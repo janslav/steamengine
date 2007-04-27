@@ -1,0 +1,8 @@
+500168	You cannot say anything, you have been squelched.
+500169	You cannot pick that up.
+500170	You cannot pick that up.
+500171	You are too tired to lift a finger, much less anything else.
+500176	That is not your container, you can't store things here.
+500177	Access to bank not allowed anymore.
+500178	Access to bank not allowed anymore.
+500204	You cannot say anything, you have been squelched.

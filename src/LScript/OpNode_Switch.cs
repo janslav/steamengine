@@ -1,0 +1,213 @@
+/*
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	Or visit http://www.gnu.org/copyleft/gpl.html
+*/
+
+using System;
+using System.Text;
+using System.Collections;
+using SteamEngine.Common;
+using PerCederberg.Grammatica.Parser;
+
+namespace SteamEngine.LScript {
+	
+	public abstract class OpNode_Switch : OpNode, IOpNodeHolder {
+		protected OpNode switchNode;
+		protected Hashtable cases;
+		protected OpNode defaultNode;
+		
+		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
+			int line = code.GetStartLine()+LScript.startLine;
+			int column = code.GetStartColumn();
+			string filename = LScript.GetParentScriptHolder(parent).filename;
+			
+			//LScript.DisplayTree(code);
+			
+			Production switchProd = (Production) code;
+			int caseBlocksCount = switchProd.GetChildCount() - 4;
+			if (caseBlocksCount == 0) {//we just run the expression
+				return LScript.CompileNode(parent, switchProd.GetChildAt(1));
+			} else {
+				OpNode switchNode = LScript.CompileNode(parent, switchProd.GetChildAt(1));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+				OpNode defaultNode = null;
+				ArrayList tempCases = new ArrayList();
+				Hashtable cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
+				bool isString = false;
+				bool isInteger = false;
+				for (int i = 0; i<caseBlocksCount; i++) {
+					Production caseProd = (Production) switchProd.GetChildAt(i+3);
+					Node caseValue = caseProd.GetChildAt(1);
+					object key = null;
+					bool isDefault = false;
+					if (IsType(caseValue, StrictConstants.INTEGER)) {
+						key = ((OpNode_Object) LScript.CompileNode(null, caseValue)).obj;
+						isInteger = true;
+					} else if (IsType(caseValue, StrictConstants.QUOTED_STRING)) {
+						OpNode_Object stringNode = LScript.CompileNode(parent, caseValue) as OpNode_Object;//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+						if (stringNode != null) {
+							key = stringNode.obj;
+							isString = true;
+						} else {
+							throw new InterpreterException("The expression in a Case must be constant.", 
+								caseProd.GetStartLine()+LScript.startLine, caseProd.GetStartColumn(),
+								filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+						}
+					} else {//default
+						isDefault = true;
+					}
+					if (caseProd.GetChildCount() == 6) {//has script
+						OpNode caseCode = LScript.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+						if (tempCases.Count > 0) {
+							foreach (object tempKey in tempCases) {
+								AddToCases(cases, tempKey, caseCode, line, filename);
+							}
+							tempCases.Clear();
+						}
+						if (isDefault) {
+							defaultNode = caseCode;
+						} else {
+							AddToCases(cases, key, caseCode, line, filename);
+						}
+					} else if (isDefault) {
+						throw new InterpreterException("The Default block must have some code.",
+							line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+					} else {
+						tempCases.Add(key);
+					}
+				}
+				OpNode_Switch constructed;
+				if (isString && isInteger) {
+					throw new InterpreterException("All cases must be either integers or strings.",
+						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+				} else if (isInteger) {
+					constructed = new OpNode_Switch_Integer(
+						parent, filename, line, column, code);
+				} else {
+					constructed = new OpNode_Switch_String(
+						parent, filename, line, column, code);
+				}
+				constructed.switchNode = switchNode;
+				constructed.cases = cases;
+				constructed.defaultNode = defaultNode;
+				switchNode.parent = constructed;
+				if (defaultNode != null) {
+					defaultNode.parent = constructed;
+				}
+				foreach (DictionaryEntry entry in cases) {
+					((OpNode) entry.Value).parent = constructed;
+				}
+				return constructed;
+			}
+		}
+		
+		private static void AddToCases(Hashtable cases, object key, OpNode code, int line, string file) {
+			if (cases.Contains(key)) {
+				Logger.WriteWarning(file, line, "The case key "+LogStr.Ident(key)+" is duplicate. Only the first occurence is valid.");
+			} else {
+				cases[key] = code;
+			}
+		}
+		
+		protected OpNode_Switch(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+			: base(parent, filename, line, column, origNode) {
+			
+		}
+		
+		public void Replace(OpNode oldNode, OpNode newNode) {
+			if (switchNode == oldNode) {
+				switchNode = newNode;
+				return;
+			}
+			if (defaultNode == oldNode) {
+				defaultNode = newNode;
+				return;
+			}
+			bool foundSome = false;
+			foreach (object key in cases.Keys) {
+				if (key == oldNode) {
+					cases[key] = newNode;
+					foundSome = true;
+				}
+			}
+			if (!foundSome) {
+				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			}
+		}
+		
+		internal override abstract object Run(ScriptVars vars);
+		
+		public override string ToString() {
+			StringBuilder str = new StringBuilder("Switch (");
+			str.Append(switchNode).Append(")").Append(Environment.NewLine);
+			foreach (DictionaryEntry entry in cases) {
+				str.Append("case (").Append(entry.Key).Append(")").Append(Environment.NewLine);
+				str.Append(entry.Value);
+			}
+			str.Append("endswitch");
+			return str.ToString();
+		}
+	}
+	
+	public class OpNode_Switch_String : OpNode_Switch {
+		internal OpNode_Switch_String(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+			: base(parent, filename, line, column, origNode) {
+		}
+		
+		internal override object Run(ScriptVars vars) {
+			object retVal;
+			object value;
+			value = String.Concat(switchNode.Run(vars));
+			OpNode node = (OpNode) cases[value];
+			if (node == null) {
+				node = defaultNode;
+			}
+			if (node != null) {
+				retVal = node.Run(vars);
+			} else {
+				retVal = null;
+			}
+			return retVal;
+		}
+	}
+	
+	public class OpNode_Switch_Integer : OpNode_Switch {
+		internal OpNode_Switch_Integer(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+			: base(parent, filename, line, column, origNode) {
+		}
+		
+		internal override object Run(ScriptVars vars) {
+			object retVal;
+			object value;
+			try {
+				value = Convert.ToInt32(switchNode.Run(vars));
+			} catch (Exception e) {
+				throw new InterpreterException("Exception while parsing integer", 
+					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+			}
+			OpNode node = (OpNode) cases[value];
+			if (node == null) {
+				node = defaultNode;
+			}
+			if (node != null) {
+				retVal = node.Run(vars);
+			} else {
+				retVal = null;
+			}
+			return retVal;
+		}
+	}
+	
+	
+}	

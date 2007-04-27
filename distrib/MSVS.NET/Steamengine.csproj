@@ -1,0 +1,818 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>..\..\src\icon6.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MSVS_SteamEngine</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SteamEngine</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>SteamEngine.MainClass</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>MSWIN;DEBUG;TRACE;MSVS</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.JScript">
+      <Name>Microsoft.JScript</Name>
+    </Reference>
+    <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
+    <Reference Include="SteamDoc">
+      <Name>SteamDoc</Name>
+      <HintPath>..\..\bin\SteamDoc.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\3rdParty\Encryption\ByteQueue.cs">
+      <Link>3rdParty\Encryption\ByteQueue.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\Encryption.cs">
+      <Link>3rdParty\Encryption\Encryption.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\GameEncryption.cs">
+      <Link>3rdParty\Encryption\GameEncryption.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\IClientEncryption.cs">
+      <Link>3rdParty\Encryption\IClientEncryption.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\LoginEncryption.cs">
+      <Link>3rdParty\Encryption\LoginEncryption.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\LoginKey.cs">
+      <Link>3rdParty\Encryption\LoginKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\NoEncryption.cs">
+      <Link>3rdParty\Encryption\NoEncryption.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\TwofishBase.cs">
+      <Link>3rdParty\Encryption\TwofishBase.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Encryption\TwofishEncryption.cs">
+      <Link>3rdParty\Encryption\TwofishEncryption.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs">
+      <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractCharacter.cs">
+      <Link>AbstractCharacter.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractCharacterDef.cs">
+      <Link>AbstractCharacterDef.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractDef.cs">
+      <Link>AbstractDef.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractDefTriggerGroupHolder.cs">
+      <Link>AbstractDefTriggerGroupHolder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\AbstractItem.cs">
+      <Link>AbstractItem.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractItemDef.cs">
+      <Link>AbstractItemDef.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractKey.cs">
+      <Link>AbstractKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractScript.cs">
+      <Link>AbstractScript.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AbstractSkillDef.cs">
+      <Link>AbstractSkillDef.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CacheDictionary.cs">
+      <Link>CacheDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CanSeeImplementation.cs">
+      <Link>CanSeeImplementation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CharData.cs">
+      <Link>CharData.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ClientVersion.cs">
+      <Link>ClientVersion.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Commands.cs">
+      <Link>Commands.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassManager.cs">
+      <Link>CompiledScripts\ClassManager.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplateInstance.cs">
+      <Link>CompiledScripts\ClassTemplateInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplateInstanceField.cs">
+      <Link>CompiledScripts\ClassTemplateInstanceField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplateReader.cs">
+      <Link>CompiledScripts\ClassTemplateReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\CompiledGump.cs">
+      <Link>CompiledScripts\CompiledGump.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\CompiledScript.cs">
+      <Link>CompiledScripts\CompiledScript.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\CompiledTriggerGroup.cs">
+      <Link>CompiledScripts\CompiledTriggerGroup.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\CompilerInvoker.cs">
+      <Link>CompiledScripts\CompilerInvoker.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\MIScriptHolder.cs">
+      <Link>CompiledScripts\MIScriptHolder.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Conn.cs">
+      <Link>Conn.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ConsConn.cs">
+      <Link>ConsConn.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Constant.cs">
+      <Link>Constant.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\CoreLogger.cs">
+      <Link>CoreLogger.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\DelayedResolver.cs">
+      <Link>DelayedResolver.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\DispidInfo.cs">
+      <Link>DispidInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Enums.cs">
+      <Link>Enums.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\FastDLL.cs">
+      <Link>FastDLL.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\FastWalk.cs">
+      <Link>FastWalk.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\FieldValue.cs">
+      <Link>FieldValue.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\GameAccount.cs">
+      <Link>GameAccount.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\GameConn.cs">
+      <Link>GameConn.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Globals.cs">
+      <Link>Globals.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Gump.cs">
+      <Link>Gump.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\GumpBuilder.cs">
+      <Link>GumpBuilder.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\HashSet.cs">
+      <Link>HashSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\LayerDefs.cs">
+      <Link>LayerDefs.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\Exceptions.cs">
+      <Link>LScript\Exceptions.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\IntrinsicMethods.cs">
+      <Link>LScript\IntrinsicMethods.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\LocalVarKey.cs">
+      <Link>LScript\LocalVarKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\LScript.cs">
+      <Link>LScript\LScript.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\LScriptAnalyzer.cs">
+      <Link>LScript\LScriptAnalyzer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\LScriptHolder.cs">
+      <Link>LScript\LScriptHolder.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\LScriptParser.cs">
+      <Link>LScript\LScriptParser.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\MemberResolver.cs">
+      <Link>LScript\MemberResolver.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode.cs">
+      <Link>LScript\OpNode.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Code.cs">
+      <Link>LScript\OpNode_Code.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_AddTimer.cs">
+      <Link>LScript\OpNode_Final_AddTimer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_ARG.cs">
+      <Link>LScript\OpNode_Final_ARG.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_Arguments.cs">
+      <Link>LScript\OpNode_Final_Arguments.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_ArrayListIndexer.cs">
+      <Link>LScript\OpNode_Final_ArrayListIndexer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_BinMathOperators.cs">
+      <Link>LScript\OpNode_Final_BinMathOperators.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_BinOperators.cs">
+      <Link>LScript\OpNode_Final_BinOperators.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_ComparOperators.cs">
+      <Link>LScript\OpNode_Final_ComparOperators.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_Constructor.cs">
+      <Link>LScript\OpNode_Final_Constructor.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_Field.cs">
+      <Link>LScript\OpNode_Final_Field.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_Function.cs">
+      <Link>LScript\OpNode_Final_Function.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_LogicalOp.cs">
+      <Link>LScript\OpNode_Final_LogicalOp.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_Method.cs">
+      <Link>LScript\OpNode_Final_Method.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_RandomExpression.cs">
+      <Link>LScript\OpNode_Final_RandomExpression.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_Return.cs">
+      <Link>LScript\OpNode_Final_Return.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_SkillKey.cs">
+      <Link>LScript\OpNode_Final_SkillKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_TAG.cs">
+      <Link>LScript\OpNode_Final_TAG.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_TemplateItem.cs">
+      <Link>LScript\OpNode_Final_TemplateItem.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_UnOperators.cs">
+      <Link>LScript\OpNode_Final_UnOperators.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Final_VAR.cs">
+      <Link>LScript\OpNode_Final_VAR.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_For.cs">
+      <Link>LScript\OpNode_For.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Foreach.cs">
+      <Link>LScript\OpNode_Foreach.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_If.cs">
+      <Link>LScript\OpNode_If.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_AddTimer.cs">
+      <Link>LScript\OpNode_Lazy_AddTimer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_Arguments.cs">
+      <Link>LScript\OpNode_Lazy_Arguments.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_BinOperator.cs">
+      <Link>LScript\OpNode_Lazy_BinOperator.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_EvalExpression.cs">
+      <Link>LScript\OpNode_Lazy_EvalExpression.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_Expression.cs">
+      <Link>LScript\OpNode_Lazy_Expression.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_ExpressionChain.cs">
+      <Link>LScript\OpNode_Lazy_ExpressionChain.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_Indexer.cs">
+      <Link>LScript\OpNode_Lazy_Indexer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_QuotedString.cs">
+      <Link>LScript\OpNode_Lazy_QuotedString.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_RandomExpression.cs">
+      <Link>LScript\OpNode_Lazy_RandomExpression.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_UnOperator.cs">
+      <Link>LScript\OpNode_Lazy_UnOperator.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Lazy_VarExpression.cs">
+      <Link>LScript\OpNode_Lazy_VarExpression.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Script.cs">
+      <Link>LScript\OpNode_Script.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_Switch.cs">
+      <Link>LScript\OpNode_Switch.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_TypeOf.cs">
+      <Link>LScript\OpNode_TypeOf.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\LScript\OpNode_While.cs">
+      <Link>LScript\OpNode_While.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\ScriptedGumpDef.cs">
+      <Link>LScript\ScriptedGumpDef.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\StrictAnalyzer.cs">
+      <Link>LScript\StrictAnalyzer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\StrictConstants.cs">
+      <Link>LScript\StrictConstants.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\StrictParser.cs">
+      <Link>LScript\StrictParser.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\StrictTokenizer.cs">
+      <Link>LScript\StrictTokenizer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Main.cs">
+      <Link>Main.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Map.cs">
+      <Link>Map.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\MemberWrapper.cs">
+      <Link>MemberWrapper.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Movement.cs">
+      <Link>Movement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\MultiData.cs">
+      <Link>MultiData.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ObjectPropertiesContainer.cs">
+      <Link>ObjectPropertiesContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\OpenedContainers.cs">
+      <Link>OpenedContainers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Packets\Compression.cs">
+      <Link>Packets\Compression.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\HighLevelOut.cs">
+      <Link>Packets\HighLevelOut.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\InPackets.cs">
+      <Link>Packets\InPackets.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\LowLevelOut.cs">
+      <Link>Packets\LowLevelOut.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\MediumLevelOut.cs">
+      <Link>Packets\MediumLevelOut.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\NetState.cs">
+      <Link>Packets\NetState.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\PacketBase.cs">
+      <Link>Packets\PacketBase.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\PacketGroup.cs">
+      <Link>Packets\PacketGroup.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\PacketHandler.cs">
+      <Link>Packets\PacketHandler.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\PacketSender.cs">
+      <Link>Packets\PacketSender.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\PacketStats.cs">
+      <Link>Packets\PacketStats.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Packets\Prepared.cs">
+      <Link>Packets\Prepared.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Persistence\DecoratedClassesSaveImplementor.cs">
+      <Link>Persistence\DecoratedClassesSaveImplementor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Persistence\ExportImport.cs">
+      <Link>Persistence\ExportImport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Persistence\ObjectSaver.cs">
+      <Link>Persistence\ObjectSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Persistence\WorldSaver.cs">
+      <Link>Persistence\WorldSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Point.cs">
+      <Link>Point.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\PropsFileParser.cs">
+      <Link>PropsFileParser.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Rectangle.cs">
+      <Link>Rectangle.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Region.cs">
+      <Link>Region.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ScriptArgs.cs">
+      <Link>ScriptArgs.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ScriptFilesCollection.cs">
+      <Link>ScriptFilesCollection.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ScriptHolder.cs">
+      <Link>ScriptHolder.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ScriptLoader.cs">
+      <Link>ScriptLoader.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Sector.cs">
+      <Link>Sector.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\SEIniHandler.cs">
+      <Link>SEIniHandler.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Server.cs">
+      <Link>Server.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\SimulConn.cs">
+      <Link>SimulConn.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\SoundMul.cs">
+      <Link>SoundMul.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Sounds.cs">
+      <Link>Sounds.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Static.cs">
+      <Link>Static.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\StaticSector.cs">
+      <Link>StaticSector.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Statistics.cs">
+      <Link>Statistics.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\TagHolder.cs">
+      <Link>TagHolder.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\TagKey.cs">
+      <Link>TagKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\TagMath.cs">
+      <Link>TagMath.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Temporary.cs">
+      <Link>Temporary.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Thing.cs">
+      <Link>Thing.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ThingDef.cs">
+      <Link>ThingDef.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\ThingLinkedList.cs">
+      <Link>ThingLinkedList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\tiledata.cs">
+      <Link>tiledata.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Timers\DelegateTimer.cs">
+      <Link>Timers\DelegateTimer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Timers\FunctionTimer.cs">
+      <Link>Timers\FunctionTimer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Timers\MethodTimer.cs">
+      <Link>Timers\MethodTimer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Timers\SimpleQueue.cs">
+      <Link>Timers\SimpleQueue.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Timers\Timer.cs">
+      <Link>Timers\Timer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Timers\TimerKey.cs">
+      <Link>Timers\TimerKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Timers\TimerPriorityQueue.cs">
+      <Link>Timers\TimerPriorityQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Timers\TriggerTimer.cs">
+      <Link>Timers\TriggerTimer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\TriggerGroup.cs">
+      <Link>TriggerGroup.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\TriggerKey.cs">
+      <Link>TriggerKey.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\UIDArray.cs">
+      <Link>UIDArray.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\Utility.cs">
+      <Link>Utility.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\WeakRefDictionary.cs">
+      <Link>WeakRefDictionary.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Common.csproj">
+      <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

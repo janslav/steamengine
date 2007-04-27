@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<project name="steamengine" default="runGUI" basedir="..\..\.">
+	<property name="outputFilePrefix" value="Sane." overwrite="false"  />
+	
+	<property name="debug" value="true" overwrite="false"  />
+	<property name="defineSymbols" value="TRACE,SANE,MSWIN" overwrite="false"  />
+	<property name="optimize" value="false" overwrite="false"  />
+	<property name="cmdLineParams" value="" overwrite="false"  />
+	<property name="scriptsNumber" value="1" overwrite="false"  />
+	<property name="scriptsReferencesListPath" value="./scripts/referencedAssemblies.txt" overwrite="false"  />
+	<property name="scriptsSourcesListPath" value="./scripts/scriptSources.Generated.txt" overwrite="false"  />
+	<property name="guiTargetType" value="winexe" readonly="false" />
+	
+	<if test="${debug}">
+		<property name="guiTargetType" value="exe" overwrite="true" />
+		<property name="outputFilePrefix" value="Debug." overwrite="true" />
+	</if>
+	<if test="${optimize}">
+		<property name="outputFilePrefix" value="Optimized." overwrite="true" />
+	</if>
+	
+	<property name="commonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Common.dll'}" />
+	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
+	<property name="coreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Core.exe'}" />
+	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
+	<property name="converterFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Converter.exe'}" />
+
+	<target name="cleanCommon">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.Common*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="cleanGUI">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.GUI*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="cleanCore">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.Core*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="cleanScripts">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.Scripts*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="cleanConverter">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.Converter*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="clean" depends="cleanCommon,cleanGUI,cleanCore,cleanScripts,cleanConverter">
+	</target>
+	
+	<target name="buildCommon">
+		<csc 
+			target="library" 
+			output="${commonFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="Common/**/*.cs" />
+			</sources>
+			<references>
+				<include name="bin/SteamDoc.dll" />
+				<include name="bin/NAnt.Core.dll" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>
+	
+	
+	<target name="buildGUI" depends="buildCommon">
+		<csc 
+			target="${guiTargetType}" 
+			output="${guiFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="WinConsole/**/*.cs" />
+			</sources>
+			<references>
+				<include name="bin/SteamDoc.dll" />
+				<include name="${commonFileName}" />
+				<include name="bin/NAnt.Core.dll" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+		<copy 
+			file="Winconsole/App.config"
+    		tofile="${guiFileName+'.config'}"	/>
+	</target>
+	
+	<target name="buildCore" depends="buildCommon">
+		<csc 
+			target="exe" 
+			output="${coreFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="src/**/*.cs" />
+			</sources>
+			<references>
+				<include name="bin/NAnt.Core.dll" />
+				<include name="bin/SteamDoc.dll" />
+				<include name="${commonFileName}" />
+				<!--include name="Microsoft.JScript.dll" / -->
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+		<copy 
+			file="Winconsole/App.config"
+    		tofile="${coreFileName+'.config'}"	/>
+	</target>
+	
+	<target name="buildScripts">
+		<csc 
+			target="library" 
+			output="${scriptsFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+
+			<sources>
+				<includesfile name="${scriptsSourcesListPath}" />
+			</sources>
+			<references>
+				<include name="${commonFileName}" />
+				<include name="${coreFileName}" />
+			
+				<include name="bin/SteamDoc.dll" />
+				<include name="bin/NAnt.Core.dll" />
+				<includesfile name="${scriptsReferencesListPath}" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>
+	
+	
+	
+	<target name="buildConverter" depends="buildCommon, buildCore, buildScripts">
+		<csc 
+			target="exe" 
+			output="${converterFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="SphereShardConverter/**/*.cs" />
+			</sources>
+			<references>
+				<include name="bin/SteamDoc.dll" />
+				<include name="${commonFileName}" />
+				<include name="${coreFileName}" />
+				<include name="${scriptsFileName}" />
+				<include name="Microsoft.JScript.dll" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>
+
+	<target name="build" depends="buildCommon,buildCore,buildGUI">
+	</target>
+	
+	<target name="echoInfo" >
+		<echo message="" />
+		<sysinfo verbose="true" />
+	</target>
+	
+	<target name="runGUI" depends="buildGUI">
+		<exec program="${guiFileName}" />
+	</target>
+	
+	<target name="runConverter" depends="buildGUI">
+		<exec program="${guiFileName}" commandline="Convert"/>
+	</target>
+	
+	<target name="runCore" depends="buildCore">
+		<exec program="${coreFileName}" />
+	</target>
+	
+	<target name="rebuild" depends="clean, build" />
+</project>
+
+

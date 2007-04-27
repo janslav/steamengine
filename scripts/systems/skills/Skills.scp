@@ -1,0 +1,864 @@
+[SCRIPTEDSKILLDEF 0]
+DEFNAME=Skill_Alchemy
+KEY=Alchemy
+//TITLE="Alchemist"
+//
+DELAY=3.0, 1.0 // per stroke.
+//EFFECT=0.0,100.0
+ADVRATE=10.0 //,200.0,800.0
+////VALUES=1,20,100
+//
+//BONUSSTATS=10
+//BONUS_STR=0
+//BONUS_DEX=20
+//BONUS_INT=80
+//
+//STAT_STR=5
+//STAT_INT=75
+//STAT_DEX=40
+
+ON=@Fail
+	src.message "You toss the failed mixture from the mortar, unable to create a potion from it."
+
+[SCRIPTEDSKILLDEF 1]
+DEFNAME=Skill_Anatomy
+KEY="Anatomy"
+//TITLE="Scholar"
+////PROMPTMSG="Whom shall I examine?"
+//DELAY=3.0,1.0
+ADVRATE=2.5,50.0,200.0
+//
+//BONUSSTATS=50
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//
+//STAT_STR=15
+//STAT_INT=70
+//STAT_DEX=15
+
+ON=@Fail
+	src.message "You can't think of anything about this creature"
+
+[SCRIPTEDSKILLDEF 2]
+DEFNAME=Skill_Animal_Lore
+KEY="AnimalLore"
+//TITLE="Scholar"
+////PROMPTMSG="What animal should I look at?"
+//DELAY=3.0,1.0
+ADVRATE=2.5,50.0,200.0
+//
+//STAT_STR=0
+//STAT_INT=70
+//STAT_DEX=0
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=50
+
+ON=@Fail
+	src.message "You can't think of anything off hand"
+
+[SCRIPTEDSKILLDEF 3]
+DEFNAME=Skill_Appraise
+KEY="ItemID"
+//TITLE="Merchant"
+////PROMPTMSG="What do you wish to appraise and identify?"
+//DELAY=1.0
+//ADVRATE=2.5,50.0,200.0
+//STAT_STR=0
+//STAT_INT=85
+//STAT_DEX=0
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=25
+
+ON=@Fail
+	src.message "You can't think of anything off hand"
+
+[SCRIPTEDSKILLDEF 4]
+DEFNAME=Skill_Armslore
+KEY="ArmsLore"
+//TITLE="Arms%s"
+////PROMPTMSG="What would you like to evaluate?"
+//DELAY=1.0
+//STAT_STR=10
+//STAT_INT=50
+//STAT_DEX=15
+//BONUS_STR=33
+//BONUS_DEX=33
+//BONUS_INT=34
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You are uncertain about this item "
+
+[SCRIPTEDSKILLDEF 5]
+DEFNAME=Skill_Parrying
+KEY="Parrying"
+//TITLE="Shieldfighter"
+ADVRATE=800.0,800.0,800.0
+//EFFECT=0.0,90.0
+//STAT_STR=75
+//STAT_INT=15
+//STAT_DEX=25
+//BONUS_STR=50
+//BONUS_DEX=50
+//BONUS_INT=0
+//BONUSSTATS=10
+
+[SCRIPTEDSKILLDEF 6]
+DEFNAME=Skill_Begging
+KEY="Begging"
+//TITLE="Beggar"
+//PROMPTMSG="To whom do you wish to grovel?"
+//DELAY=2.0
+ADVRATE=2.5,50.0,200.0
+//STAT_STR=5
+//STAT_INT=55
+//STAT_DEX=25
+//BONUS_STR=0
+//BONUS_DEX=50
+//BONUS_INT=50
+//BONUSSTATS=10
+
+[SCRIPTEDSKILLDEF 7]
+DEFNAME=Skill_Blacksmith
+KEY="Blacksmithing"
+//TITLE="Blacksmith"
+//PROMPTMSG=""
+//DELAY=1.0
+//STAT_STR=95
+//STAT_INT=15
+//STAT_DEX=25
+//BONUS_STR=75
+//BONUS_DEX=20
+//BONUS_INT=5
+//BONUSSTATS=10
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,20,100
+
+ON=@Fail
+	src.message "You have failed to make anything"
+
+[SCRIPTEDSKILLDEF 8]
+DEFNAME=Skill_Bowcraft
+KEY="Bowcraft"
+//TITLE="Bowyer"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=40
+//STAT_INT=45
+//STAT_DEX=70
+//BONUS_STR=15
+//BONUS_DEX=70
+//BONUS_INT=15
+//BONUSSTATS=20
+ADVRATE=10.0,200.0,800.0
+//VALUES=1,30,200
+
+ON=@Fail
+	src.message "You fail to create the item"
+
+[SCRIPTEDSKILLDEF 9]
+DEFNAME=Skill_Peacemaking
+KEY="Peacemaking"
+//TITLE="Bard"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=0
+//STAT_INT=70
+//STAT_DEX=70
+//BONUS_STR=0
+//BONUS_DEX=50
+//BONUS_INT=50
+//BONUSSTATS=5
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You attempt to calm everyone, but fail."
+
+[SCRIPTEDSKILLDEF 10]
+DEFNAME=Skill_Camping
+KEY="Camping"
+//TITLE="Camper"
+//PROMPTMSG=""
+//DELAY=6.0
+//STAT_STR=30
+//STAT_INT=30
+//STAT_DEX=30
+//BONUS_STR=33
+//BONUS_DEX=33
+//BONUS_INT=34
+//BONUSSTATS=50
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You fail to ignite the campfire."
+
+[SCRIPTEDSKILLDEF 11]
+DEFNAME=Skill_Carpentry
+KEY="Carpentry"
+//TITLE="Carpenter"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=60
+//STAT_INT=40
+//STAT_DEX=30
+//BONUS_STR=50
+//BONUS_DEX=30
+//BONUS_INT=20
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,20,80
+
+ON=@Fail
+	src.message "You fail to create the item"
+
+[SCRIPTEDSKILLDEF 12]
+DEFNAME=Skill_CARTOGRAPHY
+KEY="Cartography"
+//TITLE="Cartographer"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=15
+//STAT_INT=70
+//STAT_DEX=20
+//BONUS_STR=0
+//BONUS_DEX=20
+//BONUS_INT=80
+//BONUSSTATS=15
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,20,80
+
+ON=@Fail
+	src.message "Thy trembling hand results in an unusable map."
+
+[SCRIPTEDSKILLDEF 13]
+DEFNAME=Skill_Cooking
+KEY="Cooking"
+//TITLE="Chef"
+//PROMPTMSG="What would you like to cook?"
+//DELAY=2.0
+//STAT_STR=25
+//STAT_INT=45
+//STAT_DEX=20
+//BONUS_STR=0
+//BONUS_DEX=40
+//BONUS_INT=60
+//BONUSSTATS=50
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,20,80
+
+ON=@Fail
+	src.message "You burn the food to a crisp! It's ruined."
+
+[SCRIPTEDSKILLDEF 14]
+DEFNAME=Skill_DetectHidden
+KEY="DetectingHidden"
+//TITLE="Detective"
+//PROMPTMSG=""
+//DELAY=3.0,2.0
+//STAT_STR=15
+//STAT_INT=60
+//STAT_DEX=20
+//BONUS_STR=0
+//BONUS_DEX=20
+//BONUS_INT=80
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You can see nothing hidden there."
+	
+[DISCORDANCESKILLDEF 15]
+DEFNAME=Skill_Discordance
+KEY="Discordance"
+DELAY=4.0
+ADVRATE=2.5,50.0,200.0
+
+[SCRIPTEDSKILLDEF 16]
+// Used to be called EvalInt or ??
+DEFNAME=Skill_EvalInt
+KEY="EvaluatingIntel"
+//TITLE="Scholar"
+//PROMPTMSG="Select char to inspect."
+//DELAY=1.0
+//STAT_STR=5
+//STAT_INT=60
+//STAT_DEX=10
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=50
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You cannot seem to judge the creature correctly."
+
+[SCRIPTEDSKILLDEF 17]
+DEFNAME=Skill_Healing
+KEY="Healing"
+//TITLE="Healer"
+//PROMPTMSG="Who will you use the bandages on?"
+//DELAY=3.0,1.0
+//EFFECT=2.0,20.0
+ADVRATE=10.0,100.0,250.0
+//STAT_STR=10
+//STAT_INT=90
+//STAT_DEX=10
+//BONUSSTATS=20
+//BONUS_STR=0
+//BONUS_DEX=30
+//BONUS_INT=70
+
+ON=@Fail
+	src.message "You apply the bandages, but they barely help."
+	RETURN 1
+
+[SCRIPTEDSKILLDEF 18]
+DEFNAME=Skill_Fishing
+KEY="Fishing"
+//TITLE="Fisher%s"
+//PROMPTMSG="What water do you want to fish in?"
+//DELAY=2.0
+//STAT_STR=40
+//STAT_INT=30
+//STAT_DEX=40
+//BONUS_STR=10
+//BONUS_DEX=90
+//BONUS_INT=0
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,30,200
+
+ON=@Fail
+	src.message "You fish a while, but fail to catch anything."
+
+[SCRIPTEDSKILLDEF 19]
+DEFNAME=Skill_Forensics
+KEY="Forensics"
+//TITLE="Scholar"
+//PROMPTMSG="What corpse would you like to examine?"
+//DELAY=1.0
+//STAT_STR=10
+//STAT_INT=60
+//STAT_DEX=25
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You can tell nothing about the corpse."
+
+
+[SCRIPTEDSKILLDEF 20]
+DEFNAME=Skill_Herding
+KEY="Herding"
+//TITLE="Shepherd"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=50
+//STAT_INT=50
+//STAT_DEX=50
+//BONUS_STR=25
+//BONUS_DEX=45
+//BONUS_INT=30
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You don't seem to be able to persuade that to move."
+
+[HIDINGSKILLDEF 21]
+DEFNAME=Skill_Hiding
+KEY="Hiding"
+//TITLE="Rogue"
+//PROMPTMSG=""
+DELAY = 1.0, 2.0
+//STAT_STR=20
+//STAT_INT=60
+//STAT_DEX=90
+//BONUS_STR=0
+//BONUS_DEX=80
+//BONUS_INT=20
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+//ON=@Fail
+//	src.message "You can't seem to hide here."
+
+[SCRIPTEDSKILLDEF 22]
+DEFNAME=Skill_Provocation
+KEY="Provocation"
+//TITLE="Bard"
+//PROMPTMSG="Whom do you wish to incite?"
+//DELAY=3.0
+//STAT_STR=20
+//STAT_INT=60
+//STAT_DEX=70
+//BONUS_STR=0
+//BONUS_DEX=90
+//BONUS_INT=10
+//BONUSSTATS=5
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "Your music fails to incite enough anger."
+
+[SCRIPTEDSKILLDEF 23]
+DEFNAME=Skill_Inscription
+KEY="Inscription"
+//TITLE="Scribe"
+//PROMPTMSG="What spell do you want to inscribe?"
+//DELAY=3.0
+//STAT_STR=15
+//STAT_INT=100
+//STAT_DEX=15
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=10
+ADVRATE=10.0,200.0,800.0
+//VALUES=1,30,200
+
+ON=@Fail
+	src.message "You fail to inscribe the scroll, and the scroll is ruined."
+
+[SCRIPTEDSKILLDEF 24]
+DEFNAME=Skill_LockPick
+KEY="LockPicking"
+//TITLE="Locksmith"
+//PROMPTMSG="What do you want to pick?"
+//DELAY=3.0
+//STAT_STR=20
+//STAT_INT=60
+//STAT_DEX=90
+//BONUS_STR=0
+//BONUS_DEX=80
+//BONUS_INT=20
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You are unable to pick the lock."
+
+[SCRIPTEDSKILLDEF 25]
+DEFNAME=Skill_Magery
+KEY="Magery"
+//TITLE="Mage"
+//PROMPTMSG=""
+//STAT_STR=20
+//STAT_INT=100
+//STAT_DEX=40
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=15
+ADVRATE=10.0,200.0,800.0
+//VALUES=1,20,80
+//DELAY=1.0 // based on skill and difficulty.
+
+ON=@Fail
+	src.message "The spell fizzles."
+
+[SCRIPTEDSKILLDEF 26]
+DEFNAME=Skill_MagicResist
+KEY="MagicResistance"
+//TITLE="Resistor"
+//PROMPTMSG=""
+//EFFECT=0.0,90.0
+//STAT_STR=40
+//STAT_INT=100
+//STAT_DEX=40
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=50
+ADVRATE=10.0,200.0,800.0
+
+[SCRIPTEDSKILLDEF 27]
+DEFNAME=Skill_Tactics
+KEY="Tactics"
+//TITLE="Warrior"
+//STAT_STR=60
+//STAT_INT=40
+//STAT_DEX=70
+//BONUS_STR=50
+//BONUS_DEX=50
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=10.0,150.0,600.0
+
+[SCRIPTEDSKILLDEF 28]
+DEFNAME=Skill_Snooping
+KEY="Snooping"
+//TITLE="Pickpocket"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=30
+//STAT_INT=50
+//STAT_DEX=60
+//BONUS_STR=0
+//BONUS_DEX=100
+//BONUS_INT=0
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You fail to peek into the container."
+
+[SCRIPTEDSKILLDEF 30]
+DEFNAME=Skill_Poisoning
+KEY="Poisoning"
+//TITLE="Assassin"
+//PROMPTMSG="To what do you wish to apply the poison?"
+//DELAY=2.0
+//STAT_STR=15
+//STAT_INT=40
+//STAT_DEX=40
+//BONUS_STR=0
+//BONUS_DEX=20
+//BONUS_INT=80
+//BONUSSTATS=20
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,30,200
+
+ON=@Fail
+	src.message "You fail to apply a sufficient dose of poison to it."
+
+[SCRIPTEDSKILLDEF 31]
+DEFNAME=Skill_Archery
+KEY="Archery"
+//TITLE="Archer"
+//PROMPTMSG=""
+//DELAY=2.0,0.1
+//STAT_STR=40
+//STAT_INT=30
+//STAT_DEX=70
+//BONUS_STR=0
+//BONUS_DEX=95
+//BONUS_INT=5
+//BONUSSTATS=10
+ADVRATE=10.0,200.0,800.0
+
+[SCRIPTEDSKILLDEF 32]
+DEFNAME=Skill_Spiritspeak
+KEY="SpiritSpeak"
+//TITLE="Medium"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=20
+//STAT_INT=70
+//STAT_DEX=30
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=50
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You fail your attempt at contacting the netherworld."
+
+[SCRIPTEDSKILLDEF 33]
+DEFNAME=Skill_Stealing
+KEY="Stealing"
+//TITLE="Thief"
+//PROMPTMSG="Which item will you attempt to steal?"
+//DELAY=2.5
+//STAT_STR=40
+//STAT_INT=50
+//STAT_DEX=100
+//BONUS_STR=0
+//BONUS_DEX=100
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=10.0,200.0,800.0
+
+ON=@Fail
+	src.message "You fail to steal the item."
+
+[SCRIPTEDSKILLDEF 34]
+DEFNAME=Skill_Tailoring
+KEY="Tailoring"
+//TITLE="Tailor"
+//PROMPTMSG=""
+//DELAY=3.0
+//STAT_STR=30
+//STAT_INT=30
+//STAT_DEX=60
+//BONUS_STR=5
+//BONUS_DEX=75
+//BONUS_INT=20
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,20,80
+
+ON=@Fail
+	src.message "Tailoring failed. Some of the cloth is ruined."
+
+[SCRIPTEDSKILLDEF 35]
+DEFNAME=Skill_Taming
+KEY="Taming"
+//TITLE="Animal Tamer"
+//PROMPTMSG="Tame which animal?"
+//DELAY=2.0
+//STAT_STR=30
+//STAT_INT=40
+//STAT_DEX=60
+//BONUS_STR=30
+//BONUS_DEX=10
+//BONUS_INT=60
+//BONUSSTATS=20
+ADVRATE=10.0,200.0,800.0
+
+ON=@Fail
+	src.message "You fail to tame the creature."
+
+[SCRIPTEDSKILLDEF 36]
+DEFNAME=Skill_tasteid
+KEY="TasteID"
+//TITLE="Food Taster"
+//PROMPTMSG="What would you like to taste?"
+//DELAY=1.0
+//STAT_STR=25
+//STAT_INT=50
+//STAT_DEX=15
+//BONUS_STR=20
+//BONUS_DEX=0
+//BONUS_INT=80
+//BONUSSTATS=50
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You cannot discern anything about this substance."
+
+[SCRIPTEDSKILLDEF 37]
+DEFNAME=Skill_Tinkering
+KEY="Tinkering"
+//TITLE="Tinker"
+//PROMPTMSG=""
+//DELAY=3.0
+//STAT_STR=30
+//STAT_INT=100
+//STAT_DEX=50
+//BONUS_STR=20
+//BONUS_DEX=20
+//BONUS_INT=60
+//BONUSSTATS=10
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,10,20
+
+ON=@Fail
+	src.message "Tinkering failed."
+
+[SCRIPTEDSKILLDEF 38]
+DEFNAME=Skill_Tracking
+KEY="Tracking"
+//TITLE="Ranger"
+//PROMPTMSG=""
+//DELAY=4.0
+//STAT_STR=25
+//STAT_INT=50
+//STAT_DEX=50
+//BONUS_STR=0
+//BONUS_DEX=50
+//BONUS_INT=50
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "Tracking failed."
+
+[SCRIPTEDSKILLDEF 39]
+DEFNAME=Skill_Vet
+KEY="Veterinary"
+//TITLE="Veterinarian"
+//PROMPTMSG="What animal would you like to heal?"
+//DELAY=2.0
+//STAT_STR=30
+//STAT_INT=50
+//STAT_DEX=40
+//BONUS_STR=20
+//BONUS_DEX=20
+//BONUS_INT=60
+//BONUSSTATS=20
+ADVRATE=10.0,200.0,800.0
+
+ON=@Fail
+	src.message "You apply the bandages, but they barely help."
+
+[SCRIPTEDSKILLDEF 40]
+DEFNAME=Skill_Swordsmanship
+KEY="Swordsmanship"
+//TITLE="Swords%s"
+//PROMPTMSG=""
+//STAT_STR=75
+//STAT_INT=40
+//STAT_DEX=75
+//BONUS_STR=50
+//BONUS_DEX=50
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=10.0,150.0,600.0
+
+[SCRIPTEDSKILLDEF 41]
+DEFNAME=Skill_Macefighting
+KEY="Macefighting"
+//TITLE="Macefighter"
+//PROMPTMSG=""
+//STAT_STR=100
+//STAT_INT=35
+//STAT_DEX=55
+//BONUS_STR=80
+//BONUS_DEX=20
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=10.0,150.0,600.0
+
+[SCRIPTEDSKILLDEF 42]
+DEFNAME=Skill_Fencing
+KEY="Fencing"
+//TITLE="Fencer"
+//PROMPTMSG=""
+//STAT_STR=55
+//STAT_INT=60
+//STAT_DEX=95
+//BONUS_STR=20
+//BONUS_DEX=80
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=10.0,150.0,600.0
+
+[SCRIPTEDSKILLDEF 43]
+DEFNAME=Skill_Wrestling
+KEY="Wrestling"
+//TITLE="Wrestler"
+//PROMPTMSG=""
+//STAT_STR=100
+//STAT_INT=30
+//STAT_DEX=75
+//BONUS_STR=50
+//BONUS_DEX=50
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=8.5,120.0,680.0
+
+[SCRIPTEDSKILLDEF 44]
+DEFNAME=Skill_Lumberjack
+KEY="Lumberjacking"
+//TITLE="Lumberjack"
+//PROMPTMSG=""
+//DELAY=1.0
+//STAT_STR=85
+//STAT_INT=30
+//STAT_DEX=45
+//BONUS_STR=90
+//BONUS_DEX=10
+//BONUS_INT=0
+//BONUSSTATS=20
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,10,50
+
+ON=@Fail
+	src.message "You hack at the tree for a while, but fail to produce any useable wood."
+
+[SCRIPTEDSKILLDEF 45]
+DEFNAME=Skill_Mining
+KEY="Mining"
+//TITLE="Miner"
+//PROMPTMSG="Where would you like to mine?"
+//DELAY=2.0
+//STAT_STR=85
+//STAT_INT=30
+//STAT_DEX=45
+//BONUS_STR=70
+//BONUS_DEX=30
+//BONUS_INT=0
+//BONUSSTATS=20
+ADVRATE=2.5,50.0,200.0
+//VALUES=1,10,80
+
+ON=@Fail
+	src.message "You loosen some rocks but fail to find any useable ore."
+
+[SCRIPTEDSKILLDEF 46]
+DEFNAME=Skill_Meditation
+KEY="Meditation"
+//TITLE="Stoic"
+//DELAY=2.0,1.0
+//STAT_STR=10
+//STAT_INT=100
+//STAT_DEX=10
+//BONUS_STR=5
+//BONUS_DEX=90
+//BONUS_INT=5
+//BONUSSTATS=20
+ADVRATE=10.0,200.0,800.0
+
+ON=@Fail
+	src.clilocsysmessage(501848) //"you can not focus your concentration"
+
+[SCRIPTEDSKILLDEF 48]
+DEFNAME=Skill_Remove_Trap
+KEY="RemoveTrap"
+//TITLE="Jack"
+//PROMPTMSG="Select the trap to disarm"
+//DELAY=7.0,3.0,2.0
+//STAT_STR=20
+//STAT_INT=60
+//STAT_DEX=90
+//BONUS_STR=0
+//BONUS_DEX=80
+//BONUS_INT=20
+//BONUSSTATS=25
+ADVRATE=2.5,50.0,200.0
+
+ON=@Fail
+	src.message "You fail to disarm the trap."
+
+[SCRIPTEDSKILLDEF 49]
+DEFNAME=Skill_Necromancy
+KEY="Necromancy"
+//TITLE="Necromancer"
+//STAT_STR=0
+//STAT_INT=100
+//STAT_DEX=0
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=15
+ADVRATE=10.0,200.0,800.0
+//VALUES=1,10,80
+
+[SCRIPTEDSKILLDEF 50]
+DEFNAME=Skill_Focus
+KEY="Focus"
+//TITLE="Focuser"
+//STAT_STR=0
+//STAT_INT=100
+//STAT_DEX=0
+//BONUS_STR=0
+//BONUS_DEX=0
+//BONUS_INT=100
+//BONUSSTATS=10
+ADVRATE=10.0,200.0,800.0
+//VALUES=1,10,80
+
+[SCRIPTEDSKILLDEF 51]
+DEFNAME=Skill_Chivalry
+KEY="Chivalry"
+//TITLE="Knight"
+//STAT_STR=80
+//STAT_INT=10
+//STAT_DEX=10
+//BONUS_STR=100
+//BONUS_DEX=0
+//BONUS_INT=0
+//BONUSSTATS=10
+ADVRATE=10.0,200.0,800.0
+//VALUES=1,10,80

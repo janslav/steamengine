@@ -1,0 +1,28 @@
+<Project name="common" fileversion="2.0" newfilesearch="OnLoad" language="C#" ctype="DotNetProject">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="DotNetProjectConfiguration">
+      <Output directory="../../../bin" assembly="Debug_Common" />
+      <Build debugmode="True" target="Library" />
+      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="False" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" definesymbols="DEBUG;TRACE;MONO" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+  </Configurations>
+  <References>
+    <ProjectReference type="Assembly" localcopy="True" refto="../../../bin/SteamDoc.dll" />
+  </References>
+  <DeploymentInformation strategy="File">
+    <excludeFiles />
+  </DeploymentInformation>
+  <Contents>
+    <File name="./link/ConvertTools.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/HighPerformanceTimer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/IniHandler.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/LogStr.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/Sanity.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/TestSuite.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/UberEnumerator.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/common.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/Exceptions.cs" subtype="Code" buildaction="Compile" />
+    <File name="./link/ConAttrs.cs" subtype="Code" buildaction="Compile" />
+  </Contents>
+</Project>

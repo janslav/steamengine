@@ -1,0 +1,110 @@
+[triggergroup t_spawn_char]
+//trigger called when the timer is up
+on=@spawnNow
+//baseobject - spawn gem
+arg gem = this
+arg char = <tag.spawnInfo.SpawnDef.Create(this.x, this.y, this.z, this.m)>
+char.tag.spawnGem = gem //link to his spawn
+char.AddTriggerGroup(e_spawned_char)
+tag.spawnedCount = <tag.spawnedCount> + 1
+
+//check if there are more chars to be spawned
+if(<tag.spawnedCount> < <tag.spawnInfo.Amount> )
+ //print("timerujem <{<tag.spawnInfo.MinTime>,<tag.spawnInfo.MaxTime>}>")
+ AddTimer(%SpawnTimer, {tag.spawnInfo.MinTime,tag.spawnInfo.MaxTime}*10, @spawnNow) //next possible spawns will appear in the given time interval
+endif
+
+[function spawn] //argv(0) - chardef which to create
+if (argvcount==0)
+ if(!tag.exists(spawndialog_data))
+  tag.spawndialog_data = SpawnInfo(3,c_man,1,2,1)
+ endif
+else
+ tag.spawndialog_data = SpawnInfo(3,argv(0),1,2,1)
+endif
+dialog(d_spawn,tag(spawndialog_data))
+return 1
+
+[dialog d_spawn]
+arg sirka = 400
+arg vyska = 23+(5*d_def_radek_vyska)+(2*d_def_skvira)+(2*d_def_okraj)
+
+argv(0) = AdvancedGumpInstance(d_spawn)
+argv(0).SetLocation=60,80
+argv(0).DialogFirst(sirka,vyska)
+argv(0).DialogBackGround(argv(0).nextY,5,130) 
+argv(0).DialogTransparency()
+
+argv(0).DialogTextPos(0,0)
+texta(argv(0).lastXPos,argv(0).lastYPos,0481,"Amount")
+texta(argv(0).lastXPos,argv(0).lastYPos+d_def_radek_vyska,0481,"Baseid")
+texta(argv(0).lastXPos,argv(0).lastYPos+(2*d_def_radek_vyska),0481,"Mintime (minuty)")
+texta(argv(0).lastXPos,argv(0).lastYPos+(3*d_def_radek_vyska),0481,"Maxtime (minuty)")
+texta(argv(0).lastXPos,argv(0).lastYPos+(4*d_def_radek_vyska),0481,"Homedist")
+
+argv(0).DialogTextPos(0,1)
+NumberEntryA(argv(0).lastXPos,argv(0).lastYpos,200,d_def_radek_vyska,0481, 1,<argv(1).Amount>)
+textEntryA(argv(0).lastXPos,argv(0).lastYPos+d_def_radek_vyska,200,d_def_radek_vyska,0481,2,"<argv(1).SpawnDef.PrettyDefname>") //nazev chardefu
+NumberEntryA(argv(0).lastXPos,argv(0).lastYPos+(2*d_def_radek_vyska),200,d_def_radek_vyska,0481,3,<argv(1).MinTime>)
+NumberEntryA(argv(0).lastXPos,argv(0).lastYPos+(3*d_def_radek_vyska),200,d_def_radek_vyska,0481,4,<argv(1).MaxTime>)
+NumberEntryA(argv(0).lastXPos,argv(0).lastYPos+(4*d_def_radek_vyska),200,d_def_radek_vyska,0481,5,<argv(1).Homedist>)
+
+argv(0).button(d_def_okraj,(vyska-d_def_okraj)-23,0fb7,0fb9,1,0,1)//ok
+argv(0).button(d_def_okraj+33,(vyska-d_def_okraj)-23,0fb1,0fb3,1,0,0)//cancel
+
+[DIALOG d_spawn button]
+ON=0
+sysmessage("Spawning Cancelled")
+return 0
+
+ON=1
+//use abstractdef.finddef since we can get the spawngroup this way too
+arg spawnData = SpawnInfo(<argnum[1]>,<AbstractDef.FindDef(<argtxt[2]>)>,<argnum[3]>,<argnum[4]>,<argnum[5]>)    
+//arg spawnData = SpawnInfo(1,<AbstractDef.FindDef("c_man")>,1,2,5)    
+if (spawnValuesMakeSense(spawnData))
+  src.tag.spawndialog_data = spawnData //store the info for future creating of new spawns...
+  f_spawninit(spawnData)
+else
+  src.tag.spawndialog_data = spawnData //store the info for future creating of new spawns...
+  src.sysmessage(tag.responseMessage)
+  dialog(d_spawn,spawnData)
+endif
+return 0
+
+[function spawnValuesMakeSense]//check if the values provided to the spawn dialog are wise :)
+//argv(0) - the SpawnInfo instance
+if(<argv(0).Amount> <= 0)
+ tag.responseMessage = "Pocet spawnu musi byt vetsi nez 0"
+ return 0
+elseif((<argv(0).SpawnDef> == 0) || (!<argv(0).SpawnDef.IsCharDef>)) //TODO doplnit spravnou metodu
+ tag.responseMessage = "Zadany chardef neexistuje"
+ return 0
+elseif((<argv(0).MinTime>*<argv(0).MaxTime> < 0) || (<argv(0).MinTime> >= <argv(0).MaxTime>)) 
+ tag.responseMessage = "Minimalni a maximalni casy museji byt nezaporne, minimalni cas mensi nez maximalni"
+ return 0
+elseif(<argv(0).HomeDist> < 0)
+ tag.responseMessage = "Homedist musi by nezaporny"
+ return 0
+else
+ return 1
+endif
+
+[function f_spawninit]//argv0 - info object
+arg spawnGem = i_worldgem_bit.Create(this)
+//spawnGem.Flags=attr_move_never|attr_invis //TODO - az to bude implementovany tak to tam dat.
+spawnGem.tag.spawnInfo = argv(0) //store the spawn information (amounts, times, chardef/spawngroup, homedist)
+spawnGem.tag.spawnedCount = 0
+	
+//initialize the first timer
+spawnGem.AddTimer(%SpawnTimer, 1, @spawnNow)  //the first spawn will appear immediately
+spawnGem.Drop()
+
+[triggergroup e_spawned_char]
+on=@destroy
+//print("ted je tu <tag.spawnGem.tag.spawnedCount>")
+arg gem = tag.spawnGem
+gem.tag.spawnedCount = <gem.tag.spawnedCount> - 1
+//print("a ted je tu <gem.tag.spawnedCount>")
+if(!gem.HasTimer(%SpawnTimer)) //add a new timer only if the older one is not present
+ gem.AddTimer(%SpawnTimer, {gem.tag.spawnInfo.MinTime, gem.tag.spawnInfo.MaxTime}*10,@spawnNow) //initialize a new timer
+endif

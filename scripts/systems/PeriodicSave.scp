@@ -1,0 +1,14 @@
+[constants]
+periodicSave_Interval	60*60	//in seconds
+
+[triggergroup e_periodicsave_global]
+on=@startup
+RemoveTimer(%PeriodicSave)
+AddTimer(%PeriodicSave, periodicSave_Interval, Save)
+
+on=@beforeSave
+RemoveTimer(%PeriodicSave)
+
+on=@afterSave
+RemoveTimer(%PeriodicSave)
+AddTimer(%PeriodicSave, periodicSave_Interval, Save)
