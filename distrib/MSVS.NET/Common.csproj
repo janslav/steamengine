@@ -1,0 +1,126 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MSVS_Common</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SteamEngine.Common</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;MSWIN;MSVS</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
+    <Reference Include="SteamDoc">
+      <Name>SteamDoc</Name>
+      <HintPath>..\..\bin\SteamDoc.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common\3rdParty\TemplateMaschine\TemplateMaschine.cs">
+      <Link>TemplateMaschine.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\Common.cs">
+      <Link>Common.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\ConAttrs.cs">
+      <Link>ConAttrs.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\ConvertTools.cs">
+      <Link>ConvertTools.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\Exceptions.cs">
+      <Link>Exceptions.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\HighPerformanceTimer.cs">
+      <Link>HighPerformanceTimer.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\IniHandler.cs">
+      <Link>IniHandler.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\Logger.cs">
+      <Link>Logger.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\LogStr.cs">
+      <Link>LogStr.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\NantLauncher.cs">
+      <Link>NantLauncher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Sanity.cs">
+      <Link>Sanity.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\TestSuite.cs">
+      <Link>TestSuite.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

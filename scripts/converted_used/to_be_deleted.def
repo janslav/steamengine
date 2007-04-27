@@ -1,0 +1,19 @@
+[ItemDef 0x181f]
+DEFNAME = i_rune_alchem_3
+
+[ItemDef 0x1363]
+CATEGORY = Boulders and Rocks
+SUBSECTION = Rocks
+DESCRIPTION = Rock
+
+TYPE = t_arock
+//DUPELIST = 01364,01365,01366,01367,01368,01369,0136a,0136b,0136c,0136d // commented out by Converter 
+WEIGHT = 500
+DEFNAME = i_rock_plain
+//VALUE = 1 // commented out by Converter 
+
+[ItemDef 0x1367]
+DUPEITEM = 0x1363
+DEFNAME = i_rock_2
+
+

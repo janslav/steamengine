@@ -1,0 +1,15 @@
+500186	Greetings.  Have a look around.
+500187	Your order cannot be fulfilled, please try again.
+500188	Your order cannot be fulfilled, please try again.
+500189	Your order cannot be fulfilled, please try again.
+500190	Thou hast bought nothing!
+500191	Begging thy pardon, but thy bank account lacks these funds.
+500192	Begging thy pardon, but thou canst not afford that.
+500193	I will not buy from you, ever.
+500194	You can only sell 5 items at a time!
+500195	Unable to complete your request.
+500196	You may not sell containers unless they are empty.
+500197	Thou hast offered nothing!
+500198	Unable to complete your request.
+500199	Ahh!  We've been looking for that!
+500200	I have no need for that.

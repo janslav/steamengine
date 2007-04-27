@@ -1,0 +1,52 @@
+[SCRIPTEDSKILLDEF 29]
+DEFNAME=Skill_Musicianship
+KEY="Musicianship"
+//TITLE="Bard"
+//PROMPTMSG=""
+//DELAY=2.0
+//STAT_STR=20
+//STAT_INT=50
+//STAT_DEX=70
+//BONUS_STR=0
+//BONUS_DEX=80
+//BONUS_INT=20
+//BONUSSTATS=10
+ADVRATE=2.5,50.0,200.0
+
+	
+on=@Select
+	//TODO: unhide, etc.
+	if (currentSkillTarget2 is Musical)
+		if (currentSkillTarget2.TopObj != this) //nemame nastroj u sebe
+			currentSkillTarget2 = Backpack.FindByClass(typeof(Musical))
+		endif
+	else
+		currentSkillTarget2 = this.FindByClass(typeof(Musical))
+	endif
+		
+	if (currentSkillTarget2 != null)
+		StartSkill(29) //start Skill_Musicianship
+		return 1
+	else
+		src.sysMessage("Nemas u sebe hudebni nastroj.")
+		currentSkillParam = 2
+	
+	endif
+	return 1
+
+
+on=@Start
+	if (Skill_Musicianship.CheckSuccess(this, {0 700}))
+		Skill_Musicianship.Success(this)
+	else
+		Skill_Musicianship.Fail(this)
+	endif
+	
+on=@Success
+	currentSkillTarget2.SuccessSnd()
+	currentSkillParam = 1
+
+ON=@Fail
+	currentSkillTarget2.FailureSnd()
+	src.ClilocSysMessage(500612)	//You play poorly, and there is no effect.
+	currentSkillParam = 0

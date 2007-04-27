@@ -1,0 +1,223 @@
+[function pages]
+pageMan(<args>)
+
+[function pageMan]
+if(GMPage.GmPages.Count == 0)
+	src.sysmessage("Zadne GM page k zobrazeni")
+ 	return 1
+endif
+if(args == "")
+ 	dialog(d_Pages,"time",0)
+else
+ 	dialog(d_Pages,<args>,0)
+endif
+
+[dialog d_Pages] //argv2 - sorting criterion, argv3 - number of the page
+//the GMPage object has these fields
+//Sender - the player who sent the page
+//Handler - GM who handled the page
+//Time - the time when the page was sent
+//P - the point where the page was created
+//Reason - the players description of the problem
+//Reply - the GM's reply to the problem
+//Replied - if any GM has already replied to the page or not
+//---------
+//posible sorting criteria are
+//SortingCriteria.NameAsc - players name
+//SortingCriteria.TimeAsc - time of the GM page creation
+//SortingCriteria.AccountAsc - players accounts
+arg dialog = ImprovedDialog(argv(0))
+
+argv(0).tag.sortBy = <argv(2)>
+if(!argv(0).tag.exists(sortBy))
+	argv(0).tag.sortBy = SortingCriteria.TimeAsc //default sorting
+endif
+argv(0).tag.pages = <GMPage.GetSortedBy(<argv(2)>)> //store a list of gmpages sorted by given criterion
+dialog.CreateBackground(<d_def_Pages_sirka>)
+dialog.SetLocation(10,30)
+
+//nadpis tabulky
+dialog.Add(GumpRow(1, ButtonFactory.D_BUTTON_HEIGHT)) 
+dialog.Add(GumpColumn())
+dialog.MakeRowTransparent()
+dialog.Add(TextFactory.CreateText("Seznam GMPagí")) //prvni text, uplne vpravo
+dialog.Add(TextFactory.CreateText(400,0,TextFactory.D_WRITE_COLOR,"ONLINE")) //text o 400 bodù vpravo 
+dialog.Add(TextFactory.CreateText(500,0,TextFactory.D_NA_COLOR,"OFFLINE")) //text o 500 bodù vpravo
+dialog.AddLast(GumpColumn(ButtonFactory.D_BUTTON_WIDTH))
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,4)) //exit button
+
+//popis sloupecku
+dialog.Add(GumpRow(1)) //radek na nadpisy
+dialog.Add(GumpColumn(160)) //cudlik s hracem
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,1)) //tridit dle jmena hrace asc
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,7)) //tridit dle jmena hrace desc
+dialog.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Hráè")) //x posunuto kousek o sortovaci button
+dialog.Add(GumpColumn(140)) //cudlik s pozici
+dialog.Add(TextFactory.CreateText("Pozice"))
+dialog.Add(GumpColumn(ButtonFactory.D_BUTTON_WIDTH)) //cudlik
+dialog.Add(TextFactory.CreateText("Del"))
+dialog.Add(GumpColumn(180)) //cas
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,2)) //tridit podle casu asc
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,8)) //tridit podle casu desc
+dialog.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0, "Èas odeslání"))
+dialog.Add(GumpColumn(130)) //cudlik s accountem
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,3)) //tridit dle accountu asc
+dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,9)) //tridit dle accountu desc
+dialog.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Account"))
+dialog.Add(GumpColumn(ButtonFactory.D_BUTTON_WIDTH)) //cudlik
+dialog.Add(TextFactory.CreateText("Re:"))
+dialog.Add(GumpColumn()) //zbytek - text
+dialog.Add(TextFactory.CreateText("Popis problému"))
+
+dialog.MakeRowTransparent() //zpruhledni nadpisovy radek
+
+//vlastni seznam pagi
+dialog.Add(GumpRow(20, ButtonFactory.D_BUTTON_HEIGHT))
+dialog.CopyColsFromLastRow()
+
+argv(0).tag.firsti = <argv(3)>
+arg imax = <argv(0).tag.firsti>+dialog.LastRow.RowCount //maximalni index (20 radku mame)
+arg prevNextColumnAdded = false //pridat/nepridat sloupecek pro navigacni sipky?
+if (tag(firsti))
+        dialog.AddLast(GumpColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH))	
+	arg prevNextColumnAdded = true //"next" button uz nemusi vytvorit sloupecek 
+	dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev,5)) //prev
+endif
+if (<imax> >= <argv(0).tag.pages.Count>)
+ 	arg imax = argv(0).tag.pages.Count 	
+else
+	if(!prevNextColumnAdded) //jeste nemame sloupecek na prevnext buttony, pridat ted
+		dialog.AddLast(GumpColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH))		
+	endif
+	dialog.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext,0,dialog.LastColumn.Height - 21,6)) //next
+endif
+
+arg idx = <argv(3)>
+
+arg rowCntr = 0
+while (<idx> < <imax>)
+	arg iPage = argv(0).tag.pages.get_Item(idx)
+	arg pcolor = <Qval(iPage.sender.Account.Online,<Hues.WriteColor>,<Hues.NAColor>)>
+
+ 	if(iPage.Replied)
+  		arg mscolor = "1740" //nejaka oranzova sracka
+ 	else 
+  		arg mscolor = <TextFactory.D_WRITE_COLOR> //default
+ 	endif
+		//cislo sloupce, cislo radku ve sloupci, objekt co se tam frkne
+	dialog.AddToColumn(0,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,(7*idx)+100)) //players info
+	dialog.AddToColumn(0,<rowCntr>,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, pColor, "<iPage.sender.Name>")) //jmeno odesilatele
+	dialog.AddToColumn(1,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,(7*idx)+101)) //jdi na pozici
+	dialog.AddToColumn(1,<rowCntr>,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0, pColor, "<iPage.p.ToNormalString()>")) //pozice
+	dialog.AddToColumn(2,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,(7*idx)+102)) //smaz page
+	dialog.AddToColumn(3,<rowCntr>,TextFactory.CreateText(pColor, "<iPage.time.ToString()>")) //cas napsani
+	dialog.AddToColumn(4,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,(7*idx)+103)) //ukaz account
+	dialog.AddToColumn(4,<rowCntr>,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0, pColor, "<iPage.sender.Account.Name>")) //account
+	dialog.AddToColumn(6,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,(7*idx)+105)) //zobrazit text zpravy
+	dialog.AddToColumn(6,<rowCntr>,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, mscolor, "<iPage.reason>")) //text page 	 	
+	if(iPage.Replied)
+  		//nepujde odpovedet vickrat
+		arg rowCntr = <rowCntr>+1 //text odpovedi bude na nasledujicim radku
+		dialog.AddToColumn(6,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,(7*idx)+106)) //zobrazit text opdpovedi	
+		dialog.AddToColumn(6,<rowCntr>,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0, <mscolor>, "<iPage.handler.Name>(<iPage.handler.Account.Name>): <iPage.reply>")) //odpoved  				
+ 	else
+		dialog.AddToColumn(5,<rowCntr>,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,(7*idx)+104)) //odpoved  		
+ 	endif
+	arg rowCntr = <rowCntr>+1
+ 	arg idx = <idx>+1
+endwhile
+
+dialog.MakeRowTransparent() //zpruhledni zbytek dialogu
+dialog.WriteOut()
+
+[DIALOG d_Pages BUTTON]
+on=0 //exitting dialog by right click
+return 0
+
+on=1
+src.sysmessage("tridit dle jmena asc")
+dialog(d_Pages,SortingCriteria.NameAsc,argv(0).tag.firsti)
+
+on=2
+src.sysmessage("tridit dle casu asc")
+dialog(d_Pages,SortingCriteria.TimeAsc,argv(0).tag.firsti)
+
+on=3
+src.sysmessage("tridit dle uctu asc")
+dialog(d_Pages,SortingCriteria.AccountAsc,argv(0).tag.firsti)
+
+on=4 //exiting dialog by button click
+return 1
+
+on=5 //previous 
+dialog(d_Pages,argv(0).tag.sortby,<argv(0).tag.firsti>-2)
+on=6 //next
+dialog(d_Pages,argv(0).tag.sortby,<argv(0).tag.firsti>+2)
+
+on=7
+src.sysmessage("tridit dle jmena desc")
+dialog(d_Pages,SortingCriteria.NameDesc,argv(0).tag.firsti)
+
+on=8
+src.sysmessage("tridit dle casu desc")
+dialog(d_Pages,SortingCriteria.TimeDesc,argv(0).tag.firsti)
+
+on=9
+src.sysmessage("tridit dle uctu desc")
+dialog(d_Pages,SortingCriteria.AccountDesc,argv(0).tag.firsti)
+
+ON=@AnyButton 
+arg btnNumber = (argv(2)-100) % 7 //on one line we have numbers 100,101,102,103,104,105,106. next line is 107,108,109,110,111,112 etc...
+arg line = (argv(2) - (100+btnNumber)) div 7 //e.g. 104 - (100+4) / 7 = 0; 107 - (100+0) / 7 = 7/7 = 0; 115 - (100 + 1) / 7 = 2 etc...
+src.sysmessage("cudlik: <argv(2)>, butt : <btnNumber> radek: <line>")
+arg iPage = argv(0).tag.pages.get_Item(line)
+
+if (btnNumber == 0) //player info
+	//accountmgr.findname(<arg(iPage).account.name>).lastcharuid.try srccome
+elseif (btnNumber==1) //go to the pages creating position
+	src.sysmessage("skacu na <iPage.p> : <iPage.p.ToString()>")
+  	src.go(iPage.P)
+	//src.update
+elseif (btnNumber==2) //delete the page from the list
+  	GMPage.DeletePage(iPage)
+  	src.sysmessage("Page byla smazana")
+  	dialog(d_Pages,argv(0).tag(sortBy),argv(0).tag(firsti))
+elseif (btnNumber==3) //display the information about the account 
+  	//try accountinfo(<arg(iPage).account.name>)
+elseif (btnNumber==4) //reply to the page (if not replied, otherwise the button will not exist
+  	Dialog(inpt_page_reply,iPage, argv(0).tag.sortby, argv(0).tag.firsti) //send the page instance and the dialog information
+elseif (btnNumber==5) //display the page text in the better window
+	dialog(d_Pages,argv(0).tag(sortBy),argv(0).tag(firsti))
+	dialog(d_display_text,"Puvodní text page",iPage.reason)
+elseif (btnNumber==6) //display the page reply text in the better window
+	dialog(d_Pages,argv(0).tag(sortBy),argv(0).tag(firsti))
+	dialog(d_display_text,"Odpoved na page",iPage.reply)
+endif
+
+[InputDef inpt_page_reply]
+label="Odpoved na page"
+default="Page byla vyresena"
+
+on=@response //argv0 - the reply text, argv1 - the page object, argv2 - sortby info, 
+	     //argv3 - firsti (the number of the first page to be displayed in the list
+arg thePage = <argv(1)>
+thePage.replied = true
+thePage.reply = <argv(0)> //the reply text
+thePage.handler = <src> //the GM who replied
+thePage.sender.Sysmessage("Odpoved na page: <argv(0)>") //vylepsit do messaging systemu ! 
+dialog(d_Pages, <argv(2)>, <argv(3)>) //renew the dialog
+
+//player-available dialog for sending a page
+[InputDef inpt_page_post]
+label="Nova GM page"
+default="Zde vepis duvod tve page"
+
+on=@response //args - the page text
+src.sysmessage("argv: <argv(0)>")
+src.Page(<argv(0)>)
+
+[function sendgmpage] //players function for sending a GM page
+Dialog(inpt_page_post)
+
+
+[eof]
