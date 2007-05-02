@@ -48,15 +48,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Simply display the labeled text.")]
 		private void ShowDialog() {
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
-			//create the background GumpMatrix and set its size an transparency            
+			//create the background GUTAMatrix and set its size an transparency            
 			dialogHandler.CreateBackground(400);
 			dialogHandler.SetLocation(400, 300);
 
 			//first row - the label of the dialog
-			dialogHandler.Add(new GumpTable(1, ButtonFactory.D_BUTTON_HEIGHT));
-			dialogHandler.Add(new GumpColumn());
+			dialogHandler.Add(new GUTATable(1));
+			dialogHandler.Add(new GUTAColumn());
 			dialogHandler.Add(TextFactory.CreateText(label));
-			dialogHandler.AddLast(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0));
 			dialogHandler.MakeTableTransparent();
 
@@ -64,8 +64,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int rows = (dispText.Length * ImprovedDialog.D_CHARACTER_WIDTH) / dialogHandler.LastTable.Width;
 
 			//at least three rows of a button height (scrollbar has some demands)
-			dialogHandler.Add(new GumpTable((rows < 3 ? 3 : rows), ButtonFactory.D_BUTTON_HEIGHT));
-			dialogHandler.Add(new GumpColumn());
+			dialogHandler.Add(new GUTATable((rows < 3 ? 3 : rows)));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
+			dialogHandler.Add(new GUTAColumn());
 			dialogHandler.MakeTableTransparent();
 			//unbounded, scrollable
 			dialogHandler.Add(TextFactory.CreateHTML(dispText, false, true));

@@ -55,44 +55,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(40, 30);
 
 			//nadpis
-			dialogHandler.Add(new GumpTable(1, ButtonFactory.D_BUTTON_HEIGHT,300,0));			
+			dialogHandler.Add(new GUTATable(1, 300, 0, ButtonFactory.D_BUTTON_WIDTH));			
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Seznam zpráv (" + (firstiVal+1) + "-" + imax +" z " + messagesList.Count+ ")");
 
 			//cudliky na trideni dle neprectenych (i s popiskem)
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 5);//tridit dle neprectenych (neprectene nahoru)
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6);//tridit dle neprectenych (neprectene dolu)
-			dialogHandler.LastTable[0,1] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Tøídit dle nepøeètených (nepøeètených " + unreadCnt+")");
-			
-			//cudlik na zavreni dialogu
-			dialogHandler.AddLast(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0,2]=ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dialogHandler.LastTable[0,1] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Tøídit dle nepøeètených (nepøeètených " + unreadCnt+")");			
+			//cudlik na zavreni dialogu			
+			dialogHandler.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.Add(new GumpTable(1)); //radek na nadpisy            
-			dialogHandler.Add(new GumpColumn(180)); //cas
-			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1)); //tridit podle casu asc
-			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 2)); //tridit podle casu desc            
-			dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas odeslání"));
-
-			dialogHandler.Add(new GumpColumn(160));//cudlik s odesilatelem
-			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3)); //tridit dle jmena sendera asc
-			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4)); //tridit dle jmena sendera desc
-			dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Odesilatel"));
-
-			dialogHandler.Add(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH)); //cudlik pro cteni
-			dialogHandler.Add(TextFactory.CreateText("Èíst"));
-
-			dialogHandler.Add(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH)); //cudlik pro mazani   
-			dialogHandler.Add(TextFactory.CreateText("Del"));
-
-			dialogHandler.Add(new GumpColumn()); //text
-			dialogHandler.Add(TextFactory.CreateText("Text zprávy"));
+			dialogHandler.Add(new GUTATable(1, 180, 160, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 0)); //radek na nadpisy            
+				//cas
+			dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit podle casu asc
+			dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 2); //tridit podle casu desc            
+			dialogHandler.LastTable[0,0] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas odeslání");
+				//cudlik s odesilatelem
+			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit dle jmena sendera asc
+			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit dle jmena sendera desc
+			dialogHandler.LastTable[0,1] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Odesilatel");
+				//cudlik pro cteni
+			dialogHandler.LastTable[0,2] = TextFactory.CreateText("Èíst");
+				//cudlik pro mazani   
+			dialogHandler.LastTable[0,3] = TextFactory.CreateText("Del");
+				//text
+			dialogHandler.LastTable[0,4] = TextFactory.CreateText("Text zprávy");
 
 			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam zprav
-			dialogHandler.Add(new GumpTable(ImprovedDialog.PAGE_ROWS, ButtonFactory.D_BUTTON_HEIGHT));
+			dialogHandler.Add(new GUTATable(ImprovedDialog.PAGE_ROWS));
 			dialogHandler.CopyColsFromLastTable();
 
 			//setrid zpravy (neni li specifikaovano trideni, pouzije se prirozene trideni dle casu)

@@ -29,17 +29,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("The gump instance to send gump creating method calls to")]
 		private GumpInstance instance;
 
-		[Remark("The deepest background of the dialog (the first GumpMatrix where all other GumpComponents are")]
-		private GumpMatrix background;
-		[Remark("Last added table to the background GumpMatrix - all GumpColumns will be added to this row until"+
-                " the next GumpTable is added")]
-		private GumpTable lastTable;
+		[Remark("The deepest background of the dialog (the first GUTAMatrix where all other GumpComponents are")]
+		private GUTAMatrix background;
+		[Remark("Last added table to the background GUTAMatrix - all GumpColumns will be added to this row until"+
+                " the next GUTATable is added")]
+		private GUTATable lastTable;
 		[Remark("Last added column - the column is placed automatically to the lastTable, all LeafGumpComponents"+
-                " will be added to this column until the next GumpColumn is added")]
-		private GumpColumn lastColumn;
+                " will be added to this column until the next GUTAColumn is added")]
+		private GUTAColumn lastColumn;
 
 		[Remark("Getter for the lastcolumn - may be needed from LScript if we have to operate with the sies or positions")]
-		public GumpColumn LastColumn {
+		public GUTAColumn LastColumn {
 			get {
 				return lastColumn;
 			}
@@ -47,14 +47,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Getter for the lasttable - may be needed from LScript if we have to operate with the sizes or positions or "+
 				"if we want to add component directly to the desired column or row")]
-		public GumpTable LastTable {
+		public GUTATable LastTable {
 			get {
 				return lastTable;
 			}
 		}
 
 		[Remark("The getter for the background table - usable for manual creating of the dialog structure")]
-		public GumpMatrix Background {
+		public GUTAMatrix Background {
 			get {
 				return background;
 			}
@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Create the dialog background and set its size")]
 		public void CreateBackground(int width) {
-			background = new GumpMatrix(instance, width);
+			background = new GUTAMatrix(instance, width);
 		}
 
 		[Remark("Set the main table's position (all underlaying components will "+
@@ -77,15 +77,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			background.AdjustPosition(newX - background.XPos, newY - background.YPos);
 		}
 
+		[Remark("Getter allowing us to access the underlaying GUTATable by the specified index "+
+				"(usage: this.Table[i])")]
+		public List<GUTAComponent> Table {
+			get {
+				return background.Components;
+			}		
+		}
+
 		[Remark("The main method for adding the gump components to the dialog. "+
-                "We can add a GumpMatrix, GumpTable, GumpColumn or LeafGumpComponent. The GumpTable will be "+ 
-                "added to the background GumpMatrix and set as a 'lastTable' which means that all following "+
-                "GumpColumns will be added to this row until the next GumpTable is placed. The GumpColumn "+
+                "We can add a GUTAMatrix, GUTATable, GUTAColumn or LeafGUTAComponent. The GUTATable will be "+ 
+                "added to the background GUTAMatrix and set as a 'lastTable' which means that all following "+
+                "GumpColumns will be added to this row until the next GUTATable is placed. The GUTAColumn "+
                 "will be added to the 'lastTable' and set as a new 'lastColumn' (if there is no lastTable, the one-line row is created but this is not recommended!)"+
                 ". LeafGumpComponents will be added to the "+
-                "actual 'lastColumn'. It is also possible to add a new GumpMatrix which will be placed into "+
+                "actual 'lastColumn'. It is also possible to add a new GUTAMatrix which will be placed into "+
                 "the 'lastColumn' (if no 'lastColumn' exists, it is created and placed to the whole 'lastTable') although it is not possible to make "+
-                "the inner GumpMatrix extendable using this Add method so if you want to fill this inner table "+
+                "the inner GUTAMatrix extendable using this Add method so if you want to fill this inner table "+
                 "with rows, columns and leaf components, you have to do it manually (e.g. creating the inner "+
                 "table as a variable in the script and place all components into it manually. "+
                 " "+
@@ -95,30 +103,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 "You can of course create the dialog structure completely manually by creating lots of variables for "+
                 "all rows and columns, add them to the background table and add the leaf components to the columns. "+
                 "This process is necessary anyway if you want to create some inner tables...")]
-		public void Add(GumpComponent comp) {
-			if (comp is GumpMatrix) {
-				//the GumpMatrix can be only added to the GumpColumn. It must be filled manually however.
+		public void Add(GUTAComponent comp) {
+			if (comp is GUTAMatrix) {
+				//the GUTAMatrix can be only added to the GUTAColumn. It must be filled manually however.
 				lastColumn.AddComponent(comp);
-			} else if (comp is GumpTable) {
-				//the GumpTable will be added to the main background and then set as a new lastTable
+			} else if (comp is GUTATable) {
+				//the GUTATable will be added to the main background and then set as a new lastTable
 				background.AddComponent(comp);
-				lastTable = comp as GumpTable;
-			} else if (comp is GumpColumn) {
-				//the GumpColumn will be added to the lastTable and then set as a new lastColumn, if no lastTable is placed, 
+				lastTable = (GUTATable)comp;
+			} else if (comp is GUTAColumn) {
+				//the GUTAColumn will be added to the lastTable and then set as a new lastColumn, if no lastTable is placed, 
 				//create the one basic (but this is not usual and should not happen !!!)
 				if (lastTable == null) {
-					GumpTable newTable = new GumpTable(1);
+					GUTATable newTable = new GUTATable(1);
+					newTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 					Add(newTable); //very simple, one row because this is probably the error of the scripter!
 					newTable.Transparent = true;
-					Logger.WriteWarning("(Add(GumpComponent)) Dialog "+this+"je spatne navrzen, chybi specifikace radku!");
+					Logger.WriteWarning("(Add(GUTAComponent)) Dialog "+this+"je spatne navrzen, chybi specifikace radku!");
 				}
 				lastTable.AddComponent(comp);
-				lastColumn = comp as GumpColumn;
-			} else if (comp is LeafGumpComponent) {
+				lastColumn = (GUTAColumn)comp;
+			} else if (comp is LeafGUTAComponent) {
 				//all Leaf components are added to the lastColumn, if no lastColumn is placed, create one basic
 				//and make it transparent
 				if (lastColumn == null) {
-					GumpColumn newCol = new GumpColumn();
+					GUTAColumn newCol = new GUTAColumn();
 					Add(newCol);
 					newCol.Transparent = true;
 				}
@@ -129,20 +138,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Method for adding a last component to the parent - useful for columns when we want to "+
                 "add a column to the right side. It will recompute the previous column width to fit the space "+
                 "to the rest of the row to the last column (neverminding the actual width of this column)."+
-                "Adding anything else then GumpColumn as 'last' has the same effect as normal Add method.")]
-		public void AddLast(GumpComponent comp) {
-			if (comp is GumpColumn) {
+                "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method.")]
+		public void AddLast(GUTAComponent comp) {
+			if (comp is GUTAColumn) {
 				if (lastTable == null || lastTable.Components.Count == 0) {
 					throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
 				}
 				//get the lastly added column
-				GumpColumn lastCol = (GumpColumn) lastTable.Components[lastTable.Components.Count-1];
+				GUTAColumn lastCol = (GUTAColumn) lastTable.Components[lastTable.Components.Count-1];
 				//space between the previous column and the newly added last column                
-				lastCol.Width += lastTable.Width - (lastCol.XPos - lastTable.XPos) - lastCol.Width - comp.Width;
+				//lastCol.Width += lastTable.Width - (lastCol.XPos - lastTable.XPos) - lastCol.Width - comp.Width;
+				//lastCol.Width -= comp.Width;
+
+				//the column will be added from the right side...
+				((GUTAColumn)comp).IsLast = true; 
+
 				//space between the new(last) and one-before-last (former last) columns                                  
 				//now we can add, the size is recomputed, the new column will fit right to the end of the row                
 				lastTable.AddComponent(comp);
-				lastColumn = (GumpColumn)comp;
+				lastColumn = (GUTAColumn)comp;
 			} else {
 				//call normal Add method
 				Add(comp);
@@ -151,10 +165,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Method usable when iterating through some objects and adding them to the more than one columns "+
                 "(e.g. pages, admin dialog...). It takes the column number (starting from 0), the row number ("+
-                "number of the row in the GumpColumn, and adds there a specified GumpComponent.")]
-		public void AddToColumn(int colNumber, int rowNumber, GumpComponent comp) {
+                "number of the row in the GUTAColumn, and adds there a specified GUTAComponent.")]
+		public void AddToColumn(int colNumber, int rowNumber, GUTAComponent comp) {
 			//get the column to put the component to
-			GumpColumn col = (GumpColumn) lastTable.Components[colNumber];
+			GUTAColumn col = (GUTAColumn) lastTable.Components[colNumber];
 			//move the component to the desired row
 			comp.YPos += rowNumber * lastTable.RowHeight;
 			//and add the component
@@ -172,18 +186,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 "and copy their structure to the new row. They will get the new row's rowCount."+ 
                 "No underlaying columns children will be copied!")]
 		public void CopyColsFromTable(int rowNumber) {
-			GumpTable theRow = (GumpTable) background.Components[rowNumber];
-			foreach (GumpColumn col in theRow.Components) {
+			GUTATable theRow = (GUTATable) background.Components[rowNumber];
+			foreach (GUTAColumn col in theRow.Components) {
 				//copy every column to the newly added (now empty) row
-				lastTable.AddComponent(new GumpColumn(col.Width));
+				GUTAColumn newCol = new GUTAColumn(col.Width);
+				newCol.Transparent = col.Transparent;
+				newCol.IsLast = col.IsLast;
+				lastTable.AddComponent(newCol);
 			}
 		}
 
-		[Remark("Take the last row, iterate through the columns and make them all transparent")]
+		[Remark("Take the last table, iterate through the columns and make them all transparent")]
 		public void MakeTableTransparent() {
-			foreach (GumpColumn col in lastTable.Components) {
+			foreach (GUTAColumn col in lastTable.Components) {
 				col.Transparent = true;
 			}
+			//makte the table also transparent
+			//lastTable.Transparent = true;
 		}
 
 		[Remark("Last method to be called - it prints out the whole dialog")]
@@ -206,12 +225,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			bool prevNextColumnAdded = false; //indicator of navigating column
 			if(actualPage > 1) {
 				prevNextColumnAdded = true; //the column has been created
-				AddLast(new GumpColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));				
+				AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));				
 				Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ID_PREV_BUTTON)); //prev
 			}
 			if(actualPage < pagesCount) { //there will be next page
 				if(!prevNextColumnAdded) { //the navigating column does not exist (e.g. we are on the 1st page)
-					AddLast(new GumpColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
+					AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
 				}
 				Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, lastColumn.Height - 21, ID_NEXT_BUTTON)); //next
 			}
@@ -219,10 +238,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
 			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
 			//and <GOPAGE> is confirming button that jumps to the written page.
-			GumpTable storedLastRow = lastTable; //store these two things :)
-			GumpColumn storedLastColumn = lastColumn;
-			Add(new GumpTable(1,ButtonFactory.D_BUTTON_HEIGHT));
-			Add(new GumpColumn());
+			GUTATable storedLastRow = lastTable; //store these two things :)
+			GUTAColumn storedLastColumn = lastColumn;
+			Add(new GUTATable(1));
+			Add(new GUTAColumn());
 			Add(TextFactory.CreateText("Stránka"));
 													//type if input,x,y,ID, width, height, prescribed text
 			Add(InputFactory.CreateInput(LeafComponentTypes.InputNumber,65,0,ID_PAGE_NO_INPUT,30,D_ROW_HEIGHT,actualPage.ToString()));

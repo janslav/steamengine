@@ -65,29 +65,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
             ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
 
-            //create the background GumpMatrix and set its size       
+            //create the background GUTAMatrix and set its size       
             dialogHandler.CreateBackground(400);
             dialogHandler.SetLocation(350, 350);
 
             //first row - the label of the dialog
-            dialogHandler.Add(new GumpTable(1));
-            dialogHandler.Add(new GumpColumn());
+            dialogHandler.Add(new GUTATable(1));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
+            dialogHandler.Add(new GUTAColumn());
             dialogHandler.MakeTableTransparent();
             dialogHandler.Add(TextFactory.CreateText(this.Label));
 
             //second row - the basic, whole row, input field
-            dialogHandler.Add(new GumpTable(1));
-            dialogHandler.Add(new GumpColumn());
+            dialogHandler.Add(new GUTATable(1));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
+            dialogHandler.Add(new GUTAColumn());
             dialogHandler.MakeTableTransparent();
             dialogHandler.Add(InputFactory.CreateInput(LeafComponentTypes.InputText, 1, this.DefaultInput));
 
             //last row with buttons
-            dialogHandler.Add(new GumpTable(1, ButtonFactory.D_BUTTON_HEIGHT));
-            dialogHandler.Add(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH));
+            dialogHandler.Add(new GUTATable(1));
+            dialogHandler.Add(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2));
-            dialogHandler.Add(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH));
+            dialogHandler.Add(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 1));
-            dialogHandler.Add(new GumpColumn());
+            dialogHandler.Add(new GUTAColumn());
 
             dialogHandler.WriteOut();
         }
