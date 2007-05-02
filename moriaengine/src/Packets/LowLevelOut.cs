@@ -209,12 +209,6 @@ namespace SteamEngine.Packets {
 			}
 		}
 		
-		//This exists because both "zeros" and "zeroes" are correct spellings, and I apparently
-		//use both. -SL
-		protected static void EncodeZeroes(int amount, int startpos) {
-			EncodeZeros(amount, startpos);
-		}
-		
 		protected static void EncodeInt(int value, int startpos) {
 			ucBuffer[startpos] = (byte) (value>>24);	//first byte
 			ucBuffer[startpos+1] = (byte) (value>>16);	//second byte

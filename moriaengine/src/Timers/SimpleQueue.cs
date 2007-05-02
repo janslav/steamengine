@@ -21,6 +21,7 @@ using System.Threading;
 namespace SteamEngine.Timers {
 	
 	//a very simple queue class, which uses sort of "circular" algorhitm, 
+	[System.Diagnostics.DebuggerDisplay("Count = {Count}")]
 	internal class SimpleQueue<T> {
 		private T[] array;
 		private int headindex;

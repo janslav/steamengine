@@ -1,9 +1,20 @@
-(Objprop support is not yet ready, but featureFlags no longer exists, and there is
-instead an AOS variable in [features] in steamengine.ini. It defaults to off/false
-right now.)
 
+Apr 30, 2007
+	added: classtemplates/Corpse.cs
+	changed: classtemplates/Character.cs, src/UIDArray.cs, src/Packets/* etc.
+	(tar)		Zprovoznena smrt :) tj. Kill (nebo hits=0) a Resurrect uz funguji.
+		Pochopitelne ne do detailu ale to se dodela casem ;)
 
-APR 10, 2007
+Apr 27, 2007
+	Prechod na SVN
+
+Apr 24, 2007
+	added: ObjectPropertiesContainer.cs, CacheDictionary.cs
+	changed: NetState.cs, Thing+potomci
+	(tar)		Po dlouhem boji implementovany AOS tooltips. Nekdy o tom mozna napisu nejakej tutorial, zatim
+		jsou pouzity v Container.cs na zobrazeni poctu itemu
+
+Apr 10, 2007
 	added: LScript\OpNode_Typeof.cs
 	(tar)		Pridano typeof a is do LScriptu. Funkce stejna jako v C#.
 

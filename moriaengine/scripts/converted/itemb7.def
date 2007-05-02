@@ -3,7 +3,7 @@
 [ItemDef 0x2005]
 DEFNAME = i_eq_marker
 
-[ContainerDef 0x2006]
+[CorpseDef 0x2006]
 CATEGORY = Miscellaneous
 SUBSECTION = Corpses
 DESCRIPTION = All Corpses (Ogre default)
@@ -5054,7 +5054,7 @@ DUPEITEM = 0x3996
 [ItemDef 0x399f]
 DUPEITEM = 0x3996
 
-[ContainerDef 0x3d64]
+[CorpseDef 0x3d64]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Orc Captain
@@ -5064,7 +5064,7 @@ TYPE = T_CORPSE
 layer = 0 //Set by Converter 
 DEFNAME = i_corpse_orc_cap
 
-[ContainerDef 0x3d65]
+[CorpseDef 0x3d65]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Orc
@@ -5074,7 +5074,7 @@ TYPE = T_CORPSE
 layer = 0 //Set by Converter 
 DEFNAME = i_corpse_orc
 
-[ContainerDef 0x3d66]
+[CorpseDef 0x3d66]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Skeleton
@@ -5084,7 +5084,7 @@ TYPE = T_CORPSE
 layer = 0 //Set by Converter 
 DEFNAME = i_corpse_skel
 
-[ContainerDef 0x3d67]
+[CorpseDef 0x3d67]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Human
@@ -5094,7 +5094,7 @@ TYPE = T_CORPSE
 layer = 0 //Set by Converter 
 DEFNAME = i_corpse_blank
 
-[ContainerDef 0x3d68]
+[CorpseDef 0x3d68]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Human
@@ -5103,7 +5103,7 @@ TYPE = T_CORPSE
 //TDATA2 = 09 // commented out by Converter 
 layer = 0 //Set by Converter 
 
-[ContainerDef 0x3d69]
+[CorpseDef 0x3d69]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Deer
@@ -5113,7 +5113,7 @@ TYPE = T_CORPSE
 layer = 0 //Set by Converter 
 DEFNAME = i_corpse_deer
 
-[ContainerDef 0x3d6a]
+[CorpseDef 0x3d6a]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Wolf
@@ -5122,7 +5122,7 @@ TYPE = T_CORPSE
 //TDATA2 = 09 // commented out by Converter 
 layer = 0 //Set by Converter 
 
-[ContainerDef 0x3d6b]
+[CorpseDef 0x3d6b]
 CATEGORY = Miscellaneous
 SUBSECTION = Alpha Corpses
 DESCRIPTION = Rabbit

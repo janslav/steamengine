@@ -28,7 +28,11 @@ using System.Configuration;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
-	public abstract class Thing : TagHolder, IPoint4D, IEnumerable {
+	internal interface ObjectWithUid {
+		int Uid { get; set; }
+	}
+
+	public abstract class Thing : TagHolder, IPoint4D, IEnumerable, ObjectWithUid {
 		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
 		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
 
@@ -62,7 +66,7 @@ namespace SteamEngine {
 		protected Thing(ThingDef myDef) {
 			this._def=myDef;
 			if (uidBeingLoaded==-1) {
-				uid = things.Add(this);
+				things.Add(this);//sets uid
 				NetState.Resend(this);
 				//we give this either to cont or to coords.
 				if (ThingDef.lastCreatedThingContOrPoint == ContOrPoint.Point) {
@@ -79,7 +83,7 @@ namespace SteamEngine {
 		protected Thing(Thing copyFrom)
 				: base(copyFrom) { //copying constuctor
 			NetState.Resend(this);
-			uid=things.Add(this);
+			things.Add(this);//sets uid
 			if (uid<0 && uid>=things.Count) {	//If this isn't true, then something's wrong with GetFreeThingSlot.
 				throw new ServerException("Something is wrong with GetFreeThingSlot! Free uid returned="+Uid+" and things' index should be >=0 and <"+things.Count);
 			}
@@ -104,6 +108,15 @@ namespace SteamEngine {
 		public int Uid {
 			get {
 				return uid;
+			}
+		}
+
+		int ObjectWithUid.Uid {
+			get {
+				return uid;
+			}
+			set {
+				uid = value;
 			}
 		}
 
@@ -238,12 +251,6 @@ namespace SteamEngine {
 		//this is completely overriden in AbstractCharacter
 		internal abstract void SetPosImpl(MutablePoint4D point);
 
-
-		//Changes layer ('z') silently, without triggering resync or sector update code
-		protected void SetLayerSilently(byte layer) {
-			point4d.z=(sbyte) layer;
-		}
-
 		public Map GetMap() {
 			return Map.GetMap(M);
 		}
@@ -353,8 +360,8 @@ namespace SteamEngine {
 			return (int) (((uint) uid)&~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
-		public static bool UidIsValid(int uid) {
-			return things.IsValid(uid);
+		public static int UidClearFlags(uint uid) {
+			return (int) (uid&~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
 		public static AbstractCharacter UidGetCharacter(int uid) {
@@ -370,7 +377,6 @@ namespace SteamEngine {
 		}
 
 		public static AbstractItem UidGetItem(int uid) {
-			if (!UidIsValid(uid)) return null;
 			return things.Get(uid) as AbstractItem;
 		}
 
@@ -598,7 +604,7 @@ namespace SteamEngine {
 
 			Thing.uidBeingLoaded = _uid;//the constructor should set this as Uid
 			Thing constructed = thingDef.CreateWhenLoading(1, 1, 0, 0);//let's hope the P gets loaded properly later ;)
-			Thing.things.Add(constructed, _uid);
+			Thing.things.AddLoaded(constructed, _uid);
 
 			//now load the rest of the properties
 			constructed.On_Load(input);
@@ -650,7 +656,6 @@ namespace SteamEngine {
 			}
 		}
 
-
 		public static void SaveAll(SaveStream output) {
 			Logger.WriteDebug("Saving Things.");
 			output.WriteComment("Textual SteamEngine save");
@@ -667,6 +672,27 @@ namespace SteamEngine {
 											"Saved {0} things: {1} items and {2} characters.",
 											savedCharacters+savedItems, savedItems, savedCharacters));
 			alreadySaved = null;
+		}
+
+		[Remark("Sets all uids to lowest possible value. Always save & restart after doing this.")]
+		public static void ResetAllUids() {
+			things.ReIndexAll();
+		}
+
+		public static uint GetFakeUid() {
+			return (uint) things.GetFakeUid();
+		}
+
+		public static uint GetFakeItemUid() {
+			return (uint) things.GetFakeUid()|0x40000000;
+		}
+
+		public static void DisposeFakeUid(int uid) {
+			things.DisposeFakeUid(Thing.UidClearFlags(uid));
+		}
+
+		public static void DisposeFakeUid(uint uid) {
+			things.DisposeFakeUid(Thing.UidClearFlags(uid));
 		}
 
 		internal static void SaveThis(SaveStream output, Thing t) {
@@ -912,7 +938,7 @@ namespace SteamEngine {
 		}
 
 		public virtual void On_AosClick(AbstractCharacter clicker) {
-			//does this ever happen? :)
+			//aos client basically only clicks on incoming characters and corpses
 			ObjectPropertiesContainer opc = this.GetProperties();
 			Server.SendClilocNameFrom(clicker.Conn, this,
 				opc.FirstId, 0, opc.FirstArgument);
@@ -1614,6 +1640,10 @@ namespace SteamEngine {
 					PacketSender.DiscardLastPacket();
 				}
 			}
+		}
+
+		public virtual void On_BeingSentTo(GameConn viewerConn) {
+			//Console.WriteLine(this+" being sent to "+viewerConn.CurCharacter);
 		}
 
 		/*

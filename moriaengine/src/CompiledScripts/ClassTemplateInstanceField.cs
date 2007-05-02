@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			
 
 			private static Regex headerRE = new Regex(
-				@"^((?<access>(public)|(private)|(protected)|(internal))\s+)?(?<static>static\s+)?(?<type>[a-z][a-z0-9\.<>\[\]]*)\s+(?<name>[a-z][a-z0-9\.]*)\s*=\s*(?<defval>.*)\s*",
+				@"^((?<access>(public)|(private)|(protected)|(internal))\s+)?(?<static>static\s+)?(?<type>[a-z][a-z0-9\.<>\[\]\,]*)\s+(?<name>[a-z][a-z0-9\.]*)\s*=\s*(?<defval>.*)\s*",
 				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 			//[] means optional, | means or, <> is something variable.

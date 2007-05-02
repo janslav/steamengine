@@ -113,7 +113,8 @@ namespace SteamEngine {
 				Common.Tools.ExitBinDirectory();
 				SetRunLevel(RunLevels.Startup);
 				CoreLogger.Init();
-				Globals.Init(); 
+				Globals.Init();
+				Packets.Prepared.Init();
 				if (! Init()) {
 					SetRunLevel(RunLevels.Dead);
 					return;

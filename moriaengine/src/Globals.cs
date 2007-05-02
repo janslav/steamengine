@@ -170,12 +170,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public static AbstractCharacter SrcChar {
-			get {
-				return src as AbstractCharacter;
-			}
-		}
-
 		public static AbstractCharacter SrcCharacter {
 			get {
 				return src as AbstractCharacter;

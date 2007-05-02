@@ -190,7 +190,7 @@ namespace SteamEngine {
 		Gold = 1
 	}
 
-	public enum MoveRestriction {
+	internal enum MoveRestriction {
 		Normal = 0,
 		Movable = 1
 		//Immovable = 2	//Does not work

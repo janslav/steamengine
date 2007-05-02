@@ -1009,32 +1009,35 @@ namespace SteamEngine {
 		
 		public void Resync() {
 			if (IsPC) {
-				GameConn conn = Conn;
-				if (conn!=null) {
+				GameConn myConn = Conn;
+				if (myConn!=null) {
 					using (BoundPacketGroup group = PacketSender.NewBoundGroup()) {
 						//(TODO): 0xbf map change (INI flag, etc)
 						//(Not To-do, or to-do much later on): 0xbf map patches (INI flag) (.. We don't need this on custom maps, and it makes it more complicated to load the maps/statics)
 						PacketSender.PrepareSeasonAndCursor(Season, Cursor);
-						PacketSender.PrepareLocationInformation(conn);
+						PacketSender.PrepareLocationInformation(myConn);
 						//(TODO): 0x4e and 0x4f personal and global light levels
 						PacketSender.PrepareCharacterInformation(this, GetHighlightColorFor(this));
 						PacketSender.PrepareWarMode(this);
-						group.SendTo(conn);
+						group.SendTo(myConn);
 					}
-					Server.SendCharPropertiesTo(conn, this, this);
+					Server.SendCharPropertiesTo(myConn, this, this);
+					foreach (AbstractItem equippedItem in this.visibleLayers) {
+						equippedItem.On_BeingSentTo(myConn);
+					}
 
 					//send nearby characters and items
 					SendNearbyStuff();
-					foreach (AbstractItem con in OpenedContainers.GetOpenedContainers(conn)) {
+					foreach (AbstractItem con in OpenedContainers.GetOpenedContainers(myConn)) {
 						if (!con.IsEmpty) {
-							if (PacketSender.PrepareContainerContents(con, this)) {
-								PacketSender.SendTo(conn, true);
-								if (Globals.AOS && conn.Version.aosToolTips) {
+							if (PacketSender.PrepareContainerContents(con, myConn, this)) {
+								PacketSender.SendTo(myConn, true);
+								if (Globals.AOS && myConn.Version.aosToolTips) {
 									foreach (AbstractItem contained in con) {
 										if (this.CanSeeVisibility(contained)) {
 											ObjectPropertiesContainer containedOpc = contained.GetProperties();
 											if (containedOpc != null) {
-												containedOpc.SendIdPacket(conn);
+												containedOpc.SendIdPacket(myConn);
 											}
 										}
 									}
@@ -1042,6 +1045,7 @@ namespace SteamEngine {
 							}
 						}
 					}
+					this.On_BeingSentTo(myConn);
 				}
 			}
 		}
@@ -1085,7 +1089,7 @@ namespace SteamEngine {
 		public AbstractItem Backpack { get {
 			AbstractItem foundPack = null;
 			if (visibleLayers != null) {
-				foundPack = (AbstractItem) visibleLayers.FindByZ((int) layers.layer_pack);
+				foundPack = (AbstractItem) visibleLayers.FindByZ((int) Layers.layer_pack);
 			}
 			if (foundPack == null) {
 				foundPack = AddBackpack();
@@ -1102,9 +1106,9 @@ namespace SteamEngine {
 		}
 			
 		public AbstractItem FindLayer(byte num) {
-			if (num == (int) layers.layer_dragging) {
+			if (num == (int) Layers.layer_dragging) {
 				return draggingLayer;
-			} else if (num == (int) layers.layer_special) {
+			} else if (num == (int) Layers.layer_special) {
 				if (specialLayer != null) {
 					return (AbstractItem) specialLayer.firstThing;
 				}
@@ -1153,30 +1157,30 @@ namespace SteamEngine {
 		
 		internal void InternalEquip(AbstractItem i) {
 			byte iLayer = i.Layer;
-			if (iLayer == (byte) layers.layer_dragging) {
+			if (iLayer == (byte) Layers.layer_dragging) {
 				draggingLayer = i;
-				i.BeingPutInContainer(this, iLayer);
-			} else if (iLayer == (byte) layers.layer_special) {
+				i.BeingEquipped(this, iLayer);
+			} else if (iLayer == (byte) Layers.layer_special) {
 				if (specialLayer == null) {
 					specialLayer = new ThingLinkedList(this);
 				}
 				specialLayer.Add(i);
 				//i.cont = specialLayer;
-				i.BeingPutInContainer(specialLayer, iLayer);
+				i.BeingEquipped(specialLayer, iLayer);
 			} else if (iLayer < sentLayers) {
 				if (visibleLayers == null) {
 					visibleLayers = new ThingLinkedList(this);
 				}
 				visibleLayers.Add(i);
 				//i.cont = visibleLayers;
-				i.BeingPutInContainer(visibleLayers, iLayer);
+				i.BeingEquipped(visibleLayers, iLayer);
 			} else {
 				if (invisibleLayers == null) {
 					invisibleLayers = new ThingLinkedList(this);
 				}
 				invisibleLayers.Add(i);
 				//i.cont = invisibleLayers;
-				i.BeingPutInContainer(invisibleLayers, iLayer);
+				i.BeingEquipped(invisibleLayers, iLayer);
 			}
 			//IncreaseWeightBy(i.Weight);
 		}
@@ -1188,12 +1192,10 @@ namespace SteamEngine {
 				//here it can also raise an exception when i is null
 				
 				byte iLayer = i.Layer;
-				if ((iLayer>numLayers) || (iLayer<1) || (iLayer == (byte) layers.layer_dragging)) {
+				if ((iLayer>numLayers) || (iLayer<1) || (iLayer == (byte) Layers.layer_dragging)) {
 					throw new Exception("The item "+i+"("+i.def+") has it`s layer bad set.");
 				}
 				
-				i.FreeCont(droppingChar);
-				DropHeldItem();
 				PrivatePickup(i);//we "equip" it temporarily to the dragging layer
 
 				ScriptArgs sa = new ScriptArgs(droppingChar, this, i, true);
@@ -1208,7 +1210,7 @@ namespace SteamEngine {
 							i.On_Equip(droppingChar, this, true);
 							if (i == draggingLayer) {
 								PrivateDropItem(i);
-								if (iLayer != (byte) layers.layer_special) {
+								if (iLayer != (byte) Layers.layer_special) {
 									if (i.TwoHanded) {
 										//If it's two-handed, then we have to clear both hands.
 										Sanity.IfTrueThrow(iLayer!=2, "Attempted to equip two-handed weapon whose layer isn't 2! (It is "+iLayer+")");
@@ -1248,7 +1250,7 @@ namespace SteamEngine {
 				i.ThrowIfDeleted();
 				//here it can also raise an exception when i is null
 				byte iLayer = i.Layer;
-				if ((iLayer>numLayers) || (iLayer<1) || (iLayer == (byte) layers.layer_dragging)) {
+				if ((iLayer>numLayers) || (iLayer<1) || (iLayer == (byte) Layers.layer_dragging)) {
 					throw new Exception("The item "+i+"("+i.def+") has its layer set wrong.");
 				}
 				//check profession equip rules etc?
@@ -1278,8 +1280,6 @@ namespace SteamEngine {
 					if (!TryUnequip(this, FindLayer(iLayer))) return false;
 				}
 				
-				i.FreeCont(droppingChar);
-				DropHeldItem();
 				PrivatePickup(i);//we "equip" it temporarily to the dragging layer
 
 				ScriptArgs sa = new ScriptArgs(droppingChar, this, i, true);
@@ -1340,7 +1340,7 @@ namespace SteamEngine {
 		
 		internal void AddLoadedItem(AbstractItem item) {
 			byte layer = (byte) item.Z;
-			if ((layer != (byte) layers.layer_special) && (FindLayer(layer) != null)) {
+			if ((layer != (byte) Layers.layer_special) && (FindLayer(layer) != null)) {
 				PutInPack(item);
 			} else {
 				InternalEquip(item);
@@ -1440,7 +1440,7 @@ namespace SteamEngine {
 		}
 
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
-		//CanReach checks are considered done.
+		//CanReach checks are not considered done.
 		public PickupResult PickUp(AbstractItem item, ushort amt) {
 			if (CanReach(item)) {
 				PickupResult result = CanPickUp(item);
@@ -1568,13 +1568,14 @@ namespace SteamEngine {
 
 		private void PrivatePickup(AbstractItem i) {
 			DropHeldItem();
-			i.BeingPutInContainer(this, 7000, 0, (sbyte)layers.layer_dragging);
+			i.FreeCont(this);
 			draggingLayer = i;
+			i.BeingEquipped(this, (byte)Layers.layer_dragging);
 		}
 
 		//typically called from InPackets. (I am the src)
 		//could be made public if needed
-		internal void DropItemOnContainer(AbstractItem target, ushort x, ushort y) {
+		public void DropItemOnContainer(AbstractItem target, ushort x, ushort y) {
 			if (target.IsContainer) {
 				ThrowIfDeleted();
 				target.ThrowIfDeleted();
@@ -1644,7 +1645,7 @@ namespace SteamEngine {
 
 		//typically called from InPackets. (I am the src)
 		//could be made public if needed
-		internal void DropItemOnItem(AbstractItem target, ushort x, ushort y) {
+		public void DropItemOnItem(AbstractItem target, ushort x, ushort y) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
@@ -1703,7 +1704,7 @@ namespace SteamEngine {
 
 		//typically called from InPackets. (I am the src)
 		//could be made public if needed
-		internal void DropItemOnGround(ushort x, ushort y, sbyte z) {
+		public void DropItemOnGround(ushort x, ushort y, sbyte z) {
 			ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
 			if (i == null) {
@@ -1755,7 +1756,7 @@ namespace SteamEngine {
 
 		//typically called from InPackets. drops the held item on target (I am the src)
 		//could be made public if needed
-		internal void DropItemOnChar(AbstractCharacter target) {
+		public void DropItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
@@ -2012,7 +2013,7 @@ namespace SteamEngine {
 		public abstract bool CanRename(AbstractCharacter to);
 		
 		//The client apparently doesn't want characters' uids to be flagged with anything.
-		public override uint FlaggedUid {
+		public sealed override uint FlaggedUid {
 			get {
 				return (uint) Uid;
 			}
@@ -2181,12 +2182,18 @@ namespace SteamEngine {
 		//You only gain points by sacrificing gold (that balances this with other magic classes since this has no reagent costs).
 		public abstract long TithingPoints { get; set; }
 		//Resistances do not have effs. Negative values impart penalties.
-		public abstract short FireResist { get; set; }
-		public abstract short ColdResist { get; set; }
-		public abstract short PoisonResist { get; set; }
-		public abstract short PhysicalResist { get; set; }
-		public abstract short EnergyResist { get; set; }
-		public abstract short Luck { get; set; }
+		[Remark("Displays in client status as Fire resistance by default")]
+		public abstract short ExtendedStatusNum1 { get; }
+		[Remark("Displays in client status as Cold resistance by default")]
+		public abstract short ExtendedStatusNum2 { get; }
+		[Remark("Displays in client status as Poison resistance by default")]
+		public abstract short ExtendedStatusNum3 { get; }
+		[Remark("Displays in client status as Physical resistance by default")]
+		public abstract short ExtendedStatusNum4 { get; }
+		[Remark("Displays in client status as Energy resistance by default")]
+		public abstract short ExtendedStatusNum5 { get; }
+		[Remark("Displays in client status as Luck by default")]
+		public abstract short ExtendedStatusNum6 { get; }
 		
 
 		public abstract short MinDamage { get; }
@@ -2200,51 +2207,61 @@ namespace SteamEngine {
 		}
 		
 		public void SendNearbyStuff() {
-			GameConn conn = Conn;
-			if (conn != null) {
+			GameConn myConn = Conn;
+			if (myConn != null) {
 				Rectangle2D rect = new Rectangle2D(this, this.UpdateRange);
 				Map map = this.GetMap();
 				foreach (AbstractItem itm in map.GetItemsInRectangle(rect)) {
 					if (CanSeeForUpdate(itm)) {
 						PacketSender.PrepareItemInformation(itm);
-						PacketSender.SendTo(conn, true);
-						if (Globals.AOS && conn.Version.aosToolTips) {
+						PacketSender.SendTo(myConn, true);
+						if (Globals.AOS && myConn.Version.aosToolTips) {
 							ObjectPropertiesContainer iopc = itm.GetProperties();
 							if (iopc != null) {
-								iopc.SendIdPacket(conn);
+								iopc.SendIdPacket(myConn);
 							}
 						}
+						itm.On_BeingSentTo(myConn);
 					}
 				}
 				foreach (AbstractCharacter chr in map.GetCharsInRectangle(rect)) {
 					if (this!=chr && CanSeeForUpdate(chr)) {
 						PacketSender.PrepareCharacterInformation(chr, chr.GetHighlightColorFor(this));
-						PacketSender.SendTo(conn, true);
+						PacketSender.SendTo(myConn, true);
 						PacketSender.PrepareUpdateHitpoints(chr, false);
-						PacketSender.SendTo(conn, true);
-						Server.SendCharPropertiesTo(conn, this, chr);
+						PacketSender.SendTo(myConn, true);
+						Server.SendCharPropertiesTo(myConn, this, chr);
+						chr.On_BeingSentTo(myConn);
+						foreach (AbstractItem equippedItem in chr.visibleLayers) {
+							equippedItem.On_BeingSentTo(myConn);
+						}
 					}
 				}
-				if (conn.curAccount.AllShow) {
+				if (myConn.curAccount.AllShow) {
 					foreach (Thing thing in map.GetDisconnectsInRectangle(rect)) {
 						if ((this!=thing) && CanSeeForUpdate(thing)) {
 							AbstractItem itm = thing as AbstractItem;
 							if (itm != null) {
 								PacketSender.PrepareItemInformation((AbstractItem) thing);
-								PacketSender.SendTo(conn, true);
-								if (Globals.AOS && conn.Version.aosToolTips) {
+								PacketSender.SendTo(myConn, true);
+								if (Globals.AOS && myConn.Version.aosToolTips) {
 									ObjectPropertiesContainer iopc = thing.GetProperties();
 									if (iopc != null) {
-										iopc.SendIdPacket(conn);
+										iopc.SendIdPacket(myConn);
 									}
 								}
+								itm.On_BeingSentTo(myConn);
 							} else {
 								AbstractCharacter chr = (AbstractCharacter) thing;
 								PacketSender.PrepareCharacterInformation(chr, chr.GetHighlightColorFor(this));
-								PacketSender.SendTo(conn, true);
+								PacketSender.SendTo(myConn, true);
 								PacketSender.PrepareUpdateHitpoints(chr, false);
-								PacketSender.SendTo(conn, true);
-								Server.SendCharPropertiesTo(conn, this, chr);
+								PacketSender.SendTo(myConn, true);
+								Server.SendCharPropertiesTo(myConn, this, chr);
+								chr.On_BeingSentTo(myConn);
+								foreach (AbstractItem equippedItem in chr.visibleLayers) {
+									equippedItem.On_BeingSentTo(myConn);
+								}
 							}
 						}
 					}
@@ -2883,6 +2900,14 @@ namespace SteamEngine {
 				return visibleLayers.count;
 			}
 		} }
+
+		public IEnumerable GetVisibleEquip() {
+			if (visibleLayers == null) {
+				return EmptyEnumerator<AbstractCharacter>.instance;
+			} else {
+				return visibleLayers;
+			}
+		}
 		
 		public int InvisibleCount { get {
 			int count = 0;
@@ -2897,13 +2922,13 @@ namespace SteamEngine {
 			}
 			return count;
 		} }
-				
-		public override sealed IEnumerator GetEnumerator() {
+
+		public override sealed System.Collections.IEnumerator GetEnumerator() {
 			ThrowIfDeleted();
 			return new EquipsEnumerator(this);
 		}
 	}
-	public class EquipsEnumerator: IEnumerator {
+	public class EquipsEnumerator: System.Collections.IEnumerator {
 		private const int STATE_VISIBLES = 0;
 		private const int STATE_DRAGGING = 1;
 		private const int STATE_SPECIAL = 2;

@@ -14,7 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-
+using System;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -77,5 +77,49 @@ namespace SteamEngine.CompiledScripts {
 	    //Inputs
         InputText,
         InputNumber
+    }
+
+	[Remark("Urcuje zdroj damage, neboli typ utoku")]
+	public enum DamageSource {
+		[Remark("Damage magickym efektem, pasti, damage over time (poison, bleed), atd. Neredukovano.")]
+		God = 0,
+		[Remark("Damage zbrani (tj. ne kouzlem), redukovano armorem (AC)")]
+		Weapon = 1,
+		[Remark("Damage kouzlem, redukovano obranou mysli (OM)")]
+		Spell = 2
+	}
+    
+	[Flags]
+	[Remark("Urcuje, jakej rezist se ma aplikovat na dotycny damage.")]
+    public enum DamageType : int {
+		[Remark("Damage neredukovano")]
+    	Godly =				0x000000,
+		[Remark("Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)")]
+    	Magic =				0x000001,
+		MagicFire =			Magic|0x000004,
+		Electric =			Magic|0x000008,
+		Acid =				Magic|0x000010,
+		Cold =				Magic|0x000020,
+		MagicPoison =		Magic|0x000040,
+		[Remark("Mystikuv utok")]
+		Mystical =			Magic|0x000080,
+		[Remark("Damage redukovano fyzickym rezistem (neplest s armorem)")]
+		Physical =			0x000002,
+		[Remark("Secne zbrane (mece, sekery) ")]
+		Slashing =			Physical|0x000100,
+		[Remark("Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)")]
+		Stabbing =			Physical|0x000200,
+		[Remark("Secne bodne zbrane (mece)")]
+		Sharp =				Physical|Slashing|Stabbing,
+		[Remark("Tupe zbrane (hole, palcaty)")]
+		Blunt =				Physical|0x000400,
+		[Remark("Palne zbrane (luky, kuse)")]
+		Archery =			Physical|0x000800,
+		Bleed =				Physical|0x001000,
+    	
+		Summon =			0x002000,
+		Dragon =			0x004000,
+		NonMagicFire =		0x000004,
+		NonMagicPoison =	0x000040
     }
 }

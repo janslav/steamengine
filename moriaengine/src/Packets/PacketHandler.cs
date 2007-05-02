@@ -200,6 +200,9 @@ namespace SteamEngine.Packets {
 				} case 0x22:	{	//client wants to resync movement
 					HandleResyncMoveRequest(c);
 					return;
+				} case 0x2c: {		//sends client after death...
+				    packetLenUsed = 2;
+				    return;
 				} case 0x3A:	{	//client wants to change skill lock on a particular skill
 					HandleSkillLockChange(c);
 					return;

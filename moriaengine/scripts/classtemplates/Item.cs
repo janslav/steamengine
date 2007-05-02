@@ -26,9 +26,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public override byte FlagsToSend {
 			get {	//It looks like only 080 (invis) and 020 (static) are actually used
-				byte ret = 0;
-
-				return ret;
+				int ret = 0;
+				if (IsInvisible) {
+					ret |= 0x80;
+				}
+				return (byte) ret;
 			}
 		}
 
@@ -131,6 +133,21 @@ namespace SteamEngine.CompiledScripts {
 				Server.SendNameFrom(clicker.Conn, this, this.Name, 0);
 			} else {
 				Server.SendNameFrom(clicker.Conn, this, string.Concat(amount.ToString(), " ", this.Name), 0);
+			}
+		}
+
+		public virtual bool CanFallToCorpse() {
+			//TODO newbie flag etc.
+			return true;
+		}
+
+		private static TagKey linkTK = TagKey.Get("link");
+		public virtual Thing Link {
+			get {
+				return this.GetTag(linkTK) as Thing;
+			}
+			set {
+				this.SetTag(linkTK, value);
 			}
 		}
 	}

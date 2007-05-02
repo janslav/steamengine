@@ -498,13 +498,13 @@ namespace SteamEngine.Packets {
 				intel = c.Int;
 				gender = c.gender;
 				gold = c.Gold;
-				physicalResist = c.PhysicalResist;
+				physicalResist = c.ExtendedStatusNum4;
 				weight = c.Weight;
-				fireResist = c.FireResist;
-				coldResist = c.ColdResist;
-				poisonResist = c.PoisonResist;
-				energyResist = c.EnergyResist;
-				luck = c.Luck;
+				fireResist = c.ExtendedStatusNum1;
+				coldResist = c.ExtendedStatusNum2;
+				poisonResist = c.ExtendedStatusNum3;
+				energyResist = c.ExtendedStatusNum5;
+				luck = c.ExtendedStatusNum6;
 				minDamage = c.MinDamage;
 				maxDamage = c.MaxDamage;
 				tithingPoints = c.TithingPoints;
@@ -515,10 +515,10 @@ namespace SteamEngine.Packets {
 			bool retVal = (((changeflags & NSFlags.Stats) == NSFlags.Stats)
 				&&((str != c.Str) || (dex != c.Dex) || (intel != c.Int) ||
 				(gender != c.gender) || (gold != c.Gold) || 
-				(physicalResist != c.PhysicalResist) ||
-				(weight != c.Weight) || (fireResist != c.FireResist) || 
-				(coldResist != c.ColdResist) || (poisonResist != c.PoisonResist) || 
-				(energyResist != c.EnergyResist) || (luck != c.Luck) || 
+				(physicalResist != c.ExtendedStatusNum4) ||
+				(weight != c.Weight) || (fireResist != c.ExtendedStatusNum1) || 
+				(coldResist != c.ExtendedStatusNum2) || (poisonResist != c.ExtendedStatusNum3) || 
+				(energyResist != c.ExtendedStatusNum5) || (luck != c.ExtendedStatusNum6) || 
 				(minDamage != c.MinDamage) || (maxDamage != c.MaxDamage) || 
 				(tithingPoints != c.TithingPoints)));
 
@@ -693,8 +693,8 @@ namespace SteamEngine.Packets {
 				enumerator = newMap.GetClientsInRange(newMapPoint.X, newMapPoint.Y, Globals.MaxUpdateRange);
 			}
 
-			foreach (GameConn conn in enumerator) {
-				AbstractCharacter viewer = conn.CurCharacter;
+			foreach (GameConn viewerConn in enumerator) {
+				AbstractCharacter viewer = viewerConn.CurCharacter;
 				if (viewer != null) {
 					//bool canSeeNow = false;
 					//bool canSeeNowChecked = false;
@@ -746,38 +746,38 @@ namespace SteamEngine.Packets {
 										allmoveItemInfo=PacketSender.NewBoundGroup();
 										PacketSender.PrepareItemInformation(item, MoveRestriction.Movable); //0x1a
 									}
-									allmoveItemInfo.SendTo(conn);
+									allmoveItemInfo.SendTo(viewerConn);
 								} else {
 									if (pg==null) {
 										pg=PacketSender.NewBoundGroup();
 										PacketSender.PrepareItemInformation(item, MoveRestriction.Normal); //0x1a
 									}
-									pg.SendTo(conn);
+									pg.SendTo(viewerConn);
 								}
 							} else if (isEquippedAndVisible) {
 								if (pg==null) {
 									pg=PacketSender.NewBoundGroup();
 									PacketSender.PreparePaperdollItem(item);
 								}
-								pg.SendTo(conn);
+								pg.SendTo(viewerConn);
 							} else {
 								if (pg==null) {
 									pg=PacketSender.NewBoundGroup();
 									PacketSender.PrepareItemInContainer(item);
 								}
-								pg.SendTo(conn);
+								pg.SendTo(viewerConn);
 							}
 
 							if (item.IsContainer && item.Count > 0 && 
-									OpenedContainers.HasContainerOpen(conn, item)) {
-								if (PacketSender.PrepareContainerContents(item, viewer)) {
-									PacketSender.SendTo(conn, true);
-									if (Globals.AOS && conn.Version.aosToolTips) {
+									OpenedContainers.HasContainerOpen(viewerConn, item)) {
+								if (PacketSender.PrepareContainerContents(item, viewerConn, viewer)) {
+									PacketSender.SendTo(viewerConn, true);
+									if (Globals.AOS && viewerConn.Version.aosToolTips) {
 										foreach (AbstractItem contained in item) {
 											if (viewer.CanSeeVisibility(contained)) {
 												ObjectPropertiesContainer containedOpc = contained.GetProperties();
 												if (containedOpc != null) {
-													containedOpc.SendIdPacket(conn);
+													containedOpc.SendIdPacket(viewerConn);
 												}
 											}
 										}
@@ -786,7 +786,7 @@ namespace SteamEngine.Packets {
 							}
 
 							if (propertiesExist) {
-								if (Globals.AOS && conn.Version.aosToolTips) {
+								if (Globals.AOS && viewerConn.Version.aosToolTips) {
 									if (iopc == null) {
 										iopc = item.GetProperties();
 										if (iopc == null) {
@@ -794,9 +794,10 @@ namespace SteamEngine.Packets {
 											continue;
 										}
 									}
-									iopc.SendIdPacket(conn);
+									iopc.SendIdPacket(viewerConn);
 								}
 							}
+							item.On_BeingSentTo(viewerConn);
 						}
 					}
 					#endregion isOnGround || isEquippedAndVisible || isInContainer
@@ -839,6 +840,10 @@ namespace SteamEngine.Packets {
 										propertiesExist = ProcessCharProperties(ch, ref iopc, viewerConn);
 									}
 									ProcessEquippedItemsProperties(ch, viewerConn, viewer);
+								}
+								ch.On_BeingSentTo(viewerConn);
+								foreach (AbstractItem equippedItem in ch.visibleLayers) {
+									equippedItem.On_BeingSentTo(viewerConn);
 								}
 							}
 						}
@@ -953,6 +958,10 @@ namespace SteamEngine.Packets {
 										PacketSender.PrepareUpdateHitpoints(newChar, false);//may not be necessarry but oh well ;)
 										PacketSender.SendTo(myConn, true);
 										Server.SendCharPropertiesTo(myConn, ch, newChar);
+										newChar.On_BeingSentTo(myConn);
+										foreach (AbstractItem equippedItem in newChar.visibleLayers) {
+											equippedItem.On_BeingSentTo(myConn);
+										}
 									} else {
 										AbstractItem newItem = (AbstractItem) thingInRange;
 										PacketSender.PrepareItemInformation(newItem);
@@ -963,6 +972,7 @@ namespace SteamEngine.Packets {
 												newiopc.SendIdPacket(myConn);
 											}
 										}
+										newItem.On_BeingSentTo(myConn);
 									}
 								}
 							}
@@ -1045,6 +1055,10 @@ namespace SteamEngine.Packets {
 												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerConn);
 											}
 											ProcessEquippedItemsProperties(ch, viewerConn, viewer);
+										}
+										ch.On_BeingSentTo(viewerConn);
+										foreach (AbstractItem equippedItem in ch.visibleLayers) {
+											equippedItem.On_BeingSentTo(viewerConn);
 										}
 									}
 								}

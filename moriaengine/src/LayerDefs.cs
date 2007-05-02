@@ -16,7 +16,7 @@
 */
 
 namespace SteamEngine {
-	enum layers : int {
+	public enum Layers : byte {
 		layer_hand1=1,			//one-handed weapons or tools
 		layer_hand2=2,			//two-handed weapons or tools, or shields or one-handed accessory items (like torches)
 		layer_shoes=3,	
@@ -27,7 +27,7 @@ namespace SteamEngine {
 		layer_ring=8,			//only one, oddly
 		layer_light=9,  		//Apparently this is where you put i_light_source or i_dark_source. Does i_dark_source work?
 		layer_collar=10,		//Necklace, Gorget, Mempo, etc.
-			layer_gorget=10,
+		layer_gorget=10,
 		layer_hair=11,
 		layer_half_apron=12,
 		layer_chest=13,			//Primarily for armor
@@ -43,7 +43,7 @@ namespace SteamEngine {
 		layer_skirt=23,
 		layer_legs=24,			//Platemail in particular
 		layer_horse=25,			//Or any mount
-			layer_mount=25,
+		layer_mount=25,
 		layer_vendor_stock=26,	//Items we restock automatically, and sell. (Price, amount, amount when fully stocked)
 		layer_vendor_extra=27,	//Items given or sold to us by players, which we will re-sell (Price, amount)
 		layer_vendor_buys=28,	//Examples of items that we will buy. (Price, max amount we want to have?)

@@ -37,6 +37,10 @@ namespace SteamEngine.Packets {
 		private static FreedPacketGroup requestClientVersion;
 		private static FreedPacketGroup[,] seasonAndCursor;
 		private static FreedPacketGroup[] facetChange;
+		private static FreedPacketGroup[] deathMessages;
+		
+		internal static void Init() {
+		}
 		
 		static Prepared() {
 			BoundPacketGroup pg = null;
@@ -65,7 +69,11 @@ namespace SteamEngine.Packets {
 			warMode = new FreedPacketGroup[2];
 			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(false); warMode[0] = pg.Free();
 			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(true); warMode[1] = pg.Free();
-			
+
+			deathMessages = new FreedPacketGroup[3];
+			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(0); deathMessages[0] = pg.Free();
+			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(1); deathMessages[1] = pg.Free();
+			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(2); deathMessages[2] = pg.Free();
 			
 			seasonAndCursor = new FreedPacketGroup[5,2];
 			for (int index=0; index<5; index++) {
@@ -185,6 +193,14 @@ namespace SteamEngine.Packets {
 		public static void SendRequestClientVersion(GameConn c) {
 			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 			requestClientVersion.SendTo(c);
+		}
+
+		public static void SendYoureDeathMessage(GameConn c) {
+			deathMessages[0].SendTo(c);
+		}
+
+		public static void SendResurrectMessage(GameConn c) {
+			deathMessages[1].SendTo(c);
 		}
 	}
 }
