@@ -118,7 +118,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					GUTATable newTable = new GUTATable(1);
 					newTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 					Add(newTable); //very simple, one row because this is probably the error of the scripter!
-					newTable.Transparent = true;
 					Logger.WriteWarning("(Add(GUTAComponent)) Dialog "+this+"je spatne navrzen, chybi specifikace radku!");
 				}
 				lastTable.AddComponent(comp);
@@ -128,8 +127,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//and make it transparent
 				if (lastColumn == null) {
 					GUTAColumn newCol = new GUTAColumn();
-					Add(newCol);
-					newCol.Transparent = true;
+					Add(newCol);					
 				}
 				lastColumn.AddComponent(comp);
 			}
@@ -190,7 +188,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			foreach (GUTAColumn col in theRow.Components) {
 				//copy every column to the newly added (now empty) row
 				GUTAColumn newCol = new GUTAColumn(col.Width);
-				newCol.Transparent = col.Transparent;
 				newCol.IsLast = col.IsLast;
 				lastTable.AddComponent(newCol);
 			}
@@ -198,9 +195,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Take the last table, iterate through the columns and make them all transparent")]
 		public void MakeTableTransparent() {
-			foreach (GUTAColumn col in lastTable.Components) {
-				col.Transparent = true;
-			}
+			lastTable.Transparent = true;
+			//foreach (GUTAColumn col in lastTable.Components) {
+			//	col.Transparent = true;
+			//}
 			//makte the table also transparent
 			//lastTable.Transparent = true;
 		}
@@ -238,18 +236,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
 			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
 			//and <GOPAGE> is confirming button that jumps to the written page.
-			GUTATable storedLastRow = lastTable; //store these two things :)
+			GUTATable storedLastTable = lastTable; //store these two things :)
 			GUTAColumn storedLastColumn = lastColumn;
-			Add(new GUTATable(1));
-			Add(new GUTAColumn());
-			Add(TextFactory.CreateText("Stránka"));
+			Add(new GUTATable(1,0));
+			lastTable[0,0] = TextFactory.CreateText("Stránka");
 													//type if input,x,y,ID, width, height, prescribed text
-			Add(InputFactory.CreateInput(LeafComponentTypes.InputNumber,65,0,ID_PAGE_NO_INPUT,30,D_ROW_HEIGHT,actualPage.ToString()));
-			Add(TextFactory.CreateText(95,0,"/"+pagesCount.ToString()));
-			Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK,135,0,ID_JUMP_PAGE_BUTTON));
+			lastTable[0, 0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
+			lastTable[0, 0] = TextFactory.CreateText(95, 0, "/" + pagesCount.ToString());
+			lastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
 			MakeTableTransparent(); //newly created row
 			//restore the last components
-			lastTable = storedLastRow;
+			lastTable = storedLastTable;
 			lastColumn = storedLastColumn;
 		}
 
@@ -285,7 +282,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					int selectedPage = (int)gr.GetNumberResponse(ID_PAGE_NO_INPUT);
 					if(selectedPage < 1) {
 						//idiot proof adjustment
-						Globals.SrcWriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
+						gi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;					
 					}
 					//count the index of the first item
