@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		protected int id;
 
 		[Remark("Adding any children to the leaf is prohibited...")]
-		public override sealed void AddComponent(GUTAComponent child) {
+		internal override sealed void AddComponent(GUTAComponent child) {
 			throw new GUTAComponentCannotBeExtendedException("GUTAcomponent " + this.GetType() + " cannot have any children");
 		}
 	}
@@ -178,14 +178,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we "+
                     " were provided only relative positions")]
-			public override void OnBeforeWrite(GUTAComponent parent) {
+			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//no space here, the used button gumps have themselves some space...
 				xPos += parent.XPos;
 				yPos += parent.YPos;
 			}
 
 			[Remark("Simply write the button (send the method request to the underlaying gump)")]
-			public override void WriteComponent() {
+			internal override void WriteComponent() {
 				gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
 			}
 		}
@@ -205,13 +205,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("Set the position which was specified relatively")]
-			public override void OnBeforeWrite(GUTAComponent parent) {
+			protected override void OnBeforeWrite(GUTAComponent parent) {
 				xPos = xPos + parent.XPos;
 				yPos = yPos + parent.YPos;
 			}
 
 			[Remark("Simply call the gumps method for writing the checkbox")]
-			public override void WriteComponent() {
+			internal override void WriteComponent() {
                                              //unchecked!!!,    checked !!!
 				gump.AddCheckBox(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
 			}
@@ -232,13 +232,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("Set the position which was specified relatively")]
-			public override void OnBeforeWrite(GUTAComponent parent) {
+			protected override void OnBeforeWrite(GUTAComponent parent) {
 				xPos = xPos + parent.XPos;
 				yPos = yPos + parent.YPos;
 			}
 
 			[Remark("Simply call the gumps method for writing the radiobutton")]
-			public override void WriteComponent() {
+			internal override void WriteComponent() {
                                          //unselected!!!, selected!!!
 				gump.AddRadio(xPos, yPos, gumps.GumpUp,gumps.GumpDown, isChecked, id);
 			}
@@ -344,7 +344,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we " +
                     " were provided only relative positions")]
-			public override void OnBeforeWrite(GUTAComponent parent) {
+			protected override void OnBeforeWrite(GUTAComponent parent) {
 				xPos += parent.XPos;
 				yPos += parent.YPos;
 				if (width == 0) {
@@ -360,7 +360,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("Simply write the input (send the method request to the underlaying gump)"+
                     " it will determine also what parameters to send")]
-			public override void WriteComponent() {
+			internal override void WriteComponent() {
 				//first of all add a different background
 				gump.AddGumpPicTiled(xPos, yPos, width, height, ImprovedDialog.D_DEFAULT_INPUT_BACKGROUND);
 				//and make it immediately transparent
@@ -483,14 +483,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("When added to the column we have to specify the position (count the absolute)")]
-			public override void OnBeforeWrite(GUTAComponent parent) {
+			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;
 			}
 
 			[Remark("Call the underlaying gump istance's methods")]
-			public override void WriteComponent() {
+			internal override void WriteComponent() {
 				if (textId == 0) { //no text ID was specified, use the text version
 					gump.AddText(xPos, yPos, (int)textHue, text);
 				} else {
@@ -529,7 +529,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("When added to the column we have to specify the position (count the absolute)")]
-			public override void OnBeforeWrite(GUTAComponent parent) {
+			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;
@@ -543,7 +543,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("Call the underlaying gump istance's methods")]
-			public override void WriteComponent() {
+			internal override void WriteComponent() {
 				if (textId == 0) { //no text ID was specified, use the text version
 					gump.AddHTMLGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
 				} else {

@@ -126,17 +126,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Prototype of the parent method - provides the basic validation of the inserted component."+
                 "The rest of the insertion process is up to the Children.")]
-		public abstract void AddComponent(GUTAComponent child);
+		internal abstract void AddComponent(GUTAComponent child);
 
 		[Remark("Abstract method of writing the gump to the LScript - typically writes the component"+
                 " and then all its children (who can behave in the same way)")]
-		public abstract void WriteComponent();
+		internal abstract void WriteComponent();
 
 		[Remark("Method called just before the component is written to the gump - allows some post processing " +
                 "including various operations on the parent, for example."+
                 "Defaultly is empty, but can be adapted as one wishes." +
 				"By now it is used for setting the components position according to the parent's one")]
-		public virtual void OnBeforeWrite(GUTAComponent parent) {
+		protected virtual void OnBeforeWrite(GUTAComponent parent) {
 		}
 
 		[Remark("Method calls the WriteComponent() method on all children from the list")]
@@ -212,7 +212,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("When adding a child component, check if it is an instance of the GUTATable!")]
-		public override void AddComponent(GUTAComponent child) {
+		internal override void AddComponent(GUTAComponent child) {
 			if (!(child is GUTATable)) {
 				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " directly into the GUTAMatrix");
 			}
@@ -223,7 +223,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Writing the table means writing the background and calling the writing on all of its rows")]
-		public override void WriteComponent() {
+		internal override void WriteComponent() {
 			//first count the height from the number of rows (and spaces between them)
 			//upper and lower borders   //upper and lower row delimiters
 			height += 2 * ImprovedDialog.D_BORDER + 2 * ImprovedDialog.D_SPACE;
@@ -276,7 +276,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"0 as the size means the column that takes the rest of the width"+
 				"If 0 is the one-before-last column size, then the last column will be added as "+
 				"'AddLast' - its position will be counted from the right side")]
-		public GUTATable(int rowCount, params object[] columnSizes) : this(rowCount) {
+		public GUTATable(int rowCount, params int[] columnSizes) : this(rowCount) {
 			bool shallBeLast = false;
 			for(int i = 0; i < columnSizes.Length; i++) {
 				if(shallBeLast) { //are we adding the last column?
@@ -288,18 +288,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					prevCol.Width += width - (prevCol.XPos - XPos) - prevCol.Width - (int)columnSizes[i];
 					//now we can add, the size is recomputed, the new column will fit right to the end of the row...
 					*/
-					GUTAColumn lastCol = new GUTAColumn((int)columnSizes[i]);
+					GUTAColumn lastCol = new GUTAColumn(columnSizes[i]);
 					lastCol.IsLast = true;
 					AddComponent(lastCol);
 				} else {
 					if((int)columnSizes[i] == 0) {
 						AddComponent(new GUTAColumn());
 					} else {
-						AddComponent(new GUTAColumn((int)columnSizes[i]));
+						AddComponent(new GUTAColumn(columnSizes[i]));
 					}
 				}
 				//if the one-before-last column is zero sized, the next column will be added 'as last'				
-				shallBeLast = ((int)columnSizes[i] == 0) && (i == columnSizes.Length - 2);
+				shallBeLast = (columnSizes[i] == 0) && (i == columnSizes.Length - 2);
 			}
 		}			
 
@@ -313,10 +313,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int RowCount {
 			get {
 				return rowCount;
-			}
-			set {
-				rowCount = value;
-			}
+			}			
 		}
 
 		[Remark("Row Height is set automatically to the default value, other values are to be" +
@@ -383,7 +380,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("The method called when the row is added to the table. It will set the rows positions"+
                 " and size")]
-		public override void OnBeforeWrite(GUTAComponent parent) {
+		protected override void OnBeforeWrite(GUTAComponent parent) {
 			if(parent.Components.IndexOf(this) > 0) { //this is not the first row
 				//take the position from the previous sibling table
 				GUTATable lastTable = (GUTATable)parent.Components[parent.Components.IndexOf(this) - 1];
@@ -416,7 +413,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("When adding a child component, check if it is an instance of the GUTAColumn!")]
-		public override void AddComponent(GUTAComponent child) {
+		internal override void AddComponent(GUTAComponent child) {
 			if (!(child is GUTAColumn)) {
 				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " directly into the GUTATable");
 			}
@@ -428,7 +425,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Simply write the row background and continue with the columns)")]
-		public override void WriteComponent() {
+		internal override void WriteComponent() {
 			//first add the main "grey" - border tile, within the table borders delimited by spaces
 			//take one space back (see OnBeforeWrite method why...)
 			gump.AddGumpPicTiled(xPos - ImprovedDialog.D_ROW_SPACE, yPos - ImprovedDialog.D_ROW_SPACE,
@@ -518,7 +515,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Set the position according to the previous columns (if any) and set the size")]
-		public override void OnBeforeWrite(GUTAComponent parent) {
+		protected override void OnBeforeWrite(GUTAComponent parent) {
 			/*check this, for sure... (e.g. the Column could have been added to the Table during
 			 * the Table's constructor, therefore the table didn't have its "gump" set so we will
 			 * make sure that this column has it properly after the OnBeforeWrite is called for the 
@@ -570,7 +567,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Only leaf components or another GUTAMatrix can be added here...")]
-		public override void AddComponent(GUTAComponent child) {
+		internal override void AddComponent(GUTAComponent child) {
 			if ((child is GUTATable) || (child is GUTAColumn)) {
 				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " into the GUTAColumn. Use the GUTAMatrix or leaf components instead!");
 			}
@@ -580,9 +577,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Simply write the columns background and continue with the children)")]
-		public override void WriteComponent() {
+		internal override void WriteComponent() {
 			//position is specified, remove one space from the width (will appear on the right col. side)
-			gump.AddGumpPicTiled(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, height, gumpBackground);
+			gump.AddGumpPicTiled(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, Height, gumpBackground);
 			if (((GUTATable)parent).Transparent) {//the parent table is set to be transparent
 				SetTransparency();//make it transparent after writing out
 			}
@@ -592,7 +589,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Make the whole column transparent")]
 		private void SetTransparency() {
-			gump.AddCheckerTrans(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, height);
+			gump.AddCheckerTrans(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, Height);
 		}
 	}
 }
