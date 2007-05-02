@@ -32,7 +32,7 @@ namespace SteamEngine {
 		private SimpleQueue<int> freeFakeSlots = new SimpleQueue<int>();
 
 		private const int minimalLength = 1000;
-		private const int uidOffset = 1000; //low uids have been found to cause problems in client.
+		private const int uidOffset = 1; //low uids (particularly 0) have been found to cause problems in client.
 		private const int queueMaxCount = 1000;
 
 		private const int highestUid = 0x00ffffff-1;
