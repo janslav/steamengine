@@ -56,6 +56,9 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return ((flags&0x0002)==0x0002);
 			}
+			private set {
+				flags = (ushort) (value?(flags|0x0002):(flags&~0x0002));
+			}
 		}
 
 		public bool Flag_Insubst {
@@ -245,7 +248,7 @@ namespace SteamEngine.CompiledScripts {
 					//mountorrider.AboutToChange();
 
 					//move it to where we are
-					mountorrider.P(P());
+					mountorrider.P(this);
 					mountorrider.Direction=Direction;
 
 					//set it's rider to null
@@ -333,8 +336,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != hitpoints) {
-					NetState.AboutToChangeHitpoints(this);
-					hitpoints=value;
+					if (!Flag_Dead && value == 0) {
+						CauseDeath((Character) Globals.SrcCharacter);
+					} else {
+						NetState.AboutToChangeHitpoints(this);
+						hitpoints=value;
+					}
 				}
 			}
 		}
@@ -436,75 +443,39 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override short PhysicalResist {
+		public override short ExtendedStatusNum4 {
 			get {
-				return physicalResist;
-			}
-			set {
-				if (value != physicalResist) {
-					NetState.AboutToChangeStats(this);
-					physicalResist=value;
-				}
+				return 0;
 			}
 		}
 
-		public override short FireResist {
+		public override short ExtendedStatusNum1 {
 			get {
-				return fireResist;
-			}
-			set {
-				if (value != fireResist) {
-					NetState.AboutToChangeStats(this);
-					fireResist=value;
-				}
+				return 0;
 			}
 		}
 
-		public override short ColdResist {
+		public override short ExtendedStatusNum2 {
 			get {
-				return coldResist;
-			}
-			set {
-				if (value != coldResist) {
-					NetState.AboutToChangeStats(this);
-					coldResist=value;
-				}
+				return 0;
 			}
 		}
 
-		public override short PoisonResist {
+		public override short ExtendedStatusNum3 {
 			get {
-				return poisonResist;
-			}
-			set {
-				if (value != poisonResist) {
-					NetState.AboutToChangeStats(this);
-					poisonResist=value;
-				}
+				return 0;
 			}
 		}
 
-		public override short EnergyResist {
+		public override short ExtendedStatusNum5 {
 			get {
-				return energyResist;
-			}
-			set {
-				if (value != energyResist) {
-					NetState.AboutToChangeStats(this);
-					energyResist=value;
-				}
+				return 0;
 			}
 		}
 
-		public override short Luck {
+		public override short ExtendedStatusNum6 {
 			get {
-				return luck;
-			}
-			set {
-				if (value != luck) {
-					NetState.AboutToChangeStats(this);
-					luck=value;
-				}
+				return 0;
 			}
 		}
 
@@ -538,6 +509,219 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		#region resisty
+		private static TagKey resistMagicTK = TagKey.Get("resistMagic");
+		private static TagKey resistFireTK = TagKey.Get("resistFire");
+		private static TagKey resistElectricTK = TagKey.Get("resistElectric");
+		private static TagKey resistAcidTK = TagKey.Get("resistAcid");
+		private static TagKey resistColdTK = TagKey.Get("resistCold");
+		private static TagKey resistPoisonTK = TagKey.Get("resistPoison");
+		private static TagKey resistMysticalTK = TagKey.Get("resistMystical");
+		private static TagKey resistPhysicalTK = TagKey.Get("resistPhysical");
+		private static TagKey resistSlashingTK = TagKey.Get("resistSlashing");
+		private static TagKey resistStabbingTK = TagKey.Get("resistStabbing");
+		private static TagKey resistBluntTK = TagKey.Get("resistBlunt");
+		private static TagKey resistArcheryTK = TagKey.Get("resistArchery");
+		private static TagKey resistBleedTK = TagKey.Get("resistBleed");
+		private static TagKey resistSummonTK = TagKey.Get("resistSummon");
+		private static TagKey resistDragonTK = TagKey.Get("resistDragon");
+
+		public int ResistMagic {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistMagicTK));
+				return dynamicPart + Def.ResistMagic;
+			}
+			set {
+				int dynamicPart = value - Def.ResistMagic;
+				if (dynamicPart != 0) {
+					this.SetTag(resistMagicTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistFire {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistFireTK));
+				return dynamicPart + Def.ResistFire;
+			}
+			set {
+				int dynamicPart = value - Def.ResistFire;
+				if (dynamicPart != 0) {
+					this.SetTag(resistFireTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistElectric {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistElectricTK));
+				return dynamicPart + Def.ResistElectric;
+			}
+			set {
+				int dynamicPart = value - Def.ResistElectric;
+				if (dynamicPart != 0) {
+					this.SetTag(resistElectricTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistAcid {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistAcidTK));
+				return dynamicPart + Def.ResistAcid;
+			}
+			set {
+				int dynamicPart = value - Def.ResistAcid;
+				if (dynamicPart != 0) {
+					this.SetTag(resistAcidTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistCold {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistColdTK));
+				return dynamicPart + Def.ResistCold;
+			}
+			set {
+				int dynamicPart = value - Def.ResistCold;
+				if (dynamicPart != 0) {
+					this.SetTag(resistColdTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistPoison {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistPoisonTK));
+				return dynamicPart + Def.ResistPoison;
+			}
+			set {
+				int dynamicPart = value - Def.ResistPoison;
+				if (dynamicPart != 0) {
+					this.SetTag(resistPoisonTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistMystical {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistMysticalTK));
+				return dynamicPart + Def.ResistMystical;
+			}
+			set {
+				int dynamicPart = value - Def.ResistMystical;
+				if (dynamicPart != 0) {
+					this.SetTag(resistMysticalTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistPhysical {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistPhysicalTK));
+				return dynamicPart + Def.ResistPhysical;
+			}
+			set {
+				int dynamicPart = value - Def.ResistPhysical;
+				if (dynamicPart != 0) {
+					this.SetTag(resistPhysicalTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistSlashing {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistSlashingTK));
+				return dynamicPart + Def.ResistSlashing;
+			}
+			set {
+				int dynamicPart = value - Def.ResistSlashing;
+				if (dynamicPart != 0) {
+					this.SetTag(resistSlashingTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistStabbing {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistStabbingTK));
+				return dynamicPart + Def.ResistStabbing;
+			}
+			set {
+				int dynamicPart = value - Def.ResistStabbing;
+				if (dynamicPart != 0) {
+					this.SetTag(resistStabbingTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistBlunt {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistBluntTK));
+				return dynamicPart + Def.ResistBlunt;
+			}
+			set {
+				int dynamicPart = value - Def.ResistBlunt;
+				if (dynamicPart != 0) {
+					this.SetTag(resistBluntTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistArchery {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistArcheryTK));
+				return dynamicPart + Def.ResistArchery;
+			}
+			set {
+				int dynamicPart = value - Def.ResistArchery;
+				if (dynamicPart != 0) {
+					this.SetTag(resistArcheryTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistBleed {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistBleedTK));
+				return dynamicPart + Def.ResistBleed;
+			}
+			set {
+				int dynamicPart = value - Def.ResistBleed;
+				if (dynamicPart != 0) {
+					this.SetTag(resistBleedTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistSummon {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistSummonTK));
+				return dynamicPart + Def.ResistSummon;
+			}
+			set {
+				int dynamicPart = value - Def.ResistSummon;
+				if (dynamicPart != 0) {
+					this.SetTag(resistSummonTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistDragon {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistDragonTK));
+				return dynamicPart + Def.ResistDragon;
+			}
+			set {
+				int dynamicPart = value - Def.ResistDragon;
+				if (dynamicPart != 0) {
+					this.SetTag(resistDragonTK, dynamicPart);
+				}
+			}
+		}
+		#endregion
+
 
 		public override string PaperdollName {
 			get {
@@ -557,23 +741,95 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//public string NameFlags {
-		//	get {
-		//		if (Flag_Hero) {
-		//			if (Flag_Invul) {
-		//				return "[Invul Hero]";
-		//			} else {
-		//				return "[Hero]";
-		//			}
-		//		} else {
-		//			if (Flag_Invul) {
-		//				return "[Invul]";
-		//			} else {
-		//				return null;
-		//			}
-		//		}
-		//	}
-		//}
+		public void Kill() {
+			//TODO effect?
+			CauseDeath((Character) Globals.SrcCharacter);
+		}
+
+		public void CauseDeath(Character killedBy) {
+			if (!Flag_Dead) {
+				NetState.AboutToChangeHitpoints(this);
+				this.hitpoints = 0;
+
+				this.Dismount();
+
+				CorpseDef cd = this.Def.CorpseDef;
+				Corpse corpse = null;
+				if (cd != null) {
+					corpse = (Corpse) cd.Create((IPoint4D) this);
+					//NetState.ProcessThing(corpse);
+				}
+
+				GameConn myConn = this.Conn;
+				if (myConn != null) {
+					Prepared.SendYoureDeathMessage(myConn);
+				}
+
+				BoundPacketGroup bpg = null;
+				foreach (GameConn viewerConn in this.GetMap().GetClientsWhoCanSee(this)) {
+					if (myConn != viewerConn) {
+						if (bpg == null) {
+							bpg = PacketSender.NewBoundGroup();
+							PacketSender.PrepareDeathAnim(this, corpse);
+						}
+						bpg.SendTo(viewerConn);
+					}
+				}
+
+				if (corpse != null) {
+					corpse.InitFromChar(this);
+				}
+
+				if (this.IsPlayer) {
+					this.OModel = this.Model;
+					this.Model = 0x192; //make me ghost
+					this.Flag_Insubst = true;
+					this.Flag_Dead = true;
+				} else {
+					this.Delete();
+				}
+
+				//NetState.ProcessThing(this);
+
+				if (bpg != null) {
+					bpg.Dispose();
+				}
+
+
+			}
+		}
+
+		public void Resurrect() {
+			if (Flag_Dead) {
+				hitpoints = 1;
+				this.Model = this.OModel;
+				this.Flag_Insubst = false;
+				this.Flag_Dead = false;
+
+				Corpse c = null;
+				foreach (Thing nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
+					c = nearbyThing as Corpse;
+					if (c.Owner == this) {
+						break;
+					} else {
+						c = null;
+					}
+				}
+				if (c != null) {
+					c.ReturnStuffToChar(this);
+				}
+			}
+		}
+
+		private static TagKey oModelTK = TagKey.Get("_omodel_");
+		public ushort OModel {
+			get {
+				return Convert.ToUInt16(this.GetTag(oModelTK));
+			}
+			set {
+				this.SetTag(oModelTK, value);
+			}
+		}
 
 		public void Go(Region reg) {
 			P(reg.P);
@@ -803,7 +1059,7 @@ namespace SteamEngine.CompiledScripts {
 				if (memories != null) {
 					return memories;
 				}
-				return EmptyEnumerator.instance;
+				return EmptyEnumerator<Memory>.instance;
 			}
 		}
 
@@ -1320,8 +1576,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//this is to be moved to some separate class
+		public Item Hair {
+			get {
+				return (Item) FindLayer((byte) Layers.layer_hair);
+			}
+		}
 
+		public Item Beard {
+			get {
+				return (Item) FindLayer((byte) Layers.layer_beard);
+			}
+		}
+
+		//this is to be moved to some separate class
 		////Standard sphere effect, for sphere script compatibility
 		//public void Effect(byte type, ushort effect, byte speed, byte duration, byte fixedDirection) {
 		//    switch (type) {

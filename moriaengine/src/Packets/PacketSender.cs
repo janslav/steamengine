@@ -182,7 +182,7 @@ namespace SteamEngine.Packets {
 				short maxMana=cre.MaxMana;
 				ulong lgold = cre.Gold;
 				uint gold=(uint)(lgold>0xffffffff?0xffffffff:lgold);
-				short armor=cre.PhysicalResist;
+				short armor=cre.ExtendedStatusNum4;
 				ushort weight=(ushort) cre.Weight;
 				EncodeShort(strength, 44);
 				EncodeShort(dexterity, 46);
@@ -203,11 +203,11 @@ namespace SteamEngine.Packets {
 			}
 			if (moreInfo>=4) {
 				blockSize = 88;
-				short fireResist=cre.FireResist;
-				short coldResist=cre.ColdResist;
-				short poisonResist=cre.PoisonResist;
-				short energyResist=cre.EnergyResist;
-				short luck=cre.Luck;
+				short fireResist=cre.ExtendedStatusNum1;
+				short coldResist=cre.ExtendedStatusNum2;
+				short poisonResist=cre.ExtendedStatusNum3;
+				short energyResist=cre.ExtendedStatusNum5;
+				short luck=cre.ExtendedStatusNum6;
 				short minDamage=cre.MinDamage;
 				short maxDamage=cre.MaxDamage;
 				long ltithingPoints=cre.TithingPoints;
@@ -399,7 +399,7 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		public static bool PrepareContainerContents(AbstractItem cont, AbstractCharacter viewer) {
+		public static bool PrepareContainerContents(AbstractItem cont, GameConn viewerConn, AbstractCharacter viewer) {
 			StartGenerating();
 			EncodeByte(0x3c, 0);
 			ushort blockSize = 5;
@@ -416,6 +416,7 @@ namespace SteamEngine.Packets {
 					EncodeUInt(cont.FlaggedUid, blockSize+13);
 					EncodeUShort(i.Color, blockSize+17);
 					blockSize+=19;
+					i.On_BeingSentTo(viewerConn);
 				}
 			}
 			if (blockSize == 0) {
@@ -614,37 +615,47 @@ namespace SteamEngine.Packets {
 			For flags, 0x20 makes the item always movable, and 0x80 shades it hidden-grey.
 			Nothing else seems to have any effect.
 		*/
-		public static void PrepareItemInformation(AbstractItem item, MoveRestriction restrict) {
+		internal static void PrepareItemInformation(AbstractItem item, MoveRestriction restrict) {
 			StartGenerating();
 			EncodeByte(0x1a, 0);
 			ushort blockSize = 1;
 			uint uid=item.FlaggedUid;
-			if (item.Amount>1) {
+			ushort amt = item.ShortAmount;
+			if (amt>1) {
 				uid=uid|0x80000000;
 				EncodeUInt(uid, 3);
 				//Logger.WriteDebug("Preparin' stackable "+item.ToString());
-				EncodeUShort(item.ShortAmount, 9);
+				EncodeUShort(amt, 9);
 				blockSize=11;
 			} else {
 				EncodeUInt(uid, 3);
 				blockSize=9;
 			}
 			EncodeUShort(item.Model, 7);
-			EncodeUShort(item.X, blockSize);
+			byte direction = (byte) item.Direction;
 			int ypos=blockSize+2;
-			//If we want to send 'direction', it goes where z is now and z gets bumped one, and x gets flagged with 0x8000.
-			EncodeSByte(item.Z, blockSize+4);
+			if (direction > 0) {
+				EncodeUShort((ushort) (item.X|0x8000), blockSize);
+				EncodeByte(direction, blockSize+4);
+				EncodeSByte(item.Z, blockSize+5);
+				blockSize+=6;
+			} else {
+				EncodeUShort(item.X, blockSize);
+				EncodeSByte(item.Z, blockSize+4);
+				blockSize+=5;
+			} 
+			
 			ushort y=item.Y;
-			blockSize+=5;
 			byte flags=item.FlagsToSend;
 			if (restrict==MoveRestriction.Movable) {
 				flags=(byte) (flags|0x20);
 			//} else if (restrict==MoveRestriction.Immovable) {
 			//	flags=(byte) (flags|0x10);	//Doesn't seem to work. None of the other flags seem to either. Hmmm...
 			}
-			if (item.Color>0) {
+			ushort color = item.Color;
+			if (color>0) {
 				y=(ushort) (y|0x8000);
-				EncodeUShort(item.Color, blockSize);
+				EncodeUShort(color, blockSize);
 				blockSize+=2;
 			}
 			if (flags>0) {
@@ -711,21 +722,19 @@ namespace SteamEngine.Packets {
 			blockSize=19;
 			if (cre.visibleLayers != null) {
 				foreach (AbstractItem it in cre.visibleLayers) {
-					if (it!=null) {
-						Sanity.IfTrueThrow(it.Cont!=cre, LogStr.Ident(cre)+" thinks that "+LogStr.Ident(it)+" is equipped, but its cont is "+LogStr.Ident(it.Cont)+".");
-						Logger.WriteDebug("Layer "+it.Layer+" is "+it+" IsEq="+it.IsEquippable+" IsCont="+it.IsContainer+" type="+it.GetType()+" FlaggedUid="+it.FlaggedUid+" Model="+it.Model+" Color="+it.Color);
-						if (it.IsEquippable) {
-							EncodeUInt(it.FlaggedUid, blockSize);
-							if (it.Color==0) {
-								EncodeUShort(it.Model, blockSize+4);
-								EncodeByte(it.Layer, blockSize+6);
-								blockSize+=7;
-							} else {
-								EncodeUShort((ushort) (it.Model|0x8000), blockSize+4);
-								EncodeByte(it.Layer, blockSize+6);
-								EncodeUShort(it.Color, blockSize+7);
-								blockSize+=9;
-							}
+					Sanity.IfTrueThrow(it.Cont!=cre, LogStr.Ident(cre)+" thinks that "+LogStr.Ident(it)+" is equipped, but its cont is "+LogStr.Ident(it.Cont)+".");
+					//Logger.WriteDebug("Layer "+it.Layer+" is "+it+" IsEq="+it.IsEquippable+" IsCont="+it.IsContainer+" type="+it.GetType()+" FlaggedUid="+it.FlaggedUid+" Model="+it.Model+" Color="+it.Color);
+					if (it.IsEquippable) {
+						EncodeUInt(it.FlaggedUid, blockSize);
+						if (it.Color==0) {
+							EncodeUShort(it.Model, blockSize+4);
+							EncodeByte(it.Layer, blockSize+6);
+							blockSize+=7;
+						} else {
+							EncodeUShort((ushort) (it.Model|0x8000), blockSize+4);
+							EncodeByte(it.Layer, blockSize+6);
+							EncodeUShort(it.Color, blockSize+7);
+							blockSize+=9;
 						}
 					}
 				}
@@ -934,10 +943,10 @@ namespace SteamEngine.Packets {
 					//charId=cre.uid;
 					//charName = cre.Name;
 					EncodeString(cre.Name, blockSize, 30);
-					EncodeZeroes(30, blockSize+30);
+					EncodeZeros(30, blockSize+30);
 					numChars++;
 				} else {
-					EncodeZeroes(60, blockSize);
+					EncodeZeros(60, blockSize);
 				}
 				blockSize+=60;
 				
@@ -1329,12 +1338,15 @@ namespace SteamEngine.Packets {
 			EncodeUShort(color, 10); //text color
 			EncodeUShort(font, 12); //font
 			EncodeUInt(msg, 14);
-			EncodeString(sourceName, 18, 32);
-			blockSize=18+32;
-			if (args != null) {
-				int len = EncodeLittleEndianUnicodeString(args, blockSize, 1024);
-				blockSize+=(ushort) len;
+			EncodeString(sourceName, 18, 30);
+			blockSize=18+30;
+			if (args == null) {
+				args = "";
 			}
+			int len = EncodeLittleEndianUnicodeString(args, blockSize, 1024);
+			blockSize+=(ushort) len;
+			EncodeShort(0, blockSize);
+			blockSize += 2;
 			EncodeUShort(blockSize, 1);
 			DoneGenerating(blockSize);
 			Compress();			
@@ -1445,6 +1457,122 @@ namespace SteamEngine.Packets {
 			len += 4;
 			EncodeShort((short) len, 1);
 			DoneGenerating(len);
+			Compress();
+		}
+
+		public static void PrepareDeathAnim(AbstractCharacter dieingChar, AbstractItem corpse) {
+			StartGenerating();
+			EncodeByte(0xaf, 0);
+			EncodeUInt(dieingChar.FlaggedUid, 1);
+			if (corpse == null) {
+				EncodeUInt(0xffffffff, 5);
+			} else {
+				EncodeUInt(corpse.FlaggedUid, 5);
+			}
+			EncodeInt(0, 9);
+			DoneGenerating(13);
+			Compress();
+		}
+
+		internal static void PrepareDeathMessage(byte type) {
+			StartGenerating();
+			EncodeByte(0x2c, 0);
+			EncodeByte(type, 1);
+			DoneGenerating(2);
+			Compress();
+		}
+
+		public interface ICorpseEquipInfo {
+			uint FlaggedUid { get; }
+			byte Layer { get; }
+			ushort Color { get; }
+			ushort Model { get; }
+		}
+
+		public static void PrepareCorpseEquip(AbstractItem corpse, IEnumerable<ICorpseEquipInfo> items) {
+			StartGenerating();
+			EncodeByte(0x89, 0);
+			int len = 7;
+			EncodeUInt(corpse.FlaggedUid, 3);
+			foreach (ICorpseEquipInfo iulp in items) {
+				EncodeByte(iulp.Layer, len);
+				EncodeUInt(iulp.FlaggedUid, len+1);
+				len += 5;
+			}
+
+			EncodeByte(0, len);//terminator
+			len++;
+			EncodeShort((short) len, 1);
+			DoneGenerating(len);
+			Compress();
+		}
+
+		public static bool PrepareCorpseContents(AbstractItem corpse, IEnumerable<AbstractItem> items, ICorpseEquipInfo hair, ICorpseEquipInfo beard) {
+			StartGenerating();
+			EncodeByte(0x3c, 0);
+			ushort blockSize = 5;
+			ushort numSegments = 0;
+			foreach (AbstractItem i in items) {
+				numSegments++;
+				EncodeUInt(i.FlaggedUid, blockSize);
+				EncodeUShort(i.Model, blockSize+4);
+				EncodeByte(0, blockSize+6);
+				EncodeUShort(i.ShortAmount, blockSize+7);
+				EncodeUShort(i.X, blockSize+9);
+				EncodeUShort(i.Y, blockSize+11);
+				EncodeUInt(corpse.FlaggedUid, blockSize+13);
+				EncodeUShort(i.Color, blockSize+17);
+				blockSize+=19;
+			}
+			if (hair != null) {
+				numSegments++;
+				EncodeUInt(hair.FlaggedUid, blockSize);
+				EncodeUShort(hair.Model, blockSize+4);
+				EncodeByte(0, blockSize+6);
+				EncodeUShort(1, blockSize+7);
+				EncodeUShort(0, blockSize+9);
+				EncodeUShort(0, blockSize+11);
+				EncodeUInt(corpse.FlaggedUid, blockSize+13);
+				EncodeUShort(hair.Color, blockSize+17);
+				blockSize+=19;
+			}
+			if (beard != null) {
+				numSegments++;
+				EncodeUInt(beard.FlaggedUid, blockSize);
+				EncodeUShort(beard.Model, blockSize+4);
+				EncodeByte(0, blockSize+6);
+				EncodeUShort(1, blockSize+7);
+				EncodeUShort(0, blockSize+9);
+				EncodeUShort(0, blockSize+11);
+				EncodeUInt(corpse.FlaggedUid, blockSize+13);
+				EncodeUShort(beard.Color, blockSize+17);
+				blockSize+=19;
+			}
+
+			if (blockSize == 0) {
+				DiscardUncompressed();
+				return false;
+			}
+			EncodeUShort(blockSize, 1);
+			EncodeUShort(numSegments, 3);
+			DoneGenerating(blockSize);
+			Compress();
+			return true;
+		}
+
+		public static void PrepareItemInCorpse(AbstractItem corpse, ICorpseEquipInfo i) {
+			Sanity.IfTrueThrow(i==null, "PrepareItemInContainer called with a null item.");
+			StartGenerating();
+			EncodeByte(0x25, 0);
+			EncodeUInt(i.FlaggedUid, 1);
+			EncodeUShort(i.Model, 5);
+			EncodeByte(0, 7);
+			EncodeUShort(1, 8);
+			EncodeUShort(0, 10);
+			EncodeUShort(0, 12);
+			EncodeUInt(corpse.FlaggedUid, 14);
+			EncodeUShort(i.Color, 18);
+			DoneGenerating(20);
 			Compress();
 		}
 	}

@@ -161,6 +161,12 @@
     <Compile Include="..\..\scripts\classtemplates\Container.Generated.cs">
       <Link>classtemplates\Container.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Corpse.cs">
+      <Link>classtemplates\Corpse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Corpse.Generated.cs">
+      <Link>classtemplates\Corpse.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\classtemplates\Equippable.cs">
       <Link>classtemplates\Equippable.cs</Link>
     </Compile>
@@ -271,6 +277,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
       <Link>systems\skills\ArmsLore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\DamageImpl.cs">
+      <Link>systems\skills\Combat\DamageImpl.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Discordance.cs">
       <Link>systems\skills\Discordance.cs</Link>

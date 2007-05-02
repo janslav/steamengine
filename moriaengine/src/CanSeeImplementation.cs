@@ -79,10 +79,10 @@ namespace SteamEngine {
 				GameConn c = Conn;
 				if (c != null) {
 					int oldValue = c.VisionRange;
+					c.VisionRange = value;
 					if (value > oldValue) {
 						this.SendNearbyStuff();//could be optimalized but... how often do you change vision range anyway ;)
 					}
-					c.VisionRange = value;
 				} else {
 					throw new SanityCheckException("You can't set NPC's update range.");
 				}

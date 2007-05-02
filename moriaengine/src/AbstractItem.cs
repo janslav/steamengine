@@ -21,11 +21,12 @@ using SteamEngine.Packets;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
-	public abstract class AbstractItem : Thing {
+	public abstract class AbstractItem : Thing, PacketSender.ICorpseEquipInfo {
 		private uint amount;
 		private string name;
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
@@ -197,7 +198,7 @@ namespace SteamEngine {
 			}
 		}
 		
-		public override uint FlaggedUid { 
+		public sealed override uint FlaggedUid { 
 			get {
 				return (uint) (Uid|0x40000000);
 			} 
@@ -290,39 +291,44 @@ namespace SteamEngine {
 				if (viewer != null && viewer.IsPC) {
 					ThrowIfDeleted();
 					viewer.ThrowIfDeleted();
-					GameConn conn = viewer.Conn;
-					if (conn!=null) {
+					GameConn viewerConn = viewer.Conn;
+					if (viewerConn!=null) {
 						//send container
 						bool sendProperties = false;
-						OpenedContainers.SetContainerOpened(conn, this);
+						OpenedContainers.SetContainerOpened(viewerConn, this);
 						using (BoundPacketGroup packets = PacketSender.NewBoundGroup()) {
 							PacketSender.PrepareOpenContainer(this);
 							if (Count>0) {
-								if (PacketSender.PrepareContainerContents(this, viewer)) {
+								if (PacketSender.PrepareContainerContents(this, viewerConn, viewer)) {
 									sendProperties = true;
 								}
 							}
-							packets.SendTo(conn);
+							packets.SendTo(viewerConn);
 						}
 						if (sendProperties) {
-							if (Globals.AOS && conn.Version.aosToolTips) {
+							if (Globals.AOS && viewerConn.Version.aosToolTips) {
 								foreach (AbstractItem contained in this) {
 									if (viewer.CanSeeVisibility(contained)) {
 										ObjectPropertiesContainer containedOpc = contained.GetProperties();
 										if (containedOpc != null) {
-											containedOpc.SendIdPacket(conn);
+											containedOpc.SendIdPacket(viewerConn);
 										}
 									}
 								}
 							}
 						}
+						On_ContainerOpen(viewerConn);
 					}
 				}
 			} else {
 				throw new InvalidOperationException("The item ("+this+") is not a container");
 			}
 		}
-		
+
+		public virtual void On_ContainerOpen(GameConn viewerConn) {
+
+		}
+
 		public ushort GetRandomXInside() {
 			//todo?: nonconstant bounds for this? or virtual?
 			return (ushort) Globals.dice.Next(20,128);
@@ -465,6 +471,19 @@ namespace SteamEngine {
 			point4d.y=y;
 		}
 		
+		//called from PrivatePickup
+		internal void FreeCont(AbstractCharacter droppingChar) {
+			if (this.point4d.x == 0xffff && this.point4d.y == 0xffff) {
+				return;
+			}
+			Thing c = this.Cont;
+			if (c != null) {
+				c.DropItem(droppingChar, this);
+			} else {
+				BeingPickedUpFromGround();
+			}
+		}
+
 		internal void BeingDroppedFromContainer() {
 			//Console.WriteLine("BeingDroppedFromContainer()");
 			OpenedContainers.SetContainerClosed(this);//if we are a container, moving us makes us closed
@@ -477,38 +496,39 @@ namespace SteamEngine {
 			point4d.x=0xffff;
 			point4d.y=0xffff;
 		}
-		
-		//called from PrivatePickup
-		internal void BeingPutInContainer(object container, ushort x, ushort y, sbyte z) {
-			//Console.WriteLine("BeingPutInContainer(object, ushort, ushort, sbyte)");
+
+		internal void BeingPickedUpFromGround() {
 			region = null;
-			if (point4d.x!=0xffff && point4d.y!=0xffff) {
-				Map map = GetMap();
-				if (Map.IsValidPos(point4d.x, point4d.y, M)) {
-					OpenedContainers.SetContainerClosed(this);
-					RemoveFromView();
-					map.Remove(this);
-				}
+			byte m = this.M;
+			if (Map.IsValidPos(point4d.x, point4d.y, m)) {
+				Map map = Map.GetMap(m);
+				OpenedContainers.SetContainerClosed(this);
+				RemoveFromView();
+				map.Remove(this);
 			}
-			contOrTLL=container;
-			point4d.x=x;
-			point4d.y=y;
-			point4d.z=z;
-			Cont.AdjustWeight(this.Weight);
+
+			//Invalid coordinates, to mark this as being in transition between a container and somewhere else.
+			point4d.x=0xffff;
+			point4d.y=0xffff;
 		}
-		internal void BeingPutInContainer(object container, byte layer) {
+		
+		internal void BeingEquipped(object container, byte layer) {
 			//Console.WriteLine("BeingPutInContainer(object, byte)");
 			NetState.ItemAboutToChange(this);
 			contOrTLL=container;
-			SetLayerSilently(layer);	//Change layer ('z') silently, without triggering resync or sector update code
+			this.point4d.x = 7000;
+			this.point4d.y = 0;
+			this.point4d.z = (sbyte) layer;
 			Cont.AdjustWeight(this.Weight);
 		}
+
 		internal void BeingPutInContainer(object container) {
 			//Console.WriteLine("BeingPutInContainer(object)");
 			NetState.ItemAboutToChange(this);
 			contOrTLL=container;
 			Cont.AdjustWeight(this.Weight);
 		}
+
 		internal bool TryRemoveFromContainer() {
 			ThingLinkedList list = this.contOrTLL as ThingLinkedList;
 			if ((list != null) && (list.ContAsThing != null)) {
@@ -528,7 +548,7 @@ namespace SteamEngine {
 			Thing c = Cont;
 			if (c!=null) {
 				c.DropItem(null, this);	//Does not place it on the ground, which is good when it's being deleted.
-			} else if (Map.IsValidPos(P())) {
+			} else if (Map.IsValidPos(this)) {
 				GetMap().Remove(this);
 			}
 			base.BeingDeleted();	//This MUST be called.
@@ -858,12 +878,6 @@ namespace SteamEngine {
 			this.SoundTo(SoundFX.MovingLeather, droppingChar);
 		}
 		
-		internal void FreeCont(AbstractCharacter droppingChar) {
-			if (Cont != null) {
-				Cont.DropItem(droppingChar, this);
-			}
-		}
-		
 		public override sealed bool IsItem { 
 			get {
 				return true;
@@ -898,6 +912,15 @@ namespace SteamEngine {
 				return this;
 			}
 		}
+
+		public virtual Direction Direction {
+			get {
+				return (Direction) 0;
+			}
+			set {
+				throw new NotSupportedException("You can't set Direction to "+this.GetType());
+			}
+		}
 		
 		//returns true if this is in given container or its subcontainers
 		public bool IsWithinCont(Thing container) {
@@ -915,15 +938,16 @@ namespace SteamEngine {
 		public override sealed IEnumerator GetEnumerator() {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
-				return EmptyEnumerator.instance;
+				return EmptyEnumerator<AbstractItem>.instance;
 			} else {
 				return tll.GetEnumerator();
 			}
 		}
 	}
 
-	public class EmptyEnumerator: IEnumerator, IEnumerable {
-		public static EmptyEnumerator instance = new EmptyEnumerator();
+	public class EmptyEnumerator<T> : IEnumerator<T>, IEnumerable<T>, IEnumerator, IEnumerable {
+		public static readonly EmptyEnumerator<T> instance = new EmptyEnumerator<T>();
+
 		private EmptyEnumerator() {
 		}
 
@@ -941,6 +965,17 @@ namespace SteamEngine {
 		}
 		
 		public IEnumerator GetEnumerator() {
+			return this;
+		}
+
+		T IEnumerator<T>.Current {
+			get { throw new Exception("this should not happen"); }
+		}
+
+		public void Dispose() {
+		}
+
+		IEnumerator<T> IEnumerable<T>.GetEnumerator() {
 			return this;
 		}
 	}

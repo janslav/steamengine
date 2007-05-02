@@ -550,7 +550,12 @@ namespace SteamEngine {
 			foreach (Thing t in Thing.AllThings) {
 				t.FixWeight();
 				if (t.IsOnGround) {
-					t.GetMap().Add(t);
+					if (Map.IsValidPos(t)) {
+						t.GetMap().Add(t);
+					} else {
+						Logger.WriteError(t+" has invalid coordinates for an item on ground. Removing.");
+						t.Delete();
+					}
 				}
 			}
 			Logger.WriteDebug("Done categorizing sector contents.");

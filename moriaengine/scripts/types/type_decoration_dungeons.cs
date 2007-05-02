@@ -20,10 +20,6 @@ using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 
-	public class t_corpse : CompiledTriggerGroup {
-		
-	}
-
 	public class t_sign_gump : CompiledTriggerGroup {
 		
 	}

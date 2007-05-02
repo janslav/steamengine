@@ -18,15 +18,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SteamEngine.Timers; //SimpleQueue :D
 
 namespace SteamEngine {
-	//the first uid should be 1, because clients show "hidden error" behaviour with a client of uid 1...
-	internal class UIDArray<ElementType> : IEnumerable<ElementType> {
+	internal class UIDArray<ElementType> : IEnumerable<ElementType> where ElementType : ObjectWithUid {
 		private ElementType[] array;
-		private Queue<int> freeSlots;
+		private SimpleQueue<int> freeSlots = new SimpleQueue<int>();
 		private int highestElement;
 		private int count;
 		private bool loadingFinished;
+
+		private List<bool> fakeSlots = new List<bool>(minimalLength);
+		private SimpleQueue<int> freeFakeSlots = new SimpleQueue<int>();
+
+		private const int minimalLength = 1000;
+		private const int uidOffset = 1000; //low uids have been found to cause problems in client.
+		private const int queueMaxCount = 1000;
+
+		private const int highestUid = 0x00ffffff-1;
 
 		internal int HighestElement { get {
 			return highestElement;
@@ -40,127 +49,29 @@ namespace SteamEngine {
 			highestElement=0;	//we don't have any elements yet
 			count=0;
 			loadingFinished=false;
-			array=new ElementType[1000];
-		}
-
-		//private class UIDIterator : IEnumerator {
-
-		//    private object current;
-		//    private int currIdx;
-		//    private UIDArray src;
-
-		//    internal UIDIterator(UIDArray src) {	
-		//        currIdx=1;
-		//        this.src=src;
-		//        current=null;
-		//    }
-
-		//    public object Current { get { 
-		//        return current;
-		//    } }
-
-		//    public bool MoveNext() {
-		//        while (currIdx<=src.HighestElement) {
-		//            current = src.Get(currIdx);
-		//            currIdx++;
-		//            if (current != null) {
-		//                return true;
-		//            }
-		//        }
-		//        return false;
-		//    }
-
-		//    public void Reset() {
-		//        currIdx=1;
-		//        current=null;
-		//    }
-		//}
-
-		public IEnumerator<ElementType> GetEnumerator() {
-		    //return new UIDIterator(this);
-			int currIdx=1;
-			int highestElement = this.HighestElement;
-			while (currIdx<=highestElement) {
-				ElementType o = array[currIdx];
-				if (!Object.ReferenceEquals(o, default(ElementType))) {
-					yield return o;
-				}
-				currIdx++;
-			}
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() {
-			return GetEnumerator();
+			array=new ElementType[minimalLength];
 		}
 
 		internal void Clear() {
-			freeSlots=new Queue<int>();
+			freeSlots.Clear();
+			freeFakeSlots.Clear();
+			fakeSlots.Clear();
 			highestElement=0;
 			count=0;
 			array=new ElementType[array.Length];
 			loadingFinished = false;
 		}
 
-		internal int Add(ElementType o) {
-			if (freeSlots.Count==0) {	//no indexes in the freeSlots queue
-				if (highestElement==array.Length-1) { //if highestElement is the size of the array let's move everything into a bigger array
-					ResizeArray(array.Length*2);
-				} //stick the object at the end as the new highestElement
-				highestElement++;
-				array[highestElement]=o;
-				count++;
-				return highestElement;
-			} else { //we have freeSlots available
-				int num=(int)freeSlots.Dequeue();
-				array[num]=o;
-				count++;
-				return num;
-			}
-		}
-
-		internal int NextFreeSlot() {
-			if (freeSlots.Count==0) { //no indexes in the freeSlots queue
-				if (highestElement==array.Length-1) { //if highestElement is the size of the array let's move everything into a bigger array
-					ResizeArray(array.Length*2);
-				} //stick the object at the end as the new highestElement
-				return highestElement+1;
-			} else { //we have freeSlots available
-				int num=freeSlots.Peek();
-				return num;
-			}
-		}
-
-		private void ResizeArray(int newSize) {
-			ElementType[] temp=new ElementType[newSize];
-			for (int i=0; i<array.Length; i++) {
-				temp[i]=array[i];
-			}
-			array=temp;
-		}
-
-		internal void LoadingFinished() {
-			loadingFinished=true;
-			freeSlots=new Queue<int>();
-			for (int i=1; i<highestElement; i++) {
-				if (array[i]==null) {
-					freeSlots.Enqueue(i);
-				}
-			}
-		}
-
-		internal void Add(ElementType o, int index) {
+		internal void AddLoaded(ElementType o, int loadedUid) {
+			int index = loadedUid - uidOffset;
 			if (loadingFinished) {
 				throw new ApplicationException("Add(object,index) disabled after LoadingFinished");
 			}
-			if (index<1) {
+			if (index<0) {
 				throw new IndexOutOfRangeException("Object with non-positive UID "+index+" found");
 			}
 			if (index>array.Length) { //index is too high, make the array bigger!
-				if (index>array.Length*2) { //index will be bigger than if we double the array
-					ResizeArray(index+1000);
-				} else {
-					ResizeArray(array.Length*2);
-				}
+				ResizeArray(index);
 			}
 			if (array[index]!=null) {
 				throw new IndexOutOfRangeException("Two objects attempted to take the same UID");
@@ -172,16 +83,70 @@ namespace SteamEngine {
 			count++;
 		}
 
-		internal ElementType Get(int index) { //may return a null object
-			if (index<array.Length && index>0) {
+		internal void Add(ElementType o) {
+			if (freeSlots.Count==0) {	//no indexes in the freeSlots queue
+				FillFreeSlotQueue();
+			}
+			int index = freeSlots.Dequeue();
+			int uid = index + uidOffset;
+			if (uid >= (highestUid - fakeSlots.Count)) {
+				throw new FatalException("We're out of UIDs. This is baaaad.");
+			}
+			o.Uid = uid;
+			array[index] = o;
+			count++;
+		}
+
+		private void FillFreeSlotQueue() {
+			freeSlots.Clear();
+
+			int count = 0;
+			for (int i = 0, n = array.Length; i<n; i++) {
+				if (array[i] == null) {
+					freeSlots.Enqueue(i);
+					count++;
+					if (count >= queueMaxCount) {
+						break;
+					}
+				}
+			}
+			if (count == 0) {
+				ResizeArray();
+				FillFreeSlotQueue();//try again
+			}
+		}
+
+		private void ResizeArray() {
+			ResizeImpl(array.Length*2);
+		}
+
+		private void ResizeArray(int highestElement) {
+			int newSize = Math.Max(highestElement + minimalLength, array.Length*2);
+			ResizeImpl(newSize);
+		}
+
+		private void ResizeImpl(int newSize) {
+			ElementType[] temp=new ElementType[newSize];
+			Array.Copy(this.array, temp, array.Length);
+			array=temp;
+		}
+
+		internal void LoadingFinished() {
+			loadingFinished=true;
+		}
+
+		internal ElementType Get(int uid) { //may return a null object
+			int index = uid - uidOffset;
+			if (index < array.Length && index >= 0) {
 				return array[index];
 			}
 			return default(ElementType);
 		}
 
-		internal void RemoveAt(int index) {
-			if (array[index]!=null) { //only add to queue if not already null
-				array[index]=default(ElementType);
+		internal void RemoveAt(int uid) {
+			int index = uid - uidOffset;
+			if (!Object.Equals(array[index], default(ElementType))) { //only add to queue if not already null
+				array[index] = default(ElementType);
 				if (index==highestElement) {
 					highestElement--;
 				} else {
@@ -191,13 +156,107 @@ namespace SteamEngine {
 			}
 		}
 
-		internal bool IsValid(int uid) {
-			return (uid>0 && uid<array.Length && array[uid]!=null);
+		internal void ReIndexAll() {
+			ElementType[] origArray = this.array;
+			int n = origArray.Length;
+			ElementType[] newArray = new ElementType[n];
+
+			for (int i = 0, newI = 0; i<n; i++) {
+				ElementType elem = origArray[i];
+				if (!Object.Equals(elem, default(ElementType))) {
+					newArray[newI] = elem;
+					elem.Uid = newI+uidOffset;
+					newI++;
+				}
+			}
 		}
 
-		//internal bool Is(int uid, Type t) {
-		//    if (!IsValid(uid)) return false;
-		//    return t.IsInstanceOfType(array[uid]);
-		//}
+		internal int GetFakeUid() {
+			if (freeFakeSlots.Count==0) {	//no indexes in the freeSlots queue
+				FillFreeFakeSlotQueue();
+			}
+			int index = freeFakeSlots.Dequeue();
+			fakeSlots[index] = true;
+			return highestUid - index;
+		}
+
+		private void FillFreeFakeSlotQueue() {
+			freeFakeSlots.Clear();
+
+			int count = 0;
+			for (int i = 0, n = fakeSlots.Capacity; i<n; i++) {
+				if (i >= fakeSlots.Count) {
+					fakeSlots.Add(false);
+				}
+				if (!fakeSlots[i]) {
+					freeFakeSlots.Enqueue(i);
+					count++;
+					if (count >= queueMaxCount) {
+						break;
+					}
+				}
+			}
+			if (count == 0) {
+				fakeSlots.Capacity = fakeSlots.Capacity * 2;
+				FillFreeFakeSlotQueue();//try again
+			}
+		}
+
+		internal void DisposeFakeUid(int uid) {
+			int index = highestUid - uid;
+			if (index < fakeSlots.Count) {
+				if (fakeSlots[index]) {
+					fakeSlots[index] = false;
+					freeFakeSlots.Enqueue(index);
+				}
+			}
+		}
+
+		public IEnumerator<ElementType> GetEnumerator() {
+			return new Enumerator(this);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() {
+			return new Enumerator(this);
+		}
+
+
+		private class Enumerator : IEnumerator<ElementType> {
+			private ElementType current;
+			private int currIdx;
+			private UIDArray<ElementType> src;
+
+			internal Enumerator(UIDArray<ElementType> src) {
+				this.src = src;
+				Reset();
+			}
+
+			public void Reset() {
+				currIdx=1;
+				current=default(ElementType);
+			}
+
+			public ElementType Current {
+				get { return current; }
+			}
+
+			public void Dispose() {
+			}
+
+			object IEnumerator.Current {
+				get { return current; }
+			}
+
+			public bool MoveNext() {
+				while (currIdx<=src.HighestElement) {
+					current = src.Get(currIdx);
+					currIdx++;
+					if (!Object.Equals(current, default(ElementType))) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
 	}
 }

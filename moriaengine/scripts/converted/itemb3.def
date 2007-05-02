@@ -348,7 +348,7 @@ DUPEITEM = 0xe8b
 
 [ItemDef 0xea9]
 
-[ContainerDef 0xeca]
+[CorpseDef 0xeca]
 CATEGORY = Decoration - Dungeons and The Dead
 SUBSECTION = Bones
 DESCRIPTION = Bones

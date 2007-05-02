@@ -147,7 +147,7 @@ namespace SteamEngine {
 		internal protected static ContOrPoint lastCreatedThingContOrPoint;
 		internal protected static IPoint4D lastCreatedIPoint;
 
-		public Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
+		internal Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
 			ThrowIfUnloaded();
 			lastCreatedThingContOrPoint = ContOrPoint.Point;
 			lastCreatedIPoint = new Point4D(x, y, z, m);
