@@ -55,10 +55,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		protected bool wasAddedAndSet = false;*/
 
 		[Remark("Width, height and positions are common to all basic components")]
-		protected int width, height, xPos, yPos;
-
-		[Remark("Should the component be  made transparent after writing out?")]
-		protected bool transparent = false;
+		protected int width, height, xPos, yPos;		
 
 		[Remark("List of all components children")]
 		protected List<GUTAComponent> components = new List<GUTAComponent>();
@@ -104,15 +101,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			set {
 				height = value;
-			}
-		}
-
-		public bool Transparent {
-			get {
-				return transparent;
-			}
-			set {
-				transparent = value;
 			}
 		}
 
@@ -220,9 +208,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.xPos = xPos;
 			this.yPos = yPos;
 			this.height = height;
-			this.width = width;
-			//make it automatically transparent
-			//this.transparent = true;
+			this.width = width;			
 		}
 
 		[Remark("When adding a child component, check if it is an instance of the GUTATable!")]
@@ -253,17 +239,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//make the inner space
 			gump.AddGumpPicTiled(xPos+ImprovedDialog.D_BORDER, yPos+ImprovedDialog.D_BORDER,
 								 width - 2 * ImprovedDialog.D_BORDER, height - 2 * ImprovedDialog.D_BORDER,
-								 ImprovedDialog.D_DEFAULT_DIALOG_BACKGROUND);
-			if (transparent) {
-				SetTransparency();
-			}
+								 ImprovedDialog.D_DEFAULT_DIALOG_BACKGROUND);			
 			WriteChildren();
-		}
-
-		[Remark("Make the whole table transparent inside the borders")]
-		public void SetTransparency() {
-			gump.AddCheckerTrans(xPos + ImprovedDialog.D_BORDER, yPos + ImprovedDialog.D_BORDER, width - 2*ImprovedDialog.D_BORDER, height - 2*ImprovedDialog.D_BORDER);
-		}
+		}		
 	}
 
 	[Remark("Table class - this class can be only added to the basic GUTAMatrix")]
@@ -277,6 +255,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("The height of each line in the pixels, defaultly is D_BUTTON_HEIGHT. Other values " +
 				"can be specified using the appropriate setter")]
 		private int rowHeight = ButtonFactory.D_BUTTON_HEIGHT;
+
+		[Remark("Shall the table's columns be made as transparent after writing out?")]
+		private bool transparent;
+		public bool Transparent {
+			get {
+				return transparent;
+			}
+			set {
+				transparent = value;
+			}
+		}
 
 		[Remark("Basic gump table - specify the number of rows only")]
 		public GUTATable(int rowCount) {
@@ -448,17 +437,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								 gumpBorders);
 			//then add the inner beige tile, delimit it from the inner border by a little space too
 			gump.AddGumpPicTiled(xPos, yPos, width, Height, gumpBackground);
-			if (transparent) {
-				SetTransparency();//make it transparent after writing out
-			}
+			
 			//write columns
 			WriteChildren();
-		}
-
-		[Remark("Make the whole row transparent, inside the inner borders")]
-		public void SetTransparency() {
-			gump.AddCheckerTrans(xPos, yPos, width, height);
-		}
+		}		
 	}
 
 	[Remark("Column - this can be added only to the GUTATable and it will contain all of the dialog elements")]
@@ -601,7 +583,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void WriteComponent() {
 			//position is specified, remove one space from the width (will appear on the right col. side)
 			gump.AddGumpPicTiled(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, height, gumpBackground);
-			if (transparent) {
+			if (((GUTATable)parent).Transparent) {//the parent table is set to be transparent
 				SetTransparency();//make it transparent after writing out
 			}
 			//write children (another inner GUTAMatrix or leaf components)
@@ -609,7 +591,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Make the whole column transparent")]
-		public void SetTransparency() {
+		private void SetTransparency() {
 			gump.AddCheckerTrans(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, height);
 		}
 	}
