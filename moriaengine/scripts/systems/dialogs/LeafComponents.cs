@@ -22,14 +22,14 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Leaf gump components cannot have any children, these are e.g buttons, inputs, texts etc.")]
-	public abstract class LeafGumpComponent : GumpComponent {
+	[Remark("Leaf GUTA components cannot have any children, these are e.g buttons, inputs, texts etc.")]
+	public abstract class LeafGUTAComponent : GUTAComponent {
 		[Remark("This is the ID many gump items have - buttons number, input entries number...")]
 		protected int id;
 
 		[Remark("Adding any children to the leaf is prohibited...")]
-		public override sealed void AddComponent(GumpComponent child) {
-			throw new GumpComponentCannotBeExtendedException("Gump component " + this.GetType() + " cannot have any children");
+		public override sealed void AddComponent(GUTAComponent child) {
+			throw new GUTAComponentCannotBeExtendedException("GUTAcomponent " + this.GetType() + " cannot have any children");
 		}
 	}
 
@@ -157,7 +157,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("The Button component class - it handles the button writing to the client")]
-		public class Button : LeafGumpComponent {
+		public class Button : LeafGUTAComponent {
 			private ButtonGump gumps;
 			private int page = 0;
 			private bool active = true;
@@ -178,7 +178,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we "+
                     " were provided only relative positions")]
-			public override void OnAdded(GumpComponent parent) {
+			public override void OnBeforeWrite(GUTAComponent parent) {
 				//no space here, the used button gumps have themselves some space...
 				xPos += parent.XPos;
 				yPos += parent.YPos;
@@ -205,7 +205,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("Set the position which was specified relatively")]
-			public override void OnAdded(GumpComponent parent) {
+			public override void OnBeforeWrite(GUTAComponent parent) {
 				xPos = xPos + parent.XPos;
 				yPos = yPos + parent.YPos;
 			}
@@ -232,7 +232,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("Set the position which was specified relatively")]
-			public override void OnAdded(GumpComponent parent) {
+			public override void OnBeforeWrite(GUTAComponent parent) {
 				xPos = xPos + parent.XPos;
 				yPos = yPos + parent.YPos;
 			}
@@ -310,7 +310,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("The Button component class - it handles the button writing to the client")]
-		public class Input : LeafGumpComponent {
+		public class Input : LeafGUTAComponent {
             private LeafComponentTypes type;
 			[Remark("We have either ID of the used (pre-)text, or the text string itself")]
 			private int textId;
@@ -344,7 +344,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we " +
                     " were provided only relative positions")]
-			public override void OnAdded(GumpComponent parent) {
+			public override void OnBeforeWrite(GUTAComponent parent) {
 				xPos += parent.XPos;
 				yPos += parent.YPos;
 				if (width == 0) {
@@ -459,7 +459,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("The text component class - it handles the text writing to the underlaying gump")]
-		public class Text : LeafGumpComponent {
+		public class Text : LeafGUTAComponent {
 			[Remark("The text hue in the input field - if not specified, the default will be used.")]
 			private Hues textHue;
 			[Remark("We have either ID of the used text, or the text string itself")]
@@ -483,7 +483,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("When added to the column we have to specify the position (count the absolute)")]
-			public override void OnAdded(GumpComponent parent) {
+			public override void OnBeforeWrite(GUTAComponent parent) {
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;
@@ -500,7 +500,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("The HTML text component class - allows making the text scrollable")]
-		public class HTMLText : LeafGumpComponent {
+		public class HTMLText : LeafGUTAComponent {
 			private bool isScrollable, hasBoundBox;
 			[Remark("The text is either specified or passed as a text id")]
 			private string text;
@@ -529,7 +529,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			[Remark("When added to the column we have to specify the position (count the absolute)")]
-			public override void OnAdded(GumpComponent parent) {
+			public override void OnBeforeWrite(GUTAComponent parent) {
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;

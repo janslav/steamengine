@@ -56,53 +56,53 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(50, 50);
 
 			//nadpis
-			dialogHandler.Add(new GumpTable(1, ButtonFactory.D_BUTTON_HEIGHT));
-			dialogHandler.Add(new GumpColumn());
+			dialogHandler.Add(new GUTATable(1));
+			dialogHandler.Add(new GUTAColumn());
 			dialogHandler.Add(TextFactory.CreateText("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")"));
 			//cudlik na zavreni dialogu
-			dialogHandler.AddLast(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0));
 			dialogHandler.MakeTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.Add(new GumpTable(1)); //radek na nadpisy
+			dialogHandler.Add(new GUTATable(1)); //radek na nadpisy
 
-            dialogHandler.Add(new GumpColumn(ButtonFactory.D_BUTTON_WIDTH)); //cudlik pro privolani hrace
+            dialogHandler.Add(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH)); //cudlik pro privolani hrace
 			dialogHandler.Add(TextFactory.CreateText("Come"));
 
-			dialogHandler.Add(new GumpColumn(180)); //Accounts
+			dialogHandler.Add(new GUTAColumn(180)); //Accounts
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1)); //tridit podle accountu asc
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6)); //tridit podle accountu desc			
             dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Account"));
 
-			dialogHandler.Add(new GumpColumn(180)); //Jméno
+			dialogHandler.Add(new GUTAColumn(180)); //Jméno
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2)); //tridit podle hráèù asc
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7)); //tridit podle hráèù desc			
             dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno"));
 
-			dialogHandler.Add(new GumpColumn(180));//Lokace
+			dialogHandler.Add(new GUTAColumn(180));//Lokace
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3)); //tridit dle lokaci asc
             dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 8)); //tridit podle lokaci desc			
             dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Lokace"));
 
-			dialogHandler.Add(new GumpColumn()); //Akce
+			dialogHandler.Add(new GUTAColumn()); //Akce
 			dialogHandler.Add(TextFactory.CreateText("Action"));
 
 			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam lidi
-            dialogHandler.Add(new GumpTable(ImprovedDialog.PAGE_ROWS, ButtonFactory.D_BUTTON_HEIGHT));
+            dialogHandler.Add(new GUTATable(ImprovedDialog.PAGE_ROWS));
 			dialogHandler.CopyColsFromLastTable();
 
 			bool prevNextColumnAdded = false; //pridat/nepridat sloupecek pro navigacni sipky?
 			if (firstiVal > 0) { //nejdeme od nulteho playera - jsme uz na dalsich strankach
-				dialogHandler.AddLast(new GumpColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));	
+				dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));	
 				prevNextColumnAdded = true; //"next" button uz nemusi vytvorit sloupecek 
                 dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, 4)); //prev
 			}
 			if(imax < playersList.Count) {//jeste bude dalsi stranka
 				if(!prevNextColumnAdded) { //jeste nemame sloupecek na prevnext buttony, pridat ted
-					dialogHandler.AddLast(new GumpColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
+					dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
 				}
                 dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, dialogHandler.LastColumn.Height - 21, 5)); //next
 			}
