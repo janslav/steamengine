@@ -97,11 +97,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for(int i = firstiVal; i < imax; i++) {
 				DelayedMsg msg = (DelayedMsg)messagesList[i];
 				Hues msgColor = msg.color;
-				dialogHandler.AddToColumn(0, rowCntr, TextFactory.CreateText(msgColor, msg.time.ToString()));//cas odeslani
-				dialogHandler.AddToColumn(1, rowCntr, TextFactory.CreateText(msgColor, (msg.sender == null ? MsgsBoard.NO_SENDER : msg.sender.Name))); //odesilatel
-				dialogHandler.AddToColumn(2, rowCntr, ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (2 * i) + 10)); //èíst
-				dialogHandler.AddToColumn(3, rowCntr, ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2 * i) + 11)); //smazat
-				dialogHandler.AddToColumn(4, rowCntr, TextFactory.CreateText(msgColor, msg.text)); //text zpravy				
+				dialogHandler.LastTable[rowCntr,0] = TextFactory.CreateText(msgColor, msg.time.ToString());//cas odeslani
+				dialogHandler.LastTable[rowCntr,1] = TextFactory.CreateText(msgColor, (msg.sender == null ? MsgsBoard.NO_SENDER : msg.sender.Name)); //odesilatel
+				dialogHandler.LastTable[rowCntr,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (2 * i) + 10); //èíst
+				dialogHandler.LastTable[rowCntr,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2 * i) + 11); //smazat
+				dialogHandler.LastTable[rowCntr,4] = TextFactory.CreateText(msgColor, msg.text); //text zpravy				
 
 				rowCntr++;
 			}
