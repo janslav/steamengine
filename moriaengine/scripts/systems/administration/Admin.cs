@@ -44,68 +44,49 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             ArrayList playersList = ScriptUtil.ArrayListFromEnumerable(Server.AllPlayers);            
             this.GumpInstance.SetTag(players, playersList);
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = (sa[1] == null ? 0 : (int)sa[1]);   //prvni index na strance (neprisel v argumentu?)
-			int imax = firstiVal + ImprovedDialog.PAGE_ROWS; //maximalni index (20 radku mame)
-			if (imax >= playersList.Count) { //neni uz konec seznamu?
- 				imax = playersList.Count;
-			}
-
+			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
+			//maximalni index (20 radku mame) + hlidat konec seznamu...
+			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, playersList.Count);
+			
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dialogHandler.CreateBackground(800);
 			dialogHandler.SetLocation(50, 50);
 
 			//nadpis
-			dialogHandler.Add(new GUTATable(1));
-			dialogHandler.Add(new GUTAColumn());
-			dialogHandler.Add(TextFactory.CreateText("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")"));
+			dialogHandler.Add(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")");
 			//cudlik na zavreni dialogu
-			dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0));
+			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.Add(new GUTATable(1)); //radek na nadpisy
+			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 180, 180, 180, 0)); 
+			//cudlik pro privolani hrace
+			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Come");
 
-            dialogHandler.Add(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH)); //cudlik pro privolani hrace
-			dialogHandler.Add(TextFactory.CreateText("Come"));
+			//Accounts
+			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit podle accountu asc
+            dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit podle accountu desc			
+            dialogHandler.LastTable[0,1] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Account");
 
-			dialogHandler.Add(new GUTAColumn(180)); //Accounts
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1)); //tridit podle accountu asc
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6)); //tridit podle accountu desc			
-            dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Account"));
+			//Jméno
+            dialogHandler.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle hráèù asc
+            dialogHandler.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit podle hráèù desc			
+            dialogHandler.LastTable[0,2] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno");
 
-			dialogHandler.Add(new GUTAColumn(180)); //Jméno
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2)); //tridit podle hráèù asc
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7)); //tridit podle hráèù desc			
-            dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno"));
+			//Lokace
+            dialogHandler.LastTable[0,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit dle lokaci asc
+            dialogHandler.LastTable[0,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6); //tridit podle lokaci desc			
+            dialogHandler.LastTable[0,3] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Lokace");
 
-			dialogHandler.Add(new GUTAColumn(180));//Lokace
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3)); //tridit dle lokaci asc
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 8)); //tridit podle lokaci desc			
-            dialogHandler.Add(TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Lokace"));
-
-			dialogHandler.Add(new GUTAColumn()); //Akce
-			dialogHandler.Add(TextFactory.CreateText("Action"));
-
+			//Akce
+			dialogHandler.LastTable[0,4] = TextFactory.CreateText("Action");
 			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam lidi
             dialogHandler.Add(new GUTATable(ImprovedDialog.PAGE_ROWS));
 			dialogHandler.CopyColsFromLastTable();
-
-			bool prevNextColumnAdded = false; //pridat/nepridat sloupecek pro navigacni sipky?
-			if (firstiVal > 0) { //nejdeme od nulteho playera - jsme uz na dalsich strankach
-				dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));	
-				prevNextColumnAdded = true; //"next" button uz nemusi vytvorit sloupecek 
-                dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, 4)); //prev
-			}
-			if(imax < playersList.Count) {//jeste bude dalsi stranka
-				if(!prevNextColumnAdded) { //jeste nemame sloupecek na prevnext buttony, pridat ted
-					dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
-				}
-                dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, dialogHandler.LastColumn.Height - 21, 5)); //next
-			}
 
 			switch ((SortingCriteria)sa[0]) {
 				case SortingCriteria.NameAsc:
@@ -139,18 +120,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Player plr = (Player)playersList[i];
 				Hues plrColor = Hues.PlayerColor;
 				//TODO - barveni dle prislusnosti
-				dialogHandler.AddToColumn(0, rowCntr, ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 10)); //player come
-                dialogHandler.AddToColumn(1, rowCntr, ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (4 * i) + 11)); //account detail
-				dialogHandler.AddToColumn(1, rowCntr, TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Account.Name)); //acc name
-                dialogHandler.AddToColumn(2, rowCntr, ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (4 * i) + 12)); //player info
-				dialogHandler.AddToColumn(2, rowCntr, TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Name)); //plr name
-                dialogHandler.AddToColumn(3, rowCntr, ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 13)); //goto location
-				dialogHandler.AddToColumn(3, rowCntr, TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Region.Name)); //region name
-				dialogHandler.AddToColumn(4, rowCntr, TextFactory.CreateText(plrColor, plr.Action.ToString())); //region name
+				dialogHandler.LastTable[rowCntr,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 10); //player come
+                dialogHandler.LastTable[rowCntr,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (4 * i) + 11); //account detail
+				dialogHandler.LastTable[rowCntr,1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Account.Name); //acc name
+                dialogHandler.LastTable[rowCntr,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (4 * i) + 12); //player info
+				dialogHandler.LastTable[rowCntr,2] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Name); //plr name
+                dialogHandler.LastTable[rowCntr,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 13); //goto location
+				dialogHandler.LastTable[rowCntr,3] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Region.Name); //region name
+				dialogHandler.LastTable[rowCntr,4] = TextFactory.CreateText(plrColor, plr.Action.ToString()); //region name
 				
 				rowCntr++;			
 			}
 			dialogHandler.MakeTableTransparent(); //zpruhledni zbytek dialogu
+
+			//now handle the paging 
+			dialogHandler.CreatePaging(playersList.Count, firstiVal);
 
 			//uložit info o právì vytvoøeném dialogu pro návrat
 			DialogStackItem.EnstackDialog(src, focus, D_Admin.Instance,
@@ -161,6 +145,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
+			ArrayList playersList = (ArrayList)gi.GetTag(players);
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				DialogStackItem dsi = null;
                 switch(gr.pressedButton) {
@@ -182,37 +168,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
 						dsi.Args[0] = SortingCriteria.LocationAsc; //uprav info o sortovani
 						dsi.Show();
-						break;
-                    case 4: //previous page
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[1] = Convert.ToInt32(dsi.Args[1]) - ImprovedDialog.PAGE_ROWS; //uprav info o stránkování 						
-						dsi.Show();
-						break;
-                    case 5: //next page
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[1] = Convert.ToInt32(dsi.Args[1]) + ImprovedDialog.PAGE_ROWS; //uprav info o stránkování 						
-						dsi.Show();
-						break;
-                    case 6: //acc tøídit desc
+						break;                    
+                    case 4: //acc tøídit desc
 						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
 						dsi.Args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
 						dsi.Show();
 						break;
-                    case 7: //hráèi tøídit desc
+                    case 5: //hráèi tøídit desc
 						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
 						dsi.Args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
 						dsi.Show();
 						break;
-                    case 8: //lokace tøídit desc
+                    case 6: //lokace tøídit desc
 						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
 						dsi.Args[0] = SortingCriteria.LocationDesc; //uprav info o sortovani
 						dsi.Show();
 						break;
                 }
-            } else { //skutecna adminovaci tlacitka z radku
-                //seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
-                ArrayList playersList = (ArrayList)gi.GetTag(players);
-
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+				return;
+			} else { //skutecna adminovaci tlacitka z radku
                 //zjistime kterej cudlik z radku byl zmacknut
                 int row = (int)(gr.pressedButton - 10) / 4;
                 int buttNum = (int)(gr.pressedButton - 10) % 4;

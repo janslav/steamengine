@@ -44,7 +44,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ArrayList messagesList = MsgsBoard.GetClientsMessages((Character)src);
 			this.GumpInstance.SetTag(messagesTag, messagesList);
 			int unreadCnt = MsgsBoard.CountUnread((Character)src);
-			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, messagesList.Count);
