@@ -53,23 +53,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(400, 300);
 
 			//first row - the label of the dialog
-			dialogHandler.Add(new GUTATable(1));
-			dialogHandler.Add(new GUTAColumn());
-			dialogHandler.Add(TextFactory.CreateText(label));
-			dialogHandler.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0));
+			dialogHandler.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0,0] = TextFactory.CreateText(label);
+			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
-
-			//count how many rows we may need
-			int rows = (dispText.Length * ImprovedDialog.D_CHARACTER_WIDTH) / dialogHandler.LastTable.Width;
 
 			//at least three rows of a button height (scrollbar has some demands)
-			dialogHandler.Add(new GUTATable((rows < 3 ? 3 : rows)));
-			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-			dialogHandler.Add(new GUTAColumn());
+			dialogHandler.Add(new GUTATable(3,0));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;						
+			//unbounded, scrollable html text area
+			dialogHandler.LastTable[0,0] = TextFactory.CreateHTML(dispText, false, true);
 			dialogHandler.MakeTableTransparent();
-			//unbounded, scrollable
-			dialogHandler.Add(TextFactory.CreateHTML(dispText, false, true));
 
 			dialogHandler.WriteOut();
 		}
