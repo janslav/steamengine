@@ -102,7 +102,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 "which is in the row2. "+
                 "You can of course create the dialog structure completely manually by creating lots of variables for "+
                 "all rows and columns, add them to the background table and add the leaf components to the columns. "+
-                "This process is necessary anyway if you want to create some inner tables...")]
+                "This process is necessary anyway if you want to create some inner tables..."+
+				
+				"DEPRECATED. Use table[x,y] (or table.AddToCell(row,col,comp) for LSCript) method instead."+
+				"Used only for adding the GUTATables")]
 		public void Add(GUTAComponent comp) {
 			if (comp is GUTAMatrix) {
 				//the GUTAMatrix can be only added to the GUTAColumn. It must be filled manually however.
@@ -111,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//the GUTATable will be added to the main background and then set as a new lastTable
 				background.AddComponent(comp);
 				lastTable = (GUTATable)comp;
-			} else if (comp is GUTAColumn) {
+			}else if (comp is GUTAColumn) {
 				//the GUTAColumn will be added to the lastTable and then set as a new lastColumn, if no lastTable is placed, 
 				//create the one basic (but this is not usual and should not happen !!!)
 				if (lastTable == null) {
@@ -136,18 +139,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Method for adding a last component to the parent - useful for columns when we want to "+
                 "add a column to the right side. It will recompute the previous column width to fit the space "+
                 "to the rest of the row to the last column (neverminding the actual width of this column)."+
-                "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method.")]
-		public void AddLast(GUTAComponent comp) {
+                "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method."+
+				"DEPRECATED, use GUTATable constructor instead. Converted to private method to be used in paging only!")]
+		private void AddLast(GUTAComponent comp) {
 			if (comp is GUTAColumn) {
 				if (lastTable == null || lastTable.Components.Count == 0) {
 					throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
 				}
 				//get the lastly added column
 				GUTAColumn lastCol = (GUTAColumn) lastTable.Components[lastTable.Components.Count-1];
-				//space between the previous column and the newly added last column                
-				//lastCol.Width += lastTable.Width - (lastCol.XPos - lastTable.XPos) - lastCol.Width - comp.Width;
-				//lastCol.Width -= comp.Width;
-
 				//the column will be added from the right side...
 				((GUTAColumn)comp).IsLast = true; 
 
@@ -159,19 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//call normal Add method
 				Add(comp);
 			}
-		}
-
-		[Remark("Method usable when iterating through some objects and adding them to the more than one columns "+
-                "(e.g. pages, admin dialog...). It takes the column number (starting from 0), the row number ("+
-                "number of the row in the GUTAColumn, and adds there a specified GUTAComponent.")]
-		public void AddToColumn(int colNumber, int rowNumber, GUTAComponent comp) {
-			//get the column to put the component to
-			GUTAColumn col = (GUTAColumn) lastTable.Components[colNumber];
-			//move the component to the desired row
-			comp.YPos += rowNumber * lastTable.RowHeight;
-			//and add the component
-			col.AddComponent(comp);
-		}
+		}		
 
 		[Remark("Take the columns in the last row and copy their structure to the new row."+
                 "They will take the new tables's rowCount. No underlaying children will be copied!")]
@@ -195,12 +183,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Take the last table, iterate through the columns and make them all transparent")]
 		public void MakeTableTransparent() {
-			lastTable.Transparent = true;
-			//foreach (GUTAColumn col in lastTable.Components) {
-			//	col.Transparent = true;
-			//}
-			//makte the table also transparent
-			//lastTable.Transparent = true;
+			lastTable.Transparent = true;			
 		}
 
 		[Remark("Last method to be called - it prints out the whole dialog")]
@@ -241,9 +224,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Add(new GUTATable(1,0));
 			lastTable[0,0] = TextFactory.CreateText("Stránka");
 													//type if input,x,y,ID, width, height, prescribed text
-			lastTable[0, 0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
-			lastTable[0, 0] = TextFactory.CreateText(95, 0, "/" + pagesCount.ToString());
-			lastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
+			lastTable[0,0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
+			lastTable[0,0] = TextFactory.CreateText(95, 0, "/" + pagesCount.ToString());
+			lastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
 			MakeTableTransparent(); //newly created row
 			//restore the last components
 			lastTable = storedLastTable;
@@ -299,6 +282,52 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
+		[Remark("This is the paging handler used in LScript where no GumpResponse is present"+
+				"src - player who has seen the dialog; buttNo - pressed button; selPageInpt - filled "+
+				"number of page to jump to (if any, used only when 'jump page button' was pressed, "+
+				"otherwise is null);"+
+				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;"+
+				"itemsCount - total count of diplayed items in the list")]
+		public static bool PagingButtonsHandled(Character src, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount) {
+			//stacked dialog item (it is necessary to have it here so it must be set in the 
+			//dialog construct method!)
+			DialogStackItem dsi = null;
+			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
+			switch(buttNo) {
+				case ID_PREV_BUTTON:
+					dsi = DialogStackItem.PopStackedDialog(src.Conn);
+					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - PAGE_ROWS;
+					dsi.Show();
+					pagingHandled = true;
+					break;
+				case ID_NEXT_BUTTON:
+					dsi = DialogStackItem.PopStackedDialog(src.Conn);
+					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + PAGE_ROWS;
+					dsi.Show();
+					pagingHandled = true;
+					break;
+				case ID_JUMP_PAGE_BUTTON:
+					dsi = DialogStackItem.PopStackedDialog(src.Conn);
+					//get the selected page number (absolute value - make it a bit idiot proof :) )
+					int selectedPage = selPageInpt;
+					if(selectedPage < 1) {
+						//idiot proof adjustment
+						src.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
+						selectedPage = 1;
+					}
+					//count the index of the first item
+					int countedFirstIndex = (selectedPage - 1) * PAGE_ROWS;
+					if(countedFirstIndex > itemsCount) { //get the last page
+						int lastPage = (itemsCount / PAGE_ROWS) + 1; //(int) casted last page number
+						countedFirstIndex = (lastPage - 1) * PAGE_ROWS; //counted fist item on the last page
+					} //otherwise it is properly set to the first item on the page
+					dsi.Args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
+					dsi.Show();
+					pagingHandled = true;
+					break;
+			}
+			return pagingHandled;
+		}
 		[Remark("Dialog constants")]
 		public const int D_DEFAULT_DIALOG_BORDERS = 9250; //grey borders
 		public const int D_DEFAULT_DIALOG_BACKGROUND = 9354; //beige background
@@ -323,7 +352,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public const int D_CHARACTER_WIDTH = 5; //approximate width of the normal character
 
 		[Remark("Number of normal rows on the various dialog pages (when paging is used)")]
-		public const int PAGE_ROWS = 3;
+		public const int PAGE_ROWS = 20;
 
 		[Remark("Page navigating buttons (constant IDs, different enough from those common used :))")]
 		public const int ID_PREV_BUTTON = 98765;

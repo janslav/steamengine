@@ -11,6 +11,24 @@ LScript (methodwrapper) neumi poustet metodu na objektech generickych typu
 argv(0).tag.pages[<idx>] (argv(0).tag.pages je LIST<>)
 	ERROR: (pages.scp, 15) Nothing to replace the node <ARG(idx)> at ARGV0.TAG(pages).INDEX(<ARG(idx)>).  with. This should not happen.
 
+v LSCriptu nelze pouzivat standardni settery pole:
+	23:40: ERROR: (G:\SteamEngine\MoriaEngineSVN\moriaengine\scripts\systems\administration\Pages\pages.scp, 141) The type System.Object[] is not indexable
+   at function/trigger 3	(G:\SteamEngine\MoriaEngineSVN\moriaengine\scripts\systems\administration\Pages\pages.scp, 144) 
+	at SteamEngine.LScript.OpNode_Lazy_Indexer.Run(ScriptVars vars) 
+	at SteamEngine.LScript.OpNode_Lazy_ExpressionChain.Run(ScriptVars vars) 
+	at SteamEngine.LScript.OpNode_Script.Run(ScriptVars vars) 
+	at SteamEngine.LScript.LScriptHolder.Run(Object self, ScriptArgs sa) 
+	at SteamEngine.ScriptHolder.TryRun(Object self, ScriptArgs sa) 
+
+	vyhoxzeno pri pouziti : dsi.Args[0] = SortingCriteria.NameAsc //uprav info o sortovani
+	docasne bylo niutno nahradit pomoci dsi.Args.set_Item(0,SortingCriteria.NameAsc) //uprav info o sortovani
+
+
+Vyresit nutnost nejakyho nastaveni regionu pri prvnim spusteni sveta (viz vypis)
+	CRITICAL: Regions not used.: No world region defined. at SteamEngine.Region.LoadingFinished() 
+			IP Address 0 : xxx.xxx.xxx.xxx
+
+
 
 ----------------------------------------------------
 

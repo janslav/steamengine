@@ -26,6 +26,7 @@ namespace SteamEngine.CompiledScripts {
 		Green=0x44,
 		Info=0x282, //shit color :) (dark yellow-green-brown undefinable) :-/ its hard to choose
         //text colors
+		PageRepliedColor = 1740, //some other orange shit (used for labeling replied pages)
         WriteColor=2300,
         PlayerColor=2301,//color for players name in Admin dialog (until the coloring players is solved)
 		WriteColor2=0481,
