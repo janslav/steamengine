@@ -70,26 +70,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             dialogHandler.SetLocation(350, 350);
 
             //first row - the label of the dialog
-            dialogHandler.Add(new GUTATable(1));
-			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-            dialogHandler.Add(new GUTAColumn());
-            dialogHandler.MakeTableTransparent();
-            dialogHandler.Add(TextFactory.CreateText(this.Label));
+            dialogHandler.Add(new GUTATable(1,0));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;            
+            dialogHandler.LastTable[0,0] = TextFactory.CreateText(this.Label);
+			dialogHandler.MakeTableTransparent();
 
             //second row - the basic, whole row, input field
-            dialogHandler.Add(new GUTATable(1));
-			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-            dialogHandler.Add(new GUTAColumn());
-            dialogHandler.MakeTableTransparent();
-            dialogHandler.Add(InputFactory.CreateInput(LeafComponentTypes.InputText, 1, this.DefaultInput));
+            dialogHandler.Add(new GUTATable(1,0));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;            
+            dialogHandler.LastTable[0,0] = InputFactory.CreateInput(LeafComponentTypes.InputText, 1, this.DefaultInput);
+			dialogHandler.MakeTableTransparent();
 
             //last row with buttons
-            dialogHandler.Add(new GUTATable(1));
-            dialogHandler.Add(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2));
-            dialogHandler.Add(new GUTAColumn(ButtonFactory.D_BUTTON_WIDTH));
-            dialogHandler.Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 1));
-            dialogHandler.Add(new GUTAColumn());
+			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH,0));
+            dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
+            dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);            
 
             dialogHandler.WriteOut();
         }
@@ -97,12 +92,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         [Remark("Button pressed - exit the dialog or pass the calling onto the inderlaying inputDef")]
         public override void OnResponse(GumpInstance gi, GumpResponse gr) {
             switch(gr.pressedButton) {
-                case 1: //exit
+                case 0: //exit or rightclick
+					//znovuzavolat pripadny predchozi dialog
+					DialogStackItem.ShowPreviousDialog(gi.Cont.Conn);
                     break;
-                case 2: //OK
+                case 1: //OK
                     //pass the call with the input value
                     string inputVal = gr.GetTextResponse(1);
                     this.Response((Character)gi.Cont, gi.Focus, inputVal);
+					//a zavolat predchozi dialog
+					DialogStackItem.ShowPreviousDialog(gi.Cont.Conn);
                     break;
             }
         }

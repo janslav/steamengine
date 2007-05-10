@@ -350,6 +350,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		[Remark("ALternative way to add something to the desired place in the GUTATable. "+
+				"Used from LSCript as LSCript cannot handle 'this[x,y]' notation yet...")]
+		public void AddToCell(int row, int col, GUTAComponent comp) {
+			this[row, col] = comp;
+		}
+
 		[Remark("The method called when the row is added to the table. It will set the rows positions"+
                 " and size")]
 		protected override void OnBeforeWrite(GUTAComponent parent) {

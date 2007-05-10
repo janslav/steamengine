@@ -95,6 +95,14 @@ namespace SteamEngine.LScript {
 			return Thing.UidGetThing(uid);
 		}
 
+		public static int Min(int int1, int int2) {
+			return Math.Min(int1, int2);
+		}
+
+		public static int Max(int int1, int int2) {
+			return Math.Max(int1, int2);
+		}
+
 		//public static int negativenumber() {
 		//	return -1;
 		//}

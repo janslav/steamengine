@@ -68,6 +68,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			cont.SendGump(focus, instance, args);
 		}
 
+		[Remark("LSCript used method for setting the specified argument's value")]
+		public void SetArgValue(int index, object value) {
+			args[index] = value;
+		}
+
+		[Remark("LSCript used method for getting the specified argument's value")]
+		public object GetArgValue(int index) {
+			return args[index];
+		}
+
 		[Remark("Store the info about the dialog to the dialog stack. Used for " +
 			"storing info about the last used dialog whjich can be used to reopen the dialog " +
 			"when exiting from the following dialog for instance." +
