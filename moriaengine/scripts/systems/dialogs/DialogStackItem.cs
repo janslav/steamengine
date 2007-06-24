@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using SteamEngine;
 using SteamEngine.LScript;
@@ -34,7 +35,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Instance of the dialog to be recalled")]
 		Gump instance;
 		[Remark("Parameters of the dialog as used")]
-		object[] args;
+		object[] args;		
 		[Remark("Cont as was on the dialog instance - where is the dialog set")]
 		AbstractCharacter cont;
 		[Remark("Focus from the original dialog")]

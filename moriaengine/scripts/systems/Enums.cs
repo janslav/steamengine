@@ -31,7 +31,11 @@ namespace SteamEngine.CompiledScripts {
         PlayerColor=2301,//color for players name in Admin dialog (until the coloring players is solved)
 		WriteColor2=0481,
 		ReadColor=2303,
-		NAColor=2305
+		NAColor=2305,
+
+		SettingsTitleColor = 2413, //the settings category color
+		SettingsNormalColor = 2300, //normal settings items
+		SettingsFailedColor = 0x25 //setting items that weren't possible to be set
 	}
 
 	[Remark("Various sorting criteria used in different dialogs")]
@@ -79,6 +83,13 @@ namespace SteamEngine.CompiledScripts {
         InputText,
         InputNumber
     }
+
+	public enum SettingsDisplay {
+		[Remark("Zobrazit vsechny kategorie v jednom dialogu")]
+		All,
+		[Remark("Zobrazit jen jednu vybranou kategorii")]
+		Single
+	}
 
 	[Remark("Urcuje zdroj damage, neboli typ utoku")]
 	public enum DamageSource {

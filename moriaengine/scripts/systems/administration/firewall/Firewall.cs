@@ -50,13 +50,6 @@ namespace SteamEngine.CompiledScripts {
         [SavedMember]
         private static ArrayList blockedIPRangeEntries = new ArrayList();
 
-        [Remark("IPEnry sorting criteria, used in method GetSortedBy")]
-        public const string ACCOUNTUP = "accountup";
-        public const string IPUP = "ipup";
-        public const string ACCOUNTDOWN = "accountdown";
-        public const string IPDOWN = "ipdown";
-
-
         [Remark("Various comparators")]
         private static IPComparator ipComparator = new IPComparator();
         private static AccountComparator accComparator = new AccountComparator();
