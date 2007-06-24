@@ -285,7 +285,76 @@ namespace SteamEngine.Persistence {
 			}
 			return true;
 		}
-		
+
+		[Remark("Return the type of the type referenced by given MemberInfo. "+
+				"It will also set the provided object with the member's value using the"+
+				"parent's value to get it.")]
+		public static Type GetMemberType(MemberInfo mi, object parentValue, out object value) {			
+			if(mi.MemberType == MemberTypes.Property) {
+				PropertyInfo pi = (PropertyInfo)mi;
+				try {					
+					value = pi.GetValue(parentValue, null);
+				} catch(TargetException tae) { //the value still could not be found
+					value = null;
+				}
+				return pi.PropertyType;
+			} else {
+				FieldInfo fi = (FieldInfo)mi;
+				if(fi.IsStatic) {
+					//do not bother with any parent values, static field is static field and has only one value...
+					//we dont need any info about the parent's instance (if any)
+					value = fi.GetValue(null);
+				} else {
+					try {
+						value = fi.GetValue(parentValue); //we expect the parent's instance here
+					} catch(TargetException mae) {
+						//something wrong
+						value = null;
+					}
+				}
+				return fi.FieldType;
+			}
+		}
+
+		[Remark("Set the member with given value. If the member is statical, then it is easy to proceed"+
+				"but non-statical members must have the parents object reference to successfully set "+
+				"their new value, returns true or false if the setting is successful or not.")]
+		public static bool SetMemberValue(MemberInfo mi, object parentValue, object value) {
+			if(mi.MemberType == MemberTypes.Property) {
+				PropertyInfo pi = (PropertyInfo)mi;
+				try {					
+					pi.SetValue(parentValue,value,null);
+				} catch(TargetException tae) { //the value still could not be found
+					return false;
+				}
+			} else {
+				FieldInfo fi = (FieldInfo)mi;
+				if(fi.IsStatic) {
+					//do not bother with any parent values, static field is static field and has only one value...
+					//we dont need any info about the parent's instance (if any)
+					fi.SetValue(null, value);
+				} else {
+					try {
+						fi.SetValue(parentValue, value); //we expect the parent's instance here
+					} catch(TargetException tae) {
+						//something wrong
+						return false;
+					}
+				}				
+			}
+			return true; //success
+		}
+
+		[Remark("Return the value of the given MemberInfo. Use the static way to obtain it so it is not "+
+				"applicable for the non static fields or members.")]
+		public static object GetMemberValue(MemberInfo mi) {
+			if(mi.MemberType == MemberTypes.Property) {
+				return ((PropertyInfo)mi).GetValue(null, null);				
+			} else {
+				return ((FieldInfo)mi).GetValue(null);				
+			}
+		}
+
 		public static bool IsKnownSectionName(string name) {
 			return implementorsByName.ContainsKey(name);
 		}

@@ -165,7 +165,7 @@ namespace SteamEngine {
 		public SEBugException(LogStr s):base(s) {}
 	}
 
-	public class SanityCheckException : FatalException {
+	public class SanityCheckException : SEException {
 		public SanityCheckException() {
 		}
 		public SanityCheckException(string s) : base(s) {

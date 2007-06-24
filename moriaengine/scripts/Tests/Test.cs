@@ -19,8 +19,103 @@ using System;
 using System.Collections;
 using SteamEngine;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
+
+	[HasSavedMembers]
+	[Remark("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]		
+	public static class TESTSettClass {
+		[SavedMember("attr1", "Category1")]
+		private static string att1 = "pepicek";
+		[SavedMember("attr2", "Category1")]
+		private static string att2 = "jiricek";
+		[SavedMember("attr3", "Category1")]
+		private static int att3 = 5;
+		[SavedMember("attr4", "Category2")]
+		private static DateTime att4 = new DateTime();
+
+		[SavedMember("attr5", "Categotry3")]
+		private static TestSavedClass1 att5 = new TestSavedClass1();
+		[SavedMember("attr6", "Categotry3")]
+		private static string att6 = "frantik";
+		[SavedMember("attr7", "Categotry4")]
+		private static string att7 = "zmolík";
+		[SavedMember("attr8", "Categotry4")]
+		private static TimeSpan att8 = new TimeSpan();
+		[SavedMember("attr9", "Categotry4")]
+		private static TimeSpan att9 = new TimeSpan();
+		[SavedMember("attr10", "Categotry5")]
+		private static TestSavedClass2 att10 = new TestSavedClass2();
+		[SavedMember("attr11", "Categotry6")]
+		private static TestSavedClass1 att11 = new TestSavedClass1();
+		[SavedMember("attr12", "Categotry5")]
+		private static TestSavedClass2 att12 = new TestSavedClass2();
+		[SavedMember("attr13", "Categotry6")]
+		private static TestSavedClass1 att13 = new TestSavedClass1();
+		[SavedMember("attr14", "Categotry7")]
+		private static TestSavedClass2 att14 = new TestSavedClass2();
+		[SavedMember("attr15", "Categotry7")]
+		private static TestSavedClass1 att15 = new TestSavedClass1();
+		[SavedMember("attr16", "Categotry8")]
+		private static TestSavedClass2 att16 = new TestSavedClass2();
+		[SavedMember("attr17", "Categotry8")]
+		private static TestSavedClass1 att17 = new TestSavedClass1();
+		[SavedMember("attr18", "Categotry9")]
+		private static TestSavedClass2 att18 = new TestSavedClass2();
+		[SavedMember("attr19", "Categotry9")]
+		private static TestSavedClass1 att19 = new TestSavedClass1();
+		[SavedMember("attr20", "Categotry7")]
+		private static TestSavedClass1 att20 = new TestSavedClass1();
+		[SavedMember("attr21", "Categotry8")]
+		private static TestSavedClass2 att21 = new TestSavedClass2();
+		[SavedMember("attr22", "Categotry8")]
+		private static TestSavedClass1 att22 = new TestSavedClass1();
+		[SavedMember("attr25", "Categotry9")]
+		private static string att25 = "tencobymelbytprvninadasistarnce";
+		[SavedMember("attr23", "Categotry9")]
+		private static TestSavedClass2 att23 = new TestSavedClass2();
+		[SavedMember("attr24", "Categotry9")]
+		private static TestSavedClass1 att24 = new TestSavedClass1();
+	}
+
+	[SaveableClass]
+	public class TestSavedClass1 {
+		[LoadingInitializer]
+		public TestSavedClass1() {
+		}
+
+		[SaveableData("inattr1")]
+		public string savedatt1 = "Maruska";
+		[SaveableData("inattr2")]
+		public bool savedatt2 = false;
+		[SaveableData("inattr3")]
+		public int savedatt3 = 3;
+		[SaveableData("inattr4")]
+		public bool savedatt4 = false;
+		[SaveableData("inattr5")]
+		public TimeSpan savedatt5 = new TimeSpan();
+	}
+
+	[SaveableClass]
+	public class TestSavedClass2 {
+		[LoadingInitializer]
+		public TestSavedClass2() {
+		}
+
+		[SaveableData("inattr6")]
+		public string savedatt6 = "Jenicek a Marenka";
+		[SaveableData("inattr7")]
+		public bool savedatt7 = true;
+		[SaveableData("inattr8")]
+		public int savedatt8 = 18;
+		[SaveableData("inattr9")]
+		public DateTime savedatt9 = new DateTime();
+		[SaveableData("inattr10")]
+		public TimeSpan savedatt10 = new TimeSpan();
+	}
+
 
 	//If something looks difficult, make suggestions for ways to make it easier!
 

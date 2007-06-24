@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 "to the rest of the row to the last column (neverminding the actual width of this column)."+
                 "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method."+
 				"DEPRECATED, use GUTATable constructor instead. Converted to private method to be used in paging only!")]
-		private void AddLast(GUTAComponent comp) {
+		internal void AddLast(GUTAComponent comp) {
 			if (comp is GUTAColumn) {
 				if (lastTable == null || lastTable.Components.Count == 0) {
 					throw new SEException("Cannot add a last column into the row which either does not exist or is empty");

@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             dialogHandler.WriteOut();
         }
 
-        [Remark("Button pressed - exit the dialog or pass the calling onto the inderlaying inputDef")]
+        [Remark("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
         public override void OnResponse(GumpInstance gi, GumpResponse gr) {
             switch(gr.pressedButton) {
                 case 0: //exit or rightclick

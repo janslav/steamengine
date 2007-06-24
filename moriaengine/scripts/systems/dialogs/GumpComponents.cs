@@ -279,7 +279,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int RowCount {
 			get {
 				return rowCount;
-			}			
+			}
+			set {//the setter may be needed in 'setting' dialog - we may need to add some rows...
+				rowCount = value; 
+			}
 		}
 
 		[Remark("Row Height is set automatically to the default value, other values are to be" +

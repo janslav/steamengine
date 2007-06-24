@@ -272,6 +272,21 @@
     <Compile Include="..\..\scripts\systems\mailingsystem\MessagesDialog.cs">
       <Link>systems\mailingsystem\MessagesDialog.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\DefsSetting.cs">
+      <Link>systems\nastaveni\DefsSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\SettingsCategories.cs">
+      <Link>systems\nastaveni\SettingsCategories.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\SettingsResult.cs">
+      <Link>systems\nastaveni\SettingsResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\SettingsUtils.cs">
+      <Link>systems\nastaveni\SettingsUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\StaticsSetting.cs">
+      <Link>systems\nastaveni\StaticsSetting.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>

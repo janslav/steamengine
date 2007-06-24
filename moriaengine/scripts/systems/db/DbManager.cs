@@ -31,7 +31,9 @@ using MySql.Data.MySqlClient;
 namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
 	public static class DbManager {
-		[SavedMember]
+		[SavedMember("DBConfig","Database configuration")]
+		[Remark("This will appear as a subdialog in the settings dialog, allowing us to set "+
+				"database parametes online.")]
 		private static DbConfig config = new DbConfig();
 
 		public static DbConfig Config { get {
@@ -79,15 +81,15 @@ namespace SteamEngine.CompiledScripts {
 		public DbConfig() {
 		}
 
-		[SaveableData]
+		[SaveableData("IPAddress")]
 		public IPAddress server = IPAddress.Loopback;
-		[SaveableData]
+		[SaveableData("root")]
 		public String user = "root";
-		[SaveableData]
+		[SaveableData("password")]
 		public String password = "";
-		[SaveableData]
+		[SaveableData("use DB")]
 		public bool useDb = false;
-		[SaveableData]
+		[SaveableData("DB Name")]
 		public string dbName = "steamengine";
 	}
 }

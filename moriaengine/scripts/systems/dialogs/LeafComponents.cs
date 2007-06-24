@@ -400,13 +400,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Basic factory method creates the text field with a given _relative_ position in the column"+
-                " and a specified color")]
+			   " and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, string text) {
 			return new Text(xPos, yPos, hue, text);
 		}
 
 		[Remark("Basic factory method creates the text field form the previously added text (by ID) with a given _relative_ " +
-                " position in the column and a specified color")]
+                " position in the column and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, int textId) {
 			return new Text(xPos, yPos, hue, textId);
 		}
