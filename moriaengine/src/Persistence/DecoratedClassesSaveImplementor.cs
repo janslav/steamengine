@@ -39,7 +39,22 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(SaveAttribute))]
 	[AttributeUsage(AttributeTargets.Class|AttributeTargets.Struct)]
 	public class SaveableClassAttribute : Attribute {
-		//no params
+		private string description;
+
+		public string Description {
+			get {
+				return description;
+			}
+		}
+
+		//no params constructor
+		public SaveableClassAttribute() {
+		}
+
+		//constructor allowing us to specify the name of the saveableclass displayed in settings dialog
+		public SaveableClassAttribute(string desc) {
+			description = desc;
+		}
 	}
 
 	[Summary("Use to mark the simple initializer of loaded instances")]
@@ -52,8 +67,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
 	[AttributeUsage(AttributeTargets.Method|AttributeTargets.Constructor)]
-	public class LoadingInitializerAttribute : Attribute {
-		//no params
+	public class LoadingInitializerAttribute : Attribute {		
 	}
 
 	[Summary("Use to mark the initializer that takes whole saved section as it's parameter.")]
@@ -84,7 +98,22 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(SaveableClassAttribute))]
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
 	public class SaveableDataAttribute : Attribute {
-		//no params
+		private string description;
+
+		public string Description {
+			get {
+				return description;
+			}
+		}
+
+		//no params constructor
+		public SaveableDataAttribute() {
+		}
+
+		//constructor allowing us to specify the displayed name of the attribute
+		public SaveableDataAttribute(string desc) {
+			description = desc;
+		}
 	}
 
 	[Summary("Use to mark the instance method that is repeatedly called for every line in the loaded section.")]
