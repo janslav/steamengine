@@ -35,10 +35,10 @@ namespace SteamEngine.CompiledScripts {
 		//tohle bude tag urcujici hashtabulku s informaci o klicich kategorii 
 		//pro tu kterou stranku - tj ktery klic bude na ktere strance prvni
 		//je to nahrazka za klasicky radkovy paging protoze tady pocty radku nesledujeme
-		private readonly TagKey pageInfoMap = TagKey.Get("pageInfoMap");
-		private readonly TagKey lastKeyTag = TagKey.Get("lastKeyTag");
-		private readonly TagKey lastIndexTag = TagKey.Get("lastIndexTag");
-		private readonly TagKey categoriesListTag = TagKey.Get("categoriesListTag");
+		private readonly TagKey pageInfoMap = TagKey.Get("_pageInfoMap_");
+		private readonly TagKey lastKeyTag = TagKey.Get("_lastKeyTag_");
+		private readonly TagKey lastIndexTag = TagKey.Get("_lastIndexTag_");
+		private readonly TagKey categoriesListTag = TagKey.Get("_categoriesListTag_");
 
 		private int rowCounter; //pocitadlo radku pro konstrukci dialogu
 		private int dlgIndex; //indexování inputfieldù v dialogu
@@ -267,7 +267,13 @@ namespace SteamEngine.CompiledScripts {
 			} else if(gr.pressedButton == 0) { //exit button
 				DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
 				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
-			} else if(gr.pressedButton == 1) { //nastaveni		
+			} else if(gr.pressedButton == 1) { //nastaveni
+				//napred vycistime vsechny mozne predchozi neuspechy v nastaveni - nyni totiz jedem znova
+				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
+				foreach(SettingsCategory sCat in catlist) {
+					sCat.ClearSettingValues();
+				}
+
 				TryMakeSetting(valuesToSet,gr);
 				dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
 				dsi.Args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
@@ -313,7 +319,7 @@ namespace SteamEngine.CompiledScripts {
 			if(!keyFrom.Equals("")) {//je-li keyFrom prazdny, pak zaciname od zacatku normalka
 				for(int i = 0; i < catarray.Length; i++) {
 					string key = catarray[i].Name;
-					if(key.Equals(keyFrom)) {						
+					if(key.ToUpper().Equals(keyFrom.ToUpper())) {//velka/mala pismena nas nezajimaji
 						break;
 					}
 					strIdx++;

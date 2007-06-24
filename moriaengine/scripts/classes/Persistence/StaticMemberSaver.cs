@@ -187,11 +187,12 @@ namespace SteamEngine.CompiledScripts {
 				Dictionary<string, List<SettingsValue>> tempDict = new Dictionary<string, List<SettingsValue>>();
 				foreach (MemberInfo mi in registeredMembers) {
 					//get instances of the SavedMemberAttribute classes
-					object[] attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute), false);
-					if (attrs.Length > 0) {
-						string desc = ((SavedMemberAttribute) attrs[0]).Description;
-						if (desc != null) {
-							string category = ((SavedMemberAttribute) attrs[0]).Category;
+					object[] attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute),false);
+					if(attrs.Length > 0) {
+						SavedMemberAttribute smAttr = (SavedMemberAttribute)attrs[0];
+						string desc = smAttr.Description;
+						if(desc != null) {
+							string category = smAttr.Category;							
 							List<SettingsValue> catList = null;
 							SettingsValue val = new SettingsValue(desc, mi); //create the one dialog field
 							try {
@@ -256,7 +257,7 @@ namespace SteamEngine.CompiledScripts {
 			for(int i = 0; i < cat.Members.Length; i++) {
 				SettingsValue setVal = (SettingsValue)cat.Members[i]; //zatim je mozno takto pretypovat, vse je SettingsValue
 				object membersValue;
-				Type membersType = ObjectSaver.GetMemberType(setVal.Member, cat.Value, out membersValue);
+				Type membersType = SettingsUtilities.GetMemberType(setVal.Member, cat.Value, out membersValue);
 				setVal.Value = membersValue;//takto dostaneme hodnotu instance tohoto membera
 				if(!ObjectSaver.IsSimpleSaveableType(membersType)) {//mame tu slozeny typ?
 					//tento slozeny member musi obsahovat vnorene SaveableData ktere budou zobrazeny jako vnitrni kategorie
