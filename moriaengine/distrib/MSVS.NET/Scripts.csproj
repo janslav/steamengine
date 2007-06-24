@@ -167,6 +167,12 @@
     <Compile Include="..\..\scripts\classtemplates\Corpse.Generated.cs">
       <Link>classtemplates\Corpse.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Destroyable.cs">
+      <Link>classtemplates\Destroyable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Destroyable.Generated.cs">
+      <Link>classtemplates\Destroyable.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\classtemplates\Equippable.cs">
       <Link>classtemplates\Equippable.cs</Link>
     </Compile>
@@ -208,6 +214,18 @@
     </Compile>
     <Compile Include="..\..\scripts\classtemplates\Ship.Generated.cs">
       <Link>classtemplates\Ship.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Weapon.cs">
+      <Link>classtemplates\Weapon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Weapon.Generated.cs">
+      <Link>classtemplates\Weapon.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Wearable.cs">
+      <Link>classtemplates\Wearable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\classtemplates\Wearable.Generated.cs">
+      <Link>classtemplates\Wearable.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\Admin.cs">
       <Link>systems\administration\Admin.cs</Link>
@@ -292,6 +310,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
       <Link>systems\skills\ArmsLore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\CombatSettings.cs">
+      <Link>systems\skills\Combat\CombatSettings.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Combat\DamageImpl.cs">
       <Link>systems\skills\Combat\DamageImpl.cs</Link>

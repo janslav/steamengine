@@ -71,15 +71,15 @@ namespace SteamEngine.Packets {
 		private byte gender;
 		private ulong gold;
 
-		private short physicalResist;
-		private short fireResist;
-		private short coldResist;
-		private short poisonResist;
-		private short energyResist;
+		private short armorClass;
+		private short stat1;
+		private short stat2;
+		private short stat3;
+		private short stat4;
 		private float weight;
-		private short luck;
-		private short minDamage;
-		private short maxDamage;
+		private short stat5;
+		private short stat6;
+		private short stat7;
 		private long tithingPoints;
 
 		private ushort[] changedSkills = new ushort[AbstractSkillDef.SkillsCount];
@@ -498,15 +498,15 @@ namespace SteamEngine.Packets {
 				intel = c.Int;
 				gender = c.gender;
 				gold = c.Gold;
-				physicalResist = c.ExtendedStatusNum4;
+				armorClass = c.ArmorClass;
 				weight = c.Weight;
-				fireResist = c.ExtendedStatusNum1;
-				coldResist = c.ExtendedStatusNum2;
-				poisonResist = c.ExtendedStatusNum3;
-				energyResist = c.ExtendedStatusNum5;
-				luck = c.ExtendedStatusNum6;
-				minDamage = c.MinDamage;
-				maxDamage = c.MaxDamage;
+				stat1 = c.ExtendedStatusNum1;
+				stat2 = c.ExtendedStatusNum2;
+				stat3 = c.ExtendedStatusNum3;
+				stat4 = c.MindDefense;
+				stat5 = c.ExtendedStatusNum5;
+				stat6 = c.ExtendedStatusNum6;
+				stat7 = c.ExtendedStatusNum7;
 				tithingPoints = c.TithingPoints;
 			}
 		}
@@ -515,11 +515,11 @@ namespace SteamEngine.Packets {
 			bool retVal = (((changeflags & NSFlags.Stats) == NSFlags.Stats)
 				&&((str != c.Str) || (dex != c.Dex) || (intel != c.Int) ||
 				(gender != c.gender) || (gold != c.Gold) || 
-				(physicalResist != c.ExtendedStatusNum4) ||
-				(weight != c.Weight) || (fireResist != c.ExtendedStatusNum1) || 
-				(coldResist != c.ExtendedStatusNum2) || (poisonResist != c.ExtendedStatusNum3) || 
-				(energyResist != c.ExtendedStatusNum5) || (luck != c.ExtendedStatusNum6) || 
-				(minDamage != c.MinDamage) || (maxDamage != c.MaxDamage) || 
+				(armorClass != c.ArmorClass) ||
+				(weight != c.Weight) || (stat1 != c.ExtendedStatusNum1) || 
+				(stat2 != c.ExtendedStatusNum2) || (stat3 != c.ExtendedStatusNum3) || 
+				(stat4 != c.MindDefense) || (stat5 != c.ExtendedStatusNum5) || 
+				(stat6 != c.ExtendedStatusNum6) || (stat7 != c.ExtendedStatusNum7) || 
 				(tithingPoints != c.TithingPoints)));
 
 			Logger.WriteInfo(NetStateTracingOn&&retVal, "GetStatsChanged: "+retVal);

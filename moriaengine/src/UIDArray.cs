@@ -70,7 +70,7 @@ namespace SteamEngine {
 			if (index<0) {
 				throw new IndexOutOfRangeException("Object with non-positive UID "+index+" found");
 			}
-			if (index>array.Length) { //index is too high, make the array bigger!
+			if (index>=array.Length) { //index is too high, make the array bigger!
 				ResizeArray(index);
 			}
 			if (array[index]!=null) {

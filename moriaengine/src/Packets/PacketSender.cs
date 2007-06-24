@@ -182,7 +182,7 @@ namespace SteamEngine.Packets {
 				short maxMana=cre.MaxMana;
 				ulong lgold = cre.Gold;
 				uint gold=(uint)(lgold>0xffffffff?0xffffffff:lgold);
-				short armor=cre.ExtendedStatusNum4;
+				short armor=cre.ArmorClass;
 				ushort weight=(ushort) cre.Weight;
 				EncodeShort(strength, 44);
 				EncodeShort(dexterity, 46);
@@ -206,10 +206,10 @@ namespace SteamEngine.Packets {
 				short fireResist=cre.ExtendedStatusNum1;
 				short coldResist=cre.ExtendedStatusNum2;
 				short poisonResist=cre.ExtendedStatusNum3;
-				short energyResist=cre.ExtendedStatusNum5;
-				short luck=cre.ExtendedStatusNum6;
-				short minDamage=cre.MinDamage;
-				short maxDamage=cre.MaxDamage;
+				short energyResist=cre.MindDefense;
+				short luck=cre.ExtendedStatusNum5;
+				short minDamage=cre.ExtendedStatusNum6;
+				short maxDamage=cre.ExtendedStatusNum7;
 				long ltithingPoints=cre.TithingPoints;
 				int tithingPoints=(int)(ltithingPoints>0xffffffff?0xffffffff:ltithingPoints);
 				EncodeShort(fireResist, 70);

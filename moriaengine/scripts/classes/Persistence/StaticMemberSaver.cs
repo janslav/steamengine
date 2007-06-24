@@ -182,22 +182,22 @@ namespace SteamEngine.CompiledScripts {
 				"'settings' dialog.")]
 		public static SettingsCategory[] GetMembersForSetting() {
 			//if the caching list is empty, try first to get the desired classes
-			if(settingsCategories == null || settingsCategories.Length == 0) {				
+			if (settingsCategories == null || settingsCategories.Length == 0) {
 				//temp dictionary for creating the sorted list of settings members
 				Dictionary<string, List<SettingsValue>> tempDict = new Dictionary<string, List<SettingsValue>>();
-				foreach(MemberInfo mi in registeredMembers) {
+				foreach (MemberInfo mi in registeredMembers) {
 					//get instances of the SavedMemberAttribute classes
-					object[] attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute),false);
-					if(attrs.Length > 0) {
-						string desc = ((SavedMemberAttribute)attrs[0]).Description;
-						if(desc != null) {
-							string category = ((SavedMemberAttribute)attrs[0]).Category;							
+					object[] attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute), false);
+					if (attrs.Length > 0) {
+						string desc = ((SavedMemberAttribute) attrs[0]).Description;
+						if (desc != null) {
+							string category = ((SavedMemberAttribute) attrs[0]).Category;
 							List<SettingsValue> catList = null;
-							SettingsValue val = new SettingsValue(desc,mi); //create the one dialog field
+							SettingsValue val = new SettingsValue(desc, mi); //create the one dialog field
 							try {
 								//try to get the list from the list (if it exists)
 								catList = tempDict[category];
-							} catch(KeyNotFoundException knfe) {
+							} catch (KeyNotFoundException knfe) {
 								//create the list now
 								catList = new List<SettingsValue>();
 								//add the new list to the temporary dictionary
@@ -206,30 +206,30 @@ namespace SteamEngine.CompiledScripts {
 							//add the settings value to the list
 							catList.Add(val);
 						}
-					}					
+					}
 				}
 				//now the dictionary is filled, time to create the real structure:
 				settingsCategories = new SettingsCategory[tempDict.Keys.Count];
 				int cntr = 0;
-				foreach(string key in tempDict.Keys) {
+				foreach (string key in tempDict.Keys) {
 					List<SettingsValue> lst = tempDict[key];
 					//pro kazdy klic vytvorime jednu (virtualni, root) kategorii s polem SettingsValues uvnitr					
 					SettingsCategory newCat = new SettingsCategory(key, new AbstractSetting[lst.Count]);
 					//kategore je pouze virtualni, vsichni SettingsValuesove uvnitr museji byt staticti jinak to nejde :)
 					//jejich hodnoty budou taky dotazeny staticky...
-					newCat.Value = null; 
+					newCat.Value = null;
 					//temporarni seznam nyni nalijeme od praveho pole ktere jsme vytvorili
-					AddMembersToCategory(newCat, lst);					
+					AddMembersToCategory(newCat, lst);
 					//projdeme si pole memberù v této kategorii a zjistime, zda náhodou není nìkterý složený (to by byla totiž vnoøená kategorie)
 					FindInnerCategories(newCat);
-					
+
 					//a pridame novou kategorii do pole
 					settingsCategories[cntr++] = newCat;
-				}	
+				}
 				//na zaver pole setridime podle nazvu kategorii
 				Array.Sort(settingsCategories, delegate(SettingsCategory a, SettingsCategory b) {
-												return String.Compare(a.Name, b.Name);
-											   }
+					return String.Compare(a.Name, b.Name);
+				}
 						  );
 			}
 			return settingsCategories;

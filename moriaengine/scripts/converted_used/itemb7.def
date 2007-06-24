@@ -341,9 +341,9 @@ TYPE = T_CLOTHING
 layer = 22 //Set by Converter 
 DEFNAME = i_robe_gm
 
-[EquippableDef 0x2050]
+[WearableDef 0x2050]
 TYPE = T_ARMOR
-//ARMOR = 30 // commented out by Converter 
+ARMOR = 30
 layer = 22 //Set by Converter 
 DEFNAME = i_dupre
 

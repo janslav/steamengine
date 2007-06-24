@@ -16,11 +16,11 @@
 */
 using System;
 using SteamEngine.Common;
+using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 
 	public static class DamageImpl {
-
 		public static double GetResistModifier(Character resistingChar, DamageType damageType) {
 			int intDamageType = (int) damageType;
 
@@ -72,7 +72,258 @@ namespace SteamEngine.CompiledScripts {
 			return modifier;
 		}
 
+		public static void CalculateWornArmor(Character ch, out int armorClass, out int mindDefense) {
+			int resist = SkillDef.GetValueForChar(ch, SkillName.MagicResist);
+			double resistEffect = SkillDef.ById(SkillName.MagicResist).GetEffectForChar(ch);
+			mindDefense = (int) (
+				(resist * resistEffect) / 1000);
 
+			armorClass = ch.DefForCombat.Armor;
 
+			//we calculate worn armor only for players
+			if (ch.IsPlayerForCombat) {
+				double armorHead = 0;
+				double armorNeck = 0;
+				double armorBack = 0;
+				double armorChest = 0;
+				double armorArms = 0;
+				double armorHands = 0;
+				double armorLegs = 0;
+				double armorFeet = 0;
+
+				double mindDefHead = 0;
+				double mindDefNeck = 0;
+				double mindDefBack = 0;
+				double mindDefChest = 0;
+				double mindDefArms = 0;
+				double mindDefHands = 0;
+				double mindDefLegs = 0;
+				double mindDefFeet = 0;
+
+				double armorTotal = 0;
+
+				foreach (Item equipped in ch.GetVisibleEquip()) {
+					Wearable wearable = equipped as Wearable;
+					if (wearable != null) {
+						Layers layer = (Layers) wearable.Z;
+						int armor = wearable.Armor;
+						int mindDef = wearable.MindDefense;
+						if ((armor > 0) || (mindDef > 0)) {
+							switch (layer) {
+								case Layers.layer_helm:
+									armorHead = Math.Max(armorHead, armor);
+									mindDefHead = Math.Max(mindDefHead, mindDef); break;
+								case Layers.layer_collar:
+									armorNeck = Math.Max(armorNeck, armor);
+									mindDefNeck = Math.Max(mindDefNeck, mindDef); break;
+								case Layers.layer_shirt:
+								case Layers.layer_chest:       // 13 = armor chest
+								case Layers.layer_tunic:       // 17 = jester suit
+									armorBack = Math.Max(armorBack, armor);
+									armorChest = Math.Max(armorChest, armor);
+									mindDefBack = Math.Max(mindDefBack, mindDef);
+									mindDefChest = Math.Max(mindDefChest, mindDef); break;
+								case Layers.layer_arms:                // 19 = armor
+									armorArms = Math.Max(armorArms, armor);
+									mindDefArms = Math.Max(mindDefArms, mindDef); break;
+								case Layers.layer_pants:
+								case Layers.layer_skirt:
+								case Layers.layer_half_apron:
+									armorLegs = Math.Max(armorLegs, armor);
+									mindDefLegs = Math.Max(mindDefLegs, mindDef); break;
+								case Layers.layer_shoes:
+									armorFeet = Math.Max(armorFeet, armor);
+									mindDefFeet = Math.Max(mindDefFeet, mindDef); break;
+								case Layers.layer_gloves:      // 7
+									armorHands = Math.Max(armorHands, armor);
+									mindDefHands = Math.Max(mindDefHands, mindDef); break;
+								case Layers.layer_cape:                // 20 = cape
+									armorBack = Math.Max(armorBack, armor);
+									armorArms = Math.Max(armorArms, armor);
+									mindDefBack = Math.Max(mindDefBack, mindDef);
+									mindDefArms = Math.Max(mindDefArms, mindDef); break;
+								case Layers.layer_robe:                // 22 = robe over all.
+									armorBack = Math.Max(armorBack, armor);
+									armorChest = Math.Max(armorChest, armor);
+									armorArms = Math.Max(armorArms, armor);
+									armorLegs = Math.Max(armorLegs, armor); ;
+									mindDefBack = Math.Max(mindDefBack, mindDef);
+									mindDefChest = Math.Max(mindDefChest, mindDef);
+									mindDefArms = Math.Max(mindDefArms, mindDef);
+									mindDefLegs = Math.Max(mindDefLegs, mindDef); break;
+								case Layers.layer_legs:
+									armorLegs = Math.Max(armorLegs, armor);
+									armorFeet = Math.Max(armorFeet, armor);
+									mindDefLegs = Math.Max(mindDefLegs, mindDef);
+									mindDefFeet = Math.Max(mindDefFeet, mindDef); break;
+								case Layers.layer_hand2: //shield
+									int parrying = SkillDef.GetValueForChar(ch, SkillName.Parry);
+									armorTotal = (armor * parrying) / 1000;
+									//no mindDef with shield
+									break;
+							}
+						}
+					}
+				}
+
+				armorTotal += 
+					(armorHead * 0.1) +
+					(armorNeck * 0.05) +
+					(armorBack * 0.1) +
+					(armorChest * 0.3) +
+					(armorArms * 0.1) +
+					(armorHands * 0.1) +
+					(armorLegs * 0.2) +
+					(armorFeet * 0.05);
+				armorClass += (int) armorTotal;
+
+				mindDefense += (int) (
+					(mindDefHead * 0.1) +
+					(mindDefNeck * 0.05) +
+					(mindDefBack * 0.1) +
+					(mindDefChest * 0.3) +
+					(mindDefArms * 0.1) +
+					(mindDefHands * 0.1) +
+					(mindDefLegs * 0.2) +
+					(mindDefFeet * 0.05));
+			}
+		}
+
+		public static DamageType GetWeaponDamageType(WeaponType weapType) {
+			switch (weapType) {
+				case WeaponType.Archery:
+					return DamageType.Archery;
+				case WeaponType.Axe:
+					return DamageType.Slashing;
+				case WeaponType.Blunt:
+					return DamageType.Blunt;
+				case WeaponType.Stabbing:
+					return DamageType.Stabbing;
+				case WeaponType.Sword:
+					return DamageType.Sharp;
+			}
+			throw new ArgumentOutOfRangeException("weapType");
+		}
+	}
+
+	partial class Character {
+		CombatValues combatValues;
+
+		private class CombatValues {
+			internal short armor;
+			internal short mindDefense;
+			internal Weapon weapon;
+			internal DamageType damageType;
+
+			internal CombatValues(short armor, short mindDefense, Weapon weapon, DamageType damageType) {
+				this.armor = armor;
+				this.mindDefense = mindDefense;
+				this.weapon = weapon;
+				this.damageType = damageType;
+			}
+		}
+
+		public override short ArmorClass {
+			get {
+				CalculateCombatValues();
+				return combatValues.armor;
+			}
+		}
+
+		private static TagKey armorClassModifierTK = TagKey.Get("_armorClassModifier_");
+		public int ArmorClassModifier {
+			get {
+				return Convert.ToInt32(GetTag(armorClassModifierTK));
+			}
+			set {
+				InvalidateCombatValues();
+				if (value != 0) {
+					SetTag(armorClassModifierTK, value);
+				} else {
+					RemoveTag(armorClassModifierTK);
+				}
+			}
+		}
+
+		public override short MindDefense {
+			get {
+				CalculateCombatValues();
+				return combatValues.mindDefense;
+			}
+		}
+
+		private static TagKey mindDefenseModifierTK = TagKey.Get("_mindDefenseModifier_");
+		public int MindDefenseModifier {
+			get {
+				return Convert.ToInt32(GetTag(mindDefenseModifierTK));
+			}
+			set {
+				InvalidateCombatValues();
+				if (value != 0) {
+					SetTag(mindDefenseModifierTK, value);
+				} else {
+					RemoveTag(mindDefenseModifierTK);
+				}
+			}
+		}
+
+		public void InvalidateCombatValues() {
+			if (combatValues != null) {
+				Packets.NetState.AboutToChangeStats(this);
+				combatValues = null;
+			}
+		}
+
+		public void CalculateCombatValues() {
+			if (combatValues == null) {
+				int calculatedArmor, calculatedMindDef;
+				DamageImpl.CalculateWornArmor(this, out calculatedArmor, out calculatedMindDef);
+
+				Weapon weapon = this.FindLayer(1) as Weapon;
+				if (weapon == null) {
+					weapon = this.FindLayer(2) as Weapon;
+				}
+				WeaponType weaponType = WeaponType.Blunt;
+				if (weapon != null) {
+					weaponType = weapon.WeaponType;
+				}
+
+				combatValues = new CombatValues(
+					(short) (calculatedArmor + this.ArmorClassModifier),
+					(short) (calculatedMindDef + this.MindDefenseModifier),
+					weapon,
+					DamageImpl.GetWeaponDamageType(weaponType)
+					);
+			}
+		}
+
+		public override bool On_ItemEquip(AbstractCharacter droppingChar, AbstractItem i, bool forced) {
+			if (i is Wearable || i is Weapon) {
+				InvalidateCombatValues();
+			}
+			return base.On_ItemEquip(droppingChar, i, forced);
+		}
+
+		public override bool On_ItemUnEquip(AbstractCharacter pickingChar, AbstractItem i, bool forced) {
+			if (i is Wearable || i is Weapon) {
+				InvalidateCombatValues();
+			}
+			return base.On_ItemUnEquip(pickingChar, i, forced);
+		}
+
+		public bool IsPlayerForCombat {
+			get {
+				//TODO: false for hypnomystic
+				return IsPlayer;
+			}
+		}
+
+		public CharacterDef DefForCombat {
+			get {
+				//TODO: monster def for hypnomystic
+				return this.Def;
+			}
+		}
 	}
 }
+
