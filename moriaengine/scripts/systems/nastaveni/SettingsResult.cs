@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	[Remark("Dialog zobrazící výsledek po uplatnìní nastavení - vypíše seznam zmìnìných hodnot doplnìný"+
 			"o pøípadné hodnoty které se zmìnit nepodaøilo")]
 	public class D_Settings_Result : CompiledGump {
-		static readonly TagKey setResultsTag = TagKey.Get("setResultsTag");
+		static readonly TagKey setResultsTag = TagKey.Get("_setResultsTag_");
 
 
 		private static D_Settings_Result instance;
@@ -46,8 +46,8 @@ namespace SteamEngine.CompiledScripts {
 			Hashtable setResults = (Hashtable)args[1];
 			List<SettingsValue> settingValues = GetDisplayedSettingValues(setResults); //pro iterování do výpisu dialogu
 			//setridit dle nazvu zobrazovaneho itemu, jinak by nebylo zaruceno spolehlive strankovani
-			settingValues.Sort(SettingsValuesComparer.Instance);	
-		
+			settingValues.Sort(SettingsValuesComparer.Instance);
+
 			this.GumpInstance.SetTag(setResultsTag, setResults);
 			int firstiVal = Convert.ToInt32(args[0]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
@@ -81,8 +81,9 @@ namespace SteamEngine.CompiledScripts {
 			for(int i = firstiVal; i < imax; i++) {
 				SettingsValue sval = settingValues[i];
 				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(sval.Color, sval.FullPath()); //název položky nastavení
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(sval.Color, sval.Value.ToString()); //aktuální hodnota (buï je to ta pùvodní, nebo je to ta zmìnìná)
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(sval.Color, sval.OldValue); //pùvodní hodnota (vyplnìno jen pokud tato položka byla zmìnìna)
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(sval.Color, ObjectSaver.Save(sval.Value)); //aktuální hodnota (buï je to ta pùvodní, nebo je to ta zmìnìná)
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(sval.Color, ObjectSaver.Save(sval.OldValue)); //pùvodní hodnota (vyplnìno jen pokud tato položka byla zmìnìna)
+														//pvodni hotnotu nezjistujeme tim "save" neb mohla byt prave spatna (tj by to opet spadlo)!
 				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(sval.Color, sval.NewValue); //zamýšlená hodnota (vyplnìno pøi selhání - napø nekompatibilní datový typ atd.)
 				rowCntr++;
 			}

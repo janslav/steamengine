@@ -252,17 +252,9 @@ namespace SteamEngine.CompiledScripts {
 			
 			//increase the input ID counter
 			inst.DlgIndex++;
-			//if(inst.valuesToSet[inst.DlgIndex] != null) {
-			//    //the value with this index actually exists in the list -
-			//    //this occures if we are redisplaying the dialog after the settings
-			//    //some values may have been set incorrectly => therefore they will have different color etc.
-			//    SettingsValue existingVal = (SettingsValue)inst.valuesToSet[inst.DlgIndex];
-			//    dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, existingVal.color, value.ToString());
-			//} else {
-				//non existing (first displaying of the dialog, or redisplaying after paging) - create a new input field
-				dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, color, value.ToString());
-				inst.valuesToSet[inst.DlgIndex] = this; //store the info about the filled SettingsValue (for further purposes such as accepting setting etc)
-			//}
+			//display the value of the settings member in its "saved" form - including prefixes e.t.c
+			dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, color, ObjectSaver.Save(value));
+			inst.valuesToSet[inst.DlgIndex] = this; //store the info about the filled SettingsValue (for further purposes such as accepting setting etc)
 		}
 
 		[Remark("Write the value's label, using appropriate level indentation")]
@@ -275,40 +267,122 @@ namespace SteamEngine.CompiledScripts {
 		[Remark("Get the newVal and try to set it as the new value to the undelraying member."+
 				"If successful then OK, if no, mark this value as unsuccessfully set for further"+
 				"displaying.")]
-		public void TrySet(string newVal) {
-			//first get the string representation of the old value (including prefix - #, :, :: etc.)
-			string fullOldVal = ObjectSaver.Save(value);
-			//what's the Type of the field hidden in this member? (we dont care about the value, so we use just simple anonymous object)
-			object membersValueUnused = null;
-			Type valType = ObjectSaver.GetMemberType(member, parent.Value, out membersValueUnused); 
-			//cast the stringified new value to the type of the old value
-			object newValObj = null;
-			if(ConvertTools.TryConvertTo(valType, newVal, out newValObj)) {
-				string fullNewVal = ObjectSaver.Save(newValObj);//get the new value in the stringified (prefixes...) form
-				if(!fullOldVal.Equals(fullNewVal)) {
-					//the old and new values aren't the same - make a setting
-					//the parent.Value will be used only in case the member is non-static field
-					//otherwise it wont be used (and it is also null here)
-					ObjectSaver.SetMemberValue(member, parent.Value, newValObj); //set the member itself
-					oldValue = value.ToString(); //store the previous value for informational purposes
-					value = newValObj.ToString(); //set the new value for displaying in the settings dialog
+		public void TrySet(string newValInserted) {
+			try {
+				//first get the string representation of the old value (including prefix - #, :, :: etc.)
+				string fullOldVal = ObjectSaver.Save(value);
+
+				object newValLoaded = ObjectSaver.Load(newValInserted); //get the inserted string, and try to "load" it to its object representation
+				//what's the Type of the field hidden in this member? (we dont care about the value, so we use just simple anonymous object)
+				object membersValueUnused = null;
+				Type valType = SettingsUtilities.GetMemberType(member, parent.Value, out membersValueUnused);
+				//cast the objectified inserted new value to the type of the old member's value
+				object newValObj = null;
+				if(ConvertTools.TryConvertTo(valType, newValLoaded, out newValObj)) {
+					string fullNewVal = ObjectSaver.Save(newValObj);//get the new value in the stringified (prefixes...) form
+					if(!fullOldVal.Equals(fullNewVal)) {
+						//the old and new values aren't the same - make a setting
+						//the parent.Value will be used only in case the member is non-static field
+						//otherwise it wont be used (and it is also null here)
+						SettingsUtilities.SetMemberValue(member, parent.Value, newValObj); //set the member itself
+						oldValue = fullOldVal; //store the previous value for informational purposes
+						value = newValObj; //set the new value for displaying in the settings dialog
+					}
+				} else {
+					//cast exception - incorrect data tried to be set (e.g. string as a number etc)
+					color = Hues.Red; //set the error color 
+					newValue = newValInserted; //set the unsuccessful setting for informational purposes
 				}
-			} else {
-				//cast exception - incorrect data tried to be set (e.g. string as a number etc)
+			} catch(SEException sex) {
+				//there are lots of saves and loads - many potentional exceptions
+				//in ou case any exception means unsuccessfull settings - we will display 
+				//the values
 				color = Hues.Red; //set the error color 
-				newValue = newVal; //set the unsuccessful setting for informational purposes
-			}			
+				newValue = newValInserted; //set the unsuccessful setting for informational purposes
+			}
 		}
 
 		[Remark("This is the member in a category (or even in some inner category"+
 				"- return its categories name concatenated with the members own name")]
 		public override string FullPath() {
 			if(parent != null) {
-				return parent.FullPath() + "->" + name;
+				return parent.FullPath() + " -> " + name;
 			} else {
 				return name;
 			}			
 		}
+	}
 
+	[Remark("Utility class containing methods for working with Members (getting values, setting them "+
+			"recognizing data types etc")]
+	internal static class SettingsUtilities {
+		[Remark("Return the type of the type referenced by given MemberInfo. " +
+				"It will also set the provided object with the member's value using the" +
+				"parent's value to get it.")]
+		public static Type GetMemberType(MemberInfo mi, object parentValue, out object value) {
+			if(mi.MemberType == MemberTypes.Property) {
+				PropertyInfo pi = (PropertyInfo)mi;
+				try {
+					value = pi.GetValue(parentValue, null);
+				} catch(TargetException tae) { //the value still could not be found
+					value = null;
+				}
+				return pi.PropertyType;
+			} else {
+				FieldInfo fi = (FieldInfo)mi;
+				if(fi.IsStatic) {
+					//do not bother with any parent values, static field is static field and has only one value...
+					//we dont need any info about the parent's instance (if any)
+					value = fi.GetValue(null);
+				} else {
+					try {
+						value = fi.GetValue(parentValue); //we expect the parent's instance here
+					} catch(TargetException mae) {
+						//something wrong
+						value = null;
+					}
+				}
+				return fi.FieldType;
+			}
+		}
+
+		[Remark("Set the member with given value. If the member is statical, then it is easy to proceed" +
+				"but non-statical members must have the parents object reference to successfully set " +
+				"their new value, returns true or false if the setting is successful or not.")]
+		public static bool SetMemberValue(MemberInfo mi, object parentValue, object value) {
+			if(mi.MemberType == MemberTypes.Property) {
+				PropertyInfo pi = (PropertyInfo)mi;
+				try {
+					pi.SetValue(parentValue, value, null);
+				} catch(TargetException tae) { //the value still could not be found
+					return false;
+				}
+			} else {
+				FieldInfo fi = (FieldInfo)mi;
+				if(fi.IsStatic) {
+					//do not bother with any parent values, static field is static field and has only one value...
+					//we dont need any info about the parent's instance (if any)
+					fi.SetValue(null, value);
+				} else {
+					try {
+						fi.SetValue(parentValue, value); //we expect the parent's instance here
+					} catch(TargetException tae) {
+						//something wrong
+						return false;
+					}
+				}
+			}
+			return true; //success
+		}
+
+		[Remark("Return the value of the given MemberInfo. Use the static way to obtain it so it is not " +
+				"applicable for the non static fields or members.")]
+		public static object GetMemberValue(MemberInfo mi) {
+			if(mi.MemberType == MemberTypes.Property) {
+				return ((PropertyInfo)mi).GetValue(null, null);
+			} else {
+				return ((FieldInfo)mi).GetValue(null);
+			}
+		}
 	}
 }
