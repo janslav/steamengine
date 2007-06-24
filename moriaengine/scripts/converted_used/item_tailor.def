@@ -95,7 +95,7 @@ WEIGHT = 20
 //SKILLMAKE = TINKERING 18.8,t_tinker_tools // commented out by Converter 
 DEFNAME = i_sewing_kit
 
-[EquippableDef 0x1515]
+[WearableDef 0x1515]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Cloak, Cape
@@ -106,12 +106,12 @@ WEIGHT = 50
 //RESOURCES = 14 i_cloth // commented out by Converter 
 //RESOURCES2 = 14 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 45.4, t_sewing_kit // commented out by Converter 
-//ARMOR = 5 // commented out by Converter 
+ARMOR = 5
 //DYE = 1 // commented out by Converter 
 layer = 20 //Set by Converter 
 DEFNAME = i_cape
 
-[EquippableDef 0x1516]
+[WearableDef 0x1516]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Pants & Skirts
 DESCRIPTION = Long Skirt
@@ -121,12 +121,12 @@ WEIGHT = 40
 //RESOURCES = 10 i_cloth // commented out by Converter 
 //RESOURCES2 = 10 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 31.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 4 // commented out by Converter 
+ARMOR = 4
 //DYE = 1 // commented out by Converter 
 layer = 23 //Set by Converter 
 DEFNAME = i_skirt_long
 
-[EquippableDef 0x1517]
+[WearableDef 0x1517]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Plain Shirt
@@ -137,7 +137,7 @@ WEIGHT = 30
 //RESOURCES = 8 i_cloth // commented out by Converter 
 //RESOURCES2 = 8 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 22.7, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 5 //Set by Converter 
 DEFNAME = i_shirt_plain
@@ -145,7 +145,7 @@ DEFNAME = i_shirt_plain
 [ItemDef 0x1518]
 DUPEITEM = 0x1517
 
-[EquippableDef 0x152e]
+[WearableDef 0x152e]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Pants & Skirts
 DESCRIPTION = Short Pants
@@ -156,7 +156,7 @@ WEIGHT = 20
 //RESOURCES = 6 i_cloth // commented out by Converter 
 //RESOURCES2 = 6 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 6.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 4 //Set by Converter 
 DEFNAME = i_pants_short
@@ -167,7 +167,7 @@ DUPEITEM = 0x152e
 [ItemDef 0x1530]
 DUPEITEM = 0x1515
 
-[EquippableDef 0x1531]
+[WearableDef 0x1531]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Pants & Skirts
 DESCRIPTION = Skirt (Tea Length)
@@ -175,12 +175,12 @@ DESCRIPTION = Skirt (Tea Length)
 TYPE = T_CLOTHING
 WEIGHT = 40
 //RESOURCES = 10 i_CLOTH, 1 i_THREAD // commented out by Converter 
-//ARMOR = 4 // commented out by Converter 
+ARMOR = 4
 //DYE = 1 // commented out by Converter 
 layer = 23 //Set by Converter 
 DEFNAME = i_skirt_short
 
-[EquippableDef 0x1537]
+[WearableDef 0x1537]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Pants & Skirts
 DESCRIPTION = Kilt
@@ -191,7 +191,7 @@ WEIGHT = 20
 //RESOURCES = 8 i_cloth // commented out by Converter 
 //RESOURCES2 = 8 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 22.7, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 23 //Set by Converter 
 DEFNAME = i_kilt
@@ -199,7 +199,7 @@ DEFNAME = i_kilt
 [ItemDef 0x1538]
 DUPEITEM = 0x1537
 
-[EquippableDef 0x1539]
+[WearableDef 0x1539]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Pants & Skirts
 DESCRIPTION = Long Pants
@@ -210,7 +210,7 @@ WEIGHT = 30
 //RESOURCES = 8 i_cloth // commented out by Converter 
 //RESOURCES2 = 8 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 27.2, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 4 //Set by Converter 
 DEFNAME = i_pants_long
@@ -218,7 +218,7 @@ DEFNAME = i_pants_long
 [ItemDef 0x153a]
 DUPEITEM = 0x1539
 
-[EquippableDef 0x153b]
+[WearableDef 0x153b]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Miscellaneous
 DESCRIPTION = Half Apron
@@ -229,7 +229,7 @@ WEIGHT = 20
 //RESOURCES = 6 i_cloth // commented out by Converter 
 //RESOURCES2 = 6 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 22.7, t_sewing_kit // commented out by Converter 
-//ARMOR = 2 // commented out by Converter 
+ARMOR = 2
 //DYE = 1 // commented out by Converter 
 layer = 12 //Set by Converter 
 DEFNAME = i_apron_half
@@ -237,7 +237,7 @@ DEFNAME = i_apron_half
 [ItemDef 0x153c]
 DUPEITEM = 0x153b
 
-[EquippableDef 0x153d]
+[WearableDef 0x153d]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Miscellaneous
 DESCRIPTION = Full Apron
@@ -248,7 +248,7 @@ WEIGHT = 40
 //RESOURCES = 10 i_cloth // commented out by Converter 
 //RESOURCES2 = 10 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 31.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 4 // commented out by Converter 
+ARMOR = 4
 //DYE = 1 // commented out by Converter 
 layer = 17 //Set by Converter 
 DEFNAME = i_apron_full
@@ -256,7 +256,7 @@ DEFNAME = i_apron_full
 [ItemDef 0x153e]
 DUPEITEM = 0x153d
 
-[EquippableDef 0x153f]
+[WearableDef 0x153f]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Miscellaneous
 DESCRIPTION = Bandana
@@ -267,7 +267,7 @@ WEIGHT = 10
 //RESOURCES = 2 i_cloth // commented out by Converter 
 //RESOURCES2 = 2 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 10.1, t_sewing_kit // commented out by Converter 
-//ARMOR = 1 // commented out by Converter 
+ARMOR = 1
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_bandana
@@ -275,7 +275,7 @@ DEFNAME = i_bandana
 [ItemDef 0x1540]
 DUPEITEM = 0x153f
 
-[EquippableDef 0x1541]
+[WearableDef 0x1541]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Miscellaneous
 DESCRIPTION = Body Sash
@@ -286,7 +286,7 @@ WEIGHT = 10
 //RESOURCES = 4 i_cloth // commented out by Converter 
 //RESOURCES2 = 4 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 4.5, t_sewing_kit // commented out by Converter 
-//ARMOR = 1 // commented out by Converter 
+ARMOR = 1
 //DYE = 1 // commented out by Converter 
 layer = 17 //Set by Converter 
 DEFNAME = i_sash
@@ -294,7 +294,7 @@ DEFNAME = i_sash
 [ItemDef 0x1542]
 DUPEITEM = 0x1541
 
-[EquippableDef 0x1543]
+[WearableDef 0x1543]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Miscellaneous
 DESCRIPTION = SkullCap
@@ -305,7 +305,7 @@ WEIGHT = 10
 //RESOURCES = 2 i_cloth // commented out by Converter 
 //RESOURCES2 = 2 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 0.1, t_sewing_kit // commented out by Converter 
-//ARMOR = 1 // commented out by Converter 
+ARMOR = 1
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_skull_cap
@@ -313,7 +313,7 @@ DEFNAME = i_skull_cap
 [ItemDef 0x1544]
 DUPEITEM = 0x1543
 
-[EquippableDef 0x170b]
+[WearableDef 0x170b]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Footwear
 DESCRIPTION = Boots (R)
@@ -324,7 +324,7 @@ WEIGHT = 30
 //RESOURCES = 8 i_hides_cut // commented out by Converter 
 //RESOURCES2 = 8 i_hide,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 36.3, t_sewing_kit // commented out by Converter 
-//ARMOR = 7 // commented out by Converter 
+ARMOR = 7
 //DYE = 1 // commented out by Converter 
 layer = 3 //Set by Converter 
 DEFNAME = i_boots_calf
@@ -332,7 +332,7 @@ DEFNAME = i_boots_calf
 [ItemDef 0x170c]
 DUPEITEM = 0x170b
 
-[EquippableDef 0x170d]
+[WearableDef 0x170d]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Footwear
 DESCRIPTION = Sandals (R)
@@ -343,7 +343,7 @@ WEIGHT = 10
 //RESOURCES = 4 i_hides_cut // commented out by Converter 
 //RESOURCES2 = 4 i_hide,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 13.6, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 3 //Set by Converter 
 DEFNAME = i_sandals
@@ -351,7 +351,7 @@ DEFNAME = i_sandals
 [ItemDef 0x170e]
 DUPEITEM = 0x170d
 
-[EquippableDef 0x170f]
+[WearableDef 0x170f]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Footwear
 DESCRIPTION = Shoes (R)
@@ -362,7 +362,7 @@ WEIGHT = 20
 //RESOURCES = 6 i_hides_cut // commented out by Converter 
 //RESOURCES2 = 6 i_hide,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 18.1, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 3 //Set by Converter 
 DEFNAME = i_shoes_plain
@@ -372,7 +372,7 @@ DESCRIPTION = Shoes (L)
 
 DUPEITEM = 0x170f
 
-[EquippableDef 0x1711]
+[WearableDef 0x1711]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Footwear
 DESCRIPTION = Thigh Boots (R)
@@ -383,7 +383,7 @@ WEIGHT = 50
 //RESOURCES = 10 i_hides_cut // commented out by Converter 
 //RESOURCES2 = 10 i_hide,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 25.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 6 // commented out by Converter 
+ARMOR = 6
 //FLIP = 1 // commented out by Converter 
 //DYE = 1 // commented out by Converter 
 layer = 3 //Set by Converter 
@@ -394,7 +394,7 @@ DESCRIPTION = Thigh Boots (L)
 
 DUPEITEM = 0x1711
 
-[EquippableDef 0x1713]
+[WearableDef 0x1713]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Floppy Hat
@@ -404,12 +404,12 @@ WEIGHT = 20
 //RESOURCES = 11 i_cloth // commented out by Converter 
 //RESOURCES2 = 5 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 6.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_floppy
 
-[EquippableDef 0x1714]
+[WearableDef 0x1714]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Wide Brim Hat
@@ -419,12 +419,12 @@ WEIGHT = 20
 //RESOURCES = 12 i_cloth // commented out by Converter 
 //RESOURCES2 = 5 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 6.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_wide_brim
 
-[EquippableDef 0x1715]
+[WearableDef 0x1715]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Cap
@@ -432,12 +432,12 @@ DESCRIPTION = Cap
 TYPE = T_CLOTHING
 WEIGHT = 20
 //RESOURCES = 5 i_CLOTH, 1 i_THREAD // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_cap
 
-[EquippableDef 0x1716]
+[WearableDef 0x1716]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Tall Straw Hat
@@ -447,12 +447,12 @@ WEIGHT = 10
 //RESOURCES = 12 i_cloth, // commented out by Converter 
 //RESOURCES2 = 10 I_STRAW,1 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 6.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_straw_tall
 
-[EquippableDef 0x1717]
+[WearableDef 0x1717]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Straw Hat
@@ -462,12 +462,12 @@ WEIGHT = 10
 //RESOURCES = 10 i_cloth // commented out by Converter 
 //RESOURCES2 = 7 I_STRAW,1 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 6.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_straw
 
-[EquippableDef 0x1718]
+[WearableDef 0x1718]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Wizards Hat
@@ -476,12 +476,12 @@ TYPE = T_CLOTHING
 WEIGHT = 20
 //RESOURCES = 8 i_CLOTH, 1 i_THREAD // commented out by Converter 
 //SKILLMAKE = TAILORING 35.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_wizards
 
-[EquippableDef 0x1719]
+[WearableDef 0x1719]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Bonnet
@@ -491,12 +491,12 @@ WEIGHT = 10
 //RESOURCES = 11 i_cloth // commented out by Converter 
 //RESOURCES2 = 4 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 31.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_bonnet
 
-[EquippableDef 0x171a]
+[WearableDef 0x171a]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Feathered Hat
@@ -506,12 +506,12 @@ WEIGHT = 20
 //RESOURCES = 12 i_cloth,i_feather // commented out by Converter 
 //RESOURCES2 = 5 i_cloth,i_feather,i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 32.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_feather
 
-[EquippableDef 0x171b]
+[WearableDef 0x171b]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Tricorne Hat
@@ -521,12 +521,12 @@ WEIGHT = 20
 //RESOURCES = 12 i_cloth // commented out by Converter 
 //RESOURCES2 = 5 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 32.8, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_tricorne
 
-[EquippableDef 0x171c]
+[WearableDef 0x171c]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Hats
 DESCRIPTION = Jester's Cap
@@ -537,7 +537,7 @@ WEIGHT = 20
 //RESOURCES = 15 i_cloth // commented out by Converter 
 //RESOURCES2 = 5 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 30.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 6 //Set by Converter 
 DEFNAME = i_hat_jester
@@ -545,7 +545,7 @@ DEFNAME = i_hat_jester
 [ItemDef 0x172e]
 DUPEITEM = 0x171c
 
-[EquippableDef 0x1efd]
+[WearableDef 0x1efd]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Fancy Shirt
@@ -556,7 +556,7 @@ WEIGHT = 20
 //RESOURCES = 8 i_cloth // commented out by Converter 
 //RESOURCES2 = 8 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 35.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 4 // commented out by Converter 
+ARMOR = 4
 //DYE = 1 // commented out by Converter 
 layer = 5 //Set by Converter 
 DEFNAME = i_shirt_fancy
@@ -564,7 +564,7 @@ DEFNAME = i_shirt_fancy
 [ItemDef 0x1efe]
 DUPEITEM = 0x1efd
 
-[EquippableDef 0x1eff]
+[WearableDef 0x1eff]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Fancy Dress
@@ -575,7 +575,7 @@ WEIGHT = 30
 //RESOURCES = 12 i_cloth // commented out by Converter 
 //RESOURCES2 = 12 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 33.6, t_sewing_kit // commented out by Converter 
-//ARMOR = 5 // commented out by Converter 
+ARMOR = 5
 //DYE = 1 // commented out by Converter 
 layer = 22 //Set by Converter 
 DEFNAME = i_dress_full
@@ -583,7 +583,7 @@ DEFNAME = i_dress_full
 [ItemDef 0x1f00]
 DUPEITEM = 0x1eff
 
-[EquippableDef 0x1f01]
+[WearableDef 0x1f01]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Plain Dress
@@ -594,7 +594,7 @@ WEIGHT = 20
 //RESOURCES = 10 i_cloth // commented out by Converter 
 //RESOURCES2 = 10 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 36.3, t_sewing_kit // commented out by Converter 
-//ARMOR = 5 // commented out by Converter 
+ARMOR = 5
 //DYE = 1 // commented out by Converter 
 layer = 22 //Set by Converter 
 DEFNAME = i_dress_plain
@@ -602,7 +602,7 @@ DEFNAME = i_dress_plain
 [ItemDef 0x1f02]
 DUPEITEM = 0x1f01
 
-[EquippableDef 0x1f03]
+[WearableDef 0x1f03]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Robe
@@ -613,7 +613,7 @@ WEIGHT = 30
 //RESOURCES = 16 i_cloth // commented out by Converter 
 //RESOURCES2 = 16 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 59.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 7 // commented out by Converter 
+ARMOR = 7
 //DYE = 1 // commented out by Converter 
 layer = 22 //Set by Converter 
 DEFNAME = i_robe
@@ -624,7 +624,7 @@ DUPEITEM = 0x1f03
 [ItemDef 0x1f05]
 DUPEITEM = 0x1085
 
-[EquippableDef 0x1f7b]
+[WearableDef 0x1f7b]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Doublet
@@ -634,7 +634,7 @@ TYPE = T_CLOTHING
 WEIGHT = 20
 //RESOURCES = 8 I_CLOTH, I_THREAD // commented out by Converter 
 //SKILLMAKE = TAILORING 22.7, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 17 //Set by Converter 
 DEFNAME = i_doublet
@@ -642,7 +642,7 @@ DEFNAME = i_doublet
 [ItemDef 0x1f7c]
 DUPEITEM = 0x1f7b
 
-[EquippableDef 0x1f9f]
+[WearableDef 0x1f9f]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Jester's Suit
@@ -653,14 +653,14 @@ WEIGHT = 50
 //RESOURCES = 24 i_cloth // commented out by Converter 
 //RESOURCES2 = 24 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 29.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 7 // commented out by Converter 
+ARMOR = 7
 layer = 17 //Set by Converter 
 DEFNAME = i_jester_suit
 
 [ItemDef 0x1fa0]
 DUPEITEM = 0x1f9f
 
-[EquippableDef 0x1fa1]
+[WearableDef 0x1fa1]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Tunic
@@ -671,7 +671,7 @@ WEIGHT = 50
 //RESOURCES = 12 i_cloth // commented out by Converter 
 //RESOURCES2 = 12 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 31.1, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 17 //Set by Converter 
 DEFNAME = i_tunic
@@ -679,7 +679,7 @@ DEFNAME = i_tunic
 [ItemDef 0x1fa2]
 DUPEITEM = 0x1fa1
 
-[EquippableDef 0x1ffd]
+[WearableDef 0x1ffd]
 CATEGORY = Provisions - Clothes
 SUBSECTION = Shirts & Robes
 DESCRIPTION = Surcoat
@@ -690,7 +690,7 @@ WEIGHT = 50
 //RESOURCES = 14 i_cloth // commented out by Converter 
 //RESOURCES2 = 14 i_cloth,1 i_thread // commented out by Converter 
 //SKILLMAKE = TAILORING 32.0, t_sewing_kit // commented out by Converter 
-//ARMOR = 3 // commented out by Converter 
+ARMOR = 3
 //DYE = 1 // commented out by Converter 
 layer = 17 //Set by Converter 
 DEFNAME = i_surcoat

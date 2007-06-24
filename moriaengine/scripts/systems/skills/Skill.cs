@@ -51,8 +51,12 @@ namespace SteamEngine.CompiledScripts {
 				return realValue;
 			}
 			set {
-				NetState.AboutToChangeSkill(cont, id);
-				this.realValue = value;
+				ushort oldValue = this.realValue;
+				if (oldValue != value) {
+					NetState.AboutToChangeSkill(cont, id);
+					this.realValue = value;
+					cont.Trigger_SkillChange(this, oldValue);
+				}
 			}
 		}
 		

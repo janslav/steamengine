@@ -443,12 +443,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override short ExtendedStatusNum4 {
-			get {
-				return 0;
-			}
-		}
-
 		public override short ExtendedStatusNum1 {
 			get {
 				return 0;
@@ -473,12 +467,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override short ExtendedStatusNum6 {
-			get {
-				return 0;
-			}
-		}
-
 		public override long TithingPoints {
 			get {
 				return tithingPoints;
@@ -491,13 +479,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override short MinDamage {
+		public override short ExtendedStatusNum6 {
 			get {
 				return 0;
 			}
 		}
 
-		public override short MaxDamage {
+		public override short ExtendedStatusNum7 {
 			get {
 				return 0;
 			}
@@ -510,21 +498,22 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region resisty
-		private static TagKey resistMagicTK = TagKey.Get("resistMagic");
-		private static TagKey resistFireTK = TagKey.Get("resistFire");
-		private static TagKey resistElectricTK = TagKey.Get("resistElectric");
-		private static TagKey resistAcidTK = TagKey.Get("resistAcid");
-		private static TagKey resistColdTK = TagKey.Get("resistCold");
-		private static TagKey resistPoisonTK = TagKey.Get("resistPoison");
-		private static TagKey resistMysticalTK = TagKey.Get("resistMystical");
-		private static TagKey resistPhysicalTK = TagKey.Get("resistPhysical");
-		private static TagKey resistSlashingTK = TagKey.Get("resistSlashing");
-		private static TagKey resistStabbingTK = TagKey.Get("resistStabbing");
-		private static TagKey resistBluntTK = TagKey.Get("resistBlunt");
-		private static TagKey resistArcheryTK = TagKey.Get("resistArchery");
-		private static TagKey resistBleedTK = TagKey.Get("resistBleed");
-		private static TagKey resistSummonTK = TagKey.Get("resistSummon");
-		private static TagKey resistDragonTK = TagKey.Get("resistDragon");
+		private static TagKey resistMagicTK = TagKey.Get("_resistMagic_");
+		private static TagKey resistFireTK = TagKey.Get("_resistFire_");
+		private static TagKey resistElectricTK = TagKey.Get("_resistElectric_");
+		private static TagKey resistAcidTK = TagKey.Get("_resistAcid_");
+		private static TagKey resistColdTK = TagKey.Get("_resistCold_");
+		private static TagKey resistPoisonTK = TagKey.Get("_resistPoison_");
+		private static TagKey resistMysticalTK = TagKey.Get("_resistMystical_");
+		private static TagKey resistPhysicalTK = TagKey.Get("_resistPhysical_");
+		private static TagKey resistSlashingTK = TagKey.Get("_resistSlashing_");
+		private static TagKey resistStabbingTK = TagKey.Get("_resistStabbing_");
+		private static TagKey resistBluntTK = TagKey.Get("_resistBlunt_");
+		private static TagKey resistArcheryTK = TagKey.Get("_resistArchery_");
+		private static TagKey resistBleedTK = TagKey.Get("_resistBleed_");
+		private static TagKey resistSummonTK = TagKey.Get("_resistSummon_");
+		private static TagKey resistDragonTK = TagKey.Get("_resistDragon_");
+		private static TagKey resistParalyseTK = TagKey.Get("_resistParalyse_");
 
 		public int ResistMagic {
 			get {
@@ -717,6 +706,19 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - Def.ResistDragon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistDragonTK, dynamicPart);
+				}
+			}
+		}
+
+		public int ResistParalyse {
+			get {
+				int dynamicPart = Convert.ToInt32(this.GetTag(resistParalyseTK));
+				return dynamicPart + Def.ResistDragon;
+			}
+			set {
+				int dynamicPart = value - Def.ResistParalyse;
+				if (dynamicPart != 0) {
+					this.SetTag(resistParalyseTK, dynamicPart);
 				}
 			}
 		}
@@ -1201,6 +1203,23 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				InstantiateSkillsArrayIfNull();
 				return skills;
+			}
+		}
+
+		private static TriggerKey skillChangeTK = TriggerKey.Get("skillChange");
+		public void Trigger_SkillChange(Skill skill, ushort oldValue) {
+			ushort newValue = skill.RealValue;
+			ScriptArgs sa = new ScriptArgs(skill.Id, oldValue, newValue, skill);
+			this.TryTrigger(skillChangeTK, sa);
+			On_SkillChange(skill, oldValue);
+		}
+
+		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
+			switch ((SkillName) skill.Id) {
+				case SkillName.Parry:
+				case SkillName.Tactics:
+					InvalidateCombatValues();
+					break;
 			}
 		}
 

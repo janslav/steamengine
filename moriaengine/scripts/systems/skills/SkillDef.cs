@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		//CSKILLDEFPROP(Bonus_Str,	0, "")
 		//CSKILLDEFPROP(BonusStats,	0, "")
 		//CSKILLDEFPROP(Delay,		0, "")	<--- done
-		//CSKILLDEFPROP(Effect,		0, "")
+		//CSKILLDEFPROP(Effect,		0, "")	<--- done
 		//CSKILLDEFPROP(Key,			0, "")	<--- is in AbstractSkillDef already
 		//CSKILLDEFPROP(PromptMsg,	0, "")
 		//CSKILLDEFPROP(Stat_Dex,		0, "")
@@ -42,11 +42,13 @@ namespace SteamEngine.CompiledScripts {
 
 		private FieldValue advRate;
 		private FieldValue delay;
+		private FieldValue effect;
 
 		public SkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			advRate = InitField_Typed("advRate", "0", typeof(double[]));
 			delay = InitField_Typed("delay", "0", typeof(double[]));
+			effect = InitField_Typed("effect", "0", typeof(double[]));
 		}
 
 		//		protected override void LoadLine(string param, string args) {
@@ -65,6 +67,10 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			base.LoadScriptLine(filename, line, param, args);//the AbstractThingDef Loadline
+		}
+
+		public static SkillDef ById(SkillName name) {
+			return (SkillDef) ById((int) name);
 		}
 
 		public double[] AdvRate {
@@ -93,11 +99,11 @@ namespace SteamEngine.CompiledScripts {
 			return ch.Skills[this.Id].RealValue;
 		}
 
-		public ushort GetValueForChar(Character ch, ushort id) {
+		public static ushort GetValueForChar(Character ch, ushort id) {
 			return ch.Skills[id].RealValue;
 		}
 
-		public ushort GetValueForChar(Character ch, SkillName id) {
+		public static ushort GetValueForChar(Character ch, SkillName id) {
 			return ch.Skills[(int) id].RealValue;
 		}
 
@@ -137,6 +143,36 @@ namespace SteamEngine.CompiledScripts {
 
 		public double GetDelayForChar(Character ch) {
 			return Globals.EvalRangePermille(GetValueForChar(ch), Delay);
+		}
+
+		public double[] Effect {
+			get {
+				return (double[]) effect.CurrentValue;
+			}
+			set {
+				effect.CurrentValue = value;
+			}
+		}
+
+		public double MinEffect {
+			get {
+				return Effect[0];
+			}
+		}
+
+		public double MaxEffect {
+			get {
+				double[] arr = Effect;
+				return arr[arr.Length-1];
+			}
+		}
+
+		public double GetEffectForValue(ushort skillValue) {
+			return Globals.EvalRangePermille(skillValue, Effect);
+		}
+
+		public double GetEffectForChar(Character ch) {
+			return Globals.EvalRangePermille(GetValueForChar(ch), Effect);
 		}
 
 		public static bool CheckSuccess(ushort skillValue, int difficulty) {

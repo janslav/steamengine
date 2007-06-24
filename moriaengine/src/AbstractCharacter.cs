@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -2181,6 +2182,11 @@ namespace SteamEngine {
 		//They can even go negative (but not from using powers, which work only with enough points).
 		//You only gain points by sacrificing gold (that balances this with other magic classes since this has no reagent costs).
 		public abstract long TithingPoints { get; set; }
+		[Remark("Displays in client status as Physical resistance by default")]
+		public abstract short ArmorClass { get; }
+		[Remark("Displays in client status as Energy resistance by default")]
+		public abstract short MindDefense { get; }
+
 		//Resistances do not have effs. Negative values impart penalties.
 		[Remark("Displays in client status as Fire resistance by default")]
 		public abstract short ExtendedStatusNum1 { get; }
@@ -2188,16 +2194,12 @@ namespace SteamEngine {
 		public abstract short ExtendedStatusNum2 { get; }
 		[Remark("Displays in client status as Poison resistance by default")]
 		public abstract short ExtendedStatusNum3 { get; }
-		[Remark("Displays in client status as Physical resistance by default")]
-		public abstract short ExtendedStatusNum4 { get; }
-		[Remark("Displays in client status as Energy resistance by default")]
-		public abstract short ExtendedStatusNum5 { get; }
 		[Remark("Displays in client status as Luck by default")]
+		public abstract short ExtendedStatusNum5 { get; }
+		[Remark("Displays in client status as MinDamage by default")]
 		public abstract short ExtendedStatusNum6 { get; }
-		
-
-		public abstract short MinDamage { get; }
-		public abstract short MaxDamage { get; }
+		[Remark("Displays in client status as MaxDamage by default")]
+		public abstract short ExtendedStatusNum7 { get; }
 
 		public abstract HighlightColor GetHighlightColorFor(AbstractCharacter viewer);
 		
@@ -2901,9 +2903,9 @@ namespace SteamEngine {
 			}
 		} }
 
-		public IEnumerable GetVisibleEquip() {
+		public IEnumerable<Thing> GetVisibleEquip() {
 			if (visibleLayers == null) {
-				return EmptyEnumerator<AbstractCharacter>.instance;
+				return EmptyEnumerator<Thing>.instance;
 			} else {
 				return visibleLayers;
 			}

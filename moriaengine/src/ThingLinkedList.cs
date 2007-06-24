@@ -21,11 +21,12 @@ using SteamEngine.Packets;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine {
 
-	internal class ThingLinkedList : IEnumerable  {
+	internal class ThingLinkedList : IEnumerable<Thing>  {
 		private readonly object cont;
 		internal Thing firstThing;
 		internal ushort count;
@@ -130,11 +131,16 @@ namespace SteamEngine {
 			return false;
 		}
 
+
+		IEnumerator<Thing> IEnumerable<Thing>.GetEnumerator() {
+			return new ThingLinkedListEnumerator(this);
+		}
+
 		public IEnumerator GetEnumerator() {
 			return new ThingLinkedListEnumerator(this);
 		}
 
-		private class ThingLinkedListEnumerator : IEnumerator {
+		private class ThingLinkedListEnumerator : IEnumerator<Thing> {
 			ThingLinkedList cont;
 			Thing current;
 			Thing next;//this is because of the possibility 
@@ -169,6 +175,9 @@ namespace SteamEngine {
 				get {
 					return current;
 				}
+			}
+
+			public void Dispose() {
 			}
 		}
 	}
