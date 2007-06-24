@@ -25,17 +25,17 @@ namespace SteamEngine.CompiledScripts {
 		Blue=0x63,
 		Green=0x44,
 		Info=0x282, //shit color :) (dark yellow-green-brown undefinable) :-/ its hard to choose
-        //text colors
-		PageRepliedColor = 1740, //some other orange shit (used for labeling replied pages)
-        WriteColor=2300,
-        PlayerColor=2301,//color for players name in Admin dialog (until the coloring players is solved)
+		//text colors
+		PageRepliedColor=1740, //some other orange shit (used for labeling replied pages)
+		WriteColor=2300,
+		PlayerColor=2301,//color for players name in Admin dialog (until the coloring players is solved)
 		WriteColor2=0481,
 		ReadColor=2303,
 		NAColor=2305,
 
-		SettingsTitleColor = 2413, //the settings category color
-		SettingsNormalColor = 2300, //normal settings items
-		SettingsFailedColor = 0x25 //setting items that weren't possible to be set
+		SettingsTitleColor=2413, //the settings category color
+		SettingsNormalColor=2300, //normal settings items
+		SettingsFailedColor=0x25 //setting items that weren't possible to be set
 	}
 
 	[Remark("Various sorting criteria used in different dialogs")]
@@ -50,39 +50,39 @@ namespace SteamEngine.CompiledScripts {
 		TimeDesc,
 		IPAsc,
 		IPDesc,
-        UnreadAsc,
-        UnreadDesc
+		UnreadAsc,
+		UnreadDesc
 	}
 
-    [Remark("Various types of GUTA Leaf Components")]
-    public enum LeafComponentTypes : int {
-        //Buttons
-        [Remark("Button with the big X inside")]    
-        ButtonCross,
-        [Remark("Button with the OK inside")]
+	[Remark("Various types of GUTA Leaf Components")]
+	public enum LeafComponentTypes : int {
+		//Buttons
+		[Remark("Button with the big X inside")]
+		ButtonCross,
+		[Remark("Button with the OK inside")]
 		ButtonOK,
-        [Remark("Button with the tick inside")]   
+		[Remark("Button with the tick inside")]
 		ButtonTick,
-        [Remark("Button with the sheet of paper inside")]    
+		[Remark("Button with the sheet of paper inside")]
 		ButtonPaper,
-        [Remark("Button with flying paper")]
+		[Remark("Button with flying paper")]
 		ButtonSend,
-        [Remark("Button for sorting (small up arrow)")]
+		[Remark("Button for sorting (small up arrow)")]
 		ButtonSortUp,
-        [Remark("Button for sorting (small down arrow)")]
-        ButtonSortDown,
-        [Remark("Medium UP arrow")]
-        ButtonPrev,
-        [Remark("Medium DOWN arrow")]
+		[Remark("Button for sorting (small down arrow)")]
+		ButtonSortDown,
+		[Remark("Medium UP arrow")]
+		ButtonPrev,
+		[Remark("Medium DOWN arrow")]
 		ButtonNext,
-        [Remark("Button with people")]
+		[Remark("Button with people")]
 		ButtonPeople,
-        CheckBox,
-        RadioButton,
-	    //Inputs
-        InputText,
-        InputNumber
-    }
+		CheckBox,
+		RadioButton,
+		//Inputs
+		InputText,
+		InputNumber
+	}
 
 	public enum SettingsDisplay {
 		[Remark("Zobrazit vsechny kategorie v jednom dialogu")]
@@ -91,47 +91,45 @@ namespace SteamEngine.CompiledScripts {
 		Single
 	}
 
-	[Remark("Urcuje zdroj damage, neboli typ utoku")]
-	public enum DamageSource {
-		[Remark("Damage magickym efektem, pasti, damage over time (poison, bleed), atd. Neredukovano.")]
-		God = 0,
-		[Remark("Damage zbrani (tj. ne kouzlem), redukovano armorem (AC)")]
-		Weapon = 1,
-		[Remark("Damage kouzlem, redukovano obranou mysli (OM)")]
-		Spell = 2
-	}
-    
 	[Flags]
 	[Remark("Urcuje, jakej rezist se ma aplikovat na dotycny damage.")]
-    public enum DamageType : int {
+	public enum DamageType : int {
 		[Remark("Damage neredukovano")]
-    	Godly =				0x000000,
+		Irresistable=0x000000,
 		[Remark("Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)")]
-    	Magic =				0x000001,
-		MagicFire =			Magic|0x000004,
-		Electric =			Magic|0x000008,
-		Acid =				Magic|0x000010,
-		Cold =				Magic|0x000020,
-		MagicPoison =		Magic|0x000040,
+		Magic=0x000001,
+		MagicFire=Magic|0x000004,
+		Electric=Magic|0x000008,
+		Acid=Magic|0x000010,
+		Cold=Magic|0x000020,
+		MagicPoison=Magic|0x000040,
 		[Remark("Mystikuv utok")]
-		Mystical =			Magic|0x000080,
+		Mystical=Magic|0x000080,
 		[Remark("Damage redukovano fyzickym rezistem (neplest s armorem)")]
-		Physical =			0x000002,
+		Physical=0x000002,
 		[Remark("Secne zbrane (mece, sekery) ")]
-		Slashing =			Physical|0x000100,
+		Slashing=Physical|0x000100,
 		[Remark("Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)")]
-		Stabbing =			Physical|0x000200,
+		Stabbing=Physical|0x000200,
 		[Remark("Secne bodne zbrane (mece)")]
-		Sharp =				Physical|Slashing|Stabbing,
+		Sharp=Physical|Slashing|Stabbing,
 		[Remark("Tupe zbrane (hole, palcaty)")]
-		Blunt =				Physical|0x000400,
+		Blunt=Physical|0x000400,
 		[Remark("Palne zbrane (luky, kuse)")]
-		Archery =			Physical|0x000800,
-		Bleed =				Physical|0x001000,
-    	
-		Summon =			0x002000,
-		Dragon =			0x004000,
-		NonMagicFire =		0x000004,
-		NonMagicPoison =	0x000040
-    }
+		Archery=Physical|0x000800,
+		Bleed=Physical|0x001000,
+
+		Summon=0x002000,
+		Dragon=0x004000,
+		NonMagicFire=0x000004,
+		NonMagicPoison=0x000040
+	}
+
+	public enum WeaponType : int {
+		Blunt,//also bare hands
+		Stabbing,
+		Sword,
+		Axe,
+		Archery
+	}
 }
