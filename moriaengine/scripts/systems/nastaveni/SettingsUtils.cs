@@ -307,7 +307,7 @@ namespace SteamEngine.CompiledScripts {
 					color = Hues.Red; //set the error color 
 					newValue = newValInserted; //set the unsuccessful setting for informational purposes
 				}
-			} catch(SEException sex) {
+			} catch {
 				//there are lots of saves and loads - many potentional exceptions
 				//in ou case any exception means unsuccessfull settings - we will display 
 				//the values
@@ -341,7 +341,7 @@ namespace SteamEngine.CompiledScripts {
 				PropertyInfo pi = (PropertyInfo)mi;
 				try {
 					value = pi.GetValue(parentValue, null);
-				} catch(TargetException tae) { //the value still could not be found
+				} catch { //the value still could not be found
 					value = null;
 				}
 				return pi.PropertyType;
@@ -354,7 +354,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					try {
 						value = fi.GetValue(parentValue); //we expect the parent's instance here
-					} catch(TargetException mae) {
+					} catch {
 						//something wrong
 						value = null;
 					}
@@ -371,7 +371,7 @@ namespace SteamEngine.CompiledScripts {
 				PropertyInfo pi = (PropertyInfo)mi;
 				try {
 					pi.SetValue(parentValue, value, null);
-				} catch(TargetException tae) { //the value still could not be found
+				} catch { //the value still could not be found
 					return false;
 				}
 			} else {
@@ -383,7 +383,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					try {
 						fi.SetValue(parentValue, value); //we expect the parent's instance here
-					} catch(TargetException tae) {
+					} catch {
 						//something wrong
 						return false;
 					}
@@ -458,13 +458,10 @@ namespace SteamEngine.CompiledScripts {
 			//object instance which will be then stored to the member
 			try {
 				return ObjectSaver.Load(sval.ValuesPrefix + value);
-			} catch (SEException sex) {
+			} catch {
 				//loading fails - probably wrong data inserted...
 				return null;
-			} catch (FormatException fex) {
-				//this happens at least when invalid IP address was entered
-				return null;
-			}
+			} 
 		}
 	}
 }

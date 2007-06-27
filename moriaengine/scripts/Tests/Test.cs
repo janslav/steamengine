@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	[Remark("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]		
 	public static class TESTSettClass {
 		[SavedMember("attr1", "Category1")]
-		private static string att1 = "pepicek";
+		private static object att1 = "pepicek";
 		[SavedMember("attr2", "Category1")]
 		private static string att2 = "jiricek";
 		[SavedMember("attr3", "Category1")]

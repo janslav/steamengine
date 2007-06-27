@@ -95,6 +95,10 @@ namespace SteamEngine {
 			o.Uid = uid;
 			array[index] = o;
 			count++;
+
+			if (uid > highestElement) {
+				highestElement = uid;
+			}
 		}
 
 		private void FillFreeSlotQueue() {
