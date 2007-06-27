@@ -27,6 +27,7 @@ v LSCriptu nelze pouzivat standardni settery pole:
 Vyresit nutnost nejakyho nastaveni regionu pri prvnim spusteni sveta (viz vypis)
 	CRITICAL: Regions not used.: No world region defined. at SteamEngine.Region.LoadingFinished() 
 			IP Address 0 : xxx.xxx.xxx.xxx
+	nutno prozatim volat Exportutils.ImportRegions
 
 
 

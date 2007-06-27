@@ -108,6 +108,11 @@ namespace SteamEngine.Persistence {
 		+ "not yet been loaded in this loading session. In such cases, we suggest using one of "
 		+ "the Load methods that support delayed loading.")]
 		object Load(Match match);
+
+		[Summary("Return the prefix used to identify this item type in the save file")]
+		[Remark("The returned value is e.g. (4D) for point4D, (IP) for IP address etc. We will use it"+
+				"in settings dialogs for better writing out the values (without these texts)")]		
+		string Prefix { get; }
 	}
 	
 	[Summary("Class used to load and save (serialize and deserialize) various non-standard objects to savefiles.")]

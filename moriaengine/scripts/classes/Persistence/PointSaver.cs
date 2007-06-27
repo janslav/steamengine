@@ -42,6 +42,12 @@ namespace SteamEngine.CompiledScripts {
 
 			return new Point2D(x, y);
 		}
+
+		public string Prefix {
+			get {
+				return "(2D)";
+			}
+		}
 	}
 
 	public class Point3DSaveImplementor : ISimpleSaveImplementor {
@@ -92,6 +98,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			return new Point3D(x, y, z);
+		}
+
+		public string Prefix {
+			get {
+				return "(3D)";
+			}
 		}
 	}
 
@@ -151,6 +163,12 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			return new Point4D(x, y, z, m);
+		}
+
+		public string Prefix {
+			get {
+				return "(4D)";
+			}
 		}
 	}
 

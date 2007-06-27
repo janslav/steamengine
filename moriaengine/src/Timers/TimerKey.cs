@@ -70,5 +70,11 @@ namespace SteamEngine.Timers {
 		public object Load(Match match) {
 			return TimerKey.Get(match.Groups["value"].Value);
 		}
+
+		public string Prefix {
+			get {
+				return "%";
+			}
+		}
 	}
 }
