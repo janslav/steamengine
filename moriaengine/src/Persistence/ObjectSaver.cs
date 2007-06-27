@@ -160,8 +160,8 @@ namespace SteamEngine.Persistence {
 		private static ArrayList simpleImplementorsRGs = new ArrayList();
 		//regex-ISimpleSaveImplementor pairs (RGSSIPair instances)
 		private static Dictionary<Type, ISimpleSaveImplementor> simpleImplementorsByType = new Dictionary<Type, ISimpleSaveImplementor>();
-		//Type-ISimpleSaveImplementor pairs
-		
+		//Type-ISimpleSaveImplementor pairs		
+
 		private static uint uids = 0;
 		
 		[Summary("Method for generic saving of various objects.")]
@@ -661,7 +661,15 @@ namespace SteamEngine.Persistence {
 			saversList = saversList.next;//throws nullpointerexc...
 			return ds;
 		}
-		
+
+		[Remark("Forwards call for finding a SimpleSaveImplementor for given Type."+
+				"Returns the ISimpleSaveImplementor instance or null if nothing was found")]
+		public static ISimpleSaveImplementor GetSimpleSaveImplementorByType(Type t) {
+			ISimpleSaveImplementor retVal = null;
+			simpleImplementorsByType.TryGetValue(t, out retVal);
+			return retVal;
+		}
+
 
 
 //embedded classes:

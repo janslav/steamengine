@@ -230,6 +230,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Remark("The prefix from the objects value obtained by ObjectSaver.Save method.")]
+		private string valuesPrefix;
+		public string ValuesPrefix {
+			get {
+				return valuesPrefix;
+			}
+			set {
+				valuesPrefix = value;
+			}
+		}
+
 		public SettingsValue(string name, MemberInfo member) {
 			this.level = 0;
 			this.name = name;
@@ -253,7 +264,7 @@ namespace SteamEngine.CompiledScripts {
 			//increase the input ID counter
 			inst.DlgIndex++;
 			//display the value of the settings member in its "saved" form - including prefixes e.t.c
-			dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, color, ObjectSaver.Save(value));
+			dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, color, SettingsUtilities.WriteValue(value,this));
 			inst.valuesToSet[inst.DlgIndex] = this; //store the info about the filled SettingsValue (for further purposes such as accepting setting etc)
 		}
 
@@ -272,13 +283,16 @@ namespace SteamEngine.CompiledScripts {
 				//first get the string representation of the old value (including prefix - #, :, :: etc.)
 				string fullOldVal = ObjectSaver.Save(value);
 
-				object newValLoaded = ObjectSaver.Load(newValInserted); //get the inserted string, and try to "load" it to its object representation
+				//get the inserted string, and transform it to its object representation
+				object newValLoaded = SettingsUtilities.ReadValue(newValInserted,this); 
 				//what's the Type of the field hidden in this member? (we dont care about the value, so we use just simple anonymous object)
 				object membersValueUnused = null;
 				Type valType = SettingsUtilities.GetMemberType(member, parent.Value, out membersValueUnused);
 				//cast the objectified inserted new value to the type of the old member's value
+				//the newValLoaded is object of certain type, we will just find out whether the object
+				//is of the correct, member's, type
 				object newValObj = null;
-				if(ConvertTools.TryConvertTo(valType, newValLoaded, out newValObj)) {
+				if (ConvertTools.TryConvertTo(valType, newValLoaded, out newValObj) && newValLoaded != null) {
 					string fullNewVal = ObjectSaver.Save(newValObj);//get the new value in the stringified (prefixes...) form
 					if(!fullOldVal.Equals(fullNewVal)) {
 						//the old and new values aren't the same - make a setting
@@ -389,8 +403,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Remark("Find the value type and decide what is its prefix when used ObjectSaver.Save, then"+
-				"remove this prefix to obtain pure stringified value")]
-		public static string WriteValue(object value) {
+				"remove this prefix to obtain pure stringified value. The found prefix will be stored"+
+				"in its parent SettingsValue")]
+		public static string WriteValue(object value, SettingsValue sval) {
 			string valuePrefix = "";
 			if (prefixTypes == null) {
 				prefixTypes = new Hashtable();
@@ -404,7 +419,7 @@ namespace SteamEngine.CompiledScripts {
 
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
 				if (t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
-					|| typeof(Region).IsAssignableFrom(t) || value == Globals.instance) {
+					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
 				} else if (typeof(Thing).IsAssignableFrom(t)) {
 					valuePrefix = "#";
 				} else if (t.Equals(typeof(TimeSpan))) {
@@ -417,8 +432,8 @@ namespace SteamEngine.CompiledScripts {
 					valuePrefix = "#";
 				} else {
 					//it must be this type of class, nothing else should occur in settings !!!
-					ISimpleSaveImplementor iss;
-					if (simpleImplementorsByType.TryGetValue(t, out iss)) {
+					ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+					if (iss != null) {
 						valuePrefix = iss.Prefix;
 					}
 				}
@@ -429,6 +444,8 @@ namespace SteamEngine.CompiledScripts {
 			string savedValue = ObjectSaver.Save(value);
 				//just take the rest of the string aftrer the prefix
 			savedValue = savedValue.Substring(savedValue.IndexOf(valuePrefix) + valuePrefix.Length);
+			//store the prefix for 
+			sval.ValuesPrefix = valuePrefix;
 
 			return savedValue;
 		}
@@ -436,8 +453,18 @@ namespace SteamEngine.CompiledScripts {
 		[Remark("This is another metod for loading data - it takes the selected string, "+
 				"finds out its real type and adds to it the prefix we stripped off before so its "+
 				"again available for ObjectSaver.Load method to be stored.")]
-		public object ReadValue(string value) {
-			return null;
+		public static object ReadValue(string value, SettingsValue sval) {
+			//add the stored prefix to the obtained string from the dialog and transform it to the
+			//object instance which will be then stored to the member
+			try {
+				return ObjectSaver.Load(sval.ValuesPrefix + value);
+			} catch (SEException sex) {
+				//loading fails - probably wrong data inserted...
+				return null;
+			} catch (FormatException fex) {
+				//this happens at least when invalid IP address was entered
+				return null;
+			}
 		}
 	}
 }
