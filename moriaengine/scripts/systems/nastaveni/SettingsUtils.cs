@@ -16,7 +16,7 @@
 */
 
 using System;
-//using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using SteamEngine.Common;
@@ -316,6 +316,9 @@ namespace SteamEngine.CompiledScripts {
 	[Remark("Utility class containing methods for working with Members (getting values, setting them "+
 			"recognizing data types etc")]
 	internal static class SettingsUtilities {
+		[Remark("This hashtable will contain object types as keys with its corresponding prefixes as values")]
+		private static Hashtable prefixTypes; 
+
 		[Remark("Return the type of the type referenced by given MemberInfo. " +
 				"It will also set the provided object with the member's value using the" +
 				"parent's value to get it.")]
@@ -383,6 +386,58 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				return ((FieldInfo)mi).GetValue(null);
 			}
+		}
+
+		[Remark("Find the value type and decide what is its prefix when used ObjectSaver.Save, then"+
+				"remove this prefix to obtain pure stringified value")]
+		public static string WriteValue(object value) {
+			string valuePrefix = "";
+			if (prefixTypes == null) {
+				prefixTypes = new Hashtable();
+			}
+			if (prefixTypes.ContainsKey(value.GetType())) {
+				//prefix is already stored
+				valuePrefix = (String)prefixTypes[value.GetType()];
+			} else {
+				//prefix is to be found first
+				Type t = value.GetType();
+
+				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
+				if (t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
+					|| typeof(Region).IsAssignableFrom(t) || value == Globals.instance) {
+				} else if (typeof(Thing).IsAssignableFrom(t)) {
+					valuePrefix = "#";
+				} else if (t.Equals(typeof(TimeSpan))) {
+					valuePrefix = ":";
+				} else if (t.Equals(typeof(DateTime))) {
+					valuePrefix = "::";
+				} else if (typeof(GameAccount).IsAssignableFrom(t)) {
+					valuePrefix = "$";
+				} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
+					valuePrefix = "#";
+				} else {
+					//it must be this type of class, nothing else should occur in settings !!!
+					ISimpleSaveImplementor iss;
+					if (simpleImplementorsByType.TryGetValue(t, out iss)) {
+						valuePrefix = iss.Prefix;
+					}
+				}
+				//time to store the prefix
+				prefixTypes[t] = valuePrefix;
+			}
+			//now save the value, and strip the prefix
+			string savedValue = ObjectSaver.Save(value);
+				//just take the rest of the string aftrer the prefix
+			savedValue = savedValue.Substring(savedValue.IndexOf(valuePrefix) + valuePrefix.Length);
+
+			return savedValue;
+		}
+
+		[Remark("This is another metod for loading data - it takes the selected string, "+
+				"finds out its real type and adds to it the prefix we stripped off before so its "+
+				"again available for ObjectSaver.Load method to be stored.")]
+		public object ReadValue(string value) {
+			return null;
 		}
 	}
 }

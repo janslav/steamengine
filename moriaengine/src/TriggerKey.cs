@@ -145,5 +145,11 @@ namespace SteamEngine {
 		public object Load(Match match) {
 			return TriggerKey.Get(match.Groups["value"].Value);
 		}
+		
+		public string Prefix {
+			get {
+				return "@";
+			}
+		}
 	}
 }		

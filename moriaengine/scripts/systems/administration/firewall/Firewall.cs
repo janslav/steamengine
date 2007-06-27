@@ -379,5 +379,11 @@ namespace SteamEngine.CompiledScripts {
             return IPAddress.Parse(match.Groups["value"].Value);
         }
 
+		public string Prefix {
+			get {
+				return "(IP)";
+			}
+		}
+
     }
 }
