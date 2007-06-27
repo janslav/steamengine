@@ -99,7 +99,6 @@ namespace SteamEngine.CompiledScripts {
 			//seznam kategorii kontextu
 			SettingsCategory[] categories = (SettingsCategory[])gi.GetTag(categoriesTag);
 			if(gr.pressedButton < 10) { //zakladni tlacitka - end, zobraz vse 
-				DialogStackItem dsi = null;
 				switch(gr.pressedButton) {
 					case 0: //exit
 						DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog

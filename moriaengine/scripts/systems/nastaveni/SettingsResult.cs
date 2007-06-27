@@ -102,7 +102,6 @@ namespace SteamEngine.CompiledScripts {
 		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
 			//seznam nastavenych nebo zkousenych polozek
 			Hashtable setVals = (Hashtable)gi.GetTag(setResultsTag);
-			DialogStackItem dsi = null;
 			if(gr.pressedButton == 0) { //end				
 				DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
 
