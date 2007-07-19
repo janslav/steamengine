@@ -113,6 +113,9 @@
     <Compile Include="..\..\scripts\classes\Persistence\ArraySaver.cs">
       <Link>classes\Persistence\ArraySaver.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\classes\Persistence\DateSaver.cs">
+      <Link>classes\Persistence\DateSaver.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\classes\Persistence\GenericListSaver.cs">
       <Link>classes\Persistence\GenericListSaver.cs</Link>
     </Compile>
@@ -295,6 +298,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsCategories.cs">
       <Link>systems\nastaveni\SettingsCategories.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\SettingsInfo.cs">
+      <Link>systems\nastaveni\SettingsInfo.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsResult.cs">
       <Link>systems\nastaveni\SettingsResult.cs</Link>

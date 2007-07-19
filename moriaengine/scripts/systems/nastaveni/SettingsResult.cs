@@ -58,15 +58,15 @@ namespace SteamEngine.CompiledScripts {
 			int allFields = setResults.Count;
 
 			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);
-			dlg.CreateBackground(600);
+			dlg.CreateBackground(700);
 			dlg.SetLocation(100, 100);
 
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Výsledky nastavení (celkem:" + allFields + ", úspìšnì pøenastaveno: " + resultsOK + ", chybnì zadáno: " + resultsNOK + ")");
+			dlg.LastTable[0, 0] = TextFactory.CreateText("Výsledky nastavení (celkem:" + allFields + ", pøenastaveno: " + resultsOK + ", chybnì zadáno: " + resultsNOK + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(1, 150, 150, 150, 0));			
+			dlg.Add(new GUTATable(1, 175, 175, 175, 0));			
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Název");//jméno položky nastavení
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Souèasná hodnota");//po nastavení
 			dlg.LastTable[0, 2] = TextFactory.CreateText("Pùvodní hodnota");//vyplnìno pøi úspìšném nastavení

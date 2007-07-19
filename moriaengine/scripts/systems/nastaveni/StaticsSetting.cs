@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	[Remark("Dialog pro nastavení všech promìnných majících atribut SavedMember a jsou zároveò urèeny"+
 			"pro dynamické nastavování.")]
 	public class D_Static_Settings : CompiledGump {
-		private static int width = 800;
+		private static int width = 900;
 		public static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 		public static int ITEM_INDENT = 20; //pocet pixelu o ktere budou popisy s inputfieldem odsazeny od kraje
 		public static int INPUT_INDENT = 60; //pocet pixelu o ktery bude odsazen inputfield od zacatku textoveho popisku (tj zbyde i misto na vlastni text)
@@ -94,9 +94,10 @@ namespace SteamEngine.CompiledScripts {
 			dlg.CreateBackground(width);
 			dlg.SetLocation(0, 30);
 
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Nastavení globálních promìnných");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = TextFactory.CreateText("Nastavení globálních promìnných. Pro informace zmáèkni tlaèítko s papírem vpravo v rohu.");			
+			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
 			dlg.Add(new GUTATable(ImprovedDialog.PAGE_ROWS, innerWidth / 4, innerWidth / 4, 0, innerWidth / 4));//bude to ve 4 sloupcích
@@ -264,9 +265,6 @@ namespace SteamEngine.CompiledScripts {
 				dsi.Args[0] = firstCat; //updatnout info o prvni kategorii				
 				dsi.Args[1] = firstIdx; //v prvni kategorii zacneme zobrazovat od tohoto clena
 				dsi.Show();
-			} else if(gr.pressedButton == 0) { //exit button
-				DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
 			} else if(gr.pressedButton == 1) { //nastaveni
 				//napred vycistime vsechny mozne predchozi neuspechy v nastaveni - nyni totiz jedem znova
 				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
@@ -279,10 +277,11 @@ namespace SteamEngine.CompiledScripts {
 				dsi.Args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
 				dsi.Show();
 				//a zobrazime dialog s vysledky
-				gi.Cont.Dialog(D_Settings_Result.Instance, 0, valuesToSet);				
+				gi.Cont.Dialog(D_Settings_Result.Instance, 0, valuesToSet);
+			} else if(gr.pressedButton == 2) { //info
+				//zobrazit text zprávy (první parametr je nadpis, druhý je zobrazný text)
+				gi.Cont.Dialog(D_Settings_Help.Instance);				
 			}
-			
-
 		}
 
 		[Remark("Specificky zpusob vytvareni pagingu pro nastavovaci dialogy - nebudeme pouzivat ten "+ 
