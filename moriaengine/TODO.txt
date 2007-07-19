@@ -134,11 +134,10 @@ Dinivan
 	Gumpovej system pro Nastaveni. Zatim bych to videl jako generator gumpu kolem jednoho [SaveableClass] objektu
 		jinymi slovy v podstate by to vypisovalo to co se jinak pise do sejvu a stejnym algoritmem by to taky nacitalo...
 
-	Gumpy - pri zavreni podrizeneho dialogu se znovuotevre predchozi dialog na prislusne strance
-
 	Account info dialog
-
+	
 	admin dialog (list of clients and stuff)
+		DONE		
 
 	Info dialog (player, character, item)
 	

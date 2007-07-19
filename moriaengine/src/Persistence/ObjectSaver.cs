@@ -199,10 +199,25 @@ namespace SteamEngine.Persistence {
 				return "#"+((Thing) value).Uid;
 			} else if (typeof(Region).IsAssignableFrom(t)) {
 				return "("+((Region) value).Defname+")";
-			} else if (t.Equals(typeof(TimeSpan))) {
-				return ":"+((TimeSpan) value).Ticks;
+			/*
+			 *  TODO
+			 * Moved to their own ISImpleSaveImplementors, remove it from here 
+			 * 
+			 * } else if (t.Equals(typeof(TimeSpan))) {
+				//return ":"+((TimeSpan) value).Ticks;
+				return ":" + ((TimeSpan)value).ToString();
 			} else if (t.Equals(typeof(DateTime))) {
-				return "::"+((DateTime) value).Ticks;
+				//return "::"+((DateTime) value).Ticks;
+				//we will return the date in some more acceptable form
+				//the FFF... notation cuts of possible zeros, it works only if decimal part of te seconds is not null				
+				string dateString = ((DateTime)value).ToString("dd.MM.yyyy HH:mm:ss.FFFFFFF");
+				//cut off the last zeros, we dot need them, hour was not specified
+				if(dateString.EndsWith("00:00:00")) {//no hours at all?					
+					dateString = dateString.Substring(0,dateString.Length-8).Trim();
+				} else if(dateString.EndsWith(":00")) {//or no seconds?
+					dateString = dateString.Substring(0, dateString.Length - 3).Trim();
+				} 
+				return "::"+dateString;*/
 			} else if (typeof(GameAccount).IsAssignableFrom(t)) {
 				return "$"+((GameAccount) value).Name;
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
@@ -382,14 +397,21 @@ namespace SteamEngine.Persistence {
 				string stringAsSingleLine = m.Groups["value"].Value;
 				return Utility.UnescapeNewlines(stringAsSingleLine);
 			}
-			m = ConvertTools.timeSpanRE.Match(input);
+			/* TODO
+			 * moved to their own ISimpleSaveImplementors. remove it from here !
+			 *
+			 * m = ConvertTools.timeSpanRE.Match(input);
 			if (m.Success) {
-				return new TimeSpan(long.Parse(m.Groups["value"].Value));
+				//return new TimeSpan(long.Parse(m.Groups["value"].Value));
+				return TimeSpan.Parse(m.Groups["value"].Value);
 			}
 			m = ConvertTools.dateTimeRE.Match(input);
 			if (m.Success) {
-				return new DateTime(long.Parse(m.Groups["value"].Value));
-			}
+				//prepare formatter for parsing and parse the date from the string
+				IFormatProvider culture = new CultureInfo("cs-CZ", true);				
+				return DateTime.Parse(m.Groups["value"].Value,culture);
+				//return new DateTime(long.Parse(m.Groups["value"].Value));
+			}*/
 			m = ConvertTools.intRE.Match(input);
 			if (m.Success) {
 				return int.Parse(m.Groups["value"].Value, NumberStyles.Integer);

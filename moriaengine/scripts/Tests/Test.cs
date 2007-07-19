@@ -25,7 +25,8 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
-	[Remark("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]		
+	[Remark("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]
+	#pragma warning disable 0414 //disable the "private field never used warning"
 	public static class TESTSettClass {
 		[SavedMember("attr1", "Category1")]
 		private static object att1 = "pepicek";
@@ -44,8 +45,6 @@ namespace SteamEngine.CompiledScripts {
 		private static string att7 = "zmolžík";
 		[SavedMember("attr8", "Categotry4")]
 		private static TimeSpan att8 = new TimeSpan();
-		[SavedMember("attr9", "Categotry4")]
-		private static TimeSpan att9 = new TimeSpan();
 		[SavedMember("attr10", "Categotry5")]
 		private static TestSavedClass2 att10 = new TestSavedClass2();
 		[SavedMember("attr11", "Categotry6")]

@@ -198,7 +198,7 @@ namespace SteamEngine.CompiledScripts {
 							try {
 								//try to get the list from the list (if it exists)
 								catList = tempDict[category];
-							} catch (KeyNotFoundException knfe) {
+							} catch {
 								//create the list now
 								catList = new List<SettingsValue>();
 								//add the new list to the temporary dictionary
@@ -256,14 +256,17 @@ namespace SteamEngine.CompiledScripts {
 		private static void FindInnerCategories(SettingsCategory cat) {
 			for(int i = 0; i < cat.Members.Length; i++) {
 				SettingsValue setVal = (SettingsValue)cat.Members[i]; //zatim je mozno takto pretypovat, vse je SettingsValue
-				object membersValue;
+				object membersValue = null;
 				Type membersType = SettingsUtilities.GetMemberType(setVal.Member, cat.Value, out membersValue);
+				Type valuesType = (membersValue != null ? membersValue.GetType() : null);
 				setVal.Value = membersValue;//takto dostaneme hodnotu instance tohoto membera
-				if(!ObjectSaver.IsSimpleSaveableType(membersType)) {//mame tu slozeny typ?
+
+				//dale pracujeme s typem membersValue (neb mùže být napøíklad object cosi = new IPAddress; takže pøímo ten membersType nám toho moc neøekne...
+				if(membersValue != null && !ObjectSaver.IsSimpleSaveableType(valuesType)) {//mame tu slozeny typ?
 					//tento slozeny member musi obsahovat vnorene SaveableData ktere budou zobrazeny jako vnitrni kategorie
 					//pokud by takove neobsahoval, pak je to chyba a nema co delat v nastaveni !
 					List<SettingsValue> innerSetVals = new List<SettingsValue>();
-					foreach(MemberInfo innerMi in StaticMemberSaver.GetSaveableDataFromClass(membersType)) {
+					foreach(MemberInfo innerMi in StaticMemberSaver.GetSaveableDataFromClass(valuesType)) {
 						innerSetVals.Add(new SettingsValue(StaticMemberSaver.GetSettingDescFor(innerMi), innerMi));
 					}
 					//nova vnitrni kategorie, jmeno vezmeme stejne jako byl description tohoto SavedMembera co se ukazal byt slozenym

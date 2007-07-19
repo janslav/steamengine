@@ -234,6 +234,10 @@ namespace SteamEngine.CompiledScripts {
 		private string valuesPrefix;
 		public string ValuesPrefix {
 			get {
+				if(valuesPrefix == null) {
+					//load the settings prefix first
+					SettingsUtilities.LoadPrefixFor(this);
+				}
 				return valuesPrefix;
 			}
 			set {
@@ -264,15 +268,16 @@ namespace SteamEngine.CompiledScripts {
 			//increase the input ID counter
 			inst.DlgIndex++;
 			//display the value of the settings member in its "saved" form - including prefixes e.t.c
-			dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, color, SettingsUtilities.WriteValue(value,this));
+			dlg.LastTable[inst.RowCounter++, inst.FilledColumn] = InputFactory.CreateInput(LeafComponentTypes.InputText, indent, 0, inst.DlgIndex, D_Static_Settings.innerWidth / 4 - indent, ImprovedDialog.D_ROW_HEIGHT, color, SettingsUtilities.WriteValue(value));
 			inst.valuesToSet[inst.DlgIndex] = this; //store the info about the filled SettingsValue (for further purposes such as accepting setting etc)
 		}
 
-		[Remark("Write the value's label, using appropriate level indentation")]
+		[Remark("Write the value's label, using appropriate level indentation."+
+				"There will be the value's type information added in the brackets")]
 		public override void WriteLabel(ImprovedDialog dlg) {
 			//check the color, if null then simple write out, no colors, nothing...
 			//the color will be not null only in case of unsuccessfull setting of this member
-			dlg.LastTable[D_Static_Settings.Instance.RowCounter, D_Static_Settings.Instance.FilledColumn] = TextFactory.CreateText(D_Static_Settings.ITEM_INDENT * level, 0, color, name);			
+			dlg.LastTable[D_Static_Settings.Instance.RowCounter, D_Static_Settings.Instance.FilledColumn] = TextFactory.CreateText(D_Static_Settings.ITEM_INDENT * level, 0, color, name + GetTypeInfo());			
 		}
 
 		[Remark("Get the newVal and try to set it as the new value to the undelraying member."+
@@ -280,9 +285,6 @@ namespace SteamEngine.CompiledScripts {
 				"displaying.")]
 		public void TrySet(string newValInserted) {
 			try {
-				//first get the string representation of the old value (including prefix - #, :, :: etc.)
-				string fullOldVal = ObjectSaver.Save(value);
-
 				//get the inserted string, and transform it to its object representation
 				object newValLoaded = SettingsUtilities.ReadValue(newValInserted,this); 
 				//what's the Type of the field hidden in this member? (we dont care about the value, so we use just simple anonymous object)
@@ -292,14 +294,13 @@ namespace SteamEngine.CompiledScripts {
 				//the newValLoaded is object of certain type, we will just find out whether the object
 				//is of the correct, member's, type
 				object newValObj = null;
-				if (ConvertTools.TryConvertTo(valType, newValLoaded, out newValObj) && newValLoaded != null) {
-					string fullNewVal = ObjectSaver.Save(newValObj);//get the new value in the stringified (prefixes...) form
-					if(!fullOldVal.Equals(fullNewVal)) {
-						//the old and new values aren't the same - make a setting
+				if (ConvertTools.TryConvertTo(valType, newValLoaded, out newValObj)) {
+					if(!object.Equals(value,newValObj)) {
+						//the old and new value aren't the same - make a setting
 						//the parent.Value will be used only in case the member is non-static field
 						//otherwise it wont be used (and it is also null here)
 						SettingsUtilities.SetMemberValue(member, parent.Value, newValObj); //set the member itself
-						oldValue = fullOldVal; //store the previous value for informational purposes
+						oldValue = ObjectSaver.Save(value); //store the stringified previous value for informational purposes
 						value = newValObj; //set the new value for displaying in the settings dialog
 					}
 				} else {
@@ -324,6 +325,11 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				return name;
 			}			
+		}
+
+		[Remark("Get the stringified information about the member value's type")]
+		private string GetTypeInfo() {
+			return SettingsUtilities.GetTypeInfo(this);
 		}
 	}
 
@@ -392,76 +398,110 @@ namespace SteamEngine.CompiledScripts {
 			return true; //success
 		}
 
-		[Remark("Return the value of the given MemberInfo. Use the static way to obtain it so it is not " +
-				"applicable for the non static fields or members.")]
-		public static object GetMemberValue(MemberInfo mi) {
+		[Remark("Return the value of the SettingValue's underlaying member.")]
+		public static object GetMemberValue(SettingsValue sval) {
+			MemberInfo mi = sval.Member;
 			if(mi.MemberType == MemberTypes.Property) {
-				return ((PropertyInfo)mi).GetValue(null, null);
+				return ((PropertyInfo)mi).GetValue(sval.Parent.Value, null);
 			} else {
-				return ((FieldInfo)mi).GetValue(null);
+				return ((FieldInfo)mi).GetValue(sval.Parent.Value);
 			}
 		}
 
-		[Remark("Find the value type and decide what is its prefix when used ObjectSaver.Save, then"+
-				"remove this prefix to obtain pure stringified value. The found prefix will be stored"+
-				"in its parent SettingsValue")]
-		public static string WriteValue(object value, SettingsValue sval) {
-			string valuePrefix = "";
-			if (prefixTypes == null) {
-				prefixTypes = new Hashtable();
-			}
-			if (prefixTypes.ContainsKey(value.GetType())) {
-				//prefix is already stored
-				valuePrefix = (String)prefixTypes[value.GetType()];
-			} else {
-				//prefix is to be found first
-				Type t = value.GetType();
-
-				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
-				if (t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
-					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
-				} else if (typeof(Thing).IsAssignableFrom(t)) {
-					valuePrefix = "#";
-				} else if (t.Equals(typeof(TimeSpan))) {
-					valuePrefix = ":";
-				} else if (t.Equals(typeof(DateTime))) {
-					valuePrefix = "::";
-				} else if (typeof(GameAccount).IsAssignableFrom(t)) {
-					valuePrefix = "$";
-				} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
-					valuePrefix = "#";
-				} else {
-					//it must be this type of class, nothing else should occur in settings !!!
-					ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
-					if (iss != null) {
-						valuePrefix = iss.Prefix;
-					}
-				}
-				//time to store the prefix
-				prefixTypes[t] = valuePrefix;
-			}
-			//now save the value, and strip the prefix
-			string savedValue = ObjectSaver.Save(value);
-				//just take the rest of the string aftrer the prefix
-			savedValue = savedValue.Substring(savedValue.IndexOf(valuePrefix) + valuePrefix.Length);
-			//store the prefix for 
-			sval.ValuesPrefix = valuePrefix;
-
-			return savedValue;
+		[Remark("Simply call the ObjectSaver.Save method. It is separated in this method just for"+
+				"possible future adjusting of the returned string. For now it is simple.")]
+		public static string WriteValue(object value) {			
+			return ObjectSaver.Save(value);
 		}
 
 		[Remark("This is another metod for loading data - it takes the selected string, "+
 				"finds out its real type and adds to it the prefix we stripped off before so its "+
-				"again available for ObjectSaver.Load method to be stored.")]
+				"again available for ObjectSaver.Load method to be stored."+
+
+				"CHANGED: read the WriteValue method description, we will expect the prefix is present"+
+				"in the time of value's setting")]
 		public static object ReadValue(string value, SettingsValue sval) {
 			//add the stored prefix to the obtained string from the dialog and transform it to the
 			//object instance which will be then stored to the member
 			try {
-				return ObjectSaver.Load(sval.ValuesPrefix + value);
+				//return ObjectSaver.Load(sval.ValuesPrefix + value);
+				return ObjectSaver.Load(value);
 			} catch {
 				//loading fails - probably wrong data inserted...
 				return null;
 			} 
+		}
+
+		[Remark("Examine the setings value's member type and get its correct prefix."+
+				"The prefix will be stored on the SettingsValue."+
+				"We will use it in the settings dialog for displaying and identification (not "+
+				"for loading or saving - this is done automatically)")]
+		public static void LoadPrefixFor(SettingsValue sval) {
+			object value = SettingsUtilities.GetMemberValue(sval);
+			string valuePrefix = "";
+			//we will store it in the special hashtable
+			if(prefixTypes == null) {
+				prefixTypes = new Hashtable();
+			}
+			if(!prefixTypes.ContainsKey(value.GetType())) {
+				//prefix is not yet stored, find and store it now!							
+				Type t = value.GetType();
+
+				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
+				if(t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
+					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
+				} else if(typeof(Thing).IsAssignableFrom(t)) {
+					valuePrefix = "#";
+				} else if(typeof(GameAccount).IsAssignableFrom(t)) {
+					valuePrefix = "$";
+				} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
+					valuePrefix = "#";
+				} else {
+					//it must be this type of class, nothing else should occur in settings !!!
+					ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+					if(iss != null) {
+						valuePrefix = iss.Prefix;
+					}
+				}
+				//store the prefix in the hashtable
+				prefixTypes[t] = valuePrefix;
+				//store the prefix in the SettingsValue 
+				sval.ValuesPrefix = valuePrefix;
+			}			
+		}
+
+		[Remark("Get the settings values prefix and surround it by brackets."+
+				"If the value has no prefix (it is of some special type, find out what"+
+				"type it is and return some description of it")]
+		public static string GetTypeInfo(SettingsValue sval) {
+			//first load the SettingValue's _member_ type
+			/*(we use the Member type because we want to display the information about the types
+			 * that are assignable to this member. In case the member type is object and its current
+			 * value is e.g. string we want to see the information about the "Obj" assignability,
+			 * not the current "Str" value).*/			
+			object notUsed = null;
+			Type t = SettingsUtilities.GetMemberType(sval.Member,sval.Parent.Value,out notUsed);
+			if(t.Equals(typeof(object))) {
+				//object is also possible ! - the member can be set to any value
+				return "(Obj)";
+			} else if(t.IsEnum) {
+				return "(Enum)";	
+			} else if(TagMath.IsNumberType(t)) {
+				return "(Num)";
+			} else if(t.Equals(typeof(String))) {
+				return "(Str)";
+			} else if(typeof(Region).IsAssignableFrom(t)) {
+				return "(Reg)";
+			} else if(typeof(Thing).IsAssignableFrom(t)) {
+				return "(Thg)";
+			} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
+				return "(Abs)";
+			} else if(t.Equals(typeof(Globals))) {
+				return "(Glob)";
+			} else {
+				//nothing special, it is of some particular type, return the SettingValue's prefix
+				return "("+sval.ValuesPrefix+")";
+			}
 		}
 	}
 }

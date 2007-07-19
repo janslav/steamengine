@@ -36,10 +36,20 @@ namespace SteamEngine.Common {
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 		public static Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public static Regex timeSpanRE= new Regex(@"^\:(?<value>\d+)\s*$",                     
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public static Regex dateTimeRE= new Regex(@"^\::(?<value>\d+)\s*$",                     
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+		//public static Regex timeSpanRE = new Regex(@"^\:(?<value>\d+)\s*$",
+		//changed to match timespan in format like [-]d.hh:mm:ss.ff
+		//public static Regex timeSpanRE = new Regex(@"^\:(?<value>-?(\d*.)?([012]?\d?:[0-5]\d(:[0-5]\d(\.\d{1,7})?)?)?)\s*$",                     
+		//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+		//public static Regex dateTimeRE= new Regex(@"^\::(?<value>\d+)\s*$",                     
+		//changed to match date/time in format like dd.MM.yyyy HH.mm.ss.fffffff
+		//the whole time part is voluntary 
+		//the seconds part is voluntary
+		//and the decimal part too
+		//I know it is not perfect, but it should be enough for our purposes.
+		//public static Regex dateTimeRE = new Regex(@"^\::(?<value>([0-3]?\d?\.[01]?\d?\.\d\d\d\d)\s*([012]?\d?:[0-5]\d(:[0-5]\d(\.\d{1,7})?)?)?)\s*$",
+		//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		protected ConvertTools() {
 			instance=this;
