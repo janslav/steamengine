@@ -46,9 +46,14 @@ namespace SteamEngine {
 		/// private static int firstFreeGameAccount=0; private static int
 		/// lastUsedGameAccount=-1;                                      
 		private static Dictionary<string, GameAccount> accounts = new Dictionary<string, GameAccount>(StringComparer.OrdinalIgnoreCase);
+		//Generic list for holding all accounts in the game (and displaying in the dialogs)
+		private static List<GameAccount> accList = new List<GameAccount>();
+
 		//private string _password = null;	//http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconensuringdataintegritywithhashcodes.asp
 		private Byte[] passwordHash = null;
 		private string password = null;
+
+		private string regMail = null;
 
 		/// private uid representation.
 		//private int uid = 0; public int Uid { get { return uid; } }
@@ -75,6 +80,26 @@ namespace SteamEngine {
 
 		public static void ClearAll() {
 			accounts.Clear();
+			/*clear the list too 
+			 *	- during script recompiling everything is reloaded which would lead to the 
+			 *	doubled (or mored) acclist
+			 */
+			accList.Clear();
+		}
+
+		[Remark("Method for retreiving a sublist of GameAccounts which names start with "+
+				"a specified string")]
+		public static List<GameAccount> RetreiveByStr(string startWith) {
+			List<GameAccount> retList = new List<GameAccount>();
+			if(startWith.Equals("")) {//return the whole list
+				return accList;
+			}
+			foreach(string accName in accounts.Keys) {
+				if(accName.ToUpper().StartsWith(startWith.ToUpper())) {
+					retList.Add(accounts[accName]);
+				}
+			}
+			return retList;
 		}
 
 		public bool Online {
@@ -122,7 +147,7 @@ namespace SteamEngine {
 			acc = GameAccount.Get(username);
 			if (acc==null) {
 				if ((Globals.autoAccountCreation) || (accounts.Count == 0)) {
-					acc=CreateGameAccount(username, password);
+					acc=CreateGameAccount(username, password, Globals.adminEmail); //default mail
 					Console.WriteLine("Creating new account {0}", username);
 					c.LogIn(acc);
 					acc.LogIn(c);
@@ -155,7 +180,7 @@ namespace SteamEngine {
 			GameAccount acc = null;
 			if (accounts.Count==0) {
 				Console.WriteLine("Creating new account {0}", username);
-				acc=CreateGameAccount(username, password);
+				acc=CreateGameAccount(username, password, Globals.adminEmail);
 			}
 			acc = GameAccount.Get(username);
 			if (acc==null) {
@@ -169,7 +194,7 @@ namespace SteamEngine {
 
 		//commands:
 		//Call one of these to make an account
-		public static GameAccount CreateGameAccount(string acctname, string pass) {
+		public static GameAccount CreateGameAccount(string acctname, string pass, string email) {
 			//can't be called "eof" cos it would break the account save file. We know that from sphere don't we ;)
 			if (String.Equals("eof", acctname, StringComparison.OrdinalIgnoreCase)) {
 				return null;
@@ -177,8 +202,9 @@ namespace SteamEngine {
 
 			if (!accounts.ContainsKey(acctname)) {
 				GameAccount acc = new GameAccount(acctname, pass,
-					(accounts.Count == 0 ? Globals.maximalPlevel : (byte) 1));
+					(accounts.Count == 0 ? Globals.maximalPlevel : (byte)1), email);
 				accounts[acctname] = acc;
+				accList.Add(acc); //pridat tez do seznamu
 				Logger.WriteDebug("GameAccount "+acctname+" created");
 				return acc;
 			} else {
@@ -186,16 +212,16 @@ namespace SteamEngine {
 			}
 		}
 
-		public static void Create(string name, string pass) {
-			Add(name, pass);
+		public static void Create(string name, string pass, string email) {
+			Add(name, pass, email);
 		}
 
-		public static void Add(string name, string pass) {
+		public static void Add(string name, string pass, string email) {
 			if (String.Equals("eof", name, StringComparison.OrdinalIgnoreCase)) {
 				Globals.SrcWriteLine("EOF is an illegal account name");
 				return;
 			}
-			GameAccount acc=CreateGameAccount(name, pass);
+			GameAccount acc=CreateGameAccount(name, pass, email);
 			if (acc==null) {
 				Globals.SrcWriteLine("Failed to add account "+name+": That account already exists.");
 			} else {
@@ -203,9 +229,10 @@ namespace SteamEngine {
 			}
 		}
 
-		private GameAccount(string name, string password, byte plevel) {
+		private GameAccount(string name, string password, byte plevel, string email) {
 			instances++;
 			this.name=name;
+			this.regMail = email;
 			if (password==null) {
 				this.passwordHash=null;
 				this.password=null;
@@ -251,6 +278,15 @@ namespace SteamEngine {
 			get {
 				return name;
 			}
+		}
+
+		public string RegMail {
+			get {
+				return regMail;
+			}
+			/*no setter here ! it is not possible to change a registration mail in a 
+			 *conventional way!
+			 */
 		}
 
 		public byte PLevel {
@@ -342,7 +378,7 @@ namespace SteamEngine {
 		}
 
 		public string Info() {
-			string info="GameAccount "+name+"'s plevel is "+PLevel+" out of a maxPlevel of "+MaxPLevel+". It "+(IsBlocked?"is":"is not")+" blocked, and it has the following characters:";
+			string info="GameAccount "+name+"'s plevel is "+PLevel+" out of a maxPlevel of "+MaxPLevel+". Registration mail is: "+regMail+". It "+(IsBlocked?"is":"is not")+" blocked, and it has the following characters:";
 			bool foundAny=false;
 			for (int a=0; a<GameAccount.maxCharactersPerGameAccount; a++) {
 				if (characters[a]!=null) {
@@ -469,6 +505,7 @@ namespace SteamEngine {
 			Commands.AuthorizeCommandThrow(Globals.Src, "DeleteAccount");
 
 			accounts.Remove(this.name);
+			accList.Remove(this); //odstranit take ze seznamu
 			deleted = true;
 			//delete characters, and conn
 			instances--;
@@ -511,8 +548,9 @@ namespace SteamEngine {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
 			string name=input.headerType;
 
-			GameAccount curAcc = new GameAccount(name, "", 1);
+			GameAccount curAcc = new GameAccount(name, "", 1, ""); //email will be set later
 			accounts[name] = curAcc;
+			accList.Add(curAcc); //pridat take do seznamu
 			curAcc.LoadSectionLines(input);
 			loaded++;
 		}
@@ -583,6 +621,15 @@ namespace SteamEngine {
 					break;
 				case "maxplevel":
 					this.maxPlevel=byte.Parse(value, NumberStyles.Integer);
+					break;
+				//added loading of reg. mail
+				case "email":
+					m = TagMath.stringRE.Match(value);
+					if(m.Success) {
+						this.regMail = m.Groups["value"].Value;
+					} else {
+						Logger.WriteError(filename, line, "Registration mail("+value+") for acc " + this + " could not have been loaded");
+					}
 					break;
 				default:
 					base.LoadLine(filename, line, name, value);

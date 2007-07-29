@@ -227,6 +227,15 @@
     <Compile Include="..\..\scripts\classtemplates\Wearable.Generated.cs">
       <Link>classtemplates\Wearable.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccCreate.cs">
+      <Link>systems\administration\accounts\AccCreate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccInfo.cs">
+      <Link>systems\administration\accounts\AccInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccList.cs">
+      <Link>systems\administration\accounts\AccList.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\Admin.cs">
       <Link>systems\administration\Admin.cs</Link>
     </Compile>
@@ -346,6 +355,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\types\SpawnInfo.cs">
       <Link>systems\types\SpawnInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\utilities\ColorsDlg.cs">
+      <Link>systems\utilities\ColorsDlg.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Tests\d_test.cs">
       <Link>Tests\d_test.cs</Link>

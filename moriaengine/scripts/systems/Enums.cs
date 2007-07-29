@@ -33,6 +33,9 @@ namespace SteamEngine.CompiledScripts {
 		ReadColor=2303,
 		NAColor=2305,
 
+		OnlineColor=2301,//color for highlighting online accounts/players
+		OfflineColor = 0481,//color for highlighting offline accounts/players
+
 		SettingsTitleColor=2413, //the settings category color
 		SettingsNormalColor=2300, //normal settings items
 		SettingsFailedColor=0x25 //setting items that weren't possible to be set
