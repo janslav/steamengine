@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int startingColor = Convert.ToInt32(sa[0]); //cislol barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni barva na strance - pro paging
 
-			int[] colorsList = prepareColorList(firstiVal);
+			int[] colorsList = prepareColorList(startingColor);
 			//ulozit tento seznam do tagu
 			this.GumpInstance.SetTag(_colorsLst_, colorsList);
 
@@ -84,8 +84,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//columns[i] = dlgWidth / columnsCnt;
 				columns[i] = 80;
 			}
-			dlg.Add(new GUTATable(ImprovedDialog.PAGE_ROWS, columns)); 
-			int colorCntr = 0;
+			dlg.Add(new GUTATable(ImprovedDialog.PAGE_ROWS, columns));
+			int colorCntr = firstiVal; //zacneme od te, ktera ma byt na strance prvni
 			for(int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
 				for(int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr < colorsList.Length ; j++, colorCntr++) { //a v nem kazdy radek
 					//vlozit priklad jedne pouzite barvy (dokud nedojdou barvy)
