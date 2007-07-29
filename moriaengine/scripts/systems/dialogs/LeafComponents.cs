@@ -376,7 +376,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                         }
                     case LeafComponentTypes.InputNumber: {
                             if(textId == 0) {//no text ID was specified, use the text version (but send it as double!)
-                                gump.AddNumberEntry(xPos, yPos, width, height, (int)textHue, id, double.Parse(text));
+								//if the text is empty (the input field will be empty), then display zero
+								double textToDisp = text.Equals("") ? default(double) : double.Parse(text);
+								gump.AddNumberEntry(xPos, yPos, width, height, (int)textHue, id, textToDisp);
                             } else {
                                 gump.AddNumberEntry(xPos, yPos, width, height, (int)textHue, id, textId);
                             }
@@ -389,7 +391,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("TextFactory creates a text displayed in the gump according to the specified position and hue)")]
 	public class TextFactory {
-		[Remark("Simple fatctory method allows us to let the dialog to determine the text's position in the column")]
+		[Remark("Simple factory method allows us to let the dialog to determine the text's position in the column")]
+		public static Text CreateText(int hue, string text) {
+			return new Text(0, 0, hue, text);
+		}
+
+		[Remark("Simple factory method allows us to let the dialog to determine the text's position in the column")]
 		public static Text CreateText(Hues hue, string text) {
 			return new Text(0, 0, hue, text);
 		}
@@ -461,16 +468,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("The text component class - it handles the text writing to the underlaying gump")]
 		public class Text : LeafGUTAComponent {
 			[Remark("The text hue in the input field - if not specified, the default will be used.")]
-			private Hues textHue;
+			private int textHue;
 			[Remark("We have either ID of the used text, or the text string itself")]
 			private int textId;
 			private string text;
+
+			[Remark("First complete constructor - awaits the text in the string form."+
+					"Using color as int and not Hue enumeration")]
+			public Text(int xPos, int yPos, int hue, string text) {
+				this.xPos = xPos;
+				this.yPos = yPos;
+				this.textHue = hue;
+				this.text = text;
+			}
 
 			[Remark("First complete constructor - awaits the text in the string form")]
 			public Text(int xPos, int yPos, Hues hue, string text) {
 				this.xPos = xPos;
 				this.yPos = yPos;
-				this.textHue = hue;
+				this.textHue = (int)hue;
 				this.text = text;
 			}
 
@@ -478,7 +494,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			public Text(int xPos, int yPos, Hues hue, int textId) {
 				this.xPos = xPos;
 				this.yPos = yPos;
-				this.textHue = hue;
+				this.textHue = (int)hue;
 				this.textId = textId;
 			}
 
@@ -492,9 +508,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			[Remark("Call the underlaying gump istance's methods")]
 			internal override void WriteComponent() {
 				if (textId == 0) { //no text ID was specified, use the text version
-					gump.AddText(xPos, yPos, (int)textHue, text);
+					gump.AddText(xPos, yPos, textHue, text);
 				} else {
-					gump.AddText(xPos, yPos, (int)textHue, textId);
+					gump.AddText(xPos, yPos, textHue, textId);
 				}
 			}
 		}

@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
-			dialogHandler.CreatePaging(playersList.Count, firstiVal);
+			dialogHandler.CreatePaging(playersList.Count, firstiVal,1);
 
 			//uložit info o právì vytvoøeném dialogu pro návrat
 			DialogStackItem.EnstackDialog(src, focus, D_Admin.Instance,
@@ -185,7 +185,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						dsi.Show();
 						break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count,1)) {
+				//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)				
+				//posledni 1 - pocet sloupecku v dialogu
 				return;
 			} else { //skutecna adminovaci tlacitka z radku
                 //zjistime kterej cudlik z radku byl zmacknut

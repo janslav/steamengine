@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 			dlg.MakeTableTransparent();
 
 			//ted paging, klasika
-			dlg.CreatePaging(categories.Length, firstiVal);
+			dlg.CreatePaging(categories.Length, firstiVal,1);
 
 			dlg.WriteOut();
 			
@@ -112,7 +112,8 @@ namespace SteamEngine.CompiledScripts {
 						gi.Cont.Dialog(D_Static_Settings.Instance, "", 0, 0, SettingsDisplay.All);
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+				//1 sloupecek
 				return;
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z radku byl zmacknut

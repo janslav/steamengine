@@ -192,22 +192,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Takes care for the whole paging - gets number of items and the number of the "+
-			    " topmost Item on the current page (0 for first page, other for another pages).")]
-		public void CreatePaging(int itemsCount, int firstNumber) {
-			if(itemsCount <= ImprovedDialog.PAGE_ROWS) {//do we need paging at all...?
+			    " topmost Item on the current page (0 for first page, other for another pages)."+
+				"We also specify the number of columns - not only single is now available for paging")]
+		public void CreatePaging(int itemsCount, int firstNumber, int columnsCount) {
+			if(itemsCount <= ImprovedDialog.PAGE_ROWS * columnsCount) {//do we need paging at all...?
 				//...no
 				return;
 			}
-			int lastNumber = Math.Min(firstNumber + ImprovedDialog.PAGE_ROWS, itemsCount);
-			int pagesCount = (int)Math.Ceiling((double)itemsCount / ImprovedDialog.PAGE_ROWS);
+			int lastNumber = Math.Min(firstNumber + ImprovedDialog.PAGE_ROWS * columnsCount, itemsCount);
+			int pagesCount = (int)Math.Ceiling((double)itemsCount / (ImprovedDialog.PAGE_ROWS * columnsCount));
 			//first index on the page is a multiple of number of rows per page...
-			int actualPage = (firstNumber / ImprovedDialog.PAGE_ROWS) + 1;
+			int actualPage = (firstNumber / (ImprovedDialog.PAGE_ROWS * columnsCount)) + 1;
 
 			bool prevNextColumnAdded = false; //indicator of navigating column
 			if(actualPage > 1) {
-				prevNextColumnAdded = true; //the column has been created
 				AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));				
 				Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ID_PREV_BUTTON)); //prev
+				prevNextColumnAdded = true; //the column has been created				
 			}
 			if(actualPage < pagesCount) { //there will be next page
 				if(!prevNextColumnAdded) { //the navigating column does not exist (e.g. we are on the 1st page)
@@ -240,8 +241,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				" gr - GumpResponse object from the OnResponse method" +
 				" pagingArgumentNo - index in the arguments array on the stacked dialog where the info about paging is stored "+
 				"					typically 1"+
+				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)"+
 				" return true or false if the button was one of the paging buttons or not")]
-		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, int pagingArgumentNo, int itemsCount) {
+		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, int pagingArgumentNo, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
 			DialogStackItem dsi = null;
@@ -249,13 +251,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch (gr.pressedButton) {
 				case ID_PREV_BUTTON: 
 					dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - PAGE_ROWS;
+					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
 					dsi.Show();
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + PAGE_ROWS;
+					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
 					dsi.Show();
 					pagingHandled = true;
 					break;
@@ -269,10 +271,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						selectedPage = 1;					
 					}
 					//count the index of the first item
-					int countedFirstIndex = (selectedPage-1) * PAGE_ROWS;
+					int countedFirstIndex = (selectedPage-1) * (PAGE_ROWS*columnsCount);
 					if(countedFirstIndex > itemsCount) { //get the last page
-						int lastPage = (itemsCount / PAGE_ROWS) + 1; //(int) casted last page number
-						countedFirstIndex = (lastPage - 1) * PAGE_ROWS; //counted fist item on the last page
+						int lastPage = (itemsCount / (PAGE_ROWS*columnsCount)) + 1; //(int) casted last page number
+						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					dsi.Args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
 					dsi.Show();
@@ -287,8 +289,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"number of page to jump to (if any, used only when 'jump page button' was pressed, "+
 				"otherwise is null);"+
 				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;"+
+				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
 				"itemsCount - total count of diplayed items in the list")]
-		public static bool PagingButtonsHandled(Character src, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount) {
+		public static bool PagingButtonsHandled(Character src, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
 			DialogStackItem dsi = null;
@@ -296,13 +299,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch(buttNo) {
 				case ID_PREV_BUTTON:
 					dsi = DialogStackItem.PopStackedDialog(src.Conn);
-					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - PAGE_ROWS;
+					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
 					dsi.Show();
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					dsi = DialogStackItem.PopStackedDialog(src.Conn);
-					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + PAGE_ROWS;
+					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
 					dsi.Show();
 					pagingHandled = true;
 					break;
@@ -316,10 +319,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						selectedPage = 1;
 					}
 					//count the index of the first item
-					int countedFirstIndex = (selectedPage - 1) * PAGE_ROWS;
+					int countedFirstIndex = (selectedPage - 1) * (PAGE_ROWS*columnsCount);
 					if(countedFirstIndex > itemsCount) { //get the last page
-						int lastPage = (itemsCount / PAGE_ROWS) + 1; //(int) casted last page number
-						countedFirstIndex = (lastPage - 1) * PAGE_ROWS; //counted fist item on the last page
+						int lastPage = (itemsCount / (PAGE_ROWS*columnsCount)) + 1; //(int) casted last page number
+						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					dsi.Args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
 					dsi.Show();

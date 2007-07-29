@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts {
 			dlg.MakeTableTransparent();
 
 			//ted paging, klasika
-			dlg.CreatePaging(settingValues.Count, firstiVal);
+			dlg.CreatePaging(settingValues.Count, firstiVal,1);
 
 			dlg.WriteOut();
 
@@ -112,7 +112,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 				//neobrazovat predchozi dialog, puvodni dialog nastaveni jiz nam sviti vespod
 				//DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setVals.Count)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setVals.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+				//1 sloupecek
 				return;
 			} 
 		}

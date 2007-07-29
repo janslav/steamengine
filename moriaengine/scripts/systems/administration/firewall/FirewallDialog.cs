@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent();
 
 			//ted paging
-			dialogHandler.CreatePaging(ipentries.Count, firstiVal);
+			dialogHandler.CreatePaging(ipentries.Count, firstiVal,1);
 
 			// nadpis pro blokaci novych
 			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, width / 2 - ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH,0));			
@@ -155,7 +155,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						gi.Focus.Dialog(gi.Cont, D_BlockIPRange.Instance);
 						return;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, entries.Count)) {
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, entries.Count,1)) {
 				//kliknuto na paging? (ta 1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				return;
 			} else {

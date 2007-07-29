@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
-			dialogHandler.CreatePaging(messagesList.Count, firstiVal);
+			dialogHandler.CreatePaging(messagesList.Count, firstiVal,1);
 
 			dialogHandler.WriteOut();
 
@@ -158,7 +158,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						dsi.Show();						
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, messagesList.Count)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, messagesList.Count,1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+				//1 sloupecek
 				return;
             } else { //skutecna tlacitka z radku
                 //zjistime kterej cudlik z radku byl zmacknut
