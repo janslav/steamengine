@@ -123,12 +123,6 @@ namespace SteamEngine.CompiledScripts {
 			sender.SysMessage("GMPage byla uspesne prijata a zarazena na " + CountUnresolved() + ". misto v seznamu");
 			NotifyOnlineGMs(sender);
 		}
-
-		[SteamFunction]
-		[Remark("Posting a new GM Page using the input dialog")]
-		public static void GMPage(AbstractCharacter sender) {
-
-		}
 	}
 
 	[SaveableClass]
