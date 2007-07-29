@@ -282,19 +282,24 @@ namespace SteamEngine.CompiledScripts {
 				}
 				foreach (ClassTemplateInstanceField ct in vars) {
 					ctd.Members.Add(ct.ToField());
-					ctd.Members.Add(ct.ToDelayedLoadMethod());
 					//ctd.Members.Add(ct.ToProperty());
 					ctdCopyConstructor.Statements.Add(ct.ToCopyExpression());
 					save.Statements.Add(ct.ToSaveExpression());
 
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \""+ct.fieldName.ToLower()+"\":"));
-					load.Statements.Add(new CodeMethodInvokeExpression(//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
-						new CodeMethodReferenceExpression(
-							new CodeTypeReferenceExpression(typeof(SteamEngine.Persistence.ObjectSaver)), "Load"),
-							new CodeArgumentReferenceExpression("value"),
-							ct.ToDelayedLoadMethodDeleg(), 
-							new CodeArgumentReferenceExpression("filename"),
-							new CodeArgumentReferenceExpression("line")));
+					if ((ct.type != null) && 
+							SteamEngine.Persistence.ObjectSaver.IsSimpleSaveableType(ct.type)) {
+						load.Statements.Add(ct.ToDirectLoadStatement());
+					} else {
+						load.Statements.Add(new CodeMethodInvokeExpression(//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
+							new CodeMethodReferenceExpression(
+								new CodeTypeReferenceExpression(typeof(SteamEngine.Persistence.ObjectSaver)), "Load"),
+								new CodeArgumentReferenceExpression("value"),
+								ct.ToDelayedLoadMethodDeleg(),
+								new CodeArgumentReferenceExpression("filename"),
+								new CodeArgumentReferenceExpression("line")));
+						ctd.Members.Add(ct.ToDelayedLoadMethod());
+					}
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tbreak;\n"));
 				}
 

@@ -26,7 +26,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
-	public static class GMPage {
+	public static class GMPages {
         [Remark("Various comparators")]
 		private static GMPageNameComparator nameComparator = new GMPageNameComparator();
 		private static GMPageTimeComparator timeComparator = new GMPageTimeComparator();
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 			bool isGMOnline = false;
 			foreach (Character plr in Server.AllPlayers) {
 				if (plr.IsGM()) {
-					plr.SysMessage("Prisla nova page. Pocet nevyrizenych pagi: " + GMPage.CountUnresolved());
+					plr.SysMessage("Prisla nova page. Pocet nevyrizenych pagi: " + CountUnresolved());
 					isGMOnline = true;
 				}
 			}
@@ -111,28 +111,24 @@ namespace SteamEngine.CompiledScripts {
 			return counter;
 		}
 
-		[Remark("Internal class extending a CompiledScript class - allowing us to call some useful functions ingame without " +
-                "scripting them in LScript")]
-		public class GMPagesFunctions : CompiledScript {
-
-			[Remark("Create a new gmpage, store it in the gm pages table and notify the sender about the state")]
-			public void def_Page(AbstractCharacter sender, ScriptArgs text) {
-				if (text == null || text.Args.Equals("")) {
-					sender.SysMessage("Odmitnuta prazdna page");
-					return;
-				}
-				GMPageEntry newPage = new GMPageEntry(sender, text.Args);
-				GMPage.AddNewPage(newPage);
-				sender.SysMessage("GMPage byla uspesne prijata a zarazena na " + GMPage.CountUnresolved() + ". misto v seznamu");
-				NotifyOnlineGMs(sender);
+		[SteamFunction]
+		[Remark("Create a new gmpage, store it in the gm pages table and notify the sender about the state")]
+		public static void Page(AbstractCharacter sender, ScriptArgs text) {
+			if (text == null || text.Args.Equals("")) {
+				sender.SysMessage("Odmitnuta prazdna page");
+				return;
 			}
-
-			[Remark("Posting a new GM Page using the input dialog")]
-			public void def_GMPage(AbstractCharacter sender) {
-
-			}
+			GMPageEntry newPage = new GMPageEntry(sender, text.Args);
+			AddNewPage(newPage);
+			sender.SysMessage("GMPage byla uspesne prijata a zarazena na " + CountUnresolved() + ". misto v seznamu");
+			NotifyOnlineGMs(sender);
 		}
 
+		[SteamFunction]
+		[Remark("Posting a new GM Page using the input dialog")]
+		public static void GMPage(AbstractCharacter sender) {
+
+		}
 	}
 
 	[SaveableClass]

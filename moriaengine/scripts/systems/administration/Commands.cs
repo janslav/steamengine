@@ -20,25 +20,16 @@ using SteamEngine;
 using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
-	//If something looks difficult, make suggestions for ways to make it easier!
 
-	public class ScriptedCommands : CompiledScript {	//Our script must extend 'Script'
-		public OnTargon teleTargon;
-		public OnTargon infoTargon;
-		public OnTargon remove;
-		public OnTargon skillsetTargon;
-		public OnTargon dragonTileTargon;
-		public object[] args;
+	public static class ScriptedCommands {
+		public static OnTargon teleTargon = TeleTargon;
+		public static OnTargon infoTargon = InfoTargon;
+		public static OnTargon remove = Remove;
+		public static OnTargon skillsetTargon;
+		public static OnTargon dragonTileTargon = DragonTileTargon;
+		public static object[] args;
 
-		public ScriptedCommands() {
-			teleTargon = new OnTargon(TeleTargon);
-			infoTargon = new OnTargon(InfoTargon);
-			remove = new OnTargon(Remove);
-			//skillsetTargon = new OnTargon(SkillSet);
-			dragonTileTargon = new OnTargon(DragonTileTargon);
-		}
-
-		public void Remove(GameConn c, IPoint3D targetted, object targData) {
+		public static void Remove(GameConn c, IPoint3D targetted, object targData) {
 			Thing targ = targetted as Thing;
 			if (targ == null) {
 				//something other than item/char was targetted - it is wrong !
@@ -48,7 +39,8 @@ namespace SteamEngine.CompiledScripts {
 			targ.Delete();
 		}
 
-		public void def_remove(AbstractCharacter self) {
+		[SteamFunction]
+		public static void Remove(AbstractCharacter self) {
 			self.SysMessage("Zamer objekt pro odstraneni");
 			//false - cannot target ground only, must target item or char
 			//first null - no targetData  is necessary
@@ -57,18 +49,19 @@ namespace SteamEngine.CompiledScripts {
 			self.Conn.Target(false, remove, null, null);
 		}
 
-		public void TeleTargon(GameConn c, IPoint3D point, object targData) {
+		public static void TeleTargon(GameConn c, IPoint3D point, object targData) {
 			Character cre = (Character) c.CurCharacter;
 			cre.Go(point.X, point.Y, point.Z, cre.M);
 		}
 
-		public void def_tele(AbstractCharacter self) {
+		[SteamFunction]
+		public static void Tele(AbstractCharacter self) {
 			//teleports to a targetted location
 			self.SysMessage("Kam se chces portovat?");
 			self.Conn.Target(true, teleTargon, null, null);
 		}
 
-		public void DragonTileTargon(GameConn c, IPoint3D point, object targData) {
+		public static void DragonTileTargon(GameConn c, IPoint3D point, object targData) {
 			AbstractCharacter cre = c.CurCharacter;
 			Map map = cre.GetMap();
 			ushort[,] tiles = new ushort[3, 3];
@@ -145,7 +138,8 @@ namespace SteamEngine.CompiledScripts {
 		//	((GameConn) Globals.srcConn).Target(true, null, dragonTileTargon, null);
 		//}
 
-		public void def_info(TagHolder self) {
+		[SteamFunction]
+		public static void Info(TagHolder self) {
 			Character ch = self as Character;
 			if (self==Globals.Src) {
 				ch.SysMessage("Show info on what item, character, static, or map tile?");
@@ -165,7 +159,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//TODO: Show a dialog, once dialogs exist.
-		public void InfoTargon(GameConn c, IPoint3D getback, object targData) {
+		public static void InfoTargon(GameConn c, IPoint3D getback, object targData) {
 			if (getback is AbstractItem) {
 				Item itm = getback as Item;
 				itm.Message("I am an item named '"+itm.Name+"'. My model # is 0x"+itm.Model.ToString("x")+", and my itemdef is "+itm.def+", and I have a height of "+itm.Height+", and a weight of "+itm.Weight+".");

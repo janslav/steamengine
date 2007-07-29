@@ -116,6 +116,12 @@ namespace SteamEngine.LScript {
 			registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
 			unloaded = true;
 		}
+
+		public bool IsUnloaded {
+			get {
+				return unloaded;
+			}
+		}
 	}
 	
 	public class ScriptVars {

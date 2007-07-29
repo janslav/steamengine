@@ -20,9 +20,10 @@ using System.Collections;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	public class SaveLoadTests : CompiledScripts.CompiledScript {
-		
-		public void def__TestArrSave(TagHolder globals) {
+	public static class SaveLoadTests {
+
+		[SteamFunction]
+		public static void _TestArrSave(TagHolder globals) {
 			ArrayList list = new ArrayList();
 			foreach (Thing t in Thing.AllThings) {
 				list.Add(t as Character);

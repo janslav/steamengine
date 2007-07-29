@@ -23,6 +23,7 @@
 	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
 	<property name="coreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Core.exe'}" />
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
+	<property name="generatedCodeFileName" value="${'bin/Generated/'+outputFilePrefix+'SteamEngine.Generated.'+scriptsNumber+'.dll'}" />
 	<property name="converterFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Converter.exe'}" />
 
 	<target name="cleanCommon">
@@ -158,7 +159,27 @@
 		</csc>
 	</target>
 	
-	
+	<target name="buildGeneratedCode">
+		<csc 
+			target="library" 
+			output="${generatedCodeFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+
+			<sources>
+				<include name="bin/Generated/**/*.cs" />
+			</sources>
+			<references>
+				<include name="${commonFileName}" />
+				<include name="${coreFileName}" />
+				<include name="${scriptsFileName}" />
+				<include name="bin/SteamDoc.dll" />
+				<includesfile name="${scriptsReferencesListPath}" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>
 	
 	<target name="buildConverter" depends="buildCommon, buildCore, buildScripts">
 		<csc 

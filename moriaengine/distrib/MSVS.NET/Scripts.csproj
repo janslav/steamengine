@@ -10,7 +10,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>Scripts</AssemblyName>
+    <AssemblyName>MSVS_Scripts</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -18,7 +18,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>SteamEngine.Scripts</RootNamespace>
+    <RootNamespace>SteamEngine.CompiledScripts</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -92,9 +92,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\bin\DecoratedClassesSaveImplementors.Generated.cs">
-      <Link>DecoratedClassesSaveImplementors.Generated.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\AI\dummy.cs">
       <Link>AI\dummy.cs</Link>
     </Compile>

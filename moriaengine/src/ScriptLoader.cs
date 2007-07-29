@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -31,8 +31,9 @@ namespace SteamEngine {
 		private static ScriptFile file;
 		
 		private static ScriptFileCollection allFiles;
-		
-		private static Hashtable scriptTypesByName = new Hashtable(StringComparer.OrdinalIgnoreCase);
+
+		private static Dictionary<string, RegisteredScript> scriptTypesByName = 
+			new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
 		
 		static ScriptLoader() {
 			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".scp");
@@ -52,32 +53,32 @@ namespace SteamEngine {
 		//the method that is called on server initialisation by MainClass.
 		internal static void Load() {
 			ThingDef.StartingLoading();
-			TriggerGroup.StartingLoading();
+			ScriptedTriggerGroup.StartingLoading();
 			Constant.StartingLoading();
 			Map.StartingLoading();
 			ObjectSaver.StartingLoading();
 			AbstractSkillDef.StartingLoading();
 			
 			
-			ScriptFile[] files = allFiles.GetAllFiles();
+			ICollection<ScriptFile> files = allFiles.GetAllFiles();
 			long lengthSum = allFiles.LengthSum;
 			long alreadyloaded = 0;
-			Console.WriteLine("Loading "+LogStr.Number(files.Length)+" *.def and *.scp script files. ("+LogStr.Number(lengthSum)+" bytes)");
+			Console.WriteLine("Loading "+LogStr.Number(files.Count)+" *.def and *.scp script files. ("+LogStr.Number(lengthSum)+" bytes)");
 			foreach (ScriptFile f in files) {
 				Logger.SetTitle("Loading scripts: "+((alreadyloaded*100)/lengthSum)+" %");
 				Logger.WriteDebug("Loading "+f.Name);
 				LoadFile(f);
 				alreadyloaded += f.Length;
 			}
-			Console.WriteLine("Script files loaded."); //reset title of the console
-			Logger.SetTitle("");
+			Console.WriteLine("Script files loaded.");
+			Logger.SetTitle("");//reset title of the console
 			
 			//file = new ScriptFile(new FileInfo(Globals.scriptsPath+"\\defaults\\lscript.scp"));
 			//LoadFile();
 			
 			Constant.LoadingFinished();
 			ThingDef.LoadingFinished();
-			TriggerGroup.LoadingFinished();
+			ScriptedTriggerGroup.LoadingFinished();
 			Map.LoadingFinished();
 			ObjectSaver.LoadingFinished();
 			AbstractSkillDef.LoadingFinished();
@@ -91,8 +92,8 @@ namespace SteamEngine {
 		}
 		
 		public static void Resync() {
-			ScriptFile[] files = allFiles.GetChangedFiles();//this makes the entities unload
-			if (files.Length > 0) {
+			ICollection<ScriptFile> files = allFiles.GetChangedFiles();//this makes the entities unload
+			if (files.Count > 0) {
 				Server.BroadCast("Server is pausing for script resync...");
 				MainClass.SetRunLevel(RunLevels.Paused);
 				Globals.PauseServerTime();
@@ -111,7 +112,7 @@ namespace SteamEngine {
 						}
 					}
 				}
-				
+
 				MainClass.loading = loadingWas;
 				
 				if (Globals.resolveEverythingAtStart) {
@@ -160,8 +161,8 @@ namespace SteamEngine {
 				case "constants":
 					return true;
 			}
-			RegisteredScript rs = (RegisteredScript) scriptTypesByName[headerType];
-			if (rs != null) {
+			RegisteredScript rs;
+			if (scriptTypesByName.TryGetValue(headerType, out rs)) {
 				return rs.startAsScript;
 			}
 			return false;
@@ -189,7 +190,7 @@ namespace SteamEngine {
 					case "triggergroup":
 					case "events":
 					case "event":
-						file.Add(TriggerGroup.Load(input));
+						file.Add(ScriptedTriggerGroup.Load(input));
 						return null;
 					case "defname":
 					case "defnames":
@@ -225,8 +226,8 @@ namespace SteamEngine {
 							file.Add(AbstractSkillDef.LoadFromScripts(input));
 							return null;
 						}
-						RegisteredScript rs = (RegisteredScript) scriptTypesByName[type];
-						if (rs != null) {
+						RegisteredScript rs;
+						if (scriptTypesByName.TryGetValue(type, out rs)) {
 							file.Add(rs.deleg(input));
 							return null;
 						}
@@ -272,9 +273,9 @@ namespace SteamEngine {
 		}
 		
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
-			object o = scriptTypesByName[name];
-			if (o != null) {
-				throw new OverrideNotAllowedException("There is already a script section loader ("+LogStr.Ident(o)+") registered for handling the section name "+LogStr.Ident(name));  
+			RegisteredScript rs;
+			if (scriptTypesByName.TryGetValue(name, out rs)) {
+				throw new OverrideNotAllowedException("There is already a script section loader ("+LogStr.Ident(rs)+") registered for handling the section name "+LogStr.Ident(name));  
 			}
 			scriptTypesByName[name] = new RegisteredScript(deleg, startAsScript);
 		}
@@ -295,17 +296,15 @@ namespace SteamEngine {
 			}
 		}
 		
-		//unloads instences that come from scripts.
+		//unloads instances that come from scripts.
 		internal static void UnloadScripts() {
-			Assembly coreAssembly = Assembly.GetExecutingAssembly();
-			DictionaryEntry[] entries = new DictionaryEntry[scriptTypesByName.Count];
-			scriptTypesByName.CopyTo(entries, 0);
-			scriptTypesByName.Clear();
-			foreach (DictionaryEntry entry in entries) {
-				string name = (string) entry.Key;
-				LoadSection deleg = ((RegisteredScript) entry.Value).deleg;
-				if (coreAssembly == deleg.Method.DeclaringType.Assembly) {
-					scriptTypesByName[name] = deleg;
+			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
+
+			Dictionary<string, RegisteredScript> origScripts = scriptTypesByName;
+			scriptTypesByName = new Dictionary<string,RegisteredScript>(StringComparer.OrdinalIgnoreCase);
+			foreach (KeyValuePair<string, RegisteredScript> pair in origScripts) {
+				if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
+					scriptTypesByName[pair.Key] = pair.Value;
 				}
 			}
 		}

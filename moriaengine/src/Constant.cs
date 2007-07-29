@@ -270,7 +270,13 @@ namespace SteamEngine {
 
 		public void Unload() {
 			unloaded = true;
-		} 
+		}
+
+		public bool IsUnloaded {
+			get {
+				return unloaded;
+			}
+		}
 
 		private abstract class ConstantValue {
 			internal abstract object Value { get; }

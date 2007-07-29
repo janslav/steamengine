@@ -191,125 +191,52 @@ namespace SteamEngine.Persistence {
 
 	}
 
-	public static class DecoratedClassesSaveImplementorGenerator {
-		static List<Type> decoratedClasses;
-
-		internal static Assembly generatedAssembly;
-
-		static CodeCompileUnit codeCompileUnit;
-
-		internal static void Init() {
-			codeCompileUnit = new CodeCompileUnit();
-			CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
-			codeCompileUnit.Namespaces.Add(ns);
-			generatedAssembly = null;
-			decoratedClasses = new List<Type>();
-		}
+	internal class DecoratedClassesSaveImplementorGenerator : ISteamCSCodeGenerator {
+		static List<Type> decoratedClasses = new List<Type>();
 
 		internal static void AddDecoratedClass(Type t) {
 			decoratedClasses.Add(t);
 		}
 
-		internal static bool DumpAndCompileClasses() {
-			if (decoratedClasses.Count > 0) {
-				Logger.WriteDebug("Generating and compiling SaveImplementors");
-				foreach (Type decoratedClass in decoratedClasses) {
-					try {
-						GeneratedInstance gi = new GeneratedInstance(decoratedClass);
-						CodeTypeDeclaration ctd = gi.GetGeneratedType();
-						codeCompileUnit.Namespaces[0].Types.Add(ctd);
-
-					} catch (FatalException) {
-						throw;
-					} catch (Exception e) {
-						Logger.WriteError(decoratedClass.Assembly.GetName().Name, decoratedClass.Name, e);
-						return false;
-					}
-				}
-
-				try {
-					string sourceFileName = Path.Combine(
-						Path.GetDirectoryName(ClassManager.CoreAssembly.Location),
-						"DecoratedClassesSaveImplementors.Generated.cs");
-					CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider();
-
-					WriteSourcesToFile(provider, sourceFileName);
-					CompileSources(provider, sourceFileName);
-					if (generatedAssembly == null) {
-						return false;
-					}
-					ActivateAssembly();
-
-					Logger.WriteDebug("Done Generating and compiling "+decoratedClasses.Count+" SaveImplementors");
-				} catch (FatalException) {
-					throw;
-				} catch (Exception e) {
-					Logger.WriteError(e);
-					return false;
-				}
-			}
-			return true;
-		}
-
-		private static void WriteSourcesToFile(CodeDomProvider provider, string sourceFileName) {
-			StreamWriter outFile = new StreamWriter(sourceFileName);
-			CodeGeneratorOptions options = new CodeGeneratorOptions();
-			options.IndentString="\t";
-			provider.GenerateCodeFromCompileUnit(codeCompileUnit, outFile, options);
-			outFile.Close();
-		}
-
-		private static void CompileSources(CodeDomProvider provider, string sourceFileName) {
-			CompilerParameters cp = new CompilerParameters();
-			cp.ReferencedAssemblies.Add("System.dll");
-			cp.ReferencedAssemblies.Add(ClassManager.CommonAssembly.Location);
-			cp.ReferencedAssemblies.Add(ClassManager.CoreAssembly.Location);
-			cp.ReferencedAssemblies.Add(ClassManager.ScriptsAssembly.Location);
-			cp.OutputAssembly = Path.Combine(
-						Path.GetDirectoryName(ClassManager.CoreAssembly.Location),
-						"DecoratedClassesSaveImplementors.Generated."+CompilerInvoker.compilenumber+".dll");
-#if !OPTIMIZED
-			cp.CompilerOptions +="/debug+";
-#endif
-			CompilerResults results = provider.CompileAssemblyFromFile(cp, new string[] { sourceFileName });
-			/*foreach (string s in results.Output) { 
-				Console.WriteLine(name+": "+s); 
-			}*/
-			if (results.Errors.HasErrors) {
-				Console.WriteLine("Compiling of SaveImplementor code failed: ");
-			}
-			foreach (CompilerError err in results.Errors) {
-				LogStr msg;
-				if (err.FileName.Length!=0) {
-					msg=LogStr.FileLine(err.FileName, err.Line)+": "+err.ErrorText;
-				} else {
-					msg=LogStr.Raw(err);
-				}
-				if (!err.IsWarning) {
-					Logger.WriteError(msg);
-				} else {
-					Logger.WriteWarning(msg);
-				}
-			}
-			if (!results.Errors.HasErrors) {
-				generatedAssembly = results.CompiledAssembly;
+		public string FileName {
+			get {
+				return "DecoratedClassesSaveImplementors.Generated.cs"; 
 			}
 		}
 
-		private static void ActivateAssembly() {
-			foreach (Type type in generatedAssembly.GetTypes()) {
-				if (typeof(ISaveImplementor).IsAssignableFrom(type)) {
-					if (!type.IsAbstract) {
-						ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-						if (ci!=null) {
-							ISaveImplementor si = (ISaveImplementor) ci.Invoke(new object[0] { });
-							ObjectSaver.RegisterImplementor(si);
-						} else {
-							throw new Exception(type.Name+": No proper constructor.");
+		public CodeCompileUnit WriteSources() {
+			try {
+				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+				
+
+				if (decoratedClasses.Count > 0) {
+					Logger.WriteDebug("Generating SaveImplementors");
+
+					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					codeCompileUnit.Namespaces.Add(ns);
+
+					foreach (Type decoratedClass in decoratedClasses) {
+						try {
+							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
+							CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							ns.Types.Add(ctd);
+						} catch (FatalException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteError(decoratedClass.Assembly.GetName().Name, decoratedClass.Name, e);
+							return null;
 						}
 					}
+					Logger.WriteDebug("Done generating "+decoratedClasses.Count+" SaveImplementors");
 				}
+				return codeCompileUnit;
+			} finally {
+				decoratedClasses.Clear();
 			}
+		}
+
+		public void HandleAssembly(Assembly compiledAssembly) {
+
 		}
 
 		private class GeneratedInstance {
@@ -326,102 +253,11 @@ namespace SteamEngine.Persistence {
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
 				foreach (MemberInfo mi in decoratedClass.GetMembers()) {
-					if (mi.IsDefined(typeof(LoadingInitializerAttribute), false)) {
-						if (loadingInitializer != null) {
-							throw new SEException("Can not use the "+LogStr.Ident("LoadingInitializerAttribute")+" on two class members.");
-						} else if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
-							loadingInitializer = (MethodBase) mi;
-						} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
-							MethodInfo meth = (MethodInfo) mi;
-							if (meth.IsStatic) {
-								loadingInitializer = meth;
-							}
-						}
-						if (loadingInitializer != null) {
-							if (loadingInitializer.GetParameters().Length != 0) {
-								throw new SEException(LogStr.Ident("LoadingInitializerAttribute")+" can only be placed on a callable member with no parameters.");
-							}
-						} else {
-							throw new SEException(LogStr.Ident("LoadingInitializerAttribute")+" can only be placed on a constructor or static method.");
-						}
-					}
-					if (mi.IsDefined(typeof(LoadLineAttribute), false)) {
-						if (loadLine != null) {
-							throw new SEException("Can not use the "+LogStr.Ident("LoadLineAttribute")+" on two class members.");
-						} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
-							MethodInfo meth = (MethodInfo) mi;
-							if (!meth.IsStatic) {
-								ParameterInfo[] pars = meth.GetParameters();
-								if ((pars.Length == 4)&&(pars[0].ParameterType == typeof(string))&&(pars[1].ParameterType == typeof(int))
-										&&(pars[2].ParameterType == typeof(string))&&(pars[3].ParameterType == typeof(string))) {
-									loadLine = MemberWrapper.GetWrapperFor(meth);
-								}
-							}
-						}
-						if (loadLine == null) {
-							throw new SEException(LogStr.Ident("LoadLineAttribute")+" can only be placed on an instance method with four parameters of types string, int, string, string.");
-						}
-					}
-					if (mi.IsDefined(typeof(SaveableDataAttribute), false)) {
-						bool added = false;
-						if ((mi.MemberType&MemberTypes.Property) == MemberTypes.Property) {
-							PropertyInfo pi = (PropertyInfo) mi;
-							MethodInfo[] accessors = pi.GetAccessors();
-							if (accessors.Length == 2) {
-								if (!accessors[0].IsStatic) {
-									saveableDataProperties.Add(pi);
-									added = true;
-								}
-							} else {
-								throw new SEException(LogStr.Ident("SaveableDataAttribute")+" can only be placed on fields or properties with both setter and getter.");
-							}
-						} else if ((mi.MemberType&MemberTypes.Field) == MemberTypes.Field) {
-							FieldInfo fi = (FieldInfo) mi;
-							if (!fi.IsStatic) {
-								saveableDataFields.Add(fi);
-								added = true;
-							}
-						}
-						if (!added) {
-							throw new SEException(LogStr.Ident("SaveableDataAttribute")+" can only be placed on instance fields or properties.");
-						}
-					}
-					if (mi.IsDefined(typeof(LoadSectionAttribute), false)) {
-						if (loadSection != null) {
-							throw new SEException("Can not use the "+LogStr.Ident("LoadSectionAttribute")+" on two class members.");
-						} else if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
-							loadSection = (MethodBase) mi;
-						} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
-							MethodInfo meth = (MethodInfo) mi;
-							if (meth.IsStatic) {
-								loadSection = meth;
-							}
-						}
-						if (loadSection != null) {
-							ParameterInfo[] pars = loadSection.GetParameters();
-							if ((pars.Length != 1)||(pars[0].ParameterType != typeof(PropsSection))) {
-								throw new SEException(LogStr.Ident("LoadSectionAttribute")+" can only be placed on a callable member with one parameter of type PropsSection.");
-							}
-						} else {
-							throw new SEException(LogStr.Ident("LoadSectionAttribute")+" can only be placed on a constructor or static method.");
-						}
-					}
-					if (mi.IsDefined(typeof(SaveAttribute), false)) {
-						if (saveMethod != null) {
-							throw new SEException("Can not use the "+LogStr.Ident("SaveAttribute")+" on two class members.");
-						} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
-							MethodInfo meth = (MethodInfo) mi;
-							if (!meth.IsStatic) {
-								ParameterInfo[] pars = meth.GetParameters();
-								if ((pars.Length == 1)&&(pars[0].ParameterType == typeof(SaveStream))) {
-									saveMethod = MemberWrapper.GetWrapperFor(meth);
-								}
-							}
-						}
-						if (saveMethod == null) {
-							throw new SEException(LogStr.Ident("SaveAttribute")+" can only be placed on an instance method with one parameter of type SaveStream.");
-						}
-					}
+					HandleLoadingInitializerAttribute(mi);
+					HandleLoadLineAttribute(mi);
+					HandleSaveableDataAttribute(mi);
+					HandleLoadSectionAttribute(mi);
+					HandleSaveAttribute(mi);
 				}
 
 				//now check if we have all attributes we need and if we don't have any evil combination of them
@@ -437,6 +273,117 @@ namespace SteamEngine.Persistence {
 				}
 				if ((saveMethod == null) && (saveableDataFields.Count == 0) && (saveableDataProperties.Count == 0)) {
 					throw new SEException("No way to autosave this class.");
+				}
+			}
+
+			private void HandleSaveAttribute(MemberInfo mi) {
+				if (mi.IsDefined(typeof(SaveAttribute), false)) {
+					if (saveMethod != null) {
+						throw new SEException("Can not use the "+LogStr.Ident("SaveAttribute")+" on two class members.");
+					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						MethodInfo meth = (MethodInfo) mi;
+						if (!meth.IsStatic) {
+							ParameterInfo[] pars = meth.GetParameters();
+							if ((pars.Length == 1)&&(pars[0].ParameterType == typeof(SaveStream))) {
+								saveMethod = MemberWrapper.GetWrapperFor(meth);
+							}
+						}
+					}
+					if (saveMethod == null) {
+						throw new SEException(LogStr.Ident("SaveAttribute")+" can only be placed on an instance method with one parameter of type SaveStream.");
+					}
+				}
+			}
+
+			private void HandleLoadSectionAttribute(MemberInfo mi) {
+				if (mi.IsDefined(typeof(LoadSectionAttribute), false)) {
+					if (loadSection != null) {
+						throw new SEException("Can not use the "+LogStr.Ident("LoadSectionAttribute")+" on two class members.");
+					} else if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
+						loadSection = (MethodBase) mi;
+					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						MethodInfo meth = (MethodInfo) mi;
+						if (meth.IsStatic) {
+							loadSection = meth;
+						}
+					}
+					if (loadSection != null) {
+						ParameterInfo[] pars = loadSection.GetParameters();
+						if ((pars.Length != 1)||(pars[0].ParameterType != typeof(PropsSection))) {
+							throw new SEException(LogStr.Ident("LoadSectionAttribute")+" can only be placed on a callable member with one parameter of type PropsSection.");
+						}
+					} else {
+						throw new SEException(LogStr.Ident("LoadSectionAttribute")+" can only be placed on a constructor or static method.");
+					}
+				}
+			}
+
+			private void HandleSaveableDataAttribute(MemberInfo mi) {
+				if (mi.IsDefined(typeof(SaveableDataAttribute), false)) {
+					bool added = false;
+					if ((mi.MemberType&MemberTypes.Property) == MemberTypes.Property) {
+						PropertyInfo pi = (PropertyInfo) mi;
+						MethodInfo[] accessors = pi.GetAccessors();
+						if (accessors.Length == 2) {
+							if (!accessors[0].IsStatic) {
+								saveableDataProperties.Add(pi);
+								added = true;
+							}
+						} else {
+							throw new SEException(LogStr.Ident("SaveableDataAttribute")+" can only be placed on fields or properties with both setter and getter.");
+						}
+					} else if ((mi.MemberType&MemberTypes.Field) == MemberTypes.Field) {
+						FieldInfo fi = (FieldInfo) mi;
+						if (!fi.IsStatic) {
+							saveableDataFields.Add(fi);
+							added = true;
+						}
+					}
+					if (!added) {
+						throw new SEException(LogStr.Ident("SaveableDataAttribute")+" can only be placed on instance fields or properties.");
+					}
+				}
+			}
+
+			private void HandleLoadLineAttribute(MemberInfo mi) {
+				if (mi.IsDefined(typeof(LoadLineAttribute), false)) {
+					if (loadLine != null) {
+						throw new SEException("Can not use the "+LogStr.Ident("LoadLineAttribute")+" on two class members.");
+					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						MethodInfo meth = (MethodInfo) mi;
+						if (!meth.IsStatic) {
+							ParameterInfo[] pars = meth.GetParameters();
+							if ((pars.Length == 4)&&(pars[0].ParameterType == typeof(string))&&(pars[1].ParameterType == typeof(int))
+										&&(pars[2].ParameterType == typeof(string))&&(pars[3].ParameterType == typeof(string))) {
+								loadLine = MemberWrapper.GetWrapperFor(meth);
+							}
+						}
+					}
+					if (loadLine == null) {
+						throw new SEException(LogStr.Ident("LoadLineAttribute")+" can only be placed on an instance method with four parameters of types string, int, string, string.");
+					}
+				}
+			}
+
+			private void HandleLoadingInitializerAttribute(MemberInfo mi) {
+				if (mi.IsDefined(typeof(LoadingInitializerAttribute), false)) {
+					if (loadingInitializer != null) {
+						throw new SEException("Can not use the "+LogStr.Ident("LoadingInitializerAttribute")+" on two class members.");
+					} else if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
+						loadingInitializer = (MethodBase) mi;
+					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						MethodInfo meth = (MethodInfo) mi;
+						if (meth.IsStatic) {
+							loadingInitializer = meth;
+						}
+					}
+					if (loadingInitializer != null) {
+						if (loadingInitializer.GetParameters().Length != 0) {
+							throw new SEException(LogStr.Ident("LoadingInitializerAttribute")+" can only be placed on a callable member with no parameters.");
+						}
+					} else {
+						throw new SEException(LogStr.Ident("LoadingInitializerAttribute")+" can only be placed on a constructor or static method.");
+					}
 				}
 			}
 

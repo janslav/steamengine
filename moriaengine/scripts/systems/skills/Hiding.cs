@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void Success(Character self) {
 			if (!this.Trigger_Success(self)) {
 				self.Flag_Hidden = true;
-				self.AddTriggerGroup(E_skill_hiding.TG);
+				self.AddTriggerGroup(E_skill_hiding.Instance);
 				self.ClilocSysMessage(501240);//You have hidden yourself well.
 				//todo: gain
 			}
@@ -79,13 +79,14 @@ namespace SteamEngine.CompiledScripts {
 	}
 	
 	public class E_skill_hiding : CompiledTriggerGroup {
-		private static TriggerGroup tg;
-		public static TriggerGroup TG { get {
-			if (tg == null) {
-				tg = TriggerGroup.Get("E_skill_hiding");
-			}
-			return tg;
+		private static TriggerGroup instance;
+		public static TriggerGroup Instance { get {
+			return instance;
 		} }
+
+		protected E_skill_hiding() {
+			instance = this;
+		}
 		
 		public void On_SkillStart(Character self, Character selfToo, ushort skillId) {
 			//according to uo stratics, these skills do not unhide...
@@ -124,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 				self.ClilocSysMessage(501242); //You are no longer hidden.
 				self.Flag_Hidden = false;
 			}
-			self.RemoveTriggerGroup(ThisTG);
+			self.RemoveTriggerGroup(this);
 		}
 		
 		//todo: looting others should also unhide

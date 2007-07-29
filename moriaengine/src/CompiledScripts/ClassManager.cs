@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			return commonAssembly;
 		} }
 
-		private static Assembly coreAssembly = Assembly.GetExecutingAssembly();
+		private static Assembly coreAssembly = typeof(ClassManager).Assembly;
 		public static Assembly CoreAssembly { get {
 			return coreAssembly;
 		} }
@@ -47,8 +47,8 @@ namespace SteamEngine.CompiledScripts {
 			return CompilerInvoker.compiledScripts.assembly;
 		} }
 
-		public static Assembly GeneratedSaveImplementorsAssembly { get {
-			return DecoratedClassesSaveImplementorGenerator.generatedAssembly;
+		public static Assembly GeneratedAssembly { get {
+			return GeneratedCodeUtil.generatedAssembly;
 		} }
 
 		//removes all non-core references
@@ -148,19 +148,41 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
-			
+
+			if (typeof(ISteamCSCodeGenerator).IsAssignableFrom(type)) {
+				if (!type.IsAbstract) {
+					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+					if (ci!=null) {
+						ISteamCSCodeGenerator sccg = (ISteamCSCodeGenerator) ci.Invoke(new object[0] { });
+						GeneratedCodeUtil.RegisterGenerator(sccg);
+					} else {
+						throw new Exception("No proper constructor.");
+					}
+				}
+			}
+
 			foreach (MethodInfo meth in type.GetMethods(BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly)) {
 				if (Attribute.IsDefined(meth, typeof(RegisterWithRunTestsAttribute))) {
 					TestSuite.AddTest(meth);
+				}
+				if (Attribute.IsDefined(meth, typeof(SteamFunctionAttribute))) {
+					CompiledScriptHolderGenerator.AddCompiledSHType(meth);
 				}
 			}
 
 			if (type.IsSubclassOf(typeof(AbstractDef))) {
 				AbstractDef.RegisterSubtype(type);
 			}
-			if (type.IsSubclassOf(typeof(CompiledScript))
-					|| type.IsSubclassOf(typeof(CompiledTriggerGroup))
-					|| type.IsSubclassOf(typeof(AbstractScript)) ) {
+
+			if (type.IsSubclassOf(typeof(CompiledTriggerGroup))) {
+				if ((!type.IsAbstract) && (!type.IsSealed)) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
+					//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
+					CompiledTriggerGroupGenerator.AddCompiledTGType(type);
+					goto bootstrap;
+				}
+			}
+			if (type.IsSubclassOf(typeof(CompiledScriptHolder))
+					|| type.IsSubclassOf(typeof(AbstractScript))) {
 				//Instansiate it!
 				if (!type.IsAbstract) {
 					ConstructorInfo ci=type.GetConstructor(Type.EmptyTypes);
@@ -178,12 +200,11 @@ namespace SteamEngine.CompiledScripts {
 			//	ThingDef.RegisterThingSubtype(type);
 			}
 
-			
+bootstrap:
 			MethodInfo m = type.GetMethod("Bootstrap", BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly ); 
 			if (m!=null) {
 				m.Invoke(null, null);
 			}
-
 		}
 
 		//called by Main on the end of startup/recompile process

@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -26,6 +26,7 @@ using System.Globalization;	//for CultureInfo.Invariant for String.Compare for c
 namespace SteamEngine {
 	public interface IUnloadable {
 		void Unload();
+		bool IsUnloaded { get; }
 	}
 	
 	internal class CompScriptFileCollection : ScriptFileCollection {
@@ -35,11 +36,11 @@ namespace SteamEngine {
 	}
 
 	internal class ScriptFileCollection {
-		private Hashtable scriptFiles;//string-ScriptFile pairs
-		private ArrayList extensions = new ArrayList();//string
+		private Dictionary<string,ScriptFile> scriptFiles;
+		private List<string> extensions = new List<string>();
 		private DirectoryInfo mainDir;
 		private DateTime newestDateTime = DateTime.MinValue;
-		private ArrayList avoided = new ArrayList();//string
+		private List<string> avoided = new List<string>();
 		private long lengthSum;
 		
 		internal long LengthSum { get {
@@ -62,7 +63,7 @@ namespace SteamEngine {
 		internal ScriptFile AddFile(FileInfo file) {
 			ScriptFile sf = new ScriptFile(file);
 			if (scriptFiles == null) {
-				scriptFiles = new Hashtable();
+				scriptFiles = new Dictionary<string, ScriptFile>();
 			}
 			scriptFiles[file.FullName] = sf;
 			CheckTime(file);
@@ -72,7 +73,7 @@ namespace SteamEngine {
 		
 		internal bool HasFile(FileInfo file) {
 			if (scriptFiles != null) {
-				return scriptFiles.Contains(file.FullName);
+				return scriptFiles.ContainsKey(file.FullName);
 			} else {
 				return false;
 			}
@@ -81,45 +82,42 @@ namespace SteamEngine {
 		internal DateTime NewestDateTime { get {
 			return newestDateTime;
 		} }
-		
-		internal ScriptFile[] GetAllFiles() {
+
+		internal ICollection<ScriptFile> GetAllFiles() {
 			if (scriptFiles == null) {
-				scriptFiles = new Hashtable();
+				scriptFiles = new Dictionary<string, ScriptFile>();
 				InitializeList(mainDir);
 			} else {
-				FindNewFiles(mainDir, new ArrayList());
+				FindNewFiles(mainDir, new List<ScriptFile>());
 			}
-			ScriptFile[] arr = new ScriptFile[scriptFiles.Count];
-			scriptFiles.Values.CopyTo(arr, 0);
-			return arr;
+			return scriptFiles.Values;
 		}
 		
-		internal ScriptFile[] GetChangedFiles() {
+		internal ICollection<ScriptFile> GetChangedFiles() {
 			if (scriptFiles == null) {
 				return GetAllFiles();
 			} else {
-				ArrayList list = new ArrayList();
+				List<ScriptFile> list = new List<ScriptFile>();
 				if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
 					FindNewFiles(mainDir, list);
 				}
 				FindChangedFiles(list);
-				ScriptFile[] arr = new ScriptFile[list.Count];
-				list.CopyTo(arr, 0);
-				return arr;
+				return list;
 			}
 		}
 		
 		internal string[] GetAllFileNames() {
-			ScriptFile[] sfs = GetAllFiles();
-			string[] fileNames = new string[sfs.Length];
-			for (int i = 0, n = sfs.Length; i<n; i++) {
-				ScriptFile sf = sfs[i];
+			ICollection<ScriptFile> sfs = GetAllFiles();
+			string[] fileNames = new string[sfs.Count];
+			int i = 0;
+			foreach (ScriptFile sf in sfs) {
 				fileNames[i] = sf.FullName;
+				i++;
 			}
 			return fileNames;
 		}
 		
-		private void FindNewFiles(DirectoryInfo dir, ArrayList list) {
+		private void FindNewFiles(DirectoryInfo dir, List<ScriptFile> list) {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos())  { 
 				if ((entry.Attributes&FileAttributes.Directory)==FileAttributes.Directory) {
 					DirectoryInfo di = (DirectoryInfo) entry;
@@ -137,7 +135,7 @@ namespace SteamEngine {
 			}
 		}
 		
-		private void FindChangedFiles(ArrayList list) {
+		private void FindChangedFiles(List<ScriptFile> list) {
 			foreach (ScriptFile fs in scriptFiles.Values)  {
 				long prevLength = fs.Length;
 				if (fs.HasChanged) {
@@ -192,7 +190,7 @@ namespace SteamEngine {
 		private FileInfo file;
 		private FileAttributes attribs;
 		private DateTime time;
-		private ArrayList scripts;
+		private List<IUnloadable> scripts;
 		private long length;
 		
 		internal long Length { get {
@@ -207,7 +205,7 @@ namespace SteamEngine {
 			this.attribs = file.Attributes;
 			this.time = file.LastWriteTime;
 			length = file.Length;
-			scripts = new ArrayList();
+			scripts = new List<IUnloadable>();
 		}
 		
 		internal void Add(IUnloadable script) {

@@ -51,8 +51,10 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetType().Name;
 		}
 
+		public override void Unload() {
+		}
+
 		internal override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			ThrowIfUnloaded();
 			GumpInstance gi = new CompiledGumpInstance(this);
 			this.gumpInstance = gi;
 			try {

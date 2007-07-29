@@ -289,11 +289,12 @@ namespace SteamEngine {
 			Timers.Timer.Clear();
 			CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
 			ClassManager.UnLoadScripts();//bye-bye to all storec types
+			GeneratedCodeUtil.UnLoadScripts();//bye-bye to scripted code generators
 			TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
 			ScriptHolder.UnloadAll();//bye-bye to all scripted functions
 			ThingDef.UnLoadAll();//consider all thingdefs unloaded. 
 			GroundTileType.UnLoadScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
-			AbstractScript.UnloadAll();
+			AbstractScript.UnloadAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.
 			Constant.UnloadAll();
 			TestSuite.UnloadAll();
 			ObjectSaver.UnloadScripts();

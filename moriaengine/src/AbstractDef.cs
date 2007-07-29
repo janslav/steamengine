@@ -263,7 +263,12 @@ namespace SteamEngine {
 
 		public override void Unload() {
 
-			ClearTags();
+			//ClearTags();
+
+			foreach (FieldValue fv in this.fieldValues.Values) {
+				fv.Unload();
+			}
+
 			base.Unload();
 
 			//todo: clear the other various properties...

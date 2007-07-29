@@ -27,11 +27,12 @@ namespace SteamEngine {
 		Model, Typed, Typeless, ThingDefType
 	}
 	
-	public sealed class FieldValue {
+	public sealed class FieldValue : IUnloadable {
 		string name;
 		FieldValueType fvType;
 		Type type;
 		bool changedValue = false;
+		bool unloaded = false;
 		
 		FieldValueImpl currentValue;
 		FieldValueImpl defaultValue;
@@ -43,7 +44,21 @@ namespace SteamEngine {
 			
 			this.SetFromScripts(filename, line, value);
 		}
-		
+
+		public void Unload() {
+			unloaded = true;
+		}
+
+		public bool IsUnloaded {
+			get { return unloaded; }
+		}
+
+		private void ThrowIfUnloaded() {
+			if (unloaded) {
+				throw new UnloadedException("The "+this.GetType().Name+" '"+LogStr.Ident(name)+"' is unloaded.");
+			}
+		}
+
 		public string Name { get {
 			return name;
 		} }
@@ -123,9 +138,13 @@ namespace SteamEngine {
 				currentValue = new TemporaryValueImpl(filename, line, this, value);
 				defaultValue = new TemporaryValueImpl(filename, line, this, value);
 			}
+			unloaded = false;
 		}
 		
 		internal bool ShouldBeSaved() {
+			if (unloaded) {
+				return false;
+			}
 			if (changedValue) {//it was loaded/changed , so it should be also saved :)
 				return !object.Equals(CurrentValue, DefaultValue);
 			}
@@ -137,16 +156,19 @@ namespace SteamEngine {
 
 		public object CurrentValue {
 			get {
+				ThrowIfUnloaded();
 				return currentValue.Value;
 			}
 			set {
 				currentValue.Value = value;
+				unloaded = false;
 				changedValue = true;
 			}
 		}
 		
 		public object DefaultValue {
 			get {
+				ThrowIfUnloaded();
 				return defaultValue.Value;
 			}
 			//set {

@@ -19,6 +19,15 @@ using System;
 using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
+	public sealed class e_test_all_generic : CompiledTriggerGroup {
+		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
+			Globals.SrcWriteLine("@"+tk.name+" on "+self+" - parameters:\t"+Environment.NewLine
+				+Common.Tools.ObjToString(sa.Argv));
+
+			return null;
+		}
+	}
+
 	
 	public class e_test_all : CompiledTriggerGroup {
 		public int On_WarModeChange(Character self, bool changeTo) {
@@ -122,9 +131,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 	}
-	
-	public class TestCommands : CompiledScript {
-		public void Def_LookAround(Character self) {
+
+	public static class TestCommands {
+		[SteamFunction]
+		public static void LookAround(Character self) {
 			self.SysMessage("Things:");
 			foreach (Thing t in self.GetMap().GetThingsInRange(self.X, self.Y, self.UpdateRange)) {
 				self.SysMessage(t.ToString());

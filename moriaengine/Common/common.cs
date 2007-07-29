@@ -109,8 +109,8 @@ namespace SteamEngine.Common {
 					toreturn.Append(", ");
 				}
 				toreturn.Append(")");
-			} else if (obj is ArrayList) {
-				ArrayList arr=obj as ArrayList;
+			} else if (obj is IList) {
+				IList arr=obj as IList;
 				toreturn.Append("[");
 				for (int i = 0; i < arr.Count; i++) {
 					toreturn.Append(ObjToString(arr[i]));

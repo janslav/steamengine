@@ -35,7 +35,7 @@ namespace SteamEngine.Persistence {
 	+ "automatically registered with the ObjectSaver class. "
 	+ "Therefore, it needs to have a public constructor with no parameters so that the core ClassManager class can instantiate it.")]
 	public interface ISaveImplementor {
-		[Summary("Write out the section from which this object can be laoded later.")]
+		[Summary("Write out the section from which this object can be loaded later.")]
 		[Remark("First, note that you actually implement only saving of the \"body\" of the section, "
 		+ "not it's header, because that is reserved for use by the ObjectSaver class."
 		+ "Also note that there are certain format restrictions you should (or must) follow. "
@@ -50,7 +50,7 @@ namespace SteamEngine.Persistence {
 		[Summary("Returns the .NET Type of the object that it can load and save.")]
 		[Remark("The returned type is used when determining which implementor to use when saving"
 		+ "individual objects. Therefore, there can be only one implementor for loading of one class, "
-		+ "and this class can not auto-loadable (by decorating it by SaveableClassAttribute,etc.), "
+		+ "and this class can not be auto-loadable (by decorating it by SaveableClassAttribute,etc.), "
 		+ "because for those classes, ISaveImplementor instances are created, too.")]
 		Type HandledType { get; }
 		
