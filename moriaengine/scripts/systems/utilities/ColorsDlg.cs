@@ -138,9 +138,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	public class UtilityFunctions : CompiledScript {
+	public static class UtilityFunctions {
 		[Remark("Display a Colors dialog")]
-		public void func_ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
+		[SteamFunction] 
+		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
 			if(text == null || text.Args.Length == 0) {
 				//zaciname od nulte barvy
 				sender.Dialog(D_Colors.Instance, 0, 0);
