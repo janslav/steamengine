@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -35,6 +36,7 @@ namespace SteamEngine.Common {
 		Exception exception;
 		IBuildLogger logger;
 		string[] sourceFileNames;
+		string sourceFileNamesFile;
 	
 		public NantLauncher() : 
 				this("./distrib/nant/default.build") {
@@ -65,8 +67,9 @@ namespace SteamEngine.Common {
 			this.logger = logger;
 		}
 
-		public void SetSourceFileNames(string[] sourceFileNames) {
+		public void SetSourceFileNames(string[] sourceFileNames, string sourceFileNamesFile) {
 			this.sourceFileNames = sourceFileNames;
+			this.sourceFileNamesFile = sourceFileNamesFile;
 		}
 
 		public void SetProperty(string name, string value) {
@@ -125,7 +128,7 @@ namespace SteamEngine.Common {
 		public void Execute() {
 			FileInfo fileListFile = null;
 			if (sourceFileNames != null) {
-				fileListFile = new FileInfo(Path.Combine("scripts", "scriptSources.Generated.txt"));
+				fileListFile = new FileInfo(sourceFileNamesFile);
 				TextWriter writer = new StreamWriter(fileListFile.OpenWrite(), System.Text.Encoding.UTF8);
 				foreach (string sourcefile in sourceFileNames) {
 					writer.WriteLine(sourcefile);

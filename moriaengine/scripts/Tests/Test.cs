@@ -115,22 +115,9 @@ namespace SteamEngine.CompiledScripts {
 		public TimeSpan savedatt10 = new TimeSpan();
 	}
 
-
 	//If something looks difficult, make suggestions for ways to make it easier!
-
-	public class TestScript : CompiledScript {	//Our script must extend 'Script'
-		//base("something") means this is a triggerGroup named "something", and can have triggers in  it.
-		//Without that, you can't write on_ methods, they're illegal if they aren't in a triggerGroup.
-		//Note that if you need a reference to the triggerGroup, it is 'this.triggerGroup'.
-		//public TestScript() : base("e_test") {
-		//	//Specify a section for the INI, and specify name, default values, and comments for keys in that section
-		//	Globals.Instance.AddTriggerGroup(this.triggerGroup);	
-		//	//Add our trigger group (e_test) to 
-		//	//Server.globals. This is OK, it won't be added again
-		//	//if it's already there.
-		//}
-		
-		public void Moo(string asdf) {
+	public static class TestScript {
+		public static void Moo(string asdf) {
 			char o;
 			for (int a=0; a<asdf.Length; a++) {
 				o=asdf[a];
@@ -140,35 +127,41 @@ namespace SteamEngine.CompiledScripts {
 		
 		[Summary("Documentation in scripts")]
 		[Remark("Documentation attributes are allowed in scripts.")]
-		public TagHolder def_testInvoking(TagHolder self, string accname) {
+		[SteamFunction]
+		public static TagHolder testInvoking(TagHolder self, string accname) {
 			Console.WriteLine("I am called on "+self+" with '"+accname+"'");
 			return new TagHolder();
 		}
-		
-		public void def_TestFuncEmpty(TagHolder self) {
+		[SteamFunction]
+		public static void TestFuncEmpty(TagHolder self) {
 			Moo(self.Name);
 		}
-		public void def_TestFunc2Args(TagHolder self, string a, string b) {
+		[SteamFunction]
+		public static void TestFunc2Args(TagHolder self, string a, string b) {
 			Moo(self.Name);
 		}
-		public void def_TestFunc3Args(TagHolder self, string a, string b, string c) {
+		[SteamFunction]
+		public static void TestFunc3Args(TagHolder self, string a, string b, string c) {
 			Moo(self.Name);
 		}
-		public void def_TestFunc4Args(TagHolder self, string a, string b, string c, string d) {
+		[SteamFunction]
+		public static void TestFunc4Args(TagHolder self, string a, string b, string c, string d) {
 			Moo(self.Name);
 		}
-		public void def_TestFunc5Args(TagHolder self, string a, string b, string c, string d, string e) {
+		[SteamFunction]
+		public static void TestFunc5Args(TagHolder self, string a, string b, string c, string d, string e) {
 			Moo(self.Name);
 		}
-		public void def_TestFuncPArray(TagHolder self, params object[] args) {
+		[SteamFunction]
+		public static void TestFuncPArray(TagHolder self, params object[] args) {
 			Moo(self.Name);
 		}
-		
-		public void def_TestException(TagHolder self) {
+		[SteamFunction]
+		public static void TestException(TagHolder self) {
 			throw new Exception("I threw an Test exception");
 		}
-		
-		public void def_funkce(TagHolder self, ScriptArgs sa) {
+		[SteamFunction]
+		public static void funkce(TagHolder self, ScriptArgs sa) {
 			Console.WriteLine("function has been run: "+sa.Args);
 		}
 		

@@ -20,7 +20,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using SteamEngine.Packets;
@@ -31,23 +31,36 @@ namespace SteamEngine {
 	public abstract class ScriptHolder {
 		public readonly string name;
 		internal bool unloaded = false;
-		internal TriggerGroup myTriggerGroup;
+		internal TriggerGroup contTriggerGroup;
 		
 		internal bool lastRunSuccesful = false;
 		internal Exception lastRunException;
 		
-		private static Hashtable functionsByName = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<string,ScriptHolder> functionsByName = new Dictionary<string,ScriptHolder>(StringComparer.OrdinalIgnoreCase);
 		
 		public static ScriptHolder GetFunction(string name) {
-			return (ScriptHolder) functionsByName[name];
+			ScriptHolder sh;
+			functionsByName.TryGetValue(name, out sh);
+			return sh;
 		}
 	
 		protected ScriptHolder(string name) {
-			this.name=name;
+			if (String.IsNullOrEmpty(name)) {
+				this.name = this.GetName();
+			}
+			this.name = name;
 		}
 		
-		internal void RegisterAsFunction() {
-			if (functionsByName[name] == null) {
+		protected ScriptHolder() {
+			this.name = this.GetName();
+		}
+
+		protected virtual string GetName() {
+			throw new Exception("This should not happen");
+		}
+
+		internal protected void RegisterAsFunction() {
+			if (!functionsByName.ContainsKey(name)) {
 				functionsByName[name] = this;
 				return;
 			}
@@ -83,10 +96,10 @@ namespace SteamEngine {
 		}
 		
 		public string GetDecoratedName() {
-			if (myTriggerGroup == null) {
+			if (contTriggerGroup == null) {
 				return name;
 			} else {
-				return myTriggerGroup.Defname+": @"+name;
+				return contTriggerGroup.Defname+": @"+name;
 			}
 		}
 		

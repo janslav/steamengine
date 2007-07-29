@@ -28,7 +28,7 @@ namespace SteamEngine {
 	/// </summary>                                                
 	public abstract class AbstractKey {
 		public readonly string name;
-		private int uid;
+		public readonly int uid;
 		
 		protected AbstractKey(string name, int uid) {
 			this.name=name;

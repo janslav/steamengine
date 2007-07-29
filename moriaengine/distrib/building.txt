@@ -1,12 +1,12 @@
-Currently, I'm trying to unify the building process of Steamengine with NAnt, 
-so that we won't have to keep all the various make files for various platforms/OSes, 
-and I'd also like to use it from inside steamengine to build scripts, etc.
+Steamengine is built completely by Nant. Not only the core and console, but also 
+the scripts and the generated code, the building of which is invoked by the core.
 
-To have it working, you need to install NAnt properly, i.e. unzip it into some folder and point your system PATH to it,
-that means adding something like "C:\Program files\Nant\bin" to your PATH. 
-Edit: ...Not anymore. I put the Nant.exe with the needed .dlls into /bin, and the bats point to them. 
-So you do not really need NAnt installed.
+To have it working, you need to install NAnt properly, i.e. unzip it into some 
+folder and point your system PATH to it, that means adding something like 
+"C:\Program files\Nant\bin" to your PATH. 
+Edit: ...Not anymore. I put the Nant.exe with the needed .dlls into /bin, and 
+the bats point to them. So you do not really need NAnt installed.
 
-
-It's all far from done, but the bat files in steamengine root are already using the nant build file
-and they can already build enough for the steamengine to start.
+It is still possible, to some extent, to build by visual studio, but only for
+purposes of checking for compile-time errors... the built binaries won't probably 
+work properly (different file names etc.)

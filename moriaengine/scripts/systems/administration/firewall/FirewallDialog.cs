@@ -335,8 +335,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	public class FirewallCommands : CompiledScript {
-		public void func_BlockedIPs(Character self) {
+	public static class FirewallCommands {
+
+		[SteamFunction]
+		public static void BlockedIPs(Character self) {
 			ArrayList ipentries = new ArrayList(Firewall.GetSortedBy(SortingCriteria.IPAsc));
 			if (ipentries.Count == 0) {
 				Globals.SrcWriteLine("Zadna IP neni blokovana");
@@ -345,14 +347,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			self.Dialog(D_BlockedIP.Instance, SortingCriteria.IPAsc, 0);
 		}
 
-		public void func_BlockIP(Character self, ScriptArgs sa) {
+		[SteamFunction]
+		public static void BlockIP(Character self, ScriptArgs sa) {
 			if (sa != null) {
 				self.Dialog(D_BlockIP.Instance, sa.Argv);
 			} else {
 				self.Dialog(D_BlockIP.Instance);
 			}
 		}
-		public void func_BlockIpRange(Character self, ScriptArgs sa) {
+
+		[SteamFunction]
+		public static void BlockIpRange(Character self, ScriptArgs sa) {
 			if (sa != null) {
 				self.Dialog(D_BlockIPRange.Instance, sa.Argv);
 			} else {

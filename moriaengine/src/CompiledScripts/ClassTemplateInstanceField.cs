@@ -32,7 +32,8 @@ namespace SteamEngine.CompiledScripts {
 		private class ClassTemplateInstanceField {
 			//enum AccessModifier {None, Private, Protected, Internal, Public};
 			internal MemberAttributes access = MemberAttributes.Final; //AccessModifier.None;
-			internal string type;
+			internal string typeString;
+			internal Type type;
 			internal bool needsCopying = true;//copy or not in the copying constructor?
 			internal string fieldName;
 			internal string propName;
@@ -133,33 +134,33 @@ namespace SteamEngine.CompiledScripts {
 							break;
 						}
 				}
-				Type t = SteamEngine.CompiledScripts.ClassManager.GetType(typeName);
-				if (t == null) {
-					t = Type.GetType(typeName, false, true);
-					if (t == null) {
-						t = Type.GetType("System."+typeName, false, true);
-						if (t == null) {
-							t = Type.GetType("SteamEngine."+typeName, false, true);
-							if (t == null) {
-								t = Type.GetType("System.Collections."+typeName, false, true);
+				type = SteamEngine.CompiledScripts.ClassManager.GetType(typeName);
+				if (type == null) {
+					type = Type.GetType(typeName, false, true);
+					if (type == null) {
+						type = Type.GetType("System."+typeName, false, true);
+						if (type == null) {
+							type = Type.GetType("SteamEngine."+typeName, false, true);
+							if (type == null) {
+								type = Type.GetType("System.Collections."+typeName, false, true);
 							}
 						}
 					}
 				}
-				if (t != null) {
-					if (t == typeof(string)) {
+				if (type != null) {
+					if (type == typeof(string)) {
 						needsCopying = false;
-					} else if (typeof(TagHolder).IsAssignableFrom(t)) {
+					} else if (typeof(TagHolder).IsAssignableFrom(type)) {
 						needsCopying = false;//we usually do not want to copy our ingame items when copying 
 						//objects with reference to them...
 						//the TagMath.CopyTagValue would not copy them anyway, but it looks weird :)
 					} else {
-						needsCopying = !t.IsValueType;
+						needsCopying = !type.IsValueType;
 					}
-					type = t.Name;
+					typeString = type.Name;
 				} else {
 					//Console.WriteLine("unrecognized type "+typeName);
-					type = typeName;
+					typeString = typeName;
 				}
 			}
 
@@ -197,7 +198,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					//CodeMemberField field = new CodeMemberField(type, TagMath.Capitalize(name));
 					//field.Attributes=access;
-					CodeMemberField field = new CodeMemberField(type, fieldName);
+					CodeMemberField field = new CodeMemberField(typeString, fieldName);
 					field.Attributes=access;
 					field.InitExpression=new CodeSnippetExpression(defaultValue);
 					if (isStatic) {
@@ -209,7 +210,7 @@ namespace SteamEngine.CompiledScripts {
 
 			internal CodeMemberProperty ToProperty() {
 				CodeMemberProperty prop = new CodeMemberProperty();
-				prop.Type = new CodeTypeReference(type);
+				prop.Type = new CodeTypeReference(typeString);
 				prop.Name = propName;
 				if (access==MemberAttributes.Final) {
 					access|=MemberAttributes.Public;
@@ -222,7 +223,7 @@ namespace SteamEngine.CompiledScripts {
 					//return (type) field.CurrentValue;
 					prop.GetStatements.Add(
 						new CodeMethodReturnStatement(
-							new CodeCastExpression(type,
+							new CodeCastExpression(typeString,
 								new CodePropertyReferenceExpression(
 									new CodeFieldReferenceExpression(
 										new CodeThisReferenceExpression(),
@@ -285,9 +286,40 @@ namespace SteamEngine.CompiledScripts {
 						"InitField_Typed",
 						new CodePrimitiveExpression(fieldName),
 						new CodeSnippetExpression(defaultValue),
-						new CodeTypeOfExpression(type)
+						new CodeTypeOfExpression(typeString)
 					)
 				);
+			}
+
+			internal CodeStatement ToDirectLoadStatement() {
+				Sanity.IfTrueThrow(type == null, "type can't be null in ToDirectLoadStatement()");
+
+				MethodInfo convertMethod = typeof(ConvertTools).GetMethod("To"+this.type.Name, BindingFlags.Static|BindingFlags.Public);
+
+				if (convertMethod != null) {
+					return new CodeAssignStatement(
+						new CodeFieldReferenceExpression(
+							new CodeThisReferenceExpression(),
+							this.fieldName),
+						new CodeMethodInvokeExpression(
+							new CodeMethodReferenceExpression(
+								new CodeTypeReferenceExpression(typeof(ConvertTools)),
+								convertMethod.Name),
+							new CodeArgumentReferenceExpression("value")));
+				} else {
+					return new CodeAssignStatement(
+						new CodeFieldReferenceExpression(
+							new CodeThisReferenceExpression(),
+							this.fieldName),
+						new CodeCastExpression(
+							new CodeTypeReference(this.type),
+							new CodeMethodInvokeExpression(
+								new CodeMethodReferenceExpression(
+									new CodeTypeReferenceExpression(typeof(ConvertTools)),
+									"ConvertTo"),
+								new CodeTypeOfExpression(this.type),
+								new CodeArgumentReferenceExpression("value"))));
+				}
 			}
 
 			internal CodeMemberMethod ToDelayedLoadMethod() {
@@ -302,9 +334,16 @@ namespace SteamEngine.CompiledScripts {
 					new CodeParameterDeclarationExpression(typeof(int), "line"));
 
 				//implementace
-				MethodInfo convertMethod = typeof(ConvertTools).GetMethod("To"+this.type, BindingFlags.Static|BindingFlags.Public);
+				MethodInfo convertMethod = typeof(ConvertTools).GetMethod("To"+this.typeString, BindingFlags.Static|BindingFlags.Public);
 
-				if (convertMethod != null) {
+				if (type == typeof(object)) {
+					this.delayedLoadMethod.Statements.Add(new CodeAssignStatement(
+						new CodeFieldReferenceExpression(
+							new CodeThisReferenceExpression(),
+							this.fieldName),
+						new CodeArgumentReferenceExpression("resolvedObject")));
+
+				} else if (convertMethod != null) {
 					this.delayedLoadMethod.Statements.Add(new CodeAssignStatement(
 						new CodeFieldReferenceExpression(
 							new CodeThisReferenceExpression(),
@@ -320,12 +359,12 @@ namespace SteamEngine.CompiledScripts {
 							new CodeThisReferenceExpression(),
 							this.fieldName),
 						new CodeCastExpression(
-							new CodeTypeReference(this.type),
+							new CodeTypeReference(this.typeString),
 							new CodeMethodInvokeExpression(
 								new CodeMethodReferenceExpression(
 									new CodeTypeReferenceExpression(typeof(ConvertTools)),
 									"ConvertTo"),
-								new CodeTypeOfExpression(this.type),
+								new CodeTypeOfExpression(this.typeString),
 								new CodeArgumentReferenceExpression("resolvedObject")))));
 				}
 				return this.delayedLoadMethod;
@@ -367,7 +406,7 @@ namespace SteamEngine.CompiledScripts {
 					return new CodeAssignStatement(
 						assignTo,
 						new CodeCastExpression(
-							type,
+							typeString,
 							new CodeMethodInvokeExpression(
 								new CodeTypeReferenceExpression(typeof(Utility)),
 								"CopyTagValue",

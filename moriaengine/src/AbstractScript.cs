@@ -33,6 +33,12 @@ namespace SteamEngine {
 		public virtual void Unload() {
 			unloaded = true;
 		}
+
+		public bool IsUnloaded {
+			get { 
+				return unloaded; 
+			}
+		}
 		
 		protected AbstractScript() {
 			defname = GetName();
@@ -68,7 +74,7 @@ namespace SteamEngine {
 		
 		protected void ThrowIfUnloaded() {
 			if (unloaded) {
-				throw new UnloadedException("The AbstractScript '"+LogStr.Ident(defname)+"' is unloaded.");
+				throw new UnloadedException("The "+this.GetType().Name+" '"+LogStr.Ident(defname)+"' is unloaded.");
 			}
 		}
 

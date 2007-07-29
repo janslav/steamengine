@@ -16,9 +16,12 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
-using System.Collections;
-using SteamEngine;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts { 
 
@@ -28,64 +31,189 @@ namespace SteamEngine.CompiledScripts {
 			This class provides automatic linking of methods intended for use as triggers and
 			creates a TriggerGroup that your triggers are in.
 	*/
-	public abstract class CompiledTriggerGroup {
-		TriggerGroup triggerGroup;
+	public abstract class CompiledTriggerGroup : TriggerGroup {
+		protected CompiledTriggerGroup()
+			: base() {
+		}
+
+		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
+			throw new InvalidOperationException("CompiledTriggerGroup without overriden Run method?! This should not happen.");
+		}
+
+		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
+			try {
+				return Run(self, tk, sa);
+			} catch (FatalException) {
+				throw;
+			} catch (Exception e) {
+				Logger.WriteError(e);
+			}
+			return null;
+		}
+
+		protected override string GetName() {
+			return this.GetType().Name;
+		}
+
+		public override void Unload() {
+			//we do nothing. Throwing exception is rude to AbstractScript.UnloadAll
+			//and doing base.Unload() would be a lie cos we can't really unload.
+		}
+	}
+
+	internal class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
+		static List<Type> compiledTGs = new List<Type>();
+
+		internal static void AddCompiledTGType(Type t) {
+			compiledTGs.Add(t);
+		}
+
+		public CodeCompileUnit WriteSources() {
+			try {
+				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+				if (compiledTGs.Count > 0) {
+					Logger.WriteDebug("Generating compiled Triggergroups");
+
+					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					codeCompileUnit.Namespaces.Add(ns);
+
+					foreach (Type decoratedClass in compiledTGs) {
+						try {
+							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
+							CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							ns.Types.Add(ctd);
+						} catch (FatalException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteError(decoratedClass.Assembly.GetName().Name, decoratedClass.Name, e);
+							return null;
+						}
+					}
+					Logger.WriteDebug("Done generating "+compiledTGs.Count+" compiled Triggergroups");
+				}
+				return codeCompileUnit;
+			} finally {
+				compiledTGs.Clear();
+			}
+		}
+
+		public void HandleAssembly(Assembly compiledAssembly) {
+
+		}
+
+
+		public string FileName {
+			get { return "CompiledTriggerGroups.Generated.cs"; }
+		}
+
 		/*
 			Constructor: CompiledTriggerGroup
 			Creates a triggerGroup named after the class, and then finds and sets up triggers 
 			defined in the script (by naming them on_whatever).
 		*/
-		public CompiledTriggerGroup() {
-			Type t=this.GetType();			//Whatever type this really is - This has to be extended to be used.
-			
-			triggerGroup = TriggerGroup.GetNewOrCleared(t.Name);	//Get/create our TriggerGroup
-			
-			MemberTypes memberType=MemberTypes.Method;		//Only find methods.
-			BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
-			MemberFilter filter = new MemberFilter(StartsWithString);		//Our StartsWithString method
-			
-			MemberInfo[] mi = t.FindMembers(memberType, bindingAttr, filter, "on_");	//Does it's name start with "on_"?
-			foreach (MemberInfo m in mi) {
-				if (m is MethodInfo) {	//It's a trigger. We make the ScriptHolder and add it to our TG's triggers list.
-					triggerGroup.AddTrigger(MIScriptHolder.ChooseMIScriptHolder((MethodInfo)m, this, m.Name.Substring(3)));
+		private class GeneratedInstance {
+			List<MethodInfo> triggerMethods = new List<MethodInfo>();
+			Type tgType;
+
+			internal CodeTypeDeclaration GetGeneratedType() {
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration(tgType.Name+"_Generated");
+				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+				codeTypeDeclatarion.BaseTypes.Add(tgType);
+				codeTypeDeclatarion.IsClass = true;
+
+				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
+				codeTypeDeclatarion.Members.Add(GenerateGetNameMethod());
+
+				return codeTypeDeclatarion;
+			}
+
+			internal GeneratedInstance(Type tgType) {
+				this.tgType = tgType;
+				MemberTypes memberType=MemberTypes.Method;		//Only find methods.
+				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
+
+				MemberInfo[] mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
+				foreach (MemberInfo m in mis) {
+					MethodInfo mi = m as MethodInfo;
+					if (mi != null) {
+						triggerMethods.Add(mi);
+					}
 				}
 			}
-		}   
-		
-		public TriggerGroup ThisTG { get {
-			return triggerGroup;
-		} }
-		
-		    
-		//Simply return true or false depending on whether the method's name starts with whatever we asked for.
-		//Case insensitive.
-		public bool StartsWithString(MemberInfo m, object filterCriteria) {
-			string s=((string) filterCriteria).ToLower();
-			return m.Name.ToLower().StartsWith(s);
+
+			private CodeMemberMethod GenerateRunMethod() {
+				CodeMemberMethod retVal = new CodeMemberMethod();
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "Run";
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "self"));
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(TriggerKey), "tk"));
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(ScriptArgs), "sa"));
+				retVal.ReturnType = new CodeTypeReference(typeof(object));
+
+				if (triggerMethods.Count > 0) {
+					retVal.Statements.Add(new CodeVariableDeclarationStatement(
+						typeof(object[]),
+						"argv"));
+
+					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
+					foreach (MethodInfo mi in triggerMethods) {
+						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
+						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase("+tk.uid+"): //"+tk.name));
+						retVal.Statements.AddRange(
+							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
+								new CodeThisReferenceExpression()));
+					}
+					retVal.Statements.Add(new CodeSnippetStatement("\t\t\t}"));
+				}
+
+				retVal.Statements.Add(
+					new CodeMethodReturnStatement(
+						new CodePrimitiveExpression(null)));
+
+				return retVal;
+			}
+
+			private CodeMemberMethod GenerateGetNameMethod() {
+				CodeMemberMethod retVal = new CodeMemberMethod();
+				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+				retVal.Name = "GetName";
+				retVal.ReturnType = new CodeTypeReference(typeof(string));
+
+				retVal.Statements.Add(
+					new CodeMethodReturnStatement(
+						new CodePrimitiveExpression(tgType.Name)));
+
+
+				return retVal;
+			}
+
+			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
+				string s=((string) filterCriteria).ToLower();
+				return m.Name.ToLower().StartsWith(s);
+			}
 		}
 	}
-	
 	
 	//Implemented by the types which can represent map tiles
 	//like t_water and such
 	//more in the Map class
 	//if someone has a better idea about how to do this ...
 	public abstract class GroundTileType : CompiledTriggerGroup {
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		
-		public GroundTileType() : base() {
-			Type t = this.GetType();
-			byName[t.Name] = this;
+		private static Dictionary<string, GroundTileType> byName = new Dictionary<string, GroundTileType>(StringComparer.OrdinalIgnoreCase);
+
+		protected GroundTileType() {
+			byName[this.defname] = this;
 		}
 		
-		public static GroundTileType Get(string name) {
-			return (GroundTileType) byName[name];
+		public static new GroundTileType Get(string name) {
+			GroundTileType gtt;
+			byName.TryGetValue(name, out gtt);
+			return gtt;
 		}
 
 		public static bool IsMapTileInRange(int tileId, int aboveOrEqualTo, int below) {
 			return (tileId>=aboveOrEqualTo && tileId<=below);
 		}
-
 
 		public abstract bool IsTypeOfMapTile(int mapTileId);
 		

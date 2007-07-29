@@ -243,9 +243,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-
-		public class Functions_Astar_Test : CompiledScript {
-			public void func_Astar_Walk(Character self, ScriptArgs sa) {
+		public static class Functions_Astar_Test {
+			[SteamFunction]
+			public static void Astar_Walk(Character self, ScriptArgs sa) {
 				Player src = Globals.Src as Player;
 				if (src != null) {
 					double seconds = 0.5;
@@ -257,7 +257,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			public void func_Astar_Draw(Character self, ScriptArgs sa) {
+			[SteamFunction]
+			public static void Astar_Draw(Character self, ScriptArgs sa) {
 				Player src = Globals.Src as Player;
 				if (src != null) {
 					IMovementSettings settings = null;

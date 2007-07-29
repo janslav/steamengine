@@ -1,4 +1,18 @@
 
+Jul 29, 2007
+	added: CompiledScriptHolder.cs, GeneratedCodeUtil.cs, ScriptedTriggerGroup.cs, CompiledTriggerGroup.cs
+	removed: MIScriptHolder.cs, CompiledScript.cs
+	changed: TriggerGroup, ClassManager, atd.
+	(tar)		Odstranena reflexe z volani kodu pro kompilovanty triggergroupy a funkce.
+		Nahrazena generovanym kodem. Taky zmenen zpusob deklarace globalnich funkci - misto def_ metody v potomkovi 
+		CompiledScriptu se ted za globalni funkci povazuje libovolna staticka metoda s atributem [SteamFunction]
+		Stavajici kod (tj. existujici funkce ve skriptech) predelan odpovidajicim zpusobem.
+		TriggerGroup uz neni nutne fyzicky kolekce ScriptHolderu, nybrz je to abstraktni trida s metodami
+		(Try)Run(object, TriggerKey, ScriptArgs) coz umoznuje vytvaret i nejaky lehce dynamictejsi triggergroupy
+		Zatim vyuzito jen v E_Test_all_generic
+		
+		(...mezitim taky pracuju na combatu ale to sem nepatri ;)
+
 Apr 30, 2007
 	added: classtemplates/Corpse.cs
 	changed: classtemplates/Character.cs, src/UIDArray.cs, src/Packets/* etc.

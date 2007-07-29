@@ -127,8 +127,9 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Internal class extending a CompiledScript class - allowing us to call some useful functions ingame without " +
                 "scripting them in LScript")]
-		public class MessagesFunctions : CompiledScript {
-			public void def_Messages(AbstractCharacter sender, ScriptArgs args) {
+		public static class MessagesFunctions {
+			[SteamFunction]
+			public static void Messages(AbstractCharacter sender, ScriptArgs args) {
 				if(args.Args.Length == 0) {
 					sender.Dialog(D_DelayedMessages.Instance, SortingCriteria.TimeAsc, 0);//default sorting, beginning from the first message
 				} else {

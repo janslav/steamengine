@@ -20,17 +20,11 @@ using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	public class MemberWrapperTestsScript : CompiledScripts.CompiledScript {
-		//temporary for direct launching while writing the tests
-		public void def__RunMWTests(TagHolder ignored) {
-			MemberWrapperTests.RunMWTests();
-		}
-	}
-	
 	public class MemberWrapperTests {
 		//temporary for direct launching while writing the tests
 	
 		[RegisterWithRunTests]
+		[SteamFunction]
 		public static void RunMWTests() {
 			ConstructorInfo constructor = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetConstructors()[0]);
 			FieldInfo intFi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetField("intField"));

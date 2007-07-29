@@ -36,7 +36,7 @@ using NAnt.Core;
 
 namespace SteamEngine.CompiledScripts { 
 	
-	internal class CompilerInvoker {
+	internal static class CompilerInvoker {
 		internal static CompScriptFileCollection compiledScripts;//CompScriptFileCollection instances
 		//all types of Steamengine namespace, regardless if from scripts or core. 
 
@@ -46,11 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	
 		internal static bool SourcesHaveChanged { get {
-			ScriptFile[] changedFiles = compiledScripts.GetChangedFiles();
-			if (changedFiles.Length > 0) {
-				return true;
-			}
-			return false;
+			return compiledScripts.GetChangedFiles().Count > 0;
 		} }
 
 		internal static uint compilenumber = 0;
@@ -58,30 +54,24 @@ namespace SteamEngine.CompiledScripts {
 		internal static bool CompileScripts(bool firstCompiling) {
 			bool success = true;
 
-			SteamEngine.Persistence.DecoratedClassesSaveImplementorGenerator.Init();
-
 			if (firstCompiling) {
 				success = ClassManager.InitClasses(ClassManager.CoreAssembly);
 			}
 			//then try to compile scripts
 			compilenumber++;
-			
-			//these calls are now deprecated, we use building with NAnt now
-			//success=success && CompileScripts(new CSharpCodeProvider(), "C#", ".cs", firstCompiling);
-			//success=success && CompileScripts(new VBCodeProvider(), "VB.NET", ".vb", firstCompiling);
-			////#if !MONO	//the jscript does some weird errors, and I dont care enough to try to satisfy it... 
-			////			//if anyone wants JS support, try to uncomment this and see what happens
-			////			success=success && CompileScripts(new JScriptCodeProvider(), "JScript", ".js", firstCompiling);
-			////#endif
 
 			success = success && CompileScriptsUsingNAnt();
 
 			success = success && ClassManager.InitClasses(compiledScripts.assembly);
 
-			success = success && SteamEngine.Persistence.DecoratedClassesSaveImplementorGenerator.DumpAndCompileClasses();
+			success = success && GeneratedCodeUtil.DumpAndCompile();
+
+			if (success) {
+				success = success && ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
+			}
+
 			return success;
 		}
-
 
 		private static bool CompileScriptsUsingNAnt() {
 			CompScriptFileCollection fileCollection = new CompScriptFileCollection(Globals.scriptsPath, ".cs");
@@ -97,7 +87,8 @@ namespace SteamEngine.CompiledScripts {
 			nant.SetProperty("scriptsNumber", compilenumber.ToString());
 			nant.SetProperty("scriptsReferencesListPath", 
 				Path.Combine(Globals.scriptsPath, "referencedAssemblies.txt"));
-			nant.SetSourceFileNames(fileCollection.GetAllFileNames());
+			nant.SetSourceFileNames(fileCollection.GetAllFileNames(), 
+				Path.Combine(Globals.scriptsPath, "scriptSources.Generated.txt"));
 
 			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
 			nant.Execute();
@@ -114,7 +105,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private class CoreNantLogger : DefaultLogger {
+		internal class CoreNantLogger : DefaultLogger {
 			public override void BuildFinished(object sender, BuildEventArgs e) { }
 			public override void BuildStarted(object sender, BuildEventArgs e) { }
 			public override void TargetFinished(object sender, BuildEventArgs e) { }

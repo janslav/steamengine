@@ -22,9 +22,10 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.LScript {
-	public class LScriptTest : CompiledScripts.CompiledScript {
+	public class LScriptTest {
 		public static LScriptTesterObject testObj = new LScriptTesterObject();
 		
 		//temporary for direct launching while writing the tests

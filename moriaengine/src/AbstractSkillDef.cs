@@ -154,7 +154,7 @@ namespace SteamEngine {
 			//now do load the trigger code. 
 			if (input.TriggerCount>0) {
 				input.headerName = "t__"+input.headerName+"__";
-				TriggerGroup tg = TriggerGroup.Load(input);
+				TriggerGroup tg = ScriptedTriggerGroup.Load(input);
 				skillDef.AddTriggerGroup(tg);
 			}
 			

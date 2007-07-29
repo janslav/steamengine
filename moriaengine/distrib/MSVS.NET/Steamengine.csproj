@@ -278,9 +278,8 @@
       <Link>CompiledScripts\CompiledGump.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\CompiledScript.cs">
-      <Link>CompiledScripts\CompiledScript.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\src\CompiledScripts\CompiledScriptHolder.cs">
+      <Link>CompiledScripts\CompiledScriptHolder.cs</Link>
     </Compile>
     <Compile Include="..\..\src\CompiledScripts\CompiledTriggerGroup.cs">
       <Link>CompiledScripts\CompiledTriggerGroup.cs</Link>
@@ -290,9 +289,8 @@
       <Link>CompiledScripts\CompilerInvoker.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\MIScriptHolder.cs">
-      <Link>CompiledScripts\MIScriptHolder.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\src\CompiledScripts\GeneratedCodeUtil.cs">
+      <Link>CompiledScripts\GeneratedCodeUtil.cs</Link>
     </Compile>
     <Compile Include="..\..\src\Conn.cs">
       <Link>Conn.cs</Link>
@@ -551,6 +549,9 @@
     <Compile Include="..\..\src\LScript\ScriptedGumpDef.cs">
       <Link>LScript\ScriptedGumpDef.cs</Link>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\LScript\ScriptedTriggerGroup.cs">
+      <Link>LScript\ScriptedTriggerGroup.cs</Link>
     </Compile>
     <Compile Include="..\..\src\LScript\StrictAnalyzer.cs">
       <Link>LScript\StrictAnalyzer.cs</Link>
