@@ -90,14 +90,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	public class AccountsFunctions : CompiledScript {
+	public static class AccountsFunctions {
 		[Remark("Create a new gm account using the dialog")]
-		public void func_NewAcc(AbstractCharacter sender, ScriptArgs text) {
+		[SteamFunction] 
+		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {
 			sender.Dialog(D_NewAccount.Instance);
 		}
 
 		[Remark("Display an account list")]
-		public void func_AccList(AbstractCharacter sender, ScriptArgs text) {
+		[SteamFunction] 
+		public static void AccList(AbstractCharacter sender, ScriptArgs text) {
 			//zavolat dialog, parametr 0 - zacne od prvni stranky, pocatecni pismena
 			//accountu vezmeme z argv
 			//vyhledavani
