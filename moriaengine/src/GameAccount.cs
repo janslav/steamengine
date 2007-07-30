@@ -87,17 +87,19 @@ namespace SteamEngine {
 			accList.Clear();
 		}
 
-		[Remark("Method for retreiving a sublist of GameAccounts which names start with "+
+		[Remark("Method for retreiving a sublist of GameAccounts which names contain "+
 				"a specified string")]
-		public static List<GameAccount> RetreiveByStr(string startWith) {
+		public static List<GameAccount> RetreiveByStr(string searched) {
 			List<GameAccount> retList = new List<GameAccount>();
-			if(startWith.Equals("")) {//return the whole list
+			if(searched.Equals("")) {//return the whole list
 				return accList;
 			}
 			foreach(string accName in accounts.Keys) {
-				if(accName.ToUpper().StartsWith(startWith.ToUpper())) {
+				string uppName = accName.ToUpper();				
+				if(uppName.Contains(searched.ToUpper())){
+					//accounts contain the searched text
 					retList.Add(accounts[accName]);
-				}
+				} 
 			}
 			return retList;
 		}
