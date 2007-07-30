@@ -130,7 +130,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(ISaveImplementor))][SeeAlso(typeof(SaveableClassAttribute))]
 	[SeeAlso(typeof(ISimpleSaveImplementor))]
 	public static partial class ObjectSaver {
-		public static Regex thingUidRE = new Regex(@"^\s*#(?<value>\d+)\s*$",                    
+		public static Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?\d+)\s*$",                    
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 		public static Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
