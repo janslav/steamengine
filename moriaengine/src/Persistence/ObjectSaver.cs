@@ -330,7 +330,7 @@ namespace SteamEngine.Persistence {
 			
 			Match m = thingUidRE.Match(input);
 			if (m.Success) {
-				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer);
+				int uid = ConvertTools.ParseInt32(m.Groups["value"].Value);
 				Thing thing = Thing.UidGetThing(uid);
 				if (thing != null) {
 					return thing;
@@ -360,7 +360,7 @@ namespace SteamEngine.Persistence {
 			}
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				int uid = int.Parse(m.Groups["uid"].Value);//should we also check something using the "name" part?
+				int uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (uid < loadedObjectsCount) {
 					object o = loadedObjectsByUid[uid];
@@ -462,7 +462,7 @@ namespace SteamEngine.Persistence {
 			
 			Match m = thingUidRE.Match(input);
 			if (m.Success) {
-				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer);
+				int uid = ConvertTools.ParseInt32(m.Groups["value"].Value);
 				PushDelayedLoader(new ThingDelayedLoader_NoParam(deleg, filename, line, uid));
 				return;
 			}
@@ -480,7 +480,7 @@ namespace SteamEngine.Persistence {
 			}
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				uint uid = uint.Parse(m.Groups["uid"].Value);//should we also check something using the "name" part?
+				int uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
 				PushDelayedLoader(new GenericDelayedLoader_NoParam(deleg, filename, line, uid));
 				return;
 			}
@@ -849,8 +849,8 @@ namespace SteamEngine.Persistence {
 		}
 		
 		private class GenericDelayedLoader_NoParam : DelayedLoader_NoParam {
-			uint objectUid;
-			internal GenericDelayedLoader_NoParam(LoadObject deleg, string filename, int line, uint objectUid)
+			int objectUid;
+			internal GenericDelayedLoader_NoParam(LoadObject deleg, string filename, int line, int objectUid)
 					: base(deleg, filename, line) {
 				this.objectUid = objectUid;
 			}
@@ -858,7 +858,7 @@ namespace SteamEngine.Persistence {
 			internal override void Run() {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (objectUid < loadedObjectsCount) {
-					object o = loadedObjectsByUid[(int) objectUid];
+					object o = loadedObjectsByUid[objectUid];
 					if (o != typeof(void)) {
 						deleg(o, filename, line);
 						return;
