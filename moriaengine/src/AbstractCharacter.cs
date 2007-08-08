@@ -1872,6 +1872,19 @@ namespace SteamEngine {
 			}
 		}
 		
+		[Remark("Look into the dialogs dictionary and find out whether the desired one is opened"+
+				"(visible) or not")]
+		public bool HasOpenedDialog(Gump def) {
+			GameConn gc = Conn;
+			if(gc != null) {
+				if(gc.FindGumpInstances(def).Count != 0) {
+					//nasli jsme otevrenou instanci tohoto gumpu
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		internal override sealed bool TriggerSpecific_Click(AbstractCharacter clickingChar, ScriptArgs sa) {
 			//helper method for Trigger_Click
 			bool cancel=false;

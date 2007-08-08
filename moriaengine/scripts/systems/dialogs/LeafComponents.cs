@@ -391,6 +391,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("TextFactory creates a text displayed in the gump according to the specified position and hue)")]
 	public class TextFactory {
+		[Remark("Creating labels - of columns, of input fields etc")]
+		public static Text CreateLabel(string text) {
+			return CreateText(Hues.LabelColor, text);
+		}
+
+		[Remark("Creating labels - of columns, of input fields etc")]
+		public static Text CreateLabel(int xPos, int yPos, string text) {
+			return CreateText(xPos, yPos, Hues.LabelColor, text);
+		}	
+
+		public static Text CreateHeadline(string text) {
+			return CreateText(Hues.HeadlineColor, text);
+		}
+
 		[Remark("Simple factory method allows us to let the dialog to determine the text's position in the column")]
 		public static Text CreateText(int hue, string text) {
 			return new Text(0, 0, hue, text);

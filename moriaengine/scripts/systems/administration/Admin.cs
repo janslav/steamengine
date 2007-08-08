@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dialogHandler.Add(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")");
+			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")");
 			//cudlik na zavreni dialogu
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
@@ -63,29 +63,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//popis sloupecku
 			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 180, 180, 180, 0)); 
 			//cudlik pro privolani hrace
-			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Come");
+			dialogHandler.LastTable[0,0] = TextFactory.CreateLabel("Come");
 
 			//Accounts
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit podle accountu asc
             dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit podle accountu desc			
-            dialogHandler.LastTable[0,1] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Account");
+            dialogHandler.LastTable[0,1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Account");
 
 			//Jméno
             dialogHandler.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle hráèù asc
             dialogHandler.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit podle hráèù desc			
-            dialogHandler.LastTable[0,2] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno");
+			dialogHandler.LastTable[0, 2] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno");
 
 			//Lokace
             dialogHandler.LastTable[0,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit dle lokaci asc
             dialogHandler.LastTable[0,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6); //tridit podle lokaci desc			
-            dialogHandler.LastTable[0,3] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Lokace");
+			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Lokace");
 
 			//Akce
-			dialogHandler.LastTable[0,4] = TextFactory.CreateText("Action");
+			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel("Action");
 			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam lidi
-            dialogHandler.Add(new GUTATable(ImprovedDialog.PAGE_ROWS));
+            dialogHandler.Add(new GUTATable(imax-firstiVal));
 			dialogHandler.CopyColsFromLastTable();
 
 			switch ((SortingCriteria)sa[0]) {

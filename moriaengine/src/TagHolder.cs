@@ -73,7 +73,37 @@ namespace SteamEngine {
 		} set {
 		
 		} }
-		
+
+		[Remark("Return enumerable containing all tags")]
+		public IEnumerable AllTags {
+			get {
+				Hashtable onlyTags = new Hashtable();
+				if(tags != null) {
+					foreach(DictionaryEntry entry in tags) {
+						if(entry.Key is TagKey) {
+							onlyTags.Add(entry.Key, entry.Value);
+						}
+					}
+				}
+				return onlyTags;
+			}
+		}
+
+		[Remark("Return enumerable containing all timers")]
+		public IEnumerable AllTimers {
+			get {
+				Hashtable onlyTimers = new Hashtable();
+				if(tags != null) {
+					foreach(DictionaryEntry entry in tags) {
+						if(entry.Key is TimerKey) {
+							onlyTimers.Add(entry.Key,entry.Value);
+						}
+					}
+				}
+				return onlyTimers;
+			}
+		}
+
 		public TagHolder() {
 		}
 		

@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Class encapsulating stacking an recalling dialogs")]
 	public class DialogStackItem {
 		[Remark("Tag used for stacking information about clients dialogs to be called back")]
-		private static readonly TagKey dialogStack = TagKey.Get("x_guta_dialogStack");
+		private static readonly TagKey _dialogStackTag_ = TagKey.Get("x_guta_dialogStack");
 
 		[Remark("Instance of the dialog to be recalled")]
 		Gump instance;
@@ -52,7 +52,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args = value;
 			}
 		}
-	
+
+		[Remark("Returns an instance type of this dialog")]
+		public Type InstanceType {
+			get {
+				return instance.GetType();
+			}
+		}
 
 		internal DialogStackItem(GameConn connection, AbstractCharacter cont, Thing focus,
 									Gump instance, object[] args) {
@@ -63,10 +69,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.focus = focus;
 		}
 
-		[Remark("Gets the stored information and displays the dialog")]
+		[Remark("Gets the stored information and displays the dialog."+
+				"It displays the dialog only in case it is not yet opened and visible - this can"+
+				"occur e.g. when opening another dialog having one opened before and then closing the"+
+				"least opened one - it will look into the stack, find the previous dialog (the first opened one)"+
+				"and tries to show it which would lead to having two same dialogs opened and problems"+
+				"when closing one of them (displaying other previous dialogs unwantedly etc)")]
 		public void Show() {
 			//send the dialog with stored values
-			cont.SendGump(focus, instance, args);
+			//only in case it is not opened 
+			if(!cont.HasOpenedDialog(instance)) {
+				cont.SendGump(focus, instance, args);
+			} else {
+				//nothing will be shown, the dialog is still opened, return this DSI to the stack
+				DialogStackItem.EnstackDialog(cont, this);
+			}
 		}
 
 		[Remark("LSCript used method for setting the specified argument's value")]
@@ -86,10 +103,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"after finishing with the accout info dialog we would like to have the info dialog reopened!")]
 		public static void EnstackDialog(GumpInstance gi,
 											Gump instance, params object[] args) {
-			Stack<DialogStackItem> dialogsStack = gi.Cont.Conn.GetTag(dialogStack) as Stack<DialogStackItem>;
+			Stack<DialogStackItem> dialogsStack = gi.Cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
 			if(dialogsStack == null) { //not yet set
 				dialogsStack = new Stack<DialogStackItem>();
-				gi.Cont.Conn.SetTag(dialogStack, dialogsStack);
+				gi.Cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
 			}
 			dialogsStack.Push(new DialogStackItem(gi.Cont.Conn, gi.Cont, gi.Focus, instance, args));
 		}
@@ -97,23 +114,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Overloaded init method - used when the gumpinstance is not fully initialized yet")]
 		public static void EnstackDialog(AbstractCharacter cont,  Thing focus, 
 											Gump instance, params object[] args) {
-			Stack<DialogStackItem> dialogsStack = cont.Conn.GetTag(dialogStack) as Stack<DialogStackItem>;
+			Stack<DialogStackItem> dialogsStack = cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
 			if(dialogsStack == null) { //not yet set
 				dialogsStack = new Stack<DialogStackItem>();
-				cont.Conn.SetTag(dialogStack, dialogsStack);
+				cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
 			}
 			dialogsStack.Push(new DialogStackItem(cont.Conn, cont, focus, instance, args));
+		}
+
+		[Remark("Allows us to 'push back' a previously popped dialog stack item.")]
+		public static void EnstackDialog(AbstractCharacter cont, DialogStackItem dsi) {
+			Stack<DialogStackItem> dialogsStack = cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
+			if(dialogsStack == null) { //not yet set
+				dialogsStack = new Stack<DialogStackItem>();
+				cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
+			}
+			dialogsStack.Push(dsi);
 		}
 
 		[Remark("Recall the last stored dialog from the dialog stack." +
 				"Method must be called from the dialog we want to return from in the OnResponse method")]
 		public static DialogStackItem PopStackedDialog(GameConn showTo) {
-			Stack<DialogStackItem> dialogsStack = showTo.GetTag(dialogStack) as Stack<DialogStackItem>;
+			Stack<DialogStackItem> dialogsStack = showTo.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
 			DialogStackItem dsi = null;
 			if(dialogsStack != null) { //something was stored
 				dsi = dialogsStack.Pop();
 				if(dialogsStack.Count == 0) {//the stack is empty now
-					showTo.SetTag(dialogStack, null); //free the tag
+					showTo.SetTag(_dialogStackTag_, null); //free the tag
 				}
 			}
 			return dsi;
@@ -121,7 +148,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("For possible clearing of the stacked dialogs (if needed)")]
 		public static void ClearDialogStack(GameConn fromWho) {
-			fromWho.SetTag(dialogStack, null);
+			fromWho.SetTag(_dialogStackTag_, null);
 		}
 
 		[Remark("For displaying the previously stored dialog (if any)")]

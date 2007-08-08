@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first row - the label of the dialog
 			dialogHandler.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0,0] = TextFactory.CreateText(label);
+			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline(label);
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
 

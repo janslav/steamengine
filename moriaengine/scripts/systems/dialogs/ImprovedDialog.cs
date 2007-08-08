@@ -223,10 +223,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			GUTATable storedLastTable = lastTable; //store these two things :)
 			GUTAColumn storedLastColumn = lastColumn;
 			Add(new GUTATable(1,0));
-			lastTable[0,0] = TextFactory.CreateText("Stránka");
+			lastTable[0,0] = TextFactory.CreateLabel("Stránka");
 													//type if input,x,y,ID, width, height, prescribed text
 			lastTable[0,0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
-			lastTable[0,0] = TextFactory.CreateText(95, 0, "/" + pagesCount.ToString());
+			lastTable[0,0] = TextFactory.CreateLabel(95, 0, "/" + pagesCount.ToString());
 			lastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
 			MakeTableTransparent(); //newly created row
 			//restore the last components

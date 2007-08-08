@@ -21,20 +21,23 @@ namespace SteamEngine.CompiledScripts {
 
 	[Remark("Numbers of important hues")]
 	public enum Hues : int {
-		Red=0x21,
-		Blue=0x63,
-		Green=0x44,
-		Info=0x282, //shit color :) (dark yellow-green-brown undefinable) :-/ its hard to choose
+		Red=33,
+		Blue=99,
+		Green=68,
+		Info=642, //shit color :) (dark yellow-green-brown undefinable) :-/ its hard to choose
 		//text colors
 		PageRepliedColor=1740, //some other orange shit (used for labeling replied pages)
 		WriteColor=2300,
 		PlayerColor=2301,//color for players name in Admin dialog (until the coloring players is solved)
-		WriteColor2=0481,
+		WriteColor2=0481,//tmave tyrkysova
 		ReadColor=2303,
 		NAColor=2305,
 
 		OnlineColor=2301,//color for highlighting online accounts/players
 		OfflineColor = 0481,//color for highlighting offline accounts/players
+
+		LabelColor = 1675, //nadpisy (sloupecku atd) - svetlounce bezova
+		HeadlineColor = 1152, //titulek (obvykle celeho dialogu atd)
 
 		SettingsTitleColor=2413, //the settings category color
 		SettingsNormalColor=2300, //normal settings items
