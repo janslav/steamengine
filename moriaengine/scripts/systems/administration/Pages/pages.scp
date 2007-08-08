@@ -2,7 +2,7 @@
 pageMan(<args>)
 
 [function pageMan]
-if(GMPage.GmPages.Count == 0)
+if(GMPages.GmPages.Count == 0)
 	src.sysmessage("Zadne GM page k zobrazeni")
  	return 1
 endif
@@ -29,7 +29,7 @@ endif
 //SortingCriteria.AccountAsc/Desc - players accounts
 arg dialog = ImprovedDialog(argv(0))
 
-arg pagesList = <GMPage.GetSortedBy(<argv(2)>)> //seznam pagi setridenej zadanym kriteriem
+arg pagesList = <GMPages.GetSortedBy(<argv(2)>)> //seznam pagi setridenej zadanym kriteriem
 argv(0).tag.pages = pagesList //ulozime do tagu pro pouziti u buttonu
 
 arg firstiVal = <argv(3)> //cislo prvni page zobrazene na strance (od nuly)
@@ -40,7 +40,7 @@ dialog.SetLocation(10,30)
 
 //nadpis tabulky
 dialog.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH)) 
-dialog.LastTable.AddToCell(0,0,TextFactory.CreateText("Seznam GMPagí")) //prvni text, uplne vpravo
+dialog.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Seznam GMPagí - (<firstival> - <imax>) z <pagesList.Count>")) //prvni text, uplne vpravo
 dialog.LastTable.AddToCell(0,0,TextFactory.CreateText(400,0,<Hues.WriteColor>,"ONLINE")) //text o 400 bodù vpravo 
 dialog.LastTable.AddToCell(0,0,TextFactory.CreateText(500,0,<Hues.NAColor>,"OFFLINE")) //text o 500 bodù vpravo
 dialog.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
@@ -51,25 +51,25 @@ dialog.Add(GUTATable(1,160,140,ButtonFactory.D_BUTTON_WIDTH,180,130,ButtonFactor
 //cudlik s hracem
 dialog.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,1)) //tridit dle jmena hrace asc
 dialog.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,4)) //tridit dle jmena hrace desc
-dialog.LastTable.AddToCell(0,0,TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Hráè")) //x posunuto kousek o sortovaci button
+dialog.LastTable.AddToCell(0,0,TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Hráè")) //x posunuto kousek o sortovaci button
 //cudlik s pozici
-dialog.LastTable.AddToCell(0,1,TextFactory.CreateText("Pozice"))
+dialog.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Pozice"))
 //cudlik na smazani
-dialog.LastTable.AddToCell(0,2,TextFactory.CreateText("Del"))
+dialog.LastTable.AddToCell(0,2,TextFactory.CreateLabel("Del"))
 //cas
 dialog.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,2)) //tridit podle casu asc
 dialog.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,5)) //tridit podle casu desc
-dialog.LastTable.AddToCell(0,3,TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0, "Èas odeslání"))
+dialog.LastTable.AddToCell(0,3,TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0, "Èas odeslání"))
 //cudlik s accountem
 dialog.LastTable.AddToCell(0,4,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,3)) //tridit dle accountu asc
 dialog.LastTable.AddToCell(0,4,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,6)) //tridit dle accountu desc
-dialog.LastTable.AddToCell(0,4,TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Account"))
+dialog.LastTable.AddToCell(0,4,TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Account"))
 //cudlik na odpoved
-dialog.LastTable.AddToCell(0,5,TextFactory.CreateText("Re:"))
+dialog.LastTable.AddToCell(0,5,TextFactory.CreateLabel("Re:"))
 //zbytek - text
-dialog.LastTable.AddToCell(0,6,TextFactory.CreateText("Popis problému"))
+dialog.LastTable.AddToCell(0,6,TextFactory.CreateLabel("Popis problému"))
 //button na odpoved
-dialog.LastTable.AddToCell(0,7,TextFactory.CreateText("Odpoved"))
+dialog.LastTable.AddToCell(0,7,TextFactory.CreateLabel("Odpoved"))
 
 dialog.MakeTableTransparent() //zpruhledni nadpisovy radek
 

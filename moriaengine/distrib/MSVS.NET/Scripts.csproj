@@ -254,6 +254,15 @@
     <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
       <Link>systems\administration\Pages\GMPage.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\tags\TagCreate.cs">
+      <Link>systems\administration\tags\TagCreate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\tags\TagList.cs">
+      <Link>systems\administration\tags\TagList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\timers\TimerList.cs">
+      <Link>systems\administration\timers\TimerList.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\AI\PathFinding\AStar.cs">
       <Link>systems\AI\Pathfinding\AStar.cs</Link>
     </Compile>

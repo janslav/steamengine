@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.Add(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0,0] = TextFactory.CreateText("Vytvoøení nového hráèského úètu");
+			dlg.LastTable[0,0] = TextFactory.CreateHeadline("Vytvoøení nového hráèského úètu");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
@@ -54,9 +54,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//dvousloupeckovy dialozek
 			dlg.Add(new GUTATable(3,0,300)); //1.sl - napisy, 2.sl - editacni pole
 			//napred napisy 
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Jméno úètu");
-			dlg.LastTable[1, 0] = TextFactory.CreateText("Heslo");
-			dlg.LastTable[2, 0] = TextFactory.CreateText("Registraèní e-mail");
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Jméno úètu");
+			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Heslo");
+			dlg.LastTable[2, 0] = TextFactory.CreateLabel("Registraèní e-mail");
 
 			//ted editacni pole
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10);
@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//a posledni radek s tlacitkem
 			dlg.Add(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Potvrdit");
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
 			dlg.WriteOut();
@@ -88,26 +88,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//create_acc dialog jsme si neukladali, nemusime ho tedy odstranovat ze stacku				
 			}
 		}
-	}
 
-	public static class AccountsFunctions {
-		[Remark("Create a new gm account using the dialog")]
-		[SteamFunction] 
+		[Remark("Create a new gm account using the dialog. Function accessible from the game")]
+		[SteamFunction]
 		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {
 			sender.Dialog(D_NewAccount.Instance);
-		}
-
-		[Remark("Display an account list")]
-		[SteamFunction] 
-		public static void AccList(AbstractCharacter sender, ScriptArgs text) {
-			//zavolat dialog, parametr 0 - zacne od prvni stranky, pocatecni pismena
-			//accountu vezmeme z argv
-			//vyhledavani
-			if(text.Argv == null || text.Argv.Length == 0) {
-				sender.Dialog(D_AccList.Instance, 0, "");
-			} else {
-				sender.Dialog(D_AccList.Instance, 0, text.Args);
-			}
 		}
 	}
 }

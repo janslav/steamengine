@@ -52,12 +52,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int startingColor = Convert.ToInt32(sa[0]); //cislol barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni barva na strance - pro paging
 
-			int[] colorsList = prepareColorList(startingColor);
+			//int[] colorsList = prepareColorList(startingColor);
 			//ulozit tento seznam do tagu
-			this.GumpInstance.SetTag(_colorsLst_, colorsList);
+			//this.GumpInstance.SetTag(_colorsLst_, colorsList);
 
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS*columnsCnt), colorsList.Length);
+			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS*columnsCnt), lastColor);
 			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -66,14 +66,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Colors dialog - ukázky barev v textu (poèínaje" + startingColor + ")");
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Colors dialog - ukázky barev v textu (poèínaje " + startingColor + ")");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
 			//input field pro vyber barvy
 			dlg.Add(new GUTATable(1, 100, 40, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Zadej poèáteèní barvu: ");
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zadej poèáteèní barvu: ");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 10, startingColor.ToString());
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
@@ -87,15 +87,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.Add(new GUTATable(ImprovedDialog.PAGE_ROWS, columns));
 			int colorCntr = firstiVal; //zacneme od te, ktera ma byt na strance prvni
 			for(int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
-				for(int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr < colorsList.Length ; j++, colorCntr++) { //a v nem kazdy radek
+				for(int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor ; j++, colorCntr++) { //a v nem kazdy radek
 					//vlozit priklad jedne pouzite barvy (dokud nedojdou barvy)
-					dlg.LastTable[j, i] = TextFactory.CreateText(colorsList[colorCntr], "Color(" + colorsList[colorCntr] + ")");
+					dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + colorCntr + ")");
 				}
 			}
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
-			dlg.CreatePaging(colorsList.Length, firstiVal, columnsCnt);
+			dlg.CreatePaging(lastColor, firstiVal, columnsCnt);
 
 			//uložit info o právì vytvoøeném dialogu pro návrat
 			DialogStackItem.EnstackDialog(src, focus, D_Colors.Instance,
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
 			//seznam barev 
-			int[] colorsList = (int[])gi.GetTag(_colorsLst_);
+			//int[] colorsList = (int[])gi.GetTag(_colorsLst_);
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				DialogStackItem dsi = null;
                 switch(gr.pressedButton) {
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						dsi.Show();
                         break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, colorsList.Length, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//zde je sloupecku vice (columnsCnt, viz nahore)
 				return;
 			} 
@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public static class UtilityFunctions {
 		[Remark("Display a Colors dialog")]
 		[SteamFunction] 
-		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
+		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {			
 			if(text == null || text.Args.Length == 0) {
 				//zaciname od nulte barvy
 				sender.Dialog(D_Colors.Instance, 0, 0);

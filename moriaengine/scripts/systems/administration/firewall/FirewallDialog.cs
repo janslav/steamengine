@@ -58,25 +58,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(40, 30);
 			//prvni radek
 			dialogHandler.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Administrace blokovaných IP (" + (firstiVal + 1) + "-" + imax + " z " + ipentries.Count + ")");
+			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline("Administrace blokovaných IP (" + (firstiVal + 1) + "-" + imax + " z " + ipentries.Count + ")");
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); //exit button
 			dialogHandler.MakeTableTransparent();
 
 			//druhy radek
 			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, IPwidth, IPwidth, duvod, kdo));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateText("Del");
+			dialogHandler.LastTable[0, 0] = TextFactory.CreateLabel("Del");
 			//cudlik s IP
 			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit dle blokovane IP vzestupne
 			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 2); //tridit dle blokovane IP sestupne     
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Rozsah IP od");
+			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Rozsah IP od");
 			//cudlik s IP
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Rozsah IP do");
+			dialogHandler.LastTable[0, 2] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Rozsah IP do");
 			//duvod
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateText("Dùvod");
+			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel("Dùvod");
 			//kdo blokoval
 			dialogHandler.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit dle GM - Blokare vzestupne (Blocked by)
 			dialogHandler.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit dle GM - Blokare sestupne(Blocked by)  
-			dialogHandler.LastTable[0, 4] = TextFactory.CreateText(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Zablokoval");
+			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Zablokoval");
 
 			dialogHandler.MakeTableTransparent();
 
@@ -101,9 +101,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			// nadpis pro blokaci novych
 			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, width / 2 - ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH,0));			
 			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 5);
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText("Pridat novì blokovanou IP");
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 6);			
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateText("Pridat novì blokovany rozsah IP");
+			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel("Pridat novì blokovanou IP");
+			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 6);
+			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel("Pridat novì blokovany rozsah IP");
 
 			dialogHandler.MakeTableTransparent();
 

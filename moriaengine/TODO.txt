@@ -135,9 +135,7 @@ Dinivan
 		jinymi slovy v podstate by to vypisovalo to co se jinak pise do sejvu a stejnym algoritmem by to taky nacitalo...
 
 	Account info dialog
-	
-	admin dialog (list of clients and stuff)
-		DONE		
+	Account list dialog - DONE
 
 	Info dialog (player, character, item)
 	
@@ -160,6 +158,8 @@ Dinivan
 
 	Group <cislo> pro gumpy
 	
+	Dialog "ref" - informace o tøídì
+
 	Generator dokumentace (NDoc pro 2.0?)
 
 UnAssigned

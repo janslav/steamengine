@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 		private static int width = 900;
 		public static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 		public static int ITEM_INDENT = 20; //pocet pixelu o ktere budou popisy s inputfieldem odsazeny od kraje
-		public static int INPUT_INDENT = 60; //pocet pixelu o ktery bude odsazen inputfield od zacatku textoveho popisku (tj zbyde i misto na vlastni text)
+		public static int INPUT_INDENT = 75; //pocet pixelu o ktery bude odsazen inputfield od zacatku textoveho popisku (tj zbyde i misto na vlastni text)
 
 		//tohle bude tag urcujici hashtabulku s informaci o klicich kategorii 
 		//pro tu kterou stranku - tj ktery klic bude na ktere strance prvni
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 			dlg.SetLocation(0, 30);
 
 			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Nastavení globálních promìnných. Pro informace zmáèkni tlaèítko s papírem vpravo v rohu.");			
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Nastavení globálních promìnných. Pro informace zmáèkni tlaèítko s papírem vpravo v rohu.");			
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();

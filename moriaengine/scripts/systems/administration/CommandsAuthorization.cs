@@ -63,7 +63,6 @@ namespace SteamEngine.CompiledScripts {
 			commands["SetAccountPassword"]	= PLEVEL_ADMIN;//only admin can set account passwords
 			commands["BlockAccount"]		= PLEVEL_ADMIN;//only admin can block account
 			commands["UnBlockAccount"]		= PLEVEL_ADMIN;//only admin can unblock account
-
 			commands["NewAcc"]				= PLEVEL_ADMIN;//creating a new account using the dialog
 			commands["AccList"]				= PLEVEL_ADMIN;//viewing the whole list of game accounts
 		}

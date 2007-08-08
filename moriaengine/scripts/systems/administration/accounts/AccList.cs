@@ -25,10 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog listing all players accounts in the game")]
 	public class D_AccList : CompiledGump {
-		static readonly TagKey _accounts_ = TagKey.Get("_accList_");
-		static readonly TagKey _firstOnPage_ = TagKey.Get("_firstOnPage_");
-        
-        [Remark("Instance of the D_AccList, for possible access from other dialogs etc.")]
+		[Remark("Instance of the D_AccList, for possible access from other dialogs etc.")]
         private static D_AccList instance;
 		public static D_AccList Instance {
 			get {
@@ -44,8 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
 			List<GameAccount> accList = GameAccount.RetreiveByStr(sa[1].ToString());
 			accList.Sort(AccountComparer.instance);
-			this.GumpInstance.SetTag(_accounts_, accList);
-			this.GumpInstance.SetTag(_firstOnPage_, sa[0]); //ulozime take info o prvnim indexu stranky
+			sa[2] = accList; //ulozime to do argumentu dialogu
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = Convert.ToInt32(sa[0]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...			
@@ -58,28 +54,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Seznam hráèských úètù (" + (firstiVal + 1) + "-" + imax + " z " + accList.Count + ")");
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam hráèských úètù (" + (firstiVal + 1) + "-" + imax + " z " + accList.Count + ")");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 			
 			//cudlik a input field na zuzeni vyberu
 			dlg.Add(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Vyhledávací kriterium");
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
 			dlg.MakeTableTransparent();
 
 			//cudlik na zalozeni noveho uctu
 			dlg.Add(new GUTATable(1,130,ButtonFactory.D_BUTTON_WIDTH,0));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Založit nový account");
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový account");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK,2);
 			dlg.MakeTableTransparent();
 
 			//seznam uctu s tlacitkem pro detail (tolik radku, kolik se bude zobrazovat uctu)
 			dlg.Add(new GUTATable(imax-firstiVal, ButtonFactory.D_BUTTON_WIDTH, 0)); 
 			//cudlik pro info
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Come");
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Come");
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
@@ -99,30 +95,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//uložit info o právì vytvoøeném dialogu pro návrat
 			DialogStackItem.EnstackDialog(src, focus, D_AccList.Instance,
 					firstiVal, //cislo polozky kterou zacina stranka (pro paging)	
-					sa[1]); //zde je ulozena informace pro vyber uctu dle jmena
+					sa[1], //zde je ulozena informace pro vyber uctu dle jmena
+					sa[2]); //toto je seznam accountu
 
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
-			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
-			List<GameAccount> accList = (List<GameAccount>)gi.GetTag(_accounts_);
-			int firstOnPage = (int)gi.GetTag(_firstOnPage_);
-            if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)
-				DialogStackItem dsi = null;
+			//vzit "tenhle" dialog ze stacku
+			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
+
+			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
+			List<GameAccount> accList = (List<GameAccount>)dsi.Args[2];
+			int firstOnPage = (int)dsi.Args[0];
+            if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog (tj. tenhle)
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
+						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
+						//aktualni dialog uz byl vynat ze stacku, takze se opravdu zobrazi ten minuly
                         break;
                     case 1: //vyhledat dle zadani
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
 						string nameCriteria = gr.GetTextResponse(33);
 						dsi.Args[0] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
 						dsi.Args[1] = nameCriteria; //uloz info o vyhledavacim kriteriu
+						dsi.Args[2] = null; //vycistit soucasny odkaz
 						dsi.Show();
                         break;
                     case 2: //zalozit novy acc.
+						DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
 						gi.Cont.Dialog(D_NewAccount.Instance);
 						break;                    
                 }
@@ -134,9 +134,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				GameAccount ga = accList[row];
+				DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
 				gi.Cont.Dialog(D_AccInfo.Instance, ga);               
                 
             }
+		}
+
+		[Remark("Display an account list. Function accessible from the game")]
+		[SteamFunction]
+		public static void AccList(AbstractCharacter sender, ScriptArgs text) {
+			//zavolat dialog, parametr 0 - zacne od prvni stranky, pocatecni pismena
+			//accountu vezmeme z argv
+			//vyhledavani
+			//trteti parametr = volny jeden prvek pole pro seznam accountu predavany pri praci v dialogu (pro tlacitka)
+			if(text.Argv == null || text.Argv.Length == 0) {
+				sender.Dialog(D_AccList.Instance, 0, "", "");
+			} else {
+				sender.Dialog(D_AccList.Instance, 0, text.Args, "");
+			}
 		}
 	}
 

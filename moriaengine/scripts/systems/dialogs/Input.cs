@@ -70,9 +70,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             dialogHandler.SetLocation(350, 350);
 
             //first row - the label of the dialog
-            dialogHandler.Add(new GUTATable(1,0));
-			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;            
-            dialogHandler.LastTable[0,0] = TextFactory.CreateText(this.Label);
+			dialogHandler.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));			        
+            dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline(this.Label);
+			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); 
 			dialogHandler.MakeTableTransparent();
 
             //second row - the basic, whole row, input field
@@ -82,9 +82,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent();
 
             //last row with buttons
-			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH,0));
-            dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
-            dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);            
+			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+            dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);                       
 
             dialogHandler.WriteOut();
         }

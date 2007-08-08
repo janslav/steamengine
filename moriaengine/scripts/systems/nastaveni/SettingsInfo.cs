@@ -43,16 +43,16 @@ namespace SteamEngine.CompiledScripts {
 			dlg.SetLocation(0, 20);
 
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Informace a vysvìtlivky");
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Informace a vysvìtlivky");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
 			dlg.Add(new GUTATable(1, 85, 50, 40, 0, 185));			
-			dlg.LastTable[0, 0] = TextFactory.CreateText(Hues.SettingsTitleColor, "Popis hodnoty");
-			dlg.LastTable[0, 1] = TextFactory.CreateText(Hues.SettingsTitleColor, "Zkratka typu");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.SettingsTitleColor, "Prefix");
-			dlg.LastTable[0, 3] = TextFactory.CreateText(Hues.SettingsTitleColor, "Zápis hodnoty (urèeno informací o typu - viz zkratky)");
-			dlg.LastTable[0, 4] = TextFactory.CreateText(Hues.SettingsTitleColor, "Pøíklad");
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Popis hodnoty");
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zkratka typu");
+			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Prefix");
+			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Zápis hodnoty (urèeno informací o typu - viz zkratky)");
+			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Pøíklad");
 			dlg.MakeTableTransparent();
 
 			//Èísla
@@ -79,8 +79,8 @@ namespace SteamEngine.CompiledScripts {
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Thing");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Thg)");
 			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "#");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Existující UID (hexadecimálnì)");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#094dfd");
+			dlg.LastTable[0, 3] = TextFactory.CreateText("Existující UID");
+			dlg.LastTable[0, 4] = TextFactory.CreateText("#094dfd; #01");
 			dlg.MakeTableTransparent();
 
 			//Regiony
@@ -88,8 +88,8 @@ namespace SteamEngine.CompiledScripts {
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Region");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Reg)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Název regionu v závorkách");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("(Edoras)");
+			dlg.LastTable[0, 3] = TextFactory.CreateText("Defname regionu v závorkách");
+			dlg.LastTable[0, 4] = TextFactory.CreateText("(a_Edoras)");
 			dlg.MakeTableTransparent();
 
 			//Accounty
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Abs)");
 			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "#");
 			dlg.LastTable[0, 3] = TextFactory.CreateText("Existující pretty defname");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#c_man; #1234");
+			dlg.LastTable[0, 4] = TextFactory.CreateText("#c_man; #c_0x123, kde 0x123 je nìjaký model");
 			dlg.MakeTableTransparent();
 
 			//TimeSpan
@@ -165,10 +165,10 @@ namespace SteamEngine.CompiledScripts {
 			//Triggery
 			dlg.Add(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Trigger");
+			dlg.LastTable[0, 0] = TextFactory.CreateText("Trigger key");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(@)");
 			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "@");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Trigger");
+			dlg.LastTable[0, 3] = TextFactory.CreateText("Trigger key");
 			dlg.LastTable[0, 4] = TextFactory.CreateText("@create");
 			dlg.MakeTableTransparent();
 
