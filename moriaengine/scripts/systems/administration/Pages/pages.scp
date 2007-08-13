@@ -209,10 +209,9 @@ DialogStackItem.ShowPreviousDialog(src.Conn) //zavolat predchozi dialog
 //player-available dialog for sending a page
 [InputDef inpt_page_post]
 label="Nova GM page"
-default="Zde vepis duvod tve page"
+default="Text page"
 
 on=@response //args - the page text
-src.sysmessage("argv: <argv(0)>")
 src.Page(<argv(0)>)
 
 [function sendgmpage] //players function for sending a GM page

@@ -260,6 +260,9 @@
     <Compile Include="..\..\scripts\systems\administration\tags\TagList.cs">
       <Link>systems\administration\tags\TagList.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\timers\TimerCreate.cs">
+      <Link>systems\administration\timers\TimerCreate.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\timers\TimerList.cs">
       <Link>systems\administration\timers\TimerList.cs</Link>
     </Compile>

@@ -23,7 +23,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog listing all player's tags")]
+	[Remark("Dialog listing all object(tagholder)'s tags")]
 	public class D_TagList : CompiledGump {
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"	2 - vyhledavaci kriterium pro jmena tagu"+
 				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
-			//vzit seznam tagu z thingu (char nebo item) prisleho v parametru dialogu
+			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
 			List<DictionaryEntry> tagList = null;
 			if(sa[3].Equals("")) {
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + i);
 				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0,((TagKey)de.Key).name);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ObjectSaver.Save(de.Value)); //stringify the value of the tag
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ObjectSaver.Save(de.Value)); //hodnota tagu, vcetne prefixu oznacujicim typ
 				
 				rowCntr++;			
 			}
@@ -117,8 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			DialogStackItem.EnstackDialog(src, focus, D_TagList.Instance,
 					sa[0], //na kom se to spoustelo
 					firstiVal, //cislo polozky kterou zacina stranka (pro paging)	
-					sa[2], //zde je ulozena informace pro vyber uctu dle jmena
-					sa[3]); //toto je seznam tagu
+					sa[2], //informace pro vyber tagu dle jmena
+					sa[3]); //seznam tagu odpovidajicich kriteriu
 
 			dlg.WriteOut();
 		}
@@ -183,7 +183,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Display an account list. Function accessible from the game."+
 				"The function is designed to be triggered using .x TagsList(criteria)"+
-				"but it can be used also normally .TagsList(criteria) to display runner's own tags")]
+			    "but it can be used also normally .TagList(criteria) to display runner's own tags")]
 		[SteamFunction]
 		public static void TagList(Thing self, ScriptArgs text) {
 			//zavolat dialog, 
