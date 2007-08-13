@@ -57,6 +57,8 @@ namespace SteamEngine.CompiledScripts {
 			commands["BlockedIPs"]			= PLEVEL_GM;//list of blocked IPs
 			commands["BlockIP"]				= PLEVEL_GM;//block specified IP
 			commands["BlockIpRange"]		= PLEVEL_GM;//block specified IP range
+			commands["TagList"]				= PLEVEL_GM;//list of tags - runnable as .x TagList(criteria) or .TagList(criteria) to display my own tags
+			commands["TimerList"]			= PLEVEL_GM;//list of timers - runnable as .x TimerList(criteria) or .TimerList(criteria) to display my own timers
 
 			commands["DeletePlayer"]		= PLEVEL_ADMIN;//only admin can delete players
 			commands["DeleteAccount"]		= PLEVEL_ADMIN;//only admin can delete accounts

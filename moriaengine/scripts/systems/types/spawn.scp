@@ -16,41 +16,49 @@ endif
 
 [function spawn] //argv(0) - chardef which to create
 if (argvcount==0)
- if(!tag.exists(spawndialog_data))
-  tag.spawndialog_data = SpawnInfo(3,c_man,1,2,1)
+ if(!tag.exists(_spawndialog_data_))
+  tag._spawndialog_data_ = SpawnInfo(3,c_man,1,2,1)
  endif
 else
- tag.spawndialog_data = SpawnInfo(3,argv(0),1,2,1)
+ tag._spawndialog_data_ = SpawnInfo(3,argv(0),1,2,1)
 endif
-dialog(d_spawn,tag(spawndialog_data))
+dialog(d_spawn,tag(_spawndialog_data_))
 return 1
 
 [dialog d_spawn]
 arg sirka = 400
-arg vyska = 23+(5*d_def_radek_vyska)+(2*d_def_skvira)+(2*d_def_okraj)
+src.sysmessage(<argv(2)>)
+arg dlg = ImprovedDialog(argv(0))
+dlg.CreateBackground(<sirka>)
+dlg.SetLocation(60,80)
 
-argv(0) = AdvancedGumpInstance(d_spawn)
-argv(0).SetLocation=60,80
-argv(0).DialogFirst(sirka,vyska)
-argv(0).DialogBackGround(argv(0).nextY,5,130) 
-argv(0).DialogTransparency()
+//nadpis
+dlg.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH))
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Vytvoøení nového spawnu"))
+dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.MakeTableTransparent()
 
-argv(0).DialogTextPos(0,0)
-texta(argv(0).lastXPos,argv(0).lastYPos,0481,"Amount")
-texta(argv(0).lastXPos,argv(0).lastYPos+d_def_radek_vyska,0481,"Baseid")
-texta(argv(0).lastXPos,argv(0).lastYPos+(2*d_def_radek_vyska),0481,"Mintime (minuty)")
-texta(argv(0).lastXPos,argv(0).lastYPos+(3*d_def_radek_vyska),0481,"Maxtime (minuty)")
-texta(argv(0).lastXPos,argv(0).lastYPos+(4*d_def_radek_vyska),0481,"Homedist")
+dlg.Add(GUTATable(5,0,180))
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Amount"))
+dlg.LastTable.AddToCell(1,0,TextFactory.CreateLabel("Baseid"))
+dlg.LastTable.AddToCell(2,0,TextFactory.CreateLabel("Mintime [min]"))
+dlg.LastTable.AddToCell(3,0,TextFactory.CreateLabel("Maxtime [min]"))
+dlg.LastTable.AddToCell(4,0,TextFactory.CreateLabel("Homedist"))
 
-argv(0).DialogTextPos(0,1)
-NumberEntryA(argv(0).lastXPos,argv(0).lastYpos,200,d_def_radek_vyska,0481, 1,<argv(1).Amount>)
-textEntryA(argv(0).lastXPos,argv(0).lastYPos+d_def_radek_vyska,200,d_def_radek_vyska,0481,2,"<argv(1).SpawnDef.PrettyDefname>") //nazev chardefu
-NumberEntryA(argv(0).lastXPos,argv(0).lastYPos+(2*d_def_radek_vyska),200,d_def_radek_vyska,0481,3,<argv(1).MinTime>)
-NumberEntryA(argv(0).lastXPos,argv(0).lastYPos+(3*d_def_radek_vyska),200,d_def_radek_vyska,0481,4,<argv(1).MaxTime>)
-NumberEntryA(argv(0).lastXPos,argv(0).lastYPos+(4*d_def_radek_vyska),200,d_def_radek_vyska,0481,5,<argv(1).Homedist>)
+dlg.LastTable.AddToCell(0,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,10,"<argv(2).Amount>"))
+dlg.LastTable.AddToCell(1,1,InputFactory.CreateInput(LeafComponentTypes.InputText,11,"<argv(2).SpawnDef.PrettyDefname>"))
+dlg.LastTable.AddToCell(2,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,12,"<argv(2).MinTime>"))
+dlg.LastTable.AddToCell(3,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,13,"<argv(2).MaxTime>"))
+dlg.LastTable.AddToCell(4,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,14,"<argv(2).Homedist>"))
+dlg.MakeTableTransparent()
 
-argv(0).button(d_def_okraj,(vyska-d_def_okraj)-23,0fb7,0fb9,1,0,1)//ok
-argv(0).button(d_def_okraj+33,(vyska-d_def_okraj)-23,0fb1,0fb3,1,0,0)//cancel
+//a posledni radek s tlacitkem
+dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
+dlg.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1))
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Potvrdit"))
+dlg.MakeTableTransparent() //zpruhledni posledni radek
+
+dlg.WriteOut()
 
 [DIALOG d_spawn button]
 ON=0
@@ -59,14 +67,14 @@ return 0
 
 ON=1
 //use abstractdef.finddef since we can get the spawngroup this way too
-arg spawnData = SpawnInfo(<argnum[1]>,<AbstractDef.FindDef(<argtxt[2]>)>,<argnum[3]>,<argnum[4]>,<argnum[5]>)    
-//arg spawnData = SpawnInfo(1,<AbstractDef.FindDef("c_man")>,1,2,5)    
+arg spawnData = SpawnInfo(<argnum[10]>,<AbstractDef.FindDef(<argtxt[11]>)>,<argnum[12]>,<argnum[13]>,<argnum[14]>)    
 if (spawnValuesMakeSense(spawnData))
-  src.tag.spawndialog_data = spawnData //store the info for future creating of new spawns...
+  src.tag._spawndialog_data_ = spawnData //store the info for future creating of new spawns...
   f_spawninit(spawnData)
 else
-  src.tag.spawndialog_data = spawnData //store the info for future creating of new spawns...
-  src.sysmessage(tag.responseMessage)
+  src.tag._spawndialog_data_ = spawnData //store the info for future creating of new spawns...
+  src.redmessage(tag._responseMessage_)
+  src.tag.remove(_responseMessage_)
   dialog(d_spawn,spawnData)
 endif
 return 0
@@ -74,16 +82,16 @@ return 0
 [function spawnValuesMakeSense]//check if the values provided to the spawn dialog are wise :)
 //argv(0) - the SpawnInfo instance
 if(<argv(0).Amount> <= 0)
- tag.responseMessage = "Pocet spawnu musi byt vetsi nez 0"
+ tag._responseMessage_ = "Poèet spawnù musí být vìtší než 0"
  return 0
 elseif((<argv(0).SpawnDef> == 0) || (!<argv(0).SpawnDef.IsCharDef>)) //TODO doplnit spravnou metodu
- tag.responseMessage = "Zadany chardef neexistuje"
+ tag._responseMessage_ = "Zadaný chardef neexistuje"
  return 0
 elseif((<argv(0).MinTime>*<argv(0).MaxTime> < 0) || (<argv(0).MinTime> >= <argv(0).MaxTime>)) 
- tag.responseMessage = "Minimalni a maximalni casy museji byt nezaporne, minimalni cas mensi nez maximalni"
+ tag._responseMessage_ = "Minimalni a maximalni casy museji byt nezaporne, minimalni cas mensi nez maximalni"
  return 0
 elseif(<argv(0).HomeDist> < 0)
- tag.responseMessage = "Homedist musi by nezaporny"
+ tag._responseMessage_ = "Homedist musi by nezaporny"
  return 0
 else
  return 1
