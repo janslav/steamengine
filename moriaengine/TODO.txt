@@ -115,6 +115,11 @@ Lokarel
 	
 Dinivan
 ----------------------------------------------------
+	Account - umoznit rozsiritelnost tridy ve skriptu, a tam presunout email propertu a dalsi blbiny
+	
+	Gumpy - v response fazi mit znovu k dispozici parametry se kteryma byl dialog volanej.
+		Dale pak predelat ve vsech dialozich volani stackedgumpitemu tak aby to davalo smysl :)
+
 	Spawner
 	
 	Page command/menu
@@ -160,7 +165,7 @@ Dinivan
 	
 	Dialog "ref" - informace o tøídì
 
-	Generator dokumentace (NDoc pro 2.0?)
+	Generator dokumentace (NDoc pro 2.0? nebo Sandcastle?)
 
 UnAssigned
 
