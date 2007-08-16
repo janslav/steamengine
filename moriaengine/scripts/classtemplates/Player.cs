@@ -99,27 +99,24 @@ namespace SteamEngine.CompiledScripts {
 			return stopLogin;
 		}
 
+		[ManualDeepCopyClass]
 		public class CharLingeringTimer : Timer {
 			public CharLingeringTimer(TimerKey name)
 				: base(name) {
 			}
 
-			protected CharLingeringTimer(CharLingeringTimer copyFrom, TagHolder assignTo)
-				: base(copyFrom, assignTo) {
+			[DeepCopyImplementation]
+			public CharLingeringTimer(CharLingeringTimer copyFrom)
+				: base(copyFrom) {
 			}
-
-			protected sealed override Timer Dupe(TagHolder assignTo) {
-				return new CharLingeringTimer(this, assignTo);
-			}
-
 
 			public CharLingeringTimer(Character obj, TimeSpan time)
 				: base(obj, charLingeringTimerTK, time, null) {
 			}
 
 			protected sealed override void OnTimeout() {
-				Logger.WriteDebug("CharLingeringTimer OnTimeout on "+this.Obj);
-				Character self = this.Obj as Character;
+				Logger.WriteDebug("CharLingeringTimer OnTimeout on "+this.Cont);
+				Character self = this.Cont as Character;
 				if (self != null) {
 					if (self.IsLingering) {
 						self.Disconnect();

@@ -323,7 +323,7 @@ namespace SteamEngine.CompiledScripts {
 			bool retVal = base.On_Enter(ch, forced);
 			if (!retVal || forced) {
 				this.Ship.AddThing(ch);
-				ch.AddEvent(E_BeingOnShip.Instance);
+				ch.AddTriggerGroup(E_BeingOnShip.Instance);
 			}
 			return retVal;
 		}
@@ -332,7 +332,7 @@ namespace SteamEngine.CompiledScripts {
 			bool retVal =  base.On_Exit(ch, forced);
 			if (!retVal || forced) {
 				this.Ship.RemoveThing(ch);
-				ch.RemoveEvent(E_BeingOnShip.Instance);
+				ch.RemoveTriggerGroup(E_BeingOnShip.Instance);
 			}
 			return retVal;
 		}
@@ -363,7 +363,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ship != null) {
 					ship.RemoveThing(pickedUp);
 				} else {
-					self.RemoveEvent(E_BeingOnShip.Instance);
+					self.RemoveTriggerGroup(E_BeingOnShip.Instance);
 				}
 				return 0;
 			}
@@ -373,7 +373,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ship != null) {
 					ship.AddThing(dropped);
 				} else {
-					self.RemoveEvent(E_BeingOnShip.Instance);
+					self.RemoveTriggerGroup(E_BeingOnShip.Instance);
 				}
 				return 0;
 			}
@@ -383,7 +383,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ship != null) {
 					ship.HandleCommand(self, keywords);
 				} else {
-					self.RemoveEvent(E_BeingOnShip.Instance);
+					self.RemoveTriggerGroup(E_BeingOnShip.Instance);
 				}
 				return 0;
 			}

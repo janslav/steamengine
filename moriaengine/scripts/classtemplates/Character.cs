@@ -996,7 +996,7 @@ namespace SteamEngine.CompiledScripts {
 			if (memory.cont == memories) {
 				this.On_MemoryEquip(memory);
 				if (memory.cont == memories) {
-					memory.TryTrigger(TriggerKey.Equip, sa);
+					memory.TryTrigger(TriggerKey.equip, sa);
 					if (memory.cont == memories) {
 						memory.On_Equip(this);
 					}
@@ -1311,17 +1311,15 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TimerKey skillTimerKey = TimerKey.Get("__skillTimer__");
 
+		[ManualDeepCopyClass]
 		public class SkillStrokeTimer : Timer {
 			public SkillStrokeTimer(TimerKey name)
 				: base(name) {
 			}
 
-			protected SkillStrokeTimer(SkillStrokeTimer copyFrom, TagHolder assignTo)
-				: base(copyFrom, assignTo) {
-			}
-
-			protected sealed override Timer Dupe(TagHolder assignTo) {
-				return new SkillStrokeTimer(this, assignTo);
+			[DeepCopyImplementation]
+			public SkillStrokeTimer(SkillStrokeTimer copyFrom)
+				: base(copyFrom) {
 			}
 
 			public SkillStrokeTimer(Character obj, TimeSpan time)
@@ -1329,8 +1327,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout() {
-				Logger.WriteDebug("SkillStrokeTimer OnTimeout on "+this.Obj);
-				Character self = this.Obj as Character;
+				Logger.WriteDebug("SkillStrokeTimer OnTimeout on "+this.Cont);
+				Character self = this.Cont as Character;
 				if (self != null) {
 					self.DelayedSkillStroke();
 				}
@@ -1391,7 +1389,11 @@ namespace SteamEngine.CompiledScripts {
 				return Convert.ToInt32(this.GetTag(tkStealthStepsLeft));
 			}
 			set {
-				this.SetTag(tkStealthStepsLeft, value);
+				if (value == 0) {
+					this.RemoveTag(tkStealthStepsLeft);
+				} else {
+					this.SetTag(tkStealthStepsLeft, value);
+				}
 			}
 		}
 

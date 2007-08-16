@@ -56,7 +56,7 @@ namespace SteamEngine {
 			ScriptedTriggerGroup.StartingLoading();
 			Constant.StartingLoading();
 			Map.StartingLoading();
-			ObjectSaver.StartingLoading();
+			//ObjectSaver.StartingLoading();
 			AbstractSkillDef.StartingLoading();
 			
 			
@@ -80,7 +80,7 @@ namespace SteamEngine {
 			ThingDef.LoadingFinished();
 			ScriptedTriggerGroup.LoadingFinished();
 			Map.LoadingFinished();
-			ObjectSaver.LoadingFinished();
+			//ObjectSaver.LoadingFinished();
 			AbstractSkillDef.LoadingFinished();
 			
 			DelayedResolver.ResolveAll();

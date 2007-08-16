@@ -98,6 +98,9 @@
     <Compile Include="..\..\scripts\classes\ExportUtils.cs">
       <Link>classes\ExportUtils.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\classes\LegacyUtils.cs">
+      <Link>classes\LegacyUtils.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\classes\Memory.cs">
       <Link>classes\Memory.cs</Link>
     </Compile>

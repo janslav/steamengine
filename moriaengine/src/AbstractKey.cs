@@ -27,6 +27,8 @@ namespace SteamEngine {
 	/// 
 	/// </summary>                                                
 	public abstract class AbstractKey {
+		protected static int uids;
+
 		public readonly string name;
 		public readonly int uid;
 		

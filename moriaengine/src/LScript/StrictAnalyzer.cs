@@ -314,8 +314,14 @@ namespace SteamEngine.LScript {
             case (int) StrictConstants.ADD_TIMER_BODY:
                 EnterAddTimerBody((Production) node);
                 break;
+            case (int) StrictConstants.AT_KEY:
+                EnterAtKey((Production) node);
+                break;
             case (int) StrictConstants.TRIGGER_KEY:
                 EnterTriggerKey((Production) node);
+                break;
+            case (int) StrictConstants.PLUGIN_KEY:
+                EnterPluginKey((Production) node);
                 break;
             case (int) StrictConstants.TIMER_KEY:
                 EnterTimerKey((Production) node);
@@ -603,8 +609,12 @@ namespace SteamEngine.LScript {
                 return ExitAddTimerExpression((Production) node);
             case (int) StrictConstants.ADD_TIMER_BODY:
                 return ExitAddTimerBody((Production) node);
+            case (int) StrictConstants.AT_KEY:
+                return ExitAtKey((Production) node);
             case (int) StrictConstants.TRIGGER_KEY:
                 return ExitTriggerKey((Production) node);
+            case (int) StrictConstants.PLUGIN_KEY:
+                return ExitPluginKey((Production) node);
             case (int) StrictConstants.TIMER_KEY:
                 return ExitTimerKey((Production) node);
             case (int) StrictConstants.QUOTED_STRING:
@@ -751,8 +761,14 @@ namespace SteamEngine.LScript {
             case (int) StrictConstants.ADD_TIMER_BODY:
                 ChildAddTimerBody(node, child);
                 break;
+            case (int) StrictConstants.AT_KEY:
+                ChildAtKey(node, child);
+                break;
             case (int) StrictConstants.TRIGGER_KEY:
                 ChildTriggerKey(node, child);
+                break;
+            case (int) StrictConstants.PLUGIN_KEY:
+                ChildPluginKey(node, child);
                 break;
             case (int) StrictConstants.TIMER_KEY:
                 ChildTimerKey(node, child);
@@ -3703,6 +3719,46 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
+        public virtual void EnterAtKey(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being exited</param>
+         * 
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitAtKey(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         * 
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildAtKey(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being entered</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
         public virtual void EnterTriggerKey(Production node) {
         }
 
@@ -3732,6 +3788,46 @@ namespace SteamEngine.LScript {
          * discovered errors</exception>
          */
         public virtual void ChildTriggerKey(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being entered</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterPluginKey(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being exited</param>
+         * 
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitPluginKey(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         * 
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildPluginKey(Production node, Node child) {
             node.AddChild(child);
         }
 

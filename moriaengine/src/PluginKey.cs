@@ -24,26 +24,53 @@ using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using SteamEngine.Packets;
-		
+using System.Text.RegularExpressions;
+	
 namespace SteamEngine {
-	//TriggerKeys are used when calling triggers. You should call Get(name) once to get a TriggerKey, and then use
-	//that from then on for calling that trigger.
-	//This and FunctionKey are very similar, and serve similar purposes.
-	public class LocalVarKey : AbstractKey{
+	public class PluginKey : AbstractKey {
 		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-				
-		private LocalVarKey(string name, int uid) : base(name, uid) {
+
+		private PluginKey(string name, int uid)
+			: base(name, uid) {
 		}
-		
-		public static LocalVarKey Get(string name) {
-			LocalVarKey lvk = byName[name] as LocalVarKey;
-			if (lvk!=null) {
-				return lvk;
+
+		public static PluginKey Get(string name) {
+			PluginKey tk = byName[name] as PluginKey;
+			if (tk!=null) {
+				return tk;
 			}
 			int uid=uids++;
-			lvk = new LocalVarKey(name,uid);
-			byName[name]=lvk;
-			return lvk;
+			tk = new PluginKey(name, uid);
+			byName[name]=tk;
+			return tk;
 		}
 	}
-}
+
+
+	public class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+		public static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",                     
+			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+	
+		public Type HandledType { get {
+				return typeof(PluginKey);
+		} }
+		
+		public Regex LineRecognizer { get {
+			return re;
+		} }
+		
+		public string Save(object objToSave) {
+			return "@@"+((PluginKey) objToSave).name;
+		}
+		
+		public object Load(Match match) {
+			return PluginKey.Get(match.Groups["value"].Value);
+		}
+		
+		public string Prefix {
+			get {
+				return "@@";
+			}
+		}
+	}
+}		

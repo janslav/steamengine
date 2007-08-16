@@ -60,8 +60,7 @@ namespace SteamEngine.CompiledScripts {
 			instance = this;
 		}
 
-		public static Regex re = new Regex(
-			@"^\(3D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*(,\s*(?<z>-?\d+))?\s*$",
+		public static Regex re = new Regex(@"^\(3D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*(,\s*(?<z>-?\d+))?\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		public Type HandledType {
@@ -117,8 +116,7 @@ namespace SteamEngine.CompiledScripts {
 			instance = this;
 		}
 
-		public static Regex re = new Regex(
-			@"^\(4D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*(,\s*(?<z>-?\d+))?\s*(,\s*(?<m>\d+))?\s*$",
+		public static Regex re = new Regex(@"^\(4D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*(,\s*(?<z>-?\d+))?\s*(,\s*(?<m>\d+))?\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		public Type HandledType {

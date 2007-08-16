@@ -28,6 +28,7 @@ using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
+	[ManualDeepCopyClass]
 	public class FunctionTimer : Timer {
 		private ScriptHolder function;
 		private string formatString;
@@ -36,20 +37,18 @@ namespace SteamEngine.Timers {
 			//Console.WriteLine("OnTimeout on timer "+this);
 			ScriptArgs sa = new ScriptArgs(args);
 			sa.FormatString = formatString;
-			function.TryRun(this.Obj, sa);
+			function.TryRun(this.Cont, sa);
 		}
 		
 		public FunctionTimer(TimerKey name) : base(name) {
 		}
-		
-		protected FunctionTimer(FunctionTimer copyFrom, TagHolder assignTo) : base(copyFrom, assignTo) {
+
+		[DeepCopyImplementation]
+		public FunctionTimer(FunctionTimer copyFrom)
+			: base(copyFrom) {
 			//copying constructor for copying of tagholders
 			function = copyFrom.function;
 			formatString = copyFrom.formatString;
-		}
-
-		protected sealed override Timer Dupe(TagHolder assignTo) {
-			return new FunctionTimer(this, assignTo);
 		}
 		
 		public FunctionTimer(TagHolder obj, TimerKey name, TimeSpan time, ScriptHolder function, params object[] args): 

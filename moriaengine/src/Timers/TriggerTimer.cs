@@ -25,6 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
 
+	[ManualDeepCopyClass]
 	public class TriggerTimer : Timer {
 		private TriggerKey trigger;
 		private string formatString;
@@ -34,29 +35,27 @@ namespace SteamEngine.Timers {
 			ScriptArgs sa = new ScriptArgs(args);
 			sa.FormatString = formatString;
 			Globals.SetSrc(null);
-			this.Obj.TryTrigger(trigger, sa);
+			((PluginHolder) this.Cont).TryTrigger(trigger, sa);
 		}
 		
 		public TriggerTimer(TimerKey name) : base(name) {
 		}
-		
-		protected TriggerTimer(TriggerTimer copyFrom, TagHolder assignTo) : base(copyFrom, assignTo) {
+
+		[DeepCopyImplementation]
+		public TriggerTimer(TriggerTimer copyFrom)
+			: base(copyFrom) {
 			//copying constructor for copying of tagholders
-			trigger=copyFrom.trigger;
+			trigger = copyFrom.trigger;
 			formatString = copyFrom.formatString;
 		}
 
-		protected sealed override Timer Dupe(TagHolder assignTo) {
-			return new TriggerTimer(this, assignTo);
-		}
-		
-		public TriggerTimer(TagHolder obj, TimerKey name, TimeSpan time, TriggerKey trigger, params object[] args): 
+		public TriggerTimer(PluginHolder obj, TimerKey name, TimeSpan time, TriggerKey trigger, params object[] args): 
 				base(obj, name, time, args) {
 			this.trigger = trigger;
 		}
-		
-		public TriggerTimer(TagHolder obj, TimerKey name, TimeSpan time, TriggerKey trigger, string formatString, params object[] args): 
-				base(obj, name, time, args) {
+
+		public TriggerTimer(PluginHolder obj, TimerKey name, TimeSpan time, TriggerKey trigger, string formatString, params object[] args)
+			: base(obj, name, time, args) {
 			this.formatString = formatString;
 			this.trigger = trigger;
 		}

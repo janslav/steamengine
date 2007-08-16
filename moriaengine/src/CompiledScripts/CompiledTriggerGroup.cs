@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 			Type tgType;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration(tgType.Name+"_Generated");
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_"+tgType.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(tgType);
 				codeTypeDeclatarion.IsClass = true;

@@ -134,7 +134,7 @@ namespace SteamEngine.Persistence {
 	[Summary("Use to mark the method that writes out the save section for instances of this class.")]
 	[Remark("Use this attribute to decorate the instance method that takes one SaveStream parameter"
 	+ "and writes the needed saving data into it. "
-	+ "Note that you actually implement only saving of the \"body\" of the section, "
+	+ "Unless there is an according IBaseClassSaveCoordinator, you actually implement only saving of the \"body\" of the section, "
 	+ "not it's header, because that is reserved for use by the ObjectSaver class."
 	+ "Also note that there are certain format restrictions you should (or must) follow. "
 	+ "For example, the obvious one is that you can't use the format of the header ;)"
@@ -186,7 +186,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		protected virtual void LoadLineImpl(object loadedObject, string filename, int line, string name, string value) {
-			throw new InvalidOperationException("This should never be called");
+			throw new InvalidOperationException("This should not happen.");
 		}
 
 	}
@@ -252,7 +252,8 @@ namespace SteamEngine.Persistence {
 
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
-				foreach (MemberInfo mi in decoratedClass.GetMembers()) {
+				foreach (MemberInfo mi in decoratedClass.GetMembers(
+						BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) {
 					HandleLoadingInitializerAttribute(mi);
 					HandleLoadLineAttribute(mi);
 					HandleSaveableDataAttribute(mi);
@@ -388,8 +389,8 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration(decoratedClass.Name+"SaveImplementor");
-				codeTypeDeclatarion.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedSaveImplementor_"+decoratedClass.Name);
+				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(DecoratedClassesSaveImplementor));
 				codeTypeDeclatarion.IsClass = true;
 
@@ -484,6 +485,13 @@ namespace SteamEngine.Persistence {
 							new CodeTypeReferenceExpression(this.decoratedClass),
 							loadSection.Name,
 							new CodeArgumentReferenceExpression("input"));
+
+						Type returnedType = ((MethodInfo) loadSection).ReturnType;
+						if (this.decoratedClass != returnedType) {
+							createObjectExpression = new CodeCastExpression(
+								this.decoratedClass,
+								createObjectExpression);
+						}
 					}
 				} else if (this.loadingInitializer.IsConstructor) {
 					createObjectExpression = new CodeObjectCreateExpression(
@@ -630,29 +638,11 @@ namespace SteamEngine.Persistence {
 
 				if (ObjectSaver.IsSimpleSaveableType(type)) {
 					//we directly assign the value to the field/property
-
-					MethodInfo convertMethod = typeof(Convert).GetMethod("To"+type.Name, BindingFlags.Static|BindingFlags.Public, null,
-						new Type[] { typeof(object) }, null);
-					if (convertMethod != null) {
-						assignment.Right = new CodeMethodInvokeExpression(
-							new CodeTypeReferenceExpression(typeof(Convert)),
-							convertMethod.Name,
-							new CodeMethodInvokeExpression(
-								new CodeTypeReferenceExpression(typeof(ObjectSaver)),
-								"Load",
-								new CodeFieldReferenceExpression(
-									new CodeVariableReferenceExpression(propsLineName),
-									"value")));
-					} else {
-						assignment.Right = new CodeCastExpression(
-							type,
-							new CodeMethodInvokeExpression(
-								new CodeTypeReferenceExpression(typeof(ObjectSaver)),
-								"Load",
-								new CodeFieldReferenceExpression(
-									new CodeVariableReferenceExpression(propsLineName),
-									"value")));
-					}
+					assignment.Right = GeneratedCodeUtil.GenerateSimpleLoadExpression(
+						type,
+						new CodeFieldReferenceExpression(
+							new CodeVariableReferenceExpression(propsLineName),
+							"value"));
 
 					ifStatement.FalseStatements.Add(assignment);
 
@@ -687,7 +677,7 @@ namespace SteamEngine.Persistence {
 				CodeMemberMethod method = new CodeMemberMethod();
 				method.Attributes = MemberAttributes.Private;
 
-				method.Name = "Load"+name+"_Delayed";
+				method.Name = "DelayedLoad_"+name;
 				method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "resolved"));
 				method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "filename"));
 				method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "line"));
@@ -700,7 +690,7 @@ namespace SteamEngine.Persistence {
 					new CodeCastExpression(this.decoratedClass,
 						new CodeArgumentReferenceExpression("param"))));
 
-				assignment.Right = new CodeCastExpression(
+				assignment.Right = GeneratedCodeUtil.GenerateDelayedLoadExpression(
 					type,
 					new CodeArgumentReferenceExpression("resolved"));
 

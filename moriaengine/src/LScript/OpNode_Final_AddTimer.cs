@@ -49,7 +49,7 @@ namespace SteamEngine.LScript {
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
 				TimeSpan span = new TimeSpan((long) (seconds*10000000L));
-				Timer timer = new TriggerTimer((TagHolder) vars.self, name, span, triggerKey, formatString, results);
+				Timer timer = new TriggerTimer((PluginHolder) vars.self, name, span, triggerKey, formatString, results);
 				timer.Enqueue();
 				return timer;
 			} catch (Exception e) {

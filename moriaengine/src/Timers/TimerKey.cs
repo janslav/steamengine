@@ -33,7 +33,6 @@ namespace SteamEngine.Timers {
 	*/
 	public class TimerKey : AbstractKey {
 		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		private static int uids = 0;
 				
 		private TimerKey(string name, int uid) : base(name, uid) {
 		}

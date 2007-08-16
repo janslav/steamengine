@@ -26,6 +26,9 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine {
 	public abstract class AbstractDef : AbstractScript, ITagHolder {
+		static int uids;
+		private int uid;
+
 		//internal protected static Dictionary<string, AbstractDef> byDefname = new Dictionary<string, AbstractDef>(StringComparer.OrdinalIgnoreCase);
 		protected static Dictionary<string, Type> defTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		//string-Type pairs  ("ItemDef" - class ItemDef)
@@ -44,6 +47,7 @@ namespace SteamEngine {
 			this.filename=filename;
 			this.headerLine=headerLine;
 			this.unloaded = false;
+			this.uid = uids++;
 		}
 
 		public override string ToString() {
@@ -425,6 +429,14 @@ namespace SteamEngine {
 		internal static void UnloadScripts() {
 			defTypesByName.Clear();//we assume that inside core there are no non-abstract defs
 			byDefname.Clear();
+		}
+
+		public override bool Equals(object obj) {
+			return obj == this;
+		}
+
+		public override int GetHashCode() {
+			return uid;
 		}
 	}
 }

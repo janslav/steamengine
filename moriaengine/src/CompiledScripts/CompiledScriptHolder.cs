@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+compiledSHs.Count+" compiled Triggergroups");
+					Logger.WriteDebug("Done generating "+compiledSHs.Count+" compiled ScriptHolders");
 				}
 				return codeCompileUnit;
 			} finally {
@@ -153,13 +153,7 @@ namespace SteamEngine.CompiledScripts {
 					Type enumUnderlyingType = Enum.GetUnderlyingType(paramType);
 					return new CodeCastExpression(
 						paramType,
-						new CodeMethodInvokeExpression(
-							new CodeTypeReferenceExpression(typeof(Enum)),
-							"ToObject", 
-							new CodeTypeOfExpression(enumUnderlyingType),
-							GetConvertMethod(enumUnderlyingType, input))
-						);
-
+						GetConvertMethod(enumUnderlyingType, input));
 				} else {
 					return GetConvertMethod(paramType, input);
 				}
@@ -197,7 +191,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration(name+"_ScriptHolder_Generated");
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_"+name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(CompiledScriptHolder));
 				codeTypeDeclatarion.IsClass = true;

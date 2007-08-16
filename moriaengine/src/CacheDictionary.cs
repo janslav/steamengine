@@ -7,7 +7,7 @@ namespace SteamEngine {
 	[Remark("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxQueueCount' usages of the dictionary. "
 		+"The maxQueueLength number should typically be pretty big, in thousands or more.")]
 	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
-		private Dictionary<TKey, CacheDictionaryKeyEntry<TValue>> dict;
+		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
 		private SimpleQueue<TKey> queue = new SimpleQueue<TKey>();
 		private int maxQueueCount;
 
@@ -15,7 +15,7 @@ namespace SteamEngine {
 			if (maxQueueLength < 1) {
 				throw new ArgumentException("maxQueueCount must be higher than 0");
 			}
-			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry<TValue>>();
+			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>();
 			this.maxQueueCount = maxQueueLength;
 		}
 
@@ -23,7 +23,7 @@ namespace SteamEngine {
 			if (maxQueueLength < 1) {
 				throw new ArgumentException("maxQueueCount must be higher than 0");
 			}
-			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry<TValue>>(comparer);
+			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>(comparer);
 			this.maxQueueCount = maxQueueLength;
 		}
 
@@ -31,10 +31,10 @@ namespace SteamEngine {
 			return maxQueueCount;
 		} }
 
-		private struct CacheDictionaryKeyEntry<T> {
-			internal T value;
+		private struct CacheDictionaryKeyEntry {
+			internal TValue value;
 			internal int usageCounter;
-			internal CacheDictionaryKeyEntry(T value, int usageCounter) {
+			internal CacheDictionaryKeyEntry(TValue value, int usageCounter) {
 				this.value = value;
 				this.usageCounter = usageCounter;
 			}
@@ -42,17 +42,17 @@ namespace SteamEngine {
 
 		#region IDictionary<TKey, TValue> Members
 		public void Add(TKey key, TValue value) {
-			CacheDictionaryKeyEntry<TValue> valueEntry;
+			CacheDictionaryKeyEntry valueEntry;
 			if (dict.TryGetValue(key, out valueEntry)) {
-				dict.Add(key, new CacheDictionaryKeyEntry<TValue>(value, valueEntry.usageCounter+1));
+				dict.Add(key, new CacheDictionaryKeyEntry(value, valueEntry.usageCounter+1));
 			} else {
-				dict.Add(key, new CacheDictionaryKeyEntry<TValue>(value, 1));
+				dict.Add(key, new CacheDictionaryKeyEntry(value, 1));
 			}
 			EnqueueAndOrPurge(key);
 		}
 
 		public bool ContainsKey(TKey key) {
-			CacheDictionaryKeyEntry<TValue> valueEntry;
+			CacheDictionaryKeyEntry valueEntry;
 			if (dict.TryGetValue(key, out valueEntry)) {
 				valueEntry.usageCounter++;
 				dict[key] = valueEntry;//it's a struct we must re-enter it :\
@@ -67,7 +67,7 @@ namespace SteamEngine {
 		}
 
 		public bool TryGetValue(TKey key, out TValue value) {
-			CacheDictionaryKeyEntry<TValue> valueEntry;
+			CacheDictionaryKeyEntry valueEntry;
 			if (dict.TryGetValue(key, out valueEntry)) {
 				valueEntry.usageCounter++;
 				dict[key] = valueEntry;//it's a struct we must re-enter it :\
@@ -81,18 +81,18 @@ namespace SteamEngine {
 
 		public TValue this[TKey key] {
 			get {
-				CacheDictionaryKeyEntry<TValue> valueEntry = dict[key];
+				CacheDictionaryKeyEntry valueEntry = dict[key];
 				valueEntry.usageCounter++;
 				dict[key] = valueEntry;//it's a struct we must re-enter it :\
 				EnqueueAndOrPurge(key);
 				return valueEntry.value;
 			}
 			set {
-				CacheDictionaryKeyEntry<TValue> valueEntry;
+				CacheDictionaryKeyEntry valueEntry;
 				if (dict.TryGetValue(key, out valueEntry)) {
-					dict[key] = new CacheDictionaryKeyEntry<TValue>(value, valueEntry.usageCounter+1);
+					dict[key] = new CacheDictionaryKeyEntry(value, valueEntry.usageCounter+1);
 				} else {
-					dict[key] = new CacheDictionaryKeyEntry<TValue>(value, 1);
+					dict[key] = new CacheDictionaryKeyEntry(value, 1);
 				}
 				EnqueueAndOrPurge(key);
 			}
@@ -102,7 +102,7 @@ namespace SteamEngine {
 			queue.Enqueue(key);
 			if (queue.Count > maxQueueCount) {
 				TKey removedKey = queue.Dequeue();
-				CacheDictionaryKeyEntry<TValue> valueEntry;
+				CacheDictionaryKeyEntry valueEntry;
 				if (dict.TryGetValue(key, out valueEntry)) {
 					valueEntry.usageCounter--;
 					if (valueEntry.usageCounter < 1) {

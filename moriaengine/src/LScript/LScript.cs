@@ -272,6 +272,10 @@ namespace SteamEngine.LScript {
 					return OpNode_Object.Construct(parent, TriggerKey.Get(
 						((Token) code.GetChildAt(1)).GetImage()));
 
+				case StrictConstants.PLUGIN_KEY:
+					return OpNode_Object.Construct(parent, PluginKey.Get(
+						((Token) code.GetChildAt(2)).GetImage()));
+
 				case StrictConstants.ARGCHK:
 				case StrictConstants.ARGTXT:
 				case StrictConstants.ARGNUM:

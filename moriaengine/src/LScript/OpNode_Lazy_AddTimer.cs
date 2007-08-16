@@ -76,7 +76,7 @@ namespace SteamEngine.LScript {
 		}
 		
 		internal override object Run(ScriptVars vars) {
-			if (vars.self is TagHolder) {
+			if (vars.self is PluginHolder) {
 				bool memberNameMatched = false;
 				
 				OpNode finalOpNode;
@@ -147,7 +147,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					return finalOpNode.Run(vars);
 				}
 			} else {
-				throw new InterpreterException("AddTimer must be called on TagHolder, not "+vars.self, 
+				throw new InterpreterException("AddTimer must be called on PluginHolder, not "+vars.self, 
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 			}
 		}

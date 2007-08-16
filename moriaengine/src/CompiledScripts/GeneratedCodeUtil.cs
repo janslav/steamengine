@@ -26,6 +26,7 @@ using System.Text;
 using System.Globalization; 
 using SteamEngine.Timers;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 using NAnt.Core;
 
 namespace SteamEngine.CompiledScripts {
@@ -123,6 +124,101 @@ namespace SteamEngine.CompiledScripts {
 				return true;
 			} else {
 				return false;
+			}
+		}
+
+		public static CodeExpression GenerateSimpleLoadExpression(Type dataType, CodeExpression inputStringExpression) {
+			if (dataType == typeof(string)) {
+				return new CodeCastExpression(
+					typeof(string),
+					new CodeMethodInvokeExpression(
+						new CodeTypeReferenceExpression(typeof(ObjectSaver)),
+						"OptimizedLoad_String",
+						inputStringExpression));
+			} else if (ConvertTools.IsNumberType(dataType)) {
+				Type enumType = null;
+				if (dataType.IsEnum) {
+					enumType = dataType;
+					dataType = Enum.GetUnderlyingType(enumType);
+				}
+
+				MethodInfo parseMethod = typeof(ConvertTools).GetMethod("Parse"+dataType.Name, BindingFlags.Static|BindingFlags.Public);
+				if (parseMethod != null) {
+					CodeMethodInvokeExpression parseExp = new CodeMethodInvokeExpression(
+						new CodeMethodReferenceExpression(
+							new CodeTypeReferenceExpression(typeof(ConvertTools)),
+							parseMethod.Name),
+						inputStringExpression);
+
+					if (enumType != null) {
+						return new CodeCastExpression(
+							enumType,
+							parseExp);
+					} else {
+						return parseExp;
+					}
+				} else {
+					throw new Exception("ConvertTools class missing a method for parsing number type "+dataType+". This shoud not happen.");
+				}
+			} else {
+				CodeMethodInvokeExpression loadMethod = new CodeMethodInvokeExpression(
+					new CodeTypeReferenceExpression(typeof(ObjectSaver)),
+					"OptimizedLoad_SimpleType",
+					inputStringExpression, 
+					new CodeTypeOfExpression(dataType));
+
+				MethodInfo parseMethod = typeof(Convert).GetMethod("To"+dataType.Name, BindingFlags.Static|BindingFlags.Public, null,
+					new Type[] { typeof(object) }, null);
+
+				//this will probably be true for datetime only
+				if (parseMethod != null) {
+					return new CodeMethodInvokeExpression(
+						new CodeTypeReferenceExpression(typeof(Convert)),
+						parseMethod.Name,
+						loadMethod);
+				} else if (dataType == typeof(object)) {//unprobable, because Object is not simple
+					return new CodeMethodInvokeExpression(
+						new CodeTypeReferenceExpression(typeof(ObjectSaver)),
+						"Load",
+						inputStringExpression);
+				} else {
+					return new CodeCastExpression(
+						dataType,
+						loadMethod);
+				}
+			}
+		}
+
+		public static CodeExpression GenerateDelayedLoadExpression(Type dataType, CodeExpression inputObjectExpression) {
+			if (dataType == typeof(object)) {
+				return inputObjectExpression;
+			} else if (ConvertTools.IsNumberType(dataType)) {
+				CodeMethodInvokeExpression toNumberExp = new CodeMethodInvokeExpression(
+					new CodeTypeReferenceExpression(typeof(Convert)),
+					"To"+dataType.Name,
+					inputObjectExpression);
+				if (dataType.IsEnum) {
+					return new CodeCastExpression(
+						dataType,
+						toNumberExp);
+				} else {
+					return toNumberExp;
+				}
+			} else {
+				MethodInfo convertMethod = typeof(Convert).GetMethod("To"+dataType.Name, BindingFlags.Static|BindingFlags.Public, null,
+					new Type[] { typeof(object) }, null);
+
+				//this will probably be true for datetime only
+				if (convertMethod != null) {
+					return new CodeMethodInvokeExpression(
+						new CodeTypeReferenceExpression(typeof(Convert)),
+						convertMethod.Name,
+						inputObjectExpression);
+				} else {
+					return new CodeCastExpression(
+						dataType,
+						inputObjectExpression);
+				}
 			}
 		}
 	}

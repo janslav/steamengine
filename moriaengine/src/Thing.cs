@@ -17,6 +17,7 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace SteamEngine {
 		int Uid { get; set; }
 	}
 
-	public abstract class Thing : TagHolder, IPoint4D, IEnumerable, ObjectWithUid {
+	public abstract class Thing : PluginHolder, IPoint4D, IEnumerable, ObjectWithUid {
 		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
 		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
 
@@ -48,19 +49,86 @@ namespace SteamEngine {
 
 		private static int savedCharacters=0;
 		private static int savedItems=0;
-		private static ArrayList alreadySaved=new ArrayList();
-
-		internal Thing nextInList = null;
-		internal Thing prevInList = null;
+		private static List<bool> alreadySaved = new List<bool>();
 
 		private static int loadedCharacters;
 		private static int loadedItems;
+
+		internal Thing nextInList = null;
+		internal Thing prevInList = null;
 
 		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
 
 		private static UIDArray<Thing> things = new UIDArray<Thing>();
 		private static int uidBeingLoaded=-1;
 		public static TagKey weightTag = TagKey.Get("_weight");
+
+
+		public class ThingSaveCoordinator : IBaseClassSaveCoordinator {
+			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?\d+)\s*$",
+				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+			public string FileNameToSave {
+				get { return "things"; }
+			}
+
+			public void StartingLoading() {
+				loadedCharacters=0;
+				loadedItems=0;
+			}
+
+			public void SaveAll(SaveStream output) {
+				Logger.WriteDebug("Saving Things.");
+				output.WriteComment("Things");
+				output.WriteLine();
+				savedCharacters=0;
+				savedItems=0;
+				alreadySaved = new List<bool>(things.HighestElement);
+				foreach (Thing t in things) {
+					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
+				}
+				output.WriteLine("[EOF]");
+				Logger.WriteDebug(string.Format(
+												"Saved {0} things: {1} items and {2} characters.",
+												savedCharacters+savedItems, savedItems, savedCharacters));
+												
+				alreadySaved = null;
+			}
+
+			public void LoadingFinished() {
+				//this means real end of file(s)
+				uidBeingLoaded = -1;
+				things.LoadingFinished();
+				Logger.WriteDebug(string.Format(
+												"Loaded {0} things: {1} items and {2} characters.",
+												loadedItems+loadedCharacters, loadedItems, loadedCharacters));
+				foreach (Thing t in things) {
+					t.On_AfterLoad();
+				}
+			}
+
+			public Type BaseType {
+				get { return typeof(Thing); }
+			}
+
+			public string GetReferenceLine(object value) {
+				return "#"+((Thing) value).uid;
+			}
+
+			public Regex ReferenceLineRecognizer {
+				get { return thingUidRE; }
+			}
+
+			public object Load(Match m) {
+				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer);
+				Thing thing = Thing.UidGetThing(uid);
+				if (thing != null) {
+					return thing;
+				} else {
+					throw new NonExistingObjectException("There is no thing with uid "+LogStr.Number(uid)+" to load.");
+				}
+			}
+		}
 
 		//still needs to be put into the world
 		protected Thing(ThingDef myDef) {
@@ -558,13 +626,8 @@ namespace SteamEngine {
 		//------------------------
 		//Private & internal stuff
 
-
-		internal static void StartingLoading() {
-			loadedCharacters=0;
-			loadedItems=0;
-		}
-
-		internal static void Load(PropsSection input) {
+		[LoadSection]
+		public static Thing Load(PropsSection input) {
 			//an Exception propagated away from this method is usually considered critical - load failed
 
 			//is called for each separate section
@@ -576,14 +639,9 @@ namespace SteamEngine {
 
 			ThingDef thingDef = ThingDef.Get(input.headerName) as ThingDef;
 
-
 			if (thingDef == null) {
 				Logger.WriteError(input.filename, input.headerLine, "Defname '"+LogStr.Ident(input.headerName)+"' not found. Thing loading interrupted.");
-				return;
-			}
-			Type type = ThingDef.GetDefTypeByThingName(input.headerType);
-			if (thingDef.GetType() != type) {
-				Logger.WriteWarning("Saved thing declares wrong class ("+LogStr.Ident(type)+"). Using "+LogStr.Ident(thingDef.GetType()));
+				return null;
 			}
 
 			int _uid;
@@ -594,16 +652,17 @@ namespace SteamEngine {
 			if (prop!=null) {
 				if (!TagMath.TryParseInt32(prop.value, out _uid)) {
 					Logger.WriteError(input.filename, prop.line, "Unrecognized UID property format. Thing loading interrupted.");
-					return;
+					return null;
 				}
 			} else {
 				Logger.WriteError(input.filename, input.headerLine, "UID property not found. Thing loading interrupted.");
-				return;
+				return null;
 			}
 			_uid = UidClearFlags(_uid);
 
 			Thing.uidBeingLoaded = _uid;//the constructor should set this as Uid
 			Thing constructed = thingDef.CreateWhenLoading(1, 1, 0, 0);//let's hope the P gets loaded properly later ;)
+
 			Thing.things.AddLoaded(constructed, _uid);
 
 			//now load the rest of the properties
@@ -611,21 +670,10 @@ namespace SteamEngine {
 			constructed.LoadSectionLines(input);
 			if (constructed.IsChar) loadedCharacters++;
 			if (constructed.IsItem) loadedItems++;
+
+			return constructed;
 		}
 
-		internal static void LoadingFinished() {
-			//this means real end of file(s)
-			uidBeingLoaded = -1;
-			things.LoadingFinished();
-			Logger.WriteDebug(string.Format(
-											"Loaded {0} things: {1} items and {2} characters.",
-											loadedItems+loadedCharacters, loadedItems, loadedCharacters));
-			foreach (Thing t in things) {
-				t.On_AfterLoad();
-			}
-
-			return;
-		}
 
 		[Summary("This is called after this object was is being loaded.")]
 		public virtual void On_AfterLoad() {
@@ -639,7 +687,13 @@ namespace SteamEngine {
 			ThrowIfDeleted();
 			switch (prop) {
 				case "p":
-					point4d = MutablePoint4D.Parse(value);
+					object o = ObjectSaver.OptimizedLoad_SimpleType(value, typeof(Point4D));
+					string v = o as string;
+					if (v != null) {
+						point4d = MutablePoint4D.Parse(value);
+					} else {
+						point4d = new MutablePoint4D((Point4D) o);
+					}
 					//it will be put in world later by map or Cont
 					break;
 				case "color":
@@ -656,23 +710,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public static void SaveAll(SaveStream output) {
-			Logger.WriteDebug("Saving Things.");
-			output.WriteComment("Textual SteamEngine save");
-			output.WriteComment("Things");
-			output.WriteLine();
-			savedCharacters=0;
-			savedItems=0;
-			alreadySaved=new ArrayList(things.HighestElement);
-			foreach (Thing t in things) {
-				SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
-			}
-			output.WriteLine("[EOF]");
-			Logger.WriteDebug(string.Format(
-											"Saved {0} things: {1} items and {2} characters.",
-											savedCharacters+savedItems, savedItems, savedCharacters));
-			alreadySaved = null;
-		}
 
 		[Remark("Sets all uids to lowest possible value. Always save & restart after doing this.")]
 		public static void ResetAllUids() {
@@ -700,25 +737,28 @@ namespace SteamEngine {
 				Logger.WriteError("Thing "+LogStr.Ident(t)+" is already deleted.");
 				return;
 			}
-			while (alreadySaved.Count<=t.Uid) {
-				alreadySaved.Add(null);
+			t.SaveWithHeader(output);
+		}
+
+		[Save]
+		public void SaveWithHeader(SaveStream output) {
+			while (alreadySaved.Count<=this.uid) {
+				alreadySaved.Add(false);
 			}
-			if (alreadySaved[t.Uid]==null) {
-				alreadySaved[t.Uid]=true;
-				if (t.IsChar) {
+			if (!alreadySaved[this.uid]) {
+				alreadySaved[this.uid] = true;
+				if (this.IsChar) {
 					savedCharacters++;
-				} else if (t.IsItem) {
-					savedItems++;
 				} else {
-					Logger.WriteError("Unknown Thing type. uid="+LogStr.Ident(t.Uid));
-					return;
+					savedItems++;
 				}
-				output.WriteSection(t.GetType().Name, t.def.PrettyDefname);
-				t.Save(output);
+
+				output.WriteSection(this.GetType().Name, this.def.PrettyDefname);
+				this.Save(output);
 				output.WriteLine();
 				ObjectSaver.FlushCache(output);
-				if (t.CanContain) {
-					foreach (AbstractItem i in t) {
+				if (this.CanContain) {
+					foreach (AbstractItem i in this) {
 						SaveThis(output, i);
 					}
 				}
@@ -728,15 +768,8 @@ namespace SteamEngine {
 		public override void Save(SaveStream output) {
 			ThrowIfDeleted();
 			output.WriteValue("uid", uid);
-			if (M==0) {
-				if (Z==0) {
-					output.WriteValue("p", X+","+Y);
-				} else {
-					output.WriteValue("p", X+","+Y+","+Z);
-				}
-			} else {
-				output.WriteValue("p", X+","+Y+","+Z+","+M);
-			}
+
+			output.WriteValue("p", this.P());
 			if (Color!=0) {
 				output.WriteValue("color", color);
 			}
@@ -768,7 +801,7 @@ namespace SteamEngine {
 				Duplicates this character, possibly more than once.
 			
 			Parameters:
-				ntimes - The number of times to duplicate this character.
+				ntimes - The number of times to duplicate this thing.
 		 */
 		public void Dupe(int ntimes) {
 			ThrowIfDeleted();
@@ -828,7 +861,7 @@ namespace SteamEngine {
 			//in fact the src is quite undefined, it can also be null...
 			//it`s here just to keep it the same for all triggers, as usual.
 			//ScriptArgs sa = new ScriptArgs();
-			TryTrigger(TriggerKey.Destroy, null);
+			TryTrigger(TriggerKey.destroy, null);
 			On_Destroy();
 
 			BeingDeleted();
@@ -978,7 +1011,7 @@ namespace SteamEngine {
 				cancel=TriggerSpecific_DClick(dclicker, sa);
 				if (!cancel) {
 					//@itemDClick or @charDClick on src did not return 1
-					cancel=TryCancellableTrigger(TriggerKey.DClick, sa);
+					cancel=TryCancellableTrigger(TriggerKey.dClick, sa);
 					if (!cancel) {
 						//@DClick on item did not return 1
 						On_DClick(dclicker);

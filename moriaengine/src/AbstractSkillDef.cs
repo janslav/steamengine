@@ -202,8 +202,8 @@ namespace SteamEngine {
 		
 		public TriggerGroup TG  {
 			get {
-				if (triggerGroups != null) {
-					return triggerGroups.storedTG;
+				if (firstTGListNode != null) {
+					return firstTGListNode.storedTG;
 				}
 				return null;
 			} 
@@ -211,8 +211,8 @@ namespace SteamEngine {
 
 		public bool TryCancellableSkillTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
-			if (triggerGroups != null) {
-				object retVal = triggerGroups.storedTG.TryRun(self, td, sa);
+			if (firstTGListNode != null) {
+				object retVal = firstTGListNode.storedTG.TryRun(self, td, sa);
 				try {
 					int retInt = Convert.ToInt32(retVal);
 					if (retInt == 1) {

@@ -32,7 +32,6 @@ namespace SteamEngine {
 	//This and FunctionKey are very similar, and serve similar purposes.
 	public class TriggerKey : AbstractKey{
 		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		private static int uids = 0;
 				
 		private TriggerKey(string name, int uid) : base(name, uid) {
 		}
@@ -69,6 +68,9 @@ namespace SteamEngine {
 		
 		public static readonly TriggerKey login=Get("login");
 		public static readonly TriggerKey logout=Get("logout");
+
+		public static readonly TriggerKey assign=Get("assign");
+		public static readonly TriggerKey unAssign=Get("unAssign");
 		
 		public static readonly TriggerKey newPC=Get("newPC");
 		
@@ -92,10 +94,10 @@ namespace SteamEngine {
 		
 		public static readonly TriggerKey pickUpFrom=Get("pickUpFrom");
 		
-		public static readonly TriggerKey Destroy=Get("Destroy");
+		public static readonly TriggerKey destroy=Get("Destroy");
 		
 		public static readonly TriggerKey itemEquip=Get("itemEquip");
-		public static readonly TriggerKey Equip=Get("Equip");
+		public static readonly TriggerKey equip=Get("Equip");
 		public static readonly TriggerKey itemUnEquip=Get("itemUnEquip");
 		public static readonly TriggerKey unEquip=Get("UnEquip");
 		public static readonly TriggerKey hear=Get("hear");
@@ -110,7 +112,7 @@ namespace SteamEngine {
 		
 		public static readonly TriggerKey charDClick=Get("charDClick");
 		public static readonly TriggerKey itemDClick=Get("itemDClick");
-		public static readonly TriggerKey DClick=Get("DClick");
+		public static readonly TriggerKey dClick=Get("DClick");
 		
 		public static readonly TriggerKey charClick=Get("charClick");
 		public static readonly TriggerKey itemClick=Get("itemClick");
@@ -118,10 +120,9 @@ namespace SteamEngine {
 
 		public static readonly TriggerKey aosClick=Get("aosClick");
 		
-		
 		public static readonly TriggerKey enter=Get("enter");//region trigger
 		public static readonly TriggerKey exit=Get("exit");//character exiting/entering a region. can be cancellable...
-		public static readonly TriggerKey ClientAttach=Get("ClientAttach");
+		public static readonly TriggerKey clientAttach=Get("ClientAttach");
 
 	}
 

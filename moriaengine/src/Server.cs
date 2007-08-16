@@ -92,10 +92,6 @@ namespace SteamEngine {
 				this.Interval = idleCheckTimerInterval;
 				this.Enqueue();
 			}
-
-			protected override SteamEngine.Timers.Timer Dupe(TagHolder assignTo) {
-				throw new NotSupportedException("The method or operation is not supported.");
-			}
 		}
 
 		internal static void AddOmitIP(string ip) {
@@ -382,7 +378,7 @@ namespace SteamEngine {
 							GameConn newConn = new GameConn(socket);
 							Console.WriteLine(LogStr.Ident(newConn)+" connected.");
 							AddConn(newConn);
-							Globals.instance.TryTrigger(TriggerKey.ClientAttach, new ScriptArgs(newConn)); // 
+							Globals.instance.TryTrigger(TriggerKey.clientAttach, new ScriptArgs(newConn)); // 
 						} else {
 							socket.Send(new byte[2] {0x82, 0x04});
 							socket.Close();
@@ -752,16 +748,12 @@ namespace SteamEngine {
 			}
 
 			protected sealed override void OnTimeout() {
-				GameConn conn = (GameConn) Obj;
+				GameConn conn = (GameConn) Cont;
 				AbstractCharacter player = conn.CurCharacter;
 				if (player != null) {
 					player.Resync();
 				}
 			} 
-
-			protected override SteamEngine.Timers.Timer Dupe(TagHolder assignTo) {
-				throw new NotSupportedException("The method or operation is not supported.");
-			}
 		}
 
 		public static void SendCharPropertiesTo(GameConn viewerConn, AbstractCharacter viewer, AbstractCharacter target) {
