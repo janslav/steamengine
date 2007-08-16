@@ -39,7 +39,6 @@ namespace SteamEngine {
 			: base(defname) {
 			Init(defname);
 		}
-
 	
 		private static Regex globalNameRE = new Regex(@"^.*_all(?<value>[a-z][0-9a-z]+)s\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
@@ -70,7 +69,7 @@ namespace SteamEngine {
 		
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
 		public abstract object TryRun(object self, TriggerKey tk, ScriptArgs sa);
-		
+
 		public override string ToString() {
 			return "TriggerGroup "+defname;
 		}
@@ -106,8 +105,8 @@ namespace SteamEngine {
 	}
 	
 	public class TGRemover {
-		internal TriggerGroup tg;
-		internal TGRemover(TriggerGroup tg) {
+		public readonly TriggerGroup tg;
+		public TGRemover(TriggerGroup tg) {
 			this.tg = tg;
 		}
 	}

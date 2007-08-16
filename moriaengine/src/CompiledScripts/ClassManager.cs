@@ -116,13 +116,20 @@ namespace SteamEngine.CompiledScripts {
 				AbstractSkillDef.RegisterSkillDefType(type);
 			}
 			
-			if (Attribute.IsDefined(type, typeof(SaveableClassAttribute))) {
+			if (Attribute.IsDefined(type, typeof(SaveableClassAttribute), false)) {
 				DecoratedClassesSaveImplementorGenerator.AddDecoratedClass(type);
+				if (Attribute.IsDefined(type, typeof(DeepCopySaveableClassAttribute))) {
+					AutoDeepCopyImplementorGenerator.AddDecoratedClass(type);
+				}
 			}
 
-			if (typeof(IImportable).IsAssignableFrom(type)) {
-				ExportImport.RegisterExportClass(type);
+			if (Attribute.IsDefined(type, typeof(ManualDeepCopyClassAttribute), false)) {
+				ManualDeepCopyImplementorGenerator.AddDecoratedClass(type);
 			}
+
+			//if (typeof(IImportable).IsAssignableFrom(type)) {
+			//    ExportImport.RegisterExportClass(type);
+			//}
 			
 			//from scripts only, because we have a special one in ObjectSaver and stuff.
 			if (typeof(ISaveImplementor).IsAssignableFrom(type) && (!isCoreAssembly) ) {
@@ -131,6 +138,18 @@ namespace SteamEngine.CompiledScripts {
 					if (ci!=null) {
 						ISaveImplementor si = (ISaveImplementor) ci.Invoke(new object[0] {});
 						ObjectSaver.RegisterImplementor(si);
+					} else {
+						throw new Exception("No proper constructor.");
+					}
+				}
+			}
+
+			if (typeof(IBaseClassSaveCoordinator).IsAssignableFrom(type)) {
+				if (!type.IsAbstract) {
+					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+					if (ci!=null) {
+						IBaseClassSaveCoordinator ibcsc = (IBaseClassSaveCoordinator) ci.Invoke(new object[0] { });
+						ObjectSaver.RegisterCoordinator(ibcsc);
 					} else {
 						throw new Exception("No proper constructor.");
 					}
@@ -155,6 +174,18 @@ namespace SteamEngine.CompiledScripts {
 					if (ci!=null) {
 						ISteamCSCodeGenerator sccg = (ISteamCSCodeGenerator) ci.Invoke(new object[0] { });
 						GeneratedCodeUtil.RegisterGenerator(sccg);
+					} else {
+						throw new Exception("No proper constructor.");
+					}
+				}
+			}
+
+			if (typeof(IDeepCopyImplementor).IsAssignableFrom(type)) {
+				if ((!type.IsAbstract) && (type.IsPublic)) {
+					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+					if (ci!=null) {
+						IDeepCopyImplementor dci = (IDeepCopyImplementor) ci.Invoke(new object[0] { });
+						DeepCopyFactory.RegisterImplementor(dci);
 					} else {
 						throw new Exception("No proper constructor.");
 					}
@@ -192,8 +223,8 @@ namespace SteamEngine.CompiledScripts {
 					//	throw new Exception("No proper constructor.");
 					}
 				}
-			} else if (typeof(Region).IsAssignableFrom(type)) {
-				Region.RegisterRegionType(type);
+			//} else if (typeof(Region).IsAssignableFrom(type)) {
+			//    Region.RegisterRegionType(type);
 			} else if (type.IsSubclassOf(typeof(Timer))) {
 				Timer.RegisterSubClass(type);
 			//} else if (type.IsSubclassOf(typeof(Thing))) {

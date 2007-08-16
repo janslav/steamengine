@@ -317,18 +317,17 @@ namespace SteamEngine.CompiledScripts {
 			return lowedVal;
 		}
 
-		private static TimerKey discordTimerKey = TimerKey.Get("discordDecayTimer");
+		private static TimerKey discordTimerKey = TimerKey.Get("_discordDecayTimer_");
+
+		[ManualDeepCopyClass]
 		public class DiscordDecayTimer : Timer {
 			public DiscordDecayTimer(TimerKey name)
 				: base(name) {
 			}
 
-			protected DiscordDecayTimer(DiscordDecayTimer copyFrom, TagHolder assignTo)
-				: base(copyFrom, assignTo) {
-			}
-
-			protected sealed override Timer Dupe(TagHolder assignTo) {
-				return new DiscordDecayTimer(this, assignTo);
+			[DeepCopyImplementation]
+			public DiscordDecayTimer(DiscordDecayTimer copyFrom)
+				: base(copyFrom) {
 			}
 
 			public DiscordDecayTimer(Memory obj, TimeSpan time)
@@ -336,7 +335,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout() {
-				Memory self = Obj as Memory;
+				Memory self = Cont as Memory;
 				if (self != null) {
 					self.Delete();
 				}

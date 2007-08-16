@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"The function is designed to be triggered using .x TimersList(criteria)" +
 			    "but it can be used also normally .TimerList(criteria) to display runner's own timers")]
 		[SteamFunction]
-		public static void TimerList(Thing self, ScriptArgs text) {
+		public static void TimerList(TagHolder self, ScriptArgs text) {
 			//zavolat dialog, 
 			//parametr self - thing jehoz tagy chceme zobrazit
 			//0 - zacneme od prvniho tagu co ma

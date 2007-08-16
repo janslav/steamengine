@@ -307,7 +307,7 @@ namespace SteamEngine.LScript {
 	}
 		
 	
-	public class LScriptTesterObject : TagHolder {
+	public class LScriptTesterObject : PluginHolder {
 		public double currentCounter = 0;
 		public double lastCounter = 0;
 		

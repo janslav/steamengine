@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 				for (int i = 0; i<count; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
-					ObjectSaver.Load(valueLine.value, LoadNode_Delayed, input.filename, valueLine.line, linkedListWrapper);
+					ObjectSaver.Load(valueLine.value, DelayedLoad_Node, input.filename, valueLine.line, linkedListWrapper);
 				}
 				return linkedList;
 			} catch (FatalException) {
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		
-		public void LoadNode_Delayed(object loadedObj, string filename, int line, object param) {
+		public void DelayedLoad_Node(object loadedObj, string filename, int line, object param) {
 			IAdder linkedListWrapper = (IAdder) param;
 			linkedListWrapper.Add(loadedObj);
 		}

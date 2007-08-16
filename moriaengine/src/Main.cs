@@ -27,6 +27,7 @@ using System.Threading;
 using SteamEngine.Common;
 using SteamEngine.Timers;
 using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.ClassTemplates;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {  
@@ -164,7 +165,7 @@ namespace SteamEngine {
 				return false;
 			}
 			Tools.EnsureDirectory(Globals.mulPath, true);
-			ExportImport.Init();
+			//ExportImport.Init();
 
 			if (!Globals.fastStartUp) {
 				TileData.Init();
@@ -301,8 +302,8 @@ namespace SteamEngine {
 			ScriptLoader.UnloadScripts();//unload scripted loaders :)
 			AbstractDef.UnloadScripts();//unload scripted defGetters
 			AbstractSkillDef.UnloadScripts();
-			Region.UnloadScripts();
-			ExportImport.UnloadScripts();
+			//Region.UnloadScripts();
+			//ExportImport.UnloadScripts();
 			
 			Console.WriteLine("Definitions unloaded");
 			//thingdefs persist, because they are also referenced from statics etc, and we do not need to delete them anyway
@@ -317,7 +318,7 @@ namespace SteamEngine {
 			if (!CompilerInvoker.CompileScripts(false)) {
 				return false;
 			}
-			ExportImport.Init();
+			//ExportImport.Init();
 			if (!Globals.fastStartUp) {
 				ScriptLoader.Load();
 				TriggerGroup.ReAddGlobals();

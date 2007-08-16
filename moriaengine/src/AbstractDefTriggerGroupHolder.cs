@@ -17,7 +17,7 @@
 
 using System;
 using System.Text;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -47,7 +47,8 @@ namespace SteamEngine {
 			}
 		}
 
-		protected TagHolder.TGStoreNode triggerGroups = null; //linked list of triggergroup references
+		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
+		public PluginHolder.TGListNode firstTGListNode = null; //linked list of triggergroup references
 		//This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
 		internal void ResolveTriggerGroup(object[] args) {
 			string name=(string) args[0];
@@ -72,15 +73,15 @@ namespace SteamEngine {
 		*/
 		public void AddTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return;
-			if (triggerGroups == null) {
-				triggerGroups = new TagHolder.TGStoreNode(tg);
+			if (firstTGListNode == null) {
+				firstTGListNode = new PluginHolder.TGListNode(tg);
 			} else {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				while (true) {
 					if (curNode.storedTG == tg) {
 						return;// false;//we already have it
 					} else if (curNode.nextNode == null) {
-						curNode.nextNode = new TagHolder.TGStoreNode(tg);
+						curNode.nextNode = new PluginHolder.TGListNode(tg);
 						return;
 					}
 					curNode = curNode.nextNode;
@@ -89,8 +90,16 @@ namespace SteamEngine {
 			}
 		}
 
-		public void AddEvent(TriggerGroup tg) {
-			AddTriggerGroup(tg);
+		public IEnumerable<TriggerGroup> AllTriggerGroups {
+			get {
+				if (firstTGListNode != null) {
+					PluginHolder.TGListNode curNode = firstTGListNode;
+					do {
+						yield return curNode.storedTG;
+						curNode = curNode.nextNode;
+					} while (curNode != null);
+				}
+			}
 		}
 
 		/*
@@ -102,13 +111,13 @@ namespace SteamEngine {
 		*/
 		public void RemoveTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return;
-			if (triggerGroups != null) {
-				if (triggerGroups.storedTG == tg) {
-					triggerGroups = triggerGroups.nextNode;
+			if (firstTGListNode != null) {
+				if (firstTGListNode.storedTG == tg) {
+					firstTGListNode = firstTGListNode.nextNode;
 					return;
 				}
-				TagHolder.TGStoreNode lastNode = triggerGroups;
-				TagHolder.TGStoreNode curNode = lastNode.nextNode;
+				PluginHolder.TGListNode lastNode = firstTGListNode;
+				PluginHolder.TGListNode curNode = lastNode.nextNode;
 				while (curNode != null) {
 					if (curNode.storedTG == tg) {
 						lastNode.nextNode = curNode.nextNode;
@@ -119,10 +128,6 @@ namespace SteamEngine {
 				}
 				//return false;//we didnt have it, so we didnt do anything
 			}
-		}
-
-		public void RemoveEvent(TriggerGroup tg) {
-			RemoveTriggerGroup(tg);
 		}
 
 		/*
@@ -138,7 +143,7 @@ namespace SteamEngine {
 
 		public bool HasTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return false;
-			TagHolder.TGStoreNode curNode = triggerGroups;
+			PluginHolder.TGListNode curNode = firstTGListNode;
 			do {
 				if (curNode.storedTG == tg) {
 					return true;
@@ -148,57 +153,20 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public bool HasEvent(TriggerGroup tg) {
-			return HasTriggerGroup(tg);
-		}
-
 		public void ClearTriggerGroups() {
-			triggerGroups = null;
+			firstTGListNode = null;
 		}
 
-		public void Events(TriggerGroup tg) {//applies to spherescript-like "events(+e_blah)"
-			AddTriggerGroup(tg);
-		}
-
-		public void Events(TGRemover remover) {
-			RemoveTriggerGroup(remover.tg);
-		}
-
-		public void Events(int i) {
-			if (i == 0) {
-				triggerGroups = null;
-			}
-		}
-
-		public string Events() {
-			if (triggerGroups != null) {
-				StringBuilder toreturn= new StringBuilder();
-				TagHolder.TGStoreNode curNode = triggerGroups;
-				bool first=true;
-				do {
-					if (first) {
-						first=false;
-					} else {
-						toreturn.Append(", ");
-					}
-					toreturn.Append(curNode.storedTG.ToString());
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-				return toreturn.ToString();
-			} else {
-				return "";
-			}
-		}
 
 		public override void Unload() {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					curNode.storedTG.Unload();
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
-			triggerGroups = null;
+			firstTGListNode = null;
 			base.Unload();
 		}
 
@@ -217,8 +185,8 @@ namespace SteamEngine {
 				<Trigger>, <CancellableTriggers>
 		*/
 		public virtual void Trigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					curNode.storedTG.Run(this, td, sa);
 					curNode = curNode.nextNode;
@@ -227,8 +195,8 @@ namespace SteamEngine {
 		}
 
 		public virtual void TryTrigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					curNode.storedTG.TryRun(this, td, sa);
 					curNode = curNode.nextNode;
@@ -252,8 +220,8 @@ namespace SteamEngine {
 		*/
 
 		public virtual bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.Run(this, td, sa);
 					try {
@@ -270,8 +238,8 @@ namespace SteamEngine {
 		}
 
 		public virtual bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.TryRun(this, td, sa);
 					try {

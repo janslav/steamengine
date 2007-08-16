@@ -314,15 +314,8 @@ namespace SteamEngine {
 			if (IsPC) {
 				throw new NotSupportedException("You can not dupe a PC!");
 			}
-			return DupeImpl();	//(Character) def.constructor.Invoke(this);
+			return (Thing) DeepCopyFactory.GetCopy(this);
 		}
-		
-		protected virtual Thing DupeImpl() {
-			throw new SanityCheckException("DupeImpl() needs to be overridden by subclasses - "+GetType()+" did not override it.");
-			//return new AbstractCharacter(this);
-		}
-
-
 
 		public bool IsLingering {
 			get {
@@ -1206,7 +1199,7 @@ namespace SteamEngine {
 				if (i == draggingLayer) {
 					On_ItemEquip(droppingChar, i, true);
 					if (i == draggingLayer) {
-						i.TryTrigger(TriggerKey.Equip, sa);
+						i.TryTrigger(TriggerKey.equip, sa);
 						if (i == draggingLayer) {
 							i.On_Equip(droppingChar, this, true);
 							if (i == draggingLayer) {
@@ -1289,7 +1282,7 @@ namespace SteamEngine {
 				//AbstractCharacter src = Globals.src;Thing origAct = src.act;src.act=this;
 				if ((!TryCancellableTrigger(TriggerKey.itemEquip, sa))&&(i == draggingLayer)) {
 					if ((!On_ItemEquip(droppingChar, i, false))&&(i == draggingLayer)) {
-						if ((!i.TryCancellableTrigger(TriggerKey.Equip, sa))&&(i == draggingLayer)) {
+						if ((!i.TryCancellableTrigger(TriggerKey.equip, sa))&&(i == draggingLayer)) {
 							if ((!i.On_Equip(droppingChar, this, true))&&(i == draggingLayer)) {
 								PrivateDropItem(i);
 								InternalEquip(i);

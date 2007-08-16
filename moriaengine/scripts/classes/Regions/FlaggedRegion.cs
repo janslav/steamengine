@@ -20,17 +20,22 @@ using System.Collections;
 using SteamEngine.Common;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	
 	//todo: make some members virtual?
+	[SaveableClass]
 	public class FlaggedRegion : Region {
 		int flags;
-		
+
+		[LoadSection]
+		public FlaggedRegion(PropsSection input)
+			: base(input) {
+		}
+
 		public FlaggedRegion() 
 				: base() {
-					
-			flags = 0;
 		}
 		
 		public int Flags {

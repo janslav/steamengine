@@ -170,13 +170,17 @@ SimpleCodeBodyParens = LEFT_PAREN SimpleCode RIGHT_PAREN;
 
 Expression = DottedExpressionChain | EvalExpression 
 	| StrongEvalExpression | QuotedString | RandomExpression
-	| Number | CROSSHASH | TriggerKey | TimerKey;
+	| Number | CROSSHASH | AtKey | TimerKey;
 
 AddTimerExpression = ADDTIMER ( ( ( WHITESPACE | OP_ASIG_PLAIN) AddTimerBody) | (LEFT_PAREN AddTimerBody RIGHT_PAREN) );
 AddTimerBody = TimerKey ArgsSeparator SimpleCode ArgsSeparator (STRING | TriggerKey) [ArgsSeparator ArgsList];  
 //timername, interval, method/function/trigger name, args
 
-TriggerKey = AT STRING; //@somename
+AtKey = TriggerKey | PluginKey;//@somename or @@somename
+
+TriggerKey = AT STRING;
+
+PluginKey = AT AT STRING;
 
 TimerKey = OP_MOD STRING; //%somename
 

@@ -39,13 +39,13 @@ namespace SteamEngine {
 		private FieldValue height;
 
 		internal MultiData multiData;
-		
-		private static Hashtable thingDefTypesByThingName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-			//string-Type pairs  ("Item" - class ItemDef)
-		private static Hashtable thingDefTypesByName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-			//string-Type pairs  ("ItemDef" - class ItemDef)
-		private static Hashtable thingDefCtors = new Hashtable();
-			//Type-ConstructorInfo pairs (class ItemDef - Itemdef.ctor)
+
+		private static Dictionary<Type, Type> thingDefTypesByThingType = new Dictionary<Type, Type>();
+		private static Dictionary<Type, Type> thingTypesByThingDefType = new Dictionary<Type, Type>();
+
+		private static Dictionary<string, Type> thingDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<Type, ConstructorInfo> thingDefCtors = new Dictionary<Type, ConstructorInfo>();
+
 		
 		//Highest itemdef model #: 21384	(0x5388)	<-- That's a multi. The last real item is 0x3fff.
 		//Highest chardef model #: 987 (0x03db)
@@ -191,8 +191,8 @@ namespace SteamEngine {
 		protected abstract Thing CreateImpl();
 
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					curNode.storedTG.Run(self, td, sa);
 					curNode = curNode.nextNode;
@@ -201,8 +201,8 @@ namespace SteamEngine {
 		}
 		
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					curNode.storedTG.TryRun(self, td, sa);
 					curNode = curNode.nextNode;
@@ -211,8 +211,8 @@ namespace SteamEngine {
 		}
 		
 		internal bool CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.Run(self, td, sa);
 					try {
@@ -229,8 +229,8 @@ namespace SteamEngine {
 		}
 		
 		internal bool TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.TryRun(self, td, sa);
 					try {
@@ -280,7 +280,9 @@ namespace SteamEngine {
 		
 		//for loading of thingdefs from .scp/.def scripts
 		public static Type GetDefTypeByName(string name) {
-			return (Type) thingDefTypesByName[name];
+			Type defType;
+			thingDefTypesByName.TryGetValue(name, out defType);
+			return defType;
 		}
 		
 		public static new bool ExistsDefType(string name) {
@@ -288,31 +290,30 @@ namespace SteamEngine {
 		}
 		
 		//checking type when loading...
-		public static Type GetDefTypeByThingName(string name) {//
-			return (Type) thingDefTypesByThingName[name];
-		}
-		
-		public static bool ExistsThingSubtype(string name) {
-			return thingDefTypesByThingName.ContainsKey(name);
+		public static Type GetDefTypeByThingType(Type thingType) {//
+			Type defType;
+			thingDefTypesByThingType.TryGetValue(thingType, out defType);
+			return defType;
 		}
 		
 		private static Type[] thingDefConstructorParamTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
 		
 		//this should be typically called by the Bootstrap methods of scripted ThingDef
-		public static void RegisterThingDef(Type thingDefType, string thingTypeName) {
-			object o = thingDefTypesByThingName[thingTypeName];
-			if (o != null) {//we have already a Thing type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class "+LogStr.Ident(o)+" in the register of Thing classes.");
+		public static void RegisterThingDef(Type thingDefType, Type thingType) {
+			Type t;
+			if (thingDefTypesByThingType.TryGetValue(thingDefType, out t)) {
+				throw new OverrideNotAllowedException("ThingDef type "+LogStr.Ident(thingDefType.FullName)+" already has it's Thing type -"+t.FullName+".");
 			}
-			o = thingDefTypesByName[thingDefType.Name];
-			if (o != null) { //we have already a ThingDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class "+LogStr.Ident(o)+" in the register of ThingDef classes.");
+			if (thingTypesByThingDefType.TryGetValue(thingType, out t)) {
+				throw new OverrideNotAllowedException("Thing type "+LogStr.Ident(thingType.FullName)+" already has it's ThingDef type -"+t.FullName+".");
 			}
+
 			ConstructorInfo ci = thingDefType.GetConstructor(thingDefConstructorParamTypes);
 			if (ci == null) {
 				throw new Exception("Proper constructor not found.");
 			}
-			thingDefTypesByThingName[thingTypeName] = thingDefType;
+			thingDefTypesByThingType[thingType] = thingDefType;
+			thingTypesByThingDefType[thingDefType] = thingType;
 			thingDefTypesByName[thingDefType.Name] = thingDefType;
 			thingDefCtors[thingDefType] = MemberWrapper.GetWrapperFor(ci);
 		}
@@ -401,7 +402,7 @@ namespace SteamEngine {
 				if (def != null) {//it isnt thingDef
 					throw new OverrideNotAllowedException("ThingDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def));
 				} else {
-					ConstructorInfo cw = (ConstructorInfo) thingDefCtors[thingDefType];
+					ConstructorInfo cw = thingDefCtors[thingDefType];
 					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] {defname, input.filename, input.headerLine}, null);
 				}
 			} else if (thingDef.unloaded) {
@@ -495,7 +496,8 @@ namespace SteamEngine {
 		}
 		
 		internal static void UnLoadAll() {
-			thingDefTypesByThingName.Clear();//we can assume that inside core there are no non-abstract thingdefs
+			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
+			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingDefTypesByName.Clear();
 			thingDefCtors.Clear(); 
 

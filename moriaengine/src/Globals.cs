@@ -45,7 +45,7 @@ namespace SteamEngine {
 		//bool IsLoggedIn { get; }
 	}
 
-	public class Globals : TagHolder {
+	public class Globals : PluginHolder {
 		//The minimum and maximum ranges that a client can get packets within
 		public const int MaxUpdateRange=18;
 		public const int MaxUpdateRangeSquared=MaxUpdateRange*MaxUpdateRange;
@@ -615,7 +615,6 @@ namespace SteamEngine {
 
 		internal static void SaveGlobals(SaveStream output) {
 			Logger.WriteDebug("Saving globals.");
-			output.WriteComment("Textual SteamEngine save");
 			output.WriteComment("globals");
 			output.WriteLine();
 			output.WriteSection("Globals", serverName.Replace(' ', '_'));//the header name is in fact ignored

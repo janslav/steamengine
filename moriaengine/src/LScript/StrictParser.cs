@@ -378,7 +378,7 @@ namespace SteamEngine.LScript {
             alt.AddToken((int) StrictConstants.CROSSHASH, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) StrictConstants.TRIGGER_KEY, 1, 1);
+            alt.AddProduction((int) StrictConstants.AT_KEY, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
             alt.AddProduction((int) StrictConstants.TIMER_KEY, 1, 1);
@@ -405,9 +405,28 @@ namespace SteamEngine.LScript {
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
+            pattern = new ProductionPattern((int) StrictConstants.AT_KEY,
+                                            "AtKey");
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) StrictConstants.TRIGGER_KEY, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) StrictConstants.PLUGIN_KEY, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
             pattern = new ProductionPattern((int) StrictConstants.TRIGGER_KEY,
                                             "TriggerKey");
             alt = new ProductionPatternAlternative();
+            alt.AddToken((int) StrictConstants.AT, 1, 1);
+            alt.AddToken((int) StrictConstants.STRING, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) StrictConstants.PLUGIN_KEY,
+                                            "PluginKey");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) StrictConstants.AT, 1, 1);
             alt.AddToken((int) StrictConstants.AT, 1, 1);
             alt.AddToken((int) StrictConstants.STRING, 1, 1);
             pattern.AddAlternative(alt);

@@ -266,13 +266,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\src\CompiledScripts\ClassTemplateInstance.cs">
-      <Link>CompiledScripts\ClassTemplateInstance.cs</Link>
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateInstance.cs</Link>
     </Compile>
     <Compile Include="..\..\src\CompiledScripts\ClassTemplateInstanceField.cs">
-      <Link>CompiledScripts\ClassTemplateInstanceField.cs</Link>
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateInstanceField.cs</Link>
     </Compile>
     <Compile Include="..\..\src\CompiledScripts\ClassTemplateReader.cs">
-      <Link>CompiledScripts\ClassTemplateReader.cs</Link>
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateReader.cs</Link>
     </Compile>
     <Compile Include="..\..\src\CompiledScripts\CompiledGump.cs">
       <Link>CompiledScripts\CompiledGump.cs</Link>
@@ -307,6 +307,12 @@
     <Compile Include="..\..\src\CoreLogger.cs">
       <Link>CoreLogger.cs</Link>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\src\DecoratedClassesDeepCopyImplementor.cs">
+      <Link>DecoratedClassesDeepCopyImplementor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\DeepCopyFactory.cs">
+      <Link>DeepCopyFactory.cs</Link>
     </Compile>
     <Compile Include="..\..\src\DelayedResolver.cs">
       <Link>DelayedResolver.cs</Link>
@@ -653,6 +659,18 @@
     </Compile>
     <Compile Include="..\..\src\Persistence\WorldSaver.cs">
       <Link>Persistence\WorldSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Plugin.cs">
+      <Link>Plugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\PluginDef.cs">
+      <Link>PluginDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\PluginHolder.cs">
+      <Link>PluginHolder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\PluginKey.cs">
+      <Link>PluginKey.cs</Link>
     </Compile>
     <Compile Include="..\..\src\Point.cs">
       <Link>Point.cs</Link>

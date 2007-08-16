@@ -42,9 +42,9 @@ namespace SteamEngine.Timers {
 		
 		internal int index = -1; //index in the Priorityqueue. do not touch!
 		public readonly TimerKey name;
-		private TagHolder obj;
-		public TagHolder Obj { get {
-			return obj;
+		private TagHolder cont;
+		public TagHolder Cont { get {
+			return cont;
 		} }
 		internal long fireAt = -1;//internal (instead of private) because of the priorityqueue. do not touch!
 		//public bool freezable = true; //will be frozen when sector is frozen?
@@ -62,9 +62,11 @@ namespace SteamEngine.Timers {
 		}
 		
 		public virtual void Enqueue() {
-			if (obj != null) {
-				obj.AddTimer(this);
-				isAssigned = true;
+			if (cont != null) {
+				if (!isAssigned) {
+					cont.AddTimer(this);
+					isAssigned = true;
+				}
 			} else {
 				isAssigned = false;
 			}
@@ -102,11 +104,11 @@ namespace SteamEngine.Timers {
 				Timer timer = priorityQueue.Peek();
 				//Console.WriteLine("TimingOut timer "+timer);
 				if (timer.fireAt <= now) {
-					priorityQueue.Dequeue();//we have already peeked it
-					if (timer.isAssigned) {
+					priorityQueue.Dequeue();//we have already peeked at it
+					if (timer.isAssigned) {//fire only when assigned, otherwise it means it's already removed!
 						timer.Remove();
 						currentTimer = timer;
-						timer.OnTimeout();//fire only when assigned, otherwise it means it's already removed!
+						timer.OnTimeout();
 						currentTimer = null;
 					} else {
 						timer.isEnqueued = false;
@@ -128,22 +130,30 @@ namespace SteamEngine.Timers {
 			this.name = name;
 			loadedTimers.Add(this);
 		}
-
-		protected Timer(Timer copyFrom, TagHolder assignTo) {
-			//copying constructor (for copying of tagholders)
-			name=copyFrom.name;
-			fireAt=copyFrom.fireAt;
-			args=copyFrom.args;
-			obj=assignTo;
-		}
 		
 		public Timer(TagHolder obj, TimerKey name, TimeSpan time, params object[] args) {
 			this.name = name;
-			this.obj=obj;
+			this.cont=obj;
 			this.fireAt=Globals.TimeInTicks+HighPerformanceTimer.TimeSpanToTicks(time);
 			this.args=args;
 		}
 
+		protected Timer(Timer copyFrom) {
+			//copying constructor (for copying of tagholders)
+			name=copyFrom.name;
+			fireAt=copyFrom.fireAt;
+			DeepCopyFactory.GetCopyDelayed(copyFrom.args, DelayedGetCopy_Args);
+			DeepCopyFactory.GetCopyDelayed(copyFrom.cont, DelayedGetCopy_Cont);
+		}
+
+		public void DelayedGetCopy_Cont(object copy) {
+			cont = (TagHolder) copy;
+			Enqueue();
+		}
+
+		public void DelayedGetCopy_Args(object copy) {
+			args = (object[]) copy;
+		}
 
 		public bool IsDeleted {
 			get {
@@ -176,14 +186,12 @@ namespace SteamEngine.Timers {
 		public void Remove() {
 			isEnqueued = false;
 			if (isAssigned) {
-				obj.RemoveTimer(this);
+				cont.RemoveTimer(this);
 				isAssigned = false;
 			}
 		}
 		
 		protected abstract void OnTimeout();
-
-		protected abstract Timer Dupe(TagHolder assignTo);
 
 		private static Type[] timerConstructorParamTypes = new Type[] { typeof(TimerKey) };
 
@@ -210,7 +218,7 @@ namespace SteamEngine.Timers {
 		}
 
 		internal virtual void Save(SaveStream output) {
-			output.WriteValue("object",obj);
+			output.WriteValue("object",cont);
 			output.WriteValue("fireat",fireAt);
 			//if (!freezable) {
 				//output.WriteValue("freezable", freezable);
@@ -228,7 +236,7 @@ namespace SteamEngine.Timers {
 
 		public override string ToString() {
 			StringBuilder toreturn = new StringBuilder(GetType().Name+" ").Append(name).Append(" on ");
-			toreturn.Append(string.Concat("'", obj, "'"));
+			toreturn.Append(string.Concat("'", cont, "'"));
 			//if (args!=null) {
 			//	if (args.Length>0) {
 			//		toreturn.Append(", args:");
@@ -279,12 +287,12 @@ namespace SteamEngine.Timers {
 				while (argsList.Count<=index) {
 					argsList.Add(null);
 				}
-				ObjectSaver.Load(value, new LoadObjectParam(LoadArgs_Delayed), filename, line, index);
+				ObjectSaver.Load(value, new LoadObjectParam(DelayedLoad_Args), filename, line, index);
 				return;
 			}
 			switch (name) {
 				case "object": 
-					ObjectSaver.Load(value, new LoadObject(LoadObject_Delayed), filename, line);
+					ObjectSaver.Load(value, new LoadObject(DelayedLoad_Cont), filename, line);
 					return;
 				case "fireat":
 					fireAt = ConvertTools.ParseInt64(value);
@@ -305,7 +313,7 @@ namespace SteamEngine.Timers {
 				Timer timer = loadedTimers[i] as Timer;
 				if (timer != null) {
 					try {
-						if (timer.obj != null) {
+						if (timer.cont != null) {
 							if (timer.fireAt != -1) {
 								timer.Enqueue();
 							} else {
@@ -330,11 +338,11 @@ namespace SteamEngine.Timers {
 			return constructors.ContainsKey(name);
 		}
 		
-		public virtual void LoadObject_Delayed(object resolvedObject, string filename, int line) {
-			obj = (TagHolder) resolvedObject;
+		public virtual void DelayedLoad_Cont(object resolvedObject, string filename, int line) {
+			cont = (TagHolder) resolvedObject;
 		}
 		
-		public void LoadArgs_Delayed(object resolvedObject, string filename, int line, object index) {
+		public void DelayedLoad_Args(object resolvedObject, string filename, int line, object index) {
 			argsList[(int) index] = resolvedObject;
 		}
 	}

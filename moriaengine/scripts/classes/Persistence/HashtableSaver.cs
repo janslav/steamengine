@@ -54,9 +54,9 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine valueLine = input.PopPropsLine(i+".V");
 					HashtableLoadHelper helper = new HashtableLoadHelper(table, i);
 					currentLineNumber = keyLine.line;
-					ObjectSaver.Load(keyLine.value, new LoadObject(helper.LoadKey_Delayed), input.filename, keyLine.line);
+					ObjectSaver.Load(keyLine.value, new LoadObject(helper.DelayedLoad_Key), input.filename, keyLine.line);
 					currentLineNumber = valueLine.line;
-					ObjectSaver.Load(valueLine.value, new LoadObject(helper.LoadValue_Delayed), input.filename, valueLine.line);
+					ObjectSaver.Load(valueLine.value, new LoadObject(helper.DelayedLoad_Value), input.filename, valueLine.line);
 				}
 				return table;
 			} catch (FatalException) {
@@ -89,19 +89,17 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			internal void LoadValue_Delayed(object loadedObj, string filename, int line) {
+			internal void DelayedLoad_Value(object loadedObj, string filename, int line) {
 				this.value = loadedObj;
 				valueLoaded = true;
 				TryInsertIntoTable();
 			}
 
-			internal void LoadKey_Delayed(object loadedObj, string filename, int line) {
+			internal void DelayedLoad_Key(object loadedObj, string filename, int line) {
 				this.key = loadedObj;
 				keyLoaded = true;
 				TryInsertIntoTable();
 			}
-
-
 		}
 	}
 }

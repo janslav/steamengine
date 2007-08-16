@@ -40,7 +40,7 @@ namespace SteamEngine {
 		internal abstract GumpInstance InternalConstruct(Thing focused, AbstractCharacter sendTo, object[] args);
 	}
 
-	public abstract class GumpInstance : TagHolder {
+	public abstract class GumpInstance : PluginHolder {
 		private static uint uids = 0;
 
 		public readonly uint uid;

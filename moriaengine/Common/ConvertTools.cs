@@ -259,50 +259,56 @@ namespace SteamEngine.Common {
 			OverflowException - If the format is correct, but it won't fit in the data type we're trying to convert it to.
 		*/
 		public static object ParseSphereNumber(string input) {
+			object retVal;
+			if (TryParseSphereNumber(input, out retVal)) {
+				return retVal;
+			}
+			throw new FormatException("'"+input+"' does not appear to be any kind of number.");
+		}
+
+		public static bool TryParseSphereNumber(string input, out object retVal) {
 			if (input == null) {
-				throw new ArgumentNullException("input");
+				retVal = null;
+				return false;
 			}
 
 			if (input.Length==0) {
-				throw new FormatException("Cannot convert an empty string to any kind of number!");
-			} 
+				retVal = null;
+				return false;
+			}
 
 			Match m = hexRE.Match(input);
 			if (m.Success) {
 				string toConvert = m.Groups["value"].Value;
 				try {
-					return uint.Parse(toConvert, NumberStyles.HexNumber);
+					retVal = uint.Parse(toConvert, NumberStyles.HexNumber);
+					return true;
 				} catch (OverflowException) {//try a bigger type. If this fails, we give up.
-					return ulong.Parse(toConvert, NumberStyles.HexNumber);
-				} 
+					retVal = ulong.Parse(toConvert, NumberStyles.HexNumber);
+					return true;
+				}
 			}
-			
+
 			m = intRE.Match(input);
 			if (m.Success) {
 				string toConvert = m.Groups["value"].Value;
 				try {
-					return int.Parse(toConvert);
+					retVal = int.Parse(toConvert);
+					return true;
 				} catch (OverflowException) {//try a bigger type. If this fails, we give up.
-					return long.Parse(toConvert);
-				} 
+					retVal = long.Parse(toConvert);
+					return true;
+				}
 			}
-		
+
 			m = floatRE.Match(input);
 			if (m.Success) {
-				return double.Parse(m.Groups["value"].Value);
+				retVal = double.Parse(m.Groups["value"].Value);
+				return true;
 			}
-			
-			throw new FormatException("'"+input+"' does not appear to be any kind of number.");
-		}
 
-		public static bool TryParseSphereNumber(string input, out object retVal) {
 			retVal = null;
-			try {
-				retVal = ParseSphereNumber(input);
-			} catch (Exception) {
-				return false;
-			}
-			return true;
+			return false;
 		}
 
 

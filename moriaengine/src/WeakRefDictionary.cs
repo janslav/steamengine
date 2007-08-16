@@ -36,7 +36,7 @@ namespace SteamEngine {
 	[Remark("Dictionary of weakly referenced keys and values. "
 	+"That means you can put inside stuff and then later it may or may not be still inside :)"
 	+"Depending on whether it has been deleted meanwhile (if it's IDeletable) or eaten by system garbage collection.")]
-	public class WeakRefDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IPurgable {
+	public class WeakRefDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IPurgable where TKey : class where TValue : class {
 		private Dictionary<WeakRefDictionaryKeyEntry, WeakReference> dict;
 		private IEqualityComparer<TKey> comparer;
 
@@ -46,7 +46,7 @@ namespace SteamEngine {
 		}
 
 		public WeakRefDictionary(IEqualityComparer<TKey> comparer) {
-			dict = new Dictionary<WeakRefDictionaryKeyEntry, WeakReference>(new CacheComparer<TKey, TValue>(this));
+			dict = new Dictionary<WeakRefDictionaryKeyEntry, WeakReference>(new CacheComparer(this));
 			WeakRefDictionaryUtils.allCaches.Add(new WeakReference(this));
 			if (comparer == null) {
 				this.comparer = EqualityComparer<TKey>.Default;
@@ -55,16 +55,16 @@ namespace SteamEngine {
 			}
 		}
 
-		private class CacheComparer<TCKey, TCValue> : IEqualityComparer<WeakRefDictionaryKeyEntry> {
-			private WeakRefDictionary<TCKey, TCValue> cache;
+		private class CacheComparer : IEqualityComparer<WeakRefDictionaryKeyEntry> {
+			private WeakRefDictionary<TKey, TValue> cache;
 
-			internal CacheComparer(WeakRefDictionary<TCKey, TCValue> cache) {
+			internal CacheComparer(WeakRefDictionary<TKey, TValue> cache) {
 				this.cache = cache;
 			}
 
 			public bool Equals(WeakRefDictionaryKeyEntry entryA, WeakRefDictionaryKeyEntry entryB) {
-				TCKey keyA = (TCKey) entryA.weakKey.Target;
-				TCKey keyB = (TCKey) entryB.weakKey.Target;
+				TKey keyA = (TKey) entryA.weakKey.Target;
+				TKey keyB = (TKey) entryB.weakKey.Target;
 				if ((keyA != null) && (keyB != null)) {
 					IDeletable deletable = keyA as IDeletable;
 					if (deletable != null) {
@@ -188,34 +188,34 @@ namespace SteamEngine {
 			}
 		}
 
-		private KeysCollection<TKey, TValue> keys;
+		private KeysCollection keys;
 		public ICollection<TKey> Keys {
 			get {
 				if (keys == null) {
-					keys = new KeysCollection<TKey, TValue>(this);
+					keys = new KeysCollection(this);
 				}
 				return keys;
 			}
 		}
 
-		private ValuesCollection<TKey, TValue> values;
+		private ValuesCollection values;
 		public ICollection<TValue> Values {
 			get {
 				if (values == null) {
-					values = new ValuesCollection<TKey, TValue>(this);
+					values = new ValuesCollection(this);
 				}
 				return values;
 			}
 		}
 
-		private class KeysCollection<TKKey,TKValue> : ICollection<TKKey> {
-			private WeakRefDictionary<TKKey,TKValue> cache;
+		private class KeysCollection : ICollection<TKey> {
+			private WeakRefDictionary<TKey,TValue> cache;
 
-			internal KeysCollection(WeakRefDictionary<TKKey,TKValue> cache) {
+			internal KeysCollection(WeakRefDictionary<TKey,TValue> cache) {
 				this.cache = cache;
 			}
 
-			public void Add(TKKey item) {
+			public void Add(TKey item) {
 				throw new NotSupportedException("readonly");
 			}
 
@@ -223,18 +223,18 @@ namespace SteamEngine {
 				throw new NotSupportedException("readonly");
 			}
 
-			public bool Remove(TKKey item) {
+			public bool Remove(TKey item) {
 				throw new NotSupportedException("readonly");
 			}
 
-			public bool Contains(TKKey key) {
+			public bool Contains(TKey key) {
 				return cache.dict.ContainsKey(new WeakRefDictionaryKeyEntry(key));
 			}
 
-			public void CopyTo(TKKey[] array, int arrayIndex) {
+			public void CopyTo(TKey[] array, int arrayIndex) {
 				cache.Purge();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
-					array[arrayIndex] = (TKKey) pair.Key.weakKey.Target;
+					array[arrayIndex] = (TKey) pair.Key.weakKey.Target;
 					arrayIndex++;
 				}
 			}
@@ -251,10 +251,10 @@ namespace SteamEngine {
 				}
 			}
 
-			public IEnumerator<TKKey> GetEnumerator() {
+			public IEnumerator<TKey> GetEnumerator() {
 				cache.Purge();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
-					yield return (TKKey) pair.Key.weakKey.Target;
+					yield return (TKey) pair.Key.weakKey.Target;
 				}
 			}
 
@@ -266,14 +266,14 @@ namespace SteamEngine {
 			}
 		}
 
-		private class ValuesCollection<TKKey, TKValue> : ICollection<TKValue> {
-			private WeakRefDictionary<TKKey, TKValue> cache;
+		private class ValuesCollection : ICollection<TValue> {
+			private WeakRefDictionary<TKey, TValue> cache;
 
-			internal ValuesCollection(WeakRefDictionary<TKKey, TKValue> cache) {
+			internal ValuesCollection(WeakRefDictionary<TKey, TValue> cache) {
 				this.cache = cache;
 			}
 
-			public void Add(TKValue item) {
+			public void Add(TValue item) {
 				throw new NotSupportedException("readonly");
 			}
 
@@ -281,18 +281,18 @@ namespace SteamEngine {
 				throw new NotSupportedException("readonly");
 			}
 
-			public bool Remove(TKValue item) {
+			public bool Remove(TValue item) {
 				throw new NotSupportedException("readonly");
 			}
 
-			public bool Contains(TKValue value) {
+			public bool Contains(TValue value) {
 				return cache.dict.ContainsValue(new WeakReference(value));
 			}
 
-			public void CopyTo(TKValue[] array, int arrayIndex) {
+			public void CopyTo(TValue[] array, int arrayIndex) {
 				cache.Purge();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
-					array[arrayIndex] = (TKValue) pair.Value.Target;
+					array[arrayIndex] = (TValue) pair.Value.Target;
 					arrayIndex++;
 				}
 			}
@@ -309,10 +309,10 @@ namespace SteamEngine {
 				}
 			}
 
-			public IEnumerator<TKValue> GetEnumerator() {
+			public IEnumerator<TValue> GetEnumerator() {
 				cache.Purge();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
-					yield return (TKValue) pair.Value.Target;
+					yield return (TValue) pair.Value.Target;
 				}
 			}
 

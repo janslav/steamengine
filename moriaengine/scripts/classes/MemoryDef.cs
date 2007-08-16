@@ -44,23 +44,6 @@ namespace SteamEngine.CompiledScripts {
 			return new Memory(this);
 		}
 		
-		//public TriggerGroup Type {
-		//    get {
-		//        return (TriggerGroup) type.CurrentValue;
-		//    } set {
-		//        type.CurrentValue=value;
-		//    }
-		//}
-		
-		//public string Name { 
-		//    get { 
-		//        return (string) name.CurrentValue;
-		//    } 
-		//    set {
-		//        name.CurrentValue = value;
-		//    }
-		//}
-		
 		public static new MemoryDef Get(string defname) {
 			AbstractScript script;
 			byDefname.TryGetValue(defname, out script);
@@ -143,57 +126,41 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Trigger(Memory self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
-				do {
-					curNode.storedTG.Run(self, td, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			foreach (TriggerGroup tg in this.AllTriggerGroups) {
+				tg.Run(self, td, sa);
 			}
 		}
 
 		internal void TryTrigger(Memory self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
-				do {
-					curNode.storedTG.TryRun(self, td, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			foreach (TriggerGroup tg in this.AllTriggerGroups) {
+				tg.TryRun(self, td, sa);
 			}
 		}
 
 		internal bool CancellableTrigger(Memory self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
-				do {
-					object retVal = curNode.storedTG.Run(self, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+			foreach (TriggerGroup tg in this.AllTriggerGroups) {
+				object retVal = tg.Run(self, td, sa);
+				try {
+					int retInt = Convert.ToInt32(retVal);
+					if (retInt == 1) {
+						return true;
 					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+				} catch (Exception) {
+				}
 			}
 			return false;
 		}
 
 		internal bool TryCancellableTrigger(Memory self, TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TagHolder.TGStoreNode curNode = triggerGroups;
-				do {
-					object retVal = curNode.storedTG.TryRun(self, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+			foreach (TriggerGroup tg in this.AllTriggerGroups) {
+				object retVal = tg.TryRun(self, td, sa);
+				try {
+					int retInt = Convert.ToInt32(retVal);
+					if (retInt == 1) {
+						return true;
 					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+				} catch (Exception) {
+				}
 			}
 			return false;
 		}

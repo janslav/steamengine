@@ -318,12 +318,8 @@ namespace SteamEngine.CompiledScripts {
 				: base(name) {
 			}
 
-			protected AStarDecayTimer(AStarDecayTimer copyFrom, TagHolder assignTo)
-				: base(copyFrom, assignTo) {
-			}
-
-			protected sealed override Timer Dupe(TagHolder assignTo) {
-				return new AStarDecayTimer(this, assignTo);
+			protected AStarDecayTimer(AStarDecayTimer copyFrom)
+				: base(copyFrom) {
 			}
 
 			public AStarDecayTimer(Item obj, TimeSpan time)
@@ -331,7 +327,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout() {
-				Item self = this.Obj as Item;
+				Item self = this.Cont as Item;
 				if (self != null) {
 					self.Delete();
 				}
@@ -368,17 +364,15 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TimerKey walkTimerKey = TimerKey.Get("testWalkTimer");
 
+		[ManualDeepCopyClass]
 		public class AStarWalkTimer : Timer {
 			public AStarWalkTimer(TimerKey name)
 				: base(name) {
 			}
 
-			protected AStarWalkTimer(AStarWalkTimer copyFrom, TagHolder assignTo)
-				: base(copyFrom, assignTo) {
-			}
-
-			protected sealed override Timer Dupe(TagHolder assignTo) {
-				return new AStarWalkTimer(this, assignTo);
+			[DeepCopyImplementation]
+			public AStarWalkTimer(AStarWalkTimer copyFrom)
+				: base(copyFrom) {
 			}
 
 			public AStarWalkTimer(Character obj, TimeSpan time, Direction[] path)
@@ -387,7 +381,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout() {
-				Character self = (Character) this.Obj;
+				Character self = (Character) this.Cont;
 
 				Direction[] path = (Direction[]) this.args[0];
 				int pathIndex =  Convert.ToInt32(this.args[1]);

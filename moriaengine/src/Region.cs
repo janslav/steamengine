@@ -26,7 +26,8 @@ using SteamEngine.Persistence;
 namespace SteamEngine {
 	
 	//todo: make some members virtual?
-	public class Region : TagHolder, IImportable {
+	[SaveableClass]
+	public class Region : PluginHolder {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
@@ -34,7 +35,6 @@ namespace SteamEngine {
 		private static Dictionary<string, Region> byName;
 		private static Dictionary<string, Region> byDefname;
 		private static List<RegionRectangle> tempRectangles;
-		private static Dictionary<string,ConstructorInfo> constructorsByName = new Dictionary<string,ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 		private static Region worldRegion = voidRegion;
 		private static int highestHierarchyIndex = -1;
 		
@@ -70,6 +70,136 @@ namespace SteamEngine {
 			this.name = ""; //this is typically not unique, containing spaces etc.
 			this.createdAt = HighPerformanceTimer.TickCount;
 		}
+
+		[LoadSection]
+		public Region(PropsSection input) {
+			string defName = input.headerName;
+
+			if (!byDefname.ContainsKey(defName)) {
+				byDefname[defName] = this;
+				this.defname = defName;
+			} else {
+				throw new OverrideNotAllowedException("Region "+LogStr.Ident(defName)+" loaded multiple times.");
+			}
+
+			tempRectangles.Clear();
+			this.LoadSectionLines(input);
+			this.rectangles = tempRectangles.ToArray();
+		}
+
+		public class RegionSaveCoordinator : IBaseClassSaveCoordinator {
+			public static readonly Regex regionNameRE = new Regex(@"^\(\s*(?<value>\w*)\s*\)\s*$",
+				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+			public string FileNameToSave {
+				get { return "regions"; }
+			}
+
+			public void StartingLoading() {
+				
+			}
+
+			public void SaveAll(SaveStream output) {
+				Logger.WriteDebug("Saving Regions.");
+				output.WriteComment("Regions");
+				output.WriteLine();
+
+				foreach (Region region in byDefname.Values) {
+					region.SaveWithHeader(output);
+				}
+
+				Logger.WriteDebug("Saved "+byDefname.Count+" regions.");
+			}
+
+			public void LoadingFinished() {
+				if (highestHierarchyIndex != -1) {
+					return;
+				}
+				try {
+					Logger.WriteDebug("Resolving loaded regions");
+
+					foreach (Region region in byDefname.Values) {
+						if (region.parent == null) {
+							if (worldRegion == voidRegion) {
+								worldRegion = region;
+							} else {
+								throw new SEException("Parent missing for the region "+LogStr.Ident(region.defname));
+							}
+						}
+					}
+
+					if (worldRegion == voidRegion) {
+						throw new SEException("No world region defined.");
+					}
+
+					List<Region> tempList = new List<Region>(byDefname.Values);//copy list of all regions
+					int lastCount = -1;
+					while (tempList.Count > 0) {
+						if (lastCount == tempList.Count) {
+							//this will probably never happen
+							throw new SEException("Region hierarchy not completely resolvable.");
+						}
+						lastCount = tempList.Count;
+						Region r = tempList[lastCount - 1];
+						r.SetHierarchyIndex(tempList);
+					}
+
+					foreach (Region region in byDefname.Values) {
+						byName[region.Name] = region;
+					}
+
+					//and now the (cpu) intensive part :)  check if the declared hierarchy is right
+					//it has no real effect, only showing warnings about overlapping regions
+					//it's optional - part of the "resolveEverythingAtStart" option in .ini
+					if (Globals.resolveEverythingAtStart) {
+						CheckAllRegions();
+					}
+
+					//and now finally activate the regions - spread the references to their rectangles to the map sectors :)
+					List<Region>[] regionsByMapplane = new List<Region>[0x100];
+					foreach (Region region in byDefname.Values) {
+						List<Region> list = regionsByMapplane[region.Mapplane];
+						if (list == null) {
+							list = new List<Region>();
+							regionsByMapplane[region.Mapplane] = list;
+						}
+						if (!region.IsWorldRegion) { //we dont want the world region in sectors...
+							list.Add(region);
+						}
+					}
+					for (int i = 0, n = regionsByMapplane.Length; i<n; i++) {
+						List<Region> list = regionsByMapplane[i];
+						if (list != null) {
+							Map map = Map.GetMap((byte) i);
+							map.ActivateRegions(list);
+						}
+					}
+				} catch (FatalException) {
+					throw;
+				} catch (Exception e) {
+					Logger.WriteCritical("Regions not used.", e);
+					ClearAll();
+				}
+			}
+
+			public Type BaseType {
+				get { return typeof(Region); }
+			}
+
+			public string GetReferenceLine(object value) {
+				return "("+((Region) value).Defname+")";
+			}
+
+			public Regex ReferenceLineRecognizer {
+				get { return regionNameRE; }
+			}
+
+			public object Load(Match m) {
+				return Region.GetByDefname(m.Groups["value"].Value);
+			}
+		}
+
+
 
 		public Region Parent { get {
 			return parent;
@@ -204,16 +334,6 @@ namespace SteamEngine {
 		public static IEnumerable<Region> AllRegions { get {
 			return byDefname.Values;
 		} }
-
-		public static IEnumerable<IImportable> AllRegionsAsImportables {
-			get {
-				List<IImportable> retVal = new List<IImportable>(byDefname.Count);
-				foreach (IImportable i in byDefname.Values) {
-					retVal.Add(i);
-				}
-				return retVal;
-			}
-		}
 		
 		public override string Name { 
 			get {
@@ -223,155 +343,6 @@ namespace SteamEngine {
 				byName.Remove(name);
 				name = String.Intern(value);
 				byName[value] = this;
-			}
-		}
-
-		public static void UnloadScripts() {
-			ConstructorInfo[] ctors = new ConstructorInfo[constructorsByName.Count];
-			constructorsByName.Values.CopyTo(ctors, 0);
-			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
-
-			foreach (ConstructorInfo cw in ctors) {
-				Type type = cw.DeclaringType;
-				if (coreAssembly != type.Assembly) {
-					constructorsByName.Remove(type.Name);
-				}
-			}
-		}
-		
-		internal static void StartingLoading() {
-		}
-		
-		internal static bool IsRegionHeaderName(string header) {
-			if (header.StartsWith("world")) {
-				header = header.Substring(5);
-			}
-			if (header == "area") {
-				header = "region";
-			}
-			return constructorsByName.ContainsKey(header);
-		}
-		
-		internal static void RegisterRegionType(Type type) {
-			ConstructorInfo cw = FindConstructor(type.GetConstructors(
-				BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance));
-			string typeName = type.Name;
-			if (constructorsByName.ContainsKey(typeName)) {
-				throw new SEException("Region class called '"+LogStr.Ident(typeName)+"' already exists.");
-			}
-			constructorsByName[typeName] = cw;
-		}
-		
-		private static ConstructorInfo FindConstructor(ConstructorInfo[] ci) {
-			if (ci.Length>0) {
-				int match = -1;
-				for (int a=0; a<ci.Length; a++) {
-					ParameterInfo[] pi = ci[a].GetParameters();
-					if (pi.Length==0) {
-						match = a;
-						break;
-					}
-				}
-				if (match!=-1) {
-					return MemberWrapper.GetWrapperFor(ci[match]);
-				}
-			}
-			throw new SEException("No proper constructor.");
-		}
-		
-		internal static void ClearRegisteredType() {
-			constructorsByName.Clear();
-		}
-		
-		internal static void Load(PropsSection input) {
-			string typeName = input.headerType.ToLower();
-
-			string defName = input.headerName;
-
-			Region region;
-			byDefname.TryGetValue(defName, out region);
-			if (region == null) {
-				ConstructorInfo cw = constructorsByName[typeName];
-				region = (Region) cw.Invoke(null);
-				byDefname[defName] = region;
-				region.defname = defName;
-			} else {
-				throw new OverrideNotAllowedException("Region "+LogStr.Ident(defName)+" loaded multiple times.");	
-			}
-
-			tempRectangles.Clear();
-			region.LoadSectionLines(input);
-			region.rectangles = tempRectangles.ToArray();
-		}
-		
-		internal static void LoadingFinished() {
-			if (highestHierarchyIndex != -1) {
-				return;
-			}
-			try {
-				Logger.WriteDebug("Resolving loaded regions");
-
-				foreach (Region region in byDefname.Values) {
-					if (region.parent == null) {
-						if (worldRegion == voidRegion) {
-							worldRegion = region;
-						} else {
-							throw new SEException("Parent missing for the region "+LogStr.Ident(region.defname));
-						}
-					}
-				}
-
-				if (worldRegion == voidRegion) {
-					throw new SEException("No world region defined.");
-				}
-				
-				List<Region> tempList = new List<Region>(byDefname.Values);//copy list of all regions
-				int lastCount = -1;
-				while (tempList.Count > 0) {
-					if (lastCount == tempList.Count) {
-						//this will probably never happen
-						throw new SEException("Region hierarchy not completely resolvable.");
-					}
-					lastCount = tempList.Count;
-					Region r = tempList[lastCount - 1];
-					r.SetHierarchyIndex(tempList);
-				}
-
-				foreach (Region region in byDefname.Values) {
-					byName[region.Name] = region;
-				}
-				
-				//and now the (cpu) intensive part :)  check if the declared hierarchy is right
-				//it has no real effect, only showing warnings about overlapping regions
-				//it's optional - part of the "resolveEverythingAtStart" option in .ini
-				if (Globals.resolveEverythingAtStart) {
-					CheckAllRegions();
-				}
-				
-				//and now finally activate the regions - spread the references to their rectangles to the map sectors :)
-				List<Region>[] regionsByMapplane = new List<Region>[0x100];
-				foreach (Region region in byDefname.Values) {
-					List<Region> list = regionsByMapplane[region.Mapplane];
-					if (list == null) {
-						list = new List<Region>();
-						regionsByMapplane[region.Mapplane] = list;
-					}
-					if (!region.IsWorldRegion) { //we dont want the world region in sectors...
-						list.Add(region);
-					}
-				}
-				for (int i = 0, n = regionsByMapplane.Length; i<n; i++) {
-					List<Region> list = regionsByMapplane[i];
-					if (list != null) {
-						Map map = Map.GetMap((byte) i);
-						map.ActivateRegions(list);
-					}
-				}
-			} catch (FatalException) {
-				throw;
-			} catch (Exception e) {
-				Logger.WriteCritical("Regions not used.", e);
-				ClearAll();
 			}
 		}
 		
@@ -557,18 +528,11 @@ namespace SteamEngine {
 			}
 		}
 
-		public static void SaveRegions(SaveStream output) {
-			Logger.WriteDebug("Saving Regions.");
-			output.WriteComment("Regions");
+		[Save]
+		public void SaveWithHeader(SaveStream output) {
+			output.WriteSection(this.GetType().Name, this.defname);
+			this.Save(output);
 			output.WriteLine();
-
-			foreach (Region region in byDefname.Values) {
-				output.WriteSection(region.GetType().Name, region.defname);
-				region.Save(output);
-				output.WriteLine();
-			}
-
-			Logger.WriteDebug("Saved "+byDefname.Count+" regions.");
 		}
 
 		public override void Save(SaveStream output) {
@@ -631,87 +595,6 @@ namespace SteamEngine {
 			Logger.WriteDebug(ch+" left "+this);
 			ch.SysMessage("You have just left "+this);
 			return false;
-		}
-
-		private static bool someRegionWasImported = false;
-		public void Import(ImportHelper helper) {
-			someRegionWasImported = true;
-			tempRectangles.Clear();
-			this.LoadSectionLines(helper.Section);
-			this.rectangles = tempRectangles.ToArray();
-			byDefname[this.defname] = this;
-		}
-
-		public void Export(SaveStream output) {
-			output.WriteSection(this.GetType().Name, this.defname);
-			this.Save(output);
-			output.WriteLine();
-			ObjectSaver.FlushCache(output);
-		}
-
-		[ImportAssignMethod]
-		public static void ImportAssign(ImportHelperCollection collection) {
-			foreach (ImportHelper helper in collection.Enumerate(typeof(Region))) {
-				PropsSection input = helper.Section;
-
-				string typeName = input.headerType.ToLower();
-				string defName = input.headerName;
-
-				long createdAt = ConvertTools.ParseInt64(input.PopPropsLine("createdat").value);
-
-				Region region;
-				byDefname.TryGetValue(defName, out region);
-				bool isNewAndRenamed = false;
-
-				string origDefname = defName;
-				if ((region != null) && (region.createdAt != createdAt)) {
-					int i = 1; 
-					while (byDefname.ContainsKey(defName)) {
-						defName = origDefname+"_"+i; 
-						i++;
-					}
-					Logger.WriteWarning("Imported region "+LogStr.Ident(origDefname)+" identified as new, and renamed to "+LogStr.Ident(defName));
-					isNewAndRenamed = true;//a new one will be created with this defname
-				}
-
-				if ((region == null) || isNewAndRenamed) {
-					ConstructorInfo cw;
-					constructorsByName.TryGetValue(typeName, out cw);
-					if (cw == null) {
-						throw new SEException(input.filename, input.headerLine, " Unknown region type "+LogStr.Ident(helper.Section.headerType)+" in imported file.");
-					}
-					region = (Region) cw.Invoke(null);
-					if (isNewAndRenamed) {
-						region.defname = origDefname;
-						collection.SetReplacedRegion(region);
-					}
-					region.defname = defName;
-				}
-				region.createdAt = createdAt;
-
-				helper.instance = region;
-			}
-		}
-
-		[ImportingFinishedMethod]
-		public static void ImportingFinished(ImportHelperCollection collection) {
-			if (someRegionWasImported) {
-				try {
-					foreach (Region region in byDefname.Values) {
-						region.hierarchyIndex = -1;
-					}
-
-					worldRegion = voidRegion;
-					highestHierarchyIndex = -1;
-
-					LoadingFinished();
-				} catch (FatalException) {
-					throw;
-				} catch (Exception e) {//kill!
-					throw new FatalException("Error while importing Regions. Unable to revert changes, exiting.", e);
-				}
-			}
-			someRegionWasImported = false;
 		}
 	}
 	

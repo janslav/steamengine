@@ -27,8 +27,8 @@ using System.CodeDom.Compiler;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SteamEngine.CompiledScripts {
-	public static partial class ClassTemplateReader {
+namespace SteamEngine.CompiledScripts.ClassTemplates {
+	public static class ClassTemplateReader {
 		public static bool ClassTemplateMessages = TagMath.ParseBoolean(ConfigurationManager.AppSettings["ClassTemplate Trace Messages"]);
 
 		static int curLineNumber;

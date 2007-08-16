@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 					ArrayIndexPair alip = new ArrayIndexPair();
 					alip.index = i;
 					alip.arr = arr;
-					ObjectSaver.Load(valueLine.value, new LoadObjectParam(LoadIndex_Delayed), input.filename, valueLine.line, alip);
+					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
 				}
 				return arr;
 			} catch (FatalException) {
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		
-		public void LoadIndex_Delayed(object loadedObj, string filename, int line, object param) {
+		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
 			ArrayIndexPair alip = (ArrayIndexPair) param;
 			alip.arr.SetValue(loadedObj, alip.index);
 		}

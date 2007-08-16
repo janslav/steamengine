@@ -26,25 +26,23 @@ using System.Text;
 //will be alternative to Timer which runs triggers...
 //this runs "hardcoded" methods via MethodInfo
 namespace SteamEngine.Timers {
+	[ManualDeepCopyClass]
 	public class MethodTimer : Timer {
 		private MethodInfo method;
 		
 		protected sealed override void OnTimeout() {
 			//Console.WriteLine("OnTimeout on timer "+this);
 			
-			method.Invoke(this.Obj, BindingFlags.Default, null, args, null);
+			method.Invoke(this.Cont, BindingFlags.Default, null, args, null);
 		}
 		
 		public MethodTimer(TimerKey name) : base(name) {
 		}
 		
-		protected MethodTimer(MethodTimer copyFrom, TagHolder assignTo) : base(copyFrom, assignTo) {
+		[DeepCopyImplementation]
+		public MethodTimer(MethodTimer copyFrom) : base(copyFrom) {
 			//copying constructor for copying of tagholders
 			method=copyFrom.method;
-		}
-
-		protected sealed override Timer Dupe(TagHolder assignTo) {
-			return new MethodTimer(this, assignTo);
 		}
 		
 		public MethodTimer(TagHolder obj, TimerKey name, TimeSpan time, MethodInfo method, params object[] args): 

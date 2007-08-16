@@ -32,7 +32,7 @@ namespace SteamEngine {
 	//class: Conn
 	//base abstract class for GameConn and ConsConn
 
-	abstract public class Conn : TagHolder {
+	abstract public class Conn : PluginHolder {
 		private IPAddress ip;
 		protected readonly Socket client;
 		internal GameAccount curAccount;

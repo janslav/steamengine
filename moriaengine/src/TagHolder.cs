@@ -44,88 +44,52 @@ namespace SteamEngine {
 		void ClearTags();
 	}
 
-	public interface ITriggerGroupHolder {
-		void AddTriggerGroup(TriggerGroup tg);
-		void ClearTriggerGroups();
-		bool HasTriggerGroup(TriggerGroup tg);
-		void RemoveTriggerGroup(TriggerGroup tg);
-
-		void Trigger(TriggerKey td, ScriptArgs sa);
-		void TryTrigger(TriggerKey td, ScriptArgs sa);
-		bool CancellableTrigger(TriggerKey td, ScriptArgs sa);
-		bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa);
-
-		void Trigger(TriggerKey td, params object[] scriptArguments);
-		bool CancellableTrigger(TriggerKey td, params object[] scriptArguments);
-	}
-
 	/*
 		Class: TagHolder
 		All Things (Items and Characters) and GameAccounts are TagHolders, as is Server.globals.
 	*/
-	public class TagHolder : IDeletable, ITagHolder, ITriggerGroupHolder {
-		private Hashtable tags = null; //in this tagholder are stored tags and Timers
-		protected TGStoreNode triggerGroups = null; //linked list of triggergroup references
-		//used also in ThingDef
-		
+	[Summary("This is the base class for implementation of our \"lightweight polymorphism\". "
+		+ "TagHolder class holds tags (values indexed by names) and Timers.")]
+	public class TagHolder : IDeletable, ITagHolder {
+		internal Hashtable tags = null; //in this tagholder are stored tags, Timers, and by PluginHolder also Plugins
+
+		public TagHolder() {
+		}
+
+		#region DeepCopy implementation
+		public TagHolder(TagHolder copyFrom) { //copying constuctor
+			if (copyFrom.tags != null) {
+				foreach (DictionaryEntry entry in copyFrom.tags) {
+					TagKey tagK = entry.Key as TagKey;
+					if (tagK != null) {
+						DeepCopyFactory.GetCopyDelayed(entry.Value, DelayedGetCopy_Tag, tagK);
+					} else {
+						TimerKey timerK = entry.Key as TimerKey;
+						if (timerK != null) {
+							DeepCopyFactory.GetCopyDelayed(entry.Value, DelayedGetCopy_Timer);
+						}
+					}
+				}
+			}
+		}
+
+		private void DelayedGetCopy_Tag(object copy, object paramTagKey) {
+			SetTag((TagKey) paramTagKey, copy);
+		}
+
+		private void DelayedGetCopy_Timer(object copy) {
+			//it should enqueue itself
+		}
+
+		#endregion DeepCopy implementation
+
 		public virtual string Name { get {
 			return "<tagholder instance>";
 		} set {
 		
 		} }
 
-		[Remark("Return enumerable containing all tags")]
-		public IEnumerable AllTags {
-			get {
-				Hashtable onlyTags = new Hashtable();
-				if(tags != null) {
-					foreach(DictionaryEntry entry in tags) {
-						if(entry.Key is TagKey) {
-							onlyTags.Add(entry.Key, entry.Value);
-						}
-					}
-				}
-				return onlyTags;
-			}
-		}
-
-		[Remark("Return enumerable containing all timers")]
-		public IEnumerable AllTimers {
-			get {
-				Hashtable onlyTimers = new Hashtable();
-				if(tags != null) {
-					foreach(DictionaryEntry entry in tags) {
-						if(entry.Key is TimerKey) {
-							onlyTimers.Add(entry.Key,entry.Value);
-						}
-					}
-				}
-				return onlyTimers;
-			}
-		}
-
-		public TagHolder() {
-		}
-		
-		public TagHolder(TagHolder copyFrom) { //copying constuctor
-			if (copyFrom.tags!=null) {
-				tags = new Hashtable();
-				foreach (DictionaryEntry entry in copyFrom.tags) {
-					tags[entry.Key] = Utility.CopyTagValue(entry.Value);
-				}
-			}
-			if (copyFrom.triggerGroups != null) {
-				triggerGroups = new TGStoreNode(copyFrom.triggerGroups.storedTG);
-				TGStoreNode curNode = triggerGroups;
-				TGStoreNode copiedNode = copyFrom.triggerGroups.nextNode;
-				while (copiedNode != null) {
-					curNode.nextNode = new TGStoreNode(copiedNode.storedTG);
-					curNode = curNode.nextNode;
-					copiedNode = copiedNode.nextNode;
-				}
-			}
-		}
-		
+		#region Timers
 		//called by Timer after load, do not use otherwise.
 		internal Timer AddTimer(Timer timer) {
 			if (tags == null) {
@@ -211,250 +175,49 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-		
-		/*
-			Method: AddTriggerGroup
-			Returns false if we already have the triggerGroup, true if not.
-			
-			Parameters:
-				tg - The TtriggerGroup to add. 
-		*/
-		public void AddTriggerGroup(TriggerGroup tg) {
-			if (tg == null) return;
-			if (triggerGroups == null) {
-				triggerGroups = new TGStoreNode(tg);
-			} else {
-				TGStoreNode curNode = triggerGroups;
-				while (true) {
-					if (curNode.storedTG == tg) {
-						return;// false;//we already have it
-					} else if (curNode.nextNode == null) {
-						curNode.nextNode = new TGStoreNode(tg);
-						return;
-					}
-					curNode = curNode.nextNode;
-				}
-				//return true;//we had to add it
-			}
-		}
-		
-		public void AddEvent(TriggerGroup tg) {
-			AddTriggerGroup(tg);
-		}
-		
-		/*
-			Method: RemoveTriggerGroup
-			Removes the triggerGroup if we have it.
-			
-			Parameters:
-				tg - The triggerGroup to remove.
-		*/
-		public void RemoveTriggerGroup(TriggerGroup tg) {
-			if (tg == null) return;
-			if (triggerGroups != null) {
-				if (triggerGroups.storedTG == tg) {
-					triggerGroups = triggerGroups.nextNode;
-					return;
-				}
-				TGStoreNode lastNode = triggerGroups;
-				TGStoreNode curNode = lastNode.nextNode;
-				while (curNode != null) {
-					if (curNode.storedTG == tg) {
-						lastNode.nextNode = curNode.nextNode;
-						return;
-					}
-					lastNode = curNode;
-					curNode = curNode.nextNode;
-				}
-				//return false;//we didnt have it, so we didnt do anything
-			}
-		}
-		
-		public void RemoveEvent(TriggerGroup tg) {
-			RemoveTriggerGroup(tg);
-		}
-		
-		/*
-			Method: HasTriggerGroup
-			Determines if we have this TriggerGroup on us.
-			
-			Parameters:
-				tg - The triggergroup in question.
-			
-			Returns:
-				True if we have it, false if we do not.
-		*/
-		
-		public bool HasTriggerGroup(TriggerGroup tg) {
-			if (tg == null) return false;
-			TGStoreNode curNode = triggerGroups;
-			do {
-				if (curNode.storedTG == tg) {
-					return true;
-				}
-				curNode = curNode.nextNode;
-			} while (curNode != null);
-			return false;
-		}
-		
-		public bool HasEvent(TriggerGroup tg) {
-			return HasTriggerGroup(tg);
-		}
-		
-		public void ClearTriggerGroups() {
-			triggerGroups = null;
-		}
-		
-		public class TGStoreNode {
-			public TriggerGroup storedTG;
-			public TGStoreNode nextNode = null;
-		
-			internal TGStoreNode(TriggerGroup storedTG) {
-				this.storedTG	= storedTG;
-			}
-		}
-		
-		public void Events(TriggerGroup tg) {//applies to spherescript-like "events(+e_blah)"
-			AddTriggerGroup(tg);
-		}
-		
-		public void Events(TGRemover remover) {
-			RemoveTriggerGroup(remover.tg);
-		}
-		
-		public void Events(int i) {
-			if (i == 0) {
-				triggerGroups = null;
-			}
-		}
-		
-		public string Events() {
-			if (triggerGroups != null) {
-				StringBuilder toreturn= new StringBuilder();
-				TGStoreNode curNode = triggerGroups;
-				bool first=true;
-				do {
-					if (first) {
-						first=false;
-					} else {
-						toreturn.Append(", ");
-					}
-					toreturn.Append(curNode.storedTG.ToString());
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-				return toreturn.ToString();
-			} else {
-				return "";
-			}
-		}
-	
-		/*
-			Method: Trigger
-			Triggers a trigger on this object, using the specified ScriptArgs
-			
-			Parameters:
-				sa - The arguments (other than argv) for sphere scripts
-				td - The TriggerKey for the trigger to call.
-		
-			Returns:
-				The return value(s) from the triggers called.
-		
-			See also:
-				<Trigger>, <CancellableTriggers>
-		*/
-		public virtual void Trigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TGStoreNode curNode = triggerGroups;
-				do {
-					curNode.storedTG.Run(this, td, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-			}
-		}
-		
-		public virtual void TryTrigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TGStoreNode curNode = triggerGroups;
-				do {
-					curNode.storedTG.TryRun(this, td, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-			}
-		}
-		
-		/*
-			Method: CancellableTrigger
-			Executes the trigger, reads return values, and returns true if anything returned 1 (returning false otherwise).
-			
-			Parameters:
-				td - The trigger to execute
-				sa - Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.
-			
-			Returns:
-				True if any called trigger scripts returned 1, false otherwise.
-			
-			See also:
-				<Trigger>, <CancellableTriggers>
-		*/
-		
-		public virtual bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TGStoreNode curNode = triggerGroups;
-				do {
-					object retVal = curNode.storedTG.Run(this, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
-					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-			}
-			return false;
-		}
-		
-		public virtual bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			if (triggerGroups != null) {
-				TGStoreNode curNode = triggerGroups;
-				do {
-					object retVal = curNode.storedTG.TryRun(this, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
-					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-			}
-			return false;
-		}
 
-		public void Trigger(TriggerKey td, params object[] scriptArguments) {
-			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
-				Trigger(td, new ScriptArgs(scriptArguments));
-			} else {
-				Trigger(td, (ScriptArgs) null);
+		[Remark("Return enumerable containing all timers")]
+		public IEnumerable<KeyValuePair<TimerKey, Timer>> AllTimers {
+			get {
+				if (tags != null) {
+					foreach (DictionaryEntry entry in tags) {
+						TimerKey tk = entry.Key as TimerKey;
+						if (tk != null) {
+							yield return new KeyValuePair<TimerKey, Timer>(tk, (Timer) entry.Value);
+						}
+					}
+				}
+			}
+		}
+		#endregion Timers
+
+		#region Tags
+		[Remark("Return enumerable containing all tags")]
+		public IEnumerable<KeyValuePair<TagKey, Object>> AllTags {
+			get {
+				if (tags != null) {
+					foreach (DictionaryEntry entry in tags) {
+						TagKey tk = entry.Key as TagKey;
+						if (tk != null) {
+							yield return new KeyValuePair<TagKey, Object>(tk, entry.Value);
+						}
+					}
+				}
 			}
 		}
 
-		public bool CancellableTrigger(TriggerKey td, params object[] scriptArguments) {
-			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
-				return CancellableTrigger(td, new ScriptArgs(scriptArguments));
-			} else {
-				return CancellableTrigger(td, (ScriptArgs) null);
+		internal void EnsureTagsTable() {
+			if (tags == null) {
+				tags = new Hashtable();
 			}
 		}
-		
+
 		internal protected virtual void BeingDeleted() {
 			ClearTimers();
 		}
 		
 		public void SetTag(TagKey tk, object value) {
-			if (tags==null) tags=new Hashtable();
+			EnsureTagsTable();
 			//Console.WriteLine("TagKey["+tk+"]="+value);
 			tags[tk]=value;
 		}
@@ -463,11 +226,7 @@ namespace SteamEngine {
 			if (tags==null) return null;
 			return tags[td];
 		}
-		
-		public double GetTag0(TagKey td) {
-			return TagMath.ToDouble(GetTag(td));
-		}
-		
+
 		public bool HasTag(TagKey td) {
 			if (tags==null) {
 				return false;
@@ -510,26 +269,13 @@ namespace SteamEngine {
 				return "Object '"+this+"' has no tags";
 			}
 		}
-		
-		
-		public object CallFunc(ScriptHolder script, ScriptArgs sa) {
-			if (script == null) {
-				throw new CallFuncException("Attempted to call null function.");
-			}
-			return script.TryRun(this, sa);
-		}
-		
-		public object CallFunc(ScriptHolder script, params object[] args) {
-			if (script == null) {
-				throw new CallFuncException("Attempted to call null function.");
-			}
-			ScriptArgs sa = new ScriptArgs(args);
-			return script.TryRun(this, sa);
-		}
-		
+		#endregion Tags
+
+		#region HELP (todo? remove?)
 		private static string ListProperties(Type type) {
 			return ListProperties(type, null);
 		}
+
 		private static string ListProperties(Type type, string name) {
 			PropertyInfo[] props=type.GetProperties(BindingFlags.Public|BindingFlags.Instance);
 			StringBuilder propNames=new StringBuilder("(");
@@ -548,9 +294,11 @@ namespace SteamEngine {
 			}
 			return propNames.ToString();
 		}
+
 		private static string ListMethods(Type type) {
 			return ListMethods(type, null);
 		}
+
 		private static string ListMethods(Type type, string name) {
 			MethodInfo[] meths=type.GetMethods(BindingFlags.Public|BindingFlags.Instance);
 			StringBuilder methNames=new StringBuilder("(");
@@ -574,13 +322,12 @@ namespace SteamEngine {
 			Globals.Src.WriteLine("Properties: "+ListProperties(GetType()));
 			Globals.Src.WriteLine("Methods: "+ListMethods(GetType()));
 		}
+		#endregion HELP
+
+		#region save/load
+
 
 		public virtual void Save(SaveStream output) {
-			TGStoreNode curNode = triggerGroups;
-			while (curNode != null) {
-				output.WriteValue("events", curNode.storedTG.Defname);
-				curNode = curNode.nextNode;
-			}
 			if (tags != null) {
 				ArrayList timersList = new ArrayList();
 				ArrayList forDeleting = new ArrayList();
@@ -598,8 +345,8 @@ namespace SteamEngine {
 						output.WriteValue("tag."+key, value);
 					} else if (key is TimerKey) {
 						timersList.Add(value);
-					} else {
-						Logger.WriteError(string.Format("This should not happen. Unknown key-value pair: {0} - {1}", key, value));
+					//} else {
+						//Logger.WriteError(string.Format("This should not happen. Unknown key-value pair: {0} - {1}", key, value));
 					}
 				}
 				foreach (object key in forDeleting) {
@@ -611,7 +358,7 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		//regular expressions for textual loading
 		//tag.name
 		internal static Regex tagRE= new Regex(@"tag\.(?<name>\w+)\s*",
@@ -620,28 +367,10 @@ namespace SteamEngine {
 		protected virtual void LoadLine(string filename, int line, string name, string value) {
 			Match m = tagRE.Match(name);
 			if (m.Success) {	//If the name begins with 'tag.'
-				if (tags==null) {
-					tags=new Hashtable();
-				}
+				EnsureTagsTable();
 				string tagName=m.Groups["name"].Value;
 				TagKey td = TagKey.Get(tagName);
-				ObjectSaver.Load(value, new LoadObjectParam(LoadTag_Delayed), filename, line, td);
-				return;
-			}
-			if ((name=="events") || (name=="event") || (name=="triggergroup") || (name=="type")) {
-				string eventName;
-				m= TagMath.stringRE.Match(value);
-				if (m.Success) {
-					eventName = m.Groups["value"].Value;
-				} else {
-					eventName = value;
-				}
-				TriggerGroup tg=TriggerGroup.Get(eventName);
-				if (tg!=null) {
-					AddTriggerGroup(tg);
-				} else {
-					throw new Exception("TriggerGroup '"+eventName+"' does not exist.");
-				}
+				ObjectSaver.Load(value, new LoadObjectParam(DelayedLoad_Tag), filename, line, td);
 				return;
 			}
 			throw new ScriptException("Invalid data '"+LogStr.Ident(name)+"' = '"+LogStr.Number(value)+"'.");
@@ -660,14 +389,18 @@ namespace SteamEngine {
 			}
 		}
 		
-		private void LoadTag_Delayed(object resolvedObject, string filename, int line, object tagKey) {
+		private void DelayedLoad_Tag(object resolvedObject, string filename, int line, object tagKey) {
 			//throw new Exception("LoadTag_Delayed");
 			SetTag((TagKey) tagKey, resolvedObject);
 		}
 
+		#endregion save/load
+
+		#region IDeletable
+
 		public void ThrowIfDeleted() {
 			if (this.IsDeleted) {
-				throw new Exception("You can not manipulate a deleted item ("+this+")");
+				throw new Exception("You can not manipulate a deleted object ("+this+")");
 			}
 		}
 
@@ -676,5 +409,6 @@ namespace SteamEngine {
 		public virtual void Delete() {
 			BeingDeleted();
 		}
+		#endregion IDeletable
 	}
 }

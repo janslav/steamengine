@@ -41,7 +41,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine {
 
-	public class GameAccount : TagHolder {
+	public class GameAccount : PluginHolder {
 
 		/// private static int firstFreeGameAccount=0; private static int
 		/// lastUsedGameAccount=-1;                                      
@@ -647,7 +647,6 @@ namespace SteamEngine {
 
 		public static void SaveAll(SaveStream output) {
 			Logger.WriteDebug("Saving GameAccounts.");
-			output.WriteComment("Textual SteamEngine save");
 			output.WriteComment("GameAccounts");
 			output.WriteLine();
 			int numGameAccounts=accounts.Count;

@@ -228,31 +228,27 @@ namespace SteamEngine {
 		} } 
 		
 		public sealed override Thing Dupe() {
-			AbstractItem item = (AbstractItem) DupeImpl(); //def.typeInfo.constructor.Invoke(this);
-			//TODO: Copy contents.
-			Thing cont = Cont;
+			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
+			Thing cont = this.Cont;
 			if (cont != null) {
 				if (cont.IsContainer) {
-					((AbstractItem) cont).InternalAddItem(item);
+					((AbstractItem) cont).InternalAddItem(copy);
 				} else {
-					((AbstractCharacter) cont).AddLoadedItem(item);
+					((AbstractCharacter) cont).AddLoadedItem(copy);
 				}
 			} else {//on ground, we add it to map
-				item.GetMap().Add(item);
+				copy.GetMap().Add(copy);
 			}
-			if (IsContainer) {
+			if (this.IsContainer) {
 				foreach (AbstractItem i in this) {
-					i.Dupe(item);	//dupe the item & put it in our container
+					i.Dupe(copy);	//dupe the item & put it in our container
 				}
 			}
-			return item;
+			return copy;
 		}
 		
-		protected abstract Thing DupeImpl();
-		
 		public AbstractItem Dupe(Thing putIn) {
-			AbstractItem item = (AbstractItem) DupeImpl();
-			//TODO: Copy contents.
+			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
 			if (putIn!=null) {
 				if (putIn.IsContainer) {
 					((AbstractItem) putIn).InternalAddItem(this);
@@ -261,7 +257,13 @@ namespace SteamEngine {
 					((AbstractCharacter) putIn).AddLoadedItem(this);
 				}
 			}
-			return item;
+
+			if (this.IsContainer) {
+				foreach (AbstractItem i in this) {
+					i.Dupe(copy);	//dupe the item & put it in our container
+				}
+			}
+			return copy;
 		}
 		
 		public virtual byte Layer { 

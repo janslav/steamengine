@@ -33,7 +33,6 @@ namespace SteamEngine {
 	*/
 	public class TagKey : AbstractKey {
 		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		private static int uids = 0;
 				
 		private TagKey(string name, int uid) : base(name, uid) {
 		}

@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	
 	[SaveableClass]
-	public class Memory : TagHolder {
+	public class Memory : PluginHolder {
 		internal Memory prev;
 		internal Memory next;
 		internal MemoryCollection cont;
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 			if (Cont != null) {
 				Cont.RemoveMemory(this);
 			}
-			TryTrigger(TriggerKey.Destroy, null);
+			TryTrigger(TriggerKey.destroy, null);
 			isDeleted = true;
 			base.BeingDeleted();
 		}
