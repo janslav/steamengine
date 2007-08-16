@@ -204,6 +204,9 @@
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\src\AbstractAccount.cs">
+      <Link>AbstractAccount.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\AbstractCharacter.cs">
       <Link>AbstractCharacter.cs</Link>
       <SubType>Code</SubType>
@@ -336,10 +339,6 @@
     </Compile>
     <Compile Include="..\..\src\FieldValue.cs">
       <Link>FieldValue.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\src\GameAccount.cs">
-      <Link>GameAccount.cs</Link>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\src\GameConn.cs">

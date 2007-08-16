@@ -1418,7 +1418,7 @@ namespace SteamEngine.CompiledScripts {
 				Has no effect on players.
 		*/
 		public void GM() {
-			GameAccount acc=Account;
+			AbstractAccount acc=Account;
 			if (acc!=null) {
 				if (acc.PLevel<acc.MaxPLevel) {
 					acc.PLevel=acc.MaxPLevel;
@@ -1439,7 +1439,7 @@ namespace SteamEngine.CompiledScripts {
 		//Parameters:
 		//	i - 1 to turn GM mode on, 0 to turn it off off.
 		public void GM(int i) {
-			GameAccount acc=Account;
+			AbstractAccount acc=Account;
 			if (acc!=null) {
 				if (i>0) {
 					acc.PLevel=acc.MaxPLevel;

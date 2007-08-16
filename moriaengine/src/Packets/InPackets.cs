@@ -994,12 +994,12 @@ namespace SteamEngine.Packets {
 				
 			int charIndex = DecodeInt(31);
 			//Console.WriteLine("CharIndex="+charIndex);
-			if (charIndex<0 || charIndex>=GameAccount.maxCharactersPerGameAccount) {
+			if (charIndex<0 || charIndex>=AbstractAccount.maxCharactersPerGameAccount) {
 				//Server.DisconnectAndLog(c, "Illegal char index "+charIndex);
 				Packets.Prepared.SendRejectDeleteRequest(c, DeleteRequestReturnValue.Reject_NonexistantCharacter);
 				return;
 			}
-			GameAccount acc = c.curAccount;
+			AbstractAccount acc = c.curAccount;
 			DeleteRequestReturnValue drr = acc.RequestDeleteCharacter(charIndex);
 			if (drr==DeleteRequestReturnValue.AcceptedRequest) {
 				PacketSender.SendCharacterListAfterDelete(c);
@@ -1045,12 +1045,12 @@ namespace SteamEngine.Packets {
 			//OutputPacketLog(packetLenUsed);
 			int charIndex = DecodeInt(65);
 			//Console.WriteLine("CharIndex="+charIndex);
-			if (charIndex<0 || charIndex>GameAccount.maxCharactersPerGameAccount) {
+			if (charIndex<0 || charIndex>AbstractAccount.maxCharactersPerGameAccount) {
 				Packets.Prepared.SendFailedLogin(c, FailedLoginReason.CommunicationsProblem);
 				c.Close("Illegal char index "+charIndex);
 				return;
 			}
-			GameAccount acc = c.curAccount;
+			AbstractAccount acc = c.curAccount;
 			AbstractCharacter cre = c.LoginCharacter(charIndex);
 			if (cre==null) {
 				Packets.Prepared.SendFailedLogin(c, FailedLoginReason.CommunicationsProblem);
@@ -1081,7 +1081,7 @@ namespace SteamEngine.Packets {
 				password = password.Substring(0,password.IndexOf((char)0));
 			}
 			Logger.WriteDebug("Game Server Login.");
-			GameAccount.HandleLoginAttempt(username, password, c);
+			AbstractAccount.HandleLoginAttempt(username, password, c);
 		}
 		
 		/**
@@ -1112,7 +1112,7 @@ namespace SteamEngine.Packets {
 		
 		//at least part of this should be in scripts
 		internal void CreateCharPacket(GameConn c) {
-			GameAccount acc = c.curAccount;
+			AbstractAccount acc = c.curAccount;
 			if (acc == null) {
 				//IIRC, this shouldn't ever happen because of the code which only allows certain packets before login is complete. But we'll leave this check here anyways. -SL
 				Packets.Prepared.SendFailedLogin(c, FailedLoginReason.CommunicationsProblem);

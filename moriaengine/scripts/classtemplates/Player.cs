@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Password(string newpass) {
-			GameAccount acc=Account;
+			AbstractAccount acc=Account;
 			if (acc!=null) {
 				acc.Password(newpass);
 			}

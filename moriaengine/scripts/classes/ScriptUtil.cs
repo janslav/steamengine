@@ -21,7 +21,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static string GetLogString(GameConn conn, string message) {
-			GameAccount acc = conn.Account;
+			AbstractAccount acc = conn.Account;
 			AbstractCharacter ch = conn.CurCharacter;
 			if (acc != null) {
 				if (ch != null) {
@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static string GetLogString(Conn conn, string message) {
-			GameAccount acc = conn.Account;
+			AbstractAccount acc = conn.Account;
 			if (acc != null) {
 				return string.Concat(
 					"Acc '", acc.Name, "': "+message);

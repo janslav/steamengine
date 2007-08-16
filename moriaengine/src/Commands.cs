@@ -134,7 +134,7 @@ namespace SteamEngine {
 		}
 
 		private static string GetSrcAccountName(ISrc commandSrc) {
-			GameAccount acc = null;
+			AbstractAccount acc = null;
 			AbstractCharacter ch = commandSrc as AbstractCharacter;
 			if (ch != null) {
 				acc = ch.Account;

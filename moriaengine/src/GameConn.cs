@@ -300,7 +300,7 @@ namespace SteamEngine {
 		//may be called from within lock()ed code, so don't lock InSyncRoot or OutSyncRoot here!
 		public override void Close(string reason) {
 
-			GameAccount accountToLogout = curAccount;
+			AbstractAccount accountToLogout = curAccount;
 			AbstractCharacter charToLogout = curCharacter;
 			// this is necessary, because AbstractCharacter.LogOut()
 			// is calling this method recursively
@@ -321,7 +321,7 @@ namespace SteamEngine {
 		}
 
 		public override void Close(LogStr reason) {
-			GameAccount accountToLogout = curAccount;
+			AbstractAccount accountToLogout = curAccount;
 			AbstractCharacter charToLogout = curCharacter;
 
 			base.Close(reason);
@@ -758,7 +758,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal override sealed void LogIn(GameAccount acc) {
+		internal override sealed void LogIn(AbstractAccount acc) {
 			base.LogIn(acc);
 			for (int a=0; a<maxTargs; a++) {
 				targon[a]=null;
@@ -1112,7 +1112,7 @@ namespace SteamEngine {
 
 		//this is called by InPackets.LoginChar
 		internal AbstractCharacter LoginCharacter(int index) {
-			Sanity.IfTrueThrow(index<0 || index>=GameAccount.maxCharactersPerGameAccount, "Call was made to LoginCharacter with an invalid character index "+index+", valid values being from 0 to "+GameAccount.maxCharactersPerGameAccount+".");
+			Sanity.IfTrueThrow(index<0 || index>=AbstractAccount.maxCharactersPerGameAccount, "Call was made to LoginCharacter with an invalid character index "+index+", valid values being from 0 to "+AbstractAccount.maxCharactersPerGameAccount+".");
 			Sanity.IfTrueThrow(curAccount==null, "curAccount is null!");
 			if (curCharacter!=null) {
 				Close("Character login with a character already logged, wtf?!");

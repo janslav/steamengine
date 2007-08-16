@@ -788,10 +788,10 @@ namespace SteamEngine.Packets {
 			ushort blockSize = 4+60*5;
 			StartGenerating();
 			EncodeByte(0x86, 0);
-			GameAccount acc = c.curAccount;
+			AbstractAccount acc = c.curAccount;
 			EncodeUShort(blockSize, 1);
-			EncodeByte((byte) GameAccount.maxCharactersPerGameAccount, 3);
-			for (int charNum=0; charNum<GameAccount.maxCharactersPerGameAccount; charNum++) {
+			EncodeByte((byte) AbstractAccount.maxCharactersPerGameAccount, 3);
+			for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
 				AbstractCharacter cre = acc.GetCharacterInSlot(charNum);
 				string charName="";
 				if (cre!=null) {
@@ -934,8 +934,8 @@ namespace SteamEngine.Packets {
 			ushort blockSize=4;
 			
 			//characters
-			for (int charNum=0; charNum<GameAccount.maxCharactersPerGameAccount; charNum++) {
-				GameAccount acc = c.curAccount;
+			for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
+				AbstractAccount acc = c.curAccount;
 				AbstractCharacter cre=acc.GetCharacterInSlot(charNum);
 				//int charId = -1;
 				//string charName = "";

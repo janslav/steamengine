@@ -26,7 +26,6 @@ using SteamEngine.Persistence;
 namespace SteamEngine {
 	
 	//todo: make some members virtual?
-	[SaveableClass]
 	public class Region : PluginHolder {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);

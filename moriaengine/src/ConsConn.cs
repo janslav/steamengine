@@ -183,7 +183,7 @@ namespace SteamEngine {
 
 		//Rewritten to use new GameAccount methods - Nov 08 2003 - SL
 		private void DoPassword(string data) {
-			GameAccount acc = GameAccount.HandleConsoleLoginAttempt(username, data);
+			AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(username, data);
 			if (acc==null) {
 				Close("Wrong password");
 			} else {
@@ -195,7 +195,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal override sealed void LogIn(GameAccount acc) {
+		internal override sealed void LogIn(AbstractAccount acc) {
 			loggedIn = true;
 			base.LogIn(acc);
 		}

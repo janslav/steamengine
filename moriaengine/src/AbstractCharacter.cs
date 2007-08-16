@@ -103,7 +103,7 @@ namespace SteamEngine {
 		//private float calculatedWeight;
 		//private bool recalculateWeight=true;
 
-		private GameAccount account = null;
+		private AbstractAccount account = null;
 		private string name = null;
 		public Thing act = null;
 		public Thing targ = null;
@@ -274,7 +274,7 @@ namespace SteamEngine {
 			model=value;
 		} }
 		
-		public GameAccount Account {
+		public AbstractAccount Account {
 			get {
 				return account;	//return null if _owner is null or is not an GameAccount.
 			}
@@ -474,7 +474,7 @@ namespace SteamEngine {
 		
 		//For loading.
 		public void LoadAccount_Delayed(object resolvedObject, string filename, int line) {
-			account = (GameAccount) resolvedObject;
+			account = (AbstractAccount) resolvedObject;
 			account.AttachCharacter(this);
 			FixDisconnectedFlagOnPlayers();
 			
@@ -989,7 +989,7 @@ namespace SteamEngine {
 				
 			@param acc The account to attach them to.
 		*/
-		public void MakeBePlayer(GameAccount acc) {
+		public void MakeBePlayer(AbstractAccount acc) {
 			if (acc!=null) {
 				if (acc.AttachCharacter(this)) {
 					NetState.Resend(this);
@@ -2139,14 +2139,14 @@ namespace SteamEngine {
 		//ISrc implementation
 		public byte Plevel {
 			get {
-				GameAccount a = Account;
+				AbstractAccount a = Account;
 				if (a != null) {
 					return a.PLevel;
 				} else {
 					return 0;
 				}
 			} set {
-				GameAccount a = Account;
+				AbstractAccount a = Account;
 				if (a != null) {
 					a.PLevel=value;
 				}//else ?
@@ -2154,7 +2154,7 @@ namespace SteamEngine {
 		}
 		public byte MaxPlevel {
 			get {
-				GameAccount a = Account;
+				AbstractAccount a = Account;
 				if (a != null) {
 					return a.MaxPLevel;
 				} else {

@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
             }
         }
 
-        public static void AddBlockedIP(IPAddress IP, String reason, GameAccount who) {
+        public static void AddBlockedIP(IPAddress IP, String reason, AbstractAccount who) {
             if (IsBlockedIP(IP) == true) {
                 Globals.SrcWriteLine("The IP " + IP + " is already blocked.");
                 return;
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
             Globals.SrcWriteLine("The IP " + IP + " was blocked.");
 
         }
-        public static void AddBlockedIP(String IP, String reason, GameAccount who) {
+        public static void AddBlockedIP(String IP, String reason, AbstractAccount who) {
             IPAddress address;
             if (IPAddress.TryParse(IP, out address)) {
                 Firewall.AddBlockedIP(address, reason, who);
@@ -226,7 +226,7 @@ namespace SteamEngine.CompiledScripts {
 
 
         }
-        public static void AddBlockedIPRange(String fromIP, String toIP, String reason, GameAccount who) {
+        public static void AddBlockedIPRange(String fromIP, String toIP, String reason, AbstractAccount who) {
             IPAddress address1;
             IPAddress address2;
             if (IPAddress.TryParse(fromIP, out address1) && IPAddress.TryParse(toIP, out address2)) {
@@ -245,7 +245,7 @@ namespace SteamEngine.CompiledScripts {
             */
         }
 
-        public static void AddBlockedIPRange(IPAddress fromIP, IPAddress toIP, String reason, GameAccount who) {
+        public static void AddBlockedIPRange(IPAddress fromIP, IPAddress toIP, String reason, AbstractAccount who) {
             //Firewall.AddBlockedIPRange(fromIP.ToString(), toIP.ToString() , reason, who);
             BlockedIPRangeEntry iprbe = new BlockedIPRangeEntry();
             iprbe.fromIp = fromIP;
@@ -301,7 +301,7 @@ namespace SteamEngine.CompiledScripts {
         [SaveableData]
         public String reason;
         [SaveableData]
-        public GameAccount blockedBy;
+        public AbstractAccount blockedBy;
 
         IPAddress ISortableIpBlockEntry.Ip {
             get { return ip; }
@@ -312,7 +312,7 @@ namespace SteamEngine.CompiledScripts {
         String ISortableIpBlockEntry.Reason {
             get { return reason; }
         }
-        GameAccount ISortableIpBlockEntry.Account {
+        AbstractAccount ISortableIpBlockEntry.Account {
             get { return blockedBy; }
         }
     }
@@ -330,7 +330,7 @@ namespace SteamEngine.CompiledScripts {
         [SaveableData]
         public String reason;
         [SaveableData]
-        public GameAccount blockedBy;
+        public AbstractAccount blockedBy;
 
         IPAddress ISortableIpBlockEntry.Ip {
             get { return fromIp; }
@@ -341,7 +341,7 @@ namespace SteamEngine.CompiledScripts {
         String ISortableIpBlockEntry.Reason {
             get { return reason; }
         }
-        GameAccount ISortableIpBlockEntry.Account {
+        AbstractAccount ISortableIpBlockEntry.Account {
             get { return blockedBy; }
         }
     }
@@ -351,7 +351,7 @@ namespace SteamEngine.CompiledScripts {
         IPAddress Ip { get; }
         String toIp { get; }
         String Reason { get; }
-        GameAccount Account { get; }
+        AbstractAccount Account { get; }
 
     }
 

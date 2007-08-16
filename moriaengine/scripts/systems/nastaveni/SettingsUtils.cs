@@ -452,7 +452,7 @@ namespace SteamEngine.CompiledScripts {
 					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
 				} else if(typeof(Thing).IsAssignableFrom(t)) {
 					valuePrefix = "#";
-				} else if(typeof(GameAccount).IsAssignableFrom(t)) {
+				} else if(typeof(AbstractAccount).IsAssignableFrom(t)) {
 					valuePrefix = "$";
 				} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
 					valuePrefix = "#";

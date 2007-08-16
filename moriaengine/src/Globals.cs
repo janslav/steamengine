@@ -176,7 +176,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public static GameAccount SrcAccount {
+		public static AbstractAccount SrcAccount {
 			get {
 				AbstractCharacter ch = src as AbstractCharacter;
 				if (ch != null) {
@@ -475,12 +475,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public static uint statAccounts {
-			get {
-				return GameAccount.Instances;
-			}
-		}
-
 		public static uint statItems {
 			get {
 				return AbstractItem.Instances;
@@ -549,11 +543,11 @@ namespace SteamEngine {
 
 		//sphere compatibility
 		public static Type AccMgr() {
-			return typeof(GameAccount);
+			return typeof(AbstractAccount);
 		}
 
-		public static GameAccount FindAccount(string name) {
-			return GameAccount.Get(name);
+		public static AbstractAccount FindAccount(string name) {
+			return AbstractAccount.Get(name);
 		}
 
 		public static string Hex(int numb) {

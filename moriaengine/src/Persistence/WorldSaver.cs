@@ -69,6 +69,7 @@ namespace SteamEngine.Persistence {
 			bool success = false;
 			try {
 
+
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);
@@ -76,24 +77,12 @@ namespace SteamEngine.Persistence {
 					SaveStream saveStream = GetSaveStream(path, sa.Argv[1]);
 					saveStream.WriteComment("Textual SteamEngine save");
 					coordinator.SaveAll(saveStream);
+					saveStream.WriteLine("[EOF]");
 					try {
 						saveStream.Close();
 					} catch { }
 				}
 
-
-				//sa = new ScriptArgs(path, "things");
-				//Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
-				//thingsSaver = GetSaveStream(path, sa.Argv[1]);
-				//currentfile = "things.sav";//this may not be exact, it can be any other file, but it's for user info only anyway.
-				//Thing.SaveAll(thingsSaver);
-				
-				sa = new ScriptArgs(path, "accounts");
-				Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
-				accountsSaver = GetSaveStream(path, sa.Argv[1]);
-				//currentfile = "accounts.sav";
-				GameAccount.SaveAll(accountsSaver);
-				
 				sa = new ScriptArgs(path, "globals");
 				Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
 				globalsSaver = GetSaveStream(path, sa.Argv[1]);
@@ -132,15 +121,9 @@ namespace SteamEngine.Persistence {
 			return new SaveStream(new StreamWriter(File.Create(filepath)));
 		}
 		
-		private static SaveStream accountsSaver;
 		private static SaveStream globalsSaver;
 		
 		static void CloseSaveStreams() {
-			try {
-				accountsSaver.Close(); 
-			} catch (Exception e) {
-				Logger.WriteDebug(e);
-			}
 			try {
 				globalsSaver.Close(); 
 			} catch (Exception e) {
@@ -156,11 +139,8 @@ namespace SteamEngine.Persistence {
 		}
 		
 		private static bool TryLoad() {
-			//Thing.StartingLoading();
-			GameAccount.StartingLoading();
 			Timer.StartingLoading();
 			ObjectSaver.StartingLoading();
-			//Region.StartingLoading();
 			
 			string path = "";
 						
@@ -191,16 +171,6 @@ namespace SteamEngine.Persistence {
 						loadStream.Close();
 					} catch { }
 				}
-
-				//sa = new ScriptArgs(path, "things");
-				//Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
-				//loaderStreams = GetLoadStream(path, sa.Argv[1]);
-				//InvokeLoad(loaderStreams, Path.Combine(path, "things.sav"));
-				
-				sa = new ScriptArgs(path, "accounts");
-				Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
-				accountsLoader = GetLoadStream(path, sa.Argv[1]);
-				InvokeLoad(accountsLoader, Path.Combine(path, "accounts.sav"));
 				
 				sa = new ScriptArgs(path, "globals");
 				Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
@@ -228,7 +198,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			ObjectSaver.LoadingFinished();
-			GameAccount.LoadingFinished();
+			//GameAccount.LoadingFinished();
 			Timer.LoadingFinished();
 			//Region.LoadingFinished();
 			//Thing.LoadingFinished();//Things must come after regions
@@ -264,9 +234,9 @@ namespace SteamEngine.Persistence {
 				if (type == "eof") {
 					EOFMarked = true;
 					return null;
-				} else {
-					GameAccount.Load(input);
-					return null;
+				//} else {
+				//    GameAccount.Load(input);
+				//    return null;
 				}
 			}
 			if (type == "globals") {
@@ -307,13 +277,9 @@ namespace SteamEngine.Persistence {
 			return new StreamReader(File.OpenRead(filepath));
 		}
 
-		private static TextReader accountsLoader;
 		private static TextReader globalsLoader;
 		
 		static void CloseLoadStreams() {
-			try {
-				accountsLoader.Close(); 
-			} catch { }
 			try {
 				globalsLoader.Close(); 
 			} catch { }

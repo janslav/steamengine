@@ -160,8 +160,6 @@ namespace SteamEngine.Persistence {
 	public static partial class ObjectSaver {
 		public static readonly Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public static readonly Regex accountNameRE = new Regex(@"^\$(?<value>\w*)\s*$",                   
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 		public static readonly Regex genericUidRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 		//public static Regex dateTimeRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
@@ -220,12 +218,6 @@ namespace SteamEngine.Persistence {
 				//TODO: multiline strings
 				string stringAsSingleLine = Utility.EscapeNewlines((string) value);
 				return "\""+stringAsSingleLine+"\""; //returns the string in ""
-			//} else if (typeof(Thing).IsAssignableFrom(t)) {
-			//    return "#"+((Thing) value).Uid;
-			} else if (typeof(Region).IsAssignableFrom(t)) {
-				return "("+((Region) value).Defname+")";
-			} else if (typeof(GameAccount).IsAssignableFrom(t)) {
-				return "$"+((GameAccount) value).Name;
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 				return "#"+((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
 			} else if (value == Globals.instance) {
@@ -289,9 +281,6 @@ namespace SteamEngine.Persistence {
 		public static bool IsSaveableType(Type t) {
 			if (TagMath.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
-			//} else if (typeof(Thing).IsAssignableFrom(t)) {
-			} else if (typeof(Region).IsAssignableFrom(t)) {
-			} else if (typeof(GameAccount).IsAssignableFrom(t)) {
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
@@ -341,36 +330,6 @@ namespace SteamEngine.Persistence {
 				m = pair.re.Match(input);
 				if (m.Success) {
 					return pair.bcsc.Load(m);
-				}
-			}
-			//Match m = thingUidRE.Match(input);
-			//if (m.Success) {
-			//    int uid = ConvertTools.ParseInt32(m.Groups["value"].Value);
-			//    Thing thing = Thing.UidGetThing(uid);
-			//    if (thing != null) {
-			//        return thing;
-			//    } else {
-			//        throw new InsufficientDataException("The thing with uid "+LogStr.Number(uid)+" is not (yet?) known.");
-			//    }
-			//}
-			//m = regionNameRE.Match(input);
-			//if (m.Success) {
-			//    string name = m.Groups["value"].Value;
-			//    Region acc = ExportImport.GetRegionByDefName(name);
-			//    if (acc != null) {
-			//        return acc;
-			//    } else {
-			//        throw new InsufficientDataException("The account called "+LogStr.Ident(name)+" is not (yet?) known.");
-			//    }
-			//}
-			m = accountNameRE.Match(input);
-			if (m.Success) {
-				string name = m.Groups["value"].Value;
-				GameAccount acc = GameAccount.Get(name);
-				if (acc != null) {
-					return acc;
-				} else {
-					throw new InsufficientDataException("The account called "+LogStr.Ident(name)+" is not (yet?) known.");
 				}
 			}
 			m = genericUidRE.Match(input);
@@ -472,24 +431,6 @@ namespace SteamEngine.Persistence {
 				}
 			}
 
-			//Match m = thingUidRE.Match(input);
-			//if (m.Success) {
-			//    int uid = ConvertTools.ParseInt32(m.Groups["value"].Value);
-			//    PushDelayedLoader(new ThingDelayedLoader_NoParam(deleg, filename, line, uid));
-			//    return;
-			//}
-			//m = regionNameRE.Match(input);
-			//if (m.Success) {
-			//    string name = m.Groups["value"].Value;
-			//    PushDelayedLoader(new RegionDelayedLoader_NoParam(deleg, filename, line, name));
-			//    return;
-			//}
-			m = accountNameRE.Match(input);
-			if (m.Success) {
-				string name = m.Groups["value"].Value;
-				PushDelayedLoader(new AccountDelayedLoader_NoParam(deleg, filename, line, name));
-				return;
-			}
 			m = genericUidRE.Match(input);
 			if (m.Success) {
 				int uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
@@ -511,12 +452,6 @@ namespace SteamEngine.Persistence {
 				return;
 			}
 			
-			//Match m = thingUidRE.Match(input);
-			//if (m.Success) {
-			//    int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer);
-			//    PushDelayedLoader(new ThingDelayedLoader_Param(deleg, filename, line, additionalParameter, uid));
-			//    return;
-			//}
 			Match m;
 			for (int i = 0, n = coordinatorsRGs.Count; i<n; i++) {
 				RGBCSCPair pair = coordinatorsRGs[i];
@@ -527,18 +462,6 @@ namespace SteamEngine.Persistence {
 				}
 			}
 
-			//m = regionNameRE.Match(input);
-			//if (m.Success) {
-			//    string name = m.Groups["value"].Value;
-			//    PushDelayedLoader(new RegionDelayedLoader_Param(deleg, filename, line, additionalParameter, name));
-			//    return;
-			//}
-			m = accountNameRE.Match(input);
-			if (m.Success) {
-				string name = m.Groups["value"].Value;
-				PushDelayedLoader(new AccountDelayedLoader_Param(deleg, filename, line, additionalParameter, name));
-				return;
-			}
 			m = genericUidRE.Match(input);
 			if (m.Success) {
 				uint uid = uint.Parse(m.Groups["uid"].Value);//should we also check something using the "name" part?
@@ -717,7 +640,7 @@ namespace SteamEngine.Persistence {
 			implementorsByName.Clear();
 			implementorsByType.Clear();
 			foreach (ISaveImplementor isi in isis) {
-				if (coreAssembly == isi.GetType().Assembly) {
+				if (coreAssembly == isi.HandledType.Assembly) {
 					RegisterImplementor(isi);
 				}
 			}
@@ -896,40 +819,6 @@ namespace SteamEngine.Persistence {
 			internal override void Run() {
 				object o = coordinator.Load(m);
 				deleg(o, filename, line, param);
-			}
-		}
-		
-		private class AccountDelayedLoader_NoParam : DelayedLoader_NoParam {
-			string accName;
-			internal AccountDelayedLoader_NoParam(LoadObject deleg, string filename, int line, string accName)
-					: base(deleg, filename, line) {
-				this.accName = accName;
-			}
-			
-			internal override void Run() {
-				GameAccount acc = GameAccount.Get(accName);
-				if (acc != null) {
-					deleg(acc, filename, line);
-				} else {
-					throw new NonExistingObjectException("There is no account called "+LogStr.Ident(accName)+" to load.");
-				}
-			}
-		}
-		
-		private class AccountDelayedLoader_Param : DelayedLoader_Param {
-			string accName;
-			internal AccountDelayedLoader_Param(LoadObjectParam deleg, string filename, int line, object param, string accName)
-					: base(deleg, filename, line, param) {
-				this.accName = accName;
-			}
-			
-			internal override void Run() {
-				GameAccount acc = GameAccount.Get(accName);
-				if (acc != null) {
-					deleg(acc, filename, line, param);
-				} else {
-					throw new NonExistingObjectException("There is no account called "+LogStr.Ident(accName)+" to load.");
-				}
 			}
 		}
 		
