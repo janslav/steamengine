@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				string pass = gr.GetTextResponse(11);
 				string email = gr.GetTextResponse(12);
 				//zavolat metodu, ktera oznami uspech ci neuspech pri vytvoreni
-				GameAccount.Create(accName, pass, email);
+				ScriptedAccount.CreateGameAccount(accName, pass, email);
 				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
 				//create_acc dialog jsme si neukladali, nemusime ho tedy odstranovat ze stacku				
 			}

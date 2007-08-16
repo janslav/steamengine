@@ -213,7 +213,7 @@ namespace SteamEngine {
 			//Logger.WriteWarning("Clearing the world.");
 			Region.ClearAll();
 			Thing.ClearAll();
-			GameAccount.ClearAll();
+			AbstractAccount.ClearAll();
 			Globals.ClearAll();
 			Map.ClearAll();
 			DelayedResolver.ClearAll();

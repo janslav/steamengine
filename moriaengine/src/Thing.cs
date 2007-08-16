@@ -87,7 +87,6 @@ namespace SteamEngine {
 				foreach (Thing t in things) {
 					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
 				}
-				output.WriteLine("[EOF]");
 				Logger.WriteDebug(string.Format(
 												"Saved {0} things: {1} items and {2} characters.",
 												savedCharacters+savedItems, savedItems, savedCharacters));

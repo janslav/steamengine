@@ -39,8 +39,8 @@ namespace SteamEngine {
 		protected override bool ToBoolImpl(object arg) {
 			if (arg is Thing) {
 				return (((Thing)arg).Uid!=-1);
-			} else if (arg is GameAccount) {
-				return ((GameAccount)arg).IsDeleted;
+			} else if (arg is AbstractAccount) {
+				return ((AbstractAccount)arg).IsDeleted;
 			} else if (arg is string) {
 				return ParseBoolean((string) arg);
 			} else {

@@ -35,7 +35,7 @@ namespace SteamEngine {
 	abstract public class Conn : PluginHolder {
 		private IPAddress ip;
 		protected readonly Socket client;
-		internal GameAccount curAccount;
+		internal AbstractAccount curAccount;
 		public readonly int uid;
 
 		private static int uids = 0;
@@ -67,7 +67,7 @@ namespace SteamEngine {
 
 		internal abstract void Cycle();
 
-		public GameAccount Account {
+		public AbstractAccount Account {
 			get {
 				return curAccount;
 			}
@@ -87,7 +87,7 @@ namespace SteamEngine {
 
 		//called by GameAccount, or by ConsConn itself 
 		//(ConsConn loggs in without the knowledge of the Account - so it would be null ;)
-		internal virtual void LogIn(GameAccount acc) {
+		internal virtual void LogIn(AbstractAccount acc) {
 			curAccount = acc;
 			Server.ConnLoggedIn(this);
 			//Console.WriteLine(LogStr.Ident(this)+" logged in.");

@@ -140,6 +140,9 @@
     <Compile Include="..\..\scripts\classes\Regions\FlaggedRegion.cs">
       <Link>classes\Regions\FlaggedRegion.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\classes\ScriptedAccount.cs">
+      <Link>classes\ScriptedAccount.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\classes\ScriptUtil.cs">
       <Link>classes\ScriptUtil.cs</Link>
     </Compile>

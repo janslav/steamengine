@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
-			List<GameAccount> accList = GameAccount.RetreiveByStr(sa[1].ToString());
+			List<ScriptedAccount> accList = ScriptedAccount.RetreiveByStr(sa[1].ToString());
 			accList.Sort(AccountComparer.instance);
 			sa[2] = accList; //ulozime to do argumentu dialogu
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
-				GameAccount ga = accList[i];
+				AbstractAccount ga = accList[i];
 				Hues nameColor = ga.Online ? Hues.OnlineColor : Hues.OfflineColor;
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, i + 10); //account info
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
 
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<GameAccount> accList = (List<GameAccount>)dsi.Args[2];
+			List<AbstractAccount> accList = (List<AbstractAccount>)dsi.Args[2];
 			int firstOnPage = (int)dsi.Args[0];
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 //zjistime kterej cudlik z kteryho radku byl zmacknut
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
-				GameAccount ga = accList[row];
+				AbstractAccount ga = accList[row];
 				DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
 				gi.Cont.Dialog(D_AccInfo.Instance, ga);               
                 
@@ -156,14 +156,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("Comparer for sorting accounts by account name asc")]
-	public class AccountComparer : IComparer<GameAccount> {
+	public class AccountComparer : IComparer<ScriptedAccount> {
 		public readonly static AccountComparer instance = new AccountComparer();
 
 		private AccountComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
 		}
 
-		public int Compare(GameAccount x, GameAccount y) {
+		public int Compare(ScriptedAccount x, ScriptedAccount y) {
 			return string.Compare(x.Name, y.Name);
 		}
 	}

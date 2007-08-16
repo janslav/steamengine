@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
-			GameAccount displayed = (GameAccount)sa[0];
+			AbstractAccount displayed = (AbstractAccount)sa[0];
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    

@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 
 			public void GameLogin(GameConn conn) {
 				AbstractCharacter ch = conn.CurCharacter;
-				GameAccount acc = conn.Account;
+				AbstractAccount acc = conn.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogin");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
 				this.AddLine(acc.Name, conn.IP.ToString(), ch.Name, ch.Uid.ToString(), "1",
@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 
 			public void GameLogout(GameConn conn) {
 				AbstractCharacter ch = conn.CurCharacter;
-				GameAccount acc = conn.Account;
+				AbstractAccount acc = conn.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogout");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
 				this.AddLine(acc.Name, conn.IP.ToString(), ch.Name, ch.Uid.ToString(), "0",
