@@ -1,14 +1,14 @@
 //Textual SteamEngine save
 //Regions
 
-[Region a_world]
+[FlaggedRegion a_world]
 name="Stredozeme"
 p=(4D)1323,1624,55,255
 createdat=125977946877
 mapplane=255
 rect=1,1,6142,4095
 
-[Region a_Mordorske_uzemi]
+[FlaggedRegion a_Mordorske_uzemi]
 name="Mordorske uzemi"
 p=(4D)3848,2312
 createdat=125978305169
@@ -137,7 +137,7 @@ rect=4664,2312,5071,3751
 rect=4665,2268,4788,2321
 rect=4759,3744,4879,3830
 
-[Region a_Gondorske_uzemi]
+[FlaggedRegion a_Gondorske_uzemi]
 name="Gondorske uzemi"
 p=(4D)1520,1704
 createdat=125978403327
@@ -271,7 +271,7 @@ rect=3010,2853,3020,2914
 rect=3015,2803,3021,2854
 rect=3021,2810,3028,2847
 
-[Region a_test]
+[FlaggedRegion a_test]
 name="test"
 p=(4D)5615,801,0,100
 createdat=125978413258
@@ -297,7 +297,7 @@ parent=(a_world)
 rect=5383,3777,5429,3839
 flags=4498
 
-[Region a_PlanSto]
+[FlaggedRegion a_PlanSto]
 name="PlanSto"
 p=(4D)2000,2000,0,110
 createdat=125978424520
@@ -381,7 +381,7 @@ parent=(a_world)
 rect=5981,120,6006,153
 flags=12695
 
-[Region a_Horondor]
+[FlaggedRegion a_Horondor]
 name="Horondor"
 p=(4D)3144,3928
 createdat=125978431315
@@ -401,7 +401,7 @@ rect=2808,3380,2829,3409
 rect=2807,3373,2814,3381
 rect=2825,3397,2850,3413
 
-[Region a_Mordor]
+[FlaggedRegion a_Mordor]
 name="Mordor"
 p=(4D)3848,2312
 createdat=125978433601
@@ -416,7 +416,7 @@ rect=3770,2507,3873,2653
 rect=3810,2485,3895,2553
 rect=3824,2791,3843,2876
 
-[Region a_Nurnen]
+[FlaggedRegion a_Nurnen]
 name="Nurnen"
 p=(4D)3464,3256,13
 createdat=125978435028
@@ -430,7 +430,7 @@ rect=3521,3752,3795,3820
 rect=3956,3610,4157,3763
 rect=4142,3640,4297,3705
 
-[Region a_Haradwaith]
+[FlaggedRegion a_Haradwaith]
 name="Haradwaith"
 p=(4D)3144,3928
 createdat=125978470973
@@ -445,7 +445,7 @@ rect=4176,3720,4873,3791
 rect=4312,3664,4583,3719
 rect=4384,3592,4583,3663
 
-[Region a_Chand]
+[FlaggedRegion a_Chand]
 name="Chand"
 p=(4D)4832,3472,1
 createdat=125978473467
@@ -470,7 +470,7 @@ rect=4720,3328,4919,3479
 rect=4920,3200,5039,3391
 rect=4848,3240,4919,3327
 
-[Region a_provincie_Anorien_Gondor]
+[FlaggedRegion a_provincie_Anorien_Gondor]
 name="provincie Anorien Gondor"
 p=(4D)2736,2796
 createdat=125978478533
@@ -504,7 +504,7 @@ rect=2968,2841,2992,2857
 rect=2968,2830,2983,2843
 rect=2986,2847,3003,2857
 
-[Region a_provincie_Lebennin_Gondor]
+[FlaggedRegion a_provincie_Lebennin_Gondor]
 name="provincie Lebennin Gondor"
 p=(4D)2692,3280
 createdat=125978483467
@@ -538,7 +538,7 @@ rect=2827,3277,2848,3298
 rect=2837,3118,2851,3136
 rect=2844,3274,2855,3284
 
-[Region a_provincie_Anfalas_Gondor]
+[FlaggedRegion a_provincie_Anfalas_Gondor]
 name="provincie Anfalas Gondor"
 p=(4D)1980,3068
 createdat=125978486201
@@ -550,7 +550,7 @@ rect=1844,3012,1983,3125
 rect=1928,2986,2029,3127
 rect=2006,2974,2099,3055
 
-[Region a_provincie_Lamedon_Gondor]
+[FlaggedRegion a_provincie_Lamedon_Gondor]
 name="provincie Lamedon Gondor"
 p=(4D)2300,2896
 createdat=125978490181
@@ -583,7 +583,7 @@ rect=2517,2935,2528,2950
 rect=2532,2885,2551,2911
 rect=2532,2910,2544,2928
 
-[Region a_Rohan]
+[FlaggedRegion a_Rohan]
 name="Rohan"
 p=(4D)2312,2467
 createdat=125978497984
@@ -616,7 +616,7 @@ rect=2389,2651,2427,2662
 rect=2426,2551,2461,2637
 rect=2432,2371,2460,2532
 
-[Region a_Severni_Spoust]
+[FlaggedRegion a_Severni_Spoust]
 name="Severni Spoust"
 p=(4D)3264,224
 createdat=125978501189
@@ -640,7 +640,7 @@ parent=(a_Mordorske_uzemi)
 rect=2800,2408,2893,2551
 flags=2
 
-[Region a_ostrov_Rhun]
+[FlaggedRegion a_ostrov_Rhun]
 name="ostrov Rhun"
 p=(4D)4202,1881
 createdat=125978502784
@@ -667,14 +667,14 @@ rect=2872,2720,2983,2751
 rect=2824,2616,2863,2687
 flags=2
 
-[Region a_Zapadni_hrana]
+[FlaggedRegion a_Zapadni_hrana]
 name="Zapadni hrana"
 p=(4D)1428,3156,70
 createdat=125978504761
 parent=(a_Gondorske_uzemi)
 rect=1416,3144,1439,3167
 
-[Region a_Svatyne_ohne]
+[FlaggedRegion a_Svatyne_ohne]
 name="Svatyne ohne"
 p=(4D)1292,3148,75
 createdat=125978505368
@@ -714,28 +714,28 @@ parent=(a_world)
 rect=5435,165,5475,218
 flags=4510
 
-[Region a_Roklinka_dum_Elronduv]
+[FlaggedRegion a_Roklinka_dum_Elronduv]
 name="Roklinka dum Elronduv"
 p=(4D)2331,1238,4
 createdat=125978508198
 parent=(a_Gondorske_uzemi)
 rect=2312,1200,2359,1239
 
-[Region a_Delvaniova_zhouba]
+[FlaggedRegion a_Delvaniova_zhouba]
 name="Delvaniova zhouba"
 p=(4D)1248,3192,70
 createdat=125978508678
 parent=(a_Gondorske_uzemi)
 rect=1240,3184,1255,3199
 
-[Region a_Vetrov]
+[FlaggedRegion a_Vetrov]
 name="Vetrov"
 p=(4D)1760,1323
 createdat=125978510047
 parent=(a_Gondorske_uzemi)
 rect=1738,1303,1772,1333
 
-[Region a_Helmuv_zleb]
+[FlaggedRegion a_Helmuv_zleb]
 name="Helmuv zleb"
 p=(4D)2056,2544
 createdat=125978510581
@@ -743,7 +743,7 @@ parent=(a_Rohan)
 rect=2040,2528,2071,2559
 rect=5184,3688,5423,3815
 
-[Region a_Jizni_Ithilien]
+[FlaggedRegion a_Jizni_Ithilien]
 name="Jizni Ithilien"
 p=(4D)3052,3150
 createdat=125978514652
@@ -782,14 +782,14 @@ rect=3078,3275,3093,3315
 rect=3079,3040,3103,3093
 rect=3079,3079,3103,3169
 
-[Region a_zvadla_vresoviste]
+[FlaggedRegion a_zvadla_vresoviste]
 name="zvadla vresoviste"
 p=(4D)3048,760,45
 createdat=125978517408
 parent=(a_world)
 rect=2960,696,3087,823
 
-[Region a_Kraj]
+[FlaggedRegion a_Kraj]
 name="Kraj"
 p=(4D)1090,1524
 createdat=125978517950
@@ -797,14 +797,14 @@ parent=(a_Gondorske_uzemi)
 rect=886,1120,1281,1495
 rect=890,1069,1029,1133
 
-[Region a_Nenuial_soumracne_jezero]
+[FlaggedRegion a_Nenuial_soumracne_jezero]
 name="Nenuial soumracne jezero"
 p=(4D)1152,1072
 createdat=125978518588
 parent=(a_Gondorske_uzemi)
 rect=1096,1000,1231,1119
 
-[Region a_Harlindon]
+[FlaggedRegion a_Harlindon]
 name="Harlindon"
 p=(4D)400,1600
 createdat=125978519048
@@ -949,7 +949,7 @@ rect=5740,3785,5807,3867
 rect=5763,3863,5798,4024
 flags=256
 
-[Region a_Osgiliath_zapadni_breh]
+[FlaggedRegion a_Osgiliath_zapadni_breh]
 name="Osgiliath zapadni breh"
 p=(4D)2923,2907
 createdat=125978531647
@@ -957,7 +957,7 @@ parent=(a_world)
 rect=6056,3848,6135,3959
 rect=6064,3816,6119,3847
 
-[Region a_Osgiliath_vychodni_breh]
+[FlaggedRegion a_Osgiliath_vychodni_breh]
 name="Osgiliath vychodni breh"
 p=(4D)3064,2952
 createdat=125978532165
@@ -1125,28 +1125,28 @@ parent=(a_Horondor)
 rect=2360,3952,2511,4087
 flags=256
 
-[Region a_Snezny_ostrov]
+[FlaggedRegion a_Snezny_ostrov]
 name="Snezny ostrov"
 p=(4D)1024,136
 createdat=125978544107
 parent=(a_world)
 rect=856,0,1247,263
 
-[Region a_Ledovy_ostrov]
+[FlaggedRegion a_Ledovy_ostrov]
 name="Ledovy ostrov"
 p=(4D)149,2147
 createdat=125978544568
 parent=(a_Gondorske_uzemi)
 rect=38,1964,427,2193
 
-[Region a_Ostrov_Imperatoru]
+[FlaggedRegion a_Ostrov_Imperatoru]
 name="Ostrov Imperatoru"
 p=(4D)1149,3883
 createdat=125978545065
 parent=(a_world)
 rect=1032,3837,1157,3916
 
-[Region a_Ostrov_Divu]
+[FlaggedRegion a_Ostrov_Divu]
 name="Ostrov Divu"
 p=(4D)728,3680
 createdat=125978545832
@@ -1181,7 +1181,7 @@ rect=514,3424,525,3445
 rect=552,3382,573,3403
 flags=1
 
-[Region a_Vetrne_ostrovy]
+[FlaggedRegion a_Vetrne_ostrovy]
 name="Vetrne ostrovy"
 p=(4D)544,3502
 createdat=125978553813
@@ -1212,7 +1212,7 @@ rect=460,3922,477,3963
 rect=324,3766,369,3787
 flags=10
 
-[Region a_Ostrov_narku]
+[FlaggedRegion a_Ostrov_narku]
 name="Ostrov narku"
 p=(4D)1512,3992
 createdat=125978556776
@@ -1225,7 +1225,7 @@ rect=1492,3934,1795,4057
 rect=1568,3874,1691,3941
 rect=1492,3760,1505,3803
 
-[Region a_Hadi_ostrovy]
+[FlaggedRegion a_Hadi_ostrovy]
 name="Hadi ostrovy"
 p=(4D)1514,3868
 createdat=125978557946
@@ -1234,7 +1234,7 @@ rect=1492,3826,1527,3869
 rect=1501,3865,1535,3916
 rect=1570,3783,1640,3844
 
-[Region a_Draci_ostrovy]
+[FlaggedRegion a_Draci_ostrovy]
 name="Draci ostrovy"
 p=(4D)2605,3390
 createdat=125978558666
@@ -1243,7 +1243,7 @@ rect=2553,3328,2632,3375
 rect=2559,3373,2620,3402
 rect=2565,3401,2606,3435
 
-[Region a_Ostrov_strachu]
+[FlaggedRegion a_Ostrov_strachu]
 name="Ostrov strachu"
 p=(4D)2450,3480
 createdat=125978560513
@@ -1264,7 +1264,7 @@ rect=2373,3448,2457,3563
 rect=2362,3484,2379,3560
 rect=2370,3476,2373,3484
 
-[Region a_Ebenove_ostrovy]
+[FlaggedRegion a_Ebenove_ostrovy]
 name="Ebenove ostrovy"
 p=(4D)2460,3323
 createdat=125978563068
@@ -1280,7 +1280,7 @@ rect=2377,3352,2383,3381
 rect=2375,3358,2379,3374
 rect=2487,3292,2499,3313
 
-[Region a_Ostrovy_Titanu]
+[FlaggedRegion a_Ostrovy_Titanu]
 name="Ostrovy Titanu"
 p=(4D)600,2600
 createdat=125978564618
@@ -2070,7 +2070,7 @@ rect=5184,4,6131,139
 rect=5808,148,5867,227
 flags=4
 
-[Region a_expert]
+[FlaggedRegion a_expert]
 name="expert"
 p=(4D)4750,858
 createdat=125978625609
