@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<AbstractAccount> accList = (List<AbstractAccount>)args[2];
+			List<ScriptedAccount> accList = (List<ScriptedAccount>) args[2];
 			int firstOnPage = Convert.ToInt32(args[0]);
 
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
