@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
 			List<DictionaryEntry> tagList = null;
-			if(sa[3].Equals("")) {
+			if(sa[3] == null) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				tagList = ListifyTags(th.AllTags, sa[2].ToString());
@@ -113,57 +113,47 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//now handle the paging 
 			dlg.CreatePaging(tagList.Count, firstiVal,1);
 
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_TagList.Instance,
-					sa[0], //na kom se to spoustelo
-					firstiVal, //cislo polozky kterou zacina stranka (pro paging)	
-					sa[2], //informace pro vyber tagu dle jmena
-					sa[3]); //seznam tagu odpovidajicich kriteriu
-
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
-			//vzit "tenhle" dialog ze stacku
-			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
-
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<DictionaryEntry> tagList = (List<DictionaryEntry>)dsi.Args[3];
-			int firstOnPage = (int)dsi.Args[1];
+			List<DictionaryEntry> tagList = (List<DictionaryEntry>)args[3];
+			int firstOnPage = (int)args[1];
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
                     case 0: //exit
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
-						//aktualni dialog uz byl vynat ze stacku, takze se opravdu zobrazi ten minuly
-                        break;
+						break;
                     case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
-						dsi.Args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						dsi.Args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
-						dsi.Args[3] = ""; //vycistit soucasny odkaz na taglist aby se mohl prenacist
-						dsi.Show();
-                        break;
+						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
+						args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
+						args[3] = null; //vycistit soucasny odkaz na taglist aby se mohl prenacist
+						gi.Cont.SendGump(gi.Focus, D_TagList.instance, args);
+						break;
 					case 2: //zobrazit info o vysvetlivkach
-						DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
+						DialogStackItem.EnstackDialog(gi, D_TagList.instance, args); //vlozime napred dialog do stacku
 						gi.Cont.Dialog(D_Settings_Help.Instance);
 						break;   						
                     case 3: //zalozit novy tag.
-						DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
-						gi.Cont.Dialog(D_NewTag.Instance,dsi.Args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
+						DialogStackItem.EnstackDialog(gi, D_TagList.instance, args); //vlozime napred dialog do stacku
+						gi.Cont.Dialog(D_NewTag.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
 						break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_TagList.instance, args, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//1 sloupecek
 				return;
 			} else {
 				//buttony na smazani
 				int tagIdx = (int)gr.pressedButton - 10;
-				DictionaryEntry de = ((List<DictionaryEntry>)dsi.Args[3])[tagIdx];
-				TagHolder tagOwner = (TagHolder)dsi.Args[0];
+				DictionaryEntry de = ((List<DictionaryEntry>)args[3])[tagIdx];
+				TagHolder tagOwner = (TagHolder)args[0];
 				tagOwner.RemoveTag((TagKey)de.Key);
 				//na zaver smazat taglist (musi se reloadnout)
-				dsi.Args[3] = "";
-				dsi.Show();
+				args[3] = null;
+				//a zobrazit znovu dialog
+				gi.Cont.SendGump(gi.Focus, D_TagList.instance, args);
 			}
 		}
 
@@ -192,9 +182,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam tagu, pouzito az v dialogu
 			if(text.Argv == null || text.Argv.Length == 0) {
-				Globals.SrcCharacter.Dialog(D_TagList.Instance, self, 0, "", "");
+				Globals.SrcCharacter.Dialog(D_TagList.Instance, self, 0, "", null);
 			} else {
-				Globals.SrcCharacter.Dialog(D_TagList.Instance, self, 0, text.Args, "");
+				Globals.SrcCharacter.Dialog(D_TagList.Instance, self, 0, text.Args, null);
 			}
 		}
 	}

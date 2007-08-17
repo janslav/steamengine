@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//vzit "tenhle" dialog ze stacku
 			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
 
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
 				if(prevStacked.InstanceType.Equals(typeof(D_TagList))) {
 					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
-					prevStacked.Args[3] = "";
+					prevStacked.Args[3] = null;
 				}
 				prevStacked.Show();								
 			} else if(gr.pressedButton == 2) {

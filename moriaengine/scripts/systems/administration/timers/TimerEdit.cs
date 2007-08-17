@@ -24,24 +24,25 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("A new timer creating dialog")]
-	public class D_NewTimer : CompiledGump {
+	[Remark("A timer editing dialog")]
+	public class D_EditTimer : CompiledGump {
 		private static int width = 400;
 		
-		[Remark("Instance of the D_NewTimer, for possible access from other dialogs etc.")]
-        private static D_NewTimer instance;
-		public static D_NewTimer Instance {
+		[Remark("Instance of the D_EditTimer, for possible access from other dialogs etc.")]
+        private static D_EditTimer instance;
+		public static D_EditTimer Instance {
 			get {
 				return instance;
 			}
 		}
         [Remark("Set the static reference to the instance of this dialog")]
-		public D_NewTimer() {
+		public D_EditTimer() {
 			instance = this;
 		}
 
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
 			TagHolder th = (TagHolder)sa[0]; //na koho budeme timer ukladat?
+			Timer tm = (Timer)sa[1]; //timer ktery editujeme
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -50,18 +51,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového timeru na "+th.ToString());
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Úprava timeru "+tm.name+" na "+th.ToString());
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			//dialozek s inputama
+			//tabulka s inputem
 			dlg.Add(new GUTATable(2, 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
 			//napred napisy 
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Název timeru");
-			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Èas [s]");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10);
-			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 11);
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Èas [s]");
+			dlg.LastTable[1, 0] = TextFactory.CreateText(tm.name.ToString());
+			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 11, tm.InSeconds.ToString());
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
@@ -70,13 +71,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(src, focus, D_NewTimer.Instance,
-					th); //tagholder na nejz budeme tag nastavovat, pro priste 
-
+			DialogStackItem.EnstackDialog(src, focus, D_EditTimer.Instance,
+					th, //tagholder na nejz budeme tag nastavovat, pro priste 
+					tm); //timer co editujeme
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//vzit "tenhle" dialog ze stacku
 			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
 
@@ -85,16 +86,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//create_timer dialog jsme uz vytahli ze stacku, nemusime ho tedy dodatecne odstranovat
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
-				string timerName = gr.GetTextResponse(10);
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
-				//ziskame objektovou reprezentaci vlozene hodnoty. ocekava samozrejme prefixy pokud je potreba!
-				//Timer tm = new Timer((TagHolder)gi.Cont, timerName, new TimeSpan(0, 0, timerTime), null);
-				//vzit jeste predchozi dialog, musime smazat timerlist aby se pregeneroval
-				//a obsahoval ten novy timer
+				Timer tm = (Timer)dsi.Args[1];
+				tm.InSeconds = timerTime;
 				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
 				if(prevStacked.InstanceType.Equals(typeof(D_TimerList))) {
-					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
-					prevStacked.Args[3] = "";
+					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
+					prevStacked.Args[3] = null;
 				}
 				prevStacked.Show();								
 			} 

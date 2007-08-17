@@ -56,6 +56,9 @@ namespace SteamEngine.CompiledScripts {
 
 		internal override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			GumpInstance gi = new CompiledGumpInstance(this);
+
+			gi.InputParams = args; //store input parameters
+
 			this.gumpInstance = gi;
 			try {
 				Construct(focus, sendTo, args);
@@ -76,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public abstract void Construct(Thing focus, AbstractCharacter sendTo, object[] args);
-		public abstract void OnResponse(GumpInstance gi, GumpResponse gr);
+		public abstract void OnResponse(GumpInstance gi, GumpResponse gr, object[] args);
 
 		//RunUO interface
 		public void AddAlphaRegion(int x, int y, int width, int height) {
@@ -353,7 +356,7 @@ namespace SteamEngine.CompiledScripts {
 			CompiledGump gdef = (CompiledGump) def;
 			gdef.gumpInstance = this;
 			try {
-				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers));
+				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers), this.InputParams);
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
