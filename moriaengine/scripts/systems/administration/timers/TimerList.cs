@@ -174,13 +174,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Retreives the list of all timers the given TagHolder has")]
-		private List<DictionaryEntry> ListifyTimers(IEnumerable tags, string criteria) {
-			List<DictionaryEntry> timersList = new List<DictionaryEntry>();
-			foreach(DictionaryEntry entry in tags) {
+		private List<DictionaryEntry> ListifyTimers(IEnumerable<KeyValuePair<TimerKey, Timer>> tags, string criteria) {
+			List<KeyValuePair<TimerKey, Timer>> timersList = new List<KeyValuePair<TimerKey, Timer>>();
+			foreach (KeyValuePair<TimerKey, Timer> entry in tags) {
 				//entry in this hashtable is TimerKey and its Timer value
 				if(criteria.Equals("")) {
 					timersList.Add(entry);//bereme vse
-				} else if(((TimerKey)entry.Key).name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if((entry.Key.name.ToUpper().Contains(criteria.ToUpper()) {
 					timersList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu timeru
 				}
 			}
