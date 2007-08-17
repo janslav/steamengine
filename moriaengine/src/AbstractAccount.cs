@@ -66,13 +66,13 @@ namespace SteamEngine {
 			accounts.Clear();
 		}
 
-		public AbstractAccount(PropsSection input) : this(input.headerName) {
+		protected AbstractAccount(PropsSection input) : this(input.headerName) {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
 			string name=input.headerType;
 			this.LoadSectionLines(input);
 		}
 
-		public AbstractAccount(string name) {
+		protected AbstractAccount(string name) {
 			if (String.Equals("eof", name, StringComparison.OrdinalIgnoreCase)) {
 				Globals.SrcWriteLine("EOF is an illegal account name");
 				throw new OverrideNotAllowedException("EOF is an illegal account name");
