@@ -353,8 +353,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					width -= ImprovedDialog.D_COL_SPACE; //put it between the borders fo the column with a little spaces
 				}
 				if (height == 0) {
-					//no height specified, give it the default one row height
-					height = ImprovedDialog.D_ROW_HEIGHT;
+					//no height specified, give it the default one row height (which is the height of the buttons)
+					height = ButtonFactory.D_BUTTON_HEIGHT; 
 				}
 			}
 

@@ -97,32 +97,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//now handle the paging 
 			dlg.CreatePaging(lastColor, firstiVal, columnsCnt);
 
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_Colors.Instance,
-					startingColor, //prvni barva
-					firstiVal); //cislo barvy, kterou zacina stranka (pro paging)	
-
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam barev 
 			//int[] colorsList = (int[])gi.GetTag(_colorsLst_);
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-				DialogStackItem dsi = null;
-                switch(gr.pressedButton) {
+				switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog (tj. tenhle)
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
                         break;
                     case 1: //vybrat prvni barvu
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
-						dsi.Args[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
-						dsi.Show();
+						args[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
+						args[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
+						gi.Cont.SendGump(gi.Focus, D_Colors.instance, args);
                         break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Colors.instance, args, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//zde je sloupecku vice (columnsCnt, viz nahore)
 				return;
 			} 

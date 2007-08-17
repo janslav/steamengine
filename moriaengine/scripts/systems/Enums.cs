@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 		OfflineColor = 0481,//color for highlighting offline accounts/players
 
 		LabelColor = 1675, //nadpisy (sloupecku atd) - svetlounce bezova
-		HeadlineColor = 1152, //titulek (obvykle celeho dialogu atd)
+		HeadlineColor = 2000,//1152, //titulek (obvykle celeho dialogu atd)
 
 		SettingsTitleColor=2413, //the settings category color
 		SettingsNormalColor=2300, //normal settings items

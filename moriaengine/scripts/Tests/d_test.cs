@@ -19,7 +19,7 @@ using System;
 using SteamEngine;
 using System.Collections;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Test : CompiledGump {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			int headerColor = 1;
@@ -50,8 +50,8 @@ namespace SteamEngine.CompiledScripts {
 			
 			XMFHTMLGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
 		}
-		
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			Console.WriteLine("OnResponse");
 			gi.Cont.SysMessage("OnResponse from "+gi);
 			gi.Cont.SysMessage("button : "+gr.pressedButton);

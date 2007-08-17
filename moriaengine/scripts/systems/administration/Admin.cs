@@ -25,8 +25,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog that will display the admin dialog")]
 	public class D_Admin : CompiledGump {
-		static readonly TagKey players = TagKey.Get("plrList");
-        
         [Remark("Instance of the D_Admin, for possible access from other dialogs etc.")]
         private static D_Admin instance;
 		public static D_Admin Instance {
@@ -40,10 +38,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
-			//seznam lidi, ulozit na dialog
-            ArrayList playersList = ScriptUtil.ArrayListFromEnumerable(Server.AllPlayers);            
-            this.GumpInstance.SetTag(players, playersList);
-			//zjistit zda bude paging, najit maximalni index na strance
+			//seznam lidi z parametru (if any)
+			ArrayList playersList = null;
+			if(sa[2] == null) {
+				playersList = ScriptUtil.ArrayListFromEnumerable(Server.AllPlayers);
+				sa[2] = playersList; //ulozime do parametru dialogu
+			} else {
+				playersList = (ArrayList)sa[2];
+			}
+            //zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, playersList.Count);
@@ -136,56 +139,43 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//now handle the paging 
 			dialogHandler.CreatePaging(playersList.Count, firstiVal,1);
 
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_Admin.Instance,
-					(SortingCriteria)sa[0], //typ tøídìní
-					firstiVal); //cislo zpravy kterou zacina stranka (pro paging)	
-
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
-			ArrayList playersList = (ArrayList)gi.GetTag(players);
+			ArrayList playersList = (ArrayList)args[2];
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-				DialogStackItem dsi = null;
-                switch(gr.pressedButton) {
+				switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog (tj. tenhle)
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
                         break;
                     case 1: //acc tøídit asc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
-						dsi.Show();
-                        break;
+						args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						break;
                     case 2: //hráèi tøídit asc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
 						break;
                     case 3: //lokace tøídit asc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.LocationAsc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.LocationAsc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
 						break;                    
                     case 4: //acc tøídit desc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
 						break;
                     case 5: //hráèi tøídit desc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
 						break;
                     case 6: //lokace tøídit desc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.LocationDesc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.LocationDesc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
 						break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count,1)) {
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Admin.instance, args, 1, playersList.Count,1)) {
 				//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)				
 				//posledni 1 - pocet sloupecku v dialogu
 				return;
