@@ -316,7 +316,7 @@ namespace SteamEngine {
 			if (acc==null) {
 				if ((Globals.autoAccountCreation) || (accounts.Count == 0)) {
 					acc = CreateAccount(username, password);
-					if (accounts.Count == 0) {
+					if (accounts.Count == 1) {
 						acc.plevel = Globals.maximalPlevel;
 						acc.maxPlevel = Globals.maximalPlevel;
 					}
@@ -352,6 +352,8 @@ namespace SteamEngine {
 			if (accounts.Count==0) {
 				Console.WriteLine("Creating new account {0}", username);
 				acc=CreateAccount(username, password);
+				acc.maxPlevel = Globals.maximalPlevel;
+				acc.plevel = Globals.maximalPlevel;
 			}
 			acc = AbstractAccount.Get(username);
 			if (acc==null) {
