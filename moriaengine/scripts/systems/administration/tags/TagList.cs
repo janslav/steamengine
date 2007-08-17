@@ -158,13 +158,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Retreives the list of all tags the given TagHolder has")]
-		private List<DictionaryEntry> ListifyTags(IEnumerable tags, string criteria) {
-			List<DictionaryEntry> tagsList = new List<DictionaryEntry>();
-			foreach(DictionaryEntry entry in tags) {
+		private List<KeyValuePair<TagKey, Object>> ListifyTags(IEnumerable<KeyValuePair<TagKey, Object>> tags, string criteria) {
+			List<KeyValuePair<TagKey, Object>> tagsList = new List<KeyValuePair<TagKey, Object>>();
+			foreach (KeyValuePair<TagKey, Object> entry in tags) {
 				//entry in this hashtable is TagKey and its object value
 				if(criteria.Equals("")) {
 					tagsList.Add(entry);//bereme vse
-				} else if(((TagKey)entry.Key).name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if(entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					tagsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
 				}
 			}
