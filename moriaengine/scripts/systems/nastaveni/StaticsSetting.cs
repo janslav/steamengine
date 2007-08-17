@@ -23,7 +23,7 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog pro nastavení všech promìnných majících atribut SavedMember a jsou zároveò urèeny"+
 			"pro dynamické nastavování.")]
 	public class D_Static_Settings : CompiledGump {
@@ -226,45 +226,38 @@ namespace SteamEngine.CompiledScripts {
 			//ulozit informaci o posledni kategorii a poslednim indexu v ni
 			this.GumpInstance.SetTag(lastKeyTag, actualKey);//tato kategorie bude prvni na dalsi strance
 			this.GumpInstance.SetTag(lastIndexTag, idx + 1);//toto bude index prvniho membera z vyse uvedene kategorie ktery se zobrazi
-
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_Static_Settings.Instance,
-					args); //0 - prvni klic skupiny promennych co bude na strance
-		 					//1 - kolikaty saved member ze skupiny bude zobrazen jako prvni
-							//2 - cislo stranky
-							//3	- haash tabulka se všemi hodnotami a indexy v dialogu 
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		//args:
+		//0 - prvni klic skupiny promennych co bude na strance
+		//1 - kolikaty saved member ze skupiny bude zobrazen jako prvni
+		//2 - cislo stranky
+		//3	- haash tabulka se všemi hodnotami a indexy v dialogu 
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			if(gr.pressedButton == 0) { //exit button
 				//vezmem seznam zobrazenych kategorii, projdeme ho a vsechny membery vycistime
 				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
 				foreach(SettingsCategory sCat in catlist) {
 					sCat.ClearSettingValues();					
 				}
-
-				DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
 				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
 			}
-			DialogStackItem dsi = null;
 			//navigacni buttony (paging)
 			if(gr.pressedButton == ImprovedDialog.ID_PREV_BUTTON) {
-				dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-				dsi.Args[2] = Convert.ToInt32(dsi.Args[2]) - 1;//strankovani o krok zpet
-				KeyIndexPair kip = loadKeyIndexInfo(Convert.ToInt32(dsi.Args[2]),dsi.Args);
+				args[2] = Convert.ToInt32(args[2]) - 1;//strankovani o krok zpet
+				KeyIndexPair kip = loadKeyIndexInfo(Convert.ToInt32(args[2]),args);
 									//(KeyIndexPair)keytable[Convert.ToInt32(dsi.Args[2])];
-				dsi.Args[0] = kip.Key; //updatnout info o prvni kategorii na predchozi strance				
-				dsi.Args[1] = kip.Index; //ve vybrane prvni kategorii zacneme zobrazovat od tohoto clena
-				dsi.Show();									
+				args[0] = kip.Key; //updatnout info o prvni kategorii na predchozi strance				
+				args[1] = kip.Index; //ve vybrane prvni kategorii zacneme zobrazovat od tohoto clena
+				gi.Cont.SendGump(gi.Focus, D_Static_Settings.instance, args);
 			} else if(gr.pressedButton == ImprovedDialog.ID_NEXT_BUTTON) {
 				string firstCat = (string)this.GumpInstance.GetTag(lastKeyTag);
 				int firstIdx = (int)this.GumpInstance.GetTag(lastIndexTag);
 
-				dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-				dsi.Args[2] = Convert.ToInt32(dsi.Args[2]) + 1;
-				dsi.Args[0] = firstCat; //updatnout info o prvni kategorii				
-				dsi.Args[1] = firstIdx; //v prvni kategorii zacneme zobrazovat od tohoto clena
-				dsi.Show();
+				args[2] = Convert.ToInt32(args[2]) + 1;
+				args[0] = firstCat; //updatnout info o prvni kategorii				
+				args[1] = firstIdx; //v prvni kategorii zacneme zobrazovat od tohoto clena
+				gi.Cont.SendGump(gi.Focus, D_Static_Settings.instance, args);
 			} else if(gr.pressedButton == 1) { //nastaveni
 				//napred vycistime vsechny mozne predchozi neuspechy v nastaveni - nyni totiz jedem znova
 				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
@@ -273,12 +266,13 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				TryMakeSetting(valuesToSet,gr);
-				dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-				dsi.Args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
-				dsi.Show();
-				//a zobrazime dialog s vysledky
-				gi.Cont.Dialog(D_Settings_Result.Instance, 0, valuesToSet);
+				args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
+				gi.Cont.SendGump(gi.Focus, D_Static_Settings.instance, args);//zobrazime znovu tentyz dialog
+				//a zobrazime take dialog s vysledky (null = volne misto pro seznamy resultu v nasledujicim dialogu)
+				gi.Cont.Dialog(D_Settings_Result.Instance, 0, valuesToSet, null);
 			} else if(gr.pressedButton == 2) { //info
+				//stackneme se pro navrat
+				DialogStackItem.EnstackDialog(gi, D_Static_Settings.instance, args);
 				//zobrazit text zprávy (první parametr je nadpis, druhý je zobrazný text)
 				gi.Cont.Dialog(D_Settings_Help.Instance);				
 			}
@@ -286,7 +280,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Specificky zpusob vytvareni pagingu pro nastavovaci dialogy - nebudeme pouzivat ten "+ 
 				"klasickej zpusob protoze neni jendoduchyy zjistit kolik polozek je vlastne na strance, "+ 
-				"stranka nemusi mit nutne konstatnni pocet radku. =>vynechame ciselnou navigaci "+
+				"stranka nemusi mit nutne konstantni pocet radku. =>vynechame ciselnou navigaci "+
 				"Predavame si jako parametr posledni klic z naseho sortedslovniku se SavedMemberama a "+
 				"posledne pouzity index do listu MemberInfo trid pro dany klic. Take posilame cislo stranky "+
 				"(to jen abychom vedeli jak udelat navigacni sloupecek)")]

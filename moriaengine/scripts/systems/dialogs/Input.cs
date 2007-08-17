@@ -50,8 +50,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             get;
         }       
 
-        [Remark("Method called when clicked on the OK butotn in the dialog, sending the filled text")]
-        public abstract void Response(Character src, Thing focus, string filledText);
+        [Remark("Method called when clicked on the OK button in the dialog, sending the filled text")]
+        public abstract void Response(Character src, TagHolder focus, string filledText);
 
         [Remark("Construct method creates the dialog itself")]
         public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
 
         [Remark("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
-        public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
             switch(gr.pressedButton) {
                 case 0: //exit or rightclick
 					//znovuzavolat pripadny predchozi dialog
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 case 1: //OK
                     //pass the call with the input value
                     string inputVal = gr.GetTextResponse(1);
-                    this.Response((Character)gi.Cont, gi.Focus, inputVal);
+                    this.Response((Character)gi.Cont, (TagHolder)gi.Focus, inputVal);
 					//a zavolat predchozi dialog
 					DialogStackItem.ShowPreviousDialog(gi.Cont.Conn);
                     break;
@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
         [Remark("Action called when the input dialog is confirmed. The parameters of the call will be" +
                 "1st - the inputted text, followed by the params the input dialog was called with")]
-        public override void Response(Character src, Thing focus, string filledText) {
+        public override void Response(Character src, TagHolder focus, string filledText) {
             //prepend the input text to previous input parameters
             object[] pars = (object[])this.GumpInstance.GetTag(TagKey.Get("input_params"));
             object[] newPars = new object[pars.Length+1]; //create a new bigger array, we need to add a new 0th value...

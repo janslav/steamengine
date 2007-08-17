@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	[Remark("Static class for operating with clients delayed messages.")]
 	public static class MsgsBoard {		
 		[Remark("A unique tag name for holding a list of client delayed messages")]
-		internal static TagKey _delayed_msgs_ = TagKey.Get("delayed_msgs");
+		internal static TagKey _delayed_msgs_ = TagKey.Get("_delayed_msgs_");
 
 		[Remark("Default senders name (if the sender was not specified)")]
 		public const string NO_SENDER = "System";
@@ -123,19 +123,6 @@ namespace SteamEngine.CompiledScripts {
 		[Remark("Return the number of unread messages for the specified player")]
 		public static int CountUnread(Character whose) {
 			return CountUnread(GetMessages(whose));
-		}
-
-		[Remark("Internal class extending a CompiledScript class - allowing us to call some useful functions ingame without " +
-                "scripting them in LScript")]
-		public static class MessagesFunctions {
-			[SteamFunction]
-			public static void Messages(AbstractCharacter sender, ScriptArgs args) {
-				if(args.Args.Length == 0) {
-					sender.Dialog(D_DelayedMessages.Instance, SortingCriteria.TimeAsc, 0);//default sorting, beginning from the first message
-				} else {
-					sender.Dialog(D_DelayedMessages.Instance, (SortingCriteria)args.Args[0], 0); //we expect a sorting criterion !, listing from the first message
-				}
-			}
 		}
 	}
 

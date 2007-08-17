@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			switch (gr.pressedButton) {
 				case 0: //exit
 					//look if some dialog is not stored in the dialogs stack and possibly display it

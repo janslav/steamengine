@@ -25,8 +25,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog that will display the list of clients delayed messages")]
 	public class D_DelayedMessages : CompiledGump {
-		static readonly TagKey messagesTag = TagKey.Get("messagesTag");
-
 		[Remark("Instance of the D_DelayedMessages, for possible access from other dialogs, buttons etc.")]
 		private static D_DelayedMessages instance;
 		public static D_DelayedMessages Instance {
@@ -42,7 +40,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Display the list of the messages")]
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
 			ArrayList messagesList = MsgsBoard.GetClientsMessages((Character)src);
-			this.GumpInstance.SetTag(messagesTag, messagesList);
+			//setrid zpravy (neni li specifikaovano trideni, pouzije se prirozene trideni dle casu)
+			messagesList = MsgsBoard.GetSortedBy(messagesList, (SortingCriteria)sa[0]);
+			sa[2] = messagesList; //ulozime mezi parametry dialogu
+
 			int unreadCnt = MsgsBoard.CountUnread((Character)src);
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
@@ -88,9 +89,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.Add(new GUTATable(imax-firstiVal));
 			dialogHandler.CopyColsFromLastTable();
 
-			//setrid zpravy (neni li specifikaovano trideni, pouzije se prirozene trideni dle casu)
-			messagesList = MsgsBoard.GetSortedBy(messagesList, (SortingCriteria)sa[0]);
-
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
@@ -110,55 +108,42 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.CreatePaging(messagesList.Count, firstiVal,1);
 
 			dialogHandler.WriteOut();
-
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_DelayedMessages.Instance,
-					(SortingCriteria)sa[0], //typ tøídìní
-					firstiVal); //cislo zpravy kterou zacina stranka (pro paging)
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam zprav z kontextu (mohl jiz byt trideny apd.)
-			ArrayList messagesList = (ArrayList)gi.GetTag(messagesTag);
+			ArrayList messagesList = (ArrayList)args[2];
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-				DialogStackItem dsi = null;
-                switch(gr.pressedButton) {
+				switch(gr.pressedButton) {
 					case 0: //exit
-						DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //tridit dle casu asc						
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.TimeAsc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.TimeAsc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
 						break;
 					case 2: //tridit dle casu desc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.TimeDesc; //uprav info o sortovani
-						dsi.Show();						
+						args[0] = SortingCriteria.TimeDesc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
 						break;
 					case 3: //tridit dle sendera asc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
 						break;
 					case 4: //tridit dle sendera desc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
-						dsi.Show();
+						args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
 						break;
 					case 5: //tridit dle neprectenych asc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.UnreadAsc; //uprav info o sortovani
-						dsi.Show();						
+						args[0] = SortingCriteria.UnreadAsc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
 						break;
 					case 6: //tridit dle neprectenych desc
-						dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);//vem ulozene info o dialogu
-						dsi.Args[0] = SortingCriteria.UnreadDesc; //uprav info o sortovani
-						dsi.Show();						
+						args[0] = SortingCriteria.UnreadDesc; //uprav info o sortovani
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, messagesList.Count,1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_DelayedMessages.instance, args, 1, messagesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//1 sloupecek
 				return;
             } else { //skutecna tlacitka z radku
@@ -173,16 +158,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							msg.read = true;
 							msg.color = msg.color + 3;//trosku ztmavit barvu
 						}
+						//stacknout messageslist pro navrat
+						DialogStackItem.EnstackDialog(gi, D_DelayedMessages.instance, args);
+
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
 						gi.Cont.Dialog(D_Display_Text.Instance, "Text zprávy", msg.text);
                         break;
                     case 1: //smazat
 						MsgsBoard.DeleteMessage((Character)gi.Cont, msg);
 						//znovuzavolat dialog
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn);
+						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
                         break;                    
                 }
 			}
-		}    
+		}
+
+		[SteamFunction]
+		public static void Messages(AbstractCharacter sender, ScriptArgs args) {
+			//ten poslendi null - misto pro seznam messagi
+			if(args.Args.Length == 0) {
+				sender.Dialog(D_DelayedMessages.Instance, SortingCriteria.TimeAsc, 0, null);//default sorting, beginning from the first message
+			} else {
+				sender.Dialog(D_DelayedMessages.Instance, (SortingCriteria)args.Args[0], 0, null); //we expect a sorting criterion !, listing from the first message
+			}
+		}	
 	}
 }

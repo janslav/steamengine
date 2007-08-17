@@ -23,13 +23,10 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazící seznam všech kategorií které v nastavení máme, umožní rozkliknout"+
 			"a nastavit požadovanou kategorii (nebo taky všechny).")]
 	public class D_Settings_Categories : CompiledGump {
-		static readonly TagKey categoriesTag = TagKey.Get("categoriesTag");
-
-
 		private static D_Settings_Categories instance;
 		public static D_Settings_Categories Instance {
 			get {
@@ -45,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 			//pole obsahujici vsechny ketegorie pro zobrazeni
 			SettingsCategory[] categories = StaticMemberSaver.GetMembersForSetting();
 
-			this.GumpInstance.SetTag(categoriesTag, categories);
+			args[1] = categories; //kategorie vrazim do pripraveneho mista v poli argumentu
 			int firstiVal = Convert.ToInt32(args[0]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, categories.Length);
@@ -89,22 +86,19 @@ namespace SteamEngine.CompiledScripts {
 			dlg.CreatePaging(categories.Length, firstiVal,1);
 
 			dlg.WriteOut();
-			
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_Settings_Categories.Instance,
-					firstiVal);	//prvni index na strance
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam kategorii kontextu
-			SettingsCategory[] categories = (SettingsCategory[])gi.GetTag(categoriesTag);
+			SettingsCategory[] categories = (SettingsCategory[])args[1];
 			if(gr.pressedButton < 10) { //zakladni tlacitka - end, zobraz vse 
 				switch(gr.pressedButton) {
 					case 0: //exit
-						DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //zobraz vsechny kategorie	
+						//uložit info o dialogu pro návrat
+						DialogStackItem.EnstackDialog(gi, D_Settings_Categories.Instance, args);								
 							//params:	1 - prazdny, zacne od prvni kategorie
 							//			2 - 0, zacne od prvniho membera dane kategorie
 							//			3 - 0, zacne na nulte strance (jinak to ani nejde)
@@ -112,10 +106,12 @@ namespace SteamEngine.CompiledScripts {
 						gi.Cont.Dialog(D_Static_Settings.Instance, "", 0, 0, SettingsDisplay.All);
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Settings_Categories.instance, args, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} else { //skutecna tlacitka z radku
+				//uložit info o dialogu pro návrat
+				DialogStackItem.EnstackDialog(gi, D_Settings_Categories.Instance, args);
 				//zjistime kterej cudlik z radku byl zmacknut
 				int row = (int)(gr.pressedButton - 10);//- cislo kategorie v jejich setridenem seznamu
 				SettingsCategory cat = categories[row];

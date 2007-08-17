@@ -1,7 +1,8 @@
 [function nastaveni] 	//arg0 - nazev kategorie	
 if (argvcount == 0)
 	//kategorijni rozcestnik (0 = zacit od zacatku, jak taky jinak...)
-	dialog(D_Settings_Categories,0)
+	//null - pripravene misto pro ulozeni seznamu kategorii (pro vnitrodialogovou navigaci)
+	dialog(D_Settings_Categories,0, null)
 else
 	//mame specifikovanou kategorii
 	//1. klic vybrane kategorie, "" = od zacatku 

@@ -23,7 +23,7 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazující informace a vysvìtlivky symbolù pro nastavení")]
 	public class D_Settings_Help : CompiledGump {
 		private static D_Settings_Help instance;
@@ -199,11 +199,10 @@ namespace SteamEngine.CompiledScripts {
 			dlg.LastTable[0, 4] = TextFactory.CreateText("#globals (doslova)");			
 			dlg.MakeTableTransparent();
 
-			DialogStackItem.ShowPreviousDialog(src.Conn); //na pozadí zobrazíme nastavovací dialog
 			dlg.WriteOut();//a vykreslíme ten info dialog
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam nastavenych nebo zkousenych polozek
 			if(gr.pressedButton == 0) { //end				
 				DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog

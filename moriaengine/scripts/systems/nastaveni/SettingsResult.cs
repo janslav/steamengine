@@ -23,13 +23,10 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazící výsledek po uplatnìní nastavení - vypíše seznam zmìnìných hodnot doplnìný"+
 			"o pøípadné hodnoty které se zmìnit nepodaøilo")]
 	public class D_Settings_Result : CompiledGump {
-		static readonly TagKey setResultsTag = TagKey.Get("_setResultsTag_");
-
-
 		private static D_Settings_Result instance;
 		public static D_Settings_Result Instance {
 			get {
@@ -47,8 +44,8 @@ namespace SteamEngine.CompiledScripts {
 			List<SettingsValue> settingValues = GetDisplayedSettingValues(setResults); //pro iterování do výpisu dialogu
 			//setridit dle nazvu zobrazovaneho itemu, jinak by nebylo zaruceno spolehlive strankovani
 			settingValues.Sort(SettingsValuesComparer.Instance);
+			args[2] = settingValues; //ulozime mezi parametry dialogu
 
-			this.GumpInstance.SetTag(setResultsTag, setResults);
 			int firstiVal = Convert.ToInt32(args[0]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, settingValues.Count);
@@ -93,18 +90,12 @@ namespace SteamEngine.CompiledScripts {
 			dlg.CreatePaging(settingValues.Count, firstiVal,1);
 
 			dlg.WriteOut();
-
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_Settings_Result.Instance,
-					firstiVal, setResults);	//prvni index na strance; vysledna sada
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam nastavenych nebo zkousenych polozek
-			Hashtable setVals = (Hashtable)gi.GetTag(setResultsTag);
+			Hashtable setVals = (Hashtable)args[2];
 			if(gr.pressedButton == 0) { //end				
-				DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
-
 				//vycistime seznam od new a old valui - aby se polozky nezobrazovaly i pri pristim nastaveni
 				foreach(SettingsValue sval in setVals.Values) {
 					sval.OldValue = "";
@@ -112,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 				//neobrazovat predchozi dialog, puvodni dialog nastaveni jiz nam sviti vespod
 				//DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setVals.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Settings_Result.instance, args, 0, setVals.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} 
