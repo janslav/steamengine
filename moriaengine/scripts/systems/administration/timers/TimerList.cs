@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
-			List<DictionaryEntry> timerList = null;
+			List<KeyValuePair<TimerKey, Timer>> timerList = null;
 			if(sa[3] == null) {
 				//vzit seznam timeru dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				sa[3] = timerList; //ulozime to do argumentu dialogu
 			} else {
 				//timerList si posilame v argumentu (napriklad pri pagingu)
-				timerList = (List<DictionaryEntry>)sa[3];
+				timerList = (List<KeyValuePair<TimerKey, Timer>>) sa[3];
 			}
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
@@ -104,11 +104,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
-				DictionaryEntry de = timerList[i];
-				Timer tmr = (Timer)de.Value;
+				KeyValuePair<TimerKey, Timer> de = timerList[i];
+				Timer tmr = de.Value;
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2*i)+10);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(((TimerKey)de.Key).name);
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText((de.Key).name);
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tmr.InSeconds.ToString()); //hodnota tagu, vcetne prefixu oznacujicim typ
 				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (2*i)+11);
 
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam timeru bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<DictionaryEntry> timerList = (List<DictionaryEntry>)args[3];
+			List<KeyValuePair<TimerKey, Timer>> timerList = (List<KeyValuePair<TimerKey, Timer>>) args[3];
 			int firstOnPage = Convert.ToInt32(args[1]);
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch(gr.pressedButton) {
@@ -153,12 +153,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
 				int row = (int)(gr.pressedButton - 10) / 2;
-				int buttNum = (int)(gr.pressedButton - 10) % 2;				
-				DictionaryEntry de = ((List<DictionaryEntry>)args[3])[row];
+				int buttNum = (int)(gr.pressedButton - 10) % 2;
+				KeyValuePair<TimerKey, Timer> de = ((List<KeyValuePair<TimerKey, Timer>>) args[3])[row];
 				switch(buttNum) {
 					case 0: //smazat timer
 						TagHolder timerOwner = (TagHolder)args[0];
-						timerOwner.RemoveTimer((TimerKey)de.Key);
+						timerOwner.RemoveTimer(de.Key);
 						//na zaver smazat timerlist (musi se reloadnout)
 						args[3] = null;
 						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);
@@ -174,13 +174,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Retreives the list of all timers the given TagHolder has")]
-		private List<DictionaryEntry> ListifyTimers(IEnumerable<KeyValuePair<TimerKey, Timer>> tags, string criteria) {
+		private List<KeyValuePair<TimerKey, Timer>> ListifyTimers(IEnumerable<KeyValuePair<TimerKey, Timer>> tags, string criteria) {
 			List<KeyValuePair<TimerKey, Timer>> timersList = new List<KeyValuePair<TimerKey, Timer>>();
 			foreach (KeyValuePair<TimerKey, Timer> entry in tags) {
 				//entry in this hashtable is TimerKey and its Timer value
 				if(criteria.Equals("")) {
 					timersList.Add(entry);//bereme vse
-				} else if((entry.Key.name.ToUpper().Contains(criteria.ToUpper()) {
+				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					timersList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu timeru
 				}
 			}
@@ -206,7 +206,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("Comparer for sorting timer dictionary entries by timers TimerKeys asc")]
-	public class TimersComparer : IComparer<DictionaryEntry> {
+	public class TimersComparer : IComparer<KeyValuePair<TimerKey, Timer>> {
 		public readonly static TimersComparer instance = new TimersComparer();
 
 		private TimersComparer() {
@@ -215,9 +215,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//we have to make sure that we are sorting a list of DictionaryEntries which are tags
 		//otherwise this will crash on some ClassCastException -)
-		public int Compare(DictionaryEntry x, DictionaryEntry y) {
-			TimerKey a = (TimerKey)(x.Key);
-			TimerKey b = (TimerKey)(y.Key);
+		public int Compare(KeyValuePair<TimerKey, Timer> x, KeyValuePair<TimerKey, Timer> y) {
+			TimerKey a = (x.Key);
+			TimerKey b = (y.Key);
 			return string.Compare(a.name, b.name);
 		}
 	}

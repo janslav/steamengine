@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
-			List<DictionaryEntry> tagList = null;
+			List<KeyValuePair<TagKey, Object>> tagList = null;
 			if(sa[3] == null) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				sa[3] = tagList; //ulozime to do argumentu dialogu
 			} else {
 				//taglist si posilame v argumentu (napriklad pri pagingu)
-				tagList = (List<DictionaryEntry>)sa[3];
+				tagList = (List<KeyValuePair<TagKey, Object>>) sa[3];
 			}
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
@@ -100,10 +100,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
-				DictionaryEntry de = tagList[i];
+				KeyValuePair<TagKey, Object> de = tagList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + i);
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0,((TagKey)de.Key).name);
+				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0,(de.Key).name);
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ObjectSaver.Save(de.Value)); //hodnota tagu, vcetne prefixu oznacujicim typ
 				
 				rowCntr++;			
@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<DictionaryEntry> tagList = (List<DictionaryEntry>)args[3];
+			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>) args[3];
 			int firstOnPage = (int)args[1];
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
@@ -147,9 +147,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//buttony na smazani
 				int tagIdx = (int)gr.pressedButton - 10;
-				DictionaryEntry de = ((List<DictionaryEntry>)args[3])[tagIdx];
+				KeyValuePair<TagKey, Object> de = ((List<KeyValuePair<TagKey, Object>>) args[3])[tagIdx];
 				TagHolder tagOwner = (TagHolder)args[0];
-				tagOwner.RemoveTag((TagKey)de.Key);
+				tagOwner.RemoveTag(de.Key);
 				//na zaver smazat taglist (musi se reloadnout)
 				args[3] = null;
 				//a zobrazit znovu dialog
@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("Comparer for sorting tag dictionary entries by tags name asc")]
-	public class TagsComparer : IComparer<DictionaryEntry> {
+	public class TagsComparer : IComparer<KeyValuePair<TagKey, Object>> {
 		public readonly static TagsComparer instance = new TagsComparer();
 
 		private TagsComparer() {
@@ -199,9 +199,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//we have to make sure that we are sorting a list of DictionaryEntries which are tags
 		//otherwise this will crash on some ClassCastException -)
-		public int Compare(DictionaryEntry x, DictionaryEntry y) {
-			TagKey a = (TagKey)(x.Key);
-			TagKey b = (TagKey)(y.Key);
+		public int Compare(KeyValuePair<TagKey, Object> x, KeyValuePair<TagKey, Object> y) {
+			TagKey a = x.Key;
+			TagKey b = y.Key;
 			return string.Compare(a.name,b.name);
 		}
 	}
