@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
 			List<DictionaryEntry> timerList = null;
-			if(sa[3].Equals("")) {
+			if(sa[3] == null) {
 				//vzit seznam timeru dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				timerList = ListifyTimers(th.AllTimers, sa[2].ToString());
@@ -69,11 +69,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			//dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			//dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech timerù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + timerList.Count + ")");
-			//dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 3);//cudlik na refresh dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 3);//cudlik na refresh dialogu
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
@@ -90,9 +90,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//popis sloupcu
-			dlg.Add(new GUTATable(1, 200, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Jméno timeru");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zbývající èas");
+			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zruš");
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno timeru");
+			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Zbývající èas");
+			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Uprav");
 			dlg.MakeTableTransparent();
 
 			//seznam timeru
@@ -105,9 +107,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DictionaryEntry de = timerList[i];
 				Timer tmr = (Timer)de.Value;
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + i);
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, ((TimerKey)de.Key).name);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(tmr.InSeconds.ToString()); //hodnota tagu, vcetne prefixu oznacujicim typ
+				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2*i)+10);
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(((TimerKey)de.Key).name);
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tmr.InSeconds.ToString()); //hodnota tagu, vcetne prefixu oznacujicim typ
+				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (2*i)+11);
 
 				rowCntr++;
 			}
@@ -116,57 +119,57 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//now handle the paging 
 			dlg.CreatePaging(timerList.Count, firstiVal, 1);
 
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_TimerList.Instance,
-					sa[0], //na kom se to spoustelo
-					firstiVal, //cislo polozky kterou zacina stranka (pro paging)	
-					sa[2], //informace pro vyber timeru dle jmena
-					sa[3]); //seznam timeru odpovidajicich kriteriu
-
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
-			//vzit "tenhle" dialog ze stacku
-			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam timeru bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<DictionaryEntry> timerList = (List<DictionaryEntry>)dsi.Args[3];
-			int firstOnPage = (int)dsi.Args[1];
+			List<DictionaryEntry> timerList = (List<DictionaryEntry>)args[3];
+			int firstOnPage = Convert.ToInt32(args[1]);
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch(gr.pressedButton) {
 					case 0: //exit
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
-						//aktualni dialog uz byl vynat ze stacku, takze se opravdu zobrazi ten minuly
 						break;
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
-						dsi.Args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						dsi.Args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
-						dsi.Args[3] = ""; //vycistit soucasny odkaz na taglist aby se mohl prenacist
-						dsi.Show();
+						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
+						args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
+						args[3] = null; //vycistit soucasny odkaz na taglist aby se mohl prenacist
+						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);//a znovu ho zobrazit
 						break;					
 					case 2: //zalozit novy timer - TOTO ZATIM DELAT NEBUDEME
-						dsi.Show();
+						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);//jen zobrazit
 						//DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
 						//gi.Cont.Dialog(D_NewTimer.Instance, dsi.Args[0]); //posleme si parametr toho typka na nemz bude novy timer vytvoren
 						break;
 					case 3: //refresh
-						dsi.Show(); //jednoduse zobrazit znova
+						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);//znovu zobrazit
 						break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, timerList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
-				//1 sloupecek
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_TimerList.instance, args, 1, timerList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+				//druhá 1 - dialog ma jen jeden sloupecek s hodnotama na okno (napriklad colors dialog jich ma daleko vic)
 				return;
 			} else {
-				//buttony na smazani
-				int timerIdx = (int)gr.pressedButton - 10;
-				DictionaryEntry de = ((List<DictionaryEntry>)dsi.Args[3])[timerIdx];
-				TagHolder timerOwner = (TagHolder)dsi.Args[0];
-				timerOwner.RemoveTimer((TimerKey)de.Key);
-				//na zaver smazat timerlist (musi se reloadnout)
-				dsi.Args[3] = "";
-				dsi.Show();
+				//zjistime kterej cudlik z radku byl zmacknut
+				int row = (int)(gr.pressedButton - 10) / 2;
+				int buttNum = (int)(gr.pressedButton - 10) % 2;				
+				DictionaryEntry de = ((List<DictionaryEntry>)args[3])[row];
+				switch(buttNum) {
+					case 0: //smazat timer
+						TagHolder timerOwner = (TagHolder)args[0];
+						timerOwner.RemoveTimer((TimerKey)de.Key);
+						//na zaver smazat timerlist (musi se reloadnout)
+						args[3] = null;
+						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);
+						break;
+					case 1: //upravit timer
+						//uložit info o dialogu pro návrat						
+						DialogStackItem.EnstackDialog(gi.Cont, gi.Focus, D_TimerList.Instance, args);								
+						//DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
+						gi.Cont.Dialog(D_EditTimer.Instance, args[0], de.Value); //posleme si parametr toho typka na nemz editujeme timer a taky timer sam
+						break;
+				}
 			}
 		}
 
@@ -195,9 +198,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam timeru, pouzito az v dialogu
 			if(text.Argv == null || text.Argv.Length == 0) {
-				Globals.SrcCharacter.Dialog(D_TimerList.Instance, self, 0, "", "");
+				Globals.SrcCharacter.Dialog(D_TimerList.Instance, self, 0, "", null);
 			} else {
-				Globals.SrcCharacter.Dialog(D_TimerList.Instance, self, 0, text.Args, "");
+				Globals.SrcCharacter.Dialog(D_TimerList.Instance, self, 0, text.Args, null);
 			}
 		}
 	}

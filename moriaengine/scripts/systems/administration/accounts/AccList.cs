@@ -92,49 +92,42 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//now handle the paging 
 			dlg.CreatePaging(accList.Count, firstiVal,1);
 
-			//uložit info o právì vytvoøeném dialogu pro návrat
-			DialogStackItem.EnstackDialog(src, focus, D_AccList.Instance,
-					firstiVal, //cislo polozky kterou zacina stranka (pro paging)	
-					sa[1], //zde je ulozena informace pro vyber uctu dle jmena
-					sa[2]); //toto je seznam accountu
-
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr) {
-			//vzit "tenhle" dialog ze stacku
-			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
-
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<AbstractAccount> accList = (List<AbstractAccount>)dsi.Args[2];
-			int firstOnPage = (int)dsi.Args[0];
+			List<AbstractAccount> accList = (List<AbstractAccount>)args[2];
+			int firstOnPage = Convert.ToInt32(args[0]);
+
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
                     case 0: //exit
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
-						//aktualni dialog uz byl vynat ze stacku, takze se opravdu zobrazi ten minuly
-                        break;
+						break;
                     case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
-						dsi.Args[0] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
-						dsi.Args[1] = nameCriteria; //uloz info o vyhledavacim kriteriu
-						dsi.Args[2] = null; //vycistit soucasny odkaz
-						dsi.Show();
-                        break;
+						args[0] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
+						args[1] = nameCriteria; //uloz info o vyhledavacim kriteriu
+						args[2] = null; //vycistit soucasny odkaz
+						gi.Cont.SendGump(gi.Focus, D_AccList.instance, args);
+						break;
                     case 2: //zalozit novy acc.
-						DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
+						//ulozime dialog pro navrat
+						DialogStackItem.EnstackDialog(gi, D_AccList.instance, args);
 						gi.Cont.Dialog(D_NewAccount.Instance);
 						break;                    
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, accList.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_AccList.instance, args, 0, accList.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} else { //skutecna talcitka z radku
+				//ulozime dialog pro navrat
+				DialogStackItem.EnstackDialog(gi, D_AccList.instance, args);
                 //zjistime kterej cudlik z kteryho radku byl zmacknut
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
 				gi.Cont.Dialog(D_AccInfo.Instance, ga);               
                 
             }

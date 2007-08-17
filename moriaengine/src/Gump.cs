@@ -45,6 +45,7 @@ namespace SteamEngine {
 
 		public readonly uint uid;
 		public readonly Gump def;
+		internal object[] inputParams;//array of parameters the gump is called with
 		internal AbstractCharacter cont;//the player who sees this instance (src)
 		internal Thing focus;//the thing this character was "launched on"
 		internal uint x;
@@ -65,6 +66,16 @@ namespace SteamEngine {
 		internal GumpInstance(Gump def) {
 			this.def = def;
 			uid = uids++;
+		}
+
+		public object[] InputParams {
+			get {
+				return inputParams;
+			}
+
+			set {
+				inputParams = value;
+			}
 		}
 
 		public uint X {
