@@ -119,33 +119,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						return;
 					case 1: //sort ipup
 						args[0] = SortingCriteria.IPAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_BlockedIP.instance, args);
+						gi.Cont.SendGump(gi);
 						return;
 					case 2: // sort ipdown
 						args[0] = SortingCriteria.IPDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_BlockedIP.instance, args);
+						gi.Cont.SendGump(gi);
 						return;
 					case 3: // sort accountup
 						args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_BlockedIP.instance, args);
+						gi.Cont.SendGump(gi);
 						return;
 					case 4: // sort accountdown
 						args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_BlockedIP.instance, args);
+						gi.Cont.SendGump(gi);
 						return;
 
 					case 5: // block single ip
 						//stackneme aktualni dialog pro navrat
-						DialogStackItem.EnstackDialog(gi, D_BlockedIP.instance, args);
+						DialogStackItem.EnstackDialog(gi);
 						gi.Cont.Dialog(D_BlockIP.Instance);//a zobrazime novy
 						return;
 					case 6: // block iprange
 						//stackneme aktualni dialog pro navrat
-						DialogStackItem.EnstackDialog(gi, D_BlockedIP.instance, args);						
+						DialogStackItem.EnstackDialog(gi);						
 						gi.Cont.Dialog(D_BlockIPRange.Instance);//a zobrazime novy
 						return;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_BlockedIP.instance, args, 1, entries.Count,1)) {
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, entries.Count,1)) {
 				//kliknuto na paging? (ta 1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				return;
 			} else {
@@ -156,11 +156,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if(entry.toIp == "") {
 					Firewall.RemoveBlockedIP(entry.Ip);
 					//znovuzavolat dialog
-					gi.Cont.SendGump(gi.Focus, D_BlockedIP.instance, args);
+					gi.Cont.SendGump(gi);
 				} else {
 					Firewall.RemoveBlockedIPRange(entry.Ip, IPAddress.Parse(entry.toIp));
 					//znovuzavolat dialog
-					gi.Cont.SendGump(gi.Focus, D_BlockedIP.instance, args);
+					gi.Cont.SendGump(gi);
 				}
 				return;
 			}

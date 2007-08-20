@@ -239,25 +239,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				" and continue there."+
 				" gi - GumpInstance from the OnResponse method "+
 				" gr - GumpResponse object from the OnResponse method" +
-				" gump - a dialog to show after paging (e.g. D_Admin) "+
-				" args - arguments of the dialog as it was called with" +
 				" pagingArgumentNo - index in the arguments array on the stacked dialog where the info about paging is stored "+
 				"					typically 1"+
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)"+
 				" return true or false if the button was one of the paging buttons or not")]
-		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, Gump gump, object[] args, int pagingArgumentNo, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, int pagingArgumentNo, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
+			object[] args = gi.InputParams;//arguments of the dialog			
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
 			switch (gr.pressedButton) {
 				case ID_PREV_BUTTON: 
 					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
-					gi.Cont.SendGump(gi.Focus,gump,args);					
+					gi.Cont.SendGump(gi);					
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
-					gi.Cont.SendGump(gi.Focus,gump,args);					
+					gi.Cont.SendGump(gi);					
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
@@ -275,7 +274,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
-					gi.Cont.SendGump(gi.Focus,gump,args);										
+					gi.Cont.SendGump(gi);										
 					pagingHandled = true;
 					break;
 			}

@@ -136,18 +136,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
 						args[3] = null; //vycistit soucasny odkaz na taglist aby se mohl prenacist
-						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);//a znovu ho zobrazit
+						gi.Cont.SendGump(gi);//a znovu ho zobrazit
 						break;					
 					case 2: //zalozit novy timer - TOTO ZATIM DELAT NEBUDEME
-						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);//jen zobrazit
+						gi.Cont.SendGump(gi);//jen zobrazit
 						//DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
 						//gi.Cont.Dialog(D_NewTimer.Instance, dsi.Args[0]); //posleme si parametr toho typka na nemz bude novy timer vytvoren
 						break;
 					case 3: //refresh
-						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);//znovu zobrazit
+						gi.Cont.SendGump(gi);//znovu zobrazit
 						break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_TimerList.instance, args, 1, timerList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, timerList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//druhá 1 - dialog ma jen jeden sloupecek s hodnotama na okno (napriklad colors dialog jich ma daleko vic)
 				return;
 			} else {
@@ -161,7 +161,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						timerOwner.RemoveTimer(de.Key);
 						//na zaver smazat timerlist (musi se reloadnout)
 						args[3] = null;
-						gi.Cont.SendGump(gi.Focus, D_TimerList.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 1: //upravit timer
 						//uložit info o dialogu pro návrat						

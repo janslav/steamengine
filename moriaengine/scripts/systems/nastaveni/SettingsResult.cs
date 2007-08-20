@@ -94,16 +94,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam nastavenych nebo zkousenych polozek
-			Hashtable setVals = (Hashtable)args[2];
+			List<SettingsValue> setVals = (List<SettingsValue>)args[2];
 			if(gr.pressedButton == 0) { //end				
 				//vycistime seznam od new a old valui - aby se polozky nezobrazovaly i pri pristim nastaveni
-				foreach(SettingsValue sval in setVals.Values) {
+				foreach(SettingsValue sval in setVals) {
 					sval.OldValue = "";
 					sval.NewValue = "";
 				}
 				//neobrazovat predchozi dialog, puvodni dialog nastaveni jiz nam sviti vespod
 				//DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Settings_Result.instance, args, 0, setVals.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setVals.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} 

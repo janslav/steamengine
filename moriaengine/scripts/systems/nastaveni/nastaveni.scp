@@ -10,5 +10,6 @@ else
 	//3. cislo stranky ze ktere se zacina (vzdy od 0, jina cisla doplnuje paging sam, jinak to udela neco nedefinovatelnyho)
 	//4. zobrazit vsechny kategorie pocinaje klicem(prvni argument) abecedne dal - SettingsDisplay.All
 	//	nebo zobrazit jen jednu kategorii danou klicem - SettingsDisplay.Single
-	dialog(D_Static_Settings,<argv(0)>,0,0,SettingsDisplay.Single)
+	//5.,6. pripavena pozice pro vnitrodialogove potreby
+	dialog(D_Static_Settings,<argv(0)>,0,0,SettingsDisplay.Single,null,null)
 endif

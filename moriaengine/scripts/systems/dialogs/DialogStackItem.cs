@@ -100,15 +100,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"storing info about the last used dialog whjich can be used to reopen the dialog " +
 			"when exiting from the following dialog for instance." +
 			"e.g. info dialog -> clicked on the 'account info' button which closes the info dialog," +
-			"after finishing with the accout info dialog we would like to have the info dialog reopened!")]
-		public static void EnstackDialog(GumpInstance gi,
-											Gump instance, params object[] args) {
+			"after finishing with the accout info dialog we would like to have the info dialog reopened!"+
+			"UPDATED - using GumpInstance as a parameter only (it contains everything necessary)")]
+		public static void EnstackDialog(GumpInstance gi) {
 			Stack<DialogStackItem> dialogsStack = gi.Cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
 			if(dialogsStack == null) { //not yet set
 				dialogsStack = new Stack<DialogStackItem>();
 				gi.Cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
 			}
-			dialogsStack.Push(new DialogStackItem(gi.Cont.Conn, gi.Cont, gi.Focus, instance, args));
+			dialogsStack.Push(new DialogStackItem(gi.Cont.Conn, gi.Cont, gi.Focus, gi.def, gi.InputParams));
 		}
 
 		[Remark("Overloaded init method - used when the gumpinstance is not fully initialized yet")]

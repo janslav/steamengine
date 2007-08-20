@@ -120,30 +120,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //tridit dle casu asc						
 						args[0] = SortingCriteria.TimeAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 2: //tridit dle casu desc
 						args[0] = SortingCriteria.TimeDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 3: //tridit dle sendera asc
 						args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 4: //tridit dle sendera desc
 						args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 5: //tridit dle neprectenych asc
 						args[0] = SortingCriteria.UnreadAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 6: //tridit dle neprectenych desc
 						args[0] = SortingCriteria.UnreadDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_DelayedMessages.instance, args, 1, messagesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, messagesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//1 sloupecek
 				return;
             } else { //skutecna tlacitka z radku
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							msg.color = msg.color + 3;//trosku ztmavit barvu
 						}
 						//stacknout messageslist pro navrat
-						DialogStackItem.EnstackDialog(gi, D_DelayedMessages.instance, args);
+						DialogStackItem.EnstackDialog(gi);
 
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
 						gi.Cont.Dialog(D_Display_Text.Instance, "Text zprávy", msg.text);
@@ -167,7 +167,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                     case 1: //smazat
 						MsgsBoard.DeleteMessage((Character)gi.Cont, msg);
 						//znovuzavolat dialog
-						gi.Cont.SendGump(gi.Focus, D_DelayedMessages.instance, args);
+						gi.Cont.SendGump(gi);
                         break;                    
                 }
 			}

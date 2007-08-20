@@ -111,10 +111,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                     case 1: //vybrat prvni barvu
 						args[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
 						args[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
-						gi.Cont.SendGump(gi.Focus, D_Colors.instance, args);
+						gi.Cont.SendGump(gi);
                         break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Colors.instance, args, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//zde je sloupecku vice (columnsCnt, viz nahore)
 				return;
 			} 

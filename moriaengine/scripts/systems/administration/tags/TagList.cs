@@ -130,18 +130,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
 						args[3] = null; //vycistit soucasny odkaz na taglist aby se mohl prenacist
-						gi.Cont.SendGump(gi.Focus, D_TagList.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
 					case 2: //zobrazit info o vysvetlivkach
-						DialogStackItem.EnstackDialog(gi, D_TagList.instance, args); //vlozime napred dialog do stacku
+						DialogStackItem.EnstackDialog(gi); //vlozime napred dialog do stacku
 						gi.Cont.Dialog(D_Settings_Help.Instance);
 						break;   						
                     case 3: //zalozit novy tag.
-						DialogStackItem.EnstackDialog(gi, D_TagList.instance, args); //vlozime napred dialog do stacku
+						DialogStackItem.EnstackDialog(gi); //vlozime napred dialog do stacku
 						gi.Cont.Dialog(D_NewTag.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
 						break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_TagList.instance, args, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//1 sloupecek
 				return;
 			} else {
@@ -153,7 +153,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//na zaver smazat taglist (musi se reloadnout)
 				args[3] = null;
 				//a zobrazit znovu dialog
-				gi.Cont.SendGump(gi.Focus, D_TagList.instance, args);
+				gi.Cont.SendGump(gi);
 			}
 		}
 
