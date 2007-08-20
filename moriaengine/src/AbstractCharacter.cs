@@ -1843,7 +1843,12 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-		
+
+		[Remark("Overloaded SendGump method, using GumpInstance - used to resend the dialog to user after pressing some button e.g.")]
+		public GumpInstance SendGump(GumpInstance inst) {			
+			return SendGump(inst.Focus, inst.def, inst.InputParams);
+		}
+
 		public void DialogClose(GumpInstance instance, int buttonId) {
 			DialogClose(instance.uid, buttonId);
 		}

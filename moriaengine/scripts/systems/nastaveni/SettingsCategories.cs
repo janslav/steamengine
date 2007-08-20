@@ -98,25 +98,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //zobraz vsechny kategorie	
 						//uložit info o dialogu pro návrat
-						DialogStackItem.EnstackDialog(gi, D_Settings_Categories.Instance, args);								
+						DialogStackItem.EnstackDialog(gi);								
 							//params:	1 - prazdny, zacne od prvni kategorie
 							//			2 - 0, zacne od prvniho membera dane kategorie
 							//			3 - 0, zacne na nulte strance (jinak to ani nejde)
 							//			4 - info o tom ze ma zobrazit vsechny kategorie pocinaje specifikovanou (zde tou prvni)
-						gi.Cont.Dialog(D_Static_Settings.Instance, "", 0, 0, SettingsDisplay.All);
+							//			5,6 - vnitrodialogove potreby
+						gi.Cont.Dialog(D_Static_Settings.Instance, "", 0, 0, SettingsDisplay.All, null, null);
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Settings_Categories.instance, args, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} else { //skutecna tlacitka z radku
 				//uložit info o dialogu pro návrat
-				DialogStackItem.EnstackDialog(gi, D_Settings_Categories.Instance, args);
+				DialogStackItem.EnstackDialog(gi);
 				//zjistime kterej cudlik z radku byl zmacknut
 				int row = (int)(gr.pressedButton - 10);//- cislo kategorie v jejich setridenem seznamu
 				SettingsCategory cat = categories[row];
 								//parametry stejny vyznam, zde zobrazime jen tu jednu kliknutou kategorii
-				gi.Cont.Dialog(D_Static_Settings.Instance, cat.Name, 0, 0, SettingsDisplay.Single);				
+				gi.Cont.Dialog(D_Static_Settings.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);				
 			}
 		}		
 	}	

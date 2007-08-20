@@ -152,30 +152,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                         break;
                     case 1: //acc tøídit asc
 						args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
                     case 2: //hráèi tøídit asc
 						args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
                     case 3: //lokace tøídit asc
 						args[0] = SortingCriteria.LocationAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						gi.Cont.SendGump(gi);
 						break;                    
                     case 4: //acc tøídit desc
 						args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
                     case 5: //hráèi tøídit desc
 						args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
                     case 6: //lokace tøídit desc
 						args[0] = SortingCriteria.LocationDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi.Focus, D_Admin.instance, args);
+						gi.Cont.SendGump(gi);
 						break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, D_Admin.instance, args, 1, playersList.Count,1)) {
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count,1)) {
 				//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)				
 				//posledni 1 - pocet sloupecku v dialogu
 				return;

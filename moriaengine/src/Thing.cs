@@ -1181,7 +1181,7 @@ namespace SteamEngine {
 		}
 
 		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, params object[] args) {
-			if (sendTo != null) {
+			if (sendTo != null) {				
 				return sendTo.SendGump(this, gump, args);
 			}
 			return null;
