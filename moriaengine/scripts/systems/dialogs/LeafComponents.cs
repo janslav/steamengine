@@ -279,6 +279,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, textId);
 		}
 
+		[Remark("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width, height and color here !")]
+		public static Input CreateInput(LeafComponentTypes type, Hues textHue, string text, int xPos, int yPos, int id) {
+			return new Input(type, xPos, yPos, id, 0, 0, textHue, text);
+		}
+
+		[Remark("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width and height here !")]
+		public static Input CreateInput(LeafComponentTypes type, string text, int xPos, int yPos, int id) {
+			return new Input(type, xPos, yPos, id, 0, 0, Hues.WriteColor, text);
+		}
+
 		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
                 " the relative positions, the entry ID, pixel and chracter width and optionally the text hue and the text itself")]
         public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, Hues textHue, string text) {
@@ -342,7 +352,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.textId = textId;
 			}
 
-			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we " +
+			[Remark("When added, we must recompute the Input Field's absolute position in the dialog (we " +
                     " were provided only relative positions")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				xPos += parent.XPos;
@@ -350,11 +360,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (width == 0) {
 					//no width - get it from the parent
 					width = parent.Width;
-					width -= ImprovedDialog.D_COL_SPACE; //put it between the borders fo the column with a little spaces
+					width -= ImprovedDialog.D_COL_SPACE; //put it between the borders of the column with a little spaces
+					width -= xPos; //substract also the space from the xPos adjustment of this field (it can be shorter to fit to the column)
 				}
 				if (height == 0) {
 					//no height specified, give it the default one row height (which is the height of the buttons)
-					height = ButtonFactory.D_BUTTON_HEIGHT; 
+					height = ButtonFactory.D_BUTTON_HEIGHT;
 				}
 			}
 

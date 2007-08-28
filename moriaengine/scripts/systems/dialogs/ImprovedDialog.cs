@@ -351,6 +351,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public const int D_CHARACTER_WIDTH = 5; //approximate width of the normal character
 
+		[Remark("Number of pixels of which the label from the label-value fields will be indented from the left")]
+		public static int ITEM_INDENT = 20;
+		[Remark("Number of pixels of which the editbox from the label-value fields will be indented from the left "+
+				"(so there is enough space for the label")]		
+		public static int INPUT_INDENT = 75;
+
 		[Remark("Number of normal rows on the various dialog pages (when paging is used)")]
 		public const int PAGE_ROWS = 20;
 

@@ -302,6 +302,9 @@
     <Compile Include="..\..\scripts\systems\dialogs\ImprovedDialog.cs">
       <Link>systems\dialogs\ImprovedDialog.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\ImprovedPaging.cs">
+      <Link>systems\dialogs\ImprovedPaging.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\Input.cs">
       <Link>systems\dialogs\Input.cs</Link>
     </Compile>
@@ -320,6 +323,9 @@
     <Compile Include="..\..\scripts\systems\nastaveni\DefsSetting.cs">
       <Link>systems\nastaveni\DefsSetting.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\Settings.cs">
+      <Link>systems\nastaveni\Settings.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsCategories.cs">
       <Link>systems\nastaveni\SettingsCategories.cs</Link>
     </Compile>
@@ -328,6 +334,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsResult.cs">
       <Link>systems\nastaveni\SettingsResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\SettingsTest.cs">
+      <Link>systems\nastaveni\SettingsTest.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsUtils.cs">
       <Link>systems\nastaveni\SettingsUtils.cs</Link>
