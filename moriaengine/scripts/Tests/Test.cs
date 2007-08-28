@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
 	[Remark("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]
-	#pragma warning disable 0414 //disable the "private field never used warning"
+	#pragma warning disable 0414 //disable the boring "private field never used warning"
 	public static class TESTSettClass {
 		[SavedMember("attr1", "Category1")]
 		private static object att1 = "pepicek";
