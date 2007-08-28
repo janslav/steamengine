@@ -328,6 +328,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			return pagingHandled;
 		}
+
+		[Remark("Write a single DataField to the dialog")]
+		public static void WriteDataField(IDataFieldView field, object target, GUTAComponent where, params int[] index) {
+			if (field.IsButtonEnabled) { //buttonized field - we need the button index
+				if (index == null || index.Length == 0) {
+					throw new SEException(LogStr.Error("Trying to write a " + field.GetType() + " for object " + target + " but missing the button dialog index"));
+				}
+				where.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,index[0]));
+				where.AddComponent(TextFactory.CreateLabel(ButtonFactory.D_BUTTON_WIDTH,0,field.Name));
+			} else if (!field.ReadOnly) { //editable label-value field - we still need the index !
+				if (index == null || index.Length == 0) {//we have a problem - we need the index !
+					throw new SEException(LogStr.Error("Trying to write a " + field.GetType() + " for object " + target + " but missing the edit field dialog index"));			
+				}
+				where.AddComponent(TextFactory.CreateLabel(field.Name));
+				//insert the input field - specify the x and y position, let the engine to compute the width and height of the component
+				where.AddComponent(InputFactory.CreateInput(LeafComponentTypes.InputText, field.GetStringValue(target), ImprovedDialog.INPUT_INDENT, 0, index[0]));
+			} else { //non-editable label-value field
+				where.AddComponent(TextFactory.CreateLabel(field.Name));
+				where.AddComponent(TextFactory.CreateText(ImprovedDialog.INPUT_INDENT, 0, field.GetStringValue(target)));
+			}			
+		}
+
 		[Remark("Dialog constants")]
 		public const int D_DEFAULT_DIALOG_BORDERS = 9250; //grey borders
 		public const int D_DEFAULT_DIALOG_BACKGROUND = 9354; //beige background
