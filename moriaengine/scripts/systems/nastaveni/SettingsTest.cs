@@ -39,23 +39,43 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		public override string GetValue(object target) {
+		public override object GetValue(object target) {
+			return ((SimpleClass)target).foo;
+		}
+
+		public override string GetStringValue(object target) {
 			return ObjectSaver.Save(((SimpleClass)target).foo);
 		}
 
-		public override void SetValue(object target, object value) {
-			((SimpleClass)target).foo = (string)value;
+		public override bool SetValue(object target, object value) {
+			try {
+				((SimpleClass)target).foo = (string)value;
+			} catch {
+				return false;
+			}
+			return true;
 		}
 
-		public override void Write(object target, GUTAComponent where, params int[] index) {
-			if(index == null || index.Length == 0) {//we have a problem - we need the index !
-				throw new SEException(LogStr.Error("Trying to write a " +this.GetType()+" for object " + target + " but missing the edit field dialog index"));					
-			} else {
-				where.AddComponent(TextFactory.CreateLabel(ImprovedDialog.ITEM_INDENT, 0, Name));
-				int indent = ImprovedDialog.ITEM_INDENT + ImprovedDialog.INPUT_INDENT;
-				//insert the input field - specify the x and y position, let the engine to compute the width and height of the ocmponent
-				where.AddComponent(InputFactory.CreateInput(LeafComponentTypes.InputText, GetValue(target), indent, 0, index[0]));
+		public override bool SetStringValue(object target, string value) {
+			try {
+				((SimpleClass)target).foo = (string)ObjectSaver.Load(value);
+			} catch {
+				return false;
+			}
+			return true;
+		}		
+	}
+
+	[Remark("Dataview implementation for the method 'SomeMethod' of the SimpleClass")]
+	public class ButtonDataFieldView_SimpleClass_SomeMethod : ButtonDataFieldView {
+		public override string Name {
+			get {
+				return "Test Button";
 			}
 		}
+
+		public override void OnButton(object target) {
+			((SimpleClass)target).SomeMethod();
+		}		
 	}
 }
