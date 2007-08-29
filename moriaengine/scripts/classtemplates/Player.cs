@@ -21,6 +21,7 @@ using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.LScript;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	public partial class Player : Character {
@@ -69,12 +70,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TimerKey charLingeringTimerTK = TimerKey.Get("__charLingeringTimer__");
+		private static TimerKey charLingeringTimerTK = TimerKey.Get("_charLingeringTimer_");
 		public override void On_LogOut() {
-			//TODO: In safe/nonsafe areas
+			//TODO: In safe/nonsafe areas, settings, etc.
 
-			this.RemoveTimer(charLingeringTimerTK);
-			new CharLingeringTimer(this, TimeSpan.FromSeconds(5)).Enqueue();
+			//this.RemoveTimer(charLingeringTimerTK);
+			this.AddTimer(charLingeringTimerTK, new CharLingeringTimer()).DueInSeconds = 5;
 
 			if (DbManager.Config.useDb) {
 				DbMethods.loginLogs.GameLogout(this.Conn);
@@ -99,24 +100,15 @@ namespace SteamEngine.CompiledScripts {
 			return stopLogin;
 		}
 
-		[ManualDeepCopyClass]
-		public class CharLingeringTimer : Timer {
-			public CharLingeringTimer(TimerKey name)
-				: base(name) {
+		[SaveableClass]
+		public class CharLingeringTimer : BoundTimer {
+			[LoadingInitializer]
+			public CharLingeringTimer() {
 			}
 
-			[DeepCopyImplementation]
-			public CharLingeringTimer(CharLingeringTimer copyFrom)
-				: base(copyFrom) {
-			}
-
-			public CharLingeringTimer(Character obj, TimeSpan time)
-				: base(obj, charLingeringTimerTK, time, null) {
-			}
-
-			protected sealed override void OnTimeout() {
+			protected sealed override void OnTimeout(TagHolder cont) {
 				Logger.WriteDebug("CharLingeringTimer OnTimeout on "+this.Cont);
-				Character self = this.Cont as Character;
+				Character self = cont as Character;
 				if (self != null) {
 					if (self.IsLingering) {
 						self.Disconnect();

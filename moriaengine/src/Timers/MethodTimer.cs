@@ -22,41 +22,32 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Text;
+using SteamEngine.Persistence;
 
 //will be alternative to Timer which runs triggers...
 //this runs "hardcoded" methods via MethodInfo
 namespace SteamEngine.Timers {
-	[ManualDeepCopyClass]
-	public class MethodTimer : Timer {
-		private MethodInfo method;
-		
-		protected sealed override void OnTimeout() {
-			//Console.WriteLine("OnTimeout on timer "+this);
-			
-			method.Invoke(this.Cont, BindingFlags.Default, null, args, null);
-		}
-		
-		public MethodTimer(TimerKey name) : base(name) {
-		}
-		
-		[DeepCopyImplementation]
-		public MethodTimer(MethodTimer copyFrom) : base(copyFrom) {
-			//copying constructor for copying of tagholders
-			method=copyFrom.method;
-		}
-		
-		public MethodTimer(TagHolder obj, TimerKey name, TimeSpan time, MethodInfo method, params object[] args): 
-				base(obj, name, time, args) {
-			this.method = method;
-		}
-		
-		//public override void Enqueue() {
-		//	if (method == null) {
-		//		throw new Exception("The timer does not have it`s 'method' field set");
-		//	}
-		//}
+	[DeepCopySaveableClass]
+	public class MethodTimer : BoundTimer {
+		public MethodInfo method;
+		[SaveableData]
+		public object[] args;
 
-		internal sealed override void Save(SteamEngine.Persistence.SaveStream output) {
+		protected sealed override void OnTimeout(TagHolder cont) {
+			method.Invoke(cont, BindingFlags.Default, null, args, null);
+		}
+
+		[LoadingInitializer]
+		public MethodTimer() {
+		}
+		
+		public MethodTimer(MethodInfo method, params object[] args) {
+			this.method = method;
+			this.args = args;
+		}
+
+		[Save]
+		internal void Save(SteamEngine.Persistence.SaveStream output) {
 			StringBuilder sb = new StringBuilder(method.DeclaringType.ToString());
 			sb.Append(".").Append(method.Name);
 			sb.Append("(");
@@ -70,14 +61,14 @@ namespace SteamEngine.Timers {
 			}
 			sb.Append(")");
 			output.WriteLine("method="+sb);
-			base.Save(output);
 		}
 		
 		public static Regex methodSignRE= new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",                     
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 		
-		internal sealed override void LoadLine(string filename, int line, string name, string value) {
-			if (name=="method") {
+		[LoadLine]
+		public void LoadLine(string filename, int line, string name, string value) {
+			if (name.Equals("method")) {
 				//Console.WriteLine("loading method with string: "+value);
 				
 				Match m = methodSignRE.Match(value);
@@ -100,9 +91,7 @@ namespace SteamEngine.Timers {
 				} else {
 					throw new Exception("The value has unparsable format");
 				}
-				return;
 			}
-			base.LoadLine(filename, line, name, value);
 		}
 	}
 }

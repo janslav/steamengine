@@ -18,36 +18,49 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Text;
+using System.Reflection;
+using System.Threading;
+using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
-	[DeepCopySaveableClass]
-	public class TriggerTimer : BoundTimer {
-		[SaveableData]
-		public TriggerKey trigger;
-		[SaveableData]
-		public string formatString;
-		[SaveableData]
-		public object[] args;
 
-		[LoadingInitializer]
-		public TriggerTimer() {
+	public abstract class BoundTimer : Timer {
+		internal WeakReference contRef = new WeakReference(null);
+
+		public BoundTimer() {
 		}
 
-		public TriggerTimer(TriggerKey trigger, string formatString, params object[] args) {
-			this.trigger = trigger;
-			this.formatString = formatString;
-			this.args = args;
+		protected override sealed void OnTimeout() {
+			TagHolder cont = this.Cont;
+			if (cont != null) {
+				OnTimeout(cont);
+			} else {
+				this.PeriodSpan = Timer.negativeOneSecond;
+			}
 		}
 
-		protected override sealed void OnTimeout(TagHolder cont) {
-			ScriptArgs sa = new ScriptArgs(args);
-			sa.FormatString = formatString;
-			Globals.SetSrc(null);
-			((PluginHolder) cont).TryTrigger(trigger, sa);
+		protected abstract void OnTimeout(TagHolder cont);
+
+		public TagHolder Cont { get {
+			TagHolder c = contRef.Target as TagHolder;
+			if (c == null || c.IsDeleted) {
+				return null;
+			}
+			return c;
+		} }
+
+		protected override void BeingDeleted() {
+			TagHolder c = this.Cont;
+			if (c != null) {
+				c.RemoveTimer(this);
+			}
+			base.BeingDeleted();
 		}
+
 	}
 }

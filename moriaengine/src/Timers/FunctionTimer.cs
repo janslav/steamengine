@@ -28,68 +28,44 @@ using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
-	[ManualDeepCopyClass]
-	public class FunctionTimer : Timer {
-		private ScriptHolder function;
-		private string formatString;
+	[DeepCopySaveableClass]
+	public class FunctionTimer : BoundTimer {
+		public ScriptHolder function;
 
-		protected sealed override void OnTimeout() {
-			//Console.WriteLine("OnTimeout on timer "+this);
+		[SaveableData]
+		public string formatString;
+		[SaveableData]
+		public object[] args;
+
+		protected sealed override void OnTimeout(TagHolder cont) {
 			ScriptArgs sa = new ScriptArgs(args);
 			sa.FormatString = formatString;
-			function.TryRun(this.Cont, sa);
-		}
-		
-		public FunctionTimer(TimerKey name) : base(name) {
+			function.TryRun(cont, sa);
 		}
 
-		[DeepCopyImplementation]
-		public FunctionTimer(FunctionTimer copyFrom)
-			: base(copyFrom) {
-			//copying constructor for copying of tagholders
-			function = copyFrom.function;
-			formatString = copyFrom.formatString;
+		[LoadingInitializer]
+		public FunctionTimer() {
 		}
 		
-		public FunctionTimer(TagHolder obj, TimerKey name, TimeSpan time, ScriptHolder function, params object[] args): 
-				base(obj, name, time, args) {
-			this.function = function;
-		}
-		
-		public FunctionTimer(TagHolder obj, TimerKey name, TimeSpan time, ScriptHolder function, string formatString, params object[] args): 
-				base(obj, name, time, args) {
+		public FunctionTimer(ScriptHolder function, string formatString, params object[] args) {
 			this.function = function;
 			this.formatString = formatString;
-		}
-		
-		public override void Enqueue() {
-			if (function == null) {
-				throw new Exception("The timer does not have it`s 'function' field set");
-			}
-			base.Enqueue();
+			this.args = args;
 		}
 
-		internal sealed override void Save(SaveStream output) {
+		[Save]
+		public void Save(SaveStream output) {
 			output.WriteValue("function", function.name);
-			if (formatString != null) {
-				output.WriteValue("formatString", formatString);
-			}
-			base.Save(output);
 		}
-		
-		internal sealed override void LoadLine(string filename, int line, string name, string value) {
-			switch (name) {
-				case "function": 
-					function = ScriptHolder.GetFunction((string) ObjectSaver.Load(value));
-					if (function == null) {
-						throw new Exception("There is no function "+value);
-					}
-					return;
-				case "formatstring":
-					formatString = (string) ObjectSaver.Load(value);
-					return;
+
+		[LoadLine]
+		public void LoadLine(string filename, int line, string name, string value) {
+			if (name.Equals("function")) {
+				function = ScriptHolder.GetFunction((string) ObjectSaver.OptimizedLoad_String(value));
+				if (function == null) {
+					throw new Exception("There is no function "+value);
+				}
 			}
-			base.LoadLine(filename, line, name, value);
 		}
 	}
 }

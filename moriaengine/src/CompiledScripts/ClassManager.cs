@@ -225,8 +225,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			//} else if (typeof(Region).IsAssignableFrom(type)) {
 			//    Region.RegisterRegionType(type);
-			} else if (type.IsSubclassOf(typeof(Timer))) {
-				Timer.RegisterSubClass(type);
+			//} else if (type.IsSubclassOf(typeof(Timer))) {
+			//    Timer.RegisterSubClass(type);
 			//} else if (type.IsSubclassOf(typeof(Thing))) {
 			//	ThingDef.RegisterThingSubtype(type);
 			}

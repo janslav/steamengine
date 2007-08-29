@@ -770,6 +770,9 @@
       <Link>tiledata.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\src\Timers\BoundTimer.cs">
+      <Link>Timers\BoundTimer.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\Timers\DelegateTimer.cs">
       <Link>Timers\DelegateTimer.cs</Link>
     </Compile>

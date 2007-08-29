@@ -64,8 +64,8 @@ namespace SteamEngine.Timers {
 		public void Remove(Timer timer) {
 			if (timer.index > -1) {
 				RemoveAt(timer.index);
+				timer.index = -1;
 			}
-			timer.index = -1;
 		}
 		
 		private void RemoveAt(int i) {
@@ -73,13 +73,6 @@ namespace SteamEngine.Timers {
 			TrickleDown(i, heap[count]);
 			heap[count] = null;
 			version++;
-		}
-		
-		public void Update(Timer timer) {
-			if (timer.index > -1) {
-				RemoveAt(timer.index);
-				Enqueue(timer);
-			}
 		}
 		
 		public Timer Peek() {

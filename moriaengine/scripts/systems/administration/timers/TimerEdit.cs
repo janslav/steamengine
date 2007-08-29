@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Úprava timeru "+tm.name+" na "+th.ToString());
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Úprava timeru "+tm+" na "+th.ToString());
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
@@ -61,8 +61,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//napred napisy 
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Název timeru");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Èas [s]");
-			dlg.LastTable[1, 0] = TextFactory.CreateText(tm.name.ToString());
-			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 11, tm.InSeconds.ToString());
+			dlg.LastTable[1, 0] = TextFactory.CreateText(tm.ToString());
+			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 11, tm.DueInSeconds.ToString());
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
 				Timer tm = (Timer)dsi.Args[1];
-				tm.InSeconds = timerTime;
+				tm.DueInSeconds = timerTime;
 				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
 				if(prevStacked.InstanceType.Equals(typeof(D_TimerList))) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
