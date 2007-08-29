@@ -63,18 +63,12 @@ namespace SteamEngine {
 		private static LinkedList<Conn> notLoggedIn = new LinkedList<Conn>();
 		private static SimpleQueue<Conn> toBeClosed = new SimpleQueue<Conn>();
 
-		public class IdleCheckTimer : SteamEngine.Timers.Timer {
+		internal class IdleCheckTimer : SteamEngine.Timers.Timer {
 			private static TimeSpan idleCheckTimerInterval = TimeSpan.FromMinutes(2);
-			private static TimerKey tk = TimerKey.Get("idleCheckTimer");
 
-			public IdleCheckTimer(TimerKey key)
-				: base(key) {
-			}
-
-			internal IdleCheckTimer()
-				: base(Globals.instance, tk, idleCheckTimerInterval, null) {
-				Globals.instance.RemoveTimer(tk);
-				this.Enqueue();
+			internal IdleCheckTimer() {
+				this.DueInSpan = idleCheckTimerInterval;
+				this.PeriodSpan = idleCheckTimerInterval;
 			}
 
 			protected sealed override void OnTimeout() {
@@ -88,9 +82,6 @@ namespace SteamEngine {
 						}
 					}
 				}
-
-				this.Interval = idleCheckTimerInterval;
-				this.Enqueue();
 			}
 		}
 
@@ -731,29 +722,22 @@ namespace SteamEngine {
 			
 			c.WriteLine("Welcome to "+Globals.serverName);
 
-			new DelayedResyncTimer(c).Enqueue();
+			new DelayedResyncTimer(c).DueInSeconds = 2;
 		}
 
 		internal class DelayedResyncTimer : SteamEngine.Timers.Timer {
-			private static TimeSpan sendDelay = TimeSpan.FromSeconds(2);
-			private static TimerKey tk = TimerKey.Get("delayedSendTimer");
+			GameConn conn;
 
-			public DelayedResyncTimer(TimerKey key)//unloadable
-				: base(key) {
-				throw new NotSupportedException("The method or operation is not supported.");
-			}
-
-			internal DelayedResyncTimer(GameConn conn)
-				: base(conn, tk, sendDelay, null) {
+			internal DelayedResyncTimer(GameConn conn) {
+				this.conn = conn;
 			}
 
 			protected sealed override void OnTimeout() {
-				GameConn conn = (GameConn) Cont;
 				AbstractCharacter player = conn.CurCharacter;
 				if (player != null) {
 					player.Resync();
 				}
-			} 
+			}
 		}
 
 		public static void SendCharPropertiesTo(GameConn viewerConn, AbstractCharacter viewer, AbstractCharacter target) {

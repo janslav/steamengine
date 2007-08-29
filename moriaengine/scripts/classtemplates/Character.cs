@@ -21,6 +21,7 @@ using System.Reflection;
 using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Packets;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	public partial class Character : AbstractCharacter {
@@ -1309,26 +1310,17 @@ namespace SteamEngine.CompiledScripts {
 			this.RemoveTimer(skillTimerKey);
 		}
 
-		private static TimerKey skillTimerKey = TimerKey.Get("__skillTimer__");
+		private static TimerKey skillTimerKey = TimerKey.Get("_skillTimer_");
 
-		[ManualDeepCopyClass]
-		public class SkillStrokeTimer : Timer {
-			public SkillStrokeTimer(TimerKey name)
-				: base(name) {
+		[SaveableClass]
+		public class SkillStrokeTimer : BoundTimer {
+			[LoadingInitializer]
+			public SkillStrokeTimer() {
 			}
 
-			[DeepCopyImplementation]
-			public SkillStrokeTimer(SkillStrokeTimer copyFrom)
-				: base(copyFrom) {
-			}
-
-			public SkillStrokeTimer(Character obj, TimeSpan time)
-				: base(obj, skillTimerKey, time, null) {
-			}
-
-			protected sealed override void OnTimeout() {
+			protected sealed override void OnTimeout(TagHolder cont) {
 				Logger.WriteDebug("SkillStrokeTimer OnTimeout on "+this.Cont);
-				Character self = this.Cont as Character;
+				Character self = cont as Character;
 				if (self != null) {
 					self.DelayedSkillStroke();
 				}
@@ -1339,9 +1331,8 @@ namespace SteamEngine.CompiledScripts {
 			Sanity.IfTrueThrow((currentSkill == null)||(currentSkill != skill),
 				"DelaySkillStroke of skill "+skill+" called on "+this+", which currently does skill "+this.Action);
 
-			this.RemoveTimer(skillTimerKey);
-			new SkillStrokeTimer(this, TimeSpan.FromSeconds(seconds))
-				.Enqueue();
+			//this.RemoveTimer(skillTimerKey);
+			this.AddTimer(skillTimerKey, new SkillStrokeTimer()).DueInSeconds = seconds;
 		}
 
 		public void DelayedSkillStroke() {

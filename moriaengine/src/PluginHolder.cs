@@ -328,12 +328,12 @@ namespace SteamEngine {
 		private void AddPluginImpl(PluginKey pg, Plugin plugin) {
 			if (tags != null) {
 				PluginKey prevKey = tags[plugin] as PluginKey;
-				if (prevKey != pg) {
+				if (prevKey != null && prevKey != pg) {
 					throw new Exception("You can't assign one Plugin to one PluginHolder under 2 different PluginKeys");
 				}
 
 				Plugin prevPlugin = tags[pg] as Plugin;
-				if (prevPlugin != plugin) {
+				if (prevPlugin != null && prevPlugin != plugin) {
 					this.RemovePlugin(prevPlugin);
 				}
 			} else {

@@ -91,37 +91,44 @@ namespace SteamEngine {
 
 		#region Timers
 		//called by Timer after load, do not use otherwise.
-		internal Timer AddTimer(Timer timer) {
-			if (tags == null) {
+		public BoundTimer AddTimer(TimerKey key, BoundTimer timer) {
+			if (tags != null) {
+				TimerKey prevKey = tags[timer] as TimerKey;
+				if (prevKey != null && prevKey != key) {
+					throw new Exception("You can't assign one Timer to one TagHolder under 2 different TimerKeys");
+				}
+
+				BoundTimer prevTimer = tags[key] as BoundTimer;
+				if (prevTimer != null && prevTimer != timer) {
+					this.RemoveTimer(prevTimer);
+				}
+			} else {
 				tags = new Hashtable();
 			}
-			TimerKey tg = timer.name;
-			if (tags[tg] == null) {
-				tags[tg] = timer;
-				return timer;
-			} else {
-				throw new Exception("Unable to add timer '"+timer+"' to '"+this+"' - it is already added.");
+			tags[key] = timer;
+			tags[timer] = key;
+			timer.contRef.Target = this;
+			return timer;
+		}
+
+		public void RemoveTimer(TimerKey key) {
+			if (tags != null) {
+				BoundTimer timer = tags[key] as BoundTimer;
+				if (timer != null) {
+					tags.Remove(key);
+					tags.Remove(timer);
+					timer.contRef.Target = null;
+				}
 			}
 		}
 
-		//this should be called by Timer, do not use otherwise.
-		//it does not(!) invalidate the timer
-		internal void RemoveTimer(Timer timer) {
-			tags.Remove(timer.name);
-		}
-
-		/*
-			Method: RemoveTimer
-			Remove an timer from this tagHolder.
-			
-			Parameters:
-				tk - The TimerKey you passed to Timer constructor when you created it.
-		*/
-		public void RemoveTimer(TimerKey tk) {
+		public void RemoveTimer(BoundTimer timer) {
 			if (tags != null) {
-				Timer t = tags[tk] as Timer;
-				if (t != null) {
-					t.Remove();
+				TimerKey key = tags[timer] as TimerKey;
+				if (key != null) {
+					tags.Remove(key);
+					tags.Remove(timer);
+					timer.contRef.Target = null;
 				}
 			}
 		}
@@ -143,47 +150,32 @@ namespace SteamEngine {
 			}
 		}
 		
-		/*
-			Method: HasTimer
-			Returns true if the timer is on the tagholder, and still exists.
-			
-			Parameters:
-				td - The TimerKey you passed to Timer constructor when you created it.
-			
-			Returns:
-				True if we have this timer, false if not.		
-		*/
-		
-		public bool HasTimer(TimerKey tk) {
-			if (tags!=null) {
-				return (tags[tk] != null);
+		public bool HasTimer(TimerKey key) {
+			if (tags != null) {
+				return (tags.ContainsKey(key));
 			}
 			return false;
 		}
-		
-		/*
-			Method: GetTimer
-			Return the timer pointed to by the specified TimerKey.
-			
-			Parameters:
-				td - The TimerKey specified when you called AddTimer.
-		*/
-		
-		public Timer GetTimer(TimerKey tk) {
+
+		public bool HasTimer(BoundTimer timer) {
+			return timer.contRef.Target == this;
+		}
+
+		public BoundTimer GetTimer(TimerKey key) {
 			if (tags != null) {
-				return (Timer) tags[tk];
+				return (BoundTimer) tags[key];
 			}
 			return null;
 		}
 
 		[Remark("Return enumerable containing all timers")]
-		public IEnumerable<KeyValuePair<TimerKey, Timer>> AllTimers {
+		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> AllTimers {
 			get {
 				if (tags != null) {
 					foreach (DictionaryEntry entry in tags) {
 						TimerKey tk = entry.Key as TimerKey;
 						if (tk != null) {
-							yield return new KeyValuePair<TimerKey, Timer>(tk, (Timer) entry.Value);
+							yield return new KeyValuePair<TimerKey, BoundTimer>(tk, (BoundTimer) entry.Value);
 						}
 					}
 				}
@@ -329,7 +321,6 @@ namespace SteamEngine {
 
 		public virtual void Save(SaveStream output) {
 			if (tags != null) {
-				ArrayList timersList = new ArrayList();
 				ArrayList forDeleting = new ArrayList();
 				foreach (DictionaryEntry entry in tags) {
 					object key = entry.Key;
@@ -344,17 +335,13 @@ namespace SteamEngine {
 						}
 						output.WriteValue("tag."+key, value);
 					} else if (key is TimerKey) {
-						timersList.Add(value);
+						output.WriteValue("%"+key.ToString(), value);
 					//} else {
 						//Logger.WriteError(string.Format("This should not happen. Unknown key-value pair: {0} - {1}", key, value));
 					}
 				}
 				foreach (object key in forDeleting) {
 					tags.Remove(key);
-				}
-				foreach (Timer timer in timersList) {
-					output.WriteLine();
-					Timer.SaveThis(output, timer);
 				}
 			}
 		}
@@ -364,13 +351,21 @@ namespace SteamEngine {
 		internal static Regex tagRE= new Regex(@"tag\.(?<name>\w+)\s*",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
+		public static Regex timerKeyRE = new Regex(@"^\%(?<value>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
 		protected virtual void LoadLine(string filename, int line, string name, string value) {
 			Match m = tagRE.Match(name);
 			if (m.Success) {	//If the name begins with 'tag.'
-				EnsureTagsTable();
-				string tagName=m.Groups["name"].Value;
+				string tagName = m.Groups["name"].Value;
 				TagKey td = TagKey.Get(tagName);
-				ObjectSaver.Load(value, new LoadObjectParam(DelayedLoad_Tag), filename, line, td);
+				ObjectSaver.Load(value, DelayedLoad_Tag, filename, line, td);
+				return;
+			}
+			m = timerKeyRE.Match(name);
+			if (m.Success) {	//If the name begins with '%'
+				string timerName = m.Groups["name"].Value;
+				TimerKey tk = TimerKey.Get(timerName);
+				ObjectSaver.Load(value, DelayedLoad_Timer, filename, line, tk);
 				return;
 			}
 			throw new ScriptException("Invalid data '"+LogStr.Ident(name)+"' = '"+LogStr.Number(value)+"'.");
@@ -392,6 +387,11 @@ namespace SteamEngine {
 		private void DelayedLoad_Tag(object resolvedObject, string filename, int line, object tagKey) {
 			//throw new Exception("LoadTag_Delayed");
 			SetTag((TagKey) tagKey, resolvedObject);
+		}
+
+		private void DelayedLoad_Timer(object resolvedObject, string filename, int line, object timerKey) {
+			//throw new Exception("LoadTag_Delayed");
+			AddTimer((TimerKey) timerKey, (BoundTimer) resolvedObject);
 		}
 
 		#endregion save/load

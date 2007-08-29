@@ -40,7 +40,7 @@ namespace SteamEngine {
 	+ "When this attribute is used, DeepCopyImplementationAttribute is expected to be found on a corresponding member, and will be used to deep copy a new instance.")]
 	[SeeAlso(typeof(LoadingInitializerAttribute))]
 	[AttributeUsage(AttributeTargets.Class|AttributeTargets.Struct)]
-	public class ManualDeepCopyClassAttribute : Attribute{
+	public class ManualDeepCopyClassAttribute : Attribute {
 	}
 
 	[Summary("Use this to decorate a static method or constructor that implements deep copying of instances of the given class. "

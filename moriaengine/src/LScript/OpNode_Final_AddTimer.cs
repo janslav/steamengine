@@ -48,9 +48,9 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) (seconds*10000000L));
-				Timer timer = new TriggerTimer((PluginHolder) vars.self, name, span, triggerKey, formatString, results);
-				timer.Enqueue();
+				TriggerTimer timer = new TriggerTimer(triggerKey, formatString, results);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(name, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding TriggerTimer", 
@@ -105,9 +105,9 @@ namespace SteamEngine.LScript {
 			
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new MethodTimer((TagHolder) vars.self, timerKey, span, method, results);
-				timer.Enqueue();
+				MethodTimer timer = new MethodTimer(method, results);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer", 
@@ -126,9 +126,9 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new MethodTimer((TagHolder) vars.self, timerKey, span, method, results);
-				timer.Enqueue();
+				MethodTimer timer = new MethodTimer(method, results);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer", 
@@ -199,9 +199,9 @@ namespace SteamEngine.LScript {
 			
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new MethodTimer((TagHolder) vars.self, timerKey, span, method, resultString);
-				timer.Enqueue();
+				MethodTimer timer = new MethodTimer(method, resultString);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer", 
@@ -219,11 +219,11 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
 				string resultString = String.Format(formatString, results);
-				Timer timer = new MethodTimer((TagHolder) vars.self, timerKey, span, method, resultString);
-				timer.Enqueue();
+				double seconds = Convert.ToDouble(secondsVal);
+				MethodTimer timer = new MethodTimer(method, resultString);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer", 
@@ -299,9 +299,9 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new MethodTimer((TagHolder) vars.self, timerKey, span, method, results);
-				timer.Enqueue();
+				MethodTimer timer = new MethodTimer(method, results);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer", 
@@ -328,11 +328,11 @@ namespace SteamEngine.LScript {
 				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
 				Array.Copy(results, normalArgsLength, paramArray, 0, paramArrayLength);
 				modifiedResults[normalArgsLength] = paramArray;
-				
+
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new MethodTimer((TagHolder) vars.self, timerKey, span, method, modifiedResults);
-				timer.Enqueue();
+				MethodTimer timer = new MethodTimer(method, modifiedResults);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer", 
@@ -402,9 +402,9 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new FunctionTimer((TagHolder) vars.self, timerKey, span, function, formatString, results);
-				timer.Enqueue();
+				FunctionTimer timer = new FunctionTimer(function, formatString, results);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (InterpreterException) {
 				throw;
@@ -427,9 +427,9 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				TimeSpan span = new TimeSpan((long) seconds*10000000L);
-				Timer timer = new FunctionTimer((TagHolder) vars.self, timerKey, span, function, results);
-				timer.Enqueue();
+				FunctionTimer timer = new FunctionTimer(function, formatString, results);
+				timer.DueInSeconds = seconds;
+				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
 			} catch (InterpreterException) {
 				throw;

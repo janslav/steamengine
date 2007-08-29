@@ -640,7 +640,7 @@ namespace SteamEngine.Persistence {
 			implementorsByName.Clear();
 			implementorsByType.Clear();
 			foreach (ISaveImplementor isi in isis) {
-				if (coreAssembly == isi.HandledType.Assembly) {
+				if (coreAssembly == isi.GetType().Assembly) {
 					RegisterImplementor(isi);
 				}
 			}
@@ -938,25 +938,3 @@ namespace SteamEngine.Persistence {
 		}	
 	}
 }
-
-
-
-//TODO: saving of:
-//arraylist
-//hashtable
-//array
-
-
-//simple
-//TriggerKey
-//TimerKey
-
-//} else if (typeof(TriggerKey).IsAssignableFrom(t)) {
-//	return "@"+((TriggerKey)value).name;
-//} else if (typeof(TimerKey).IsAssignableFrom(t)) {
-//	return "%"+((TimerKey)value).name;
-
-//public static Regex triggerKeyRE= new Regex(@"^\@(?<value>.+)\s*$",                     
-//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-//public static Regex timerKeyRE= new Regex(@"^\%(?<value>.+)\s*$",                     
-//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);

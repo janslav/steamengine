@@ -50,16 +50,13 @@ namespace SteamEngine.Timers {
 	}
 
 	public class TimerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
-		public static Regex re =  new Regex(@"^\%(?<value>.+)\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-	
 		public Type HandledType { get {
 			return typeof(TimerKey);
 		} }
 		
 		
 		public Regex LineRecognizer { get {
-			return re;
+			return TagHolder.timerKeyRE;
 		} }
 		
 		public string Save(object objToSave) {

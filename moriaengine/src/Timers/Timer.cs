@@ -29,75 +29,37 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
 
-	public abstract class Timer {
-		private static ArrayList loadedTimers = new ArrayList();
+	public abstract class Timer : IDeletable {
+		private static SimpleQueue<Timer> toBeEnqueued = new SimpleQueue<Timer>();
 
-		private static SimpleQueue<Timer> newTimers = new SimpleQueue<Timer>();
-		private static SimpleQueue<Timer> toUpdate = new SimpleQueue<Timer>();
-		
 		private static TimerPriorityQueue priorityQueue = new TimerPriorityQueue();
-		
-		private static Dictionary<string, ConstructorInfo> constructors = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
-		
-		
+
+		private bool isDeleted = false;
+
 		internal int index = -1; //index in the Priorityqueue. do not touch!
-		public readonly TimerKey name;
-		private TagHolder cont;
-		public TagHolder Cont { get {
-			return cont;
-		} }
 		internal long fireAt = -1;//internal (instead of private) because of the priorityqueue. do not touch!
-		//public bool freezable = true; //will be frozen when sector is frozen?
-		protected object[] args;//used by subclasses
-		
-		private bool isBeingUpdated = false;//is in the Updated queue - do not re-enqueue
-		private bool isEnqueued = false;//is the newTimers or priorityQueue
-		private bool isAssigned = false;//is registered with it`s tagholder?
-	
-		internal static void Clear() {
-			loadedTimers.Clear();
-			newTimers.Clear();
-			toUpdate.Clear();
-			priorityQueue.Clear();
+		private long period = -1;//if this is > -1, it will be repeated.
+
+		private bool isToBeEnqueued = false;
+
+		public Timer() {
 		}
-		
-		public virtual void Enqueue() {
-			if (cont != null) {
-				if (!isAssigned) {
-					cont.AddTimer(this);
-					isAssigned = true;
-				}
-			} else {
-				isAssigned = false;
-			}
-			if (!isEnqueued) {
-				isEnqueued = true;
-				newTimers.Enqueue(this);
-			}
-		}
-		
-		private static void ProcessNew() {
-			while (newTimers.Count > 0) {
-				//Console.WriteLine("processing timer "+newTimers.Peek());
-				priorityQueue.Enqueue(newTimers.Dequeue());
-			}
-		}
-		
-		private static void ProcessUpdate() {
-			while (toUpdate.Count > 0) {
-				Timer timer = toUpdate.Dequeue();
-				timer.isBeingUpdated = false;
-				if (timer.isEnqueued) {
-					priorityQueue.Update(timer);
+
+		private static void ProcessToBeEnqueued() {
+			while (toBeEnqueued.Count > 0) {
+				Timer timer = toBeEnqueued.Dequeue();
+				timer.isToBeEnqueued = false;
+				if (!timer.isDeleted && timer.fireAt > -1) {
+					priorityQueue.Enqueue(timer);
 				}
 			}
 		}
-		
+
 		private static Timer currentTimer;
 		public static Timer CurrentTimer {
 			get { return currentTimer; }
 		}
-		
+
 		private static void ProcessTimingOut() {
 			long now = Globals.TimeInTicks;
 			while (priorityQueue.Count > 0) {
@@ -105,245 +67,139 @@ namespace SteamEngine.Timers {
 				//Console.WriteLine("TimingOut timer "+timer);
 				if (timer.fireAt <= now) {
 					priorityQueue.Dequeue();//we have already peeked at it
-					if (timer.isAssigned) {//fire only when assigned, otherwise it means it's already removed!
-						timer.Remove();
-						currentTimer = timer;
-						timer.OnTimeout();
-						currentTimer = null;
-					} else {
-						timer.isEnqueued = false;
+					if (timer.period > -1) {
+						timer.fireAt += timer.period;
+						toBeEnqueued.Enqueue(timer);
+						timer.isToBeEnqueued = true;
 					}
+					currentTimer = timer;
+					timer.OnTimeout();
+					currentTimer = null;
 				} else {
 					return;
 				}
 			}
 		}
-		
-		public static void Cycle() { 
-			ProcessUpdate();
-			ProcessNew();
+
+		protected abstract void OnTimeout();
+
+		public static void Cycle() {
+			ProcessToBeEnqueued();
 			ProcessTimingOut();
 		}
-		
-		//for loading
-		protected Timer(TimerKey name) {
-			this.name = name;
-			loadedTimers.Add(this);
-		}
-		
-		public Timer(TagHolder obj, TimerKey name, TimeSpan time, params object[] args) {
-			this.name = name;
-			this.cont=obj;
-			this.fireAt=Globals.TimeInTicks+HighPerformanceTimer.TimeSpanToTicks(time);
-			this.args=args;
+
+		public static void Clear() {
+			priorityQueue.Clear();
+			toBeEnqueued.Clear();
 		}
 
-		protected Timer(Timer copyFrom) {
-			//copying constructor (for copying of tagholders)
-			name=copyFrom.name;
-			fireAt=copyFrom.fireAt;
-			DeepCopyFactory.GetCopyDelayed(copyFrom.args, DelayedGetCopy_Args);
-			DeepCopyFactory.GetCopyDelayed(copyFrom.cont, DelayedGetCopy_Cont);
+		public void Delete() {
+			BeingDeleted();
+			isDeleted = true;
 		}
 
-		public void DelayedGetCopy_Cont(object copy) {
-			cont = (TagHolder) copy;
-			Enqueue();
-		}
-
-		public void DelayedGetCopy_Args(object copy) {
-			args = (object[]) copy;
+		protected virtual void BeingDeleted() {
+			priorityQueue.Remove(this);
 		}
 
 		public bool IsDeleted {
 			get {
-				return ((!isEnqueued) && (!isAssigned));
+				return isDeleted;
+			}
+		}
+		
+		[Summary("The time interval between invocations, using TimeSpan values to measure time intervals.")]
+		[Remark("Specify negative one (-1) second (or any other negative number) to disable periodic signaling.")]
+		public TimeSpan PeriodSpan {
+			get {
+				if (period < 0) {
+					return negativeOneSecond;
+				} else {
+					return HighPerformanceTimer.TicksToTimeSpan(period);
+				}
+			}
+			set {
+				if (value < TimeSpan.Zero) {
+					period = -1;
+				} else {
+					period = HighPerformanceTimer.TimeSpanToTicks(value);
+				}
 			}
 		}
 
-		public TimeSpan Interval {
+		[Summary("The time interval between invocations, in seconds. ")]
+		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to disable periodic signaling.")]
+		[SaveableData]
+		public double PeriodInSeconds {
+			get {
+				if (period < 0) {
+					return -1;
+				} else {
+					return HighPerformanceTimer.TicksToSeconds(period);
+				}
+			}
+			set {
+				if (value < 0) {
+					period = -1;
+				} else {
+					period = HighPerformanceTimer.SecondsToTicks(value);
+				}
+			}
+		}
+
+		[Summary("The amount of time to delay before the first invoking, in seconds.")]
+		[Remark("Specify negative one (-1) second (or any other negative number) to prevent the timer from starting (i.e. to pause it). Specify 0 to start the timer immediately.")]
+		[SaveableData]
+		public double DueInSeconds {
+			get {
+				return HighPerformanceTimer.TicksToSeconds(fireAt - Globals.TimeInTicks);
+			}
+			set {
+				if (value < 0) {
+					fireAt = -1;
+					priorityQueue.Remove(this);
+				} else {
+					fireAt = Globals.TimeInTicks+HighPerformanceTimer.SecondsToTicks(value);
+					priorityQueue.Remove(this);
+					if (!isToBeEnqueued) {
+						toBeEnqueued.Enqueue(this);
+						isToBeEnqueued = true;
+					}
+				}
+			}
+		}
+
+		public static readonly TimeSpan negativeOneSecond = TimeSpan.FromSeconds(-1);
+
+		[Summary("The amount of time to delay before the first invoking, using TimeSpan values to measure time intervals.")]
+		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to prevent the timer from starting (i.e. to pause it). Specify TimeSpan.Zero to start the timer immediately.")]
+		public TimeSpan DueInSpan {
 			get {
 				return HighPerformanceTimer.TicksToTimeSpan(fireAt - Globals.TimeInTicks);
 			}
 			set {
-				fireAt = Globals.TimeInTicks+HighPerformanceTimer.TimeSpanToTicks(value);
-				if (isEnqueued && (!isBeingUpdated)) {
-					toUpdate.Enqueue(this);
-					isBeingUpdated = true;
-				}
-			}
-		}
-
-		public double InSeconds {
-			get {
-				return Interval.TotalSeconds;
-			}
-			set {
-				Interval = TimeSpan.FromSeconds(value);
-			}
-		}
-
-		public void Remove() {
-			isEnqueued = false;
-			if (isAssigned) {
-				cont.RemoveTimer(this);
-				isAssigned = false;
-			}
-		}
-		
-		protected abstract void OnTimeout();
-
-		private static Type[] timerConstructorParamTypes = new Type[] { typeof(TimerKey) };
-
-		//called by ClassManager
-		internal static void RegisterSubClass(Type type) {
-			ConstructorInfo match = type.GetConstructor(timerConstructorParamTypes);
-
-			string name = type.Name;
-			if (match!=null) {
-				constructors[name]=MemberWrapper.GetWrapperFor(match);
-			} else {
-				throw new Exception("The Timer subclass "+name+" does not have proper loading constructor");
-			}
-		}
-		
-		internal static void SaveThis(SaveStream output, Timer timer) {
-			if (timer.IsDeleted) {
-				Logger.WriteError("Timer "+LogStr.Ident(timer)+" is already deleted.");
-				return;
-			}
-
-			output.WriteSection(timer.GetType().Name, timer.name.name);
-			timer.Save(output);
-		}
-
-		internal virtual void Save(SaveStream output) {
-			output.WriteValue("object",cont);
-			output.WriteValue("fireat",fireAt);
-			//if (!freezable) {
-				//output.WriteValue("freezable", freezable);
-			//}
-			
-			if (args!=null) {
-				for (int a=0; a<args.Length; a++) {
-					object o = args[a];
-					if (o!=null) {
-						output.WriteValue("args["+a+"]",o);
+				if (value < TimeSpan.Zero) {
+					fireAt = -1;
+					priorityQueue.Remove(this);
+				} else {
+					fireAt = Globals.TimeInTicks+HighPerformanceTimer.TimeSpanToTicks(value);
+					priorityQueue.Remove(this);
+					if (!isToBeEnqueued) {
+						toBeEnqueued.Enqueue(this);
+						isToBeEnqueued = true;
 					}
 				}
 			}
 		}
 
-		public override string ToString() {
-			StringBuilder toreturn = new StringBuilder(GetType().Name+" ").Append(name).Append(" on ");
-			toreturn.Append(string.Concat("'", cont, "'"));
-			//if (args!=null) {
-			//	if (args.Length>0) {
-			//		toreturn.Append(", args:");
-			//		for (int i=0, n = args.Length; i<n; i++) {
-			//			toreturn.Append(Tools.ObjToString(args[i])+", ");
-			//		}
-			//	}
-			//}
-			return toreturn.ToString();
+		internal static void StartingLoading() {
 		}
 
-		//regular expressions for textual loading
-		//args[465]
-		static Regex argsRE= new Regex(@"args\s*\[\s*(?<index>\d+)\s*\]\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		
-		
-		public static void StartingLoading() {
-		}
-		
-		private static ArrayList argsList = new ArrayList();
-		internal static void Load(PropsSection input) {
-			ConstructorInfo constructor;
-			if (!constructors.TryGetValue(input.headerType, out constructor)) {
-				Logger.WriteError(input.filename,input.headerLine,"There is no proper timer constructor for this section...");
-				return;
-			}
-			TimerKey name = TimerKey.Get(input.headerName);
-			Timer timer = (Timer)constructor.Invoke(BindingFlags.Default, null, new object[] {name}, null);
-			argsList.Clear();
-			
-			foreach (PropsLine p in input.props.Values) {
-				try {
-					timer.LoadLine(input.filename, p.line, p.name.ToLower(), p.value);
-				} catch (FatalException) {
-					throw;
-				} catch (Exception ex) {
-					Logger.WriteWarning(input.filename,p.line,ex);
-				}
-			}
-			timer.args = argsList.ToArray();
-		}
-		
-		internal virtual void LoadLine(string filename, int line, string name, string value) {
-			Match m=argsRE.Match(name);
-			if (m.Success) {
-				int index=int.Parse(m.Groups["index"].Value, NumberStyles.Integer);
-				while (argsList.Count<=index) {
-					argsList.Add(null);
-				}
-				ObjectSaver.Load(value, new LoadObjectParam(DelayedLoad_Args), filename, line, index);
-				return;
-			}
-			switch (name) {
-				case "object": 
-					ObjectSaver.Load(value, new LoadObject(DelayedLoad_Cont), filename, line);
-					return;
-				case "fireat":
-					fireAt = ConvertTools.ParseInt64(value);
-					return;
-				//case "freezable":
-					//freezable = (bool) ObjectSaver.Load(value);
-					//return;
-			}
-			throw new ScriptException("Invalid data '"+LogStr.Ident(name)+" = "+LogStr.Ident(value)+"'.");
-		}
-
-		//this method checks if timers are loaded correctly (if they have obj and delay) 
-		//and sends them to the priorityqueue
 		internal static void LoadingFinished() {
+			Logger.WriteDebug("Loaded "+priorityQueue.Count+" timers.");
 
-			Logger.WriteDebug("Resolving timers");
-			for (int i = 0, n = loadedTimers.Count; i<n; i++) {
-				Timer timer = loadedTimers[i] as Timer;
-				if (timer != null) {
-					try {
-						if (timer.cont != null) {
-							if (timer.fireAt != -1) {
-								timer.Enqueue();
-							} else {
-								Logger.WriteError(LogStr.Ident(timer)+" does not have the delay property loaded.");
-							}
-						} else {
-							Logger.WriteError(LogStr.Ident(timer)+" does not have the object property loaded.");	
-						}
-					} catch (FatalException) {
-						throw;
-					} catch (Exception ex) {
-						Logger.WriteError(timer.GetType().Name, timer.name, ex);
-					}
-				}
-			}
-			loadedTimers = new ArrayList();
-
-			Logger.WriteDebug("Loaded "+loadedTimers.Count+" timers.");
-		}
-		
-		internal static bool IsTimerName(string name) {
-			return constructors.ContainsKey(name);
-		}
-		
-		public virtual void DelayedLoad_Cont(object resolvedObject, string filename, int line) {
-			cont = (TagHolder) resolvedObject;
-		}
-		
-		public void DelayedLoad_Args(object resolvedObject, string filename, int line, object index) {
-			argsList[(int) index] = resolvedObject;
+			ProcessToBeEnqueued();
+			toBeEnqueued = new SimpleQueue<Timer>();//it could have been unnecessary big...
 		}
 	}
 }

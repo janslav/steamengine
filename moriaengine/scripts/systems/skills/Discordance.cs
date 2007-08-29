@@ -284,7 +284,7 @@ namespace SteamEngine.CompiledScripts {
 			if (Cont.Stam > Cont.MaxStam) {
 				Cont.Stam = Cont.MaxStam;
 			}
-			new DiscordDecayTimer(this, TimeSpan.FromSeconds(Globals.EvalRangePermille(discordEffectPower, 10, 15))).Enqueue();
+			//new DiscordDecayTimer(this, TimeSpan.FromSeconds(Globals.EvalRangePermille(discordEffectPower, 10, 15))).Enqueue();
 		}
 
 		public override void On_Equip(Character self) {
@@ -317,30 +317,30 @@ namespace SteamEngine.CompiledScripts {
 			return lowedVal;
 		}
 
-		private static TimerKey discordTimerKey = TimerKey.Get("_discordDecayTimer_");
+		//private static TimerKey discordTimerKey = TimerKey.Get("_discordDecayTimer_");
 
-		[ManualDeepCopyClass]
-		public class DiscordDecayTimer : Timer {
-			public DiscordDecayTimer(TimerKey name)
-				: base(name) {
-			}
+		//[ManualDeepCopyClass]
+		//public class DiscordDecayTimer : Timer {
+		//    public DiscordDecayTimer(TimerKey name)
+		//        : base(name) {
+		//    }
 
-			[DeepCopyImplementation]
-			public DiscordDecayTimer(DiscordDecayTimer copyFrom)
-				: base(copyFrom) {
-			}
+		//    [DeepCopyImplementation]
+		//    public DiscordDecayTimer(DiscordDecayTimer copyFrom)
+		//        : base(copyFrom) {
+		//    }
 
-			public DiscordDecayTimer(Memory obj, TimeSpan time)
-				: base(obj, discordTimerKey, time, null) {
-			}
+		//    public DiscordDecayTimer(Memory obj, TimeSpan time)
+		//        : base(obj, discordTimerKey, time, null) {
+		//    }
 
-			protected sealed override void OnTimeout() {
-				Memory self = Cont as Memory;
-				if (self != null) {
-					self.Delete();
-				}
-			}
-		}
+		//    protected sealed override void OnTimeout() {
+		//        Memory self = Cont as Memory;
+		//        if (self != null) {
+		//            self.Delete();
+		//        }
+		//    }
+		//}
 	}
 
 	public class DiscordanceEffectMemoryDef : MemoryDef {

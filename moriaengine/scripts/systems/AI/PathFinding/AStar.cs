@@ -301,8 +301,7 @@ namespace SteamEngine.CompiledScripts {
 						Item i = (Item) Def.Create((ushort) x, (ushort) y, (sbyte) z, m);
                         i.Color = 0x21; // Tento radek je historicky prvnim C# skripterkym pocinem pana Verbatima, mocneho a krfafeho! 7.4.2007 0:29am
 						start = i;
-						new AStarDecayTimer(i, TimeSpan.FromSeconds(10))
-							.Enqueue();
+						i.AddTimer(decayTimerKey, new AStarDecayTimer()).DueInSeconds = 10;
 					}
 				} else {
 					Globals.SrcWriteLine("Path not calculated");
@@ -312,22 +311,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TimerKey decayTimerKey = TimerKey.Get("testDecayTimer");
-		public class AStarDecayTimer : Timer {
-			public AStarDecayTimer(TimerKey name)
-				: base(name) {
+		private static TimerKey decayTimerKey = TimerKey.Get("_testDecayTimer_");
+		[DeepCopySaveableClass]
+		public class AStarDecayTimer : BoundTimer {
+			[LoadingInitializer]
+			public AStarDecayTimer() {
 			}
 
-			protected AStarDecayTimer(AStarDecayTimer copyFrom)
-				: base(copyFrom) {
-			}
-
-			public AStarDecayTimer(Item obj, TimeSpan time)
-				: base(obj, decayTimerKey, time, null) {
-			}
-
-			protected sealed override void OnTimeout() {
-				Item self = this.Cont as Item;
+			protected sealed override void OnTimeout(TagHolder cont) {
+				Item self = cont as Item;
 				if (self != null) {
 					self.Delete();
 				}
@@ -353,8 +345,10 @@ namespace SteamEngine.CompiledScripts {
 				Direction[] path = AStar.GetPathFromTo(self, targetted, map, self.MovementSettings);
 				if (path != null) {
 					self.RemoveTimer(walkTimerKey);
-					AStarWalkTimer timer = new AStarWalkTimer(self, TimeSpan.FromSeconds(seconds), path);
-					timer.Enqueue();
+					AStarWalkTimer timer = new AStarWalkTimer(path);
+					timer.DueInSeconds = seconds;
+					timer.PeriodInSeconds = seconds;
+					self.AddTimer(walkTimerKey, timer);
 				} else {
 					Globals.SrcWriteLine("Path not calculated");
 				}
@@ -362,30 +356,26 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TimerKey walkTimerKey = TimerKey.Get("testWalkTimer");
+		private static TimerKey walkTimerKey = TimerKey.Get("_testWalkTimer_");
 
-		[ManualDeepCopyClass]
-		public class AStarWalkTimer : Timer {
-			public AStarWalkTimer(TimerKey name)
-				: base(name) {
+		[DeepCopySaveableClass]
+		public class AStarWalkTimer : BoundTimer {
+			[SaveableData]
+			public Direction[] path;
+
+			[SaveableData]
+			public int pathIndex;
+
+			[LoadingInitializer]
+			public AStarWalkTimer() {
 			}
 
-			[DeepCopyImplementation]
-			public AStarWalkTimer(AStarWalkTimer copyFrom)
-				: base(copyFrom) {
+			public AStarWalkTimer(Direction[] path) {
+				this.path = path;
 			}
 
-			public AStarWalkTimer(Character obj, TimeSpan time, Direction[] path)
-				: base(obj, walkTimerKey, time, 
-					path, 0, time ) {
-			}
-
-			protected sealed override void OnTimeout() {
-				Character self = (Character) this.Cont;
-
-				Direction[] path = (Direction[]) this.args[0];
-				int pathIndex =  Convert.ToInt32(this.args[1]);
-				TimeSpan interval = (TimeSpan) this.args[2];
+			protected sealed override void OnTimeout(TagHolder cont) {
+				Character self = (Character) cont;
 
 				if (pathIndex < path.Length) {
 					Direction nextStep = path[pathIndex];
@@ -393,9 +383,9 @@ namespace SteamEngine.CompiledScripts {
 						self.Direction = nextStep;
 					}
 					self.WalkRunOrFly(nextStep, true, false);
-					this.args[1] = pathIndex + 1;
-					this.Interval = interval;
-					this.Enqueue();
+					pathIndex++;
+				} else {
+					this.DueInSpan = Timer.negativeOneSecond;
 				}
 			}
 		}

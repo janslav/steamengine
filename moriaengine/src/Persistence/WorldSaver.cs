@@ -242,21 +242,12 @@ namespace SteamEngine.Persistence {
 			if (type == "globals") {
 				Globals.LoadGlobals(input);
 				return null;
-			//} else if (ThingDef.ExistsThingSubtype(type)) {
-			//    Thing.Load(input);
-			//    return null;
-			} else if (Timer.IsTimerName(type)) {
-				Timer.Load(input);
-				return null;
 			} else if (ObjectSaver.IsKnownSectionName(type)) {
 				ObjectSaver.LoadSection(input);
 				return null;
 			} else if (AbstractDef.ExistsDefType(type)) {
 				AbstractDef.LoadSectionFromSaves(input);
 				return null;
-			//} else if (Region.IsRegionHeaderName(type)) {
-			//    Region.Load(input);
-			//    return null;
 			}
 			Logger.WriteError(input.filename,input.headerLine,"Unknown section "+LogStr.Ident(input));
 			return null;
