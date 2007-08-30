@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("The ancestor of all generated classes that manage and return the paged data to display")]
-	public abstract class AbstractDataView : IPageableCollection<IDataFieldView> {
+	public abstract class AbstractViewDescriptor : IPageableCollection<IDataFieldView> {
 		[Remark("Implement the method to return an initialized instance of AbstractPage. This "+
 				"should be then used in foreach block or somehow (as an IEnumerable)")]
 		public abstract IEnumerable<IDataFieldView> GetPage(int firstLineIndex, int pageSize);

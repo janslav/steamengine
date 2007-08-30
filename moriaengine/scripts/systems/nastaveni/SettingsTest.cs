@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Class returning pages for the dialog. It also ensures we are not trying to reach more fields than available" +
 			"and makes index corrections necessary for the page size with respects to the real number of fields "+
 			"(e.g. we are on the last page)")]
-	public class SimpleClassDataView : AbstractDataView {
+	public class SimpleClassViewDescriptor : AbstractViewDescriptor {
 		public override IEnumerable<IDataFieldView> GetPage(int firstLineIndex, int pageSize) {
 			if(firstLineIndex > LineCount) {
 				throw new SEException(LogStr.Error("Trying to access more IDataFieldViews than available - "+
@@ -58,7 +58,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("This class will be automatically generated - the MoveNext method ensures the correct "+
-			" the correct iteration on all the IDataFieldViews of the ViewableClass")]
+			" iteration on all the IDataFieldViews of the ViewableClass. It makes sure the upperBound "+
+			"won't be reached")]
 	public class SimpleClassPage : AbstractPage {
 		public static SimpleClassPage instance = new SimpleClassPage();
 
