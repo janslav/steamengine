@@ -26,6 +26,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class SimpleClass {
 		public string foo;
 
+		[NoShow]
+		public int bar;
+
 		[Button("Test Button")]
 		public void SomeMethod() {
 			LogStr.Debug("Pressed button for some method");
@@ -60,13 +63,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static SimpleClassPage instance = new SimpleClassPage();
 
 		public override bool MoveNext() {
-			switch(currentIndex++) {
-				case 0:
-					current = ReadWriteDataFieldView_SimpleClass_Foo.instance;
-					break;
-				case 1:
-					current = ButtonDataFieldView_SimpleClass_SomeMethod.instance;
-					break;
+			if(currentIndex++ < upperBound) {			
+				switch(currentIndex-1) {
+					case 0:
+						current = ReadWriteDataFieldView_SimpleClass_Foo.instance;
+						break;
+					case 1:
+						current = ButtonDataFieldView_SimpleClass_SomeMethod.instance;
+						break;
+				}
+				return true;
+			} else {
+				return false;
 			}
 		}
 	}
