@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"it will also hold all the IDataFieldViews belonging to the ViewableClass")]
 	public abstract class AbstractPage : IEnumerable<IDataFieldView>, IEnumerator<IDataFieldView> {
 		protected int currentIndex;
-		protected int stopIndex;
+		protected int upperBound;
 		protected IDataFieldView current;
 
 		[Remark("This method will be used by IPageableCollection to prepare the Enumerator" +
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public AbstractPage Initialize(int startIndex, int pageSize) {
 			//initialize indices and return the current instance for usage
 			this.currentIndex = startIndex;
-			this.stopIndex = startIndex + pageSize;
+			this.upperBound = startIndex + pageSize;
 			return this;
 		}
 
