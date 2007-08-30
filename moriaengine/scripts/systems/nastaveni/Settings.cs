@@ -36,13 +36,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		object GetValue(object target);
 
 		[Remark("Take the target object and set its member's value")]
-		bool SetValue(object target, object value);
+		void SetValue(object target, object value);
 
 		[Remark("Take the target object and retreive its member's value in the stringified form")]
 		string GetStringValue(object target);
 
 		[Remark("Take the stringified value, convert it and set it to the respective member of the target")]
-		bool SetStringValue(object target, string value);
+		void SetStringValue(object target, string value);
 
 		[Remark("What will happen when the button is pressed?")]
 		void OnButton(object target);				
@@ -65,12 +65,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("This method is forbidden in this class")]
-		public bool SetValue(object target, object value) {
+		public void SetValue(object target, object value) {
 			throw new SEException(LogStr.Error("Cannot set a value to the non-editable field"));
 		}
 
 		[Remark("This method is forbidden in this class")]
-		public bool SetStringValue(object target, string value) {
+		public void SetStringValue(object target, string value) {
 			throw new SEException(LogStr.Error("Cannot convert and set a stringified value to the non-editable field"));
 		}
 
@@ -109,9 +109,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//all other properties/methods will be implemented in child classes later
 		public abstract string Name { get; }
 		public abstract object GetValue(object target);
-		public abstract bool SetValue(object target, object value);
+		public abstract void SetValue(object target, object value);
 		public abstract string GetStringValue(object target);
-		public abstract bool SetStringValue(object target, string value);
+		public abstract void SetStringValue(object target, string value);
 
 	}
 
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("This method is forbidden in this class, there is nothing to set")]
-		public bool SetValue(object target, object value) {
+		public void SetValue(object target, object value) {
 			throw new SEException(LogStr.Error("Cannot set any value to a buttonized dataview field"));
 		}
 
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("This method is forbidden in this class, there is nothing to set")]
-		public bool SetStringValue(object target, string value) {
+		public void SetStringValue(object target, string value) {
 			throw new SEException(LogStr.Error("Cannot convert and set any stringified value to a buttonized dataview field"));
 		}
 
