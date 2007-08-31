@@ -37,7 +37,7 @@ namespace SteamEngine.Timers {
 		public TriggerTimer() {
 		}
 
-		public TriggerTimer(TriggerKey trigger, string formatString, params object[] args) {
+		public TriggerTimer(TriggerKey trigger, string formatString, object[] args) {
 			this.trigger = trigger;
 			this.formatString = formatString;
 			this.args = args;

@@ -10,5 +10,4 @@ on=@beforeSave
 RemoveTimer(%PeriodicSave)
 
 on=@afterSave
-RemoveTimer(%PeriodicSave)
 AddTimer(%PeriodicSave, periodicSave_Interval, Save)

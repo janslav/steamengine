@@ -41,7 +41,7 @@ namespace SteamEngine.Timers {
 		public MethodTimer() {
 		}
 		
-		public MethodTimer(MethodInfo method, params object[] args) {
+		public MethodTimer(MethodInfo method, object[] args) {
 			this.method = method;
 			this.args = args;
 		}

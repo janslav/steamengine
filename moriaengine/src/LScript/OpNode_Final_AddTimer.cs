@@ -199,7 +199,7 @@ namespace SteamEngine.LScript {
 			
 			try {
 				double seconds = Convert.ToDouble(secondsVal);
-				MethodTimer timer = new MethodTimer(method, resultString);
+				MethodTimer timer = new MethodTimer(method, new object[] { resultString });
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;
@@ -221,7 +221,7 @@ namespace SteamEngine.LScript {
 			try {
 				string resultString = String.Format(formatString, results);
 				double seconds = Convert.ToDouble(secondsVal);
-				MethodTimer timer = new MethodTimer(method, resultString);
+				MethodTimer timer = new MethodTimer(method, new object[] { resultString });
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
 				return timer;

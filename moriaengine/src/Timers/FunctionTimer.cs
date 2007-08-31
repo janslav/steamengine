@@ -47,7 +47,7 @@ namespace SteamEngine.Timers {
 		public FunctionTimer() {
 		}
 		
-		public FunctionTimer(ScriptHolder function, string formatString, params object[] args) {
+		public FunctionTimer(ScriptHolder function, string formatString, object[] args) {
 			this.function = function;
 			this.formatString = formatString;
 			this.args = args;
