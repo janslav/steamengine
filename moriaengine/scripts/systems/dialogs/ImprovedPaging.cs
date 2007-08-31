@@ -51,8 +51,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("This will be used to return the desired page of objects to be displayed"+
 			"it will also hold all the IDataFieldViews belonging to the ViewableClass")]
 	public abstract class AbstractPage : IEnumerable<IDataFieldView>, IEnumerator<IDataFieldView> {
+		//this is the starting index, which is inceased everytime the MoveNext method is invoked
 		protected int currentIndex;
-		protected int upperBound;
+		//this is the upper bound (the lines count) - it will never be reached (there is only upperbound-1 fields to display)
+		protected int upperBound; 
+		//this is the current field we are displaying - it will be used in Enumerators methods
 		protected IDataFieldView current;
 
 		[Remark("This method will be used by IPageableCollection to prepare the Enumerator" +
