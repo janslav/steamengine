@@ -41,7 +41,7 @@ namespace SteamEngine {
 		private static int recursionLevel = 0;
 
 		private static DelayedCopier firstCopier; //this is the list of the pending jobs :)
-		private static DelayedCopier lastCopier;  //it is emptied when LoadingFinished is called
+		private static DelayedCopier lastCopier;
 
 		private static HashSet<object> toBeCopied = new HashSet<object>();
 		private static Dictionary<object, object> copies = new Dictionary<object, object>(new ObjectSaver.ReferenceEqualityComparer());
@@ -147,6 +147,7 @@ namespace SteamEngine {
 				}
 
 				object copy = implementor.DeepCopy(copyFrom);
+				copies[copyFrom] = copy;
 				noException = true;
 				return copy;
 			} finally {

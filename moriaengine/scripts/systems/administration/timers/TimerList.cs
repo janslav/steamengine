@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
 				KeyValuePair<TimerKey, BoundTimer> de = timerList[i];
-				Timer tmr = de.Value;
+				BoundTimer tmr = de.Value;
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2*i)+10);
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText((de.Key).name);
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam timeru bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<TimerKey, Timer>> timerList = (List<KeyValuePair<TimerKey, Timer>>) args[3];
+			List<KeyValuePair<TimerKey, BoundTimer>> timerList = (List<KeyValuePair<TimerKey, BoundTimer>>) args[3];
 			int firstOnPage = Convert.ToInt32(args[1]);
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch(gr.pressedButton) {
@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//zjistime kterej cudlik z radku byl zmacknut
 				int row = (int)(gr.pressedButton - 10) / 2;
 				int buttNum = (int)(gr.pressedButton - 10) % 2;
-				KeyValuePair<TimerKey, Timer> de = ((List<KeyValuePair<TimerKey, Timer>>) args[3])[row];
+				KeyValuePair<TimerKey, BoundTimer> de = ((List<KeyValuePair<TimerKey, BoundTimer>>) args[3])[row];
 				switch(buttNum) {
 					case 0: //smazat timer
 						TagHolder timerOwner = (TagHolder)args[0];

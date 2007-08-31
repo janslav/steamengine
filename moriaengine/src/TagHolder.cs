@@ -148,6 +148,7 @@ namespace SteamEngine {
 			foreach (TimerKey key in toBeRemoved) {
 				RemoveTimer(key);
 			}
+			ReleaseTagsTableIfEmpty();
 		}
 		
 		public bool HasTimer(TimerKey key) {
@@ -204,6 +205,14 @@ namespace SteamEngine {
 			}
 		}
 
+		internal void ReleaseTagsTableIfEmpty() {
+			if (tags != null) {
+				if (tags.Count == 0) {
+					tags = null;
+				}
+			}
+		}
+
 		internal protected virtual void BeingDeleted() {
 			ClearTimers();
 		}
@@ -235,11 +244,17 @@ namespace SteamEngine {
 			if (tags==null) {
 				return;
 			}
+			List<TagKey> toBeRemoved = new List<TagKey>();
 			foreach (object keyObj in tags.Keys) {
-				if (keyObj is TagKey) {
-					tags.Remove(keyObj);
+				TagKey key = keyObj as TagKey;
+				if (key != null) {
+					toBeRemoved.Add(key);
 				}
 			}
+			foreach (TagKey key in toBeRemoved) {
+				RemoveTag(key);
+			}
+			ReleaseTagsTableIfEmpty();
 		}
 		
 		public string ListTags() {
@@ -351,7 +366,7 @@ namespace SteamEngine {
 		internal static Regex tagRE= new Regex(@"tag\.(?<name>\w+)\s*",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
-		public static Regex timerKeyRE = new Regex(@"^\%(?<value>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		public static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		protected virtual void LoadLine(string filename, int line, string name, string value) {
 			Match m = tagRE.Match(name);

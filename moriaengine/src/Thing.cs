@@ -702,8 +702,6 @@ namespace SteamEngine {
 					createdAt = TagMath.ParseInt64(value);
 					break;
 				default:
-					//here should come some skill loader, but since skills
-					//are not yet implemented, isnt this implemented too
 					base.LoadLine(filename, line, prop, value);
 					break;
 			}

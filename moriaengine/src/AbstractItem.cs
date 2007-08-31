@@ -119,6 +119,12 @@ namespace SteamEngine {
 			model=copyFrom.model;
 			flags=copyFrom.flags;
 			amount=copyFrom.amount;
+
+			if (this.IsContainer) {
+				foreach (AbstractItem i in copyFrom) {
+					i.Dupe(this);	//dupe the item & put it in our container
+				}
+			}
 			Globals.lastNewItem=this;
 		}
 		
@@ -228,40 +234,21 @@ namespace SteamEngine {
 		} } 
 		
 		public sealed override Thing Dupe() {
-			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
 			Thing cont = this.Cont;
-			if (cont != null) {
-				if (cont.IsContainer) {
-					((AbstractItem) cont).InternalAddItem(copy);
-				} else {
-					((AbstractCharacter) cont).AddLoadedItem(copy);
-				}
-			} else {//on ground, we add it to map
-				copy.GetMap().Add(copy);
-			}
-			if (this.IsContainer) {
-				foreach (AbstractItem i in this) {
-					i.Dupe(copy);	//dupe the item & put it in our container
-				}
-			}
-			return copy;
+			return Dupe(cont);
 		}
 		
-		public AbstractItem Dupe(Thing putIn) {
+		internal AbstractItem Dupe(Thing putIn) {
 			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
 			if (putIn!=null) {
 				if (putIn.IsContainer) {
-					((AbstractItem) putIn).InternalAddItem(this);
+					((AbstractItem) putIn).InternalAddItem(copy);
 				} else {
 					//it is a character
-					((AbstractCharacter) putIn).AddLoadedItem(this);
+					((AbstractCharacter) putIn).AddLoadedItem(copy);
 				}
-			}
-
-			if (this.IsContainer) {
-				foreach (AbstractItem i in this) {
-					i.Dupe(copy);	//dupe the item & put it in our container
-				}
+			} else {//on ground, we add it to map
+				copy.GetMap().Add(copy);
 			}
 			return copy;
 		}
