@@ -302,14 +302,14 @@
     <Compile Include="..\..\scripts\systems\dialogs\ImprovedDialog.cs">
       <Link>systems\dialogs\ImprovedDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\dialogs\ImprovedPaging.cs">
-      <Link>systems\dialogs\ImprovedPaging.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\Input.cs">
       <Link>systems\dialogs\Input.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\LeafComponents.cs">
       <Link>systems\dialogs\LeafComponents.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\Paging.cs">
+      <Link>systems\dialogs\Paging.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Enums.cs">
       <Link>systems\Enums.cs</Link>

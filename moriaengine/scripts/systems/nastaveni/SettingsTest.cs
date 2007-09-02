@@ -35,19 +35,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Class returning pages for the dialog. It also ensures we are not trying to reach more fields than available" +
-			"and makes index corrections necessary for the page size with respects to the real number of fields "+
-			"(e.g. we are on the last page)")]
-	public class SimpleClassViewDescriptor : AbstractViewDescriptor {
+	[Remark("Class returning pages for the dialog.")]
+	public class SimpleClassDataView : AbstractDataView {
 		public override IEnumerable<IDataFieldView> GetPage(int firstLineIndex, int pageSize) {
-			if(firstLineIndex > LineCount) {
-				throw new SEException(LogStr.Error("Trying to access more IDataFieldViews than available - "+
-									"starting from "+firstLineIndex+" but have only " + LineCount));
-			}
-			if(firstLineIndex + pageSize > LineCount) {
-				pageSize = LineCount - firstLineIndex;
-			}
-			return SimpleClassPage.instance.Initialize(firstLineIndex, pageSize);
+			SimpleClassPage scp = new SimpleClassPage(firstLineIndex, pageSize);
+			return scp;
 		}
 
 		public override int LineCount {
@@ -55,30 +47,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return 2;
 			}
 		}
-	}
 
-	[Remark("This class will be automatically generated - the MoveNext method ensures the correct "+
-			" iteration on all the IDataFieldViews of the ViewableClass. It makes sure the upperBound "+
+		[Remark("This class will be automatically generated - the MoveNext method ensures the correct " +
+			" iteration on all the IDataFieldViews of the ViewableClass. It makes sure the upperBound " +
 			"won't be reached")]
-	public class SimpleClassPage : AbstractPage {
-		public static SimpleClassPage instance = new SimpleClassPage();
+		public class SimpleClassPage : AbstractPage {
+			public SimpleClassPage(int firstLineIndex, int pageSize) : base(firstLineIndex,pageSize) {
+			}
 
-		public override bool MoveNext() {
-			if(currentIndex++ < upperBound) {			
-				switch(currentIndex-1) {
-					case 0:
-						current = ReadWriteDataFieldView_SimpleClass_Foo.instance;
-						break;
-					case 1:
-						current = ButtonDataFieldView_SimpleClass_SomeMethod.instance;
-						break;
+			public override bool MoveNext() {
+				if(nextIndex < upperBound) {
+					switch(nextIndex) {
+						case 0:
+							current = ReadWriteDataFieldView_SimpleClass_Foo.instance;
+							break;
+						case 1:
+							current = ButtonDataFieldView_SimpleClass_SomeMethod.instance;
+							break;
+						default:
+							//this happens if there are not enough lines to fill the whole page
+							//or if we are beginning with the index larger then the overall LinesCount 
+							//(which results in the empty page and should not happen)
+							return false;
+					}
+					++nextIndex;//prepare the index for the next round of iteration
+					return true;
+				} else {
+					return false;
 				}
-				return true;
-			} else {
-				return false;
 			}
 		}
-	}
+	}	
 
 	[Remark("Dataview implementation for the member 'foo' of the SimpleClass")]
 	public class ReadWriteDataFieldView_SimpleClass_Foo : ReadWriteDataFieldView {
