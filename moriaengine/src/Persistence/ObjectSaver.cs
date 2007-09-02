@@ -459,6 +459,7 @@ namespace SteamEngine.Persistence {
 				if (m.Success) {
 					PushDelayedLoader(new BaseClassDelayedLoader_Param(
 						deleg, filename, line, additionalParameter, m, pair.bcsc));
+					return;
 				}
 			}
 

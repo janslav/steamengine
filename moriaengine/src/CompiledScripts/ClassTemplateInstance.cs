@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 				ctd.BaseTypes.Add(imp);
 			}
 			ctd.CustomAttributes.Add(new CodeAttributeDeclaration(
-				new CodeTypeReference(typeof(ManualDeepCopyClassAttribute))));
+				new CodeTypeReference(typeof(DeepCopyableClassAttribute))));
 			ctd.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(Persistence.SaveableClassAttribute))));
 

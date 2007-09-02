@@ -312,9 +312,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static TimerKey decayTimerKey = TimerKey.Get("_testDecayTimer_");
-		[DeepCopySaveableClass]
+		[DeepCopyableClass]
+		[SaveableClass]
 		public class AStarDecayTimer : BoundTimer {
 			[LoadingInitializer]
+			[DeepCopyImplementation]
 			public AStarDecayTimer() {
 			}
 
@@ -358,15 +360,19 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TimerKey walkTimerKey = TimerKey.Get("_testWalkTimer_");
 
-		[DeepCopySaveableClass]
+		[DeepCopyableClass]
+		[SaveableClass]
 		public class AStarWalkTimer : BoundTimer {
 			[SaveableData]
+			[CopyableData]
 			public Direction[] path;
 
 			[SaveableData]
+			[CopyableData]
 			public int pathIndex;
 
 			[LoadingInitializer]
+			[DeepCopyImplementation]
 			public AStarWalkTimer() {
 			}
 

@@ -28,13 +28,16 @@ using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
-	[DeepCopySaveableClass]
+	[DeepCopyableClass]
+	[SaveableClass]
 	public class FunctionTimer : BoundTimer {
 		public ScriptHolder function;
 
 		[SaveableData]
+		[CopyableData]
 		public string formatString;
 		[SaveableData]
+		[CopyableData]
 		public object[] args;
 
 		protected sealed override void OnTimeout(TagHolder cont) {
@@ -44,6 +47,7 @@ namespace SteamEngine.Timers {
 		}
 
 		[LoadingInitializer]
+		[DeepCopyImplementation]
 		public FunctionTimer() {
 		}
 		

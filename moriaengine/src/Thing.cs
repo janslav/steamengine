@@ -65,7 +65,7 @@ namespace SteamEngine {
 
 
 		public class ThingSaveCoordinator : IBaseClassSaveCoordinator {
-			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?\d+)\s*$",
+			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?[\da-f]+)\s*$",
 				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 			public string FileNameToSave {
