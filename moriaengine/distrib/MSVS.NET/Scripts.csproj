@@ -335,9 +335,6 @@
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsResult.cs">
       <Link>systems\nastaveni\SettingsResult.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\SettingsTest.cs">
-      <Link>systems\nastaveni\SettingsTest.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsUtils.cs">
       <Link>systems\nastaveni\SettingsUtils.cs</Link>
     </Compile>
@@ -400,6 +397,9 @@
     </Compile>
     <Compile Include="..\..\scripts\Tests\SaveLoadTests.cs">
       <Link>Tests\SaveLoadTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\SettingsTest.cs">
+      <Link>Tests\SettingsTest.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Tests\TargetDefTest.cs">
       <Link>Tests\TargetDefTest.cs</Link>
