@@ -1,3 +1,8 @@
+Sep 2, 2007
+	added: DeepCopyFactory.cs, DecoratedClassesDeepCopyImplementor.cs, atd.
+	(tar)		DeepCopyFactory - system pro hloubkove kopirovani objektu. Pouziva se pro maximalni 
+		dokonalost methody Thing.Dupe()
+
 
 Jul 29, 2007
 	added: CompiledScriptHolder.cs, GeneratedCodeUtil.cs, ScriptedTriggerGroup.cs, CompiledTriggerGroup.cs

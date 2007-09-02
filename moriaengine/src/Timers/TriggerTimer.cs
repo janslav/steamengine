@@ -24,16 +24,21 @@ using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
-	[DeepCopySaveableClass]
+	[DeepCopyableClass]
+	[SaveableClass]
 	public class TriggerTimer : BoundTimer {
 		[SaveableData]
+		[CopyableData]
 		public TriggerKey trigger;
 		[SaveableData]
+		[CopyableData]
 		public string formatString;
 		[SaveableData]
+		[CopyableData]
 		public object[] args;
 
 		[LoadingInitializer]
+		[DeepCopyImplementation]
 		public TriggerTimer() {
 		}
 

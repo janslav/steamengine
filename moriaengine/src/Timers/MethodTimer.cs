@@ -27,10 +27,12 @@ using SteamEngine.Persistence;
 //will be alternative to Timer which runs triggers...
 //this runs "hardcoded" methods via MethodInfo
 namespace SteamEngine.Timers {
-	[DeepCopySaveableClass]
+	[DeepCopyableClass]
+	[SaveableClass]
 	public class MethodTimer : BoundTimer {
 		public MethodInfo method;
 		[SaveableData]
+		[CopyableData]
 		public object[] args;
 
 		protected sealed override void OnTimeout(TagHolder cont) {
@@ -38,6 +40,7 @@ namespace SteamEngine.Timers {
 		}
 
 		[LoadingInitializer]
+		[DeepCopyImplementation]
 		public MethodTimer() {
 		}
 		

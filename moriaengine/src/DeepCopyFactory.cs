@@ -68,7 +68,9 @@ namespace SteamEngine {
 				|| ObjectSaver.IsSimpleSaveableType(type) //numbers, datetime, timespan, etc.
 				|| typeof(AbstractScript).IsAssignableFrom(type)
 				|| typeof(Region).IsAssignableFrom(type)
-				|| typeof(Globals).IsAssignableFrom(type));
+				|| typeof(Globals).IsAssignableFrom(type)
+				|| typeof(AbstractKey).IsAssignableFrom(type)
+				|| typeof(AbstractAccount).IsAssignableFrom(type));
 		}
 
 		public static object GetCopy(object copyFrom) {
@@ -88,10 +90,11 @@ namespace SteamEngine {
 		public static void GetCopyDelayed(object copyFrom, ReturnCopy callback) {
 			if (copyFrom == null) {
 				callback(null);
+				return;
 			}
-			if (copyFrom is Thing) {
-				callback(copyFrom);
-			}
+			//if (copyFrom is Thing) {
+			//    callback(copyFrom);
+			//}
 			object copy;
 			if (copies.TryGetValue(copyFrom, out copy)) {
 				callback(copy);
@@ -111,6 +114,7 @@ namespace SteamEngine {
 		public static void GetCopyDelayed(object copyFrom, ReturnCopyParam callback, object additionalParameter) {
 			if (copyFrom == null) {
 				callback(null, additionalParameter);
+				return;
 			}
 			object copy;
 			if (copies.TryGetValue(copyFrom, out copy)) {

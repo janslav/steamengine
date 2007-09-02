@@ -39,8 +39,6 @@ Stuff assigned to individual devs:
 
 tar
 ----------------------------------------------------
-	IDupeImplementor
-
 	Multis
 		MultiRegions
 		Boats

@@ -42,8 +42,8 @@
     <Compile Include="..\..\bin\Generated\DecoratedClassesSaveImplementors.Generated.cs">
       <Link>DecoratedClassesSaveImplementors.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\bin\Generated\ManualDeepCopyImplementor.Generated.cs">
-      <Link>ManualDeepCopyImplementor.Generated.cs</Link>
+    <Compile Include="..\..\bin\Generated\DeepCopyImplementor.Generated.cs">
+      <Link>DeepCopyImplementor.Generated.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

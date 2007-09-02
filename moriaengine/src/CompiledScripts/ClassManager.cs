@@ -118,13 +118,10 @@ namespace SteamEngine.CompiledScripts {
 			
 			if (Attribute.IsDefined(type, typeof(SaveableClassAttribute), false)) {
 				DecoratedClassesSaveImplementorGenerator.AddDecoratedClass(type);
-				if (Attribute.IsDefined(type, typeof(DeepCopySaveableClassAttribute))) {
-					AutoDeepCopyImplementorGenerator.AddDecoratedClass(type);
-				}
 			}
 
-			if (Attribute.IsDefined(type, typeof(ManualDeepCopyClassAttribute), false)) {
-				ManualDeepCopyImplementorGenerator.AddDecoratedClass(type);
+			if (Attribute.IsDefined(type, typeof(DeepCopyableClassAttribute), false)) {
+				DeepCopyImplementorGenerator.AddDecoratedClass(type);
 			}
 
 			//if (typeof(IImportable).IsAssignableFrom(type)) {
