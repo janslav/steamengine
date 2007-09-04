@@ -116,6 +116,9 @@
     <Compile Include="..\..\scripts\classes\Persistence\DateSaver.cs">
       <Link>classes\Persistence\DateSaver.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\classes\Persistence\DictionarySaver.cs">
+      <Link>classes\Persistence\DictionarySaver.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\classes\Persistence\GenericListSaver.cs">
       <Link>classes\Persistence\GenericListSaver.cs</Link>
     </Compile>

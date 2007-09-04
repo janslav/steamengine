@@ -21,7 +21,7 @@ using SteamEngine;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class ArrayListSaver : ISaveImplementor {
+	public class ArrayListSaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "ArrayList";
 		} }
@@ -50,9 +50,7 @@ namespace SteamEngine.CompiledScripts {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
-					ArrayListIndexPair alip = new ArrayListIndexPair();
-					alip.index = i;
-					alip.list = list;
+					ArrayListIndexPair alip = new ArrayListIndexPair(list, i);
 					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
 				}
 				return list;
@@ -70,10 +68,31 @@ namespace SteamEngine.CompiledScripts {
 			ArrayListIndexPair alip = (ArrayListIndexPair) param;
 			alip.list[alip.index] = loadedObj;
 		}
+
+		public void DelayedCopy_Index(object loadedObj, object param) {
+			ArrayListIndexPair alip = (ArrayListIndexPair) param;
+			alip.list[alip.index] = loadedObj;
+		}
 		
 		private class ArrayListIndexPair {
 			internal ArrayList list;
 			internal int index;
+			internal ArrayListIndexPair(ArrayList list, int index) {
+				this.index = index;
+				this.list = list;
+			}
+		}
+
+		public object DeepCopy(object copyFrom) {
+			ArrayList copyFromList = (ArrayList) copyFrom;
+			int n = copyFromList.Count;
+			ArrayList newList = new ArrayList(n);
+			for (int i = 0; i<n; i++) {
+				newList.Add(null);
+				ArrayListIndexPair alip = new ArrayListIndexPair(newList, i);
+				DeepCopyFactory.GetCopyDelayed(copyFromList[i], DelayedCopy_Index, alip);
+			}
+			return newList;
 		}
 	}
 }
