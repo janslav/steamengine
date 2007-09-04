@@ -22,7 +22,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class ArraySaver : ISaveImplementor {
+	public class ArraySaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "Array";
 		} }
@@ -56,17 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			try {
 				PropsLine pl = input.PopPropsLine("type");
 				currentLineNumber = pl.line;
-				if (pl == null) {
-					throw new Exception("Array save section missing the Type line.");
-				}
-
-				Type elemType = ClassManager.GetType(pl.value);
-				if (elemType == null) {
-					elemType = Type.GetType(pl.value, false, true);
-				}
-				if (elemType == null) {
-					throw new Exception("Array element type not recognised.");
-				}
+				Type elemType = GenericListSaver.ParseType(pl);
 
 				PropsLine lengthLine = input.PopPropsLine("length");
 				currentLineNumber = lengthLine.line;
@@ -77,9 +67,7 @@ namespace SteamEngine.CompiledScripts {
 				for (int i = 0; i<length; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
-					ArrayIndexPair alip = new ArrayIndexPair();
-					alip.index = i;
-					alip.arr = arr;
+					ArrayLoadHelper alip = new ArrayLoadHelper(arr, i, elemType);
 					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
 				}
 				return arr;
@@ -94,13 +82,37 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
-			ArrayIndexPair alip = (ArrayIndexPair) param;
-			alip.arr.SetValue(loadedObj, alip.index);
+			ArrayLoadHelper alip = (ArrayLoadHelper) param;
+			alip.arr.SetValue(ConvertTools.ConvertTo(alip.elemType, loadedObj), alip.index);
+		}
+
+		public void DelayedCopy_Index(object loadedObj, object param) {
+			ArrayLoadHelper alip = (ArrayLoadHelper) param;
+			alip.arr.SetValue(ConvertTools.ConvertTo(alip.elemType, loadedObj), alip.index);
 		}
 		
-		private class ArrayIndexPair {
+		private class ArrayLoadHelper {
 			internal Array arr;
 			internal int index;
+			internal Type elemType;
+
+			internal ArrayLoadHelper(Array arr, int index, Type elemType) {
+				this.index = index;
+				this.arr = arr;
+				this.elemType = elemType;
+			}
+		}
+
+		public object DeepCopy(object copyFrom) {
+			Array copyFromArray = (Array) copyFrom;
+			int n = copyFromArray.Length;
+			Type elemType = copyFromArray.GetType().GetElementType();
+			Array newArray = Array.CreateInstance(elemType, n);
+			for (int i = 0; i<n; i++) {
+				ArrayLoadHelper aip = new ArrayLoadHelper(newArray, i, elemType);
+				DeepCopyFactory.GetCopyDelayed(copyFromArray.GetValue(i), DelayedCopy_Index, aip);
+			}
+			return newArray;
 		}
 	}
 }

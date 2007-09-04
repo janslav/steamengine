@@ -55,24 +55,16 @@ namespace SteamEngine.CompiledScripts {
 
 				PropsLine pl = input.PopPropsLine("type");
 				currentLineNumber = pl.line;
-				Type elemType = ClassManager.GetType(pl.value);
-				if (elemType == null) {
-					elemType = Type.GetType(pl.value, false, true);
-				}
-				if (elemType == null) {
-					throw new Exception("Generic List element type not recognised.");
-				}
+				Type elemType = ParseType(pl);
 
 				Type typeOfList = typeof(List<>).MakeGenericType(elemType);
-				IList list = (IList) Activator.CreateInstance(typeOfList);
+				IList list = (IList) Activator.CreateInstance(typeOfList, new object[] { count });
 
 				for (int i = 0; i<count; i++) {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
-					GenericListIndexPair alip = new GenericListIndexPair();
-					alip.index = i;
-					alip.list = list;
+					GenericListLoadHelper alip = new GenericListLoadHelper(list, i, elemType);
 					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
 				}
 				return list;
@@ -85,15 +77,54 @@ namespace SteamEngine.CompiledScripts {
 				throw new SEException(input.filename, currentLineNumber, e);
 			}
 		}
-		
-		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
-			GenericListIndexPair alip = (GenericListIndexPair) param;
-			alip.list[alip.index] = loadedObj;
+
+		public static Type ParseType(PropsLine pl) {
+			Type elemType = ClassManager.GetType(pl.value);
+			if (elemType == null) {
+				elemType = Type.GetType(pl.value, false, true);
+			}
+			if (elemType == null) {
+				throw new Exception("Element type not recognised.");
+			}
+			return elemType;
 		}
 		
-		private class GenericListIndexPair {
+		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
+			GenericListLoadHelper alip = (GenericListLoadHelper) param;
+			alip.list[alip.index] = ConvertTools.ConvertTo(alip.elemType, loadedObj);
+		}
+
+		public void DelayedCopy_Index(object loadedObj, object param) {
+			GenericListLoadHelper alip = (GenericListLoadHelper) param;
+			alip.list[alip.index] = ConvertTools.ConvertTo(alip.elemType, loadedObj);
+		}
+		
+		private class GenericListLoadHelper {
 			internal IList list;
 			internal int index;
+			internal Type elemType;
+
+			internal GenericListLoadHelper(IList list, int index, Type elemType) {
+				this.index = index;
+				this.list = list;
+				this.elemType = elemType;
+			}
+		}
+
+		public object DeepCopy(object copyFrom) {
+			IList copyFromList = (IList) copyFrom;
+			int n = copyFromList.Count;
+
+			Type elemType = copyFrom.GetType().GetGenericArguments()[0];
+			Type typeOfList = typeof(List<>).MakeGenericType(elemType);
+			IList newList = (IList) Activator.CreateInstance(typeOfList, new object[] { n });
+
+			for (int i = 0; i<n; i++) {
+				newList.Add(null);
+				GenericListLoadHelper alip = new GenericListLoadHelper(newList, i, elemType);
+				DeepCopyFactory.GetCopyDelayed(copyFromList[i], DelayedCopy_Index, alip);
+			}
+			return newList;
 		}
 	}
 }
