@@ -299,6 +299,7 @@ namespace SteamEngine {
 			Constant.UnloadAll();
 			TestSuite.UnloadAll();
 			ObjectSaver.UnloadScripts();
+			DeepCopyFactory.UnloadScripts();
 			ScriptLoader.UnloadScripts();//unload scripted loaders :)
 			AbstractDef.UnloadScripts();//unload scripted defGetters
 			AbstractSkillDef.UnloadScripts();

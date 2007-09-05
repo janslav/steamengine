@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -279,5 +280,18 @@ namespace SteamEngine {
 			return dl;
 		}
 
+		internal static void UnloadScripts() {
+			Assembly scriptsAssembly = CompiledScripts.ClassManager.CoreAssembly;
+
+			Dictionary<Type,IDeepCopyImplementor> copiedList = new Dictionary<Type,IDeepCopyImplementor>(implementors);
+
+			foreach (KeyValuePair<Type,IDeepCopyImplementor> pair in copiedList) {
+
+				IDeepCopyImplementor idci = pair.Value;
+				if (!(idci is CopyImplementor_UseICloneable)) {
+					implementors.Remove(pair.Key);
+				}
+			}
+		}
 	}
 }

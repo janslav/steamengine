@@ -222,6 +222,10 @@ namespace SteamEngine {
 							file.Add(ThingDef.LoadFromScripts(input));
 							return null;
 						}
+						if (PluginDef.ExistsDefType(type)) {
+							file.Add(PluginDef.LoadFromScripts(input));
+							return null;
+						}
 						if (AbstractSkillDef.ExistsDefType(type)) {
 							file.Add(AbstractSkillDef.LoadFromScripts(input));
 							return null;

@@ -48,7 +48,7 @@ namespace SteamEngine {
 	public interface IPluginHolder : ITriggerGroupHolder {
 		void AddPlugin(PluginKey pg, Plugin plugin);
 		void AddPluginAsSimple(PluginKey pg, Plugin plugin);
-		void ClearPlugins();
+		void DeletePlugins();
 		Plugin GetPlugin(PluginKey pg);
 		bool HasPlugin(PluginKey pg);
 		bool HasPlugin(Plugin plugin);
@@ -84,6 +84,11 @@ namespace SteamEngine {
 					copiedNode = copiedNode.nextNode;
 				}
 			}
+		}
+
+		protected internal override void BeingDeleted() {
+			this.DeletePlugins();
+			base.BeingDeleted();
 		}
 
 		#region Triggergroups
@@ -283,7 +288,7 @@ namespace SteamEngine {
 			base.Save(output);
 		}
 
-		protected override void LoadLine(string filename, int line, string name, string value) {
+		public override void LoadLine(string filename, int line, string name, string value) {
 			switch (name) {
 				case "events":
 				case "event":
@@ -344,7 +349,7 @@ namespace SteamEngine {
 			plugin.cont = this;
 		}
 
-		public void ClearPlugins() {
+		public void DeletePlugins() {
 			if (tags != null) {
 				List<DictionaryEntry> allPlugins = new List<DictionaryEntry>();
 				foreach (DictionaryEntry entry in tags) {
@@ -353,7 +358,7 @@ namespace SteamEngine {
 					}
 				}
 				foreach (DictionaryEntry entry in allPlugins) {
-					RemovePluginImpl((PluginKey) entry.Key, (Plugin) entry.Value);
+					RemovePluginImpl((PluginKey) entry.Key, (Plugin) entry.Value).Delete();
 				}
 			}
 		}

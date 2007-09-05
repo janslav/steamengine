@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		protected override void LoadLine(string filename, int line, string name, string value) {
+		public override void LoadLine(string filename, int line, string name, string value) {
 			switch (name) {
 				//added loading of reg. mail
 				case "email":

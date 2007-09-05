@@ -682,7 +682,7 @@ namespace SteamEngine {
 		public virtual void On_Load(PropsSection output) {
 		}
 
-		protected override void LoadLine(string filename, int line, string prop, string value) {
+		public override void LoadLine(string filename, int line, string prop, string value) {
 			ThrowIfDeleted();
 			switch (prop) {
 				case "p":

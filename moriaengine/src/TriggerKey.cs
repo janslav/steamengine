@@ -95,6 +95,7 @@ namespace SteamEngine {
 		public static readonly TriggerKey pickUpFrom=Get("pickUpFrom");
 		
 		public static readonly TriggerKey destroy=Get("Destroy");
+		public static readonly TriggerKey ownDestroy=Get("ownDestroy");
 		
 		public static readonly TriggerKey itemEquip=Get("itemEquip");
 		public static readonly TriggerKey equip=Get("Equip");

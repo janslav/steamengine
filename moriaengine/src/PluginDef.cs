@@ -31,6 +31,13 @@ using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 	public abstract class PluginDef : AbstractDef {
+
+		private static Dictionary<Type, Type> pluginDefTypesByPluginType = new Dictionary<Type, Type>();
+		private static Dictionary<Type, Type> pluginTypesByPluginDefType = new Dictionary<Type, Type>();
+		private static Dictionary<string, Type> pluginDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<Type, ConstructorInfo> pluginDefCtors = new Dictionary<Type, ConstructorInfo>();
+
+
 		protected PluginDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			{
@@ -38,6 +45,118 @@ namespace SteamEngine {
 			}
 		}
 
+		internal TriggerGroup scriptedTriggers; 
+		internal protected PluginTriggerHolder compiledTriggers;
+
+		public abstract class PluginTriggerHolder {
+			public abstract object Run(Plugin self, TriggerKey tk, ScriptArgs sa);
+		}
+
 		public abstract Plugin Create();
+
+		public static new PluginDef Get(string defname) {
+			AbstractScript script;
+			byDefname.TryGetValue(defname, out script);
+			return script as PluginDef;
+		}
+
+		public static Type GetDefTypeByName(string name) {
+			Type defType;
+			pluginDefTypesByName.TryGetValue(name, out defType);
+			return defType;
+		}
+
+		public static new bool ExistsDefType(string name) {
+			return pluginDefTypesByName.ContainsKey(name);
+		}
+
+		//checking type when loading...
+		public static Type GetDefTypeByPluginType(Type pluginType) {//
+			Type defType;
+			pluginDefTypesByPluginType.TryGetValue(pluginType, out defType);
+			return defType;
+		}
+
+		private static Type[] pluginDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
+		//this should be typically called by the Bootstrap methods of scripted PluginDef
+		public static void RegisterPluginDef(Type pluginDefType, Type pluginType) {
+			Type t;
+			if (pluginDefTypesByPluginType.TryGetValue(pluginDefType, out t)) {
+				throw new OverrideNotAllowedException("PluginDef type "+LogStr.Ident(pluginDefType.FullName)+" already has it's Plugin type -"+t.FullName+".");
+			}
+			if (pluginTypesByPluginDefType.TryGetValue(pluginType, out t)) {
+				throw new OverrideNotAllowedException("Plugin type "+LogStr.Ident(pluginType.FullName)+" already has it's PluginDef type -"+t.FullName+".");
+			}
+
+			ConstructorInfo ci = pluginDefType.GetConstructor(pluginDefConstructorParamTypes);
+			if (ci == null) {
+				throw new Exception("Proper constructor not found.");
+			}
+			pluginDefTypesByPluginType[pluginType] = pluginDefType;
+			pluginTypesByPluginDefType[pluginDefType] = pluginType;
+			pluginDefTypesByName[pluginDefType.Name] = pluginDefType;
+			pluginDefCtors[pluginDefType] = MemberWrapper.GetWrapperFor(ci);
+		}
+
+		internal static void StartingLoading() {
+
+		}
+
+		internal static PluginDef LoadFromScripts(PropsSection input) {
+			Type pluginDefType = null;
+			string typeName = input.headerType.ToLower();
+			string defname = input.headerName.ToLower();
+			//Console.WriteLine("loading section "+input.HeadToString());
+			//[typeName defname]
+
+			pluginDefType = PluginDef.GetDefTypeByName(typeName);
+			if (pluginDefType==null) {
+				throw new SEException("Type "+LogStr.Ident(typeName)+" does not exist.");
+			}
+
+			if (pluginDefType.IsAbstract) {
+				throw new SEException("The PluginDef Type "+LogStr.Ident(pluginDefType)+" is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
+			}
+
+			AbstractScript def;
+			byDefname.TryGetValue(defname, out def);
+			PluginDef pluginDef = def as PluginDef;
+
+			if (pluginDef == null) {
+				if (def != null) {//it isnt pluginDef
+					throw new OverrideNotAllowedException("PluginDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def));
+				} else {
+					ConstructorInfo cw = pluginDefCtors[pluginDefType];
+					pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
+				}
+			} else if (pluginDef.unloaded) {
+				if (pluginDef.GetType() != pluginDefType) {
+					throw new OverrideNotAllowedException("You can not change the class of a Plugindef while resync. You have to recompile or restart to achieve that. Ignoring.");
+				}
+				pluginDef.unloaded = false;
+				byDefname.Remove(pluginDef.Defname); ;//will be re-registered again
+			} else {
+				throw new OverrideNotAllowedException("PluginDef "+LogStr.Ident(defname)+" defined multiple times. Ignoring.");
+			}
+
+			pluginDef.defname = defname;
+			byDefname[defname] = pluginDef;
+
+			//header done. now we have the def instantiated.
+			//now load the other fields
+			pluginDef.LoadScriptLines(input);
+
+			//now do load the trigger code. 
+			if (input.TriggerCount>0) {
+				input.headerName = "t__"+input.headerName+"__";
+				pluginDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+			}
+			return pluginDef;
+		}
+
+		internal static void LoadingFinished() {
+			//dump number of loaded instances?
+		}
 	}
 }
