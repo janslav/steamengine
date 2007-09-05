@@ -273,7 +273,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			//string saveStatement = "";
 			CodeMemberMethod load = new CodeMemberMethod();
 			load.Name="LoadLine";
-			load.Attributes=MemberAttributes.Family|MemberAttributes.Override;
+			load.Attributes=MemberAttributes.Public|MemberAttributes.Override;
 			load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "filename"));
 			load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "line"));
 			load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "prop"));

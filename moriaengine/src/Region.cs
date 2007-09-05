@@ -467,8 +467,8 @@ namespace SteamEngine {
 				return Name+" in "+parent.HierarchyName;
 			}
 		} }
-		
-		protected override void LoadLine(string filename, int line, string param, string args) {
+
+		public override void LoadLine(string filename, int line, string param, string args) {
 			switch(param) {
 				case "category":
 				case "subsection":

@@ -516,7 +516,7 @@ namespace SteamEngine {
 		//}
 		
 		//For loading.
-		protected override void LoadLine(string filename, int line, string prop, string value) {
+		public override void LoadLine(string filename, int line, string prop, string value) {
 			switch(prop) {
 				case "account": 
 					ObjectSaver.Load(value, new LoadObject(LoadAccount_Delayed), filename, line);

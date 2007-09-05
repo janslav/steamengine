@@ -111,15 +111,17 @@ namespace SteamEngine {
 			return timer;
 		}
 
-		public void RemoveTimer(TimerKey key) {
+		public BoundTimer RemoveTimer(TimerKey key) {
 			if (tags != null) {
 				BoundTimer timer = tags[key] as BoundTimer;
 				if (timer != null) {
 					tags.Remove(key);
 					tags.Remove(timer);
 					timer.contRef.Target = null;
+					return timer;
 				}
 			}
+			return null;
 		}
 
 		public void RemoveTimer(BoundTimer timer) {
@@ -133,7 +135,7 @@ namespace SteamEngine {
 			}
 		}
 		
-		public void ClearTimers() {
+		public void DeleteTimers() {
 			if (tags==null) {
 				return;
 			}
@@ -146,7 +148,7 @@ namespace SteamEngine {
 			}
 			
 			foreach (TimerKey key in toBeRemoved) {
-				RemoveTimer(key);
+				RemoveTimer(key).Delete();
 			}
 			ReleaseTagsTableIfEmpty();
 		}
@@ -214,7 +216,7 @@ namespace SteamEngine {
 		}
 
 		internal protected virtual void BeingDeleted() {
-			ClearTimers();
+			DeleteTimers();
 		}
 		
 		public void SetTag(TagKey tk, object value) {
@@ -368,7 +370,7 @@ namespace SteamEngine {
 
 		public static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		protected virtual void LoadLine(string filename, int line, string name, string value) {
+		public virtual void LoadLine(string filename, int line, string name, string value) {
 			Match m = tagRE.Match(name);
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;

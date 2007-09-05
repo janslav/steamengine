@@ -151,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		protected override void LoadLine(string filename, int line, string prop, string value) {
+		public override void LoadLine(string filename, int line, string prop, string value) {
 			switch(prop) {
 				case "cont":
 					ObjectSaver.Load(value, new LoadObject(LoadCont_Delayed), filename, line);

@@ -349,23 +349,10 @@ namespace SteamEngine.Persistence {
 		
 		private static bool LoadSimple(string input, out object retVal) {
 			retVal = null;
-			Match m = abstractScriptRE.Match(input);
-			if (m.Success) {
-				string defname = m.Groups["value"].Value;
-				if (string.Compare("globals", defname, true) == 0) {
-					retVal = Globals.instance;
-					return true;
-				}
 
-				AbstractScript script = AbstractScript.Get(defname);
-				if (script != null) {
-					retVal = script;
-					return true;
-				} else {
-					throw new InsufficientDataException("The AbstractScript '"+LogStr.Ident(defname)+"' is not known.");
-				}
+			if (TryLoadScriptReference(input, ref retVal)) {
+				return true;
 			}
-
 			if (TryLoadString(input, ref retVal)) {
 				return true;
 			}
@@ -388,10 +375,30 @@ namespace SteamEngine.Persistence {
 			}
 			for (int i = 0, n = simpleImplementorsRGs.Count; i<n; i++) {
 				RGSSIPair pair = simpleImplementorsRGs[i];
-				m = pair.re.Match(input);
+				Match m = pair.re.Match(input);
 				if (m.Success) {
 					retVal = pair.ssi.Load(m);
 					return true;
+				}
+			}
+			return false;
+		}
+
+		private static bool TryLoadScriptReference(string input, ref object retVal) {
+			Match m = abstractScriptRE.Match(input);
+			if (m.Success) {
+				string defname = m.Groups["value"].Value;
+				if (string.Compare("globals", defname, true) == 0) {
+					retVal = Globals.instance;
+					return true;
+				}
+
+				AbstractScript script = AbstractScript.Get(defname);
+				if (script != null) {
+					retVal = script;
+					return true;
+				} else {
+					throw new InsufficientDataException("The AbstractScript '"+LogStr.Ident(defname)+"' is not known.");
 				}
 			}
 			return false;
@@ -477,6 +484,16 @@ namespace SteamEngine.Persistence {
 		public static object OptimizedLoad_String(string input) {
 			object retVal = null;
 			if (TryLoadString(input, ref retVal)) {
+				return retVal;
+			}
+			return Load(input);//we failed to load string, lets try all other possibilities
+		}
+
+		[Summary("Use this if you know that the loaded value is supposed to be an AbstractScript instance. "
+		+"If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		public static object OptimizedLoad_Script(string input) {
+			object retVal = null;
+			if (TryLoadScriptReference(input, ref retVal)) {
 				return retVal;
 			}
 			return Load(input);//we failed to load string, lets try all other possibilities

@@ -139,7 +139,7 @@ namespace SteamEngine {
 		//static Regex charuidRE= new Regex(@"charuid\[(?<index>\d+)\]\s*$",
 		//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
-		protected override void LoadLine(string filename, int line, string name, string value) {
+		public override void LoadLine(string filename, int line, string name, string value) {
 			//gets a name/value pair for each line in the file
 			//Match m=charuidRE.Match(name);
 			//if (m.Success) {

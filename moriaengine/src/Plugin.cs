@@ -16,34 +16,29 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Globalization;
-using SteamEngine.Packets;
-using SteamEngine.LScript;
+using SteamEngine.Persistence;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 	
 namespace SteamEngine {
 	public abstract class Plugin : TagHolder {
 		internal PluginHolder cont;
-
 		internal Plugin prevInList;
 		internal Plugin nextInList;
 
-		PluginDef def;
+		internal PluginDef def;
 
-		protected Plugin() {
-			
+		private bool isDeleted = false;
+
+		protected Plugin(Plugin copyFrom)
+			: base(copyFrom) {
+			this.def = copyFrom.def;
 		}
 
-		protected Plugin(PluginDef def) {
-			this.def = def;
+		protected Plugin() {
 		}
 
 		public PluginDef Def {
@@ -59,13 +54,48 @@ namespace SteamEngine {
 		}
 
 		//the first trigger that throws an exceptions terminates the other ones that way
-		public abstract object Run(TriggerKey tk, ScriptArgs sa);
+		public object Run(TriggerKey tk, ScriptArgs sa) {
+			object retVal = null;
+			TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
+			if (scriptedTriggers != null) {
+				retVal = scriptedTriggers.Run(this, tk, sa);
+			}
+
+			PluginDef.PluginTriggerHolder compiledTriggers = def.compiledTriggers;
+			if (compiledTriggers != null) {
+				retVal = compiledTriggers.Run(this, tk, sa);
+			}
+			return retVal;
+		}
 		
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
-		public abstract object TryRun(TriggerKey tk, ScriptArgs sa);
+		public object TryRun(TriggerKey tk, ScriptArgs sa) {
+			object retVal = null;
+			TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
+			if (scriptedTriggers != null) {
+				retVal = scriptedTriggers.TryRun(this, tk, sa);
+			}
+			PluginDef.PluginTriggerHolder compiledTriggers = def.compiledTriggers;
+			if (compiledTriggers != null) {
+				try {
+					retVal = compiledTriggers.Run(this, tk, sa);
+				} catch (FatalException) {
+					throw;
+				} catch (Exception e) {
+					Logger.WriteError(e);
+				}
+			}
+			return retVal;
+		}
 
 		public override void Delete() {
-			this.TryRun(TriggerKey.destroy, null);
+			if (cont != null) {
+				cont.RemovePlugin(this);
+			}
+			if (!isDeleted) {
+				this.TryRun(TriggerKey.ownDestroy, null);
+				isDeleted = true;
+			}
 			base.Delete();
 		}
 
@@ -73,8 +103,24 @@ namespace SteamEngine {
 			if (cont != null) {
 				cont.RemovePlugin(this);
 			}
-
 			base.BeingDeleted();
 		}
+
+		#region save/load
+		[Save]
+		public override void Save(SaveStream output) {
+			output.WriteValue("def", this.def);
+			base.Save(output);
+		}
+
+		[LoadLine]
+		public override void LoadLine(string filename, int line, string name, string value) {
+			if ("def".Equals(name, StringComparison.OrdinalIgnoreCase)) {
+				this.def = (PluginDef) ObjectSaver.OptimizedLoad_Script(value);
+			} else {
+				base.LoadLine(filename, line, name, value);
+			}
+		}
+		#endregion save/load
 	}
 }

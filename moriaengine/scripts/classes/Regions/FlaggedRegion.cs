@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override void LoadLine(string filename, int line, string param, string args) {
+		public override void LoadLine(string filename, int line, string param, string args) {
 			switch(param) {
 				case "flag_announce":
 					LoadSpecificFlag(filename, line, 0x00200, args);
