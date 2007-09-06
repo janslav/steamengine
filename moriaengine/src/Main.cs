@@ -307,7 +307,6 @@ namespace SteamEngine {
 			//ExportImport.UnloadScripts();
 			
 			Console.WriteLine("Definitions unloaded");
-			//thingdefs persist, because they are also referenced from statics etc, and we do not need to delete them anyway
 		}
 		
 		//reload everything, including recompile

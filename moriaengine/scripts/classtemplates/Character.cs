@@ -24,6 +24,19 @@ using SteamEngine.Packets;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
+	public partial class CharacterDef {
+
+		private CorpseDef corpseDef;
+		public CorpseDef CorpseDef {
+			get {
+				if (corpseDef == null) {
+					corpseDef = ThingDef.FindItemDef(this.CorpseModel) as CorpseDef;
+				}
+				return corpseDef;
+			}
+		}
+	}
+
 	public partial class Character : AbstractCharacter {
 		MemoryCollection memories = null;
 		Skill[] skills;//this CAN be null, altough it usually isn't

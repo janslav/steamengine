@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal TemplateDef(string defname, string filename, int headerLine) : 
 				base(defname, filename, headerLine) {
-			container = InitField_ThingDef("container", "null", typeof(ItemDef));
+			container = InitField_ThingDef("container", null, typeof(ItemDef));
 		}
 		
 		public ItemDef Container {

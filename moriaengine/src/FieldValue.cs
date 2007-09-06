@@ -41,8 +41,16 @@ namespace SteamEngine {
 			this.name = name;
 			this.fvType = fvType;
 			this.type = type;
-			
+
 			this.SetFromScripts(filename, line, value);
+		}
+
+		internal FieldValue(string name, FieldValueType fvType, Type type, object value) {
+			this.name = name;
+			this.fvType = fvType;
+			this.type = type;
+
+			this.SetFromCode(value);
 		}
 
 		public void Unload() {
@@ -130,6 +138,14 @@ namespace SteamEngine {
 			}
 			throw new Exception("This can never happen...I hope");
 		}
+
+		private void SetFromCode(object value) {
+			Sanity.IfTrueThrow((changedValue || unloaded), "SetFromCode after change/unload? This should never happen.");
+
+			defaultValue = ResolveTemporaryValueImpl();
+			defaultValue.Value = value;
+			currentValue = defaultValue.Clone();
+		}
 		
 		public void SetFromScripts(string filename, int line, string value) {
 			if (changedValue) {
@@ -182,7 +198,7 @@ namespace SteamEngine {
 			internal abstract FieldValueImpl Clone();
 		}
 		
-		private class TemporaryValueImpl : FieldValueImpl{
+		private class TemporaryValueImpl : FieldValueImpl {
 			internal string filename;
 			internal int line;
 			internal string value;
@@ -297,6 +313,15 @@ namespace SteamEngine {
 					} else if (value == null) {
 						this.val = TagMath.ConvertTo(type, value);
 						return;
+					} else if (typeof(AbstractScript).IsAssignableFrom(type) && value is string) {
+						string str = (string) value;
+						str = str.Trim();
+						str = str.TrimStart('#');
+						AbstractScript script = AbstractScript.Get(str);
+						if (script != null) {
+							this.val = script;
+							return;
+						}
 					} else {
 						Type objType = value.GetType();
 						

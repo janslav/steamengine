@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts {
 		internal ScriptedTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.message = this.InitField_Typed("message", "\"Target?\"", typeof(string));
+			this.message = this.InitField_Typed("message", "Target?", typeof(string));
 		}
 
 		public string Message {

@@ -201,10 +201,13 @@ namespace SteamEngine {
 			}
 		}
 
-		protected FieldValue InitField_Typed(string name, string value, Type type) {
+		protected FieldValue InitField_Typed(string name, object value, Type type) {
+			if (typeof(ThingDef).IsAssignableFrom(type)) {
+				return InitField_ThingDef(name, value, type);
+			}
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
-				fieldValue = new FieldValue(name, FieldValueType.Typed, type, "<default>", -1, value);
+				fieldValue = new FieldValue(name, FieldValueType.Typed, type, value);
 				fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
@@ -212,10 +215,10 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		protected FieldValue InitField_ThingDef(string name, string value, Type type) {
+		protected FieldValue InitField_ThingDef(string name, object value, Type type) {
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
-				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, "<default>", -1, value);
+				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, value);
 				fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
@@ -223,10 +226,10 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		protected FieldValue InitField_Model(string name, string value) {
+		protected FieldValue InitField_Model(string name, object value) {
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
-				fieldValue = new FieldValue(name, FieldValueType.Model, null, "<default>", -1, value);
+				fieldValue = new FieldValue(name, FieldValueType.Model, null, value);
 				fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Model called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
@@ -234,10 +237,10 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		protected FieldValue InitField_Typeless(string name, string value) {
+		protected FieldValue InitField_Typeless(string name, object value) {
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
-				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, "<default>", -1, value);
+				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, value);
 				fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Typeless called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");

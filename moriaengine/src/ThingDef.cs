@@ -63,9 +63,9 @@ namespace SteamEngine {
 		
 		internal ThingDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 			name = InitField_Typed("name", "", typeof(string));
-			model = this.InitField_Model("model", "0");
-			weight = InitField_Typed("weight", "0", typeof(float));
-			height = InitField_Typed("height", "0", typeof(int));
+			model = this.InitField_Model("model", 0);
+			weight = InitField_Typed("weight", 0, typeof(float));
+			height = InitField_Typed("height", 0, typeof(int));
 			ushort modelNum;
 			if (TagMath.TryParseUInt16(defname.Substring(2), out modelNum)) {
 				model.SetFromScripts(filename, headerLine, modelNum.ToString());
@@ -470,7 +470,7 @@ namespace SteamEngine {
 				if (idef!=null) {
 					try {
 						AbstractItemDef dupeItem = idef.DupeItem;
-						if (dupeItem!=null) {
+						if (dupeItem != null) {
 							dupeItem.AddToDupeList(idef);
 						}
 					} catch (FatalException) {
