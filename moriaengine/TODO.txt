@@ -1,8 +1,6 @@
 ----------------------------------------------------
 !!!!BUGs!!!!
 
-Tartaros zkurvil recompile, tak si ho laskave opravi nez bude pozde ! To bylo naposled tohleto ... // by Yavanna
-
 Overit vytvareni postavy na clientu 501j
 
 TagHolders must be actively removed - to remove timers from Timer's static container.
