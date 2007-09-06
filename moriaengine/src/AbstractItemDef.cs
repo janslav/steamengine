@@ -48,8 +48,8 @@ namespace SteamEngine {
 			dupeItem = InitField_ThingDef("dupeItem", null, typeof(AbstractItemDef));
 			//clilocName = InitField_Typed("clilocName", "0", typeof(uint));
 			mountChar = InitField_ThingDef("mountChar", null, typeof(AbstractCharacterDef));
-			flippable = InitField_Typed("flippable", "false", typeof(bool));
-			stackable = InitField_Typed("stackable", "false", typeof(bool));
+			flippable = InitField_Typed("flippable", false, typeof(bool));
+			stackable = InitField_Typed("stackable", false, typeof(bool));
 		}
 
 		public AbstractItemDef DupeItem {
@@ -122,11 +122,21 @@ namespace SteamEngine {
 				mountChar.CurrentValue=value;
 			}
 		}
+
+		private static TriggerGroup t_normal;
 		
 		public TriggerGroup Type {
 			get {
+				TriggerGroup tg = (TriggerGroup) type.CurrentValue;
+				if (tg == null) {
+					if (t_normal == null) {
+						t_normal = TriggerGroup.Get("t_normal");
+					}
+					return t_normal;
+				}
 				return (TriggerGroup) type.CurrentValue;
-			} set {
+			} 
+			set {
 				type.CurrentValue=value;
 			}
 		}
@@ -179,7 +189,7 @@ namespace SteamEngine {
 			}
 		}
 	
-		private void ParseName(string name, out string singular, out string plural) {
+		private bool ParseName(string name, out string singular, out string plural) {
 			int percentPos = name.IndexOf("%");
 			if (percentPos==-1) {
 				singular = name;
@@ -212,7 +222,9 @@ namespace SteamEngine {
 				}
 				singular = before+singadd+after;
 				plural = before+pluradd+after;
+				return true;
 			}
+			return false;
 		}
 		
 		public override string Name { 
@@ -279,13 +291,20 @@ namespace SteamEngine {
 			 		//Do nothing, for now.
 			 		break;
 			 	case "name":
+					System.Text.RegularExpressions.Match m = TagMath.stringRE.Match(args);
+					if (m.Success) {
+						args = m.Groups["value"].Value;
+					}
+
 			 		string singular;
 			 		string plural;
-			 		ParseName(args, out singular, out plural);
-					singularName.SetFromScripts(filename, line, singular);
-					pluralName.SetFromScripts(filename, line, plural);
-
-					base.LoadScriptLine(filename, line, param, args);//will normally load name
+					if (ParseName(args, out singular, out plural)) {
+						singularName.SetFromScripts(filename, line, "\""+singular+"\"");
+						pluralName.SetFromScripts(filename, line, "\""+plural+"\"");
+						base.LoadScriptLine(filename, line, param, "\""+singular+"\"");//will normally load name
+					} else {
+						base.LoadScriptLine(filename, line, param, "\""+args+"\"");//will normally load name
+					}
 			 		break;
 				default:
 					base.LoadScriptLine(filename, line, param, args);//the AbstractThingDef Loadline

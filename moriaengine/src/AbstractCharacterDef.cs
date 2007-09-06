@@ -29,9 +29,9 @@ namespace SteamEngine {
 		private FieldValue animsAvailable;
 
 		public AbstractCharacterDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
-			sound = InitField_Typed("sound", "0", typeof(ushort));
-			mountItem = InitField_Model("mountItem", "0");
-			animsAvailable = InitField_Typed("animsAvailable", "0", typeof(uint));//not sure if it's supposed to be 0 really :)
+			sound = InitField_Typed("sound", 0, typeof(ushort));
+			mountItem = InitField_Model("mountItem", 0);
+			animsAvailable = InitField_Typed("animsAvailable", 0, typeof(uint));//not sure if it's supposed to be 0 really :)
 		}
 		
 		public SoundFX Sound {

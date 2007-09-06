@@ -15,7 +15,7 @@
 
 [ClassTemplate Ship : MultiItem]
 Def:	//vars on the def
-	public ShipFacing facing = "ShipFacing.North"
+	public ShipFacing facing = ShipFacing.North
 
 Vars:	//vars defined in the class, so they basically do what tags do, but better
 	private LinkedList<Thing> carriedThings = null
