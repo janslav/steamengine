@@ -179,6 +179,12 @@
     <Compile Include="..\..\scripts\ItemClasses\Wearable.Generated.cs">
       <Link>ItemClasses\Wearable.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.cs">
+      <Link>inGameFeatures\storageBoxes\RegBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.Generated.cs">
+      <Link>inGameFeatures\storageBoxes\RegBox.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCreate.cs">
       <Link>systems\administration\accounts\AccCreate.cs</Link>
     </Compile>
