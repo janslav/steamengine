@@ -1,0 +1,8 @@
+[RegBoxDef i_regBox]
+CATEGORY = Items by Professions
+SUBSECTION = Carpentry
+DESCRIPTION = Bedynka na regy
+
+NAME = "Bedynka na regy"
+WEIGHT = 30
+model = 0x1e80
