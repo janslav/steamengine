@@ -13,8 +13,8 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ClassTemplate Container : Equippable]
+[ThingTemplate Destroyable : Equippable]
 Def:	//vars on the def
-	ushort Gump = 0xffff
 Vars:	//vars defined in the class, so they basically do what tags do, but better
-	None //or just omit this section altogether if you don't want any
+	private ushort durability = 100
+	private ushort maxDurability = 100

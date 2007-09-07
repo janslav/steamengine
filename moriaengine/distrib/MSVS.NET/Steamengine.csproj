@@ -268,14 +268,35 @@
       <Link>CompiledScripts\ClassManager.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplateInstance.cs">
-      <Link>CompiledScripts\ClassTemplates\ClassTemplateInstance.cs</Link>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassDefTemplate.cs">
+      <Link>CompiledScripts\ClassTemplates\ClassDefTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplateInstanceField.cs">
-      <Link>CompiledScripts\ClassTemplates\ClassTemplateInstanceField.cs</Link>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplate.cs">
+      <Link>CompiledScripts\ClassTemplates\ClassTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplateReader.cs">
-      <Link>CompiledScripts\ClassTemplates\ClassTemplateReader.cs</Link>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateBase.cs">
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateParser.cs">
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateSection.cs">
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateSection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateSectionField.cs">
+      <Link>CompiledScripts\ClassTemplates\ClassTemplateSectionField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\PluginDefTemplate.cs">
+      <Link>CompiledScripts\ClassTemplates\PluginDefTemplate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\PluginTemplate.cs">
+      <Link>CompiledScripts\ClassTemplates\PluginTemplate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ThingDefTemplate.cs">
+      <Link>CompiledScripts\ClassTemplates\ThingDefTemplate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ThingTemplate.cs">
+      <Link>CompiledScripts\ClassTemplates\ThingTemplate.cs</Link>
     </Compile>
     <Compile Include="..\..\src\CompiledScripts\CompiledGump.cs">
       <Link>CompiledScripts\CompiledGump.cs</Link>

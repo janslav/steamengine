@@ -95,11 +95,23 @@
     <Compile Include="..\..\scripts\AI\dummy.cs">
       <Link>AI\dummy.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\ExportUtils.cs">
-      <Link>classes\ExportUtils.cs</Link>
+    <Compile Include="..\..\scripts\CharClasses\Character.cs">
+      <Link>CharClasses\Character.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\LegacyUtils.cs">
-      <Link>classes\LegacyUtils.cs</Link>
+    <Compile Include="..\..\scripts\CharClasses\Character.Generated.cs">
+      <Link>CharClasses\Character.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\NPC.cs">
+      <Link>CharClasses\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\NPC.Generated.cs">
+      <Link>CharClasses\NPC.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\Player.cs">
+      <Link>CharClasses\Player.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
+      <Link>CharClasses\Player.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\classes\Memory.cs">
       <Link>classes\Memory.cs</Link>
@@ -107,134 +119,71 @@
     <Compile Include="..\..\scripts\classes\MemoryDef.cs">
       <Link>classes\MemoryDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\ArrayListSaver.cs">
-      <Link>classes\Persistence\ArrayListSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\ArraySaver.cs">
-      <Link>classes\Persistence\ArraySaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\DateSaver.cs">
-      <Link>classes\Persistence\DateSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\DictionarySaver.cs">
-      <Link>classes\Persistence\DictionarySaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\GenericListSaver.cs">
-      <Link>classes\Persistence\GenericListSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\HashtableSaver.cs">
-      <Link>classes\Persistence\HashtableSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\LinkedListSaver.cs">
-      <Link>classes\Persistence\LinkedListSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\PointSaver.cs">
-      <Link>classes\Persistence\PointSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Persistence\StaticMemberSaver.cs">
-      <Link>classes\Persistence\StaticMemberSaver.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\PriorityQueue.cs">
-      <Link>classes\PriorityQueue.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\classes\Regions\DynamicRegion.cs">
       <Link>classes\Regions\DynamicRegion.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\classes\Regions\FlaggedRegion.cs">
       <Link>classes\Regions\FlaggedRegion.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\ScriptedAccount.cs">
-      <Link>classes\ScriptedAccount.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Container.cs">
+      <Link>ItemClasses\Container.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\ScriptUtil.cs">
-      <Link>classes\ScriptUtil.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Container.Generated.cs">
+      <Link>ItemClasses\Container.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\Speech.cs">
-      <Link>classes\Speech.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Corpse.cs">
+      <Link>ItemClasses\Corpse.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\Target.cs">
-      <Link>classes\Target.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Corpse.Generated.cs">
+      <Link>ItemClasses\Corpse.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\TemplateDef.cs">
-      <Link>classes\TemplateDef.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Destroyable.cs">
+      <Link>ItemClasses\Destroyable.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Character.cs">
-      <Link>classtemplates\Character.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Destroyable.Generated.cs">
+      <Link>ItemClasses\Destroyable.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Character.Generated.cs">
-      <Link>classtemplates\Character.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Equippable.cs">
+      <Link>ItemClasses\Equippable.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Container.cs">
-      <Link>classtemplates\Container.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Equippable.Generated.cs">
+      <Link>ItemClasses\Equippable.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Container.Generated.cs">
-      <Link>classtemplates\Container.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Item.cs">
+      <Link>ItemClasses\Item.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Corpse.cs">
-      <Link>classtemplates\Corpse.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Item.Generated.cs">
+      <Link>ItemClasses\Item.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Corpse.Generated.cs">
-      <Link>classtemplates\Corpse.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\MultiItem.cs">
+      <Link>ItemClasses\MultiItem.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Destroyable.cs">
-      <Link>classtemplates\Destroyable.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\MultiItem.Generated.cs">
+      <Link>ItemClasses\MultiItem.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Destroyable.Generated.cs">
-      <Link>classtemplates\Destroyable.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Musical.cs">
+      <Link>ItemClasses\Musical.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Equippable.cs">
-      <Link>classtemplates\Equippable.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Musical.Generated.cs">
+      <Link>ItemClasses\Musical.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Equippable.Generated.cs">
-      <Link>classtemplates\Equippable.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Ship.cs">
+      <Link>ItemClasses\Ship.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Item.cs">
-      <Link>classtemplates\Item.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Ship.Generated.cs">
+      <Link>ItemClasses\Ship.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Item.Generated.cs">
-      <Link>classtemplates\Item.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Weapon.cs">
+      <Link>ItemClasses\Weapon.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\MultiItem.cs">
-      <Link>classtemplates\MultiItem.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Weapon.Generated.cs">
+      <Link>ItemClasses\Weapon.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\MultiItem.Generated.cs">
-      <Link>classtemplates\MultiItem.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Wearable.cs">
+      <Link>ItemClasses\Wearable.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Musical.cs">
-      <Link>classtemplates\Musical.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Musical.Generated.cs">
-      <Link>classtemplates\Musical.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\NPC.cs">
-      <Link>classtemplates\NPC.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\NPC.Generated.cs">
-      <Link>classtemplates\NPC.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Player.cs">
-      <Link>classtemplates\Player.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Player.Generated.cs">
-      <Link>classtemplates\Player.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Ship.cs">
-      <Link>classtemplates\Ship.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Ship.Generated.cs">
-      <Link>classtemplates\Ship.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Weapon.cs">
-      <Link>classtemplates\Weapon.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Weapon.Generated.cs">
-      <Link>classtemplates\Weapon.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Wearable.cs">
-      <Link>classtemplates\Wearable.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classtemplates\Wearable.Generated.cs">
-      <Link>classtemplates\Wearable.Generated.cs</Link>
+    <Compile Include="..\..\scripts\ItemClasses\Wearable.Generated.cs">
+      <Link>ItemClasses\Wearable.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCreate.cs">
       <Link>systems\administration\accounts\AccCreate.cs</Link>
@@ -347,6 +296,9 @@
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
+      <Link>systems\ScriptedAccount.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
       <Link>systems\skills\ArmsLore.cs</Link>
     </Compile>
@@ -379,6 +331,15 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\SkillUtils.cs">
       <Link>systems\skills\SkillUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Speech.cs">
+      <Link>systems\Speech.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Target.cs">
+      <Link>systems\Target.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\TemplateDef.cs">
+      <Link>systems\TemplateDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\types\SpawnInfo.cs">
       <Link>systems\types\SpawnInfo.cs</Link>
@@ -511,6 +472,45 @@
     </Compile>
     <Compile Include="..\..\scripts\types\type_weapons.cs">
       <Link>types\type_weapons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
+      <Link>Utils\ExportUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\LegacyUtils.cs">
+      <Link>Utils\LegacyUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\ArrayListSaver.cs">
+      <Link>Utils\Persistence\ArrayListSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\ArraySaver.cs">
+      <Link>Utils\Persistence\ArraySaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\DateSaver.cs">
+      <Link>Utils\Persistence\DateSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\DictionarySaver.cs">
+      <Link>Utils\Persistence\DictionarySaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\GenericListSaver.cs">
+      <Link>Utils\Persistence\GenericListSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\HashtableSaver.cs">
+      <Link>Utils\Persistence\HashtableSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\LinkedListSaver.cs">
+      <Link>Utils\Persistence\LinkedListSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\PointSaver.cs">
+      <Link>Utils\Persistence\PointSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\StaticMemberSaver.cs">
+      <Link>Utils\Persistence\StaticMemberSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\PriorityQueue.cs">
+      <Link>Utils\PriorityQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\ScriptUtil.cs">
+      <Link>Utils\ScriptUtil.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

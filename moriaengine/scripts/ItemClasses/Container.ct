@@ -13,10 +13,6 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ClassTemplate Equippable : Item]
+[ThingTemplate Container : Equippable]
 Def:	//vars on the def
-	byte Layer = 30
-	///TODO: [Alias("twohands")] or something like it
-	bool twoHanded = false
-Vars:	//vars defined in the class, so they basically do what tags do, but better
-	None //or just omit this section altogether if you don't want any
+	ushort Gump = 0xffff
