@@ -102,6 +102,7 @@ namespace SteamEngine {
 					group.AddTrigger(sc);
 				}
 			}
+			group.unloaded = false;
 			return group;
 		}
 		

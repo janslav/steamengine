@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 			get { return "CompiledScriptHolders.Generated.cs"; }
 		}
 
-		internal static CodeStatementCollection GenerateMethodInvocation(MethodInfo method, CodeExpression thisInstance) {
+		internal static CodeStatementCollection GenerateMethodInvocation(MethodInfo method, CodeExpression thisInstance, bool thisAsFirstParam) {
 			CodeStatementCollection retVal = new CodeStatementCollection();
 			//we have "object self" and "ScriptArgs sa"
 
@@ -112,19 +112,22 @@ namespace SteamEngine.CompiledScripts {
 						new CodeArgumentReferenceExpression("sa"),
 						"Argv")));
 
+				int paramOffset = thisAsFirstParam? 0 : -1;
+
 				for (int i = 0; i<n; i++) {
 					ParameterInfo pi = pis[i];
-					if (i == 0) {
+					if ((i == 0) && thisAsFirstParam) {
 						methodParams[i] = CastParameter(pi,
 								new CodeVariableReferenceExpression("self"));
-					} else if ((i == 1) && (n == 2) && (pi.ParameterType == typeof(ScriptArgs))) {
+					} else if ((i == 1+paramOffset) && (n == 2+paramOffset) && (pi.ParameterType == typeof(ScriptArgs))) {
 						methodParams[i] = new CodeArgumentReferenceExpression("sa");
 						break;
 					} else {
+						int index = thisAsFirstParam? i - 1 : i;
 						methodParams[i] = CastParameter(pi,
 							new CodeArrayIndexerExpression(
 								new CodeVariableReferenceExpression("argv"),
-								new CodePrimitiveExpression(i-1)));
+								new CodePrimitiveExpression(index)));
 					}
 				}
 			}
@@ -228,7 +231,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				retVal.Statements.AddRange(
-					GenerateMethodInvocation(method, new CodeTypeReferenceExpression(method.DeclaringType)));
+					GenerateMethodInvocation(method, new CodeTypeReferenceExpression(method.DeclaringType), true));
 
 				return retVal;
 			}

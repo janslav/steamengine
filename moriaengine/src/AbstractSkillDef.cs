@@ -142,6 +142,11 @@ namespace SteamEngine {
 					throw new OverrideNotAllowedException("You can not change the class of a Skilldef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
 				skillDef.unloaded = false;
+				//we have to load the key first, so that it may be unloaded by it...
+
+				PropsLine p = input.PopPropsLine("key");
+				skillDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(), p.value);
+
 				UnRegisterSkillDef(skillDef);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("SkillDef "+LogStr.Ident(defName)+" defined multiple times.");

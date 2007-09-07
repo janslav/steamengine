@@ -26,7 +26,6 @@ using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Packets;
-using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -280,22 +279,44 @@ namespace SteamEngine {
 				output.WriteValue("TriggerGroup", curNode.storedTG);
 				curNode = curNode.nextNode;
 			}
-			Plugin curPlugin = firstPlugin;
-			while (curPlugin != null) {
-				ObjectSaver.Save(curPlugin);//we don't write the reference, cos the plugins have their own "cont" property saved...
-				curPlugin = curPlugin.nextInList;
+			if (tags != null) {
+				foreach (DictionaryEntry entry in tags) {
+					object key = entry.Key;
+					if (key is PluginKey) {
+						Plugin value = (Plugin) entry.Value;
+						if ((value == this.firstPlugin) || (value.prevInList != null) || (value.nextInList != null)) {
+							output.WriteValue("@@"+key.ToString(), value);
+						} else {
+							output.WriteValue("@@"+key.ToString()+"*", value);
+						}
+					}
+				}
 			}
 			base.Save(output);
 		}
 
+		public static Regex pluginKeyRE = new Regex(@"^\@@(?<name>.+?)(?<asterisk>\*)?\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
 		public override void LoadLine(string filename, int line, string name, string value) {
+			Match m = pluginKeyRE.Match(name);
+			if (m.Success) {	//If the name begins with '@@'
+				string pluginName = m.Groups["name"].Value;
+				PluginKey tk = PluginKey.Get(pluginName);
+				if (m.Groups["asterisk"].Value.Length > 0) {
+					ObjectSaver.Load(value, DelayedLoad_SimplePlugin, filename, line, tk);
+				} else {
+					ObjectSaver.Load(value, DelayedLoad_Plugin, filename, line, tk);
+				}
+				return;
+			}
+
 			switch (name) {
 				case "events":
 				case "event":
 				case "triggergroup":
 				case "type":
 					string tgName;
-					Match m= ObjectSaver.abstractScriptRE.Match(value);
+					m= ObjectSaver.abstractScriptRE.Match(value);
 					if (m.Success) {
 						tgName = m.Groups["value"].Value;
 					} else {
@@ -312,11 +333,25 @@ namespace SteamEngine {
 			base.LoadLine(filename, line, name, value);
 		}
 
+		private void DelayedLoad_Plugin(object resolvedObject, string filename, int line, object pluginKey) {
+			Plugin plugin = (Plugin) resolvedObject;
+			AddPluginImpl((PluginKey) pluginKey, plugin);
+			if (firstPlugin != null) {
+				firstPlugin.prevInList = plugin;
+				plugin.nextInList = firstPlugin;
+			}
+			firstPlugin = plugin;
+		}
+
+		private void DelayedLoad_SimplePlugin(object resolvedObject, string filename, int line, object pluginKey) {
+			AddPluginImpl((PluginKey) pluginKey, (Plugin) resolvedObject);
+		}
+
 		#endregion save/load
 
 		#region IPluginHolder Members
-		public void AddPlugin(PluginKey pg, Plugin plugin) {
-			AddPluginImpl(pg, plugin);
+		public void AddPlugin(PluginKey pk, Plugin plugin) {
+			AddPluginImpl(pk, plugin);
 			if (firstPlugin != null) {
 				firstPlugin.prevInList = plugin;
 				plugin.nextInList = firstPlugin;
@@ -325,27 +360,27 @@ namespace SteamEngine {
 			plugin.TryRun(TriggerKey.assign, null);
 		}
 
-		public void AddPluginAsSimple(PluginKey pg, Plugin plugin) {
-			AddPluginImpl(pg, plugin);
+		public void AddPluginAsSimple(PluginKey pk, Plugin plugin) {
+			AddPluginImpl(pk, plugin);
 			plugin.TryRun(TriggerKey.assign, null);
 		}
 
-		private void AddPluginImpl(PluginKey pg, Plugin plugin) {
+		private void AddPluginImpl(PluginKey pk, Plugin plugin) {
 			if (tags != null) {
 				PluginKey prevKey = tags[plugin] as PluginKey;
-				if (prevKey != null && prevKey != pg) {
+				if (prevKey != null && prevKey != pk) {
 					throw new Exception("You can't assign one Plugin to one PluginHolder under 2 different PluginKeys");
 				}
 
-				Plugin prevPlugin = tags[pg] as Plugin;
+				Plugin prevPlugin = tags[pk] as Plugin;
 				if (prevPlugin != null && prevPlugin != plugin) {
-					this.RemovePlugin(prevPlugin);
+					this.RemovePlugin(prevPlugin).Delete();
 				}
 			} else {
 				tags = new Hashtable();
 			}
-			tags[pg] = plugin;
-			tags[plugin] = pg;
+			tags[pk] = plugin;
+			tags[plugin] = pk;
 			plugin.cont = this;
 		}
 

@@ -145,6 +145,7 @@ namespace SteamEngine {
 			defaultValue = ResolveTemporaryValueImpl();
 			defaultValue.Value = value;
 			currentValue = defaultValue.Clone();
+			unloaded = false;
 		}
 		
 		public void SetFromScripts(string filename, int line, string value) {

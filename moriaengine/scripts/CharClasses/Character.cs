@@ -1325,9 +1325,9 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TimerKey skillTimerKey = TimerKey.Get("_skillTimer_");
 
-		[SaveableClass]
+		[SaveableClass][DeepCopyableClass]
 		public class SkillStrokeTimer : BoundTimer {
-			[LoadingInitializer]
+			[LoadingInitializer][DeepCopyImplementation]
 			public SkillStrokeTimer() {
 			}
 

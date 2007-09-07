@@ -37,22 +37,33 @@ namespace SteamEngine {
 		private static Dictionary<string, Type> pluginDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		private static Dictionary<Type, ConstructorInfo> pluginDefCtors = new Dictionary<Type, ConstructorInfo>();
 
+		private static Dictionary<Type, PluginTriggerGroup> triggerGroupsByType = new Dictionary<Type, PluginTriggerGroup>();
+
 
 		protected PluginDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			{
-
+				PluginTriggerGroup ptg;
+				if (triggerGroupsByType.TryGetValue(this.GetType(), out ptg)) {
+					this.compiledTriggers = ptg;
+				}
 			}
 		}
 
 		internal TriggerGroup scriptedTriggers; 
-		internal protected PluginTriggerHolder compiledTriggers;
+		internal protected PluginTriggerGroup compiledTriggers;
 
-		public abstract class PluginTriggerHolder {
+		public abstract class PluginTriggerGroup {
 			public abstract object Run(Plugin self, TriggerKey tk, ScriptArgs sa);
 		}
 
-		public abstract Plugin Create();
+		protected abstract Plugin CreateImpl();
+
+		public Plugin Create() {
+			Plugin p = this.CreateImpl();
+			p.def = this;
+			return p;
+		}
 
 		public static new PluginDef Get(string defname) {
 			AbstractScript script;
@@ -75,6 +86,10 @@ namespace SteamEngine {
 			Type defType;
 			pluginDefTypesByPluginType.TryGetValue(pluginType, out defType);
 			return defType;
+		}
+
+		public static void RegisterPluginTG(Type defType, PluginTriggerGroup tg) {
+			triggerGroupsByType[defType] = tg;
 		}
 
 		private static Type[] pluginDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
@@ -155,8 +170,23 @@ namespace SteamEngine {
 			return pluginDef;
 		}
 
+		public override void Unload() {
+			if (this.scriptedTriggers != null) {
+				scriptedTriggers.Unload();
+			}
+			base.Unload();
+		}
+
 		internal static void LoadingFinished() {
 			//dump number of loaded instances?
+		}
+
+		internal static void ClearAll() {
+			pluginDefTypesByPluginType.Clear();
+			pluginTypesByPluginDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
+			pluginDefTypesByName.Clear();
+			pluginDefCtors.Clear();
+			triggerGroupsByType.Clear();
 		}
 	}
 }

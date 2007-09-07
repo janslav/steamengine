@@ -50,7 +50,7 @@ namespace SteamEngine.Timers {
 		}
 
 		[Save]
-		internal void Save(SteamEngine.Persistence.SaveStream output) {
+		public override void Save(SteamEngine.Persistence.SaveStream output) {
 			StringBuilder sb = new StringBuilder(method.DeclaringType.ToString());
 			sb.Append(".").Append(method.Name);
 			sb.Append("(");
@@ -64,13 +64,14 @@ namespace SteamEngine.Timers {
 			}
 			sb.Append(")");
 			output.WriteLine("method="+sb);
+			base.Save(output);
 		}
 		
 		public static Regex methodSignRE= new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",                     
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 		
 		[LoadLine]
-		public void LoadLine(string filename, int line, string name, string value) {
+		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("method")) {
 				//Console.WriteLine("loading method with string: "+value);
 				
@@ -95,6 +96,7 @@ namespace SteamEngine.Timers {
 					throw new Exception("The value has unparsable format");
 				}
 			}
+			base.LoadLine(filename, line, name, value);
 		}
 	}
 }

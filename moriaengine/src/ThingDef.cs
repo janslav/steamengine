@@ -439,11 +439,19 @@ namespace SteamEngine {
 			
 			//now do load the trigger code. 
 			if (input.TriggerCount>0) {
-				input.headerName = "t__"+input.headerName+"__";
+				input.headerName = "t__"+defname+"__";
 				TriggerGroup tg = ScriptedTriggerGroup.Load(input);
 				thingDef.AddTriggerGroup(tg);
 			}
 			return thingDef;
+		}
+
+		public override void Unload() {
+			TriggerGroup tg = TriggerGroup.Get("t__"+this.defname+"__");
+			if (tg != null) {
+				tg.Unload();
+			}
+			base.Unload();
 		}
 		
 		private static void UnRegisterThingDef(ThingDef td) {
@@ -495,7 +503,7 @@ namespace SteamEngine {
 			Logger.SetTitle("");
 		}
 		
-		internal static void UnLoadAll() {
+		internal static void ClearAll() {
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingDefTypesByName.Clear();

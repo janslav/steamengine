@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void CalculateWornArmor(Character ch, out int armorClass, out int mindDefense) {
-			int resist = SkillDef.GetValueForChar(ch, SkillName.MagicResist);
+			int resist = SkillDef.SkillValueOfChar(ch, SkillName.MagicResist);
 			double resistEffect = SkillDef.ById(SkillName.MagicResist).GetEffectForChar(ch);
 			mindDefense = (int) (
 				(resist * resistEffect) / 1000);
@@ -157,7 +157,7 @@ namespace SteamEngine.CompiledScripts {
 									mindDefLegs = Math.Max(mindDefLegs, mindDef);
 									mindDefFeet = Math.Max(mindDefFeet, mindDef); break;
 								case Layers.layer_hand2: //shield
-									int parrying = SkillDef.GetValueForChar(ch, SkillName.Parry);
+									int parrying = SkillDef.SkillValueOfChar(ch, SkillName.Parry);
 									armorTotal = (armor * parrying) / 1000;
 									//no mindDef with shield
 									break;

@@ -58,18 +58,20 @@ namespace SteamEngine.Timers {
 		}
 
 		[Save]
-		public void Save(SaveStream output) {
+		public override void Save(SaveStream output) {
 			output.WriteValue("function", function.name);
+			base.Save(output);
 		}
 
 		[LoadLine]
-		public void LoadLine(string filename, int line, string name, string value) {
+		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("function")) {
 				function = ScriptHolder.GetFunction((string) ObjectSaver.OptimizedLoad_String(value));
 				if (function == null) {
 					throw new Exception("There is no function "+value);
 				}
 			}
+			base.LoadLine(filename, line, name, value);
 		}
 	}
 }

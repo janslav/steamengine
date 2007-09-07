@@ -129,7 +129,6 @@ namespace SteamEngine.Timers {
 
 		[Summary("The time interval between invocations, in seconds. ")]
 		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to disable periodic signaling.")]
-		[SaveableData]
 		public double PeriodInSeconds {
 			get {
 				if (period < 0) {
@@ -149,7 +148,6 @@ namespace SteamEngine.Timers {
 
 		[Summary("The amount of time to delay before the first invoking, in seconds.")]
 		[Remark("Specify negative one (-1) second (or any other negative number) to prevent the timer from starting (i.e. to pause it). Specify 0 to start the timer immediately.")]
-		[SaveableData]
 		public double DueInSeconds {
 			get {
 				return HighPerformanceTimer.TicksToSeconds(fireAt - Globals.TimeInTicks);
@@ -192,8 +190,35 @@ namespace SteamEngine.Timers {
 			}
 		}
 
+		#region save/load
 		internal static void StartingLoading() {
 		}
+		
+		[Save]
+		public virtual void Save(SaveStream output) {
+			if (fireAt != -1) {
+				output.WriteValue("fireAt", this.fireAt);
+			}
+			if (period != -1) {
+				output.WriteValue("period", this.period);
+			}
+		}
+
+		[LoadLine]
+		public virtual void LoadLine(string filename, int line, string name, string value) {
+			switch (name) {
+				case "fireat":
+					this.fireAt = ConvertTools.ParseInt64(value);
+					toBeEnqueued.Enqueue(this);
+					isToBeEnqueued = true;
+					break;
+				case "period":
+					this.period = ConvertTools.ParseInt64(value);
+					break;
+			}
+		}
+		
+		
 
 		internal static void LoadingFinished() {
 			Logger.WriteDebug("Loaded "+priorityQueue.Count+" timers.");
@@ -201,5 +226,6 @@ namespace SteamEngine.Timers {
 			ProcessToBeEnqueued();
 			toBeEnqueued = new SimpleQueue<Timer>();//it could have been unnecessary big...
 		}
+		#endregion save/load
 	}
 }
