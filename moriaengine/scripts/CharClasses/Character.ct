@@ -16,7 +16,7 @@
 
 //TODO: A gettable flags property which emulates sphere flags
 
-[ClassTemplate Character : AbstractCharacter]
+[ThingTemplate Character : AbstractCharacter]
 Def:	//vars on the def
 	uint corpseModel = 0x2006
 	

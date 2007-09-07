@@ -13,14 +13,14 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ClassTemplate Weapon : Destroyable]
+[ThingTemplate Ship : MultiItem]
 Def:	//vars on the def
-	double attackNumber = 0
-	WeaponType weaponType = 0
-	SkillName combatSkill = SkillName.Swords
-	int range = 0
-	int strikeStartRange = 5
-	int strikeStopRange = 10
-	
+	public ShipFacing facing = ShipFacing.North
+
 Vars:	//vars defined in the class, so they basically do what tags do, but better
-	None //or just omit this section altogether if you don't want any
+	private LinkedList<Thing> carriedThings = null
+	internal Item tiller = null
+	internal Item leftPlank = null
+	internal Item rightPlank = null
+	internal Item trunk = null
+	internal ShipFacing facing = ShipFacing.North

@@ -159,7 +159,7 @@ namespace SteamEngine {
 			Console.WriteLine("http://steamengine.sourceforge.net");
 			Console.WriteLine("Running under "+Environment.OSVersion+", Framework version: "+Environment.Version+".");
 			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			ClassTemplateReader.Init();
+			ClassTemplateParser.Init();
 			
 			if (!CompilerInvoker.CompileScripts(true)) {
 				return false;
@@ -225,7 +225,7 @@ namespace SteamEngine {
 		
 		//returns false if nothing was changing, otherwise true
 		internal static bool TryResyncCompiledScripts() {
-			ClassTemplateReader.Resync();
+			ClassTemplateParser.Resync();
 			if (CompilerInvoker.SourcesHaveChanged) {
 				RecompileScripts();
 				return true;
