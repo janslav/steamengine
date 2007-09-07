@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		private static Regex fieldRE = new Regex(
-			@"^((?<access>(public)|(private)|(protected)|(internal))\s+)?(?<static>static\s+)?(?<type>[a-z][a-z0-9\.<>\[\]\,]*)\s+(?<name>[a-z][a-z0-9\.]*)\s*=\s*(?<defval>.*)\s*?$",
+			@"^((?<access>(public)|(private)|(protected)|(internal))\s+)?(?<static>static\s+)?(?<type>[a-z_][_a-z0-9\.<>\[\]\,]*)\s+(?<name>[a-z_][_a-z0-9\.]*)\s*=\s*(?<defval>.*)\s*?$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		static ScriptFileCollection allFiles;
@@ -52,13 +52,13 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		public static void Init() {
 			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".ct");
 
-			Console.WriteLine("Processing ClassTemplates");
+			Logger.WriteDebug("Processing ClassTemplates");
 			int numFilesRead=0;
 			foreach (ScriptFile file in allFiles.GetAllFiles()) {
 				ProcessFile(file);
 				numFilesRead++;
 			}
-			Console.WriteLine("Processed "+numFilesRead+" ClassTemplates scripts.");
+			Logger.WriteDebug("Processed "+numFilesRead+" ClassTemplates scripts.");
 		}
 
 		public static void Resync() {

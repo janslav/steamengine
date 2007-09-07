@@ -24,64 +24,29 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts { 
+	internal class PluginTriggerGroupGenerator : ISteamCSCodeGenerator {
+		static List<Type> pluginTGs = new List<Type>();
 
-	/*
-		Class: CompiledTriggerGroup
-			.NET scripts should extend this class, and make use of its features.
-			This class provides automatic linking of methods intended for use as triggers and
-			creates a TriggerGroup that your triggers are in.
-	*/
-	public abstract class CompiledTriggerGroup : TriggerGroup {
-		protected CompiledTriggerGroup()
-			: base() {
-		}
-
-		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
-			throw new InvalidOperationException("CompiledTriggerGroup without overriden Run method?! This should not happen.");
-		}
-
-		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
-			try {
-				return Run(self, tk, sa);
-			} catch (FatalException) {
-				throw;
-			} catch (Exception e) {
-				Logger.WriteError(e);
-			}
-			return null;
-		}
-
-		protected override string GetName() {
-			return this.GetType().Name;
-		}
-
-		public override void Unload() {
-			//we do nothing. Throwing exception is rude to AbstractScript.UnloadAll
-			//and doing base.Unload() would be a lie cos we can't really unload.
-		}
-	}
-
-	internal class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
-		static List<Type> compiledTGs = new List<Type>();
-
-		internal static void AddCompiledTGType(Type t) {
-			compiledTGs.Add(t);
+		internal static void AddPluginTGType(Type t) {
+			pluginTGs.Add(t);
 		}
 
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-				if (compiledTGs.Count > 0) {
-					Logger.WriteDebug("Generating compiled Triggergroups");
+				if (pluginTGs.Count > 0) {
+					Logger.WriteDebug("Generating PluginTriggergroups");
 
 					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
 					codeCompileUnit.Namespaces.Add(ns);
 
-					foreach (Type decoratedClass in compiledTGs) {
+					foreach (Type decoratedClass in pluginTGs) {
 						try {
 							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
-							CodeTypeDeclaration ctd = gi.GetGeneratedType();
-							ns.Types.Add(ctd);
+							if (gi.triggerMethods.Count > 0) {
+								CodeTypeDeclaration ctd = gi.GetGeneratedType();
+								ns.Types.Add(ctd);
+							}
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
@@ -89,11 +54,11 @@ namespace SteamEngine.CompiledScripts {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+compiledTGs.Count+" compiled Triggergroups");
+					Logger.WriteDebug("Done generating "+pluginTGs.Count+" PluginTriggergroups");
 				}
 				return codeCompileUnit;
 			} finally {
-				compiledTGs.Clear();
+				pluginTGs.Clear();
 			}
 		}
 
@@ -103,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public string FileName {
-			get { return "CompiledTriggerGroups.Generated.cs"; }
+			get { return "PluginTriggerGroups.Generated.cs"; }
 		}
 
 		/*
@@ -112,27 +77,28 @@ namespace SteamEngine.CompiledScripts {
 			defined in the script (by naming them on_whatever).
 		*/
 		private class GeneratedInstance {
-			List<MethodInfo> triggerMethods = new List<MethodInfo>();
-			Type tgType;
+			internal List<MethodInfo> triggerMethods = new List<MethodInfo>();
+			Type pluginType;
+			CodeTypeDeclaration codeTypeDeclatarion;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_"+tgType.Name);
+				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_"+pluginType.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				codeTypeDeclatarion.BaseTypes.Add(tgType);
+				codeTypeDeclatarion.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
 				codeTypeDeclatarion.IsClass = true;
 
 				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
-				codeTypeDeclatarion.Members.Add(GenerateGetNameMethod());
+				codeTypeDeclatarion.Members.Add(GenerateBootstrapMethod());
 
 				return codeTypeDeclatarion;
 			}
 
-			internal GeneratedInstance(Type tgType) {
-				this.tgType = tgType;
+			internal GeneratedInstance(Type pluginType) {
+				this.pluginType = pluginType;
 				MemberTypes memberType=MemberTypes.Method;		//Only find methods.
 				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
 
-				MemberInfo[] mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
+				MemberInfo[] mis = pluginType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
 				foreach (MemberInfo m in mis) {
 					MethodInfo mi = m as MethodInfo;
 					if (mi != null) {
@@ -145,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				retVal.Name = "Run";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "self"));
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(Plugin), "self"));
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(TriggerKey), "tk"));
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(ScriptArgs), "sa"));
 				retVal.ReturnType = new CodeTypeReference(typeof(object));
@@ -160,8 +126,12 @@ namespace SteamEngine.CompiledScripts {
 						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase("+tk.uid+"): //"+tk.name));
 						retVal.Statements.AddRange(
-							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
-								new CodeThisReferenceExpression(), true));
+							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi, 
+							new CodeCastExpression(
+								pluginType,
+								new CodeArgumentReferenceExpression("self")), 
+							false));
+
 					}
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\t}"));
 				}
@@ -173,52 +143,28 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			private CodeMemberMethod GenerateGetNameMethod() {
+
+			private CodeMemberMethod GenerateBootstrapMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
-				retVal.Name = "GetName";
-				retVal.ReturnType = new CodeTypeReference(typeof(string));
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Static;
+				retVal.Name = "Bootstrap";
 
 				retVal.Statements.Add(
-					new CodeMethodReturnStatement(
-						new CodePrimitiveExpression(tgType.Name)));
-
+					new CodeMethodInvokeExpression(
+						new CodeTypeReferenceExpression(typeof(PluginDef)),
+						"RegisterPluginTG",
+						new CodeTypeOfExpression(pluginType.Name+"Def"),
+						new CodeObjectCreateExpression(this.codeTypeDeclatarion.Name)
+					));
 
 				return retVal;
 			}
+
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
 				string s=((string) filterCriteria).ToLower();
 				return m.Name.ToLower().StartsWith(s);
 			}
-		}
-	}
-	
-	//Implemented by the types which can represent map tiles
-	//like t_water and such
-	//more in the Map class
-	//if someone has a better idea about how to do this ...
-	public abstract class GroundTileType : CompiledTriggerGroup {
-		private static Dictionary<string, GroundTileType> byName = new Dictionary<string, GroundTileType>(StringComparer.OrdinalIgnoreCase);
-
-		protected GroundTileType() {
-			byName[this.defname] = this;
-		}
-		
-		public static new GroundTileType Get(string name) {
-			GroundTileType gtt;
-			byName.TryGetValue(name, out gtt);
-			return gtt;
-		}
-
-		public static bool IsMapTileInRange(int tileId, int aboveOrEqualTo, int below) {
-			return (tileId>=aboveOrEqualTo && tileId<=below);
-		}
-
-		public abstract bool IsTypeOfMapTile(int mapTileId);
-		
-		internal static void UnLoadScripts() {
-			byName.Clear();
 		}
 	}
 }

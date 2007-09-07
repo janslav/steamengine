@@ -61,7 +61,7 @@ namespace SteamEngine {
 				retVal = scriptedTriggers.Run(this, tk, sa);
 			}
 
-			PluginDef.PluginTriggerHolder compiledTriggers = def.compiledTriggers;
+			PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
 			if (compiledTriggers != null) {
 				retVal = compiledTriggers.Run(this, tk, sa);
 			}
@@ -75,7 +75,7 @@ namespace SteamEngine {
 			if (scriptedTriggers != null) {
 				retVal = scriptedTriggers.TryRun(this, tk, sa);
 			}
-			PluginDef.PluginTriggerHolder compiledTriggers = def.compiledTriggers;
+			PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
 			if (compiledTriggers != null) {
 				try {
 					retVal = compiledTriggers.Run(this, tk, sa);

@@ -692,6 +692,9 @@
     <Compile Include="..\..\src\PluginKey.cs">
       <Link>PluginKey.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\PluginTriggerGroupGenerator.cs">
+      <Link>PluginTriggerGroupGenerator.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\Point.cs">
       <Link>Point.cs</Link>
       <SubType>Code</SubType>

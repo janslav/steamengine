@@ -209,6 +209,12 @@ namespace SteamEngine.CompiledScripts {
 					goto bootstrap;
 				}
 			}
+			if (type.IsSubclassOf(typeof(Plugin))) {
+				if (!type.IsAbstract) {
+					PluginTriggerGroupGenerator.AddPluginTGType(type);
+					goto bootstrap;
+				}
+			}
 			if (type.IsSubclassOf(typeof(CompiledScriptHolder))
 					|| type.IsSubclassOf(typeof(AbstractScript))) {
 				//Instansiate it!

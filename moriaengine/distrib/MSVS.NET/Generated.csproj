@@ -45,6 +45,9 @@
     <Compile Include="..\..\bin\Generated\DeepCopyImplementor.Generated.cs">
       <Link>DeepCopyImplementor.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\bin\Generated\PluginTriggerGroups.Generated.cs">
+      <Link>PluginTriggerGroups.Generated.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MSVS.NET\Common.csproj">

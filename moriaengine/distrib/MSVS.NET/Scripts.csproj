@@ -119,12 +119,6 @@
     <Compile Include="..\..\scripts\classes\MemoryDef.cs">
       <Link>classes\MemoryDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\Regions\DynamicRegion.cs">
-      <Link>classes\Regions\DynamicRegion.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\Regions\FlaggedRegion.cs">
-      <Link>classes\Regions\FlaggedRegion.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Container.cs">
       <Link>ItemClasses\Container.cs</Link>
     </Compile>
@@ -296,6 +290,12 @@
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Regions\DynamicRegion.cs">
+      <Link>systems\Regions\DynamicRegion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
+      <Link>systems\Regions\FlaggedRegion.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>
     </Compile>
@@ -308,8 +308,11 @@
     <Compile Include="..\..\scripts\systems\skills\Combat\DamageImpl.cs">
       <Link>systems\skills\Combat\DamageImpl.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Discordance.cs">
-      <Link>systems\skills\Discordance.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Discordance\Discordance.cs">
+      <Link>systems\skills\Discordance\Discordance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs">
+      <Link>systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Hiding.cs">
       <Link>systems\skills\Hiding.cs</Link>
@@ -340,6 +343,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\TemplateDef.cs">
       <Link>systems\TemplateDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\TimerPlugin.cs">
+      <Link>systems\TimerPlugin.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\types\SpawnInfo.cs">
       <Link>systems\types\SpawnInfo.cs</Link>

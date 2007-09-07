@@ -27,7 +27,7 @@ if (Skill_Stealth.CheckSuccess(this, {0 700}))
 else
 	Skill_Stealth.Fail(this)
 endif
-//CurrentSkill = null;
+CurrentSkill = null;
 	
 on=@Success
 tag.StealthStepsLeft = (Stealth / 50) + 1
@@ -47,4 +47,4 @@ RemoveTriggerGroup(E_skill_hiding)
 //502728	It will be tremendouly difficult to move quietly with this many people around.
 //502729	Better hide under a tree and get some rest first.                             
 //502730	You begin to move quietly.                                                    
-//502731	You fail in your attempt to move unnoticed.                                   
+//502731	You fail in your attempt to move unnoticed.                            

@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			Fields();
 			CopyConstructor();
 			Save();
-			Load();
+			LoadLine();
 		}
 
 		private void GenerateTypeDeclaration() {
@@ -78,13 +78,14 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			ctdCopyConstructor.Attributes=MemberAttributes.Public|MemberAttributes.Final;
 			ctdCopyConstructor.Parameters.Add(new CodeParameterDeclarationExpression(section.className, "copyFrom"));
 			ctdCopyConstructor.BaseConstructorArgs.Add(new CodeArgumentReferenceExpression("copyFrom"));
-			generatedType.Members.Add(ctdCopyConstructor);
-
+			
 			if (this.subSection != null) {
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
 					ctdCopyConstructor.Statements.Add(CopyFieldStatement(ctif));
 				}
 			}
+
+			generatedType.Members.Add(ctdCopyConstructor);
 		}
 
 		private CodeStatement CopyFieldStatement(ClassTemplateInstanceField field) {
@@ -182,7 +183,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		}
 
-		private void Load() {
+		private void LoadLine() {
 			if ((this.subSection != null) &&  (this.subSection.fields.Count > 0)) {
 				CodeMemberMethod load = new CodeMemberMethod();
 				load.Name = "LoadLine";

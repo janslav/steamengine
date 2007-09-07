@@ -35,22 +35,50 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			AddDefProperty();
+			DefProperty();
+			LoadSaveAttributes();
+			DefaultConstructor();
 		}
 
-		private void AddDefProperty() {
+		private void DefProperty() {
 			CodeMemberProperty defProperty = new CodeMemberProperty();
 			defProperty.Name = "Def";
-			defProperty.Attributes = MemberAttributes.Final|MemberAttributes.Private;
-			defProperty.Type = new CodeTypeReference(section.baseDefClassName);
+			defProperty.Attributes = MemberAttributes.Final|MemberAttributes.Private|MemberAttributes.New;
+			defProperty.Type = new CodeTypeReference(section.defClassName);
 			CodeMethodReturnStatement ret = new CodeMethodReturnStatement(
 				new CodeCastExpression(
-					section.baseDefClassName,
+					section.defClassName,
 					new CodePropertyReferenceExpression(
 						new CodeThisReferenceExpression(),
-						"def")));
+						"Def")));
 			defProperty.GetStatements.Add(ret);
 			generatedType.Members.Add(defProperty);
+		}
+
+		private void LoadSaveAttributes() {
+			foreach (CodeTypeMember member in generatedType.Members) {
+				CodeMemberMethod method = member as CodeMemberMethod;
+				if (method != null) {
+					switch (method.Name.ToLower()) {
+						case "save":
+							method.CustomAttributes.Add(new CodeAttributeDeclaration(
+								new CodeTypeReference(typeof(Persistence.SaveAttribute))));
+							break;
+						case "loadline":
+							method.CustomAttributes.Add(new CodeAttributeDeclaration(
+								new CodeTypeReference(typeof(Persistence.LoadLineAttribute))));
+							break;
+					}
+				}
+			}
+		}
+
+		private void DefaultConstructor() {
+			CodeConstructor constructor = new CodeConstructor();
+			constructor.CustomAttributes.Add(new CodeAttributeDeclaration(
+				new CodeTypeReference(typeof(Persistence.LoadingInitializerAttribute))));
+			constructor.Attributes=MemberAttributes.Public|MemberAttributes.Final;
+			generatedType.Members.Add(constructor);
 		}
 	}
 }

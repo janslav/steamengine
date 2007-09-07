@@ -95,24 +95,24 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ushort GetValueForChar(Character ch) {
+		public ushort SkillValueOfChar(Character ch) {
 			return ch.Skills[this.Id].RealValue;
 		}
 
-		public static ushort GetValueForChar(Character ch, ushort id) {
+		public static ushort SkillValueOfChar(Character ch, ushort id) {
 			return ch.Skills[id].RealValue;
 		}
 
-		public static ushort GetValueForChar(Character ch, SkillName id) {
+		public static ushort SkillValueOfChar(Character ch, SkillName id) {
 			return ch.Skills[(int) id].RealValue;
 		}
 
-		public double GetAdvRateForValue(ushort skillValue) {
+		public double AdvRateForValue(ushort skillValue) {
 			return Globals.EvalRangePermille(skillValue, AdvRate);
 		}
 
-		public double GetAdvRateForChar(Character ch) {
-			return Globals.EvalRangePermille(GetValueForChar(ch), AdvRate);
+		public double AdvRateOfChar(Character ch) {
+			return Globals.EvalRangePermille(SkillValueOfChar(ch), AdvRate);
 		}
 
 		public double[] Delay {
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetDelayForChar(Character ch) {
-			return Globals.EvalRangePermille(GetValueForChar(ch), Delay);
+			return Globals.EvalRangePermille(SkillValueOfChar(ch), Delay);
 		}
 
 		public double[] Effect {
@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetEffectForChar(Character ch) {
-			return Globals.EvalRangePermille(GetValueForChar(ch), Effect);
+			return Globals.EvalRangePermille(SkillValueOfChar(ch), Effect);
 		}
 
 		public static bool CheckSuccess(ushort skillValue, int difficulty) {
@@ -181,7 +181,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckSuccess(Character ch, int difficulty) {
-			return SkillUtils.CheckSuccess(GetValueForChar(ch), difficulty);
+			return SkillUtils.CheckSuccess(SkillValueOfChar(ch), difficulty);
 		}
 
 		[Summary("This method fires the @skillselect triggers. "
