@@ -72,7 +72,13 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			CodeCompileUnit ccu = CreateCompileUnit();
 
 			foreach (ClassTemplateSection section in ParseFile(scriptFile)) {
-				ClassTemplateBase.ProcessSection(section, ccu);
+				try {
+					ClassTemplateBase.ProcessSection(section, ccu);
+				} catch (FatalException) {
+					throw;
+				} catch (Exception e) {
+					Logger.WriteError(scriptFile.FullName, section.line, e);
+				}
 			}
 
 			string dirName = Path.GetDirectoryName(scriptFile.FullName);
@@ -109,7 +115,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 							yield return curSection;
 						}
 						GroupCollection gc = m.Groups;
-						curSection = new ClassTemplateSection(gc["templatename"].Value, gc["classname"].Value, gc["baseclassname"].Value);
+						curSection = new ClassTemplateSection(line, gc["templatename"].Value, gc["classname"].Value, gc["baseclassname"].Value);
 						curSubSection=null;
 						continue;
 					}
