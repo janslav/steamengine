@@ -69,6 +69,8 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					yield return new PluginDefTemplate(section, defss);
 					yield return new PluginTemplate(section, ss);
 					break;
+				default:
+					throw new Exception("Unknown classtemplate "+section.templateName);
 			}
 		}
 

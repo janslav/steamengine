@@ -13,7 +13,7 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ClassTemplate RegBox : Item]
+[ThingTemplate RegBox : Item]
 Def:	//vars on the def
 Vars:	//vars defined in the class, so they basically do what tags do, but better
 	public ushort pocetRegu = 0

@@ -35,9 +35,12 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		internal string baseClassName;
 		internal string baseDefClassName;
 
+		internal int line;
+
 		internal Dictionary<string, ClassTemplateSubSection> subsections = new Dictionary<string, ClassTemplateSubSection>(StringComparer.OrdinalIgnoreCase);
 
-		internal ClassTemplateSection(string templateName, string className, string baseClassName) {
+		internal ClassTemplateSection(int line, string templateName, string className, string baseClassName) {
+			this.line = line;
 			this.templateName = templateName;
 			this.className = Utility.Capitalize(className);
 			this.defClassName = this.className+"Def";
