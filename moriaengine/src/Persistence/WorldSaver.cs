@@ -176,7 +176,7 @@ namespace SteamEngine.Persistence {
 				Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
 				globalsLoader = GetLoadStream(path, sa.Argv[1]);
 				InvokeLoad(globalsLoader, Path.Combine(path, "globals.sav"));
-
+				Globals.instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
 				Console.WriteLine("Loading successful");
 			} catch (FileNotFoundException e) {
 				//this is not critical, just a warning.
@@ -191,7 +191,7 @@ namespace SteamEngine.Persistence {
 				Logger.WriteCritical("Loading failed.");
 				MainClass.ClearWorld();
 				TriggerGroup.ReAddGlobals();
-				Globals.instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
+				Globals.instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, false));
 				return false;
 			} finally {
 				CloseLoadStreams();
