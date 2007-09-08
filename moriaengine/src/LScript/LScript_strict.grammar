@@ -158,7 +158,7 @@ ForHeaderInParens = LEFT_PAREN ForHeader RIGHT_PAREN;
 WhileBlock = WHILE Code COMEOL [Script] ENDWHILE COMEOL;
 
 SwitchBlock = SWITCH SimpleCode COMEOL (CaseBlock)+ ENDSWITCH;
-CaseBlock = CASE ( QuotedString | INTEGER | DEFAULT ) COMEOL [Script BREAK COMEOL];
+CaseBlock = CASE ( SimpleCode | DEFAULT ) COMEOL [ [Script] BREAK COMEOL];
 
 Code = CodeBody { BinaryOperators CodeBody };
 CodeBody = [UnaryOperator] ( CodeBodyParens | Expression );

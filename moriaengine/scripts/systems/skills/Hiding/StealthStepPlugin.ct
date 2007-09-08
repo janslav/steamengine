@@ -14,23 +14,6 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate DiscordanceEffectPlugin : TimerPlugin]
-
+[PluginTemplate StealthStepPlugin : Plugin]
 Vars:
-	public int discordEffectPower = 0
-	
-	public short lowed_dex = 0
-	public short lowed_str = 0
-	public short lowed_int = 0
-	public short lowed_hits = 0
-	public short lowed_mana = 0
-	public short lowed_stam = 0
-	public ushort lowed_magery = 0
-	public ushort lowed_resist = 0
-	public ushort lowed_wrestl = 0
-	public ushort lowed_archer = 0
-	public ushort lowed_mace = 0
-	public ushort lowed_onehand = 0
-	public ushort lowed_twohand = 0
-	public ushort lowed_poison = 0
-	public ushort lowed_ei = 0
+	public int stealthStepsLeft = 0

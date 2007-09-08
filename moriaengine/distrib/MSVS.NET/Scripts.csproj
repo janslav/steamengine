@@ -320,8 +320,11 @@
     <Compile Include="..\..\scripts\systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs">
       <Link>systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Hiding.cs">
-      <Link>systems\skills\Hiding.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
+      <Link>systems\skills\Hiding\Hiding.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\StealthStepPlugin.Generated.cs">
+      <Link>systems\skills\Hiding\StealthStepPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
       <Link>systems\skills\ItemID.cs</Link>

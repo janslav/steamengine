@@ -755,10 +755,7 @@ namespace SteamEngine.LScript {
                                             "Subproduction6");
             pattern.SetSyntetic(true);
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) StrictConstants.QUOTED_STRING, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) StrictConstants.INTEGER, 1, 1);
+            alt.AddProduction((int) StrictConstants.SIMPLE_CODE, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) StrictConstants.DEFAULT, 1, 1);
@@ -769,7 +766,7 @@ namespace SteamEngine.LScript {
                                             "Subproduction7");
             pattern.SetSyntetic(true);
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) StrictConstants.SCRIPT, 1, 1);
+            alt.AddProduction((int) StrictConstants.SCRIPT, 0, 1);
             alt.AddToken((int) StrictConstants.BREAK, 1, 1);
             alt.AddToken((int) StrictConstants.COMEOL, 1, 1);
             pattern.AddAlternative(alt);

@@ -29,7 +29,7 @@ using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	public sealed class LScriptHolder : ScriptHolder, IOpNodeHolder, IUnloadable {
+	public class LScriptHolder : ScriptHolder, IOpNodeHolder, IUnloadable {
 		internal string filename = "<default>";
 		internal int line;
 		internal OpNode code = null;
