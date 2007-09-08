@@ -26,7 +26,19 @@ namespace SteamEngine.CompiledScripts {
 		
 		public HidingSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
 		}
-		
+
+		private static PluginKey pluginKey = PluginKey.Get("stealthstep");
+
+		private static PluginDef p_StealthStep;
+		public static PluginDef P_StealthStep {
+			get {
+				if (p_StealthStep == null) {
+					p_StealthStep = PluginDef.Get("p_StealthStep");
+				}
+				return p_StealthStep;
+			}
+		}
+
 		public override void Select(AbstractCharacter ch) {
 			//todo: various state checks...
 			Character self = (Character) ch;
@@ -58,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void Success(Character self) {
 			if (!this.Trigger_Success(self)) {
 				self.Flag_Hidden = true;
-				self.AddTriggerGroup(E_skill_hiding.Instance);
+				self.AddPlugin(pluginKey, P_StealthStep.Create());
 				self.ClilocSysMessage(501240);//You have hidden yourself well.
 				//todo: gain
 			}
@@ -76,102 +88,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			self.CurrentSkill = null;
 		}
-	}
-	
-	public class E_skill_hiding : CompiledTriggerGroup {
-		private static TriggerGroup instance;
-		public static TriggerGroup Instance { get {
-			return instance;
-		} }
 
-		protected E_skill_hiding() {
-			instance = this;
-		}
-		
-		public void On_SkillStart(Character self, Character selfToo, ushort skillId) {
-			//according to uo stratics, these skills do not unhide...
-			switch ((SkillName) skillId) {
-				case SkillName.DetectHidden:
-				case SkillName.ItemID:
-				case SkillName.Anatomy:
-				case SkillName.ArmsLore:
-				case SkillName.AnimalLore:
-				case SkillName.EvalInt:
-				case SkillName.Forensics:
-				case SkillName.Poisoning:
-				case SkillName.Stealth:
-					return;
-			}
-			UnHide(self);
-		}
-		
-		public void On_Step(Character self, byte direction, bool running) {
-			if (self.StealthStepsLeft < 1) {
-				self.SelectSkill((short) SkillName.Stealth);
-			}
-			if (self.StealthStepsLeft < 1) {//stealth was not succesfull
-				UnHide(self);
-				return;
-			}
-			if (running) {
-				self.StealthStepsLeft -=2;
-			} else {
-				self.StealthStepsLeft --;
-			}
-		}
-		
-		private void UnHide(Character self) {
+		[SteamFunction]
+		public static void UnHide(Character self) {
 			if (self.Flag_Hidden) {
 				self.ClilocSysMessage(501242); //You are no longer hidden.
 				self.Flag_Hidden = false;
 			}
-			self.RemoveTriggerGroup(this);
+			self.RemovePlugin(pluginKey).Delete();
 		}
-		
-		//todo: looting others should also unhide
 	}
 }
-
-
-
-
-//
-
-//	ushort range = (ushort)(18 - (self.Skills[(int)SkillName.Hiding].RealValue / (ushort)10 ));
-//	
-//	Map map = self.GetMap();
-//	EnumeratorOfPlayers enumer = map.GetPlayersInRange(self.X, self.Y, range);
-//	
-//	bool badcombat = ( enumer.MoveNext() );
-//	bool ok = ( !badcombat );
-//	
-//	if ( ok )
-//	{
-//		foreach ( Character chars in map.GetPlayersInRange(self.X, self.Y, range) ) {
-//			if ( chars.CanSee( self ) ) {
-//				badcombat = true;
-//				ok = false;
-//				break;
-//			}
-//		}
-//		
-//		ok = ( !badcombat );
-//	}
-//	
-//	if ( badcombat ) {
-//		self.SysMessage( 501237, 0x22, "" ); //You can't seem to hide right now.
-//		return;
-//	}
-//	else {
-//		if ( ok )
-//		{
-//			self.OverheadMessage( 501240, 0x1F4, "" ); //You have hidden yourself well.
-//			self.Flag_Hidden = true;
-//			return;
-//		}
-//		else {
-//			self.OverheadMessage( 501241, 0x22, "" ); //You can't seem to hide here.
-//			return;
-//		}
-//	}
-//}

@@ -45,8 +45,8 @@ namespace SteamEngine {
 	}
 
 	public interface IPluginHolder : ITriggerGroupHolder {
-		void AddPlugin(PluginKey pg, Plugin plugin);
-		void AddPluginAsSimple(PluginKey pg, Plugin plugin);
+		Plugin AddPlugin(PluginKey pg, Plugin plugin);
+		Plugin AddPluginAsSimple(PluginKey pg, Plugin plugin);
 		void DeletePlugins();
 		Plugin GetPlugin(PluginKey pg);
 		bool HasPlugin(PluginKey pg);
@@ -349,8 +349,16 @@ namespace SteamEngine {
 
 		#endregion save/load
 
+		public Plugin AddNewPlugin(PluginKey key, PluginDef def) {
+			return AddPlugin(key, def.Create());
+		}
+
+		public Plugin AddNewPluginAsSimple(PluginKey key, PluginDef def) {
+			return AddPluginAsSimple(key, def.Create());
+		}
+
 		#region IPluginHolder Members
-		public void AddPlugin(PluginKey pk, Plugin plugin) {
+		public Plugin AddPlugin(PluginKey pk, Plugin plugin) {
 			AddPluginImpl(pk, plugin);
 			if (firstPlugin != null) {
 				firstPlugin.prevInList = plugin;
@@ -358,11 +366,13 @@ namespace SteamEngine {
 			}
 			firstPlugin = plugin;
 			plugin.TryRun(TriggerKey.assign, null);
+			return plugin;
 		}
 
-		public void AddPluginAsSimple(PluginKey pk, Plugin plugin) {
+		public Plugin AddPluginAsSimple(PluginKey pk, Plugin plugin) {
 			AddPluginImpl(pk, plugin);
 			plugin.TryRun(TriggerKey.assign, null);
+			return plugin;
 		}
 
 		private void AddPluginImpl(PluginKey pk, Plugin plugin) {

@@ -27,6 +27,23 @@ namespace SteamEngine.LScript {
 		protected OpNode switchNode;
 		protected Hashtable cases;
 		protected OpNode defaultNode;
+
+		private class TempParent : LScriptHolder, IOpNodeHolder {
+			void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+		private static TempParent tempParent = new TempParent();
+
+		protected class NullOpNode : OpNode {
+			internal NullOpNode()
+				: base(null, null, -1, -1, null) {
+			}
+			internal override object Run(ScriptVars vars) {
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+		protected static NullOpNode nullOpNode = new NullOpNode();
 		
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
 			int line = code.GetStartLine()+LScript.startLine;
@@ -51,24 +68,34 @@ namespace SteamEngine.LScript {
 					Node caseValue = caseProd.GetChildAt(1);
 					object key = null;
 					bool isDefault = false;
-					if (IsType(caseValue, StrictConstants.INTEGER)) {
-						key = ((OpNode_Object) LScript.CompileNode(null, caseValue)).obj;
-						isInteger = true;
-					} else if (IsType(caseValue, StrictConstants.QUOTED_STRING)) {
-						OpNode_Object stringNode = LScript.CompileNode(parent, caseValue) as OpNode_Object;//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
-						if (stringNode != null) {
-							key = stringNode.obj;
-							isString = true;
-						} else {
-							throw new InterpreterException("The expression in a Case must be constant.", 
+					if (IsType(caseValue, StrictConstants.DEFAULT)) {//default
+						isDefault = true;
+					} else {
+						OpNode caseValueNode = LScript.CompileNode(tempParent, caseValue);//the parent here is false, it doesn't matter tho.
+						key = caseValueNode.Run(new ScriptVars(null, new object(), 0));
+						try {
+							key = ConvertTools.ToInt32(key);
+							isInteger = true;
+						} catch {
+							key = key as string;
+							if (key != null) {
+								isString = true;
+							}
+						}
+						if (key == null) {
+							throw new InterpreterException("The expression in a Case must be either convertible to an integer, or a string.",
 								caseProd.GetStartLine()+LScript.startLine, caseProd.GetStartColumn(),
 								filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
 						}
-					} else {//default
-						isDefault = true;
 					}
-					if (caseProd.GetChildCount() == 6) {//has script
-						OpNode caseCode = LScript.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+					if (caseProd.GetChildCount() > 3) {
+						OpNode caseCode = null;
+						if (caseProd.GetChildCount() == 6) {//has script
+							caseCode = LScript.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+						} else {
+							caseCode = nullOpNode;
+						}
+
 						if (tempCases.Count > 0) {
 							foreach (object tempKey in tempCases) {
 								AddToCases(cases, tempKey, caseCode, line, filename);
@@ -80,6 +107,7 @@ namespace SteamEngine.LScript {
 						} else {
 							AddToCases(cases, key, caseCode, line, filename);
 						}
+						//else only has "break" in it
 					} else if (isDefault) {
 						throw new InterpreterException("The Default block must have some code.",
 							line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
@@ -106,7 +134,9 @@ namespace SteamEngine.LScript {
 					defaultNode.parent = constructed;
 				}
 				foreach (DictionaryEntry entry in cases) {
-					((OpNode) entry.Value).parent = constructed;
+					if (entry.Value != null) {
+						((OpNode) entry.Value).parent = constructed;
+					}
 				}
 				return constructed;
 			}
@@ -134,6 +164,7 @@ namespace SteamEngine.LScript {
 				defaultNode = newNode;
 				return;
 			}
+
 			bool foundSome = false;
 			foreach (object key in cases.Keys) {
 				if (key == oldNode) {
@@ -166,19 +197,17 @@ namespace SteamEngine.LScript {
 		}
 		
 		internal override object Run(ScriptVars vars) {
-			object retVal;
-			object value;
-			value = String.Concat(switchNode.Run(vars));
+			object value = String.Concat(switchNode.Run(vars));
 			OpNode node = (OpNode) cases[value];
-			if (node == null) {
-				node = defaultNode;
+			if (node != nullOpNode) {
+				if (node == null) {
+					node = defaultNode;
+				}
+				if ((node != nullOpNode) && (node != null)) {
+					return node.Run(vars);
+				}
 			}
-			if (node != null) {
-				retVal = node.Run(vars);
-			} else {
-				retVal = null;
-			}
-			return retVal;
+			return null;
 		}
 	}
 	
@@ -188,7 +217,6 @@ namespace SteamEngine.LScript {
 		}
 		
 		internal override object Run(ScriptVars vars) {
-			object retVal;
 			object value;
 			try {
 				value = Convert.ToInt32(switchNode.Run(vars));
@@ -197,15 +225,15 @@ namespace SteamEngine.LScript {
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 			OpNode node = (OpNode) cases[value];
-			if (node == null) {
-				node = defaultNode;
+			if (node != nullOpNode) {
+				if (node == null) {
+					node = defaultNode;
+				}
+				if ((node != nullOpNode) && (node != null)) {
+					return node.Run(vars);
+				}
 			}
-			if (node != null) {
-				retVal = node.Run(vars);
-			} else {
-				retVal = null;
-			}
-			return retVal;
+			return null;
 		}
 	}
 	

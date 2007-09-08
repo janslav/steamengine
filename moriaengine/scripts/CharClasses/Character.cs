@@ -1386,21 +1386,6 @@ namespace SteamEngine.CompiledScripts {
 		//	return false;
 		//}
 
-		private static TagKey tkStealthStepsLeft = TagKey.Get("StealthStepsLeft");
-
-		public int StealthStepsLeft {
-			get {
-				return Convert.ToInt32(this.GetTag(tkStealthStepsLeft));
-			}
-			set {
-				if (value == 0) {
-					this.RemoveTag(tkStealthStepsLeft);
-				} else {
-					this.SetTag(tkStealthStepsLeft, value);
-				}
-			}
-		}
-
 		public Character Owner {
 			get {
 				return owner;
