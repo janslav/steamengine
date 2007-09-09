@@ -376,6 +376,9 @@ namespace SteamEngine {
 		}
 
 		private void AddPluginImpl(PluginKey pk, Plugin plugin) {
+			if (plugin.cont != null) {
+				plugin.cont.RemovePlugin(plugin);
+			}
 			if (tags != null) {
 				PluginKey prevKey = tags[plugin] as PluginKey;
 				if (prevKey != null && prevKey != pk) {
