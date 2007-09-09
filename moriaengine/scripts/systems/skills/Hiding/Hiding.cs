@@ -90,6 +90,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
+		public static void Hide(Character self) {
+			self.SelectSkill(SkillName.Hiding);
+		}
+
+		[SteamFunction]
 		public static void UnHide(Character self) {
 			if (self.Flag_Hidden) {
 				self.ClilocSysMessage(501242); //You are no longer hidden.

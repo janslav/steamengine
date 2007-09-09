@@ -1262,6 +1262,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Summary("Start a skill.")]
+		public void SelectSkill(SkillName skillName) {
+			SelectSkill((int) skillName);
+		}
+
 		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
 		public void StartSkill(int skillId) {
 			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
@@ -1283,6 +1288,11 @@ namespace SteamEngine.CompiledScripts {
 				currentSkill = skillDef;
 				skillDef.Start(this);
 			}
+		}
+
+		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
+		public void StartSkill(SkillName skillName) {
+			StartSkill((int) skillName);
 		}
 
 		private SkillDef currentSkill;
