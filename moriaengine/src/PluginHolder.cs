@@ -284,10 +284,12 @@ namespace SteamEngine {
 					object key = entry.Key;
 					if (key is PluginKey) {
 						Plugin value = (Plugin) entry.Value;
-						if ((value == this.firstPlugin) || (value.prevInList != null) || (value.nextInList != null)) {
-							output.WriteValue("@@"+key.ToString(), value);
-						} else {
-							output.WriteValue("@@"+key.ToString()+"*", value);
+						if (!value.IsDeleted) {
+							if ((value == this.firstPlugin) || (value.prevInList != null) || (value.nextInList != null)) {
+								output.WriteValue("@@"+key.ToString(), value);
+							} else {
+								output.WriteValue("@@"+key.ToString()+"*", value);
+							}
 						}
 					}
 				}

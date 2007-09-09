@@ -55,34 +55,39 @@ namespace SteamEngine {
 
 		//the first trigger that throws an exceptions terminates the other ones that way
 		public object Run(TriggerKey tk, ScriptArgs sa) {
-			object retVal = null;
-			TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
-			if (scriptedTriggers != null) {
-				retVal = scriptedTriggers.Run(this, tk, sa);
-			}
+			if (!isDeleted) {
+				object retVal = null;
+				TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
+				if (scriptedTriggers != null) {
+					retVal = scriptedTriggers.Run(this, tk, sa);
+				}
 
-			PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
-			if (compiledTriggers != null) {
-				retVal = compiledTriggers.Run(this, tk, sa);
+				PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
+				if (compiledTriggers != null) {
+					retVal = compiledTriggers.Run(this, tk, sa);
+				}
+				return retVal;
 			}
-			return retVal;
+			return null;
 		}
 		
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
 		public object TryRun(TriggerKey tk, ScriptArgs sa) {
 			object retVal = null;
-			TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
-			if (scriptedTriggers != null) {
-				retVal = scriptedTriggers.TryRun(this, tk, sa);
-			}
-			PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
-			if (compiledTriggers != null) {
-				try {
-					retVal = compiledTriggers.Run(this, tk, sa);
-				} catch (FatalException) {
-					throw;
-				} catch (Exception e) {
-					Logger.WriteError(e);
+			if (!isDeleted) {
+				TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
+				if (scriptedTriggers != null) {
+					retVal = scriptedTriggers.TryRun(this, tk, sa);
+				}
+				PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
+				if (compiledTriggers != null) {
+					try {
+						retVal = compiledTriggers.Run(this, tk, sa);
+					} catch (FatalException) {
+						throw;
+					} catch (Exception e) {
+						Logger.WriteError(e);
+					}
 				}
 			}
 			return retVal;
