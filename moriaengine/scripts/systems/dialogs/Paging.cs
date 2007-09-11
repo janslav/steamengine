@@ -32,14 +32,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		new IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage);		
 	}
 
-	[Remark("The ancestor of all generated classes that manage and return the paged data to display")]
-	public abstract class AbstractDataView : IPageableCollection<IDataFieldView> {
-		[Remark("Implement the method to return an initialized instance of AbstractPage. This "+
-				"should be then used in foreach block or somehow (as an IEnumerable)")]
-		public abstract IEnumerable<IDataFieldView> GetPage(int firstLineIndex, int pageSize);
+	[Remark("The ancestor of all generated classes that manage and return the paged data to display."+
+			"It implements two interfaces - first for paging the data fields, second for paging the action buttons"+
+			"both types will be available by two similar GetPage methods.")]
+	public abstract class AbstractDataView : IPageableCollection<IDataFieldView>, IPageableCollection<ButtonDataFieldView> {
+		[Remark("Implement the method to return an initialized instance of AbstractPage. This " +
+				"should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields")]
+		IEnumerable<IDataFieldView> IPageableCollection<IDataFieldView>.GetPage(int firstLineIndex, int maxFieldsOnPage) {
+			return DataFieldsPage(firstLineIndex, maxFieldsOnPage);
+		}
+
+		[Remark("Similar as the previous method but for iterating over the action buttons pages")]
+		IEnumerable<ButtonDataFieldView> IPageableCollection<ButtonDataFieldView>.GetPage(int firstLineIndex, int maxButtonsOnPage) {
+			return ActionButtonsPage(firstLineIndex, maxButtonsOnPage);
+		}
+		
+		[Remark("This will be the real implementation of GetPage for data fields")]
+		protected abstract IEnumerable<IDataFieldView> DataFieldsPage(int firstLineIndex, int maxLinesOnPage);
+		[Remark("This will be the real implementation of GetPage for action buttons")]
+		protected abstract IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
 
 		[Remark("The OutOfBounds guard will be implemented later")]
 		public abstract int LineCount { get; }
+
+		[Remark("Name that will be displayed in the Info dialog headline - description of the infoized class")]
+		public abstract string Name {get;}
 
 		#region IPageableCollection Members
 		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
@@ -59,10 +76,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("This method will be used by IPageableCollection to prepare the Enumerator" +
 				   "- set the indices.")]
-			public AbstractPage(int startIndex, int pageSize) {
+			public AbstractPage(int startIndex, int maxFiledsOnPage) {
 				//initialize indices and prepare for usage
 				this.nextIndex = startIndex;
-				this.upperBound = startIndex + pageSize;				
+				this.upperBound = startIndex + maxFiledsOnPage;				
 			}
 
 			#region IEnumerable<IDataFieldView> Members
@@ -111,7 +128,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 			#endregion
-		}
+		}			
 	}
 
 	[Remark("Wrapper class for List<T> which allows us to use the paging")]
@@ -147,7 +164,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private T current;
 			public Page(int startIndex, int pageSize, List<T> wrappedList) {
 				this.nextIndex = startIndex; //index of the first item from the list tht will be returned
-				this.upperBound = startIndex + pageSize; //index of the first from the list tht will NOT be returned (the upper bound)
+				this.upperBound = startIndex + pageSize; //index of the first item from the list tht will NOT be returned (the upper bound)
 				this.wrappedList = wrappedList; //the list itself, for getting the items :)
 			}
 

@@ -22,7 +22,7 @@ using System.Collections.Generic;
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Simple class for testing the info dialogs")]
-	[ViewableClass]
+	[ViewableClass("SimpleClass")]
 	public class SimpleClass {
 		public string foo;
 
@@ -37,10 +37,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Class returning pages for the dialog.")]
 	public class SimpleClassDataView : AbstractDataView {
-		public override IEnumerable<IDataFieldView> GetPage(int firstLineIndex, int pageSize) {
-			SimpleClassPage scp = new SimpleClassPage(firstLineIndex, pageSize);
-			return scp;
+		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {
+			SimpleClassActionButtonsPage buttonsPage = new SimpleClassActionButtonsPage(firstLineIndex, maxButtonsOnPage);
+			return (IEnumerable<ButtonDataFieldView>)buttonsPage;
 		}
+
+		protected override IEnumerable<IDataFieldView> DataFieldsPage(int firstLineIndex, int maxLinesOnPage) {
+			SimpleClassDataFieldsPage fieldsPage = new SimpleClassDataFieldsPage(firstLineIndex, maxLinesOnPage);
+			return fieldsPage;
+		}		
 
 		public override int LineCount {
 			get {
@@ -48,24 +53,52 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("This class will be automatically generated - the MoveNext method ensures the correct " +
-			" iteration on all the IDataFieldViews of the ViewableClass. It makes sure the upperBound " +
-			"won't be reached")]
-		public class SimpleClassPage : AbstractPage {
-			public SimpleClassPage(int firstLineIndex, int pageSize) : base(firstLineIndex,pageSize) {
+		public override string Name {
+			get {
+				return "SimpleClass";
 			}
+		}
 
+		[Remark("This class will be automatically generated - the MoveNext method ensures the correct " +
+			" iteration on all the data fields of the ViewableClass. It makes sure the upperBound " +
+			"won't be reached")]
+		public class SimpleClassDataFieldsPage : AbstractPage {
+			public SimpleClassDataFieldsPage(int firstLineIndex, int maxFieldsOnPage) : base(firstLineIndex, maxFieldsOnPage) {
+			}
+			
 			public override bool MoveNext() {
 				if(nextIndex < upperBound) {
 					switch(nextIndex) {
 						case 0:
 							current = ReadWriteDataFieldView_SimpleClass_Foo.instance;
-							break;
-						case 1:
+							break;						
+						default:
+							//this happens when there are not enough lines to fill the whole page
+							//or if we are beginning with the index larger then the overall LinesCount 
+							//(which results in the empty page and should not happen)
+							return false;
+					}
+					++nextIndex;//prepare the index for the next round of iteration
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		[Remark("And this one ensures correct iteration over the action buttons of the ViewableClass")]
+		public class SimpleClassActionButtonsPage : AbstractPage {
+			public SimpleClassActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) : base(firstLineIndex, maxButtonsOnPage) {
+			}
+
+			public override bool MoveNext() {
+				if(nextIndex < upperBound) {
+					switch(nextIndex) {						
+						case 0:
 							current = ButtonDataFieldView_SimpleClass_SomeMethod.instance;
 							break;
 						default:
-							//this happens if there are not enough lines to fill the whole page
+							//this happens when there are not enough lines to fill the whole page
 							//or if we are beginning with the index larger then the overall LinesCount 
 							//(which results in the empty page and should not happen)
 							return false;

@@ -519,8 +519,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Only leaf components or another GUTAMatrix can be added here...")]
 		internal override void AddComponent(GUTAComponent child) {
-			if ((child is GUTATable) || (child is GUTAColumn)) {
-				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " into the GUTAColumn. Use the GUTAMatrix or leaf components instead!");
+			if ((child is GUTAMatrix) || (child is GUTAColumn)) {
+				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " into the GUTAColumn. Use the GUTATable or leaf components instead!");
 			}			
 			AddNewChild(child);
 		}
@@ -532,7 +532,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (((GUTATable)parent).Transparent) {//the parent table is set to be transparent
 				SetTransparency();//make it transparent after writing out
 			}
-			//write children (another inner GUTAMatrix or leaf components)
+			//write children (another inner GUTATable or leaf components)
 			WriteChildren();
 		}
 
