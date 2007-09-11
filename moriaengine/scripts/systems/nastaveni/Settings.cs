@@ -160,9 +160,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Decorate your class by this attribute if you want it to be viewable by info dialogs.")]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]	
 	public class ViewableClassAttribute : Attribute {
+		[Remark("The name that will be displayed in the headline of the infodialog")]
+		private string name;
+		
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
 		//no params constructor
 		public ViewableClassAttribute() {
-		}		
+		}
+
+		public ViewableClassAttribute(string name) {
+			this.name = name;
+		}
 	}
 
 	[Summary("Decorate amember of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs."+
@@ -194,18 +207,4 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.name = name;
 		}
 	}
-
-	/* pro priklad takto:
-	 * 
-	 *	[ViewableClass]
-		public static SimpleClass {
-			public string foo;
-	 *		[Button]
-			public void SomeMethod() {
-			}
-		}
-	 * 
-	 * napis ipageablecolelction kterej vrati tenhle jeden datafieldview foo
-	 * button pridej do ty pageablecollection*/ 
-
 }
