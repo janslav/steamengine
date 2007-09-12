@@ -117,9 +117,11 @@ namespace SteamEngine.CompiledScripts {
 				retVal.ReturnType = new CodeTypeReference(typeof(object));
 
 				if (triggerMethods.Count > 0) {
+					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning disable 168"));
 					retVal.Statements.Add(new CodeVariableDeclarationStatement(
 						typeof(object[]),
 						"argv"));
+					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning restore 168"));
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
 					foreach (MethodInfo mi in triggerMethods) {

@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_DClick(AbstractCharacter from) {
 			Character src = from as Character;
 			if (src != null) {
-				if (src.CurrentSkill != null) {
+				if (src.currentSkill != null) {
 					src.AbortSkill();
 				}
 				src.currentSkillTarget2 = this;

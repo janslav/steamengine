@@ -187,7 +187,8 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This method fires the @skillselect triggers. "
 		+"Gets usually called immediately after the user clicks on the button in skillgump or uses the useskill macro")]
 		public bool Trigger_Select(Character self) {
-			if (self==null) return false;
+			if (self.Flag_Dead) 
+				return true;
 			bool cancel=false;
 			ScriptArgs sa = new ScriptArgs(self, Id);
 			cancel=TryCancellableSkillTrigger(self, tkSelect, sa);
@@ -302,11 +303,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void DelaySkillStroke(double seconds, Character self) {
-			self.DelaySkillStroke(seconds, this);
+			self.DelaySkillStroke(seconds);
 		}
 
 		public void DelaySkillStroke(Character self) {
-			self.DelaySkillStroke(GetDelayForChar(self), this);
+			self.DelaySkillStroke(GetDelayForChar(self));
 		}
 
 		//[Summary("This method fires the @skillMakeItem triggers. "

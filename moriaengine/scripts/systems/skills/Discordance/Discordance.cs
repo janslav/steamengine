@@ -102,21 +102,21 @@ namespace SteamEngine.CompiledScripts {
 					skillTarget.AddPluginAsSimple(effectPluginKey, plugin);
 				}
 			}
-			self.CurrentSkill = null;
+			self.currentSkill = null;
 		}
 		
 		public override void Fail(Character self) {
 			if (!this.Trigger_Fail(self)) {
-				//self.currentSkillTarget.Attack(self) - nebo neco takovyho, proste potvoru poslat na me nebo zvysit AGGRO
+				self.Trigger_HostileAction(self);
 			}
-			self.CurrentSkill = null;
+			self.currentSkill = null;
 		}
 		
 		protected internal override void Abort(Character self) {
 			if (!this.Trigger_Abort(self)) {
 				self.SysMessage("Oslabovani bylo predcasne preruseno.");
 			}
-			self.CurrentSkill = null;
+			self.currentSkill = null;
 		}
 	}
 
@@ -133,12 +133,12 @@ namespace SteamEngine.CompiledScripts {
 			if (targetted.IsPlayer) {
 				self.SysMessage("Zameruj jenom monstra!");
 				return false;
-			} else if (self.CurrentSkill != null) {
+			} else if (self.currentSkill != null) {
 				self.ClilocSysMessage(500118);                    //You must wait a few moments to use another skill.
 				return false;
 			} else if (targetted.HasPlugin(DiscordanceSkillDef.effectPluginKey)) {
 				self.SysMessage("Cil je jiz oslaben.");
-				self.CurrentSkill = null;
+				self.currentSkill = null;
 				return false;
 			}
 			self.SelectSkill((int)SkillName.Musicianship);

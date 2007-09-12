@@ -35,6 +35,8 @@ namespace SteamEngine.CompiledScripts {
 		FreedPacketGroup hairItemsPackets;
 		bool hasHairItems = true;
 
+		CharacterDef charDef;
+
 		public override void GetNameCliloc(out uint id, out string argument) {
 			if (this.ownerName != null) {
 				id = 1070702; //a corpse of ~1_CORPSENAME~
@@ -67,6 +69,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void InitFromChar(Character dieingChar) {
+			this.charDef = dieingChar.def as CharacterDef;
 			this.Amount = dieingChar.Model;
 			this.Direction = dieingChar.Direction;
 			this.Color = dieingChar.Color;
@@ -89,12 +92,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 			AbstractItem pack = dieingChar.Backpack;
 			foreach (Item inBackpack in pack) {
-				if (inBackpack.CanFallToCorpse()) {
+				if (inBackpack.CanFallToCorpse) {
 					inBackpack.Cont = this;
 				}
 			}
 			foreach (Item equipped in dieingChar.GetVisibleEquip()) {
-				if (equipped.CanFallToCorpse() && equipped != pack && equipped != hair && equipped != beard) {
+				if (equipped.CanFallToCorpse && equipped != pack && equipped != hair && equipped != beard) {
 					equipped.Cont = this;
 					if (equippedItems == null) {
 						equippedItems = new Dictionary<PacketSender.ICorpseEquipInfo, AbstractItem>();
@@ -311,6 +314,12 @@ namespace SteamEngine.CompiledScripts {
 		public ushort BeardColor {
 			get {
 				return beardColor;
+			}
+		}
+
+		public CharacterDef CharDef {
+			get {
+				return charDef;
 			}
 		}
 	}

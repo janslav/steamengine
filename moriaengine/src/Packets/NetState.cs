@@ -308,13 +308,19 @@ namespace SteamEngine.Packets {
 				flagsToSend = c.FlagsToSend;
 			}
 		}
-		private bool GetChangedFlags(out bool invisChanges) {
+		private bool GetChangedFlags(out bool invisChanges, out bool warModeChanges) {
 			invisChanges = false;
+			warModeChanges = false;
 			bool retVal = false;
 			AbstractCharacter c = thing as AbstractCharacter;
 			if ((changeflags & NSFlags.Flags) == NSFlags.Flags) {
 				byte newFlagsToSend = c.FlagsToSend;
-				retVal = (this.flagsToSend != newFlagsToSend);
+
+				if ((this.flagsToSend & 0x40) != (newFlagsToSend & 0x40)) {
+					warModeChanges = true;
+				}
+
+				retVal = ((this.flagsToSend &~ 0x40) != (newFlagsToSend &~ 0x40));
 
 				if ((changeflags & NSFlags.Visibility) == NSFlags.Visibility) {
 					invisChanges = true;
@@ -498,12 +504,12 @@ namespace SteamEngine.Packets {
 				intel = c.Int;
 				gender = c.gender;
 				gold = c.Gold;
-				armorClass = c.ArmorClass;
+				armorClass = c.StatusArmorClass;
 				weight = c.Weight;
 				stat1 = c.ExtendedStatusNum1;
 				stat2 = c.ExtendedStatusNum2;
 				stat3 = c.ExtendedStatusNum3;
-				stat4 = c.MindDefense;
+				stat4 = c.StatusMindDefense;
 				stat5 = c.ExtendedStatusNum5;
 				stat6 = c.ExtendedStatusNum6;
 				stat7 = c.ExtendedStatusNum7;
@@ -515,10 +521,10 @@ namespace SteamEngine.Packets {
 			bool retVal = (((changeflags & NSFlags.Stats) == NSFlags.Stats)
 				&&((str != c.Str) || (dex != c.Dex) || (intel != c.Int) ||
 				(gender != c.gender) || (gold != c.Gold) || 
-				(armorClass != c.ArmorClass) ||
+				(armorClass != c.StatusArmorClass) ||
 				(weight != c.Weight) || (stat1 != c.ExtendedStatusNum1) || 
 				(stat2 != c.ExtendedStatusNum2) || (stat3 != c.ExtendedStatusNum3) || 
-				(stat4 != c.MindDefense) || (stat5 != c.ExtendedStatusNum5) || 
+				(stat4 != c.StatusMindDefense) || (stat5 != c.ExtendedStatusNum5) || 
 				(stat6 != c.ExtendedStatusNum6) || (stat7 != c.ExtendedStatusNum7) || 
 				(tithingPoints != c.TithingPoints)));
 
@@ -865,8 +871,8 @@ namespace SteamEngine.Packets {
 			//triggers - @seenewplayer and stuff
 
 			Logger.WriteInfo(NetStateTracingOn, "ProcessCharUpdate "+ch);
-			bool invisChanged;
-			bool flagsChanged = GetChangedFlags(out invisChanged);
+			bool invisChanged, warModeChanges;
+			bool flagsChanged = GetChangedFlags(out invisChanged, out warModeChanges);
 			bool highlightChanged = GetHighlightChanged();
 			bool hitsChanged = GetHitpointsChanged();
 			bool nameChanged = GetNameChanged();
@@ -929,6 +935,9 @@ namespace SteamEngine.Packets {
 						PacketSender.PrepareLocationInformation(myConn);
 						PacketSender.SendTo(myConn, true);
 					}
+					if (warModeChanges) {
+						Prepared.SendWarMode(myConn, ch);
+					}
 					if (posChanged) {
 						Map oldMap = topPoint.GetMap();
 						bool mapChanged = oldMap != chMap;
@@ -984,8 +993,8 @@ namespace SteamEngine.Packets {
 				}
 			}
 
-			if (posChanged || directionChanged || flagsChanged || highlightChanged || invisChanged ||
-					hitsChanged || nameChanged || mountChanged || basePropsChanged) {
+			if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || 
+					invisChanged ||	hitsChanged || nameChanged || mountChanged || basePropsChanged) {
 				int range = Globals.MaxUpdateRange;
 				if (teleported) {
 					RemoveFromViewIfNeeded(topPoint, new Rectangle2D(topPoint, Globals.MaxUpdateRange));
@@ -1068,7 +1077,7 @@ namespace SteamEngine.Packets {
 											propertiesExist = ProcessCharProperties(ch, ref iopc, viewerConn);
 										}
 									}
-									if (posChanged || directionChanged || flagsChanged || highlightChanged || basePropsChanged) {
+									if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || basePropsChanged) {
 										int highlight = (int) ch.GetHighlightColorFor(viewer);
 										BoundPacketGroup myMoving = myMovings[highlight];
 										if (myMoving == null) {

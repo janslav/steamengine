@@ -549,7 +549,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public abstract bool IsInvisible { get; }
+		public abstract bool IsNotVisible { get; }
 
 		public virtual Region Region {
 			get {
@@ -1585,9 +1585,9 @@ namespace SteamEngine {
 
 		internal void ChangedP(Point4D oldP) {
 			Map.ChangedP(this, oldP);
-			AbstractCharacter self = this as AbstractCharacter;//why are you "creating" a src? why dont you take the Globals.src? -tar
+			AbstractCharacter self = this as AbstractCharacter;
 			if (self!=null) {
-				self.StepOnItems();
+				self.Trigger_NewPosition();
 			}
 		}
 

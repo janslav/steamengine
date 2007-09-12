@@ -98,30 +98,30 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Flags]
-	[Remark("Urcuje, jakej rezist se ma aplikovat na dotycny damage.")]
+	[Summary("Urcuje, jakej rezist se ma aplikovat na dotycny damage.")]
 	public enum DamageType : int {
-		[Remark("Damage neredukovano")]
+		[Summary("Damage neredukovano")]
 		Irresistable=0x000000,
-		[Remark("Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)")]
+		[Summary("Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)")]
 		Magic=0x000001,
 		MagicFire=Magic|0x000004,
 		Electric=Magic|0x000008,
 		Acid=Magic|0x000010,
 		Cold=Magic|0x000020,
 		MagicPoison=Magic|0x000040,
-		[Remark("Mystikuv utok")]
+		[Summary("Mystikuv utok")]
 		Mystical=Magic|0x000080,
-		[Remark("Damage redukovano fyzickym rezistem (neplest s armorem)")]
+		[Summary("Damage redukovano fyzickym rezistem (neplest s armorem)")]
 		Physical=0x000002,
-		[Remark("Secne zbrane (mece, sekery) ")]
+		[Summary("Secne zbrane (mece, sekery) ")]
 		Slashing=Physical|0x000100,
-		[Remark("Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)")]
+		[Summary("Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)")]
 		Stabbing=Physical|0x000200,
-		[Remark("Secne bodne zbrane (mece)")]
+		[Summary("Secne bodne zbrane (mece)")]
 		Sharp=Physical|Slashing|Stabbing,
-		[Remark("Tupe zbrane (hole, palcaty)")]
+		[Summary("Tupe zbrane (hole, palcaty)")]
 		Blunt=Physical|0x000400,
-		[Remark("Palne zbrane (luky, kuse)")]
+		[Summary("Palne zbrane (luky, kuse)")]
 		Archery=Physical|0x000800,
 		Bleed=Physical|0x001000,
 
@@ -131,11 +131,130 @@ namespace SteamEngine.CompiledScripts {
 		NonMagicPoison=0x000040
 	}
 
-	public enum WeaponType : int {
-		Blunt,//also bare hands
-		Stabbing,
-		Sword,
-		Axe,
-		Archery
+
+	//Jednorucni (Broad Sword, Cutlass, Katana, Kryss, Long Sword, Scimitar, Short Spear, Spear, Viking Sword, War Fork) - Fencing
+	//Obourucni (Dagger, Axe, Bardiche, Battle Axe, Battle Large Axe, Executioner"s Axe, Double Axe, Halberd, Spear, Two Handed Axe, War Axe)- Swordsmanship
+	//Tupe (Mace, War Mace, Hammer Pick, War Hammer, Maul)- Macefighting
+	//Strelne (Bow, Crossbow, Heavy crossbow)- Archery
+	//Hole (Gnarled staff, Quarter staff, Black staff) - Magery
+	public enum WeaponType : byte {
+		BareHands,//prazdne ruce
+		OneHandBlunt,//jednorucni tupe - mace
+		TwoHandBlunt,//dvourucni tupe - kladiva, hole
+		OneHandSpike,//jednorucni bodne - noze
+		TwoHandSpike,//dvourucni bodne - vidle, ostepy
+		OneHandBlade,//jednorucni bodne/secne - mece
+		TwoHandBlade,//dvourucni bodne/secne - obourucni mece
+		OneHandAxe,//jednorucni secne - sekery
+		TwoHandAxe,//dvourucni secne - sekery
+		ArcheryStand,
+		ArcheryRunning,
+
+		Undefined//NPC s undefined weapontypou na defu budou brat weapontype ze sve skutecne zbrane
+	}
+
+	public enum GenericAnim : byte {
+		Walk=0,
+		Run=1,
+		StandStill=2,
+		RandomIdleAction=3,
+		IdleAction=4,
+		LookAround=5,
+		AttackSwing=6,
+		AttackStab=7,
+		AttackOverhead=8,
+		AttackShoot=9,
+		GetHit=10,
+		FallBackwards=11,
+		FallForwards=12,
+		Block=13, Dodge=13,
+		AttackPunch=14,
+		Bow=15,
+		Salute=16,
+		Drink=17, Eat=17
+	}
+
+	public enum HumanAnim : byte {
+		WalkUnarmed=0,
+		WalkArmed=1,
+		RunUnarmed=2,
+		RunArmed=3,
+		StandStill=4,
+		LookAround=5,
+		LookDown=6,
+		WarMode=7,
+		WarModeWithTwoHandedWeapon=8,
+		AttackSwing=9,
+		AttackStab=10,
+		AttackOverhead=11,
+		AttackTwoHandedOverhead=12,
+		AttackTwoHandedSwing=13,
+		AttackTwoHandedStab=14,
+		WalkWarMode=15,
+		CastForward=16,
+		Cast=17,
+		FireBow=18,
+		FireCrossbow=19,
+		GetHit=20,
+		FallBackwards=21, Die1=21,
+		FallForwards=22, Die2=22,
+		MountedWalk=23,
+		MountedRun=24,
+		MountedStandStill=25,
+		MountedAttackOverhead=26,
+		MountedFireBow=27,
+		MountedFireCrossbow=28,
+		MountedAttackTwohandedOverhead=29,
+		Block=30, Dodge=30,
+		AttackPunch=31,
+		Bow=32,
+		Salute=33,
+		Drink=34, Eat=34,
+		MountedSalute=47,
+		MountedBlock=48,
+		MountedGetHit=49,	//?
+		NumAnims=50
+	}
+	public enum MonsterAnim : byte {
+		Walk=0,
+		StandStill=1,
+		FallBackwards=2, Die1=2,
+		FallForwards=3, Die2=3,
+		Attack=4, Attack1=4,
+		Attack2=5,
+		Attack3=6,
+		Attack4=7,	//bow?
+		Attack5=8,	//xbow?
+		Attack6=9,	//throw?
+		GetHit=10,
+		Cast=11,
+		Summoned=12, Cast2=12, UseBreathWeapon=13, //For dragons, breath fire
+		Cast3=13, CastForward=13,
+		Cast4=14,
+		BlockRight=15,
+		BlockLeft=16,
+		IdleAction=17,
+		LookAround=18,
+		Fly=19,
+		TakeOff=20,
+		GetHitWhileFlying=21,
+		NumAnims=21
+	}
+
+	public enum AnimalAnim : byte {
+		Walk=0,
+		Run=1,
+		StandStill=2,
+		Eat=3,
+		Unknown=4,
+		Attack=5, Attack1=5,
+		Attack2=6,
+		GetHit=7,
+		Die=8,
+		IdleAction=9, IdleAction1=9,
+		IdleAction2=10,
+		LieDown=11, Sleep=11,
+		Die2=12,	//This looks identical to 5 (attack) on all the animals I've tested so far...
+		NumAnims=13
 	}
 }

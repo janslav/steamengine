@@ -186,6 +186,7 @@ namespace SteamEngine {
 			//Region.ResolveLoadedRegions();
 			Map.Init();   //Sectors are created and items sorted on startup. This must be done AFTER DelayedResolver, or it can't tell what's on the ground and what's not.
 			ClassManager.InitScripts();
+			PluginDef.Init();
 			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
 			loading = false;
 			Globals.UnPauseServerTime();
@@ -293,7 +294,7 @@ namespace SteamEngine {
 			GeneratedCodeUtil.UnLoadScripts();//bye-bye to scripted code generators
 			TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
 			ScriptHolder.UnloadAll();//bye-bye to all scripted functions
-			ThingDef.ClearAll();//clear plugindef constructors etc.
+			ThingDef.ClearAll();//clear thingdef constructors etc.
 			PluginDef.ClearAll();//clear plugindef constructors etc.
 			GroundTileType.UnLoadScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
 			AbstractScript.UnloadAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.

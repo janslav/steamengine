@@ -20,20 +20,41 @@ using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
 	public partial class WearableDef : DestroyableDef {
-
+		protected override void LoadScriptLine(string filename, int line, string param, string args) {
+			switch (param) {
+				case "armor":
+				case "minddefense":
+					base.LoadScriptLine(filename, line, param+"vsp", args);
+					base.LoadScriptLine(filename, line, param+"vsm", args);
+					return;
+			}
+			base.LoadScriptLine(filename, line, param, args);
+		}
 	}
 
 	public partial class Wearable : Destroyable {
 
-		public int Armor {
+		public int ArmorVsP {
 			get {
-				return (int) ((Def.Armor * (double) this.Durability) / this.MaxDurability);
+				return (int) ((Def.ArmorVsP * (double) this.Durability) / this.MaxDurability);
 			}
 		}
 
-		public int MindDefense {
+		public int MindDefenseVsP {
 			get {
-				return (int) ((Def.MindDefense * (double) this.Durability) / this.MaxDurability);
+				return (int) ((Def.MindDefenseVsP * (double) this.Durability) / this.MaxDurability);
+			}
+		}
+
+		public int ArmorVsM {
+			get {
+				return (int) ((Def.ArmorVsM * (double) this.Durability) / this.MaxDurability);
+			}
+		}
+
+		public int MindDefenseVsM {
+			get {
+				return (int) ((Def.MindDefenseVsM * (double) this.Durability) / this.MaxDurability);
 			}
 		}
 	}

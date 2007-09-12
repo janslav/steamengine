@@ -26,21 +26,22 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Weapon : Destroyable {
 
 		//at durability 0, attacknumber is halved
-		public int AttackNumber {
+		public int Attack {
 			get {
-				return (int) (Def.AttackNumber - (((Def.AttackNumber * this.Durability) / this.MaxDurability))/2);
+				double attackHalved = Def.Attack/2;
+				return (int) (attackHalved + (((attackHalved * this.Durability) / this.MaxDurability)));
+			}
+		}
+
+		public double Piercing {
+			get {
+				return Def.Piercing;
 			}
 		}
 		
 		public WeaponType WeaponType {
 			get {
 				return Def.WeaponType;
-			}
-		}
-
-		public SkillName CombatSkill {
-			get {
-				return Def.CombatSkill;
 			}
 		}
 
@@ -59,6 +60,12 @@ namespace SteamEngine.CompiledScripts {
 		public int StrikeStopRange {
 			get {
 				return Def.StrikeStopRange;
+			}
+		}
+
+		public double Speed {
+			get {
+				return Def.Speed;
 			}
 		}
 	}

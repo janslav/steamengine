@@ -73,6 +73,8 @@ namespace SteamEngine {
 		public static readonly TriggerKey unAssign=Get("unAssign");
 		
 		public static readonly TriggerKey newPC=Get("newPC");
+
+		public static readonly TriggerKey newPosition=Get("newPosition");
 		
 		public static readonly TriggerKey stackon_Item=Get("stackon_Item");//item trigger
 		public static readonly TriggerKey stackon_Char=Get("stackon_Char");//item trigger

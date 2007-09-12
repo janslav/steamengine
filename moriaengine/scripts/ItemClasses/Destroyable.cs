@@ -30,7 +30,13 @@ namespace SteamEngine.CompiledScripts {
 				return durability;
 			}
 			set {
-				durability = value;
+				if (value != durability) {
+					durability = value;
+					Character cont = this.Cont as Character;
+					if (cont != null) {
+						cont.InvalidateCombatValues();
+					}
+				}
 			}
 		}
 
@@ -39,7 +45,13 @@ namespace SteamEngine.CompiledScripts {
 				return maxDurability;
 			}
 			set {
-				maxDurability = value;
+				if (value != maxDurability) {
+					maxDurability = value;
+					Character cont = this.Cont as Character;
+					if (cont != null) {
+						cont.InvalidateCombatValues();
+					}
+				}
 			}
 		}
 	}

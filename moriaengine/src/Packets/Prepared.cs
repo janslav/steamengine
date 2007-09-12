@@ -195,7 +195,7 @@ namespace SteamEngine.Packets {
 			requestClientVersion.SendTo(c);
 		}
 
-		public static void SendYoureDeathMessage(GameConn c) {
+		public static void SendYouAreDeathMessage(GameConn c) {
 			deathMessages[0].SendTo(c);
 		}
 

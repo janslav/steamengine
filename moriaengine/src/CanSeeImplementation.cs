@@ -136,7 +136,7 @@ namespace SteamEngine {
 			if (target.IsDeleted) {
 				return false;
 			}
-			if (target.IsInvisible) {
+			if (target.IsNotVisible) {
 				return false;
 			}
 			return true;

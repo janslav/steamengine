@@ -16,10 +16,49 @@
 */
 using System;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
+	[SaveableClass]
+	[HasSavedMembers]
+	public class CombatSettings {
 
-	public static class CombatSettings {
+		[SavedMember]
+		public static CombatSettings instance = new CombatSettings();
 
+		[LoadingInitializer]
+		public CombatSettings() {
+		}
+
+		[SaveableData]
+		[Summary("How long should a character remember it's combat targets?")]
+		public double secondsToRememberTargets = 300;
+
+		[SaveableData]
+		public double bareHandsAttack = 10;
+
+		[SaveableData]
+		public double bareHandsPiercing = 100;
+
+		[SaveableData]
+		public double bareHandsSpeed = 100;
+
+		[SaveableData]
+		public int bareHandsRange = 1;
+
+		[SaveableData]
+		public int bareHandsStrikeStartRange = 5;
+
+		[SaveableData]
+		public int bareHandsStrikeStopRange = 10;
+
+		[SaveableData]
+		public double weaponSpeedGlobal = 1.0;
+
+		[SaveableData]
+		public double weaponSpeedNPC = 0.15;
+
+		[SaveableData]
+		public double attackStrModifier = 317;
 	}
 }

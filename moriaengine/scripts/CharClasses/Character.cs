@@ -38,15 +38,19 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public partial class Character : AbstractCharacter {
-		MemoryCollection memories = null;
 		Skill[] skills;//this CAN be null, altough it usually isn't
 		float weight;
+
+		public SkillDef currentSkill;
+		public IPoint3D currentSkillTarget1 = null;
+		public IPoint3D currentSkillTarget2 = null;
+		public Object currentSkillParam = null;
 
 		public override sealed byte FlagsToSend {
 			get {
 				//We don't want to send 0x02 if it is set, so we &0xfd to get rid of it.
 				int ret = 0;	//0xfd is all bits except 0x02.
-				if (IsInvisible) {
+				if (IsNotVisible) {
 					ret |= 0x80;
 				}
 				if (Flag_WarMode) {
@@ -65,7 +69,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//TODO: Make this do something
 		public bool Flag_Dead {
 			get {
 				return ((flags&0x0002)==0x0002);
@@ -119,13 +122,34 @@ namespace SteamEngine.CompiledScripts {
 				return ((flags&0x0020)==0x0020);
 			}
 			set {
-				if (Flag_WarMode!=value) {
-					Trigger_WarModeChange(value);
+				ushort newFlags = (ushort) (value?(flags|0x0020):(flags&~0x0020));
+				if (newFlags != flags) {
+					NetState.AboutToChangeFlags(this);
+					flags = newFlags;
+					Trigger_WarModeChange();
 				}
 			}
 		}
 
-		public override sealed bool IsInvisible {
+		private static TriggerKey warModeChangeTK = TriggerKey.Get("warModeChange");
+		public void Trigger_WarModeChange() {
+			TryTrigger(warModeChangeTK, null);
+			On_WarModeChange();
+		}
+
+		public virtual void On_WarModeChange() {
+		}
+
+		private static TriggerKey visibilityChangeTK = TriggerKey.Get("visibilityChange");
+		public void Trigger_VisibilityChange() {
+			TryTrigger(visibilityChangeTK, null);
+			On_VisibilityChange();
+		}
+
+		public virtual void On_VisibilityChange() {
+		}
+
+		public override sealed bool IsNotVisible {
 			get {
 				return (Flag_InvisByMagic || Flag_Hidden || Flag_Insubst || Flag_Disconnected);
 			}
@@ -136,54 +160,6 @@ namespace SteamEngine.CompiledScripts {
 		public override bool Flag_Riding {
 			get {
 				return ((flags&0x2000)==0x2000);
-			}
-		}
-
-		//method: Trigger_WarModeChange
-		//this method fires the @warmodechange trigger
-		public void Trigger_WarModeChange(bool changeTo) {
-			ThrowIfDeleted();
-
-			bool cancel=false;
-			ScriptArgs sa;
-			if (changeTo) {
-				sa = new ScriptArgs(this, 1);
-			} else {
-				sa = new ScriptArgs(this, 0);
-			}
-			cancel=TryCancellableTrigger(TKwarModeChange, sa);
-			if (!cancel) {
-				//@warModeChange did not return 1
-				On_WarModeChange(changeTo);
-			}
-		}
-
-		public static readonly TriggerKey TKwarModeChange=TriggerKey.Get("warModeChange");
-
-		public virtual void On_WarModeChange(bool changeTo) {
-			if ((flags&0x40)==0x40) {
-				//we had warmode on
-				if (!changeTo) {
-					NetState.AboutToChangeFlags(this);
-					flags=(ushort) (flags&~0x40);
-					if (IsPlayer && Conn!=null) {
-						//PacketSender.PrepareWarMode(this);
-						//PacketSender.SendTo(Conn, true);
-
-						Packets.Prepared.SendWarMode(Conn, this);
-					}
-				}//else no change
-			} else {
-				if (changeTo) {
-					//change it
-					NetState.AboutToChangeFlags(this);
-					flags=(ushort) (flags|0x40);
-					if (IsPlayer && Conn!=null) {
-						//PacketSender.PrepareWarMode(this);
-						//PacketSender.SendTo(Conn, true);
-						Packets.Prepared.SendWarMode(Conn, this);
-					}
-				}
 			}
 		}
 
@@ -283,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 			if (target.IsDeleted) {
 				return false;
 			}
-			if (target.IsInvisible) {
+			if (target.IsNotVisible) {
 				if (!target.Flag_Disconnected) {
 					return this.IsGM();
 				} else {
@@ -344,6 +320,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		#region status properties
 		public override short Hits {
 			get {
 				return hitpoints;
@@ -427,6 +404,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != strength) {
 					NetState.AboutToChangeStats(this);
+					InvalidateCombatValues();
 					strength=value;
 				}
 			}
@@ -440,6 +418,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != dexterity) {
 					NetState.AboutToChangeStats(this);
+					InvalidateCombatValues();
 					dexterity=value;
 				}
 			}
@@ -452,6 +431,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != intelligence) {
 					NetState.AboutToChangeStats(this);
+					InvalidateCombatValues();
 					intelligence=value;
 				}
 			}
@@ -510,6 +490,7 @@ namespace SteamEngine.CompiledScripts {
 				return 0;
 			}
 		}
+		#endregion status properties
 
 		#region resisty
 		private static TagKey resistMagicTK = TagKey.Get("_resistMagic_");
@@ -762,12 +743,25 @@ namespace SteamEngine.CompiledScripts {
 			CauseDeath((Character) Globals.SrcCharacter);
 		}
 
+		public void On_Death(Character killedBy) {
+		}
+
+		private static TriggerKey deathTK = TriggerKey.Get("death");
+
 		public void CauseDeath(Character killedBy) {
 			if (!Flag_Dead) {
+
+				this.Trigger_HostileAction(killedBy);
+				this.Trigger_Disrupt();
+
+				this.AbortSkill();
+				this.Dismount();
+
+				TryTrigger(deathTK, new ScriptArgs(killedBy));
+				On_Death(killedBy);
+
 				NetState.AboutToChangeHitpoints(this);
 				this.hitpoints = 0;
-
-				this.Dismount();
 
 				CorpseDef cd = this.Def.CorpseDef;
 				Corpse corpse = null;
@@ -778,7 +772,7 @@ namespace SteamEngine.CompiledScripts {
 
 				GameConn myConn = this.Conn;
 				if (myConn != null) {
-					Prepared.SendYoureDeathMessage(myConn);
+					Prepared.SendYouAreDeathMessage(myConn);
 				}
 
 				BoundPacketGroup bpg = null;
@@ -798,7 +792,9 @@ namespace SteamEngine.CompiledScripts {
 
 				if (this.IsPlayer) {
 					this.OModel = this.Model;
+					this.OColor = this.Color;
 					this.Model = 0x192; //make me ghost
+					this.Color = 0; //?
 					this.Flag_Insubst = true;
 					this.Flag_Dead = true;
 				} else {
@@ -810,15 +806,17 @@ namespace SteamEngine.CompiledScripts {
 				if (bpg != null) {
 					bpg.Dispose();
 				}
-
-
 			}
 		}
 
 		public void Resurrect() {
 			if (Flag_Dead) {
-				hitpoints = 1;
+				NetState.AboutToChangeHitpoints(this);
+				this.hitpoints = 1;
 				this.Model = this.OModel;
+				this.ReleaseOModelTag();
+				this.Color = this.OColor;
+				this.ReleaseOColorTag();
 				this.Flag_Insubst = false;
 				this.Flag_Dead = false;
 
@@ -834,17 +832,69 @@ namespace SteamEngine.CompiledScripts {
 				if (c != null) {
 					c.ReturnStuffToChar(this);
 				}
+
+				GameConn myConn = this.Conn;
+				if (myConn != null) {
+					Prepared.SendResurrectMessage(myConn);
+				}
 			}
+		}
+
+		private static TagKey oColorTK = TagKey.Get("_ocolor_");
+		public ushort OColor {
+			get {
+				object o = this.GetTag(oColorTK);
+				if (o != null) {
+					return Convert.ToUInt16(o);
+				}
+				return this.Color;
+			}
+			set {
+				this.SetTag(oColorTK, value);
+			}
+		}
+
+		private void ReleaseOColorTag() {
+			this.RemoveTag(oColorTK);
 		}
 
 		private static TagKey oModelTK = TagKey.Get("_omodel_");
 		public ushort OModel {
 			get {
-				return Convert.ToUInt16(this.GetTag(oModelTK));
+				object o = this.GetTag(oModelTK);
+				if (o != null) {
+					return Convert.ToUInt16(o);
+				}
+				return this.Model;
 			}
 			set {
 				this.SetTag(oModelTK, value);
 			}
+		}
+
+		private void ReleaseOModelTag() {
+			this.RemoveTag(oModelTK);
+		}
+
+		private static TriggerKey disruptTK = TriggerKey.Get("disrupt");
+		public void Trigger_Disrupt() {
+			TryTrigger(disruptTK, null);
+			On_Disruption();
+		}
+
+		public virtual void On_Disruption() {
+
+		}
+
+		private static TriggerKey hostileActionTK = TriggerKey.Get("hostileAction");
+		public void Trigger_HostileAction(Character enemy) {
+			ScriptArgs sa = new ScriptArgs(enemy);
+			TryTrigger(hostileActionTK, sa);
+			On_HostileAction(enemy);
+		}
+
+		public virtual void On_HostileAction(Character enemy) {
+
 		}
 
 		public void Go(Region reg) {
@@ -889,60 +939,6 @@ namespace SteamEngine.CompiledScripts {
 			//Update();
 		}
 
-		public void Go(string s) {
-			Region reg = Region.Get(s);
-			if (reg != null) {
-				P(reg.P);
-				return;
-			}
-
-			//translate s to coordinates
-			bool parse=true;
-			string constant=null;
-			while (parse) {
-				parse=false;
-				string[] args = Utility.SplitSphereString(s);
-				switch (args.Length) {
-					case 1: {
-							if (constant==null) {
-								object o = Constant.GetValue(s);
-								if (o is string) {
-									Logger.WriteDebug("Resolved constant '"+s+"' to "+o);
-									constant=s;
-									s=(string) o;
-									parse=true;
-								} else {
-									throw new SanityCheckException("We found a constant named '"+s+"', but it was a "+o.GetType()+" -- we expected a string.");
-								}
-							} else {
-								throw new SanityCheckException("We found a constant named '"+s+"', but it didn't resolve to anything meaningful.");
-							}
-							break;
-						}
-					case 2: {
-							Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]));
-							break;
-						}
-					case 3: {
-							Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]), TagMath.ParseSByte(args[3]), TagMath.ParseByte(args[4]));
-							break;
-						}
-					case 4: {
-							Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]), TagMath.ParseSByte(args[3]));
-							return;
-						}
-					default: {
-							if (args.Length>4) {
-								throw new SanityCheckException("Too many args ("+args.Length+") to Go(\""+s+"\"), expected no more than 4.");
-							} else { //if (args.Length<2) {
-								throw new SanityCheckException("Too few args ("+args.Length+") to Go(\""+s+"\"), expected at least 2.");
-							}
-						}
-				}
-			}
-			//Update();
-		}
-
 		public void Go(ushort x, ushort y) {
 			P(x, y);
 			Fix();
@@ -959,12 +955,6 @@ namespace SteamEngine.CompiledScripts {
 			P(x, y, z, m);
 			Fix();
 			//Update();
-		}
-
-		public virtual void On_MemoryEquip(Memory memory) {
-		}
-
-		public virtual void On_MemoryUnEquip(Memory memory) {
 		}
 
 		private static AbstractItemDef backpackDef = null;
@@ -994,121 +984,8 @@ namespace SteamEngine.CompiledScripts {
 			return i;
 		}
 
-		public Memory NewMemory(MemoryDef memoryDef) {
-			return memoryDef.Create(this);
-		}
-
-		public void AddMemory(Memory memory) {
-			if (memories == null) {
-				memories = new MemoryCollection(this);
-			}
-			memories.Add(memory);
-
-			ScriptArgs sa = new ScriptArgs(memory, this);
-
-			TryTrigger(TriggerKey.memoryEquip, sa);
-			if (memory.cont == memories) {
-				this.On_MemoryEquip(memory);
-				if (memory.cont == memories) {
-					memory.TryTrigger(TriggerKey.equip, sa);
-					if (memory.cont == memories) {
-						memory.On_Equip(this);
-					}
-				}
-			}
-		}
-
-		public void RemoveMemory(Memory memory) {
-			if (memories != null) {
-				ScriptArgs sa = new ScriptArgs(memory, this);
-				TryTrigger(TriggerKey.memoryUnEquip, sa);
-				On_MemoryUnEquip(memory);
-				memory.TryTrigger(TriggerKey.unEquip, sa);
-				memory.On_UnEquip(this);
-				memories.Remove(memory);
-			}
-		}
-
-		public void AddLoadedMemory(Memory memory) {
-			if (memories == null) {
-				memories = new MemoryCollection(this);
-			}
-			memories.Add(memory);
-		}
-
-		public int MemoryCount {
-			get {
-				if (memories != null) {
-					return memories.count;
-				}
-				return 0;
-			}
-		}
-
-		//public void Memory SrcFindMemoryByLink() {;
-		//	return FindMemoryByLink(Globals.src);
-		//}
-
-		public Memory FindMemory(MemoryDef def) {
-			if (memories != null) {
-				return memories.FindByDef(def);
-			}
-			return null;
-		}
-
-		public Memory FindMemoryByLink(Thing link) {
-			if (memories != null) {
-				return memories.FindByLink(link);
-			}
-			return null;
-		}
-
-		public Memory FindMemoryByFlag(int flag) {
-			if (memories != null) {
-				return memories.FindByFlag(flag);
-			}
-			return null;
-		}
-
-		public IEnumerable Memories {
-			get {
-				if (memories != null) {
-					return memories;
-				}
-				return EmptyEnumerator<Memory>.instance;
-			}
-		}
-
-		//for sphere compatibility
-		public void Equip(Memory memory) {
-			AddMemory(memory);
-		}
-
-		public void Unequip(Memory memory) {
-			RemoveMemory(memory);
-		}
-
-		public Memory Memory() {
-			return FindMemoryByLink(Globals.SrcCharacter);
-		}
-
-		public Memory MemoryFind(Thing link) {
-			return FindMemoryByLink(link);
-		}
-
-		public Memory MemoryFind(int uid) {
-			return FindMemoryByLink(Thing.UidGetThing(uid));
-		}
-
-		public Memory MemoryFindType(int flag) {
-			return FindMemoryByFlag(flag);
-		}
-
 		public override void On_Dupe(Thing t) {
 			Character copyFrom = (Character) t;
-			if (copyFrom.memories != null) {
-				memories = new MemoryCollection(copyFrom.memories);
-			}
 
 			if (copyFrom.skills != null) {
 				skills = new Skill[copyFrom.skills.Length];
@@ -1120,9 +997,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
-			if (memories != null) {
-				memories.SaveMemories();
-			}
 			if (skills != null) {
 				int n = skills.Length;
 				for (ushort i = 0; i<n; i++) {
@@ -1142,10 +1016,6 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 				}
-			}
-
-			if (currentSkill != null) {
-				output.WriteLine("CurrentSkill="+currentSkill.Defname);
 			}
 
 			base.On_Save(output);
@@ -1195,14 +1065,10 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			PropsLine pl = input.TryPopPropsLine("CurrentSkill");
-			if (pl != null) {
-				currentSkill = AbstractSkillDef.ByDefname(pl.value) as SkillDef;
-			}
-
 			base.On_Load(input);
 		}
 
+		#region skills
 		private void InstantiateSkillsArrayIfNull() {
 			if (skills == null) {
 				skills = new Skill[AbstractSkillDef.SkillsCount];
@@ -1226,15 +1092,6 @@ namespace SteamEngine.CompiledScripts {
 			ScriptArgs sa = new ScriptArgs(skill.Id, oldValue, newValue, skill);
 			this.TryTrigger(skillChangeTK, sa);
 			On_SkillChange(skill, oldValue);
-		}
-
-		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
-			switch ((SkillName) skill.Id) {
-				case SkillName.Parry:
-				case SkillName.Tactics:
-					InvalidateCombatValues();
-					break;
-			}
 		}
 
 		public override void On_Create() {
@@ -1295,17 +1152,6 @@ namespace SteamEngine.CompiledScripts {
 			StartSkill((int) skillName);
 		}
 
-		private SkillDef currentSkill;
-
-		public SkillDef CurrentSkill {
-			get {
-				return currentSkill;
-			}
-			set {
-				currentSkill = value;
-			}
-		}
-
 		//the same as currentskill, only backward compatible with sphere
 		public int Action {
 			get {
@@ -1350,9 +1196,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void DelaySkillStroke(double seconds, SkillDef skill) {
-			Sanity.IfTrueThrow((currentSkill == null)||(currentSkill != skill),
-				"DelaySkillStroke of skill "+skill+" called on "+this+", which currently does skill "+this.Action);
+		public void DelaySkillStroke(double seconds) {
+			Sanity.IfTrueThrow((currentSkill == null),
+				"DelaySkillStroke called on "+this+", which currently does no skill.");
 
 			//this.RemoveTimer(skillTimerKey);
 			this.AddTimer(skillTimerKey, new SkillStrokeTimer()).DueInSeconds = seconds;
@@ -1395,6 +1241,7 @@ namespace SteamEngine.CompiledScripts {
 		//public virtual bool On_SkillMakeItem(int id, AbstractItem item) {
 		//	return false;
 		//}
+		#endregion skills
 
 		public Character Owner {
 			get {
@@ -1672,5 +1519,198 @@ namespace SteamEngine.CompiledScripts {
 		//    PacketSender.PrepareEffect(source, this, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
 		//    PacketSender.SendToClientsWhoCanSee(this);
 		//}
+
+		#region combat
+		public override void AttackRequest(AbstractCharacter target) {
+			if (this == target || target == null) {
+				return;
+			}
+
+			WeaponSkillTargetQueuePlugin.AddTarget(this, (Character) target);
+		}
+
+		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
+			switch ((SkillName) skill.Id) {
+				case SkillName.Parry:
+				case SkillName.Tactics:
+					InvalidateCombatValues();
+					break;
+			}
+		}
+
+		CombatCalculator.CombatValues combatValues;
+
+		public int ArmorClassVsP {
+			get {
+				CalculateCombatValues();
+				return combatValues.armorVsP;
+			}
+		}
+
+		public int ArmorClassVsM {
+			get {
+				CalculateCombatValues();
+				return combatValues.armorVsM;
+			}
+		}
+
+		public override short StatusArmorClass {
+			get {
+				CalculateCombatValues();
+				return (short) ((combatValues.armorVsP+combatValues.armorVsM)/2);
+			}
+		}
+
+		private static TagKey armorClassModifierTK = TagKey.Get("_armorClassModifier_");
+		public int ArmorClassModifier {
+			get {
+				return Convert.ToInt32(GetTag(armorClassModifierTK));
+			}
+			set {
+				InvalidateCombatValues();
+				if (value != 0) {
+					SetTag(armorClassModifierTK, value);
+				} else {
+					RemoveTag(armorClassModifierTK);
+				}
+			}
+		}
+
+		public int MindDefenseVsP {
+			get {
+				CalculateCombatValues();
+				return combatValues.mindDefenseVsP;
+			}
+		}
+
+		public int MindDefenseVsM {
+			get {
+				CalculateCombatValues();
+				return combatValues.mindDefenseVsM;
+			}
+		}
+
+		public override short StatusMindDefense {
+			get {
+				CalculateCombatValues();
+				return (short) ((combatValues.mindDefenseVsP+combatValues.mindDefenseVsM)/2);
+			}
+		}
+
+		private static TagKey mindDefenseModifierTK = TagKey.Get("_mindDefenseModifier_");
+		public int MindDefenseModifier {
+			get {
+				return Convert.ToInt32(GetTag(mindDefenseModifierTK));
+			}
+			set {
+				InvalidateCombatValues();
+				if (value != 0) {
+					SetTag(mindDefenseModifierTK, value);
+				} else {
+					RemoveTag(mindDefenseModifierTK);
+				}
+			}
+		}
+
+		public void InvalidateCombatValues() {
+			if (combatValues != null) {
+				Packets.NetState.AboutToChangeStats(this);
+				combatValues = null;
+			}
+		}
+
+		private void CalculateCombatValues() {
+			if (combatValues == null) {
+				Packets.NetState.AboutToChangeStats(this);
+				combatValues = CombatCalculator.CalculateCombatValues(this);
+			}
+		}
+
+		public override bool On_ItemEquip(AbstractCharacter droppingChar, AbstractItem i, bool forced) {
+			if (i is Wearable || i is Weapon) {
+				InvalidateCombatValues();
+			}
+			return base.On_ItemEquip(droppingChar, i, forced);
+		}
+
+		public override bool On_ItemUnEquip(AbstractCharacter pickingChar, AbstractItem i, bool forced) {
+			if (i is Wearable || i is Weapon) {
+				InvalidateCombatValues();
+			}
+ 			return base.On_ItemUnEquip(pickingChar, i, forced);
+		}
+
+		public bool IsPlayerForCombat {
+			get {
+				//TODO: false for hypnomystic
+				return IsPlayer;
+			}
+		}
+
+		public CharacterDef DefForCombat {
+			get {
+				//TODO: monster def for hypnomystic
+				return this.Def;
+			}
+		}
+
+		public Weapon Weapon {
+			get {
+				CalculateCombatValues();
+				return combatValues.weapon;
+			}
+		}
+
+		public double WeaponAttack {
+			get {
+				CalculateCombatValues();
+				return combatValues.attack;
+			}
+		}
+
+		public double WeaponPiercing {
+			get {
+				CalculateCombatValues();
+				return combatValues.piercing;
+			}
+		}
+
+		public WeaponType WeaponType {
+			get {
+				CalculateCombatValues();
+				return combatValues.weaponType;
+			}
+		}
+
+		public int WeaponRange {
+			get {
+				CalculateCombatValues();
+				return combatValues.range;
+			}
+		}
+
+		public int WeaponStrikeStartRange {
+			get {
+				CalculateCombatValues();
+				return combatValues.strikeStartRange;
+			}
+		}
+
+		public int WeaponStrikeStopRange {
+			get {
+				CalculateCombatValues();
+				return combatValues.strikeStopRange;
+			}
+		}
+
+		public double WeaponDelay {
+			get {
+				//TODO: mana-dependant for mystic
+				CalculateCombatValues();
+				return combatValues.delay;
+			}
+		}
+
+		#endregion combat
 	}
 }
