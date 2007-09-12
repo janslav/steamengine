@@ -20,7 +20,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal override void Start(Character self) {
 			if (!this.Trigger_Start(self)) {
-				self.CurrentSkill = this;
+				self.currentSkill = this;
 				DelaySkillStroke(self);
 			}
 		}
@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 					Fail(self);
 				}
 			}
-			self.CurrentSkill = null;
+			self.currentSkill = null;
 		}
 
 		public override void Success(Character self) {
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!this.Trigger_Abort(self)) {
 				self.SysMessage("Identification aborted.");
 			}
-			self.CurrentSkill = null;
+			self.currentSkill = null;
 		}
 	}
 

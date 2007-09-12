@@ -43,10 +43,14 @@ namespace SteamEngine {
 		protected PluginDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			{
-				PluginTriggerGroup ptg;
-				if (triggerGroupsByType.TryGetValue(this.GetType(), out ptg)) {
-					this.compiledTriggers = ptg;
-				}
+				TryActivateCompiledTriggers();
+			}
+		}
+
+		private void TryActivateCompiledTriggers() {
+			PluginTriggerGroup ptg;
+			if (triggerGroupsByType.TryGetValue(this.GetType(), out ptg)) {
+				this.compiledTriggers = ptg;
 			}
 		}
 
@@ -114,10 +118,6 @@ namespace SteamEngine {
 			pluginDefCtors[pluginDefType] = MemberWrapper.GetWrapperFor(ci);
 		}
 
-		internal static void StartingLoading() {
-
-		}
-
 		internal static PluginDef LoadFromScripts(PropsSection input) {
 			Type pluginDefType = null;
 			string typeName = input.headerType.ToLower();
@@ -177,16 +177,21 @@ namespace SteamEngine {
 			base.Unload();
 		}
 
-		internal static void LoadingFinished() {
-			//dump number of loaded instances?
-		}
-
 		internal static void ClearAll() {
 			pluginDefTypesByPluginType.Clear();
 			pluginTypesByPluginDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			pluginDefTypesByName.Clear();
 			pluginDefCtors.Clear();
 			triggerGroupsByType.Clear();
+		}
+
+		internal static void Init() {
+			foreach (AbstractScript script in AbstractScript.byDefname.Values) {
+				PluginDef pd = script as PluginDef;
+				if (pd != null) {
+					pd.TryActivateCompiledTriggers();
+				}
+			}
 		}
 	}
 }

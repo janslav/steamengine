@@ -36,13 +36,11 @@ Def:	//vars on the def
 	int resistSummon = 0
 	int resistDragon = 0
 	int resistParalyse = 0
-	int armor = 0
+	int armorVsM = 0
+	int armorVsP = 0
 	
 	
 Vars:	//vars defined in the class, so they basically do what tags do, but better
-	public IPoint3D currentSkillTarget1 = null
-	public IPoint3D currentSkillTarget2 = null
-	public object currentSkillParam = null
 	short experience=0
 	short hitpoints=100
 	short maxHitpoints=100

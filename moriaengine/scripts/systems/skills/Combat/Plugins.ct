@@ -13,19 +13,9 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate NPC : Character]
-Defs:
-	double weaponAttack = 1
-	double weaponPiercing = 0
-	double weaponDelay = 2.0
-	WeaponType weaponType = WeaponType.Undefined
-	int weaponRange = 1
-	int strikeStartRange = 5
-	int strikeStopRange = 10
-	
-Vars:	//vars defined in the class, so they basically do what tags do, but better
-	private IMovementSettings movementSettings = null 
 
+[PluginTemplate WeaponSkillTargetQueuePlugin : TimerPlugin]
+Vars:
 
-
-
+[PluginTemplate WeaponSkillTargetTrackerPlugin : TimerPlugin]
+Vars:

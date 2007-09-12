@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		public override byte FlagsToSend {
 			get {	//It looks like only 080 (invis) and 020 (static) are actually used
 				int ret = 0;
-				if (IsInvisible) {
+				if (IsNotVisible) {
 					ret |= 0x80;
 				}
 				return (byte) ret;
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override sealed bool IsInvisible {
+		public override sealed bool IsNotVisible {
 			get {
 				return (Flag_Invisible || !IsInVisibleLayer || Flag_Disconnected);
 			}
@@ -136,9 +136,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual bool CanFallToCorpse() {
-			//TODO newbie flag etc.
-			return true;
+		public virtual bool CanFallToCorpse {
+			get {
+				//TODO newbie flag etc.
+				return true;
+			}
 		}
 
 		private static TagKey linkTK = TagKey.Get("link");

@@ -15,9 +15,11 @@
 
 [ThingTemplate Weapon : Destroyable]
 Def:	//vars on the def
-	double attackNumber = 0
-	WeaponType weaponType = 0
-	SkillName combatSkill = SkillName.Swords
-	int range = 0
+	double attack = 50
+	double piercing = 100
+	double speed = 100
+	WeaponType weaponType = WeaponType.BareHands
+	int range = 1
 	int strikeStartRange = 5
 	int strikeStopRange = 10
+	

@@ -15,5 +15,7 @@
 
 [ThingTemplate Wearable : Destroyable]
 Def:	//vars on the def
-	int armor = 0
-	int mindDefense = 0
+	int armorVsP = 0
+	int mindDefenseVsP = 0
+	int armorVsM = 0
+	int mindDefenseVsM = 0

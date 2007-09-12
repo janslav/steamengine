@@ -152,22 +152,19 @@ namespace SteamEngine.Packets {
 		internal void HandleAttack(GameConn c) {
 			packetLenUsed=5;
 			int uid = DecodeInt(1);
-			uid=Thing.UidClearFlags(uid);
-			if (uid==c.CurCharacter.Uid) {
-				c.SuspiciousError("User attempted to attack themselves.");
+			uid = Thing.UidClearFlags(uid);
+
+
+			AbstractCharacter cre = Thing.UidGetCharacter(uid);
+			AbstractCharacter self = c.CurCharacter;
+			if ((cre == null) || (cre.IsDeleted)) {
+				PacketSender.PrepareRemoveFromView(uid);
+				PacketSender.SendTo(c, true);
 			} else {
-				AbstractCharacter cre = Thing.UidGetCharacter(uid);
-				if (cre != null) {
-					if (cre.IsDeleted) {
-						//cre.RemoveFromView();	//should be done by NetState anyways.
-					} else {
-						Temporary.AttackRequest(c.CurCharacter, cre);
-					}
-				} else {
-					c.SuspiciousError("User attempted to attack something that isn't a character.");
-				}
+				self.AttackRequest(cre);
 			}
 		}
+	
 		
 		internal void HandleGodClientDeleteStaticRequest(GameConn c) {
 			//OutputPacketLog();

@@ -170,7 +170,7 @@ namespace SteamEngine.Packets {
 					return;
 				} case 0x05:	{	//client wants to attack
 					HandleAttack(c);
-					break;
+					return;
 				} case 0x06:	{	//client double clicks something
 					HandleDoubleClick(c);
 					return;

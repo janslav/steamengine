@@ -10,6 +10,62 @@ namespace SteamEngine.CompiledScripts {
 
 	[Summary("Methods for simulating of sphereserver API in some cases")]
 	public static class LegacyUtils {
+
+		[SteamFunction]
+		public static void Go(Character self, string s) {
+			Region reg = Region.Get(s);
+			if (reg != null) {
+				self.P(reg.P);
+				return;
+			}
+
+			//translate s to coordinates
+			bool parse=true;
+			string constant=null;
+			while (parse) {
+				parse=false;
+				string[] args = Utility.SplitSphereString(s);
+				switch (args.Length) {
+					case 1: {
+							if (constant==null) {
+								object o = Constant.GetValue(s);
+								if (o is string) {
+									Logger.WriteDebug("Resolved constant '"+s+"' to "+o);
+									constant=s;
+									s=(string) o;
+									parse=true;
+								} else {
+									throw new SanityCheckException("We found a constant named '"+s+"', but it was a "+o.GetType()+" -- we expected a string.");
+								}
+							} else {
+								throw new SanityCheckException("We found a constant named '"+s+"', but it didn't resolve to anything meaningful.");
+							}
+							break;
+						}
+					case 2: {
+							self.Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]));
+							break;
+						}
+					case 3: {
+							self.Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]), TagMath.ParseSByte(args[3]), TagMath.ParseByte(args[4]));
+							break;
+						}
+					case 4: {
+							self.Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]), TagMath.ParseSByte(args[3]));
+							return;
+						}
+					default: {
+							if (args.Length>4) {
+								throw new SanityCheckException("Too many args ("+args.Length+") to Go(\""+s+"\"), expected no more than 4.");
+							} else { //if (args.Length<2) {
+								throw new SanityCheckException("Too few args ("+args.Length+") to Go(\""+s+"\"), expected at least 2.");
+							}
+						}
+				}
+			}
+			//Update();
+		}
+
 		[SteamFunction]
 		public static void AddEvent(ITriggerGroupHolder self, TriggerGroup tg) {
 			self.AddTriggerGroup(tg);

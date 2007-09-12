@@ -113,12 +113,6 @@
     <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
       <Link>CharClasses\Player.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\classes\Memory.cs">
-      <Link>classes\Memory.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\classes\MemoryDef.cs">
-      <Link>classes\MemoryDef.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Container.cs">
       <Link>ItemClasses\Container.cs</Link>
     </Compile>
@@ -308,11 +302,23 @@
     <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
       <Link>systems\skills\ArmsLore.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\CombatCalculator.cs">
+      <Link>systems\skills\Combat\CombatCalculator.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Combat\CombatSettings.cs">
       <Link>systems\skills\Combat\CombatSettings.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Combat\DamageImpl.cs">
-      <Link>systems\skills\Combat\DamageImpl.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Combat\Plugins.Generated.cs">
+      <Link>systems\skills\Combat\Plugins.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillDef.cs">
+      <Link>systems\skills\Combat\WeaponSkillDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetQueuePlugin.cs">
+      <Link>systems\skills\Combat\WeaponSkillTargetQueuePlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs">
+      <Link>systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Discordance\Discordance.cs">
       <Link>systems\skills\Discordance\Discordance.cs</Link>
@@ -487,6 +493,9 @@
     </Compile>
     <Compile Include="..\..\scripts\types\type_weapons.cs">
       <Link>types\type_weapons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\AnimCalculator.cs">
+      <Link>Utils\AnimCalculator.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
       <Link>Utils\ExportUtils.cs</Link>
