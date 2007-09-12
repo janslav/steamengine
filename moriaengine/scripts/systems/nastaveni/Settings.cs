@@ -16,7 +16,10 @@
 */
 using System;
 using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
 using SteamEngine.Common;
+
 
 
 namespace SteamEngine.CompiledScripts.Dialogs {
@@ -46,6 +49,109 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("What will happen when the button is pressed?")]
 		void OnButton(object target);				
+	}
+
+	[Remark("The ancestor of all generated classes that manage and return the paged data to display." +
+			"It implements two interfaces - first for paging the data fields, second for paging the action buttons" +
+			"both types will be available by two similar GetPage methods.")]
+	public abstract class AbstractDataView : IPageableCollection<IDataFieldView>, IPageableCollection<ButtonDataFieldView> {
+		[Remark("Implement the method to return an initialized instance of AbstractPage. This " +
+				"should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields")]
+		IEnumerable<IDataFieldView> IPageableCollection<IDataFieldView>.GetPage(int firstLineIndex, int maxFieldsOnPage) {
+			return DataFieldsPage(firstLineIndex, maxFieldsOnPage);
+		}
+
+		[Remark("Similar as the previous method but for iterating over the action buttons pages")]
+		IEnumerable<ButtonDataFieldView> IPageableCollection<ButtonDataFieldView>.GetPage(int firstLineIndex, int maxButtonsOnPage) {
+			return ActionButtonsPage(firstLineIndex, maxButtonsOnPage);
+		}
+
+		[Remark("This will be the real implementation of GetPage for data fields")]
+		protected abstract IEnumerable<IDataFieldView> DataFieldsPage(int firstLineIndex, int maxLinesOnPage);
+		[Remark("This will be the real implementation of GetPage for action buttons")]
+		protected abstract IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
+
+		[Remark("The OutOfBounds guard will be implemented later")]
+		public abstract int LineCount {
+			get;
+		}
+
+		[Remark("Name that will be displayed in the Info dialog headline - description of the infoized class")]
+		public abstract string Name {
+			get;
+		}
+
+		#region IPageableCollection Members
+		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
+			throw new System.Exception("The method or operation is not implemented.");
+		}
+		#endregion
+
+		[Remark("This will be used to return the desired page of objects to be displayed" +
+			"it will also hold all the IDataFieldViews belonging to the ViewableClass")]
+		public abstract class AbstractPage<T> : IEnumerable<T>, IEnumerator<T> {
+			//increased everytime the MoveNext method will be invoked
+			protected int nextIndex;
+			//this is the upper bound (the lines count) - it will never be reached (there is only upperbound-1 fields to display)
+			protected int upperBound;
+			//this is the current field we are displaying - it will be used in Enumerators methods
+			protected T current;
+
+			[Remark("This method will be used by IPageableCollection to prepare the Enumerator" +
+				   "- set the indices.")]
+			public AbstractPage(int startIndex, int maxFiledsOnPage) {
+				//initialize indices and prepare for usage
+				this.nextIndex = startIndex;
+				this.upperBound = startIndex + maxFiledsOnPage;
+			}
+
+			#region IEnumerable<T> Members
+			[Remark("Interface method used for iterating - it will return itself, but prepared for iterating")]
+			public IEnumerator<T> GetEnumerator() {
+				return this;
+			}
+			#endregion
+
+			#region IEnumerable Members
+			[Remark("Interface method used for iterating - it will return itself, but prepared for iterating")]
+			IEnumerator IEnumerable.GetEnumerator() {
+				return this;
+			}
+			#endregion
+
+			#region IEnumerator<T> Members
+			[Remark("Yet another interface property - returns the prepared field for displaying")]
+			public T Current {
+				get {
+					return current;
+				}
+			}
+			#endregion
+
+			#region IDisposable Members
+			[Remark("Do nothing, we don't need to dispose anything in some special way")]
+			public void Dispose() {
+				//we dont care
+			}
+			#endregion
+
+			#region IEnumerator Members
+
+			[Remark("This is the most important method - it will ensure the iterating on the fields " +
+					"belonging to the desired page")]
+			public abstract bool MoveNext();
+
+			public void Reset() {
+				throw new System.Exception("The method or operation is not implemented.");
+			}
+
+			object IEnumerator.Current {
+				get {
+					return current;
+				}
+			}
+			#endregion
+		}
 	}
 
 	[Remark("Abstract class providing basics to display a non editable 'label-value' in the dialog")]

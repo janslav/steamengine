@@ -36,15 +36,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("Class returning pages for the dialog.")]
-	public class SimpleClassDataView : AbstractDataView {
+	public class GeneratedDataView_SimpleClass : AbstractDataView {
 		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {
-			SimpleClassActionButtonsPage buttonsPage = new SimpleClassActionButtonsPage(firstLineIndex, maxButtonsOnPage);
-			return (IEnumerable<ButtonDataFieldView>)buttonsPage;
+			return new SimpleClassActionButtonsPage(firstLineIndex, maxButtonsOnPage);			
 		}
 
 		protected override IEnumerable<IDataFieldView> DataFieldsPage(int firstLineIndex, int maxLinesOnPage) {
-			SimpleClassDataFieldsPage fieldsPage = new SimpleClassDataFieldsPage(firstLineIndex, maxLinesOnPage);
-			return fieldsPage;
+			return new SimpleClassDataFieldsPage(firstLineIndex, maxLinesOnPage);
 		}		
 
 		public override int LineCount {
@@ -62,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("This class will be automatically generated - the MoveNext method ensures the correct " +
 			" iteration on all the data fields of the ViewableClass. It makes sure the upperBound " +
 			"won't be reached")]
-		public class SimpleClassDataFieldsPage : AbstractPage {
+		public class SimpleClassDataFieldsPage : AbstractPage<IDataFieldView> {
 			public SimpleClassDataFieldsPage(int firstLineIndex, int maxFieldsOnPage) : base(firstLineIndex, maxFieldsOnPage) {
 			}
 			
@@ -70,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if(nextIndex < upperBound) {
 					switch(nextIndex) {
 						case 0:
-							current = ReadWriteDataFieldView_SimpleClass_Foo.instance;
+							current = GeneratedReadWriteDataFieldView_SimpleClass_Foo.instance;
 							break;						
 						default:
 							//this happens when there are not enough lines to fill the whole page
@@ -87,7 +85,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("And this one ensures correct iteration over the action buttons of the ViewableClass")]
-		public class SimpleClassActionButtonsPage : AbstractPage {
+		public class SimpleClassActionButtonsPage : AbstractPage<ButtonDataFieldView> {
 			public SimpleClassActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) : base(firstLineIndex, maxButtonsOnPage) {
 			}
 
@@ -95,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if(nextIndex < upperBound) {
 					switch(nextIndex) {						
 						case 0:
-							current = ButtonDataFieldView_SimpleClass_SomeMethod.instance;
+							current = GeneratedButtonDataFieldView_SimpleClass_SomeMethod.instance;
 							break;
 						default:
 							//this happens when there are not enough lines to fill the whole page
@@ -113,8 +111,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}	
 
 	[Remark("Dataview implementation for the member 'foo' of the SimpleClass")]
-	public class ReadWriteDataFieldView_SimpleClass_Foo : ReadWriteDataFieldView {
-		public static ReadWriteDataFieldView_SimpleClass_Foo instance = new ReadWriteDataFieldView_SimpleClass_Foo();
+	public class GeneratedReadWriteDataFieldView_SimpleClass_Foo : ReadWriteDataFieldView {
+		public static GeneratedReadWriteDataFieldView_SimpleClass_Foo instance = new GeneratedReadWriteDataFieldView_SimpleClass_Foo();
 
 		public override string Name {
 			get {
@@ -135,13 +133,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void SetStringValue(object target, string value) {
-			((SimpleClass)target).foo = (string)ObjectSaver.Load(value);			
+			((SimpleClass)target).foo = (string)ObjectSaver.OptimizedLoad_String(value);			
 		}		
 	}
 
 	[Remark("Dataview implementation for the method 'SomeMethod' of the SimpleClass")]
-	public class ButtonDataFieldView_SimpleClass_SomeMethod : ButtonDataFieldView {
-		public static ButtonDataFieldView_SimpleClass_SomeMethod instance = new ButtonDataFieldView_SimpleClass_SomeMethod();
+	public class GeneratedButtonDataFieldView_SimpleClass_SomeMethod : ButtonDataFieldView {
+		public static GeneratedButtonDataFieldView_SimpleClass_SomeMethod instance = new GeneratedButtonDataFieldView_SimpleClass_SomeMethod();
 
 		public override string Name {
 			get {

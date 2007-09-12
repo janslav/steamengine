@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				foreach(SettingsCategory sCat in catlist) {
 					sCat.ClearSettingValues();					
 				}
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
+				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
 			}
 			//navigacni buttony (paging)
 			if(gr.pressedButton == ImprovedDialog.ID_PREV_BUTTON) {
@@ -262,7 +262,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if(gr.pressedButton == 2) { //info
 				//stackneme se pro navrat
 				DialogStackItem.EnstackDialog(gi);
-				//zobrazit text zprávy (první parametr je nadpis, druhý je zobrazný text)
 				gi.Cont.Dialog(D_Settings_Help.Instance);				
 			}
 		}
