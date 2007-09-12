@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		[SteamFunction]
-		public static void Info(TagHolder self) {
+		public static void OldInfo(TagHolder self) {
 			Character ch = self as Character;
 			if (self==Globals.Src) {
 				ch.SysMessage("Show info on what item, character, static, or map tile?");
