@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"	1 - index ze seznamu tagu ktery bude na strance jako prvni"+
 				"	2 - vyhledavaci kriterium pro jmena tagu"+
 				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
 			List<KeyValuePair<TagKey, Object>> tagList = null;

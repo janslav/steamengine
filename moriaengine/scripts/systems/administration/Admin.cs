@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//seznam lidi z parametru (if any)
 			ArrayList playersList = null;
 			if(sa[2] == null) {

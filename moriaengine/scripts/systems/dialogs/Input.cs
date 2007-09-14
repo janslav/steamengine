@@ -51,10 +51,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }       
 
         [Remark("Method called when clicked on the OK button in the dialog, sending the filled text")]
-        public abstract void Response(Character src, TagHolder focus, string filledText);
+        public abstract void Response(Character sentTo, TagHolder focus, string filledText);
 
         [Remark("Construct method creates the dialog itself")]
-        public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+        public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
             //store all input parameters on the dialog instance
             if(sa == null) { //no params specified, prepare the empty params field 
                 //there will be at least one parameter (the inputted text)
@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
         [Remark("Action called when the input dialog is confirmed. The parameters of the call will be" +
                 "1st - the inputted text, followed by the params the input dialog was called with")]
-        public override void Response(Character src, TagHolder focus, string filledText) {
+        public override void Response(Character sentTo, TagHolder focus, string filledText) {
             //prepend the input text to previous input parameters
             object[] pars = (object[])this.GumpInstance.GetTag(TagKey.Get("input_params"));
             object[] newPars = new object[pars.Length+1]; //create a new bigger array, we need to add a new 0th value...

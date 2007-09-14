@@ -23,14 +23,14 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Musical : Item {
 		private SkillDef musicianshipDef = (SkillDef) SkillDef.ByKey("musicianship");
 
-		public override void On_DClick(AbstractCharacter from) {
-			Character src = from as Character;
-			if (src != null) {
-				if (src.currentSkill != null) {
-					src.AbortSkill();
+		public override void On_DClick(AbstractCharacter ac) {
+			Character clicker = ac as Character;
+			if (clicker != null) {
+				if (clicker.currentSkill != null) {
+					clicker.AbortSkill();
 				}
-				src.currentSkillTarget2 = this;
-				src.SelectSkill((int) SkillName.Musicianship);//select Musicianship
+				clicker.currentSkillTarget2 = this;
+				clicker.SelectSkill((int) SkillName.Musicianship);//select Musicianship
 			}
 		}
 		

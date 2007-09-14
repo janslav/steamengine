@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//zjistit zda bude paging, najit maximalni index na strance
 			int startingColor = Convert.ToInt32(sa[0]); //cislol barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni barva na strance - pro paging

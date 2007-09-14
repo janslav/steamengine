@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			valuesToSet = new Hashtable(); //vycistime tabulku inputfieldu ted
 			
 			//pole obsahujici vsechny ketegorie pro zobrazeni

@@ -38,13 +38,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Display the list of the messages")]
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
-			ArrayList messagesList = MsgsBoard.GetClientsMessages((Character)src);
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+			ArrayList messagesList = MsgsBoard.GetClientsMessages((Character)sendTo);
 			//setrid zpravy (neni li specifikaovano trideni, pouzije se prirozene trideni dle casu)
 			messagesList = MsgsBoard.GetSortedBy(messagesList, (SortingCriteria)sa[0]);
 			sa[2] = messagesList; //ulozime mezi parametry dialogu
 
-			int unreadCnt = MsgsBoard.CountUnread((Character)src);
+			int unreadCnt = MsgsBoard.CountUnread((Character)sendTo);
 			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, messagesList.Count);

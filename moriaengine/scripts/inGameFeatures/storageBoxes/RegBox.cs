@@ -27,13 +27,13 @@ using SteamEngine.LScript;
 namespace SteamEngine.CompiledScripts {
 	public partial class RegBox : Item {
 
-		public override void On_DClick(AbstractCharacter from) {
-			Character src = from as Character;
-			if (src != null) {
-				if (src.currentSkill != null) {
-					src.AbortSkill();
+		public override void On_DClick(AbstractCharacter ac) {
+			Character dClicker = ac as Character;
+			if (dClicker != null) {
+				if (dClicker.currentSkill != null) {
+					dClicker.AbortSkill();
 				}
-				src.SysMessage("pico si na me dclick");
+				dClicker.SysMessage("pico si na me dclick");
 				this.Dialog(Dialogs.D_RegBox.Instance);
 			}
 		}
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			RegBox box = (RegBox) focus;
 			SetLocation(70, 25);
 			ResizePic(0, 0, 5054, 660, 350);
