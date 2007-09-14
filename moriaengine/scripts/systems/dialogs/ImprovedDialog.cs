@@ -282,37 +282,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("This is the paging handler used in LScript where no GumpResponse is present"+
-				"src - player who has seen the dialog; buttNo - pressed button; selPageInpt - filled "+
+				"sentTo - player who has seen the dialog; buttNo - pressed button; selPageInpt - filled "+
 				"number of page to jump to (if any, used only when 'jump page button' was pressed, "+
 				"otherwise is null);"+
 				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;"+
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
 				"itemsCount - total count of diplayed items in the list")]
-		public static bool PagingButtonsHandled(Character src, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(Character sentTo, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
 			DialogStackItem dsi = null;
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
 			switch(buttNo) {
 				case ID_PREV_BUTTON:
-					dsi = DialogStackItem.PopStackedDialog(src.Conn);
+					dsi = DialogStackItem.PopStackedDialog(sentTo.Conn);
 					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
 					dsi.Show();
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
-					dsi = DialogStackItem.PopStackedDialog(src.Conn);
+					dsi = DialogStackItem.PopStackedDialog(sentTo.Conn);
 					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
 					dsi.Show();
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
-					dsi = DialogStackItem.PopStackedDialog(src.Conn);
+					dsi = DialogStackItem.PopStackedDialog(sentTo.Conn);
 					//get the selected page number (absolute value - make it a bit idiot proof :) )
 					int selectedPage = selPageInpt;
 					if(selectedPage < 1) {
 						//idiot proof adjustment
-						src.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
+						sentTo.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;
 					}
 					//count the index of the first item

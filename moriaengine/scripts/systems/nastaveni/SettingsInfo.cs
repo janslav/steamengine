@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);
 			dlg.CreateBackground(1100);
 			dlg.SetLocation(0, 20);

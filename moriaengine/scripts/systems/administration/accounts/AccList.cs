@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
 			List<ScriptedAccount> accList = ScriptedAccount.RetreiveByStr(sa[1].ToString());
 			accList.Sort(AccountComparer.instance);

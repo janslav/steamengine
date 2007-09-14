@@ -926,7 +926,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal abstract bool TriggerSpecific_Click(AbstractCharacter src, ScriptArgs sa);
+		internal abstract bool TriggerSpecific_Click(AbstractCharacter clickingChar, ScriptArgs sa);
 
 		public virtual void GetNameCliloc(out uint id, out string argument) {
 			id = 1042971;

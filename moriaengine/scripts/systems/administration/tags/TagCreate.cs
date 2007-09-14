@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			TagHolder th = (TagHolder)sa[0]; //na koho budeme tag ukladat?
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(src, focus, D_NewTag.Instance,
+			DialogStackItem.EnstackDialog(sendTo, focus, D_NewTag.Instance,
 					th); //tagholder na nejz budeme tag nastavovat, pro priste 
 
 			dlg.WriteOut();

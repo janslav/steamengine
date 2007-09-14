@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			//pole obsahujici vsechny ketegorie pro zobrazeni
 			SettingsCategory[] categories = StaticMemberSaver.GetMembersForSetting();
 

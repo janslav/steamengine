@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"	1 - index ze seznamu timeru ktery bude na strance jako prvni" +
 				"	2 - vyhledavaci kriterium pro jmena timeru(timerkeye)" +
 				"	3 - ulozeny timerlist pro pripadnou navigaci v dialogu")]
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
 			List<KeyValuePair<TimerKey, BoundTimer>> timerList = null;

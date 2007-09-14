@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			object target = args[0];
 			///TODO - just for debugging
 			target = new SimpleClass();

@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter src, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			TagHolder th = (TagHolder)sa[0]; //na koho budeme timer ukladat?
 			Timer tm = (Timer)sa[1]; //timer ktery editujeme
 
@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(src, focus, D_EditTimer.Instance,
+			DialogStackItem.EnstackDialog(sendTo, focus, D_EditTimer.Instance,
 					th, //tagholder na nejz budeme tag nastavovat, pro priste 
 					tm); //timer co editujeme
 			dlg.WriteOut();

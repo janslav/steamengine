@@ -228,10 +228,10 @@ namespace SteamEngine {
 		private class Enumerator : IEnumerator<ElementType> {
 			private ElementType current;
 			private int currIdx;
-			private UIDArray<ElementType> src;
+			private UIDArray<ElementType> source;
 
-			internal Enumerator(UIDArray<ElementType> src) {
-				this.src = src;
+			internal Enumerator(UIDArray<ElementType> source) {
+				this.source = source;
 				Reset();
 			}
 
@@ -252,8 +252,8 @@ namespace SteamEngine {
 			}
 
 			public bool MoveNext() {
-				while (currIdx<=src.HighestElement) {
-					current = src.Get(currIdx);
+				while (currIdx<=source.HighestElement) {
+					current = source.Get(currIdx);
 					currIdx++;
 					if (!Object.Equals(current, default(ElementType))) {
 						return true;
