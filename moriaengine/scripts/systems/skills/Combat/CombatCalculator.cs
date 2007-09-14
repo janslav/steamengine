@@ -370,21 +370,24 @@ namespace SteamEngine.CompiledScripts {
 				//TODO: upravy pro sipy (archery)
 
 			} else {
-				NPCDef npcDef = (NPCDef) self.DefForCombat;
-				retVal.weaponType = npcDef.WeaponType;
-				if (retVal.weaponType == WeaponType.Undefined) {
-					if (weapon == null) {
-						retVal.weaponType = WeaponType.BareHands;
-					} else {
-						retVal.weaponType = weapon.WeaponType;
+				NPCDef npcDef = self.DefForCombat as NPCDef;
+				if (npcDef != null) {
+					retVal.weaponType = npcDef.WeaponType;
+					if (retVal.weaponType == WeaponType.Undefined) {
+						if (weapon == null) {
+							retVal.weaponType = WeaponType.BareHands;
+						} else {
+							retVal.weaponType = weapon.WeaponType;
+						}
 					}
+					retVal.range = npcDef.WeaponRange;
+					retVal.strikeStartRange = npcDef.StrikeStartRange;
+					retVal.strikeStopRange = npcDef.StrikeStopRange;
+					retVal.delay = npcDef.WeaponDelay;
+					retVal.attack = npcDef.WeaponAttack;
+					retVal.piercing = npcDef.WeaponPiercing;
 				}
-				retVal.range = npcDef.WeaponRange;
-				retVal.strikeStartRange = npcDef.StrikeStartRange;
-				retVal.strikeStopRange = npcDef.StrikeStopRange;
-				retVal.delay = npcDef.WeaponDelay;
-				retVal.attack = npcDef.WeaponAttack;
-				retVal.piercing = npcDef.WeaponPiercing;
+				//else ?!
 			}
 
 			retVal.damageType = GetWeaponDamageType(retVal.weaponType);
