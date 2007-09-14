@@ -248,6 +248,12 @@
     <Compile Include="..\..\scripts\systems\dialogs\ImprovedDialog.cs">
       <Link>systems\dialogs\ImprovedDialog.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\info\Info.cs">
+      <Link>systems\dialogs\info\Info.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\info\InfoDialogHandler.cs">
+      <Link>systems\dialogs\info\InfoDialogHandler.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\Input.cs">
       <Link>systems\dialogs\Input.cs</Link>
     </Compile>
@@ -367,6 +373,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\utilities\ColorsDlg.cs">
       <Link>systems\utilities\ColorsDlg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\CompoundDialog.cs">
+      <Link>Tests\CompoundDialog.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Tests\d_test.cs">
       <Link>Tests\d_test.cs</Link>
