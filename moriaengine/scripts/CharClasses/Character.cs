@@ -1640,14 +1640,14 @@ namespace SteamEngine.CompiledScripts {
  			return base.On_ItemUnEquip(pickingChar, i, forced);
 		}
 
-		public bool IsPlayerForCombat {
+		public virtual bool IsPlayerForCombat {
 			get {
 				//TODO: false for hypnomystic
 				return IsPlayer;
 			}
 		}
 
-		public CharacterDef DefForCombat {
+		public virtual CharacterDef DefForCombat {
 			get {
 				//TODO: monster def for hypnomystic
 				return this.Def;
