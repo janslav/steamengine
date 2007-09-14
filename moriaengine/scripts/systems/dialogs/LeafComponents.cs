@@ -27,6 +27,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("This is the ID many gump items have - buttons number, input entries number...")]
 		protected int id;
 
+		[Remark("In which row in the column this component lies?")]
+		protected int columnRow;
+
 		[Remark("Adding any children to the leaf is prohibited...")]
 		internal override sealed void AddComponent(GUTAComponent child) {
 			throw new GUTAComponentCannotBeExtendedException("GUTAcomponent " + this.GetType() + " cannot have any children");
@@ -158,6 +161,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("The Button component class - it handles the button writing to the client")]
 		public class Button : LeafGUTAComponent {
+			protected static string stringDescription = "Button";
+
 			private ButtonGump gumps;
 			private int page = 0;
 			private bool active = true;
@@ -179,19 +184,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we "+
                     " were provided only relative positions")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+				//set the column row (counted from the relative position
+				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
 				//no space here, the used button gumps have themselves some space...
 				xPos += parent.XPos;
-				yPos += parent.YPos;
+				yPos += parent.YPos;				
 			}
 
 			[Remark("Simply write the button (send the method request to the underlaying gump)")]
 			internal override void WriteComponent() {
 				gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
 			}
+
+			public override string ToString() {
+				string linesTabsOffset = "\r\n"; //at least one row
+				//add as much rows as is the row which this item lies in
+				for(int i = 0; i < columnRow; i++) {
+					linesTabsOffset += "\r\n";
+				}
+				for(int i = 0; i < level; i++) {
+					linesTabsOffset += "\t";
+				}
+				return linesTabsOffset+"->"+stringDescription;
+			}
 		}
 
 		[Remark("Create a nice small checkbox")]
 		public class CheckBox : Button {
+			protected new static string stringDescription = "CheckBox";
+
 			private ButtonGump gumps;
 			private bool isChecked;
 
@@ -206,6 +230,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("Set the position which was specified relatively")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+				//set the column row (counted from the relative position
+				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
 				xPos = xPos + parent.XPos;
 				yPos = yPos + parent.YPos;
 			}
@@ -219,6 +248,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("A class representing the radio button")]
 		public class RadioButton : Button {
+			protected new static string stringDescription = "Radio";
+
             private ButtonGump gumps;
 			private bool isChecked;
 
@@ -233,6 +264,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("Set the position which was specified relatively")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+				//set the column row (counted from the relative position
+				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
 				xPos = xPos + parent.XPos;
 				yPos = yPos + parent.YPos;
 			}
@@ -321,7 +357,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("The Button component class - it handles the button writing to the client")]
 		public class Input : LeafGUTAComponent {
-            private LeafComponentTypes type;
+			private LeafComponentTypes type;
 			[Remark("We have either ID of the used (pre-)text, or the text string itself")]
 			private int textId;
 			private string text;
@@ -355,6 +391,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			[Remark("When added, we must recompute the Input Field's absolute position in the dialog (we " +
                     " were provided only relative positions")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+				//set the column row (counted from the relative position
+				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
 				xPos += parent.XPos;
 				yPos += parent.YPos;
 				if (width == 0) {
@@ -396,6 +437,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                             break;
                         }
                 }
+			}
+
+			public override string ToString() {
+				string linesTabsOffset = "\r\n";
+				//add as much rows as is the row which this item lies in
+				for(int i = 0; i < columnRow; i++) {
+					linesTabsOffset += "\r\n";
+				}
+				for(int i = 0; i < level; i++) {
+					linesTabsOffset += "\t";
+				}
+				return linesTabsOffset + "->Input";
 			}
 		}
 	}
@@ -525,6 +578,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("When added to the column we have to specify the position (count the absolute)")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+				//set the column row (counted from the relative position
+				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;
@@ -537,6 +595,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					gump.AddText(xPos, yPos, textHue, textId);
 				}
+			}
+
+			public override string ToString() {
+				string linesTabsOffset = "\r\n";
+				//add as much rows as is the row which this item lies in
+				for(int i = 0; i < columnRow; i++) {
+					linesTabsOffset += "\r\n";
+				}
+				for(int i = 0; i < level; i++) {
+					linesTabsOffset += "\t";
+				}
+				return linesTabsOffset + "->Text(" + text + ")";
 			}
 		}
 
@@ -571,6 +641,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			[Remark("When added to the column we have to specify the position (count the absolute)")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+				//set the column row (counted from the relative position
+				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;
@@ -590,6 +665,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					gump.AddHTMLGump(xPos, yPos, width, height, textId, hasBoundBox, isScrollable);
 				}
+			}
+
+			public override string ToString() {
+				string linesTabsOffset = "\r\n";
+				//add as much rows as is the row which this item lies in
+				for(int i = 0; i < columnRow; i++) {
+					linesTabsOffset += "\r\n";
+				}
+				for(int i = 0; i < level; i++) {
+					linesTabsOffset += "\t";
+				}
+				return linesTabsOffset + "->HTMLText(" + text + ")";
 			}
 		}
 	}
