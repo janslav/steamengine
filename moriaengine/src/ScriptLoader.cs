@@ -28,8 +28,6 @@ using SteamEngine.Persistence;
 	
 namespace SteamEngine {
 	public class ScriptLoader {
-		private static ScriptFile file;
-		
 		private static ScriptFileCollection allFiles;
 
 		private static Dictionary<string, RegisteredScript> scriptTypesByName = 
@@ -132,13 +130,89 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void LoadFile(ScriptFile f) {
-			file = f;
+		internal static void LoadFile(ScriptFile file) {
 			//string filepath = file.Name;
 			//WorldSaver.currentfile = filepath;
 			if (file.Exists) { //this may not be true on rare circumstances (basically, delete script and recompile) not gonna do any better fix
+
 				using (StreamReader stream = file.OpenText()) {
-					PropsFileParser.Load(file.FullName, stream, new LoadSection(LoadSection), new CanStartAsScript(StartsAsScript));
+					foreach (PropsSection section in PropsFileParser.Load(
+							file.FullName, stream, new CanStartAsScript(StartsAsScript))) {
+
+						try {
+							string type = section.headerType.ToLower();
+							string name = section.headerName;
+							if ((name == "")&&(type == "eof")) {
+								continue;
+							}
+
+							switch (type) {
+								case "function":
+									file.Add(SteamEngine.LScript.LScript.LoadAsFunction(section.GetTrigger(0)));
+									if (section.TriggerCount>1) {
+										Logger.WriteWarning(section.filename, section.headerLine, "Triggers in a function are nonsensual (and ignored).");
+									}
+									continue;
+								case "typedef":
+								case "triggergroup":
+								case "events":
+								case "event":
+									file.Add(ScriptedTriggerGroup.Load(section));
+									continue;
+								case "defname":
+								case "defnames":
+								case "constants":
+									foreach (Constant constant in Constant.Load(section)) {
+										file.Add(constant);
+									}
+									continue;
+								//case "template":
+								//	
+								//	//file.Add(ThingDef.LoadFromScripts(input));
+								//	return null;
+								case "dialog":
+								case "gump":
+									IUnloadable gump = ScriptedGump.Load(section);
+									if (gump != null) {//it could have been a "subsection" of dialog, i.e. TEXT or BUTTON part
+										file.Add(gump);
+									}
+									continue;
+								//case "skill":
+								//	Skills.Load(input);
+								//	return null;
+								default:
+									//"itemdef", "characterdef", etc.
+									if (string.Compare(type, "chardef", true) == 0) {
+										type = "CharacterDef";
+									}
+									if (ThingDef.ExistsDefType(type)) {
+										file.Add(ThingDef.LoadFromScripts(section));
+										continue;
+									}
+									if (PluginDef.ExistsDefType(type)) {
+										file.Add(PluginDef.LoadFromScripts(section));
+										continue;
+									}
+									if (AbstractSkillDef.ExistsDefType(type)) {
+										file.Add(AbstractSkillDef.LoadFromScripts(section));
+										continue;
+									}
+									RegisteredScript rs;
+									if (scriptTypesByName.TryGetValue(type, out rs)) {
+										file.Add(rs.deleg(section));
+										continue;
+									}
+
+								break;
+							}
+						} catch (FatalException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteError(section.filename, section.headerLine, e);
+							continue;
+						}
+						Logger.WriteError(section.filename, section.headerLine, "Unknown section "+LogStr.Ident(section));
+					}
 				}
 			}
 		}
@@ -160,86 +234,7 @@ namespace SteamEngine {
 			return false;
 		}
 		
-		private static IUnloadable LoadSection(PropsSection input) {
-			if (input == null) {
-				return null;
-			}
-			try {
-				string type = input.headerType.ToLower();
-				string name = input.headerName;
-				if ((name == "")&&(type == "eof")) {
-					return null;
-				}
-				
-				switch (type) {
-					case "function":
-						file.Add(SteamEngine.LScript.LScript.LoadAsFunction(input.GetTrigger(0)));
-						if (input.TriggerCount>1) {
-							Logger.WriteWarning(input.filename, input.headerLine, "Triggers in a function are nonsensual (and ignored).");
-						}
-						return null;
-					case "typedef":
-					case "triggergroup":
-					case "events":
-					case "event":
-						file.Add(ScriptedTriggerGroup.Load(input));
-						return null;
-					case "defname":
-					case "defnames":
-					case "constants":
-						foreach (Constant constant in Constant.Load(input)) {
-							file.Add(constant);
-						}
-						return null;
-					//case "template":
-					//	
-					//	//file.Add(ThingDef.LoadFromScripts(input));
-					//	return null;
-					case "dialog":
-					case "gump":
-						IUnloadable gump = ScriptedGump.Load(input);
-						if (gump != null) {//it could have been a "subsection" of dialog, i.e. TEXT or BUTTON part
-							file.Add(gump);
-						}
-						return null;
-					//case "skill":
-					//	Skills.Load(input);
-					//	return null;
-					default:
-						//"itemdef", "characterdef", etc.
-						if (string.Compare(type, "chardef", true) == 0) {
-							type = "CharacterDef";
-						}
-						if (ThingDef.ExistsDefType(type)) {
-							file.Add(ThingDef.LoadFromScripts(input));
-							return null;
-						}
-						if (PluginDef.ExistsDefType(type)) {
-							file.Add(PluginDef.LoadFromScripts(input));
-							return null;
-						}
-						if (AbstractSkillDef.ExistsDefType(type)) {
-							file.Add(AbstractSkillDef.LoadFromScripts(input));
-							return null;
-						}
-						RegisteredScript rs;
-						if (scriptTypesByName.TryGetValue(type, out rs)) {
-							file.Add(rs.deleg(input));
-							return null;
-						}
-						
-						break;
-				}
-			} catch (FatalException) {
-				throw;
-			} catch (Exception e) {
-				Logger.WriteError(input.filename, input.headerLine, e);
-				return null;
-			}
-			Logger.WriteError(input.filename,input.headerLine,"Unknown section "+LogStr.Ident(input));
-			return null;
-		}
-		
+	
 		internal static void LoadNewFile(string filename) {
 			FileInfo fi = new FileInfo(filename);
 			if (!fi.Exists) {
