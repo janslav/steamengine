@@ -235,32 +235,34 @@ namespace SteamEngine {
 		}
 
 		internal static void RecompileScripts() {
-			Commands.commandRunning = false;
-			Server.BroadCast("Server is pausing for script recompiling...");
-			Logger.WriteDebug("triggering @shutdown");
-			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
-				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
-			}
-			SetRunLevel(RunLevels.Paused);
-			Globals.PauseServerTime();
-			WorldSaver.Save();
-			Server.AboutToRecompile();
-			UnLoadAll();
-			if (!LoadAll()) {
-				//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
-				//connections & native commands, though SE doesn't care what they type, and whatever it is,
-				//SE calls RetryRecompilingScripts. So, "retry", "recompile", "resync", "r", and "die you evil compiler"
-				//(and whatever else they try) would all make SE attempt to recompile. Except for "exit", which, well,
-				//exits.
-				SetRunLevel(RunLevels.AwaitingRetry);
-				Server.BroadCast("Script recompiling failed, pausing until it has been retried and succeeds.");
-				/*while ((keepRunning) && commandsPaused) {
-					System.Windows.Forms.Application.DoEvents();
-					System.Threading.Thread.Sleep(20);
-				}*/
-			} else {	//If recompiling fails, we do not run this section. Instead, after a recompile succeeds,
-						//the same code will be run in RetryRecompilingScripts.
-				ScriptRecompilingSucceeded();
+			using (StopWatch.StartAndDisplay("Recompiling...")) {
+				Commands.commandRunning = false;
+				Server.BroadCast("Server is pausing for script recompiling...");
+				Logger.WriteDebug("triggering @shutdown");
+				if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
+					Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
+				}
+				SetRunLevel(RunLevels.Paused);
+				Globals.PauseServerTime();
+				WorldSaver.Save();
+				Server.AboutToRecompile();
+				UnLoadAll();
+				if (!LoadAll()) {
+					//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
+					//connections & native commands, though SE doesn't care what they type, and whatever it is,
+					//SE calls RetryRecompilingScripts. So, "retry", "recompile", "resync", "r", and "die you evil compiler"
+					//(and whatever else they try) would all make SE attempt to recompile. Except for "exit", which, well,
+					//exits.
+					SetRunLevel(RunLevels.AwaitingRetry);
+					Server.BroadCast("Script recompiling failed, pausing until it has been retried and succeeds.");
+					/*while ((keepRunning) && commandsPaused) {
+						System.Windows.Forms.Application.DoEvents();
+						System.Threading.Thread.Sleep(20);
+					}*/
+				} else {	//If recompiling fails, we do not run this section. Instead, after a recompile succeeds,
+					//the same code will be run in RetryRecompilingScripts.
+					ScriptRecompilingSucceeded();
+				}
 			}
 		}
 		
