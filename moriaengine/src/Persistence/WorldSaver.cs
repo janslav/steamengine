@@ -210,7 +210,39 @@ namespace SteamEngine.Persistence {
 		private static void InvokeLoad(TextReader stream, string filename) {
 			//currentfile = filename;
 			EOFMarked = false;
-			PropsFileParser.Load(filename, stream, new LoadSection(LoadSection), new CanStartAsScript(StartsAsScript));
+			foreach (PropsSection section in PropsFileParser.Load(
+					filename, stream, new CanStartAsScript(StartsAsScript))) {
+
+				string type = section.headerType.ToLower();
+				string name = section.headerName;
+				if (EOFMarked) {
+					Logger.WriteWarning(section.filename, section.headerLine, "[EOF] reached. Skipping "+section);
+					continue;
+				}
+				if (name == "") {
+					if (type == "eof") {
+						EOFMarked = true;
+						continue;
+						//} else {
+						//    GameAccount.Load(input);
+						//    return null;
+					}
+				}
+				if (type == "globals") {
+					Globals.LoadGlobals(section);
+					continue;
+				} else if (ObjectSaver.IsKnownSectionName(type)) {
+					ObjectSaver.LoadSection(section);
+					continue;
+				} else if (AbstractDef.ExistsDefType(type)) {
+					AbstractDef.LoadSectionFromSaves(section);
+					continue;
+				}
+				Logger.WriteError(section.filename, section.headerLine, "Unknown section "+LogStr.Ident(section));
+			}
+			if (!EOFMarked) {
+				throw new Exception("EOF Marker not reached!");
+			}
 		}
 		
 		public static bool StartsAsScript(string headerType) {
@@ -218,42 +250,6 @@ namespace SteamEngine.Persistence {
 		}
 		
 		private static bool EOFMarked;
-		
-		private static IUnloadable LoadSection(PropsSection input) {
-			if (input == null) {
-				if (!EOFMarked) {
-					throw new Exception("EOF Marker not reached!");
-				}
-				return null;
-			}
-			string type = input.headerType.ToLower();
-			string name = input.headerName;
-			if (EOFMarked) {
-				Logger.WriteWarning(input.filename,input.headerLine,"[EOF] reached. Skipping "+input);
-				return null;
-			}
-			if (name == "") {
-				if (type == "eof") {
-					EOFMarked = true;
-					return null;
-				//} else {
-				//    GameAccount.Load(input);
-				//    return null;
-				}
-			}
-			if (type == "globals") {
-				Globals.LoadGlobals(input);
-				return null;
-			} else if (ObjectSaver.IsKnownSectionName(type)) {
-				ObjectSaver.LoadSection(input);
-				return null;
-			} else if (AbstractDef.ExistsDefType(type)) {
-				AbstractDef.LoadSectionFromSaves(input);
-				return null;
-			}
-			Logger.WriteError(input.filename,input.headerLine,"Unknown section "+LogStr.Ident(input));
-			return null;
-		}
 		
 		static TextReader GetLoadStream(string path, object file) {
 			//object file is either string or Stream or TextWriter

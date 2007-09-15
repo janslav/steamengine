@@ -55,10 +55,11 @@ namespace SteamEngine {
 		//	Logger.WriteError(WorldSaver.CurrentFile,line,s);
 		//}
 		
-		public static void Load(string filename, TextReader stream, LoadSection method, CanStartAsScript isScript) {
+		public static IEnumerable<PropsSection> Load(string filename, TextReader stream, CanStartAsScript isScript) {
 			int line = 0;
 			PropsSection curSection=null;
 			TriggerSection curTrigger=null; //these are also added to curSection...
+
 			while (true) {
 				string curLine = stream.ReadLine();
 				line++;
@@ -75,7 +76,7 @@ namespace SteamEngine {
 					Match m= headerRE.Match(curLine);
 					if (m.Success) {
 						if (curSection!=null) {//send the last section
-							method(curSection);
+							yield return curSection;
 						}
 						GroupCollection gc = m.Groups;
 						curSection=new PropsSection(filename, gc["type"].Value, gc["name"].Value, line, gc["comment"].Value);
@@ -126,9 +127,8 @@ namespace SteamEngine {
 				} else {
 					//end of file
 					if (curSection!=null) {
-						method(curSection);
+						yield return curSection;
 					}
-					method(null); //tell the listening method that this is end of file
 					break;
 				}
 			} //end of (while (true)) - for each line of the file

@@ -3,7 +3,7 @@ Set 15, 2007
 	(tar)		Optimalizace rychlosti nahravani skriptu a sveta.
 		Skripty budiz opet nahravany vsechny, tj. ne jen converted_used adresar. Puvodni cas vcetne resolveEverythingAtStart=1 v .ini byl pres 3 minuty
 			povedlo se mi to stahnout na 11 sekund :) a bez resolveEverythingAtStart to dela asi 6 sekund. (v optimized buildu pochopitelne)
-		
+		Nahravani sveta se zas tak moc nezkratilo... na testovacim vzorku zhruba z 35s na 25s. Ale lepsi nez nic :)
 
 
 Set 7, 2007
