@@ -1,3 +1,11 @@
+Set 15, 2007
+	changed: FieldValue.cs, Constants.cs
+	(tar)		Optimalizace rychlosti nahravani skriptu a sveta.
+		Skripty budiz opet nahravany vsechny, tj. ne jen converted_used adresar. Puvodni cas vcetne resolveEverythingAtStart=1 v .ini byl pres 3 minuty
+			povedlo se mi to stahnout na 11 sekund :) a bez resolveEverythingAtStart to dela asi 6 sekund. (v optimized buildu pochopitelne)
+		
+
+
 Set 7, 2007
 	added: Plugin.cs, PluginDef.cs, atdatd.
 	(tar)		Pridany pluginy. Pri te prilezitosti taky pridana DeepCopyFactory, 

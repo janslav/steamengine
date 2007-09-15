@@ -265,7 +265,7 @@ namespace SteamEngine {
 
 				if (arg.Length > 0) {
 					haveArg = true;
-					argIsNumber = TagMath.TryParseSphereNumber(arg, out argAsNumber);
+					argIsNumber = TagMath.TryParseAnyNumber(arg, out argAsNumber);
 				}
 
 				ScriptHolder func = ScriptHolder.GetFunction(name);

@@ -35,7 +35,7 @@ namespace SteamEngine {
 	//Do not add an access modifier to MainClass - Scripts should not be able to see INI settings, since they're
 	//all changeable right now, and changing them could have unintended effects.
 	
-	public class MainClass {
+	public static class MainClass {
 		
 		//public static Logger logger;
 
@@ -57,9 +57,6 @@ namespace SteamEngine {
 		
 		internal static readonly ArrayList emptyList = new ArrayList(1); //empty arraylist(TM) for various purposes :)
 		//I've changed it from (0) to (1), because if you give it 0 it just uses the default capacity, which is 16. (That's written in the MSDN docs for the ArrayList(int) constructor)
-				
-		public MainClass() {
-		}
 		
 		internal static ConsConn winConsole;
 		
@@ -168,14 +165,17 @@ namespace SteamEngine {
 			//ExportImport.Init();
 
 			if (!Globals.fastStartUp) {
-				TileData.Init();
-				SoundMul.Init();
-				MultiData.Init();
+				using (StopWatch.StartAndDisplay("Loading .idx and .mul files from "+LogStr.File(Globals.mulPath)+"...")) {
+					TileData.Init();
+					SoundMul.Init();
+					MultiData.Init();
+				}
 				ScriptLoader.Load();
 
 				TileData.GenerateMissingDefs();
 				CharData.GenerateMissingDefs();
-			
+
+
 				WorldSaver.Load();
 			}
 			
@@ -199,7 +199,7 @@ namespace SteamEngine {
 			}
 
 			Console.WriteLine("Starting Main Loop");
-			return true;
+			return false;
 		}
 		
 		public static void CollectGarbage() {

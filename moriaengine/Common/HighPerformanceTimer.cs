@@ -122,7 +122,36 @@ namespace SteamEngine.Common {
 			//} else {
 			return (long) (count*dmFrequency);	//(count/1000.0)*dFrequency);
 			//}
-		}
-		
+		}		
 	}
+
+	public class StopWatch : IDisposable {
+		long ticksOnStart = HighPerformanceTimer.TickCount;
+		private bool disposed = false;
+
+		private StopWatch() {
+		}
+
+		public static StopWatch Start() {
+			Logger.indentation += "\t";
+			return new StopWatch();
+		}
+
+		public static StopWatch StartAndDisplay(object message) {
+			Logger.StaticWriteLine(message);
+			Logger.indentation += "\t";
+			return new StopWatch();
+		}
+
+		public void Dispose() {
+			if (!disposed) {
+				long ticksOnEnd = HighPerformanceTimer.TickCount;
+				long diff = ticksOnEnd - ticksOnStart;
+				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length-1);
+				Logger.StaticWriteLine("...took "+HighPerformanceTimer.TicksToTimeSpan(diff).ToString());
+				disposed = true;
+			}
+		}
+	}
+
 }

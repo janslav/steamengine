@@ -47,47 +47,48 @@ namespace SteamEngine {
              *When all development will be finished, the converted directory will be made
              *available again.
              */
-			allFiles.AddAvoided("converted");            
+			allFiles.AddAvoided("converted_used");            
 		}
 		
 		//the method that is called on server initialisation by MainClass.
 		internal static void Load() {
-			ThingDef.StartingLoading();
-			ScriptedTriggerGroup.StartingLoading();
-			Constant.StartingLoading();
-			Map.StartingLoading();
-			//ObjectSaver.StartingLoading();
-			AbstractSkillDef.StartingLoading();
-			
-			
 			ICollection<ScriptFile> files = allFiles.GetAllFiles();
 			long lengthSum = allFiles.LengthSum;
 			long alreadyloaded = 0;
-			Console.WriteLine("Loading "+LogStr.Number(files.Count)+" *.def and *.scp script files. ("+LogStr.Number(lengthSum)+" bytes)");
-			foreach (ScriptFile f in files) {
-				Logger.SetTitle("Loading scripts: "+((alreadyloaded*100)/lengthSum)+" %");
-				Logger.WriteDebug("Loading "+f.Name);
-				LoadFile(f);
-				alreadyloaded += f.Length;
-			}
-			Console.WriteLine("Script files loaded.");
-			Logger.SetTitle("");//reset title of the console
-			
-			//file = new ScriptFile(new FileInfo(Globals.scriptsPath+"\\defaults\\lscript.scp"));
-			//LoadFile();
-			
-			Constant.LoadingFinished();
-			ThingDef.LoadingFinished();
-			ScriptedTriggerGroup.LoadingFinished();
-			Map.LoadingFinished();
-			//ObjectSaver.LoadingFinished();
-			AbstractSkillDef.LoadingFinished();
-			
-			DelayedResolver.ResolveAll();
-			
-			if (Globals.resolveEverythingAtStart) {
-				Constant.ResolveAll();
-				AbstractDef.ResolveAll();
+			using (StopWatch.StartAndDisplay("Loading "+LogStr.Number(files.Count)+" *.def and *.scp script files. ("+LogStr.Number(lengthSum)+" bytes)...")) {
+
+				ThingDef.StartingLoading();
+				ScriptedTriggerGroup.StartingLoading();
+				Constant.StartingLoading();
+				Map.StartingLoading();
+				//ObjectSaver.StartingLoading();
+				AbstractSkillDef.StartingLoading();
+
+				foreach (ScriptFile f in files) {
+					Logger.SetTitle("Loading scripts: "+((alreadyloaded*100)/lengthSum)+" %");
+					Logger.WriteDebug("Loading "+f.Name);
+					LoadFile(f);
+					alreadyloaded += f.Length;
+				}
+				Logger.WriteDebug("Script files loaded.");
+				Logger.SetTitle("");//reset title of the console
+
+				//file = new ScriptFile(new FileInfo(Globals.scriptsPath+"\\defaults\\lscript.scp"));
+				//LoadFile();
+
+				Constant.LoadingFinished();
+				ThingDef.LoadingFinished();
+				ScriptedTriggerGroup.LoadingFinished();
+				Map.LoadingFinished();
+				//ObjectSaver.LoadingFinished();
+				AbstractSkillDef.LoadingFinished();
+
+				DelayedResolver.ResolveAll();
+
+				if (Globals.resolveEverythingAtStart) {
+					Constant.ResolveAll();
+					AbstractDef.ResolveAll();
+				}
 			}
 		}
 		

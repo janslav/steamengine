@@ -134,7 +134,9 @@ namespace SteamEngine.Persistence {
 ////////////////////////////////////////////////////////////////////////////////
 
 		public static void Load() {
-			while (!TryLoad()) {
+			using (StopWatch.StartAndDisplay("Loading world data...")) {
+				while (!TryLoad()) {
+				}
 			}
 		}
 		

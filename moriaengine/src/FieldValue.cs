@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Text.RegularExpressions;
 using System.Collections;
 using System.Reflection;
 using System.IO;
@@ -84,15 +85,10 @@ namespace SteamEngine {
 					if (value != null) {
 						if (value.Length > 0) {
 							//if ((type != null) && ((ConvertTools.IsNumberType(type)) || (fvType == FieldValueType.ThingDefType) || (fvType == FieldValueType.Model))
-							if (ConvertTools.TryParseSphereNumber(value, out retVal)) {
-								//this is a dirty shortcut to make resolving faster, without it would it last forever
-							} else {
+							if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
 								string statement = string.Concat("return ", value);
 								retVal = SteamEngine.LScript.LScript.RunSnippet(
 									tempVI.filename, tempVI.line, Globals.Instance, statement);
-								if (SteamEngine.LScript.LScript.snippetRunner.ContainsRandomExpression) {
-									Logger.WriteWarning(tempVI.filename, tempVI.line, "Only constant values are to be set here, so random expression makes not too much sense...");
-								}
 							}
 						} else {
 							retVal = "";
@@ -123,6 +119,112 @@ namespace SteamEngine {
 					}
 				}
 			}
+		}
+
+
+		public static Regex simpleStringRE= new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
+			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+		private bool ResolveStringWithoutLScript(string value, ref object retVal) {
+			switch (this.fvType) {
+				case FieldValueType.Typeless:
+					if (TryResolveAsString(value, ref retVal)) {
+						return true;
+					} else if (TryResolveAsScript(value, ref retVal)) {
+						return true;
+					} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
+						return true;
+					}
+					break;
+				case FieldValueType.Typed:
+					TypeCode code = Type.GetTypeCode(this.type);
+					switch (code) {
+						case TypeCode.Empty:
+						case TypeCode.DateTime:
+							break;
+						case TypeCode.Boolean:
+							bool b;
+							if (ConvertTools.TryParseBoolean(value, out b)) {
+								retVal = b;
+								return true;
+							}
+							break;
+						case TypeCode.Object:
+							if (typeof(AbstractScript).IsAssignableFrom(type)) {
+								if (TryResolveAsScript(value, ref retVal)) {
+									return true;
+								}
+							}
+							break;
+						case TypeCode.String:
+							string str = value.Trim().Trim('"');
+							if (!str.Contains("<") || !str.Contains(">")) {
+								retVal = str;
+								return true;
+							}
+							break;
+						default: //it's a number
+							if (ConvertTools.TryParseSpecificNumber(code, value, out retVal)) {
+								return true;
+							}
+							break;
+					}
+					break;
+				case FieldValueType.Model:
+					short s;
+					if (ConvertTools.TryParseInt16(value, out s)) {
+						retVal = s;
+						return true;
+					}
+					if (TryResolveAsScript(value, ref retVal)) {
+						if (retVal is ThingDef) {
+							return true;
+						}
+					}
+					break;
+				case FieldValueType.ThingDefType:
+					uint id;
+					if (ConvertTools.TryParseUInt32(value, out id)) {
+						ThingDef def;
+						if (typeof(AbstractItemDef).IsAssignableFrom(this.type)) {
+							def = ThingDef.FindItemDef(id);
+						} else {
+							def = ThingDef.FindCharDef(id);
+						}
+						if (def != null) {
+							retVal = def;
+							return true;
+						}
+					}
+					if (TryResolveAsScript(value, ref retVal)) {
+						if (retVal is ThingDef) {
+							return true;
+						}
+					}
+					break;
+			}
+
+			retVal = null;
+			return false;
+		}
+
+		internal static bool TryResolveAsString(string value, ref object retVal) {
+			Match m = simpleStringRE.Match(value);
+			if (m.Success) {
+				retVal = m.Groups["value"].Value;
+				return true;
+			}
+			return false;
+		}
+
+		internal static bool TryResolveAsScript(string value, ref object retVal) {
+			value = value.Trim().TrimStart('#');
+			AbstractScript script = AbstractScript.Get(value);
+			if (script != null) {
+				retVal = script;
+				return true;
+			}
+			return false;
 		}
 		
 		private FieldValueImpl ResolveTemporaryValueImpl() {
@@ -347,9 +449,11 @@ namespace SteamEngine {
 								retVal.SetValue(
 									TagMath.ConvertTo(elemType, arr.GetValue(i)), i);
 							}
+
 							this.val = TagMath.ConvertTo(type, retVal);//this should actually do nothing, just for check
 							return;
 						}
+
 					}
 					this.val = GetInternStringIfPossible(TagMath.ConvertTo(type, value));
 				}
@@ -427,311 +531,3 @@ namespace SteamEngine {
 		}
 	}
 }
-
-///*
-//	This program is free software; you can redistribute it and/or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation; either version 2 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program; if not, write to the Free Software
-//	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//	Or visit http://www.gnu.org/copyleft/gpl.html
-//*/
-//
-//using System;
-//using System.Collections;
-//using System.Reflection;
-//using System.IO;
-//using System.Globalization;
-//using SteamEngine.Common;
-//
-//namespace SteamEngine {
-//	public abstract class FieldValue {
-//		public readonly string name;
-//		public readonly Type type;
-//		protected object[] value;
-//		protected bool[] unresolved;
-//		const int Current = 0;
-//		const int Default = 1;
-//		
-//		internal FieldValue(FieldValue copyFrom) {
-//			this.name = copyFrom.name;
-//			this.type = copyFrom.type;
-//			this.value = new object[2];
-//			this.unresolved = new bool[2];
-//			this.value[Current] = copyFrom.value[Current];
-//			this.value[Default] = copyFrom.value[Default];
-//			this.unresolved[Current] = copyFrom.unresolved[Current];
-//			this.unresolved[Default] = copyFrom.unresolved[Default];
-//		}
-//		
-//		internal FieldValue(string name, object value, Type type) {
-//			this.name = name;
-//			this.type = type;
-//			this.value = new object[2];
-//			this.unresolved = new bool[2];
-//			this.unresolved[Current] = false;
-//			this.unresolved[Default] = false;
-//			CurrentValue = value;
-//			this.value[Default] = this.value[Current];
-//		}
-//		
-//		public override string ToString() {
-//			return "FieldValue(Name="+name+" Type="+type+" CurrentValue="+value[0]+" DefaultValue="+value[1]+")";
-//		}
-//		
-//		protected object ResolveValue(int which) {
-//			Sanity.IfTrueThrow(!(this.value[which] is string), "ResolveValue was called, but the value to resolve wasn't a string, it was a "+this.value[which].GetType().ToString()+"!");
-//			
-//			string val = (string) this.value[which];
-//			
-//			string[] arr = Utility.SplitSphereString(val);
-//			if (arr.Length > 1) {
-//				return arr;
-//			}
-//		
-//			return Constant.GetWhateverThisIs(val);
-//		}
-//		
-//		protected virtual object ConvertResolvedValue(object value) {
-//			if (value is Constant) return value;
-//			Type objType = value.GetType();
-//			if (type.IsAssignableFrom(objType)) {
-//				return value;
-//			} else if (type.IsSubclassOf(typeof(Array))) {
-//				Type wantedElType = type.GetElementType();
-//			
-//				if (objType.IsSubclassOf(typeof(Array))) {
-//					Type currentElType = objType.GetElementType();
-//					Array srcArr = (Array) value;
-//					int n = srcArr.Length;
-//					Array retVal = Array.CreateInstance(wantedElType, n);
-//					for (int i = 0; i<n; i++) {
-//						retVal.SetValue(
-//							TagMath.ConvertTo(wantedElType, srcArr.GetValue(i)), i);
-//					}
-//					return retVal;
-//				} else {//we just create a single-element array
-//					object el = TagMath.ConvertTo(wantedElType, value);
-//					Array retVal = Array.CreateInstance(wantedElType, 1);
-//					retVal.SetValue(el, 0);
-//					return retVal;
-//				}
-//			}
-//			return TagMath.ConvertTo(type, value);
-//		}
-//		
-//		protected virtual object GetValue(int which) {
-//			if (this.unresolved[which]) {
-//				object obj = ResolveValue(which);
-//				if (type.IsInstanceOfType(obj)) {
-//					this.value[which] = obj;
-//				} else {
-//					this.value[which] = ConvertResolvedValue(obj);
-//				}
-//				this.unresolved[which]=false;
-//			}
-//			return TranslateValue(this.value[which]);
-//		}
-//		protected virtual object TranslateValue(object value) {
-//			if (value is Constant) {
-//				value=((Constant)value).Value;
-//			}
-//			if (type.IsInstanceOfType(value)) {
-//				return value;
-//			} else {
-//				return TagMath.ConvertTo(type, value);
-//			}
-//		}
-//		protected virtual void SetValue(int which, object value) {
-//			if (value==null || value.GetType()==type || value is Constant) {
-//				this.value[which]=value;
-//				this.unresolved[which] = false;
-//			} else if (value is string) {
-//				string vs = value as string;
-//				if (vs.IndexOf('{')>-1) {
-//					this.value[which]=null;
-//					this.unresolved[which]=false;
-//					throw new ScriptException("Invalid "+LogStr.Ident(name)+": "+LogStr.WarningData(value)+" (Non-constant expressions are not allowed here)");
-//					//return;
-//				}
-//				try {
-//					this.value[which] = TagMath.ConvertTo(type, value);
-//				} catch (FormatException) {	//conversion failed
-//					this.value[which] = value;
-//					this.unresolved[which]=true;
-//				} catch (TagMathException) {	//conversion failed
-//					this.value[which] = value;
-//					this.unresolved[which]=true;
-//				} catch (InvalidCastException) {	//conversion failed
-//					this.value[which] = value;
-//					this.unresolved[which]=true;
-//				} catch (OverflowException oe) {
-//					Console.WriteLine("OverflowException in attempt to convert '"+value+"' to '"+type+"': "+oe);
-//					Sanity.StackTrace();
-//				}
-//				
-//			
-//			} else {
-//				this.value[which] = TagMath.ConvertTo(type, value);
-//				this.unresolved[which] = false;
-//			}
-//		}
-//		public object CurrentValue {
-//			get {
-//				return GetValue(Current);
-//			}
-//			set {
-//				SetValue(Current, value);
-//			}
-//		}
-//		
-//		public object DefaultValue {
-//			get {
-//				return GetValue(Default);
-//			}
-//			set {
-//				SetValue(Default, value);
-//			}
-//		}
-//	}
-//	
-//	//Exists so we can do 'if (fieldValue is NormalFieldValue)' (among other things)
-//	internal class NormalFieldValue : FieldValue {
-//		internal NormalFieldValue(FieldValue copyFrom) : base(copyFrom) {
-//		}
-//		internal NormalFieldValue(string name, object value, Type type) : base(name, value, type) {
-//		}
-//		
-//	}
-//	
-//	internal class ModelFieldValue : FieldValue {
-//		internal ModelFieldValue(ModelFieldValue copyFrom) : base(copyFrom) {
-//			
-//		}
-//		
-//		internal ModelFieldValue(string name, object value) : base(name, value, typeof(ushort)) {
-//		}
-//		
-//		internal ModelFieldValue(string name, object value, Type type) : base(name, value, type) {
-//			Sanity.IfTrueThrow(type!=typeof(ushort) && !type.IsSubclassOf(typeof(ushort)), "The type passed for a DefFieldValue must derive from or be AbstractDef. "+type.ToString()+" does not (For "+name+")");
-//		}
-//		/**
-//			Can accept:
-//			1) A string which can be parsed to a ushort
-//			2) A ushort
-//			3) Anything else which TagMath can convert to a ushort
-//			4) A string holding a constant name or defname of a ThingDef
-//			5) A Constant
-//			6) A ThingDef
-//			
-//			The first four are handled by base.SetValue, the last two by this method.
-//		*/
-//		protected override void SetValue(int which, object value) {
-//			if (value==null) {
-//				throw new ScriptException("You can't set a ModelFieldValue ("+name+")'s value(s) to null!");
-//			}
-//			if (value is Constant) {
-//				this.value[which]=value;
-//				this.unresolved[which]=false;
-//			} else if (value is ThingDef) {
-//				this.value[which]=value;
-//				this.unresolved[which]=false;
-//			} else {
-//				base.SetValue(which, value);
-//			}
-//		}
-//		protected override object TranslateValue(object value) {
-//			if (value is Constant) {
-//				return Constant.EvaluateToModel(((Constant)value).Value);
-//			} else if (value is ThingDef) {
-//				return ((ThingDef)value).Model;
-//			} else {
-//				return base.TranslateValue(value);
-//			}
-//		}
-//		
-//		protected override object ConvertResolvedValue(object obj) {
-//			obj=Constant.EvaluateToModel(obj);
-//			if (obj==null) {
-//				return null;
-//			} else if (obj is ushort) {
-//				return obj;
-//			} else {
-//				return base.ConvertResolvedValue(value);
-//			}
-//		}
-//	}
-//
-//	internal class DefFieldValue : FieldValue {
-//		private static Type GDFSType = typeof(AbstractDef);
-//		
-//		internal DefFieldValue(DefFieldValue copyFrom) : base(copyFrom) {
-//			
-//		}
-//		
-//		internal DefFieldValue(string name, object value) : base(name, value, typeof(AbstractDef)) {
-//		}
-//		internal DefFieldValue(string name, object value, Type type) : base(name, value, type) {
-//			Sanity.IfTrueThrow(type!=GDFSType && !type.IsSubclassOf(GDFSType), "The type passed for a DefFieldValue must derive from or be AbstractDef. "+type.ToString()+" does not (For "+name+")");
-//		}
-//		/**
-//			Can accept:
-//			1) A string holding a constant name or defname of a AbstractDef
-//			2) A Constant
-//			3) A AbstractDef
-//			
-//		*/
-//		protected override void SetValue(int which, object value) {
-//			if (value==null) {
-//				base.SetValue(which, null);
-//			} else if (value is Constant) {
-//				this.value[which]=value;
-//				this.unresolved[which]=false;
-//			} else if (value is AbstractDef) {
-//				this.value[which]=value;
-//				this.unresolved[which]=false;
-//			} else {
-//				base.SetValue(which, value);
-//			}
-//		}
-//		
-//		protected override object TranslateValue(object value) {
-//			if (value is Constant) {
-//				return ((Constant)value).Value as AbstractDef;
-//			} else if (value is AbstractDef) {
-//				return ((AbstractDef)value);
-//			} else {
-//				return base.TranslateValue(value);
-//			}
-//		}
-//		
-//		protected override object ConvertResolvedValue(object obj) {
-//			if (obj!=null && !type.IsInstanceOfType(obj)) {	//type is AbstractDef
-//				if (obj is Constant) {
-//					//Constant.EvaluateToDef(((Constant)obj).UnevaluatedValue);
-//				} else if (obj is string) {
-//					throw new SanityCheckException("This DefFieldValue ("+name+")'s ConvertResolveValue was passed a value that's a string - which means it isn't resolved.");
-//				} else if (TagMath.IsNumberType(obj.GetType())) {
-//					if (type==typeof(AbstractItemDef)) {
-//						obj=ThingDef.FindItemDef((uint)TagMath.ConvertTo(typeof(uint), obj));
-//					} else if (type==typeof(AbstractCharacterDef)) {
-//						obj=ThingDef.FindCharDef((uint)TagMath.ConvertTo(typeof(uint), obj));
-//					} else {
-//						throw new SanityCheckException("This DefFieldValue ("+name+") resolved one of its values to a "+obj.GetType()+" ("+obj+"), it was expected to be a "+type.ToString()+".");
-//					}
-//				} else {
-//					throw new SanityCheckException("This DefFieldValue ("+name+") resolved one of its values to a "+obj.GetType()+" ("+obj+"), it was expected to be a "+type.ToString()+".");
-//				}
-//			}
-//			return obj;
-//		}
-//	}
-//}

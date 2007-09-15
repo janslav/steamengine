@@ -27,15 +27,17 @@ namespace SteamEngine.Common {
 	//the commented-out ones are commented out for a reason, do not let them the way they are!
 	public class ConvertTools {
 		protected static ConvertTools instance;
-		
-		public static Regex stringRE= new Regex(@"^""(?<value>.*)""\s*$",                   
+
+		public readonly static Regex stringRE= new Regex(@"^""(?<value>.*)""\s*$",                   
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public static Regex floatRE= new Regex(@"^(?<value>-?\d*\.\d*)\s*$",                
+		public readonly static Regex floatRE= new Regex(@"^(?<value>-?\d*\.\d*)\s*$",                
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public static Regex intRE= new Regex(@"^(?<value>-?\d+)\s*$",                    
+		public readonly static Regex intRE= new Regex(@"^(?<value>-?\d+)\s*$",                    
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public static Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
+		public readonly static Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+		public readonly static CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 
 		//public static Regex timeSpanRE = new Regex(@"^\:(?<value>\d+)\s*$",
 		//changed to match timespan in format like [-]d.hh:mm:ss.ff
@@ -104,7 +106,7 @@ namespace SteamEngine.Common {
 			} else if (IsNumberType(type)) {
 				string asString = obj as String;
 				if (asString != null) {
-					return Convert.ChangeType(ParseSphereNumber(asString), type);
+					return Convert.ChangeType(ParseAnyNumber(asString), type);
 				}
 			}
 			return Convert.ChangeType(obj, type);
@@ -204,14 +206,40 @@ namespace SteamEngine.Common {
 				If s is any other value, a FormatException is thrown.
 		*/
 		public static bool ParseBoolean(string s) {
-			if (s==null) return false;
-			s=s.ToLower();
-			if (s=="true" || s=="1" || s=="on") {
-				return true;
-			} else if (s=="false" || s=="0" || s=="off") {
+			if (s==null) 
 				return false;
+			switch (s.ToLower()) {
+				case "true":
+				case "1":
+				case "on":
+					return true;
+				case "false":
+				case "0":
+				case "off":
+					return false;
 			}
 			throw new FormatException("'"+s+"' is not a valid boolean string (true/1/on/false/0/off).");
+		}
+
+		public static bool TryParseBoolean(string s, out bool retVal) {
+			if (s==null) {
+				retVal = false;
+				return true;
+			}
+			switch (s.ToLower()) {
+				case "true":
+				case "1":
+				case "on":
+					retVal = true;
+					return true;
+				case "false":
+				case "0":
+				case "off":
+					retVal = false;
+					return true;
+			}
+			retVal = false;
+			return false;
 		}
 
 		public static bool ToBoolean(object arg) {
@@ -258,55 +286,146 @@ namespace SteamEngine.Common {
 			FormatException - If input is "", or is not a number.
 			OverflowException - If the format is correct, but it won't fit in the data type we're trying to convert it to.
 		*/
-		public static object ParseSphereNumber(string input) {
+		public static object ParseAnyNumber(string input) {
 			object retVal;
-			if (TryParseSphereNumber(input, out retVal)) {
+			if (TryParseAnyNumber(input, out retVal)) {
 				return retVal;
 			}
 			throw new FormatException("'"+input+"' does not appear to be any kind of number.");
 		}
 
-		public static bool TryParseSphereNumber(string input, out object retVal) {
-			if (input == null) {
+		public static bool TryParseAnyNumber(string input, out object retVal) {
+			if (string.IsNullOrEmpty(input)) {
 				retVal = null;
 				return false;
 			}
 
-			if (input.Length==0) {
-				retVal = null;
-				return false;
-			}
+			try {
+				Match m;
+				if (TryParseSphereHex(input, out retVal)) {
+					return true;
+				}
 
-			Match m = hexRE.Match(input);
-			if (m.Success) {
-				string toConvert = m.Groups["value"].Value;
-				try {
-					retVal = uint.Parse(toConvert, NumberStyles.HexNumber);
+				m = intRE.Match(input);
+				if (m.Success) {
+					string toConvert = m.Groups["value"].Value;
+					try {
+						retVal = int.Parse(toConvert, NumberStyles.Integer, invariantCulture);
+						return true;
+					} catch (OverflowException) {//try a bigger type. If this fails, we give up.
+						retVal = long.Parse(toConvert, NumberStyles.Integer, invariantCulture);
+						return true;
+					}
+				}
+
+				m = floatRE.Match(input);
+				if (m.Success) {
+					retVal = double.Parse(m.Groups["value"].Value, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 					return true;
-				} catch (OverflowException) {//try a bigger type. If this fails, we give up.
-					retVal = ulong.Parse(toConvert, NumberStyles.HexNumber);
-					return true;
+				}
+
+			} catch { }
+
+			retVal = null;
+			return false;
+		}
+
+
+		public static object ParseSpecificNumber(TypeCode typeCode, string input) {
+			if (input.StartsWith("0")) {
+				Match m = hexRE.Match(input);
+				if (m.Success) {
+					string toConvert = m.Groups["value"].Value;
+					switch (typeCode) {
+						case TypeCode.Byte:
+							return Byte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.Int16:
+							return Int16.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.Int32:
+							return Int32.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.Int64:
+							return Int64.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.SByte:
+							return SByte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.UInt16:
+							return UInt16.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.UInt32:
+							return UInt32.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.UInt64:
+							return UInt64.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.Decimal:
+							return (Decimal) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.Double:
+							return (Double) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						case TypeCode.Single:
+							return (Single) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+					}
 				}
 			}
 
-			m = intRE.Match(input);
-			if (m.Success) {
-				string toConvert = m.Groups["value"].Value;
-				try {
-					retVal = int.Parse(toConvert);
-					return true;
-				} catch (OverflowException) {//try a bigger type. If this fails, we give up.
-					retVal = long.Parse(toConvert);
-					return true;
-				}
+			switch (typeCode) {
+				case TypeCode.Byte:
+					return Byte.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.Decimal:
+					return Decimal.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+				case TypeCode.Double:
+					return Double.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+				case TypeCode.Int16:
+					return Int16.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.Int32:
+					return Int32.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.Int64:
+					return Int64.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.Single:
+					return Single.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+				case TypeCode.SByte:
+					return SByte.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.UInt16:
+					return UInt16.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.UInt32:
+					return UInt32.Parse(input, NumberStyles.Integer, invariantCulture);
+				case TypeCode.UInt64:
+					return UInt64.Parse(input, NumberStyles.Integer, invariantCulture);
 			}
+			throw new ArgumentOutOfRangeException("typeCode");
+		}
 
-			m = floatRE.Match(input);
-			if (m.Success) {
-				retVal = double.Parse(m.Groups["value"].Value);
+		public static bool TryParseSpecificNumber(TypeCode typeCode, string input, out object retVal) {
+			try {
+				retVal = ParseSpecificNumber(typeCode, input);
 				return true;
-			}
+			} catch (ArgumentOutOfRangeException aoore) {
+				if ("typeCode".Equals(aoore.ParamName)) {
+					throw;
+				}
+			} catch { }
+			retVal = null;
+			return false;
+		}
 
+		private static bool TryParseSphereHex(object input, out object retVal) {
+			string str = input as string;
+			if (str != null) {
+				return TryParseSphereHex(str, out retVal);
+			}
+			retVal = null;
+			return false;
+		}
+
+		private static bool TryParseSphereHex(string input, out object retVal) {
+			if (input.StartsWith("0")) {
+				Match m = hexRE.Match(input);
+				if (m.Success) {
+					string toConvert = m.Groups["value"].Value;
+					try {
+						retVal = uint.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						return true;
+					} catch (OverflowException) {//try a bigger type. If this fails, we give up.
+						retVal = ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+						return true;
+					}
+				}
+			}
 			retVal = null;
 			return false;
 		}
@@ -325,258 +444,272 @@ namespace SteamEngine.Common {
 
 		#region Double (double)
 		public static double ParseDouble(string input) {
-			return Convert.ToDouble(ParseSphereNumber(input));
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToDouble(o, invariantCulture);
+			}
+			return Double.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 		}
 
 		public static bool TryParseDouble(string input, out Double retVal) {
-			try {
-				retVal = Convert.ToDouble(ParseSphereNumber(input));
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToDouble(o, invariantCulture);
 				return true;
-			} catch (Exception) {
-				retVal = Double.MinValue;
-				return false;
 			}
+			return Double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
 		}
 
 		public static Double ToDouble(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseDouble(asString);
-			} else {
-				return Convert.ToDouble(input);
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToDouble(o, invariantCulture);
 			}
+			return Convert.ToDouble(input, invariantCulture);
 		}
 		#endregion Double
 
-		#region Single
+		#region Single (float)
 		public static Single ParseSingle(string input) {
-			return Convert.ToSingle(ParseSphereNumber(input));
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToSingle(o, invariantCulture);
+			}
+			return Single.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 		}
 
 		public static bool TryParseSingle(string input, out Single retVal) {
-			try {
-				retVal = Convert.ToSingle(ParseSphereNumber(input));
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToSingle(o, invariantCulture);
 				return true;
-			} catch (Exception) {
-				retVal = Single.MinValue;
-				return false;
 			}
+			return Single.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
 		}
 
 		public static Single ToSingle(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseSingle(asString);
-			} else {
-				return Convert.ToSingle(input);
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToSingle(o, invariantCulture);
 			}
+			return Convert.ToSingle(input, invariantCulture);
 		}
 		#endregion Single
 
-		#region Int64 (long)
-		public static long ParseInt64(string input) {
-			return Convert.ToInt64(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseInt64(string input, out Int64 retVal) {
-			try {
-				retVal = Convert.ToInt64(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = Int64.MinValue;
-				return false;
-			}
-		}
-
-		public static Int64 ToInt64(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseInt64(asString);
-			} else {
-				return Convert.ToInt64(input);
-			}
-		}
-		#endregion Int66 (long)
-
-		#region UInt64 (ulong)
-		public static UInt64 ParseUInt64(string input) {
-			return Convert.ToUInt64(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseUInt64(string input, out UInt64 retVal) {
-			try {
-				retVal = Convert.ToUInt64(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = UInt64.MinValue;
-				return false;
-			}
-		}
-
-		public static UInt64 ToUInt64(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseUInt64(asString);
-			} else {
-				return Convert.ToUInt64(input);
-			}
-		}
-		#endregion UInt64 (ulong)
-
-		#region Int32 (int)
-		public static Int32 ParseInt32(string input) {
-			return Convert.ToInt32(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseInt32(string input, out Int32 retVal) {
-			try {
-				retVal = Convert.ToInt32(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = Int32.MinValue;
-				return false;
-			}
-		}
-
-		public static Int32 ToInt32(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseInt32(asString);
-			} else {
-				return Convert.ToInt32(input);
-			}
-		}
-		#endregion Int32 (int)
-
-		#region UInt32 (uint)
-		public static UInt32 ParseUInt32(string input) {
-			return Convert.ToUInt32(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseUInt32(string input, out UInt32 retVal) {
-			try {
-				retVal = Convert.ToUInt32(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = UInt32.MinValue;
-				return false;
-			}
-		}
-
-		public static UInt32 ToUInt32(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseUInt32(asString);
-			} else {
-				return Convert.ToUInt32(input);
-			}
-		}
-		#endregion UInt32 (uint)
-
-		#region Int16 (short)
-		public static Int16 ParseInt16(string input) {
-			return Convert.ToInt16(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseInt16(string input, out Int16 retVal) {
-			try {
-				retVal = Convert.ToInt16(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = Int16.MinValue;
-				return false;
-			}
-		}
-
-		public static Int16 ToInt16(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseInt16(asString);
-			} else {
-				return Convert.ToInt16(input);
-			}
-		}
-		#endregion Int16 (short)
-
-		#region UInt16 (ushort)
-		public static UInt16 ParseUInt16(string input) {
-			return Convert.ToUInt16(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseUInt16(string input, out UInt16 retVal) {
-			try {
-				retVal = Convert.ToUInt16(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = UInt16.MinValue;
-				return false;
-			}
-		}
-
-		public static UInt16 ToUInt16(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseUInt16(asString);
-			} else {
-				return Convert.ToUInt16(input);
-			}
-		}
-		#endregion UInt16 (ushort)
-
-		#region SByte (sbyte)
-		public static sbyte ParseSByte(string input) {
-			return Convert.ToSByte(ParseSphereNumber(input));
-		}
-
-		public static bool TryParseSByte(string input, out SByte retVal) {
-			try {
-				retVal = Convert.ToSByte(ParseSphereNumber(input));
-				return true;
-			} catch (Exception) {
-				retVal = SByte.MinValue;
-				return false;
-			}
-		}
-
-		public static SByte ToSByte(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseSByte(asString);
-			} else {
-				return Convert.ToSByte(input);
-			}
-		}
-		#endregion SByte (byte)
-
 		#region Byte (byte)
-		public static Byte ParseByte(string input) {
-			return Convert.ToByte(ParseSphereNumber(input));
+		public static byte ParseByte(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToByte(o, invariantCulture);
+			}
+			return Byte.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
 		public static bool TryParseByte(string input, out Byte retVal) {
-			try {
-				retVal = Convert.ToByte(ParseSphereNumber(input));
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToByte(o, invariantCulture);
 				return true;
-			} catch (Exception) {
-				retVal = Byte.MinValue;
-				return false;
 			}
+			return Byte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
 		public static Byte ToByte(object input) {
-			string asString = input as String;
-			if (asString != null) {
-				return ParseByte(asString);
-			} else {
-				return Convert.ToByte(input);
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToByte(o, invariantCulture);
 			}
+			return Convert.ToByte(input, invariantCulture);
 		}
-		#endregion Byte (byte)
-		//		
-//		//public static object GetNumber(Type type, string input) {
-//		//	return ConvertTo(type, ConvertSphereNumber(input));
-//		//}
-//		
-//		
+		#endregion Byte
+
+		#region SByte (sbyte)
+		public static sbyte ParseSByte(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToSByte(o, invariantCulture);
+			}
+			return SByte.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseSByte(string input, out SByte retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToSByte(o, invariantCulture);
+				return true;
+			}
+			return SByte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static SByte ToSByte(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToSByte(o, invariantCulture);
+			}
+			return Convert.ToSByte(input, invariantCulture);
+		}
+		#endregion SByte
+
+		#region Int16 (short)
+		public static Int16 ParseInt16(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToInt16(o, invariantCulture);
+			}
+			return Int16.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseInt16(string input, out Int16 retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToInt16(o, invariantCulture);
+				return true;
+			}
+			return Int16.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static Int16 ToInt16(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToInt16(o, invariantCulture);
+			}
+			return Convert.ToInt16(input, invariantCulture);
+		}
+		#endregion Int16
+
+		#region UInt16 (ushort)
+		public static UInt16 ParseUInt16(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToUInt16(o, invariantCulture);
+			}
+			return UInt16.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseUInt16(string input, out UInt16 retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToUInt16(o, invariantCulture);
+				return true;
+			}
+			return UInt16.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static UInt16 ToUInt16(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToUInt16(o, invariantCulture);
+			}
+			return Convert.ToUInt16(input, invariantCulture);
+		}
+		#endregion UInt16
+
+		#region Int32 (int)
+		public static Int32 ParseInt32(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToInt32(o, invariantCulture);
+			}
+			return Int32.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseInt32(string input, out Int32 retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToInt32(o, invariantCulture);
+				return true;
+			}
+			return Int32.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static Int32 ToInt32(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToInt32(o, invariantCulture);
+			}
+			return Convert.ToInt32(input, invariantCulture);
+		}
+		#endregion Int32
+
+		#region UInt32 (uint)
+		public static UInt32 ParseUInt32(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToUInt32(o, invariantCulture);
+			}
+			return UInt32.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseUInt32(string input, out UInt32 retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToUInt32(o, invariantCulture);
+				return true;
+			}
+			return UInt32.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static UInt32 ToUInt32(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToUInt32(o, invariantCulture);
+			}
+			return Convert.ToUInt32(input, invariantCulture);
+		}
+		#endregion UInt32
+
+		#region Int64 (long)
+		public static Int64 ParseInt64(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToInt64(o, invariantCulture);
+			}
+			return Int64.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseInt64(string input, out Int64 retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToInt64(o, invariantCulture);
+				return true;
+			}
+			return Int64.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static Int64 ToInt64(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToInt64(o, invariantCulture);
+			}
+			return Convert.ToInt64(input, invariantCulture);
+		}
+		#endregion Int64
+
+		#region UInt64 (ulong)
+		public static UInt64 ParseUInt64(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToUInt64(o, invariantCulture);
+			}
+			return UInt64.Parse(input, NumberStyles.Integer, invariantCulture);
+		}
+
+		public static bool TryParseUInt64(string input, out UInt64 retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToUInt64(o, invariantCulture);
+				return true;
+			}
+			return UInt64.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+		}
+
+		public static UInt64 ToUInt64(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToUInt64(o, invariantCulture);
+			}
+			return Convert.ToUInt64(input, invariantCulture);
+		}
+		#endregion UInt64
 	}
 }

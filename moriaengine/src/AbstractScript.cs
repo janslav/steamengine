@@ -93,5 +93,11 @@ namespace SteamEngine {
 		protected virtual string GetName() {
 			throw new Exception("This should not happen");
 		}
+
+		public static ICollection<AbstractScript> AllScrips {
+			get {
+				return byDefname.Values;
+			}
+		}
 	}
 }

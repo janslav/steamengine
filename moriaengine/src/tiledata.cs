@@ -101,7 +101,7 @@ namespace SteamEngine {
 
 		public static void Init() {
 			string mulFileP = Path.Combine(Globals.mulPath, "tiledata.mul");
-			Console.WriteLine("Loading "+LogStr.File("tiledata.mul")+" - terrain tile info.");
+			Logger.WriteDebug("Loading "+LogStr.File("tiledata.mul")+" - terrain tile info.");
 			// Kemoc - filenames will be solved later
 			//#if MONO
 			//if (!mulReader.Exists(tileDataFile)) {
@@ -138,7 +138,7 @@ namespace SteamEngine {
 				if (Globals.writeMulDocsFiles) {
 					mtfi.Close();
 				}
-				Console.WriteLine("Loading "+LogStr.File("tiledata.mul")+" - item dispid info.");
+				Logger.WriteDebug("Loading "+LogStr.File("tiledata.mul")+" - item dispid info.");
 				long bytes=0;
 				//bool multipleModels=false;	// Kemoc - I didnt find reason for this
 				//uint lastAmount=0;

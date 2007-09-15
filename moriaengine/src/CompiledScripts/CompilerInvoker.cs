@@ -52,25 +52,27 @@ namespace SteamEngine.CompiledScripts {
 		internal static uint compilenumber = 0;
 
 		internal static bool CompileScripts(bool firstCompiling) {
-			bool success = true;
+			using (StopWatch.StartAndDisplay("Compiling...")) {
+				bool success = true;
 
-			if (firstCompiling) {
-				success = ClassManager.InitClasses(ClassManager.CoreAssembly);
+				if (firstCompiling) {
+					success = ClassManager.InitClasses(ClassManager.CoreAssembly);
+				}
+				//then try to compile scripts
+				compilenumber++;
+
+				success = success && CompileScriptsUsingNAnt();
+
+				success = success && ClassManager.InitClasses(compiledScripts.assembly);
+
+				success = success && GeneratedCodeUtil.DumpAndCompile();
+
+				if (success) {
+					success = success && ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
+				}
+
+				return success;
 			}
-			//then try to compile scripts
-			compilenumber++;
-
-			success = success && CompileScriptsUsingNAnt();
-
-			success = success && ClassManager.InitClasses(compiledScripts.assembly);
-
-			success = success && GeneratedCodeUtil.DumpAndCompile();
-
-			if (success) {
-				success = success && ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
-			}
-
-			return success;
 		}
 
 		private static bool CompileScriptsUsingNAnt() {

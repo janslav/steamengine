@@ -241,20 +241,29 @@ namespace SteamEngine {
 			//			//We could bypass it if needed (like the {}-handling code does) and set the value directly.
 			//this is not that much valid anymore, but we still need a syntax for array... -tar
 
-			string statement = string.Concat("return ", value);
-			Logger.WriteInfo(ConstantTracingOn, "TryRunSnippet(filename("+filename+"), line("+line+"), statement("+statement+"))");
-			object retVal = SteamEngine.LScript.LScript.TryRunSnippet(
-				filename, line, Globals.instance, statement);
-			if (!SteamEngine.LScript.LScript.LastSnippetSuccess) {
-				unloaded = true;
-				Logger.WriteWarning(filename, line, "No value was set on this ("+this+"): It is now unloaded!");
+			object retVal = null;
+			if (FieldValue.TryResolveAsString(value, ref retVal)) {
+				held = new NormalConstant(retVal);
+			} else if (FieldValue.TryResolveAsScript(value, ref retVal)) {
+				held = new NormalConstant(retVal);
+			} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
+				held = new NormalConstant(retVal);
 			} else {
-				unloaded = false;
-				if (SteamEngine.LScript.LScript.snippetRunner.ContainsRandomExpression) {
-					held = new LScriptHolderConstant(SteamEngine.LScript.LScript.snippetRunner);
-					SteamEngine.LScript.LScript.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
+				string statement = string.Concat("return ", value);
+				Logger.WriteInfo(ConstantTracingOn, "TryRunSnippet(filename("+filename+"), line("+line+"), statement("+statement+"))");
+				retVal = SteamEngine.LScript.LScript.TryRunSnippet(
+					filename, line, Globals.instance, statement);
+				if (!SteamEngine.LScript.LScript.LastSnippetSuccess) {
+					unloaded = true;
+					Logger.WriteWarning(filename, line, "No value was set on this ("+this+"): It is now unloaded!");
 				} else {
-					held = new NormalConstant(retVal);
+					unloaded = false;
+					if (SteamEngine.LScript.LScript.snippetRunner.ContainsRandomExpression) {
+						held = new LScriptHolderConstant(SteamEngine.LScript.LScript.snippetRunner);
+						SteamEngine.LScript.LScript.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
+					} else {
+						held = new NormalConstant(retVal);
+					}
 				}
 			}
 		}
