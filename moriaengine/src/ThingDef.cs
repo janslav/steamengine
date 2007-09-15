@@ -467,39 +467,38 @@ namespace SteamEngine {
 			Logger.WriteDebug("Highest chardef model #: "+highestCharModel+" (0x"+highestCharModel.ToString("x")+")");
 			
 			int count = byDefname.Count;
-			Logger.WriteDebug("Resolving itemdefs out of "+count+" abstractdefs");
-			DateTime before = DateTime.Now;
-			int a = 0;
-			foreach (AbstractScript td in byDefname.Values) {
-				if ((a%100)==0) {
-					Logger.SetTitle("Resolving dupelists: "+((a*100)/count)+" %");
-				}
-				AbstractItemDef idef = td as AbstractItemDef;
-				if (idef!=null) {
-					try {
-						AbstractItemDef dupeItem = idef.DupeItem;
-						if (dupeItem != null) {
-							dupeItem.AddToDupeList(idef);
+			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
+				int a = 0;
+				foreach (AbstractScript td in byDefname.Values) {
+					if ((a%100)==0) {
+						Logger.SetTitle("Resolving dupelists and multidata: "+((a*100)/count)+" %");
+					}
+					AbstractItemDef idef = td as AbstractItemDef;
+					if (idef!=null) {
+						try {
+							AbstractItemDef dupeItem = idef.DupeItem;
+							if (dupeItem != null) {
+								dupeItem.AddToDupeList(idef);
+							}
+						} catch (FatalException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteWarning(e);
 						}
-					} catch (FatalException) {
-						throw;
-					} catch (Exception e) {
-						Logger.WriteWarning(e);
-					}
 
-					try {
-						idef.multiData = MultiData.Get(idef.Model);
-					} catch (FatalException) {
-						throw;
-					} catch (Exception e) {
-						Logger.WriteWarning(e);
-					}
+						try {
+							idef.multiData = MultiData.Get(idef.Model);
+						} catch (FatalException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteWarning(e);
+						}
 
+					}
+					a++;
 				}
-				a++;
+				DateTime after = DateTime.Now;
 			}
-			DateTime after = DateTime.Now;
-			Logger.WriteDebug("...took "+(after-before));
 			Logger.SetTitle("");
 		}
 		

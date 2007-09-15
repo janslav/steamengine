@@ -153,11 +153,11 @@ namespace SteamEngine {
 						Logger.WriteWarning("Exceptio while reading Multi.mul/idx", e);
 					}
 					finally {
-						Console.WriteLine("Num of multiItem slots: " + slots);
-						Console.WriteLine("Num of multiItems: " + items);
+						Logger.WriteDebug("Num of multiItem slots: " + slots);
+						Logger.WriteDebug("Num of multiItems: " + items);
 					}
 
-					Console.WriteLine("Finished loading multi.mul");
+					Logger.WriteDebug("Finished loading multi.mul");
 					mulbr.Close();
 					idxbr.Close();
 

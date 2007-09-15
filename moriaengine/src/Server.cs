@@ -41,7 +41,7 @@ namespace SteamEngine {
 		parts dealing with multiple connections, etc. Things dealing with individual connections are done with
 		InPackets or PacketSender, or in Conn, GameConn, or ConsConn.
 	*/
-	public class Server  {
+	public static class Server  {
 		public const int maxPacketLen = 65536;
 		
 		internal static int consoles = 0;

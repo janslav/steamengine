@@ -34,6 +34,9 @@ namespace SteamEngine.Common {
 		static Logger instance;
 		public static bool showCoreExceptions;
 		public static Assembly scriptsAssembly;
+		public static string indentation = "";
+
+		public static readonly string timeFormat = "HH:mm:ss";
 		
 		public static event StringToSend OnConsoleWriteLine;
 		public static event StringToSend OnConsoleWrite;
@@ -733,7 +736,7 @@ namespace SteamEngine.Common {
 		//it only writes it to file
 		public static void Log(string data) {
 			if (fileopen) {
-				file.WriteLine(DateTime.Now.ToShortTimeString()+": "+data);
+				file.WriteLine(DateTime.Now.ToString(timeFormat)+": "+data);
 				Rotate();
 			}
 		}
@@ -743,7 +746,7 @@ namespace SteamEngine.Common {
 		}
 
 		public override void WriteLine(string data) {
-			string printline=DateTime.Now.ToShortTimeString()+": "+data;
+			string printline=String.Concat(DateTime.Now.ToString(timeFormat), ": ", indentation, data);
 			console.WriteLine(printline);
 			if (OnConsoleWriteLine!=null) {  
 				OnConsoleWriteLine(printline);
@@ -759,7 +762,7 @@ namespace SteamEngine.Common {
 		}
 		
 		public void WriteLine(LogStr data) {
-			LogStr printline=DateTime.Now.ToShortTimeString()+": "+data;
+			LogStr printline=LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat), (LogStr) ": ", (LogStr) indentation, data);
 			console.WriteLine(printline.RawString);
 			if (OnConsoleWriteLine != null) {  
 				OnConsoleWriteLine(printline.NiceString);

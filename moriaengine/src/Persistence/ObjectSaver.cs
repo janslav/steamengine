@@ -356,7 +356,7 @@ namespace SteamEngine.Persistence {
 			if (TryLoadString(input, ref retVal)) {
 				return true;
 			}
-			if (ConvertTools.TryParseSphereNumber(input, out retVal)) {
+			if (ConvertTools.TryParseAnyNumber(input, out retVal)) {
 				return true;
 			}
 
