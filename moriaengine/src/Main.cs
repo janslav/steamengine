@@ -199,7 +199,7 @@ namespace SteamEngine {
 			}
 
 			Console.WriteLine("Starting Main Loop");
-			return false;
+			return true;
 		}
 		
 		public static void CollectGarbage() {

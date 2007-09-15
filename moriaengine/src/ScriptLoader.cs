@@ -38,16 +38,7 @@ namespace SteamEngine {
 		static ScriptLoader() {
 			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".scp");
 			allFiles.AddExtension(".def");
-			allFiles.AddAvoided("import");
-            /*
-             *For low level development purposes - disabling all Moria scripts for now (which will
-             *make the rebuilding much much faster avoiding all those "kecy_a_drby.def"s), 
-             *if you need some of the old imported scripts then place it to the "converted_used"
-             *directory.
-             *When all development will be finished, the converted directory will be made
-             *available again.
-             */
-			allFiles.AddAvoided("converted_used");            
+			//allFiles.AddAvoided("import");
 		}
 		
 		//the method that is called on server initialisation by MainClass.
