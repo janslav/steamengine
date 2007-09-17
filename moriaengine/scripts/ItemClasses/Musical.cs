@@ -35,11 +35,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		public void SuccessSnd() {
-			this.Sound(Def.SuccessSound);
+			this.Sound(TypeDef.SuccessSound);
 		}
 		
 		public void FailureSnd() {
-			this.Sound(Def.FailureSound);
+			this.Sound(TypeDef.FailureSound);
 		}
 
 		public override bool IsMusicalInstrument { get {

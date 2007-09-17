@@ -120,8 +120,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (!focus.inBoxReags.TryGetValue(targetted.Def as ItemDef, out previousCount)) {
 					previousCount = 0;
 				}
-				if (focus.pocetRegu + Convert.ToInt32(targetted.Amount) > focus.Def.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
-					int reagsToTake = focus.Def.Capacity - focus.pocetRegu;
+				if (focus.pocetRegu + Convert.ToInt32(targetted.Amount) > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
+					int reagsToTake = focus.TypeDef.Capacity - focus.pocetRegu;
 					targetted.Amount -= Convert.ToUInt32(reagsToTake);
 					focus.pocetRegu += reagsToTake;
 					focus.inBoxReags[targetted.Def as ItemDef] = previousCount + reagsToTake;

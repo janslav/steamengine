@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 				id = 1070702; //a corpse of ~1_CORPSENAME~
 				argument = this.ownerName;
 			} else {
-				ItemDispidInfo idi = this.Def.DispidInfo;
+				ItemDispidInfo idi = this.TypeDef.DispidInfo;
 				string name = this.Name;
 				if (idi != null) {
 					if (string.Compare(name, idi.name, true) == 0) {

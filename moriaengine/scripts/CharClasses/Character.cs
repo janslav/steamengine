@@ -513,10 +513,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistMagic {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistMagicTK));
-				return dynamicPart + Def.ResistMagic;
+				return dynamicPart + TypeDef.ResistMagic;
 			}
 			set {
-				int dynamicPart = value - Def.ResistMagic;
+				int dynamicPart = value - TypeDef.ResistMagic;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMagicTK, dynamicPart);
 				}
@@ -526,10 +526,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistFire {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistFireTK));
-				return dynamicPart + Def.ResistFire;
+				return dynamicPart + TypeDef.ResistFire;
 			}
 			set {
-				int dynamicPart = value - Def.ResistFire;
+				int dynamicPart = value - TypeDef.ResistFire;
 				if (dynamicPart != 0) {
 					this.SetTag(resistFireTK, dynamicPart);
 				}
@@ -539,10 +539,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistElectric {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistElectricTK));
-				return dynamicPart + Def.ResistElectric;
+				return dynamicPart + TypeDef.ResistElectric;
 			}
 			set {
-				int dynamicPart = value - Def.ResistElectric;
+				int dynamicPart = value - TypeDef.ResistElectric;
 				if (dynamicPart != 0) {
 					this.SetTag(resistElectricTK, dynamicPart);
 				}
@@ -552,10 +552,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistAcid {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistAcidTK));
-				return dynamicPart + Def.ResistAcid;
+				return dynamicPart + TypeDef.ResistAcid;
 			}
 			set {
-				int dynamicPart = value - Def.ResistAcid;
+				int dynamicPart = value - TypeDef.ResistAcid;
 				if (dynamicPart != 0) {
 					this.SetTag(resistAcidTK, dynamicPart);
 				}
@@ -565,10 +565,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistCold {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistColdTK));
-				return dynamicPart + Def.ResistCold;
+				return dynamicPart + TypeDef.ResistCold;
 			}
 			set {
-				int dynamicPart = value - Def.ResistCold;
+				int dynamicPart = value - TypeDef.ResistCold;
 				if (dynamicPart != 0) {
 					this.SetTag(resistColdTK, dynamicPart);
 				}
@@ -578,10 +578,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistPoison {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistPoisonTK));
-				return dynamicPart + Def.ResistPoison;
+				return dynamicPart + TypeDef.ResistPoison;
 			}
 			set {
-				int dynamicPart = value - Def.ResistPoison;
+				int dynamicPart = value - TypeDef.ResistPoison;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPoisonTK, dynamicPart);
 				}
@@ -591,10 +591,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistMystical {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistMysticalTK));
-				return dynamicPart + Def.ResistMystical;
+				return dynamicPart + TypeDef.ResistMystical;
 			}
 			set {
-				int dynamicPart = value - Def.ResistMystical;
+				int dynamicPart = value - TypeDef.ResistMystical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMysticalTK, dynamicPart);
 				}
@@ -604,10 +604,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistPhysical {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistPhysicalTK));
-				return dynamicPart + Def.ResistPhysical;
+				return dynamicPart + TypeDef.ResistPhysical;
 			}
 			set {
-				int dynamicPart = value - Def.ResistPhysical;
+				int dynamicPart = value - TypeDef.ResistPhysical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPhysicalTK, dynamicPart);
 				}
@@ -617,10 +617,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistSlashing {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistSlashingTK));
-				return dynamicPart + Def.ResistSlashing;
+				return dynamicPart + TypeDef.ResistSlashing;
 			}
 			set {
-				int dynamicPart = value - Def.ResistSlashing;
+				int dynamicPart = value - TypeDef.ResistSlashing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSlashingTK, dynamicPart);
 				}
@@ -630,10 +630,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistStabbing {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistStabbingTK));
-				return dynamicPart + Def.ResistStabbing;
+				return dynamicPart + TypeDef.ResistStabbing;
 			}
 			set {
-				int dynamicPart = value - Def.ResistStabbing;
+				int dynamicPart = value - TypeDef.ResistStabbing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistStabbingTK, dynamicPart);
 				}
@@ -643,10 +643,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistBlunt {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistBluntTK));
-				return dynamicPart + Def.ResistBlunt;
+				return dynamicPart + TypeDef.ResistBlunt;
 			}
 			set {
-				int dynamicPart = value - Def.ResistBlunt;
+				int dynamicPart = value - TypeDef.ResistBlunt;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBluntTK, dynamicPart);
 				}
@@ -656,10 +656,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistArchery {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistArcheryTK));
-				return dynamicPart + Def.ResistArchery;
+				return dynamicPart + TypeDef.ResistArchery;
 			}
 			set {
-				int dynamicPart = value - Def.ResistArchery;
+				int dynamicPart = value - TypeDef.ResistArchery;
 				if (dynamicPart != 0) {
 					this.SetTag(resistArcheryTK, dynamicPart);
 				}
@@ -669,10 +669,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistBleed {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistBleedTK));
-				return dynamicPart + Def.ResistBleed;
+				return dynamicPart + TypeDef.ResistBleed;
 			}
 			set {
-				int dynamicPart = value - Def.ResistBleed;
+				int dynamicPart = value - TypeDef.ResistBleed;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBleedTK, dynamicPart);
 				}
@@ -682,10 +682,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistSummon {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistSummonTK));
-				return dynamicPart + Def.ResistSummon;
+				return dynamicPart + TypeDef.ResistSummon;
 			}
 			set {
-				int dynamicPart = value - Def.ResistSummon;
+				int dynamicPart = value - TypeDef.ResistSummon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSummonTK, dynamicPart);
 				}
@@ -695,10 +695,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistDragon {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistDragonTK));
-				return dynamicPart + Def.ResistDragon;
+				return dynamicPart + TypeDef.ResistDragon;
 			}
 			set {
-				int dynamicPart = value - Def.ResistDragon;
+				int dynamicPart = value - TypeDef.ResistDragon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistDragonTK, dynamicPart);
 				}
@@ -708,10 +708,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistParalyse {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistParalyseTK));
-				return dynamicPart + Def.ResistDragon;
+				return dynamicPart + TypeDef.ResistParalyse;
 			}
 			set {
-				int dynamicPart = value - Def.ResistParalyse;
+				int dynamicPart = value - TypeDef.ResistParalyse;
 				if (dynamicPart != 0) {
 					this.SetTag(resistParalyseTK, dynamicPart);
 				}
@@ -763,7 +763,7 @@ namespace SteamEngine.CompiledScripts {
 				NetState.AboutToChangeHitpoints(this);
 				this.hitpoints = 0;
 
-				CorpseDef cd = this.Def.CorpseDef;
+				CorpseDef cd = this.TypeDef.CorpseDef;
 				Corpse corpse = null;
 				if (cd != null) {
 					corpse = (Corpse) cd.Create((IPoint4D) this);
@@ -1650,7 +1650,7 @@ namespace SteamEngine.CompiledScripts {
 		public virtual CharacterDef DefForCombat {
 			get {
 				//TODO: monster def for hypnomystic
-				return this.Def;
+				return this.TypeDef;
 			}
 		}
 

@@ -66,7 +66,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public AbstractCharacterDef Def {
+		public AbstractCharacterDef TypeDef {
 			get {
 				return (AbstractCharacterDef) Def;
 			}
@@ -205,7 +205,7 @@ namespace SteamEngine {
 		//}
 		
 		public override int Height { get {
-			int defHeight = def.Height;
+			int defHeight = Def.Height;
 			if (defHeight > 0) {
 				return defHeight;
 			}
@@ -214,7 +214,7 @@ namespace SteamEngine {
 		
 		public ushort MountItem {
 			get {
-				return (def as AbstractCharacterDef).MountItem;
+				return (Def as AbstractCharacterDef).MountItem;
 			}
 		}
 
@@ -439,10 +439,10 @@ namespace SteamEngine {
 			if (account!=null) {
 				output.WriteValue("account",account);
 			}
-			if (def.Name!=name) {
+			if (Def.Name!=name) {
 				output.WriteValue("name",name);
 			}
-			if (def.Model!=model) {
+			if (Def.Model!=model) {
 				output.WriteValue("model",model);
 			}
 			int flagsToSave = flags;
@@ -1178,7 +1178,7 @@ namespace SteamEngine {
 				
 				byte iLayer = i.Layer;
 				if ((iLayer>numLayers) || (iLayer<1) || (iLayer == (byte) Layers.layer_dragging)) {
-					throw new Exception("The item "+i+"("+i.def+") has it`s layer bad set.");
+					throw new Exception("The item "+i+"("+i.Def+") has it`s layer bad set.");
 				}
 				
 				PrivatePickup(i);//we "equip" it temporarily to the dragging layer
@@ -1236,7 +1236,7 @@ namespace SteamEngine {
 				//here it can also raise an exception when i is null
 				byte iLayer = i.Layer;
 				if ((iLayer>numLayers) || (iLayer<1) || (iLayer == (byte) Layers.layer_dragging)) {
-					throw new Exception("The item "+i+"("+i.def+") has its layer set wrong.");
+					throw new Exception("The item "+i+"("+i.Def+") has its layer set wrong.");
 				}
 				//check profession equip rules etc?
 				if (!this.CanEquip(i)) {

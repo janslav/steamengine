@@ -39,7 +39,7 @@ namespace SteamEngine {
 
 		private long createdAt = Globals.TimeInTicks;//Server time of creation
 		private ushort color;
-		internal ThingDef _def; //tis is changed even from outside the constructor in case of dupeitems...
+		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
 		internal MutablePoint4D point4d; //made this internal because SetPosImpl is now abstract... -tar
 		private int uid=-2;
 		internal Region region;
@@ -131,7 +131,7 @@ namespace SteamEngine {
 
 		//still needs to be put into the world
 		protected Thing(ThingDef myDef) {
-			this._def=myDef;
+			this.def=myDef;
 			if (uidBeingLoaded==-1) {
 				things.Add(this);//sets uid
 				NetState.Resend(this);
@@ -155,7 +155,7 @@ namespace SteamEngine {
 				throw new ServerException("Something is wrong with GetFreeThingSlot! Free uid returned="+Uid+" and things' index should be >=0 and <"+things.Count);
 			}
 			point4d=new MutablePoint4D(copyFrom.point4d);
-			_def=copyFrom._def;
+			def=copyFrom.def;
 			color=copyFrom.color;
 			//SetSectorPoint4D();
 			Globals.lastNew=this;
@@ -385,7 +385,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public ThingDef def { get { return _def; } }
+		public ThingDef Def { get { return def; } }
 
 		public virtual bool IsPlayer { get { return false; } }
 
@@ -471,7 +471,7 @@ namespace SteamEngine {
 				tg.Run(this, td, sa);
 			}
 			base.Trigger(td, sa);
-			_def.Trigger(this, td, sa);
+			def.Trigger(this, td, sa);
 		}
 
 		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
@@ -481,7 +481,7 @@ namespace SteamEngine {
 				tg.TryRun(this, td, sa);
 			}
 			base.TryTrigger(td, sa);
-			_def.TryTrigger(this, td, sa);
+			def.TryTrigger(this, td, sa);
 		}
 
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
@@ -500,7 +500,7 @@ namespace SteamEngine {
 			if (base.CancellableTrigger(td, sa)) {
 				return true;
 			} else {
-				return _def.CancellableTrigger(this, td, sa);
+				return def.CancellableTrigger(this, td, sa);
 			}
 		}
 
@@ -520,7 +520,7 @@ namespace SteamEngine {
 			if (base.TryCancellableTrigger(td, sa)) {
 				return true;
 			} else {
-				return _def.TryCancellableTrigger(this, td, sa);
+				return def.TryCancellableTrigger(this, td, sa);
 			}
 		}
 
@@ -750,7 +750,7 @@ namespace SteamEngine {
 					savedItems++;
 				}
 
-				output.WriteSection(this.GetType().Name, this.def.PrettyDefname);
+				output.WriteSection(this.GetType().Name, this.Def.PrettyDefname);
 				this.Save(output);
 				output.WriteLine();
 				ObjectSaver.FlushCache(output);
@@ -1071,7 +1071,7 @@ namespace SteamEngine {
 
 		public bool IsMulti {
 			get {
-				return def.multiData != null;
+				return Def.multiData != null;
 			}
 		}
 

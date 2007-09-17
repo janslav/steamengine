@@ -36,25 +36,25 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ArmorVsP {
 			get {
-				return (int) ((Def.ArmorVsP * (double) this.Durability) / this.MaxDurability);
+				return (int) ((TypeDef.ArmorVsP * (double) this.Durability) / this.MaxDurability);
 			}
 		}
 
 		public int MindDefenseVsP {
 			get {
-				return (int) ((Def.MindDefenseVsP * (double) this.Durability) / this.MaxDurability);
+				return (int) ((TypeDef.MindDefenseVsP * (double) this.Durability) / this.MaxDurability);
 			}
 		}
 
 		public int ArmorVsM {
 			get {
-				return (int) ((Def.ArmorVsM * (double) this.Durability) / this.MaxDurability);
+				return (int) ((TypeDef.ArmorVsM * (double) this.Durability) / this.MaxDurability);
 			}
 		}
 
 		public int MindDefenseVsM {
 			get {
-				return (int) ((Def.MindDefenseVsM * (double) this.Durability) / this.MaxDurability);
+				return (int) ((TypeDef.MindDefenseVsM * (double) this.Durability) / this.MaxDurability);
 			}
 		}
 	}

@@ -116,11 +116,11 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Ship : MultiItem {
 
 		internal override void InitMultiRegion() {
-			int n = Def.rectangleHelpers.Count;
+			int n = TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
 				Rectangle2D[] newRectangles = new Rectangle2D[n];
 				for (int i = 0; i<n; i++) {
-					newRectangles[i] = Def.rectangleHelpers[i].CreateRect(this);
+					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
 				region = new ShipRegion(this, newRectangles);
 			}
