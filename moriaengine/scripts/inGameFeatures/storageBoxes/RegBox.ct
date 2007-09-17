@@ -15,8 +15,8 @@
 
 [ThingTemplate RegBox : Item]
 Def:	//vars on the def
+	public int capacity = 1000000
 Vars:	//vars defined in the class, so they basically do what tags do, but better
-	public ushort pocetRegu = 0
-	public uint maximRegu = 1000000
-	public uint Garlic = 0
+	public int pocetRegu = 0
+	public Dictionary<ItemDef,int> inBoxReags = null
 	
