@@ -43,12 +43,12 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		private void DefProperty() {
 			CodeMemberProperty defProperty = new CodeMemberProperty();
 			defProperty.Name = "Def";
-			defProperty.Attributes = MemberAttributes.Final|MemberAttributes.Private;
+			defProperty.Attributes = MemberAttributes.Final|MemberAttributes.Public|MemberAttributes.New;
 			defProperty.Type = new CodeTypeReference(section.defClassName);
 			CodeMethodReturnStatement ret = new CodeMethodReturnStatement(
 				new CodeCastExpression(
 					section.defClassName,
-					new CodeFieldReferenceExpression(
+					new CodePropertyReferenceExpression(
 						new CodeThisReferenceExpression(),
 						"def")));
 			defProperty.GetStatements.Add(ret);

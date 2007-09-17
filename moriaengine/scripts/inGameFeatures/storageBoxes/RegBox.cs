@@ -117,17 +117,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (targetted.Type.Defname == "t_reagent") {
 				int previousCount;
 				self.SysMessage("pøidávám reagenty do bedny ...");
-				if (!focus.inBoxReags.TryGetValue(targetted.def as ItemDef, out previousCount)) {
+				if (!focus.inBoxReags.TryGetValue(targetted.Def as ItemDef, out previousCount)) {
 					previousCount = 0;
 				}
-				if (focus.pocetRegu + Convert.ToInt32(targetted.Amount) > focus.def.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
-					int reagsToTake = focus.def.Capacity - focus.pocetRegu;
+				if (focus.pocetRegu + Convert.ToInt32(targetted.Amount) > focus.Def.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
+					int reagsToTake = focus.Def.Capacity - focus.pocetRegu;
 					targetted.Amount -= Convert.ToUInt32(reagsToTake);
 					focus.pocetRegu += reagsToTake;
-					focus.inBoxReags[targetted.def as ItemDef] = previousCount + reagsToTake;
+					focus.inBoxReags[targetted.Def as ItemDef] = previousCount + reagsToTake;
 				} else {
 					focus.pocetRegu += Convert.ToInt32(targetted.Amount);
-					focus.inBoxReags[targetted.def as ItemDef] = previousCount + Convert.ToInt32(targetted.Amount);
+					focus.inBoxReags[targetted.Def as ItemDef] = previousCount + Convert.ToInt32(targetted.Amount);
 					targetted.Delete();
 				}
 			} else {

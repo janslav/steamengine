@@ -545,6 +545,9 @@
     <Compile Include="..\..\scripts\Utils\ScriptUtil.cs">
       <Link>Utils\ScriptUtil.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Utils\SingletonScript.cs">
+      <Link>Utils\SingletonScript.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Common.csproj">

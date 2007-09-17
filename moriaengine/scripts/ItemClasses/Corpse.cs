@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void InitFromChar(Character dieingChar) {
-			this.charDef = dieingChar.def as CharacterDef;
+			this.charDef = dieingChar.Def as CharacterDef;
 			this.Amount = dieingChar.Model;
 			this.Direction = dieingChar.Direction;
 			this.Color = dieingChar.Color;

@@ -65,6 +65,12 @@ namespace SteamEngine {
 				throw new SanityCheckException("They obviously won't fit in your "+value.GetType()+"! (You can't give a Character a Cont)");
 			}
 		}
+
+		public AbstractCharacterDef Def {
+			get {
+				return (AbstractCharacterDef) Def;
+			}
+		}
 		
 		public bool IsNPC { get {
 			return !IsPlayer;
