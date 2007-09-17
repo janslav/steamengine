@@ -316,7 +316,7 @@ namespace SteamEngine {
 		private void AddMulti(AbstractItem multiItem) {
 			MultiItemComponent[] components = multiItem.contentsOrComponents as MultiItemComponent[];
 			Sanity.IfTrueThrow(components!=null, "MultiItem being added to map when it already has it's components instantiated!");
-			MultiData data = multiItem.def.multiData;
+			MultiData data = multiItem.Def.multiData;
 			Sanity.IfTrueThrow(data==null, "MultiItem wihtout MultiData on it's Def?!");
 			MutablePoint4D p = multiItem.point4d;
 			components = data.Create(p.x, p.y, p.z, p.m);

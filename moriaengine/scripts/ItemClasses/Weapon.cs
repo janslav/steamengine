@@ -28,44 +28,44 @@ namespace SteamEngine.CompiledScripts {
 		//at durability 0, attacknumber is halved
 		public int Attack {
 			get {
-				double attackHalved = Def.Attack/2;
+				double attackHalved = TypeDef.Attack/2;
 				return (int) (attackHalved + (((attackHalved * this.Durability) / this.MaxDurability)));
 			}
 		}
 
 		public double Piercing {
 			get {
-				return Def.Piercing;
+				return TypeDef.Piercing;
 			}
 		}
 		
 		public WeaponType WeaponType {
 			get {
-				return Def.WeaponType;
+				return TypeDef.WeaponType;
 			}
 		}
 
 		public int Range {
 			get {
-				return Def.Range;
+				return TypeDef.Range;
 			}
 		}
 
 		public int StrikeStartRange {
 			get {
-				return Def.StrikeStartRange;
+				return TypeDef.StrikeStartRange;
 			}
 		}
 
 		public int StrikeStopRange {
 			get {
-				return Def.StrikeStopRange;
+				return TypeDef.StrikeStopRange;
 			}
 		}
 
 		public double Speed {
 			get {
-				return Def.Speed;
+				return TypeDef.Speed;
 			}
 		}
 	}

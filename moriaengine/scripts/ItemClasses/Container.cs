@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override ushort Gump {
 			get {
-				ushort gump=Def.Gump;
+				ushort gump=TypeDef.Gump;
 				if (gump==0xffff) {		//It has no defined gump
 					AbstractItemDef idef = ThingDef.FindItemDef((uint) Model);
 					ContainerDef cdef = idef as ContainerDef;

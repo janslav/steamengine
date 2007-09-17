@@ -37,7 +37,7 @@ namespace SteamEngine {
 
 		internal object contentsOrComponents = null;
 
-		public AbstractItemDef Def {
+		public AbstractItemDef TypeDef {
 			get {
 				return (AbstractItemDef) Def;
 			}
@@ -564,7 +564,7 @@ namespace SteamEngine {
 		public override string Name { 
 			get {
 				if (name==null) {
-					return Amount>1?Def.PluralName:Def.SingularName;
+					return Amount>1?TypeDef.PluralName:TypeDef.SingularName;
 				} else {
 					return name;
 				}
@@ -580,17 +580,17 @@ namespace SteamEngine {
 		}
 	
 		public override void On_Create() {
-			AbstractItemDef aidef = (AbstractItemDef) _def;
+			AbstractItemDef aidef = (AbstractItemDef) def;
 			AbstractItemDef dupe = aidef.DupeItem;
 			if (dupe!=null) {
-				_def = dupe;
+				def = dupe;
 			}
 			Type = aidef.Type;
 			base.On_Create();
 		}
 				
 		public void Flip() {
-			Model = Def.GetNextFlipModel(Model);
+			Model = TypeDef.GetNextFlipModel(Model);
 		}
 		
 		public static new void RegisterTriggerGroup(TriggerGroup tg) {
@@ -795,7 +795,7 @@ namespace SteamEngine {
 			if (flags != 0) {
 				output.WriteValue("flags", flags);
 			}
-			if ((type != null)&&(type!= Def.Type)) {
+			if ((type != null)&&(type!= TypeDef.Type)) {
 				output.WriteLine("type="+type.Defname);
 			}
 		}

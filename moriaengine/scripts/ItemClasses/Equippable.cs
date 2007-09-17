@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Equippable : Item {
 		public override byte Layer {
 			get {
-				return Def.Layer;
+				return TypeDef.Layer;
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		public override bool TwoHanded {
 			get {
-				if (Def!=null) return Def.TwoHanded;
+				if (Def!=null) return TypeDef.TwoHanded;
 				return false;
 			}
 		}
