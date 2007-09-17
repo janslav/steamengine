@@ -78,7 +78,7 @@ KEY="ItemID"
 ON=@Fail
 	src.message "You can't think of anything off hand"
 
-[SCRIPTEDSKILLDEF 4]
+[ArmsLoreSkillDef 4]
 DEFNAME=Skill_Armslore
 KEY="ArmsLore"
 EFFECT=76

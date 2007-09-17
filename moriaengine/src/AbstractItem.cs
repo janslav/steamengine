@@ -37,9 +37,9 @@ namespace SteamEngine {
 
 		internal object contentsOrComponents = null;
 
-		private AbstractItemDef Def {
+		public AbstractItemDef Def {
 			get {
-				return (AbstractItemDef) def;
+				return (AbstractItemDef) Def;
 			}
 		}
 		
@@ -136,7 +136,7 @@ namespace SteamEngine {
 		
 		public bool IsStackable { 
 			get { 
-				return ((AbstractItemDef) def).IsStackable;
+				return ((AbstractItemDef) Def).IsStackable;
 			} 
 		}
 
@@ -156,7 +156,7 @@ namespace SteamEngine {
 		}		
 		public override int Height { 
 			get {
-				int defHeight = def.Height;
+				int defHeight = Def.Height;
 				if (defHeight > 0) {
 					return defHeight;
 				}
@@ -399,7 +399,7 @@ namespace SteamEngine {
 		//add i to this stack, if possible
 		public bool StackAdd(AbstractCharacter stackingChar, AbstractItem i) {
 			if (this.IsStackable && i.IsStackable) {
-				if (this.def.Equals(i.def)) {
+				if (this.Def.Equals(i.Def)) {
 					ThrowIfDeleted();
 					i.ThrowIfDeleted();
 					
@@ -779,10 +779,10 @@ namespace SteamEngine {
 		
 		public override void Save(SaveStream output) {
 			base.Save(output);
-			if ((name != null)&&(def.Name != name)) {
+			if ((name != null)&&(Def.Name != name)) {
 				output.WriteValue("name", name);
 			}
-			if (def.Model != model) {
+			if (Def.Model != model) {
 				output.WriteValue("model", model);
 			}
 			Thing c = Cont;

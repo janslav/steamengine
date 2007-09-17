@@ -14,7 +14,7 @@ namespace SteamEngine.CompiledScripts {
 			//todo: various state checks...
 			Player self = ch as Player;
 			if (self != null) {
-				self.Target(Targ_ArmsLore.Instance);
+				self.Target(SingletonScript<Targ_ArmsLore>.Instance);
 			}
 		}
 
@@ -64,18 +64,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class Targ_ArmsLore : CompiledTargetDef {
-
-		private static Targ_ArmsLore instance;
-		public static Targ_ArmsLore Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public Targ_ArmsLore() {
-			instance = this;
-		}
-
 		protected override void On_Start(Character self, object parameter) {
 			self.SysMessage("Co chces prohlednout?");
 			base.On_Start(self, parameter);

@@ -36,19 +36,21 @@ namespace SteamEngine.Persistence {
 		//}
 		
 		public static void Save() {
-			Server.BroadCast("Server is pausing for worldsave...");
-			Globals.PauseServerTime();
-			WeakRefDictionaryUtils.PurgeAll();
+			using (StopWatch.StartAndDisplay("Saving world data...")) {
+				Server.BroadCast("Server is pausing for worldsave...");
+				Globals.PauseServerTime();
+				WeakRefDictionaryUtils.PurgeAll();
 
-			//-1 because we will save new files now.
-			if (!TrySave()) {
-				Server.BroadCast("Saving failed!");//we do not throw an exception to kill the server, 
-				//the admin should do that, after he tries to fix the problem somehow...
-			} else {
-				Server.BroadCast("Saving finished.");
+				//-1 because we will save new files now.
+				if (!TrySave()) {
+					Server.BroadCast("Saving failed!");//we do not throw an exception to kill the server, 
+					//the admin should do that, after he tries to fix the problem somehow...
+				} else {
+					Server.BroadCast("Saving finished.");
+				}
+
+				Globals.UnPauseServerTime();
 			}
-
-			Globals.UnPauseServerTime();
 		}
 		
 		static bool TrySave() {

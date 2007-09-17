@@ -162,10 +162,10 @@ namespace SteamEngine.CompiledScripts {
 		public static void InfoTargon(GameConn c, IPoint3D getback, object targData) {
 			if (getback is AbstractItem) {
 				Item itm = getback as Item;
-				itm.Message("I am an item named '"+itm.Name+"'. My model # is 0x"+itm.Model.ToString("x")+", and my itemdef is "+itm.def+", and I have a height of "+itm.Height+", and a weight of "+itm.Weight+".");
+				itm.Message("I am an item named '"+itm.Name+"'. My model # is 0x"+itm.Model.ToString("x")+", and my itemdef is "+itm.Def+", and I have a height of "+itm.Height+", and a weight of "+itm.Weight+".");
 			} else if (getback is Character) {
 				Character cre = getback as Character;
-				cre.Message("I am a character named '"+cre.Name+"' at "+cre.X+","+cre.Y+","+cre.Z+" on mapplane "+cre.M+". My model # is 0x"+cre.Model.ToString("x")+", and my chardef is "+cre.def+", and I have a height of "+cre.Height+", and a weight of "+cre.Weight+".");
+				cre.Message("I am a character named '"+cre.Name+"' at "+cre.X+","+cre.Y+","+cre.Z+" on mapplane "+cre.M+". My model # is 0x"+cre.Model.ToString("x")+", and my chardef is "+cre.Def+", and I have a height of "+cre.Height+", and a weight of "+cre.Weight+".");
 				string ownride = "";
 				if (cre.Owner!=null) {
 					ownride="My owner is "+cre.Owner;
