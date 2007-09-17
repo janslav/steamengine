@@ -25,6 +25,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Class that will display the info dialog")]
 	public class D_Info : CompiledGump {
+		//keys - button or edit field index; value - related IDataFieldView for performing some action
+		private Hashtable buttons;
+		private Hashtable editFlds;
+
 		[Remark("Instance of the D_Info, for possible access from other dialogs etc.")]
 		private static D_Info instance;
 		public static D_Info Instance {
@@ -38,6 +42,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+			buttons = new Hashtable();
+			editFlds = new Hashtable();
+
 			object target = args[0];
 			///TODO - just for debugging
 			target = new SimpleClass();
@@ -46,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			AbstractDataView viewCls = GetAbstractDataView(target);
 			int firstItem = Convert.ToInt32(args[1]);
 			
-			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance);
+			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance, buttons, editFlds);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
 			dlg.SetLocation(50, 50);
 			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
@@ -63,14 +70,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int editsIndex = 10; //start counting editable input fields also from 10
 
 			//first get the single page of data fields (we use COLS_COUNT columns for them)
-/*			
+			
 			foreach(IDataFieldView field in ((IPageableCollection<IDataFieldView>)viewCls).GetPage(firstItem, InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS)) {
 				//add both indexing params - the buttons index will be used (and raised) when the field is Button or 
 				//ReadWrite or ReadOnly field with type that itself has the DataView implemented (and can be infoized)
 				// - the edits index will be used for input fields in ReadWrite field case
 				dlg.WriteDataField(field, target, buttonsIndex, editsIndex);
 			}
-*/
+
 			//now write the single page of action buttons (one column - normal rowcount)
 			foreach(ButtonDataFieldView button in ((IPageableCollection<ButtonDataFieldView>)viewCls).GetPage(firstItem, ImprovedDialog.PAGE_ROWS)) {
 				dlg.WriteDataField(button, target, buttonsIndex, editsIndex);
@@ -103,7 +110,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						//TryMakeSetting(valuesToSet, gr);
 						//args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
 						*/
-						///TODO - udelat nejake to nastavenicko...
+						///TODO - udelat nejake to nastavenicko...; bude hotovo az udelam novej dialog k nastaveni (bude se to delat stejne)
+						///a bude to prizpusobeny tomu dialog nastaveni, tj proto pockam
 						gi.Cont.SendGump(gi);//resend the dialog
 						/*
 						//a zobrazime take dialog s vysledky (null = volne misto pro seznamy resultu v nasledujicim dialogu)
@@ -115,14 +123,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						gi.Cont.Dialog(D_Settings_Help.Instance);
 						break;
 				}
-			///TODO - pagingove cudlicky
+				///TODO - pagingove cudlicky
 			/*} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count, 1)) {
 				//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)				
 				//posledni 1 - pocet sloupecku v dialogu
 				return;
-			 */ 
+			 */
 			} else { //info dialog buttons
-				///TODO - neco udelej :)
+				//get the IDataFieldView and do something
+				IDataFieldView idfv = (IDataFieldView)buttons[Convert.ToInt32(gr.pressedButton)];
+				if(idfv.IsButtonEnabled) { 
+					//action button field - call the method
+					((ButtonDataFieldView)idfv).OnButton(target);
+				} else if(!idfv.ReadOnly) {
+					//normal editable field but with button - it will redirect to another info dialog...
+					DialogStackItem.EnstackDialog(gi); //store
+					gi.Cont.Dialog(D_Info.instance,idfv.GetValue(target)); //display info dialog on this datafield
+				}
 			}
 		}
 

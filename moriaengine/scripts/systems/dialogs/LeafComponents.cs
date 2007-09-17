@@ -402,7 +402,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					//no width - get it from the parent
 					width = parent.Width;
 					width -= ImprovedDialog.D_COL_SPACE; //put it between the borders of the column with a little spaces
-					width -= xPos; //substract also the space from the xPos adjustment of this field (it can be shorter to fit to the column)
+					//substract also the space from the xPos adjustment of this field (it can be shorter to fit to the column)
+					//this makes  sense, if the input field is not at the beginning pos. of the column... - it will shorten it 
+					//of the space it is indented from the left border
+					width -= (xPos - parent.XPos); 
 				}
 				if (height == 0) {
 					//no height specified, give it the default one row height (which is the height of the buttons)

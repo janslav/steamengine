@@ -34,6 +34,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private int actualFieldRow;
 		private int actualFieldColumn;
 
+		//hashtables for button/editfield index relationing with IDataFieldViews...
+		private Hashtable buttons;
+		private Hashtable editFlds;
+
 		public GUTATable ActionTable {
 			get {
 				return actionTable;
@@ -47,7 +51,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
-		public InfoDialogHandler(GumpInstance dialogInstance) : base(dialogInstance) {			
+		public InfoDialogHandler(GumpInstance dialogInstance, Hashtable buttons, Hashtable editFlds) : base(dialogInstance) {
+			this.buttons = buttons;
+			this.editFlds = editFlds;
 		}
 
 		[Remark("Table for all of the IDataFieldViews")]
@@ -83,21 +89,36 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				actionTable[actualActionRow, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
 				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.Name);				
 				actualActionRow++;
+				//store the field under the buttons index
+				buttons.Add(buttonsIndex, field);
 				buttonsIndex++; //raise the button index - and prepare it for other buttons
 				return;
 			} else if(!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.Name);
 				//if necessary, insert the button
+				bool willHaveButton = false;
 				if(field.GetValue(target) != null) {
 					if(!ObjectSaver.IsSimpleSaveableType(field.GetValue(target).GetType())) {
 						actualFieldTable[actualFieldRow, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
+						//store the field under the buttons index
+						buttons.Add(buttonsIndex, field);				
 						buttonsIndex++;
+						willHaveButton = true;
 					}
 				}
 				//insert the input field - specify the x and y position, let the engine to compute the width and height of the component
-				actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
-				actualFieldRow++;
-				editsIndex++;
+				if(willHaveButton) {
+					//non simple field (buttonized - the redirect to another info dialog is present)
+					//the field will not be editable, we will therefore display only non editable stringvalue
+					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
+				} else {
+					//no buttonized edit field - it is some simple type and can be edited
+					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
+					//store the field under the edits index
+					editFlds.Add(editsIndex, field);
+					editsIndex++;
+				}
+				actualFieldRow++;				
 			} else { //non-editable label-value field
 				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.Name);
 				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
