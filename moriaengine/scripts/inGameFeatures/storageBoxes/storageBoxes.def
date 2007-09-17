@@ -3,6 +3,6 @@ CATEGORY = Items by Professions
 SUBSECTION = Carpentry
 DESCRIPTION = Bedynka na regy
 
-NAME = "Bedynka na regy"
+NAME = "Bedýnka na regy"
 WEIGHT = 30
 model = 0x1e80
