@@ -25,17 +25,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog that will display the list of clients delayed messages")]
 	public class D_DelayedMessages : CompiledGump {
-		[Remark("Instance of the D_DelayedMessages, for possible access from other dialogs, buttons etc.")]
-		private static D_DelayedMessages instance;
-		public static D_DelayedMessages Instance {
-			get {
-				return instance;
-			}
-		}
-		[Remark("Set the static reference to the instance of this dialog")]
-		public D_DelayedMessages() {
-			instance = this;
-		}
 
 		[Remark("Display the list of the messages")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
@@ -177,9 +166,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Messages(AbstractCharacter sender, ScriptArgs args) {
 			//ten poslendi null - misto pro seznam messagi
 			if(args.Args.Length == 0) {
-				sender.Dialog(D_DelayedMessages.Instance, SortingCriteria.TimeAsc, 0, null);//default sorting, beginning from the first message
+				sender.Dialog(SingletonScript<D_DelayedMessages>.Instance, SortingCriteria.TimeAsc, 0, null);//default sorting, beginning from the first message
 			} else {
-				sender.Dialog(D_DelayedMessages.Instance, (SortingCriteria)args.Args[0], 0, null); //we expect a sorting criterion !, listing from the first message
+				sender.Dialog(SingletonScript<D_DelayedMessages>.Instance, (SortingCriteria) args.Args[0], 0, null); //we expect a sorting criterion !, listing from the first message
 			}
 		}	
 	}

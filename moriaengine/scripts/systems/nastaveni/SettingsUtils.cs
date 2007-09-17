@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Write the categories label, using appropriate level indentation")]
 		public override void WriteLabel(ImprovedDialog dlg) {
-			dlg.LastTable[D_Static_Settings.Instance.RowCounter++, D_Static_Settings.Instance.FilledColumn] = TextFactory.CreateText(D_Static_Settings.ITEM_INDENT * level, 0, Hues.SettingsTitleColor, name);			
+			dlg.LastTable[SingletonScript<D_Static_Settings>.Instance.RowCounter++, SingletonScript<D_Static_Settings>.Instance.FilledColumn] = TextFactory.CreateText(D_Static_Settings.ITEM_INDENT * level, 0, Hues.SettingsTitleColor, name);			
 		}
 
 		[Remark("Iterate through the array of inner members, set their level and write them also out")]
@@ -254,7 +254,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Create the label and an input field to the dialog. Use appropriate indentation according to the level")]
 		public override void WriteSetting(ImprovedDialog dlg) {
-			D_Static_Settings inst = D_Static_Settings.Instance;
+			D_Static_Settings inst = SingletonScript<D_Static_Settings>.Instance;
 			WriteLabel(dlg);
 			//check the size of the underlaying table - if we are writing the category containing more values
 			//it is possible to override the normal rowcount in the table (we dont want the category to split)
@@ -277,7 +277,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void WriteLabel(ImprovedDialog dlg) {
 			//check the color, if null then simple write out, no colors, nothing...
 			//the color will be not null only in case of unsuccessfull setting of this member
-			dlg.LastTable[D_Static_Settings.Instance.RowCounter, D_Static_Settings.Instance.FilledColumn] = TextFactory.CreateText(D_Static_Settings.ITEM_INDENT * level, 0, color, name + GetTypeInfo());			
+			dlg.LastTable[SingletonScript<D_Static_Settings>.Instance.RowCounter, SingletonScript<D_Static_Settings>.Instance.FilledColumn] = TextFactory.CreateText(D_Static_Settings.ITEM_INDENT * level, 0, color, name + GetTypeInfo());			
 		}
 
 		[Remark("Get the newVal and try to set it as the new value to the undelraying member."+

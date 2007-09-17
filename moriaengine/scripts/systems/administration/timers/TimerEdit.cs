@@ -27,18 +27,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("A timer editing dialog")]
 	public class D_EditTimer : CompiledGump {
 		private static int width = 400;
-		
-		[Remark("Instance of the D_EditTimer, for possible access from other dialogs etc.")]
-        private static D_EditTimer instance;
-		public static D_EditTimer Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_EditTimer() {
-			instance = this;
-		}
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			TagHolder th = (TagHolder)sa[0]; //na koho budeme timer ukladat?
@@ -71,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(sendTo, focus, D_EditTimer.Instance,
+			DialogStackItem.EnstackDialog(sendTo, focus, SingletonScript<D_EditTimer>.Instance,
 					th, //tagholder na nejz budeme tag nastavovat, pro priste 
 					tm); //timer co editujeme
 			dlg.WriteOut();

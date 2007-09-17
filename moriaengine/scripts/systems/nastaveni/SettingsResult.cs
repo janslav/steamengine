@@ -27,16 +27,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazící výsledek po uplatnìní nastavení - vypíše seznam zmìnìných hodnot doplnìný"+
 			"o pøípadné hodnoty které se zmìnit nepodaøilo")]
 	public class D_Settings_Result : CompiledGump {
-		private static D_Settings_Result instance;
-		public static D_Settings_Result Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public D_Settings_Result() {
-			instance = this;
-		}
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			//pole obsahujici vysledky k zobrazeni

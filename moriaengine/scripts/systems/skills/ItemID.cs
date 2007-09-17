@@ -14,7 +14,7 @@ namespace SteamEngine.CompiledScripts {
 			//todo: various state checks...
 			Player self = ch as Player;
 			if (self != null) {
-				self.Target(Targ_ItemID.Instance);
+				self.Target(SingletonScript<Targ_ItemID>.Instance);
 			}
 		}
 
@@ -62,17 +62,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class Targ_ItemID : CompiledTargetDef {
-
-		private static Targ_ItemID instance;
-		public static Targ_ItemID Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public Targ_ItemID() {
-			instance = this;
-		}
 
 		protected override void On_Start(Character self, object parameter) {
 			self.SysMessage("Co chces identifikovat ?");

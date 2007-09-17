@@ -27,16 +27,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazící seznam všech kategorií které v nastavení máme, umožní rozkliknout"+
 			"a nastavit požadovanou kategorii (nebo taky všechny).")]
 	public class D_Settings_Categories : CompiledGump {
-		private static D_Settings_Categories instance;
-		public static D_Settings_Categories Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public D_Settings_Categories() {
-			instance = this;
-		}
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			//pole obsahujici vsechny ketegorie pro zobrazeni
@@ -104,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							//			3 - 0, zacne na nulte strance (jinak to ani nejde)
 							//			4 - info o tom ze ma zobrazit vsechny kategorie pocinaje specifikovanou (zde tou prvni)
 							//			5,6 - vnitrodialogove potreby
-						gi.Cont.Dialog(D_Static_Settings.Instance, "", 0, 0, SettingsDisplay.All, null, null);
+						gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, "", 0, 0, SettingsDisplay.All, null, null);
 						break;					
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
@@ -117,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (int)(gr.pressedButton - 10);//- cislo kategorie v jejich setridenem seznamu
 				SettingsCategory cat = categories[row];
 								//parametry stejny vyznam, zde zobrazime jen tu jednu kliknutou kategorii
-				gi.Cont.Dialog(D_Static_Settings.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);				
+				gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);				
 			}
 		}		
 	}	
