@@ -26,16 +26,6 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazující informace a vysvìtlivky symbolù pro nastavení")]
 	public class D_Settings_Help : CompiledGump {
-		private static D_Settings_Help instance;
-		public static D_Settings_Help Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public D_Settings_Help() {
-			instance = this;
-		}
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);

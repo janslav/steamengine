@@ -73,17 +73,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"inputu v dialogu.")]
 		public Hashtable valuesToSet;
 
-		private static D_Static_Settings instance;
-		public static D_Static_Settings Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public D_Static_Settings() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			valuesToSet = new Hashtable(); //vycistime tabulku inputfieldu ted
 			
@@ -258,11 +247,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
 				gi.Cont.SendGump(gi);//zobrazime znovu tentyz dialog
 				//a zobrazime take dialog s vysledky (null = volne misto pro seznamy resultu v nasledujicim dialogu)
-				gi.Cont.Dialog(D_Settings_Result.Instance, 0, valuesToSet, null);
+				gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, valuesToSet, null);
 			} else if(gr.pressedButton == 2) { //info
 				//stackneme se pro navrat
 				DialogStackItem.EnstackDialog(gi);
-				gi.Cont.Dialog(D_Settings_Help.Instance);				
+				gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);				
 			}
 		}
 

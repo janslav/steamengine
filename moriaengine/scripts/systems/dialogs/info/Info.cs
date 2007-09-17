@@ -29,18 +29,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private Hashtable buttons;
 		private Hashtable editFlds;
 
-		[Remark("Instance of the D_Info, for possible access from other dialogs etc.")]
-		private static D_Info instance;
-		public static D_Info Instance {
-			get {
-				return instance;
-			}
-		}
-		[Remark("Set the static reference to the instance of this dialog")]
-		public D_Info() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			buttons = new Hashtable();
 			editFlds = new Hashtable();
@@ -120,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //info
 						DialogStackItem.EnstackDialog(gi); //stack self for return
-						gi.Cont.Dialog(D_Settings_Help.Instance);
+						gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						break;
 				}
 				///TODO - pagingove cudlicky
@@ -138,7 +126,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else if(!idfv.ReadOnly) {
 					//normal editable field but with button - it will redirect to another info dialog...
 					DialogStackItem.EnstackDialog(gi); //store
-					gi.Cont.Dialog(D_Info.instance,idfv.GetValue(target)); //display info dialog on this datafield
+					gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target)); //display info dialog on this datafield
 				}
 			}
 		}
@@ -157,11 +145,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Info(object self, ScriptArgs args) {
 			if(args.Argv == null || args.Argv.Length == 0) {
 				//display it normally (targetted or for self)
-				Globals.SrcCharacter.Dialog(D_Info.Instance, self, 0);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, self, 0);
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(D_Info.Instance, args.Argv[0], 0);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, args.Argv[0], 0);
 			}
 		}
 	}	

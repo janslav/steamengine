@@ -28,18 +28,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 400;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 		
-		[Remark("Instance of the D_NewTag, for possible access from other dialogs etc.")]
-        private static D_NewTag instance;
-		public static D_NewTag Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_NewTag() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			TagHolder th = (TagHolder)sa[0]; //na koho budeme tag ukladat?
 
@@ -71,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(sendTo, focus, D_NewTag.Instance,
+			DialogStackItem.EnstackDialog(sendTo, focus, SingletonScript<D_NewTag>.Instance,
 					th); //tagholder na nejz budeme tag nastavovat, pro priste 
 
 			dlg.WriteOut();
@@ -101,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				prevStacked.Show();								
 			} else if(gr.pressedButton == 2) {
 				DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
-				gi.Cont.Dialog(D_Settings_Help.Instance);				 
+				gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);				 
 			}
 		}		
 	}

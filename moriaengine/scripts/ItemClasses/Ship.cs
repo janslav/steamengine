@@ -323,7 +323,7 @@ namespace SteamEngine.CompiledScripts {
 			bool retVal = base.On_Enter(ch, forced);
 			if (!retVal || forced) {
 				this.Ship.AddThing(ch);
-				ch.AddTriggerGroup(E_BeingOnShip.Instance);
+				ch.AddTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 			}
 			return retVal;
 		}
@@ -332,23 +332,12 @@ namespace SteamEngine.CompiledScripts {
 			bool retVal =  base.On_Exit(ch, forced);
 			if (!retVal || forced) {
 				this.Ship.RemoveThing(ch);
-				ch.RemoveTriggerGroup(E_BeingOnShip.Instance);
+				ch.RemoveTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 			}
 			return retVal;
 		}
 
 		public class E_BeingOnShip : CompiledTriggerGroup {
-			private static TriggerGroup instance;
-
-			public static TriggerGroup Instance {
-				get {
-					if (instance == null) {
-						instance = TriggerGroup.Get("E_BeingOnShip");
-					}
-					return instance;
-				}
-			}
-
 			private Ship GetShipOnPoint(Map map, ushort x, ushort y) {
 				Region region = map.GetRegionFor(x, y);
 				ShipRegion shipRegion = region as ShipRegion;
@@ -363,7 +352,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ship != null) {
 					ship.RemoveThing(pickedUp);
 				} else {
-					self.RemoveTriggerGroup(E_BeingOnShip.Instance);
+					self.RemoveTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 				}
 				return 0;
 			}
@@ -373,7 +362,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ship != null) {
 					ship.AddThing(dropped);
 				} else {
-					self.RemoveTriggerGroup(E_BeingOnShip.Instance);
+					self.RemoveTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 				}
 				return 0;
 			}
@@ -383,7 +372,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ship != null) {
 					ship.HandleCommand(self, keywords);
 				} else {
-					self.RemoveTriggerGroup(E_BeingOnShip.Instance);
+					self.RemoveTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 				}
 				return 0;
 			}

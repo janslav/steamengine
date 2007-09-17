@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 				dClicker.AbortSkill();
 			}
 			dClicker.SysMessage("pièo si na mì dclick");
-			this.Dialog(ac, Dialogs.D_RegBox.Instance);			
+			this.Dialog(ac, SingletonScript<Dialogs.D_RegBox>.Instance);			
 		}
 
 	}
@@ -51,21 +51,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Surprisingly the dialog that will display the RegBox guts")]
 	public class D_RegBox : CompiledGump {
-		[Remark("Instance of the D_RegBox, for possible access from other dialogs etc.")]
-		private static D_RegBox instance;
-		public static D_RegBox Instance {
-			get {
-				return instance;
-			}
-		}
-		[Remark("Set the static reference to the instance of this dialog")]
-		public D_RegBox() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
-			short radek = 1;
-			short sloup = 1;
+			//short radek = 1;
+			//short sloup = 1;
 			RegBox box = (RegBox) focus;
 			SetLocation(70, 25);
 			ResizePic(0, 0, 5054, 660, 350);
@@ -89,23 +77,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else if (gr.pressedButton == 1) {
 				gi.Focus.Message("Posilam se sefe");
-				((Player)gi.Cont).Target(Targ_RegBox.Instance, gi.Focus);				
+				((Player) gi.Cont).Target(SingletonScript<Targ_RegBox>.Instance, gi.Focus);				
 			}
 		}
 	}
 
 	public class Targ_RegBox : CompiledTargetDef {
-
-		private static Targ_RegBox instance;
-		public static Targ_RegBox Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public Targ_RegBox() {
-			instance = this;
-		}
 
 		protected override void On_Start(Character self, object parameter) {
 			self.SysMessage("Zamìø reagent, který chceš vložit do bedny.");

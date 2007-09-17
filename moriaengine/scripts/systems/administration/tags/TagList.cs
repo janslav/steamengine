@@ -28,18 +28,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 		
-		[Remark("Instance of the D_TagList, for possible access from other dialogs etc.")]
-        private static D_TagList instance;
-		public static D_TagList Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_TagList() {
-			instance = this;
-		}
-
 		[Remark("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, "+
 				"	1 - index ze seznamu tagu ktery bude na strance jako prvni"+
 				"	2 - vyhledavaci kriterium pro jmena tagu"+
@@ -134,11 +122,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //zobrazit info o vysvetlivkach
 						DialogStackItem.EnstackDialog(gi); //vlozime napred dialog do stacku
-						gi.Cont.Dialog(D_Settings_Help.Instance);
+						gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						break;   						
                     case 3: //zalozit novy tag.
 						DialogStackItem.EnstackDialog(gi); //vlozime napred dialog do stacku
-						gi.Cont.Dialog(D_NewTag.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
+						gi.Cont.Dialog(SingletonScript<D_NewTag>.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
 						break;
                 }
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
@@ -182,9 +170,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam tagu, pouzito az v dialogu
 			if(text.Argv == null || text.Argv.Length == 0) {
-				Globals.SrcCharacter.Dialog(D_TagList.Instance, self, 0, "", null);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, "", null);
 			} else {
-				Globals.SrcCharacter.Dialog(D_TagList.Instance, self, 0, text.Args, null);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, text.Args, null);
 			}
 		}
 	}
