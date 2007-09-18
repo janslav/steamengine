@@ -29,8 +29,9 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> viewableClasses = new List<Type>();
 		
 		public CodeCompileUnit WriteSources() {
+			return null;
 			///TODO - pøepsat pochopitelnì
-			try {
+			/*try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
 				if (pluginTGs.Count > 0) {
 					Logger.WriteDebug("Generating PluginTriggergroups");
@@ -57,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 				return codeCompileUnit;
 			} finally {
 				pluginTGs.Clear();
-			}
+			}*/
 		}
 
 		public void HandleAssembly(Assembly compiledAssembly) {
@@ -78,9 +79,10 @@ namespace SteamEngine.CompiledScripts {
 			//look if the type has this attribute, don't look to parent classes 
 			//(if the type has not the attribute but some parent has, we dont care - if we want
 			//it to be infoized, we must add a ViewableClass attribute to it)
-			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false) {
+			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false)) {
 				return true;
-			} 
+			}
+			return false;
 		}
 
 		[Remark("Method for checking the Viewable types. Used as delegate in ClassManager")]
@@ -96,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 		*/
 		private class GeneratedInstance {
 			///TODO - pøepsat pochopitelnì
-			internal List<MethodInfo> triggerMethods = new List<MethodInfo>();
+			/*internal List<MethodInfo> triggerMethods = new List<MethodInfo>();
 			Type pluginType;
 			CodeTypeDeclaration codeTypeDeclatarion;
 
@@ -185,7 +187,7 @@ namespace SteamEngine.CompiledScripts {
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
 				string s=((string) filterCriteria).ToLower();
 				return m.Name.ToLower().StartsWith(s);
-			}
+			}*/
 		}
 	}
 }
