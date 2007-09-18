@@ -29,36 +29,34 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> viewableClasses = new List<Type>();
 		
 		public CodeCompileUnit WriteSources() {
-			return new CodeCompileUnit();
-			///TODO - pøepsat pochopitelnì
-			/*try {
+			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-				if (pluginTGs.Count > 0) {
-					Logger.WriteDebug("Generating PluginTriggergroups");
+				if (viewableClasses.Count > 0) {
+					Logger.WriteDebug("Generating DataViews");
 
-					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts.Dialogs");
 					codeCompileUnit.Namespaces.Add(ns);
 
-					foreach (Type decoratedClass in pluginTGs) {
+					foreach (Type viewableClass in viewableClasses) {
 						try {
-							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
-							if (gi.triggerMethods.Count > 0) {
+							GeneratedInstance gi = new GeneratedInstance(viewableClass);
+							if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
 								CodeTypeDeclaration ctd = gi.GetGeneratedType();
 								ns.Types.Add(ctd);
 							}
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
-							Logger.WriteError(decoratedClass.Assembly.GetName().Name, decoratedClass.Name, e);
+							Logger.WriteError(viewableClass.Assembly.GetName().Name, viewableClass.Name, e);
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+pluginTGs.Count+" PluginTriggergroups");
+					Logger.WriteDebug("Done generating "+viewableClasses.Count+" DataViews");
 				}
 				return codeCompileUnit;
 			} finally {
-				pluginTGs.Clear();
-			}*/
+				viewableClasses.Clear();
+			}
 		}
 
 		public void HandleAssembly(Assembly compiledAssembly) {
@@ -77,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Remark("Method for checking if the given Type is Viewable. If so, put it to the list."+
-				"Used as delegate in ClassManager")]
+				"Used as hooked delegate in ClassManager")]
 		public static bool CheckViewabilityClass(Type type) {
 			//look if the type has this attribute, don't look to parent classes 
 			//(if the type has not the attribute but some parent has, we dont care - if we want
@@ -89,19 +87,44 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		/*
-			Constructor: CompiledTriggerGroup
-			Creates a triggerGroup named after the class, and then finds and sets up triggers 
-			defined in the script (by naming them on_whatever).
-		*/
 		private class GeneratedInstance {
-			///TODO - pøepsat pochopitelnì
-			/*internal List<MethodInfo> triggerMethods = new List<MethodInfo>();
-			Type pluginType;
+
+			//all fields except marked as NoShow
+			internal List<FieldInfo> fields = new List<FieldInfo>();
+			internal List<PropertyInfo> properties = new List<PropertyInfo>();
+			internal List<MethodInfo> butonMethods = new List<MethodInfo>();
+			Type type;
 			CodeTypeDeclaration codeTypeDeclatarion;
 
+			internal GeneratedInstance(Type type) {
+				this.type = type;
+				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
+
+				//get all fields from the Type except for those marked as "NoShow"
+				MemberInfo[] flds = type.FindMembers(MemberTypes.Field|MemberTypes.Property, bindingAttr, HasntAttribute, typeof(NoShowAttribute)); 
+				foreach (MemberInfo fld in flds) {
+					PropertyInfo propinf = fld as PropertyInfo;
+					if(propinf != null) {
+						properties.Add(propinf);
+					}
+					FieldInfo fldinf = fld as FieldInfo;
+					if(fldinf != null) {
+						fields.Add(fldinf);
+					}
+				}
+
+				//get all methods from the Type that have the "Button" attribute
+				MemberInfo[] mths = type.FindMembers(MemberTypes.Method, bindingAttr, HasAttribute, typeof(ButtonAttribute));
+				foreach(MemberInfo mi in mths) {
+					MethodInfo minf = mi as MethodInfo;
+					if(minf != null) {
+						butonMethods.Add(minf);
+					}
+				}
+			}
+
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_"+pluginType.Name);
+				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDataView_"+type.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
 				codeTypeDeclatarion.IsClass = true;
@@ -112,19 +135,6 @@ namespace SteamEngine.CompiledScripts {
 				return codeTypeDeclatarion;
 			}
 
-			internal GeneratedInstance(Type pluginType) {
-				this.pluginType = pluginType;
-				MemberTypes memberType=MemberTypes.Method;		//Only find methods.
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
-
-				MemberInfo[] mis = pluginType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
-				foreach (MemberInfo m in mis) {
-					MethodInfo mi = m as MethodInfo;
-					if (mi != null) {
-						triggerMethods.Add(mi);
-					}
-				}
-			}
 
 			private CodeMemberMethod GenerateRunMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
@@ -135,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(ScriptArgs), "sa"));
 				retVal.ReturnType = new CodeTypeReference(typeof(object));
 
-				if (triggerMethods.Count > 0) {
+				if(butonMethods.Count > 0) {
 					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning disable 168"));
 					retVal.Statements.Add(new CodeVariableDeclarationStatement(
 						typeof(object[]),
@@ -143,16 +153,17 @@ namespace SteamEngine.CompiledScripts {
 					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning restore 168"));
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
-					foreach (MethodInfo mi in triggerMethods) {
+					foreach(MethodInfo mi in butonMethods) {
 						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase("+tk.uid+"): //"+tk.name));
-						retVal.Statements.AddRange(
-							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi, 
-							new CodeCastExpression(
-								pluginType,
-								new CodeArgumentReferenceExpression("self")), 
-							false));
-
+						//rozatim vyhozen\o, generuje to kod co nechceme
+						 
+						//retVal.Statements.AddRange(
+						//    CompiledScriptHolderGenerator.GenerateMethodInvocation(mi, 
+						//    new CodeCastExpression(
+						//        type,
+						//        new CodeArgumentReferenceExpression("self")), 
+						//    false));
 					}
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\t}"));
 				}
@@ -174,18 +185,24 @@ namespace SteamEngine.CompiledScripts {
 					new CodeMethodInvokeExpression(
 						new CodeTypeReferenceExpression(typeof(PluginDef)),
 						"RegisterPluginTG",
-						new CodeTypeOfExpression(pluginType.Name+"Def"),
+						new CodeTypeOfExpression(type.Name+"Def"),
 						new CodeObjectCreateExpression(this.codeTypeDeclatarion.Name)
 					));
 
 				return retVal;
 			}
 
+			[Remark("Used in constructor for filtering - obtain all members with given attribute")]
+			private static bool HasAttribute(MemberInfo m, object attributeType) {
+				Type attType = (Type)attributeType;
+				return Attribute.IsDefined(m,attType, false);
+			}
 
-			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s=((string) filterCriteria).ToLower();
-				return m.Name.ToLower().StartsWith(s);
-			}*/
+			[Remark("Used in constructor for filtering- obtain all members except those with given attribute")]
+			private static bool HasntAttribute(MemberInfo m, object attributeType) {
+				Type attType = (Type)attributeType;
+				return !Attribute.IsDefined(m, attType, false);
+			}
 		}
 	}
 }
