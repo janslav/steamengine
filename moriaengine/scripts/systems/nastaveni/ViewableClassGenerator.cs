@@ -69,27 +69,25 @@ namespace SteamEngine.CompiledScripts {
 			get { return "ViewableClasses.Generated.cs"; }
 		}
 
-		//[Remark("While loading this class, make some registrations in the ClassManager for handling ViewableClasses")]
-		//public static void Bootstrap() {			
-		//    ClassManager.PrepareForViewables(IsViewableClass,RegisterViewableClass);
-		//}
+		[Remark("While loading this class, make some registrations in the ClassManager for handling ViewableClasses")]
+		public static void Bootstrap() {			
+			//register the CheckViewabilityClass method so every ClassManager managed Type will be
+			//checked here for its Viewability...
+		    ClassManager.RegisterHook(CheckViewabilityClass);
+		}
 
-		[Remark("Method for checking if the given Type is Viewable. Used as delegate in ClassManager")]
-		public static bool IsViewableClass(Type type) {
+		[Remark("Method for checking if the given Type is Viewable. If so, put it to the list."+
+				"Used as delegate in ClassManager")]
+		public static bool CheckViewabilityClass(Type type) {
 			//look if the type has this attribute, don't look to parent classes 
 			//(if the type has not the attribute but some parent has, we dont care - if we want
 			//it to be infoized, we must add a ViewableClass attribute to it)
 			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false)) {
+				viewableClasses.Add(type);
 				return true;
 			}
 			return false;
 		}
-
-		[Remark("Method for checking the Viewable types. Used as delegate in ClassManager")]
-		public static void RegisterViewableClass(Type type) {
-			viewableClasses.Add(type);
-		}
-
 
 		/*
 			Constructor: CompiledTriggerGroup
