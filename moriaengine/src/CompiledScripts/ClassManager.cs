@@ -26,6 +26,12 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts { 
 	
 	public static class ClassManager {
+		public delegate bool IsViewable(Type type);
+		public delegate bool RegViewable(Type type);
+
+		private static IsViewable viewDeleg;
+		private static RegViewable regDeleg;
+
 		public readonly static Hashtable allTypesbyName = new Hashtable(StringComparer.OrdinalIgnoreCase);
 		//String-Type pairs.
 		//private static Type[] allTypes;
@@ -87,6 +93,15 @@ namespace SteamEngine.CompiledScripts {
 			
 		private static bool InitClasses(Type[] types, string assemblyName, bool isCoreAssembly) {
 			bool success = true;
+			MethodInfo m = null;
+			//first call the Bootstrap methods (if present)
+			for(int i = 0; i < types.Length; i++) {
+				m = types[i].GetMethod("Bootstrap", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+				if(m != null) {
+					m.Invoke(null, null);
+				}
+			}
+			//then Initialize the classes as needed
 			for (int i=0; i<types.Length; i++) {
 				try {
 					InitClass(types[i], isCoreAssembly);
@@ -206,13 +221,13 @@ namespace SteamEngine.CompiledScripts {
 				if ((!type.IsAbstract) && (!type.IsSealed)) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
 					//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
 					CompiledTriggerGroupGenerator.AddCompiledTGType(type);
-					goto bootstrap;
+					return;
 				}
 			}
 			if (type.IsSubclassOf(typeof(Plugin))) {
 				if (!type.IsAbstract) {
 					PluginTriggerGroupGenerator.AddPluginTGType(type);
-					goto bootstrap;
+					return;
 				}
 			}
 			if (type.IsSubclassOf(typeof(CompiledScriptHolder))
@@ -234,11 +249,18 @@ namespace SteamEngine.CompiledScripts {
 			//	ThingDef.RegisterThingSubtype(type);
 			}
 
-bootstrap:
+			//if the type is ViewableClass, register it!
+			if(ClassManager.viewDeleg(type)) {
+				ClassManager.regDeleg(type);
+			}
+
+			//moved to InitClasses method - see above
+			/*
 			MethodInfo m = type.GetMethod("Bootstrap", BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly ); 
 			if (m!=null) {
 				m.Invoke(null, null);
 			}
+			*/
 		}
 
 		//called by Main on the end of startup/recompile process
@@ -265,6 +287,12 @@ bootstrap:
 				}
 			}
 			Logger.WriteDebug("Initializing Scripts done.");
+		}
+
+		[Remark("This is invoked during the Bootstrap phase of ViewableClassManager, it registers the desired methods for checking types")]
+		public static void PrepareForViewables(IsViewable viewDeleg, RegViewable regDeleg) {
+			ClassManager.viewDeleg = viewDeleg;
+			ClassManager.regDeleg = regDeleg;
 		}
 	}
 }
