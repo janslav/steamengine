@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using SteamEngine;
 using SteamEngine.Common;
@@ -26,6 +27,11 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts { 
 	
 	public static class ClassManager {
+		//delegate for registering hooks
+		public delegate bool HookedMethod(Type type);
+		//list for storing hooked delegates
+		private static List<HookedMethod> hooksList = new List<HookedMethod>();
+
 		public readonly static Hashtable allTypesbyName = new Hashtable(StringComparer.OrdinalIgnoreCase);
 		//String-Type pairs.
 		//private static Type[] allTypes;
@@ -243,6 +249,11 @@ namespace SteamEngine.CompiledScripts {
 			//	ThingDef.RegisterThingSubtype(type);
 			}
 
+			//check every hooked delegates			
+			foreach(HookedMethod hmDeleg in hooksList) {
+				hmDeleg(type);
+			}
+
 			//moved to InitClasses method - see above
 			/*
 			MethodInfo m = type.GetMethod("Bootstrap", BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly ); 
@@ -276,6 +287,14 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			Logger.WriteDebug("Initializing Scripts done.");
+		}
+
+		[Remark("Register hook method (delegate). The hook method awaits Type as a parameter "+
+				"and returns bool value according to its implementation. Every managed Type will be"+
+				"sent to every delegate found in the delegList. The delegated methods in various classes"+
+				"can then perform any necessary actions on managed Types")]
+		public static void RegisterHook(HookedMethod hook) {
+			hooksList.Add(hook);
 		}
 	}
 }
