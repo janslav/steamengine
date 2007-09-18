@@ -78,6 +78,7 @@ namespace SteamEngine.CompiledScripts {
 			foreach (ISteamCSCodeGenerator generator in generators.Values) {
 				CodeCompileUnit codeCompileUnit = generator.WriteSources();
 				if (codeCompileUnit == null) {
+					Logger.WriteFatal(generator+" failed to generate scripts...?");
 					return false;
 				}
 

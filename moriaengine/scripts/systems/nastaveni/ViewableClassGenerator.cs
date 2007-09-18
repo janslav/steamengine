@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> viewableClasses = new List<Type>();
 		
 		public CodeCompileUnit WriteSources() {
-			return null;
+			return new CodeCompileUnit();
 			///TODO - pøepsat pochopitelnì
 			/*try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -69,10 +69,10 @@ namespace SteamEngine.CompiledScripts {
 			get { return "ViewableClasses.Generated.cs"; }
 		}
 
-		[Remark("While loading this class, make some registrations in the ClassManager for handling ViewableClasses")]
-		public static void Bootstrap() {			
-			ClassManager.PrepareForViewables(IsViewableClass,RegisterViewableClass);
-		}
+		//[Remark("While loading this class, make some registrations in the ClassManager for handling ViewableClasses")]
+		//public static void Bootstrap() {			
+		//    ClassManager.PrepareForViewables(IsViewableClass,RegisterViewableClass);
+		//}
 
 		[Remark("Method for checking if the given Type is Viewable. Used as delegate in ClassManager")]
 		public static bool IsViewableClass(Type type) {
