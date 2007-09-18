@@ -293,6 +293,9 @@
     <Compile Include="..\..\scripts\systems\nastaveni\StaticsSetting.cs">
       <Link>systems\nastaveni\StaticsSetting.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\nastaveni\ViewableClassGenerator.cs">
+      <Link>systems\nastaveni\ViewableClassGenerator.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
