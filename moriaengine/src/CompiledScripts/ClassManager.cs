@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	
 	public static class ClassManager {
 		public delegate bool IsViewable(Type type);
-		public delegate bool RegViewable(Type type);
+		public delegate void RegViewable(Type type);
 
 		private static IsViewable viewDeleg;
 		private static RegViewable regDeleg;
