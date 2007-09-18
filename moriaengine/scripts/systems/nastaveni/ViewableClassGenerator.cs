@@ -40,10 +40,11 @@ namespace SteamEngine.CompiledScripts {
 					foreach (Type viewableClass in viewableClasses) {
 						try {
 							GeneratedInstance gi = new GeneratedInstance(viewableClass);
-							if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
-								CodeTypeDeclaration ctd = gi.GetGeneratedType();
-								ns.Types.Add(ctd);
-							}
+							///TODO-dodìlat 
+							//if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
+							//    CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							//    ns.Types.Add(ctd);
+							//}
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
@@ -122,7 +123,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
-
+			/*
 			internal CodeTypeDeclaration GetGeneratedType() {
 				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDataView_"+type.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
@@ -191,7 +192,7 @@ namespace SteamEngine.CompiledScripts {
 
 				return retVal;
 			}
-
+            */
 			[Remark("Used in constructor for filtering - obtain all members with given attribute")]
 			private static bool HasAttribute(MemberInfo m, object attributeType) {
 				Type attType = (Type)attributeType;
