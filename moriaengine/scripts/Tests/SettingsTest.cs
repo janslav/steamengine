@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("Class returning pages for the dialog.")]
-	public class GeneratedDataView_SimpleClass : AbstractDataView {
+	public sealed class Prototype_GeneratedDataView_SimpleClass : AbstractDataView {
 		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {
 			return new SimpleClassActionButtonsPage(firstLineIndex, maxButtonsOnPage);			
 		}
