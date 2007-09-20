@@ -113,6 +113,18 @@
     <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
       <Link>CharClasses\Player.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.cs">
+      <Link>ItemClasses\ColoredArmor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.Generated.cs">
+      <Link>ItemClasses\ColoredArmor.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredWeapon.cs">
+      <Link>ItemClasses\ColoredWeapon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredWeapon.Generated.cs">
+      <Link>ItemClasses\ColoredWeapon.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Container.cs">
       <Link>ItemClasses\Container.cs</Link>
     </Compile>
@@ -511,6 +523,9 @@
     </Compile>
     <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
       <Link>Utils\ExportUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\HuesCalculator.cs">
+      <Link>Utils\HuesCalculator.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Utils\LegacyUtils.cs">
       <Link>Utils\LegacyUtils.cs</Link>

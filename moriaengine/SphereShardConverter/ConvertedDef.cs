@@ -47,9 +47,9 @@ namespace SteamEngine.Converter {
 
 		private bool dontDump = false;
 		
-		protected ArrayList firstStageImplementations = new ArrayList(5);
-		protected ArrayList secondStageImplementations = new ArrayList(5);
-		protected ArrayList thirdStageImplementations = new ArrayList(5);
+		protected ArrayList firstStageImplementations = new ArrayList();
+		protected ArrayList secondStageImplementations = new ArrayList();
+		protected ArrayList thirdStageImplementations = new ArrayList();
 		
 		public ConvertedDef(PropsSection input) {
 			this.origData = input;

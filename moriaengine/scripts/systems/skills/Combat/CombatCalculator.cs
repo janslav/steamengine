@@ -386,8 +386,10 @@ namespace SteamEngine.CompiledScripts {
 					retVal.delay = npcDef.WeaponDelay;
 					retVal.attack = npcDef.WeaponAttack;
 					retVal.piercing = npcDef.WeaponPiercing;
+				} else {
+					//else ?!
+					Logger.WriteError("Can't calculate combat values for '"+self+"'. It says it's a NPC but has no NPCDef.");
 				}
-				//else ?!
 			}
 
 			retVal.damageType = GetWeaponDamageType(retVal.weaponType);
