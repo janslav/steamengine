@@ -48,6 +48,9 @@
     <Compile Include="..\..\bin\Generated\PluginTriggerGroups.Generated.cs">
       <Link>PluginTriggerGroups.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\bin\Generated\ViewableClasses.Generated.cs">
+      <Link>ViewableClasses.Generated.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MSVS.NET\Common.csproj">
