@@ -41,10 +41,10 @@ namespace SteamEngine.CompiledScripts {
 						try {
 							GeneratedInstance gi = new GeneratedInstance(viewableClass);
 							///TODO-dodìlat 
-							//if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
-							//    CodeTypeDeclaration ctd = gi.GetGeneratedType();
-							//    ns.Types.Add(ctd);
-							//}
+							if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
+							    CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							    ns.Types.Add(ctd);
+							}
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
@@ -95,11 +95,14 @@ namespace SteamEngine.CompiledScripts {
 			internal List<PropertyInfo> properties = new List<PropertyInfo>();
 			internal List<MethodInfo> butonMethods = new List<MethodInfo>();
 			Type type;
-			CodeTypeDeclaration codeTypeDeclatarion;
+			string typeLabel; //label for info dialogs - obtained from ViewableClassAttribute
+			CodeTypeDeclaration codeTypeDeclaration;
 
 			internal GeneratedInstance(Type type) {
 				this.type = type;
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
+				ViewableClassAttribute vca = (ViewableClassAttribute)type.GetCustomAttributes(typeof(ViewableClassAttribute), false)[0];
+				typeLabel = (vca.Name == null ? type.Name : vca.Name); //label will be either the name of the type or specified label
+				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public|BindingFlags.Static;
 
 				//get all fields from the Type except for those marked as "NoShow"
 				MemberInfo[] flds = type.FindMembers(MemberTypes.Field|MemberTypes.Property, bindingAttr, HasntAttribute, typeof(NoShowAttribute)); 
@@ -123,29 +126,65 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
-			/*
+			
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDataView_"+type.Name);
-				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				codeTypeDeclatarion.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
-				codeTypeDeclatarion.IsClass = true;
+				codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDataView_" + type.Name);
+				codeTypeDeclaration.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+				codeTypeDeclaration.BaseTypes.Add(typeof(AbstractDataView));
+				codeTypeDeclaration.IsClass = true;
+				
+				//first add two methods for getting the ActionsButtonsPage and DataFieldsPage
+				codeTypeDeclaration.Members.Add(GenerateActionsButtonsPageMethod());
+				codeTypeDeclaration.Members.Add(GenerateDataFieldsPageMethod());
+				//now two overriden properties - LineCount and Name
+				codeTypeDeclaration.Members.Add(GenerateLineCountProperty());
+				codeTypeDeclaration.Members.Add(GenerateNameProperty());
 
-				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
-				codeTypeDeclatarion.Members.Add(GenerateBootstrapMethod());
+				//now create the inner classes of all IDataFieldViews for this class
+				//first classes for buttons
+				List<string> buttonDataFieldViews = new List<string>();
+				foreach(MethodInfo buttonMethod in butonMethods) {
+					CodeTypeDeclaration oneButtonIDFW = GenerateButtonIDFW(buttonMethod);
+					buttonDataFieldViews.Add(oneButtonIDFW.Name); //store the name of the new generated type
+					codeTypeDeclaration.Members.Add(oneButtonIDFW);
+				}
 
-				return codeTypeDeclatarion;
+				//then classes for datafields
+				List<string> fieldsDataFieldViews = new List<string>();
+				foreach(FieldInfo oneField in fields) {
+					CodeTypeDeclaration oneFieldIDFW = GenerateFieldIDFW(oneField);
+					fieldsDataFieldViews.Add(oneFieldIDFW.Name); //store the name of the new generated type
+					codeTypeDeclaration.Members.Add(oneFieldIDFW);
+				}
+				foreach(PropertyInfo oneProperty in properties) {
+					CodeTypeDeclaration onePropertyIDFW = GenerateFieldIDFW(oneProperty);
+					fieldsDataFieldViews.Add(onePropertyIDFW.Name); //store the name of the new generated type
+					codeTypeDeclaration.Members.Add(onePropertyIDFW);
+				}
+
+				//now add a Class representing one Page of action buttons
+				codeTypeDeclaration.Members.Add(GenerateActionButtonsPage(buttonDataFieldViews));
+
+				return codeTypeDeclaration;
 			}
 
-
-			private CodeMemberMethod GenerateRunMethod() {
+			[Remark("Method for getting one page of action buttons")]
+			private CodeMemberMethod GenerateActionsButtonsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "Run";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(Plugin), "self"));
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(TriggerKey), "tk"));
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(ScriptArgs), "sa"));
-				retVal.ReturnType = new CodeTypeReference(typeof(object));
+				retVal.Name = "ActionsButtonsPage";
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxButtonsOnPage"));
+				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<ButtonDataFieldView>));
 
+				retVal.Statements.Add(new CodeMethodReturnStatement(
+										//makes the "new ..." section
+										new CodeObjectCreateExpression(type.Name+"ActionButtonsPage",
+											//two parameters
+											new CodeVariableReferenceExpression("firstLineIndex"),
+											new CodeVariableReferenceExpression("maxButtonsOnPage"))
+										));
+				/*
 				if(butonMethods.Count > 0) {
 					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning disable 168"));
 					retVal.Statements.Add(new CodeVariableDeclarationStatement(
@@ -167,32 +206,221 @@ namespace SteamEngine.CompiledScripts {
 						//    false));
 					}
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\t}"));
-				}
-
-				retVal.Statements.Add(
-					new CodeMethodReturnStatement(
-						new CodePrimitiveExpression(null)));
-
+				}*/
 				return retVal;
 			}
 
-
-			private CodeMemberMethod GenerateBootstrapMethod() {
+			[Remark("Method for getting one page of data fields buttons")]
+			private CodeMemberMethod GenerateDataFieldsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Static;
-				retVal.Name = "Bootstrap";
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "DataFieldsPage";
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxLinesOnPage"));
+				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<ButtonDataFieldView>));
 
-				retVal.Statements.Add(
-					new CodeMethodInvokeExpression(
-						new CodeTypeReferenceExpression(typeof(PluginDef)),
-						"RegisterPluginTG",
-						new CodeTypeOfExpression(type.Name+"Def"),
-						new CodeObjectCreateExpression(this.codeTypeDeclatarion.Name)
-					));
+				retVal.Statements.Add(new CodeMethodReturnStatement(
+										new CodeObjectCreateExpression(type.Name + "DataFieldsPage",
+											new CodeVariableReferenceExpression("firstLineIndex"),
+											new CodeVariableReferenceExpression("maxLinesOnPage"))
+										));
+				return retVal;
+			}
+
+			[Remark("The get-property LineCount - says how many rows will there be")]
+			private CodeMemberProperty GenerateLineCountProperty() {
+				CodeMemberProperty retVal = new CodeMemberProperty();
+				retVal.HasGet = true;
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "LineCount";
+				retVal.Type = new CodeTypeReference(typeof(int));
+				retVal.GetStatements.Add(new CodeMethodReturnStatement(
+											new CodePrimitiveExpression(
+												Math.Max(butonMethods.Count,fields.Count+properties.Count)
+										)));
+				return retVal;
+			}
+
+			[Remark("The get-property Name")]
+			private CodeMemberProperty GenerateNameProperty() {
+				CodeMemberProperty retVal = new CodeMemberProperty();
+				retVal.HasGet = true;
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "Name";
+				retVal.Type = new CodeTypeReference(typeof(string));
+				retVal.GetStatements.Add(new CodeMethodReturnStatement(
+											new CodePrimitiveExpression(
+												typeLabel
+										)));
+				return retVal;
+			}
+
+			[Remark("Generate an inner class for handling Action Buttons")]
+			private CodeTypeDeclaration GenerateButtonIDFW(MethodInfo minf) {
+				ButtonAttribute bat = (ButtonAttribute)minf.GetCustomAttributes(typeof(ButtonAttribute),false)[0];
+				string buttonLabel = (bat.Name == null ? minf.Name : bat.Name); //label of the button (could have been specified in ButtonAttribute)
+				string newClassName = "GeneratedButtonDataFieldView_" + type.Name + "_" + minf.Name;
+				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
+				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+				retVal.BaseTypes.Add(typeof(ButtonDataFieldView));				
+				retVal.IsClass = true;
+
+				//reference to instance
+				retVal.Members.Add(new CodeMemberField(newClassName, "instance"));
+				//constructor
+				CodeConstructor constr = new CodeConstructor();
+				constr.Attributes = MemberAttributes.Static;
+				//add initialization of instance variable to the constructor
+				constr.Statements.Add(new CodeAssignStatement(
+										new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"instance"), 
+										new CodeObjectCreateExpression(newClassName)));
+				retVal.Members.Add(constr);
+
+				//now override the Name property
+				CodeMemberProperty nameProp = new CodeMemberProperty();
+				nameProp.HasGet = true;
+				nameProp.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				nameProp.Name = "Name";
+				nameProp.Type = new CodeTypeReference(typeof(string));
+				nameProp.GetStatements.Add(new CodeMethodReturnStatement(
+											new CodePrimitiveExpression(
+												buttonLabel
+										)));
+				retVal.Members.Add(nameProp);
+
+				//and finally add the implementation of OnButton method
+				CodeMemberMethod onButtonMeth = new CodeMemberMethod();
+				onButtonMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				onButtonMeth.Name = "OnButton";
+				onButtonMeth.ReturnType = new CodeTypeReference(typeof(void));
+				onButtonMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				onButtonMeth.Statements.Add(new CodeMethodInvokeExpression(
+												//cast the "target" to the "type" and call the method referenced by the MethodMember
+												new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
+												minf.Name
+											));
+				retVal.Members.Add(onButtonMeth);
+				return retVal;
+			}
+
+			[Remark("Generate an inner class for handling ReadWriteData fields")]
+			private CodeTypeDeclaration GenerateFieldIDFW(MemberInfo minf) {
+				string newClassName = "GeneratedReadWriteDataFieldView_" + type.Name + "_" + minf.Name;
+				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
+				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+				retVal.BaseTypes.Add(typeof(ReadWriteDataFieldView));
+				retVal.IsClass = true;
+
+				//reference to instance
+				retVal.Members.Add(new CodeMemberField(newClassName, "instance"));
+				//constructor
+				CodeConstructor constr = new CodeConstructor();
+				constr.Attributes = MemberAttributes.Static;
+				//add initialization of instance variable to the constructor
+				constr.Statements.Add(new CodeAssignStatement(
+										new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "instance"),
+										new CodeObjectCreateExpression(newClassName)));
+				retVal.Members.Add(constr);
+
+				//now override the Name property
+				CodeMemberProperty nameProp = new CodeMemberProperty();
+				nameProp.HasGet = true;
+				nameProp.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				nameProp.Name = "Name";
+				nameProp.Type = new CodeTypeReference(typeof(string));
+				nameProp.GetStatements.Add(new CodeMethodReturnStatement(
+											new CodePrimitiveExpression(
+												minf.Name
+										)));
+				retVal.Members.Add(nameProp);
+
+				//GetValue method
+				CodeMemberMethod getValueMeth = new CodeMemberMethod();
+				getValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				getValueMeth.Name = "GetValue";
+				getValueMeth.ReturnType = new CodeTypeReference(typeof(object));
+				getValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				getValueMeth.Statements.Add(new CodeMethodReturnStatement(
+												new CodeFieldReferenceExpression(
+													//cast the "target" to the "type" and call the method referenced by the MethodMember
+													new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
+													minf.Name
+											)));
+				retVal.Members.Add(getValueMeth);
+
+				//GetStringValue method
+				CodeMemberMethod getStringValueMeth = new CodeMemberMethod();
+				getStringValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				getStringValueMeth.Name = "GetStringValue";
+				getStringValueMeth.ReturnType = new CodeTypeReference(typeof(string));
+				getStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				//add something like this: return ObjectSaver.Save(((SimpleClass)target).foo);
+				getStringValueMeth.Statements.Add(new CodeMethodReturnStatement(
+													new CodeMethodInvokeExpression(
+														new CodeTypeReferenceExpression("ObjectSaver"),
+														"Save",
+														new CodeFieldReferenceExpression(
+															new CodeCastExpression(type,new CodeVariableReferenceExpression("target")),
+															minf.Name)
+												 )));
+				retVal.Members.Add(getStringValueMeth);
+
+				//SetValue method
+				CodeMemberMethod setValueMeth = new CodeMemberMethod();
+				setValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				setValueMeth.Name = "SetValue";
+				setValueMeth.ReturnType = new CodeTypeReference(typeof(void));
+				setValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				setValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "value"));
+				//add something like this: ((SimpleClass)target).foo = (string)value;
+				Type memberType = null;
+				if(minf is PropertyInfo)
+					memberType = ((PropertyInfo)minf).PropertyType;
+				else if(minf is FieldInfo)
+					memberType = ((FieldInfo)minf).FieldType;
+				setValueMeth.Statements.Add(new CodeAssignStatement(
+												new CodeFieldReferenceExpression(
+													new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
+													minf.Name),
+												new CodeCastExpression(memberType, new CodeVariableReferenceExpression("value"))
+											));				
+				retVal.Members.Add(setValueMeth);
+
+				//SetStringValue method
+				CodeMemberMethod setStringValueMeth = new CodeMemberMethod();
+				setStringValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				setStringValueMeth.Name = "SetStringValue";
+				setStringValueMeth.ReturnType = new CodeTypeReference(typeof(void));
+				setStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				setStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "value"));
+				//add something like this: ((SimpleClass)target).foo = (string)ObjectSaver.OptimizedLoad_String(value);
+				setStringValueMeth.Statements.Add(new CodeAssignStatement(
+													new CodeFieldReferenceExpression(
+														new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
+														minf.Name),
+													new CodeCastExpression(
+														typeof(string), 
+														new CodeMethodInvokeExpression(
+															new CodeTypeReferenceExpression("ObjectSaver"),
+															"OptimizedLoad_String",
+															new CodeVariableReferenceExpression("value")
+													))));
+				retVal.Members.Add(setStringValueMeth);
 
 				return retVal;
 			}
-            */
+
+			[Remark("Generate a class representing an ActionButtonsPage")]
+			private CodeTypeDeclaration GenerateActionButtonsPage(List<string> buttonDFVs) {
+				string newClassName = type.Name+"ActionButtonsPage";
+				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
+				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;				
+				//retVal.BaseTypes.Add(typeof(AbstractPage<ButtonDataFieldView>));
+				retVal.IsClass = true;
+
+				return retVal;
+			}
+
 			[Remark("Used in constructor for filtering - obtain all members with given attribute")]
 			private static bool HasAttribute(MemberInfo m, object attributeType) {
 				Type attType = (Type)attributeType;

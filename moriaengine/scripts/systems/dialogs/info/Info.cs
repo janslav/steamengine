@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Method for finding the AbstractDataView for given infoized object")]
 		private AbstractDataView GetAbstractDataView(object target) {
 			///TODO - prozatim takto, pozdeji vzit dle typu targetu z globalni hashtable
-			return new GeneratedDataView_SimpleClass();
+			return new Prototype_GeneratedDataView_SimpleClass();
 		}
 
 		[Remark("Display an info dialog. Function accessible from the game." +

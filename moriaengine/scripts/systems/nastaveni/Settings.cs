@@ -20,8 +20,6 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 
-
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Interface for displaying the labels and values of single members of the target"+
 			"(infoized) object in the dialog")]
