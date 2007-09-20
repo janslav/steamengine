@@ -29,6 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> viewableClasses = new List<Type>();
 		
 		public CodeCompileUnit WriteSources() {
+			return new CodeCompileUnit();
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
 				if (viewableClasses.Count > 0) {
@@ -134,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 				codeTypeDeclaration.IsClass = true;
 				
 				//first add two methods for getting the ActionsButtonsPage and DataFieldsPage
-				codeTypeDeclaration.Members.Add(GenerateActionsButtonsPageMethod());
+				codeTypeDeclaration.Members.Add(GenerateActionButtonsPageMethod());
 				codeTypeDeclaration.Members.Add(GenerateDataFieldsPageMethod());
 				//now two overriden properties - LineCount and Name
 				codeTypeDeclaration.Members.Add(GenerateLineCountProperty());
@@ -169,10 +170,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			[Remark("Method for getting one page of action buttons")]
-			private CodeMemberMethod GenerateActionsButtonsPageMethod() {
+			private CodeMemberMethod GenerateActionButtonsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "ActionsButtonsPage";
+				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+				retVal.Name = "ActionButtonsPage";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxButtonsOnPage"));
 				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<ButtonDataFieldView>));
@@ -213,11 +214,11 @@ namespace SteamEngine.CompiledScripts {
 			[Remark("Method for getting one page of data fields buttons")]
 			private CodeMemberMethod GenerateDataFieldsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 				retVal.Name = "DataFieldsPage";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxLinesOnPage"));
-				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<ButtonDataFieldView>));
+				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<IDataFieldView>));
 
 				retVal.Statements.Add(new CodeMethodReturnStatement(
 										new CodeObjectCreateExpression(type.Name + "DataFieldsPage",
@@ -357,7 +358,7 @@ namespace SteamEngine.CompiledScripts {
 				//add something like this: return ObjectSaver.Save(((SimpleClass)target).foo);
 				getStringValueMeth.Statements.Add(new CodeMethodReturnStatement(
 													new CodeMethodInvokeExpression(
-														new CodeTypeReferenceExpression("ObjectSaver"),
+														new CodeTypeReferenceExpression(typeof(Persistence.ObjectSaver)),
 														"Save",
 														new CodeFieldReferenceExpression(
 															new CodeCastExpression(type,new CodeVariableReferenceExpression("target")),
@@ -401,7 +402,7 @@ namespace SteamEngine.CompiledScripts {
 													new CodeCastExpression(
 														typeof(string), 
 														new CodeMethodInvokeExpression(
-															new CodeTypeReferenceExpression("ObjectSaver"),
+															new CodeTypeReferenceExpression(typeof(Persistence.ObjectSaver)),
 															"OptimizedLoad_String",
 															new CodeVariableReferenceExpression("value")
 													))));
