@@ -257,4 +257,26 @@ namespace SteamEngine.CompiledScripts {
 		Die2=12,	//This looks identical to 5 (attack) on all the animals I've tested so far...
 		NumAnims=13
 	}
+
+	public enum MaterialType : byte {
+		None=0,
+		Metal=1,
+		Ore=2,
+		Wood=3
+	}
+
+	public enum Material : byte {
+		None=0,
+		Copper=1, Spruce=1,
+		Iron=2, Chestnut=2,
+		Silver=3,
+		Gold=4,
+		Verite=5, Oak=5,
+		Valorite=6, Teak=6,
+		Obsidian=7, Mahagon=7,
+		Adamantinum=8, Eben=8,
+		Mithril=9, Elven=9,
+		Sand = 10
+
+	}
 }
