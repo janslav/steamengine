@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 		void HandleAssembly(Assembly compiledAssembly);
 	}
 
-	internal static class GeneratedCodeUtil {
+	public static class GeneratedCodeUtil {
 		internal static Assembly generatedAssembly;
 
 		internal static Dictionary<string, ISteamCSCodeGenerator> generators = new Dictionary<string, ISteamCSCodeGenerator>(StringComparer.OrdinalIgnoreCase);
