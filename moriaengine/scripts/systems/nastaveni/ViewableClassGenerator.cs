@@ -21,6 +21,7 @@ using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
@@ -29,7 +30,6 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> viewableClasses = new List<Type>();
 		
 		public CodeCompileUnit WriteSources() {
-			return new CodeCompileUnit();
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
 				if (viewableClasses.Count > 0) {
@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 
 					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts.Dialogs");
 					codeCompileUnit.Namespaces.Add(ns);
-
+					
 					foreach (Type viewableClass in viewableClasses) {
 						try {
 							GeneratedInstance gi = new GeneratedInstance(viewableClass);
@@ -165,6 +165,8 @@ namespace SteamEngine.CompiledScripts {
 
 				//now add a Class representing one Page of action buttons
 				codeTypeDeclaration.Members.Add(GenerateActionButtonsPage(buttonDataFieldViews));
+				//and a Class representing one Page of other datafields
+				codeTypeDeclaration.Members.Add(GenerateDataFieldsPage(fieldsDataFieldViews));
 
 				return codeTypeDeclaration;
 			}
@@ -184,30 +186,7 @@ namespace SteamEngine.CompiledScripts {
 											//two parameters
 											new CodeVariableReferenceExpression("firstLineIndex"),
 											new CodeVariableReferenceExpression("maxButtonsOnPage"))
-										));
-				/*
-				if(butonMethods.Count > 0) {
-					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning disable 168"));
-					retVal.Statements.Add(new CodeVariableDeclarationStatement(
-						typeof(object[]),
-						"argv"));
-					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning restore 168"));
-
-					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
-					foreach(MethodInfo mi in butonMethods) {
-						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
-						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase("+tk.uid+"): //"+tk.name));
-						//rozatim vyhozen\o, generuje to kod co nechceme
-						 
-						//retVal.Statements.AddRange(
-						//    CompiledScriptHolderGenerator.GenerateMethodInvocation(mi, 
-						//    new CodeCastExpression(
-						//        type,
-						//        new CodeArgumentReferenceExpression("self")), 
-						//    false));
-					}
-					retVal.Statements.Add(new CodeSnippetStatement("\t\t\t}"));
-				}*/
+										));				
 				return retVal;
 			}
 
@@ -267,13 +246,15 @@ namespace SteamEngine.CompiledScripts {
 				retVal.IsClass = true;
 
 				//reference to instance
-				retVal.Members.Add(new CodeMemberField(newClassName, "instance"));
+				CodeMemberField instField = new CodeMemberField(newClassName, "instance");
+				instField.Attributes = MemberAttributes.Public | MemberAttributes.Static;
+				retVal.Members.Add(instField);
 				//constructor
-				CodeConstructor constr = new CodeConstructor();
+				CodeTypeConstructor constr = new CodeTypeConstructor();
 				constr.Attributes = MemberAttributes.Static;
 				//add initialization of instance variable to the constructor
 				constr.Statements.Add(new CodeAssignStatement(
-										new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"instance"), 
+										new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(newClassName), "instance"),
 										new CodeObjectCreateExpression(newClassName)));
 				retVal.Members.Add(constr);
 
@@ -313,14 +294,17 @@ namespace SteamEngine.CompiledScripts {
 				retVal.IsClass = true;
 
 				//reference to instance
-				retVal.Members.Add(new CodeMemberField(newClassName, "instance"));
+				CodeMemberField instField = new CodeMemberField(newClassName, "instance");
+				instField.Attributes = MemberAttributes.Public | MemberAttributes.Static;
+				retVal.Members.Add(instField);
 				//constructor
-				CodeConstructor constr = new CodeConstructor();
+				CodeTypeConstructor constr = new CodeTypeConstructor();
 				constr.Attributes = MemberAttributes.Static;
 				//add initialization of instance variable to the constructor
 				constr.Statements.Add(new CodeAssignStatement(
-										new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "instance"),
-										new CodeObjectCreateExpression(newClassName)));
+										new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(newClassName), "instance"),
+										new CodeObjectCreateExpression(newClassName)
+									  ));
 				retVal.Members.Add(constr);
 
 				//now override the Name property
@@ -358,7 +342,7 @@ namespace SteamEngine.CompiledScripts {
 				//add something like this: return ObjectSaver.Save(((SimpleClass)target).foo);
 				getStringValueMeth.Statements.Add(new CodeMethodReturnStatement(
 													new CodeMethodInvokeExpression(
-														new CodeTypeReferenceExpression(typeof(Persistence.ObjectSaver)),
+														new CodeTypeReferenceExpression(typeof(ObjectSaver)),
 														"Save",
 														new CodeFieldReferenceExpression(
 															new CodeCastExpression(type,new CodeVariableReferenceExpression("target")),
@@ -402,7 +386,7 @@ namespace SteamEngine.CompiledScripts {
 													new CodeCastExpression(
 														typeof(string), 
 														new CodeMethodInvokeExpression(
-															new CodeTypeReferenceExpression(typeof(Persistence.ObjectSaver)),
+															new CodeTypeReferenceExpression(typeof(ObjectSaver)),
 															"OptimizedLoad_String",
 															new CodeVariableReferenceExpression("value")
 													))));
@@ -416,8 +400,178 @@ namespace SteamEngine.CompiledScripts {
 				string newClassName = type.Name+"ActionButtonsPage";
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;				
-				//retVal.BaseTypes.Add(typeof(AbstractPage<ButtonDataFieldView>));
+				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<ButtonDataFieldView>));
 				retVal.IsClass = true;
+
+				//constructor with two parameters (calling the base(,))
+				CodeConstructor constr = new CodeConstructor();
+				constr.Attributes = MemberAttributes.Public;
+				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
+				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxButtonsOnPage"));
+				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("firstLineIndex"));
+				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("maxButtonsOnPage"));
+				retVal.Members.Add(constr);
+
+				//add the MoveNext method for iterating over the buttons
+				CodeMemberMethod moveNextMeth = new CodeMemberMethod();
+				moveNextMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				moveNextMeth.Name = "MoveNext";
+				moveNextMeth.ReturnType = new CodeTypeReference(typeof(bool));
+				//add something like this: 
+							/*if(nextIndex < upperBound) {
+								switch(nextIndex) {						
+									case 0:
+										current = GeneratedButtonDataFieldView_SimpleClass_SomeMethod.instance;
+										break;
+									default:
+										//this happens when there are not enough lines to fill the whole page
+										//or if we are beginning with the index larger then the overall LinesCount 
+										//(which results in the empty page and should not happen)
+										return false;
+								}
+								++nextIndex;//prepare the index for the next round of iteration
+								return true;
+							} else {
+								return false;
+							}
+							*/
+				//prepare the if block
+				List<CodeStatement> ifblock = new List<CodeStatement>();
+				ifblock.Add(new CodeSnippetStatement("\t\t\t\t\tswitch(nextIndex) {"));
+				for(int i = 0; i < buttonDFVs.Count; i++) { //for every ReadWriteDataFieldView add one "case"
+					ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t\tcase " + i + ":"));
+					ifblock.Add(new CodeAssignStatement(
+									new CodeVariableReferenceExpression("current"),
+									new CodeFieldReferenceExpression(
+										new CodeTypeReferenceExpression(buttonDFVs[i]), "instance")
+								));
+					ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t\t\tbreak;"));
+				}
+				ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t\tdefault:"));
+				ifblock.Add(new CodeMethodReturnStatement(
+								new CodePrimitiveExpression(false)
+							));
+				ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t}"));
+				ifblock.Add(new CodeAssignStatement( 
+								new CodeVariableReferenceExpression("nextIndex"), 
+								new CodeBinaryOperatorExpression(
+									new CodeVariableReferenceExpression("nextIndex"), 
+									CodeBinaryOperatorType.Add, 
+									new CodePrimitiveExpression(1) 
+							)));				
+				ifblock.Add(new CodeMethodReturnStatement(
+								new CodePrimitiveExpression(true)
+							));
+				CodeStatement[] ifblockArray = ifblock.ToArray();
+				//prepare the else block				
+				CodeStatement[] elseblockArray = { new CodeMethodReturnStatement(
+													new CodePrimitiveExpression(false))
+												 };
+
+				moveNextMeth.Statements.Add(new CodeConditionStatement(
+												//condition
+												new CodeBinaryOperatorExpression(
+													new CodeVariableReferenceExpression("nextIndex"),
+													CodeBinaryOperatorType.LessThan,
+													new CodeVariableReferenceExpression("upperBound")),
+												//if
+												ifblockArray
+												,
+												//else
+												elseblockArray
+											));					
+				retVal.Members.Add(moveNextMeth);
+
+				return retVal;
+			}
+
+			[Remark("Generate a class representing an DataFieldsPage")]
+			private CodeTypeDeclaration GenerateDataFieldsPage(List<string> fieldsDFVs) {
+				string newClassName = type.Name + "DataFieldsPage";
+				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
+				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<IDataFieldView>));
+				retVal.IsClass = true;
+
+				//constructor with two parameters (calling the base(,))
+				CodeConstructor constr = new CodeConstructor();
+				constr.Attributes = MemberAttributes.Public;
+				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
+				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxFieldsOnPage"));
+				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("firstLineIndex"));
+				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("maxFieldsOnPage"));
+				retVal.Members.Add(constr);
+
+				//add the MoveNext method for iterating over the fields
+				CodeMemberMethod moveNextMeth = new CodeMemberMethod();
+				moveNextMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				moveNextMeth.Name = "MoveNext";
+				moveNextMeth.ReturnType = new CodeTypeReference(typeof(bool));
+				//add something like this: 
+						/*if(nextIndex < upperBound) {
+							switch(nextIndex) {						
+								case 0:
+									current = GeneratedButtonDataFieldView_SimpleClass_SomeMethod.instance;
+									break;
+								default:
+									//this happens when there are not enough lines to fill the whole page
+									//or if we are beginning with the index larger then the overall LinesCount 
+									//(which results in the empty page and should not happen)
+									return false;
+							}
+							++nextIndex;//prepare the index for the next round of iteration
+							return true;
+						} else {
+							return false;
+						}
+						*/
+				//prepare the if block
+				List<CodeStatement> ifblock = new List<CodeStatement>();
+				ifblock.Add(new CodeSnippetStatement("\t\t\t\t\tswitch(nextIndex) {"));
+				for(int i = 0; i < fieldsDFVs.Count; i++) { //for every ReadWriteDataFieldView add one "case"
+					ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t\tcase " + i + ":"));
+					ifblock.Add(new CodeAssignStatement(
+									new CodeVariableReferenceExpression("current"),
+									new CodeFieldReferenceExpression(
+										new CodeTypeReferenceExpression(fieldsDFVs[i]), "instance")
+								));
+					ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t\t\tbreak;"));
+				}
+				ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t\tdefault:"));
+				ifblock.Add(new CodeMethodReturnStatement(
+								new CodePrimitiveExpression(false)
+							));
+				ifblock.Add(new CodeSnippetStatement("\t\t\t\t\t}"));
+				ifblock.Add(new CodeAssignStatement(
+								new CodeVariableReferenceExpression("nextIndex"),
+								new CodeBinaryOperatorExpression(
+									new CodeVariableReferenceExpression("nextIndex"),
+									CodeBinaryOperatorType.Add,
+									new CodePrimitiveExpression(1)
+							)));
+				ifblock.Add(new CodeMethodReturnStatement(
+								new CodePrimitiveExpression(true)
+							));
+				CodeStatement[] ifblockArray = ifblock.ToArray();
+				//prepare the else block				
+				CodeStatement[] elseblockArray = { new CodeMethodReturnStatement(
+													new CodePrimitiveExpression(false))
+												 };
+				
+				moveNextMeth.Statements.Add(new CodeConditionStatement(
+												//condition
+												new CodeBinaryOperatorExpression(
+													new CodeVariableReferenceExpression("nextIndex"), 
+													CodeBinaryOperatorType.LessThan, 
+													new CodeVariableReferenceExpression("upperBound")),
+												//if
+												ifblockArray
+												,
+												//else
+												elseblockArray
+												));												
+				
+				retVal.Members.Add(moveNextMeth);
 
 				return retVal;
 			}
