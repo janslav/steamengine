@@ -51,6 +51,7 @@ namespace SteamEngine.CompiledScripts {
 		static GeneratedCodeUtil() {
 			options = new CodeGeneratorOptions();
 			options.IndentString="\t";
+			options.ElseOnClosing = true;			
 			provider = new Microsoft.CSharp.CSharpCodeProvider();
 		}
 

@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			public SimpleClassActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) : base(firstLineIndex, maxButtonsOnPage) {
 			}
 
-			public override bool MoveNext() {
+			public override bool MoveNext() {				
 				if(nextIndex < upperBound) {
 					switch(nextIndex) {						
 						case 0:
