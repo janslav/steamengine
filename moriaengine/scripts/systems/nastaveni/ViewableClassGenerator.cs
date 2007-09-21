@@ -399,13 +399,8 @@ namespace SteamEngine.CompiledScripts {
 													new CodeFieldReferenceExpression(
 														new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
 														minf.Name),
-													new CodeCastExpression(
-														typeof(string), 
-														new CodeMethodInvokeExpression(
-															new CodeTypeReferenceExpression(typeof(ObjectSaver)),
-															"OptimizedLoad_String",
-															new CodeVariableReferenceExpression("value")
-													))));
+													GeneratedCodeUtil.GenerateSimpleLoadExpression(memberType, new CodeVariableReferenceExpression("value"))
+													));
 				retVal.Members.Add(setStringValueMeth);
 
 				return retVal;
