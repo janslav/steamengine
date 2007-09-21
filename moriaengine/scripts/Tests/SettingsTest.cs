@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using System.Collections.Generic;
@@ -106,6 +107,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					return false;
 				}
+			}
+		}
+
+		public override Type HandledType {
+			get {
+				return typeof(SimpleClass);
 			}
 		}
 	}	

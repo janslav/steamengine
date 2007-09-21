@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.CodeDom;
@@ -28,6 +29,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts { 
 	internal class ViewableClassGenerator : ISteamCSCodeGenerator {
 		static List<Type> viewableClasses = new List<Type>();
+		static Hashtable typesViewablesTable = new Hashtable(); 
 		
 		public CodeCompileUnit WriteSources() {
 			try {
@@ -137,9 +139,10 @@ namespace SteamEngine.CompiledScripts {
 				//first add two methods for getting the ActionsButtonsPage and DataFieldsPage
 				codeTypeDeclaration.Members.Add(GenerateActionButtonsPageMethod());
 				codeTypeDeclaration.Members.Add(GenerateDataFieldsPageMethod());
-				//now two overriden properties - LineCount and Name
+				//now three overriden properties - LineCount, Name and HandledType
 				codeTypeDeclaration.Members.Add(GenerateLineCountProperty());
 				codeTypeDeclaration.Members.Add(GenerateNameProperty());
+				codeTypeDeclaration.Members.Add(GenerateHandledTypeProperty());
 
 				//now create the inner classes of all IDataFieldViews for this class
 				//first classes for buttons
@@ -232,6 +235,19 @@ namespace SteamEngine.CompiledScripts {
 											new CodePrimitiveExpression(
 												typeLabel
 										)));
+				return retVal;
+			}
+
+			[Remark("The HandledType getter")]
+			private CodeMemberProperty GenerateHandledTypeProperty() {
+				CodeMemberProperty retVal = new CodeMemberProperty();
+				retVal.HasGet = true;
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "HandledType";
+				retVal.Type = new CodeTypeReference(typeof(Type));
+				retVal.GetStatements.Add(new CodeMethodReturnStatement(
+											new CodeTypeOfExpression(type)
+										));
 				return retVal;
 			}
 

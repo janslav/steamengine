@@ -79,6 +79,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			get;
 		}
 
+		[Remark("This getter will provide us the Type this AbstractDataView is made for")]
+		public abstract Type HandledType {
+			get;
+		}
+
 		#region IPageableCollection Members
 		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
 			throw new System.Exception("The method or operation is not implemented.");
