@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
@@ -36,10 +36,11 @@ namespace SteamEngine.Converter {
 		//bool ownModel = false;
 		bool hasNumericalHeader = false;
 		int modelNum = -1;
-		ConvertedThingDef modelDef;
+		protected ConvertedThingDef modelDef;
 		//bool isDupeItem = false;
 
-		protected Hashtable myTypeList;
+		public Dictionary<string, ConvertedThingDef> byDefname = new Dictionary<string, ConvertedThingDef>(StringComparer.OrdinalIgnoreCase);
+		public Dictionary<int, ConvertedThingDef> byModel = new Dictionary<int, ConvertedThingDef>();
 
 		public int Model { get {
 			if (modelNum == -1) {
@@ -93,11 +94,11 @@ namespace SteamEngine.Converter {
 						hasNumericalHeader = true;
 						//ownModel = true;
 						modelNum = headerNum;
-						myTypeList[headerNum] = this;
+						byModel[headerNum] = this;
 						headerName = "0x"+headerNum.ToString("x");
 					}
 				} else {
-					myTypeList[headerName] = this;
+					byDefname[headerName] = this;
 				}
 
 				defname1 = origData.TryPopPropsLine("defname");
@@ -106,7 +107,7 @@ namespace SteamEngine.Converter {
 						headerName = defname1.value;
 						needsHeader = false;
 					}
-					myTypeList[defname1.value] = this;
+					byDefname[defname1.value] = this;
 				}
 
 				defname2 = origData.TryPopPropsLine("defname2");
@@ -115,7 +116,7 @@ namespace SteamEngine.Converter {
 						headerName = defname2.value;
 						needsHeader = false;
 					}
-					myTypeList[defname2.value] = this;
+					byDefname[defname2.value] = this;
 				}
 
 				if (needsHeader) {
@@ -131,8 +132,7 @@ namespace SteamEngine.Converter {
 			if (idLine != null) {
 				int idNum;
 				if (ConvertTools.TryParseInt32(idLine.value, out idNum)) {
-					modelDef = (ConvertedThingDef) myTypeList[idNum];
-					if (modelDef != null) {
+					if (byModel.TryGetValue(idNum, out modelDef)) {
 						Set("model", modelDef.PrettyDefname, idLine.comment);
 						//Info(idLine.line, "ID Written as "+modelDef.PrettyDefname);
 					} else {
@@ -141,7 +141,7 @@ namespace SteamEngine.Converter {
 					}
 				} else {
 					Set("model", idLine.value, idLine.comment);
-					modelDef = (ConvertedThingDef) myTypeList[idLine.value];
+					byDefname.TryGetValue(idLine.value, out modelDef);
 				}
 			}
 
@@ -149,10 +149,9 @@ namespace SteamEngine.Converter {
 				int dupeItemNum;
 				bool dupeItemSet = false;
 				if (ConvertTools.TryParseInt32(dupeItemLine.value, out dupeItemNum)) {
-					ConvertedThingDef dupeItemDef = (ConvertedThingDef) myTypeList[dupeItemNum];
-					if (dupeItemDef != null) {
-						Set(dupeItemLine.name, "0x"+dupeItemNum.ToString("x") //dupeItemDef.PrettyDefname //-having defname here makes the SE startup slower...
-							, dupeItemLine.comment);
+					ConvertedThingDef dupeItemDef;
+					if (byModel.TryGetValue(dupeItemNum, out dupeItemDef)) {
+						Set(dupeItemLine.name, dupeItemDef.PrettyDefname, dupeItemLine.comment);
 						dupeItemSet = true;
 						//Info(dupeItemLine.line, "DupeItem Written as "+dupeItemDef.PrettyDefname);
 					}

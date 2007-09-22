@@ -143,8 +143,8 @@ namespace SteamEngine.CompiledScripts {
 		TwoHandBlunt,//dvourucni tupe - kladiva, hole
 		OneHandSpike,//jednorucni bodne - noze
 		TwoHandSpike,//dvourucni bodne - vidle, ostepy
-		OneHandBlade,//jednorucni bodne/secne - mece
-		TwoHandBlade,//dvourucni bodne/secne - obourucni mece
+		OneHandSword,//jednorucni bodne/secne - mece
+		TwoHandSword,//dvourucni bodne/secne - obourucni mece
 		OneHandAxe,//jednorucni secne - sekery
 		TwoHandAxe,//dvourucni secne - sekery
 		ArcheryStand,

@@ -267,8 +267,8 @@ namespace SteamEngine {
 		public readonly string name;
 		public readonly string value;//name=value
 		public readonly int line;
-		
-		internal PropsLine(string name, string value, int line, string comment) {
+
+		public PropsLine(string name, string value, int line, string comment) {
 			this.name = name;
 			this.value = value;
 			this.line = line;

@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
@@ -34,7 +34,8 @@ namespace SteamEngine.Converter {
 	
 
 	public class ConvertedCharDef : ConvertedThingDef {
-		private static Hashtable chardefs = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		public static Dictionary<string, ConvertedThingDef> charsByDefname = new Dictionary<string, ConvertedThingDef>(StringComparer.OrdinalIgnoreCase);
+		public static Dictionary<int, ConvertedThingDef> charsByModel = new Dictionary<int, ConvertedThingDef>();
 		//by model and by defnames
 		
 	
@@ -55,7 +56,8 @@ namespace SteamEngine.Converter {
 		};
 
 		public ConvertedCharDef(PropsSection input) : base(input) {
-			this.myTypeList = chardefs;
+			this.byModel = charsByModel;
+			this.byDefname = charsByDefname;
 
 			this.firstStageImplementations.Add(firstStageImpl);
 			this.thirdStageImplementations.Add(thirdStageImpl);
@@ -73,19 +75,22 @@ namespace SteamEngine.Converter {
 			}
 		}
 
-		private static void HandleMountId(ConvertedDef def, PropsLine line) {
+		private static string HandleMountId(ConvertedDef def, PropsLine line) {
 			int num = -1; 
 			if (!ConvertTools.TryParseInt32(line.value, out num)) {
-				ConvertedItemDef i = (ConvertedItemDef) ConvertedItemDef.itemdefs[line.value];
-				if (i != null) {
+				ConvertedThingDef i;
+				if (ConvertedItemDef.itemsByDefname.TryGetValue(line.value, out i)) {
 					num = i.Model;
 				}
 			}
 			if (num != -1) {
-				def.Set("MountItem", "0x"+num.ToString("x"), line.comment);
+				string retVal = "0x"+num.ToString("x");
+				def.Set("MountItem", retVal, line.comment);
+				return retVal;
 			} else {
 				def.Warning(line.line, "Unresolvable MountItem model");
 			}
+			return "";
 		}
 	}
 }

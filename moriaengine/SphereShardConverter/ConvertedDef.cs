@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -25,7 +25,7 @@ using SteamEngine.Common;
 using System.Configuration;
 
 namespace SteamEngine.Converter {
-	public delegate void LineImpl(ConvertedDef def, PropsLine line);
+	public delegate string LineImpl(ConvertedDef def, PropsLine line);
 
 	public class LineImplTask {
 		public readonly string fieldName;
@@ -40,16 +40,16 @@ namespace SteamEngine.Converter {
 	public class ConvertedDef {
 		protected PropsSection origData;
 		protected string origFile;
-		protected ArrayList writtenData = new ArrayList();
+		protected List<string> writtenData = new List<string>();
 		private ConvertedFile convertFile;
 		public string headerType = null;
 		public string headerName = null;
 
 		private bool dontDump = false;
-		
-		protected ArrayList firstStageImplementations = new ArrayList();
-		protected ArrayList secondStageImplementations = new ArrayList();
-		protected ArrayList thirdStageImplementations = new ArrayList();
+
+		protected List<LineImplTask[]> firstStageImplementations = new List<LineImplTask[]>();
+		protected List<LineImplTask[]> secondStageImplementations = new List<LineImplTask[]>();
+		protected List<LineImplTask[]> thirdStageImplementations = new List<LineImplTask[]>();
 		
 		public ConvertedDef(PropsSection input) {
 			this.origData = input;
@@ -93,7 +93,7 @@ namespace SteamEngine.Converter {
 			}
 		}
 
-		private void BasicStageImpl(ArrayList implementations) {
+		private void BasicStageImpl(List<LineImplTask[]> implementations) {
 			foreach (LineImplTask[] arr in implementations) {
 				foreach (LineImplTask task in arr) {
 					string origKey = task.fieldName;
@@ -173,11 +173,12 @@ namespace SteamEngine.Converter {
 		}
 
 //generic line implementations
-		protected static void WriteAsIs(ConvertedDef def, PropsLine line) {
+		protected static string WriteAsIs(ConvertedDef def, PropsLine line) {
 			def.Set(line);
+			return line.value;
 		}
 		
-		protected static void WriteInQuotes(ConvertedDef def, PropsLine line) {
+		protected static string WriteInQuotes(ConvertedDef def, PropsLine line) {
 			string value;
 			Match ma = TagMath.stringRE.Match(line.value);
 			if (ma.Success) {
@@ -187,33 +188,47 @@ namespace SteamEngine.Converter {
 			}
 			value = "\""+value+"\"";
 			def.Set(line.name, value, line.comment);
+			return value;
 		}
 
-		protected static void WriteAsComment(ConvertedDef def, PropsLine line) {
+		//protected static void WriteAsBool(ConvertedDef def, PropsLine line) {
+		//    string value;
+		//    Match ma = TagMath.stringRE.Match(line.value);
+		//    if (ma.Success) {
+		//        value = String.Intern(ma.Groups["value"].Value);
+		//    } else {
+		//        value = line.value;
+		//    }
+		//    value = "\""+value+"\"";
+		//    def.Set(line.name, value, line.comment);
+		//}
+
+		protected static string WriteAsComment(ConvertedDef def, PropsLine line) {
 			def.Set("//"+line.name, line.value, line.comment+" commented out by Converter");
+			return line.value;
 		}
 
-		protected static void MayBeInt_IgnorePoint(ConvertedDef def, PropsLine line) {
-			object number;
+		protected static string MayBeInt_IgnorePoint(ConvertedDef def, PropsLine line) {
+			string retVal = line.value;
 			try {
-				number = TagMath.ParseSphereNumber(line.value.Replace(".", ""));
+				object number = ConvertTools.ParseAnyNumber(line.value.Replace(".", ""));
+				retVal = number.ToString();
 			} catch (Exception) {
-				WriteAsIs(def, line);
-				return;
 			}
-			def.Set(line.name, number.ToString(), line.comment);
+			def.Set(line.name, retVal, line.comment);
+			return retVal;
 		}
 
-		protected static void MayBeHex_IgnorePoint(ConvertedDef def, PropsLine line) {
-			object number;
+		protected static string MayBeHex_IgnorePoint(ConvertedDef def, PropsLine line) {
+			string retVal = line.value;
 			try {
-				number = TagMath.ParseSphereNumber(line.value.Replace(".", ""));
+				object number = ConvertTools.ParseAnyNumber(line.value.Replace(".", ""));
+				long i = Convert.ToInt64(number);
+				retVal = "0x"+i.ToString("x");
 			} catch (Exception) {
-				WriteAsIs(def, line);
-				return;
 			}
-			long i = Convert.ToInt64(number);
-			def.Set(line.name, "0x"+i.ToString("x"), line.comment);
+			def.Set(line.name, retVal, line.comment);
+			return retVal;
 		}
 	}
 }

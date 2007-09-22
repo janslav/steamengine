@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
@@ -29,12 +29,10 @@ namespace SteamEngine.Converter {
 	public static class ConverterMain  {
 		public static bool AdditionalConverterMessages = true; //AdditionalConverterMessages = TagMath.ToBoolean(ConfigurationSettings.AppSettings["Additional converter Messages"]);
 		//private static ArrayList convertedDefs = new ArrayList();
-		public static ArrayList memFiles = new ArrayList();
+		public static List<ConvertedFile> memFiles = new List<ConvertedFile>();
 		public static string convertToPath = null;
 		public static string convertPath = null;
 		
-		private static ArrayList origFilePaths = new ArrayList();
-
 		public static ConvertedFile currentIFile;
 		
 		private static StringToSend consoleDelegate;
@@ -86,6 +84,8 @@ namespace SteamEngine.Converter {
 			Tools.ExitBinDirectory();
 			//Directory.SetCurrentDirectory("SphereShardConverter");
 			ConverterLogger.Init();
+
+			TileData.Init();
 
 			try {
 				CreateFolders();
@@ -163,12 +163,79 @@ namespace SteamEngine.Converter {
 				memFiles.Add(file);
 			}
 		}
-	
+
 		public static void ConvertFile(ConvertedFile f) {
 			currentIFile = f;
 
 			using (StreamReader stream = File.OpenText(f.origPath)) {
-				PropsFileParser.Load(f.origPath, stream, new LoadSection(LoadSection), new CanStartAsScript(StartsAsScript));
+				foreach (PropsSection input in
+						PropsFileParser.Load(f.origPath, stream, StartsAsScript)) {
+
+					ConvertedDef cd = null;
+					try {
+						string type = input.headerType.ToLower();
+						string name = input.headerName;
+						if ((name == "")&&(type == "eof")) {
+							continue;
+						}
+
+						switch (type) {
+							case "itemdef":
+								cd = new ConvertedItemDef(input);
+								break;
+							case "chardef":
+								cd = new ConvertedCharDef(input);
+								break;
+							case "area":
+								cd = new ConvertedRegion(input);
+								break;
+							case "template":
+								cd = new ConvertedTemplateDef(input);
+								break;
+							case "defname":
+							case "defnames":
+								cd = new ConvertedConstants(input);
+								break;
+						}
+					} catch (FatalException) {
+						throw;
+					} catch (SEException se) {
+						se.TryAddFileLineInfo(input.filename, input.headerLine);
+						Logger.WriteError(se.NiceMessage);
+						continue;
+					} catch (Exception e) {
+						Logger.WriteError(input.filename, input.headerLine, e);
+						continue;
+					}
+					if (cd == null) {
+						cd = new ConvertedDef(input);
+						cd.DontDump();
+						//Logger.WriteWarning(WorldSaver.currentfile, input.headerLine, "Unknown section "+LogStr.Ident(input));
+					}
+					currentIFile.AddDef(cd);
+					//convertedDefs.Add(cd);
+					continue;
+
+					//							if (sectionName=="itemdef") {
+					//								string id=SphereNumberCheck(param, false);
+					//								curDef=new convertedItemDef(id);
+					//								convertedDefs.Add(curDef);
+					//							} else if (sectionName=="chardef") {
+					//								string id=SphereNumberCheck(param, false);
+					//								curDef=new convertedCharDef(id);
+					//								convertedDefs.Add(curDef);
+					//							//} else if (sectionName=="template") {
+					//							//	string id=SphereNumberCheck(param, false);
+					//							//	curDef=new convertedTemplateDef(id);
+					//							//	convertedDefs.Add(curDef);
+					//							} else if (sectionName=="area") {
+					//								curDef = new convertedRegion(param);
+					//								convertedDefs.Add(curDef);
+					//							} else {
+					//								curDef=null;
+					//							}
+
+				}
 			}
 		}
 
@@ -186,75 +253,6 @@ namespace SteamEngine.Converter {
 					return false;
 			}
 			return true;//temp
-		}
-
-		private static IUnloadable LoadSection(PropsSection input) {
-			if (input == null) {
-				return null;
-			}
-			ConvertedDef cd = null;
-			try {
-				string type = input.headerType.ToLower();
-				string name = input.headerName;
-				if ((name == "")&&(type == "eof")) {
-					return null;
-				}
-				
-				switch (type) {
-					case "itemdef":
-						cd = new ConvertedItemDef(input);
-						break;
-					case "chardef":
-						cd = new ConvertedCharDef(input);
-						break;
-					case "area":
-						cd = new ConvertedRegion(input);
-						break;
-					case "template":
-						cd = new ConvertedTemplateDef(input);
-						break;
-					case "defname":
-					case "defnames":
-						cd = new ConvertedConstants(input);
-						break;
-				}
-			} catch (FatalException) {
-				throw;
-			} catch (SEException se) {
-				se.TryAddFileLineInfo(input.filename, input.headerLine);
-				Logger.WriteError(se.NiceMessage);
-				return null;
-			} catch (Exception e) {
-				Logger.WriteError(input.filename, input.headerLine, e);
-				return null;
-			}
-			if (cd == null) {
-				cd = new ConvertedDef(input);
-				cd.DontDump();
-				//Logger.WriteWarning(WorldSaver.currentfile, input.headerLine, "Unknown section "+LogStr.Ident(input));
-			}
-			currentIFile.AddDef(cd);
-			//convertedDefs.Add(cd);
-			return null;
-
-//							if (sectionName=="itemdef") {
-//								string id=SphereNumberCheck(param, false);
-//								curDef=new convertedItemDef(id);
-//								convertedDefs.Add(curDef);
-//							} else if (sectionName=="chardef") {
-//								string id=SphereNumberCheck(param, false);
-//								curDef=new convertedCharDef(id);
-//								convertedDefs.Add(curDef);
-//							//} else if (sectionName=="template") {
-//							//	string id=SphereNumberCheck(param, false);
-//							//	curDef=new convertedTemplateDef(id);
-//							//	convertedDefs.Add(curDef);
-//							} else if (sectionName=="area") {
-//								curDef = new convertedRegion(param);
-//								convertedDefs.Add(curDef);
-//							} else {
-//								curDef=null;
-//							}
 		}
 	}
 }
