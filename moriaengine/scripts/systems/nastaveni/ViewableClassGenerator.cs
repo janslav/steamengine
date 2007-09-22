@@ -79,15 +79,13 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Method for checking if the given Type is Viewable. If so, put it to the list."+
 				"Used as hooked delegate in ClassManager")]
-		public static bool CheckViewabilityClass(Type type) {
+		public static void CheckViewabilityClass(Type type) {
 			//look if the type has this attribute, don't look to parent classes 
 			//(if the type has not the attribute but some parent has, we dont care - if we want
 			//it to be infoized, we must add a ViewableClass attribute to it)
 			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false)) {
-				viewableClasses.Add(type);
-				return true;
+				viewableClasses.Add(type);				
 			}
-			return false;
 		}
 
 		private class GeneratedInstance {
