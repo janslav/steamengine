@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Class returning pages for the dialog.")]
+	/*[Remark("Class returning pages for the dialog.")]
 	public sealed class Prototype_GeneratedDataView_SimpleClass : AbstractDataView {
 		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {
 			return new SimpleClassActionButtonsPage(firstLineIndex, maxButtonsOnPage);			
@@ -110,52 +110,53 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		[Remark("Dataview implementation for the member 'foo' of the SimpleClass")]
+		public class GeneratedReadWriteDataFieldView_SimpleClass_Foo : ReadWriteDataFieldView {
+			public static GeneratedReadWriteDataFieldView_SimpleClass_Foo instance = new GeneratedReadWriteDataFieldView_SimpleClass_Foo();
+
+			public override string Name {
+				get {
+					return "foo";
+				}
+			}
+
+			public override object GetValue(object target) {
+				return ((SimpleClass)target).foo;
+			}
+
+			public override string GetStringValue(object target) {
+				return ObjectSaver.Save(((SimpleClass)target).foo);
+			}
+
+			public override void SetValue(object target, object value) {
+				((SimpleClass)target).foo = (string)value;			
+			}
+
+			public override void SetStringValue(object target, string value) {
+				((SimpleClass)target).foo = (string)ObjectSaver.OptimizedLoad_String(value);			
+			}		
+		}
+
+		[Remark("Dataview implementation for the method 'SomeMethod' of the SimpleClass")]
+		public class GeneratedButtonDataFieldView_SimpleClass_SomeMethod : ButtonDataFieldView {
+			public static GeneratedButtonDataFieldView_SimpleClass_SomeMethod instance = new GeneratedButtonDataFieldView_SimpleClass_SomeMethod();
+
+			public override string Name {
+				get {
+					return "Test Button";
+				}
+			}
+
+			public override void OnButton(object target) {
+				((SimpleClass)target).SomeMethod();
+			}		
+		}
+	  
 		public override Type HandledType {
 			get {
 				return typeof(SimpleClass);
 			}
 		}
 	}	
-
-	[Remark("Dataview implementation for the member 'foo' of the SimpleClass")]
-	public class GeneratedReadWriteDataFieldView_SimpleClass_Foo : ReadWriteDataFieldView {
-		public static GeneratedReadWriteDataFieldView_SimpleClass_Foo instance = new GeneratedReadWriteDataFieldView_SimpleClass_Foo();
-
-		public override string Name {
-			get {
-				return "foo";
-			}
-		}
-
-		public override object GetValue(object target) {
-			return ((SimpleClass)target).foo;
-		}
-
-		public override string GetStringValue(object target) {
-			return ObjectSaver.Save(((SimpleClass)target).foo);
-		}
-
-		public override void SetValue(object target, object value) {
-			((SimpleClass)target).foo = (string)value;			
-		}
-
-		public override void SetStringValue(object target, string value) {
-			((SimpleClass)target).foo = (string)ObjectSaver.OptimizedLoad_String(value);			
-		}		
-	}
-
-	[Remark("Dataview implementation for the method 'SomeMethod' of the SimpleClass")]
-	public class GeneratedButtonDataFieldView_SimpleClass_SomeMethod : ButtonDataFieldView {
-		public static GeneratedButtonDataFieldView_SimpleClass_SomeMethod instance = new GeneratedButtonDataFieldView_SimpleClass_SomeMethod();
-
-		public override string Name {
-			get {
-				return "Test Button";
-			}
-		}
-
-		public override void OnButton(object target) {
-			((SimpleClass)target).SomeMethod();
-		}		
-	}
+	*/
 }

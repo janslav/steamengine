@@ -43,7 +43,6 @@ namespace SteamEngine.CompiledScripts {
 					foreach (Type viewableClass in viewableClasses) {
 						try {
 							GeneratedInstance gi = new GeneratedInstance(viewableClass);
-							///TODO-dodìlat 
 							if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
 							    CodeTypeDeclaration ctd = gi.GetGeneratedType();
 							    ns.Types.Add(ctd);

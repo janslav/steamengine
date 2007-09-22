@@ -284,11 +284,8 @@
     <Compile Include="..\..\scripts\systems\mailingsystem\MessagesDialog.cs">
       <Link>systems\mailingsystem\MessagesDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\DefsSetting.cs">
-      <Link>systems\nastaveni\DefsSetting.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\Settings.cs">
-      <Link>systems\nastaveni\Settings.cs</Link>
+    <Compile Include="..\..\scripts\systems\nastaveni\DataView.cs">
+      <Link>systems\nastaveni\DataView.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\nastaveni\SettingsCategories.cs">
       <Link>systems\nastaveni\SettingsCategories.cs</Link>

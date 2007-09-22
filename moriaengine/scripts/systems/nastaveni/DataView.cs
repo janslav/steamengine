@@ -49,10 +49,55 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		void OnButton(object target);				
 	}
 
+	[Remark("Class for managing all generated dataviews and providing them according to wanted type")]
+	public static class DataViewProvider {
+		public static Hashtable dataViewsForTypes = new Hashtable();
+
+		[Remark("Primitive FindDataView metho, using the object instead of just Type. As Simple as can be -)")]
+		public static IDataView FindDataViewByInstance(object handledObject) {
+			return (IDataView)dataViewsForTypes[handledObject.GetType()];
+		}
+
+		[Remark("Primitive FindDataView method. As Simple as can be -)")]
+		public static IDataView FindDataViewByType(Type handledType) {
+			return (IDataView)dataViewsForTypes[handledType];
+		}
+
+		[Remark("Register a new hook to ClassManager - it will send the examined Types here and we will care for next.")]
+		public static void Bootstrap() {
+			ClassManager.RegisterHook(CheckGeneratedDataViewClass);
+		}
+
+		[Remark("Method for checking if the given Type is a descendant of AbstractViewableClass. If so, store it in the map"+
+				"with the HandledType as Key...")]
+		public static bool CheckGeneratedDataViewClass(Type type) {
+			if (typeof(IDataView).IsAssignableFrom(type)) {
+				ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+				if (ci != null) {
+					IDataView idv = (IDataView)ci.Invoke(new object[0] { });
+					dataViewsForTypes.Add(idv.HandledType, idv);
+					return true;
+				} else {
+					return false;
+				}
+			}
+			return false;
+		}
+	}
+
+	[Remark("Interface used for all generated DataView classes")]
+	public interface IDataView : IPageableCollection<IDataFieldView>, IPageableCollection<ButtonDataFieldView> {
+		[Remark("This getter will provide us the Type this AbstractDataView is made for")]
+		Type HandledType {get;}
+
+		[Remark("Name that will be displayed in the Info dialog headline - description of the infoized class")]
+		string Name {get;}
+	}
+
 	[Remark("The ancestor of all generated classes that manage and return the paged data to display." +
 			"It implements two interfaces - first for paging the data fields, second for paging the action buttons" +
 			"both types will be available by two similar GetPage methods.")]
-	public abstract class AbstractDataView : IPageableCollection<IDataFieldView>, IPageableCollection<ButtonDataFieldView> {
+	public abstract class AbstractDataView : IDataView {
 		[Remark("Implement the method to return an initialized instance of AbstractPage. This " +
 				"should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields")]
 		IEnumerable<IDataFieldView> IPageableCollection<IDataFieldView>.GetPage(int firstLineIndex, int maxFieldsOnPage) {
@@ -69,18 +114,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("This will be the real implementation of GetPage for action buttons")]
 		protected abstract IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
 
-		[Remark("The OutOfBounds guard will be implemented later")]
-		public abstract int LineCount {
+		//these three interface properties will be imlemented in children
+		public abstract Type HandledType {
 			get;
 		}
 
-		[Remark("Name that will be displayed in the Info dialog headline - description of the infoized class")]
 		public abstract string Name {
 			get;
 		}
 
-		[Remark("This getter will provide us the Type this AbstractDataView is made for")]
-		public abstract Type HandledType {
+		public abstract int LineCount {
 			get;
 		}
 
