@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public static class DataViewProvider {
 		public static Hashtable dataViewsForTypes = new Hashtable();
 
-		[Remark("Primitive FindDataView metho, using the object instead of just Type. As Simple as can be -)")]
+		[Remark("Primitive FindDataView method, using the object instead of just Type. As Simple as can be -)")]
 		public static IDataView FindDataViewByInstance(object handledObject) {
 			return (IDataView)dataViewsForTypes[handledObject.GetType()];
 		}
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ClassManager.RegisterHook(CheckGeneratedDataViewClass);
 		}
 
-		[Remark("Method for checking if the given Type is a descendant of AbstractViewableClass. If so, store it in the map"+
+		[Remark("Method for checking if the given Type is a descendant of IDataView. If so, store it in the map"+
 				"with the HandledType as Key...")]
 		public static void CheckGeneratedDataViewClass(Type type) {
 			if (typeof(IDataView).IsAssignableFrom(type)) {
@@ -112,18 +112,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("This will be the real implementation of GetPage for action buttons")]
 		protected abstract IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
 
-		//these three interface properties will be imlemented in children
-		public abstract Type HandledType {
-			get;
-		}
+		//these three interface properties will be implemented in children
+		public abstract Type HandledType {get;}
 
-		public abstract string Name {
-			get;
-		}
+		public abstract string Name {get;}
 
-		public abstract int LineCount {
-			get;
-		}
+		public abstract int LineCount {get;}
 
 		#region IPageableCollection Members
 		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
