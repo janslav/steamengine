@@ -108,9 +108,9 @@ namespace SteamEngine.CompiledScripts {
 				case WeaponType.ArcheryRunning:
 					return SkillName.Archery;
 				case WeaponType.TwoHandAxe:
-				case WeaponType.TwoHandBlade:
+				case WeaponType.TwoHandSword:
 					return SkillName.Swords;
-				case WeaponType.OneHandBlade:
+				case WeaponType.OneHandSword:
 				case WeaponType.OneHandAxe:
 				case WeaponType.OneHandSpike:
 				case WeaponType.TwoHandSpike:

@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
@@ -26,12 +26,12 @@ namespace SteamEngine.Converter {
 	public class ConvertedFile {
 		public readonly string origPath;
 		public readonly string convertedPath;
-		public readonly ArrayList defs;
+		public readonly List<ConvertedDef> defs;
 		
 		public ConvertedFile(string path) : base() {
 			this.origPath = Path.GetFullPath(path);
 			this.convertedPath = GetNewFilename(path);
-			this.defs = new ArrayList();
+			this.defs = new List<ConvertedDef>();
 		}
 		
 		private static string GetNewFilename(string fileName) {

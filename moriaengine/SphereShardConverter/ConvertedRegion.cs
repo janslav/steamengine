@@ -18,6 +18,7 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
@@ -27,13 +28,11 @@ using System.Configuration;
 namespace SteamEngine.Converter {
 
 	public class ConvertedRegion : ConvertedDef {
-		private static Hashtable regionsByDefname = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		private static Hashtable unknownParams = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		private static ArrayList byUid = new ArrayList();
+		private static Dictionary<string, ConvertedRegion> regionsByDefname = new Dictionary<string, ConvertedRegion>(StringComparer.OrdinalIgnoreCase);
+		private static List<ConvertedRegion> allRegions = new List<ConvertedRegion>();
 		private static ArrayList temp = new ArrayList();
 		
-		private int uid;
-		private ArrayList rectangles = new ArrayList();
+		private List<Rectangle2D> rectangles = new List<Rectangle2D>();
 		private Point2D[] points;//corners of the rectangles. its not too accurate, but who cares... :)
 		private byte mapplane;
 		private int hierarchyIndex = -1;
@@ -89,7 +88,7 @@ namespace SteamEngine.Converter {
 		public ConvertedRegion(PropsSection input) : base(input) {
 			this.firstStageImplementations.Add(firstStageImpl);
 
-			Set("createdat", HighPerformanceTimer.TickCount);
+			Set("createdat", HighPerformanceTimer.TickCount.ToString(), "");
 
 			string name = input.headerName;
 			Set("Name", "\""+name+"\"", "");
@@ -106,13 +105,13 @@ namespace SteamEngine.Converter {
 			name = string.Join("_", splitted);//we make "a_local_mine" out of "local mine"
 			string defname = name;
 			int toAdd = 2;
-			while (regionsByDefname.Contains(defname)) {
+			while (regionsByDefname.ContainsKey(defname)) {
 				defname = name+"_"+toAdd;
 				toAdd++;
 			}
 			regionsByDefname[defname] = this;
 			headerName = defname;
-			uid = byUid.Add(this);
+			allRegions.Add(this);
 
 			PropsLine defnameLine = input.TryPopPropsLine("defname");
 			if (defnameLine != null) {
@@ -126,7 +125,7 @@ namespace SteamEngine.Converter {
 			}
 		}
 
-		private static void ParseRect(ConvertedDef def, PropsLine line) {
+		private static string ParseRect(ConvertedDef def, PropsLine line) {
 			Match m = Region.rectRE.Match(line.value);
 			if (m.Success) {
 				GroupCollection gc = m.Groups;
@@ -155,34 +154,40 @@ namespace SteamEngine.Converter {
 					maxY = y1;
 				}
 				maxX--;maxY--; //this is because sphere has weird system of rectangle coordinates
-				def.Set("Rect", string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY), line.comment);
+				string retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
+				def.Set("Rect", retVal, line.comment);
 				Point2D startpoint = new Point2D(minX, minY);
 				Point2D endpoint = new Point2D(maxX, maxY);
 				((ConvertedRegion) def).rectangles.Add(new Rectangle2D(startpoint, endpoint));
+				return retVal;
 			} else {
 				def.Warning(line.line, "Unrecognized Rectangle format ('"+line.value+"')");
 			}
+			return "";
 		}
 
-		private static void ParseMapplane(ConvertedDef def, PropsLine line) {
+		private static string ParseMapplane(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
 			r.mapplane = TagMath.ParseByte(line.value);
 			r.mapplaneSet = true;
 			r.mapplaneLine = line;
+			return "";
 		}
 
 		private static SteamEngine.CompiledScripts.Point4DSaveImplementor pImplementor = new SteamEngine.CompiledScripts.Point4DSaveImplementor();
 
-		private static void ParseP(ConvertedDef def, PropsLine line) {
+		private static string ParseP(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
 			Point4D p = Point4D.Parse(line.value);
 			if (!r.mapplaneSet) {
 				r.mapplane = p.M;
 			}
-			def.Set("Spawnpoint", pImplementor.Save(p), line.comment);
+			string retVal = pImplementor.Save(p);
+			def.Set("Spawnpoint", retVal, line.comment);
+			return retVal;
 		}
 
-		private static void ParseFlags(ConvertedDef def, PropsLine line) {
+		private static string ParseFlags(ConvertedDef def, PropsLine line) {
 			string name = line.name;
 			switch (line.name.ToLower()) {
 				case "flagsafe":
@@ -213,7 +218,9 @@ namespace SteamEngine.Converter {
 					def.headerType = "FlaggedRegion";
 				//}
 				def.Set(name, line.value, line.comment);
+				return line.value;
 			}
+			return "";
 		}
 
 		public override void SecondStage() {
@@ -228,7 +235,7 @@ namespace SteamEngine.Converter {
 			}
 			
 			temp.Clear();
-			foreach (ConvertedRegion reg in byUid) {
+			foreach (ConvertedRegion reg in allRegions) {
 				if (HasSameMapplane(reg)) {
 					int contained = reg.ContainsPoints(this.points);
 					temp.Add(new DictionaryEntry(contained, reg));
@@ -327,7 +334,7 @@ namespace SteamEngine.Converter {
 		
 		//internal static void ResolveRegionsHierarchy() {
 		public static void SecondStageFinished() {
-			temp = new ArrayList(byUid);//copy list of all regions
+			temp = new ArrayList(allRegions);//copy list of all regions
 			int lastCount = -1;
 			while (temp.Count > 0) {
 				if (lastCount == temp.Count) {
@@ -338,7 +345,7 @@ namespace SteamEngine.Converter {
 						reg.Info(reg.origData.headerLine, reg+", possible parents: "+Tools.ObjToString(reg.parents));
 					}
 					
-					foreach (ConvertedRegion reg in byUid) {
+					foreach (ConvertedRegion reg in allRegions) {
 						reg.DontDump();
 					}
 					return;

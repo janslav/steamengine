@@ -16,34 +16,42 @@
 */
 
 using System;
-using System.Collections;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
 using SteamEngine.Common;
 using System.Configuration;
 using SteamEngine;
+using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.Converter {
 	public class ConvertedItemDef : ConvertedThingDef {
-		public static Hashtable itemdefs = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		//by model and by defnames
-		
+		public static Dictionary<string, ConvertedThingDef> itemsByDefname = new Dictionary<string, ConvertedThingDef>(StringComparer.OrdinalIgnoreCase);
+		public static Dictionary<int, ConvertedThingDef> itemsByModel = new Dictionary<int, ConvertedThingDef>();
+
+		string type;
+
+		string layer = "-1";
 		bool layerSet = false;
 		bool isEquippable = false;
+
+		bool isWeapon = false;
+		bool isWearable = false;
+		bool armorOrDamHandled = false;
+		bool isTwoHanded = false;
+		bool twoHandedSet = false;
 	
 		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
 				new LineImplTask("type", new LineImpl(HandleType)), 
 				new LineImplTask("dupelist", new LineImpl(WriteAsComment)), 
 				new LineImplTask("weight", new LineImpl(MayBeInt_IgnorePoint)), 
 //TODO
-				new LineImplTask("twohanded", new LineImpl(WriteAsComment)),
-				new LineImplTask("twohands", new LineImpl(WriteAsComment)),
 				new LineImplTask("resources", new LineImpl(WriteAsComment)),
 				new LineImplTask("resources2", new LineImpl(WriteAsComment)),
 				new LineImplTask("skillmake", new LineImpl(WriteAsComment)),
 				new LineImplTask("skillmake2", new LineImpl(WriteAsComment)),
-				new LineImplTask("armor", new LineImpl(WriteAsComment)),
 				new LineImplTask("flip", new LineImpl(WriteAsComment)),
 				new LineImplTask("reqstr", new LineImpl(WriteAsComment)),
 				new LineImplTask("dye", new LineImpl(WriteAsComment)),
@@ -51,59 +59,185 @@ namespace SteamEngine.Converter {
 				new LineImplTask("tdata2", new LineImpl(WriteAsComment)),
 				new LineImplTask("tdata3", new LineImpl(WriteAsComment)),
 				new LineImplTask("skill", new LineImpl(WriteAsComment)),
-				new LineImplTask("dam", new LineImpl(WriteAsComment)),
 				new LineImplTask("speed", new LineImpl(WriteAsComment))
 			};
 			
-			private static LineImplTask[] secondStageImpl = new LineImplTask[] {
+		private static LineImplTask[] secondStageImpl = new LineImplTask[] {
 				new LineImplTask("layer", new LineImpl(HandleLayer)), 
+				new LineImplTask("twohanded", new LineImpl(HandleTwohanded)),
+				new LineImplTask("twohands", new LineImpl(HandleTwohanded)),
 			};
-//					} case "tdata1": {
-//						if (Get("typeclass")=="Musical") {
-//							Set("successSound", SphereNumberCheck(args, false));
-//						}
-//						break;
-//					} case "tdata2": {
-//						if (Get("typeclass")!=null && Get("typeclass")=="Container") {
-//							Set("gump",SphereNumberCheck(args, false));
-//						} else {
-//							if (Get("typeclass")=="Musical") {
-//								Set("failureSound", SphereNumberCheck(args, false));
-//							}
-//						}
-//						break;
-//					} case "tdata3": {
-//						if (isHorseMountItem) {
-//							Set("mountchar", args);
-//						}
-//						break;
+
+		private static LineImplTask[] thirdStageImpl = new LineImplTask[] {
+				new LineImplTask("armor", new LineImpl(HandleArmorOrDam)),
+				new LineImplTask("dam", new LineImpl(HandleArmorOrDam)),
+			};
 
 
 		public ConvertedItemDef(PropsSection input) : base(input) {
-			this.myTypeList = itemdefs;
+			this.byModel = itemsByModel;
+			this.byDefname = itemsByDefname;
 
 			this.firstStageImplementations.Add(firstStageImpl);
 			this.secondStageImplementations.Add(secondStageImpl);
+			this.thirdStageImplementations.Add(thirdStageImpl);
 			
 			headerType="ItemDef";
 		}
 
-//		private static void HandleTwohanded(convertedDef def, PropsLine line) {
-//						string largs = args.ToLower();
-//						if (largs=="y") {
-//							Set("twohanded","true");
-//						} else {
-//							if (largs!="n") {
-//								Warning("Twohands was expected to be either 'Y' or 'N' (or 'y' or 'n'...), but it was '"+args+"'!");
-//							}
-//							Set("twohanded","false");
-//						}
-//						break;
-//		}
+		private static string HandleType(ConvertedDef d, PropsLine line) {
+			ConvertedItemDef def = (ConvertedItemDef) d;
+			def.Set(line);
+
+			string args = line.value.ToLower();
+			def.type = args;
+
+			switch (args) {
+				case "t_container":
+				case "t_container_locked":
+				case "t_eq_vendor_box":
+				case "t_eq_bank_box":
+					def.headerType="ContainerDef";
+					def.isEquippable = true;
+					break;
+				case "t_corpse":
+					def.headerType="CorpseDef";
+					def.isEquippable = true;
+					break;
+				case "t_light_lit":
+				case "t_light_out":
+				case "t_wand":
+				case "t_clothing":
+				case "t_carpentry_chop":
+				case "t_hair":
+				case "t_beard":
+				case "t_spellbook":
+					def.headerType="EquippableDef";
+					def.isEquippable = true;
+					break;
+				case "t_armor_leather":
+				case "t_armor":
+				case "t_shield":
+					def.isWearable = true;
+					def.isEquippable = true;
+					break;
+				case "t_multi":
+					def.headerType="MultiItemDef";
+					def.DontDump();	//for now
+					break;
+				case "t_musical":
+					def.headerType="MusicalDef";
+					break;
+				case "t_eq_horse":
+					//isHorseMountItem=true;
+					Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "Ignoring mountitem def "+LogStr.Ident(def.headerName)+" (steamengine does not need those defined).");
+					def.DontDump();	//TODO: make just some constant out of it?
+					break;
+
+				default:
+					if (args.StartsWith("t_weapon")) {
+						def.isWeapon = true;
+						def.isEquippable = true;
+					}
+					break;
+			}
+			//TODO: Implement args=="t_sign_gump" || "t_board", which have gumps too in sphere scripts,
+			//but aren't containers.
+			//TODO: Detect if item with 'resmake' isn't craftable.
+			return line.value;
+		}
+
+		private static string HandleTwohanded(ConvertedDef d, PropsLine line) {
+			ConvertedItemDef def = (ConvertedItemDef) d;
+			def.twoHandedSet = true;
+			string largs = line.value.ToLower();
+			switch (largs) {
+				case "0":
+				case "n":
+				case "false":
+					def.Set("TwoHanded", "false", line.comment);
+					return "false";
+				default:
+					def.Set("TwoHanded", "true", line.comment);
+					def.isTwoHanded = true;
+					return "true";
+			}
+
+		}
+
+		private static string HandleArmorOrDam(ConvertedDef d, PropsLine line) {
+			ConvertedItemDef def = (ConvertedItemDef) d;
+			if (!def.armorOrDamHandled) {
+				def.armorOrDamHandled = true;
+				string value = null;
+				string[] strings = Utility.SplitSphereString(line.value);
+				int n = strings.Length;
+				double sum = 0;
+				for (int i = 0; i<n; i++) {
+					string str = strings[i];
+					int number;
+					if (ConvertTools.TryParseInt32(str, out number)) {
+						sum += number;
+					} else {
+						sum = int.MinValue;
+						break;
+					}
+				}
+				if (sum != 0) {
+					sum = sum / n;
+					if (def.isWearable) {
+						sum = Math.Round(sum);
+					}
+					value = sum.ToString();
+				} else {
+					value = line.value;
+				}
+
+				if (def.isWeapon) {
+					def.Set("attack", value, line.comment);
+					def.Set("piercing", "100", "");
+					def.Set("speed", "100", "");
+					def.Set("range", "1", "");
+					def.Set("strikeStartRange", "5", "");
+					def.Set("strikeStopRange", "10", "");
+				} else if (def.isWearable) {
+					def.Set("armorVsP", value, line.comment);
+					def.Set("mindDefenseVsP", value, "");
+					def.Set("armorVsM", value, "");
+					def.Set("mindDefenseVsM", value, "");
+				}
+				return value;
+			}
+			return "";
+		}
 
 		public static void SecondStageFinished() {
-			Globals.useTileData = true;
-			TileData.Init();
+			HashSet<ConvertedItemDef> itemDefSet = new HashSet<ConvertedItemDef>();
+			foreach (ConvertedItemDef def in itemsByDefname.Values) {
+				itemDefSet.Add(def);
+			}
+
+			foreach (ConvertedItemDef def in itemDefSet) {
+				ConvertedItemDef baseDef = def.modelDef as ConvertedItemDef;
+				if (baseDef != null) {
+					if (baseDef.isEquippable) {
+						def.MakeEquippable();
+
+						if ((baseDef.isTwoHanded) && (!def.twoHandedSet)) {
+							def.Set("TwoHanded", "true", "guessed from base def by Converter");
+						}
+						if ((baseDef.layerSet) && (!def.layerSet)) {
+							def.Set("Layer", baseDef.layer, "guessed from base def by Converter");
+							def.layerSet = true;
+							def.layer = baseDef.layer;
+						}
+					}
+
+					if ((baseDef.type != null) && (def.type == null)) {
+						HandleType(def, new PropsLine("type", baseDef.type, -1, "guessed from base def by Converter"));
+					}
+				}
+			}
 		}
 
 		private void MakeEquippable() {
@@ -114,62 +248,128 @@ namespace SteamEngine.Converter {
 		}
 
 		public override void ThirdStage() {
-			if (!isEquippable) {
-				ConvertedItemDef m = (ConvertedItemDef) itemdefs[Model];
-				if ((m != null) && m.isEquippable) {
-					MakeEquippable();
-				}
-			}
-
 			if (isEquippable && !layerSet) {
 				int model = this.Model;
 				ItemDispidInfo info = ItemDispidInfo.Get(model);
 				if (info != null) {
-					Set("layer", info.quality.ToString(), "Set by Converter");
+					this.layer = info.quality.ToString();
+					Set("layer", this.layer, "Set by Converter");
 					layerSet = true;
 				} else {
+					Set("//layer", "unknown", "");
 					Info(origData.headerLine, "Unknown layer for ItemDef "+headerName);
 				}
 			}
+
+			if (isWeapon) {
+				bool isColored = IsColoredMetal();
+				if (isColored) {
+					this.headerType = "ColoredWeaponDef";
+				} else {
+					this.headerType = "WeaponDef";
+				}
+
+				MaterialType materialType = MaterialType.Metal;
+				WeaponType weaponType = WeaponType.BareHands;
+
+				switch (this.type.ToLower()) {
+					case "t_weapon_sword":
+						string prettyDefName = this.PrettyDefname.ToLower();
+						if (prettyDefName.Contains("_axe_") || prettyDefName.EndsWith("_axe")) {
+							if (isTwoHanded) {
+								weaponType = WeaponType.TwoHandAxe;
+							} else {
+								weaponType = WeaponType.OneHandAxe;
+							}
+						} else {
+							if (isTwoHanded) {
+								weaponType = WeaponType.TwoHandSword;
+							} else {
+								weaponType = WeaponType.OneHandSword;
+							}
+						}
+						break;
+					case "t_weapon_fence":
+						if (isTwoHanded) {
+							weaponType = WeaponType.TwoHandSpike;
+						} else {
+							weaponType = WeaponType.OneHandSpike;
+						}
+						break;
+					case "t_weapon_mace_crook":
+					case "t_weapon_mace_staff":
+						materialType = MaterialType.Wood;
+						goto case "t_weapon_mace_smith";
+					case "t_weapon_mace_smith":
+						if (isTwoHanded) {
+							weaponType = WeaponType.TwoHandSpike;
+						} else {
+							weaponType = WeaponType.OneHandSpike;
+						}
+						break;
+					case "t_weapon_bow":
+					case "t_weapon_xbow":
+						weaponType = WeaponType.ArcheryStand;
+						materialType = MaterialType.Wood;
+						break;
+					case "t_weapon_bow_run":
+						weaponType = WeaponType.ArcheryRunning;
+						materialType = MaterialType.Wood;
+						//TODO - preferred ammo...?
+						break;
+					case "t_weapon_bolt":
+					case "t_weapon_bolt_jagged":
+					case "t_weapon_arrow":
+						materialType = MaterialType.Wood;
+						//TODO - different class altogether?
+						break;
+				}
+				Set("WeaponType", "WeaponType."+weaponType, "guessed by Converter");
+
+				if (isColored) {
+					Set("MaterialType", "MaterialType."+materialType, "guessed by Converter");
+				}
+			} else if (isWearable) {
+				bool isColored = IsColoredMetal();
+				if (isColored) {
+					this.headerType = "ColoredArmorDef";
+					Set("MaterialType", "MaterialType.Metal", "guessed by Converter");
+				} else {
+					this.headerType = "WearableDef";
+				}
+			}
+
 			base.ThirdStage();
 		}
 
-
-		private static void HandleType(ConvertedDef def, PropsLine line) {
-			def.Set(line);
-
-			string args=line.value.ToLower();
-			if (args=="t_container" || args=="t_container_locked" || args=="t_eq_vendor_box" ||
-					args=="t_eq_bank_box" || args=="t_corpse") {
-				def.headerType="ContainerDef";
-				((ConvertedItemDef) def).isEquippable = true;
-			} else if (args=="t_light_lit" || args=="t_light_out" || args=="t_armor" ||
-					args=="t_wand" || args=="t_clothing" || args=="t_carpentry_chop" || args=="t_hair" ||
-					args=="t_beard" || args=="t_armor_leather" || args=="t_spellbook" ||
-					args=="t_shield" || args=="t_jewelry" ||
-					args.IndexOf("t_weapon")==0) {
-				def.headerType="EquippableDef";
-				((ConvertedItemDef) def).isEquippable = true;
-			} else if (args=="t_multi") {
-				def.headerType="MultiItemDef";
-				def.DontDump();	//for now
-			} else if (args=="t_eq_horse") {
-				//isHorseMountItem=true;
-				Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "Ignoring mountitem def "+LogStr.Ident(def.headerName)+" (steamengine does not need those defined).");
-				def.DontDump();	//TODO: make just some constant out of it?
-			} else if (args=="t_musical") {
-				def.headerType="MusicalDef";
-				//Remove("type");
+		private bool IsColoredMetal() {
+			string material = GetMaterialFromDefname(this.PrettyDefname);
+			if (material != null) {
+				Set("Material", "Material."+Utility.Capitalize(material), "guessed by Converter");
+				return true;
 			}
-			//TODO: Implement args=="t_sign_gump" || "t_bboard", which have gumps too in sphere scripts,
-			//but aren't containers.
-			//TODO: Detect if item with 'resmake' isn't craftable.
+			return false;
 		}
+
+		private static Regex materialRE = new Regex(
+			@".*(?<material>((Copper)|(Iron)|(Silver)|(Gold)|(Verite)|(Valorite)|(Obsidian)|(Adamantinum)|(Mithril))).*", 
+			RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.IgnoreCase);
+
+		private static string GetMaterialFromDefname(string defname) {
+			Match m = materialRE.Match(defname);
+			if (m.Success) {
+				return m.Groups["material"].Value;
+			}
+			return null;
+		}
+
 		
-		private static void HandleLayer(ConvertedDef def, PropsLine line) {
-			((ConvertedItemDef) def).MakeEquippable();
-			((ConvertedItemDef) def).layerSet = true;
-			MayBeInt_IgnorePoint(def, line);
+		private static string HandleLayer(ConvertedDef d, PropsLine line) {
+			ConvertedItemDef def = (ConvertedItemDef) d;
+			def.MakeEquippable();
+			def.layerSet = true;
+			def.layer = MayBeInt_IgnorePoint(def, line);
+			return def.layer;
 		}
 	}
 }

@@ -71,13 +71,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Method for checking if the given Type is a descendant of IDataView. If so, store it in the map"+
 				"with the HandledType as Key...")]
 		public static void CheckGeneratedDataViewClass(Type type) {
-			if (typeof(IDataView).IsAssignableFrom(type)) {
-				ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-				if (ci != null) {
-					IDataView idv = (IDataView)ci.Invoke(new object[0] { });
-					dataViewsForTypes.Add(idv.HandledType, idv);
-				} else {
-					throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
+			if (!type.IsAbstract) {
+				if (typeof(IDataView).IsAssignableFrom(type)) {
+					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+					if (ci != null) {
+						IDataView idv = (IDataView) ci.Invoke(new object[0] { });
+						dataViewsForTypes.Add(idv.HandledType, idv);
+					} else {
+						throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
+					}
 				}
 			}
 		}
