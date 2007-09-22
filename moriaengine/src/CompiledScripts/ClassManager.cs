@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	
 	public static class ClassManager {
 		//delegate for registering hooks
-		public delegate bool HookedMethod(Type type);
+		public delegate void HookedMethod(Type type);
 		//list for storing hooked delegates
 		private static List<HookedMethod> hooksList = new List<HookedMethod>();
 

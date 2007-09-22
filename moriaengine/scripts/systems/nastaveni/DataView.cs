@@ -70,18 +70,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Method for checking if the given Type is a descendant of AbstractViewableClass. If so, store it in the map"+
 				"with the HandledType as Key...")]
-		public static bool CheckGeneratedDataViewClass(Type type) {
+		public static void CheckGeneratedDataViewClass(Type type) {
 			if (typeof(IDataView).IsAssignableFrom(type)) {
 				ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
 				if (ci != null) {
 					IDataView idv = (IDataView)ci.Invoke(new object[0] { });
 					dataViewsForTypes.Add(idv.HandledType, idv);
-					return true;
 				} else {
-					return false;
+					throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
 				}
 			}
-			return false;
 		}
 	}
 
