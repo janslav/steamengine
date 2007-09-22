@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			target = new SimpleClass();
 
 			//first argument is the object being infoized - we will get its DataView first
-			AbstractDataView viewCls = GetAbstractDataView(target);
+			IDataView viewCls = DataViewProvider.FindDataViewByInstance(target);
 			int firstItem = Convert.ToInt32(args[1]);
 			
 			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance, buttons, editFlds);
@@ -52,13 +52,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
+			//no data - ¨no dialog necessary
+			if (viewCls == null) {
+				dlg.Add(new GUTATable(1));
+				dlg.LastTable[0, 0] = TextFactory.CreateHeadline("No DataView found for the given type " + target.GetType());
+				dlg.WriteOut();
+				return;
+			}
+
 			dlg.CreateDataFieldsSpace();
 
 			int buttonsIndex = 10; //start counting buttons from 10
 			int editsIndex = 10; //start counting editable input fields also from 10
 
 			//first get the single page of data fields (we use COLS_COUNT columns for them)
-			
+		
 			foreach(IDataFieldView field in ((IPageableCollection<IDataFieldView>)viewCls).GetPage(firstItem, InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS)) {
 				//add both indexing params - the buttons index will be used (and raised) when the field is Button or 
 				//ReadWrite or ReadOnly field with type that itself has the DataView implemented (and can be infoized)
@@ -129,12 +137,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target)); //display info dialog on this datafield
 				}
 			}
-		}
-
-		[Remark("Method for finding the AbstractDataView for given infoized object")]
-		private AbstractDataView GetAbstractDataView(object target) {
-			///TODO - prozatim takto, pozdeji vzit dle typu targetu z globalni hashtable
-			return new Prototype_GeneratedDataView_SimpleClass();
 		}
 
 		[Remark("Display an info dialog. Function accessible from the game." +
