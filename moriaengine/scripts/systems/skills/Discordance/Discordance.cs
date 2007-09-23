@@ -30,7 +30,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static TriggerGroup t_Musical;
-		private static AbstractTargetDef td_Discordance;
 
 		public TriggerGroup T_Musical {
 			get {
@@ -41,19 +40,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public AbstractTargetDef TD_Discordance {
-			get {
-				if (td_Discordance == null) {
-					td_Discordance = AbstractTargetDef.Get("Targ_Discordance");
-				}
-				return td_Discordance;
-			}
-		}
-
 		public override void Select(AbstractCharacter ch) {
 			Character self = (Character) ch;
 			self.currentSkillTarget2 = ((Item)self.Backpack).FindType(T_Musical);
-			((Player)self).Target(TD_Discordance);
+			((Player)self).Target(SingletonScript<Targ_Discordance>.Instance);
 		}
 
 		internal override void Start(Character self) {
