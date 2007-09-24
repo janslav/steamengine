@@ -299,6 +299,9 @@
     <Compile Include="..\..\scripts\systems\settings\DataView.cs">
       <Link>systems\settings\DataView.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\ListDataView.cs">
+      <Link>systems\settings\Implementations\ListDataView.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsCategories.cs">
       <Link>systems\settings\SettingsCategories.cs</Link>
     </Compile>
