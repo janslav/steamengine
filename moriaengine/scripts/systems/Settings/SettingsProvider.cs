@@ -103,6 +103,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public SettingResult(IDataFieldView field, object target) {
 			this.field = field;
+			this.target = target;
 			formerValue = field.GetValue(target);
 		}
 
@@ -126,7 +127,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("The value attempted to store which resluted in error - filled only in case of error :)")]
 		public string ErroneousValue {
 			get {
-				return erroneousValue;
+				//if the setting is OK, then return an empty string
+				return erroneousValue == null ? "" : erroneousValue;
 			}
 			set {
 				erroneousValue = value;
