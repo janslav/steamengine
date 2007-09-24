@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int GetFieldsCount(object instance) {
-			return ((IList) target).Count+1;
+			return ((IList) instance).Count+1;
 		}
 
 		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage) {
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private class CountField : ReadOnlyDataFieldView {
 
 			public override string Name {
-				get { "Count"; }
+				get { return "Count"; }
 			}
 
 			public override object GetValue(object target) {
@@ -65,17 +65,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		private class IndexField : ReadOnlyDataFieldView {
+			int index;
 
 			public override string Name {
-				get { "Count"; }
+				get { return index.ToString(); }
 			}
 
 			public override object GetValue(object target) {
-				return ((IList) target).Count;
+				throw new Exception("The method or operation is not implemented.");
 			}
 
 			public override string GetStringValue(object target) {
-				return ((IList) target).Count.ToString();
+				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
