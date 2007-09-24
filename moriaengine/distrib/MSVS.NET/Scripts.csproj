@@ -284,27 +284,6 @@
     <Compile Include="..\..\scripts\systems\mailingsystem\MessagesDialog.cs">
       <Link>systems\mailingsystem\MessagesDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\DataView.cs">
-      <Link>systems\nastaveni\DataView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\SettingsCategories.cs">
-      <Link>systems\nastaveni\SettingsCategories.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\SettingsInfo.cs">
-      <Link>systems\nastaveni\SettingsInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\SettingsResult.cs">
-      <Link>systems\nastaveni\SettingsResult.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\SettingsUtils.cs">
-      <Link>systems\nastaveni\SettingsUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\StaticsSetting.cs">
-      <Link>systems\nastaveni\StaticsSetting.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\nastaveni\ViewableClassGenerator.cs">
-      <Link>systems\nastaveni\ViewableClassGenerator.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
@@ -316,6 +295,30 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\DataView.cs">
+      <Link>systems\settings\DataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsCategories.cs">
+      <Link>systems\settings\SettingsCategories.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsInfo.cs">
+      <Link>systems\settings\SettingsInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsProvider.cs">
+      <Link>systems\settings\SettingsProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsResult.cs">
+      <Link>systems\settings\SettingsResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsUtils.cs">
+      <Link>systems\settings\SettingsUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\StaticsSetting.cs">
+      <Link>systems\settings\StaticsSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\ViewableClassGenerator.cs">
+      <Link>systems\settings\ViewableClassGenerator.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
       <Link>systems\skills\ArmsLore.cs</Link>

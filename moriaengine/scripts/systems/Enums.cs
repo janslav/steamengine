@@ -41,7 +41,8 @@ namespace SteamEngine.CompiledScripts {
 
 		SettingsTitleColor=2413, //the settings category color
 		SettingsNormalColor=2300, //normal settings items
-		SettingsFailedColor=0x25 //setting items that weren't possible to be set
+		SettingsCorrectColor=0x25, //setting items that weren't possible to be set
+		SettingsFailedColor=0x25 //setting items that were correctly set
 	}
 
 	[Remark("Various sorting criteria used in different dialogs")]
@@ -95,6 +96,13 @@ namespace SteamEngine.CompiledScripts {
 		All,
 		[Remark("Zobrazit jen jednu vybranou kategorii")]
 		Single
+	}
+
+	[Remark("Result of settign a single field in the info or settings dialogs")]
+	public enum SettingsOutcome {
+		NotChanged,//field has not changed at all
+		ChangedOK, //field has changed successfully
+		ChangedError //field has not changed due to some fault
 	}
 
 	[Flags]
