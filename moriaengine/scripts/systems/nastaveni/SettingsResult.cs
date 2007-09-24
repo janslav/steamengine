@@ -24,24 +24,19 @@ using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog zobrazící výsledek po uplatnìní nastavení - vypíše seznam zmìnìných hodnot doplnìný"+
-			"o pøípadné hodnoty které se zmìnit nepodaøilo")]
+	[Remark("Dialog showing the results after storing the info or settigns dialog changes")]
 	public class D_Settings_Result : CompiledGump {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			//pole obsahujici vysledky k zobrazeni
-			Hashtable setResults = (Hashtable)args[1];
-			List<SettingsValue> settingValues = GetDisplayedSettingValues(setResults); //pro iterování do výpisu dialogu
-			//setridit dle nazvu zobrazovaneho itemu, jinak by nebylo zaruceno spolehlive strankovani
-			settingValues.Sort(SettingsValuesComparer.Instance);
-			args[2] = settingValues; //ulozime mezi parametry dialogu
+			//field containing the results for display
+			List<SettingResult> setResults = (List<SettingResult>)args[1];
+			int firstiVal = Convert.ToInt32(args[0]);   //first index on the page
+			
+			//max index (20 lines) + check the list end !
+			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, setResults.Count);
 
-			int firstiVal = Convert.ToInt32(args[0]);   //prvni index na strance
-			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, settingValues.Count);
-
-			int resultsOK = CountSuccessfulSettings(setResults);
-			int resultsNOK = CountUnSuccessfulSettings(setResults);
+			int resultsOK = SettingsProvider.CountSuccessfulSettings(setResults);
+			int resultsNOK = SettingsProvider.CountUnSuccessfulSettings(setResults);
 			int allFields = setResults.Count;
 
 			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);
@@ -54,63 +49,45 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			dlg.Add(new GUTATable(1, 175, 175, 175, 0));			
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Název");//jméno položky nastavení
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Souèasná hodnota");//po nastavení
-			dlg.LastTable[0, 2] = TextFactory.CreateText("Pùvodní hodnota");//vyplnìno pøi úspìšném nastavení
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Chybná hodnota");//vyplnìno pøi neúspìšném nastavení
+			dlg.LastTable[0, 0] = TextFactory.CreateText("Název");//name of the datafield
+			dlg.LastTable[0, 1] = TextFactory.CreateText("Souèasná hodnota");//after setting
+			dlg.LastTable[0, 2] = TextFactory.CreateText("Pùvodní hodnota");//filled when successfully changed
+			dlg.LastTable[0, 3] = TextFactory.CreateText("Chybná hodnota");//filled on erroneous attempt to store the change
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(imax - firstiVal)); //jen tolik radku kolik kategorii je na strance (tj bud PAGE_ROWS anebo mene)
+			dlg.Add(new GUTATable(imax - firstiVal)); //as much lines as many results there is on the page (maximally ROW_COUNT)
 			dlg.CopyColsFromLastTable();
 
-			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
-				SettingsValue sval = settingValues[i];
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(sval.Color, sval.FullPath()); //název položky nastavení
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(sval.Color, ObjectSaver.Save(sval.Value)); //aktuální hodnota (buï je to ta pùvodní, nebo je to ta zmìnìná)
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(sval.Color, sval.OldValue); //pùvodní hodnota (vyplnìno jen pokud tato položka byla zmìnìna)
-														//pvodni hotnotu nezjistujeme tim "save" neb mohla byt prave spatna (tj by to opet spadlo)!
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(sval.Color, sval.NewValue); //zamýšlená hodnota (vyplnìno pøi selhání - napø nekompatibilní datový typ atd.)
+				SettingResult sres = setResults[i];
+				Hues color = SettingsProvider.ResultColor(sres);
+				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(color, sres.Name); //nam of the editable field
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(color, sres.CurrentValue); //actual value from the field
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(color, sres.FormerValue); //former value of the field (filled only if the value has changed)														//
+				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(color, sres.ErroneousValue); //value that was attempted to be filled but which ended by some error (filled only on error)
 				rowCntr++;
 			}
 			dlg.MakeTableTransparent();
 
 			//ted paging, klasika
-			dlg.CreatePaging(settingValues.Count, firstiVal,1);
+			dlg.CreatePaging(setResults.Count, firstiVal, 1);
 
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			//seznam nastavenych nebo zkousenych polozek
-			List<SettingsValue> setVals = (List<SettingsValue>)args[2];
+			List<SettingResult> setResults = (List<SettingResult>)args[1];			
 			if(gr.pressedButton == 0) { //end				
-				//vycistime seznam od new a old valui - aby se polozky nezobrazovaly i pri pristim nastaveni
-				foreach(SettingsValue sval in setVals) {
-					sval.OldValue = "";
-					sval.NewValue = "";
-				}
-				//neobrazovat predchozi dialog, puvodni dialog nastaveni jiz nam sviti vespod
-				//DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setVals.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+				return;
+				//dont redirect to any dialog - former info/settings dialog is already open
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setResults.Count, 1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} 
 		}
 
-		[Remark("Spocita v seznamu nastavovanych input fieldu vsechny ktere byly uspesne"+
-				"prenastaveny")]
-		private int CountSuccessfulSettings(Hashtable results) {
-			int resCntr = 0;
-			foreach(SettingsValue sval in results.Values) {
-				//zjisti, zda je ulozena puvodni hodnota (to se stane pri uspesnem prenastaveni)
-				if(sval.OldValue != null && !sval.OldValue.Equals("")) {
-					resCntr++;
-				}
-			}
-			return resCntr;
-		}
+		
 
 		[Remark("Spocita v seznamu nastavovanych input fieldu vsechny ktere byly neuspesne" +
 				"prenastaveny")]
