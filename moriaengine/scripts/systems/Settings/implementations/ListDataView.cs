@@ -42,14 +42,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage) {
-			throw new Exception("The method or operation is not implemented.");
+			yield return CountField.instance;
+			for (int i = firstLineIndex, n = firstLineIndex+maxLinesOnPage; i<n; i++) {
+				yield return new IndexField(i);
+			}
 		}
 
 		public IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, int maxLinesOnPage) {
-			yield return this;
+			yield return this;//nechtelo sem idelat dalsi tridu :)
 		}
 
 		private class CountField : ReadOnlyDataFieldView {
+
+			internal static CountField instance = new CountField();
 
 			public override string Name {
 				get { return "Count"; }
@@ -64,19 +69,51 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		private class IndexField : ReadOnlyDataFieldView {
+		private class IndexField : ReadWriteDataFieldView {
 			int index;
 
+			internal IndexField(int index) {
+				this.index = index;
+			}
+
 			public override string Name {
-				get { return index.ToString(); }
+				get { return "["+index+"]"; }
 			}
 
 			public override object GetValue(object target) {
-				throw new Exception("The method or operation is not implemented.");
+				IList list = (IList) target;
+				int n = list.Count;
+				if (index < n) {
+					return list[index];
+				} else {
+					return null;
+				}
 			}
 
 			public override string GetStringValue(object target) {
-				throw new Exception("The method or operation is not implemented.");
+				IList list = (IList) target;
+				int n = list.Count;
+				if (index < n) {
+					return ObjectSaver.Save(list[index]);
+				} else {
+					return "";
+				}
+			}
+
+			public override void SetValue(object target, object value) {
+				IList list = (IList) target;
+				int n = list.Count;
+				if (index < n) {
+					list[index] = value;
+				}
+			}
+
+			public override void SetStringValue(object target, string value) {
+				IList list = (IList) target;
+				int n = list.Count;
+				if (index < n) {
+					list[index] = ObjectSaver.Load(value);
+				}
 			}
 		}
 
