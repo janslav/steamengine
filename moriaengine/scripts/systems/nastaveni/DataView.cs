@@ -86,12 +86,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Remark("Interface used for all generated DataView classes")]
-	public interface IDataView : IPageableCollection<IDataFieldView>, IPageableCollection<ButtonDataFieldView> {
+	public interface IDataView {
 		[Remark("This getter will provide us the Type this AbstractDataView is made for")]
 		Type HandledType {get;}
 
 		[Remark("Name that will be displayed in the Info dialog headline - description of the infoized class")]
-		string Name {get;}
+		string GetName(object instance);
+
+		[Remark("Number of buttons")]
+		int GetActionButtonsCount(object instance);
+
+		[Remark("Number of fields")]
+		int GetFieldsCount(object instance);
+
+		[Remark("GetPage for data fields")]
+		IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage);
+
+		[Remark("GetPage for action buttons")]
+		IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
 	}
 
 	[Remark("The ancestor of all generated classes that manage and return the paged data to display." +
@@ -100,32 +112,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public abstract class AbstractDataView : IDataView {
 		[Remark("Implement the method to return an initialized instance of AbstractPage. This " +
 				"should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields")]
-		IEnumerable<IDataFieldView> IPageableCollection<IDataFieldView>.GetPage(int firstLineIndex, int maxFieldsOnPage) {
-			return DataFieldsPage(firstLineIndex, maxFieldsOnPage);
-		}
+		public abstract IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage);
 
 		[Remark("Similar as the previous method but for iterating over the action buttons pages")]
-		IEnumerable<ButtonDataFieldView> IPageableCollection<ButtonDataFieldView>.GetPage(int firstLineIndex, int maxButtonsOnPage) {
-			return ActionButtonsPage(firstLineIndex, maxButtonsOnPage);
-		}
-
-		[Remark("This will be the real implementation of GetPage for data fields")]
-		protected abstract IEnumerable<IDataFieldView> DataFieldsPage(int firstLineIndex, int maxLinesOnPage);
-		[Remark("This will be the real implementation of GetPage for action buttons")]
-		protected abstract IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
+		public abstract IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
 
 		//these three interface properties will be implemented in children
 		public abstract Type HandledType {get;}
 
-		public abstract string Name {get;}
+		public abstract string GetName(object instance);
 
-		public abstract int LineCount {get;}
+		public abstract int GetActionButtonsCount(object instance);
 
-		#region IPageableCollection Members
-		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
-			throw new System.Exception("The method or operation is not implemented.");
-		}
-		#endregion
+		public abstract int GetFieldsCount(object instance);
+
 
 		[Remark("This will be used to return the desired page of objects to be displayed" +
 			"it will also hold all the IDataFieldViews belonging to the ViewableClass")]

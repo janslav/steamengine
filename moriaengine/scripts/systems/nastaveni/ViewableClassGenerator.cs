@@ -134,11 +134,12 @@ namespace SteamEngine.CompiledScripts {
 				codeTypeDeclaration.IsClass = true;
 				
 				//first add two methods for getting the ActionsButtonsPage and DataFieldsPage
-				codeTypeDeclaration.Members.Add(GenerateActionButtonsPageMethod());
-				codeTypeDeclaration.Members.Add(GenerateDataFieldsPageMethod());
-				//now three overriden properties - LineCount, Name and HandledType
-				codeTypeDeclaration.Members.Add(GenerateLineCountProperty());
-				codeTypeDeclaration.Members.Add(GenerateNameProperty());
+				codeTypeDeclaration.Members.Add(GenerateGetActionButtonsPageMethod());
+				codeTypeDeclaration.Members.Add(GenerateGetDataFieldsPageMethod());
+				
+				codeTypeDeclaration.Members.Add(GenerateGetActionButtonsCountMethod());
+				codeTypeDeclaration.Members.Add(GenerateGetFieldsCountMethod());
+				codeTypeDeclaration.Members.Add(GenerateGetNameMethod());
 				codeTypeDeclaration.Members.Add(GenerateHandledTypeProperty());
 
 				//now create the inner classes of all IDataFieldViews for this class
@@ -172,10 +173,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			[Remark("Method for getting one page of action buttons")]
-			private CodeMemberMethod GenerateActionButtonsPageMethod() {
+			private CodeMemberMethod GenerateGetActionButtonsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
-				retVal.Name = "ActionButtonsPage";
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "GetActionButtonsPage";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxButtonsOnPage"));
 				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<ButtonDataFieldView>));
@@ -191,10 +192,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			[Remark("Method for getting one page of data fields buttons")]
-			private CodeMemberMethod GenerateDataFieldsPageMethod() {
+			private CodeMemberMethod GenerateGetDataFieldsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
-				retVal.Name = "DataFieldsPage";
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "GetDataFieldsPage";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "maxLinesOnPage"));
 				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<IDataFieldView>));
@@ -207,28 +208,42 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("The get-property LineCount - says how many rows will there be")]
-			private CodeMemberProperty GenerateLineCountProperty() {
-				CodeMemberProperty retVal = new CodeMemberProperty();
-				retVal.HasGet = true;
+			[Remark("The GetActionButtonsCount method - says how many buttons will there be")]
+			private CodeMemberMethod GenerateGetActionButtonsCountMethod() {
+				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "LineCount";
-				retVal.Type = new CodeTypeReference(typeof(int));
-				retVal.GetStatements.Add(new CodeMethodReturnStatement(
+				retVal.Name = "GetActionButtonsCount";
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "instance"));
+				retVal.ReturnType = new CodeTypeReference(typeof(int));
+				retVal.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
-												Math.Max(butonMethods.Count,fields.Count+properties.Count)
+												butonMethods.Count
 										)));
 				return retVal;
 			}
 
-			[Remark("The get-property Name")]
-			private CodeMemberProperty GenerateNameProperty() {
-				CodeMemberProperty retVal = new CodeMemberProperty();
-				retVal.HasGet = true;
+			[Remark("The GetActionButtonsCount method - says how many rows will there be")]
+			private CodeMemberMethod GenerateGetFieldsCountMethod() {
+				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "Name";
-				retVal.Type = new CodeTypeReference(typeof(string));
-				retVal.GetStatements.Add(new CodeMethodReturnStatement(
+				retVal.Name = "GetFieldsCount";
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "instance"));
+				retVal.ReturnType = new CodeTypeReference(typeof(int));
+				retVal.Statements.Add(new CodeMethodReturnStatement(
+											new CodePrimitiveExpression(
+												fields.Count+properties.Count
+										)));
+				return retVal;
+			}
+
+			[Remark("The GetName method")]
+			private CodeMemberMethod GenerateGetNameMethod() {
+				CodeMemberMethod retVal = new CodeMemberMethod();
+				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				retVal.Name = "GetName";
+				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "instance"));
+				retVal.ReturnType = new CodeTypeReference(typeof(string));
+				retVal.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
 												typeLabel
 										)));
