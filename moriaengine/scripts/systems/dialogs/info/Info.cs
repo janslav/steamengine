@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Info dialog - " + viewCls.Name);
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Info dialog - " + viewCls.GetName(target));
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
