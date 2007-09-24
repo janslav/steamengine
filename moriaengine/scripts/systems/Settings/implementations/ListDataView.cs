@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		private class CountField : ReadOnlyDataFieldView {
+		private class IndexField : ReadOnlyDataFieldView {
 
 			public override string Name {
 				get { "Count"; }
