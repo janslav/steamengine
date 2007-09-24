@@ -102,24 +102,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //store
-						/*
-						//TryMakeSetting(valuesToSet, gr);
-						//args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
-						*/
-						///TODO - udelat nejake to nastavenicko...; bude hotovo az udelam novej dialog k nastaveni (bude se to delat stejne)
-						///a bude to prizpusobeny tomu dialog nastaveni, tj proto pockam
+						List<SettingResult> reslist = SettingsProvider.AssertSettings(editFlds, gr, target);
 						gi.Cont.SendGump(gi);//resend the dialog
-						/*
-						//a zobrazime take dialog s vysledky (null = volne misto pro seznamy resultu v nasledujicim dialogu)
-						gi.Cont.Dialog(D_Settings_Result.Instance, 0, valuesToSet, null);
-						*/
+						gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, reslist, null);
 						break;
 					case 2: //info
 						DialogStackItem.EnstackDialog(gi); //stack self for return
 						gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						break;
 				}
-				///TODO - pagingove cudlicky
+			///TODO - pagingove cudlicky
 			/*} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count, 1)) {
 				//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)				
 				//posledni 1 - pocet sloupecku v dialogu
