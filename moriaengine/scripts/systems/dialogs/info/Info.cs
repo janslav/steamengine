@@ -35,7 +35,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			object target = args[0];
 			///TODO - just for debugging
-			target = new SimpleClass();
+			if(!(target is SimpleClass)) {
+				args[0] = new SimpleClass();
+				target = args[0];
+			}
 
 			//first argument is the object being infoized - we will get its DataView first
 			IDataView viewCls = DataViewProvider.FindDataViewByInstance(target);
@@ -67,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first get the single page of data fields (we use COLS_COUNT columns for them)
 		
-			foreach(IDataFieldView field in ((IPageableCollection<IDataFieldView>)viewCls).GetPage(firstItem, InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS)) {
+			foreach(IDataFieldView field in viewCls.GetDataFieldsPage(firstItem, InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS)) {
 				//add both indexing params - the buttons index will be used (and raised) when the field is Button or 
 				//ReadWrite or ReadOnly field with type that itself has the DataView implemented (and can be infoized)
 				// - the edits index will be used for input fields in ReadWrite field case
@@ -75,7 +78,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//now write the single page of action buttons (one column - normal rowcount)
-			foreach(ButtonDataFieldView button in ((IPageableCollection<ButtonDataFieldView>)viewCls).GetPage(firstItem, ImprovedDialog.PAGE_ROWS)) {
+			foreach(ButtonDataFieldView button in viewCls.GetActionButtonsPage(firstItem, ImprovedDialog.PAGE_ROWS)) {
 				dlg.WriteDataField(button, target, buttonsIndex, editsIndex);
 			}
 

@@ -85,38 +85,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//1 sloupecek
 				return;
 			} 
-		}
-
-		
-
-		[Remark("Spocita v seznamu nastavovanych input fieldu vsechny ktere byly neuspesne" +
-				"prenastaveny")]
-		private int CountUnSuccessfulSettings(Hashtable results) {
-			int resCntr = 0;
-			foreach(SettingsValue sval in results.Values) {
-				//zjisti, zda je ulozena hodnota co jsme zkouseli nastavit (to se stane pri neuspesnem)
-				if(sval.NewValue != null && !sval.NewValue.Equals("")) {
-					resCntr++;
-				}
-			}
-			return resCntr;
-		}
-
-		[Remark("Vybere ze seznamui vsech fieldu jen ty, ktere bud byly prenastaveny anebo ktere"+
-				"byly nastavovany neuspesne")]
-		private List<SettingsValue> GetDisplayedSettingValues(Hashtable results) {
-			List<SettingsValue> retList = new List<SettingsValue>();
-			foreach(SettingsValue sval in results.Values) {
-				//zjisti, zda je ulozena hodnota co jsme zkouseli nastavit (to se stane pri neuspesnem)
-				if((sval.NewValue != null && !sval.NewValue.Equals("")) || //bud byl neuspesne nastavovan
-				   (sval.OldValue != null && !sval.OldValue.Equals(""))) { //nebo naopak uspesne prenastaven
-					retList.Add(sval);					
-				}
-			}
-			return retList;	
-		}
+		}		
 	}
 
+	/*
 	[Remark("Komparator pro setrideni vysledku nastaveni podle abecedy. Singleton")]
 	class SettingsValuesComparer : IComparer<SettingsValue> {
 		internal static SettingsValuesComparer instance;
@@ -137,4 +109,5 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return a.FullPath().CompareTo(b.FullPath());
 		}
 	}
+	*/
 }

@@ -41,8 +41,8 @@ namespace SteamEngine.CompiledScripts {
 
 		SettingsTitleColor=2413, //the settings category color
 		SettingsNormalColor=2300, //normal settings items
-		SettingsCorrectColor=0x25, //setting items that weren't possible to be set
-		SettingsFailedColor=0x25 //setting items that were correctly set
+		SettingsCorrectColor = 95,//setting items that were correctly set
+		SettingsFailedColor = 35 //setting items that weren't possible to be set
 	}
 
 	[Remark("Various sorting criteria used in different dialogs")]

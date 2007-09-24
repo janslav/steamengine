@@ -589,6 +589,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
 				yPos += parent.YPos;
+
+				if(text == null) {
+					text = "null"; //we cannot display null so stringify it
+				}
 			}
 
 			[Remark("Call the underlaying gump istance's methods")]
