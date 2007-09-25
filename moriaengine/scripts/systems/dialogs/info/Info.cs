@@ -34,15 +34,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			editFlds = new Hashtable();
 
 			object target = args[0];
-			///TODO - just for debugging
-			if(!(target is SimpleClass)) {
-				args[0] = new SimpleClass();
-				target = args[0];
-			}
-
+			
 			//first argument is the object being infoized - we will get its DataView first
 			IDataView viewCls = DataViewProvider.FindDataViewByInstance(target);
-			int firstItem = Convert.ToInt32(args[1]);
+			int firstItemButt = Convert.ToInt32(args[1]);
+			int firstItemFld = Convert.ToInt32(args[2]);
 			
 			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance, buttons, editFlds);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
@@ -50,15 +46,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Info dialog - " + viewCls.GetName(target));
+				//the viewCls could be null ! - e.g. DataView does not exist
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Info dialog" + (viewCls == null ? "" : " - "+viewCls.GetName(target)));
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			//no data - ¨no dialog necessary
+			//no data - no dialog necessary
 			if (viewCls == null) {
-				dlg.Add(new GUTATable(1));
-				dlg.LastTable[0, 0] = TextFactory.CreateHeadline("No DataView found for the given type " + target.GetType());
+				dlg.Add(new GUTATable(1,0));
+				dlg.LastTable[0, 0] = TextFactory.CreateLabel("No DataView found for the given type " + target.GetType());
+				dlg.MakeTableTransparent();
 				dlg.WriteOut();
 				return;
 			}
@@ -68,23 +66,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int buttonsIndex = 10; //start counting buttons from 10
 			int editsIndex = 10; //start counting editable input fields also from 10
 
-			//first get the single page of data fields (we use COLS_COUNT columns for them)
-		
-			foreach(IDataFieldView field in viewCls.GetDataFieldsPage(firstItem, InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS)) {
+			int finishIndex = firstItemFld + InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS;
+			int counter = firstItemFld;
+			foreach(IDataFieldView field in viewCls.GetDataFieldsPage(firstItemFld, target)) {
 				//add both indexing params - the buttons index will be used (and raised) when the field is Button or 
 				//ReadWrite or ReadOnly field with type that itself has the DataView implemented (and can be infoized)
 				// - the edits index will be used for input fields in ReadWrite field case
-				dlg.WriteDataField(field, target, buttonsIndex, editsIndex);
+				dlg.WriteDataField(field, target, ref buttonsIndex, ref editsIndex);
+				//check if we should continue
+				counter++;
+				if(counter==finishIndex)
+					break;
 			}
 
 			//now write the single page of action buttons (one column - normal rowcount)
-			foreach(ButtonDataFieldView button in viewCls.GetActionButtonsPage(firstItem, ImprovedDialog.PAGE_ROWS)) {
-				dlg.WriteDataField(button, target, buttonsIndex, editsIndex);
+			finishIndex = firstItemButt + ImprovedDialog.PAGE_ROWS;
+			counter = firstItemButt;
+			foreach(ButtonDataFieldView button in viewCls.GetActionButtonsPage(firstItemButt, target)) {
+				dlg.WriteDataField(button, target, ref buttonsIndex, ref editsIndex);
+				//check if we should continue
+				counter++;
+				if(counter == finishIndex)
+					break;
 			}
 
 			//now handle the paging 
-			//dlg.CreatePaging(playersList.Count, firstiVal, 1);
-
+			dlg.HandlePaging(viewCls, target, firstItemButt, firstItemFld);
+				
 			//send button
 			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
@@ -95,9 +103,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			object target = args[0];
-			///TODO - just for debugging
-			target = new SimpleClass();
+			object target = args[0];			
 
 			if(gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
 				switch(gr.pressedButton) {
@@ -113,23 +119,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStackItem.EnstackDialog(gi); //stack self for return
 						gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						break;
-				}
-			///TODO - pagingove cudlicky
-			/*} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count, 1)) {
-				//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)				
-				//posledni 1 - pocet sloupecku v dialogu
-				return;
-			 */
+				}			
+			} else if(InfoDialogHandler.PagingHandled(gi, gr)) {
+				//kliknuto na paging? 
+				return;			
 			} else { //info dialog buttons
 				//get the IDataFieldView and do something
 				IDataFieldView idfv = (IDataFieldView)buttons[Convert.ToInt32(gr.pressedButton)];
 				if(idfv.IsButtonEnabled) { 
 					//action button field - call the method
 					((ButtonDataFieldView)idfv).OnButton(target);
+					gi.Cont.SendGump(gi);//resend the dialog
 				} else if(!idfv.ReadOnly) {
 					//normal editable field but with button - it will redirect to another info dialog...
 					DialogStackItem.EnstackDialog(gi); //store
-					gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target)); //display info dialog on this datafield
+					gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target),0,0); //display info dialog on this datafield
 				}
 			}
 		}
@@ -142,12 +146,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Info(object self, ScriptArgs args) {
 			if(args.Argv == null || args.Argv.Length == 0) {
 				//display it normally (targetted or for self)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, self, 0);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, self, 0, 0);
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, args.Argv[0], 0);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, args.Argv[0], 0, 0);
 			}
+		}
+
+		[SteamFunction]
+		public static void Inf(object self, ScriptArgs args) {
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new SimpleClass(), 0, 0);			
 		}
 	}	
 }

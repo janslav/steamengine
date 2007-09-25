@@ -18,6 +18,7 @@
 using System;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
@@ -27,12 +28,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class SimpleClass {
 		public string foo;
 
+		public ArrayList nejakejList = new ArrayList();
+
 		[NoShow]
-		public int bar;
+		public int bar = 0;
 
 		[Button("Test Button")]
 		public void SomeMethod() {
-			LogStr.Debug("Pressed button for some method");
+			nejakejList.Add(bar);
+			bar++;
 		}
 	}
 

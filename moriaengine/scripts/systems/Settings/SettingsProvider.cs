@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
@@ -22,6 +23,9 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Class for accepting and setting all values edited in the info or settings dialogs")]
 	public static class SettingsProvider {
+		//sotre the used saveable prefixes for particular Types
+		private static Dictionary<Type, string> prefixTypes = new Dictionary<Type, string>();
+
 		[Remark("Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for "+
 				"displaying")]
 		public static List<SettingResult> AssertSettings(Hashtable editFields, GumpResponse resp, object target) {
@@ -83,6 +87,80 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 			return resCntr;
+		}
+
+		[Remark("Examine the setings value's member type and get its prefix as used in ObjectSaver." +
+				"We will use it in the info/settings dialog for displaying and identification")]
+		public static string GetValuePrefix(IDataFieldView field, object target) {
+			object value = field.GetValue(target);
+			string valuePrefix = "";
+
+			//we will store it in the special dictionary
+			if(!prefixTypes.ContainsKey(value.GetType())) {
+				//prefix is not yet stored, find and store it now!							
+				Type t = value.GetType();
+
+				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
+				if(t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
+					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
+				} else if(typeof(Thing).IsAssignableFrom(t)) {
+					valuePrefix = "#";
+				} else if(typeof(AbstractAccount).IsAssignableFrom(t)) {
+					valuePrefix = "$";
+				} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
+					valuePrefix = "#";
+				} else {
+					//try the simpleimplementors
+					ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+					if(iss != null) {
+						valuePrefix = iss.Prefix;
+					} else {
+						valuePrefix = t.Name; //this is the final possibility
+					}
+				}
+
+				//store the prefix in the dictionary
+				prefixTypes[t] = valuePrefix;
+			} else {
+				valuePrefix = prefixTypes[value.GetType()];
+			}
+			return valuePrefix;
+		}
+
+		[Remark("Get the settings values prefix and surround it by brackets." +
+				"If the value has no prefix (it is of some special type, find out what" +
+				"type it is and return some description of it")]
+		public static string GetTypePrefix(IDataFieldView field) {
+			//get type
+			Type t = field.FieldType;
+			if(t.Equals(typeof(object))) {
+				//object is also possible ! - the member can be set to any value
+				return "(Obj)";
+			} else if(t.IsEnum) {
+				return "(Enum)";
+			} else if(TagMath.IsNumberType(t)) {
+				return "(Num)";
+			} else if(t.Equals(typeof(String))) {
+				return "(Str)";
+			} else if(typeof(Region).IsAssignableFrom(t)) {
+				return "(Reg)";
+			} else if(typeof(Thing).IsAssignableFrom(t)) {
+				return "(Thg)";
+			} else if(typeof(AbstractAccount).IsAssignableFrom(t)) {
+				return "(Acc)";
+			} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
+				return "(Abs)";
+			} else if(t.Equals(typeof(Globals))) {
+				return "(Glob)";
+			} else {
+				//nothing special, try the simpleimplementors
+				ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+				if(iss != null) {
+					return "("+iss.Prefix+")";
+				} else {
+					return "("+t.Name+")"; //this is the final desperate possibility
+				}				
+			}
 		}
 	}
 
