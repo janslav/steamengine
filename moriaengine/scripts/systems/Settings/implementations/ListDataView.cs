@@ -41,14 +41,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return ((IList) instance).Count+1;
 		}
 
-		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage) {
+		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
 			yield return CountField.instance;
-			for (int i = firstLineIndex, n = firstLineIndex+maxLinesOnPage; i<n; i++) {
+			//iterovat budeme nejpozdeji do doby nez dojdou polozky seznamu
+			//(iterovani mozno byt prerusovanu kvuli pagingu i jinde...)
+			for (int i = firstLineIndex; i < ((IList)target).Count; i++) {
 				yield return new IndexField(i);
 			}
 		}
 
-		public IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, int maxLinesOnPage) {
+		public IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target) {
 			yield return this;//nechtelo sem idelat dalsi tridu :)
 		}
 
@@ -58,6 +60,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override string Name {
 				get { return "Count"; }
+			}
+
+			public override Type FieldType {
+				get {
+					return typeof(int);
+				}
 			}
 
 			public override object GetValue(object target) {
@@ -78,6 +86,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override string Name {
 				get { return "["+index+"]"; }
+			}
+
+			public override Type FieldType {
+				get {
+					return typeof(object);
+				}
 			}
 
 			public override object GetValue(object target) {

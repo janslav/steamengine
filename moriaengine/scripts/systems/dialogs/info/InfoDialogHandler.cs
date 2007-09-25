@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}		
 
 		[Remark("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
-		public void WriteDataField(IDataFieldView field, object target, int buttonsIndex, int editsIndex) {
+		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex) {
 			if(field.IsButtonEnabled) { //buttonized field - we need the button index
 				actionTable[actualActionRow, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
 				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.Name);				
@@ -94,7 +94,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				buttonsIndex++; //raise the button index - and prepare it for other buttons
 				return;
 			} else if(!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.Name);
+					//first column holds the type information in brackets() and the name of the field
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field)+field.Name);
 				//if necessary, insert the button
 				bool willHaveButton = false;
 				if(field.GetValue(target) != null) {
@@ -109,8 +110,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//insert the input field - specify the x and y position, let the engine to compute the width and height of the component
 				if(willHaveButton) {
 					//non simple field (buttonized - the redirect to another info dialog is present)
-					//the field will not be editable, we will therefore display only non editable stringvalue
-					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
+					//the field will not be editable, we will therefore display only non editable label
+					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.Name);
 				} else {
 					//no buttonized edit field - it is some simple type and can be edited
 					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
@@ -120,7 +121,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				actualFieldRow++;				
 			} else { //non-editable label-value field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.Name);
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field) + field.Name);
 				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
 				actualFieldRow++;
 			}
@@ -129,10 +130,68 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//if so, check also if there are more columns to write to and prepare another one for writing
 			if(actualFieldRow == ImprovedDialog.PAGE_ROWS && actualFieldColumn < COLS_COUNT) {
 				actualFieldRow = 0;
+				actualFieldColumn++;
 				//next column to write to (indexing is from 0 and actualFieldColumn starts at 1 so this is correct)
-				actualFieldTable = (GUTATable)LastTable.Components[1].Components[actualFieldColumn];
-				actualFieldColumn++;				
+				//Lasttable - the main table containing action buttons columns and COLS_COUNT odf columns for datafields
+				//every column for datfields contain the GUTATable for writing fields to -
+														//column						table inside
+				actualFieldTable = (GUTATable)LastTable.Components[actualFieldColumn].Components[0];
 			}
+		}
+
+		[Remark("Create paging for the Info dialog - it looks a little bit different than normal paging")]
+		public void HandlePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
+			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
+			int fieldLines = viewCls.GetFieldsCount(target) / InfoDialogHandler.COLS_COUNT; //number of fields didvided by number of columns per page
+			int maxLines = Math.Max(buttonLines, fieldLines);
+				//more buttons than fields in all columns? - the number of buttons will be the director of paging (or it will be the opposite way)
+			int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : COLS_COUNT;
+			//do we need the paging at all?
+			if(maxLines <= ImprovedDialog.PAGE_ROWS * columnsForPagingCreate) {
+				//no...
+				return;
+			}
+
+			int pagesCount = (int)Math.Ceiling((double)maxLines / (ImprovedDialog.PAGE_ROWS * columnsForPagingCreate));
+			int actualPage = (firstItemButt / ImprovedDialog.PAGE_ROWS) + 1; //we can count it from the buttons column -its OK
+
+			bool prevNextColumnAdded = false; //indicator of navigating column
+											   //last column          //the inner table
+			GUTATable pagingTable = (GUTATable)LastTable.Components[COLS_COUNT].Components[0];
+			GUTAColumn pagingCol = new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH);
+			pagingCol.IsLast = true;					
+			if(actualPage > 1) {
+				pagingTable.AddComponent(pagingCol);
+
+				pagingCol.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ID_PREV_BUTTON)); //prev
+				prevNextColumnAdded = true; //the column has been created				
+			}
+			if(actualPage < pagesCount) { //there will be a next page
+				if(!prevNextColumnAdded) { //the navigating column does not exist (e.g. we are on the 1st page)
+					pagingTable.AddComponent(pagingCol);					
+				}
+				pagingCol.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, pagingCol.Height - 21, ID_NEXT_BUTTON)); //next
+			}
+			//MakeTableTransparent(); //the row where we added the navigating column
+			//add a navigating bar to the bottom (editable field for jumping to the selected page)
+			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
+			//and <GOPAGE> is confirming button that jumps to the written page.
+			GUTATable storedLastTable = LastTable; //store this one :)
+			
+			Add(new GUTATable(1, 0));
+			LastTable[0, 0] = TextFactory.CreateLabel("Stránka");
+			//type if input,x,y,ID, width, height, prescribed text
+			LastTable[0, 0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
+			LastTable[0, 0] = TextFactory.CreateLabel(95, 0, "/" + pagesCount.ToString());
+			LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
+			MakeTableTransparent(); //newly created row
+			//restore the last components
+			lastTable = storedLastTable;			
+		}
+
+		[Remark("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
+		public static bool PagingHandled(GumpInstance gi, GumpResponse gr) {
+			return false;
 		}
 
 		public const int INFO_WIDTH = 800; //width of the info dialog

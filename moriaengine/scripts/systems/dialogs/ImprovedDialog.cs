@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private GUTAMatrix background;
 		[Remark("Last added table to the background GUTAMatrix - all GumpColumns will be added to this row until"+
                 " the next GUTATable is added")]
-		private GUTATable lastTable;
+		protected GUTATable lastTable;
 		[Remark("Last added column - the column is placed automatically to the lastTable, all LeafGumpComponents"+
                 " will be added to this column until the next GUTAColumn is added")]
 		private GUTAColumn lastColumn;
@@ -147,7 +147,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
 				}
 				//get the lastly added column
-				GUTAColumn lastCol = (GUTAColumn) lastTable.Components[lastTable.Components.Count-1];
+				//GUTAColumn lastCol = (GUTAColumn) lastTable.Components[lastTable.Components.Count-1];
 				//the column will be added from the right side...
 				((GUTAColumn)comp).IsLast = true; 
 

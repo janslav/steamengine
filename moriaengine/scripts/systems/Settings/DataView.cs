@@ -33,6 +33,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Shall this value be displayed with a button?")]
 		bool IsButtonEnabled { get; }
 
+		[Remark("The real type of the data field (it needn't necessary be the type of the value...)")]
+		Type FieldType {get;}
+
 		[Remark("Take the target object and retreive its member's (for which this interface instance is) value")]
 		object GetValue(object target);
 
@@ -100,10 +103,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		int GetFieldsCount(object instance);
 
 		[Remark("GetPage for data fields")]
-		IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage);
+		IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target);
 
 		[Remark("GetPage for action buttons")]
-		IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
+		IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target);
 	}
 
 	[Remark("The ancestor of all generated classes that manage and return the paged data to display." +
@@ -112,10 +115,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public abstract class AbstractDataView : IDataView {
 		[Remark("Implement the method to return an initialized instance of AbstractPage. This " +
 				"should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields")]
-		public abstract IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, int maxLinesOnPage);
+		public abstract IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target);
 
 		[Remark("Similar as the previous method but for iterating over the action buttons pages")]
-		public abstract IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, int maxLinesOnPage);
+		public abstract IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target);
 
 		//these three interface properties will be implemented in children
 		public abstract Type HandledType {get;}
@@ -132,17 +135,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public abstract class AbstractPage<T> : IEnumerable<T>, IEnumerator<T> {
 			//increased everytime the MoveNext method will be invoked
 			protected int nextIndex;
-			//this is the upper bound (the lines count) - it will never be reached (there is only upperbound-1 fields to display)
-			protected int upperBound;
+			protected object target; //the parent object we are making info/settings on
 			//this is the current field we are displaying - it will be used in Enumerators methods
 			protected T current;
 
 			[Remark("This method will be used by IPageableCollection to prepare the Enumerator" +
-				   "- set the indices.")]
-			public AbstractPage(int startIndex, int maxFiledsOnPage) {
+				   "- set the starting index and the reference object from which we possibly can obtain some"+
+					"necessary inforamtion such as upper bound of iteration... if needed")]
+			public AbstractPage(int startIndex, object target) {
 				//initialize indices and prepare for usage
 				this.nextIndex = startIndex;
-				this.upperBound = startIndex + maxFiledsOnPage;
+				this.target = target;
 			}
 
 			#region IEnumerable<T> Members
@@ -226,7 +229,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//all other properties/methods will be implemented in child classes later
-		public abstract string Name { get; }
+		public abstract string Name {get;}
+		public abstract Type FieldType {get;}
 		public abstract object GetValue(object target);
 		public abstract string GetStringValue(object target);
 	}
@@ -254,6 +258,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//all other properties/methods will be implemented in child classes later
 		public abstract string Name { get; }
+		public abstract Type FieldType {get;}
 		public abstract object GetValue(object target);
 		public abstract void SetValue(object target, object value);
 		public abstract string GetStringValue(object target);
@@ -274,6 +279,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public bool ReadOnly {
 			get {
 				return true;
+			}
+		}
+
+		public Type FieldType {
+			get {
+				throw new SEException(LogStr.Error("This property is not provided for button fields"));
 			}
 		}
 
