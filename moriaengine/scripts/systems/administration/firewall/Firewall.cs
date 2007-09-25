@@ -100,9 +100,6 @@ namespace SteamEngine.CompiledScripts {
             return ipentries;
         }
 
-
-
-
         [Remark("Comparator serving for sorting the list of Blockedipentries by blocked by")]
         class AccountComparator : IComparer {
             public int Compare(object a, object b) {
@@ -291,7 +288,7 @@ namespace SteamEngine.CompiledScripts {
         }
     }
 
-    [SaveableClass]
+	[SaveableClass][Dialogs.ViewableClass]
     public class BlockedIPEntry : ISortableIpBlockEntry {
         [LoadingInitializer]
         public BlockedIPEntry() {
@@ -317,7 +314,7 @@ namespace SteamEngine.CompiledScripts {
         }
     }
 
-    [SaveableClass]
+    [SaveableClass][Dialogs.ViewableClass]
     public class BlockedIPRangeEntry : ISortableIpBlockEntry {
         [LoadingInitializer]
         public BlockedIPRangeEntry() {

@@ -25,17 +25,6 @@ using SteamEngine.LScript;
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	public class D_BlockedIP : CompiledGump {		
-		private static D_BlockedIP instance;
-		public static D_BlockedIP Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public D_BlockedIP() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			int IPwidth = 120; //velikost okna pro IP adresu 
 			int duvod = 350;
@@ -137,12 +126,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 5: // block single ip
 						//stackneme aktualni dialog pro navrat
 						DialogStackItem.EnstackDialog(gi);
-						gi.Cont.Dialog(D_BlockIP.Instance);//a zobrazime novy
+						gi.Cont.Dialog(SingletonScript<D_BlockIP>.Instance);//a zobrazime novy
 						return;
 					case 6: // block iprange
 						//stackneme aktualni dialog pro navrat
-						DialogStackItem.EnstackDialog(gi);						
-						gi.Cont.Dialog(D_BlockIPRange.Instance);//a zobrazime novy
+						DialogStackItem.EnstackDialog(gi);
+						gi.Cont.Dialog(SingletonScript<D_BlockIPRange>.Instance);//a zobrazime novy
 						return;
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, entries.Count,1)) {
@@ -174,22 +163,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			}
 			//zaverecnej null - sem se ulozi seznam blokovanych IP
-			self.Dialog(D_BlockedIP.Instance, SortingCriteria.IPAsc, 0, null);
+			self.Dialog(SingletonScript<D_BlockedIP>.Instance, SortingCriteria.IPAsc, 0, null);
 		}
 	}
 
 	public class D_BlockIP : CompiledGump {
-		private static D_BlockIP instance;
-		public static D_BlockIP Instance {
-			get {
-				return instance;
-			}
-		}
-
-		public D_BlockIP() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			string ip;
 
@@ -254,9 +232,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIP(Character self, ScriptArgs sa) {
 			if(sa != null) {
-				self.Dialog(D_BlockIP.Instance, sa.Argv);
+				self.Dialog(SingletonScript<D_BlockIP>.Instance, sa.Argv);
 			} else {
-				self.Dialog(D_BlockIP.Instance);
+				self.Dialog(SingletonScript<D_BlockIP>.Instance);
 			}
 		}
 	}
