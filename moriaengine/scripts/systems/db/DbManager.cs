@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[SaveableClass]
+	[SaveableClass][Dialogs.ViewableClass]
 	public class DbConfig {
 		[LoadingInitializer]
 		public DbConfig() {
