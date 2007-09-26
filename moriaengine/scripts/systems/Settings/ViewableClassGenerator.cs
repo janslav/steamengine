@@ -286,17 +286,17 @@ namespace SteamEngine.CompiledScripts {
 										new CodeObjectCreateExpression(newClassName)));
 				retVal.Members.Add(constr);
 
-				//now override the Name property
-				CodeMemberProperty nameProp = new CodeMemberProperty();
-				nameProp.HasGet = true;
-				nameProp.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				nameProp.Name = "Name";
-				nameProp.Type = new CodeTypeReference(typeof(string));
-				nameProp.GetStatements.Add(new CodeMethodReturnStatement(
+				//now override the Name method
+				CodeMemberMethod getNameMethod = new CodeMemberMethod();
+				getNameMethod.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				getNameMethod.Name = "GetName";
+				getNameMethod.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				getNameMethod.ReturnType = new CodeTypeReference(typeof(string));
+				getNameMethod.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
 												buttonLabel
 										)));
-				retVal.Members.Add(nameProp);
+				retVal.Members.Add(getNameMethod);
 
 				//and finally add the implementation of OnButton method
 				CodeMemberMethod onButtonMeth = new CodeMemberMethod();
@@ -347,17 +347,17 @@ namespace SteamEngine.CompiledScripts {
 									  ));
 				retVal.Members.Add(constr);
 
-				//now override the Name property
-				CodeMemberProperty nameProp = new CodeMemberProperty();
-				nameProp.HasGet = true;
-				nameProp.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				nameProp.Name = "Name";
-				nameProp.Type = new CodeTypeReference(typeof(string));
-				nameProp.GetStatements.Add(new CodeMethodReturnStatement(
+				//now override the Name method
+				CodeMemberMethod getNameMethod = new CodeMemberMethod();
+				getNameMethod.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+				getNameMethod.Name = "GetName";
+				getNameMethod.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+				getNameMethod.ReturnType = new CodeTypeReference(typeof(string));
+				getNameMethod.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
 												minf.Name
 										)));
-				retVal.Members.Add(nameProp);
+				retVal.Members.Add(getNameMethod);
 
 				//GetValue method
 				CodeMemberMethod getValueMeth = new CodeMemberMethod();

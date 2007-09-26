@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		public string GetName(object instance) {
+		string IDataView.GetName(object instance) {
 			return instance.GetType().Name;
 		}
 
@@ -64,8 +64,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			internal static CountField instance = new CountField();
 
-			public override string Name {
-				get { return "Count"; }
+			public override string GetName(object target) {
+				return "Count";
 			}
 
 			public override Type FieldType {
@@ -90,8 +90,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.index = index;
 			}
 
-			public override string Name {
-				get { return "["+index+"]"; }
+			public override string GetName(object target) {
+				return "["+index+"]";
 			}
 
 			public override Type FieldType {
@@ -138,10 +138,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		#region ButtonDataFieldView (Clear)
-		public override string Name {
-			get { 
-				return "Clear"; 
-			}
+		public override string GetName(object target) {
+			return "Clear"; 
 		}
 
 		public override void OnButton(object target) {
