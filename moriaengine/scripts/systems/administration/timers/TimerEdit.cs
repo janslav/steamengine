@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Timer tm = (Timer)dsi.Args[1];
 				tm.DueInSeconds = timerTime;
 				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-				if(prevStacked.InstanceType.Equals(typeof(D_TimerList))) {
+				if(prevStacked.GumpType.Equals(typeof(D_TimerList))) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
 					prevStacked.Args[3] = null;
 				}

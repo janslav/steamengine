@@ -480,20 +480,22 @@ namespace SteamEngine.CompiledScripts {
 								new CodePrimitiveExpression(false)
 							));
 				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t}"));
-				
-				//increase indexer for the next step
-				moveNextMeth.Statements.Add(new CodeAssignStatement(
-								new CodeVariableReferenceExpression("nextIndex"),
-								new CodeBinaryOperatorExpression(
+
+				if (buttonDFVs.Count > 0) { //if no buttons found, only "default part" od switch - dont show any other coe
+					//increase indexer for the next step
+					moveNextMeth.Statements.Add(new CodeAssignStatement(
 									new CodeVariableReferenceExpression("nextIndex"),
-									CodeBinaryOperatorType.Add,
-									new CodePrimitiveExpression(1)
-							)));
-				//return true -we will continue in iterating
-				moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
-								new CodePrimitiveExpression(true)
-							));
-					
+									new CodeBinaryOperatorExpression(
+										new CodeVariableReferenceExpression("nextIndex"),
+										CodeBinaryOperatorType.Add,
+										new CodePrimitiveExpression(1)
+								)));
+					//return true -we will continue in iterating
+					moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
+									new CodePrimitiveExpression(true)
+								));
+				}
+						
 				retVal.Members.Add(moveNextMeth);
 
 				return retVal;
@@ -555,35 +557,22 @@ namespace SteamEngine.CompiledScripts {
 							));
 				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t}"));
 
-				//increase indexer for the next step
-				moveNextMeth.Statements.Add(new CodeAssignStatement(
-								new CodeVariableReferenceExpression("nextIndex"),
-								new CodeBinaryOperatorExpression(
+				if (fieldsDFVs.Count > 0) { //if no fields found, only "default part" od switch - dont show anything else
+
+					//increase indexer for the next step
+					moveNextMeth.Statements.Add(new CodeAssignStatement(
 									new CodeVariableReferenceExpression("nextIndex"),
-									CodeBinaryOperatorType.Add,
-									new CodePrimitiveExpression(1)
-							)));
+									new CodeBinaryOperatorExpression(
+										new CodeVariableReferenceExpression("nextIndex"),
+										CodeBinaryOperatorType.Add,
+										new CodePrimitiveExpression(1)
+								)));
 
-				//return true -we will continue in iterating				
-				moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
-								new CodePrimitiveExpression(true)
-							));
-
-				//CodeStatement[] iterationBlockArray = iterationBlock.ToArray();
-
-				/*moveNextMeth.Statements.Add(new CodeIterationStatement(												
-												new CodeCommentStatement("nic"),
-												new CodePrimitiveExpression(true),
-												new CodeAssignStatement(
-													new CodeVariableReferenceExpression("nextIndex"),
-													new CodeBinaryOperatorExpression(
-														new CodeVariableReferenceExpression("nextIndex"),
-														CodeBinaryOperatorType.Add,
-														new CodePrimitiveExpression(1)
-												)),
-												iterationBlockArray
-											 ));*/
-				
+					//return true -we will continue in iterating				
+					moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
+									new CodePrimitiveExpression(true)
+								));
+				}
 				retVal.Members.Add(moveNextMeth);
 
 				return retVal;
