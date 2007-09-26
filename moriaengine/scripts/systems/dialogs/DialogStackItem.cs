@@ -32,8 +32,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Tag used for stacking information about clients dialogs to be called back")]
 		private static readonly TagKey _dialogStackTag_ = TagKey.Get("x_guta_dialogStack");
 
+		[Remark("Main object contining all necessary info")]
+		GumpInstance gumpInstance;
+		
+		//set of variables used in case we dont have the GumpInstance (LScript, e.g)
 		[Remark("Instance of the dialog to be recalled")]
-		Gump instance;
+		Gump gump;
 		[Remark("Parameters of the dialog as used")]
 		object[] args;		
 		[Remark("Cont as was on the dialog instance - where is the dialog set")]
@@ -42,27 +46,89 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		Thing focus;
 		[Remark("Conn holding info about who will be shown the dialog in the end")]
 		GameConn connection;
+		
 
 		[Remark("Make the args of the stored dialog available for possible editing")]
-		public object[] Args {
+		internal object[] Args {
 			get {
-				return args;
+				if (gumpInstance != null) {
+					return gumpInstance.InputParams;
+				} else {
+					return args;
+				} 
 			}
 			set {
-				args = value;
+				if (gumpInstance != null) {
+					gumpInstance.InputParams = value;
+				} else {
+					args = value;
+				}				
 			}
 		}
 
-		[Remark("Returns an instance type of this dialog")]
-		public Type InstanceType {
+		[Remark("Cont - who sees the dialog")]		
+		internal AbstractCharacter Cont {
 			get {
-				return instance.GetType();
+				if (gumpInstance != null) {
+					return gumpInstance.Cont;
+				} else {
+					return cont;
+				}				
 			}
 		}
 
-		internal DialogStackItem(GameConn connection, AbstractCharacter cont, Thing focus,
-									Gump instance, object[] args) {
-			this.instance = instance;
+		internal Thing Focus {
+			get {
+				if (gumpInstance != null) {
+					return gumpInstance.Focus;
+				} else {
+					return focus;
+				}
+			}
+		}
+
+		internal GameConn Conn {
+			get {
+				if (gumpInstance != null) {
+					return gumpInstance.Cont.Conn;
+				} else {
+					return connection;
+				}
+			}
+		}
+
+		[Remark("The dialog to be recalled")]
+		public Gump Gump {
+			get {
+				if (gumpInstance != null) {
+					return gumpInstance.def;
+				} else {
+					return gump;
+				}				
+			}
+		}
+
+		[Remark("Returns a type of this dialog")]
+		internal Type GumpType {
+			get {
+				return gumpInstance.def.GetType();
+			}
+		}
+
+		internal DialogStackItem(GumpInstance gi) {
+			this.gumpInstance = gi;
+			/*this.instance = instance;
+			this.args = args;
+			this.connection = connection;
+			this.cont = cont;
+			this.focus = focus;
+			 * */
+		}
+
+		[Remark("This constructor is used e.g. when calling dialog stack from the LScripted dialogs or simply in "+
+				"the case we dont have the GumpInstance")]
+		internal DialogStackItem(GameConn connection, AbstractCharacter cont, Thing focus, Gump gump, object[] args) {
+			this.gump = gump;
 			this.args = args;
 			this.connection = connection;
 			this.cont = cont;
@@ -78,22 +144,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public void Show() {
 			//send the dialog with stored values
 			//only in case it is not opened 
-			if(!cont.HasOpenedDialog(instance)) {
-				cont.SendGump(focus, instance, args);
+			if(!Cont.HasOpenedDialog(Gump)) {
+				Cont.SendGump(gumpInstance);
 			} else {
 				//nothing will be shown, the dialog is still opened, return this DSI to the stack
-				DialogStackItem.EnstackDialog(cont, this);
+				DialogStackItem.EnstackDialog(Cont, this);
 			}
 		}
 
 		[Remark("LSCript used method for setting the specified argument's value")]
 		public void SetArgValue(int index, object value) {
-			args[index] = value;
+			Args[index] = value;
 		}
 
 		[Remark("LSCript used method for getting the specified argument's value")]
 		public object GetArgValue(int index) {
-			return args[index];
+			return Args[index];
 		}
 
 		[Remark("Store the info about the dialog to the dialog stack. Used for " +
@@ -108,7 +174,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dialogsStack = new Stack<DialogStackItem>();
 				gi.Cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
 			}
-			dialogsStack.Push(new DialogStackItem(gi.Cont.Conn, gi.Cont, gi.Focus, gi.def, gi.InputParams));
+			dialogsStack.Push(new DialogStackItem(gi));
 		}
 
 		[Remark("Overloaded init method - used when the gumpinstance is not fully initialized yet")]

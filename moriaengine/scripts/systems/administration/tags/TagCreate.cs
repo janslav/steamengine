@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
 				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
-				if(prevStacked.InstanceType.Equals(typeof(D_TagList))) {
+				if(prevStacked.GumpType.Equals(typeof(D_TagList))) {
 					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
 					prevStacked.Args[3] = null;
 				}
