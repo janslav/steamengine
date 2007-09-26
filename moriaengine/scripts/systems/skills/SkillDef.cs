@@ -22,6 +22,7 @@ using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public abstract class SkillDef : AbstractSkillDef {
 
 		//this is from spheretables: all these should or could be defined here...

@@ -1712,5 +1712,20 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#endregion combat
+
+		public bool HasTwoHandedWeaponEquipped {
+			get {
+				switch (this.WeaponType) {
+					case WeaponType.TwoHandAxe:
+					case WeaponType.TwoHandBlunt:
+					case WeaponType.TwoHandSpike:
+					case WeaponType.TwoHandSword:
+					case WeaponType.ArcheryStand:
+					case WeaponType.ArcheryRunning:
+						return true;
+				}
+				return false;
+			}
+		}
 	}
 }

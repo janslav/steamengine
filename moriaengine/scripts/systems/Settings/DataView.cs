@@ -56,14 +56,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public static class DataViewProvider {
 		public static Hashtable dataViewsForTypes = new Hashtable();
 
-		[Remark("Primitive FindDataView method, using the object instead of just Type. As Simple as can be -)")]
-		public static IDataView FindDataViewByInstance(object handledObject) {
-			return (IDataView)dataViewsForTypes[handledObject.GetType()];
+		public static SortedList<Type, IDataView> dataViewsForbaseClasses = new SortedList<Type, IDataView>(new TypeHierarchyComparer());
+
+		private class TypeHierarchyComparer : IComparer<Type> {
+			public int Compare(Type x, Type y) {
+				if (x.IsSubclassOf(y)) {
+					return 1;
+				} else if (x == y) {
+					return 0;
+				} else {
+					return -1;
+				}
+			}
 		}
 
-		[Remark("Primitive FindDataView method. As Simple as can be -)")]
+		[Remark("Will find dataview for given type.")]
 		public static IDataView FindDataViewByType(Type handledType) {
-			return (IDataView)dataViewsForTypes[handledType];
+			IDataView view = (IDataView)dataViewsForTypes[handledType];
+			if (view != null) {
+				return view;
+			} else {
+				foreach (KeyValuePair<Type, IDataView> pair in dataViewsForbaseClasses) {
+					if (pair.Key.IsAssignableFrom(handledType)) {
+						dataViewsForTypes[handledType] = pair.Value;
+						return pair.Value;
+					}
+				}
+			}
+			return null;
 		}
 
 		[Remark("Register a new hook to ClassManager - it will send the examined Types here and we will care for next.")]
@@ -79,7 +99,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
 					if (ci != null) {
 						IDataView idv = (IDataView) ci.Invoke(new object[0] { });
-						dataViewsForTypes.Add(idv.HandledType, idv);
+
+						if (idv.HandleSubclasses) {
+							dataViewsForbaseClasses.Add(idv.HandledType, idv);
+						} else {
+							dataViewsForTypes.Add(idv.HandledType, idv);
+						}
+
 					} else {
 						throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
 					}
@@ -92,6 +118,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public interface IDataView {
 		[Remark("This getter will provide us the Type this AbstractDataView is made for")]
 		Type HandledType {get;}
+
+		[Remark("If true, subclasses of HandledType will also be handled.")]
+		bool HandleSubclasses { get;}
 
 		[Remark("Name that will be displayed in the Info dialog headline - description of the infoized class")]
 		string GetName(object instance);
@@ -122,6 +151,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//these three interface properties will be implemented in children
 		public abstract Type HandledType {get;}
+
+		public bool HandleSubclasses {
+			get {
+				return true;
+			}
+		}
 
 		public abstract string GetName(object instance);
 

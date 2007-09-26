@@ -21,6 +21,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
+	[Dialogs.ViewableClass]
 	partial class WeaponSkillTargetQueuePlugin {
 		LinkedList<Character> targetQueue = new LinkedList<Character>();
 		Dictionary<Character, LinkedListNode<Character>> targetDict = new Dictionary<Character, LinkedListNode<Character>>();

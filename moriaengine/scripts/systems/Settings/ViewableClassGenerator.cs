@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts {
 				this.type = type;
 				ViewableClassAttribute vca = (ViewableClassAttribute)type.GetCustomAttributes(typeof(ViewableClassAttribute), false)[0];
 				typeLabel = (vca.Name == null ? type.Name : vca.Name); //label will be either the name of the type or specified label
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public|BindingFlags.Static;
+				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public; //|BindingFlags.Static - co chces jako delat se statickejma memberama omg? -tar
 
 				//get all fields from the Type except for those marked as "NoShow"
 				MemberInfo[] flds = type.FindMembers(MemberTypes.Field|MemberTypes.Property, bindingAttr, HasntAttribute, typeof(NoShowAttribute)); 
@@ -315,10 +315,22 @@ namespace SteamEngine.CompiledScripts {
 
 			[Remark("Generate an inner class for handling ReadWriteData fields")]
 			private CodeTypeDeclaration GenerateFieldIDFW(MemberInfo minf) {
-				string newClassName = "GeneratedReadWriteDataFieldView_" + type.Name + "_" + minf.Name;
+				bool isReadOnly = false;
+				if (minf is PropertyInfo) {
+					isReadOnly = !((PropertyInfo) minf).CanWrite;
+				}
+
+				Type baseAbstractClass;
+				if (isReadOnly) {
+					baseAbstractClass = typeof(ReadOnlyDataFieldView);
+				} else {
+					baseAbstractClass = typeof(ReadWriteDataFieldView);
+				}
+
+				string newClassName = "Generated" + baseAbstractClass.Name + "_" + type.Name + "_" + minf.Name;
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				retVal.BaseTypes.Add(typeof(ReadWriteDataFieldView));
+				retVal.BaseTypes.Add(baseAbstractClass);
 				retVal.IsClass = true;
 
 				//reference to instance
@@ -378,26 +390,45 @@ namespace SteamEngine.CompiledScripts {
 												 )));
 				retVal.Members.Add(getStringValueMeth);
 
-				//SetValue method
-				CodeMemberMethod setValueMeth = new CodeMemberMethod();
-				setValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				setValueMeth.Name = "SetValue";
-				setValueMeth.ReturnType = new CodeTypeReference(typeof(void));
-				setValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
-				setValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "value"));
-				//add something like this: ((SimpleClass)target).foo = (string)value;
 				Type memberType = null;
-				if(minf is PropertyInfo)
-					memberType = ((PropertyInfo)minf).PropertyType;
-				else if(minf is FieldInfo)
-					memberType = ((FieldInfo)minf).FieldType;
-				setValueMeth.Statements.Add(new CodeAssignStatement(
-												new CodeFieldReferenceExpression(
-													new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
-													minf.Name),
-												new CodeCastExpression(memberType, new CodeVariableReferenceExpression("value"))
-											));				
-				retVal.Members.Add(setValueMeth);
+				if (minf is PropertyInfo)
+					memberType = ((PropertyInfo) minf).PropertyType;
+				else if (minf is FieldInfo)
+					memberType = ((FieldInfo) minf).FieldType;
+
+				if (!isReadOnly) {
+					//SetValue method
+					CodeMemberMethod setValueMeth = new CodeMemberMethod();
+					setValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+					setValueMeth.Name = "SetValue";
+					setValueMeth.ReturnType = new CodeTypeReference(typeof(void));
+					setValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+					setValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "value"));
+					//add something like this: ((SimpleClass)target).foo = (string)value;
+					setValueMeth.Statements.Add(new CodeAssignStatement(
+													new CodeFieldReferenceExpression(
+														new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
+														minf.Name),
+													new CodeCastExpression(memberType, new CodeVariableReferenceExpression("value"))
+												));
+					retVal.Members.Add(setValueMeth);
+
+					//SetStringValue method
+					CodeMemberMethod setStringValueMeth = new CodeMemberMethod();
+					setStringValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+					setStringValueMeth.Name = "SetStringValue";
+					setStringValueMeth.ReturnType = new CodeTypeReference(typeof(void));
+					setStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
+					setStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "value"));
+					//add something like this: ((SimpleClass)target).foo = (string)ObjectSaver.OptimizedLoad_String(value);
+					setStringValueMeth.Statements.Add(new CodeAssignStatement(
+														new CodeFieldReferenceExpression(
+															new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
+															minf.Name),
+														GeneratedCodeUtil.GenerateSimpleLoadExpression(memberType, new CodeVariableReferenceExpression("value"))
+														));
+					retVal.Members.Add(setStringValueMeth);
+				}
 
 				//override the FieldType property
 				CodeMemberProperty fieldTypeProp = new CodeMemberProperty();
@@ -409,22 +440,6 @@ namespace SteamEngine.CompiledScripts {
 											new CodeTypeOfExpression(memberType)
 										   ));
 				retVal.Members.Add(fieldTypeProp);
-
-				//SetStringValue method
-				CodeMemberMethod setStringValueMeth = new CodeMemberMethod();
-				setStringValueMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				setStringValueMeth.Name = "SetStringValue";
-				setStringValueMeth.ReturnType = new CodeTypeReference(typeof(void));
-				setStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
-				setStringValueMeth.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "value"));
-				//add something like this: ((SimpleClass)target).foo = (string)ObjectSaver.OptimizedLoad_String(value);
-				setStringValueMeth.Statements.Add(new CodeAssignStatement(
-													new CodeFieldReferenceExpression(
-														new CodeCastExpression(type, new CodeVariableReferenceExpression("target")),
-														minf.Name),
-													GeneratedCodeUtil.GenerateSimpleLoadExpression(memberType, new CodeVariableReferenceExpression("value"))
-													));
-				retVal.Members.Add(setStringValueMeth);
 
 				return retVal;
 			}

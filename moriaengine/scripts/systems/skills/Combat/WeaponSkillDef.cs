@@ -22,6 +22,7 @@ using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public class WeaponSkillDef : SkillDef {
 		public enum WeaponSkillPhase {
 			Drawing,//first phase, the target must get in under startsrike range
@@ -81,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 						self.DelaySkillStroke(delay);
 						param.dueAt = Globals.TimeInSeconds+delay;
 						param.phase = WeaponSkillPhase.Striking;
-						AnimCalculator.PerformAnim(self, GenericAnim.AttackStab);
+						AnimCalculator.PerformAttackAnim(self);
 					}
 				} else {
 					if (distance > self.WeaponStrikeStopRange) {

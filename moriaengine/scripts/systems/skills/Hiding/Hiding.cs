@@ -22,6 +22,7 @@ using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public class HidingSkillDef : SkillDef {
 		
 		public HidingSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
