@@ -23,6 +23,7 @@ using SteamEngine.Packets;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public class Skill : ISkill {
 		private ushort realValue;
 		private ushort cap;

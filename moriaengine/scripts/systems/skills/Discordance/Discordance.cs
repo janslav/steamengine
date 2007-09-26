@@ -24,6 +24,7 @@ using SteamEngine.Common;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public class DiscordanceSkillDef : SkillDef {
 
 		public DiscordanceSkillDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
@@ -147,6 +148,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class DiscordanceEffectPlugin {
 
 		public static readonly DiscordanceEffectPluginDef defInstance = new DiscordanceEffectPluginDef("p_discordanceEffect_", "C#scripts", -1);

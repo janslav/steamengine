@@ -15,12 +15,15 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
+using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[HasSavedMembers]
+	[Dialogs.ViewableClass]
 	public class CombatSettings {
 
 		[SavedMember]

@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 			return animDuration[numFrames,frameDelay];
 		}
 		
-		public static float SlowAnimDuration(ushort numFrames, byte frameDelay) {
+		private static float SlowAnimDuration(ushort numFrames, byte frameDelay) {
 			return (.25f*numFrames)+(.1f*numFrames*frameDelay);
 		}
 
@@ -468,7 +468,7 @@ namespace SteamEngine.CompiledScripts {
 							realAnim=HumanAnim.MountedWalk;
 						} else if (self.Flag_WarMode) {
 							realAnim=HumanAnim.WalkWarMode;
-						} else if (!self.HasBothHandsFree) {
+						} else if (self.WeaponType != WeaponType.BareHands) {
 							realAnim=HumanAnim.WalkArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
 						} else {
 							realAnim=HumanAnim.WalkUnarmed;
@@ -478,7 +478,7 @@ namespace SteamEngine.CompiledScripts {
 				case GenericAnim.Run: {
 						if (self.Flag_Riding) {
 							realAnim=HumanAnim.MountedRun;
-						} else if (!self.HasBothHandsFree) {
+						} else if (self.WeaponType != WeaponType.BareHands) {
 							realAnim=HumanAnim.RunArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
 						} else {
 							realAnim=HumanAnim.RunUnarmed;
@@ -690,6 +690,57 @@ namespace SteamEngine.CompiledScripts {
 			}
 			Logger.WriteDebug("Translated "+anim+" to "+realAnim);
 			return realAnim;
+		}
+
+		public static void PerformAttackAnim(Character self) {
+			GenericAnim anim = GenericAnim.AttackPunch;
+			switch (self.WeaponType) {
+				case WeaponType.OneHandBlunt:
+				case WeaponType.TwoHandBlunt:
+					anim = GenericAnim.AttackOverhead;
+					break;
+
+				case WeaponType.OneHandSpike:
+				case WeaponType.TwoHandSpike:
+					anim = GenericAnim.AttackStab;
+					break;
+				case WeaponType.OneHandSword:
+				case WeaponType.TwoHandSword:
+					switch (Globals.dice.Next(3)) {
+						case 0:
+							anim = GenericAnim.AttackStab;
+							break;
+						case 1:
+							anim = GenericAnim.AttackSwing;
+							break;
+						case 2:
+							anim = GenericAnim.AttackOverhead;
+							break;
+					}
+					break;
+				case WeaponType.OneHandAxe:
+				case WeaponType.TwoHandAxe:
+					switch (Globals.dice.Next(2)) {
+						case 0:
+							anim = GenericAnim.AttackOverhead;
+							break;
+						case 1:
+							anim = GenericAnim.AttackSwing;
+							break;
+					}
+					break;
+				case WeaponType.ArcheryStand:
+				case WeaponType.ArcheryRunning:
+					anim = GenericAnim.AttackShoot;
+					break;
+
+				//case WeaponType.BareHands:
+				//default:
+				//    anim = GenericAnim.AttackPunch;
+				//    break;
+			}
+
+			self.Anim(TranslateAnim(self, anim));
 		}
 
 		public static void PerformAnim(Character self, GenericAnim anim) {

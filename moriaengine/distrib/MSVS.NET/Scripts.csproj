@@ -302,6 +302,9 @@
     <Compile Include="..\..\scripts\systems\Settings\implementations\ListDataView.cs">
       <Link>systems\settings\Implementations\ListDataView.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\MassSettings.cs">
+      <Link>systems\settings\MassSettings.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsCategories.cs">
       <Link>systems\settings\SettingsCategories.cs</Link>
     </Compile>

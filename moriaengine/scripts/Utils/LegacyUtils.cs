@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static string Events(ITriggerGroupHolder self) {
 			StringBuilder toreturn= new StringBuilder();
-			foreach (TriggerGroup tg in self.AllTriggerGroups) {
+			foreach (TriggerGroup tg in self.GetAllTriggerGroups()) {
 				toreturn.Append(tg.ToString()).Append(", ");
 
 			}

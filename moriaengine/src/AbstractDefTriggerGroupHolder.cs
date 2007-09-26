@@ -90,17 +90,17 @@ namespace SteamEngine {
 			}
 		}
 
-		public IEnumerable<TriggerGroup> AllTriggerGroups {
-			get {
-				if (firstTGListNode != null) {
-					PluginHolder.TGListNode curNode = firstTGListNode;
-					do {
-						yield return curNode.storedTG;
-						curNode = curNode.nextNode;
-					} while (curNode != null);
-				}
+		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
+			if (firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = firstTGListNode;
+				do {
+					yield return curNode.storedTG;
+					curNode = curNode.nextNode;
+				} while (curNode != null);
 			}
 		}
+			
+
 
 		/*
 			Method: RemoveTriggerGroup

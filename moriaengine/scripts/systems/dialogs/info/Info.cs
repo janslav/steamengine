@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			object target = args[0];
 			
 			//first argument is the object being infoized - we will get its DataView first
-			IDataView viewCls = DataViewProvider.FindDataViewByInstance(target);
+			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
 			int firstItemButt = Convert.ToInt32(args[1]);
 			int firstItemFld = Convert.ToInt32(args[2]);
 			

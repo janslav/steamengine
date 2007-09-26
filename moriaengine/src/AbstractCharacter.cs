@@ -2219,32 +2219,6 @@ namespace SteamEngine {
 			}
 		}
 		
-		public bool HasTwoHandedWeaponEquipped {
-			get {
-				AbstractItem layer2 = FindLayer(2);
-				return (layer2!=null && layer2.TwoHanded);
-			}
-		}
-		public bool HasAHandFree {
-			get {
-				AbstractItem layer1 = FindLayer(1);
-				AbstractItem layer2 = FindLayer(2);
-				return (layer2==null || (!layer2.TwoHanded && layer1==null));
-			}
-		}
-		public bool HasBothHandsFree {
-			get {
-				AbstractItem layer1 = FindLayer(1);
-				AbstractItem layer2 = FindLayer(2);
-				return (layer2==null && layer1==null);
-			}
-		}
-		public bool HasNoHandsFree {
-			get {
-				return !HasAHandFree;
-			}
-		}
-		
 		//ISrc implementation
 		public AbstractCharacter Character { get {
 			return this;

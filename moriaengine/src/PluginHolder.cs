@@ -41,7 +41,7 @@ namespace SteamEngine {
 		bool CancellableTrigger(TriggerKey td, ScriptArgs sa);
 		bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa);
 
-		IEnumerable<TriggerGroup> AllTriggerGroups { get; }
+		IEnumerable<TriggerGroup> GetAllTriggerGroups();
 	}
 
 	public interface IPluginHolder : ITriggerGroupHolder {
@@ -54,8 +54,8 @@ namespace SteamEngine {
 		Plugin RemovePlugin(Plugin plugin);
 		Plugin RemovePlugin(PluginKey pg);
 
-		IEnumerable<Plugin> AllPlugins { get; }
-		IEnumerable<Plugin> AllNonSimplePlugins { get; }
+		IEnumerable<Plugin> GetAllPlugins();
+		IEnumerable<Plugin> GetNonSimplePlugins();
 	}
 
 	/*
@@ -139,13 +139,11 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public IEnumerable<TriggerGroup> AllTriggerGroups {
-			get {
-				TGListNode curNode = firstTGListNode;
-				while (curNode != null) {
-					yield return curNode.storedTG;
-					curNode = curNode.nextNode;
-				}
+		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
+			TGListNode curNode = firstTGListNode;
+			while (curNode != null) {
+				yield return curNode.storedTG;
+				curNode = curNode.nextNode;
 			}
 		}
 	
@@ -470,24 +468,20 @@ namespace SteamEngine {
 			return plugin;
 		}
 
-		public IEnumerable<Plugin> AllNonSimplePlugins {
-			get {
-				Plugin curPlugin = firstPlugin;
-				while (curPlugin != null) {
-					yield return curPlugin;
-					curPlugin = curPlugin.nextInList;
-				}
+		public IEnumerable<Plugin> GetNonSimplePlugins() {
+			Plugin curPlugin = firstPlugin;
+			while (curPlugin != null) {
+				yield return curPlugin;
+				curPlugin = curPlugin.nextInList;
 			}
 		}
 
-		public IEnumerable<Plugin> AllPlugins {
-			get {
-				if (tags != null) {
-					foreach (DictionaryEntry entry in tags) {
-						Plugin p = entry.Key as Plugin;
-						if (p != null) {
-							yield return p;
-						}
+		public IEnumerable<Plugin> GetAllPlugins() {
+			if (tags != null) {
+				foreach (DictionaryEntry entry in tags) {
+					Plugin p = entry.Key as Plugin;
+					if (p != null) {
+						yield return p;
 					}
 				}
 			}

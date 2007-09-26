@@ -25,7 +25,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class ListDataView : ButtonDataFieldView, IDataView {
 		public Type HandledType {
 			get {
-				return typeof(ArrayList);
+				return typeof(IList);
+			}
+		}
+
+		public bool HandleSubclasses {
+			get { 
+				return true; 
 			}
 		}
 
