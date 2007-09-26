@@ -194,7 +194,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//args[1] ... firstItem of the action buttons
 			//args[2] ... firstItem of the fields
 			object[] args = gi.InputParams;//arguments of the dialog			
-			IDataView viewCls = DataViewProvider.FindDataViewByInstance(args[0]);
+			IDataView viewCls = DataViewProvider.FindDataViewByType(args[0].GetType());
 			int buttonCount = viewCls.GetActionButtonsCount(args[0]);
 			int fieldsCount = viewCls.GetFieldsCount(args[0]);
 			bool pagingHandled = false; //indicator if the pressed button was the paging one.
