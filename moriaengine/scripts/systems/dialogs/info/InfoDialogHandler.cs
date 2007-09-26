@@ -142,10 +142,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Create paging for the Info dialog - it looks a little bit different than normal paging")]
 		public void HandlePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
 			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
-			int fieldLines = viewCls.GetFieldsCount(target) / InfoDialogHandler.COLS_COUNT; //number of fields didvided by number of columns per page
+			int fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
 			int maxLines = Math.Max(buttonLines, fieldLines);
 				//more buttons than fields in all columns? - the number of buttons will be the director of paging (or it will be the opposite way)
-			int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : COLS_COUNT;
+			 int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : COLS_COUNT;
 			//do we need the paging at all?
 			if(maxLines <= ImprovedDialog.PAGE_ROWS * columnsForPagingCreate) {
 				//no...
@@ -191,7 +191,54 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
 		public static bool PagingHandled(GumpInstance gi, GumpResponse gr) {
-			return false;
+			//args[1] ... firstItem of the action buttons
+			//args[2] ... firstItem of the fields
+			object[] args = gi.InputParams;//arguments of the dialog			
+			IDataView viewCls = DataViewProvider.FindDataViewByInstance(args[0]);
+			int buttonCount = viewCls.GetActionButtonsCount(args[0]);
+			int fieldsCount = viewCls.GetFieldsCount(args[0]);
+			bool pagingHandled = false; //indicator if the pressed button was the paging one.
+			switch(gr.pressedButton) {
+				case ID_PREV_BUTTON:
+					//set the first indexes one page to the back
+					args[1] = Convert.ToInt32(args[1]) - PAGE_ROWS;
+					args[2] = Convert.ToInt32(args[2]) - PAGE_ROWS * COLS_COUNT;
+					gi.Cont.SendGump(gi);
+					pagingHandled = true;
+					break;
+				case ID_NEXT_BUTTON:
+					//set the first indexes one page forwards
+					args[1] = Convert.ToInt32(args[1]) + PAGE_ROWS;
+					args[2] = Convert.ToInt32(args[2]) + PAGE_ROWS * COLS_COUNT;
+					gi.Cont.SendGump(gi);
+					pagingHandled = true;
+					break;
+				case ID_JUMP_PAGE_BUTTON:
+					//get the selected page number (absolute value - make it a bit idiot proof :) )
+					int selectedPage = (int)gr.GetNumberResponse(ID_PAGE_NO_INPUT);
+					if(selectedPage < 1) {
+						//idiot proof adjustment
+						gi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
+						selectedPage = 1;
+					}
+					//count the index of the first item
+					int newFirstButtIndex = (selectedPage - 1) * PAGE_ROWS;
+					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * COLS_COUNT);
+					if(newFirstButtIndex > buttonCount) { //get the last page
+						int lastPage = (buttonCount / PAGE_ROWS) + 1; //(int) casted last page number
+						newFirstButtIndex = (lastPage - 1) * PAGE_ROWS; //counted first item on the last page
+					} //otherwise it is properly set to the first item on the page
+					if(newFirstFldIndex > fieldsCount) {
+						int lastPage = (fieldsCount / (PAGE_ROWS * COLS_COUNT)) + 1; //(int) casted last page number
+						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * COLS_COUNT; //counted first item on the last page
+					}
+					args[1] = newFirstButtIndex; //set the index of the first button
+					args[2] = newFirstFldIndex; //set the index of the first field
+					gi.Cont.SendGump(gi);
+					pagingHandled = true;
+					break;
+			}
+			return pagingHandled;
 		}
 
 		public const int INFO_WIDTH = 800; //width of the info dialog
