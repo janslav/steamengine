@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex) {
 			if(field.IsButtonEnabled) { //buttonized field - we need the button index
 				actionTable[actualActionRow, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
-				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.Name);				
+				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.GetName(target));				
 				actualActionRow++;
 				//store the field under the buttons index
 				buttons.Add(buttonsIndex, field);
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else if(!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 					//first column holds the type information in brackets() and the name of the field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field)+field.Name);
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field)+field.GetName(target));
 				//if necessary, insert the button
 				bool willHaveButton = false;
 				if(field.GetValue(target) != null) {
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if(willHaveButton) {
 					//non simple field (buttonized - the redirect to another info dialog is present)
 					//the field will not be editable, we will therefore display only non editable label
-					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.Name);
+					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
 				} else {
 					//no buttonized edit field - it is some simple type and can be edited
 					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				actualFieldRow++;				
 			} else { //non-editable label-value field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field) + field.Name);
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field) + field.GetName(target));
 				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
 				actualFieldRow++;
 			}

@@ -63,5 +63,66 @@ namespace SteamEngine.CompiledScripts {
 
 		[SaveableData]
 		public double attackStrModifier = 317;
+
+		public WeaponTypeMassSetting weaponTypes = new WeaponTypeMassSetting();
+	}
+
+	public abstract class WeaponMassSetting<DefType, FieldType> : MassSettingsByModel<DefType, FieldType> where DefType : WeaponDef {
+		private static ushort[] weaponModels;
+
+		private static ushort[] WeaponModels { 
+			get {
+				if (weaponModels == null) {
+					HashSet<ushort> models = new HashSet<ushort>();
+					foreach (AbstractScript scp in AbstractScript.AllScrips) {
+						WeaponDef weap = scp as WeaponDef;
+						if (weap != null) {
+							models.Add(weap.Model);
+						}
+					}
+					if (models.Count == 0) {
+						throw new Exception("WeaponMassSetting instantiated before scripts are loaded... or no weapons in scripts?");
+					}
+
+					weaponModels = new ushort[models.Count];
+					int i = 0;
+					foreach (ushort model in models) {
+						weaponModels[i] = model;
+						i++;
+					}
+				}
+				return weaponModels;
+			}
+		}
+
+		public WeaponMassSetting()
+			: base(WeaponModels) {
+		}
+	}
+
+	public class WeaponTypeMassSetting : WeaponMassSetting<WeaponDef,WeaponType> {
+		public override string Name {
+			get { 
+				return "Typy zbraní";
+			}
+		}
+
+		protected class WeaponTypeFieldView : FieldView {
+			internal WeaponTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, WeaponType value) {
+				def.WeaponType = value;
+			}
+
+			internal override WeaponType GetValue(WeaponDef def) {
+				return def.WeaponType;
+			}
+		}
+
+		public override ReadWriteDataFieldView GetFieldView(int index) {
+			return new WeaponTypeFieldView(index);
+		}
 	}
 }

@@ -198,7 +198,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Get the name from the IDataFieldView")]
 		public string Name {
 			get {
-				return field.Name;
+				return field.GetName(target);
 			}
 		}
 

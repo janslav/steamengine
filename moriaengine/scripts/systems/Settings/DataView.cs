@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"(infoized) object in the dialog")]
 	public interface IDataFieldView {
 		[Remark("The name of this field / the label of the button")]
-		string Name { get; }
+		string GetName(object target);
 		
 		[Remark("Is the data read only? - i.e. displaying the settings results?")]
 		bool ReadOnly { get; }
@@ -264,7 +264,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//all other properties/methods will be implemented in child classes later
-		public abstract string Name {get;}
+		public abstract string GetName(object target);
 		public abstract Type FieldType {get;}
 		public abstract object GetValue(object target);
 		public abstract string GetStringValue(object target);
@@ -292,7 +292,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//all other properties/methods will be implemented in child classes later
-		public abstract string Name { get; }
+		public abstract string GetName(object target);
 		public abstract Type FieldType {get;}
 		public abstract object GetValue(object target);
 		public abstract void SetValue(object target, object value);
@@ -344,7 +344,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//all other properties/methods will be implemented in child classes later
-		public abstract string Name { get; }
+		public abstract string GetName(object target);
 		public abstract void OnButton(object target);
 
 	}

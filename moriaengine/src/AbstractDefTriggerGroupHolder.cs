@@ -48,7 +48,7 @@ namespace SteamEngine {
 		}
 
 		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
-		public PluginHolder.TGListNode firstTGListNode = null; //linked list of triggergroup references
+		internal PluginHolder.TGListNode firstTGListNode = null; //linked list of triggergroup references
 		//This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
 		internal void ResolveTriggerGroup(object[] args) {
 			string name=(string) args[0];

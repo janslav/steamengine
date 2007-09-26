@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	public abstract class MassSettingsByModel<DefType, FieldType> : IMassSettings where DefType : ThingDef {
 		ushort[] models;
-		DefType[] defs;
+		List<DefType>[] defs;
 
 		internal MassSettingsByModel(ushort[] models) {
 			this.models = models;
@@ -42,20 +42,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private void InitDefList() {
 			if (defs == null) {
 				int n = models.Length;
-				defs = new DefType[n];
+				defs = new List<DefType>[n];
 				for (int i = 0; i<n; i++) {
 					ushort model = models[i];
+					List<DefType> list = new List<DefType>();
+					defs[i] = list;
 					foreach (AbstractScript scp in AbstractScript.AllScrips) {
 						DefType def = scp as DefType;
 						if ((def != null) && 
 								(def.Model == model) &&
 								CheckIfAppies(def)) {
-							defs[i] = def;
-							break;
+							list.Add(def);
 						}
 					}
-					if (defs[i] == null) {
+					if (list.Count == 0) {
 						throw new Exception("Def for model "+model+" not found for mass setting");
+					}
+					foreach (DefType def in list) {
+						if (def.Defname.StartsWith("i_0x") || def.Defname.StartsWith("c_0x")) {
+							list.Remove(def);
+							list.Insert(0, def);
+							break;
+						}
 					}
 				}
 			}
@@ -81,6 +89,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.index = index;
 			}
 
+			public override string GetName(object target) {
+				DefType def = ((MassSettingsByModel<DefType, FieldType>) target).defs[index][0];
+				return def.Name;
+			}
+
 			public override Type FieldType {
 				get {
 					return typeof(FieldType);
@@ -88,15 +101,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				DefType def = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
+				DefType def = ((MassSettingsByModel<DefType, FieldType>) target).defs[index][0];
 
 				return this.GetValue(def);
 			}
 
 			public override void SetValue(object target, object value) {
-				DefType def = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
+				List<DefType> defs = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
 
-				this.SetValue(def, (FieldType) ConvertTools.ConvertTo(typeof(FieldType), value));
+				foreach (DefType def in defs) {
+					this.SetValue(def, (FieldType) ConvertTools.ConvertTo(typeof(FieldType), value));
+				}
 			}
 
 			public override string GetStringValue(object target) {
@@ -138,7 +153,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int GetFieldsCount(object instance) {
-			throw new Exception("The method or operation is not implemented.");
+			return ((IMassSettings) instance).Count;
 		}
 
 		public System.Collections.Generic.IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
