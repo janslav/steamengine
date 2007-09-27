@@ -33,10 +33,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[NoShow]
 		public int bar = 0;
 
-		[Button("Test Button")]
-		public void SomeMethod() {
-			nejakejList.Add(bar);
-			bar++;
+		[Button("List doublify")]
+		public void SomeMethod() {			
+			for(int i = 0; i < (bar == 0 ? 1 : bar) * 2; i++) {
+				nejakejList.Add(nejakejList.Count);
+			}
+			bar = (bar == 0 ? 1 : bar) * 2;
 		}
 	}
 
