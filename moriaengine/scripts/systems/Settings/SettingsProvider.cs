@@ -46,11 +46,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						//store the attempted string
 						oneRes.ErroneousValue = newStringValue;
 					}
+					resList.Add(oneRes);//add to the list (only if changed somehow)
 				} else {
 					//nothing changed
 					oneRes.Outcome = SettingsOutcome.NotChanged;
-				}
-				resList.Add(oneRes);
+				}								
 			}
 			return resList;
 		}
