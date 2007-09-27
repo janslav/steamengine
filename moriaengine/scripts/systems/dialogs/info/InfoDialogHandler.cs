@@ -144,6 +144,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
 			int fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
 			int maxLines = Math.Max(buttonLines, fieldLines);
+				//deciding on where is more items, get the determining first item position (we will count the page number from it)
+				//shortly - we are paging either according to the buttons (of there are more buttons) or fields (if there are more fields...)
+			int pageDeterminingFirstItem = (buttonLines > fieldLines) ? firstItemButt : firstItemFld;
 				//more buttons than fields in all columns? - the number of buttons will be the director of paging (or it will be the opposite way)
 			 int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : COLS_COUNT;
 			//do we need the paging at all?
@@ -153,7 +156,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			int pagesCount = (int)Math.Ceiling((double)maxLines / (ImprovedDialog.PAGE_ROWS * columnsForPagingCreate));
-			int actualPage = (firstItemButt / ImprovedDialog.PAGE_ROWS) + 1; //we can count it from the buttons column -its OK
+			int actualPage = (pageDeterminingFirstItem / (ImprovedDialog.PAGE_ROWS * columnsForPagingCreate)) + 1;
 
 			bool prevNextColumnAdded = false; //indicator of navigating column
 											   //last column          //the inner table
