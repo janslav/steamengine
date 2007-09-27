@@ -34,6 +34,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private int actualFieldRow;
 		private int actualFieldColumn;
 
+		private IDataView viewCls;
+		private object target;
+
+		//how many data fields there will be? (normally 2 but if we dont have any action buttons
+		//then there will be 3
+		public int REAL_COLUMNS_COUNT;
+
 		//hashtables for button/editfield index relationing with IDataFieldViews...
 		private Hashtable buttons;
 		private Hashtable editFlds;
@@ -57,53 +64,60 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Table for all of the IDataFieldViews")]
-		public void CreateDataFieldsSpace() {
+		public void CreateDataFieldsSpace(IDataView viewCls, object target) {
+			this.target = target;
+			this.viewCls = viewCls;
+
 			int[] columns = new int[1 + COLS_COUNT];
-			columns[0] = ACTION_COLUMN; //action buttons column
-			for(int i = 1; i <= COLS_COUNT; i++) {
-				columns[i] = FIELD_COLUMN; //same width for every other datafield column
+			int firstFieldsColumn = 1;
+			if(viewCls.GetActionButtonsCount(target) > 0) {
+				REAL_COLUMNS_COUNT = COLS_COUNT; //standard number of field columns
+				columns[0] = ACTION_COLUMN; //we have the action buttons column	
+			} else {
+				//there are no action buttons => even the first column will contain the data fields
+				REAL_COLUMNS_COUNT = COLS_COUNT + 1; //one more field column
+				firstFieldsColumn = 0;
+			}
+			for(int i = firstFieldsColumn; i <= COLS_COUNT; i++) {
+				columns[i] = FieldColumn; //same width for every other datafield column
 			}
 			Add(new GUTATable(PAGE_ROWS, columns));
 			MakeTableTransparent();
 
 			//now add subtables to every defined column... first- action table (two subcolumns - button and his label)
-			LastTable.Components[0].AddComponent(new GUTATable(PAGE_ROWS, ButtonFactory.D_BUTTON_WIDTH, 0));
-			actionTable = (GUTATable)LastTable.Components[0].Components[0]; //(dialogtable - first column - his just added inner table)
-			actionTable.NoWrite = true; //only its columns will be seen, the table itself is just virtual, for operating
-			actualActionRow = 0;
-			actionTable.Transparent = true;
+			if(viewCls.GetActionButtonsCount(target) > 0) { //do we have the action buttons colum ?
+				LastTable.Components[0].AddComponent(new GUTATable(PAGE_ROWS, ButtonFactory.D_BUTTON_WIDTH, 0));
+				actionTable = (GUTATable)LastTable.Components[0].Components[0]; //(dialogtable - first column - his just added inner table)
+				actionTable.NoWrite = true; //only its columns will be seen, the table itself is just virtual, for operating
+				actualActionRow = 0;
+				actionTable.Transparent = true;
+			}
 			//then other tables (3 columns - name(, button), value)
-			for(int i = 1; i <= COLS_COUNT; i++) {
-				LastTable.Components[i].AddComponent(new GUTATable(PAGE_ROWS, 110, ButtonFactory.D_BUTTON_WIDTH, 0));
+			for(int i = firstFieldsColumn; i <= COLS_COUNT; i++) {
+				LastTable.Components[i].AddComponent(new GUTATable(PAGE_ROWS, FIELD_LABEL, ButtonFactory.D_BUTTON_WIDTH, 0));
 				((GUTATable)LastTable.Components[i].Components[0]).Transparent = true;
 				((GUTATable)LastTable.Components[i].Components[0]).NoWrite = true;//also not for writing out!
 			}
-			actualFieldTable = (GUTATable)LastTable.Components[1].Components[0];//(dialogtable - second column - his inner table)
+			actualFieldTable = (GUTATable)LastTable.Components[firstFieldsColumn].Components[0];//(dialogtable - first fields column - his inner table)
 			actualFieldRow = 0; //row counter
-			actualFieldColumn = 1; //column counter (we have COLS_COUNT -1 columns to write to)
+			actualFieldColumn = firstFieldsColumn; //column counter (we have REAL_COLUMNS_COUNT columns to write to)
 		}		
 
 		[Remark("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
 		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex) {
 			if(field.IsButtonEnabled) { //buttonized field - we need the button index
-				actionTable[actualActionRow, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
+				actionTable[actualActionRow, 0] = CreateInfoInnerButton(ref buttonsIndex, field);
 				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.GetName(target));				
-				actualActionRow++;
-				//store the field under the buttons index
-				buttons.Add(buttonsIndex, field);
-				buttonsIndex++; //raise the button index - and prepare it for other buttons
+				actualActionRow++;				
 				return;
 			} else if(!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 					//first column holds the type information in brackets() and the name of the field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field)+field.GetName(target));
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.GetName(target)+SettingsProvider.GetTypePrefix(field));
 				//if necessary, insert the button
 				bool willHaveButton = false;
 				if(field.GetValue(target) != null) {
 					if(!ObjectSaver.IsSimpleSaveableType(field.GetValue(target).GetType())) {
-						actualFieldTable[actualFieldRow, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
-						//store the field under the buttons index
-						buttons.Add(buttonsIndex, field);				
-						buttonsIndex++;
+						actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
 						willHaveButton = true;
 					}
 				}
@@ -114,14 +128,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
 				} else {
 					//no buttonized edit field - it is some simple type and can be edited
-					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
+					if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+						//Enums have one smart button showing hint- what to insert
+						actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
+						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType,field.GetValue(target)));
+					} else {
+						//other types have only edit fields
+						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
+					}
 					//store the field under the edits index
 					editFlds.Add(editsIndex, field);
 					editsIndex++;
 				}
 				actualFieldRow++;				
 			} else { //non-editable label-value field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(SettingsProvider.GetTypePrefix(field) + field.GetName(target));
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.GetName(target)+SettingsProvider.GetTypePrefix(field));
 				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
 				actualFieldRow++;
 			}
@@ -148,7 +169,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//shortly - we are paging either according to the buttons (of there are more buttons) or fields (if there are more fields...)
 			int pageDeterminingFirstItem = (buttonLines > fieldLines) ? firstItemButt : firstItemFld;
 				//more buttons than fields in all columns? - the number of buttons will be the director of paging (or it will be the opposite way)
-			 int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : COLS_COUNT;
+			int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : REAL_COLUMNS_COUNT;
 			//do we need the paging at all?
 			if(maxLines <= ImprovedDialog.PAGE_ROWS * columnsForPagingCreate) {
 				//no...
@@ -159,7 +180,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int actualPage = (pageDeterminingFirstItem / (ImprovedDialog.PAGE_ROWS * columnsForPagingCreate)) + 1;
 
 			bool prevNextColumnAdded = false; //indicator of navigating column
-											   //last column          //the inner table
+											   //last column					//the inner table
 			GUTATable pagingTable = (GUTATable)LastTable.Components[COLS_COUNT].Components[0];
 			GUTAColumn pagingCol = new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH);
 			pagingCol.IsLast = true;					
@@ -200,19 +221,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			IDataView viewCls = DataViewProvider.FindDataViewByType(args[0].GetType());
 			int buttonCount = viewCls.GetActionButtonsCount(args[0]);
 			int fieldsCount = viewCls.GetFieldsCount(args[0]);
+			//how many columns for fields do we have?
+			int fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
 			bool pagingHandled = false; //indicator if the pressed button was the paging one.
 			switch(gr.pressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
 					args[1] = Convert.ToInt32(args[1]) - PAGE_ROWS;
-					args[2] = Convert.ToInt32(args[2]) - PAGE_ROWS * COLS_COUNT;
+					args[2] = Convert.ToInt32(args[2]) - PAGE_ROWS * fieldsColumnsCount;
 					gi.Cont.SendGump(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					//set the first indexes one page forwards
 					args[1] = Convert.ToInt32(args[1]) + PAGE_ROWS;
-					args[2] = Convert.ToInt32(args[2]) + PAGE_ROWS * COLS_COUNT;
+					args[2] = Convert.ToInt32(args[2]) + PAGE_ROWS * fieldsColumnsCount;
 					gi.Cont.SendGump(gi);
 					pagingHandled = true;
 					break;
@@ -226,14 +249,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					//count the index of the first item
 					int newFirstButtIndex = (selectedPage - 1) * PAGE_ROWS;
-					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * COLS_COUNT);
+					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * fieldsColumnsCount);
 					if(newFirstButtIndex > buttonCount) { //get the last page
 						int lastPage = (buttonCount / PAGE_ROWS) + 1; //(int) casted last page number
 						newFirstButtIndex = (lastPage - 1) * PAGE_ROWS; //counted first item on the last page
 					} //otherwise it is properly set to the first item on the page
 					if(newFirstFldIndex > fieldsCount) {
-						int lastPage = (fieldsCount / (PAGE_ROWS * COLS_COUNT)) + 1; //(int) casted last page number
-						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * COLS_COUNT; //counted first item on the last page
+						int lastPage = (fieldsCount / (PAGE_ROWS * fieldsColumnsCount)) + 1; //(int) casted last page number
+						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * fieldsColumnsCount; //counted first item on the last page
 					}
 					args[1] = newFirstButtIndex; //set the index of the first button
 					args[2] = newFirstFldIndex; //set the index of the first field
@@ -244,14 +267,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
-		public const int INFO_WIDTH = 800; //width of the info dialog
-		public const int COLS_COUNT = 2; //one column is always for action buttons, two columns for other fields
+		[Remark("Create a inside-info dialog button (buttons in the columns). Increase the button index and store the field in the map")]
+		private GUTAComponent CreateInfoInnerButton(ref int buttonsIndex, IDataFieldView field) {
+			GUTAComponent retBut = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
+			buttons.Add(buttonsIndex, field);
+			buttonsIndex++;
+			return retBut;
+		}
+
+		private int FieldColumn {
+			get {
+				if(viewCls.GetActionButtonsCount(target) > 0) {
+					return (INFO_WIDTH - //complete dialog width
+							ACTION_COLUMN - //action button column
+							2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
+										 (COLS_COUNT - 1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
+										 / COLS_COUNT;//divide by number of desired data columns
+				} else { //no button column...
+					return (INFO_WIDTH - //complete dialog width							
+							2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
+								 (REAL_COLUMNS_COUNT - 1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
+								 / REAL_COLUMNS_COUNT;//divide by number of desired data columns
+				}	
+			}
+		}
+
+		public const int INFO_WIDTH = 1000; //width of the info dialog
+		public const int COLS_COUNT = 2; //one column is always reserved for action buttons, two columns for other fields
 		private const int ACTION_COLUMN = 180; //action column width
-										 
-		private const int FIELD_COLUMN = (INFO_WIDTH - //complete dialog width
-										 ACTION_COLUMN - //first column
-										 2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
-										 (COLS_COUNT-1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
-										 / COLS_COUNT;//divide by number of desired data columns									 
+		private const int FIELD_LABEL = 150; //label of the field column										 
 	}
 }

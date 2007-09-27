@@ -35,7 +35,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				IDataFieldView field = (IDataFieldView)editFields[key];
 				oneRes = new SettingResult(field, target); //prepare the result
 				string newStringValue = resp.GetTextResponse(key); //get the value from the edit field
-				if(!newStringValue.Equals(field.GetStringValue(target))) {
+				if(!typeof(Enum).IsAssignableFrom(field.FieldType) && !newStringValue.Equals(field.GetStringValue(target))) {
+					//hnadled type is not Enum and it has changed somehow...
 					oneRes.Outcome = SettingsOutcome.ChangedOK; //assume it will be OK
 					//something has changed - try to make the setting
 					try {
@@ -44,6 +45,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						//setting failed for some reason
 						oneRes.Outcome = SettingsOutcome.ChangedError; //it wasnt OK... :-(
 						//store the attempted string
+						oneRes.ErroneousValue = newStringValue;
+					}
+					resList.Add(oneRes);//add to the list (only if changed somehow)
+				} else if(typeof(Enum).IsAssignableFrom(field.FieldType) && SettingsProvider.IsEnumValueChanged(field,target,newStringValue)) {
+					//if the field handles the Enum type, we have to check it a slightly different way...
+					oneRes.Outcome = SettingsOutcome.ChangedOK;
+					try {
+						//try to set the enumeration value
+						field.SetValue(target,Enum.Parse(field.FieldType, newStringValue, true));
+					} catch {
+						oneRes.Outcome = SettingsOutcome.ChangedError;
 						oneRes.ErroneousValue = newStringValue;
 					}
 					resList.Add(oneRes);//add to the list (only if changed somehow)
@@ -87,6 +99,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 			return resCntr;
+		}
+
+		[Remark("Compare case insensitively the names of enumeration values if they have changed")]
+		private static bool IsEnumValueChanged(IDataFieldView field, object target, string newEnumValueName) {
+			string oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
+			if(string.Compare(oldEnumValuName, newEnumValueName, true) == 0) {
+				return false;
+			} else {
+				return true;
+			}			
 		}
 
 		[Remark("Examine the setings value's member type and get its prefix as used in ObjectSaver." +
@@ -216,14 +238,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Get the former value of the edited field - for comparation with the result")]
 		public string FormerValue {
 			get {
-				return ObjectSaver.Save(formerValue);
+				//Handle the Enums differently (show the name, not the value...)
+				if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+					return Enum.GetName(field.FieldType, formerValue);
+				} else {
+					return ObjectSaver.Save(formerValue);
+				}
+			}
+			set {
+				formerValue = value;
 			}
 		}
 
 		[Remark("The actual value of the field - after the setting is made")]
 		public string CurrentValue {
 			get {
-				return field.GetStringValue(target);
+				//Handle the Enums differently (show the name, not the value...)				
+				if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+					return Enum.GetName(field.FieldType, field.GetValue(target));
+				} else {
+					return field.GetStringValue(target);
+				}
 			}
 		}
 	}

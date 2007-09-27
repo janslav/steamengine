@@ -30,6 +30,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public ArrayList nejakejList = new ArrayList();
 
+		public Hues kolorka = Hues.Blue;
+
 		[NoShow]
 		public int bar = 0;
 
