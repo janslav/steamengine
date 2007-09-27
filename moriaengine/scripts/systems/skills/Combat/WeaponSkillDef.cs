@@ -75,6 +75,10 @@ namespace SteamEngine.CompiledScripts {
 				//self.SysMessage(this.Key+" stroking");
 				WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam;
 				Character target = self.currentSkillTarget1 as Character;
+				if (target.IsDeleted || target.Flag_Dead) {
+					WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
+					return;
+				}
 				int distance = Point2D.GetSimpleDistance(self, target);
 				if (param.phase == WeaponSkillPhase.Drawing) {
 					if (distance <= self.WeaponStrikeStartRange) {
@@ -129,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 				//self.SysMessage(this.Key+" aborted");
 				Character target = self.currentSkillTarget1 as Character;
 				if (target != null) {
-					WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
+					//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 					WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 				}
 			}
