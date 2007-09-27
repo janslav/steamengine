@@ -65,6 +65,10 @@ namespace SteamEngine.CompiledScripts {
 		public double attackStrModifier = 317;
 
 		public WeaponTypeMassSetting weaponTypes = new WeaponTypeMassSetting();
+
+		public WeaponSpeedMassSetting weaponSpeeds = new WeaponSpeedMassSetting();
+
+		public WeaponAnimTypeSetting weaponAnims = new WeaponAnimTypeSetting();
 	}
 
 	public abstract class WeaponMassSetting<DefType, FieldType> : MassSettingsByModel<DefType, FieldType> where DefType : WeaponDef {
@@ -90,6 +94,7 @@ namespace SteamEngine.CompiledScripts {
 						weaponModels[i] = model;
 						i++;
 					}
+					Array.Sort(weaponModels);
 				}
 				return weaponModels;
 			}
@@ -114,6 +119,26 @@ namespace SteamEngine.CompiledScripts {
 
 			internal override void SetValue(WeaponDef def, WeaponType value) {
 				def.WeaponType = value;
+				switch (value) {
+					case WeaponType.TwoHandBlunt:
+					case WeaponType.TwoHandSpike:
+					case WeaponType.TwoHandSword:
+					case WeaponType.TwoHandAxe:
+					case WeaponType.XBowRunning:
+					case WeaponType.XBowStand:
+					case WeaponType.BowRunning:
+					case WeaponType.BowStand:
+						def.Layer = 2;
+						def.TwoHanded = true;
+						break;
+					case WeaponType.OneHandBlunt:
+					case WeaponType.OneHandSpike:
+					case WeaponType.OneHandSword:
+					case WeaponType.OneHandAxe:
+						def.Layer = 1;
+						def.TwoHanded = false;
+						break;
+				}
 			}
 
 			internal override WeaponType GetValue(WeaponDef def) {
@@ -125,4 +150,91 @@ namespace SteamEngine.CompiledScripts {
 			return new WeaponTypeFieldView(index);
 		}
 	}
+
+	public class WeaponSpeedMassSetting : WeaponMassSetting<WeaponDef, double> {
+		public override string Name {
+			get {
+				return "Rychlosti zbraní";
+			}
+		}
+
+		protected class WeaponSpeedFieldView : FieldView {
+			internal WeaponSpeedFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, double value) {
+				def.Speed = value;
+			}
+
+			internal override double GetValue(WeaponDef def) {
+				return def.Speed;
+			}
+		}
+
+		public override ReadWriteDataFieldView GetFieldView(int index) {
+			return new WeaponSpeedFieldView(index);
+		}
+	}
+
+	public class WeaponAnimTypeSetting : WeaponMassSetting<WeaponDef, WeaponAnimType> {
+		public override string Name {
+			get {
+				return "Typy animace zbraní";
+			}
+		}
+
+		protected class WeaponAnimTypeFieldView : FieldView {
+			internal WeaponAnimTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, WeaponAnimType value) {
+				def.WeaponAnimType = value;
+			}
+
+			internal override WeaponAnimType GetValue(WeaponDef def) {
+				WeaponAnimType anim = def.WeaponAnimType;
+				if (anim == WeaponAnimType.Undefined) {
+					anim = TranslateAnimType(def.WeaponType);
+				}
+				return anim;
+			}
+		}
+
+		public static WeaponAnimType TranslateAnimType(WeaponType type) {
+			WeaponAnimType anim = WeaponAnimType.Undefined;
+			switch (type) {
+				case WeaponType.BareHands:
+					anim = WeaponAnimType.BareHands;
+					break;
+				case WeaponType.XBowRunning:
+				case WeaponType.XBowStand:
+					anim = WeaponAnimType.XBow;
+					break;
+				case WeaponType.BowRunning:
+				case WeaponType.BowStand:
+					anim = WeaponAnimType.Bow;
+					break;
+				case WeaponType.OneHandAxe:
+				case WeaponType.OneHandSpike:
+				case WeaponType.OneHandSword:
+				case WeaponType.OneHandBlunt:
+					anim = WeaponAnimType.HeldInRightHand;
+					break;
+				case WeaponType.TwoHandSword:
+				case WeaponType.TwoHandBlunt:
+				case WeaponType.TwoHandSpike:
+				case WeaponType.TwoHandAxe:
+					anim = WeaponAnimType.HeldInLeftHand;
+					break;
+			}
+			return anim;
+		}
+
+		public override ReadWriteDataFieldView GetFieldView(int index) {
+			return new WeaponAnimTypeFieldView(index);
+		}
+	}
 }
+

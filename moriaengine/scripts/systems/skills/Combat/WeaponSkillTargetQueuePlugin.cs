@@ -24,7 +24,6 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	partial class WeaponSkillTargetQueuePlugin {
 		LinkedList<Character> targetQueue = new LinkedList<Character>();
-		Dictionary<Character, LinkedListNode<Character>> targetDict = new Dictionary<Character, LinkedListNode<Character>>();
 
 		private new Character Cont {
 			get {
@@ -54,39 +53,35 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void AddTarget(Character target) {
-			bool isNew = false;
-			LinkedListNode<Character> node;
-			if (targetDict.TryGetValue(target, out node)) {
+			LinkedListNode<Character> node = targetQueue.First;
+			if (node != null) {
 				if (target != targetQueue.First.Value) {
-					isNew = true;
-					targetQueue.Remove(node);
+					while (node != null) {
+						if (node.Value == target) {
+							targetQueue.Remove(node);
+							break;
+						}
+						node = node.Next;
+					}
 					targetQueue.AddFirst(target);
 				}
 			} else {
-				isNew = true;
 				targetQueue.AddFirst(target);
 			}
-
-			if (isNew) {
-				FightCurrentTarget();
-			}
+			
+			FightCurrentTarget();
 		}
 
 		public void RemoveTarget(Character target) {
-			LinkedListNode<Character> node;
-			bool removedFirst = false;
-			if (targetDict.TryGetValue(target, out node)) {
-				if (target == targetQueue.First.Value) {
-					removedFirst = true;
+			LinkedListNode<Character> node = targetQueue.First;
+			while (node != null) {
+				if (node.Value == target) {
+					targetQueue.Remove(node);
+					break;
 				}
-				targetQueue.Remove(node);
-				targetQueue.AddFirst(target);
+				node = node.Next;
 			}
-			if (removedFirst) {
-				if (targetQueue.Count == 0) {
-					this.Delete();
-				}
-			}
+			FightCurrentTarget();
 		}
 
 		public void FightCurrentTarget() {
@@ -105,8 +100,10 @@ namespace SteamEngine.CompiledScripts {
 			switch (weapType) {
 				case WeaponType.BareHands:
 					return SkillName.Wrestling;
-				case WeaponType.ArcheryStand:
-				case WeaponType.ArcheryRunning:
+				case WeaponType.XBowRunning:
+				case WeaponType.XBowStand:
+				case WeaponType.BowRunning:
+				case WeaponType.BowStand:
 					return SkillName.Archery;
 				case WeaponType.TwoHandAxe:
 				case WeaponType.TwoHandSword:
@@ -145,10 +142,6 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_Death() {
 			this.Delete();
-		}
-
-		public void On_Step() {
-			TryStrokeWeapSkill();
 		}
 
 		public void On_NewPosition() {

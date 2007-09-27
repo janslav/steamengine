@@ -155,9 +155,19 @@ namespace SteamEngine.CompiledScripts {
 		TwoHandSword,//dvourucni bodne/secne - obourucni mece
 		OneHandAxe,//jednorucni secne - sekery
 		TwoHandAxe,//dvourucni secne - sekery
-		ArcheryStand,
-		ArcheryRunning,
+		BowStand,
+		BowRunning,
+		XBowStand,
+		XBowRunning,
+		Undefined//NPC s undefined weapontypou na defu budou brat weapontype ze sve skutecne zbrane
+	}
 
+	public enum WeaponAnimType : byte {
+		BareHands,//prazdne ruce
+		HeldInLeftHand,
+		HeldInRightHand,
+		Bow,
+		XBow,
 		Undefined//NPC s undefined weapontypou na defu budou brat weapontype ze sve skutecne zbrane
 	}
 
@@ -176,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 		FallBackwards=11,
 		FallForwards=12,
 		Block=13, Dodge=13,
-		AttackPunch=14,
+		AttackBareHands=14,
 		Bow=15,
 		Salute=16,
 		Drink=17, Eat=17
@@ -192,12 +202,12 @@ namespace SteamEngine.CompiledScripts {
 		LookDown=6,
 		WarMode=7,
 		WarModeWithTwoHandedWeapon=8,
-		AttackSwing=9,
-		AttackStab=10,
-		AttackOverhead=11,
-		AttackTwoHandedOverhead=12,
-		AttackTwoHandedSwing=13,
-		AttackTwoHandedStab=14,
+		RightHandSwing=9, OneHandSwing = 9,
+		RightHandStab=10, OneHandStab=10,
+		RightHandOverhead=11, OneHandOverhead=11,
+		LeftHandOverhead=12, TwoHandOverhead=12,
+		LeftHandSwing=13, TwoHandSwing=13,
+		LeftHandStab=14, TwoHandStab=14,
 		WalkWarMode=15,
 		CastForward=16,
 		Cast=17,
@@ -209,12 +219,12 @@ namespace SteamEngine.CompiledScripts {
 		MountedWalk=23,
 		MountedRun=24,
 		MountedStandStill=25,
-		MountedAttackOverhead=26,
+		MountedRightHandAttack=26,
 		MountedFireBow=27,
 		MountedFireCrossbow=28,
-		MountedAttackTwohandedOverhead=29,
+		MountedLeftHandAttack=29,
 		Block=30, Dodge=30,
-		AttackPunch=31,
+		AttackBareHands=31,
 		Bow=32,
 		Salute=33,
 		Drink=34, Eat=34,

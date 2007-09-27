@@ -381,7 +381,7 @@ namespace SteamEngine.Packets {
 							Logger.Show("TestSuite", "Testing with: Sound packet (len "+gPacketSize+")");
 							break;
 						} case 11: {
-							PacketSender.PrepareAnimation(that, 21, 0, 1, false, false, 1);
+							PacketSender.PrepareAnimation(that, 21, 1, false, false, 1);
 							Logger.Show("TestSuite", "Testing with: Animation (action) packet (len "+gPacketSize+")");
 							break;
 						} case 12: {

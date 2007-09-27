@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void Select(AbstractCharacter ch) {
 			Character self = (Character) ch;
 			if (!Trigger_Select(self)) {
-				self.SysMessage(this.Key+" selected");
+				//self.SysMessage(this.Key+" selected");
 				Character target = self.currentSkillTarget1 as Character;
 				if (target != null) {
 					self.StartSkill(this);
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 		
 		public override void Stroke(Character self) {
 			if (!Trigger_Stroke(self)) {
-				self.SysMessage(this.Key+" stroking");
+				//self.SysMessage(this.Key+" stroking");
 				WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam;
 				Character target = self.currentSkillTarget1 as Character;
 				int distance = Point2D.GetSimpleDistance(self, target);
@@ -94,6 +94,12 @@ namespace SteamEngine.CompiledScripts {
 						} else {
 							Fail(self);
 						}
+
+						self.Sound((SoundFX) 567);
+						if (!self.Flag_Moving) {
+							self.Direction = Point2D.GetDirFromTo(self, target);
+						}
+
 						self.currentSkill = null;
 						if (!target.IsDeleted && !target.Flag_Dead) {
 							WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
@@ -107,22 +113,23 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Success(Character self) {
 			if (!Trigger_Success(self)) {
-				self.SysMessage(this.Key+" succeeded");
+				//self.SysMessage(this.Key+" succeeded");
 
 			}
 		}
 
 		public override void Fail(Character self) {
 			if (!Trigger_Fail(self)) {
-				self.SysMessage(this.Key+" failed");
+				//self.SysMessage(this.Key+" failed");
 			}
 		}
 
 		protected internal override void Abort(Character self) {
 			if (!Trigger_Abort(self)) {
-				self.SysMessage(this.Key+" aborted");
+				//self.SysMessage(this.Key+" aborted");
 				Character target = self.currentSkillTarget1 as Character;
 				if (target != null) {
+					WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 					WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 				}
 			}

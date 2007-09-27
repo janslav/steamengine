@@ -68,5 +68,11 @@ namespace SteamEngine.CompiledScripts {
 				return TypeDef.Speed;
 			}
 		}
+
+		public WeaponAnimType WeaponAnimType {
+			get {
+				return TypeDef.WeaponAnimType;
+			}
+		}
 	}
 }

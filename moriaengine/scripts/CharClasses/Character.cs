@@ -1682,6 +1682,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public WeaponAnimType WeaponAnimType {
+			get {
+				CalculateCombatValues();
+				return combatValues.weaponAnimType;
+			}
+		}
+
 		public int WeaponRange {
 			get {
 				CalculateCombatValues();
@@ -1713,19 +1720,9 @@ namespace SteamEngine.CompiledScripts {
 
 		#endregion combat
 
-		public bool HasTwoHandedWeaponEquipped {
-			get {
-				switch (this.WeaponType) {
-					case WeaponType.TwoHandAxe:
-					case WeaponType.TwoHandBlunt:
-					case WeaponType.TwoHandSpike:
-					case WeaponType.TwoHandSword:
-					case WeaponType.ArcheryStand:
-					case WeaponType.ArcheryRunning:
-						return true;
-				}
-				return false;
-			}
+		public override void On_LogOut() {
+			AbortSkill();
+			base.On_LogOut();
 		}
 	}
 }
