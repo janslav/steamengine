@@ -308,12 +308,19 @@ namespace SteamEngine.Converter {
 						}
 						break;
 					case "t_weapon_bow":
+						weaponType = WeaponType.BowStand;
+						materialType = MaterialType.Wood;
+						break;
 					case "t_weapon_xbow":
-						weaponType = WeaponType.ArcheryStand;
+						weaponType = WeaponType.XBowStand;
+						materialType = MaterialType.Wood;
+						break;
+					case "t_weapon_xbow_run":
+						weaponType = WeaponType.XBowRunning;
 						materialType = MaterialType.Wood;
 						break;
 					case "t_weapon_bow_run":
-						weaponType = WeaponType.ArcheryRunning;
+						weaponType = WeaponType.BowRunning;
 						materialType = MaterialType.Wood;
 						//TODO - preferred ammo...?
 						break;
@@ -325,6 +332,11 @@ namespace SteamEngine.Converter {
 						break;
 				}
 				Set("WeaponType", "WeaponType."+weaponType, "guessed by Converter");
+
+				WeaponAnimType animType = WeaponAnimTypeSetting.TranslateAnimType(weaponType);
+				if (animType != WeaponAnimType.Undefined) {
+					Set("WeaponAnimType", "WeaponAnimType."+animType, "guessed by Converter");
+				}
 
 				if (isColored) {
 					Set("MaterialType", "MaterialType."+materialType, "guessed by Converter");

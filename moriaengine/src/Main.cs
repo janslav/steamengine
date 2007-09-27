@@ -333,6 +333,7 @@ namespace SteamEngine {
 			Server.ReLinkCharacters();
 			Map.Init();
 			ClassManager.InitScripts();
+			PluginDef.Init();
 			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
 			//Region.ResolveLoadedRegions();
 			loading = false;

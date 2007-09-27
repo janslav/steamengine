@@ -55,7 +55,9 @@ namespace SteamEngine {
 		}
 
 		public void Unload() {
-			unloaded = true;
+			if (this.changedValue) {
+				unloaded = true;
+			}
 		}
 
 		public bool IsUnloaded {

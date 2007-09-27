@@ -87,6 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			protected FieldView(int index) {
 				this.index = index;
+
 			}
 
 			public override string GetName(object target) {
@@ -101,9 +102,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				DefType def = ((MassSettingsByModel<DefType, FieldType>) target).defs[index][0];
+				//set the fields on all defs to the same value.
+				List<DefType> defs = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
+				FieldType value = this.GetValue(defs[0]);
 
-				return this.GetValue(def);
+				foreach (DefType def in defs) {
+					this.SetValue(def, (FieldType) ConvertTools.ConvertTo(typeof(FieldType), value));
+				}
+
+				return value;
 			}
 
 			public override void SetValue(object target, object value) {

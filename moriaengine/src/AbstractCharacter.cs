@@ -165,9 +165,12 @@ namespace SteamEngine {
 			get {
 				return (Direction)(direction&0x7);
 			} set {
-				Sanity.IfTrueThrow(!Enum.IsDefined(typeof(Direction),value),"Invalid value "+value+" for "+this+"'s direction.");
-				NetState.AboutToChangeDirection(this, false);
-				direction=(byte)value;
+				byte dir = (byte) value;
+				if (dir != direction) {
+					Sanity.IfTrueThrow(!Enum.IsDefined(typeof(Direction), value), "Invalid value "+value+" for "+this+"'s direction.");
+					NetState.AboutToChangeDirection(this, false);
+					direction = dir;
+				}
 			}
 		}
 		/**
@@ -2027,34 +2030,41 @@ namespace SteamEngine {
 		//Commands
 		
 		public void Anim(int anim) {
-			PacketSender.PrepareAnimation(this, (byte)anim, 6, 1, false, false, 0x01);
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, (byte)anim, 1, false, false, 0x01);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		public void Anim(int anim, byte frameDelay) {
-			PacketSender.PrepareAnimation(this, (byte)anim, 6, 1, false, false, frameDelay);
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, (byte)anim, 1, false, false, frameDelay);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		
 		public void Anim(int anim, bool backwards) {
-			PacketSender.PrepareAnimation(this, (byte)anim, 0, 1, backwards, false, 0x01);
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, (byte)anim, 1, backwards, false, 0x01);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		public void Anim(int anim, bool backwards, bool undo) {
-			PacketSender.PrepareAnimation(this, (byte)anim, 0, 1, backwards, undo, 0x01);
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, (byte)anim, 1, backwards, undo, 0x01);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		
 		public void Anim(int anim, bool backwards, byte frameDelay) {
-			PacketSender.PrepareAnimation(this, (byte)anim, 0, 1, backwards, false, frameDelay);
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, (byte)anim, 1, backwards, false, frameDelay);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		public void Anim(int anim, bool backwards, bool undo, byte frameDelay) {
-			PacketSender.PrepareAnimation(this, (byte)anim, 0, 1, backwards, undo, frameDelay);
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, (byte)anim, 1, backwards, undo, frameDelay);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		
-		public void Anim(byte anim, ushort numBackwardsFrames, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
-			PacketSender.PrepareAnimation(this, anim, numBackwardsFrames, numAnims, backwards, undo, frameDelay);
+		public void Anim(byte anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+			//NetState.ProcessThing(this);
+			PacketSender.PrepareAnimation(this, anim, numAnims, backwards, undo, frameDelay);
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 		

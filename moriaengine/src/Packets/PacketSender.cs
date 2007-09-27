@@ -1065,14 +1065,14 @@ namespace SteamEngine.Packets {
 					Or for anims without 7 frames:
 					(.25*numFrames)+(.1*numFrames*frameDelay)=how many seconds UO should spend showing the anim
 		*/
-		public static void PrepareAnimation(AbstractCharacter cre, byte anim, ushort numBackwardsFrames, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
-			Logger.WriteDebug("PrepareAnimation("+cre+",anim:"+anim+",numBackwardsFrames:"+numBackwardsFrames+",numAnims:"+numAnims+",backwards:"+backwards+",undo:"+undo+",frameDelay:"+frameDelay+")");
+		public static void PrepareAnimation(AbstractCharacter cre, byte anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+			Logger.WriteDebug("PrepareAnimation("+cre+",anim:"+anim+",numAnims:"+numAnims+",backwards:"+backwards+",undo:"+undo+",frameDelay:"+frameDelay+")");
 			StartGenerating();
 			EncodeByte(0x6e, 0);
 			EncodeUInt(cre.FlaggedUid, 1);
-			EncodeByte(0, 5);	//The client seems to ignore byte #5 entirely.
-			EncodeByte(anim, 6);
-			EncodeUShort(numBackwardsFrames, 7);
+			EncodeShort(anim, 5);
+			EncodeByte(1, 7);//used to be numBackwardsFrames...?
+			EncodeByte((byte) ((cre.Dir - 4)&0x7), 8);
 			EncodeUShort(numAnims, 9);
 			EncodeBool(backwards, 11);
 			EncodeBool(undo, 12);

@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 						break;
 					}
-				case GenericAnim.AttackPunch: {
+				case GenericAnim.AttackBareHands: {
 						if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
 							realAnim=AnimalAnim.Attack;
 						} else if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
@@ -423,7 +423,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 						break;
 					}
-				case GenericAnim.AttackPunch: {
+				case GenericAnim.AttackBareHands: {
 						if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
 							realAnim=MonsterAnim.Attack6;
 						} else if (CanPerformAnim(MonsterAnim.Attack, animsAvailable)) {
@@ -468,7 +468,7 @@ namespace SteamEngine.CompiledScripts {
 							realAnim=HumanAnim.MountedWalk;
 						} else if (self.Flag_WarMode) {
 							realAnim=HumanAnim.WalkWarMode;
-						} else if (self.WeaponType != WeaponType.BareHands) {
+						} else if (self.WeaponAnimType != WeaponAnimType.BareHands) {
 							realAnim=HumanAnim.WalkArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
 						} else {
 							realAnim=HumanAnim.WalkUnarmed;
@@ -478,7 +478,7 @@ namespace SteamEngine.CompiledScripts {
 				case GenericAnim.Run: {
 						if (self.Flag_Riding) {
 							realAnim=HumanAnim.MountedRun;
-						} else if (self.WeaponType != WeaponType.BareHands) {
+						} else if (self.WeaponAnimType != WeaponAnimType.BareHands) {
 							realAnim=HumanAnim.RunArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
 						} else {
 							realAnim=HumanAnim.RunUnarmed;
@@ -505,15 +505,15 @@ namespace SteamEngine.CompiledScripts {
 							} else if (dbl<.75) {
 								realAnim=HumanAnim.MountedGetHit;
 							} else {
-								if (!self.HasTwoHandedWeaponEquipped) {
+								if (self.WeaponAnimType != WeaponAnimType.HeldInLeftHand) {
 									//This looks like slapping the horse, and that's what wolfpack calls it,
 									//but if you ask me, you shouldn't use it for an idle action unless you don't
 									//have a two-handed weapon equipped (or it will look like you're attacking).
-									realAnim=HumanAnim.MountedAttackTwohandedOverhead;
+									realAnim=HumanAnim.MountedLeftHandAttack;
 								} else {
 									//Let's see how this looks. IIRC, if you're mounted you hold two-handed weapons
 									//with only one hand, so this should look like slapping the horse too.
-									realAnim=HumanAnim.MountedAttackOverhead;
+									realAnim=HumanAnim.MountedRightHandAttack;
 								}
 							}
 						} else if (self.Flag_WarMode) {
@@ -534,16 +534,16 @@ namespace SteamEngine.CompiledScripts {
 							if (dbl<.5) {
 								realAnim=HumanAnim.MountedSalute;
 							} else {
-								if (!self.HasTwoHandedWeaponEquipped) {
+								if (self.WeaponAnimType != WeaponAnimType.HeldInLeftHand) {
 									//This looks like slapping the horse, and that's what wolfpack calls it,
 									//but if you ask me, you shouldn't use it for an idle action unless you don't
 									//have a two-handed weapon equipped (or it will look like you're attacking).
 									//Heh.
-									realAnim=HumanAnim.MountedAttackTwohandedOverhead;
+									realAnim=HumanAnim.MountedLeftHandAttack;
 								} else {
 									//Let's see how this looks. IIRC, if you're mounted you hold two-handed weapons
 									//with only one hand, so this should look like slapping the horse too.
-									realAnim=HumanAnim.MountedAttackOverhead;
+									realAnim=HumanAnim.MountedRightHandAttack;
 								}
 							}
 						} else if (self.Flag_WarMode) {
@@ -565,43 +565,54 @@ namespace SteamEngine.CompiledScripts {
 					}
 				case GenericAnim.AttackSwing: {
 						if (self.Flag_Riding) {
-							realAnim=HumanAnim.MountedAttackOverhead;
-						} else if (self.HasTwoHandedWeaponEquipped) {
-							realAnim=HumanAnim.AttackTwoHandedSwing;
+							if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
+								realAnim=HumanAnim.MountedLeftHandAttack;
+							} else {
+								realAnim=HumanAnim.MountedRightHandAttack;
+							}
+						} else if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
+							realAnim=HumanAnim.LeftHandSwing;
 						} else {
-							realAnim=HumanAnim.AttackSwing;
+							realAnim=HumanAnim.RightHandSwing;
 						}
 						break;
 					}
 				case GenericAnim.AttackStab: {
 						if (self.Flag_Riding) {
-							realAnim=HumanAnim.MountedAttackOverhead;
-						} else if (self.HasTwoHandedWeaponEquipped) {
-							realAnim=HumanAnim.AttackTwoHandedStab;
+							if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
+								realAnim=HumanAnim.MountedLeftHandAttack;
+							} else {
+								realAnim=HumanAnim.MountedRightHandAttack;
+							}
+						} else if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
+							realAnim=HumanAnim.LeftHandStab;
 						} else {
-							realAnim=HumanAnim.AttackStab;
+							realAnim=HumanAnim.RightHandStab;
 						}
 						break;
 					}
 				case GenericAnim.AttackOverhead: {
 						if (self.Flag_Riding) {
-							realAnim=HumanAnim.MountedAttackOverhead;
-						} else if (self.HasTwoHandedWeaponEquipped) {
-							realAnim=HumanAnim.AttackTwoHandedOverhead;
+							if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
+								realAnim=HumanAnim.MountedLeftHandAttack;
+							} else {
+								realAnim=HumanAnim.MountedRightHandAttack;
+							}
+						} else if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
+							realAnim=HumanAnim.LeftHandOverhead;
 						} else {
-							realAnim=HumanAnim.AttackOverhead;
+							realAnim=HumanAnim.RightHandOverhead;
 						}
 						break;
 					}
 				case GenericAnim.AttackShoot: {
-						AbstractItem layer2 = self.FindLayer(2);
-						if (layer2!=null && layer2.HasTriggerGroup(TriggerGroup.Get("t_weapon_xbow"))) {
+						if (self.WeaponAnimType == WeaponAnimType.XBow) {
 							if (self.Flag_Riding) {
 								realAnim=HumanAnim.MountedFireCrossbow;
 							} else {
 								realAnim=HumanAnim.FireCrossbow;
 							}
-						} else {
+						} else {//what isnt xbow, is bow.
 							if (self.Flag_Riding) {
 								realAnim=HumanAnim.MountedFireBow;
 							} else {
@@ -634,11 +645,11 @@ namespace SteamEngine.CompiledScripts {
 						}
 						break;
 					}
-				case GenericAnim.AttackPunch: {
+				case GenericAnim.AttackBareHands: {
 						if (self.Flag_Riding) {
-							realAnim=HumanAnim.MountedBlock;
+							realAnim=HumanAnim.MountedRightHandAttack;
 						} else {
-							realAnim=HumanAnim.AttackPunch;
+							realAnim=HumanAnim.AttackBareHands;
 						}
 						break;
 					}
@@ -693,13 +704,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void PerformAttackAnim(Character self) {
-			GenericAnim anim = GenericAnim.AttackPunch;
+			GenericAnim anim = GenericAnim.AttackBareHands;
 			switch (self.WeaponType) {
-				case WeaponType.OneHandBlunt:
-				case WeaponType.TwoHandBlunt:
-					anim = GenericAnim.AttackOverhead;
-					break;
-
 				case WeaponType.OneHandSpike:
 				case WeaponType.TwoHandSpike:
 					anim = GenericAnim.AttackStab;
@@ -718,6 +724,9 @@ namespace SteamEngine.CompiledScripts {
 							break;
 					}
 					break;
+
+				case WeaponType.OneHandBlunt:
+				case WeaponType.TwoHandBlunt://or should blunt weapons only do overhead?
 				case WeaponType.OneHandAxe:
 				case WeaponType.TwoHandAxe:
 					switch (Globals.dice.Next(2)) {
@@ -729,19 +738,30 @@ namespace SteamEngine.CompiledScripts {
 							break;
 					}
 					break;
-				case WeaponType.ArcheryStand:
-				case WeaponType.ArcheryRunning:
+				case WeaponType.XBowRunning:
+				case WeaponType.XBowStand:
+				case WeaponType.BowRunning:
+				case WeaponType.BowStand:
 					anim = GenericAnim.AttackShoot;
 					break;
 
-				//case WeaponType.BareHands:
+				//case WeaponAnimType.BareHands:
 				//default:
 				//    anim = GenericAnim.AttackPunch;
 				//    break;
 			}
 
-			self.Anim(TranslateAnim(self, anim));
+			double seconds = self.WeaponDelay;
+			byte frameDelay = 0;
+			seconds = seconds - (0.25*attackAnimFrames);
+			if (seconds > 0) {
+				frameDelay = (byte)(seconds / (.1*attackAnimFrames));
+			}
+			
+			self.Anim(TranslateAnim(self, anim), frameDelay);
 		}
+
+		const double attackAnimFrames = 3; //in fact it's 7 but we only use it for attack anim. The swing lands sooner than on the last frame...
 
 		public static void PerformAnim(Character self, GenericAnim anim) {
 			self.Anim(TranslateAnim(self, anim));
@@ -752,19 +772,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void PerformAnim(Character self, GenericAnim anim, bool backwards, bool undo) {
-			self.Anim(TranslateAnim(self, anim), 0, 1, backwards, undo, 0x01);
+			self.Anim(TranslateAnim(self, anim), 1, backwards, undo, 0x01);
 		}
 
 		public static void PerformAnim(Character self, GenericAnim anim, bool backwards, byte frameDelay) {
-			self.Anim(TranslateAnim(self, anim), 0, 1, backwards, false, frameDelay);
+			self.Anim(TranslateAnim(self, anim), 1, backwards, false, frameDelay);
 		}
 
 		public static void PerformAnim(Character self, GenericAnim anim, bool backwards, bool undo, byte frameDelay) {
-			self.Anim(TranslateAnim(self, anim), 0, 1, backwards, undo, frameDelay);
-		}
-
-		public static void PerformAnim(Character self, GenericAnim anim, ushort numBackwardsFrames, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
-			self.Anim(TranslateAnim(self, anim), numBackwardsFrames, numAnims, backwards, undo, frameDelay);
+			self.Anim(TranslateAnim(self, anim), 1, backwards, undo, frameDelay);
 		}
 
 		/*

@@ -278,8 +278,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public static DamageType GetWeaponDamageType(WeaponType weapType) {
 			switch (weapType) {
-				case WeaponType.ArcheryStand:
-				case WeaponType.ArcheryRunning:
+				case WeaponType.XBowRunning:
+				case WeaponType.XBowStand:
+				case WeaponType.BowRunning:
+				case WeaponType.BowStand:
 					return DamageType.Archery;
 				case WeaponType.OneHandSword:
 				case WeaponType.TwoHandSword:
@@ -312,6 +314,7 @@ namespace SteamEngine.CompiledScripts {
 			internal double delay;
 			internal double attack;
 			internal double piercing;
+			internal WeaponAnimType weaponAnimType;
 		}
 
 		internal static CombatValues CalculateCombatValues(Character self) {
@@ -329,8 +332,8 @@ namespace SteamEngine.CompiledScripts {
 			retVal.mindDefenseVsM += mdModifier;
 
 			Weapon weapon = self.FindLayer(1) as Weapon;
-			if (retVal.weapon == null) {
-				retVal.weapon = self.FindLayer(2) as Weapon;
+			if (weapon == null) {
+				weapon = self.FindLayer(2) as Weapon;
 			}
 			retVal.weapon = weapon;
 
@@ -339,6 +342,7 @@ namespace SteamEngine.CompiledScripts {
 				double weapAttack;
 				if (weapon != null) {
 					retVal.weaponType = weapon.WeaponType;
+					retVal.weaponAnimType = weapon.WeaponAnimType;
 					retVal.range = weapon.Range;
 					retVal.strikeStartRange = weapon.StrikeStartRange;
 					retVal.strikeStopRange = weapon.StrikeStopRange;
@@ -347,6 +351,7 @@ namespace SteamEngine.CompiledScripts {
 					weapAttack = weapon.Attack;
 				} else {
 					retVal.weaponType = WeaponType.BareHands;
+					retVal.weaponAnimType = WeaponAnimType.BareHands;
 					retVal.range = CombatSettings.instance.bareHandsRange;
 					retVal.strikeStartRange = CombatSettings.instance.bareHandsStrikeStartRange;
 					retVal.strikeStopRange = CombatSettings.instance.bareHandsStrikeStopRange;
@@ -365,8 +370,6 @@ namespace SteamEngine.CompiledScripts {
 				double strAttack = (self.Str * CombatSettings.instance.attackStrModifier) / 100;
 				retVal.attack = (weapAttack * (tacticsAttack + anatomyAttack + armsloreAttack + strAttack)) / 1000;
 
-				
-
 				//TODO: upravy pro sipy (archery)
 
 			} else {
@@ -379,6 +382,10 @@ namespace SteamEngine.CompiledScripts {
 						} else {
 							retVal.weaponType = weapon.WeaponType;
 						}
+					}
+					retVal.weaponAnimType = WeaponAnimType.BareHands;
+					if (weapon != null) {
+						retVal.weaponAnimType = weapon.WeaponAnimType;
 					}
 					retVal.range = npcDef.WeaponRange;
 					retVal.strikeStartRange = npcDef.StrikeStartRange;

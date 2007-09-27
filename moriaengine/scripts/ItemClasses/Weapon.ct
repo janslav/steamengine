@@ -19,6 +19,7 @@ Def:	//vars on the def
 	double piercing = 100
 	double speed = 100
 	WeaponType weaponType = WeaponType.BareHands
+	WeaponAnimType weaponAnimType = WeaponAnimType.Undefined
 	int range = 1
 	int strikeStartRange = 5
 	int strikeStopRange = 10
