@@ -61,12 +61,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			}
 
-			dlg.CreateDataFieldsSpace();
+			dlg.CreateDataFieldsSpace(viewCls, target);
 
 			int buttonsIndex = 10; //start counting buttons from 10
 			int editsIndex = 10; //start counting editable input fields also from 10
 
-			int finishIndex = firstItemFld + InfoDialogHandler.COLS_COUNT * ImprovedDialog.PAGE_ROWS;
+			int finishIndex = firstItemFld + dlg.REAL_COLUMNS_COUNT * ImprovedDialog.PAGE_ROWS;
 			int counter = firstItemFld;
 			foreach(IDataFieldView field in viewCls.GetDataFieldsPage(firstItemFld, target)) {
 				//add both indexing params - the buttons index will be used (and raised) when the field is Button or 
@@ -113,7 +113,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //store
 						List<SettingResult> reslist = SettingsProvider.AssertSettings(editFlds, gr, target);
 						gi.Cont.SendGump(gi);//resend the dialog
-						gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, reslist, null);
+						if(reslist.Count > 0) {
+							//show the results dialog (if there is any change)
+							gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, reslist, null);
+						}
 						break;
 					case 2: //info
 						DialogStackItem.EnstackDialog(gi); //stack self for return
