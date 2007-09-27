@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else if(!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 					//first column holds the type information in brackets() and the name of the field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.GetName(target)+SettingsProvider.GetTypePrefix(field));
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(GetFieldName(field, target));
 				//if necessary, insert the button
 				bool willHaveButton = false;
 				if(field.GetValue(target) != null) {
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				actualFieldRow++;				
 			} else { //non-editable label-value field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(field.GetName(target)+SettingsProvider.GetTypePrefix(field));
+				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(GetFieldName(field,target));
 				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
 				actualFieldRow++;
 			}
@@ -273,6 +273,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			buttons.Add(buttonsIndex, field);
 			buttonsIndex++;
 			return retBut;
+		}
+
+		[Remark("Return the fields name accompanied with the type information (but sometimes we dont need the type info...)")]
+		private static string GetFieldName(IDataFieldView field, object target) {
+			string retName = field.GetName(target);
+			if(typeof(Enum).IsAssignableFrom(target.GetType())) {} //target is Enum (e.g when infoizing the Enum itself and displaying its items)
+			else if(typeof(Enum).IsAssignableFrom(field.FieldType)) {}//field is of type Enum
+			else {
+				retName += SettingsProvider.GetTypePrefix(field);
+			}
+			return retName;
 		}
 
 		private int FieldColumn {
