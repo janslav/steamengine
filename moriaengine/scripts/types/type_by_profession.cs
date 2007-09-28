@@ -102,14 +102,6 @@ namespace SteamEngine.CompiledScripts {
 		
 	}
 
-	public class t_bandage_blood : CompiledTriggerGroup {
-		
-	}
-
-	public class t_bandage : CompiledTriggerGroup {
-		
-	}
-
 	public class t_hair_dye : CompiledTriggerGroup {
 		
 	}
