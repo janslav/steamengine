@@ -50,7 +50,7 @@ tar
 		This won't be an issue once multis and boats are imported, however, and it isn't affecting much right now,
 		so it doesn't need to be done unless it gets annoying before the code to import multis and boats is written.
 
-		
+	try / catch kolem volani On_Udalost z jadra (equip, click, dclick, etc.)
 	
 	findtype, findid - najit nebo implementovat
 
@@ -80,8 +80,7 @@ tar
 	zipped gump packet
 
 	"Garbage collection" - checking&fixing of game-objects invariants.
-	
-	"memorytemplate", for generating memory types.
+
 	
 iwan
 ----------------------------------------------------
@@ -93,10 +92,8 @@ iwan
 	
 Yavanna
 ----------------------------------------------------
-	Discordance
-		- convert scripts to C#
-		
-
+	regbox, keg, atlas, svitkovac, atd.
+	
 
 Lokarel
 ----------------------------------------------------
@@ -115,11 +112,6 @@ Lokarel
 	
 Dinivan
 ----------------------------------------------------
-	Account - umoznit rozsiritelnost tridy ve skriptu, a tam presunout email propertu a dalsi blbiny
-	
-	Gumpy - v response fazi mit znovu k dispozici parametry se kteryma byl dialog volanej.
-		Dale pak predelat ve vsech dialozich volani stackedgumpitemu tak aby to davalo smysl :)
-
 	Spawner
 	
 	Page command/menu
@@ -136,9 +128,8 @@ Dinivan
 	Gumpovej system pro ingame vytvareni/editaci/mazani regionu a pripadne jejich export/import na a z shardu.
 		Patrne nutna spoluprace s tarem :)
 
-	Gumpovej system pro Nastaveni. Zatim bych to videl jako generator gumpu kolem jednoho [SaveableClass] objektu
-		jinymi slovy v podstate by to vypisovalo to co se jinak pise do sejvu a stejnym algoritmem by to taky nacitalo...
-
+	Gumpovej system pro Nastaveni. 
+	
 	Account info dialog
 	Account list dialog - DONE
 
@@ -272,9 +263,6 @@ Not so easy :)
 		*. diff mul files (those that make mapplanes different without using another mapxx.mul)
 		*. mapxx.mul where xx > 0 (and statics, and other stuff)
 		*. Check verdata.mul for data too, if it exists. Many patching programs use verdata.mul instead of the other muls.
-		*. @attach and @detach for when a type/triggergroup is assigned or removed. t_musical should not be obsolete, but should be set when a Musical is made.
-
-
 
 
 	These do not necessarily need to be done soon, but they do need to be done eventually. Say, within
@@ -285,7 +273,8 @@ Not so easy :)
 	These are in no particular order.
 	
 	1. Implement sphere commands. See http://www.cs.rit.edu/~djr7581/compendium.php)
-		This shouldn't be too hard (ClassTemplate was HARD).
+		LegacyUtils class is for those.
+
 	2. Go through scripts/defaults/itemdefs/newItemDefsFromMuls.def and move stuff to new .def files as appropriate,
 		modifying as necessary. Test the stuff
 		to see how it equips, make it unequippable if it is screwy, etc. DO NOT MOVE THESE INTO ANY FILE WHICH IS
@@ -339,9 +328,6 @@ Not so easy :)
 		We will probably need to add some sort of feature-flag for SE in the Axis settings, similar to how Axis
 		supports both the 55* and 99*+ sphere versions.
 	5. Make more tests that're run with RunTests, which test whatever anyone can think of a good way of testing.
-	6. Make TypelessFieldValue, and make tags on GenericDefFromScripts hold those instead of other stuff - this
-		is so that we can detect non-default tag values on defs, and save them. Also store default triggergroup
-		names in each GenericDefFromScripts, for the same reason (That could just be in an array).
 	7. On stack on, stacking on.z+on.height, if it passes src.z+src.height+src.height or (127-height) it stacks at same z.
 	8. Additional (third) command prefix, defaulting to '.
 	9. Autogenerating .add menu by categories, etc. Autogenerating crafting menus too?

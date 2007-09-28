@@ -1,3 +1,8 @@
+Set 28, 2007
+	added: scripts/systems/skills/Combat/*
+	(tar)		I kdyz pochopitelne jeste prijdou mnohe zmeny, myslim ze pro dnesek se da povazovat weaponcombat za hotovej.
+		otestovano ubitim zombie iron macem :)
+
 Set 15, 2007
 	changed: FieldValue.cs, Constants.cs
 	(tar)		Optimalizace rychlosti nahravani skriptu a sveta.

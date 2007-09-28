@@ -56,13 +56,57 @@ namespace SteamEngine.CompiledScripts {
 		public int bareHandsStrikeStopRange = 10;
 
 		[SaveableData]
-		public double weaponSpeedGlobal = 1.0;
+		public double weaponSpeedGlobal = 1.000;
 
 		[SaveableData]
-		public double weaponSpeedNPC = 0.15;
+		public double weaponSpeedNPC = 0.150;
 
 		[SaveableData]
-		public double attackStrModifier = 317;
+		public double attackStrModifier = 3.170;
+
+		[SaveableData]
+		public double weapAttack = 1.100; //nastaveni_global_UC
+
+		[SaveableData]
+		public double weapAttackM = 1.000; //nastaveni_global_MUC
+
+		[SaveableData]
+		public double weapAttackVsM = 1.600; //nastaveni_global_vMweapattack
+
+		[SaveableData]
+		public double weapAttackPvP = 0.900; //nastaveni_global_PvPweapattack
+
+		[SaveableData]
+		public double armorClassP = 0.700; //nastaveni_global_Parmor
+
+		[SaveableData]
+		public double armorClassM = 1.000; //nastaveni_global_Marmor
+
+		[SaveableData]
+		public double armorClassMvP = 5.000; //1000/nastaveni_global_MvP_armorfactor
+
+		[SaveableData]
+		[Remark("Every case other than (M is attacker, P is defender)")]
+		public double armorRandEffectMin = 0.945; //skill_parrying.effect
+
+		[SaveableData]
+		[Remark("Every case other than (M is attacker, P is defender)")]
+		public double armorRandEffectMax = 1.050; //skill_parrying.effect
+
+		[SaveableData]
+		public double swingDamagePvP = 0.900; //nastaveni_global_PvPweapdam
+
+		[SaveableData]
+		public double swingDamageVsM = 1.350; //nastaveni_global_vMweapdam
+
+		[SaveableData]
+		public double swingDamageM = 1.0; //nastaveni_global_Mvweapdam
+
+		[SaveableData]
+		public double swingDamageRandMvPMin = 0.850; //nastaveni_global_MvP_randomfactor
+
+		[SaveableData]
+		public double swingDamageRandMvPMax = 1.000; //nastaveni_global_MvP_randomfactor		
 
 		public WeaponTypeMassSetting weaponTypes = new WeaponTypeMassSetting();
 

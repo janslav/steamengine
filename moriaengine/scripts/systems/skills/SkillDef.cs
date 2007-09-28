@@ -109,11 +109,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double AdvRateForValue(ushort skillValue) {
-			return Globals.EvalRangePermille(skillValue, AdvRate);
+			return ScriptUtil.EvalRangePermille(skillValue, AdvRate);
 		}
 
 		public double AdvRateOfChar(Character ch) {
-			return Globals.EvalRangePermille(SkillValueOfChar(ch), AdvRate);
+			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), AdvRate);
 		}
 
 		public double[] Delay {
@@ -139,11 +139,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetDelayForValue(ushort skillValue) {
-			return Globals.EvalRangePermille(skillValue, Delay);
+			return ScriptUtil.EvalRangePermille(skillValue, Delay);
 		}
 
 		public double GetDelayForChar(Character ch) {
-			return Globals.EvalRangePermille(SkillValueOfChar(ch), Delay);
+			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Delay);
 		}
 
 		public double[] Effect {
@@ -169,11 +169,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetEffectForValue(ushort skillValue) {
-			return Globals.EvalRangePermille(skillValue, Effect);
+			return ScriptUtil.EvalRangePermille(skillValue, Effect);
 		}
 
 		public double GetEffectForChar(Character ch) {
-			return Globals.EvalRangePermille(SkillValueOfChar(ch), Effect);
+			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Effect);
 		}
 
 		public static bool CheckSuccess(ushort skillValue, int difficulty) {

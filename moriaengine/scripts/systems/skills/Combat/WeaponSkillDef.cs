@@ -93,15 +93,15 @@ namespace SteamEngine.CompiledScripts {
 						self.AbortSkill();
 					} else if ((param.dueAt <= Globals.TimeInSeconds) && 
 							(distance <= self.WeaponRange)) {
+								
+						if (!self.Flag_Moving) {
+							self.Direction = Point2D.GetDirFromTo(self, target);
+						}
+						
 						if (CheckSuccess(self, Globals.dice.Next(700))) {
 							Success(self);
 						} else {
 							Fail(self);
-						}
-
-						self.Sound((SoundFX) 567);
-						if (!self.Flag_Moving) {
-							self.Direction = Point2D.GetDirFromTo(self, target);
 						}
 
 						self.currentSkill = null;
@@ -118,13 +118,19 @@ namespace SteamEngine.CompiledScripts {
 		public override void Success(Character self) {
 			if (!Trigger_Success(self)) {
 				//self.SysMessage(this.Key+" succeeded");
-
+				Character target = (Character) self.currentSkillTarget1;
+				DamageManager.ProcessSwing(self, target);
+				self.Sound((SoundFX) 567);
 			}
 		}
 
 		public override void Fail(Character self) {
 			if (!Trigger_Fail(self)) {
 				//self.SysMessage(this.Key+" failed");
+				Character target = (Character) self.currentSkillTarget1;
+				target.Trigger_HostileAction(self);
+
+				self.Sound((SoundFX) 0x23a);
 			}
 		}
 
