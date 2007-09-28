@@ -327,7 +327,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != hitpoints) {
-					if (!Flag_Dead && value == 0) {
+					if (!Flag_Dead && value < 1) {
 						CauseDeath((Character) Globals.SrcCharacter);
 					} else {
 						NetState.AboutToChangeHitpoints(this);
@@ -1682,6 +1682,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public DamageType WeaponDamageType {
+			get {
+				CalculateCombatValues();
+				return combatValues.damageType;
+			}
+		}
+
 		public WeaponAnimType WeaponAnimType {
 			get {
 				CalculateCombatValues();
@@ -1716,6 +1723,30 @@ namespace SteamEngine.CompiledScripts {
 				CalculateCombatValues();
 				return combatValues.delay;
 			}
+		}
+
+		public bool On_BeforeSwing(WeaponSwingArgs args) {
+			return false;
+		}
+
+		public bool On_BeforeGetSwing(WeaponSwingArgs args) {
+			return false;
+		}
+
+		public bool On_CauseDamage(DamageArgs args) {
+			return false;
+		}
+
+		public bool On_Damage(DamageArgs args) {
+			return false;
+		}
+
+		public bool On_AfterSwing(WeaponSwingArgs args) {
+			return false;
+		}
+
+		public bool On_AfterGetSwing(WeaponSwingArgs args) {
+			return false;
 		}
 
 		#endregion combat

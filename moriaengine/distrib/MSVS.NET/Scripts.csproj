@@ -335,6 +335,9 @@
     <Compile Include="..\..\scripts\systems\skills\Combat\CombatSettings.cs">
       <Link>systems\skills\Combat\CombatSettings.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\DamageManager.cs">
+      <Link>systems\skills\Combat\DamageManager.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Combat\Plugins.Generated.cs">
       <Link>systems\skills\Combat\Plugins.Generated.cs</Link>
     </Compile>

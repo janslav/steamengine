@@ -21,56 +21,6 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public static class CombatCalculator {
-		public static double GetResistModifier(Character resistingChar, DamageType damageType) {
-			int intDamageType = (int) damageType;
-
-			//phase 1
-			double hasResistMagic =		((intDamageType & 0x0001) == 0)? 0.0 : 0.001;
-			double hasResistPhysical =	((intDamageType & 0x0002) == 0)? 0.0 : 0.001;
-
-			double modifier = 1000;
-			double resistCount = hasResistMagic + hasResistPhysical;
-			modifier = modifier * resistCount;
-
-			modifier -= hasResistMagic * resistingChar.ResistMagic;
-			modifier -= hasResistPhysical * resistingChar.ResistPhysical;
-
-			//phase 2
-			double hasResistFire =		((intDamageType & 0x0004) == 0)? 0.0 : 0.001;
-			double hasResistElectric =	((intDamageType & 0x0008) == 0)? 0.0 : 0.001;
-			double hasResistAcid =		((intDamageType & 0x0010) == 0)? 0.0 : 0.001;
-			double hasResistCold =		((intDamageType & 0x0020) == 0)? 0.0 : 0.001;
-			double hasResistPoison =	((intDamageType & 0x0040) == 0)? 0.0 : 0.001;
-			double hasResistMystical =	((intDamageType & 0x0080) == 0)? 0.0 : 0.001;
-			double hasResistSlashing =	((intDamageType & 0x0100) == 0)? 0.0 : 0.001;
-			double hasResistStabbing =	((intDamageType & 0x0200) == 0)? 0.0 : 0.001;
-			double hasResistBlunt =		((intDamageType & 0x0400) == 0)? 0.0 : 0.001;
-			double hasResistArchery =	((intDamageType & 0x0800) == 0)? 0.0 : 0.001;
-			double hasResistBleed =		((intDamageType & 0x1000) == 0)? 0.0 : 0.001;
-			double hasResistSummon =	((intDamageType & 0x2000) == 0)? 0.0 : 0.001;
-			double hasResistDragon =	((intDamageType & 0x4000) == 0)? 0.0 : 0.001;
-
-			resistCount = hasResistFire + hasResistElectric + hasResistAcid + hasResistCold +
-				hasResistPoison + hasResistMystical + hasResistSlashing + hasResistStabbing +
-				hasResistBlunt + hasResistArchery + hasResistBleed + hasResistSummon + hasResistDragon;
-			modifier = modifier * resistCount;
-
-			modifier -= hasResistFire * resistingChar.ResistFire;
-			modifier -= hasResistElectric * resistingChar.ResistElectric;
-			modifier -= hasResistAcid * resistingChar.ResistAcid;
-			modifier -= hasResistCold * resistingChar.ResistCold;
-			modifier -= hasResistPoison * resistingChar.ResistPoison;
-			modifier -= hasResistMystical * resistingChar.ResistMystical;
-			modifier -= hasResistSlashing * resistingChar.ResistSlashing;
-			modifier -= hasResistStabbing * resistingChar.ResistStabbing;
-			modifier -= hasResistBlunt * resistingChar.ResistBlunt;
-			modifier -= hasResistArchery * resistingChar.ResistArchery;
-			modifier -= hasResistBleed * resistingChar.ResistBleed;
-			modifier -= hasResistSummon * resistingChar.ResistSummon;
-			modifier -= hasResistDragon * resistingChar.ResistDragon;
-
-			return modifier;
-		}
 
 		public static void CalculateWornArmor(Character ch, out int armorClassVsP, out int mindDefenseVsP, out int armorClassVsM, out int mindDefenseVsM) {
 			int resist = SkillDef.SkillValueOfChar(ch, SkillName.MagicResist);
@@ -367,7 +317,7 @@ namespace SteamEngine.CompiledScripts {
 				double tacticsAttack = SkillDef.ById(SkillName.Tactics).GetEffectForChar(self);
 				double anatomyAttack = SkillDef.ById(SkillName.Anatomy).GetEffectForChar(self);
 				double armsloreAttack = SkillDef.ById(SkillName.ArmsLore).GetEffectForChar(self);
-				double strAttack = (self.Str * CombatSettings.instance.attackStrModifier) / 100;
+				double strAttack = self.Str * CombatSettings.instance.attackStrModifier;
 				retVal.attack = (weapAttack * (tacticsAttack + anatomyAttack + armsloreAttack + strAttack)) / 1000;
 
 				//TODO: upravy pro sipy (archery)

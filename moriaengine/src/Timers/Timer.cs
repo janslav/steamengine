@@ -73,7 +73,14 @@ namespace SteamEngine.Timers {
 						timer.isToBeEnqueued = true;
 					}
 					currentTimer = timer;
-					timer.OnTimeout();
+					try {
+						timer.OnTimeout();
+					} catch (FatalException) {
+						throw;
+					} catch (Exception e) {
+						Logger.WriteError(e);
+					}
+						
 					currentTimer = null;
 				} else {
 					return;

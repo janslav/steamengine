@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 					if ((SkillValueOfChar(self) * 0.3) < targExperience) {
 						self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
 					} else {
-						double discordancePower = Globals.EvalRandomFaktor(SkillValueOfChar(self), 0, 300);
+						double discordancePower = ScriptUtil.EvalRandomFaktor(SkillValueOfChar(self), 0, 300);
 						if (discordancePower > targExperience) {
 							Success(self);
 							return;
@@ -199,7 +199,7 @@ namespace SteamEngine.CompiledScripts {
 			if (cont.Stam > cont.MaxStam) {
 				cont.Stam = cont.MaxStam;
 			}
-			this.Timer = Globals.EvalRangePermille(discordEffectPower, 10, 15);
+			this.Timer = ScriptUtil.EvalRangePermille(discordEffectPower, 10, 15);
 		}
 
 		public void On_UnAssign(Character cont) {

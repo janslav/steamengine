@@ -118,7 +118,7 @@ namespace SteamEngine {
 			pluginDefCtors[pluginDefType] = MemberWrapper.GetWrapperFor(ci);
 		}
 
-		internal static PluginDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			Type pluginDefType = null;
 			string typeName = input.headerType.ToLower();
 			string defname = input.headerName.ToLower();
@@ -167,14 +167,11 @@ namespace SteamEngine {
 				input.headerName = "t__"+input.headerName+"__";
 				pluginDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			}
-			return pluginDef;
-		}
-
-		public override void Unload() {
-			if (this.scriptedTriggers != null) {
-				scriptedTriggers.Unload();
+			if (pluginDef.scriptedTriggers == null) {
+				return pluginDef;
+			} else {
+				return new UnloadableGroup(pluginDef, pluginDef.scriptedTriggers);
 			}
-			base.Unload();
 		}
 
 		internal static void ClearAll() {

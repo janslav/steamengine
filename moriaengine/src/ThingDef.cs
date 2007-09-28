@@ -356,7 +356,7 @@ namespace SteamEngine {
 			
 		}
 		
-		internal static ThingDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			Type thingDefType = null;
 			string typeName = input.headerType.ToLower();
 			string defname = input.headerName.ToLower();
@@ -438,20 +438,17 @@ namespace SteamEngine {
 			thingDef.LoadScriptLines(input);
 			
 			//now do load the trigger code. 
+			TriggerGroup tg = null;
 			if (input.TriggerCount>0) {
 				input.headerName = "t__"+defname+"__";
-				TriggerGroup tg = ScriptedTriggerGroup.Load(input);
+				tg = ScriptedTriggerGroup.Load(input);
 				thingDef.AddTriggerGroup(tg);
 			}
-			return thingDef;
-		}
-
-		public override void Unload() {
-			TriggerGroup tg = TriggerGroup.Get("t__"+this.defname+"__");
-			if (tg != null) {
-				tg.Unload();
+			if (tg == null) {
+				return thingDef;
+			} else {
+				return new UnloadableGroup(thingDef, tg);
 			}
-			base.Unload();
 		}
 		
 		private static void UnRegisterThingDef(ThingDef td) {
@@ -517,6 +514,35 @@ namespace SteamEngine {
 			//}
 			itemModelDefs.Clear();
 			charModelDefs.Clear();
+		}
+	}
+
+	public class UnloadableGroup : IUnloadable {
+		IUnloadable[] array;
+
+		public UnloadableGroup(params IUnloadable[] array) {
+			this.array = array;
+		}
+
+		public void Unload() {
+			foreach (IUnloadable member in array) {
+				if (member != null) {
+					member.Unload();
+				}
+			}
+		}
+
+		public bool IsUnloaded {
+			get {
+				foreach (IUnloadable member in array) {
+					if (member != null) {
+						if (member.IsUnloaded) {
+							return true;
+						}
+					}
+				}
+				return false;
+			}
 		}
 	}
 }

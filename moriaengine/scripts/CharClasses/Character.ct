@@ -18,6 +18,8 @@
 
 [ThingTemplate Character : AbstractCharacter]
 Def:	//vars on the def
+	SoundFX Sound = 0
+
 	uint corpseModel = 0x2006
 	
 	int resistMagic = 0
