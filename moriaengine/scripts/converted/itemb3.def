@@ -519,9 +519,6 @@ DESCRIPTION = Grave
 
 DUPEITEM = 0xe9f
 
-[ItemDef 0xee9]
-DUPEITEM = 0xe21
-
 [ItemDef 0xeeb]
 CATEGORY = Provisions - Miscellaneous
 SUBSECTION = Coins

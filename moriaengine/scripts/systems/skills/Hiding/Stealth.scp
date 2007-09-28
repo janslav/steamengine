@@ -41,7 +41,6 @@ on=@Fail
 ClilocSysMessage(502731) //You fail in your attempt to move unnoticed.
 UnHide()
 
-
 [StealthStepPluginDef p_stealthStep]
 //todo: looting others should also unhide
 
