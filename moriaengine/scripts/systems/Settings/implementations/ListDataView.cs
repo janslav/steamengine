@@ -48,10 +48,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
-			yield return CountField.instance;
+			if (firstLineIndex == 0) {
+				yield return CountField.instance;
+			} else {
+				firstLineIndex--;
+			}
 			//iterovat budeme nejpozdeji do doby nez dojdou polozky seznamu
 			//(iterovani mozno byt prerusovanu kvuli pagingu i jinde...)
-			for (int i = firstLineIndex; i < ((IList)target).Count; i++) {
+			for (int i = firstLineIndex, n = ((IList) target).Count; i < n; i++) {
 				yield return new IndexField(i);
 			}
 		}
