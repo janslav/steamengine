@@ -113,9 +113,11 @@ namespace SteamEngine.CompiledScripts {
 		public WeaponSpeedMassSetting weaponSpeeds = new WeaponSpeedMassSetting();
 
 		public WeaponAnimTypeSetting weaponAnims = new WeaponAnimTypeSetting();
+
+		public WeaponMaterialTypeMassSetting weaponMaterialTypes = new WeaponMaterialTypeMassSetting();
 	}
 
-	public abstract class WeaponMassSetting<DefType, FieldType> : MassSettingsByModel<DefType, FieldType> where DefType : WeaponDef {
+	public abstract class WeaponMassSettingByModel<DefType, FieldType> : MassSettingsByModel<DefType, FieldType> where DefType : WeaponDef {
 		private static ushort[] weaponModels;
 
 		private static ushort[] WeaponModels { 
@@ -123,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 				if (weaponModels == null) {
 					HashSet<ushort> models = new HashSet<ushort>();
 					foreach (AbstractScript scp in AbstractScript.AllScrips) {
-						WeaponDef weap = scp as WeaponDef;
+						DefType weap = scp as DefType;
 						if (weap != null) {
 							models.Add(weap.Model);
 						}
@@ -144,12 +146,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public WeaponMassSetting()
+		public WeaponMassSettingByModel()
 			: base(WeaponModels) {
 		}
 	}
 
-	public class WeaponTypeMassSetting : WeaponMassSetting<WeaponDef,WeaponType> {
+	public class WeaponTypeMassSetting : WeaponMassSettingByModel<WeaponDef,WeaponType> {
 		public override string Name {
 			get { 
 				return "Typy zbraní";
@@ -195,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponSpeedMassSetting : WeaponMassSetting<WeaponDef, double> {
+	public class WeaponSpeedMassSetting : WeaponMassSettingByModel<WeaponDef, double> {
 		public override string Name {
 			get {
 				return "Rychlosti zbraní";
@@ -221,7 +223,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponAnimTypeSetting : WeaponMassSetting<WeaponDef, WeaponAnimType> {
+	public class WeaponAnimTypeSetting : WeaponMassSettingByModel<WeaponDef, WeaponAnimType> {
 		public override string Name {
 			get {
 				return "Typy animace zbraní";
@@ -278,6 +280,32 @@ namespace SteamEngine.CompiledScripts {
 
 		public override ReadWriteDataFieldView GetFieldView(int index) {
 			return new WeaponAnimTypeFieldView(index);
+		}
+	}
+
+	public class WeaponMaterialTypeMassSetting : WeaponMassSettingByModel<ColoredWeaponDef, MaterialType> {
+		public override string Name {
+			get {
+				return "Typ materiálu zbraní";
+			}
+		}
+
+		protected class WeaponMaterialTypeFieldView : FieldView {
+			internal WeaponMaterialTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredWeaponDef def, MaterialType value) {
+				def.MaterialType = value;
+			}
+
+			internal override MaterialType GetValue(ColoredWeaponDef def) {
+				return def.MaterialType;
+			}
+		}
+
+		public override ReadWriteDataFieldView GetFieldView(int index) {
+			return new WeaponMaterialTypeFieldView(index);
 		}
 	}
 }
