@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//now handle the paging 
-			dlg.HandlePaging(viewCls, target, firstItemButt, firstItemFld);
+			dlg.CreatePaging(viewCls, target, firstItemButt, firstItemFld);
 				
 			//send button
 			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
@@ -128,7 +128,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;			
 			} else { //info dialog buttons
 				//get the IDataFieldView and do something
-				IDataFieldView idfv = (IDataFieldView)buttons[(int) gr.pressedButton];
+				IDataFieldView idfv = (IDataFieldView)buttons[(int)gr.pressedButton];
 
 				if(idfv.IsButtonEnabled) { 
 					//action button field - call the method

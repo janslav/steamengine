@@ -131,9 +131,9 @@ Dinivan
 	Gumpovej system pro Nastaveni. 
 	
 	Account info dialog
-	Account list dialog - DONE
 
-	Info dialog (player, character, item)
+	Info dialog (player, character, item) - DONE
+	Descriptors for enabling more options in info dialogs than just the class's methods and properties
 	
 	Konzole: Dlouhy odkazy na soubory ("C:\SE\moria engine\scripts\kdesicosi.scp") se maj zobrazovat jen jako jmeno souboru
 		("kdesicosi.scp"), ale konzole si musi nadale pamatovat tu cestu ktera tam byla napsana
@@ -154,7 +154,7 @@ Dinivan
 
 	Group <cislo> pro gumpy
 	
-	Dialog "ref" - informace o tøídì
+	Dialog "ref" - informace o tøídì - DONE v info dialogach
 
 	Generator dokumentace (NDoc pro 2.0? nebo Sandcastle?)
 

@@ -141,13 +141,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					//Enums have one smart button showing hint- what to insert
 					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
 					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
+					//store the field under the edits index
+					editFlds.Add(editsIndex, field);
+					editsIndex++;
 				} else {					
 					if (!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 						//other types have only edit fields
 						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
-
-						//insert the input field - specify the x and y position, let the engine to compute the width and height of the component
-
+						//store the field under the edits index
+						editFlds.Add(editsIndex, field);
+						editsIndex++;
 					} else { //non-editable label-value field
 						if (fieldValue == null) {
 							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText("null");
@@ -157,10 +160,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
 						}
 					}
-				}
-				//store the field under the edits index
-				editFlds.Add(editsIndex, field);
-				editsIndex++;
+				}				
 			}
 			actualFieldRow++;
 
@@ -178,7 +178,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Create paging for the Info dialog - it looks a little bit different than normal paging")]
-		public void HandlePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
+		public void CreatePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
 			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
 			int fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
 			int maxLines = Math.Max(buttonLines, fieldLines);
