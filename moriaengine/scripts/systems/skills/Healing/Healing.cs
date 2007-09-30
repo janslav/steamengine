@@ -1,5 +1,7 @@
 using System;
 using SteamEngine;
+using SteamEngine.Timers;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -28,8 +30,178 @@ namespace SteamEngine.CompiledScripts {
 
         [SteamFunction]
         public static void StartHealing(Character self, Item bandage) {
-            self.SysMessage("prdel");
-            //((Player) self).Target(
+            ((Player)self).Target(SingletonScript<Targ_Healing>.Instance);
         }
+    }
+
+
+    public class Targ_Healing : CompiledTargetDef {
+
+        protected override void On_Start(Character self, object parameter) {
+            self.SysMessage("Koho se chces pokusit lecit?");
+            base.On_Start(self, parameter);
+        }
+
+        protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
+            if (self.currentSkill != null) {
+                self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
+                return false;
+            }
+
+            //TODO: kontrola jestli neni zmrzlej nebo tak neco
+
+            //nevidi na cil
+            if (targetted != self) {
+                if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
+                    self.SysMessage(targetted.Name + " je od tebe prilis daleko!");
+                    return false;
+                }
+            }
+            //pokud ma cil stejne nebo vic zivotu
+            if (targetted.Hits >= targetted.MaxHits) {
+                if (targetted == self)
+                    self.SysMessage("Jsi zcela zdráv!");
+                else
+                    self.SysMessage(targetted.Name + " je zcela zdráv!");
+                return false;
+            }
+
+            //jestlize je to GM vylecime ihned bez otazek
+            //  if (self.IsGM()) {
+            //     targetted.Hits = targetted.MaxHits;
+            //     return false;
+            //  }
+
+
+            HealingTimer timer = null;//new HealingTimer(targetted);
+
+            //pokud jiz nekoho leci
+            if (self.HasTimer(healingTimerKey)) {
+
+                HealingTimer oldHealing = (HealingTimer)self.GetTimer(healingTimerKey);
+
+                if (oldHealing == null) //nikdy by nemel byt null
+                    return false;
+
+                Character oldTarget = (Character)oldHealing.Targetted;
+
+                if (targetted == self) {
+                    self.SysMessage("Pøerušil si léèení!");
+                } else {
+                    self.SysMessage("Pøerušil si léèení " + oldTarget.Name + "!");
+                    oldTarget.SysMessage(self.Name + " pøerušil tvoji léèbu!");
+                }
+
+                timer = oldHealing;
+            }
+
+            if (timer == null)
+                timer = new HealingTimer(targetted);
+
+            timer.DueInSeconds = HealingSkillDef.defHealing.GetDelayForChar(self);
+
+            //pokud se leci sam nebo jinyho
+            if (self == targetted)
+                self.SysMessage("Pokousis se lecit.");
+            else {
+                self.SysMessage("Pokousis se lecit " + targetted.Name + ".");
+                targetted.SysMessage(self.Name + " se te pokousi lecit.");
+            }
+
+            //vyhodime mu z ruky zbran
+            self.DisArm();
+
+
+            self.AddTimer(healingTimerKey, timer);
+            return false;
+        }
+
+        protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+            self.SysMessage("Predmety nelze lecit.");
+            return false;
+        }
+
+        private TimerKey healingTimerKey = TimerKey.Get("_healingTimer_");
+    }
+
+    [DeepCopyableClass]
+    [SaveableClass]
+    public class HealingTimer : BoundTimer {
+
+        [SaveableData]
+        [CopyableData]
+        public Character Targetted;
+
+        [LoadingInitializer]
+        [DeepCopyImplementation]
+        public HealingTimer() {
+        }
+
+        public HealingTimer(Character target) {
+            this.Targetted = target;
+        }
+
+
+        protected override void OnTimeout(TagHolder cont) {
+
+            if (Targetted == null || Targetted.IsDeleted)
+                return;
+
+            Character self = (Character)cont;
+
+            //nevidi na cil
+            if (Targetted != self) {
+                if (self.GetMap() != Targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, Targetted) || Point2D.GetSimpleDistance(self, Targetted) > 6) {
+                    self.SysMessage(Targetted.Name + " je od tebe prilis daleko!");
+                    return;
+                }
+            }
+
+            //pokud ma cil stejne nebo vic zivotu
+            if (Targetted.Hits >= Targetted.MaxHits) {
+
+                if (Targetted == self)
+                    self.SysMessage("Jsi zcela zdráv!");
+                else
+                    self.SysMessage(Targetted.Name + " je zcela zdráv!");
+
+                return;
+            }
+
+            ushort selfHealing = self.Skills[(int)SkillName.Healing].RealValue;
+
+            //pokud se leceni zdarilo
+            if (HealingSkillDef.defHealing.CheckSuccess(self, Globals.dice.Next(200))) {
+
+                Targetted.Hits += (short)ScriptUtil.EvalRangePermille(self.Skills[17].RealValue + self.Skills[1].RealValue, HealingSkillDef.defHealing.MinEffect, HealingSkillDef.defHealing.MaxEffect);
+
+                if (Targetted.Hits > Targetted.MaxHits)
+                    Targetted.Hits = Targetted.MaxHits;
+
+
+
+                self.SysMessage("Léèení se ti povedlo!");
+
+                //jestlize je cil jinej nez healer rekneme hlasku
+                if (Targetted != self)
+                    Targetted.SysMessage(self.Name + " tì ošetøil!");
+
+            } else {
+                self.SysMessage("Léèení se ti nezdaøilo!");
+
+                if (Targetted != self)
+                    Targetted.SysMessage(self.Name + " se nepodaøilo tì ošetøit!");
+
+            }
+        }
+    }
+
+    /// <summary>
+    /// jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
+    /// </summary>
+    public class HealingSkillDef {
+
+        public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
+
     }
 }

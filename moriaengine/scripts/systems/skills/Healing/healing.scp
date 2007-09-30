@@ -1,6 +1,6 @@
 [ItemDef  0xe21]
 TYPE = t_bandage
-NAME = 'bandage'
+NAME = "bandage"
 WEIGHT = 1
 DEFNAME = i_bandage
 
@@ -9,7 +9,7 @@ DUPEITEM = 0x21
 
 [ItemDef  0xe20]
 TYPE = t_bandage_blood
-NAME = 'bloody bandage'
+NAME = "bloody bandage"
 WEIGHT = 1
 DEFNAME = i_bandage_bloody
 
@@ -22,8 +22,8 @@ DEFNAME=Skill_Healing
 KEY="Healing"
 //TITLE="Healer"
 //PROMPTMSG="Who will you use the bandages on?"
-//DELAY=3.0,1.0
-//EFFECT=2.0,20.0
+DELAY=7.0,3.0
+EFFECT=0,15
 ADVRATE=10.0,100.0,250.0
 //STAT_STR=10
 //STAT_INT=90

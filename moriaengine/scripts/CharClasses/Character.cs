@@ -1751,6 +1751,17 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
+        
+
+        /// <summary>
+        /// hodi zbran do batohu
+        /// </summary>
+        public void DisArm()
+        {
+            Weapon w = this.Weapon;
+            if (w != null)
+                w.Cont = this.Backpack;
+        }
 		#endregion combat
 
 		public override void On_LogOut() {
