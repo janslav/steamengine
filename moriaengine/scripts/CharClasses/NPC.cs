@@ -26,6 +26,7 @@ namespace SteamEngine.CompiledScripts {
 
 	//temporary? Mozna to bude neco jako MovementBrain, kazdopadne to chci takhle na testovani
 	[SaveableClass]
+	[ViewableClass]
 	public class DynamicMovementSettings : IMovementSettings {
 		[SaveableData]
 		public bool canCrossLand;
@@ -89,6 +90,11 @@ namespace SteamEngine.CompiledScripts {
 		} } //max positive difference in 1 step
 	}
 
+	[ViewableClass]
+	public partial class NPCDef {
+	}
+
+	[ViewableClass]
 	public partial class NPC : Character {
 
 		public override IMovementSettings MovementSettings {

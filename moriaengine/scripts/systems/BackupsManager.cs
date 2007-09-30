@@ -310,7 +310,8 @@ namespace SteamEngine.CompiledScripts {
 					long bytesFree = Convert.ToInt64(disk["FreeSpace"]);
 					return (bytesFree < (-maxSavesSize));
 #else
-					throw new NotImplementedException("In MONO version the device free space detection is not implemented");
+
+#error In MONO version the device free space detection is not implemented
 					//I dont say MONO can't do this, it's me who doesn't and I do not care that much :P
 #endif
 				} else if (maxSavesSize > 0) {

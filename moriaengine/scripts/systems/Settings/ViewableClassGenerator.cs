@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 					foreach (Type viewableClass in viewableClasses) {
 						try {
 							GeneratedInstance gi = new GeneratedInstance(viewableClass);
-							if(gi.butonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
+							if(gi.buttonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
 							    CodeTypeDeclaration ctd = gi.GetGeneratedType();
 							    ns.Types.Add(ctd);
 							}
@@ -89,11 +89,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private class GeneratedInstance {
+			private static int classCounter = 0;
 
 			//all fields except marked as NoShow
-			internal List<FieldInfo> fields = new List<FieldInfo>();
-			internal List<PropertyInfo> properties = new List<PropertyInfo>();
-			internal List<MethodInfo> butonMethods = new List<MethodInfo>();
+			internal Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
+			internal Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
+			//internal List<FieldInfo> fields = new List<FieldInfo>();
+			//internal List<PropertyInfo> properties = new List<PropertyInfo>();
+			internal List<MethodInfo> buttonMethods = new List<MethodInfo>();
 			Type type;
 			string typeLabel; //label for info dialogs - obtained from ViewableClassAttribute
 			CodeTypeDeclaration codeTypeDeclaration;
@@ -102,33 +105,51 @@ namespace SteamEngine.CompiledScripts {
 				this.type = type;
 				ViewableClassAttribute vca = (ViewableClassAttribute)type.GetCustomAttributes(typeof(ViewableClassAttribute), false)[0];
 				typeLabel = (vca.Name == null ? type.Name : vca.Name); //label will be either the name of the type or specified label
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public; //|BindingFlags.Static - co chces jako delat se statickejma memberama omg? -tar
+				//binding flags for members of the actual type - do not consider members from the possible parent classes
+				BindingFlags forActualMembers = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public|BindingFlags.DeclaredOnly;
+				BindingFlags forInheritedMembers = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
 
-				//get all fields from the Type except for those marked as "NoShow"
-				MemberInfo[] flds = type.FindMembers(MemberTypes.Field|MemberTypes.Property, bindingAttr, HasntAttribute, typeof(NoShowAttribute)); 
-				foreach (MemberInfo fld in flds) {
+				//get all fields from the actual Type except for those marked as "NoShow"
+				MemberInfo[] fldsMine = type.FindMembers(MemberTypes.Field | MemberTypes.Property, forActualMembers, HasntAttribute, typeof(NoShowAttribute));
+				foreach (MemberInfo fld in fldsMine) {
 					PropertyInfo propinf = fld as PropertyInfo;
 					if(propinf != null) {
-						properties.Add(propinf);
+						properties.Add(propinf.Name,propinf);
 					}
 					FieldInfo fldinf = fld as FieldInfo;
 					if(fldinf != null) {
-						fields.Add(fldinf);
+						fields.Add(fldinf.Name,fldinf);						
+					}
+				}
+				//now get the fields from the whole hierarchy, but before adding them, check if they are not present in the set (which would mean
+				//that we dont want to add it (this would overwrite the membere from the actual Type by the member from parent class with the same name)
+				MemberInfo[] fldsAll = type.FindMembers(MemberTypes.Field | MemberTypes.Property, forInheritedMembers, HasntAttribute, typeof(NoShowAttribute));
+				foreach (MemberInfo fld in fldsAll) {
+					PropertyInfo propinf = fld as PropertyInfo;
+					if (propinf != null) {
+						if(!properties.ContainsKey(propinf.Name))//isnt this property already in the dictionary?
+							properties.Add(propinf.Name,propinf);
+					}
+					FieldInfo fldinf = fld as FieldInfo;
+					if (fldinf != null) {
+						if (!fields.ContainsKey(fldinf.Name))//isnt this property already in the dictionary?
+							fields.Add(fldinf.Name,fldinf);
 					}
 				}
 
 				//get all methods from the Type that have the "Button" attribute
-				MemberInfo[] mths = type.FindMembers(MemberTypes.Method, bindingAttr, HasAttribute, typeof(ButtonAttribute));
+				MemberInfo[] mths = type.FindMembers(MemberTypes.Method, forInheritedMembers, HasAttribute, typeof(ButtonAttribute));
 				foreach(MemberInfo mi in mths) {
 					MethodInfo minf = mi as MethodInfo;
 					if(minf != null) {
-						butonMethods.Add(minf);
+						buttonMethods.Add(minf);
 					}
 				}
 			}
 			
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDataView_" + type.Name);
+				
+				codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDataView_" + type.Name + "_"+classCounter++);
 				codeTypeDeclaration.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclaration.BaseTypes.Add(typeof(AbstractDataView));
 				codeTypeDeclaration.IsClass = true;
@@ -145,7 +166,7 @@ namespace SteamEngine.CompiledScripts {
 				//now create the inner classes of all IDataFieldViews for this class
 				//first classes for buttons
 				List<string> buttonDataFieldViews = new List<string>();
-				foreach(MethodInfo buttonMethod in butonMethods) {
+				foreach(MethodInfo buttonMethod in buttonMethods) {
 					CodeTypeDeclaration oneButtonIDFW = GenerateButtonIDFW(buttonMethod);
 					buttonDataFieldViews.Add(oneButtonIDFW.Name); //store the name of the new generated type
 					codeTypeDeclaration.Members.Add(oneButtonIDFW);
@@ -153,12 +174,12 @@ namespace SteamEngine.CompiledScripts {
 
 				//then classes for datafields
 				List<string> fieldsDataFieldViews = new List<string>();
-				foreach(FieldInfo oneField in fields) {
+				foreach(FieldInfo oneField in fields.Values) {
 					CodeTypeDeclaration oneFieldIDFW = GenerateFieldIDFW(oneField);
 					fieldsDataFieldViews.Add(oneFieldIDFW.Name); //store the name of the new generated type
 					codeTypeDeclaration.Members.Add(oneFieldIDFW);
 				}
-				foreach(PropertyInfo oneProperty in properties) {
+				foreach(PropertyInfo oneProperty in properties.Values) {
 					CodeTypeDeclaration onePropertyIDFW = GenerateFieldIDFW(oneProperty);
 					fieldsDataFieldViews.Add(onePropertyIDFW.Name); //store the name of the new generated type
 					codeTypeDeclaration.Members.Add(onePropertyIDFW);
@@ -217,7 +238,7 @@ namespace SteamEngine.CompiledScripts {
 				retVal.ReturnType = new CodeTypeReference(typeof(int));
 				retVal.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
-												butonMethods.Count
+												buttonMethods.Count
 										)));
 				return retVal;
 			}
@@ -267,7 +288,7 @@ namespace SteamEngine.CompiledScripts {
 			private CodeTypeDeclaration GenerateButtonIDFW(MethodInfo minf) {
 				ButtonAttribute bat = (ButtonAttribute)minf.GetCustomAttributes(typeof(ButtonAttribute),false)[0];
 				string buttonLabel = (bat.Name == null ? minf.Name : bat.Name); //label of the button (could have been specified in ButtonAttribute)
-				string newClassName = "GeneratedButtonDataFieldView_" + type.Name + "_" + minf.Name;
+				string newClassName = "GeneratedButtonDataFieldView_" + type.Name + "_" + minf.Name + "_" + classCounter++;
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				retVal.BaseTypes.Add(typeof(ButtonDataFieldView));				
@@ -317,7 +338,12 @@ namespace SteamEngine.CompiledScripts {
 			private CodeTypeDeclaration GenerateFieldIDFW(MemberInfo minf) {
 				bool isReadOnly = false;
 				if (minf is PropertyInfo) {
-					isReadOnly = !((PropertyInfo) minf).CanWrite;
+					isReadOnly = !((PropertyInfo)minf).CanWrite;
+					MethodInfo setMethod = ((PropertyInfo)minf).GetSetMethod(true);
+					if(setMethod != null) //we have the set Method - check if it is public...
+						isReadOnly = !((setMethod.Attributes & MethodAttributes.Public) == MethodAttributes.Public);
+				} else { //field
+					isReadOnly = ((FieldInfo)minf).IsInitOnly;
 				}
 
 				Type baseAbstractClass;
@@ -327,7 +353,7 @@ namespace SteamEngine.CompiledScripts {
 					baseAbstractClass = typeof(ReadWriteDataFieldView);
 				}
 
-				string newClassName = "Generated" + baseAbstractClass.Name + "_" + type.Name + "_" + minf.Name;
+				string newClassName = "Generated" + baseAbstractClass.Name + "_" + type.Name + "_" + minf.Name + "_" + classCounter++;
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				retVal.BaseTypes.Add(baseAbstractClass);
@@ -446,7 +472,7 @@ namespace SteamEngine.CompiledScripts {
 
 			[Remark("Generate a class representing an ActionButtonsPage")]
 			private CodeTypeDeclaration GenerateActionButtonsPage(List<string> buttonDFVs) {
-				string newClassName = type.Name+"ActionButtonsPage";
+				string newClassName = type.Name + "ActionButtonsPage";
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;				
 				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<ButtonDataFieldView>));

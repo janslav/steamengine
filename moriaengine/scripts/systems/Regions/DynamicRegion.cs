@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public class DynamicRegion : FlaggedRegion {
 
 		public DynamicRegion() {

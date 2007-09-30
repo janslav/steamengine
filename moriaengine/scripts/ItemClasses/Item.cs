@@ -21,6 +21,11 @@ using System.Collections.Generic;
 using SteamEngine.Packets;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
+	public partial class ItemDef {
+	}
+
+	[Dialogs.ViewableClass]
     public partial class Item : AbstractItem {
 
 

@@ -105,47 +105,64 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
 		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex) {
-			if(field.IsButtonEnabled) { //buttonized field - we need the button index
+			if (field.IsButtonEnabled) { //buttonized field - we need the button index
 				actionTable[actualActionRow, 0] = CreateInfoInnerButton(ref buttonsIndex, field);
-				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.GetName(target));				
-				actualActionRow++;				
+				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.GetName(target));
+				actualActionRow++;
 				return;
-			} else if(!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
-					//first column holds the type information in brackets() and the name of the field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(GetFieldName(field, target));
-				//if necessary, insert the button
-				bool willHaveButton = false;
-				if(field.GetValue(target) != null) {
-					if(!ObjectSaver.IsSimpleSaveableType(field.GetValue(target).GetType())) {
-						actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
-						willHaveButton = true;
-					}
+			}
+
+			//first column holds the type information in brackets() and the name of the field
+			actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(GetFieldName(field, target));
+
+			object fieldValue = field.GetValue(target);
+			Type fieldValueType = null;
+			if (fieldValue != null) {
+				fieldValueType = fieldValue.GetType();
+			}
+
+			//if necessary, insert the button
+			bool willHaveButton = false;
+
+			if (fieldValueType != null) {
+				if (!ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType)) {
+					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
+					willHaveButton = true;
 				}
-				//insert the input field - specify the x and y position, let the engine to compute the width and height of the component
-				if(willHaveButton) {
-					//non simple field (buttonized - the redirect to another info dialog is present)
-					//the field will not be editable, we will therefore display only non editable label
-					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
-				} else {
-					//no buttonized edit field - it is some simple type and can be edited
-					if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
-						//Enums have one smart button showing hint- what to insert
-						actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
-						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType,field.GetValue(target)));
-					} else {
+			}
+
+			if (willHaveButton) {
+				//non simple field (buttonized - the redirect to another info dialog is present)
+				//the field will not be editable, we will therefore display only non editable label
+				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
+			} else {
+				//no buttonized edit field - it is some simple type and can be edited
+				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
+					//Enums have one smart button showing hint- what to insert
+					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
+					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
+				} else {					
+					if (!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 						//other types have only edit fields
 						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
+
+						//insert the input field - specify the x and y position, let the engine to compute the width and height of the component
+
+					} else { //non-editable label-value field
+						if (fieldValue == null) {
+							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText("null");
+						} else if (!ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType)) {
+							throw new SEException("Attempted to display an unsupported field " + field.GetName(target) + " of type " + fieldValueType + "!");
+						} else {
+							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
+						}
 					}
-					//store the field under the edits index
-					editFlds.Add(editsIndex, field);
-					editsIndex++;
 				}
-				actualFieldRow++;				
-			} else { //non-editable label-value field
-				actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(GetFieldName(field,target));
-				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
-				actualFieldRow++;
+				//store the field under the edits index
+				editFlds.Add(editsIndex, field);
+				editsIndex++;
 			}
+			actualFieldRow++;
 
 			//after adding the data field, check whether we haven't reached the last line in the column
 			//if so, check also if there are more columns to write to and prepare another one for writing
@@ -227,14 +244,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch(gr.pressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
-					args[1] = Convert.ToInt32(args[1]) - PAGE_ROWS;
+					//args[1] = Convert.ToInt32(args[1]) - PAGE_ROWS;
 					args[2] = Convert.ToInt32(args[2]) - PAGE_ROWS * fieldsColumnsCount;
 					gi.Cont.SendGump(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					//set the first indexes one page forwards
-					args[1] = Convert.ToInt32(args[1]) + PAGE_ROWS;
+					//args[1] = Convert.ToInt32(args[1]) + PAGE_ROWS;
 					args[2] = Convert.ToInt32(args[2]) + PAGE_ROWS * fieldsColumnsCount;
 					gi.Cont.SendGump(gi);
 					pagingHandled = true;
@@ -248,17 +265,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						selectedPage = 1;
 					}
 					//count the index of the first item
-					int newFirstButtIndex = (selectedPage - 1) * PAGE_ROWS;
+					//int newFirstButtIndex = (selectedPage - 1) * PAGE_ROWS;
 					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * fieldsColumnsCount);
-					if(newFirstButtIndex > buttonCount) { //get the last page
-						int lastPage = (buttonCount / PAGE_ROWS) + 1; //(int) casted last page number
-						newFirstButtIndex = (lastPage - 1) * PAGE_ROWS; //counted first item on the last page
-					} //otherwise it is properly set to the first item on the page
+					//if(newFirstButtIndex > buttonCount) { //get the last page
+					//	int lastPage = (buttonCount / PAGE_ROWS) + 1; //(int) casted last page number
+					//	newFirstButtIndex = (lastPage - 1) * PAGE_ROWS; //counted first item on the last page
+					//} //otherwise it is properly set to the first item on the page
 					if(newFirstFldIndex > fieldsCount) {
 						int lastPage = (fieldsCount / (PAGE_ROWS * fieldsColumnsCount)) + 1; //(int) casted last page number
 						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * fieldsColumnsCount; //counted first item on the last page
 					}
-					args[1] = newFirstButtIndex; //set the index of the first button
+					//args[1] = newFirstButtIndex; //set the index of the first button
 					args[2] = newFirstFldIndex; //set the index of the first field
 					gi.Cont.SendGump(gi);
 					pagingHandled = true;

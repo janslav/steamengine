@@ -20,6 +20,11 @@ using System.Collections;
 
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
+	public partial class MusicalDef {
+	}
+
+	[Dialogs.ViewableClass]
 	public partial class Musical : Item {
 		private SkillDef musicianshipDef = (SkillDef) SkillDef.ByKey("musicianship");
 

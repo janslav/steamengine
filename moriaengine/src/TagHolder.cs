@@ -172,33 +172,29 @@ namespace SteamEngine {
 		}
 
 		[Remark("Return enumerable containing all timers")]
-		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> AllTimers {
-			get {
-				if (tags != null) {
-					foreach (DictionaryEntry entry in tags) {
-						TimerKey tk = entry.Key as TimerKey;
-						if (tk != null) {
-							yield return new KeyValuePair<TimerKey, BoundTimer>(tk, (BoundTimer) entry.Value);
-						}
+		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {			
+			if (tags != null) {
+				foreach (DictionaryEntry entry in tags) {
+					TimerKey tk = entry.Key as TimerKey;
+					if (tk != null) {
+						yield return new KeyValuePair<TimerKey, BoundTimer>(tk, (BoundTimer) entry.Value);
 					}
 				}
-			}
+			}			
 		}
 		#endregion Timers
 
 		#region Tags
 		[Remark("Return enumerable containing all tags")]
-		public IEnumerable<KeyValuePair<TagKey, Object>> AllTags {
-			get {
-				if (tags != null) {
-					foreach (DictionaryEntry entry in tags) {
-						TagKey tk = entry.Key as TagKey;
-						if (tk != null) {
-							yield return new KeyValuePair<TagKey, Object>(tk, entry.Value);
-						}
+		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {			
+			if (tags != null) {
+				foreach (DictionaryEntry entry in tags) {
+					TagKey tk = entry.Key as TagKey;
+					if (tk != null) {
+						yield return new KeyValuePair<TagKey, Object>(tk, entry.Value);
 					}
 				}
-			}
+			}			
 		}
 
 		internal void EnsureTagsTable() {

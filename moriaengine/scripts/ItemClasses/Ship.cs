@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 	
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class ShipDef : MultiItemDef {
 		
 
@@ -113,6 +114,7 @@ namespace SteamEngine.CompiledScripts {
 		Starboard = Right
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class Ship : MultiItem {
 
 		internal override void InitMultiRegion() {
@@ -305,7 +307,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-
+	[Dialogs.ViewableClass]
 	public class ShipRegion : MultiRegion {
 		public ShipRegion() {
 			throw new NotSupportedException("The constructor without paramaters is not supported");

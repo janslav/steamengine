@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class WearableDef : DestroyableDef {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
@@ -32,6 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class Wearable : Destroyable {
 
 		public int ArmorVsP {

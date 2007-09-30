@@ -291,12 +291,30 @@ namespace SteamEngine.Persistence {
 			}
 			return true;
 		}
-		
+
 		public static bool IsSimpleSaveableType(Type t) {
 			if (TagMath.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
+			} else {
+				return false;
+			}
+			return true;
+		}
+
+		[Remark("Types that are either simple or have their coordinator for saving")]
+		public static bool IsSimpleSaveableOrCoordinated(Type t) {
+			ISaveImplementor isi;
+
+			if (TagMath.IsNumberType(t)) {
+			} else if (t.Equals(typeof(String))) {
+			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
+			} else if (typeof(Globals).IsAssignableFrom(t)) {
+			} else if (simpleImplementorsByType.ContainsKey(t)) {
+			} else if (implementorsByType.TryGetValue(t, out isi)) {
+				IBaseClassSaveCoordinator coordinator;
+				return coordinatorsByImplementor.TryGetValue(isi, out coordinator);
 			} else {
 				return false;
 			}

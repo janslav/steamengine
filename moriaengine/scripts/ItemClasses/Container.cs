@@ -20,6 +20,11 @@ using System.Collections;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
+	public partial class ContainerDef {
+	}
+
+	[Dialogs.ViewableClass]
 	public partial class Container : Equippable {
 		//Note: Only C# is supported until .NET 2.0 (see comments on ClassTemplate itself).
 

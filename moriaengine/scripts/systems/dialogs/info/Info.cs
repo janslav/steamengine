@@ -128,15 +128,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;			
 			} else { //info dialog buttons
 				//get the IDataFieldView and do something
-				IDataFieldView idfv = (IDataFieldView)buttons[Convert.ToInt32(gr.pressedButton)];
+				IDataFieldView idfv = (IDataFieldView)buttons[(int) gr.pressedButton];
+
 				if(idfv.IsButtonEnabled) { 
 					//action button field - call the method
 					((ButtonDataFieldView)idfv).OnButton(target);
 					gi.Cont.SendGump(gi);//resend the dialog
-				} else if(!idfv.ReadOnly) {
-					//normal editable field but with button - it will redirect to another info dialog...
-					DialogStackItem.EnstackDialog(gi); //store
-					gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target),0,0); //display info dialog on this datafield
+				} else {
+					object fieldValue = idfv.GetValue(target);
+					Type fieldValueType = null;
+					if (fieldValue != null) {
+						fieldValueType = fieldValue.GetType();
+					}
+					if (fieldValueType != null) {
+						DialogStackItem.EnstackDialog(gi); //store
+						gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target), 0, 0); 
+						//display info dialog on this datafield
+					} else {
+						throw new SEException("Null value can't be viewed");
+					}
 				}
 			}
 		}

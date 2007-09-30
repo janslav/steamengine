@@ -26,6 +26,7 @@ namespace SteamEngine.CompiledScripts {
 	
 	//todo: make some members virtual?
 	[SaveableClass]
+	[Dialogs.ViewableClass]
 	public class FlaggedRegion : Region {
 		int flags;
 
