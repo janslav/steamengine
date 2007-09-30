@@ -105,18 +105,22 @@
     <EmbeddedResource Include="..\..\WinConsole\ConnectionForm.resx">
       <Link>ConnectionForm.resx</Link>
       <DependentUpon>ConnectionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\WinConsole\FileViewForm.resx">
       <Link>FileViewForm.resx</Link>
       <DependentUpon>FileViewForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\WinConsole\StyleForm.resx">
       <Link>StyleForm.resx</Link>
       <DependentUpon>StyleForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\WinConsole\WinConsoleForm.resx">
       <Link>WinConsoleForm.resx</Link>
       <DependentUpon>WinConsoleForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
