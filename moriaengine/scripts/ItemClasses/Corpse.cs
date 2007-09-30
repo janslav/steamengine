@@ -21,10 +21,12 @@ using SteamEngine.Common;
 using SteamEngine.Packets;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class CorpseDef : ContainerDef {
 
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class Corpse : Container {
 		uint hairFakeUid = Thing.GetFakeItemUid();
 		uint beardFakeUid = Thing.GetFakeItemUid();

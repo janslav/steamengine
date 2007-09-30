@@ -19,10 +19,12 @@ using System;
 using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class DestroyableDef : EquippableDef {
 
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class Destroyable : Equippable {
 
 		public ushort Durability {

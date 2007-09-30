@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 	
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class MultiItemDef : ItemDef {
 		private DynamicMultiItemComponentDescription[] components;
 
@@ -185,6 +186,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class MultiItem : Item {
 		protected MultiRegion region;
 
@@ -243,6 +245,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	public class MultiRegion : DynamicRegion {
 		public readonly MultiItem multiItem;
 

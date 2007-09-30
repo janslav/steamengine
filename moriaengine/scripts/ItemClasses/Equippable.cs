@@ -19,6 +19,11 @@ using System;
 using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
+	public partial class EquippableDef {
+	}
+
+	[Dialogs.ViewableClass]
 	public partial class Equippable : Item {
 		public override byte Layer {
 			get {

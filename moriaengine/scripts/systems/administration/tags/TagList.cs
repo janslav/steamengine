@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(sa[3] == null) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				tagList = ListifyTags(th.AllTags, sa[2].ToString());
+				tagList = ListifyTags(th.GetAllTags(), sa[2].ToString());
 				tagList.Sort(TagsComparer.instance);
 				sa[3] = tagList; //ulozime to do argumentu dialogu
 			} else {

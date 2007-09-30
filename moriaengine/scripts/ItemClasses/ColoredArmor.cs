@@ -20,6 +20,7 @@ using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
 
+	[Dialogs.ViewableClass]
 	public partial class ColoredArmorDef : WearableDef {
 		protected override void On_Create(Thing t) {
 			t.Color = HuesCalculator.GetHueForMaterial(this.Material, this.MaterialType);
@@ -27,6 +28,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class ColoredArmor : Wearable {
 
 	}

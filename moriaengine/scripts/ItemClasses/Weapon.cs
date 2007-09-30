@@ -19,10 +19,12 @@ using System;
 using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class WeaponDef : DestroyableDef {
 
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class Weapon : Destroyable {
 
 		//at durability 0, attacknumber is halved

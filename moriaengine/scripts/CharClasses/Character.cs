@@ -24,6 +24,7 @@ using SteamEngine.Packets;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class CharacterDef {
 
 		private CorpseDef corpseDef;
@@ -37,6 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	public partial class Character : AbstractCharacter {
 		Skill[] skills;//this CAN be null, altough it usually isn't
 		float weight;

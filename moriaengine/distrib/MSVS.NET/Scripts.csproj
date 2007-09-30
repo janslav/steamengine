@@ -299,6 +299,9 @@
     <Compile Include="..\..\scripts\systems\settings\DataView.cs">
       <Link>systems\settings\DataView.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\EnumDataView.cs">
+      <Link>systems\settings\Implementations\EnumDataView.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\ListDataView.cs">
       <Link>systems\settings\Implementations\ListDataView.cs</Link>
     </Compile>
@@ -355,6 +358,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs">
       <Link>systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Healing\Healing.cs">
+      <Link>systems\skills\Healing\Healing.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
       <Link>systems\skills\Hiding\Hiding.cs</Link>

@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public bool HandleSubclasses {
 			get {
-				return true;
+				return false;
 			}
 		}
 

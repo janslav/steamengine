@@ -24,6 +24,11 @@ using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
+	[ViewableClass]
+	public partial class PlayerDef {
+	}
+
+	[ViewableClass]
 	public partial class Player : Character {
 		public Globals serv() {
 			return Globals.Instance;
@@ -41,6 +46,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Button("Skills")]
 		public void ShowSkills() {
 			ShowSkillsTo(Globals.SrcGameConn);
 		}

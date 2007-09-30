@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(sa[3] == null) {
 				//vzit seznam timeru dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				timerList = ListifyTimers(th.AllTimers, sa[2].ToString());
+				timerList = ListifyTimers(th.GetAllTimers(), sa[2].ToString());
 				timerList.Sort(TimersComparer.instance);
 				sa[3] = timerList; //ulozime to do argumentu dialogu
 			} else {
