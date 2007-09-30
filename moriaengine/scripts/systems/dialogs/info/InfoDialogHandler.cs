@@ -138,12 +138,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//no buttonized edit field - it is some simple type and can be edited
 				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
-					//Enums have one smart button showing hint- what to insert
-					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
-					actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
-					//store the field under the edits index
-					editFlds.Add(editsIndex, field);
-					editsIndex++;
+					if(field.ReadOnly) {//is the enum editable?
+						//display only its value...
+						actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(Enum.GetName(field.FieldType, field.GetValue(target)));
+					} else {
+						//Enums have one smart button showing hint- what to insert
+						actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
+						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
+						//store the field under the edits index
+						editFlds.Add(editsIndex, field);
+						editsIndex++;
+					}
 				} else {					
 					if (!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 						//other types have only edit fields
