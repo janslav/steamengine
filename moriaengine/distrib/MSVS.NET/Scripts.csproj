@@ -119,6 +119,12 @@
     <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.Generated.cs">
       <Link>ItemClasses\ColoredArmor.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredProjectile.cs">
+      <Link>ItemClasses\ColoredProjectile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredProjectile.Generated.cs">
+      <Link>ItemClasses\ColoredProjectile.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\ColoredWeapon.cs">
       <Link>ItemClasses\ColoredWeapon.cs</Link>
     </Compile>
@@ -166,6 +172,12 @@
     </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Musical.Generated.cs">
       <Link>ItemClasses\Musical.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Projectile.cs">
+      <Link>ItemClasses\Projectile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Projectile.Generated.cs">
+      <Link>ItemClasses\Projectile.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Ship.cs">
       <Link>ItemClasses\Ship.cs</Link>

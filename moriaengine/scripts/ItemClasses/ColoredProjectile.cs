@@ -20,13 +20,8 @@ using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
 
-	public interface IObjectWithMaterial {
-		MaterialType MaterialType { get; }
-		Material Material { get; }
-	}
-
 	[Dialogs.ViewableClass]
-	public partial class ColoredArmorDef : IObjectWithMaterial {
+	public partial class ColoredProjectileDef : IObjectWithMaterial {
 		protected override void On_Create(Thing t) {
 			t.Color = HuesCalculator.GetHueForMaterial(this.Material, this.MaterialType);
 			base.On_Create(t);
@@ -34,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class ColoredArmor : Wearable {
+	public partial class ColoredProjectile {
 
 	}
 }

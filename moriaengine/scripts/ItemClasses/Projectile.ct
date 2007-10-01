@@ -13,10 +13,8 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate Wearable : Destroyable]
+[ThingTemplate Projectile : Item]
 Def:	//vars on the def
-	int armorVsP = 0
-	int mindDefenseVsP = 0
-	int armorVsM = 0
-	int mindDefenseVsM = 0
-	WearableType wearableType = WearableType.Clothing
+	double piercing = 0
+	ProjectileType projectileType = ProjectileType.Bolt
+	

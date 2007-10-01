@@ -38,7 +38,10 @@ namespace SteamEngine.CompiledScripts {
 		public double secondsToRememberTargets = 300;
 
 		[SaveableData]
-		public double bareHandsAttack = 10;
+		public double bareHandsAttackVsP = 10;
+
+		[SaveableData]
+		public double bareHandsAttackVsM = 10;
 
 		[SaveableData]
 		public double bareHandsPiercing = 100;
@@ -115,43 +118,22 @@ namespace SteamEngine.CompiledScripts {
 		public WeaponAnimTypeSetting weaponAnims = new WeaponAnimTypeSetting();
 
 		public WeaponMaterialTypeMassSetting weaponMaterialTypes = new WeaponMaterialTypeMassSetting();
+
+		public MetaMassSetting<WeaponAttackVsMMassSetting, ColoredWeaponDef, double> weaponsAttackVsM = new MetaMassSetting<WeaponAttackVsMMassSetting, ColoredWeaponDef, double>();
+
+		public MetaMassSetting<WeaponAttackVsPMassSetting, ColoredWeaponDef, double> weaponsAttackVsP = new MetaMassSetting<WeaponAttackVsPMassSetting, ColoredWeaponDef, double>();
+
+		public WearableTypeMassSetting wearableTypes = new WearableTypeMassSetting();
+
+		public WearableLayerMassSetting wearableLayers = new WearableLayerMassSetting();
+
+		public ArmorVsPMassSetting armorVsP = new ArmorVsPMassSetting();
+		public ArmorVsMMassSetting armorVsM = new ArmorVsMMassSetting();
+		public MindDefenseVsPMassSetting mindDefVsP = new MindDefenseVsPMassSetting();
+		public MindDefenseVsMMassSetting mindDefVsM = new MindDefenseVsMMassSetting();
 	}
 
-	public abstract class WeaponMassSettingByModel<DefType, FieldType> : MassSettingsByModel<DefType, FieldType> where DefType : WeaponDef {
-		private static ushort[] weaponModels;
-
-		private static ushort[] WeaponModels { 
-			get {
-				if (weaponModels == null) {
-					HashSet<ushort> models = new HashSet<ushort>();
-					foreach (AbstractScript scp in AbstractScript.AllScrips) {
-						DefType weap = scp as DefType;
-						if (weap != null) {
-							models.Add(weap.Model);
-						}
-					}
-					if (models.Count == 0) {
-						throw new Exception("WeaponMassSetting instantiated before scripts are loaded... or no weapons in scripts?");
-					}
-
-					weaponModels = new ushort[models.Count];
-					int i = 0;
-					foreach (ushort model in models) {
-						weaponModels[i] = model;
-						i++;
-					}
-					Array.Sort(weaponModels);
-				}
-				return weaponModels;
-			}
-		}
-
-		public WeaponMassSettingByModel()
-			: base(WeaponModels) {
-		}
-	}
-
-	public class WeaponTypeMassSetting : WeaponMassSettingByModel<WeaponDef,WeaponType> {
+	public class WeaponTypeMassSetting : MassSettingsByModel<WeaponDef, WeaponType> {
 		public override string Name {
 			get { 
 				return "Typy zbraní";
@@ -192,12 +174,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override ReadWriteDataFieldView GetFieldView(int index) {
+		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponTypeFieldView(index);
 		}
 	}
 
-	public class WeaponSpeedMassSetting : WeaponMassSettingByModel<WeaponDef, double> {
+	public class WeaponSpeedMassSetting : MassSettingsByModel<WeaponDef, double> {
 		public override string Name {
 			get {
 				return "Rychlosti zbraní";
@@ -218,12 +200,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override ReadWriteDataFieldView GetFieldView(int index) {
+		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponSpeedFieldView(index);
 		}
 	}
 
-	public class WeaponAnimTypeSetting : WeaponMassSettingByModel<WeaponDef, WeaponAnimType> {
+	public class WeaponAnimTypeSetting : MassSettingsByModel<WeaponDef, WeaponAnimType> {
 		public override string Name {
 			get {
 				return "Typy animace zbraní";
@@ -278,12 +260,12 @@ namespace SteamEngine.CompiledScripts {
 			return anim;
 		}
 
-		public override ReadWriteDataFieldView GetFieldView(int index) {
+		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponAnimTypeFieldView(index);
 		}
 	}
 
-	public class WeaponMaterialTypeMassSetting : WeaponMassSettingByModel<ColoredWeaponDef, MaterialType> {
+	public class WeaponMaterialTypeMassSetting : MassSettingsByModel<ColoredWeaponDef, MaterialType> {
 		public override string Name {
 			get {
 				return "Typ materiálu zbraní";
@@ -304,8 +286,210 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override ReadWriteDataFieldView GetFieldView(int index) {
+		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponMaterialTypeFieldView(index);
+		}
+	}
+
+	public class WeaponAttackVsPMassSetting : MassSettingByMaterial<ColoredWeaponDef,double> {
+
+		public override string Name {
+			get { return "Útok proti hráèùm"; }
+		}
+
+		protected class WeaponAttackVsPFieldView : FieldView {
+			internal WeaponAttackVsPFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredWeaponDef def, double value) {
+				def.AttackVsP = value;
+			}
+
+			internal override double GetValue(ColoredWeaponDef def) {
+				return def.AttackVsP;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponAttackVsPFieldView(index);
+		}
+	}
+
+	public class WeaponAttackVsMMassSetting : MassSettingByMaterial<ColoredWeaponDef, double> {
+
+		public override string Name {
+			get { return "Útok proti monstrùm"; }
+		}
+
+		protected class WeaponAttackVsMFieldView : FieldView {
+			internal WeaponAttackVsMFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredWeaponDef def, double value) {
+				def.AttackVsM = value;
+			}
+
+			internal override double GetValue(ColoredWeaponDef def) {
+				return def.AttackVsM;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponAttackVsMFieldView(index);
+		}
+	}
+
+	public class WearableTypeMassSetting : MassSettingsByModel<WearableDef, WearableType> {
+		public override string Name {
+			get { 
+				return "Typy brnìní/obleèení"; 
+			}
+		}
+
+		protected class WearableTypeFieldView : FieldView {
+			internal WearableTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WearableDef def, WearableType value) {
+				def.WearableType = value;
+			}
+
+			internal override WearableType GetValue(WearableDef def) {
+				return def.WearableType;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WearableTypeFieldView(index);
+		}
+	}
+
+	public class WearableLayerMassSetting : MassSettingsByModel<WearableDef, Layers> {
+		public override string Name {
+			get {
+				return "Layery brnìní/obleèení";
+			}
+		}
+
+		protected class WearableLayerFieldView : FieldView {
+			internal WearableLayerFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WearableDef def, Layers value) {
+				def.Layer = (byte) value;
+			}
+
+			internal override Layers GetValue(WearableDef def) {
+				return (Layers) def.Layer;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WearableLayerFieldView(index);
+		}
+	}
+
+	public class ArmorVsPMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+
+		public override string Name {
+			get { return "Armor proti hráèùm"; }
+		}
+
+		protected class ArmorVsPFieldView : FieldView {
+			internal ArmorVsPFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredArmorDef def, int value) {
+				def.ArmorVsP = value;
+			}
+
+			internal override int GetValue(ColoredArmorDef def) {
+				return def.ArmorVsP;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new ArmorVsPFieldView(index);
+		}
+	}
+
+	public class ArmorVsMMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+
+		public override string Name {
+			get { return "Armor proti monstrùm"; }
+		}
+
+		protected class ArmorVsMFieldView : FieldView {
+			internal ArmorVsMFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredArmorDef def, int value) {
+				def.ArmorVsM = value;
+			}
+
+			internal override int GetValue(ColoredArmorDef def) {
+				return def.ArmorVsM;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new ArmorVsMFieldView(index);
+		}
+	}
+
+	public class MindDefenseVsPMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+
+		public override string Name {
+			get { return "Obrana mysli hráèùm"; }
+		}
+
+		protected class MindDefenseVsPFieldView : FieldView {
+			internal MindDefenseVsPFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredArmorDef def, int value) {
+				def.MindDefenseVsP = value;
+			}
+
+			internal override int GetValue(ColoredArmorDef def) {
+				return def.MindDefenseVsP;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new MindDefenseVsPFieldView(index);
+		}
+	}
+
+	public class MindDefenseVsMMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+
+		public override string Name {
+			get { return "Obrana mysli monstrùm"; }
+		}
+
+		protected class MindDefenseVsMFieldView : FieldView {
+			internal MindDefenseVsMFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredArmorDef def, int value) {
+				def.MindDefenseVsM = value;
+			}
+
+			internal override int GetValue(ColoredArmorDef def) {
+				return def.MindDefenseVsM;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new MindDefenseVsMFieldView(index);
 		}
 	}
 }

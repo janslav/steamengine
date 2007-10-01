@@ -262,7 +262,8 @@ namespace SteamEngine.CompiledScripts {
 			internal int strikeStartRange;
 			internal int strikeStopRange;
 			internal double delay;
-			internal double attack;
+			internal double attackVsP;
+			internal double attackVsM;
 			internal double piercing;
 			internal WeaponAnimType weaponAnimType;
 		}
@@ -289,7 +290,8 @@ namespace SteamEngine.CompiledScripts {
 
 			if (self.IsPlayerForCombat) {
 				double weapSpeed;
-				double weapAttack;
+				double weapAttackVsP;
+				double weapAttackVsM;
 				if (weapon != null) {
 					retVal.weaponType = weapon.WeaponType;
 					retVal.weaponAnimType = weapon.WeaponAnimType;
@@ -298,7 +300,8 @@ namespace SteamEngine.CompiledScripts {
 					retVal.strikeStopRange = weapon.StrikeStopRange;
 					retVal.piercing = weapon.Piercing;
 					weapSpeed = weapon.Speed;
-					weapAttack = weapon.Attack;
+					weapAttackVsP = weapon.AttackVsP;
+					weapAttackVsM = weapon.AttackVsM;
 				} else {
 					retVal.weaponType = WeaponType.BareHands;
 					retVal.weaponAnimType = WeaponAnimType.BareHands;
@@ -307,7 +310,8 @@ namespace SteamEngine.CompiledScripts {
 					retVal.strikeStopRange = CombatSettings.instance.bareHandsStrikeStopRange;
 					retVal.piercing = CombatSettings.instance.bareHandsPiercing;
 					weapSpeed = CombatSettings.instance.bareHandsSpeed;
-					weapAttack = CombatSettings.instance.bareHandsAttack;
+					weapAttackVsP = CombatSettings.instance.bareHandsAttackVsP;
+					weapAttackVsM = CombatSettings.instance.bareHandsAttackVsM;
 				}
 				double delay = Math.Sqrt((double) self.Dex);
 				delay *=  weapSpeed;
@@ -318,7 +322,9 @@ namespace SteamEngine.CompiledScripts {
 				double anatomyAttack = SkillDef.ById(SkillName.Anatomy).GetEffectForChar(self);
 				double armsloreAttack = SkillDef.ById(SkillName.ArmsLore).GetEffectForChar(self);
 				double strAttack = self.Str * CombatSettings.instance.attackStrModifier;
-				retVal.attack = (weapAttack * (tacticsAttack + anatomyAttack + armsloreAttack + strAttack)) / 1000;
+				double sum = (tacticsAttack + anatomyAttack + armsloreAttack + strAttack) / 1000;
+				retVal.attackVsP = weapAttackVsP * sum;
+				retVal.attackVsM = weapAttackVsM * sum;
 
 				//TODO: upravy pro sipy (archery)
 
@@ -341,7 +347,8 @@ namespace SteamEngine.CompiledScripts {
 					retVal.strikeStartRange = npcDef.StrikeStartRange;
 					retVal.strikeStopRange = npcDef.StrikeStopRange;
 					retVal.delay = npcDef.WeaponDelay;
-					retVal.attack = npcDef.WeaponAttack;
+					retVal.attackVsM = npcDef.WeaponAttack;
+					retVal.attackVsP = retVal.attackVsM;
 					retVal.piercing = npcDef.WeaponPiercing;
 				} else {
 					//else ?!

@@ -15,8 +15,9 @@
 
 [ThingTemplate Weapon : Destroyable]
 Def:	//vars on the def
-	double attack = 50
-	double piercing = 100
+	double attackVsM = 50
+	double attackVsP = 50
+	double piercing = 0
 	double speed = 100
 	WeaponType weaponType = WeaponType.BareHands
 	WeaponAnimType weaponAnimType = WeaponAnimType.Undefined
