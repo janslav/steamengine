@@ -46,15 +46,15 @@ namespace SteamEngine.Converter {
 			convertToPath = Path.Combine("scripts", "converted");
 			Tools.EnsureDirectory(convertToPath, true);
 
-			foreach (string path in Directory.GetFileSystemEntries(convertToPath)) {
-				try {
-					if (Directory.Exists(path)) {
-						Directory.Delete(path, true);
-					} else {
-						File.Delete(path);
-					}
-				} catch {}
-			}
+			//foreach (string path in Directory.GetFileSystemEntries(convertToPath)) {
+			//    try {
+			//        if (Directory.Exists(path)) {
+			//            Directory.Delete(path, true);
+			//        } else {
+			//            File.Delete(path);
+			//        }
+			//    } catch {}
+			//}
 
 		}
 		

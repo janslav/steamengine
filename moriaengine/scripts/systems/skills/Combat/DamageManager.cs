@@ -73,11 +73,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static WeaponSwingArgs GetWeaponSwingArgs(Character attacker, Character defender) {
-			double attack = attacker.WeaponAttack;
-			double piercing = attacker.WeaponPiercing;
-
 			CombatSettings settings = CombatSettings.instance;
-			attack *= settings.weapAttack;
+			double attack = settings.weapAttack;
+			double piercing = attacker.WeaponPiercing;
 
 			bool defenderIsPlayer = defender.IsPlayerForCombat;
 			bool attackerIsPlayer = attacker.IsPlayerForCombat;
@@ -96,8 +94,10 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			if (defenderIsPlayer) {
+				attack *= attacker.WeaponAttackVsP;
 				armorClass *= settings.armorClassP;
 			} else {
+				attack *= attacker.WeaponAttackVsM;
 				attack *= settings.weapAttackVsM;
 				armorClass *= settings.armorClassM;
 			}

@@ -1663,10 +1663,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double WeaponAttack {
+		public double WeaponAttackVsP {
 			get {
 				CalculateCombatValues();
-				return combatValues.attack;
+				return combatValues.attackVsP;
+			}
+		}
+
+		public double WeaponAttackVsM {
+			get {
+				CalculateCombatValues();
+				return combatValues.attackVsM;
 			}
 		}
 

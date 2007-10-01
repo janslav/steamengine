@@ -28,9 +28,16 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Weapon : Destroyable {
 
 		//at durability 0, attacknumber is halved
-		public int Attack {
+		public int AttackVsM {
 			get {
-				double attackHalved = TypeDef.Attack/2;
+				double attackHalved = TypeDef.AttackVsM/2;
+				return (int) (attackHalved + (((attackHalved * this.Durability) / this.MaxDurability)));
+			}
+		}
+
+		public int AttackVsP {
+			get {
+				double attackHalved = TypeDef.AttackVsP/2;
 				return (int) (attackHalved + (((attackHalved * this.Durability) / this.MaxDurability)));
 			}
 		}

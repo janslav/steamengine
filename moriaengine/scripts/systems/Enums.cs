@@ -168,7 +168,22 @@ namespace SteamEngine.CompiledScripts {
 		HeldInRightHand,
 		Bow,
 		XBow,
-		Undefined//NPC s undefined weapontypou na defu budou brat weapontype ze sve skutecne zbrane
+		Undefined
+	}
+
+	public enum ProjectileType : byte {
+		Bolt,
+		Arrow
+	}
+
+	public enum WearableType : byte {
+		Clothing = 0,
+		Leather = 1,
+		Studded = 2,
+		Bone = 3,
+		Chain = 4,
+		Ring = 5,
+		Plate = 6
 	}
 
 	public enum GenericAnim : byte {

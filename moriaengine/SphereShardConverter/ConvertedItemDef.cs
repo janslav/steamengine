@@ -42,6 +42,7 @@ namespace SteamEngine.Converter {
 		bool armorOrDamHandled = false;
 		bool isTwoHanded = false;
 		bool twoHandedSet = false;
+		bool wearableTypeSet = false;
 	
 		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
 				new LineImplTask("type", new LineImpl(HandleType)), 
@@ -107,7 +108,6 @@ namespace SteamEngine.Converter {
 				case "t_light_lit":
 				case "t_light_out":
 				case "t_wand":
-				case "t_clothing":
 				case "t_carpentry_chop":
 				case "t_hair":
 				case "t_beard":
@@ -115,6 +115,10 @@ namespace SteamEngine.Converter {
 					def.headerType="EquippableDef";
 					def.isEquippable = true;
 					break;
+				case "t_clothing":
+					def.Set("WearableType", "WearableType.Clothing", "guessed by Converter");
+					def.wearableTypeSet = true;
+					goto case "t_armor_leather";
 				case "t_armor_leather":
 				case "t_armor":
 				case "t_shield":
@@ -134,6 +138,18 @@ namespace SteamEngine.Converter {
 					def.DontDump();	//TODO: make just some constant out of it?
 					break;
 
+				case "t_weapon_bolt":
+				case "t_weapon_bolt_jagged":
+				case "t_weapon_arrow":
+					bool isColored = def.IsColoredMetal();
+					if (isColored) {
+						def.headerType = "ColoredProjectileDef";
+						def.Set("MaterialType", "MaterialType.Wood", "guessed by Converter");
+					} else {
+						def.headerType = "ProjectileDef";
+					}
+					
+					break;
 				default:
 					if (args.StartsWith("t_weapon")) {
 						def.isWeapon = true;
@@ -194,7 +210,8 @@ namespace SteamEngine.Converter {
 				}
 
 				if (def.isWeapon) {
-					def.Set("attack", value, line.comment);
+					def.Set("attackVsP", value, line.comment);
+					def.Set("attackVsM", value, line.comment);
 					def.Set("piercing", "100", "");
 					def.Set("speed", "100", "");
 					def.Set("range", "1", "");
@@ -324,12 +341,6 @@ namespace SteamEngine.Converter {
 						materialType = MaterialType.Wood;
 						//TODO - preferred ammo...?
 						break;
-					case "t_weapon_bolt":
-					case "t_weapon_bolt_jagged":
-					case "t_weapon_arrow":
-						materialType = MaterialType.Wood;
-						//TODO - different class altogether?
-						break;
 				}
 				Set("WeaponType", "WeaponType."+weaponType, "guessed by Converter");
 
@@ -348,6 +359,10 @@ namespace SteamEngine.Converter {
 					Set("MaterialType", "MaterialType.Metal", "guessed by Converter");
 				} else {
 					this.headerType = "WearableDef";
+				}
+				if (!wearableTypeSet) {
+					Set("WearableType", "WearableType."+GetWearableType(this.PrettyDefname), "guessed by Converter");
+					
 				}
 			}
 
@@ -375,6 +390,30 @@ namespace SteamEngine.Converter {
 			return null;
 		}
 
+		private static Regex wearableTypeRE = new Regex(
+			@".*(?<type>((bone)|(studded)|(chain)|(ring))).*",
+			RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.IgnoreCase);
+
+		private WearableType GetWearableType(string prettyDefname ) {
+			Match m = wearableTypeRE.Match(prettyDefname);
+			if (m.Success) {
+				switch (m.Groups["type"].Value.ToLower()) {
+					case "bone":
+						return WearableType.Bone;
+					case "studded":
+						return WearableType.Studded;
+					case "chain":
+						return WearableType.Chain;
+					case "ring":
+						return WearableType.Ring;
+				}
+			}
+			if (this.type.Equals("t_armor_leather", StringComparison.OrdinalIgnoreCase)) {
+				return WearableType.Leather;
+			}
+
+			return WearableType.Plate;
+		}
 		
 		private static string HandleLayer(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;

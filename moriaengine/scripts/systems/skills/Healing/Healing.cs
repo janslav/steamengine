@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
             if (timer == null)
                 timer = new HealingTimer(targetted);
 
-            timer.DueInSeconds = HealingSkillDef.defHealing.GetDelayForChar(self);
+            timer.DueInSeconds = SingletonScript<HealingSkillDef>.Instance.GetDelayForChar(self);
 
             //pokud se leci sam nebo jinyho
             if (self == targetted)
@@ -171,9 +171,9 @@ namespace SteamEngine.CompiledScripts {
             ushort selfHealing = self.Skills[(int)SkillName.Healing].RealValue;
 
             //pokud se leceni zdarilo
-            if (HealingSkillDef.defHealing.CheckSuccess(self, Globals.dice.Next(200))) {
+			if (SingletonScript<HealingSkillDef>.Instance.CheckSuccess(self, Globals.dice.Next(200))) {
 
-                Targetted.Hits += (short)ScriptUtil.EvalRangePermille(self.Skills[17].RealValue + self.Skills[1].RealValue, HealingSkillDef.defHealing.MinEffect, HealingSkillDef.defHealing.MaxEffect);
+				Targetted.Hits += (short) ScriptUtil.EvalRangePermille(self.Skills[17].RealValue + self.Skills[1].RealValue, SingletonScript<HealingSkillDef>.Instance.Effect);
 
                 if (Targetted.Hits > Targetted.MaxHits)
                     Targetted.Hits = Targetted.MaxHits;
@@ -196,12 +196,39 @@ namespace SteamEngine.CompiledScripts {
         }
     }
 
-    /// <summary>
-    /// jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
-    /// </summary>
-    public class HealingSkillDef {
+    // jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
+    
+	//ano. pomoci singletonscriptu. Ale bylo potreba zmenit typ ty sekce v healing.scp
+    public class HealingSkillDef : SkillDef {
 
-        public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
+		public HealingSkillDef(string defname, string filename, int line)
+			: base(defname, filename, line) {
+		}
 
-    }
+        //public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
+
+		internal override void Start(Character ch) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Fail(Character ch) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		protected internal override void Abort(Character ch) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Stroke(Character ch) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Success(Character ch) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override void Select(AbstractCharacter ch) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+	}
 }
