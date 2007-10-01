@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
                 if (oldHealing == null) //nikdy by nemel byt null
                     return false;
 
-                Character oldTarget = (Character)oldHealing.Targetted;
+                Character oldTarget = (Character)oldHealing.targetted;
 
                 if (targetted == self) {
                     self.SysMessage("Pøerušil si léèení!");
@@ -130,7 +130,7 @@ namespace SteamEngine.CompiledScripts {
 
         [SaveableData]
         [CopyableData]
-        public Character Targetted;
+        public Character targetted;
 
         [LoadingInitializer]
         [DeepCopyImplementation]
@@ -138,32 +138,32 @@ namespace SteamEngine.CompiledScripts {
         }
 
         public HealingTimer(Character target) {
-            this.Targetted = target;
+            this.targetted = target;
         }
 
 
         protected override void OnTimeout(TagHolder cont) {
 
-            if (Targetted == null || Targetted.IsDeleted)
+            if (targetted == null || targetted.IsDeleted)
                 return;
 
             Character self = (Character)cont;
 
             //nevidi na cil
-            if (Targetted != self) {
-                if (self.GetMap() != Targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, Targetted) || Point2D.GetSimpleDistance(self, Targetted) > 6) {
-                    self.SysMessage(Targetted.Name + " je od tebe prilis daleko!");
+            if (targetted != self) {
+                if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
+                    self.SysMessage(targetted.Name + " je od tebe prilis daleko!");
                     return;
                 }
             }
 
             //pokud ma cil stejne nebo vic zivotu
-            if (Targetted.Hits >= Targetted.MaxHits) {
+            if (targetted.Hits >= targetted.MaxHits) {
 
-                if (Targetted == self)
+                if (targetted == self)
                     self.SysMessage("Jsi zcela zdráv!");
                 else
-                    self.SysMessage(Targetted.Name + " je zcela zdráv!");
+                    self.SysMessage(targetted.Name + " je zcela zdráv!");
 
                 return;
             }
@@ -173,24 +173,24 @@ namespace SteamEngine.CompiledScripts {
             //pokud se leceni zdarilo
 			if (SingletonScript<HealingSkillDef>.Instance.CheckSuccess(self, Globals.dice.Next(200))) {
 
-				Targetted.Hits += (short) ScriptUtil.EvalRangePermille(self.Skills[17].RealValue + self.Skills[1].RealValue, SingletonScript<HealingSkillDef>.Instance.Effect);
+				targetted.Hits += (short) ScriptUtil.EvalRangePermille(self.Skills[17].RealValue + self.Skills[1].RealValue, SingletonScript<HealingSkillDef>.Instance.Effect);
 
-                if (Targetted.Hits > Targetted.MaxHits)
-                    Targetted.Hits = Targetted.MaxHits;
+                if (targetted.Hits > targetted.MaxHits)
+                    targetted.Hits = targetted.MaxHits;
 
 
 
                 self.SysMessage("Léèení se ti povedlo!");
 
                 //jestlize je cil jinej nez healer rekneme hlasku
-                if (Targetted != self)
-                    Targetted.SysMessage(self.Name + " tì ošetøil!");
+                if (targetted != self)
+                    targetted.SysMessage(self.Name + " tì ošetøil!");
 
             } else {
                 self.SysMessage("Léèení se ti nezdaøilo!");
 
-                if (Targetted != self)
-                    Targetted.SysMessage(self.Name + " se nepodaøilo tì ošetøit!");
+                if (targetted != self)
+                    targetted.SysMessage(self.Name + " se nepodaøilo tì ošetøit!");
 
             }
         }
