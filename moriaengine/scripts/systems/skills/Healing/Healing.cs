@@ -198,7 +198,7 @@ namespace SteamEngine.CompiledScripts {
 
     // jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
     
-	//ano. pomoci singletonscriptu. Ale bylo potreba zmenit typ ty sekce v healing.scp
+	//ano. pomoci singletonscriptu. Ale bylo potreba zmenit typ ty sekce v healing.scp -tar
     public class HealingSkillDef : SkillDef {
 
 		public HealingSkillDef(string defname, string filename, int line)
