@@ -143,7 +143,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetDelayForChar(Character ch) {
-			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Delay);
+			if (ch.IsGM()) {
+				return 0;
+			} else {
+				return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Delay);
+			}
 		}
 
 		public double[] Effect {
@@ -182,7 +186,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckSuccess(Character ch, int difficulty) {
-			return SkillUtils.CheckSuccess(SkillValueOfChar(ch), difficulty);
+			if (ch.IsGM()) {
+				return true;
+			} else {
+				return SkillUtils.CheckSuccess(SkillValueOfChar(ch), difficulty);
+			}
 		}
 
 		[Summary("This method fires the @skillselect triggers. "
