@@ -117,24 +117,96 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			object fieldValue = field.GetValue(target);
 			Type fieldValueType = null;
-			if (fieldValue != null) {
+			string thirdColumnText = "";
+			bool thirdColumnIsText; //third column is editable or just simple text
+			bool secondColIsButton; //second column is with or without button
+		
+			if (fieldValue == null) {
+				thirdColumnText = "null";
+				if(ObjectSaver.IsSimpleSaveableType(field.FieldType)) {
+					thirdColumnIsText = field.ReadOnly;
+					if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+						secondColIsButton = !field.ReadOnly; //editable enum will have button						
+					} else {
+						secondColIsButton = false; //everything other will be controlled without button
+					}					
+				} else {
+					secondColIsButton = false; //no button here (there is null value by now - we cannot edit that)
+					if(ObjectSaver.IsSimpleSaveableOrCoordinated(field.FieldType)) {
+						thirdColumnIsText = field.ReadOnly;//it can be editable directly (e.g #someUID etc.)						
+					} else {
+						thirdColumnIsText = true; //can be modified via the button, but not directly!
+					}						
+				}
+			} else {
 				fieldValueType = fieldValue.GetType();
+				if(ObjectSaver.IsSimpleSaveableType(fieldValueType)) {
+					thirdColumnIsText = field.ReadOnly;
+					if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+						thirdColumnText = Enum.GetName(field.FieldType, fieldValue);
+						secondColIsButton = !field.ReadOnly; //editable enum will have button						
+					} else {
+						thirdColumnText = field.GetStringValue(target);
+						secondColIsButton = false; //everything other will be controlled without button
+					}
+				} else {
+					secondColIsButton = true; //button is present everytime
+					if(ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType)) {
+						thirdColumnText = field.GetStringValue(target);
+						thirdColumnIsText = field.ReadOnly;//it can be editable directly (e.g #someUID etc.)						
+					} else {
+						thirdColumnText = field.GetName(target); //just informative label
+						thirdColumnIsText = true; //can be modified via the button, but not directly!
+					}
+				}
 			}
 
+			//now fill second and third columns
+			if(secondColIsButton) {
+				actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);					
+			}
+			if(thirdColumnIsText) {
+				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(thirdColumnText);					
+			} else {
+				actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, thirdColumnText);
+				//store the field under the edits index
+				editFlds.Add(editsIndex, field);
+				editsIndex++;					
+			}
+			actualFieldRow++;
+
+			/*
 			//if necessary, insert the button
 			bool willHaveButton = false;
-
+			bool willHaveInput = false;
 			if (fieldValueType != null) {
-				if (!ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType)) {
+				if (!ObjectSaver.IsSimpleSaveableType(fieldValueType)) {
 					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
 					willHaveButton = true;
+				} else if(ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType) && !field.ReadOnly) {
+					//is not simple saveable but is coordinated - there is a button
+					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
+					willHaveButton = true;
+					willHaveInput = true;					
 				}
 			}
 
 			if (willHaveButton) {
-				//non simple field (buttonized - the redirect to another info dialog is present)
-				//the field will not be editable, we will therefore display only non editable label
-				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
+				if(willHaveInput) {
+					if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+						//enums have different text
+						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
+					} else {
+						//buttonized field with input field (non simple but coordinated - e.g #character...)
+						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
+					}
+					//store the field under the edits index
+					editFlds.Add(editsIndex, field);
+					editsIndex++;
+				} else {
+					//the field will not be editable, we will therefore display only non editable label
+					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
+				}
 			} else {
 				//no buttonized edit field - it is some simple type and can be edited
 				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
@@ -149,7 +221,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						editFlds.Add(editsIndex, field);
 						editsIndex++;
 					}
-				} else {					
+				} else {//not an enum
 					if (!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
 						//other types have only edit fields
 						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
@@ -160,15 +232,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						if (fieldValue == null) {
 							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText("null");
 						} else if (!ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType)) {
-							throw new SEException("Attempted to display an unsupported field " + field.GetName(target) + " of type " + fieldValueType + "!");
+							//this is some strange object - we cannot edit it this way. it must have its "info dialog" button...!
+							throw new SEException("Attempted to display an unsupported field " + field.GetName(target) + " of type " + fieldValueType + "!");							
 						} else {
 							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
 						}
 					}
 				}				
 			}
-			actualFieldRow++;
-
+			*/
+			
 			//after adding the data field, check whether we haven't reached the last line in the column
 			//if so, check also if there are more columns to write to and prepare another one for writing
 			if(actualFieldRow == ImprovedDialog.PAGE_ROWS && actualFieldColumn < COLS_COUNT) {
