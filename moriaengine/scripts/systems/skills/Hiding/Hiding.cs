@@ -70,10 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		
 		public override void Success(Character self) {
 			if (!this.Trigger_Success(self)) {
-				self.Flag_Hidden = true;
-				self.AddPlugin(pluginKey, P_StealthStep.Create());
-				self.ClilocSysMessage(501240);//You have hidden yourself well.
-				//todo: gain
+				Hide(self);
 			}
 		}
 		
@@ -92,7 +89,9 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void Hide(Character self) {
-			self.SelectSkill(SkillName.Hiding);
+			self.ClilocSysMessage(501240);//You have hidden yourself well.
+			self.Flag_Hidden = true;
+			self.AddPlugin(pluginKey, P_StealthStep.Create());
 		}
 
 		[SteamFunction]
