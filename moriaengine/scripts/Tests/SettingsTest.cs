@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public LeafComponentTypes nullROEnum {
 			get {
-				return refEnum;
+				return LeafComponentTypes.ButtonCross;
 			}
 		}
 
