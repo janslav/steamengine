@@ -26,11 +26,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Simple class for testing the info dialogs")]
 	[ViewableClass("SimpleClass")]
 	public class SimpleClass {
-		public string foo;
+		private AbstractCharacter refChar;
+
+		public string nullSS;
+		public int notNullSS = 5;
+		public string ROSS {
+			get {
+				return "getted Value";
+			}
+		}
 
 		public ArrayList nejakejList = new ArrayList();
 
-		public Hues kolorka = Hues.Blue;
+		public Hues notNullEnum = Hues.Blue;
+
+		public LeafComponentTypes nullROEnum {
+			get {
+				return refEnum;
+			}
+		}
+
+		public AbstractCharacter GetChar {
+			get {
+				return Globals.SrcCharacter;
+			}
+		}
+
+		public AbstractCharacter GetSetChar {
+			get {
+				return refChar;
+			}
+			set {
+				refChar = value;
+			}
+		}
 
 		[NoShow]
 		public int bar = 0;
