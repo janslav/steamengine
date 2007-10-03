@@ -21,7 +21,7 @@ on=@Select
 			currentSkillTarget2 = Backpack.FindByClass(typeof(Musical))
 		endif
 	else
-		currentSkillTarget2 = this.FindByClass(typeof(Musical))
+		currentSkillTarget2 = Backpack.FindByClass(typeof(Musical))
 	endif
 		
 	if (currentSkillTarget2 != null)
