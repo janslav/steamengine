@@ -26,8 +26,8 @@ using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
-namespace SteamEngine.CompiledScripts { 
-	internal class ViewableClassGenerator : ISteamCSCodeGenerator {
+namespace SteamEngine.CompiledScripts {
+	internal sealed class ViewableClassGenerator : ISteamCSCodeGenerator {
 		static List<Type> viewableClasses = new List<Type>();
 		static Hashtable typesViewablesTable = new Hashtable(); 
 		

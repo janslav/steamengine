@@ -52,17 +52,22 @@ namespace SteamEngine {
 	//public abstract class DecoratedClassesDeepCopyImplementor : IDeepCopyImplementor {
 	//}
 
-	internal class DeepCopyImplementorGenerator : ISteamCSCodeGenerator {
+	internal sealed class DeepCopyImplementorGenerator : ISteamCSCodeGenerator {
 		static List<Type> decoratedClasses = new List<Type>();
 
-		internal static void AddDecoratedClass(Type t) {
+		internal static bool AddDecoratedClass(Type t, DeepCopyableClassAttribute ignored) {
 			decoratedClasses.Add(t);
+			return false;
 		}
 
 		public string FileName {
 			get {
 				return "DeepCopyImplementor.Generated.cs";
 			}
+		}
+
+		public static void Bootstrap() {
+			ClassManager.RegisterSupplyDecoratedClasses<DeepCopyableClassAttribute>(AddDecoratedClass, false);
 		}
 
 		public System.CodeDom.CodeCompileUnit WriteSources() {

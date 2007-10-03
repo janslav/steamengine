@@ -39,6 +39,10 @@ namespace SteamEngine {
 				return unloaded; 
 			}
 		}
+
+		public static void Bootstrap() {
+			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
+		}
 		
 		protected AbstractScript() {
 			defname = GetName();

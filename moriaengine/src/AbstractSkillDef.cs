@@ -21,9 +21,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 	
 namespace SteamEngine {
 	public abstract class AbstractSkillDef : AbstractDefTriggerGroupHolder {
+
 		//string(defname)-Skilldef pairs
 		private static Dictionary<string, AbstractSkillDef> byKey = new Dictionary<string, AbstractSkillDef>(StringComparer.OrdinalIgnoreCase);
 		//string(key)-Skilldef pairs
@@ -82,7 +84,11 @@ namespace SteamEngine {
 			byId.Clear();
 			skillDefCtorsByName.Clear();
 		}
-		
+
+		public static new void Bootstrap() {
+			ClassManager.RegisterSupplySubclasses<AbstractSkillDef>(RegisterSkillDefType);
+		}
+
 		//for loading of skilldefs from .scp/.def scripts
 		public static new bool ExistsDefType(string name) {
 			return skillDefCtorsByName.ContainsKey(name);
@@ -91,7 +97,7 @@ namespace SteamEngine {
 		private static Type[] skillDefConstructorParamTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
 		
 		//this should be typically called by the Bootstrap methods of scripted SkillDefs
-		internal static void RegisterSkillDefType(Type skillDefType) {
+		internal static bool RegisterSkillDefType(Type skillDefType) {
 			ConstructorInfo ci;
 			if (skillDefCtorsByName.TryGetValue(skillDefType.Name, out ci)) { //we have already a ThingDef type named like that
 				throw new OverrideNotAllowedException("Trying to overwrite class "+LogStr.Ident(ci.DeclaringType)+" in the register of SkillDef classes.");
@@ -101,6 +107,7 @@ namespace SteamEngine {
 				throw new Exception("Proper constructor not found.");
 			}
 			skillDefCtorsByName[skillDefType.Name] = MemberWrapper.GetWrapperFor(ci);
+			return false;
 		}
 
 		

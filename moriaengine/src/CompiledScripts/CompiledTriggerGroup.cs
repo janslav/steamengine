@@ -61,11 +61,20 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	internal class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
+	internal sealed class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> compiledTGs = new List<Type>();
 
-		internal static void AddCompiledTGType(Type t) {
-			compiledTGs.Add(t);
+		public static void Bootstrap() {
+			ClassManager.RegisterSupplySubclasses<CompiledTriggerGroup>(AddCompiledTGType);
+		}
+
+		internal static bool AddCompiledTGType(Type t) {
+			if ((!t.IsAbstract) && (!t.IsSealed)) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
+				//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
+				compiledTGs.Add(t);
+				return true;
+			}
+			return false;
 		}
 
 		public CodeCompileUnit WriteSources() {

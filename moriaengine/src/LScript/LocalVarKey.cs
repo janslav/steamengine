@@ -16,34 +16,26 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine.Packets;
+using System.Collections.Generic;
 		
 namespace SteamEngine {
 	//TriggerKeys are used when calling triggers. You should call Get(name) once to get a TriggerKey, and then use
 	//that from then on for calling that trigger.
 	//This and FunctionKey are very similar, and serve similar purposes.
-	public class LocalVarKey : AbstractKey{
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
+	public class LocalVarKey : AbstractKey {
+		private static Dictionary<string, LocalVarKey> byName = new Dictionary<string, LocalVarKey>();
 				
 		private LocalVarKey(string name, int uid) : base(name, uid) {
 		}
 		
 		public static LocalVarKey Get(string name) {
-			LocalVarKey lvk = byName[name] as LocalVarKey;
-			if (lvk!=null) {
-				return lvk;
+			LocalVarKey key;
+			if (byName.TryGetValue(name, out key)) {
+				return key;
 			}
-			int uid=uids++;
-			lvk = new LocalVarKey(name,uid);
-			byName[name]=lvk;
-			return lvk;
+			key = new LocalVarKey(name, uids++);
+			byName[name] = key;
+			return key;
 		}
 	}
 }

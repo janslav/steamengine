@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
-	public class LinkedListSerializer : ISaveImplementor {
+	public sealed class LinkedListSerializer : ISaveImplementor {
 		public string HeaderName { get {
 			return "LinkedList";
 		} }

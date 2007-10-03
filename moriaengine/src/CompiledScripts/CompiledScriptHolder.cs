@@ -26,6 +26,10 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	public abstract class CompiledScriptHolder : ScriptHolder {
 
+		public static void Bootstrap() {
+			ClassManager.RegisterSupplySubclassInstances<CompiledScriptHolder>(null, false, false);
+		}
+
 		public CompiledScriptHolder()
 			: base() {
 
@@ -49,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	internal class CompiledScriptHolderGenerator : ISteamCSCodeGenerator {
+	internal sealed class CompiledScriptHolderGenerator : ISteamCSCodeGenerator {
 		static List<MethodInfo> compiledSHs = new List<MethodInfo>();
 
 		internal static void AddCompiledSHType(MethodInfo mi) {

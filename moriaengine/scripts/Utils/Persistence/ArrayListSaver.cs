@@ -21,7 +21,7 @@ using SteamEngine;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class ArrayListSaver : ISaveImplementor, IDeepCopyImplementor {
+	public sealed class ArrayListSaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "ArrayList";
 		} }

@@ -352,7 +352,7 @@ namespace SteamEngine.CompiledScripts {
 
     }
 
-    public class IPAddressSaveImplementor : ISimpleSaveImplementor {
+	public sealed class IPAddressSaveImplementor : ISimpleSaveImplementor {
         public static Regex re = new Regex(@"^\(IP\)(?<value>.+)\s*$",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 

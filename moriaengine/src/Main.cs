@@ -291,7 +291,7 @@ namespace SteamEngine {
 		private static void UnLoadAll() {
 			ClearWorld();
 			Timers.Timer.Clear();
-			CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
+			//CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
 			ClassManager.UnLoadScripts();//bye-bye to all storec types
 			GeneratedCodeUtil.UnLoadScripts();//bye-bye to scripted code generators
 			TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers

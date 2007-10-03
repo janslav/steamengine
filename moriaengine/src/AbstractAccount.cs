@@ -93,7 +93,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public class AccountSaveCoordinator : IBaseClassSaveCoordinator {
+		public sealed class AccountSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex accountNameRE = new Regex(@"^\$(?<value>\w*)\s*$",
 				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 

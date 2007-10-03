@@ -182,7 +182,7 @@ namespace SteamEngine.CompiledScripts {
 			return td;
 		}
 
-		public static void Bootstrap() {
+		public static new void Bootstrap() {
 			ScriptLoader.RegisterScriptType(new string[] {"templatedef", "template"}, 
 				new LoadSection(LoadFromScripts), true);
 		}

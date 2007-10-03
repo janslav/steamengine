@@ -371,13 +371,18 @@ namespace SteamEngine {
 			}
 		}
 
-		public static void RegisterSubtype(Type type) {
+		public static new void Bootstrap() {
+			CompiledScripts.ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype);
+		}
+
+		public static bool RegisterSubtype(Type type) {
 			string typeName = type.Name;
 			Type o;
 			if (defTypesByName.TryGetValue(typeName, out o)) { //we have already a ThingDef type named like that
 				throw new OverrideNotAllowedException("Trying to overwrite class "+LogStr.Ident(o)+" in the register of AbstractDef classes.");
 			}
 			defTypesByName[typeName] = type;
+			return false;
 		}
 
 		public static bool ExistsDefType(string name) {

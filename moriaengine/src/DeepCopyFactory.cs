@@ -55,6 +55,10 @@ namespace SteamEngine {
 
 		}
 
+		public static void Bootstrap() {
+			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<IDeepCopyImplementor>(RegisterImplementor, true, true);
+		}
+
 		//called by ClassManager
 		internal static void RegisterImplementor(IDeepCopyImplementor implementor) {
 			Type type = implementor.HandledType;

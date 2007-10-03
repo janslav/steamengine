@@ -59,9 +59,9 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			CodeMemberMethod init = new CodeMemberMethod();
 			init.Name="Bootstrap";
 			init.Attributes=MemberAttributes.Public|MemberAttributes.Static;
-			if (!section.baseClassName.Equals("AbstractItem") && !section.baseClassName.Equals("AbstractCharacter")) {
+			//if (!section.baseClassName.Equals("AbstractItem") && !section.baseClassName.Equals("AbstractCharacter")) {
 				init.Attributes |= MemberAttributes.New;
-			}
+			//}
 			//init.Statements.Add(new CodeSnippetStatement("ThingDef.RegisterThingDef(typeof("+name+"Def), \""+name+"\");"));
 			init.Statements.Add(
 				new CodeMethodInvokeExpression(

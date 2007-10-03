@@ -41,9 +41,9 @@ namespace SteamEngine.CompiledScripts {
 		//all types of Steamengine namespace, regardless if from scripts or core. 
 
 		//removes all non-core references
-		internal static void UnLoadScripts() {
-			compiledScripts = null;
-		}
+		//internal static void UnLoadScripts() {
+		//    compiledScripts = null;
+		//}
 	
 		internal static bool SourcesHaveChanged { get {
 			return compiledScripts.GetChangedFiles().Count > 0;

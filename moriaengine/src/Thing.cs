@@ -64,7 +64,7 @@ namespace SteamEngine {
 		public static TagKey weightTag = TagKey.Get("_weight");
 
 
-		public class ThingSaveCoordinator : IBaseClassSaveCoordinator {
+		public sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?[\da-f]+)\s*$",
 				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 

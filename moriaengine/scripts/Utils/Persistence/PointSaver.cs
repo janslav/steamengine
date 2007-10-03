@@ -8,7 +8,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class Point2DSaveImplementor : ISimpleSaveImplementor {
+	public sealed class Point2DSaveImplementor : ISimpleSaveImplementor {
 		private static Point2DSaveImplementor instance;
 		public static Point2DSaveImplementor Instance { get {
 			return instance;
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class Point3DSaveImplementor : ISimpleSaveImplementor {
+	public sealed class Point3DSaveImplementor : ISimpleSaveImplementor {
 		private static Point3DSaveImplementor instance;
 		public static Point3DSaveImplementor Instance { get {
 			return instance;
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class Point4DSaveImplementor : ISimpleSaveImplementor {
+	public sealed class Point4DSaveImplementor : ISimpleSaveImplementor {
 		private static Point4DSaveImplementor instance;
 		public static Point4DSaveImplementor Instance { get {
 			return instance;

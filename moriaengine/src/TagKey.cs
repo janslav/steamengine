@@ -14,38 +14,26 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine.Packets;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine {
-	/*
-		Class: TagKey
-		Used as an ID for tags
-	*/
 	public class TagKey : AbstractKey {
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-				
-		private TagKey(string name, int uid) : base(name, uid) {
+		private static Dictionary<string, TagKey> byName = new Dictionary<string, TagKey>(StringComparer.OrdinalIgnoreCase);
+
+		private TagKey(string name, int uid)
+			: base(name, uid) {
 		}
-		
+
 		public static TagKey Get(string name) {
-			TagKey tk = byName[name] as TagKey;
-			if (tk!=null) {
-				return tk;
+			TagKey key;
+			if (byName.TryGetValue(name, out key)) {
+				return key;
 			}
-			int uid=uids++;
-			tk = new TagKey(name,uid);
-			byName[name]=tk;
-			return tk;
+			key = new TagKey(name, uids++);
+			byName[name] = key;
+			return key;
 		}
 	}
 }

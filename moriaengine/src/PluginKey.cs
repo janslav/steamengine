@@ -16,38 +16,30 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine.Packets;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
-	
+
 namespace SteamEngine {
 	public class PluginKey : AbstractKey {
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<string, PluginKey> byName = new Dictionary<string, PluginKey>(StringComparer.OrdinalIgnoreCase);
 
 		private PluginKey(string name, int uid)
 			: base(name, uid) {
 		}
 
 		public static PluginKey Get(string name) {
-			PluginKey tk = byName[name] as PluginKey;
-			if (tk!=null) {
-				return tk;
+			PluginKey key;
+			if (byName.TryGetValue(name, out key)) {
+				return key;
 			}
-			int uid=uids++;
-			tk = new PluginKey(name, uid);
-			byName[name]=tk;
-			return tk;
+			key = new PluginKey(name, uids++);
+			byName[name] = key;
+			return key;
 		}
 	}
 
 
-	public class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
 		public static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",                     
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 	

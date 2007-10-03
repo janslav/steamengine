@@ -53,10 +53,10 @@ namespace SteamEngine {
 				if (string.Compare(typeName, "account", true) == 0) {
 					typeName = "GameAccount";
 				}
-				
-				MethodInfo wrapper = ClassManager.GetRegisterTGmethod(typeName);
+
+				RegisterTGDeleg wrapper = ClassManager.GetRegisterTGmethod(typeName);
 				if (wrapper != null) {
-					wrapper.Invoke(null, new object[] {this});
+					wrapper(this);
 				}
 			}
 			if (defname.ToLower().EndsWith("_global")) {
