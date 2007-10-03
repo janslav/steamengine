@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			bar = (bar == 0 ? 1 : bar) * 2;
 		}
 	}
-
+	
 	/*[Remark("Class returning pages for the dialog.")]
 	public sealed class Prototype_GeneratedDataView_SimpleClass : AbstractDataView {
 		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {

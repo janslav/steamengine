@@ -27,12 +27,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_TagList : CompiledGump {
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
-		
+
+		//slovnik na ulozeni buttonu a hodnot pod nima skrytych (odkazy do info dialogu)
+		private static Dictionary<int, object> buttonLinks;
+
+
 		[Remark("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, "+
 				"	1 - index ze seznamu tagu ktery bude na strance jako prvni"+
 				"	2 - vyhledavaci kriterium pro jmena tagu"+
 				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+			buttonLinks = new Dictionary<int, object>();
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)sa[0];
 			List<KeyValuePair<TagKey, Object>> tagList = null;
@@ -87,12 +92,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
+			int buttonCounter = 0;
 			for(int i = firstiVal; i < imax; i++) {
 				KeyValuePair<TagKey, Object> de = tagList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + i);
 				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0,(de.Key).name);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ObjectSaver.Save(de.Value)); //hodnota tagu, vcetne prefixu oznacujicim typ
+				//je li hodnota simple saveable nebo ma koordinator, muzeme ObjectSaver.Save
+				//if(ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
+					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ObjectSaver.Save(de.Value)); //hodnota tagu, vcetne prefixu oznacujicim typ
+				//} else {//jinak odkaz do infodialogu
+				//	dlg.Last
+				//}
 				
 				rowCntr++;			
 			}
@@ -169,7 +180,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvniho tagu co ma
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam tagu, pouzito az v dialogu
-			if(text.Argv == null || text.Argv.Length == 0) {
+			if(text == null || text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, "", null);
 			} else {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, text.Args, null);

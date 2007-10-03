@@ -152,9 +152,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Get the settings values prefix and surround it by brackets." +
 				"If the value has no prefix (it is of some special type, find out what" +
 				"type it is and return some description of it")]
-		public static string GetTypePrefix(IDataFieldView field) {
-			//get type
-			Type t = field.FieldType;
+		public static string GetTypePrefix(Type t) {
 			if(t.Equals(typeof(object))) {
 				//object is also possible ! - the member can be set to any value
 				return "(Obj)";
@@ -171,7 +169,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if(typeof(AbstractAccount).IsAssignableFrom(t)) {
 				return "(Acc)";
 			} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
-				return "(Abs)";
+				return "(Scp)";
 			} else if(t.Equals(typeof(Globals))) {
 				return "(Glob)";
 			} else {
