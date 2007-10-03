@@ -399,4 +399,59 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.name = name;
 		}
 	}
+
+	[Remark("Used for marking classes used as descriptors - see SimpleClassDescriptor for example."+
+			"Obligatory constructor parameter is handled type, voluntary is the name of the described class")]
+	public class DescriptorAttribute : Attribute {
+		private Type handledType;
+		
+		[Remark("The name that will be displayed in the headline of the infodialog")]
+		private string name;
+		
+		public Type HandledType {
+			get {
+				return handledType;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public DescriptorAttribute(Type handledType) {
+			this.handledType = handledType;
+		}
+
+		public DescriptorAttribute(Type handledType, string name) {
+			this.handledType = handledType;
+			this.name = name;
+		}
+	}
+
+	[Remark("Used for marking field get method in descriptors")]
+	public class GetMethodAttribute : Attribute {
+	}
+
+	[Remark("Used for marking field set method in descriptors")]
+	public class SetMethodAttribute : Attribute {
+	}
+
+	[Remark("Attribute holding name of the field in descriptor (this must be the same for get and set method)")]
+	public class FieldNameAttribute : Attribute {
+		[Remark("The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set "+
+				" descriptor method of the same field")]
+		private string name;
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public FieldNameAttribute(string name) {
+			this.name = name;
+		}
+	}
 }

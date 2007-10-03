@@ -311,11 +311,14 @@
     <Compile Include="..\..\scripts\systems\settings\DataView.cs">
       <Link>systems\settings\DataView.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Settings\implementations\EnumDataView.cs">
-      <Link>systems\settings\Implementations\EnumDataView.cs</Link>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\EnumDataView.cs">
+      <Link>systems\settings\Implementations\DataViews\EnumDataView.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Settings\implementations\ListDataView.cs">
-      <Link>systems\settings\Implementations\ListDataView.cs</Link>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\ListDataView.cs">
+      <Link>systems\settings\Implementations\DataViews\ListDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\TagHolderDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\TagHolderDescriptor.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\MassSettings.cs">
       <Link>systems\settings\MassSettings.cs</Link>

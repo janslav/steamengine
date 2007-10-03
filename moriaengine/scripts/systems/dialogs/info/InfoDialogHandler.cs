@@ -372,11 +372,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Return the fields name accompanied with the type information (but sometimes we dont need the type info...)")]
 		private static string GetFieldName(IDataFieldView field, object target) {
+			object fieldVal = field.GetValue(target);
 			string retName = field.GetName(target);
 			if(typeof(Enum).IsAssignableFrom(target.GetType())) {} //target is Enum (e.g when infoizing the Enum itself and displaying its items)
 			else if(typeof(Enum).IsAssignableFrom(field.FieldType)) {}//field is of type Enum
 			else {
-				retName += SettingsProvider.GetTypePrefix(field);
+				retName += SettingsProvider.GetTypePrefix(field.FieldType);				
 			}
 			return retName;
 		}
