@@ -22,7 +22,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class ArraySaver : ISaveImplementor, IDeepCopyImplementor {
+	public sealed class ArraySaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "Array";
 		} }

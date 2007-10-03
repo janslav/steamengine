@@ -16,7 +16,6 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using SteamEngine;
@@ -24,7 +23,15 @@ using SteamEngine.Common;
 using SteamEngine.Timers;
 using SteamEngine.Persistence;
 
-namespace SteamEngine.CompiledScripts { 
+namespace SteamEngine.CompiledScripts {
+
+	public delegate void RegisterTGDeleg(TriggerGroup tg);
+
+	public delegate bool SupplyType(Type type);
+
+	public delegate bool SupplyDecoratedType<T>(Type type, T attr) where T : Attribute;
+
+	public delegate void SupplyInstance<T>(T instance);
 	
 	public static class ClassManager {
 		//delegate for registering hooks
@@ -32,12 +39,15 @@ namespace SteamEngine.CompiledScripts {
 		//list for storing hooked delegates
 		private static List<HookedMethod> hooksList = new List<HookedMethod>();
 
-		public readonly static Hashtable allTypesbyName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		//String-Type pairs.
-		//private static Type[] allTypes;
+		public readonly static Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		
-		private static Hashtable registerTGmethods = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		//string - MethodInfo pairs
+		private static Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
+
+		private static List<SupplyDecoratedTypeBase> supplyDecoratedTypesDelegs = new List<SupplyDecoratedTypeBase>();
+
+		private static List<SupplySubclassInstanceBase> supplySubclassInstanceDelegs = new List<SupplySubclassInstanceBase>();
+			
+		private static List<TypeDelegPair> supplySubclassDelegs = new List<TypeDelegPair>();
 
 		private static Assembly commonAssembly = typeof(ConAttrs).Assembly;
 		public static Assembly CommonAssembly { get {
@@ -67,19 +77,152 @@ namespace SteamEngine.CompiledScripts {
 					allTypesbyName[type.Name] = type;
 				}
 			}
-			
+
+			List<SupplyDecoratedTypeBase> tempDecoTypes = new List<SupplyDecoratedTypeBase>(supplyDecoratedTypesDelegs.Count);
+			foreach (SupplyDecoratedTypeBase entry in supplyDecoratedTypesDelegs) {
+				if (!IsTypeFromScripts(entry.type) && !IsTypeFromScripts(entry.TargetClass)) {
+					tempDecoTypes.Add(entry);
+				}
+			}
+			supplyDecoratedTypesDelegs = tempDecoTypes;
+
+			List<SupplySubclassInstanceBase> tempInstances = new List<SupplySubclassInstanceBase>(supplySubclassInstanceDelegs.Count);
+			foreach (SupplySubclassInstanceBase entry in supplySubclassInstanceDelegs) {
+				if (!IsTypeFromScripts(entry.type) && !IsTypeFromScripts(entry.TargetClass)) {
+					tempInstances.Add(entry);
+				}
+			}
+			supplySubclassInstanceDelegs = tempInstances;
+
+			List<TypeDelegPair> tempSubclasses = new List<TypeDelegPair>(supplySubclassDelegs.Count);
+			foreach (TypeDelegPair entry in supplySubclassDelegs) {
+				if (!IsTypeFromScripts(entry.type)) {
+					tempSubclasses.Add(entry);
+				}
+			}
+			supplySubclassDelegs = tempSubclasses;
+
 			//allTypes = new Type[allTypesbyName.Count];
 			//allTypesbyName.Values.CopyTo(allTypes, 0);
 		}
-		
+
+		private static bool IsTypeFromScripts(Type type) {
+			return (type.Assembly == ClassManager.GeneratedAssembly) ||
+				(type.Assembly == ClassManager.ScriptsAssembly);
+		}
+
 		public static Type GetType(string name) {
-			return (Type) allTypesbyName[name];
+			Type type;
+			allTypesbyName.TryGetValue(name, out type);
+			return type;
 		}
-		
-		internal static MethodInfo GetRegisterTGmethod(string name) {
-			return (MethodInfo) registerTGmethods[name];
+
+		internal static RegisterTGDeleg GetRegisterTGmethod(string name) {
+			RegisterTGDeleg mi;
+			registerTGmethods.TryGetValue(name, out mi);
+			return mi;
 		}
-		
+
+
+		[Remark("Register hook method (delegate). The hook method awaits Type as a parameter "+
+				"and returns bool value according to its implementation. Every managed Type will be"+
+				"sent to every delegate found in the delegList. The delegated methods in various classes"+
+				"can then perform any necessary actions on managed Types")]
+		public static void RegisterHook(HookedMethod hook) {
+			hooksList.Add(hook);
+		}
+
+		public static void RegisterSupplyDecoratedClasses<T>(SupplyDecoratedType<T> deleg, bool inherited) where T : Attribute {
+			supplyDecoratedTypesDelegs.Add(new SupplyDecoratedTypeBaseTuple<T>(deleg, inherited));
+		}
+
+		public static void RegisterSupplySubclasses<T>(SupplyType deleg) {
+			supplySubclassDelegs.Add(new TypeDelegPair(typeof(T), deleg));
+		}
+
+		public static void RegisterSupplySubclassInstances<T>(SupplyInstance<T> deleg, bool sealedOnly, bool throwIfNoCtor) {
+			supplySubclassInstanceDelegs.Add(new SupplySubclassInstanceTuple<T>(deleg, sealedOnly, throwIfNoCtor));
+		}
+
+		static ClassManager() {
+			//can't be in GeneratedCodeUtil's Bootstrap, cos that's too late.
+			ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
+		}
+
+		private class TypeDelegPair {
+			internal readonly Type type;
+			internal readonly SupplyType deleg;
+
+			internal TypeDelegPair(Type type, SupplyType deleg) {
+				this.type = type;
+				this.deleg = deleg;
+			}
+		}
+
+		private abstract class SupplySubclassInstanceBase {
+			internal readonly bool sealedOnly;
+			internal readonly bool throwIfNoCtor;
+			internal readonly Type type;
+
+			internal SupplySubclassInstanceBase(bool sealedOnly, bool throwIfNoCtor, Type type) {
+				this.sealedOnly = sealedOnly;
+				this.throwIfNoCtor = throwIfNoCtor;
+				this.type = type;
+			}
+
+			internal abstract void InvokeDeleg(object instance);
+			internal abstract Type TargetClass { get; }
+		}
+
+		private class SupplySubclassInstanceTuple<T> : SupplySubclassInstanceBase {
+			SupplyInstance<T> deleg;
+
+			internal SupplySubclassInstanceTuple(SupplyInstance<T> deleg, bool sealedOnly, bool throwIfNoCtor) 
+					: base(sealedOnly, throwIfNoCtor, typeof(T)) {
+				this.deleg = deleg;
+			}
+
+			internal override void InvokeDeleg(object instance) {
+				if (deleg != null) {
+					deleg((T) instance);
+				}
+			}
+
+			internal override Type TargetClass {
+				get { return deleg.Method.DeclaringType; }
+			}
+		}
+
+		private abstract class SupplyDecoratedTypeBase {
+			internal readonly bool inherited;
+			internal readonly Type type;
+
+			internal SupplyDecoratedTypeBase(bool inherited, Type type) {
+				this.inherited = inherited;
+				this.type = type;
+			}
+
+			internal abstract bool InvokeDeleg(Type type, Attribute attr);
+			internal abstract Type TargetClass { get; }
+		}
+
+		private class SupplyDecoratedTypeBaseTuple<T> : SupplyDecoratedTypeBase where T : Attribute {
+			SupplyDecoratedType<T> deleg;
+
+			internal SupplyDecoratedTypeBaseTuple(SupplyDecoratedType<T> deleg, bool inherited)
+				: base(inherited, typeof(T)) {
+				this.deleg = deleg;
+			}
+
+			internal override bool InvokeDeleg(Type type, Attribute attr) {
+				return deleg(type, (T) attr);
+			}
+
+			internal override Type TargetClass {
+				get { return deleg.Method.DeclaringType; }
+			}
+		}
+
 		internal static bool InitClasses(Assembly assembly) {
 			Type[] types = assembly.GetTypes();
 			if (!InitClasses(types, assembly.GetName().Name, (coreAssembly == assembly) )) {
@@ -117,92 +260,6 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void InitClass(Type type, bool isCoreAssembly) {
 			allTypesbyName[type.Name] = type;
-			
-			if (type.IsSubclassOf(typeof(TagHolder))) {
-				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup", 
-					BindingFlags.Public | BindingFlags.Static, null, new Type[] {typeof(TriggerGroup)}, null);
-				if (rtgmi != null) {
-					MethodInfo mw = MemberWrapper.GetWrapperFor(rtgmi);
-					registerTGmethods[type.Name] = mw;
-				}
-			}
-
-			if (type.IsSubclassOf(typeof(AbstractSkillDef))) {
-				AbstractSkillDef.RegisterSkillDefType(type);
-			}
-			
-			if (Attribute.IsDefined(type, typeof(SaveableClassAttribute), false)) {
-				DecoratedClassesSaveImplementorGenerator.AddDecoratedClass(type);
-			}
-
-			if (Attribute.IsDefined(type, typeof(DeepCopyableClassAttribute), false)) {
-				DeepCopyImplementorGenerator.AddDecoratedClass(type);
-			}
-
-			//if (typeof(IImportable).IsAssignableFrom(type)) {
-			//    ExportImport.RegisterExportClass(type);
-			//}
-			
-			//from scripts only, because we have a special one in ObjectSaver and stuff.
-			if (typeof(ISaveImplementor).IsAssignableFrom(type) && (!isCoreAssembly) ) {
-				if (!type.IsAbstract) {
-					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-					if (ci!=null) {
-						ISaveImplementor si = (ISaveImplementor) ci.Invoke(new object[0] {});
-						ObjectSaver.RegisterImplementor(si);
-					} else {
-						throw new Exception("No proper constructor.");
-					}
-				}
-			}
-
-			if (typeof(IBaseClassSaveCoordinator).IsAssignableFrom(type)) {
-				if (!type.IsAbstract) {
-					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-					if (ci!=null) {
-						IBaseClassSaveCoordinator ibcsc = (IBaseClassSaveCoordinator) ci.Invoke(new object[0] { });
-						ObjectSaver.RegisterCoordinator(ibcsc);
-					} else {
-						throw new Exception("No proper constructor.");
-					}
-				}
-			}
-			
-			if (typeof(ISimpleSaveImplementor).IsAssignableFrom(type)) {
-				if (!type.IsAbstract) {
-					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-					if (ci!=null) {
-						ISimpleSaveImplementor ssi = (ISimpleSaveImplementor) ci.Invoke(new object[0] {});
-						ObjectSaver.RegisterSimpleImplementor(ssi);
-					} else {
-						throw new Exception("No proper constructor.");
-					}
-				}
-			}
-
-			if (typeof(ISteamCSCodeGenerator).IsAssignableFrom(type)) {
-				if (!type.IsAbstract) {
-					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-					if (ci!=null) {
-						ISteamCSCodeGenerator sccg = (ISteamCSCodeGenerator) ci.Invoke(new object[0] { });
-						GeneratedCodeUtil.RegisterGenerator(sccg);
-					} else {
-						throw new Exception("No proper constructor.");
-					}
-				}
-			}
-
-			if (typeof(IDeepCopyImplementor).IsAssignableFrom(type)) {
-				if ((!type.IsAbstract) && (type.IsPublic)) {
-					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-					if (ci!=null) {
-						IDeepCopyImplementor dci = (IDeepCopyImplementor) ci.Invoke(new object[0] { });
-						DeepCopyFactory.RegisterImplementor(dci);
-					} else {
-						throw new Exception("No proper constructor.");
-					}
-				}
-			}
 
 			foreach (MethodInfo meth in type.GetMethods(BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly)) {
 				if (Attribute.IsDefined(meth, typeof(RegisterWithRunTestsAttribute))) {
@@ -213,46 +270,64 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			if (type.IsSubclassOf(typeof(AbstractDef))) {
-				AbstractDef.RegisterSubtype(type);
-			}
-
-			if (type.IsSubclassOf(typeof(CompiledTriggerGroup))) {
-				if ((!type.IsAbstract) && (!type.IsSealed)) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
-					//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
-					CompiledTriggerGroupGenerator.AddCompiledTGType(type);
-					return;
-				}
-			}
-			if (type.IsSubclassOf(typeof(Plugin))) {
-				if (!type.IsAbstract) {
-					PluginTriggerGroupGenerator.AddPluginTGType(type);
-					return;
-				}
-			}
-			if (type.IsSubclassOf(typeof(CompiledScriptHolder))
-					|| type.IsSubclassOf(typeof(AbstractScript))) {
-				//Instansiate it!
-				if (!type.IsAbstract) {
-					ConstructorInfo ci=type.GetConstructor(Type.EmptyTypes);
-					if (ci!=null) {
-						ci.Invoke(new object[0] {});
-					//} else {
-					//	throw new Exception("No proper constructor.");
-					}
-				}
-			//} else if (typeof(Region).IsAssignableFrom(type)) {
-			//    Region.RegisterRegionType(type);
-			//} else if (type.IsSubclassOf(typeof(Timer))) {
-			//    Timer.RegisterSubClass(type);
-			//} else if (type.IsSubclassOf(typeof(Thing))) {
-			//	ThingDef.RegisterThingSubtype(type);
-			}
-
 			//check every hooked delegates			
-			foreach(HookedMethod hmDeleg in hooksList) {
+			foreach (HookedMethod hmDeleg in hooksList) {
 				hmDeleg(type);
 			}
+
+
+			if (type.IsSubclassOf(typeof(TagHolder))) {
+				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup", 
+					BindingFlags.Public | BindingFlags.Static, null, new Type[] {typeof(TriggerGroup)}, null);
+				if (rtgmi != null) {
+					RegisterTGDeleg rtgd = (RegisterTGDeleg) Delegate.CreateDelegate(typeof(RegisterTGDeleg), rtgmi);
+					registerTGmethods[type.Name] = rtgd;
+				}
+			}
+
+			bool match = false;
+			foreach (TypeDelegPair entry in supplySubclassDelegs) {
+				if (entry.type.IsAssignableFrom(type)) {
+					match = entry.deleg(type);
+				}
+			}
+
+			foreach (SupplyDecoratedTypeBase entry in supplyDecoratedTypesDelegs) {
+				object[] attribs = type.GetCustomAttributes(entry.type, entry.inherited);
+				if (attribs.Length > 0) {
+					match = entry.InvokeDeleg(type, (Attribute) attribs[0]);
+					if (attribs.Length > 1) {
+						Logger.WriteWarning("Class "+type+" has more than one "+entry.type+" Attribute defined. What to do...?");
+					}
+				}
+			}
+
+			if (!match) {
+				object instance = null;
+				foreach (SupplySubclassInstanceBase entry in supplySubclassInstanceDelegs) {
+					if (entry.type.IsAssignableFrom(type)) {
+						if ((type.IsAbstract) || 
+							((entry.sealedOnly) && (!type.IsSealed))) {
+							continue;
+						}
+						if (instance == null) {
+							ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+							if (ci != null) {
+								instance = ci.Invoke(null);
+							} else if (entry.throwIfNoCtor) {
+								throw new Exception("No proper constructor.");
+							}
+						}
+						if (instance != null) {
+							entry.InvokeDeleg(instance);
+						}
+					}
+				}
+			}
+
+			//if (typeof(IImportable).IsAssignableFrom(type)) {
+			//    ExportImport.RegisterExportClass(type);
+			//}
 
 			//moved to InitClasses method - see above
 			/*
@@ -287,14 +362,6 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			Logger.WriteDebug("Initializing Scripts done.");
-		}
-
-		[Remark("Register hook method (delegate). The hook method awaits Type as a parameter "+
-				"and returns bool value according to its implementation. Every managed Type will be"+
-				"sent to every delegate found in the delegList. The delegated methods in various classes"+
-				"can then perform any necessary actions on managed Types")]
-		public static void RegisterHook(HookedMethod hook) {
-			hooksList.Add(hook);
 		}
 	}
 }

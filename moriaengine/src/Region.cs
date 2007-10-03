@@ -86,7 +86,7 @@ namespace SteamEngine {
 			this.rectangles = tempRectangles.ToArray();
 		}
 
-		public class RegionSaveCoordinator : IBaseClassSaveCoordinator {
+		public sealed class RegionSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex regionNameRE = new Regex(@"^\(\s*(?<value>\w*)\s*\)\s*$",
 				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 

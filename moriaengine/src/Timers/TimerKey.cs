@@ -16,40 +16,29 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine.Packets;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Timers {
-	/*
-		Class: TimerKey
-		Used as an ID for timers
-	*/
 	public class TimerKey : AbstractKey {
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-				
-		private TimerKey(string name, int uid) : base(name, uid) {
+		private static Dictionary<string, TimerKey> byName = new Dictionary<string, TimerKey>(StringComparer.OrdinalIgnoreCase);
+
+		private TimerKey(string name, int uid)
+			: base(name, uid) {
 		}
-		
+
 		public static TimerKey Get(string name) {
-			TimerKey tk = byName[name] as TimerKey;
-			if (tk!=null) {
-				return tk;
+			TimerKey key;
+			if (byName.TryGetValue(name, out key)) {
+				return key;
 			}
-			int uid=uids++;
-			tk = new TimerKey(name,uid);
-			byName[name]=tk;
-			return tk;
+			key = new TimerKey(name, uids++);
+			byName[name] = key;
+			return key;
 		}
 	}
 
-	public class TimerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class TimerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
 		public Type HandledType { get {
 			return typeof(TimerKey);
 		} }

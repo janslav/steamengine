@@ -21,7 +21,7 @@ using SteamEngine;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class HashtableSaver : ISaveImplementor, IDeepCopyImplementor {
+	public sealed class HashtableSaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "Hashtable";
 		} }

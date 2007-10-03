@@ -23,7 +23,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class DictionarySaver : ISaveImplementor, IDeepCopyImplementor {
+	public sealed class DictionarySaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName {
 			get {
 				return "Dictionary";

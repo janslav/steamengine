@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             byDefname[id.Defname] = id;
         }
 
-        public static void Bootstrap() {
+        public static new void Bootstrap() {
             ScriptLoader.RegisterScriptType(new string[] { "InputDef" },
                 Load, false);
         }

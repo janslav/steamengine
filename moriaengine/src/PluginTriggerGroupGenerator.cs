@@ -23,12 +23,19 @@ using System.CodeDom.Compiler;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
-namespace SteamEngine.CompiledScripts { 
-	internal class PluginTriggerGroupGenerator : ISteamCSCodeGenerator {
+namespace SteamEngine.CompiledScripts {
+	internal sealed class PluginTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> pluginTGs = new List<Type>();
 
-		internal static void AddPluginTGType(Type t) {
-			pluginTGs.Add(t);
+		public static void Bootstrap() {
+			ClassManager.RegisterSupplySubclasses<Plugin>(AddPluginTGType);
+		}
+
+		internal static bool AddPluginTGType(Type t) {
+			if (!t.IsAbstract) {
+				pluginTGs.Add(t);
+			}
+			return false;
 		}
 
 		public CodeCompileUnit WriteSources() {

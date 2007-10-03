@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 			return new TimerPlugin();
 		}
 
-		public static void Bootstrap() {
+		public static new void Bootstrap() {
 			PluginDef.RegisterPluginDef(typeof(TimerPluginDef), typeof(TimerPlugin));
 		}
 	}

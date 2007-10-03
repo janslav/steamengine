@@ -186,7 +186,13 @@ namespace SteamEngine.Persistence {
 		//Type-ISimpleSaveImplementor pairs		
 
 		private static uint uids = 0;
-		
+
+		public static void Bootstrap() {
+			ClassManager.RegisterSupplySubclassInstances<ISaveImplementor>(RegisterImplementor, true, true);
+			ClassManager.RegisterSupplySubclassInstances<IBaseClassSaveCoordinator>(RegisterCoordinator, true, true);
+			ClassManager.RegisterSupplySubclassInstances<ISimpleSaveImplementor>(RegisterSimpleImplementor, true, true);
+		}
+
 		[Summary("Method for generic saving of various objects.")]
 		[Remark("There are two possible outcomes of this method."
 		+ "Either, if the object being saved is trivial enough (like a known value type),"

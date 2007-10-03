@@ -278,7 +278,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static void Bootstrap() {
+		public static new void Bootstrap() {
 			ScriptLoader.RegisterScriptType(new string[] { "ScriptedTargetDef", "TargetDef" },
 				LoadFromScripts, false);
 		}

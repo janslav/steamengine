@@ -22,7 +22,7 @@ using SteamEngine.Persistence;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	public class DateTimeImplementor : ISimpleSaveImplementor {
+	public sealed class DateTimeImplementor : ISimpleSaveImplementor {
 		private static DateTimeImplementor instance;
 		public static DateTimeImplementor Instance {
 			get {
@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class TimeSpanImplementor : ISimpleSaveImplementor {
+	public sealed class TimeSpanImplementor : ISimpleSaveImplementor {
 		private static TimeSpanImplementor instance;
 		public static TimeSpanImplementor Instance {
 			get {

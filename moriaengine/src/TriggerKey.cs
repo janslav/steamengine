@@ -16,35 +16,27 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine.Packets;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 	
 namespace SteamEngine {
 	//TriggerKeys are used when calling triggers. You should call Get(name) once to get a TriggerKey, and then use
 	//that from then on for calling that trigger.
-	//This and FunctionKey are very similar, and serve similar purposes.
-	public class TriggerKey : AbstractKey{
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
-				
-		private TriggerKey(string name, int uid) : base(name, uid) {
+	public class TriggerKey : AbstractKey {
+		private static Dictionary<string, TriggerKey> byName = new Dictionary<string, TriggerKey>(StringComparer.OrdinalIgnoreCase);
+
+		private TriggerKey(string name, int uid)
+			: base(name, uid) {
 		}
-		
+
 		public static TriggerKey Get(string name) {
-			TriggerKey tk = byName[name] as TriggerKey;
-			if (tk!=null) {
-				return tk;
+			TriggerKey key;
+			if (byName.TryGetValue(name, out key)) {
+				return key;
 			}
-			int uid=uids++;
-			tk = new TriggerKey(name,uid);
-			byName[name]=tk;
-			return tk;
+			key = new TriggerKey(name, uids++);
+			byName[name] = key;
+			return key;
 		}
 		
 		//Triggers defined as fields for faster access (Won't have to look up the string every time)
@@ -130,7 +122,7 @@ namespace SteamEngine {
 	}
 
 
-	public class TriggerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class TriggerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
 		public static Regex re = new Regex(@"^\@(?<value>.+)\s*$",                     
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 	
