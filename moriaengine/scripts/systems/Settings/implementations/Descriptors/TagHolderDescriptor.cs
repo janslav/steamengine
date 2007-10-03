@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod]
 		[FieldName("TimersCount")]
-		public static void GetTagsCount(object target) {
+		public static void GetTimersCount(object target) {
 			///TODO
 		}
 
