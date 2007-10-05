@@ -22,6 +22,8 @@ Def:	//vars on the def
 
 	uint corpseModel = 0x2006
 	
+	uint AnimsAvailable = 0xffffffff /*all anims by default*/
+	
 	int resistMagic = 0
 	int resistFire = 0
 	int resistElectric = 0

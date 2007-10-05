@@ -172,7 +172,7 @@ namespace SteamEngine.Packets {
 			blockSize=43;
 			if (moreInfo>=1) {
 				blockSize=66;
-				EncodeByte(cre.gender, 43);
+				EncodeByte((cre.IsFemale ? (byte) 1 : (byte) 0), 43);
 				short strength=cre.Str;
 				short dexterity=cre.Dex;
 				short intelligence=cre.Int;

@@ -92,7 +92,6 @@ namespace SteamEngine {
 		private string name = null;
 		public Thing act = null;
 		public Thing targ = null;
-		public byte gender = 0;
 		private byte direction = 0;
 		private ushort model = 0;
 		internal ThingLinkedList visibleLayers;//layers 0..24
@@ -141,7 +140,6 @@ namespace SteamEngine {
 			name=copyFrom.name;
 			targ=copyFrom.targ;
 			flags=copyFrom.flags;
-			gender=copyFrom.gender;
 			direction=copyFrom.direction;
 			model=copyFrom.model;
 
@@ -184,6 +182,9 @@ namespace SteamEngine {
 			}
 		}
 
+		public abstract bool IsFemale { get; }
+		public abstract bool IsMale { get; }
+
 		//Used with NetState, but at present this should be set when the character moves (walk/run/fly), and should remain
 		//set for the rest of the cycle. Maybe there's a potential use for that in scripts, so this is public.
 		public bool Flag_Moving {
@@ -218,17 +219,6 @@ namespace SteamEngine {
 		public ushort MountItem {
 			get {
 				return (Def as AbstractCharacterDef).MountItem;
-			}
-		}
-
-		/**
-			These are flags which specify what kind of model this is, and what anims it has.
-		*/
-		public uint AnimsAvailable {
-			get {
-				uint animsAvailable=(ThingDef.FindCharDef(Model).AnimsAvailable);
-				Sanity.IfTrueThrow(animsAvailable==0, "No AnimsAvailable flags were specified in the scripts for character model "+Model+"!");
-				return animsAvailable;
 			}
 		}
 		
@@ -455,7 +445,6 @@ namespace SteamEngine {
 			if (flagsToSave!=0) {
 				output.WriteValue("flags", flagsToSave);
 			}
-			output.WriteValue("gender",gender);
 			output.WriteValue("direction",(byte)direction);
 			base.Save(output);
 		}
@@ -519,9 +508,6 @@ namespace SteamEngine {
 					break;
 				case "flags":
 					flags = TagMath.ParseUInt16(value);
-					break;
-				case "gender":
-					gender = TagMath.ParseByte(value);
 					break;
 				case "direction":
 					direction = TagMath.ParseByte(value);

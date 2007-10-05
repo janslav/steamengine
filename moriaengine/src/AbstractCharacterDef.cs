@@ -25,11 +25,9 @@ namespace SteamEngine {
 	
 	public abstract class AbstractCharacterDef : ThingDef {
 		private FieldValue mountItem;
-		private FieldValue animsAvailable;
 
 		public AbstractCharacterDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 			mountItem = InitField_Model("mountItem", 0);
-			animsAvailable = InitField_Typed("animsAvailable", 0, typeof(uint));//not sure if it's supposed to be 0 really :)
 		}
 		
 		public ushort MountItem { 
@@ -40,16 +38,6 @@ namespace SteamEngine {
 				mountItem.CurrentValue = value; 
 			}
 		}
-		
-		
-		public uint AnimsAvailable { 
-			get {
-				return (uint) animsAvailable.CurrentValue; 
-			} 
-			set {
-				animsAvailable.CurrentValue = value; 
-			}
-		}
 
 		public override sealed bool IsItemDef { get {
 			return false;
@@ -58,6 +46,9 @@ namespace SteamEngine {
 		public override sealed bool IsCharDef { get {
 			return true;
 		} }
+
+		public abstract bool IsFemale { get; }
+		public abstract bool IsMale { get; }
 		
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			if ("anim".Equals(param)) {

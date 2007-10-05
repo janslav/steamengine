@@ -189,7 +189,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal override Type TargetClass {
-				get { return deleg.Method.DeclaringType; }
+				get {
+					if (deleg == null) {
+						return typeof(void);
+					} else {
+						return deleg.Method.DeclaringType;
+					}
+				}
 			}
 		}
 
