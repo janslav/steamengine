@@ -19,24 +19,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine;
+using SteamEngine.Timers;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Descriptor(typeof(TagHolder),"Tag Holder")]
+	[ViewDescriptor(typeof(TagHolder), "Tag Holder")]
 	public static class TagHolderDescriptor {
 		/* We will add here a few methods for displaying tags, timers, clearing tags and timers
 		 * and also two fields holding information about the tags and timers count*/
 
-		[GetMethod]
-		[FieldName("TagsCount")]
-		public static void GetTagsCount(object target) {
-			///TODO
+		[GetMethod("TagsCount",typeof(int))]
+		public static object GetTagsCount(object target) {
+			int counter = 0;
+			foreach(KeyValuePair<TagKey, object> kvp in ((TagHolder)target).GetAllTags()) {
+				counter++;
+			}
+			return counter;
 		}
 
-		[GetMethod]
-		[FieldName("TimersCount")]
-		public static void GetTimersCount(object target) {
-			///TODO
+		[GetMethod("TimersCount", typeof(int))]
+		public static object GetTimersCount(object target) {
+			int counter = 0;
+			foreach(KeyValuePair<TimerKey, BoundTimer> kvp in ((TagHolder)target).GetAllTimers()) {
+				counter++;
+			}
+			return counter;
 		}
 
 		[Button("Taglist")]
