@@ -402,7 +402,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Used for marking classes used as descriptors - see SimpleClassDescriptor for example."+
 			"Obligatory constructor parameter is handled type, voluntary is the name of the described class")]
-	public class DescriptorAttribute : Attribute {
+	public class ViewDescriptorAttribute : Attribute {
 		private Type handledType;
 		
 		[Remark("The name that will be displayed in the headline of the infodialog")]
@@ -420,11 +420,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		public DescriptorAttribute(Type handledType) {
+		public ViewDescriptorAttribute(Type handledType) {
 			this.handledType = handledType;
 		}
 
-		public DescriptorAttribute(Type handledType, string name) {
+		public ViewDescriptorAttribute(Type handledType, string name) {
 			this.handledType = handledType;
 			this.name = name;
 		}
@@ -432,17 +432,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Used for marking field get method in descriptors")]
 	public class GetMethodAttribute : Attribute {
-	}
-
-	[Remark("Used for marking field set method in descriptors")]
-	public class SetMethodAttribute : Attribute {
-	}
-
-	[Remark("Attribute holding name of the field in descriptor (this must be the same for get and set method)")]
-	public class FieldNameAttribute : Attribute {
-		[Remark("The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set "+
+		[Remark("The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set " +
 				" descriptor method of the same field")]
 		private string name;
+		private Type fieldType;
 
 		public string Name {
 			get {
@@ -450,8 +443,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		public FieldNameAttribute(string name) {
+		public Type FieldType {
+			get {
+				return fieldType;
+			}
+		}
+
+		public GetMethodAttribute(string name, Type fieldType) {
 			this.name = name;
+			this.fieldType = fieldType;
 		}
 	}
+
+	[Remark("Used for marking field set method in descriptors")]
+	public class SetMethodAttribute : Attribute {
+		[Remark("The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set " +
+				" descriptor method of the same field")]
+		private string name;
+		private Type fieldType;
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public Type FieldType {
+			get {
+				return fieldType;
+			}
+		}
+
+		public SetMethodAttribute(string name, Type fieldType) {
+			this.name = name;
+			this.fieldType = fieldType;
+		}
+	}	
 }
