@@ -291,11 +291,30 @@ namespace SteamEngine.CompiledScripts {
 		NumAnims=13
 	}
 
+	public enum Gender : byte {
+		Undefined = 0,
+		Male = 1,
+		Female = 2
+	}
+
 	public enum MaterialType : byte {
 		None=0,
 		Metal=1,
 		Ore=2,
 		Wood=3
+	}
+
+	[Flags]
+	public enum BodyAnimType : byte {
+		Nothing =	0x00,
+		Monster =	0x01,
+		Animal =	0x02,
+		Human =		0x04,
+		Equipment =	0x08,
+		SeaAnimal =	0x10|Animal,
+		Male =		0x20,
+		Female =	0x40,
+		Ghost =		0x80
 	}
 
 	public enum Material : byte {

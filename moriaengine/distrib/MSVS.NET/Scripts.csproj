@@ -245,6 +245,12 @@
     <Compile Include="..\..\scripts\systems\AI\PathFinding\AStar.cs">
       <Link>systems\AI\Pathfinding\AStar.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Animations\AnimCalculator.cs">
+      <Link>systems\Animations\AnimCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Animations\AnimInfo.cs">
+      <Link>systems\Animations\AnimInfo.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\BackupsManager.cs">
       <Link>systems\BackupsManager.cs</Link>
     </Compile>
@@ -316,6 +322,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\ListDataView.cs">
       <Link>systems\settings\Implementations\DataViews\ListDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginHolderDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\PluginHolderDescriptor.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\TagHolderDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\TagHolderDescriptor.cs</Link>
@@ -547,9 +556,6 @@
     </Compile>
     <Compile Include="..\..\scripts\types\type_weapons.cs">
       <Link>types\type_weapons.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Utils\AnimCalculator.cs">
-      <Link>Utils\AnimCalculator.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
       <Link>Utils\ExportUtils.cs</Link>

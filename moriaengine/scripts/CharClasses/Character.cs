@@ -26,6 +26,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class CharacterDef {
+		private AnimInfo animInfo;
 
 		private CorpseDef corpseDef;
 		public CorpseDef CorpseDef {
@@ -36,6 +37,64 @@ namespace SteamEngine.CompiledScripts {
 				return corpseDef;
 			}
 		}
+
+		public AnimInfo AnimInfo {
+			get {
+				if (this.animInfo == null) {
+					this.animInfo = AnimInfo.Get(this.Model);
+				}
+				return animInfo;
+			}
+		}
+
+		public bool IsHuman {
+			get {
+				return (this.AnimInfo.BodyAnimType & BodyAnimType.Human) == BodyAnimType.Human;
+			}
+		}
+
+		public bool IsAnimal {
+			get {
+				return (this.AnimInfo.BodyAnimType & BodyAnimType.Animal) == BodyAnimType.Animal;
+			}
+		}
+
+		public bool IsMonster {
+			get {
+				return (this.AnimInfo.BodyAnimType & BodyAnimType.Monster) == BodyAnimType.Monster;
+			}
+		}
+
+		public Gender Gender {
+			get {
+				BodyAnimType body = this.AnimInfo.BodyAnimType;
+				if ((body & BodyAnimType.Male) == BodyAnimType.Male) {
+					return Gender.Male;
+				} else if ((body & BodyAnimType.Female) == BodyAnimType.Female) {
+					return Gender.Female;
+				}
+				return Gender.Undefined;
+			}
+		}
+
+		public override bool IsMale {
+			get {
+				if ((this.AnimInfo.BodyAnimType & BodyAnimType.Female) == BodyAnimType.Female) {
+					return false;
+				}
+				return true;
+			}
+		}
+
+		public override bool IsFemale {
+			get {
+				if ((this.AnimInfo.BodyAnimType & BodyAnimType.Female) == BodyAnimType.Female) {
+					return true;
+				}
+				return false;
+			}
+		}
+
 	}
 
 	[Dialogs.ViewableClass]
@@ -1750,19 +1809,14 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public bool On_AfterSwing(WeaponSwingArgs args) {
-			return false;
+		public void On_AfterSwing(WeaponSwingArgs args) {
 		}
 
-		public bool On_AfterGetSwing(WeaponSwingArgs args) {
-			return false;
+		public void On_AfterGetSwing(WeaponSwingArgs args) {
 		}
-
         
 
-        /// <summary>
-        /// hodi zbran do batohu
-        /// </summary>
+        [Summary("hodi zbran do batohu")]
         public void DisArm()
         {
             Weapon w = this.Weapon;
@@ -1774,6 +1828,34 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_LogOut() {
 			AbortSkill();
 			base.On_LogOut();
+		}
+
+
+		/**
+			These are flags which specify what kind of model this is, and what anims it has.
+		*/
+		public uint AnimsAvailable {
+			get {
+				return AnimInfo.Get(this.Model).AnimsAvailable;
+			}
+		}
+
+		public AnimInfo AnimInfo {
+			get {
+				return AnimInfo.Get(this.Model);
+			}
+		}
+
+		public override bool IsFemale {
+			get {
+				return AnimInfo.Get(this.Model).IsFemale;
+			}
+		}
+
+		public override bool IsMale {
+			get {
+				return AnimInfo.Get(this.Model).IsMale;
+			}
 		}
 	}
 }

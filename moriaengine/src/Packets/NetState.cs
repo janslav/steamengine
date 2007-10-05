@@ -68,7 +68,7 @@ namespace SteamEngine.Packets {
 		private short str;
 		private short intel;
 		private short dex;
-		private byte gender;
+		private bool isFemale;
 		private ulong gold;
 
 		private short armorClass;
@@ -496,13 +496,14 @@ namespace SteamEngine.Packets {
 				PopAndEnqueueInstance(thing).AboutToChangeStats();
 			}
 		}
+
 		private void AboutToChangeStats() {
 			if (IsNewAndPositiveBit(NSFlags.Stats)) {
 				AbstractCharacter c = (AbstractCharacter) thing;
 				str = c.Str;
 				dex = c.Dex;
 				intel = c.Int;
-				gender = c.gender;
+				isFemale = c.IsFemale;
 				gold = c.Gold;
 				armorClass = c.StatusArmorClass;
 				weight = c.Weight;
@@ -520,7 +521,7 @@ namespace SteamEngine.Packets {
 			AbstractCharacter c = (AbstractCharacter) thing;
 			bool retVal = (((changeflags & NSFlags.Stats) == NSFlags.Stats)
 				&&((str != c.Str) || (dex != c.Dex) || (intel != c.Int) ||
-				(gender != c.gender) || (gold != c.Gold) || 
+				(isFemale != c.IsFemale) || (gold != c.Gold) || 
 				(armorClass != c.StatusArmorClass) ||
 				(weight != c.Weight) || (stat1 != c.ExtendedStatusNum1) || 
 				(stat2 != c.ExtendedStatusNum2) || (stat3 != c.ExtendedStatusNum3) || 
