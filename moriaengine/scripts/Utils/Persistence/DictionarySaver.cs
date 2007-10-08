@@ -61,8 +61,7 @@ namespace SteamEngine.CompiledScripts {
 				pl = input.PopPropsLine("TValue");
 				currentLineNumber = pl.line;
 				genericTypes[1] = GenericListSaver.ParseType(pl);
-				Type dictType = typeof(Dictionary<,>);
-				dictType.MakeGenericType(genericTypes);
+				Type dictType = typeof(Dictionary<,>).MakeGenericType(genericTypes);
 				IDictionary dict = (IDictionary) Activator.CreateInstance(dictType);
 
 				PropsLine countLine = input.PopPropsLine("count");
@@ -139,8 +138,7 @@ namespace SteamEngine.CompiledScripts {
 			IDictionary copyFromDict = (IDictionary) copyFrom;
 
 			Type[] genericArguments = copyFrom.GetType().GetGenericArguments();
-			Type dictType = typeof(Dictionary<,>);
-			dictType.MakeGenericType(genericArguments);
+			Type dictType = typeof(Dictionary<,>).MakeGenericType(genericArguments);
 			IDictionary newDict = (IDictionary) Activator.CreateInstance(dictType);
 
 			foreach (DictionaryEntry entry in copyFromDict) {
