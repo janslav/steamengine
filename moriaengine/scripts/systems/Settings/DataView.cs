@@ -58,18 +58,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public static SortedList<Type, IDataView> dataViewsForbaseClasses = new SortedList<Type, IDataView>(new TypeHierarchyComparer());
 
-		private class TypeHierarchyComparer : IComparer<Type> {
-			public int Compare(Type x, Type y) {
-				if (x.IsSubclassOf(y)) {
-					return 1;
-				} else if (x == y) {
-					return 0;
-				} else {
-					return -1;
-				}
-			}
-		}
-
 		[Remark("Will find dataview for given type.")]
 		public static IDataView FindDataViewByType(Type handledType) {
 			IDataView view = (IDataView)dataViewsForTypes[handledType];
@@ -478,5 +466,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.name = name;
 			this.fieldType = fieldType;
 		}
-	}	
+	}
+
+	[Remark("For comparing collections containing Types")]
+	public class TypeHierarchyComparer : IComparer<Type> {
+		public int Compare(Type x, Type y) {
+			if (x.IsSubclassOf(y)) {
+				return 1;
+			} else if (x == y) {
+				return 0;
+			} else {
+				return -1;
+			}
+		}
+	}
 }
