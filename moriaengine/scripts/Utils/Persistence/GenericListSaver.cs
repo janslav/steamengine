@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 			Type memberType = listType.GetGenericArguments()[0];
 			int count = list.Count;
 			writer.WriteValue("count", count);
-			writer.WriteLine("type="+memberType.Name);
+			writer.WriteLine("type="+GenericListSaver.GetTypeName(memberType));
 			for (int i = 0; i<count; i++) {
 				writer.WriteValue(i.ToString(), list[i]);
 			}
@@ -87,6 +87,14 @@ namespace SteamEngine.CompiledScripts {
 				throw new Exception("Element type not recognised.");
 			}
 			return elemType;
+		}
+
+		public static string GetTypeName(Type type) {
+			if (ClassManager.GetType(type.Name) == type) {//steamengine class
+				return type.Name;
+			} else {
+				return type.FullName;
+			}
 		}
 		
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {

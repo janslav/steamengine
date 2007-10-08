@@ -41,8 +41,8 @@ namespace SteamEngine.CompiledScripts {
 			int count = dict.Count;
 			writer.WriteValue("count", count);
 			Type[] genericArguments = objToSave.GetType().GetGenericArguments();
-			writer.WriteLine("TKey="+genericArguments[0].Name);
-			writer.WriteLine("TValue="+genericArguments[1].Name);
+			writer.WriteLine("TKey="+GenericListSaver.GetTypeName(genericArguments[0]));
+			writer.WriteLine("TValue="+GenericListSaver.GetTypeName(genericArguments[1]));
 			int i = 0;
 			foreach (DictionaryEntry entry in dict) {
 				writer.WriteValue(i+".K", entry.Key);
