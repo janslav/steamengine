@@ -29,20 +29,19 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	internal sealed class ViewableClassGenerator : ISteamCSCodeGenerator {
 		static List<Type> viewableClasses = new List<Type>();
-		static List<Type> viewableDescriptors = new List<Type>();
-		static Hashtable typesViewablesTable = new Hashtable();
-		static Hashtable typesDescriptorsTable = new Hashtable();
+
+		//key is type, value is its descriptor
+		static Dictionary<Type, Type> viewableDescriptorsForTypes = new Dictionary<Type, Type>();
 
 		internal static int classCounter = 0;
 
 		public CodeCompileUnit WriteSources() {
 			try {
-				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-				CodeNamespace ns = null;
+				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();				
 				if (viewableClasses.Count > 0) {
-					Logger.WriteDebug("Generating DataViews");
+					Logger.WriteDebug("Generating DataViews and View Descriptors");
 
-					ns = new CodeNamespace("SteamEngine.CompiledScripts.Dialogs");
+					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts.Dialogs");
 					codeCompileUnit.Namespaces.Add(ns);
 					
 					foreach (Type viewableClass in viewableClasses) {
@@ -59,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+viewableClasses.Count+" DataViews");
+					Logger.WriteDebug("Done generating "+viewableClasses.Count+" DataViews and View Descriptors");
 				}
 
 				if(viewableDescriptors.Count > 0) {
@@ -116,17 +115,34 @@ namespace SteamEngine.CompiledScripts {
 			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false)) {
 				viewableClasses.Add(type);
 			} else if(Attribute.IsDefined(type, typeof(ViewDescriptorAttribute), false)) {
-				viewableDescriptors.Add(type); //we have found some descriptor class
+				Type descHandledType = ((ViewDescriptorAttribute)type.GetCustomAttributes(typeof(ViewDescriptorAttribute), false)[0]).HandledType;
+				viewableDescriptorsForTypes.Add(descHandledType,type); //we have found some descriptor class
 			}
+		}
+
+		[Remark("Go through all descriptors and look if their handled type is assignable from the just generated one")]
+		private List<Type> FindDescriptorsForType(Type infoizedType) {
+			List<Type> retList = new List<Type>(new TypeHierarchyComparer());
+			foreach (Type describedType in viewableDescriptorsForTypes.Keys) {
+				if (describedType.IsAssignableFrom(infoizedType)) {
+					//a describedType is some parent class of the infoized type
+					retList.Add(describedType);//the described types list will be sorted and then used for getting and generating all descriptors
+				}
+			}
+			return retList;
 		}
 
 		private class GeneratedInstance {
 			//all fields except marked as NoShow
-			internal Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
-			internal Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
-			//internal List<FieldInfo> fields = new List<FieldInfo>();
-			//internal List<PropertyInfo> properties = new List<PropertyInfo>();
+			internal Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(StringComparer.OrdinalIgnoreCase);
+			internal Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>(StringComparer.OrdinalIgnoreCase);
 			internal List<MethodInfo> buttonMethods = new List<MethodInfo>();
+
+			//this will be the list containing all descriptor methods from which the dialog action buttons will be created
+			internal List<MethodInfo> descButtonMethods = new List<MethodInfo>();
+			//in this dictionary will be stored all described fields. we will find out whether the field has Getter or Setter (or both) methods
+			internal Dictionary<string, PropertyMethods> describedFields = new Dictionary<string, PropertyMethods>(StringComparer.OrdinalIgnoreCase);
+			
 			Type type;
 			string typeLabel; //label for info dialogs - obtained from ViewableClassAttribute
 			CodeTypeDeclaration codeTypeDeclaration;
@@ -175,6 +191,9 @@ namespace SteamEngine.CompiledScripts {
 						buttonMethods.Add(minf);
 					}
 				}
+
+				//now find any possible descriptors, we will have to add them too...
+				List<Type> typeDescriptors = FindDescriptorsForType(type);
 			}
 			
 			internal CodeTypeDeclaration GetGeneratedType() {
@@ -669,11 +688,7 @@ namespace SteamEngine.CompiledScripts {
 			string descLabel; //label for info dialogs - it will be used unless the ViewableClass for the Type is found
 			CodeTypeDeclaration ctd;
 
-			//this will be the list containing all methods from which the dialog action buttons will be created
-			internal List<MethodInfo> buttonMethods = new List<MethodInfo>();
-			//in this dictionary will be stored all described fields. we will find out whether the field has Getter or Setter (or both) methods
-			internal Dictionary<string, PropertyMethods> describedFields = new Dictionary<string, PropertyMethods>(StringComparer.OrdinalIgnoreCase);
-
+			
 			internal GeneratedInstanceDesc(Type descriptorType) {
 				this.descriptorType = descriptorType;
 				ViewDescriptorAttribute vda = (ViewDescriptorAttribute)descriptorType.GetCustomAttributes(typeof(ViewDescriptorAttribute), false)[0];
