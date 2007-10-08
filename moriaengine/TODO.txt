@@ -41,6 +41,10 @@ Stuff assigned to individual devs:
 
 tar
 ----------------------------------------------------
+	Combat  Colors, right ? Make them visible ? Right ? Like ... I'm comming to the monster yeah ? Now, Im trying to kill it so
+		I'm targetting the monster by dclicking on him and here we are, The monster must turn red or such ... like his status collor
+		or something. So while I'm moving target over any monster, there should be this color change and already targetted monster,
+		that is the one, I'm attacking, must stay colored. And if you hadn't understood you are realy an ignorant .... at least.
 	Multis
 		MultiRegions
 		Boats
