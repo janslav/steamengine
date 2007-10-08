@@ -119,7 +119,7 @@ namespace SteamEngine {
 		
 		private void FindNewFiles(DirectoryInfo dir, List<ScriptFile> list) {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos())  { 
-				if ((entry.Attributes&FileAttributes.Directory)==FileAttributes.Directory) {
+				if (entry is DirectoryInfo) {
 					DirectoryInfo di = (DirectoryInfo) entry;
 					if (!IsAvoidedDirectory(di)) {
 						FindNewFiles(di, list);
