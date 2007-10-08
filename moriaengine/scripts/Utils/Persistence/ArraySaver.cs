@@ -38,11 +38,7 @@ namespace SteamEngine.CompiledScripts {
 				throw new NotImplementedException("Multi-dimensional array saving not implemented.");
 			}
 			Type elemType = arrType.GetElementType();
-			if (ClassManager.GetType(elemType.Name) == elemType) {//steamengine class
-				writer.WriteLine("type="+ elemType.Name);
-			} else {
-				writer.WriteLine("type="+ elemType.FullName);
-			}
+			writer.WriteLine("type="+ GenericListSaver.GetTypeName(elemType));
 			
 			int length = arr.Length;
 			writer.WriteValue("length", length);
