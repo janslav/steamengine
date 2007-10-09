@@ -317,11 +317,17 @@
     <Compile Include="..\..\scripts\systems\settings\DataView.cs">
       <Link>systems\settings\DataView.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\DictionaryDataView.cs">
+      <Link>systems\settings\Implementations\DataViews\DictionaryDataView.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\EnumDataView.cs">
       <Link>systems\settings\Implementations\DataViews\EnumDataView.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\ListDataView.cs">
       <Link>systems\settings\Implementations\DataViews\ListDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\CharacterDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\CharacterDescriptor.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginHolderDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\PluginHolderDescriptor.cs</Link>
@@ -336,7 +342,7 @@
       <Link>systems\settings\SettingsCategories.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsInfo.cs">
-      <Link>systems\settings\SettingsInfo.cs</Link>
+      <Link>systems\utilities\SettingsInfo.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsProvider.cs">
       <Link>systems\settings\SettingsProvider.cs</Link>

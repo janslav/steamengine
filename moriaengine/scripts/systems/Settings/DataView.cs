@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public static class DataViewProvider {
 		public static Hashtable dataViewsForTypes = new Hashtable();
 
-		public static SortedList<Type, IDataView> dataViewsForbaseClasses = new SortedList<Type, IDataView>(new TypeHierarchyComparer());
+		public static SortedList<Type, IDataView> dataViewsForbaseClasses = new SortedList<Type, IDataView>(TypeHierarchyComparer.instance);
 
 		[Remark("Will find dataview for given type.")]
 		public static IDataView FindDataViewByType(Type handledType) {
@@ -395,7 +395,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		
 		[Remark("The name that will be displayed in the headline of the infodialog")]
 		private string name;
-		
+
+		[Remark("Array of field names that wont be generated to the DataView")]
+		private string[] nonDisplayedFields;
+
 		public Type HandledType {
 			get {
 				return handledType;
@@ -408,6 +411,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		public string[] NonDisplayedFields {
+			get {
+				return nonDisplayedFields;
+			}
+		}
+
 		public ViewDescriptorAttribute(Type handledType) {
 			this.handledType = handledType;
 		}
@@ -415,6 +424,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public ViewDescriptorAttribute(Type handledType, string name) {
 			this.handledType = handledType;
 			this.name = name;
+		}
+
+		public ViewDescriptorAttribute(Type handledType, string name, string[] nonDisplayedFields) {
+			this.handledType = handledType;
+			this.name = name;
+			this.nonDisplayedFields = nonDisplayedFields;
 		}
 	}
 
@@ -470,6 +485,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("For comparing collections containing Types")]
 	public class TypeHierarchyComparer : IComparer<Type> {
+		public static TypeHierarchyComparer instance = new TypeHierarchyComparer();
+
+		private TypeHierarchyComparer() {
+		}
+
 		public int Compare(Type x, Type y) {
 			if (x.IsSubclassOf(y)) {
 				return 1;
