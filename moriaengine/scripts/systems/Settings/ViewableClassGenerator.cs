@@ -46,10 +46,11 @@ namespace SteamEngine.CompiledScripts {
 					
 					foreach (Type viewableClass in viewableClasses) {
 						try {
+							//class for generating all fields, including those from possible descriptors
 							GeneratedInstance gi = new GeneratedInstance(viewableClass);
-							if(gi.buttonMethods.Count + gi.fields.Count + gi.properties.Count > 0) {//we have at least one MemberInfo
-							    //CodeTypeDeclaration ctd = gi.GetGeneratedType();
-							    //ns.Types.Add(ctd);
+							if(gi.GetAllFieldViewsCount() > 0) {//we have at least one MemberInfo
+							    CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							    ns.Types.Add(ctd);
 							}
 						} catch (FatalException) {
 							throw;
@@ -60,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 					Logger.WriteDebug("Done generating "+viewableClasses.Count+" DataViews and View Descriptors");
 				}
-
+				/*
 				if(viewableDescriptors.Count > 0) {
 					Logger.WriteDebug("Generating View Descriptors");
 
@@ -84,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 					Logger.WriteDebug("Done generating " + viewableDescriptors.Count + " viewable descriptors");
-				}
+				}*/
 				return codeCompileUnit;
 			} finally {
 				viewableClasses.Clear();
@@ -121,13 +122,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Remark("Go through all descriptors and look if their handled type is assignable from the just generated one")]
-		private List<Type> FindDescriptorsForType(Type infoizedType) {
-			List<Type> retList = new List<Type>(new TypeHierarchyComparer());
+		private static List<Type> FindDescriptorsForType(Type infoizedType) {
+			List<Type> typeList = new List<Type>();
+			List<Type> retList = new List<Type>();
 			foreach (Type describedType in viewableDescriptorsForTypes.Keys) {
 				if (describedType.IsAssignableFrom(infoizedType)) {
 					//a describedType is some parent class of the infoized type
-					retList.Add(describedType);//the described types list will be sorted and then used for getting and generating all descriptors
+					typeList.Add(describedType);//the described types list will be sorted and then used for getting and generating all descriptors
 				}
+			}
+			typeList.Sort(TypeHierarchyComparer.instance);
+			//now take the types that are assignable from the infoized type and get their descriptors in the right order
+			foreach(Type assignableTypeWithDescriptor in typeList) {
+				retList.Add(viewableDescriptorsForTypes[assignableTypeWithDescriptor]);
 			}
 			return retList;
 		}
@@ -138,12 +145,11 @@ namespace SteamEngine.CompiledScripts {
 			internal Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>(StringComparer.OrdinalIgnoreCase);
 			internal List<MethodInfo> buttonMethods = new List<MethodInfo>();
 
-			//this will be the list containing all descriptor methods from which the dialog action buttons will be created
-			internal List<MethodInfo> descButtonMethods = new List<MethodInfo>();
-			//in this dictionary will be stored all described fields. we will find out whether the field has Getter or Setter (or both) methods
-			internal Dictionary<string, PropertyMethods> describedFields = new Dictionary<string, PropertyMethods>(StringComparer.OrdinalIgnoreCase);
-			
-			Type type;
+			List<DescriptorData> descriptors = new List<DescriptorData>();//all descriptors will be here
+
+			HashSet<string> nonGeneratedFields = new HashSet<string>();//set of fields that will be ommited during generating (filled from descriptors)
+
+			Type type; //type of the viewable class
 			string typeLabel; //label for info dialogs - obtained from ViewableClassAttribute
 			CodeTypeDeclaration codeTypeDeclaration;
 
@@ -155,15 +161,30 @@ namespace SteamEngine.CompiledScripts {
 				BindingFlags forActualMembers = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public|BindingFlags.DeclaredOnly;
 				BindingFlags forInheritedMembers = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
 
+				//now find any possible descriptors, we will have to add them too...
+				List<Type> typeDescriptors = FindDescriptorsForType(type);
+				foreach(Type descriptorType in typeDescriptors) {
+					//add a prepared DescriptorData class to the list
+					DescriptorData descData = new DescriptorData(descriptorType);
+					descriptors.Add(descData);
+					if(descData.nonDisplayedFields != null && descData.nonDisplayedFields.Length > 0) {
+						foreach(string namedField in descData.nonDisplayedFields) {
+							nonGeneratedFields.Add(namedField);
+						}
+					}
+				}
+
 				//get all fields from the actual Type except for those marked as "NoShow"
 				MemberInfo[] fldsMine = type.FindMembers(MemberTypes.Field | MemberTypes.Property, forActualMembers, HasntAttribute, typeof(NoShowAttribute));
 				foreach (MemberInfo fld in fldsMine) {
 					PropertyInfo propinf = fld as PropertyInfo;
-					if(propinf != null) {
+					//check also if it wasn't ommited by descriptor...
+					if(propinf != null && !nonGeneratedFields.Contains(propinf.Name)) {
 						properties.Add(propinf.Name,propinf);
 					}
 					FieldInfo fldinf = fld as FieldInfo;
-					if(fldinf != null) {
+					//check also if it wasn't ommited by descriptor...
+					if(fldinf != null && !nonGeneratedFields.Contains(fldinf.Name)) {
 						fields.Add(fldinf.Name,fldinf);						
 					}
 				}
@@ -172,12 +193,14 @@ namespace SteamEngine.CompiledScripts {
 				MemberInfo[] fldsAll = type.FindMembers(MemberTypes.Field | MemberTypes.Property, forInheritedMembers, HasntAttribute, typeof(NoShowAttribute));
 				foreach (MemberInfo fld in fldsAll) {
 					PropertyInfo propinf = fld as PropertyInfo;
-					if (propinf != null) {
+					//check also if it wasn't ommited by descriptor...					
+					if(propinf != null && !nonGeneratedFields.Contains(propinf.Name)) {
 						if(!properties.ContainsKey(propinf.Name))//isnt this property already in the dictionary?
 							properties.Add(propinf.Name,propinf);
 					}
 					FieldInfo fldinf = fld as FieldInfo;
-					if (fldinf != null) {
+					//check also if it wasn't ommited by descriptor...					
+					if(fldinf != null && !nonGeneratedFields.Contains(fldinf.Name)) {
 						if (!fields.ContainsKey(fldinf.Name))//isnt this property already in the dictionary?
 							fields.Add(fldinf.Name,fldinf);
 					}
@@ -191,11 +214,9 @@ namespace SteamEngine.CompiledScripts {
 						buttonMethods.Add(minf);
 					}
 				}
-
-				//now find any possible descriptors, we will have to add them too...
-				List<Type> typeDescriptors = FindDescriptorsForType(type);
 			}
-			
+
+			#region Viewable class' DataView generating methods
 			internal CodeTypeDeclaration GetGeneratedType() {
 
 				codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDataView_" + type.Name + "_" + ViewableClassGenerator.classCounter++);
@@ -212,9 +233,31 @@ namespace SteamEngine.CompiledScripts {
 				codeTypeDeclaration.Members.Add(GenerateGetNameMethod());
 				codeTypeDeclaration.Members.Add(GenerateHandledTypeProperty());
 
-				//now create the inner classes of all IDataFieldViews for this class
-				//first classes for buttons
+				//preapre the fields and actionbuttons storages
 				List<string> buttonDataFieldViews = new List<string>();
+				List<string> fieldsDataFieldViews = new List<string>();
+				
+
+				//now go through the list of descriptors and add all fields and buttons originating from the descriptor too...
+				//we go through the descriptors first as we want their fields to be the first on the page
+				foreach(DescriptorData oneDesc in descriptors) {
+					//first, add classes for descriptor's buttons
+					foreach(MethodInfo buttonMethod in oneDesc.buttonMethods) {
+						CodeTypeDeclaration oneButtonIDFW = oneDesc.GenerateButtonIDFW(buttonMethod);
+						buttonDataFieldViews.Add(oneButtonIDFW.Name); //store the name of the new generated type
+						codeTypeDeclaration.Members.Add(oneButtonIDFW);
+					}
+
+					//now the descriptor's fields...
+					foreach(KeyValuePair<string, PropertyMethods> oneKVP in oneDesc.describedFields) {
+						CodeTypeDeclaration oneFieldIDFW = oneDesc.GenerateFieldIDFW(oneKVP.Value);
+						fieldsDataFieldViews.Add(oneFieldIDFW.Name); //store the name of the newly generated type. use the field name as key
+						codeTypeDeclaration.Members.Add(oneFieldIDFW);
+					}
+				}
+
+				//now create the inner classes of all own IDataFieldViews for this class
+				//first classes for buttons
 				foreach(MethodInfo buttonMethod in buttonMethods) {
 					CodeTypeDeclaration oneButtonIDFW = GenerateButtonIDFW(buttonMethod);
 					buttonDataFieldViews.Add(oneButtonIDFW.Name); //store the name of the new generated type
@@ -222,7 +265,6 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				//then classes for datafields
-				List<string> fieldsDataFieldViews = new List<string>();
 				foreach(FieldInfo oneField in fields.Values) {
 					CodeTypeDeclaration oneFieldIDFW = GenerateFieldIDFW(oneField);
 					fieldsDataFieldViews.Add(oneFieldIDFW.Name); //store the name of the new generated type
@@ -241,7 +283,7 @@ namespace SteamEngine.CompiledScripts {
 
 				return codeTypeDeclaration;
 			}
-
+	
 			[Remark("Method for getting one page of action buttons")]
 			private CodeMemberMethod GenerateGetActionButtonsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
@@ -280,6 +322,12 @@ namespace SteamEngine.CompiledScripts {
 
 			[Remark("The GetActionButtonsCount method - says how many buttons will there be")]
 			private CodeMemberMethod GenerateGetActionButtonsCountMethod() {
+				int buttonsCount = 0;
+				buttonsCount += buttonMethods.Count; //class' own buttons
+				foreach(DescriptorData desc in descriptors) {
+					buttonsCount += desc.buttonMethods.Count; //plus descriptor's buttons...
+				}
+
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				retVal.Name = "GetActionButtonsCount";
@@ -287,13 +335,19 @@ namespace SteamEngine.CompiledScripts {
 				retVal.ReturnType = new CodeTypeReference(typeof(int));
 				retVal.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
-												buttonMethods.Count
+												buttonsCount
 										)));
 				return retVal;
 			}
 
-			[Remark("The GetActionButtonsCount method - says how many rows will there be")]
+			[Remark("The GenerateGetFieldsCountMethod method - says how many fields will there be")]
 			private CodeMemberMethod GenerateGetFieldsCountMethod() {
+				int fieldsCount = 0;
+				fieldsCount += fields.Count + properties.Count; //class' own fields
+				foreach(DescriptorData desc in descriptors) {
+					fieldsCount += desc.describedFields.Count; //plus descriptor's fields...
+				}
+
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				retVal.Name = "GetFieldsCount";
@@ -301,7 +355,7 @@ namespace SteamEngine.CompiledScripts {
 				retVal.ReturnType = new CodeTypeReference(typeof(int));
 				retVal.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
-												fields.Count+properties.Count
+												fieldsCount
 										)));
 				return retVal;
 			}
@@ -631,7 +685,7 @@ namespace SteamEngine.CompiledScripts {
 				//List<CodeStatement> iterationBlock = new List<CodeStatement>();
 
 				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\tswitch(nextIndex) {"));
-				for(int i = 0; i < fieldsDFVs.Count; i++) { //for every ReadWriteDataFieldView add one "case"
+				for(int i = 0; i < fieldsDFVs.Count; i++) { //for every IDataFieldView add one "case"
 					moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tcase " + i + ":"));
 					moveNextMeth.Statements.Add(new CodeAssignStatement(
 									new CodeVariableReferenceExpression("current"),
@@ -647,8 +701,7 @@ namespace SteamEngine.CompiledScripts {
 							));
 				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t}"));
 
-				if (fieldsDFVs.Count > 0) { //if no fields found, only "default part" od switch - dont show anything else
-
+				if (fieldsDFVs.Count > 0) { //if no fields found, only "default part" of switch - dont show anything else
 					//increase indexer for the next step
 					moveNextMeth.Statements.Add(new CodeAssignStatement(
 									new CodeVariableReferenceExpression("nextIndex"),
@@ -658,7 +711,7 @@ namespace SteamEngine.CompiledScripts {
 										new CodePrimitiveExpression(1)
 								)));
 
-					//return true -we will continue in iterating				
+					//return true -we will continue with iterating				
 					moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
 									new CodePrimitiveExpression(true)
 								));
@@ -679,25 +732,45 @@ namespace SteamEngine.CompiledScripts {
 				Type attType = (Type)attributeType;
 				return !Attribute.IsDefined(m, attType, false);
 			}
+	#endregion
+
+			internal int GetAllFieldViewsCount() {
+				int retVal = 0;
+				retVal = fields.Count + properties.Count + buttonMethods.Count;
+				//add also all fields from descriptor
+				foreach(DescriptorData descData in descriptors) {
+					retVal += descData.buttonMethods.Count;
+					retVal += descData.describedFields.Count;
+				}
+				return retVal;
+			}
 		}
 
-		[Remark("Special class used similiarly as GeneratedInstance but only for ViewableDescriptors")]
-		private class GeneratedInstanceDesc {
+		[Remark("Special class used similiarly as GeneratedInstance but only for ViewableDescriptors."+
+				"All found descriptors will have one instance and they will be stored in a list in the GeneratedInstance class")]
+		private class DescriptorData {
 			Type handledType;
 			Type descriptorType;
 			string descLabel; //label for info dialogs - it will be used unless the ViewableClass for the Type is found
-			CodeTypeDeclaration ctd;
-
 			
-			internal GeneratedInstanceDesc(Type descriptorType) {
+			//this will be the list containing all descriptor methods from which the dialog action buttons will be created
+			internal List<MethodInfo> buttonMethods = new List<MethodInfo>();
+			//in this dictionary will be stored all described fields. we will find out whether the field has Getter or Setter (or both) methods
+			internal Dictionary<string, PropertyMethods> describedFields = new Dictionary<string, PropertyMethods>(StringComparer.OrdinalIgnoreCase);
+
+			internal string[] nonDisplayedFields;//explicitely named fields that wont be generated to the DataView
+
+			internal DescriptorData(Type descriptorType) {
 				this.descriptorType = descriptorType;
 				ViewDescriptorAttribute vda = (ViewDescriptorAttribute)descriptorType.GetCustomAttributes(typeof(ViewDescriptorAttribute), false)[0];
 				descLabel = (vda.Name == null ? handledType.Name : vda.Name); //label will be either the name of the type or specified label
 				handledType = vda.HandledType;
+				nonDisplayedFields = vda.NonDisplayedFields; //can be null or array of fieldnames
+
 				//binding flags for members of the actual type - do not consider members from the possible parent classes, everything is static here!
 				BindingFlags forMembers = BindingFlags.IgnoreCase|BindingFlags.Static|BindingFlags.Public;
 
-				//get all methods from the Type that have the "Button" attribute
+				//get all methods from the descriptor that have the "Button" attribute
 				MemberInfo[] mths = descriptorType.FindMembers(MemberTypes.Method, forMembers, HasAttribute, typeof(ButtonAttribute));
 				foreach(MemberInfo mi in mths) {
 					MethodInfo minf = mi as MethodInfo;
@@ -706,7 +779,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 
-				//get all methods from the Type that have the "GetMethod" attribute
+				//get all methods from the descriptor that have the "GetMethod" attribute
 				mths = descriptorType.FindMembers(MemberTypes.Method, forMembers, HasAttribute, typeof(GetMethodAttribute));
 				foreach(MemberInfo mi in mths) {
 					MethodInfo minf = mi as MethodInfo;
@@ -749,140 +822,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			internal CodeTypeDeclaration GetGeneratedType() {
-
-				ctd = new CodeTypeDeclaration("GeneratedViewDescriptor_" + handledType.Name + "_" + ViewableClassGenerator.classCounter++);
-				ctd.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				ctd.BaseTypes.Add(typeof(AbstractDataView));
-				ctd.IsClass = true;
-
-				//first add two methods for getting the ActionsButtonsPage and DataFieldsPage
-				ctd.Members.Add(GenerateGetActionButtonsPageMethod());
-				ctd.Members.Add(GenerateGetDataFieldsPageMethod());
-
-				ctd.Members.Add(GenerateGetActionButtonsCountMethod());
-				ctd.Members.Add(GenerateGetFieldsCountMethod());
-				ctd.Members.Add(GenerateGetNameMethod());
-				ctd.Members.Add(GenerateHandledTypeProperty());
-
-				//now create the inner classes of all IDataFieldViews for this class
-				//first classes for buttons
-				List<string> buttonDataFieldViews = new List<string>();
-				foreach(MethodInfo buttonMethod in buttonMethods) {
-					CodeTypeDeclaration oneButtonIDFW = GenerateButtonIDFW(buttonMethod);
-					buttonDataFieldViews.Add(oneButtonIDFW.Name); //store the name of the new generated type
-					ctd.Members.Add(oneButtonIDFW);
-				}
-
-				//then classes for datafields
-				Dictionary<string,string> describedFieldViews = new Dictionary<string,string>();
-				foreach(KeyValuePair<string,PropertyMethods> oneKVP in describedFields) {
-					CodeTypeDeclaration oneFieldIDFW = GenerateFieldIDFW(oneKVP.Value);
-					describedFieldViews.Add(oneKVP.Key,oneFieldIDFW.Name); //store the name of the newly generated type. use the field name as key
-					ctd.Members.Add(oneFieldIDFW);
-				}
-
-				//now add a Class representing one Page of action buttons
-				ctd.Members.Add(GenerateActionButtonsPage(buttonDataFieldViews));
-				//and a Class representing one Page of other datafields
-				ctd.Members.Add(GenerateDataFieldsPage(describedFieldViews));
-
-				return ctd;
-			}
-
-			[Remark("Method for getting one page of action buttons")]
-			private CodeMemberMethod GenerateGetActionButtonsPageMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "GetActionButtonsPage";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
-				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<ButtonDataFieldView>));
-
-				retVal.Statements.Add(new CodeMethodReturnStatement(
-					//makes the "new ..." section
-										new CodeObjectCreateExpression(handledType.Name + "DescActionButtonsPage",
-					//two parameters
-											new CodeVariableReferenceExpression("firstLineIndex"),
-											new CodeVariableReferenceExpression("target"))
-										));
-				return retVal;
-			}
-
-			[Remark("Method for getting one page of data fields buttons")]
-			private CodeMemberMethod GenerateGetDataFieldsPageMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "GetDataFieldsPage";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
-				retVal.ReturnType = new CodeTypeReference(typeof(IEnumerable<IDataFieldView>));
-
-				retVal.Statements.Add(new CodeMethodReturnStatement(
-										new CodeObjectCreateExpression(handledType.Name + "DescDataFieldsPage",
-											new CodeVariableReferenceExpression("firstLineIndex"),
-											new CodeVariableReferenceExpression("target"))
-										));
-				return retVal;
-			}
-
-			[Remark("The GetActionButtonsCount method - says how many buttons will there be")]
-			private CodeMemberMethod GenerateGetActionButtonsCountMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "GetActionButtonsCount";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "instance"));
-				retVal.ReturnType = new CodeTypeReference(typeof(int));
-				retVal.Statements.Add(new CodeMethodReturnStatement(
-											new CodePrimitiveExpression(
-												buttonMethods.Count
-										)));
-				return retVal;
-			}
-
-			[Remark("The GetActionButtonsCount method - says how many rows will there be")]
-			private CodeMemberMethod GenerateGetFieldsCountMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "GetFieldsCount";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "instance"));
-				retVal.ReturnType = new CodeTypeReference(typeof(int));
-				retVal.Statements.Add(new CodeMethodReturnStatement(
-											new CodePrimitiveExpression(
-												describedFields.Count
-										)));
-				return retVal;
-			}
-
-			[Remark("The GetName method")]
-			private CodeMemberMethod GenerateGetNameMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "GetName";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "instance"));
-				retVal.ReturnType = new CodeTypeReference(typeof(string));
-				retVal.Statements.Add(new CodeMethodReturnStatement(
-											new CodePrimitiveExpression(
-												descLabel
-										)));
-				return retVal;
-			}
-
-			[Remark("The HandledType getter")]
-			private CodeMemberProperty GenerateHandledTypeProperty() {
-				CodeMemberProperty retVal = new CodeMemberProperty();
-				retVal.HasGet = true;
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				retVal.Name = "HandledType";
-				retVal.Type = new CodeTypeReference(typeof(Type));
-				retVal.GetStatements.Add(new CodeMethodReturnStatement(
-											new CodeTypeOfExpression(handledType)
-										));
-				return retVal;
-			}
-
-			[Remark("Generate an inner class for handling Action Buttons")]
-			private CodeTypeDeclaration GenerateButtonIDFW(MethodInfo minf) {
+			#region Descriptor's fields/buttons build methods
+			[Remark("Generate an inner class for handling one descriptor's Action Button")]
+			internal CodeTypeDeclaration GenerateButtonIDFW(MethodInfo minf) {
 				ButtonAttribute bat = (ButtonAttribute)minf.GetCustomAttributes(typeof(ButtonAttribute), false)[0];
 				string buttonLabel = (bat.Name == null ? minf.Name : bat.Name); //label of the button (could have been specified in ButtonAttribute)
 				string newClassName = "GeneratedButtonDataFieldView_" + handledType.Name + "_" + minf.Name + "_" + ViewableClassGenerator.classCounter++;
@@ -934,8 +876,8 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Generate an inner class for handling ReadWriteData fields")]
-			private CodeTypeDeclaration GenerateFieldIDFW(PropertyMethods propMeth) {				
+			[Remark("Generate an inner class for handling descriptor's Read(Write/Only)Data fields")]
+			internal CodeTypeDeclaration GenerateFieldIDFW(PropertyMethods propMeth) {				
 				bool isReadOnly = !propMeth.HasSetMethod; //if we dont have Set method, it is readonly
 				
 				//check if we have GetMethod (if not then it is time to throw an exception...)
@@ -1067,225 +1009,76 @@ namespace SteamEngine.CompiledScripts {
 										   ));
 				retVal.Members.Add(fieldTypeProp);
 
-				return retVal;				
-			}
-
-			[Remark("Generate a class representing an ActionButtonsPage")]
-			private CodeTypeDeclaration GenerateActionButtonsPage(List<string> buttonDFVs) {
-				string newClassName = handledType.Name + "DescActionButtonsPage";
-				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
-				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<ButtonDataFieldView>));
-				retVal.IsClass = true;
-
-				//constructor with two parameters (calling the base(,))
-				CodeConstructor constr = new CodeConstructor();
-				constr.Attributes = MemberAttributes.Public;
-				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
-				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
-				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("firstLineIndex"));
-				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("target"));
-				retVal.Members.Add(constr);
-
-				//add the MoveNext method for iterating over the buttons
-				CodeMemberMethod moveNextMeth = new CodeMemberMethod();
-				moveNextMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				moveNextMeth.Name = "MoveNext";
-				moveNextMeth.ReturnType = new CodeTypeReference(typeof(bool));
-				//add something like this: 							
-				/*switch(nextIndex) {						
-					case 0:
-						current = GeneratedButtonDataFieldView_SimpleClass_SomeMethod.instance;
-						break;
-					default:
-						//this happens when there are not enough lines to fill the whole page
-						//or if we are beginning with the index larger then the overall LinesCount 
-						//(which results in the empty page and should not happen)
-						return false;
-				}
-				++nextIndex;//prepare the index for the next round of iteration
-				*/
-				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\tswitch(nextIndex) {"));
-				for(int i = 0; i < buttonDFVs.Count; i++) { //for every ReadWriteDataFieldView add one "case"
-					moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tcase " + i + ":"));
-					moveNextMeth.Statements.Add(new CodeAssignStatement(
-									new CodeVariableReferenceExpression("current"),
-									new CodeFieldReferenceExpression(
-										new CodeTypeReferenceExpression(buttonDFVs[i]), "instance")
-								));
-					moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\t\tbreak;"));
-				}
-				//default section returns false (it means we have no more cases - no more fields to display 
-				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tdefault:"));
-				moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
-								new CodePrimitiveExpression(false)
-							));
-				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t}"));
-
-				if(buttonDFVs.Count > 0) { //if no buttons found, only "default part" od switch - dont show any other coe
-					//increase indexer for the next step
-					moveNextMeth.Statements.Add(new CodeAssignStatement(
-									new CodeVariableReferenceExpression("nextIndex"),
-									new CodeBinaryOperatorExpression(
-										new CodeVariableReferenceExpression("nextIndex"),
-										CodeBinaryOperatorType.Add,
-										new CodePrimitiveExpression(1)
-								)));
-					//return true -we will continue in iterating
-					moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
-									new CodePrimitiveExpression(true)
-								));
-				}
-
-				retVal.Members.Add(moveNextMeth);
-
 				return retVal;
 			}
-
-			[Remark("Generate a class representing an DataFieldsPage")]
-			private CodeTypeDeclaration GenerateDataFieldsPage(Dictionary<string,string> describedFieldViews) {
-				string newClassName = handledType.Name + "DescDataFieldsPage";
-				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
-				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<IDataFieldView>));
-				retVal.IsClass = true;
-
-				//constructor with two parameters (calling the base(,))
-				CodeConstructor constr = new CodeConstructor();
-				constr.Attributes = MemberAttributes.Public;
-				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "firstLineIndex"));
-				constr.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "target"));
-				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("firstLineIndex"));
-				constr.BaseConstructorArgs.Add(new CodeVariableReferenceExpression("target"));
-				retVal.Members.Add(constr);
-
-				//add the MoveNext method for iterating over the fields
-				CodeMemberMethod moveNextMeth = new CodeMemberMethod();
-				moveNextMeth.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-				moveNextMeth.Name = "MoveNext";
-				moveNextMeth.ReturnType = new CodeTypeReference(typeof(bool));
-				//add something like this: 
-				/*	switch(nextIndex) {						
-						case 0:
-							current = GeneratedButtonDataFieldView_SimpleClass_SomeMethod.instance;
-							break;
-						default:
-							//this happens when there are not enough lines to fill the whole page
-							//or if we are beginning with the index larger then the overall LinesCount 
-							//(which results in the empty page and should not happen)
-							return false;
-					}
-					++nextIndex;//prepare the index for the next round of iteration
-					return true;
-				*/
-				//prepare the iteration block
-				//List<CodeStatement> iterationBlock = new List<CodeStatement>();
-
-				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\tswitch(nextIndex) {"));
-				int i = 0;
-				foreach(string generatedRWDF in describedFieldViews.Values) { //for every Read(Write/Only)DataFieldView add one "case"
-					moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tcase " + i + ":"));
-					moveNextMeth.Statements.Add(new CodeAssignStatement(
-									new CodeVariableReferenceExpression("current"),
-									new CodeFieldReferenceExpression(
-										new CodeTypeReferenceExpression(generatedRWDF), "instance")
-								));
-					moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\t\tbreak;"));
-					i++;
-				}
-				//default section returns false (it means we have no more cases - no more fields to display 
-				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tdefault:"));
-				moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
-								new CodePrimitiveExpression(false)
-							));
-				moveNextMeth.Statements.Add(new CodeSnippetStatement("\t\t\t\t}"));
-
-				if(i > 0) { //if no fields found, only "default part" from switch - dont show anything else
-					//increase indexer for the next step
-					moveNextMeth.Statements.Add(new CodeAssignStatement(
-									new CodeVariableReferenceExpression("nextIndex"),
-									new CodeBinaryOperatorExpression(
-										new CodeVariableReferenceExpression("nextIndex"),
-										CodeBinaryOperatorType.Add,
-										new CodePrimitiveExpression(1)
-								)));
-
-					//return true -we will continue in iterating				
-					moveNextMeth.Statements.Add(new CodeMethodReturnStatement(
-									new CodePrimitiveExpression(true)
-								));
-				}
-				retVal.Members.Add(moveNextMeth);
-
-				return retVal;				
-			}
-
-			[Remark("Utility class used for holding MethodInfos of Get and Set methods from the descriptor."+
-					"Both Get and Set methods are connected with single described field")]
-			internal class PropertyMethods {
-				private MethodInfo getMethod;
-				private MethodInfo setMethod;
-				private string fieldLabel;
-				private Type fieldType;
-
-				internal PropertyMethods(string fieldLabel, Type fieldType) {
-					this.fieldLabel = fieldLabel;
-					this.fieldType = fieldType;
-				}
-
-				internal bool HasGetMethod {
-					get {
-						return (getMethod != null);
-					}
-				}
-
-				internal bool HasSetMethod {
-					get {
-						return (setMethod != null);
-					}
-				}
-
-				internal string FieldLabel {
-					get {
-						return fieldLabel;
-					}
-					set {
-						fieldLabel = value;
-					}
-				}
-
-				internal Type FieldType {
-					get {
-						return fieldType;
-					}
-					set {
-						FieldType = value;
-					}
-				}
-
-				internal MethodInfo GetMethod {
-					get {
-						return getMethod;
-					}
-					set {
-						getMethod = value;
-					}
-				}
-
-				internal MethodInfo SetMethod {
-					get {
-						return setMethod;
-					}
-					set {
-						setMethod = value;
-					}
-				}
-			}
+			#endregion
 
 			[Remark("Used in constructor for filtering - obtain all members with given attribute")]
 			private static bool HasAttribute(MemberInfo m, object attributeType) {
 				Type attType = (Type)attributeType;
 				return Attribute.IsDefined(m, attType, false);
+			}
+		}
+
+		[Remark("Utility class used for holding MethodInfos of Get and Set methods from the descriptor." +
+					"Both Get and Set methods are connected with single described field")]
+		internal class PropertyMethods {
+			private MethodInfo getMethod;
+			private MethodInfo setMethod;
+			private string fieldLabel;
+			private Type fieldType;
+
+			internal PropertyMethods(string fieldLabel, Type fieldType) {
+				this.fieldLabel = fieldLabel;
+				this.fieldType = fieldType;
+			}
+
+			internal bool HasGetMethod {
+				get {
+					return (getMethod != null);
+				}
+			}
+
+			internal bool HasSetMethod {
+				get {
+					return (setMethod != null);
+				}
+			}
+
+			internal string FieldLabel {
+				get {
+					return fieldLabel;
+				}
+				set {
+					fieldLabel = value;
+				}
+			}
+
+			internal Type FieldType {
+				get {
+					return fieldType;
+				}
+				set {
+					FieldType = value;
+				}
+			}
+
+			internal MethodInfo GetMethod {
+				get {
+					return getMethod;
+				}
+				set {
+					getMethod = value;
+				}
+			}
+
+			internal MethodInfo SetMethod {
+				get {
+					return setMethod;
+				}
+				set {
+					setMethod = value;
+				}
 			}
 		}
 	}

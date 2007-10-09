@@ -38,6 +38,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public ArrayList nejakejList = new ArrayList();
 
+		public Hashtable nejakaTabulka = new Hashtable();
+
 		public Hues notNullEnum = Hues.Blue;
 
 		public LeafComponentTypes nullROEnum {
@@ -63,6 +65,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[NoShow]
 		public int bar = 0;
+		[NoShow]
+		public int baz = 0;		
 
 		[Button("List doublify")]
 		public void SomeMethod() {			
@@ -70,6 +74,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				nejakejList.Add(nejakejList.Count);
 			}
 			bar = (bar == 0 ? 1 : bar) * 2;
+		}
+
+		[Button("Table doublify")]
+		public void SomeOtherMethod() {
+			for(int i = 0; i < (baz == 0 ? 1 : baz) * 2; i++) {
+				nejakaTabulka.Add(nejakaTabulka.Count + ".)", nejakaTabulka.Count);
+			}
+			baz = (baz == 0 ? 1 : baz) * 2;
 		}
 	}
 	
