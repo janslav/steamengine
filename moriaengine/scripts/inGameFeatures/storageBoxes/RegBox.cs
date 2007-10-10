@@ -59,25 +59,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int,ItemDef>();
 			int buttonsCount = 0;
-			int i = 0;
 			int radku = 0;
 			RegBox box = (RegBox)focus;
-			box.EnsureDictionary();
-			foreach (KeyValuePair<ItemDef, int> pair in box.inBoxReags) {
-				i++;
-				if (i > 3) {
-					radku++;
-					i = 0;
-				}
-			}
-			if ((i == 0) && (radku > 0)) { 
-				radku--;
+			int i = box.inBoxReags.Count;
+			if (box.inBoxReags == null) {
+				radku = 0;
+			} else {
+				radku = (i - 1) / 4;
+
 			}
 			int baseX = 20;
 			int baseY = 60;
 			SetLocation(70, 25);
-			ResizePic(0, 0, 5054, 660, 160 + radku * 80);
-			ResizePic(10, 10, 3000, 640, 140 + radku * 80);
+			ResizePic(0, 0, 5054, 660, 165 + radku * 80);
+			ResizePic(10, 10, 3000, 640, 145 + radku * 80);
 			Button(15, 25, 4005, 4007, true, 0, 1);		// add reagents
 			Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
 			HTMLGumpA(255, 15, 100, 20, "Bedýnka na regy", false, false);
@@ -130,7 +125,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				while (i < buttonsCount) {
 					if ( (gr.IsSwitched(i)) && (gr.responseNumbers[i].number > 0) ){	// player wants to take at least one reagent
 						if (box.inBoxReags[buttonShowItemDef[i]] < (int)gr.responseNumbers[i].number) {
-							((Player)gi.Cont).RedMessage("Snazis se vyndat prilis mnoho regu: " + buttonShowItemDef[i].Name + ". Vyndavas jen tolik, kolik muzes.");
+							((Player)gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho regù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
 							reagsToGive = box.inBoxReags[buttonShowItemDef[i]];
 						} else {
 							reagsToGive = (int)gr.responseNumbers[i].number;
@@ -172,6 +167,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			if (targetted.Type.Defname == "t_reagent") {
 				int previousCount;
+				focus.EnsureDictionary();
 				if (!focus.inBoxReags.TryGetValue(targetted.TypeDef, out previousCount)) {
 					previousCount = 0;
 				}
