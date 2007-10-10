@@ -45,6 +45,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public override void On_Create() {
+			Color = 2448;
+		}
+
 	}
 }
 
