@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
-					this.SetValue(def, value);
+					this.SetValue(def, (FieldType) value);
 				}
 
 				return value;
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				List<DefType> defs = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
 
 				foreach (DefType def in defs) {
-					this.SetValue(def, value);
+					this.SetValue(def, (FieldType) value);
 				}
 			}
 
@@ -344,7 +344,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
-					this.SetValue(def, value);
+					this.SetValue(def, (FieldType) value);
 				}
 
 				return value;
@@ -354,7 +354,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				List<DefType> defs = defSets[firstIndex, secondIndex];
 
 				foreach (DefType def in defs) {
-					this.SetValue(def, value);
+					this.SetValue(def, (FieldType) value);
 				}
 			}
 
