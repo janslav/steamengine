@@ -113,6 +113,12 @@
     <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
       <Link>CharClasses\Player.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\GemBox.cs">
+      <Link>inGameFeatures\storageBoxes\GemBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\storageBoxes.Generated.cs">
+      <Link>inGameFeatures\storageBoxes\storageBoxes.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.cs">
       <Link>ItemClasses\ColoredArmor.cs</Link>
     </Compile>
@@ -199,9 +205,6 @@
     </Compile>
     <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.cs">
       <Link>inGameFeatures\storageBoxes\RegBox.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.Generated.cs">
-      <Link>inGameFeatures\storageBoxes\RegBox.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCreate.cs">
       <Link>systems\administration\accounts\AccCreate.cs</Link>

@@ -19,4 +19,12 @@ Def:	//vars on the def
 Vars:	//vars defined in the class, so they basically do what tags do, but better
 	public int pocetRegu = 0
 	public Dictionary<ItemDef,int> inBoxReags = null
+
+
+[ThingTemplate GemBox : Item]
+Def:	//vars on the def
+	public int capacity = 1000000
+Vars:	//vars defined in the class, so they basically do what tags do, but better
+	public int pocetGemu = 0
+	public Dictionary<ItemDef,int> inBoxGems = null
 	
