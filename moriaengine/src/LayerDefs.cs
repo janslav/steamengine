@@ -17,6 +17,8 @@
 
 namespace SteamEngine {
 	public enum Layers : byte {
+		layer_none=0,			//non-equippable items have this.
+
 		layer_hand1=1,			//one-handed weapons or tools
 		layer_hand2=2,			//two-handed weapons or tools, or shields or one-handed accessory items (like torches)
 		layer_shoes=3,	
