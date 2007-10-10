@@ -25,6 +25,7 @@ using SteamEngine.LScript;
 
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class RegBox : Item {
 
 		public void EnsureDictionary() {
@@ -49,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Surprisingly the dialog that will display the RegBox guts")]
+	[Summary("Surprisingly the dialog that will display the RegBox guts")]
 	public class D_RegBox : CompiledGump {
 
 		private readonly TagKey tkButtonsForReags = TagKey.Get("_rb_ButtonsForReags_");

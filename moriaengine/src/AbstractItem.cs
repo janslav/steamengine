@@ -255,13 +255,13 @@ namespace SteamEngine {
 		
 		public virtual byte Layer { 
 			get {
-				throw new InvalidOperationException("The item ("+this+") is not equippable");
+				return (int) Layers.layer_none;
 			} 
 		}
 		
 		public virtual ushort Gump { 
 			get {
-				throw new InvalidOperationException("The item ("+this+") is not a container");
+				return 0;
 			} 
 		}
 		
