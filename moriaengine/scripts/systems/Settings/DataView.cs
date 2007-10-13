@@ -358,12 +358,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Decorate amember of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs."+
+	[Summary("Decorate a member of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs."+
 			 "all other attributes will be displayed")]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class NoShowAttribute : Attribute {
 		//no params constructor
 		public NoShowAttribute() {
+		}
+	}
+
+	[Summary("Decorate a member of the ViewableClass by this attribute if you want it to be infoized and you want"+
+			 "to specify its name explicitely")]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+	public class InfoFieldAttribute : Attribute {
+		[Remark("The name of the field which will be displayed in the dialog rather than the fields name itself")]
+		private string name;
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public InfoFieldAttribute(string name) {
+			this.name = name;
 		}
 	}
 

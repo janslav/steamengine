@@ -60,32 +60,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 					Logger.WriteDebug("Done generating "+viewableClasses.Count+" DataViews and View Descriptors");
-				}
-				/*
-				if(viewableDescriptors.Count > 0) {
-					Logger.WriteDebug("Generating View Descriptors");
-
-					if(ns == null) { //add namespace only if it not yet present...
-						ns = new CodeNamespace("SteamEngine.CompiledScripts.Dialogs");
-						codeCompileUnit.Namespaces.Add(ns);
-					}
-
-					foreach(Type descriptorClass in viewableDescriptors) {
-						try {
-							GeneratedInstanceDesc gi = new GeneratedInstanceDesc(descriptorClass);
-							if(gi.buttonMethods.Count + gi.describedFields.Count > 0) {//we have at least one Button method or field to be described
-								CodeTypeDeclaration ctd = gi.GetGeneratedType();
-								ns.Types.Add(ctd);
-							}
-						} catch(FatalException) {
-							throw;
-						} catch(Exception e) {
-							Logger.WriteError(descriptorClass.Assembly.GetName().Name, descriptorClass.Name, e);
-							return null;
-						}
-					}
-					Logger.WriteDebug("Done generating " + viewableDescriptors.Count + " viewable descriptors");
-				}*/
+				}				
 				return codeCompileUnit;
 			} finally {
 				viewableClasses.Clear();
@@ -477,6 +452,14 @@ namespace SteamEngine.CompiledScripts {
 				retVal.Members.Add(constr);
 
 				//now override the Name method
+				//first look if the field has the InfoField attribute (it would contain its special name)
+				string fieldName;
+				InfoFieldAttribute ifa = (InfoFieldAttribute)Attribute.GetCustomAttribute(minf, typeof(InfoFieldAttribute));
+				if(ifa != null) {
+					fieldName = ifa.Name;
+				} else {
+					fieldName = minf.Name;
+				}
 				CodeMemberMethod getNameMethod = new CodeMemberMethod();
 				getNameMethod.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				getNameMethod.Name = "GetName";
@@ -484,7 +467,7 @@ namespace SteamEngine.CompiledScripts {
 				getNameMethod.ReturnType = new CodeTypeReference(typeof(string));
 				getNameMethod.Statements.Add(new CodeMethodReturnStatement(
 											new CodePrimitiveExpression(
-												minf.Name
+												fieldName
 										)));
 				retVal.Members.Add(getNameMethod);
 

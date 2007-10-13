@@ -45,9 +45,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
+			string headline;
+			//decide the headline according to the dialog type (info/setting)
+			if(typeof(SettingsMetaCategory).IsAssignableFrom(target.GetType())) {
+				headline = "Settings dialog " + (viewCls == null ? "" : " - " + viewCls.GetName(target));
+			} else {
+				headline = "Info dialog" + (viewCls == null ? "" : " - "+viewCls.GetName(target));
+			}
+
 			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
 				//the viewCls could be null ! - e.g. DataView does not exist
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Info dialog" + (viewCls == null ? "" : " - "+viewCls.GetName(target)));
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(headline);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
@@ -130,10 +138,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//get the IDataFieldView and do something
 				IDataFieldView idfv = (IDataFieldView)buttons[(int)gr.pressedButton];
 
-				if(idfv.IsButtonEnabled) { 
+				if(idfv.IsButtonEnabled) {
+					gi.Cont.SendGump(gi);//resend the dialog									
 					//action button field - call the method
 					((ButtonDataFieldView)idfv).OnButton(target);
-					gi.Cont.SendGump(gi);//resend the dialog
 				} else {
 					object fieldValue = idfv.GetValue(target);
 					Type fieldValueType = null;
@@ -160,6 +168,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(args.Argv == null || args.Argv.Length == 0) {
 				//display it normally (targetted or for self)
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, self, 0, 0);
+			} else {
+				//get the arguments to be sent to the dialog (especialy the first one which is the 
+				//desired object for infoizing)
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, args.Argv[0], 0, 0);
+			}
+		}
+
+		[Remark("Display a settings dialog. Function accessible from the game." +
+				"The function is designed to be triggered using .x settings, but it will be" +
+				"mainly used from the SettingsCategories dialog on a various buttons")]
+		[SteamFunction]
+		public static void Settings(object self, ScriptArgs args) {
+			if(args.Argv == null || args.Argv.Length == 0) {
+				//call the default settings dialog
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, SettingsCategories.instance, 0, 0);
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
