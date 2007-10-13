@@ -37,6 +37,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private IDataView viewCls;
 		private object target;
 
+		private bool isSettings; //settings dialog (true) / info dialog (false)
+
 		//how many data fields there will be? (normally 2 but if we dont have any action buttons
 		//then there will be 3
 		public int REAL_COLUMNS_COUNT;
@@ -68,6 +70,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.target = target;
 			this.viewCls = viewCls;
 
+			//what type of dialog we have?
+			isSettings = typeof(SettingsMetaCategory).IsAssignableFrom(target.GetType());			
+
 			int[] columns = new int[1 + COLS_COUNT];
 			int firstFieldsColumn = 1;
 			if(viewCls.GetActionButtonsCount(target) > 0) {
@@ -81,6 +86,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for(int i = firstFieldsColumn; i <= COLS_COUNT; i++) {
 				columns[i] = FieldColumn; //same width for every other datafield column
 			}
+
+			if(isSettings) {//settings dialog will have one column-headers line
+				if(viewCls.GetActionButtonsCount(target) > 0) {
+					Add(new GUTATable(1, columns[0], 0));
+					//there are subcategories and fields - two header columns
+					LastTable[0, 0] = TextFactory.CreateLabel("Subcategories");
+					LastTable[0, 1] = TextFactory.CreateLabel("Settings Items");
+				} else {
+					Add(new GUTATable(1, 0));
+					//no subcategories - one header column
+					LastTable[0, 0] = TextFactory.CreateLabel("Settings Items");
+				}
+				MakeTableTransparent();
+			}
+
 			Add(new GUTATable(PAGE_ROWS, columns));
 			MakeTableTransparent();
 
@@ -173,74 +193,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				editFlds.Add(editsIndex, field);
 				editsIndex++;					
 			}
-			actualFieldRow++;
-
-			/*
-			//if necessary, insert the button
-			bool willHaveButton = false;
-			bool willHaveInput = false;
-			if (fieldValueType != null) {
-				if (!ObjectSaver.IsSimpleSaveableType(fieldValueType)) {
-					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
-					willHaveButton = true;
-				} else if(ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType) && !field.ReadOnly) {
-					//is not simple saveable but is coordinated - there is a button
-					actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
-					willHaveButton = true;
-					willHaveInput = true;					
-				}
-			}
-
-			if (willHaveButton) {
-				if(willHaveInput) {
-					if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
-						//enums have different text
-						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
-					} else {
-						//buttonized field with input field (non simple but coordinated - e.g #character...)
-						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
-					}
-					//store the field under the edits index
-					editFlds.Add(editsIndex, field);
-					editsIndex++;
-				} else {
-					//the field will not be editable, we will therefore display only non editable label
-					actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetName(target));
-				}
-			} else {
-				//no buttonized edit field - it is some simple type and can be edited
-				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
-					if(field.ReadOnly) {//is the enum editable?
-						//display only its value...
-						actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(Enum.GetName(field.FieldType, field.GetValue(target)));
-					} else {
-						//Enums have one smart button showing hint- what to insert
-						actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
-						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, Enum.GetName(field.FieldType, field.GetValue(target)));
-						//store the field under the edits index
-						editFlds.Add(editsIndex, field);
-						editsIndex++;
-					}
-				} else {//not an enum
-					if (!field.ReadOnly) { //editable label-value field - we need the edit index and probably the button index!
-						//other types have only edit fields
-						actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, field.GetStringValue(target));
-						//store the field under the edits index
-						editFlds.Add(editsIndex, field);
-						editsIndex++;
-					} else { //non-editable label-value field
-						if (fieldValue == null) {
-							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText("null");
-						} else if (!ObjectSaver.IsSimpleSaveableOrCoordinated(fieldValueType)) {
-							//this is some strange object - we cannot edit it this way. it must have its "info dialog" button...!
-							throw new SEException("Attempted to display an unsupported field " + field.GetName(target) + " of type " + fieldValueType + "!");							
-						} else {
-							actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(field.GetStringValue(target));
-						}
-					}
-				}				
-			}
-			*/
+			actualFieldRow++;			
 			
 			//after adding the data field, check whether we haven't reached the last line in the column
 			//if so, check also if there are more columns to write to and prepare another one for writing

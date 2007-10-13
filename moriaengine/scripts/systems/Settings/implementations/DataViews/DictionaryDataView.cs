@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			foreach(object key in ((IDictionary)target).Keys) {
 				//jsem-li s pocitadlem konecne nad firstLineIndexem, zacinam vracet fieldy
 				if(i >= firstLineIndex) {
-					yield return new IndexKeyValue(i, key);
+					yield return new IndexKeyValue(key);
 				}
 				i++;
 			}			
@@ -93,12 +93,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		private class IndexKeyValue : ReadWriteDataFieldView {
-			int index;
 			object key;
 
-			internal IndexKeyValue(int index, object key) {
-				this.key = key;
-				this.index = index;
+			internal IndexKeyValue(object key) {
+				this.key = key;				
 			}
 
 			public override string GetName(object target) {
@@ -113,38 +111,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				IDictionary dict = (IDictionary)target;
-				int n = dict.Count;
-				if (index < n) {
-					return dict[key];
-				} else {
-					return null;
-				}
+				return dict[key]; //null or correct value				
 			}
 
 			public override string GetStringValue(object target) {
 				IDictionary dict = (IDictionary)target;
-				int n = dict.Count;
-				if (index < n) {
+				if(dict[key] != null) {
 					return ObjectSaver.Save(dict[key]);
 				} else {
 					return "";
-				}
+				}				
 			}
 
 			public override void SetValue(object target, object value) {
 				IDictionary dict = (IDictionary)target;
-				int n = dict.Count;
-				if (index < n) {
-					dict[key] = value;
-				}
+				dict[key] = value;				
 			}
 
 			public override void SetStringValue(object target, string value) {
 				IDictionary dict = (IDictionary)target;
 				int n = dict.Count;
-				if (index < n) {
-					dict[key] = ObjectSaver.Load(value);
-				}
+				dict[key] = ObjectSaver.Load(value);				
 			}
 		}
 

@@ -341,6 +341,9 @@
     <Compile Include="..\..\scripts\systems\Settings\MassSettings.cs">
       <Link>systems\settings\MassSettings.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\MetaSettings.cs">
+      <Link>systems\settings\MetaSettings.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsCategories.cs">
       <Link>systems\settings\SettingsCategories.cs</Link>
     </Compile>
