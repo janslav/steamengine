@@ -59,25 +59,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(sendTo, focus, SingletonScript<D_EditTimer>.Instance,
-					th, //tagholder na nejz budeme tag nastavovat, pro priste 
-					tm); //timer co editujeme
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			//vzit "tenhle" dialog ze stacku
-			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
-
 			if(gr.pressedButton == 0) {
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
-				//create_timer dialog jsme uz vytahli ze stacku, nemusime ho tedy dodatecne odstranovat
+				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
-				Timer tm = (Timer)dsi.Args[1];
+				Timer tm = (Timer)args[1];
 				tm.DueInSeconds = timerTime;
-				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
+				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi);
 				if(prevStacked.GumpType.Equals(typeof(D_TimerList))) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
 					prevStacked.Args[3] = null;

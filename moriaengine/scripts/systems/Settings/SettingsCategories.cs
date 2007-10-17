@@ -84,30 +84,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(gr.pressedButton < 10) { //zakladni tlacitka - end, zobraz vse 
 				switch(gr.pressedButton) {
 					case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
+						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //zobraz vsechny kategorie	
 						//uložit info o dialogu pro návrat
-						DialogStackItem.EnstackDialog(gi);								
 							//params:	1 - prazdny, zacne od prvni kategorie
 							//			2 - 0, zacne od prvniho membera dane kategorie
 							//			3 - 0, zacne na nulte strance (jinak to ani nejde)
 							//			4 - info o tom ze ma zobrazit vsechny kategorie pocinaje specifikovanou (zde tou prvni)
 							//			5,6 - vnitrodialogove potreby
-						gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, "", 0, 0, SettingsDisplay.All, null, null);
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, "", 0, 0, SettingsDisplay.All, null, null);
+						DialogStackItem.EnstackDialog(gi, newGi);						
 						break;					
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} else { //skutecna tlacitka z radku
-				//uložit info o dialogu pro návrat
-				DialogStackItem.EnstackDialog(gi);
 				//zjistime kterej cudlik z radku byl zmacknut
 				int row = (int)(gr.pressedButton - 10);//- cislo kategorie v jejich setridenem seznamu
 				SettingsCategory cat = categories[row];
 								//parametry stejny vyznam, zde zobrazime jen tu jednu kliknutou kategorii
-				gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);				
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);
+				DialogStackItem.EnstackDialog(gi, newGi);
 			}
 		}		
 	}	

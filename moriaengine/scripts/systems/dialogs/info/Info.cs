@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.LScript;
+using System.Diagnostics;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
@@ -30,6 +31,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private Hashtable editFlds;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+			StackTrace str = new StackTrace();
+
 			buttons = new Hashtable();
 			editFlds = new Hashtable();
 
@@ -116,19 +119,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
 				switch(gr.pressedButton) {
 					case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
+						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //store
 						List<SettingResult> reslist = SettingsProvider.AssertSettings(editFlds, gr, target);
-						gi.Cont.SendGump(gi);//resend the dialog
+						DialogStackItem.ResendAndRestackDialog(gi);
 						if(reslist.Count > 0) {
 							//show the results dialog (if there is any change)
 							gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, reslist, null);
 						}
 						break;
 					case 2: //info
-						DialogStackItem.EnstackDialog(gi); //stack self for return
-						gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+						DialogStackItem.EnstackDialog(gi, newGi); //stack self for return						
 						break;
 				}			
 			} else if(InfoDialogHandler.PagingHandled(gi, gr)) {
@@ -139,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				IDataFieldView idfv = (IDataFieldView)buttons[(int)gr.pressedButton];
 
 				if(idfv.IsButtonEnabled) {
-					gi.Cont.SendGump(gi);//resend the dialog									
+					DialogStackItem.ResendAndRestackDialog(gi);
 					//action button field - call the method
 					((ButtonDataFieldView)idfv).OnButton(target);
 				} else {
@@ -149,8 +152,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						fieldValueType = fieldValue.GetType();
 					}
 					if (fieldValueType != null) {
-						DialogStackItem.EnstackDialog(gi); //store
-						gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target), 0, 0); 
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target), 0, 0);
+						DialogStackItem.EnstackDialog(gi, newGi); //store						
 						//display info dialog on this datafield
 					} else {
 						throw new SEException("Null value can't be viewed");

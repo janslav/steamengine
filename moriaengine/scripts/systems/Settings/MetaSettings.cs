@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//Setting categories: - Combat Settings
 		[InfoField("Combat Settings")]
-		public CombatSettings CmbtSettings {
+		public CombatSettings CombatSettings {
 			get {
 				return CombatSettings.instance;
 			}

@@ -103,33 +103,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
+						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
                     case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args[0] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
 						args[1] = nameCriteria; //uloz info o vyhledavacim kriteriu
 						args[2] = null; //vycistit soucasny odkaz
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
                     case 2: //zalozit novy acc.
 						//ulozime dialog pro navrat
-						DialogStackItem.EnstackDialog(gi);
-						gi.Cont.Dialog(D_NewAccount.Instance);
+						GumpInstance newGi = gi.Cont.Dialog(D_NewAccount.Instance);
+						DialogStackItem.EnstackDialog(gi, newGi);						
 						break;                    
                 }
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, accList.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
 				//1 sloupecek
 				return;
 			} else { //skutecna talcitka z radku
-				//ulozime dialog pro navrat
-				DialogStackItem.EnstackDialog(gi);
-                //zjistime kterej cudlik z kteryho radku byl zmacknut
+				//zjistime kterej cudlik z kteryho radku byl zmacknut
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				gi.Cont.Dialog(D_AccInfo.Instance, ga);               
-                
+				GumpInstance newGi = gi.Cont.Dialog(D_AccInfo.Instance, ga);
+				//ulozime dialog pro navrat
+				DialogStackItem.EnstackDialog(gi, newGi);                
             }
 		}
 

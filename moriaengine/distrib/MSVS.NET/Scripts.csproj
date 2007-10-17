@@ -267,10 +267,7 @@
       <Link>systems\db\DbUtils.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\DialogStackItem.cs">
-      <Link>systems\db\DialogStackItem.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\dialogs\DialogUtils.cs">
-      <Link>systems\dialogs\DialogUtils.cs</Link>
+      <Link>systems\dialogs\DialogStackItem.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\displaytext\DisplayText.cs">
       <Link>systems\dialogs\displaytext\DisplayText.cs</Link>

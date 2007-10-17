@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			if(gr.pressedButton == 0) { //ovladaci tlacitka (exit, new, vyhledej)								
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog				
+				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			}			
 		}
 

@@ -105,31 +105,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch(gr.pressedButton) {
 					case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
+						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //tridit dle casu asc						
 						args[0] = SortingCriteria.TimeAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
 					case 2: //tridit dle casu desc
 						args[0] = SortingCriteria.TimeDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
 					case 3: //tridit dle sendera asc
 						args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
 					case 4: //tridit dle sendera desc
 						args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
 					case 5: //tridit dle neprectenych asc
 						args[0] = SortingCriteria.UnreadAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
 					case 6: //tridit dle neprectenych desc
 						args[0] = SortingCriteria.UnreadDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;					
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, messagesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
@@ -147,16 +147,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							msg.read = true;
 							msg.color = msg.color + 3;//trosku ztmavit barvu
 						}
-						//stacknout messageslist pro navrat
-						DialogStackItem.EnstackDialog(gi);
-
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
-						gi.Cont.Dialog(D_Display_Text.Instance, "Text zprávy", msg.text);
+						GumpInstance newGi = gi.Cont.Dialog(D_Display_Text.Instance, "Text zprávy", msg.text);
+						//stacknout messageslist pro navrat
+						DialogStackItem.EnstackDialog(gi, newGi);
                         break;
                     case 1: //smazat
 						MsgsBoard.DeleteMessage((Character)gi.Cont, msg);
 						//znovuzavolat dialog
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
                         break;                    
                 }
 			}

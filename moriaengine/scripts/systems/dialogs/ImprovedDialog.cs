@@ -251,12 +251,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch (gr.pressedButton) {
 				case ID_PREV_BUTTON: 
 					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
-					gi.Cont.SendGump(gi);					
+					DialogStackItem.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
-					gi.Cont.SendGump(gi);					
+					DialogStackItem.ResendAndRestackDialog(gi);					
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
@@ -274,7 +274,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
-					gi.Cont.SendGump(gi);										
+					DialogStackItem.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 			}
@@ -288,31 +288,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;"+
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
 				"itemsCount - total count of diplayed items in the list")]
-		public static bool PagingButtonsHandled(Character sentTo, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(GumpInstance actualGi, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
-			//dialog construct method!)
-			DialogStackItem dsi = null;
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
 			switch(buttNo) {
 				case ID_PREV_BUTTON:
-					dsi = DialogStackItem.PopStackedDialog(sentTo.Conn);
-					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
-					dsi.Show();
+					actualGi.InputParams[pagingArgumentNo] = Convert.ToInt32(actualGi.InputParams[pagingArgumentNo]) - (PAGE_ROWS * columnsCount);
+					DialogStackItem.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
-					dsi = DialogStackItem.PopStackedDialog(sentTo.Conn);
-					dsi.Args[pagingArgumentNo] = Convert.ToInt32(dsi.Args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
-					dsi.Show();
+					actualGi.InputParams[pagingArgumentNo] = Convert.ToInt32(actualGi.InputParams[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
+					DialogStackItem.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
-					dsi = DialogStackItem.PopStackedDialog(sentTo.Conn);
 					//get the selected page number (absolute value - make it a bit idiot proof :) )
 					int selectedPage = selPageInpt;
 					if(selectedPage < 1) {
 						//idiot proof adjustment
-						sentTo.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
+						 actualGi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;
 					}
 					//count the index of the first item
@@ -321,8 +316,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						int lastPage = (itemsCount / (PAGE_ROWS*columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
-					dsi.Args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
-					dsi.Show();
+					actualGi.InputParams[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
+					DialogStackItem.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 			}

@@ -75,8 +75,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			if(gr.pressedButton == 0) {
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
-				//create_acc dialog jsme si neukladali, nemusime ho tedy odstranovat ze stacku				
+				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				string accName = gr.GetTextResponse(10);
@@ -84,8 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				string email = gr.GetTextResponse(12);
 				//zavolat metodu, ktera oznami uspech ci neuspech pri vytvoreni
 				ScriptedAccount.CreateGameAccount(accName, pass, email);
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
-				//create_acc dialog jsme si neukladali, nemusime ho tedy odstranovat ze stacku				
+				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog			
 			}
 		}
 

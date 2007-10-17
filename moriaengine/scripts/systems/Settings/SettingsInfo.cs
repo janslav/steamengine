@@ -194,9 +194,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam nastavenych nebo zkousenych polozek
-			if(gr.pressedButton == 0) { //end				
-				DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);	//odstranit ze stacku aktualni dialog
-				dsi.Show();
+			if(gr.pressedButton == 0) { //end
+				DialogStackItem.ShowPreviousDialog(gi);
 			}
 		}
 	}	

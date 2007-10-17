@@ -59,18 +59,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek
 
-			DialogStackItem.EnstackDialog(sendTo, focus, SingletonScript<D_NewTag>.Instance,
-					th); //tagholder na nejz budeme tag nastavovat, pro priste 
-
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			//vzit "tenhle" dialog ze stacku
-			DialogStackItem dsi = DialogStackItem.PopStackedDialog(gi.Cont.Conn);			
-
 			if(gr.pressedButton == 0) {
-				DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog
+				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				//create_tag dialog jsme uz vytahli ze stacku, nemusime ho tedy dodatecne odstranovat
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
@@ -78,18 +72,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				string tagValue = gr.GetTextResponse(11);
 				//ziskame objektovou reprezentaci vlozene hodnoty. ocekava samozrejme prefixy pokud je potreba!
 				object objectifiedValue = SettingsUtilities.ReadValue(tagValue, null);
-				((TagHolder)dsi.Args[0]).SetTag(TagKey.Get(tagName), objectifiedValue);
+				((TagHolder)args[0]).SetTag(TagKey.Get(tagName), objectifiedValue);
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
-				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi.Cont.Conn);
+				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi);
 				if(prevStacked.GumpType.Equals(typeof(D_TagList))) {
 					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
 					prevStacked.Args[3] = null;
 				}
 				prevStacked.Show();								
 			} else if(gr.pressedButton == 2) {
-				DialogStackItem.EnstackDialog(gi.Cont, dsi); //vlozime napred dialog zpet do stacku
-				gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);				 
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+				DialogStackItem.EnstackDialog(gi, newGi); //ulozime dialog do stacku
 			}
 		}		
 	}
