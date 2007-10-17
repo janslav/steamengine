@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Class encapsulating stacking an recalling dialogs")]
 	public class DialogStackItem {
 		[Remark("Tag used for stacking information about clients dialogs to be called back")]
-		private static readonly TagKey _dialogStackTag_ = TagKey.Get("x_guta_dialogStack");
+		private static readonly TagKey _dialogStackTag_ = TagKey.Get("x_guta_dialogStackTree");
 
 		[Remark("Main object contining all necessary info")]
 		GumpInstance gumpInstance;
@@ -116,13 +116,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		internal DialogStackItem(GumpInstance gi) {
-			this.gumpInstance = gi;
-			/*this.instance = instance;
-			this.args = args;
-			this.connection = connection;
-			this.cont = cont;
-			this.focus = focus;
-			 * */
+			this.gumpInstance = gi;			
 		}
 
 		[Remark("This constructor is used e.g. when calling dialog stack from the LScripted dialogs or simply in "+
@@ -140,16 +134,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"occur e.g. when opening another dialog having one opened before and then closing the"+
 				"least opened one - it will look into the stack, find the previous dialog (the first opened one)"+
 				"and tries to show it which would lead to having two same dialogs opened and problems"+
-				"when closing one of them (displaying other previous dialogs unwantedly etc)")]
+				"when closing one of them (displaying other previous dialogs unwantedly etc)"+
+				"neresti otevrenost ostatnich ialogu, o to se musi postarat volatel")]
 		public void Show() {
 			//send the dialog with stored values
 			//only in case it is not opened 
-			if(!Cont.HasOpenedDialog(Gump)) {
-				Cont.SendGump(gumpInstance);
-			} else {
+			//if(!Cont.HasOpenedDialog(Gump)) {
+			ResendAndRestackDialog(gumpInstance);
+			//Cont.ReSendGump(gumpInstance);
+			//} else {
 				//nothing will be shown, the dialog is still opened, return this DSI to the stack
-				DialogStackItem.EnstackDialog(Cont, this);
-			}
+			//	DialogStackItem.EnstackDialog(Cont, this);
+			//}
 		}
 
 		[Remark("LSCript used method for setting the specified argument's value")]
@@ -167,49 +163,93 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"when exiting from the following dialog for instance." +
 			"e.g. info dialog -> clicked on the 'account info' button which closes the info dialog," +
 			"after finishing with the accout info dialog we would like to have the info dialog reopened!"+
-			"UPDATED - using GumpInstance as a parameter only (it contains everything necessary)")]
-		public static void EnstackDialog(GumpInstance gi) {
-			Stack<DialogStackItem> dialogsStack = gi.Cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
-			if(dialogsStack == null) { //not yet set
-				dialogsStack = new Stack<DialogStackItem>();
-				gi.Cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
+			"UPDATED - using GumpInstance as a parameter only (it contains everything necessary)"+
+			"UPDATED2 - oldGi - dialog being enstacked; newGi - newly opened dialog for storing stacking info")]
+		public static void EnstackDialog(GumpInstance oldGi, GumpInstance newGi) {
+			Dictionary<uint, Stack<DialogStackItem>> dialogsMultiStack = oldGi.Cont.Conn.GetTag(_dialogStackTag_) as Dictionary<uint, Stack<DialogStackItem>>;
+			if(dialogsMultiStack == null) { //zatim nemame ani stack
+				dialogsMultiStack = new Dictionary<uint, Stack<DialogStackItem>>();
+				oldGi.Cont.Conn.SetTag(_dialogStackTag_, dialogsMultiStack);
 			}
-			dialogsStack.Push(new DialogStackItem(gi));
+			Stack<DialogStackItem> actualStack;
+			if(dialogsMultiStack.ContainsKey(oldGi.uid)) {
+				actualStack = dialogsMultiStack[oldGi.uid]; //dotahnout
+			} else {
+				actualStack = new Stack<DialogStackItem>(); //vytvortit a ulozit
+				dialogsMultiStack[oldGi.uid] = actualStack;
+			}
+			actualStack.Push(new DialogStackItem(oldGi)); //stackneme si starej dialog
+			dialogsMultiStack[newGi.uid] = actualStack; //dat k dispozici novemu dialogu pro pozdejsi navraty
 		}
 
-		[Remark("Overloaded init method - used when the gumpinstance is not fully initialized yet")]
-		public static void EnstackDialog(AbstractCharacter cont,  Thing focus, 
-											Gump instance, params object[] args) {
-			Stack<DialogStackItem> dialogsStack = cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
-			if(dialogsStack == null) { //not yet set
-				dialogsStack = new Stack<DialogStackItem>();
-				cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
-			}
-			dialogsStack.Push(new DialogStackItem(cont.Conn, cont, focus, instance, args));
-		}
-
-		[Remark("Allows us to 'push back' a previously popped dialog stack item.")]
-		public static void EnstackDialog(AbstractCharacter cont, DialogStackItem dsi) {
-			Stack<DialogStackItem> dialogsStack = cont.Conn.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
-			if(dialogsStack == null) { //not yet set
-				dialogsStack = new Stack<DialogStackItem>();
-				cont.Conn.SetTag(_dialogStackTag_, dialogsStack);
-			}
-			dialogsStack.Push(dsi);
-		}
+		//[Remark("Overloaded init method - used when the gumpinstance is not fully initialized yet")]
+		///TODO - zjistit jak v LScriptu fungujou dialogy a prepsat tuto metodu
+		//public static void EnstackDialog(AbstractCharacter cont,  Thing focus, 
+		//                                    Gump instance, params object[] args) {
+		//    Dictionary<int, Stack<DialogStackItem>> dialogsMultiStack = cont.Conn.GetTag(_dialogStackTag_) as Dictionary<int, Stack<DialogStackItem>>;
+		//    if(dialogsMultiStack == null) { //not yet set
+		//        dialogsMultiStack = new Dictionary<int, Stack<DialogStackItem>>();
+		//        cont.Conn.SetTag(_dialogStackTag_, dialogsMultiStack);
+		//    }
+		//    Stack<DialogStackItem> actualStack;
+		//    if(dialogsMultiStack.ContainsKey(oldGi.uid)) {
+		//        actualStack = dialogsMultiStack[oldGi.uid]; //dotahnout
+		//    } else {
+		//        actualStack = new Stack<DialogStackItem>(); //vytvortit a ulozit
+		//        dialogsMultiStack[oldGi.uid] = actualStack;
+		//    }
+		//    actualStack.Push(new DialogStackItem(cont.Conn, cont, focus, instance, args));
+		//    dialogsMultiStack[newGi.uid] = actualStack; //dat k dispozici novemu dialogu pro pozdejsi navraty		
+		//}
 
 		[Remark("Recall the last stored dialog from the dialog stack." +
-				"Method must be called from the dialog we want to return from in the OnResponse method")]
-		public static DialogStackItem PopStackedDialog(GameConn showTo) {
-			Stack<DialogStackItem> dialogsStack = showTo.GetTag(_dialogStackTag_) as Stack<DialogStackItem>;
+				"Find it according to the given actual GumpInstance in the dialogs multistack."+
+				"Handles also emptying and clearing unused (empty) stacks and the multistack too.")]
+		public static DialogStackItem PopStackedDialog(GumpInstance actualGi) {
+			Dictionary<uint, Stack<DialogStackItem>> dialogsMultiStack = actualGi.Cont.Conn.GetTag(_dialogStackTag_) as Dictionary<uint, Stack<DialogStackItem>>;
 			DialogStackItem dsi = null;
-			if(dialogsStack != null) { //something was stored
-				dsi = dialogsStack.Pop();
-				if(dialogsStack.Count == 0) {//the stack is empty now
-					showTo.SetTag(_dialogStackTag_, null); //free the tag
+			if(dialogsMultiStack != null) { //something was stored
+				if(dialogsMultiStack.ContainsKey(actualGi.uid)) {
+					Stack<DialogStackItem> actualsOwnStack = dialogsMultiStack[actualGi.uid];
+					if(actualsOwnStack.Count != 0) {
+						dsi = actualsOwnStack.Pop(); //popovat budem jen pokud ve stacku vubec neco je
+						dialogsMultiStack.Remove(actualGi.uid); //po popnuti uz muzeme vyhodit soucasny dialog z multistacku (uz ho stejne zaviram...)					
+					}
+
+					if(actualsOwnStack.Count == 0) {//stack je uz prazdnej (nebo byl prazdnej i predtim), odstranit stack
+						dialogsMultiStack.Remove(actualGi.uid);
+						if(dialogsMultiStack.Count == 0) {
+							actualGi.Cont.Conn.SetTag(_dialogStackTag_, null); //multistack je prazdnej, uvolnit
+							actualGi.Cont.Conn.RemoveTag(_dialogStackTag_);
+						}
+					}
 				}
 			}
 			return dsi;
+		}
+
+		[Remark("When we need to resend the actual dialog (e.g. only with changed parameters such as going to another page or "+
+				"refrehsing some list where we need the actual data to be refreshed, we need the complete initialization phase "+
+				"to be performed - we will resend the dialog in a standard way but we have to make sure the stacked information "+
+				"remains valid => we will store the new (resent) gumpinstance with the same stacking info as the old one "+
+				"This is necesasry since the resent dialog has a different uid than its older form")]
+		public static void ResendAndRestackDialog(GumpInstance oldInstance) {
+			GumpInstance newInstance = oldInstance.Cont.SendGump(oldInstance);//resend
+			RenewStackedDialog(oldInstance, newInstance);//and restack
+		}
+
+		[Remark("After resending the gump to the player, we have a new instance with a new UID - we need to"+
+				"update the stacked information in the multistack - assign the stack info to the new UID")]
+		public static void RenewStackedDialog(GumpInstance oldInstance, GumpInstance resentInstance) {
+			Dictionary<uint, Stack<DialogStackItem>> dialogsMultiStack = oldInstance.Cont.Conn.GetTag(_dialogStackTag_) as Dictionary<uint, Stack<DialogStackItem>>;
+			if(dialogsMultiStack != null) { //something was stored
+				if(dialogsMultiStack.ContainsKey(oldInstance.uid)) {
+					Stack<DialogStackItem> storedStack = dialogsMultiStack[oldInstance.uid];
+					//store the stack back to the multistack but now under the new UID!
+					dialogsMultiStack[resentInstance.uid] = storedStack;
+					dialogsMultiStack.Remove(oldInstance.uid); //the old dialog has been discarded
+				}
+			}
 		}
 
 		[Remark("For possible clearing of the stacked dialogs (if needed)")]
@@ -218,8 +258,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("For displaying the previously stored dialog (if any)")]
-		public static void ShowPreviousDialog(GameConn forWho) {
-			DialogStackItem dsi = DialogStackItem.PopStackedDialog(forWho);
+		public static void ShowPreviousDialog(GumpInstance actualGi) {
+			DialogStackItem dsi = DialogStackItem.PopStackedDialog(actualGi);
 			if(dsi != null) {
 				dsi.Show(); //we had something stored there, display it now
 			}

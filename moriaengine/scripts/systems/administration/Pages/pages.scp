@@ -12,7 +12,7 @@ else
  	dialog(d_Pages,<args>,0)
 endif
 
-//pozor: src - ten kdo dialog vyvolal, argv(1) - ten komu se dialog zobrazil, this - default object gumpscriptu
+//pozor: src - ten kdo dialog vyvolal, argv(0) - dialog's GumpInstance argv(1) - ten komu se dialog zobrazil, this - default object gumpscriptu
 [dialog d_Pages] //argv2 - sorting criterion, argv3 - number of the page (argv1 - gumpinstance.cont (tj ten komu se dialog zobrazil))
 //the GMPage object has these fields
 //Sender - the player who sent the page
@@ -116,51 +116,41 @@ dialog.MakeTableTransparent() //zpruhledni zbytek dialogu
 dialog.CreatePaging(pagesList.Count, firstiVal)
 dialog.WriteOut()
 
-//ulozit info o prave vytvorenem dialogu pro navrat (argv(1) - ten kteremu se dialog zobrazil (tomu se pak zobrazi znova)
-//argv(2) - trideni
-DialogStackItem.EnstackDialog(<argv(1)>,<this>,d_pages,<argv(2)>,firstiVal)
-
 [DIALOG d_Pages BUTTON]
 on=0 //exitting dialog by right click
-DialogStackItem.PopStackedDialog(argv(1).Conn)	//odstranit ze stacku aktualni dialog
 DialogStackItem.ShowPreviousDialog(argv(1).Conn) //zobrazit pripadny predchozi dialog						
 return 0
 
 on=1
 //src.sysmessage("tridit dle jmena asc")
-arg dsi = DialogStackItem.PopStackedDialog(argv(1).Conn) //vem ulozene info o dialogu
-dsi.SetArgValue(0,SortingCriteria.NameAsc) //uprav info o sortovani
-dsi.Show()
+argv(0).InputParams.set_Item(0,SortingCriteria.NameAsc) //uprav info o sortovani
+argv(0).Cont.SendGump(<argv(0)>)
 
 on=2
 //src.sysmessage("tridit dle casu asc")
-arg dsi = DialogStackItem.PopStackedDialog(argv(1).Conn) //vem ulozene info o dialogu
-dsi.SetArgValue(0,SortingCriteria.TimeAsc) //uprav info o sortovani
-dsi.Show()
+argv(0).InputParams.set_Item(0,SortingCriteria.TimeAsc) //uprav info o sortovani
+argv(0).Cont.SendGump(<argv(0)>)
 
 on=3
 //src.sysmessage("tridit dle uctu asc")
-arg dsi = DialogStackItem.PopStackedDialog(argv(1).Conn) //vem ulozene info o dialogu
-dsi.SetArgValue(0,SortingCriteria.AccountAsc) //uprav info o sortovani
-dsi.Show()
+argv(0).InputParams.set_Item(0,SortingCriteria.AccountAsc) //uprav info o sortovani
+argv(0).Cont.SendGump(<argv(0)>)
 
 on=4
 //src.sysmessage("tridit dle jmena desc")
-arg dsi = DialogStackItem.PopStackedDialog(argv(1).Conn) //vem ulozene info o dialogu
-dsi.SetArgValue(0,SortingCriteria.NameDesc) //uprav info o sortovani
-dsi.Show()
+argv(0).InputParams.set_Item(0,SortingCriteria.NameDesc) //uprav info o sortovani
+argv(0).Cont.SendGump(<argv(0)>)
 
 on=5
 //src.sysmessage("tridit dle casu desc")
-arg dsi = DialogStackItem.PopStackedDialog(argv(1).Conn) //vem ulozene info o dialogu
-dsi.SetArgValue(0,SortingCriteria.TimeDesc) //uprav info o sortovani
+argv(0).InputParams.set_Item(0,SortingCriteria.TimeDesc) //uprav info o sortovani
+argv(0).Cont.SendGump(<argv(0)>)
 dsi.Show()
 
 on=6
 //src.sysmessage("tridit dle uctu desc")
-arg dsi = DialogStackItem.PopStackedDialog(argv(1).Conn) //vem ulozene info o dialogu
-dsi.SetArgValue(0,SortingCriteria.AccountDesc) //uprav info o sortovani
-dsi.Show()
+argv(0).InputParams.set_Item(0,SortingCriteria.AccountDesc) //uprav info o sortovani
+argv(0).Cont.SendGump(<argv(0)>)
 
 ON=@AnyButton 
 arg btnNumber = (argv(2)-100) % 7 //on one line we have numbers 100,101,102,103,104,105,106. next line is 107,108,109,110,111,112 etc...
@@ -168,8 +158,8 @@ arg line = (argv(2) - (100+btnNumber)) div 7 //e.g. 104 - (100+4) / 7 = 0; 107 -
 //src.sysmessage("cudlik: <argv(2)>, butt : <btnNumber> radek: <line>")
 arg iPage = argv(0).tag.pages.get_Item(line)
 
-//adresat, button, pripadna hodnota iputfieldu pro paging,    index informace o pagingu mezi parametry , pocet pagi celkem
-if (ImprovedDialog.PagingButtonsHandled(<argv(1)>, <argv(2)>, <argnum[ImprovedDialog.ID_PAGE_NO_INPUT]>, 1, argv(0).tag.pages.Count))
+//gumpinstance s adresatem, button, pripadna hodnota iputfieldu pro paging,    index informace o pagingu mezi parametry , pocet pagi celkem
+if (ImprovedDialog.PagingButtonsHandled(<argv(0)>, <argv(2)>, <argnum[ImprovedDialog.ID_PAGE_NO_INPUT]>, 1, argv(0).tag.pages.Count))
 	return 1 //neni to nahoou neco z pagingu?, jestli jo tak return hned
 endif
 

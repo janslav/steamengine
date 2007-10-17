@@ -148,31 +148,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi.Cont.Conn); //zobrazit pripadny predchozi dialog						
+						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
                         break;
                     case 1: //acc tøídit asc
 						args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
                     case 2: //hráèi tøídit asc
 						args[0] = SortingCriteria.NameAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
                     case 3: //lokace tøídit asc
 						args[0] = SortingCriteria.LocationAsc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;                    
                     case 4: //acc tøídit desc
 						args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
                     case 5: //hráèi tøídit desc
 						args[0] = SortingCriteria.NameDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
                     case 6: //lokace tøídit desc
 						args[0] = SortingCriteria.LocationDesc; //uprav info o sortovani
-						gi.Cont.SendGump(gi);
+						DialogStackItem.ResendAndRestackDialog(gi);
 						break;
                 }
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, playersList.Count,1)) {
