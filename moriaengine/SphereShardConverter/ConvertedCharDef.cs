@@ -62,17 +62,20 @@ namespace SteamEngine.Converter {
 
 			this.firstStageImplementations.Add(firstStageImpl);
 			this.thirdStageImplementations.Add(thirdStageImpl);
-			headerType = "CharacterDef";
 		}
 
 		public override void ThirdStage() {
 			base.ThirdStage();
 
-			string defname = this.PrettyDefname;
-			if ((string.Compare(defname, "c_man", true) == 0) ||
-					(string.Compare(defname, "c_woman", true) == 0)) {
-
-				headerType = "PlayerDef";
+			switch (this.PrettyDefname.ToLower()) {
+				case "c_man_gm":
+				case "c_man":
+				case "c_woman":
+					headerType = "PlayerDef";
+					break;
+				default:
+					headerType = "NPCDef";
+					break;
 			}
 		}
 

@@ -2,7 +2,7 @@
 
 //[NAMES NAMES_ENT] //(commented out by Converter) 
 
-[CharacterDef C_m_GUARD_ent1]
+[NPCDef C_m_GUARD_ent1]
 CATEGORY = Civilized
 SUBSECTION = Guards & Law
 DESCRIPTION = Lorien Ent1
@@ -26,7 +26,7 @@ tag.guardhire = 500000
 //TEVENTS = e_guard_ent // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
-[CharacterDef C_f_GUARD_ent2]
+[NPCDef C_f_GUARD_ent2]
 CATEGORY = Civilized
 SUBSECTION = Guards & Law
 DESCRIPTION = Lorien Ent1
