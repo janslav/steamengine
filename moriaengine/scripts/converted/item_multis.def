@@ -457,8 +457,8 @@ DEFNAME = i_multi_ship_dragon_long_w
 ////MULTIREGION = -3,-3,3,4 // commented out by Converter 
 ////VALUE = 43800 // commented out by Converter 
 
-[ItemDef 0x406d]
-DUPEITEM = 0x406c
+//[ItemDef 0x406d]
+//DUPEITEM = 0x406c
 
 //[MultiItemDef 0x406e] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -473,8 +473,8 @@ DUPEITEM = 0x406c
 ////MULTIREGION = -3,-3,3,4 // commented out by Converter 
 ////VALUE = 43800 // commented out by Converter 
 
-[ItemDef 0x406f]
-DUPEITEM = 0x406e
+//[ItemDef 0x406f]
+//DUPEITEM = 0x406e
 
 //[MultiItemDef 0x4070] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -488,8 +488,8 @@ DUPEITEM = 0x406e
 ////MULTIREGION = -3,-3,4,4 // commented out by Converter 
 ////VALUE = 22000 // commented out by Converter 
 
-[ItemDef 0x4071]
-DUPEITEM = 0x4070
+//[ItemDef 0x4071]
+//DUPEITEM = 0x4070
 
 //[MultiItemDef 0x4072] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -503,8 +503,8 @@ DUPEITEM = 0x4070
 ////MULTIREGION = -3,-3,4,4 // commented out by Converter 
 ////VALUE = 22000 // commented out by Converter 
 
-[ItemDef 0x4073]
-DUPEITEM = 0x4072
+//[ItemDef 0x4073]
+//DUPEITEM = 0x4072
 
 //[MultiItemDef 0x4074] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -522,8 +522,8 @@ DUPEITEM = 0x4072
 ////COMPONENT = i_door_wood,3,-1, 7 // Front door. commented out by Converter 
 ////COMPONENT = i_sign_brass_2,3, 7, 5 // Place the sign. commented out by Converter 
 
-[ItemDef 0x4075]
-DUPEITEM = 0x4074
+//[ItemDef 0x4075]
+//DUPEITEM = 0x4074
 
 //[MultiItemDef 0x4076] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -541,8 +541,8 @@ DUPEITEM = 0x4074
 ////COMPONENT = i_door_wood,-3, 0, 7 // Front door. commented out by Converter 
 ////COMPONENT = i_sign_brass_2, 1, 7, 5 // Place the sign. commented out by Converter 
 
-[ItemDef 0x4077]
-DUPEITEM = 0x4076
+//[ItemDef 0x4077]
+//DUPEITEM = 0x4076
 
 //[MultiItemDef 0x4078] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -560,8 +560,8 @@ DUPEITEM = 0x4076
 ////COMPONENT = i_door_wood,-3, 0, 7 // Front door. commented out by Converter 
 ////COMPONENT = i_sign_brass_2, 1, 7, 5 // Place the sign. commented out by Converter 
 
-[ItemDef 0x4079]
-DUPEITEM = 0x4078
+//[ItemDef 0x4079]
+//DUPEITEM = 0x4078
 
 //[MultiItemDef 0x407a] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -580,8 +580,8 @@ DUPEITEM = 0x4078
 ////COMPONENT = 0677,	 1, 6, 7 // Front door 2. commented out by Converter 
 ////COMPONENT = i_door_metal,	 0, 6, 7 // Front door 1. commented out by Converter 
 
-[ItemDef 0x407b]
-DUPEITEM = 0x407a
+//[ItemDef 0x407b]
+//DUPEITEM = 0x407a
 
 //[MultiItemDef 0x407c] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -597,8 +597,8 @@ DUPEITEM = 0x407a
 ////MULTIREGION = -11,-11,12,12 // commented out by Converter 
 ////VALUE = 665200 // commented out by Converter 
 
-[ItemDef 0x407d]
-DUPEITEM = 0x407c
+//[ItemDef 0x407d]
+//DUPEITEM = 0x407c
 
 //[MultiItemDef 0x407e] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -616,8 +616,8 @@ DUPEITEM = 0x407c
 ////COMPONENT = i_door_metal, 0, 15, 7 // Front door 1. commented out by Converter 
 ////COMPONENT = i_sign_brass_2, 4, 16, 5 // Place the sign. commented out by Converter 
 
-[ItemDef 0x407f]
-DUPEITEM = 0x407e
+//[ItemDef 0x407f]
+//DUPEITEM = 0x407e
 
 //[MultiItemDef 0x4087] //(commented out by Converter) 
 //CATEGORY = Multis
@@ -653,8 +653,8 @@ DUPEITEM = 0x407e
 ////COMPONENT = 06A7,	-3, 6, 7 // Front door 2. commented out by Converter 
 ////COMPONENT = i_door_wood,	-4, 6, 7 // Front door 1. commented out by Converter 
 
-[ItemDef 0x408d]
-DUPEITEM = 0x408c
+//[ItemDef 0x408d]
+//DUPEITEM = 0x408c
 
 //[MultiItemDef 0x4096] //(commented out by Converter) 
 //CATEGORY = Multis
