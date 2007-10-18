@@ -1824,31 +1824,6 @@ namespace SteamEngine {
 			return null;
 		}
 
-		[Remark("SendGump method, using GumpInstance - used to invoke the dialog again where we need it to be changed "+
-				"(e.g. the displayed list changes, goin to a next page etc...)")]
-		public GumpInstance SendGump(GumpInstance inst) {
-			return SendGump(inst.Focus, inst.def, inst.InputParams);
-		}
-
-		/*[Remark("SendGump method, using GumpInstance - used to resend the existing dialog where we just need to repict the "+
-				"previous state where no changes are possible (e.g. unstacking the static dialogs)")]
-		public GumpInstance ReSendGump(GumpInstance inst) {
-			//check the game connection, althgough it should be OK (unless some connection error occured :) )
-			GameConn gc = Conn;
-			if(gc != null) {
-				//normally resend, no initializing here!
-				//when ReSending the CompiledGump we may need to go through the "Construct" method (the one implemented...)
-				if(inst.def is CompiledGump) {
-					((CompiledGump)inst.def).Construct(inst.Focus, this, inst.InputParams);
-				}
-				gc.SentGump(inst);
-				PacketSender.PrepareGump(inst);
-				PacketSender.SendTo(gc, true);
-				return inst;
-			}
-			return null;
-		}*/
-
 		public void DialogClose(GumpInstance instance, int buttonId) {
 			DialogClose(instance.uid, buttonId);
 		}

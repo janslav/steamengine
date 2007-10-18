@@ -1229,29 +1229,34 @@ namespace SteamEngine.Packets {
 			EncodeUInt(instance.uid, 7);
 			EncodeUInt(instance.x, 11);
 			EncodeUInt(instance.y, 15);
-			int layoutLength = instance.layout.Length;
+			string layout = instance.layout.ToString();
+			int layoutLength = layout.Length;
 			if (layoutLength == 0) {
 				//throw new SEException("The gump is empty!");
 				Logger.WriteWarning("The GumpInstance "+instance+" represents an empty gump?!");
 			}
-			Sanity.IfTrueThrow(layoutLength>32768,"Gump layout for '"+instance.def.Defname+"' is too long ("+instance.layout.Length+"). That would take at least several seconds to send, and you'd probably crash the client by sending something that big, if it was sendable at all (Also, the packet's size can never be > 65535 bytes (It has to be stored in a ushort and sent to the client, and that's the highest value a ushort can hold)).");
+			Sanity.IfTrueThrow(layoutLength>32768,"Gump layout for '"+instance.def.Defname+"' is too long ("+layout.Length+"). That would take at least several seconds to send, and you'd probably crash the client by sending something that big, if it was sendable at all (Also, the packet's size can never be > 65535 bytes (It has to be stored in a ushort and sent to the client, and that's the highest value a ushort can hold)).");
 			EncodeUShort((ushort)(layoutLength+1), 19);
 			//no idea why does it have to be +1, but it wont work without it... it is not written in any packet guide, I sniffed it from sphere, tried it, and it worked :) -tar
 			//It probably includes the null terminator. Just another little inconsistancy in the packets, nothing unusual... -SL
 			
-			ushort blockSize = (ushort) (21+EncodeString(instance.layout, 21));
+			ushort blockSize = (ushort) (21+EncodeString(layout, 21));
 			EncodeByte(0, blockSize);	//null terminator for the layout string
-			int numTextLines = instance.texts.Length;
+			int numTextLines;
+			if (instance.textsList != null) {
+				numTextLines = instance.textsList.Count;
+			} else {
+				numTextLines = 0;
+			}
 			EncodeUShort((ushort)numTextLines, blockSize+1);
 			blockSize+=3;
-			
-			foreach (string line in instance.texts) {
-				#if DEBUG
-				//this is inside an IF because substring fails if the line isn't longer than 30 characters, etc.
+			for (int i = 0; i<numTextLines; i++) {
+				string line = instance.textsList[i];
+#if DEBUG
 				if (line.Length>4096) {
 					Sanity.IfTrueThrow(true, "You're trying to send a text line in '"+instance.def.Defname+"' which is "+line.Length+" bytes long. Are you trying to crash the client? This line begins with '"+line.Substring(0, 30)+"'.");
 				}
-				#endif
+#endif
 				ushort bytelen = (ushort) EncodeUnicodeString(line, blockSize+2);
 				EncodeUShort((ushort)line.Length, blockSize);
 				blockSize+=(ushort)(bytelen+2);

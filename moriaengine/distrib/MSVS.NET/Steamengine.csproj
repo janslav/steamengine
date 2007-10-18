@@ -374,10 +374,6 @@
       <Link>Gump.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\GumpBuilder.cs">
-      <Link>GumpBuilder.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\src\HashSet.cs">
       <Link>HashSet.cs</Link>
     </Compile>

@@ -47,12 +47,10 @@ namespace SteamEngine {
 		public readonly Gump def;
 		internal object[] inputParams;//array of parameters the gump is called with
 		internal AbstractCharacter cont;//the player who sees this instance (src)
-		internal Thing focus;//the thing this character was "launched on"
+		internal Thing focus;//the thing this gump was "launched on"
 		internal uint x;
 		internal uint y;
-		internal string layout;
-		internal string[] texts;
-		internal int textsLengthsSum;
+		internal readonly StringBuilder layout = new StringBuilder();
 		internal List<int> numEntryIDs;
 		internal Dictionary<int, int> entryTextIds;
 
@@ -60,8 +58,9 @@ namespace SteamEngine {
 		internal bool movable = true;
 		internal bool closable = true;
 		internal bool disposable = true;
-		private List<string[]> elements = new List<string[]>();
-		private ArrayList textsList;
+		//private List<string[]> elements = new List<string[]>();
+		internal List<string> textsList;
+		//internal int textsLengthsSum;
 
 		internal GumpInstance(Gump def) {
 			this.def = def;
@@ -83,7 +82,7 @@ namespace SteamEngine {
 				return x;
 			}
 			set {
-				x = (uint) value;
+				x = value;
 			}
 		}
 
@@ -92,7 +91,7 @@ namespace SteamEngine {
 				return y;
 			}
 			set {
-				y = (uint) value;
+				y = value;
 			}
 		}
 
@@ -121,55 +120,27 @@ namespace SteamEngine {
 		public override string ToString() {
 			return String.Format("{0} {1} (uid {2})", GetType().Name, def.Defname, uid);
 		}
-		//methods from former GumpBuilder (for creating the dialog itself)
-		//this is the final method where all the elements are compiled into the string
-		internal string GetLayoutString() {
-			StringBuilder sb = new StringBuilder();
-			if (!movable) {
-				sb.Append("{nomove}");
-			}
-			if (!closable) {
-				sb.Append("{noclose}");
-			}
-			if (!disposable) {//what does it really mean? :)
-				sb.Append("{nodispose}");
-			}
-			for (int elIndex = 0, elementsCount = elements.Count; elIndex < elementsCount; elIndex++) {
-				string[] element = elements[elIndex];
-				sb.Append("{");
-				int n = (element.Length - 1);//after the last one there is no space
-				for (int i = 0; i < n; i++) {
-					sb.Append(element[i]);
-					sb.Append(" ");
-				}
-				sb.Append(element[n]);
-				sb.Append("}");
-			}
-			return sb.ToString();
+
+		private void AddElement(string[] arr) {
+			layout.Append("{").Append(String.Join(" ", arr)).Append("}");
 		}
 
+		//this is the final method where all the elements are compiled into the string
 		public void CompilePacketData() {
-			//Logger.WriteDebug("data of "+instance);
-			layout = GetLayoutString();
-			//Logger.WriteDebug(instance.layout);
-			textsLengthsSum = 0;
-			if (textsList != null) {
-				int textsListCount = textsList.Count;
-				texts = new string[textsListCount];
-				for (int i = 0; i < textsListCount; i++) {
-					string text = (string) textsList[i];
-					textsLengthsSum += text.Length;
-					texts[i] = text;
-					//Logger.WriteDebug("text "+i+": "+text);
-				}
-			} else {
-				texts = new string[0];
+			if (!movable) {
+				layout.Insert(0, "{nomove}");
+			}
+			if (!closable) {
+				layout.Insert(0, "{noclose}");
+			}
+			if (!disposable) {//what does it really mean? :)
+				layout.Insert(0, "{nodispose}");
 			}
 		}
 
 		private void CreateTexts() {
 			if (textsList == null) {
-				textsList = new ArrayList();
+				textsList = new List<string>();
 			}
 		}
 
@@ -184,7 +155,7 @@ namespace SteamEngine {
 				pageId.ToString(),
 				triggerId.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddCheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
@@ -197,7 +168,7 @@ namespace SteamEngine {
 				(isChecked?"1": "0"), 
 				id.ToString(),
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddRadio(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
@@ -210,7 +181,7 @@ namespace SteamEngine {
 				(isChecked?"1": "0"), 
 				id.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddCheckerTrans(int x, int y, int width, int height) {
@@ -221,13 +192,13 @@ namespace SteamEngine {
 				width.ToString(), 
 				height.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		//is it possible without args? sphere tables say it is...
 		public void AddCheckerTrans() {
 			string[] arr = new string[] { "checkertrans" };
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddText(int x, int y, int hue, int textId) {
@@ -238,13 +209,15 @@ namespace SteamEngine {
 				hue.ToString(), 
 				textId.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public int AddText(int x, int y, int hue, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			int textId = textsList.Add(text);
+			textsList.Add(text);
+			//textsLengthsSum += text.Length;
+			int textId = textsList.Count - 1;
 			AddText(x, y, hue, textId);
 			return textId;
 		}
@@ -259,13 +232,15 @@ namespace SteamEngine {
 				hue.ToString(), 
 				textId.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public int AddCroppedText(int x, int y, int width, int height, int hue, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			int textId = textsList.Add(text);
+			textsList.Add(text);
+			//textsLengthsSum += text.Length;
+			int textId = textsList.Count - 1;
 			AddCroppedText(x, y, width, height, hue, textId);
 			return textId;
 		}
@@ -275,7 +250,7 @@ namespace SteamEngine {
 				"group", 
 				groupId.ToString(), 
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddGumpPic(int x, int y, int gumpId) {
@@ -285,7 +260,7 @@ namespace SteamEngine {
 				y.ToString(),
 				gumpId.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddGumpPic(int x, int y, int gumpId, int hue) {
@@ -299,7 +274,7 @@ namespace SteamEngine {
 					gumpId.ToString(), 
 					"hue="+hue.ToString(), 
 				};
-				elements.Add(arr);
+				AddElement(arr);
 			}
 		}
 
@@ -312,7 +287,7 @@ namespace SteamEngine {
 				height.ToString(),
 				gumpId.ToString(), 
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddHTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
@@ -326,13 +301,15 @@ namespace SteamEngine {
 				(hasBoundBox? "1": "0"), 
 				(isScrollable? "1": "0")
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public int AddHTMLGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			int textId = textsList.Add(text);
+			textsList.Add(text);
+			//textsLengthsSum += text.Length;
+			int textId = textsList.Count - 1;
 			AddHTMLGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 			return textId;
 		}
@@ -342,7 +319,7 @@ namespace SteamEngine {
 				"page",
 				pageId.ToString(), 
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddResizePic(int x, int y, int gumpId, int width, int height) {
@@ -354,7 +331,7 @@ namespace SteamEngine {
 				width.ToString(), 
 				height.ToString(),
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		//internal int AddString(string text) {
@@ -366,7 +343,9 @@ namespace SteamEngine {
 		public int AddTextLine(string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			return textsList.Add(text);
+			textsList.Add(text);
+			//textsLengthsSum += text.Length;
+			return textsList.Count - 1;
 		}
 
 		public void AddTextEntry(int x, int y, int widthPix, int height, int hue, int id, int textId) {
@@ -383,7 +362,7 @@ namespace SteamEngine {
 				id.ToString(),
 				textId.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 			if (entryTextIds == null) {
 				entryTextIds = new Dictionary<int, int>();
 			}
@@ -393,7 +372,9 @@ namespace SteamEngine {
 		public int AddTextEntry(int x, int y, int widthPix, int height, int hue, int id, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			int textId = textsList.Add(text);
+			textsList.Add(text);
+			//textsLengthsSum += text.Length;
+			int textId = textsList.Count - 1;
 			AddTextEntry(x, y, widthPix, height, hue, id, textId);
 			return textId;
 		}
@@ -412,7 +393,7 @@ namespace SteamEngine {
 				id.ToString(),
 				textId.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 			if (numEntryIDs == null) {
 				numEntryIDs = new List<int>();
 			}
@@ -426,7 +407,10 @@ namespace SteamEngine {
 
 		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, double text) {
 			CreateTexts();
-			int textId = textsList.Add(text.ToString());
+			string textStr = text.ToString();
+			textsList.Add(textStr);
+			//textsLengthsSum += textStr.Length;
+			int textId = textsList.Count - 1;
 			AddNumberEntry(x, y, widthPix, height, hue, id, textId);
 			return textId;
 		}
@@ -438,7 +422,7 @@ namespace SteamEngine {
 				y.ToString(),
 				model.ToString()
 			};
-			elements.Add(arr);
+			AddElement(arr);
 		}
 
 		public void AddTilePicHue(int x, int y, int model, int hue) {
@@ -452,7 +436,7 @@ namespace SteamEngine {
 					model.ToString(),
 					hue.ToString()
 				};
-				elements.Add(arr);
+				AddElement(arr);
 			}
 		}
 
@@ -486,7 +470,7 @@ namespace SteamEngine {
 					hue.ToString()
 				};
 			}
-			elements.Add(arr);
+			AddElement(arr);
 		}
 	}
 
