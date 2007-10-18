@@ -7,11 +7,38 @@ using System.Text.RegularExpressions;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
+	[HasSavedMembers]
 	public static class HuesCalculator {
+
 		static Dictionary<Material, Constant> woodHues = new Dictionary<Material, Constant>();
 		static Dictionary<Material, Constant> metalHues = new Dictionary<Material, Constant>();
 		static Dictionary<Material, Constant> oreHues = new Dictionary<Material, Constant>();
 
+
+		private static bool defsWithMaterialColored;
+		[SavedMember]
+		public static bool DefsWithMaterialColored {
+			get {
+				return defsWithMaterialColored;
+			}
+			set {
+				if (value == false) {
+					SetColorOnDefsWithMaterial();
+				}
+			}
+		}
+
+		//pusti se automaticky po druhym loadu novyho sveta
+		public static void SetColorOnDefsWithMaterial() {
+			foreach (AbstractScript scp in AbstractScript.AllScrips) {
+				IObjectWithMaterial materialObj = scp as IObjectWithMaterial;
+				if (materialObj != null) {
+					materialObj.Color = GetHueForMaterial(materialObj.Material, materialObj.MaterialType);
+				}
+			}
+
+			defsWithMaterialColored = true;
+		}
 
 		public static ushort GetHueForMaterial(Material material, MaterialType type) {
 			if (material == Material.None) {

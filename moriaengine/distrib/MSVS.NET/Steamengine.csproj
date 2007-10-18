@@ -743,10 +743,6 @@
       <Link>SoundMul.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Sounds.cs">
-      <Link>Sounds.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\src\Static.cs">
       <Link>Static.cs</Link>
       <SubType>Code</SubType>

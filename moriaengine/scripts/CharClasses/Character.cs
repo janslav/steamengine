@@ -26,7 +26,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class CharacterDef {
-		private AnimInfo animInfo;
+		private CharModelInfo charModelInfo;
 
 		private CorpseDef corpseDef;
 		public CorpseDef CorpseDef {
@@ -38,60 +38,49 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public AnimInfo AnimInfo {
+		public CharModelInfo CharModelInfo {
 			get {
-				if (this.animInfo == null) {
-					this.animInfo = AnimInfo.Get(this.Model);
+				ushort model = this.Model;
+				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
+					this.charModelInfo = CharModelInfo.Get(model);
 				}
-				return animInfo;
+				return charModelInfo;
 			}
 		}
 
 		public bool IsHuman {
 			get {
-				return (this.AnimInfo.BodyAnimType & BodyAnimType.Human) == BodyAnimType.Human;
+				return (this.CharModelInfo.charAnimType & CharAnimType.Human) == CharAnimType.Human;
 			}
 		}
 
 		public bool IsAnimal {
 			get {
-				return (this.AnimInfo.BodyAnimType & BodyAnimType.Animal) == BodyAnimType.Animal;
+				return (this.CharModelInfo.charAnimType & CharAnimType.Animal) == CharAnimType.Animal;
 			}
 		}
 
 		public bool IsMonster {
 			get {
-				return (this.AnimInfo.BodyAnimType & BodyAnimType.Monster) == BodyAnimType.Monster;
+				return (this.CharModelInfo.charAnimType & CharAnimType.Monster) == CharAnimType.Monster;
 			}
 		}
 
 		public Gender Gender {
 			get {
-				BodyAnimType body = this.AnimInfo.BodyAnimType;
-				if ((body & BodyAnimType.Male) == BodyAnimType.Male) {
-					return Gender.Male;
-				} else if ((body & BodyAnimType.Female) == BodyAnimType.Female) {
-					return Gender.Female;
-				}
-				return Gender.Undefined;
+				return this.CharModelInfo.gender;
 			}
 		}
 
 		public override bool IsMale {
 			get {
-				if ((this.AnimInfo.BodyAnimType & BodyAnimType.Female) == BodyAnimType.Female) {
-					return false;
-				}
-				return true;
+				return this.CharModelInfo.isMale;
 			}
 		}
 
 		public override bool IsFemale {
 			get {
-				if ((this.AnimInfo.BodyAnimType & BodyAnimType.Female) == BodyAnimType.Female) {
-					return true;
-				}
-				return false;
+				return this.CharModelInfo.isFemale;
 			}
 		}
 
@@ -101,6 +90,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Character : AbstractCharacter {
 		Skill[] skills;//this CAN be null, altough it usually isn't
 		float weight;
+		private CharModelInfo charModelInfo;
 
 		public SkillDef currentSkill;
 		public IPoint3D currentSkillTarget1 = null;
@@ -817,6 +807,7 @@ namespace SteamEngine.CompiledScripts {
 
 				this.AbortSkill();
 				this.Dismount();
+				SoundCalculator.PlayDeathSound(this);
 
 				TryTrigger(deathTK, new ScriptArgs(killedBy));
 				On_Death(killedBy);
@@ -1831,30 +1822,58 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
+		public CharModelInfo CharModelInfo {
+			get {
+				ushort model = this.Model;
+				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
+					this.charModelInfo = CharModelInfo.Get(model);
+				}
+				return charModelInfo;
+			}
+		}
+
 		/**
 			These are flags which specify what kind of model this is, and what anims it has.
 		*/
 		public uint AnimsAvailable {
 			get {
-				return AnimInfo.Get(this.Model).AnimsAvailable;
+				return this.CharModelInfo.AnimsAvailable;
 			}
 		}
 
-		public AnimInfo AnimInfo {
+		public bool IsHuman {
 			get {
-				return AnimInfo.Get(this.Model);
+				return (this.CharModelInfo.charAnimType & CharAnimType.Human) == CharAnimType.Human;
 			}
 		}
 
-		public override bool IsFemale {
+		public bool IsAnimal {
 			get {
-				return AnimInfo.Get(this.Model).IsFemale;
+				return (this.CharModelInfo.charAnimType & CharAnimType.Animal) == CharAnimType.Animal;
+			}
+		}
+
+		public bool IsMonster {
+			get {
+				return (this.CharModelInfo.charAnimType & CharAnimType.Monster) == CharAnimType.Monster;
+			}
+		}
+
+		public Gender Gender {
+			get {
+				return this.CharModelInfo.gender;
 			}
 		}
 
 		public override bool IsMale {
 			get {
-				return AnimInfo.Get(this.Model).IsMale;
+				return this.CharModelInfo.isMale;
+			}
+		}
+
+		public override bool IsFemale {
+			get {
+				return this.CharModelInfo.isFemale;
 			}
 		}
 	}

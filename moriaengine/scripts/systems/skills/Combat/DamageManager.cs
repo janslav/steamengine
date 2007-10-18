@@ -227,7 +227,7 @@ namespace SteamEngine.CompiledScripts {
 					if (!defender.IsDeleted && !defender.Flag_Dead) {
 						//TODO create blood, sound?
 
-						defender.Sound((SoundFX) ((int) defender.TypeDef.Sound+3));
+						SoundCalculator.PlayHurtSound(defender);
 						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
 					}
 
@@ -240,7 +240,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static double ProcessSwing(Character attacker, Character defender) {
 			WeaponSwingArgs swingArgs = GetWeaponSwingArgs(attacker, defender);
-
+			SoundCalculator.PlayAttackSound(attacker);
 			double retVal = 0;
 
 			if (!Trigger_BeforeSwing(swingArgs)) {

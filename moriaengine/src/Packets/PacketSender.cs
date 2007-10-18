@@ -996,13 +996,13 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		public static void PrepareSound(IPoint4D source, SoundFX sound) {
+		public static void PrepareSound(IPoint4D source, ushort sound) {
 			Sanity.IfTrueThrow(source==null, "PrepareSound called with a null source.");
 			StartGenerating();
 			source = source.TopPoint;
 			EncodeByte(0x54, 0);
 			EncodeByte(0x01, 1);
-			EncodeUShort((ushort)sound, 2);
+			EncodeUShort(sound, 2);
 			EncodeUShort(0, 4);
 			EncodeUShort(source.X,6);
 			EncodeUShort(source.Y,8);

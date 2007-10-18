@@ -120,7 +120,6 @@ namespace SteamEngine.CompiledScripts {
 				//self.SysMessage(this.Key+" succeeded");
 				Character target = (Character) self.currentSkillTarget1;
 				DamageManager.ProcessSwing(self, target);
-				self.Sound((SoundFX) 567);
 			}
 		}
 
@@ -129,8 +128,7 @@ namespace SteamEngine.CompiledScripts {
 				//self.SysMessage(this.Key+" failed");
 				Character target = (Character) self.currentSkillTarget1;
 				target.Trigger_HostileAction(self);
-
-				self.Sound((SoundFX) 0x23a);
+				SoundCalculator.PlayMissSound(self);
 			}
 		}
 

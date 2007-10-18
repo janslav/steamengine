@@ -248,6 +248,7 @@ namespace SteamEngine.CompiledScripts {
 		MountedGetHit=49,	//?
 		NumAnims=50
 	}
+
 	public enum MonsterAnim : byte {
 		Walk=0,
 		StandStill=1,
@@ -304,17 +305,28 @@ namespace SteamEngine.CompiledScripts {
 		Wood=3
 	}
 
+	//[Flags]
+	//public enum BodyAnimType : byte {
+	//    Nothing =	0x00,
+	//    Monster =	0x01,
+	//    Animal =	0x02,
+	//    Human =		0x04,
+	//    Equipment =	0x08,
+	//    SeaAnimal =	0x10|Animal,
+	//    Male =		0x20,
+	//    Female =	0x40,
+	//    Ghost =		0x80
+	//}
+
+	//taken from runuo
 	[Flags]
-	public enum BodyAnimType : byte {
-		Nothing =	0x00,
-		Monster =	0x01,
-		Animal =	0x02,
-		Human =		0x04,
-		Equipment =	0x08,
-		SeaAnimal =	0x10|Animal,
-		Male =		0x20,
-		Female =	0x40,
-		Ghost =		0x80
+	public enum CharAnimType : byte {
+		Empty=0x00,
+		Monster=0x01,
+		Animal=0x02,
+		Sea=Animal|0x04,
+		Human=0x08,
+		Equipment=0x10
 	}
 
 	public enum Material : byte {

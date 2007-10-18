@@ -33,7 +33,6 @@ namespace SteamEngine {
 		//and coords of an item inside a container should only be changed through MoveInsideContainer
 		
 		private TriggerGroup type;
-		private ushort model;
 
 		internal object contentsOrComponents = null;
 
@@ -83,7 +82,6 @@ namespace SteamEngine {
 		public AbstractItem(ThingDef myDef) : base(myDef) {
 			instances++;
 			this.name=null;
-			this.model = myDef.Model;
 			this.type = ((AbstractItemDef) myDef).Type;
 			this.flags=0;
 			this.amount=1;
@@ -116,7 +114,6 @@ namespace SteamEngine {
 		public AbstractItem(AbstractItem copyFrom) : base(copyFrom) { //copying constuctor
 			instances++;
 			name=copyFrom.name;
-			model=copyFrom.model;
 			flags=copyFrom.flags;
 			amount=copyFrom.amount;
 
@@ -160,12 +157,12 @@ namespace SteamEngine {
 				if (defHeight > 0) {
 					return defHeight;
 				}
-				ItemDispidInfo idi=ItemDispidInfo.Get(model);
-				if (idi == null) {
-					return 1;
-				}
 				if (this.IsContainer) {
 					return 4;
+				}
+				ItemDispidInfo idi=ItemDispidInfo.Get(this.Model);
+				if (idi == null) {
+					return 1;
 				}
 				return idi.height;
 			} 
@@ -550,17 +547,6 @@ namespace SteamEngine {
 			}
 		}
 		
-		public override sealed ushort Model { 
-			get {
-				return model;
-			} set {
-				NetState.ItemAboutToChange(this);
-				model=value;
-			} 
-		}
-		
-		//"StackModel" is handled automatically by the client, we don't have to do anything. (SL)
-		
 		public override string Name { 
 			get {
 				if (name==null) {
@@ -779,13 +765,11 @@ namespace SteamEngine {
 		
 		public override void Save(SaveStream output) {
 			base.Save(output);
-			if ((name != null)&&(Def.Name != name)) {
+			AbstractItemDef def = this.TypeDef;
+			if ((name != null) && (!def.Name.Equals(name))) {
 				output.WriteValue("name", name);
 			}
-			if (Def.Model != model) {
-				output.WriteValue("model", model);
-			}
-			Thing c = Cont;
+			Thing c = this.Cont;
 			if (c != null) {
 				output.WriteValue("cont", c);
 			}
@@ -795,7 +779,7 @@ namespace SteamEngine {
 			if (flags != 0) {
 				output.WriteValue("flags", flags);
 			}
-			if ((type != null)&&(type!= TypeDef.Type)) {
+			if ((type != null) && (type!= def.Type)) {
 				output.WriteLine("type="+type.Defname);
 			}
 		}
@@ -812,10 +796,6 @@ namespace SteamEngine {
 					} else {
 						name = String.Intern(value);
 					}
-					break;
-				case "dispid":
-				case "model":
-					model = TagMath.ParseUInt16(value);
 					break;
 				case "amount":
 					amount = TagMath.ParseUInt16(value);
@@ -864,7 +844,7 @@ namespace SteamEngine {
 		}
 
 		public virtual void On_DropSound(AbstractCharacter droppingChar) {
-			this.SoundTo(SoundFX.MovingLeather, droppingChar);
+			this.SoundTo(this.TypeDef.DropSound, droppingChar);
 		}
 		
 		public override sealed bool IsItem { 

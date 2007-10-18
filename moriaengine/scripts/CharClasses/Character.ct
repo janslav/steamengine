@@ -18,7 +18,11 @@
 
 [ThingTemplate Character : AbstractCharacter]
 Def:	//vars on the def
-	SoundFX Sound = 0
+	ushort AngerSound = SoundNames.None
+	ushort IdleSound = SoundNames.None
+	ushort AttackSound = SoundNames.None
+	ushort HurtSound = SoundNames.None
+	ushort DeathSound = SoundNames.None
 
 	uint corpseModel = 0x2006
 	

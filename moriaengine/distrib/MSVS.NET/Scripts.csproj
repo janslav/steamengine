@@ -248,14 +248,11 @@
     <Compile Include="..\..\scripts\systems\AI\PathFinding\AStar.cs">
       <Link>systems\AI\Pathfinding\AStar.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Animations\AnimCalculator.cs">
-      <Link>systems\Animations\AnimCalculator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Animations\AnimInfo.cs">
-      <Link>systems\Animations\AnimInfo.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\BackupsManager.cs">
       <Link>systems\BackupsManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\CharModelInfo.cs">
+      <Link>systems\CharModelInfo.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\db\DbManager.cs">
       <Link>systems\db\DbManager.cs</Link>
@@ -566,6 +563,9 @@
     <Compile Include="..\..\scripts\types\type_weapons.cs">
       <Link>types\type_weapons.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Utils\AnimCalculator.cs">
+      <Link>Utils\AnimCalculator.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
       <Link>Utils\ExportUtils.cs</Link>
     </Compile>
@@ -610,6 +610,12 @@
     </Compile>
     <Compile Include="..\..\scripts\Utils\SingletonScript.cs">
       <Link>Utils\SingletonScript.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\SoundCalculator.cs">
+      <Link>Utils\SoundCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\SoundNames.cs">
+      <Link>Utils\SoundNames.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
