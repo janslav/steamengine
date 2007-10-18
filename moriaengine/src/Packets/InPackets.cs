@@ -644,8 +644,8 @@ namespace SteamEngine.Packets {
 			foreach (ResponseText rt in responseTexts) {
 				int defaultTextId;
 				if (gi.entryTextIds.TryGetValue((int) rt.id, out defaultTextId)) {
-					if (defaultTextId < gi.texts.Length) {//one can never be too sure
-						gi.texts[defaultTextId] = rt.text;
+					if (defaultTextId < gi.textsList.Count) {//one can never be too sure
+						gi.textsList[defaultTextId] = rt.text;
 					}
 				}
 			}

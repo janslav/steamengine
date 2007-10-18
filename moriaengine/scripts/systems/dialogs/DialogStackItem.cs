@@ -234,7 +234,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"remains valid => we will store the new (resent) gumpinstance with the same stacking info as the old one "+
 				"This is necesasry since the resent dialog has a different uid than its older form")]
 		public static void ResendAndRestackDialog(GumpInstance oldInstance) {
-			GumpInstance newInstance = oldInstance.Cont.SendGump(oldInstance);//resend
+			GumpInstance newInstance = oldInstance.Cont.SendGump(
+				oldInstance.Focus, oldInstance.def, oldInstance.InputParams);//resend
 			RenewStackedDialog(oldInstance, newInstance);//and restack
 		}
 
