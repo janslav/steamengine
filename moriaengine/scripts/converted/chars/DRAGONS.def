@@ -23,7 +23,7 @@ colors_drag_all		{colors_wyrm, 1, colors_drag_green, 1, colors_drag_red, 1, colo
 //         (c)-Sir Glorg-          //
 /////////////////////////////////////
 
-[CharacterDef c_dragon_swamp]
+[NPCDef c_dragon_swamp]
 CATEGORY = Monsters
 SUBSECTION = Dragons
 DESCRIPTION = Dragon Swamp
@@ -51,7 +51,7 @@ DeathSound = snd_monster_dragon1 + 4
 //TEVENTS = e_inexhaustible // commented out by Converter 
 //TEVENTS = e_summoneater // commented out by Converter 
 
-[CharacterDef 0x3d]
+[NPCDef 0x3d]
 category = Monsters
 subsection = Dragons and Drakes
 description = drake (red)
@@ -78,7 +78,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef 0x3b]
+[NPCDef 0x3b]
 category = Monsters
 subsection = Dragons and Drakes
 description = dragon (red)
@@ -110,7 +110,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_green]
+[NPCDef c_drake_green]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Green
@@ -136,7 +136,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_red]
+[NPCDef c_drake_red]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Red
@@ -157,7 +157,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_blue]
+[NPCDef c_drake_blue]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Blue
@@ -183,7 +183,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_copper]
+[NPCDef c_drake_copper]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Copper
@@ -204,7 +204,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_silver]
+[NPCDef c_drake_silver]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Silver
@@ -231,7 +231,7 @@ tag.resist_sumon = 800
 tag.resist_poison = 900
 tag.resist_magic = 200
 
-[CharacterDef c_drake_gold]
+[NPCDef c_drake_gold]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Gold
@@ -257,7 +257,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_ice]
+[NPCDef c_drake_ice]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Ice
@@ -282,7 +282,7 @@ DeathSound = snd_MONSTER_DRAGON1 + 4
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_drake_black]
+[NPCDef c_drake_black]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Drake Black
@@ -308,7 +308,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_wyvern]
+[NPCDef c_wyvern]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Wyvern
@@ -329,7 +329,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_green]
+[NPCDef c_dragon_green]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Green
@@ -350,7 +350,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_red]
+[NPCDef c_dragon_red]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Red
@@ -371,7 +371,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_blue]
+[NPCDef c_dragon_blue]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Blue
@@ -397,7 +397,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_copper]
+[NPCDef c_dragon_copper]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Copper
@@ -423,7 +423,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_silver]
+[NPCDef c_dragon_silver]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Silver
@@ -449,7 +449,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_gold]
+[NPCDef c_dragon_gold]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Gold
@@ -475,7 +475,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_ice]
+[NPCDef c_dragon_ice]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Ice
@@ -500,7 +500,7 @@ DeathSound = snd_MONSTER_DRAGON1 + 4
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef c_dragon_black]
+[NPCDef c_dragon_black]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Black
@@ -526,7 +526,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef 0xc]
+[NPCDef 0xc]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Wyrm
@@ -556,7 +556,7 @@ tag.resist_fire = 1000
 tag.resist_sumon = 800
 tag.resist_poison = 900
 
-[CharacterDef 0x31e]
+[NPCDef 0x31e]
 CATEGORY = Monsters
 SUBSECTION = Dragons and Drakes
 DESCRIPTION = Dragon Lord
@@ -589,7 +589,7 @@ tag.resist_poison = 900
 
 //[SPEECH spk_dragon_lord] //(commented out by Converter) 
 
-[CharacterDef c_dragon_beridor]
+[NPCDef c_dragon_beridor]
 CATEGORY = Dungy
 SUBSECTION = Beridor
 DESCRIPTION = drak
