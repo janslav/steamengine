@@ -140,18 +140,6 @@ Dinivan
 
 	Info dialog (player, character, item) - DONE
 	Descriptors for enabling more options in info dialogs than just the class's methods and properties
-	
-	Konzole: Dlouhy odkazy na soubory ("C:\SE\moria engine\scripts\kdesicosi.scp") se maj zobrazovat jen jako jmeno souboru
-		("kdesicosi.scp"), ale konzole si musi nadale pamatovat tu cestu ktera tam byla napsana
-	
-	konzole: Pri nastaveni showCoreExceptions = false v .ini se misto mimoskriptovych radku stacktrace vypisuje jen
-		[...]. Tento znak by idealne mohl byt rozbalovaci na poklikani ;)
-
-	Konzole: udelat neco jako [filter na soucasny pythonicky konzoli co bezi na morii.
-		Nebo vymyslet nejakou jinou, odpovidajici funkcionalitu, ktera by zabranovala spamu logovanych udalosti,
-		ale nezabranovala vzdaleny praci s konzoli.
-		
-	Konzole: spravit poradi pamatovanych predchozich prikazu
 		
 	"Trestni rejstrik" pro hracsky accounty. Tj. Gump kde by GMka videli seznam dosavadnich prohresku a trestu na accountu, 
 		plus by tam mohli psat vlastni nezavisle poznamky jako "je to druhej account hrace X" apod.
@@ -163,6 +151,26 @@ Dinivan
 	Dialog "ref" - informace o tøídì - DONE v info dialogach
 
 	Generator dokumentace (NDoc pro 2.0? nebo Sandcastle?)
+
+
+
+Kemoc
+----------------------------------------------------
+
+	Oddeleni login serveru od game serveru
+
+	Konzole: Dlouhy odkazy na soubory ("C:\SE\moria engine\scripts\kdesicosi.scp") se maj zobrazovat jen jako jmeno souboru
+		("kdesicosi.scp"), ale konzole si musi nadale pamatovat tu cestu ktera tam byla napsana
+	
+	konzole: Pri nastaveni showCoreExceptions = false v .ini se misto mimoskriptovych radku stacktrace vypisuje jen
+		[...]. Tento znak by idealne mohl byt rozbalovaci na poklikani ;)
+
+	Konzole: udelat neco jako [filter na soucasny pythonicky konzoli co bezi na morii.
+		Nebo vymyslet nejakou jinou, odpovidajici funkcionalitu, ktera by zabranovala spamu logovanych udalosti,
+		ale nezabranovala vzdaleny praci s konzoli.
+		
+	Konzole: spravit poradi pamatovanych predchozich prikazu
+
 
 UnAssigned
 
