@@ -342,8 +342,8 @@ TYPE = T_MUSICAL
 WEIGHT = 30
 //RESOURCES = 1 i_hides_cut, 5 I_BOARD // commented out by Converter 
 //SKILLMAKE = TINKERING 51.0,t_tinker_tools // commented out by Converter 
-SuccessSound = SoundFX.DrumSuccess
-FailureSound = SoundFX.DrumFailure
+SuccessSound = SoundNames.DrumSuccess
+FailureSound = SoundNames.DrumFailure
 DEFNAME = i_drum
 
 [MusicalDef 0xe9d]
@@ -355,8 +355,8 @@ TYPE = T_MUSICAL
 WEIGHT = 10
 //RESOURCES = 1 i_ingot_iron, 2 i_board // commented out by Converter 
 //SKILLMAKE = TINKERING 50.0,t_tinker_tools // commented out by Converter 
-SuccessSound = SoundFX.TambourineSuccess
-FailureSound = SoundFX.TambourineFailure
+SuccessSound = SoundNames.TambourineSuccess
+FailureSound = SoundNames.TambourineFailure
 DEFNAME = i_tambourine
 
 [MusicalDef 0xe9e]
@@ -368,8 +368,8 @@ TYPE = T_MUSICAL
 WEIGHT = 10
 //RESOURCES = i_tambourine, i_cloth // commented out by Converter 
 //SKILLMAKE = CARPENTRY 50.0, MUSICIANSHIP 65.0, t_carpentry // commented out by Converter 
-SuccessSound = SoundFX.TambourineSuccess
-FailureSound = SoundFX.TambourineFailure
+SuccessSound = SoundNames.TambourineSuccess
+FailureSound = SoundNames.TambourineFailure
 DEFNAME = i_tambourine_tas
 
 [MusicalDef 0xeb1]
@@ -380,8 +380,8 @@ DESCRIPTION = Standing Harp
 TYPE = T_MUSICAL
 //RESOURCES = 10 i_log, 4 i_wire_iron // commented out by Converter 
 //SKILLMAKE = TINKERING 56.5,t_tinker_tools // commented out by Converter 
-SuccessSound = SoundFX.Harp1Success
-FailureSound = SoundFX.Harp1Failure
+SuccessSound = SoundNames.Harp1Success
+FailureSound = SoundNames.Harp1Failure
 DEFNAME = i_HARP_LARGE
 
 [MusicalDef 0xeb2]
@@ -393,8 +393,8 @@ TYPE = T_MUSICAL
 WEIGHT = 100
 //RESOURCES = 7 i_log, 2 i_wire_iron // commented out by Converter 
 //SKILLMAKE = TINKERING 54.0,t_tinker_tools // commented out by Converter 
-SuccessSound = SoundFX.Harp2Success
-FailureSound = SoundFX.Harp2Failure
+SuccessSound = SoundNames.Harp2Success
+FailureSound = SoundNames.Harp2Failure
 DEFNAME = i_lyre
 
 [MusicalDef 0xeb3]
@@ -407,8 +407,8 @@ TYPE = T_MUSICAL
 WEIGHT = 50
 //RESOURCES = 6 i_log, 1 i_wire_iron // commented out by Converter 
 //SKILLMAKE = TINKERING 52.0,t_tinker_tools // commented out by Converter 
-SuccessSound = SoundFX.LuteSuccess
-FailureSound = SoundFX.LuteFailure
+SuccessSound = SoundNames.LuteSuccess
+FailureSound = SoundNames.LuteFailure
 DEFNAME = i_lute
 
 [ItemDef 0xeb4]

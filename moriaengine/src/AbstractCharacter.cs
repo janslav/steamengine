@@ -93,7 +93,6 @@ namespace SteamEngine {
 		public Thing act = null;
 		public Thing targ = null;
 		private byte direction = 0;
-		private ushort model = 0;
 		internal ThingLinkedList visibleLayers;//layers 0..24
 		internal ThingLinkedList invisibleLayers;//layers (26..29) + (32..max)
 		internal ThingLinkedList specialLayer;//layer 30
@@ -121,7 +120,6 @@ namespace SteamEngine {
 		public AbstractCharacter(ThingDef myDef): base(myDef) {
 			instances++;
 			this.name = myDef.Name;
-			this.model = myDef.Model;
 			if (!MainClass.loading) {
 				if (ThingDef.lastCreatedThingContOrPoint == ContOrPoint.Cont) {
 					throw new SanityCheckException("You can't create a Character in a container.");
@@ -141,8 +139,6 @@ namespace SteamEngine {
 			targ=copyFrom.targ;
 			flags=copyFrom.flags;
 			direction=copyFrom.direction;
-			model=copyFrom.model;
-
 			act=copyFrom.act;
 			foreach (AbstractItem item in copyFrom) {
 				//no triggers, thats why we are adding it this way.
@@ -238,19 +234,6 @@ namespace SteamEngine {
 				name=value;
 			}
 		}
-		
-		public override ushort Model { get {
-			return model;
-		} set {
-			NetState.AboutToChangeBaseProps(this);
-			model=value;
-		} }
-		public ushort Body { get {
-			return model;
-		} set {
-			NetState.AboutToChangeBaseProps(this);
-			model=value;
-		} }
 		
 		public AbstractAccount Account {
 			get {
@@ -429,23 +412,20 @@ namespace SteamEngine {
 		}
 			
 		public override void Save(SaveStream output) {
-			if (account!=null) {
+			if (account != null) {
 				output.WriteValue("account",account);
 			}
-			if (Def.Name!=name) {
+			if (!Def.Name.Equals(name)) {
 				output.WriteValue("name",name);
-			}
-			if (Def.Model!=model) {
-				output.WriteValue("model",model);
 			}
 			int flagsToSave = flags;
 			if (this.IsPlayer) {
 				flagsToSave = flagsToSave|0x0001;//add the Disconnected flag, makes no sense to save a person "connected"
 			}
-			if (flagsToSave!=0) {
+			if (flagsToSave != 0) {
 				output.WriteValue("flags", flagsToSave);
 			}
-			output.WriteValue("direction",(byte)direction);
+			output.WriteValue("direction", (byte)direction);
 			base.Save(output);
 		}
 		
@@ -515,11 +495,6 @@ namespace SteamEngine {
 						Flag_Moving=false;
 						Sanity.IfTrueSay(true, "Flag_Moving was saved! It should not have been! (At the time this sanity check was written, NetState changes should always be processed before any thought of saving occurs. NetState changes clear Flag_Moving, if it is set)");
 					}
-					break;
-				case "dispid":
-				case "model": 
-				case "body":
-					model = TagMath.ParseUInt16(value);
 					break;
 				default:
 					base.LoadLine(filename, line, prop, value);

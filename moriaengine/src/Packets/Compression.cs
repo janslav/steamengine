@@ -377,7 +377,7 @@ namespace SteamEngine.Packets {
 							Logger.Show("TestSuite", "Testing with: MovingCharacter packet (len "+gPacketSize+")");
 							break;
 						} case 10: {
-							PacketSender.PrepareSound(that, SoundFX.Thunder);
+							PacketSender.PrepareSound(that, 41); //Thunder sound
 							Logger.Show("TestSuite", "Testing with: Sound packet (len "+gPacketSize+")");
 							break;
 						} case 11: {

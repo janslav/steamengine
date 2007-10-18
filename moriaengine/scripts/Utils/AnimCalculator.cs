@@ -1,3 +1,20 @@
+/*
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	Or visit http://www.gnu.org/copyleft/gpl.html
+*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -681,15 +698,15 @@ namespace SteamEngine.CompiledScripts {
 				Sanity.IfTrueThrow((byte) anim>0xff, "Cannot perform anim '"+anim+"', that number is too high.");
 				realAnim = (byte) anim;
 			} else {
-				AnimInfo ai = AnimInfo.Get(self.Model);
-				uint animsAvailable = ai.AnimsAvailable;
-				BodyAnimType bat = ai.BodyAnimType;
+				CharModelInfo cmi = self.CharModelInfo;
+				uint animsAvailable = cmi.AnimsAvailable;
+				CharAnimType bat = cmi.charAnimType;
 
-				if ((bat & BodyAnimType.Human) == BodyAnimType.Human) {
+				if ((bat & CharAnimType.Human) == CharAnimType.Human) {
 					realAnim=(byte) GetHumanAnim(self, anim);
-				} else if ((bat & BodyAnimType.Monster) == BodyAnimType.Monster) {
+				} else if ((bat & CharAnimType.Monster) == CharAnimType.Monster) {
 					realAnim=(byte) GetMonsterAnim(anim, animsAvailable);
-				} else if ((bat & BodyAnimType.Animal) == BodyAnimType.Animal) {
+				} else if ((bat & CharAnimType.Animal) == CharAnimType.Animal) {
 					realAnim=(byte) GetAnimalAnim(anim, animsAvailable);
 				}
 			}
@@ -834,15 +851,15 @@ namespace SteamEngine.CompiledScripts {
 		public static void PerformAttackAnim(Character self) {
 			int anim = 0;
 
-			AnimInfo ai = AnimInfo.Get(self.Model);
-			BodyAnimType bat = ai.BodyAnimType;
+			CharModelInfo cmi = self.CharModelInfo;
+			CharAnimType bat = cmi.charAnimType;
 
-			if ((bat & BodyAnimType.Human) == BodyAnimType.Human) {
+			if ((bat & CharAnimType.Human) == CharAnimType.Human) {
 				anim = (int) GetHumanAttackAnim(self);
-			} else if ((bat & BodyAnimType.Monster) == BodyAnimType.Monster) {
-				anim = (int) GetMonsterRandomAttackAnim(ai.AnimsAvailable);
-			} else if ((bat & BodyAnimType.Animal) == BodyAnimType.Animal) {
-				anim = (int) GetAnimalRandomAttackAnim(ai.AnimsAvailable);
+			} else if ((bat & CharAnimType.Monster) == CharAnimType.Monster) {
+				anim = (int) GetMonsterRandomAttackAnim(cmi.AnimsAvailable);
+			} else if ((bat & CharAnimType.Animal) == CharAnimType.Animal) {
+				anim = (int) GetAnimalRandomAttackAnim(cmi.AnimsAvailable);
 			}
 
 			double seconds = self.WeaponDelay;

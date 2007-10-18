@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class t_ingot : CompiledTriggerGroup {
 		public bool on_playDropSound(Item self, Character droppingChar) {
-			self.SoundTo(SoundFX.DroppingSomethingWhichBouncesSlightly, droppingChar);	
+			self.SoundTo((ushort) SoundNames.DroppingSomethingWhichBouncesSlightly, droppingChar);	
 			return true;
 		}
 	}

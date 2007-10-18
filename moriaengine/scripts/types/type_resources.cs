@@ -36,13 +36,13 @@ namespace SteamEngine.CompiledScripts {
 		
 		public bool on_playdropsound(Item self, Character droppingChar) {
 			if (self.Amount<=1) {
-				self.SoundTo(SoundFX.DroppingASingleCoin2, droppingChar);		//1
+				self.SoundTo((ushort) SoundNames.DroppingASingleCoin2, droppingChar);		//1
 			} else if (self.Amount>=6) {
-				self.SoundTo(SoundFX.DroppingManyCoins, droppingChar);			//6
+				self.SoundTo((ushort) SoundNames.DroppingManyCoins, droppingChar);			//6
 			} else if (self.Amount>=3) {
-				self.SoundTo(SoundFX.DroppingSomeCoins, droppingChar);			//3
+				self.SoundTo((ushort) SoundNames.DroppingSomeCoins, droppingChar);			//3
 			} else if (self.Amount>=2) {
-				self.SoundTo(SoundFX.DroppingTwoCoins, droppingChar);			//2
+				self.SoundTo((ushort) SoundNames.DroppingTwoCoins, droppingChar);			//2
 			}
 			return true;
 		}
@@ -51,13 +51,13 @@ namespace SteamEngine.CompiledScripts {
 	public class t_gold : CompiledTriggerGroup {
 		public bool on_playDropSound(Item self, Character droppingChar) {
 			if (self.Amount<=1) {
-				self.SoundTo(SoundFX.DroppingASingleCoin2, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingASingleCoin2, droppingChar);
 			} else if (self.Amount>=6) {
-				self.SoundTo(SoundFX.DroppingManyCoins, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingManyCoins, droppingChar);
 			} else if (self.Amount>=3) {
-				self.SoundTo(SoundFX.DroppingSomeCoins, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingSomeCoins, droppingChar);
 			} else if (self.Amount>=2) {
-				self.SoundTo(SoundFX.DroppingTwoCoins, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingTwoCoins, droppingChar);
 			}
 			return true;
 		}
@@ -66,11 +66,11 @@ namespace SteamEngine.CompiledScripts {
 	public class t_gem : CompiledTriggerGroup {
 		public bool on_playDropSound(Item self, Character droppingChar) {
 			if (self.Amount<=1) {
-				self.SoundTo(SoundFX.DroppingGem3, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingGem3, droppingChar);
 			} else if (self.Amount>=6) {
-				self.SoundTo(SoundFX.DroppingGem2, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingGem2, droppingChar);
 			} else if (self.Amount>=3) {
-				self.SoundTo(SoundFX.DroppingGem, droppingChar);
+				self.SoundTo((ushort) SoundNames.DroppingGem, droppingChar);
 			}
 			return true;
 		}

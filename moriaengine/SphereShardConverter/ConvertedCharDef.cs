@@ -44,12 +44,13 @@ namespace SteamEngine.Converter {
 //TODO:
 				new LineImplTask("npc", new LineImpl(WriteAsComment)),
 				new LineImplTask("brain", new LineImpl(WriteAsComment)),
-				new LineImplTask("sound", new LineImpl(WriteAsComment)),
+				
 
 
 			};
 
 		private static LineImplTask[] thirdStageImpl = new LineImplTask[] {
+			new LineImplTask("sound", new LineImpl(HandleSound)),
 			new LineImplTask("mountid", new LineImpl(HandleMountId)),
 			new LineImplTask("tag.mountid", new LineImpl(HandleMountId)),
 																			  
@@ -91,6 +92,27 @@ namespace SteamEngine.Converter {
 				def.Warning(line.line, "Unresolvable MountItem model");
 			}
 			return "";
+		}
+
+
+		private static string HandleSound(ConvertedDef def, PropsLine line) {
+			string retVal = line.value;
+			int num;
+			if (ConvertTools.TryParseInt32(line.value, out num)) {
+				retVal = "0x"+num.ToString("x");
+				def.Set("AngerSound", retVal, line.comment);
+				def.Set("IdleSound", "0x"+(num+1).ToString("x"), "");
+				def.Set("AttackSound", "0x"+(num+2).ToString("x"), "");
+				def.Set("HurtSound", "0x"+(num+3).ToString("x"), "");
+				def.Set("DeathSound", "0x"+(num+4).ToString("x"), "");
+			} else {
+				def.Set("AngerSound", retVal, line.comment);
+				def.Set("IdleSound", retVal + " + 1", "");
+				def.Set("AttackSound", retVal + " + 2", "");
+				def.Set("HurtSound", retVal + " + 3", "");
+				def.Set("DeathSound", retVal + " + 4", "");
+			}
+			return retVal;
 		}
 	}
 }

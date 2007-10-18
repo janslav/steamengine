@@ -33,6 +33,8 @@ namespace SteamEngine {
 		private FieldValue mountChar;
 		private FieldValue flippable;
 		private FieldValue stackable;
+
+		private FieldValue dropSound;
 		
 		private List<AbstractItemDef> dupeList = null;
 
@@ -50,6 +52,8 @@ namespace SteamEngine {
 			mountChar = InitField_ThingDef("mountChar", null, typeof(AbstractCharacterDef));
 			flippable = InitField_Typed("flippable", false, typeof(bool));
 			stackable = InitField_Typed("stackable", false, typeof(bool));
+
+			dropSound = InitField_Typed("dropSound", 87, typeof(ushort));
 		}
 
 		public AbstractItemDef DupeItem {
@@ -188,6 +192,16 @@ namespace SteamEngine {
 				flippable.CurrentValue = value;
 			}
 		}
+
+		public ushort DropSound {
+			get {
+				return (ushort) dropSound.CurrentValue;
+			}
+			set {
+				dropSound.CurrentValue = value;
+			}
+		}
+
 	
 		private bool ParseName(string name, out string singular, out string plural) {
 			int percentPos = name.IndexOf("%");

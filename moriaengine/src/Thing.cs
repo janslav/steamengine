@@ -39,6 +39,7 @@ namespace SteamEngine {
 
 		private long createdAt = Globals.TimeInTicks;//Server time of creation
 		private ushort color;
+		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
 		internal MutablePoint4D point4d; //made this internal because SetPosImpl is now abstract... -tar
 		private int uid=-2;
@@ -132,6 +133,8 @@ namespace SteamEngine {
 		//still needs to be put into the world
 		protected Thing(ThingDef myDef) {
 			this.def=myDef;
+			this.model = myDef.Model;
+			this.color = myDef.Color;
 			if (uidBeingLoaded==-1) {
 				things.Add(this);//sets uid
 				NetState.Resend(this);
@@ -157,6 +160,7 @@ namespace SteamEngine {
 			point4d=new MutablePoint4D(copyFrom.point4d);
 			def=copyFrom.def;
 			color=copyFrom.color;
+			model=copyFrom.model;
 			//SetSectorPoint4D();
 			Globals.lastNew=this;
 			On_Dupe(copyFrom);
@@ -379,6 +383,20 @@ namespace SteamEngine {
 			}
 		}
 
+		public ushort Model {
+			get {
+				return model;
+			}
+			set {
+				if (IsItem) {
+					NetState.ItemAboutToChange((AbstractItem) this);
+				} else {
+					NetState.AboutToChangeBaseProps((AbstractCharacter) this);
+				}
+				model=value;
+			}
+		}
+
 		public long CreatedAt {
 			get {
 				return createdAt;
@@ -528,8 +546,6 @@ namespace SteamEngine {
 		//Public methods
 
 		public override abstract string Name { get; set; }
-
-		public abstract ushort Model { get; set; }
 
 		public virtual bool IsEquipped {
 			get {
@@ -698,6 +714,11 @@ namespace SteamEngine {
 				case "color":
 					color = TagMath.ParseUInt16(value);
 					break;
+				case "dispid":
+				case "model":
+				case "body":
+					model = TagMath.ParseUInt16(value);
+					break;
 				case "createdat":
 					createdAt = TagMath.ParseInt64(value);
 					break;
@@ -767,9 +788,15 @@ namespace SteamEngine {
 			output.WriteValue("uid", uid);
 
 			output.WriteValue("p", this.P());
-			if (Color!=0) {
+
+			if (color!=def.Color) {
 				output.WriteValue("color", color);
 			}
+
+			if (model != def.Model) {
+				output.WriteValue("model", model);
+			}
+
 			output.WriteValue("createdat", createdAt);
 			On_Save(output);
 			base.Save(output);//tagholder save
@@ -1218,8 +1245,8 @@ namespace SteamEngine {
 		}
 
 
-		public void SoundTo(SoundFX soundId, GameConn toClient) {
-			if (soundId!=SoundFX.None) {
+		public void SoundTo(ushort soundId, GameConn toClient) {
+			if (soundId != 0xffff) {
 				if (toClient != null) {
 					PacketSender.PrepareSound(this, soundId);
 					PacketSender.SendTo(toClient, true);
@@ -1227,8 +1254,8 @@ namespace SteamEngine {
 			}
 		}
 
-		public void SoundTo(SoundFX soundId, AbstractCharacter toPlayer) {
-			if (soundId!=SoundFX.None) {
+		public void SoundTo(ushort soundId, AbstractCharacter toPlayer) {
+			if (soundId != 0xffff) {
 				if (toPlayer != null) {
 					GameConn conn = toPlayer.Conn;
 					if (conn != null) {
@@ -1239,20 +1266,18 @@ namespace SteamEngine {
 			}
 		}
 
-		public void Sound(SoundFX soundId) {
-			if (soundId!=SoundFX.None) {
+		public void Sound(ushort soundId) {
+			if (soundId != 0xffff) {
 				PacketSender.PrepareSound(this, soundId);
 				PacketSender.SendToClientsInRange(this.TopPoint, Globals.MaxUpdateRange);
 			}
 		}
-		public void Sound(SoundFX soundId, ushort range) {
-			if (soundId!=SoundFX.None) {
+
+		public void Sound(ushort soundId, ushort range) {
+			if (soundId != 0xffff) {
 				PacketSender.PrepareSound(this, soundId);
 				PacketSender.SendToClientsInRange(this.TopPoint, range);
 			}
-		}
-		public void Sfx(SoundFX soundId) {
-			Sound(soundId);
 		}
 
 		/**

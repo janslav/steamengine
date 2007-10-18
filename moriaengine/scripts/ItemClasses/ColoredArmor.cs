@@ -23,14 +23,11 @@ namespace SteamEngine.CompiledScripts {
 	public interface IObjectWithMaterial {
 		MaterialType MaterialType { get; }
 		Material Material { get; }
+		ushort Color { get; set; }
 	}
 
 	[Dialogs.ViewableClass]
 	public partial class ColoredArmorDef : IObjectWithMaterial {
-		protected override void On_Create(Thing t) {
-			t.Color = HuesCalculator.GetHueForMaterial(this.Material, this.MaterialType);
-			base.On_Create(t);
-		}
 	}
 
 	[Dialogs.ViewableClass]

@@ -38,6 +38,8 @@ namespace SteamEngine {
 		private FieldValue weight;
 		private FieldValue height;
 
+		private FieldValue color;
+
 		internal MultiData multiData;
 
 		private static Dictionary<Type, Type> thingDefTypesByThingType = new Dictionary<Type, Type>();
@@ -63,7 +65,9 @@ namespace SteamEngine {
 		
 		internal ThingDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 			name = InitField_Typed("name", "", typeof(string));
-			model = this.InitField_Model("model", 0);
+			color = InitField_Typed("color", 0, typeof(ushort));
+
+			model = InitField_Model("model", 0);
 			weight = InitField_Typed("weight", 0, typeof(float));
 			height = InitField_Typed("height", 0, typeof(int));
 			ushort modelNum;
@@ -93,6 +97,15 @@ namespace SteamEngine {
 			} 
 			set {
 				model.CurrentValue = value; 
+			}
+		}
+
+		public ushort Color {
+			get {
+				return (ushort) color.CurrentValue;
+			}
+			set {
+				color.CurrentValue = value;
 			}
 		}
 		

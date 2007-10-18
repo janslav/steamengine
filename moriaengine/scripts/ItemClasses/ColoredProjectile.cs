@@ -22,10 +22,6 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class ColoredProjectileDef : IObjectWithMaterial {
-		protected override void On_Create(Thing t) {
-			t.Color = HuesCalculator.GetHueForMaterial(this.Material, this.MaterialType);
-			base.On_Create(t);
-		}
 	}
 
 	[Dialogs.ViewableClass]
