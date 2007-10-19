@@ -68,7 +68,7 @@ namespace SteamEngine.Converter {
 			base.ThirdStage();
 
 			switch (this.PrettyDefname.ToLower()) {
-				case "c_man_gm":
+				//case "c_man_gm":
 				case "c_man":
 				case "c_woman":
 					headerType = "PlayerDef";

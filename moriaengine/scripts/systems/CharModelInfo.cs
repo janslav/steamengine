@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-
+	[Dialogs.ViewableClass]
 	public sealed class CharModelInfo {
 		private static Dictionary<ushort, CharModelInfo> animsByModel = new Dictionary<ushort, CharModelInfo>();
 		private static CharAnimType[] bodyTable;

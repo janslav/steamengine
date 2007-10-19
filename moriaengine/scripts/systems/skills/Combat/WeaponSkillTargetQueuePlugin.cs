@@ -100,10 +100,8 @@ namespace SteamEngine.CompiledScripts {
 			switch (weapType) {
 				case WeaponType.BareHands:
 					return SkillName.Wrestling;
-				case WeaponType.XBowRunning:
-				case WeaponType.XBowStand:
-				case WeaponType.BowRunning:
-				case WeaponType.BowStand:
+				case WeaponType.XBow:
+				case WeaponType.Bow:
 					return SkillName.Archery;
 				case WeaponType.TwoHandAxe:
 				case WeaponType.TwoHandSword:
@@ -155,21 +153,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_ItemEquip(AbstractCharacter droppingChar, AbstractItem i) {
+		public void On_ItemEquip(Character droppingChar, Character cont, Item i) {
 			if (i is Weapon) {
-				Cont.InvalidateCombatValues();
-				if (Cont.currentSkill is WeaponSkillDef) {
-					Cont.AbortSkill();
+				cont.InvalidateCombatWeaponValues();
+				if (cont.currentSkill is WeaponSkillDef) {
+					cont.AbortSkill();
 					this.FightCurrentTarget();
 				}
 			}
 		}
 
-		public void On_ItemUnEquip(AbstractCharacter pickingChar, AbstractItem i) {
+		public void On_ItemUnEquip(Character pickingChar, Character cont, Item i) {
 			if (i is Weapon) {
-				Cont.InvalidateCombatValues();
-				if (Cont.currentSkill is WeaponSkillDef) {
-					Cont.AbortSkill();
+				cont.InvalidateCombatWeaponValues();
+				if (cont.currentSkill is WeaponSkillDef) {
+					cont.AbortSkill();
 					this.FightCurrentTarget();
 				}
 			}
