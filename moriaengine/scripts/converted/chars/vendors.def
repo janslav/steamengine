@@ -92,7 +92,7 @@ DEFNAME = c_man_invisible
 //RESOURCES = 4 i_ribs_raw // commented out by Converter 
 //FOODTYPE = 15 t_food,t_fruit // commented out by Converter 
 
-[PlayerDef 0x3db]
+[NPCDef 0x3db]
 CATEGORY = Moria
 SUBSECTION = (systemova NPC)
 DESCRIPTION = GM Body
@@ -515,7 +515,7 @@ TYPE = T_SCISSORS
 WEIGHT = 1
 //RESOURCES = 4 i_ingot_iron // commented out by Converter 
 //SKILLMAKE = TINKERING 140.0,t_tinker_tools // commented out by Converter 
-model = 0xf9e
+model = i_scissors
 
 [NPCDef c_vetesnik]
 CATEGORY = Moria
