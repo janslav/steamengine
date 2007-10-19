@@ -64,18 +64,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			if(gr.pressedButton == 0) {
-				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
+				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
 				Timer tm = (Timer)args[1];
 				tm.DueInSeconds = timerTime;
-				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi);
-				if(prevStacked.GumpType.Equals(typeof(D_TimerList))) {
+				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
+				if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TimerList))) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
-					prevStacked.Args[3] = null;
+					prevStacked.InputParams[3] = null;
 				}
-				prevStacked.Show();								
+				DialogStacking.ResendAndRestackDialog(prevStacked);								
 			} 
 		}		
 	}

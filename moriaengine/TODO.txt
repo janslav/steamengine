@@ -134,12 +134,8 @@ Dinivan
 	Gumpovej system pro ingame vytvareni/editaci/mazani regionu a pripadne jejich export/import na a z shardu.
 		Patrne nutna spoluprace s tarem :)
 
-	Gumpovej system pro Nastaveni. 
-	
 	Account info dialog
 
-	Info dialog (player, character, item) - DONE
-	Descriptors for enabling more options in info dialogs than just the class's methods and properties
 		
 	"Trestni rejstrik" pro hracsky accounty. Tj. Gump kde by GMka videli seznam dosavadnich prohresku a trestu na accountu, 
 		plus by tam mohli psat vlastni nezavisle poznamky jako "je to druhej account hrace X" apod.
@@ -148,10 +144,7 @@ Dinivan
 
 	Group <cislo> pro gumpy
 	
-	Dialog "ref" - informace o tøídì - DONE v info dialogach
-
 	Generator dokumentace (NDoc pro 2.0? nebo Sandcastle?)
-
 
 
 Kemoc

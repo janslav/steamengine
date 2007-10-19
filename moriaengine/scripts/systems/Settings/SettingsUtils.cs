@@ -443,10 +443,8 @@ namespace SteamEngine.CompiledScripts {
 			if(prefixTypes == null) {
 				prefixTypes = new Hashtable();
 			}
-			if(!prefixTypes.ContainsKey(value.GetType())) {
-				//prefix is not yet stored, find and store it now!							
-				Type t = value.GetType();
-
+			Type t = value.GetType();
+			if(!prefixTypes.ContainsKey(t)) {			
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
 				if(t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
 					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {

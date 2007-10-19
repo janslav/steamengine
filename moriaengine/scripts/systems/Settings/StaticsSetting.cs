@@ -218,7 +218,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				foreach(SettingsCategory sCat in catlist) {
 					sCat.ClearSettingValues();					
 				}
-				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			}
 			//navigacni buttony (paging)
 			if(gr.pressedButton == ImprovedDialog.ID_PREV_BUTTON) {
@@ -227,7 +227,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 									//(KeyIndexPair)keytable[Convert.ToInt32(dsi.Args[2])];
 				args[0] = kip.Key; //updatnout info o prvni kategorii na predchozi strance				
 				args[1] = kip.Index; //ve vybrane prvni kategorii zacneme zobrazovat od tohoto clena
-				DialogStackItem.ResendAndRestackDialog(gi);
+				DialogStacking.ResendAndRestackDialog(gi);
 			} else if(gr.pressedButton == ImprovedDialog.ID_NEXT_BUTTON) {
 				string firstCat = (string)this.GumpInstance.GetTag(lastKeyTag);
 				int firstIdx = Convert.ToInt32(this.GumpInstance.GetTag(lastIndexTag));
@@ -235,7 +235,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args[2] = Convert.ToInt32(args[2]) + 1;
 				args[0] = firstCat; //updatnout info o prvni kategorii				
 				args[1] = firstIdx; //v prvni kategorii zacneme zobrazovat od tohoto clena
-				DialogStackItem.ResendAndRestackDialog(gi);
+				DialogStacking.ResendAndRestackDialog(gi);
 			} else if(gr.pressedButton == 1) { //nastaveni
 				//napred vycistime vsechny mozne predchozi neuspechy v nastaveni - nyni totiz jedem znova
 				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
@@ -245,13 +245,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				TryMakeSetting(valuesToSet,gr);
 				args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
-				DialogStackItem.ResendAndRestackDialog(gi);
+				DialogStacking.ResendAndRestackDialog(gi);
 				//a zobrazime take dialog s vysledky (null = volne misto pro seznamy resultu v nasledujicim dialogu)
 				gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, valuesToSet, null);
 			} else if(gr.pressedButton == 2) { //info
 				//stackneme se pro navrat
 				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
-				DialogStackItem.EnstackDialog(gi, newGi);				
+				DialogStacking.EnstackDialog(gi, newGi);				
 			}
 		}
 

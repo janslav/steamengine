@@ -772,13 +772,17 @@ namespace SteamEngine.CompiledScripts {
 						string fieldName = gmAtt.Name;
 						Type fieldType = gmAtt.FieldType;
 
+						//if(describedFields.ContainsKey(fieldName)) {
+						//    pm = describedFields[fieldName];//get it from the dictionary
+						//} else {
+						//    pm = new PropertyMethods(fieldName,fieldType);
+						//    describedFields.Add(fieldName, pm);//store it newly to the dictionary
+						//}
 						PropertyMethods pm;
-						if(describedFields.ContainsKey(fieldName)) {
-							pm = describedFields[fieldName];//get it from the dictionary
-						} else {
+						if(!describedFields.TryGetValue(fieldName, out pm)) {
 							pm = new PropertyMethods(fieldName,fieldType);
 							describedFields.Add(fieldName, pm);//store it newly to the dictionary
-						}
+						}						
 						pm.GetMethod = minf;
 					}
 				}
@@ -793,11 +797,16 @@ namespace SteamEngine.CompiledScripts {
 						string fieldName = smAtt.Name;
 						Type fieldType = smAtt.FieldType;
 
+
+						//if(describedFields.ContainsKey(fieldName)) {
+						//    pm = describedFields[fieldName];//get it from the dictionary
+						//} else {
+						//    pm = new PropertyMethods(fieldName,fieldType);
+						//    describedFields.Add(fieldName, pm);//store it newly to the dictionary
+						//}
 						PropertyMethods pm;
-						if(describedFields.ContainsKey(fieldName)) {
-							pm = describedFields[fieldName];//get it from the dictionary
-						} else {
-							pm = new PropertyMethods(fieldName,fieldType);
+						if (!describedFields.TryGetValue(fieldName, out pm)) {
+							pm = new PropertyMethods(fieldName, fieldType);
 							describedFields.Add(fieldName, pm);//store it newly to the dictionary
 						}
 						pm.SetMethod = minf;

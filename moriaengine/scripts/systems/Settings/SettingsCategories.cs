@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(gr.pressedButton < 10) { //zakladni tlacitka - end, zobraz vse 
 				switch(gr.pressedButton) {
 					case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //zobraz vsechny kategorie	
 						//uložit info o dialogu pro návrat
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							//			4 - info o tom ze ma zobrazit vsechny kategorie pocinaje specifikovanou (zde tou prvni)
 							//			5,6 - vnitrodialogove potreby
 						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, "", 0, 0, SettingsDisplay.All, null, null);
-						DialogStackItem.EnstackDialog(gi, newGi);						
+						DialogStacking.EnstackDialog(gi, newGi);						
 						break;					
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				SettingsCategory cat = categories[row];
 								//parametry stejny vyznam, zde zobrazime jen tu jednu kliknutou kategorii
 				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);
-				DialogStackItem.EnstackDialog(gi, newGi);
+				DialogStacking.EnstackDialog(gi, newGi);
 			}
 		}		
 	}	

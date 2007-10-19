@@ -117,11 +117,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			object value = field.GetValue(target);
 			string valuePrefix = "";
 
+			Type t = value.GetType();
 			//we will store it in the special dictionary
-			if(!prefixTypes.ContainsKey(value.GetType())) {
-				//prefix is not yet stored, find and store it now!							
-				Type t = value.GetType();
-
+			if(!prefixTypes.TryGetValue(t, out valuePrefix)) {
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
 				if(t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
 					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
@@ -143,9 +141,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				//store the prefix in the dictionary
 				prefixTypes[t] = valuePrefix;
-			} else {
-				valuePrefix = prefixTypes[value.GetType()];
-			}
+			} 
 			return valuePrefix;
 		}
 

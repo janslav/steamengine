@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			if(gr.pressedButton == 0) {
-				DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				//create_tag dialog jsme uz vytahli ze stacku, nemusime ho tedy dodatecne odstranovat
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
@@ -75,15 +75,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				((TagHolder)args[0]).SetTag(TagKey.Get(tagName), objectifiedValue);
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
-				DialogStackItem prevStacked = DialogStackItem.PopStackedDialog(gi);
-				if(prevStacked.GumpType.Equals(typeof(D_TagList))) {
+				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
+				if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TagList))) {
 					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
-					prevStacked.Args[3] = null;
+					prevStacked.InputParams[3] = null;
 				}
-				prevStacked.Show();								
+				DialogStacking.ResendAndRestackDialog(prevStacked);
 			} else if(gr.pressedButton == 2) {
 				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
-				DialogStackItem.EnstackDialog(gi, newGi); //ulozime dialog do stacku
+				DialogStacking.EnstackDialog(gi, newGi); //ulozime dialog do stacku
 			}
 		}		
 	}

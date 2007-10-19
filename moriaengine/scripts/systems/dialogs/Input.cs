@@ -93,14 +93,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             switch(gr.pressedButton) {
                 case 0: //exit or rightclick
 					//znovuzavolat pripadny predchozi dialog
-					DialogStackItem.ShowPreviousDialog(gi);
+					DialogStacking.ShowPreviousDialog(gi);
                     break;
                 case 1: //OK
                     //pass the call with the input value
                     string inputVal = gr.GetTextResponse(1);
                     this.Response((Character)gi.Cont, (TagHolder)gi.Focus, inputVal);
 					//a zavolat predchozi dialog
-					DialogStackItem.ShowPreviousDialog(gi);
+					DialogStacking.ShowPreviousDialog(gi);
                     break;
             }
         }
