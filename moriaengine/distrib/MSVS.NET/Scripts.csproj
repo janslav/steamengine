@@ -215,8 +215,8 @@
     <Compile Include="..\..\scripts\systems\administration\accounts\AccList.cs">
       <Link>systems\administration\accounts\AccList.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\administration\Admin.cs">
-      <Link>systems\administration\Admin.cs</Link>
+    <Compile Include="..\..\scripts\systems\administration\Admin\Admin.cs">
+      <Link>systems\administration\Admin\Admin.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\Commands.cs">
       <Link>systems\administration\Commands.cs</Link>
@@ -232,6 +232,12 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
       <Link>systems\administration\Pages\GMPage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Register\RegisterDialogs.cs">
+      <Link>systems\administration\Register\RegisterDialogs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Register\RegisterHandling.cs">
+      <Link>systems\administration\Register\RegisterHandling.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\tags\TagCreate.cs">
       <Link>systems\administration\tags\TagCreate.cs</Link>
