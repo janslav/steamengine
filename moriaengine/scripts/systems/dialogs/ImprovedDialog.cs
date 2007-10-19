@@ -251,12 +251,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch (gr.pressedButton) {
 				case ID_PREV_BUTTON: 
 					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
-					DialogStackItem.ResendAndRestackDialog(gi);					
+					DialogStacking.ResendAndRestackDialog(gi);					
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
@@ -274,7 +274,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 			}
@@ -294,12 +294,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch(buttNo) {
 				case ID_PREV_BUTTON:
 					actualGi.InputParams[pagingArgumentNo] = Convert.ToInt32(actualGi.InputParams[pagingArgumentNo]) - (PAGE_ROWS * columnsCount);
-					DialogStackItem.ResendAndRestackDialog(actualGi);
+					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					actualGi.InputParams[pagingArgumentNo] = Convert.ToInt32(actualGi.InputParams[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
-					DialogStackItem.ResendAndRestackDialog(actualGi);
+					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
@@ -317,7 +317,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					actualGi.InputParams[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
-					DialogStackItem.ResendAndRestackDialog(actualGi);
+					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 			}

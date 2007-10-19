@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch (gr.pressedButton) {
 				case 0: //exit
 					//look if some dialog is not stored in the dialogs stack and possibly display it
-					DialogStackItem.ShowPreviousDialog(gi);
+					DialogStacking.ShowPreviousDialog(gi);
 					break;
 			}
 		}

@@ -104,33 +104,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
 				switch(gr.pressedButton) {
 					case 0: //rmouseButton anebo zavreni tlacitkem v rohu
-						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						return;
 					case 1: //sort ipup
 						args[0] = SortingCriteria.IPAsc; //uprav info o sortovani
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 2: // sort ipdown
 						args[0] = SortingCriteria.IPDesc; //uprav info o sortovani
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 3: // sort accountup
 						args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 4: // sort accountdown
 						args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 5: // block single ip
 						//stackneme aktualni dialog pro navrat
 						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_BlockIP>.Instance);//a zobrazime novy
-						DialogStackItem.EnstackDialog(gi, newGi);
+						DialogStacking.EnstackDialog(gi, newGi);
 						return;
 					case 6: // block iprange
 						//stackneme aktualni dialog pro navrat
 						newGi = gi.Cont.Dialog(SingletonScript<D_BlockIPRange>.Instance);//a zobrazime novy
-						DialogStackItem.EnstackDialog(gi, newGi);						
+						DialogStacking.EnstackDialog(gi, newGi);						
 						return;
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, entries.Count,1)) {
@@ -144,11 +144,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if(entry.toIp == "") {
 					Firewall.RemoveBlockedIP(entry.Ip);
 					//znovuzavolat dialog
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 				} else {
 					Firewall.RemoveBlockedIPRange(entry.Ip, IPAddress.Parse(entry.toIp));
 					//znovuzavolat dialog
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 				}
 				return;
 			}
@@ -221,10 +221,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(gr.pressedButton == 1) { //OK button
 				Firewall.AddBlockedIP(gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//zavolat stacklej dialog (if any)				
-				DialogStackItem.ShowPreviousDialog(gi);				
+				DialogStacking.ShowPreviousDialog(gi);				
 			} else {
 				//rovnou se vracime
-				DialogStackItem.ShowPreviousDialog(gi);						
+				DialogStacking.ShowPreviousDialog(gi);						
 			}
 		}
 
@@ -314,10 +314,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(gr.pressedButton == 1) {
 				Firewall.AddBlockedIPRange(gr.GetTextResponse(9), gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//rovnou se vracime			
-				DialogStackItem.ShowPreviousDialog(gi);
+				DialogStacking.ShowPreviousDialog(gi);
 			} else {
 				//rovnou se vracime
-				DialogStackItem.ShowPreviousDialog(gi);
+				DialogStacking.ShowPreviousDialog(gi);
 			}
 		}
 

@@ -126,22 +126,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
                     case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
 						args[3] = null; //vycistit soucasny odkaz na taglist aby se mohl prenacist
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //zobrazit info o vysvetlivkach
 						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
-						DialogStackItem.EnstackDialog(gi, newGi);						
+						DialogStacking.EnstackDialog(gi, newGi);						
 						break;   						
                     case 3: //zalozit novy tag.
 						newGi = gi.Cont.Dialog(SingletonScript<D_NewTag>.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
-						DialogStackItem.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 4: //uložit pripadne zmeny
 						//projdeme dostupny seznam tagu na strance a u tech editovatelnych zkoukneme zmeny
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							}											
 						}
 						//resendneme to
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                 }
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
@@ -180,11 +180,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						tagOwner.RemoveTag(de.Key);
 						//na zaver smazat taglist (musi se reloadnout)
 						args[3] = null;
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //info
 						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, tagOwner.GetTag(de.Key), 0, 0);
-						DialogStackItem.EnstackDialog(gi, newGi);
+						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}				
 			}

@@ -27,12 +27,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
 	public static class GMPages {
-        [Remark("Various comparators")]
-		private static GMPageNameComparator nameComparator = new GMPageNameComparator();
-		private static GMPageTimeComparator timeComparator = new GMPageTimeComparator();
-		private static GMPageAccountComparator accComparator = new GMPageAccountComparator();
-
-		[SavedMember]
+        [SavedMember]
 		public static Hashtable gmPages = new Hashtable();
 
 		[Remark("Returns a copy of the GMPages Hashtable (usable for sorting etc.)")]
@@ -57,28 +52,28 @@ namespace SteamEngine.CompiledScripts {
 			ArrayList pages = new ArrayList(gmPages.Values);
 			switch (criterion) {
 				case SortingCriteria.NameAsc:
-					pages.Sort(nameComparator);
+					pages.Sort(GMPageNameComparator.instance);
 					break;
                 case SortingCriteria.NameDesc:
-                    pages.Sort(nameComparator);
+					pages.Sort(GMPageNameComparator.instance);
                     pages.Reverse();
                     break;
                 case SortingCriteria.AccountAsc:
-					pages.Sort(accComparator);
+					pages.Sort(GMPageAccountComparator.instance);
 					break;
                 case SortingCriteria.AccountDesc:
-                    pages.Sort(accComparator);
+                    pages.Sort(GMPageAccountComparator.instance);
                     pages.Reverse();
                     break;                
                 case SortingCriteria.TimeAsc:
-					pages.Sort(timeComparator);
+					pages.Sort(GMPageTimeComparator.instance);
 					break;
                 case SortingCriteria.TimeDesc:
-                    pages.Sort(timeComparator);
+					pages.Sort(GMPageTimeComparator.instance);
                     pages.Reverse();
                     break;				
 				default:
-					pages.Sort(timeComparator);
+					pages.Sort(GMPageTimeComparator.instance);
 					break;
 			}
 			return pages;
@@ -165,6 +160,11 @@ namespace SteamEngine.CompiledScripts {
 
 	[Remark("Comparator serving for sorting the list of pages by name of their author")]
 	class GMPageNameComparator : IComparer {
+		public static GMPageNameComparator instance = new GMPageNameComparator();
+
+		private GMPageNameComparator() {
+		}
+
 		public int Compare(object a, object b) {
 			string name1 = ((GMPageEntry) a).sender.Name;
 			string name2 = ((GMPageEntry) b).sender.Name;
@@ -175,6 +175,11 @@ namespace SteamEngine.CompiledScripts {
 
 	[Remark("Comparator serving for sorting the list of pages by name their creation time")]
 	class GMPageTimeComparator : IComparer {
+		public static GMPageTimeComparator instance = new GMPageTimeComparator();
+
+		private GMPageTimeComparator() {
+		}
+
 		public int Compare(object a, object b) {
 			DateTime time1 = ((GMPageEntry) a).time;
 			DateTime time2 = ((GMPageEntry) b).time;
@@ -185,6 +190,11 @@ namespace SteamEngine.CompiledScripts {
 
 	[Remark("Comparator serving for sorting the list of pages by teir creators account name")]
 	class GMPageAccountComparator : IComparer {
+		public static GMPageAccountComparator instance = new GMPageAccountComparator();
+
+		private GMPageAccountComparator() {
+		}
+
 		public int Compare(object a, object b) {
 			string acc1 = ((GMPageEntry) a).sender.Account.Name;
 			string acc2 = ((GMPageEntry) b).sender.Account.Name;

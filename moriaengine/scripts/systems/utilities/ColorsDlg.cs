@@ -106,12 +106,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch(gr.pressedButton) {
                     case 0: //exit
-						DialogStackItem.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
                         break;
                     case 1: //vybrat prvni barvu
 						args[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
 						args[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
-						DialogStackItem.ResendAndRestackDialog(gi);
+						DialogStacking.ResendAndRestackDialog(gi);
                         break;
                 }
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)

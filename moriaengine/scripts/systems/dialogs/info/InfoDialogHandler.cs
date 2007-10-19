@@ -277,14 +277,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					//set the first indexes one page to the back
 					//args[1] = Convert.ToInt32(args[1]) - PAGE_ROWS;
 					args[2] = Convert.ToInt32(args[2]) - PAGE_ROWS * fieldsColumnsCount;
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					//set the first indexes one page forwards
 					//args[1] = Convert.ToInt32(args[1]) + PAGE_ROWS;
 					args[2] = Convert.ToInt32(args[2]) + PAGE_ROWS * fieldsColumnsCount;
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_JUMP_PAGE_BUTTON:
@@ -308,7 +308,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					//args[1] = newFirstButtIndex; //set the index of the first button
 					args[2] = newFirstFldIndex; //set the index of the first field
-					DialogStackItem.ResendAndRestackDialog(gi);
+					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 			}
