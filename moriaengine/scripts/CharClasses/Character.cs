@@ -455,7 +455,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != strength) {
 					NetState.AboutToChangeStats(this);
-					InvalidateCombatValues();
+					InvalidateCombatWeaponValues();
 					strength=value;
 				}
 			}
@@ -469,7 +469,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != dexterity) {
 					NetState.AboutToChangeStats(this);
-					InvalidateCombatValues();
+					InvalidateCombatWeaponValues();
 					dexterity=value;
 				}
 			}
@@ -482,7 +482,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != intelligence) {
 					NetState.AboutToChangeStats(this);
-					InvalidateCombatValues();
+					InvalidateCombatWeaponValues();
 					intelligence=value;
 				}
 			}
@@ -1584,32 +1584,35 @@ namespace SteamEngine.CompiledScripts {
 		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
 			switch ((SkillName) skill.Id) {
 				case SkillName.Parry:
+					InvalidateCombatArmorValues();
+					break;
 				case SkillName.Tactics:
-					InvalidateCombatValues();
+					InvalidateCombatWeaponValues();
 					break;
 			}
 		}
 
-		CombatCalculator.CombatValues combatValues;
+		CombatCalculator.CombatWeaponValues combatWeaponValues;
+		CombatCalculator.CombatArmorValues combatArmorValues;
 
 		public int ArmorClassVsP {
 			get {
-				CalculateCombatValues();
-				return combatValues.armorVsP;
+				CalculateCombatWeaponValues();
+				return combatArmorValues.armorVsP;
 			}
 		}
 
 		public int ArmorClassVsM {
 			get {
-				CalculateCombatValues();
-				return combatValues.armorVsM;
+				CalculateCombatArmorValues();
+				return combatArmorValues.armorVsM;
 			}
 		}
 
 		public override short StatusArmorClass {
 			get {
-				CalculateCombatValues();
-				return (short) ((combatValues.armorVsP+combatValues.armorVsM)/2);
+				CalculateCombatArmorValues();
+				return (short) ((combatArmorValues.armorVsP+combatArmorValues.armorVsM)/2);
 			}
 		}
 
@@ -1619,7 +1622,7 @@ namespace SteamEngine.CompiledScripts {
 				return Convert.ToInt32(GetTag(armorClassModifierTK));
 			}
 			set {
-				InvalidateCombatValues();
+				InvalidateCombatArmorValues();
 				if (value != 0) {
 					SetTag(armorClassModifierTK, value);
 				} else {
@@ -1630,22 +1633,22 @@ namespace SteamEngine.CompiledScripts {
 
 		public int MindDefenseVsP {
 			get {
-				CalculateCombatValues();
-				return combatValues.mindDefenseVsP;
+				CalculateCombatArmorValues();
+				return combatArmorValues.mindDefenseVsP;
 			}
 		}
 
 		public int MindDefenseVsM {
 			get {
-				CalculateCombatValues();
-				return combatValues.mindDefenseVsM;
+				CalculateCombatArmorValues();
+				return combatArmorValues.mindDefenseVsM;
 			}
 		}
 
 		public override short StatusMindDefense {
 			get {
-				CalculateCombatValues();
-				return (short) ((combatValues.mindDefenseVsP+combatValues.mindDefenseVsM)/2);
+				CalculateCombatArmorValues();
+				return (short) ((combatArmorValues.mindDefenseVsP+combatArmorValues.mindDefenseVsM)/2);
 			}
 		}
 
@@ -1655,7 +1658,7 @@ namespace SteamEngine.CompiledScripts {
 				return Convert.ToInt32(GetTag(mindDefenseModifierTK));
 			}
 			set {
-				InvalidateCombatValues();
+				InvalidateCombatArmorValues();
 				if (value != 0) {
 					SetTag(mindDefenseModifierTK, value);
 				} else {
@@ -1664,30 +1667,48 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void InvalidateCombatValues() {
-			if (combatValues != null) {
+		public void InvalidateCombatWeaponValues() {
+			if (combatWeaponValues != null) {
 				Packets.NetState.AboutToChangeStats(this);
-				combatValues = null;
+				combatWeaponValues = null;
 			}
 		}
 
-		private void CalculateCombatValues() {
-			if (combatValues == null) {
+		public void InvalidateCombatArmorValues() {
+			if (combatArmorValues != null) {
 				Packets.NetState.AboutToChangeStats(this);
-				combatValues = CombatCalculator.CalculateCombatValues(this);
+				combatArmorValues = null;
+			}
+		}
+
+		private void CalculateCombatWeaponValues() {
+			if (combatWeaponValues == null) {
+				Packets.NetState.AboutToChangeStats(this);
+				combatWeaponValues = CombatCalculator.CalculateCombatWeaponValues(this);
+			}
+		}
+
+		private void CalculateCombatArmorValues() {
+			if (combatArmorValues == null) {
+				Packets.NetState.AboutToChangeStats(this);
+				combatArmorValues = CombatCalculator.CalculateCombatArmorValues(this);
 			}
 		}
 
 		public override bool On_ItemEquip(AbstractCharacter droppingChar, AbstractItem i, bool forced) {
-			if (i is Wearable || i is Weapon) {
-				InvalidateCombatValues();
+			if (i is Wearable) {
+				InvalidateCombatArmorValues();
+			} else if (i is Weapon) {
+				InvalidateCombatWeaponValues();
 			}
 			return base.On_ItemEquip(droppingChar, i, forced);
 		}
 
 		public override bool On_ItemUnEquip(AbstractCharacter pickingChar, AbstractItem i, bool forced) {
-			if (i is Wearable || i is Weapon) {
-				InvalidateCombatValues();
+			if (i is Wearable) {
+				InvalidateCombatArmorValues();
+			} else if (i is Weapon) {
+				InvalidateCombatWeaponValues();
 			}
  			return base.On_ItemUnEquip(pickingChar, i, forced);
 		}
@@ -1708,79 +1729,79 @@ namespace SteamEngine.CompiledScripts {
 
 		public Weapon Weapon {
 			get {
-				CalculateCombatValues();
-				return combatValues.weapon;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.weapon;
 			}
 		}
 
 		public double WeaponAttackVsP {
 			get {
-				CalculateCombatValues();
-				return combatValues.attackVsP;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.attackVsP;
 			}
 		}
 
 		public double WeaponAttackVsM {
 			get {
-				CalculateCombatValues();
-				return combatValues.attackVsM;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.attackVsM;
 			}
 		}
 
 		public double WeaponPiercing {
 			get {
-				CalculateCombatValues();
-				return combatValues.piercing;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.piercing;
 			}
 		}
 
 		public WeaponType WeaponType {
 			get {
-				CalculateCombatValues();
-				return combatValues.weaponType;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.weaponType;
 			}
 		}
 
 		public DamageType WeaponDamageType {
 			get {
-				CalculateCombatValues();
-				return combatValues.damageType;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.damageType;
 			}
 		}
 
 		public WeaponAnimType WeaponAnimType {
 			get {
-				CalculateCombatValues();
-				return combatValues.weaponAnimType;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.weaponAnimType;
 			}
 		}
 
 		public int WeaponRange {
 			get {
-				CalculateCombatValues();
-				return combatValues.range;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.range;
 			}
 		}
 
 		public int WeaponStrikeStartRange {
 			get {
-				CalculateCombatValues();
-				return combatValues.strikeStartRange;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.strikeStartRange;
 			}
 		}
 
 		public int WeaponStrikeStopRange {
 			get {
-				CalculateCombatValues();
-				return combatValues.strikeStopRange;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.strikeStopRange;
 			}
 		}
 
 		public double WeaponDelay {
 			get {
 				//TODO: mana-dependant for mystic
-				CalculateCombatValues();
-				return combatValues.delay;
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.delay;
 			}
 		}
 

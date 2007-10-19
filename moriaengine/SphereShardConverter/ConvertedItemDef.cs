@@ -325,19 +325,19 @@ namespace SteamEngine.Converter {
 						}
 						break;
 					case "t_weapon_bow":
-						weaponType = WeaponType.BowStand;
+						weaponType = WeaponType.Bow;
 						materialType = MaterialType.Wood;
 						break;
 					case "t_weapon_xbow":
-						weaponType = WeaponType.XBowStand;
+						weaponType = WeaponType.XBow;
 						materialType = MaterialType.Wood;
 						break;
 					case "t_weapon_xbow_run":
-						weaponType = WeaponType.XBowRunning;
+						weaponType = WeaponType.XBow;
 						materialType = MaterialType.Wood;
 						break;
 					case "t_weapon_bow_run":
-						weaponType = WeaponType.BowRunning;
+						weaponType = WeaponType.Bow;
 						materialType = MaterialType.Wood;
 						//TODO - preferred ammo...?
 						break;

@@ -155,10 +155,8 @@ namespace SteamEngine.CompiledScripts {
 		TwoHandSword,//dvourucni bodne/secne - obourucni mece
 		OneHandAxe,//jednorucni secne - sekery
 		TwoHandAxe,//dvourucni secne - sekery
-		BowStand,
-		BowRunning,
-		XBowStand,
-		XBowRunning,
+		Bow,//luky - run archery
+		XBow,//kuse - stand archery
 		Undefined//NPC s undefined weapontypou na defu budou brat weapontype ze sve skutecne zbrane
 	}
 

@@ -152,10 +152,8 @@ namespace SteamEngine.CompiledScripts {
 					case WeaponType.TwoHandSpike:
 					case WeaponType.TwoHandSword:
 					case WeaponType.TwoHandAxe:
-					case WeaponType.XBowRunning:
-					case WeaponType.XBowStand:
-					case WeaponType.BowRunning:
-					case WeaponType.BowStand:
+					case WeaponType.XBow:
+					case WeaponType.Bow:
 						def.Layer = 2;
 						def.TwoHanded = true;
 						break;
@@ -236,12 +234,10 @@ namespace SteamEngine.CompiledScripts {
 				case WeaponType.BareHands:
 					anim = WeaponAnimType.BareHands;
 					break;
-				case WeaponType.XBowRunning:
-				case WeaponType.XBowStand:
+				case WeaponType.XBow:
 					anim = WeaponAnimType.XBow;
 					break;
-				case WeaponType.BowRunning:
-				case WeaponType.BowStand:
+				case WeaponType.Bow:
 					anim = WeaponAnimType.Bow;
 					break;
 				case WeaponType.OneHandAxe:

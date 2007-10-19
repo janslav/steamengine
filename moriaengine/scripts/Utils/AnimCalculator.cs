@@ -793,12 +793,10 @@ namespace SteamEngine.CompiledScripts {
 								break;
 						}
 						break;
-					case WeaponType.XBowRunning:
-					case WeaponType.XBowStand:
+					case WeaponType.Bow:
 						anim = HumanAnim.FireBow;
 						break;
-					case WeaponType.BowRunning:
-					case WeaponType.BowStand:
+					case WeaponType.XBow:
 						anim = HumanAnim.FireCrossbow;
 						break;
 				}
@@ -872,7 +870,7 @@ namespace SteamEngine.CompiledScripts {
 			self.Anim(anim, frameDelay);
 		}
 
-		const double attackAnimFrames = 3; //in fact it's 7 but we only use it for attack anim. The swing lands sooner than on the last frame...
+		const double attackAnimFrames = 5; //in fact it's 7 but we only use it for attack anim. The swing lands sooner than on the last frame...
 
 		public static void PerformAnim(Character self, GenericAnim anim) {
 			self.Anim(TranslateAnim(self, anim));

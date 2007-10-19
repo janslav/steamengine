@@ -22,18 +22,19 @@ namespace SteamEngine.CompiledScripts {
 
 	public static class CombatCalculator {
 
-		public static void CalculateWornArmor(Character ch, out int armorClassVsP, out int mindDefenseVsP, out int armorClassVsM, out int mindDefenseVsM) {
-			int resist = SkillDef.SkillValueOfChar(ch, SkillName.MagicResist);
-			double resistEffect = SkillDef.ById(SkillName.MagicResist).GetEffectForChar(ch);
+		internal static CombatArmorValues CalculateCombatArmorValues(Character self) {
+			int armorClassVsP, mindDefenseVsP, armorClassVsM, mindDefenseVsM;
+			int resist = SkillDef.SkillValueOfChar(self, SkillName.MagicResist);
+			double resistEffect = SkillDef.ById(SkillName.MagicResist).GetEffectForChar(self);
 			mindDefenseVsP = (int) (
 				(resist * resistEffect) / 1000);
 			mindDefenseVsM = mindDefenseVsP;
 
-			armorClassVsP = ch.DefForCombat.ArmorVsP;
-			armorClassVsM = ch.DefForCombat.ArmorVsM;
+			armorClassVsP = self.DefForCombat.ArmorVsP;
+			armorClassVsM = self.DefForCombat.ArmorVsM;
 
 			//we calculate worn armor only for players
-			if (ch.IsPlayerForCombat) {
+			if (self.IsPlayerForCombat) {
 				double armorVsPHead = 0;
 				double armorVsPNeck = 0;
 				double armorVsPBack = 0;
@@ -73,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 				double armorVsPTotal = 0;
 				double armorVsMTotal = 0;
 
-				foreach (Item equipped in ch.GetVisibleEquip()) {
+				foreach (Item equipped in self.GetVisibleEquip()) {
 					Wearable wearable = equipped as Wearable;
 					if (wearable != null) {
 						Layers layer = (Layers) wearable.Z;
@@ -172,7 +173,7 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM); 
 									break;
 								case Layers.layer_hand2: //shield
-									int parrying = SkillDef.SkillValueOfChar(ch, SkillName.Parry);
+									int parrying = SkillDef.SkillValueOfChar(self, SkillName.Parry);
 									armorVsPTotal = (armorVsP * parrying) / 1000;
 									armorVsMTotal = (armorVsP * parrying) / 1000;
 									//no mindDef with shield
@@ -224,14 +225,27 @@ namespace SteamEngine.CompiledScripts {
 					(mindDefVsMLegs * 0.2) +
 					(mindDefVsMFeet * 0.05));
 			}
+			CombatArmorValues retVal = new CombatArmorValues();
+			retVal.armorVsP = armorClassVsP;
+			retVal.armorVsM += armorClassVsM;
+			retVal.mindDefenseVsP += mindDefenseVsP;
+			retVal.mindDefenseVsM += mindDefenseVsM;
+
+			int acModifier = self.ArmorClassModifier;
+			int mdModifier = self.MindDefenseModifier;
+
+			retVal.armorVsP += acModifier;
+			retVal.armorVsM += acModifier;
+			retVal.mindDefenseVsP += mdModifier;
+			retVal.mindDefenseVsM += mdModifier;
+
+			return retVal;
 		}
 
 		public static DamageType GetWeaponDamageType(WeaponType weapType) {
 			switch (weapType) {
-				case WeaponType.XBowRunning:
-				case WeaponType.XBowStand:
-				case WeaponType.BowRunning:
-				case WeaponType.BowStand:
+				case WeaponType.Bow:
+				case WeaponType.XBow:
 					return DamageType.Archery;
 				case WeaponType.OneHandSword:
 				case WeaponType.TwoHandSword:
@@ -250,11 +264,14 @@ namespace SteamEngine.CompiledScripts {
 			throw new ArgumentOutOfRangeException("weapType");
 		}
 
-		internal class CombatValues {
+		internal class CombatArmorValues {
 			internal int armorVsP;
 			internal int mindDefenseVsP;
 			internal int armorVsM;
 			internal int mindDefenseVsM;
+		}
+
+		internal class CombatWeaponValues {
 			internal Weapon weapon;
 			internal WeaponType weaponType;
 			internal DamageType damageType;
@@ -268,19 +285,8 @@ namespace SteamEngine.CompiledScripts {
 			internal WeaponAnimType weaponAnimType;
 		}
 
-		internal static CombatValues CalculateCombatValues(Character self) {
-			CombatValues retVal = new CombatValues();
-
-			CombatCalculator.CalculateWornArmor(self, out retVal.armorVsP, out retVal.mindDefenseVsP,
-				out retVal.armorVsM, out retVal.mindDefenseVsM);
-
-			int acModifier = self.ArmorClassModifier;
-			int mdModifier = self.MindDefenseModifier;
-
-			retVal.armorVsP += acModifier;
-			retVal.armorVsM += acModifier;
-			retVal.mindDefenseVsP += mdModifier;
-			retVal.mindDefenseVsM += mdModifier;
+		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
+			CombatWeaponValues retVal = new CombatWeaponValues();
 
 			Weapon weapon = self.FindLayer(1) as Weapon;
 			if (weapon == null) {

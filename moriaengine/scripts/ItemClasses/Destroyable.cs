@@ -36,7 +36,11 @@ namespace SteamEngine.CompiledScripts {
 					durability = value;
 					Character cont = this.Cont as Character;
 					if (cont != null) {
-						cont.InvalidateCombatValues();
+						if (this is Weapon) {
+							cont.InvalidateCombatWeaponValues();
+						} else if (this is Wearable) {
+							cont.InvalidateCombatArmorValues();
+						}
 					}
 				}
 			}
@@ -51,7 +55,11 @@ namespace SteamEngine.CompiledScripts {
 					maxDurability = value;
 					Character cont = this.Cont as Character;
 					if (cont != null) {
-						cont.InvalidateCombatValues();
+						if (this is Weapon) {
+							cont.InvalidateCombatWeaponValues();
+						} else if (this is Wearable) {
+							cont.InvalidateCombatArmorValues();
+						}
 					}
 				}
 			}
