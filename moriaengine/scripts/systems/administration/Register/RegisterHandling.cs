@@ -16,12 +16,11 @@
 */
 using System;
 using System.Collections.Generic;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine;
 
-namespace Steamengine.CompiledScripts {
+namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
 	[Remark("Utility class for storing and managing account information notes")]
