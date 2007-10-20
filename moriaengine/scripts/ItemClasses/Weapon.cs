@@ -83,5 +83,17 @@ namespace SteamEngine.CompiledScripts {
 				return TypeDef.WeaponAnimType;
 			}
 		}
+
+		public ProjectileType ProjectileType {
+			get {
+				return TypeDef.ProjectileType;
+			}
+		}
+
+		public int ProjectileAnim {
+			get {
+				return TypeDef.ProjectileAnim;
+			}
+		}
 	}
 }

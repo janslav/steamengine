@@ -869,8 +869,8 @@ namespace SteamEngine.CompiledScripts {
 
 			self.Anim(anim, frameDelay);
 		}
-
-		const double attackAnimFrames = 5; //in fact it's 7 but we only use it for attack anim. The swing lands sooner than on the last frame...
+		//(.25*numFrames)+(.1*numFrames*frameDelay)
+		const double attackAnimFrames = 4;
 
 		public static void PerformAnim(Character self, GenericAnim anim) {
 			self.Anim(TranslateAnim(self, anim));

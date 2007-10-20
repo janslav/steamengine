@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Select(AbstractCharacter ch) {
 			Character self = (Character) ch;
-			self.currentSkillTarget2 = ((Item)self.Backpack).FindType(T_Musical);
+			self.currentSkillTarget2 = ((Item)self.BackpackAsContainer).FindType(T_Musical);
 			((Player)self).Target(SingletonScript<Targ_Discordance>.Instance);
 		}
 

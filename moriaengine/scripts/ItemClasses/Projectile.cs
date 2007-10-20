@@ -28,5 +28,17 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class Projectile {
 
+		public ProjectileType ProjectileType {
+			get {
+				//TODO modify for jagged/poisoned/whatever
+				return this.TypeDef.ProjectileType;
+			}
+		}
+
+		public double Piercing {
+			get {
+				return this.TypeDef.Piercing;
+			}
+		}
 	}
 }

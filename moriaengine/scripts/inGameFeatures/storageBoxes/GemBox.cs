@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						} else {
 							gemsToGive = (int)gr.responseNumbers[i].number;
 						}
-						buttonShowItemDef[i].Create(((Player)gi.Cont).Backpack);
+						buttonShowItemDef[i].Create(((Player)gi.Cont).BackpackAsContainer);
 						Globals.lastNewItem.Amount = (uint)gemsToGive;
 						gi.Cont.SysMessage("Vyndáváš z bedny " + Convert.ToString(gemsToGive) + "ks " + buttonShowItemDef[i].Name + ".");
 						box.inBoxGems[buttonShowItemDef[i]] -= gemsToGive;
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.pressedButton >= 1000) {
 				int thisButtonValue = (int)gr.pressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)gi.GetTag(tkButtonsForGems);
-				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).Backpack);
+				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).BackpackAsContainer);
 				Globals.lastNewItem.Amount = (uint)box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);
 				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance);

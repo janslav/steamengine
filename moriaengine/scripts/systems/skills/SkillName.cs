@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 		Stealth = 47,
 		RemoveTrap = 48,
 		Necromancy = 49,
-		Focus = 50,
+		Marksmanship = 50,
 		Chivalry = 51,
 		Bushido = 52,
 		Ninjitsu = 53

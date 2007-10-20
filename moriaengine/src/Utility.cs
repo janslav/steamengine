@@ -99,7 +99,7 @@ namespace SteamEngine {
 			and the modified string is returned. (Uncapitalized meaning it is made lowercase)
 		*/
 		public static string Uncapitalize(string s) {
-			if (s==null) throw new SanityCheckException("Capitalize was called on a null string.");
+			if (s==null) throw new SanityCheckException("Uncapitalize was called on a null string.");
 			if (s.Length>1) {
 				s=Char.ToLower(s[0])+s.Substring(1);
 			} else if (s.Length==1) {

@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Packets;
+using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -68,14 +69,36 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		} }
 
+		[Summary("Enumerates every item in this item and items in all subcontainers, recurses into infinite deep.")]
 		public IEnumerable<Item> EnumDeep() {
 			ThrowIfDeleted();
-			foreach (Item i in this) {
+			IEnumerator e = this.GetEnumerator();
+			while (e.MoveNext()) {
+				Item i = (Item) e.Current;
 				yield return i;
 			}
-			foreach (Item i in this) {
+			e.Reset();
+			while (e.MoveNext()) {
+				Item i = (Item) e.Current;
 				foreach (Item deep in i.EnumDeep()) {
 					yield return deep;
+				}
+			}
+		}
+
+		[Summary("Enumerates every item in this item and items in all subcontainers, does not recurse.")]
+		public IEnumerable<Item> EnumShallow() {
+			ThrowIfDeleted();
+			IEnumerator e = this.GetEnumerator();
+			while (e.MoveNext()) {
+				Item i = (Item) e.Current;
+				yield return i;
+			}
+			e.Reset();
+			while (e.MoveNext()) {
+				Item i = (Item) e.Current;
+				foreach (Item shallow in i) {
+					yield return shallow;
 				}
 			}
 		}

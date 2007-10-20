@@ -32,6 +32,8 @@ Vyresit nutnost nejakyho nastaveni regionu pri prvnim spusteni sveta (viz vypis)
 	nutno prozatim volat Exportutils.ImportRegions
 
 
+Zmena DIrection na serveru koliduje s klientem kdyz bezi
+
 
 ----------------------------------------------------
 
@@ -74,8 +76,6 @@ tar
 		
 	brain - patrne prednastavena sada vlastnosti a prepinacu pro obecnou AI
 		and the AI implementation (ugh)
-	
-	make GameAccount overridable?
 	
 	make Globals overridable?
 		

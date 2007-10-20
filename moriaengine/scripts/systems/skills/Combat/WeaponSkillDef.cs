@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Collections;
 using SteamEngine;
 using SteamEngine.Common;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -69,6 +70,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+
+		static TimerKey animTk = TimerKey.Get("_weaponAnimDelay_");
 		
 		public override void Stroke(Character self) {
 			if (!Trigger_Stroke(self)) {
@@ -86,16 +89,48 @@ namespace SteamEngine.CompiledScripts {
 						self.DelaySkillStroke(delay);
 						param.dueAt = Globals.TimeInSeconds+delay;
 						param.phase = WeaponSkillPhase.Striking;
-						AnimCalculator.PerformAttackAnim(self);
+						self.AddTimer(animTk, new WeaponAnimTimer()).DueInSeconds = delay/2;
 					}
 				} else {
 					if (distance > self.WeaponStrikeStopRange) {
 						self.AbortSkill();
 					} else if ((param.dueAt <= Globals.TimeInSeconds) && 
 							(distance <= self.WeaponRange)) {
-								
+
+						Projectile projectile = self.WeaponProjectile;
+						if (projectile != null) {
+							switch (Globals.dice.Next(3)) {
+								case 0://arrow appears on ground
+									Item onGround = (Item) projectile.Dupe();
+									onGround.P(target);
+									onGround.Amount = 1;
+									break;
+								case 1://arrow appears in targets backpack
+									Item inPack = (Item) projectile.Dupe();
+									inPack.Cont = target.BackpackAsContainer;
+									inPack.Amount = 1;
+									break;
+								//else arrow disappears
+							}
+							uint amount = projectile.Amount;
+							if (amount < 2) {
+								projectile.Delete();
+							} else {
+								projectile.Amount = amount - 1;
+							}
+						} else if (self.WeaponProjectileType != ProjectileType.None) {
+							self.AbortSkill();
+							self.SysMessage("Nemáš støelivo.");
+							return;
+						}
+
 						if (!self.Flag_Moving) {
 							self.Direction = Point2D.GetDirFromTo(self, target);
+						}
+
+						int projectileAnim = self.WeaponProjectileAnim;
+						if (projectileAnim >= 0) {
+							EffectFactory.EffectFromTo(self, target, (ushort) projectileAnim, 10, 1, 0, 0, 0, 0);
 						}
 						
 						if (CheckSuccess(self, Globals.dice.Next(700))) {
@@ -112,6 +147,17 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 				}
+			}
+		}
+
+		[Dialogs.ViewableClass][Persistence.SaveableClass][DeepCopyableClass]
+		public class WeaponAnimTimer : BoundTimer {
+			[Persistence.LoadingInitializer][DeepCopyImplementation]
+			public WeaponAnimTimer() {
+			}
+
+			protected override void OnTimeout(TagHolder cont) {
+				AnimCalculator.PerformAttackAnim((Character) cont);
 			}
 		}
 

@@ -1,5 +1,6 @@
 [function explevel]
-InvalidateCombatValues()
+InvalidateCombatWeaponValues()
+InvalidateCombatArmorValues()
 Dialog(d_explevel)
 
 [Dialog d_explevel]

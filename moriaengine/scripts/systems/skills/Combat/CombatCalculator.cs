@@ -283,6 +283,36 @@ namespace SteamEngine.CompiledScripts {
 			internal double attackVsM;
 			internal double piercing;
 			internal WeaponAnimType weaponAnimType;
+			internal int projectileAnim = -1;
+			internal ProjectileType projectileType;
+		}
+
+		private static Projectile TryFindProjectile(Character self, ProjectileType type) {
+			if (type != ProjectileType.None) {
+				Projectile retVal = self.weaponProjectile;
+				if ((retVal != null) &&
+						(retVal.IsDeleted || 
+						(retVal.TopObj() != self) || 
+						(retVal.Amount < 1))) {
+					retVal = null;
+				}
+				if ((retVal == null) || (!CheckProjectile(retVal, type))) {
+					foreach (Item i in self.BackpackAsContainer.EnumShallow()) {
+						retVal = i as Projectile;
+						if ((retVal != null) && (CheckProjectile(retVal, type))) {
+							return retVal;
+						}
+					}
+				} else {
+					return retVal;
+				}
+			}
+			return null;
+		}
+
+		private static bool CheckProjectile(Projectile projectile, ProjectileType type) {
+			ProjectileType actualType = projectile.ProjectileType;
+			return ((type & actualType) == actualType);
 		}
 
 		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
@@ -305,6 +335,13 @@ namespace SteamEngine.CompiledScripts {
 					retVal.strikeStartRange = weapon.StrikeStartRange;
 					retVal.strikeStopRange = weapon.StrikeStopRange;
 					retVal.piercing = weapon.Piercing;
+					retVal.projectileType = weapon.ProjectileType;
+					self.weaponProjectile = TryFindProjectile(self, weapon.ProjectileType);
+					if (self.weaponProjectile != null) {
+						retVal.piercing += self.weaponProjectile.Piercing;
+						retVal.projectileAnim = weapon.ProjectileAnim;
+					}
+
 					weapSpeed = weapon.Speed;
 					weapAttackVsP = weapon.AttackVsP;
 					weapAttackVsM = weapon.AttackVsM;
@@ -315,6 +352,7 @@ namespace SteamEngine.CompiledScripts {
 					retVal.strikeStartRange = CombatSettings.instance.bareHandsStrikeStartRange;
 					retVal.strikeStopRange = CombatSettings.instance.bareHandsStrikeStopRange;
 					retVal.piercing = CombatSettings.instance.bareHandsPiercing;
+					self.weaponProjectile = null;
 					weapSpeed = CombatSettings.instance.bareHandsSpeed;
 					weapAttackVsP = CombatSettings.instance.bareHandsAttackVsP;
 					weapAttackVsM = CombatSettings.instance.bareHandsAttackVsM;
@@ -331,9 +369,6 @@ namespace SteamEngine.CompiledScripts {
 				double sum = (tacticsAttack + anatomyAttack + armsloreAttack + strAttack) / 1000;
 				retVal.attackVsP = weapAttackVsP * sum;
 				retVal.attackVsM = weapAttackVsM * sum;
-
-				//TODO: upravy pro sipy (archery)
-
 			} else {
 				NPCDef npcDef = self.DefForCombat as NPCDef;
 				if (npcDef != null) {
@@ -345,9 +380,12 @@ namespace SteamEngine.CompiledScripts {
 							retVal.weaponType = weapon.WeaponType;
 						}
 					}
-					retVal.weaponAnimType = WeaponAnimType.BareHands;
 					if (weapon != null) {
 						retVal.weaponAnimType = weapon.WeaponAnimType;
+						retVal.projectileAnim = weapon.ProjectileAnim;
+					} else {
+						retVal.weaponAnimType = WeaponAnimType.BareHands;
+						retVal.projectileAnim = npcDef.ProjectileAnim;
 					}
 					retVal.range = npcDef.WeaponRange;
 					retVal.strikeStartRange = npcDef.StrikeStartRange;
@@ -356,6 +394,7 @@ namespace SteamEngine.CompiledScripts {
 					retVal.attackVsM = npcDef.WeaponAttack;
 					retVal.attackVsP = retVal.attackVsM;
 					retVal.piercing = npcDef.WeaponPiercing;
+					self.weaponProjectile = null;
 				} else {
 					//else ?!
 					Logger.WriteError("Can't calculate combat values for '"+self+"'. It says it's a NPC but has no NPCDef.");

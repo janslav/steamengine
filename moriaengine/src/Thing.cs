@@ -789,7 +789,7 @@ namespace SteamEngine {
 
 			output.WriteValue("p", this.P());
 
-			if (color!=def.Color) {
+			if (color!=0) {
 				output.WriteValue("color", color);
 			}
 

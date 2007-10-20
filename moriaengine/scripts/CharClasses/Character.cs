@@ -1025,6 +1025,12 @@ namespace SteamEngine.CompiledScripts {
 			return i;
 		}
 
+		public Container BackpackAsContainer {
+			get {
+				return (Container) base.Backpack;
+			}
+		}
+
 		public AbstractItem NewEquip(AbstractItemDef itemDef) {
 			AbstractItem i = Newitem(itemDef);
 			if (i.IsEquippable) {
@@ -1204,19 +1210,12 @@ namespace SteamEngine.CompiledScripts {
 			StartSkill((int) skillName);
 		}
 
-		//the same as currentskill, only backward compatible with sphere
-		public int Action {
+		public SkillName CurrentSkillName {
 			get {
 				if (currentSkill == null) {
-					return -1;
+					return SkillName.None;
 				}
-				return currentSkill.Id;
-			}
-			set {
-				if ((value != currentSkill.Id) || (value < 0) || (value >= AbstractSkillDef.SkillsCount)) {
-					AbortSkill();
-				}
-				//else...? 
+				return (SkillName) currentSkill.Id;
 			}
 		}
 
@@ -1507,71 +1506,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//this is to be moved to some separate class
-		////Standard sphere effect, for sphere script compatibility
-		//public void Effect(byte type, ushort effect, byte speed, byte duration, byte fixedDirection) {
-		//    switch (type) {
-		//        case 0: {
-		//                EffectFrom(Globals.SrcCharacter,
-		//                    effect, speed, duration, fixedDirection, 0, 0, 0);
-		//                break;
-		//            }
-		//        case 1: {
-		//                LightningEffect();
-		//                break;
-		//            }
-		//        case 2: {
-		//                StationaryEffectAt(this.P(), effect, speed, duration, fixedDirection, 0, 0, 0);
-		//                break;
-		//            }
-		//        case 3: {
-		//                StationaryEffect(effect, speed, duration, fixedDirection, 0, 0, 0);
-		//                break;
-		//            }
-		//        default: {
-		//                Logger.WriteWarning("Unknown effect type '"+type+"'. Sending it anyways.");
-		//                PacketSender.PrepareEffect(Globals.SrcCharacter,
-		//                    this, type, effect, speed, duration, 0, fixedDirection, 0, 0, 0);
-		//                PacketSender.SendToClientsWhoCanSee(this);
-		//                break;
-		//            }
-		//    }
-		//}
-
-		////More detailed effects.
-		//public void LightningEffectAt(IPoint3D point) {
-		//    PacketSender.PrepareEffect(point, point, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void LightningEffect() {
-		//    PacketSender.PrepareEffect(this, this, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void StationaryEffect(ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-		//    PacketSender.PrepareEffect(this, this, 3, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void StationaryEffectAt(IPoint3D point, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-		//    PacketSender.PrepareEffect(point, point, 2, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void EffectTo(IPoint3D target, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-		//    PacketSender.PrepareEffect(this, target, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void EffectTo(IPoint4D target, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-		//    PacketSender.PrepareEffect(this, target, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void EffectFrom(IPoint3D source, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-		//    PacketSender.PrepareEffect(source, this, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-		//public void EffectFrom(IPoint4D source, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-		//    PacketSender.PrepareEffect(source, this, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-		//    PacketSender.SendToClientsWhoCanSee(this);
-		//}
-
 		#region combat
 		public override void AttackRequest(AbstractCharacter target) {
 			if (this == target || target == null) {
@@ -1594,10 +1528,11 @@ namespace SteamEngine.CompiledScripts {
 
 		CombatCalculator.CombatWeaponValues combatWeaponValues;
 		CombatCalculator.CombatArmorValues combatArmorValues;
+		internal Projectile weaponProjectile;
 
 		public int ArmorClassVsP {
 			get {
-				CalculateCombatWeaponValues();
+				CalculateCombatArmorValues();
 				return combatArmorValues.armorVsP;
 			}
 		}
@@ -1776,6 +1711,37 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public Projectile WeaponProjectile {
+			get {
+				if ((weaponProjectile != null) &&
+						(weaponProjectile.IsDeleted || 
+						(weaponProjectile.TopObj() != this) || 
+						(weaponProjectile.Amount < 1))) {
+					weaponProjectile = null;//we had ammo but now don't have it anymore
+					InvalidateCombatWeaponValues();
+				} else if ((weaponProjectile == null) && (this.combatWeaponValues != null) && 
+						(this.combatWeaponValues.projectileType != ProjectileType.None)) {
+					InvalidateCombatWeaponValues();//we have no ammo but we should, let's look for it
+				}
+				CalculateCombatWeaponValues();
+				return weaponProjectile;
+			}
+		}
+
+		public int WeaponProjectileAnim {
+			get {
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.projectileAnim;
+			}
+		}
+
+		public ProjectileType WeaponProjectileType {
+			get {
+				CalculateCombatWeaponValues();
+				return combatWeaponValues.projectileType;
+			}
+		}
+
 		public int WeaponRange {
 			get {
 				CalculateCombatWeaponValues();
@@ -1833,7 +1799,7 @@ namespace SteamEngine.CompiledScripts {
         {
             Weapon w = this.Weapon;
             if (w != null)
-                w.Cont = this.Backpack;
+                w.Cont = this.BackpackAsContainer;
         }
 		#endregion combat
 

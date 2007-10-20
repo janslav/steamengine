@@ -572,6 +572,9 @@
     <Compile Include="..\..\scripts\Utils\AnimCalculator.cs">
       <Link>Utils\AnimCalculator.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Utils\EffectFactory.cs">
+      <Link>Utils\EffectFactory.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
       <Link>Utils\ExportUtils.cs</Link>
     </Compile>
