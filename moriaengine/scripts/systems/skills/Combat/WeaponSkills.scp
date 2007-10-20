@@ -1,5 +1,5 @@
 
-[WeaponSkillDef 31]
+[WeaponSkillDef 31] //Bow - run
 DEFNAME=Skill_Archery
 KEY="Archery"
 //TITLE="Archer"
@@ -69,3 +69,7 @@ KEY="Wrestling"
 //BONUS_INT=0
 //BONUSSTATS=10
 ADVRATE=8.5,120.0,680.0
+
+[WeaponSkillDef 50] //XBow - stand, used to be Focus
+DEFNAME=Skill_Marksmanship
+KEY="Marksmanship"

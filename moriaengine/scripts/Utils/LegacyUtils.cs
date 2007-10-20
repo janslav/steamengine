@@ -5,11 +5,30 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Packets;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Summary("Methods for simulating of sphereserver API in some cases")]
 	public static class LegacyUtils {
+
+		//the same as currentskill, only backward compatible with sphere
+
+		[SteamFunction]
+		public static int Action(Character self, ScriptArgs sa) {
+			if ((sa != null) && (sa.Argv.Length > 0)) {
+				int value = Convert.ToInt32(sa.Argv[0]);
+				if ((value != self.currentSkill.Id) || (value < 0) || (value >= AbstractSkillDef.SkillsCount)) {
+					self.AbortSkill();
+				}
+				return 0;
+			} else {
+				if (self.currentSkill == null) {
+					return -1;
+				}
+				return self.currentSkill.Id;
+			}
+		}
 
 		[SteamFunction]
 		public static void Go(Character self, string s) {
@@ -79,6 +98,31 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static bool HasEvent(ITriggerGroupHolder self, TriggerGroup tg) {
 			return self.HasTriggerGroup(tg);
+		}
+
+		[SteamFunction]
+		public static void Effect(Thing self, byte type, ushort effect, byte speed, byte duration, byte fixedDirection) {
+			switch (type) {
+				case 0:
+					EffectFactory.EffectFromTo(Globals.SrcCharacter, self,
+						effect, speed, duration, fixedDirection, 0, 0, 0);
+					break;
+				case 1:
+					EffectFactory.LightningEffect(self);
+					break;
+				case 2:
+					EffectFactory.StationaryEffectAt(self, effect, speed, duration, fixedDirection, 0, 0, 0);
+					break;
+				case 3:
+					EffectFactory.StationaryEffect(self, effect, speed, duration, fixedDirection, 0, 0, 0);
+					break;
+				default:
+					Logger.WriteWarning("Unknown effect type '"+type+"'. Sending it anyways.");
+					PacketSender.PrepareEffect(Globals.SrcCharacter,
+						self, type, effect, speed, duration, 0, fixedDirection, 0, 0, 0);
+					PacketSender.SendToClientsWhoCanSee(self);
+					break;
+			}
 		}
 
 		[SteamFunction]

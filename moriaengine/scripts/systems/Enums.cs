@@ -169,9 +169,14 @@ namespace SteamEngine.CompiledScripts {
 		Undefined
 	}
 
+	[Flags]
 	public enum ProjectileType : byte {
-		Bolt,
-		Arrow
+		None =		0x00,
+		Bolt =		0x01,
+		Arrow =		0x02,
+		Posioned =	0x04,
+		Jagged =	0x08
+		//?
 	}
 
 	public enum WearableType : byte {

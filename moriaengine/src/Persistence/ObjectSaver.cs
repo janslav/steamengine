@@ -221,7 +221,6 @@ namespace SteamEngine.Persistence {
 			} else if (TagMath.IsNumberType(t)) {
 				return value.ToString();
 			} else if (t.Equals(typeof(String))) {
-				//TODO: multiline strings
 				string stringAsSingleLine = Utility.EscapeNewlines((string) value);
 				return "\""+stringAsSingleLine+"\""; //returns the string in ""
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {

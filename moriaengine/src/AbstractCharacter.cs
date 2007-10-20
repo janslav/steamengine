@@ -54,7 +54,7 @@ namespace SteamEngine {
 	*/
 	public abstract partial class AbstractCharacter : Thing, ISrc {
 		public static bool CharacterTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Character Trace Messages"]);
-		public const uint maxTimersPerChar = 24;
+
 		public const uint numLayers = 31;
 		public const uint sentLayers = 25;//0-24
 		
@@ -1303,7 +1303,7 @@ namespace SteamEngine {
 		//in case P is set on this later (we wouldn't want it trying to remove the item from a sector it isn't
 		//in because of ghost x/y values from when it was in a container).
 		//calls triggers
-		internal override void DropItem(AbstractCharacter pickingChar, AbstractItem i) {
+		internal override sealed void DropItem(AbstractCharacter pickingChar, AbstractItem i) {
 			if (i.Cont == this) {
 				Thing origAct = act;
 				if (draggingLayer != i) {//no triggers for "unequipping" dragged item
@@ -1619,7 +1619,7 @@ namespace SteamEngine {
 								if ((!i.On_StackOn_Item(this, target, ref objX, ref objY))&&(i == draggingLayer)) {
 									//first try to stack this with the item
 									if (!target.StackAdd(this, i)) {//stacking didnt happen
-										if (target.IsInContainer) {
+										if (!target.IsOnGround) {
 											try {
 												x = Convert.ToUInt16(objX);
 												y = Convert.ToUInt16(objY);

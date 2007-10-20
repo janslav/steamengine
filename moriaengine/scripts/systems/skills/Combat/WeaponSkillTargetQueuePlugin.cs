@@ -101,6 +101,7 @@ namespace SteamEngine.CompiledScripts {
 				case WeaponType.BareHands:
 					return SkillName.Wrestling;
 				case WeaponType.XBow:
+					return SkillName.Marksmanship;
 				case WeaponType.Bow:
 					return SkillName.Archery;
 				case WeaponType.TwoHandAxe:
@@ -143,13 +144,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_NewPosition() {
-			TryStrokeWeapSkill();
-		}
+			Character cont = this.Cont;
 
-		private void TryStrokeWeapSkill() {
-			WeaponSkillDef skill = Cont.currentSkill as WeaponSkillDef;
-			if (skill != null) {
-				skill.Stroke(Cont);
+			if (cont.CurrentSkillName == SkillName.Marksmanship) {//nonrun archery
+				cont.AbortSkill();
+				this.FightCurrentTarget();
+			} else {
+				WeaponSkillDef skill = cont.currentSkill as WeaponSkillDef;
+				if (skill != null) {
+					skill.Stroke(cont);
+				}
 			}
 		}
 
@@ -158,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 				cont.InvalidateCombatWeaponValues();
 				if (cont.currentSkill is WeaponSkillDef) {
 					cont.AbortSkill();
-					this.FightCurrentTarget();
+					//this.FightCurrentTarget();
 				}
 			}
 		}
@@ -168,7 +172,7 @@ namespace SteamEngine.CompiledScripts {
 				cont.InvalidateCombatWeaponValues();
 				if (cont.currentSkill is WeaponSkillDef) {
 					cont.AbortSkill();
-					this.FightCurrentTarget();
+					//this.FightCurrentTarget();
 				}
 			}
 		}

@@ -148,7 +148,12 @@ namespace SteamEngine.Converter {
 					} else {
 						def.headerType = "ProjectileDef";
 					}
-					
+					if (args.Equals("t_weapon_arrow")) {
+						def.Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
+					} else {
+						def.Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
+					}
+
 					break;
 				default:
 					if (args.StartsWith("t_weapon")) {
@@ -327,19 +332,26 @@ namespace SteamEngine.Converter {
 					case "t_weapon_bow":
 						weaponType = WeaponType.Bow;
 						materialType = MaterialType.Wood;
+						Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
+						Set("ProjectileAnim", "0xf42", "guessed by Converter");
 						break;
 					case "t_weapon_xbow":
 						weaponType = WeaponType.XBow;
 						materialType = MaterialType.Wood;
+						Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
+						Set("ProjectileAnim", "0x1bfe", "guessed by Converter");
 						break;
 					case "t_weapon_xbow_run":
 						weaponType = WeaponType.XBow;
 						materialType = MaterialType.Wood;
+						Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
+						Set("ProjectileAnim", "0x1bfe", "guessed by Converter");
 						break;
 					case "t_weapon_bow_run":
 						weaponType = WeaponType.Bow;
 						materialType = MaterialType.Wood;
-						//TODO - preferred ammo...?
+						Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
+						Set("ProjectileAnim", "0xf42", "guessed by Converter");
 						break;
 				}
 				Set("WeaponType", "WeaponType."+weaponType, "guessed by Converter");

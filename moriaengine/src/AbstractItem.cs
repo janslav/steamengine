@@ -426,7 +426,6 @@ namespace SteamEngine {
 			ThrowIfDeleted();
 			if (Cont!=null) {
 				IPoint4D tp = TopPoint;
-				Cont.DropItem(Globals.SrcCharacter, this);
 				P(tp);
 			}
 			//Perhaps call Fix too? Adjust Z so we aren't in the exact same place as the cont?
@@ -610,13 +609,18 @@ namespace SteamEngine {
 		}
 
 		internal override sealed void SetPosImpl(MutablePoint4D point) {
-			if (IsInContainer) {
-				Logger.WriteWarning(LogStr.Ident(this)+" is inside a container, but its P is being set. If it is being taken out of the container, it should be dropped first, and if it is just being moved inside the container, then MoveInsideContainer should be used instead of setting its coordinates directly. (We are now going to call MoveInsideContainer for you)");
-				MoveInsideContainer(point.x, point.y);
-				return;
-			}
 			if (Map.IsValidPos(point.x,point.y,point.m)) {
 				NetState.ItemAboutToChange(this);
+
+				Thing c = this.Cont;
+				if (c!= null) {
+					AbstractCharacter contAsChar = c as AbstractCharacter;
+					if (contAsChar != null) {
+						contAsChar.DropItem(contAsChar, this);
+					} else {
+						c.DropItem(null, this);
+					}
+				}
 				region = null;
 				Point4D oldP = this.P();
 				point4d = point;

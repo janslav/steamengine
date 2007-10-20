@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 				beardModel = beard.Model;
 				beardColor = beard.Color;
 			}
-			AbstractItem pack = dieingChar.Backpack;
+			AbstractItem pack = dieingChar.BackpackAsContainer;
 			foreach (Item inBackpack in pack) {
 				if (inBackpack.CanFallToCorpse) {
 					inBackpack.Cont = this;
@@ -115,7 +115,7 @@ namespace SteamEngine.CompiledScripts {
 					resurrectedChar.TryEquip(resurrectedChar, i);
 				}
 			}
-			AbstractItem backpack = resurrectedChar.Backpack;
+			AbstractItem backpack = resurrectedChar.BackpackAsContainer;
 			foreach (Item i in this) {
 				i.Cont = backpack; //TODO pickup/dropon backpack triggers...?
 			}

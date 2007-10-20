@@ -115,6 +115,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public WeaponSpeedMassSetting weaponSpeeds = new WeaponSpeedMassSetting();
 
+		public WeaponRangeMassSetting weaponRanges = new WeaponRangeMassSetting();
+		public WeaponStrikeStartRangeMassSetting weaponStrikeStartRanges = new WeaponStrikeStartRangeMassSetting();
+		public WeaponStrikeStopRangeMassSetting weaponStrikeStopRanges = new WeaponStrikeStopRangeMassSetting();
+
 		public WeaponAnimTypeSetting weaponAnims = new WeaponAnimTypeSetting();
 
 		public WeaponMaterialTypeMassSetting weaponMaterialTypes = new WeaponMaterialTypeMassSetting();
@@ -129,8 +133,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public ArmorVsPMassSetting armorVsP = new ArmorVsPMassSetting();
 		public ArmorVsMMassSetting armorVsM = new ArmorVsMMassSetting();
+
 		public MindDefenseVsPMassSetting mindDefVsP = new MindDefenseVsPMassSetting();
 		public MindDefenseVsMMassSetting mindDefVsM = new MindDefenseVsMMassSetting();
+
+		public WeaponProjectileAnimMassSetting weaponProjectileAnimations = new WeaponProjectileAnimMassSetting();
+		public WeaponProjectileType weaponProjectileTypes = new WeaponProjectileType();
+		public ProjectilePiercingMassSetting projectilePiercings = new ProjectilePiercingMassSetting();
+		public ProjectileTypeMassSetting projectileTypes = new ProjectileTypeMassSetting();
 	}
 
 	public class WeaponTypeMassSetting : MassSettingsByModel<WeaponDef, WeaponType> {
@@ -174,6 +184,85 @@ namespace SteamEngine.CompiledScripts {
 
 		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponTypeFieldView(index);
+		}
+	}
+
+
+	public class WeaponRangeMassSetting : MassSettingsByModel<WeaponDef, int> {
+		public override string Name {
+			get {
+				return "Dostøely/dosahy zbraní";
+			}
+		}
+
+		protected class WeaponRangeFieldView : FieldView {
+			internal WeaponRangeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, int value) {
+				def.Range = value;
+			}
+
+			internal override int GetValue(WeaponDef def) {
+				return def.Range;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponRangeFieldView(index);
+		}
+	}
+
+	public class WeaponStrikeStartRangeMassSetting : MassSettingsByModel<WeaponDef, int> {
+		public override string Name {
+			get {
+				return "Dostøely/dosahy zbraní - minimum pro zaèátek nápøahu";
+			}
+		}
+
+		protected class WeaponStrikeStartRangeFieldView : FieldView {
+			internal WeaponStrikeStartRangeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, int value) {
+				def.StrikeStartRange = value;
+			}
+
+			internal override int GetValue(WeaponDef def) {
+				return def.StrikeStartRange;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponStrikeStartRangeFieldView(index);
+		}
+	}
+
+	public class WeaponStrikeStopRangeMassSetting : MassSettingsByModel<WeaponDef, int> {
+		public override string Name {
+			get {
+				return "Dostøely/dosahy zbraní - maximum pro trvání nápøahu";
+			}
+		}
+
+		protected class WeaponStrikeStopRangeFieldView : FieldView {
+			internal WeaponStrikeStopRangeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, int value) {
+				def.StrikeStopRange = value;
+			}
+
+			internal override int GetValue(WeaponDef def) {
+				return def.StrikeStopRange;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponStrikeStopRangeFieldView(index);
 		}
 	}
 
@@ -486,6 +575,110 @@ namespace SteamEngine.CompiledScripts {
 
 		public override IDataFieldView GetFieldView(int index) {
 			return new MindDefenseVsMFieldView(index);
+		}
+	}
+
+	public class WeaponProjectileType : MassSettingsByModel<WeaponDef, ProjectileType> {
+		public override string Name {
+			get {
+				return "Typ projektilù pro zbranì";
+			}
+		}
+
+		protected class ProjectileTypeFieldView : FieldView {
+			internal ProjectileTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, ProjectileType value) {
+				def.ProjectileType = value;
+			}
+
+			internal override ProjectileType GetValue(WeaponDef def) {
+				return def.ProjectileType;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new ProjectileTypeFieldView(index);
+		}
+	}
+
+	public class WeaponProjectileAnimMassSetting : MassSettingsByModel<WeaponDef, int> {
+		public override string Name {
+			get {
+				return "Animace projektilù pro zbranì";
+			}
+		}
+
+		protected class WeaponProjectileAnimFieldView : FieldView {
+			internal WeaponProjectileAnimFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, int value) {
+				def.ProjectileAnim = value;
+			}
+
+			internal override int GetValue(WeaponDef def) {
+				return def.ProjectileAnim;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponProjectileAnimFieldView(index);
+		}
+	}
+
+	public class ProjectileTypeMassSetting : MassSettingsByModel<ProjectileDef, ProjectileType> {
+		public override string Name {
+			get {
+				return "Typ projektilù";
+			}
+		}
+
+		protected class ProjectileTypeFieldView : FieldView {
+			internal ProjectileTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ProjectileDef def, ProjectileType value) {
+				def.ProjectileType = value;
+			}
+
+			internal override ProjectileType GetValue(ProjectileDef def) {
+				return def.ProjectileType;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new ProjectileTypeFieldView(index);
+		}
+	}
+
+	public class ProjectilePiercingMassSetting : MassSettingsByClass<ProjectileDef, double> {
+		public override string Name {
+			get {
+				return "Piercing projektilù";
+			}
+		}
+
+		protected class ProjectilePiercingFieldView : FieldView {
+			internal ProjectilePiercingFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ProjectileDef def, double value) {
+				def.Piercing = value;
+			}
+
+			internal override double GetValue(ProjectileDef def) {
+				return def.Piercing;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new ProjectilePiercingFieldView(index);
 		}
 	}
 }

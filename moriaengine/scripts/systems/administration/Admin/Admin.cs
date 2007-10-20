@@ -130,7 +130,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dialogHandler.LastTable[rowCntr,2] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Name); //plr name
                 dialogHandler.LastTable[rowCntr,3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 13); //goto location
 				dialogHandler.LastTable[rowCntr,3] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Region.Name); //region name
-				dialogHandler.LastTable[rowCntr,4] = TextFactory.CreateText(plrColor, plr.Action.ToString()); //region name
+				dialogHandler.LastTable[rowCntr,4] = TextFactory.CreateText(plrColor, plr.CurrentSkillName.ToString()); //action name
 				
 				rowCntr++;			
 			}

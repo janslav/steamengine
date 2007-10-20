@@ -15,7 +15,7 @@ namespace SteamEngine.CompiledScripts {
                 StartHealing(clicker, self);
             } else {
                 Item otherBandage = null;
-                foreach (Item i in clicker.Backpack) {
+                foreach (Item i in clicker.BackpackAsContainer) {
                     if (i.Type == this) {
                         otherBandage = i;
                         break;

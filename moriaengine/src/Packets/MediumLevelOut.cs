@@ -209,6 +209,11 @@ namespace SteamEngine.Packets {
 		}
 
 		[Remark("This always discards the single-blocking-packet after sending.")]
+		public static void SendToClientsInRange(IPoint4D point) {
+			SendToClientsInRange(point, Globals.MaxUpdateRange);
+		}
+
+		[Remark("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsInRange(IPoint4D point, ushort range) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsInRange("+point+","+range+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsInRange called when generatingState is "+generatingState+" - Expected it to be Ready.");

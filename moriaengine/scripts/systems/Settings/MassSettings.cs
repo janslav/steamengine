@@ -30,6 +30,78 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		IDataFieldView GetFieldView(int index);
 	}
 
+	public abstract class MassSettingsByClass<DefType, FieldType> : IMassSettings where DefType : ThingDef {
+		static List<DefType> defs;
+
+		static MassSettingsByClass() {
+			if (defs == null) {
+				defs = new List<DefType>();
+				foreach (AbstractScript scp in AbstractScript.AllScrips) {
+					DefType def = scp as DefType;
+					if (def != null) {
+						defs.Add(def);
+					}
+				}
+				if (defs.Count == 0) {
+					throw new Exception("MassSettingsByClass instantiated before scripts are loaded... or no "+typeof(DefType).Name+" in scripts?");
+				}
+
+				defs.Sort(delegate(DefType a, DefType b) {
+					return Comparer<ushort>.Default.Compare(a.Model, b.Model);
+				});
+			}
+		}
+
+		protected abstract class FieldView : ReadWriteDataFieldView {
+			protected int index;
+
+			protected FieldView(int index) {
+				this.index = index;
+			}
+
+			public override string GetName(object target) {
+				return defs[index].Name;
+			}
+
+			public override Type FieldType {
+				get {
+					return typeof(FieldType);
+				}
+			}
+
+			public override object GetValue(object target) {
+				return this.GetValue(defs[index]);
+			}
+
+			public override void SetValue(object target, object value) {
+				this.SetValue(defs[index], (FieldType) value);
+			}
+
+			public override string GetStringValue(object target) {
+				return ObjectSaver.Save(this.GetValue(target));
+			}
+
+			public override void SetStringValue(object target, string value) {
+				this.SetValue(target, ObjectSaver.Load(value));
+			}
+
+			internal abstract void SetValue(DefType def, FieldType value);
+
+			internal abstract FieldType GetValue(DefType def);
+		}
+
+		public abstract string Name { get; }
+		public abstract IDataFieldView GetFieldView(int index);
+
+		public int Count {
+			get {
+				return defs.Count;
+			}
+		}
+		
+
+	}
+
 	public abstract class MassSettingsByModel<DefType, FieldType> : IMassSettings where DefType : ThingDef {
 		static ushort[] models;
 		List<DefType>[] defs;
