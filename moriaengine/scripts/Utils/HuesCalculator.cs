@@ -15,16 +15,17 @@ namespace SteamEngine.CompiledScripts {
 		static Dictionary<Material, Constant> oreHues = new Dictionary<Material, Constant>();
 
 
-		private static bool defsWithMaterialColored;
+		private static bool defsWithMaterialColored = false;
 		[SavedMember]
 		public static bool DefsWithMaterialColored {
 			get {
 				return defsWithMaterialColored;
 			}
 			set {
-				if (value == false) {
+				if (!value) {
 					SetColorOnDefsWithMaterial();
 				}
+				defsWithMaterialColored = true;
 			}
 		}
 
@@ -36,8 +37,6 @@ namespace SteamEngine.CompiledScripts {
 					materialObj.Color = GetHueForMaterial(materialObj.Material, materialObj.MaterialType);
 				}
 			}
-
-			defsWithMaterialColored = true;
 		}
 
 		public static ushort GetHueForMaterial(Material material, MaterialType type) {
