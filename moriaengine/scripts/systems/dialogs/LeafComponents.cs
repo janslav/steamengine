@@ -62,7 +62,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             buttonGumps.Add(LeafComponentTypes.ButtonSortUp, new ButtonGump(2435, 2436));
             //0985, 0986 Sort down button
             buttonGumps.Add(LeafComponentTypes.ButtonSortDown, new ButtonGump(2437, 2438));
-            
+			//0fb4, 0fb6 Crossed circle button 
+			buttonGumps.Add(LeafComponentTypes.ButtonNoOperation, new ButtonGump(4020, 4022));
+
+
             //0d2, 0d3 Checkbox (unchecked, checked)
             buttonGumps.Add(LeafComponentTypes.CheckBox, new ButtonGump(210, 211));
             //0d0, 0d1 Radiobutton (unselected, selected)
