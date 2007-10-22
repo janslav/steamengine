@@ -61,6 +61,18 @@ namespace SteamEngine.CompiledScripts {
 		UnreadDesc
 	}
 
+	[Remark("Various sorting criteria for displaying account notes or crimes")]
+	public enum AccountNotesSorting : int {
+		TimeAsc,
+		TimeDesc,
+		RefCharAsc,
+		RefCharDesc,
+		AFKAsc,
+		AFKDesc,
+		IssuerAsc,
+		IssuerDesc
+	}
+
 	[Remark("Various types of GUTA Leaf Components")]
 	public enum LeafComponentTypes : int {
 		//Buttons
@@ -74,6 +86,8 @@ namespace SteamEngine.CompiledScripts {
 		ButtonPaper,
 		[Remark("Button with flying paper")]
 		ButtonSend,
+		[Remark("Button with the crossed circle")]
+		ButtonNoOperation,		
 		[Remark("Button for sorting (small up arrow)")]
 		ButtonSortUp,
 		[Remark("Button for sorting (small down arrow)")]

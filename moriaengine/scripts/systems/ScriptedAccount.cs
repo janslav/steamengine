@@ -26,6 +26,13 @@ namespace SteamEngine.CompiledScripts {
 	
 	[SaveableClass]
 	public class ScriptedAccount : AbstractAccount {
+		[Remark("GM written notes for this account")]
+		List<AccountNote> accNotes = new List<AccountNote>();
+
+		[Remark("Crimes commited by this account (AFK, bugs, roughing etc.)")]		
+		List<AccountCrime> accCrimes = new List<AccountCrime>();
+
+
 		string email;
 
 		[LoadSection]
@@ -37,6 +44,29 @@ namespace SteamEngine.CompiledScripts {
 		public ScriptedAccount(string name)
 			: base(name) {
 
+		}
+
+		[Remark("Returns a copy of the AccNotes Dictionary (usable for sorting etc.)")]
+		public List<AccountNote> AccNotes {
+			get {
+				return new List<AccountNote>(accNotes);
+			}
+		}
+
+		[Remark("Returns a copy of the AccCrimes Dictionary (usable for sorting etc.)")]
+		public List<AccountCrime> AccCrimes {
+			get {
+				return new List<AccountCrime>(accCrimes);
+			}
+		}
+
+		[Remark("Remove one selected note (cannot be removed from AccNotes property")]
+		public void RemoveNote(AccountNote note) {
+			accNotes.Remove(note);
+		}
+
+		public void RemoveCrime(AccountCrime crime) {
+			accCrimes.Remove(crime);
 		}
 
 		public override void LoadLine(string filename, int line, string name, string value) {
