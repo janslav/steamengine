@@ -377,6 +377,9 @@
     <Compile Include="..\..\src\HashSet.cs">
       <Link>HashSet.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\ItemManipulation.cs">
+      <Link>ItemManipulation.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\LayerDefs.cs">
       <Link>LayerDefs.cs</Link>
       <SubType>Code</SubType>
