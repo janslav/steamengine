@@ -204,9 +204,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, self.Account, AccountNotesSorting.TimeDesc, 0, null);
 			} else {
-				ScriptedAccount acc = (ScriptedAccount)AbstractAccount.Get(text.Argv[0].ToString());
+				ScriptedAccount acc = (ScriptedAccount)AbstractAccount.Get(text.argv[0].ToString());
 				if(acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem "+text.Argv[0].ToString()+" neexistuje.", (int)Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem "+text.argv[0].ToString()+" neexistuje.", (int)Hues.Red);
 					return;
 				}
 				if(text.argv.Length == 1) { //mame jen nazev accountu
