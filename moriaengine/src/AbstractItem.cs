@@ -26,7 +26,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
-	public abstract class AbstractItem : Thing, PacketSender.ICorpseEquipInfo {
+	public abstract partial class AbstractItem : Thing, PacketSender.ICorpseEquipInfo {
 		private uint amount;
 		private string name;
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
@@ -146,11 +146,13 @@ namespace SteamEngine {
 				return tll.count;
 			}
 		}
+
 		public bool IsEmpty {
 			get {
 				return (Count==0);
 			}
-		}		
+		}
+
 		public override int Height { 
 			get {
 				int defHeight = Def.Height;
@@ -165,18 +167,6 @@ namespace SteamEngine {
 					return 1;
 				}
 				return idi.height;
-			} 
-		}
-		
-		public override Thing Cont { 
-			get {
-				ThingLinkedList list = contOrTLL as ThingLinkedList;
-				if ((list != null) && (list.ContAsThing != null)) {
-					return list.ContAsThing;
-				}
-				return contOrTLL as Thing;
-			} set {
-				value.AddItem(Globals.SrcCharacter, this);
 			} 
 		}
 		
@@ -229,26 +219,6 @@ namespace SteamEngine {
 			}
 			return true;
 		} } 
-		
-		public sealed override Thing Dupe() {
-			Thing cont = this.Cont;
-			return Dupe(cont);
-		}
-		
-		internal AbstractItem Dupe(Thing putIn) {
-			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
-			if (putIn!=null) {
-				if (putIn.IsContainer) {
-					((AbstractItem) putIn).InternalAddItem(copy);
-				} else {
-					//it is a character
-					((AbstractCharacter) putIn).AddLoadedItem(copy);
-				}
-			} else {//on ground, we add it to map
-				copy.GetMap().Add(copy);
-			}
-			return copy;
-		}
 		
 		public virtual byte Layer { 
 			get {
@@ -313,215 +283,6 @@ namespace SteamEngine {
 
 		public virtual void On_ContainerOpen(GameConn viewerConn) {
 
-		}
-
-		public ushort GetRandomXInside() {
-			//todo?: nonconstant bounds for this? or virtual?
-			return (ushort) Globals.dice.Next(20,128);
-		}
-		
-		public ushort GetRandomYInside() {
-			return (ushort) Globals.dice.Next(20,128);
-		}
-		
-		public virtual bool On_PickupFrom(AbstractCharacter pickingChar, AbstractItem i, ref object amount) {
-			//pickingChar is picking up amount of AbstractItem i from this
-			return false;
-		}
-
-		public override void AddItem(AbstractCharacter addingChar, AbstractItem i) {
-			if (IsContainer) {
-				if (!TryToStack(addingChar, i)) {
-					AddItem(addingChar, i, GetRandomXInside(), GetRandomYInside());
-				}
-			} else {
-				throw new InvalidOperationException("The item ("+this+") is not a container");
-			}
-		}
-
-		public override void AddItem(AbstractCharacter addingChar, AbstractItem i, ushort x, ushort y) {
-			if (IsContainer) {
-				ThrowIfDeleted();
-				i.ThrowIfDeleted();
-				if (this.IsWithinCont(i)) {
-					throw new InvalidOperationException("You can not add item ("+i+") to it's own subcontainer ("+this+").");
-				}
-				NetState.ItemAboutToChange(i);
-				
-				if ((x==0xffff) || (y==0xffff)) {
-					//add with stacking
-					if (TryToStack(addingChar, i)) {
-						return;
-					} else {
-						x = GetRandomXInside();
-						y = GetRandomYInside();
-					}
-				} else if ((x==0) || (y==0)) {
-					x = GetRandomXInside();
-					y = GetRandomYInside();
-				}
-				if (i.Cont != this) {
-					i.FreeCont(addingChar);
-					InternalAddItem(i);
-				}
-				i.MoveInsideContainer(x, y);
-				i.PlayDropSound(addingChar);
-			} else {
-				throw new InvalidOperationException("The item ("+this+") is not a container");
-			}
-		}
-		
-		internal void InternalAddItem(AbstractItem i) {
-			this.ChangingProperties();
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
-			if (tll == null) {
-				tll = new ThingLinkedList(this);
-				contentsOrComponents = tll;
-			}
-			//IncreaseWeightBy(i.Weight);
-			i.BeingPutInContainer(tll);
-			tll.Add(i);
-			//i.cont = contents;
-		}
-		
-		//try to add item to some stack inside
-		private bool TryToStack(AbstractCharacter stackingChar, AbstractItem toStack) {
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
-			if (tll != null) {
-				return tll.TryToStack(stackingChar, toStack);
-			}
-			return false;
-		}
-
-		//add i to this stack, if possible
-		public bool StackAdd(AbstractCharacter stackingChar, AbstractItem i) {
-			if (this.IsStackable && i.IsStackable) {
-				if (this.Def.Equals(i.Def)) {
-					ThrowIfDeleted();
-					i.ThrowIfDeleted();
-					
-					//Amount overflow checking:
-					if (Amount==0) Amount=1;
-					if (i.Amount==0) i.Amount=1;
-					uint tmpAmount=Amount;
-					try {
-						tmpAmount=checked (tmpAmount+i.Amount);
-					} catch (OverflowException) {
-						return false;
-					}
-					Amount=tmpAmount;
-
-					PlayDropSound(stackingChar);
-					Thing.DeleteThing(i);
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/**
-			Drop this item on the ground.
-		*/
-		public void Drop() {
-			ThrowIfDeleted();
-			if (Cont!=null) {
-				IPoint4D tp = TopPoint;
-				P(tp);
-			}
-			//Perhaps call Fix too? Adjust Z so we aren't in the exact same place as the cont?
-			//Fix should probably do that, I suppose.
-		}
-		
-		//is not public because it leaves the item in "illegal" state...
-		internal override void DropItem(AbstractCharacter pickingChar, AbstractItem i) {
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
-			if (tll != null) {
-				if (i.contOrTLL == tll) {
-					tll.Remove(i);
-					this.ChangingProperties();//changing Count
-					//DecreaseWeightBy(i.Weight);
-					i.BeingDroppedFromContainer();
-				}
-			}
-		}
-
-		/**
-			Changes x/y without affecting sector coordinates.
-			If you are moving an item around inside a container, this is what you should call.
-		 */
-		public void MoveInsideContainer(ushort x, ushort y) {
-			NetState.ItemAboutToChange(this);
-			region = null;
-			point4d.x=x;
-			point4d.y=y;
-		}
-		
-		//called from PrivatePickup
-		internal void FreeCont(AbstractCharacter droppingChar) {
-			if (this.point4d.x == 0xffff && this.point4d.y == 0xffff) {
-				return;
-			}
-			Thing c = this.Cont;
-			if (c != null) {
-				c.DropItem(droppingChar, this);
-			} else {
-				BeingPickedUpFromGround();
-			}
-		}
-
-		internal void BeingDroppedFromContainer() {
-			//Console.WriteLine("BeingDroppedFromContainer()");
-			OpenedContainers.SetContainerClosed(this);//if we are a container, moving us makes us closed
-			RemoveFromView();
-			Cont.AdjustWeight(-this.Weight);
-			//NetState.AboutToChange(this);
-			contOrTLL=null;
-			region = null;
-			//Invalid coordinates, to mark this as being in transition between a container and somewhere else.
-			point4d.x=0xffff;
-			point4d.y=0xffff;
-		}
-
-		internal void BeingPickedUpFromGround() {
-			region = null;
-			byte m = this.M;
-			if (Map.IsValidPos(point4d.x, point4d.y, m)) {
-				Map map = Map.GetMap(m);
-				OpenedContainers.SetContainerClosed(this);
-				RemoveFromView();
-				map.Remove(this);
-			}
-
-			//Invalid coordinates, to mark this as being in transition between a container and somewhere else.
-			point4d.x=0xffff;
-			point4d.y=0xffff;
-		}
-		
-		internal void BeingEquipped(object container, byte layer) {
-			//Console.WriteLine("BeingPutInContainer(object, byte)");
-			NetState.ItemAboutToChange(this);
-			contOrTLL=container;
-			this.point4d.x = 7000;
-			this.point4d.y = 0;
-			this.point4d.z = (sbyte) layer;
-			Cont.AdjustWeight(this.Weight);
-		}
-
-		internal void BeingPutInContainer(object container) {
-			//Console.WriteLine("BeingPutInContainer(object)");
-			NetState.ItemAboutToChange(this);
-			contOrTLL=container;
-			Cont.AdjustWeight(this.Weight);
-		}
-
-		internal bool TryRemoveFromContainer() {
-			ThingLinkedList list = this.contOrTLL as ThingLinkedList;
-			if ((list != null) && (list.ContAsThing != null)) {
-				list.Remove(this);
-				return true;
-			}
-			Logger.WriteWarning("cont is "+contOrTLL+", a "+contOrTLL.GetType()+".");
-			return false;
 		}
 
 		internal protected override sealed void BeingDeleted() {
@@ -607,28 +368,6 @@ namespace SteamEngine {
 				type.TryRun(this, td, sa);
 			}
 		}
-
-		internal override sealed void SetPosImpl(MutablePoint4D point) {
-			if (Map.IsValidPos(point.x,point.y,point.m)) {
-				NetState.ItemAboutToChange(this);
-
-				Thing c = this.Cont;
-				if (c!= null) {
-					AbstractCharacter contAsChar = c as AbstractCharacter;
-					if (contAsChar != null) {
-						contAsChar.DropItem(contAsChar, this);
-					} else {
-						c.DropItem(null, this);
-					}
-				}
-				region = null;
-				Point4D oldP = this.P();
-				point4d = point;
-				ChangedP(oldP);
-			} else {
-				throw new ArgumentOutOfRangeException("Invalid position ("+point.x+","+point.y+" on mapplane "+point.m+")");
-			}
-		}
 		
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
@@ -699,38 +438,6 @@ namespace SteamEngine {
 				cancel=clickingChar.On_ItemClick(this);
 			}
 			return cancel;
-		}
-
-		public virtual bool On_DropOn_Ground(AbstractCharacter droppingChar, IPoint4D point) {
-			//src is dropping on ground at x y z point4d
-			return false;
-		}
-
-		public virtual bool On_Pickup_Ground(AbstractCharacter pickingChar, ref object amount) {
-			//pickingChar is picking me up from ground
-			return false;
-		}
-
-		public virtual bool On_Pickup_Pack(AbstractCharacter pickingChar, ref object amount) {
-			//pickingChar is picking me up from ground
-			return false;
-		}
-
-		public virtual bool On_StackOn_Item(AbstractCharacter droppingChar, AbstractItem target, ref object objX, ref object objY) {
-			//droppingChar is dropping this on (not into!) item target
-			return false;
-		}
-
-		public virtual bool On_StackOn_Char(AbstractCharacter droppingChar, AbstractCharacter target) {
-			return false;
-		}
-
-		public virtual bool On_Equip(AbstractCharacter droppingChar, AbstractCharacter target, bool forced) {
-			return false;
-		}
-
-		public virtual bool On_UnEquip(AbstractCharacter pickingChar, bool forced) {
-			return false;
 		}
 		
 		internal override sealed bool TriggerSpecific_DClick(AbstractCharacter dClickingChar, ScriptArgs sa) {
@@ -815,41 +522,7 @@ namespace SteamEngine {
 					break;
 			}
 		}
-		
-		public void LoadCont_Delayed(object resolvedObj, string filename, int line) {
-			if (Uid == -1) {
-				//I was probably cleared because of failed load. Let me get deleted by garbage collector.
-				return;
-			}
-			if (Cont == null) {
-				Thing t = resolvedObj as Thing;
-				if (t != null) {
-					if ((t.IsChar)&&(this.IsEquippable)) {
-						((AbstractCharacter) t).AddLoadedItem(this);
-						return;
-					} else if (t.IsContainer) {
-						((AbstractItem) t).InternalAddItem(this);
-						return;
-					}
-				}
-				//contOrTLL=null;
-				Logger.WriteWarning("The saved cont object ("+resolvedObj+") for item '"+this.ToString()+"' is not a valid container. Removing.");
-				Thing.DeleteThing(this);
-				return;
-			}
-			Logger.WriteWarning("The object ("+resolvedObj+") is being loaded as cont for item '"+this.ToString()+"', but it already does have it's cont. This should not happen.");
-		}
-		
-		public void PlayDropSound(AbstractCharacter droppingChar) {
-			ScriptArgs sa = new ScriptArgs(droppingChar);
-			if (!TryCancellableTrigger(TriggerKey.playDropSound, sa)) {
-				On_DropSound(droppingChar);
-			}
-		}
 
-		public virtual void On_DropSound(AbstractCharacter droppingChar) {
-			this.SoundTo(this.TypeDef.DropSound, droppingChar);
-		}
 		
 		public override sealed bool IsItem { 
 			get {

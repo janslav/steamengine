@@ -112,9 +112,9 @@ namespace SteamEngine.CompiledScripts {
 
 				retVal.Add(new CodeAssignStatement(
 					new CodeVariableReferenceExpression("argv"),
-					new CodePropertyReferenceExpression(
+					new CodeFieldReferenceExpression(
 						new CodeArgumentReferenceExpression("sa"),
-						"Argv")));
+						"argv")));
 
 				int paramOffset = thisAsFirstParam? 0 : -1;
 

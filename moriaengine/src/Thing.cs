@@ -33,7 +33,7 @@ namespace SteamEngine {
 		int Uid { get; set; }
 	}
 
-	public abstract class Thing : PluginHolder, IPoint4D, IEnumerable, ObjectWithUid {
+	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable, ObjectWithUid {
 		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
 		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
 
@@ -621,18 +621,6 @@ namespace SteamEngine {
 		//	Sanity.IfTrueThrow(!netStateChanged, "You can only use NSMessage once AboutToChange has been used this cycle.");
 		//	NetState.Message(this, msg, args);
 		//}
-
-		public virtual void AddItem(AbstractCharacter addingChar, AbstractItem iToAdd) {
-			throw new InvalidOperationException("The thing ("+this+") can not contain items");
-		}
-
-		public virtual void AddItem(AbstractCharacter addingChar, AbstractItem iToAdd, ushort x, ushort y) {
-			throw new InvalidOperationException("The thing ("+this+") can not contain items");
-		}
-
-		internal virtual void DropItem(AbstractCharacter pickingChar, AbstractItem i) {
-			throw new InvalidOperationException("The thing ("+this+") can not contain items");
-		}
 
 		public abstract AbstractItem FindCont(int index);
 
