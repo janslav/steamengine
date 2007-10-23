@@ -35,101 +35,67 @@ namespace SteamEngine.CompiledScripts {
 
 		public static List<AccountCrime> GetCrimes(ScriptedAccount acc, AccountNotesSorting sortBy) {
 			List<AccountCrime> crimes = acc.AccCrimes;
-			CrimesListSort(crimes, sortBy); //sort, if necessary
+			NotesListSort(crimes, sortBy); //sort, if necessary
 			return crimes;
 		}
 
 		[Remark("Sorting of the account notes/crimes list")]
-		private static void NotesListSort(List<AccountNote> list, AccountNotesSorting criteria) {
+		private static void NotesListSort<T>(List<T> list, AccountNotesSorting criteria) where T : AccountNote {
 			switch (criteria) {
 				case AccountNotesSorting.TimeAsc:
-					list.Sort(NotesTimeComparer.instance);
+					list.Sort(NotesTimeComparer<T>.instance);
 					break;
 				case AccountNotesSorting.TimeDesc:
-					list.Sort(NotesTimeComparer.instance);
+					list.Sort(NotesTimeComparer<T>.instance);
 					list.Reverse();
 					break;
 				case AccountNotesSorting.RefCharAsc:
-					list.Sort(NotesRefCharComparer.instance);
+					list.Sort(NotesRefCharComparer<T>.instance);
 					break;
 				case AccountNotesSorting.RefCharDesc:
-					list.Sort(NotesRefCharComparer.instance);
+					list.Sort(NotesRefCharComparer<T>.instance);
 					list.Reverse();
 					break;
 				case AccountNotesSorting.IssuerAsc:
-					list.Sort(NotesIssuerComparer.instance);
+					list.Sort(NotesIssuerComparer<T>.instance);
 					break;
 				case AccountNotesSorting.IssuerDesc:
-					list.Sort(NotesIssuerComparer.instance);
+					list.Sort(NotesIssuerComparer<T>.instance);
 					list.Reverse();
 					break;
 				case AccountNotesSorting.AFKAsc:
-					list.Sort(CrimesAFKComparer.instance);
+					list.Sort(CrimesAFKComparer<T>.instance);
 					break;
 				case AccountNotesSorting.AFKDesc:
-					list.Sort(CrimesAFKComparer.instance);
+					list.Sort(CrimesAFKComparer<T>.instance);
 					list.Reverse();
 					break;
 			}			
-		}
-
-		[Remark("Sorting of the account notes/crimes list")]
-		private static void CrimesListSort(List<AccountCrime> list, AccountNotesSorting criteria) {
-			switch (criteria) {
-				case AccountNotesSorting.TimeAsc:
-					list.Sort(NotesTimeComparer.instance);
-					break;
-				case AccountNotesSorting.TimeDesc:
-					list.Sort(NotesTimeComparer.instance);
-					list.Reverse();
-					break;
-				case AccountNotesSorting.RefCharAsc:
-					list.Sort(NotesRefCharComparer.instance);
-					break;
-				case AccountNotesSorting.RefCharDesc:
-					list.Sort(NotesRefCharComparer.instance);
-					list.Reverse();
-					break;
-				case AccountNotesSorting.IssuerAsc:
-					list.Sort(NotesIssuerComparer.instance);
-					break;
-				case AccountNotesSorting.IssuerDesc:
-					list.Sort(NotesIssuerComparer.instance);
-					list.Reverse();
-					break;
-				case AccountNotesSorting.AFKAsc:
-					list.Sort(CrimesAFKComparer.instance);
-					break;
-				case AccountNotesSorting.AFKDesc:
-					list.Sort(CrimesAFKComparer.instance);
-					list.Reverse();
-					break;
-			}
-		}
+		}		
 	}
 
 	[Remark("Comparer for sorting account notes by time")]
-	public class NotesTimeComparer : IComparer<AccountNote> {
-		public readonly static NotesTimeComparer instance = new NotesTimeComparer();
+	public class NotesTimeComparer<T> : IComparer<T> where T: AccountNote {
+		public readonly static NotesTimeComparer<T> instance = new NotesTimeComparer<T>();
 
 		private NotesTimeComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
 		}
 
-		public int Compare(AccountNote x, AccountNote y) {
+		public int Compare(T x, T y) {
 			return x.time.CompareTo(y.time);
 		}
 	}
 
 	[Remark("Comparer for sorting account notes by referered character")]
-	public class NotesRefCharComparer : IComparer<AccountNote> {
-		public readonly static NotesRefCharComparer instance = new NotesRefCharComparer();
+	public class NotesRefCharComparer<T> : IComparer<T> where T : AccountNote {
+		public readonly static NotesRefCharComparer<T> instance = new NotesRefCharComparer<T>();
 
 		private NotesRefCharComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
 		}
 
-		public int Compare(AccountNote x, AccountNote y) {
+		public int Compare(T x, T y) {
 			//check if we have the reffered character, otherwise return "all" - the note or crime is related to the whole account
 			string refXName = (x.referredChar != null ? x.referredChar.Name : "all");
 			string refYName = (y.referredChar != null ? y.referredChar.Name : "all");
@@ -138,34 +104,32 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Remark("Comparer for sorting account notes by note issuer")]
-	public class NotesIssuerComparer : IComparer<AccountNote> {
-		public readonly static NotesIssuerComparer instance = new NotesIssuerComparer();
+	public class NotesIssuerComparer<T> : IComparer<T> where T: AccountNote {
+		public readonly static NotesIssuerComparer<T> instance = new NotesIssuerComparer<T>();
 
 		private NotesIssuerComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
 		}
 
-		public int Compare(AccountNote x, AccountNote y) {
+		public int Compare(T x, T y) {
 			return String.Compare(x.issuer.Name, y.issuer.Name, true);
 		}
 	}
 
 	[Remark("Comparer for sorting account notes its AFK or nonAFK type")]
-	public class CrimesAFKComparer : IComparer<AccountNote> {
-		public readonly static CrimesAFKComparer instance = new CrimesAFKComparer();
+	public class CrimesAFKComparer<T> : IComparer<T> where T: AccountNote {
+		public readonly static CrimesAFKComparer<T> instance = new CrimesAFKComparer<T>();
 
 		private CrimesAFKComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
 		}
 
-		public int Compare(AccountNote x, AccountNote y) {
-			AccountCrime a = (AccountCrime)x;
-			AccountCrime b = (AccountCrime)y;
+		public int Compare(T x, T y) {
+			AccountCrime a = (AccountCrime)(AccountNote)x;
+			AccountCrime b = (AccountCrime)(AccountNote)y;
 			return a.isAFK.CompareTo(b.isAFK);
 		}
 	}
-
-
 
 	[SaveableClass]
 	public class AccountNote {
@@ -197,7 +161,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		[SaveableData]
-		public string punishment; //the pujnishment description		
+		public string punishment; //the punishment description		
 
 		[SaveableData]		
 		public bool isAFK; //is it the AFK crime?
