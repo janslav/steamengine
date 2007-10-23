@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvniho tagu co ma
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam tagu, pouzito az v dialogu
-			if(text == null || text.Argv == null || text.Argv.Length == 0) {
+			if(text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, "", null);
 			} else {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, text.Args, null);

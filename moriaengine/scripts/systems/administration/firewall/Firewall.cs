@@ -35,7 +35,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
     public class E_Firewall_Global : CompiledTriggerGroup {
         public void On_ClientAttach(Globals ignored, ScriptArgs sa) {
-            GameConn conn = (GameConn)sa.Argv[0];
+            GameConn conn = (GameConn)sa.argv[0];
             if (Firewall.IsBlockedIP(conn.IP)) {
 				Prepared.SendFailedLogin(conn, FailedLoginReason.Blocked);
                 conn.Close("IP Blocked");

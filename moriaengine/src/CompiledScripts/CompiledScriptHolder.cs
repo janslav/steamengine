@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts {
 					if ((i == 0) && thisAsFirstParam) {
 						methodParams[i] = CastParameter(pi,
 								new CodeVariableReferenceExpression("self"));
-					} else if ((i == 1+paramOffset) && (n == 2+paramOffset) && (pi.ParameterType == typeof(ScriptArgs))) {
+					} else if ((i == 1+paramOffset) && (n == 2+paramOffset) && (typeof(ScriptArgs).IsAssignableFrom(pi.ParameterType))) {
 						methodParams[i] = new CodeArgumentReferenceExpression("sa");
 						break;
 					} else {

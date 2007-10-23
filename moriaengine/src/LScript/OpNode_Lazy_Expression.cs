@@ -399,8 +399,8 @@ namespace SteamEngine.LScript {
 			}
 
 //a little hack for gumps - to make possible to use dialog layout methods without the "argo."
-			if ((vars.self == vars.defaultObject)&&(vars.scriptArgs != null)&&(vars.scriptArgs.Argv.Length > 0)) {
-				ScriptedGumpInstance sgi = vars.scriptArgs.Argv[0] as ScriptedGumpInstance;
+			if ((vars.self == vars.defaultObject)&&(vars.scriptArgs != null)&&(vars.scriptArgs.argv.Length > 0)) {
+				ScriptedGumpInstance sgi = vars.scriptArgs.argv[0] as ScriptedGumpInstance;
 				if (sgi != null) {
 					if (ScriptedGumpInstance.IsMethodName(name)) {
 						desc = null;

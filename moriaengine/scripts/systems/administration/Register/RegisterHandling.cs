@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static List<AccountCrime> GetCrimes(ScriptedAccount acc, AccountNotesSorting sortBy) {
 			List<AccountCrime> crimes = acc.AccCrimes;
-			NotesListSort(notes, sortBy); //sort, if necessary
+			NotesListSort(crimes, sortBy); //sort, if necessary
 			return crimes;
 		}
 

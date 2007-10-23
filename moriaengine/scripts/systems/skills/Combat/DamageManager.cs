@@ -112,15 +112,13 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Happens before applying armor, can be cancelled.")]
 		public static bool Trigger_BeforeSwing(WeaponSwingArgs swingArgs) {
-			ScriptArgs sa = new ScriptArgs(swingArgs);
-
-			if (!swingArgs.attacker.TryCancellableTrigger(beforeSwingTK, sa)) {
+			if (!swingArgs.attacker.TryCancellableTrigger(beforeSwingTK, swingArgs)) {
 				try {
 					if (swingArgs.attacker.On_BeforeSwing(swingArgs)) {
 						return true;
 					}
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!swingArgs.defender.TryCancellableTrigger(beforeGetSwingTK, sa)) {
+				if (!swingArgs.defender.TryCancellableTrigger(beforeGetSwingTK, swingArgs)) {
 					try {
 						if (swingArgs.defender.On_BeforeGetSwing(swingArgs)) {
 							return true;
@@ -137,15 +135,13 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Happens before applying armor, can be cancelled.")]
 		public static bool Trigger_Damage(DamageArgs damageArgs) {
-			ScriptArgs sa = new ScriptArgs(damageArgs);
-
-			if (!damageArgs.attacker.TryCancellableTrigger(causeDamageTK, sa)) {
+			if (!damageArgs.attacker.TryCancellableTrigger(causeDamageTK, damageArgs)) {
 				try {
 					if (damageArgs.attacker.On_CauseDamage(damageArgs)) {
 						return true;
 					}
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!damageArgs.defender.TryCancellableTrigger(damageTK, sa)) {
+				if (!damageArgs.defender.TryCancellableTrigger(damageTK, damageArgs)) {
 					try {
 						if (damageArgs.defender.On_Damage(damageArgs)) {
 							return true;
@@ -162,16 +158,14 @@ namespace SteamEngine.CompiledScripts {
 
 		[Remark("Happens after applying armor, can be cancelled.")]
 		public static void Trigger_AfterSwing(WeaponSwingArgs swingArgs) {
-			ScriptArgs sa = new ScriptArgs(swingArgs);
-
-			swingArgs.attacker.TryTrigger(afterSwingTK, sa);
+			swingArgs.attacker.TryTrigger(afterSwingTK, swingArgs);
 
 			try {
 				swingArgs.attacker.On_AfterSwing(swingArgs);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 			if (!swingArgs.defender.IsDeleted) {
-				swingArgs.defender.TryTrigger(afterGetSwingTK, sa);
+				swingArgs.defender.TryTrigger(afterGetSwingTK, swingArgs);
 
 				try {
 					swingArgs.defender.On_AfterGetSwing(swingArgs);
@@ -198,16 +192,16 @@ namespace SteamEngine.CompiledScripts {
 				damageMod = settings.swingDamageM;
 			}
 
-			double armor = swingArgs.armorClass * (1000-swingArgs.piercing) / 1000;
+			double armor = swingArgs.ArmorClass * (1000-swingArgs.Piercing) / 1000;
 			if (!isMvP) {
 				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMin);
 			}
 
 			armor = Math.Max(0, armor);
-			swingArgs.attack = Math.Max(0, swingArgs.attack);
+			swingArgs.Attack = Math.Max(0, swingArgs.Attack);
 			damageMod = Math.Max(0, damageMod);
 
-			swingArgs.damageAfterAC = (swingArgs.attack - armor) * damageMod;
+			swingArgs.DamageAfterAC = (swingArgs.Attack - armor) * damageMod;
 		}
 
 		public static double CauseDamage(Character attacker, Character defender, DamageType flags, double damage) {
@@ -219,19 +213,20 @@ namespace SteamEngine.CompiledScripts {
 			DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
 			if (!Trigger_Damage(damageArgs)) {
 
-				if (damageArgs.damage > 0.5) {//0.5 gets rounded to 0...
+				damage = damageArgs.Damage;
+				if (damage > 0.5) {//0.5 gets rounded to 0...
 
 
-					defender.Hits = (short) (defender.Hits - damageArgs.damage);
+					defender.Hits = (short) (defender.Hits - damage);
 
 					if (!defender.IsDeleted && !defender.Flag_Dead) {
-						//TODO create blood, sound?
+						//TODO create blood?
 
 						SoundCalculator.PlayHurtSound(defender);
 						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
 					}
 
-					return damageArgs.damage;
+					return damage;
 				}
 			}
 
@@ -246,9 +241,9 @@ namespace SteamEngine.CompiledScripts {
 			if (!Trigger_BeforeSwing(swingArgs)) {
 				ApplyArmorClass(swingArgs);
 
-				retVal = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.damageAfterAC);
+				retVal = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
 
-				swingArgs.finalDamage = retVal;
+				swingArgs.FinalDamage = retVal;
 
 				Trigger_AfterSwing(swingArgs);
 			}
@@ -257,37 +252,81 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class DamageArgs {
+	public class DamageArgs : ScriptArgs {
 		public readonly Character defender;
 		public readonly Character attacker;
-
 		public readonly DamageType flags;
-		public double damage;
 
-		public DamageArgs(Character attacker, Character defender, DamageType flags, double damage) {
+		public DamageArgs(Character attacker, Character defender, DamageType flags, double damage)
+				: base(attacker, defender, flags, damage) {
 			this.defender = defender;
 			this.attacker = attacker;
 			this.flags = flags;
-			this.damage = damage;
+		}
+
+		public double Damage {
+			get {
+				return Convert.ToDouble(this.argv[3]);
+			}
+			set {
+				this.argv[3] = value;
+			}
 		}
 	}
 
-	public class WeaponSwingArgs {
+	public class WeaponSwingArgs : ScriptArgs {
 		public readonly Character defender;
 		public readonly Character attacker;
-		public double attack;
-		public double piercing;
-		public double armorClass;
 
-		public double damageAfterAC = -1;
-		public double finalDamage = -1;
-
-		public WeaponSwingArgs(Character attacker, Character defender, double attack, double piercing, double armorClass) {
-			this.defender = defender;
+		public WeaponSwingArgs(Character attacker, Character defender, double attack, double piercing, double armorClass)
+				: base(attacker, defender, attack, piercing, armorClass, -1, -1) {
 			this.attacker = attacker;
-			this.attack = attack;
-			this.piercing = piercing;
-			this.armorClass = armorClass;
+			this.defender = defender;
+		}
+
+		public double Attack {
+			get {
+				return Convert.ToDouble(this.argv[2]);
+			}
+			set {
+				this.argv[2] = value;
+			}
+		}
+
+		public double Piercing {
+			get {
+				return Convert.ToDouble(this.argv[3]);
+			}
+			set {
+				this.argv[3] = value;
+			}
+		}
+
+		public double ArmorClass {
+			get {
+				return Convert.ToDouble(this.argv[4]);
+			}
+			set {
+				this.argv[4] = value;
+			}
+		}
+
+		public double DamageAfterAC {
+			get {
+				return Convert.ToDouble(this.argv[5]);
+			}
+			set {
+				this.argv[5] = value;
+			}
+		}
+
+		public double FinalDamage {
+			get {
+				return Convert.ToDouble(this.argv[6]);
+			}
+			set {
+				this.argv[6] = value;
+			}
 		}
 	}
 }

@@ -176,7 +176,7 @@ namespace SteamEngine.LScript {
 
 			layoutScript.TryRun(focus, sa);
 
-			ScriptedGumpInstance returnedInstance = sa.Argv[0] as ScriptedGumpInstance;
+			ScriptedGumpInstance returnedInstance = sa.argv[0] as ScriptedGumpInstance;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}

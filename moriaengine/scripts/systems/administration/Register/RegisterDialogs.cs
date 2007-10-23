@@ -200,18 +200,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0. parametr - account
 			//1. param - trideni dle...
 			//2. od kolikate poznamky zaciname (0), 3. prostor pro potreby dialogu
-			if(text == null || text.Argv == null || text.Argv.Length == 0) {
+			if(text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, self.Account, AccountNotesSorting.TimeDesc, 0, null);
 			} else {
-				ScriptedAccount acc = AbstractAccount.Get(text.Argv[0].ToString());
+				ScriptedAccount acc = AbstractAccount.Get(text.argv[0].ToString());
 				if(acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem "+text.Argv[0].ToString()+" neexistuje.", Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem "+text.argv[0].ToString()+" neexistuje.", Hues.Red);
 					return;
 				}
-				if(text.Argv.Length == 1) { //mame jen nazev accountu
+				if(text.argv.Length == 1) { //mame jen nazev accountu
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, acc, null, 0, null);
 				} else { //mame i trideni
-					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, acc, (AccountNotesSorting)text.Argv[1], 0, null);
+					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, acc, (AccountNotesSorting)text.argv[1], 0, null);
 				}
 			}
 		}

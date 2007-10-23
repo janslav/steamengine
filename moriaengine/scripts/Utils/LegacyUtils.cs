@@ -16,8 +16,8 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static int Action(Character self, ScriptArgs sa) {
-			if ((sa != null) && (sa.Argv.Length > 0)) {
-				int value = Convert.ToInt32(sa.Argv[0]);
+			if ((sa != null) && (sa.argv.Length > 0)) {
+				int value = Convert.ToInt32(sa.argv[0]);
 				if ((value != self.currentSkill.Id) || (value < 0) || (value >= AbstractSkillDef.SkillsCount)) {
 					self.AbortSkill();
 				}
@@ -128,7 +128,7 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static void Events(ITriggerGroupHolder self, ScriptArgs sa) {
 			if (sa != null) {
-				object[] argv = sa.Argv;
+				object[] argv = sa.argv;
 				if (argv.Length > 0) {
 					object firstArg = argv[0];
 					TriggerGroup tg = firstArg as TriggerGroup;
