@@ -292,7 +292,7 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object origSelf = vars.self;
 			try {
-				vars.self = vars.scriptArgs.Argv[0];
+				vars.self = vars.scriptArgs.argv[0];
 				return toRun.Run(vars);
 			} finally {
 				vars.self = origSelf;
@@ -310,7 +310,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			object origSelf = vars.self;
 			try {
-				vars.self = vars.scriptArgs.Argv[0];
+				vars.self = vars.scriptArgs.argv[0];
 				return toRun.TryRun(vars, results);
 			} finally {
 				vars.self = origSelf;

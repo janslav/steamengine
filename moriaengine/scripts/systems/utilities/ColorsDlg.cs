@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				sender.Dialog(D_Colors.Instance, 0, 0);
 			} else {
 				//zacneme od zvolene barvy
-				sender.Dialog(D_Colors.Instance, Convert.ToInt32(text.Argv[0]), Convert.ToInt32(text.Argv[0]));
+				sender.Dialog(D_Colors.Instance, Convert.ToInt32(text.argv[0]), Convert.ToInt32(text.argv[0]));
 			}
 		}		
 	}

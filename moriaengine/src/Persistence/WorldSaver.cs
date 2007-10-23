@@ -58,7 +58,7 @@ namespace SteamEngine.Persistence {
 			
 			ScriptArgs sa = new ScriptArgs(path);
 			Globals.instance.TryTrigger(TriggerKey.beforeSave, sa);
-			path = string.Concat(sa.Argv[0]);
+			path = string.Concat(sa.argv[0]);
 			if (path.Length < 1) {//scripts error or something...
 				path = Globals.savePath;
 			}
@@ -76,7 +76,7 @@ namespace SteamEngine.Persistence {
 					string name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);
 					Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
-					SaveStream saveStream = GetSaveStream(path, sa.Argv[1]);
+					SaveStream saveStream = GetSaveStream(path, sa.argv[1]);
 					saveStream.WriteComment("Textual SteamEngine save");
 					coordinator.SaveAll(saveStream);
 					saveStream.WriteLine("[EOF]");
@@ -87,7 +87,7 @@ namespace SteamEngine.Persistence {
 
 				sa = new ScriptArgs(path, "globals");
 				Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
-				globalsSaver = GetSaveStream(path, sa.Argv[1]);
+				globalsSaver = GetSaveStream(path, sa.argv[1]);
 				//currentfile = "globals.sav";
 				Globals.SaveGlobals(globalsSaver);
 				//Region.SaveRegions(globalsSaver);
@@ -152,7 +152,7 @@ namespace SteamEngine.Persistence {
 				path = Globals.savePath;
 				ScriptArgs sa = new ScriptArgs(path);
 				Globals.instance.Trigger(TriggerKey.beforeLoad, sa);
-				path = string.Concat(sa.Argv[0]);
+				path = string.Concat(sa.argv[0]);
 				if (path.Length < 1) {//scripts error or something...
 					path = Globals.savePath;
 				}
@@ -169,7 +169,7 @@ namespace SteamEngine.Persistence {
 					}
 					sa = new ScriptArgs(path, name);
 					Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
-					TextReader loadStream = GetLoadStream(path, sa.Argv[1]);
+					TextReader loadStream = GetLoadStream(path, sa.argv[1]);
 					InvokeLoad(loadStream, Path.Combine(path, name+".sav"));
 					try {
 						loadStream.Close();
@@ -178,7 +178,7 @@ namespace SteamEngine.Persistence {
 				
 				sa = new ScriptArgs(path, "globals");
 				Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
-				globalsLoader = GetLoadStream(path, sa.Argv[1]);
+				globalsLoader = GetLoadStream(path, sa.argv[1]);
 				InvokeLoad(globalsLoader, Path.Combine(path, "globals.sav"));
 				Globals.instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
 				Console.WriteLine("Loading successful");

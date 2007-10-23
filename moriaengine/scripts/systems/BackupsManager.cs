@@ -62,52 +62,52 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		public void On_BeforeSave(Globals ignored, ScriptArgs sa) {
-			string path = string.Concat(sa.Argv[0]);
+			string path = string.Concat(sa.argv[0]);
 			if (pathManager != null) {
 				path = pathManager.GetSavingPath(path);
 			}
 			if (fileManager != null) {
 				fileManager.StartSaving(path);
 			}
-			sa.Argv[0] = path;
+			sa.argv[0] = path;
 		}
 		
 		
 		public void On_OpenSaveStream(Globals ignored, ScriptArgs sa) {
 			if (fileManager != null) {
-				sa.Argv[1] = fileManager.GetSaveStream(string.Concat(sa.Argv[1]));
+				sa.argv[1] = fileManager.GetSaveStream(string.Concat(sa.argv[1]));
 			}
 		}
 		
 		public void On_AfterSave(Globals ignored, ScriptArgs sa) {
-			bool success = Convert.ToBoolean(sa.Argv[1]);
+			bool success = Convert.ToBoolean(sa.argv[1]);
 			if (success) {
 				if (fileManager != null) {
 					fileManager.FinishSaving();
 				}
 				if (pathManager != null) {
-					pathManager.SavingFinished(string.Concat(sa.Argv[0]));
+					pathManager.SavingFinished(string.Concat(sa.argv[0]));
 				}
 			}
 		}
 		
 		//can be called more than once, when the particular load doesn't work
 		public void On_BeforeLoad(Globals ignored, ScriptArgs sa) {
-			string path = string.Concat(sa.Argv[0]);
+			string path = string.Concat(sa.argv[0]);
 			if (pathManager != null) {
 				path = pathManager.GetLoadingPath(path, loadAttempts, out isLastLoadPossibility);
 			}
 			if (fileManager != null) {
 				fileManager.StartLoading(path);
 			}
-			sa.Argv[0] = path;
+			sa.argv[0] = path;
 			loadAttempts++;
 		}
 		
 		public void On_OpenLoadStream(Globals ignored, ScriptArgs sa) {
 			if (fileManager != null) {
 				try {
-					sa.Argv[1] = fileManager.GetLoadStream(string.Concat(sa.Argv[1]));
+					sa.argv[1] = fileManager.GetLoadStream(string.Concat(sa.argv[1]));
 				} catch (FileNotFoundException e) {
 					if (isLastLoadPossibility) {
 						throw;//this finishes the loading
@@ -119,13 +119,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		public void On_AfterLoad(Globals ignored, ScriptArgs sa) {
-			bool success = Convert.ToBoolean(sa.Argv[1]);
+			bool success = Convert.ToBoolean(sa.argv[1]);
 			if (success) {
 				if (fileManager != null) {
 					fileManager.FinishLoading();
 				}
 				if (pathManager != null) {
-					pathManager.LoadingFinished(string.Concat(sa.Argv[0]));
+					pathManager.LoadingFinished(string.Concat(sa.argv[0]));
 				}
 			}
 		}

@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//accountu vezmeme z argv
 			//vyhledavani
 			//trteti parametr = volny jeden prvek pole pro seznam accountu predavany pri praci v dialogu (pro tlacitka)
-			if(text.Argv == null || text.Argv.Length == 0) {
+			if(text.argv == null || text.argv.Length == 0) {
 				sender.Dialog(D_AccList.Instance, 0, "", "");
 			} else {
 				sender.Dialog(D_AccList.Instance, 0, text.Args, "");

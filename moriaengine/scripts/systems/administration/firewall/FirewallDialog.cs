@@ -231,7 +231,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIP(Character self, ScriptArgs sa) {
 			if(sa != null) {
-				self.Dialog(SingletonScript<D_BlockIP>.Instance, sa.Argv);
+				self.Dialog(SingletonScript<D_BlockIP>.Instance, sa.argv);
 			} else {
 				self.Dialog(SingletonScript<D_BlockIP>.Instance);
 			}
@@ -324,7 +324,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIpRange(Character self, ScriptArgs sa) {
 			if(sa != null) {
-				self.Dialog(D_BlockIPRange.Instance, sa.Argv);
+				self.Dialog(D_BlockIPRange.Instance, sa.argv);
 			} else {
 				self.Dialog(D_BlockIPRange.Instance);
 			}

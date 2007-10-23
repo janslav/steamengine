@@ -22,15 +22,15 @@ using System.Collections;
 namespace SteamEngine {
 	public class ScriptArgs {
 		private string formatArgs;
-		internal object[] argv;
+		public readonly object[] argv;
 		private string args;
 		
 		private static object[] zeroArray = new object[0];
 		
-		public object[] Argv { get {
-								   return argv;
-							   } 
-		}
+		//public object[] Argv { get {
+		//                           return argv;
+		//                       } 
+		//}
 		
 //		[Obsolete("no more used, could have caused badly recognized calls", true)]
 //		public ScriptArgs(string formatArgs, params object[] argv) {//function parameters
