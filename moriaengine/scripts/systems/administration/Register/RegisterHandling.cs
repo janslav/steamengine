@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+
 using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
@@ -34,36 +35,75 @@ namespace SteamEngine.CompiledScripts {
 
 		public static List<AccountCrime> GetCrimes(ScriptedAccount acc, AccountNotesSorting sortBy) {
 			List<AccountCrime> crimes = acc.AccCrimes;
-			NotesListSort(crimes, sortBy); //sort, if necessary
+			CrimesListSort(crimes, sortBy); //sort, if necessary
 			return crimes;
 		}
 
 		[Remark("Sorting of the account notes/crimes list")]
 		private static void NotesListSort(List<AccountNote> list, AccountNotesSorting criteria) {
-			if(sortBy != null) {
-				switch(sortBy) {
-					case AccountNotesSorting.TimeAsc:
-						notes.Sort(NotesTimeComparer.instance);
-						break;
-					case AccountNotesSorting.IssuerDesc:
-						notes.Sort(NotesTimeComparer.instance);
-						notes.Reverse();
-						break;
-					case AccountNotesSorting.RefCharAsc:
-						notes.Sort(NotesRefCharComparer.instance);
-						break;
-					case AccountNotesSorting.RefCharDesc:
-						notes.Sort(NotesRefCharComparer.instance);
-						notes.Reverse();
-						break;
-					case AccountNotesSorting.IssuerAsc:
-						notes.Sort(NotesIssuerComparer.instance);
-						break;
-					case AccountNotesSorting.IssuerDesc:
-						notes.Sort(NotesIssuerComparer.instance);
-						notes.Reverse();
-						break;					
-				}
+			switch (criteria) {
+				case AccountNotesSorting.TimeAsc:
+					list.Sort(NotesTimeComparer.instance);
+					break;
+				case AccountNotesSorting.TimeDesc:
+					list.Sort(NotesTimeComparer.instance);
+					list.Reverse();
+					break;
+				case AccountNotesSorting.RefCharAsc:
+					list.Sort(NotesRefCharComparer.instance);
+					break;
+				case AccountNotesSorting.RefCharDesc:
+					list.Sort(NotesRefCharComparer.instance);
+					list.Reverse();
+					break;
+				case AccountNotesSorting.IssuerAsc:
+					list.Sort(NotesIssuerComparer.instance);
+					break;
+				case AccountNotesSorting.IssuerDesc:
+					list.Sort(NotesIssuerComparer.instance);
+					list.Reverse();
+					break;
+				case AccountNotesSorting.AFKAsc:
+					list.Sort(CrimesAFKComparer.instance);
+					break;
+				case AccountNotesSorting.AFKDesc:
+					list.Sort(CrimesAFKComparer.instance);
+					list.Reverse();
+					break;
+			}			
+		}
+
+		[Remark("Sorting of the account notes/crimes list")]
+		private static void CrimesListSort(List<AccountCrime> list, AccountNotesSorting criteria) {
+			switch (criteria) {
+				case AccountNotesSorting.TimeAsc:
+					list.Sort(NotesTimeComparer.instance);
+					break;
+				case AccountNotesSorting.TimeDesc:
+					list.Sort(NotesTimeComparer.instance);
+					list.Reverse();
+					break;
+				case AccountNotesSorting.RefCharAsc:
+					list.Sort(NotesRefCharComparer.instance);
+					break;
+				case AccountNotesSorting.RefCharDesc:
+					list.Sort(NotesRefCharComparer.instance);
+					list.Reverse();
+					break;
+				case AccountNotesSorting.IssuerAsc:
+					list.Sort(NotesIssuerComparer.instance);
+					break;
+				case AccountNotesSorting.IssuerDesc:
+					list.Sort(NotesIssuerComparer.instance);
+					list.Reverse();
+					break;
+				case AccountNotesSorting.AFKAsc:
+					list.Sort(CrimesAFKComparer.instance);
+					break;
+				case AccountNotesSorting.AFKDesc:
+					list.Sort(CrimesAFKComparer.instance);
+					list.Reverse();
+					break;
 			}
 		}
 	}
@@ -110,6 +150,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Remark("Comparer for sorting account notes its AFK or nonAFK type")]
+	public class CrimesAFKComparer : IComparer<AccountNote> {
+		public readonly static CrimesAFKComparer instance = new CrimesAFKComparer();
+
+		private CrimesAFKComparer() {
+			//soukromy konstruktor, pristupovat budeme pres instanci
+		}
+
+		public int Compare(AccountNote x, AccountNote y) {
+			AccountCrime a = (AccountCrime)x;
+			AccountCrime b = (AccountCrime)y;
+			return a.isAFK.CompareTo(b.isAFK);
+		}
+	}
+
 
 
 	[SaveableClass]
@@ -148,7 +203,7 @@ namespace SteamEngine.CompiledScripts {
 		public bool isAFK; //is it the AFK crime?
 
 		public AccountCrime(AbstractCharacter issuer, AbstractCharacter referredChar, string punishment, string crime)
-			: base(issuer, refferedChar, crime) {
+			: base(issuer, referredChar, crime) {
 			this.punishment = punishment;			
 		}
 

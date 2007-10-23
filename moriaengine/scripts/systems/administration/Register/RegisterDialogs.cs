@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(args[3] == null) {
 				//vzit seznam notu a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				notesList = AccountRegister.GetNotes(acc, args[1]);
+				notesList = AccountRegister.GetNotes(acc, (AccountNotesSorting)args[1]);
 				args[3] = notesList; //ulozime to do argumentu dialogu
 			} else {
 				//taglist si posilame v argumentu (napriklad pri pagingu)
@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 2, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, 2, notesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
 				//1 sloupecek
 				return;
 			} else {
@@ -166,18 +166,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = ((int)gr.pressedButton - 10) / 4;
 				int buttNo = ((int)gr.pressedButton - 10) % 4;
 				AccountNote note = notesList[row];
+				GumpInstance newGi;
 				switch(buttNo) {
 					case 0: //char info
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, note.referredChar, 0, 0);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, note.referredChar, 0, 0);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //text zpravy
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
-						GumpInstance newGi = gi.Cont.Dialog(D_Display_Text.Instance, "Text poznámky", note.text);
+						newGi = gi.Cont.Dialog(D_Display_Text.Instance, "Text poznámky", note.text);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 2: //issuer info
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, note.issuer, 0, 0);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, note.issuer, 0, 0);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //smazat poznamku (to muze jen jeji autor nebo clovek s vyssim plevelem)
@@ -203,9 +204,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, self.Account, AccountNotesSorting.TimeDesc, 0, null);
 			} else {
-				ScriptedAccount acc = AbstractAccount.Get(text.argv[0].ToString());
+				ScriptedAccount acc = (ScriptedAccount)AbstractAccount.Get(text.Argv[0].ToString());
 				if(acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem "+text.argv[0].ToString()+" neexistuje.", Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem "+text.Argv[0].ToString()+" neexistuje.", (int)Hues.Red);
 					return;
 				}
 				if(text.argv.Length == 1) { //mame jen nazev accountu
