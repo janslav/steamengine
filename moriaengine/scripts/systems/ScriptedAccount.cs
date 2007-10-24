@@ -60,11 +60,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Remark("Add a new note")]
+		public void AddNote(AccountNote note) {
+			accNotes.Add(note);
+		}
 		[Remark("Remove one selected note (cannot be removed from AccNotes property")]
 		public void RemoveNote(AccountNote note) {
 			accNotes.Remove(note);
 		}
-
+		[Remark("Add a new crime")]
+		public void AddCrime(AccountCrime crime) {
+			accCrimes.Add(crime);
+		}
+		[Remark("Remove one selected crime (cannot be removed from AccCrimes property")]		
 		public void RemoveCrime(AccountCrime crime) {
 			accCrimes.Remove(crime);
 		}

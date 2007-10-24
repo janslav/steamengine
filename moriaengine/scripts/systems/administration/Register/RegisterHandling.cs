@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(issuer, referredChar, crime) {
 			this.punishment = punishment;			
 		}
-
+		
 		public bool AFK { //setter for the AFK property
 			set {
 				isAFK = value;
