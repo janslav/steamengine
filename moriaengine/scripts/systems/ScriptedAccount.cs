@@ -24,7 +24,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	
-	[SaveableClass]
+	[SaveableClass][Dialogs.ViewableClass]
 	public class ScriptedAccount : AbstractAccount {
 		[Remark("GM written notes for this account")]
 		List<AccountNote> accNotes = new List<AccountNote>();
