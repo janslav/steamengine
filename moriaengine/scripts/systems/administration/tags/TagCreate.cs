@@ -65,7 +65,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			if(gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-				//create_tag dialog jsme uz vytahli ze stacku, nemusime ho tedy dodatecne odstranovat
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				string tagName = gr.GetTextResponse(10);
