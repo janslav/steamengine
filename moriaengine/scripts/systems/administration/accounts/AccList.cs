@@ -25,18 +25,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog listing all players accounts in the game")]
 	public class D_AccList : CompiledGump {
-		[Remark("Instance of the D_AccList, for possible access from other dialogs etc.")]
-        private static D_AccList instance;
-		public static D_AccList Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_AccList() {
-			instance = this;
-		}
-
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
 			List<ScriptedAccount> accList = ScriptedAccount.RetreiveByStr(sa[1].ToString());
@@ -82,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				AbstractAccount ga = accList[i];
 				Hues nameColor = ga.Online ? Hues.OnlineColor : Hues.OfflineColor;
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, i + 10); //account info
+				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, i + 10); //account info
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(nameColor, ga.Name); //acc name
 				
 				rowCntr++;			
@@ -114,7 +102,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
                     case 2: //zalozit novy acc.
 						//ulozime dialog pro navrat
-						GumpInstance newGi = gi.Cont.Dialog(D_NewAccount.Instance);
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_NewAccount>.Instance);
 						DialogStacking.EnstackDialog(gi, newGi);						
 						break;                    
                 }
@@ -126,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				GumpInstance newGi = gi.Cont.Dialog(D_AccInfo.Instance, ga);
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, ga, 0, 0);
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);                
             }
@@ -140,9 +128,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//vyhledavani
 			//trteti parametr = volny jeden prvek pole pro seznam accountu predavany pri praci v dialogu (pro tlacitka)
 			if(text.argv == null || text.argv.Length == 0) {
-				sender.Dialog(D_AccList.Instance, 0, "", "");
+				sender.Dialog(SingletonScript<D_AccList>.Instance, 0, "", "");
 			} else {
-				sender.Dialog(D_AccList.Instance, 0, text.Args, "");
+				sender.Dialog(SingletonScript<D_AccList>.Instance, 0, text.Args, "");
+			}
+		}
+
+		[Remark("Display an account info. "+
+				"Usage .x accinfo or .accinfo('accname')")]
+		[SteamFunction]
+		public static void AccInfo(AbstractCharacter target, ScriptArgs text) {
+			if(text.argv == null || text.argv.Length == 0) {
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, target.Account, 0, 0);
+			} else {
+				string accName = (String)text.argv[0];
+				AbstractAccount acc = AbstractAccount.Get(accName);
+				if(acc == null) {
+					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int)Hues.Red);
+					return;
+				}
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, acc, 0, 0);
 			}
 		}
 	}

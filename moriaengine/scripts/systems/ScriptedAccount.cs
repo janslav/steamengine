@@ -24,12 +24,15 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	
-	[SaveableClass][Dialogs.ViewableClass]
+	[SaveableClass]
+	[Dialogs.ViewableClass]
 	public class ScriptedAccount : AbstractAccount {
 		[Remark("GM written notes for this account")]
+		[Dialogs.NoShow]
 		List<AccountNote> accNotes = new List<AccountNote>();
 
-		[Remark("Crimes commited by this account (AFK, bugs, roughing etc.)")]		
+		[Remark("Crimes commited by this account (AFK, bugs, roughing etc.)")]
+		[Dialogs.NoShow]
 		List<AccountCrime> accCrimes = new List<AccountCrime>();
 
 
@@ -47,6 +50,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Remark("Returns a copy of the AccNotes Dictionary (usable for sorting etc.)")]
+		[Dialogs.NoShow]
 		public List<AccountNote> AccNotes {
 			get {
 				return new List<AccountNote>(accNotes);
@@ -54,6 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Remark("Returns a copy of the AccCrimes Dictionary (usable for sorting etc.)")]
+		[Dialogs.NoShow]
 		public List<AccountCrime> AccCrimes {
 			get {
 				return new List<AccountCrime>(accCrimes);

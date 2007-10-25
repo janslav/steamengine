@@ -44,16 +44,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return counter;
 		}
 
-		//[Button("Taglist")]
-		//public static void TagList(object target) {
-		//    D_TagList.TagList((TagHolder)target, null);
-		//}
-
-		//[Button("Timerlist")]
-		//public static void TimerList(object target) {
-		//    D_TimerList.TimerList((TagHolder)target, null);
-		//}
-
 		[Button("Delete plugins")]
 		public static void DeletePlugins(object target) {
 			((PluginHolder) target).DeletePlugins();

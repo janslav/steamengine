@@ -25,19 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog that will display the admin dialog")]
 	public class D_Admin : CompiledGump {
-        [Remark("Instance of the D_Admin, for possible access from other dialogs etc.")]
-        private static D_Admin instance;
-		public static D_Admin Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_Admin() {
-			instance = this;
-		}
-
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+        public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
 			//seznam lidi z parametru (if any)
 			ArrayList playersList = null;
 			if(sa[2] == null) {

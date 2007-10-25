@@ -206,11 +206,11 @@
     <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.cs">
       <Link>inGameFeatures\storageBoxes\RegBox.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccCharsList.cs">
+      <Link>systems\administration\accounts\AccCharsList.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCreate.cs">
       <Link>systems\administration\accounts\AccCreate.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\administration\accounts\AccInfo.cs">
-      <Link>systems\administration\accounts\AccInfo.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccList.cs">
       <Link>systems\administration\accounts\AccList.cs</Link>
@@ -328,6 +328,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\ListDataView.cs">
       <Link>systems\settings\Implementations\DataViews\ListDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\AccountDescriptors.cs">
+      <Link>systems\settings\Implementations\Descriptors\AccountDescriptors.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\CharacterDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\CharacterDescriptor.cs</Link>

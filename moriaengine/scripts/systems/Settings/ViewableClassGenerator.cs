@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts {
 	internal sealed class ViewableClassGenerator : ISteamCSCodeGenerator {
 		static List<Type> viewableClasses = new List<Type>();
 
-		//key is type, value is its descriptor
-		static Dictionary<Type, Type> viewableDescriptorsForTypes = new Dictionary<Type, Type>();
+		//key is type, value is the list of its descriptors
+		static Dictionary<Type, List<Type>> viewableDescriptorsForTypes = new Dictionary<Type, List<Type>>();
 
 		internal static int classCounter = 0;
 
@@ -92,7 +92,14 @@ namespace SteamEngine.CompiledScripts {
 				viewableClasses.Add(type);
 			} else if(Attribute.IsDefined(type, typeof(ViewDescriptorAttribute), false)) {
 				Type descHandledType = ((ViewDescriptorAttribute)type.GetCustomAttributes(typeof(ViewDescriptorAttribute), false)[0]).HandledType;
-				viewableDescriptorsForTypes.Add(descHandledType,type); //we have found some descriptor class
+				List<Type> descriptors;
+				if(viewableDescriptorsForTypes.TryGetValue(descHandledType,out descriptors)) {
+					descriptors.Add(type); //new descriptor to the list
+				} else {
+					descriptors = new List<Type>();
+					descriptors.Add(type);
+					viewableDescriptorsForTypes.Add(descHandledType,descriptors); //we have found some descriptor class
+				}				
 			}
 		}
 
@@ -108,8 +115,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 			typeList.Sort(TypeHierarchyComparer.instance);
 			//now take the types that are assignable from the infoized type and get their descriptors in the right order
-			foreach(Type assignableTypeWithDescriptor in typeList) {
-				retList.Add(viewableDescriptorsForTypes[assignableTypeWithDescriptor]);
+			foreach(Type assignableTypeWithDescriptorList in typeList) {
+				retList.AddRange(viewableDescriptorsForTypes[assignableTypeWithDescriptorList]);
 			}
 			return retList;
 		}
