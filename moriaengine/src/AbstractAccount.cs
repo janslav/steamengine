@@ -407,6 +407,15 @@ namespace SteamEngine {
 			get { return maxPlevel; }
 		}
 
+		//readonly property for info dialogs...
+		public List<AbstractCharacter> Characters {
+			get {
+				List<AbstractCharacter> retList = new List<AbstractCharacter>();
+				retList.AddRange(characters);
+				return retList;
+			}
+		}
+
 		/*
 			Method: Promote
 			Promote this account to <plevel> maxPlevel. Both their maxPlevel and plevel are set to this, but note

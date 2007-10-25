@@ -25,20 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("An account creating dialog")]
 	public class D_NewAccount : CompiledGump {
-		[Remark("Instance of the D_NewAccount, for possible access from other dialogs etc.")]
-        private static D_NewAccount instance;
-		public static D_NewAccount Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_NewAccount() {
-			instance = this;
-		}
-
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
-			
+		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(500);
@@ -89,8 +76,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Create a new gm account using the dialog. Function accessible from the game")]
 		[SteamFunction]
-		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {
-			sender.Dialog(D_NewAccount.Instance);
+		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {			
+			sender.Dialog(SingletonScript<D_NewAccount>.Instance);
 		}
 	}
 }
