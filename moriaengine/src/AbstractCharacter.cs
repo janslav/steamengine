@@ -57,28 +57,12 @@ namespace SteamEngine {
 
 		public const uint numLayers = 31;
 		public const uint sentLayers = 25;//0-24
-		
-		public override Thing Cont {
-			get {
-				return this;
-			} set {
-				throw new SanityCheckException("They obviously won't fit in your "+value.GetType()+"! (You can't give a Character a Cont)");
-			}
-		}
 
 		public AbstractCharacterDef TypeDef {
 			get {
 				return (AbstractCharacterDef) Def;
 			}
 		}
-		
-		public bool IsNPC { get {
-			return !IsPlayer;
-		} }
-		
-		public bool IsPC { get {
-			return IsPlayer;
-		} }
 		
 		public override bool IsPlayer { get {
 			Logger.WriteInfo(CharacterTracingOn, "IsPlayer: "+((Account!=null)?"Nope":("Yep: "+Account)));
@@ -131,21 +115,14 @@ namespace SteamEngine {
 
 		public AbstractCharacter(AbstractCharacter copyFrom) : base(copyFrom) { //copying constuctor
 			instances++;
-			if (copyFrom.IsPC) {
-				throw new NotSupportedException("You can not dupe a PC!");
-			}
 			account=copyFrom.account;
 			name=copyFrom.name;
 			targ=copyFrom.targ;
 			flags=copyFrom.flags;
 			direction=copyFrom.direction;
 			act=copyFrom.act;
-			foreach (AbstractItem item in copyFrom) {
-				//no triggers, thats why we are adding it this way.
-				item.Dupe(this);
-			}
-			
 			Globals.lastNewChar=this;
+			Map.GetMap(this.point4d.m).Add(this);
 		}
 		
 		public static uint Instances { get {
@@ -265,22 +242,10 @@ namespace SteamEngine {
 		public bool IsMaxPlevelAtLeast(int plevel) {
 			return (account!=null && account.MaxPLevel>=plevel);
 		}
-		
-		/*
-			Method: Dupe
-			
-				Duplicates this character.
-		*/
-		public sealed override Thing Dupe() {
-			if (IsPC) {
-				throw new NotSupportedException("You can not dupe a PC!");
-			}
-			return (Thing) DeepCopyFactory.GetCopy(this);
-		}
 
 		public bool IsLingering {
 			get {
-				return IsPC && !Flag_Disconnected && Conn==null;
+				return IsPlayer && !Flag_Disconnected && Conn==null;
 			}
 		}
 
@@ -320,7 +285,7 @@ namespace SteamEngine {
 			If this character is already logged out fully, this does nothing.
 		*/
 		public void LogoutFully() {
-			if (IsPC) {
+			if (IsPlayer) {
 				if (IsLingering) {
 					SetFlag_Disconnected(true);
 				} else if (!Flag_Disconnected) {
@@ -338,7 +303,7 @@ namespace SteamEngine {
 			If this is a NPC, it simply goes to the Disconnect containers (of map) and gets it's Flag_Disconnected set to True
 		*/
 		public void Disconnect() {
-			if (IsPC) {
+			if (IsPlayer) {
 				if (IsLingering) {
 					SetFlag_Disconnected(true);
 				} else if (!Flag_Disconnected) {
@@ -354,7 +319,7 @@ namespace SteamEngine {
 			If this is a NPC, it simply goes out of the Disconnect containers (of map) and gets it's Flag_Disconnected set to False
 		*/
 		public void Reconnect() {
-			if (!IsPC) {
+			if (!IsPlayer) {
 				SetFlag_Disconnected(false);
 			}
 		}
@@ -677,13 +642,10 @@ namespace SteamEngine {
 					return false;
 				}
 
-				MutablePoint4D newPoint = new MutablePoint4D((ushort) newX, (ushort) newY, (sbyte) newZ, this.point4d.m);
-				
-
 				//move char, and send 0x77 to players nearby
 
 				//check valid spot, and change z
-				if (!Map.IsValidPos(newPoint.x, newPoint.y, newPoint.m)) {	//off the map
+				if (!Map.IsValidPos(newX, newY, oldPoint.m)) {	//off the map
 					return false;
 				}
 				
@@ -696,7 +658,7 @@ namespace SteamEngine {
 				
 				//should we really be asking regions, even for npcs? -tar
 				Region oldRegion = this.Region;
-				Region newRegion = map.GetRegionFor(newPoint);
+				Region newRegion = map.GetRegionFor(newX, newY);
 				if (oldRegion != newRegion) {
 					if (!Region.TryExitAndEnter(oldRegion, newRegion, this)) {
 						return false;
@@ -712,10 +674,7 @@ namespace SteamEngine {
 				}
 				NetState.AboutToChangePosition(this, mt);
 
-				this.region = newRegion;	//moved this down here in case CanWalkFromTo rejects the move attempt.
-				
-				//P(newPoint); -this makes many operations that are already here, thus would be duped. -tar
-				point4d = newPoint;
+				point4d.SetP((ushort) newX, (ushort) newY, (sbyte) newZ);
 				ChangedP(oldPoint);
 			} else {//just changing direction, no steps
 				NetState.AboutToChangeDirection(this, requested);
@@ -723,21 +682,23 @@ namespace SteamEngine {
 			}
 			return true;
 		}
-		
-		internal override sealed void SetPosImpl(MutablePoint4D point) {
+
+		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {
 			NetState.AboutToChangePosition(this, MovementType.Teleporting);
-			if (Map.IsValidPos(point.x,point.y,point.m)) {
-				Region oldRegion = this.Region;
+			if (Map.IsValidPos(x, y, m)) {
 				Point4D oldP = this.P();
-				Region newRegion = GetMap().GetRegionFor(point);
+				Region oldRegion = Map.GetMap(oldP.m).GetRegionFor(oldP.x, oldP.y);
+				Region newRegion = Map.GetMap(m).GetRegionFor(x, y);
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
-					region = newRegion;
 				}
-				point4d = point;
+				point4d.x = x;
+				point4d.y = y;
+				point4d.z = z;
+				point4d.m = m;
 				ChangedP(oldP);
 			} else {
-				throw new ArgumentOutOfRangeException("Invalid position ("+point.x+","+point.y+" on mapplane "+point.m+")");
+				throw new ArgumentOutOfRangeException("Invalid position ("+x+","+y+" on mapplane "+m+")");
 			}
 		}
 		
@@ -957,7 +918,7 @@ namespace SteamEngine {
 		}
 		
 		public void Resync() {
-			if (IsPC) {
+			if (IsPlayer) {
 				GameConn myConn = Conn;
 				if (myConn!=null) {
 					using (BoundPacketGroup group = PacketSender.NewBoundGroup()) {
@@ -1000,7 +961,7 @@ namespace SteamEngine {
 		}
 		
 		public void SendVersions(params uint[] vals) {
-			if (IsPC) {
+			if (IsPlayer) {
 				try {
 					GameConn c = Conn;
 					if (c!=null) {
@@ -1013,23 +974,21 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
-		//Death should kill the mount and unlink it from its rider, so this will only delete mounts
-		//if the rider is deleted directly.
-		internal protected override sealed void BeingDeleted() {
-			instances--;
-			//Server._out.SendForgetCharacterPackets(this);
+
+		internal override void Trigger_Destroy() {
 			foreach (AbstractItem i in this) {
-				i.Trigger_Destroy();//no updates, because it will disappear entirely
+				i.InternalDeleteNoRFV();//no updates, because it will disappear entirely
 			}
+			base.Trigger_Destroy();
+			instances--;
 			GetMap().Remove(this);
-			base.BeingDeleted();	//This MUST be called.
+			Thing.MarkAsLimbo(this);
 		}
 		
 		public void EmptyCont() {
 			ThrowIfDeleted();
 			foreach (AbstractItem i in this) {
-				Thing.DeleteThing(i);
+				i.InternalDelete();
 			}
 		}
 		
@@ -1038,7 +997,7 @@ namespace SteamEngine {
 		public AbstractItem Backpack { get {
 			AbstractItem foundPack = null;
 			if (visibleLayers != null) {
-				foundPack = (AbstractItem) visibleLayers.FindByZ((int) Layers.layer_pack);
+				foundPack = (AbstractItem) visibleLayers.FindByZ((int) LayerNames.Pack);
 			}
 			if (foundPack == null) {
 				foundPack = AddBackpack();
@@ -1141,6 +1100,10 @@ namespace SteamEngine {
 					PacketSender.SendTo(conn, true);
 				}
 			}
+		}
+
+		public virtual bool CanEquipItemsOn(AbstractCharacter targetChar) {
+			return true;
 		}
 		
 		public void ShowPaperdoll() {

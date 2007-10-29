@@ -98,17 +98,10 @@ namespace SteamEngine {
 				cont.RemovePlugin(this);
 			}
 			if (!isDeleted) {
-				this.TryRun(TriggerKey.ownDestroy, null);
+				this.TryRun(TriggerKey.destroy, null);
 				isDeleted = true;
 			}
 			base.Delete();
-		}
-
-		protected internal override void BeingDeleted() {
-			if (cont != null) {
-				cont.RemovePlugin(this);
-			}
-			base.BeingDeleted();
 		}
 
 		#region save/load

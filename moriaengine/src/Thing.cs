@@ -41,9 +41,9 @@ namespace SteamEngine {
 		private ushort color;
 		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
-		internal MutablePoint4D point4d; //made this internal because SetPosImpl is now abstract... -tar
+		internal readonly MutablePoint4D point4d = new MutablePoint4D(7000, 7000, 0, 0); //made this internal because SetPosImpl is now abstract... -tar
 		private int uid=-2;
-		internal Region region;
+		//internal Region region;
 		internal NetState netState;//No one is to touch this but the NetState class itself!
 
 		internal object contOrTLL; //internal cos of ThingLinkedList
@@ -62,7 +62,7 @@ namespace SteamEngine {
 
 		private static UIDArray<Thing> things = new UIDArray<Thing>();
 		private static int uidBeingLoaded=-1;
-		public static TagKey weightTag = TagKey.Get("_weight");
+		public static TagKey weightTag = TagKey.Get("_weight_");
 
 
 		public sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
@@ -154,16 +154,12 @@ namespace SteamEngine {
 				: base(copyFrom) { //copying constuctor
 			NetState.Resend(this);
 			things.Add(this);//sets uid
-			if (uid<0 && uid>=things.Count) {	//If this isn't true, then something's wrong with GetFreeThingSlot.
-				throw new ServerException("Something is wrong with GetFreeThingSlot! Free uid returned="+Uid+" and things' index should be >=0 and <"+things.Count);
-			}
 			point4d=new MutablePoint4D(copyFrom.point4d);
 			def=copyFrom.def;
 			color=copyFrom.color;
 			model=copyFrom.model;
 			//SetSectorPoint4D();
 			Globals.lastNew=this;
-			On_Dupe(copyFrom);
 		}
 
 		//Property: Enumerable
@@ -276,51 +272,49 @@ namespace SteamEngine {
 		public abstract bool Flag_Disconnected { get; set; }
 
 		public void P(ushort x, ushort y) {
-			P(x, y, Z, M);	//maybe the compiler will optimize this for us... I hope so! -SL
+			SetPosImpl(x, y, this.Z, this.M);
 		}
 
 		public void P(Point2D point) {
-			P(point.X, point.Y, Z, M);
+			SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
 		public void P(IPoint2D point) {
-			P(point.X, point.Y, Z, M);
+			SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
 		public void P(ushort x, ushort y, sbyte z) {
-			P(x, y, z, M);	//maybe the compiler will optimize this for us... I hope so! -SL
+			SetPosImpl(x, y, z, M);
 		}
 
 		public void P(Point3D point) {
-			P(point.X, point.Y, point.Z, M);
+			SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
 		public void P(IPoint3D point) {
-			P(point.X, point.Y, point.Z, M);
+			SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
 		public void P(ushort x, ushort y, sbyte z, byte m) {
-			SetPosImpl(new MutablePoint4D(x, y, z, m));
+			SetPosImpl(x, y, z, m);
 		}
 
 		public void P(Point4D point) {
-			P(point.X, point.Y, point.Z, point.M);
+			SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
 		public void P(IPoint4D point) {
-			P(point.X, point.Y, point.Z, point.M);
+			SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
-		public abstract Thing Cont {
-			get;
-			set;
+		public virtual Thing Cont {
+			get {
+				return this;
+			}
+			set {
+				throw new SanityCheckException("You can't give a Character a Cont");
+			}
 		}
-
-		//This verifies that the coordinate specified is inside the appropriate map (by asking Map if it's a valid pos),
-		//and then sets
-		//CheckVisibility itself only if the character turns instead of moving (Since P isn't updated in that case).
-		//this is completely overriden in AbstractCharacter
-		internal abstract void SetPosImpl(MutablePoint4D point);
 
 		public Map GetMap() {
 			return Map.GetMap(M);
@@ -410,36 +404,13 @@ namespace SteamEngine {
 		public abstract int Height { get; }
 
 		public override bool IsDeleted { get { return (uid==-1); } }
-		public bool IsBeingCreated { get { return (uid==-2); } }
 
 		//------------------------
 		//Static Thing methods
 
 		//method: DeleteThing
 		//Call this to delete a thing
-		internal static void DeleteThing(Thing t) {
-			if (t==null || t.IsDeleted) {
-				//throw new ServerException("Attempt to delete item which is already deleted.");
-				return;
-			}
-			t.RemoveFromView();
-			t.Trigger_Destroy();
-			//this should not be done inside the BeingDeleted,
-			//so that its possible to delete some items without update just by calling BeingDeleted
-		}
 
-		//call this to delete a thing without update packets being sent to clients.
-		//AbstractItem and AbstractCharacter remove themselves from the map when BeingDeleted is called, but this is done separately
-		//by them instead of here because AbstractItem doesn't remove itself from the map if it was in a container
-		//(it removes itself from that instead) - by the time we get to Thing's BeingDeleted, the item is already
-		//removed from its container, so we can't check here. Although, we COULD check if the x/y coords are
-		//0xffff,0xffff, which is what they're set to when removed from a container (until they are put somewhere new,
-		//which won't happen if they're being deleted).
-		internal protected override void BeingDeleted() {
-			things.RemoveAt(uid);
-			uid=-1;
-			base.BeingDeleted();
-		}
 
 		public static int UidClearFlags(int uid) {
 			return (int) (((uint) uid)&~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
@@ -467,13 +438,6 @@ namespace SteamEngine {
 
 		public static Thing UidGetThing(int uid) {
 			return things.Get(uid);
-		}
-
-		public static void UidDelete(int uid) {
-			Thing t = things.Get(uid);
-			if (t != null) {
-				DeleteThing(t);
-			}
 		}
 
 		public static void RegisterTriggerGroup(TriggerGroup tg) {
@@ -569,10 +533,7 @@ namespace SteamEngine {
 
 		public virtual Region Region {
 			get {
-				if (region == null) {
-					region = GetMap().GetRegionFor(point4d);
-				}
-				return region;
+				return Map.GetMap(this.point4d.m).GetRegionFor(point4d);
 			}
 		}
 
@@ -693,9 +654,9 @@ namespace SteamEngine {
 					object o = ObjectSaver.OptimizedLoad_SimpleType(value, typeof(Point4D));
 					string v = o as string;
 					if (v != null) {
-						point4d = MutablePoint4D.Parse(value);
+						MutablePoint4D.Parse(this.point4d, value);
 					} else {
-						point4d = new MutablePoint4D((Point4D) o);
+						point4d.SetP((Point4D) o);
 					}
 					//it will be put in world later by map or Cont
 					break;
@@ -795,16 +756,9 @@ namespace SteamEngine {
 
 		}
 
-		[Summary("This is called when this object is being duped. It exists because of ClassTemplate and it's autogenerating of the copy constructor itself. With this, it's possible to implement custom copy code...")]
-		public virtual void On_Dupe(Thing copyFrom) {
-
-		}
-
 		public virtual Thing TopObj() {
 			return this;
 		}
-
-		public abstract Thing Dupe();
 
 
 		/*
@@ -866,17 +820,45 @@ namespace SteamEngine {
 		//}
 
 
-		//fires the @destroy trigger on this Thing, after that calls BeingDeleted(),
-		//which removes the item from world. If you want to remove a Thing without it being refreshed for clients,
-		//use this method instead of Thing.DeleteThing()
-		internal void Trigger_Destroy() {
-			//in fact the src is quite undefined, it can also be null...
-			//it`s here just to keep it the same for all triggers, as usual.
-			//ScriptArgs sa = new ScriptArgs();
+		public override void Delete() {
+			if (this.IsDeleted) {
+				return;
+			}
+			if (IsPlayer) {
+				Globals.SrcWriteLine("Unable to remove player characters with Delete command. Use DeletePlayer().");
+				return;
+			}
+			this.InternalDelete();
+		}
+
+		public void DeletePlayer() {
+			this.InternalDelete();
+		}
+
+		internal void InternalDelete() {
+			if (this.IsDeleted) {
+				return;
+			}
+			this.RemoveFromView();
+			this.InternalDeleteNoRFV();
+		}
+
+		internal void InternalDeleteNoRFV() {
+			if (this.IsDeleted) {
+				return;
+			}
+			base.Delete();
+			this.Trigger_Destroy();
+
+			things.RemoveAt(uid);
+			uid=-1;
+
+		}
+
+		//fires the @destroy trigger on this Thing, after that removes the item from world. 
+		internal virtual void Trigger_Destroy() {
 			TryTrigger(TriggerKey.destroy, null);
 			On_Destroy();
-
-			BeingDeleted();
 		}
 
 		//method:On_Destroy
@@ -1124,7 +1106,7 @@ namespace SteamEngine {
 				return i;
 			}
 			if (t != null) {
-				DeleteThing(t);//we created a character, wtf? :)
+				t.InternalDeleteNoRFV();//we created a character, wtf? :)
 			}
 			throw new SEException(factory+" did not create an item.");
 		}
@@ -1137,22 +1119,9 @@ namespace SteamEngine {
 				return c;
 			}
 			if (t != null) {
-				DeleteThing(t);//we created an item, wtf? :)
+				t.InternalDeleteNoRFV();//we created an item, wtf? :)
 			}
 			throw new SEException(factory+" did not create a character.");
-		}
-
-		public override void Delete() {
-			if (IsPlayer) {
-				Message("Unable to remove player characters with Delete unless you use remove('n'): 'n' must be a number greater than 0.");
-				return;
-			}
-			DeleteThing(this);
-		}
-
-
-		public void DeletePlayer() {
-			DeleteThing(this);
 		}
 
 		public void Move(string dir) {

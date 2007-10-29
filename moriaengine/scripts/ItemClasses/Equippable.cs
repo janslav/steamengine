@@ -37,18 +37,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void Equip() {
-			AbstractCharacter src = Globals.SrcCharacter;
-			src.Equip(src, this);
-		}
+		//public void Equip() {
+		//    AbstractCharacter src = Globals.SrcCharacter;
+		//    src.Equip(src, this);
+		//}
 
 		public override void On_DClick(AbstractCharacter from) {
 			//(TODO): check ownership(?), trigger snooping...
 			if (this.Cont != from) {
-				from.TryEquip(from, this);
+				this.Cont = from;
+				//from.TryEquip(from, this);
 			}
 		}
-		public override bool TwoHanded {
+		public override bool IsTwoHanded {
 			get {
 				if (Def!=null) return TypeDef.TwoHanded;
 				return false;

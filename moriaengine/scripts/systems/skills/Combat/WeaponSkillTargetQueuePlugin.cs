@@ -157,7 +157,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_ItemEquip(Character droppingChar, Character cont, Item i) {
+		public void On_ItemEnter(Character cont, Item i) {
 			if (i is Weapon) {
 				cont.InvalidateCombatWeaponValues();
 				if (cont.currentSkill is WeaponSkillDef) {
@@ -167,7 +167,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_ItemUnEquip(Character pickingChar, Character cont, Item i) {
+		public void On_ItemLeave(Character cont, Item i) {
 			if (i is Weapon) {
 				cont.InvalidateCombatWeaponValues();
 				if (cont.currentSkill is WeaponSkillDef) {

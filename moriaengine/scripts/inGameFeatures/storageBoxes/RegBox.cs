@@ -37,12 +37,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_DClick(AbstractCharacter ac) {
 			Character dClicker = ac as Character;
-			if (dClicker.CanReach(this)) {
-				if (dClicker.currentSkill != null) {
-					dClicker.AbortSkill();
-				}
-				this.Dialog(ac, SingletonScript<Dialogs.D_RegBox>.Instance);
+			if (dClicker.currentSkill != null) {
+				dClicker.AbortSkill();
 			}
+			this.Dialog(ac, SingletonScript<Dialogs.D_RegBox>.Instance);
 		}
 
 	}
@@ -110,8 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			RegBox box = (RegBox)gi.Focus;
-			if (!((Player)gi.Cont).CanReach(box)) {
-				((Player)gi.Cont).SysMessage("Jsi pøíliš daleko.");
+			if (!((Player)gi.Cont).CanReachWithMessage(box)) {
 				return;
 			}
 			if (gr.pressedButton == 0) {			// cancel
@@ -162,8 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
 			RegBox focus = parameter as RegBox;
-			if ( (!self.CanReach(focus)) || (!self.CanReach(targetted)) ) {
-				self.SysMessage("Jsi pøíliš daleko.");
+			if ( (!self.CanReachWithMessage(focus)) || (!self.CanReachWithMessage(targetted)) ) {
 				return false;
 			}
 			if (targetted.Type.Defname == "t_reagent") {

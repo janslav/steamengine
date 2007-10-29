@@ -660,6 +660,36 @@ namespace SteamEngine {
 			SendMessage(c, null, 0xffff, "System", msg, SpeechType.Server, 0, color);
 		}
 
+		public static void SendTryReachResultFailMessage(GameConn c, Thing t, TryReachResult trr) {
+			switch (trr) {
+				case TryReachResult.Failed_RemoveFromView:
+					if (t != null) {
+						PacketSender.PrepareRemoveFromView(t);
+						PacketSender.SendTo(c, true);
+					}
+					break;
+				case TryReachResult.Failed_ThatDoesNotBelongToYou:
+					SendClilocSysMessage(c, 500364, 0);	//You can't use that, it belongs to someone else.
+					break;
+				case TryReachResult.Failed_ThatIsOutOfSight:
+					SendClilocSysMessage(c, 1052011, 0);	//You must have line of sight to do that.
+					break;
+				case TryReachResult.Failed_ThatIsTooFarAway:
+					SendClilocSysMessage(c, 500446, 0);	//That is too far away.
+					break;
+				case TryReachResult.Failed_YouAreAlreadyHoldingAnItem:
+					SendSystemMessage(c, "You are already holding an item.", 0);
+					break;
+				case TryReachResult.Failed_YouCannotPickThatUp:
+					SendClilocSysMessage(c, 500169, 0);	//You cannot pick that up.
+					break;
+
+				//case TryReachResult.Failed_NoMessage:
+				//case TryReachResult.Succeeded:
+				//default:
+			}
+		}
+
 		/*
 			Method: BroadCast
 				Broadcast a message to all clients (as a server message).

@@ -452,7 +452,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WearableLayerMassSetting : MassSettingsByModel<WearableDef, Layers> {
+	public class WearableLayerMassSetting : MassSettingsByModel<WearableDef, LayerNames> {
 		public override string Name {
 			get {
 				return "Layery brnìní/obleèení";
@@ -464,12 +464,12 @@ namespace SteamEngine.CompiledScripts {
 				: base(index) {
 			}
 
-			internal override void SetValue(WearableDef def, Layers value) {
+			internal override void SetValue(WearableDef def, LayerNames value) {
 				def.Layer = (byte) value;
 			}
 
-			internal override Layers GetValue(WearableDef def) {
-				return (Layers) def.Layer;
+			internal override LayerNames GetValue(WearableDef def) {
+				return (LayerNames) def.Layer;
 			}
 		}
 

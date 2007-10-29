@@ -211,10 +211,6 @@ namespace SteamEngine {
 			}
 		}
 
-		internal protected virtual void BeingDeleted() {
-			DeleteTimers();
-		}
-		
 		public void SetTag(TagKey tk, object value) {
 			EnsureTagsTable();
 			//Console.WriteLine("TagKey["+tk+"]="+value);
@@ -415,12 +411,21 @@ namespace SteamEngine {
 			if (this.IsDeleted) {
 				throw new Exception("You can not manipulate a deleted object ("+this+")");
 			}
+			if (this.IsLimbo) {
+				throw new Exception("This object is in Limbo state ("+this+"). This should not happen.");
+			}
+		}
+
+		internal virtual bool IsLimbo {
+			get {
+				return false;
+			}
 		}
 
 		public virtual bool IsDeleted { get { return false; } }
 
 		public virtual void Delete() {
-			BeingDeleted();
+			DeleteTimers();
 		}
 		#endregion IDeletable
 	}

@@ -71,8 +71,8 @@ namespace SteamEngine {
 	//}
 
 	public class Point2D : IPoint2D {
-		protected ushort x;	//Map X coordinate (Low is west, high is east)
-		protected ushort y;
+		internal ushort x;	//Map X coordinate (Low is west, high is east)
+		internal ushort y;
 
 		public static int GetSimpleDistance(ushort ax, ushort ay, ushort bx, ushort by) {
 			return Math.Max(Math.Abs(ax-bx), Math.Abs(ay-by));
@@ -205,7 +205,7 @@ namespace SteamEngine {
 	}
 
 	public class Point3D : Point2D, IPoint3D {
-		protected sbyte z;
+		internal sbyte z;
 
 		public Point3D(ushort x, ushort y, sbyte z)
 			: base(x, y) {
@@ -284,10 +284,7 @@ namespace SteamEngine {
 		internal byte m;
 
 		public MutablePoint4D(ushort x, ushort y, sbyte z, byte m) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.m = m;
+			this.SetP(x, y, z, m);
 		}
 
 		public MutablePoint4D(ushort x, ushort y, sbyte z)
@@ -310,7 +307,11 @@ namespace SteamEngine {
 			: this(p.X, p.Y, p.Z, p.M) {
 		}
 
-		internal static MutablePoint4D Parse(string value) {
+		public static bool Equals(MutablePoint4D a, MutablePoint4D b) {
+			return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.m == b.m));
+		}
+
+		internal static void Parse(MutablePoint4D point, string value) {
 			Match m = Point4D.positionRE.Match(value);
 			if (m.Success) {
 				GroupCollection gc=m.Groups;
@@ -331,16 +332,33 @@ namespace SteamEngine {
 					thisz = 0;
 					thism = 0;
 				}
-				return new MutablePoint4D(thisx, thisy, thisz, thism);
+
+				point.SetP(thisx, thisy, thisz, thism);
 			} else {
 				throw new SEException("Invalid input string for Point4D parse: '"+value+"'");
 			}
 		}
 
+		internal void SetP(ushort x, ushort y, sbyte z, byte m) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.m = m;
+		}
+
+		internal void SetP(IPoint4D p) {
+			SetP(p.X, p.Y, p.Z, p.M);
+		}
+
+		internal void SetP(ushort x, ushort y, sbyte z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
 	}
 
-	public class Point4D : Point3D, IPoint4D {
-		protected byte m;
+	public sealed class Point4D : Point3D, IPoint4D {
+		internal byte m;
 
 		public Point4D(ushort x, ushort y, sbyte z, byte m)
 			: base(x, y, z) {

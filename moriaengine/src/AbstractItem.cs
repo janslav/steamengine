@@ -96,10 +96,8 @@ namespace SteamEngine {
 							ci = ((AbstractCharacter) ThingDef.lastCreatedIPoint).Backpack;
 						}
 					}
-					this.point4d = new MutablePoint4D(0, 0, 0, 0);
-					MoveInsideContainer((ushort) Globals.dice.Next(20,100),(ushort) Globals.dice.Next(20,100));
 					if (ci.IsItem) {
-						((AbstractItem) ci).InternalAddItem(this);//also resends
+						((AbstractItem) ci).InternalItemEnter(this);//also resends
 					} else {
 						((AbstractCharacter) ci).AddLoadedItem(this);
 					}
@@ -116,12 +114,6 @@ namespace SteamEngine {
 			name=copyFrom.name;
 			flags=copyFrom.flags;
 			amount=copyFrom.amount;
-
-			if (this.IsContainer) {
-				foreach (AbstractItem i in copyFrom) {
-					i.Dupe(this);	//dupe the item & put it in our container
-				}
-			}
 			Globals.lastNewItem=this;
 		}
 		
@@ -175,17 +167,22 @@ namespace SteamEngine {
 				return amount;
 			} 
 			set {
-				this.ChangingProperties();
-				NetState.ItemAboutToChange(this);
-				amount = value;
+				if (value != amount) {
+					this.ChangingProperties();
+					NetState.ItemAboutToChange(this);
+					this.AdjustWeight(this.def.Weight * (value - amount));
+					amount = value;
+				}
 			} 
 		}
+
 		public ushort ShortAmount {
 			get {
 				return (amount>50000?(ushort)50000:(ushort)amount);
 			}
 		}
-		public virtual bool TwoHanded {
+
+		public virtual bool IsTwoHanded {
 			get { 
 				return false;
 			}
@@ -222,7 +219,7 @@ namespace SteamEngine {
 		
 		public virtual byte Layer { 
 			get {
-				return (int) Layers.layer_none;
+				return (int) LayerNames.None;
 			} 
 		}
 		
@@ -244,7 +241,7 @@ namespace SteamEngine {
 		
 		public void OpenTo(AbstractCharacter viewer) {
 			if (IsContainer) {
-				if (viewer != null && viewer.IsPC) {
+				if (viewer != null && viewer.IsPlayer) {
 					ThrowIfDeleted();
 					viewer.ThrowIfDeleted();
 					GameConn viewerConn = viewer.Conn;
@@ -285,21 +282,16 @@ namespace SteamEngine {
 
 		}
 
-		internal protected override sealed void BeingDeleted() {
-			instances--;
+		internal override void Trigger_Destroy() {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				tll.BeingDeleted();
 			}
-			Thing c = Cont;
-			if (c!=null) {
-				c.DropItem(null, this);	//Does not place it on the ground, which is good when it's being deleted.
-			} else if (Map.IsValidPos(this)) {
-				GetMap().Remove(this);
-			}
-			base.BeingDeleted();	//This MUST be called.
+			base.Trigger_Destroy();
+			this.MakeLimbo();
+			instances--;
 		}
-		
+
 		public void EmptyCont() {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll != null) {

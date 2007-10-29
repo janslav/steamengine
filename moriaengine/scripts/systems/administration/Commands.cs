@@ -176,7 +176,7 @@ namespace SteamEngine.CompiledScripts {
 					} else {
 						ownride+=", but I am not being ridden right now.";
 					}
-				} else if (cre.IsPC) {
+				} else if (cre.IsPlayer) {
 					ownride="I am a player, my account name is "+cre.Account.Name;
 					if (cre.Rider!=null) {
 						ownride+=", and I am (WTF?) being ridden by "+cre.Rider+".";

@@ -176,9 +176,7 @@ namespace SteamEngine {
 			lastCreatedThingContOrPoint = ContOrPoint.Point;
 			lastCreatedIPoint = p;
 			Thing retVal = CreateImpl();
-			this.On_Create(retVal);
-			retVal.TryTrigger(TriggerKey.create, null);
-			retVal.On_Create();
+			Trigger_Create(retVal);
 			return retVal;
 		}
 		
@@ -191,10 +189,14 @@ namespace SteamEngine {
 			}
 			lastCreatedIPoint = cont;
 			Thing retVal = CreateImpl();
-			this.On_Create(retVal);
-			retVal.TryTrigger(TriggerKey.create, null);
-			retVal.On_Create();
+			Trigger_Create(retVal);
 			return retVal;
+		}
+
+		public void Trigger_Create(Thing createdThing) {
+			this.On_Create(createdThing);
+			createdThing.TryTrigger(TriggerKey.create, null);
+			createdThing.On_Create();
 		}
 
 		protected virtual void On_Create(Thing t) {

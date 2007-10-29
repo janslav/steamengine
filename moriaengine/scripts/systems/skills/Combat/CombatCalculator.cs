@@ -77,28 +77,28 @@ namespace SteamEngine.CompiledScripts {
 				foreach (Item equipped in self.GetVisibleEquip()) {
 					Wearable wearable = equipped as Wearable;
 					if (wearable != null) {
-						Layers layer = (Layers) wearable.Z;
+						LayerNames layer = (LayerNames) wearable.Z;
 						int armorVsP = wearable.ArmorVsP;
 						int mindDefVsP = wearable.MindDefenseVsP;
 						int armorVsM = wearable.ArmorVsM;
 						int mindDefVsM = wearable.MindDefenseVsM;
 						if ((armorVsP > 0) || (mindDefVsP > 0) || (armorVsM > 0) || (mindDefVsM > 0)) {
 							switch (layer) {
-								case Layers.layer_helm:
+								case LayerNames.Helmet:
 									armorVsPHead = Math.Max(armorVsPHead, armorVsP);
 									mindDefVsPHead = Math.Max(mindDefVsPHead, mindDefVsP);
 									armorVsMHead = Math.Max(armorVsMHead, armorVsM);
 									mindDefVsMHead = Math.Max(mindDefVsMHead, mindDefVsM); 
 									break;
-								case Layers.layer_collar:
+								case LayerNames.Collar:
 									armorVsPNeck = Math.Max(armorVsPNeck, armorVsP);
 									mindDefVsPNeck = Math.Max(mindDefVsPNeck, mindDefVsP);
 									armorVsMNeck = Math.Max(armorVsMNeck, armorVsM);
 									mindDefVsMNeck = Math.Max(mindDefVsMNeck, mindDefVsM); 
 									break;
-								case Layers.layer_shirt:
-								case Layers.layer_chest:       // 13 = armor chest
-								case Layers.layer_tunic:       // 17 = jester suit
+								case LayerNames.Shirt:
+								case LayerNames.Chest:       // 13 = armor chest
+								case LayerNames.Tunic:       // 17 = jester suit
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
 									armorVsPChest = Math.Max(armorVsPChest, armorVsP);
 									mindDefVsPBack = Math.Max(mindDefVsPBack, mindDefVsP);
@@ -108,33 +108,33 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
 									mindDefVsMChest = Math.Max(mindDefVsMChest, mindDefVsM); 
 									break;
-								case Layers.layer_arms:                // 19 = armor
+								case LayerNames.Arms:                // 19 = armor
 									armorVsPArms = Math.Max(armorVsPArms, armorVsP);
 									mindDefVsPArms = Math.Max(mindDefVsPArms, mindDefVsP);
 									armorVsMArms = Math.Max(armorVsMArms, armorVsM);
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM); 
 									break;
-								case Layers.layer_pants:
-								case Layers.layer_skirt:
-								case Layers.layer_half_apron:
+								case LayerNames.Pants:
+								case LayerNames.Skirt:
+								case LayerNames.Half_apron:
 									armorVsPLegs = Math.Max(armorVsPLegs, armorVsP);
 									mindDefVsPLegs = Math.Max(mindDefVsPLegs, mindDefVsM);
 									armorVsMLegs = Math.Max(armorVsMLegs, armorVsM);
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM); 
 									break;
-								case Layers.layer_shoes:
+								case LayerNames.Shoes:
 									armorVsPFeet = Math.Max(armorVsPFeet, armorVsP);
 									mindDefVsPFeet = Math.Max(mindDefVsPFeet, mindDefVsP);
 									armorVsMFeet = Math.Max(armorVsMFeet, armorVsM);
 									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM); 
 									break;
-								case Layers.layer_gloves:      // 7
+								case LayerNames.Gloves:      // 7
 									armorVsPHands = Math.Max(armorVsPHands, armorVsP);
 									mindDefVsPHands = Math.Max(mindDefVsPHands, mindDefVsP);
 									armorVsMHands = Math.Max(armorVsMHands, armorVsM);
 									mindDefVsMHands = Math.Max(mindDefVsMHands, mindDefVsM); 
 									break;
-								case Layers.layer_cape:                // 20 = cape
+								case LayerNames.Cape:                // 20 = cape
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
 									armorVsPArms = Math.Max(armorVsPArms, armorVsP);
 									mindDefVsPBack = Math.Max(mindDefVsPBack, mindDefVsP);
@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM); 
 									break;
-								case Layers.layer_robe:                // 22 = robe over all.
+								case LayerNames.Robe:                // 22 = robe over all.
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
 									armorVsPChest = Math.Max(armorVsPChest, armorVsP);
 									armorVsPArms = Math.Max(armorVsPArms, armorVsP);
@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM); 
 									break;
-								case Layers.layer_legs:
+								case LayerNames.Leggins:
 									armorVsPLegs = Math.Max(armorVsPLegs, armorVsP);
 									armorVsPFeet = Math.Max(armorVsPFeet, armorVsP);
 									mindDefVsPLegs = Math.Max(mindDefVsPLegs, mindDefVsP);
@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
 									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM); 
 									break;
-								case Layers.layer_hand2: //shield
+								case LayerNames.Hand2: //shield
 									int parrying = SkillDef.SkillValueOfChar(self, SkillName.Parry);
 									armorVsPTotal = (armorVsP * parrying) / 1000;
 									armorVsMTotal = (armorVsP * parrying) / 1000;

@@ -106,7 +106,7 @@ namespace SteamEngine {
 			Thing i = firstThing;
 			while (i != null) {
 				Thing next = i.nextInList;
-				Thing.DeleteThing(i);
+				i.InternalDelete();
 				i = next;
 			}
 		}
@@ -115,22 +115,10 @@ namespace SteamEngine {
 			Thing i = firstThing;
 			while (i != null) {
 				Thing next = i.nextInList;
-				i.Trigger_Destroy();
+				i.InternalDeleteNoRFV();
 				i = next;
 			}
 		}
-
-		internal bool TryToStack(AbstractCharacter stackingChar, AbstractItem toStack) {
-			AbstractItem stackWith = (AbstractItem) this.firstThing;
-			while (stackWith != null) {
-				if (stackWith.StackAdd(stackingChar, toStack)) {
-					return true;
-				}
-				stackWith=(AbstractItem) stackWith.nextInList;
-			}
-			return false;
-		}
-
 
 		IEnumerator<Thing> IEnumerable<Thing>.GetEnumerator() {
 			return new ThingLinkedListEnumerator(this);
