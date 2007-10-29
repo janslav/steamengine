@@ -180,5 +180,16 @@ namespace SteamEngine.CompiledScripts {
 				this.SetTag(linkTK, value);
 			}
 		}
+
+		//public void PlayDropSound(AbstractCharacter droppingChar) {
+		//    ScriptArgs sa = new ScriptArgs(droppingChar);
+		//    if (!TryCancellableTrigger(TriggerKey.playDropSound, sa)) {
+		//        On_DropSound(droppingChar);
+		//    }
+		//}
+
+		//public virtual void On_DropSound(AbstractCharacter droppingChar) {
+		//    this.SoundTo(this.TypeDef.DropSound, droppingChar);
+		//}
 	}
 }

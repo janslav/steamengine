@@ -124,7 +124,8 @@ namespace SteamEngine {
 				}
 				return false;
 			} else {
-				return this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
+				return TryReachResult.Succeeded ==
+					this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
 			}
 		}
 
@@ -158,56 +159,60 @@ namespace SteamEngine {
 			return dist <= this.UpdateRange;
 		}
 
-		public virtual PickupResult CanPickUp(AbstractItem item) {
-			return PickupResult.Succeeded;
+		public virtual TryReachResult CanPickUp(AbstractItem item) {
+			return TryReachResult.Succeeded;
 		}
 
 		[Remark("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
-		public bool CanReach(Thing target) {
-			return CanReachFromAt(this, target.TopObj(), target, true);
+		public TryReachResult CanReach(Thing target) {
+			return CanReachFromAt(this, target.TopPoint, target, true);
 		}
 
-		internal bool CanReachFromAt(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target, bool checkTopObj) {
-			bool success = false;
+		internal TryReachResult CanReachFromAt(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target, bool checkTopObj) {
+			bool retVal = false;
 			Thing topobj = null;
 
 			if (checkTopObj) {
-				success = CanReachCoordinatesFrom(fromCoordinates, targetMapCoordinates);
-				if (!success) {
-					return false;
+				retVal = CanReachCoordinatesFrom(fromCoordinates, targetMapCoordinates);
+				if (!retVal) {
+					return TryReachResult.Failed_ThatIsTooFarAway;
 				}
 
 				Map map = fromCoordinates.GetMap();
-				success = map.CanSeeLOSFromTo(fromCoordinates, targetMapCoordinates);
-				if (!success) {
-					return false;
+				retVal = map.CanSeeLOSFromTo(fromCoordinates, targetMapCoordinates);
+				if (!retVal) {
+					return TryReachResult.Failed_ThatIsOutOfSight;
 				}
 
 				topobj = target.TopObj();
-				success = this.CanSeeVisibility(topobj);
-				if (!success) {
-					return false;
+				retVal = this.CanSeeVisibility(topobj);
+				if (!retVal) {
+					return TryReachResult.Failed_RemoveFromView;
 				}
 			}
 
-			if (target != topobj) {//in that case we already checked it
-				success = this.CanSeeVisibility(target);
-				if (!success) {
-					return false;
+			if (target != topobj) {
+				retVal = this.CanSeeVisibility(target);
+				if (!retVal) {
+					return TryReachResult.Failed_RemoveFromView;
 				}
-			}
+			} //else we already checked it
 
 			AbstractItem container = target.Cont as AbstractItem;
 			if (container != null) {
 				GameConn conn = this.Conn;
 				if (conn != null) {
-					success = OpenedContainers.HasContainerOpenFromAt(conn, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
+					retVal = OpenedContainers.HasContainerOpenFromAt(conn, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
 				} else {
-					return false; //only logged-in players can reach stuff in containers
+					return TryReachResult.Failed_NoMessage; //only logged-in players can reach stuff in containers
 				}
 			}
 
-			return success;
+			if (retVal) {
+				return TryReachResult.Succeeded;
+			} else {
+				return TryReachResult.Failed_YouCannotPickThatUp;
+			}
 		}
 
 		public bool CanReachCoordinates(IPoint4D target) {

@@ -377,12 +377,8 @@
     <Compile Include="..\..\src\HashSet.cs">
       <Link>HashSet.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\ItemManipulation.cs">
-      <Link>ItemManipulation.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\LayerDefs.cs">
-      <Link>LayerDefs.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\src\LayerNames.cs">
+      <Link>LayerNames.cs</Link>
     </Compile>
     <Compile Include="..\..\src\LScript\Exceptions.cs">
       <Link>LScript\Exceptions.cs</Link>
@@ -784,6 +780,9 @@
     </Compile>
     <Compile Include="..\..\src\ThingLinkedList.cs">
       <Link>ThingLinkedList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\ThingManipulationTriggers.cs">
+      <Link>ThingManipulationTriggers.cs</Link>
     </Compile>
     <Compile Include="..\..\src\tiledata.cs">
       <Link>tiledata.cs</Link>

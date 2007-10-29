@@ -112,7 +112,8 @@ namespace SteamEngine.CompiledScripts {
 		public void ReturnStuffToChar(Character resurrectedChar) {
 			if (equippedItems != null) {
 				foreach (Item i in equippedItems.Values) {
-					resurrectedChar.TryEquip(resurrectedChar, i);
+					i.Cont = resurrectedChar;
+					//resurrectedChar.TryEquip(resurrectedChar, i);
 				}
 			}
 			AbstractItem backpack = resurrectedChar.BackpackAsContainer;
@@ -197,12 +198,12 @@ namespace SteamEngine.CompiledScripts {
 
 					if (hairModel != 0) {
 						hair = new CorpseEquipInfo(
-							hairFakeUid, (byte) Layers.layer_hair, hairColor, hairModel);
+							hairFakeUid, (byte) LayerNames.Hair, hairColor, hairModel);
 						equippedItems[hair] = null;
 					}
 					if (beardModel != 0) {
 						beard = new CorpseEquipInfo(
-							beardFakeUid, (byte) Layers.layer_beard, beardColor, beardModel);
+							beardFakeUid, (byte) LayerNames.Beard, beardColor, beardModel);
 						equippedItems[beard] = null;
 					}
 
@@ -238,13 +239,13 @@ namespace SteamEngine.CompiledScripts {
 					BoundPacketGroup bpg = PacketSender.NewBoundGroup();
 					if (hairModel != 0) {
 						CorpseEquipInfo hair = new CorpseEquipInfo(
-							hairFakeUid, (byte) Layers.layer_hair, hairColor, hairModel);
+							hairFakeUid, (byte) LayerNames.Hair, hairColor, hairModel);
 						PacketSender.PrepareItemInCorpse(this, hair);
 						hasHairItems = true;
 					}
 					if (beardModel != 0) {
 						CorpseEquipInfo beard = new CorpseEquipInfo(
-							beardFakeUid, (byte) Layers.layer_beard, beardColor, beardModel);
+							beardFakeUid, (byte) LayerNames.Beard, beardColor, beardModel);
 						PacketSender.PrepareItemInCorpse(this, beard);
 						hasHairItems = true;
 					}

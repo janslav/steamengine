@@ -309,6 +309,54 @@ namespace SteamEngine {
 			}
 			child.Enter(ch);
 		}
+
+		internal static void Trigger_ItemEnter(ItemOnGroundArgs args) {
+			Region region = args.region;
+			Point4D point = args.point;
+			AbstractItem item = args.manipulatedItem;
+
+			do {
+				region.TryTrigger(TriggerKey.itemEnter, args);
+				ReturnItemOnGroundIfNeeded(item, point);
+				try {
+					region.On_ItemEnter(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnItemOnGroundIfNeeded(item, point);
+
+				region = region.parent;
+			} while (region != null);
+		}
+
+		internal static void Trigger_ItemLeave(ItemOnGroundArgs args) {
+			Region region = args.region;
+			Point4D point = args.point;
+			AbstractItem item = args.manipulatedItem;
+
+			do {
+				region.TryTrigger(TriggerKey.itemLeave, args);
+				ReturnItemOnGroundIfNeeded(item, point);
+				try {
+					region.On_ItemLeave(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnItemOnGroundIfNeeded(item, point);
+
+				region = region.parent;
+			} while (region != null);
+		}
+
+		private static void ReturnItemOnGroundIfNeeded(AbstractItem item, Point4D point) {
+			if ((item.Cont != null) || (!point.Equals(item))) {
+				Logger.WriteWarning(item+" has been moved in the implementation of one of the @LeaveGround triggers. Don't do this. Putting back.");
+				item.MakeLimbo();
+				item.Trigger_EnterRegion(point.x, point.y, point.z, point.m);
+			}
+		}
+
+		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
+		}
+
+		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
+		}
 		
 		public static Region Get(string nameOrDefName) {
 			Region retVal;
@@ -583,7 +631,8 @@ namespace SteamEngine {
 			TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
 			On_Exit(ch, true);
 		}
-		
+
+	
 		public virtual bool On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
 			Logger.WriteDebug(ch+" entered "+this);
 			ch.SysMessage("You have just entered "+this);

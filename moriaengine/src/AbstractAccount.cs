@@ -434,20 +434,26 @@ namespace SteamEngine {
 		public override bool IsDeleted { get { return deleted; } }
 
 		public override void Delete() {
-			DeleteGameAccount();
-			Globals.SrcWriteLine("GameAccount "+name+" removed successfully.");
-		}
+			Commands.AuthorizeCommandThrow(Globals.Src, "DeleteAccount");
 
-		//Call this to delete an account
-		public void DeleteGameAccount() {
-			BeingDeleted();
-			//	if (uid<firstFreeGameAccount) {
-			//		firstFreeGameAccount=uid;
-			//	}
-			//	while (lastUsedGameAccount>-1 && accounts[lastUsedGameAccount]==null) {
-			//		accounts.Remove(lastUsedGameAccount);
-			//		lastUsedGameAccount--;
-			//	}
+			if (conn!=null) {
+				Packets.Prepared.SendFailedLogin(conn, FailedLoginReason.NoAccount);
+				conn.Close("Account is being deleted.");
+			}
+
+			//delete characters
+			for (int a=0; a<maxCharactersPerGameAccount; a++) {
+				if (characters[a]!=null) {
+					characters[a].InternalDelete();
+					characters[a]=null;
+				}
+			}
+
+			base.Delete();
+
+			accounts.Remove(this.name);
+			deleted = true;
+			
 		}
 
 		public void Block() {
@@ -564,7 +570,7 @@ namespace SteamEngine {
 			//TODO: Trigger on=@deleteCharacter or something (someone else can decide what to put it on)
 			// with return 1 to cancel it.
 
-			Thing.DeleteThing(cre);
+			cre.InternalDelete();
 			characters[index]=null;
 			return DeleteRequestReturnValue.AcceptedRequest;
 		}
@@ -585,25 +591,6 @@ namespace SteamEngine {
 					}
 				}
 			}
-		}
-
-		internal protected override void BeingDeleted() {
-			Commands.AuthorizeCommandThrow(Globals.Src, "DeleteAccount");
-
-			accounts.Remove(this.name);
-			deleted = true;
-			//delete characters, and conn
-			if (conn!=null) {
-				Packets.Prepared.SendFailedLogin(conn, FailedLoginReason.NoAccount);
-				conn.Close("Account is being deleted.");
-			}
-			for (int a=0; a<maxCharactersPerGameAccount; a++) {
-				if (characters[a]!=null) {
-					Thing.DeleteThing(characters[a]);
-					characters[a]=null;
-				}
-			}
-			base.BeingDeleted();
 		}
 
 		internal int GetBlankChar() {

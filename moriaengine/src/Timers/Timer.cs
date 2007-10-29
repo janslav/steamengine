@@ -100,13 +100,9 @@ namespace SteamEngine.Timers {
 			toBeEnqueued.Clear();
 		}
 
-		public void Delete() {
-			BeingDeleted();
-			isDeleted = true;
-		}
-
-		protected virtual void BeingDeleted() {
+		public virtual void Delete() {
 			priorityQueue.Remove(this);
+			isDeleted = true;
 		}
 
 		public bool IsDeleted {

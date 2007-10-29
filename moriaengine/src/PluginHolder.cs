@@ -85,9 +85,10 @@ namespace SteamEngine {
 			}
 		}
 
-		protected internal override void BeingDeleted() {
+		public override void Delete() {
 			this.DeletePlugins();
-			base.BeingDeleted();
+			this.ClearTriggerGroups();
+			base.Delete();
 		}
 
 		#region Triggergroups

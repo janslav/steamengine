@@ -546,15 +546,16 @@ namespace SteamEngine {
 		
 		internal static void Init() {
 			Logger.WriteDebug("Categorizing sector contents.");
-			
+
 			foreach (Thing t in Thing.AllThings) {
 				t.FixWeight();
 				if (t.IsOnGround) {
 					if (Map.IsValidPos(t)) {
+
 						t.GetMap().Add(t);
 					} else {
 						Logger.WriteError(t+" has invalid coordinates for an item on ground. Removing.");
-						t.Delete();
+						t.InternalDelete();
 					}
 				}
 			}
@@ -996,7 +997,7 @@ namespace SteamEngine {
 			return GetSector(point.X>>sectorFactor, point.Y>>sectorFactor).GetRegionFor(point);
 		}
 
-		public Region GetRegionFor(ushort x, ushort y) {
+		public Region GetRegionFor(int x, int y) {
 			return GetSector(x>>sectorFactor, y>>sectorFactor).GetRegionFor(x, y);
 		}
 

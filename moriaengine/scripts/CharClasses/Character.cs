@@ -1031,25 +1031,27 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public AbstractItem NewEquip(AbstractItemDef itemDef) {
-			AbstractItem i = Newitem(itemDef);
-			if (i.IsEquippable) {
-				TryEquip(this, i);
-			} else {
-				i.Delete();
-				throw new Exception("'"+i+"' is not equippable.");
-			}
-			return i;
-		}
+		//public AbstractItem NewEquip(AbstractItemDef itemDef) {
+		//    AbstractItem i = Newitem(itemDef);
+		//    if (i.IsEquippable) {
+		//        TryEquip(this, i);
+		//    } else {
+		//        i.Delete();
+		//        throw new Exception("'"+i+"' is not equippable.");
+		//    }
+		//    return i;
+		//}
 
-		public override void On_Dupe(Thing t) {
-			Character copyFrom = (Character) t;
+		public override void On_Dupe(DupeArgs args) {
+			if (this == args.copy) {
+				Character copyFrom = (Character) args.model;
 
-			if (copyFrom.skills != null) {
-				skills = new Skill[copyFrom.skills.Length];
-				int n = skills.Length;
-				for (ushort i = 0; i<n; i++) {
-					skills[i] = new Skill(copyFrom.skills[i], this);
+				if (copyFrom.skills != null) {
+					skills = new Skill[copyFrom.skills.Length];
+					int n = skills.Length;
+					for (ushort i = 0; i<n; i++) {
+						skills[i] = new Skill(copyFrom.skills[i], this);
+					}
 				}
 			}
 		}
@@ -1299,7 +1301,7 @@ namespace SteamEngine.CompiledScripts {
 				return owner;
 			}
 			set {
-				if (IsNPC) {
+				if (this.IsPlayer) {
 					//AboutToChange();
 					owner=value;	//always Character
 				} else {
@@ -1355,12 +1357,12 @@ namespace SteamEngine.CompiledScripts {
 
 		//for pets
 		public bool IsOwnerOf(Character cre) {
-			return (cre.IsNPC && cre.Owner!=null && cre.owner.Equals(this));
+			return ((cre.IsPlayer) && cre.Owner!=null && cre.owner.Equals(this));
 		}
 
 		public bool IsPet {
 			get {
-				return (IsNPC && Owner!=null);
+				return ((this.IsPlayer) && (this.Owner!=null));
 			}
 		}
 
@@ -1372,17 +1374,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
 			Character target = (Character) chr;
-			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner==this && CanReach(chr)));
+			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner==this && CanReach(chr) == TryReachResult.Succeeded));
 		}
 
-		public override bool CanEquip(AbstractItem i) {
-			return true;
-		}
+		//public override bool CanEquip(AbstractItem i) {
+		//    return true;
+		//}
 
 		public override bool CanRename(AbstractCharacter to) {
 			Character target = (Character) to;
 			Character targetOwner = target.owner;
-			return (to.IsNPC && targetOwner!=null && targetOwner.Equals(this));
+			return ((to.IsPlayer) && targetOwner!=null && targetOwner.Equals(this));
 		}
 
 		public virtual bool IsMountable {
@@ -1392,7 +1394,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public virtual bool IsMountableBy(AbstractCharacter chr) {
-			if (IsMountable && chr.CanReach(this)) {
+			if (IsMountable && chr.CanReach(this) == TryReachResult.Succeeded) {
 				if (IsPetOf((Character) chr)) return true;
 				if (!IsPet && chr.IsPlevelAtLeast(Globals.plevelOfGM)) return true;
 			}
@@ -1496,13 +1498,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public Item Hair {
 			get {
-				return (Item) FindLayer((byte) Layers.layer_hair);
+				return (Item) FindLayer((byte) LayerNames.Hair);
 			}
 		}
 
 		public Item Beard {
 			get {
-				return (Item) FindLayer((byte) Layers.layer_beard);
+				return (Item) FindLayer((byte) LayerNames.Beard);
 			}
 		}
 
@@ -1630,22 +1632,22 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override bool On_ItemEquip(AbstractCharacter droppingChar, AbstractItem i, bool forced) {
-			if (i is Wearable) {
+		public override void On_ItemEnter(ItemInCharArgs args) {
+			if (args.manipulatedItem is Wearable) {
 				InvalidateCombatArmorValues();
-			} else if (i is Weapon) {
+			} else if (args.manipulatedItem is Weapon) {
 				InvalidateCombatWeaponValues();
 			}
-			return base.On_ItemEquip(droppingChar, i, forced);
+			base.On_ItemEnter(args);
 		}
 
-		public override bool On_ItemUnEquip(AbstractCharacter pickingChar, AbstractItem i, bool forced) {
-			if (i is Wearable) {
+		public override void On_ItemLeave(ItemInCharArgs args) {
+			if (args.manipulatedItem is Wearable) {
 				InvalidateCombatArmorValues();
-			} else if (i is Weapon) {
+			} else if (args.manipulatedItem is Weapon) {
 				InvalidateCombatWeaponValues();
 			}
- 			return base.On_ItemUnEquip(pickingChar, i, forced);
+			base.On_ItemLeave(args);
 		}
 
 		public virtual bool IsPlayerForCombat {
@@ -1861,6 +1863,19 @@ namespace SteamEngine.CompiledScripts {
 		public override bool IsFemale {
 			get {
 				return this.CharModelInfo.isFemale;
+			}
+		}
+
+		public bool CanReachWithMessage(Thing target) {
+			TryReachResult trr = CanReach(target);
+			if (trr == TryReachResult.Succeeded) {
+				return true;
+			} else {
+				GameConn conn = this.Conn;
+				if (conn != null) {
+					Server.SendTryReachResultFailMessage(conn, target, trr);
+				}
+				return false;
 			}
 		}
 	}

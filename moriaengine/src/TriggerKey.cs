@@ -67,6 +67,19 @@ namespace SteamEngine {
 		public static readonly TriggerKey newPC=Get("newPC");
 
 		public static readonly TriggerKey newPosition=Get("newPosition");
+
+		public static readonly TriggerKey itemLeave=Get("itemLeave");
+		public static readonly TriggerKey leaveItem=Get("leaveItem");
+		public static readonly TriggerKey leaveChar=Get("leaveChar");
+		public static readonly TriggerKey leaveRegion=Get("leaveRegion");
+
+		public static readonly TriggerKey itemEnter=Get("itemEnter");
+		public static readonly TriggerKey enterItem=Get("enterItem");
+		public static readonly TriggerKey enterChar=Get("enterChar");
+		public static readonly TriggerKey enterRegion=Get("enterRegion");
+
+		public static readonly TriggerKey stackOnItem=Get("stackOnItem");
+		public static readonly TriggerKey itemStackOn=Get("stackon_Item");
 		
 		public static readonly TriggerKey stackon_Item=Get("stackon_Item");//item trigger
 		public static readonly TriggerKey stackon_Char=Get("stackon_Char");//item trigger
@@ -89,7 +102,6 @@ namespace SteamEngine {
 		public static readonly TriggerKey pickUpFrom=Get("pickUpFrom");
 		
 		public static readonly TriggerKey destroy=Get("Destroy");
-		public static readonly TriggerKey ownDestroy=Get("ownDestroy");
 		
 		public static readonly TriggerKey itemEquip=Get("itemEquip");
 		public static readonly TriggerKey equip=Get("Equip");

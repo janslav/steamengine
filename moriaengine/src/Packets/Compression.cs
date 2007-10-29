@@ -401,7 +401,7 @@ namespace SteamEngine.Packets {
 					PacketSender.DiscardLastPacket();
 				}
 			} finally {
-				that.Delete();
+				that.InternalDelete();
 			}
 			Logger.Show("TestSuite","Finished compression tests.");
 		}

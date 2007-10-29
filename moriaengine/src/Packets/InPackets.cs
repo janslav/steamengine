@@ -440,12 +440,13 @@ namespace SteamEngine.Packets {
 				int contuid = DecodeInt(6);
 				AbstractCharacter co = Thing.UidGetCharacter(Thing.UidClearFlags(contuid));
 				if (co != null) {
-					if (cre.CanReach(co)) {
-						cre.DropItemOnChar(co);
+					TryReachResult canReach = cre.CanReach(co);
+					if (canReach == TryReachResult.Succeeded) {
+						cre.EquipItemOnChar(co);
 					} else {
 						//you can't reach that
-						Server.SendSystemMessage(c, "They're out of reach.", 0);
-						cre.DropItemOnContainer(cre.Backpack, (ushort) 0xffff, (ushort) 0xffff);
+						Server.SendTryReachResultFailMessage(c, co, canReach);
+						cre.DropItemOnContainer(cre.Backpack, 0xffff, 0xffff);
 					}
 				} else {
 					PacketSender.PrepareRemoveFromView(itemuid);
@@ -481,11 +482,12 @@ namespace SteamEngine.Packets {
 				} else {
 					Thing co = Thing.UidGetThing(Thing.UidClearFlags(contuid));
 					if (co != null) {
-						if (cre.CanReach(co)) {
+						TryReachResult canReach = cre.CanReach(co);
+						if (canReach == TryReachResult.Succeeded) {
 							if (co.IsContainer) {
 								cre.DropItemOnContainer((AbstractItem) co, x, y);
 							} else if (co.IsItem) {
-								cre.DropItemOnItem((AbstractItem) co, x, y);
+								cre.DropItemOnItem((AbstractItem) co);//we ignore the x y
 							} else if (co.IsChar) {
 								cre.DropItemOnChar((AbstractCharacter) co);
 							} else {
@@ -493,7 +495,7 @@ namespace SteamEngine.Packets {
 							}
 						} else {
 							//you can't reach that
-							Server.SendSystemMessage(c, "That's out of reach.", 0);
+							Server.SendTryReachResultFailMessage(c, co, canReach); //You cannot reach that.
 							cre.DropItemOnContainer(cre.Backpack, 0xffff, 0xffff);
 						}
 					} else {
@@ -516,10 +518,10 @@ namespace SteamEngine.Packets {
 			AbstractItem item = Thing.UidGetItem(uid);
 			if (item != null) {
 				AbstractCharacter cre = c.CurCharacter;
-				PickupResult result = cre.PickUp(item, amt);
-				if (result != PickupResult.Succeeded) {
+				TryReachResult result = cre.PickUp(item, amt);
+				if (result != TryReachResult.Succeeded) {
 					Prepared.SendPickupFailed(c, result);
-					if (result == PickupResult.Failed_RemoveFromView) {
+					if (result == TryReachResult.Failed_RemoveFromView) {
 						PacketSender.PrepareRemoveFromView(uid);
 						PacketSender.SendTo(c, true);
 					}
@@ -541,7 +543,7 @@ namespace SteamEngine.Packets {
 			}
 			packetLenUsed=5;
 		}
-		
+
 		internal void HandleDoubleClick(GameConn c) {
 			uint flaggedUid = DecodeUInt(1);
 			int uid = (int) flaggedUid;
@@ -557,21 +559,22 @@ namespace SteamEngine.Packets {
 				PacketSender.PrepareRemoveFromView(uid);
 				PacketSender.SendTo(c, true);
 			} else if (t.IsItem) {
-				AbstractItem item = (AbstractItem) t;
-				if (c.CurCharacter.CanReach(item)) {
-					item.Trigger_DClick(c.CurCharacter);
+				AbstractCharacter curChar = c.CurCharacter;
+				TryReachResult canReach = curChar.CanReach(t);
+				if (canReach == TryReachResult.Succeeded) {
+					t.Trigger_DClick(curChar);
 				} else {
-					Server.SendSystemMessage(c, "That's out of reach.", 0);
+					Server.SendTryReachResultFailMessage(c, t, canReach);
 				}
 			} else {
 				//for characters, reach is not tested, at least not here.
-				AbstractCharacter cre = (AbstractCharacter) t;
 				if (paperdollFlag) {
-					cre.ShowPaperdollTo(c);
+					((AbstractCharacter) t).ShowPaperdollTo(c);
 				} else {
-					cre.Trigger_DClick(c.CurCharacter);
+					t.Trigger_DClick(c.CurCharacter);
 				}
-			}//else invalid uid
+			}
+			//else invalid uid
 			packetLenUsed=5;
 		}
 		

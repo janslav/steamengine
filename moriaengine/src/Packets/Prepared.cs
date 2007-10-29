@@ -45,10 +45,10 @@ namespace SteamEngine.Packets {
 		static Prepared() {
 			BoundPacketGroup pg = null;
 			
-			pickUpFailed = new FreedPacketGroup[(int)PickupResult.FailedCount];
-			for (int index=0; index<(int)PickupResult.FailedCount; index++) {
+			pickUpFailed = new FreedPacketGroup[(int)TryReachResult.FailedCount];
+			for (int index=0; index<(int)TryReachResult.FailedCount; index++) {
 				pg = PacketSender.NewBoundGroup();
-				PacketSender.PreparePickupFailed((PickupResult)index);
+				PacketSender.PreparePickupFailed((TryReachResult)index);
 				pickUpFailed[index] = pg.Free();
 			}
 			
@@ -111,9 +111,9 @@ namespace SteamEngine.Packets {
 			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareRequestCliVer(); requestClientVersion = pg.Free();
 		}
 		
-		public static void SendPickupFailed(GameConn c, PickupResult msg) {
+		public static void SendPickupFailed(GameConn c, TryReachResult msg) {
 			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
-			Sanity.IfTrueThrow((int)msg<0 || (int)msg>(int)PickupResult.FailedCount, "Invalid pickUpFailedMessage '"+msg+"'.");
+			Sanity.IfTrueThrow((int)msg<0 || (int)msg>(int)TryReachResult.FailedCount, "Invalid pickUpFailedMessage '"+msg+"'.");
 			pickUpFailed[(int)msg].SendTo(c);
 		}
 		

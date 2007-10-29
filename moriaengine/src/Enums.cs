@@ -165,7 +165,7 @@ namespace SteamEngine {
 		Ready,			//- We are ready to generate a new packet (Or do other things).
 	}
 	
-	public enum PickupResult : byte {
+	public enum TryReachResult : byte {
 		Failed_YouCannotPickThatUp=0,
 		Failed_ThatIsTooFarAway=1,
 		Failed_ThatIsOutOfSight=2,

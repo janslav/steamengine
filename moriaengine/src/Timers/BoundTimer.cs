@@ -57,13 +57,12 @@ namespace SteamEngine.Timers {
 			return c;
 		} }
 
-		protected override void BeingDeleted() {
+		public override void Delete() {
 			TagHolder c = this.Cont;
 			if (c != null) {
 				c.RemoveTimer(this);
 			}
-			base.BeingDeleted();
+			base.Delete();
 		}
-
 	}
 }

@@ -113,9 +113,9 @@ namespace SteamEngine {
 				DelayedResolver.ResolveAll();
 				ObjectSaver.LoadingFinished();
 
-				foreach (Thing t in Thing.AllThings) {
-					t.region = null;
-				}
+				//foreach (Thing t in Thing.AllThings) {
+				//    t.region = null;
+				//}
 				
 				MainClass.SetRunLevel(RunLevels.Running);
 				Globals.UnPauseServerTime();
