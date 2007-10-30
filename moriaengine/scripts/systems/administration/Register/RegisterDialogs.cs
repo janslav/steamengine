@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for(int i = firstiVal; i < imax; i++) {
 				AccountNote note = notesList[i];
 
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(note.time.ToString());
+				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(note.time.ToString("hh:mm:ss dd.MM.yyyy"));
 				if(note.referredChar != null) {
 					dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (4 * i)); //info o postave
 					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.referredChar.Name); //postava
@@ -293,7 +293,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for(int i = firstiVal; i < imax; i++) {
 				AccountCrime crime = crimesList[i];
 
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(crime.time.ToString());
+				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(crime.time.ToString("hh:mm:ss dd.MM.yyyy"));
 				if(crime.referredChar != null) {
 					dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (5 * i)); //info o postave
 					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.referredChar.Name); //postava

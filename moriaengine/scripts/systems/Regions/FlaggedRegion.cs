@@ -20,6 +20,7 @@ using System.Collections;
 using SteamEngine.Common;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using SteamEngine;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
@@ -27,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	//todo: make some members virtual?
 	[SaveableClass]
 	[Dialogs.ViewableClass]
-	public class FlaggedRegion : Region {
+	public class FlaggedRegion : StaticRegion {
 		int flags;
 
 		[LoadSection]

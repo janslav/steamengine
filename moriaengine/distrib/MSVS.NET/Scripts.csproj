@@ -308,9 +308,6 @@
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Regions\DynamicRegion.cs">
-      <Link>systems\Regions\DynamicRegion.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
     </Compile>

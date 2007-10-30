@@ -391,7 +391,7 @@ namespace SteamEngine.LScript {
 				}
 
 //regions
-				Region reg = Region.GetByDefname(name);
+				StaticRegion reg = StaticRegion.GetByDefname(name);
 				if (reg != null) {
 					finalOpNode = OpNode_Object.Construct(parent, reg);
 					goto runit;

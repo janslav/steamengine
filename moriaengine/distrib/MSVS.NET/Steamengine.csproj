@@ -346,6 +346,9 @@
       <Link>DispidInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\src\DynamicRegion.cs">
+      <Link>DynamicRegion.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\Enums.cs">
       <Link>Enums.cs</Link>
       <SubType>Code</SubType>
