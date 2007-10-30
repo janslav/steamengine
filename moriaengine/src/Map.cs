@@ -47,7 +47,7 @@ namespace SteamEngine {
 		public readonly int sizeX;
 		public readonly int sizeY;
 		private Sector[,] sectors;
-		internal Region[] regions;
+		internal StaticRegion[] regions;
 		public readonly byte m;
 		private LinkedList<Region> dynamicRegions = new LinkedList<Region>();
 		
@@ -1001,12 +1001,12 @@ namespace SteamEngine {
 			return GetSector(x>>sectorFactor, y>>sectorFactor).GetRegionFor(x, y);
 		}
 
-		internal void ActivateRegions(List<Region> list) {
+		internal void ActivateRegions(List<StaticRegion> list) {
 			//we dont add the rectangles directly to sectors, we first create a "matrix" of arraylists which are then "Staticed" to arrays and assigned to sectors
 			regions = list.ToArray();
 			
 			ArrayList[,] matrix = new ArrayList[numXSectors, numYSectors];
-			foreach (Region region in regions) {
+			foreach(StaticRegion region in regions) {
 				foreach (RegionRectangle rect in region.Rectangles) {
 					int minXs = rect.StartPoint.X >> sectorFactor;
 					int maxXs = rect.EndPoint.X >> sectorFactor;
@@ -1065,7 +1065,7 @@ namespace SteamEngine {
 			//Logger.WriteDebug("x/y=("+x+","+y+") sx/sy=("+sx+","+sy+") and numsect=("+GetMapNumXSectors(0)+","+GetMapNumYSectors(0)+")");
 		}
 
-		public void AddDynamicRegion(Region region) {
+		public void AddDynamicRegion(DynamicRegion region) {
 			foreach (RegionRectangle rect in region.Rectangles) {
 				foreach (Sector sector in GetSectorsInRectangle(rect)) {
 					sector.AddDynamicRegionRect(rect);
@@ -1073,7 +1073,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public void RemoveDynamicRegion(Region region) {
+		public void RemoveDynamicRegion(DynamicRegion region) {
 			foreach (RegionRectangle rect in region.Rectangles) {
 				foreach (Sector sector in GetSectorsInRectangle(rect)) {
 					sector.RemoveDynamicRegionRect(rect);

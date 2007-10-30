@@ -33,8 +33,8 @@ namespace SteamEngine.CompiledScripts {
 		ReadColor=2303,
 		NAColor=2305,
 
-		OnlineColor=2301,//color for highlighting online accounts/players
-		OfflineColor = 0481,//color for highlighting offline accounts/players
+		OnlineColor=1152,//color for highlighting online accounts/players
+		OfflineColor = 2301,//color for highlighting offline accounts/players
 
 		LabelColor = 1675, //nadpisy (sloupecku atd) - svetlounce bezova
 		HeadlineColor = 2000,//1152, //titulek (obvykle celeho dialogu atd)

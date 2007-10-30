@@ -22,9 +22,8 @@ using SteamEngine.Common;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
-	public class DynamicRegion : FlaggedRegion {
+namespace SteamEngine {
+	public class DynamicRegion : Region {
 
 		public DynamicRegion() {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
