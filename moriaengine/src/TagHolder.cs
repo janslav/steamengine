@@ -412,6 +412,9 @@ namespace SteamEngine {
 				throw new Exception("You can not manipulate a deleted object ("+this+")");
 			}
 			if (this.IsLimbo) {
+				try {
+					this.Delete();
+				} catch { }
 				throw new Exception("This object is in Limbo state ("+this+"). This should not happen.");
 			}
 		}

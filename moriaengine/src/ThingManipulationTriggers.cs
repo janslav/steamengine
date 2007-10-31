@@ -60,8 +60,12 @@ namespace SteamEngine {
 			}
 
 			//copy.def.Trigger_Create(copy); nevolame pri dupovani...?
-			this.On_Dupe(args);
-			copy.On_Dupe(args);
+			try {
+				this.On_Dupe(args);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			try {
+				copy.On_Dupe(args);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 
 			foreach (AbstractItem i in this) {
@@ -86,7 +90,7 @@ namespace SteamEngine {
 			}
 
 			//copy.def.Trigger_Create(copy); nevolame pri dupovani...?
-			this.On_Dupe(args);
+			//this.On_Dupe(args);
 			copy.On_Dupe(args);
 
 			foreach (AbstractItem i in this) {
@@ -287,7 +291,6 @@ namespace SteamEngine {
 			}
 #endif
 
-			NetState.ItemAboutToChange(this);
 			cont.InternalItemEnter(this);
 			this.point4d.x = x;
 			this.point4d.y = y;

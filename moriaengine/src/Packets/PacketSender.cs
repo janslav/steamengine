@@ -68,7 +68,7 @@ namespace SteamEngine.Packets {
 			EncodeUInt(item.FlaggedUid,1);
 			EncodeUShort(item.Model,5);
 			EncodeByte(0, 7);
-			EncodeByte(item.Layer, 8);
+			EncodeByte((byte) item.point4d.z, 8);
 			EncodeUInt(item.Cont.FlaggedUid,9);
 			EncodeUShort(item.Color,13);
 			DoneGenerating(15);
@@ -724,18 +724,17 @@ namespace SteamEngine.Packets {
 				foreach (AbstractItem it in cre.visibleLayers) {
 					Sanity.IfTrueThrow(it.Cont!=cre, LogStr.Ident(cre)+" thinks that "+LogStr.Ident(it)+" is equipped, but its cont is "+LogStr.Ident(it.Cont)+".");
 					//Logger.WriteDebug("Layer "+it.Layer+" is "+it+" IsEq="+it.IsEquippable+" IsCont="+it.IsContainer+" type="+it.GetType()+" FlaggedUid="+it.FlaggedUid+" Model="+it.Model+" Color="+it.Color);
-					if (it.IsEquippable) {
-						EncodeUInt(it.FlaggedUid, blockSize);
-						if (it.Color==0) {
-							EncodeUShort(it.Model, blockSize+4);
-							EncodeByte(it.Layer, blockSize+6);
-							blockSize+=7;
-						} else {
-							EncodeUShort((ushort) (it.Model|0x8000), blockSize+4);
-							EncodeByte(it.Layer, blockSize+6);
-							EncodeUShort(it.Color, blockSize+7);
-							blockSize+=9;
-						}
+					EncodeUInt(it.FlaggedUid, blockSize);
+					ushort color = it.Color;
+					if (color == 0) {
+						EncodeUShort(it.Model, blockSize+4);
+						EncodeByte((byte) it.point4d.z, blockSize+6);
+						blockSize+=7;
+					} else {
+						EncodeUShort((ushort) (it.Model|0x8000), blockSize+4);
+						EncodeByte((byte) it.point4d.z, blockSize+6);
+						EncodeUShort(color, blockSize+7);
+						blockSize+=9;
 					}
 				}
 			}

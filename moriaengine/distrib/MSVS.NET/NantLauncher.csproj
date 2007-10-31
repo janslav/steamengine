@@ -12,13 +12,11 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>..\..\bin\Sane.SteamEngine.GUI.exe</StartProgram>
+    <StartProgram>..\..\bin\Debug.SteamEngine.GUI.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>..\..\bin\NAnt.exe</StartProgram>
-    <StartArguments>-D:debug=false -D:defineSymbols="TRACE,SANE,MSWIN" -buildfile:../../../nant/default.build</StartArguments>
-    <OutputPath>..\..\bin\</OutputPath>
+    <StartProgram>..\..\bin\Sane.SteamEngine.GUI.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
