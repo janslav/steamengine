@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override sealed bool IsEquippable {
 			get {
-				return true;
+				return TypeDef.Layer != 0;
 			}
 		}
 

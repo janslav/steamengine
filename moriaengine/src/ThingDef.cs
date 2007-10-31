@@ -156,41 +156,78 @@ namespace SteamEngine {
 			}
 		}
 		
-		//this is not too elegant, but I can't think of anything better at the moment :\ -tar
-		internal protected static ContOrPoint lastCreatedThingContOrPoint;
-		internal protected static IPoint4D lastCreatedIPoint;
-
 		internal Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
 			ThrowIfUnloaded();
-			lastCreatedThingContOrPoint = ContOrPoint.Point;
-			lastCreatedIPoint = new Point4D(x, y, z, m);
 			return CreateImpl();
 		}
 
 		public Thing Create(ushort x, ushort y, sbyte z, byte m) {
-			return Create(new Point4D(x, y, z, m));
+			ThrowIfUnloaded();
+			Thing retVal = CreateImpl();
+			PutOnGround(retVal, x, y, z, m);
+			Trigger_Create(retVal);
+			return retVal;
 		}
 
 		public Thing Create(IPoint4D p) {
-			ThrowIfUnloaded();
-			lastCreatedThingContOrPoint = ContOrPoint.Point;
-			lastCreatedIPoint = p;
-			Thing retVal = CreateImpl();
-			Trigger_Create(retVal);
-			return retVal;
+			p = p.TopPoint;
+			return Create(p.X, p.Y, p.Z, p.M);
 		}
 		
 		public Thing Create(Thing cont) {
 			ThrowIfUnloaded();
-			if (this.IsCharDef) {
-				lastCreatedThingContOrPoint = ContOrPoint.Point;
-			} else {
-				lastCreatedThingContOrPoint = ContOrPoint.Cont;
-			}
-			lastCreatedIPoint = cont;
 			Thing retVal = CreateImpl();
+			AbstractItem item = retVal as AbstractItem;
+			if (item == null) {//we are char
+				MutablePoint4D p = cont.TopObj().point4d;
+				PutOnGround(retVal, p.x, p.y, p.z, p.m);
+			} else {
+				AbstractCharacter contAsChar = cont as AbstractCharacter;
+				if (contAsChar != null) {
+					if (retVal.IsEquippable) {
+						PutInCont(item, contAsChar);
+					} else {
+						PutInCont(item, contAsChar.Backpack);
+					}
+				} else if (cont.IsContainer) {
+					PutInCont(item, cont);
+				} else {
+					MutablePoint4D p = cont.TopObj().point4d;
+					PutOnGround(item, p.x, p.y, p.z, p.m);
+				}
+			}
+
 			Trigger_Create(retVal);
 			return retVal;
+		}
+
+		private static void PutOnGround(Thing t, ushort x, ushort y, sbyte z, byte m) {
+			//MarkAsLimbo(t);
+			AbstractItem item = t as AbstractItem;
+			if (item != null) {
+				item.Trigger_EnterRegion(x, y, z, m);
+			} else {
+				t.point4d.SetP(x, y, z, m);
+				Map.GetMap(m).Add(t);
+			}
+		}
+
+		private static void PutInCont(AbstractItem item, Thing cont) {
+			AbstractItem contItem = cont as AbstractItem;
+			if (contItem == null) {
+				//MarkAsLimbo(item);
+				byte layer = item.Layer;
+				if (layer > 0) {
+					item.Trigger_EnterChar((AbstractCharacter) cont, layer);
+				} else {
+					throw new SEException("Item '"+ item + "' is equippable, but has Layer not set.");
+				}
+			} else {
+				//MarkAsLimbo(item);
+				ushort x, y;
+				contItem.GetRandomXYInside(out x, out y);
+				item.Trigger_EnterItem(contItem, x, y);
+			}
 		}
 
 		public void Trigger_Create(Thing createdThing) {

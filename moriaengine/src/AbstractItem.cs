@@ -85,24 +85,6 @@ namespace SteamEngine {
 			this.type = ((AbstractItemDef) myDef).Type;
 			this.flags=0;
 			this.amount=1;
-			if (!MainClass.loading) {
-				if (ThingDef.lastCreatedThingContOrPoint == ContOrPoint.Cont) {
-					//we are to be placed in a container
-					Thing ci = ThingDef.lastCreatedIPoint as AbstractItem;
-					if (ci == null) {
-						if (this.IsEquippable) {
-							ci = (AbstractCharacter) ThingDef.lastCreatedIPoint;
-						} else {//when creating a new backpack, it must be equippable, otherwise StackOverflow here :)
-							ci = ((AbstractCharacter) ThingDef.lastCreatedIPoint).Backpack;
-						}
-					}
-					if (ci.IsItem) {
-						((AbstractItem) ci).InternalItemEnter(this);//also resends
-					} else {
-						((AbstractCharacter) ci).AddLoadedItem(this);
-					}
-				}
-			}
 
 			//MoveInsideContainer((ushort) Globals.dice.Next(20,100),(ushort) Globals.dice.Next(20,100));
 			//cont.InternalAddItem(this);//also resends

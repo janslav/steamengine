@@ -104,12 +104,6 @@ namespace SteamEngine {
 		public AbstractCharacter(ThingDef myDef): base(myDef) {
 			instances++;
 			this.name = myDef.Name;
-			if (!MainClass.loading) {
-				if (ThingDef.lastCreatedThingContOrPoint == ContOrPoint.Cont) {
-					throw new SanityCheckException("You can't create a Character in a container.");
-				}
-			}
-
 			Globals.lastNewChar=this;
 		}
 

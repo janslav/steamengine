@@ -41,7 +41,7 @@ namespace SteamEngine {
 		private ushort color;
 		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
-		internal readonly MutablePoint4D point4d = new MutablePoint4D(7000, 7000, 0, 0); //made this internal because SetPosImpl is now abstract... -tar
+		internal readonly MutablePoint4D point4d = new MutablePoint4D(0xffff, 0xffff, 0, 0); //made this internal because SetPosImpl is now abstract... -tar
 		private int uid=-2;
 		//internal Region region;
 		internal NetState netState;//No one is to touch this but the NetState class itself!
@@ -138,11 +138,6 @@ namespace SteamEngine {
 			if (uidBeingLoaded==-1) {
 				things.Add(this);//sets uid
 				NetState.Resend(this);
-				//we give this either to cont or to coords.
-				if (ThingDef.lastCreatedThingContOrPoint == ContOrPoint.Point) {
-					this.point4d = new MutablePoint4D(ThingDef.lastCreatedIPoint);
-					Map.GetMap(point4d.m).Add(this);
-				}
 			} else {
 				uid=uidBeingLoaded;
 				this.point4d=new MutablePoint4D((ushort) Globals.dice.Next(0, 256), (ushort) Globals.dice.Next(0, 256), 0, 0);
