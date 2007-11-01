@@ -346,9 +346,6 @@
       <Link>DispidInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\DynamicRegion.cs">
-      <Link>DynamicRegion.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\Enums.cs">
       <Link>Enums.cs</Link>
       <SubType>Code</SubType>
@@ -597,10 +594,6 @@
       <Link>Main.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Map.cs">
-      <Link>Map.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\src\MemberWrapper.cs">
       <Link>MemberWrapper.cs</Link>
       <SubType>Code</SubType>
@@ -705,9 +698,23 @@
       <Link>Rectangle.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Region.cs">
-      <Link>Region.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\src\Regions\DynamicRegion.cs">
+      <Link>Regions\DynamicRegion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Regions\Map.cs">
+      <Link>Regions\Map.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Regions\Region.cs">
+      <Link>Regions\Region.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Regions\Sector.cs">
+      <Link>Regions\Sector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Regions\StaticRegion.cs">
+      <Link>Regions\StaticRegion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Regions\StaticSector.cs">
+      <Link>Regions\StaticSector.cs</Link>
     </Compile>
     <Compile Include="..\..\src\ScriptArgs.cs">
       <Link>ScriptArgs.cs</Link>
@@ -723,10 +730,6 @@
     </Compile>
     <Compile Include="..\..\src\ScriptLoader.cs">
       <Link>ScriptLoader.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\src\Sector.cs">
-      <Link>Sector.cs</Link>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\src\SEIniHandler.cs">
@@ -747,10 +750,6 @@
     </Compile>
     <Compile Include="..\..\src\Static.cs">
       <Link>Static.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\src\StaticSector.cs">
-      <Link>StaticSector.cs</Link>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\src\Statistics.cs">

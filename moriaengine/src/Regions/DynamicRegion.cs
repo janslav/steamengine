@@ -59,7 +59,7 @@ namespace SteamEngine {
 				if (value == null) {
 					throw new ArgumentNullException("P");
 				}
-				bool xyChanged = (p.X != value.X || p.Y != p.Z);
+				bool xyChanged = (p.X != value.X || p.Y != value.Y);
 				bool mapChanged = p.M != value.M;
 
 				if (xyChanged) {
