@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 //using SteamEngine.PScript;
 	
 namespace SteamEngine {

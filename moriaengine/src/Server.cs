@@ -32,6 +32,7 @@ using Microsoft.Win32;	//for RegistryKey
 using SteamEngine.Packets;
 using SteamEngine.Timers;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 			

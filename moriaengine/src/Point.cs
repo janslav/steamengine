@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 //using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	public interface IPoint2D {

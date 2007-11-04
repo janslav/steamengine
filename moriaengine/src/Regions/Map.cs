@@ -24,7 +24,7 @@ using System.Configuration;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
-namespace SteamEngine {
+namespace SteamEngine.Regions {
 	
 	public partial class Map {
 		public static bool MapTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Map Trace Messages"]);

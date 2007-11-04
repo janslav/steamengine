@@ -27,6 +27,7 @@ using SteamEngine.Packets;
 using System.Diagnostics;
 using System.Configuration;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	internal interface ObjectWithUid {

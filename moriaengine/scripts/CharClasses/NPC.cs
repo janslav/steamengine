@@ -21,6 +21,7 @@ using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 

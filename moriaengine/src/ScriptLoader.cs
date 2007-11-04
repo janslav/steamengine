@@ -25,6 +25,7 @@ using SteamEngine.LScript;
 using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 	
 namespace SteamEngine {
 	public class ScriptLoader {

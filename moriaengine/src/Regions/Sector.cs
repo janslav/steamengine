@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 using System.Diagnostics;
 
-namespace SteamEngine {
+namespace SteamEngine.Regions {
 	public partial class Map {
 		private class Sector {
 			internal ThingLinkedList things;

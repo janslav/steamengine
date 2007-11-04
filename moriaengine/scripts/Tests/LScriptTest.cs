@@ -23,6 +23,7 @@ using System.Text;
 using System.Diagnostics;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.Regions;
 
 namespace SteamEngine.LScript {
 	public class LScriptTest {

@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 	
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Packets;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 

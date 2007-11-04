@@ -27,6 +27,7 @@ using System.Configuration;
 using System.Diagnostics;
 using SteamEngine.Common;
 using SteamEngine.Packets;
+using SteamEngine.Regions;
 using System.Reflection;
 
 namespace SteamEngine.Packets {

@@ -22,12 +22,13 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using SteamEngine;
 using SteamEngine.Persistence;
+using SteamEngine.CompiledScripts.Dialogs;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.Regions {
 	
 	//todo: make some members virtual?
 	[SaveableClass]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class FlaggedRegion : StaticRegion {
 		int flags;
 

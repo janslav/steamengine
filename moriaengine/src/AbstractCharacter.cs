@@ -24,6 +24,7 @@ using System.Text.RegularExpressions;
 using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 using System.Threading;
 using System.Configuration;
 #if TESTRUNUO

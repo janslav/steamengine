@@ -598,9 +598,6 @@
       <Link>MemberWrapper.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Movement.cs">
-      <Link>Movement.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\MultiData.cs">
       <Link>MultiData.cs</Link>
       <SubType>Code</SubType>
@@ -703,6 +700,9 @@
     </Compile>
     <Compile Include="..\..\src\Regions\Map.cs">
       <Link>Regions\Map.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Regions\Movement.cs">
+      <Link>Regions\Movement.cs</Link>
     </Compile>
     <Compile Include="..\..\src\Regions\Region.cs">
       <Link>Regions\Region.cs</Link>

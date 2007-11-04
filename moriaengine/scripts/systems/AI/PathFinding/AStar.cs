@@ -25,6 +25,7 @@ using SteamEngine.Packets;
 using SteamEngine.Persistence;
 using SteamEngine.Timers;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	public static class AStar {
