@@ -21,7 +21,7 @@ using System.Collections;
 using SteamEngine.Packets;
 using SteamEngine.Common;
 
-namespace SteamEngine {
+namespace SteamEngine.Regions {
 	
 	internal class StaticSector {
 		private ushort[,] tile = null;

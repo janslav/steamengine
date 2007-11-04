@@ -21,22 +21,37 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 using System.Diagnostics;
 
 namespace SteamEngine {
 	public interface IMovementSettings {
-		bool CanCrossLand { get; }
-		bool CanSwim { get; }
-		bool CanCrossLava { get; }
-		bool CanFly { get; }
-		bool IgnoreDoors { get; }
-		int ClimbPower { get; } //max positive difference in 1 step
+		bool CanCrossLand {
+			get;
+		}
+		bool CanSwim {
+			get;
+		}
+		bool CanCrossLava {
+			get;
+		}
+		bool CanFly {
+			get;
+		}
+		bool IgnoreDoors {
+			get;
+		}
+		int ClimbPower {
+			get;
+		} //max positive difference in 1 step
 	}
+}
 
+namespace SteamEngine.Regions {
+	
 	//I think the movement implementation is important enough to move it into another 
 	//file even though it's still the Map class
 	public partial class Map {
-
 
 		private const int PersonHeight = 16;
 		//private const int StepHeight = 2;

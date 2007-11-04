@@ -22,6 +22,7 @@ using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Packets;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]

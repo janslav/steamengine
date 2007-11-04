@@ -20,6 +20,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	public abstract class Static : IPoint4D {

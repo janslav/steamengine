@@ -29,6 +29,7 @@ using SteamEngine.Timers;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.ClassTemplates;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine {  
 	

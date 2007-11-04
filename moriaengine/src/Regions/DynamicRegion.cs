@@ -22,7 +22,7 @@ using SteamEngine.Common;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace SteamEngine {
+namespace SteamEngine.Regions {
 	public class DynamicRegion : Region {
 
 		public DynamicRegion() {

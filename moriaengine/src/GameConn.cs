@@ -27,6 +27,7 @@ using System.Globalization;
 using System.Configuration;
 using SteamEngine.Packets;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 /*
 	Status of asynch & synch testing code:
 		AsyncSend:		Written. Tested. Appears to be working.

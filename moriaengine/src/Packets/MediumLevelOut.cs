@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 
 namespace SteamEngine.Packets {
 	

@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 
 namespace SteamEngine.LScript {
 	

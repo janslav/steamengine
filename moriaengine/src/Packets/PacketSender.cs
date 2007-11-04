@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using SteamEngine.Common;
 using System.Configuration;
+using SteamEngine.Regions;
 
 //See docs/packets.txt for a list of packet methods here, along with their packet ID#.
 //See docs/plans/packetsender.txt for detailed information on PacketSender and its subclasses.

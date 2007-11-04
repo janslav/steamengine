@@ -23,7 +23,7 @@ using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
-namespace SteamEngine {
+namespace SteamEngine.Regions {
 	
 	//todo: make some members virtual?
 	public class Region : PluginHolder {

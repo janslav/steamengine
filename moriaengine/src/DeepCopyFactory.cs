@@ -23,6 +23,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 

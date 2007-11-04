@@ -19,6 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Class for accepting and setting all values edited in the info or settings dialogs")]

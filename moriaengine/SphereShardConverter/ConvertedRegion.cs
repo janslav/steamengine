@@ -24,6 +24,7 @@ using System.IO;
 using System.Globalization;
 using SteamEngine.Common;
 using System.Configuration;
+using SteamEngine.Regions;
 	
 namespace SteamEngine.Converter {
 

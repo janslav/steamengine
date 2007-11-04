@@ -16,8 +16,8 @@
  */
 
 using System;
-using SteamEngine;
 using System.Collections;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 

@@ -26,6 +26,7 @@ using SteamEngine.Persistence;
 using System.Threading;
 using System.Configuration;
 using SteamEngine.CompiledScripts;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	public abstract partial class AbstractCharacter {
@@ -231,8 +232,10 @@ namespace SteamEngine {
 			int dist = Point2D.GetSimpleDistance(fromCoordinates, target);
 			return dist <= Globals.reachRange;
 		}
-	}
+	}	
+}
 
+namespace SteamEngine.Regions {
 	public partial class Map {
 		public bool CanSeeLOSFromTo(IPoint3D from, IPoint3D to) {
 			return true;
