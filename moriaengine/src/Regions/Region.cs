@@ -329,5 +329,12 @@ namespace SteamEngine.Regions {
 			: base(rect.StartPoint, rect.EndPoint) {
 			this.region = region;
 		}
+
+		public bool IntersectsWith(Rectangle2D rect) {
+			return (Contains(rect.StartPoint)//left upper
+					|| Contains(Point2D.GetPosition(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
+					|| Contains(rect.EndPoint) //right lower
+					|| Contains(Point2D.GetPosition(rect.EndPoint.X, rect.StartPoint.Y)));//right upper
+		}
 	}
 }

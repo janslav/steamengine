@@ -30,6 +30,10 @@ namespace SteamEngine.Regions {
 		private static Dictionary<string, StaticRegion> byName;
 		private static Dictionary<string, StaticRegion> byDefname;
 
+		static StaticRegion() {
+			ClearAll();
+		}
+
 		[Remark("Clearing of the lists of all regions")]
 		public new static void ClearAll() {
 			byName = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
@@ -311,7 +315,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public static StaticRegion GetByDefname(string defname) {
-			StaticRegion region;
+			StaticRegion region;			
 			byDefname.TryGetValue(defname, out region);
 			return region;
 		}
@@ -326,16 +330,16 @@ namespace SteamEngine.Regions {
 		#region Other regions mutual positions checks
 		private bool ContainsRectangle(Rectangle2D rect) {
 			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
-					&& ContainsPoint(new Point2D(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
+					&& ContainsPoint(Point2D.GetPosition(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
 					&& ContainsPoint(rect.EndPoint) //right lower
-					&& ContainsPoint(new Point2D(rect.EndPoint.X, rect.StartPoint.Y))));//right upper
+					&& ContainsPoint(Point2D.GetPosition(rect.EndPoint.X, rect.StartPoint.Y))));//right upper
 		}
 
 		private bool ContainsRectanglePartly(Rectangle2D rect) {
 			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
-					|| ContainsPoint(new Point2D(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
+					|| ContainsPoint(Point2D.GetPosition(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
 					|| ContainsPoint(rect.EndPoint) //right lower
-					|| ContainsPoint(new Point2D(rect.EndPoint.X, rect.StartPoint.Y))));//right upper
+					|| ContainsPoint(Point2D.GetPosition(rect.EndPoint.X, rect.StartPoint.Y))));//right upper
 		}
 
 		private void CheckHasAllRectanglesIn(StaticRegion other) {

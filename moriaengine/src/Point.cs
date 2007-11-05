@@ -75,6 +75,13 @@ namespace SteamEngine {
 		internal ushort x;	//Map X coordinate (Low is west, high is east)
 		internal ushort y;
 
+		[Common.Remark("One static point used for all possible checkings (such as Rectangle2D.Contains(Point2D)"+
+					   "where we dont care for the point itself but rather for its position."+
+					   "NEVER use it in any object since it can be modified anywhere and anyhow!"+
+					   "Its purpose is to avoid creating of many instances od Point2D during some processing "+
+					   "(such as moving the dynamic region, determining safe location, distance etc.)")]
+		private static Point2D common = new Point2D(0, 0);
+
 		public static int GetSimpleDistance(ushort ax, ushort ay, ushort bx, ushort by) {
 			return Math.Max(Math.Abs(ax-bx), Math.Abs(ay-by));
 		}
@@ -127,6 +134,22 @@ namespace SteamEngine {
 				}
 				return ((dx > 0) ? Direction.SouthWest : Direction.SouthEast);
 			}
+		}
+
+		[Common.Remark("Add the diff's X and Y to owns X and Y")]
+		public Point2D Add(int diffX, int diffY) {
+			return new Point2D((ushort)(x + diffX), (ushort)(y + diffY));
+		}
+
+		[Common.Remark("Set the 'commons' coordinates and return it - e.g. for providing some checkings."+
+					   "This method is NOT intended to be used for obtaining a usable instance of Point2D!!!"+
+					   "The Point2D that is returned is to be used only immediately and never stored anywhere!"+
+					   "The singletonized instance of Point2D is used to avoid creating many small objects during"+
+					   "some processing - such as dynamic region movement etc")]
+		public static Point2D GetPosition(ushort x, ushort y) {
+			common.x = x;
+			common.y = y;
+			return common;
 		}
 
 		public Point2D(ushort x, ushort y) {
@@ -221,6 +244,11 @@ namespace SteamEngine {
 		public Point3D(IPoint3D p)
 			: base(p) {
 			this.z = p.Z;
+		}
+
+		[Common.Remark("Add the diff's X, Y and Z to owns X, Y and Z")]
+		public Point3D Add(int diffX, int diffY, int diffZ) {
+			return new Point3D((ushort)(x + diffX), (ushort)(y + diffY), (sbyte)(z + diffZ));
 		}
 
 		public static bool Equals(Point3D a, Point3D b) {

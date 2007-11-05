@@ -125,7 +125,9 @@ namespace SteamEngine.CompiledScripts {
 				for (int i = 0; i<n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
-				region = new ShipRegion(this, newRectangles);
+				bool success;
+				region = new ShipRegion(this, newRectangles, out success);
+				///TODO - co delat pri neuspechu !
 			}
 		}
 
@@ -314,8 +316,8 @@ namespace SteamEngine.CompiledScripts {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public ShipRegion(Ship ship, Rectangle2D[] rectangles)
-			: base(ship, rectangles) {
+		public ShipRegion(Ship ship, Rectangle2D[] rectangles, out bool success)
+			: base(ship, rectangles, out success) {
 		}
 
 		public Ship Ship { get {

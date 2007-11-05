@@ -300,12 +300,24 @@ namespace SteamEngine.Regions {
 			}
 			#endregion Regions
 
-			#region dynamic regions
-			internal void AddDynamicRegionRect(RegionRectangle rect) {
+			#region Dynamic Regions
+			internal bool AddDynamicRegionRect(RegionRectangle rect, bool performControls) {
 				if (dynamicRegionRects == null) {
 					dynamicRegionRects = new LinkedList<RegionRectangle>();
 				}
-				dynamicRegionRects.AddFirst(rect);
+				if(performControls) {
+					//check whethre other dynamic region rectangles do not intersect with the currently inserted one
+					foreach(RegionRectangle existingRect in dynamicRegionRects) {
+						if(existingRect.IntersectsWith(rect)) {
+							return false; //problem here, stop trying !
+						}
+					}
+					dynamicRegionRects.AddFirst(rect);
+					return true;
+				} else {
+					dynamicRegionRects.AddFirst(rect);
+					return true; //always OK
+				}
 			}
 
 			internal void RemoveDynamicRegionRect(RegionRectangle rect) {
@@ -317,7 +329,8 @@ namespace SteamEngine.Regions {
 					dynamicRegionRects = null;
 				}
 			}
-			#endregion dynamic regions
+			#endregion
+
 		}
 	}
 }

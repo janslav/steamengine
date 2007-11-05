@@ -29,7 +29,7 @@ namespace SteamEngine.Regions {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public DynamicRegion(Point4D p, Rectangle2D[] newRects) 
+		public DynamicRegion(Point4D p, Rectangle2D[] newRects, out bool success) 
 				: base() {
 			this.p = p;
 
@@ -40,7 +40,11 @@ namespace SteamEngine.Regions {
 			}
 			Map map = Map.GetMap(p.M);
 			this.parent = map.GetRegionFor(p);
-			map.AddDynamicRegion(this);
+			success = map.AddDynamicRegion(this, true); //add it to the map, but try if there is no other obstacle!
+
+			if(!success) {
+				Delete();
+			}			
 		}
 
 		public override string Name {
@@ -59,44 +63,64 @@ namespace SteamEngine.Regions {
 				if (value == null) {
 					throw new ArgumentNullException("P");
 				}
-				bool xyChanged = (p.X != value.X || p.Y != value.Y);
-				bool mapChanged = p.M != value.M;
-
-				if (xyChanged) {
-					int diffX = value.X - p.X;
-					int diffY = value.Y - p.Y;
-					Map map = Map.GetMap(p.M);
-					map.RemoveDynamicRegion(this);
-					int n = rectangles.Length;
-					RegionRectangle[] newRects = new RegionRectangle[n];
-					for (int i = 0; i<n; i++) {
-						RegionRectangle oldRect = rectangles[i];
-						Point2D oldStart = oldRect.StartPoint;
-						Point2D oldEnd = oldRect.EndPoint;
-						newRects[i] = new RegionRectangle(
-							new Point2D((ushort) (oldStart.X + diffX), (ushort) (oldStart.Y + diffY)),
-							new Point2D((ushort) (oldEnd.X + diffX), (ushort) (oldEnd.Y + diffY)),
-							this);
-					}
-					this.rectangles = newRects;
-					if (mapChanged) {
-						map = Map.GetMap(value.M);
-						this.parent = map.GetRegionFor(value);
-						map.AddDynamicRegion(this);
-					} else {
-						this.parent = map.GetRegionFor(value);
-						map.AddDynamicRegion(this);
-					}
-				} else if (mapChanged) {
-					Map oldMap = Map.GetMap(p.M);
-					Map newMap = Map.GetMap(value.M);
-					oldMap.RemoveDynamicRegion(this);
-					this.parent = newMap.GetRegionFor(value);
-					newMap.AddDynamicRegion(this);
-				}
-				
-				base.P = value;
+				if(Step(value)) { //first move to the desired position after performing necessary checks
+					//(trying to move over another dynamic region causes movement to fail!)
+					base.P = value;
+				} 
 			}
+		}
+
+		[Remark("Method called on position change - it recounts the region's rectnagles' position and also makes "+
+				"sure that no confilicts with other dynamic regions occurs when moving!")]
+		private bool Step(Point4D newP) {
+			Point4D oldPos = p; //store the old position for case the movement fails!
+			RegionRectangle[] oldRects = rectangles;
+
+			bool xyChanged = (p.X != newP.X || p.Y != newP.Y);
+			bool mapChanged = p.M != newP.M;
+
+			Map oldMap = Map.GetMap(p.M); //the dynamic region's old Map
+			oldMap.RemoveDynamicRegion(this);//remove it anyways
+			bool movingOK = true;//indicator if the movement success
+			if(xyChanged) {
+				int diffX = newP.X - p.X;
+				int diffY = newP.Y - p.Y;
+				RegionRectangle[] movedRects = MoveRectangles(diffX, diffY);
+				this.rectangles = movedRects;
+				if(mapChanged) {
+					Map newMap = Map.GetMap(newP.M);
+					this.parent = newMap.GetRegionFor(newP);
+					movingOK = newMap.AddDynamicRegion(this, true);//try to place region to the new location
+				} else {
+					this.parent = oldMap.GetRegionFor(newP);
+					movingOK = oldMap.AddDynamicRegion(this, true);//try to place region to the new location
+				}
+			} else if(mapChanged) {
+				Map newMap = Map.GetMap(newP.M);
+				this.parent = newMap.GetRegionFor(newP);
+				movingOK = newMap.AddDynamicRegion(this, true);//try to place region to the new location
+			}
+			if(!movingOK) {
+				//return the parent and rectangles and place the region to the old position to the map without checkings!
+				this.parent = oldMap.GetRegionFor(oldPos);
+				this.rectangles = oldRects;
+				oldMap.AddDynamicRegion(this,false);
+			}
+			return movingOK;
+		}
+
+		[Remark("Use the diffPos (difference point) to move every rectangle of the dynamic region. "+
+				"The used diffPos is added to the rectangle's position."+
+				"New array of rectangles is returned..."+
+				"The diff coordinates may also be negative!")]
+		internal RegionRectangle[] MoveRectangles(int diffX, int diffY) {
+			RegionRectangle[] newRects = new RegionRectangle[rectangles.Length];
+			for(int i = 0; i < rectangles.Length; i++) {
+				newRects[i] = new RegionRectangle(
+								rectangles[i].StartPoint.Add(diffX, diffY), 
+								rectangles[i].EndPoint.Add(diffX, diffY), this);				        
+			}
+			return newRects;
 		}
 
 		public override void Delete() {

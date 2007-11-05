@@ -1065,12 +1065,26 @@ namespace SteamEngine.Regions {
 			//Logger.WriteDebug("x/y=("+x+","+y+") sx/sy=("+sx+","+sy+") and numsect=("+GetMapNumXSectors(0)+","+GetMapNumYSectors(0)+")");
 		}
 
-		public void AddDynamicRegion(DynamicRegion region) {
-			foreach (RegionRectangle rect in region.Rectangles) {
-				foreach (Sector sector in GetSectorsInRectangle(rect)) {
-					sector.AddDynamicRegionRect(rect);
-				}
+		public bool AddDynamicRegion(DynamicRegion region, bool performControls) {
+			if(performControls) {
+				bool addingOK = true;
+				foreach(RegionRectangle rect in region.Rectangles) {
+					foreach(Sector sector in GetSectorsInRectangle(rect)) {
+						addingOK = sector.AddDynamicRegionRect(rect, performControls);
+						if(!addingOK) { //there was an error during inserting 
+							RemoveDynamicRegion(region); //immediatelly remove - removes all so far inserted rects...
+							return false;//stop trying immediatelly
+						}
+					}
+				}								
+			} else { //no controls
+				foreach(RegionRectangle rect in region.Rectangles) {
+					foreach(Sector sector in GetSectorsInRectangle(rect)) {
+						sector.AddDynamicRegionRect(rect, false);
+					}
+				}				
 			}
+			return true; //OK
 		}
 
 		public void RemoveDynamicRegion(DynamicRegion region) {
