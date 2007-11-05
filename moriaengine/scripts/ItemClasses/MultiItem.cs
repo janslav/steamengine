@@ -241,7 +241,9 @@ namespace SteamEngine.CompiledScripts {
 				for (int i = 0; i<n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
-				region = new MultiRegion(this, newRectangles);
+				bool success;
+				region = new MultiRegion(this, newRectangles, out success);
+				///TODO - vyresit co delat pri neuspechu (nic se nevytvori!)
 			}
 		}
 	}
@@ -254,8 +256,8 @@ namespace SteamEngine.CompiledScripts {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public MultiRegion(MultiItem multiItem, Rectangle2D[] rectangles)
-			: base(multiItem.P(), rectangles) {
+		public MultiRegion(MultiItem multiItem, Rectangle2D[] rectangles, out bool success)
+			: base(multiItem.P(), rectangles, out success) {
 			this.multiItem = multiItem;
 		}
 
