@@ -476,7 +476,7 @@ namespace SteamEngine.Packets {
 		}
 		*/
 		
-		internal static void PreparePickupFailed(TryReachResult msg) {
+		internal static void PreparePickupFailed(DenyResult msg) {
 			StartGenerating();
 			EncodeByte(0x27, 0);
 			EncodeByte((byte)msg, 1);

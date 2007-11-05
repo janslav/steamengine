@@ -120,12 +120,12 @@ namespace SteamEngine {
 	
 	//Used by the Has/Exists methods in TagHolder. e.g. Has(rider), Has(owner), etc.
 	//-SL
-	public enum DoesItHaveIt {
-		No=0,				//No, it is null.
-		Yes=1,				//Yes, it has it, it isn't null.
-		Maybe=2,			//It might have it... There's more than one member with the same name, so you need to capitalize exactly.
-		No_Such_Name=3		//There are no properties matching that name!
-	}
+	//public enum DoesItHaveIt {
+	//    No=0,				//No, it is null.
+	//    Yes=1,				//Yes, it has it, it isn't null.
+	//    Maybe=2,			//It might have it... There's more than one member with the same name, so you need to capitalize exactly.
+	//    No_Such_Name=3		//There are no properties matching that name!
+	//}
 	
 	[Flags]
 	public enum MovementType {
@@ -164,17 +164,28 @@ namespace SteamEngine {
 		Generated,		//- A packet has been generated, and is waiting to be compressed.
 		Ready,			//- We are ready to generate a new packet (Or do other things).
 	}
-	
-	public enum TryReachResult : byte {
-		Failed_YouCannotPickThatUp=0,
-		Failed_ThatIsTooFarAway=1,
-		Failed_ThatIsOutOfSight=2,
-		Failed_ThatDoesNotBelongToYou=3,	//you will have to steal it
-		Failed_YouAreAlreadyHoldingAnItem=4,	//unused?
-		Failed_RemoveFromView=5,	//remove from view
-		Failed_NoMessage=6,
-		Succeeded=7,
-		FailedCount=7	//The number of Failed_ elements in this enum.
+
+	public enum DenyResult {
+		Deny_YouCannotPickThatUp=0,
+		Deny_ThatIsTooFarAway=1,
+		Deny_ThatIsOutOfSight=2,
+		Deny_ThatDoesNotBelongToYou=3,	//you will have to steal it
+		Deny_YouAreAlreadyHoldingAnItem=4,
+		Deny_RemoveFromView=5,	//remove from view
+		Deny_NoMessage=6,
+		Allow=7,
+		DenyCount=7	//The number of Deny_ elements in this enum.
+	}
+
+	//for testing purposes
+	internal static class DenyResultGenerator {
+		static int i;
+
+		internal static DenyResult GetResultAndPrintIt() {
+			DenyResult retVal = (DenyResult) ((i++)%8);
+			Console.WriteLine("Generated DenyResult:"+retVal);
+			return retVal;
+		}
 	}
 	
 	public enum Season : byte {
