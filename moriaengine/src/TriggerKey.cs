@@ -80,6 +80,9 @@ namespace SteamEngine {
 
 		public static readonly TriggerKey stackOnItem=Get("stackOnItem");
 		public static readonly TriggerKey itemStackOn=Get("stackon_Item");
+
+		public static readonly TriggerKey denyPickup=Get("denyPickup");
+		public static readonly TriggerKey denyPickupItem=Get("denyPickupItem");
 		
 		public static readonly TriggerKey stackon_Item=Get("stackon_Item");//item trigger
 		public static readonly TriggerKey stackon_Char=Get("stackon_Char");//item trigger
@@ -116,6 +119,7 @@ namespace SteamEngine {
 		public static readonly TriggerKey memoryUnEquip=Get("memoryUnEquip");
 		
 		public static readonly TriggerKey create=Get("create");
+		public static readonly TriggerKey dupe=Get("dupe");
 		
 		public static readonly TriggerKey charDClick=Get("charDClick");
 		public static readonly TriggerKey itemDClick=Get("itemDClick");

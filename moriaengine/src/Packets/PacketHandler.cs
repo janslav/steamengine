@@ -192,7 +192,7 @@ namespace SteamEngine.Packets {
 					HandleUse(c);
 					return;
 				} case 0x13:	{	//client wants to wear a held item or place it on a target (in other words, drop item on char)
-					HandleWearItem(c);
+					HandleEquipItem(c);
 					return;
 				} case 0x1a:	{	//statlock change
 					HandleStatLockChange(c);

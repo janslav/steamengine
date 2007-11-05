@@ -428,34 +428,29 @@ namespace SteamEngine.Packets {
 			}
 			
 		}
-				
-		internal void HandleWearItem(GameConn c) {
+
+		internal void HandleEquipItem(GameConn c) {
+			packetLenUsed=10;
 			int itemuid = DecodeInt(1);
 			AbstractItem i = Thing.UidGetItem(Thing.UidClearFlags(itemuid));
 			AbstractCharacter cre = c.CurCharacter;
-			if (i==null) {
-				PacketSender.PrepareRemoveFromView(itemuid);
-				PacketSender.SendTo(c, true);
-			} else if (cre.HasPickedUp(i)) {
+			if (i != null && cre.HasPickedUp(i)) {
 				int contuid = DecodeInt(6);
-				AbstractCharacter co = Thing.UidGetCharacter(Thing.UidClearFlags(contuid));
-				if (co != null) {
-					TryReachResult canReach = cre.CanReach(co);
-					if (canReach == TryReachResult.Succeeded) {
-						cre.EquipItemOnChar(co);
-					} else {
-						//you can't reach that
-						Server.SendTryReachResultFailMessage(c, co, canReach);
-						cre.DropItemOnContainer(cre.Backpack, 0xffff, 0xffff);
-					}
-				} else {
-					PacketSender.PrepareRemoveFromView(itemuid);
-					PacketSender.SendTo(c, true);
+				AbstractCharacter contChar = Thing.UidGetCharacter(contuid);
+				if (contChar == null) {
+					contChar = cre;
+				}
+				DenyResult result = cre.TryEquipItemOnChar(contChar);
+
+				if (result != DenyResult.Allow && cre.HasPickedUp(i)) {
+					Server.SendTryReachResultFailMessage(c, contChar, result);
+
+					cre.TryGetRidOfDraggedItem();
 				}
 			} else {
-				Logger.WriteError("Client attempted to wear item which was not actually in hand.");
+				PacketSender.PrepareRemoveFromView(itemuid);
+				PacketSender.SendTo(c, true);
 			}
-			packetLenUsed=10;
 		}
 		
 		internal void HandleDropItem(GameConn c) {
@@ -473,30 +468,30 @@ namespace SteamEngine.Packets {
 				int contuid = DecodeInt(10);
 				if (contuid == -1) {//dropping on ground
 					if (cre.CanReachCoordinates(new Point4D(x, y, z, cre.M))) {
-						cre.DropItemOnGround(x, y, z);
+						cre.TryPutItemOnGround(x, y, z);
 					} else {
 						//you can't reach that
 						Server.SendSystemMessage(c, "That's out of reach.", 0);
-						cre.DropItemOnGround(cre.X, cre.Y, cre.Z);
+						cre.TryPutItemOnGround(cre.X, cre.Y, cre.Z);
 					}
 				} else {
 					Thing co = Thing.UidGetThing(Thing.UidClearFlags(contuid));
 					if (co != null) {
-						TryReachResult canReach = cre.CanReach(co);
-						if (canReach == TryReachResult.Succeeded) {
+						DenyResult canReach = cre.CanReach(co);
+						if (canReach == DenyResult.Allow) {
 							if (co.IsContainer) {
-								cre.DropItemOnContainer((AbstractItem) co, x, y);
+								cre.TryPutItemInItem((AbstractItem) co, x, y);
 							} else if (co.IsItem) {
-								cre.DropItemOnItem((AbstractItem) co);//we ignore the x y
+								cre.TryPutItemOnItem((AbstractItem) co);//we ignore the x y
 							} else if (co.IsChar) {
-								cre.DropItemOnChar((AbstractCharacter) co);
+								cre.TryPutItemOnChar((AbstractCharacter) co);
 							} else {
 								throw new SEBugException("This can't happen.");
 							}
 						} else {
 							//you can't reach that
 							Server.SendTryReachResultFailMessage(c, co, canReach); //You cannot reach that.
-							cre.DropItemOnContainer(cre.Backpack, 0xffff, 0xffff);
+							cre.TryPutItemInItem(cre.Backpack, 0xffff, 0xffff);
 						}
 					} else {
 						PacketSender.PrepareRemoveFromView(contuid);
@@ -513,21 +508,20 @@ namespace SteamEngine.Packets {
 		internal void HandlePickupItem(GameConn c) {
 			int uid = DecodeInt(1);
 			ushort amt = DecodeUShort(5);
+			packetLenUsed=7;
 			//always an item, may or may not have the item-flag.
 			uid = Thing.UidClearFlags(uid);
 			AbstractItem item = Thing.UidGetItem(uid);
 			if (item != null) {
 				AbstractCharacter cre = c.CurCharacter;
-				TryReachResult result = cre.PickUp(item, amt);
-				if (result != TryReachResult.Succeeded) {
+				DenyResult result = cre.TryPickupItem(item, amt);
+				if (result != DenyResult.Allow) {
 					Prepared.SendPickupFailed(c, result);
-					if (result == TryReachResult.Failed_RemoveFromView) {
-						PacketSender.PrepareRemoveFromView(uid);
-						PacketSender.SendTo(c, true);
-					}
 				}
+			} else {
+				PacketSender.PrepareRemoveFromView(uid);
+				PacketSender.SendTo(c, true);
 			}
-			packetLenUsed=7;
 		}
 		
 		internal void HandleSingleClick(GameConn c) {
@@ -560,8 +554,8 @@ namespace SteamEngine.Packets {
 				PacketSender.SendTo(c, true);
 			} else if (t.IsItem) {
 				AbstractCharacter curChar = c.CurCharacter;
-				TryReachResult canReach = curChar.CanReach(t);
-				if (canReach == TryReachResult.Succeeded) {
+				DenyResult canReach = curChar.CanReach(t);
+				if (canReach == DenyResult.Allow) {
 					t.Trigger_DClick(curChar);
 				} else {
 					Server.SendTryReachResultFailMessage(c, t, canReach);

@@ -661,28 +661,28 @@ namespace SteamEngine {
 			SendMessage(c, null, 0xffff, "System", msg, SpeechType.Server, 0, color);
 		}
 
-		public static void SendTryReachResultFailMessage(GameConn c, Thing t, TryReachResult trr) {
+		public static void SendTryReachResultFailMessage(GameConn c, Thing t, DenyResult trr) {
 			switch (trr) {
-				case TryReachResult.Failed_RemoveFromView:
+				case DenyResult.Deny_RemoveFromView:
 					if (t != null) {
 						PacketSender.PrepareRemoveFromView(t);
 						PacketSender.SendTo(c, true);
 					}
 					break;
-				case TryReachResult.Failed_ThatDoesNotBelongToYou:
-					SendClilocSysMessage(c, 500364, 0);	//You can't use that, it belongs to someone else.
+				case DenyResult.Deny_ThatDoesNotBelongToYou:
+					SendClilocSysMessage(c, 500364, 0);		//You can't use that, it belongs to someone else.
 					break;
-				case TryReachResult.Failed_ThatIsOutOfSight:
-					SendClilocSysMessage(c, 1052011, 0);	//You must have line of sight to do that.
+				case DenyResult.Deny_ThatIsOutOfSight:
+					SendClilocSysMessage(c, 3000269, 0);	//That is out of sight.
 					break;
-				case TryReachResult.Failed_ThatIsTooFarAway:
-					SendClilocSysMessage(c, 500446, 0);	//That is too far away.
+				case DenyResult.Deny_ThatIsTooFarAway:
+					SendClilocSysMessage(c, 3000268, 0);	//That is too far away.
 					break;
-				case TryReachResult.Failed_YouAreAlreadyHoldingAnItem:
-					SendSystemMessage(c, "You are already holding an item.", 0);
+				case DenyResult.Deny_YouAreAlreadyHoldingAnItem:
+					SendClilocSysMessage(c, 3000271, 0);	//You are already holding an item.
 					break;
-				case TryReachResult.Failed_YouCannotPickThatUp:
-					SendClilocSysMessage(c, 500169, 0);	//You cannot pick that up.
+				case DenyResult.Deny_YouCannotPickThatUp:
+					SendClilocSysMessage(c, 3000267, 0);	//You cannot pick that up.
 					break;
 
 				//case TryReachResult.Failed_NoMessage:

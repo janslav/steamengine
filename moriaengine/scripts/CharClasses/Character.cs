@@ -1043,16 +1043,14 @@ namespace SteamEngine.CompiledScripts {
 		//    return i;
 		//}
 
-		public override void On_Dupe(DupeArgs args) {
-			if (this == args.copy) {
-				Character copyFrom = (Character) args.model;
+		public override void On_Dupe(Thing model) {
+			Character copyFrom = (Character) model;
 
-				if (copyFrom.skills != null) {
-					skills = new Skill[copyFrom.skills.Length];
-					int n = skills.Length;
-					for (ushort i = 0; i<n; i++) {
-						skills[i] = new Skill(copyFrom.skills[i], this);
-					}
+			if (copyFrom.skills != null) {
+				skills = new Skill[copyFrom.skills.Length];
+				int n = skills.Length;
+				for (ushort i = 0; i<n; i++) {
+					skills[i] = new Skill(copyFrom.skills[i], this);
 				}
 			}
 		}
@@ -1375,7 +1373,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
 			Character target = (Character) chr;
-			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner==this && CanReach(chr) == TryReachResult.Succeeded));
+			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner==this && CanReach(chr) == DenyResult.Allow));
 		}
 
 		//public override bool CanEquip(AbstractItem i) {
@@ -1395,7 +1393,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public virtual bool IsMountableBy(AbstractCharacter chr) {
-			if (IsMountable && chr.CanReach(this) == TryReachResult.Succeeded) {
+			if (IsMountable && chr.CanReach(this) == DenyResult.Allow) {
 				if (IsPetOf((Character) chr)) return true;
 				if (!IsPet && chr.IsPlevelAtLeast(Globals.plevelOfGM)) return true;
 			}
@@ -1868,8 +1866,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanReachWithMessage(Thing target) {
-			TryReachResult trr = CanReach(target);
-			if (trr == TryReachResult.Succeeded) {
+			DenyResult trr = CanReach(target);
+			if (trr == DenyResult.Allow) {
 				return true;
 			} else {
 				GameConn conn = this.Conn;

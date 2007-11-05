@@ -125,7 +125,7 @@ namespace SteamEngine {
 				}
 				return false;
 			} else {
-				return TryReachResult.Succeeded ==
+				return DenyResult.Allow ==
 					this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
 			}
 		}
@@ -160,42 +160,42 @@ namespace SteamEngine {
 			return dist <= this.UpdateRange;
 		}
 
-		public virtual TryReachResult CanPickUp(AbstractItem item) {
-			return TryReachResult.Succeeded;
+		public virtual DenyResult CanPickUp(AbstractItem item) {
+			return DenyResult.Allow;
 		}
 
 		[Remark("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
-		public TryReachResult CanReach(Thing target) {
+		public DenyResult CanReach(Thing target) {
 			return CanReachFromAt(this, target.TopPoint, target, true);
 		}
 
-		internal TryReachResult CanReachFromAt(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target, bool checkTopObj) {
+		internal DenyResult CanReachFromAt(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target, bool checkTopObj) {
 			bool retVal = false;
 			Thing topobj = null;
 
 			if (checkTopObj) {
 				retVal = CanReachCoordinatesFrom(fromCoordinates, targetMapCoordinates);
 				if (!retVal) {
-					return TryReachResult.Failed_ThatIsTooFarAway;
+					return DenyResult.Deny_ThatIsTooFarAway;
 				}
 
 				Map map = fromCoordinates.GetMap();
 				retVal = map.CanSeeLOSFromTo(fromCoordinates, targetMapCoordinates);
 				if (!retVal) {
-					return TryReachResult.Failed_ThatIsOutOfSight;
+					return DenyResult.Deny_ThatIsOutOfSight;
 				}
 
 				topobj = target.TopObj();
 				retVal = this.CanSeeVisibility(topobj);
 				if (!retVal) {
-					return TryReachResult.Failed_RemoveFromView;
+					return DenyResult.Deny_RemoveFromView;
 				}
 			}
 
 			if (target != topobj) {
 				retVal = this.CanSeeVisibility(target);
 				if (!retVal) {
-					return TryReachResult.Failed_RemoveFromView;
+					return DenyResult.Deny_RemoveFromView;
 				}
 			} //else we already checked it
 
@@ -205,14 +205,14 @@ namespace SteamEngine {
 				if (conn != null) {
 					retVal = OpenedContainers.HasContainerOpenFromAt(conn, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
 				} else {
-					return TryReachResult.Failed_NoMessage; //only logged-in players can reach stuff in containers
+					return DenyResult.Deny_NoMessage; //only logged-in players can reach stuff in containers
 				}
 			}
 
 			if (retVal) {
-				return TryReachResult.Succeeded;
+				return DenyResult.Allow;
 			} else {
-				return TryReachResult.Failed_YouCannotPickThatUp;
+				return DenyResult.Deny_YouCannotPickThatUp;
 			}
 		}
 

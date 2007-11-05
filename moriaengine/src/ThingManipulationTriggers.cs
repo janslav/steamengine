@@ -24,14 +24,14 @@ using System.Text.RegularExpressions;
 using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
-using SteamEngine.Regions;
 using System.Threading;
 using System.Configuration;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 
 	public partial class Thing {
-		public virtual void On_Dupe(DupeArgs args) {
+		public virtual void On_Dupe(Thing model) {
 
 		}
 
@@ -40,7 +40,6 @@ namespace SteamEngine {
 				throw new NotSupportedException("You can not dupe a PC!");
 			}
 			Thing copy = (Thing) DeepCopyFactory.GetCopy(this);
-			DupeArgs args = new DupeArgs(this, copy);
 
 			AbstractItem copyAsItem = copy as AbstractItem;
 			if (copyAsItem != null) {
@@ -60,18 +59,7 @@ namespace SteamEngine {
 				}
 			}
 
-			//copy.def.Trigger_Create(copy); nevolame pri dupovani...?
-			try {
-				this.On_Dupe(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			try {
-				copy.On_Dupe(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-
-
-			foreach (AbstractItem i in this) {
-				i.Dupe(copy);
-			}
+			Trigger_Dupe(this);
 
 			return copy;
 		}
@@ -79,7 +67,6 @@ namespace SteamEngine {
 		//duplicating some code here, but hey... who will know ;)
 		private AbstractItem Dupe(Thing cont) {
 			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
-			DupeArgs args = new DupeArgs(this, copy);
 
 			AbstractItem contItem = cont as AbstractItem;
 			if (contItem == null) {
@@ -90,15 +77,16 @@ namespace SteamEngine {
 				copy.Trigger_EnterItem(contItem, this.point4d.x, this.point4d.y);
 			}
 
-			//copy.def.Trigger_Create(copy); nevolame pri dupovani...?
-			//this.On_Dupe(args);
-			copy.On_Dupe(args);
-
-			foreach (AbstractItem i in this) {
-				i.Dupe(copy);
-			}
+			Trigger_Dupe(this);
 
 			return copy;
+		}
+
+		private void Trigger_Dupe(Thing model) {
+			this.TryTrigger(TriggerKey.dupe, new ScriptArgs(model));
+			try {
+				this.On_Dupe(model);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		internal override bool IsLimbo {
@@ -142,7 +130,7 @@ namespace SteamEngine {
 				if (value == null) {
 					throw new ArgumentNullException("value");
 				}
-				
+
 				AbstractItem contItem = value as AbstractItem;
 				if (contItem == null) {
 					if (this.IsEquippable) {
@@ -226,20 +214,39 @@ namespace SteamEngine {
 			byte layer = (byte) this.point4d.z;
 			ItemInCharArgs args = new ItemInCharArgs(this, cont, layer);
 
-			this.TryTrigger(TriggerKey.leaveChar, args);
-			ReturnIntoCharIfNeeded(cont, layer);
-			try {
-				this.On_LeaveChar(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoCharIfNeeded(cont, layer);
-			cont.TryTrigger(TriggerKey.itemLeave, args);
-			ReturnIntoCharIfNeeded(cont, layer);
-			try {
-				cont.On_ItemLeave(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoCharIfNeeded(cont, layer);
+			if (this.IsEquippable && this.Layer == layer) {
+				this.TryTrigger(TriggerKey.leaveChar, args);
+				ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					this.On_LeaveChar(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+				cont.TryTrigger(TriggerKey.itemLeave, args);
+				ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					cont.On_ItemLeave(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+			} else {
+				this.TryTrigger(TriggerKey.unEquip, args);
+				ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					this.On_UnEquip(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+				cont.TryTrigger(TriggerKey.itemUnEquip, args);
+				ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					cont.On_ItemUnEquip(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+
+			}
 
 			cont.ItemMakeLimbo(this);
+		}
+
+		public virtual void On_UnEquip(ItemInCharArgs args) {
 		}
 
 		private void ReturnIntoCharIfNeeded(AbstractCharacter originalCont, byte layer) {
@@ -350,7 +357,7 @@ namespace SteamEngine {
 					(waitingStack.Color == toStack.Color) &&
 					(waitingStack.Model == toStack.Model)) {
 
-				
+
 				//Amount overflow checking:
 				uint tmpAmount = waitingStack.Amount;
 				try {
@@ -451,18 +458,38 @@ namespace SteamEngine {
 
 			ItemInCharArgs args = new ItemInCharArgs(this, cont, layer);
 
-			this.TryTrigger(TriggerKey.enterChar, args);
-			this.ReturnIntoCharIfNeeded(cont, layer);
-			try {
-				this.On_EnterChar(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			this.ReturnIntoCharIfNeeded(cont, layer);
-			cont.TryTrigger(TriggerKey.itemLeave, args);
-			this.ReturnIntoCharIfNeeded(cont, layer);
-			try {
-				cont.On_ItemEnter(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoCharIfNeeded(cont, layer);
+			//do we really want this?
+			if (this.IsEquippable && this.Layer == layer) {
+				this.TryTrigger(TriggerKey.equip, args);
+				this.ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					this.On_Equip(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				this.ReturnIntoCharIfNeeded(cont, layer);
+				cont.TryTrigger(TriggerKey.itemEquip, args);
+				this.ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					cont.On_ItemEquip(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+			} else {
+				this.TryTrigger(TriggerKey.enterChar, args);
+				this.ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					this.On_EnterChar(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				this.ReturnIntoCharIfNeeded(cont, layer);
+				cont.TryTrigger(TriggerKey.itemEnter, args);
+				this.ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					cont.On_ItemEnter(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+			}
+
+		}
+
+		public virtual void On_Equip(ItemInCharArgs args) {
 		}
 
 		//we expect this to be in limbo
@@ -593,39 +620,6 @@ namespace SteamEngine {
 			}//else throw? Probably not so important...
 		}
 
-		public virtual bool On_DropOn_Ground(AbstractCharacter droppingChar, IPoint4D point) {
-			//src is dropping on ground at x y z point4d
-			return false;
-		}
-
-		public virtual bool On_Pickup_Ground(AbstractCharacter pickingChar, ref object amount) {
-			//pickingChar is picking me up from ground
-			return false;
-		}
-
-		public virtual bool On_Pickup_Pack(AbstractCharacter pickingChar, ref object amount) {
-			//pickingChar is picking me up from ground
-			return false;
-		}
-
-		public virtual bool On_StackOn_Item(AbstractCharacter droppingChar, AbstractItem target, ref object objX, ref object objY) {
-			//droppingChar is dropping this on (not into!) item target
-			return false;
-		}
-
-		public virtual bool On_StackOn_Char(AbstractCharacter droppingChar, AbstractCharacter target) {
-			return false;
-		}
-
-		public virtual bool On_Equip(AbstractCharacter droppingChar, AbstractCharacter target, bool forced) {
-			return false;
-		}
-
-		public virtual bool On_UnEquip(AbstractCharacter pickingChar, bool forced) {
-			return false;
-		}
-
-
 		public void LoadCont_Delayed(object resolvedObj, string filename, int line) {
 			if (Uid == -1) {
 				//I was probably cleared because of failed load. Let me get deleted by garbage collector.
@@ -648,6 +642,10 @@ namespace SteamEngine {
 				return;
 			}
 			Logger.WriteWarning("The object ("+resolvedObj+") is being loaded as cont for item '"+this.ToString()+"', but it already does have it's cont. This should not happen.");
+		}
+
+		public virtual bool On_DenyPickup(DenyPickupArgs args) {
+			return false;
 		}
 	}
 
@@ -804,11 +802,33 @@ namespace SteamEngine {
 			i.Cont = this;
 		}
 
-		public void DropHeldItem() {
+		[Summary("Tries to have the char drop the item it is dragging. First it tries to put it in backpack, then on ground.")]
+		[Return("True if it is dragging no item after the method passes.")]
+		public bool TryGetRidOfDraggedItem() {
 			AbstractItem i = draggingLayer;
 			if (i != null) {
-				i.P(this);
+				GameConn conn = this.Conn;
+
+				DenyResult result = this.TryPutItemOnItem(this.Backpack);
+				if (result != DenyResult.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
+					if (conn != null) {
+						Server.SendTryReachResultFailMessage(conn, i, result);
+					}
+
+					MutablePoint4D point = this.point4d;
+					result = this.TryPutItemOnGround(point.x, point.y, point.z);
+
+					if (result != DenyResult.Allow && this.draggingLayer == i) {//can't even put item on ground?
+						if (conn != null) {
+							Server.SendTryReachResultFailMessage(conn, i, result);
+						}
+						//The player is not allowed to put the item anywhere. 
+						//Too bad we can't tell the client
+					}
+				}
 			}
+
+			return this.draggingLayer == null;
 		}
 
 		private void SendMovingItemAnimation(Thing from, Thing to, AbstractItem i) {
@@ -816,23 +836,57 @@ namespace SteamEngine {
 			PacketSender.SendToClientsWhoCanSee(this);
 		}
 
+		#region client 
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
+		//will run the @deny triggers
 		//CanReach checks are not considered done.
-		public TryReachResult PickUp(AbstractItem item, ushort amt) {
+		public DenyResult TryPickupItem(AbstractItem item, ushort amt) {
 			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
 
-			TryReachResult retVal = CanReach(item);
-			if (retVal == TryReachResult.Succeeded) {
+			if (!this.TryGetRidOfDraggedItem()) {
+				return DenyResult.Deny_YouAreAlreadyHoldingAnItem;
+			}
+
+			//@deny triggers
+			DenyPickupArgs args = new DenyPickupArgs(this, item, amt);
+
+			bool cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
+			if (!cancel) {
+				try {
+					cancel = this.On_DenyPickupItem(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = item.TryCancellableTrigger(TriggerKey.denyPickup, args);
+					if (!cancel) {
+						try {
+							cancel = item.On_DenyPickup(args);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+
+			DenyResult retVal = args.Result;
+
+			//default implementation
+			if ((!cancel) && (retVal == DenyResult.Allow)) {
+				retVal = this.CanReach(item);
+			}
+
+			//equip into dragging layer
+			if (retVal == DenyResult.Allow) {
 				item.MakeLimbo();
 				item.Trigger_EnterChar(this, (byte) LayerNames.Dragging);
 			}
 			return retVal;
 		}
 
+		public virtual bool On_DenyPickupItem(DenyPickupArgs args) {
+			return false;
+		} 
+
 		//typically called from InPackets. (I am the src)
-		//could be made public if needed
-		public void DropItemOnContainer(AbstractItem targetCont, ushort x, ushort y) {
+		public void TryPutItemInItem(AbstractItem targetCont, ushort x, ushort y) {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
@@ -864,7 +918,7 @@ namespace SteamEngine {
 
 		//typically called from InPackets. (I am the src)
 		//could be made public if needed
-		public void DropItemOnItem(AbstractItem target) {
+		public DenyResult TryPutItemOnItem(AbstractItem target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
@@ -892,11 +946,13 @@ namespace SteamEngine {
 				i.Trigger_EnterRegion(targP.x, targP.y, newZ, targP.m);
 				AbstractItem.Trigger_StackOnGround(i, target);
 			}
+
+			return DenyResult.Allow;
 		}
 
 		//typically called from InPackets. (I am the src)
 		//could be made public if needed
-		public void DropItemOnGround(ushort x, ushort y, sbyte z) {
+		public DenyResult TryPutItemOnGround(ushort x, ushort y, sbyte z) {
 			ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
 			if (i == null) {
@@ -906,11 +962,13 @@ namespace SteamEngine {
 
 			i.MakeLimbo();
 			i.Trigger_EnterRegion(x, y, z, this.point4d.m);
+
+			return DenyResult.Allow;
 		}
 
 		//typically called from InPackets. drops the held item on target (I am the src)
 		//could be made public if needed
-		public void DropItemOnChar(AbstractCharacter target) {
+		public void TryPutItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
@@ -922,7 +980,7 @@ namespace SteamEngine {
 			i.Cont = target.Backpack;
 		}
 
-		public void EquipItemOnChar(AbstractCharacter target) {
+		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem i = draggingLayer;
@@ -937,24 +995,24 @@ namespace SteamEngine {
 				if ((layer < sentLayers) && (layer > 0)) {
 					i.MakeLimbo();
 					i.Trigger_EnterChar(target, layer);
-					return;
+					return DenyResult.Allow;
 				}
 			}
-			i.Cont = target.Backpack;
+			return DenyResult.Deny_NoMessage;
+
 		}
+
+		#endregion client trigger_deny methods
+
 
 		public virtual void On_ItemEnter(ItemInCharArgs args) {
 		}
-	}
 
-	public class DupeArgs : ScriptArgs {
-		public readonly Thing copy;
-		public readonly Thing model;
+		public virtual void On_ItemEquip(ItemInCharArgs args) {
+		}
 
-		public DupeArgs(Thing model, Thing copy)
-				: base(model, copy) {
-			this.model = model;
-			this.copy = copy;
+		public virtual void On_ItemUnEquip(ItemInCharArgs args) {
+
 		}
 	}
 
@@ -1003,6 +1061,42 @@ namespace SteamEngine {
 			this.manipulatedItem = manipulatedItem;
 			this.cont = cont;
 			this.layer = layer;
+		}
+	}
+
+	public class DenyTriggerArgs : ScriptArgs {
+		public DenyTriggerArgs(params object[] argv)
+				: base(argv) {
+			Sanity.IfTrueThrow(!(argv[0] is DenyResult), "argv[0] is not DenyResult");
+		}
+
+		public DenyResult Result {
+			get {
+				return (DenyResult) Convert.ToInt32(argv[0]);
+			}
+			set {
+				argv[0] = value;
+			}
+		}
+	}
+
+	public class DenyPickupArgs : DenyTriggerArgs {
+		public readonly AbstractCharacter pickingChar;
+		public readonly AbstractItem manipulatedItem;
+
+		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, ushort amount)
+				: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
+			this.pickingChar = pickingChar;
+			this.manipulatedItem = manipulatedItem;
+		}
+
+		public ushort Amount {
+			get {
+				return Convert.ToUInt16(argv[3]);
+			}
+			set {
+				argv[3] = value;
+			}
 		}
 	}
 }

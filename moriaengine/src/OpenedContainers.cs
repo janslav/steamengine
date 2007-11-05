@@ -38,7 +38,7 @@ namespace SteamEngine {
 		public static bool HasContainerOpen(GameConn conn, AbstractItem container) {
 			if (conn.openedContainers.Contains(container)) {
 				AbstractCharacter curCharacter = conn.CurCharacter;
-				if ((curCharacter != null) && (curCharacter.CanReach(container) == TryReachResult.Succeeded)) {
+				if ((curCharacter != null) && (curCharacter.CanReach(container) == DenyResult.Allow)) {
 			        return true;
 			    } else {
 					SetContainerClosed(conn, container);
@@ -50,7 +50,7 @@ namespace SteamEngine {
 		internal static bool HasContainerOpenFromAt(GameConn conn, IPoint4D fromPoint, IPoint4D targetPoint, AbstractItem container, bool checkTopobj) {
 			if (conn.openedContainers.Contains(container)) {
 				AbstractCharacter curCharacter = conn.CurCharacter;
-				if ((curCharacter != null) && (curCharacter.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj) == TryReachResult.Succeeded)) {
+				if ((curCharacter != null) && (curCharacter.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj) == DenyResult.Allow)) {
 					return true;
 				} else {
 					SetContainerClosed(conn, container);
@@ -99,7 +99,7 @@ namespace SteamEngine {
 				List<AbstractItem> toRemove = null;
 
 				foreach (AbstractItem con in openedContainers) {
-					if (con.IsDeleted || curCharacter.CanReach(con) != TryReachResult.Succeeded) {
+					if (con.IsDeleted || curCharacter.CanReach(con) != DenyResult.Allow) {
 						if (toRemove == null) {
 							toRemove = new List<AbstractItem>();
 						}
@@ -125,7 +125,7 @@ namespace SteamEngine {
 					GameConn conn = node.Value;
 					AbstractCharacter curCharacter = conn.CurCharacter;
 					if (curCharacter != null) {
-						if (curCharacter.CanReach(container) != TryReachResult.Succeeded) {
+						if (curCharacter.CanReach(container) != DenyResult.Allow) {
 							if (toRemove == null) {
 								toRemove = new List<LinkedListNode<GameConn>>();
 							}
