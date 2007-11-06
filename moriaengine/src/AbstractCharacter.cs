@@ -110,12 +110,12 @@ namespace SteamEngine {
 
 		public AbstractCharacter(AbstractCharacter copyFrom) : base(copyFrom) { //copying constuctor
 			instances++;
-			account=copyFrom.account;
-			name=copyFrom.name;
-			targ=copyFrom.targ;
-			flags=copyFrom.flags;
-			direction=copyFrom.direction;
-			act=copyFrom.act;
+			this.account=copyFrom.account;
+			this.name=copyFrom.name;
+			this.targ=copyFrom.targ;
+			this.flags=copyFrom.flags;
+			this.direction=copyFrom.direction;
+			this.act=copyFrom.act;
 			Globals.lastNewChar=this;
 			Map.GetMap(this.point4d.m).Add(this);
 		}
@@ -231,11 +231,11 @@ namespace SteamEngine {
 		}
 		
 		public bool IsPlevelAtLeast(int plevel) {
-			return (account!=null && account.PLevel>=plevel);
+			return (account != null && account.PLevel >= plevel);
 		}
 		
 		public bool IsMaxPlevelAtLeast(int plevel) {
-			return (account!=null && account.MaxPLevel>=plevel);
+			return (account != null && account.MaxPLevel >= plevel);
 		}
 
 		public bool IsLingering {
@@ -246,7 +246,7 @@ namespace SteamEngine {
 
 		public override bool Flag_Disconnected {
 			get {
-				return ((flags&0x0001)==0x0001);
+				return ((flags&0x0001) == 0x0001);
 			}
 			set {
 				throw new InvalidOperationException("Can't set Flag_Disconnected directly on a character");
@@ -372,47 +372,35 @@ namespace SteamEngine {
 		}
 			
 		public override void Save(SaveStream output) {
-			if (account != null) {
-				output.WriteValue("account",account);
+			if (this.account != null) {
+				output.WriteValue("account", this.account);
 			}
-			if (!Def.Name.Equals(name)) {
-				output.WriteValue("name",name);
+			if (!this.Def.Name.Equals(this.name)) {
+				output.WriteValue("name", this.name);
 			}
-			int flagsToSave = flags;
+			int flagsToSave = this.flags;
 			if (this.IsPlayer) {
 				flagsToSave = flagsToSave|0x0001;//add the Disconnected flag, makes no sense to save a person "connected"
 			}
 			if (flagsToSave != 0) {
 				output.WriteValue("flags", flagsToSave);
 			}
-			output.WriteValue("direction", (byte)direction);
+			output.WriteValue("direction", (byte) this.direction);
 			base.Save(output);
 		}
 		
 		//For loading.
 		public void LoadAccount_Delayed(object resolvedObject, string filename, int line) {
-			account = (AbstractAccount) resolvedObject;
-			account.AttachCharacter(this);
-			FixDisconnectedFlagOnPlayers();
-			
-			//check that this account knows us, it should know us by this time...
-			//for (int i = 0; i < GameAccount.maxCharactersPerGameAccount; i++) {
-			//	AbstractCharacter ch = acc.GetCharacterInSlot(i);
-			//	if (ch == this) {
-			//		//ok
-			//		return;
-			//	}
-			//}
-			
-			
-			//if (!acc.AttachCharacter(this)) {
-			//	Logger.WriteError("The character "+this+" declares "+acc+" as it's account, but the Account doesn't know it... and the Account is already full. Deleting.");
-			//	Remove();
-			//} else {
-			//	Logger.WriteError("The character "+this+" declares "+acc+" as it's account, but the Account doesn't know it... re-adding.");
-			//}
-			
-			return;
+			AbstractAccount acc = (AbstractAccount) resolvedObject;
+
+			if (acc.AttachCharacter(this)) {
+				this.account = acc;
+
+				FixDisconnectedFlagOnPlayers();
+			} else {
+				Logger.WriteError("The character "+this+" declares "+acc+" as it's account, but the Account is already full. Deleting.");
+				this.Delete();
+			}
 		}
 		
 		//For loading
@@ -971,9 +959,20 @@ namespace SteamEngine {
 		}
 
 		internal override void Trigger_Destroy() {
+			AbstractAccount acc = this.Account;
+			if (acc != null) {
+				GameConn conn = acc.Conn;
+				if (conn != null) {
+					conn.Close("Character being deleted");
+				}
+
+				acc.DetachCharacter(this);
+			}
+
 			foreach (AbstractItem i in this) {
 				i.InternalDeleteNoRFV();//no updates, because it will disappear entirely
 			}
+
 			base.Trigger_Destroy();
 			instances--;
 			GetMap().Remove(this);
@@ -1238,10 +1237,6 @@ namespace SteamEngine {
 			//NetState.ProcessThing(this);
 			PacketSender.PrepareAnimation(this, anim, numAnims, backwards, undo, frameDelay);
 			PacketSender.SendToClientsWhoCanSee(this);
-		}
-		
-		public override sealed AbstractItem Newitem(IThingFactory arg, uint amount) {
-			return Backpack.Newitem(arg, amount);
 		}
 		
 		public void ShowStatusBarTo(GameConn conn) {

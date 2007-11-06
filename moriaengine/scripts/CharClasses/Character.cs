@@ -1032,16 +1032,25 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//public AbstractItem NewEquip(AbstractItemDef itemDef) {
-		//    AbstractItem i = Newitem(itemDef);
-		//    if (i.IsEquippable) {
-		//        TryEquip(this, i);
-		//    } else {
-		//        i.Delete();
-		//        throw new Exception("'"+i+"' is not equippable.");
-		//    }
-		//    return i;
-		//}
+		public override sealed AbstractItem NewItem(IThingFactory arg, uint amount) {
+			return Backpack.NewItem(arg, amount);
+		}
+
+		public Equippable NewEquip(IThingFactory factory) {
+			Thing t = factory.Create(this);
+			Equippable i = t as Equippable;
+			if (i != null) {
+				if (i.Cont != this) {
+					i.Delete();
+					throw new Exception("'"+i+"' ended not equipped on the char... Wtf?");
+				}
+				return i;
+			}
+			if (t != null) {
+				t.Delete();//we created something else
+			}
+			throw new SEException(factory+" did not create an equippable item.");
+		}
 
 		public override void On_Dupe(Thing model) {
 			Character copyFrom = (Character) model;

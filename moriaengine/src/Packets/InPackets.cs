@@ -983,7 +983,7 @@ namespace SteamEngine.Packets {
 			}
 		}
 		
-		internal void DeleteCharPacket(GameConn c) {
+		internal void DeleteCharRequest(GameConn c) {
 			packetLenUsed=39;
 				
 			int charIndex = DecodeInt(31);

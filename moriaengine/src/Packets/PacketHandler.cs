@@ -244,7 +244,7 @@ namespace SteamEngine.Packets {
 					PacketSender.SendServersList(c);
 					return;
 				} case 0x83:	{	//delete character
-					DeleteCharPacket(c);
+					DeleteCharRequest(c);
 					return;
 				} case 0x91:	{	//game server login
 					GameServerLogin(c);

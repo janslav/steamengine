@@ -1088,37 +1088,10 @@ namespace SteamEngine {
 		}
 
 		public AbstractItem Newitem(IThingFactory factory) {
-			return Newitem(factory, 1);
+			return NewItem(factory, 1);
 		}
 
-		public virtual AbstractItem Newitem(IThingFactory factory, uint amount) {
-			ThrowIfDeleted();
-			Thing t = factory.Create(point4d.x, point4d.y, point4d.z, point4d.m);
-			AbstractItem i = t as AbstractItem;
-			if (i != null) {
-				if (i.IsStackable) {
-					i.Amount=amount;
-				}
-				return i;
-			}
-			if (t != null) {
-				t.InternalDeleteNoRFV();//we created a character, wtf? :)
-			}
-			throw new SEException(factory+" did not create an item.");
-		}
-
-		public virtual AbstractCharacter Newnpc(IThingFactory factory) {
-			ThrowIfDeleted();
-			Thing t = factory.Create(point4d.x, point4d.y, point4d.z, point4d.m);
-			AbstractCharacter c = t as AbstractCharacter;
-			if (c != null) {
-				return c;
-			}
-			if (t != null) {
-				t.InternalDeleteNoRFV();//we created an item, wtf? :)
-			}
-			throw new SEException(factory+" did not create a character.");
-		}
+		public abstract AbstractItem NewItem(IThingFactory factory, uint amount);
 
 		public void Move(string dir) {
 			Move(dir, 1);

@@ -181,6 +181,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public override AbstractItem NewItem(IThingFactory factory, uint amount) {
+			Thing t = factory.Create(this);
+			AbstractItem i = t as AbstractItem;
+			if (i != null) {
+				if (i.IsStackable) {
+					i.Amount=amount;
+				}
+				return i;
+			}
+			if (t != null) {
+				t.Delete();//we created a character, wtf? :)
+			}
+			throw new SEException(factory+" did not create an item.");
+		}
+
 		//public void PlayDropSound(AbstractCharacter droppingChar) {
 		//    ScriptArgs sa = new ScriptArgs(droppingChar);
 		//    if (!TryCancellableTrigger(TriggerKey.playDropSound, sa)) {

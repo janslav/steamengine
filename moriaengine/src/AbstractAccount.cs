@@ -571,7 +571,6 @@ namespace SteamEngine {
 			// with return 1 to cancel it.
 
 			cre.InternalDelete();
-			characters[index]=null;
 			return DeleteRequestReturnValue.AcceptedRequest;
 		}
 
