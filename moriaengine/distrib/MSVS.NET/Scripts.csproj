@@ -263,11 +263,11 @@
     <Compile Include="..\..\scripts\systems\db\DbManager.cs">
       <Link>systems\db\DbManager.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\db\DbMethods.cs">
-      <Link>systems\db\DbMethods.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\db\DbUtils.cs">
       <Link>systems\db\DbUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\db\LoginLogsContainer.cs">
+      <Link>systems\db\LoginLogsContainer.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\DialogStackItem.cs">
       <Link>systems\dialogs\DialogStackItem.cs</Link>

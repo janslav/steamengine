@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		public class LoginLogsContainer : MultiInsertContainer {
 			public override string TableName {
 				get {
-					return "log_logins";
+                    return "log_items";
 				}
 			}
 
@@ -68,6 +68,16 @@ namespace SteamEngine.CompiledScripts {
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Globals.TimeInTicks.ToString(),
 					"0", conn.uid.ToString());
 			}
+
+            public void ItemMove(GameConn conn) {
+                AbstractCharacter ch = conn.CurCharacter;
+                AbstractAccount acc = conn.Account;
+                Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogin");
+                Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
+                this.AddLine(acc.Name, conn.IP.ToString(), ch.Name, ch.Uid.ToString(), "1",
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Globals.TimeInTicks.ToString(),
+                    "0", conn.uid.ToString());
+            }
 
 			//needs implementing of the calling side, too lazy for that now
 
