@@ -45,11 +45,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override AbstractItem Newitem(IThingFactory factory, uint amount) {
-			ThrowIfDeleted();
+		public override AbstractItem NewItem(IThingFactory factory, uint amount) {
 			Thing t = factory.Create(this);
 			AbstractItem i = t as AbstractItem;
 			if (i != null) {
+				if (i.Cont != this) {
+					i.Delete();
+					throw new Exception("'"+i+"' ended outside the container... Wtf?");
+				}
 				if (i.IsStackable) {
 					i.Amount=amount;
 				}

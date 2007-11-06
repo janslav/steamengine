@@ -66,7 +66,7 @@ namespace SteamEngine.LScript {
 			}
 
 			try {
-				AbstractItem i = t.Newitem(tf, amount);
+				AbstractItem i = t.NewItem(tf, amount);
 				vars.self = i;
 				return i;
 			} catch (InterpreterException ie) {
@@ -89,7 +89,7 @@ namespace SteamEngine.LScript {
 				amount = Convert.ToUInt32(results[1]);
 			}
 			try {
-				AbstractItem i = t.Newitem(tf, amount);
+				AbstractItem i = t.NewItem(tf, amount);
 				vars.self = i;
 				return i;
 			} catch (InterpreterException ie) {

@@ -23,7 +23,7 @@ endif
 local.ch.MakeBePlayer(this.Account)
 
 local.ch.Name = argo.charname
-local.ch.gender = argo.gender
+//local.ch.gender = argo.gender
 local.ch.Color = argo.skinColor
 
 //make hair and beard
