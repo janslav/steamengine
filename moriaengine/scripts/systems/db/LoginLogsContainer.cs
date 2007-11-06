@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		public class LoginLogsContainer : MultiInsertContainer {
 			public override string TableName {
 				get {
-                    return "log_items";
+                    return "log_logins";
 				}
 			}
 
