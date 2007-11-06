@@ -53,6 +53,22 @@ namespace SteamEngine.CompiledScripts {
 			ExecuteNonQuery(sql);
 		}
 
+        public static void CreateItemsTable() {
+            string sql = @"CREATE TABLE log_items (
+				id INT AUTO_INCREMENT NOT NULL,
+				account TINYTEXT ASCII NOT NULL,
+				ip TINYTEXT ASCII NOT NULL,
+				charname TINYTEXT ASCII NULL,
+				charuid INT NULL,
+				inorout TINYINT NOT NULL,
+				time DATETIME NOT NULL,
+				servertime BIGINT NOT NULL,
+				gameorconsole TINYINT NOT NULL,
+				clientuid INT NOT NULL,
+				PRIMARY KEY (id)
+				);";
+            ExecuteNonQuery(sql);
+        }
 
 		public static void ExecuteNonQuery(string sql) {
 			using (MySqlCommand command = new MySqlCommand(sql, DbManager.Connection)) {
