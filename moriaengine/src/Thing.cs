@@ -417,11 +417,11 @@ namespace SteamEngine {
 		}
 
 		public static AbstractCharacter UidGetCharacter(int uid) {
-			return things.Get(uid) as AbstractCharacter;
+			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
 		}
 
 		public static AbstractItem UidGetContainer(int uid) {
-			AbstractItem i = things.Get(uid) as AbstractItem;
+			AbstractItem i = things.Get(UidClearFlags(uid)) as AbstractItem;
 			if ((i != null) && (i.IsContainer)) {
 				return i;
 			}
@@ -429,11 +429,11 @@ namespace SteamEngine {
 		}
 
 		public static AbstractItem UidGetItem(int uid) {
-			return things.Get(uid) as AbstractItem;
+			return things.Get(UidClearFlags(uid)) as AbstractItem;
 		}
 
 		public static Thing UidGetThing(int uid) {
-			return things.Get(uid);
+			return things.Get(UidClearFlags(uid));
 		}
 
 		public static void RegisterTriggerGroup(TriggerGroup tg) {
@@ -1070,8 +1070,8 @@ namespace SteamEngine {
 
 		public virtual bool CanContain {
 			get {
-				//i.e. if this implements IContainer
-				return false;
+				//i.e. if this is either char or container
+				return this.IsContainer;
 			}
 		}
 

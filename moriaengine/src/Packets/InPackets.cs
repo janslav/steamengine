@@ -444,7 +444,6 @@ namespace SteamEngine.Packets {
 
 				if (result != DenyResult.Allow && cre.HasPickedUp(i)) {
 					Server.SendTryReachResultFailMessage(c, contChar, result);
-
 					cre.TryGetRidOfDraggedItem();
 				}
 			} else {
@@ -454,6 +453,7 @@ namespace SteamEngine.Packets {
 		}
 		
 		internal void HandleDropItem(GameConn c) {
+			packetLenUsed=14;
 			int itemuid = DecodeInt(1);
 			//always an item, may or may not have the item-flag.
 			AbstractItem i = Thing.UidGetItem(Thing.UidClearFlags(itemuid));
@@ -461,47 +461,45 @@ namespace SteamEngine.Packets {
 			ushort y = DecodeUShort(7);
 			sbyte z = DecodeSByte(9);
 			AbstractCharacter cre = c.CurCharacter;
-			if (i==null) {
-				PacketSender.PrepareRemoveFromView(itemuid);
-				PacketSender.SendTo(c, true);
-			} else if (cre.HasPickedUp(i)) {
+			if (i != null && cre.HasPickedUp(i)) {
 				int contuid = DecodeInt(10);
+
+				DenyResult result;
 				if (contuid == -1) {//dropping on ground
-					if (cre.CanReachCoordinates(new Point4D(x, y, z, cre.M))) {
-						cre.TryPutItemOnGround(x, y, z);
-					} else {
-						//you can't reach that
-						Server.SendSystemMessage(c, "That's out of reach.", 0);
-						cre.TryPutItemOnGround(cre.X, cre.Y, cre.Z);
-					}
+				    result = cre.TryPutItemOnGround(x, y, z);
 				} else {
-					Thing co = Thing.UidGetThing(Thing.UidClearFlags(contuid));
-					if (co != null) {
-						DenyResult canReach = cre.CanReach(co);
-						if (canReach == DenyResult.Allow) {
-							if (co.IsContainer) {
-								cre.TryPutItemInItem((AbstractItem) co, x, y);
-							} else if (co.IsItem) {
-								cre.TryPutItemOnItem((AbstractItem) co);//we ignore the x y
-							} else if (co.IsChar) {
-								cre.TryPutItemOnChar((AbstractCharacter) co);
+				    Thing co = Thing.UidGetThing(contuid);
+				    if (co != null) {
+						//Console.WriteLine("HandleDropItem: x = "+x+", y = "+y+", z = "+z+", cont = "+co);
+
+						AbstractItem coAsItem = co as AbstractItem;
+						if (coAsItem != null) {
+							if (coAsItem.IsContainer && (x != 0xFFFF) && (y != 0xFFFF)) {
+								//client put it to some coords inside container
+								result = cre.TryPutItemInItem(coAsItem, x, y);
 							} else {
-								throw new SEBugException("This can't happen.");
+								//client put it on some other item. The client probably thinks the other item is either a container or that they can be stacked. We'll see ;)
+								result = cre.TryPutItemOnItem(coAsItem);//we ignore the x y
 							}
 						} else {
-							//you can't reach that
-							Server.SendTryReachResultFailMessage(c, co, canReach); //You cannot reach that.
-							cre.TryPutItemInItem(cre.Backpack, 0xffff, 0xffff);
-						}
-					} else {
+							result = cre.TryPutItemOnChar((AbstractCharacter) co);
+						}					
+				    } else {
 						PacketSender.PrepareRemoveFromView(contuid);
 						PacketSender.SendTo(c, true);
+						result = DenyResult.Deny_ThatIsOutOfSight;
 					}
 				}
+
+				if (result != DenyResult.Allow) {
+					Server.SendTryReachResultFailMessage(c, i, result);
+					cre.TryGetRidOfDraggedItem();
+				}
 			} else {
-				Logger.WriteWarning("Client "+LogStr.Ident(cre)+" attempted to drop item ("+LogStr.Ident("#0x"+itemuid.ToString("x"))+") which was not actually picked up.");
+				PacketSender.PrepareRemoveFromView(itemuid);
+				PacketSender.SendTo(c, true);
 			}
-			packetLenUsed=14;
+			
 		}
 		
 		
