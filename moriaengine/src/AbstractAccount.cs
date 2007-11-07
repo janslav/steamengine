@@ -75,10 +75,10 @@ namespace SteamEngine {
 		protected AbstractAccount(string name) {
 			Commands.AuthorizeCommandThrow(Globals.Src, "CreateGameAccount");
 
-			if (String.Equals("eof", name, StringComparison.OrdinalIgnoreCase)) {
-				Globals.SrcWriteLine("EOF is an illegal account name");
-				throw new OverrideNotAllowedException("EOF is an illegal account name");
-			}
+			//if (String.Equals("eof", name, StringComparison.OrdinalIgnoreCase)) {
+			//    Globals.SrcWriteLine("EOF is an illegal account name");
+			//    throw new OverrideNotAllowedException("EOF is an illegal account name");
+			//}
 			if (accounts.ContainsKey(name)) {
 				throw new OverrideNotAllowedException("There is already an account named "+name+"!");
 			}

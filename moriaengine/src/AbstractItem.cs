@@ -152,7 +152,10 @@ namespace SteamEngine {
 				if (value != amount) {
 					this.ChangingProperties();
 					NetState.ItemAboutToChange(this);
-					this.AdjustWeight(this.def.Weight * (value - amount));
+					Thing c = this.Cont;
+					if (c != null) {
+						c.AdjustWeight(this.def.Weight * (value - amount));
+					}
 					amount = value;
 				}
 			} 
@@ -474,6 +477,13 @@ namespace SteamEngine {
 				case "cont":
 					ObjectSaver.Load(value, new LoadObject(LoadCont_Delayed), filename, line);
 					break;
+				case "p":
+					base.LoadLine(filename, line, prop, value);//loads the position
+					if (this.IsInContainer) {
+						this.MakePositionInContLegal();
+					}
+					break;
+
 				case "name":
 					Match ma = TagMath.stringRE.Match(value);
 					if (ma.Success) {

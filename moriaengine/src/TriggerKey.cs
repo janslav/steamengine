@@ -83,6 +83,9 @@ namespace SteamEngine {
 
 		public static readonly TriggerKey denyPickup=Get("denyPickup");
 		public static readonly TriggerKey denyPickupItem=Get("denyPickupItem");
+
+		public static readonly TriggerKey denyPutOnGround=Get("denyPutOnGround");
+		public static readonly TriggerKey denyPutItemOnGround=Get("denyPutItemOnGround");
 		
 		public static readonly TriggerKey stackon_Item=Get("stackon_Item");//item trigger
 		public static readonly TriggerKey stackon_Char=Get("stackon_Char");//item trigger

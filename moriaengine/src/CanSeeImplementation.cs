@@ -92,11 +92,11 @@ namespace SteamEngine {
 
 		[Remark("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
 		public virtual bool CanSeeForUpdate(Thing target) {
-			return CanSeeImpl(this, target.TopObj(), target);
+			return CanSeeImpl(this, target.TopPoint, target);
 		}
 
 		internal bool CanSeeForUpdateFrom(IPoint4D fromCoordinates, Thing target) {
-			return CanSeeImpl(fromCoordinates, target.TopObj(), target);
+			return CanSeeImpl(fromCoordinates, target.TopPoint, target);
 		}
 
 		internal bool CanSeeForUpdateAt(IPoint4D targetMapCoordinates, Thing target) {
@@ -160,9 +160,9 @@ namespace SteamEngine {
 			return dist <= this.UpdateRange;
 		}
 
-		public virtual DenyResult CanPickUp(AbstractItem item) {
-			return DenyResult.Allow;
-		}
+		//public virtual DenyResult CanPickUp(AbstractItem item) {
+		//    return DenyResult.Allow;
+		//}
 
 		[Remark("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {
@@ -174,7 +174,7 @@ namespace SteamEngine {
 			Thing topobj = null;
 
 			if (checkTopObj) {
-				retVal = CanReachCoordinatesFrom(fromCoordinates, targetMapCoordinates);
+				retVal = CanReachMapRangeFrom(fromCoordinates, targetMapCoordinates);
 				if (!retVal) {
 					return DenyResult.Deny_ThatIsTooFarAway;
 				}
@@ -212,15 +212,23 @@ namespace SteamEngine {
 			if (retVal) {
 				return DenyResult.Allow;
 			} else {
-				return DenyResult.Deny_YouCannotPickThatUp;
+				return DenyResult.Deny_ThatIsOutOfSight;
 			}
 		}
 
-		public bool CanReachCoordinates(IPoint4D target) {
-			return CanReachCoordinatesFrom(this, target);
+		public DenyResult CanReachCoordinates(IPoint4D target) {
+			target = target.TopPoint;
+			if (!CanReachMapRangeFrom(this, target)) {
+				return DenyResult.Deny_ThatIsTooFarAway;
+			}
+			Map m = this.GetMap();
+			if (!m.CanSeeLOSFromTo(this, target)) {
+				return DenyResult.Deny_ThatIsOutOfSight;
+			}
+			return DenyResult.Allow;
 		}
 
-		internal bool CanReachCoordinatesFrom(IPoint4D fromCoordinates, IPoint4D target) {
+		internal bool CanReachMapRangeFrom(IPoint4D fromCoordinates, IPoint4D target) {
 			ThrowIfDeleted();
 			if (target == null) {
 				return false;
