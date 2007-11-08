@@ -389,6 +389,9 @@
     <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs">
       <Link>systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\DetectHidden.cs">
+      <Link>systems\skills\DetectHidden.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Discordance\Discordance.cs">
       <Link>systems\skills\Discordance\Discordance.cs</Link>
     </Compile>
