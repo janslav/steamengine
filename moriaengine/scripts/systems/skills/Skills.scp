@@ -257,23 +257,12 @@ ADVRATE=2.5,50.0,200.0
 ON=@Fail
 	src.message "You burn the food to a crisp! It's ruined."
 
-[SCRIPTEDSKILLDEF 14]
+[DETECTHIDDENSKILLDEF 14]
 DEFNAME=Skill_DetectHidden
 KEY="DetectingHidden"
-//TITLE="Detective"
-//PROMPTMSG=""
-//DELAY=3.0,2.0
-//STAT_STR=15
-//STAT_INT=60
-//STAT_DEX=20
-//BONUS_STR=0
-//BONUS_DEX=20
-//BONUS_INT=80
-//BONUSSTATS=25
+DELAY=3.0,2.0
+EFFECT=3,7	//Radius of detecting
 ADVRATE=2.5,50.0,200.0
-
-ON=@Fail
-	src.message "You can see nothing hidden there."
 	
 [DISCORDANCESKILLDEF 15]
 DEFNAME=Skill_Discordance
