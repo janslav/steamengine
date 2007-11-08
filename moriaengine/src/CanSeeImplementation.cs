@@ -170,31 +170,26 @@ namespace SteamEngine {
 		}
 
 		internal DenyResult CanReachFromAt(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target, bool checkTopObj) {
-			bool retVal = false;
 			Thing topobj = null;
 
 			if (checkTopObj) {
-				retVal = CanReachMapRangeFrom(fromCoordinates, targetMapCoordinates);
-				if (!retVal) {
+				if (!CanReachMapRangeFrom(fromCoordinates, targetMapCoordinates)) {
 					return DenyResult.Deny_ThatIsTooFarAway;
 				}
 
 				Map map = fromCoordinates.GetMap();
-				retVal = map.CanSeeLOSFromTo(fromCoordinates, targetMapCoordinates);
-				if (!retVal) {
+				if (!map.CanSeeLOSFromTo(fromCoordinates, targetMapCoordinates)) {
 					return DenyResult.Deny_ThatIsOutOfSight;
 				}
 
 				topobj = target.TopObj();
-				retVal = this.CanSeeVisibility(topobj);
-				if (!retVal) {
+				if (!this.CanSeeVisibility(topobj)) {
 					return DenyResult.Deny_RemoveFromView;
 				}
 			}
 
 			if (target != topobj) {
-				retVal = this.CanSeeVisibility(target);
-				if (!retVal) {
+				if (!this.CanSeeVisibility(target)) {
 					return DenyResult.Deny_RemoveFromView;
 				}
 			} //else we already checked it
@@ -203,17 +198,13 @@ namespace SteamEngine {
 			if (container != null) {
 				GameConn conn = this.Conn;
 				if (conn != null) {
-					retVal = OpenedContainers.HasContainerOpenFromAt(conn, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
+					return OpenedContainers.HasContainerOpenFromAt(conn, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
 				} else {
 					return DenyResult.Deny_NoMessage; //only logged-in players can reach stuff in containers
 				}
 			}
 
-			if (retVal) {
-				return DenyResult.Allow;
-			} else {
-				return DenyResult.Deny_ThatIsOutOfSight;
-			}
+			return DenyResult.Allow;
 		}
 
 		public DenyResult CanReachCoordinates(IPoint4D target) {
@@ -239,6 +230,10 @@ namespace SteamEngine {
 
 			int dist = Point2D.GetSimpleDistance(fromCoordinates, target);
 			return dist <= Globals.reachRange;
+		}
+
+		public virtual DenyResult CanOpenContainer(AbstractItem targetContainer) {
+			return DenyResult.Allow;
 		}
 	}	
 }

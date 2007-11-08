@@ -148,7 +148,7 @@ namespace SteamEngine {
 					this.MakeLimbo();
 					ushort x, y;
 					contItem.GetRandomXYInside(out x, out y);
-					Trigger_EnterItem(contItem, x, y);
+					this.Trigger_EnterItem(contItem, x, y);
 
 					contItem.TryStackToAnyInside(this);
 				} else {
@@ -330,8 +330,8 @@ namespace SteamEngine {
 		}
 
 		//try to add item to some stack inside
-		private bool TryStackToAnyInside(AbstractItem toStack) {
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
+		internal bool TryStackToAnyInside(AbstractItem toStack) {
+			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				AbstractItem stackWith = (AbstractItem) tll.firstThing;
 				while (stackWith != null) {
@@ -346,17 +346,19 @@ namespace SteamEngine {
 			return false;
 		}
 
+		public static bool CouldBeStacked(AbstractItem a, AbstractItem b) {
+			return ((a.IsStackable && b.IsStackable) && 
+					(a.def == b.def) &&
+					(a.Color == b.Color) &&
+					(a.Model == b.Model));
+		}
+
 		//add "toStack" to this stack, if possible
 		internal bool Trigger_StackInCont(AbstractItem toStack, AbstractItem waitingStack) {
 			Sanity.IfTrueThrow(this != toStack.Cont, "toStack not in this.");
 			Sanity.IfTrueThrow(this != waitingStack.Cont, "waitingStack not in this.");
 
-			if ((waitingStack.IsStackable && toStack.IsStackable) && 
-					(waitingStack.def == toStack.def) &&
-					(waitingStack.Color == toStack.Color) &&
-					(waitingStack.Model == toStack.Model)) {
-
-
+			if (CouldBeStacked(toStack, waitingStack)) {
 				//Amount overflow checking:
 				uint tmpAmount = waitingStack.Amount;
 				try {
@@ -401,11 +403,7 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow(null != toStack.Cont, "toStack not on ground.");
 			Sanity.IfTrueThrow(null != waitingStack.Cont, "waitingStack not on ground.");
 
-			if ((waitingStack.IsStackable && toStack.IsStackable) && 
-					(waitingStack.def == toStack.def) &&
-					(waitingStack.Color == toStack.Color) &&
-					(waitingStack.Model == toStack.Model)) {
-
+			if (CouldBeStacked(toStack, waitingStack)) {
 
 				//Amount overflow checking:
 				uint tmpAmount = waitingStack.Amount;
@@ -664,11 +662,28 @@ namespace SteamEngine {
 			Logger.WriteWarning("The object ("+resolvedObj+") is being loaded as cont for item '"+this.ToString()+"', but it already does have it's cont. This should not happen.");
 		}
 
+		[Summary("Someone is trying to pick me up")]
 		public virtual bool On_DenyPickup(DenyPickupArgs args) {
 			return false;
 		}
 
+		[Summary("Someone is trying to pick up item that is contained in me")]
+		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+			return false;
+		}
+
+		[Summary("Someone is trying to put me on ground")]
 		public virtual bool On_DenyPutOnGround(DenyPutOnGroundArgs args) {
+			return false;
+		}
+
+		[Summary("Someone is trying to put me in a container")]
+		public virtual bool On_DenyPutInItem(DenyPutInItemArgs args) {
+			return false;
+		}
+
+		[Summary("Someone is trying to put an item in me (I am a container)")]
+		public virtual bool On_DenyPutItemIn(DenyPutInItemArgs args) {
 			return false;
 		}
 	}
@@ -836,7 +851,7 @@ namespace SteamEngine {
 				DenyResult result = this.TryPutItemOnItem(this.Backpack);
 				if (result != DenyResult.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
 					if (conn != null) {
-						Server.SendTryReachResultFailMessage(conn, i, result);
+						Server.SendDenyResultMessage(conn, i, result);
 					}
 
 					MutablePoint4D point = this.point4d;
@@ -844,7 +859,7 @@ namespace SteamEngine {
 
 					if (result != DenyResult.Allow && this.draggingLayer == i) {//can't even put item on ground?
 						if (conn != null) {
-							Server.SendTryReachResultFailMessage(conn, i, result);
+							Server.SendDenyResultMessage(conn, i, result);
 						}
 						//The player is not allowed to put the item anywhere. 
 						//Too bad we can't tell the client
@@ -886,6 +901,33 @@ namespace SteamEngine {
 						try {
 							cancel = item.On_DenyPickup(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
+						if (!cancel) {
+							Thing c = item.Cont;
+							if (c != null) {
+								AbstractItem contItem = c as AbstractItem;
+								if (contItem != null) {
+									cancel = contItem.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
+									if (!cancel) {
+										try {
+											cancel = contItem.On_DenyPickupItemFrom(args);
+										} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+									}
+								} else {
+									AbstractCharacter contChar = (AbstractCharacter) c;
+									cancel = contChar.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
+									if (!cancel) {
+										try {
+											cancel = contChar.On_DenyPickupItemFrom(args);
+										} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+									}
+								}
+							} else {
+								MutablePoint4D p = item.point4d;
+								Region region = Map.GetMap(p.m).GetRegionFor(p.x, p.y);
+								cancel = Region.Trigger_DenyPickupItemFrom(args);
+							}
+						}
 					}
 				}
 			}
@@ -913,37 +955,105 @@ namespace SteamEngine {
 			return retVal;
 		}
 
+		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+			return false;
+		}
+
 		//typically called from InPackets. (I am the src)
-		public DenyResult TryPutItemInItem(AbstractItem targetCont, ushort x, ushort y) {
+		public DenyResult TryPutItemInItem(AbstractItem targetCont, ushort x, ushort y, bool tryStacking) {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
-			AbstractItem i = draggingLayer;
-			if (i == null) {
+			GameConn conn = this.Conn;
+			if (conn == null) {
+				return DenyResult.Deny_NoMessage;
+			}
+
+			AbstractItem item = draggingLayer;
+			if (item == null) {
 				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+targetCont+"'");
 			}
-			i.ThrowIfDeleted();
+			item.ThrowIfDeleted();
 
 			if (targetCont.IsContainer) {
-				ushort minX, minY, maxX, maxY;
-				targetCont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
-				if (x < minX) {
-					x = minX;
-				} else if (x > maxX) {
-					x = maxX;
+				DenyPutInItemArgs args = new DenyPutInItemArgs(this, item, targetCont);
+
+				bool cancel = this.TryCancellableTrigger(TriggerKey.denyPutItemInItem, args);
+				if (!cancel) {
+					try {
+						cancel = this.On_DenyPutItemInItem(args);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					if (!cancel) {
+						cancel = item.TryCancellableTrigger(TriggerKey.denyPutInItem, args);
+						if (!cancel) {
+							try {
+								cancel = item.On_DenyPutInItem(args);
+							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+							if (!cancel) {
+								cancel = item.TryCancellableTrigger(TriggerKey.denyPutItemIn, args);
+								if (!cancel) {
+									try {
+										cancel = item.On_DenyPutItemIn(args);
+									} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+								}
+							}
+						}
+					}
 				}
-				if (y < minY) {
-					y = minY;
-				} else if (y > maxY) {
-					y = maxY;
+
+				DenyResult retVal = args.Result;
+
+				if ((!cancel) && (retVal == DenyResult.Allow)) {
+					if (conn.openedContainers.Contains(targetCont)) {//is considered open
+						//but we still need to check if it is rightfully considered such
+						retVal = OpenedContainers.HasContainerOpen(conn, targetCont);
+					} else {
+						Thing c = targetCont.Cont;
+						if (c != null) {
+							AbstractItem contContAsItem = c as AbstractItem;
+							if (contContAsItem != null) {
+								if (conn.openedContainers.Contains(contContAsItem)) {//cont.cont is considered open
+									retVal = this.CanOpenContainer(targetCont);//so we can check if targetCont would be openable (it also does canreach checks)
+								} else {
+									retVal = DenyResult.Deny_ThatIsOutOfSight;//the container is in a closed container
+								}
+							} else {
+								//it's probably someones backpack/bank
+								retVal = this.CanOpenContainer(targetCont);//we check if targetCont is be openable (it also does canreach checks)
+							}
+						} else {//is on ground
+							retVal = this.CanOpenContainer(targetCont);//we check if targetCont is be openable (it also does canreach checks)
+						}
+					}
 				}
-				i.MakeLimbo();
-				i.Trigger_EnterItem(targetCont, x, y);
+
+				if (retVal == DenyResult.Allow) {
+					ushort minX, minY, maxX, maxY;
+					targetCont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
+					if (x < minX) {
+						x = minX;
+					} else if (x > maxX) {
+						x = maxX;
+					}
+					if (y < minY) {
+						y = minY;
+					} else if (y > maxY) {
+						y = maxY;
+					}
+					item.MakeLimbo();
+					item.Trigger_EnterItem(targetCont, x, y);
+					if (tryStacking) {
+						targetCont.TryStackToAnyInside(item);
+					}
+				}
+				return retVal;
 			} else {
 				throw new InvalidOperationException("The item ("+targetCont+") is not a container");
 			}
+		}
 
-			return DenyResult.Allow;
+		public virtual bool On_DenyPutItemInItem(DenyPutInItemArgs args) {
+			return false;
 		}
 
 		//typically called from InPackets. (I am the src)
@@ -988,10 +1098,9 @@ namespace SteamEngine {
 			}
 			item.ThrowIfDeleted();
 
-			IPoint4D point = new Point4D(x, y, z, this.M);
+			byte m = this.M;
+			IPoint4D point = new Point4D(x, y, z, m);
 			DenyPutOnGroundArgs args = new DenyPutOnGroundArgs(this, item, point);
-
-
 
 			bool cancel = this.TryCancellableTrigger(TriggerKey.denyPutItemOnGround, args);
 			if (!cancel) {
@@ -1004,6 +1113,11 @@ namespace SteamEngine {
 						try {
 							cancel = item.On_DenyPutOnGround(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
+						if (!cancel) {
+							Region region = Map.GetMap(m).GetRegionFor(x, y);
+							cancel = Region.Trigger_DenyPutItemOn(args);
+						}
 					}
 				}
 			}
@@ -1023,10 +1137,6 @@ namespace SteamEngine {
 			}
 
 			return retVal;
-		}
-
-		public virtual bool On_DenyPutItemOnGround(DenyPutOnGroundArgs args) {
-			return false;
 		}
 
 		//typically called from InPackets. drops the held item on target (I am the src)
@@ -1079,6 +1189,10 @@ namespace SteamEngine {
 
 		public virtual void On_ItemUnEquip(ItemInCharArgs args) {
 
+		}
+
+		public virtual bool On_DenyPutItemOnGround(DenyPutOnGroundArgs args) {
+			return false;
 		}
 
 		public virtual bool On_DenyPickupItem(DenyPickupArgs args) {
@@ -1167,6 +1281,19 @@ namespace SteamEngine {
 			set {
 				argv[3] = value;
 			}
+		}
+	}
+
+	public class DenyPutInItemArgs : DenyTriggerArgs {
+		public readonly AbstractCharacter pickingChar;
+		public readonly AbstractItem manipulatedItem;
+		public readonly AbstractItem container;
+
+		public DenyPutInItemArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, AbstractItem container)
+			: base(DenyResult.Allow, pickingChar, manipulatedItem, container) {
+			this.pickingChar = pickingChar;
+			this.manipulatedItem = manipulatedItem;
+			this.container = container;
 		}
 	}
 

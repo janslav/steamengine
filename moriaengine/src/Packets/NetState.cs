@@ -776,8 +776,9 @@ namespace SteamEngine.Packets {
 								pg.SendTo(viewerConn);
 							}
 
-							if (item.IsContainer && item.Count > 0 && 
-									OpenedContainers.HasContainerOpen(viewerConn, item)) {
+							if (item.IsContainer && 
+									item.Count > 0 && 
+									(OpenedContainers.HasContainerOpen(viewerConn, item) == DenyResult.Allow)) {
 								if (PacketSender.PrepareContainerContents(item, viewerConn, viewer)) {
 									PacketSender.SendTo(viewerConn, true);
 									if (Globals.AOS && viewerConn.Version.aosToolTips) {

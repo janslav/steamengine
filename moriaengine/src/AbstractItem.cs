@@ -225,7 +225,7 @@ namespace SteamEngine {
 		}
 		
 		public void OpenTo(AbstractCharacter viewer) {
-			if (IsContainer) {
+			if (this.IsContainer) {
 				if (viewer != null && viewer.IsPlayer) {
 					ThrowIfDeleted();
 					viewer.ThrowIfDeleted();

@@ -443,7 +443,7 @@ namespace SteamEngine.Packets {
 				DenyResult result = cre.TryEquipItemOnChar(contChar);
 
 				if (result != DenyResult.Allow && cre.HasPickedUp(i)) {
-					Server.SendTryReachResultFailMessage(c, contChar, result);
+					Server.SendDenyResultMessage(c, contChar, result);
 					cre.TryGetRidOfDraggedItem();
 				}
 			} else {
@@ -476,7 +476,7 @@ namespace SteamEngine.Packets {
 						if (coAsItem != null) {
 							if (coAsItem.IsContainer && (x != 0xFFFF) && (y != 0xFFFF)) {
 								//client put it to some coords inside container
-								result = cre.TryPutItemInItem(coAsItem, x, y);
+								result = cre.TryPutItemInItem(coAsItem, x, y, false);
 							} else {
 								//client put it on some other item. The client probably thinks the other item is either a container or that they can be stacked. We'll see ;)
 								result = cre.TryPutItemOnItem(coAsItem);//we ignore the x y
@@ -492,7 +492,7 @@ namespace SteamEngine.Packets {
 				}
 
 				if (result != DenyResult.Allow) {
-					Server.SendTryReachResultFailMessage(c, i, result);
+					Server.SendDenyResultMessage(c, i, result);
 					cre.TryGetRidOfDraggedItem();
 				}
 			} else {
@@ -514,7 +514,12 @@ namespace SteamEngine.Packets {
 				AbstractCharacter cre = c.CurCharacter;
 				DenyResult result = cre.TryPickupItem(item, amt);
 				if (result != DenyResult.Allow) {
-					Prepared.SendPickupFailed(c, result);
+					if (result < DenyResult.Allow) {
+						Prepared.SendPickupFailed(c, result);
+					} else {
+						Server.SendDenyResultMessage(c, item, result);
+						Prepared.SendPickupFailed(c, DenyResult.Deny_NoMessage);
+					}
 				}
 			} else {
 				PacketSender.PrepareRemoveFromView(uid);
@@ -556,7 +561,7 @@ namespace SteamEngine.Packets {
 				if (canReach == DenyResult.Allow) {
 					t.Trigger_DClick(curChar);
 				} else {
-					Server.SendTryReachResultFailMessage(c, t, canReach);
+					Server.SendDenyResultMessage(c, t, canReach);
 				}
 			} else {
 				//for characters, reach is not tested, at least not here.
