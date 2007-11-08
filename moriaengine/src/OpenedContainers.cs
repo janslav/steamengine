@@ -35,28 +35,34 @@ namespace SteamEngine {
 		private readonly static List<AbstractItem> emptyItemList = new List<AbstractItem>(0);
 		private readonly static List<GameConn> emptyGameConnList = new List<GameConn>(0);
 
-		public static bool HasContainerOpen(GameConn conn, AbstractItem container) {
+		public static DenyResult HasContainerOpen(GameConn conn, AbstractItem container) {
 			if (conn.openedContainers.Contains(container)) {
 				AbstractCharacter curCharacter = conn.CurCharacter;
-				if ((curCharacter != null) && (curCharacter.CanReach(container) == DenyResult.Allow)) {
-			        return true;
-			    } else {
-					SetContainerClosed(conn, container);
+				DenyResult retVal = DenyResult.Deny_NoMessage;
+				if (curCharacter != null) {
+					retVal = curCharacter.CanReach(container);
 			    }
-			}
-			return false;
-		}
-
-		internal static bool HasContainerOpenFromAt(GameConn conn, IPoint4D fromPoint, IPoint4D targetPoint, AbstractItem container, bool checkTopobj) {
-			if (conn.openedContainers.Contains(container)) {
-				AbstractCharacter curCharacter = conn.CurCharacter;
-				if ((curCharacter != null) && (curCharacter.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj) == DenyResult.Allow)) {
-					return true;
-				} else {
+				if (retVal != DenyResult.Allow) {
 					SetContainerClosed(conn, container);
 				}
+				return retVal;
 			}
-			return false;
+			return DenyResult.Deny_ContainerClosed;
+		}
+
+		internal static DenyResult HasContainerOpenFromAt(GameConn conn, IPoint4D fromPoint, IPoint4D targetPoint, AbstractItem container, bool checkTopobj) {
+			if (conn.openedContainers.Contains(container)) {
+				AbstractCharacter curCharacter = conn.CurCharacter;
+				DenyResult retVal = DenyResult.Deny_NoMessage;
+				if (curCharacter != null) {
+					retVal = curCharacter.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj);
+			    }
+				if (retVal != DenyResult.Allow) {
+					SetContainerClosed(conn, container);
+				}
+				return retVal;
+			}
+			return DenyResult.Deny_ContainerClosed;
 		}
 
 		public static void SetContainerOpened(GameConn conn, AbstractItem container) {
@@ -159,6 +165,7 @@ namespace SteamEngine {
 					conn.openedContainers.Clear();
 				}
 			}
+			openedByConns.Clear();
 		}
 	}
 }

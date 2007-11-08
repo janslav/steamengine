@@ -174,7 +174,8 @@ namespace SteamEngine {
 		Deny_RemoveFromView=5,	//remove from view
 		Deny_NoMessage=6,
 		Allow=7,
-		DenyCount=7	//The number of Deny_ elements in this enum.
+		Deny_ThatIsLocked = 8,
+		Deny_ContainerClosed = 9 //You cannot peek into the container.
 	}
 
 	//for testing purposes
@@ -182,7 +183,7 @@ namespace SteamEngine {
 		static int i;
 
 		internal static DenyResult GetResultAndPrintIt() {
-			DenyResult retVal = (DenyResult) ((i++)%8);
+			DenyResult retVal = (DenyResult) ((i++)%9);
 			Console.WriteLine("Generated DenyResult:"+retVal);
 			return retVal;
 		}

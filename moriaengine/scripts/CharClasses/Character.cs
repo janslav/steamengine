@@ -1881,7 +1881,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				GameConn conn = this.Conn;
 				if (conn != null) {
-					Server.SendTryReachResultFailMessage(conn, target, trr);
+					Server.SendDenyResultMessage(conn, target, trr);
 				}
 				return false;
 			}

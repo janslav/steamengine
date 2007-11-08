@@ -661,10 +661,10 @@ namespace SteamEngine {
 			SendMessage(c, null, 0xffff, "System", msg, SpeechType.Server, 0, color);
 		}
 
-		public static void SendTryReachResultFailMessage(GameConn c, Thing t, DenyResult trr) {
+		public static void SendDenyResultMessage(GameConn c, Thing t, DenyResult trr) {
 			switch (trr) {
 				case DenyResult.Deny_RemoveFromView:
-					if (t != null) {
+					if ((t != null)&&(!t.IsDeleted)) {
 						PacketSender.PrepareRemoveFromView(t);
 						PacketSender.SendTo(c, true);
 					}
@@ -684,7 +684,13 @@ namespace SteamEngine {
 				case DenyResult.Deny_YouCannotPickThatUp:
 					SendClilocSysMessage(c, 3000267, 0);	//You cannot pick that up.
 					break;
-
+				case DenyResult.Deny_ThatIsLocked:
+					SendClilocSysMessage(c, 501283, 0);		//That is locked.
+					break;
+				case DenyResult.Deny_ContainerClosed:
+					//SendClilocSysMessage(c, 500209, 0);		//You cannot peek into the container.
+					SendSystemMessage(c, "Tento kontejner není otevøený.", 0);
+					break;
 				//case TryReachResult.Failed_NoMessage:
 				//case TryReachResult.Succeeded:
 				//default:

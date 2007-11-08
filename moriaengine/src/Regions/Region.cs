@@ -227,6 +227,62 @@ namespace SteamEngine.Regions {
 			} while (region != null);
 		}
 
+		internal bool Trigger_DenyPickupItemFrom(DenyPickupArgs args) {
+			Region region = this;
+
+			bool cancel = false;
+			do {
+				if (!cancel) {
+					cancel = region.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
+					if (!cancel) {
+						try {
+							cancel = region.On_DenyPickupItemFrom(args);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} else {
+						break;
+					}
+				} else {
+					break;
+				}
+
+				region = region.parent;
+			} while (region != null);
+
+			return cancel;
+		}
+
+		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+			return false;
+		}
+
+		internal bool Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
+			Region region = this;
+
+			bool cancel = false;
+			do {
+				if (!cancel) {
+					cancel = region.TryCancellableTrigger(TriggerKey.denyPutItemOn, args);
+					if (!cancel) {
+						try {
+							cancel = region.On_DenyPutItemOn(args);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} else {
+						break;
+					}
+				} else {
+					break;
+				}
+
+				region = region.parent;
+			} while (region != null);
+
+			return cancel;
+		}
+
+		public virtual bool On_DenyPutItemOn(DenyPutOnGroundArgs args) {
+			return false;
+		}
+
 		private static void ReturnItemOnGroundIfNeeded(AbstractItem item, Point4D point) {
 			if ((item.Cont != null) || (!point.Equals(item))) {
 				Logger.WriteWarning(item+" has been moved in the implementation of one of the @LeaveGround triggers. Don't do this. Putting back.");

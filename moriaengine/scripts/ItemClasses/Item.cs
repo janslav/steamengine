@@ -28,48 +28,6 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
     public partial class Item : AbstractItem {
-
-        public override void On_Dupe(Thing model) {
-        }
-
-        public override void On_UnEquip(ItemInCharArgs args) {
-        }
-
-        public override void On_Equip(ItemInCharArgs args) {
-        }
-
-        public override void On_LeaveItem(ItemInItemArgs args) {
-        }
-
-        public override void On_ItemLeave(ItemInItemArgs args) {
-        }
-
-        public override void On_LeaveChar(ItemInCharArgs args) {
-        }
-
-        public override void On_LeaveRegion(ItemOnGroundArgs args) {
-        }
-
-        public override void On_ItemEnter(ItemInItemArgs args) {
-        }
-
-        public override void On_EnterItem(ItemInItemArgs args) {
-        }
-
-        public override bool On_ItemStackOn(ItemStackArgs args) {
-            return base.On_ItemStackOn(args);
-        }
-
-        public override bool On_StackOnItem(ItemStackArgs args) {
-            return base.On_StackOnItem(args);
-        }
-
-        public override void On_EnterChar(ItemInCharArgs args) {
-        }
-
-        public override void On_EnterRegion(ItemOnGroundArgs args) {
-        }
-
 		public override byte FlagsToSend {
 			get {	//It looks like only 080 (invis) and 020 (static) are actually used
 				int ret = 0;
