@@ -330,16 +330,16 @@ namespace SteamEngine.Regions {
 		#region Other regions mutual positions checks
 		private bool ContainsRectangle(Rectangle2D rect) {
 			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
-					&& ContainsPoint(Point2D.GetPosition(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
+					&& ContainsPoint(rect.StartPoint.X, rect.EndPoint.Y) //left lower
 					&& ContainsPoint(rect.EndPoint) //right lower
-					&& ContainsPoint(Point2D.GetPosition(rect.EndPoint.X, rect.StartPoint.Y))));//right upper
+					&& ContainsPoint(rect.EndPoint.X, rect.StartPoint.Y)));//right upper
 		}
 
 		private bool ContainsRectanglePartly(Rectangle2D rect) {
 			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
-					|| ContainsPoint(Point2D.GetPosition(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
+					|| ContainsPoint(rect.StartPoint.X, rect.EndPoint.Y) //left lower
 					|| ContainsPoint(rect.EndPoint) //right lower
-					|| ContainsPoint(Point2D.GetPosition(rect.EndPoint.X, rect.StartPoint.Y))));//right upper
+					|| ContainsPoint(rect.EndPoint.X, rect.StartPoint.Y)));//right upper
 		}
 
 		private void CheckHasAllRectanglesIn(StaticRegion other) {

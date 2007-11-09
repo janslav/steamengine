@@ -119,13 +119,23 @@ namespace SteamEngine {
 			return (end.Y - start.Y);
 		} }
 
-		public Point2D StartPoint { get {
-		    return start;
-		} }
+		public Point2D StartPoint { 
+			get {
+				return start;
+			}
+			set {
+				start = value;
+			}
+		}
 
-		public Point2D EndPoint { get {
-		    return end;
-		} }
+		public Point2D EndPoint { 
+			get {
+				return end;
+			}
+			set {
+				start = value;
+			}
+		}
 		
 		public override string ToString() {
 		   return string.Format("({0}, {1})+({2}, {3})", X, Y, Width, Height);   
