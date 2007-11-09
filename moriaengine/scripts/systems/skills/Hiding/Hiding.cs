@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 				self.ClilocSysMessage(501242); //You are no longer hidden.
 				self.Flag_Hidden = false;
 			}
-			self.RemovePlugin(pluginKey).Delete();
+			self.DeletePlugin(pluginKey);
 		}
 	}
 }
