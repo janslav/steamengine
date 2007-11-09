@@ -115,7 +115,7 @@ namespace SteamEngine.Regions {
 		public byte Mapplane { 
 			get {
 				if (!mapplaneIsSet) {
-					mapplane = P.M;
+					mapplane = P.m;
 					mapplaneIsSet = true;
 				}
 				return mapplane;
@@ -397,9 +397,9 @@ namespace SteamEngine.Regions {
 
 		public bool IntersectsWith(Rectangle2D rect) {
 			return (Contains(rect.StartPoint)//left upper
-					|| Contains(rect.StartPoint.X, rect.EndPoint.Y) //left lower
+					|| Contains(rect.StartPoint.x, rect.EndPoint.y) //left lower
 					|| Contains(rect.EndPoint) //right lower
-					|| Contains(rect.EndPoint.X, rect.StartPoint.Y));//right upper
+					|| Contains(rect.EndPoint.x, rect.StartPoint.y));//right upper
 		}
 	}
 }

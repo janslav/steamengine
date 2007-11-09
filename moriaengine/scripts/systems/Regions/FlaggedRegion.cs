@@ -140,17 +140,17 @@ namespace SteamEngine.Regions {
 			ushort minY = ushort.MaxValue;//upper
 			ushort maxY = ushort.MinValue;//lower
 			foreach (Rectangle2D rect in Rectangles) {
-				if (rect.StartPoint.X < minX) {
-					minX = rect.StartPoint.X;
+				if (rect.StartPoint.x < minX) {
+					minX = rect.StartPoint.x;
 				}
-				if (rect.StartPoint.Y < minY) {
-					minY = rect.StartPoint.Y;
+				if (rect.StartPoint.y < minY) {
+					minY = rect.StartPoint.y;
 				}
-				if (rect.EndPoint.X > maxX) {
-					maxX = rect.EndPoint.X;
+				if (rect.EndPoint.x > maxX) {
+					maxX = rect.EndPoint.x;
 				}
-				if (rect.StartPoint.Y > maxY) {
-					maxY = rect.EndPoint.Y;
+				if (rect.StartPoint.y > maxY) {
+					maxY = rect.EndPoint.y;
 				}
 			}
 			return new Rectangle2D(minX, minY, maxX, maxY);

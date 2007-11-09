@@ -33,7 +33,7 @@ namespace SteamEngine {
 		}
 		
 		public Rectangle2D(Point2D start, Point2D end) {
-			Sanity.IfTrueThrow( (start.X > end.X) || (start.Y > end.Y), 
+			Sanity.IfTrueThrow( (start.x > end.x) || (start.y > end.y), 
 				"The first argument is supposed to be the upper left corner and the second the lower right corner.");
 			this.start = start;
 			this.end = end;
@@ -59,39 +59,39 @@ namespace SteamEngine {
 		public void Crop(ushort minx, ushort miny, ushort maxx, ushort maxy) {
 			bool newStart = false;
 			bool newEnd = false;
-			ushort newStartX = start.X;
-			ushort newStartY = start.Y;
-			ushort newEndX = end.X;
-			ushort newEndY = end.Y;
-			if (this.StartPoint.X<minx) {
+			ushort newStartX = start.x;
+			ushort newStartY = start.y;
+			ushort newEndX = end.x;
+			ushort newEndY = end.y;
+			if (this.StartPoint.x<minx) {
 				newStartX = minx;
 				newStart = true;
 			}
-			if (this.EndPoint.X<minx) {
+			if (this.EndPoint.x<minx) {
 				newEndX = minx;
 				newEnd = true;
 			}
-			if (this.StartPoint.Y<miny) {
+			if (this.StartPoint.y<miny) {
 				newStartY = miny;
 				newStart = true;
 			}
-			if (this.EndPoint.Y<miny) {
+			if (this.EndPoint.y<miny) {
 				newEndY = miny;
 				newEnd = true;
 			}
-			if (this.StartPoint.X>maxx) {
+			if (this.StartPoint.x>maxx) {
 				newStartX = maxx;
 				newStart = true;
 			}
-			if (this.EndPoint.X>maxx) {
+			if (this.EndPoint.x>maxx) {
 				newEndX = maxx;
 				newEnd = true;
 			}
-			if (this.StartPoint.Y>maxy) {
+			if (this.StartPoint.y>maxy) {
 				newStartY = maxy;
 				newStart = true;
 			}
-			if (this.EndPoint.Y>maxy) {
+			if (this.EndPoint.y>maxy) {
 				newEndY = maxy;
 				newEnd = true;
 			}
@@ -104,19 +104,19 @@ namespace SteamEngine {
 		}
 		
 		public int X { get {
-		    return start.X;
+		    return start.x;
 		} }
 		
 		public int Y { get {
-		    return start.Y;
+		    return start.y;
 		} }
 		
 		public int Width { get {
-			return (end.X - start.X);
+			return (end.x - start.x);
 		} }
 		
 		public int Height { get {
-			return (end.Y - start.Y);
+			return (end.y - start.y);
 		} }
 
 		public Point2D StartPoint { 
@@ -144,36 +144,36 @@ namespace SteamEngine {
 		public bool Contains(Static p) {
 			ushort px = p.X;
 			ushort py = p.Y;
-			return ((start.X <= px) && (start.Y <= py) && (end.X >= px) && (end.Y >= py));
+			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
 		}
 		
 		public bool Contains(Thing p) {
 			ushort px = p.X;
 			ushort py = p.Y;
-			return ((start.X <= px) && (start.Y <= py) && (end.X >= px) && (end.Y >= py)); 
+			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py)); 
 		}
 		
 		public bool Contains(Point2D p) {
-			ushort px = p.X;
-			ushort py = p.Y;
-			return ((start.X <= px) && (start.Y <= py) && (end.X >= px) && (end.Y >= py));
+			ushort px = p.x;
+			ushort py = p.y;
+			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
 		}
 
 		public bool Contains(int px, int py) {
-			return ((start.X <= px) && (start.Y <= py) && (end.X >= px) && (end.Y >= py));
+			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
 		}
 		
 		public bool Contains(IPoint2D p) {
 			ushort px = p.X;
 			ushort py = p.Y;
-			return ((start.X <= px) && (start.Y <= py) && (end.X >= px) && (end.Y >= py));
+			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
 		}
 		
 		public static Rectangle2D GetIntersection(Rectangle2D a, Rectangle2D b) {
-			int maxStartX = Math.Max(a.StartPoint.X, b.StartPoint.X);
-			int minEndX = Math.Min(a.EndPoint.X, b.EndPoint.X);
-			int maxStartY = Math.Max(a.StartPoint.Y, b.StartPoint.Y);
-			int minEndY = Math.Min(a.EndPoint.Y, b.EndPoint.Y);
+			int maxStartX = Math.Max(a.StartPoint.x, b.StartPoint.x);
+			int minEndX = Math.Min(a.EndPoint.x, b.EndPoint.x);
+			int maxStartY = Math.Max(a.StartPoint.y, b.StartPoint.y);
+			int minEndY = Math.Min(a.EndPoint.y, b.EndPoint.y);
 			if ((minEndX >= maxStartX) && (minEndY >= maxStartY)) {
 				return new Rectangle2D((ushort) maxStartX, (ushort) maxStartY, 
 					(ushort) (minEndX - maxStartX), (ushort) (minEndY - maxStartY));
@@ -182,7 +182,7 @@ namespace SteamEngine {
 		}
 		
 		public int TilesNumber { get {
-			return ((end.X - start.X)*(end.Y - start.Y));
+			return ((end.x - start.x)*(end.y - start.y));
 		} }
 	}
 }

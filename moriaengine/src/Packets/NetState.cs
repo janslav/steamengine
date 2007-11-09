@@ -951,7 +951,7 @@ namespace SteamEngine.Packets {
 							if (oldMap.Facet != newFacet) {
 								Prepared.SendFacetChange(myConn, newFacet);
 							}
-							foreach (Thing thing in oldMap.GetThingsInRange(topPoint.X, topPoint.Y, updateRange)) {
+							foreach (Thing thing in oldMap.GetThingsInRange(topPoint.x, topPoint.y, updateRange)) {
 								Logger.WriteInfo(NetStateTracingOn, "Removing thing ("+thing+") from own view");
 								PacketSender.PrepareRemoveFromView(thing);
 								PacketSender.SendTo(myConn, true);

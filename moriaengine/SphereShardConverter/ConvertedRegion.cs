@@ -181,7 +181,7 @@ namespace SteamEngine.Converter {
 			ConvertedRegion r = (ConvertedRegion) def;
 			Point4D p = Point4D.Parse(line.value);
 			if (!r.mapplaneSet) {
-				r.mapplane = p.M;
+				r.mapplane = p.m;
 			}
 			string retVal = pImplementor.Save(p);
 			def.Set("Spawnpoint", retVal, line.comment);
@@ -230,9 +230,9 @@ namespace SteamEngine.Converter {
 			for (int i = 0; i < rectanglesCount; i++) {
 				Rectangle2D rect = (Rectangle2D) rectangles[i];
 				points[(i*4)+0] = rect.StartPoint; //left upper
-				points[(i*4)+1] = new Point2D(rect.StartPoint.X, rect.EndPoint.Y);//left lower
+				points[(i*4)+1] = new Point2D(rect.StartPoint.x, rect.EndPoint.y);//left lower
 				points[(i*4)+2] = rect.EndPoint;//right lower
-				points[(i*4)+3] = new Point2D(rect.EndPoint.X, rect.StartPoint.Y);//right upper
+				points[(i*4)+3] = new Point2D(rect.EndPoint.x, rect.StartPoint.y);//right upper
 			}
 			
 			temp.Clear();
