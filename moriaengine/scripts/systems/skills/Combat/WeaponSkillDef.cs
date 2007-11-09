@@ -179,13 +179,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected internal override void Abort(Character self) {
-			if (!Trigger_Abort(self)) {
-				//self.SysMessage(this.Key+" aborted");
-				Character target = self.currentSkillTarget1 as Character;
-				if (target != null) {
-					//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
-					WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
-				}
+			this.Trigger_Abort(self);
+			Character target = self.currentSkillTarget1 as Character;
+			if (target != null) {
+				//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
+				WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 			}
 		}
 	}

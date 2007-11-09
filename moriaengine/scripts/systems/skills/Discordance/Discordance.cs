@@ -104,10 +104,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		protected internal override void Abort(Character self) {
-			if (!this.Trigger_Abort(self)) {
-				self.SysMessage("Oslabovani bylo predcasne preruseno.");
-			}
-			self.currentSkill = null;
+			this.Trigger_Abort(self);
+			self.SysMessage("Oslabovani bylo predcasne preruseno.");
 		}
 	}
 

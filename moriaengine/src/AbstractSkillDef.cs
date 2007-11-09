@@ -236,6 +236,12 @@ namespace SteamEngine {
 			return false;
 		}
 
+		public void TrySkillTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+			//cancellable trigger just for the one triggergroup
+			if (firstTGListNode != null) {
+				firstTGListNode.storedTG.TryRun(self, td, sa);
+			}
+		}
 
 		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			throw new NotImplementedException();
