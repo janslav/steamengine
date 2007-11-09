@@ -1,17 +1,23 @@
 ----------------------------------------------------
 !!!!BUGs!!!!
 
-Overit vytvareni postavy na clientu 501j
+Overit vytvareni postavy na clientu 501j 
+// ticket
 
 TagHolders must be actively removed - to remove timers from Timer's static container.
-	I had no time to look at that at this point. -tar
+	I had no time to look at that at this point. -tar  
+	//ticket
 
-lscript: print(System.DateTime.Now.Ticks) - exception
+lscript: print(System.DateTime.Now.Ticks) - exception 
+//ticket
 
-LScript (methodwrapper) neumi poustet metodu na objektech generickych typu
+LScript (methodwrapper) neumi poustet metodu na objektech generickych typu  
+//ticket
 
 argv(0).tag.pages[<idx>] (argv(0).tag.pages je LIST<>)
-	ERROR: (pages.scp, 15) Nothing to replace the node <ARG(idx)> at ARGV0.TAG(pages).INDEX(<ARG(idx)>).  with. This should not happen.
+	ERROR: (pages.scp, 15) Nothing to replace the node <ARG(idx)> at ARGV0.TAG(pages).INDEX(<ARG(idx)>).  with. 
+	This should not happen.  
+//ticket
 
 v LSCriptu nelze pouzivat standardni settery pole:
 	23:40: ERROR: (G:\SteamEngine\MoriaEngineSVN\moriaengine\scripts\systems\administration\Pages\pages.scp, 141) The type System.Object[] is not indexable
@@ -21,19 +27,12 @@ v LSCriptu nelze pouzivat standardni settery pole:
 	at SteamEngine.LScript.OpNode_Script.Run(ScriptVars vars) 
 	at SteamEngine.LScript.LScriptHolder.Run(Object self, ScriptArgs sa) 
 	at SteamEngine.ScriptHolder.TryRun(Object self, ScriptArgs sa) 
-
 	vyhoxzeno pri pouziti : dsi.Args[0] = SortingCriteria.NameAsc //uprav info o sortovani
 	docasne bylo niutno nahradit pomoci dsi.Args.set_Item(0,SortingCriteria.NameAsc) //uprav info o sortovani
-
-
-Vyresit nutnost nejakyho nastaveni regionu pri prvnim spusteni sveta (viz vypis)
-	CRITICAL: Regions not used.: No world region defined. at SteamEngine.Region.LoadingFinished() 
-			IP Address 0 : xxx.xxx.xxx.xxx
-	nutno prozatim volat Exportutils.ImportRegions
-
+//ticket
 
 Zmena DIrection na serveru koliduje s klientem kdyz bezi
-
+//ticket
 
 ----------------------------------------------------
 
@@ -44,12 +43,15 @@ Stuff assigned to individual devs:
 tar
 ----------------------------------------------------
 	Color	Setting collors may be part of an item/char/whatever Def instead of setting it in an On_Create trigger.
+	//ticket
 	
 	Combat  Colors, right ? Make them visible ? Right ? Like ... I'm comming to the monster yeah ? Now, Im trying to kill it so
 		I'm targetting the monster by dclicking on him and here we are, The monster must turn red or such ... like his status collor
 		or something. So while I'm moving target over any monster, there should be this color change and already targetted monster,
 		that is the one, I'm attacking, must stay colored. And if you hadn't understood you are realy an ignorant .... at least.
-	Multis
+  //ticket
+		
+		Multis
 		MultiRegions
 		Boats
 		
@@ -59,12 +61,16 @@ tar
 		so it doesn't need to be done unless it gets annoying before the code to import multis and boats is written.
 
 	try / catch kolem volani On_Udalost z jadra (equip, click, dclick, etc.)
+	//ticket
 	
 	findtype, findid - najit nebo implementovat
+	//ticket
 
 	Identifikace objektu pro import/export
+	//ticket
 	
 	Attr jako alternativu pro Flags u itemu, vyresit pouzivani nerezervovanych bitu
+	//ticket
 			
 	LScript: 
 		various for* statements from 55ir (not sure if I will bother with them, there is a generic FOREACH...)
@@ -99,6 +105,7 @@ iwan
 Yavanna
 ----------------------------------------------------
 	regbox, keg, atlas, svitkovac, atd.
+	//separatni tickety
 	
 
 Lokarel
@@ -108,6 +115,7 @@ Lokarel
 			ip except this one account")
 		should have some nice interface. (.ini maybe, or ingame gump)
 		definitely as a script (probably C#)
+		//ticket
 	
 	additional feature for the "firewall": make a command that would be usable by players in the future, 
 		which would enable them to constrain the range of IPs that can connect to their account, providing them with
@@ -115,12 +123,16 @@ Lokarel
 		rules they set. Basically, the rules would be "allow only this and that IP to connect" and 
 		"allow my IP to change only once per hour/day/week/month/never", etc. Any more ideas are welcome, of course.
 		This would possibly use a gump interface.
+		//ticket
 	
 Dinivan
 ----------------------------------------------------
 	Spawner
+	//ticket
 	
 	Page command/menu
+	//ticket
+	
 
 	Mailing system: a system of sysmessage and gump driven "post". Basic functionality would allow the system (scripts)
 		and GMs to send messages to players even if they were offline. 
@@ -130,22 +142,27 @@ Dinivan
 			- Make player names unique?
 			- System instantnich "whisper" zprav libovolnym ostatnim online hracum
 			- ...?
+	//ticket
 	
 	Gumpovej system pro ingame vytvareni/editaci/mazani regionu a pripadne jejich export/import na a z shardu.
 		Patrne nutna spoluprace s tarem :)
+		//ticket
 
 	Account info dialog
+	//ticket
 
 		
 	"Trestni rejstrik" pro hracsky accounty. Tj. Gump kde by GMka videli seznam dosavadnich prohresku a trestu na accountu, 
 		plus by tam mohli psat vlastni nezavisle poznamky jako "je to druhej account hrace X" apod.
 		S timhle souvisi vubec system prohresku a trestu, idealni by byla nejaka automatizace nebo temer automatizace,
 		od udeleni trestu GMkem az po provedeni trestu systemem a exportem pro web. Good luck :)
+		//ticket
 
 	Group <cislo> pro gumpy
+	//ticket
 	
 	Generator dokumentace (NDoc pro 2.0? nebo Sandcastle?)
-
+//ticket
 
 Kemoc
 ----------------------------------------------------
@@ -171,6 +188,7 @@ Easy stuff for anyone to do, in no particular order:
 ----------------------------------------------------
 
 	t_door, t_door_locked, t_key
+	//ticket
 
 	Axis (pro vypravece): fungujici char spawny, fungujici item spawny (spawnujici i dovnitr kontejneru), 
 		Item: nudge, create remove, nuke, flip, tile, Z, lockdown
@@ -183,12 +201,15 @@ Easy stuff for anyone to do, in no particular order:
 		See "docs/cliloc messages/README and TODO and CHANGES" for details.
 
 	Give the sounds after 476 in "src/Sounds.cs" more descriptive names.
+	//ticket
 	
 	logovaci trida pro verbatima a spol. :) - kdovi co se tim myslelo :) kazdopadne uz existuje logovani do db
+	//ticket
 	
 	party system
 
 	logovani pohybu itemu po svete tak jak je to na morii, ale do db, podle vzoru logovani login/out characteru
+	//ticket
 	
 	odesilani statusu kazdych x minut na DB
 
