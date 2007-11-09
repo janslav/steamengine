@@ -25,6 +25,19 @@ using System.Diagnostics;
 
 namespace SteamEngine.Regions {
 	public partial class Map {
+		[Remark("Take the rectangle, find all sectors it belongs to and chek every dynamic region rectangle in the"+
+				"sector that the do not intersect")]
+		internal bool CheckDynRectIntersection(RegionRectangle rect) {
+			foreach(Sector sector in GetSectorsInRectangle(rect)) {//all sectors the examined rectangle belongs to
+				foreach(RegionRectangle existingRect in sector.RegionRectangles) {//all dynamic regions from the sector
+					if(existingRect.IntersectsWith(rect)) { //intersection check
+						return false; //problem here, stop trying !
+					}
+				}				
+			}
+			return true;
+		}
+
 		private class Sector {
 			internal ThingLinkedList things;
 			internal LinkedList<AbstractCharacter> players;
@@ -298,6 +311,13 @@ namespace SteamEngine.Regions {
 				rectangles = RegionRectangle.emptyArray;
 				dynamicRegionRects = null;
 			}
+
+			//Simple getter
+			internal LinkedList<RegionRectangle> RegionRectangles {
+				get {
+					return dynamicRegionRects;
+				}
+			}
 			#endregion Regions
 
 			#region Dynamic Regions
@@ -330,7 +350,6 @@ namespace SteamEngine.Regions {
 				}
 			}
 			#endregion
-
 		}
 	}
 }

@@ -39,7 +39,6 @@ namespace SteamEngine.Regions {
 		}
 
 		public static void ClearAll() {
-			StaticRegion.ClearAll(); //clears all static regions info
 			worldRegion = voidRegion;
 			highestHierarchyIndex = -1;
 
@@ -317,6 +316,16 @@ namespace SteamEngine.Regions {
 			}
 			return false;
 		}
+
+		public bool ContainsPoint(ushort x, ushort y) {
+			for(int i = 0, n = rectangles.Length; i < n; i++) {
+				Rectangle2D rect = rectangles[i];
+				if(rect.Contains(x,y)) {
+					return true;
+				}
+			}
+			return false;
+		}
 		
 		public override string ToString() {
 			return GetType().Name+" "+defname;
@@ -388,9 +397,9 @@ namespace SteamEngine.Regions {
 
 		public bool IntersectsWith(Rectangle2D rect) {
 			return (Contains(rect.StartPoint)//left upper
-					|| Contains(Point2D.GetPosition(rect.StartPoint.X, rect.EndPoint.Y)) //left lower
+					|| Contains(rect.StartPoint.X, rect.EndPoint.Y) //left lower
 					|| Contains(rect.EndPoint) //right lower
-					|| Contains(Point2D.GetPosition(rect.EndPoint.X, rect.StartPoint.Y)));//right upper
+					|| Contains(rect.EndPoint.X, rect.StartPoint.Y));//right upper
 		}
 	}
 }

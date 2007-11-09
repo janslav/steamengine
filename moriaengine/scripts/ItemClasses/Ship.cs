@@ -125,9 +125,8 @@ namespace SteamEngine.CompiledScripts {
 				for (int i = 0; i<n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
-				bool success;
-				region = new ShipRegion(this, newRectangles, out success);
-				///TODO - co delat pri neuspechu !
+				region = new ShipRegion(this, newRectangles);
+				///TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
 			}
 		}
 

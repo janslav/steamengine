@@ -24,27 +24,18 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.Regions {
 	public class DynamicRegion : Region {
-
 		public DynamicRegion() {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public DynamicRegion(Point4D p, Rectangle2D[] newRects, out bool success) 
+		public DynamicRegion(Rectangle2D[] newRects) 
 				: base() {
-			this.p = p;
-
+			
 			int n = newRects.Length;
 			rectangles = new RegionRectangle[n];
 			for (int i = 0; i<n; i++) {
 				rectangles[i] = new RegionRectangle(newRects[i], this);
-			}
-			Map map = Map.GetMap(p.M);
-			this.parent = map.GetRegionFor(p);
-			success = map.AddDynamicRegion(this, true); //add it to the map, but try if there is no other obstacle!
-
-			if(!success) {
-				Delete();
-			}			
+			}						
 		}
 
 		public override string Name {
@@ -53,6 +44,19 @@ namespace SteamEngine.Regions {
 			}
 			set {
 			}
+		}
+
+		[Remark("Serves to place the region to the map for the first time (after creation)")]
+		public bool Place(Point4D p) {
+			if(p != null) { //already placed!
+				throw new SEException("This Dynamic region has already been placed to the map. For movement try setting its P");
+			} 
+			this.p = p;
+
+			Map map = Map.GetMap(p.M);
+			this.parent = map.GetRegionFor(p);
+
+			return map.AddDynamicRegion(this, true); //add it to the map, but try if there is no other obstacle!
 		}
 
 		public override Point4D P {
@@ -68,6 +72,33 @@ namespace SteamEngine.Regions {
 					base.P = value;
 				} 
 			}
+		}
+
+		[Remark("Tries to move the specified amount of fields in X and Y axes. First examines if it is possible"+
+				"to move that way to the desired location and if so, it moves every rectangle there."+
+				"We expect the timesX and timesY parameteres to be small numbers")]
+		public bool Step(int timesX, int timesY) {
+			Dictionary<RegionRectangle, List<Point2D>> memento = new Dictionary<RegionRectangle, List<Point2D>>();
+			foreach(RegionRectangle rect in rectangles) {
+				//store the original position of the rectangle (the information will be bound to the rectangle object)
+				List<Point2D> pointList = new List<Point2D>();
+				pointList.Add(rect.StartPoint);
+				pointList.Add(rect.EndPoint);
+				memento.Add(rect, pointList);
+				rect.StartPoint = rect.StartPoint.Add(timesX, timesY); //move the rectangle the desired number of tiles
+				rect.EndPoint = rect.EndPoint.Add(timesX, timesY);
+				Map oldMap = Map.GetMap(p.M); //the dynamic region's Map
+				if(!oldMap.CheckDynRectIntersection(rect)) {
+					//check the intercesction of the dynamic region, in case of any trouble immediatelly 
+					//reset the stored position and finish
+					foreach(RegionRectangle storedRect in memento.Keys) {
+						storedRect.StartPoint = memento[storedRect][0]; //nulty je startpoint
+						storedRect.EndPoint = memento[storedRect][1]; //a druhy je ulozeny end point
+					}
+					return false;
+				}
+			}
+			return true; //all OK
 		}
 
 		[Remark("Method called on position change - it recounts the region's rectnagles' position and also makes "+
