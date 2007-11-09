@@ -123,7 +123,7 @@ namespace SteamEngine {
 			get {
 				return start;
 			}
-			set {
+			internal set {
 				start = value;
 			}
 		}
@@ -132,7 +132,7 @@ namespace SteamEngine {
 			get {
 				return end;
 			}
-			set {
+			internal set {
 				start = value;
 			}
 		}
