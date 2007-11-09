@@ -51,14 +51,17 @@ tar
 		that is the one, I'm attacking, must stay colored. And if you hadn't understood you are realy an ignorant .... at least.
   //ticket
 		
-		Multis
+		Multis, Boats
+		//ticket
+		
 		MultiRegions
-		Boats
+		//ticket
 		
 		The Importer is importing multis and boats defs which are DUPEITEMs, since they don't say they're multis. Need
 		to check what they're duping and if it won't be written, then don't write anything duping it either.
 		This won't be an issue once multis and boats are imported, however, and it isn't affecting much right now,
 		so it doesn't need to be done unless it gets annoying before the code to import multis and boats is written.
+//ticket
 
 	try / catch kolem volani On_Udalost z jadra (equip, click, dclick, etc.)
 	//ticket
@@ -77,30 +80,39 @@ tar
 		DOSWITCH (the sphere's thingy)
 		DORAND
 		resource lists? or are they just matter of property loading?
-		
 		while(a < b) no more causing syntax error. need to rewrite the grammar quite a bit... :\ or something.
+	//ticket
 		
-	brain - patrne prednastavena sada vlastnosti a prepinacu pro obecnou AI
+		
+	brain - patrne prednastavena sada vlastnosti a prepinacu pro obecnou AI¨
 		and the AI implementation (ugh)
+		//ticket
 	
 	make Globals overridable?
+	//ticket
 		
 	Networking - sync/async, etc. - revise
+	//ticket
 	
 	Huffman - revise, make the statistics work, fastdll?
+	//ticket
 	
 	zipped gump packet
+	//ticket
 
 	"Garbage collection" - checking&fixing of game-objects invariants.
+	//ticket
 
 	
 iwan
 ----------------------------------------------------
 	Test under MONO.
+	//ticket
 
 	Online documentation.
 
 	Service mode
+	//ticket
 	
 Yavanna
 ----------------------------------------------------
@@ -168,18 +180,23 @@ Kemoc
 ----------------------------------------------------
 
 	Oddeleni login serveru od game serveru
+//ticket
 
 	Konzole: Dlouhy odkazy na soubory ("C:\SE\moria engine\scripts\kdesicosi.scp") se maj zobrazovat jen jako jmeno souboru
 		("kdesicosi.scp"), ale konzole si musi nadale pamatovat tu cestu ktera tam byla napsana
+		//ticket
 	
 	konzole: Pri nastaveni showCoreExceptions = false v .ini se misto mimoskriptovych radku stacktrace vypisuje jen
 		[...]. Tento znak by idealne mohl byt rozbalovaci na poklikani ;)
+		//ticket
 
 	Konzole: udelat neco jako [filter na soucasny pythonicky konzoli co bezi na morii.
 		Nebo vymyslet nejakou jinou, odpovidajici funkcionalitu, ktera by zabranovala spamu logovanych udalosti,
 		ale nezabranovala vzdaleny praci s konzoli.
+		//ticket
 		
 	Konzole: spravit poradi pamatovanych predchozich prikazu
+	//ticket
 
 
 UnAssigned
@@ -194,11 +211,15 @@ Easy stuff for anyone to do, in no particular order:
 		Item: nudge, create remove, nuke, flip, tile, Z, lockdown
 		Summon Remove Set Home Set homedist shrink freeze kill
 		General: skoro vsechno :)
+		//ticket
 
 	converter: convert name = log%s to singularname="log" and pluralname = "logs"
+	//ticket
 
 	Look through cliloc messages and sort them into appropriate text files (stealing.txt, etc).
 		See "docs/cliloc messages/README and TODO and CHANGES" for details.
+//ticket
+
 
 	Give the sounds after 476 in "src/Sounds.cs" more descriptive names.
 	//ticket
@@ -207,14 +228,18 @@ Easy stuff for anyone to do, in no particular order:
 	//ticket
 	
 	party system
+	//ticket
 
 	logovani pohybu itemu po svete tak jak je to na morii, ale do db, podle vzoru logovani login/out characteru
 	//ticket
 	
 	odesilani statusu kazdych x minut na DB
+	//ticket
 
 
-Not so easy :)
+
+----------------------------------------------------
+Not so easy :)  //not yet migrated to tickets
 ----------------------------------------------------
 	Background save. Would need to copy the entire world in-memory first, 
 		and then write it to files in the background.
