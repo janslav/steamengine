@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
                 Point2D point = new Point2D(self);
                 ushort pointX = point.x;
                 ushort pointY = point.y;
-                Int16 s = 0;
+                byte s = 0;
                 foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
 		    		if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
                         s++;
