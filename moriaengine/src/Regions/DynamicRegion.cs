@@ -53,7 +53,7 @@ namespace SteamEngine.Regions {
 			} 
 			this.p = p;
 
-			Map map = Map.GetMap(p.M);
+			Map map = Map.GetMap(p.m);
 			this.parent = map.GetRegionFor(p);
 
 			return map.AddDynamicRegion(this, true); //add it to the map, but try if there is no other obstacle!
@@ -87,7 +87,7 @@ namespace SteamEngine.Regions {
 				memento.Add(rect, pointList);
 				rect.StartPoint = rect.StartPoint.Add(timesX, timesY); //move the rectangle the desired number of tiles
 				rect.EndPoint = rect.EndPoint.Add(timesX, timesY);
-				Map oldMap = Map.GetMap(p.M); //the dynamic region's Map
+				Map oldMap = Map.GetMap(p.m); //the dynamic region's Map
 				if(!oldMap.CheckDynRectIntersection(rect)) {
 					//check the intercesction of the dynamic region, in case of any trouble immediatelly 
 					//reset the stored position and finish
@@ -107,19 +107,19 @@ namespace SteamEngine.Regions {
 			Point4D oldPos = p; //store the old position for case the movement fails!
 			RegionRectangle[] oldRects = rectangles;
 
-			bool xyChanged = (p.X != newP.X || p.Y != newP.Y);
-			bool mapChanged = p.M != newP.M;
+			bool xyChanged = (p.x != newP.x || p.y != newP.y);
+			bool mapChanged = p.m != newP.m;
 
-			Map oldMap = Map.GetMap(p.M); //the dynamic region's old Map
+			Map oldMap = Map.GetMap(p.m); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
 			bool movingOK = true;//indicator if the movement success
 			if(xyChanged) {
-				int diffX = newP.X - p.X;
-				int diffY = newP.Y - p.Y;
+				int diffX = newP.x - p.x;
+				int diffY = newP.y - p.y;
 				RegionRectangle[] movedRects = MoveRectangles(diffX, diffY);
 				this.rectangles = movedRects;
 				if(mapChanged) {
-					Map newMap = Map.GetMap(newP.M);
+					Map newMap = Map.GetMap(newP.m);
 					this.parent = newMap.GetRegionFor(newP);
 					movingOK = newMap.AddDynamicRegion(this, true);//try to place region to the new location
 				} else {
@@ -127,7 +127,7 @@ namespace SteamEngine.Regions {
 					movingOK = oldMap.AddDynamicRegion(this, true);//try to place region to the new location
 				}
 			} else if(mapChanged) {
-				Map newMap = Map.GetMap(newP.M);
+				Map newMap = Map.GetMap(newP.m);
 				this.parent = newMap.GetRegionFor(newP);
 				movingOK = newMap.AddDynamicRegion(this, true);//try to place region to the new location
 			}
@@ -155,7 +155,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void Delete() {
-			Map.GetMap(p.M).RemoveDynamicRegion(this);
+			Map.GetMap(p.m).RemoveDynamicRegion(this);
 			base.Delete();
 		}
 

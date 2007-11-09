@@ -272,7 +272,7 @@ namespace SteamEngine {
 		}
 
 		public void P(Point2D point) {
-			SetPosImpl(point.X, point.Y, this.Z, this.M);
+			SetPosImpl(point.x, point.y, this.Z, this.M);
 		}
 
 		public void P(IPoint2D point) {
@@ -284,7 +284,7 @@ namespace SteamEngine {
 		}
 
 		public void P(Point3D point) {
-			SetPosImpl(point.X, point.Y, point.Z, this.M);
+			SetPosImpl(point.x, point.y, point.z, this.M);
 		}
 
 		public void P(IPoint3D point) {
@@ -296,7 +296,7 @@ namespace SteamEngine {
 		}
 
 		public void P(Point4D point) {
-			SetPosImpl(point.X, point.Y, point.Z, point.M);
+			SetPosImpl(point.x, point.y, point.z, point.m);
 		}
 
 		public void P(IPoint4D point) {

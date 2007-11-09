@@ -50,8 +50,8 @@ namespace SteamEngine.CompiledScripts {
 			if (!this.Trigger_Stroke(self)) {
                 Map map = self.GetMap();
                 Point2D point = new Point2D(self);
-                ushort pointX = point.X;
-                ushort pointY = point.Y;
+                ushort pointX = point.x;
+                ushort pointY = point.y;
                 Int16 s = 0;
                 foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
 		    		if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {

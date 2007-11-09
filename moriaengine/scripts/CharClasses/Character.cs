@@ -957,19 +957,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Go(Point2D pnt) {
-			P(pnt.X, pnt.Y);
+			P(pnt.x, pnt.y);
 			Fix();
 			//Update();
 		}
 
 		public void Go(Point3D pnt) {
-			P(pnt.X, pnt.Y, pnt.Z);
+			P(pnt.x, pnt.y, pnt.z);
 			Fix();
 			//Update();
 		}
 
 		public void Go(Point4D pnt) {
-			P(pnt.X, pnt.Y, pnt.Z, pnt.M);
+			P(pnt.x, pnt.y, pnt.z, pnt.m);
 			Fix();
 			//Update();
 		}

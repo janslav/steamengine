@@ -133,7 +133,7 @@ namespace SteamEngine.Regions {
 			It does not check if the tile is walkable, or anything else (including z).
 		*/
 		public static bool IsValidPos(Point4D point) {
-			return (point.X>=0 && point.Y>=0 && point.X<GetMapSizeX(point.M) && point.Y<GetMapSizeY(point.M));
+			return (point.x>=0 && point.y>=0 && point.x<GetMapSizeX(point.m) && point.y<GetMapSizeY(point.m));
 		}
 
 		public static bool IsValidPos(IPoint4D point) {
@@ -389,7 +389,7 @@ namespace SteamEngine.Regions {
 		internal static void ChangedP(Thing thing, Point4D oldP) {
 			bool oldPValid = Map.IsValidPos(oldP);
 			bool newPValid = Map.IsValidPos(thing);
-			Map oldM = Map.GetMap(oldP.M);
+			Map oldM = Map.GetMap(oldP.m);
 			Map newM = Map.GetMap(thing.M);
 			if (!oldPValid) {
 				if (newPValid) {
@@ -412,8 +412,8 @@ namespace SteamEngine.Regions {
 		
 		private void RemoveFromPImpl(Thing thing, Point4D oldP) {
 			Logger.WriteInfo(MapTracingOn, this+".RemoveFromPImpl("+thing+","+oldP+")");
-			int oldSx = oldP.X>>sectorFactor;
-			int oldSy = oldP.Y>>sectorFactor;
+			int oldSx = oldP.x>>sectorFactor;
+			int oldSy = oldP.y>>sectorFactor;
 			GetSector(oldSx, oldSy).Remove(thing);
 			if (thing.IsMulti) {
 				RemoveMulti((AbstractItem) thing);
@@ -487,14 +487,14 @@ namespace SteamEngine.Regions {
 		private void ChangedPImpl(Thing thing, Point2D oldP) {
 			MutablePoint4D newP = thing.point4d;
 			Logger.WriteInfo(MapTracingOn, this+".ChangedPImpl("+newP+","+oldP+")");
-			int oldXPre = oldP.X&sectorAnd;
+			int oldXPre = oldP.x&sectorAnd;
 			int newXPre = newP.x&sectorAnd;
-			int oldYPre = oldP.Y&sectorAnd;
+			int oldYPre = oldP.y&sectorAnd;
 			int newYPre = newP.y&sectorAnd;
 			if (oldXPre!=newXPre || oldYPre!=newYPre) {
-				int oldSx = oldP.X>>sectorFactor;
+				int oldSx = oldP.x>>sectorFactor;
 				int newSx = newP.x>>sectorFactor;
-				int oldSy = oldP.Y>>sectorFactor;
+				int oldSy = oldP.y>>sectorFactor;
 				int newSy = newP.y>>sectorFactor;
 				Sector oldSector = GetSector(oldSx, oldSy);
 				Sector newSector = GetSector(newSx, newSy);
@@ -851,8 +851,8 @@ namespace SteamEngine.Regions {
 			Point2D point1 = rectangle.StartPoint;
 			Point2D point2 = rectangle.EndPoint;
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
-			this.GetSectorXY(Math.Min(point1.X, point2.X), Math.Min(point1.Y, point2.Y), out xSectorStart, out ySectorStart);
-			this.GetSectorXY(Math.Max(point1.X, point2.X), Math.Max(point1.Y, point2.Y), out xSectorEnd, out ySectorEnd);
+			this.GetSectorXY(Math.Min(point1.x, point2.x), Math.Min(point1.y, point2.y), out xSectorStart, out ySectorStart);
+			this.GetSectorXY(Math.Max(point1.x, point2.x), Math.Max(point1.y, point2.y), out xSectorEnd, out ySectorEnd);
 
 			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
 				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
@@ -994,7 +994,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public Region GetRegionFor(Point2D point) {
-			return GetSector(point.X>>sectorFactor, point.Y>>sectorFactor).GetRegionFor(point);
+			return GetSector(point.x>>sectorFactor, point.y>>sectorFactor).GetRegionFor(point);
 		}
 
 		public Region GetRegionFor(int x, int y) {
@@ -1008,11 +1008,11 @@ namespace SteamEngine.Regions {
 			ArrayList[,] matrix = new ArrayList[numXSectors, numYSectors];
 			foreach(StaticRegion region in regions) {
 				foreach (RegionRectangle rect in region.Rectangles) {
-					int minXs = rect.StartPoint.X >> sectorFactor;
-					int maxXs = rect.EndPoint.X >> sectorFactor;
+					int minXs = rect.StartPoint.x >> sectorFactor;
+					int maxXs = rect.EndPoint.x >> sectorFactor;
 					maxXs = (int) Math.Min(maxXs, numXSectors - 1);
-					int minYs = rect.StartPoint.Y >> sectorFactor;
-					int maxYs = rect.EndPoint.Y >> sectorFactor;
+					int minYs = rect.StartPoint.y >> sectorFactor;
+					int maxYs = rect.EndPoint.y >> sectorFactor;
 					maxYs = (int) Math.Min(maxYs, numYSectors - 1);
 					for (int sx = minXs, topx = maxXs+1; sx<topx; sx++) {
 						for (int sy = minYs, topy = maxYs+1; sy<topy; sy++) {
