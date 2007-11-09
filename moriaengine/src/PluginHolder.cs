@@ -53,6 +53,7 @@ namespace SteamEngine {
 		bool HasPlugin(Plugin plugin);
 		Plugin RemovePlugin(Plugin plugin);
 		Plugin RemovePlugin(PluginKey pg);
+		void DeletePlugin(PluginKey pg);
 
 		IEnumerable<Plugin> GetAllPlugins();
 		IEnumerable<Plugin> GetNonSimplePlugins();
@@ -448,6 +449,15 @@ namespace SteamEngine {
 				}
 			}
 			return null;
+		}
+
+		public void DeletePlugin(PluginKey pg) {
+			if (tags != null) {
+				Plugin plugin = tags[pg] as Plugin;
+				if (plugin != null) {
+					plugin.Delete();
+				}
+			}
 		}
 
 		private Plugin RemovePluginImpl(PluginKey pg, Plugin plugin) {
