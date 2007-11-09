@@ -1279,8 +1279,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public virtual bool On_SkillAbort(int id) {
-			return false;
+		public virtual void On_SkillAbort(int id) {
 		}
 
 		public virtual bool On_SkillFail(int id) {

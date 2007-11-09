@@ -256,18 +256,15 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("This method fires the @skillAbort triggers. "
 		+"//Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
-		public bool Trigger_Abort(Character self) {
-			if (self==null) return false;
-			bool cancel=false;
+		public void Trigger_Abort(Character self) {
+			if (self==null) 
+				return;
+
 			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableSkillTrigger(self, tkAbort, sa);
-			if (!cancel) {
-				cancel=self.TryCancellableTrigger(tkSkillAbort, sa);
-				if (!cancel) {
-					cancel=self.On_SkillAbort(Id);
-				}
-			}
-			return cancel;
+			TrySkillTrigger(self, tkAbort, sa);
+			self.TryTrigger(tkSkillAbort, sa);
+			self.On_SkillAbort(Id);
+
 		}
 
 
