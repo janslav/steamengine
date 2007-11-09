@@ -315,8 +315,8 @@ namespace SteamEngine.CompiledScripts {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public ShipRegion(Ship ship, Rectangle2D[] rectangles, out bool success)
-			: base(ship, rectangles, out success) {
+		public ShipRegion(Ship ship, Rectangle2D[] rectangles)
+			: base(ship, rectangles) {
 		}
 
 		public Ship Ship { get {
