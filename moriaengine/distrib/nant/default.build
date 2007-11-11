@@ -20,8 +20,9 @@
 	</if>
 	
 	<property name="commonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Common.dll'}" />
+	<property name="serverCommonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.ServerCommon.dll'}" />
 	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
-	<property name="coreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Core.exe'}" />
+	<property name="gameCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GameCore.exe'}" />
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
 	<property name="generatedCodeFileName" value="${'bin/Generated/'+outputFilePrefix+'SteamEngine.Generated.'+scriptsNumber+'.dll'}" />
 	<property name="converterFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Converter.exe'}" />
@@ -88,6 +89,25 @@
 		</csc>
 	</target>
 	
+	<target name="buildServerCommon" depends="buildCommon">
+		<csc 
+			target="library" 
+			output="${serverCommonFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="ServerCommon/**/*.cs" />
+			</sources>
+			<references>
+				<include name="${commonFileName}" />
+				<include name="bin/SteamDoc.dll" />
+				<include name="bin/NAnt.Core.dll" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>	
 	
 	<target name="buildGUI" depends="buildCommon">
 		<csc 
@@ -112,20 +132,21 @@
     		tofile="${guiFileName+'.config'}"	/>
 	</target>
 	
-	<target name="buildCore" depends="buildCommon">
+	<target name="buildCore" depends="buildServerCommon">
 		<csc 
 			target="exe" 
-			output="${coreFileName}" 
+			output="${gameCoreFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
 			optimize="${optimize} ">
 			
 			<sources>
-				<include name="src/**/*.cs" />
+				<include name="GameCore/**/*.cs" />
 			</sources>
 			<references>
 				<include name="bin/NAnt.Core.dll" />
 				<include name="bin/SteamDoc.dll" />
+				<include name="${serverCommonFileName}" />
 				<include name="${commonFileName}" />
 				<!--include name="Microsoft.JScript.dll" / -->
 			</references>
@@ -133,7 +154,7 @@
 		</csc>
 		<copy 
 			file="Winconsole/App.config"
-    		tofile="${coreFileName+'.config'}"	/>
+    		tofile="${gameCoreFileName+'.config'}"	/>
 	</target>
 	
 	<target name="buildScripts">
@@ -149,7 +170,7 @@
 			</sources>
 			<references>
 				<include name="${commonFileName}" />
-				<include name="${coreFileName}" />
+				<include name="${gameCoreFileName}" />
 			
 				<include name="bin/SteamDoc.dll" />
 				<include name="bin/NAnt.Core.dll" />
@@ -172,7 +193,7 @@
 			</sources>
 			<references>
 				<include name="${commonFileName}" />
-				<include name="${coreFileName}" />
+				<include name="${gameCoreFileName}" />
 				<include name="${scriptsFileName}" />
 				<include name="bin/SteamDoc.dll" />
 				<includesfile name="${scriptsReferencesListPath}" />
@@ -181,7 +202,7 @@
 		</csc>
 	</target>
 	
-	<target name="buildConverter" depends="buildCommon, buildCore, buildScripts">
+	<target name="buildConverter" depends="buildServerCommon, buildCore, buildScripts">
 		<csc 
 			target="exe" 
 			output="${converterFileName}" 
@@ -195,7 +216,7 @@
 			<references>
 				<include name="bin/SteamDoc.dll" />
 				<include name="${commonFileName}" />
-				<include name="${coreFileName}" />
+				<include name="${gameCoreFileName}" />
 				<include name="${scriptsFileName}" />
 				<include name="Microsoft.JScript.dll" />
 			</references>
@@ -203,7 +224,7 @@
 		</csc>
 	</target>
 
-	<target name="build" depends="buildCommon,buildCore,buildGUI">
+	<target name="build" depends="buildServerCommon,buildCore,buildGUI">
 	</target>
 	
 	<target name="echoInfo" >
@@ -220,7 +241,7 @@
 	</target>
 	
 	<target name="runCore" depends="buildCore">
-		<exec program="${coreFileName}" />
+		<exec program="${gameCoreFileName}" />
 	</target>
 	
 	<target name="rebuild" depends="clean, build" />
