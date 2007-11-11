@@ -39,37 +39,7 @@ namespace SteamEngine {
 
 		new IPoint4D TopPoint { get; }
 		Map GetMap();
-
-		//IEnumerable ThingsInRange();
-		//IEnumerable ItemsInRange();
-		//IEnumerable CharsInRange();
-		//IEnumerable PlayersInRange();
-		//IEnumerable StaticsInRange();
-		//IEnumerable DisconnectsInRange();
-		//IEnumerable MultiComponentsInRange();
-
-		//IEnumerable ThingsInRange(ushort range);
-		//IEnumerable ItemsInRange(ushort range);
-		//IEnumerable CharsInRange(ushort range);
-		//IEnumerable PlayersInRange(ushort range);
-		//IEnumerable StaticsInRange(ushort range);
-		//IEnumerable DisconnectsInRange(ushort range);
 	}
-
-	//public interface IPoint5D : IPoint4D {
-	//    int Height { get; }
-	//    The height to consider this to be. This is used for LOS checking. 
-	//    People are about 10 units (Height is in z units) in height.
-	//}
-	//public interface IPoint6D : IPoint5D {
-	//    Thing TopObj();
-	//    IPoint5D TopPos { get; }
-	//    new IPoint5D TopPoint { get; }
-	//    bool IsOnGround { get; }
-	//    bool IsInContainer { get; }
-	//    bool IsInvisible { get; }
-	//    Thing Cont { get; }
-	//}
 
 	public class Point2D : IPoint2D {
 		public readonly ushort x;	//Map X coordinate (Low is west, high is east)
@@ -205,7 +175,7 @@ namespace SteamEngine {
 			return (37*17^x)^y;
 		}
 
-		public IPoint2D TopPoint {
+		IPoint2D IPoint2D.TopPoint {
 			get { return this; }
 		}
 	}
@@ -283,7 +253,7 @@ namespace SteamEngine {
 			return ((37*17^x)^y)^z;
 		}
 
-		public new IPoint3D TopPoint {
+		IPoint3D IPoint3D.TopPoint {
 			get { return this; }
 		}
 	}
@@ -487,7 +457,7 @@ namespace SteamEngine {
 			return Map.GetMap(m);
 		}
 
-		public new IPoint4D TopPoint {
+		IPoint4D IPoint4D.TopPoint {
 			get { return this; }
 		}
 	}
