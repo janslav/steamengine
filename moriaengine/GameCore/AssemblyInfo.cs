@@ -46,9 +46,6 @@ using System.Web;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SteamEngine Team")]
 [assembly: AssemblyProduct("SteamEngine")]
-[assembly: AssemblyCopyright("2002-2004 Richard Dillingham and contributors")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 
 // The assembly version has following format :

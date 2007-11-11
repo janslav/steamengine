@@ -115,7 +115,7 @@ namespace SteamClients {
 			if (runConverter) {
 				steamConsole.StartNative("buildConverter", "converterFileName");
 			} else {
-				steamConsole.StartNative("buildCore", "coreFileName");
+				steamConsole.StartNative("buildCore", "gameCoreFileName");
 			}
 			iniFile.IniDone();
 			runMainLoop=true;

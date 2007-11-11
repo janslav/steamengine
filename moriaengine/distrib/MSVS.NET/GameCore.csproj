@@ -6,7 +6,7 @@
     <ProjectGuid>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>..\..\src\icon6.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\GameCore\icon6.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>MSVS_SteamEngine</AssemblyName>
@@ -72,774 +72,774 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\3rdParty\Encryption\ByteQueue.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\ByteQueue.cs">
       <Link>3rdParty\Encryption\ByteQueue.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\Encryption.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\Encryption.cs">
       <Link>3rdParty\Encryption\Encryption.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\GameEncryption.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\GameEncryption.cs">
       <Link>3rdParty\Encryption\GameEncryption.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\IClientEncryption.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\IClientEncryption.cs">
       <Link>3rdParty\Encryption\IClientEncryption.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\LoginEncryption.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\LoginEncryption.cs">
       <Link>3rdParty\Encryption\LoginEncryption.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\LoginKey.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\LoginKey.cs">
       <Link>3rdParty\Encryption\LoginKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\NoEncryption.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\NoEncryption.cs">
       <Link>3rdParty\Encryption\NoEncryption.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\TwofishBase.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\TwofishBase.cs">
       <Link>3rdParty\Encryption\TwofishBase.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Encryption\TwofishEncryption.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Encryption\TwofishEncryption.cs">
       <Link>3rdParty\Encryption\TwofishEncryption.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs">
+    <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractAccount.cs">
+    <Compile Include="..\..\GameCore\AbstractAccount.cs">
       <Link>AbstractAccount.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\AbstractCharacter.cs">
+    <Compile Include="..\..\GameCore\AbstractCharacter.cs">
       <Link>AbstractCharacter.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractCharacterDef.cs">
+    <Compile Include="..\..\GameCore\AbstractCharacterDef.cs">
       <Link>AbstractCharacterDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractDef.cs">
+    <Compile Include="..\..\GameCore\AbstractDef.cs">
       <Link>AbstractDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractDefTriggerGroupHolder.cs">
+    <Compile Include="..\..\GameCore\AbstractDefTriggerGroupHolder.cs">
       <Link>AbstractDefTriggerGroupHolder.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\AbstractItem.cs">
+    <Compile Include="..\..\GameCore\AbstractItem.cs">
       <Link>AbstractItem.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractItemDef.cs">
+    <Compile Include="..\..\GameCore\AbstractItemDef.cs">
       <Link>AbstractItemDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractKey.cs">
+    <Compile Include="..\..\GameCore\AbstractKey.cs">
       <Link>AbstractKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractScript.cs">
+    <Compile Include="..\..\GameCore\AbstractScript.cs">
       <Link>AbstractScript.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AbstractSkillDef.cs">
+    <Compile Include="..\..\GameCore\AbstractSkillDef.cs">
       <Link>AbstractSkillDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\AssemblyInfo.cs">
+    <Compile Include="..\..\GameCore\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CacheDictionary.cs">
+    <Compile Include="..\..\GameCore\CacheDictionary.cs">
       <Link>CacheDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CanSeeImplementation.cs">
+    <Compile Include="..\..\GameCore\CanSeeImplementation.cs">
       <Link>CanSeeImplementation.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CharData.cs">
+    <Compile Include="..\..\GameCore\CharData.cs">
       <Link>CharData.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ClientVersion.cs">
+    <Compile Include="..\..\GameCore\ClientVersion.cs">
       <Link>ClientVersion.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Commands.cs">
+    <Compile Include="..\..\GameCore\Commands.cs">
       <Link>Commands.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassManager.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassManager.cs">
       <Link>CompiledScripts\ClassManager.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassDefTemplate.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ClassDefTemplate.cs">
       <Link>CompiledScripts\ClassTemplates\ClassDefTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplate.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ClassTemplate.cs">
       <Link>CompiledScripts\ClassTemplates\ClassTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateBase.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ClassTemplateBase.cs">
       <Link>CompiledScripts\ClassTemplates\ClassTemplateBase.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateParser.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ClassTemplateParser.cs">
       <Link>CompiledScripts\ClassTemplates\ClassTemplateParser.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateSection.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ClassTemplateSection.cs">
       <Link>CompiledScripts\ClassTemplates\ClassTemplateSection.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ClassTemplateSectionField.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ClassTemplateSectionField.cs">
       <Link>CompiledScripts\ClassTemplates\ClassTemplateSectionField.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\PluginDefTemplate.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\PluginDefTemplate.cs">
       <Link>CompiledScripts\ClassTemplates\PluginDefTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\PluginTemplate.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\PluginTemplate.cs">
       <Link>CompiledScripts\ClassTemplates\PluginTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ThingDefTemplate.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ThingDefTemplate.cs">
       <Link>CompiledScripts\ClassTemplates\ThingDefTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\ClassTemplates\ThingTemplate.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\ClassTemplates\ThingTemplate.cs">
       <Link>CompiledScripts\ClassTemplates\ThingTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\CompiledGump.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\CompiledGump.cs">
       <Link>CompiledScripts\CompiledGump.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\CompiledScriptHolder.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\CompiledScriptHolder.cs">
       <Link>CompiledScripts\CompiledScriptHolder.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\CompiledTriggerGroup.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\CompiledTriggerGroup.cs">
       <Link>CompiledScripts\CompiledTriggerGroup.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\CompilerInvoker.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\CompilerInvoker.cs">
       <Link>CompiledScripts\CompilerInvoker.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CompiledScripts\GeneratedCodeUtil.cs">
+    <Compile Include="..\..\GameCore\CompiledScripts\GeneratedCodeUtil.cs">
       <Link>CompiledScripts\GeneratedCodeUtil.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Conn.cs">
+    <Compile Include="..\..\GameCore\Conn.cs">
       <Link>Conn.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ConsConn.cs">
+    <Compile Include="..\..\GameCore\ConsConn.cs">
       <Link>ConsConn.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Constant.cs">
+    <Compile Include="..\..\GameCore\Constant.cs">
       <Link>Constant.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\CoreLogger.cs">
+    <Compile Include="..\..\GameCore\CoreLogger.cs">
       <Link>CoreLogger.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\DecoratedClassesDeepCopyImplementor.cs">
+    <Compile Include="..\..\GameCore\DecoratedClassesDeepCopyImplementor.cs">
       <Link>DecoratedClassesDeepCopyImplementor.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\DeepCopyFactory.cs">
+    <Compile Include="..\..\GameCore\DeepCopyFactory.cs">
       <Link>DeepCopyFactory.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\DelayedResolver.cs">
+    <Compile Include="..\..\GameCore\DelayedResolver.cs">
       <Link>DelayedResolver.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\DispidInfo.cs">
+    <Compile Include="..\..\GameCore\DispidInfo.cs">
       <Link>DispidInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Enums.cs">
+    <Compile Include="..\..\GameCore\Enums.cs">
       <Link>Enums.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\FastDLL.cs">
+    <Compile Include="..\..\GameCore\FastDLL.cs">
       <Link>FastDLL.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\FastWalk.cs">
+    <Compile Include="..\..\GameCore\FastWalk.cs">
       <Link>FastWalk.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\FieldValue.cs">
+    <Compile Include="..\..\GameCore\FieldValue.cs">
       <Link>FieldValue.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\GameConn.cs">
+    <Compile Include="..\..\GameCore\GameConn.cs">
       <Link>GameConn.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Globals.cs">
+    <Compile Include="..\..\GameCore\Globals.cs">
       <Link>Globals.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Gump.cs">
+    <Compile Include="..\..\GameCore\Gump.cs">
       <Link>Gump.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\HashSet.cs">
+    <Compile Include="..\..\GameCore\HashSet.cs">
       <Link>HashSet.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\LayerNames.cs">
+    <Compile Include="..\..\GameCore\LayerNames.cs">
       <Link>LayerNames.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\LScript\Exceptions.cs">
+    <Compile Include="..\..\GameCore\LScript\Exceptions.cs">
       <Link>LScript\Exceptions.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\IntrinsicMethods.cs">
+    <Compile Include="..\..\GameCore\LScript\IntrinsicMethods.cs">
       <Link>LScript\IntrinsicMethods.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\LocalVarKey.cs">
+    <Compile Include="..\..\GameCore\LScript\LocalVarKey.cs">
       <Link>LScript\LocalVarKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\LScript.cs">
+    <Compile Include="..\..\GameCore\LScript\LScript.cs">
       <Link>LScript\LScript.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\LScriptAnalyzer.cs">
+    <Compile Include="..\..\GameCore\LScript\LScriptAnalyzer.cs">
       <Link>LScript\LScriptAnalyzer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\LScriptHolder.cs">
+    <Compile Include="..\..\GameCore\LScript\LScriptHolder.cs">
       <Link>LScript\LScriptHolder.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\LScriptParser.cs">
+    <Compile Include="..\..\GameCore\LScript\LScriptParser.cs">
       <Link>LScript\LScriptParser.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\MemberResolver.cs">
+    <Compile Include="..\..\GameCore\LScript\MemberResolver.cs">
       <Link>LScript\MemberResolver.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode.cs">
       <Link>LScript\OpNode.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Code.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Code.cs">
       <Link>LScript\OpNode_Code.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_AddTimer.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_AddTimer.cs">
       <Link>LScript\OpNode_Final_AddTimer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_ARG.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_ARG.cs">
       <Link>LScript\OpNode_Final_ARG.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_Arguments.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Arguments.cs">
       <Link>LScript\OpNode_Final_Arguments.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_ArrayListIndexer.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_ArrayListIndexer.cs">
       <Link>LScript\OpNode_Final_ArrayListIndexer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_BinMathOperators.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_BinMathOperators.cs">
       <Link>LScript\OpNode_Final_BinMathOperators.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_BinOperators.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_BinOperators.cs">
       <Link>LScript\OpNode_Final_BinOperators.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_ComparOperators.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_ComparOperators.cs">
       <Link>LScript\OpNode_Final_ComparOperators.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_Constructor.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Constructor.cs">
       <Link>LScript\OpNode_Final_Constructor.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_Field.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Field.cs">
       <Link>LScript\OpNode_Final_Field.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_Function.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Function.cs">
       <Link>LScript\OpNode_Final_Function.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_LogicalOp.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_LogicalOp.cs">
       <Link>LScript\OpNode_Final_LogicalOp.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_Method.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Method.cs">
       <Link>LScript\OpNode_Final_Method.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_RandomExpression.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_RandomExpression.cs">
       <Link>LScript\OpNode_Final_RandomExpression.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_Return.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Return.cs">
       <Link>LScript\OpNode_Final_Return.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_SkillKey.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_SkillKey.cs">
       <Link>LScript\OpNode_Final_SkillKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_TAG.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_TAG.cs">
       <Link>LScript\OpNode_Final_TAG.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_TemplateItem.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_TemplateItem.cs">
       <Link>LScript\OpNode_Final_TemplateItem.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_UnOperators.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_UnOperators.cs">
       <Link>LScript\OpNode_Final_UnOperators.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Final_VAR.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_VAR.cs">
       <Link>LScript\OpNode_Final_VAR.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_For.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_For.cs">
       <Link>LScript\OpNode_For.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Foreach.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Foreach.cs">
       <Link>LScript\OpNode_Foreach.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_If.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_If.cs">
       <Link>LScript\OpNode_If.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_AddTimer.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_AddTimer.cs">
       <Link>LScript\OpNode_Lazy_AddTimer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_Arguments.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_Arguments.cs">
       <Link>LScript\OpNode_Lazy_Arguments.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_BinOperator.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_BinOperator.cs">
       <Link>LScript\OpNode_Lazy_BinOperator.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_EvalExpression.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_EvalExpression.cs">
       <Link>LScript\OpNode_Lazy_EvalExpression.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_Expression.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_Expression.cs">
       <Link>LScript\OpNode_Lazy_Expression.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_ExpressionChain.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_ExpressionChain.cs">
       <Link>LScript\OpNode_Lazy_ExpressionChain.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_Indexer.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_Indexer.cs">
       <Link>LScript\OpNode_Lazy_Indexer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_QuotedString.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_QuotedString.cs">
       <Link>LScript\OpNode_Lazy_QuotedString.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_RandomExpression.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_RandomExpression.cs">
       <Link>LScript\OpNode_Lazy_RandomExpression.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_UnOperator.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_UnOperator.cs">
       <Link>LScript\OpNode_Lazy_UnOperator.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Lazy_VarExpression.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Lazy_VarExpression.cs">
       <Link>LScript\OpNode_Lazy_VarExpression.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Script.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Script.cs">
       <Link>LScript\OpNode_Script.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_Switch.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_Switch.cs">
       <Link>LScript\OpNode_Switch.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_TypeOf.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_TypeOf.cs">
       <Link>LScript\OpNode_TypeOf.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\LScript\OpNode_While.cs">
+    <Compile Include="..\..\GameCore\LScript\OpNode_While.cs">
       <Link>LScript\OpNode_While.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\ScriptedGumpDef.cs">
+    <Compile Include="..\..\GameCore\LScript\ScriptedGumpDef.cs">
       <Link>LScript\ScriptedGumpDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\ScriptedTriggerGroup.cs">
+    <Compile Include="..\..\GameCore\LScript\ScriptedTriggerGroup.cs">
       <Link>LScript\ScriptedTriggerGroup.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\LScript\StrictAnalyzer.cs">
+    <Compile Include="..\..\GameCore\LScript\StrictAnalyzer.cs">
       <Link>LScript\StrictAnalyzer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\StrictConstants.cs">
+    <Compile Include="..\..\GameCore\LScript\StrictConstants.cs">
       <Link>LScript\StrictConstants.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\StrictParser.cs">
+    <Compile Include="..\..\GameCore\LScript\StrictParser.cs">
       <Link>LScript\StrictParser.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\LScript\StrictTokenizer.cs">
+    <Compile Include="..\..\GameCore\LScript\StrictTokenizer.cs">
       <Link>LScript\StrictTokenizer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Main.cs">
+    <Compile Include="..\..\GameCore\Main.cs">
       <Link>Main.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\MemberWrapper.cs">
+    <Compile Include="..\..\GameCore\MemberWrapper.cs">
       <Link>MemberWrapper.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\MultiData.cs">
+    <Compile Include="..\..\GameCore\MultiData.cs">
       <Link>MultiData.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ObjectPropertiesContainer.cs">
+    <Compile Include="..\..\GameCore\ObjectPropertiesContainer.cs">
       <Link>ObjectPropertiesContainer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\OpenedContainers.cs">
+    <Compile Include="..\..\GameCore\OpenedContainers.cs">
       <Link>OpenedContainers.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Packets\Compression.cs">
+    <Compile Include="..\..\GameCore\Packets\Compression.cs">
       <Link>Packets\Compression.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\HighLevelOut.cs">
+    <Compile Include="..\..\GameCore\Packets\HighLevelOut.cs">
       <Link>Packets\HighLevelOut.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\InPackets.cs">
+    <Compile Include="..\..\GameCore\Packets\InPackets.cs">
       <Link>Packets\InPackets.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\LowLevelOut.cs">
+    <Compile Include="..\..\GameCore\Packets\LowLevelOut.cs">
       <Link>Packets\LowLevelOut.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\MediumLevelOut.cs">
+    <Compile Include="..\..\GameCore\Packets\MediumLevelOut.cs">
       <Link>Packets\MediumLevelOut.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\NetState.cs">
+    <Compile Include="..\..\GameCore\Packets\NetState.cs">
       <Link>Packets\NetState.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\PacketBase.cs">
+    <Compile Include="..\..\GameCore\Packets\PacketBase.cs">
       <Link>Packets\PacketBase.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\PacketGroup.cs">
+    <Compile Include="..\..\GameCore\Packets\PacketGroup.cs">
       <Link>Packets\PacketGroup.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\PacketHandler.cs">
+    <Compile Include="..\..\GameCore\Packets\PacketHandler.cs">
       <Link>Packets\PacketHandler.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\PacketSender.cs">
+    <Compile Include="..\..\GameCore\Packets\PacketSender.cs">
       <Link>Packets\PacketSender.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\PacketStats.cs">
+    <Compile Include="..\..\GameCore\Packets\PacketStats.cs">
       <Link>Packets\PacketStats.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Packets\Prepared.cs">
+    <Compile Include="..\..\GameCore\Packets\Prepared.cs">
       <Link>Packets\Prepared.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Persistence\DecoratedClassesSaveImplementor.cs">
+    <Compile Include="..\..\GameCore\Persistence\DecoratedClassesSaveImplementor.cs">
       <Link>Persistence\DecoratedClassesSaveImplementor.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Persistence\ExportImport.cs">
+    <Compile Include="..\..\GameCore\Persistence\ExportImport.cs">
       <Link>Persistence\ExportImport.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Persistence\ObjectSaver.cs">
+    <Compile Include="..\..\GameCore\Persistence\ObjectSaver.cs">
       <Link>Persistence\ObjectSaver.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Persistence\WorldSaver.cs">
+    <Compile Include="..\..\GameCore\Persistence\WorldSaver.cs">
       <Link>Persistence\WorldSaver.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Plugin.cs">
+    <Compile Include="..\..\GameCore\Plugin.cs">
       <Link>Plugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\PluginDef.cs">
+    <Compile Include="..\..\GameCore\PluginDef.cs">
       <Link>PluginDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\PluginHolder.cs">
+    <Compile Include="..\..\GameCore\PluginHolder.cs">
       <Link>PluginHolder.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\PluginKey.cs">
+    <Compile Include="..\..\GameCore\PluginKey.cs">
       <Link>PluginKey.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\PluginTriggerGroupGenerator.cs">
+    <Compile Include="..\..\GameCore\PluginTriggerGroupGenerator.cs">
       <Link>PluginTriggerGroupGenerator.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Point.cs">
+    <Compile Include="..\..\GameCore\Point.cs">
       <Link>Point.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\PropsFileParser.cs">
+    <Compile Include="..\..\GameCore\PropsFileParser.cs">
       <Link>PropsFileParser.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Rectangle.cs">
+    <Compile Include="..\..\GameCore\Rectangle.cs">
       <Link>Rectangle.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Regions\DynamicRegion.cs">
+    <Compile Include="..\..\GameCore\Regions\DynamicRegion.cs">
       <Link>Regions\DynamicRegion.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Regions\Map.cs">
+    <Compile Include="..\..\GameCore\Regions\Map.cs">
       <Link>Regions\Map.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Regions\Movement.cs">
+    <Compile Include="..\..\GameCore\Regions\Movement.cs">
       <Link>Regions\Movement.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Regions\Region.cs">
+    <Compile Include="..\..\GameCore\Regions\Region.cs">
       <Link>Regions\Region.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Regions\Sector.cs">
+    <Compile Include="..\..\GameCore\Regions\Sector.cs">
       <Link>Regions\Sector.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Regions\StaticRegion.cs">
+    <Compile Include="..\..\GameCore\Regions\StaticRegion.cs">
       <Link>Regions\StaticRegion.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Regions\StaticSector.cs">
+    <Compile Include="..\..\GameCore\Regions\StaticSector.cs">
       <Link>Regions\StaticSector.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\ScriptArgs.cs">
+    <Compile Include="..\..\GameCore\ScriptArgs.cs">
       <Link>ScriptArgs.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ScriptFilesCollection.cs">
+    <Compile Include="..\..\GameCore\ScriptFilesCollection.cs">
       <Link>ScriptFilesCollection.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ScriptHolder.cs">
+    <Compile Include="..\..\GameCore\ScriptHolder.cs">
       <Link>ScriptHolder.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ScriptLoader.cs">
+    <Compile Include="..\..\GameCore\ScriptLoader.cs">
       <Link>ScriptLoader.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\SEIniHandler.cs">
+    <Compile Include="..\..\GameCore\SEIniHandler.cs">
       <Link>SEIniHandler.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Server.cs">
+    <Compile Include="..\..\GameCore\Server.cs">
       <Link>Server.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\SimulConn.cs">
+    <Compile Include="..\..\GameCore\SimulConn.cs">
       <Link>SimulConn.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\SoundMul.cs">
+    <Compile Include="..\..\GameCore\SoundMul.cs">
       <Link>SoundMul.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Static.cs">
+    <Compile Include="..\..\GameCore\Static.cs">
       <Link>Static.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Statistics.cs">
+    <Compile Include="..\..\GameCore\Statistics.cs">
       <Link>Statistics.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\TagHolder.cs">
+    <Compile Include="..\..\GameCore\TagHolder.cs">
       <Link>TagHolder.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\TagKey.cs">
+    <Compile Include="..\..\GameCore\TagKey.cs">
       <Link>TagKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\TagMath.cs">
+    <Compile Include="..\..\GameCore\TagMath.cs">
       <Link>TagMath.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Temporary.cs">
+    <Compile Include="..\..\GameCore\Temporary.cs">
       <Link>Temporary.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Thing.cs">
+    <Compile Include="..\..\GameCore\Thing.cs">
       <Link>Thing.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ThingDef.cs">
+    <Compile Include="..\..\GameCore\ThingDef.cs">
       <Link>ThingDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\ThingLinkedList.cs">
+    <Compile Include="..\..\GameCore\ThingLinkedList.cs">
       <Link>ThingLinkedList.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\ThingManipulationTriggers.cs">
+    <Compile Include="..\..\GameCore\ThingManipulationTriggers.cs">
       <Link>ThingManipulationTriggers.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\tiledata.cs">
+    <Compile Include="..\..\GameCore\tiledata.cs">
       <Link>tiledata.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Timers\BoundTimer.cs">
+    <Compile Include="..\..\GameCore\Timers\BoundTimer.cs">
       <Link>Timers\BoundTimer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Timers\DelegateTimer.cs">
+    <Compile Include="..\..\GameCore\Timers\DelegateTimer.cs">
       <Link>Timers\DelegateTimer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Timers\FunctionTimer.cs">
+    <Compile Include="..\..\GameCore\Timers\FunctionTimer.cs">
       <Link>Timers\FunctionTimer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Timers\MethodTimer.cs">
+    <Compile Include="..\..\GameCore\Timers\MethodTimer.cs">
       <Link>Timers\MethodTimer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Timers\SimpleQueue.cs">
+    <Compile Include="..\..\GameCore\Timers\SimpleQueue.cs">
       <Link>Timers\SimpleQueue.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Timers\Timer.cs">
+    <Compile Include="..\..\GameCore\Timers\Timer.cs">
       <Link>Timers\Timer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Timers\TimerKey.cs">
+    <Compile Include="..\..\GameCore\Timers\TimerKey.cs">
       <Link>Timers\TimerKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Timers\TimerPriorityQueue.cs">
+    <Compile Include="..\..\GameCore\Timers\TimerPriorityQueue.cs">
       <Link>Timers\TimerPriorityQueue.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Timers\TriggerTimer.cs">
+    <Compile Include="..\..\GameCore\Timers\TriggerTimer.cs">
       <Link>Timers\TriggerTimer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\TriggerGroup.cs">
+    <Compile Include="..\..\GameCore\TriggerGroup.cs">
       <Link>TriggerGroup.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\TriggerKey.cs">
+    <Compile Include="..\..\GameCore\TriggerKey.cs">
       <Link>TriggerKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\UIDArray.cs">
+    <Compile Include="..\..\GameCore\UIDArray.cs">
       <Link>UIDArray.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\Utility.cs">
+    <Compile Include="..\..\GameCore\Utility.cs">
       <Link>Utility.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\src\WeakRefDictionary.cs">
+    <Compile Include="..\..\GameCore\WeakRefDictionary.cs">
       <Link>WeakRefDictionary.cs</Link>
     </Compile>
   </ItemGroup>

@@ -133,9 +133,9 @@
       <Project>{69DBC534-CB41-450F-AF83-0F95BD8762C4}</Project>
       <Name>Scripts</Name>
     </ProjectReference>
-    <ProjectReference Include="Steamengine.csproj">
+    <ProjectReference Include="GameCore.csproj">
       <Project>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</Project>
-      <Name>Steamengine</Name>
+      <Name>GameCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

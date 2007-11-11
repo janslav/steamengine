@@ -24,8 +24,8 @@ using System.Runtime.CompilerServices;
 // change them to the information which is associated with the assembly
 // you compile.
 
-[assembly: AssemblyTitle("SteamEngine GUI")]
-[assembly: AssemblyDescription("GUI for SteamEngine which can be used with either a local or remote SteamEngine server")]
+[assembly: AssemblyTitle("SteamEngine Server Common Library")]
+[assembly: AssemblyDescription("Base library GUI SteamEngine GameServer and LoginServer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SteamEngine Team")]
 [assembly: AssemblyProduct("SteamEngine GUI")]
