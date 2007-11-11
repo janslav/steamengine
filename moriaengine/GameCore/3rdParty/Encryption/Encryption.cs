@@ -8,7 +8,7 @@ using SteamEngine.Packets;
 namespace SteamEngine.Packets
 {
 	// This class handles OSI client encryption for clients newer than 2.0.3. (not including 2.0.3)
-	public class Encryption
+	public class Encryption //: SteamEngine.Network.IEncryption
 	{
 		// Encryption state information
 		private uint m_Seed;
@@ -61,7 +61,7 @@ namespace SteamEngine.Packets
 		}
 
 		// Try to encrypt outgoing data.
-		public void EncodeOutgoingPacket(byte[] buffer)
+		public void ServerEncrypt(byte[] buffer)
 		{
 			if (m_Encryption != null) 
 			{
@@ -71,7 +71,7 @@ namespace SteamEngine.Packets
 			}
 		}
 
-		public void RejectNoEncryption(GameConn ns)
+		private void RejectNoEncryption(GameConn ns)
 		{
 			// Log it on the console
 			//Console.WriteLine( "Client: {0}: Unencrypted client detected, disconnected", ns );
@@ -90,7 +90,7 @@ namespace SteamEngine.Packets
 		}
 
 		// Try to decrypt incoming data.
-		public void DecodeIncomingPacket( GameConn from, ref byte[] buffer, ref int length )
+		public void ClientDecrypt( GameConn from, ref byte[] buffer, ref int length )
 		{
 			if (m_Encryption != null) 
 			{

@@ -75,7 +75,7 @@ namespace SteamEngine.Packets
 				// Recalculate table
 				if ( recvPos >= 0x100 )
 				{
-					byte[] tmpBuffer = new byte[0x100];
+					//byte[] tmpBuffer = new byte[0x100];
 					refreshCipherTable();
 				}
 

@@ -735,9 +735,11 @@ namespace SteamEngine.Common {
 		//similar to WriteLine, only it does not show the string on the console - 
 		//it only writes it to file
 		public static void Log(string data) {
-			if (fileopen) {
-				file.WriteLine(DateTime.Now.ToString(timeFormat)+": "+data);
-				Rotate();
+			lock (instance) {
+				if (fileopen) {
+					file.WriteLine(DateTime.Now.ToString(timeFormat)+": "+data);
+					Rotate();
+				}
 			}
 		}
 
@@ -746,14 +748,16 @@ namespace SteamEngine.Common {
 		}
 
 		public override void WriteLine(string data) {
-			string printline=String.Concat(DateTime.Now.ToString(timeFormat), ": ", indentation, data);
-			console.WriteLine(printline);
-			if (OnConsoleWriteLine!=null) {  
-				OnConsoleWriteLine(printline);
-			}
-			if (fileopen) {
-				file.WriteLine(printline);
-				Rotate();
+			lock (this) {
+				string printline=String.Concat(DateTime.Now.ToString(timeFormat), ": ", indentation, data);
+				console.WriteLine(printline);
+				if (OnConsoleWriteLine!=null) {
+					OnConsoleWriteLine(printline);
+				}
+				if (fileopen) {
+					file.WriteLine(printline);
+					Rotate();
+				}
 			}
 		}
 
@@ -762,25 +766,29 @@ namespace SteamEngine.Common {
 		}
 		
 		public void WriteLine(LogStr data) {
-			LogStr printline=LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat), (LogStr) ": ", (LogStr) indentation, data);
-			console.WriteLine(printline.RawString);
-			if (OnConsoleWriteLine != null) {  
-				OnConsoleWriteLine(printline.NiceString);
-			}
-			if (fileopen) {
-				file.WriteLine(printline.RawString);
-				Rotate();
+			lock (this) {
+				LogStr printline=LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat), (LogStr) ": ", (LogStr) indentation, data);
+				console.WriteLine(printline.RawString);
+				if (OnConsoleWriteLine != null) {
+					OnConsoleWriteLine(printline.NiceString);
+				}
+				if (fileopen) {
+					file.WriteLine(printline.RawString);
+					Rotate();
+				}
 			}
 		}
 		
 		public override void Write(string data) {
-			console.Write(data);
-			if (OnConsoleWrite!=null) {
-				OnConsoleWrite(data);
-			}
-			if (fileopen) {
-				file.Write(data);
-				Rotate();
+			lock (this) {
+				console.Write(data);
+				if (OnConsoleWrite!=null) {
+					OnConsoleWrite(data);
+				}
+				if (fileopen) {
+					file.Write(data);
+					Rotate();
+				}
 			}
 		}
 
@@ -789,13 +797,15 @@ namespace SteamEngine.Common {
 		}
 
 		public void Write(LogStr data) {
-			console.Write(data.RawString);
-			if (OnConsoleWrite!=null) {
-				OnConsoleWrite(data.NiceString);
-			}
-			if (fileopen) {
-				file.Write(data.RawString);
-				Rotate();
+			lock (this) {
+				console.Write(data.RawString);
+				if (OnConsoleWrite!=null) {
+					OnConsoleWrite(data.NiceString);
+				}
+				if (fileopen) {
+					file.Write(data.RawString);
+					Rotate();
+				}
 			}
 		}
 		

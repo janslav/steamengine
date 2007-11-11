@@ -1003,7 +1003,7 @@ namespace SteamEngine {
 			byte[] a = new byte[len];
 			Buffer.BlockCopy(array, start, a, 0, len);
 
-			encryption.EncodeOutgoingPacket(a);
+			encryption.ServerEncrypt(a);
 
 			if (!GetRandAsync()) {
 				long timeStartedSyncWrite=HighPerformanceTimer.TickCount;

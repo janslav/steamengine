@@ -39,7 +39,7 @@ namespace SteamEngine.Packets {
 					//Darkstorms encryption
 					//Console.WriteLine("Before decoding: packet 0x"+packet[0].ToString("x")+", len "+packetLen);
 					//OutputPacketLog();
-					conn.encryption.DecodeIncomingPacket(conn, ref packet, ref packetLen);
+					conn.encryption.ClientDecrypt(conn, ref packet, ref packetLen);
 					//Console.WriteLine("After decoding: packet 0x"+packet[0].ToString("x")+", len "+packetLen);
 					//OutputPacketLog();
 

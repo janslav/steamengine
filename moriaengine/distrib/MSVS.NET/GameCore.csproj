@@ -86,7 +86,6 @@
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Encryption\IClientEncryption.cs">
       <Link>3rdParty\Encryption\IClientEncryption.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Encryption\LoginEncryption.cs">
       <Link>3rdParty\Encryption\LoginEncryption.cs</Link>
