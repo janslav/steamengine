@@ -36,6 +36,42 @@
     <Compile Include="..\..\ServerCommon\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\..\ServerCommon\Buffer.cs">
+      <Link>Buffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\Disposable.cs">
+      <Link>Disposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\IConnection.cs">
+      <Link>IConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\IncomingPacket.cs">
+      <Link>IncomingPacket.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\OutgoingPacket.cs">
+      <Link>OutgoingPacket.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\Packet.cs">
+      <Link>Packet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\PacketGroup.cs">
+      <Link>PacketGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\Pool.cs">
+      <Link>Pool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\Poolable.cs">
+      <Link>Poolable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\Protocol.cs">
+      <Link>Protocol.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\Server.cs">
+      <Link>Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ServerCommon\SynchronisedQueue.cs">
+      <Link>SynchronisedQueue.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Common.csproj">
