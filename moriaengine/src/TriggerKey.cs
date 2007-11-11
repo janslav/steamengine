@@ -92,26 +92,17 @@ namespace SteamEngine {
 		public static readonly TriggerKey denyPutInItem=Get("denyPutInItem");
 		public static readonly TriggerKey denyPutItemInItem=Get("denyPutItemInItem");
 		public static readonly TriggerKey denyPutItemIn=Get("denyPutItemIn");
-		
-		public static readonly TriggerKey stackon_Item=Get("stackon_Item");//item trigger
-		public static readonly TriggerKey stackon_Char=Get("stackon_Char");//item trigger
-		public static readonly TriggerKey itemDropon_Item=Get("itemDropon_Item");//character trigger
-		public static readonly TriggerKey itemDropon_Char=Get("itemDropon_Char");//character trigger
-		public static readonly TriggerKey stackOn=Get("StackOn");//thing trigger
-		public static readonly TriggerKey itemStackOn_Item=Get("itemStackOn_Item");//may be redundant (practically the same as itemDropon_Item)
-		public static readonly TriggerKey itemStackOn_Char=Get("itemStackOn_Char");//may be redundant (practically the same as itemDropon_Char)
-		
-		public static readonly TriggerKey itemDropon_Ground=Get("itemDropon_Ground");
-		public static readonly TriggerKey dropon_Ground=Get("Dropon_Ground");
+
+		public static readonly TriggerKey putItemOn=Get("putItemOn");
+		public static readonly TriggerKey putOnItem=Get("putOnItem");
+
+		public static readonly TriggerKey putOnChar=Get("putOnChar");
+		public static readonly TriggerKey putItemOnChar=Get("putItemOnChar");
+
+		public static readonly TriggerKey denyEquipOnChar=Get("denyEquipOnChar");
+		public static readonly TriggerKey denyEquip=Get("denyEquip");
+
 		public static readonly TriggerKey playDropSound=Get("playDropSound");
-		
-		public static readonly TriggerKey itemPickup_Ground=Get("itemPickup_Ground");
-		public static readonly TriggerKey pickUp_Ground=Get("pickUp_Ground");
-		
-		public static readonly TriggerKey itemPickup_Pack=Get("itemPickup_Pack");
-		public static readonly TriggerKey pickUp_Pack=Get("Pickup_Pack");
-		
-		public static readonly TriggerKey pickUpFrom=Get("pickUpFrom");
 		
 		public static readonly TriggerKey destroy=Get("Destroy");
 		
@@ -121,11 +112,6 @@ namespace SteamEngine {
 		public static readonly TriggerKey unEquip=Get("UnEquip");
 		public static readonly TriggerKey hear=Get("hear");
 		public static readonly TriggerKey say=Get("say");
-		public static readonly TriggerKey see=Get("see");
-		public static readonly TriggerKey lostSightOf=Get("lostSightOf");
-		public static readonly TriggerKey seeMoving=Get("seeMoving");
-		public static readonly TriggerKey memoryEquip=Get("memoryEquip");
-		public static readonly TriggerKey memoryUnEquip=Get("memoryUnEquip");
 		
 		public static readonly TriggerKey create=Get("create");
 		public static readonly TriggerKey dupe=Get("dupe");

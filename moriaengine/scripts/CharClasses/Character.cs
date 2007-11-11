@@ -1874,16 +1874,52 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanReachWithMessage(Thing target) {
-			DenyResult trr = CanReach(target);
-			if (trr == DenyResult.Allow) {
+			DenyResult result = CanReach(target);
+			if (result == DenyResult.Allow) {
 				return true;
 			} else {
 				GameConn conn = this.Conn;
 				if (conn != null) {
-					Server.SendDenyResultMessage(conn, target, trr);
+					Server.SendDenyResultMessage(conn, target, result);
 				}
 				return false;
 			}
 		}
+
+		public override DenyResult CanOpenContainer(AbstractItem targetContainer) {
+			if (this.IsGM()) {
+				return DenyResult.Allow;
+			}
+
+			GameConn conn = this.Conn;
+			if (conn == null) {
+				return DenyResult.Deny_NoMessage;
+			}
+
+			//TODO zamykani kontejneru
+
+			DenyResult result = DenyResult.Allow;
+
+			Thing c = targetContainer.Cont;
+			if (c != null) {
+				Item contAsItem = c as Item;
+				if (contAsItem != null) {
+					result = OpenedContainers.HasContainerOpen(conn, contAsItem);
+				} else if (c != this) {
+					result = this.CanReach(c);
+					if (result == DenyResult.Allow) {
+						Character contAsChar = (Character) c;
+						if (!contAsChar.IsPetOf(this)) {//not my pet or myself
+							result = DenyResult.Deny_ThatDoesNotBelongToYou;
+						}
+					}
+				}
+			} else {
+				result = this.CanReachCoordinates(targetContainer);
+			}
+
+			return result;
+		}
+
 	}
 }

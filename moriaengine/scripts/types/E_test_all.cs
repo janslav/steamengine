@@ -21,8 +21,12 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 	public sealed class e_test_all_generic : CompiledTriggerGroup {
 		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
-			Globals.SrcWriteLine("@"+tk.name+" on "+self+" - parameters:\t"+Environment.NewLine
+			if (sa != null) {
+				Console.WriteLine("@"+tk.name+" on "+self+" - parameters:\t"+Environment.NewLine
 				+Common.Tools.ObjToString(sa.argv));
+			} else {
+				Console.WriteLine("@"+tk.name+" on "+self);
+			}
 
 			return null;
 		}

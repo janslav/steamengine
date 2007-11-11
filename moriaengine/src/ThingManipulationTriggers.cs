@@ -686,6 +686,26 @@ namespace SteamEngine {
 		public virtual bool On_DenyPutItemIn(DenyPutInItemArgs args) {
 			return false;
 		}
+		
+		[Summary("I am being put on another item")]
+		public virtual bool On_PutOnItem(ItemOnItemArgs args) {
+ 			return false;
+		}
+
+		[Summary("Another item is being put on me")]
+		public virtual bool On_PutItemOn(ItemOnItemArgs args) {
+			return false;
+		}
+
+		[Summary("I am being put on a character other than the person wielding me")]
+		public virtual bool On_PutOnChar(ItemOnCharArgs args) {
+			return false;
+		}
+
+		[Summary("Iam being equipped on a character")]
+		public virtual bool On_DenyEquip(DenyEquipArgs args) {
+			return false;
+		}
 	}
 
 	public partial class AbstractCharacter {
@@ -955,10 +975,6 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-			return false;
-		}
-
 		//typically called from InPackets. (I am the src)
 		public DenyResult TryPutItemInItem(AbstractItem targetCont, ushort x, ushort y, bool tryStacking) {
 			this.ThrowIfDeleted();
@@ -990,10 +1006,10 @@ namespace SteamEngine {
 								cancel = item.On_DenyPutInItem(args);
 							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 							if (!cancel) {
-								cancel = item.TryCancellableTrigger(TriggerKey.denyPutItemIn, args);
+								cancel = targetCont.TryCancellableTrigger(TriggerKey.denyPutItemIn, args);
 								if (!cancel) {
 									try {
-										cancel = item.On_DenyPutItemIn(args);
+										cancel = targetCont.On_DenyPutItemIn(args);
 									} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 								}
 							}
@@ -1052,38 +1068,67 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual bool On_DenyPutItemInItem(DenyPutInItemArgs args) {
-			return false;
-		}
-
 		//typically called from InPackets. (I am the src)
 		public DenyResult TryPutItemOnItem(AbstractItem target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem i = draggingLayer;
-			if (i == null) {
+			AbstractItem item = draggingLayer;
+			if (item == null) {
 				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
 			}
-			i.ThrowIfDeleted();
+			item.ThrowIfDeleted();
 
-			Thing cont = i.Cont;
-			if (cont != null) {
-				AbstractItem contAsItem = cont as AbstractItem;
-				if (contAsItem != null) {
-					i.MakeLimbo();
-					i.Trigger_EnterItem(contAsItem, i.point4d.x, i.point4d.y);
-					contAsItem.Trigger_StackInCont(i, target);
-				} else {
-					//stacking with an equipped item? huh. Put in pack.
-					i.Cont = ((AbstractCharacter) cont).Backpack;
-				}
+			if (target.IsContainer) {
+				ushort x, y;
+				target.GetRandomXYInside(out x, out y);
+				return this.TryPutItemInItem(target, x, y, true);
 			} else {
-				MutablePoint4D targP = target.point4d;
-				sbyte newZ = (sbyte) Math.Min(sbyte.MaxValue, (targP.z + target.Height));
+				Thing cont = target.Cont;
+				if (cont != null) {
+					AbstractItem contAsItem = cont as AbstractItem;
+					if (contAsItem != null) {
+						MutablePoint4D point = target.point4d;
+						DenyResult result = this.TryPutItemInItem(contAsItem, point.x, point.y, false);
+						if (result == DenyResult.Allow) {
+							if (!contAsItem.Trigger_StackInCont(item, target)) {
+								//couldn't stack, let's see if there's some script for the stacking
+								goto trigger;
+							}
+						}
+						return result;
+					} else {
+						//we're stacking something on an equipped item? that's pretty weird.
+						return DenyResult.Deny_NoMessage;
+					}
+				} else {
+					MutablePoint4D point = target.point4d;
+					DenyResult result = this.TryPutItemOnGround(point.x, point.y, point.z);
+					if (result == DenyResult.Allow) {
+						if (!AbstractItem.Trigger_StackOnGround(item, target)) {
+							//couldn't stack, let's see if there's some script for the stacking
+							goto trigger;
+						}
+					}
+					return result;
+				}
+			}
 
-				i.MakeLimbo();
-				i.Trigger_EnterRegion(targP.x, targP.y, newZ, targP.m);
-				AbstractItem.Trigger_StackOnGround(i, target);
+		trigger:
+			ItemOnItemArgs args = new ItemOnItemArgs(this, item, target);
+			bool cancel = item.TryCancellableTrigger(TriggerKey.putOnItem, args);
+			if (!cancel) {
+				try {
+					cancel = item.On_PutOnItem(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = target.TryCancellableTrigger(TriggerKey.putItemOn, args);
+					if (!cancel) {
+						try {
+							cancel = target.On_PutItemOn(args);
+							//we do nothing...
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
 			}
 
 			return DenyResult.Allow;
@@ -1143,13 +1188,44 @@ namespace SteamEngine {
 		public DenyResult TryPutItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem i = draggingLayer;
-			if (i == null) {
+			AbstractItem item = draggingLayer;
+			if (item == null) {
 				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
 			}
-			i.ThrowIfDeleted();
+			item.ThrowIfDeleted();
 
-			i.Cont = target.Backpack;
+			if (target == this) {
+				return this.TryPutItemOnItem(this.Backpack);
+			} else {
+				ItemOnCharArgs args = new ItemOnCharArgs(this, item, target);
+
+				bool cancel = this.TryCancellableTrigger(TriggerKey.putItemOnChar, args);
+				if (!cancel) {
+					try {
+						cancel = this.On_PutItemOnChar(args);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					if (!cancel) {
+						cancel = item.TryCancellableTrigger(TriggerKey.putOnChar, args);
+						if (!cancel) {
+							try {
+								cancel = item.On_PutOnChar(args);
+							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+							if (!cancel) {
+								cancel = target.TryCancellableTrigger(TriggerKey.putItemOn, args);
+								if (!cancel) {
+									try {
+										cancel = target.On_PutItemOn(args);
+									} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+								}
+							}
+						}
+					}
+				}
+
+				if (!cancel) {
+					return this.TryPutItemOnItem(target.Backpack);
+				}
+			}
 
 			return DenyResult.Allow;
 		}
@@ -1159,23 +1235,59 @@ namespace SteamEngine {
 		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem i = draggingLayer;
-			if (i == null) {
+			AbstractItem item = draggingLayer;
+			if (item == null) {
 				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
 			}
-			i.ThrowIfDeleted();
+			item.ThrowIfDeleted();
 
-			
-			if (i.IsEquippable) {
-				byte layer = i.Layer;
+			if (item.IsEquippable) {
+				byte layer = item.Layer;
 				if ((layer < sentLayers) && (layer > 0)) {
-					i.MakeLimbo();
-					i.Trigger_EnterChar(target, layer);
-					return DenyResult.Allow;
+
+					DenyEquipArgs args = new DenyEquipArgs(this, item, target, layer);
+
+					bool cancel = this.TryCancellableTrigger(TriggerKey.denyEquipOnChar, args);
+					if (!cancel) {
+						try {
+							cancel = this.On_DenyEquipOnChar(args);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						if (!cancel) {
+							cancel = target.TryCancellableTrigger(TriggerKey.denyEquip, args);
+							if (!cancel) {
+								try {
+									cancel = target.On_DenyEquip(args);
+								} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+								if (!cancel) {
+									cancel = item.TryCancellableTrigger(TriggerKey.denyEquip, args);
+									if (!cancel) {
+										try {
+											cancel = item.On_DenyEquip(args);
+										} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+									}
+								}
+							}
+						}
+					}
+
+					DenyResult result = args.Result;
+
+					if (!cancel && result == DenyResult.Allow) {
+						if (this != target) {
+							result = this.CanReach(target);
+						}
+					}
+
+					if (result == DenyResult.Allow) {
+						item.MakeLimbo();
+						item.Trigger_EnterChar(target, layer);
+					}
+
+					return result;
 				}
 			}
-			return DenyResult.Deny_NoMessage;
 
+			return this.TryPutItemOnChar(target);
 		}
 
 		#endregion client trigger_deny methods
@@ -1197,7 +1309,31 @@ namespace SteamEngine {
 
 		public virtual bool On_DenyPickupItem(DenyPickupArgs args) {
 			return false;
-		} 
+		}
+
+		public virtual bool On_DenyPutItemInItem(DenyPutInItemArgs args) {
+			return false;
+		}
+
+		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+			return false;
+		}
+
+		public virtual bool On_PutItemOn(ItemOnCharArgs args) {
+			return false;
+		}
+
+		public virtual bool On_PutItemOnChar(ItemOnCharArgs args) {
+			return false;
+		}
+
+		public virtual bool On_DenyEquip(DenyEquipArgs args) {
+			return false;
+		}
+
+		public virtual bool On_DenyEquipOnChar(DenyEquipArgs args) {
+			return false;
+		}
 	}
 
 	public class ItemStackArgs : ScriptArgs {
@@ -1298,12 +1434,12 @@ namespace SteamEngine {
 	}
 
 	public class DenyPutOnGroundArgs : DenyTriggerArgs {
-		public readonly AbstractCharacter pickingChar;
+		public readonly AbstractCharacter puttingChar;
 		public readonly AbstractItem manipulatedItem;
 
-		public DenyPutOnGroundArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, IPoint4D point)
-			: base(DenyResult.Allow, pickingChar, manipulatedItem, point) {
-			this.pickingChar = pickingChar;
+		public DenyPutOnGroundArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, IPoint4D point)
+			: base(DenyResult.Allow, puttingChar, manipulatedItem, point) {
+			this.puttingChar = puttingChar;
 			this.manipulatedItem = manipulatedItem;
 		}
 
@@ -1314,6 +1450,49 @@ namespace SteamEngine {
 			set {
 				argv[3] = value;
 			}
+		}
+	}
+
+	public class ItemOnItemArgs : ScriptArgs {
+		public readonly AbstractCharacter puttingChar;
+		public readonly AbstractItem manipulatedItem;
+		public readonly AbstractItem waitingItem;
+
+		public ItemOnItemArgs( AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractItem waitingItem)
+				: base(puttingChar, manipulatedItem, waitingItem) {
+			this.puttingChar = puttingChar;
+			this.manipulatedItem = manipulatedItem;
+			this.waitingItem = waitingItem;
+		}
+	}
+
+
+	public class ItemOnCharArgs : ScriptArgs {
+		public readonly AbstractCharacter puttingChar;
+		public readonly AbstractCharacter cont;
+		public readonly AbstractItem manipulatedItem;
+
+		public ItemOnCharArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont)
+			: base(puttingChar, manipulatedItem, cont) {
+			this.puttingChar = puttingChar;
+			this.cont = cont;
+			this.manipulatedItem = manipulatedItem;
+		}
+	}
+
+	public class DenyEquipArgs : DenyTriggerArgs {
+		public readonly AbstractCharacter puttingChar;
+		public readonly AbstractCharacter cont;
+		public readonly AbstractItem manipulatedItem;
+		public readonly byte layer;
+
+		public DenyEquipArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont, byte layer)
+				: base(DenyResult.Allow, puttingChar, manipulatedItem, cont, layer) {
+
+			this.puttingChar = puttingChar;
+			this.cont = cont;
+			this.manipulatedItem = manipulatedItem;
+			this.layer = layer;
 		}
 	}
 }
