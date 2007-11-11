@@ -6,7 +6,7 @@
     <ProjectGuid>{F4133814-1B38-467C-A5DF-526483DF173B}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>icon6.ico</ApplicationIcon>
+    <ApplicationIcon>..\icon6.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>MSVS_GUI</AssemblyName>

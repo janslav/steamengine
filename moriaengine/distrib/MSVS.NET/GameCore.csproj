@@ -6,10 +6,10 @@
     <ProjectGuid>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>..\..\GameCore\icon6.ico</ApplicationIcon>
+    <ApplicationIcon>..\icon6.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>MSVS_SteamEngine</AssemblyName>
+    <AssemblyName>MSVS_GameCore</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -848,6 +848,13 @@
       <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="ServerCommon.csproj">
+      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
+      <Name>ServerCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon6.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
