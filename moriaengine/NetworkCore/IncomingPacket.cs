@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.Network {
-	public abstract class IncomingPacket : Packet {
+	public abstract class IncomingPacket : Poolable {
 		internal protected byte[] buffer;
 		internal protected int start;
 
@@ -47,7 +47,5 @@ namespace SteamEngine.Network {
 		}
 
 		protected abstract bool Read(int count);
-
-		internal protected abstract void Handle(IConnection conn);
 	}
 }

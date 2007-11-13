@@ -76,7 +76,6 @@
     </None>
     <Compile Include="..\..\WinConsole\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\WinConsole\ConnectionForm.cs">
       <Link>ConnectionForm.cs</Link>
@@ -128,9 +127,6 @@
       <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
       <Name>Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="icon6.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
