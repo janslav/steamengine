@@ -34,7 +34,7 @@ namespace SteamEngine.Regions {
 
 		[LoadSection]
 		public FlaggedRegion(PropsSection input)
-			: base(input) {
+			: base (input) {
 		}
 
 		public FlaggedRegion() 

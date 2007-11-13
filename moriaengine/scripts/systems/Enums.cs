@@ -73,6 +73,14 @@ namespace SteamEngine.CompiledScripts {
 		IssuerDesc
 	}
 
+	[Remark("Various sorting criteria for displaying regions list")]
+	public enum RegionsSorting : int {
+		NameAsc,
+		NameDesc,
+		DefnameAsc,
+		DefnameDesc		
+	}
+
 	[Remark("Various types of GUTA Leaf Components")]
 	public enum LeafComponentTypes : int {
 		//Buttons

@@ -43,7 +43,7 @@ namespace SteamEngine.Regions {
 			highestHierarchyIndex = -1;
 
 			voidRegion.defname = "";
-			voidRegion.name = "void";
+			voidRegion.name =  "void";
 		}
 
 		protected string defname; //protected, we will make use of it in StaticRegion loading part...

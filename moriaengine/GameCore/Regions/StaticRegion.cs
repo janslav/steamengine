@@ -325,6 +325,20 @@ namespace SteamEngine.Regions {
 				return byDefname.Values;
 			}
 		}
+
+		[Remark("Searches through all regions and returns the list of StaticRegions thats name contains the "+
+				"criteria string")]
+		public static List<StaticRegion> FindByString(string criteria) {
+			List<StaticRegion> regList = new List<StaticRegion>();
+			foreach(StaticRegion reg in AllRegions) {
+				if(criteria.Equals("")) {
+					regList.Add(reg);//bereme vse
+				} else if(reg.Name.ToUpper().Contains(criteria.ToUpper())) {
+					regList.Add(reg);//jinak jen v pripade ze kriterium se vyskytuje v nazvu regionu
+				}
+			}
+			return regList;
+		}
 		#endregion
 
 		#region Other regions mutual positions checks

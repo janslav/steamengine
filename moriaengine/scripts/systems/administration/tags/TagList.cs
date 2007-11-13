@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;   						
                     case 3: //zalozit novy tag.
 						newGi = gi.Cont.Dialog(SingletonScript<D_NewTag>.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
-						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						DialogStacking.EnstackDialog(gi,newGi); //vlozime napred dialog do stacku
 						break;
 					case 4: //uložit pripadne zmeny
 						//projdeme dostupny seznam tagu na strance a u tech editovatelnych zkoukneme zmeny
