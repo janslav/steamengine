@@ -233,6 +233,9 @@
     <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
       <Link>systems\administration\Pages\GMPage.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\RegionsDialog.cs">
+      <Link>systems\administration\Regions\RegionsDialog.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\Register\RegisterDialogs.cs">
       <Link>systems\administration\Register\RegisterDialogs.cs</Link>
     </Compile>

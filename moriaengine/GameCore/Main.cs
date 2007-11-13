@@ -214,6 +214,7 @@ namespace SteamEngine {
 		public static void ClearWorld() {
 			//Logger.WriteWarning("Clearing the world.");
 			Region.ClearAll();
+			StaticRegion.ClearAll(); //puvodni vycisteni vsech loadnuthych regionu...
 			Thing.ClearAll();
 			AbstractAccount.ClearAll();
 			Globals.ClearAll();
