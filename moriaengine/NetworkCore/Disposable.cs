@@ -24,11 +24,49 @@ using System.Collections;
 using System.Collections.Generic;
 
 using SteamEngine.Common;
-
 namespace SteamEngine.Network {
-	public abstract class Packet : Poolable {
-		public Packet() {
+	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm
+
+	public abstract class Disposable : IDisposable {
+		internal bool disposed = false;
+
+		// subclass should to implement these two methods
+		virtual protected void DisposeManagedResources() {
 		}
 
+		virtual protected void DisposeUnmanagedResources() {
+		}
+
+		public virtual void Dispose() {
+			Dispose(true);
+		}
+
+		protected void ThrowIfDisposed() {
+			if (this.disposed) {
+				throw new ObjectDisposedException(this+" disposed");
+			}
+		}
+
+		public bool IsDisposed {
+			get {
+				return disposed;
+			}
+		}
+
+		private void Dispose(bool disposing) {
+			if (!this.disposed) {
+				if (disposing) // called from Dispose
+                {
+					DisposeManagedResources();
+				}
+				DisposeUnmanagedResources();
+			}
+			disposed = true;
+		}
+
+		~Disposable() // maps to finalize
+		{
+			Dispose(false);
+		}
 	}
 }

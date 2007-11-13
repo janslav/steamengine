@@ -24,43 +24,36 @@ using System.Collections;
 using System.Collections.Generic;
 
 using SteamEngine.Common;
+
 namespace SteamEngine.Network {
-	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm
+	public abstract class OutgoingPacket : Poolable {
+		internal protected byte[] buffer;
+		internal protected int start;
+		internal protected int position;
 
-	public abstract class Disposable : IDisposable {
-		protected bool disposed = false;
 
-		// subclass should to implement these two methods
-		virtual protected void DisposeManagedResources() {
+		public abstract byte Id { get; }
+
+		public abstract string Name { get; }
+
+		public int Write(byte[] bytes, int offset) {
+			this.buffer = bytes;
+			this.start = offset;
+			this.position = offset;
+			this.Write();
+
+			int retVal = position - start;
+			Sanity.IfTrueThrow(retVal < 0, "OutgoingPacket.Write: position < start. This should not happen.");
+			return retVal;
 		}
 
-		virtual protected void DisposeUnmanagedResources() {
-		}
+		protected abstract void Write();
 
-		public void Dispose() {
-			Dispose(true);
-		}
 
-		protected void ThrowIfDisposed() {
-			if (this.disposed) {
-				throw new ObjectDisposedException(this+" disposed");
+		public string FullName {
+			get {
+				return string.Concat(this.Name, " ( 0x", this.Id.ToString("x"), " )");
 			}
-		}
-
-		private void Dispose(bool disposing) {
-			if (!this.disposed) {
-				if (disposing) // called from Dispose
-                {
-					DisposeManagedResources();
-				}
-				DisposeUnmanagedResources();
-			}
-			disposed = true;
-		}
-
-		~Disposable() // maps to finalize
-		{
-			Dispose(false);
 		}
 	}
 }

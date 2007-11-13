@@ -29,48 +29,43 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\ServerCommon\AssemblyInfo.cs">
+    <Compile Include="..\..\NetworkCore\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Buffer.cs">
+    <Compile Include="..\..\NetworkCore\Buffer.cs">
       <Link>Buffer.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Disposable.cs">
+    <Compile Include="..\..\NetworkCore\Client.cs">
+      <Link>Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NetworkCore\Disposable.cs">
       <Link>Disposable.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\IConnection.cs">
-      <Link>IConnection.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ServerCommon\IncomingPacket.cs">
+    <Compile Include="..\..\NetworkCore\IncomingPacket.cs">
       <Link>IncomingPacket.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\OutgoingPacket.cs">
+    <Compile Include="..\..\NetworkCore\OutgoingPacket.cs">
       <Link>OutgoingPacket.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Packet.cs">
-      <Link>Packet.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ServerCommon\PacketGroup.cs">
+    <Compile Include="..\..\NetworkCore\PacketGroup.cs">
       <Link>PacketGroup.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Pool.cs">
+    <Compile Include="..\..\NetworkCore\Pool.cs">
       <Link>Pool.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Poolable.cs">
+    <Compile Include="..\..\NetworkCore\Poolable.cs">
       <Link>Poolable.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Protocol.cs">
+    <Compile Include="..\..\NetworkCore\Protocol.cs">
       <Link>Protocol.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\Server.cs">
+    <Compile Include="..\..\NetworkCore\Server.cs">
       <Link>Server.cs</Link>
     </Compile>
-    <Compile Include="..\..\ServerCommon\SynchronisedQueue.cs">
-      <Link>SynchronisedQueue.cs</Link>
+    <Compile Include="..\..\NetworkCore\SteamSocket.cs">
+      <Link>SteamSocket.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

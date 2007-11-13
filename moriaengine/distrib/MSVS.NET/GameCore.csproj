@@ -847,9 +847,9 @@
       <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="ServerCommon.csproj">
+    <ProjectReference Include="NetworkCore.csproj">
       <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
-      <Name>ServerCommon</Name>
+      <Name>NetworkCore</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

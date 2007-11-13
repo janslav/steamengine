@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -40,12 +41,12 @@ namespace SteamEngine.Network {
 
 		private bool isWritten = false;
 		private bool isCompressed = false;
-		private bool isQueued = false;
+		private int isQueued = 0;
 
 		int uncompressedLen;
 		int compressedLen;
 
-		private PacketGroupType type = PacketGroupType.MultiUse;
+		internal PacketGroupType type = PacketGroupType.MultiUse;
 
 		protected ICompression compression = null;
 
@@ -57,14 +58,14 @@ namespace SteamEngine.Network {
 		}
 
 		public void AddPacket(OutgoingPacket packet) {
-			Sanity.IfTrueSay(isQueued, "Can't add new packets to a locked group. They're ignored.");
+			Sanity.IfTrueSay(isQueued > 0, "Can't add new packets to a locked group. They're ignored.");
 			packets.Add(packet);
 		}
 
 		internal protected override void Reset() {
 			this.isWritten = false;
 			this.isCompressed = false;
-			this.isQueued = false;
+			this.isQueued = 0;
 			this.type = PacketGroupType.MultiUse;
 
 			base.Reset();
@@ -93,7 +94,7 @@ namespace SteamEngine.Network {
 			if (!this.isCompressed) {
 				if (this.compression != null) {
 					this.compressedLen = compression.Compress(
-						this.uncompressed.bytes, this.uncompressedLen, this.compressed.bytes);
+						this.uncompressed.bytes, 0, this.uncompressedLen, this.compressed.bytes, 0);
 				} else {
 					this.uncompressed.Dispose();
 					this.compressed = this.uncompressed;
@@ -132,18 +133,32 @@ namespace SteamEngine.Network {
 			return compressedLen;
 		}
 
+		internal void Enqueued() {
+			Interlocked.Increment(ref this.isQueued);
+		}
+
+		internal void Dequeued() {
+			Interlocked.Decrement(ref this.isQueued);
+			if (this.isQueued < 1) {
+				if (this.type == PacketGroupType.SingleUse) {
+					this.Dispose();
+				}
+			}
+		}
+
 		protected override void DisposeManagedResources() {
 			if (this.uncompressed != null) {
 				this.compressed.Dispose();
-				this.compressed = null;
 				this.uncompressed.Dispose();
+
 				this.uncompressed = null;
 			}
+
+			this.compressed = null;
 
 			foreach (OutgoingPacket packet in this.packets) {
 				packet.Dispose();
 			}
-
 			this.packets.Clear();
 
 			base.DisposeManagedResources();
