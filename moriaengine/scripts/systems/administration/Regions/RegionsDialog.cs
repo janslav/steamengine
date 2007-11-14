@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			List<StaticRegion> regionsList = null;
 			if(args[2] == null) {
-				//vzit seznam notu a pripadne ho setridit...
+				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				regionsList = StaticRegion.FindByString((string)args[0]);
 				args[2] = regionsList; //ulozime to do argumentu dialogu
@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		private static void SortBy(List<StaticRegion> regList, RegionsSorting criterium) {
+		private void SortBy(List<StaticRegion> regList, RegionsSorting criterium) {
 			switch(criterium) {
 				case RegionsSorting.NameAsc:
 					regList.Sort(RegionComparerByName.instance);
@@ -211,7 +211,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Display an account notes. Function accessible from the game." +
+		[Remark("Display regions. Function accessible from the game." +
 				"The function is designed to be triggered using .RegionsList" +
 				"but it can be also called from other dialogs - such as info..." +
 				"Default sorting is by Name, asc.")]
