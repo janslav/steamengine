@@ -20,7 +20,7 @@
 	</if>
 	
 	<property name="commonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Common.dll'}" />
-	<property name="serverCommonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.ServerCommon.dll'}" />
+	<property name="networkCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.NetworkCore.dll'}" />
 	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
 	<property name="gameCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GameCore.exe'}" />
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
@@ -43,10 +43,18 @@
 		</delete>
 	</target>
 	
-	<target name="cleanCore">
+	<target name="cleanGameCore">
 		<delete>
 			<fileset>
-				<include name="bin/*SteamEngine.Core*" />
+				<include name="bin/*SteamEngine.GameCore*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="cleanNetworkCore">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.NetworkCore*" />
 			</fileset>
 		</delete>
 	</target>
@@ -67,7 +75,7 @@
 		</delete>
 	</target>
 	
-	<target name="clean" depends="cleanCommon,cleanGUI,cleanCore,cleanScripts,cleanConverter">
+	<target name="clean" depends="cleanCommon,cleanGUI,cleanNetworkCore,cleanGameCore,cleanScripts,cleanConverter">
 	</target>
 	
 	<target name="buildCommon">
@@ -89,16 +97,16 @@
 		</csc>
 	</target>
 	
-	<target name="buildServerCommon" depends="buildCommon">
+	<target name="buildNetworkCore" depends="buildCommon">
 		<csc 
 			target="library" 
-			output="${serverCommonFileName}" 
+			output="${networkCoreFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
 			optimize="${optimize} ">
 			
 			<sources>
-				<include name="ServerCommon/**/*.cs" />
+				<include name="NetworkCore/**/*.cs" />
 			</sources>
 			<references>
 				<include name="${commonFileName}" />
@@ -132,7 +140,7 @@
     		tofile="${guiFileName+'.config'}"	/>
 	</target>
 	
-	<target name="buildCore" depends="buildServerCommon">
+	<target name="buildCore" depends="buildNetworkCore">
 		<csc 
 			target="exe" 
 			output="${gameCoreFileName}" 
@@ -146,7 +154,7 @@
 			<references>
 				<include name="bin/NAnt.Core.dll" />
 				<include name="bin/SteamDoc.dll" />
-				<include name="${serverCommonFileName}" />
+				<include name="${networkCoreFileName}" />
 				<include name="${commonFileName}" />
 				<!--include name="Microsoft.JScript.dll" / -->
 			</references>
@@ -202,7 +210,7 @@
 		</csc>
 	</target>
 	
-	<target name="buildConverter" depends="buildServerCommon, buildCore, buildScripts">
+	<target name="buildConverter" depends="buildNetworkCore, buildCore, buildScripts">
 		<csc 
 			target="exe" 
 			output="${converterFileName}" 
@@ -224,7 +232,7 @@
 		</csc>
 	</target>
 
-	<target name="build" depends="buildServerCommon,buildCore,buildGUI">
+	<target name="build" depends="buildNetworkCore,buildCore,buildGUI">
 	</target>
 	
 	<target name="echoInfo" >
