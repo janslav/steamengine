@@ -25,8 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
 	
-	//todo: make some members virtual?
-	public class Region : PluginHolder {
+	public class Region : PluginHolder, IUnloadable {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
@@ -62,6 +61,7 @@ namespace SteamEngine.Regions {
 			this.p = new Point4D(0,0,0,0); //spawnpoint
 			this.name = ""; //this is typically not unique, containing spaces etc.
 			this.createdAt = HighPerformanceTimer.TickCount;
+			this.unloaded = false; //defaultly is loaded
 		}
 
 		public Region Parent { 
@@ -87,7 +87,7 @@ namespace SteamEngine.Regions {
 				return rectangles;
 			} 
 		}
-		
+
 		public static Region WorldRegion { 
 			get {
 				return worldRegion;
@@ -127,11 +127,13 @@ namespace SteamEngine.Regions {
 				return p;
 			}
 			set {
+				ThrowIfUnloaded();
 				p = value;
 			}
 		}
 
 		public bool IsChildOf(Region tested) {
+			ThrowIfUnloaded();
 			if (parent == null) {
 				return false;
 			} else if (tested == parent) {
@@ -251,10 +253,12 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+			ThrowIfUnloaded();
 			return false;
 		}
 
 		internal bool Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
+			ThrowIfUnloaded();
 			Region region = this;
 
 			bool cancel = false;
@@ -279,6 +283,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual bool On_DenyPutItemOn(DenyPutOnGroundArgs args) {
+			ThrowIfUnloaded();
 			return false;
 		}
 
@@ -291,9 +296,11 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
+			ThrowIfUnloaded();
 		}
 
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
+			ThrowIfUnloaded();
 		}
 		
 		protected bool HasSameMapplane(Region reg) {
@@ -342,6 +349,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool TryEnter(AbstractCharacter ch) {
+			ThrowIfUnloaded();
 			if (!TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
 				if (!On_Enter(ch, false)) {
 					return true;
@@ -351,6 +359,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool TryExit(AbstractCharacter ch) {
+			ThrowIfUnloaded();
 			if (!TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
 				if (!On_Exit(ch, false)) {
 					return true;
@@ -360,11 +369,13 @@ namespace SteamEngine.Regions {
 		}
 		
 		public void Enter(AbstractCharacter ch) {
+			ThrowIfUnloaded();
 			TryTrigger(TriggerKey.enter, new ScriptArgs(ch, 1));
 			On_Enter(ch, true);
 		}
 		
 		public void Exit(AbstractCharacter ch) {
+			ThrowIfUnloaded();
 			TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
 			On_Exit(ch, true);
 		}
@@ -380,17 +391,47 @@ namespace SteamEngine.Regions {
 			ch.SysMessage("You have just left "+this);
 			return false;
 		}
+
+		#region IUnloadable Members
+		protected bool unloaded = false;
+
+		public void Unload() {
+			unloaded = true;
+			Map itsMap = Map.GetMap(p.m);
+			itsMap.UnactivateOneRegion(this); //unactivate in the map!			
+		}
+
+		public void Load() {
+			unloaded = false;
+			Map itsMap = Map.GetMap(p.m);
+			itsMap.ActivateOneRegion(this); //activate it back!
+		}
+
+		public bool IsUnloaded {
+			get {
+				return unloaded;
+			}
+		}
+
+		protected void ThrowIfUnloaded() {
+			if(unloaded) {
+				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is unloaded.");
+			}
+		}
+
+		#endregion
 	}
 
 	public class RegionRectangle : Rectangle2D {
-		public static readonly RegionRectangle[] emptyArray = new RegionRectangle[0];
-		
+		internal static readonly RegionRectangle[] emptyArray = new RegionRectangle[0];
+
 		public readonly Region region;
-		public RegionRectangle(Point2D start, Point2D end, Region region) : base(start, end) {
+		internal RegionRectangle(Point2D start, Point2D end, Region region)
+			: base(start, end) {
 			this.region = region;
 		}
 
-		public RegionRectangle(Rectangle2D rect, Region region)
+		internal RegionRectangle(Rectangle2D rect, Region region)
 			: base(rect.StartPoint, rect.EndPoint) {
 			this.region = region;
 		}

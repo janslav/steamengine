@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.MakeTableTransparent();
 
-			//popis sloupcu (Detail, Name, Defname, P, Delete)
+			//popis sloupcu (Detail, Delete, Name, Defname, P)
 			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 150, 150, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Detail");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Smaž");
@@ -160,8 +160,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				GumpInstance newGi;
 				switch(buttNo) {
 					case 0: //region info
-						//newGi = gi.Cont.Dialog(SingletonScript<D_Region_Info>.Instance, region);
-						//DialogStacking.EnstackDialog(gi, newGi);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, region, 0, 0);
+						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //smazat region
 						//region.Delete(); - TODO (remove z dictu, rectangly atd.)

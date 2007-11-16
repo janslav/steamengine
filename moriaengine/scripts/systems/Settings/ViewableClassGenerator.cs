@@ -892,7 +892,8 @@ namespace SteamEngine.CompiledScripts {
 					baseAbstractClass = typeof(ReadWriteDataFieldView);
 				}
 
-				string newClassName = "Generated" + baseAbstractClass.Name + "_" + descriptorType.Name + "_" + propMeth.FieldLabel + "_" + ViewableClassGenerator.classCounter++;
+				//classname must not contain spaces (thetrefore replace them in the field name from the attribute
+				string newClassName = "Generated" + baseAbstractClass.Name + "_" + descriptorType.Name + "_" + propMeth.FieldLabel.Replace(' ','_') + "_" + ViewableClassGenerator.classCounter++;
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				retVal.BaseTypes.Add(baseAbstractClass);
@@ -970,7 +971,7 @@ namespace SteamEngine.CompiledScripts {
 					//add something like this: DescriptorClass.SetSomeField(target,value);
 					setValueMeth.Statements.Add(new CodeMethodInvokeExpression(
 														new CodeTypeReferenceExpression(descriptorType),
-														propMeth.SetMethod.Name,	
+														propMeth.SetMethod.Name,
 														new CodeExpression[] {
 															new CodeVariableReferenceExpression("target"),
 															new CodeVariableReferenceExpression("value") }

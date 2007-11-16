@@ -26,7 +26,7 @@ using System.Diagnostics;
 namespace SteamEngine.Regions {
 	public partial class Map {
 		[Remark("Take the rectangle, find all sectors it belongs to and chek every dynamic region rectangle in the"+
-				"sector that the do not intersect")]
+				"sector that they do not intersect")]
 		internal bool CheckDynRectIntersection(RegionRectangle rect) {
 			foreach(Sector sector in GetSectorsInRectangle(rect)) {//all sectors the examined rectangle belongs to
 				foreach(RegionRectangle existingRect in sector.RegionRectangles) {//all dynamic regions from the sector
@@ -310,6 +310,21 @@ namespace SteamEngine.Regions {
 			internal void ClearRegionRectangles() {
 				rectangles = RegionRectangle.emptyArray;
 				dynamicRegionRects = null;
+			}
+
+			[Remark("Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)")]
+			internal void ClearOneRegionRectangles(Region whichRegion) {
+				List<RegionRectangle> copyRects = new List<RegionRectangle>(rectangles);
+				foreach(RegionRectangle regRect in rectangles) {
+					if(regRect.region == whichRegion) {
+						copyRects.Remove(regRect); //remove it from the temporary list
+					}
+				}
+				RegionRectangle[] restRects = new RegionRectangle[copyRects.Count];
+				for(int i = 0;i < copyRects.Count; i++) { //those who are left will be set back as a new array
+					restRects[i] = copyRects[i];
+				}
+				rectangles = restRects;
 			}
 
 			//Simple getter

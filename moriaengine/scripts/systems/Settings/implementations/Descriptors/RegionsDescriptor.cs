@@ -19,34 +19,54 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine;
+using SteamEngine.Common;
 using SteamEngine.Regions;
+using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Region), "Region",
-	 new string[] { "Parent", "Rectangles", "WorldRegion", "IsWorldRegion", "P"}
+	 new string[] { "Parent", "Rectangles", "WorldRegion", "IsWorldRegion", "P", "HierarchyName", "CreatedAt"}
 		)]
 	public static class RegionDescriptor {
 		//automaticky se zobrazi defname, createdAt, hierarchy index, mapplane
 		[Button("Parent")]
 		public static void Parent(object target) {
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>, target, 0, 0);
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, ((Region)target).Parent, 0, 0);
 		}
 
 		[Button("Rectangles")]
 		public static void Rectangles(object target) {
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>, target);
+			//Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance,target);
 		}
 
-		[GetMethod("Position", typeof(string))]
+		[GetMethod("Position", typeof(Point4D))]
 		public static object GetPosition(object target) {
-			return ((Region)target).P.ToNormalString();
+			return ((Region)target).P;
 		}
 
 		[SetMethod("Position", typeof(Point4D))]
-		public static object SetPosition(object target) {
-			return ((Region)target).P.ToNormalString();
+		public static void SetPosition(object target, object value) {
+			Region reg = (Region)target;
+			Point4D point = null;
+			if(value.GetType().IsAssignableFrom(typeof(Point4D))) {
+				point = (Point4D)value;
+			} else if(value is String) {
+				point = (Point4D)ObjectSaver.Load((string)value);
+			}
+			if(reg.ContainsPoint(point)) {
+				reg.P = point;
+			} else {
+				throw new SEException("Specified point " + point.ToString() + " must lay in the region");
+			}
 		}
+
+		//Tohle v sobe nese informaci v podstate o poslednim resyncu :) (tehdy se reloadnou a znovu vzniknou)
+		//[GetMethod("Created at", typeof(string))]
+		//public static object CretingTime(object target) {
+		//    TimeSpan tms = HighPerformanceTimer.TicksToTimeSpan(((Region)target).CreatedAt);
+		//    return tms.ToString();			
+		//}
 	}
 
 	[ViewDescriptor(typeof(StaticRegion), "Region")]
