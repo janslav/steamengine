@@ -45,7 +45,7 @@ namespace SteamEngine.Regions {
 			: base() {
 		}
 
-		#region Saving/Loading
+		#region Saving/Loading/Manipulating
 		[LoadSection]
 		public StaticRegion(PropsSection input) {
 			string defName = input.headerName;
@@ -60,6 +60,7 @@ namespace SteamEngine.Regions {
 			tempRectangles.Clear();
 			this.LoadSectionLines(input);
 			this.rectangles = tempRectangles.ToArray();
+			this.unloaded = false;
 		}
 
 		public sealed class StaticRegionSaveCoordinator : IBaseClassSaveCoordinator {
@@ -211,6 +212,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void LoadLine(string filename, int line, string param, string args) {
+			ThrowIfUnloaded();
 			switch(param) {
 				case "category":
 				case "subsection":
@@ -271,12 +273,14 @@ namespace SteamEngine.Regions {
 
 		[Save]
 		public void SaveWithHeader(SaveStream output) {
+			ThrowIfUnloaded();
 			output.WriteSection(this.GetType().Name, this.defname);
 			this.Save(output);
 			output.WriteLine();
 		}
 
 		public override void Save(SaveStream output) {
+			ThrowIfUnloaded();
 			base.Save(output);//tagholder save
 
 			if(!string.IsNullOrEmpty(this.name)) {
@@ -295,6 +299,21 @@ namespace SteamEngine.Regions {
 				Point2D start = rect.StartPoint;
 				Point2D end = rect.EndPoint;
 				output.WriteLine("rect=" + start.x + "," + start.y + "," + end.x + "," + end.y);
+			}
+		}
+
+		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state")]
+		public static void UnloadAll() {
+			foreach(StaticRegion reg in byDefname.Values) {
+				reg.Unload();
+			}
+		}
+
+		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state"+
+				"called after manipulation is successfully done")]
+		public static void LoadAll() {
+			foreach(StaticRegion reg in byDefname.Values) {
+				reg.unloaded = false;
 			}
 		}
 		#endregion
@@ -356,58 +375,91 @@ namespace SteamEngine.Regions {
 					|| ContainsPoint(rect.EndPoint.x, rect.StartPoint.y)));//right upper
 		}
 
-		private void CheckHasAllRectanglesIn(StaticRegion other) {
+		private bool CheckHasAllRectanglesIn(StaticRegion other) {
 			for(int i = 0, n = rectangles.Length; i < n; i++) {
 				Rectangle2D rect = rectangles[i];
 				if(!other.ContainsRectangle(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " should be contained within region " + LogStr.Ident(other.defname) + ", but is not.");
+					return false; //rovnou problem
 				}
 			}
+			return true;
 		}
 
-		private void CheckHasNoRectanglesIn(StaticRegion other) {
+		private bool CheckHasNoRectanglesIn(StaticRegion other) {
 			for(int i = 0, n = rectangles.Length; i < n; i++) {
 				Rectangle2D rect = rectangles[i];
 				if(other.ContainsRectanglePartly(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " overlaps with " + LogStr.Ident(other.defname) + ", but should not.");
+					return false; //rovnou problem
 				}
 			}
+			return true;
 		}
 
-		public static void CheckAllRegions() {
+		public static bool CheckAllRegions() {
 			int i = 0, n = byDefname.Count;
 
 			foreach(StaticRegion region in byDefname.Values) {
 				if((i % 20) == 0) {
 					Logger.SetTitle("Checking regions: " + ((i * 100) / n) + " %");
 				}
-				region.CheckConflictsAndWarn();
+				if(!region.CheckConflictsAndWarn()) {
+					return false; //rovnou problem
+				}
 				i++;
 			}
 			Logger.SetTitle("");
-		}
+			return true; //OK
+		}		
 
-		private void CheckConflictsAndWarn() {
+		private bool CheckConflictsAndWarn() {
 			if(parent != null) {
-				CheckHasAllRectanglesIn((StaticRegion)parent);
+				if(!CheckHasAllRectanglesIn((StaticRegion)parent)) {
+					return false; //rovnou problem
+				}
 			}
 			foreach(StaticRegion other in byDefname.Values) {
 				//Console.WriteLine("CheckConflictsAndWarn for "+this+" and "+other);
 				if((other != this) && this.HasSameMapplane(other)) {
 					if(other.hierarchyIndex == this.hierarchyIndex) {
 						//Console.WriteLine("CheckConflictsAndWarn in progress");
-						this.CheckHasNoRectanglesIn(other);
+						if(!this.CheckHasNoRectanglesIn(other)) {
+							return false; //problem
+						}
 					}
 				}
 			}
+			return true;
 		}
 		#endregion
+
+		[Remark("Take the list of rectangles and make an array of RegionRectangles of it")]
+		public bool SetRectangles<T>(IList<T> list) where T : IRectangle {
+			RegionRectangle[] newArr = new RegionRectangle[list.Count];
+			for(int i = 0; i < list.Count; i++) {
+				//take the start/end point from the IRectangle and create a new RegionRectangle
+				newArr[i] = new RegionRectangle(list[i].StartPoint, list[i].EndPoint, this);				
+			}
+			//now the checking phase!
+			RegionRectangle[] oldRects = rectangles; //save
+			Unload(); //unload the region - it 'locks' it for every usage except for rectangles operations
+			rectangles = newArr; //switch the rectangles			
+			if(!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
+				rectangles = oldRects; //return the previous set of rectangles
+				unloaded = false; //release the locks
+				return false;
+			}
+			Load();
+			return true;
+		}
 
 		public override string Name {
 			get {
 				return name;
 			}
 			set {
+				ThrowIfUnloaded();
 				byName.Remove(name);
 				name = String.Intern(value);
 				byName[value] = this;

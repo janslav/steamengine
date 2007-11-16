@@ -16,14 +16,23 @@
 */
 
 using System;
+using System.Collections.Generic;
 using SteamEngine.Common;
 
-namespace SteamEngine {
-	public class Rectangle2D {//class or struct? what is better in this case? :)
+namespace SteamEngine.Regions {
+	public interface IRectangle {
+		Point2D StartPoint { get; }
+		Point2D EndPoint { get; }
+
+		bool Contains(Point2D point);
+		bool Contains(int x, int y);
+	}
+
+	public class Rectangle2D : IRectangle {
 		public static readonly Rectangle2D voidInstance = new Rectangle2D(0, 0, 0);
 		
-		private Point2D start;
-		private Point2D end;
+		protected Point2D start;
+		protected Point2D end;
 		
 		public Rectangle2D(IPoint2D start, IPoint2D end) {
 			Sanity.IfTrueThrow( (start.X > end.X) || (start.Y > end.Y), 
@@ -133,7 +142,7 @@ namespace SteamEngine {
 				return end;
 			}
 			internal set {
-				start = value;
+				end = value;
 			}
 		}
 		
@@ -184,5 +193,50 @@ namespace SteamEngine {
 		public int TilesNumber { get {
 			return ((end.x - start.x)*(end.y - start.y));
 		} }
+	}
+
+	[Remark("Rectangle class for dialogs - the mutable one. It will be used for operating with "+
+			"rectngles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
+	public class MutableRectangle : Rectangle2D {
+		public MutableRectangle(Point2D start, Point2D end)
+			: base(start, end) {
+		}
+
+		public MutableRectangle(IPoint2D start, IPoint2D end)
+			: base(start, end) {
+		}
+
+		public new Point2D StartPoint {
+			get {
+				return start;
+			}
+			set {
+				start = value;
+			}
+		}
+
+		public new Point2D EndPoint {
+			get {
+				return end;
+			}
+			set {
+				end = value;
+			}
+		}
+
+		[Remark("Alters both rectangle's points for specified tiles in X and Y axes")]
+		public void MoveBy(int timesX, int timesY) {
+			start = start.Add(timesX, timesY); //move the rectangle the desired number of tiles
+			end = end.Add(timesX, timesY);				
+		}
+
+		[Remark("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the unmutable ones)")]
+		public static List<MutableRectangle> CopyRectsFromRegion(Region reg) {
+			List<MutableRectangle> retList = new List<MutableRectangle>();
+			foreach(RegionRectangle regRect in reg.Rectangles) {
+				retList.Add(new MutableRectangle(new Point2D(regRect.StartPoint), new Point2D(regRect.EndPoint)));
+			}
+			return retList;
+		}
 	}
 }

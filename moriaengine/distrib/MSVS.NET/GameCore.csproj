@@ -690,10 +690,6 @@
       <Link>PropsFileParser.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\Rectangle.cs">
-      <Link>Rectangle.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\GameCore\Regions\DynamicRegion.cs">
       <Link>Regions\DynamicRegion.cs</Link>
     </Compile>
@@ -702,6 +698,9 @@
     </Compile>
     <Compile Include="..\..\GameCore\Regions\Movement.cs">
       <Link>Regions\Movement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Regions\Rectangle.cs">
+      <Link>Regions\Rectangle.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\Regions\Region.cs">
       <Link>Regions\Region.cs</Link>

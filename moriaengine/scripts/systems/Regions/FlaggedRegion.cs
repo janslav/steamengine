@@ -41,11 +41,13 @@ namespace SteamEngine.Regions {
 				: base() {
 		}
 		
+		[NoShow]
 		public int Flags {
 			get {
 				return flags;
 			}
 			set {
+				ThrowIfUnloaded();
 				flags = value;
 			}
 		}
@@ -59,6 +61,7 @@ namespace SteamEngine.Regions {
 		//}
 
 		public override void Save(SteamEngine.Persistence.SaveStream output) {
+			ThrowIfUnloaded();
 			base.Save(output);//Region save
 
 			if (flags != 0) {
@@ -67,6 +70,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void LoadLine(string filename, int line, string param, string args) {
+			ThrowIfUnloaded();
 			switch(param) {
 				case "flag_announce":
 					LoadSpecificFlag(filename, line, 0x00200, args);
