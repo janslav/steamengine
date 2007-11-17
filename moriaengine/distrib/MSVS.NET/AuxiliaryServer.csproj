@@ -1,0 +1,85 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C3647FCA-67E6-429A-A9F1-AABBEE1E7AE5}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SteamEngine.AuxiliaryServer</RootNamespace>
+    <AssemblyName>AuxiliaryServer</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MSVS.NET\Common.csproj">
+      <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MSVS.NET\NetworkCore.csproj">
+      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
+      <Name>NetworkCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\AuxiliaryServer\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleServer.cs">
+      <Link>ConsoleServer\ConsoleServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\ConsoleServer\IncomingPackets.cs">
+      <Link>ConsoleServer\IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\ConsoleServer\OutgoingPackets.cs">
+      <Link>ConsoleServer\OutgoingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\Logger.cs">
+      <Link>Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\IncomingPackets.cs">
+      <Link>LoginServer\IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginServer.cs">
+      <Link>LoginServer\LoginServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\OutgoingPackets.cs">
+      <Link>LoginServer\OutgoingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\MainClass.cs">
+      <Link>MainClass.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\Settings.cs">
+      <Link>Settings.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -32,8 +32,6 @@ namespace SteamEngine.Network {
 
 		int port;
 
-		
-
 		private AsyncCallback onAccept;
 
 
@@ -57,36 +55,7 @@ namespace SteamEngine.Network {
 				outgoingPackets.Enqueue(new OutgoingMessage(ss, group));
 			}
 
-
-			outgoingEvent.Set();
-
-		}
-
-		//called from main loop
-		//public void Cycle() {
-		//    ThrowIfDisposed();
-
-		//    lock (this.lockObject) {
-		//        Queue<IncomingMessage> temp = this.incomingPacketsWorking;
-		//        this.incomingPacketsWorking = this.incomingPackets;
-		//        this.incomingPackets = temp;
-		//    }
-
-		//    while (this.incomingPacketsWorking.Count > 0) {
-		//        IncomingMessage msg = this.incomingPacketsWorking.Dequeue();
-		//        try {
-		//            msg.packet.Handle(msg.ss);
-		//        } catch (FatalException) {
-		//            throw;
-		//        } catch (Exception e) {
-		//            Logger.WriteError(e);
-		//        }
-		//        msg.packet.Dispose();
-		//    }
-		//}
-
-		private Socket CreateSocket() {
-			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			outgoingPacketsWaitingEvent.Set();
 		}
 
 		public void Bind() {
@@ -152,14 +121,6 @@ namespace SteamEngine.Network {
 			return true;
 		}
 
-		//private void DisposeConnection(SSType ss, string reason) {
-		//    ClosingPacket fake = Pool<ClosingPacket>.Acquire();
-		//    fake.message = reason;
-		//    lock (this.lockObject) {
-		//        incomingPackets.Enqueue(new IncomingMessage(ss, fake));
-		//    }
-		//}
-
 		public void UnBind() {
 			lock (this) {
 				if (this.listener != null) {
@@ -173,19 +134,5 @@ namespace SteamEngine.Network {
 		protected override void DisposeUnmanagedResources() {
 			UnBind();
 		}
-
-
 	}
-
-	//public class ClosingPacket : IncomingPacket {
-	//    public string message;
-
-	//    protected internal override void Handle(IConnection conn) {
-	//        conn.Close(this.message);
-	//    }
-
-	//    protected override bool Read(int count) {
-	//        throw new Exception("The method or operation is not implemented.");
-	//    }
-	//}
 }

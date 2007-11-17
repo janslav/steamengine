@@ -31,7 +31,7 @@ namespace SteamEngine.Network {
 		internal abstract void Release(Poolable p);
 	}
 
-	class Pool<T> : PoolBase where T : Poolable, new() {
+	public class Pool<T> : PoolBase where T : Poolable, new() {
 		static private Queue<T> queue = new Queue<T>();
 
 		static Pool<T> pool = new Pool<T>();

@@ -28,33 +28,54 @@ using System.Threading;
 using SteamEngine.Common;
 
 namespace SteamEngine.Network {
-	public abstract class Client<SSType> : Protocol<SSType>, IComponent where SSType : SteamSocket, new() {
 
-		SSType ss;
+	public class ClientSocket : SteamSocket {
+		internal Client client;
 
-		string remoteHost;
-		int remotePort;
+		public ClientSocket() {
 
-		public string RemoteHost {
+		}
+
+		public override void Handle(IncomingPacket packet) {
+			this.client.Handle(packet);
+		}
+
+		public override IEncryption Encryption {
 			get {
-				return this.remoteHost;
-			}
-			set {
-				this.remoteHost = value;
+				return client.Encryption;
 			}
 		}
 
-		public int RemotePort {
-			get {
-				return this.remotePort;
-			}
-			set {
-				this.remotePort = value;
-			}
+		public override void On_Close(LogStr reason) {
+			this.client.On_Close(reason);
+			this.client.Dispose();
 		}
+
+		public override void On_Close(string reason) {
+			this.client.On_Close(reason);
+			this.client.Dispose();
+		}
+	}
+
+	public abstract class Client : Protocol<ClientSocket> {
+		ClientSocket ss;
 
 		public Client() {
-			this.ss = Pool<SSType>.Acquire();
+			this.ss = Pool<ClientSocket>.Acquire();
+			this.ss.client = this;
+		}
+
+		public void Connect(string remoteHost, int remotePort) {
+			this.ss.socket = this.CreateSocket();
+			this.ss.socket.Connect(remoteHost, remotePort);
+
+			this.BeginReceive(this.ss);
+		}
+
+		public virtual IEncryption Encryption {
+			get {
+				return null;
+			}
 		}
 
 		public void SendPacketGroup(PacketGroup group) {
@@ -66,56 +87,24 @@ namespace SteamEngine.Network {
 			group.Enqueued();
 
 			lock (this.outgoingPackets) {
-				outgoingPackets.Enqueue(new OutgoingMessage(ss, group));
+				outgoingPackets.Enqueue(new OutgoingMessage(this.ss, group));
 			}
 
-			outgoingEvent.Set();
+			outgoingPacketsWaitingEvent.Set();
 		}
-
-
-		#region IComponent implementation
-		// Fields
-		private ISite site;
-
-		public event EventHandler Disposed;
 
 		protected override void DisposeUnmanagedResources() {
 			this.ss.Dispose();
 
-			lock (this) {
-				if (this.site != null) {
-					IContainer cont = this.site.Container;
-					if (cont != null) {
-						cont.Remove(this);
-					}
-				}
-
-				EventHandler handler = this.Disposed;
-				if (handler != null) {
-					handler(this, EventArgs.Empty);
-				}
-			}
 			base.DisposeUnmanagedResources();
 		}
 
-		public override string ToString() {
-			ISite site = this.site;
-			if (site != null) {
-				return (site.Name + " [" + this.GetType().FullName + "]");
-			}
-			return this.GetType().FullName;
+		protected internal abstract void Handle(IncomingPacket packet);
+
+		protected internal virtual void On_Close(LogStr reason) {
 		}
 
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(false)]
-		public virtual ISite Site {
-			get {
-				return this.site;
-			}
-			set {
-				this.site = value;
-			}
+		protected internal virtual void On_Close(string reason) {
 		}
-
-		#endregion IComponent implementation
 	}
 }

@@ -39,7 +39,7 @@ namespace SteamEngine {
 	  	protected override string GetFilepath() {
 	  		//DateTime.Now.GetDateTimeFormats()[4]
 	  		DateTime dtnow=DateTime.Now;
-			string filename = string.Format("SteamEngine.{0}-{1}-{2}.log", 
+			string filename = string.Format("SteamEngine.GameServer.{0}-{1}-{2}.log", 
 				dtnow.Year, dtnow.Month.ToString("00"), dtnow.Day.ToString("00"));
 	  		return Path.Combine(Globals.logPath, filename);
 		}

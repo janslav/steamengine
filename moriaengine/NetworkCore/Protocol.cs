@@ -27,21 +27,22 @@ using System.Threading;
 using SteamEngine.Common;
 
 namespace SteamEngine.Network {
-	public abstract class Protocol<SSType> : Disposable where SSType : SteamSocket {
+	public abstract class Protocol<SSType> : Poolable where SSType : SteamSocket {
 
 		private AsyncCallback onSend;
 		private AsyncCallback onReceieve;
-
 
 		Thread workerAlpha;
 		Thread workerBeta;
 		Thread workerGama;
 
 		internal Queue<OutgoingMessage> outgoingPackets;
-		internal Queue<IncomingMessage> incomingPackets;
-		internal Queue<IncomingMessage> incomingPacketsWorking;
+		Queue<IncomingMessage> incomingPackets;
+		Queue<IncomingMessage> incomingPacketsWorking;
 
-		internal AutoResetEvent outgoingEvent = new AutoResetEvent(false);
+		internal AutoResetEvent outgoingPacketsWaitingEvent = new AutoResetEvent(false);
+
+		internal ManualResetEvent workersNeedStopping = new ManualResetEvent(false);
 
 		public Protocol() {
 
@@ -88,6 +89,33 @@ namespace SteamEngine.Network {
 		internal void BeginReceive(SteamSocket ss) {
 			ss.socket.BeginReceive(ss.receivingBuffer.bytes, ss.endOfData, 
 				ss.receivingBuffer.bytes.Length - ss.endOfData, SocketFlags.None, onReceieve, ss);
+		}
+
+		//called from main loop (!)
+		public void Cycle() {
+			ThrowIfDisposed();
+
+			lock (this.incomingPackets) {
+				Queue<IncomingMessage> temp = this.incomingPacketsWorking;
+				this.incomingPacketsWorking = this.incomingPackets;
+				this.incomingPackets = temp;
+			}
+
+			while (this.incomingPacketsWorking.Count > 0) {
+				IncomingMessage msg = this.incomingPacketsWorking.Dequeue();
+				try {
+					msg.ss.Handle(msg.packet);
+				} catch (FatalException) {
+					throw;
+				} catch (Exception e) {
+					Logger.WriteError(e);
+				}
+				msg.packet.Dispose();
+			}
+		}
+
+		internal Socket CreateSocket() {
+			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		}
 
 		internal void OnReceieve(IAsyncResult asyncResult) {
@@ -140,7 +168,7 @@ namespace SteamEngine.Network {
 				}
 				BeginReceive(ss);
 			} catch (Exception e) {
-				Logger.WriteError(e);
+				//Logger.WriteError(e);
 				ss.Close(e.Message);
 			}
 		}
@@ -149,7 +177,7 @@ namespace SteamEngine.Network {
 		private void WorkerThreadMethod() {
 			Queue<OutgoingMessage> secondQueue = new Queue<OutgoingMessage>();
 
-			while (outgoingEvent.WaitOne()) {
+			while (outgoingPacketsWaitingEvent.WaitOne()) {
 				lock (this.outgoingPackets) {
 					Queue<OutgoingMessage> temp = this.outgoingPackets;
 					this.outgoingPackets = secondQueue;
@@ -173,6 +201,10 @@ namespace SteamEngine.Network {
 					}
 				} catch (Exception e) {
 					Logger.WriteError(e);
+				}
+
+				if (this.workersNeedStopping.WaitOne(0, false)) {
+					return;
 				}
 			}
 		}

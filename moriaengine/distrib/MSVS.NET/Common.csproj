@@ -60,6 +60,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -92,6 +93,9 @@
     <Compile Include="..\..\Common\HighPerformanceTimer.cs">
       <Link>HighPerformanceTimer.cs</Link>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\IniFile.cs">
+      <Link>IniFile.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\IniHandler.cs">
       <Link>IniHandler.cs</Link>

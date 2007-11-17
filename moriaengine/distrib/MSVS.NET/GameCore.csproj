@@ -851,9 +851,6 @@
       <Name>NetworkCore</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="icon6.ico" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
