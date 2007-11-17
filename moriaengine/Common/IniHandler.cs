@@ -13,6 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER(S) AND CONTRIBUTORS "AS IS" AN
 (For the curious, this is a BSD-style license)
 */
 
+
 namespace SteamEngine.Common {
 	using System;
 	using System.Net;
@@ -86,6 +87,8 @@ namespace SteamEngine.Common {
 		
 
 	*/
+
+	//obsolete - use IniFile -tar
 	public class IniHandler {
 		protected string iniPath = null;
 		private ArrayList iniSections = null;

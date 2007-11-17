@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.Network {
-	public class SteamSocket : Poolable {
+	public abstract class SteamSocket : Poolable {
 		internal Socket socket;
 		internal Buffer receivingBuffer;
 		internal int startOfData;
@@ -100,6 +100,10 @@ namespace SteamEngine.Network {
 				return socket.RemoteEndPoint;
 			}
 		}
+
+		public abstract void Handle(IncomingPacket packet);
+
+
 	}
 
 
