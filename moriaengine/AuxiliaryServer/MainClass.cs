@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+
 using SteamEngine.Network;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
 	public static class MainClass {
 		//public static ConsoleServer server = new ConsoleServer();
+
+		private static LoginServer.LoginServer loginServer;
 
 		static void Main(string[] args) {
 			Tools.ExitBinDirectory();
@@ -27,7 +30,10 @@ namespace SteamEngine.AuxiliaryServer {
 		private static void Init() {
 			Logger.Init();
 			Settings.Init();
+
+			loginServer = new LoginServer.LoginServer();
 		}
+
 
 
 		private static void Cycle() {
@@ -39,7 +45,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		private static void Dispose() {
-
+			Console.ReadLine();
 		}
 
 	}

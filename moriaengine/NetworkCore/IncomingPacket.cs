@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.Network {
-	public abstract class IncomingPacket : Poolable {
+	public abstract class IncomingPacket<SSType> : Poolable where SSType : SteamSocket {
 		internal protected byte[] buffer;
 		internal protected int start;
 
@@ -47,5 +47,7 @@ namespace SteamEngine.Network {
 		}
 
 		protected abstract bool Read(int count);
+
+		public abstract void Handle(SSType packet);
 	}
 }

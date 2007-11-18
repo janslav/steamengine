@@ -21,6 +21,7 @@
 	
 	<property name="commonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Common.dll'}" />
 	<property name="networkCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.NetworkCore.dll'}" />
+	<property name="auxiliaryServerFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.AuxiliaryServer.exe'}" />
 	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
 	<property name="gameCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GameCore.exe'}" />
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
@@ -75,7 +76,15 @@
 		</delete>
 	</target>
 	
-	<target name="clean" depends="cleanCommon,cleanGUI,cleanNetworkCore,cleanGameCore,cleanScripts,cleanConverter">
+	<target name="cleanAuxiliaryServer">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.AuxiliaryServer*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="clean" depends="cleanCommon,cleanGUI,cleanNetworkCore,cleanGameCore,cleanScripts,cleanConverter, cleanAuxiliaryServer">
 	</target>
 	
 	<target name="buildCommon">
@@ -165,6 +174,27 @@
     		tofile="${gameCoreFileName+'.config'}"	/>
 	</target>
 	
+	<target name="buildAuxiliaryServer" depends="buildNetworkCore">
+		<csc 
+			target="exe" 
+			output="${auxiliaryServerFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="AuxiliaryServer/**/*.cs" />
+			</sources>
+			<references>
+				<include name="bin/NAnt.Core.dll" />
+				<include name="bin/SteamDoc.dll" />
+				<include name="${networkCoreFileName}" />
+				<include name="${commonFileName}" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>
+	
 	<target name="buildScripts">
 		<csc 
 			target="library" 
@@ -252,6 +282,10 @@
 		<exec program="${gameCoreFileName}" />
 	</target>
 	
+	<target name="runAuxiliaryServer" depends="buildAuxiliaryServer">
+		<exec program="${auxiliaryServerFileName}" />
+	</target>
+
 	<target name="rebuild" depends="clean, build" />
 </project>
 

@@ -29,8 +29,13 @@ namespace SteamEngine.Network {
 	public abstract class SteamSocket : Poolable {
 		internal Socket socket;
 		internal Buffer receivingBuffer;
+		internal Buffer decryptBuffer;
+		internal Buffer decompressBuffer;
 		internal int startOfData;
 		internal int endOfData;
+
+		internal bool encryptionInitialised = false;
+		internal bool useEncryption = true;
 
 		private readonly object lockObject = new object();
 
@@ -39,9 +44,11 @@ namespace SteamEngine.Network {
 		}
 
 		protected internal override void Reset() {
-			receivingBuffer = Pool<Buffer>.Acquire();
-			startOfData = 0;
-			endOfData = 0;
+			this.receivingBuffer = Pool<Buffer>.Acquire();
+			this.decryptBuffer = Pool<Buffer>.Acquire();
+			this.decompressBuffer = Pool<Buffer>.Acquire();
+			this.startOfData = 0;
+			this.endOfData = 0;
 
 			base.Reset();
 		}
@@ -62,6 +69,10 @@ namespace SteamEngine.Network {
 					base.Dispose();
 				}
 			}
+		}
+
+		public virtual void On_Connect() {
+
 		}
 
 		public virtual void On_Close(string reason) {
@@ -85,11 +96,19 @@ namespace SteamEngine.Network {
 		}
 
 		protected override void DisposeManagedResources() {
-			receivingBuffer.Dispose();
+			this.receivingBuffer.Dispose();
+			this.decryptBuffer.Dispose();
+			this.decompressBuffer.Dispose();
 			base.DisposeManagedResources();
-		}
+		}	
 
 		public virtual IEncryption Encryption {
+			get {
+				return null;
+			}
+		}
+
+		public virtual ICompression Compression {
 			get {
 				return null;
 			}
@@ -100,14 +119,19 @@ namespace SteamEngine.Network {
 				return socket.RemoteEndPoint;
 			}
 		}
-
-		public abstract void Handle(IncomingPacket packet);
-
-
 	}
 
+	public enum EncryptionInitResult {
+		SuccessUseEncryption, 
+		SuccessNoEncryption,
+		NotEnoughData,
+		InvalidData //
+	}
 
 	public interface IEncryption {
+		// 
+		EncryptionInitResult Init(byte[] bytesIn, int offsetIn, int lengthIn, out int bytesUsed);
+
 		// Encrypt outgoing data
 		int Encrypt(byte[] bytesIn, int offsetIn, int lengthIn, byte[] bytesOut, int offsetOut);
 

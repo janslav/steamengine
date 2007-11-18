@@ -8,24 +8,26 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SteamEngine.AuxiliaryServer</RootNamespace>
-    <AssemblyName>AuxiliaryServer</AssemblyName>
+    <AssemblyName>MSVS_AuxiliaryServer</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MSWIN;MSVS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MSWIN;MSVS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -33,18 +35,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MSVS.NET\Common.csproj">
-      <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MSVS.NET\NetworkCore.csproj">
-      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
-      <Name>NetworkCore</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\AuxiliaryServer\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleConnection.cs">
+      <Link>ConsoleServer\ConsoleConnection.cs</Link>
     </Compile>
     <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleServer.cs">
       <Link>ConsoleServer\ConsoleServer.cs</Link>
@@ -61,6 +56,15 @@
     <Compile Include="..\..\AuxiliaryServer\LoginServer\IncomingPackets.cs">
       <Link>LoginServer\IncomingPackets.cs</Link>
     </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginConnection.cs">
+      <Link>LoginServer\LoginConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginEncryption.cs">
+      <Link>LoginServer\LoginEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginKey.cs">
+      <Link>LoginServer\LoginKey.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginServer.cs">
       <Link>LoginServer\LoginServer.cs</Link>
     </Compile>
@@ -73,6 +77,16 @@
     <Compile Include="..\..\AuxiliaryServer\Settings.cs">
       <Link>Settings.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Common.csproj">
+      <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="NetworkCore.csproj">
+      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
+      <Name>NetworkCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

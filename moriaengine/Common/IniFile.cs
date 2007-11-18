@@ -36,6 +36,8 @@ namespace SteamEngine.Common {
 		private List<IniFileSection> allSections = new List<IniFileSection>();
 		string filename;
 
+		private static readonly string verticalLine = Environment.NewLine + "------------------------------------------------------------------------------" + Environment.NewLine;
+
 		public IniFile(string filename) {
 			this.filename = filename;
 
@@ -58,10 +60,11 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		public IniFileSection GetNewOrParsedSection(string sectionName, string comment) {
+		public IniFileSection GetNewOrParsedSection(string sectionName) {
 			IniFileSection section;
 			if (!sectionsByName.TryGetValue(sectionName, out section)) {
-				section = new IniFileSection(sectionName, comment);
+
+				section = new IniFileSection(sectionName, verticalLine);
 				allSections.Add(section);
 				sectionsByName[section.name] = section;
 			}
@@ -105,11 +108,14 @@ namespace SteamEngine.Common {
 					if (curLine.Length==0) {
 						comments.AppendLine();
 						continue;
-					} else if (curLine.StartsWith("//")) {
+					} else if (curLine.StartsWith("//") || curLine.StartsWith("# ")) {
 						comments.AppendLine(curLine.Substring(2));
 						continue;
 					} else if (curLine.StartsWith("#")) {
 						comments.AppendLine(curLine.Substring(1));
+						continue;
+					} else if (curLine.Trim('-').Length == 0) {
+						comments.AppendLine(verticalLine);
 						continue;
 					}
 					Match m = headerRE.Match(curLine);
@@ -198,7 +204,7 @@ namespace SteamEngine.Common {
 			if (props.TryGetValue(name, out value)) {
 				return value.GetValue<T>();
 			} else {
-				comment = string.Concat("( ", name, ": ", comment, " )");
+				comment = string.Concat(Environment.NewLine, "( ", name, ": ", comment, " )", Environment.NewLine);
 				value = new IniFileValueLine(name, string.Concat(defaultValue), comment, true, null);
 				props[name] = value;
 				parts.Add(value);
@@ -219,7 +225,7 @@ namespace SteamEngine.Common {
 			this.commentAbove.WriteOut(stream);
 			stream.Write("[");
 			stream.Write(this.name);
-			stream.Write("]");
+			stream.WriteLine("]");
 			this.commentNext.WriteOut(stream);
 
 			foreach (IIniFilePart part in this.parts) {
@@ -258,7 +264,7 @@ namespace SteamEngine.Common {
 			this.commentAbove.WriteOut(stream);
 			stream.Write(this.name);
 			stream.Write(" = ");
-			stream.Write(this.valueString);
+			stream.WriteLine(this.valueString);
 			this.commentNext.WriteOut(stream);
 		}
 	}
@@ -276,26 +282,39 @@ namespace SteamEngine.Common {
 			if (string.IsNullOrEmpty(this.comment)) {
 				return;
 			}
-			this.comment = this.comment.Trim();
-			if (string.IsNullOrEmpty(this.comment)) {
-				return;
-			}
 
-			string strOut="# "+comment;
-			if (this.wrap) {
-				while (strOut.Length > 80) {
-					int space=strOut.LastIndexOf(' ', 80);
-					if (space>-1) {
-						string s=strOut.Substring(0, space);
-						strOut="# "+strOut.Substring(space+1);
-						stream.WriteLine(s);
-					} else {
-						break;
+			StringReader reader = new StringReader(this.comment);
+
+			string line;
+			while ((line = reader.ReadLine()) != null) {
+				if (line.Trim().Length == 0) {
+					stream.WriteLine();
+					continue;
+				}
+
+				string strOut="# "+line;
+				if (this.wrap) {
+					while (strOut.Length>80) {
+						int space=strOut.LastIndexOf(' ', 80);
+						if (space>-1) {
+							if (space < 2) {
+								space = strOut.IndexOf(' ', 80);
+								if (space < 0) {
+									break;
+								}
+							}
+							string s=strOut.Substring(0, space);
+							strOut="# "+strOut.Substring(space);
+							stream.WriteLine(s);
+
+						} else {
+							break;
+						}
 					}
 				}
-			} else {
 				stream.WriteLine(strOut);
 			}
+			
 		}
 	}
 }

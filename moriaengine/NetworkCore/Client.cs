@@ -36,10 +36,6 @@ namespace SteamEngine.Network {
 
 		}
 
-		public override void Handle(IncomingPacket packet) {
-			this.client.Handle(packet);
-		}
-
 		public override IEncryption Encryption {
 			get {
 				return client.Encryption;
@@ -98,8 +94,6 @@ namespace SteamEngine.Network {
 
 			base.DisposeUnmanagedResources();
 		}
-
-		protected internal abstract void Handle(IncomingPacket packet);
 
 		protected internal virtual void On_Close(LogStr reason) {
 		}

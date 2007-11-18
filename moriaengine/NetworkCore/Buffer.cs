@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SteamEngine.Network {
 
-	class Buffer : Poolable {
+	public class Buffer : Poolable {
 		public const int bufferLen = 10*1024;
 
 		public readonly byte[] bytes;

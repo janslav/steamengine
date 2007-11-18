@@ -18,31 +18,33 @@ namespace SteamEngine.AuxiliaryServer {
 		static Settings() {
 			IniFile ini = new IniFile(iniFileName);
 
-			IniFileSection files = ini.GetNewOrParsedSection("Files", "paths to relevant files or directories");
+			IniFileSection files = ini.GetNewOrParsedSection("Files");
 
-			logPath = files.GetValue<string>("logPath", "logs", "Path to the log files");
+			logPath = Path.GetFullPath(files.GetValue<string>("logPath", "logs", "Path to the log files"));
 
 
-			IniFileSection loginServer = ini.GetNewOrParsedSection("LoginServer", null);
+			IniFileSection loginServer = ini.GetNewOrParsedSection("LoginServer");
 
 			timeZone = loginServer.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
 
 			loginServerPort = loginServer.GetValue<int>("port", 2593, "The port to listen on for game client connections");
 
 
-			foreach (IniFileSection section in ini.GetSections("gameserver")) {
+			foreach (IniFileSection section in ini.GetSections("GameServer")) {
 				loginSettings.Add(new LoginServerInstanceSettings(section));
 			}
 
 			if (loginSettings.Count == 0) {
-				loginSettings.Add(new LoginServerInstanceSettings(ini.GetNewOrParsedSection("gameserver", "The default gameserver entry.")));
+				loginSettings.Add(new LoginServerInstanceSettings(ini.GetNewOrParsedSection("GameServer")));
 			}
 
 			ini.WriteToFile();
+
+			Console.WriteLine(iniFileName+" loaded and written.");
 		}
 
 		internal static void Init() {
-			Console.WriteLine(iniFileName+" loaded.");
+			
 		}
 	}
 
@@ -54,7 +56,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		internal LoginServerInstanceSettings(IniFileSection section) {
 			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list");
-			this.iniPath = section.GetValue<string>("iniPath", ".", "path to steamengine.ini of this instance");
+			this.iniPath = Path.GetFullPath(section.GetValue<string>("iniPath", ".", "path to steamengine.ini of this instance"));
 
 			IniFile ini = null;
 

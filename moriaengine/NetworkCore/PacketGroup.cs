@@ -48,8 +48,6 @@ namespace SteamEngine.Network {
 
 		internal PacketGroupType type = PacketGroupType.MultiUse;
 
-		protected ICompression compression = null;
-
 		public PacketGroup() {
 		}
 
@@ -58,7 +56,7 @@ namespace SteamEngine.Network {
 		}
 
 		public void AddPacket(OutgoingPacket packet) {
-			Sanity.IfTrueSay(isQueued > 0, "Can't add new packets to a locked group. They're ignored.");
+			Sanity.IfTrueSay((isQueued > 0 || this.isCompressed || this.isWritten) , "Can't add new packets to a locked group. They're ignored.");
 			packets.Add(packet);
 		}
 
@@ -90,9 +88,13 @@ namespace SteamEngine.Network {
 			}
 		}
 
-		private void Compress() {
+		internal int GetResult(ICompression compression, out byte[] bytes) {
+			ThrowIfDisposed();
+
+			WritePackets();
+
 			if (!this.isCompressed) {
-				if (this.compression != null) {
+				if (compression != null) {
 					this.compressedLen = compression.Compress(
 						this.uncompressed.bytes, 0, this.uncompressedLen, this.compressed.bytes, 0);
 				} else {
@@ -102,11 +104,6 @@ namespace SteamEngine.Network {
 				}
 				this.isCompressed = true;
 			}
-		}
-
-		internal int GetResult(out byte[] bytes) {
-			WritePackets();
-			Compress();
 
 			if (this.type == PacketGroupType.Free) {
 				Buffer newCompressed = new Buffer(this.compressedLen);
