@@ -74,6 +74,8 @@ namespace SteamEngine.Network {
 						listener.Bind(ipep);
 						listener.Listen(8);
 
+						Console.WriteLine("Listening on port "+port);
+
 						listener.BeginAccept(CreateSocket(), 0, onAccept, listener);
 					} catch (Exception e) {
 						throw new FatalException("Server socket bind failed.", e);
@@ -99,6 +101,8 @@ namespace SteamEngine.Network {
 			if (accepted != null) {
 				SSType newSS = Pool<SSType>.Acquire();
 				newSS.socket = accepted;
+
+				newSS.On_Connect();
 
 				if (this.On_NewClient(newSS)) {
 					BeginReceive(newSS);

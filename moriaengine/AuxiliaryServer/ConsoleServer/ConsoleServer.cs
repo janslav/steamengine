@@ -2,38 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+
 using SteamEngine.Network;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
-	public class LoginServer : Server<ConsoleServerSocket> {
+	public class LoginServer : Server<ConsoleConnection> {
 		public LoginServer()
 			: base(12345) {
 
 		}
 
-		protected override IncomingPacket GetPacketImplementation(byte id) {
+		protected override IncomingPacket<ConsoleConnection> GetPacketImplementation(byte id) {
 			return Pool<ConsoleServerIncomingPacket>.Acquire();
 		}
 	}
 
-	public class ConsoleServerSocket : SteamSocket {
 
-		public override void Handle(IncomingPacket packet) {
-			ConsoleServerPacketGroup pg = Pool<ConsoleServerPacketGroup>.Acquire();
 
-			pg.AddPacket(Pool<ConsoleServerOutgoingPacket>.Acquire());
-
-			//MainClass.server.SendPacketGroup(this, pg);
-		}
-	}
-
-	public class ConsoleServerIncomingPacket : IncomingPacket {
+	public class ConsoleServerIncomingPacket : IncomingPacket<ConsoleConnection> {
 
 		protected override bool Read(int count) {
 			this.position += count;
 
 			return true;
+		}
+
+		public override void Handle(ConsoleConnection packet) {
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 

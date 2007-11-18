@@ -32,7 +32,7 @@ namespace SteamEngine.Common {
 		static DateTime filedate;
 		static bool fileopen=false;
 		static Logger instance;
-		public static bool showCoreExceptions;
+		public static bool showCoreExceptions = true;
 		public static Assembly scriptsAssembly;
 		public static string indentation = "";
 
