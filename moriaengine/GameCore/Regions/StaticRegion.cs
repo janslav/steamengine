@@ -296,7 +296,7 @@ namespace SteamEngine.Regions {
 			}
 			//RECT=2300,3612,3264,4096
 			foreach(RegionRectangle rect in this.rectangles) {
-				output.WriteLine("rect=" + rect.MinX + "," + rect.MinY + "," + rect.MaxX + "," + rect.MaxY);
+				output.WriteLine("rect=" + rect.minX + "," + rect.minY + "," + rect.maxX + "," + rect.maxY);
 			}
 		}
 
@@ -367,14 +367,14 @@ namespace SteamEngine.Regions {
 		#endregion
 
 		#region Other regions mutual positions checks
-		private bool ContainsRectangle(Rectangle2D rect) {
+		private bool ContainsRectangle(ImmutableRectangle rect) {
 			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
 					&& ContainsPoint(rect.StartPoint.x, rect.EndPoint.y) //left lower
 					&& ContainsPoint(rect.EndPoint) //right lower
 					&& ContainsPoint(rect.EndPoint.x, rect.StartPoint.y)));//right upper
 		}
 
-		private bool ContainsRectanglePartly(Rectangle2D rect) {
+		private bool ContainsRectanglePartly(ImmutableRectangle rect) {
 			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
 					|| ContainsPoint(rect.StartPoint.x, rect.EndPoint.y) //left lower
 					|| ContainsPoint(rect.EndPoint) //right lower
@@ -383,7 +383,7 @@ namespace SteamEngine.Regions {
 
 		private bool CheckHasAllRectanglesIn(StaticRegion other) {
 			for(int i = 0, n = rectangles.Length; i < n; i++) {
-				Rectangle2D rect = rectangles[i];
+				ImmutableRectangle rect = rectangles[i];
 				if(!other.ContainsRectangle(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " should be contained within region " + LogStr.Ident(other.defname) + ", but is not.");
 					return false; //rovnou problem
@@ -394,7 +394,7 @@ namespace SteamEngine.Regions {
 
 		private bool CheckHasNoRectanglesIn(StaticRegion other) {
 			for(int i = 0, n = rectangles.Length; i < n; i++) {
-				Rectangle2D rect = rectangles[i];
+				ImmutableRectangle rect = rectangles[i];
 				if(other.ContainsRectanglePartly(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " overlaps with " + LogStr.Ident(other.defname) + ", but should not.");
 					return false; //rovnou problem
@@ -441,7 +441,7 @@ namespace SteamEngine.Regions {
 		#endregion
 
 		[Remark("Take the list of rectangles and make an array of RegionRectangles of it")]
-		public bool SetRectangles<T>(IList<T> list) where T : Rectangle2D {
+		public bool SetRectangles<T>(IList<T> list) where T : ImmutableRectangle {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for(int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle

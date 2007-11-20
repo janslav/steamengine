@@ -33,7 +33,7 @@ namespace SteamEngine.Converter {
 		private static List<ConvertedRegion> allRegions = new List<ConvertedRegion>();
 		private static ArrayList temp = new ArrayList();
 		
-		private List<Rectangle2D> rectangles = new List<Rectangle2D>();
+		private List<ImmutableRectangle> rectangles = new List<ImmutableRectangle>();
 		private Point2D[] points;//corners of the rectangles. its not too accurate, but who cares... :)
 		private byte mapplane;
 		private int hierarchyIndex = -1;
@@ -159,7 +159,7 @@ namespace SteamEngine.Converter {
 				def.Set("Rect", retVal, line.comment);
 				Point2D startpoint = new Point2D(minX, minY);
 				Point2D endpoint = new Point2D(maxX, maxY);
-				((ConvertedRegion) def).rectangles.Add(new Rectangle2D(startpoint, endpoint));
+				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(startpoint, endpoint));
 				return retVal;
 			} else {
 				def.Warning(line.line, "Unrecognized Rectangle format ('"+line.value+"')");
@@ -228,7 +228,7 @@ namespace SteamEngine.Converter {
 			int rectanglesCount = rectangles.Count;
 			points = new Point2D[rectanglesCount*4];
 			for (int i = 0; i < rectanglesCount; i++) {
-				Rectangle2D rect = (Rectangle2D) rectangles[i];
+				ImmutableRectangle rect = (ImmutableRectangle) rectangles[i];
 				points[(i*4)+0] = rect.StartPoint; //left upper
 				points[(i*4)+1] = new Point2D(rect.StartPoint.x, rect.EndPoint.y);//left lower
 				points[(i*4)+2] = rect.EndPoint;//right lower
@@ -300,7 +300,7 @@ namespace SteamEngine.Converter {
 			int counter = 0;
 			for (int i = 0, n = ps.Length; i<n; i++) {
 				Point2D p = ps[i];
-				foreach (Rectangle2D rect in rectangles) {
+				foreach (ImmutableRectangle rect in rectangles) {
 					if (rect.Contains(p)) {
 						counter ++;
 						continue;

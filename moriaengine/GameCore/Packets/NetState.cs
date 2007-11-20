@@ -1000,7 +1000,7 @@ namespace SteamEngine.Packets {
 					invisChanged ||	hitsChanged || nameChanged || mountChanged || basePropsChanged) {
 				int range = Globals.MaxUpdateRange;
 				if (teleported) {
-					RemoveFromViewIfNeeded(topPoint, new Rectangle2D(topPoint, Globals.MaxUpdateRange));
+					RemoveFromViewIfNeeded(topPoint, new ImmutableRectangle(topPoint, Globals.MaxUpdateRange));
 				} else if (posChanged) {
 					range++;//not teleported, that means only step, so we update wider range
 				}
@@ -1186,7 +1186,7 @@ namespace SteamEngine.Packets {
 			equippedItemsPropContainersCleared = false;
 		}
 
-		private void RemoveFromViewIfNeeded(IPoint4D mapPoint, Rectangle2D rect) {
+		private void RemoveFromViewIfNeeded(IPoint4D mapPoint, ImmutableRectangle rect) {
 			BoundPacketGroup rfv = null;
 			Map oldMap = mapPoint.GetMap();
 

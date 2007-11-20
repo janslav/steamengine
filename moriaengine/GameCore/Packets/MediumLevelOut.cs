@@ -228,7 +228,7 @@ namespace SteamEngine.Packets {
 		}
 
 		[Remark("This always discards the single-blocking-packet after sending.")]
-		public static void SendToClientsInRect(byte mapplane, Rectangle2D rect) {
+		public static void SendToClientsInRect(byte mapplane, ImmutableRectangle rect) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsInRect("+mapplane+","+rect+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsInRect called when generatingState is "+generatingState+" - Expected it to be Ready.");
 			Sanity.IfTrueThrow(groupState!=GroupState.SingleBlocking, "SendToClientsInRect called when groupState is "+groupState+" - Expected it to be SingleBlocking.");

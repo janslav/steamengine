@@ -124,8 +124,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			internal Rectangle2D CreateRect(IPoint2D p) {
-				return new Rectangle2D(
+			internal ImmutableRectangle CreateRect(IPoint2D p) {
+				return new ImmutableRectangle(
 					new Point2D((ushort) (p.X + startX), (ushort) (p.Y + startY)),
 					new Point2D((ushort) (p.X + endX), (ushort) (p.Y + endY)));
 			}
@@ -237,7 +237,7 @@ namespace SteamEngine.CompiledScripts {
 		internal virtual void InitMultiRegion() {
 			int n = TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
-				Rectangle2D[] newRectangles = new Rectangle2D[n];
+				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
 				for (int i = 0; i<n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
@@ -255,7 +255,7 @@ namespace SteamEngine.CompiledScripts {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public MultiRegion(MultiItem multiItem, Rectangle2D[] rectangles)
+		public MultiRegion(MultiItem multiItem, ImmutableRectangle[] rectangles)
 			: base(rectangles) {
 			this.multiItem = multiItem;
 		}

@@ -577,7 +577,7 @@ namespace SteamEngine.Regions {
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<GameConn> GetClientsInRange(ushort x, ushort y, ushort range) {
-			return GetClientsInRectangle(new Rectangle2D(x, y, range));
+			return GetClientsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		
 		/**
@@ -585,49 +585,49 @@ namespace SteamEngine.Regions {
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y, ushort range) {
-			return GetPlayersInRectangle(new Rectangle2D(x, y, range));
+			return GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y, ushort range) {
-			return GetThingsInRectangle(new Rectangle2D(x, y, range));
+			return GetThingsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y, ushort range) {
-			return GetItemsInRectangle(new Rectangle2D(x, y, range));
+			return GetItemsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y, ushort range) {
-			return GetCharsInRectangle(new Rectangle2D(x, y, range));
+			return GetCharsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y, ushort range) {
-			return GetStaticsInRectangle(new Rectangle2D(x, y, range));
+			return GetStaticsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y, ushort range) {
-			return GetDisconnectsInRectangle(new Rectangle2D(x, y, range));
+			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y, ushort range) {
-			return GetMultiComponentsInRectangle(new Rectangle2D(x, y, range));
+			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		/**
@@ -635,56 +635,56 @@ namespace SteamEngine.Regions {
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<GameConn> GetClientsInRange(ushort x, ushort y) {
-			return GetClientsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetClientsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y) {
-			return GetPlayersInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetPlayersInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y) {
-			return GetThingsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetThingsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y) {
-			return GetItemsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetItemsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y) {
-			return GetCharsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetCharsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y) {
-			return GetStaticsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetStaticsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y) {
-			return GetDisconnectsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify coordinates to look near.
 		*/
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y) {
-			return GetMultiComponentsInRectangle(new Rectangle2D(x, y, Globals.MaxUpdateRange));
+			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		
@@ -693,7 +693,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<GameConn> GetClientsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<GameConn> GetClientsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
 					GameConn conn = player.Conn;
@@ -707,7 +707,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<AbstractCharacter> GetPlayersInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<AbstractCharacter> GetPlayersInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
 					if (rectangle.Contains(player)) {
@@ -720,7 +720,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<Thing> GetThingsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<Thing> GetThingsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (Thing thing in sector.things) {
 					if (rectangle.Contains(thing)) {
@@ -733,7 +733,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<AbstractItem> GetItemsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<AbstractItem> GetItemsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (Thing thing in sector.things) {
 					AbstractItem i = thing as AbstractItem;
@@ -747,7 +747,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<AbstractCharacter> GetCharsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<AbstractCharacter> GetCharsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (Thing thing in sector.things) {
 					AbstractCharacter ch = thing as AbstractCharacter;
@@ -761,7 +761,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<Static> GetStaticsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<Static> GetStaticsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (Static s in sector.Statics) {
 					if (rectangle.Contains(s)) {
@@ -800,7 +800,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<Thing> GetDisconnectsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<Thing> GetDisconnectsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (Thing thing in sector.disconnects) {
 					if (rectangle.Contains(thing)) {
@@ -814,7 +814,7 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<MultiItemComponent> GetMultiComponentsInRectangle(Rectangle2D rectangle) {
+		public IEnumerable<MultiItemComponent> GetMultiComponentsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (MultiItemComponent mic in sector.multiComponents) {
 					if (rectangle.Contains(mic)) {
@@ -835,7 +835,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<GameConn> GetClientsWhoCanSee(Thing thing) {
 			Thing t = thing.TopObj();
-			Rectangle2D rectangle = new Rectangle2D(t.X, t.Y, Globals.MaxUpdateRange);
+			ImmutableRectangle rectangle = new ImmutableRectangle(t.X, t.Y, Globals.MaxUpdateRange);
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
 					GameConn conn = player.Conn;
@@ -846,7 +846,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		private IEnumerable<Sector> GetSectorsInRectangle(Rectangle2D rectangle) {
+		private IEnumerable<Sector> GetSectorsInRectangle(ImmutableRectangle rectangle) {
 			//rectangle.Crop(0, 0, (ushort) (map.sizeX - 1), (ushort) (map.sizeY - 1));
 			Point2D point1 = rectangle.StartPoint;
 			Point2D point2 = rectangle.EndPoint;

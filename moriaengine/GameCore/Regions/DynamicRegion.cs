@@ -28,7 +28,7 @@ namespace SteamEngine.Regions {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public DynamicRegion(Rectangle2D[] newRects) 
+		public DynamicRegion(ImmutableRectangle[] newRects) 
 				: base() {
 			
 			int n = newRects.Length;
@@ -143,7 +143,7 @@ namespace SteamEngine.Regions {
 		[Remark("Take the list of rectangles and make an array of RegionRectangles of it."+
 				"The purpose is the same as for StaticRegion but the checks are different."+
 				"The map parameter allows us to specifiy the map where the region should be")]
-		public bool SetRectangles<T>(IList<T> list, Map map) where T : Rectangle2D {
+		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for(int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
