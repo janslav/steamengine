@@ -1336,7 +1336,7 @@ namespace SteamEngine {
 		public void SendNearbyStuff() {
 			GameConn myConn = Conn;
 			if (myConn != null) {
-				Rectangle2D rect = new Rectangle2D(this, this.UpdateRange);
+				ImmutableRectangle rect = new ImmutableRectangle(this, this.UpdateRange);
 				Map map = this.GetMap();
 				foreach (AbstractItem itm in map.GetItemsInRectangle(rect)) {
 					if (CanSeeForUpdate(itm)) {

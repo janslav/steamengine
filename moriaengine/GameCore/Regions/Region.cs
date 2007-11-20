@@ -82,7 +82,7 @@ namespace SteamEngine.Regions {
 			} 
 		}
 
-		public IEnumerable<Rectangle2D> Rectangles { 
+		public IEnumerable<ImmutableRectangle> Rectangles { 
 			get {
 				return rectangles;
 			} 
@@ -318,7 +318,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool ContainsPoint(Point2D point) {
-			foreach(Rectangle2D rect in Rectangles) {
+			foreach(ImmutableRectangle rect in Rectangles) {
 				if(rect.Contains(point)) {
 					return true;
 				}
@@ -327,7 +327,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool ContainsPoint(ushort x, ushort y) {
-			foreach(Rectangle2D rect in Rectangles) {
+			foreach(ImmutableRectangle rect in Rectangles) {
 				if(rect.Contains(x,y)) {
 					return true;
 				}
@@ -416,7 +416,7 @@ namespace SteamEngine.Regions {
 		}
 	}
 
-	internal class RegionRectangle : Rectangle2D {
+	internal class RegionRectangle : ImmutableRectangle {
 		internal static readonly RegionRectangle[] emptyArray = new RegionRectangle[0];
 
 		internal readonly Region region;
@@ -430,7 +430,7 @@ namespace SteamEngine.Regions {
 			this.region = region;
 		}
 
-		internal RegionRectangle(Rectangle2D rect, Region region)
+		internal RegionRectangle(ImmutableRectangle rect, Region region)
 			: base(rect.StartPoint, rect.EndPoint) {
 			this.region = region;
 		}

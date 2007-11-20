@@ -25,67 +25,66 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts {
 	[Remark("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
 				"rectngles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
-	public class MutableRectangle : Rectangle2D {
-		public MutableRectangle(Point2D start, Point2D end)
-			: base(start, end) {
+	public class MutableRectangle : AbstractRectangle {
+		public ushort minX, maxX, minY, maxY;
+
+		public MutableRectangle(Point2D start, Point2D end) {
+			this.minX = start.x;
+			this.minY = start.y;
+			this.maxX = end.x;
+			this.maxY = end.y;
 		}
 
-		public MutableRectangle(IPoint2D start, IPoint2D end)
-			: base(start, end) {
+		public MutableRectangle(IPoint2D start, IPoint2D end) {
+			this.minX = start.X;
+			this.minY = start.Y;
+			this.maxX = end.X;
+			this.maxY = end.Y;
 		}
 
-		public new ushort MinX {
+		public override ushort MinX {
 			get {
 				return minX;
 			}
-			set {
-				minX = value;
-			}
 		}
-		public new ushort MinY {
+
+		public override ushort MinY {
 			get {
 				return minY;
 			}
-			set {
-				minY = value;
-			}
 		}
-		public new ushort MaxX {
+
+		public override ushort MaxX {
 			get {
 				return maxX;
 			}
-			set {
-				maxX = value;
-			}
 		}
-		public new ushort MaxY {
+
+		public override ushort MaxY {
 			get {
 				return maxY;
 			}
-			set {
-				maxY = value;
-			}
 		}
 
-		public new Point2D StartPoint {
-			get {
-				return StartPoint;
-			}
-			set {
-				minX = value.x;
-				minY = value.y;
-			}
-		}
+		//public Point2D StartPoint {
+		//    get {
+		//        return StartPoint;
+		//    }
+		//    set {
+		//        minX = value.x;
+		//        minY = value.y;
+		//    }
+		//}
 
-		public new Point2D EndPoint {
-			get {
-				return EndPoint;
-			}
-			set {
-				maxX = value.x;
-				maxY = value.y;
-			}
-		}
+		//public Point2D EndPoint {
+		//    get {
+		//        return EndPoint;
+		//    }
+		//    set {
+		//        maxX = value.x;
+		//        maxY = value.y;
+		//    }
+		//}
 
 		[Remark("Alters all four rectangle's position coordinates for specified tiles in X and Y axes."+
 				"This time it changes 'this'")]
@@ -101,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 		[Remark("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the unmutable ones)")]
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
 			List<MutableRectangle> retList = new List<MutableRectangle>();
-			foreach(Rectangle2D regRect in reg.Rectangles) {
+			foreach(ImmutableRectangle regRect in reg.Rectangles) {
 				retList.Add(new MutableRectangle(regRect.StartPoint, regRect.EndPoint));
 			}
 			return retList;

@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 		internal override void InitMultiRegion() {
 			int n = TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
-				Rectangle2D[] newRectangles = new Rectangle2D[n];
+				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
 				for (int i = 0; i<n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
@@ -315,7 +315,7 @@ namespace SteamEngine.CompiledScripts {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public ShipRegion(Ship ship, Rectangle2D[] rectangles)
+		public ShipRegion(Ship ship, ImmutableRectangle[] rectangles)
 			: base(ship, rectangles) {
 		}
 

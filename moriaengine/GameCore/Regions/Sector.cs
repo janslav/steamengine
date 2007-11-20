@@ -273,7 +273,7 @@ namespace SteamEngine.Regions {
 					rectangles = RegionRectangle.emptyArray;
 				} else {
 					rectangles = (RegionRectangle[]) list.ToArray(typeof(RegionRectangle));
-					Rectangle2D sectorRect = new Rectangle2D((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
+					ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
 						Map.sectorWidth, Map.sectorWidth);
 					SectRectComparer comparer = new SectRectComparer(sectorRect);
 					Array.Sort(rectangles, comparer);
@@ -285,8 +285,8 @@ namespace SteamEngine.Regions {
 			}
 
 			private class SectRectComparer : IComparer {
-				private Rectangle2D sectorRectangle;
-				internal SectRectComparer(Rectangle2D sectorRectangle) {
+				private ImmutableRectangle sectorRectangle;
+				internal SectRectComparer(ImmutableRectangle sectorRectangle) {
 					this.sectorRectangle = sectorRectangle;
 				}
 
@@ -300,8 +300,8 @@ namespace SteamEngine.Regions {
 					} else if (a.region.HierarchyIndex > b.region.HierarchyIndex) {
 						return 1;
 					} else {
-						Rectangle2D intersectA = Rectangle2D.GetIntersection(sectorRectangle, a);
-						Rectangle2D intersectB = Rectangle2D.GetIntersection(sectorRectangle, b);
+						ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(sectorRectangle, a);
+						ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(sectorRectangle, b);
 						return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
 					}
 				}
