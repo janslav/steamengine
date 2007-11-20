@@ -60,7 +60,7 @@ namespace SteamEngine.Regions {
 			tempRectangles.Clear();
 			this.LoadSectionLines(input);
 			this.rectangles = tempRectangles.ToArray();
-			this.unloaded = false;
+			this.inactivated = false;
 		}
 
 		public sealed class StaticRegionSaveCoordinator : IBaseClassSaveCoordinator {
@@ -212,7 +212,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void LoadLine(string filename, int line, string param, string args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			switch(param) {
 				case "category":
 				case "subsection":
@@ -273,14 +273,14 @@ namespace SteamEngine.Regions {
 
 		[Save]
 		public void SaveWithHeader(SaveStream output) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			output.WriteSection(this.GetType().Name, this.defname);
 			this.Save(output);
 			output.WriteLine();
 		}
 
 		public override void Save(SaveStream output) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			base.Save(output);//tagholder save
 
 			if(!string.IsNullOrEmpty(this.name)) {
@@ -296,25 +296,31 @@ namespace SteamEngine.Regions {
 			}
 			//RECT=2300,3612,3264,4096
 			foreach(RegionRectangle rect in this.rectangles) {
-				Point2D start = rect.StartPoint;
-				Point2D end = rect.EndPoint;
-				output.WriteLine("rect=" + start.x + "," + start.y + "," + end.x + "," + end.y);
+				output.WriteLine("rect=" + rect.MinX + "," + rect.MinY + "," + rect.MaxX + "," + rect.MaxY);
 			}
 		}
 
-		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state")]
-		public static void UnloadAll() {
-			foreach(StaticRegion reg in byDefname.Values) {
-				reg.Unload();
+		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
+		private static void InactivateAll() {
+			foreach(StaticRegion reg in AllRegions) {
+				reg.Inactivate();			
+			}
+			foreach(Map map in Map.AllMaps) {
+				map.InactivateRegions();
 			}
 		}
 
 		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state"+
 				"called after manipulation is successfully done")]
-		public static void LoadAll() {
-			foreach(StaticRegion reg in byDefname.Values) {
-				reg.unloaded = false;
+		private static void ActivateAll() {
+			List<StaticRegion> allRegs = new List<StaticRegion>();
+			foreach(StaticRegion reg in AllRegions) {
+				reg.Activate();
+				allRegs.Add(reg);
 			}
+			foreach(Map map in Map.AllMaps) {
+				map.ActivateRegions(allRegs);
+			}			
 		}
 		#endregion
 
@@ -435,7 +441,7 @@ namespace SteamEngine.Regions {
 		#endregion
 
 		[Remark("Take the list of rectangles and make an array of RegionRectangles of it")]
-		public bool SetRectangles<T>(IList<T> list) where T : IRectangle {
+		public bool SetRectangles<T>(IList<T> list) where T : Rectangle2D {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for(int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
@@ -443,14 +449,14 @@ namespace SteamEngine.Regions {
 			}
 			//now the checking phase!
 			RegionRectangle[] oldRects = rectangles; //save
-			Unload(); //unload the region - it 'locks' it for every usage except for rectangles operations
+			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations
 			rectangles = newArr; //switch the rectangles			
 			if(!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
 				rectangles = oldRects; //return the previous set of rectangles
-				unloaded = false; //release the locks
+				StaticRegion.ActivateAll();
 				return false;
 			}
-			Load();
+			StaticRegion.ActivateAll();//all OK
 			return true;
 		}
 
@@ -459,11 +465,18 @@ namespace SteamEngine.Regions {
 				return name;
 			}
 			set {
-				ThrowIfUnloaded();
+				ThrowIfInactivated();
 				byName.Remove(name);
 				name = String.Intern(value);
 				byName[value] = this;
 			}
+		}
+
+		public override void Delete() {
+			///TODO / patrne bude potreba mazat i jeho deti (protoze kdybych ho pak chtel pridat zpet do sveta
+			///tak jeho deti mi tam budou prekazet a tak vubec). kazdopadne je potreba to minimalne promyslet
+			///a prokonzultovat s Tramtarem
+ 			base.Delete();
 		}
 	}
 }

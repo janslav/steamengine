@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
 	
-	public class Region : PluginHolder, IUnloadable {
+	public class Region : PluginHolder {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
@@ -49,7 +49,7 @@ namespace SteamEngine.Regions {
 		protected Point4D p; //spawnpoint
 		protected string name; //this is typically not unique, containing spaces etc.
 		
-		protected RegionRectangle[] rectangles;
+		internal RegionRectangle[] rectangles;
 		protected Region parent;
 		protected byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
 		protected bool mapplaneIsSet;
@@ -61,7 +61,7 @@ namespace SteamEngine.Regions {
 			this.p = new Point4D(0,0,0,0); //spawnpoint
 			this.name = ""; //this is typically not unique, containing spaces etc.
 			this.createdAt = HighPerformanceTimer.TickCount;
-			this.unloaded = false; //defaultly is loaded
+			this.inactivated = false; //defaultly is loaded
 		}
 
 		public Region Parent { 
@@ -82,7 +82,7 @@ namespace SteamEngine.Regions {
 			} 
 		}
 
-		public RegionRectangle[] Rectangles { 
+		public IEnumerable<Rectangle2D> Rectangles { 
 			get {
 				return rectangles;
 			} 
@@ -127,13 +127,16 @@ namespace SteamEngine.Regions {
 				return p;
 			}
 			set {
-				ThrowIfUnloaded();
+				ThrowIfInactivated();
+				if(!ContainsPoint((Point2D)value)) {
+					throw new SEException("Spawnpoint "+value.ToString()+" is not contained in the region "+ToString());
+				}
 				p = value;
 			}
 		}
 
 		public bool IsChildOf(Region tested) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			if (parent == null) {
 				return false;
 			} else if (tested == parent) {
@@ -253,12 +256,12 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			return false;
 		}
 
 		internal bool Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			Region region = this;
 
 			bool cancel = false;
@@ -283,7 +286,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual bool On_DenyPutItemOn(DenyPutOnGroundArgs args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			return false;
 		}
 
@@ -296,11 +299,11 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 		}
 
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 		}
 		
 		protected bool HasSameMapplane(Region reg) {
@@ -315,18 +318,16 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool ContainsPoint(Point2D point) {
-			for (int i = 0, n = rectangles.Length; i<n; i++) {
-				Rectangle2D rect = rectangles[i];
-				if (rect.Contains(point)) {
+			foreach(Rectangle2D rect in Rectangles) {
+				if(rect.Contains(point)) {
 					return true;
 				}
-			}
+			}			
 			return false;
 		}
 
 		public bool ContainsPoint(ushort x, ushort y) {
-			for(int i = 0, n = rectangles.Length; i < n; i++) {
-				Rectangle2D rect = rectangles[i];
+			foreach(Rectangle2D rect in Rectangles) {
 				if(rect.Contains(x,y)) {
 					return true;
 				}
@@ -349,7 +350,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool TryEnter(AbstractCharacter ch) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			if (!TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
 				if (!On_Enter(ch, false)) {
 					return true;
@@ -359,7 +360,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool TryExit(AbstractCharacter ch) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			if (!TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
 				if (!On_Exit(ch, false)) {
 					return true;
@@ -369,13 +370,13 @@ namespace SteamEngine.Regions {
 		}
 		
 		public void Enter(AbstractCharacter ch) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			TryTrigger(TriggerKey.enter, new ScriptArgs(ch, 1));
 			On_Enter(ch, true);
 		}
 		
 		public void Exit(AbstractCharacter ch) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
 			On_Exit(ch, true);
 		}
@@ -392,40 +393,38 @@ namespace SteamEngine.Regions {
 			return false;
 		}
 
-		#region IUnloadable Members
-		protected bool unloaded = false;
+		protected bool inactivated = false;
 
-		public void Unload() {
-			unloaded = true;
-			Map itsMap = Map.GetMap(p.m);
-			itsMap.UnactivateOneRegion(this); //unactivate in the map!			
+		public void Inactivate() {
+			inactivated = true;			
 		}
 
-		public void Load() {
-			unloaded = false;
-			Map itsMap = Map.GetMap(p.m);
-			itsMap.ActivateOneRegion(this); //activate it back!
+		public void Activate() {
+			inactivated = false;			
 		}
 
-		public bool IsUnloaded {
+		public bool IsInactivated {
 			get {
-				return unloaded;
+				return inactivated;
 			}
 		}
 
-		protected void ThrowIfUnloaded() {
-			if(unloaded) {
-				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is unloaded.");
+		protected void ThrowIfInactivated() {
+			if(inactivated) {
+				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is inactivated.");
 			}
 		}
-
-		#endregion
 	}
 
-	public class RegionRectangle : Rectangle2D {
+	internal class RegionRectangle : Rectangle2D {
 		internal static readonly RegionRectangle[] emptyArray = new RegionRectangle[0];
 
-		public readonly Region region;
+		internal readonly Region region;
+		internal RegionRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY, Region region)
+			: base(minX, minY, maxX, maxY) {
+			this.region = region;
+		}
+
 		internal RegionRectangle(Point2D start, Point2D end, Region region)
 			: base(start, end) {
 			this.region = region;
@@ -436,11 +435,11 @@ namespace SteamEngine.Regions {
 			this.region = region;
 		}
 
-		public bool IntersectsWith(Rectangle2D rect) {
-			return (Contains(rect.StartPoint)//left upper
-					|| Contains(rect.StartPoint.x, rect.EndPoint.y) //left lower
-					|| Contains(rect.EndPoint) //right lower
-					|| Contains(rect.EndPoint.x, rect.StartPoint.y));//right upper
+		[Remark("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
+				"Returns a new (moved) instance")]
+		internal new RegionRectangle Move(int timesX, int timesY) {
+			return new RegionRectangle((ushort)(minX + timesX), (ushort)(minY + timesY),
+									   (ushort)(maxX + timesX), (ushort)(maxY + timesY), region);
 		}
 	}
 }

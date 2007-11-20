@@ -46,7 +46,7 @@ namespace SteamEngine.Regions {
 
 		[Remark("Serves to place the region to the map for the first time (after creation)")]
 		public bool Place(Point4D p) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			if(p != null) { //already placed!
 				throw new SEException("This Dynamic region has already been placed to the map. For movement try setting its P");
 			} 
@@ -63,7 +63,7 @@ namespace SteamEngine.Regions {
 				return p;
 			}
 			set {
-				ThrowIfUnloaded();
+				ThrowIfInactivated();
 				if (value == null) {
 					throw new ArgumentNullException("P");
 				}
@@ -78,13 +78,14 @@ namespace SteamEngine.Regions {
 				"to move that way to the desired location and if so, it moves every rectangle there."+
 				"We expect the timesX and timesY parameteres to be small numbers")]
 		public bool Step(int timesX, int timesY) {
-			List<MutableRectangle> mutableRects = MutableRectangle.CopyRectsFromRegion(this); //make an editable list of rectangles
-			foreach(MutableRectangle mutableRect in mutableRects) {
-				mutableRect.MoveBy(timesX, timesY);
+			//a new list of changed (moved) rectangles
+			List<RegionRectangle> movedRects = new List<RegionRectangle>();
+			foreach(RegionRectangle oneRect in rectangles) {
+				movedRects.Add(oneRect.Move(timesX, timesY));
 			}
 			Map oldMap = Map.GetMap(p.m); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
-			bool result = SetRectangles(mutableRects, oldMap);
+			bool result = SetRectangles(movedRects, oldMap);
 			//add it without checks (these were performed when setting the rectangles)
 			//we will add either the new array of rectangles or the old one if there were problems
 			oldMap.AddDynamicRegion(this, false);
@@ -109,18 +110,18 @@ namespace SteamEngine.Regions {
 			if(xyChanged) {
 				int diffX = newP.x - p.x;
 				int diffY = newP.y - p.y;
-				List<MutableRectangle> mutableRects = MutableRectangle.CopyRectsFromRegion(this); //make an editable list of rectangles
-				foreach(MutableRectangle mutableRect in mutableRects) {
-					mutableRect.MoveBy(diffX, diffY);
-				}
+				List<RegionRectangle> movedRects = new List<RegionRectangle>();
+				foreach(RegionRectangle oneRect in rectangles) {
+					movedRects.Add(oneRect.Move(diffX, diffY));
+				}				
 				if(mapChanged) {
 					Map newMap = Map.GetMap(newP.m);
 					this.parent = newMap.GetRegionFor(newP);
-					movingOK = SetRectangles(mutableRects, newMap);
+					movingOK = SetRectangles(movedRects, newMap);
 					newMap.AddDynamicRegion(this, false);//place the region to the map (no checks, they were already performed in SetRectangles)
 				} else {
 					this.parent = oldMap.GetRegionFor(newP);
-					movingOK = SetRectangles(mutableRects, oldMap);
+					movingOK = SetRectangles(movedRects, oldMap);
 					oldMap.AddDynamicRegion(this, false);//and place (no checks as well)
 				}
 			} else if(mapChanged) {
@@ -142,14 +143,14 @@ namespace SteamEngine.Regions {
 		[Remark("Take the list of rectangles and make an array of RegionRectangles of it."+
 				"The purpose is the same as for StaticRegion but the checks are different."+
 				"The map parameter allows us to specifiy the map where the region should be")]
-		public bool SetRectangles<T>(IList<T> list, Map map) where T : IRectangle {
+		public bool SetRectangles<T>(IList<T> list, Map map) where T : Rectangle2D {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for(int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
 				newArr[i] = new RegionRectangle(list[i].StartPoint, list[i].EndPoint, this);
 			}
 			//now the checking phase!
-			Unload(); //unload the region - it 'locks' it for every usage except for rectangles operations
+			Inactivate(); //unload the region - it 'locks' it for every usage except for rectangles operations
 			foreach(RegionRectangle rect in newArr) {
 				if(!map.CheckDynRectIntersection(rect)) {
 					//check the intercesction of the dynamic region, in case of any trouble immediatelly finish
@@ -158,7 +159,7 @@ namespace SteamEngine.Regions {
 			}
 			//everything is OK, we can swith the lists
 			rectangles = newArr;
-			unloaded = false; //release the lock			
+			Activate();
 			return true;
 		}
 

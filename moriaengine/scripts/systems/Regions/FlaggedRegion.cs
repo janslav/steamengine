@@ -47,7 +47,7 @@ namespace SteamEngine.Regions {
 				return flags;
 			}
 			set {
-				ThrowIfUnloaded();
+				ThrowIfInactivated();
 				flags = value;
 			}
 		}
@@ -61,7 +61,7 @@ namespace SteamEngine.Regions {
 		//}
 
 		public override void Save(SteamEngine.Persistence.SaveStream output) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			base.Save(output);//Region save
 
 			if (flags != 0) {
@@ -70,7 +70,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void LoadLine(string filename, int line, string param, string args) {
-			ThrowIfUnloaded();
+			ThrowIfInactivated();
 			switch(param) {
 				case "flag_announce":
 					LoadSpecificFlag(filename, line, 0x00200, args);
@@ -135,30 +135,7 @@ namespace SteamEngine.Regions {
 					base.LoadLine(filename, line, param, args);//the Region Loadline
 					break;
 			}
-		}
-
-		//returns a rectangle "around" this region. I used it for UOMapRenderer rendering a view on a city :)
-		public Rectangle2D GetEscribedRectangle() {
-			ushort minX = ushort.MaxValue;//left
-			ushort maxX = ushort.MinValue;//right
-			ushort minY = ushort.MaxValue;//upper
-			ushort maxY = ushort.MinValue;//lower
-			foreach (Rectangle2D rect in Rectangles) {
-				if (rect.StartPoint.x < minX) {
-					minX = rect.StartPoint.x;
-				}
-				if (rect.StartPoint.y < minY) {
-					minY = rect.StartPoint.y;
-				}
-				if (rect.EndPoint.x > maxX) {
-					maxX = rect.EndPoint.x;
-				}
-				if (rect.StartPoint.y > maxY) {
-					maxY = rect.EndPoint.y;
-				}
-			}
-			return new Rectangle2D(minX, minY, maxX, maxY);
-		}
+		}		
 		
 		private void LoadSpecificFlag(string filename, int line, int mask, string args) {
 			if (TagMath.ParseBoolean(args)) {//args is 1 or true or something like that

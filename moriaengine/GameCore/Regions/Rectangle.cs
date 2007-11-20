@@ -21,222 +21,181 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Regions {
 	public interface IRectangle {
-		Point2D StartPoint { get; }
-		Point2D EndPoint { get; }
-
-		bool Contains(Point2D point);
-		bool Contains(int x, int y);
+		ushort MinX { get; }
+		ushort MaxX { get; }
+		ushort MinY { get; }
+		ushort MaxY { get; }
 	}
 
 	public class Rectangle2D : IRectangle {
-		public static readonly Rectangle2D voidInstance = new Rectangle2D(0, 0, 0);
-		
-		protected Point2D start;
-		protected Point2D end;
-		
+		public static readonly Rectangle2D voidInstance = new Rectangle2D(0, 0, 0, 0);
+
+		protected ushort minX, maxX, minY, maxY;
+
+		public Rectangle2D(ushort minX, ushort minY, ushort maxX, ushort maxY) {
+			this.minX = minX;
+			this.minY = minY;
+			this.maxX = maxX;
+			this.maxY = maxY;
+		}
+
 		public Rectangle2D(IPoint2D start, IPoint2D end) {
 			Sanity.IfTrueThrow( (start.X > end.X) || (start.Y > end.Y), 
 				"The first argument is supposed to be the upper left corner and the second the lower right corner.");
-			this.start = new Point2D(start);
-			this.end = new Point2D(end);
+			this.minX = start.X;
+			this.minY = start.Y;
+			this.maxX = end.X;
+			this.maxY = end.Y;
 		}
 		
-		public Rectangle2D(Point2D start, Point2D end) {
-			Sanity.IfTrueThrow( (start.x > end.x) || (start.y > end.y), 
-				"The first argument is supposed to be the upper left corner and the second the lower right corner.");
-			this.start = start;
-			this.end = end;
+		public Rectangle2D(Point2D start, Point2D end) : this((IPoint2D)start, (IPoint2D)end) {			
 		}
-		
-		public Rectangle2D(ushort x, ushort y, ushort width, ushort height) {
-			this.start = new Point2D(x, y);
-			this.end = new Point2D((ushort) (x + width), (ushort) (y + height));
-		}
-		
+
+		[Remark("Return a rectangle created from the central point with the specific range around the point"+
+				"(square 'around')")]
 		public Rectangle2D(ushort x, ushort y, ushort range) {
-			this.start = new Point2D((ushort) (x - range), (ushort) (y - range));
-			this.end = new Point2D((ushort) (x + range), (ushort) (y + range));
+			this.minX = (ushort)(x - range);
+			this.minY = (ushort)(y - range);
+			this.maxX = (ushort)(x + range);
+			this.maxY = (ushort)(y + range);
 		}
 		
-		public Rectangle2D(IPoint2D center, ushort range) {
-			ushort x = center.X;
-			ushort y = center.Y;
-			this.start = new Point2D((ushort) (x - range), (ushort) (y - range));
-			this.end = new Point2D((ushort) (x + range), (ushort) (y + range));
+		public Rectangle2D(IPoint2D center, ushort range) : this(center.X, center.Y, range) {			
 		}
 		
-		public void Crop(ushort minx, ushort miny, ushort maxx, ushort maxy) {
-			bool newStart = false;
-			bool newEnd = false;
-			ushort newStartX = start.x;
-			ushort newStartY = start.y;
-			ushort newEndX = end.x;
-			ushort newEndY = end.y;
+		public Rectangle2D Crop(ushort minx, ushort miny, ushort maxx, ushort maxy) {
+			ushort newStartX = this.minX;
+			ushort newStartY = this.minY;
+			ushort newEndX = this.maxX;
+			ushort newEndY = this.maxY;
 			if (this.StartPoint.x<minx) {
 				newStartX = minx;
-				newStart = true;
 			}
 			if (this.EndPoint.x<minx) {
 				newEndX = minx;
-				newEnd = true;
 			}
 			if (this.StartPoint.y<miny) {
 				newStartY = miny;
-				newStart = true;
 			}
 			if (this.EndPoint.y<miny) {
 				newEndY = miny;
-				newEnd = true;
 			}
 			if (this.StartPoint.x>maxx) {
 				newStartX = maxx;
-				newStart = true;
 			}
 			if (this.EndPoint.x>maxx) {
 				newEndX = maxx;
-				newEnd = true;
 			}
 			if (this.StartPoint.y>maxy) {
 				newStartY = maxy;
-				newStart = true;
 			}
 			if (this.EndPoint.y>maxy) {
 				newEndY = maxy;
-				newEnd = true;
 			}
-			if (newStart) {
-				this.start = new Point2D(newStartX, newStartY);
-			}
-			if (newEnd) {
-				this.end = new Point2D(newEndX, newEndY);
-			}
+			//return the new rectangle with possible changes in its strat/end positions
+			return new Rectangle2D(newStartX, newStartY, newEndX, newEndY);
 		}
 		
-		public int X { get {
-		    return start.x;
+		public ushort MinX { get {
+		    return minX;
 		} }
-		
-		public int Y { get {
-		    return start.y;
+		public ushort MinY { get {
+			return minY;
 		} }
+		public ushort MaxX { get {
+			return maxX;
+		} }
+		public ushort MaxY { get {
+			return maxY;
+		} }		
 		
 		public int Width { get {
-			return (end.x - start.x);
+			return maxX - minX;
 		} }
 		
 		public int Height { get {
-			return (end.y - start.y);
+			return maxY - minY;
 		} }
 
 		public Point2D StartPoint { 
 			get {
-				return start;
-			}
-			internal set {
-				start = value;
-			}
+				return new Point2D(minX, minY);
+			} 
 		}
 
 		public Point2D EndPoint { 
 			get {
-				return end;
-			}
-			internal set {
-				end = value;
+				return new Point2D(maxX, maxY);
 			}
 		}
 		
 		public override string ToString() {
-		   return string.Format("({0}, {1})+({2}, {3})", X, Y, Width, Height);   
+		   return string.Format("({0}, {1})+({2}, {3})", minX, minY, maxX, maxY);   
 		}
 		
 		public bool Contains(Static p) {
 			ushort px = p.X;
 			ushort py = p.Y;
-			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
+			return ((minX <= px) && (minY <= py) && (maxX >= px) && (maxY >= py));
 		}
 		
 		public bool Contains(Thing p) {
 			ushort px = p.X;
 			ushort py = p.Y;
-			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py)); 
+			return ((minX <= px) && (minY <= py) && (maxX >= px) && (maxY >= py)); 
 		}
 		
 		public bool Contains(Point2D p) {
 			ushort px = p.x;
 			ushort py = p.y;
-			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
+			return ((minX <= px) && (minY <= py) && (maxX >= px) && (maxY >= py));
 		}
 
 		public bool Contains(int px, int py) {
-			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
+			return ((minX <= px) && (minY <= py) && (maxX >= px) && (maxY >= py));
 		}
 		
 		public bool Contains(IPoint2D p) {
 			ushort px = p.X;
 			ushort py = p.Y;
-			return ((start.x <= px) && (start.y <= py) && (end.x >= px) && (end.y >= py));
+			return ((minX <= px) && (minY <= py) && (maxX >= px) && (maxY >= py));
 		}
-		
+
+		[Remark("Does the rectangle contain another rectangle completely?")]
+		public bool Contains(IRectangle rect) {
+			return Contains(rect.MinX, rect.MinY)//left lower
+					&& Contains(rect.MinX, rect.MaxY) //left upper
+					&& Contains(rect.MaxX, rect.MaxY) //right upper
+					&& Contains(rect.MaxX, rect.MinY);//right lower
+		}
+
+		public bool IntersectsWith(IRectangle rect) {
+			return Contains(rect.MinX, rect.MinY)//left lower
+					|| Contains(rect.MinX, rect.MaxY) //left upper
+					|| Contains(rect.MaxX, rect.MaxY) //right upper
+					|| Contains(rect.MaxX, rect.MinY);//right lower
+		}		
+
+		[Remark("Do the two rectangles have any intersection?")]
+		public static bool Intersects(Rectangle2D a, Rectangle2D b) {
+			return a.IntersectsWith(b) || b.IntersectsWith(a);
+		}
+
 		public static Rectangle2D GetIntersection(Rectangle2D a, Rectangle2D b) {
-			int maxStartX = Math.Max(a.StartPoint.x, b.StartPoint.x);
-			int minEndX = Math.Min(a.EndPoint.x, b.EndPoint.x);
-			int maxStartY = Math.Max(a.StartPoint.y, b.StartPoint.y);
-			int minEndY = Math.Min(a.EndPoint.y, b.EndPoint.y);
+			ushort maxStartX = (ushort)Math.Max(a.minX, b.minX);
+			ushort minEndX = (ushort)Math.Min(a.maxX, b.maxX);
+			ushort maxStartY = (ushort)Math.Max(a.minY, b.minY);
+			ushort minEndY = (ushort)Math.Min(a.maxY, b.maxY);
 			if ((minEndX >= maxStartX) && (minEndY >= maxStartY)) {
-				return new Rectangle2D((ushort) maxStartX, (ushort) maxStartY, 
-					(ushort) (minEndX - maxStartX), (ushort) (minEndY - maxStartY));
+				return new Rectangle2D(maxStartX, maxStartY, minEndX, minEndY);
 			}
 			return Rectangle2D.voidInstance;
 		}
 		
-		public int TilesNumber { get {
-			return ((end.x - start.x)*(end.y - start.y));
-		} }
-	}
-
-	[Remark("Rectangle class for dialogs - the mutable one. It will be used for operating with "+
-			"rectngles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
-	public class MutableRectangle : Rectangle2D {
-		public MutableRectangle(Point2D start, Point2D end)
-			: base(start, end) {
-		}
-
-		public MutableRectangle(IPoint2D start, IPoint2D end)
-			: base(start, end) {
-		}
-
-		public new Point2D StartPoint {
+		public int TilesNumber { 
 			get {
-				return start;
-			}
-			set {
-				start = value;
-			}
+				return ((maxX - minX)*(maxY - minY));
+			} 
 		}
-
-		public new Point2D EndPoint {
-			get {
-				return end;
-			}
-			set {
-				end = value;
-			}
-		}
-
-		[Remark("Alters both rectangle's points for specified tiles in X and Y axes")]
-		public void MoveBy(int timesX, int timesY) {
-			start = start.Add(timesX, timesY); //move the rectangle the desired number of tiles
-			end = end.Add(timesX, timesY);				
-		}
-
-		[Remark("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the unmutable ones)")]
-		public static List<MutableRectangle> CopyRectsFromRegion(Region reg) {
-			List<MutableRectangle> retList = new List<MutableRectangle>();
-			foreach(RegionRectangle regRect in reg.Rectangles) {
-				retList.Add(new MutableRectangle(new Point2D(regRect.StartPoint), new Point2D(regRect.EndPoint)));
-			}
-			return retList;
-		}
-	}
+	}	
 }
