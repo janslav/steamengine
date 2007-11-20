@@ -317,6 +317,9 @@
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Regions\MutableRectangle.cs">
+      <Link>systems\Regions\MutableRectangle.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>
     </Compile>

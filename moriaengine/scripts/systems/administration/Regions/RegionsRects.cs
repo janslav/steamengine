@@ -31,12 +31,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"	2 - rectangly v listu(je totiž možno pøidávat dynamicky)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			Region reg = (Region)args[0];
-			List<RegionRectangle> rectList = null;
+			List<MutableRectangle> rectList = null;
 			if(args[2] != null) {
-				rectList = (List<RegionRectangle>)args[2];				
+				rectList = (List<MutableRectangle>)args[2];				
 			} else {
 				//vezmeme je z regionu
-				rectList = new List<RegionRectangle>(reg.Rectangles);
+				rectList = MutableRectangle.TakeRectsFromRegion(reg);
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
-				RegionRectangle rect = rectList[i];
+				MutableRectangle rect = rectList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + i); //editovat
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rect.Width.ToString());
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
 			Region reg = (Region)args[0];
-			List<RegionRectangle> rectsList = (List<RegionRectangle>)args[2];
+			List<MutableRectangle> rectsList = (List<MutableRectangle>)args[2];
 			int firstOnPage = Convert.ToInt32(args[1]);
 			//if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 			//    switch(gr.pressedButton) {

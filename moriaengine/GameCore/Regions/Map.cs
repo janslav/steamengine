@@ -166,7 +166,7 @@ namespace SteamEngine.Regions {
 		public static void ClearAll() {
 			foreach (Map map in mapsList) {
 				map.ClearThings();
-				map.UnactivateRegions();
+				map.InactivateRegions();
 			}
 		}
 		
@@ -1036,41 +1036,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Used only for one region - e.g. when editing it through the dialog")]
-		internal void ActivateOneRegion(Region region) {
-			//we dont add the rectangles directly to sectors, we first create a "matrix" of arraylists which are then "Staticed" to arrays and assigned to sectors
-			
-			ArrayList[,] matrix = new ArrayList[numXSectors, numYSectors];
-			foreach(RegionRectangle rect in region.Rectangles) {
-				int minXs = rect.StartPoint.x >> sectorFactor;
-				int maxXs = rect.EndPoint.x >> sectorFactor;
-				maxXs = (int)Math.Min(maxXs, numXSectors - 1);
-				int minYs = rect.StartPoint.y >> sectorFactor;
-				int maxYs = rect.EndPoint.y >> sectorFactor;
-				maxYs = (int)Math.Min(maxYs, numYSectors - 1);
-				for(int sx = minXs, topx = maxXs + 1; sx < topx; sx++) {
-					for(int sy = minYs, topy = maxYs + 1; sy < topy; sy++) {
-						ArrayList al = matrix[sx, sy];
-						if(al == null) {
-							al = new ArrayList();
-							matrix[sx, sy] = al;
-						}
-						al.Add(rect);
-					}
-				}
-			}
-			
-			for(int sx = 0; sx < numXSectors; sx++) {
-				for(int sy = 0; sy < numYSectors; sy++) {
-					ArrayList thislist = matrix[sx, sy];
-					if(thislist != null) {
-						GetSector(sx, sy).SetRegionRectangles(thislist);
-					}
-				}
-			}
-		}
-
-		internal void UnactivateRegions() {
+		internal void InactivateRegions() {
 			for (int sx = 0; sx<numXSectors; sx++) {
 				for (int sy = 0; sy<numYSectors; sy++) {
 					Sector se = sectors[sx, sy];
@@ -1079,19 +1045,7 @@ namespace SteamEngine.Regions {
 					}
 				}
 			}
-		}
-
-		[Remark("Used only for one region - e.g. when editing it through the dialog")]
-		internal void UnactivateOneRegion(Region region) {
-			for(int sx = 0; sx < numXSectors; sx++) {
-				for(int sy = 0; sy < numYSectors; sy++) {
-					Sector se = sectors[sx, sy];
-					if(se != null) {
-						se.ClearOneRegionRectangles(region);
-					}
-				}
-			}
-		}
+		}		
 		#endregion Regions
 
 		internal void GetSectorXY(int x, int y, out int sx, out int sy) {
