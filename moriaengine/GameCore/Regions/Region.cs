@@ -29,8 +29,6 @@ namespace SteamEngine.Regions {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
-		private static List<RegionRectangle> tempRectangles = new List<RegionRectangle>();//for loading purposes...		
-
 		internal static readonly Region voidRegion = new Region();
 		protected static Region worldRegion = voidRegion;
 		protected static int highestHierarchyIndex = -1;
@@ -51,7 +49,7 @@ namespace SteamEngine.Regions {
 		protected Point4D p; //spawnpoint
 		protected string name; //this is typically not unique, containing spaces etc.
 		
-		internal RegionRectangle[] rectangles;
+		internal IList<RegionRectangle> rectangles = new List<RegionRectangle>();
 		protected Region parent;
 		protected byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
 		protected bool mapplaneIsSet;
@@ -64,10 +62,7 @@ namespace SteamEngine.Regions {
 		public Region() : base() {
 			this.p = new Point4D(0,0,0,0); //spawnpoint
 			this.name = ""; //this is typically not unique, containing spaces etc.
-			this.inactivated = false; //defaultly is loaded
-			this.rectangles = tempRectangles.ToArray();
-
-			tempRectangles.Clear();
+			this.inactivated = false; //defaultly is activated
 		}
 
 		public Region Parent { 
@@ -88,9 +83,11 @@ namespace SteamEngine.Regions {
 			} 
 		}
 
-		public IEnumerable<ImmutableRectangle> Rectangles { 
+		public IList<ImmutableRectangle> Rectangles { 
 			get {
-				return rectangles;
+				RegionRectangle[] arr = new RegionRectangle[this.rectangles.Count];
+				rectangles.CopyTo(arr, 0);
+				return arr;
 			} 
 		}
 
@@ -423,6 +420,10 @@ namespace SteamEngine.Regions {
 
 		public override void LoadLine(string filename, int line, string name, string value) {
 			switch (name) {
+				case "category":
+				case "subsection":
+				case "description":
+					return;
 				case "event":
 				case "events":
 				case "type":
@@ -442,7 +443,7 @@ namespace SteamEngine.Regions {
 						Point2D point1 = new Point2D(x1, y1);
 						Point2D point2 = new Point2D(x2, y2);
 						RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
-						tempRectangles.Add(rr);//tempRectangles are then resolved statically (arraylist to array)
+						this.rectangles.Add(rr);
 					} else {
 						throw new SEException("Unrecognized Rectangle format ('" + value + "')");
 					}
@@ -461,9 +462,9 @@ namespace SteamEngine.Regions {
 				case "name":
 					Match ma = ConvertTools.stringRE.Match(value);
 					if (ma.Success) {
-						name = String.Intern(ma.Groups["value"].Value);
+						this.name = String.Intern(ma.Groups["value"].Value);
 					} else {
-						name = String.Intern(value);
+						this.name = String.Intern(value);
 					}
 					break;
 				case "createdat":
@@ -485,7 +486,6 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void Save(SaveStream output) {
-
 			if (!string.IsNullOrEmpty(this.name)) {
 				output.WriteValue("name", name);
 			}

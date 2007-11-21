@@ -106,7 +106,7 @@ namespace SteamEngine.Regions {
 						throw new SEException("No world region defined.");
 					}
 
-					List<StaticRegion> tempList = new List<StaticRegion>(byDefname.Values);//copy list of all regions
+					LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(byDefname.Values);//copy list of all regions
 					int lastCount = -1;
 					while(tempList.Count > 0) {
 						if(lastCount == tempList.Count) {
@@ -114,7 +114,7 @@ namespace SteamEngine.Regions {
 							throw new SEException("Region hierarchy not completely resolvable.");
 						}
 						lastCount = tempList.Count;
-						StaticRegion r = tempList[lastCount - 1];
+						StaticRegion r = tempList.Last.Value;
 						r.SetHierarchyIndex(tempList);
 					}
 
@@ -177,7 +177,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		private int SetHierarchyIndex(List<StaticRegion> tempList) {
+		private int SetHierarchyIndex(ICollection<StaticRegion> tempList) {
 			if(parent == null) {
 				if(IsWorldRegion) {
 					hierarchyIndex = 0;
@@ -197,20 +197,6 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public override void LoadLine(string filename, int line, string param, string args) {
-			ThrowIfInactivated();
-			switch(param) {
-				case "category":
-				case "subsection":
-				case "description":
-					return;
-				//axis props are ignored
-				default:
-					base.LoadLine(filename, line, param, args);//the AbstractDef Loadline
-					break;
-			}
-		}
-
 		[Save]
 		public void SaveWithHeader(SaveStream output) {
 			ThrowIfInactivated();
@@ -218,12 +204,6 @@ namespace SteamEngine.Regions {
 			this.Save(output);
 			output.WriteLine();
 		}
-
-		public override void Save(SaveStream output) {
-			ThrowIfInactivated();
-			base.Save(output);//tagholder save
-
-	}
 
 		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
 		private static void InactivateAll() {
@@ -307,7 +287,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private bool CheckHasAllRectanglesIn(StaticRegion other) {
-			for(int i = 0, n = rectangles.Length; i < n; i++) {
+			for(int i = 0, n = rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = rectangles[i];
 				if(!other.ContainsRectangle(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " should be contained within region " + LogStr.Ident(other.defname) + ", but is not.");
@@ -318,7 +298,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private bool CheckHasNoRectanglesIn(StaticRegion other) {
-			for(int i = 0, n = rectangles.Length; i < n; i++) {
+			for (int i = 0, n = rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = rectangles[i];
 				if(other.ContainsRectanglePartly(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " overlaps with " + LogStr.Ident(other.defname) + ", but should not.");
@@ -373,7 +353,7 @@ namespace SteamEngine.Regions {
 				newArr[i] = new RegionRectangle(list[i].StartPoint, list[i].EndPoint, this);				
 			}
 			//now the checking phase!
-			RegionRectangle[] oldRects = rectangles; //save
+			IList<RegionRectangle> oldRects = rectangles; //save
 			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations
 			rectangles = newArr; //switch the rectangles			
 			if(!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
