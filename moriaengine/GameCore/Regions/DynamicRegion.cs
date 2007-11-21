@@ -99,7 +99,7 @@ namespace SteamEngine.Regions {
 				"sure that no confilicts with other dynamic regions occurs when moving!")]
 		private bool Step(Point4D newP) {
 			Point4D oldPos = p; //store the old position for case the movement fails!
-			RegionRectangle[] oldRects = rectangles;
+			IList<RegionRectangle> oldRects = rectangles;
 
 			bool xyChanged = (p.x != newP.x || p.y != newP.y);
 			bool mapChanged = p.m != newP.m;
@@ -168,8 +168,9 @@ namespace SteamEngine.Regions {
 				"New array of rectangles is returned..."+
 				"The diff coordinates may also be negative!")]
 		internal RegionRectangle[] MoveRectangles(int diffX, int diffY) {
-			RegionRectangle[] newRects = new RegionRectangle[rectangles.Length];
-			for(int i = 0; i < rectangles.Length; i++) {
+			int n = rectangles.Count;
+			RegionRectangle[] newRects = new RegionRectangle[n];
+			for (int i = 0; i < n; i++) {
 				newRects[i] = new RegionRectangle(
 								rectangles[i].StartPoint.Add(diffX, diffY), 
 								rectangles[i].EndPoint.Add(diffX, diffY), this);				        
