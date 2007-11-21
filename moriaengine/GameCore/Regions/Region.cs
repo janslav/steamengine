@@ -29,6 +29,8 @@ namespace SteamEngine.Regions {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
+		private static List<RegionRectangle> tempRectangles = new List<RegionRectangle>();//for loading purposes...		
+
 		internal static readonly Region voidRegion = new Region();
 		protected static Region worldRegion = voidRegion;
 		protected static int highestHierarchyIndex = -1;
@@ -54,14 +56,18 @@ namespace SteamEngine.Regions {
 		protected byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
 		protected bool mapplaneIsSet;
 		protected int hierarchyIndex = -1;
-		protected long createdAt;
+		protected DateTime createdAt = DateTime.Now;
+
+		
 
 		//private readonly static Type[] constructorTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
 		public Region() : base() {
 			this.p = new Point4D(0,0,0,0); //spawnpoint
 			this.name = ""; //this is typically not unique, containing spaces etc.
-			this.createdAt = HighPerformanceTimer.TickCount;
 			this.inactivated = false; //defaultly is loaded
+			this.rectangles = tempRectangles.ToArray();
+
+			tempRectangles.Clear();
 		}
 
 		public Region Parent { 
@@ -76,7 +82,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public long CreatedAt { 
+		public DateTime CreatedAt { 
 			get {
 				return createdAt;
 			} 
@@ -414,6 +420,90 @@ namespace SteamEngine.Regions {
 				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is inactivated.");
 			}
 		}
+
+		public override void LoadLine(string filename, int line, string name, string value) {
+			switch (name) {
+				case "event":
+				case "events":
+				case "type":
+				case "triggergroup":
+				case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
+					base.LoadLine(filename, line, "triggergroup", value);
+					break;
+				case "rect":
+				case "rectangle": //RECT=2300,3612,3264,4096
+					Match m = rectRE.Match(value);
+					if (m.Success) {
+						GroupCollection gc = m.Groups;
+						ushort x1 = TagMath.ParseUInt16(gc["x1"].Value);
+						ushort y1 = TagMath.ParseUInt16(gc["y1"].Value);
+						ushort x2 = TagMath.ParseUInt16(gc["x2"].Value);
+						ushort y2 = TagMath.ParseUInt16(gc["y2"].Value);
+						Point2D point1 = new Point2D(x1, y1);
+						Point2D point2 = new Point2D(x2, y2);
+						RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
+						tempRectangles.Add(rr);//tempRectangles are then resolved statically (arraylist to array)
+					} else {
+						throw new SEException("Unrecognized Rectangle format ('" + value + "')");
+					}
+					break;
+				case "p":
+				case "spawnpoint":
+					p = (Point4D) ObjectSaver.Load(value);
+					break;
+				case "mapplane":
+					mapplane = TagMath.ParseByte(value);
+					mapplaneIsSet = true;
+					break;
+				case "parent":
+					ObjectSaver.Load(value, LoadParent_Delayed, filename, line);
+					break;
+				case "name":
+					Match ma = ConvertTools.stringRE.Match(value);
+					if (ma.Success) {
+						name = String.Intern(ma.Groups["value"].Value);
+					} else {
+						name = String.Intern(value);
+					}
+					break;
+				case "createdat":
+					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(value, typeof(DateTime));
+					break;
+				default:
+					base.LoadLine(filename, line, name, value);
+					break;
+			}
+		}
+
+		private void LoadParent_Delayed(object resolvedObject, string filename, int line) {
+			Region reg = resolvedObject as Region;
+			if (reg != null) {
+				parent = reg;
+			} else {
+				Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(resolvedObject) + "' is not a valid Region. Referenced as parent by '" + LogStr.Ident(Defname) + "'.");
+			}
+		}
+
+		public override void Save(SaveStream output) {
+
+			if (!string.IsNullOrEmpty(this.name)) {
+				output.WriteValue("name", name);
+			}
+			output.WriteValue("p", p);
+			output.WriteValue("createdat", createdAt);
+			if (mapplane != 0) {
+				output.WriteValue("mapplane", mapplane);
+			}
+			if (parent != null) {
+				output.WriteValue("parent", this.parent);
+			}
+			//RECT=2300,3612,3264,4096
+			foreach (RegionRectangle rect in this.rectangles) {
+				output.WriteLine("rect=" + rect.minX + "," + rect.minY + "," + rect.maxX + "," + rect.maxY);
+			}
+
+			base.Save(output);
+		}
 	}
 
 	internal class RegionRectangle : ImmutableRectangle {
@@ -437,7 +527,7 @@ namespace SteamEngine.Regions {
 
 		[Remark("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
 				"Returns a new (moved) instance")]
-		internal new RegionRectangle Move(int timesX, int timesY) {
+		internal RegionRectangle Move(int timesX, int timesY) {
 			return new RegionRectangle((ushort)(minX + timesX), (ushort)(minY + timesY),
 									   (ushort)(maxX + timesX), (ushort)(maxY + timesY), region);
 		}

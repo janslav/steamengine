@@ -26,7 +26,6 @@ using SteamEngine.Persistence;
 namespace SteamEngine.Regions {
 	[Remark("Class implementing saving/loading of regions, controlling unique defnames etc.")]
 	public class StaticRegion : Region {
-		private static List<RegionRectangle> tempRectangles;//for loading purposes...		
 		private static Dictionary<string, StaticRegion> byName;
 		private static Dictionary<string, StaticRegion> byDefname;
 
@@ -38,7 +37,6 @@ namespace SteamEngine.Regions {
 		public new static void ClearAll() {
 			byName = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
 			byDefname = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
-			tempRectangles = new List<RegionRectangle>();
 		}
 
 		public StaticRegion()
@@ -57,9 +55,7 @@ namespace SteamEngine.Regions {
 				throw new OverrideNotAllowedException("Region " + LogStr.Ident(defName) + " loaded multiple times.");
 			}
 
-			tempRectangles.Clear();
 			this.LoadSectionLines(input);
-			this.rectangles = tempRectangles.ToArray();
 			this.inactivated = false;
 		}
 
@@ -201,16 +197,6 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		//at some point, we could make this use ObjectSaver
-		internal void LoadParent_Delayed(object resolvedObject, string filename, int line) {
-			Region reg = resolvedObject as Region;
-			if(reg != null) {
-				parent = reg;
-			} else {
-				Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(resolvedObject) + "' is not a valid Region. Referenced as parent by '" + LogStr.Ident(Defname) + "'.");
-			}
-		}
-
 		public override void LoadLine(string filename, int line, string param, string args) {
 			ThrowIfInactivated();
 			switch(param) {
@@ -219,52 +205,6 @@ namespace SteamEngine.Regions {
 				case "description":
 					return;
 				//axis props are ignored
-				case "event":
-				case "events":
-				case "type":
-				case "triggergroup":
-				case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
-					base.LoadLine(filename, line, "triggergroup", args);
-					break;
-				case "rect":
-				case "rectangle": //RECT=2300,3612,3264,4096
-					Match m = rectRE.Match(args);
-					if(m.Success) {
-						GroupCollection gc = m.Groups;
-						ushort x1 = TagMath.ParseUInt16(gc["x1"].Value);
-						ushort y1 = TagMath.ParseUInt16(gc["y1"].Value);
-						ushort x2 = TagMath.ParseUInt16(gc["x2"].Value);
-						ushort y2 = TagMath.ParseUInt16(gc["y2"].Value);
-						Point2D point1 = new Point2D(x1, y1);
-						Point2D point2 = new Point2D(x2, y2);
-						RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
-						StaticRegion.tempRectangles.Add(rr);//tempRectangles are then resolved statically (arraylist to array)
-					} else {
-						throw new SEException("Unrecognized Rectangle format ('" + args + "')");
-					}
-					break;
-				case "p":
-				case "spawnpoint":
-					p = (Point4D)ObjectSaver.Load(args);
-					break;
-				case "mapplane":
-					mapplane = TagMath.ParseByte(args);
-					mapplaneIsSet = true;
-					break;
-				case "parent":
-					ObjectSaver.Load(args, LoadParent_Delayed, filename, line);
-					break;
-				case "name":
-					Match ma = ConvertTools.stringRE.Match(args);
-					if(ma.Success) {
-						name = String.Intern(ma.Groups["value"].Value);
-					} else {
-						name = String.Intern(args);
-					}
-					break;
-				case "createdat":
-					this.createdAt = ConvertTools.ParseInt64(args);
-					break;
 				default:
 					base.LoadLine(filename, line, param, args);//the AbstractDef Loadline
 					break;
@@ -283,22 +223,7 @@ namespace SteamEngine.Regions {
 			ThrowIfInactivated();
 			base.Save(output);//tagholder save
 
-			if(!string.IsNullOrEmpty(this.name)) {
-				output.WriteValue("name", name);
-			}
-			output.WriteValue("p", p);
-			output.WriteValue("createdat", createdAt);
-			if(mapplane != 0) {
-				output.WriteValue("mapplane", mapplane);
-			}
-			if(parent != null) {
-				output.WriteValue("parent", this.parent);
-			}
-			//RECT=2300,3612,3264,4096
-			foreach(RegionRectangle rect in this.rectangles) {
-				output.WriteLine("rect=" + rect.minX + "," + rect.minY + "," + rect.maxX + "," + rect.maxY);
-			}
-		}
+	}
 
 		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
 		private static void InactivateAll() {

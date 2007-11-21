@@ -38,7 +38,7 @@ namespace SteamEngine {
 		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
 		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
 
-		private long createdAt = Globals.TimeInTicks;//Server time of creation
+		private DateTime createdAt;//Server time of creation
 		private ushort color;
 		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
@@ -387,7 +387,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public long CreatedAt {
+		public DateTime CreatedAt {
 			get {
 				return createdAt;
 			}
@@ -665,14 +665,13 @@ namespace SteamEngine {
 					model = TagMath.ParseUInt16(value);
 					break;
 				case "createdat":
-					createdAt = TagMath.ParseInt64(value);
+					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(value, typeof(DateTime));
 					break;
 				default:
 					base.LoadLine(filename, line, prop, value);
 					break;
 			}
 		}
-
 
 		[Remark("Sets all uids to lowest possible value. Always save & restart after doing this.")]
 		public static void ResetAllUids() {
