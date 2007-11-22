@@ -85,12 +85,6 @@ namespace SteamEngine.Network {
 				this.packet = packet;
 			}
 		}
-
-		internal void BeginReceive(SteamSocket ss) {
-			ss.socket.BeginReceive(ss.receivingBuffer.bytes, ss.endOfData, 
-				ss.receivingBuffer.bytes.Length - ss.endOfData, SocketFlags.None, onReceieve, ss);
-		}
-
 		//called from main loop (!)
 		public void Cycle() {
 			ThrowIfDisposed();
@@ -118,101 +112,155 @@ namespace SteamEngine.Network {
 			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		}
 
+		internal void BeginReceive(SteamSocket ss) {
+			int offset = ss.receivedDataLength;
+
+
+			ss.socket.BeginReceive(ss.receivingBuffer.bytes, offset,
+				Buffer.bufferLen - offset, SocketFlags.None, onReceieve, ss);
+		}
+
 		internal void OnReceieve(IAsyncResult asyncResult) {
 			SSType ss = (SSType) asyncResult.AsyncState;
 
 			try {
-				int byteCount = ss.socket.EndReceive(asyncResult);
+				int length = ss.socket.EndReceive(asyncResult);
 
-				if (byteCount > 0) {
-					ss.endOfData += byteCount;
-
+				if (length > 0) {//we have new data, but still possibly have some old data.
+					//ss.receievedDataLength += newBytesLength;
 					byte[] bytes = ss.receivingBuffer.bytes;
+					length += ss.receivedDataLength;
+					int offset = 0;
 
-					while (true) {
-						int offset = ss.startOfData;
-						int count = ss.endOfData - offset;
+					if (!ProcessDecryption(ss, ref length, ref bytes, ref offset)) {
+						//init failed with not enough data, we queue the data
+						BeginReceive(ss);
+						return;
+					}
+
+					ICompression compression = ss.Compression;
+					if (compression != null) {
+						length = compression.Decompress(bytes, offset, ss.decompressBuffer.bytes,
+							ss.decompressedDataOffset + ss.decompressedDataLength, length);
+					} else {
+						System.Buffer.BlockCopy(bytes, offset, ss.decompressBuffer.bytes,
+							ss.decompressedDataOffset + ss.decompressedDataLength, length);
+					}
+
+					bytes = ss.decompressBuffer.bytes;
+					offset = ss.decompressedDataOffset;
+					length += ss.decompressedDataLength;
+
+
+					//read all posible packets outa those data
+					bool loop = true;
+					while (loop && (length > 0)) {
+						byte id = bytes[offset];
+						IncomingPacket<SSType> packet = this.GetPacketImplementation(id);
+						length--;
+						offset++;
 
 						int read;
-						if (ss.useEncryption) {
-							IEncryption encryption = ss.Encryption;
-							if (encryption != null) {
-								if (!ss.encryptionInitialised) {
-									EncryptionInitResult result = encryption.Init(bytes, offset, count, out read);
-									switch (result) {
-										case EncryptionInitResult.SuccessUseEncryption:
-											Console.WriteLine(ss+": using encryption "+encryption);
-											ss.startOfData += read;
-											ss.encryptionInitialised = true;
-											continue;
-										case EncryptionInitResult.SuccessNoEncryption:
-											Console.WriteLine(ss+": using no encryption");
-											ss.startOfData += read;
-											ss.useEncryption = false;
-											continue;
-										case EncryptionInitResult.InvalidData:
-											throw new Exception("Encryption not recognised");
-										case EncryptionInitResult.NotEnoughData:
-											break;
-									}
-									break;//EncryptionInitResult.NotEnoughData
-								}
+						ReadPacketResult result;
+						if (packet != null) {
+							Logger.WriteDebug("Handling packet 0x"+id.ToString("x"));
+							result = packet.Read(bytes, offset, length, out read);
+						} else {
+							result = ReadPacketResult.DiscardAll;
+							read = 0;
+							Logger.WriteDebug("Unknown packet 0x"+id.ToString("x"));
+							//TODO: write out packet
+						}
 
-								count = encryption.Decrypt(bytes, offset, count, ss.decryptBuffer.bytes, 0);
-								bytes = ss.decryptBuffer.bytes;
-								offset = 0;
-							}
-
-							ICompression compression = ss.Compression;
-							if (compression != null) {
-								count = compression.Decompress(bytes, offset, count, ss.decompressBuffer.bytes, 0);
-								bytes = ss.decompressBuffer.bytes;
-								offset = 0;
-							}
-
-							byte id = bytes[ss.startOfData];
-							IncomingPacket<SSType> packet = this.GetPacketImplementation(id);
-
-							if (packet.Read(bytes, ss.startOfData, count, out read)) {
+						switch (result) {
+							case ReadPacketResult.NeedMoreData:
+								loop = false;
+								break;
+							case ReadPacketResult.Success:
 								lock (this.incomingPackets) {
 									incomingPackets.Enqueue(new IncomingMessage(ss, packet));
 								}
-							} else {
-								packet.Dispose();
-							}
-
-							if (read > 0) {
-								ss.startOfData += read;
-							} else {
+								goto default;
+							case ReadPacketResult.DiscardAll:
+								read = length;
+								goto default;
+							default:
+								Sanity.IfTrueThrow(read < 0, "read bytes can't be negative!");
+								if (read > 0) {
+									offset += read;
+									length -= read;
+								}
 								break;
-							}
-						}
-
-						if (ss.startOfData < ss.endOfData) {
-							//if over half the buffer, we copy to the start
-							//
-							if (ss.startOfData > (Buffer.bufferLen / 2)) {
-								int len = ss.endOfData - ss.startOfData;
-								System.Buffer.BlockCopy(bytes, ss.startOfData, bytes, 0, len);
-								ss.startOfData = 0;
-								ss.endOfData = len;
-							} else if (ss.endOfData == Buffer.bufferLen) {
-								ss.Close("Incoming data buffer full. This is bad.");
-								return;
-							}
-						} else {//we read exactly what we had, perfect.
-							ss.startOfData = 0;
-							ss.endOfData = 0;
 						}
 					}
+
+					ss.decompressedDataOffset = offset;
+					ss.decompressedDataLength = length;
+
+					RecycleBufferIfNeeded(bytes, ref ss.decompressedDataOffset, ref ss.decompressedDataLength);
+					BeginReceive(ss);
+				} else {
+					ss.Close("Connection lost");
 				}
-				BeginReceive(ss);
 			} catch (Exception e) {
 				//Logger.WriteError(e);
 				ss.Close(e.Message);
 			}
 		}
 
+		private static bool ProcessDecryption(SSType ss, ref int length, ref byte[] bytes, ref int offset) {
+			if (ss.useEncryption) {
+				IEncryption encryption = ss.Encryption;
+				if (encryption != null) {
+					if (!ss.encryptionInitialised) {
+						int read;
+						EncryptionInitResult result = encryption.Init(bytes, offset, length, out read);
+						switch (result) {
+							case EncryptionInitResult.SuccessUseEncryption:
+								Console.WriteLine(ss+": using encryption "+encryption);
+								offset += read;
+								length -= read;
+								ss.receivedDataLength = 0;
+								ss.encryptionInitialised = true;
+								break;
+							case EncryptionInitResult.SuccessNoEncryption:
+								Console.WriteLine(ss+": using no encryption");
+								offset += read;
+								length -= read;
+								ss.useEncryption = false;
+								break;
+							case EncryptionInitResult.InvalidData:
+								throw new Exception("Encryption not recognised");
+							case EncryptionInitResult.NotEnoughData:
+								ss.receivedDataLength = length;
+								return false;
+						}
+					}
+
+					if (ss.useEncryption) {
+						length = encryption.Decrypt(bytes, offset, ss.decryptBuffer.bytes, 0, length);
+						bytes = ss.decryptBuffer.bytes;
+						offset = 0;
+					}
+				}
+			}
+			return true;
+		}
+
+		private static void RecycleBufferIfNeeded(byte[] bytes, ref int offset, ref int length) {
+			if (length > 0) {
+				//if over half the buffer, we copy to the start
+				if (offset > (Buffer.bufferLen / 2)) {
+					System.Buffer.BlockCopy(bytes, offset, bytes, 0, length);
+					offset = 0;
+				} else if ((offset + length) == Buffer.bufferLen) {
+					throw new Exception("Incoming data buffer full. This is bad.");
+				}
+			} else {//we read exactly what we had, perfect.
+				offset = 0;
+				length = 0;
+			}
+		}
 
 		private void WorkerThreadMethod() {
 			Queue<OutgoingMessage> secondQueue = new Queue<OutgoingMessage>();
@@ -227,12 +275,12 @@ namespace SteamEngine.Network {
 					while (secondQueue.Count > 0) {
 						OutgoingMessage msg = secondQueue.Dequeue();
 						byte[] unencrypted;
-						int len = msg.group.GetResult(msg.ss.Compression, out unencrypted);
+						int len = msg.group.GetFinalBytes(msg.ss.Compression, out unencrypted);
 
 						IEncryption encryption = msg.ss.Encryption;
 						if (encryption != null) {
 							byte[] encrypted = msg.buffer.bytes;
-							len = msg.ss.Encryption.Encrypt(unencrypted, 0, len, encrypted, 0);
+							len = msg.ss.Encryption.Encrypt(unencrypted, 0, encrypted, 0, len);
 
 							msg.ss.socket.BeginSend(encrypted, 0, len, SocketFlags.None, onSend, msg);
 						} else {
@@ -252,15 +300,21 @@ namespace SteamEngine.Network {
 		internal void OnSend(IAsyncResult asyncResult) {
 			OutgoingMessage msg = (OutgoingMessage) asyncResult.AsyncState;
 
-			SocketError err;
-			msg.ss.socket.EndSend(asyncResult, out err);
+			try {
+				SocketError err;
+				msg.ss.socket.EndSend(asyncResult, out err);
 
-			if (err != SocketError.Success) {
-				msg.ss.Close(err.ToString());
+				if (err != SocketError.Success) {
+					msg.ss.Close(err.ToString());
+				}
+
+
+			} catch (Exception e) {
+				msg.ss.Close(e.Message);
+			} finally {
+				msg.buffer.Dispose();
+				msg.group.Dequeued();
 			}
-
-			msg.buffer.Dispose();
-			msg.group.Dequeued();
 		}
 
 

@@ -10,7 +10,7 @@ namespace SteamEngine.AuxiliaryServer {
 	public static class MainClass {
 		//public static ConsoleServer server = new ConsoleServer();
 
-		private static LoginServer.LoginServer loginServer;
+		public static LoginServer.LoginServer loginServer;
 
 		static void Main(string[] args) {
 			Tools.ExitBinDirectory();
@@ -40,7 +40,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 			while (true) {
 				Thread.Sleep(1);
-				//server.Cycle();
+				loginServer.Cycle();
 			}
 		}
 

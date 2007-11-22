@@ -89,7 +89,7 @@ namespace SteamEngine.Converter {
 		public ConvertedRegion(PropsSection input) : base(input) {
 			this.firstStageImplementations.Add(firstStageImpl);
 
-			Set("createdat", HighPerformanceTimer.TickCount.ToString(), "");
+			Set("createdat", Persistence.ObjectSaver.Save(DateTime.Now), "");
 
 			string name = input.headerName;
 			Set("Name", "\""+name+"\"", "");

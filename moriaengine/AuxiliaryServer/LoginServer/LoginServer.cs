@@ -14,8 +14,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		protected override IncomingPacket<LoginConnection> GetPacketImplementation(byte id) {
-			return Pool<ConsoleServerIncomingPacket>.Acquire();
+			return PacketHandlers.GetPacketImplementation(id);
 		}
+
 	}
 
 }

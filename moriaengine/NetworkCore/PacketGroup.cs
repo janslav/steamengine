@@ -33,15 +33,15 @@ namespace SteamEngine.Network {
 		Free
 	}
 
-	public class PacketGroup : Poolable {
+	public sealed class PacketGroup : Poolable {
 		Buffer uncompressed;
 		Buffer compressed;
 
 		List<OutgoingPacket> packets = new List<OutgoingPacket>();
 
-		private bool isWritten = false;
-		private bool isCompressed = false;
-		private int isQueued = 0;
+		private bool isWritten;
+		private bool compressionDone;
+		private int isQueued;
 
 		int uncompressedLen;
 		int compressedLen;
@@ -49,6 +49,7 @@ namespace SteamEngine.Network {
 		internal PacketGroupType type = PacketGroupType.MultiUse;
 
 		public PacketGroup() {
+			this.Reset();
 		}
 
 		public void SetType(PacketGroupType type) {
@@ -56,13 +57,13 @@ namespace SteamEngine.Network {
 		}
 
 		public void AddPacket(OutgoingPacket packet) {
-			Sanity.IfTrueSay((isQueued > 0 || this.isCompressed || this.isWritten) , "Can't add new packets to a locked group. They're ignored.");
+			Sanity.IfTrueSay((isQueued > 0 || this.compressionDone || this.isWritten) , "Can't add new packets to a locked group. They're ignored.");
 			packets.Add(packet);
 		}
 
 		internal protected override void Reset() {
 			this.isWritten = false;
-			this.isCompressed = false;
+			this.compressionDone = false;
 			this.isQueued = 0;
 			this.type = PacketGroupType.MultiUse;
 
@@ -79,7 +80,7 @@ namespace SteamEngine.Network {
 
 				int position = 0;
 				foreach (OutgoingPacket packet in packets) {
-					position += packet.Write(this.compressed.bytes, position);
+					position += packet.Write(this.uncompressed.bytes, position);
 				}
 
 				this.uncompressedLen = position;
@@ -88,21 +89,21 @@ namespace SteamEngine.Network {
 			}
 		}
 
-		internal int GetResult(ICompression compression, out byte[] bytes) {
+		internal int GetFinalBytes(ICompression compression, out byte[] bytes) {
 			ThrowIfDisposed();
 
 			WritePackets();
 
-			if (!this.isCompressed) {
+			if (!this.compressionDone) {
 				if (compression != null) {
 					this.compressedLen = compression.Compress(
-						this.uncompressed.bytes, 0, this.uncompressedLen, this.compressed.bytes, 0);
+						this.uncompressed.bytes, 0, this.compressed.bytes, 0, this.uncompressedLen);
 				} else {
 					this.uncompressed.Dispose();
 					this.compressed = this.uncompressed;
 					this.compressedLen = this.uncompressedLen;
 				}
-				this.isCompressed = true;
+				this.compressionDone = true;
 			}
 
 			if (this.type == PacketGroupType.Free) {
@@ -127,7 +128,21 @@ namespace SteamEngine.Network {
 
 			bytes = this.compressed.bytes;
 
+#if DEBUG 
+			foreach (OutgoingPacket packet in packets) {
+				Logger.WriteDebug("Sending "+packet.FullName);
+			}
+#endif
+
 			return compressedLen;
+		}
+
+		public override void Dispose() {
+			if (this.isQueued > 0) {
+				throw new InvalidOperationException("Can't directly dispose a packet group that is queued for sending. Set it's type to SingleUse before the last intended use instead.");
+			} else {
+				base.Dispose();
+			}
 		}
 
 		internal void Enqueued() {
@@ -138,7 +153,7 @@ namespace SteamEngine.Network {
 			Interlocked.Decrement(ref this.isQueued);
 			if (this.isQueued < 1) {
 				if (this.type == PacketGroupType.SingleUse) {
-					this.Dispose();
+					base.Dispose();
 				}
 			}
 		}

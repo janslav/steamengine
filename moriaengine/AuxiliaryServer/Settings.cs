@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,9 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
 	public static class Settings {
+		public static readonly byte[] lanIP;
+		public static readonly byte[] wanIP;
+
 		public static readonly string logPath;
 		public static readonly sbyte timeZone;
 		public static readonly int loginServerPort;
@@ -41,6 +45,18 @@ namespace SteamEngine.AuxiliaryServer {
 			ini.WriteToFile();
 
 			Console.WriteLine(iniFileName+" loaded and written.");
+
+
+
+
+			IPAddress[] wanIPs = Dns.GetHostAddresses(Dns.GetHostName());
+			wanIP = wanIPs[0].GetAddressBytes();
+			Sanity.IfTrueThrow(wanIP.Length != 4, "wanIP has not 4 bytes, need IPv6 compatibility?");
+
+			
+			IPAddress[] lanIPs = Dns.GetHostAddresses("localhost");
+			lanIP = lanIPs[0].GetAddressBytes();
+			Sanity.IfTrueThrow(lanIP.Length != 4, "lanIP has not 4 bytes, need IPv6 compatibility?");
 		}
 
 		internal static void Init() {
@@ -52,7 +68,7 @@ namespace SteamEngine.AuxiliaryServer {
 		public readonly int number;
 		public readonly string iniPath;
 		public readonly string name;
-		public readonly int port;
+		public readonly ushort port;
 
 		internal LoginServerInstanceSettings(IniFileSection section) {
 			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list");
@@ -75,7 +91,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			this.name = ini.GetSection("setup").GetValue<string>("name");
-			this.port = ini.GetSection("ports").GetValue<int>("game");
+			this.port = ini.GetSection("ports").GetValue<ushort>("game");
 
 		}
 	}

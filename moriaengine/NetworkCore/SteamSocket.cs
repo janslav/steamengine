@@ -31,11 +31,13 @@ namespace SteamEngine.Network {
 		internal Buffer receivingBuffer;
 		internal Buffer decryptBuffer;
 		internal Buffer decompressBuffer;
-		internal int startOfData;
-		internal int endOfData;
+		internal int decompressedDataOffset;
+		internal int decompressedDataLength;
 
-		internal bool encryptionInitialised = false;
-		internal bool useEncryption = true;
+		internal int receivedDataLength;
+
+		internal bool encryptionInitialised;
+		internal bool useEncryption;
 
 		private readonly object lockObject = new object();
 
@@ -47,8 +49,11 @@ namespace SteamEngine.Network {
 			this.receivingBuffer = Pool<Buffer>.Acquire();
 			this.decryptBuffer = Pool<Buffer>.Acquire();
 			this.decompressBuffer = Pool<Buffer>.Acquire();
-			this.startOfData = 0;
-			this.endOfData = 0;
+			this.decompressedDataOffset = 0;
+			this.decompressedDataLength = 0;
+
+			this.encryptionInitialised = false;
+			this.useEncryption = true;
 
 			base.Reset();
 		}
@@ -114,9 +119,9 @@ namespace SteamEngine.Network {
 			}
 		}
 
-		public EndPoint EndPoint {
+		public IPEndPoint EndPoint {
 			get {
-				return socket.RemoteEndPoint;
+				return (IPEndPoint) socket.RemoteEndPoint;
 			}
 		}
 	}
@@ -133,14 +138,14 @@ namespace SteamEngine.Network {
 		EncryptionInitResult Init(byte[] bytesIn, int offsetIn, int lengthIn, out int bytesUsed);
 
 		// Encrypt outgoing data
-		int Encrypt(byte[] bytesIn, int offsetIn, int lengthIn, byte[] bytesOut, int offsetOut);
+		int Encrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
 
 		// Decrypt incoming data
-		int Decrypt(byte[] bytesIn, int offsetIn, int lengthIn, byte[] bytesOut, int offsetOut);
+		int Decrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
 	}
 
 	public interface ICompression {
-		int Compress(byte[] bytesIn, int offsetIn, int lengthIn, byte[] bytesOut, int offsetOut);
-		int Decompress(byte[] bytesIn, int offsetIn, int lengthIn, byte[] bytesOut, int offsetOut);
+		int Compress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
+		int Decompress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
 	}
 }

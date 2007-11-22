@@ -38,7 +38,9 @@ namespace SteamEngine.Network {
 		}
 
 		public virtual void Dispose() {
-			Dispose(true);
+			lock (this) {
+				Dispose(true);
+			}
 
 			GC.SuppressFinalize(this); // remove this from gc finalizer list
 
