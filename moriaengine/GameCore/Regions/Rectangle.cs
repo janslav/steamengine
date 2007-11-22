@@ -36,19 +36,7 @@ namespace SteamEngine.Regions {
 			get {
 				return this.MaxY - this.MinY;
 			}
-		}
-
-		public Point2D StartPoint {
-			get {
-				return new Point2D(this.MinX, this.MinY);
-			}
-		}
-
-		public Point2D EndPoint {
-			get {
-				return new Point2D(this.MaxX, this.MaxY);
-			}
-		}
+		}		
 
 		public bool Contains(Static p) {
 			ushort px = p.X;
@@ -114,6 +102,13 @@ namespace SteamEngine.Regions {
 		public static readonly ImmutableRectangle voidInstance = new ImmutableRectangle(0, 0, 0, 0);
 
 		public readonly ushort minX, maxX, minY, maxY;
+
+		public ImmutableRectangle(AbstractRectangle copiedOne) {
+			this.minX = copiedOne.MinX;
+			this.minY = copiedOne.MinY;
+			this.maxX = copiedOne.MaxX;
+			this.maxY = copiedOne.MaxY;
+		}
 
 		public ImmutableRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY) {
 			this.minX = minX;

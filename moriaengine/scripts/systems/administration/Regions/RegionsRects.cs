@@ -82,8 +82,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + i); //editovat
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rect.Width.ToString());
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(rect.Height.ToString());
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(rect.StartPoint.ToString());
-				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText(rect.EndPoint.ToString());
+				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText("(" + rect.MinX + "," + rect.MinY + ")");
+				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText("(" + rect.MaxX + "," + rect.MaxY + ")");
 				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(rect.TilesNumber.ToString());
 
 				rowCntr++;

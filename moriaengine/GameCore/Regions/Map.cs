@@ -848,11 +848,14 @@ namespace SteamEngine.Regions {
 
 		private IEnumerable<Sector> GetSectorsInRectangle(ImmutableRectangle rectangle) {
 			//rectangle.Crop(0, 0, (ushort) (map.sizeX - 1), (ushort) (map.sizeY - 1));
-			Point2D point1 = rectangle.StartPoint;
-			Point2D point2 = rectangle.EndPoint;
+			ushort startX = rectangle.MinX;
+			ushort startY = rectangle.MinY;
+			ushort endX = rectangle.MaxX;
+			ushort endY = rectangle.MaxY;
+			
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
-			this.GetSectorXY(Math.Min(point1.x, point2.x), Math.Min(point1.y, point2.y), out xSectorStart, out ySectorStart);
-			this.GetSectorXY(Math.Max(point1.x, point2.x), Math.Max(point1.y, point2.y), out xSectorEnd, out ySectorEnd);
+			this.GetSectorXY(Math.Min(startX, endX), Math.Min(startY, endY), out xSectorStart, out ySectorStart);
+			this.GetSectorXY(Math.Max(startX, endX), Math.Max(startY, endY), out xSectorEnd, out ySectorEnd);
 
 			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
 				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
@@ -1004,21 +1007,21 @@ namespace SteamEngine.Regions {
 		internal void ActivateRegions(List<StaticRegion> list) {
 			//we dont add the rectangles directly to sectors, we first create a "matrix" of arraylists which are then "Staticed" to arrays and assigned to sectors
 			regions = list.ToArray();
-			
-			ArrayList[,] matrix = new ArrayList[numXSectors, numYSectors];
+
+			List<RegionRectangle>[,] matrix = new List<RegionRectangle>[numXSectors, numYSectors];
 			foreach(StaticRegion region in regions) {
-				foreach (RegionRectangle rect in region.Rectangles) {
-					int minXs = rect.StartPoint.x >> sectorFactor;
-					int maxXs = rect.EndPoint.x >> sectorFactor;
-					maxXs = (int) Math.Min(maxXs, numXSectors - 1);
-					int minYs = rect.StartPoint.y >> sectorFactor;
-					int maxYs = rect.EndPoint.y >> sectorFactor;
-					maxYs = (int) Math.Min(maxYs, numYSectors - 1);
-					for (int sx = minXs, topx = maxXs+1; sx<topx; sx++) {
-						for (int sy = minYs, topy = maxYs+1; sy<topy; sy++) {
-							ArrayList al = matrix[sx, sy];
-							if (al == null) {
-								al = new ArrayList();
+				foreach(RegionRectangle rect in region.Rectangles) {
+					int minXs = rect.MinX >> sectorFactor;
+					int maxXs = rect.MaxX >> sectorFactor;
+					maxXs = (int)Math.Min(maxXs, numXSectors - 1);
+					int minYs = rect.MinY >> sectorFactor;
+					int maxYs = rect.MaxY >> sectorFactor;
+					maxYs = (int)Math.Min(maxYs, numYSectors - 1);
+					for(int sx = minXs, topx = maxXs + 1; sx < topx; sx++) {
+						for(int sy = minYs, topy = maxYs + 1; sy < topy; sy++) {
+							List<RegionRectangle> al = matrix[sx, sy];
+							if(al == null) {
+								al = new List<RegionRectangle>();
 								matrix[sx, sy] = al;
 							}
 							al.Add(rect);
@@ -1026,14 +1029,43 @@ namespace SteamEngine.Regions {
 					}
 				}
 			}
-			for (int sx = 0; sx<numXSectors; sx++) {
-				for (int sy = 0; sy<numYSectors; sy++) {
-					ArrayList thislist = matrix[sx, sy];
-					if (thislist != null) {
+			for(int sx = 0; sx < numXSectors; sx++) {
+				for(int sy = 0; sy < numYSectors; sy++) {
+					List<RegionRectangle> thislist = matrix[sx, sy];
+					if(thislist != null) {
 						GetSector(sx, sy).SetRegionRectangles(thislist);
 					}
 				}
 			}
+			//ArrayList[,] matrix = new ArrayList[numXSectors, numYSectors];
+			//foreach(StaticRegion region in regions) {
+			//    foreach (RegionRectangle rect in region.Rectangles) {
+			//        int minXs = rect.MinX >> sectorFactor;
+			//        int maxXs = rect.MaxX >> sectorFactor;
+			//        maxXs = (int) Math.Min(maxXs, numXSectors - 1);
+			//        int minYs = rect.MinY >> sectorFactor;
+			//        int maxYs = rect.MaxY >> sectorFactor;
+			//        maxYs = (int) Math.Min(maxYs, numYSectors - 1);
+			//        for (int sx = minXs, topx = maxXs+1; sx<topx; sx++) {
+			//            for (int sy = minYs, topy = maxYs+1; sy<topy; sy++) {
+			//                ArrayList al = matrix[sx, sy];
+			//                if (al == null) {
+			//                    al = new ArrayList();
+			//                    matrix[sx, sy] = al;
+			//                }
+			//                al.Add(rect);
+			//            }
+			//        }
+			//    }
+			//}
+			//for (int sx = 0; sx<numXSectors; sx++) {
+			//    for (int sy = 0; sy<numYSectors; sy++) {
+			//        ArrayList thislist = matrix[sx, sy];
+			//        if (thislist != null) {
+			//            GetSector(sx, sy).SetRegionRectangles(thislist);
+			//        }
+			//    }
+			//}
 		}
 
 		internal void InactivateRegions() {

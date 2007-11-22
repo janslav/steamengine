@@ -213,7 +213,6 @@ namespace SteamEngine {
 		//this is used for clearing a failed load attempt.
 		public static void ClearWorld() {
 			//Logger.WriteWarning("Clearing the world.");
-			Region.ClearAll();
 			StaticRegion.ClearAll(); //puvodni vycisteni vsech loadnuthych regionu...
 			Thing.ClearAll();
 			AbstractAccount.ClearAll();

@@ -28,6 +28,13 @@ namespace SteamEngine.CompiledScripts {
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, maxX, minY, maxY;
 
+		public MutableRectangle(AbstractRectangle copiedOne) {
+			this.minX = copiedOne.MinX;
+			this.minY = copiedOne.MinY;
+			this.maxX = copiedOne.MaxX;
+			this.maxY = copiedOne.MaxY;
+		}
+
 		public MutableRectangle(Point2D start, Point2D end) {
 			this.minX = start.x;
 			this.minY = start.y;
@@ -66,26 +73,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//public Point2D StartPoint {
-		//    get {
-		//        return StartPoint;
-		//    }
-		//    set {
-		//        minX = value.x;
-		//        minY = value.y;
-		//    }
-		//}
-
-		//public Point2D EndPoint {
-		//    get {
-		//        return EndPoint;
-		//    }
-		//    set {
-		//        maxX = value.x;
-		//        maxY = value.y;
-		//    }
-		//}
-
 		[Remark("Alters all four rectangle's position coordinates for specified tiles in X and Y axes."+
 				"This time it changes 'this'")]
 		public MutableRectangle Move(int timesX, int timesY) {
@@ -101,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
 			List<MutableRectangle> retList = new List<MutableRectangle>();
 			foreach(ImmutableRectangle regRect in reg.Rectangles) {
-				retList.Add(new MutableRectangle(regRect.StartPoint, regRect.EndPoint));
+				retList.Add(new MutableRectangle(regRect));
 			}
 			return retList;
 		}
