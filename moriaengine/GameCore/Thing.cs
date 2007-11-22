@@ -643,32 +643,32 @@ namespace SteamEngine {
 		public virtual void On_Load(PropsSection output) {
 		}
 
-		public override void LoadLine(string filename, int line, string prop, string value) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			ThrowIfDeleted();
-			switch (prop) {
+			switch (valueName) {
 				case "p":
-					object o = ObjectSaver.OptimizedLoad_SimpleType(value, typeof(Point4D));
+					object o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
 					string v = o as string;
 					if (v != null) {
-						MutablePoint4D.Parse(this.point4d, value);
+						MutablePoint4D.Parse(this.point4d, valueString);
 					} else {
 						point4d.SetP((Point4D) o);
 					}
 					//it will be put in world later by map or Cont
 					break;
 				case "color":
-					color = TagMath.ParseUInt16(value);
+					color = TagMath.ParseUInt16(valueString);
 					break;
 				case "dispid":
 				case "model":
 				case "body":
-					model = TagMath.ParseUInt16(value);
+					model = TagMath.ParseUInt16(valueString);
 					break;
 				case "createdat":
-					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(value, typeof(DateTime));
+					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(DateTime));
 					break;
 				default:
-					base.LoadLine(filename, line, prop, value);
+					base.LoadLine(filename, line, valueName, valueString);
 					break;
 			}
 		}

@@ -141,7 +141,7 @@ namespace SteamEngine {
 		//static Regex charuidRE= new Regex(@"charuid\[(?<index>\d+)\]\s*$",
 		//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
-		public override void LoadLine(string filename, int line, string name, string value) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			//gets a name/value pair for each line in the file
 			//Match m=charuidRE.Match(name);
 			//if (m.Success) {
@@ -152,9 +152,9 @@ namespace SteamEngine {
 			//    ObjectSaver.Load(value, new LoadObjectParam(CharLoad_Delayed), filename, line, index);
 			//    return;
 			//}
-			switch (name) {
+			switch (valueName) {
 				case "password":
-					Match m= TagMath.stringRE.Match(value);
+					Match m= TagMath.stringRE.Match(valueString);
 					if (m.Success) {
 						if (Globals.hashPasswords) {
 							this.passwordHash = HashPassword(m.Groups["value"].Value);
@@ -165,16 +165,16 @@ namespace SteamEngine {
 						}
 					} else {
 						if (Globals.hashPasswords) {
-							this.passwordHash = HashPassword(value);
+							this.passwordHash = HashPassword(valueString);
 							this.password = null;
 						} else {
-							this.password = value;
+							this.password = valueString;
 							this.passwordHash = null;
 						}
 					}
 					break;
 				case "passwordHash":
-					m= TagMath.stringRE.Match(value);
+					m= TagMath.stringRE.Match(valueString);
 					if (m.Success) {
 						if (Globals.hashPasswords) {
 							if (this.passwordHash==null) {	//Allows admins to set password=xxx without erasing passwordHash, and the password=xxx will override the passwordHash.
@@ -193,20 +193,20 @@ namespace SteamEngine {
 					break;
 				case "blocked":
 					this.blocked=false;
-					if (value.ToLower().StartsWith("true")) {
+					if (valueString.ToLower().StartsWith("true")) {
 						this.blocked=true;
-					} else if (!value.StartsWith("0")) {
+					} else if (!valueString.StartsWith("0")) {
 						this.blocked=true;
 					}
 					break;
 				case "plevel":
-					this.plevel=byte.Parse(value, NumberStyles.Integer);
+					this.plevel=byte.Parse(valueString, NumberStyles.Integer);
 					break;
 				case "maxplevel":
-					this.maxPlevel=byte.Parse(value, NumberStyles.Integer);
+					this.maxPlevel=byte.Parse(valueString, NumberStyles.Integer);
 					break;
 				default:
-					base.LoadLine(filename, line, name, value);
+					base.LoadLine(filename, line, valueName, valueString);
 					break;
 			}
 		}

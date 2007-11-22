@@ -112,11 +112,11 @@ namespace SteamEngine {
 		}
 
 		[LoadLine]
-		public override void LoadLine(string filename, int line, string name, string value) {
-			if ("def".Equals(name, StringComparison.OrdinalIgnoreCase)) {
-				this.def = (PluginDef) ObjectSaver.OptimizedLoad_Script(value);
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			if ("def".Equals(valueName, StringComparison.OrdinalIgnoreCase)) {
+				this.def = (PluginDef) ObjectSaver.OptimizedLoad_Script(valueString);
 			} else {
-				base.LoadLine(filename, line, name, value);
+				base.LoadLine(filename, line, valueName, valueString);
 			}
 		}
 		#endregion save/load

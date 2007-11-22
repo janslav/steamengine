@@ -190,11 +190,11 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 				load.Attributes = MemberAttributes.Public|MemberAttributes.Override;
 				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "filename"));
 				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "line"));
-				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "prop"));
-				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "value"));
+				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "valueName"));
+				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "valueString"));
 				load.ReturnType = new CodeTypeReference(typeof(void));
 
-				load.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (prop) {\n"));
+				load.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (valueName) {\n"));
 
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \""+ctif.uncapName.ToLower()+"\":"));
@@ -209,8 +209,8 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 							"LoadLine"),
 						new CodeArgumentReferenceExpression("filename"),
 						new CodeArgumentReferenceExpression("line"),
-						new CodeArgumentReferenceExpression("prop"),
-						new CodeArgumentReferenceExpression("value")));
+						new CodeArgumentReferenceExpression("valueName"),
+						new CodeArgumentReferenceExpression("valueString")));
 
 				load.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tbreak;\n\t\t\t}"));
 
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						field.uncapName),
 					GeneratedCodeUtil.GenerateSimpleLoadExpression(
 						field.type,
-						new CodeArgumentReferenceExpression("value")));
+						new CodeArgumentReferenceExpression("valueString")));
 
 			} else {
 				CodeMemberMethod delayedLoadMethod = new CodeMemberMethod();
@@ -264,7 +264,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
 					new CodeMethodReferenceExpression(
 						new CodeTypeReferenceExpression(typeof(SteamEngine.Persistence.ObjectSaver)), "Load"),
-						new CodeArgumentReferenceExpression("value"),
+						new CodeArgumentReferenceExpression("valueString"),
 						new CodeDelegateCreateExpression(
 							new CodeTypeReference(typeof(SteamEngine.Persistence.LoadObject)),
 							new CodeThisReferenceExpression(),

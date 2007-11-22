@@ -472,37 +472,37 @@ namespace SteamEngine {
 			}
 		}
 
-		public override void LoadLine(string filename, int line, string prop, string value) {
-			switch(prop) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch(valueName) {
 				case "cont":
-					ObjectSaver.Load(value, new LoadObject(LoadCont_Delayed), filename, line);
+					ObjectSaver.Load(valueString, new LoadObject(LoadCont_Delayed), filename, line);
 					break;
 				case "p":
-					base.LoadLine(filename, line, prop, value);//loads the position
+					base.LoadLine(filename, line, valueName, valueString);//loads the position
 					if (this.IsInContainer) {
 						this.MakePositionInContLegal();
 					}
 					break;
 
 				case "name":
-					Match ma = TagMath.stringRE.Match(value);
+					Match ma = TagMath.stringRE.Match(valueString);
 					if (ma.Success) {
 						name = String.Intern(ma.Groups["value"].Value);
 					} else {
-						name = String.Intern(value);
+						name = String.Intern(valueString);
 					}
 					break;
 				case "amount":
-					amount = TagMath.ParseUInt16(value);
+					amount = TagMath.ParseUInt16(valueString);
 					break;
 				case "flags":
-					flags = TagMath.ParseByte(value);
+					flags = TagMath.ParseByte(valueString);
 					break;
 				case "type":
-					type = TriggerGroup.Get(value);
+					type = TriggerGroup.Get(valueString);
 					break;
 				default:
-					base.LoadLine(filename, line, prop, value);
+					base.LoadLine(filename, line, valueName, valueString);
 					break;
 			}
 		}

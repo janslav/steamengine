@@ -362,22 +362,22 @@ namespace SteamEngine {
 
 		public static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		public virtual void LoadLine(string filename, int line, string name, string value) {
-			Match m = tagRE.Match(name);
+		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
+			Match m = tagRE.Match(valueName);
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
 				TagKey td = TagKey.Get(tagName);
-				ObjectSaver.Load(value, DelayedLoad_Tag, filename, line, td);
+				ObjectSaver.Load(valueString, DelayedLoad_Tag, filename, line, td);
 				return;
 			}
-			m = timerKeyRE.Match(name);
+			m = timerKeyRE.Match(valueName);
 			if (m.Success) {	//If the name begins with '%'
 				string timerName = m.Groups["name"].Value;
 				TimerKey tk = TimerKey.Get(timerName);
-				ObjectSaver.Load(value, DelayedLoad_Timer, filename, line, tk);
+				ObjectSaver.Load(valueString, DelayedLoad_Timer, filename, line, tk);
 				return;
 			}
-			throw new ScriptException("Invalid data '"+LogStr.Ident(name)+"' = '"+LogStr.Number(value)+"'.");
+			throw new ScriptException("Invalid data '"+LogStr.Ident(valueName)+"' = '"+LogStr.Number(valueString)+"'.");
 		}
 		
 		//used by loaders (Thing, GameAccount...)

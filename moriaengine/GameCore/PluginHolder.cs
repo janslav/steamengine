@@ -299,30 +299,30 @@ namespace SteamEngine {
 
 		public static Regex pluginKeyRE = new Regex(@"^\@@(?<name>.+?)(?<asterisk>\*)?\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		public override void LoadLine(string filename, int line, string name, string value) {
-			Match m = pluginKeyRE.Match(name);
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			Match m = pluginKeyRE.Match(valueName);
 			if (m.Success) {	//If the name begins with '@@'
 				string pluginName = m.Groups["name"].Value;
 				PluginKey tk = PluginKey.Get(pluginName);
 				if (m.Groups["asterisk"].Value.Length > 0) {
-					ObjectSaver.Load(value, DelayedLoad_SimplePlugin, filename, line, tk);
+					ObjectSaver.Load(valueString, DelayedLoad_SimplePlugin, filename, line, tk);
 				} else {
-					ObjectSaver.Load(value, DelayedLoad_Plugin, filename, line, tk);
+					ObjectSaver.Load(valueString, DelayedLoad_Plugin, filename, line, tk);
 				}
 				return;
 			}
 
-			switch (name) {
+			switch (valueName) {
 				case "events":
 				case "event":
 				case "triggergroup":
 				case "type":
 					string tgName;
-					m= ObjectSaver.abstractScriptRE.Match(value);
+					m= ObjectSaver.abstractScriptRE.Match(valueString);
 					if (m.Success) {
 						tgName = m.Groups["value"].Value;
 					} else {
-						tgName = value;
+						tgName = valueString;
 					}
 					TriggerGroup tg = TriggerGroup.Get(tgName);
 					if (tg != null) {
@@ -332,7 +332,7 @@ namespace SteamEngine {
 					}
 					return;
 			}
-			base.LoadLine(filename, line, name, value);
+			base.LoadLine(filename, line, valueName, valueString);
 		}
 
 		private void DelayedLoad_Plugin(object resolvedObject, string filename, int line, object pluginKey) {

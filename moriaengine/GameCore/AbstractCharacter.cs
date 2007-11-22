@@ -421,31 +421,31 @@ namespace SteamEngine {
 		//}
 		
 		//For loading.
-		public override void LoadLine(string filename, int line, string prop, string value) {
-			switch(prop) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch(valueName) {
 				case "account": 
-					ObjectSaver.Load(value, new LoadObject(LoadAccount_Delayed), filename, line);
+					ObjectSaver.Load(valueString, new LoadObject(LoadAccount_Delayed), filename, line);
 					break;
 				case "name":
-					Match ma = ConvertTools.stringRE.Match(value);
+					Match ma = ConvertTools.stringRE.Match(valueString);
 					if (ma.Success) {
 						name = ma.Groups["value"].Value;
 					} else {
-						name = value;
+						name = valueString;
 					}
 					break;
 				case "flags":
-					flags = TagMath.ParseUInt16(value);
+					flags = TagMath.ParseUInt16(valueString);
 					break;
 				case "direction":
-					direction = TagMath.ParseByte(value);
+					direction = TagMath.ParseByte(valueString);
 					if (Flag_Moving) {
 						Flag_Moving=false;
 						Sanity.IfTrueSay(true, "Flag_Moving was saved! It should not have been! (At the time this sanity check was written, NetState changes should always be processed before any thought of saving occurs. NetState changes clear Flag_Moving, if it is set)");
 					}
 					break;
 				default:
-					base.LoadLine(filename, line, prop, value);
+					base.LoadLine(filename, line, valueName, valueString);
 					break;
 			}
 		}
