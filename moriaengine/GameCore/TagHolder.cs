@@ -312,7 +312,7 @@ namespace SteamEngine {
 				}
 			}
 			if (methNames.Length==1) {
-				methNames.Append("[Sorry, no properties found])");
+				methNames.Append("[Sorry, no methods found])");
 			} else {
 				methNames.Append(")");
 			}
@@ -409,7 +409,7 @@ namespace SteamEngine {
 
 		public void ThrowIfDeleted() {
 			if (this.IsDeleted) {
-				throw new Exception("You can not manipulate a deleted object ("+this+")");
+				throw new DeletedException("You can not manipulate a deleted object (" + this + ")");
 			}
 			if (this.IsLimbo) {
 				try {
