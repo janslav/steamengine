@@ -29,7 +29,6 @@ namespace SteamEngine.Regions {
 		internal static readonly StaticRegion voidRegion = new StaticRegion();
 		private static StaticRegion worldRegion = voidRegion;
 		
-		private static List<RegionRectangle> tempRectangles;//for loading purposes...		
 		private static Dictionary<string, StaticRegion> byName;
 		private static Dictionary<string, StaticRegion> byDefname;
 		private static int highestHierarchyIndex = -1;
