@@ -111,6 +111,8 @@ namespace SteamEngine.Regions {
 		}
 
 		public ImmutableRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY) {
+			Sanity.IfTrueThrow((minX > maxX) || (minY > maxY),
+				"The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");			
 			this.minX = minX;
 			this.minY = minY;
 			this.maxX = maxX;
@@ -124,10 +126,7 @@ namespace SteamEngine.Regions {
 			this.minY = start.Y;
 			this.maxX = end.X;
 			this.maxY = end.Y;
-		}
-		
-		public ImmutableRectangle(Point2D start, Point2D end) : this((IPoint2D)start, (IPoint2D)end) {			
-		}
+		}		
 
 		[Remark("Return a rectangle created from the central point with the specific range around the point"+
 				"(square 'around')")]
