@@ -349,21 +349,17 @@ namespace SteamEngine.Regions {
 			return retState;
 		}
 
-		public static bool CheckAllRegions() {
-			bool retState = true;
+		public static void CheckAllRegions() {
 			int i = 0, n = byDefname.Count;
 
 			foreach(StaticRegion region in byDefname.Values) {
 				if((i % 20) == 0) {
 					Logger.SetTitle("Checking regions: " + ((i * 100) / n) + " %");
 				}
-				if(!region.CheckConflictsAndWarn()) {
-					retState = false; //problem
-				}
+				region.CheckConflictsAndWarn();
 				i++;
 			}
 			Logger.SetTitle("");
-			return retState; //vysledek
 		}		
 
 		private bool CheckConflictsAndWarn() {
