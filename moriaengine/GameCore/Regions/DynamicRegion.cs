@@ -187,7 +187,7 @@ namespace SteamEngine.Regions {
 			throw new NotSupportedException("Dynamic regions are not supposed to be saved");
 		}
 
-		public override sealed void LoadLine(string filename, int line, string param, string args) {
+		public override sealed void LoadLine(string filename, int line, string valueName, string valueString) {
 			throw new NotSupportedException("Dynamic regions are not supposed to be loaded");
 		}
 	}

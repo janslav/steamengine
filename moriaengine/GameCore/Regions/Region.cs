@@ -418,8 +418,8 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public override void LoadLine(string filename, int line, string name, string value) {
-			switch (name) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName) {
 				case "category":
 				case "subsection":
 				case "description":
@@ -429,11 +429,11 @@ namespace SteamEngine.Regions {
 				case "type":
 				case "triggergroup":
 				case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
-					base.LoadLine(filename, line, "triggergroup", value);
+					base.LoadLine(filename, line, "triggergroup", valueString);
 					break;
 				case "rect":
 				case "rectangle": //RECT=2300,3612,3264,4096
-					Match m = rectRE.Match(value);
+					Match m = rectRE.Match(valueString);
 					if (m.Success) {
 						GroupCollection gc = m.Groups;
 						ushort x1 = TagMath.ParseUInt16(gc["x1"].Value);
@@ -445,33 +445,33 @@ namespace SteamEngine.Regions {
 						RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
 						this.rectangles.Add(rr);
 					} else {
-						throw new SEException("Unrecognized Rectangle format ('" + value + "')");
+						throw new SEException("Unrecognized Rectangle format ('" + valueString + "')");
 					}
 					break;
 				case "p":
 				case "spawnpoint":
-					p = (Point4D) ObjectSaver.Load(value);
+					p = (Point4D) ObjectSaver.Load(valueString);
 					break;
 				case "mapplane":
-					mapplane = TagMath.ParseByte(value);
+					mapplane = TagMath.ParseByte(valueString);
 					mapplaneIsSet = true;
 					break;
 				case "parent":
-					ObjectSaver.Load(value, LoadParent_Delayed, filename, line);
+					ObjectSaver.Load(valueString, LoadParent_Delayed, filename, line);
 					break;
 				case "name":
-					Match ma = ConvertTools.stringRE.Match(value);
+					Match ma = ConvertTools.stringRE.Match(valueString);
 					if (ma.Success) {
 						this.name = String.Intern(ma.Groups["value"].Value);
 					} else {
-						this.name = String.Intern(value);
+						this.name = String.Intern(valueString);
 					}
 					break;
 				case "createdat":
-					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(value, typeof(DateTime));
+					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(DateTime));
 					break;
 				default:
-					base.LoadLine(filename, line, name, value);
+					base.LoadLine(filename, line, valueName, valueString);
 					break;
 			}
 		}
