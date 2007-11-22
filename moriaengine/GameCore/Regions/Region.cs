@@ -367,13 +367,7 @@ namespace SteamEngine.Regions {
 			get {
 				return inactivated;
 			}
-		}
-
-		protected new void ThrowIfDeleted() {
-			if(inactivated) {
-				throw new DeletedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is inactivated.");
-			}
-		}
+		}		
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
