@@ -46,7 +46,7 @@ namespace SteamEngine.Regions {
 
 		[Remark("Serves to place the region to the map for the first time (after creation)")]
 		public bool Place(Point4D p) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			if(p != null) { //already placed!
 				throw new SEException("This Dynamic region has already been placed to the map. For movement try setting its P");
 			} 
@@ -63,7 +63,7 @@ namespace SteamEngine.Regions {
 				return p;
 			}
 			set {
-				ThrowIfInactivated();
+				ThrowIfDeleted();
 				if (value == null) {
 					throw new ArgumentNullException("P");
 				}
@@ -147,10 +147,10 @@ namespace SteamEngine.Regions {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for(int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
-				newArr[i] = new RegionRectangle(list[i].StartPoint, list[i].EndPoint, this);
+				newArr[i] = new RegionRectangle(list[i].MinX, list[i].MinY, list[i].MaxX, list[i].MaxY, this);
 			}
 			//now the checking phase!
-			Inactivate(); //unload the region - it 'locks' it for every usage except for rectangles operations
+			inactivated = true;
 			foreach(RegionRectangle rect in newArr) {
 				if(!map.CheckDynRectIntersection(rect)) {
 					//check the intercesction of the dynamic region, in case of any trouble immediatelly finish
@@ -159,23 +159,8 @@ namespace SteamEngine.Regions {
 			}
 			//everything is OK, we can swith the lists
 			rectangles = newArr;
-			Activate();
+			inactivated = false;
 			return true;
-		}
-
-		[Remark("Use the diffPos (difference point) to move every rectangle of the dynamic region. "+
-				"The used diffPos is added to the rectangle's position."+
-				"New array of rectangles is returned..."+
-				"The diff coordinates may also be negative!")]
-		internal RegionRectangle[] MoveRectangles(int diffX, int diffY) {
-			int n = rectangles.Count;
-			RegionRectangle[] newRects = new RegionRectangle[n];
-			for (int i = 0; i < n; i++) {
-				newRects[i] = new RegionRectangle(
-								rectangles[i].StartPoint.Add(diffX, diffY), 
-								rectangles[i].EndPoint.Add(diffX, diffY), this);				        
-			}
-			return newRects;
 		}
 
 		public override void Delete() {

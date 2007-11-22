@@ -102,6 +102,12 @@ namespace SteamEngine {
 		public UnloadedException(LogStr s):base(s) {}
 	}
 
+	public class DeletedException : SEException {
+		public DeletedException() : base() {}
+		public DeletedException(string s) : base(s) {}
+		public DeletedException(LogStr s) : base(s) {}
+	}
+
 	public class ServerException : SEException {
 		public ServerException():base() {}
 		public ServerException(string s):base(s) {}

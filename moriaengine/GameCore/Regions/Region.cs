@@ -29,22 +29,6 @@ namespace SteamEngine.Regions {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
-		internal static readonly Region voidRegion = new Region();
-		protected static Region worldRegion = voidRegion;
-		protected static int highestHierarchyIndex = -1;
-		
-		static Region() {
-			ClearAll();
-		}
-
-		public static void ClearAll() {
-			worldRegion = voidRegion;
-			highestHierarchyIndex = -1;
-
-			voidRegion.defname = "";
-			voidRegion.name =  "void";
-		}
-
 		protected string defname; //protected, we will make use of it in StaticRegion loading part...
 		protected Point4D p; //spawnpoint
 		protected string name; //this is typically not unique, containing spaces etc.
@@ -91,27 +75,15 @@ namespace SteamEngine.Regions {
 			} 
 		}
 
-		public static Region WorldRegion { 
+		public bool IsWorldRegion {
 			get {
-				return worldRegion;
-			} 
+				return (this == StaticRegion.WorldRegion);
+			}
 		}
-		
-		public bool IsWorldRegion { 
-			get {
-				return (this == worldRegion);
-			} 
-		}
-		
+
 		public int HierarchyIndex { 
 			get {
 				return hierarchyIndex;
-			} 
-		}
-		
-		public static int HighestHierarchyIndex { 
-			get {
-				return highestHierarchyIndex;
 			} 
 		}
 		
@@ -130,7 +102,7 @@ namespace SteamEngine.Regions {
 				return p;
 			}
 			set {
-				ThrowIfInactivated();
+				ThrowIfDeleted();
 				if(!ContainsPoint((Point2D)value)) {
 					throw new SEException("Spawnpoint "+value.ToString()+" is not contained in the region "+ToString());
 				}
@@ -139,7 +111,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool IsChildOf(Region tested) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			if (parent == null) {
 				return false;
 			} else if (tested == parent) {
@@ -259,12 +231,12 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			return false;
 		}
 
 		internal bool Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			Region region = this;
 
 			bool cancel = false;
@@ -289,7 +261,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual bool On_DenyPutItemOn(DenyPutOnGroundArgs args) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			return false;
 		}
 
@@ -302,22 +274,11 @@ namespace SteamEngine.Regions {
 		}
 
 		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 		}
 
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
-			ThrowIfInactivated();
-		}
-		
-		protected bool HasSameMapplane(Region reg) {
-			if (this.Mapplane == reg.Mapplane) {
-				return true;
-			} else if (this.IsWorldRegion) {
-				return true;
-			} else if (reg.IsWorldRegion) {
-				return true;
-			}
-			return false;
+			ThrowIfDeleted();
 		}
 		
 		public bool ContainsPoint(Point2D point) {
@@ -353,7 +314,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool TryEnter(AbstractCharacter ch) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			if (!TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
 				if (!On_Enter(ch, false)) {
 					return true;
@@ -363,7 +324,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public bool TryExit(AbstractCharacter ch) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			if (!TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
 				if (!On_Exit(ch, false)) {
 					return true;
@@ -373,13 +334,13 @@ namespace SteamEngine.Regions {
 		}
 		
 		public void Enter(AbstractCharacter ch) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			TryTrigger(TriggerKey.enter, new ScriptArgs(ch, 1));
 			On_Enter(ch, true);
 		}
 		
 		public void Exit(AbstractCharacter ch) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
 			On_Exit(ch, true);
 		}
@@ -397,14 +358,10 @@ namespace SteamEngine.Regions {
 		}
 
 		protected bool inactivated = false;
-
-		public void Inactivate() {
-			inactivated = true;			
-		}
-
-		public void Activate() {
-			inactivated = false;			
-		}
+		//this will be set to false when the region is going to be edited
+		//after succesful editing (changing of P or changing rectnagles) it will be then reset to true
+		//without this, the region won't be activated (Error will occur)
+		protected bool canBeActivated = true;		
 
 		public bool IsInactivated {
 			get {
@@ -412,9 +369,9 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		protected void ThrowIfInactivated() {
+		protected new void ThrowIfDeleted() {
 			if(inactivated) {
-				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is inactivated.");
+				throw new DeletedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is inactivated.");
 			}
 		}
 
@@ -520,8 +477,8 @@ namespace SteamEngine.Regions {
 			this.region = region;
 		}
 
-		internal RegionRectangle(ImmutableRectangle rect, Region region)
-			: base(rect.StartPoint, rect.EndPoint) {
+		internal RegionRectangle(AbstractRectangle rect, Region region)
+			: base(rect.MinX, rect.MinY, rect.MaxX, rect.MaxY) {
 			this.region = region;
 		}
 

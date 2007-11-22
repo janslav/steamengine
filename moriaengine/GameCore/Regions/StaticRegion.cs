@@ -26,21 +26,44 @@ using SteamEngine.Persistence;
 namespace SteamEngine.Regions {
 	[Remark("Class implementing saving/loading of regions, controlling unique defnames etc.")]
 	public class StaticRegion : Region {
+		internal static readonly StaticRegion voidRegion = new StaticRegion();
+		private static StaticRegion worldRegion = voidRegion;
+		
+		private static List<RegionRectangle> tempRectangles;//for loading purposes...		
 		private static Dictionary<string, StaticRegion> byName;
 		private static Dictionary<string, StaticRegion> byDefname;
+		private static int highestHierarchyIndex = -1;
 
 		static StaticRegion() {
 			ClearAll();
 		}
 
 		[Remark("Clearing of the lists of all regions")]
-		public new static void ClearAll() {
+		public static void ClearAll() {
 			byName = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
 			byDefname = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
+
+			worldRegion = voidRegion;
+			highestHierarchyIndex = -1;
+
+			voidRegion.defname = "";
+			voidRegion.name = "void";
 		}
 
 		public StaticRegion()
 			: base() {
+		}
+
+		public static int HighestHierarchyIndex {
+			get {
+				return highestHierarchyIndex;
+			}
+		}
+
+		public static StaticRegion WorldRegion {
+			get {
+				return worldRegion;
+			}
 		}
 
 		#region Saving/Loading/Manipulating
@@ -199,33 +222,38 @@ namespace SteamEngine.Regions {
 
 		[Save]
 		public void SaveWithHeader(SaveStream output) {
-			ThrowIfInactivated();
+			ThrowIfDeleted();
 			output.WriteSection(this.GetType().Name, this.defname);
 			this.Save(output);
 			output.WriteLine();
 		}
 
 		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
-		private static void InactivateAll() {
-			foreach(StaticRegion reg in AllRegions) {
-				reg.Inactivate();			
-			}
+		private static void InactivateAll() {			
 			foreach(Map map in Map.AllMaps) {
 				map.InactivateRegions();
+			}
+			foreach(StaticRegion reg in AllRegions) {
+				reg.inactivated = true; //inactivate
 			}
 		}
 
 		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state"+
-				"called after manipulation is successfully done")]
+				"called after manipulation is successfully done."+
+				"Activates only activable regions")]
 		private static void ActivateAll() {
-			List<StaticRegion> allRegs = new List<StaticRegion>();
+			List<StaticRegion> activeRegs = new List<StaticRegion>();
 			foreach(StaticRegion reg in AllRegions) {
-				reg.Activate();
-				allRegs.Add(reg);
+				if(reg.canBeActivated) {
+					activeRegs.Add(reg);
+				}
 			}
 			foreach(Map map in Map.AllMaps) {
-				map.ActivateRegions(allRegs);
-			}			
+				map.ActivateRegions(activeRegs);
+			}
+			foreach(StaticRegion reg in activeRegs) {
+				reg.inactivated = false; //activate the activated regions
+			}
 		}
 		#endregion
 
@@ -272,43 +300,57 @@ namespace SteamEngine.Regions {
 		#endregion
 
 		#region Other regions mutual positions checks
+		private bool HasSameMapplane(Region reg) {
+			if(this.Mapplane == reg.Mapplane) {
+				return true;
+			} else if(this.IsWorldRegion) {
+				return true;
+			} else if(reg.IsWorldRegion) {
+				return true;
+			}
+			return false;
+		}
+
 		private bool ContainsRectangle(ImmutableRectangle rect) {
-			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
-					&& ContainsPoint(rect.StartPoint.x, rect.EndPoint.y) //left lower
-					&& ContainsPoint(rect.EndPoint) //right lower
-					&& ContainsPoint(rect.EndPoint.x, rect.StartPoint.y)));//right upper
+			return (IsWorldRegion || (ContainsPoint(rect.MinX,rect.MinY)//left upper
+					&& ContainsPoint(rect.MinX, rect.MaxY) //left lower
+					&& ContainsPoint(rect.MaxX, rect.MaxY) //right lower
+					&& ContainsPoint(rect.MaxX, rect.MinY)));//right upper
 		}
 
 		private bool ContainsRectanglePartly(ImmutableRectangle rect) {
-			return (IsWorldRegion || (ContainsPoint(rect.StartPoint)//left upper
-					|| ContainsPoint(rect.StartPoint.x, rect.EndPoint.y) //left lower
-					|| ContainsPoint(rect.EndPoint) //right lower
-					|| ContainsPoint(rect.EndPoint.x, rect.StartPoint.y)));//right upper
+			return (IsWorldRegion || (ContainsPoint(rect.MinX, rect.MinY)//left upper
+					|| ContainsPoint(rect.MinX, rect.MaxY) //left lower
+					|| ContainsPoint(rect.MaxX, rect.MaxY) //right lower
+					|| ContainsPoint(rect.MaxX, rect.MinY)));//right upper
 		}
 
 		private bool CheckHasAllRectanglesIn(StaticRegion other) {
+			bool retState = true;
 			for(int i = 0, n = rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = rectangles[i];
 				if(!other.ContainsRectangle(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " should be contained within region " + LogStr.Ident(other.defname) + ", but is not.");
-					return false; //rovnou problem
+					retState = false; //problem
 				}
 			}
-			return true;
+			return retState;
 		}
 
 		private bool CheckHasNoRectanglesIn(StaticRegion other) {
-			for (int i = 0, n = rectangles.Count; i < n; i++) {
+			bool retState = true;
+			for(int i = 0, n = rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = rectangles[i];
 				if(other.ContainsRectanglePartly(rect)) {
 					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " overlaps with " + LogStr.Ident(other.defname) + ", but should not.");
-					return false; //rovnou problem
+					retState = false; //problem
 				}
 			}
-			return true;
+			return retState;
 		}
 
 		public static bool CheckAllRegions() {
+			bool retState = true;
 			int i = 0, n = byDefname.Count;
 
 			foreach(StaticRegion region in byDefname.Values) {
@@ -316,18 +358,19 @@ namespace SteamEngine.Regions {
 					Logger.SetTitle("Checking regions: " + ((i * 100) / n) + " %");
 				}
 				if(!region.CheckConflictsAndWarn()) {
-					return false; //rovnou problem
+					retState = false; //problem
 				}
 				i++;
 			}
 			Logger.SetTitle("");
-			return true; //OK
+			return retState; //vysledek
 		}		
 
 		private bool CheckConflictsAndWarn() {
+			bool retState = true;			
 			if(parent != null) {
 				if(!CheckHasAllRectanglesIn((StaticRegion)parent)) {
-					return false; //rovnou problem
+					retState = false; //problem
 				}
 			}
 			foreach(StaticRegion other in byDefname.Values) {
@@ -336,33 +379,38 @@ namespace SteamEngine.Regions {
 					if(other.hierarchyIndex == this.hierarchyIndex) {
 						//Console.WriteLine("CheckConflictsAndWarn in progress");
 						if(!this.CheckHasNoRectanglesIn(other)) {
-							return false; //problem
+							retState = false; //problem
 						}
 					}
 				}
 			}
-			return true;
+			return retState;
 		}
 		#endregion
 
 		[Remark("Take the list of rectangles and make an array of RegionRectangles of it")]
-		public bool SetRectangles<T>(IList<T> list) where T : ImmutableRectangle {
+		public bool SetRectangles<T>(IList<T> list) where T : AbstractRectangle {
+			bool result = true;
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for(int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
-				newArr[i] = new RegionRectangle(list[i].StartPoint, list[i].EndPoint, this);				
+				newArr[i] = new RegionRectangle(list[i], this);				
 			}
 			//now the checking phase!
 			IList<RegionRectangle> oldRects = rectangles; //save
 			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations
-			rectangles = newArr; //switch the rectangles			
-			if(!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
-				rectangles = oldRects; //return the previous set of rectangles
-				StaticRegion.ActivateAll();
-				return false;
+			this.canBeActivated = false;
+			try {
+				rectangles = newArr; //switch the rectangles			
+				if(!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
+					rectangles = oldRects; //return the previous set of rectangles
+					result = false; //some problem
+				}
+				this.canBeActivated = true; //if we are here, everythin went fine or with simple warnings, which does not cause the fatal problem -)
+			}  finally {				
+				StaticRegion.ActivateAll();//all OK
 			}
-			StaticRegion.ActivateAll();//all OK
-			return true;
+			return result;
 		}
 
 		public override string Name {
@@ -370,7 +418,7 @@ namespace SteamEngine.Regions {
 				return name;
 			}
 			set {
-				ThrowIfInactivated();
+				ThrowIfDeleted();
 				byName.Remove(name);
 				name = String.Intern(value);
 				byName[value] = this;

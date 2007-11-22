@@ -229,10 +229,10 @@ namespace SteamEngine.Converter {
 			points = new Point2D[rectanglesCount*4];
 			for (int i = 0; i < rectanglesCount; i++) {
 				ImmutableRectangle rect = (ImmutableRectangle) rectangles[i];
-				points[(i*4)+0] = rect.StartPoint; //left upper
-				points[(i*4)+1] = new Point2D(rect.StartPoint.x, rect.EndPoint.y);//left lower
-				points[(i*4)+2] = rect.EndPoint;//right lower
-				points[(i*4)+3] = new Point2D(rect.EndPoint.x, rect.StartPoint.y);//right upper
+				points[(i*4)+0] = new Point2D(rect.MinX, rect.MinY);//left lower
+				points[(i*4)+1] = new Point2D(rect.MinX, rect.MaxY);//left upper
+				points[(i*4)+2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
+				points[(i*4)+3] = new Point2D(rect.MaxX, rect.MinY);//right lower
 			}
 			
 			temp.Clear();

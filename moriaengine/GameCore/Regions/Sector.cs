@@ -248,7 +248,7 @@ namespace SteamEngine.Regions {
 						return rect.region;
 					}
 				}
-				return Region.WorldRegion;
+				return StaticRegion.WorldRegion;
 			}
 
 			public Region GetRegionFor(Point2D point) {
@@ -265,14 +265,14 @@ namespace SteamEngine.Regions {
 						return rect.region;
 					}
 				}
-				return Region.WorldRegion;
+				return StaticRegion.WorldRegion;
 			}
 
-			internal void SetRegionRectangles(ArrayList list) {
+			internal void SetRegionRectangles(List<RegionRectangle> list) {
 				if (list == null) {
 					rectangles = RegionRectangle.emptyArray;
 				} else {
-					rectangles = (RegionRectangle[]) list.ToArray(typeof(RegionRectangle));
+					rectangles = list.ToArray();
 					ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
 						Map.sectorWidth, Map.sectorWidth);
 					SectRectComparer comparer = new SectRectComparer(sectorRect);
