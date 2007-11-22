@@ -184,25 +184,25 @@ namespace SteamEngine.Regions {
 			return ImmutableRectangle.voidInstance;
 		}
 
-		public override ushort MinX {
+		public override sealed ushort MinX {
 			get {
 				return this.minX;
 			}
 		}
 
-		public override ushort MaxX {
+		public override sealed ushort MaxX {
 			get {
 				return this.maxX;
 			}
 		}
 
-		public override ushort MinY {
+		public override sealed ushort MinY {
 			get {
 				return this.minY;
 			}
 		}
 
-		public override ushort MaxY {
+		public override sealed ushort MaxY {
 			get { 
 				return this.maxY; 
 			}
