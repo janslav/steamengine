@@ -61,7 +61,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					key2 = LoginKey.loginKeys[i].key2;
 
 
-					this.Decrypt(buffer, 4, length - 4, bytes, 0);
+					this.Decrypt(buffer, 4, bytes, 0, length - 4);
 
 					// Check if it decrypted correctly
 					if (bytes[0] == 0x80 && CheckCorrectASCIIString(bytes, 1, 30) && CheckCorrectASCIIString(bytes, 31, 30)) {
@@ -96,7 +96,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return true;
 		}
 
-		public int Encrypt(byte[] bytesIn, int offsetIn, int length, byte[] bytesOut, int offsetOut) {
+		public int Encrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length) {
 			// There is no server->client encryption in the login stage
 
 			System.Buffer.BlockCopy(bytesIn, offsetIn, bytesOut, offsetOut, length);
@@ -104,7 +104,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return length;
 		}
 
-		public int Decrypt(byte[] bytesIn, int offsetIn, int length, byte[] bytesOut, int offsetOut) {
+		public int Decrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length) {
 			uint eax, ecx, edx, esi;
 
 			for (int i = 0; i < length; i++) {

@@ -45,7 +45,6 @@ namespace SteamEngine.Network {
 			T instance = (T) p;
 			Sanity.IfTrueThrow(queue.Contains(instance), "ReleasePacket: Packet already in queue. This should not happen");
 			lock (pool) {
-				instance.Reset();
 				queue.Enqueue(instance);
 			}
 		}
@@ -60,6 +59,7 @@ namespace SteamEngine.Network {
 			lock (pool) {
 				if (queue.Count > 0) {
 					T instance = queue.Dequeue();
+					instance.Reset();
 					return instance;
 				} else {
 					T instance = new T();

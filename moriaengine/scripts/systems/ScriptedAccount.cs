@@ -82,19 +82,19 @@ namespace SteamEngine.CompiledScripts {
 			accCrimes.Remove(crime);
 		}
 
-		public override void LoadLine(string filename, int line, string name, string value) {
-			switch (name) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName) {
 				//added loading of reg. mail
 				case "email":
-					System.Text.RegularExpressions.Match m = TagMath.stringRE.Match(value);
+					System.Text.RegularExpressions.Match m = TagMath.stringRE.Match(valueString);
 					if (m.Success) {
 						this.email = m.Groups["value"].Value;
 					} else {
-						this.email = value;
+						this.email = valueString;
 					}
 					break;
 				default:
-					base.LoadLine(filename, line, name, value);
+					base.LoadLine(filename, line, valueName, valueString);
 					break;
 			}
 		}

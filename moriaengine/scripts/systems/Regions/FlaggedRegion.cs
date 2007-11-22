@@ -69,59 +69,59 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public override void LoadLine(string filename, int line, string param, string args) {
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			ThrowIfInactivated();
-			switch(param) {
+			switch(valueName) {
 				case "flag_announce":
-					LoadSpecificFlag(filename, line, 0x00200, args);
+					LoadSpecificFlag(filename, line, 0x00200, valueString);
 					break;
 				case "flag_antimagic_all":
-					LoadSpecificFlag(filename, line, 0x00001, args);
+					LoadSpecificFlag(filename, line, 0x00001, valueString);
 					break;
 				case "flag_antimagic_damage":
-					LoadSpecificFlag(filename, line, 0x00020, args);
+					LoadSpecificFlag(filename, line, 0x00020, valueString);
 					break;
 				case "flag_antimagic_gate":
-					LoadSpecificFlag(filename, line, 0x00008, args);
+					LoadSpecificFlag(filename, line, 0x00008, valueString);
 					break;
 				case "flag_antimagic_recallin":
-					LoadSpecificFlag(filename, line, 0x00002, args);
+					LoadSpecificFlag(filename, line, 0x00002, valueString);
 					break;
 				case "flag_antimagic_recallout":
-					LoadSpecificFlag(filename, line, 0x00004, args);
+					LoadSpecificFlag(filename, line, 0x00004, valueString);
 					break;
 				case "flag_antimagic_teleport":
-					LoadSpecificFlag(filename, line, 0x00010, args);
+					LoadSpecificFlag(filename, line, 0x00010, valueString);
 					break;
 				case "flag_arena":
-					LoadSpecificFlag(filename, line, 0x10000, args);
+					LoadSpecificFlag(filename, line, 0x10000, valueString);
 					break;
 				case "flag_guarded":
-					LoadSpecificFlag(filename, line, 0x04000, args);
+					LoadSpecificFlag(filename, line, 0x04000, valueString);
 					break;
 				case "flag_instalogout":
-					LoadSpecificFlag(filename, line, 0x00400, args);
+					LoadSpecificFlag(filename, line, 0x00400, valueString);
 					break;
 				case "flag_nobuilding":
-					LoadSpecificFlag(filename, line, 0x00080, args);
+					LoadSpecificFlag(filename, line, 0x00080, valueString);
 					break;
 				case "flag_nodecay":
-					LoadSpecificFlag(filename, line, 0x01000, args);
+					LoadSpecificFlag(filename, line, 0x01000, valueString);
 					break;
 				case "flag_nopvp":
-					LoadSpecificFlag(filename, line, 0x08000, args);
+					LoadSpecificFlag(filename, line, 0x08000, valueString);
 					break;
 				//case "flag_roof"://"this region has a roof" - wtf does that mean? -tar
 				//	LoadSpecificFlag(filename, line, 0x20000, args);
 				//	break;
 				case "flag_safe":
-					LoadSpecificFlag(filename, line, 0x02000, args);
+					LoadSpecificFlag(filename, line, 0x02000, valueString);
 					break;
 				case "flag_ship":
-					LoadSpecificFlag(filename, line, 0x00040, args);
+					LoadSpecificFlag(filename, line, 0x00040, valueString);
 					break;
 				case "flag_underground":
-					LoadSpecificFlag(filename, line, 0x00800, args); 
+					LoadSpecificFlag(filename, line, 0x00800, valueString); 
 					break;
 				//case "flag_unused":
 				//	LoadSpecificFlag(0x00100, args); 
@@ -129,10 +129,10 @@ namespace SteamEngine.Regions {
 
 				case "flag":
 				case "flags":
-					flags = TagMath.ParseInt32(args);
+					flags = TagMath.ParseInt32(valueString);
 					break;
 				default:
-					base.LoadLine(filename, line, param, args);//the Region Loadline
+					base.LoadLine(filename, line, valueName, valueString);//the Region Loadline
 					break;
 			}
 		}		

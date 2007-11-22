@@ -22,10 +22,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 	public class ConsoleServerIncomingPacket : IncomingPacket<ConsoleConnection> {
 
-		protected override bool Read(int count) {
-			this.position += count;
-
-			return true;
+		protected override ReadPacketResult Read() {
+			return ReadPacketResult.DiscardSingle;
 		}
 
 		public override void Handle(ConsoleConnection packet) {
@@ -45,13 +43,13 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		protected override void Write() {
-			this.position++;
+			
 		}
 	}
 
-	public class ConsoleServerPacketGroup : PacketGroup {
-		public ConsoleServerPacketGroup() {
-			base.SetType(PacketGroupType.SingleUse);
-		}
-	}
+	//public class ConsoleServerPacketGroup : PacketGroup {
+	//    public ConsoleServerPacketGroup() {
+	//        base.SetType(PacketGroupType.SingleUse);
+	//    }
+	//}
 }
