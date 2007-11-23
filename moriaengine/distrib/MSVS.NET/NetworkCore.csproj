@@ -68,6 +68,9 @@
     <Compile Include="..\..\NetworkCore\Server.cs">
       <Link>Server.cs</Link>
     </Compile>
+    <Compile Include="..\..\NetworkCore\ServerSteamSocket.cs">
+      <Link>ServerSteamSocket.cs</Link>
+    </Compile>
     <Compile Include="..\..\NetworkCore\SteamSocket.cs">
       <Link>SteamSocket.cs</Link>
     </Compile>

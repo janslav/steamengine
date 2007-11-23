@@ -57,13 +57,6 @@ namespace SteamEngine.Network {
 
 		protected abstract void Write();
 
-		public PacketGroup GetSingleUseGroup() {
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
-			pg.SetType(PacketGroupType.SingleUse);
-			pg.AddPacket(this);
-			return pg;
-		}
-
 		public string FullName {
 			get {
 				return string.Concat(this.Name, " ( 0x", this.Id.ToString("x"), " )");

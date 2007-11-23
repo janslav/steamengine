@@ -27,7 +27,7 @@ using System.Threading;
 using SteamEngine.Common;
 
 namespace SteamEngine.Network {
-	public abstract class Server<SSType> : Protocol<SSType> where SSType : SteamSocket, new() {
+	public abstract class Server<SSType> : Protocol<SSType> where SSType : ServerSteamSocket<SSType>, new() {
 		bool bound = false;
 
 		int port;
@@ -46,7 +46,7 @@ namespace SteamEngine.Network {
 		}
 
 		//called from main loop
-		public void SendPacketGroup(SSType ss, PacketGroup group) {
+		internal void SendPacketGroup(SSType ss, PacketGroup group) {
 			ThrowIfDisposed();
 
 			group.Enqueued();
@@ -101,13 +101,18 @@ namespace SteamEngine.Network {
 			if (accepted != null) {
 				SSType newSS = Pool<SSType>.Acquire();
 				newSS.socket = accepted;
+				newSS.server = this;
+				try {
+					newSS.On_Connect();
 
-				newSS.On_Connect();
-
-				if (this.On_NewClient(newSS)) {
-					BeginReceive(newSS);
-				} else {
-					newSS.Close("On_NewClient returned false.");
+					if (this.On_NewClient(newSS)) {
+						BeginReceive(newSS);
+					} else {
+						newSS.Close("On_NewClient returned false.");
+					}
+				} catch (Exception e) {
+					Logger.WriteError(e);
+					newSS.Close(e.Message);
 				}
 			}
 
