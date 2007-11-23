@@ -69,24 +69,23 @@ namespace SteamEngine.CompiledScripts {
 			self.currentSkill = null;
             self.currentSkillTarget1 = null;
 		}
-		
+
 		public override void Success(Character self) {
-            Character person = (Character)self.currentSkillTarget1;
-            StealthStepPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
-            if (!this.Trigger_Success(self)) {
-                if (ssp != null) {
-                    if (ssp.hadDetectedMe == null) {
-                        self.SysMessage("Stvoren");
-                        ssp.hadDetectedMe = new LinkedList<object>();
-                        ssp.hadDetectedMe.AddFirst(self);
-                        }
-                    }
-                    else if (!ssp.hadDetectedMe.Contains(self)) {
-                        self.SysMessage("Pridan");
-                        ssp.hadDetectedMe.AddLast(self);
-                    }
-                }
-            }
+			Character person = (Character) self.currentSkillTarget1;
+			StealthStepPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+			if (!this.Trigger_Success(self)) {
+				if (ssp != null) {
+					if (ssp.hadDetectedMe == null) {
+						self.SysMessage("Stvoren");
+						ssp.hadDetectedMe = new LinkedList<object>();
+						ssp.hadDetectedMe.AddFirst(self);
+					}
+				} else if (!ssp.hadDetectedMe.Contains(self)) {
+					self.SysMessage("Pridan");
+					ssp.hadDetectedMe.AddLast(self);
+				}
+			}
+		}
 		
 		public override void Fail(Character self) {
 			if (!this.Trigger_Fail(self)) {
