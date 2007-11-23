@@ -17,3 +17,4 @@
 [PluginTemplate StealthStepPlugin : Plugin]
 Vars:
 	public int stealthStepsLeft = 0
+	public LinkedList<object> hadDetectedMe = null

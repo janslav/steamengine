@@ -437,6 +437,9 @@
     <Compile Include="..\..\scripts\systems\skills\SkillUtils.cs">
       <Link>systems\skills\SkillUtils.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Snooping.cs">
+      <Link>systems\skills\Snooping.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Speech.cs">
       <Link>systems\Speech.cs</Link>
     </Compile>

@@ -312,12 +312,19 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 			if (target.IsNotVisible) {
-				if (!target.Flag_Disconnected) {
-					return this.IsGM();
-				} else {
-					return false;
-				}
-			}
+                if (!target.Flag_Disconnected) {
+                    return this.IsGM();
+                }
+                StealthStepPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+                if (ssp != null) {
+                        if (ssp.hadDetectedMe.Contains(this)) {
+                            return true;
+                        }
+                    }
+                else {
+                    return false;
+                }
+            }
 			return true;
 		}
 
