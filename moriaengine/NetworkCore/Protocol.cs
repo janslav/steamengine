@@ -112,7 +112,7 @@ namespace SteamEngine.Network {
 			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		}
 
-		internal void BeginReceive(SteamSocket ss) {
+		internal void BeginReceive(SSType ss) {
 			int offset = ss.receivedDataLength;
 
 

@@ -55,7 +55,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					serverList.Prepare(Settings.wanIP);
 				}
 
-				MainClass.loginServer.SendPacketGroup(conn, serverList.GetSingleUseGroup());
+				conn.SendSinglePacket(serverList);
 			}
 
 			internal static bool ByteArraysEquals(byte[] a, byte[] b) {
@@ -91,8 +91,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 				//packet.Prepare(new byte[] { 89, 185, 242, 165 }, 2593); //moria 
 
-
-				MainClass.loginServer.SendPacketGroup(conn, packet.GetSingleUseGroup());
+				conn.SendSinglePacket(packet);
 			}
 		}
 	}

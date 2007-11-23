@@ -6,7 +6,7 @@ using SteamEngine.Network;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
-	public class ConsoleConnection : SteamSocket {
+	public class ConsoleConnection : ServerSteamSocket<ConsoleConnection> {
 
 		//public override void Handle(IncomingPacket<ConsoleConnection> packet) {
 		//    ConsoleServerPacketGroup pg = Pool<ConsoleServerPacketGroup>.Acquire();

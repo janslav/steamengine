@@ -6,7 +6,7 @@ using SteamEngine.Network;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginConnection : SteamSocket {
+	public class LoginConnection : ServerSteamSocket<LoginConnection> {
 
 		static int uids;
 
