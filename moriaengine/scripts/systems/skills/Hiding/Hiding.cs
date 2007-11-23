@@ -18,6 +18,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using SteamEngine;
 using SteamEngine.Common;
 
@@ -28,9 +29,9 @@ namespace SteamEngine.CompiledScripts {
 		public HidingSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
 		}
 
-		private static PluginKey pluginKey = PluginKey.Get("stealthstep");
+		public static PluginKey pluginKey = PluginKey.Get("stealthstep");
 
-		private static PluginDef p_StealthStep;
+		public static PluginDef p_StealthStep;
 		public static PluginDef P_StealthStep {
 			get {
 				if (p_StealthStep == null) {

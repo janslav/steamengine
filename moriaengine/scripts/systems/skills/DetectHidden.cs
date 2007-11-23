@@ -18,6 +18,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Regions;
@@ -25,7 +26,6 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class DetectHiddenSkillDef : SkillDef {
-        Character currentSkillTarget1;
 		
 		public DetectHiddenSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
 		}
@@ -52,39 +52,55 @@ namespace SteamEngine.CompiledScripts {
                 Point2D point = new Point2D(self);
                 ushort pointX = point.x;
                 ushort pointY = point.y;
-                byte s = 0;
+                int s = 0;
                 foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
 		    		if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
                         s++;
-                        currentSkillTarget1 = person;
+                        self.SysMessage("Suceeees");
+                        self.currentSkillTarget1 = person;
 		    			Success(self);
                     }
 				}
                 if (s==0) {
                     Fail(self);
                 }
+                self.SysMessage("s je "+s);
 			}
 			self.currentSkill = null;
-            currentSkillTarget1 = null;
+            self.currentSkillTarget1 = null;
 		}
 		
 		public override void Success(Character self) {
-			if (!this.Trigger_Success(self)) {
-                HidingSkillDef.UnHide(currentSkillTarget1); 
+            Character person = (Character)self.currentSkillTarget1;
+            StealthStepPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+            if (!this.Trigger_Success(self)) {
+                if (ssp != null) {
+                    if (ssp.hadDetectedMe == null) {
+                        self.SysMessage("Stvoren");
+                        ssp.hadDetectedMe = new LinkedList<object>();
+                        ssp.hadDetectedMe.AddFirst(self);
+                        }
+                    }
+                    else if (!ssp.hadDetectedMe.Contains(self)) {
+                        self.SysMessage("Pridan");
+                        ssp.hadDetectedMe.AddLast(self);
+                    }
+                }
             }
-		}
 		
 		public override void Fail(Character self) {
 			if (!this.Trigger_Fail(self)) {
                 self.ClilocSysMessage(500817);//You can see nothing hidden there.
                 self.currentSkill = null;
-                currentSkillTarget1 = null;
+                self.currentSkillTarget1 = null;
 			}
 		}
 		
 		protected internal override void Abort(Character self) {
 			this.Trigger_Abort(self);
 			self.SysMessage("Detecting Hidden aborted.");
+            self.currentSkill = null;
+            self.currentSkillTarget1 = null;
 		}
 	}
 }
