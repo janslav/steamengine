@@ -304,27 +304,67 @@ namespace SteamEngine.CompiledScripts {
 			mountorrider=null;
 		}
 
-        public override bool CanSeeVisibility(Thing target) {
-            if (target == null) {
-                return false;
-            }
-            if (target.IsDeleted) {
-                return false;
-            }
-            if (target.IsNotVisible) {
-                if (!target.Flag_Disconnected) {
-                    StealthStepPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
-                    if (ssp != null) {
-                        if (ssp.hadDetectedMe.Contains(this)) {
-                            return true;
-                        }
-                    } else {
-                        return this.IsGM();
-                    }
-                }
-            }
-            return true;
-        }
+		public override bool CanSeeVisibility(Thing target) {
+			Item targetAsItem = target as Item;
+			if (targetAsItem != null) {
+				return CanSeeVisibility(targetAsItem);
+			}
+			Character targetAsChar = target as Character;
+			if (targetAsItem != null) {
+				return CanSeeVisibility(targetAsChar);
+			}
+			return false;//it was null
+		}
+
+		public bool CanSeeVisibility(Character target) {
+			if (target == null) {
+				return false;
+			}
+			if (target.IsDeleted) {
+				return false;
+			}
+			//character invisibility has 4 possible reasons: Flag_InvisByMagic || Flag_Hidden || Flag_Insubst || Flag_Disconnected
+			if (target.Flag_Disconnected) {
+				//TODO: "allshow" mode for GMs
+				return false;
+			}
+			if (target.Flag_Insubst) {//ghosts, insubst GMs
+				if (this.IsGM()) {
+					return this.Plevel > target.Plevel; //can see other GMs only if they have lowe plevel
+				}
+				return false;
+			}
+			if (target.Flag_InvisByMagic) {
+				return this.IsGM();
+			}
+			if (target.Flag_Hidden) {
+				if (this.IsGM()) {
+					return true;
+				} else {
+					StealthStepPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+					return ((ssp != null) && 
+						(ssp.hadDetectedMe != null) &&
+						(ssp.hadDetectedMe.Contains(this)));
+				}
+			}
+			return true;
+		}
+
+		public bool CanSeeVisibility(Item target) {
+			if (target == null) {
+				return false;
+			}
+			if (target.IsDeleted) {
+				return false;
+			}
+			if (target.IsNotVisible) {
+				if (!target.Flag_Disconnected) {
+					return this.IsGM();
+				}
+				return false;
+			}
+			return true;
+		}
 
 		public override byte StatLockByte {
 			get {
