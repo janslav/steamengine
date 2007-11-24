@@ -310,7 +310,7 @@ namespace SteamEngine.CompiledScripts {
 				return CanSeeVisibility(targetAsItem);
 			}
 			Character targetAsChar = target as Character;
-			if (targetAsItem != null) {
+			if (targetAsChar != null) {
 				return CanSeeVisibility(targetAsChar);
 			}
 			return false;//it was null
