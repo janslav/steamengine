@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				byte newFlags = (byte) (value?(flags|0x80):(flags&~0x80));
 				if (newFlags != flags) {
-					NetState.ItemAboutToChange(this);
+					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}
