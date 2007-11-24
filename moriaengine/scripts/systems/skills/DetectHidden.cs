@@ -32,14 +32,16 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Select(AbstractCharacter ch) {
 			//todo: various state checks...
-			Character self = (Character) ch;
+            Character self = (Character)ch;
 			if (!this.Trigger_Select(self)) {
+                self.SysMessage("Select");
 				self.StartSkill((int) SkillName.DetectHidden);
 			}
 		}
 
 		internal override void Start(Character self) {
 			if (!this.Trigger_Start(self)) {
+                self.SysMessage("Start");
 				self.currentSkill = this;
 				DelaySkillStroke(self);
 			}
@@ -53,6 +55,7 @@ namespace SteamEngine.CompiledScripts {
                 ushort pointX = point.x;
                 ushort pointY = point.y;
                 int s = 0;
+                self.SysMessage("Stroke");
                 foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
 		    		if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
                         s++;
@@ -62,6 +65,7 @@ namespace SteamEngine.CompiledScripts {
                     }
 				}
                 if (s==0) {
+                    self.SysMessage("s = 0");
                     Fail(self);
                 }
                 self.SysMessage("s je "+s);
@@ -70,22 +74,22 @@ namespace SteamEngine.CompiledScripts {
             self.currentSkillTarget1 = null;
 		}
 
-		public override void Success(Character self) {
-			Character person = (Character) self.currentSkillTarget1;
-			StealthStepPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
-			if (!this.Trigger_Success(self)) {
-				if (ssp != null) {
-					if (ssp.hadDetectedMe == null) {
-						self.SysMessage("Stvoren");
-						ssp.hadDetectedMe = new LinkedList<object>();
-						ssp.hadDetectedMe.AddFirst(self);
-					}
-				} else if (!ssp.hadDetectedMe.Contains(self)) {
-					self.SysMessage("Pridan");
-					ssp.hadDetectedMe.AddLast(self);
-				}
-			}
-		}
+        public override void Success(Character self) {
+            if (!this.Trigger_Success(self)) {
+                Character person = (Character)self.currentSkillTarget1;
+                StealthStepPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+                if (ssp != null) {
+                    if (ssp.hadDetectedMe == null) {
+                        self.SysMessage("Stvoren");
+                        ssp.hadDetectedMe = new LinkedList<Character>();
+                        ssp.hadDetectedMe.AddFirst(self);
+                    } else if (!ssp.hadDetectedMe.Contains(self)) {
+                        self.SysMessage("Pridan");
+                        ssp.hadDetectedMe.AddFirst(self);
+                    }
+                }
+            }
+        }
 		
 		public override void Fail(Character self) {
 			if (!this.Trigger_Fail(self)) {

@@ -304,29 +304,27 @@ namespace SteamEngine.CompiledScripts {
 			mountorrider=null;
 		}
 
-		public override bool CanSeeVisibility(Thing target) {
-			if (target == null) {
-				return false;
-			}
-			if (target.IsDeleted) {
-				return false;
-			}
-			if (target.IsNotVisible) {
+        public override bool CanSeeVisibility(Thing target) {
+            if (target == null) {
+                return false;
+            }
+            if (target.IsDeleted) {
+                return false;
+            }
+            if (target.IsNotVisible) {
                 if (!target.Flag_Disconnected) {
-                    return this.IsGM();
-                }
-                StealthStepPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
-                if (ssp != null) {
+                    StealthStepPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+                    if (ssp != null) {
                         if (ssp.hadDetectedMe.Contains(this)) {
                             return true;
                         }
+                    } else {
+                        return this.IsGM();
                     }
-                else {
-                    return false;
                 }
             }
-			return true;
-		}
+            return true;
+        }
 
 		public override byte StatLockByte {
 			get {
