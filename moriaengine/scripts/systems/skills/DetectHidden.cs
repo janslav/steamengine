@@ -81,10 +81,12 @@ namespace SteamEngine.CompiledScripts {
                 if (ssp != null) {
                     if (ssp.hadDetectedMe == null) {
                         self.SysMessage("Stvoren");
+						Packets.NetState.AboutToChangeVisibility(person);
                         ssp.hadDetectedMe = new LinkedList<Character>();
                         ssp.hadDetectedMe.AddFirst(self);
                     } else if (!ssp.hadDetectedMe.Contains(self)) {
                         self.SysMessage("Pridan");
+						Packets.NetState.AboutToChangeVisibility(person);
                         ssp.hadDetectedMe.AddFirst(self);
                     }
                 }

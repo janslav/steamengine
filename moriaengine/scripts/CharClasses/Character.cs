@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value?(flags|0x0004):(flags&~0x0004));
 				if (newFlags != flags) {
-					NetState.AboutToChangeFlags(this);
+					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}
@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value?(flags|0x0008):(flags&~0x0008));
 				if (newFlags != flags) {
-					NetState.AboutToChangeFlags(this);
+					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value?(flags|0x0010):(flags&~0x0010));
 				if (newFlags != flags) {
-					NetState.AboutToChangeFlags(this);
+					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}

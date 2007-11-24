@@ -184,7 +184,7 @@ namespace SteamEngine {
 				return ((flags&0x01)==0x01);
 			} set {
 				if (Flag_Disconnected!=value) {
-					NetState.ItemAboutToChange(this);
+					NetState.AboutToChangeVisibility(this);
 					flags=(byte) (value?(flags|0x01):(flags&~0x01));
 					if (value) {
 						GetMap().Disconnected(this);

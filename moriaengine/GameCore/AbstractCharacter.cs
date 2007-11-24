@@ -328,7 +328,7 @@ namespace SteamEngine {
 		//So Character itself (or GameConn after relinking) can set the flag without warnings.
 		private void SetFlag_Disconnected(bool value) {
 			if (Flag_Disconnected!=value) {
-				NetState.AboutToChangeFlags(this);
+				NetState.AboutToChangeVisibility(this);
 				flags=(ushort) (value?(flags|0x0001):(flags&~0x0001));
 				if (value) {
 					GetMap().Disconnected(this);
