@@ -3,13 +3,13 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 
-using SteamEngine.Network;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public static class PacketHandlers {
-
-		internal static IncomingPacket<LoginConnection> GetPacketImplementation(byte id) {
+	public class PacketHandlers : IProtocol<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> {
+		IncomingPacket<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> IProtocol<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint>.GetPacketImplementation(byte id) {
 			switch (id) {
 				case 0x80:
 					return Pool<GameLoginPacket>.Acquire();
@@ -23,76 +23,80 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 			return null;
 		}
+	}
 
-		public class GameSpyPacket : IncomingPacket<LoginConnection> {
-			protected override ReadPacketResult Read() {
-				SeekFromCurrent(148);
-				return ReadPacketResult.DiscardSingle;
-			}
+	public abstract class LoginIncomingPacket : IncomingPacket<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> {
 
-			public override void Handle(LoginConnection packet) {
-				throw new Exception("The method or operation is not implemented.");
-			}
+	}
+
+	public class GameSpyPacket : LoginIncomingPacket {
+		protected override ReadPacketResult Read() {
+			SeekFromCurrent(148);
+			return ReadPacketResult.DiscardSingle;
 		}
 
-		public class GameLoginPacket : IncomingPacket<LoginConnection> {
-			string accname;
+		protected override void Handle(TCPConnection<PacketHandlers, LoginClient> conn, LoginClient state) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+	}
 
-			protected override ReadPacketResult Read() {
-				accname = this.DecodeAsciiString(30);
-				this.SeekFromCurrent(31);
-				return ReadPacketResult.Success;
+	public class GameLoginPacket : LoginIncomingPacket {
+		string accname;
+
+		protected override ReadPacketResult Read() {
+			accname = this.DecodeAsciiString(30);
+			this.SeekFromCurrent(31);
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(TCPConnection<PacketHandlers, LoginClient> conn, LoginClient state) {
+			Console.WriteLine(state+" identified as "+this.accname);
+
+			ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
+			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
+			if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
+				serverList.Prepare(Settings.lanIP);
+			} else {
+				serverList.Prepare(Settings.wanIP);
 			}
 
-			public override void Handle(LoginConnection conn) {
-				Console.WriteLine(conn+" identified as "+this.accname);
+			conn.SendSinglePacket(serverList);
+		}
 
-				ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
-				byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
-				if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
-					serverList.Prepare(Settings.lanIP);
-				} else {
-					serverList.Prepare(Settings.wanIP);
-				}
-
-				conn.SendSinglePacket(serverList);
+		internal static bool ByteArraysEquals(byte[] a, byte[] b) {
+			int len = a.Length;
+			if (len != b.Length) {
+				return false;
 			}
-
-			internal static bool ByteArraysEquals(byte[] a, byte[] b) {
-				int len = a.Length;
-				if (len != b.Length) {
+			for (int i = 0; i<len; i++) {
+				if (a[i] != b[i]) {
 					return false;
 				}
-				for (int i = 0; i<len; i++) {
-					if (a[i] != b[i]) {
-						return false;
-					}
-				}
-				return true;
 			}
+			return true;
+		}
+	}
+
+	public class ServerSelectPacket : LoginIncomingPacket {
+		int chosenServer;
+
+		protected override ReadPacketResult Read() {
+			chosenServer = DecodeUShort();
+			return ReadPacketResult.Success;
 		}
 
-		public class ServerSelectPacket : IncomingPacket<LoginConnection> {
-			int chosenServer;
-
-			protected override ReadPacketResult Read() {
-				chosenServer = DecodeUShort();
-				return ReadPacketResult.Success;
+		protected override void Handle(TCPConnection<PacketHandlers, LoginClient> conn, LoginClient state) {
+			LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
+			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
+			if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
+				packet.Prepare(Settings.lanIP, Settings.loginSettings[this.chosenServer].port);
+			} else {
+				packet.Prepare(Settings.wanIP, Settings.loginSettings[this.chosenServer].port);
 			}
 
-			public override void Handle(LoginConnection conn) {
-				LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
-				byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
-				if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
-					packet.Prepare(Settings.lanIP, Settings.loginSettings[this.chosenServer].port);
-				} else {
-					packet.Prepare(Settings.wanIP, Settings.loginSettings[this.chosenServer].port);
-				}
+			//packet.Prepare(new byte[] { 89, 185, 242, 165 }, 2593); //moria 
 
-				//packet.Prepare(new byte[] { 89, 185, 242, 165 }, 2593); //moria 
-
-				conn.SendSinglePacket(packet);
-			}
+			conn.SendSinglePacket(packet);
 		}
 	}
 }

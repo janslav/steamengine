@@ -1,0 +1,98 @@
+/*
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	Or visit http://www.gnu.org/copyleft/gpl.html
+*/
+
+using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+
+using SteamEngine.Common;
+
+namespace SteamEngine.Communication {
+
+	public interface IClientFactory<TProtocol, TConnection, TState, TEndPoint> :
+		IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+
+		TState Connect(TEndPoint endpoint);
+	}
+
+	public interface IServer<TProtocol, TConnection, TState, TEndPoint> :
+		IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+
+		void Bind(TEndPoint endpoint);
+		TEndPoint BoundTo { get; }
+		bool IsBound { get; }
+		void UnBind();
+	}
+
+	public interface IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+
+		//called from main loop (!)
+		void Cycle();
+	}
+
+	public interface IProtocol<TProtocol, TConnection, TState, TEndPoint>
+		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+		
+		IncomingPacket<TProtocol, TConnection, TState, TEndPoint> GetPacketImplementation(byte id);
+	}
+
+	public interface IConnectionState<TProtocol, TConnection, TState, TEndPoint>
+		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+
+		IEncryption Encryption { get; }
+
+		ICompression Compression { get; }
+
+		void On_Init(TConnection conn);
+
+		void On_Close(string reason);
+	}
+
+	public interface IEncryption {
+		// 
+		EncryptionInitResult Init(byte[] bytesIn, int offsetIn, int lengthIn, out int bytesUsed);
+
+		// Encrypt outgoing data
+		int Encrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
+
+		// Decrypt incoming data
+		int Decrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
+	}
+
+	public interface ICompression {
+		int Compress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
+		int Decompress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
+	}
+}

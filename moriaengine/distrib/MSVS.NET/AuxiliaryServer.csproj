@@ -56,8 +56,8 @@
     <Compile Include="..\..\AuxiliaryServer\LoginServer\IncomingPackets.cs">
       <Link>LoginServer\IncomingPackets.cs</Link>
     </Compile>
-    <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginConnection.cs">
-      <Link>LoginServer\LoginConnection.cs</Link>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginClient.cs">
+      <Link>LoginServer\LoginClient.cs</Link>
     </Compile>
     <Compile Include="..\..\AuxiliaryServer\LoginServer\LoginEncryption.cs">
       <Link>LoginServer\LoginEncryption.cs</Link>
@@ -83,9 +83,9 @@
       <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="NetworkCore.csproj">
+    <ProjectReference Include="Communication.csproj">
       <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
-      <Name>NetworkCore</Name>
+      <Name>Communication</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

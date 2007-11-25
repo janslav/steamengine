@@ -13,7 +13,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public static readonly string logPath;
 		public static readonly sbyte timeZone;
-		public static readonly int loginServerPort;
+		public static readonly IPEndPoint loginServerEndpoint;
 
 		public static readonly List<LoginServerInstanceSettings> loginSettings = new List<LoginServerInstanceSettings>();
 
@@ -31,7 +31,8 @@ namespace SteamEngine.AuxiliaryServer {
 
 			timeZone = loginServer.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
 
-			loginServerPort = loginServer.GetValue<int>("port", 2593, "The port to listen on for game client connections");
+			loginServerEndpoint = new IPEndPoint(IPAddress.Any,
+				loginServer.GetValue<int>("port", 2593, "The port to listen on for game client connections"));
 
 
 			foreach (IniFileSection section in ini.GetSections("GameServer")) {

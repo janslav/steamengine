@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 using SteamEngine.Common;
 
-namespace SteamEngine.Network {
+namespace SteamEngine.Communication {
 	public abstract class PoolBase {
 
 		internal abstract void Release(Poolable p);

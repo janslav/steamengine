@@ -25,19 +25,28 @@ using System.Collections.Generic;
 
 using SteamEngine.Common;
 
-namespace SteamEngine.Network {
-	public abstract class ServerSteamSocket<RealType> : SteamSocket where RealType : ServerSteamSocket<RealType>, new() {
-		internal Server<RealType> server;
+namespace SteamEngine.Communication {
+	public class Poolable : Disposable {
+		internal PoolBase myPool;
 
-		public void SendPacketGroup(PacketGroup group) {
-			this.server.SendPacketGroup((RealType) this, group);
+		public Poolable() {
+			this.On_Reset();
 		}
 
-		public void SendSinglePacket(OutgoingPacket packet) {
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
-			pg.SetType(PacketGroupType.SingleUse);
-			pg.AddPacket(packet);
-			this.SendPacketGroup(pg);
+		protected override void On_DisposeManagedResources() {
+			if (myPool != null) {
+				myPool.Release(this);
+			}
+			base.On_DisposeManagedResources();
+		}
+
+		internal void Reset() {
+			this.disposed = false;
+
+			On_Reset();
+		}
+
+		protected virtual void On_Reset() {
 		}
 	}
 }

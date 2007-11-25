@@ -1,12 +1,15 @@
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Text;
 
-using SteamEngine.Network;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginConnection : ServerSteamSocket<LoginConnection> {
+	public class LoginClient : Poolable,
+		IConnectionState<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> {
 
 		static int uids;
 
@@ -14,40 +17,37 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		IEncryption encryption;
 
-		protected override void Reset() {
+		protected override void On_Reset() {
 			encryption = new LoginEncryption();
 			uid = uids++;
 
-			base.Reset();
+			base.On_Reset();
 		}
 
-		public override IEncryption Encryption {
+		public IEncryption Encryption {
 			get {
 				return encryption;
 			}
 		}
 
-		public override void On_Connect() {
-			Console.WriteLine(this + " connected from "+this.EndPoint);
-
-			base.On_Connect();
+		public ICompression Compression {
+			get {
+				return null;
+			}
 		}
 
-		public override void On_Close(LogStr reason) {
-			Console.WriteLine(this + " closed: "+reason);
-
-			base.On_Close(reason);
+		public void On_Init(TCPConnection<PacketHandlers, LoginClient> conn) {
+			Console.WriteLine(this + " connected from "+conn.EndPoint);
 		}
 
-		public override void On_Close(string reason) {
+		public void On_Close(string reason) {
 			Console.WriteLine(this + " closed: "+reason);
-
-			base.On_Close(reason);
 		}
 
 		public override string ToString() {
-			return "LoginConnection "+uid;
+			return "LoginClient "+uid;
 		}
+
 		//public override void Handle(IncomingPacket packet) {
 		//    ConsoleServerPacketGroup pg = Pool<ConsoleServerPacketGroup>.Acquire();
 

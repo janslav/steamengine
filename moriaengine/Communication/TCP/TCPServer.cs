@@ -25,63 +25,65 @@ using System.Collections.Generic;
 using System.Threading;
 
 using SteamEngine.Common;
+using SteamEngine.Communication;
 
-namespace SteamEngine.Network {
-	public abstract class Server<SSType> : Protocol<SSType> where SSType : ServerSteamSocket<SSType>, new() {
-		bool bound = false;
-
-		int port;
+namespace SteamEngine.Communication.TCP {
+	public abstract class TCPServer<TProtocol, TState> : 
+		AsyncCore<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>,
+		IServer<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>
+		where TProtocol : IProtocol<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new() {
 
 		private AsyncCallback onAccept;
-
-
 		Socket listener;
 
-		public Server(int port) {
-			this.port = port;
-
+		public TCPServer(IPEndPoint endpoint) {
 			this.onAccept = this.OnAccept;
 
-			this.Bind();
+			this.Bind(endpoint);
 		}
 
-		//called from main loop
-		internal void SendPacketGroup(SSType ss, PacketGroup group) {
-			ThrowIfDisposed();
+		private static Socket CreateSocket() {
+			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		}
 
-			group.Enqueued();
-
-			lock (this.outgoingPackets) {
-				outgoingPackets.Enqueue(new OutgoingMessage(ss, group));
+		public void Bind(IPEndPoint ipep) {
+			if (this.IsBound) {
+				throw new Exception("Already bound");
 			}
 
-			outgoingPacketsWaitingEvent.Set();
-		}
+			listener = CreateSocket();
 
-		public void Bind() {
-			lock (this) {
-				if (!this.bound) {
-					IPEndPoint ipep = new IPEndPoint(IPAddress.Any, port);
-
-					listener = CreateSocket();
-
-					try {
-						listener.LingerState.Enabled = false;
+			try {
+				listener.LingerState.Enabled = false;
 #if !MONO
-						listener.ExclusiveAddressUse = false;
+				listener.ExclusiveAddressUse = false;
 #endif
 
-						listener.Bind(ipep);
-						listener.Listen(8);
+				listener.Bind(ipep);
+				listener.Listen(8);
 
-						Console.WriteLine("Listening on port "+port);
+				Console.WriteLine("Listening on port "+ipep.Port);
 
-						listener.BeginAccept(CreateSocket(), 0, onAccept, listener);
-					} catch (Exception e) {
-						throw new FatalException("Server socket bind failed.", e);
+				listener.BeginAccept(CreateSocket(), 0, onAccept, listener);
+			} catch (Exception e) {
+				throw new FatalException("Server socket bind failed.", e);
 
-					}
+			}
+		}
+
+		public IPEndPoint BoundTo {
+			get {
+				return (IPEndPoint) this.listener.LocalEndPoint;			
+			}
+		}
+
+		public bool IsBound {
+			get {
+				if (this.listener != null) {
+					return this.listener.Connected;
 				}
+				return false;
 			}
 		}
 
@@ -99,20 +101,13 @@ namespace SteamEngine.Network {
 			}
 
 			if (accepted != null) {
-				SSType newSS = Pool<SSType>.Acquire();
-				newSS.socket = accepted;
-				newSS.server = this;
+				TCPConnection<TProtocol, TState> newConn = Pool<TCPConnection<TProtocol, TState>>.Acquire();
+				newConn.socket = accepted;
 				try {
-					newSS.On_Connect();
-
-					if (this.On_NewClient(newSS)) {
-						BeginReceive(newSS);
-					} else {
-						newSS.Close("On_NewClient returned false.");
-					}
+					newConn.Init(this);
 				} catch (Exception e) {
 					Logger.WriteError(e);
-					newSS.Close(e.Message);
+					newConn.Close(e.Message);
 				}
 			}
 
@@ -126,21 +121,17 @@ namespace SteamEngine.Network {
 			}
 		}
 
-		protected virtual bool On_NewClient(SSType newSS) {
-			return true;
-		}
+		//protected virtual bool On_NewClient(TState newSS) {
+		//    return true;
+		//}
 
 		public void UnBind() {
-			lock (this) {
-				if (this.listener != null) {
-					listener.Close();
-					this.listener = null;
-					this.bound = false;
-				}
-			}
+			try {
+				listener.Close();
+			} catch { }
 		}
 
-		protected override void DisposeUnmanagedResources() {
+		protected override void On_DisposeUnmanagedResources() {
 			UnBind();
 		}
 	}

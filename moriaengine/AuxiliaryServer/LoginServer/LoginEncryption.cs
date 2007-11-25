@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 using SteamEngine.Common;
-using SteamEngine.Network;
+using SteamEngine.Communication;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginEncryption : IEncryption {
@@ -51,7 +51,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			uint orgTable1 = ( ( ( ~seed ) ^ 0x00001357 ) << 16 ) | ( ( seed ^ 0xffffaaaa ) & 0x0000ffff );
 			uint orgTable2 = ( ( seed ^ 0x43210000 ) >> 16 ) | ( ( ( ~seed ) ^ 0xabcdffff ) & 0xffff0000 );
 
-			using (Network.Buffer b = Pool<Network.Buffer>.Acquire()) {
+			using (Communication.Buffer b = Pool<Communication.Buffer>.Acquire()) {
 				byte[] bytes = b.bytes;
 
 				for (int i = 0, n = LoginKey.loginKeys.Length; i<n; i++) {

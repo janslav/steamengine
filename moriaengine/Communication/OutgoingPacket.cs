@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 using SteamEngine.Common;
 
-namespace SteamEngine.Network {
+namespace SteamEngine.Communication {
 	public abstract class OutgoingPacket : Poolable {
 		private byte[] buffer;
 		private int offset;

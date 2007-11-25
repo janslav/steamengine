@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common.csproj", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generated", "Generated.csproj", "{7761F98B-9485-4079-A5ED-D3F09921DEFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkCore", "NetworkCore.csproj", "{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication", "Communication.csproj", "{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuxiliaryServer", "AuxiliaryServer.csproj", "{C3647FCA-67E6-429A-A9F1-AABBEE1E7AE5}"
 EndProject

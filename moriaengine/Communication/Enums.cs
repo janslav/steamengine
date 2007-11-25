@@ -25,18 +25,12 @@ using System.Collections.Generic;
 
 using SteamEngine.Common;
 
-namespace SteamEngine.Network {
-	public class Poolable : Disposable {
-		internal PoolBase myPool;
+namespace SteamEngine.Communication {
 
-		protected override void DisposeManagedResources() {
-			if (myPool != null) {
-				myPool.Release(this);
-			}
-		}
-
-		internal protected virtual void Reset() {
-			this.disposed = false;
-		}
+	public enum EncryptionInitResult {
+		SuccessUseEncryption, 
+		SuccessNoEncryption,
+		NotEnoughData,
+		InvalidData //
 	}
 }
