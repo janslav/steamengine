@@ -899,7 +899,7 @@ namespace SteamEngine {
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
-		public DenyResult TryPickupItem(AbstractItem item, ushort amt) {
+		public DenyResult TryPickupItem(AbstractItem item, uint amt) {
 			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
 
@@ -1404,15 +1404,15 @@ namespace SteamEngine {
 		public readonly AbstractCharacter pickingChar;
 		public readonly AbstractItem manipulatedItem;
 
-		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, ushort amount)
+		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, uint amount)
 				: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
 			this.pickingChar = pickingChar;
 			this.manipulatedItem = manipulatedItem;
 		}
 
-		public ushort Amount {
+		public uint Amount {
 			get {
-				return Convert.ToUInt16(argv[3]);
+				return Convert.ToUInt32(this.argv[3]);
 			}
 			set {
 				argv[3] = value;
