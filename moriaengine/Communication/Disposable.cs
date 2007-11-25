@@ -24,17 +24,19 @@ using System.Collections;
 using System.Collections.Generic;
 
 using SteamEngine.Common;
-namespace SteamEngine.Network {
+namespace SteamEngine.Communication {
 	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm
 
 	public abstract class Disposable : IDisposable {
 		internal bool disposed = false;
 
 		// subclass should to implement these two methods
-		virtual protected void DisposeManagedResources() {
+		virtual protected void On_DisposeManagedResources() {
+
 		}
 
-		virtual protected void DisposeUnmanagedResources() {
+		virtual protected void On_DisposeUnmanagedResources() {
+
 		}
 
 		public virtual void Dispose() {
@@ -62,9 +64,9 @@ namespace SteamEngine.Network {
 			if (!this.disposed) {
 				if (disposing) // called from Dispose
                 {
-					DisposeManagedResources();
+					On_DisposeManagedResources();
 				}
-				DisposeUnmanagedResources();
+				On_DisposeUnmanagedResources();
 			}
 			disposed = true;
 		}

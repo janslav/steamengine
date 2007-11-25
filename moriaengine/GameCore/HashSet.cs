@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine {
-	public class HashSet<T> : IEnumerable<T> {
+	public class HashSet<T> : ICollection<T> {
 		private int[] buckets;
 		private int count;
 		private Entry[] entries;
@@ -289,5 +289,21 @@ namespace SteamEngine {
 
 			#endregion
 		}
+
+		#region ICollection<T> Members
+
+
+		public void CopyTo(T[] array, int arrayIndex) {
+			foreach (T entry in this) {
+				array[arrayIndex] = entry;
+				arrayIndex++;
+			}
+		}
+
+		public bool IsReadOnly {
+			get { return false; }
+		}
+
+		#endregion
 	}
 }

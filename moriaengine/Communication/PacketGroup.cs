@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 using SteamEngine.Common;
 
-namespace SteamEngine.Network {
+namespace SteamEngine.Communication {
 	public enum PacketGroupType {
 		SingleUse,
 		MultiUse,
@@ -43,16 +43,21 @@ namespace SteamEngine.Network {
 		private bool compressionDone;
 		private int isQueued;
 
+		private bool isMadeFree;
+
 		int uncompressedLen;
 		int compressedLen;
 
 		internal PacketGroupType type = PacketGroupType.MultiUse;
 
 		public PacketGroup() {
-			this.Reset();
+			this.On_Reset();
 		}
 
 		public void SetType(PacketGroupType type) {
+			if (this.isMadeFree) {
+				throw new Exception("Can't change type once the group is made free");
+			}
 			this.type = type;
 		}
 
@@ -61,23 +66,21 @@ namespace SteamEngine.Network {
 			packets.Add(packet);
 		}
 
-		internal protected override void Reset() {
+		protected override void On_Reset() {
 			this.isWritten = false;
 			this.compressionDone = false;
 			this.isQueued = 0;
 			this.type = PacketGroupType.MultiUse;
+			this.isMadeFree = false;
 
-			base.Reset();
+			this.uncompressed = Pool<Buffer>.Acquire();
+			this.compressed = Pool<Buffer>.Acquire();
+
+			base.On_Reset();
 		}
 
 		private void WritePackets() {
 			if (!this.isWritten) {
-
-				if (this.compressed == null) {
-					this.uncompressed = Pool<Buffer>.Acquire();
-					this.compressed = Pool<Buffer>.Acquire();
-				}
-
 				int position = 0;
 				foreach (OutgoingPacket packet in packets) {
 					position += packet.Write(this.uncompressed.bytes, position);
@@ -99,9 +102,11 @@ namespace SteamEngine.Network {
 					this.compressedLen = compression.Compress(
 						this.uncompressed.bytes, 0, this.compressed.bytes, 0, this.uncompressedLen);
 				} else {
-					this.uncompressed.Dispose();
+					this.compressed.Dispose();
 					this.compressed = this.uncompressed;
 					this.compressedLen = this.uncompressedLen;
+
+					this.uncompressed = null;
 				}
 				this.compressionDone = true;
 			}
@@ -122,6 +127,8 @@ namespace SteamEngine.Network {
 				this.packets.Clear();
 
 				this.compressed = newCompressed;
+
+				this.isMadeFree = true;
 
 				this.type = PacketGroupType.MultiUse;
 			}
@@ -158,22 +165,22 @@ namespace SteamEngine.Network {
 			}
 		}
 
-		protected override void DisposeManagedResources() {
-			if (this.uncompressed != null) {
+		protected override void On_DisposeManagedResources() {
+			if (this.compressed != null) {
 				this.compressed.Dispose();
+				this.compressed = null;
+			}
+			if (this.uncompressed != null) {
 				this.uncompressed.Dispose();
-
 				this.uncompressed = null;
 			}
-
-			this.compressed = null;
 
 			foreach (OutgoingPacket packet in this.packets) {
 				packet.Dispose();
 			}
 			this.packets.Clear();
 
-			base.DisposeManagedResources();
+			base.On_DisposeManagedResources();
 		}
 	}
 }

@@ -26,7 +26,7 @@ using System.Diagnostics;
 
 using SteamEngine.Common;
 
-namespace SteamEngine.Network {
+namespace SteamEngine.Communication {
 	public enum ReadPacketResult {
 		Success, 
 		DiscardSingle,
@@ -34,7 +34,11 @@ namespace SteamEngine.Network {
 		NeedMoreData
 	}
 
-	public abstract class IncomingPacket<SSType> : Poolable where SSType : SteamSocket {
+	public abstract class IncomingPacket<TProtocol, TConnection, TState, TEndPoint> : Poolable
+		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+
 		private byte[] buffer;
 		private int offset;
 		private int position;
@@ -70,7 +74,7 @@ namespace SteamEngine.Network {
 
 		protected abstract ReadPacketResult Read();
 
-		public abstract void Handle(SSType conn);
+		internal protected abstract void Handle(TConnection conn, TState state);
 
 
 		internal void OutputPacketLog() {

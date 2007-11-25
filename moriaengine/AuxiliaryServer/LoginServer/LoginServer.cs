@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-using SteamEngine.Network;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginServer : Server<LoginConnection> {
+	public class LoginServer : TCPServer<PacketHandlers, LoginClient> {
 		public LoginServer()
-			: base(Settings.loginServerPort) {
+			: base(Settings.loginServerEndpoint) {
 
 		}
-
-		protected override IncomingPacket<LoginConnection> GetPacketImplementation(byte id) {
-			return PacketHandlers.GetPacketImplementation(id);
-		}
-
 	}
-
 }

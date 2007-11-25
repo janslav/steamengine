@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+//using System;
+//using System.Collections.Generic;
+//using System.Text;
 
-namespace SteamEngine.AuxiliaryServer.ConsoleServer {
+//namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
-}
+//}
