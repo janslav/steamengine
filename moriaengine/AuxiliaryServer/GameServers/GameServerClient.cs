@@ -35,6 +35,10 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		public void On_Init(NamedPipeConnection<GameServerClient> conn) {
 			Console.WriteLine(this + " connected.");
+
+			RequestSendingLogStringsPacket packet = Pool<RequestSendingLogStringsPacket>.Acquire();
+			packet.Prepare(true);
+			conn.SendSinglePacket(packet);
 		}
 
 		public void On_Close(string reason) {

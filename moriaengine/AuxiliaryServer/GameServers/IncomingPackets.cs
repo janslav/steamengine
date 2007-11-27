@@ -14,8 +14,11 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		public IncomingPacket<NamedPipeConnection<GameServerClient>, GameServerClient, string> GetPacketImplementation(byte id) {
 			switch (id) {
-				case 0x05:
-					return Pool<GameServerLoginPacket>.Acquire();
+				case 0x01:
+					return Pool<IdentifyGameServerPacket>.Acquire();
+
+				case 0x02:
+					return Pool<LogStringPacket>.Acquire();
 			}
 
 			return null;
@@ -26,18 +29,35 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 	}
 
-	public class GameServerLoginPacket : GameServerIncomingPacket {
-		string message;
+	public class IdentifyGameServerPacket : GameServerIncomingPacket {
+		ushort port;
+		string serverName;
+		string executablePath;
 
 		protected override ReadPacketResult Read() {
-			byte len = this.DecodeByte();
-			this.message = this.DecodeAsciiString(len);
+			this.port = this.DecodeUShort();
+			this.serverName = this.DecodeUTF8String();
+			this.executablePath = this.DecodeUTF8String();
 
 			return ReadPacketResult.Success;
 		}
 
 		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
-			Console.WriteLine(state+" says:"+this.message);
+			Console.WriteLine(state+" identified as '"+this.serverName+"', port "+this.port+
+				", executable '"+this.executablePath+"'");
+		}
+	}
+
+	public class LogStringPacket : GameServerIncomingPacket {
+		string str;
+
+		protected override ReadPacketResult Read() {
+			str = this.DecodeUTF8String();
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
+			//Console.WriteLine(state+": "+str);
 		}
 	}
 }

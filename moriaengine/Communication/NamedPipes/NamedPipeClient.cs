@@ -52,8 +52,9 @@ namespace SteamEngine.Communication.NamedPipes {
 				  ClientKernelFunctions.FILE_FLAG_OVERLAPPED,
 				  IntPtr.Zero);
 
-			if (handle.IsInvalid)
-				throw new Exception("Failed to connect to namedpipe '"+pipeName+"'");
+			if (handle.IsInvalid) {
+				return null;
+			}
 
 
 			NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();

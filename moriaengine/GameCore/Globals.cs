@@ -440,7 +440,7 @@ namespace SteamEngine {
 
 				iniH.IniDone();
 				if (!exists) {
-					MainClass.keepRunning = false;
+					MainClass.keepRunning.Set();
 					throw new ShowMessageAndExitException(msgBox+"SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");
 				}
 			} catch (ShowMessageAndExitException smaee) {
@@ -469,19 +469,19 @@ namespace SteamEngine {
 			set { Logger.showCoreExceptions = value; }
 		}
 
-		public static int statClients {
+		public static int StatClients {
 			get {
 				return Server.clients;
 			}
 		}
 
-		public static uint statItems {
+		public static uint StatItems {
 			get {
 				return AbstractItem.Instances;
 			}
 		}
 
-		public static uint statChars {
+		public static uint StatChars {
 			get {
 				return AbstractCharacter.Instances;
 			}
@@ -496,7 +496,7 @@ namespace SteamEngine {
 		}
 
 		public static void Exit() {
-			MainClass.keepRunning = false;
+			MainClass.keepRunning.Set();
 		}
 
 		public static void SetConsoleTitle(string title) {
@@ -535,10 +535,6 @@ namespace SteamEngine {
 		public static Type se(string typename) {
 			//Console.WriteLine("type: "+Type.GetType("SteamEngine."+typename));
 			return Type.GetType("SteamEngine."+typename, true, true);
-		}
-
-		public static Type m() {
-			return typeof(MainClass);
 		}
 
 		//sphere compatibility

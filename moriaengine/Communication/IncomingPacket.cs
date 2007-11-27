@@ -60,13 +60,13 @@ namespace SteamEngine.Communication {
 				return ReadPacketResult.DiscardAll;
 			}
 
-			Sanity.IfTrueThrow(offset + lengthIn > this.lastPosition, "IncomingPacket.Read: offset + count > lastPosition. This should not happen.");
-
 			lengthOut = this.lastPosition - offset;
 			if (lengthOut < 0) {
 				lengthOut = 0;
 				return ReadPacketResult.NeedMoreData;
 			}
+
+			Sanity.IfTrueThrow(offset + lengthOut > this.lastPosition, "IncomingPacket.Read: offset + count > lastPosition. This should not happen.");
 
 			return result;
 		}
@@ -112,12 +112,12 @@ namespace SteamEngine.Communication {
 			Logger.WriteDebug(s);
 		}
 
-		public void SeekFromStart(int count) {
+		protected void SeekFromStart(int count) {
 			this.position = this.offset + count;
 			this.lastPosition = Math.Max(this.position, this.lastPosition);
 		}
 
-		public void SeekFromCurrent(int count) {
+		protected void SeekFromCurrent(int count) {
 			this.position += count;
 			this.lastPosition = Math.Max(this.position, this.lastPosition);
 		}
@@ -125,14 +125,14 @@ namespace SteamEngine.Communication {
 		[Summary("Decodes a unicode string, truncating it if it contains endlines (and replacing tabs with spaces).")]
 		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
 		[Param(0, "The number of bytes to decode (two per character)")]
-		public string DecodeUnicodeString(int len) {
+		protected string DecodeUnicodeString(int len) {
 			return DecodeUnicodeString(len, true);
 		}
 
 		[Summary("Decodes a unicode string.")]
 		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
 		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
-		public string DecodeUnicodeString(int len, bool truncateEndlines) {
+		protected string DecodeUnicodeString(int len, bool truncateEndlines) {
 			string str = Encoding.BigEndianUnicode.GetString(this.buffer, this.position, len);
 			int indexOfZero = str.IndexOf((char) 0);
 			if (indexOfZero > -1) {
@@ -149,7 +149,7 @@ namespace SteamEngine.Communication {
 		[Summary("Decodes an ascii string, truncating it if it contains endlines (and replacing tabs with spaces).")]
 		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
 		[Param(0, "The length of the string.")]
-		public string DecodeAsciiString(int len) {
+		protected string DecodeAsciiString(int len) {
 			return DecodeAsciiString(len, true);
 		}
 
@@ -157,7 +157,7 @@ namespace SteamEngine.Communication {
 		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
 		[Param(0, "The length of the string.")]
 		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
-		public string DecodeAsciiString(int len, bool truncateEndlines) {
+		protected string DecodeAsciiString(int len, bool truncateEndlines) {
 			string str="";
 			try {
 				str = Encoding.UTF8.GetString(this.buffer, this.position, len);
@@ -177,21 +177,21 @@ namespace SteamEngine.Communication {
 			}
 		}
 
-		public int DecodeInt() {
+		protected int DecodeInt() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(4);
 			return ((packet[startpos]<<24)+(packet[startpos+1]<<16)+(packet[startpos+2]<<8)+packet[startpos+3]);
 		}
 
-		public uint DecodeUInt() {
+		protected uint DecodeUInt() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(4);
 			return (uint) ((packet[startpos]<<24)+(packet[startpos+1]<<16)+(packet[startpos+2]<<8)+packet[startpos+3]);
 		}
 
-		public short DecodeShort() {
+		protected short DecodeShort() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(2);
@@ -205,17 +205,25 @@ namespace SteamEngine.Communication {
 			return (ushort) ((packet[startpos]<<8)+packet[startpos+1]);
 		}
 
-		public sbyte DecodeSByte() {
+		protected sbyte DecodeSByte() {
 			int startpos = this.position;
 			this.SeekFromCurrent(1);
 			return (sbyte) this.buffer[startpos];
 		}
 
-		public byte DecodeByte() {
+		protected byte DecodeByte() {
 			int startpos = this.position;
 			this.SeekFromCurrent(1);
 			return this.buffer[startpos];
 		}
 
+
+		//non-UO
+		protected string DecodeUTF8String() {
+			int bytesCount = DecodeInt();
+			string retVal = Encoding.UTF8.GetString(this.buffer, this.position, bytesCount);
+			SeekFromCurrent(bytesCount);
+			return retVal;
+		}
 	}
 }
