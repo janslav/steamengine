@@ -30,6 +30,7 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.ClassTemplates;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.AuxServerPipe;
 
 namespace SteamEngine {  
 	
@@ -40,14 +41,15 @@ namespace SteamEngine {
 		
 		//public static Logger logger;
 
-		public static bool keepRunning; 
+		public static readonly object globalLock = new object();
+
+		public static ManualResetEvent keepRunning = new ManualResetEvent(false);
 		
 		internal static bool loading=true;
 		
 
 		public static bool Loading { get {
 			return loading;
-
 		} }
 		 
 		public static bool nativeConsole = false;
@@ -56,17 +58,18 @@ namespace SteamEngine {
 		private static RunLevels runLevel=RunLevels.Unknown;
 		private static Queue nativeCommands=null;
 		
-		internal static readonly ArrayList emptyList = new ArrayList(1); //empty arraylist(TM) for various purposes :)
-		//I've changed it from (0) to (1), because if you give it 0 it just uses the default capacity, which is 16. (That's written in the MSDN docs for the ArrayList(int) constructor)
-		
 		internal static ConsConn winConsole;
 		
 		public static RunLevels RunLevel {
-			get { lock (typeof(MainClass)) { return runLevel; }}
+			get { 
+				lock (globalLock) { 
+					return runLevel; 
+				}
+			}
 		}
 
-		internal static void SetRunLevel (RunLevels level) {
-			lock (typeof(SteamEngine.MainClass)) {
+		internal static void SetRunLevel(RunLevels level) {
+			lock (globalLock) {
 				runLevel=level;
 			}
 		}
@@ -84,6 +87,7 @@ namespace SteamEngine {
 				}
 			}
 		}
+
 		//method: WinStart
 		//invoked instead of the Main() by the Winconsole if the server is run as console
 		//as the argument it gets Methodinfo of a method that sends its string argument to the console
@@ -106,32 +110,27 @@ namespace SteamEngine {
 		}
 
 		private static void SteamMain() {
-			keepRunning=true;
+			keepRunning.Reset();
 			try {
 				long time = HighPerformanceTimer.TickCount; //initializing HighPerformanceTimer
 				Common.Tools.ExitBinDirectory();
 				SetRunLevel(RunLevels.Startup);
-				CoreLogger.Init();
-				Globals.Init();
-				Packets.Prepared.Init();
 				if (! Init()) {
 					SetRunLevel(RunLevels.Dead);
 					return;
 				}
-				SetRunLevel(RunLevels.Running);
-				while (keepRunning) {
-					Cycle();
-				}
+
+				Cycle();
+
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.WriteFatal(smaee);
 				smaee.Show();
 			} catch (ThreadAbortException) {
 				SetRunLevel(RunLevels.Shutdown);
-				Logger.WriteWarning("Initialization process aborted");
+				Logger.WriteFatal("Initialization process aborted");
 			} catch (Exception globalexp) {
 				Logger.WriteFatal(globalexp);
 			} finally {
-				Console.WriteLine("Leaving Main Loop");
 				if (RunLevel==RunLevels.Running)
 					SetRunLevel(RunLevels.Shutdown);
 				FastDLL.ShutDownFastDLL();
@@ -142,9 +141,9 @@ namespace SteamEngine {
 		}
 		
 		private static bool Init() {
-			if (!keepRunning) {
-				return false;
-			}
+			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+			CoreLogger.Init();
 #if DEBUG
 			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (DEBUG build)"+" - "+Globals.serverName);
 #elif SANE
@@ -156,7 +155,16 @@ namespace SteamEngine {
 #endif
 			Console.WriteLine("http://steamengine.sourceforge.net");
 			Console.WriteLine("Running under "+Environment.OSVersion+", Framework version: "+Environment.Version+".");
-			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+			AuxServerPipeClient.Init();
+			
+			Globals.Init();
+			if (keepRunning.WaitOne(0, false)) {
+				return false;
+			}
+
+			Packets.Prepared.Init();
+
 			ClassTemplateParser.Init();
 			
 			if (!CompilerInvoker.CompileScripts(true)) {
@@ -185,7 +193,7 @@ namespace SteamEngine {
 			//Console.WriteLine("Resolving object references...");
 			DelayedResolver.ResolveAll();
 			//Region.ResolveLoadedRegions();
-			Map.Init();   //Sectors are created and items sorted on startup. This must be done AFTER DelayedResolver, or it can't tell what's on the ground and what's not.
+			Map.Init();   //Sectors are created and items sorted on startup. 
 			ClassManager.InitScripts();
 			PluginDef.Init();
 			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
@@ -199,7 +207,6 @@ namespace SteamEngine {
 				Globals.Resync();
 			}
 
-			Console.WriteLine("Starting Main Loop");
 			return true;
 		}
 		
@@ -354,19 +361,28 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		private static void Cycle() {
-			System.Threading.Thread.Sleep(1);
-			HandleNativeCmds();
-			Server.Cycle(); 
-			if (MainClass.RunLevel==RunLevels.Running) {
-				SteamEngine.Timers.Timer.Cycle(); 
-				SteamEngine.Packets.NetState.ProcessAll();
-				if (saveFlag) { 
-					WorldSaver.Save(); 
-					saveFlag=false; 
+			SetRunLevel(RunLevels.Running);
+			Console.WriteLine("Starting Main Loop");
+
+			while (!keepRunning.WaitOne(5, false)) {
+				lock (globalLock) {
+					HandleNativeCmds();
+
+					Server.Cycle();
+					if (MainClass.RunLevel==RunLevels.Running) {
+						SteamEngine.Timers.Timer.Cycle();
+						SteamEngine.Packets.NetState.ProcessAll();
+						if (saveFlag) {
+							WorldSaver.Save();
+							saveFlag=false;
+						}
+					}
 				}
 			}
+
+			Console.WriteLine("Leaving Main Loop");
 		}
 		
 		internal static void Exit() {
@@ -374,7 +390,7 @@ namespace SteamEngine {
 			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
 				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
 			}
-			keepRunning = false;
+			keepRunning.Set();
 			Timers.Timer.Clear();
 			Server.Exit();
 		}

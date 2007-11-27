@@ -83,7 +83,7 @@ namespace SteamEngine {
 		public static void ConsoleCommand(ConsConn c, string command) {
 			if (MainClass.RunLevel==RunLevels.AwaitingRetry) {
 				if (command=="exit") {//check if we can run it?
-					MainClass.keepRunning = false;
+					MainClass.keepRunning.Set();
 				} else {
 					MainClass.RetryRecompilingScripts();
 				}

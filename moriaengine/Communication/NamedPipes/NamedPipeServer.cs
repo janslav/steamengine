@@ -37,10 +37,9 @@ namespace SteamEngine.Communication.NamedPipes {
 		string pipename;
 		Thread listenThread;
 
-		public NamedPipeServer(string pipename, IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject)
+		public NamedPipeServer(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject)
 			: base(protocol, lockObject) {
 
-			this.Bind(pipename);
 		}
 
 		public void Bind(string pipename) {

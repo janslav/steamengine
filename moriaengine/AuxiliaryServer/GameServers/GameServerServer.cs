@@ -11,7 +11,9 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 	public class GameServerServer : NamedPipeServer<GameServerClient> {
 
 		public GameServerServer()
-			: base(@"\\.\pipe\myNamedPipe", GameServerProtocol.instance, MainClass.globalLock) {
+			: base(GameServerProtocol.instance, MainClass.globalLock) {
+
+			this.Bind(Common.Tools.commonPipeName);
 
 		}
 	}

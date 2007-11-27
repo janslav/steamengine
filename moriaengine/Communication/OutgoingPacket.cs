@@ -234,6 +234,14 @@ namespace SteamEngine.Communication {
 			}
 		}
 
+		//non-UO
+		protected void EncodeUTF8String(string value) {
+			int valueLength = value.Length;
+			int encodedLength = Encoding.UTF8.GetBytes(value, 0, valueLength, this.buffer, this.position+4);
+			EncodeInt(encodedLength);
+			SeekFromCurrent(encodedLength);
+		}
+
 		[Conditional("DEBUG")]
 		protected void OutputPacketLog() {
 			OutputPacketLog(this.offset, this.position);

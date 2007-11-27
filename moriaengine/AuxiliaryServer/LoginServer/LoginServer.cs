@@ -10,10 +10,9 @@ using SteamEngine.Common;
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginServer : TCPServer<LoginClient> {
 		public LoginServer()
-			: base(Settings.loginServerEndpoint, 
-			PacketHandlers.instance,
-			MainClass.globalLock) {
+				: base(PacketHandlers.instance, MainClass.globalLock) {
 
+			this.Bind(Settings.loginServerEndpoint);
 		}
 	}
 }

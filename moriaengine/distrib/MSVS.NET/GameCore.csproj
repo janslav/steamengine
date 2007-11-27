@@ -245,6 +245,15 @@
       <Link>AssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\GameCore\AuxServerPipe\AuxServerPipeClient.cs">
+      <Link>AuxServerPipe\AuxServerPipeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\AuxServerPipe\IncomingPackets.cs">
+      <Link>AuxServerPipe\IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\AuxServerPipe\OutgoingPackets.cs">
+      <Link>AuxServerPipe\OutgoingPackets.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\CacheDictionary.cs">
       <Link>CacheDictionary.cs</Link>
     </Compile>

@@ -36,11 +36,10 @@ namespace SteamEngine.Communication.TCP {
 		private AsyncCallback onAccept;
 		Socket listener;
 
-		public TCPServer(IPEndPoint endpoint, IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
+		public TCPServer(IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
 				: base(protocol, lockObject) {
 			this.onAccept = this.OnAccept;
 
-			this.Bind(endpoint);
 		}
 
 		private static Socket CreateSocket() {
