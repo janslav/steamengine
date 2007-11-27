@@ -29,15 +29,15 @@ namespace SteamEngine.CompiledScripts {
 		public HidingSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
 		}
 
-		public static PluginKey pluginKey = PluginKey.Get("stealthstep");
+		public static PluginKey pluginKey = PluginKey.Get("hiddenHelper");
 
-		public static PluginDef p_StealthStep;
-		public static PluginDef P_StealthStep {
+		public static PluginDef p_hiddenHelper;
+		public static PluginDef P_HiddenHelper {
 			get {
-				if (p_StealthStep == null) {
-					p_StealthStep = PluginDef.Get("p_StealthStep");
+				if (p_hiddenHelper == null) {
+					p_hiddenHelper = PluginDef.Get("p_hiddenHelper");
 				}
-				return p_StealthStep;
+				return p_hiddenHelper;
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void Hide(Character self) {
 			self.ClilocSysMessage(501240);//You have hidden yourself well.
 			self.Flag_Hidden = true;
-			self.AddPlugin(pluginKey, P_StealthStep.Create());
+			self.AddPlugin(pluginKey, P_HiddenHelper.Create());
 		}
 
 		[SteamFunction]

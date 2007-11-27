@@ -257,13 +257,6 @@ ADVRATE=2.5,50.0,200.0
 ON=@Fail
 	src.message "You burn the food to a crisp! It's ruined."
 
-[DETECTHIDDENSKILLDEF 14]
-DEFNAME=Skill_DetectHidden
-KEY="DetectingHidden"
-DELAY=3.0,2.0
-EFFECT=3,7	//Radius of detecting
-ADVRATE=2.5,50.0,200.0
-	
 [DISCORDANCESKILLDEF 15]
 DEFNAME=Skill_Discordance
 KEY="Discordance"
@@ -344,24 +337,6 @@ ADVRATE=2.5,50.0,200.0
 
 ON=@Fail
 	src.message "You don't seem to be able to persuade that to move."
-
-[HIDINGSKILLDEF 21]
-DEFNAME=Skill_Hiding
-KEY="Hiding"
-//TITLE="Rogue"
-//PROMPTMSG=""
-DELAY = 1.0, 2.0
-//STAT_STR=20
-//STAT_INT=60
-//STAT_DEX=90
-//BONUS_STR=0
-//BONUS_DEX=80
-//BONUS_INT=20
-//BONUSSTATS=25
-ADVRATE=2.5,50.0,200.0
-
-//ON=@Fail
-//	src.message "You can't seem to hide here."
 
 [SCRIPTEDSKILLDEF 22]
 DEFNAME=Skill_Provocation

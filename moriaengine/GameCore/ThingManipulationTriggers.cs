@@ -856,8 +856,9 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-
-		public void Equip(AbstractItem i) {
+		
+		//
+		public void TryEquip(AbstractItem i) {
 			i.Cont = this;
 		}
 
@@ -1245,6 +1246,35 @@ namespace SteamEngine {
 				byte layer = item.Layer;
 				if ((layer < sentLayers) && (layer > 0)) {
 
+					bool succeededUnequipping = true;
+					if (layer != (byte) LayerNames.Special) {
+						if ((layer == (byte) LayerNames.Hand1) || (layer == (byte) LayerNames.Hand2)) {
+							bool twoHanded = item.IsTwoHanded;
+							AbstractItem h1 = this.FindLayer(LayerNames.Hand1);
+							if (h1 != null) {
+								if (twoHanded || (layer == (byte) LayerNames.Hand1) || h1.IsTwoHanded) {
+									succeededUnequipping = this.TryUnequip(h1);
+								}
+							}
+							AbstractItem h2 = this.FindLayer(LayerNames.Hand2);
+							if (h2 != null) {
+								if (twoHanded || (layer == (byte) LayerNames.Hand2) || h2.IsTwoHanded) {
+									succeededUnequipping = succeededUnequipping && this.TryUnequip(h2);
+								}
+							}
+						} else {
+							//unequip what's in there and throw it on ground.
+							AbstractItem prevItem = this.FindLayer(layer);
+							if (prevItem != null) {
+								succeededUnequipping = this.TryUnequip(prevItem);
+							}
+						}
+					}
+
+					if (!succeededUnequipping) {
+						return DenyResult.Deny_YouAreAlreadyHoldingAnItem;
+					}
+
 					DenyEquipArgs args = new DenyEquipArgs(this, item, target, layer);
 
 					bool cancel = this.TryCancellableTrigger(TriggerKey.denyEquipOnChar, args);
@@ -1288,6 +1318,14 @@ namespace SteamEngine {
 			}
 
 			return this.TryPutItemOnChar(target);
+		}
+
+		private bool TryUnequip(AbstractItem i) {
+			DenyResult dr = this.TryPickupItem(i, 1);
+			if (dr == DenyResult.Allow) {
+				return this.TryGetRidOfDraggedItem();
+			}
+			return false;
 		}
 
 		#endregion client trigger_deny methods
