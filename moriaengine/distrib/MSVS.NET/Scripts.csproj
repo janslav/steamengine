@@ -411,13 +411,13 @@
       <Link>systems\skills\Healing\Healing.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Hiding\DetectHidden.cs">
-      <Link>systems\skills\DetectHidden.cs</Link>
+      <Link>systems\skills\Hiding\DetectHidden.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\HiddenHelperPlugin.Generated.cs">
+      <Link>systems\skills\Hiding\HiddenHelperPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
       <Link>systems\skills\Hiding\Hiding.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Hiding\StealthStepPlugin.Generated.cs">
-      <Link>systems\skills\Hiding\StealthStepPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
       <Link>systems\skills\ItemID.cs</Link>

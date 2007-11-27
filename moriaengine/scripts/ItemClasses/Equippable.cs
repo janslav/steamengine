@@ -43,12 +43,23 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		public override void On_DClick(AbstractCharacter from) {
-			//(TODO): check ownership(?), trigger snooping...
-			if (this.Cont != from) {
-				this.Cont = from;
-				//from.TryEquip(from, this);
+			if (this.IsEquippable) {
+				//first unequip whatever we may already have equipped
+				//now pick it up and equip
+				//(TODO): check ownership(?), trigger snooping...
+				DenyResult dr = from.TryPickupItem(this, 1);
+				if (dr == DenyResult.Allow) {
+					dr = from.TryEquipItemOnChar(from);
+				}
+				if (dr != DenyResult.Allow) {
+					GameConn conn = from.Conn;
+					if (conn != null) {
+						Server.SendDenyResultMessage(conn, this, dr);
+					}
+				}
 			}
 		}
+
 		public override bool IsTwoHanded {
 			get {
 				if (Def!=null) return TypeDef.TwoHanded;
