@@ -401,9 +401,6 @@
     <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs">
       <Link>systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\DetectHidden.cs">
-      <Link>systems\skills\DetectHidden.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Discordance\Discordance.cs">
       <Link>systems\skills\Discordance\Discordance.cs</Link>
     </Compile>
@@ -412,6 +409,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Healing\Healing.cs">
       <Link>systems\skills\Healing\Healing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\DetectHidden.cs">
+      <Link>systems\skills\DetectHidden.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
       <Link>systems\skills\Hiding\Hiding.cs</Link>
