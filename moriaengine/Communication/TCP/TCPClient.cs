@@ -29,14 +29,17 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public class TCPClientFactory<TProtocol, TState> :
-		AsyncCore<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>,  
-		IClientFactory<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>
-		where TProtocol : IProtocol<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new() {
+	public class TCPClientFactory<TState> :
+		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,  
+		IClientFactory<TCPConnection<TState>, TState, IPEndPoint>
+		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
 
+		public TCPClientFactory(IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
+			: base(protocol, lockObject) {
 
-		public TState Connect(IPEndPoint endpoint) {
+		}
+
+		public TCPConnection<TState> Connect(IPEndPoint endpoint) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 	}

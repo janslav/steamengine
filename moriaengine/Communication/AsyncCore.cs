@@ -28,56 +28,67 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication {
-	public abstract class AsyncCore<TProtocol, TConnection, TState, TEndPoint> : Disposable,
-		IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public abstract class AsyncCore<TConnection, TState, TEndPoint> : Disposable//,
+		//IAsyncCore<TConnection, TState, TEndPoint>
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 
 
-		Queue<IncomingMessage> incomingPackets;
-		Queue<IncomingMessage> incomingPacketsWorking;
+		//Queue<IncomingMessage> incomingPackets;
+		//Queue<IncomingMessage> incomingPacketsWorking;
 
-		internal AutoResetEvent outgoingPacketsWaitingEvent = new AutoResetEvent(false);
+		private AutoResetEvent outgoingPacketsWaitingEvent = new AutoResetEvent(false);
 
-		internal ManualResetEvent workersNeedStopping = new ManualResetEvent(false);
+		private ManualResetEvent workersNeedStopping = new ManualResetEvent(false);
 
-		internal Thread workerAlpha;
-		internal Thread workerBeta;
-		internal Thread workerGama;
-		internal Queue<OutgoingMessage> outgoingPackets;
+		private Thread workerAlpha;
+		private Thread workerBeta;
+		private Thread workerGamma;
+		private Queue<OutgoingMessage> outgoingPackets;
 
-		internal TProtocol protocol = new TProtocol();
+		internal readonly IProtocol<TConnection, TState, TEndPoint> protocol;
 
-		public AsyncCore() {
-			this.incomingPackets = new Queue<IncomingMessage>();
-			this.incomingPacketsWorking = new Queue<IncomingMessage>();
+		private object lockObject;
+
+		public AsyncCore(IProtocol<TConnection, TState, TEndPoint> protocol, object lockObject) {
+			//this.incomingPackets = new Queue<IncomingMessage>();
+			//this.incomingPacketsWorking = new Queue<IncomingMessage>();
+
+			this.protocol = protocol;
 
 			this.outgoingPackets = new Queue<OutgoingMessage>();
 
-			this.workerAlpha = new Thread(WorkerThreadMethod);
-			this.workerBeta = new Thread(WorkerThreadMethod);
-			this.workerGama = new Thread(WorkerThreadMethod);
-			this.workerAlpha.IsBackground = true;
-			this.workerBeta.IsBackground = true;
-			this.workerGama.IsBackground = true;
-			this.workerAlpha.Start();
-			this.workerBeta.Start();
-			this.workerGama.Start();
+			string threadsName = this.GetType().Name;
 
-			
+			this.workerAlpha = CreateAndStartWorkerThread(threadsName+"_Worker_Alpha");
+			this.workerBeta = CreateAndStartWorkerThread(threadsName+"_Worker_Beta");
+			this.workerGamma = CreateAndStartWorkerThread(threadsName+"_Worker_Gamma");
+
+			this.lockObject = lockObject;
 		}
 
-		internal struct IncomingMessage {
-			internal readonly TConnection conn;
-			internal readonly IncomingPacket<TProtocol, TConnection, TState, TEndPoint> packet;
-
-			internal IncomingMessage(TConnection conn, IncomingPacket<TProtocol, TConnection, TState, TEndPoint> packet) {
-				this.conn = conn;
-				this.packet = packet;
-			}
+		private Thread CreateAndStartWorkerThread(string name) {
+			Thread t = new Thread(this.WorkerThreadMethod);
+			t.Name = name;
+			t.IsBackground = true;
+			t.Start();
+			return t;
 		}
+
+		public object LockObject {
+			get { return this.lockObject; }
+		}
+
+		//internal struct IncomingMessage {
+		//    internal readonly TConnection conn;
+		//    internal readonly IncomingPacket<TConnection, TState, TEndPoint> packet;
+
+		//    internal IncomingMessage(TConnection conn, IncomingPacket<TConnection, TState, TEndPoint> packet) {
+		//        this.conn = conn;
+		//        this.packet = packet;
+		//    }
+		//}
 
 		internal class OutgoingMessage {
 			internal readonly TConnection conn;
@@ -90,26 +101,38 @@ namespace SteamEngine.Communication {
 		}
 
 		//called from main loop (!)
-		public void Cycle() {
-			ThrowIfDisposed();
+		//public void Cycle() {
+		//    ThrowIfDisposed();
 
-			lock (this.incomingPackets) {
-				Queue<IncomingMessage> temp = this.incomingPacketsWorking;
-				this.incomingPacketsWorking = this.incomingPackets;
-				this.incomingPackets = temp;
-			}
+		//    lock (this.incomingPackets) {
+		//        Queue<IncomingMessage> temp = this.incomingPacketsWorking;
+		//        this.incomingPacketsWorking = this.incomingPackets;
+		//        this.incomingPackets = temp;
+		//    }
 
-			while (this.incomingPacketsWorking.Count > 0) {
-				IncomingMessage msg = this.incomingPacketsWorking.Dequeue();
-				try {
-					TConnection conn = msg.conn;
-					msg.packet.Handle(conn, conn.State);
-				} catch (FatalException) {
-					throw;
-				} catch (Exception e) {
-					Logger.WriteError(e);
+		//    while (this.incomingPacketsWorking.Count > 0) {
+		//        IncomingMessage msg = this.incomingPacketsWorking.Dequeue();
+		//        try {
+		//            TConnection conn = msg.conn;
+		//            msg.packet.Handle(conn, conn.State);
+		//        } catch (FatalException) {
+		//            throw;
+		//        } catch (Exception e) {
+		//            Logger.WriteError(e);
+		//        }
+		//        msg.packet.Dispose();
+		//    }
+		//}
+
+
+		protected void InitNewConnection(TConnection newConn) {
+			try {
+				lock (this.lockObject) {
+					newConn.Init(this);
 				}
-				msg.packet.Dispose();
+			} catch (Exception e) {
+				Logger.WriteError(e);
+				newConn.Close(e.Message);
 			}
 		}
 
@@ -124,9 +147,12 @@ namespace SteamEngine.Communication {
 		}
 
 		//from async background thread
-		internal void EnqueueIncoming(TConnection conn, IncomingPacket<TProtocol, TConnection, TState, TEndPoint> packet) {
-			lock (this.incomingPackets) {
-				this.incomingPackets.Enqueue(new IncomingMessage(conn, packet));
+		internal void HandlePacket(TConnection conn, TState state, IncomingPacket<TConnection, TState, TEndPoint> packet) {
+			//lock (this.incomingPackets) {
+			//    this.incomingPackets.Enqueue(new IncomingMessage(conn, packet));
+			//}
+			lock (this.lockObject) {
+				packet.Handle(conn, state);
 			}
 		}
 

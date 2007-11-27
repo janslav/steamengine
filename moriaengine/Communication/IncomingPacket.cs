@@ -34,10 +34,9 @@ namespace SteamEngine.Communication {
 		NeedMoreData
 	}
 
-	public abstract class IncomingPacket<TProtocol, TConnection, TState, TEndPoint> : Poolable
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public abstract class IncomingPacket<TConnection, TState, TEndPoint> : Poolable
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		private byte[] buffer;
 		private int offset;

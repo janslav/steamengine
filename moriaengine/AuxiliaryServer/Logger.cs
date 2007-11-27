@@ -7,7 +7,6 @@ namespace SteamEngine.AuxiliaryServer {
 	public class Logger : SteamEngine.Common.Logger {
 
 		public static void Init() {
-
 			new Logger();
 
 			SteamEngine.Common.Logger.OpenFile();

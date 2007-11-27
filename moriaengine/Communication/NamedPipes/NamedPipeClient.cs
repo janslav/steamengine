@@ -22,102 +22,64 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
-	public class NamedPipeClientFactory<TProtocol, TState> :
-		AsyncCore<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>,
-		IClientFactory<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>
-		where TProtocol : IProtocol<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>, new()
-		where TState : IConnectionState<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>, new() {
+	public class NamedPipeClientFactory<TState> :
+		AsyncCore<NamedPipeConnection<TState>, TState, string>,
+		IClientFactory<NamedPipeConnection<TState>, TState, string>
+		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
 
-		public TState Connect(string pipeName) {
-			throw new Exception("The method or operation is not implemented.");
+
+		public NamedPipeClientFactory(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject)
+			: base(protocol, lockObject) {
+		}
+
+
+		public NamedPipeConnection<TState> Connect(string pipeName) {
+			SafeFileHandle handle =
+               ClientKernelFunctions.CreateFile(
+				  pipeName,
+				  ClientKernelFunctions.GENERIC_READ | ClientKernelFunctions.GENERIC_WRITE,
+				  0,
+				  IntPtr.Zero,
+				  ClientKernelFunctions.OPEN_EXISTING,
+				  ClientKernelFunctions.FILE_FLAG_OVERLAPPED,
+				  IntPtr.Zero);
+
+			if (handle.IsInvalid)
+				throw new Exception("Failed to connect to namedpipe '"+pipeName+"'");
+
+
+			NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
+			newConn.SetFields(pipeName, handle);
+			InitNewConnection(newConn);
+
+			return newConn;
 		}
 	}
 
+	internal static class ClientKernelFunctions {
 
-	//public class TCPClient : TCPConnection {
-	//    internal Client client;
+		[DllImport("kernel32.dll", SetLastError=true)]
+		internal static extern SafeFileHandle CreateFile(
+		   String pipeName,
+		   uint dwDesiredAccess,
+		   uint dwShareMode,
+		   IntPtr lpSecurityAttributes,
+		   uint dwCreationDisposition,
+		   uint dwFlagsAndAttributes,
+		   IntPtr hTemplate);
 
-	//    public TCPClient() {
+		internal const uint GENERIC_READ = (0x80000000);
+		internal const uint GENERIC_WRITE = (0x40000000);
+		internal const uint OPEN_EXISTING = 3;
+		internal const uint FILE_FLAG_OVERLAPPED = (0x40000000);
 
-	//    }
-
-	//    public override IEncryption Encryption {
-	//        get {
-	//            return client.Encryption;
-	//        }
-	//    }
-
-	//    protected override void On_Close(LogStr reason) {
-	//        this.client.On_Close(reason);
-	//        this.client.Dispose();
-	//    }
-
-	//    protected override void On_Close(string reason) {
-	//        this.client.On_Close(reason);
-	//        this.client.Dispose();
-	//    }
-	//}
-
-	//public abstract class Client : TCPImplementation<TCPClient> {
-	//    TCPClient ss;
-
-	//    public Client() {
-	//        this.ss = Pool<TCPClient>.Acquire();
-	//        this.ss.client = this;
-	//    }
-
-	//    public void Connect(string remoteHost, int remotePort) {
-	//        this.ss.socket = this.CreateSocket();
-	//        this.ss.socket.Connect(remoteHost, remotePort);
-
-	//        this.BeginReceive(this.ss);
-	//    }
-
-	//    public virtual IEncryption Encryption {
-	//        get {
-	//            return null;
-	//        }
-	//    }
-
-	//    public void SendPacketGroup(PacketGroup group) {
-	//        ThrowIfDisposed();
-	//        if ((ss.socket == null) || (!ss.socket.Connected)) {
-	//            throw new InvalidOperationException("Client not connected");
-	//        }
-
-	//        group.Enqueued();
-
-	//        lock (this.outgoingPackets) {
-	//            outgoingPackets.Enqueue(new OutgoingMessage(this.ss, group));
-	//        }
-
-	//        outgoingPacketsWaitingEvent.Set();
-	//    }
-
-	//    public void Close(string reason) {
-	//        this.ss.Close(reason);
-	//    }
-
-	//    public void Close(LogStr reason) {
-	//        this.ss.Close(reason);
-	//    }
-
-	//    protected override void DisposeUnmanagedResources() {
-	//        this.ss.Dispose();
-
-	//        base.DisposeUnmanagedResources();
-	//    }
-
-	//    protected internal virtual void On_Close(LogStr reason) {
-	//    }
-
-	//    protected internal virtual void On_Close(string reason) {
-	//    }
-	//}
+	}
 }

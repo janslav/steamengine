@@ -8,8 +8,11 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class PacketHandlers : IProtocol<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> {
-		IncomingPacket<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> IProtocol<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint>.GetPacketImplementation(byte id) {
+	public class PacketHandlers : IProtocol<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
+		public static readonly PacketHandlers instance = new PacketHandlers();
+
+
+		public IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id) {
 			switch (id) {
 				case 0x80:
 					return Pool<GameLoginPacket>.Acquire();
@@ -25,7 +28,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 	}
 
-	public abstract class LoginIncomingPacket : IncomingPacket<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> {
+	public abstract class LoginIncomingPacket : IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
 
 	}
 
@@ -35,7 +38,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return ReadPacketResult.DiscardSingle;
 		}
 
-		protected override void Handle(TCPConnection<PacketHandlers, LoginClient> conn, LoginClient state) {
+		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 	}
@@ -49,7 +52,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<PacketHandlers, LoginClient> conn, LoginClient state) {
+		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
 			Console.WriteLine(state+" identified as "+this.accname);
 
 			ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
@@ -85,7 +88,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<PacketHandlers, LoginClient> conn, LoginClient state) {
+		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
 			LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
 			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
 			if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {

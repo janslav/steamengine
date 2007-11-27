@@ -50,6 +50,18 @@
     <Compile Include="..\..\AuxiliaryServer\ConsoleServer\OutgoingPackets.cs">
       <Link>ConsoleServer\OutgoingPackets.cs</Link>
     </Compile>
+    <Compile Include="..\..\auxiliaryserver\gameservers\GameServerClient.cs">
+      <Link>GameServers\GameServerClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\auxiliaryserver\gameservers\GameServerServer.cs">
+      <Link>GameServers\GameServerServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\auxiliaryserver\gameservers\IncomingPackets.cs">
+      <Link>GameServers\IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\auxiliaryserver\gameservers\OutgoingPackets.cs">
+      <Link>GameServers\OutgoingPackets.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\Logger.cs">
       <Link>Logger.cs</Link>
     </Compile>

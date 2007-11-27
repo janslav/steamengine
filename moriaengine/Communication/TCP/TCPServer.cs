@@ -28,16 +28,16 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public abstract class TCPServer<TProtocol, TState> : 
-		AsyncCore<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>,
-		IServer<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>
-		where TProtocol : IProtocol<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new() {
+	public class TCPServer<TState> : 
+		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,
+		IServer<TCPConnection<TState>, TState, IPEndPoint>
+		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
 
 		private AsyncCallback onAccept;
 		Socket listener;
 
-		public TCPServer(IPEndPoint endpoint) {
+		public TCPServer(IPEndPoint endpoint, IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
+				: base(protocol, lockObject) {
 			this.onAccept = this.OnAccept;
 
 			this.Bind(endpoint);
@@ -81,7 +81,7 @@ namespace SteamEngine.Communication.TCP {
 		public bool IsBound {
 			get {
 				if (this.listener != null) {
-					return this.listener.Connected;
+					return this.listener.IsBound;
 				}
 				return false;
 			}
@@ -101,14 +101,9 @@ namespace SteamEngine.Communication.TCP {
 			}
 
 			if (accepted != null) {
-				TCPConnection<TProtocol, TState> newConn = Pool<TCPConnection<TProtocol, TState>>.Acquire();
+				TCPConnection<TState> newConn = Pool<TCPConnection<TState>>.Acquire();
 				newConn.socket = accepted;
-				try {
-					newConn.Init(this);
-				} catch (Exception e) {
-					Logger.WriteError(e);
-					newConn.Close(e.Message);
-				}
+				InitNewConnection(newConn);
 			}
 
 			//continue in accepting
@@ -126,6 +121,9 @@ namespace SteamEngine.Communication.TCP {
 		//}
 
 		public void UnBind() {
+			if (this.IsBound) {
+				Console.WriteLine("Stopped listening on port "+this.BoundTo.Port);
+			}
 			try {
 				listener.Close();
 			} catch { }
@@ -133,6 +131,8 @@ namespace SteamEngine.Communication.TCP {
 
 		protected override void On_DisposeUnmanagedResources() {
 			UnBind();
+
+			base.On_DisposeUnmanagedResources();
 		}
 	}
 }

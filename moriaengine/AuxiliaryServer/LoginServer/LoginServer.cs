@@ -8,9 +8,11 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginServer : TCPServer<PacketHandlers, LoginClient> {
+	public class LoginServer : TCPServer<LoginClient> {
 		public LoginServer()
-			: base(Settings.loginServerEndpoint) {
+			: base(Settings.loginServerEndpoint, 
+			PacketHandlers.instance,
+			MainClass.globalLock) {
 
 		}
 	}

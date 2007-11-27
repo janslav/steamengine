@@ -27,16 +27,15 @@ using System.Threading;
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
-	public abstract class AbstractConnection<TProtocol, TConnection, TState, TEndPoint> : Poolable
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public abstract class AbstractConnection<TConnection, TState, TEndPoint> : Poolable
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
-		internal AsyncCore<TProtocol, TConnection, TState, TEndPoint> core;
+		private AsyncCore<TConnection, TState, TEndPoint> core;
 
 		protected Buffer receivingBuffer;
-		protected Buffer decryptBuffer;
-		protected Buffer decompressBuffer;
+		private Buffer decryptBuffer;
+		private Buffer decompressBuffer;
 
 		protected int receivedDataLength;
 
@@ -45,11 +44,13 @@ namespace SteamEngine.Communication {
 		private bool encryptionInitialised;
 		private bool useEncryption;
 
-		protected readonly object lockObject = new object();
+		private TState state;
 
-		TState state;
-
-		TProtocol protocol = new TProtocol();
+		public AbstractConnection() {
+			if (this.GetType() != typeof(TConnection)) {
+				throw new Exception("The type must be the same as the TConnection generic parameter");
+			}
+		}
 
 		protected override void On_Reset() {
 			this.receivingBuffer = Pool<Buffer>.Acquire();
@@ -90,20 +91,20 @@ namespace SteamEngine.Communication {
 		public void Close(string reason) {
 			this.state.On_Close(reason);
 
-			On_Close(reason);
+			//On_Close(reason);
 			base.Dispose();
 		}
 
-		public virtual void On_Close(string reason) {
+		//public virtual void On_Close(string reason) {
 
-		}
+		//}
 
 		public abstract bool IsConnected { get; }
 
 		public abstract TEndPoint EndPoint { get; }
 
 
-		public void Init(AsyncCore<TProtocol, TConnection, TState, TEndPoint> core) {
+		internal void Init(AsyncCore<TConnection, TState, TEndPoint> core) {
 			this.core = core;
 			this.On_Init();
 
@@ -141,7 +142,7 @@ namespace SteamEngine.Communication {
 				bool loop = true;
 				while (loop && (length > 0)) {
 					byte id = bytes[offset];
-					IncomingPacket<TProtocol, TConnection, TState, TEndPoint> packet = this.protocol.GetPacketImplementation(id);
+					IncomingPacket<TConnection, TState, TEndPoint> packet = this.core.protocol.GetPacketImplementation(id);
 					length--;
 					offset++;
 
@@ -162,7 +163,7 @@ namespace SteamEngine.Communication {
 							loop = false;
 							break;
 						case ReadPacketResult.Success:
-							this.core.EnqueueIncoming((TConnection) this, packet);
+							this.core.HandlePacket((TConnection) this, this.state, packet);
 							goto default;
 						case ReadPacketResult.DiscardAll:
 							read = length;
