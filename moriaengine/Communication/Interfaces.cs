@@ -28,20 +28,19 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
 
-	public interface IClientFactory<TProtocol, TConnection, TState, TEndPoint> :
-		IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public interface IClientFactory<TConnection, TState, TEndPoint> //:
+		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
-		TState Connect(TEndPoint endpoint);
+		TConnection Connect(TEndPoint endpoint);
 	}
 
-	public interface IServer<TProtocol, TConnection, TState, TEndPoint> :
-		IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public interface IServer<TConnection, TState, TEndPoint> //:
+		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		//where TProtocol : IProtocol<TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		void Bind(TEndPoint endpoint);
 		TEndPoint BoundTo { get; }
@@ -49,27 +48,26 @@ namespace SteamEngine.Communication {
 		void UnBind();
 	}
 
-	public interface IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	//public interface IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+	//    where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+	//    where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
+	//    where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
 
-		//called from main loop (!)
-		void Cycle();
-	}
+	//    object LockObject { get; }
+	//}
 
-	public interface IProtocol<TProtocol, TConnection, TState, TEndPoint>
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public interface IProtocol<TConnection, TState, TEndPoint>
+		//where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 		
-		IncomingPacket<TProtocol, TConnection, TState, TEndPoint> GetPacketImplementation(byte id);
+		IncomingPacket<TConnection, TState, TEndPoint> GetPacketImplementation(byte id);
 	}
 
-	public interface IConnectionState<TProtocol, TConnection, TState, TEndPoint>
-		where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TConnection : AbstractConnection<TProtocol, TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TProtocol, TConnection, TState, TEndPoint>, new() {
+	public interface IConnectionState<TConnection, TState, TEndPoint>
+		//where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		IEncryption Encryption { get; }
 

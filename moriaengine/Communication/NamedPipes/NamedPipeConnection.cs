@@ -21,27 +21,107 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
-	public sealed class NamedPipeConnection<TProtocol, TState> :
-		AbstractConnection<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>
-		where TState : IConnectionState<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>, new()
-		where TProtocol : IProtocol<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>, new() {
+	public sealed class NamedPipeConnection<TState> :
+		AbstractConnection<NamedPipeConnection<TState>, TState, string>
+		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
+		private string pipename;
+		private SafeFileHandle handle;
+		private FileStream stream;
+		private bool isConnected = false;
+
+		private AsyncCallback onWrite;
+		private AsyncCallback onRead;
+
+		public NamedPipeConnection() {
+			this.onWrite = this.OnWrite;
+			this.onRead = this.OnRead;
+		}
+
+		internal void SetFields(string pipename, SafeFileHandle handle) {
+			this.pipename = pipename;
+			this.handle = handle;
+			this.stream = new FileStream(handle, FileAccess.ReadWrite, Buffer.bufferLen, true);
+		}
 
 		public override bool IsConnected {
-			get { throw new Exception("The method or operation is not implemented."); }
+			get {
+				return this.isConnected;
+			}
 		}
 
 		public override string EndPoint {
-			get { throw new Exception("The method or operation is not implemented."); }
+			get {
+				return this.pipename;
+			}
 		}
 
-		protected override void BeginSend(AbstractConnection<TProtocol, NamedPipeConnection<TProtocol, TState>, TState, string>.BufferToSend toSend) {
-			throw new Exception("The method or operation is not implemented.");
+		protected override void On_Init() {
+			this.isConnected = true;
+			this.BeginReceive();
+			base.On_Init();
+		}
+
+		private void BeginReceive() {
+
+			int offset = this.receivedDataLength;
+			byte[] buffer = this.receivingBuffer.bytes;
+
+			this.stream.BeginRead(buffer, offset,
+				buffer.Length - offset, onRead, null);
+		}
+
+		private void OnRead(IAsyncResult asyncResult) {
+			try {
+				int length = this.stream.EndRead(asyncResult);
+				if (length > 0) {//we have new data, but still possibly have some old data.
+					base.ProcessReceievedData(length);
+				} else {
+					this.Close("Other side closed the pipe.");
+				}
+			} catch (Exception e) {
+				//Logger.WriteError(e);
+				this.Close(e.Message);
+			}
+
+			if (this.IsConnected) {
+				this.BeginReceive();
+			}
+		}
+
+		protected override void BeginSend(BufferToSend toSend) {
+			this.stream.BeginWrite(toSend.buffer.bytes, toSend.offset, toSend.len, this.onWrite, toSend.buffer);
+		}
+
+		private void OnWrite(IAsyncResult asyncResult) {
+			Buffer toDispose = (Buffer) asyncResult.AsyncState;
+
+			try {
+				this.stream.EndWrite(asyncResult);
+			} catch (Exception e) {
+				this.Close(e.Message);
+			} finally {
+				toDispose.Dispose();
+			}
+		}
+
+		protected override void On_DisposeUnmanagedResources() {
+			this.isConnected = false;
+			try {
+				this.stream.Close();
+			} catch { }
+			try {
+				this.handle.Close();
+			} catch { }
+
+			base.On_DisposeUnmanagedResources();
 		}
 	}
 }

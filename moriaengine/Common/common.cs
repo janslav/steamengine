@@ -24,7 +24,10 @@ using System.Collections;
 namespace SteamEngine.Common {
 	public enum RunLevels {Unknown,Running,Startup,Shutdown,Paused,Dead,AwaitingRetry}
 
-	public sealed class Tools {
+	public static class Tools {
+
+		public readonly static string commonPipeName = @"\\.\pipe\steamAuxPipe";
+
 		public static void ExitBinDirectory() {
 			//string cmdLine = Environment.CommandLine.Replace('"', ' ').Trim();
 			//string path=Path.GetDirectoryName(Path.Combine(Environment.CurrentDirectory, cmdLine));//Directory.GetCurrentDirectory();
@@ -91,8 +94,8 @@ namespace SteamEngine.Common {
 			StringBuilder toreturn= new StringBuilder();
 			if (obj==null) {
 				toreturn.Append("null");
-			} else if (obj is Hashtable) {
-				Hashtable ht=obj as Hashtable;
+			} else if (obj is IDictionary) {
+				IDictionary ht = obj as IDictionary;
 				toreturn.Append("{");
 				foreach (DictionaryEntry entry in ht) {
 					toreturn.Append(ObjToString(entry.Key));
@@ -119,7 +122,7 @@ namespace SteamEngine.Common {
 				toreturn.Append("]");
 			} else if (obj is Enum) {
 				toreturn.Append("'");
-				toreturn.Append(obj.ToString().Replace("_"," "));
+				toreturn.Append(obj.ToString());
 				toreturn.Append("'");
 			} else {
 				toreturn.Append("'");

@@ -28,10 +28,9 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public sealed class TCPConnection<TProtocol, TState> :
-		AbstractConnection<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>
-		where TState : IConnectionState<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new()
-		where TProtocol : IProtocol<TProtocol, TCPConnection<TProtocol, TState>, TState, IPEndPoint>, new() {
+	public sealed class TCPConnection<TState> :
+		AbstractConnection<TCPConnection<TState>, TState, IPEndPoint>
+		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
 
 
 		internal Socket socket;

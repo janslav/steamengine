@@ -10,7 +10,11 @@ namespace SteamEngine.AuxiliaryServer {
 	public static class MainClass {
 		//public static ConsoleServer server = new ConsoleServer();
 
+		public static readonly object globalLock = new object();
+
 		public static LoginServer.LoginServer loginServer;
+		public static GameServers.GameServerServer gameServerServer;
+
 
 		static void Main(string[] args) {
 			Tools.ExitBinDirectory();
@@ -18,7 +22,8 @@ namespace SteamEngine.AuxiliaryServer {
 			try {
 				Init();
 
-				Cycle();
+				Console.ReadLine(); //exit by pressing Enter :D
+
 			} catch (Exception e) {
 				Logger.WriteFatal(e);
 			} finally {
@@ -32,20 +37,10 @@ namespace SteamEngine.AuxiliaryServer {
 			Settings.Init();
 
 			loginServer = new LoginServer.LoginServer();
-		}
-
-
-
-		private static void Cycle() {
-
-			while (true) {
-				Thread.Sleep(1);
-				loginServer.Cycle();
-			}
+			gameServerServer = new GameServers.GameServerServer();
 		}
 
 		private static void Dispose() {
-			Console.ReadLine();
 		}
 
 	}

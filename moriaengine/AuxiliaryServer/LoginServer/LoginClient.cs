@@ -9,7 +9,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginClient : Poolable,
-		IConnectionState<PacketHandlers, TCPConnection<PacketHandlers, LoginClient>, LoginClient, IPEndPoint> {
+		IConnectionState<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
 
 		static int uids;
 
@@ -36,7 +36,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			}
 		}
 
-		public void On_Init(TCPConnection<PacketHandlers, LoginClient> conn) {
+		public void On_Init(TCPConnection<LoginClient> conn) {
 			Console.WriteLine(this + " connected from "+conn.EndPoint);
 		}
 
