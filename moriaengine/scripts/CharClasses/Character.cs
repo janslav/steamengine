@@ -341,7 +341,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.IsGM()) {
 					return true;
 				} else {
-					StealthStepPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+                    HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
 					return ((ssp != null) && 
 						(ssp.hadDetectedMe != null) &&
 						(ssp.hadDetectedMe.Contains(this)));
