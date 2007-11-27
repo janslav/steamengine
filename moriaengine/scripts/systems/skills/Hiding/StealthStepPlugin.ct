@@ -14,7 +14,7 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate StealthStepPlugin : Plugin]
+[PluginTemplate HiddenHelperPlugin : Plugin]
 Vars:
 	public int stealthStepsLeft = 0
 	public LinkedList<Character> hadDetectedMe = null

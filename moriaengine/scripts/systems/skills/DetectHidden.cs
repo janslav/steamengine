@@ -34,14 +34,12 @@ namespace SteamEngine.CompiledScripts {
 			//todo: various state checks...
             Character self = (Character)ch;
 			if (!this.Trigger_Select(self)) {
-                self.SysMessage("Select");
 				self.StartSkill((int) SkillName.DetectHidden);
 			}
 		}
 
 		internal override void Start(Character self) {
 			if (!this.Trigger_Start(self)) {
-                self.SysMessage("Start");
 				self.currentSkill = this;
 				DelaySkillStroke(self);
 			}
@@ -55,20 +53,16 @@ namespace SteamEngine.CompiledScripts {
                 ushort pointX = point.x;
                 ushort pointY = point.y;
                 int s = 0;
-                self.SysMessage("Stroke");
                 foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
 		    		if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
                         s++;
-                        self.SysMessage("Suceeees");
                         self.currentSkillTarget1 = person;
 		    			Success(self);
                     }
 				}
-                if (s==0) {
-                    self.SysMessage("s = 0");
+                if (s==0) {     //If nobody was found
                     Fail(self);
                 }
-                self.SysMessage("s je "+s);
 			}
 			self.currentSkill = null;
             self.currentSkillTarget1 = null;
@@ -77,15 +71,13 @@ namespace SteamEngine.CompiledScripts {
         public override void Success(Character self) {
             if (!this.Trigger_Success(self)) {
                 Character person = (Character)self.currentSkillTarget1;
-                StealthStepPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as StealthStepPlugin;
+                HiddenHelperPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
                 if (ssp != null) {
                     if (ssp.hadDetectedMe == null) {
-                        self.SysMessage("Stvoren");
 						Packets.NetState.AboutToChangeVisibility(person);
                         ssp.hadDetectedMe = new LinkedList<Character>();
                         ssp.hadDetectedMe.AddFirst(self);
                     } else if (!ssp.hadDetectedMe.Contains(self)) {
-                        self.SysMessage("Pridan");
 						Packets.NetState.AboutToChangeVisibility(person);
                         ssp.hadDetectedMe.AddFirst(self);
                     }
