@@ -39,6 +39,18 @@ namespace SteamEngine.Regions {
 
 		[Remark("Clearing of the lists of all regions")]
 		public static void ClearAll() {
+			//first we have to remove the regions from the sectors etc
+			//if(byDefname != null) { //the dictionary exists => we can claim some regions
+			//    foreach(Map map in Map.AllMaps) {
+			//        map.InactivateRegions(true); //true - clear all dynamic regions rectangles too
+			//    }
+			//    foreach(StaticRegion region in AllRegions) {
+			//        region.inactivated = true; //inactivate
+			//        region.isDeleted = true; //deleted, of course!
+			//        ((PluginHolder)region).Delete(); //call the delete method from the parent (not the StaticRegion - this one is a bit different)
+			//    }
+			//}
+
 			byName = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
 			byDefname = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
 
@@ -230,7 +242,7 @@ namespace SteamEngine.Regions {
 		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
 		private static void InactivateAll() {			
 			foreach(Map map in Map.AllMaps) {
-				map.InactivateRegions();
+				map.InactivateRegions(false); //false - omit dynamic regions from clearing
 			}
 			foreach(StaticRegion reg in AllRegions) {
 				reg.inactivated = true; //inactivate
@@ -247,9 +259,63 @@ namespace SteamEngine.Regions {
 					activeRegs.Add(reg);
 				}
 			}
-			foreach(Map map in Map.AllMaps) {
-				map.ActivateRegions(activeRegs);
-			}
+			//now perform something like "LoadingFinished" method - resetting the regions hierarchy etc				
+			try {
+				Logger.WriteDebug("Resolving reactivating of static regions");
+				foreach(StaticRegion region in AllRegions) {
+					if(region.parent == null) {
+						if(worldRegion == voidRegion) {
+							worldRegion = region;
+						} else {
+							throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
+						}
+					}
+				}
+				if(worldRegion == voidRegion) {
+					throw new SEException("No world region defined.");
+				}
+				LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(byDefname.Values);//copy list of all regions
+				int lastCount = -1;
+				while(tempList.Count > 0) {
+					if(lastCount == tempList.Count) {
+						//this will probably never happen
+						throw new SEException("Region hierarchy not completely resolvable.");
+					}
+					lastCount = tempList.Count;
+					StaticRegion r = tempList.Last.Value;
+					r.SetHierarchyIndex(tempList);
+				}
+				//we omit the "byName" dictionary resetting - this is not necessary here, it is filled already
+				//if the regions name is changed (by setter property) then the byName dict is updated properly 
+
+				//we also omit the "CheckAllRegions()" part here (if we realy need it, we will call it from the
+				//code where the ActivateAll is being run)
+
+				//and now finally reactivate the activable regions - spread the references to their rectangles to the map sectors :)
+				List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
+				foreach(StaticRegion region in activeRegs) { //use only the regions from "activeRegs - those that can be activated"
+					List<StaticRegion> list = regionsByMapplane[region.Mapplane];
+					if(list == null) {
+						list = new List<StaticRegion>();
+						regionsByMapplane[region.Mapplane] = list;
+					}
+					if(!region.IsWorldRegion) { //we dont want the world region in sectors...
+						list.Add(region);
+					}
+				}
+				for(int i = 0, n = regionsByMapplane.Length; i < n; i++) {
+					List<StaticRegion> list = regionsByMapplane[i];
+					if(list != null) {
+						Map map = Map.GetMap((byte)i);
+						map.ActivateRegions(list);
+					}
+				}
+			} catch(FatalException) {
+				throw;
+			} catch(Exception e) {
+				Logger.WriteCritical("Regions reloading failed!", e);
+				//ClearAll(); dont ClearAll it here - this would delete all regions !! (rather we will allow the user to fix his errors)
+			}			
 			foreach(StaticRegion reg in activeRegs) {
 				reg.inactivated = false; //activate the activated regions
 			}
@@ -381,6 +447,18 @@ namespace SteamEngine.Regions {
 			}
 			return retState;
 		}
+
+		[Remark("Looks through the list of all regions and check if the region is not a chidlren of the specified one")]
+		public List<StaticRegion> FindRegionsChildren(StaticRegion reg) {
+			//first search the static ones (houses, stalls etc.)
+			List<StaticRegion> retList = new List<StaticRegion>();
+			foreach(StaticRegion stReg in AllRegions) {				
+				if(stReg.Parent == reg) {
+					retList.Add(stReg); //parent is the one we are searching its choldren
+				}				
+			}
+			return retList;
+		}
 		#endregion
 
 		[Remark("Take the list of rectangles and make an array of RegionRectangles of it")]
@@ -420,11 +498,40 @@ namespace SteamEngine.Regions {
 			}
 		}
 
+		private bool isDeleted = false;
+
+		public override bool IsDeleted {
+			get {
+				return isDeleted;
+			}
+		}
+
+		[Remark("Vezme region. vsechny jeho deti, napoji deti na parenta a sam sebe odstrani")]
 		public override void Delete() {
-			///TODO / patrne bude potreba mazat i jeho deti (protoze kdybych ho pak chtel pridat zpet do sveta
-			///tak jeho deti mi tam budou prekazet a tak vubec). kazdopadne je potreba to minimalne promyslet
-			///a prokonzultovat s Tramtarem
- 			base.Delete();
+			if(this == worldRegion) { //world region nesmime smazat
+				throw new SEException("Attempted to delete the 'world region'");
+			} else if(this == voidRegion) { //a void taky ne...
+				throw new SEException("Attempted to delete the 'void region'");
+			}
+			//najdeme deti a prepojime je na parenta
+			List<StaticRegion> children = FindRegionsChildren(this);
+			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations			
+			try {
+				foreach(StaticRegion child in children) {
+					child.parent = this.parent; //reset parents!
+					if(typeof(StaticRegion).IsAssignableFrom(child.GetType())) {
+						//if child is StaticRegion), make it activable - we dont care for DynamicRegions etc				
+						((StaticRegion)child).canBeActivated = true;
+					}
+				}
+				byName.Remove(this.name); //remove it from the byNames dict
+				byDefname.Remove(this.defname);//and from the byDefnames dict this means that the region is now completely removed
+			} finally {				
+				StaticRegion.ActivateAll();//all OK
+			}
+			this.inactivated = true;
+			this.isDeleted = true;
+ 			base.Delete(); //call other delete processing (such as deleting plugins, timers etc)
 		}
 	}
 }
