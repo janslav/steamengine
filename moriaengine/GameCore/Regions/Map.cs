@@ -166,7 +166,7 @@ namespace SteamEngine.Regions {
 		public static void ClearAll() {
 			foreach (Map map in mapsList) {
 				map.ClearThings();
-				map.InactivateRegions();
+				map.InactivateRegions(true); //true - clear also the dynamic regions
 			}
 		}
 		
@@ -1068,12 +1068,13 @@ namespace SteamEngine.Regions {
 			//}
 		}
 
-		internal void InactivateRegions() {
+		[Remark("Inactivate regions - unload their rectangles, boolean parameter allows us to omit dynamic regions...")]
+		internal void InactivateRegions(bool dynamicsToo) {
 			for (int sx = 0; sx<numXSectors; sx++) {
 				for (int sy = 0; sy<numYSectors; sy++) {
 					Sector se = sectors[sx, sy];
 					if (se != null) {
-						se.ClearRegionRectangles();
+						se.ClearRegionRectangles(dynamicsToo);
 					}
 				}
 			}

@@ -112,21 +112,21 @@ namespace SteamEngine.Regions {
 
 		public ImmutableRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY) {
 			Sanity.IfTrueThrow((minX > maxX) || (minY > maxY),
-				"The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");			
+				"Rectangle ("+minX+","+minY+","+maxX+","+maxY+"). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");
 			this.minX = minX;
 			this.minY = minY;
 			this.maxX = maxX;
 			this.maxY = maxY;
 		}
 
-		public ImmutableRectangle(IPoint2D start, IPoint2D end) {
+		/*public ImmutableRectangle(IPoint2D start, IPoint2D end) {
 			Sanity.IfTrueThrow( (start.X > end.X) || (start.Y > end.Y), 
 				"The first argument is supposed to be the upper left corner and the second the lower right corner.");
 			this.minX = start.X;
 			this.minY = start.Y;
 			this.maxX = end.X;
 			this.maxY = end.Y;
-		}		
+		}*/		
 
 		[Remark("Return a rectangle created from the central point with the specific range around the point"+
 				"(square 'around')")]
@@ -138,40 +138,7 @@ namespace SteamEngine.Regions {
 		}
 		
 		public ImmutableRectangle(IPoint2D center, ushort range) : this(center.X, center.Y, range) {			
-		}
-		
-		//public Rectangle2D Crop(ushort minx, ushort miny, ushort maxx, ushort maxy) {
-		//    ushort newStartX = this.minX;
-		//    ushort newStartY = this.minY;
-		//    ushort newEndX = this.maxX;
-		//    ushort newEndY = this.maxY;
-		//    if (this.StartPoint.x<minx) {
-		//        newStartX = minx;
-		//    }
-		//    if (this.EndPoint.x<minx) {
-		//        newEndX = minx;
-		//    }
-		//    if (this.StartPoint.y<miny) {
-		//        newStartY = miny;
-		//    }
-		//    if (this.EndPoint.y<miny) {
-		//        newEndY = miny;
-		//    }
-		//    if (this.StartPoint.x>maxx) {
-		//        newStartX = maxx;
-		//    }
-		//    if (this.EndPoint.x>maxx) {
-		//        newEndX = maxx;
-		//    }
-		//    if (this.StartPoint.y>maxy) {
-		//        newStartY = maxy;
-		//    }
-		//    if (this.EndPoint.y>maxy) {
-		//        newEndY = maxy;
-		//    }
-		//    //return the new rectangle with possible changes in its strat/end positions
-		//    return new Rectangle2D(newStartX, newStartY, newEndX, newEndY);
-		//}
+		}		
 
 		public static ImmutableRectangle GetIntersection(ImmutableRectangle a, ImmutableRectangle b) {
 			ushort maxStartX = (ushort)Math.Max(a.minX, b.minX);

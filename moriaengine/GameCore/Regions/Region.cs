@@ -52,7 +52,7 @@ namespace SteamEngine.Regions {
 		public Region Parent { 
 			get {
 				return parent;
-			}	 
+			}
 		}
 
 		public string Defname { 
@@ -391,9 +391,10 @@ namespace SteamEngine.Regions {
 						ushort y1 = TagMath.ParseUInt16(gc["y1"].Value);
 						ushort x2 = TagMath.ParseUInt16(gc["x2"].Value);
 						ushort y2 = TagMath.ParseUInt16(gc["y2"].Value);
-						Point2D point1 = new Point2D(x1, y1);
-						Point2D point2 = new Point2D(x2, y2);
-						RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
+						//Point2D point1 = new Point2D(x1, y1);
+						//Point2D point2 = new Point2D(x2, y2);
+						RegionRectangle rr = new RegionRectangle(x1,y1,x2,y2, this);
+						//RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
 						this.rectangles.Add(rr);
 					} else {
 						throw new SEException("Unrecognized Rectangle format ('" + valueString + "')");
@@ -466,10 +467,10 @@ namespace SteamEngine.Regions {
 			this.region = region;
 		}
 
-		internal RegionRectangle(Point2D start, Point2D end, Region region)
+		/*internal RegionRectangle(Point2D start, Point2D end, Region region)
 			: base(start, end) {
 			this.region = region;
-		}
+		}*/
 
 		internal RegionRectangle(AbstractRectangle rect, Region region)
 			: base(rect.MinX, rect.MinY, rect.MaxX, rect.MaxY) {

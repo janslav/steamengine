@@ -125,9 +125,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal ImmutableRectangle CreateRect(IPoint2D p) {
-				return new ImmutableRectangle(
-					new Point2D((ushort) (p.X + startX), (ushort) (p.Y + startY)),
-					new Point2D((ushort) (p.X + endX), (ushort) (p.Y + endY)));
+				return new ImmutableRectangle((ushort)(p.X + startX), (ushort)(p.Y + startY),
+											  (ushort)(p.X + endX), (ushort)(p.Y + endY));				
 			}
 		}
 

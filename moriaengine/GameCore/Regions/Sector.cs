@@ -273,8 +273,13 @@ namespace SteamEngine.Regions {
 					rectangles = RegionRectangle.emptyArray;
 				} else {
 					rectangles = list.ToArray();
-					ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
-						Map.sectorWidth, Map.sectorWidth);
+					//ACHTUNG!!! do not use the width but send immediatelly the second coordinates!!!
+					//ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
+					//	Map.sectorWidth, Map.sectorWidth);
+					ushort startX = (ushort)(sx << Map.sectorFactor);
+					ushort startY = (ushort)(sy << Map.sectorFactor);
+					ImmutableRectangle sectorRect = new ImmutableRectangle(startX, startY,
+						(ushort) (startX + Map.sectorWidth), (ushort)(startY + Map.sectorWidth));
 					SectRectComparer comparer = new SectRectComparer(sectorRect);
 					Array.Sort(rectangles, comparer);
 				}
@@ -307,9 +312,11 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			internal void ClearRegionRectangles() {
+			internal void ClearRegionRectangles(bool dynamicsToo) {
 				rectangles = RegionRectangle.emptyArray;
-				dynamicRegionRects = null;
+				if(dynamicsToo) {
+					dynamicRegionRects = null;
+				}
 			}
 
 			[Remark("Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)")]
