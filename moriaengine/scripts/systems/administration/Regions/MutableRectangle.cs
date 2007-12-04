@@ -35,19 +35,12 @@ namespace SteamEngine.CompiledScripts {
 			this.maxY = copiedOne.MaxY;
 		}
 
-		public MutableRectangle(Point2D start, Point2D end) {
-			this.minX = start.x;
-			this.minY = start.y;
-			this.maxX = end.x;
-			this.maxY = end.y;
-		}
-
-		public MutableRectangle(IPoint2D start, IPoint2D end) {
-			this.minX = start.X;
-			this.minY = start.Y;
-			this.maxX = end.X;
-			this.maxY = end.Y;
-		}
+		public MutableRectangle(ushort startX, ushort startY, ushort endX, ushort endY) {
+			this.minX = startX;
+			this.minY = startY;
+			this.maxX = endX;
+			this.maxY = endY;
+		}		
 
 		public override ushort MinX {
 			get {
