@@ -112,7 +112,7 @@ namespace SteamEngine.Regions {
 				output.WriteComment("Static Regions");
 				output.WriteLine();
 
-				foreach(StaticRegion region in byDefname.Values) {
+				foreach(StaticRegion region in AllRegions) {
 					region.SaveWithHeader(output);
 				}
 
@@ -126,33 +126,11 @@ namespace SteamEngine.Regions {
 				try {
 					Logger.WriteDebug("Resolving loaded static regions");
 
-					foreach(StaticRegion region in byDefname.Values) {
-						if(region.parent == null) {
-							if(worldRegion == voidRegion) {
-								worldRegion = region;
-							} else {
-								throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
-							}
-						}
-					}
+					StaticRegion.ResolveParents();
 
-					if(worldRegion == voidRegion) {
-						throw new SEException("No world region defined.");
-					}
+					StaticRegion.ResolveRegionsHierarchy();
 
-					LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(byDefname.Values);//copy list of all regions
-					int lastCount = -1;
-					while(tempList.Count > 0) {
-						if(lastCount == tempList.Count) {
-							//this will probably never happen
-							throw new SEException("Region hierarchy not completely resolvable.");
-						}
-						lastCount = tempList.Count;
-						StaticRegion r = tempList.Last.Value;
-						r.SetHierarchyIndex(tempList);
-					}
-
-					foreach(StaticRegion region in byDefname.Values) {
+					foreach(StaticRegion region in AllRegions) {
 						byName[region.Name] = region;
 					}
 
@@ -164,31 +142,14 @@ namespace SteamEngine.Regions {
 					}
 
 					//and now finally activate the regions - spread the references to their rectangles to the map sectors :)
-					List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
-					foreach(StaticRegion region in byDefname.Values) {
-						List<StaticRegion> list = regionsByMapplane[region.Mapplane];
-						if(list == null) {
-							list = new List<StaticRegion>();
-							regionsByMapplane[region.Mapplane] = list;
-						}
-						if(!region.IsWorldRegion) { //we dont want the world region in sectors...
-							list.Add(region);
-						}
-					}
-					for(int i = 0, n = regionsByMapplane.Length; i < n; i++) {
-						List<StaticRegion> list = regionsByMapplane[i];
-						if(list != null) {
-							Map map = Map.GetMap((byte)i);
-							map.ActivateRegions(list);
-						}
-					}
+					StaticRegion.InitRectanglesToMaps(AllRegions);//use list of all available regions
 				} catch(FatalException) {
 					throw;
 				} catch(Exception e) {
 					Logger.WriteCritical("Regions not used.", e);
 					ClearAll();
 				}
-			}
+			}		
 
 			public Type BaseType {
 				get {
@@ -262,29 +223,10 @@ namespace SteamEngine.Regions {
 			//now perform something like "LoadingFinished" method - resetting the regions hierarchy etc				
 			try {
 				Logger.WriteDebug("Resolving reactivating of static regions");
-				foreach(StaticRegion region in AllRegions) {
-					if(region.parent == null) {
-						if(worldRegion == voidRegion) {
-							worldRegion = region;
-						} else {
-							throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
-						}
-					}
-				}
-				if(worldRegion == voidRegion) {
-					throw new SEException("No world region defined.");
-				}
-				LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(byDefname.Values);//copy list of all regions
-				int lastCount = -1;
-				while(tempList.Count > 0) {
-					if(lastCount == tempList.Count) {
-						//this will probably never happen
-						throw new SEException("Region hierarchy not completely resolvable.");
-					}
-					lastCount = tempList.Count;
-					StaticRegion r = tempList.Last.Value;
-					r.SetHierarchyIndex(tempList);
-				}
+				ResolveParents();
+
+				ResolveRegionsHierarchy();
+
 				//we omit the "byName" dictionary resetting - this is not necessary here, it is filled already
 				//if the regions name is changed (by setter property) then the byName dict is updated properly 
 
@@ -292,24 +234,7 @@ namespace SteamEngine.Regions {
 				//code where the ActivateAll is being run)
 
 				//and now finally reactivate the activable regions - spread the references to their rectangles to the map sectors :)
-				List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
-				foreach(StaticRegion region in activeRegs) { //use only the regions from "activeRegs - those that can be activated"
-					List<StaticRegion> list = regionsByMapplane[region.Mapplane];
-					if(list == null) {
-						list = new List<StaticRegion>();
-						regionsByMapplane[region.Mapplane] = list;
-					}
-					if(!region.IsWorldRegion) { //we dont want the world region in sectors...
-						list.Add(region);
-					}
-				}
-				for(int i = 0, n = regionsByMapplane.Length; i < n; i++) {
-					List<StaticRegion> list = regionsByMapplane[i];
-					if(list != null) {
-						Map map = Map.GetMap((byte)i);
-						map.ActivateRegions(list);
-					}
-				}
+				InitRectanglesToMaps(activeRegs); //use only the regions from "activeRegs - those that can be activated"
 			} catch(FatalException) {
 				throw;
 			} catch(Exception e) {
@@ -318,6 +243,60 @@ namespace SteamEngine.Regions {
 			}			
 			foreach(StaticRegion reg in activeRegs) {
 				reg.inactivated = false; //activate the activated regions
+			}
+		}
+
+		[Remark("Take the regions from the given list and set their rectangles to every mapplane")]
+		private static void InitRectanglesToMaps(IEnumerable<StaticRegion> regionList) {
+			List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
+			foreach(StaticRegion region in regionList) {
+				List<StaticRegion> list = regionsByMapplane[region.Mapplane];
+				if(list == null) {
+					list = new List<StaticRegion>();
+					regionsByMapplane[region.Mapplane] = list;
+				}
+				if(!region.IsWorldRegion) { //we dont want the world region in sectors...
+					list.Add(region);
+				}
+			}
+			for(int i = 0, n = regionsByMapplane.Length; i < n; i++) {
+				List<StaticRegion> list = regionsByMapplane[i];
+				if(list != null) {
+					Map map = Map.GetMap((byte)i);
+					map.ActivateRegions(list);
+				}
+			}
+		}
+
+		[Remark("Check if all regions (except for the world region) have parents set")]
+		private static void ResolveParents() {
+			foreach(StaticRegion region in AllRegions) {
+				if(region.parent == null) {
+					if(worldRegion == voidRegion) {
+						worldRegion = region;
+					} else {
+						throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
+					}
+				}
+			}
+			//all was OK, but we need to have also the world region!
+			if(worldRegion == voidRegion) {
+				throw new SEException("No world region defined.");
+			}
+		}
+
+		[Remark("Itearate through all regions and set their hierarchy indices")]
+		private static void ResolveRegionsHierarchy() {
+			LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(AllRegions);//copy list of all regions
+			int lastCount = -1;
+			while(tempList.Count > 0) {
+				if(lastCount == tempList.Count) {
+					//this will probably never happen
+					throw new SEException("Region hierarchy not completely resolvable.");
+				}
+				lastCount = tempList.Count;
+				StaticRegion r = tempList.Last.Value;
+				r.SetHierarchyIndex(tempList);
 			}
 		}
 		#endregion

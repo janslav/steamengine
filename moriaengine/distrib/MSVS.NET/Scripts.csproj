@@ -233,6 +233,9 @@
     <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
       <Link>systems\administration\Pages\GMPage.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\MutableRectangle.cs">
+      <Link>systems\administration\Regions\MutableRectangle.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\Regions\RegionsList.cs">
       <Link>systems\administration\Regions\RegionsList.cs</Link>
     </Compile>
@@ -316,9 +319,6 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Regions\MutableRectangle.cs">
-      <Link>systems\Regions\MutableRectangle.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>

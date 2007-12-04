@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //smazat region
-						//region.Delete(); - TODO (remove z dictu, rectangly atd.)
+						region.Delete(); //(remove z dictu, rectangly atd.)
 						args[3] = null;
 						DialogStacking.ResendAndRestackDialog(gi);
 						break; 
