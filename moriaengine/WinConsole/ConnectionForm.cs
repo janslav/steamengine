@@ -23,8 +23,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace SteamClients
-{
+namespace SteamClients {
 	/// <summary>
 	/// Summary description for ConnectionForm.
 	/// </summary>
@@ -118,13 +117,13 @@ namespace SteamClients
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing ) {
-			if( disposing ) {
-				if(components != null) {
+		protected override void Dispose(bool disposing) {
+			if (disposing) {
+				if (components != null) {
 					components.Dispose();
 				}
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -337,7 +336,7 @@ namespace SteamClients
 			comboName.Focus();
 		}
 
-		private void btnAddConnectionClick (object sender,System.EventArgs e) {
+		private void btnAddConnectionClick(object sender, System.EventArgs e) {
 			AddNewConnection();
 		}
 
@@ -345,8 +344,8 @@ namespace SteamClients
 			changeEnabled=false;
 			if (idx<0 && comboName.Items.Count>idx)
 				return;
-			Debug.Assert(comboName.Items[idx] is SteamConnection,"comboName doesn't contain SteamConnection at index "+idx);
-			SteamConnection con=(SteamConnection)comboName.Items[idx];
+			Debug.Assert(comboName.Items[idx] is SteamConnection, "comboName doesn't contain SteamConnection at index "+idx);
+			SteamConnection con=(SteamConnection) comboName.Items[idx];
 			comboName.Text=con.Name;
 			textAddress.Text=con.Address;
 			textPort.Text=con.Port.ToString();
@@ -360,8 +359,8 @@ namespace SteamClients
 				return;
 			}
 			changeEnabled=false;
-			Debug.Assert(comboName.Items[idx] is SteamConnection,"comboName doesn't contain SteamConnection at index "+idx);
-			SteamConnection con=(SteamConnection)comboName.Items[idx];
+			Debug.Assert(comboName.Items[idx] is SteamConnection, "comboName doesn't contain SteamConnection at index "+idx);
+			SteamConnection con=(SteamConnection) comboName.Items[idx];
 			con.Name=comboName.Text;
 			con.Address=textAddress.Text;
 			con.UserName=textUserName.Text;
@@ -380,9 +379,9 @@ namespace SteamClients
 			}
 			comboName.Items[idx]=con;
 			changeEnabled=true;
-	}
+		}
 
-		private void comboNameSelectedIndexChanged (object sender,System.EventArgs e) {
+		private void comboNameSelectedIndexChanged(object sender, System.EventArgs e) {
 			int idx=comboName.SelectedIndex;
 			if (changeEnabled) {
 				changeEnabled=false;
@@ -397,7 +396,7 @@ namespace SteamClients
 			oldComboNameIndex=idx;
 		}
 
-		private void comboNameDropDown(object sender,System.EventArgs e) {
+		private void comboNameDropDown(object sender, System.EventArgs e) {
 			changeEnabled=false;
 			SaveValuesTo(oldComboNameIndex);
 			changeEnabled=true;
@@ -439,11 +438,11 @@ namespace SteamClients
 			textPassword.Text="";
 		}
 
-		private void btnRemoveClick(object sender,System.EventArgs e) {
+		private void btnRemoveClick(object sender, System.EventArgs e) {
 			RemoveConnection(comboName.SelectedIndex);
 		}
 
-		private void btnCancelClick(object sender,System.EventArgs e) {
+		private void btnCancelClick(object sender, System.EventArgs e) {
 			shouldConnect=false;
 			this.Close();
 		}
@@ -451,16 +450,16 @@ namespace SteamClients
 		private void btnConnectClick(object sender, System.EventArgs e) {
 			SaveValuesTo(oldComboNameIndex);
 			if (comboName.SelectedIndex>=0) {
-				Debug.Assert(comboName.SelectedIndex<comboName.Items.Count,"SelectedIndex out of range");
+				Debug.Assert(comboName.SelectedIndex<comboName.Items.Count, "SelectedIndex out of range");
 				shouldConnect=true;
-				selectedConnection=(SteamConnection)comboName.Items[comboName.SelectedIndex];
+				selectedConnection=(SteamConnection) comboName.Items[comboName.SelectedIndex];
 			} else {
 				shouldConnect=false;
 			}
 			this.Close();
 		}
 
-		private void textPortKeyPress(object sender,System.Windows.Forms.KeyPressEventArgs e) {
+		private void textPortKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e) {
 			e.Handled=false;
 			if (char.IsControl(e.KeyChar))
 				return;

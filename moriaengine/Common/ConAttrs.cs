@@ -24,9 +24,9 @@ using System.Collections;
 
 namespace SteamEngine.Common {
 	public enum LogStyles : byte {
-		Default=0,Warning,WarningData,Error,ErrorData,Fatal,FatalData,
-		Critical,CriticalData,Debug,DebugData,FileLine,Highlight,
-		Ident,FilePos,File,Number
+		Default=0, Warning, WarningData, Error, ErrorData, Fatal, FatalData,
+		Critical, CriticalData, Debug, DebugData, FileLine, Highlight,
+		Ident, FilePos, File, Number
 	}
 
 	public class ConAttrs {
@@ -34,23 +34,23 @@ namespace SteamEngine.Common {
 		public const char charEOS='e';
 		public const char charTitle='t';
 		public const char charStyle='s';
-		public static readonly string EOS=string.Format("{0}{1}{0}",charSeparator.ToString(),charEOS);
+		public static readonly string EOS=string.Format("{0}{1}{0}", charSeparator.ToString(), charEOS);
 
 		#region Static Methods
-		static public string PrintStyle (LogStyles style) {
-			return string.Format ("{0}{1}{2}{0}",charSeparator,charStyle,(int)style);
+		static public string PrintStyle(LogStyles style) {
+			return string.Format("{0}{1}{2}{0}", charSeparator, charStyle, (int) style);
 		}
 
-		static public string PrintTitle (string title) {
-			return string.Format("{0}{1}{2}{0}",charSeparator,charTitle,title);
+		static public string PrintTitle(string title) {
+			return string.Format("{0}{1}{2}{0}", charSeparator, charTitle, title);
 		}
 		#endregion
 
 #if !MONO
 		#region Delegates
-		public delegate void StyleChangedHandler(object sender,LogStyles style);
-		public delegate void TitleChangedHandler(object sender,string title);
-		public delegate void NextChunkHandler(object sender,string chunk);
+		public delegate void StyleChangedHandler(object sender, LogStyles style);
+		public delegate void TitleChangedHandler(object sender, string title);
+		public delegate void NextChunkHandler(object sender, string chunk);
 		#endregion
 
 		internal struct LogStyle {
@@ -59,13 +59,13 @@ namespace SteamEngine.Common {
 			public FontFamily styleFontFamily;
 			public float styleSize;
 
-			public LogStyle (Color col,FontStyle style,FontFamily family,float size) {
+			public LogStyle(Color col, FontStyle style, FontFamily family, float size) {
 				styleColor=col;
 				styleFont=style;
 				styleFontFamily=family;
 				styleSize=size;
 			}
-			public LogStyle (Color col,FontStyle style) {
+			public LogStyle(Color col, FontStyle style) {
 				styleColor=col;
 				styleFont=style;
 				styleFontFamily=defaultFamily;
@@ -78,7 +78,7 @@ namespace SteamEngine.Common {
 		private const FontStyle defaultFontStyle=FontStyle.Regular;
 		private static readonly FontFamily defaultFamily=new FontFamily(GenericFontFamilies.SansSerif);
 		private static readonly Color defaultColor=Color.Black;
-		private LogStyle[] logStyles=new LogStyle[((int)lastStyleElement)+1];
+		private LogStyle[] logStyles=new LogStyle[((int) lastStyleElement)+1];
 		private string RawString;
 		private string chunk;
 		private int ProcessingIndex;
@@ -88,72 +88,71 @@ namespace SteamEngine.Common {
 
 		#region Log Style Configuration
 		public float DefaultSize {
-			get {return GetSize(LogStyles.Default);}
+			get { return GetSize(LogStyles.Default); }
 		}
 		public Color DefaultColor {
-			get {return GetColor(LogStyles.Default);}
+			get { return GetColor(LogStyles.Default); }
 		}
 		public string DefaultFontFamilyName {
-			get {return GetFontFamilyName(LogStyles.Default);}
+			get { return GetFontFamilyName(LogStyles.Default); }
 		}
 		public FontFamily DefaultFontFamily {
-			get {return GetFontFamily(LogStyles.Default);}
+			get { return GetFontFamily(LogStyles.Default); }
 		}
 		public FontStyle DefaultFontStyle {
-			get {return GetFontStyle(LogStyles.Default);}
+			get { return GetFontStyle(LogStyles.Default); }
 		}
 
-		public void SetStyle(LogStyles style,Color color,FontStyle fnt,FontFamily family,float size) {
-			SetColor(style,color);
-			SetFontStyle(style,fnt);
-			SetFontFamily(style,family);
-			SetSize(style,size);
+		public void SetStyle(LogStyles style, Color color, FontStyle fnt, FontFamily family, float size) {
+			SetColor(style, color);
+			SetFontStyle(style, fnt);
+			SetFontFamily(style, family);
+			SetSize(style, size);
 		}
-		public void SetStyle(LogStyles style,Color color,FontStyle fnt,string family,float size) {
-			SetColor(style,color);
-			SetFontStyle(style,fnt);
-			SetFontFamily(style,family);
-			SetSize(style,size);
+		public void SetStyle(LogStyles style, Color color, FontStyle fnt, string family, float size) {
+			SetColor(style, color);
+			SetFontStyle(style, fnt);
+			SetFontFamily(style, family);
+			SetSize(style, size);
 		}
-      
-		public void SetColor(LogStyles style,Color color) {
-			logStyles[(int)style].styleColor=color;
+
+		public void SetColor(LogStyles style, Color color) {
+			logStyles[(int) style].styleColor=color;
 		}
 		public Color GetColor(LogStyles style) {
-			return logStyles[(int)style].styleColor;
+			return logStyles[(int) style].styleColor;
 		}
 
-		public void SetFontStyle(LogStyles style,FontStyle fnt) {
-			logStyles[(int)style].styleFont=fnt;
+		public void SetFontStyle(LogStyles style, FontStyle fnt) {
+			logStyles[(int) style].styleFont=fnt;
 		}
 		public FontStyle GetFontStyle(LogStyles style) {
-			return logStyles[(int)style].styleFont;
+			return logStyles[(int) style].styleFont;
 		}
 
-		public void SetFontFamily(LogStyles style,string name) {
+		public void SetFontFamily(LogStyles style, string name) {
 			try {
 				FontFamily family=new FontFamily(name);
-				logStyles[(int)style].styleFontFamily=family;
-			}
-			catch {
+				logStyles[(int) style].styleFontFamily=family;
+			} catch {
 				// TODO: name of font family is invalid
 			}
 		}
-		public void SetFontFamily(LogStyles style,FontFamily family) {
-			logStyles[(int)style].styleFontFamily=family;
+		public void SetFontFamily(LogStyles style, FontFamily family) {
+			logStyles[(int) style].styleFontFamily=family;
 		}
 		public string GetFontFamilyName(LogStyles style) {
-			return logStyles[(int)style].styleFontFamily.Name;
+			return logStyles[(int) style].styleFontFamily.Name;
 		}
 		public FontFamily GetFontFamily(LogStyles style) {
-			return logStyles[(int)style].styleFontFamily;
+			return logStyles[(int) style].styleFontFamily;
 		}
 
-		public void SetSize(LogStyles style,float size) {
-			logStyles[(int)style].styleSize=size;
+		public void SetSize(LogStyles style, float size) {
+			logStyles[(int) style].styleSize=size;
 		}
 		public float GetSize(LogStyles style) {
-			return logStyles[(int)style].styleSize;
+			return logStyles[(int) style].styleSize;
 		}
 		#endregion
 
@@ -163,42 +162,42 @@ namespace SteamEngine.Common {
 		public event NextChunkHandler NextChunk;
 		public event TitleChangedHandler TitleChanged;
 
-		protected virtual void OnStyleChanged (LogStyles style) {
+		protected virtual void OnStyleChanged(LogStyles style) {
 			if (StyleChanged!=null)
-				StyleChanged(this,style);
+				StyleChanged(this, style);
 		}
 
-		protected virtual void OnNextChunk (string chunk) {
+		protected virtual void OnNextChunk(string chunk) {
 			if (NextChunk != null && chunk.Length > 0)
-				NextChunk (this, chunk);
+				NextChunk(this, chunk);
 		}
 
-		protected virtual void OnTitleChanged (string title) {
+		protected virtual void OnTitleChanged(string title) {
 			if (TitleChanged != null)
-				TitleChanged (this, title);
+				TitleChanged(this, title);
 		}
 
 		#endregion
 		public void DefaultSettings() {
 			RawString="";
 			ProcessingIndex=0;
-			logStyles[(int)LogStyles.Default]		= new LogStyle(defaultColor,defaultFontStyle,defaultFamily,defaultSize);
-			logStyles[(int)LogStyles.Warning]		= new LogStyle(Color.Red,defaultFontStyle);
-			logStyles[(int)LogStyles.WarningData]	= new LogStyle(defaultColor,defaultFontStyle);
-			logStyles[(int)LogStyles.Error]			= new LogStyle(Color.Red,defaultFontStyle);
-			logStyles[(int)LogStyles.ErrorData]		= new LogStyle(defaultColor,defaultFontStyle);
-			logStyles[(int)LogStyles.Fatal]			= new LogStyle(Color.Red,FontStyle.Bold);
-			logStyles[(int)LogStyles.FatalData]		= new LogStyle(defaultColor,defaultFontStyle);
-			logStyles[(int)LogStyles.Critical]		= new LogStyle(Color.Red,FontStyle.Bold);
-			logStyles[(int)LogStyles.CriticalData]	= new LogStyle(defaultColor,defaultFontStyle);
-			logStyles[(int)LogStyles.Debug]			= new LogStyle(Color.Gray,defaultFontStyle);
-			logStyles[(int)LogStyles.DebugData]		= new LogStyle(Color.Gray,defaultFontStyle);
-			logStyles[(int)LogStyles.FileLine]		= new LogStyle(Color.Blue,defaultFontStyle);
-			logStyles[(int)LogStyles.Highlight]		= new LogStyle(Color.Orange,defaultFontStyle);
-			logStyles[(int)LogStyles.FilePos]		= new LogStyle(defaultColor,FontStyle.Italic);
-			logStyles[(int)LogStyles.File]			= new LogStyle(Color.Purple,defaultFontStyle);
-			logStyles[(int)LogStyles.Number]		= new LogStyle(Color.Blue,defaultFontStyle);
-			logStyles[(int)LogStyles.Ident]			= new LogStyle(Color.Blue,FontStyle.Bold);
+			logStyles[(int) LogStyles.Default]		= new LogStyle(defaultColor, defaultFontStyle, defaultFamily, defaultSize);
+			logStyles[(int) LogStyles.Warning]		= new LogStyle(Color.Red, defaultFontStyle);
+			logStyles[(int) LogStyles.WarningData]	= new LogStyle(defaultColor, defaultFontStyle);
+			logStyles[(int) LogStyles.Error]			= new LogStyle(Color.Red, defaultFontStyle);
+			logStyles[(int) LogStyles.ErrorData]		= new LogStyle(defaultColor, defaultFontStyle);
+			logStyles[(int) LogStyles.Fatal]			= new LogStyle(Color.Red, FontStyle.Bold);
+			logStyles[(int) LogStyles.FatalData]		= new LogStyle(defaultColor, defaultFontStyle);
+			logStyles[(int) LogStyles.Critical]		= new LogStyle(Color.Red, FontStyle.Bold);
+			logStyles[(int) LogStyles.CriticalData]	= new LogStyle(defaultColor, defaultFontStyle);
+			logStyles[(int) LogStyles.Debug]			= new LogStyle(Color.Gray, defaultFontStyle);
+			logStyles[(int) LogStyles.DebugData]		= new LogStyle(Color.Gray, defaultFontStyle);
+			logStyles[(int) LogStyles.FileLine]		= new LogStyle(Color.Blue, defaultFontStyle);
+			logStyles[(int) LogStyles.Highlight]		= new LogStyle(Color.Orange, defaultFontStyle);
+			logStyles[(int) LogStyles.FilePos]		= new LogStyle(defaultColor, FontStyle.Italic);
+			logStyles[(int) LogStyles.File]			= new LogStyle(Color.Purple, defaultFontStyle);
+			logStyles[(int) LogStyles.Number]		= new LogStyle(Color.Blue, defaultFontStyle);
+			logStyles[(int) LogStyles.Ident]			= new LogStyle(Color.Blue, FontStyle.Bold);
 
 			logStyle=LogStyles.Default;
 		}
@@ -210,30 +209,29 @@ namespace SteamEngine.Common {
 		#region Public Methods
 		public String Strip() {
 			string str="";
-			int idx,idx2;
+			int idx, idx2;
 
 			idx=0;
 			try {
 				while (idx>=0 && idx<RawString.Length) {
 					while (idx>=0 && RawString[idx]==charSeparator) {
 						idx++;
-						idx2=RawString.IndexOf(charSeparator,idx);
+						idx2=RawString.IndexOf(charSeparator, idx);
 
 						if (idx2>idx)
 							idx=idx2+1;
 					}
-					idx2=RawString.IndexOf(charSeparator,idx);
+					idx2=RawString.IndexOf(charSeparator, idx);
 
 					if (idx2>idx) {
-						str+=RawString.Substring(idx,idx2-idx);
+						str+=RawString.Substring(idx, idx2-idx);
 					} else {
-						str+=RawString.Substring(idx,RawString.Length-idx);
+						str+=RawString.Substring(idx, RawString.Length-idx);
 					}
 
 					idx=idx2;
 				}
-			}
-			catch (Exception) {
+			} catch (Exception) {
 			}
 
 			return str;
@@ -260,30 +258,30 @@ namespace SteamEngine.Common {
 			try {
 				while (RawString[ProcessingIndex]==charSeparator) {
 					ProcessingIndex++;
-					idx=RawString.IndexOf(charSeparator,ProcessingIndex);
+					idx=RawString.IndexOf(charSeparator, ProcessingIndex);
 
 					if (idx>ProcessingIndex) {
 						switch (RawString[ProcessingIndex++]) {
-							case charEOS :
+							case charEOS:
 								if (styleStack.Count>0) {
-									logStyle=(LogStyles)styleStack.Pop();
+									logStyle=(LogStyles) styleStack.Pop();
 									OnStyleChanged(logStyle);
 								} else {
 									OnStyleChanged(LogStyles.Default);
 								}
 								break;
-							case charTitle :
-								title=RawString.Substring(ProcessingIndex,idx-ProcessingIndex);
+							case charTitle:
+								title=RawString.Substring(ProcessingIndex, idx-ProcessingIndex);
 								OnTitleChanged(title);
 								break;
-							case charStyle :
+							case charStyle:
 								try {
 									int i;
 									LogStyles old=logStyle;
 
-									i = int.Parse (RawString.Substring(ProcessingIndex, idx - ProcessingIndex));
-									if (i<=(int)lastStyleElement && i>=0) {
-										logStyle=(LogStyles)i;
+									i = int.Parse(RawString.Substring(ProcessingIndex, idx - ProcessingIndex));
+									if (i<=(int) lastStyleElement && i>=0) {
+										logStyle=(LogStyles) i;
 									} else {
 										logStyle = LogStyles.Default;
 									}
@@ -292,32 +290,30 @@ namespace SteamEngine.Common {
 										styleStack.Push(old);
 										OnStyleChanged(logStyle);
 									}
-								}
-								catch (Exception) {
+								} catch (Exception) {
 									// something goes wrong, setting default text style
 									logStyle = LogStyles.Default;
 								}
 								break;
-							default :
+							default:
 								// Non-standard tag
 								break;
 						}
 						ProcessingIndex=idx+1;
 					}
 				}
-				idx=RawString.IndexOf(charSeparator,ProcessingIndex);
+				idx=RawString.IndexOf(charSeparator, ProcessingIndex);
 
 				if (idx>ProcessingIndex) {
-					chunk=RawString.Substring(ProcessingIndex,idx-ProcessingIndex);
+					chunk=RawString.Substring(ProcessingIndex, idx-ProcessingIndex);
 				} else {
-					chunk=RawString.Substring(ProcessingIndex,RawString.Length-ProcessingIndex);
+					chunk=RawString.Substring(ProcessingIndex, RawString.Length-ProcessingIndex);
 				}
 
 				OnNextChunk(chunk);
 
 				ProcessingIndex=idx;
-			}
-			catch (Exception) {
+			} catch (Exception) {
 			}
 
 			return true;

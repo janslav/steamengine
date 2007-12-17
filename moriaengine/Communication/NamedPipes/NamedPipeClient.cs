@@ -29,7 +29,7 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
-	public class NamedPipeClientFactory<TState> :
+	public sealed class NamedPipeClientFactory<TState> :
 		AsyncCore<NamedPipeConnection<TState>, TState, string>,
 		IClientFactory<NamedPipeConnection<TState>, TState, string>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
@@ -43,7 +43,7 @@ namespace SteamEngine.Communication.NamedPipes {
 
 		public NamedPipeConnection<TState> Connect(string pipeName) {
 			SafeFileHandle handle =
-               ClientKernelFunctions.CreateFile(
+			   ClientKernelFunctions.CreateFile(
 				  pipeName,
 				  ClientKernelFunctions.GENERIC_READ | ClientKernelFunctions.GENERIC_WRITE,
 				  0,

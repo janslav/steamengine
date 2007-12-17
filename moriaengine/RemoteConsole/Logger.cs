@@ -3,22 +3,25 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SteamEngine.AuxiliaryServer {
+namespace SteamEngine.RemoteConsole {
 	public class Logger : SteamEngine.Common.Logger {
 
-		public static void Init() {
+		public static void Init(ILogStrDisplay display) {
 			new Logger();
 
-			SteamEngine.Common.Logger.OpenFile();
-			
+			Logger.OnConsoleWrite += display.Write;
+			Logger.OnConsoleWriteLine += display.WriteLine;
+
+			//SteamEngine.Common.Logger.OpenFile();
+
 		}
 
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]
 			DateTime dtnow=DateTime.Now;
-			string filename = string.Format("SteamEngine.AuxiliaryServer.{0}-{1}-{2}.log",
+			string filename = string.Format("SteamEngine.RemoteConsole.{0}-{1}-{2}.log",
 				dtnow.Year, dtnow.Month.ToString("00"), dtnow.Day.ToString("00"));
-			return Path.Combine(Settings.logPath, filename);
+			return Path.Combine("logs", filename);
 		}
 	}
 }

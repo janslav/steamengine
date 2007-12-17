@@ -15,7 +15,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		public override byte Id {
 			get { 
-				return 0x03; 
+				return 0x01; 
 			}
 		}
 
@@ -23,4 +23,29 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			EncodeBool(this.sendLogStrings);
 		}
 	}
+
+	public class ConsoleLoginRequestPacket : OutgoingPacket {
+		int consoleId;
+		string accName, password;
+
+		public void Prepare(int consoleId, string accName, string password) {
+			this.consoleId = consoleId;
+			this.accName = accName;
+			this.password = password;
+		}
+
+		public override byte Id {
+			get {
+				return 0x02;
+			}
+		}
+
+		protected override void Write() {
+			EncodeInt(this.consoleId);
+			EncodeUTF8String(this.accName);
+			EncodeUTF8String(this.password);
+		}
+	}
+
+
 }

@@ -568,45 +568,10 @@ namespace SteamEngine {
 		public override sealed IEnumerator GetEnumerator() {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
-				return EmptyEnumerator<AbstractItem>.instance;
+				return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
 			} else {
 				return tll.GetEnumerator();
 			}
-		}
-	}
-
-	public class EmptyEnumerator<T> : IEnumerator<T>, IEnumerable<T>, IEnumerator, IEnumerable {
-		public static readonly EmptyEnumerator<T> instance = new EmptyEnumerator<T>();
-
-		private EmptyEnumerator() {
-		}
-
-		public void Reset() {
-		}
-
-		public bool MoveNext() {
-			return false;
-		}
-
-		public object Current { 
-			get {
-				throw new Exception("this should not happen");
-			} 
-		}
-		
-		public IEnumerator GetEnumerator() {
-			return this;
-		}
-
-		T IEnumerator<T>.Current {
-			get { throw new Exception("this should not happen"); }
-		}
-
-		public void Dispose() {
-		}
-
-		IEnumerator<T> IEnumerable<T>.GetEnumerator() {
-			return this;
 		}
 	}
 }

@@ -27,7 +27,8 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class DiscordanceSkillDef : SkillDef {
 
-		public DiscordanceSkillDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
+		public DiscordanceSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 		}
 
 		private static TriggerGroup t_Musical;
@@ -43,8 +44,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Select(AbstractCharacter ch) {
 			Character self = (Character) ch;
-			self.currentSkillTarget2 = ((Item)self.BackpackAsContainer).FindType(T_Musical);
-			((Player)self).Target(SingletonScript<Targ_Discordance>.Instance);
+			self.currentSkillTarget2 = ((Item) self.BackpackAsContainer).FindType(T_Musical);
+			((Player) self).Target(SingletonScript<Targ_Discordance>.Instance);
 		}
 
 		internal override void Start(Character self) {
@@ -53,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 				DelaySkillStroke(self);
 			}
 		}
-		
+
 		public override void Stroke(Character self) {
 			if (!this.Trigger_Stroke(self)) {
 				if (SkillValueOfChar(((Character) self.currentSkillTarget1)) != 0) {
@@ -95,14 +96,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			self.currentSkill = null;
 		}
-		
+
 		public override void Fail(Character self) {
 			if (!this.Trigger_Fail(self)) {
 				self.Trigger_HostileAction(self);
 			}
 			self.currentSkill = null;
 		}
-		
+
 		protected internal override void Abort(Character self) {
 			this.Trigger_Abort(self);
 			self.SysMessage("Oslabovani bylo predcasne preruseno.");
@@ -111,14 +112,12 @@ namespace SteamEngine.CompiledScripts {
 
 	public class Targ_Discordance : CompiledTargetDef {
 
-		protected override void On_Start(Character self, object parameter)
-		{
+		protected override void On_Start(Character self, object parameter) {
 			self.SysMessage("Koho chces zkusit oslabit?");
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Character self, Character targetted, object parameter)
-		{
+		protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
 			if (targetted.IsPlayer) {
 				self.SysMessage("Zameruj jenom monstra!");
 				return false;
@@ -130,17 +129,16 @@ namespace SteamEngine.CompiledScripts {
 				self.currentSkill = null;
 				return false;
 			}
-			self.SelectSkill((int)SkillName.Musicianship);
-			if ((int)self.currentSkillParam == 2) {
+			self.SelectSkill((int) SkillName.Musicianship);
+			if ((int) self.currentSkillParam == 2) {
 				return false;
 			}
 			self.currentSkillTarget1 = targetted;
-			self.StartSkill((int)SkillName.Discordance);
+			self.StartSkill((int) SkillName.Discordance);
 			return false;
 		}
 
-		protected override bool On_TargonItem(Character self, Item targetted, object parameter)
-		{
+		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
 			self.SysMessage("Predmety nelze oslabit.");
 			return false;
 		}
@@ -153,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_Assign() {
 			Character cont = (Character) this.Cont;
-			
+
 			int lowerConst = discordEffectPower / 4;
 
 			lowed_dex = (short) DiscordanceValueLower(cont.Dex, lowerConst);
@@ -218,16 +216,16 @@ namespace SteamEngine.CompiledScripts {
 			cont.Skills[43].RealValue += lowed_wrestl;
 		}
 
-		private static int DiscordanceValueLower(int value,int lowerConst) {
+		private static int DiscordanceValueLower(int value, int lowerConst) {
 			int lowedVal = ((value * lowerConst) / 1000);
 			if (value < lowedVal) {
 				lowedVal = value;
 			}
 			return lowedVal;
 		}
-		
+
 		public void On_Timer() {
-			this.Delete();	
+			this.Delete();
 		}
 	}
 }

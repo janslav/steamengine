@@ -32,9 +32,6 @@ namespace SteamEngine {
 	public static class OpenedContainers {
 		private readonly static Dictionary<AbstractItem, LinkedList<GameConn>> openedByConns = new Dictionary<AbstractItem, LinkedList<GameConn>>();
 
-		private readonly static List<AbstractItem> emptyItemList = new List<AbstractItem>(0);
-		private readonly static List<GameConn> emptyGameConnList = new List<GameConn>(0);
-
 		public static DenyResult HasContainerOpen(GameConn conn, AbstractItem container) {
 			if (conn.openedContainers.Contains(container)) {
 				AbstractCharacter curCharacter = conn.CurCharacter;
@@ -119,7 +116,7 @@ namespace SteamEngine {
 				}
 				return openedContainers;
 			}
-			return emptyItemList;
+			return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
 		}
 
 		public static IEnumerable<GameConn> GetConnsWithOpened(AbstractItem container) {
@@ -155,7 +152,7 @@ namespace SteamEngine {
 				}
 				return openedBy;
 			}
-			return emptyGameConnList;
+			return EmptyReadOnlyGenericCollection<GameConn>.instance;
 		}
 
 		internal static void ClearAll() {

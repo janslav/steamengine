@@ -48,11 +48,7 @@ namespace SteamEngine.Communication {
 		int uncompressedLen;
 		int compressedLen;
 
-		internal PacketGroupType type = PacketGroupType.MultiUse;
-
-		public PacketGroup() {
-			this.On_Reset();
-		}
+		internal PacketGroupType type;
 
 		public void SetType(PacketGroupType type) {
 			if (this.isMadeFree) {
@@ -70,7 +66,7 @@ namespace SteamEngine.Communication {
 			this.isWritten = false;
 			this.compressionDone = false;
 			this.isQueued = 0;
-			this.type = PacketGroupType.MultiUse;
+			this.type = PacketGroupType.SingleUse;
 			this.isMadeFree = false;
 
 			this.uncompressed = Pool<Buffer>.Acquire();

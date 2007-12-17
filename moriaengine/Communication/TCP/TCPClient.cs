@@ -29,7 +29,7 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public class TCPClientFactory<TState> :
+	public sealed class TCPClientFactory<TState> :
 		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,  
 		IClientFactory<TCPConnection<TState>, TState, IPEndPoint>
 		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
@@ -40,7 +40,14 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		public TCPConnection<TState> Connect(IPEndPoint endpoint) {
-			throw new Exception("The method or operation is not implemented.");
+			Socket socket = TCPServer<TState>.CreateSocket();
+			socket.Connect(endpoint);
+
+			TCPConnection<TState> newConn = Pool<TCPConnection<TState>>.Acquire();
+			newConn.socket = socket;
+			InitNewConnection(newConn);
+
+			return newConn;
 		}
 	}
 

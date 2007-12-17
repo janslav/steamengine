@@ -42,7 +42,7 @@ namespace SteamEngine.Communication.TCP {
 
 		}
 
-		private static Socket CreateSocket() {
+		internal static Socket CreateSocket() {
 			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		}
 

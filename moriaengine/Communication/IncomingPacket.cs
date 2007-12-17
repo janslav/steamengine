@@ -217,6 +217,12 @@ namespace SteamEngine.Communication {
 			return this.buffer[startpos];
 		}
 
+		protected bool DecodeBool() {
+			int startpos = this.position;
+			this.SeekFromCurrent(1);
+			return this.buffer[startpos] != 0;
+		}
+
 
 		//non-UO
 		protected string DecodeUTF8String() {

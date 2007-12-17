@@ -1411,7 +1411,7 @@ namespace SteamEngine {
 
 		public IEnumerable<Thing> GetVisibleEquip() {
 			if (visibleLayers == null) {
-				return EmptyEnumerator<Thing>.instance;
+				return EmptyReadOnlyGenericCollection<Thing>.instance;
 			} else {
 				return visibleLayers;
 			}

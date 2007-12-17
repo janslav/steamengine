@@ -36,22 +36,17 @@ namespace SteamEngine.AuxServerPipe {
 
 		}
 
+		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
+			NamedPipeConnection<AuxServerPipeClient> c =
+				clientFactory.Connect(Common.Tools.commonPipeName);
+
+			if (c == null) {
+				StartTryingToConnect();
+			}
+		}));
+
 		private static void StartTryingToConnect() {
-			Thread connectingThread = new Thread(delegate() {
-				while (true) {
-					NamedPipeConnection<AuxServerPipeClient> c = 
-						clientFactory.Connect(Common.Tools.commonPipeName);
-
-					if (c != null) {
-						break;
-					}
-					Thread.Sleep(1000);
-				}
-			});
-
-			connectingThread.IsBackground = true;
-			connectingThread.Name = "AuxServerPipeClient_Connecting";
-			connectingThread.Start();
+			connectingTimer.Change(TimeSpan.FromSeconds(1), TimeSpan.Zero);
 		}
 
 		public void On_Init(NamedPipeConnection<AuxServerPipeClient> conn) {
@@ -59,6 +54,10 @@ namespace SteamEngine.AuxServerPipe {
 			this.pipe = conn;
 			Logger.OnConsoleWrite += this.onConsoleWrite;
 			Logger.OnConsoleWriteLine += this.onConsoleWriteLine;
+
+			IdentifyGameServerPacket packet = Pool<IdentifyGameServerPacket>.Acquire();
+			packet.Prepare();
+			conn.SendSinglePacket(packet);
 		}
 
 		private void Logger_OnConsoleWriteLine(string data) {
