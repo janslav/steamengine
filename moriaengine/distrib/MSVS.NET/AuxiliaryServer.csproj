@@ -38,8 +38,8 @@
     <Compile Include="..\..\AuxiliaryServer\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleConnection.cs">
-      <Link>ConsoleServer\ConsoleConnection.cs</Link>
+    <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleClient.cs">
+      <Link>ConsoleServer\ConsoleClient.cs</Link>
     </Compile>
     <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleServer.cs">
       <Link>ConsoleServer\ConsoleServer.cs</Link>

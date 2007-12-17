@@ -15,6 +15,8 @@ namespace SteamEngine.AuxiliaryServer {
 		public static readonly sbyte timeZone;
 		public static readonly IPEndPoint loginServerEndpoint;
 
+		public static readonly IPEndPoint consoleServerEndpoint;
+
 		public static readonly List<LoginServerInstanceSettings> loginSettings = new List<LoginServerInstanceSettings>();
 
 		public static readonly string iniFileName = "steamaux.ini";
@@ -35,6 +37,13 @@ namespace SteamEngine.AuxiliaryServer {
 				loginServer.GetValue<int>("port", 2593, "The port to listen on for game client connections"));
 
 
+			IniFileSection consoleServer = ini.GetNewOrParsedSection("ConsoleServer");
+
+			consoleServerEndpoint = new IPEndPoint(IPAddress.Any,
+				consoleServer.GetValue<int>("port", 2594, "The port to listen on for remote console connections"));
+
+
+
 			foreach (IniFileSection section in ini.GetSections("GameServer")) {
 				loginSettings.Add(new LoginServerInstanceSettings(section));
 			}
@@ -52,12 +61,12 @@ namespace SteamEngine.AuxiliaryServer {
 
 			IPAddress[] wanIPs = Dns.GetHostAddresses(Dns.GetHostName());
 			wanIP = wanIPs[0].GetAddressBytes();
-			Sanity.IfTrueThrow(wanIP.Length != 4, "wanIP has not 4 bytes, need IPv6 compatibility?");
+			Sanity.IfTrueThrow(wanIP.Length != 4, "wanIP has not 4 bytes, need IPv6 compatibility implemented?");
 
 			
 			IPAddress[] lanIPs = Dns.GetHostAddresses("localhost");
 			lanIP = lanIPs[0].GetAddressBytes();
-			Sanity.IfTrueThrow(lanIP.Length != 4, "lanIP has not 4 bytes, need IPv6 compatibility?");
+			Sanity.IfTrueThrow(lanIP.Length != 4, "lanIP has not 4 bytes, need IPv6 compatibility implemented?");
 		}
 
 		internal static void Init() {

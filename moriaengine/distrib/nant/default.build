@@ -23,6 +23,7 @@
 	<property name="communicationFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Communication.dll'}" />
 	<property name="auxiliaryServerFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.AuxiliaryServer.exe'}" />
 	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
+	<property name="remoteConsoleFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.RemoteConsole.exe'}" />
 	<property name="gameCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GameCore.exe'}" />
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
 	<property name="generatedCodeFileName" value="${'bin/Generated/'+outputFilePrefix+'SteamEngine.Generated.'+scriptsNumber+'.dll'}" />
@@ -149,6 +150,28 @@
     		tofile="${guiFileName+'.config'}"	/>
 	</target>
 	
+	
+	<target name="buildRemoteConsole" depends="buildCommunication">
+		<csc 
+			target="${guiTargetType}" 
+			output="${remoteConsoleFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="RemoteConsole/**/*.cs" />
+			</sources>
+			<references>
+				<include name="bin/SteamDoc.dll" />
+				<include name="${communicationFileName}" />
+				<include name="${commonFileName}" />
+				<include name="bin/NAnt.Core.dll" />
+			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>
+	
 	<target name="buildCore" depends="buildCommunication">
 		<csc 
 			target="exe" 
@@ -272,6 +295,10 @@
 	
 	<target name="runGUI" depends="buildGUI">
 		<exec program="${guiFileName}" />
+	</target>
+	
+	<target name="runRemoteConsole" depends="buildGUI">
+		<exec program="${remoteConsoleFileName}" />
 	</target>
 	
 	<target name="runConverter" depends="buildGUI">

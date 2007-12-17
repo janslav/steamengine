@@ -20,6 +20,9 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+
 
 namespace SteamEngine.Common {
 	public enum RunLevels {Unknown,Running,Startup,Shutdown,Paused,Dead,AwaitingRetry}
@@ -130,6 +133,16 @@ namespace SteamEngine.Common {
 				toreturn.Append("'");
 			}
 			return toreturn.ToString();
+		}
+
+
+		public static Byte[] HashPassword(string password) {
+			//use SHA512 to hash the password.
+			Byte[] passBytes=Encoding.BigEndianUnicode.GetBytes(password);
+			SHA512Managed sha = new SHA512Managed();
+			Byte[] hash=sha.ComputeHash(passBytes);
+			sha.Clear();
+			return hash;
 		}
 	}
 }

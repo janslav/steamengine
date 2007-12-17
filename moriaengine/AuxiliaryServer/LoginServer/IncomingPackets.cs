@@ -8,8 +8,8 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class PacketHandlers : IProtocol<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
-		public static readonly PacketHandlers instance = new PacketHandlers();
+	public class LoginServerProtocol : IProtocol<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
+		public static readonly LoginServerProtocol instance = new LoginServerProtocol();
 
 
 		public IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id) {

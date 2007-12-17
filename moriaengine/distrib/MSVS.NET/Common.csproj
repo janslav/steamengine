@@ -86,6 +86,9 @@
       <Link>ConvertTools.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common\EmptyCollection.cs">
+      <Link>EmptyCollection.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\Exceptions.cs">
       <Link>Exceptions.cs</Link>
       <SubType>Code</SubType>

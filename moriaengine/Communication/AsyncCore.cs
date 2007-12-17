@@ -154,6 +154,7 @@ namespace SteamEngine.Communication {
 			lock (this.lockObject) {
 				packet.Handle(conn, state);
 			}
+			packet.Dispose();
 		}
 
 		//outgoing packets

@@ -22,7 +22,7 @@ namespace SteamEngine.AuxServerPipe {
 
 		public override byte Id {
 			get {
-				return 1; 
+				return 0x01; 
 			}
 		}
 
@@ -43,7 +43,7 @@ namespace SteamEngine.AuxServerPipe {
 
 		public override byte Id {
 			get {
-				return 2;
+				return 0x02;
 			}
 		}
 
@@ -52,4 +52,27 @@ namespace SteamEngine.AuxServerPipe {
 		}
 	}
 
+	internal class AccountLoginPacket : OutgoingPacket {
+		int consoleId;
+		string accName;
+		bool loginSuccessful;
+
+		public void Prepare(int consoleId, string accName, bool loginSuccessful) {
+			this.consoleId = consoleId;
+			this.accName = accName;
+			this.loginSuccessful = loginSuccessful;
+		}
+
+		public override byte Id {
+			get {
+				return 0x03;
+			}
+		}
+
+		protected override void Write() {
+			this.EncodeInt(this.consoleId);
+			this.EncodeUTF8String(this.accName);
+			this.EncodeBool(this.loginSuccessful);
+		}
+	}
 }

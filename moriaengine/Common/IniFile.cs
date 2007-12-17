@@ -71,6 +71,13 @@ namespace SteamEngine.Common {
 			return section;
 		}
 
+		public IniFileSection GetNewSection(string sectionName) {
+			IniFileSection section = new IniFileSection(sectionName, verticalLine);
+			allSections.Add(section);
+			sectionsByName[section.name] = section;
+			return section;
+		}
+
 		public IniFileSection GetSection(string sectionName) {
 			IniFileSection section;
 			if (!sectionsByName.TryGetValue(sectionName, out section)) {
@@ -83,6 +90,23 @@ namespace SteamEngine.Common {
 			foreach (IniFileSection section in allSections) {
 				if (sectionName.Equals(section.name, StringComparison.OrdinalIgnoreCase)) {
 					yield return section;
+				}
+			}
+		}
+
+		public void RemoveSection(IniFileSection section) {
+			allSections.Remove(section);
+
+			IniFileSection oldSection;
+			if (sectionsByName.TryGetValue(section.name, out oldSection)) {
+				if (oldSection == section) {
+					sectionsByName.Remove(section.name);
+					foreach (IniFileSection s in allSections) {
+						if (string.Equals(s.name, section.name, StringComparison.OrdinalIgnoreCase)) {
+							sectionsByName[s.name] = s;
+							return;
+						}
+					}
 				}
 			}
 		}
@@ -212,6 +236,18 @@ namespace SteamEngine.Common {
 			}
 		}
 
+		public void SetValue<T>(string name, T value, string comment) {
+			IniFileValueLine valueLine;
+			if (props.TryGetValue(name, out valueLine)) {
+				valueLine.SetValue(string.Concat(value));
+			} else {
+				comment = string.Concat(Environment.NewLine, "( ", name, ": ", comment, " )", Environment.NewLine);
+				valueLine = new IniFileValueLine(name, string.Concat(value), comment, true, null);
+				props[name] = valueLine;
+				parts.Add(valueLine);
+			}
+		}
+
 		public T GetValue<T>(string name) {
 			IniFileValueLine value;
 			if (props.TryGetValue(name, out value)) {
@@ -248,6 +284,11 @@ namespace SteamEngine.Common {
 			this.valueSet = false;
 		}
 
+		public void SetValue(string valueString) {
+			this.valueString = valueString;
+			this.valueSet = false;
+		}
+
 		public T GetValue<T>() {
 			if (!this.valueSet) {
 				if (string.IsNullOrEmpty(this.valueString)) {
@@ -257,7 +298,7 @@ namespace SteamEngine.Common {
 				}
 				this.valueSet = true;
 			}
-			return (T) value;
+			return (T) ConvertTools.ConvertTo(typeof(T), value);
 		}
 
 		public void WriteOut(TextWriter stream) {

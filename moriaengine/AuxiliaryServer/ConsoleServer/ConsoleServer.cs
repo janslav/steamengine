@@ -1,56 +1,55 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Text;
-//using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
 
-//using SteamEngine.Communication;
-//using SteamEngine.Communication.TCP;
-//using SteamEngine.Common;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
+using SteamEngine.Common;
 
-//namespace SteamEngine.AuxiliaryServer.ConsoleServer {
-//    public class LoginServer : TCPServer<ConsoleConnection> {
-//        public LoginServer()
-//            : base(12345) {
+namespace SteamEngine.AuxiliaryServer.ConsoleServer {
+	public class ConsoleServer : TCPServer<ConsoleClient> {
+		public ConsoleServer()
+			: base(ConsoleServerProtocol.instance, MainClass.globalLock) {
+		}
 
-//        }
+		private static ConsoleServer instance = new ConsoleServer();
 
-//        protected override IncomingPacket<ConsoleConnection> GetPacketImplementation(byte id) {
-//            return Pool<ConsoleServerIncomingPacket>.Acquire();
-//        }
-//    }
+		private static Dictionary<int, ConsoleClient> consoles = new Dictionary<int, ConsoleClient>();
 
 
+		internal static void Init() {
+			instance.Bind(Settings.consoleServerEndpoint);
+		}
 
-//    public class ConsoleServerIncomingPacket : IncomingPacket<ConsoleConnection> {
+		internal static void AddConnection(ConsoleClient client) {
+			consoles.Add(client.Uid, client);
 
-//        protected override ReadPacketResult Read() {
-//            return ReadPacketResult.DiscardSingle;
-//        }
+			if (consoles.Count == 1) {
+				GameServers.GameServerServer.StartSendingLogStr();
+			}
+		}
 
-//        public override void Handle(ConsoleConnection packet) {
-//            throw new Exception("The method or operation is not implemented.");
-//        }
-//    }
+		internal static void RemoveConnection(ConsoleClient client) {
+			consoles.Remove(client.Uid);
 
+			if (consoles.Count == 0) {
+				GameServers.GameServerServer.StopSendingLogStr();
+			}
+		}
 
-//    public class ConsoleServerOutgoingPacket : OutgoingPacket {
+		public static ConsoleClient GetClientByUid(int uid) {
+			ConsoleClient retVal;
+			if (consoles.TryGetValue(uid, out retVal)) {
+				return retVal;
+			}
+			return null;
+		}
 
-//        public override byte Id {
-//            get { return 0; }
-//        }
-
-//        public override string Name {
-//            get { return "ConsoleOutgoingPacket"; }
-//        }
-
-//        protected override void Write() {
-			
-//        }
-//    }
-
-//    //public class ConsoleServerPacketGroup : PacketGroup {
-//    //    public ConsoleServerPacketGroup() {
-//    //        base.SetType(PacketGroupType.SingleUse);
-//    //    }
-//    //}
-//}
+		public static IEnumerable<ConsoleClient> AllConsoles {
+			get {
+				return consoles.Values;
+			}
+		}
+	}
+}

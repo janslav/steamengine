@@ -116,6 +116,7 @@ namespace SteamEngine.Communication.NamedPipes {
 			this.isConnected = false;
 			try {
 				this.stream.Close();
+				this.stream = null;
 			} catch { }
 			try {
 				this.handle.Close();

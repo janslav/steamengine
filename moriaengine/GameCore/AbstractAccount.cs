@@ -157,7 +157,7 @@ namespace SteamEngine {
 					Match m= TagMath.stringRE.Match(valueString);
 					if (m.Success) {
 						if (Globals.hashPasswords) {
-							this.passwordHash = HashPassword(m.Groups["value"].Value);
+							this.passwordHash = Tools.HashPassword(m.Groups["value"].Value);
 							this.password = null;
 						} else {
 							this.password = m.Groups["value"].Value;
@@ -165,7 +165,7 @@ namespace SteamEngine {
 						}
 					} else {
 						if (Globals.hashPasswords) {
-							this.passwordHash = HashPassword(valueString);
+							this.passwordHash = Tools.HashPassword(valueString);
 							this.password = null;
 						} else {
 							this.password = valueString;
@@ -264,7 +264,7 @@ namespace SteamEngine {
 		public void Password(string pass) {
 			Commands.AuthorizeCommandThrow(Globals.Src, "SetAccountPassword");
 			if (Globals.hashPasswords) {
-				this.passwordHash=HashPassword(pass);
+				this.passwordHash=Tools.HashPassword(pass);
 				this.password=null;
 			} else {
 				this.password=pass;
@@ -627,13 +627,13 @@ namespace SteamEngine {
 		//precedence. This should not happen, but this is here as an additional
 		//security measure, in case someone manages to somehow set the string
 		//password despite there being a hashed password already.
-		private bool TestPassword(string pass) {
+		internal bool TestPassword(string pass) {
 			//Preconditions
 			Sanity.IfTrueThrow((this.passwordHash!=null && this.password!=null), "GameAccount ["+name+"]: Has both a password and hashed password.");
 			Sanity.IfTrueThrow((this.passwordHash==null && this.password==null), "GameAccount ["+name+"]: Has neither a password nor hashed password.");
 
 			if (this.passwordHash!=null) {
-				if (TestHash(this.passwordHash, HashPassword(pass))) {
+				if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {
 					if (!Globals.hashPasswords) {
 						//record the password string and get rid of the hash now that we know what the password is again
 						this.password=pass;
@@ -654,10 +654,10 @@ namespace SteamEngine {
 						}
 					}
 				} else {	//Eh, convert the account's password to a hash and THEN compare.
-					this.passwordHash=HashPassword(this.password);
+					this.passwordHash=Tools.HashPassword(this.password);
 					this.password=null;
 
-					if (TestHash(this.passwordHash, HashPassword(pass))) {
+					if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {
 						return true;
 					} else {
 						return false;
@@ -675,15 +675,6 @@ namespace SteamEngine {
 		private static string EncodeHashToString(Byte[] decodedHash) {
 			//encode it into a string which we can write to a text save if necessary
 			return Convert.ToBase64String(decodedHash);
-		}
-
-		private static Byte[] HashPassword(string password) {
-			//use SHA512 to hash the password.
-			Byte[] passBytes=Encoding.BigEndianUnicode.GetBytes(password);
-			SHA512Managed sha = new SHA512Managed();
-			Byte[] hash=sha.ComputeHash(passBytes);
-			sha.Clear();
-			return hash;
 		}
 
 		private static bool TestHash(Byte[] original, Byte[] test) {
