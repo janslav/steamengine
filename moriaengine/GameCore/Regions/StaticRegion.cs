@@ -234,7 +234,7 @@ namespace SteamEngine.Regions {
 				//code where the ActivateAll is being run)
 
 				//and now finally reactivate the activable regions - spread the references to their rectangles to the map sectors :)
-				InitRectanglesToMaps(activeRegs); //use only the regions from "activeRegs - those that can be activated"
+				InitRectanglesToMaps(activeRegs); //use only the regions from "activeRegs" - those that can be activated
 			} catch(FatalException) {
 				throw;
 			} catch(Exception e) {

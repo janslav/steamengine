@@ -32,7 +32,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//automaticky se zobrazi defname, createdAt, hierarchy index, mapplane
 		[Button("Parent")]
 		public static void Parent(object target) {
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, ((Region)target).Parent, 0, 0);
+			Region parent = ((Region)target).Parent;
+			if (parent != null) {
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, ((Region)target).Parent, 0, 0);
+			} else {
+				D_Display_Text.ShowError("Neexistuje rodièovský region");
+			}
 		}
 
 		[Button("Rectangles")]

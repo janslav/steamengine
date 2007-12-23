@@ -76,5 +76,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 			}
 		}
+
+		[SteamFunction]
+		[Remark("Zobrazí dialog s volitelným labelem a textem v nìm")]
+		public static void DisplayText(Thing self, ScriptArgs args) {
+			if (args != null && args.Args.Length != 2) {
+				self.Dialog(SingletonScript<D_Display_Text>.Instance, args.Args[0], args.Args[1]);
+			} else {
+				Globals.SrcCharacter.Message("DisplayText musí být volána se dvìma parametry - label + text", (int)Hues.Red);
+			}
+		}
+
+		[SteamFunction]
+		[Remark("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
+		public static void ShowError(Thing self, ScriptArgs args) {
+			if (args != null && args.Args.Length != 1) {
+				self.Dialog(SingletonScript<D_Display_Text>.Instance, "CHYBA", args.Args[0]);
+			} else {
+				Globals.SrcCharacter.Message("ShowError musí být volána s parametrem - text chyby", (int)Hues.Red);
+			}
+		}
+
+		[Remark("Obdoba show erroru použitlená jendoduše z C#")]
+		public static void ShowError(string text) {
+			ShowError(Globals.SrcCharacter, new ScriptArgs(text));
+		}
 	}
 }
