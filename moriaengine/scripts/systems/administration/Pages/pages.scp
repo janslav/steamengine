@@ -178,9 +178,9 @@ elseif (btnNumber==3) //display the information about the account
 elseif (btnNumber==4) //reply to the page (if not replied, otherwise the button will not exist
   	dialog(inpt_page_reply,iPage) //send the page instance and the dialog information	
 elseif (btnNumber==5) //display the page text in the better window
-	dialog(d_display_text,"Puvodní text page",iPage.reason)
+	DisplayText(src,"Puvodní text page",iPage.reason)
 elseif (btnNumber==6) //display the page reply text in the better window
-	dialog(d_display_text,"Odpoved na page",iPage.reply)	
+	DisplayText(src,"Odpoved na page",iPage.reply)
 endif
 
 [InputDef inpt_page_reply]
