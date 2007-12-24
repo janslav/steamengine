@@ -24,7 +24,7 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[Remark("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
-				"rectngles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
+				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, maxX, minY, maxY;
 
@@ -36,6 +36,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public MutableRectangle(ushort startX, ushort startY, ushort endX, ushort endY) {
+			Sanity.IfTrueThrow((startX > endX) || (startY > endY),
+				"MutableRectangle (" + startX + "," + startY + "," + endX + "," + endY + "). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");			
 			this.minX = startX;
 			this.minY = startY;
 			this.maxX = endX;

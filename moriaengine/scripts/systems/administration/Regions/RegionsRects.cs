@@ -23,8 +23,8 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog for dispalying the regions rectangles")]
-	public class D_Regions_Rectangles : CompiledGump {
-		private static int width = 600;
+	public class D_Region_Rectangles : CompiledGump {
+		private static int width = 450;
 
 		[Remark("Seznam parametru: 0 - region" +
 				"	1 - paging"+
@@ -37,6 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//vezmeme je z regionu
 				rectList = MutableRectangle.TakeRectsFromRegion(reg);
+				args[2] = rectList; //ulozime to do argumentu dialogu
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -61,13 +62,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//popis sloupcu (Info, Height, Width, StartPoint, EndPoint, Tiles)
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH,30,30,230,0,40));
+			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 35, 35, 130, 0, 35));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Edit");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Šíøka");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Výška");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Poèáteèní bod");
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Koncový bod");
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Polí");
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Smaž");			
+			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Šíøka");
+			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Výška");
+			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Poèáteèní bod");
+			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Koncový bod");
+			dlg.LastTable[0, 6] = TextFactory.CreateLabel("Polí");
 			dlg.MakeTableTransparent();
 
 			//seznam rectnaglu
@@ -79,17 +81,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for(int i = firstiVal; i < imax; i++) {
 				MutableRectangle rect = rectList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + i); //editovat
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rect.Width.ToString());
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(rect.Height.ToString());
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText("(" + rect.MinX + "," + rect.MinY + ")");
-				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText("(" + rect.MaxX + "," + rect.MaxY + ")");
-				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(rect.TilesNumber.ToString());
+				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (2 * i)); //editovat
+				dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 11 + (2 * i)); //smazat
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(rect.Width.ToString());
+				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(rect.Height.ToString());
+				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText("(" + rect.MinX + "," + rect.MinY + ")");
+				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText("(" + rect.MaxX + "," + rect.MaxY + ")");
+				dlg.LastTable[rowCntr, 6] = TextFactory.CreateText(rect.TilesNumber.ToString());
 
 				rowCntr++;
 			}
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
-			dlg.CreatePaging(rectList.Count, firstiVal, 1);//ted paging			
+
+			//send button
+			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2);
+			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
+			dlg.MakeTableTransparent();
+
+			dlg.CreatePaging(rectList.Count, firstiVal, 1);//ted paging		
 			dlg.WriteOut();
 		}
 
@@ -98,81 +108,41 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Region reg = (Region)args[0];
 			List<MutableRectangle> rectsList = (List<MutableRectangle>)args[2];
 			int firstOnPage = Convert.ToInt32(args[1]);
-			//if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-			//    switch(gr.pressedButton) {
-			//        case 0: //exit
-			//            DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-			//            break;
-			//        case 1: //zalozit novy rectangle
-			//            //dummy
-			//            //newRect.region = reg;
-			//            args[2] = null; //vycistit odkaz na seznam - prenacteme ho
-			//            //GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance);
-			//            //DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
-			//            break;
-			//        case 2: //vyhledavat / zuzit vyber
-			//            string nameCriteria = gr.GetTextResponse(33);
-			//            args[0] = nameCriteria; //uloz info o vyhledavacim kriteriu
-			//            args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem												
-			//            args[2] = null; //vycistit soucasny odkaz na regionlist aby se mohl prenacist
-			//            DialogStacking.ResendAndRestackDialog(gi);
-			//            break;
-			//        case 3: //name asc						
-			//            args[2] = null;
-			//            args[3] = RegionsSorting.NameAsc;
-			//            DialogStacking.ResendAndRestackDialog(gi);
-			//            break;
-			//        case 4: //name desc
-			//            args[2] = null;
-			//            args[3] = RegionsSorting.NameDesc;
-			//            DialogStacking.ResendAndRestackDialog(gi);
-			//            break;
-			//        case 5: //defname asc
-			//            args[2] = null;
-			//            args[3] = RegionsSorting.DefnameAsc;
-			//            DialogStacking.ResendAndRestackDialog(gi);
-			//            break;
-			//        case 6: //defname desc
-			//            args[2] = null;
-			//            args[3] = RegionsSorting.DefnameDesc;
-			//            DialogStacking.ResendAndRestackDialog(gi);
-			//            break;
-			//    }
-			//} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, rectsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
-			//    //1 sloupecek
-			//    return;
-			//} else {
-			//    //zjistime si radek
-			//    int row = ((int)gr.pressedButton - 10) / 2;
-			//    int buttNo = ((int)gr.pressedButton - 10) % 2;
-			//    RegionRectangle region = rectsList[row];
-			//    GumpInstance newGi;
-			//    switch(buttNo) {
-			//        case 0: //region info
-			//            newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, region, 0, 0);
-			//            DialogStacking.EnstackDialog(gi, newGi);
-			//            break;
-			//        case 1: //smazat region
-			//            //region.Delete(); - TODO (remove z dictu, rectangly atd.)
-			//            args[3] = null;
-			//            DialogStacking.ResendAndRestackDialog(gi);
-			//            break;
-			//    }
-			//}
+			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch(gr.pressedButton) {
+					case 0: //exit
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+						break;
+					case 1: //zalozit novy rectangle
+						//nemazat rectangly - budeme do nich ukladat novy						
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, rectsList, null, null, null, null);
+						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						break;
+					case 2: //ulozit
+						args[2] = null; //vycistit odkaz na seznam - prenacteme ho
+						//DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						break;
+				}
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, rectsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
+				//1 sloupecek
+				return;
+			} else {
+				//zjistime si radek a cudlik v nem
+				int row = ((int)gr.pressedButton - 10) / 2;
+				int buttNo = ((int)gr.pressedButton - 10) % 2;
+				MutableRectangle rect = rectsList[row];
+				GumpInstance newGi;
+				switch(buttNo) {
+					case 0: //region rectangle info
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, rect, 0, 0);
+						DialogStacking.EnstackDialog(gi, newGi);
+						break;
+					case 1: //smazat rectangle
+						rectsList.Remove(rect); //remove z listu, list nenulujeme zejo .)
+						DialogStacking.ResendAndRestackDialog(gi);
+						break;
+				}
+			}
 		}		
-
-		//[Remark("Display region's rectangles. Function accessible from the game." +
-		//        "The function is designed to be triggered using .RegionsRectangles to display the "+
-		//        "rectangles of the callers actual region" +
-		//        "but it can be also called from other dialogs - such as region's info...")]				
-		//[SteamFunction]
-		//public static void RegionsRectangles(Thing self, ScriptArgs text) {
-		//    //Parametry dialogu:
-		//    //0 - vyhledavaci kriterium
-		//    //1 - kolikaty bude prvni
-		//    //2 - seznam
-		//    //3 - trideni
-		//    Globals.SrcCharacter.Dialog(SingletonScript<D_Regions_Rectangles>.Instance, "", 0, null, RegionsSorting.NameAsc);
-		//}
 	}
 }
