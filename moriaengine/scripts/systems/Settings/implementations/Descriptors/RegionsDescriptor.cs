@@ -42,7 +42,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Rectangles")]
 		public static void Rectangles(object target) {
-			//Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance,target);
+			//params:	1 - Region
+			//			2 - prvni rect na strance
+			//			3 - seznam
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance, (Region)target, 0, null);
 		}
 
 		[GetMethod("Position", typeof(Point4D))]
@@ -67,6 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//Tohle v sobe nese informaci v podstate o poslednim resyncu :) (tehdy se reloadnou a znovu vzniknou)
+		//hmm tak nebrat, v podstate je to k nicemu, a nejde to nejak dost dobre zformatovat
 		//[GetMethod("Created at", typeof(string))]
 		//public static object CretingTime(object target) {
 		//    TimeSpan tms = HighPerformanceTimer.TicksToTimeSpan(((Region)target).CreatedAt);

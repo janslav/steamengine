@@ -236,6 +236,12 @@
     <Compile Include="..\..\scripts\systems\administration\Regions\MutableRectangle.cs">
       <Link>systems\administration\Regions\MutableRectangle.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\NewRectangle.cs">
+      <Link>systems\administration\Regions\NewRectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\NewRegion.cs">
+      <Link>systems\administration\Regions\NewRegion.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\Regions\RegionsList.cs">
       <Link>systems\administration\Regions\RegionsList.cs</Link>
     </Compile>

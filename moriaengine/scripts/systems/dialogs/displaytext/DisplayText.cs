@@ -97,9 +97,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Obdoba show erroru použitlená jendoduše z C#")]
-		public static void ShowError(string text) {
-			ShowError(Globals.SrcCharacter, new ScriptArgs(text));
+		[Remark("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
+		public static GumpInstance ShowError(string text) {
+			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, "CHYBA", text);
 		}
 	}
 }
