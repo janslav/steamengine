@@ -57,7 +57,7 @@ namespace SteamEngine.AuxServerPipe {
 		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
 			AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
 
-			AccountLoginPacket reply = Pool<AccountLoginPacket>.Acquire();
+			ReplyAccountLoginPacket reply = Pool<ReplyAccountLoginPacket>.Acquire();
 			reply.Prepare(this.consoleId, this.accName, acc != null);
 
 			conn.SendSinglePacket(reply);

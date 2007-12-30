@@ -29,6 +29,12 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			}
 		}
 
+		public static int GameServersCount {
+			get {
+				return clients.Count;
+			}
+		}
+
 		internal static void AddClient(GameServerClient gameServerClient) {
 			clients.AddFirst(gameServerClient);
 		}
@@ -46,14 +52,8 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 
 		private static void BroadcastRSLS(bool state) {
-			RequestSendingLogStringsPacket packet = Pool<RequestSendingLogStringsPacket>.Acquire();
-			packet.Prepare(state);
-
-			PacketGroup group = Pool<PacketGroup>.Acquire();
-			group.AddPacket(packet);
-
 			foreach (GameServerClient gameServer in clients) {
-				gameServer.Conn.SendPacketGroup(group);
+				gameServer.RequestSendingLogStr(state);
 			}
 		}
 	}

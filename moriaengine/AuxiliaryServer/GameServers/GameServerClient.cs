@@ -13,13 +13,13 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		NamedPipeConnection<GameServerClient> conn;
 
-		static int uids;
+		static int uids = 1;
 
 		int uid;
 
-		int port;
-		string serverName;
-		string executablePath;
+		GameServerInstanceSettings settings;
+
+		private bool startupFinished = false;
 
 		public NamedPipeConnection<GameServerClient> Conn {
 			get {
@@ -29,7 +29,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		public string Name {
 			get {
-				return this.serverName;
+				return this.settings.Name;
 			}
 		}
 
@@ -41,6 +41,9 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		protected override void On_Reset() {
 			uid = uids++;
+
+			this.settings = null;
+			this.startupFinished = false;
 
 			base.On_Reset();
 		}
@@ -62,29 +65,13 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			this.conn = conn;
 
 			GameServerServer.AddClient(this);
-
-			foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-				console.TryLoginToGameServer(this);
-			}
 		}
 
 		public void On_Close(string reason) {
 			Console.WriteLine(this + " closed: "+reason);
 
-			ConsoleServer.RequestCloseGameServerWindowPacket packet = Pool<ConsoleServer.RequestCloseGameServerWindowPacket>.Acquire();
-			packet.Prepare(this.uid);
-			PacketGroup group = Pool<PacketGroup>.Acquire();
-			group.AddPacket(packet);
-
-			bool usedGroup = false;
-
-			foreach (ConsoleServer.ConsoleClient console in LoggedInConsoles.AllConsolesIn(this)) {
-				console.Conn.SendPacketGroup(group);
-				usedGroup = true;
-			}
-
-			if (!usedGroup) {
-				group.Dispose();
+			foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				console.CloseCmdWindow(this.uid);
 			}
 
 			LoggedInConsoles.RemoveGameServer(this);
@@ -95,10 +82,24 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			return "GameServerClient "+uid;
 		}
 
-		internal void SetIdentificationData(ushort port, string serverName, string executablePath) {
-			this.port = port;
-			this.serverName = serverName;
-			this.executablePath = executablePath;
+		internal void SetIdentificationData(GameServerInstanceSettings settings) {
+			this.settings = settings;
+		}
+
+		internal void WriteString(string str) {
+			if (this.startupFinished) {
+
+			} else {
+				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					console.WriteString(this.uid, str);
+				}
+			}
+		}
+
+		internal void RequestSendingLogStr(bool state) {
+			RequestSendingLogStringsPacket packet = Pool<RequestSendingLogStringsPacket>.Acquire();
+			packet.Prepare(state);
+			this.conn.SendSinglePacket(packet);
 		}
 	}
 }

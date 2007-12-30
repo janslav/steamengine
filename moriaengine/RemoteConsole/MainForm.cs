@@ -36,14 +36,16 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		public void AddCmdLineDisplay(int id, string name) {
-			TabPage tab = new TabPage(name);
-			CommandLineDisplay cld = new CommandLineDisplay(name, id);
-			tab.Controls.Add(cld);
-			cld.Dock = DockStyle.Fill;
-			this.tabControl.Controls.Add(tab);
+			if (!this.displays.ContainsKey(id)) {
+				TabPage tab = new TabPage(name);
+				CommandLineDisplay cld = new CommandLineDisplay(name, id);
+				tab.Controls.Add(cld);
+				cld.Dock = DockStyle.Fill;
+				this.tabControl.Controls.Add(tab);
 
-			RemoveCmdLineDisplay(id);
-			this.displays.Add(id, cld);
+				RemoveCmdLineDisplay(id);
+				this.displays.Add(id, cld);
+			}
 		}
 
 		public void RemoveCmdLineDisplay(int id) {
@@ -55,11 +57,18 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
+		public void EnableCommandLineOnDisplay(int id) {
+			CommandLineDisplay cld;
+			if (this.displays.TryGetValue(id, out cld)) {
+				cld.EnableComandLine();
+			}
+		}
+
 		public void ClearCmdLineDisplays() {
 			Control[] controls = new Control[this.tabControl.Controls.Count];
 			this.tabControl.Controls.CopyTo(controls, 0);
 			foreach (Control ctrl in controls) {
-				if ((ctrl != this.systemTabPage) && (ctrl is TabPage)) {
+				if ((ctrl != this.systemTab) && (ctrl is TabPage)) {
 					ctrl.Dispose();
 				}
 			}
@@ -92,6 +101,13 @@ namespace SteamEngine.RemoteConsole {
 
 		private void menuDisconnect_Click(object sender, EventArgs e) {
 			ConsoleClient.Disconnect("Disconnect menu item used.");
+		}
+
+		internal void WriteLine(int uid, string str) {
+			CommandLineDisplay cld;
+			if (this.displays.TryGetValue(uid, out cld)) {
+				cld.display.Write(str);
+			}
 		}
 	}
 }

@@ -59,7 +59,7 @@ namespace SteamEngine.RemoteConsole {
 
 		#endregion
 
-		private LogStrDisplay display;
 		private System.Windows.Forms.ComboBox txtCommandLine;
+		public LogStrDisplay display;
 	}
 }

@@ -25,7 +25,6 @@ namespace SteamEngine.AuxiliaryServer {
 			} finally {
 				Dispose();
 			}
-
 		}
 
 		private static void Init() {

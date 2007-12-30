@@ -40,8 +40,17 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			state.SetLoginData(this.accName, this.password);
 
-			foreach (GameServers.GameServerClient gameServer in GameServers.GameServerServer.AllGameServers) {
-				state.TryLoginToGameServer(gameServer);
+			if (GameServers.GameServerServer.GameServersCount > 0) {
+
+				foreach (GameServers.GameServerClient gameServer in GameServers.GameServerServer.AllGameServers) {
+					state.TryLoginToGameServer(gameServer);
+				}
+			} else {
+				if (Settings.CheckUser(this.accName, this.password)) {
+					state.LoggedInToAux(true);
+				} else {
+					conn.Close("Failed to identify as " + this.accName);
+				}
 			}
 		}
 	}

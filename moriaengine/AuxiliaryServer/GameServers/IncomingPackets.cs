@@ -33,23 +33,26 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 	}
 
 	public class IdentifyGameServerPacket : GameServerIncomingPacket {
-		ushort port;
-		string serverName;
-		string executablePath;
+		string steamengineIniPath;
 
 		protected override ReadPacketResult Read() {
-			this.port = this.DecodeUShort();
-			this.serverName = this.DecodeUTF8String();
-			this.executablePath = this.DecodeUTF8String();
+			this.steamengineIniPath = this.DecodeUTF8String();
 
 			return ReadPacketResult.Success;
 		}
 
 		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
-			Console.WriteLine(state+" identified as '"+this.serverName+"', port "+this.port+
-				", executable '"+this.executablePath+"'");
+			Console.WriteLine(state + " identified (steamengine.ini at '" + this.steamengineIniPath + "')");
+			GameServerInstanceSettings game = Settings.RememberGameServer(this.steamengineIniPath);
+			state.SetIdentificationData(game);
 
-			state.SetIdentificationData(this.port, this.serverName, this.executablePath);
+			if (ConsoleServer.ConsoleServer.AllConsolesCount > 0) {
+				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					//console.TryLoginToGameServer(this);
+					console.OpenCmdWindow(state.Name, state.Uid);
+				}
+				state.RequestSendingLogStr(true);
+			}
 		}
 	}
 
@@ -63,6 +66,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
 			//Console.WriteLine(state+": "+str);
+			state.WriteString(this.str);
 		}
 	}
 
@@ -82,16 +86,11 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(this.consoleId);
 			if (console != null) {
 				if (this.loginSuccessful) {
-					Console.WriteLine(console + " identified as " + this.accName);
+					Console.WriteLine(this + " identified as " + this.accName + " with " + state.Name);
 
-					ConsoleServer.RequestOpenGameServerWindowPacket packet = Pool<ConsoleServer.RequestOpenGameServerWindowPacket>.Acquire();
-					packet.Prepare(state.Name, state.Uid);
-					console.Conn.SendSinglePacket(packet);
-
-					LoggedInConsoles.AddPair(console, state);
-
+					console.LoggedInTo(state);
 				} else {
-					console.Conn.Close("Failed to identify as " + this.accName);
+					console.CloseCmdWindow(state.Uid);
 				}
 			}
 		}

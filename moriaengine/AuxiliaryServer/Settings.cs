@@ -17,7 +17,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public static readonly IPEndPoint consoleServerEndpoint;
 
-		public static readonly List<LoginServerInstanceSettings> loginSettings = new List<LoginServerInstanceSettings>();
+		public static readonly List<GameServerInstanceSettings> knownGameServers = new List<GameServerInstanceSettings>();
 
 		public static readonly string iniFileName = "steamaux.ini";
 
@@ -45,19 +45,20 @@ namespace SteamEngine.AuxiliaryServer {
 
 
 			foreach (IniFileSection section in ini.GetSections("GameServer")) {
-				loginSettings.Add(new LoginServerInstanceSettings(section));
+				knownGameServers.Add(new GameServerInstanceSettings(section));
 			}
 
-			if (loginSettings.Count == 0) {
-				loginSettings.Add(new LoginServerInstanceSettings(ini.GetNewOrParsedSection("GameServer")));
+			if (knownGameServers.Count == 0) {
+				knownGameServers.Add(new GameServerInstanceSettings(ini.GetNewOrParsedSection("GameServer")));
 			}
+
+			knownGameServers.Sort(delegate(GameServerInstanceSettings a, GameServerInstanceSettings b) {
+				return a.Number.CompareTo(b.Number);
+			});
 
 			ini.WriteToFile();
 
 			Console.WriteLine(iniFileName+" loaded and written.");
-
-
-
 
 			IPAddress[] wanIPs = Dns.GetHostAddresses(Dns.GetHostName());
 			wanIP = wanIPs[0].GetAddressBytes();
@@ -69,40 +70,111 @@ namespace SteamEngine.AuxiliaryServer {
 			Sanity.IfTrueThrow(lanIP.Length != 4, "lanIP has not 4 bytes, need IPv6 compatibility implemented?");
 		}
 
+		public static GameServerInstanceSettings RememberGameServer(string iniPath) {
+			foreach (GameServerInstanceSettings game in knownGameServers) {
+				if (string.Equals(Path.GetFullPath(game.IniPath), Path.GetFullPath(iniPath), StringComparison.OrdinalIgnoreCase)) {
+					return game;
+				}
+			}
+
+			IniFile ini = new IniFile(iniFileName);
+			IniFileSection section = ini.GetNewSection("GameServer");
+
+			GameServerInstanceSettings newGameServer = new GameServerInstanceSettings(iniPath);
+			newGameServer.WriteToIniSection(section);
+			knownGameServers.Add(newGameServer);
+
+			ini.WriteToFile();
+
+			return newGameServer;
+		}
+
+		public static void RememberUser(string user, string password) {
+			IniFile ini = new IniFile(iniFileName);
+			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
+			usersSection.SetValue<string>(user, password, null);
+			ini.WriteToFile();
+		}
+
+		public static bool CheckUser(string user, string password) {
+			IniFile ini = new IniFile(iniFileName);
+			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
+			string passToCompare;
+			if (usersSection.TryGetValue<string>(user, out passToCompare)) {
+				if (string.Equals(password, passToCompare, StringComparison.Ordinal)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		internal static void Init() {
 			
 		}
 	}
 
-	public class LoginServerInstanceSettings {
-		public readonly int number;
-		public readonly string iniPath;
-		public readonly string name;
-		public readonly ushort port;
+	public class GameServerInstanceSettings {
+		private int number;
+		private string iniPath;
+		private string name;
+		private ushort port;
 
-		internal LoginServerInstanceSettings(IniFileSection section) {
-			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list");
+		internal GameServerInstanceSettings(string iniPath) {
+			this.number = Settings.knownGameServers.Count;
+			this.iniPath = iniPath;
+
+			ReadGameIni();
+		}
+
+		internal GameServerInstanceSettings(IniFileSection section) {
+			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list. Should be unique.");
 			this.iniPath = Path.GetFullPath(section.GetValue<string>("iniPath", ".", "path to steamengine.ini of this instance"));
 
-			IniFile ini = null;
+			ReadGameIni();
 
+		}
+
+		internal void WriteToIniSection(IniFileSection section) {
+			section.SetValue<int>("number", this.number, "Number to order the servers in shard list. Should be unique.");
+			section.SetValue<string>("iniPath", ".", "path to steamengine.ini of this instance");
+		}
+
+		private void ReadGameIni() {
+			IniFile gameIni;
+
+			iniPath = Path.Combine(iniPath, "steamengine.ini");
 			if (File.Exists(iniPath)) {
-				ini = new IniFile(iniPath);
-
+				gameIni = new IniFile(iniPath);
 			} else {
-				iniPath = Path.Combine(iniPath, "steamengine.ini");
-				if (File.Exists(iniPath)) {
-					ini = new IniFile(iniPath);
-				}
+				throw new Exception("Can't find steamengine.ini on the path " + this.iniPath + ". It inecessary for the AuxiliaryServer operation.");
 			}
 
-			if (ini == null) {
-				throw new Exception("Can't find steamengine.ini on the path "+this.iniPath+". It inecessary for the AuxiliaryServer operation.");
+			this.name = gameIni.GetSection("setup").GetValue<string>("name");
+			this.port = gameIni.GetSection("ports").GetValue<ushort>("game");
+		}
+
+		public int Number {
+			get {
+				return this.number;
 			}
+		}
 
-			this.name = ini.GetSection("setup").GetValue<string>("name");
-			this.port = ini.GetSection("ports").GetValue<ushort>("game");
+		public string IniPath {
+			get {
+				return this.iniPath;
+			}
+		}
 
+		public string Name {
+			get {
+				return this.name;
+			}
+		}
+
+		public ushort Port {
+			get {
+				return this.port;
+			}
 		}
 	}
 }

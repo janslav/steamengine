@@ -17,6 +17,10 @@ namespace SteamEngine.RemoteConsole {
 			InitializeComponent();
 		}
 
+		public void EnableComandLine() {
+			this.txtCommandLine.Enabled = true;
+		}
+
 		private void txtCommandLine_KeyPress(object sender, KeyPressEventArgs e) {
 			if (e.KeyChar=='\r') {
 				string cmd=txtCommandLine.Text;

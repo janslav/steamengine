@@ -257,6 +257,17 @@ namespace SteamEngine.Common {
 			}
 		}
 
+		public bool TryGetValue<T>(string name, out T retVal) {
+			IniFileValueLine value;
+			if (props.TryGetValue(name, out value)) {
+				retVal = value.GetValue<T>();
+				return true;
+			} else {
+				retVal = default(T);
+				return false;
+			}
+		}
+
 		public void WriteOut(TextWriter stream) {
 			this.commentAbove.WriteOut(stream);
 			stream.Write("[");
@@ -291,7 +302,7 @@ namespace SteamEngine.Common {
 
 		public T GetValue<T>() {
 			if (!this.valueSet) {
-				if (string.IsNullOrEmpty(this.valueString)) {
+				if (typeof(T) != typeof(string) && string.IsNullOrEmpty(this.valueString)) {
 					this.value = default(T);
 				} else {
 					this.value = ConvertTools.ConvertTo(typeof(T), this.valueString);
