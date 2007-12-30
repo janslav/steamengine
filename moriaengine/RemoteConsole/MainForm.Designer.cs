@@ -83,7 +83,7 @@ namespace SteamEngine.RemoteConsole {
 			this.tabControl.Location = new System.Drawing.Point(0, 0);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(632, 373);
+			this.tabControl.Size = new System.Drawing.Size(632, 173);
 			this.tabControl.TabIndex = 0;
 			// 
 			// systemTab
@@ -92,7 +92,7 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTab.Location = new System.Drawing.Point(4, 22);
 			this.systemTab.Name = "systemTab";
 			this.systemTab.Padding = new System.Windows.Forms.Padding(3);
-			this.systemTab.Size = new System.Drawing.Size(624, 347);
+			this.systemTab.Size = new System.Drawing.Size(624, 147);
 			this.systemTab.TabIndex = 0;
 			this.systemTab.Text = "System";
 			this.systemTab.UseVisualStyleBackColor = true;
@@ -102,14 +102,14 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTabPage.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.systemTabPage.Location = new System.Drawing.Point(3, 3);
 			this.systemTabPage.Name = "systemTabPage";
-			this.systemTabPage.Size = new System.Drawing.Size(618, 341);
+			this.systemTabPage.Size = new System.Drawing.Size(618, 141);
 			this.systemTabPage.TabIndex = 0;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(632, 373);
+			this.ClientSize = new System.Drawing.Size(632, 173);
 			this.Controls.Add(this.tabControl);
 			this.Menu = this.mainMenu;
 			this.Name = "MainForm";

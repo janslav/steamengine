@@ -10,14 +10,10 @@ using SteamEngine.Common;
 namespace SteamEngine.AuxServerPipe {
 
 	internal class IdentifyGameServerPacket : OutgoingPacket {
-		ushort port;
-		string serverName;
-		string executablePath;
+		string steamengineIniPath;
 
 		public void Prepare() {
-			this.port = Globals.port;
-			this.serverName = Globals.serverName;
-			this.executablePath = System.IO.Path.GetFullPath(CompiledScripts.ClassManager.CoreAssembly.Location);
+			this.steamengineIniPath = System.IO.Path.GetFullPath(".");
 		}
 
 		public override byte Id {
@@ -27,9 +23,7 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		protected override void Write() {
-			this.EncodeUShort(this.port);
-			this.EncodeUTF8String(this.serverName);
-			this.EncodeUTF8String(this.executablePath);
+			this.EncodeUTF8String(this.steamengineIniPath);
 		}
 	}
 
@@ -52,7 +46,7 @@ namespace SteamEngine.AuxServerPipe {
 		}
 	}
 
-	internal class AccountLoginPacket : OutgoingPacket {
+	internal class ReplyAccountLoginPacket : OutgoingPacket {
 		int consoleId;
 		string accName;
 		bool loginSuccessful;

@@ -17,6 +17,10 @@ namespace SteamEngine.RemoteConsole {
 					return Pool<RequestOpenGameServerWindowPacket>.Acquire();
 				case 2:
 					return Pool<RequestCloseGameServerWindowPacket>.Acquire();
+				case 3:
+					return Pool<RequestEnableCommandLinePacket>.Acquire();
+				case 4:
+					return Pool<WriteLinePacket>.Acquire();
 			}
 
 			return null;
@@ -54,13 +58,13 @@ namespace SteamEngine.RemoteConsole {
 		int uid;
 
 		private delegate void IntDeleg(int i);
-		private static IntDeleg deleg = RemoveCmdLineDisplay;
+		private static IntDeleg deleg = CloseGameServerWindow;
 
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid);
 		}
 
-		private static void RemoveCmdLineDisplay(int uid) {
+		private static void CloseGameServerWindow(int uid) {
 			MainClass.mainForm.RemoveCmdLineDisplay(uid);
 		}
 
@@ -69,4 +73,47 @@ namespace SteamEngine.RemoteConsole {
 			return ReadPacketResult.Success;
 		}
 	}
+
+	public class RequestEnableCommandLinePacket : ConsoleIncomingPacket {
+		int uid;
+
+		private delegate void IntDeleg(int i);
+		private static IntDeleg deleg = EnableCommandLine;
+
+		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.Invoke(deleg, this.uid);
+		}
+
+		private static void EnableCommandLine(int uid) {
+			MainClass.mainForm.EnableCommandLineOnDisplay(uid);
+		}
+
+		protected override ReadPacketResult Read() {
+			this.uid = this.DecodeInt();
+			return ReadPacketResult.Success;
+		}
+	}
+
+	public class WriteLinePacket : ConsoleIncomingPacket {
+		int uid;
+		string str;
+
+		private delegate void IntAndStrDeleg(int i, string s);
+		private static IntAndStrDeleg deleg = WriteLine;
+
+		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.Invoke(deleg, this.uid, this.str);
+		}
+
+		private static void WriteLine(int uid, string str) {
+			MainClass.mainForm.WriteLine(uid, str);
+		}
+
+		protected override ReadPacketResult Read() {
+			this.uid = this.DecodeInt();
+			this.str = this.DecodeUTF8String();
+			return ReadPacketResult.Success;
+		}
+	}
+
 }

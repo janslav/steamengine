@@ -46,12 +46,7 @@ namespace SteamEngine {
 		}
 		
 		public override bool Equals(Object obj) {
-			if (obj.GetType()==this.GetType()) {
-				AbstractKey tobj = (AbstractKey) obj;
-				return (tobj.uid==this.uid);
-			} else {
-				return false;
-			}
+			return this == obj;
 		}
 	}
 }

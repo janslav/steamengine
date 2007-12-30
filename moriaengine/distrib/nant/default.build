@@ -85,6 +85,14 @@
 		</delete>
 	</target>
 	
+	<target name="cleanRemoteConsole">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.RemoteConsole*" />
+			</fileset>
+		</delete>
+	</target>
+	
 	<target name="clean" depends="cleanCommon,cleanGUI,cleanCommunication,cleanGameCore,cleanScripts,cleanConverter, cleanAuxiliaryServer">
 	</target>
 	
@@ -297,7 +305,7 @@
 		<exec program="${guiFileName}" />
 	</target>
 	
-	<target name="runRemoteConsole" depends="buildGUI">
+	<target name="runRemoteConsole" depends="buildRemoteConsole">
 		<exec program="${remoteConsoleFileName}" />
 	</target>
 	

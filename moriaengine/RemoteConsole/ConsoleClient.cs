@@ -52,12 +52,16 @@ namespace SteamEngine.RemoteConsole {
 			//conn.SendSinglePacket(packet);
 		}
 
+		private delegate void NoParamDeleg();
+
 		public void On_Close(string reason) {
 			MainClass.mainForm.SystemDisplay.WriteLine("Disconnected from " + conn.EndPoint);
 
 			connectedInstance = null;
 			MainClass.mainForm.SetConnected(false);
-			MainClass.mainForm.ClearCmdLineDisplays();
+
+
+			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.ClearCmdLineDisplays));
 		}
 
 		public static void SendCommand(int id, string command) {

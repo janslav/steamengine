@@ -51,5 +51,11 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				return consoles.Values;
 			}
 		}
+
+		public static int AllConsolesCount {
+			get {
+				return consoles.Count;
+			}
+		}
 	}
 }

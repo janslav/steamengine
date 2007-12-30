@@ -19,6 +19,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		string accName;
 		string password;
 
+		private bool isLoggedInAux;
+
 		public TCPConnection<ConsoleClient> Conn {
 			get {
 				return this.conn;
@@ -32,7 +34,11 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		protected override void On_Reset() {
-			uid = uids++;
+			this.uid = uids++;
+
+			this.isLoggedInAux = false;
+			this.accName = null;
+			this.password = null;
 
 			base.On_Reset();
 		}
@@ -53,8 +59,6 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		public void On_Close(string reason) {
-			//if (
-
 			Console.WriteLine(this + " closed: " + reason);
 
 			ConsoleServer.RemoveConnection(this);
@@ -76,5 +80,59 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			gameServer.Conn.SendSinglePacket(loginRequest);
 		}
 
+		internal void LoggedInToAux(bool announce) {
+			if (announce) {
+				Console.WriteLine(this + " identified as " + this.accName);
+			}
+
+			this.isLoggedInAux = true;
+
+			PacketGroup pg = Pool<PacketGroup>.Acquire();
+
+			RequestOpenCommandWindowPacket openWindow = Pool<RequestOpenCommandWindowPacket>.Acquire();
+			openWindow.Prepare("AuxiliaryServer", 0);
+			pg.AddPacket(openWindow);
+			this.Conn.SendSinglePacket(openWindow);
+
+			EnableCommandLine(0);
+		}
+
+		internal void EnableCommandLine(int serverUid) {
+			RequestEnableCommandLinePacket enableCmdLine = Pool<RequestEnableCommandLinePacket>.Acquire();
+			enableCmdLine.Prepare(serverUid);
+			this.Conn.SendSinglePacket(enableCmdLine);
+		}
+
+		internal void CloseCmdWindow(int serverUid) {
+			RequestCloseCommandWindowPacket packet = Pool<RequestCloseCommandWindowPacket>.Acquire();
+			packet.Prepare(serverUid);
+			this.Conn.SendSinglePacket(packet);
+		}
+
+		internal void LoggedInTo(GameServers.GameServerClient state) {
+			if (!this.isLoggedInAux) {
+				LoggedInToAux(false);
+			}
+
+			Console.WriteLine(this + " identified as " + this.accName + " with " + state.Name);
+
+			Settings.RememberUser(this.accName, this.password);
+
+			OpenCmdWindow(state.Name, state.Uid);
+
+			LoggedInConsoles.AddPair(this, state);
+		}
+
+		internal void OpenCmdWindow(string name, int uid) {
+			RequestOpenCommandWindowPacket packet = Pool<RequestOpenCommandWindowPacket>.Acquire();
+			packet.Prepare(name, uid);
+			this.Conn.SendSinglePacket(packet);
+		}
+
+		public void WriteString(int serverUid, string str) {
+			SendStringPacket packet = Pool<SendStringPacket>.Acquire();
+			packet.Prepare(serverUid, str);
+			this.Conn.SendSinglePacket(packet);
+		}
 	}
 }
