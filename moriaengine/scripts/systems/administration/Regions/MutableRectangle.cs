@@ -23,10 +23,11 @@ using SteamEngine;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	[Remark("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
 				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	public class MutableRectangle : AbstractRectangle {
-		public ushort minX, maxX, minY, maxY;
+		public ushort minX, minY, maxX, maxY;
 
 		public MutableRectangle(AbstractRectangle copiedOne) {
 			this.minX = copiedOne.MinX;
@@ -47,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 		public override ushort MinX {
 			get {
 				return minX;
-			}
+			}			
 		}
 
 		public override ushort MinY {
@@ -61,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 				return maxX;
 			}
 		}
-
+		
 		public override ushort MaxY {
 			get {
 				return maxY;
