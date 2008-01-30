@@ -24,10 +24,10 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog for creating a new region rectangle")]
 	public class D_New_Rectangle : CompiledGump {
-		private static int width = 600;
+		private static int width = 450;
 
 		[Remark("Seznam parametru: 0 - list s rectanglama kam to pak pridame "+
-				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach")]
+				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
 			minX = (args[1] != null ? args[1].ToString() : "");
@@ -46,8 +46,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
+			//navod
+			dlg.Add(new GUTATable(2, 0));
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("(MinX,MinY) - levy horni roh, (MaxX,MaxY) - pravy dolni roh");
+			dlg.LastTable[1, 0] = TextFactory.CreateHeadline("Mapa v UO zacina vlevo nahore bodem (0,0) a konci vpravo dole!");
+			dlg.MakeTableTransparent();
+
 			//textiky a editfieldy na zadani souradnic
-			dlg.Add(new GUTATable(2, 150, 150, 0, 150));
+			dlg.Add(new GUTATable(2, 100, 100, 0, 100));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("MinX");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 31, minX);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("MinY");
@@ -101,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				try {
 					newRect = new MutableRectangle((ushort)minX, (ushort)minY, (ushort)maxX, (ushort)maxY);
 				} catch {
-					//tady se octneme pokud zadal blbe ty souradnice (napred pravy horni, pak levy dolni roh!)
+					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//pripravime zadane hodnoty k poslani
 					args[1] = sMinX;
 					args[2] = sMinY;

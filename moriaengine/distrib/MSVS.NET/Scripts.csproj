@@ -350,6 +350,9 @@
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginHolderDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\PluginHolderDescriptor.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\RectanglesDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\RectanglesDescriptor.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\RegionsDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\RegionsDescriptor.cs</Link>
     </Compile>
