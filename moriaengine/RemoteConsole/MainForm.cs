@@ -12,24 +12,18 @@ namespace SteamEngine.RemoteConsole {
 	public partial class MainForm : Form {
 		Dictionary<int, CommandLineDisplay> displays = new Dictionary<int, CommandLineDisplay>();
 
+		EventHandler txtDisplay_TitleChanged;
 
 		public MainForm() {
 			InitializeComponent();
+			txtDisplay_TitleChanged = new EventHandler(TxtDisplay_TitleChanged);
 		}
 
 		private void menuExit_Click(object sender, EventArgs e) {
 			this.Close();
 		}
 
-		private void MainForm_Load(object sender, EventArgs e) {
-
-		}
-
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-
-		}
-
-		public ILogStrDisplay SystemDisplay {
+		public LogStrDisplay SystemDisplay {
 			get {
 				return this.systemTabPage;
 			}
@@ -39,6 +33,7 @@ namespace SteamEngine.RemoteConsole {
 			if (!this.displays.ContainsKey(id)) {
 				TabPage tab = new TabPage(name);
 				CommandLineDisplay cld = new CommandLineDisplay(name, id);
+				cld.txtDisplay.TitleChanged += txtDisplay_TitleChanged;
 				tab.Controls.Add(cld);
 				cld.Dock = DockStyle.Fill;
 				this.tabControl.Controls.Add(tab);
@@ -74,11 +69,32 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
+		private void TxtDisplay_TitleChanged(object sender, EventArgs ignored) {
+			LogStrDisplay display = (LogStrDisplay) sender;
+			TabPage page = display.Parent.Parent as TabPage;
+			if (page != null) {
+				page.Text = display.Title;
+			}
+		}
+
 		private void menuConnect_Click(object sender, EventArgs e) {
 			ConnectionForm cf = new ConnectionForm();
 			cf.ShowDialog();
 		}
 
+		protected override void OnControlRemoved(ControlEventArgs e) {
+			TabPage page = e.Control as TabPage;
+			if (page != null) {
+				foreach (Control pageControl in page.Controls) {
+					CommandLineDisplay cld = pageControl as CommandLineDisplay;
+					if (cld != null) {
+						cld.txtDisplay.TitleChanged -= txtDisplay_TitleChanged;
+					}
+				}
+			}
+
+			base.OnControlRemoved(e);
+		}
 
 		//ConsoleClient cc;
 
@@ -106,7 +122,7 @@ namespace SteamEngine.RemoteConsole {
 		internal void WriteLine(int uid, string str) {
 			CommandLineDisplay cld;
 			if (this.displays.TryGetValue(uid, out cld)) {
-				cld.display.Write(str);
+				cld.txtDisplay.Write(str);
 			}
 		}
 	}

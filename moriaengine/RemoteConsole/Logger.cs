@@ -6,7 +6,7 @@ using System.Text;
 namespace SteamEngine.RemoteConsole {
 	public class Logger : SteamEngine.Common.Logger {
 
-		public static void Init(ILogStrDisplay display) {
+		public static void Init(LogStrDisplay display) {
 			new Logger();
 
 			Logger.OnConsoleWrite += display.Write;

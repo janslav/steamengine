@@ -11,10 +11,9 @@ namespace SteamEngine.RemoteConsole {
 		int id;
 
 		public CommandLineDisplay(string name, int id) {
-			this.Name = name;
 			this.id = id;
-
 			InitializeComponent();
+			this.txtDisplay.DefaultTitle = name;
 		}
 
 		public void EnableComandLine() {
