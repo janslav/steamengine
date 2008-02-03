@@ -23,17 +23,17 @@ namespace SteamEngine.RemoteConsole {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.display = new SteamEngine.RemoteConsole.LogStrDisplay();
+			this.txtDisplay = new SteamEngine.RemoteConsole.LogStrDisplay();
 			this.txtCommandLine = new System.Windows.Forms.ComboBox();
 			this.SuspendLayout();
 			// 
-			// display
+			// txtDisplay
 			// 
-			this.display.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.display.Location = new System.Drawing.Point(0, 0);
-			this.display.Name = "display";
-			this.display.Size = new System.Drawing.Size(496, 391);
-			this.display.TabIndex = 0;
+			this.txtDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.txtDisplay.Location = new System.Drawing.Point(0, 0);
+			this.txtDisplay.Name = "txtDisplay";
+			this.txtDisplay.Size = new System.Drawing.Size(496, 391);
+			this.txtDisplay.TabIndex = 0;
 			// 
 			// txtCommandLine
 			// 
@@ -49,7 +49,7 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.display);
+			this.Controls.Add(this.txtDisplay);
 			this.Controls.Add(this.txtCommandLine);
 			this.Name = "CommandLineDisplay";
 			this.Size = new System.Drawing.Size(496, 412);
@@ -60,6 +60,6 @@ namespace SteamEngine.RemoteConsole {
 		#endregion
 
 		private System.Windows.Forms.ComboBox txtCommandLine;
-		public LogStrDisplay display;
+		public LogStrDisplay txtDisplay;
 	}
 }

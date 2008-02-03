@@ -127,41 +127,21 @@ namespace SteamEngine.Common {
 			string str=ToStringFor(obj);
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Warning)+str+ConAttrs.EOS);
 		}
-		public static LogStr WarningData(object obj) {
-			string str=ToStringFor(obj);
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.WarningData)+str+ConAttrs.EOS);
-		}
 		public static LogStr Error(object obj) {
 			string str=ToStringFor(obj);
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Error)+str+ConAttrs.EOS);
-		}
-		public static LogStr ErrorData(object obj) {
-			string str=ToStringFor(obj);
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.ErrorData)+str+ConAttrs.EOS);
 		}
 		public static LogStr Critical(object obj) {
 			string str=ToStringFor(obj);
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Critical)+str+ConAttrs.EOS);
 		}
-		public static LogStr CriticalData(object obj) {
-			string str=ToStringFor(obj);
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.CriticalData)+str+ConAttrs.EOS);
-		}
 		public static LogStr Fatal(object obj) {
 			string str=ToStringFor(obj);
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Fatal)+str+ConAttrs.EOS);
 		}
-		public static LogStr FatalData(object obj) {
-			string str=ToStringFor(obj);
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.FatalData)+str+ConAttrs.EOS);
-		}
 		public static LogStr Debug(object obj) {
 			string str = ToStringFor(obj);
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Debug)+str+ConAttrs.EOS);
-		}
-		public static LogStr DebugData(object obj) {
-			string str=ToStringFor(obj);
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.DebugData)+str+ConAttrs.EOS);
 		}
 		public static LogStr Highlight(object obj) {
 			string str=ToStringFor(obj);
@@ -200,32 +180,17 @@ namespace SteamEngine.Common {
 		public static LogStr Warning(string str) {
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Warning)+str+ConAttrs.EOS);
 		}
-		public static LogStr WarningData(string str) {
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.WarningData)+str+ConAttrs.EOS);
-		}
 		public static LogStr Error(string str) {
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Error)+str+ConAttrs.EOS);
-		}
-		public static LogStr ErrorData(string str) {
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.ErrorData)+str+ConAttrs.EOS);
 		}
 		public static LogStr Critical(string str) {
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Critical)+str+ConAttrs.EOS);
 		}
-		public static LogStr CriticalData(string str) {
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.CriticalData)+str+ConAttrs.EOS);
-		}
 		public static LogStr Fatal(string str) {
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Fatal)+str+ConAttrs.EOS);
 		}
-		public static LogStr FatalData(string str) {
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.FatalData)+str+ConAttrs.EOS);
-		}
 		public static LogStr Debug(string str) {
 			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.Debug)+str+ConAttrs.EOS);
-		}
-		public static LogStr DebugData(string str) {
-			return new LogStr(str,ConAttrs.PrintStyle(LogStyles.DebugData)+str+ConAttrs.EOS);
 		}
 		public static LogStr FileLine(string file,int line) {
 			string str=file+", "+line.ToString();

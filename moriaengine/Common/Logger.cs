@@ -479,27 +479,27 @@ namespace SteamEngine.Common {
 		#region WriteDebug
 		[Conditional("DEBUG")]
 		public static void WriteDebug(object data) {
-			instance.WriteLine(LogStr.Debug("(D) ")+LogStr.DebugData(ErrText(data)));
+			instance.WriteLine(LogStr.Debug("(D) " + ErrText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(string data) {
-			instance.WriteLine(LogStr.Debug("(D) ")+LogStr.DebugData(ErrText(data)));
+			instance.WriteLine(LogStr.Debug("(D) " + ErrText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(LogStr data) {
-			instance.WriteLine(LogStr.Debug("(D) ")+LogStr.DebugData(ErrText(data)));
+			instance.WriteLine(LogStr.Debug("(D) " + ErrText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(Exception data) {
-			instance.WriteLine(LogStr.Debug("(D) ")+LogStr.DebugData(ErrText(data)));
+			instance.WriteLine(LogStr.Debug("(D) " + ErrText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(SEException data) {
-			instance.WriteLine(LogStr.Debug("(D) ")+LogStr.DebugData(ErrText(data)));
+			instance.WriteLine(LogStr.Debug("(D) " + ErrText(data)));
 		}
 		#endregion WriteDebug
 
@@ -600,7 +600,7 @@ namespace SteamEngine.Common {
 						if (method.DeclaringType.Assembly != scriptsAssembly) {
 							if (!showedCoreSign) {
 								showedCoreSign = true;
-								builder.Append(LogStr.DebugData("  [...]  "));
+								builder.Append(LogStr.Debug("  [...]  "));
 							}
 							continue;
 						}

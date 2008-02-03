@@ -404,7 +404,7 @@ namespace SteamEngine {
 					var1/=(long)obj1; var2/=(long)obj2;
 					Decimal result = Decimal.Round(var1/var2, count);
 					//Logger.WriteInfo(true, desc+": "+result);
-					Logger.WriteLogStr(LogStr.Highlight(desc)+": "+LogStr.Number(result)+" "+LogStr.DebugData("("+var1Name+"/"+var2Name+")"));
+					//Logger.WriteLogStr(LogStr.Highlight(desc)+": "+LogStr.Number(result)+" "+LogStr.DebugData("("+var1Name+"/"+var2Name+")"));
 				}
 			}
 			Logger.WriteLogStr(LogStr.Raw("Done showing statistics for ")+LogStr.Ident(boss.Name+"'s "+Name)+".");

@@ -99,6 +99,7 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			// systemTabPage
 			// 
+			this.systemTabPage.DefaultTitle = null;
 			this.systemTabPage.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.systemTabPage.Location = new System.Drawing.Point(3, 3);
 			this.systemTabPage.Name = "systemTabPage";
@@ -114,8 +115,6 @@ namespace SteamEngine.RemoteConsole {
 			this.Menu = this.mainMenu;
 			this.Name = "MainForm";
 			this.Text = "MainForm";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.tabControl.ResumeLayout(false);
 			this.systemTab.ResumeLayout(false);
 			this.ResumeLayout(false);

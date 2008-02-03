@@ -190,9 +190,9 @@ namespace SteamEngine.Common {
 				LogStr logstr;
 
 				if (msg.IndexOf("warning", StringComparison.OrdinalIgnoreCase) > -1) {
-					logstr = LogStr.Warning("WARNING: ")+LogStr.SetStyle(LogStyles.WarningData);
+					logstr = LogStr.Warning("WARNING: ");
 				} else {
-					logstr = LogStr.Error("ERROR: ")+LogStr.SetStyle(LogStyles.ErrorData);
+					logstr = LogStr.Error("ERROR: ");
 				}
 
 				logstr += LogStr.FileLine(m.Groups["filename"].Value, int.Parse(m.Groups["linenumber"].Value))

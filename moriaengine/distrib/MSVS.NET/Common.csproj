@@ -80,7 +80,6 @@
     </Compile>
     <Compile Include="..\..\Common\ConAttrs.cs">
       <Link>ConAttrs.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\Common\ConvertTools.cs">
       <Link>ConvertTools.cs</Link>

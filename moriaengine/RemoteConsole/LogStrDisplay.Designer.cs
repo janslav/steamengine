@@ -24,29 +24,45 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		private void InitializeComponent() {
 			this.txtBox = new System.Windows.Forms.RichTextBox();
+			this.chckAutoScroll = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// txtBox
 			// 
-			this.txtBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.txtBox.Location = new System.Drawing.Point(0, 0);
+			this.txtBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.txtBox.Location = new System.Drawing.Point(0, 26);
 			this.txtBox.Name = "txtBox";
-			this.txtBox.Size = new System.Drawing.Size(306, 293);
+			this.txtBox.Size = new System.Drawing.Size(306, 267);
 			this.txtBox.TabIndex = 0;
 			this.txtBox.Text = "";
 			// 
-			// SystemTabPage
+			// chckAutoScroll
 			// 
+			this.chckAutoScroll.AutoSize = true;
+			this.chckAutoScroll.Location = new System.Drawing.Point(3, 3);
+			this.chckAutoScroll.Name = "chckAutoScroll";
+			this.chckAutoScroll.Size = new System.Drawing.Size(72, 17);
+			this.chckAutoScroll.TabIndex = 1;
+			this.chckAutoScroll.Text = "Autoscroll";
+			this.chckAutoScroll.UseVisualStyleBackColor = true;
+			// 
+			// LogStrDisplay
+			// 
+			this.Controls.Add(this.chckAutoScroll);
 			this.Controls.Add(this.txtBox);
-			this.Name = "SystemTabPage";
+			this.Name = "LogStrDisplay";
 			this.Size = new System.Drawing.Size(306, 293);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
 		#endregion
 
 		private System.Windows.Forms.RichTextBox txtBox;
+		private System.Windows.Forms.CheckBox chckAutoScroll;
 
 	}
 }

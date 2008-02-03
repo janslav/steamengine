@@ -1025,10 +1025,10 @@ namespace SteamEngine {
 		//    Server.SendSystemMessage(this, data.RawString, 0);
 		//}
 
-		public void SuspiciousError(object data) {
+		public void SuspiciousError(string data) {
 			if (Globals.kickOnSuspiciousErrors) {
 				WriteLine("You've been kicked because your client sent something suspicious.");
-				Close(LogStr.Warning("KICKED FOR SUSPICIOUS ERROR: ")+LogStr.WarningData(data));
+				Close(LogStr.Warning("KICKED FOR SUSPICIOUS ERROR: ") + data);
 			}
 			Logger.WriteError(data);
 		}
@@ -1051,14 +1051,12 @@ namespace SteamEngine {
 			instancesOfThisGump.AddFirst(gi);
 		}
 
-		private readonly static LinkedList<GumpInstance> emptyGIList = new LinkedList<GumpInstance>();
-
-		internal LinkedList<GumpInstance> FindGumpInstances(Gump gd) {
+		internal ICollection<GumpInstance> FindGumpInstances(Gump gd) {
 			LinkedList<GumpInstance> retVal;
 			if (gumpInstancesByGump.TryGetValue(gd, out retVal)) {
 				return retVal;
 			}
-			return emptyGIList;
+			return EmptyReadOnlyGenericCollection<GumpInstance>.instance;
 		}
 
 		internal GumpInstance PopGump(uint uid) {

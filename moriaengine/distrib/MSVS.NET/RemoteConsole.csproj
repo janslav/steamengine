@@ -47,9 +47,6 @@
     <Compile Include="..\..\RemoteConsole\ConsoleClient.cs">
       <Link>ConsoleClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\RemoteConsole\ILogStrDisplay.cs">
-      <Link>ILogStrDisplay.cs</Link>
-    </Compile>
     <Compile Include="..\..\RemoteConsole\IncomingPackets.cs">
       <Link>IncomingPackets.cs</Link>
     </Compile>

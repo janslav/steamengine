@@ -21,28 +21,40 @@ using System.Drawing;
 using System.Drawing.Text;
 #endif
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SteamEngine.Common {
 	public enum LogStyles : byte {
-		Default=0, Warning, WarningData, Error, ErrorData, Fatal, FatalData,
-		Critical, CriticalData, Debug, DebugData, FileLine, Highlight,
-		Ident, FilePos, File, Number
+		Default=0, Warning, Error, Fatal, Critical, Debug,
+		Highlight, Ident, FileLine, FilePos, File, Number
 	}
 
+	public interface ILogStrDisplay {
+		void Write(string data, LogStyles style);
+		void SetTitle(string data);
+		void SetTitleToDefault();
+	}
+
+	//deprecated. To be replaced by LogStrParser
 	public class ConAttrs {
-		public const char charSeparator='\u001B';
-		public const char charEOS='e';
-		public const char charTitle='t';
-		public const char charStyle='s';
-		public static readonly string EOS=string.Format("{0}{1}{0}", charSeparator.ToString(), charEOS);
+		internal const char separatorChar = '\u001B';
+		internal const char eosChar='e';
+		internal const char titleChar = 't';
+		internal const char styleChar = 's';
+		internal const string separatorString = "\u001B";
+		internal const string titleString = "t";
+		internal const string styleString = "s";
+		internal const string eosString = "e";
+		public const string EOS = separatorString + eosString + separatorString;
 
 		#region Static Methods
 		static public string PrintStyle(LogStyles style) {
-			return string.Format("{0}{1}{2}{0}", charSeparator, charStyle, (int) style);
+			return string.Concat(separatorString, styleString, ((int) style).ToString(), separatorString);
 		}
 
 		static public string PrintTitle(string title) {
-			return string.Format("{0}{1}{2}{0}", charSeparator, charTitle, title);
+			return string.Concat(separatorString, titleString, title, separatorString);
 		}
 		#endregion
 
@@ -183,21 +195,16 @@ namespace SteamEngine.Common {
 			ProcessingIndex=0;
 			logStyles[(int) LogStyles.Default]		= new LogStyle(defaultColor, defaultFontStyle, defaultFamily, defaultSize);
 			logStyles[(int) LogStyles.Warning]		= new LogStyle(Color.Red, defaultFontStyle);
-			logStyles[(int) LogStyles.WarningData]	= new LogStyle(defaultColor, defaultFontStyle);
-			logStyles[(int) LogStyles.Error]			= new LogStyle(Color.Red, defaultFontStyle);
-			logStyles[(int) LogStyles.ErrorData]		= new LogStyle(defaultColor, defaultFontStyle);
-			logStyles[(int) LogStyles.Fatal]			= new LogStyle(Color.Red, FontStyle.Bold);
-			logStyles[(int) LogStyles.FatalData]		= new LogStyle(defaultColor, defaultFontStyle);
+			logStyles[(int) LogStyles.Error]		= new LogStyle(Color.Red, defaultFontStyle);
+			logStyles[(int) LogStyles.Fatal]		= new LogStyle(Color.Red, FontStyle.Bold);
 			logStyles[(int) LogStyles.Critical]		= new LogStyle(Color.Red, FontStyle.Bold);
-			logStyles[(int) LogStyles.CriticalData]	= new LogStyle(defaultColor, defaultFontStyle);
-			logStyles[(int) LogStyles.Debug]			= new LogStyle(Color.Gray, defaultFontStyle);
-			logStyles[(int) LogStyles.DebugData]		= new LogStyle(Color.Gray, defaultFontStyle);
+			logStyles[(int) LogStyles.Debug]		= new LogStyle(Color.Gray, defaultFontStyle);
 			logStyles[(int) LogStyles.FileLine]		= new LogStyle(Color.Blue, defaultFontStyle);
-			logStyles[(int) LogStyles.Highlight]		= new LogStyle(Color.Orange, defaultFontStyle);
+			logStyles[(int) LogStyles.Highlight]	= new LogStyle(Color.Orange, defaultFontStyle);
 			logStyles[(int) LogStyles.FilePos]		= new LogStyle(defaultColor, FontStyle.Italic);
 			logStyles[(int) LogStyles.File]			= new LogStyle(Color.Purple, defaultFontStyle);
 			logStyles[(int) LogStyles.Number]		= new LogStyle(Color.Blue, defaultFontStyle);
-			logStyles[(int) LogStyles.Ident]			= new LogStyle(Color.Blue, FontStyle.Bold);
+			logStyles[(int) LogStyles.Ident]		= new LogStyle(Color.Blue, FontStyle.Bold);
 
 			logStyle=LogStyles.Default;
 		}
@@ -214,14 +221,14 @@ namespace SteamEngine.Common {
 			idx=0;
 			try {
 				while (idx>=0 && idx<RawString.Length) {
-					while (idx>=0 && RawString[idx]==charSeparator) {
+					while (idx>=0 && RawString[idx]==separatorChar) {
 						idx++;
-						idx2=RawString.IndexOf(charSeparator, idx);
+						idx2=RawString.IndexOf(separatorChar, idx);
 
 						if (idx2>idx)
 							idx=idx2+1;
 					}
-					idx2=RawString.IndexOf(charSeparator, idx);
+					idx2=RawString.IndexOf(separatorChar, idx);
 
 					if (idx2>idx) {
 						str+=RawString.Substring(idx, idx2-idx);
@@ -256,13 +263,13 @@ namespace SteamEngine.Common {
 				return false;
 
 			try {
-				while (RawString[ProcessingIndex]==charSeparator) {
+				while (RawString[ProcessingIndex]==separatorChar) {
 					ProcessingIndex++;
-					idx=RawString.IndexOf(charSeparator, ProcessingIndex);
+					idx=RawString.IndexOf(separatorChar, ProcessingIndex);
 
 					if (idx>ProcessingIndex) {
 						switch (RawString[ProcessingIndex++]) {
-							case charEOS:
+							case eosChar:
 								if (styleStack.Count>0) {
 									logStyle=(LogStyles) styleStack.Pop();
 									OnStyleChanged(logStyle);
@@ -270,11 +277,11 @@ namespace SteamEngine.Common {
 									OnStyleChanged(LogStyles.Default);
 								}
 								break;
-							case charTitle:
+							case titleChar:
 								title=RawString.Substring(ProcessingIndex, idx-ProcessingIndex);
 								OnTitleChanged(title);
 								break;
-							case charStyle:
+							case styleChar:
 								try {
 									int i;
 									LogStyles old=logStyle;
@@ -302,7 +309,7 @@ namespace SteamEngine.Common {
 						ProcessingIndex=idx+1;
 					}
 				}
-				idx=RawString.IndexOf(charSeparator, ProcessingIndex);
+				idx=RawString.IndexOf(separatorChar, ProcessingIndex);
 
 				if (idx>ProcessingIndex) {
 					chunk=RawString.Substring(ProcessingIndex, idx-ProcessingIndex);
@@ -320,5 +327,63 @@ namespace SteamEngine.Common {
 		}
 		#endregion
 #endif
+	}
+
+	public class LogStrParser {
+		private ILogStrDisplay display;
+		private Stack<LogStyles> styleStack = new Stack<LogStyles>();
+
+		private static char[] separatorArray = new char[] { ConAttrs.separatorChar };
+
+		public LogStrParser(ILogStrDisplay display) {
+			this.display = display;
+		}
+
+		public void ProcessLogStr(LogStr logStr) {
+			ProcessLogStr(logStr.rawString);
+		}
+
+		private LogStyles CurrentStyle {
+			get {
+				if (styleStack.Count > 0) {
+					return styleStack.Peek();
+				}
+				return LogStyles.Default;
+			}
+		}
+
+		public void ProcessLogStr(string logStrEncoded) {
+			string[] tokens = logStrEncoded.Split(separatorArray);
+			int tokenLen = tokens.Length;
+			if (tokenLen > 0) {
+				foreach (string token in tokens) {
+					if (string.IsNullOrEmpty(token)) {
+						continue;
+					}
+					switch (token[0]) {
+						case ConAttrs.eosChar:
+							if (styleStack.Count > 0) {
+								styleStack.Pop();
+							}
+							break;
+						case ConAttrs.titleChar:
+							string title = token.Substring(1);
+							if (title.Length > 0) {
+								this.display.SetTitle(title);
+							} else {
+								this.display.SetTitleToDefault();
+							}
+							break;
+						case ConAttrs.styleChar:
+							int i = int.Parse(token.Substring(1));
+							this.styleStack.Push((LogStyles) i);
+							break;
+						default:
+							this.display.Write(token, this.CurrentStyle);
+							break;
+					}
+				}
+			}
+		}
 	}
 }
