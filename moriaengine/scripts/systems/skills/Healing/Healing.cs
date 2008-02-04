@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
     public class Targ_Healing : CompiledTargetDef {
 
         protected override void On_Start(Character self, object parameter) {
-            self.SysMessage("Koho se chces pokusit lecit?");
+            self.SysMessage("Koho se chceš pokusit léèit?");
             base.On_Start(self, parameter);
         }
 
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
             //nevidi na cil
             if (targetted != self) {
                 if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
-                    self.SysMessage(targetted.Name + " je od tebe prilis daleko!");
+                    self.SysMessage(targetted.Name + " je od tebe pøíliš daleko!");
                     return false;
                 }
             }
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
         }
 
         protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
-            self.SysMessage("Predmety nelze lecit.");
+            self.SysMessage("Pøedmìty nelze léèit.");
             return false;
         }
 
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
             //nevidi na cil
             if (targetted != self) {
                 if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
-                    self.SysMessage(targetted.Name + " je od tebe prilis daleko!");
+                    self.SysMessage(targetted.Name + " je od tebe pøíliš daleko!");
                     return;
                 }
             }
