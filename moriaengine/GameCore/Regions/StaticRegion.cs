@@ -36,7 +36,7 @@ namespace SteamEngine.Regions {
 		static StaticRegion() {
 			ClearAll();
 		}
-
+		
 		[Remark("Clearing of the lists of all regions")]
 		public static void ClearAll() {
 			//first we have to remove the regions from the sectors etc
@@ -271,11 +271,17 @@ namespace SteamEngine.Regions {
 		[Remark("Check if all regions (except for the world region) have parents set")]
 		private static void ResolveParents() {
 			foreach(StaticRegion region in AllRegions) {
+				//(pri opakovanem reloadu - napr. po editaci regionu uz je worldregion nasetovan
+				//a tudiz by tento kus kodu skoncil tou vyjimkou =>uprava pred vyjimkou
 				if(region.parent == null) {
 					if(worldRegion == voidRegion) {
-						worldRegion = region;
+						worldRegion = region; //world region jeste neni nastaven - prave jsme ho nasli
 					} else {
-						throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
+						//world region je nastaven a ten co zkoumame nema parenta - neni to naohdou worldregion?
+						if(!region.IsWorldRegion) {
+							//neni a nema parenta -> chyba!
+							throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
+						}
 					}
 				}
 			}
@@ -465,6 +471,16 @@ namespace SteamEngine.Regions {
 			return result;
 		}
 
+		[Remark("Initializes newly created region - set the name, home position and list of rectangles")]
+		public void InitializeNewRegion<T>(string name, Point4D home, IList<T> rects) where T : AbstractRectangle {
+			Name = name; //nove jmeno, a zaroven ho to ulozi do prislusneho seznamu
+			//jeste nez nasetujeme rectangly (coz vyvola zaroven i celou kontrolu vsech regionu)
+			//tak musime zvlast vyresit zarazeni do hierarchie
+			StaticRegion.ResolveRegionsHierarchy();//to se resi jen na urovni parentu (bez rectanglu)
+			SetRectangles(rects); //nastavit rect - ulozi se
+			P = home; //homepos muzeme az kdyz mame region i s rectangly 
+		}
+
 		public override string Name {
 			get {
 				return name;
@@ -474,6 +490,31 @@ namespace SteamEngine.Regions {
 				byName.Remove(name);
 				name = String.Intern(value);
 				byName[value] = this;
+			}
+		}
+
+		public new string Defname {
+			get {
+				return defname;
+			}
+			protected set {
+				//toto se bude volat jen pri skriptovem zakladani noveho regionu
+				//tam bude osetreno ze podobny defname neexistuje atd...
+				ThrowIfDeleted();
+				defname = String.Intern(value);
+				byDefname[value] = this;
+			}
+		}
+
+		public new Region Parent {
+			get {
+				return parent;
+			}
+			protected set {
+				//toto se bude volat jen pri skriptovem zakladani noveho regionu
+				//tam bude osetreno ze podobny defname neexistuje atd...
+				ThrowIfDeleted();
+				parent = value;
 			}
 		}
 

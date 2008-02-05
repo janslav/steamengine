@@ -40,6 +40,12 @@ namespace SteamEngine.Regions {
 		public FlaggedRegion() 
 				: base() {
 		}
+
+		public FlaggedRegion(string defname, Region parent) 
+			: base () {			
+			this.Defname = defname;
+			this.Parent = parent;
+		}
 		
 		[NoShow]
 		public int Flags {

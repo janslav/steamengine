@@ -69,6 +69,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		[GetMethod("Parent name", typeof(string))]
+		public static object GetParentName(object target) {
+			if(((Region)target).Parent != null) {
+				return ((Region)target).Parent.Name;
+			} else {
+				return "";
+			}
+		}
+
 		//Tohle v sobe nese informaci v podstate o poslednim resyncu :) (tehdy se reloadnou a znovu vzniknou)
 		//hmm tak nebrat, v podstate je to k nicemu, a nejde to nejak dost dobre zformatovat
 		//[GetMethod("Created at", typeof(string))]

@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);
 			dlg.CreateBackground(700);
-			dlg.SetLocation(100, 100);
+			dlg.SetLocation(50, 590);
 
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Výsledky nastavení (celkem:" + allFields + ", pøenastaveno: " + resultsOK + ", chybnì zadáno: " + resultsNOK + ")");

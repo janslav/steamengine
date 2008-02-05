@@ -31,9 +31,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
 			minX = (args[1] != null ? args[1].ToString() : "");
-			minY = (args[1] != null ? args[2].ToString() : "");
-			maxX = (args[1] != null ? args[3].ToString() : "");
-			maxY = (args[1] != null ? args[4].ToString() : "");
+			minY = (args[2] != null ? args[2].ToString() : "");
+			maxX = (args[3] != null ? args[3].ToString() : "");
+			maxY = (args[4] != null ? args[4].ToString() : "");
 			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -55,13 +55,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//textiky a editfieldy na zadani souradnic
 			dlg.Add(new GUTATable(2, 100, 100, 0, 100));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("MinX");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 31, minX);
+			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 31, minX);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("MinY");
-			dlg.LastTable[0, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText, 32, minY);
+			dlg.LastTable[0, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 32, minY);
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel("MaxX");
-			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33, maxX);
+			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 33, maxX);
 			dlg.LastTable[1, 2] = TextFactory.CreateLabel("MaxY");
-			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText, 34, maxY);
+			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 34, maxY);
 			dlg.MakeTableTransparent();
 	
 			//send button
@@ -81,38 +81,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if(gr.pressedButton == 1) { //ulozit
 				//precteme parametry a zkusime vytvorit rectangle
-				string sMinX = "", sMinY = "", sMaxX = "", sMaxY = "";
-				int minX, minY, maxX, maxY;
-				try {
-					sMinX = gr.GetTextResponse(31);
-					sMinY = gr.GetTextResponse(32);
-					sMaxX = gr.GetTextResponse(33);
-					sMaxY = gr.GetTextResponse(34);
-					minX = Convert.ToInt32(gr.GetTextResponse(31));
-					minY = Convert.ToInt32(gr.GetTextResponse(32));
-					maxX = Convert.ToInt32(gr.GetTextResponse(33));
-					maxY = Convert.ToInt32(gr.GetTextResponse(34));
-				} catch {
-					//pripravime zadane hodnoty k poslani
-					args[1] = sMinX;
-					args[2] = sMinY;
-					args[3] = sMaxX;
-					args[4] = sMaxY;
-					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("Nìjaké èíslo jsi buï nezadal nebo zadal špatnì");
-					DialogStacking.EnstackDialog(gi, newGi);
-					return;
-				}
 				MutableRectangle newRect = null;
 				try {
-					newRect = new MutableRectangle((ushort)minX, (ushort)minY, (ushort)maxX, (ushort)maxY);
+					args[1] = Convert.ToUInt16(gr.GetNumberResponse(31));
+					args[2] = Convert.ToUInt16(gr.GetNumberResponse(32));
+					args[3] = Convert.ToUInt16(gr.GetNumberResponse(33));
+					args[4] = Convert.ToUInt16(gr.GetNumberResponse(34));
+							
+					newRect = new MutableRectangle((ushort)args[1], (ushort)args[2], (ushort)args[3], (ushort)args[4]);
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
-					//pripravime zadane hodnoty k poslani
-					args[1] = sMinX;
-					args[2] = sMinY;
-					args[3] = sMaxX;
-					args[4] = sMaxY;
 					//stackneme a zobrazime chybu
 					GumpInstance newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
 					DialogStacking.EnstackDialog(gi, newGi);
