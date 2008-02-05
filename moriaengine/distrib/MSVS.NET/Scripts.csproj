@@ -248,6 +248,9 @@
     <Compile Include="..\..\scripts\systems\administration\Regions\RegionsRects.cs">
       <Link>systems\administration\Regions\RegionsRects.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\SelectParent.cs">
+      <Link>systems\administration\Regions\SelectParent.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\Register\RegisterDialogs.cs">
       <Link>systems\administration\Register\RegisterDialogs.cs</Link>
     </Compile>

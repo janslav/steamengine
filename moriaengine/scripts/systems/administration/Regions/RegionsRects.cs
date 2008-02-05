@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(width);
-			dlg.SetLocation(50, 50);
+			dlg.SetLocation(25, 25);
 
 			//nadpis
 			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
-			Region reg = (Region)args[0];
+			StaticRegion reg = (StaticRegion)args[0];
 			List<MutableRectangle> rectsList = (List<MutableRectangle>)args[2];
 			int firstOnPage = Convert.ToInt32(args[1]);
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
@@ -119,8 +119,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //ulozit
-						args[2] = null; //vycistit odkaz na seznam - prenacteme ho
-						//DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						reg.SetRectangles(rectsList); //nastavenim rectanglu dojde k reinicializaci vsech regionu
+						//pokud to nekde spadne, tak to uvidime v konzoli - to uz je zavazny problem a nesmi to jen tak projit! (=nechytam vyjimku)
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, rectsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
