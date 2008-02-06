@@ -157,9 +157,7 @@ namespace SteamEngine.Converter {
 				maxX--;maxY--; //this is because sphere has weird system of rectangle coordinates
 				string retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
 				def.Set("Rect", retVal, line.comment);
-				Point2D startpoint = new Point2D(minX, minY);
-				Point2D endpoint = new Point2D(maxX, maxY);
-				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(startpoint, endpoint));
+				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(minX, minY, maxX, maxY));
 				return retVal;
 			} else {
 				def.Warning(line.line, "Unrecognized Rectangle format ('"+line.value+"')");
