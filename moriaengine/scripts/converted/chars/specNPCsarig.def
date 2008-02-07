@@ -90,7 +90,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Copper eye
 
-NAME = "Copper Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1
@@ -114,7 +114,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Verite eye
 
-NAME = "Verite Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1
@@ -138,7 +138,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Valorite eye
 
-NAME = "Valorite Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1
@@ -163,7 +163,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Obsidian eye
 
-NAME = "Obsidian Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1
@@ -188,7 +188,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Adamantinum eye
 
-NAME = "Adamantinum Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1
@@ -213,7 +213,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Mitheril eye
 
-NAME = "Mitheril Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1
@@ -649,7 +649,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = Invisible Eye
 
-NAME = "Invisible Eye"
+NAME = "Eye"
 model = c_gazer
 DEFNAME = c_invisbile_eye
 AngerSound = snd_MONSTER_GAZER1
@@ -726,7 +726,7 @@ CATEGORY = Monsters
 SUBSECTION = Eyes and Gazers
 DESCRIPTION = fire eye
 
-NAME = "Fire Eye"
+NAME = "Eye"
 model = c_gazer
 AngerSound = snd_MONSTER_GAZER1
 IdleSound = snd_MONSTER_GAZER1 + 1

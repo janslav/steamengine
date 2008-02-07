@@ -570,25 +570,6 @@ tag.guardhire = 40000
 //TEVENTS = e_character // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 
-[NPCDef c_vguard_elf_sedy_kopi_pesak]
-CATEGORY = Civilized
-SUBSECTION = Guards & Law
-DESCRIPTION = elf Sedy pesak
-
-NAME = "Elf Sedy pesak s kopim"
-model = C_MAN
-//ICON = i_pet_MAN // commented out by Converter 
-//CAN = MT_EQUIP|MT_WALK|MT_RUN|MT_USEHANDS // commented out by Converter 
-//ATTACK = 100 // commented out by Converter 
-//ARMOR = 40 // commented out by Converter 
-tag.guard = 1
-tag.guardopposite = c_vguard_mordor_hala_pesak
-tag.guardhire = 40000
-//TSPEECH = spk_guard // commented out by Converter 
-//TEVENTS = e_guard // commented out by Converter 
-//TEVENTS = e_character // commented out by Converter 
-//TEVENTS = e_monster // commented out by Converter 
-
 [NPCDef c_vguard_krajnik_sekera_pesak]
 CATEGORY = Civilized
 SUBSECTION = Guards & Law
@@ -1278,10 +1259,10 @@ SUBSECTION = Guards & Law
 DESCRIPTION = Mordor jezdec na vrku
 
 NAME = "Jezdec na vrku"
+ANIM = 0x78c7f
 model = c_vrk
 //ICON = i_pet_ORC // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
-//DESIRES =  // commented out by Converter 
 //CAN = MT_EQUIP|MT_WALK|MT_RUN|MT_USEHANDS // commented out by Converter 
 //ATTACK = 100 // commented out by Converter 
 //ARMOR = 40 // commented out by Converter 

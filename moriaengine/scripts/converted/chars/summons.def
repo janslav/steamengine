@@ -309,7 +309,7 @@ IdleSound = snd_ANIMALS_HORSE1 + 1
 AttackSound = snd_ANIMALS_HORSE1 + 2
 HurtSound = snd_ANIMALS_HORSE1 + 3
 DeathSound = snd_ANIMALS_HORSE1 + 4
-MountItem = 0x3ea0
+MountItem = 0x0
 //ICON = i_pet_horse_gray // commented out by Converter 
 //CAN = MT_WALK|MT_RUN|mt_ghost // commented out by Converter 
 //Attack = 3,4 // commented out by Converter 
@@ -384,8 +384,6 @@ DeathSound = snd_ANIMALS_BEAR1 + 4
 //CAN = MT_WALK // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
-tag.rasist_para = 750
-tag.resist_blunt = 500
 tag.weapflag = dam_physical|dam_blunt|dam_summon
 
 [NPCDef mage_grizzly_bear]
@@ -503,10 +501,10 @@ DeathSound = snd_ELEMENTL_AIRELEM1 + 4
 //attack = 55 // commented out by Converter 
 //ARMOR = 60 // commented out by Converter 
 //CAN = MT_WALK|MT_FLY|mt_run // commented out by Converter 
-//TEVENTS = e_monster // commented out by Converter 
-//TEVENTS = e_character // commented out by Converter 
 //BLOODCOLOR = {0984 0985} // commented out by Converter 
 tag.weapflag = dam_physical|dam_blunt|dam_summon
+//TEVENTS = e_monster // commented out by Converter 
+//TEVENTS = e_character // commented out by Converter 
 
 [NPCDef 0xe]
 CATEGORY = Monsters
@@ -525,10 +523,10 @@ DeathSound = snd_ELEMENTL_ERTHEL1 + 4
 //attack = 50 // commented out by Converter 
 //ARMOR = 80 // commented out by Converter 
 //CAN = MT_WALK // commented out by Converter 
-//TEVENTS = e_monster // commented out by Converter 
-//TEVENTS = e_character // commented out by Converter 
 //BLOODCOLOR = 072c // commented out by Converter 
 tag.weapflag = dam_physical|dam_blunt|dam_summon
+//TEVENTS = e_monster // commented out by Converter 
+//TEVENTS = e_character // commented out by Converter 
 
 [NPCDef 0xf]
 CATEGORY = Monsters
@@ -581,7 +579,7 @@ DESCRIPTION = MAGE Daemon Sword
 
 Name = "Summon"
 ANIM = 0x3fbc7f
-DEFNAME = c_daemon_sword_1_mage
+DEFNAME = c_daemon_mage1
 AngerSound = snd_MONSTER_DAEMON1
 IdleSound = snd_MONSTER_DAEMON1 + 1
 AttackSound = snd_MONSTER_DAEMON1 + 2
@@ -594,7 +592,6 @@ DeathSound = snd_MONSTER_DAEMON1 + 4
 //RESOURCES = 9 i_ribs_raw, 8 i_reag_daemon_bone, 20 i_hide // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
-tag.weapflag = dam_physical|dam_blunt|dam_summon
 
 [NPCDef 0x9]
 CATEGORY = Monsters
@@ -603,7 +600,7 @@ DESCRIPTION = MAGE Daemon Sword
 
 Name = "Summon"
 ANIM = 0x3fbc7f
-DEFNAME = c_daemon_sword_2_mage
+DEFNAME = c_daemon_sword1
 AngerSound = snd_MONSTER_DAEMON1
 IdleSound = snd_MONSTER_DAEMON1 + 1
 AttackSound = snd_MONSTER_DAEMON1 + 2
@@ -616,7 +613,6 @@ DeathSound = snd_MONSTER_DAEMON1 + 4
 //RESOURCES = 9 i_ribs_raw, 8 i_reag_daemon_bone, 20 i_hide // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
-tag.weapflag = dam_physical|dam_blunt|dam_summon
 
 [NPCDef mage_horse_brown]
 CATEGORY = Monsters
@@ -632,16 +628,14 @@ IdleSound = snd_ANIMALS_HORSE1 + 1
 AttackSound = snd_ANIMALS_HORSE1 + 2
 HurtSound = snd_ANIMALS_HORSE1 + 3
 DeathSound = snd_ANIMALS_HORSE1 + 4
-MountItem = 0x3ea2
+MountItem = 0x0
 //ICON = i_pet_horse_brown_dk // commented out by Converter 
 //CAN = MT_WALK|MT_RUN // commented out by Converter 
 //attack = 3,4 // commented out by Converter 
 //ARMOR = 10 // commented out by Converter 
-//RESOURCES = 15 i_ribs_raw, 4 i_hide // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
-tag.resist_para = 750
-tag.weapflag = dam_physical|dam_blunt|dam_summon
+//RESOURCES = 15 i_ribs_raw, 4 i_hide // commented out by Converter 
 
 [NPCDef 0x23e]
 CATEGORY = Monsters
@@ -661,5 +655,3 @@ DeathSound = snd_WEAPONS_SWORD1 + 4
 //CAN = MT_WALK|MT_RUN|MT_FLY // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
-tag.resist_poison = 100.0
-tag.weapflag = dam_physical|dam_blunt|dam_summon
