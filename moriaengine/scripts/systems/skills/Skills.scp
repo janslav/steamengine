@@ -441,23 +441,11 @@ KEY="Tactics"
 ADVRATE=10.0,150.0,600.0
 EFFECT=303
 
-[SCRIPTEDSKILLDEF 28]
+[SNOOPINGSKILLDEF 28]
 DEFNAME=Skill_Snooping
 KEY="Snooping"
-//TITLE="Pickpocket"
-//PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=30
-//STAT_INT=50
-//STAT_DEX=60
-//BONUS_STR=0
-//BONUS_DEX=100
-//BONUS_INT=0
-//BONUSSTATS=25
+DELAY=2.0
 ADVRATE=2.5,50.0,200.0
-
-ON=@Fail
-	src.message "You fail to peek into the container."
 
 [SCRIPTEDSKILLDEF 30]
 DEFNAME=Skill_Poisoning
