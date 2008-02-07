@@ -65,8 +65,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_DClick(AbstractCharacter from) {
-			//(TODO): check ownership(?), trigger snooping, etc...
-			OpenTo(from);
+			//(TODO): check ownership(?), trigger snooping(done), etc...
+            Character topChar = (Character)this.TopObj();
+            if ((topChar != null) && (topChar != from)) {
+                ((Character)from).currentSkillTarget1 = topChar;    //in snooping skill called as snooped
+                from.SelectSkill((int)SkillName.Snooping);
+            } else {
+                OpenTo(from);
+            }
 		}
 
 		public void Open() {
