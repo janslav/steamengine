@@ -20,6 +20,7 @@ DeathSound = snd_MONSTER_RATMAN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw,2 i_fur_light // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -43,6 +44,7 @@ DeathSound = snd_MONSTER_RATMAN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw, 2 i_fur_light // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -66,6 +68,7 @@ DeathSound = snd_MONSTER_RATMAN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw,2 i_fur_light // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -89,6 +92,7 @@ DeathSound = snd_MONSTER_RATMAN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw,2 i_fur_light // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -112,6 +116,7 @@ DeathSound = snd_MONSTER_LZRDMN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -135,6 +140,7 @@ DeathSound = snd_MONSTER_LZRDMN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -158,6 +164,7 @@ DeathSound = snd_MONSTER_LZRDMN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
@@ -181,6 +188,7 @@ DeathSound = snd_MONSTER_LZRDMN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_scales // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
@@ -204,15 +212,10 @@ DeathSound = snd_MONSTER_LZRDMN1 + 4
 //moverate = 3 // commented out by Converter 
 //RESOURCES = 6 i_ribs_raw // commented out by Converter 
 //FOODTYPE =  // commented out by Converter 
+//BLOODCOLOR = 020 // commented out by Converter 
 //TEVENTS = e_scales // commented out by Converter 
 //TEVENTS = e_monster // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
-
-//[events e_smrt] //(commented out by Converter) 
-
-//[events e_more_attackage] //(commented out by Converter) 
-
-//[EVENTS e_scales] //(commented out by Converter) 
 
 [NPCDef 0xca]
 CATEGORY = Monsters
