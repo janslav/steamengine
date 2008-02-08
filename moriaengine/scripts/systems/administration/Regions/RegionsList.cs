@@ -166,7 +166,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //smazat region
 						region.Delete(); //(remove z dictu, rectangly atd.)
 						args[3] = null;
-						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+						D_Display_Text.ShowInfo("Region byl smazán úspìšnì");
+						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break; 
 				}
 			}

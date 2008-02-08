@@ -119,10 +119,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //ulozit
-						reg.SetRectangles(rectsList); //nastavenim rectanglu dojde k reinicializaci vsech regionu
+						//nastavenim rectanglu dojde k reinicializaci vsech regionu
+						if(reg.SetRectangles(rectsList)) {
+							if(!reg.ContainsPoint(reg.P)) {//jeste zkoukneme pozici - mohla zmizet smazáním/resizem rectanglu
+								D_Display_Text.ShowError("Home pozice je mimo region - je potøeba ji pøenastavit");
+							} else {
+								D_Display_Text.ShowInfo("Ukládání rectanglù bylo úspìšné");
+							}
+							//zobrazime info a zmizime (z infa bude navrat k predchozimu dlg neb tento nestackneme)
+							break;
+						} else { //nekde to neproslo
+							GumpInstance infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
+							DialogStacking.EnstackDialog(gi, infoGi); //vlozime dialog do stacku pro navrat						
+							break;
+						}
 						//pokud to nekde spadne, tak to uvidime v konzoli - to uz je zavazny problem a nesmi to jen tak projit! (=nechytam vyjimku)
-						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-						break;
+						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+						//break;
 				}
 			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, rectsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
 				//1 sloupecek

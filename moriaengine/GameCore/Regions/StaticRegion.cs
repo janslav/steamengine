@@ -455,13 +455,13 @@ namespace SteamEngine.Regions {
 				newArr[i] = new RegionRectangle(list[i], this);				
 			}
 			//now the checking phase!
-			IList<RegionRectangle> oldRects = rectangles; //save
+			//IList<RegionRectangle> oldRects = rectangles; //save
 			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations
 			this.canBeActivated = false;
 			try {
 				rectangles = newArr; //switch the rectangles			
 				if(!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
-					rectangles = oldRects; //return the previous set of rectangles
+					//rectangles = oldRects; //return the previous set of rectangles
 					result = false; //some problem
 				}
 				this.canBeActivated = true; //if we are here, everythin went fine or with simple warnings, which does not cause the fatal problem -)
@@ -472,13 +472,16 @@ namespace SteamEngine.Regions {
 		}
 
 		[Remark("Initializes newly created region - set the name, home position and list of rectangles")]
-		public void InitializeNewRegion<T>(string name, Point4D home, IList<T> rects) where T : AbstractRectangle {
+		public bool InitializeNewRegion<T>(string name, Point4D home, IList<T> rects) where T : AbstractRectangle {
+			bool retval;
 			Name = name; //nove jmeno, a zaroven ho to ulozi do prislusneho seznamu
 			//jeste nez nasetujeme rectangly (coz vyvola zaroven i celou kontrolu vsech regionu)
 			//tak musime zvlast vyresit zarazeni do hierarchie
 			StaticRegion.ResolveRegionsHierarchy();//to se resi jen na urovni parentu (bez rectanglu)
-			SetRectangles(rects); //nastavit rect - ulozi se
+			retval = SetRectangles(rects); //nastavit rect - ulozi se
 			P = home; //homepos muzeme az kdyz mame region i s rectangly 
+
+			return retval; //jak to dopadlo
 		}
 
 		public override string Name {
