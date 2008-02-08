@@ -469,10 +469,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Creating labels - of columns, of input fields etc")]
 		public static Text CreateLabel(int xPos, int yPos, string text) {
 			return CreateText(xPos, yPos, Hues.LabelColor, text);
-		}	
+		}
 
+		[Remark("Bezny titulek tabulky")]
 		public static Text CreateHeadline(string text) {
 			return CreateText(Hues.HeadlineColor, text);
+		}
+
+		[Remark("Titulek tabulky, ovsem s volbou barvy")]
+		public static Text CreateHeadline(string text, Hues color) {
+			return CreateText(color, text);
 		}
 
 		[Remark("Simple factory method allows us to let the dialog to determine the text's position in the column")]

@@ -26,6 +26,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Display_Text : CompiledGump {
 		private string label;
 		private string dispText;
+		private Hues textColor;
 
 		[Remark("Instance of the D_Display_Text, for possible access from other dialogs, buttons etc.")]
 		private static D_Display_Text instance;
@@ -42,6 +43,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
 			label = string.Concat(args[0]); //the gump's label
 			dispText = string.Concat(args[1]); //the text to be displayed
+			if(args.Length == 3) {
+				textColor = (Hues)args[2]; //barva titulku volitelna
+			} else {
+				textColor = Hues.HeadlineColor; //normalni nadpisek
+			}
 			ShowDialog();
 		}
 
@@ -54,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first row - the label of the dialog
 			dialogHandler.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline(label);
+			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline(label, textColor);
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
 
@@ -99,7 +105,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
 		public static GumpInstance ShowError(string text) {
-			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, "CHYBA", text);
+			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, "CHYBA", text, Hues.Red);
+		}
+
+		[Remark("Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
+		public static GumpInstance ShowInfo(string text) {
+			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, "INFO", text);
 		}
 	}
 }

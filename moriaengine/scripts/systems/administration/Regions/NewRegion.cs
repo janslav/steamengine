@@ -164,9 +164,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				oneRectList.Add(newRect);
 				//vsef poradku tak hura vytvorit novy region
 				StaticRegion newRegion = new FlaggedRegion(defname, parent);
-				newRegion.InitializeNewRegion(name, home, oneRectList);
-				
-				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+				if(newRegion.InitializeNewRegion(name, home, oneRectList)) {
+					D_Display_Text.ShowInfo("Vytvoøení regionu bylo úspìšné");
+				} else {
+					D_Display_Text.ShowError("Pøi vytávøení regionu došlo k problémùm - viz konzole");					
+				}
+				return; //konec at uz se stackem nebo ne, dalsi navigace bude z infotextu
+				//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if(gr.pressedButton == 2) {//vyber regionu parenta                         dialog,vyhledavani,prvni index, seznam regionu, trideni
 				//zkusime precist vsechyn parametry abychom je kdyztak meli
 				args[0] = Convert.ToUInt16(gr.GetNumberResponse(31));
