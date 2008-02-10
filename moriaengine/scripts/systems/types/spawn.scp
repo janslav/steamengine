@@ -67,7 +67,7 @@ return 0
 
 ON=1
 //use abstractdef.finddef since we can get the spawngroup this way too
-arg spawnData = SpawnInfo(<argnum[10]>,<AbstractDef.FindDef(<argtxt[11]>)>,<argnum[12]>,<argnum[13]>,<argnum[14]>)    
+arg spawnData = SpawnInfo(<argnum[10]>,<AbstractDef.Get(<argtxt[11]>)>,<argnum[12]>,<argnum[13]>,<argnum[14]>)    
 if (spawnValuesMakeSense(spawnData))
   src.tag._spawndialog_data_ = spawnData //store the info for future creating of new spawns...
   f_spawninit(spawnData)
