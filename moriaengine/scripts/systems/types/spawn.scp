@@ -27,7 +27,7 @@ return 1
 
 [dialog d_spawn]
 arg sirka = 400
-src.sysmessage(<argv(2)>)
+//src.sysmessage(<argv(2)>)
 arg dlg = ImprovedDialog(argv(0))
 dlg.CreateBackground(<sirka>)
 dlg.SetLocation(60,80)
@@ -55,7 +55,7 @@ dlg.MakeTableTransparent()
 //a posledni radek s tlacitkem
 dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
 dlg.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1))
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Potvrdit"))
+dlg.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Potvrdit"))
 dlg.MakeTableTransparent() //zpruhledni posledni radek
 
 dlg.WriteOut()
