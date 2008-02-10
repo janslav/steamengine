@@ -48,12 +48,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance, (Region)target, 0, null);
 		}
 
-		[GetMethod("Position", typeof(Point4D))]
+		[GetMethod("Home Point", typeof(Point4D))]
 		public static object GetPosition(object target) {
 			return ((Region)target).P;
 		}
 
-		[SetMethod("Position", typeof(Point4D))]
+		[SetMethod("Home Point", typeof(Point4D))]
 		public static void SetPosition(object target, object value) {
 			Region reg = (Region)target;
 			Point4D point = null;
