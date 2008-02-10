@@ -452,6 +452,9 @@
     <Compile Include="..\..\scripts\systems\skills\Stealing\Snooping.cs">
       <Link>systems\skills\Stealing\Snooping.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Stealing\SnoopingPlugin.Generated.cs">
+      <Link>systems\skills\Stealing\SnoopingPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Stealing\Stealing.cs">
       <Link>systems\skills\Stealing\Stealing.cs</Link>
     </Compile>
