@@ -50,17 +50,6 @@ using SteamEngine.Regions;
             return true;
         }
     }*/
-
-    /*[Dialogs.ViewableClass]
-    public partial class SnoopingPlugin {
-
-        //public static readonly SnoopingPluginDef defInstance = new SnoopingPluginDef("p_snoopedBackpacks_", "C#scripts", -1);
-
-        public void On_Assign() {
-
-        }
-    }*/
-
     /*    public class Targ_Snooping : CompiledTargetDef {
             protected override void On_Start(Character self, object parameter) {
                 self.SysMessage("Komu se chceš podívat do batohu?");
@@ -111,15 +100,15 @@ namespace SteamEngine.CompiledScripts {
         }
 
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
-        private static PluginDef p_snooping;
+        /*private static PluginDef p_snooping;
         private static PluginDef P_Snooping {
             get {
                 if (p_snooping == null) {
-                    p_snooping = PluginDef.Get("p_snoopedBackpacks_");
+                    p_snooping = PluginDef.Get("p_snoopedBackpacks");
                 }
                 return p_snooping;
             }
-        }
+        }*/
 
         public override void Select(AbstractCharacter ch) {
             //todo: various state checks...
@@ -172,7 +161,7 @@ namespace SteamEngine.CompiledScripts {
                         sb.snoopedBackpacks.AddFirst((Container)self.currentSkillTarget2);
                     }
                 } else {
-                    self.AddPlugin(snoopedPluginKey, P_Snooping.Create());
+                    self.AddPlugin(snoopedPluginKey, (SnoopingPlugin.defInstance).Create());
                     sb.snoopedBackpacks.AddFirst((Container)self.currentSkillTarget2);
                 }
             }
@@ -195,6 +184,17 @@ namespace SteamEngine.CompiledScripts {
             self.currentSkill = null;
             self.currentSkillTarget1 = null;
             self.currentSkillTarget2 = null;
+        }
+    }
+
+    [Dialogs.ViewableClass]
+    public partial class SnoopingPlugin {
+
+        public static readonly SnoopingPluginDef defInstance = new SnoopingPluginDef("p_snoopedBackpacks", "C#scripts", -1);
+
+        public bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+            args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
+            return true;
         }
     }
 }

@@ -15,10 +15,5 @@
 
 
 [PluginTemplate SnoopingPlugin : TimerPlugin]
-	public bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-		args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-		return true;
-        }
-
 Vars: 
 	public LinkedList<Container> snoopedBackpacks = null
