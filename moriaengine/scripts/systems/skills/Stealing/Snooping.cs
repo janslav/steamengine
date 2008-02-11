@@ -37,14 +37,12 @@ namespace SteamEngine.CompiledScripts {
             //todo: various state checks...
             Character self = (Character)ch;
             if (!this.Trigger_Select(self)) {
-                self.SysMessage("Select");
                 self.StartSkill((int)SkillName.Snooping);
             }
         }
 
         internal override void Start(Character self) {
             if (!this.Trigger_Start(self)) {
-                self.SysMessage("Start");
                 self.currentSkill = this;
                 DelaySkillStroke(self);
             }
@@ -53,20 +51,16 @@ namespace SteamEngine.CompiledScripts {
         public override void Stroke(Character self) {
             //todo: various state checks...
             if (!this.Trigger_Stroke(self)) {
-                self.SysMessage("Stroke");
                 Character snooped = (Character)self.currentSkillTarget1;
                 if (!self.CanReachWithMessage(snooped)) {
                     Fail(self);
                 } else {
-                    self.SysMessage("else");
                     if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Snooping].RealValue, 800)) {
-                        self.SysMessage("Succ");
                         Success(self);
                     } else {
                         Fail(self);
                     }
                 }
-                self.SysMessage("eh?");
                 self.currentSkill = null;
                 self.currentSkillTarget1 = null;
                 self.currentSkillTarget2 = null;
@@ -79,14 +73,8 @@ namespace SteamEngine.CompiledScripts {
                 self.SysMessage("Vidis do batohu hrace " + ((Character)self.currentSkillTarget1).Name);
                 ((Container)self.currentSkillTarget2).OpenTo(self);
                 SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
-                if (cnt == null) {
-                    self.SysMessage("cnt prazdno nebo neni");
-                }
                 if (sb != null) {
-                    if ((sb.snoopedBackpacks == null) || (sb.snoopedBackpacks.Count == 0)) {
-                        self.SysMessage("sb.sb prazdno nebo neni");
-                    }
-                    if (!((LinkedList<Container>)sb.snoopedBackpacks).Contains(cnt)) {
+                    if (!sb.snoopedBackpacks.Contains(cnt)) {
                         sb.snoopedBackpacks.AddFirst(cnt);
                     }
                 } else {
