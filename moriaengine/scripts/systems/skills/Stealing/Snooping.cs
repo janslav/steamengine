@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
             if (!this.Trigger_Stroke(self)) {
                 self.SysMessage("Stroke");
                 Character snooped = (Character)self.currentSkillTarget1;
-                if (self.GetMap() != snooped.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, snooped) || (Point2D.GetSimpleDistance(self, snooped) > 2)) {
+                if (self.CanReach(snooped) != DenyResult.Allow) {
                     self.SysMessage(snooped.Name + " je od tebe na prohlížení batohu pøíliš daleko.");
                     Fail(self);
                 } else {
@@ -153,18 +153,24 @@ namespace SteamEngine.CompiledScripts {
 
         public override void Success(Character self) {
             if (!this.Trigger_Success(self)) {
+                Container cnt = (Container)self.currentSkillTarget2;
                 self.SysMessage("Vidis do batohu hrace " + ((Character)self.currentSkillTarget1).Name);
                 ((Character)self.currentSkillTarget1).BackpackAsContainer.OpenTo(self);
                 SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
-                if (self.HasPlugin(snoopedPluginKey)) {
-                    if (!sb.snoopedBackpacks.Contains((Container)self.currentSkillTarget2)) {
-                        sb.snoopedBackpacks.AddFirst((Container)self.currentSkillTarget2);
+                if (sb != null) {
+                    if (!sb.snoopedBackpacks.Contains(cnt)) {
+                        sb.snoopedBackpacks.AddFirst(cnt);
                     }
                 } else {
                     self.AddPlugin(snoopedPluginKey, (SnoopingPlugin.defInstance).Create());
-                    sb.snoopedBackpacks.AddFirst((Container)self.currentSkillTarget2);
+                    sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
+                    sb.snoopedBackpacks = new LinkedList<Container>();
+                    sb.snoopedBackpacks.AddFirst(cnt);
                 }
             }
+            self.currentSkill = null;
+            self.currentSkillTarget1 = null;
+            self.currentSkillTarget2 = null;
         }
 
         public override void Fail(Character self) {
