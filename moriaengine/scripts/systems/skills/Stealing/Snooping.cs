@@ -23,74 +23,6 @@ using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Regions;
 
-/*namespace SteamEngine.CompiledScripts {
-    [Dialogs.ViewableClass]
-    public class t_backpack : CompiledTriggerGroup {
-        public void On_Dclick(Player self, Player snooped) {
-
-
-        }
-    }*/
-
-    /*public class SnoopingDeny : CompiledTriggerGroup {
-        [Summary("Someone is trying to pick up item that is contained in me")]
-        public bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-            if (((Character)args.pickingChar).currentSkillParam != null) {
-                if ((Item)((Character)args.pickingChar).currentSkillParam == (Item)args.manipulatedItem) {
-                    //muze zvednout
-                    args.Result = DenyResult.Allow;
-                    return true;
-                } else {
-                    //nemuze zevednout
-                    args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-                    return true;
-                }
-            }
-            args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-            return true;
-        }
-    }*/
-    /*    public class Targ_Snooping : CompiledTargetDef {
-            protected override void On_Start(Character self, object parameter) {
-                self.SysMessage("Komu se chceš podívat do batohu?");
-                base.On_Start(self, parameter);
-
-            }
-
-            protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
-                self.SysMessage("Zameøuj pouze hráèe.");
-                return false;
-            }
-
-            protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
-                if (self.currentSkill != null) {
-                    self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
-                    return false;
-                }
-
-               //cil neni hrac
-               // if (targetted != Player) {
-               //     self.SysMessage("Monstrùm se nelze podívat do batohu.");
-               //}
-
-                //chce se vloupat k sobe do batohu
-                if (targetted == self) {
-                    self.SysMessage("Vyber nìkoho jiného než sebe.");
-                    return false;
-                }
-
-                //nevidi na cil
-                if (targetted != self) {
-                    if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 3) {
-                        self.SysMessage(targetted.Name + " je od tebe pøíliš daleko.");
-                        return false;
-                    }
-                }
-                self.currentSkillTarget1 = (Character)targetted;
-                return false;
-            }
-        }*/
-
 namespace SteamEngine.CompiledScripts {
     [Dialogs.ViewableClass]
     public class SnoopingSkillDef : SkillDef {
@@ -100,15 +32,6 @@ namespace SteamEngine.CompiledScripts {
         }
 
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
-        /*private static PluginDef p_snooping;
-        private static PluginDef P_Snooping {
-            get {
-                if (p_snooping == null) {
-                    p_snooping = PluginDef.Get("p_snoopedBackpacks");
-                }
-                return p_snooping;
-            }
-        }*/
 
         public override void Select(AbstractCharacter ch) {
             //todo: various state checks...
@@ -132,19 +55,18 @@ namespace SteamEngine.CompiledScripts {
             if (!this.Trigger_Stroke(self)) {
                 self.SysMessage("Stroke");
                 Character snooped = (Character)self.currentSkillTarget1;
-                if (self.CanReach(snooped) != DenyResult.Allow) {
-                    self.SysMessage(snooped.Name + " je od tebe na prohlížení batohu pøíliš daleko.");
+                if (!self.CanReachWithMessage(snooped)) {
                     Fail(self);
                 } else {
                     self.SysMessage("else");
                     if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Snooping].RealValue, 800)) {
-                        self.currentSkillTarget2 = (Container)snooped.BackpackAsContainer;
                         self.SysMessage("Succ");
                         Success(self);
                     } else {
                         Fail(self);
                     }
                 }
+                self.SysMessage("eh?");
                 self.currentSkill = null;
                 self.currentSkillTarget1 = null;
                 self.currentSkillTarget2 = null;
@@ -155,15 +77,20 @@ namespace SteamEngine.CompiledScripts {
             if (!this.Trigger_Success(self)) {
                 Container cnt = (Container)self.currentSkillTarget2;
                 self.SysMessage("Vidis do batohu hrace " + ((Character)self.currentSkillTarget1).Name);
-                ((Character)self.currentSkillTarget1).BackpackAsContainer.OpenTo(self);
+                ((Container)self.currentSkillTarget2).OpenTo(self);
                 SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
+                if (cnt == null) {
+                    self.SysMessage("cnt prazdno nebo neni");
+                }
                 if (sb != null) {
-                    if (!sb.snoopedBackpacks.Contains(cnt)) {
+                    if ((sb.snoopedBackpacks == null) || (sb.snoopedBackpacks.Count == 0)) {
+                        self.SysMessage("sb.sb prazdno nebo neni");
+                    }
+                    if (!((LinkedList<Container>)sb.snoopedBackpacks).Contains(cnt)) {
                         sb.snoopedBackpacks.AddFirst(cnt);
                     }
                 } else {
-                    self.AddPlugin(snoopedPluginKey, (SnoopingPlugin.defInstance).Create());
-                    sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
+                    sb = self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance) as SnoopingPlugin;
                     sb.snoopedBackpacks = new LinkedList<Container>();
                     sb.snoopedBackpacks.AddFirst(cnt);
                 }
@@ -198,9 +125,16 @@ namespace SteamEngine.CompiledScripts {
 
         public static readonly SnoopingPluginDef defInstance = new SnoopingPluginDef("p_snoopedBackpacks", "C#scripts", -1);
 
-        public bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-            args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-            return true;
+        public bool On_DenyPickupItem(DenyPickupArgs args) {
+            SnoopingPlugin sb = (args.pickingChar).GetPlugin(PluginKey.Get("_snoopedBackpacks_")) as SnoopingPlugin;
+            Container conta = args.manipulatedItem.Cont as Container;
+            if ((conta != null) && (sb.snoopedBackpacks.Contains(conta))) {
+                args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
+                return true;
+                //((Item)args.manipulatedItem).TopObj();
+            }
+            args.Result = DenyResult.Allow;
+            return false;
         }
     }
 }
