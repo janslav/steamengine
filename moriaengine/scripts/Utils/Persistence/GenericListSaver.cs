@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
-	public sealed class GenericListSaver : ISaveImplementor {
+	public sealed class GenericListSaver : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "GenericList";
 		} }

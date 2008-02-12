@@ -123,6 +123,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					}
 				}
 			}
+
 			if (type != null) {
 				if (typeof(Thing).IsAssignableFrom(type)) {
 					needsCopying = false;
@@ -133,6 +134,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			} else {
 				//Console.WriteLine("unrecognized type "+typeName);
 				typeString = typeName;
+				needsCopying = true;
 			}
 		}
 

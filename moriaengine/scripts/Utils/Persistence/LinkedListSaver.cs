@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
-	public sealed class LinkedListSerializer : ISaveImplementor {
+	public sealed class LinkedListSerializer : ISaveImplementor, IDeepCopyImplementor {
 		public string HeaderName { get {
 			return "LinkedList";
 		} }
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 				Type typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
 				object linkedList = Activator.CreateInstance(typeOfList);
 				Type typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
-				IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, new object[] { linkedList });
+				IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, new object[] { linkedList, count });
 
 				for (int i = 0; i<count; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
