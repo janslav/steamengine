@@ -71,14 +71,10 @@ namespace SteamEngine.CompiledScripts {
                 self.SysMessage("Vidíš do batohu hráèe " + (((Container)self.currentSkillTarget1).TopObj()).Name);
                 ((Container)self.currentSkillTarget1).OpenTo(self);
                 SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
-                if (sb != null) {
-                    if (!sb.IsInList(self, cnt)) {
-                        sb.Add(self, cnt);
-                    }
-                } else {
-                    SnoopingPlugin.Create(self);
-                    ((SnoopingPlugin)self.GetPlugin(snoopedPluginKey)).Add(self, cnt);
+                if (sb == null) {
+                    sb = (SnoopingPlugin)self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
                 }
+                sb.Add(cnt);
             }
             self.currentSkill = null;
             self.currentSkillTarget1 = null;
@@ -109,34 +105,29 @@ namespace SteamEngine.CompiledScripts {
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
 
         public bool On_DenyPickupItem(DenyPickupArgs args) {
-            SnoopingPlugin sb = (args.pickingChar).GetPlugin(PluginKey.Get("_snoopedBackpacks_")) as SnoopingPlugin;
+            SnoopingPlugin sb = (args.pickingChar).GetPlugin(SnoopingSkillDef.snoopedPluginKey) as SnoopingPlugin;
             Container conta = args.manipulatedItem.Cont as Container;
-            if ((conta != null) && (sb.IsInList((Character)args.pickingChar ,conta))) {
+            if ((conta != null) && (sb.Contains(conta))) {
                 args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
                 return true;
             }
             return false;
         }
 
-        public static void Create(Character self) {
-            self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
-            ((SnoopingPlugin)(self.GetPlugin(snoopedPluginKey))).snoopedBackpacks = new LinkedList<Container>();
-        }
-
-        public void Add(Character self, Container cont) {
-            SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
-            if (sb == null) {
-                Create(self);
+        public void Add(Container cont) {
+            if (this.snoopedBackpacks == null) {
+                this.snoopedBackpacks = new LinkedList<Container>();
             }
-            sb.snoopedBackpacks.AddFirst(cont);
+            if (!this.snoopedBackpacks.Contains(cont)) {
+                this.snoopedBackpacks.AddFirst(cont);
+            }
         }
 
-        public bool IsInList(Character self, Container cont) {
-            SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
-            if (sb == null) {
-                return false;
-            } else {
+        public bool Contains(Container cont) {
+            if (this.snoopedBackpacks.Contains(cont)) {
                 return true;
+            } else {
+                return false;
             }
         }
     }
