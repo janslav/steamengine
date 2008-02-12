@@ -16,4 +16,4 @@
 
 [PluginTemplate SnoopingPlugin : TimerPlugin]
 Vars: 
-	public LinkedList<Container> snoopedBackpacks = null
+	private LinkedList<Container> snoopedBackpacks = null
