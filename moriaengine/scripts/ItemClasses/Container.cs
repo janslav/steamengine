@@ -68,11 +68,8 @@ namespace SteamEngine.CompiledScripts {
 			//(TODO): check ownership(?), trigger snooping(done), etc...
             Character topChar = this.TopObj() as Character;
             if ((topChar != null) && (topChar != from) && (!((Character)from).IsGM())) {
-                ((Character)from).currentSkillTarget1 = topChar;    //in snooping skill called as snooped
-                ((Character)from).currentSkillTarget2 = this as Container;
-                if (((Character)from).currentSkillTarget2 == null) {
-                    from.SysMessage("null");
-                }
+                //((Character)from).currentSkillTarget1 = topChar;    //in snooping skill called as snooped
+                ((Character)from).currentSkillTarget1 = this as Container;
                 from.SelectSkill((int)SkillName.Snooping);
             } else {
                 OpenTo(from);
