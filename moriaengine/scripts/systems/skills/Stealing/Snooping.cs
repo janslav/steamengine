@@ -68,8 +68,8 @@ namespace SteamEngine.CompiledScripts {
         public override void Success(Character self) {
             if (!this.Trigger_Success(self)) {
                 Container cnt = (Container)self.currentSkillTarget1;
-                self.SysMessage("Vidíš do batohu hráèe " + (((Container)self.currentSkillTarget1).TopObj()).Name);
-                ((Container)self.currentSkillTarget1).OpenTo(self);
+                self.SysMessage("Vidíš do batohu hráèe " + (cnt.TopObj()).Name);
+                cnt.OpenTo(self);
                 SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
                 if (sb == null) {
                     sb = (SnoopingPlugin)self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
@@ -124,10 +124,10 @@ namespace SteamEngine.CompiledScripts {
         }
 
         public bool Contains(Container cont) {
-            if (this.snoopedBackpacks.Contains(cont)) {
-                return true;
-            } else {
+            if (this.snoopedBackpacks == null) {
                 return false;
+            } else {
+                return this.snoopedBackpacks.Contains(cont);
             }
         }
     }
