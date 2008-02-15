@@ -56,13 +56,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Poznámky k accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + notesList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni nove pozmamky
 			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Nová poznámka");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, 145, 120, 350, 0, ButtonFactory.D_BUTTON_WIDTH));
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7); //tridit dle issuera desc
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Autor");			
 			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Smaž");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam poznamek
 			dlg.AddTable(new GUTATable(imax - firstiVal));
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 			dlg.CreatePaging(notesList.Count, firstiVal, 1);//ted paging			
 			dlg.WriteOut();
 		}
@@ -260,13 +260,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Prohøešky accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + crimesList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho trestu
 			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Nový prohøešek");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, 145, 120, 225, 225, 0, ButtonFactory.D_BUTTON_WIDTH));
@@ -282,7 +282,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7); //tridit dle issuera desc
 			dlg.LastTable[0, 4] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Autor");
 			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Smaž");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam trestu
 			dlg.AddTable(new GUTATable(imax - firstiVal));
@@ -316,7 +316,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 			dlg.CreatePaging(crimesList.Count, firstiVal, 1);//ted paging			
 			dlg.WriteOut();
 		}
@@ -473,7 +473,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(dlgHeadline);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable((isCrime ? 3 : 2), 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel(textFldLabel);
@@ -493,12 +493,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[2, 0] = TextFactory.CreateLabel("Trest");
 				dlg.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 12);
 			}
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Uložit");
-			dlg.MakeTableTransparent(); 
+			dlg.MakeLastTableTransparent(); 
 
 			dlg.WriteOut();
 		}

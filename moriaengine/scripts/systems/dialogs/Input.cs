@@ -73,13 +73,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));			        
             dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline(this.Label);
 			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); 
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
             //second row - the basic, whole row, input field
             dialogHandler.AddTable(new GUTATable(1,0));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;            
             dialogHandler.LastTable[0,0] = InputFactory.CreateInput(LeafComponentTypes.InputText, 1, this.DefaultInput);
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
             //last row with buttons
 			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));

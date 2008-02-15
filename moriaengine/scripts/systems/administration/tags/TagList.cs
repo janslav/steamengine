@@ -60,20 +60,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech tagù na "+th.ToString()+" (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);//cudlik na info o hodnotach
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 			
 			//cudlik a input field na zuzeni vyberu
 			dlg.AddTable(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho tagu
 			dlg.AddTable(new GUTATable(1,130,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový tag");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK,3);
-			dlg.MakeTableTransparent();			
+			dlg.MakeLastTableTransparent();			
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, ButtonFactory.D_BUTTON_WIDTH, 0));
@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno tagu");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Info");			
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Hodnota");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam tagu
 			dlg.AddTable(new GUTATable(imax-firstiVal));
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}				
 				rowCntr++;			
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//ted paging
 			dlg.CreatePaging(tagList.Count, firstiVal,1);
@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 4);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();
 		}

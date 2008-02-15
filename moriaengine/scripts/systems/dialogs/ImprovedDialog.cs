@@ -206,7 +206,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Take the last table, iterate through the columns and make them all transparent")]
-		public void MakeTableTransparent() {
+		public void MakeLastTableTransparent() {
 			lastTable.Transparent = true;			
 		}
 
@@ -240,7 +240,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				lastColumn.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, lastColumn.Height - 21, ID_NEXT_BUTTON)); //next
 			}
-			MakeTableTransparent(); //the row where we added the navigating column
+			MakeLastTableTransparent(); //the row where we added the navigating column
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
 			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
 			//and <GOPAGE> is confirming button that jumps to the written page.
@@ -252,7 +252,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastTable[0,0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
 			lastTable[0,0] = TextFactory.CreateLabel(95, 0, "/" + pagesCount.ToString());
 			lastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
-			MakeTableTransparent(); //newly created row
+			MakeLastTableTransparent(); //newly created row
 			//restore the last components
 			lastTable = storedLastTable;
 			lastColumn = storedLastColumn;

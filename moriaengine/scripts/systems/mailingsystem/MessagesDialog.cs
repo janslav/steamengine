@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Tøídit dle nepøeètených (nepøeètených " + unreadCnt + ")");			
 			//cudlik na zavreni dialogu			
 			dialogHandler.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//popis sloupecku
 			dialogHandler.AddTable(new GUTATable(1, 180, 160, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 0)); //radek na nadpisy            
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//text
 			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel("Text zprávy");
 
-			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
+			dialogHandler.MakeLastTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam zprav
 			dialogHandler.AddTable(new GUTATable(imax-firstiVal));
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				rowCntr++;
 			}
-			dialogHandler.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dialogHandler.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
 			dialogHandler.CreatePaging(messagesList.Count, firstiVal,1);

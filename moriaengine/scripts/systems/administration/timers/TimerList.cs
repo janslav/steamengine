@@ -62,20 +62,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech timerù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + timerList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 3);//cudlik na refresh dialogu
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
 			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho timeru
 			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový timer");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, 0, ButtonFactory.D_BUTTON_WIDTH));
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno timeru");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Zbývající èas");
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Uprav");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam timeru
 			dlg.AddTable(new GUTATable(imax - firstiVal));
@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
 			dlg.CreatePaging(timerList.Count, firstiVal, 1);

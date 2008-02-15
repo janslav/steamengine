@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);//cudlik na info o hodnotach			
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//dialozek s inputama
 			dlg.AddTable(new GUTATable(2, 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
@@ -51,13 +51,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Hodnota");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10);
 			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11);
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
 			dlg.AddTable(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
-			dlg.MakeTableTransparent(); //zpruhledni posledni radek
+			dlg.MakeLastTableTransparent(); //zpruhledni posledni radek
 
 			dlg.WriteOut();
 		}

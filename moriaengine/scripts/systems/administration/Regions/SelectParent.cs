@@ -58,14 +58,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Výbìr regionu (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + regionsList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 						
 			//cudlik a input field na zuzeni vyberu
 			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu (Detail, Delete, Name, Defname, P)
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 150, 0));
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 5); //tridit dle defnamu asc
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6); //tridit dle defnamu desc
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Defname");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam regionu
 			dlg.AddTable(new GUTATable(imax - firstiVal));
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 			dlg.CreatePaging(regionsList.Count, firstiVal, 1);//ted paging			
 			dlg.WriteOut();
 		}

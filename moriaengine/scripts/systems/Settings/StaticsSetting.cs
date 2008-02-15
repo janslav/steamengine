@@ -87,10 +87,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Nastavení globálních promìnných. Pro informace zmáèkni tlaèítko s papírem vpravo v rohu.");			
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, innerWidth / 4, innerWidth / 4, 0, innerWidth / 4));//bude to ve 4 sloupcích
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 			rowCounter = 0;
 			dlgIndex = 0; //indexování inputfieldù v dialogu
 			string catKey = (string)args[0]; //klic vybrane kategorie (na tretim argumentu pak zavisi zda zobrazi jen tuto kategorii nebo vsechny abecedne od ni(vcetne) dal)
@@ -196,7 +196,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Nastavit");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 			dlg.WriteOut();
 
 			//ulozit informaci o tom ktery klic a index seznamu v kategorii byl na teto strance prvni

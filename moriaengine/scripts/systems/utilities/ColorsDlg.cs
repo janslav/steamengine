@@ -69,14 +69,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Colors dialog - ukázky barev v textu (poèínaje " + startingColor + ")");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//input field pro vyber barvy
 			dlg.AddTable(new GUTATable(1, 100, 40, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zadej poèáteèní barvu: ");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 10, startingColor.ToString());
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//sloupecky - napred pripravime sirky
 			int[] columns = new int[columnsCnt];
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + colorCntr + ")");
 				}
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
 			dlg.CreatePaging(lastColor, firstiVal, columnsCnt);

@@ -44,20 +44,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Kategorie pro nastavení (" + (firstiVal + 1) + "-" + imax + " z " + categories.Length + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 							//èudlik pro zobrazeni
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zobraz");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Název kategorie");					
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//odkaz na "ALL"
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1); //zobrazit
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Všechny");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(imax-firstiVal)); //jen tolik radku kolik kategorii je na strance (tj bud PAGE_ROWS anebo mene)
 			dlg.CopyColsFromLastTable();
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(Hues.SettingsTitleColor, cat.Name); //název kategorie		
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//ted paging, klasika
 			dlg.CreatePaging(categories.Length, firstiVal,1);

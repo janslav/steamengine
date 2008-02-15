@@ -45,20 +45,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam hráèských úètù (" + (firstiVal + 1) + "-" + imax + " z " + accList.Count + ")");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 			
 			//cudlik a input field na zuzeni vyberu
 			dlg.AddTable(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho uctu
 			dlg.AddTable(new GUTATable(1,130,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový account");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK,2);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam uctu s tlacitkem pro detail (tolik radku, kolik se bude zobrazovat uctu)
 			dlg.AddTable(new GUTATable(imax-firstiVal, ButtonFactory.D_BUTTON_WIDTH, 0)); 
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				
 				rowCntr++;			
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
 			dlg.CreatePaging(accList.Count, firstiVal,1);
