@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline("Administrace blokovaných IP (" + (firstiVal + 1) + "-" + imax + " z " + ipentries.Count + ")");
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); //exit button
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//druhy radek
 			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, IPwidth, IPwidth, duvod, kdo));
@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit dle GM - Blokare sestupne(Blocked by)  
 			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Zablokoval");
 
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//seznam blokovaných IP adres
 			dialogHandler.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS));
@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dialogHandler.LastTable[rowCntr, 3] = TextFactory.CreateText(entry.Reason);
 				dialogHandler.LastTable[rowCntr, 4] = TextFactory.CreateText(entry.Account.Name);				
 			}			
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//ted paging
 			dialogHandler.CreatePaging(ipentries.Count, firstiVal,1);
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 6);
 			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel("Pridat novì blokovany rozsah IP");
 
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();
 		}
@@ -186,33 +186,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(1, width, ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText((width - 130) / 2, 0, "Pridej blokovanou IP");
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); //exit button
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//druhy radek IP adresa
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;			
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("IP adresa:");
 			dialogHandler.LastTable[0,1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10, ip);
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//treti radek Duvod
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Dùvod:");
 			dialogHandler.LastTable[0,1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11, "");
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//ctvrty radek Kdo
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Zablokoval:");
 			dialogHandler.LastTable[0,1] = TextFactory.CreateText(sendTo.Account.Name);
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//paty radek tlacitko OK
 			dialogHandler.AddTable(new GUTATable(1,0));
 			dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, width / 2, 0, 1); //exit button
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 			
 			dialogHandler.WriteOut();
 
@@ -272,40 +272,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));			
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText((width - 130) / 2, 0, "Pridej blokovany range");
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); //exit button
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//druhy radek 1.IP adresa
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;			
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("IP adresa od:");
 			dialogHandler.LastTable[0,1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 9, ipfrom);			            
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//treti radek 2.IP adresa
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;			
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("IP adresa do:");			
 			dialogHandler.LastTable[0,1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10, ipto);			            			
-            dialogHandler.MakeTableTransparent();
+            dialogHandler.MakeLastTableTransparent();
 
 			//ctvrty radek Duvod
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Dùvod:");
 			dialogHandler.LastTable[0,1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11, "");			            			            			
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//ctvrty radek Kdo
 			dialogHandler.AddTable(new GUTATable(1, 0, width - labels));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			dialogHandler.LastTable[0,0] = TextFactory.CreateText("Zablokoval:");
 			dialogHandler.LastTable[0,1] = TextFactory.CreateText(sendTo.Account.Name);
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//paty radek tlacitko OK
 			dialogHandler.AddTable(new GUTATable(1,0));
             dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, width / 2, 0, 1); //exit button
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();
 

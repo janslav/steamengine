@@ -61,13 +61,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(headline);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//no data - no dialog necessary
 			if (viewCls == null) {
 				dlg.AddTable(new GUTATable(1,0));
 				dlg.LastTable[0, 0] = TextFactory.CreateLabel("No DataView found for the given type " + target.GetType());
-				dlg.MakeTableTransparent();
+				dlg.MakeLastTableTransparent();
 				dlg.WriteOut();
 				return;
 			}
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();
 		}

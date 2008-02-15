@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam postav na accountu "+acc.Name);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam charu s tlacitkem pro info
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 160, 130, 110, 40, 0));
@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Rasa");
 			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Level");
 			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Pozice");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable((int)AbstractAccount.maxCharactersPerGameAccount));
 			dlg.CopyColsFromLastTable();
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			dlg.WriteOut();
 		}

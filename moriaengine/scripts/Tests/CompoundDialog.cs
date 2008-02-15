@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Testovací skládaný dialog");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//telo
 			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS,200,0));
@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable.Components[0].AddComponent(innerTable1);
 			dlg.LastTable.Components[1].AddComponent(innerTable2);
 
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			dlg.WriteOut();
 		}

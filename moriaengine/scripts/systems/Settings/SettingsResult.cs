@@ -46,14 +46,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Výsledky nastavení (celkem:" + allFields + ", pøenastaveno: " + resultsOK + ", chybnì zadáno: " + resultsNOK + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(1, 175, 175, 175, 0));			
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Název");//name of the datafield
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Souèasná hodnota");//after setting
 			dlg.LastTable[0, 2] = TextFactory.CreateText("Pùvodní hodnota");//filled when successfully changed
 			dlg.LastTable[0, 3] = TextFactory.CreateText("Chybná hodnota");//filled on erroneous attempt to store the change
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(imax - firstiVal)); //as much lines as many results there is on the page (maximally ROW_COUNT)
 			dlg.CopyColsFromLastTable();
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(color, sres.ErroneousValue); //value that was attempted to be filled but which ended by some error (filled only on error)
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//ted paging, klasika
 			dlg.CreatePaging(setResults.Count, firstiVal, 1);

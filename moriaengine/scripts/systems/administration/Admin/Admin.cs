@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")");
 			//cudlik na zavreni dialogu
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
-			dialogHandler.MakeTableTransparent();
+			dialogHandler.MakeLastTableTransparent();
 
 			//popis sloupecku
 			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 180, 180, 180, 0)); 
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//Akce
 			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel("Action");
-			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
+			dialogHandler.MakeLastTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam lidi
             dialogHandler.AddTable(new GUTATable(imax-firstiVal));
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				
 				rowCntr++;			
 			}
-			dialogHandler.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dialogHandler.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//now handle the paging 
 			dialogHandler.CreatePaging(playersList.Count, firstiVal,1);

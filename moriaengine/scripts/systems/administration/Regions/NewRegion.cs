@@ -50,13 +50,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Založení nového regionu");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//navod
 			dlg.AddTable(new GUTATable(3, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vyplò vše vèetnì jednoho rectanglu (další lze pøidat pozdìji)");
 			dlg.LastTable[1, 0] = TextFactory.CreateHeadline("(MinX,MinY) - levy horni roh, (MaxX,MaxY) - pravy dolni roh.");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//textiky a editfieldy na zadani vseho a souradnic rectanglu
 			dlg.AddTable(new GUTATable(2, 100, 100, 0, 100));
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[1, 2] = TextFactory.CreateLabel("Parent");
 			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText, 24, parent);
 			dlg.LastTable[1, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,100-ButtonFactory.D_BUTTON_WIDTH,0,2);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 			dlg.AddTable(new GUTATable(2, 100, 100, 0, 100));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("MinX");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 31, minX);
@@ -79,13 +79,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 33, maxX);
 			dlg.LastTable[1, 2] = TextFactory.CreateLabel("MaxY");
 			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 34, maxY);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//send button
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Vytvoøit");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();
 		}

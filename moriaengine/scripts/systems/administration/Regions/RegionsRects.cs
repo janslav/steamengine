@@ -53,13 +53,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Pøehled rectanglù pro region " + reg.Name + "(" + reg.Defname + ") (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + rectList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho rectanglu
 			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Pøidat rectangle");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu (Info, Height, Width, StartPoint, EndPoint, Tiles)
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 35, 35, 130, 0, 35));
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Poèáteèní bod");
 			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Koncový bod");
 			dlg.LastTable[0, 6] = TextFactory.CreateLabel("Polí");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			//seznam rectnaglu
 			dlg.AddTable(new GUTATable(imax - firstiVal));
@@ -91,13 +91,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				rowCntr++;
 			}
-			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//send button
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
-			dlg.MakeTableTransparent();
+			dlg.MakeLastTableTransparent();
 
 			dlg.CreatePaging(rectList.Count, firstiVal, 1);//ted paging		
 			dlg.WriteOut();
