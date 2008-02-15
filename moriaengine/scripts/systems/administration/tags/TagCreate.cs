@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového tagu na "+th.ToString());
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);//cudlik na info o hodnotach			
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//dialozek s inputama
-			dlg.Add(new GUTATable(2, 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
+			dlg.AddTable(new GUTATable(2, 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
 			//napred napisy 
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Název tagu");
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Hodnota");
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.Add(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek

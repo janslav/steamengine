@@ -106,6 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				
 				"DEPRECATED. Use table[x,y] (or table.AddToCell(row,col,comp) for LSCript) method instead."+
 				"Used only for adding the GUTATables")]
+		[Obsolete("Do not use this method, use AddTable for adding GUTATables",true)]
 		public void Add(GUTAComponent comp) {
 			if (comp is GUTAMatrix) {
 				//the GUTAMatrix can be only added to the GUTAColumn. It must be filled manually however.
@@ -136,11 +137,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		[Remark("Add a single GUTATable to the dialog and set is as 'last'")]
+		public void AddTable(GUTATable table) {
+			background.AddComponent(table);
+			lastTable = table;
+		}
+
 		[Remark("Method for adding a last component to the parent - useful for columns when we want to "+
                 "add a column to the right side. It will recompute the previous column width to fit the space "+
                 "to the rest of the row to the last column (neverminding the actual width of this column)."+
                 "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method."+
 				"DEPRECATED, use GUTATable constructor instead. Converted to private method to be used in paging only!")]
+		[Obsolete("Do not use this method, use AddLastColumn for adding last GUTAColumn.", true)]
 		internal void AddLast(GUTAComponent comp) {
 			if (comp is GUTAColumn) {
 				if (lastTable == null || lastTable.Components.Count == 0) {
@@ -159,7 +167,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//call normal Add method
 				Add(comp);
 			}
-		}		
+		}
+
+		[Remark("Add a last GUTAColumn to the dialog and set is as 'last'. This method is to be used instead of AddLastColumn.")]		
+		internal void AddLastColumn(GUTAColumn col) {
+			if(lastTable == null || lastTable.Components.Count == 0) {
+				throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
+			}
+			//get the lastly added column
+			//GUTAColumn lastCol = (GUTAColumn) lastTable.Components[lastTable.Components.Count-1];
+			//the column will be added from the right side...
+			col.IsLast = true;
+
+			//space between the new(last) and one-before-last (former last) columns                                  
+			//now we can add, the size is recomputed, the new column will fit right to the end of the row                
+			lastTable.AddComponent(col);
+			lastColumn = col;
+		}
 
 		[Remark("Take the columns in the last row and copy their structure to the new row."+
                 "They will take the new tables's rowCount. No underlaying children will be copied!")]
@@ -206,15 +230,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			bool prevNextColumnAdded = false; //indicator of navigating column
 			if(actualPage > 1) {
-				AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));				
-				Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ID_PREV_BUTTON)); //prev
+				AddLastColumn(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
+				lastColumn.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ID_PREV_BUTTON)); //prev
 				prevNextColumnAdded = true; //the column has been created				
 			}
 			if(actualPage < pagesCount) { //there will be next page
 				if(!prevNextColumnAdded) { //the navigating column does not exist (e.g. we are on the 1st page)
-					AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
+					AddLastColumn(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
 				}
-				Add(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, lastColumn.Height - 21, ID_NEXT_BUTTON)); //next
+				lastColumn.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, lastColumn.Height - 21, ID_NEXT_BUTTON)); //next
 			}
 			MakeTableTransparent(); //the row where we added the navigating column
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
@@ -222,7 +246,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//and <GOPAGE> is confirming button that jumps to the written page.
 			GUTATable storedLastTable = lastTable; //store these two things :)
 			GUTAColumn storedLastColumn = lastColumn;
-			Add(new GUTATable(1,0));
+			AddTable(new GUTATable(1,0));
 			lastTable[0,0] = TextFactory.CreateLabel("Stránka");
 													//type if input,x,y,ID, width, height, prescribed text
 			lastTable[0,0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());

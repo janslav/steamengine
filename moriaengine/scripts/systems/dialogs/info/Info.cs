@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				headline = "Info dialog" + (viewCls == null ? "" : " - "+viewCls.GetName(target));
 			}
 
-			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
 				//the viewCls could be null ! - e.g. DataView does not exist
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(headline);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//no data - no dialog necessary
 			if (viewCls == null) {
-				dlg.Add(new GUTATable(1,0));
+				dlg.AddTable(new GUTATable(1,0));
 				dlg.LastTable[0, 0] = TextFactory.CreateLabel("No DataView found for the given type " + target.GetType());
 				dlg.MakeTableTransparent();
 				dlg.WriteOut();
@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreatePaging(viewCls, target, firstItemButt, firstItemFld);
 				
 			//send button
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
 			dlg.MakeTableTransparent();

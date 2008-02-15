@@ -41,27 +41,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam hráèských úètù (" + (firstiVal + 1) + "-" + imax + " z " + accList.Count + ")");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 			
 			//cudlik a input field na zuzeni vyberu
-			dlg.Add(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
 			dlg.MakeTableTransparent();
 
 			//cudlik na zalozeni noveho uctu
-			dlg.Add(new GUTATable(1,130,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1,130,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový account");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK,2);
 			dlg.MakeTableTransparent();
 
 			//seznam uctu s tlacitkem pro detail (tolik radku, kolik se bude zobrazovat uctu)
-			dlg.Add(new GUTATable(imax-firstiVal, ButtonFactory.D_BUTTON_WIDTH, 0)); 
+			dlg.AddTable(new GUTATable(imax-firstiVal, ButtonFactory.D_BUTTON_WIDTH, 0)); 
 			//cudlik pro info
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Come");
 			//projet seznam v ramci daneho rozsahu indexu

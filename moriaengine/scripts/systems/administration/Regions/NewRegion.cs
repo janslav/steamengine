@@ -47,19 +47,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(150, 150);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Založení nového regionu");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
 			//navod
-			dlg.Add(new GUTATable(3, 0));
+			dlg.AddTable(new GUTATable(3, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vyplò vše vèetnì jednoho rectanglu (další lze pøidat pozdìji)");
 			dlg.LastTable[1, 0] = TextFactory.CreateHeadline("(MinX,MinY) - levy horni roh, (MaxX,MaxY) - pravy dolni roh.");
 			dlg.MakeTableTransparent();
 
 			//textiky a editfieldy na zadani vseho a souradnic rectanglu
-			dlg.Add(new GUTATable(2, 100, 100, 0, 100));
+			dlg.AddTable(new GUTATable(2, 100, 100, 0, 100));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Name");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 21, name);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Defname");
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText, 24, parent);
 			dlg.LastTable[1, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,100-ButtonFactory.D_BUTTON_WIDTH,0,2);
 			dlg.MakeTableTransparent();
-			dlg.Add(new GUTATable(2, 100, 100, 0, 100));
+			dlg.AddTable(new GUTATable(2, 100, 100, 0, 100));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("MinX");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 31, minX);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("MinY");
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//send button
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Vytvoøit");
 			dlg.MakeTableTransparent();

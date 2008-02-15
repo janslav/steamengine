@@ -55,26 +55,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam statických regionù (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + regionsList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
 			//cudlik na zalozeni noveho regionu
-			dlg.Add(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vytvoøit region");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.MakeTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.Add(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.MakeTableTransparent();
 
 			//popis sloupcu (Detail, Delete, Name, Defname, P)
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 150, 150, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 150, 150, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Detail");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Smaž");
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit podle jmena asc
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//seznam regionu
-			dlg.Add(new GUTATable(imax - firstiVal));
+			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu

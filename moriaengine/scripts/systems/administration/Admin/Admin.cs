@@ -45,14 +45,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(50, 50);
 
 			//nadpis
-			dialogHandler.Add(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.AddTable(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline("Admin dialog - seznam pøipojených klientù ("+(firstiVal+1)+"-"+imax+" z "+playersList.Count+")");
 			//cudlik na zavreni dialogu
 			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 180, 180, 180, 0)); 
+			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 180, 180, 180, 0)); 
 			//cudlik pro privolani hrace
 			dialogHandler.LastTable[0,0] = TextFactory.CreateLabel("Come");
 
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam lidi
-            dialogHandler.Add(new GUTATable(imax-firstiVal));
+            dialogHandler.AddTable(new GUTATable(imax-firstiVal));
 			dialogHandler.CopyColsFromLastTable();
 
 			switch ((SortingCriteria)sa[0]) {

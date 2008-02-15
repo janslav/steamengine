@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(40, 30);
 
 			//nadpis
-			dialogHandler.Add(new GUTATable(1, 300, 0, ButtonFactory.D_BUTTON_WIDTH));			
+			dialogHandler.AddTable(new GUTATable(1, 300, 0, ButtonFactory.D_BUTTON_WIDTH));			
 			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline("Seznam zpráv (" + (firstiVal+1) + "-" + imax +" z " + messagesList.Count+ ")");
 
 			//cudliky na trideni dle neprectenych (i s popiskem)
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.Add(new GUTATable(1, 180, 160, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 0)); //radek na nadpisy            
+			dialogHandler.AddTable(new GUTATable(1, 180, 160, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 0)); //radek na nadpisy            
 				//cas
 			dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit podle casu asc
 			dialogHandler.LastTable[0,0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 2); //tridit podle casu desc            
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.MakeTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam zprav
-			dialogHandler.Add(new GUTATable(imax-firstiVal));
+			dialogHandler.AddTable(new GUTATable(imax-firstiVal));
 			dialogHandler.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
