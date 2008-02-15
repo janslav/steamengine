@@ -34,13 +34,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 600);
 
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam postav na accountu "+acc.Name);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
 			//seznam charu s tlacitkem pro info
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 160, 130, 110, 40, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 160, 130, 110, 40, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Info");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Profese");
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Pozice");
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable((int)AbstractAccount.maxCharactersPerGameAccount));
+			dlg.AddTable(new GUTATable((int)AbstractAccount.maxCharactersPerGameAccount));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu

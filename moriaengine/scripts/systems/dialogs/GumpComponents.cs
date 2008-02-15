@@ -286,7 +286,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("This constructor allows us to specify the sizes of intable columns."+
 				"0 as the size means the column that takes the rest of the width"+
 				"If 0 is the one-before-last column size, then the last column will be added as "+
-				"'AddLast' - its position will be counted from the right side")]
+				"'AddLastColumn' - its position will be counted from the right side")]
 		public GUTATable(int rowCount, params int[] columnSizes) : this(rowCount) {
 			bool shallBeLast = false;
 			for(int i = 0; i < columnSizes.Length; i++) {

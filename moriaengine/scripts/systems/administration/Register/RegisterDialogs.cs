@@ -53,19 +53,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Poznámky k accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + notesList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
 			//cudlik na zalozeni nove pozmamky
-			dlg.Add(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Nová poznámka");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.MakeTableTransparent();
 
 			//popis sloupcu
-			dlg.Add(new GUTATable(1, 145, 120, 350, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 145, 120, 350, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle casu asc
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle casu desc            
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas");
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//seznam poznamek
-			dlg.Add(new GUTATable(imax - firstiVal));
+			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
@@ -257,19 +257,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Prohøešky accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + crimesList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
 			//cudlik na zalozeni noveho trestu
-			dlg.Add(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Nový prohøešek");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.MakeTableTransparent();
 
 			//popis sloupcu
-			dlg.Add(new GUTATable(1, 145, 120, 225, 225, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 145, 120, 225, 225, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle casu asc
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle casu desc            
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas");
@@ -285,7 +285,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//seznam trestu
-			dlg.Add(new GUTATable(imax - firstiVal));
+			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
@@ -470,12 +470,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(400);
 			dlg.SetLocation(50, 50);
 
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(dlgHeadline);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable((isCrime ? 3 : 2), 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
+			dlg.AddTable(new GUTATable((isCrime ? 3 : 2), 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel(textFldLabel);
 			if(refChar == null) {
 				dlg.LastTable[0, 0] = TextFactory.CreateLabel("Account");
@@ -495,7 +495,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Uložit");
 			dlg.MakeTableTransparent(); 

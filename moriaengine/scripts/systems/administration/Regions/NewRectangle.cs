@@ -41,19 +41,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(100, 100);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového rectanglu");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeTableTransparent();
 
 			//navod
-			dlg.Add(new GUTATable(2, 0));
+			dlg.AddTable(new GUTATable(2, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("(MinX,MinY) - levy horni roh, (MaxX,MaxY) - pravy dolni roh");
 			dlg.LastTable[1, 0] = TextFactory.CreateHeadline("Mapa v UO zacina vlevo nahore bodem (0,0) a konci vpravo dole!");
 			dlg.MakeTableTransparent();
 
 			//textiky a editfieldy na zadani souradnic
-			dlg.Add(new GUTATable(2, 100, 100, 0, 100));
+			dlg.AddTable(new GUTATable(2, 100, 100, 0, 100));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("MinX");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 31, minX);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("MinY");
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 	
 			//send button
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
 			dlg.MakeTableTransparent();

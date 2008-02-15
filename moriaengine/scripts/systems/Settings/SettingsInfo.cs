@@ -32,12 +32,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(1100);
 			dlg.SetLocation(0, 20);
 
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Informace a vysvìtlivky");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(1, 85, 50, 40, 0, 185));			
+			dlg.AddTable(new GUTATable(1, 85, 50, 40, 0, 185));			
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Popis hodnoty");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zkratka typu");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Prefix");
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Èísla
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Èíslo");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Num)");
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Øetìzce
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("String");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Str)");
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Thingy
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Thing");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Thg)");
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Regiony
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Region");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Reg)");
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Accounty
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Account");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("($)");
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Abstract defy
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("AbstractScript");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Scp)");
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//TimeSpan
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("TimeSpan");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(:)");
@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//DateTime
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("DateTime");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(::)");
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Pozice
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Pozice");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(nD)");
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//IPèka
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("IP");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(IP)");
@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Timer key
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Timer key");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(%)");
@@ -153,7 +153,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Triggery
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Trigger key");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(@)");
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Enumerace
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Enumerace");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Enum)");
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Objekty
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Object");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Obj)");
@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent();
 
 			//Globals
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Globals");
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Glob)");

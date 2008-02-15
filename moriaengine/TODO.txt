@@ -141,7 +141,8 @@ Dinivan
 ----------------------------------------------------
 	Spawner
 	//ticket
-	
+	DONE	
+
 	Page command/menu
 	//ticket
 	
@@ -159,9 +160,11 @@ Dinivan
 	Gumpovej system pro ingame vytvareni/editaci/mazani regionu a pripadne jejich export/import na a z shardu.
 		Patrne nutna spoluprace s tarem :)
 		//ticket
+	DONE
 
 	Account info dialog
 	//ticket
+	DONE
 
 		
 	"Trestni rejstrik" pro hracsky accounty. Tj. Gump kde by GMka videli seznam dosavadnich prohresku a trestu na accountu, 
@@ -169,6 +172,7 @@ Dinivan
 		S timhle souvisi vubec system prohresku a trestu, idealni by byla nejaka automatizace nebo temer automatizace,
 		od udeleni trestu GMkem az po provedeni trestu systemem a exportem pro web. Good luck :)
 		//ticket
+	DONE až na ten export... to poèká na databázi
 
 	Group <cislo> pro gumpy
 	//ticket

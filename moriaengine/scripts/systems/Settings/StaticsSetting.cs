@@ -83,13 +83,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(width);
 			dlg.SetLocation(0, 30);
 
-			dlg.Add(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Nastavení globálních promìnných. Pro informace zmáèkni tlaèítko s papírem vpravo v rohu.");			
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(ImprovedDialog.PAGE_ROWS, innerWidth / 4, innerWidth / 4, 0, innerWidth / 4));//bude to ve 4 sloupcích
+			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, innerWidth / 4, innerWidth / 4, 0, innerWidth / 4));//bude to ve 4 sloupcích
 			dlg.MakeTableTransparent();
 			rowCounter = 0;
 			dlgIndex = 0; //indexování inputfieldù v dialogu
@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			WriteOut:
 			//dalsi oddeleny radek s cudlikem k odeslani
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Nastavit");
 			dlg.MakeTableTransparent();
@@ -265,7 +265,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			bool prevNextColumnAdded = false; //indikator navigacniho sloupecku
 			if(actualPage > 0) {
 				prevNextColumnAdded = true; //navigacni sloupecek uz bude existovat
-				dlg.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
+				dlg.AddLastColumn(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
 				//button pro predchozi stranku
 				dlg.LastColumn.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ImprovedDialog.ID_PREV_BUTTON)); //prev
 			}
@@ -273,7 +273,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//ne chceme jen tlacitko zpet (to se stane napr kdyz na strance bude jen 
 				//nekolik itemu takze uz nebude zadna dalsi strana ale potrebujeme se vracet)
 				if(!prevNextColumnAdded) { //navigacni sloupecek jeste nebyl zalozen - jsme na prvni strance teprve.
-					dlg.AddLast(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
+					dlg.AddLastColumn(new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH));
 				}
 				//a button pro dalsi stranku
 				dlg.LastColumn.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, dlg.LastColumn.Height - 21, ImprovedDialog.ID_NEXT_BUTTON)); //next

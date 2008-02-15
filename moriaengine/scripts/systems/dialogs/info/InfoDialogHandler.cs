@@ -89,19 +89,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			if(isSettings) {//settings dialog will have one column-headers line
 				if(viewCls.GetActionButtonsCount(target) > 0) {
-					Add(new GUTATable(1, columns[0], 0));
+					AddTable(new GUTATable(1, columns[0], 0));
 					//there are subcategories and fields - two header columns
 					LastTable[0, 0] = TextFactory.CreateLabel("Subcategories");
 					LastTable[0, 1] = TextFactory.CreateLabel("Settings Items");
 				} else {
-					Add(new GUTATable(1, 0));
+					AddTable(new GUTATable(1, 0));
 					//no subcategories - one header column
 					LastTable[0, 0] = TextFactory.CreateLabel("Settings Items");
 				}
 				MakeTableTransparent();
 			}
 
-			Add(new GUTATable(PAGE_ROWS, columns));
+			AddTable(new GUTATable(PAGE_ROWS, columns));
 			MakeTableTransparent();
 
 			//now add subtables to every defined column... first- action table (two subcolumns - button and his label)
@@ -250,7 +250,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//and <GOPAGE> is confirming button that jumps to the written page.
 			GUTATable storedLastTable = LastTable; //store this one :)
 			
-			Add(new GUTATable(1, 0));
+			AddTable(new GUTATable(1, 0));
 			LastTable[0, 0] = TextFactory.CreateLabel("Stránka");
 			//type if input,x,y,ID, width, height, prescribed text
 			LastTable[0, 0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());

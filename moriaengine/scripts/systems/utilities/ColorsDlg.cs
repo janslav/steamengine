@@ -65,14 +65,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Colors dialog - ukázky barev v textu (poèínaje " + startingColor + ")");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
 			//input field pro vyber barvy
-			dlg.Add(new GUTATable(1, 100, 40, 0));
+			dlg.AddTable(new GUTATable(1, 100, 40, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zadej poèáteèní barvu: ");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 10, startingColor.ToString());
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//columns[i] = dlgWidth / columnsCnt;
 				columns[i] = 80;
 			}
-			dlg.Add(new GUTATable(ImprovedDialog.PAGE_ROWS, columns));
+			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, columns));
 			int colorCntr = firstiVal; //zacneme od te, ktera ma byt na strance prvni
 			for(int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
 				for(int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor ; j++, colorCntr++) { //a v nem kazdy radek

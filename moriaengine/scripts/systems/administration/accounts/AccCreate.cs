@@ -32,14 +32,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.Add(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0,0] = TextFactory.CreateHeadline("Vytvoøení nového hráèského úètu");
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
 			//dvousloupeckovy dialozek
-			dlg.Add(new GUTATable(3,0,300)); //1.sl - napisy, 2.sl - editacni pole
+			dlg.AddTable(new GUTATable(3,0,300)); //1.sl - napisy, 2.sl - editacni pole
 			//napred napisy 
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Jméno úètu");
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Heslo");
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.Add(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeTableTransparent(); //zpruhledni posledni radek

@@ -41,25 +41,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(300);
 			dlg.SetLocation(100, 100);
 
-			dlg.Add(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Kategorie pro nastavení (" + (firstiVal + 1) + "-" + imax + " z " + categories.Length + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 							//èudlik pro zobrazeni
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zobraz");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Název kategorie");					
 			dlg.MakeTableTransparent();
 
 			//odkaz na "ALL"
-			dlg.Add(new GUTATable(1));
+			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1); //zobrazit
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Všechny");
 			dlg.MakeTableTransparent();
 
-			dlg.Add(new GUTATable(imax-firstiVal)); //jen tolik radku kolik kategorii je na strance (tj bud PAGE_ROWS anebo mene)
+			dlg.AddTable(new GUTATable(imax-firstiVal)); //jen tolik radku kolik kategorii je na strance (tj bud PAGE_ROWS anebo mene)
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
