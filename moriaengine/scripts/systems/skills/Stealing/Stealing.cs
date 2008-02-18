@@ -23,81 +23,104 @@ using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Regions;
 
-/*namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts {
     [Dialogs.ViewableClass]
     public class StealingSkillDef : SkillDef {
+
+        public const int limwght = 17;
+
         public StealingSkillDef(string defname, string filename, int headerLine)
             : base(defname, filename, headerLine) {
         }
-        public void Steal(Character self, Character stealedFrom, Item item) {
-            if (SkillDef.CheckSucess(self, self.Skills[(int)SkillName.Stealing].RealValue)) {
-            } else {
-                stealedFrom.BackpackAsContainer.On_DenyPickupItemFrom(stealedFrom);
-            }
-        }
+
         public override void Select(AbstractCharacter ch) {
-            throw new Exception("The method or operation is not implemented.");
+            //todo: various state checks...
+            Character self = (Character)ch;
+            if (!this.Trigger_Select(self)) {
+                ((Player)self).Target(SingletonScript<Targ_Stealing>.Instance);
+            }
         }
 
         internal override void Start(Character self) {
-            throw new Exception("The method or operation is not implemented.");
+            if (!this.Trigger_Start(self)) {
+                self.currentSkill = this;
+                DelaySkillStroke(self);
+            }
         }
 
         public override void Stroke(Character self) {
-            throw new Exception("The method or operation is not implemented.");
+            //todo: various state checks...
+            if (!this.Trigger_Stroke(self)) {
+                Item item = (Item)self.currentSkillTarget2;
+                if (self.CanReach(item) == DenyResult.Allow) {
+                    int diff = (int)(700 + 100 * Math.Log(item.Weight+1));
+                    self.SysMessage("Diff je " + diff);
+                    if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, diff)) {
+                        Success(self);
+                    } else {
+                        Fail(self);
+                    }
+                    //if (item.Weight < limwght) {
+                    //} else {
+                    //    if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, 970)) {
+                    //        Success(self);
+                    //    }
+                    //}
+                }
+                self.currentSkill = null;
+                self.currentSkillTarget2 = null;
+            }
         }
 
         public override void Success(Character self) {
-            throw new Exception("The method or operation is not implemented.");
+            self.SysMessage("Ukradeno");
+            if (((Character)((Item)self.currentSkillTarget2).TopObj()) != (Character)self) {
+                self.SysMessage("Ale nemam to...");
+            }
+            // stipnout item
+            //((Item)self.currentSkillTarget2).Newitem();
+            self.currentSkill = null;
+            self.currentSkillTarget2 = null;
         }
 
         public override void Fail(Character self) {
-            throw new Exception("The method or operation is not implemented.");
+            if (!this.Trigger_Fail(self)) {
+                self.SysMessage("Krádež se nezdaøila.");
+                self.Trigger_HostileAction(self);
+            }
+            self.currentSkill = null;
+            self.currentSkillTarget2 = null;
         }
 
         protected internal override void Abort(Character self) {
-            throw new Exception("The method or operation is not implemented.");
+            this.Trigger_Abort(self);
+            self.SysMessage("Okradani bylo predcasne preruseno.");
+            self.currentSkill = null;
+            self.currentSkillTarget2 = null;
         }
     }
-}*/
 
-/*public class Targ_Snooping : CompiledTargetDef {
-    protected override void On_Start(Character self, object parameter) {
-        self.SysMessage("Komu se chceš podívat do batohu?");
-        base.On_Start(self, parameter);
 
-    }
+    public class Targ_Stealing : CompiledTargetDef {
 
-    protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
-        self.SysMessage("Zameøuj pouze hráèe.");
-        return false;
-    }
-
-    protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
-        if (self.currentSkill != null) {
-            self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
-            return false;
+        protected override void On_Start(Character self, object parameter) {
+            self.SysMessage("Co chceš ukrást?");
+            base.On_Start(self, parameter);
         }
 
-        //cil neni hrac
-        if (targetted != Player) {
-            self.SysMessage("Vyber hráèe.");
-        }
-
-        //chce se vloupat k sobe do batohu
-        if (targetted == self) {
-            self.SysMessage("Vyber nìkoho jiného než sebe.");
-            return false;
-        }
-
-        //nevidi na cil
-        if (targetted != self) {
-            if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 3) {
-                self.SysMessage(targetted.Name + " je od tebe pøíliš daleko.");
+        protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+            if (self.currentSkill != null) {
+                self.ClilocSysMessage(500118);                    //You must wait a few moments to use another skill.
                 return false;
             }
+            self.currentSkillTarget2 = targetted;
+            self.StartSkill((int)SkillName.Stealing);
+            return false;
         }
-        self.currentSkillTarget1 = (Character)targetted;
-        return false;
+
+        protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
+            self.SysMessage("Zameøuj pouze vìci.");
+            return false;
+        }
     }
-}*/
+}
