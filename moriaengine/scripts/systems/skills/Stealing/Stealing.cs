@@ -51,21 +51,18 @@ namespace SteamEngine.CompiledScripts {
         public override void Stroke(Character self) {
             //todo: various state checks...
             if (!this.Trigger_Stroke(self)) {
-                Item item = (Item)self.currentSkillTarget2;
+                Item item = (Item)self.currentSkillTarget2 as Item;
+                if (item == null) {
+                    self.SysMessage("null");
+                }
                 if (self.CanReach(item) == DenyResult.Allow) {
-                    int diff = (int)(700 + 100 * Math.Log(item.Weight+1));
+                    int diff = (int)(700 + 100 * Math.Log(((Item)self.currentSkillTarget2).Weight + 1));
                     self.SysMessage("Diff je " + diff);
                     if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, diff)) {
                         Success(self);
                     } else {
                         Fail(self);
                     }
-                    //if (item.Weight < limwght) {
-                    //} else {
-                    //    if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, 970)) {
-                    //        Success(self);
-                    //    }
-                    //}
                 }
                 self.currentSkill = null;
                 self.currentSkillTarget2 = null;
@@ -79,8 +76,6 @@ namespace SteamEngine.CompiledScripts {
             }
             // stipnout item
             //((Item)self.currentSkillTarget2).Newitem();
-            self.currentSkill = null;
-            self.currentSkillTarget2 = null;
         }
 
         public override void Fail(Character self) {
@@ -88,15 +83,11 @@ namespace SteamEngine.CompiledScripts {
                 self.SysMessage("Krádež se nezdaøila.");
                 self.Trigger_HostileAction(self);
             }
-            self.currentSkill = null;
-            self.currentSkillTarget2 = null;
         }
 
         protected internal override void Abort(Character self) {
             this.Trigger_Abort(self);
-            self.SysMessage("Okradani bylo predcasne preruseno.");
-            self.currentSkill = null;
-            self.currentSkillTarget2 = null;
+            self.SysMessage("Okrádání bylo pøedèasnì pøerušeno.");
         }
     }
 
