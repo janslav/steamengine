@@ -51,7 +51,8 @@ namespace SteamEngine.CompiledScripts {
         public override void Stroke(Character self) {
             //todo: various state checks...
             if (!this.Trigger_Stroke(self)) {
-                if (!self.CanReachWithMessage((Container)self.currentSkillTarget1)) {
+                Container conta = self.currentSkillTarget1 as Container;
+                if (!self.CanReachWithMessage(conta)) {
                     Fail(self);
                 } else {
                     if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Snooping].RealValue, 800)) {
@@ -76,25 +77,26 @@ namespace SteamEngine.CompiledScripts {
                 }
                 sb.Add(cnt);
             }
-            self.currentSkill = null;
-            self.currentSkillTarget1 = null;
         }
 
         public override void Fail(Character self) {
             if (!this.Trigger_Fail(self)) {
                 self.SysMessage("Nepovedlo se ti nepozorovanì otevøít batoh.");
                 //z zlodeje udelame crima
-                ((Character)(((Container)self.currentSkillTarget1).TopObj())).SysMessage(self.Name + " se ti pokusil otevøít batoh.");
-                self.currentSkill = null;
-                self.currentSkillTarget1 = null;
+                //int ran = System.Math.Floor(Globals.dice.Next(4));
+                //if (ran == 3) {
+                //    ((Character)(((Container)self.currentSkillTarget1).TopObj())).SysMessage(self.Name + " se ti pokusil otevøít batoh.");
+                //    self.Trigger_HostileAction((Character)(((Container)self.currentSkillTarget1).TopObj()));
+                //} else if ((ran == 2) || (ran == 1)) {
+                //    ((Character)(((Container)self.currentSkillTarget1).TopObj())).SysMessage(self.Name + " se ti pokusil otevøít batoh.");
+                //    //crim
+                //}
             }
         }
 
         protected internal override void Abort(Character self) {
             this.Trigger_Abort(self);
-            self.SysMessage("Snooping aborted.");
-            self.currentSkill = null;
-            self.currentSkillTarget1 = null;
+            self.SysMessage("Šacování pøedèasnì pøerušeno.");
         }
     }
 
@@ -105,9 +107,8 @@ namespace SteamEngine.CompiledScripts {
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
 
         public bool On_DenyPickupItem(DenyPickupArgs args) {
-            SnoopingPlugin sb = (args.pickingChar).GetPlugin(SnoopingSkillDef.snoopedPluginKey) as SnoopingPlugin;
             Container conta = args.manipulatedItem.Cont as Container;
-            if ((conta != null) && (sb.Contains(conta))) {
+            if ((conta != null) && (this.Contains(conta))) {
                 args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
                 return true;
             }
@@ -128,6 +129,20 @@ namespace SteamEngine.CompiledScripts {
                 return false;
             } else {
                 return this.snoopedBackpacks.Contains(cont);
+            }
+        }
+
+        public void On_Timer() {
+            int s = 0;          //counter of opened containers
+            foreach (Container cont in this.snoopedBackpacks) {
+                if (OpenedContainers.HasContainerOpen(((Character)this.Cont).Conn, cont) == DenyResult.Allow) {
+                    s++;
+                }
+            }
+            if (s == 0) {
+                this.Delete();
+            } else {
+                this.Timer = 180;
             }
         }
     }
