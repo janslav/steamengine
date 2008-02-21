@@ -76,27 +76,30 @@ namespace SteamEngine.CompiledScripts {
                     sb = (SnoopingPlugin)self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
                 }
                 sb.Add(cnt);
+                sb.Timer = 180;
             }
         }
 
         public override void Fail(Character self) {
             if (!this.Trigger_Fail(self)) {
                 self.SysMessage("Nepovedlo se ti nepozorovanì otevøít batoh.");
-                //z zlodeje udelame crima
-                //int ran = System.Math.Floor(Globals.dice.Next(4));
-                //if (ran == 3) {
-                //    ((Character)(((Container)self.currentSkillTarget1).TopObj())).SysMessage(self.Name + " se ti pokusil otevøít batoh.");
-                //    self.Trigger_HostileAction((Character)(((Container)self.currentSkillTarget1).TopObj()));
-                //} else if ((ran == 2) || (ran == 1)) {
-                //    ((Character)(((Container)self.currentSkillTarget1).TopObj())).SysMessage(self.Name + " se ti pokusil otevøít batoh.");
-                //    //crim
-                //}
+                int ran = (int)Globals.dice.Next(4);
+                Character steal = (Character)(((Container)self.currentSkillTarget1).TopObj());
+                if (ran == 3) {
+                    steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
+                    steal.Trigger_HostileAction(self);
+                    self.DisArm();
+                    //Bonus for fatal fail
+                } else if ((ran == 2) || (ran == 1)) {
+                    steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
+                    steal.Trigger_HostileAction(self);
+                }
             }
         }
 
         protected internal override void Abort(Character self) {
             this.Trigger_Abort(self);
-            self.SysMessage("Šacování pøedèasnì pøerušeno.");
+            self.SysMessage("Šacování pøedèasnì ukonèeno.");
         }
     }
 
@@ -108,10 +111,26 @@ namespace SteamEngine.CompiledScripts {
 
         public bool On_DenyPickupItem(DenyPickupArgs args) {
             Container conta = args.manipulatedItem.Cont as Container;
-            if ((conta != null) && (this.Contains(conta))) {
-                args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-                return true;
+            Character stealer = args.pickingChar as Character;
+            if (stealer == null) {
+                ((Character)args.manipulatedItem.TopObj()).SysMessage("stealer je null");
             }
+            stealer.currentSkillTarget2 = (Item)args.manipulatedItem;
+            //stealer.currentSkill = StealingSkillDef;
+            stealer.SelectSkill((int)SkillName.Stealing);
+            stealer.SysMessage("kuk");
+            //this.AddTimer(Timers.TriggerTimer, Timers.BoundTimer.CurrentTimer.DueInSeconds()
+            if ((conta != null) && (this.Contains(conta))) {
+                if ((int)stealer.currentSkillParam == 1) {          // currentSkillParam == 1 if stealing successed
+                    stealer.currentSkillParam = null;
+                    return false;
+                } else {
+                    args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
+                    stealer.currentSkillParam = null;
+                    return true;
+                }
+            }
+            stealer.currentSkillParam = null;
             return false;
         }
 

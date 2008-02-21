@@ -27,8 +27,6 @@ namespace SteamEngine.CompiledScripts {
     [Dialogs.ViewableClass]
     public class StealingSkillDef : SkillDef {
 
-        public const int limwght = 17;
-
         public StealingSkillDef(string defname, string filename, int headerLine)
             : base(defname, filename, headerLine) {
         }
@@ -37,14 +35,14 @@ namespace SteamEngine.CompiledScripts {
             //todo: various state checks...
             Character self = (Character)ch;
             if (!this.Trigger_Select(self)) {
-                ((Player)self).Target(SingletonScript<Targ_Stealing>.Instance);
+                self.StartSkill((int)SkillName.Stealing);
             }
         }
 
         internal override void Start(Character self) {
             if (!this.Trigger_Start(self)) {
                 self.currentSkill = this;
-                DelaySkillStroke(self);
+                DelaySkillStroke(0, self);
             }
         }
 
@@ -56,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
                     self.SysMessage("null");
                 }
                 if (self.CanReach(item) == DenyResult.Allow) {
-                    int diff = (int)(700 + 100 * Math.Log(((Item)self.currentSkillTarget2).Weight + 1));
+                    int diff = (int)(700 + 100 * Math.Log(item.Weight + 1));
                     self.SysMessage("Diff je " + diff);
                     if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, diff)) {
                         Success(self);
@@ -74,8 +72,7 @@ namespace SteamEngine.CompiledScripts {
             if (((Character)((Item)self.currentSkillTarget2).TopObj()) != (Character)self) {
                 self.SysMessage("Ale nemam to...");
             }
-            // stipnout item
-            //((Item)self.currentSkillTarget2).Newitem();
+            self.currentSkillParam = 1;        // for On_DenyPickupItem in snooping skill
         }
 
         public override void Fail(Character self) {
@@ -87,12 +84,12 @@ namespace SteamEngine.CompiledScripts {
 
         protected internal override void Abort(Character self) {
             this.Trigger_Abort(self);
-            self.SysMessage("Okrádání bylo pøedèasnì pøerušeno.");
+            self.SysMessage("Okrádání bylo pøedèasnì ukonèeno.");
         }
     }
 
 
-    public class Targ_Stealing : CompiledTargetDef {
+    /*public class Targ_Stealing : CompiledTargetDef {
 
         protected override void On_Start(Character self, object parameter) {
             self.SysMessage("Co chceš ukrást?");
@@ -113,5 +110,5 @@ namespace SteamEngine.CompiledScripts {
             self.SysMessage("Zameøuj pouze vìci.");
             return false;
         }
-    }
+    }*/
 }
