@@ -32,7 +32,6 @@ namespace SteamEngine.CompiledScripts {
         }
 
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
-        public static int duration = 180;
 
         public override void Select(AbstractCharacter ch) {
             //todo: various state checks...
@@ -77,22 +76,24 @@ namespace SteamEngine.CompiledScripts {
                     sb = (SnoopingPlugin)self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
                 }
                 sb.Add(cnt);
-                sb.Timer = duration;
+                sb.Timer = SnoopingPlugin.duration;
             }
         }
 
         public override void Fail(Character self) {
             if (!this.Trigger_Fail(self)) {
                 Character steal = (Character)(((Container)self.currentSkillTarget1).TopObj());
-                self.SysMessage("Nepovedlo se ti nepozorovanì otevøít batoh hráèe " + steal.Name + ".");
+                self.ClilocSysMessage(500210);      // You failed to peek into the container. 
                 int ran = (int)Globals.dice.Next(4);
                 if (ran == 3) {
                     steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
                     steal.Trigger_HostileAction(self);
-                    self.DisArm(); //Bonus for fatal fail. Can be more
+                    self.ClilocSysMessage(500167);  // You are now a criminal.
+                    self.DisArm();                  // Bonus for fatal fail. Can be more
                 } else if ((ran == 2) || (ran == 1)) {
                     steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
                     steal.Trigger_HostileAction(self);
+                    self.ClilocSysMessage(500167);  // You are now a criminal.
                 }
             }
         }
@@ -108,6 +109,7 @@ namespace SteamEngine.CompiledScripts {
 
         public static readonly SnoopingPluginDef defInstance = new SnoopingPluginDef("p_snoopedBackpacks", "C#scripts", -1);
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
+        public static int duration = 180;
 
         public bool On_DenyPickupItem(DenyPickupArgs args) {
             Container conta = args.manipulatedItem.Cont as Container;
@@ -146,17 +148,13 @@ namespace SteamEngine.CompiledScripts {
         }
 
         public void On_Timer() {
-            int s = 0;          //counter of opened containers
             foreach (Container cont in this.snoopedBackpacks) {
                 if (OpenedContainers.HasContainerOpen(((Character)this.Cont).Conn, cont) == DenyResult.Allow) {
-                    s++;
+                    this.Timer = duration;
+                    return;
                 }
             }
-            if (s == 0) {
-                this.Delete();
-            } else {
-                this.Timer = SnoopingSkillDef.duration;
-            }
+            this.Delete();
         }
     }
 }
