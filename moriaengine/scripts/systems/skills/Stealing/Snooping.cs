@@ -32,6 +32,7 @@ namespace SteamEngine.CompiledScripts {
         }
 
         internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
+        public static int duration = 180;
 
         public override void Select(AbstractCharacter ch) {
             //todo: various state checks...
@@ -69,27 +70,26 @@ namespace SteamEngine.CompiledScripts {
         public override void Success(Character self) {
             if (!this.Trigger_Success(self)) {
                 Container cnt = (Container)self.currentSkillTarget1;
-                self.SysMessage("Vidíš do batohu hráèe " + (cnt.TopObj()).Name);
+                self.SysMessage("Vidíš do batohu hráèe " + (cnt.TopObj()).Name+ ".");
                 cnt.OpenTo(self);
                 SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
                 if (sb == null) {
                     sb = (SnoopingPlugin)self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
                 }
                 sb.Add(cnt);
-                sb.Timer = 1;
+                sb.Timer = duration;
             }
         }
 
         public override void Fail(Character self) {
             if (!this.Trigger_Fail(self)) {
-                self.SysMessage("Nepovedlo se ti nepozorovanì otevøít batoh.");
-                int ran = (int)Globals.dice.Next(4);
                 Character steal = (Character)(((Container)self.currentSkillTarget1).TopObj());
+                self.SysMessage("Nepovedlo se ti nepozorovanì otevøít batoh hráèe " + steal.Name + ".");
+                int ran = (int)Globals.dice.Next(4);
                 if (ran == 3) {
                     steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
                     steal.Trigger_HostileAction(self);
-                    self.DisArm();
-                    //Bonus for fatal fail
+                    self.DisArm(); //Bonus for fatal fail. Can be more
                 } else if ((ran == 2) || (ran == 1)) {
                     steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
                     steal.Trigger_HostileAction(self);
@@ -147,17 +147,15 @@ namespace SteamEngine.CompiledScripts {
 
         public void On_Timer() {
             int s = 0;          //counter of opened containers
-            ((Character)this.Cont).SysMessage("nazdarek");
             foreach (Container cont in this.snoopedBackpacks) {
                 if (OpenedContainers.HasContainerOpen(((Character)this.Cont).Conn, cont) == DenyResult.Allow) {
                     s++;
                 }
             }
             if (s == 0) {
-                ((Character)this.Cont).SysMessage("mazu");
                 this.Delete();
             } else {
-                this.Timer = 1;
+                this.Timer = SnoopingSkillDef.duration;
             }
         }
     }
