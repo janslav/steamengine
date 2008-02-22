@@ -39,7 +39,7 @@ namespace SteamEngine.Timers {
 			TagHolder cont = this.Cont;
 			if (cont != null) {
 				OnTimeout(cont);
-				if (this.PeriodInSeconds < 0) {
+				if ((this.PeriodInSeconds < 0) && (this.DueInSeconds < 0)) {
 					this.Delete();
 				}
 			} else {
