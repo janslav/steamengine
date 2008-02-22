@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
                     sb = (SnoopingPlugin)self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
                 }
                 sb.Add(cnt);
-                sb.Timer = 180;
+                sb.Timer = 1;
             }
         }
 
@@ -112,16 +112,10 @@ namespace SteamEngine.CompiledScripts {
         public bool On_DenyPickupItem(DenyPickupArgs args) {
             Container conta = args.manipulatedItem.Cont as Container;
             Character stealer = args.pickingChar as Character;
-            if (stealer == null) {
-                ((Character)args.manipulatedItem.TopObj()).SysMessage("stealer je null");
-            }
             stealer.currentSkillTarget2 = (Item)args.manipulatedItem;
-            //stealer.currentSkill = StealingSkillDef;
             stealer.SelectSkill((int)SkillName.Stealing);
-            stealer.SysMessage("kuk");
-            //this.AddTimer(Timers.TriggerTimer, Timers.BoundTimer.CurrentTimer.DueInSeconds()
             if ((conta != null) && (this.Contains(conta))) {
-                if ((int)stealer.currentSkillParam == 1) {          // currentSkillParam == 1 if stealing successed
+                if ((stealer.currentSkillParam != null) && (int)stealer.currentSkillParam == 1) {          // currentSkillParam == 1 if stealing successed
                     stealer.currentSkillParam = null;
                     return false;
                 } else {
@@ -153,15 +147,17 @@ namespace SteamEngine.CompiledScripts {
 
         public void On_Timer() {
             int s = 0;          //counter of opened containers
+            ((Character)this.Cont).SysMessage("nazdarek");
             foreach (Container cont in this.snoopedBackpacks) {
                 if (OpenedContainers.HasContainerOpen(((Character)this.Cont).Conn, cont) == DenyResult.Allow) {
                     s++;
                 }
             }
             if (s == 0) {
+                ((Character)this.Cont).SysMessage("mazu");
                 this.Delete();
             } else {
-                this.Timer = 180;
+                this.Timer = 1;
             }
         }
     }

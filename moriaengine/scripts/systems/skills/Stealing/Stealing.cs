@@ -42,20 +42,9 @@ namespace SteamEngine.CompiledScripts {
         internal override void Start(Character self) {
             if (!this.Trigger_Start(self)) {
                 self.currentSkill = this;
-                DelaySkillStroke(0, self);
-            }
-        }
-
-        public override void Stroke(Character self) {
-            //todo: various state checks...
-            if (!this.Trigger_Stroke(self)) {
                 Item item = (Item)self.currentSkillTarget2 as Item;
-                if (item == null) {
-                    self.SysMessage("null");
-                }
                 if (self.CanReach(item) == DenyResult.Allow) {
                     int diff = (int)(700 + 100 * Math.Log(item.Weight + 1));
-                    self.SysMessage("Diff je " + diff);
                     if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, diff)) {
                         Success(self);
                     } else {
@@ -67,11 +56,12 @@ namespace SteamEngine.CompiledScripts {
             }
         }
 
+        public override void Stroke(Character self) {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
         public override void Success(Character self) {
-            self.SysMessage("Ukradeno");
-            if (((Character)((Item)self.currentSkillTarget2).TopObj()) != (Character)self) {
-                self.SysMessage("Ale nemam to...");
-            }
+            self.SysMessage("Pøedmìt ukraden.");
             self.currentSkillParam = 1;        // for On_DenyPickupItem in snooping skill
         }
 
@@ -87,28 +77,4 @@ namespace SteamEngine.CompiledScripts {
             self.SysMessage("Okrádání bylo pøedèasnì ukonèeno.");
         }
     }
-
-
-    /*public class Targ_Stealing : CompiledTargetDef {
-
-        protected override void On_Start(Character self, object parameter) {
-            self.SysMessage("Co chceš ukrást?");
-            base.On_Start(self, parameter);
-        }
-
-        protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
-            if (self.currentSkill != null) {
-                self.ClilocSysMessage(500118);                    //You must wait a few moments to use another skill.
-                return false;
-            }
-            self.currentSkillTarget2 = targetted;
-            self.StartSkill((int)SkillName.Stealing);
-            return false;
-        }
-
-        protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
-            self.SysMessage("Zameøuj pouze vìci.");
-            return false;
-        }
-    }*/
 }
