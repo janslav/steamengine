@@ -61,14 +61,18 @@ namespace SteamEngine.CompiledScripts {
         }
 
         public override void Success(Character self) {
-            self.SysMessage("Pøedmìt ukraden.");
-            self.currentSkillParam = 1;        // for On_DenyPickupItem in snooping skill
+            if (!this.Trigger_Success(self)) {
+                self.ClilocSysMessage(500174);      // You successfully steal the item!
+                self.currentSkillParam = 1;         // for On_DenyPickupItem in snooping skill
+            }
         }
 
         public override void Fail(Character self) {
             if (!this.Trigger_Fail(self)) {
-                self.SysMessage("Krádež se nezdaøila.");
-                self.Trigger_HostileAction(self);
+                self.ClilocSysMessage(500172);	    // I failed to steal.
+                ((Character)((Item)self.currentSkillTarget2).TopObj()).Trigger_HostileAction(self);
+                self.ClilocSysMessage(500167);	    // You are now a criminal.
+                self.currentSkillParam = 0;
             }
         }
 
