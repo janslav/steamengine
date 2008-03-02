@@ -88,12 +88,10 @@ namespace SteamEngine.CompiledScripts {
                 if (ran == 3) {
                     steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
                     steal.Trigger_HostileAction(self);
-                    self.ClilocSysMessage(500167);  // You are now a criminal.
                     self.DisArm();                  // Bonus for fatal fail. Can be more
                 } else if ((ran == 2) || (ran == 1)) {
                     steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
                     steal.Trigger_HostileAction(self);
-                    self.ClilocSysMessage(500167);  // You are now a criminal.
                 }
             }
         }
