@@ -25,8 +25,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog listing all characters of the account")]
 	public class D_Acc_Characters : CompiledGump {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			AbstractAccount acc = (AbstractAccount)args[0];
+		internal static readonly TagKey accountTK = TagKey.Get("__account_with_chars_");
+
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			AbstractAccount acc = (AbstractAccount)args.GetTag(D_Acc_Characters.accountTK);
 			List<AbstractCharacter> chars = acc.Characters;
 			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -75,8 +77,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			AbstractAccount acc = (AbstractAccount)args[0];
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+			AbstractAccount acc = (AbstractAccount)args.GetTag(D_Acc_Characters.accountTK);
 			
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch(gr.pressedButton) {
@@ -89,7 +91,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (int)(gr.pressedButton - 10);
 				List<AbstractCharacter> chars = acc.Characters;
 				Character oneChar = (Character)chars[row];
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, oneChar, 0, 0);
+				DialogArgs newArgs = new DialogArgs(0, 0); //button, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, oneChar);
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
@@ -99,8 +103,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"Usage - .x AccChars. or .AccChars('accname')")]
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {
+			DialogArgs newArgs = new DialogArgs();				
 			if(text.argv == null || text.argv.Length == 0) {
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, target.Account);
+				newArgs.SetTag(D_Acc_Characters.accountTK, target.Account);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
 			} else {
 				string accName = (String)text.argv[0];
 				AbstractAccount acc = AbstractAccount.Get(accName);
@@ -108,7 +114,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Account se jménem "+accName+" neexistuje!",(int)Hues.Red);
 					return;
 				}
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, acc);
+				newArgs.SetTag(D_Acc_Characters.accountTK, acc);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
 			}
 		}
 	}	

@@ -37,7 +37,28 @@ namespace SteamEngine {
 			return script as Gump;
 		}
 
-		internal abstract GumpInstance InternalConstruct(Thing focused, AbstractCharacter sendTo, object[] args);
+		internal abstract GumpInstance InternalConstruct(Thing focused, AbstractCharacter sendTo, DialogArgs args);
+	}
+
+	[Remark("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)"+
+			"the array's length is unmodifiable so the only way to put args into it is to put them during constructor call."+
+			"Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example "+
+			"label and text in the Info/Error dialog-messages). Other args should be added as normal tags!")]
+	public class DialogArgs : TagHolder {
+		private object[] fldArgs;
+
+		public DialogArgs() {
+		}
+
+		public DialogArgs(params object[] args) {
+			this.fldArgs = args;
+		}
+
+		public object[] ArgsArray {
+			get {
+				return fldArgs;
+			}
+		}
 	}
 
 	public abstract class GumpInstance : PluginHolder {
@@ -45,7 +66,7 @@ namespace SteamEngine {
 
 		public readonly uint uid;
 		public readonly Gump def;
-		internal object[] inputParams;//array of parameters the gump is called with
+		internal DialogArgs inputArgs;//arguments the gump is called with
 		internal AbstractCharacter cont;//the player who sees this instance (src)
 		internal Thing focus;//the thing this gump was "launched on"
 		internal uint x;
@@ -67,13 +88,13 @@ namespace SteamEngine {
 			uid = uids++;
 		}
 
-		public object[] InputParams {
+		public DialogArgs InputArgs {
 			get {
-				return inputParams;
+				return inputArgs;
 			}
 
 			set {
-				inputParams = value;
+				inputArgs = value;
 			}
 		}
 

@@ -711,5 +711,9 @@ namespace SteamEngine.Common {
 			return Convert.ToUInt64(input, invariantCulture);
 		}
 		#endregion UInt64
+
+		protected static string TryConvertTo(object p) {
+			throw new Exception("The method or operation is not implemented.");
+		}
 	}
 }

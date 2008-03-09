@@ -368,9 +368,6 @@
     <Compile Include="..\..\scripts\systems\Settings\MetaSettings.cs">
       <Link>systems\settings\MetaSettings.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\settings\SettingsCategories.cs">
-      <Link>systems\settings\SettingsCategories.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsInfo.cs">
       <Link>systems\utilities\SettingsInfo.cs</Link>
     </Compile>
@@ -379,12 +376,6 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\settings\SettingsResult.cs">
       <Link>systems\settings\SettingsResult.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\settings\SettingsUtils.cs">
-      <Link>systems\settings\SettingsUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\settings\StaticsSetting.cs">
-      <Link>systems\settings\StaticsSetting.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\settings\ViewableClassGenerator.cs">
       <Link>systems\settings\ViewableClassGenerator.cs</Link>

@@ -1007,7 +1007,7 @@ namespace SteamEngine {
 			return true;
 		} }
 		
-		public GumpInstance SendGump(Thing focus, Gump gump, params object[] args) {
+		public GumpInstance SendGump(Thing focus, Gump gump, DialogArgs args) {
 			GameConn gc = Conn;
 			if (gc != null) {
 				if (gump == null) {

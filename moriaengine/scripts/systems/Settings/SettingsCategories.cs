@@ -27,13 +27,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazící seznam všech kategorií které v nastavení máme, umožní rozkliknout"+
 			"a nastavit požadovanou kategorii (nebo taky všechny).")]
 	public class D_Settings_Categories : CompiledGump {
+        internal static readonly TagKey settingsCatTK = TagKey.Get("__settings_categories_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//pole obsahujici vsechny ketegorie pro zobrazeni
 			SettingsCategory[] categories = StaticMemberSaver.GetMembersForSetting();
 
-			args[1] = categories; //kategorie vrazim do pripraveneho mista v poli argumentu
-			int firstiVal = Convert.ToInt32(args[0]);   //prvni index na strance
+            args.SetTag(D_Settings_Categories.settingsCatTK, categories);
+			int firstiVal = Convert.ToInt32(args.GetTag(ImprovedDialog.pagingIndexTK));   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, categories.Length);
 
@@ -78,9 +79,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam kategorii kontextu
-			SettingsCategory[] categories = (SettingsCategory[])args[1];
+			SettingsCategory[] categories = (SettingsCategory[])args.GetTag(D_Settings_Categories.settingsCatTK);
 			if(gr.pressedButton < 10) { //zakladni tlacitka - end, zobraz vse 
 				switch(gr.pressedButton) {
 					case 0: //exit
@@ -93,11 +94,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							//			3 - 0, zacne na nulte strance (jinak to ani nejde)
 							//			4 - info o tom ze ma zobrazit vsechny kategorie pocinaje specifikovanou (zde tou prvni)
 							//			5,6 - vnitrodialogove potreby
+                        DialogArgs newArgs = new DialogArgs();
+                        newArgs.SetTag(D_Static_Settings.settingsDisplayTypeTK, SettingsDisplay.All);
 						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, "", 0, 0, SettingsDisplay.All, null, null);
 						DialogStacking.EnstackDialog(gi, newGi);						
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, categories.Length,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, categories.Length,1)) {//kliknuto na paging?
 				//1 sloupecek
 				return;
 			} else { //skutecna tlacitka z radku
@@ -105,6 +108,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (int)(gr.pressedButton - 10);//- cislo kategorie v jejich setridenem seznamu
 				SettingsCategory cat = categories[row];
 								//parametry stejny vyznam, zde zobrazime jen tu jednu kliknutou kategorii
+                DialogArgs newArgs = new DialogArgs();
+                newArgs.SetTag(D_Static_Settings.settingsDisplayTypeTK, SettingsDisplay.Single); //budem zobrazovat jen jednu specifikovanou kategorii
+                newArgs.SetTag(D_Static_Settings.settingsFirstCategoryTKs, cat.Name); //mame konkretni kategorii k zobrazeni jako prvni	(to bude ta jedina)
 				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Static_Settings>.Instance, cat.Name, 0, 0, SettingsDisplay.Single, null, null);
 				DialogStacking.EnstackDialog(gi, newGi);
 			}

@@ -28,12 +28,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Seznam parametru: 0 - list s rectanglama kam to pak pridame "+
 				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)")]
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
-			minX = (args[1] != null ? args[1].ToString() : "");
-			minY = (args[2] != null ? args[2].ToString() : "");
-			maxX = (args[3] != null ? args[3].ToString() : "");
-			maxY = (args[4] != null ? args[4].ToString() : "");
+			minX = (args.ArgsArray[0] != null ? args.ArgsArray[0].ToString() : "");
+			minY = (args.ArgsArray[1] != null ? args.ArgsArray[1].ToString() : "");
+			maxX = (args.ArgsArray[2] != null ? args.ArgsArray[2].ToString() : "");
+			maxY = (args.ArgsArray[3] != null ? args.ArgsArray[3].ToString() : "");			
 			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -73,22 +73,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (jsou to ty mutable)
-			List<MutableRectangle> rectsList = (List<MutableRectangle>)args[0];
-			int firstOnPage = Convert.ToInt32(args[1]);
+			List<MutableRectangle> rectsList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
 			if(gr.pressedButton == 0) { //exit
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if(gr.pressedButton == 1) { //ulozit
 				//precteme parametry a zkusime vytvorit rectangle
 				MutableRectangle newRect = null;
 				try {
-					args[1] = Convert.ToUInt16(gr.GetNumberResponse(31));
-					args[2] = Convert.ToUInt16(gr.GetNumberResponse(32));
-					args[3] = Convert.ToUInt16(gr.GetNumberResponse(33));
-					args[4] = Convert.ToUInt16(gr.GetNumberResponse(34));
-							
-					newRect = new MutableRectangle((ushort)args[1], (ushort)args[2], (ushort)args[3], (ushort)args[4]);
+					args.ArgsArray[0] = Convert.ToUInt16(gr.GetNumberResponse(31));
+					args.ArgsArray[1] = Convert.ToUInt16(gr.GetNumberResponse(32));
+					args.ArgsArray[2] = Convert.ToUInt16(gr.GetNumberResponse(33));
+					args.ArgsArray[3] = Convert.ToUInt16(gr.GetNumberResponse(34));
+
+					newRect = new MutableRectangle((ushort)args.ArgsArray[0], (ushort)args.ArgsArray[1], (ushort)args.ArgsArray[2], (ushort)args.ArgsArray[3]);
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu
@@ -99,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//vsef poradku tak hura zpatky (nezapomenout pridat do puvodniho seznamu!)
 				rectsList.Add(newRect);
 				GumpInstance previousGi = DialogStacking.PopStackedDialog(gi);
-				previousGi.InputParams[2] = rectsList;
+				previousGi.InputArgs.SetTag(D_Region_Rectangles.rectsListTK, rectsList); //ulozime to do predchoziho dialogu
 				DialogStacking.ResendAndRestackDialog(previousGi);
 			}
 		}

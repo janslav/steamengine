@@ -53,12 +53,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("LSCript used method for setting the specified argument's value")]
 		public static void SetArgValue(GumpInstance gi, int index, object value) {
-			gi.InputParams[index] = value;
+			gi.InputArgs.ArgsArray[index] = value;
 		}
 
 		[Remark("LSCript used method for getting the specified argument's value")]
 		public static object GetArgValue(GumpInstance gi, int index) {
-			return gi.InputParams[index];
+			return gi.InputArgs.ArgsArray[index];
 		}
 
 		[Remark("Store the info about the dialog to the dialog stack. Used for " +
@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"This is necesasry since the resent dialog has a different uid than its older form")]
 		public static void ResendAndRestackDialog(GumpInstance oldInstance) {
 			GumpInstance newInstance = oldInstance.Cont.SendGump(
-				oldInstance.Focus, oldInstance.def, oldInstance.InputParams);//resend
+				oldInstance.Focus, oldInstance.def, oldInstance.InputArgs);//resend
 			RenewStackedDialog(oldInstance, newInstance);//and restack
 		}
 

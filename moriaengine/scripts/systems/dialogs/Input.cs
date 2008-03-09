@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         public abstract void Response(Character sentTo, TagHolder focus, string filledText);
 
         [Remark("Construct method creates the dialog itself")]
-        public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
             //store all input parameters on the dialog instance
             if(sa == null) { //no params specified, prepare the empty params field 
                 //there will be at least one parameter (the inputted text)
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
 
         [Remark("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
             switch(gr.pressedButton) {
                 case 0: //exit or rightclick
 					//znovuzavolat pripadny predchozi dialog

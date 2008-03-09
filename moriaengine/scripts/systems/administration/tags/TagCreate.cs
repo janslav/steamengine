@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.LScript;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
@@ -27,10 +28,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_NewTag : CompiledGump {
 		private static int width = 400;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
-		
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
-			TagHolder th = (TagHolder)sa[0]; //na koho budeme tag ukladat?
 
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			TagHolder th = (TagHolder)args.GetTag(D_TagList.holderTK); //na koho budeme tag ukladat?
+			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(width);
@@ -62,28 +63,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+				return;
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				string tagName = gr.GetTextResponse(10);
 				string tagValue = gr.GetTextResponse(11);
 				//ziskame objektovou reprezentaci vlozene hodnoty. ocekava samozrejme prefixy pokud je potreba!
-				object objectifiedValue = SettingsUtilities.ReadValue(tagValue, null);
-				((TagHolder)args[0]).SetTag(TagKey.Get(tagName), objectifiedValue);
+                object objectifiedValue = null;
+                try {
+                    objectifiedValue = ObjectSaver.Load(tagValue);//kdyz to napsal blbe tak to spadne samozrejme...
+                } catch {
+                    //zhucelo mu to, neco zadal blbe
+                    //stackneme a zobrazime chybu
+                    GumpInstance newGi = D_Display_Text.ShowError("Chybne zadano, nerozpoznatelna hodnota: " + tagValue);
+                    DialogStacking.EnstackDialog(gi, newGi);
+                    return;
+                }
+				TagHolder th = (TagHolder)args.GetTag(D_TagList.holderTK);
+				th.SetTag(TagKey.Get(tagName), objectifiedValue);
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
 				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
-				if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TagList))) {
+				//overovat netreba, proste odstranime tag se seznamem at uz existuje nebo ne
+				//if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TagList))) {
 					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
-					prevStacked.InputParams[3] = null;
-				}
+				prevStacked.InputArgs.RemoveTag(D_TagList.tagListTK);					
+				//}
 				DialogStacking.ResendAndRestackDialog(prevStacked);
 			} else if(gr.pressedButton == 2) {
 				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 				DialogStacking.EnstackDialog(gi, newGi); //ulozime dialog do stacku
 			}
-		}		
+		}        
 	}
 }

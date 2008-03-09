@@ -154,18 +154,22 @@ namespace SteamEngine.LScript {
 			textsScript = null;
 		}
 
-		internal sealed override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		internal sealed override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ThrowIfUnloaded();
 			ScriptedGumpInstance instance = new ScriptedGumpInstance(this);
 			ScriptArgs sa;
-			if ((args == null) || (args.Length == 0)) {
+			//if ((args == null) || (args.Length == 0)) {
+			if(args == null) {
 				sa = new ScriptArgs(instance, sendTo);
 			} else {
-				object[] newArgs = new object[args.Length + 2];
-				newArgs[0] = instance;
-				newArgs[1] = sendTo;
-				Array.Copy(args, 0, newArgs, 2, args.Length);
-				sa = new ScriptArgs(newArgs);
+				//object[] newArgs = new object[args.Length + 2];
+				object[] basicArgs = new object[2];
+				basicArgs[0] = instance;
+				basicArgs[1] = sendTo;
+				//the DialogArgs will be stored on the instance and will not be comming in the args[x]!
+				//Array.Copy(args, 0, newArgs, 2, args.Length);
+				instance.InputArgs = args;
+				sa = new ScriptArgs(basicArgs);
 			}
 			if (textsScript != null) {
 				textsScript.TryRun(focus, sa);

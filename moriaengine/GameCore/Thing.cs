@@ -1123,14 +1123,20 @@ namespace SteamEngine {
 		//}
 
 		public GumpInstance Dialog(Gump gump) {
-			return Dialog(Globals.SrcCharacter, gump);
+			return Dialog(Globals.SrcCharacter, gump, null);
 		}
 
-		public GumpInstance Dialog(Gump gump, params object[] args) {
+		public GumpInstance Dialog(Gump gump, DialogArgs args) {
 			return Dialog(Globals.SrcCharacter, gump, args);
 		}
 
-		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, params object[] args) {
+		//jen presmerujeme volani jinam (bez argumentu ovsem)
+		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump) {
+			return Dialog(sendTo, gump, null);
+		}
+
+
+		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, DialogArgs args) {
 			if (sendTo != null) {				
 				return sendTo.SendGump(this, gump, args);
 			}

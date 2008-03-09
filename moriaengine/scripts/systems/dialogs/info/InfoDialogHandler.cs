@@ -265,25 +265,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static bool PagingHandled(GumpInstance gi, GumpResponse gr) {
 			//args[1] ... firstItem of the action buttons
 			//args[2] ... firstItem of the fields
-			object[] args = gi.InputParams;//arguments of the dialog			
-			IDataView viewCls = DataViewProvider.FindDataViewByType(args[0].GetType());
-			int buttonCount = viewCls.GetActionButtonsCount(args[0]);
-			int fieldsCount = viewCls.GetFieldsCount(args[0]);
+			DialogArgs args = gi.InputArgs;//arguments of the dialog			
+			IDataView viewCls = DataViewProvider.FindDataViewByType(args.GetTag(D_Info.infoizedTargTK).GetType());
+            int buttonCount = viewCls.GetActionButtonsCount(args.GetTag(D_Info.infoizedTargTK));
+            int fieldsCount = viewCls.GetFieldsCount(args.GetTag(D_Info.infoizedTargTK));
 			//how many columns for fields do we have?
 			int fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
 			bool pagingHandled = false; //indicator if the pressed button was the paging one.
 			switch(gr.pressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
-					//args[1] = Convert.ToInt32(args[1]) - PAGE_ROWS;
-					args[2] = Convert.ToInt32(args[2]) - PAGE_ROWS * fieldsColumnsCount;
+					args.SetTag(D_Info.pagingFieldsTK, Convert.ToInt32(args.GetTag(D_Info.pagingFieldsTK)) - PAGE_ROWS * fieldsColumnsCount);
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					//set the first indexes one page forwards
-					//args[1] = Convert.ToInt32(args[1]) + PAGE_ROWS;
-					args[2] = Convert.ToInt32(args[2]) + PAGE_ROWS * fieldsColumnsCount;
+					args.SetTag(D_Info.pagingFieldsTK, Convert.ToInt32(args.GetTag(D_Info.pagingFieldsTK)) + PAGE_ROWS * fieldsColumnsCount);
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
@@ -296,18 +294,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						selectedPage = 1;
 					}
 					//count the index of the first item
-					//int newFirstButtIndex = (selectedPage - 1) * PAGE_ROWS;
 					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * fieldsColumnsCount);
-					//if(newFirstButtIndex > buttonCount) { //get the last page
-					//	int lastPage = (buttonCount / PAGE_ROWS) + 1; //(int) casted last page number
-					//	newFirstButtIndex = (lastPage - 1) * PAGE_ROWS; //counted first item on the last page
-					//} //otherwise it is properly set to the first item on the page
 					if(newFirstFldIndex > fieldsCount) {
 						int lastPage = (fieldsCount / (PAGE_ROWS * fieldsColumnsCount)) + 1; //(int) casted last page number
 						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * fieldsColumnsCount; //counted first item on the last page
 					}
-					//args[1] = newFirstButtIndex; //set the index of the first button
-					args[2] = newFirstFldIndex; //set the index of the first field
+					args.SetTag(D_Info.pagingFieldsTK, newFirstFldIndex);//set the index of the first field
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;

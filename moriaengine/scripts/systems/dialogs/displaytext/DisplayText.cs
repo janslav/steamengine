@@ -28,6 +28,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private string dispText;
 		private Hues textColor;
 
+		public static TagKey textHueTK = TagKey.Get("__text_hue_");		
+
 		[Remark("Instance of the D_Display_Text, for possible access from other dialogs, buttons etc.")]
 		private static D_Display_Text instance;
 		public static D_Display_Text Instance {
@@ -40,11 +42,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			label = string.Concat(args[0]); //the gump's label
-			dispText = string.Concat(args[1]); //the text to be displayed
-			if(args.Length == 3) {
-				textColor = (Hues)args[2]; //barva titulku volitelna
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			label = string.Concat(args.ArgsArray[0]); //the gump's label
+			dispText = string.Concat(args.ArgsArray[1]); //the text to be displayed
+			if(args.HasTag(D_Display_Text.textHueTK)) {
+				textColor = (Hues)args.GetTag(D_Display_Text.textHueTK); //barva titulku volitelna
 			} else {
 				textColor = Hues.HeadlineColor; //normalni nadpisek
 			}
@@ -74,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			switch (gr.pressedButton) {
 				case 0: //exit
 					//look if some dialog is not stored in the dialogs stack and possibly display it
@@ -87,7 +89,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Zobrazí dialog s volitelným labelem a textem v nìm")]
 		public static void DisplayText(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 2) {
-				self.Dialog(SingletonScript<D_Display_Text>.Instance, args.Args[0], args.Args[1]);
+				DialogArgs newArgs = new DialogArgs(args.Args[0], args.Args[1]);
+				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {
 				Globals.SrcCharacter.Message("DisplayText musí být volána se dvìma parametry - label + text", (int)Hues.Red);
 			}
@@ -97,7 +100,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
-				self.Dialog(SingletonScript<D_Display_Text>.Instance, "CHYBA", args.Args[0]);
+				DialogArgs newArgs = new DialogArgs("CHYBA", args.Args[0]);
+				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {
 				Globals.SrcCharacter.Message("ShowError musí být volána s parametrem - text chyby", (int)Hues.Red);
 			}
@@ -105,12 +109,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
 		public static GumpInstance ShowError(string text) {
-			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, "CHYBA", text, Hues.Red);
+			DialogArgs newArgs = new DialogArgs("CHYBA", text);
+			newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);				
+			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}
 
 		[Remark("Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
 		public static GumpInstance ShowInfo(string text) {
-			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, "INFO", text);
+			DialogArgs newArgs = new DialogArgs("INFO", text);
+			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}
 	}
 }

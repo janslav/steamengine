@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("This is the ID many gump items have - buttons number, input entries number...")]
 		protected int id;
 
-		[Remark("In which row in the column this component lies?")]
+		[Remark("Which row in the column this component lies in?")]
 		protected int columnRow;
 
 		[Remark("Adding any children to the leaf is prohibited...")]

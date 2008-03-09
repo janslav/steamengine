@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private readonly TagKey tkButtonsForReags = TagKey.Get("_rb_ButtonsForReags_");
 		private readonly TagKey tkButtonsCount = TagKey.Get("_rb_ButtonsCount_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
 			int i;
 			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int,ItemDef>();
 			int buttonsCount = 0;
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			RegBox box = (RegBox)gi.Focus;
 			if (!((Player)gi.Cont).CanReachWithMessage(box)) {
 				return;

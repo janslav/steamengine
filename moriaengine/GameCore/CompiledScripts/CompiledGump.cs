@@ -54,10 +54,14 @@ namespace SteamEngine.CompiledScripts {
 		public override void Unload() {
 		}
 
-		internal override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		internal override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			GumpInstance gi = new CompiledGumpInstance(this);
 
-			gi.InputParams = args; //store input parameters
+			if(args == null) {
+				gi.InputArgs = new DialogArgs(); //empty arguments
+			} else {
+				gi.InputArgs = args; //store input arguments
+			}
 
 			this.gumpInstance = gi;
 			try {
@@ -78,8 +82,8 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		public abstract void Construct(Thing focus, AbstractCharacter sendTo, object[] args);
-		public abstract void OnResponse(GumpInstance gi, GumpResponse gr, object[] args);
+		public abstract void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args);
+		public abstract void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args);
 
 		//RunUO interface
 		public void AddAlphaRegion(int x, int y, int width, int height) {
@@ -356,7 +360,7 @@ namespace SteamEngine.CompiledScripts {
 			CompiledGump gdef = (CompiledGump) def;
 			gdef.gumpInstance = this;
 			try {
-				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers), this.InputParams);
+				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers), this.InputArgs);
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {

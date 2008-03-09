@@ -360,8 +360,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"position must be specified manually. Perpetual usage of the same x,y coordinates does "+
 				"not overwrite anything(!) it just _adds_ the component to the existing column to the "+
 				"specified row position."+
-				"The getter method returns the specified GUTAColumn (ignoring the row parameter)")]
-		public GUTAComponent this[int row, int col] {
+				"The getter method returns the specified GUTAColumn (ignoring the row parameter)."+
+				"Newly we are able to add also the texts - they will be transformed automatically")]
+		public object this[int row, int col] {
 			set {
 				//first check if we have enough rows
 				if(rowCount < row) {
@@ -376,10 +377,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				//get the column we are adding the component to
 				GUTAColumn columnToAccess = (GUTAColumn)components[col];
+				//now check what is the component:
+				GUTAComponent addedObj = null;
+				if(typeof(GUTAComponent).IsAssignableFrom(value.GetType())) {
+					addedObj = (GUTAComponent)value; //the component is added directly					
+				} else if(typeof(string).IsAssignableFrom(value.GetType())) {
+					addedObj = TextFactory.CreateText((string)value); //create the text component now
+				}
 				//move the component to the desired row
-				value.YPos += row * rowHeight;
+				addedObj.YPos += row * rowHeight;
 				//and add the component
-				columnToAccess.AddComponent(value);
+				columnToAccess.AddComponent(addedObj);
 			}
 			get {
 				//just return the desired GUTAColumn, ignore the row parameter, it is only for setting
@@ -391,12 +399,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				return (GUTAColumn)components[col];
 			}
-		}
+		}		
 
 		[Remark("ALternative way to add something to the desired place in the GUTATable. "+
 				"Used from LSCript as LSCript cannot handle 'this[x,y]' notation yet...")]
 		public void AddToCell(int row, int col, GUTAComponent comp) {
 			this[row, col] = comp;
+		}
+
+		[Remark("Similar adding to cell, now for the strings")]
+		public void AddToCell(int row, int col, string text) {
+			this[row, col] = text;
 		}
 
 		[Remark("The method called when the row is added to the table. It will set the rows positions"+
@@ -591,13 +604,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}			
 		}
 
-		[Remark("Only leaf components or another GUTAMatrix can be added here...")]
+		[Remark("Only leaf components, texts or another GUTATable can be added here...")]
 		internal override void AddComponent(GUTAComponent child) {
 			if ((child is GUTAMatrix) || (child is GUTAColumn)) {
-				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " into the GUTAColumn. Use the GUTATable or leaf components instead!");
-			}			
+				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " into the GUTAColumn. Use the GUTATable, leaf components or texts instead!");
+			}	
 			AddNewChild(child);
-		}
+		}	
 
 		[Remark("Simply write the columns background and continue with the children)")]
 		internal override void WriteComponent() {

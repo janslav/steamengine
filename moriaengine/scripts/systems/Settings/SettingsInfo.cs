@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog zobrazující informace a vysvìtlivky symbolù pro nastavení")]
 	public class D_Settings_Help : CompiledGump {
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);
 			dlg.CreateBackground(1100);
 			dlg.SetLocation(0, 20);
@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();//a vykreslíme ten info dialog
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam nastavenych nebo zkousenych polozek
 			if(gr.pressedButton == 0) { //end
 				DialogStacking.ShowPreviousDialog(gi);

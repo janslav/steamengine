@@ -35,11 +35,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//tohle bude tag urcujici hashtabulku s informaci o klicich kategorii 
 		//pro tu kterou stranku - tj ktery klic bude na ktere strance prvni
 		//je to nahrazka za klasicky radkovy paging protoze tady pocty radku nesledujeme
-		private readonly TagKey pageInfoMap = TagKey.Get("_pageInfoMap_");
-		private readonly TagKey lastKeyTag = TagKey.Get("_lastKeyTag_");
-		private readonly TagKey lastIndexTag = TagKey.Get("_lastIndexTag_");
-		private readonly TagKey categoriesListTag = TagKey.Get("_categoriesListTag_");
-
+		private static readonly TagKey lastKeyTK = TagKey.Get("__last_key_");
+		private static readonly TagKey lastIndexTK = TagKey.Get("__last_index_");
+		private static readonly TagKey categoriesListTK = TagKey.Get("__categories_list_");
+        private static readonly TagKey actualPageTK = TagKey.Get("__actual_page_");
+        internal static readonly TagKey settingsDisplayTypeTK = TagKey.Get("__settings_type_"); //all nebo jeno categories...
+        internal static readonly TagKey settingsFirstCategoryTK = TagKey.Get("__displayed_category_");//jak bude prvni zobrazena kategorie na strance
+        internal static readonly TagKey categorysFirstIndexTK = TagKey.Get("__categorys_first_index_");//index itemu z kategorie kterej bude zobrazen jako prvni (v kategorii nemusime nutne zacinat od 0)
+        private static readonly TagKey keytableTK = TagKey.Get("__key_table_");
+       
 		private int rowCounter; //pocitadlo radku pro konstrukci dialogu
 		private int dlgIndex; //indexování inputfieldù v dialogu
 		private int filledColumn; //pocitadlo sloupecku v dialogu, indikuje kam se ma davat SettingsValues a ketegorie
@@ -71,11 +75,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Hashtabulka pro uchovávání nastavovaných memberù v návaznosti na poøadí jejich "+
 				"inputu v dialogu.")]
-		public Hashtable valuesToSet;
+		internal Hashtable valuesToSet;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			valuesToSet = new Hashtable(); //vycistime tabulku inputfieldu ted
-			
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//pole obsahujici vsechny ketegorie pro zobrazeni
 			SettingsCategory[] categories = StaticMemberSaver.GetMembersForSetting();
 
@@ -93,10 +95,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 			rowCounter = 0;
 			dlgIndex = 0; //indexování inputfieldù v dialogu
-			string catKey = (string)args[0]; //klic vybrane kategorie (na tretim argumentu pak zavisi zda zobrazi jen tuto kategorii nebo vsechny abecedne od ni(vcetne) dal)
-			int listIndex = (int)args[1]; //indexování poøadí SavedMemberù v prvním procházeném listu (to bude ten kde jsme skonèili na predchozi strance)
-			int actualPage = (int)args[2]; //ktera stranka se nam zobrazuje?
-			SettingsDisplay dspl = (SettingsDisplay)args[3]; //All nebo Single - zobrazene kategorie
+            string catKey = ""; //defaultne nespscifikovana kategorie
+            if (args.HasTag(D_Static_Settings.settingsFirstCategoryTK)) {
+                //mame-li prvni kategorii udanou, vezmeme ji
+                catKey = (string)args.GetTag(D_Static_Settings.settingsFirstCategoryTK); //klic vybrane kategorie (na tretim argumentu pak zavisi zda zobrazi jen tuto kategorii nebo vsechny abecedne od ni(vcetne) dal)
+            }
+            int listIndex = 0;
+            if (args.HasTag(D_Static_Settings.categorysFirstIndexTK)) {
+                listIndex = Convert.ToInt32(args.GetTag(D_Static_Settings.categorysFirstIndexTK));//index itemu kategorie ktery bude prvni
+            }
+			int actualPage = 0;
+            if (args.HasTag(D_Static_Settings.actualPageTK)) {
+                //mame-li, vezmeme cislo stranky z tagu
+                actualPage = (int)args.GetTag(D_Static_Settings.actualPageTK);
+            } 
+			SettingsDisplay dspl = (SettingsDisplay)args.GetTag(D_Static_Settings.settingsDisplayTypeTK); //All nebo Single - zobrazene kategorie
 
 			//pozice parametru:
 			//	0. nazev kategorie ktera ma byt zobrazena ("" - od zacatku)
@@ -109,10 +122,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//paty parametr se nastavuje pouze v pripade ze dialog zobrazujeme pote co doslo k "nastaveni" (umozni nam to 
 			//	sledovat nastavovane hodnoty a zjistit uspech ci neuspech pri nastaveni
 			//sesty parametr se nastavuje v pripade ze je potreba uplatnit paging
-			if(args[4] != null) {					
-				//na pate pozici v argumentech je ukladan ten seznam
-				valuesToSet = (Hashtable)args[4];
-			}
+            if (args.HasTag(D_Settings_Result.resultsListTK)) {
+                //mame-li ho, vezmeme ho	
+                valuesToSet = (Hashtable)args.GetTag(D_Settings_Result.resultsListTK);
+            } else {
+                valuesToSet = new Hashtable(); //vycistime tabulku inputfieldu ted						
+            }
 			
 			//par indikatoru pro layout - pocitadlo sloupecku a informace o tom kam se ma vypisovat
 			filledColumn = 0;
@@ -123,7 +138,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			List<SettingsCategory> selectedCats = GetRelevantCategories(categories, catKey, dspl);
 
-			this.GumpInstance.SetTag(categoriesListTag, selectedCats);//ulozime seznam kategorii pro potreby vycisteni
+			args.SetTag(D_Static_Settings.categoriesListTK, selectedCats);//ulozime seznam kategorii pro potreby vycisteni
 
 			//ted je potreba projit pole kategorii a udelat dialog z hodnot v nem ulozenejch
 			//bereme klice od posledne pouziteho dal (vcetne, protoze mame take specifikovany index 
@@ -200,10 +215,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 
 			//ulozit informaci o tom ktery klic a index seznamu v kategorii byl na teto strance prvni
-			StoreKeyIndexInfo(catKey, listIndex, actualPage, ref args);
+			StoreKeyIndexInfo(catKey, listIndex, actualPage, args);
 			//ulozit informaci o posledni kategorii a poslednim indexu v ni
-			this.GumpInstance.SetTag(lastKeyTag, actualKey);//tato kategorie bude prvni na dalsi strance
-			this.GumpInstance.SetTag(lastIndexTag, idx + 1);//toto bude index prvniho membera z vyse uvedene kategorie ktery se zobrazi
+			args.SetTag(D_Static_Settings.lastKeyTK, actualKey);//tato kategorie bude prvni na dalsi strance
+			args.SetTag(D_Static_Settings.lastIndexTK, idx + 1);//toto bude index prvniho membera z vyse uvedene kategorie ktery se zobrazi
 		}
 
 		//args:
@@ -211,10 +226,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//1 - kolikaty saved member ze skupiny bude zobrazen jako prvni
 		//2 - cislo stranky
 		//3	- haash tabulka se všemi hodnotami a indexy v dialogu 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) { //exit button
 				//vezmem seznam zobrazenych kategorii, projdeme ho a vsechny membery vycistime
-				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
+				List<SettingsCategory> catlist = (List<SettingsCategory>)args.GetTag(D_Static_Settings.categoriesListTK);
 				foreach(SettingsCategory sCat in catlist) {
 					sCat.ClearSettingValues();					
 				}
@@ -222,32 +237,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			//navigacni buttony (paging)
 			if(gr.pressedButton == ImprovedDialog.ID_PREV_BUTTON) {
-				args[2] = Convert.ToInt32(args[2]) - 1;//strankovani o krok zpet
-				KeyIndexPair kip = loadKeyIndexInfo(Convert.ToInt32(args[2]),args);
+                args.SetTag(D_Static_Settings.actualPageTK, Convert.ToInt32(args.GetTag(D_Static_Settings.actualPageTK)) - 1);//strankovani o krok zpet
+                KeyIndexPair kip = loadKeyIndexInfo(Convert.ToInt32(args.GetTag(D_Static_Settings.actualPageTK)), args);
 									//(KeyIndexPair)keytable[Convert.ToInt32(dsi.Args[2])];
-				args[0] = kip.Key; //updatnout info o prvni kategorii na predchozi strance				
-				args[1] = kip.Index; //ve vybrane prvni kategorii zacneme zobrazovat od tohoto clena
+                args.SetTag(D_Static_Settings.settingsFirstCategoryTK, kip.Key); //updatnout info o prvni kategorii na predchozi strance				
+                args.SetTag(D_Static_Settings.categorysFirstIndexTK, kip.Index);//ve vybrane prvni kategorii zacneme zobrazovat od tohoto clena
 				DialogStacking.ResendAndRestackDialog(gi);
 			} else if(gr.pressedButton == ImprovedDialog.ID_NEXT_BUTTON) {
-				string firstCat = (string)this.GumpInstance.GetTag(lastKeyTag);
-				int firstIdx = Convert.ToInt32(this.GumpInstance.GetTag(lastIndexTag));
-
-				args[2] = Convert.ToInt32(args[2]) + 1;
-				args[0] = firstCat; //updatnout info o prvni kategorii				
-				args[1] = firstIdx; //v prvni kategorii zacneme zobrazovat od tohoto clena
+                args.SetTag(D_Static_Settings.actualPageTK, Convert.ToInt32(args.GetTag(D_Static_Settings.actualPageTK)) + 1);
+                args.SetTag(D_Static_Settings.settingsFirstCategoryTK, (string)args.GetTag(D_Static_Settings.lastKeyTK));//updatnout info o prvni kategorii				
+                args.SetTag(D_Static_Settings.categorysFirstIndexTK, Convert.ToInt32(args.GetTag(D_Static_Settings.lastIndexTK)));//v prvni kategorii zacneme zobrazovat od tohoto clena
 				DialogStacking.ResendAndRestackDialog(gi);
 			} else if(gr.pressedButton == 1) { //nastaveni
 				//napred vycistime vsechny mozne predchozi neuspechy v nastaveni - nyni totiz jedem znova
-				List<SettingsCategory> catlist = (List<SettingsCategory>)this.GumpInstance.GetTag(categoriesListTag);
+				List<SettingsCategory> catlist = (List<SettingsCategory>)args.GetTag(D_Static_Settings.categoriesListTK);
 				foreach(SettingsCategory sCat in catlist) {
 					sCat.ClearSettingValues();
 				}
 
 				TryMakeSetting(valuesToSet,gr);
-				args[4] = valuesToSet; //predame si seznam hodnot v dialogu pro pozdejsi pripadny navrat
+				args.SetTag(D_Settings_Result.resultsListTK, valuesToSet); //predame si kolekci hodnot v dialogu pro pozdejsi pripadny navrat
 				DialogStacking.ResendAndRestackDialog(gi);
 				//a zobrazime take dialog s vysledky (null = volne misto pro seznamy resultu v nasledujicim dialogu)
-				gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, valuesToSet, null);
+                DialogArgs newArgs = new DialogArgs();
+                newArgs.SetTag(D_Settings_Result.resultsListTK, valuesToSet);
+                newArgs.SetTag(ImprovedDialog.pagingIndexTK, 0);
+				gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, newArgs);
 			} else if(gr.pressedButton == 2) { //info
 				//stackneme se pro navrat
 				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
@@ -256,8 +271,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Specificky zpusob vytvareni pagingu pro nastavovaci dialogy - nebudeme pouzivat ten "+ 
-				"klasickej zpusob protoze neni jendoduchyy zjistit kolik polozek je vlastne na strance, "+ 
-				"stranka nemusi mit nutne konstantni pocet radku. =>vynechame ciselnou navigaci "+
+				"klasickej zpusob protoze neni jendoduchy zjistit kolik polozek je vlastne na strance, "+ 
+				"stranka nemusi mit nutne konstantni pocet radku. => vynechame ciselnou navigaci "+
 				"Predavame si jako parametr posledni klic z naseho sortedslovniku se SavedMemberama a "+
 				"posledne pouzity index do listu MemberInfo trid pro dany klic. Take posilame cislo stranky "+
 				"(to jen abychom vedeli jak udelat navigacni sloupecek)")]
@@ -313,13 +328,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"a k nemu klic urcujici kategorii nastaveni, ktera bude na dane strance zobrazena"+ 
 				"jako prvni. Nahrazujeme tak klasicky radkovy paging kde se posouvame po strankach"+
 				"o urcity pocet radku v seznamu zobrazovanych hodnot (to zde nelze).")]
-		private void StoreKeyIndexInfo(string firstKey, int firstIndex, int actualPage, ref object[] args) {
+		private void StoreKeyIndexInfo(string firstKey, int firstIndex, int actualPage, DialogArgs args) {
 			Hashtable keytable = null;
-			if(args[5] == null) { //jeste ji tam nemame
+			if(!args.HasTag(D_Static_Settings.keytableTK)) { //jeste ji tam nemame
 				keytable = new Hashtable();
-				args[5] = keytable;
+				args.SetTag(D_Static_Settings.keytableTK,keytable);
 			} else {
-				keytable = (Hashtable)args[args.Length - 1];
+				keytable = (Hashtable)args.GetTag(D_Static_Settings.keytableTK);
 			}			
 			keytable[actualPage] = new KeyIndexPair(firstKey, firstIndex); //na teto strance bude prvni tento klic
 		}

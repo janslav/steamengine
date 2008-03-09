@@ -24,24 +24,28 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog for dispalying the regions rectangles")]
 	public class D_Region_Rectangles : CompiledGump {
+		internal static readonly TagKey regionTK = TagKey.Get("__region_with_rects_");
+		internal static readonly TagKey rectsListTK = TagKey.Get("__rects_list_");
+
+
 		private static int width = 450;
 
 		[Remark("Seznam parametru: 0 - region" +
 				"	1 - paging"+
 				"	2 - rectangly v listu(je totiž možno pøidávat dynamicky)")]
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			Region reg = (Region)args[0];
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			Region reg = (Region)args.GetTag(D_Region_Rectangles.regionTK);
 			List<MutableRectangle> rectList = null;
-			if(args[2] != null) {
-				rectList = (List<MutableRectangle>)args[2];				
+			if(args.HasTag(D_Region_Rectangles.rectsListTK)) {
+				rectList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
 			} else {
 				//vezmeme je z regionu
 				rectList = MutableRectangle.TakeRectsFromRegion(reg);
-				args[2] = rectList; //ulozime to do argumentu dialogu
+				args.SetTag(D_Region_Rectangles.rectsListTK,rectList); //ulozime to do argumentu dialogu
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = Convert.ToInt32(args[1]);   //prvni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rectList.Count);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -103,11 +107,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
-			StaticRegion reg = (StaticRegion)args[0];
-			List<MutableRectangle> rectsList = (List<MutableRectangle>)args[2];
-			int firstOnPage = Convert.ToInt32(args[1]);
+			StaticRegion reg = (StaticRegion)args.GetTag(D_Region_Rectangles.regionTK);
+			List<MutableRectangle> rectsList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
+			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch(gr.pressedButton) {
 					case 0: //exit
@@ -115,7 +119,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //zalozit novy rectangle
 						//nemazat rectangly - budeme do nich ukladat novy						
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, rectsList, null, null, null, null);
+						DialogArgs newArgs = new DialogArgs(0, 0, 0, 0);//zakladni souradnice rectanglu
+						newArgs.SetTag(D_Region_Rectangles.rectsListTK, rectsList); //seznam budeme potrebovat
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //ulozit
@@ -137,8 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						//break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, rectsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
-				//1 sloupecek
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, rectsList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime si radek a cudlik v nem
@@ -148,7 +153,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				GumpInstance newGi;
 				switch(buttNo) {
 					case 0: //region rectangle info
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, rect, 0, 0);
+						DialogArgs newArgs = new DialogArgs(0, 0); //button, items paging
+						newArgs.SetTag(D_Info.infoizedTargTK, rect);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //smazat rectangle

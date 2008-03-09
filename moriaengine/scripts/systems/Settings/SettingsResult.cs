@@ -26,11 +26,12 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog showing the results after storing the info or settigns dialog changes")]
 	public class D_Settings_Result : CompiledGump {
+		internal static readonly TagKey resultsListTK = TagKey.Get("__settings_results_list_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//field containing the results for display
-			List<SettingResult> setResults = (List<SettingResult>)args[1];
-			int firstiVal = Convert.ToInt32(args[0]);   //first index on the page
+            List<SettingResult> setResults = (List<SettingResult>)args.GetTag(D_Settings_Result.resultsListTK);
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //first index on the page (0 if not present)
 			
 			//max index (20 lines) + check the list end !
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, setResults.Count);
@@ -76,38 +77,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			List<SettingResult> setResults = (List<SettingResult>)args[1];			
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+            List<SettingResult> setResults = (List<SettingResult>)args.GetTag(D_Settings_Result.resultsListTK);
 			if(gr.pressedButton == 0) { //end				
 				return;
 				//dont redirect to any dialog - former info/settings dialog is already open
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, setResults.Count, 1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, setResults.Count, 1)) {//kliknuto na paging?
 				//1 sloupecek
 				return;
 			} 
 		}		
-	}
-
-	/*
-	[Remark("Komparator pro setrideni vysledku nastaveni podle abecedy. Singleton")]
-	class SettingsValuesComparer : IComparer<SettingsValue> {
-		internal static SettingsValuesComparer instance;
-
-		public static SettingsValuesComparer Instance {
-			get {
-				if(instance == null) {
-					instance = new SettingsValuesComparer();
-				}
-				return instance;				
-			}
-		}
-
-		private SettingsValuesComparer() {
-		}
-
-		public int Compare(SettingsValue a, SettingsValue b) {
-			return a.FullPath().CompareTo(b.FullPath());
-		}
-	}
-	*/
+	}	
 }
