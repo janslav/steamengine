@@ -29,19 +29,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//keys - button or edit field index; value - related IDataFieldView for performing some action
 		private Hashtable buttons;
 		private Hashtable editFlds;
+		internal static TagKey infoizedTargTK = TagKey.Get("__info_target_");
+		internal static TagKey pagingButtonsTK = TagKey.Get("__paging_buttons_");
+		internal static TagKey pagingFieldsTK = TagKey.Get("__paging_fields_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			StackTrace str = new StackTrace();
-
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			buttons = new Hashtable();
 			editFlds = new Hashtable();
 
-			object target = args[0];
+			object target = args.GetTag(D_Info.infoizedTargTK);//target of info dialog
 			
 			//first argument is the object being infoized - we will get its DataView first
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
-			int firstItemButt = Convert.ToInt32(args[1]);
-			int firstItemFld = Convert.ToInt32(args[2]);
+			int firstItemButt = TagMath.IGetTag(args, D_Info.pagingButtonsTK);//buttons paging 1st item index
+			int firstItemFld = TagMath.IGetTag(args, D_Info.pagingFieldsTK);//fields paging 1st item index
 			
 			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance, buttons, editFlds);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
@@ -113,8 +114,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			object target = args[0];			
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+			object target = args.GetTag(infoizedTargTK);//target of info dialog
 
 			if(gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
 				switch(gr.pressedButton) {
@@ -126,7 +127,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						if(reslist.Count > 0) {
 							//show the results dialog (if there is any change)
-							gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, 0, reslist, null);
+							DialogArgs newArgs = new DialogArgs();
+							newArgs.SetTag(D_Settings_Result.resultsListTK, reslist); //list of settings resluts
+							gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, newArgs);
 						}
 						break;
 					case 2: //info
@@ -152,7 +155,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						fieldValueType = fieldValue.GetType();
 					}
 					if (fieldValueType != null) {
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, idfv.GetValue(target), 0, 0);
+						DialogArgs newArgs = new DialogArgs();//buttons, fields paging
+						newArgs.SetTag(D_Info.infoizedTargTK, idfv.GetValue(target)); //infoized item
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //store						
 						//display info dialog on this datafield
 					} else {
@@ -170,11 +175,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Info(object self, ScriptArgs args) {
 			if(args.argv == null || args.argv.Length == 0) {
 				//display it normally (targetted or for self)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, self, 0, 0);
+				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, self); //infoized item
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, args.argv[0], 0, 0);
+				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, args.argv[0]); //infoized item
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			}
 		}
 
@@ -185,17 +194,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Settings(object self, ScriptArgs args) {
 			if(args.argv == null || args.argv.Length == 0) {
 				//call the default settings dialog
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, SettingsCategories.instance, 0, 0);
+				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, SettingsCategories.instance); //infoized item
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, args.argv[0], 0, 0);
+				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, args.argv[0]); //infoized item
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			}
 		}
 
 		[SteamFunction]
 		public static void Inf(object self, ScriptArgs args) {
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new SimpleClass(), 0, 0);			
+			DialogArgs newArgs = new DialogArgs();//buttons, fields paging
+			newArgs.SetTag(D_Info.infoizedTargTK, new SimpleClass()); //infoized item
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);			
 		}
 	}	
 }

@@ -25,6 +25,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog listing all object(tagholder)'s tags")]
 	public class D_TagList : CompiledGump {
+		internal static readonly TagKey holderTK = TagKey.Get("__tag_holder_");
+		internal static readonly TagKey tagListTK = TagKey.Get("__tag_list_");
+		internal static readonly TagKey tagCriteriumTK = TagKey.Get("__tag_criterium_");
+
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
@@ -32,22 +36,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"	1 - index ze seznamu tagu ktery bude na strance jako prvni"+
 				"	2 - vyhledavaci kriterium pro jmena tagu"+
 				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
-			TagHolder th = (TagHolder)sa[0];
+			TagHolder th = (TagHolder)args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
 			List<KeyValuePair<TagKey, Object>> tagList = null;
-			if(sa[3] == null) {
+			if(!args.HasTag(D_TagList.tagListTK)) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				tagList = ListifyTags(th.GetAllTags(), sa[2].ToString());
+				tagList = ListifyTags(th.GetAllTags(), TagMath.SGetTag(args, D_TagList.tagCriteriumTK));
 				tagList.Sort(TagsComparer.instance);
-				sa[3] = tagList; //ulozime to do argumentu dialogu
+				args.SetTag(D_TagList.tagListTK, tagList); //ulozime to do argumentu dialogu				
 			} else {
-				//taglist si posilame v argumentu (napriklad pri pagingu)
-				tagList = (List<KeyValuePair<TagKey, Object>>) sa[3];
+				//tagList si posilame v argumentu (napriklad pri pagingu)
+				tagList = (List<KeyValuePair<TagKey, Object>>)args.GetTag(D_TagList.tagListTK);
 			}
-			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = Convert.ToInt32(sa[1]);   //prvni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tagList.Count);
 			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -118,10 +121,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>) args[3];
-			int firstOnPage = (int)args[1];
+			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>)args.GetTag(D_TagList.tagListTK);
+			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tagList.Count);			
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
@@ -130,9 +133,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
                     case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
-						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						args[2] = nameCriteria; //uloz info o vyhledavacim kriteriu
-						args[3] = null; //vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
+						args.SetTag(D_TagList.tagCriteriumTK, nameCriteria);
+						args.RemoveTag(D_TagList.tagListTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //zobrazit info o vysvetlivkach
@@ -140,7 +143,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);						
 						break;   						
                     case 3: //zalozit novy tag.
-						newGi = gi.Cont.Dialog(SingletonScript<D_NewTag>.Instance, args[0]); //posleme si parametr toho typka na nemz bude novy tag vytvoren
+						DialogArgs newArgs = new DialogArgs();
+						newArgs.SetTag(D_TagList.holderTK, (TagHolder)args.GetTag(D_TagList.holderTK));
+						newGi = gi.Cont.Dialog(SingletonScript<D_NewTag>.Instance, newArgs); //posleme si parametr toho typka na nemz bude novy tag vytvoren
 						DialogStacking.EnstackDialog(gi,newGi); //vlozime napred dialog do stacku
 						break;
 					case 4: //uložit pripadne zmeny
@@ -152,7 +157,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								string oldValue = ObjectSaver.Save(de.Value);
 								string dialogValue = gr.GetTextResponse(11 + (3 * i));
 								if(!string.Equals(oldValue, dialogValue)) {
-									TagHolder tagOwner = (TagHolder)args[0];
+									TagHolder tagOwner = (TagHolder)args.GetTag(D_TagList.holderTK);
 									try {
 										tagOwner.SetTag(de.Key, ObjectSaver.Load(dialogValue));
 									} catch {
@@ -166,24 +171,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, tagList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
-				//1 sloupecek
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, tagList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime si radek
 				int row = ((int)gr.pressedButton - 10) / 3;
 				int buttNo = ((int)gr.pressedButton - 10) % 3;
-				TagHolder tagOwner = (TagHolder)args[0];
+				TagHolder tagOwner = (TagHolder)args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
 				KeyValuePair<TagKey, Object> de = tagList[row];
 				switch(buttNo) {
 					case 0: //smazat						
 						tagOwner.RemoveTag(de.Key);
-						//na zaver smazat taglist (musi se reloadnout)
-						args[3] = null;
+						args.RemoveTag(D_TagList.tagListTK);//na zaver smazat taglist (musi se reloadnout)
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //info
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, tagOwner.GetTag(de.Key), 0, 0);
+						DialogArgs newArgs = new DialogArgs(0, 0);//button, item paging
+						newArgs.SetTag(D_Info.infoizedTargTK, tagOwner.GetTag(de.Key));//infoized item - the tag's value
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}				
@@ -195,7 +200,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<KeyValuePair<TagKey, Object>> tagsList = new List<KeyValuePair<TagKey, Object>>();
 			foreach (KeyValuePair<TagKey, Object> entry in tags) {
 				//entry in this hashtable is TagKey and its object value
-				if(criteria.Equals("")) {
+				if(criteria == null || criteria.Equals("")) {
 					tagsList.Add(entry);//bereme vse
 				} else if(entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					tagsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
@@ -214,10 +219,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvniho tagu co ma
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam tagu, pouzito az v dialogu
+			DialogArgs newArgs = new DialogArgs();
+			newArgs.SetTag(D_TagList.holderTK, self); //na sobe budeme zobrazovat tagy
 			if(text == null || text.argv == null || text.argv.Length == 0) {
-				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, "", null);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, newArgs);
 			} else {
-				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, self, 0, text.Args, null);
+				newArgs.SetTag(D_TagList.tagCriteriumTK, text.Args);//vyhl. kriterium
+				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, newArgs);
 			}
 		}
 	}

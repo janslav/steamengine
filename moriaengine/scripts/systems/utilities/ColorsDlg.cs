@@ -30,32 +30,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static readonly int columnsCnt = 10; //kolik sloupecku bude mit dialog?
 		static readonly int dlgWidth = 850; //sirka dialogu
 		
-		//seznam zpracovavanych barev pro tuto verzi dialogu
-		static readonly TagKey _colorsLst_ = TagKey.Get("_colorsLst_");
-		//prvni barva od ktere se pojede 
-		static readonly TagKey _startingColor_ = TagKey.Get("_startingColor_");
-
-        [Remark("Instance of the D_Colors, for possible access from other dialogs etc.")]
-        private static D_Colors instance;
-		public static D_Colors Instance {
-			get {
-				return instance;
-			}
-		}
-        [Remark("Set the static reference to the instance of this dialog")]
-		public D_Colors() {
-			instance = this;
-		}
-
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//zjistit zda bude paging, najit maximalni index na strance
-			int startingColor = Convert.ToInt32(sa[0]); //cislol barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
-			int firstiVal = Convert.ToInt32(sa[1]);   //prvni barva na strance - pro paging
-
-			//int[] colorsList = prepareColorList(startingColor);
-			//ulozit tento seznam do tagu
-			//this.GumpInstance.SetTag(_colorsLst_, colorsList);
-
+			int startingColor = Convert.ToInt32(args.ArgsArray[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
+			int firstiVal = Convert.ToInt32(args.ArgsArray[1]);   //prvni barva na strance - pro paging
+			
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS*columnsCnt), lastColor);
 			
@@ -100,21 +79,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			//seznam barev 
-			//int[] colorsList = (int[])gi.GetTag(_colorsLst_);
-            if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+			if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch(gr.pressedButton) {
                     case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
                         break;
                     case 1: //vybrat prvni barvu
-						args[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
-						args[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
+						args.ArgsArray[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
+						args.ArgsArray[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
 						DialogStacking.ResendAndRestackDialog(gi);
                         break;
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//zde je sloupecku vice (columnsCnt, viz nahore)
 				return;
 			} 
@@ -128,19 +105,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			return retArr;
 		}
-	}
 
-	public static class UtilityFunctions {
-		[Remark("Display a Colors dialog")]
-		[SteamFunction] 
-		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {			
+		[Remark("Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)"+
+				"or with one parameter (number of color which will be taken as the first in the dialog)")]
+		[SteamFunction]
+		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
 			if(text == null || text.Args.Length == 0) {
 				//zaciname od nulte barvy
-				sender.Dialog(D_Colors.Instance, 0, 0);
+				sender.Dialog(SingletonScript<D_Colors>.Instance, new DialogArgs(0,0)); //zaciname od 0. barvy, a 0. barva bude prvni na strance
 			} else {
-				//zacneme od zvolene barvy
-				sender.Dialog(D_Colors.Instance, Convert.ToInt32(text.argv[0]), Convert.ToInt32(text.argv[0]));
+				//zacneme od zvolene barvy (argv0 bude prvni na strance i se od ni bude zacinat)
+				sender.Dialog(SingletonScript<D_Colors>.Instance, new DialogArgs(Convert.ToInt32(text.argv[0]), Convert.ToInt32(text.argv[0])));
 			}
-		}		
+		}	
 	}
 }

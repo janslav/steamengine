@@ -34,9 +34,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Parent(object target) {
 			Region parent = ((Region)target).Parent;
 			if (parent != null) {
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, ((Region)target).Parent, 0, 0);
+				DialogArgs newArgs = new DialogArgs(0, 0);//button, field paging
+				newArgs.SetTag(D_Info.infoizedTargTK, ((Region)target).Parent);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			} else {
 				D_Display_Text.ShowError("Neexistuje rodièovský region");
+				return;
 			}
 		}
 
@@ -45,7 +48,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//params:	1 - Region
 			//			2 - prvni rect na strance
 			//			3 - seznam
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance, (Region)target, 0, null);
+			DialogArgs newArgs = new DialogArgs();
+			newArgs.SetTag(D_Region_Rectangles.regionTK, (Region)target);
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance,newArgs);
 		}
 
 		[GetMethod("Home Point", typeof(Point4D))]

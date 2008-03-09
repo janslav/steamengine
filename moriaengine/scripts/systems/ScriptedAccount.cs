@@ -110,13 +110,12 @@ namespace SteamEngine.CompiledScripts {
 				"a specified string")]
 		public static List<ScriptedAccount> RetreiveByStr(string searched) {
 			List<ScriptedAccount> retList = new List<ScriptedAccount>();
-
+            if (searched == null) searched = ""; //can be null
 			searched = searched.ToUpper();
 
 			foreach (ScriptedAccount acc in AllAccounts) {
-				string accName = acc.Name.ToUpper();
-				if (accName.Contains(searched)) {
-					//accounts contain the searched text
+				if (acc.Name.ToUpper().Contains(searched)) {
+					//accounts containing the searched text
 					retList.Add(acc);
 				}
 			}

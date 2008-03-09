@@ -26,11 +26,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("A timer editing dialog")]
 	public class D_EditTimer : CompiledGump {
+		internal static readonly TagKey editedTimerTK = TagKey.Get("__timer_edited_");
 		private static int width = 400;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
-			TagHolder th = (TagHolder)sa[0]; //na koho budeme timer ukladat?
-			Timer tm = (Timer)sa[1]; //timer ktery editujeme
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			TagHolder th = (TagHolder)args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
+			Timer tm = (Timer)args.GetTag(D_EditTimer.editedTimerTK); //timer ktery editujeme
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -62,18 +63,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) {
-				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
+				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+				return;
 			} else if(gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
-				Timer tm = (Timer)args[1];
+				Timer tm = (Timer)args.GetTag(D_EditTimer.editedTimerTK);
 				tm.DueInSeconds = timerTime;
 				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
 				if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TimerList))) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
-					prevStacked.InputParams[3] = null;
+					prevStacked.InputArgs.RemoveTag(D_TimerList.timerListTK);
 				}
 				DialogStacking.ResendAndRestackDialog(prevStacked);								
 			} 

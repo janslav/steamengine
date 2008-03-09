@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("An account creating dialog")]
 	public class D_NewAccount : CompiledGump {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {			
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(500);
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			} else if(gr.pressedButton == 1) {

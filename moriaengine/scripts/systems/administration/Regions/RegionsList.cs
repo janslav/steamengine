@@ -24,29 +24,28 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Remark("Dialog listing all regions and enabling us to edit them")]
 	public class D_Regions : CompiledGump {
+		public static readonly TagKey regsListTK = TagKey.Get("__regions_list_");//bude vyuzit jeste jinde, proto public a static
+		public static readonly TagKey regsSearchTK = TagKey.Get("__regions_list_search_crit_");
+		public static readonly TagKey regsSortingTK = TagKey.Get("__regions_list_sorting_");
 		private static int width = 600;
 
-		[Remark("Seznam parametru: 0 - vyhledavaci retezec"+
-				"	1 - paging"+
-				"	2 - seznam regionu"+
-				"	3 - trideni")]
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			List<StaticRegion> regionsList = null;
-			if(args[2] == null) {
+			if(!args.HasTag(D_Regions.regsListTK)) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				regionsList = StaticRegion.FindByString((string)args[0]);
-				args[2] = regionsList; //ulozime to do argumentu dialogu
+				regionsList = StaticRegion.FindByString(TagMath.SGetTag(args,D_Regions.regsSearchTK));
+				args.SetTag(D_Regions.regsListTK,regionsList); //ulozime to do argumentu dialogu
 			} else {
 				//regionlist si posilame v argumentu (napriklad pri pagingu)
-				regionsList = (List<StaticRegion>)args[2];
+				regionsList = (List<StaticRegion>)args.GetTag(D_Regions.regsListTK);
 			}
-			if(args[3] != null) {
-				SortBy(regionsList, (RegionsSorting)args[3]);
+			if(args.HasTag(D_Regions.regsSortingTK)) {//mame cim tridit?
+				SortBy(regionsList, (RegionsSorting)args.GetTag(D_Regions.regsSortingTK));
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = Convert.ToInt32(args[1]);   //prvni index na strance
+			int firstiVal = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, regionsList.Count);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -108,48 +107,49 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam regionu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<StaticRegion> regionsList = (List<StaticRegion>)args[2];
-			int firstOnPage = Convert.ToInt32(args[1]);
+			List<StaticRegion> regionsList = (List<StaticRegion>)args.GetTag(D_Regions.regsListTK);
+			int firstOnPage = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch(gr.pressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //zalozit novy region
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance,"","","","","","","","");
+						//jako parametry vzit jednoduse 4 zakladni souradnice rectanglu
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance, new DialogArgs(0,0,0,0));
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //vyhledavat / zuzit vyber
 						string nameCriteria = gr.GetTextResponse(33);
-						args[0] = nameCriteria; //uloz info o vyhledavacim kriteriu
-						args[1] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem												
-						args[2] = null; //vycistit soucasny odkaz na regionlist aby se mohl prenacist
+						args.SetTag(D_Regions.regsSearchTK, nameCriteria);//uloz info o vyhledavacim kriteriu
+						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem												
+						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;						
 					case 3: //name asc						
-						args[2] = null;
-						args[3] = RegionsSorting.NameAsc;
+						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameAsc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //name desc
-						args[2] = null;
-						args[3] = RegionsSorting.NameDesc;
+						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameDesc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //defname asc
-						args[2] = null;
-						args[3] = RegionsSorting.DefnameAsc;
+						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.DefnameAsc);						
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //defname desc
-						args[2] = null;
-						args[3] = RegionsSorting.DefnameDesc;
+						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.DefnameDesc);						
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;					
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, regionsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, regionsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
 				//1 sloupecek
 				return;
 			} else {
@@ -160,12 +160,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				GumpInstance newGi;
 				switch(buttNo) {
 					case 0: //region info
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, region, 0, 0);
+						DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
+						newArgs.SetTag(D_Info.infoizedTargTK, region);//infoized item
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //smazat region
 						region.Delete(); //(remove z dictu, rectangly atd.)
-						args[3] = null;
 						D_Display_Text.ShowInfo("Region byl smazán úspìšnì");
 						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break; 
@@ -201,11 +202,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void RegionsList(Thing self, ScriptArgs text) {
 			//Parametry dialogu:
-			//0 - vyhledavaci kriterium
-			//1 - kolikaty bude prvni
-			//2 - seznam
-			//3 - trideni
-			self.Dialog(SingletonScript<D_Regions>.Instance, "", 0, null, RegionsSorting.NameAsc);
+			DialogArgs newArgs = new DialogArgs();
+			newArgs.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameAsc);//zakladni trideni
+			self.Dialog(SingletonScript<D_Regions>.Instance, newArgs);
 		}
 	}
 

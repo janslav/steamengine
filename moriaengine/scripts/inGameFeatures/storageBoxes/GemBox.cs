@@ -57,8 +57,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private readonly TagKey tkButtonsForGems = TagKey.Get("_rb_ButtonsForGems_");
 		private readonly TagKey tkButtonsCount = TagKey.Get("_rb_ButtonsCount_");
-		
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
 			Dictionary<int, ItemDef> dictButtonForGems = new Dictionary<int,ItemDef>();
 			int buttonsCount = 0;
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			GemBox box = (GemBox)gi.Focus;
 			if (!((Player)gi.Cont).CanReachWithMessage(box)) {
 				return;
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).BackpackAsContainer);
 				Globals.lastNewItem.Amount = (uint)box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);
-				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance);
+				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance, null);
 			}
 		}
 	}

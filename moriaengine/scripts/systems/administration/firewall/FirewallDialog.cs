@@ -24,21 +24,31 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	public class D_BlockedIP : CompiledGump {		
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+	public class D_BlockedIP : CompiledGump {
+        internal static readonly TagKey ipSortingTK = TagKey.Get("__blocked_ips_sorting_");
+        internal static readonly TagKey ipsListTK = TagKey.Get("__blocked_ips_list_");
+
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int IPwidth = 120; //velikost okna pro IP adresu 
 			int duvod = 350;
 			int kdo = 110;
 			int width = IPwidth * 2 + duvod + kdo + 2 * ButtonFactory.D_BUTTON_WIDTH;
 
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
-
-			SortingCriteria sort = (SortingCriteria) Convert.ToInt32(args[0]);
-			ArrayList ipentries = new ArrayList(Firewall.GetSortedBy(sort));
-			args[2] = ipentries; //ulozime je mezi gumpovni parametry
-
+			ArrayList ipentries = null;
+			if(!args.HasTag(D_BlockedIP.ipsListTK)) {
+				//vzit seznam a pripadne ho setridit...
+				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
+				SortingCriteria sort = (SortingCriteria)args.GetTag(D_BlockedIP.ipSortingTK);
+				ipentries = new ArrayList(Firewall.GetSortedBy(sort));
+				args.SetTag(D_BlockedIP.ipsListTK,ipentries); //ulozime je mezi gumpovni parametry
+			} else {
+				//regionlist si posilame v argumentu (napriklad pri pagingu)
+				ipentries = (ArrayList)args.GetTag(D_BlockedIP.ipsListTK);
+			}			
+		
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = Convert.ToInt32(args[1]);   //prvni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, ipentries.Count);
 			
@@ -89,17 +99,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			// nadpis pro blokaci novych
 			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, width / 2 - ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH,0));			
 			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 5);
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel("Pridat novì blokovanou IP");
+			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel("Pøidat novì blokovanou IP");
 			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 6);
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel("Pridat novì blokovany rozsah IP");
+			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel("Pøidat novì blokovaný rozsah IP");
 
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
-			ArrayList entries = (ArrayList)args[2]; //tam jsou ulozeny
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+			ArrayList entries = (ArrayList)args.GetTag(D_BlockedIP.ipsListTK);//tam jsou ulozeny
 			
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
 				switch(gr.pressedButton) {
@@ -107,19 +117,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						return;
 					case 1: //sort ipup
-						args[0] = SortingCriteria.IPAsc; //uprav info o sortovani
+                        args.SetTag(D_BlockedIP.ipSortingTK, SortingCriteria.IPAsc);//uprav info o sortovani
+                        args.RemoveTag(D_BlockedIP.ipsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 2: // sort ipdown
-						args[0] = SortingCriteria.IPDesc; //uprav info o sortovani
+                        args.SetTag(D_BlockedIP.ipSortingTK, SortingCriteria.IPDesc);//uprav info o sortovani
+                        args.RemoveTag(D_BlockedIP.ipsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 3: // sort accountup
-						args[0] = SortingCriteria.AccountAsc; //uprav info o sortovani
+						args.SetTag(D_BlockedIP.ipSortingTK, SortingCriteria.AccountAsc);//uprav info o sortovani
+                        args.RemoveTag(D_BlockedIP.ipsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 4: // sort accountdown
-						args[0] = SortingCriteria.AccountDesc; //uprav info o sortovani
+						args.SetTag(D_BlockedIP.ipSortingTK, SortingCriteria.AccountDesc);//uprav info o sortovani
+                        args.RemoveTag(D_BlockedIP.ipsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						return;
 					case 5: // block single ip
@@ -133,8 +147,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);						
 						return;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 1, entries.Count,1)) {
-				//kliknuto na paging? (ta 1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, entries.Count,1)) {//kliknuto na paging?
 				return;
 			} else {
 				//porad jsme zde - klikalo se na tlacitko primo u bloknute IP
@@ -158,23 +171,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void BlockedIPs(Character self) {
 			ArrayList ipentries = new ArrayList(Firewall.GetSortedBy(SortingCriteria.IPAsc));
 			if(ipentries.Count == 0) {
-				Globals.SrcWriteLine("Zadna IP neni blokovana");
+				D_Display_Text.ShowInfo("Zadna IP neni blokovana");
 				return;
 			}
 			//zaverecnej null - sem se ulozi seznam blokovanych IP
-			self.Dialog(SingletonScript<D_BlockedIP>.Instance, SortingCriteria.IPAsc, 0, null);
+			DialogArgs newArgs = new DialogArgs();
+			newArgs.SetTag(D_BlockedIP.ipSortingTK, SortingCriteria.IPAsc);
+			self.Dialog(SingletonScript<D_BlockedIP>.Instance, newArgs);
 		}
 	}
 
 	public class D_BlockIP : CompiledGump {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			string ip;
+		internal static readonly TagKey ipToBlockTK = TagKey.Get("__ip_to_block_");
+        
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			string ip = TagMath.SGetTag(args,D_BlockIP.ipToBlockTK);			
+            if (ip == null) ip = "";
 
-			if ((args != null) && (args.Length > 0)) {
-				ip = string.Concat(args[0]);
-			} else {
-				ip = "";
-			}
 			int width = 500;
 			int labels = 130;
 			
@@ -217,7 +230,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 
 		}
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 1) { //OK button
 				Firewall.AddBlockedIP(gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//zavolat stacklej dialog (if any)				
@@ -231,7 +244,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIP(Character self, ScriptArgs sa) {
 			if(sa != null) {
-				self.Dialog(SingletonScript<D_BlockIP>.Instance, sa.argv);
+				DialogArgs newArgs = new DialogArgs();
+				newArgs.SetTag(D_BlockIP.ipToBlockTK, sa.argv[0]);
+				self.Dialog(SingletonScript<D_BlockIP>.Instance, newArgs);
 			} else {
 				self.Dialog(SingletonScript<D_BlockIP>.Instance);
 			}
@@ -239,28 +254,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	public class D_BlockIPRange : CompiledGump {
-		private static D_BlockIPRange instance;
-		public static D_BlockIPRange Instance {
-			get {
-				return instance;
-			}
-		}
+		internal static readonly TagKey ipFromRangeTK = TagKey.Get("__ip_from_range_");
+		internal static readonly TagKey ipToRangeTK = TagKey.Get("__ip_to_range_");
+        
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+            string ipfrom = TagMath.SGetTag(args, D_BlockIPRange.ipFromRangeTK);
+            if (ipfrom == null) ipfrom = "";
 
-		public D_BlockIPRange() {
-			instance = this;
-		}
+            string ipto = TagMath.SGetTag(args, D_BlockIPRange.ipToRangeTK);
+            if (ipto == null) ipto = "";
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
-			string ipfrom;
-			string ipto;
-
-			if ((args != null) && (args.Length > 0)) {
-				ipfrom = string.Concat(args[0]);
-				ipto = ipfrom;
-			} else { //TODO if there would be 2 arguments.			
-				ipfrom = "";
-				ipto = ipfrom;
-			}
 			int width = 500;
 			int labels = 150;
 
@@ -310,7 +313,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 
 		}
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 1) {
 				Firewall.AddBlockedIPRange(gr.GetTextResponse(9), gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//rovnou se vracime			
@@ -324,9 +327,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIpRange(Character self, ScriptArgs sa) {
 			if(sa != null) {
-				self.Dialog(D_BlockIPRange.Instance, sa.argv);
+				DialogArgs newArgs = new DialogArgs();
+				if(sa.argv != null && sa.argv.Length == 1) {
+					newArgs.SetTag(D_BlockIPRange.ipFromRangeTK,sa.argv[0]);
+				} else if(sa.argv != null && sa.argv.Length == 2) {
+					newArgs.SetTag(D_BlockIPRange.ipFromRangeTK,sa.argv[0]);
+					newArgs.SetTag(D_BlockIPRange.ipToRangeTK,sa.argv[1]);
+				} else {
+					D_Display_Text.ShowError("Oèekávány 2 parametry: od IP - do IP");
+					return;
+				}
+				self.Dialog(SingletonScript<D_BlockIPRange>.Instance, newArgs);
 			} else {
-				self.Dialog(D_BlockIPRange.Instance);
+				self.Dialog(SingletonScript<D_BlockIPRange>.Instance);
 			}
 		}
 	}

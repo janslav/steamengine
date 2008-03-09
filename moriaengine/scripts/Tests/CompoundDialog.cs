@@ -37,8 +37,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public D_CompoundDlg() {
 			instance = this;
 		}
-		
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {			
+
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(450);
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) { //ovladaci tlacitka (exit, new, vyhledej)								
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			}			

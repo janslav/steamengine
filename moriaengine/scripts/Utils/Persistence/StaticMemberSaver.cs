@@ -61,17 +61,6 @@ namespace SteamEngine.CompiledScripts {
 		private static List<MemberInfo> registeredMembers = new List<MemberInfo>();
 		private static TagKey tkSavedStaticMembersTable = TagKey.Get("SavedStaticMembersTable");
 
-		[Remark("This generic list will hold all members with attribute SavedMember that are " +
-				"used with parametrized string constructor - these members will appear in the " +
-				"'settings' dialog so we can cache them for better performance. "+
-				"We store the members in the generic dictionary identified by the name - the "+
-				"category of their SavedMember attribute. This name identifies a generic List which "+
-				"contains the desired members (there can be more than one member for the same name) - "+
-				"that logically correspond with each other")]
-		private static SettingsCategory[] settingsCategories;
-		//private static SortedDictionary<String, List<MemberInfo>> settingsCategories = new SortedDictionary<String, List<MemberInfo>>();
-
-
 		private static void LoadMembers() {
 			Hashtable table = Globals.Instance.GetTag(tkSavedStaticMembersTable) as Hashtable;
 			Globals.Instance.RemoveTag(tkSavedStaticMembersTable);
@@ -174,113 +163,6 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 				registeredMembers.Add(mi);
-			}
-		}
-
-		[Remark("This method will get the generic list of all members that have attribute 'SavedMember' "+
-				"used with string-parametrized constructor. We will use them in the "+
-				"'settings' dialog.")]
-		public static SettingsCategory[] GetMembersForSetting() {
-			//if the caching list is empty, try first to get the desired classes
-			if (settingsCategories == null || settingsCategories.Length == 0) {
-				//temp dictionary for creating the sorted list of settings members
-				Dictionary<string, List<SettingsValue>> tempDict = new Dictionary<string, List<SettingsValue>>();
-				foreach (MemberInfo mi in registeredMembers) {
-					//get instances of the SavedMemberAttribute classes
-					object[] attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute),false);
-					if(attrs.Length > 0) {
-						SavedMemberAttribute smAttr = (SavedMemberAttribute)attrs[0];
-						string desc = smAttr.Description;
-						if(desc != null) {
-							string category = smAttr.Category;							
-							List<SettingsValue> catList = null;
-							SettingsValue val = new SettingsValue(desc, mi); //create the one dialog field
-							try {
-								//try to get the list from the list (if it exists)
-								catList = tempDict[category];
-							} catch {
-								//create the list now
-								catList = new List<SettingsValue>();
-								//add the new list to the temporary dictionary
-								tempDict[category] = catList;
-							}
-							//add the settings value to the list
-							catList.Add(val);
-						}
-					}
-				}
-				//now the dictionary is filled, time to create the real structure:
-				settingsCategories = new SettingsCategory[tempDict.Keys.Count];
-				int cntr = 0;
-				foreach (string key in tempDict.Keys) {
-					List<SettingsValue> lst = tempDict[key];
-					//pro kazdy klic vytvorime jednu (virtualni, root) kategorii s polem SettingsValues uvnitr					
-					SettingsCategory newCat = new SettingsCategory(key, new AbstractSetting[lst.Count]);
-					//kategore je pouze virtualni, vsichni SettingsValuesove uvnitr museji byt staticti jinak to nejde :)
-					//jejich hodnoty budou taky dotazeny staticky...
-					newCat.Value = null;
-					//temporarni seznam nyni nalijeme od praveho pole ktere jsme vytvorili
-					AddMembersToCategory(newCat, lst);
-					//projdeme si pole memberù v této kategorii a zjistime, zda náhodou není nìkterý složený (to by byla totiž vnoøená kategorie)
-					FindInnerCategories(newCat);
-
-					//a pridame novou kategorii do pole
-					settingsCategories[cntr++] = newCat;
-				}
-				//na zaver pole setridime podle nazvu kategorii
-				Array.Sort(settingsCategories, delegate(SettingsCategory a, SettingsCategory b) {
-					return String.Compare(a.Name, b.Name);
-				}
-						  );
-			}
-			return settingsCategories;
-		}
-
-		[Remark("Projdeme seznam memberu, nastavime level podle kategorie a konecne ten seznam "+
-				"do te kategorie pridame")]
-		private static void AddMembersToCategory(SettingsCategory newCat, List<SettingsValue> lst) {
-			int i = 0;
-			foreach(SettingsValue val in lst) {
-				val.Level = newCat.Level + 1; //nastavit level
-				val.Parent = newCat; //linknout na rodicovskou kategorii
-				newCat.Members[i++] = val; //vlozit do pole
-			}						
-		}
-
-		[Remark("Search the newly created category's members for those that are composed (contain themselves"+
-				"any SavedMembers or SaveableData). If any of these is found, convert them to inner categories."+
-				"This check is done recursively on the saved members of the new inner categories."+
-				"Second parameter 'parentValue' serves for loading the members value - static fields do not need the "+
-				"parent value at all but non-static members in the inner categories (e.g. SaveableDatas) do need their parent SavedMember class's"+
-				"(statically loaded) value.")]
-		private static void FindInnerCategories(SettingsCategory cat) {
-			for(int i = 0; i < cat.Members.Length; i++) {
-				SettingsValue setVal = (SettingsValue)cat.Members[i]; //zatim je mozno takto pretypovat, vse je SettingsValue
-				object membersValue = null;
-				Type membersType = SettingsUtilities.GetMemberType(setVal.Member, cat.Value, out membersValue);
-				Type valuesType = (membersValue != null ? membersValue.GetType() : null);
-				setVal.Value = membersValue;//takto dostaneme hodnotu instance tohoto membera
-
-				//dale pracujeme s typem membersValue (neb mùže být napøíklad object cosi = new IPAddress; takže pøímo ten membersType nám toho moc neøekne...
-				if(membersValue != null && !ObjectSaver.IsSimpleSaveableType(valuesType)) {//mame tu slozeny typ?
-					//tento slozeny member musi obsahovat vnorene SaveableData ktere budou zobrazeny jako vnitrni kategorie
-					//pokud by takove neobsahoval, pak je to chyba a nema co delat v nastaveni !
-					List<SettingsValue> innerSetVals = new List<SettingsValue>();
-					foreach(MemberInfo innerMi in StaticMemberSaver.GetSaveableDataFromClass(valuesType)) {
-						innerSetVals.Add(new SettingsValue(StaticMemberSaver.GetSettingDescFor(innerMi), innerMi));
-					}
-					//nova vnitrni kategorie, jmeno vezmeme stejne jako byl description tohoto SavedMembera co se ukazal byt slozenym
-					SettingsCategory innerCat = new SettingsCategory(StaticMemberSaver.GetSettingDescFor(setVal.Member), new AbstractSetting[innerSetVals.Count]);
-					innerCat.Value = setVal.Value; //value nove kategorie bude value membera z nejz tuto kategorii delame... 
-					innerCat.Level = cat.Level + 1; //bude o jeden level vnorena
-					AddMembersToCategory(innerCat, innerSetVals);
-
-					//a touto vnitrni kategorii nahradime membera ktereho jsme v ni pretvorili
-					cat.Members[i] = innerCat;
-
-					//a zaroven tuto vnitrni kategorii zkontrolujeme uplne stejnym zpusobem!
-					FindInnerCategories(innerCat);
-				}
 			}
 		}
 

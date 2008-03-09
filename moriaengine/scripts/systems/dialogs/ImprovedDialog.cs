@@ -258,28 +258,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastColumn = storedLastColumn;
 		}
 
+		[Remark("Tag key using for holding information about paging actual item index for dialogs.")]
+		public static readonly TagKey pagingIndexTK = TagKey.Get("__paging_index_");
+		
 		[Remark("Look if the paging buttons has been pressed and if so, handle the actions as "+
 				" a normal OnResponse method, otherwise return to the dialog OnResponse method "+
 				" and continue there."+
 				" gi - GumpInstance from the OnResponse method "+
 				" gr - GumpResponse object from the OnResponse method" +
-				" pagingArgumentNo - index in the arguments array on the stacked dialog where the info about paging is stored "+
-				"					typically 1"+
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)"+
 				" return true or false if the button was one of the paging buttons or not")]
-		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, int pagingArgumentNo, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
-			object[] args = gi.InputParams;//arguments of the dialog			
+			DialogArgs args = gi.InputArgs;//arguments of the dialog			
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
 			switch (gr.pressedButton) {
 				case ID_PREV_BUTTON: 
-					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) - (PAGE_ROWS*columnsCount);
+					args.SetTag(ImprovedDialog.pagingIndexTK,TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) - (PAGE_ROWS*columnsCount));
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
-					args[pagingArgumentNo] = Convert.ToInt32(args[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
+					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) + (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(gi);					
 					pagingHandled = true;
 					break;
@@ -297,7 +298,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						int lastPage = (itemsCount / (PAGE_ROWS*columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
-					args[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
+					args.SetTag(ImprovedDialog.pagingIndexTK, countedFirstIndex);//set the index of the first item
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
@@ -312,17 +313,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;"+
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
 				"itemsCount - total count of diplayed items in the list")]
-		public static bool PagingButtonsHandled(GumpInstance actualGi, int buttNo, int selPageInpt, int pagingArgumentNo, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(GumpInstance actualGi, int buttNo, int selPageInpt, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
+			DialogArgs args = actualGi.InputArgs;
 			switch(buttNo) {
 				case ID_PREV_BUTTON:
-					actualGi.InputParams[pagingArgumentNo] = Convert.ToInt32(actualGi.InputParams[pagingArgumentNo]) - (PAGE_ROWS * columnsCount);
+					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) - (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
-					actualGi.InputParams[pagingArgumentNo] = Convert.ToInt32(actualGi.InputParams[pagingArgumentNo]) + (PAGE_ROWS*columnsCount);
+                    args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) + (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
@@ -340,7 +342,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						int lastPage = (itemsCount / (PAGE_ROWS*columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS*columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
-					actualGi.InputParams[pagingArgumentNo] = countedFirstIndex; //set the index of the first item
+					args.SetTag(ImprovedDialog.pagingIndexTK, countedFirstIndex);
 					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;

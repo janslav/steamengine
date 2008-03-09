@@ -25,13 +25,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog listing all players accounts in the game")]
 	public class D_AccList : CompiledGump {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] sa) {
+		public static TagKey searchStringTK = TagKey.Get("__search_string_");
+		public static TagKey accListTK = TagKey.Get("__acc_list_");
+
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
-			List<ScriptedAccount> accList = ScriptedAccount.RetreiveByStr(sa[1].ToString());
-			accList.Sort(AccountComparer.instance);
-			sa[2] = accList; //ulozime to do argumentu dialogu
+			List<ScriptedAccount> accList = null;
+			if(!args.HasTag(D_AccList.accListTK)) {//nemame zadny seznam
+                accList = ScriptedAccount.RetreiveByStr(TagMath.SGetTag(args,D_AccList.searchStringTK));
+				accList.Sort(AccountComparer.instance);//setridit, to da rozum			
+			} else {
+				accList = (List<ScriptedAccount>)args.GetTag(D_AccList.accListTK);//mame list v tagu, vytahneme ho
+			}
+			args.SetTag(D_AccList.accListTK,accList);//ulozime to do argumentu dialogu
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = Convert.ToInt32(sa[0]);   //prvni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...			
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, accList.Count);
 			
@@ -83,10 +91,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<ScriptedAccount> accList = (List<ScriptedAccount>) args[2];
-			int firstOnPage = Convert.ToInt32(args[0]);
+			List<ScriptedAccount> accList = (List<ScriptedAccount>)args.GetTag(D_AccList.accListTK);
+			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 
             if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
                 switch(gr.pressedButton) {
@@ -95,9 +103,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
                     case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
-						args[0] = 0; //zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
-						args[1] = nameCriteria; //uloz info o vyhledavacim kriteriu
-						args[2] = null; //vycistit soucasny odkaz
+						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
+						args.SetTag(D_AccList.searchStringTK,nameCriteria);//uloz info o vyhledavacim kriteriu
+						args.RemoveTag(D_AccList.accListTK);//vycistit soucasny odkaz
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                     case 2: //zalozit novy acc.
@@ -106,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);						
 						break;                    
                 }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, 0, accList.Count,1)) {//kliknuto na paging? (0 = index parametru nesoucim info o pagingu (zde dsi.Args[0] viz výše)
+			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, accList.Count,1)) {//kliknuto na paging?
 				//1 sloupecek
 				return;
 			} else { //skutecna talcitka z radku
@@ -114,7 +122,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, ga, 0, 0);
+				DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, ga);//infoized item (account instance)
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);                
             }
@@ -123,14 +133,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Display an account list. Function accessible from the game")]
 		[SteamFunction]
 		public static void AccList(AbstractCharacter sender, ScriptArgs text) {
-			//zavolat dialog, parametr 0 - zacne od prvni stranky, pocatecni pismena
-			//accountu vezmeme z argv
+			//zavolat dialog, pocatecni pismena
+			//accountu vezmeme z args
 			//vyhledavani
-			//trteti parametr = volny jeden prvek pole pro seznam accountu predavany pri praci v dialogu (pro tlacitka)
+			DialogArgs newArgs = new DialogArgs();
 			if(text.argv == null || text.argv.Length == 0) {
-				sender.Dialog(SingletonScript<D_AccList>.Instance, 0, "", "");
+				sender.Dialog(SingletonScript<D_AccList>.Instance, newArgs);
 			} else {
-				sender.Dialog(SingletonScript<D_AccList>.Instance, 0, text.Args, "");
+				newArgs.SetTag(D_AccList.searchStringTK, text.Args);
+				sender.Dialog(SingletonScript<D_AccList>.Instance, newArgs);
 			}
 		}
 
@@ -139,7 +150,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void AccInfo(AbstractCharacter target, ScriptArgs text) {
 			if(text.argv == null || text.argv.Length == 0) {
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, target.Account, 0, 0);
+				DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, target.Account);//infoized item (account instance)
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			} else {
 				string accName = (String)text.argv[0];
 				AbstractAccount acc = AbstractAccount.Get(accName);
@@ -147,7 +160,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int)Hues.Red);
 					return;
 				}
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, acc, 0, 0);
+				DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
+				newArgs.SetTag(D_Info.infoizedTargTK, acc);//infoized item (account instance)				
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
 			}
 		}
 	}

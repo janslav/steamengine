@@ -21,7 +21,7 @@ using System.Collections;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Test : CompiledGump {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, object[] args) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int headerColor = 1;
 			string header = "Carpentry Menu";
 			//int contentColor = 1;
@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			XMFHTMLGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, object[] args) {
+		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
 			Console.WriteLine("OnResponse");
 			gi.Cont.SysMessage("OnResponse from "+gi);
 			gi.Cont.SysMessage("button : "+gr.pressedButton);
