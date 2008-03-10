@@ -172,12 +172,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int buttNo = ((int)gr.pressedButton - 10) % 4;
 				AccountNote note = notesList[row];
 				GumpInstance newGi;
-				DialogArgs newArgs;
 				switch(buttNo) {
 					case 0: //char info
-						newArgs = new DialogArgs(0, 0);//buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, note.referredChar); //infoized char
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(note.referredChar));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //text zpravy
@@ -186,9 +183,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 2: //issuer info
-						newArgs = new DialogArgs(0, 0);//buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, note.issuer); //infoized char						
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(note.issuer));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //smazat poznamku (to muze jen jeji autor nebo clovek s vyssim plevelem)
@@ -395,12 +390,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int buttNo = ((int)gr.pressedButton - 10) % 5;
 				AccountCrime crime = crimesList[row];
 				GumpInstance newGi;
-				DialogArgs newArgs;
 				switch(buttNo) {
 					case 0: //char info
-						newArgs = new DialogArgs(0, 0); //buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, crime.referredChar);//infoized char
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(crime.referredChar));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //text prohresku
@@ -414,9 +406,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //issuer info
-						newArgs = new DialogArgs(0, 0); //buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, crime.issuer);//infoized char						
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(crime.issuer));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 4: //smazat trest (to muze jen jeji autor nebo clovek s vyssim plevelem)

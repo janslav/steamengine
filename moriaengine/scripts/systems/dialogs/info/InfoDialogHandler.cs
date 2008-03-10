@@ -262,13 +262,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Remark("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
-		public static bool PagingHandled(GumpInstance gi, GumpResponse gr) {
-			//args[1] ... firstItem of the action buttons
-			//args[2] ... firstItem of the fields
-			DialogArgs args = gi.InputArgs;//arguments of the dialog			
-			IDataView viewCls = DataViewProvider.FindDataViewByType(args.GetTag(D_Info.infoizedTargTK).GetType());
-            int buttonCount = viewCls.GetActionButtonsCount(args.GetTag(D_Info.infoizedTargTK));
-            int fieldsCount = viewCls.GetFieldsCount(args.GetTag(D_Info.infoizedTargTK));
+		public static bool PagingHandled(GumpInstance gi, GumpResponse gr) {			
+			DialogArgs args = gi.InputArgs;//arguments of the dialog		
+			object target = args.ArgsArray[0];
+			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
+			int buttonCount = viewCls.GetActionButtonsCount(target);
+            int fieldsCount = viewCls.GetFieldsCount(target);
 			//how many columns for fields do we have?
 			int fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
 			bool pagingHandled = false; //indicator if the pressed button was the paging one.

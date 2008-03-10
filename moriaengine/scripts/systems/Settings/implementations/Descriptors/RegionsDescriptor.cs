@@ -34,9 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Parent(object target) {
 			Region parent = ((Region)target).Parent;
 			if (parent != null) {
-				DialogArgs newArgs = new DialogArgs(0, 0);//button, field paging
-				newArgs.SetTag(D_Info.infoizedTargTK, ((Region)target).Parent);
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(((Region)target).Parent));
 			} else {
 				D_Display_Text.ShowError("Neexistuje rodièovský region");
 				return;

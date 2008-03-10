@@ -186,9 +186,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //info
-						DialogArgs newArgs = new DialogArgs(0, 0);//button, item paging
-						newArgs.SetTag(D_Info.infoizedTargTK, tagOwner.GetTag(de.Key));//infoized item - the tag's value
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(tagOwner.GetTag(de.Key)));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}				

@@ -160,9 +160,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				GumpInstance newGi;
 				switch(buttNo) {
 					case 0: //region info
-						DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, region);//infoized item
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(region));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1: //smazat region

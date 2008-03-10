@@ -97,9 +97,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (int)(gr.pressedButton - 10);
 				List<AbstractCharacter> chars = acc.Characters;
 				Character oneChar = (Character)chars[row];
-				DialogArgs newArgs = new DialogArgs(0, 0); //button, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, oneChar);
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
@@ -110,8 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {
 			if(text.argv == null || text.argv.Length == 0) {
-				DialogArgs newArgs = new DialogArgs(target.Account.Name);							
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(target.Account.Name));
 			} else {
 				string accName = (String)text.argv[0];
 				//overime zda existuje (uz ted)
@@ -120,8 +117,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					D_Display_Text.ShowError("Account se jménem " + accName + " neexistuje!");
 					return;
 				}
-				DialogArgs newArgs = new DialogArgs(accName);
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(accName));
 			}
 		}
 	}	

@@ -1123,7 +1123,7 @@ namespace SteamEngine {
 		//}
 
 		public GumpInstance Dialog(Gump gump) {
-			return Dialog(Globals.SrcCharacter, gump, null);
+			return Dialog(Globals.SrcCharacter, gump);
 		}
 
 		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
@@ -1137,9 +1137,13 @@ namespace SteamEngine {
 
 		//jen presmerujeme volani jinam (bez argumentu ovsem)
 		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump) {
-			return Dialog(sendTo, gump, null);
+			return Dialog(sendTo, gump, new DialogArgs());
 		}
 
+		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
+		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, params object[] paramArr) {
+			return Dialog(sendTo, gump, new DialogArgs(paramArr));
+		}
 
 		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, DialogArgs args) {
 			if (sendTo != null) {				
