@@ -1126,6 +1126,11 @@ namespace SteamEngine {
 			return Dialog(Globals.SrcCharacter, gump, null);
 		}
 
+		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
+		public GumpInstance Dialog(Gump gump, params object[] paramArr) {
+			return Dialog(Globals.SrcCharacter, gump, new DialogArgs(paramArr));
+		}
+
 		public GumpInstance Dialog(Gump gump, DialogArgs args) {
 			return Dialog(Globals.SrcCharacter, gump, args);
 		}
