@@ -287,8 +287,8 @@
     <Compile Include="..\..\scripts\systems\db\LoginLogsContainer.cs">
       <Link>systems\db\LoginLogsContainer.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\dialogs\DialogStackItem.cs">
-      <Link>systems\dialogs\DialogStackItem.cs</Link>
+    <Compile Include="..\..\scripts\systems\dialogs\DialogStacking.cs">
+      <Link>systems\dialogs\DialogStacking.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\displaytext\DisplayText.cs">
       <Link>systems\dialogs\displaytext\DisplayText.cs</Link>

@@ -25,10 +25,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Remark("Dialog listing all characters of the account")]
 	public class D_Acc_Characters : CompiledGump {
-		internal static readonly TagKey accountTK = TagKey.Get("__account_with_chars_");
-
+		private static readonly TagKey accountTK = TagKey.Get("_account_with_chars_");
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			AbstractAccount acc = (AbstractAccount)args.GetTag(D_Acc_Characters.accountTK);
+			AbstractAccount acc = AbstractAccount.Get((string)args.ArgsArray[0]); //jmeno accountu
+			if(acc == null) {
+				Globals.SrcCharacter.SysMessage("Account se jménem " + args.ArgsArray[0] + " neexistuje!", (int)Hues.Red);
+				return;
+			}
+			//mame-li ho, ulozme si ho do parametru pro pozdejsi pouziti
+			args.SetTag(D_Acc_Characters.accountTK, acc);
+
 			List<AbstractCharacter> chars = acc.Characters;
 			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -103,18 +109,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"Usage - .x AccChars. or .AccChars('accname')")]
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {
-			DialogArgs newArgs = new DialogArgs();				
 			if(text.argv == null || text.argv.Length == 0) {
-				newArgs.SetTag(D_Acc_Characters.accountTK, target.Account);
+				DialogArgs newArgs = new DialogArgs(target.Account.Name);							
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
 			} else {
 				string accName = (String)text.argv[0];
+				//overime zda existuje (uz ted)
 				AbstractAccount acc = AbstractAccount.Get(accName);
 				if(acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem "+accName+" neexistuje!",(int)Hues.Red);
+					D_Display_Text.ShowError("Account se jménem " + accName + " neexistuje!");
 					return;
 				}
-				newArgs.SetTag(D_Acc_Characters.accountTK, acc);
+				DialogArgs newArgs = new DialogArgs(accName);
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
 			}
 		}

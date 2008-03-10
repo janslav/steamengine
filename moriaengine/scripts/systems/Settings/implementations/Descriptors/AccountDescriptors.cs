@@ -45,8 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Button("Characters")]
 		public static void AccChars(object target) {
 			//dialog se seznamem characteru (tech bude maximalne pet)
-			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_Acc_Characters.accountTK, (AbstractAccount)target);
+			DialogArgs newArgs = new DialogArgs(((AbstractAccount)target).Name);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, newArgs);
 		}
 	}
