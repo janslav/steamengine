@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//keys - button or edit field index; value - related IDataFieldView for performing some action
 		private Hashtable buttons;
 		private Hashtable editFlds;
-		internal static TagKey infoizedTargTK = TagKey.Get("__info_target_");
+		internal static TagKey infoizedTargT = TagKey.Get("__info_target_");
 		internal static TagKey pagingButtonsTK = TagKey.Get("__paging_buttons_");
 		internal static TagKey pagingFieldsTK = TagKey.Get("__paging_fields_");
 
@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			buttons = new Hashtable();
 			editFlds = new Hashtable();
 
-			object target = args.GetTag(D_Info.infoizedTargTK);//target of info dialog
+			object target = args.ArgsArray[0];//target of info dialog
 			
 			//first argument is the object being infoized - we will get its DataView first
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
@@ -115,7 +115,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
-			object target = args.GetTag(infoizedTargTK);//target of info dialog
+			object target = args.ArgsArray[0];//target of info dialog
 
 			if(gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
 				switch(gr.pressedButton) {
@@ -155,9 +155,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						fieldValueType = fieldValue.GetType();
 					}
 					if (fieldValueType != null) {
-						DialogArgs newArgs = new DialogArgs();//buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, idfv.GetValue(target)); //infoized item
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
 						DialogStacking.EnstackDialog(gi, newGi); //store						
 						//display info dialog on this datafield
 					} else {
@@ -175,15 +173,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Info(object self, ScriptArgs args) {
 			if(args.argv == null || args.argv.Length == 0) {
 				//display it normally (targetted or for self)
-				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, self); //infoized item
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(self));
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, args.argv[0]); //infoized item
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.argv[0]));
 			}
 		}
 
@@ -194,23 +188,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Settings(object self, ScriptArgs args) {
 			if(args.argv == null || args.argv.Length == 0) {
 				//call the default settings dialog
-				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, SettingsCategories.instance); //infoized item
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(SettingsCategories.instance));
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				DialogArgs newArgs = new DialogArgs();//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, args.argv[0]); //infoized item
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.argv[0]));
 			}
 		}
 
 		[SteamFunction]
 		public static void Inf(object self, ScriptArgs args) {
-			DialogArgs newArgs = new DialogArgs();//buttons, fields paging
-			newArgs.SetTag(D_Info.infoizedTargTK, new SimpleClass()); //infoized item
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);			
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(new SimpleClass()));			
 		}
 	}	
 }

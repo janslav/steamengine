@@ -174,21 +174,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int buttNum = (int)(gr.pressedButton - 10) % 4;
                 Player plr = (Player)playersList[row];
 				GumpInstance newGi;
-				DialogArgs newArgs;
                 switch(buttNum) {
                     case 0: //player come
                         plr.Go(gi.Cont);
                         break;
                     case 1: //acc info
-						newArgs = new DialogArgs(0,0); //buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, plr.Account);
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(plr.Account));
 						DialogStacking.EnstackDialog(gi, newGi);
                         break;
-                    case 2: //player info
-						newArgs = new DialogArgs(0, 0); //buttons, fields paging
-						newArgs.SetTag(D_Info.infoizedTargTK, plr);						
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+                    case 2: //player info						
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(plr));
 						DialogStacking.EnstackDialog(gi, newGi);
                         break;
                     case 3: //goto location

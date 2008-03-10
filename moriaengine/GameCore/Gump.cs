@@ -48,6 +48,7 @@ namespace SteamEngine {
 		private object[] fldArgs;
 
 		public DialogArgs() {
+			this.fldArgs = new object[0] { }; //aspon prazdny pole, ale ne null
 		}
 
 		public DialogArgs(params object[] args) {

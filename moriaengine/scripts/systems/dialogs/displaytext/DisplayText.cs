@@ -89,8 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Zobrazí dialog s volitelným labelem a textem v nìm")]
 		public static void DisplayText(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 2) {
-				DialogArgs newArgs = new DialogArgs(args.Args[0], args.Args[1]);
-				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
+				self.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs(args.Args[0], args.Args[1]));
 			} else {
 				Globals.SrcCharacter.Message("DisplayText musí být volána se dvìma parametry - label + text", (int)Hues.Red);
 			}
@@ -100,7 +99,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Remark("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
-				DialogArgs newArgs = new DialogArgs("CHYBA", args.Args[0]);
+				DialogArgs newArgs = new DialogArgs("CHYBA", args.argv[0]);
+				newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);							
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {
 				Globals.SrcCharacter.Message("ShowError musí být volána s parametrem - text chyby", (int)Hues.Red);
@@ -116,8 +116,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Remark("Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
 		public static GumpInstance ShowInfo(string text) {
-			DialogArgs newArgs = new DialogArgs("INFO", text);
-			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
+			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("INFO", text));
 		}
 	}
 }

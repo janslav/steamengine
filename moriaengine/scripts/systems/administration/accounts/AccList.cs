@@ -122,9 +122,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, ga);//infoized item (account instance)
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);                
             }
@@ -150,9 +148,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void AccInfo(AbstractCharacter target, ScriptArgs text) {
 			if(text.argv == null || text.argv.Length == 0) {
-				DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, target.Account);//infoized item (account instance)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(target.Account));
 			} else {
 				string accName = (String)text.argv[0];
 				AbstractAccount acc = AbstractAccount.Get(accName);
@@ -160,9 +156,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int)Hues.Red);
 					return;
 				}
-				DialogArgs newArgs = new DialogArgs(0,0);//buttons, fields paging
-				newArgs.SetTag(D_Info.infoizedTargTK, acc);//infoized item (account instance)				
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, newArgs);
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(acc));
 			}
 		}
 	}

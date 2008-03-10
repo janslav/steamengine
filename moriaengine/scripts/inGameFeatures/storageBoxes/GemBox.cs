@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).BackpackAsContainer);
 				Globals.lastNewItem.Amount = (uint)box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);
-				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance, null);
+				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance);
 			}
 		}
 	}
