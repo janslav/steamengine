@@ -44,7 +44,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Serves to place the region to the map for the first time (after creation)")]
+		[Summary("Serves to place the region to the map for the first time (after creation)")]
 		public bool Place(Point4D p) {
 			ThrowIfDeleted();
 			if(p != null) { //already placed!
@@ -74,7 +74,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Tries to move the specified amount of fields in X and Y axes. First examines if it is possible"+
+		[Summary("Tries to move the specified amount of fields in X and Y axes. First examines if it is possible"+
 				"to move that way to the desired location and if so, it moves every rectangle there."+
 				"We expect the timesX and timesY parameteres to be small numbers")]
 		public bool Step(int timesX, int timesY) {
@@ -95,7 +95,7 @@ namespace SteamEngine.Regions {
 			return result;			
 		}
 
-		[Remark("Method called on position change - it recounts the region's rectangles' position and also makes "+
+		[Summary("Method called on position change - it recounts the region's rectangles' position and also makes "+
 				"sure that no confilicts with other dynamic regions occurs when moving!")]
 		private bool Step(Point4D newP) {
 			Point4D oldPos = p; //store the old position for case the movement fails!
@@ -140,7 +140,7 @@ namespace SteamEngine.Regions {
 			return movingOK;
 		}
 
-		[Remark("Take the list of rectangles and make an array of RegionRectangles of it."+
+		[Summary("Take the list of rectangles and make an array of RegionRectangles of it."+
 				"The purpose is the same as for StaticRegion but the checks are different."+
 				"The map parameter allows us to specifiy the map where the region should be")]
 		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {

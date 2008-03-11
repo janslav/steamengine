@@ -24,9 +24,9 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	public class D_BlockedIP : CompiledGump {
-        internal static readonly TagKey ipSortingTK = TagKey.Get("__blocked_ips_sorting_");
-        internal static readonly TagKey ipsListTK = TagKey.Get("__blocked_ips_list_");
+	public class D_BlockedIP : CompiledGumpDef {
+        internal static readonly TagKey ipSortingTK = TagKey.Get("_blocked_ips_sorting_");
+        internal static readonly TagKey ipsListTK = TagKey.Get("_blocked_ips_list_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int IPwidth = 120; //velikost okna pro IP adresu 
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			ArrayList entries = (ArrayList)args.GetTag(D_BlockedIP.ipsListTK);//tam jsou ulozeny
 			
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						return;
 					case 5: // block single ip
 						//stackneme aktualni dialog pro navrat
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_BlockIP>.Instance);//a zobrazime novy
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_BlockIP>.Instance);//a zobrazime novy
 						DialogStacking.EnstackDialog(gi, newGi);
 						return;
 					case 6: // block iprange
@@ -181,8 +181,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	public class D_BlockIP : CompiledGump {
-		internal static readonly TagKey ipToBlockTK = TagKey.Get("__ip_to_block_");
+	public class D_BlockIP : CompiledGumpDef {
+		internal static readonly TagKey ipToBlockTK = TagKey.Get("_ip_to_block_");
         
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string ip = TagMath.SGetTag(args,D_BlockIP.ipToBlockTK);			
@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 
 		}
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 1) { //OK button
 				Firewall.AddBlockedIP(gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//zavolat stacklej dialog (if any)				
@@ -253,9 +253,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	public class D_BlockIPRange : CompiledGump {
-		internal static readonly TagKey ipFromRangeTK = TagKey.Get("__ip_from_range_");
-		internal static readonly TagKey ipToRangeTK = TagKey.Get("__ip_to_range_");
+	public class D_BlockIPRange : CompiledGumpDef {
+		internal static readonly TagKey ipFromRangeTK = TagKey.Get("_ip_from_range_");
+		internal static readonly TagKey ipToRangeTK = TagKey.Get("_ip_to_range_");
         
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
             string ipfrom = TagMath.SGetTag(args, D_BlockIPRange.ipFromRangeTK);
@@ -313,7 +313,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 
 		}
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 1) {
 				Firewall.AddBlockedIPRange(gr.GetTextResponse(9), gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//rovnou se vracime			

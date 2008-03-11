@@ -99,7 +99,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Common.Remark("Add the diff's X and Y to owns X and Y")]
+		[Common.Summary("Add the diff's X and Y to owns X and Y")]
 		public Point2D Add(int diffX, int diffY) {
 			return new Point2D((ushort)(x + diffX), (ushort)(y + diffY));
 		}
@@ -198,7 +198,7 @@ namespace SteamEngine {
 			this.z = p.Z;
 		}
 
-		[Common.Remark("Add the diff's X, Y and Z to owns X, Y and Z")]
+		[Common.Summary("Add the diff's X, Y and Z to owns X, Y and Z")]
 		public Point3D Add(int diffX, int diffY, int diffZ) {
 			return new Point3D((ushort)(x + diffX), (ushort)(y + diffY), (sbyte)(z + diffZ));
 		}

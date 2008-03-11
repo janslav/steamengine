@@ -37,7 +37,7 @@ namespace SteamEngine.LScript {
 		//this gets set by the nodes, when an arg gets declared, so that we know how many ARGs can appear in this function
 		internal OpNode nodeToReturn = null;
 
-		//used by TriggerGroup/Gump/templatedef/... loading, and LoadAsFunction here
+		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
 		public LScriptHolder(TriggerSection input) : base(input.triggerName) {
 			Compile(input);
 		}

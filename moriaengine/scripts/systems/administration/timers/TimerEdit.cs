@@ -24,9 +24,9 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("A timer editing dialog")]
-	public class D_EditTimer : CompiledGump {
-		internal static readonly TagKey editedTimerTK = TagKey.Get("__timer_edited_");
+	[Summary("A timer editing dialog")]
+	public class D_EditTimer : CompiledGumpDef {
+		internal static readonly TagKey editedTimerTK = TagKey.Get("_timer_edited_");
 		private static int width = 400;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				return;
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
 				Timer tm = (Timer)args.GetTag(D_EditTimer.editedTimerTK);
 				tm.DueInSeconds = timerTime;
-				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
+				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
 				if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TimerList))) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
 					prevStacked.InputArgs.RemoveTag(D_TimerList.timerListTK);

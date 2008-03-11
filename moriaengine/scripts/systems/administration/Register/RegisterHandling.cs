@@ -23,7 +23,7 @@ using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Remark("Utility class for managing account information or crime notes")]
+	[Summary("Utility class for managing account information or crime notes")]
 	public static class AccountRegister {
 		public static readonly string ALL_CHARS = "all";
 
@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 			return crimes;
 		}
 
-		[Remark("Sorting of the account notes/crimes list")]
+		[Summary("Sorting of the account notes/crimes list")]
 		private static void NotesListSort<T>(List<T> list, AccountNotesSorting criteria) where T : AccountNote {
 			switch (criteria) {
 				case AccountNotesSorting.TimeAsc:
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 		}		
 	}
 
-	[Remark("Comparer for sorting account notes by time")]
+	[Summary("Comparer for sorting account notes by time")]
 	public class NotesTimeComparer<T> : IComparer<T> where T: AccountNote {
 		public readonly static NotesTimeComparer<T> instance = new NotesTimeComparer<T>();
 
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparer for sorting account notes by referered character")]
+	[Summary("Comparer for sorting account notes by referered character")]
 	public class NotesRefCharComparer<T> : IComparer<T> where T : AccountNote {
 		public readonly static NotesRefCharComparer<T> instance = new NotesRefCharComparer<T>();
 
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparer for sorting account notes by note issuer")]
+	[Summary("Comparer for sorting account notes by note issuer")]
 	public class NotesIssuerComparer<T> : IComparer<T> where T: AccountNote {
 		public readonly static NotesIssuerComparer<T> instance = new NotesIssuerComparer<T>();
 
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparer for sorting account notes its AFK or nonAFK type")]
+	[Summary("Comparer for sorting account notes its AFK or nonAFK type")]
 	public class CrimesAFKComparer<T> : IComparer<T> where T: AccountNote {
 		public readonly static CrimesAFKComparer<T> instance = new CrimesAFKComparer<T>();
 

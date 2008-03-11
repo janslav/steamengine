@@ -19,7 +19,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Remark("Numbers of important hues")]
+	[Summary("Numbers of important hues")]
 	public enum Hues : int {
 		Red=33,
 		Blue=99,
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		SettingsFailedColor = 35 //setting items that weren't possible to be set
 	}
 
-	[Remark("Various sorting criteria used in different dialogs")]
+	[Summary("Various sorting criteria used in different dialogs")]
 	public enum SortingCriteria : int {
 		NameAsc,
 		NameDesc,
@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 		UnreadDesc
 	}
 
-	[Remark("Various sorting criteria for displaying account notes or crimes")]
+	[Summary("Various sorting criteria for displaying account notes or crimes")]
 	public enum AccountNotesSorting : int {
 		TimeAsc,
 		TimeDesc,
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 		IssuerDesc
 	}
 
-	[Remark("Various sorting criteria for displaying regions list")]
+	[Summary("Various sorting criteria for displaying regions list")]
 	public enum RegionsSorting : int {
 		NameAsc,
 		NameDesc,
@@ -81,30 +81,30 @@ namespace SteamEngine.CompiledScripts {
 		DefnameDesc		
 	}
 
-	[Remark("Various types of GUTA Leaf Components")]
+	[Summary("Various types of GUTA Leaf Components")]
 	public enum LeafComponentTypes : int {
 		//Buttons
-		[Remark("Button with the big X inside")]
+		[Summary("Button with the big X inside")]
 		ButtonCross,
-		[Remark("Button with the OK inside")]
+		[Summary("Button with the OK inside")]
 		ButtonOK,
-		[Remark("Button with the tick inside")]
+		[Summary("Button with the tick inside")]
 		ButtonTick,
-		[Remark("Button with the sheet of paper inside")]
+		[Summary("Button with the sheet of paper inside")]
 		ButtonPaper,
-		[Remark("Button with flying paper")]
+		[Summary("Button with flying paper")]
 		ButtonSend,
-		[Remark("Button with the crossed circle")]
+		[Summary("Button with the crossed circle")]
 		ButtonNoOperation,		
-		[Remark("Button for sorting (small up arrow)")]
+		[Summary("Button for sorting (small up arrow)")]
 		ButtonSortUp,
-		[Remark("Button for sorting (small down arrow)")]
+		[Summary("Button for sorting (small down arrow)")]
 		ButtonSortDown,
-		[Remark("Medium UP arrow")]
+		[Summary("Medium UP arrow")]
 		ButtonPrev,
-		[Remark("Medium DOWN arrow")]
+		[Summary("Medium DOWN arrow")]
 		ButtonNext,
-		[Remark("Button with people")]
+		[Summary("Button with people")]
 		ButtonPeople,
 		CheckBox,
 		RadioButton,
@@ -114,13 +114,13 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public enum SettingsDisplay {
-		[Remark("Zobrazit vsechny kategorie v jednom dialogu")]
+		[Summary("Zobrazit vsechny kategorie v jednom dialogu")]
 		All,
-		[Remark("Zobrazit jen jednu vybranou kategorii")]
+		[Summary("Zobrazit jen jednu vybranou kategorii")]
 		Single
 	}
 
-	[Remark("Result of settign a single field in the info or settings dialogs")]
+	[Summary("Result of settign a single field in the info or settings dialogs")]
 	public enum SettingsOutcome {
 		NotChanged,//field has not changed at all
 		ChangedOK, //field has changed successfully

@@ -22,25 +22,25 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine {
-	public abstract class Gump : AbstractScript {
-		internal Gump()
+	public abstract class GumpDef : AbstractScript {
+		internal GumpDef()
 			: base() {
 		}
 
-		internal Gump(string name)
+		internal GumpDef(string name)
 			: base(name) {
 		}
 
-		public static new Gump Get(string name) {
+		public static new GumpDef Get(string name) {
 			AbstractScript script;
 			byDefname.TryGetValue(name, out script);
-			return script as Gump;
+			return script as GumpDef;
 		}
 
-		internal abstract GumpInstance InternalConstruct(Thing focused, AbstractCharacter sendTo, DialogArgs args);
+		internal abstract Gump InternalConstruct(Thing focused, AbstractCharacter sendTo, DialogArgs args);
 	}
 
-	[Remark("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)"+
+	[Summary("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)"+
 			"the array's length is unmodifiable so the only way to put args into it is to put them during constructor call."+
 			"Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example "+
 			"label and text in the Info/Error dialog-messages). Other args should be added as normal tags!")]
@@ -62,11 +62,11 @@ namespace SteamEngine {
 		}
 	}
 
-	public abstract class GumpInstance : PluginHolder {
+	public abstract class Gump {
 		private static uint uids = 0;
 
 		public readonly uint uid;
-		public readonly Gump def;
+		public readonly GumpDef def;
 		internal DialogArgs inputArgs;//arguments the gump is called with
 		internal AbstractCharacter cont;//the player who sees this instance (src)
 		internal Thing focus;//the thing this gump was "launched on"
@@ -84,7 +84,7 @@ namespace SteamEngine {
 		internal List<string> textsList;
 		//internal int textsLengthsSum;
 
-		internal GumpInstance(Gump def) {
+		internal Gump(GumpDef def) {
 			this.def = def;
 			uid = uids++;
 		}
@@ -522,7 +522,7 @@ namespace SteamEngine {
 //· BYTE[2] subcmd
 //· BYTE[len-5] submessage
 //
-//Subcommand 4: "Close Generic Gump"
+//Subcommand 4: "Close Generic GumpDef"
 //
 //    * BYTE[4] dialogID // which gump to destroy (second ID in 0xB0 packet)
 //    * BYTE[4] buttonId // response buttonID for packet 0xB1

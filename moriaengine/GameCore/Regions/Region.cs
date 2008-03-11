@@ -477,7 +477,7 @@ namespace SteamEngine.Regions {
 			this.region = region;
 		}
 
-		[Remark("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
+		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
 				"Returns a new (moved) instance")]
 		internal RegionRectangle Move(int timesX, int timesY) {
 			return new RegionRectangle((ushort)(minX + timesX), (ushort)(minY + timesY),

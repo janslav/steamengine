@@ -673,7 +673,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Remark("Sets all uids to lowest possible value. Always save & restart after doing this.")]
+		[Summary("Sets all uids to lowest possible value. Always save & restart after doing this.")]
 		public static void ResetAllUids() {
 			things.ReIndexAll();
 		}
@@ -1113,39 +1113,39 @@ namespace SteamEngine {
 		}
 
 
-		//public GumpInstance Dialog(string gumpName) {
-		//	Gump Gump = Gump.Get(gumpName);
-		//	if (Gump == null) {
+		//public Gump Dialog(string gumpName) {
+		//	GumpDef GumpDef = GumpDef.Get(gumpName);
+		//	if (GumpDef == null) {
 		//		throw new SEException("There is no gump named "+LogStr.Ident(gumpName));
 		//	} else {
-		//		return Globals.src.Character.SendGump(this, Gump, null);
+		//		return Globals.src.Character.SendGump(this, GumpDef, null);
 		//	}
 		//}
 
-		public GumpInstance Dialog(Gump gump) {
+		public Gump Dialog(GumpDef gump) {
 			return Dialog(Globals.SrcCharacter, gump);
 		}
 
 		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
-		public GumpInstance Dialog(Gump gump, params object[] paramArr) {
+		public Gump Dialog(GumpDef gump, params object[] paramArr) {
 			return Dialog(Globals.SrcCharacter, gump, new DialogArgs(paramArr));
 		}
 
-		public GumpInstance Dialog(Gump gump, DialogArgs args) {
+		public Gump Dialog(GumpDef gump, DialogArgs args) {
 			return Dialog(Globals.SrcCharacter, gump, args);
 		}
 
 		//jen presmerujeme volani jinam (bez argumentu ovsem)
-		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump) {
+		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump) {
 			return Dialog(sendTo, gump, new DialogArgs());
 		}
 
 		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
-		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, params object[] paramArr) {
+		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump, params object[] paramArr) {
 			return Dialog(sendTo, gump, new DialogArgs(paramArr));
 		}
 
-		public GumpInstance Dialog(AbstractCharacter sendTo, Gump gump, DialogArgs args) {
+		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump, DialogArgs args) {
 			if (sendTo != null) {				
 				return sendTo.SendGump(this, gump, args);
 			}

@@ -26,32 +26,32 @@ using SteamEngine.Common;
 namespace SteamEngine.LScript {
 
 	//this is the class that gets instantiated for every LScript DIALOG/GUMP script
-	public sealed class ScriptedGump : Gump {
+	public sealed class ScriptedGumpDef : GumpDef {
 		private LScriptHolder layoutScript;
 		private LScriptHolder textsScript;
 		private ResponseTrigger[] responseTriggers;
 
-		private ScriptedGump(string name)
+		private ScriptedGumpDef(string name)
 			: base(name) {
 		}
 
-		internal static ScriptedGump Load(PropsSection input) {
+		internal static ScriptedGumpDef Load(PropsSection input) {
 			string[] headers = input.headerName.Split(new char[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
-			Gump gump = Gump.Get(name);
-			ScriptedGump sgd;
+			GumpDef gump = GumpDef.Get(name);
+			ScriptedGumpDef sgd;
 			if (gump != null) {
-				sgd = gump as ScriptedGump;
+				sgd = gump as ScriptedGumpDef;
 				if (sgd == null) {//is not scripted, so can not be overriden
-					throw new SEException(LogStr.FileLine(input.filename, input.headerLine)+"Gump/Dialog "+LogStr.Ident(name)+" already exists!");
+					throw new SEException(LogStr.FileLine(input.filename, input.headerLine)+"GumpDef/Dialog "+LogStr.Ident(name)+" already exists!");
 				}
 			} else {
-				sgd = new ScriptedGump(name);
+				sgd = new ScriptedGumpDef(name);
 				DelayedResolver.DelayResolve(new DelayedMethod(sgd.CheckValidity));
 			}
 			if (headers.Length == 1) {//layout section
 				if ((sgd.layoutScript != null)&&(!sgd.unloaded)) {//already loaded
-					throw new SEException("Gump/Dialog "+LogStr.Ident(name)+" already exists!");
+					throw new SEException("GumpDef/Dialog "+LogStr.Ident(name)+" already exists!");
 				}
 				LScriptHolder sc = new LScriptHolder(input.GetTrigger(0));
 				if (sc.unloaded) {//in case the compilation failed (syntax error)
@@ -67,7 +67,7 @@ namespace SteamEngine.LScript {
 					case "text":
 					case "texts":
 						if ((sgd.textsScript != null)&&(!sgd.unloaded)) {//already loaded
-							throw new SEException("TEXT section for Gump/Dialog called "+LogStr.Ident(name)+" already exists!");
+							throw new SEException("TEXT section for GumpDef/Dialog called "+LogStr.Ident(name)+" already exists!");
 						}
 						TriggerSection trigger = input.GetTrigger(0);
 						StringReader stream = new StringReader(trigger.code.ToString());
@@ -101,7 +101,7 @@ namespace SteamEngine.LScript {
 					case "triggers":
 					case "trigger":
 						if ((sgd.responseTriggers != null)&&(!sgd.unloaded)) {//already loaded
-							throw new SEException("BUTTON section for Gump/Dialog called "+LogStr.Ident(name)+" already exists!");
+							throw new SEException("BUTTON section for GumpDef/Dialog called "+LogStr.Ident(name)+" already exists!");
 						}
 						ArrayList responsesList = new ArrayList();
 						for (int i = 1, n = input.TriggerCount; i<n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
@@ -133,7 +133,7 @@ namespace SteamEngine.LScript {
 						return sgd;
 				}
 			}
-			throw new Exception("Invalid Gump/Dialog header");
+			throw new Exception("Invalid GumpDef/Dialog header");
 		}
 
 		private void CheckValidity(object[] args) {//check method, used as delayed
@@ -154,9 +154,9 @@ namespace SteamEngine.LScript {
 			textsScript = null;
 		}
 
-		internal sealed override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		internal sealed override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ThrowIfUnloaded();
-			ScriptedGumpInstance instance = new ScriptedGumpInstance(this);
+			ScriptedGump instance = new ScriptedGump(this);
 			ScriptArgs sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
 			if(args != null) {
 				instance.InputArgs = args; //store the Dialog Args to the instance				
@@ -172,7 +172,7 @@ namespace SteamEngine.LScript {
 
 			layoutScript.TryRun(focus, sa);
 
-			ScriptedGumpInstance returnedInstance = sa.argv[0] as ScriptedGumpInstance;
+			ScriptedGump returnedInstance = sa.argv[0] as ScriptedGump;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}
@@ -186,7 +186,7 @@ namespace SteamEngine.LScript {
 			return null;
 		}
 
-		internal void OnResponse(ScriptedGumpInstance instance, uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
+		internal void OnResponse(ScriptedGump instance, uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
 			if (responseTriggers != null) {
 				for (int i = 0, n = responseTriggers.Length; i<n; i++) {
 					ResponseTrigger rt = responseTriggers[i];
@@ -282,15 +282,13 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	public class ScriptedGumpInstance : GumpInstance {
-		//internal GumpBuilder builder = new GumpBuilder();
-
-		internal protected ScriptedGumpInstance(ScriptedGump def)
+	public class ScriptedGump : Gump {
+		internal protected ScriptedGump(ScriptedGumpDef def)
 			: base(def) {
 		}
 
 		public override void OnResponse(uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
-			ScriptedGump sdef = (ScriptedGump) def;
+			ScriptedGumpDef sdef = (ScriptedGumpDef) def;
 			sdef.OnResponse(this, pressedButton, selectedSwitches, returnedTexts, responseNumbers);
 		}
 

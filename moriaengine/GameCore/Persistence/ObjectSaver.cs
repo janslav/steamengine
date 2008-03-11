@@ -308,7 +308,7 @@ namespace SteamEngine.Persistence {
 			return true;
 		}
 
-		[Remark("Types that are either simple or have their coordinator for saving")]
+		[Summary("Types that are either simple or have their coordinator for saving")]
 		public static bool IsSimpleSaveableOrCoordinated(Type t) {
 			if (TagMath.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
@@ -756,7 +756,7 @@ namespace SteamEngine.Persistence {
 			return ds;
 		}
 
-		[Remark("Forwards call for finding a SimpleSaveImplementor for given Type."+
+		[Summary("Forwards call for finding a SimpleSaveImplementor for given Type."+
 				"Returns the ISimpleSaveImplementor instance or null if nothing was found")]
 		public static ISimpleSaveImplementor GetSimpleSaveImplementorByType(Type t) {
 			ISimpleSaveImplementor retVal = null;

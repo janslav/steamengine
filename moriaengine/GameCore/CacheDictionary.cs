@@ -4,7 +4,7 @@ using SteamEngine.Common;
 using SteamEngine.Timers;
 
 namespace SteamEngine {
-	[Remark("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxQueueCount' usages of the dictionary. "
+	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxQueueCount' usages of the dictionary. "
 		+"The maxQueueLength number should typically be pretty big, in thousands or more.")]
 	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;

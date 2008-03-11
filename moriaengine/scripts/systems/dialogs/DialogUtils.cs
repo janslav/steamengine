@@ -18,7 +18,7 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	//[Remark("Utility class for holding the scripted functions connected with dialogs")]
+	[Summary("Utility class for holding the scripted functions connected with dialogs")]
 	public static class DialogFunctions {
 
 	}

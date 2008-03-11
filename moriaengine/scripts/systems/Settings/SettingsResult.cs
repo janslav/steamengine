@@ -24,9 +24,9 @@ using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog showing the results after storing the info or settigns dialog changes")]
-	public class D_Settings_Result : CompiledGump {
-		internal static readonly TagKey resultsListTK = TagKey.Get("__settings_results_list_");
+	[Summary("Dialog showing the results after storing the info or settigns dialog changes")]
+	public class D_Settings_Result : CompiledGumpDef {
+		internal static readonly TagKey resultsListTK = TagKey.Get("_settings_results_list_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//field containing the results for display
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
             List<SettingResult> setResults = (List<SettingResult>)args.GetTag(D_Settings_Result.resultsListTK);
 			if(gr.pressedButton == 0) { //end				
 				return;

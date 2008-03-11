@@ -173,7 +173,7 @@ namespace SteamEngine {
 								//	return null;
 								case "dialog":
 								case "gump":
-									IUnloadable gump = ScriptedGump.Load(section);
+									IUnloadable gump = ScriptedGumpDef.Load(section);
 									if (gump != null) {//it could have been a "subsection" of dialog, i.e. TEXT or BUTTON part
 										file.Add(gump);
 									}

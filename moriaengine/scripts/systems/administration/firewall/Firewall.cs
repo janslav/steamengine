@@ -50,25 +50,25 @@ namespace SteamEngine.CompiledScripts {
         [SavedMember]
         private static ArrayList blockedIPRangeEntries = new ArrayList();
 
-        [Remark("Various comparators")]
+        [Summary("Various comparators")]
         private static IPComparator ipComparator = new IPComparator();
         private static AccountComparator accComparator = new AccountComparator();
 
-        [Remark("Returns a copy of the BlockedIPEntry Hashtable (usable for sorting etc.)")]
+        [Summary("Returns a copy of the BlockedIPEntry Hashtable (usable for sorting etc.)")]
         public static Hashtable BlockedIPEntries {
             get {
                 return new Hashtable(blockedIPEntries);
             }
         }
 
-        [Remark("Returns a copy of the BlockedIPRangeEntry Hashtable (usable for sorting etc.)")]
+        [Summary("Returns a copy of the BlockedIPRangeEntry Hashtable (usable for sorting etc.)")]
         public static ArrayList BlockedIPRangeEntries {
             get {
                 return new ArrayList (blockedIPRangeEntries);
             }
         }
 
-        [Remark("Sorting method: Sorting parameters available are ip, account")]
+        [Summary("Sorting method: Sorting parameters available are ip, account")]
         public static ArrayList GetSortedBy(SortingCriteria criterion) {
             ArrayList ipentries = new ArrayList(blockedIPEntries.Values);
             ipentries.AddRange(blockedIPRangeEntries);
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
             return ipentries;
         }
 
-        [Remark("Comparator serving for sorting the list of Blockedipentries by blocked by")]
+        [Summary("Comparator serving for sorting the list of Blockedipentries by blocked by")]
         class AccountComparator : IComparer {
             public int Compare(object a, object b) {
                 string acc1 = ((ISortableIpBlockEntry)a).Account.Name;
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
             }
         }
 
-        [Remark("Comparator serving for sorting the list of Blockedipentries by IP")]
+        [Summary("Comparator serving for sorting the list of Blockedipentries by IP")]
         class IPComparator : IComparer {
             public int Compare(object a, object b) {
                 IPAddress ip1 = ((ISortableIpBlockEntry)a).Ip;

@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 			DelayedMessage(null, text);
 		}
 
-		[Remark("Send a delayed message to the player. Specify the sender of the message (null means "+
+		[Summary("Send a delayed message to the player. Specify the sender of the message (null means "+
                 "that the message comes from the system)")]
 		public void DelayedMessage(AbstractCharacter sender, string text) {
 			if (sender == null) {
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 			InfoMessage("Nova zprava, celkem neprectenych: "+MsgsBoard.CountUnread(this));
 		}
 
-		[Remark("Send a delayed message to the player. Specify the sender of the message (null means " +
+		[Summary("Send a delayed message to the player. Specify the sender of the message (null means " +
 				"that the message comes from the system), we can also specify a message custom color here")]
 		public void DelayedMessage(AbstractCharacter sender, string text, Hues hue) {
 			if(sender == null) {
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 			DelayedRedMessage(null, text);
 		}
 
-		[Remark("Send a delayed red message to the player. Specify the sender of the message (null means " +
+		[Summary("Send a delayed red message to the player. Specify the sender of the message (null means " +
                 "that the message comes from the system)")]
 		public void DelayedRedMessage(AbstractCharacter sender, string text) {
 			if (sender == null) {

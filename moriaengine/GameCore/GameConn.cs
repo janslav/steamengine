@@ -146,8 +146,8 @@ namespace SteamEngine {
 		public ushort nextTarg = 0;
 		//public FastWalkStack FastWalk;
 		public string lang = "enu";
-		private Dictionary<uint, GumpInstance> gumpInstancesByUid = new Dictionary<uint, GumpInstance>();
-		private Dictionary<Gump, LinkedList<GumpInstance>> gumpInstancesByGump = new Dictionary<Gump, LinkedList<GumpInstance>>();
+		private Dictionary<uint, Gump> gumpInstancesByUid = new Dictionary<uint, Gump>();
+		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
 		internal HashSet<AbstractItem> openedContainers = new HashSet<AbstractItem>();
 
 		private bool godMode = false;
@@ -1040,32 +1040,32 @@ namespace SteamEngine {
 			Logger.WriteError(data);
 		}
 
-		internal void SentGump(GumpInstance gi) {
+		internal void SentGump(Gump gi) {
 			gumpInstancesByUid[gi.uid] = gi;
-			Gump thisGump = gi.def;
-			LinkedList<GumpInstance> instancesOfThisGump;
+			GumpDef thisGump = gi.def;
+			LinkedList<Gump> instancesOfThisGump;
 			if (!gumpInstancesByGump.TryGetValue(thisGump, out instancesOfThisGump)) {
-				instancesOfThisGump = new LinkedList<GumpInstance>();
+				instancesOfThisGump = new LinkedList<Gump>();
 				gumpInstancesByGump[thisGump] = instancesOfThisGump;
 			}
 			instancesOfThisGump.AddFirst(gi);
 		}
 
-		internal ICollection<GumpInstance> FindGumpInstances(Gump gd) {
-			LinkedList<GumpInstance> retVal;
+		internal ICollection<Gump> FindGumpInstances(GumpDef gd) {
+			LinkedList<Gump> retVal;
 			if (gumpInstancesByGump.TryGetValue(gd, out retVal)) {
 				return retVal;
 			}
-			return EmptyReadOnlyGenericCollection<GumpInstance>.instance;
+			return EmptyReadOnlyGenericCollection<Gump>.instance;
 		}
 
-		internal GumpInstance PopGump(uint uid) {
-			GumpInstance gi;
+		internal Gump PopGump(uint uid) {
+			Gump gi;
 			if (gumpInstancesByUid.TryGetValue(uid, out gi)) {
 				gumpInstancesByUid.Remove(uid);
 
-				Gump gd = gi.def;
-				LinkedList<GumpInstance> list;
+				GumpDef gd = gi.def;
+				LinkedList<Gump> list;
 				if (gumpInstancesByGump.TryGetValue(gd, out list)) {
 					list.Remove(gi);
 					if (list.Count == 0) {

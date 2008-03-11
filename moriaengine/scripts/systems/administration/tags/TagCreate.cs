@@ -24,8 +24,8 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("A new tag creating dialog")]
-	public class D_NewTag : CompiledGump {
+	[Summary("A new tag creating dialog")]
+	public class D_NewTag : CompiledGumpDef {
 		private static int width = 400;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				return;
@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 } catch {
                     //zhucelo mu to, neco zadal blbe
                     //stackneme a zobrazime chybu
-                    GumpInstance newGi = D_Display_Text.ShowError("Chybne zadano, nerozpoznatelna hodnota: " + tagValue);
+                    Gump newGi = D_Display_Text.ShowError("Chybne zadano, nerozpoznatelna hodnota: " + tagValue);
                     DialogStacking.EnstackDialog(gi, newGi);
                     return;
                 }
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				th.SetTag(TagKey.Get(tagName), objectifiedValue);
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
-				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
+				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
 				//overovat netreba, proste odstranime tag se seznamem at uz existuje nebo ne
 				//if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TagList))) {
 					//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//}
 				DialogStacking.ResendAndRestackDialog(prevStacked);
 			} else if(gr.pressedButton == 2) {
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 				DialogStacking.EnstackDialog(gi, newGi); //ulozime dialog do stacku
 			}
 		}        

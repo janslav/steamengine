@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey beforeSwingTK = TriggerKey.Get("beforeSwing");
 		static TriggerKey beforeGetSwingTK = TriggerKey.Get("beforeGetSwing");
 
-		[Remark("Happens before applying armor, can be cancelled.")]
+		[Summary("Happens before applying armor, can be cancelled.")]
 		public static bool Trigger_BeforeSwing(WeaponSwingArgs swingArgs) {
 			if (!swingArgs.attacker.TryCancellableTrigger(beforeSwingTK, swingArgs)) {
 				try {
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey causeDamageTK = TriggerKey.Get("causeDamage");
 		static TriggerKey damageTK = TriggerKey.Get("damage");
 
-		[Remark("Happens before applying armor, can be cancelled.")]
+		[Summary("Happens before applying armor, can be cancelled.")]
 		public static bool Trigger_Damage(DamageArgs damageArgs) {
 			if (!damageArgs.attacker.TryCancellableTrigger(causeDamageTK, damageArgs)) {
 				try {
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey afterSwingTK = TriggerKey.Get("afterSwing");
 		static TriggerKey afterGetSwingTK = TriggerKey.Get("afterGetSwing");
 
-		[Remark("Happens after applying armor, can be cancelled.")]
+		[Summary("Happens after applying armor, can be cancelled.")]
 		public static void Trigger_AfterSwing(WeaponSwingArgs swingArgs) {
 			swingArgs.attacker.TryTrigger(afterSwingTK, swingArgs);
 

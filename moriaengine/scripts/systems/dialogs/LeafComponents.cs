@@ -22,21 +22,21 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Leaf GUTA components cannot have any children, these are e.g buttons, inputs, texts etc.")]
+	[Summary("Leaf GUTA components cannot have any children, these are e.g buttons, inputs, texts etc.")]
 	public abstract class LeafGUTAComponent : GUTAComponent {
-		[Remark("This is the ID many gump items have - buttons number, input entries number...")]
+		[Summary("This is the ID many gump items have - buttons number, input entries number...")]
 		protected int id;
 
-		[Remark("Which row in the column this component lies in?")]
+		[Summary("Which row in the column this component lies in?")]
 		protected int columnRow;
 
-		[Remark("Adding any children to the leaf is prohibited...")]
+		[Summary("Adding any children to the leaf is prohibited...")]
 		internal override sealed void AddComponent(GUTAComponent child) {
 			throw new GUTAComponentCannotBeExtendedException("GUTAcomponent " + this.GetType() + " cannot have any children");
 		}
 	}
 
-	[Remark("Factory class for creating buttons according to the given button type. Including special buttons"+
+	[Summary("Factory class for creating buttons according to the given button type. Including special buttons"+
             " such as Checkbox or Radio Button")]
 	public class ButtonFactory {
         internal static Hashtable buttonGumps = new Hashtable();
@@ -77,12 +77,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public const int D_BUTTON_PREVNEXT_WIDTH = 16;
 		public const int D_BUTTON_PREVNEXT_HEIGHT = 21;
 
-		[Remark("Number of pixels to move the button in the line so it is in the middle")]
+		[Summary("Number of pixels to move the button in the line so it is in the middle")]
 		public const int D_SORTBUTTON_LINE_OFFSET =	9;
-		[Remark("Number of pixels to move the text to the right so it is readable next to the sort buttons")]
+		[Summary("Number of pixels to move the text to the right so it is readable next to the sort buttons")]
 		public const int D_SORTBUTTON_COL_OFFSET = 11;
 
-        [Remark("Flyweight class carrying info about the two button gumps (pressed and released)"+
+        [Summary("Flyweight class carrying info about the two button gumps (pressed and released)"+
                 "it will be used when building the dialog buttons for storing info about the gumps.")]
         internal class ButtonGump {
             private int gumpUp, //also unchecked checkbox and unselected radiobutton
@@ -106,63 +106,63 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             }
         }
 
-		[Remark("Factory method for creating a given type of the button. We have to provide the _relative_"+
+		[Summary("Factory method for creating a given type of the button. We have to provide the _relative_"+
                 "x and y position (relative to the parent column) and the button ID, we have to also specify the page "+
                 "opened by this button and whether the button is active or not")]
         public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int page, int id) {
 			return new Button(id, xPos, yPos, (ButtonGump)buttonGumps[type], active, page);
 		}
 
-		[Remark("Basic method - it adds the button automatically to the beginning of the column")]
+		[Summary("Basic method - it adds the button automatically to the beginning of the column")]
 		public static Button CreateButton(LeafComponentTypes type, int id) {
 			return CreateButton(type, 0, 0, true, 0, id);
 		}
 
-		[Remark("Basic method - allows to specify the button position")]
+		[Summary("Basic method - allows to specify the button position")]
         public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, int id) {
 			return CreateButton(type, xPos, yPos, true, 0, id);
 		}
 
-		[Remark("Basic method - allows to specify the button position and activity")]
+		[Summary("Basic method - allows to specify the button position and activity")]
         public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int id) {
 			return CreateButton(type, xPos, yPos, active, 0, id);
 		}
 
-		[Remark("Basic method - it adds the button automatically to the beginning of the column"+
+		[Summary("Basic method - it adds the button automatically to the beginning of the column"+
                 "allows us to specify if the button is active or not")]
         public static Button CreateButton(LeafComponentTypes type, bool active, int id) {
 			return CreateButton(type, 0, 0, active, 0, id);
 		}
 
-		[Remark("Basic method - it adds the button automatically to the beginning of the column" +
+		[Summary("Basic method - it adds the button automatically to the beginning of the column" +
                 "allows us to specify if the button is active or not and the page opened")]
         public static Button CreateButton(LeafComponentTypes type, bool active, int page, int id) {
 			return CreateButton(type, 0, 0, active, page, id);
 		}
 
-		[Remark("Create a checkbox using the _relative_ position in the column, the check/unchecked flag"+
+		[Summary("Create a checkbox using the _relative_ position in the column, the check/unchecked flag"+
                 "and the id")]
 		public static CheckBox CreateCheckbox(int xPos, int yPos, bool isChecked, int id) {
 			return new CheckBox(xPos, yPos, (ButtonGump)buttonGumps[LeafComponentTypes.CheckBox], isChecked, id);
 		}
 
-		[Remark("Create checkbox using the 1 or 0 as a marker if the checkbox is checked or not")]
+		[Summary("Create checkbox using the 1 or 0 as a marker if the checkbox is checked or not")]
 		public static CheckBox CreateCheckbox(int xPos, int yPos, int isChecked, int id) {
 			return CreateCheckbox(xPos, yPos, isChecked == 1 ? true : false, id);
 		}
 
-		[Remark("Create a radio button using the _relative_ position in the column, the check/unchecked flag" +
+		[Summary("Create a radio button using the _relative_ position in the column, the check/unchecked flag" +
                 "and the id")]
 		public static RadioButton CreateRadio(int xPos, int yPos, bool isChecked, int id) {
 			return new RadioButton(xPos, yPos, (ButtonGump)buttonGumps[LeafComponentTypes.RadioButton], isChecked, id);
 		}
 
-		[Remark("Create radio button using the 1 or 0 as a marker if the checkbox is checked or not")]
+		[Summary("Create radio button using the 1 or 0 as a marker if the checkbox is checked or not")]
 		public static RadioButton CreateRadio(int xPos, int yPos, int isChecked, int id) {
 			return CreateRadio(xPos, yPos, isChecked == 1 ? true : false, id);
 		}
 
-		[Remark("The Button component class - it handles the button writing to the client")]
+		[Summary("The Button component class - it handles the button writing to the client")]
 		public class Button : LeafGUTAComponent {
 			protected static string stringDescription = "Button";
 
@@ -170,11 +170,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private int page = 0;
 			private bool active = true;
 
-			[Remark("This constructor is here only for the buttons children classes")]
+			[Summary("This constructor is here only for the buttons children classes")]
 			internal Button() {
 			}
 
-			[Remark("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
+			[Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
 			internal Button(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page) {
 				this.id = id;
 				this.xPos = xPos;
@@ -184,7 +184,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.page = page;
 			}
 
-			[Remark("When added, we must recompute the Buttons absolute position in the dialog (we "+
+			[Summary("When added, we must recompute the Buttons absolute position in the dialog (we "+
                     " were provided only relative positions")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				yPos += parent.YPos;				
 			}
 
-			[Remark("Simply write the button (send the method request to the underlaying gump)")]
+			[Summary("Simply write the button (send the method request to the underlaying gump)")]
 			internal override void WriteComponent() {
 				gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
 			}
@@ -215,14 +215,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Create a nice small checkbox")]
+		[Summary("Create a nice small checkbox")]
 		public class CheckBox : Button {
 			protected new static string stringDescription = "CheckBox";
 
 			private ButtonGump gumps;
 			private bool isChecked;
 
-			[Remark("Creates a checkbox with the given format")]
+			[Summary("Creates a checkbox with the given format")]
 			internal CheckBox(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -231,7 +231,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.id = id;
 			}
 
-			[Remark("Set the position which was specified relatively")]
+			[Summary("Set the position which was specified relatively")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
@@ -242,21 +242,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				yPos = yPos + parent.YPos;
 			}
 
-			[Remark("Simply call the gumps method for writing the checkbox")]
+			[Summary("Simply call the gumps method for writing the checkbox")]
 			internal override void WriteComponent() {
                                              //unchecked!!!,    checked !!!
 				gump.AddCheckBox(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
 			}
 		}
 
-		[Remark("A class representing the radio button")]
+		[Summary("A class representing the radio button")]
 		public class RadioButton : Button {
 			protected new static string stringDescription = "Radio";
 
             private ButtonGump gumps;
 			private bool isChecked;
 
-			[Remark("Creates a radio button")]
+			[Summary("Creates a radio button")]
 			internal RadioButton(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -265,7 +265,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.id = id;
 			}
 
-			[Remark("Set the position which was specified relatively")]
+			[Summary("Set the position which was specified relatively")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
@@ -276,7 +276,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				yPos = yPos + parent.YPos;
 			}
 
-			[Remark("Simply call the gumps method for writing the radiobutton")]
+			[Summary("Simply call the gumps method for writing the radiobutton")]
 			internal override void WriteComponent() {
                                          //unselected!!!, selected!!!
 				gump.AddRadio(xPos, yPos, gumps.GumpUp,gumps.GumpDown, isChecked, id);
@@ -284,90 +284,90 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("InputFactory creates different type of input fields (basicly TEXT or NUMBER)")]
+	[Summary("InputFactory creates different type of input fields (basicly TEXT or NUMBER)")]
 	public class InputFactory {
-		[Remark("Position from the parent, no pre-text specified, default color")]
+		[Summary("Position from the parent, no pre-text specified, default color")]
         public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height) {
             return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, "");
 		}
 
-		[Remark("Position and width from the parent, no pre-text specified, default color ")]
+		[Summary("Position and width from the parent, no pre-text specified, default color ")]
         public static Input CreateInput(LeafComponentTypes type, int id) {
             return new Input(type, 0, 0, id, 0, 0, Hues.WriteColor, "");
 		}
 
-		[Remark("Position and width from the parent, default color but the pre-text is specified here")]
+		[Summary("Position and width from the parent, default color but the pre-text is specified here")]
         public static Input CreateInput(LeafComponentTypes type, int id, string text) {
             return new Input(type, 0, 0, id, 0, 0, Hues.WriteColor, text);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, the entry ID, pixel and "+
+		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, the entry ID, pixel and "+
                 "character width and optionally the text hue and the text itself "+
                 "the position will be determined from the parent")]
         public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height, Hues textHue, string text) {
 			return new Input(type, 0, 0, id, pixelWidth, height, textHue, text);
 		}
 
-		[Remark("Position will be determined from the parent, the color will be default")]
+		[Summary("Position will be determined from the parent, the color will be default")]
         public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height, string text) {
             return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, text);
 		}
 
-		[Remark("Position will be determined from the parent, the color will be default, the text may be only the specified Id")]
+		[Summary("Position will be determined from the parent, the color will be default, the text may be only the specified Id")]
         public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height, int textId) {
             return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, textId);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width, height and color here !")]
+		[Summary("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width, height and color here !")]
 		public static Input CreateInput(LeafComponentTypes type, Hues textHue, string text, int xPos, int yPos, int id) {
 			return new Input(type, xPos, yPos, id, 0, 0, textHue, text);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width and height here !")]
+		[Summary("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width and height here !")]
 		public static Input CreateInput(LeafComponentTypes type, string text, int xPos, int yPos, int id) {
 			return new Input(type, xPos, yPos, id, 0, 0, Hues.WriteColor, text);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
+		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
                 " the relative positions, the entry ID, pixel and chracter width and optionally the text hue and the text itself")]
         public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, Hues textHue, string text) {
 			return new Input(type, xPos, yPos, id, pixelWidth, height, textHue, text);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
+		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
                 " the relative positions, the entry ID, pixel and chracter width and optionally the text hue and the textId")]
         public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, Hues textHue, int textId) {
 			return new Input(type, xPos, yPos, id, pixelWidth, height, textHue, textId);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
+		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
                 " the relative positions, the entry ID, pixel and chracter width.")]
         public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height) {
             return InputFactory.CreateInput(type, xPos, yPos, id, pixelWidth, height, Hues.WriteColor, "");
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
+		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
                 " the relative positions, the entry ID, pixel and chracter width, the pre-text.")]
         public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, string text) {
 			return InputFactory.CreateInput(type, xPos, yPos, id, pixelWidth, height, Hues.WriteColor, text);
 		}
 
-		[Remark("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
+		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide "+
                 " the relative positions, the entry ID, pixel and chracter width, the pre-text id.")]
         public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, int textId) {
             return InputFactory.CreateInput(type, xPos, yPos, id, pixelWidth, height, Hues.WriteColor, textId);
 		}
 
-		[Remark("The Button component class - it handles the button writing to the client")]
+		[Summary("The Button component class - it handles the button writing to the client")]
 		public class Input : LeafGUTAComponent {
 			private LeafComponentTypes type;
-			[Remark("We have either ID of the used (pre-)text, or the text string itself")]
+			[Summary("We have either ID of the used (pre-)text, or the text string itself")]
 			private int textId;
 			private string text;
-			[Remark("The text hue in the input field - if not specified, the default will be used.")]
+			[Summary("The text hue in the input field - if not specified, the default will be used.")]
 			private Hues textHue;
 
-			[Remark("First complete constructor - awaits the necessary things and the pre-text in the string form")]
+			[Summary("First complete constructor - awaits the necessary things and the pre-text in the string form")]
             internal Input(LeafComponentTypes type, int xPos, int yPos, int id, int widthPix, int height, Hues textHue, string text) {
 				this.id = id;
 				this.xPos = xPos;
@@ -379,7 +379,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.text = text;
 			}
 
-			[Remark("Second complete constructor - awaits the necessary things and the pre-text as the string id")]
+			[Summary("Second complete constructor - awaits the necessary things and the pre-text as the string id")]
             internal Input(LeafComponentTypes type, int xPos, int yPos, int id, int widthPix, int height, Hues textHue, int textId) {
 				this.id = id;
 				this.xPos = xPos;
@@ -391,7 +391,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.textId = textId;
 			}
 
-			[Remark("When added, we must recompute the Input Field's absolute position in the dialog (we " +
+			[Summary("When added, we must recompute the Input Field's absolute position in the dialog (we " +
                     " were provided only relative positions")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
@@ -416,7 +416,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 
-			[Remark("Simply write the input (send the method request to the underlaying gump)"+
+			[Summary("Simply write the input (send the method request to the underlaying gump)"+
                     " it will determine also what parameters to send")]
 			internal override void WriteComponent() {
 				//first of all add a different background
@@ -459,111 +459,111 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("TextFactory creates a text displayed in the gump according to the specified position and hue)")]
+	[Summary("TextFactory creates a text displayed in the gump according to the specified position and hue)")]
 	public class TextFactory {
-		[Remark("Creating labels - of columns, of input fields etc")]
+		[Summary("Creating labels - of columns, of input fields etc")]
 		public static Text CreateLabel(string text) {
 			return CreateText(Hues.LabelColor, text);
 		}
 
-		[Remark("Creating labels - of columns, of input fields etc")]
+		[Summary("Creating labels - of columns, of input fields etc")]
 		public static Text CreateLabel(int xPos, int yPos, string text) {
 			return CreateText(xPos, yPos, Hues.LabelColor, text);
 		}
 
-		[Remark("Bezny titulek tabulky")]
+		[Summary("Bezny titulek tabulky")]
 		public static Text CreateHeadline(string text) {
 			return CreateText(Hues.HeadlineColor, text);
 		}
 
-		[Remark("Titulek tabulky, ovsem s volbou barvy")]
+		[Summary("Titulek tabulky, ovsem s volbou barvy")]
 		public static Text CreateHeadline(string text, Hues color) {
 			return CreateText(color, text);
 		}
 
-		[Remark("Simple factory method allows us to let the dialog to determine the text's position in the column")]
+		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
 		public static Text CreateText(int hue, string text) {
 			return new Text(0, 0, hue, text);
 		}
 
-		[Remark("Simple factory method allows us to let the dialog to determine the text's position in the column")]
+		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
 		public static Text CreateText(Hues hue, string text) {
 			return new Text(0, 0, hue, text);
 		}
 
-		[Remark("The simplest factory method lets the dialog to determine the position and the color of the text")]
+		[Summary("The simplest factory method lets the dialog to determine the position and the color of the text")]
 		public static Text CreateText(string text) {
 			return new Text(0, 0, Hues.WriteColor, text);
 		}
 
-		[Remark("Basic factory method creates the text field with a given _relative_ position in the column"+
+		[Summary("Basic factory method creates the text field with a given _relative_ position in the column"+
 			   " and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, string text) {
 			return new Text(xPos, yPos, hue, text);
 		}
 
-		[Remark("Basic factory method creates the text field form the previously added text (by ID) with a given _relative_ " +
+		[Summary("Basic factory method creates the text field form the previously added text (by ID) with a given _relative_ " +
                 " position in the column and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, int textId) {
 			return new Text(xPos, yPos, hue, textId);
 		}
 
-		[Remark("Factory method awaiting the text string but no special hue (the default will be used)")]
+		[Summary("Factory method awaiting the text string but no special hue (the default will be used)")]
 		public static Text CreateText(int xPos, int yPos, string text) {
 			return new Text(xPos, yPos, Hues.WriteColor, text);
 		}
 
-		[Remark("Factory method awaiting the textId but no special hue (the default will be used)")]
+		[Summary("Factory method awaiting the textId but no special hue (the default will be used)")]
 		public static Text CreateText(int xPos, int yPos, int textId) {
 			return new Text(xPos, yPos, Hues.WriteColor, textId);
 		}
 
-		[Remark("Basic fafctory method for building a html gump - we can specify all")]
+		[Summary("Basic fafctory method for building a html gump - we can specify all")]
 		public static HTMLText CreateHTML(int xPos, int yPos, int width, int height, string text, bool hasBoundBox, bool scrollBar) {
 			return new HTMLText(xPos, yPos, width, height, text, hasBoundBox, scrollBar);
 		}
 
-		[Remark("Basic fafctory method for building a html gump - we can specify all but pass the text as ID")]
+		[Summary("Basic fafctory method for building a html gump - we can specify all but pass the text as ID")]
 		public static HTMLText CreateHTML(int xPos, int yPos, int width, int height, int textId, bool hasBoundBox, bool scrollBar) {
 			return new HTMLText(xPos, yPos, width, height, textId, hasBoundBox, scrollBar);
 		}
 
-		[Remark("Basic fafctory method for building a html gump - on a relative position")]
+		[Summary("Basic fafctory method for building a html gump - on a relative position")]
 		public static HTMLText CreateHTML(int width, int height, string text, bool hasBoundBox, bool scrollBar) {
 			return new HTMLText(0, 0, width, height, text, hasBoundBox, scrollBar);
 		}
 
-		[Remark("Create a html gump which takes the size and position from the parent")]
+		[Summary("Create a html gump which takes the size and position from the parent")]
 		public static HTMLText CreateHTML(string text, bool hasBoundBox, bool scrollable) {
 			return new HTMLText(0, 0, 0, 0, text, hasBoundBox, scrollable);
 		}
 
-		[Remark("Create a html gump which takes the size and position from the parent (using textID)")]
+		[Summary("Create a html gump which takes the size and position from the parent (using textID)")]
 		public static HTMLText CreateHTML(int textId, bool hasBoundBox, bool scrollable) {
 			return new HTMLText(0, 0, 0, 0, textId, hasBoundBox, scrollable);
 		}
 
-		[Remark("Create a html gump which takes the size and position from the parent "+
+		[Summary("Create a html gump which takes the size and position from the parent "+
                 "using default values for boundaries and scrollability (false both)")]
 		public static HTMLText CreateHTML(string text) {
 			return new HTMLText(0, 0, 0, 0, text, false, false);
 		}
 
-		[Remark("Create a html gump which takes the size and position from the parent (using textID) "+
+		[Summary("Create a html gump which takes the size and position from the parent (using textID) "+
                 "using default values for boundaries and scrollability (false both)")]
 		public static HTMLText CreateHTML(int textId) {
 			return new HTMLText(0, 0, 0, 0, textId, false, false);
 		}
 
-		[Remark("The text component class - it handles the text writing to the underlaying gump")]
+		[Summary("The text component class - it handles the text writing to the underlaying gump")]
 		public class Text : LeafGUTAComponent {
-			[Remark("The text hue in the input field - if not specified, the default will be used.")]
+			[Summary("The text hue in the input field - if not specified, the default will be used.")]
 			private int textHue;
-			[Remark("We have either ID of the used text, or the text string itself")]
+			[Summary("We have either ID of the used text, or the text string itself")]
 			private int textId;
 			private string text;
 
-			[Remark("First complete constructor - awaits the text in the string form."+
+			[Summary("First complete constructor - awaits the text in the string form."+
 					"Using color as int and not Hue enumeration")]
 			public Text(int xPos, int yPos, int hue, string text) {
 				this.xPos = xPos;
@@ -572,7 +572,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.text = text;
 			}
 
-			[Remark("First complete constructor - awaits the text in the string form")]
+			[Summary("First complete constructor - awaits the text in the string form")]
 			public Text(int xPos, int yPos, Hues hue, string text) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -580,7 +580,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.text = text;
 			}
 
-			[Remark("First complete constructor - awaits the text in the textId")]
+			[Summary("First complete constructor - awaits the text in the textId")]
 			public Text(int xPos, int yPos, Hues hue, int textId) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -588,7 +588,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.textId = textId;
 			}
 
-			[Remark("When added to the column we have to specify the position (count the absolute)")]
+			[Summary("When added to the column we have to specify the position (count the absolute)")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
@@ -604,7 +604,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 
-			[Remark("Call the underlaying gump istance's methods")]
+			[Summary("Call the underlaying gump istance's methods")]
 			internal override void WriteComponent() {
 				if (textId == 0) { //no text ID was specified, use the text version
 					gump.AddText(xPos, yPos, textHue, text);
@@ -626,14 +626,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("The HTML text component class - allows making the text scrollable")]
+		[Summary("The HTML text component class - allows making the text scrollable")]
 		public class HTMLText : LeafGUTAComponent {
 			private bool isScrollable, hasBoundBox;
-			[Remark("The text is either specified or passed as a text id")]
+			[Summary("The text is either specified or passed as a text id")]
 			private string text;
 			private int textId;
 
-			[Remark("First complete constructor - awaits the text in the string form")]
+			[Summary("First complete constructor - awaits the text in the string form")]
 			public HTMLText(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
 				this.xPos = x;
 				this.yPos = y;
@@ -644,7 +644,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.isScrollable = isScrollable;
 			}
 
-			[Remark("Second complete constructor - awaits the text in the textId")]
+			[Summary("Second complete constructor - awaits the text in the textId")]
 			public HTMLText(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
 				this.xPos = x;
 				this.yPos = y;
@@ -655,7 +655,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.isScrollable = isScrollable;
 			}
 
-			[Remark("When added to the column we have to specify the position (count the absolute)")]
+			[Summary("When added to the column we have to specify the position (count the absolute)")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
@@ -674,7 +674,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 
-			[Remark("Call the underlaying gump istance's methods")]
+			[Summary("Call the underlaying gump istance's methods")]
 			internal override void WriteComponent() {
 				if (textId == 0) { //no text ID was specified, use the text version
 					gump.AddHTMLGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);

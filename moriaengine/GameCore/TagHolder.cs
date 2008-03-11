@@ -171,7 +171,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		[Remark("Return enumerable containing all timers")]
+		[Summary("Return enumerable containing all timers")]
 		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {			
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
@@ -185,7 +185,7 @@ namespace SteamEngine {
 		#endregion Timers
 
 		#region Tags
-		[Remark("Return enumerable containing all tags")]
+		[Summary("Return enumerable containing all tags")]
 		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {			
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {

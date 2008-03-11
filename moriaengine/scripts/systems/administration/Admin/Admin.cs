@@ -23,10 +23,10 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog that will display the admin dialog")]
-	public class D_Admin : CompiledGump {
-		internal static readonly TagKey playersListTK = TagKey.Get("__players_list_");
-		internal static readonly TagKey plrListSortTK = TagKey.Get("__players_list_sorting_");
+	[Summary("Dialog that will display the admin dialog")]
+	public class D_Admin : CompiledGumpDef {
+		internal static readonly TagKey playersListTK = TagKey.Get("_players_list_");
+		internal static readonly TagKey plrListSortTK = TagKey.Get("_players_list_sorting_");
 		
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam lidi z parametru (if any)
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
 			ArrayList playersList = (ArrayList)args.GetTag(D_Admin.playersListTK);
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int row = (int)(gr.pressedButton - 10) / 4;
                 int buttNum = (int)(gr.pressedButton - 10) % 4;
                 Player plr = (Player)playersList[row];
-				GumpInstance newGi;
+				Gump newGi;
                 switch(buttNum) {
                     case 0: //player come
                         plr.Go(gi.Cont);
@@ -194,7 +194,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-    [Remark("Comparer for sorting players (chars) by name asc")]
+    [Summary("Comparer for sorting players (chars) by name asc")]
     public class CharComparerByName : IComparer<Character>, IComparer {
         public readonly static CharComparerByName instance = new CharComparerByName();
 
@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
     }
 
-    [Remark("Comparer for sorting players (chars) by location name asc")]
+    [Summary("Comparer for sorting players (chars) by location name asc")]
     public class CharComparerByLocation : IComparer<Character>, IComparer {
         public readonly static CharComparerByLocation instance = new CharComparerByLocation();
 
@@ -221,7 +221,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
     }
 
-    [Remark("Comparer for sorting players (chars) by account name asc")]
+    [Summary("Comparer for sorting players (chars) by account name asc")]
     public class CharComparerByAccount : IComparer<Character>, IComparer {
         public readonly static CharComparerByAccount instance = new CharComparerByAccount();
         

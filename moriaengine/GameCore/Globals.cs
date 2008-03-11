@@ -786,7 +786,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Remark("For sphere compatibility, this returns servertime in tenths of second")]
+		[Summary("For sphere compatibility, this returns servertime in tenths of second")]
 		public long Time {
 			get {
 				return (long) (HighPerformanceTimer.TicksToDMilliseconds(TimeInTicks)/100.0);

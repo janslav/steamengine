@@ -30,20 +30,20 @@ namespace SteamEngine.CompiledScripts {
 		Reply=1
 	}
 
-	public abstract class CompiledGump : Gump {
+	public abstract class CompiledGumpDef : GumpDef {
 		//private GumpBuilder builder;
-		internal GumpInstance gumpInstance = null; //this is to be used only in the abstract methods
-		public GumpInstance GumpInstance {
+		internal Gump gumpInstance = null; //this is to be used only in the abstract methods
+		public Gump GumpInstance {
 			get {
 				return gumpInstance;
 			}
 		}
 
-		public CompiledGump()
+		public CompiledGumpDef()
 			: base() {
 		}
 
-		public CompiledGump(string defName)
+		public CompiledGumpDef(string defName)
 			: base(defName) {
 		}
 
@@ -54,8 +54,8 @@ namespace SteamEngine.CompiledScripts {
 		public override void Unload() {
 		}
 
-		internal override GumpInstance InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			GumpInstance gi = new CompiledGumpInstance(this);
+		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			Gump gi = new CompiledGump(this);
 
 			if(args == null) {
 				gi.InputArgs = new DialogArgs(); //empty arguments
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public abstract void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args);
-		public abstract void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args);
+		public abstract void OnResponse(Gump gi, GumpResponse gr, DialogArgs args);
 
 		//RunUO interface
 		public void AddAlphaRegion(int x, int y, int width, int height) {
@@ -352,12 +352,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class CompiledGumpInstance : GumpInstance {
-		public CompiledGumpInstance(CompiledGump def)
+	public class CompiledGump : Gump {
+		public CompiledGump(CompiledGumpDef def)
 			: base(def) {
 		}
 		public override void OnResponse(uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] returnedNumbers) {
-			CompiledGump gdef = (CompiledGump) def;
+			CompiledGumpDef gdef = (CompiledGumpDef) def;
 			gdef.gumpInstance = this;
 			try {
 				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers), this.InputArgs);

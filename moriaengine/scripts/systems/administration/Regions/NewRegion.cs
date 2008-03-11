@@ -23,15 +23,15 @@ using SteamEngine.Regions;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog for creating a new region")]
-	public class D_New_Region : CompiledGump {
-		private static readonly TagKey defNameTK = TagKey.Get("__new_region_defname_");
-		private static readonly TagKey nameTK = TagKey.Get("__new_region_name_");
-		private static readonly TagKey homeposTK = TagKey.Get("__new_region_homepos_");
-		public static readonly TagKey parentDefTK = TagKey.Get("__new_region_parent_defname_");
+	[Summary("Dialog for creating a new region")]
+	public class D_New_Region : CompiledGumpDef {
+		private static readonly TagKey defNameTK = TagKey.Get("_new_region_defname_");
+		private static readonly TagKey nameTK = TagKey.Get("_new_region_name_");
+		private static readonly TagKey homeposTK = TagKey.Get("_new_region_homepos_");
+		public static readonly TagKey parentDefTK = TagKey.Get("_new_region_parent_defname_");
 		private static int width = 450;
 
-		[Remark("V argumentech (args) mohou prijit parametry pro dialogove editfieldy")]
+		[Summary("V argumentech (args) mohou prijit parametry pro dialogove editfieldy")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY, name, defname, home, parent; //predzadane hodnoty (if any)
 
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) { //exit
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if(gr.pressedButton == 1) { //ulozit				
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
+					Gump newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//podelal homepos
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("Chybne zadana home position - ocekavano '(4D)x,y,z,m'");
+					Gump newGi = D_Display_Text.ShowError("Chybne zadana home position - ocekavano '(4D)x,y,z,m'");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
@@ -142,30 +142,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if(name == null || name.Equals("") || defname == null || defname.Equals("")) {
 					//neco blbe s namem nebo defnamem
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("Name i defname musi byt zadano");
+					Gump newGi = D_Display_Text.ShowError("Name i defname musi byt zadano");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				} else if(!newRect.Contains(home)) {
 					//homepos by nesedla
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("Home pozice ("+gr.GetTextResponse(23)+") musi lezet v zadanem rectanglu ("+args.ArgsArray[0]+","+args.ArgsArray[1]+")-("+args.ArgsArray[2]+","+args.ArgsArray[3]+")");
+					Gump newGi = D_Display_Text.ShowError("Home pozice ("+gr.GetTextResponse(23)+") musi lezet v zadanem rectanglu ("+args.ArgsArray[0]+","+args.ArgsArray[1]+")-("+args.ArgsArray[2]+","+args.ArgsArray[3]+")");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				} else if(StaticRegion.GetByName(name) != null) {
 					//jmeno uz existuje
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("Region se jmenem "+name+" uz existuje");
+					Gump newGi = D_Display_Text.ShowError("Region se jmenem "+name+" uz existuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				} else if(StaticRegion.GetByDefname(defname) != null) {
 					//defname uz existuje
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("Region s defnamem "+defname+" uz existuje");
+					Gump newGi = D_Display_Text.ShowError("Region s defnamem "+defname+" uz existuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				} else if(parent == null) {
 					//parent je povinnost!
-					GumpInstance newGi = D_Display_Text.ShowError("Rodièovský region "+gr.GetTextResponse(24)+" neexistuje");
+					Gump newGi = D_Display_Text.ShowError("Rodièovský region "+gr.GetTextResponse(24)+" neexistuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
@@ -194,12 +194,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				DialogArgs newArgs = new DialogArgs();
 				newArgs.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameAsc);//zakladni trideni			
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_SelectParent>.Instance,newArgs);
+				Gump newGi = gi.Cont.Dialog(SingletonScript<D_SelectParent>.Instance,newArgs);
 				DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku				
 			}
 		}
 
-		[Remark("Create a new region. Function accessible from the game." +
+		[Summary("Create a new region. Function accessible from the game." +
 				"The function is designed to be triggered using .NewRegion" +
 				"but it can be also called from other dialogs - such as regions list...")]
 		[SteamFunction]

@@ -1007,13 +1007,13 @@ namespace SteamEngine {
 			return true;
 		} }
 		
-		public GumpInstance SendGump(Thing focus, Gump gump, DialogArgs args) {
+		public Gump SendGump(Thing focus, GumpDef gump, DialogArgs args) {
 			GameConn gc = Conn;
 			if (gc != null) {
 				if (gump == null) {
 					throw new ArgumentNullException("gump");
 				}
-				GumpInstance instance = gump.InternalConstruct(focus, this, args);
+				Gump instance = gump.InternalConstruct(focus, this, args);
 				if (instance != null) {
 					gc.SentGump(instance);
 					PacketSender.PrepareGump(instance);	//gc.Send(new SendGump(instance));
@@ -1024,7 +1024,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		public void DialogClose(GumpInstance instance, int buttonId) {
+		public void DialogClose(Gump instance, int buttonId) {
 			DialogClose(instance.uid, buttonId);
 		}
 		
@@ -1036,18 +1036,18 @@ namespace SteamEngine {
 			}
 		}
 		
-		public void DialogClose(Gump def, int buttonId) {
+		public void DialogClose(GumpDef def, int buttonId) {
 			GameConn gc = Conn;
 			if (gc != null) {
-				foreach (GumpInstance gi in gc.FindGumpInstances(def)) {
+				foreach (Gump gi in gc.FindGumpInstances(def)) {
 					DialogClose(gi.uid, buttonId);
 				}
 			}
 		}
 		
-		[Remark("Look into the dialogs dictionary and find out whether the desired one is opened"+
+		[Summary("Look into the dialogs dictionary and find out whether the desired one is opened"+
 				"(visible) or not")]
-		public bool HasOpenedDialog(Gump def) {
+		public bool HasOpenedDialog(GumpDef def) {
 			GameConn gc = Conn;
 			if(gc != null) {
 				if(gc.FindGumpInstances(def).Count != 0) {
@@ -1307,23 +1307,23 @@ namespace SteamEngine {
 		//They can even go negative (but not from using powers, which work only with enough points).
 		//You only gain points by sacrificing gold (that balances this with other magic classes since this has no reagent costs).
 		public abstract long TithingPoints { get; set; }
-		[Remark("Displays in client status as Physical resistance by default")]
+		[Summary("Displays in client status as Physical resistance by default")]
 		public abstract short StatusArmorClass { get; }
-		[Remark("Displays in client status as Energy resistance by default")]
+		[Summary("Displays in client status as Energy resistance by default")]
 		public abstract short StatusMindDefense { get; }
 
 		//Resistances do not have effs. Negative values impart penalties.
-		[Remark("Displays in client status as Fire resistance by default")]
+		[Summary("Displays in client status as Fire resistance by default")]
 		public abstract short ExtendedStatusNum1 { get; }
-		[Remark("Displays in client status as Cold resistance by default")]
+		[Summary("Displays in client status as Cold resistance by default")]
 		public abstract short ExtendedStatusNum2 { get; }
-		[Remark("Displays in client status as Poison resistance by default")]
+		[Summary("Displays in client status as Poison resistance by default")]
 		public abstract short ExtendedStatusNum3 { get; }
-		[Remark("Displays in client status as Luck by default")]
+		[Summary("Displays in client status as Luck by default")]
 		public abstract short ExtendedStatusNum5 { get; }
-		[Remark("Displays in client status as MinDamage by default")]
+		[Summary("Displays in client status as MinDamage by default")]
 		public abstract short ExtendedStatusNum6 { get; }
-		[Remark("Displays in client status as MaxDamage by default")]
+		[Summary("Displays in client status as MaxDamage by default")]
 		public abstract short ExtendedStatusNum7 { get; }
 
 		public abstract HighlightColor GetHighlightColorFor(AbstractCharacter viewer);

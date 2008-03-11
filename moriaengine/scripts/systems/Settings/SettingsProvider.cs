@@ -22,14 +22,14 @@ using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Class for accepting and setting all values edited in the info or settings dialogs")]
+	[Summary("Class for accepting and setting all values edited in the info or settings dialogs")]
 	public static class SettingsProvider {
 		//sotre the used saveable prefixes for particular Types
 		private static Dictionary<Type, string> prefixTypes = new Dictionary<Type, string>();
 
-		[Remark("Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for "+
+		[Summary("Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for "+
 				"displaying")]
-		public static List<SettingResult> AssertSettings(Hashtable editFields, GumpResponse resp, object target) {
+        public static List<SettingResult> AssertSettings(Dictionary<int, IDataFieldView> editFields, GumpResponse resp, object target) {
 			List<SettingResult> resList = new List<SettingResult>();
 			SettingResult oneRes = null;
 			foreach(int key in editFields.Keys) {
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return resList;
 		}
 
-		[Remark("Look on the outcome value and return the correct color for the dialog")]
+		[Summary("Look on the outcome value and return the correct color for the dialog")]
 		public static Hues ResultColor(SettingResult sres) {
 			switch(sres.Outcome) {
 				case SettingsOutcome.ChangedError:
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}			
 		}
 
-		[Remark("Count all successfully edited fields")]
+		[Summary("Count all successfully edited fields")]
 		public static int CountSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
 			foreach(SettingResult sres in results) {
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return resCntr;
 		}
 
-		[Remark("Count all failed fields")]
+		[Summary("Count all failed fields")]
 		public static int CountUnSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
 			foreach(SettingResult sres in results) {
@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return resCntr;
 		}
 
-		[Remark("Compare case insensitively the names of enumeration values if they have changed")]
+		[Summary("Compare case insensitively the names of enumeration values if they have changed")]
 		private static bool IsEnumValueChanged(IDataFieldView field, object target, string newEnumValueName) {
 			string oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
 			if(string.Compare(oldEnumValuName, newEnumValueName, true) == 0) {
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}			
 		}
 
-		[Remark("Examine the setings value's member type and get its prefix as used in ObjectSaver." +
+		[Summary("Examine the setings value's member type and get its prefix as used in ObjectSaver." +
 				"We will use it in the info/settings dialog for displaying and identification")]
 		public static string GetValuePrefix(IDataFieldView field, object target) {
 			object value = field.GetValue(target);
@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return valuePrefix;
 		}
 
-		[Remark("Get the settings values prefix and surround it by brackets." +
+		[Summary("Get the settings values prefix and surround it by brackets." +
 				"If the value has no prefix (it is of some special type, find out what" +
 				"type it is and return some description of it")]
 		public static string GetTypePrefix(Type t) {
@@ -181,7 +181,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Class carrying information about one edit field - its former value, its value after setting and "+
+	[Summary("Class carrying information about one edit field - its former value, its value after setting and "+
 			"the setting result value (success/fail)")]
 	public class SettingResult {
 		//former value of the field - before settings
@@ -202,7 +202,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			formerValue = field.GetValue(target);
 		}
 
-		[Remark("What is the result of the setting?")]
+		[Summary("What is the result of the setting?")]
 		public SettingsOutcome Outcome {
 			get {
 				return outcome;
@@ -212,14 +212,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Get the name from the IDataFieldView")]
+		[Summary("Get the name from the IDataFieldView")]
 		public string Name {
 			get {
 				return field.GetName(target);
 			}
 		}
 
-		[Remark("The value attempted to store which resluted in error - filled only in case of error :)")]
+		[Summary("The value attempted to store which resluted in error - filled only in case of error :)")]
 		public string ErroneousValue {
 			get {
 				//if the setting is OK, then return an empty string
@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Get the former value of the edited field - for comparation with the result")]
+		[Summary("Get the former value of the edited field - for comparation with the result")]
 		public string FormerValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)
@@ -245,7 +245,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("The actual value of the field - after the setting is made")]
+		[Summary("The actual value of the field - after the setting is made")]
 		public string CurrentValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)				

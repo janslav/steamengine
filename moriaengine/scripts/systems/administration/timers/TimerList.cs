@@ -24,16 +24,16 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog listing all object(tagholder)'s timers")]
-	public class D_TimerList : CompiledGump {
-		internal static readonly TagKey holderTK = TagKey.Get("__timer_holder_");
-		internal static readonly TagKey timerListTK = TagKey.Get("__timer_list_");
-		internal static readonly TagKey timerCriteriumTK = TagKey.Get("__timer_criterium_");
+	[Summary("Dialog listing all object(tagholder)'s timers")]
+	public class D_TimerList : CompiledGumpDef {
+		internal static readonly TagKey holderTK = TagKey.Get("_timer_holder_");
+		internal static readonly TagKey timerListTK = TagKey.Get("_timer_list_");
+		internal static readonly TagKey timerCriteriumTK = TagKey.Get("_timer_criterium_");
 
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 		
-		[Remark("Seznam parametru: 0 - thing jehoz timery zobrazujeme, " +
+		[Summary("Seznam parametru: 0 - thing jehoz timery zobrazujeme, " +
 				"	1 - index ze seznamu timeru ktery bude na strance jako prvni" +
 				"	2 - vyhledavaci kriterium pro jmena timeru(timerkeye)" +
 				"	3 - ulozeny timerlist pro pripadnou navigaci v dialogu")]
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam timeru bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<KeyValuePair<TimerKey, BoundTimer>> timerList = (List<KeyValuePair<TimerKey, BoundTimer>>)args.GetTag(D_TimerList.timerListTK);
 			int firstOnPage = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogArgs newArgs = new DialogArgs();
 						newArgs.SetTag(D_EditTimer.editedTimerTK, de.Value);//editovany timer
 						newArgs.SetTag(D_TimerList.holderTK, (TagHolder)args.GetTag(D_TimerList.holderTK));//majitel timeru
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_EditTimer>.Instance, newArgs); //posleme si parametr toho typka na nemz editujeme timer a taky timer sam
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_EditTimer>.Instance, newArgs); //posleme si parametr toho typka na nemz editujeme timer a taky timer sam
 						//uložit info o dialogu pro návrat						
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Retreives the list of all timers the given TagHolder has")]
+		[Summary("Retreives the list of all timers the given TagHolder has")]
 		private List<KeyValuePair<TimerKey, BoundTimer>> ListifyTimers(IEnumerable<KeyValuePair<TimerKey, BoundTimer>> tags, string criteria) {
 			List<KeyValuePair<TimerKey, BoundTimer>> timersList = new List<KeyValuePair<TimerKey, BoundTimer>>();
 			foreach (KeyValuePair<TimerKey, BoundTimer> entry in tags) {
@@ -178,7 +178,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return timersList;
 		}
 
-		[Remark("Display a timers ist. Function accessible from the game." +
+		[Summary("Display a timers ist. Function accessible from the game." +
 				"The function is designed to be triggered using .x TimersList(criteria)" +
 			    "but it can be used also normally .TimerList(criteria) to display runner's own timers")]
 		[SteamFunction]
@@ -199,7 +199,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Comparer for sorting timer dictionary entries by timers TimerKeys asc")]
+	[Summary("Comparer for sorting timer dictionary entries by timers TimerKeys asc")]
 	public class TimersComparer : IComparer<KeyValuePair<TimerKey, BoundTimer>> {
 		public readonly static TimersComparer instance = new TimersComparer();
 

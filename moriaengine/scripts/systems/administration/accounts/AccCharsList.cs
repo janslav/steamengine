@@ -23,8 +23,8 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog listing all characters of the account")]
-	public class D_Acc_Characters : CompiledGump {
+	[Summary("Dialog listing all characters of the account")]
+	public class D_Acc_Characters : CompiledGumpDef {
 		private static readonly TagKey accountTK = TagKey.Get("_account_with_chars_");
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			AbstractAccount acc = AbstractAccount.Get((string)args.ArgsArray[0]); //jmeno accountu
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			AbstractAccount acc = (AbstractAccount)args.GetTag(D_Acc_Characters.accountTK);
 			
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -97,13 +97,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (int)(gr.pressedButton - 10);
 				List<AbstractCharacter> chars = acc.Characters;
 				Character oneChar = (Character)chars[row];
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
+				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
 		}
 
-		[Remark("Display a list of characters on the account list. "+
+		[Summary("Display a list of characters on the account list. "+
 				"Usage - .x AccChars. or .AccChars('accname')")]
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {

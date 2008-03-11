@@ -15,7 +15,7 @@ namespace SteamEngine.CompiledScripts {
 	
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
 	public class SavedMemberAttribute : Attribute {
-		[Remark("The description will be used in settings dialog")]
+		[Summary("The description will be used in settings dialog")]
 		private string description;
 		private string category;
 
@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		public SavedMemberAttribute() {
 		}
 
-		[Remark("Allows us to _shortly_ describe the purpose of the member..."+
+		[Summary("Allows us to _shortly_ describe the purpose of the member..."+
 				"this info will be used for displaying it in 'settings' dialog."+
 				"We can also specify the settings category in which this member will be placed.")]
 		public SavedMemberAttribute(string desc, string cat) {
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Search through the members of the given class and find those marked with "+
+		[Summary("Search through the members of the given class and find those marked with "+
 				"'SaveableData' attribute - we will use them as a settings dialog subsection")]
 		public static List<MemberInfo> GetSaveableDataFromClass(Type type) {
 			List<MemberInfo> retList = new List<MemberInfo>();
@@ -178,7 +178,7 @@ namespace SteamEngine.CompiledScripts {
 			return retList;
 		}
 
-		[Remark("Get the SavedMember resp. SaveableData attribute and fetch the value of its 'description'"+
+		[Summary("Get the SavedMember resp. SaveableData attribute and fetch the value of its 'description'"+
 				"field. This will be displayed in the 'settings' dialog.")]
 		public static string GetSettingDescFor(MemberInfo mi) {
 			string retDesc = "";

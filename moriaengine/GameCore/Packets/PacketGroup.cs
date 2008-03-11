@@ -31,7 +31,7 @@ namespace SteamEngine.Packets {
 			get;
 		}
 		
-		[Remark("This sends the packets in this PacketGroup to a specific GameConn.")]
+		[Summary("This sends the packets in this PacketGroup to a specific GameConn.")]
 		public abstract void SendTo(GameConn conn);
 	}
 	

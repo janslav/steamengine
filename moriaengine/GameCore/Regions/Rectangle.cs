@@ -70,7 +70,7 @@ namespace SteamEngine.Regions {
 			return string.Format("({0}, {1})+({2}, {3})", this.MinX, this.MinY, this.MaxX, this.MaxY);
 		}
 
-		[Remark("Does the rectangle contain another rectangle completely?")]
+		[Summary("Does the rectangle contain another rectangle completely?")]
 		public bool Contains(AbstractRectangle rect) {
 			return Contains(rect.MinX, rect.MinY)//left lower
 					&& Contains(rect.MinX, rect.MaxY) //left upper
@@ -85,7 +85,7 @@ namespace SteamEngine.Regions {
 					|| Contains(rect.MaxX, rect.MinY);//right lower
 		}
 
-		[Remark("Do the two rectangles have any intersection?")]
+		[Summary("Do the two rectangles have any intersection?")]
 		public static bool Intersects(ImmutableRectangle a, ImmutableRectangle b) {
 			return a.IntersectsWith(b) || b.IntersectsWith(a);
 		}
@@ -128,7 +128,7 @@ namespace SteamEngine.Regions {
 			this.maxY = end.Y;
 		}*/		
 
-		[Remark("Return a rectangle created from the central point with the specific range around the point"+
+		[Summary("Return a rectangle created from the central point with the specific range around the point"+
 				"(square 'around')")]
 		public ImmutableRectangle(ushort x, ushort y, ushort range) {
 			this.minX = (ushort)(x - range);

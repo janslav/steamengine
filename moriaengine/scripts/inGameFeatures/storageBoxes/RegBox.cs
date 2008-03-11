@@ -49,12 +49,12 @@ namespace SteamEngine.CompiledScripts {
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Surprisingly the dialog that will display the RegBox guts")]
-	public class D_RegBox : CompiledGump {
+	public class D_RegBox : CompiledGumpDef {
 
-		private readonly TagKey tkButtonsForReags = TagKey.Get("_rb_ButtonsForReags_");
-		private readonly TagKey tkButtonsCount = TagKey.Get("_rb_ButtonsCount_");
+		private static readonly TagKey buttonsForReagsTK = TagKey.Get("_rb_ButtonsForReags_");
+		private static readonly TagKey buttonsCountTK = TagKey.Get("_rb_ButtonsCount_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
 			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int,ItemDef>();
 			int buttonsCount = 0;
@@ -101,12 +101,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 			}
-			this.GumpInstance.SetTag(tkButtonsCount, buttonsCount);
-			this.GumpInstance.SetTag(tkButtonsForReags, dictButtonForReags);
+			args.SetTag(D_RegBox.buttonsCountTK, buttonsCount);
+			args.SetTag(D_RegBox.buttonsForReagsTK, dictButtonForReags);
 			Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			RegBox box = (RegBox)gi.Focus;
 			if (!((Player)gi.Cont).CanReachWithMessage(box)) {
 				return;
@@ -116,8 +116,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.pressedButton == 1) {		// Add reags
 				((Player) gi.Cont).Target(SingletonScript<Targ_RegBox>.Instance, gi.Focus);
 			} else if (gr.pressedButton == 2) {		// OK -> give selected reags
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)gi.GetTag(tkButtonsForReags);
-				int buttonsCount = (int)gi.GetTag(tkButtonsCount);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)args.GetTag(D_RegBox.buttonsForReagsTK);
+				int buttonsCount = TagMath.IGetTag(args,D_RegBox.buttonsCountTK);
 				int i = 0;
 				int reagsToGive = 0;
 				while (i < buttonsCount) {
@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (gr.pressedButton >= 1000) {
 				int thisButtonValue = (int)gr.pressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)gi.GetTag(tkButtonsForReags);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)args.GetTag(D_RegBox.buttonsForReagsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).BackpackAsContainer);
 				Globals.lastNewItem.Amount = (uint)box.inBoxReags[buttonShowItemDef[thisButtonValue]];
 				box.inBoxReags.Remove(buttonShowItemDef[thisButtonValue]);

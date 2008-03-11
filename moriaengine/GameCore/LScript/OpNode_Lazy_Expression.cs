@@ -401,11 +401,11 @@ namespace SteamEngine.LScript {
 
 //a little hack for gumps - to make possible to use dialog layout methods without the "argo."
 			if ((vars.self == vars.defaultObject)&&(vars.scriptArgs != null)&&(vars.scriptArgs.argv.Length > 0)) {
-				ScriptedGumpInstance sgi = vars.scriptArgs.argv[0] as ScriptedGumpInstance;
+				ScriptedGump sgi = vars.scriptArgs.argv[0] as ScriptedGump;
 				if (sgi != null) {
-					if (ScriptedGumpInstance.IsMethodName(name)) {
+					if (ScriptedGump.IsMethodName(name)) {
 						desc = null;
-						memberNameMatched = resolver.Resolve(typeof(ScriptedGumpInstance), BindingFlags.Instance, MemberTypes.Method, out desc);
+						memberNameMatched = resolver.Resolve(typeof(ScriptedGump), BindingFlags.Instance, MemberTypes.Method, out desc);
 						ResolveAsClassMember(desc, out finalOpNode);
 						if (finalOpNode != null) {
 							OpNode_MethodWrapper onmw = (OpNode_MethodWrapper) finalOpNode;

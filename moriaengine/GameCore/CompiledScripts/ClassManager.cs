@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		[Remark("Register hook method (delegate). The hook method awaits Type as a parameter "+
+		[Summary("Register hook method (delegate). The hook method awaits Type as a parameter "+
 				"and returns bool value according to its implementation. Every managed Type will be"+
 				"sent to every delegate found in the delegList. The delegated methods in various classes"+
 				"can then perform any necessary actions on managed Types")]

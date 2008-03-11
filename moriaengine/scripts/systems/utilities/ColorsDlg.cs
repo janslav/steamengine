@@ -23,8 +23,8 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog that will display all colors examples - useful for determining which color we need.")]
-	public class D_Colors : CompiledGump {
+	[Summary("Dialog that will display all colors examples - useful for determining which color we need.")]
+	public class D_Colors : CompiledGumpDef {
 		static readonly int lastColor = 2999;
 
 		static readonly int columnsCnt = 10; //kolik sloupecku bude mit dialog?
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch(gr.pressedButton) {
                     case 0: //exit
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} 
 		}
 
-		[Remark("Prepare an array of colors to be displayed")]
+		[Summary("Prepare an array of colors to be displayed")]
 		private int[] prepareColorList(int startingColor) {			
 			int[] retArr = new int[lastColor - startingColor + 1];
 			for(int i = startingColor, j=0; i <= lastColor; i++,j++) {
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return retArr;
 		}
 
-		[Remark("Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)"+
+		[Summary("Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)"+
 				"or with one parameter (number of color which will be taken as the first in the dialog)")]
 		[SteamFunction]
 		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {

@@ -22,8 +22,10 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-    [Remark("Abstract class designed for implementing by scripted and compiled version of a input dialog def")]
-    public abstract class AbstractInputDef : CompiledGump {
+    [Summary("Abstract class designed for implementing by scripted and compiled version of a input dialog def")]
+    public abstract class AbstractInputDef : CompiledGumpDef {
+        protected static readonly TagKey inputParamsTK = TagKey.Get("_input_params_");
+
         public AbstractInputDef()
             : base() {
         }
@@ -32,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             : base(defname) {
         }
 
-        [Remark("Static 'factory' method for getting the instance of an existing input def.")]
+        [Summary("Static 'factory' method for getting the instance of an existing input def.")]
         public static new AbstractInputDef Get(string defname) {
             AbstractScript script;
             byDefname.TryGetValue(defname, out script);
@@ -40,28 +42,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             return script as AbstractInputDef;
         }
 
-        [Remark("Label of the input dialog")]
+        [Summary("Label of the input dialog")]
         public abstract string Label {
             get;
         }
 
-        [Remark("Pre-inserted default input value")]
+        [Summary("Pre-inserted default input value")]
         public abstract string DefaultInput {
             get;
         }       
 
-        [Remark("Method called when clicked on the OK button in the dialog, sending the filled text")]
+        [Summary("Method called when clicked on the OK button in the dialog, sending the filled text")]
         public abstract void Response(Character sentTo, TagHolder focus, string filledText);
 
-        [Remark("Construct method creates the dialog itself")]
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
-            //store all input parameters on the dialog instance
-            if(sa == null) { //no params specified, prepare the empty params field 
-                //there will be at least one parameter (the inputted text)
-                this.GumpInstance.SetTag(TagKey.Get("input_params"), new object[1]);
-            } else {
-                this.GumpInstance.SetTag(TagKey.Get("input_params"), sa);
-            }
+        [Summary("Construct method creates the dialog itself")]
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+            //there should be a input-text in the args params array
 
             ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
 
@@ -88,8 +84,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             dialogHandler.WriteOut();
         }
 
-        [Remark("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+        [Summary("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
             switch(gr.pressedButton) {
                 case 0: //exit or rightclick
 					//znovuzavolat pripadny predchozi dialog
@@ -106,7 +102,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
     }
 
-    [Remark("Class for displaying the input dialogs from LSCript using the [inputdef foo] section")]
+    [Summary("Class for displaying the input dialogs from LSCript using the [inputdef foo] section")]
     public sealed class ScriptedInputDialogDef : AbstractInputDef {
         private string label;
         private string defaultInput;
@@ -121,8 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             string defname = input.headerName.ToLower();
 
             AbstractScript def;
-
             byDefname.TryGetValue(defname, out def);
+
             ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
             if(id == null) {
                 if(def != null) {//it isnt ScriptedInputDialogDef
@@ -171,24 +167,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             return id;
         }
 
-        [Remark("Action called when the input dialog is confirmed. The parameters of the call will be" +
+        [Summary("Action called when the input dialog is confirmed. The parameters of the call will be" +
                 "1st - the inputted text, followed by the params the input dialog was called with")]
         public override void Response(Character sentTo, TagHolder focus, string filledText) {
             //prepend the input text to previous input parameters
-            object[] pars = (object[])this.GumpInstance.GetTag(TagKey.Get("input_params"));
-            object[] newPars = new object[pars.Length+1]; //create a new bigger array, we need to add a new 0th value...
-            Array.Copy(pars, 0, newPars, 1, pars.Length); //copy all old values to the new field beginning with the index 1
+            object[] oldParams = GumpInstance.InputArgs.ArgsArray;
+            object[] newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
+            Array.Copy(oldParams, 0, newPars, 1, oldParams.Length); //copy all old values to the new field beginning with the index 1
             newPars[0] = filledText; //filled text will be 0th                        
             on_response.Run(focus, newPars); //pass the filled text value
         }
 
 
-        [Remark("Unregister the input dialog def from the other defs")]
+        [Summary("Unregister the input dialog def from the other defs")]
         private static void UnRegisterInputDialogDef(ScriptedInputDialogDef id) {
             byDefname.Remove(id.Defname);
         }
 
-        [Remark("Register the input dialog def among the other defs")]
+        [Summary("Register the input dialog def among the other defs")]
         private static void RegisterInputDialogDef(ScriptedInputDialogDef id) {
             byDefname[id.Defname] = id;
         }
@@ -211,7 +207,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
     }
 
-    [Remark("Class for using input dialogs implemented in C#")]
+    [Summary("Class for using input dialogs implemented in C#")]
     public abstract class CompiledInputDef : AbstractInputDef {
 
     }

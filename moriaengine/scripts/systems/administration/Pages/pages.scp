@@ -187,8 +187,7 @@ endif
 label="Odpoved na page"
 default="Page byla vyresena"
 
-on=@response //argv0 - the reply text, argv1 - the page object, argv2 - sortby info, 
-	     //argv3 - firsti (the number of the first page to be displayed in the list
+on=@response //argv0 - the reply text, argv1 - the page object
 arg thePage = <argv(1)>
 thePage.replied = true
 thePage.reply = "<src.Name>(<src.Account.Name>): <argv(0)>" //text odpovedi

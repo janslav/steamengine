@@ -90,7 +90,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Remark("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
+		[Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
 		public virtual bool CanSeeForUpdate(Thing target) {
 			return CanSeeImpl(this, target.TopPoint, target);
 		}
@@ -164,7 +164,7 @@ namespace SteamEngine {
 		//    return DenyResult.Allow;
 		//}
 
-		[Remark("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
+		[Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {
 			return CanReachFromAt(this, target.TopPoint, target, true);
 		}

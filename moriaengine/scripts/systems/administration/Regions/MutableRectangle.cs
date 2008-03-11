@@ -24,7 +24,7 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	[Remark("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
+	[Summary("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
 				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, minY, maxX, maxY;
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Alters all four rectangle's position coordinates for specified tiles in X and Y axes."+
+		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes."+
 				"This time it changes 'this'")]
 		public MutableRectangle Move(int timesX, int timesY) {
 			minX += (ushort)(minX + timesX);
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 			return this;
 		}
 
-		[Remark("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the unmutable ones)")]
+		[Summary("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the unmutable ones)")]
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
 			List<MutableRectangle> retList = new List<MutableRectangle>();
 			foreach(ImmutableRectangle regRect in reg.Rectangles) {

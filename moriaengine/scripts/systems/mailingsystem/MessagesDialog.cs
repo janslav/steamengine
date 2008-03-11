@@ -22,12 +22,12 @@ using SteamEngine.LScript;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {	
-	[Remark("Dialog that will display the list of clients delayed messages")]
-	public class D_DelayedMessages : CompiledGump {
-		internal static readonly TagKey msgsSortingTK = TagKey.Get("__messages_sorting_");
-		internal static readonly TagKey msgsListTK = TagKey.Get("__messages_list_");
+	[Summary("Dialog that will display the list of clients delayed messages")]
+	public class D_DelayedMessages : CompiledGumpDef {
+		internal static readonly TagKey msgsSortingTK = TagKey.Get("_messages_sorting_");
+		internal static readonly TagKey msgsListTK = TagKey.Get("_messages_list_");
 
-		[Remark("Display the list of the messages")]
+		[Summary("Display the list of the messages")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ArrayList messagesList = null;
 			if(!args.HasTag(D_DelayedMessages.msgsListTK)) {
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam zprav z kontextu (mohl jiz byt trideny apd.)
 			ArrayList messagesList = (ArrayList)args.GetTag(D_DelayedMessages.msgsListTK);
             if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							msg.color = msg.color + 3;//trosku ztmavit barvu
 						}
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
-						GumpInstance newGi = gi.Cont.Dialog(D_Display_Text.Instance, new DialogArgs("Text zprávy", msg.text));
+						Gump newGi = gi.Cont.Dialog(D_Display_Text.Instance, new DialogArgs("Text zprávy", msg.text));
 						//stacknout messageslist pro navrat
 						DialogStacking.EnstackDialog(gi, newGi);
                         break;

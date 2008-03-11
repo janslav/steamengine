@@ -22,11 +22,11 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog listing all regions and enabling us to edit them")]
-	public class D_Regions : CompiledGump {
-		public static readonly TagKey regsListTK = TagKey.Get("__regions_list_");//bude vyuzit jeste jinde, proto public a static
-		public static readonly TagKey regsSearchTK = TagKey.Get("__regions_list_search_crit_");
-		public static readonly TagKey regsSortingTK = TagKey.Get("__regions_list_sorting_");
+	[Summary("Dialog listing all regions and enabling us to edit them")]
+	public class D_Regions : CompiledGumpDef {
+		public static readonly TagKey regsListTK = TagKey.Get("_regions_list_");//bude vyuzit jeste jinde, proto public a static
+		public static readonly TagKey regsSearchTK = TagKey.Get("_regions_list_search_crit_");
+		public static readonly TagKey regsSortingTK = TagKey.Get("_regions_list_sorting_");
 		private static int width = 600;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam regionu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<StaticRegion> regionsList = (List<StaticRegion>)args.GetTag(D_Regions.regsListTK);
 			int firstOnPage = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);
@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //zalozit novy region
 						//jako parametry vzit jednoduse 4 zakladni souradnice rectanglu
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance, new DialogArgs(0,0,0,0));
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance, new DialogArgs(0,0,0,0));
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //vyhledavat / zuzit vyber
@@ -157,7 +157,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = ((int)gr.pressedButton - 10) / 2;
 				int buttNo = ((int)gr.pressedButton - 10) % 2;
 				StaticRegion region = regionsList[row];
-				GumpInstance newGi;
+				Gump newGi;
 				switch(buttNo) {
 					case 0: //region info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(region));
@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}		
 
-		[Remark("Display regions. Function accessible from the game." +
+		[Summary("Display regions. Function accessible from the game." +
 				"The function is designed to be triggered using .RegionsList" +
 				"but it can be also called from other dialogs - such as info..." +
 				"Default sorting is by Name, asc.")]
@@ -206,7 +206,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Comparer for sorting regions by name asc")]
+	[Summary("Comparer for sorting regions by name asc")]
 	public class RegionComparerByName : IComparer<StaticRegion> {
 		public readonly static RegionComparerByName instance = new RegionComparerByName();
 
@@ -215,7 +215,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Comparer for sorting regions by defname name asc")]
+	[Summary("Comparer for sorting regions by defname name asc")]
 	public class RegionComparerByDefname : IComparer<StaticRegion> {
 		public readonly static RegionComparerByDefname instance = new RegionComparerByDefname();
 
