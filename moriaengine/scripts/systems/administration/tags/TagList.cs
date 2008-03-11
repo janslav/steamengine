@@ -23,16 +23,16 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog listing all object(tagholder)'s tags")]
-	public class D_TagList : CompiledGump {
-		internal static readonly TagKey holderTK = TagKey.Get("__tag_holder_");
-		internal static readonly TagKey tagListTK = TagKey.Get("__tag_list_");
-		internal static readonly TagKey tagCriteriumTK = TagKey.Get("__tag_criterium_");
+	[Summary("Dialog listing all object(tagholder)'s tags")]
+	public class D_TagList : CompiledGumpDef {
+		internal static readonly TagKey holderTK = TagKey.Get("_tag_holder_");
+		internal static readonly TagKey tagListTK = TagKey.Get("_tag_list_");
+		internal static readonly TagKey tagCriteriumTK = TagKey.Get("_tag_criterium_");
 
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		[Remark("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, "+
+		[Summary("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, "+
 				"	1 - index ze seznamu tagu ktery bude na strance jako prvni"+
 				"	2 - vyhledavaci kriterium pro jmena tagu"+
 				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>)args.GetTag(D_TagList.tagListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //zobrazit info o vysvetlivkach
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						DialogStacking.EnstackDialog(gi, newGi);						
 						break;   						
                     case 3: //zalozit novy tag.
@@ -186,14 +186,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //info
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(tagOwner.GetTag(de.Key)));
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(tagOwner.GetTag(de.Key)));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}				
 			}
 		}
 
-		[Remark("Retreives the list of all tags the given TagHolder has")]
+		[Summary("Retreives the list of all tags the given TagHolder has")]
 		private List<KeyValuePair<TagKey, Object>> ListifyTags(IEnumerable<KeyValuePair<TagKey, Object>> tags, string criteria) {
 			List<KeyValuePair<TagKey, Object>> tagsList = new List<KeyValuePair<TagKey, Object>>();
 			foreach (KeyValuePair<TagKey, Object> entry in tags) {
@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return tagsList;
 		}
 
-		[Remark("Display an account list. Function accessible from the game."+
+		[Summary("Display an account list. Function accessible from the game."+
 				"The function is designed to be triggered using .x TagsList(criteria)"+
 			    "but it can be used also normally .TagList(criteria) to display runner's own tags")]
 		[SteamFunction]
@@ -228,7 +228,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Comparer for sorting tag dictionary entries by tags name asc")]
+	[Summary("Comparer for sorting tag dictionary entries by tags name asc")]
 	public class TagsComparer : IComparer<KeyValuePair<TagKey, Object>> {
 		public readonly static TagsComparer instance = new TagsComparer();
 

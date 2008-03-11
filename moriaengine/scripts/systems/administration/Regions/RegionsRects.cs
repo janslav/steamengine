@@ -22,15 +22,15 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog for dispalying the regions rectangles")]
-	public class D_Region_Rectangles : CompiledGump {
-		internal static readonly TagKey regionTK = TagKey.Get("__region_with_rects_");
-		internal static readonly TagKey rectsListTK = TagKey.Get("__rects_list_");
+	[Summary("Dialog for dispalying the regions rectangles")]
+	public class D_Region_Rectangles : CompiledGumpDef {
+		internal static readonly TagKey regionTK = TagKey.Get("_region_with_rects_");
+		internal static readonly TagKey rectsListTK = TagKey.Get("_rects_list_");
 
 
 		private static int width = 450;
 
-		[Remark("Seznam parametru: 0 - region" +
+		[Summary("Seznam parametru: 0 - region" +
 				"	1 - paging"+
 				"	2 - rectangly v listu(je totiž možno pøidávat dynamicky)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
 			StaticRegion reg = (StaticRegion)args.GetTag(D_Region_Rectangles.regionTK);
 			List<MutableRectangle> rectsList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						//nemazat rectangly - budeme do nich ukladat novy						
 						DialogArgs newArgs = new DialogArgs(0, 0, 0, 0);//zakladni souradnice rectanglu
 						newArgs.SetTag(D_Region_Rectangles.rectsListTK, rectsList); //seznam budeme potrebovat
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, newArgs);
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //ulozit
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							//zobrazime info a zmizime (z infa bude navrat k predchozimu dlg neb tento nestackneme)
 							break;
 						} else { //nekde to neproslo
-							GumpInstance infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
+							Gump infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
 							DialogStacking.EnstackDialog(gi, infoGi); //vlozime dialog do stacku pro navrat						
 							break;
 						}
@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = ((int)gr.pressedButton - 10) / 2;
 				int buttNo = ((int)gr.pressedButton - 10) % 2;
 				MutableRectangle rect = rectsList[row];
-				GumpInstance newGi;
+				Gump newGi;
 				switch(buttNo) {
 					case 0: //region rectangle info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(rect));

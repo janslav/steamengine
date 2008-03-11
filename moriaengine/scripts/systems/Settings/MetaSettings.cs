@@ -23,11 +23,11 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Extend this class in order to obtain a new Category to the settings dialog")]
+	[Summary("Extend this class in order to obtain a new Category to the settings dialog")]
 	public abstract class SettingsMetaCategory {
 	}
 
-	[Remark("Viewable class representing the Settings Categories")]
+	[Summary("Viewable class representing the Settings Categories")]
 	[ViewableClass("Settings Categories")]
 	public class SettingsCategories : SettingsMetaCategory {
 		/*The class or its subclasses can contain properties/fields which will be 

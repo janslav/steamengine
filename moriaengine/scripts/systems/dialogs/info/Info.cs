@@ -24,19 +24,15 @@ using System.Diagnostics;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Class that will display the info dialog")]
-	public class D_Info : CompiledGump {
-		//keys - button or edit field index; value - related IDataFieldView for performing some action
-		private Hashtable buttons;
-		private Hashtable editFlds;
-		internal static TagKey infoizedTargT = TagKey.Get("__info_target_");
-		internal static TagKey pagingButtonsTK = TagKey.Get("__paging_buttons_");
-		internal static TagKey pagingFieldsTK = TagKey.Get("__paging_fields_");
+	[Summary("Class that will display the info dialog")]
+	public class D_Info : CompiledGumpDef {
+		internal static TagKey infoizedTargT = TagKey.Get("_info_target_");
+		internal static TagKey pagingButtonsTK = TagKey.Get("_paging_buttons_");
+		internal static TagKey pagingFieldsTK = TagKey.Get("_paging_fields_");
+        internal static TagKey btnsIndexPairingTK = TagKey.Get("_button_index_pairing_");
+        internal static TagKey editFieldsIndexPairingTK = TagKey.Get("_edit_fields_index_pairing_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			buttons = new Hashtable();
-			editFlds = new Hashtable();
-
 			object target = args.ArgsArray[0];//target of info dialog
 			
 			//first argument is the object being infoized - we will get its DataView first
@@ -44,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstItemButt = TagMath.IGetTag(args, D_Info.pagingButtonsTK);//buttons paging 1st item index
 			int firstItemFld = TagMath.IGetTag(args, D_Info.pagingFieldsTK);//fields paging 1st item index
 			
-			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance, buttons, editFlds);
+			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
 			dlg.SetLocation(50, 50);
 			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
@@ -114,7 +110,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			object target = args.ArgsArray[0];//target of info dialog
 
 			if(gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
@@ -123,7 +119,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //store
-						List<SettingResult> reslist = SettingsProvider.AssertSettings(editFlds, gr, target);
+                        Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>)args.GetTag(D_Info.editFieldsIndexPairingTK);
+
+                        List<SettingResult> reslist = SettingsProvider.AssertSettings(editFieldsPairing, gr, target);
 						DialogStacking.ResendAndRestackDialog(gi);
 						if(reslist.Count > 0) {
 							//show the results dialog (if there is any change)
@@ -133,7 +131,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 						break;
 					case 2: //info
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						DialogStacking.EnstackDialog(gi, newGi); //stack self for return						
 						break;
 				}			
@@ -141,8 +139,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//kliknuto na paging? 
 				return;			
 			} else { //info dialog buttons
-				//get the IDataFieldView and do something
-				IDataFieldView idfv = (IDataFieldView)buttons[(int)gr.pressedButton];
+                Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>)args.GetTag(D_Info.btnsIndexPairingTK);
+                
+                //get the IDataFieldView and do something
+                IDataFieldView idfv = (IDataFieldView)btnsPairing[(int)gr.pressedButton];
 
 				if(idfv.IsButtonEnabled) {
 					DialogStacking.ResendAndRestackDialog(gi);
@@ -155,7 +155,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						fieldValueType = fieldValue.GetType();
 					}
 					if (fieldValueType != null) {
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
 						DialogStacking.EnstackDialog(gi, newGi); //store						
 						//display info dialog on this datafield
 					} else {
@@ -165,7 +165,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Display an info dialog. Function accessible from the game." +
+		[Summary("Display an info dialog. Function accessible from the game." +
 				"The function is designed to be triggered using .x info" +
 				"it can be used also normally .info to display runner's own info dialog"+
 				"finally - we can use it also like .info(obj) to display the info about obj")]
@@ -181,7 +181,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Display a settings dialog. Function accessible from the game." +
+		[Summary("Display a settings dialog. Function accessible from the game." +
 				"The function is designed to be triggered using .x settings, but it will be" +
 				"mainly used from the SettingsCategories dialog on a various buttons")]
 		[SteamFunction]

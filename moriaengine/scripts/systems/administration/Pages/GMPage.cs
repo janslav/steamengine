@@ -30,24 +30,24 @@ namespace SteamEngine.CompiledScripts {
         [SavedMember]
 		public static Hashtable gmPages = new Hashtable();
 
-		[Remark("Returns a copy of the GMPages Hashtable (usable for sorting etc.)")]
+		[Summary("Returns a copy of the GMPages Hashtable (usable for sorting etc.)")]
 		public static Hashtable GmPages {
 			get {
 				return new Hashtable(gmPages);
 			}
 		}
 
-		[Remark("Simple 'add' method.")]
+		[Summary("Simple 'add' method.")]
 		public static void AddNewPage(GMPageEntry newPage) {
 			gmPages[newPage.sender] = newPage;
 		}
 
-		[Remark("Simple 'remove' method.")]
+		[Summary("Simple 'remove' method.")]
 		public static void DeletePage(GMPageEntry thePage) {
 			gmPages.Remove(thePage.sender);
 		}
 
-		[Remark("Sorting method: Sorting criteria available are nameUp, accountUp, timeUp")]
+		[Summary("Sorting method: Sorting criteria available are nameUp, accountUp, timeUp")]
 		public static ArrayList GetSortedBy(SortingCriteria criterion) {
 			ArrayList pages = new ArrayList(gmPages.Values);
 			switch (criterion) {
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 			return pages;
 		}
 
-		[Remark("Find all available GMs that are online and notify them of the new page.")]
+		[Summary("Find all available GMs that are online and notify them of the new page.")]
 		private static void NotifyOnlineGMs(AbstractCharacter sender) {
 			bool isGMOnline = false;
 			foreach (Character plr in Server.AllPlayers) {
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Return the number of unresolved pages  - that means count all pages that have not been replied (or deleted :) )")]
+		[Summary("Return the number of unresolved pages  - that means count all pages that have not been replied (or deleted :) )")]
 		public static int CountUnresolved() {
 			int counter = 0;
 			foreach (GMPageEntry page in gmPages.Values) {
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		[Remark("Create a new gmpage, store it in the gm pages table and notify the sender about the state")]
+		[Summary("Create a new gmpage, store it in the gm pages table and notify the sender about the state")]
 		public static void Page(AbstractCharacter sender, ScriptArgs text) {
 			if (text == null || text.Args.Equals("")) {
 				sender.SysMessage("Odmitnuta prazdna page");
@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparator serving for sorting the list of pages by name of their author")]
+	[Summary("Comparator serving for sorting the list of pages by name of their author")]
 	class GMPageNameComparator : IComparer {
 		public static GMPageNameComparator instance = new GMPageNameComparator();
 
@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparator serving for sorting the list of pages by name their creation time")]
+	[Summary("Comparator serving for sorting the list of pages by name their creation time")]
 	class GMPageTimeComparator : IComparer {
 		public static GMPageTimeComparator instance = new GMPageTimeComparator();
 
@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparator serving for sorting the list of pages by teir creators account name")]
+	[Summary("Comparator serving for sorting the list of pages by teir creators account name")]
 	class GMPageAccountComparator : IComparer {
 		public static GMPageAccountComparator instance = new GMPageAccountComparator();
 

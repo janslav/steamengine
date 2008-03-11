@@ -23,7 +23,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public class E_CommandsAuthorization_Global : CompiledTriggerGroup {
-		[Remark("Use this const for all non-player functions where the plevel number has no special meaning "+
+		[Summary("Use this const for all non-player functions where the plevel number has no special meaning "+
                 "except for differentiation 'player available function' / 'player forbidden function'")]
 		const int MORE_THAN_PLAYER   = 2;
 
@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 		const int PLEVEL_DEVELOPER   = 6;
 		const int PLEVEL_OWNER       = 7;
 
-		[Remark("Meaning all commands except the ones for higher levels")]
+		[Summary("Meaning all commands except the ones for higher levels")]
 		const int plevelToAllCommands = 4;
 
 		Dictionary<string, int> commands = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);

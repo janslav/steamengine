@@ -19,12 +19,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Data source for all paging dialogs (those, where there are displayed larger "+
+	[Summary("Data source for all paging dialogs (those, where there are displayed larger "+
 			"collections of data that need to be divided to more pages")]
 	public interface IPageableCollection {
-		[Remark("Field for checking the OutOfBounds problem :)")]
+		[Summary("Field for checking the OutOfBounds problem :)")]
 		int LineCount { get; }
-		[Remark("Returns an enumeration for a subset of data (for one single page)")]
+		[Summary("Returns an enumeration for a subset of data (for one single page)")]
 		IEnumerable GetPage(int firstLineIndex, int maxLinesOnPage);		
 	}
 
@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		new IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage);		
 	}
 
-	[Remark("Wrapper class for List<T> which allows us to use the paging")]
+	[Summary("Wrapper class for List<T> which allows us to use the paging")]
 	public class PageableList<T> : IPageableCollection<T> {
 		private List<T> wrappedList;
 
@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 		#endregion
 
-		[Remark("Inner class for getting the exact range from the wrappedList. Similar to AbstractPage.")]
+		[Summary("Inner class for getting the exact range from the wrappedList. Similar to AbstractPage.")]
 		public class Page : IEnumerator<T>, IEnumerable<T> {
 			private int nextIndex, upperBound;
 			private List<T> wrappedList;
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 
-			[Remark("The main iteration method. Make checks if we are not exceeding the page boundaries"+
+			[Summary("The main iteration method. Make checks if we are not exceeding the page boundaries"+
 					"and check also if we are not exceeding the wrapped list boundaries...")]
 			public bool MoveNext() {
 				if(nextIndex < upperBound && nextIndex < wrappedList.Count) {

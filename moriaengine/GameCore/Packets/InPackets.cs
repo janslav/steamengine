@@ -592,7 +592,7 @@ namespace SteamEngine.Packets {
 			packetLenUsed = DecodeShort(1);
 			//uint player = DecodeInt(3); //we dont need this, the gumpinstance does remember it
 			uint gumpUid = DecodeUInt(7);
-			GumpInstance gi = c.PopGump(gumpUid);
+			Gump gi = c.PopGump(gumpUid);
 			if (gi != null) {
 				uint buttonId = DecodeUInt(11);
 				uint switchesCount = DecodeUInt(15);
@@ -639,7 +639,7 @@ namespace SteamEngine.Packets {
 			}
 		}
 
-		private void SendGumpBack(GameConn c, GumpInstance gi, ResponseText[] responseTexts) {
+		private void SendGumpBack(GameConn c, Gump gi, ResponseText[] responseTexts) {
 			//first we copy the responsetext into the default texts for the textentries so that they don't change.
 			foreach (ResponseText rt in responseTexts) {
 				int defaultTextId;

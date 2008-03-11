@@ -27,11 +27,11 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[Dialogs.ViewableClass]
 	public class ScriptedAccount : AbstractAccount {
-		[Remark("GM written notes for this account")]
+		[Summary("GM written notes for this account")]
 		[Dialogs.NoShow]
 		List<AccountNote> accNotes = new List<AccountNote>();
 
-		[Remark("Crimes commited by this account (AFK, bugs, roughing etc.)")]
+		[Summary("Crimes commited by this account (AFK, bugs, roughing etc.)")]
 		[Dialogs.NoShow]
 		List<AccountCrime> accCrimes = new List<AccountCrime>();
 
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		[Remark("Returns a copy of the AccNotes Dictionary (usable for sorting etc.)")]
+		[Summary("Returns a copy of the AccNotes Dictionary (usable for sorting etc.)")]
 		[Dialogs.NoShow]
 		public List<AccountNote> AccNotes {
 			get {
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Returns a copy of the AccCrimes Dictionary (usable for sorting etc.)")]
+		[Summary("Returns a copy of the AccCrimes Dictionary (usable for sorting etc.)")]
 		[Dialogs.NoShow]
 		public List<AccountCrime> AccCrimes {
 			get {
@@ -65,19 +65,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Add a new note")]
+		[Summary("Add a new note")]
 		public void AddNote(AccountNote note) {
 			accNotes.Add(note);
 		}
-		[Remark("Remove one selected note (cannot be removed from AccNotes property")]
+		[Summary("Remove one selected note (cannot be removed from AccNotes property")]
 		public void RemoveNote(AccountNote note) {
 			accNotes.Remove(note);
 		}
-		[Remark("Add a new crime")]
+		[Summary("Add a new crime")]
 		public void AddCrime(AccountCrime crime) {
 			accCrimes.Add(crime);
 		}
-		[Remark("Remove one selected crime (cannot be removed from AccCrimes property")]		
+		[Summary("Remove one selected crime (cannot be removed from AccCrimes property")]		
 		public void RemoveCrime(AccountCrime crime) {
 			accCrimes.Remove(crime);
 		}
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts {
 			base.Save(output);
 		}
 
-		[Remark("Method for retreiving a sublist of GameAccounts which names contain "+
+		[Summary("Method for retreiving a sublist of GameAccounts which names contain "+
 				"a specified string")]
 		public static List<ScriptedAccount> RetreiveByStr(string searched) {
 			List<ScriptedAccount> retList = new List<ScriptedAccount>();

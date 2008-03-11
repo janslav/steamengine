@@ -22,11 +22,11 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog listing all regions for selecting single one for parent dialog")]
-	public class D_SelectParent : CompiledGump {
+	[Summary("Dialog listing all regions for selecting single one for parent dialog")]
+	public class D_SelectParent : CompiledGumpDef {
 		private static int width = 450;
 
-		[Remark("Seznam parametru: 0 - vyhledavaci retezec" +
+		[Summary("Seznam parametru: 0 - vyhledavaci retezec" +
 				"	1 - paging" +
 				"	2 - seznam regionu" +
 				"	3 - trideni")]
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam regionu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<StaticRegion> regionsList = (List<StaticRegion>)args.GetTag(D_Regions.regsListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (int)gr.pressedButton - 10;
 				StaticRegion region = regionsList[row];
 				//vezmem z vybraneho regionu jeho defname a predame do predchoziho dialogu
-				GumpInstance previousGi = DialogStacking.PopStackedDialog(gi);
+				Gump previousGi = DialogStacking.PopStackedDialog(gi);
 				previousGi.InputArgs.SetTag(D_New_Region.parentDefTK,region.Defname); //to je zalozeni noveho regionu (posleme si defname parenta)
 				DialogStacking.ResendAndRestackDialog(previousGi);				
 			}

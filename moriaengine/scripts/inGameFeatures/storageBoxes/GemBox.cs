@@ -53,10 +53,10 @@ namespace SteamEngine.CompiledScripts {
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Surprisingly the dialog that will display the GemBox guts")]
-	public class D_GemBox : CompiledGump {
+	public class D_GemBox : CompiledGumpDef {
 
-		private readonly TagKey tkButtonsForGems = TagKey.Get("_rb_ButtonsForGems_");
-		private readonly TagKey tkButtonsCount = TagKey.Get("_rb_ButtonsCount_");
+		private static readonly TagKey buttonsForGemsTK = TagKey.Get("_rb_ButtonsForGems_");
+		private static readonly TagKey buttonsCountTK = TagKey.Get("_rb_ButtonsCount_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
@@ -105,12 +105,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 			}
-			this.GumpInstance.SetTag(tkButtonsCount, buttonsCount);
-			this.GumpInstance.SetTag(tkButtonsForGems, dictButtonForGems);
+			args.SetTag(D_GemBox.buttonsCountTK, buttonsCount);
+			args.SetTag(D_GemBox.buttonsForGemsTK, dictButtonForGems);
 			Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			GemBox box = (GemBox)gi.Focus;
 			if (!((Player)gi.Cont).CanReachWithMessage(box)) {
 				return;
@@ -120,8 +120,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.pressedButton == 1) {		// Add gems
 				((Player) gi.Cont).Target(SingletonScript<Targ_GemBox>.Instance, gi.Focus);
 			} else if (gr.pressedButton == 2) {		// OK -> give selected gems
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)gi.GetTag(tkButtonsForGems);
-				int buttonsCount = (int)gi.GetTag(tkButtonsCount);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)args.GetTag(D_GemBox.buttonsForGemsTK);
+				int buttonsCount = TagMath.IGetTag(args,D_GemBox.buttonsCountTK);
 				int i = 0;
 				int gemsToGive = 0;
 				while (i < buttonsCount) {
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (gr.pressedButton >= 1000) {
 				int thisButtonValue = (int)gr.pressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)gi.GetTag(tkButtonsForGems);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)args.GetTag(D_GemBox.buttonsForGemsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).BackpackAsContainer);
 				Globals.lastNewItem.Amount = (uint)box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);

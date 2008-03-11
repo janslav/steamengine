@@ -23,14 +23,14 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog listing all accounts notes")]
-	public class D_AccountNotes : CompiledGump {
-		internal static readonly TagKey accountTK = TagKey.Get("__scripted_account_tag_");
-		internal static readonly TagKey issuesListTK = TagKey.Get("__acc_issues_list_"); //used for notes, crimes
-		internal static readonly TagKey issuesSortingTK = TagKey.Get("__acc_issues_sorting_"); //used the smae way
+	[Summary("Dialog listing all accounts notes")]
+	public class D_AccountNotes : CompiledGumpDef {
+		internal static readonly TagKey accountTK = TagKey.Get("_scripted_account_tag_");
+		internal static readonly TagKey issuesListTK = TagKey.Get("_acc_issues_list_"); //used for notes, crimes
+		internal static readonly TagKey issuesSortingTK = TagKey.Get("_acc_issues_sorting_"); //used the smae way
 		private static int width = 800;
 		
-		[Remark("Seznam parametru: 0 - account jehoz noty zobrazujeme, " +
+		[Summary("Seznam parametru: 0 - account jehoz noty zobrazujeme, " +
 				"	1 - tridici kriterium" +
 				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +				
 				"	3 - ulozeny noteslist pro pripadnou navigaci v dialogu")]
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam poznamek bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<AccountNote> notesList = (List<AccountNote>)args.GetTag(D_AccountNotes.issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogArgs newArgs = new DialogArgs();
 						newArgs.SetTag(D_New_AccountNote.isCrimeTK, false); //poznamka
 						newArgs.SetTag(D_AccountNotes.accountTK, args.GetTag(D_AccountNotes.accountTK));//account (char nepotrebujeme)
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;						
 					case 2: //time asc
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = ((int)gr.pressedButton - 10) / 4;
 				int buttNo = ((int)gr.pressedButton - 10) % 4;
 				AccountNote note = notesList[row];
-				GumpInstance newGi;
+				Gump newGi;
 				switch(buttNo) {
 					case 0: //char info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(note.referredChar));
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}		
 
-		[Remark("Display an account notes. Function accessible from the game." +
+		[Summary("Display an account notes. Function accessible from the game." +
 				"The function is designed to be triggered using .x AccNotes or .AccNotes" +
 				"but it can be also called from other dialogs - such as info..."+
 				"Default sorting is by Time, desc."+
@@ -240,11 +240,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}		
 	}
 
-	[Remark("Dialog listing all account's crimes")]
-	public class D_AccountCrimes : CompiledGump {
+	[Summary("Dialog listing all account's crimes")]
+	public class D_AccountCrimes : CompiledGumpDef {
 		private static int width = 900;
 
-		[Remark("Seznam parametru: 0 - account jehoz crimy zobrazujeme, " +
+		[Summary("Seznam parametru: 0 - account jehoz crimy zobrazujeme, " +
 				"	1 - tridici kriterium" +
 				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +
 				"	3 - ulozeny noteslist pro pripadnou navigaci v dialogu")]
@@ -334,7 +334,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam crimu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<AccountCrime> crimesList = (List<AccountCrime>)args.GetTag(D_AccountNotes.issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
@@ -347,7 +347,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogArgs newArgs = new DialogArgs();
 						newArgs.SetTag(D_New_AccountNote.isCrimeTK, true); //trest
 						newArgs.SetTag(D_AccountNotes.accountTK, args.GetTag(D_AccountNotes.accountTK));//account (char nepotrebujeme)
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //time asc
@@ -389,7 +389,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = ((int)gr.pressedButton - 10) / 5;
 				int buttNo = ((int)gr.pressedButton - 10) % 5;
 				AccountCrime crime = crimesList[row];
-				GumpInstance newGi;
+				Gump newGi;
 				switch(buttNo) {
 					case 0: //char info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(crime.referredChar));
@@ -419,7 +419,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Display an account crimes. Function accessible from the game." +
+		[Summary("Display an account crimes. Function accessible from the game." +
 				"The function is designed to be triggered using .x AccCrimes or .AccCrimes" +
 				"but it can be also called from other dialogs - such as info..." +
 				"Default sorting is by Time, desc." +
@@ -462,9 +462,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	public class D_New_AccountNote : CompiledGump {
-		internal static readonly TagKey isCrimeTK = TagKey.Get("__is_crime_issue_");
-		internal static readonly TagKey issuedCharTK = TagKey.Get("__issued_char_");
+	public class D_New_AccountNote : CompiledGumpDef {
+		internal static readonly TagKey isCrimeTK = TagKey.Get("_is_crime_issue_");
+		internal static readonly TagKey issuedCharTK = TagKey.Get("_issued_char_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			bool isCrime = (bool)args.GetTag(D_New_AccountNote.isCrimeTK); //true - crime note, false - normal note
@@ -528,7 +528,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			bool isCrime = (bool)args.GetTag(D_New_AccountNote.isCrimeTK); //true - crime note, false - normal note
 			AbstractCharacter refChar = args.GetTag(D_New_AccountNote.issuedCharTK) as AbstractCharacter; //if not present the note is for the whole account
 			ScriptedAccount acc = args.GetTag(D_AccountNotes.accountTK) as ScriptedAccount; //the account could or might not have arrived... :]
@@ -560,7 +560,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				//if the previous dialog is the accnotes or acccrimes list, we have to clear the list in the stacked instance
 				//so it can be reread again with the newly created note
-				GumpInstance prevStacked = DialogStacking.PopStackedDialog(gi);
+				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
 				if(prevStacked != null) {
 					//uz neni treba kontrolovat, odstranujeme jenom tag...
 					//if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_AccountNotes)) ||
@@ -572,7 +572,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} 
 		}
 
-		[Remark("Display the dialog for creating a new AccountNote."+
+		[Summary("Display the dialog for creating a new AccountNote."+
 				"Is called directly by .x NewAccNote on the target player")]
 		[SteamFunction]
 		public static void NewAccNote(Thing self, ScriptArgs text) {
@@ -600,7 +600,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Display the dialog for creating a new AccountCrime." +
+		[Summary("Display the dialog for creating a new AccountCrime." +
 				"Is called directly by .x NewAccCrime on the target player")]
 		[SteamFunction]
 		public static void NewAccCrime(Thing self, ScriptArgs text) {

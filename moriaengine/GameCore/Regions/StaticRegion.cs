@@ -24,7 +24,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
-	[Remark("Class implementing saving/loading of regions, controlling unique defnames etc.")]
+	[Summary("Class implementing saving/loading of regions, controlling unique defnames etc.")]
 	public class StaticRegion : Region {
 		internal static readonly StaticRegion voidRegion = new StaticRegion();
 		private static StaticRegion worldRegion = voidRegion;
@@ -37,7 +37,7 @@ namespace SteamEngine.Regions {
 			ClearAll();
 		}
 		
-		[Remark("Clearing of the lists of all regions")]
+		[Summary("Clearing of the lists of all regions")]
 		public static void ClearAll() {
 			//first we have to remove the regions from the sectors etc
 			//if(byDefname != null) { //the dictionary exists => we can claim some regions
@@ -200,7 +200,7 @@ namespace SteamEngine.Regions {
 			output.WriteLine();
 		}
 
-		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
+		[Summary("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
 		private static void InactivateAll() {			
 			foreach(Map map in Map.AllMaps) {
 				map.InactivateRegions(false); //false - omit dynamic regions from clearing
@@ -210,7 +210,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state"+
+		[Summary("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state"+
 				"called after manipulation is successfully done."+
 				"Activates only activable regions")]
 		private static void ActivateAll() {
@@ -246,7 +246,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Take the regions from the given list and set their rectangles to every mapplane")]
+		[Summary("Take the regions from the given list and set their rectangles to every mapplane")]
 		private static void InitRectanglesToMaps(IEnumerable<StaticRegion> regionList) {
 			List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
 			foreach(StaticRegion region in regionList) {
@@ -268,7 +268,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Check if all regions (except for the world region) have parents set")]
+		[Summary("Check if all regions (except for the world region) have parents set")]
 		private static void ResolveParents() {
 			foreach(StaticRegion region in AllRegions) {
 				//(pri opakovanem reloadu - napr. po editaci regionu uz je worldregion nasetovan
@@ -291,7 +291,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Itearate through all regions and set their hierarchy indices")]
+		[Summary("Itearate through all regions and set their hierarchy indices")]
 		private static void ResolveRegionsHierarchy() {
 			LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(AllRegions);//copy list of all regions
 			int lastCount = -1;
@@ -334,7 +334,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Searches through all regions and returns the list of StaticRegions thats name contains the "+
+		[Summary("Searches through all regions and returns the list of StaticRegions thats name contains the "+
 				"criteria string")]
 		public static List<StaticRegion> FindByString(string criteria) {
 			List<StaticRegion> regList = new List<StaticRegion>();
@@ -433,7 +433,7 @@ namespace SteamEngine.Regions {
 			return retState;
 		}
 
-		[Remark("Looks through the list of all regions and check if the region is not a chidlren of the specified one")]
+		[Summary("Looks through the list of all regions and check if the region is not a chidlren of the specified one")]
 		public List<StaticRegion> FindRegionsChildren(StaticRegion reg) {
 			//first search the static ones (houses, stalls etc.)
 			List<StaticRegion> retList = new List<StaticRegion>();
@@ -446,7 +446,7 @@ namespace SteamEngine.Regions {
 		}
 		#endregion
 
-		[Remark("Take the list of rectangles and make an array of RegionRectangles of it")]
+		[Summary("Take the list of rectangles and make an array of RegionRectangles of it")]
 		public bool SetRectangles<T>(IList<T> list) where T : AbstractRectangle {
 			bool result = true;
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
@@ -471,7 +471,7 @@ namespace SteamEngine.Regions {
 			return result;
 		}
 
-		[Remark("Initializes newly created region - set the name, home position and list of rectangles")]
+		[Summary("Initializes newly created region - set the name, home position and list of rectangles")]
 		public bool InitializeNewRegion<T>(string name, Point4D home, IList<T> rects) where T : AbstractRectangle {
 			bool retval;
 			Name = name; //nove jmeno, a zaroven ho to ulozi do prislusneho seznamu
@@ -529,7 +529,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Remark("Vezme region. vsechny jeho deti, napoji deti na parenta a sam sebe odstrani")]
+		[Summary("Vezme region. vsechny jeho deti, napoji deti na parenta a sam sebe odstrani")]
 		public override void Delete() {
 			if(this == worldRegion) { //world region nesmime smazat
 				throw new SEException("Attempted to delete the 'world region'");

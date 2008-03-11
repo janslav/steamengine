@@ -89,11 +89,11 @@ namespace SteamEngine.CompiledScripts {
 		public double armorClassMvP = 5.000; //1000/nastaveni_global_MvP_armorfactor
 
 		[SaveableData]
-		[Remark("Every case other than (M is attacker, P is defender)")]
+		[Summary("Every case other than (M is attacker, P is defender)")]
 		public double armorRandEffectMin = 0.945; //skill_parrying.effect
 
 		[SaveableData]
-		[Remark("Every case other than (M is attacker, P is defender)")]
+		[Summary("Every case other than (M is attacker, P is defender)")]
 		public double armorRandEffectMax = 1.050; //skill_parrying.effect
 
 		[SaveableData]

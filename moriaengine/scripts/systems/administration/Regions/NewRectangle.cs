@@ -22,11 +22,11 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Dialog for creating a new region rectangle")]
-	public class D_New_Rectangle : CompiledGump {
+	[Summary("Dialog for creating a new region rectangle")]
+	public class D_New_Rectangle : CompiledGumpDef {
 		private static int width = 450;
 
-		[Remark("Seznam parametru: 0 - list s rectanglama kam to pak pridame "+
+		[Summary("Seznam parametru: 0 - list s rectanglama kam to pak pridame "+
 				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (jsou to ty mutable)
 			List<MutableRectangle> rectsList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
 			if(gr.pressedButton == 0) { //exit
@@ -91,13 +91,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu
-					GumpInstance newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
+					Gump newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 				//vsef poradku tak hura zpatky (nezapomenout pridat do puvodniho seznamu!)
 				rectsList.Add(newRect);
-				GumpInstance previousGi = DialogStacking.PopStackedDialog(gi);
+				Gump previousGi = DialogStacking.PopStackedDialog(gi);
 				previousGi.InputArgs.SetTag(D_Region_Rectangles.rectsListTK, rectsList); //ulozime to do predchoziho dialogu
 				DialogStacking.ResendAndRestackDialog(previousGi);
 			}

@@ -21,7 +21,7 @@
 
 //namespace SteamEngine.CompiledScripts.Dialogs {
 
-//    [Remark("Priklad C# skriptovane verze input dialogu. Jedine co je potreba udelat je overridnout metodu Response "+
+//    [Summary("Priklad C# skriptovane verze input dialogu. Jedine co je potreba udelat je overridnout metodu Response "+
 //            "K dispozici jsou ve fieldu InputParams vstupni parametry dialoguse kterymi lze pracovat pri responsu")]
 //    public class InputTestCompiled : CompiledInputDef {
 //        public override string Label {

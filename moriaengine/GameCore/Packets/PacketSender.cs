@@ -1220,7 +1220,7 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		public static void PrepareGump(GumpInstance instance) {
+		public static void PrepareGump(Gump instance) {
 			//1+2+4+4+4+4+2+instance.layout.Length+1+2+(instance.textsLength+(instance.texts.Length*2)) -tar
 			//lol -SL
 			StartGenerating();
@@ -1233,9 +1233,9 @@ namespace SteamEngine.Packets {
 			int layoutLength = layout.Length;
 			if (layoutLength == 0) {
 				//throw new SEException("The gump is empty!");
-				Logger.WriteWarning("The GumpInstance "+instance+" represents an empty gump?!");
+				Logger.WriteWarning("The Gump "+instance+" represents an empty gump?!");
 			}
-			Sanity.IfTrueThrow(layoutLength>32768,"Gump layout for '"+instance.def.Defname+"' is too long ("+layout.Length+"). That would take at least several seconds to send, and you'd probably crash the client by sending something that big, if it was sendable at all (Also, the packet's size can never be > 65535 bytes (It has to be stored in a ushort and sent to the client, and that's the highest value a ushort can hold)).");
+			Sanity.IfTrueThrow(layoutLength>32768,"GumpDef layout for '"+instance.def.Defname+"' is too long ("+layout.Length+"). That would take at least several seconds to send, and you'd probably crash the client by sending something that big, if it was sendable at all (Also, the packet's size can never be > 65535 bytes (It has to be stored in a ushort and sent to the client, and that's the highest value a ushort can hold)).");
 			EncodeUShort((ushort)(layoutLength+1), 19);
 			//no idea why does it have to be +1, but it wont work without it... it is not written in any packet guide, I sniffed it from sphere, tried it, and it worked :) -tar
 			//It probably includes the null terminator. Just another little inconsistancy in the packets, nothing unusual... -SL

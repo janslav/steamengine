@@ -1068,7 +1068,7 @@ namespace SteamEngine.Regions {
 			//}
 		}
 
-		[Remark("Inactivate regions - unload their rectangles, boolean parameter allows us to omit dynamic regions...")]
+		[Summary("Inactivate regions - unload their rectangles, boolean parameter allows us to omit dynamic regions...")]
 		internal void InactivateRegions(bool dynamicsToo) {
 			for (int sx = 0; sx<numXSectors; sx++) {
 				for (int sy = 0; sy<numYSectors; sy++) {

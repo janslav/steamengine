@@ -75,14 +75,14 @@ namespace SteamEngine.CompiledScripts {
 			get { return "ViewableClasses.Generated.cs"; }
 		}
 
-		[Remark("While loading this class, make some registrations in the ClassManager for handling ViewableClasses")]
+		[Summary("While loading this class, make some registrations in the ClassManager for handling ViewableClasses")]
 		public static void Bootstrap() {			
 			//register the CheckViewabilityClass method so every ClassManager managed Type will be
 			//checked here for its Viewability...
 		    ClassManager.RegisterHook(CheckViewabilityClass);
 		}
 
-		[Remark("Method for checking if the given Type is Viewable. If so, put it to the list."+
+		[Summary("Method for checking if the given Type is Viewable. If so, put it to the list."+
 				"Used as hooked delegate in ClassManager")]
 		public static void CheckViewabilityClass(Type type) {
 			//look if the type has this attribute, don't look to parent classes 
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Go through all descriptors and look if their handled type is assignable from the just generated one")]
+		[Summary("Go through all descriptors and look if their handled type is assignable from the just generated one")]
 		private static List<Type> FindDescriptorsForType(Type infoizedType) {
 			List<Type> typeList = new List<Type>();
 			List<Type> retList = new List<Type>();
@@ -266,7 +266,7 @@ namespace SteamEngine.CompiledScripts {
 				return codeTypeDeclaration;
 			}
 	
-			[Remark("Method for getting one page of action buttons")]
+			[Summary("Method for getting one page of action buttons")]
 			private CodeMemberMethod GenerateGetActionButtonsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
@@ -285,7 +285,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Method for getting one page of data fields buttons")]
+			[Summary("Method for getting one page of data fields buttons")]
 			private CodeMemberMethod GenerateGetDataFieldsPageMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
@@ -302,7 +302,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("The GetActionButtonsCount method - says how many buttons will there be")]
+			[Summary("The GetActionButtonsCount method - says how many buttons will there be")]
 			private CodeMemberMethod GenerateGetActionButtonsCountMethod() {
 				int buttonsCount = 0;
 				buttonsCount += buttonMethods.Count; //class' own buttons
@@ -322,7 +322,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("The GenerateGetFieldsCountMethod method - says how many fields will there be")]
+			[Summary("The GenerateGetFieldsCountMethod method - says how many fields will there be")]
 			private CodeMemberMethod GenerateGetFieldsCountMethod() {
 				int fieldsCount = 0;
 				fieldsCount += fields.Count + properties.Count; //class' own fields
@@ -342,7 +342,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("The GetName method")]
+			[Summary("The GetName method")]
 			private CodeMemberMethod GenerateGetNameMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
@@ -356,7 +356,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("The HandledType getter")]
+			[Summary("The HandledType getter")]
 			private CodeMemberProperty GenerateHandledTypeProperty() {
 				CodeMemberProperty retVal = new CodeMemberProperty();
 				retVal.HasGet = true;
@@ -369,7 +369,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Generate an inner class for handling Action Buttons")]
+			[Summary("Generate an inner class for handling Action Buttons")]
 			private CodeTypeDeclaration GenerateButtonIDFW(MethodInfo minf) {
 				ButtonAttribute bat = (ButtonAttribute)minf.GetCustomAttributes(typeof(ButtonAttribute),false)[0];
 				string buttonLabel = (bat.Name == null ? minf.Name : bat.Name); //label of the button (could have been specified in ButtonAttribute)
@@ -419,7 +419,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Generate an inner class for handling ReadWriteData fields")]
+			[Summary("Generate an inner class for handling ReadWriteData fields")]
 			private CodeTypeDeclaration GenerateFieldIDFW(MemberInfo minf) {
 				bool isReadOnly = false;
 				if (minf is PropertyInfo) {
@@ -563,7 +563,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Generate a class representing an ActionButtonsPage")]
+			[Summary("Generate a class representing an ActionButtonsPage")]
 			private CodeTypeDeclaration GenerateActionButtonsPage(List<string> buttonDFVs) {
 				string newClassName = type.Name + "ActionButtonsPage";
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
@@ -635,7 +635,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Generate a class representing an DataFieldsPage")]
+			[Summary("Generate a class representing an DataFieldsPage")]
 			private CodeTypeDeclaration GenerateDataFieldsPage(List<string> fieldsDFVs) {
 				string newClassName = type.Name + "DataFieldsPage";
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
@@ -711,13 +711,13 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Used in constructor for filtering - obtain all members with given attribute")]
+			[Summary("Used in constructor for filtering - obtain all members with given attribute")]
 			private static bool HasAttribute(MemberInfo m, object attributeType) {
 				Type attType = (Type)attributeType;
 				return Attribute.IsDefined(m,attType, false);
 			}
 
-			[Remark("Used in constructor for filtering- obtain all members except those with given attribute")]
+			[Summary("Used in constructor for filtering- obtain all members except those with given attribute")]
 			private static bool HasntAttribute(MemberInfo m, object attributeType) {
 				Type attType = (Type)attributeType;
 				return !Attribute.IsDefined(m, attType, false);
@@ -736,7 +736,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Special class used similiarly as GeneratedInstance but only for ViewableDescriptors."+
+		[Summary("Special class used similiarly as GeneratedInstance but only for ViewableDescriptors."+
 				"All found descriptors will have one instance and they will be stored in a list in the GeneratedInstance class")]
 		private class DescriptorData {
 			Type handledType;
@@ -822,7 +822,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			#region Descriptor's fields/buttons build methods
-			[Remark("Generate an inner class for handling one descriptor's Action Button")]
+			[Summary("Generate an inner class for handling one descriptor's Action Button")]
 			internal CodeTypeDeclaration GenerateButtonIDFW(MethodInfo minf) {
 				ButtonAttribute bat = (ButtonAttribute)minf.GetCustomAttributes(typeof(ButtonAttribute), false)[0];
 				string buttonLabel = (bat.Name == null ? minf.Name : bat.Name); //label of the button (could have been specified in ButtonAttribute)
@@ -875,7 +875,7 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			[Remark("Generate an inner class for handling descriptor's Read(Write/Only)Data fields")]
+			[Summary("Generate an inner class for handling descriptor's Read(Write/Only)Data fields")]
 			internal CodeTypeDeclaration GenerateFieldIDFW(PropertyMethods propMeth) {				
 				bool isReadOnly = !propMeth.HasSetMethod; //if we dont have Set method, it is readonly
 				
@@ -1013,14 +1013,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			#endregion
 
-			[Remark("Used in constructor for filtering - obtain all members with given attribute")]
+			[Summary("Used in constructor for filtering - obtain all members with given attribute")]
 			private static bool HasAttribute(MemberInfo m, object attributeType) {
 				Type attType = (Type)attributeType;
 				return Attribute.IsDefined(m, attType, false);
 			}
 		}
 
-		[Remark("Utility class used for holding MethodInfos of Get and Set methods from the descriptor." +
+		[Summary("Utility class used for holding MethodInfos of Get and Set methods from the descriptor." +
 					"Both Get and Set methods are connected with single described field")]
 		internal class PropertyMethods {
 			private MethodInfo getMethod;

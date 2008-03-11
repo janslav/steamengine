@@ -24,28 +24,28 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Wrapper class used to manage and create dialogs easily.")]
+	[Summary("Wrapper class used to manage and create dialogs easily.")]
 	public class ImprovedDialog {
-		[Remark("The gump instance to send gump creating method calls to")]
-		protected GumpInstance instance;
+		[Summary("The gump instance to send gump creating method calls to")]
+		protected Gump instance;
 
-		[Remark("The deepest background of the dialog (the first GUTAMatrix where all other GumpComponents are")]
+		[Summary("The deepest background of the dialog (the first GUTAMatrix where all other GumpComponents are")]
 		private GUTAMatrix background;
-		[Remark("Last added table to the background GUTAMatrix - all GumpColumns will be added to this row until"+
+		[Summary("Last added table to the background GUTAMatrix - all GumpColumns will be added to this row until"+
                 " the next GUTATable is added")]
 		protected GUTATable lastTable;
-		[Remark("Last added column - the column is placed automatically to the lastTable, all LeafGumpComponents"+
+		[Summary("Last added column - the column is placed automatically to the lastTable, all LeafGumpComponents"+
                 " will be added to this column until the next GUTAColumn is added")]
 		private GUTAColumn lastColumn;
 
-		[Remark("Getter for the lastcolumn - may be needed from LScript if we have to operate with the sies or positions")]
+		[Summary("Getter for the lastcolumn - may be needed from LScript if we have to operate with the sies or positions")]
 		public GUTAColumn LastColumn {
 			get {
 				return lastColumn;
 			}
 		}
 
-		[Remark("Getter for the lasttable - may be needed from LScript if we have to operate with the sizes or positions or "+
+		[Summary("Getter for the lasttable - may be needed from LScript if we have to operate with the sizes or positions or "+
 				"if we want to add component directly to the desired column or row")]
 		public GUTATable LastTable {
 			get {
@@ -53,31 +53,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("The getter for the background table - usable for manual creating of the dialog structure")]
+		[Summary("The getter for the background table - usable for manual creating of the dialog structure")]
 		public GUTAMatrix Background {
 			get {
 				return background;
 			}
 		}
 
-		[Remark("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
-		public ImprovedDialog(GumpInstance dialogInstance) {
+		[Summary("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
+		public ImprovedDialog(Gump dialogInstance) {
 			this.instance = dialogInstance;
 		}
 
-		[Remark("Create the dialog background and set its size")]
+		[Summary("Create the dialog background and set its size")]
 		public void CreateBackground(int width) {
 			background = new GUTAMatrix(instance, width);
 		}
 
-		[Remark("Set the main table's position (all underlaying components will "+
+		[Summary("Set the main table's position (all underlaying components will "+
                 "be moved too). It is up to the scripter to make sure that this method is called on the correctly"+
                 " set background")]
 		public void SetLocation(int newX, int newY) {
 			background.AdjustPosition(newX - background.XPos, newY - background.YPos);
 		}
 
-		[Remark("Getter allowing us to access the underlaying GUTATable by the specified index "+
+		[Summary("Getter allowing us to access the underlaying GUTATable by the specified index "+
 				"(usage: this.Table[i])")]
 		public List<GUTAComponent> Table {
 			get {
@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}		
 		}
 
-		[Remark("The main method for adding the gump components to the dialog. "+
+		[Summary("The main method for adding the gump components to the dialog. "+
                 "We can add a GUTAMatrix, GUTATable, GUTAColumn or LeafGUTAComponent. The GUTATable will be "+ 
                 "added to the background GUTAMatrix and set as a 'lastTable' which means that all following "+
                 "GumpColumns will be added to this row until the next GUTATable is placed. The GUTAColumn "+
@@ -137,13 +137,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Add a single GUTATable to the dialog and set is as 'last'")]
+		[Summary("Add a single GUTATable to the dialog and set is as 'last'")]
 		public void AddTable(GUTATable table) {
 			background.AddComponent(table);
 			lastTable = table;
 		}
 
-		[Remark("Method for adding a last component to the parent - useful for columns when we want to "+
+		[Summary("Method for adding a last component to the parent - useful for columns when we want to "+
                 "add a column to the right side. It will recompute the previous column width to fit the space "+
                 "to the rest of the row to the last column (neverminding the actual width of this column)."+
                 "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method."+
@@ -169,7 +169,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Add a last GUTAColumn to the dialog and set is as 'last'. This method is to be used instead of AddLastColumn.")]		
+		[Summary("Add a last GUTAColumn to the dialog and set is as 'last'. This method is to be used instead of AddLastColumn.")]		
 		internal void AddLastColumn(GUTAColumn col) {
 			if(lastTable == null || lastTable.Components.Count == 0) {
 				throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
@@ -185,14 +185,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastColumn = col;
 		}
 
-		[Remark("Take the columns in the last row and copy their structure to the new row."+
+		[Summary("Take the columns in the last row and copy their structure to the new row."+
                 "They will take the new tables's rowCount. No underlaying children will be copied!")]
 		public void CopyColsFromLastTable() {
 			//take the last row (count-1 = this, new, row; count-2 = previous row)
 			CopyColsFromTable(background.Components.Count-2);
 		}
 
-		[Remark("Take the columns from the specified row (start counting from 0) - 0th, 1st, 2nd etc."+
+		[Summary("Take the columns from the specified row (start counting from 0) - 0th, 1st, 2nd etc."+
                 "and copy their structure to the new row. They will get the new row's rowCount."+ 
                 "No underlaying columns children will be copied!")]
 		public void CopyColsFromTable(int rowNumber) {
@@ -205,17 +205,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Take the last table, iterate through the columns and make them all transparent")]
+		[Summary("Take the last table, iterate through the columns and make them all transparent")]
 		public void MakeLastTableTransparent() {
 			lastTable.Transparent = true;			
 		}
 
-		[Remark("Last method to be called - it prints out the whole dialog")]
+		[Summary("Last method to be called - it prints out the whole dialog")]
 		public void WriteOut() {
 			background.WriteComponent();
 		}
 
-		[Remark("Takes care for the whole paging - gets number of items and the number of the "+
+		[Summary("Takes care for the whole paging - gets number of items and the number of the "+
 			    " topmost Item on the current page (0 for first page, other for another pages)."+
 				"We also specify the number of columns - not only single is now available for paging")]
 		public void CreatePaging(int itemsCount, int firstNumber, int columnsCount) {
@@ -258,17 +258,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastColumn = storedLastColumn;
 		}
 
-		[Remark("Tag key using for holding information about paging actual item index for dialogs.")]
-		public static readonly TagKey pagingIndexTK = TagKey.Get("__paging_index_");
+		[Summary("Tag key using for holding information about paging actual item index for dialogs.")]
+		internal static readonly TagKey pagingIndexTK = TagKey.Get("_paging_index_");
 		
-		[Remark("Look if the paging buttons has been pressed and if so, handle the actions as "+
+		[Summary("Look if the paging buttons has been pressed and if so, handle the actions as "+
 				" a normal OnResponse method, otherwise return to the dialog OnResponse method "+
 				" and continue there."+
-				" gi - GumpInstance from the OnResponse method "+
+				" gi - Gump from the OnResponse method "+
 				" gr - GumpResponse object from the OnResponse method" +
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)"+
 				" return true or false if the button was one of the paging buttons or not")]
-		public static bool PagingButtonsHandled(GumpInstance gi, GumpResponse gr, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(Gump gi, GumpResponse gr, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
 			DialogArgs args = gi.InputArgs;//arguments of the dialog			
@@ -306,14 +306,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
-		[Remark("This is the paging handler used in LScript where no GumpResponse is present"+
+		[Summary("This is the paging handler used in LScript where no GumpResponse is present"+
 				"sentTo - player who has seen the dialog; buttNo - pressed button; selPageInpt - filled "+
 				"number of page to jump to (if any, used only when 'jump page button' was pressed, "+
 				"otherwise is null);"+
 				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;"+
 				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
 				"itemsCount - total count of diplayed items in the list")]
-		public static bool PagingButtonsHandled(GumpInstance actualGi, int buttNo, int selPageInpt, int itemsCount, int columnsCount) {
+		public static bool PagingButtonsHandled(Gump actualGi, int buttNo, int selPageInpt, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
 			DialogArgs args = actualGi.InputArgs;
@@ -350,7 +350,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}		
 
-		[Remark("Dialog constants")]
+		[Summary("Dialog constants")]
 		public const int D_DEFAULT_DIALOG_BORDERS = 9250; //grey borders
 		public const int D_DEFAULT_DIALOG_BACKGROUND = 9354; //beige background
 
@@ -364,25 +364,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public const int D_ROW_HEIGHT = 19;
 		public const int D_SPACE = 3;
-		[Remark("Space for delimiting the rows one from the above one")]
+		[Summary("Space for delimiting the rows one from the above one")]
 		public const int D_ROW_SPACE = 2;
-		[Remark("Space for delimiting the columns in the inner row")]
+		[Summary("Space for delimiting the columns in the inner row")]
 		public const int D_COL_SPACE = 1;
 		public const int D_BORDER = 10;
 		public const int D_OFFSET = 5;
 
 		public const int D_CHARACTER_WIDTH = 5; //approximate width of the normal character
 
-		[Remark("Number of pixels of which the label from the label-value fields will be indented from the left")]
+		[Summary("Number of pixels of which the label from the label-value fields will be indented from the left")]
 		public static int ITEM_INDENT = 20;
-		[Remark("Number of pixels of which the editbox from the label-value fields will be indented from the left "+
+		[Summary("Number of pixels of which the editbox from the label-value fields will be indented from the left "+
 				"(so there is enough space for the label")]		
 		public static int INPUT_INDENT = 75;
 
-		[Remark("Number of normal rows on the various dialog pages (when paging is used)")]
+		[Summary("Number of normal rows on the various dialog pages (when paging is used)")]
 		public const int PAGE_ROWS = 20;
 
-		[Remark("Page navigating buttons (constant IDs, different enough from those common used :))")]
+		[Summary("Page navigating buttons (constant IDs, different enough from those common used :))")]
 		public const int ID_PREV_BUTTON = 98765;
 		public const int ID_NEXT_BUTTON = 98764;
 		public const int ID_JUMP_PAGE_BUTTON = 98763;

@@ -23,10 +23,10 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog listing all players accounts in the game")]
-	public class D_AccList : CompiledGump {
-		public static TagKey searchStringTK = TagKey.Get("__search_string_");
-		public static TagKey accListTK = TagKey.Get("__acc_list_");
+	[Summary("Dialog listing all players accounts in the game")]
+	public class D_AccList : CompiledGumpDef {
+		public static TagKey searchStringTK = TagKey.Get("_search_string_");
+		public static TagKey accListTK = TagKey.Get("_acc_list_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<ScriptedAccount> accList = (List<ScriptedAccount>)args.GetTag(D_AccList.accListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
                     case 2: //zalozit novy acc.
 						//ulozime dialog pro navrat
-						GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_NewAccount>.Instance);
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_NewAccount>.Instance);
 						DialogStacking.EnstackDialog(gi, newGi);						
 						break;                    
                 }
@@ -122,13 +122,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 int row = (int)(gr.pressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				GumpInstance newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));
+				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);                
             }
 		}
 
-		[Remark("Display an account list. Function accessible from the game")]
+		[Summary("Display an account list. Function accessible from the game")]
 		[SteamFunction]
 		public static void AccList(AbstractCharacter sender, ScriptArgs text) {
 			//zavolat dialog, pocatecni pismena
@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Display an account info. "+
+		[Summary("Display an account info. "+
 				"Usage .x accinfo or .accinfo('accname')")]
 		[SteamFunction]
 		public static void AccInfo(AbstractCharacter target, ScriptArgs text) {
@@ -161,7 +161,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Remark("Comparer for sorting accounts by account name asc")]
+	[Summary("Comparer for sorting accounts by account name asc")]
 	public class AccountComparer : IComparer<ScriptedAccount> {
 		public readonly static AccountComparer instance = new AccountComparer();
 

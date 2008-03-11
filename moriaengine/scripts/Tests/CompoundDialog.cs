@@ -23,17 +23,17 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog testing the tables in columns")]
-	public class D_CompoundDlg : CompiledGump {
+	[Summary("Dialog testing the tables in columns")]
+	public class D_CompoundDlg : CompiledGumpDef {
 		
-		[Remark("Instance of the D_TagList, for possible access from other dialogs etc.")]
+		[Summary("Instance of the D_TagList, for possible access from other dialogs etc.")]
 		private static D_CompoundDlg instance;
 		public static D_CompoundDlg Instance {
 			get {
 				return instance;
 			}
 		}
-		[Remark("Set the static reference to the instance of this dialog")]
+		[Summary("Set the static reference to the instance of this dialog")]
 		public D_CompoundDlg() {
 			instance = this;
 		}
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if(gr.pressedButton == 0) { //ovladaci tlacitka (exit, new, vyhledej)								
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
 			}			

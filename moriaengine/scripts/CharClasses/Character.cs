@@ -1402,7 +1402,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Check if the current character has plevel greater than 1 (is more than player)")]
+		[Summary("Check if the current character has plevel greater than 1 (is more than player)")]
 		public bool IsGM() {
 			return Account.PLevel > 1;
 		}
@@ -1518,22 +1518,22 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Destroy();
 		}
 
-		[Remark("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
+		[Summary("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
 		public void RedMessage(string arg) {
 			SysMessage(arg, (int) Hues.Red);
 		}
 
-		[Remark("Message displayed in blue - used for ingame purposes")]
+		[Summary("Message displayed in blue - used for ingame purposes")]
 		public void BlueMessage(string arg) {
 			SysMessage(arg, (int) Hues.Blue);
 		}
 
-		[Remark("Message displayed in green - used for ingame purposes")]
+		[Summary("Message displayed in green - used for ingame purposes")]
 		public void GreenMessage(string arg) {
 			SysMessage(arg, (int) Hues.Green);
 		}
 
-		[Remark("Message displayed in green - used for ingame purposes")]
+		[Summary("Message displayed in green - used for ingame purposes")]
 		public void InfoMessage(string arg) {
 			SysMessage(arg, (int) Hues.Info);
 		}

@@ -24,21 +24,21 @@ using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	[Remark("Static class for operating with clients delayed messages.")]
+	[Summary("Static class for operating with clients delayed messages.")]
 	public static class MsgsBoard {		
-		[Remark("A unique tag name for holding a list of client delayed messages")]
+		[Summary("A unique tag name for holding a list of client delayed messages")]
 		internal static TagKey _delayed_msgs_ = TagKey.Get("_delayed_msgs_");
 
-		[Remark("Default senders name (if the sender was not specified)")]
+		[Summary("Default senders name (if the sender was not specified)")]
 		public const string NO_SENDER = "System";
 
-		[Remark("Various comparators")]
+		[Summary("Various comparators")]
 		private static MsgsSenderComparator senderComparator = new MsgsSenderComparator();
 		private static MsgsTimeComparator timeComparator = new MsgsTimeComparator();
 		private static MsgsUnreadComparator unreadComparator = new MsgsUnreadComparator();
 
 
-		[Remark("Returns a copy of the list of clients delayed messages (for sorting e.g.)")]
+		[Summary("Returns a copy of the list of clients delayed messages (for sorting e.g.)")]
 		public static ArrayList GetClientsMessages(Character whose) {
 			//get the client messages (empty list if no messages present)
 			ArrayList list = GetMessages(whose);
@@ -50,17 +50,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Remark("Simple 'add' method.")]
+		[Summary("Simple 'add' method.")]
 		public static void AddNewMessage(Character whom, DelayedMsg newMsg) {
 			GetMessages(whom).Add(newMsg);
 		}
 
-		[Remark("Simple 'remove' method.")]
+		[Summary("Simple 'remove' method.")]
 		public static void DeleteMessage(Character whose, DelayedMsg newMsg) {
 			GetMessages(whose).Remove(newMsg);
 		}
 
-		[Remark("Private utility method returning the characters list of messages")]
+		[Summary("Private utility method returning the characters list of messages")]
 		private static ArrayList GetMessages(Character whose) {
 			ArrayList retList = (ArrayList)whose.GetTag(_delayed_msgs_);
 			if (retList == null) { // no messages previously posted
@@ -70,13 +70,13 @@ namespace SteamEngine.CompiledScripts {
 			return retList;
 		}
 
-		[Remark("Sorting method used for Character: Sorting parameters available are senders name, time and read/unread messages first")]
+		[Summary("Sorting method used for Character: Sorting parameters available are senders name, time and read/unread messages first")]
 		public static ArrayList GetSortedBy(Character whom, SortingCriteria criterion) {
 			//get a new copy of the list and sort it using another version of this method			
 			return GetSortedBy(GetClientsMessages(whom), criterion);
 		}
 
-		[Remark("Sorting method when the list is obtained first: Sorting parameters available are senders name, time and read/unread messages first")]
+		[Summary("Sorting method when the list is obtained first: Sorting parameters available are senders name, time and read/unread messages first")]
 		public static ArrayList GetSortedBy(ArrayList messages, SortingCriteria criterion) {
 			//get a new copy of the list			
 			switch(criterion) {
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts {
 			return messages;
 		}
 
-		[Remark("Return the number of unread messages (those the recipient has not opened by "+
+		[Summary("Return the number of unread messages (those the recipient has not opened by "+
                 "'read/display detail' button")]
 		public static int CountUnread(ArrayList msgs) {
 			int counter = 0;
@@ -120,13 +120,13 @@ namespace SteamEngine.CompiledScripts {
 			return counter;
 		}
 
-		[Remark("Return the number of unread messages for the specified player")]
+		[Summary("Return the number of unread messages for the specified player")]
 		public static int CountUnread(Character whose) {
 			return CountUnread(GetMessages(whose));
 		}
 	}
 
-	[Remark("The object of the clients delayed message. Holds the info about the sender, sending time and "+
+	[Summary("The object of the clients delayed message. Holds the info about the sender, sending time and "+
             "the message body")]
 	[SaveableClass]
 	public class DelayedMsg {
@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts {
 		public Hues color; //messages color
 
 
-		[Remark("No sender - the message was created by server probably.")]
+		[Summary("No sender - the message was created by server probably.")]
 		public DelayedMsg(string text) {
 			this.sender = null;
 			this.text = text;
@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 			this.sender = sender;
 		}
 
-		[Remark("Allows us to specify if the message should be displayed as red")]
+		[Summary("Allows us to specify if the message should be displayed as red")]
 		public DelayedMsg(string text, bool redMessage)
 			: this(text) {
 			this.color = Hues.Red;
@@ -171,14 +171,14 @@ namespace SteamEngine.CompiledScripts {
 			this.sender = sender;
 		}
 
-		[Remark("Allows uas to specify the messages color also...")]
+		[Summary("Allows uas to specify the messages color also...")]
 		public DelayedMsg(AbstractCharacter sender, string text, Hues hue)
 			: this(sender, text) {
 			this.color = hue;
 		}
 	}
 
-	[Remark("Comparator serving for sorting the list of messages by sender")]
+	[Summary("Comparator serving for sorting the list of messages by sender")]
 	class MsgsSenderComparator : IComparer {
 		public int Compare(object a, object b) {
 			DelayedMsg msg1 = (DelayedMsg) a;
@@ -202,7 +202,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparator serving for sorting the list of messages by their creation time")]
+	[Summary("Comparator serving for sorting the list of messages by their creation time")]
 	class MsgsTimeComparator : IComparer {
 		public int Compare(object a, object b) {
 			DateTime time1 = ((DelayedMsg) a).time;
@@ -212,7 +212,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Remark("Comparator serving for sorting the list of messages by their unread/status")]
+	[Summary("Comparator serving for sorting the list of messages by their unread/status")]
 	class MsgsUnreadComparator : IComparer {
 		public int Compare(object a, object b) {
 			bool read1 = ((DelayedMsg) a).read;

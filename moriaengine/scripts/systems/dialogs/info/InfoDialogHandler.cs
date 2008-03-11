@@ -25,7 +25,7 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Remark("Class used to manage and create all necessarities for various Info dialogs.")]
+	[Summary("Class used to manage and create all necessarities for various Info dialogs.")]
 	public class InfoDialogHandler : ImprovedDialog {
 		private GUTATable actionTable;
 		private GUTATable actualFieldTable;
@@ -43,10 +43,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//then there will be 3
 		public int REAL_COLUMNS_COUNT;
 
-		//hashtables for button/editfield index relationing with IDataFieldViews...
-		private Hashtable buttons;
-		private Hashtable editFlds;
-
 		public GUTATable ActionTable {
 			get {
 				return actionTable;
@@ -59,13 +55,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
-		public InfoDialogHandler(GumpInstance dialogInstance, Hashtable buttons, Hashtable editFlds) : base(dialogInstance) {
-			this.buttons = buttons;
-			this.editFlds = editFlds;
+		[Summary("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
+		public InfoDialogHandler(Gump dialogInstance) : base(dialogInstance) {
+            //pairing collections (pairs IDAtaFieldViews and indexes of edit fields or buttons
+            //keys - button or edit field index; value - related IDataFieldView for performing some action
+            //these collections will be renewed on every InfoDialog instantiation (even during the paging!)
+            dialogInstance.InputArgs.SetTag(D_Info.btnsIndexPairingTK, new Dictionary<int, IDataFieldView>());
+            dialogInstance.InputArgs.SetTag(D_Info.editFieldsIndexPairingTK, new Dictionary<int, IDataFieldView>());			
 		}
 
-		[Remark("Table for all of the IDataFieldViews")]
+		[Summary("Table for all of the IDataFieldViews")]
 		public void CreateDataFieldsSpace(IDataView viewCls, object target) {
 			this.target = target;
 			this.viewCls = viewCls;
@@ -123,7 +122,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			actualFieldColumn = firstFieldsColumn; //column counter (we have REAL_COLUMNS_COUNT columns to write to)
 		}		
 
-		[Remark("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
+		[Summary("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
 		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex) {
 			if (field.IsButtonEnabled) { //buttonized field - we need the button index
 				actionTable[actualActionRow, 0] = CreateInfoInnerButton(ref buttonsIndex, field);
@@ -190,7 +189,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, thirdColumnText);
 				//store the field under the edits index
-				editFlds.Add(editsIndex, field);
+                Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>)instance.InputArgs.GetTag(D_Info.editFieldsIndexPairingTK);
+                editFieldsPairing.Add(editsIndex, field);
 				editsIndex++;					
 			}
 			actualFieldRow++;			
@@ -208,7 +208,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Create paging for the Info dialog - it looks a little bit different than normal paging")]
+		[Summary("Create paging for the Info dialog - it looks a little bit different than normal paging")]
 		public void CreatePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
 			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
 			int fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
@@ -261,8 +261,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastTable = storedLastTable;			
 		}
 
-		[Remark("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
-		public static bool PagingHandled(GumpInstance gi, GumpResponse gr) {			
+		[Summary("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
+		public static bool PagingHandled(Gump gi, GumpResponse gr) {			
 			DialogArgs args = gi.InputArgs;//arguments of the dialog		
 			object target = args.ArgsArray[0];
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
@@ -306,15 +306,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
-		[Remark("Create a inside-info dialog button (buttons in the columns). Increase the button index and store the field in the map")]
+		[Summary("Create a inside-info dialog button (buttons in the columns). Increase the button index and store the field in the map")]
 		private GUTAComponent CreateInfoInnerButton(ref int buttonsIndex, IDataFieldView field) {
 			GUTAComponent retBut = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
-			buttons.Add(buttonsIndex, field);
+            //store the field under the edits index
+            Dictionary<int, IDataFieldView> buttonsPairing = (Dictionary<int, IDataFieldView>)instance.InputArgs.GetTag(D_Info.btnsIndexPairingTK);
+            buttonsPairing.Add(buttonsIndex, field);
 			buttonsIndex++;
 			return retBut;
 		}
 
-		[Remark("Return the fields name accompanied with the type information (but sometimes we dont need the type info...)")]
+		[Summary("Return the fields name accompanied with the type information (but sometimes we dont need the type info...)")]
 		private static string GetFieldName(IDataFieldView field, object target) {
 			object fieldVal = field.GetValue(target);
 			string retName = field.GetName(target);

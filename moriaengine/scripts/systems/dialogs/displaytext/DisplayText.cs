@@ -21,23 +21,23 @@ using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Remark("Dialog that will display a desired text with a desired label (e.g. displaying larger texts "+
+	[Summary("Dialog that will display a desired text with a desired label (e.g. displaying larger texts "+
             "in pages dialog etc.")]
-	public class D_Display_Text : CompiledGump {
+	public class D_Display_Text : CompiledGumpDef {
 		private string label;
 		private string dispText;
 		private Hues textColor;
 
-		public static TagKey textHueTK = TagKey.Get("__text_hue_");		
+		internal static TagKey textHueTK = TagKey.Get("_text_hue_");		
 
-		[Remark("Instance of the D_Display_Text, for possible access from other dialogs, buttons etc.")]
+		[Summary("Instance of the D_Display_Text, for possible access from other dialogs, buttons etc.")]
 		private static D_Display_Text instance;
 		public static D_Display_Text Instance {
 			get {
 				return instance;
 			}
 		}
-		[Remark("Set the static reference to the instance of this dialog")]
+		[Summary("Set the static reference to the instance of this dialog")]
 		public D_Display_Text() {
 			instance = this;
 		}
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ShowDialog();
 		}
 
-		[Remark("Simply display the labeled text.")]
+		[Summary("Simply display the labeled text.")]
 		private void ShowDialog() {
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
 			//create the background GUTAMatrix and set its size an transparency            
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(GumpInstance gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			switch (gr.pressedButton) {
 				case 0: //exit
 					//look if some dialog is not stored in the dialogs stack and possibly display it
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[SteamFunction]
-		[Remark("Zobrazí dialog s volitelným labelem a textem v nìm")]
+		[Summary("Zobrazí dialog s volitelným labelem a textem v nìm")]
 		public static void DisplayText(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 2) {
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs(args.Args[0], args.Args[1]));
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[SteamFunction]
-		[Remark("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
+		[Summary("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
 				DialogArgs newArgs = new DialogArgs("CHYBA", args.argv[0]);
@@ -107,15 +107,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Remark("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
-		public static GumpInstance ShowError(string text) {
+		[Summary("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
+		public static Gump ShowError(string text) {
 			DialogArgs newArgs = new DialogArgs("CHYBA", text);
 			newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);				
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}
 
-		[Remark("Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
-		public static GumpInstance ShowInfo(string text) {
+		[Summary("Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
+		public static Gump ShowInfo(string text) {
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("INFO", text));
 		}
 	}

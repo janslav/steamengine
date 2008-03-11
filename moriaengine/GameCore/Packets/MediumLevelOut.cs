@@ -209,12 +209,12 @@ namespace SteamEngine.Packets {
 			}
 		}
 
-		[Remark("This always discards the single-blocking-packet after sending.")]
+		[Summary("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsInRange(IPoint4D point) {
 			SendToClientsInRange(point, Globals.MaxUpdateRange);
 		}
 
-		[Remark("This always discards the single-blocking-packet after sending.")]
+		[Summary("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsInRange(IPoint4D point, ushort range) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsInRange("+point+","+range+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsInRange called when generatingState is "+generatingState+" - Expected it to be Ready.");
@@ -227,7 +227,7 @@ namespace SteamEngine.Packets {
 			groupState=GroupState.Ready;
 		}
 
-		[Remark("This always discards the single-blocking-packet after sending.")]
+		[Summary("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsInRect(byte mapplane, ImmutableRectangle rect) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsInRect("+mapplane+","+rect+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsInRect called when generatingState is "+generatingState+" - Expected it to be Ready.");
@@ -241,7 +241,7 @@ namespace SteamEngine.Packets {
 		}
 		
 
-		[Remark("This always discards the single-blocking-packet after sending.")]
+		[Summary("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsWhoCanSee(Thing thing) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsWhoCanSee("+thing+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsWhoCanSee called when generatingState is "+generatingState+" - Expected it to be Ready.");
@@ -269,7 +269,7 @@ namespace SteamEngine.Packets {
 			groupState=GroupState.Ready;
 		}
 
-		[Remark("This always discards the single-blocking-packet after sending.")]
+		[Summary("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsWhoCanSee(AbstractCharacter thing) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsWhoCanSee("+thing+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsWhoCanSee called when generatingState is "+generatingState+" - Expected it to be Ready.");
@@ -284,7 +284,7 @@ namespace SteamEngine.Packets {
 			groupState=GroupState.Ready;
 		}
 
-		[Remark("This always discards the single-blocking-packet after sending.")]
+		[Summary("This always discards the single-blocking-packet after sending.")]
 		public static void SendToClientsWhoCanSee(AbstractItem thing) {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsWhoCanSee("+thing+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsWhoCanSee called when generatingState is "+generatingState+" - Expected it to be Ready.");
