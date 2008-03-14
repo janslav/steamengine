@@ -5,9 +5,8 @@ if (src.isplayer)
 	else
 		arg(sortby,SortingCriteria.NameAsc)
 	endif
-	if (argvcount == 2)
-		//ten treti null je pripraven pro seznam lidi (bude predavan uvnitr dialogu pri navigaci)
-		dialog(d_admin,arg(sortby),argv(1),null)
+	if (argvcount == 2)		
+		dialog(d_admin,arg(sortby),argv(1))
 	else
 		dialog(d_admin,arg(sortby),0,null)
 	endif
