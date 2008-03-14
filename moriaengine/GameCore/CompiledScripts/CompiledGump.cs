@@ -31,7 +31,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public abstract class CompiledGumpDef : GumpDef {
-		//private GumpBuilder builder;
 		internal Gump gumpInstance = null; //this is to be used only in the abstract methods
 		public Gump GumpInstance {
 			get {
