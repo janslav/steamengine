@@ -901,7 +901,7 @@ namespace SteamEngine {
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
 		public DenyResult TryPickupItem(AbstractItem item, uint amt) {
-			this.ThrowIfDeleted();
+            this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
 
 			if (!this.TryGetRidOfDraggedItem()) {
@@ -912,7 +912,7 @@ namespace SteamEngine {
 			DenyPickupArgs args = new DenyPickupArgs(this, item, amt);
 
 			bool cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
-			if (!cancel) {
+            if (!cancel) {
 				try {
 					cancel = this.On_DenyPickupItem(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -964,7 +964,7 @@ namespace SteamEngine {
 			if (retVal == DenyResult.Allow) {
 				uint amountToPick = args.Amount;
 				uint amountSum = item.Amount;
-				if (amountToPick < amountSum) {
+    			if (!item.IsEquipped && amountToPick < amountSum) {
 					AbstractItem dupedItem = (AbstractItem) item.Dupe();
 					dupedItem.Amount = (amountSum - amountToPick);
 					item.Amount = amountToPick;
@@ -1321,7 +1321,7 @@ namespace SteamEngine {
 		}
 
 		private bool TryUnequip(AbstractItem i) {
-			DenyResult dr = this.TryPickupItem(i, 1);
+            DenyResult dr = this.TryPickupItem(i, 1);
 			if (dr == DenyResult.Allow) {
 				return this.TryGetRidOfDraggedItem();
 			}
