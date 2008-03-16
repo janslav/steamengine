@@ -74,13 +74,19 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			this.password = password;
 		}
 
+		public string AccountName {
+			get {
+				return this.accName;
+			}
+		}
+
 		public void TryLoginToGameServer(GameServers.GameServerClient gameServer) {
 			GameServers.ConsoleLoginRequestPacket loginRequest = Pool<GameServers.ConsoleLoginRequestPacket>.Acquire();
 			loginRequest.Prepare(this.uid, this.accName, this.password);
 			gameServer.Conn.SendSinglePacket(loginRequest);
 		}
 
-		internal void LoggedInToAux(bool announce) {
+		internal void SetLoggedInToAux(bool announce) {
 			if (announce) {
 				Console.WriteLine(this + " identified as " + this.accName);
 			}
@@ -109,9 +115,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			this.Conn.SendSinglePacket(packet);
 		}
 
-		internal void LoggedInTo(GameServers.GameServerClient state) {
+		internal void SetLoggedInTo(GameServers.GameServerClient state) {
 			if (!this.isLoggedInAux) {
-				LoggedInToAux(false);
+				SetLoggedInToAux(false);
 			}
 
 			Console.WriteLine(this + " identified as " + this.accName + " with " + state.Name);
@@ -119,6 +125,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			Settings.RememberUser(this.accName, this.password);
 
 			OpenCmdWindow(state.Name, state.Uid);
+			EnableCommandLine(state.Uid);
 
 			LoggedInConsoles.AddPair(this, state);
 		}

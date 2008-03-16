@@ -105,5 +105,13 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 			return EmptyReadOnlyGenericCollection<ConsoleServer.ConsoleClient>.instance;
 		}
+
+		public static ICollection<GameServers.GameServerClient> AllServersWhereLoggedIn(ConsoleServer.ConsoleClient console) {
+			LinkedList<GameServers.GameServerClient> serversList;
+			if (gameServers.TryGetValue(console, out serversList)) {
+				return serversList;
+			}
+			return EmptyReadOnlyGenericCollection<GameServers.GameServerClient>.instance;
+		}
 	}
 }

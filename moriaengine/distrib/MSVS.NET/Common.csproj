@@ -92,6 +92,9 @@
       <Link>Exceptions.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common\HashSet.cs">
+      <Link>HashSet.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\HighPerformanceTimer.cs">
       <Link>HighPerformanceTimer.cs</Link>
       <SubType>Code</SubType>

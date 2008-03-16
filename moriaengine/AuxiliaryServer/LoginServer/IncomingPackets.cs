@@ -92,9 +92,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
 			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
 			if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
-				packet.Prepare(Settings.lanIP, Settings.knownGameServers[this.chosenServer].Port);
+				packet.Prepare(Settings.lanIP, Settings.KnownGameServersList[this.chosenServer].Port);
 			} else {
-				packet.Prepare(Settings.wanIP, Settings.knownGameServers[this.chosenServer].Port);
+				packet.Prepare(Settings.wanIP, Settings.KnownGameServersList[this.chosenServer].Port);
 			}
 
 			//packet.Prepare(new byte[] { 89, 185, 242, 165 }, 2593); //moria 

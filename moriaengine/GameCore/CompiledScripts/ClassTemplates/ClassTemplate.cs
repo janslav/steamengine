@@ -41,6 +41,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			CopyConstructor();
 			Save();
 			LoadLine();
+			DefProperty();
 		}
 
 		private void GenerateTypeDeclaration() {
@@ -54,6 +55,22 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 			generatedType.IsClass = true;
 			generatedType.IsPartial = true;
+		}
+
+
+		private void DefProperty() {
+			CodeMemberProperty defProperty = new CodeMemberProperty();
+			defProperty.Name = "TypeDef";
+			defProperty.Attributes = MemberAttributes.Final | MemberAttributes.Public | MemberAttributes.New;
+			defProperty.Type = new CodeTypeReference(section.defClassName);
+			CodeMethodReturnStatement ret = new CodeMethodReturnStatement(
+				new CodeCastExpression(
+					section.defClassName,
+					new CodePropertyReferenceExpression(
+						new CodeBaseReferenceExpression(),
+						"Def")));
+			defProperty.GetStatements.Add(ret);
+			generatedType.Members.Add(defProperty);
 		}
 
 		private void Fields() {

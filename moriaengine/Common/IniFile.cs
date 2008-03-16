@@ -238,7 +238,7 @@ namespace SteamEngine.Common {
 
 		public void SetValue<T>(string name, T value, string comment) {
 			IniFileValueLine valueLine;
-			if (props.TryGetValue(name, out valueLine)) {
+			if (this.props.TryGetValue(name, out valueLine)) {
 				valueLine.SetValue(string.Concat(value));
 			} else {
 				comment = string.Concat(Environment.NewLine, "( ", name, ": ", comment, " )", Environment.NewLine);
@@ -250,7 +250,7 @@ namespace SteamEngine.Common {
 
 		public T GetValue<T>(string name) {
 			IniFileValueLine value;
-			if (props.TryGetValue(name, out value)) {
+			if (this.props.TryGetValue(name, out value)) {
 				return value.GetValue<T>();
 			} else {
 				throw new Exception("Missing value "+name+" from the ini file.");
@@ -259,13 +259,17 @@ namespace SteamEngine.Common {
 
 		public bool TryGetValue<T>(string name, out T retVal) {
 			IniFileValueLine value;
-			if (props.TryGetValue(name, out value)) {
+			if (this.props.TryGetValue(name, out value)) {
 				retVal = value.GetValue<T>();
 				return true;
 			} else {
 				retVal = default(T);
 				return false;
 			}
+		}
+
+		public void RemoveValue(string name) {
+			this.props.Remove(name);
 		}
 
 		public void WriteOut(TextWriter stream) {

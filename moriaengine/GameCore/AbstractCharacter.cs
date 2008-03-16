@@ -61,7 +61,7 @@ namespace SteamEngine {
 
 		public AbstractCharacterDef TypeDef {
 			get {
-				return (AbstractCharacterDef) Def;
+				return (AbstractCharacterDef) base.def;
 			}
 		}
 		

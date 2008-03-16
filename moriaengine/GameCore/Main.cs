@@ -115,7 +115,7 @@ namespace SteamEngine {
 				long time = HighPerformanceTimer.TickCount; //initializing HighPerformanceTimer
 				Common.Tools.ExitBinDirectory();
 				SetRunLevel(RunLevels.Startup);
-				if (! Init()) {
+				if (!Init()) {
 					SetRunLevel(RunLevels.Dead);
 					return;
 				}

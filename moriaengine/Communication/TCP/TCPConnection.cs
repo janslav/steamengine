@@ -74,11 +74,14 @@ namespace SteamEngine.Communication.TCP {
 		private void OnReceieve(IAsyncResult asyncResult) {
 			try {
 				int length = this.socket.EndReceive(asyncResult);
-				if (length > 0) {//we have new data, but still possibly have some old data.
+
+				if (length > 0) {
+					//we have new data, but still possibly have some old data.
 					base.ProcessReceievedData(length);
 				} else {
 					this.Close("Connection lost");
 				}
+
 			} catch (Exception e) {
 				//Logger.WriteError(e);
 				this.Close(e.Message);
