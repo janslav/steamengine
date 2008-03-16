@@ -382,9 +382,6 @@
       <Link>Gump.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\HashSet.cs">
-      <Link>HashSet.cs</Link>
-    </Compile>
     <Compile Include="..\..\GameCore\LayerNames.cs">
       <Link>LayerNames.cs</Link>
     </Compile>

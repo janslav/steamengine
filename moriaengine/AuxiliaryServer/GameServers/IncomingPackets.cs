@@ -50,6 +50,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					//console.TryLoginToGameServer(this);
 					console.OpenCmdWindow(state.Name, state.Uid);
+					console.TryLoginToGameServer(state);
 				}
 				state.RequestSendingLogStr(true);
 			}
@@ -86,11 +87,20 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(this.consoleId);
 			if (console != null) {
 				if (this.loginSuccessful) {
-					Console.WriteLine(this + " identified as " + this.accName + " with " + state.Name);
+					Console.WriteLine(state + " identified as " + this.accName + " with " + state.Name);
 
-					console.LoggedInTo(state);
+					console.SetLoggedInTo(state);
 				} else {
 					console.CloseCmdWindow(state.Uid);
+
+					ICollection<GameServerClient> serversLoggedIn = LoggedInConsoles.AllServersWhereLoggedIn(console);
+					if (serversLoggedIn.Count == 0) {
+						Settings.ForgetUser(console.AccountName);
+
+						string msg = "Failed to identify as " + this.accName;
+						console.WriteString(-1, msg);
+						console.Conn.Close(msg);
+					}
 				}
 			}
 		}

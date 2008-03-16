@@ -35,24 +35,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			DefProperty();
 			Constructor();
-			
-		}
-
-		private void DefProperty() {
-			CodeMemberProperty defProperty = new CodeMemberProperty();
-			defProperty.Name = "TypeDef";
-			defProperty.Attributes = MemberAttributes.Final|MemberAttributes.Public|MemberAttributes.New;
-			defProperty.Type = new CodeTypeReference(section.defClassName);
-			CodeMethodReturnStatement ret = new CodeMethodReturnStatement(
-				new CodeCastExpression(
-					section.defClassName,
-					new CodePropertyReferenceExpression(
-						new CodeThisReferenceExpression(),
-						"Def")));
-			defProperty.GetStatements.Add(ret);
-			generatedType.Members.Add(defProperty);
 		}
 
 		private void Constructor() {

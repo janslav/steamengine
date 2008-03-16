@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SteamEngine {
+namespace SteamEngine.Common {
 	public class HashSet<T> : ICollection<T> {
 		private int[] buckets;
 		private int count;

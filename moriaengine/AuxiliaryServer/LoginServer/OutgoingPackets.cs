@@ -18,7 +18,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		public void Prepare(byte[] ip) {
 			this.names.Clear();
-			foreach (GameServerInstanceSettings server in Settings.knownGameServers) {
+			foreach (GameServerInstanceSettings server in Settings.KnownGameServersList) {
 				this.names.Add(server.Name);
 			}
 			this.ip = ip;

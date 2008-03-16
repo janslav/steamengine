@@ -89,8 +89,9 @@ namespace SteamEngine.Communication {
 		}
 
 		public void Close(string reason) {
-			lock (this.core.LockObject) {
-				if (!this.disposed) {
+
+			if (!this.disposed) {
+				lock (this.core.LockObject) {
 					this.state.On_Close(reason);
 				}
 			}

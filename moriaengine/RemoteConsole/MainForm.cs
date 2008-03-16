@@ -67,6 +67,7 @@ namespace SteamEngine.RemoteConsole {
 					ctrl.Dispose();
 				}
 			}
+			this.displays.Clear();
 		}
 
 		private void TxtDisplay_TitleChanged(object sender, EventArgs ignored) {
@@ -120,9 +121,13 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		internal void WriteLine(int uid, string str) {
-			CommandLineDisplay cld;
-			if (this.displays.TryGetValue(uid, out cld)) {
-				cld.txtDisplay.Write(str);
+			if (uid >= 0) {
+				CommandLineDisplay cld;
+				if (this.displays.TryGetValue(uid, out cld)) {
+					cld.txtDisplay.Write(str);
+				}
+			} else {
+				systemTabPage.WriteLine(str);
 			}
 		}
 	}

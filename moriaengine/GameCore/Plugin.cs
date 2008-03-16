@@ -47,6 +47,12 @@ namespace SteamEngine {
 			}
 		}
 
+		public PluginDef TypeDef {
+			get {
+				return def;
+			}
+		}
+
 		public PluginHolder Cont {
 			get {
 				return cont;

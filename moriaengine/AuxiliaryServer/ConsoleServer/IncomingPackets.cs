@@ -47,7 +47,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				}
 			} else {
 				if (Settings.CheckUser(this.accName, this.password)) {
-					state.LoggedInToAux(true);
+					state.SetLoggedInToAux(true);
 				} else {
 					conn.Close("Failed to identify as " + this.accName);
 				}

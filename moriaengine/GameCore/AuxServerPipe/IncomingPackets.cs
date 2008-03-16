@@ -55,12 +55,36 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
-			AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
+			//instead of replting right away, we use a timer. That way we ensure the reply is sent no sooner than when the server is started properly, 
+			//i.e. including loading of account list.
+			new AccountLoginDelayTimer(conn, this.consoleId, this.accName, this.password);
+		}
 
-			ReplyAccountLoginPacket reply = Pool<ReplyAccountLoginPacket>.Acquire();
-			reply.Prepare(this.consoleId, this.accName, acc != null);
+		private class AccountLoginDelayTimer : Timers.Timer {
+			int consoleId;
+			string accName, password;
+			NamedPipeConnection<AuxServerPipeClient> conn;
 
-			conn.SendSinglePacket(reply);
+			public AccountLoginDelayTimer(NamedPipeConnection<AuxServerPipeClient> conn, int consoleId, string accName, string password) {
+				this.conn = conn;
+				this.consoleId = consoleId;
+				this.accName = accName;
+				this.password = password;
+
+				this.DueInSeconds = 0;
+			}
+
+			protected override void OnTimeout() {
+				if (this.conn.IsConnected) {
+					AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
+
+					ReplyAccountLoginPacket reply = Pool<ReplyAccountLoginPacket>.Acquire();
+					reply.Prepare(this.consoleId, this.accName, acc != null);
+
+					conn.SendSinglePacket(reply);
+				}
+				this.Delete();
+			}
 		}
 	}
 }
