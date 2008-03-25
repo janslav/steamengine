@@ -111,9 +111,18 @@ namespace SteamEngine.RemoteConsole {
 		//    cc.SendPacketGroup(pg);
 		//}
 
+		internal void SetConnectedTrue() {
+			SetConnected(true);
+		}
+
+		internal void SetConnectedFalse() {
+			SetConnected(false);
+		}
+
 		internal void SetConnected(bool connected) {
 			this.menuConnect.Enabled = !connected;
 			this.menuDisconnect.Enabled = connected;
+			this.menuRemoteServer.Enabled = connected;
 		}
 
 		private void menuDisconnect_Click(object sender, EventArgs e) {
@@ -128,6 +137,13 @@ namespace SteamEngine.RemoteConsole {
 				}
 			} else {
 				systemTabPage.WriteLine(str);
+			}
+		}
+
+		private void menuStartGameServer_Click(object sender, EventArgs e) {
+			ConsoleClient cc = ConsoleClient.ConnectedInstance;
+			if (cc != null) {
+				cc.Conn.SendPacketGroup(RequestServersToStartPacket.group);
 			}
 		}
 	}

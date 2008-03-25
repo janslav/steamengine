@@ -59,6 +59,7 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			// btnCancel
 			// 
+			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.btnCancel.Location = new System.Drawing.Point(196, 169);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(80, 23);
@@ -238,8 +239,10 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			// ConnectionForm
 			// 
+			this.AcceptButton = this.btnConnect;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.btnCancel;
 			this.ClientSize = new System.Drawing.Size(459, 205);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.btnClear);
@@ -266,6 +269,7 @@ namespace SteamEngine.RemoteConsole {
 			this.Name = "ConnectionForm";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Connect";
 			((System.ComponentModel.ISupportInitialize) (this.endPointSettingBindingSource)).EndInit();
 			this.ResumeLayout(false);

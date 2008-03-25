@@ -75,4 +75,45 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			this.EncodeUTF8String(this.str);
 		}
 	}
+
+	public class SendServersToStartPacket : OutgoingPacket {
+		private int count;
+		private List<int> numbers = new List<int>();
+		private List<string> iniPaths = new List<string>();
+		private List<string> names = new List<string>();
+		private List<ushort> ports = new List<ushort>();
+		private List<bool> runnings = new List<bool>();
+
+		public void Prepare(IList<GameServerInstanceSettings> servers, IList<int> runningServerNumbers) {
+			this.numbers.Clear();
+			this.iniPaths.Clear();
+			this.names.Clear();
+			this.ports.Clear();
+			this.runnings.Clear();
+
+			this.count = servers.Count;
+			foreach (GameServerInstanceSettings gsis in servers) {
+				this.numbers.Add(gsis.Number);
+				this.iniPaths.Add(gsis.IniPath);
+				this.names.Add(gsis.Name);
+				this.ports.Add(gsis.Port);
+				this.runnings.Add(runningServerNumbers.Contains(gsis.Number));
+			}
+		}
+
+		public override byte Id {
+			get { return 5; }
+		}
+
+		protected override void Write() {
+			this.EncodeInt(this.count);
+			for (int i = 0; i < this.count; i++) {
+				this.EncodeInt(this.numbers[i]);
+				this.EncodeUTF8String(this.iniPaths[i]);
+				this.EncodeUTF8String(this.names[i]);
+				this.EncodeUShort(this.ports[i]);
+				this.EncodeBool(this.runnings[i]);
+			}
+		}
+	}
 }

@@ -63,7 +63,7 @@ namespace SteamEngine.RemoteConsole {
 				TCPConnection<ConsoleClient> conn = ConsoleClient.Connect(eps);
 
 				if (conn != null) {
-					LoginRequestPacket packet = Pool<LoginRequestPacket>.Acquire();
+					RequestLoginPacket packet = Pool<RequestLoginPacket>.Acquire();
 					packet.Prepare(this.txtUserName.Text, this.txtPassword.Text);
 					conn.SendSinglePacket(packet);
 				}

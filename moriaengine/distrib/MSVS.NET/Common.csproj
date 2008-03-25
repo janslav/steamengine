@@ -70,10 +70,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Common\3rdParty\TemplateMaschine\TemplateMaschine.cs">
-      <Link>TemplateMaschine.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\Common\Common.cs">
       <Link>Common.cs</Link>
       <SubType>Code</SubType>
@@ -87,6 +83,9 @@
     </Compile>
     <Compile Include="..\..\Common\EmptyCollection.cs">
       <Link>EmptyCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\EnumCollection.cs">
+      <Link>EnumCollection.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\Exceptions.cs">
       <Link>Exceptions.cs</Link>

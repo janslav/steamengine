@@ -33,6 +33,12 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			}
 		}
 
+		public GameServerInstanceSettings Setting {
+			get {
+				return this.settings;
+			}
+		}
+
 		public int Uid {
 			get {
 				return this.uid;

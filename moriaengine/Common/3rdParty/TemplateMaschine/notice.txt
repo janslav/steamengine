@@ -1,3 +1,0 @@
-this class is/will be used by scripts to generate web status pages. 
-I made just a few changes to it to work under .NET 1.1 (since it's written for 2.0 beta)
--tart
