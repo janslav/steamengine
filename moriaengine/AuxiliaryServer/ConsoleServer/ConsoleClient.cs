@@ -93,11 +93,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 			this.isLoggedInAux = true;
 
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
-
 			RequestOpenCommandWindowPacket openWindow = Pool<RequestOpenCommandWindowPacket>.Acquire();
 			openWindow.Prepare("AuxiliaryServer", 0);
-			pg.AddPacket(openWindow);
 			this.Conn.SendSinglePacket(openWindow);
 
 			EnableCommandLine(0);

@@ -30,6 +30,8 @@ namespace SteamEngine.RemoteConsole {
 			this.menuDisconnect = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.menuExit = new System.Windows.Forms.MenuItem();
+			this.menuRemoteServer = new System.Windows.Forms.MenuItem();
+			this.menuStartGameServer = new System.Windows.Forms.MenuItem();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.systemTab = new System.Windows.Forms.TabPage();
 			this.systemTabPage = new SteamEngine.RemoteConsole.LogStrDisplay();
@@ -40,7 +42,8 @@ namespace SteamEngine.RemoteConsole {
 			// mainMenu
 			// 
 			this.mainMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuConsole});
+            this.menuConsole,
+            this.menuRemoteServer});
 			// 
 			// menuConsole
 			// 
@@ -76,6 +79,20 @@ namespace SteamEngine.RemoteConsole {
 			this.menuExit.Text = "&Exit";
 			this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
 			// 
+			// menuRemoteServer
+			// 
+			this.menuRemoteServer.Enabled = false;
+			this.menuRemoteServer.Index = 1;
+			this.menuRemoteServer.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuStartGameServer});
+			this.menuRemoteServer.Text = "Remote Server";
+			// 
+			// menuStartGameServer
+			// 
+			this.menuStartGameServer.Index = 0;
+			this.menuStartGameServer.Text = "Start Gameserver";
+			this.menuStartGameServer.Click += new System.EventHandler(this.menuStartGameServer_Click);
+			// 
 			// tabControl
 			// 
 			this.tabControl.Controls.Add(this.systemTab);
@@ -83,7 +100,7 @@ namespace SteamEngine.RemoteConsole {
 			this.tabControl.Location = new System.Drawing.Point(0, 0);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(632, 433);
+			this.tabControl.Size = new System.Drawing.Size(632, 113);
 			this.tabControl.TabIndex = 0;
 			// 
 			// systemTab
@@ -92,7 +109,7 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTab.Location = new System.Drawing.Point(4, 22);
 			this.systemTab.Name = "systemTab";
 			this.systemTab.Padding = new System.Windows.Forms.Padding(3);
-			this.systemTab.Size = new System.Drawing.Size(624, 407);
+			this.systemTab.Size = new System.Drawing.Size(624, 87);
 			this.systemTab.TabIndex = 0;
 			this.systemTab.Text = "System";
 			this.systemTab.UseVisualStyleBackColor = true;
@@ -103,18 +120,18 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTabPage.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.systemTabPage.Location = new System.Drawing.Point(3, 3);
 			this.systemTabPage.Name = "systemTabPage";
-			this.systemTabPage.Size = new System.Drawing.Size(618, 401);
+			this.systemTabPage.Size = new System.Drawing.Size(618, 81);
 			this.systemTabPage.TabIndex = 0;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(632, 433);
+			this.ClientSize = new System.Drawing.Size(632, 113);
 			this.Controls.Add(this.tabControl);
 			this.Menu = this.mainMenu;
 			this.Name = "MainForm";
-			this.Text = "MainForm";
+			this.Text = "SteamEngine remote console";
 			this.tabControl.ResumeLayout(false);
 			this.systemTab.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -132,6 +149,8 @@ namespace SteamEngine.RemoteConsole {
 		private System.Windows.Forms.MenuItem menuItem2;
 		private System.Windows.Forms.MenuItem menuDisconnect;
 		private System.Windows.Forms.MenuItem menuConnect;
+		private System.Windows.Forms.MenuItem menuRemoteServer;
+		private System.Windows.Forms.MenuItem menuStartGameServer;
 	}
 }
 

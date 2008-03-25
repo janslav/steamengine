@@ -21,6 +21,8 @@ namespace SteamEngine.RemoteConsole {
 					return Pool<RequestEnableCommandLinePacket>.Acquire();
 				case 4:
 					return Pool<WriteLinePacket>.Acquire();
+				case 5:
+					return Pool<SendServersToStartPacket>.Acquire();
 			}
 
 			return null;
@@ -116,4 +118,92 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
+
+	public class SendServersToStartPacket : ConsoleIncomingPacket {
+		GameServerEntry[] entries;
+
+		private delegate void EntriesArrayDeleg(GameServerEntry[] entries);
+		private static EntriesArrayDeleg deleg = OpenStartGameForm;
+
+		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.Invoke(deleg, new object[] { this.entries });
+		}
+
+		private static void OpenStartGameForm(GameServerEntry[] entries) {
+			new StartGameForm(entries).ShowDialog();
+		}
+
+		protected override ReadPacketResult Read() {
+			int count = this.DecodeInt();
+			this.entries = new GameServerEntry[count];
+
+			for (int i = 0; i < count; i++) {
+				int number = this.DecodeInt();
+				string iniPath = this.DecodeUTF8String();
+				string name = this.DecodeUTF8String();
+				ushort port = this.DecodeUShort();
+				bool running = this.DecodeBool();
+
+				this.entries[i] = new GameServerEntry(number, iniPath, name, port, running);
+			}
+
+			return ReadPacketResult.Success;
+		}
+
+		public class GameServerEntry {
+			private readonly int number;
+			private readonly string iniPath;
+			private readonly string name;
+			private readonly ushort port;
+			private readonly bool running;
+
+			internal GameServerEntry(int number, string iniPath, string name, ushort port, bool running) {
+				this.iniPath = iniPath;
+				this.number = number;
+				this.name = name;
+				this.port = port;
+				this.running = running;
+			}
+
+			public string DisplayText {
+				get {
+					if (this.running) {
+						return this.name + " (on)";
+					} else {
+						return this.name + " (off)";
+					}
+				}
+			}
+
+			public int Number {
+				get {
+					return this.number;
+				}
+			}
+
+			public string IniPath {
+				get {
+					return this.iniPath;
+				}
+			}
+
+			public string Name {
+				get {
+					return this.name;
+				}
+			}
+
+			public ushort Port {
+				get {
+					return this.port;
+				}
+			}
+
+			public bool Running {
+				get {
+					return this.running;
+				}
+			}
+		}
+	}
 }

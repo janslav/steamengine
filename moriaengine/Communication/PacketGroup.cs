@@ -115,8 +115,10 @@ namespace SteamEngine.Communication {
 
 				this.compressed.Dispose();
 				this.compressed = null;
-				this.uncompressed.Dispose();
-				this.uncompressed = null;
+				if (this.uncompressed != null) {
+					this.uncompressed.Dispose();
+					this.uncompressed = null;
+				}
 				foreach (OutgoingPacket packet in this.packets) {
 					packet.Dispose();
 				}

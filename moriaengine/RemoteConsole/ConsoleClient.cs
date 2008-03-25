@@ -14,7 +14,7 @@ namespace SteamEngine.RemoteConsole {
 
 		private static ConsoleClient connectedInstance;
 
-		public ConsoleClient ConnectedInstance {
+		public static ConsoleClient ConnectedInstance {
 			get {
 				return connectedInstance;
 			}
@@ -58,9 +58,7 @@ namespace SteamEngine.RemoteConsole {
 			MainClass.mainForm.SystemDisplay.WriteLine("Disconnected from " + conn.EndPoint + ": "+ reason);
 
 			connectedInstance = null;
-			MainClass.mainForm.SetConnected(false);
-
-
+			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.SetConnectedFalse));
 			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.ClearCmdLineDisplays));
 		}
 

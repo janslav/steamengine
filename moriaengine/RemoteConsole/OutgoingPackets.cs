@@ -8,7 +8,7 @@ using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.RemoteConsole {
 
-	public class LoginRequestPacket : OutgoingPacket {
+	public class RequestLoginPacket : OutgoingPacket {
 		private string accName;
 		private string password;
 
@@ -24,6 +24,24 @@ namespace SteamEngine.RemoteConsole {
 		protected override void Write() {
 			this.EncodeUTF8String(this.accName);
 			this.EncodeUTF8String(this.password);
+		}
+	}
+
+
+	public class RequestServersToStartPacket : OutgoingPacket {
+		public static readonly PacketGroup group;
+
+		static RequestServersToStartPacket() {
+			group = new PacketGroup();
+			group.AddPacket(new RequestServersToStartPacket());
+			group.SetType(PacketGroupType.Free);
+		}
+
+		public override byte Id {
+			get { return 1; }
+		}
+
+		protected override void Write() {
 		}
 	}
 

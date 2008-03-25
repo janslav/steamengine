@@ -16,7 +16,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id) {
 			switch (id) {
 				case 0:
-					return Pool<LoginRequestPacket>.Acquire();
+					return Pool<RequestLoginPacket>.Acquire();
+				case 1:
+					return Pool<RequestServersToStartPacket>.Acquire();
 			}
 			return null;
 		}
@@ -27,7 +29,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 	}
 
-	public class LoginRequestPacket : ConsoleIncomingPacket {
+	public class RequestLoginPacket : ConsoleIncomingPacket {
 		private string accName;
 		private string password;
 
@@ -52,6 +54,23 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					conn.Close("Failed to identify as " + this.accName);
 				}
 			}
+		}
+	}
+
+	public class RequestServersToStartPacket : ConsoleIncomingPacket {
+		protected override ReadPacketResult Read() {
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+			List<int> runningServerNumbers = new List<int>();
+			foreach (GameServers.GameServerClient gsc in GameServers.GameServerServer.AllGameServers) {
+				runningServerNumbers.Add(gsc.Setting.Number);
+			}
+
+			SendServersToStartPacket packet = Pool<SendServersToStartPacket>.Acquire();
+			packet.Prepare(Settings.KnownGameServersList, runningServerNumbers);
+			conn.SendSinglePacket(packet);
 		}
 	}
 }
