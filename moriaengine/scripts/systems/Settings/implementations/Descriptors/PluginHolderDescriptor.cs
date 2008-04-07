@@ -44,6 +44,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return counter;
 		}
 
+		[Button("Pluginlist")]
+		public static void PluginList(object target) {
+			D_PluginList.PluginList((PluginHolder)target, null);
+		}
+
 		[Button("Delete plugins")]
 		public static void DeletePlugins(object target) {
 			((PluginHolder) target).DeletePlugins();

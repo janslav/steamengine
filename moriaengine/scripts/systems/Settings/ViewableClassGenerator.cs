@@ -28,6 +28,10 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	internal sealed class ViewableClassGenerator : ISteamCSCodeGenerator {
+		//array of special types which (or whose children) will be viewable even if the classes doesn't have the
+		//viewable attribute
+		static Type[] viewableSpecials = { typeof(Plugin) };
+
 		static List<Type> viewableClasses = new List<Type>();
 
 		//key is type, value is the list of its descriptors
@@ -82,13 +86,24 @@ namespace SteamEngine.CompiledScripts {
 		    ClassManager.RegisterHook(CheckViewabilityClass);
 		}
 
+		[Summary("Check if the given type is in the viewableSpecials array")]
+		internal static bool IsViewableSpecial(Type type) {
+			foreach(Type specType in viewableSpecials) {
+				if(specType.IsAssignableFrom(type)) {//specialViewable type is some kind of parent fo the checked type
+					return true;
+				}
+			}
+			return false;
+		}
+
 		[Summary("Method for checking if the given Type is Viewable. If so, put it to the list."+
 				"Used as hooked delegate in ClassManager")]
 		public static void CheckViewabilityClass(Type type) {
 			//look if the type has this attribute, don't look to parent classes 
 			//(if the type has not the attribute but some parent has, we dont care - if we want
 			//it to be infoized, we must add a ViewableClass attribute to it)
-			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false)) {
+			if(Attribute.IsDefined(type, typeof(ViewableClassAttribute),false) ||
+							ViewableClassGenerator.IsViewableSpecial(type)) {
 				viewableClasses.Add(type);
 			} else if(Attribute.IsDefined(type, typeof(ViewDescriptorAttribute), false)) {
 				Type descHandledType = ((ViewDescriptorAttribute)type.GetCustomAttributes(typeof(ViewDescriptorAttribute), false)[0]).HandledType;
@@ -137,8 +152,14 @@ namespace SteamEngine.CompiledScripts {
 
 			internal GeneratedInstance(Type type) {
 				this.type = type;
-				ViewableClassAttribute vca = (ViewableClassAttribute)type.GetCustomAttributes(typeof(ViewableClassAttribute), false)[0];
-				typeLabel = (vca.Name == null ? type.Name : vca.Name); //label will be either the name of the type or specified label
+				object[] vcaArray = type.GetCustomAttributes(typeof(ViewableClassAttribute), false);
+				ViewableClassAttribute vca = null;
+				if(vcaArray.Length > 0) {
+					//we have the ViewableClassAttribute, get it now
+					vca = (ViewableClassAttribute)vcaArray[0];
+				}
+				//the vca needn't be present - if the type is kind of "viewableSpecial" then the class might be without this attribute...
+				typeLabel = ((vca == null || vca.Name == null) ? type.Name : vca.Name); //label will be either the name of the type or specified label
 				//binding flags for members of the actual type - do not consider members from the possible parent classes
 				BindingFlags forActualMembers = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public|BindingFlags.DeclaredOnly;
 				BindingFlags forInheritedMembers = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
