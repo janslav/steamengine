@@ -39,17 +39,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
-			List<KeyValuePair<TagKey, Object>> tagList = null;
-			if(!args.HasTag(D_TagList.tagListTK)) {
+			List<KeyValuePair<TagKey, Object>> tagList = args.GetTag(D_TagList.tagListTK) as List<KeyValuePair<TagKey, Object>>;
+			if(tagList == null) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				tagList = ListifyTags(th.GetAllTags(), TagMath.SGetTag(args, D_TagList.tagCriteriumTK));
 				tagList.Sort(TagsComparer.instance);
 				args.SetTag(D_TagList.tagListTK, tagList); //ulozime to do argumentu dialogu				
-			} else {
-				//tagList si posilame v argumentu (napriklad pri pagingu)
-				tagList = (List<KeyValuePair<TagKey, Object>>)args.GetTag(D_TagList.tagListTK);
-			}
+			} 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tagList.Count);
 			
@@ -207,16 +204,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return tagsList;
 		}
 
-		[Summary("Display an account list. Function accessible from the game."+
-				"The function is designed to be triggered using .x TagsList(criteria)"+
+		[Summary("Display a tag list. Function accessible from the game."+
+				"The function is designed to be triggered using .x TagList(criteria)"+
 			    "but it can be used also normally .TagList(criteria) to display runner's own tags")]
 		[SteamFunction]
 		public static void TagList(TagHolder self, ScriptArgs text) {
 			//zavolat dialog, 
 			//parametr self - thing jehoz tagy chceme zobrazit
-			//0 - zacneme od prvniho tagu co ma
-			//treti parametr vyhledavani dle parametru, if any...
-			//ctvrty parametr = volny jeden prvek pole pro seznam tagu, pouzito az v dialogu
+			//0 - zacneme od prvniho tagu
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_TagList.holderTK, self); //na sobe budeme zobrazovat tagy
 			if(text == null || text.argv == null || text.argv.Length == 0) {

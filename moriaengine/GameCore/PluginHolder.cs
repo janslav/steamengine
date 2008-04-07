@@ -490,9 +490,22 @@ namespace SteamEngine {
 		public IEnumerable<Plugin> GetAllPlugins() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
-					Plugin p = entry.Key as Plugin;
+					Plugin p = entry.Value as Plugin;
 					if (p != null) {
 						yield return p;
+					}
+				}
+			}
+		}
+
+		[Summary("Return enumerable containing all plugins")]		
+		public IEnumerable<KeyValuePair<PluginKey, Plugin>> GetAllPluginsWithKeys() {
+			if(tags != null) {
+				foreach(DictionaryEntry entry in tags) {
+					PluginKey pk = entry.Key as PluginKey;
+					if(pk != null) {
+						//returning PluginKey-Plugin pair (if the key is of type PluginKey then we expect Plugin as a value
+						yield return new KeyValuePair<PluginKey, Plugin>(pk, entry.Value as Plugin);
 					}
 				}
 			}

@@ -40,17 +40,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder)args.GetTag(D_TimerList.holderTK); //z koho budeme timery brat?
-			List<KeyValuePair<TimerKey, BoundTimer>> timerList = null;
-			if(!args.HasTag(D_TimerList.timerListTK)) {
+			List<KeyValuePair<TimerKey, BoundTimer>> timerList = args.GetTag(D_TimerList.timerListTK) as List<KeyValuePair<TimerKey, BoundTimer>>;
+			if(timerList == null) {
 				//vzit seznam timeru dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				timerList = ListifyTimers(th.GetAllTimers(), TagMath.SGetTag(args, D_TimerList.timerCriteriumTK));
 				timerList.Sort(TimersComparer.instance);
 				args.SetTag(D_TimerList.timerListTK,timerList); //ulozime to do argumentu dialogu
-			} else {
-				//timerList si posilame v argumentu (napriklad pri pagingu)
-				timerList = (List<KeyValuePair<TimerKey, BoundTimer>>)args.GetTag(D_TimerList.timerListTK);
-			}
+			} 
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, timerList.Count);

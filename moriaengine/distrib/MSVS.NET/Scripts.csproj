@@ -233,6 +233,9 @@
     <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
       <Link>systems\administration\Pages\GMPage.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\plugins\PluginList.cs">
+      <Link>systems\administration\plugins\PluginList.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\Regions\MutableRectangle.cs">
       <Link>systems\administration\Regions\MutableRectangle.cs</Link>
     </Compile>
@@ -349,6 +352,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\CharacterDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\CharacterDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\PluginDescriptor.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginHolderDescriptor.cs">
       <Link>systems\settings\Implementations\Descriptors\PluginHolderDescriptor.cs</Link>
