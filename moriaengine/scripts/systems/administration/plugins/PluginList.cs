@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
+			//vzit seznam plugin z pluginholdera (char nebo item) prisleho v parametru dialogu
 			PluginHolder ph = (PluginHolder)args.GetTag(D_PluginList.holderTK); //z koho budeme pluginy brat?
 			List<KeyValuePair<PluginKey, Plugin>> pluginList = args.GetTag(D_PluginList.pluginListTK) as List<KeyValuePair<PluginKey, Plugin>>;
 			if(pluginList == null) {
@@ -52,10 +52,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech plugin na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + pluginList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);//cudlik na info o hodnotach
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 			
 			//cudlik a input field na zuzeni vyberu
@@ -143,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all tags the given TagHolder has")]
+		[Summary("Retreives the list of all plugins the given PluginHolder has")]
 		private List<KeyValuePair<PluginKey, Plugin>> ListifyPlugins(IEnumerable<KeyValuePair<PluginKey, Plugin>> plugins, string criteria) {
 			List<KeyValuePair<PluginKey, Plugin>> pluginsList = new List<KeyValuePair<PluginKey, Plugin>>();
 			foreach(KeyValuePair<PluginKey, Plugin> entry in plugins) {

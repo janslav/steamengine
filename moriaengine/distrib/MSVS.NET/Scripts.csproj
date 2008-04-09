@@ -272,6 +272,12 @@
     <Compile Include="..\..\scripts\systems\administration\timers\TimerList.cs">
       <Link>systems\administration\timers\TimerList.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Triggers\TriggerGroupAdd.cs">
+      <Link>systems\administration\Triggers\TriggerGroupAdd.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Triggers\TriggerGroupList.cs">
+      <Link>systems\administration\Triggers\TriggerGroupList.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\AI\PathFinding\AStar.cs">
       <Link>systems\AI\Pathfinding\AStar.cs</Link>
     </Compile>

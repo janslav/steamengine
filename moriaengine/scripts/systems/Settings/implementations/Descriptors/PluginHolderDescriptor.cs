@@ -44,7 +44,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return counter;
 		}
 
-		[Button("Pluginlist")]
+		[GetMethod("TriggerGroups", typeof(string))]
+		public static object GetTriggerGroups(object target) {
+			string retString = "";
+			foreach(TriggerGroup tg in ((PluginHolder)target).GetAllTriggerGroups()) {
+				retString += tg.PrettyDefname;
+			}
+			return retString;
+		}
+
+		[Button("Plugin List")]
 		public static void PluginList(object target) {
 			D_PluginList.PluginList((PluginHolder)target, null);
 		}
@@ -52,6 +61,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Button("Delete plugins")]
 		public static void DeletePlugins(object target) {
 			((PluginHolder) target).DeletePlugins();
+		}
+
+		[Button("TriggerGroups List")]
+		public static void TriggerGroupsList(object target) {
+			D_TriggerGroupsList.TriggerGroupList((PluginHolder)target, null);
 		}
 
 		[Button("Clear TriggerGroups")]
