@@ -23,7 +23,7 @@ namespace SteamEngine.AuxiliaryServer {
 			} catch (Exception e) {
 				Logger.WriteFatal(e);
 			} finally {
-				Dispose();
+				Exit();
 			}
 		}
 
@@ -37,7 +37,10 @@ namespace SteamEngine.AuxiliaryServer {
 			
 		}
 
-		private static void Dispose() {
+		private static void Exit() {
+			LoginServer.LoginServer.Exit();
+			ConsoleServer.ConsoleServer.Exit();
+			GameServers.GameServerServer.Exit();
 		}
 	}
 

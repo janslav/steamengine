@@ -625,7 +625,7 @@ namespace SteamEngine.Packets {
 
 			if ((changeflags & NSFlags.ItemUpdate) == NSFlags.ItemUpdate) {
 				ProcessItem(item, topPoint);
-			} else if (Globals.AOS) {//only new properties
+			} else if (Globals.aos) {//only new properties
 				ProcessItemProperties(item);
 			}
 		}
@@ -781,7 +781,7 @@ namespace SteamEngine.Packets {
 									(OpenedContainers.HasContainerOpen(viewerConn, item) == DenyResult.Allow)) {
 								if (PacketSender.PrepareContainerContents(item, viewerConn, viewer)) {
 									PacketSender.SendTo(viewerConn, true);
-									if (Globals.AOS && viewerConn.Version.aosToolTips) {
+									if (Globals.aos && viewerConn.Version.aosToolTips) {
 										foreach (AbstractItem contained in item) {
 											if (viewer.CanSeeVisibility(contained)) {
 												ObjectPropertiesContainer containedOpc = contained.GetProperties();
@@ -795,7 +795,7 @@ namespace SteamEngine.Packets {
 							}
 
 							if (propertiesExist) {
-								if (Globals.AOS && viewerConn.Version.aosToolTips) {
+								if (Globals.aos && viewerConn.Version.aosToolTips) {
 									if (iopc == null) {
 										iopc = item.GetProperties();
 										if (iopc == null) {
@@ -844,7 +844,7 @@ namespace SteamEngine.Packets {
 									PacketSender.PrepareCharacterInformation(ch, (HighlightColor) highlight);
 								}
 								charInfoPackets[highlight].SendTo(viewerConn);
-								if (Globals.AOS && viewerConn.Version.aosToolTips) {
+								if (Globals.aos && viewerConn.Version.aosToolTips) {
 									if (propertiesExist) {
 										propertiesExist = ProcessCharProperties(ch, ref iopc, viewerConn);
 									}
@@ -900,7 +900,7 @@ namespace SteamEngine.Packets {
 				if (myConn != null) {
 					UpdateSkills(myConn);
 					if (propertiesExist && propertiesChanged) {
-						if (Globals.AOS && myConn.Version.aosToolTips) {
+						if (Globals.aos && myConn.Version.aosToolTips) {
 							propertiesExist = ProcessCharProperties(ch, ref iopc, myConn);
 						}
 					}
@@ -978,7 +978,7 @@ namespace SteamEngine.Packets {
 										AbstractItem newItem = (AbstractItem) thingInRange;
 										PacketSender.PrepareItemInformation(newItem);
 										PacketSender.SendTo(myConn, true);
-										if (Globals.AOS && myConn.Version.aosToolTips) {
+										if (Globals.aos && myConn.Version.aosToolTips) {
 											ObjectPropertiesContainer newiopc = thing.GetProperties();
 											if (newiopc != null) {
 												newiopc.SendIdPacket(myConn);
@@ -1062,7 +1062,7 @@ namespace SteamEngine.Packets {
 										Logger.WriteInfo(NetStateTracingOn, "Sending new char info to "+viewerConn);
 										myCharInfo.SendTo(viewerConn);
 										newCharSent = true;
-										if (Globals.AOS && viewerConn.Version.aosToolTips) {
+										if (Globals.aos && viewerConn.Version.aosToolTips) {
 											if (propertiesExist) {
 												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerConn);
 											}
@@ -1076,7 +1076,7 @@ namespace SteamEngine.Packets {
 								}
 								if (!newCharSent) {
 									if (propertiesChanged && propertiesExist) {
-										if (Globals.AOS && viewerConn.Version.aosToolTips) {
+										if (Globals.aos && viewerConn.Version.aosToolTips) {
 											propertiesExist = ProcessCharProperties(ch, ref iopc, viewerConn);
 										}
 									}

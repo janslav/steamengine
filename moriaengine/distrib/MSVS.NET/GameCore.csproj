@@ -736,10 +736,6 @@
       <Link>ScriptLoader.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\SEIniHandler.cs">
-      <Link>SEIniHandler.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\GameCore\Server.cs">
       <Link>Server.cs</Link>
       <SubType>Code</SubType>

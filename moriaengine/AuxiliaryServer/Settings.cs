@@ -93,7 +93,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public static GameServerInstanceSettings RememberGameServer(string iniPath) {
 			foreach (GameServerInstanceSettings game in knownGameServersSet) {
-				if (string.Equals(Path.GetFullPath(game.IniPath), Path.GetFullPath(iniPath), StringComparison.OrdinalIgnoreCase)) {
+				if (string.Equals(game.IniPath, Path.GetFullPath(iniPath), StringComparison.OrdinalIgnoreCase)) {
 					return game;
 				}
 			}
@@ -150,17 +150,16 @@ namespace SteamEngine.AuxiliaryServer {
 
 		internal GameServerInstanceSettings(string iniPath) {
 			this.number = Settings.KnownGameServersList.Count;
-			this.iniPath = iniPath;
+			this.iniPath = Path.GetFullPath(iniPath);
 
 			ReadGameIni(this.iniPath, out this.name, out this.port);
 		}
 
 		internal GameServerInstanceSettings(IniFileSection section) {
 			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list. Should be unique, starting with 0.");
-			this.iniPath = Path.GetFullPath(section.GetValue<string>("iniPath", ".", "path to steamengine.ini of this instance"));
+			this.iniPath = Path.GetFullPath(section.GetValue<string>("iniPath", Path.GetFullPath("."), "path to steamengine.ini of this instance"));
 
 			ReadGameIni(this.iniPath, out this.name, out this.port);
-
 		}
 
 		internal void WriteToIniSection(IniFileSection section) {

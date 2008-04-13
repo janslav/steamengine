@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 using NAnt.Core;
 
@@ -94,29 +95,22 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			if (cli != null) {
 				//server online, we do nothing
 			} else {
-				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
-				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
-
-				//string binPath = System.IO.Path.Combine(sett.IniPath, "bin");
-
-				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
-
-				NantLauncher nant = new NantLauncher(nantPath);
-				nant.SetLogger(new AuxServNantLogger());
-				nant.SetPropertiesAsSelf();
-				nant.SetDebugMode(this.build == SEBuild.Debug);
-				nant.SetOptimizeMode(this.build == SEBuild.Optimised);
-
-				nant.SetTarget("buildCore");
-				nant.Execute();
-
-				string file = nant.GetCompiledAssemblyName("gameCoreFileName");
-
-				System.Diagnostics.Process.Start(file);
+				AuxServNantLogger o = new AuxServNantLogger(this.serverNum, this.build);
+				Thread t = new Thread(o.StartThread);
+				t.Start();
 			}
 		}
 
+		//Nant logger class and a helper threading class combined
 		internal class AuxServNantLogger : DefaultLogger {
+			private byte serverNum;
+			private SEBuild build;
+
+			internal AuxServNantLogger(byte serverNum, SEBuild build) {
+				this.serverNum = serverNum;
+				this.build = build;
+			}
+
 			public override void BuildFinished(object sender, BuildEventArgs e) { }
 			public override void BuildStarted(object sender, BuildEventArgs e) { }
 			public override void TargetFinished(object sender, BuildEventArgs e) { }
@@ -130,6 +124,28 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					Logger.StaticWriteLine(o);
 				}
 				//Console.WriteLine(pMessage);
+			}
+
+			internal void StartThread() {
+				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
+				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
+
+				//string binPath = System.IO.Path.Combine(sett.IniPath, "bin");
+
+				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
+
+				NantLauncher nant = new NantLauncher(nantPath);
+				nant.SetLogger(this);
+				nant.SetPropertiesAsSelf();
+				nant.SetDebugMode(this.build == SEBuild.Debug);
+				nant.SetOptimizeMode(this.build == SEBuild.Optimised);
+
+				nant.SetTarget("buildCore");
+				nant.Execute();
+
+				string file = nant.GetCompiledAssemblyName("gameCoreFileName");
+
+				System.Diagnostics.Process.Start(file);
 			}
 		}
 	}

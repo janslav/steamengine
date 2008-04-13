@@ -925,7 +925,7 @@ namespace SteamEngine {
 						if (!con.IsEmpty) {
 							if (PacketSender.PrepareContainerContents(con, myConn, this)) {
 								PacketSender.SendTo(myConn, true);
-								if (Globals.AOS && myConn.Version.aosToolTips) {
+								if (Globals.aos && myConn.Version.aosToolTips) {
 									foreach (AbstractItem contained in con) {
 										if (this.CanSeeVisibility(contained)) {
 											ObjectPropertiesContainer containedOpc = contained.GetProperties();
@@ -1342,7 +1342,7 @@ namespace SteamEngine {
 					if (CanSeeForUpdate(itm)) {
 						PacketSender.PrepareItemInformation(itm);
 						PacketSender.SendTo(myConn, true);
-						if (Globals.AOS && myConn.Version.aosToolTips) {
+						if (Globals.aos && myConn.Version.aosToolTips) {
 							ObjectPropertiesContainer iopc = itm.GetProperties();
 							if (iopc != null) {
 								iopc.SendIdPacket(myConn);
@@ -1371,7 +1371,7 @@ namespace SteamEngine {
 							if (itm != null) {
 								PacketSender.PrepareItemInformation((AbstractItem) thing);
 								PacketSender.SendTo(myConn, true);
-								if (Globals.AOS && myConn.Version.aosToolTips) {
+								if (Globals.aos && myConn.Version.aosToolTips) {
 									ObjectPropertiesContainer iopc = thing.GetProperties();
 									if (iopc != null) {
 										iopc.SendIdPacket(myConn);

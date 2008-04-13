@@ -49,8 +49,8 @@ namespace SteamEngine {
 		internal static int clients = 0;
 		internal static LinkedList<Conn> connections = new LinkedList<Conn>();
 		internal static TcpListener[] serverSockets;
-		
-		internal static ArrayList omitIPs = new ArrayList();
+
+		internal static List<IPAddress> omitIPs = new List<IPAddress>();
 		internal static string routerIPstr = null;
 		internal static byte[] routerIP = new byte[4];
         
@@ -86,13 +86,13 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void AddOmitIP(string ip) {
+		internal static void AddOmitIP(IPAddress ip) {
 			omitIPs.Add(ip);
 		}
 
 		internal static bool IsOmitIP(IPAddress ip) {
 			for (int a=0; a<omitIPs.Count; a++) {
-				if (ip.ToString()==(String)omitIPs[a]) {
+				if (ip.Equals(omitIPs[a])) {
 					return true;
 				}
 			}
@@ -128,7 +128,7 @@ namespace SteamEngine {
 			it isn't specified which this will find.
 		*/
 		public static string GetMulsPath() {
-		#if !MONO
+#if !MONO
 			RegistryKey rk = Registry.LocalMachine;
 			rk=rk.OpenSubKey("SOFTWARE");
 			if (rk!=null) {
@@ -158,9 +158,9 @@ namespace SteamEngine {
 			} else {
 				Logger.WriteWarning("Unable to open 'SOFTWARE' in registry");
 			}
-		#else
+#else
 			Logger.WriteWarning("TODO: Implement some way to find the muls when running from MONO?");
-		#endif
+#endif
 			return null;
 		}
 		
@@ -778,7 +778,7 @@ namespace SteamEngine {
 		}
 
 		public static void SendCharPropertiesTo(GameConn viewerConn, AbstractCharacter viewer, AbstractCharacter target) {
-			if (Globals.AOS && viewerConn.Version.aosToolTips) {
+			if (Globals.aos && viewerConn.Version.aosToolTips) {
 				ObjectPropertiesContainer iopc = target.GetProperties();
 				if (iopc != null) {
 					iopc.SendIdPacket(viewerConn);

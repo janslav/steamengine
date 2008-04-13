@@ -23,6 +23,10 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			
 		}
 
+		internal static void Exit() {
+			instance.Dispose();
+		}
+
 		public static IEnumerable<GameServerClient> AllGameServers {
 			get {
 				return clients;
