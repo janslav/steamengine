@@ -34,7 +34,6 @@ namespace SteamEngine.AuxiliaryServer {
 			LoginServer.LoginServer.Init();
 			ConsoleServer.ConsoleServer.Init();
 			GameServers.GameServerServer.Init();
-			
 		}
 
 		private static void Exit() {

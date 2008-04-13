@@ -84,7 +84,7 @@ namespace SteamClients {
 		private string cmdEditorFileParams;
 		private string cmdEditorLineParams;
 		private Point insanePoint;
-		private IniHandler iniFile;
+		private IniFile iniFile;
 		private SteamConsole steamConsole;
 		private ConsoleLinks links;
 		private bool runMainLoop;
@@ -117,7 +117,7 @@ namespace SteamClients {
 			} else {
 				steamConsole.StartNative("buildCore", "gameCoreFileName");
 			}
-			iniFile.IniDone();
+			iniFile.WriteToFile();
 			runMainLoop=true;
 			timer.Enabled=true;
 			while (runMainLoop) {
@@ -141,7 +141,7 @@ namespace SteamClients {
 			connForm=null;
 			viewForm=null;
 			insanePoint=new Point(0,0);
-			iniFile=new IniHandler("gui.ini");
+			iniFile=new IniFile("gui.ini");
 
 			steamConsole=new SteamConsole((IConsoleListener)this);
 
@@ -220,31 +220,31 @@ namespace SteamClients {
 
 		#region Configuration
 		private void LoadConfiguration() {
-			IniDataSection section=iniFile.IniSection("General");
-			savePasswords=ConvertTools.ToBoolean(section.IniEntry("SavePasswords", defaultSavePasswords, ""));
-			cmdEditor=section.IniEntry("Editor",defaultEditor,"").ToString();
-			cmdEditorFileParams=section.IniEntry("EditorFileParams",defaultEditorFileParams,"").ToString();
-			cmdEditorLineParams=section.IniEntry("EditorLineParams",defaultEditorLineParams,"").ToString();
-			simpleCopy=ConvertTools.ToBoolean(section.IniEntry("SimpleCopy", defaultSimpleCopy, ""));
-			runConverter= ConvertTools.ToBoolean(section.IniEntry("runConverter", false, "Run Converter instead of SteamEngine"));
+			IniFileSection section=iniFile.GetNewOrParsedSection("General");
+			savePasswords = section.GetValue<bool>("SavePasswords", defaultSavePasswords, "");
+			cmdEditor = section.GetValue<string>("Editor", defaultEditor, "");
+			cmdEditorFileParams = section.GetValue<string>("EditorFileParams", defaultEditorFileParams, "");
+			cmdEditorLineParams = section.GetValue<string>("EditorLineParams", defaultEditorLineParams, "");
+			simpleCopy = section.GetValue<bool>("SimpleCopy", defaultSimpleCopy, "");
+			runConverter = section.GetValue<bool>("runConverter", false, "Run Converter instead of SteamEngine");
 
 			int i=0;
-			string name="SearchDir"+i.ToString();
-			if (!section.Contains(name)) {
-				for (i=0;i<defaultSearchDirs.Length;i++) {
+			string name="SearchDir"+i;
+			if (!section.HasValue(name)) {
+				for (;i<defaultSearchDirs.Length;i++) {
 					name="SearchDir"+i.ToString();
-					section.IniEntry(name,defaultSearchDirs[i].ToString(),"");
+					section.SetValue<string>(name,defaultSearchDirs[i],"");
 					links.AddSearchDir(defaultSearchDirs[i]);
 				}
 			} else {
 				do {
-					string dir=section.IniEntry(name,defaultSearchDirs[0],"").ToString();
+					string dir = section.GetValue<string>(name,defaultSearchDirs[i],"");
 					links.AddSearchDir(dir);
 					i++;
 					name="SearchDir"+i.ToString();
-				} while (section.Contains(name));
+				} while (section.HasValue(name));
 			}
-			links.recurseDirectories=ConvertTools.ToBoolean(section.IniEntry("RecurseDirectories",defaultRecurseDirectories,""));
+			links.recurseDirectories = section.GetValue<bool>("RecurseDirectories", defaultRecurseDirectories, "");
 
 			LoadStyles();
 			LoadHistory();
@@ -252,27 +252,21 @@ namespace SteamClients {
 		}
 
 		private void LoadStyles() {
-			LogStyles style;
-			object name,color;
-			object size;
-			object fnt;
+			string name,color;
+			float size;
+			FontStyle fnt;
 
-			IniDataSection section=iniFile.IniSection("Styles");
-			Array styles=Enum.GetValues(typeof(LogStyles));
-			IEnumerator ie=styles.GetEnumerator();
+			IniFileSection section = iniFile.GetNewOrParsedSection("Styles");
 
-			while (ie.MoveNext()) {
-				if (ie.Current is LogStyles) {
-					style=(LogStyles)ie.Current;
-					color=section.IniEntry(style.ToString()+"Color",conAttrs.GetColor(style).Name,"");
-					size=section.IniEntry(style.ToString()+"Size",conAttrs.GetSize(style),"");
-					fnt=section.IniEntry(style.ToString()+"Style",((int)conAttrs.GetFontStyle(style)),"");
-					name=section.IniEntry(style.ToString()+"Font",conAttrs.GetFontFamilyName(style),"");
-					try {conAttrs.SetColor(style,Color.FromName(color.ToString()));} catch {}
-					try {conAttrs.SetFontFamily(style,new FontFamily(name.ToString()));} catch {}
-					try {conAttrs.SetSize(style,(float)size);} catch {}
-					try {conAttrs.SetFontStyle(style,(FontStyle)fnt);} catch {}
-				}
+			foreach (LogStyles style in Enum.GetValues(typeof(LogStyles))) {
+				color = section.GetValue<string>(style + "Color", conAttrs.GetColor(style).Name, "");
+				size = section.GetValue<float>(style + "Size", conAttrs.GetSize(style), "");
+				fnt = section.GetValue<FontStyle>(style + "Style", conAttrs.GetFontStyle(style), "");
+				name = section.GetValue<string>(style + "Font", conAttrs.GetFontFamilyName(style), "");
+				try { conAttrs.SetColor(style, Color.FromName(color)); } catch { }
+				try { conAttrs.SetFontFamily(style, new FontFamily(name)); } catch { }
+				try { conAttrs.SetSize(style, size); } catch { }
+				try { conAttrs.SetFontStyle(style, fnt); } catch { }
 			}
 		}
 
@@ -280,97 +274,98 @@ namespace SteamClients {
 			int i=firstConnectionNumber;
 			string name="Connection"+i.ToString();
 			do {
-				IniDataSection section=iniFile.IniSection(name);
+				IniFileSection section = iniFile.GetNewOrParsedSection(name);
 				SteamConnection con=new SteamConnection();
-				con.Name=section.IniEntry("Name",defaultConnectionName,"").ToString();
-				con.Address=section.IniEntry("Host",defaultConnectionHost,"").ToString();
-				con.Port=ConvertTools.ParseInt32(section.IniEntry("Port",defaultConnectionPort,"").ToString());
-				con.UserName=section.IniEntry("UserName",defaultConnectionUserName,"").ToString();
-				con.Password=section.IniEntry("Password",defaultConnectionPassword,"").ToString();
+				con.Name = section.GetValue<string>("Name", defaultConnectionName, "");
+				con.Address = section.GetValue<string>("Host", defaultConnectionHost, "");
+				con.Port = section.GetValue<int>("Port", defaultConnectionPort, "");
+				con.UserName = section.GetValue<string>("UserName", defaultConnectionUserName, "");
+				con.Password = section.GetValue<string>("Password", defaultConnectionPassword, "");
 				connections.Add(con);
 				i++;
 				name="Connection"+i.ToString();
-			} while (iniFile.ContainsGroup(name));
+			} while (iniFile.HasSection(name));
 		}
 
 		private void LoadHistory() {
-			IniDataSection section=iniFile.IniSection("History");
-			try {
-				maxCmdHistory=int.Parse(section.IniEntry("MaxCmdHistory",defaultMaxCmdHistory,"how many items can be contained in history").ToString());
-			} catch {}
+			//IniFileSection section = iniFile.GetNewOrParsedSection("History");
+			//try {
+			//    maxCmdHistory = section.GetValue<int>("MaxCmdHistory", defaultMaxCmdHistory, "how many items can be contained in history");
+			//} catch {}
 
-			int i=0;
-			string key="Item0";
-			while (section.Contains(key)) {
-				editBox.Items.Add(section.IniEntry(key,"",""));
-				i++;
-				key="Item"+i.ToString();
-			}
+			//int i=0;
+			//string key="Item"+i;
+
+			//while (section.Contains(key)) {
+			//    editBox.Items.Add(section.IniEntry(key,"",""));
+			//    i++;
+			//    key="Item"+i.ToString();
+			//}
 		}
 
 		private void SaveStyles() {
-			Array styles=Enum.GetValues(typeof(LogStyles));
-			IEnumerator ie=styles.GetEnumerator();
+			//Array styles=Enum.GetValues(typeof(LogStyles));
+			//IEnumerator ie=styles.GetEnumerator();
 
-			while (ie.MoveNext()) {
-				if (ie.Current is LogStyles) {
-					LogStyles style=(LogStyles)ie.Current;
-					iniFile.SetValue("Styles",style.ToString()+"Color",conAttrs.GetColor(style).Name);
-					iniFile.SetValue("Styles",style.ToString()+"Size",conAttrs.GetSize(style));
-					iniFile.SetValue("Styles",style.ToString()+"Style",((int)conAttrs.GetFontStyle(style)));
-					iniFile.SetValue("Styles",style.ToString()+"Font",conAttrs.GetFontFamilyName(style));
-				}
-			}
+			//while (ie.MoveNext()) {
+			//    if (ie.Current is LogStyles) {
+			//        LogStyles style=(LogStyles)ie.Current;
+			//        iniFile.SetValue("Styles",style.ToString()+"Color",conAttrs.GetColor(style).Name);
+			//        iniFile.SetValue("Styles",style.ToString()+"Size",conAttrs.GetSize(style));
+			//        iniFile.SetValue("Styles",style.ToString()+"Style",((int)conAttrs.GetFontStyle(style)));
+			//        iniFile.SetValue("Styles",style.ToString()+"Font",conAttrs.GetFontFamilyName(style));
+			//    }
+			//}
 		}
 
 		private void SaveConnections() {
-			int i=firstConnectionNumber;
-			string name="Connection"+i.ToString();
-			foreach (SteamConnection con in connections) {
-				if (!iniFile.ContainsGroup(name)) {
-					IniDataSection section=iniFile.IniSection(name);
-					section.SetValue("Name",con.Name);
-					section.SetValue("Host",con.Address);
-					section.SetValue("Port",con.Port.ToString());
-					section.SetValue("UserName",con.UserName);
-					if (savePasswords) {
-						section.SetValue("Password",con.Password);
-					} else {
-						section.SetValue("Password","");
-					}
-				} else {
-					iniFile.SetValue(name,"Name",con.Name);
-					iniFile.SetValue(name,"Host",con.Address);
-					iniFile.SetValue(name,"Port",con.Port.ToString());
-					iniFile.SetValue(name,"UserName",con.UserName);
-					if (savePasswords) {
-						iniFile.SetValue(name,"Password",con.Password);
-					} else {
-						iniFile.SetValue(name,"Password","");
-					}
-				}
+			//int i=firstConnectionNumber;
+			//string name="Connection"+i.ToString();
+			//foreach (SteamConnection con in connections) {
+			//    if (!iniFile.ContainsGroup(name)) {
+			//        IniDataSection section=iniFile.IniSection(name);
+			//        section.SetValue("Name",con.Name);
+			//        section.SetValue("Host",con.Address);
+			//        section.SetValue("Port",con.Port.ToString());
+			//        section.SetValue("UserName",con.UserName);
+			//        if (savePasswords) {
+			//            section.SetValue("Password",con.Password);
+			//        } else {
+			//            section.SetValue("Password","");
+			//        }
+			//    } else {
+			//        iniFile.SetValue(name,"Name",con.Name);
+			//        iniFile.SetValue(name,"Host",con.Address);
+			//        iniFile.SetValue(name,"Port",con.Port.ToString());
+			//        iniFile.SetValue(name,"UserName",con.UserName);
+			//        if (savePasswords) {
+			//            iniFile.SetValue(name,"Password",con.Password);
+			//        } else {
+			//            iniFile.SetValue(name,"Password","");
+			//        }
+			//    }
 
-				i++;
-				name="Connection"+i.ToString();
-			}
-			while (iniFile.ContainsGroup(name)) {
-				iniFile.RemoveGroup(name);
-				i++;
-				name="Connection"+i.ToString();
-			}
+			//    i++;
+			//    name="Connection"+i.ToString();
+			//}
+			//while (iniFile.ContainsGroup(name)) {
+			//    iniFile.RemoveGroup(name);
+			//    i++;
+			//    name="Connection"+i.ToString();
+			//}
 		}
 
 		private void SaveHistory() {
-			int i;
+			//int i;
 
-			for (i=0;i<editBox.Items.Count;i++) {
-				string key="item"+i.ToString();
-				iniFile.SetValue("history",key,editBox.Items[i]);
-			}
+			//for (i=0;i<editBox.Items.Count;i++) {
+			//    string key="item"+i.ToString();
+			//    iniFile.SetValue("history",key,editBox.Items[i]);
+			//}
 		}
 
 		private void SaveConfiguration() {
-			iniFile.SetValue("General","SavePasswords",savePasswords);
+			//iniFile.SetValue("General","SavePasswords",savePasswords);
 		}
 		#endregion
 
@@ -827,7 +822,7 @@ namespace SteamClients {
 			SaveHistory();
 			SaveConfiguration();
 			steamConsole.Exit();
-			iniFile.WriteFile();
+			iniFile.WriteToFile();
 		}
 
 		private void viewFormClosed(object sender,System.EventArgs e) {

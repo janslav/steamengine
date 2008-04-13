@@ -93,9 +93,15 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByNumber(this.serverNum);
 			if (cli != null) {
+				state.WriteStringLine(0, "Server already online, ignoring start command.");
 				//server online, we do nothing
 			} else {
-				AuxServNantLogger o = new AuxServNantLogger(this.serverNum, this.build);
+				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
+				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
+				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
+				ConsoleServer.WriteLineAsAux("Compiling " + this.build + " build of server at " + sett.IniPath);
+
+				AuxServNantLogger o = new AuxServNantLogger(this.serverNum, this.build, nantPath);
 				Thread t = new Thread(o.StartThread);
 				t.Start();
 			}
@@ -105,10 +111,12 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		internal class AuxServNantLogger : DefaultLogger {
 			private byte serverNum;
 			private SEBuild build;
+			private string nantPath;
 
-			internal AuxServNantLogger(byte serverNum, SEBuild build) {
+			internal AuxServNantLogger(byte serverNum, SEBuild build, string nantPath) {
 				this.serverNum = serverNum;
 				this.build = build;
+				this.nantPath = nantPath;
 			}
 
 			public override void BuildFinished(object sender, BuildEventArgs e) { }
@@ -127,14 +135,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			}
 
 			internal void StartThread() {
-				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
-				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
-
-				//string binPath = System.IO.Path.Combine(sett.IniPath, "bin");
-
-				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
-
-				NantLauncher nant = new NantLauncher(nantPath);
+				NantLauncher nant = new NantLauncher(this.nantPath);
 				nant.SetLogger(this);
 				nant.SetPropertiesAsSelf();
 				nant.SetDebugMode(this.build == SEBuild.Debug);
@@ -145,7 +146,10 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 				string file = nant.GetCompiledAssemblyName("gameCoreFileName");
 
-				System.Diagnostics.Process.Start(file);
+				ConsoleServer.WriteLineAsAux("Starting " + file);
+				System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(file);
+				psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+				System.Diagnostics.Process.Start(psi);
 			}
 		}
 	}

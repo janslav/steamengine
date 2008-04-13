@@ -22,6 +22,9 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 				case 0x03:
 					return Pool<ConsoleLoginReplyPacket>.Acquire();
+
+				case 0x04:
+					return Pool<StartupFinishedPacket>.Acquire();
 			}
 
 			return null;
@@ -67,7 +70,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
 			//Console.WriteLine(state+": "+str);
-			state.WriteString(this.str);
+			state.WriteToMyConsoles(this.str);
 		}
 	}
 
@@ -98,11 +101,22 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 						Settings.ForgetUser(console.AccountName);
 
 						string msg = "Failed to identify as " + this.accName;
-						console.WriteString(-1, msg);
+						console.WriteStringLine(0, msg);
 						console.Conn.Close(msg);
 					}
 				}
 			}
+		}
+	}
+
+
+	public class StartupFinishedPacket : GameServerIncomingPacket {
+		protected override ReadPacketResult Read() {
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
+			state.SetStartupFinished(true);
 		}
 	}
 }

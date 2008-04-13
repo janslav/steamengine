@@ -69,4 +69,23 @@ namespace SteamEngine.AuxServerPipe {
 			this.EncodeBool(this.loginSuccessful);
 		}
 	}
+
+	internal class StartupFinishedPacket : OutgoingPacket {
+		static StartupFinishedPacket() {
+			group = new PacketGroup();
+			group.AddPacket(new StartupFinishedPacket());
+			group.SetType(PacketGroupType.Free);
+		}
+
+		public override byte Id {
+			get {
+				return 0x04;
+			}
+		}
+
+		public static readonly PacketGroup group;
+
+		protected override void Write() {
+		}
+	}
 }

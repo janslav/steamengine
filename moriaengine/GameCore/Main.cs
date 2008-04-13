@@ -144,6 +144,10 @@ namespace SteamEngine {
 			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			CoreLogger.Init();
+
+			AuxServerPipeClient.Init();
+			System.Threading.Thread.Sleep(1000);//wait to conne
+
 #if DEBUG
 			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (DEBUG build)"+" - "+Globals.serverName);
 #elif SANE
@@ -156,8 +160,6 @@ namespace SteamEngine {
 			Console.WriteLine("http://steamengine.sourceforge.net");
 			Console.WriteLine("Running under "+Environment.OSVersion+", Framework version: "+Environment.Version+".");
 
-			AuxServerPipeClient.Init();
-			
 			Globals.Init();
 			if (keepRunning.WaitOne(0, false)) {
 				return false;
@@ -364,6 +366,8 @@ namespace SteamEngine {
 
 		private static void Cycle() {
 			SetRunLevel(RunLevels.Running);
+			AuxServerPipe.AuxServerPipeClient.AnnounceStartupFinished();
+
 			Console.WriteLine("Starting Main Loop");
 
 			while (!keepRunning.WaitOne(5, false)) {
