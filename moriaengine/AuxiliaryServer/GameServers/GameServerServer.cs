@@ -35,6 +35,15 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			}
 		}
 
+		public static GameServerClient GetInstanceByNumber(int number) {
+			foreach (GameServerClient gsc in clients) {
+				if (gsc.Setting.Number == number) {
+					return gsc;
+				}
+			}
+			return null;
+		}
+
 		internal static void AddClient(GameServerClient gameServerClient) {
 			clients.AddFirst(gameServerClient);
 		}

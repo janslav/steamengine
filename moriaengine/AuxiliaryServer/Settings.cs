@@ -63,6 +63,10 @@ namespace SteamEngine.AuxiliaryServer {
 				return a.Number.CompareTo(b.Number);
 			});
 
+			for (int i = 0, n = knownGameServersList.Count; i < n; i++) {
+				knownGameServersList[i].SetNumber(i);
+			}
+
 			ini.WriteToFile();
 
 			Console.WriteLine(iniFileName+" loaded and written.");
@@ -139,7 +143,7 @@ namespace SteamEngine.AuxiliaryServer {
 	}
 
 	public class GameServerInstanceSettings {
-		private readonly int number;
+		private int number;
 		private readonly string iniPath;
 		private readonly string name;
 		private readonly ushort port;
@@ -152,7 +156,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal GameServerInstanceSettings(IniFileSection section) {
-			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list. Should be unique.");
+			this.number = section.GetValue<int>("number", 0, "Number to order the servers in shard list. Should be unique, starting with 0.");
 			this.iniPath = Path.GetFullPath(section.GetValue<string>("iniPath", ".", "path to steamengine.ini of this instance"));
 
 			ReadGameIni(this.iniPath, out this.name, out this.port);
@@ -160,7 +164,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal void WriteToIniSection(IniFileSection section) {
-			section.SetValue<int>("number", this.number, "Number to order the servers in shard list. Should be unique.");
+			section.SetValue<int>("number", this.number, "Number to order the servers in shard list. Should be unique, starting with 0.");
 			section.SetValue<string>("iniPath", this.iniPath, "path to steamengine.ini of this instance");
 		}
 
@@ -184,6 +188,10 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 		}
 
+		internal void SetNumber(int number) {
+			this.number = number;
+		}
+
 		public string IniPath {
 			get {
 				return this.iniPath;
@@ -205,7 +213,7 @@ namespace SteamEngine.AuxiliaryServer {
 		public override bool Equals(object obj) {
 			GameServerInstanceSettings gsis = obj as GameServerInstanceSettings;
 			if (gsis != null) {
-				if (this.iniPath.Equals(gsis.iniPath, StringComparison.OrdinalIgnoreCase)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(gsis.iniPath, StringComparison.OrdinalIgnoreCase)) {
 					return true;
 				}
 			}
@@ -213,7 +221,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public override int GetHashCode() {
-			return this.iniPath.GetHashCode() * this.name.GetHashCode() * this.port.GetHashCode();
+			return StringComparer.OrdinalIgnoreCase.GetHashCode(this.iniPath);
 		}
 	}
 }

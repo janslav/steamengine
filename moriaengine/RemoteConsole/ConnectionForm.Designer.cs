@@ -131,6 +131,7 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			this.ddName.DataSource = this.endPointSettingBindingSource;
 			this.ddName.DisplayMember = "Name";
+			this.ddName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ddName.Location = new System.Drawing.Point(108, 9);
 			this.ddName.Name = "ddName";
 			this.ddName.Size = new System.Drawing.Size(338, 21);
