@@ -18,5 +18,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		internal static void Init() {
 			instance.Bind(Settings.loginServerEndpoint);
 		}
+
+		internal static void Exit() {
+			instance.Dispose();
+		}
 	}
 }

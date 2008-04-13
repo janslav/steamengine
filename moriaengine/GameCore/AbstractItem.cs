@@ -244,7 +244,7 @@ namespace SteamEngine {
 							packets.SendTo(viewerConn);
 						}
 						if (sendProperties) {
-							if (Globals.AOS && viewerConn.Version.aosToolTips) {
+							if (Globals.aos && viewerConn.Version.aosToolTips) {
 								foreach (AbstractItem contained in this) {
 									if (viewer.CanSeeVisibility(contained)) {
 										ObjectPropertiesContainer containedOpc = contained.GetProperties();

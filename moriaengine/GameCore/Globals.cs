@@ -52,30 +52,32 @@ namespace SteamEngine {
 		public const int MinUpdateRange=5;
 		public const int defaultWarningLevel=4;
 
-		private static SEIniHandler iniH;
-		public static ushort port;   //Changing this after initialization has no effect. 
-		public static ushort consoleport;   //Changing this after initialization has no effect. 
-		public static string serverName;  //Can be changed while the server is running.
-		public static string adminEmail;  //Can be changed while the server is running.
+		public readonly static ushort port;   //Changing this after initialization has no effect. 
+		public readonly static ushort consoleport;   //Changing this after initialization has no effect. 
+		public readonly static string serverName;  //Can be changed while the server is running.
+		public readonly static string adminEmail;  //Can be changed while the server is running.
+
 		public override string Name {
 			get {
 				return serverName;
 			}
 			set {
-				serverName = value;
+				//serverName = value;
+				throw new InvalidOperationException("Can't set server name directly. It's read from steamengine.ini");
 			}
 		}
-		public static string commandPrefix;
-		public static string alternateCommandPrefix;
-		public static string logPath;      //Can be changed while the server is running. (altough it has an effect only when creating a new log file)
-		public static string savePath;        //Can be changed while the server is running.
-		public static string mulPath;
-		public static string scriptsPath;
-		//public static string ctOutputPath;
-		public static string docsPath;
-		public static string ndocExe;
-		public static bool logToFiles;
-		//public static uint saveInterval;
+		public readonly static string commandPrefix;
+		public readonly static string alternateCommandPrefix;
+		public readonly static string logPath;
+		public readonly static string savePath;
+		public readonly static string mulPath;
+		public readonly static string scriptsPath;
+
+		public readonly static string docsPath;
+		public readonly static string ndocExe;
+
+		public readonly static bool logToFiles;
+		public static bool logToConsole;
 
 		public readonly static byte maximalPlevel;
 		public readonly static int plevelOfGM;
@@ -84,73 +86,58 @@ namespace SteamEngine {
 		public readonly static bool kickOnSuspiciousErrors;
 		public readonly static bool allowUnencryptedClients;
 
-		public static ushort reachRange;
-		public static int squaredReachRange;
-		public static uint sightRange;
-		public static int squaredSightRange;
-		public static ushort serverMessageColor;
-		public static ushort defaultUnicodeMessageColor;
-		//public static uint savesPerDay;
-		//public static uint savesInBackup;
-		public static bool useMap;
-		//public static bool useTileData;
-		public static bool generateMissingDefs;
-		public static bool useMultiItems;
-		public static bool readBodyDefs;
-		public static bool sendTileDataSpam;
-		public static bool fastStartUp;
-		public static bool writeMulDocsFiles;
+		public readonly static ushort reachRange;
+		public readonly static int squaredReachRange;
+		public readonly static uint sightRange;
+		public readonly static int squaredSightRange;
+		public readonly static ushort serverMessageColor;
+		public readonly static ushort defaultUnicodeMessageColor;
 
-		public static bool resolveEverythingAtStart;
-
-		public static string importTo;
-		public static bool importCodeAndComments;
-
-		//public static bool amountPrecedingName;
-		//public static bool showTitleInStatusBar;
-		public static bool autoAccountCreation;
-		//public static bool fastWalkPackets;
-		public static bool blockOSI3DClient;
-		public static bool alwaysUpdateRouterIPOnStartup;
-		public static sbyte timeZone;
-		public static int maxConnections;
-		//public static int useCommasInXDigitNumbers;
-		public static bool supportUnicode;
-		public static uint speechDistance;
-		public static uint emoteDistance;
-		public static uint whisperDistance;
-		public static uint yellDistance;
-		public static bool asciiForNames;
-		public static uint loginFlags;
-		public static ushort featuresFlags;
-		//public static int sectorSize = 4;
-
-		public static ushort defaultItemModel;
-		public static ushort defaultCharModel;
-
-		//public static short minEffStat;
-
-		public static bool hashPasswords;
-		//public static bool allowReferencingImpliedTriggerGroup;
-		//public static bool overrideIdenticallyNamedScripts;
-
-		//public static bool dynamicMapCaching=false;
-		//public static bool staticsStatistics;
-
-		//public static bool alwaysCompileScripts;
-
-		public static bool scriptFloats;
-
-		//public static bool showCoreExceptions;
-		//public static bool strictCompiling;
-		//public static int warningLevel;
-
-		private static bool aos;
-		public static bool AOS {
+		internal static bool useMap;
+		public static bool UseMap {
 			get {
-				return aos;
+				return useMap;
 			}
 		}
+
+		public readonly static bool generateMissingDefs;
+		public readonly static bool useMultiItems;
+		internal static bool readBodyDefs;
+		public static bool ReadBodyDefs {
+			get {
+				return readBodyDefs;
+			}
+		}
+
+		public readonly static bool sendTileDataSpam;
+		public readonly static bool fastStartUp;
+		public readonly static bool writeMulDocsFiles;
+
+		public readonly static bool resolveEverythingAtStart;
+
+		public readonly static bool autoAccountCreation;
+		public readonly static bool blockOSI3DClient;
+		public readonly static bool alwaysUpdateRouterIPOnStartup;
+		public readonly static sbyte timeZone;
+		public readonly static int maxConnections;
+
+		public readonly static bool supportUnicode;
+		public readonly static uint speechDistance;
+		public readonly static uint emoteDistance;
+		public readonly static uint whisperDistance;
+		public readonly static uint yellDistance;
+		public readonly static bool asciiForNames;
+		public readonly static uint loginFlags;
+		public readonly static ushort featuresFlags;
+
+		public readonly static ushort defaultItemModel;
+		public readonly static ushort defaultCharModel;
+
+		public readonly static bool hashPasswords;
+
+		public readonly static bool scriptFloats;
+
+		public readonly static bool aos;
 
 		[Summary("The last new item or character or memory or whatever created.")]
 		public static TagHolder lastNew = null;
@@ -237,157 +224,115 @@ namespace SteamEngine {
 		}
 
 		static Globals() {
-			//basically does what MainClass.LoadIni previously did 
 			try {
-				iniH=new SEIniHandler();
-				IniDataSection setup=iniH.IniSection("setup");
+				IniFile iniH = new IniFile("steamengine.ini");
+				IniFileSection setup = iniH.GetNewOrParsedSection("setup");
 
-				serverName=(string) setup.IniEntry("name", "Unnamed SteamEngine Shard", "The name of your shard");
-				adminEmail=(string) setup.IniEntry("adminEmail", "admin@email.com", "Your Email to be displayed in status web, etc.");
-				hashPasswords=(bool) setup.IniEntry("hashPasswords", false, "This hashes passwords (for accounts) using SHA512, which isn't reversable. Instead of writing passwords to the save files, the hash is written. If you disable this, then passwords will be recorded instead of the hashes, and will be stored instead of the hashes, which means that if someone obtains access to your accounts file, they will be able to read the passwords. It's recommended to leave this on. Note: If you switch this off after it's been on, passwords that are hashed will stay hashed, because hashing is one-way, until that account logs in, at which point the password (if it matches) will be recorded again in place of the hash. If you use text saves, you should be able to write password=whatever in the account save, and the password will be changed to that when that save is loaded, even if you're using hashed passwords.");
+				serverName = setup.GetValue<string>("name", "Unnamed SteamEngine Shard", "The name of your shard");
+				adminEmail = setup.GetValue<string>("adminEmail", "admin@email.com", "Your Email to be displayed in status web, etc.");
+				hashPasswords = setup.GetValue<bool>("hashPasswords", false, "This hashes passwords (for accounts) using SHA512, which isn't reversable. Instead of writing passwords to the save files, the hash is written. If you disable this, then passwords will be recorded instead of the hashes, and will be stored instead of the hashes, which means that if someone obtains access to your accounts file, they will be able to read the passwords. It's recommended to leave this on. Note: If you switch this off after it's been on, passwords that are hashed will stay hashed, because hashing is one-way, until that account logs in, at which point the password (if it matches) will be recorded again in place of the hash. If you use text saves, you should be able to write password=whatever in the account save, and the password will be changed to that when that save is loaded, even if you're using hashed passwords.");
 
-				kickOnSuspiciousErrors=(bool) setup.IniEntry("kickOnSuspiciousErrors", true, "Kicks the user if a suspiciously erroneous value is recieved in a packet from their client.");
+				kickOnSuspiciousErrors = setup.GetValue<bool>("kickOnSuspiciousErrors", true, "Kicks the user if a suspiciously erroneous value is recieved in a packet from their client.");
 
-				allowUnencryptedClients=(bool) setup.IniEntry("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
+				allowUnencryptedClients = setup.GetValue<bool>("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
 
-				IniDataSection files=iniH.IniSection("files");
-				logPath=((string) files.IniEntry("logPath", "logs", "Path to the log files")).Trim('/', '\\');
-				savePath=((string) files.IniEntry("savePath", "saves", "Path to the save files")).Trim('/', '\\');
-				scriptsPath=((string) files.IniEntry("scriptsPath", "scripts", "Path to the scripts")).Trim('/', '\\');
-				//ctOutputPath=((string) files.IniEntry("classTemplatesOutputPath",Tools.CombineMultiplePaths("scripts", "generated"),"Output the files generated from classtemplates to this directory. It should be inside the scripts directory, otherwise it wont get compiled :)")).Trim('/','\\');
+				IniFileSection files = iniH.GetNewOrParsedSection("files");
+				logPath = Path.GetFullPath(files.GetValue<string>("logPath", ".\\logs\\", "Path to the log files"));
+				savePath = Path.GetFullPath(files.GetValue<string>("savePath", ".\\saves\\", "Path to the save files"));
+				scriptsPath = Path.GetFullPath(files.GetValue<string>("scriptsPath", ".\\scripts\\", "Path to the scripts"));
 #if MSWIN
-				ndocExe=((string) files.IniEntry("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc).")).Trim('/', '\\');
+				ndocExe = Path.GetFullPath(files.GetValue<string>("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
 #elif LINUX
-				ndocExe=((string) files.IniEntry("ndocExe","","NDoc cannot be used under Linux")).Trim('/','\\');
+				ndocExe= Path.GetFullPath(files.GetValue<string>("ndocExe","","NDoc cannot be used under Linux"));
 #endif
-				docsPath=((string) files.IniEntry("docsPath", "docs", "Path to the docs (Used when writing out some information from MUL files, like map tile info)")).Trim('/', '\\');
+				docsPath = Path.GetFullPath(files.GetValue<string>("docsPath", ".\\docs\\", "Path to the docs (Used when writing out some information from MUL files, like map tile info)"));
 
-				files.Comment("If you change any of the above paths, everything which uses them should instead use the path(s) you have chosen, but comments in this file will not reflect the change, and output on the console may not, since it is simpler to display 'scripts/whatever/whatever' rather than 'C:/documents and settings/bob/documents/my scripts' (That's an example, but you could set scriptsPath to that if you really wanted to).");
-				logToFiles=(bool) files.IniEntry("logToFiles", true, "Whether to log console output to a file");
-				//savesPerDay=(uint)files.IniEntry("savesPerDay",(uint)15,"Maximal number of save files SE will keep in the save directory. I.E. if the amount of save subfolders oversteppes this number, SE deletes the one which covers a minimal time among the others.");
-				//savesInBackup=(uint)files.IniEntry("savesInBackup",(uint)3,"When save files are copied from the main save folder to backup subfolders, SE can reduce the amount of files to this number. If 0, no backing up is done (not recommended).");
+				logToFiles = files.GetValue<bool>("logToFiles", true, "Whether to log console output to a file");
+				useMap = files.GetValue<bool>("useMap", true, "Whether to load map0.mul and statics0.mul and use them or not.");
+				generateMissingDefs = files.GetValue<bool>("generateMissingDefs", false, "Whether to generate missing scripts based on tiledata.");
+				useMultiItems = files.GetValue<bool>("useMultiItems", true, "Whether to use multi items...");
+				readBodyDefs = files.GetValue<bool>("readBodyDefs", true, "Whether to read Bodyconv.def (a client file) in order to determine what character models lack defs (and then to write new ones for them to 'scripts/defaults/chardefs/newCharDefsFromMuls.def').");
+				writeMulDocsFiles = files.GetValue<bool>("writeMulDocsFiles", false, "If this is true/on/1, then SteamEngine will write out some files with general information gathered from various MUL files into the 'docs/MUL file docs' folder. These should be distributed with SteamEngine anyways, but this is useful sometimes (like when a new UO expansion is released).");
 
-
-				useMap=(bool) files.IniEntry("useMap", true, "Whether to load map0.mul and statics0.mul and use them or not.");
-				//dynamicMapCaching=(bool)files.IniEntry("dynamicMapCaching",true,"Whether to load and cache only parts of the map which are or recently were in use. If false, loads the entire map into RAM. False is good if you are OSI. True is good otherwise. :P");
-				//useTileData=(bool)files.IniEntry("useTileData",true,"Whether to load tiledata.mul and use it or not.");
-				generateMissingDefs = (bool) files.IniEntry("generateMissingDefs", false, "Whether to generate missing scripts based on tiledata.");
-
-				useMultiItems= (bool) files.IniEntry("useMultiItems", true, "Whether to use multi items...");
-				readBodyDefs=(bool) files.IniEntry("readBodyDefs", true, "Whether to read Bodyconv.def (a client file) in order to determine what character models lack defs (and then to write new ones for them to 'scripts/defaults/chardefs/newCharDefsFromMuls.def').");
-				//readSoundData=(bool)files.IniEntry("readSoundData",false,"Whether to read sound.mul and dump filenames and ids to 'docs/MUL File Docs/Sounds.txt', just for reference.");
-				writeMulDocsFiles=(bool) files.IniEntry("writeMulDocsFiles", false, "If this is true/on/1, then SteamEngine will write out some files with general information gathered from various MUL files into the 'docs/MUL file docs' folder. These should be distributed with SteamEngine anyways, but this is useful sometimes (like when a new UO expansion is released).");
-				files.Comment("You can have more than one of these import options set to true. If you do, scripts converted from the import folder will be written out to all folders you have chosen.");
-				importTo=(string) files.IniEntry("importTo", "imported", "Write scripts converted from the import folder to what folder? (Defaults, custom, or imported, or you can specify your own)");
-				importCodeAndComments=(bool) files.IniEntry("importCodeAndComments", false, "True to copy code and comments from scripts being imported, and write them out again into the generated scripts. With this off, only actual defs are copied, no scripts. Only comments inside or after imported defs are copied.");
-				if (importTo.LastIndexOf("/")==importTo.Length-1) {
-					importTo=importTo.Substring(0, importTo.Length-1);
-				} else if (importTo.LastIndexOf("\\")==importTo.Length-1) {
-					importTo=importTo.Substring(0, importTo.Length-1);
+				IniFileSection login = iniH.GetNewOrParsedSection("login");
+				alwaysUpdateRouterIPOnStartup = (bool) login.GetValue<bool>("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
+				string omit = login.GetValue<string>("omitip", "5.0.0.0", "IP to omit from server lists, for example, omitIP=5.0.0.0. You can have multiple omitIP values, separated by comma.");
+				foreach (string ip in omit.Split(',')) {
+					Server.AddOmitIP(IPAddress.Parse(ip));
 				}
 
-				IniDataSection login=iniH.IniSection("login");
-				alwaysUpdateRouterIPOnStartup=(bool) login.IniEntry("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
-				object omit=login.IniEntry("omitip", "5.0.0.0", "An IP to omit from server lists, for example, omitIP=5.0.0.0. You can have multiple omitIP lines.");
-				if (omit is ArrayList) {
-					ArrayList al=(ArrayList) omit;
-					foreach (string ip in al) {
-						Server.AddOmitIP(ip);
-					}
-				} else {
-					Server.AddOmitIP((string) omit);
-				}
 				bool exists;
 				string msgBox="";
-				if (iniH.Exists) {
+				if (iniH.FileExists) {
 					exists=true;
-					string routerIP=(string) login.IniEntry("routerIP", "", "The IP to show to people who are outside your LAN");
+					string routerIP = login.GetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
 					//if (routerIP.Length>0) {
 					Server.SetRouterIP(routerIP);
 					//}
-					mulPath=(string) files.IniEntry("mulPath", "muls", "Path to the mul files");
+					mulPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
 				} else {
 					string mulsPath=Server.GetMulsPath();
 					if (mulsPath==null) {
 						msgBox+="Unable to locate the UO MUL files. Please either place them in the 'muls' folder or specify the proper path in steamengine.ini (change mulPath=muls to the proper path)\n\n";
-						mulsPath=(string) files.IniEntry("mulPath", "muls", "Path to the mul files");
+						mulsPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
 					} else {
-						mulsPath=(string) files.IniEntry("mulPath", mulsPath, "Path to the mul files");
+						mulsPath = files.GetValue<string>("mulPath", mulsPath, "Path to the mul files");
 					}
 					exists=false;
 					string[] ret=Server.FindMyIP();
 					string routerIP=ret[1];
 					msgBox+=ret[0];
 					if (routerIP==null) {
-						login.IniEntry("routerIP", "", "The IP to show to people who are outside your LAN", true);
+						login.SetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
 					} else {
-						login.IniEntry("routerIP", routerIP, "The IP to show to people who are outside your LAN");
+						login.SetValue<string>("routerIP", routerIP, "The IP to show to people who are outside your LAN");
 					}
 				}
-				timeZone=(sbyte) login.IniEntry("timeZone", (sbyte) 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
-				maxConnections=(int) login.IniEntry("maxConnections", (int) 100, "The cap on # of connections. Affects the percentage-full number sent to UO client.");
-				autoAccountCreation=(bool) login.IniEntry("autoAccountCreation", false, "Automatically create accounts when someone attempts to log in");
-				//fastWalkPackets=(bool) login.IniEntry("fastWalkPackets", false, "Use fastwalk-check packets. Requires 9 more bytes server->client per step when on, and kills Krrios' Client because it can't handle it.");
-				blockOSI3DClient=(bool) login.IniEntry("blockOSI3DClient", true, "Block the OSI 3D client from connecting. Said client is not supported, since it tends to do things in a stupid manner.");
+				timeZone = login.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
+				maxConnections = login.GetValue<int>("maxConnections", 100, "The cap on # of connections. Affects the percentage-full number sent to UO client.");
+				autoAccountCreation = login.GetValue<bool>("autoAccountCreation", false, "Automatically create accounts when someone attempts to log in");
+				blockOSI3DClient = login.GetValue<bool>("blockOSI3DClient", true, "Block the OSI 3D client from connecting. Said client is not supported, since it tends to do things in a stupid manner.");
 
-				IniDataSection ports=iniH.IniSection("ports");
-				port=(ushort) ports.IniEntry("game", (ushort) 2593, "The port to listen on for client connections");
-				consoleport=(ushort) ports.IniEntry("console", (ushort) 2594, "The port to listen for (remote) console connections on");
+				IniFileSection ports = iniH.GetNewOrParsedSection("ports");
+				port = ports.GetValue<ushort>("game", 2595, "The port to listen on for client connections");
+				consoleport = ports.GetValue<ushort>("console", 2596, "The port to listen for (remote) console connections on");
 
 
-				IniDataSection text=iniH.IniSection("text");
-				commandPrefix=(string) text.IniEntry("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
-				alternateCommandPrefix=(string) text.IniEntry("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
-				supportUnicode=(bool) text.IniEntry("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
-				//amountPrecedingName=(bool)text.IniEntry("amountPrecedingName",false,"If true, \"5 gold coins\". If false, \"gold coins: 5\"");
-				//showTitleInStatusBar=(bool)text.IniEntry("showTitleInStatusBar",true,"Include titles in status bars, after the name");
-				//useCommasInXDigitNumbers=(int)text.IniEntry("useCommasInXDigitNumbers",(int)5,"Use commas only in numbers with at least this many digits. Set to 0 to never use commas in numbers.");
-				asciiForNames=(bool) text.IniEntry("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
-				serverMessageColor=(ushort) text.IniEntry("serverMessageColor", (ushort) 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
-				defaultUnicodeMessageColor=(ushort) text.IniEntry("defaultUnicodeMessageColor", (ushort) 0x0394, "The color to use for unicode messages with no specified color (or a specified color of 0, which is not really valid for unicode messages).");
+				IniFileSection text = iniH.GetNewOrParsedSection("text");
+				commandPrefix = text.GetValue<string>("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
+				alternateCommandPrefix = text.GetValue<string>("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
+				supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
+				asciiForNames = text.GetValue<bool>("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
+				serverMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
+				defaultUnicodeMessageColor = text.GetValue<ushort>("defaultUnicodeMessageColor", 0x0394, "The color to use for unicode messages with no specified color (or a specified color of 0, which is not really valid for unicode messages).");
 
-				IniDataSection ranges=iniH.IniSection("ranges");
-				reachRange=(ushort) ranges.IniEntry("reachRange", (ushort) 5, "The distance (in spaces) a character can reach.");
-				squaredReachRange=reachRange*reachRange;
-				sightRange=(uint) ranges.IniEntry("sightRange", (uint) 15, "The distance (in spaces) a character can see.");
-				speechDistance=(uint) ranges.IniEntry("speechDistance", (uint) 10, "The maximum distance from which normal speech can be heard.");
-				emoteDistance=(uint) ranges.IniEntry("emoteDistance", (uint) 10, "The maximum distance from which an emote can be heard/seen.");
-				whisperDistance=(uint) ranges.IniEntry("whisperDistance", (uint) 2, "The maximum distance from which a whisper can be heard.");
-				yellDistance=(uint) ranges.IniEntry("yellDistance", (uint) 20, "The maximum distance from which a yell can be heard.");
+				IniFileSection ranges = iniH.GetNewOrParsedSection("ranges");
+				reachRange = ranges.GetValue<ushort>("reachRange", 5, "The distance (in spaces) a character can reach.");
+				squaredReachRange = reachRange * reachRange;
+				sightRange = ranges.GetValue<uint>("sightRange", 15, "The distance (in spaces) a character can see.");
+				speechDistance = ranges.GetValue<uint>("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
+				emoteDistance = ranges.GetValue<uint>("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
+				whisperDistance = ranges.GetValue<uint>("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
+				yellDistance = ranges.GetValue<uint>("yellDistance", 20, "The maximum distance from which a yell can be heard.");
 
-				IniDataSection plevels=iniH.IniSection("plevels");
-				maximalPlevel=(byte) plevels.IniEntry("maximalPlevel", (byte) 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");
-				plevelOfGM=(int) plevels.IniEntry("plevelOfGM", (int) 4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
-				plevelToLscriptCommands=(int) plevels.IniEntry("plevelToLscriptCommands", (int) 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
+				IniFileSection plevels = iniH.GetNewOrParsedSection("plevels");
+				maximalPlevel = plevels.GetValue<byte>("maximalPlevel", 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");
+				plevelOfGM = plevels.GetValue<int>("plevelOfGM",  4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
+				plevelToLscriptCommands = plevels.GetValue<int>("plevelToLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
 
-				IniDataSection scripts=iniH.IniSection("scripts");
-				resolveEverythingAtStart = (bool) scripts.IniEntry("resolveEverythingAtStart", false, "If this is false, Constants and fields of scripted defs (ThingDef,Skilldef, etc.) will be resolved from the text on demand (and probably at the first save). Otherwise, everything is resolved on the start. Leave this to false on your development server, but set it to true for a live shard, because it's more secure.");
-				//this has nothing to do in core, omg! -tar
-				//minEffStat=(short) scripts.IniEntry("minimumEffectiveStat",(short)10,"Combat, skills, etc will treat any stat (str/int/dex/etc) that is below this as if it were this. Stats can be reduced lower than this, and lower than 0 even, this simply ensures that things still work properly.");
-				defaultItemModel=(ushort) scripts.IniEntry("defaultItemModel", (ushort) 0xeed, "The item model # to use when an itemdef has no model specified.");
-				defaultCharModel=(ushort) scripts.IniEntry("defaultCharModel", (ushort) 0x0190, "The character body/model # to use when a chardef has no model specified.");
-				//allowReferencingImpliedTriggerGroup=(bool) scripts.IniEntry("allowReferencingImpliedTriggerGroup",(bool)true,"All itemdefs and chardefs with triggers in their scripts have an implied TriggerGroup named after themselves. If this is set to true, then you can reference those TriggerGroup by that itemdef or chardef's name. I.E. triggerGroup=i_my_cool_item in an itemdef or chardef scripts would give that itemdef or chardef all the triggers that're on i_my_cool_item.");
-				//overrideIdenticallyNamedScripts=(bool) scripts.IniEntry("overrideIdenticallyNamedScripts",(bool)false,"If this is true, then itemdef/chardef/etc scripts with the same names will not cause an error. Instead, the one loaded later will override the one loaded earlier. (This is standard behavior for Sphere)");
-				//alwaysCompileScripts=(bool) scripts.IniEntry("alwaysCompileScripts",(bool)false,"If this is off, SteamEngine will not recompile C#, JScript, or VB.NET scripts when none of the script files are newer than the already compiled scripts DLL (if one exists).");
-				scriptFloats = (bool) scripts.IniEntry("scriptFloats", (bool) true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
-				Logger.showCoreExceptions = (bool) scripts.IniEntry("showCoreExceptions", (bool) true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
-				//strictCompiling = (bool) scripts.IniEntry("strictCompiling",(bool)true, "If this is on, any compiler warnings are treated as errors while compiling scripts.");
-				//warningLevel=(int) scripts.IniEntry("warningLevel",(int)defaultWarningLevel,"The minimum warning level you want displayed for compiled scripts. Valid values are 0-4. Greater value means more pedantic compiler. 0 means no warnings are reported at all.");
-				//if (warningLevel>4 || warningLevel<0) {
-				//	Logger.WriteWarning("warningLevel in "+LogStr.File("steamengine.ini")+" (section '"+scripts.Name+"') is out of range. Valid values are "+LogStr.Number("0-4")+" but current warningLevel is "+LogStr.Number(warningLevel)+". Using default level "+LogStr.Number(defaultWarningLevel)+".");
-				//	warningLevel=defaultWarningLevel;
-				//}
-
-				//IniDataSection debug=iniH.IniSection("statistics");
-				//debug.Comment("These are INI settings for gathering statistics purposes.");
-				//staticsStatistics=(bool)debug.IniEntry("statics",false,"If dynamicMapCaching is off, will gather and display some information on the amount of statics, etc.");
+				IniFileSection scripts = iniH.GetNewOrParsedSection("scripts");
+				resolveEverythingAtStart = scripts.GetValue<bool>("resolveEverythingAtStart", false, "If this is false, Constants and fields of scripted defs (ThingDef,Skilldef, etc.) will be resolved from the text on demand (and probably at the first save). Otherwise, everything is resolved on the start. Leave this to false on your development server, but set it to true for a live shard, because it's more secure.");
+				defaultItemModel = scripts.GetValue<ushort>("defaultItemModel", 0xeed, "The item model # to use when an itemdef has no model specified.");
+				defaultCharModel = scripts.GetValue<ushort>("defaultCharModel", 0x0190, "The character body/model # to use when a chardef has no model specified.");
+				scriptFloats = scripts.GetValue<bool>("scriptFloats", true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
+				Logger.showCoreExceptions = scripts.GetValue<bool>("showCoreExceptions", true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
 
 				loginFlags=0;
 				featuresFlags=0;
 
-				IniDataSection features=iniH.IniSection("features");
-				features.Comment("These are features which can be toggled on or off.");
-				aos = (bool) features.IniEntry("AOS Features", (bool) false, "If this is on, AOS features (like objprops) are enabled.");
+				IniFileSection features = iniH.GetNewOrParsedSection("features");
+				//features.Comment("These are features which can be toggled on or off.");
+				aos = features.GetValue<bool>("AOS Features", false, "If this is on, AOS features (like objprops) are enabled.");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
 
 				//TODO:
@@ -430,15 +375,15 @@ namespace SteamEngine {
 				//Six Characters		: LF 0x40 FF 0x8020
 
 
-				IniDataSection temporary=iniH.IniSection("temporary");
-				temporary.Comment("These are temporary INI settings, which will be going away in future versions.");
-				fastStartUp=(bool) temporary.IniEntry("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
-				sendTileDataSpam=(bool) temporary.IniEntry("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
-				temporary.Comment("");
-				temporary.Comment("SteamEngine determines if someone is on your LAN by comparing their IP with all of yours. If the first three parts of the IPs match, they're considered to be on your LAN. Note that this will probably not work for people on very big LANs. If you're on one, please post a feature request on our SourceForge site.");
-				temporary.Comment("http://steamengine.sf.net/");
+				IniFileSection temporary = iniH.GetNewOrParsedSection("temporary");
+				temporary.AddComment("These are temporary INI settings, which will be going away in future versions.");
+				fastStartUp = temporary.GetValue<bool>("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
+				sendTileDataSpam = temporary.GetValue<bool>("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
+				temporary.AddComment("");
+				temporary.AddComment("SteamEngine determines if someone is on your LAN by comparing their IP with all of yours. If the first three parts of the IPs match, they're considered to be on your LAN. Note that this will probably not work for people on very big LANs. If you're on one, please post a feature request on our SourceForge site.");
+				temporary.AddComment("http://steamengine.sf.net/");
 
-				iniH.IniDone();
+				iniH.WriteToFile();
 				if (!exists) {
 					MainClass.keepRunning.Set();
 					throw new ShowMessageAndExitException(msgBox+"SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");

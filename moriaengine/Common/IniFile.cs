@@ -52,6 +52,12 @@ namespace SteamEngine.Common {
 			}
 		}
 
+		public bool FileExists {
+			get {
+				return File.Exists(this.filename);
+			}
+		}
+
 		public void WriteToFile() {
 			using (StreamWriter writer = new StreamWriter(this.filename)) {
 				foreach (IniFileSection section in allSections) {
@@ -172,7 +178,7 @@ namespace SteamEngine.Common {
 				} else {
 					//end of file
 					if (curSection!=null) {
-						curSection.SetComment(comments.ToString());
+						curSection.AddComment(comments.ToString());
 						yield return curSection;
 					}
 					break;
@@ -219,7 +225,7 @@ namespace SteamEngine.Common {
 			parts.Add(valueLine);
 		}
 
-		internal void SetComment(string comment) {
+		public void AddComment(string comment) {
 			parts.Add(new IniFileComment(comment, false));
 		}
 

@@ -101,10 +101,6 @@
     <Compile Include="..\..\Common\IniFile.cs">
       <Link>IniFile.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common\IniHandler.cs">
-      <Link>IniHandler.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\Common\Logger.cs">
       <Link>Logger.cs</Link>
       <SubType>Code</SubType>

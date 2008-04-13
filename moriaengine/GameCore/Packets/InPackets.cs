@@ -532,7 +532,7 @@ namespace SteamEngine.Packets {
 			uid=Thing.UidClearFlags(uid);
 			Thing thing = Thing.UidGetThing(uid);
 			if (thing!=null) {
-				if (Globals.AOS && c.Version.aosToolTips) {
+				if (Globals.aos && c.Version.aosToolTips) {
 					thing.Trigger_AosClick(c.CurCharacter);
 				} else {
 					thing.Trigger_Click(c.CurCharacter);
@@ -790,7 +790,7 @@ namespace SteamEngine.Packets {
 		internal void HandleRequestProperties(GameConn c) {
 			//Console.WriteLine("HandleRequestProperties packet recieved.");
 			//OutputPacketLog(packetLen);
-			if (Globals.AOS) {
+			if (Globals.aos) {
 				AbstractCharacter curChar = c.CurCharacter;
 				if (curChar != null) {
 					uint flaggedUid = DecodeUInt(5);
@@ -817,7 +817,7 @@ namespace SteamEngine.Packets {
 				c.Close("Invalid blockSize="+blockSize+" is greater than packetLen="+packetLen);
 				return;
 			}
-			if (Globals.AOS) {
+			if (Globals.aos) {
 				AbstractCharacter curChar = c.CurCharacter;
 				if (curChar != null) {
 					int dataBlockSize = blockSize - 3;

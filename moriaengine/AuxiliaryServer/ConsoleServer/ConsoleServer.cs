@@ -22,6 +22,10 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			instance.Bind(Settings.consoleServerEndpoint);
 		}
 
+		internal static void Exit() {
+			instance.Dispose();
+		}
+
 		internal static void AddConnection(ConsoleClient client) {
 			consoles.Add(client.Uid, client);
 

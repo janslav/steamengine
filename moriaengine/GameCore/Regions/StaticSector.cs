@@ -85,7 +85,7 @@ namespace SteamEngine.Regions {
 						ushort[,] tile=(ushort[,]) ret[0]; z=(sbyte[,]) ret[1];
 						sector = new StaticSector(tile, z, statics);
 					} catch (Exception e) {
-						Logger.WriteCritical("Exception while loading map sector "+sx+","+sy,e);
+						Logger.WriteCritical("Exception while loading map sector "+sx+","+sy,e+". Disabling map use.");
 						Globals.useMap=false;
 					}
 					staticMap[sx, sy]=sector;
