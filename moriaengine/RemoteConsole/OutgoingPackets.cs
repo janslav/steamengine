@@ -3,6 +3,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
@@ -42,6 +43,25 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		protected override void Write() {
+		}
+	}
+
+	public class RequestStartGameServer : OutgoingPacket {
+		private byte serverNum;
+		private SEBuild build;
+
+		public void Prepare(int serverNum, SEBuild build) {
+			this.serverNum = (byte) serverNum;
+			this.build = build;
+		}
+
+		public override byte Id {
+			get { return 2; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.serverNum);
+			this.EncodeByte((byte) this.build);
 		}
 	}
 

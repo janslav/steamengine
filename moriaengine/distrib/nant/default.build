@@ -224,6 +224,9 @@
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
+		<copy 
+			file="AuxiliaryServer/App.config"
+    		tofile="${auxiliaryServerFileName+'.config'}"	/>
 	</target>
 	
 	<target name="buildScripts">

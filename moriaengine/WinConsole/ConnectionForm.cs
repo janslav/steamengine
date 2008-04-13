@@ -156,8 +156,8 @@ namespace SteamClients {
 			this.comboName.Name = "comboName";
 			this.comboName.Size = new System.Drawing.Size(272, 21);
 			this.comboName.TabIndex = 0;
-			this.comboName.DropDown += new System.EventHandler(this.comboNameDropDown);
 			this.comboName.SelectedIndexChanged += new System.EventHandler(this.comboNameSelectedIndexChanged);
+			this.comboName.DropDown += new System.EventHandler(this.comboNameDropDown);
 			// 
 			// textAddress
 			// 
@@ -166,7 +166,6 @@ namespace SteamClients {
 			this.textAddress.Name = "textAddress";
 			this.textAddress.Size = new System.Drawing.Size(304, 20);
 			this.textAddress.TabIndex = 1;
-			this.textAddress.Text = "";
 			// 
 			// textPort
 			// 
@@ -175,7 +174,6 @@ namespace SteamClients {
 			this.textPort.Name = "textPort";
 			this.textPort.Size = new System.Drawing.Size(48, 20);
 			this.textPort.TabIndex = 2;
-			this.textPort.Text = "";
 			this.textPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textPortKeyPress);
 			// 
 			// textUserName
@@ -185,7 +183,6 @@ namespace SteamClients {
 			this.textUserName.Name = "textUserName";
 			this.textUserName.Size = new System.Drawing.Size(168, 20);
 			this.textUserName.TabIndex = 3;
-			this.textUserName.Text = "";
 			// 
 			// textPassword
 			// 
@@ -195,7 +192,6 @@ namespace SteamClients {
 			this.textPassword.PasswordChar = '*';
 			this.textPassword.Size = new System.Drawing.Size(168, 20);
 			this.textPassword.TabIndex = 4;
-			this.textPassword.Text = "";
 			// 
 			// label1
 			// 
@@ -313,6 +309,7 @@ namespace SteamClients {
 			this.Text = "Connect";
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.ConnectionFormClosing);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 		#endregion

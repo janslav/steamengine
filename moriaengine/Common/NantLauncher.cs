@@ -37,9 +37,11 @@ namespace SteamEngine.Common {
 		IBuildLogger logger;
 		string[] sourceFileNames;
 		string sourceFileNamesFile;
+
+		public const string defaultPathInProject = "./distrib/nant/default.build";
 	
-		public NantLauncher() : 
-				this("./distrib/nant/default.build") {
+		public NantLauncher() :
+				this(defaultPathInProject) {
 			
 		}
 		
@@ -157,10 +159,11 @@ namespace SteamEngine.Common {
 
 		
 		public Assembly GetCompiledAssembly(string filenameproperty) {
-			string filename = System.IO.Path.GetFullPath(nantProject.Properties[filenameproperty]);
-			
-		
-			return Assembly.LoadFile(filename);
+			return Assembly.LoadFile(GetCompiledAssemblyName(filenameproperty));
+		}
+
+		public string GetCompiledAssemblyName(string filenameproperty) {
+			return System.IO.Path.GetFullPath(nantProject.Properties[filenameproperty]);
 		}
 		
 		public Exception Exception {
