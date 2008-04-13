@@ -50,6 +50,14 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return null;
 		}
 
+		public static void WriteLineAsAux(string msg) {
+			foreach (ConsoleClient cc in consoles.Values) {
+				if (cc.IsLoggedInAux) {
+					cc.WriteStringLine(0, msg);
+				}
+			}
+		}
+
 		public static IEnumerable<ConsoleClient> AllConsoles {
 			get {
 				return consoles.Values;

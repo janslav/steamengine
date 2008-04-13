@@ -21,6 +21,12 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		private bool isLoggedInAux;
 
+		public bool IsLoggedInAux {
+			get {
+				return this.isLoggedInAux;
+			}
+		}
+
 		public TCPConnection<ConsoleClient> Conn {
 			get {
 				return this.conn;
@@ -137,6 +143,10 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			SendStringPacket packet = Pool<SendStringPacket>.Acquire();
 			packet.Prepare(serverUid, str);
 			this.Conn.SendSinglePacket(packet);
+		}
+
+		public void WriteStringLine(int serverUid, string str) {
+			WriteString(serverUid, str + Environment.NewLine);
 		}
 	}
 }

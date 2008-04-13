@@ -332,7 +332,7 @@ namespace SteamEngine {
 
 				IniFileSection features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
-				aos = features.GetValue<bool>("AOS Features", false, "If this is on, AOS features (like objprops) are enabled.");
+				aos = features.GetValue<bool>("AOS", false, "If this is on, AOS features (like objprops) are enabled.");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
 
 				//TODO:
@@ -383,8 +383,9 @@ namespace SteamEngine {
 				temporary.AddComment("SteamEngine determines if someone is on your LAN by comparing their IP with all of yours. If the first three parts of the IPs match, they're considered to be on your LAN. Note that this will probably not work for people on very big LANs. If you're on one, please post a feature request on our SourceForge site.");
 				temporary.AddComment("http://steamengine.sf.net/");
 
-				iniH.WriteToFile();
+				
 				if (!exists) {
+					iniH.WriteToFile();
 					MainClass.keepRunning.Set();
 					throw new ShowMessageAndExitException(msgBox+"SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");
 				}

@@ -92,6 +92,10 @@ namespace SteamEngine.Common {
 			return section;
 		}
 
+		public bool HasSection(string name) {
+			return this.sectionsByName.ContainsKey(name);
+		}
+
 		public IEnumerable<IniFileSection> GetSections(string sectionName) {
 			foreach (IniFileSection section in allSections) {
 				if (sectionName.Equals(section.name, StringComparison.OrdinalIgnoreCase)) {
@@ -274,6 +278,11 @@ namespace SteamEngine.Common {
 			}
 		}
 
+
+		public bool HasValue(string name) {
+			return this.props.ContainsKey(name);
+		}
+
 		public void RemoveValue(string name) {
 			this.props.Remove(name);
 		}
@@ -292,6 +301,19 @@ namespace SteamEngine.Common {
 	}
 
 	internal class IniFileValueLine : CommentedIniFilePart, IIniFilePart {
+		private static readonly char[] stringWhitespaceChars;
+
+		static IniFileValueLine() {
+			unchecked {
+				stringWhitespaceChars = new char[] { 
+					(char) 9, (char) 10, (char) 11, (char) 12, (char) 13, (char) 32, (char) 133, (char) 160, (char) 5760, 
+					(char) 8192, (char) 8193, (char) 8194, (char) 8195, (char) 8196, (char) 8197, (char) 8198, (char) 8199, 
+					(char) 8200, (char) 8201, (char) 8202, (char) 8203, (char) 8232, (char) 8233, (char) 12288, 
+					(char) -257
+				};
+			}
+		}
+
 		internal string name;
 		internal string valueString;//name=value
 
@@ -300,6 +322,10 @@ namespace SteamEngine.Common {
 
 		internal IniFileValueLine(string name, string valueString, string commentAbove, bool wrap, string commentNext) 
 				: base(commentAbove, wrap, commentNext) {
+
+			if (name.Trim(stringWhitespaceChars).IndexOfAny(stringWhitespaceChars) > -1) {
+				throw new Exception("No whitespace characters allowed in value name");
+			}
 			this.name = name;
 			this.valueString = valueString;
 			this.valueSet = false;

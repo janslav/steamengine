@@ -271,6 +271,7 @@ namespace SteamEngine.RemoteConsole {
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Connect";
 			((System.ComponentModel.ISupportInitialize) (this.endPointSettingBindingSource)).EndInit();
 			this.ResumeLayout(false);

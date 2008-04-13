@@ -32,8 +32,14 @@ namespace SteamEngine.AuxServerPipe {
 				AuxServerPipeProtocol.instance,
 				MainClass.globalLock);
 
-			StartTryingToConnect();
+			connectingTimer.Change(TimeSpan.Zero, TimeSpan.Zero);
 
+		}
+
+		internal static void AnnounceStartupFinished() {
+			if (connectedInstance != null) {
+				connectedInstance.pipe.SendPacketGroup(StartupFinishedPacket.group);
+			}
 		}
 
 		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {

@@ -27,6 +27,10 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			}
 		}
 
+		internal void SetStartupFinished(bool p) {
+			this.startupFinished = p;
+		}
+
 		public string Name {
 			get {
 				return this.settings.Name;
@@ -92,9 +96,11 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			this.settings = settings;
 		}
 
-		internal void WriteString(string str) {
+		internal void WriteToMyConsoles(string str) {
 			if (this.startupFinished) {
-
+				foreach (ConsoleServer.ConsoleClient console in LoggedInConsoles.AllConsolesIn(this)) {
+					console.WriteString(this.uid, str);
+				}
 			} else {
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					console.WriteString(this.uid, str);
