@@ -28,35 +28,26 @@ namespace SteamEngine.CompiledScripts {
 		public ScriptedSkillDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 		}
 
-		public override void Select(AbstractCharacter ch) {
-			Character self = (Character) ch;
-			
+		protected override void On_Select(Character self) {
 			//temp code, just to see it does *something*
-			if (!Trigger_Select(self)) {
-				//Trigger_Fail(self);
-				ch.SysMessage("I clicked the button of the skill "+this+" which has value "+ch.Skills[this.Id].RealValue+" and cap "+ch.Skills[this.Id].Cap);
-				ch.ClilocSysMessage(500014); //That skill cannot be used directly.
-			}
+
+			self.SysMessage("I clicked the button of the skill " + this + " which has value " + self.Skills[this.Id].RealValue + " and cap " + self.Skills[this.Id].Cap);
+			self.ClilocSysMessage(500014); //That skill cannot be used directly.
 		}
 
-		internal override void Start(Character self) {
-			Trigger_Start(self);
-		}
-		
-		public override void Stroke(Character self) {
-			Trigger_Stroke(self);
+		protected override void On_Start(Character self) {
 		}
 
-		public override void Success(Character self) {
-			Trigger_Success(self);
+		protected override void On_Stroke(Character self) {
 		}
-	    
-		public override void Fail(Character self) {
-			Trigger_Fail(self);
+
+		protected override void On_Success(Character self) {
+		}
+
+		protected override void On_Fail(Character self) {
 		}
 		
-		protected internal override void Abort(Character self) {
-			Trigger_Abort(self);
+		protected override void On_Abort(Character self) {
 		}
 	}
 }

@@ -30,71 +30,59 @@ namespace SteamEngine.CompiledScripts {
 		public DetectHiddenSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
 		}
 
-		public override void Select(AbstractCharacter ch) {
+		protected override void On_Select(Character self) {
 			//todo: various state checks...
-            Character self = (Character)ch;
-			if (!this.Trigger_Select(self)) {
-				self.StartSkill((int) SkillName.DetectHidden);
-			}
+			self.StartSkill(SkillName.DetectHidden);
 		}
 
-		internal override void Start(Character self) {
-			if (!this.Trigger_Start(self)) {
-				self.currentSkill = this;
-				DelaySkillStroke(self);
-			}
+		protected override void On_Start(Character self) {
+			self.currentSkill = this;
+			DelaySkillStroke(self);
 		}
-		
-		public override void Stroke(Character self) {
+
+		protected override void On_Stroke(Character self) {
 			//todo: various state checks...
-			if (!this.Trigger_Stroke(self)) {
-                Map map = self.GetMap();
-                Point2D point = new Point2D(self);
-                ushort pointX = point.x;
-                ushort pointY = point.y;
-                int s = 0;
-                foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
-		    		if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
-                        s++;
-                        self.currentSkillTarget1 = person;
-		    			Success(self);
-                    }
+			Map map = self.GetMap();
+			Point2D point = new Point2D(self);
+			ushort pointX = point.x;
+			ushort pointY = point.y;
+			int s = 0;
+			foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
+				if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
+					s++;
+					self.currentSkillTarget1 = person;
+					this.Success(self);
 				}
-                if (s==0) {     //If nobody was found
-                    Fail(self);
-                }
+			}
+			if (s == 0) {     //If nobody was found
+				this.Fail(self);
 			}
 			self.currentSkill = null;
-            self.currentSkillTarget1 = null;
+			self.currentSkillTarget1 = null;
 		}
 
-        public override void Success(Character self) {
-            if (!this.Trigger_Success(self)) {
-                Character person = (Character)self.currentSkillTarget1;
-                HiddenHelperPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
-                if (ssp != null) {
-                    if (ssp.hadDetectedMe == null) {
-						Packets.NetState.AboutToChangeVisibility(person);
-                        ssp.hadDetectedMe = new LinkedList<Character>();
-                        ssp.hadDetectedMe.AddFirst(self);
-                    } else if (!ssp.hadDetectedMe.Contains(self)) {
-						Packets.NetState.AboutToChangeVisibility(person);
-                        ssp.hadDetectedMe.AddFirst(self);
-                    }
-                }
-            }
-        }
-		
-		public override void Fail(Character self) {
-			if (!this.Trigger_Fail(self)) {
-                self.ClilocSysMessage(500817);//You can see nothing hidden there.
-                self.currentSkill = null;
-                self.currentSkillTarget1 = null;
+		protected override void On_Success(Character self) {
+			Character person = (Character) self.currentSkillTarget1;
+			HiddenHelperPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+			if (ssp != null) {
+				if (ssp.hadDetectedMe == null) {
+					Packets.NetState.AboutToChangeVisibility(person);
+					ssp.hadDetectedMe = new LinkedList<Character>();
+					ssp.hadDetectedMe.AddFirst(self);
+				} else if (!ssp.hadDetectedMe.Contains(self)) {
+					Packets.NetState.AboutToChangeVisibility(person);
+					ssp.hadDetectedMe.AddFirst(self);
+				}
 			}
 		}
+
+		protected override void On_Fail(Character self) {
+			self.ClilocSysMessage(500817);//You can see nothing hidden there.
+			self.currentSkill = null;
+			self.currentSkillTarget1 = null;
+		}
 		
-		protected internal override void Abort(Character self) {
-			this.Trigger_Abort(self);
+		protected override void On_Abort(Character self) {
 			self.SysMessage("Detecting Hidden aborted.");
             self.currentSkill = null;
             self.currentSkillTarget1 = null;

@@ -42,70 +42,61 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void Select(AbstractCharacter ch) {
+		protected override void On_Select(Character ch) {
 			Character self = (Character) ch;
 			self.currentSkillTarget2 = ((Item) self.BackpackAsContainer).FindType(T_Musical);
 			((Player) self).Target(SingletonScript<Targ_Discordance>.Instance);
 		}
 
-		internal override void Start(Character self) {
-			if (!this.Trigger_Start(self)) {
-				self.SysMessage("Pokousis se oslabit " + ((Character) self.currentSkillTarget1).Name + ".");
-				DelaySkillStroke(self);
-			}
+		protected override void On_Start(Character self) {
+			self.SysMessage("Pokousis se oslabit " + ((Character) self.currentSkillTarget1).Name + ".");
+			DelaySkillStroke(self);
 		}
 
-		public override void Stroke(Character self) {
-			if (!this.Trigger_Stroke(self)) {
-				if (SkillValueOfChar(((Character) self.currentSkillTarget1)) != 0) {
-					self.SysMessage("Tohle nelze oslabit.");
-				} else if (Convert.ToInt32(self.currentSkillParam) == 1) {
-					double targExperience = ((Character) self.currentSkillTarget1).Experience;
-					if ((SkillValueOfChar(self) * 0.3) < targExperience) {
-						self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
-					} else {
-						double discordancePower = ScriptUtil.EvalRandomFaktor(SkillValueOfChar(self), 0, 300);
-						if (discordancePower > targExperience) {
-							Success(self);
-							return;
-						} else {
-							self.SysMessage("Oslabeni se nepovedlo.");
-						}
-					}
+		protected override void On_Stroke(Character self) {
+			if (SkillValueOfChar(((Character) self.currentSkillTarget1)) != 0) {
+				self.SysMessage("Tohle nelze oslabit.");
+			} else if (Convert.ToInt32(self.currentSkillParam) == 1) {
+				double targExperience = ((Character) self.currentSkillTarget1).Experience;
+				if ((SkillValueOfChar(self) * 0.3) < targExperience) {
+					self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
 				} else {
-					self.SysMessage("Oslabeni se nepovedlo.");
+					double discordancePower = ScriptUtil.EvalRandomFaktor(SkillValueOfChar(self), 0, 300);
+					if (discordancePower > targExperience) {
+						this.Success(self);
+						return;
+					} else {
+						self.SysMessage("Oslabeni se nepovedlo.");
+					}
 				}
-				Fail(self);
+			} else {
+				self.SysMessage("Oslabeni se nepovedlo.");
 			}
+			this.Fail(self);
 		}
 
 		internal static PluginKey effectPluginKey = PluginKey.Get("_discordanceEffect_");
 
-		public override void Success(Character self) {
-			if (!this.Trigger_Success(self)) {
-				Character skillTarget = (Character) self.currentSkillTarget1;
+		protected override void On_Success(Character self) {
+			Character skillTarget = (Character) self.currentSkillTarget1;
 
-				if (skillTarget.HasPlugin(effectPluginKey)) {
-					self.SysMessage("Cil je jiz oslaben.");
-				} else {
-					self.SysMessage("Uspesne jsi oslabil cil.");
-					DiscordanceEffectPlugin plugin = (DiscordanceEffectPlugin) DiscordanceEffectPlugin.defInstance.Create();
-					plugin.discordEffectPower = SkillValueOfChar(self);
-					skillTarget.AddPluginAsSimple(effectPluginKey, plugin);
-				}
+			if (skillTarget.HasPlugin(effectPluginKey)) {
+				self.SysMessage("Cil je jiz oslaben.");
+			} else {
+				self.SysMessage("Uspesne jsi oslabil cil.");
+				DiscordanceEffectPlugin plugin = (DiscordanceEffectPlugin) DiscordanceEffectPlugin.defInstance.Create();
+				plugin.discordEffectPower = SkillValueOfChar(self);
+				skillTarget.AddPluginAsSimple(effectPluginKey, plugin);
 			}
 			self.currentSkill = null;
 		}
 
-		public override void Fail(Character self) {
-			if (!this.Trigger_Fail(self)) {
-				self.Trigger_HostileAction(self);
-			}
+		protected override void On_Fail(Character self) {
+			self.Trigger_HostileAction(self);
 			self.currentSkill = null;
 		}
 
-		protected internal override void Abort(Character self) {
-			this.Trigger_Abort(self);
+		protected override void On_Abort(Character self) {
 			self.SysMessage("Oslabovani bylo predcasne preruseno.");
 		}
 	}
@@ -129,12 +120,12 @@ namespace SteamEngine.CompiledScripts {
 				self.currentSkill = null;
 				return false;
 			}
-			self.SelectSkill((int) SkillName.Musicianship);
+			self.SelectSkill(SkillName.Musicianship);
 			if ((int) self.currentSkillParam == 2) {
 				return false;
 			}
 			self.currentSkillTarget1 = targetted;
-			self.StartSkill((int) SkillName.Discordance);
+			self.StartSkill(SkillName.Discordance);
 			return false;
 		}
 

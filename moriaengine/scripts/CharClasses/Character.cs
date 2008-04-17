@@ -1242,7 +1242,7 @@ namespace SteamEngine.CompiledScripts {
 			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
 			if (skillDef != null) {
 				if (currentSkill != null) {
-					currentSkill.Abort(this);
+					this.AbortSkill();
 				}
 				currentSkill = skillDef;
 				skillDef.Start(this);
@@ -1253,7 +1253,7 @@ namespace SteamEngine.CompiledScripts {
 		public void StartSkill(SkillDef skillDef) {
 			if (skillDef != null) {
 				if (currentSkill != null) {
-					currentSkill.Abort(this);
+					this.AbortSkill();
 				}
 				currentSkill = skillDef;
 				skillDef.Start(this);

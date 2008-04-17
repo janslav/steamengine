@@ -24,7 +24,7 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 	
 namespace SteamEngine {
-	public abstract class AbstractSkillDef : AbstractDefTriggerGroupHolder {
+	public abstract class AbstractSkillDef : AbstractDef/*TriggerGroupHolder*/ {
 
 		//string(defname)-Skilldef pairs
 		private static Dictionary<string, AbstractSkillDef> byKey = new Dictionary<string, AbstractSkillDef>(StringComparer.OrdinalIgnoreCase);
@@ -34,6 +34,8 @@ namespace SteamEngine {
 
 		private static Dictionary<string, ConstructorInfo> skillDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 		//string-ConstructorInfo pairs  ("CombatSkillDef" - CombatSkillDef.ctor)
+
+		private TriggerGroup scriptedTriggers;
 		
 		public static AbstractSkillDef ByDefname(string defname) {
 			AbstractScript script;
@@ -96,7 +98,7 @@ namespace SteamEngine {
 		
 		private static Type[] skillDefConstructorParamTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
 		
-		//this should be typically called by the Bootstrap methods of scripted SkillDefs
+		//called by ClassManager
 		internal static bool RegisterSkillDefType(Type skillDefType) {
 			ConstructorInfo ci;
 			if (skillDefCtorsByName.TryGetValue(skillDefType.Name, out ci)) { //we have already a ThingDef type named like that
@@ -164,10 +166,11 @@ namespace SteamEngine {
 			}
 		
 			//now do load the trigger code. 
-			if (input.TriggerCount>0) {
-				input.headerName = "t__"+input.headerName+"__";
-				TriggerGroup tg = ScriptedTriggerGroup.Load(input);
-				skillDef.AddTriggerGroup(tg);
+			if (input.TriggerCount > 0) {
+				input.headerName = "t__" + input.headerName + "__";
+				skillDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+			} else {
+				skillDef.scriptedTriggers = null;
 			}
 			
 			skillDef.LoadScriptLines(input);
@@ -214,17 +217,14 @@ namespace SteamEngine {
 		
 		public TriggerGroup TG  {
 			get {
-				if (firstTGListNode != null) {
-					return firstTGListNode.storedTG;
-				}
-				return null;
+				return this.scriptedTriggers;
 			} 
 		}
 
-		public bool TryCancellableSkillTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
-			if (firstTGListNode != null) {
-				object retVal = firstTGListNode.storedTG.TryRun(self, td, sa);
+			if (this.scriptedTriggers != null) {
+				object retVal = this.scriptedTriggers.TryRun(self, td, sa);
 				try {
 					int retInt = Convert.ToInt32(retVal);
 					if (retInt == 1) {
@@ -236,34 +236,34 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public void TrySkillTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
-			if (firstTGListNode != null) {
-				firstTGListNode.storedTG.TryRun(self, td, sa);
+			if (this.scriptedTriggers != null) {
+				this.scriptedTriggers.TryRun(self, td, sa);
 			}
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			throw new NotImplementedException();
-		}
+		//public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		//    throw new NotImplementedException();
+		//}
 
-		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			throw new NotImplementedException();
-		}
+		//public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		//    throw new NotImplementedException();
+		//}
 
-		public override void Trigger(TriggerKey td, ScriptArgs sa) {
-			throw new NotImplementedException();
-		}
+		//public override void Trigger(TriggerKey td, ScriptArgs sa) {
+		//    throw new NotImplementedException();
+		//}
 
-		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
-			throw new NotImplementedException();
-		}
+		//public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
+		//    throw new NotImplementedException();
+		//}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			base.LoadScriptLine(filename, line, param, args);
 		}
 		
-		public abstract void Select(AbstractCharacter ch);
+		//internal protected abstract void Select(AbstractCharacter ch);
 		
 		public override string ToString() {
 			return GetType().Name+" "+Key;

@@ -31,53 +31,43 @@ namespace SteamEngine.CompiledScripts {
             : base(defname, filename, headerLine) {
         }
 
-        public override void Select(AbstractCharacter ch) {
+		protected override void On_Select(Character self) {
             //todo: various state checks...
-            Character self = (Character)ch;
-            if (!this.Trigger_Select(self)) {
-                self.StartSkill((int)SkillName.Stealing);
-            }
+            self.StartSkill(SkillName.Stealing);
         }
 
-        internal override void Start(Character self) {
-            if (!this.Trigger_Start(self)) {
-                self.currentSkill = this;
-                Item item = (Item)self.currentSkillTarget2 as Item;
-                if (self.CanReach(item) == DenyResult.Allow) {
-                    int diff = (int)(700 + 100 * Math.Log(item.Weight + 1));
-                    if (SkillDef.CheckSuccess(self.Skills[(int)SkillName.Stealing].RealValue, diff)) {
-                        Success(self);
-                    } else {
-                        Fail(self);
-                    }
-                }
-                self.currentSkill = null;
-                self.currentSkillTarget2 = null;
-            }
-        }
+		protected override void On_Start(Character self) {
+			self.currentSkill = this;
+			Item item = (Item) self.currentSkillTarget2 as Item;
+			if (self.CanReach(item) == DenyResult.Allow) {
+				int diff = (int) (700 + 100 * Math.Log(item.Weight + 1));
+				if (SkillDef.CheckSuccess(self.Skills[(int) SkillName.Stealing].RealValue, diff)) {
+					this.Success(self);
+				} else {
+					this.Fail(self);
+				}
+			}
+			self.currentSkill = null;
+			self.currentSkillTarget2 = null;
+		}
 
-        public override void Stroke(Character self) {
+		protected override void On_Stroke(Character self) {
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public override void Success(Character self) {
-            if (!this.Trigger_Success(self)) {
-                self.ClilocSysMessage(500174);      // You successfully steal the item!
-                self.currentSkillParam = 1;         // for On_DenyPickupItem in snooping skill
-            }
-        }
+		protected override void On_Success(Character self) {
+			self.ClilocSysMessage(500174);      // You successfully steal the item!
+			self.currentSkillParam = 1;         // for On_DenyPickupItem in snooping skill
+		}
 
-        public override void Fail(Character self) {
-            if (!this.Trigger_Fail(self)) {
-                self.ClilocSysMessage(500172);	    // I failed to steal.
-                ((Character)((Item)self.currentSkillTarget2).TopObj()).Trigger_HostileAction(self);
-                self.ClilocSysMessage(500167);	    // You are now a criminal.
-                self.currentSkillParam = 0;
-            }
-        }
+		protected override void On_Fail(Character self) {
+			self.ClilocSysMessage(500172);	    // I failed to steal.
+			((Character) ((Item) self.currentSkillTarget2).TopObj()).Trigger_HostileAction(self);
+			self.ClilocSysMessage(500167);	    // You are now a criminal.
+			self.currentSkillParam = 0;
+		}
 
-        protected internal override void Abort(Character self) {
-            this.Trigger_Abort(self);
+        protected override void On_Abort(Character self) {
             self.SysMessage("Okrádání bylo pøedèasnì ukonèeno.");
         }
     }

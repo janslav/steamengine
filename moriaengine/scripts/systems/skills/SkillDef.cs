@@ -194,33 +194,48 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("This method fires the @skillselect triggers. "
-		+"Gets usually called immediately after the user clicks on the button in skillgump or uses the useskill macro")]
-		public bool Trigger_Select(Character self) {
-			if (self.Flag_Dead) 
+		+ "Gets usually called immediately after the user clicks on the button in skillgump or uses the useskill macro")]
+		internal void Select(AbstractCharacter ch) {
+			Character self = (Character) ch;
+			if (!this.Trigger_Select(self)) {
+				this.On_Select(self);
+			}
+		}
+
+		protected abstract void On_Select(Character ch);
+
+		private bool Trigger_Select(Character self) {
+			if (self.Flag_Dead)
 				return true;
-			bool cancel=false;
+			bool cancel = false;
 			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableSkillTrigger(self, tkSelect, sa);
+			cancel = this.TryCancellableTrigger(self, tkSelect, sa);
 			if (!cancel) {
-				cancel=self.TryCancellableTrigger(tkSkillSelect, sa);
+				cancel = self.TryCancellableTrigger(tkSkillSelect, sa);
 				if (!cancel) {
-					cancel=self.On_SkillSelect(Id);
+					cancel = self.On_SkillSelect(Id);
 				}
 			}
 			return cancel;
 		}
 
+		[Summary("This method fires the @skillstart triggers. "
+		+ "Gets usually called after the target of the skill was set")]
+		internal void Start(Character ch) {
+			if (!this.Trigger_Start(ch)) {
+				this.On_Start(ch);
+			}
+		}
+
 		[Summary("This method implements the start of the skill. "
 		+"Usually calls Trigger_Start at some point")]
-		internal abstract void Start(Character ch);
+		protected abstract void On_Start(Character ch);
 
-		[Summary("This method fires the @skillstart triggers. "
-		+"Gets usually called after the target of the skill was set")]
-		public bool Trigger_Start(Character self) {
+		private bool Trigger_Start(Character self) {
 			if (self==null) return false;
 			bool cancel=false;
 			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableSkillTrigger(self, tkStart, sa);
+			cancel=TryCancellableTrigger(self, tkStart, sa);
 			if (!cancel) {
 				cancel=self.TryCancellableTrigger(tkSkillStart, sa);
 				if (!cancel) {
@@ -230,17 +245,47 @@ namespace SteamEngine.CompiledScripts {
 			return cancel;
 		}
 
-		[Summary("This method implements the failing of the skill. "
-		+"Usually calls Trigger_Fail at some point")]
-		public abstract void Fail(Character ch);
+		[Summary("This method fires the @skillStroke triggers. "
+		+ "Gets usually at some \"important\" moment during the execution of the skill, like one strike of the blacksmither's hammer")]
+		public void Stroke(Character ch){
+			if (!this.Trigger_Stroke(ch)) {
+				this.On_Stroke(ch);
+			}
+		}
+
+		[Summary("This method implements the \"stroke\" of the skill, that means some important moment \"in the middle\".")]
+		protected abstract void On_Stroke(Character ch);
+
+		private bool Trigger_Stroke(Character self) {
+			if (self == null) return false;
+			bool cancel = false;
+			ScriptArgs sa = new ScriptArgs(self, Id);
+			cancel = TryCancellableTrigger(self, tkStroke, sa);
+			if (!cancel) {
+				cancel = self.TryCancellableTrigger(tkSkillStroke, sa);
+				if (!cancel) {
+					cancel = self.On_SkillStroke(Id);
+				}
+			}
+			return cancel;
+		}
 
 		[Summary("This method fires the @skillFail triggers. "
-		+"Gets usually called when the skill chance fails, which is something else than being forced to abort")]
-		public bool Trigger_Fail(Character self) {
+		+ "Gets usually called when the skill chance fails, which is something else than being forced to abort")]
+		public void Fail(Character ch) {
+			if (!this.Trigger_Fail(ch)) {
+				this.On_Fail(ch);
+			}
+		}
+
+		[Summary("This method implements the failing of the skill. ")]
+		protected abstract void On_Fail(Character ch);
+
+		private bool Trigger_Fail(Character self) {
 			if (self==null) return false;
 			bool cancel=false;
 			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableSkillTrigger(self, tkFail, sa);
+			cancel=TryCancellableTrigger(self, tkFail, sa);
 			if (!cancel) {
 				cancel=self.TryCancellableTrigger(tkSkillFail, sa);
 				if (!cancel) {
@@ -250,62 +295,51 @@ namespace SteamEngine.CompiledScripts {
 			return cancel;
 		}
 
-		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... "
-		+"Usually calls Trigger_Abort at some point")]
-		internal protected abstract void Abort(Character ch);
+		[Summary("This method fires the @skillGain triggers. "
+		+ "Gets called when the Character`s about to gain in this skill, with the chance and skillcap as additional args")]
+		public void Success(Character ch) {
+			if (!this.Trigger_Success(ch)) {
+				this.On_Success(ch);
+			}
+		}
+
+		[Summary("This method implements the succes of the skill, a.e. skillgaiin and the success effect."
+		+ "Usually calls Trigger_Success at some point")]
+		protected abstract void On_Success(Character ch);
+
+		private bool Trigger_Success(Character self) {
+			if (self == null) return false;
+			bool cancel = false;
+			ScriptArgs sa = new ScriptArgs(self, Id);
+			cancel = TryCancellableTrigger(self, tkSuccess, sa);
+			if (!cancel) {
+				cancel = self.TryCancellableTrigger(tkSkillSuccess, sa);
+				if (!cancel) {
+					cancel = self.On_SkillSuccess(Id);
+				}
+			}
+			return cancel;
+		}
 
 		[Summary("This method fires the @skillAbort triggers. "
-		+"//Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
-		public void Trigger_Abort(Character self) {
+		+ "Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
+		internal void Abort(Character self) {
+			Trigger_Abort(self);
+			On_Abort(self);
+		}
+
+		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... "
+		+"Usually calls Trigger_Abort at some point")]
+		protected abstract void On_Abort(Character self);
+
+		private void Trigger_Abort(Character self) {
 			if (self==null) 
 				return;
 
 			ScriptArgs sa = new ScriptArgs(self, Id);
-			TrySkillTrigger(self, tkAbort, sa);
+			TryTrigger(self, tkAbort, sa);
 			self.TryTrigger(tkSkillAbort, sa);
 			self.On_SkillAbort(Id);
-
-		}
-
-
-		[Summary("This method implements the \"stroke\" of the skill, that means some important moment \"in the middle\"."
-		+"Usually calls Trigger_Stroke at some point")]
-		public abstract void Stroke(Character ch);
-
-		[Summary("This method fires the @skillStroke triggers. "
-		+"Gets usually at some \"important\" moment during the execution of the skill, like one strike of the blacksmither's hammer")]
-		public bool Trigger_Stroke(Character self) {
-			if (self==null) return false;
-			bool cancel=false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableSkillTrigger(self, tkStroke, sa);
-			if (!cancel) {
-				cancel=self.TryCancellableTrigger(tkSkillStroke, sa);
-				if (!cancel) {
-					cancel=self.On_SkillStroke(Id);
-				}
-			}
-			return cancel;
-		}
-
-		[Summary("This method implements the succes of the skill, a.e. skillgaiin and the success effect."
-		+"Usually calls Trigger_Success at some point")]
-		public abstract void Success(Character ch);
-
-		[Summary("This method fires the @skillGain triggers. "
-		+"Gets called when the Character`s about to gain in this skill, with the chance and skillcap as additional args")]
-		public bool Trigger_Success(Character self) {
-			if (self==null) return false;
-			bool cancel=false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableSkillTrigger(self, tkSuccess, sa);
-			if (!cancel) {
-				cancel=self.TryCancellableTrigger(tkSkillSuccess, sa);
-				if (!cancel) {
-					cancel=self.On_SkillSuccess(Id);
-				}
-			}
-			return cancel;
 		}
 
 		public void DelaySkillStroke(double seconds, Character self) {
