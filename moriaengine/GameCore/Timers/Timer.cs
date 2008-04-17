@@ -170,6 +170,14 @@ namespace SteamEngine.Timers {
 			}
 		}
 
+		public static long SecondsToTicks(double value) {
+			return (long) (value * 10000000L);
+		}
+
+		public static double TicksToSeconds(long period) {
+			return period / 10000000.0;
+		}
+
 		public static readonly TimeSpan negativeOneSecond = TimeSpan.FromSeconds(-1);
 
 		[Summary("The amount of time to delay before the first invoking, using TimeSpan values to measure time intervals.")]

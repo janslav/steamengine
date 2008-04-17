@@ -44,107 +44,99 @@ namespace SteamEngine.CompiledScripts {
 				: base(defname, filename, headerLine) {
 		}
 
-		public override void Select(AbstractCharacter ch) {
-			Character self = (Character) ch;
-			if (!Trigger_Select(self)) {
-				//self.SysMessage(this.Key+" selected");
-				Character target = self.currentSkillTarget1 as Character;
-				if (target != null) {
-					self.StartSkill(this);
-				}
+		protected override void On_Select(Character self) {
+			//self.SysMessage(this.Key+" selected");
+			Character target = self.currentSkillTarget1 as Character;
+			if (target != null) {
+				self.StartSkill(this);
 			}
 		}
 
-		internal override void Start(Character self) {
-			if (!Trigger_Start(self)) {
-				Character target = self.currentSkillTarget1 as Character;
-				if (target != null) {
-					WeaponSkillTargetTrackerPlugin.InstallTargetTracker(target, self);
-					self.currentSkillParam = new WeaponSkillParam(
-						WeaponSkillPhase.Drawing,
-						0);
-
+		protected override void On_Start(Character self) {
+			Character target = self.currentSkillTarget1 as Character;
+			if (target != null) {
+				WeaponSkillTargetTrackerPlugin.InstallTargetTracker(target, self);
+				self.currentSkillParam = new WeaponSkillParam(
+					WeaponSkillPhase.Drawing,
+					0);
 					self.DelayedSkillStroke();
-				} else {
-					self.AbortSkill();
-				}
+			} else {
+				self.AbortSkill();
 			}
 		}
 
 		static TimerKey animTk = TimerKey.Get("_weaponAnimDelay_");
-		
-		public override void Stroke(Character self) {
-			if (!Trigger_Stroke(self)) {
-				//self.SysMessage(this.Key+" stroking");
-				WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam;
-				Character target = self.currentSkillTarget1 as Character;
-				if (target.IsDeleted || target.Flag_Dead) {
-					WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
-					return;
+
+		protected override void On_Stroke(Character self) {
+			//self.SysMessage(this.Key+" stroking");
+			WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam;
+			Character target = self.currentSkillTarget1 as Character;
+			if (target.IsDeleted || target.Flag_Dead) {
+				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
+				return;
+			}
+			int distance = Point2D.GetSimpleDistance(self, target);
+			if (param.phase == WeaponSkillPhase.Drawing) {
+				if (distance <= self.WeaponStrikeStartRange) {
+					double delay = self.WeaponDelay;
+					self.DelaySkillStroke(delay);
+					param.dueAt = Globals.TimeInSeconds + delay;
+					param.phase = WeaponSkillPhase.Striking;
+					self.AddTimer(animTk, new WeaponAnimTimer()).DueInSeconds = delay / 2;
 				}
-				int distance = Point2D.GetSimpleDistance(self, target);
-				if (param.phase == WeaponSkillPhase.Drawing) {
-					if (distance <= self.WeaponStrikeStartRange) {
-						double delay = self.WeaponDelay;
-						self.DelaySkillStroke(delay);
-						param.dueAt = Globals.TimeInSeconds+delay;
-						param.phase = WeaponSkillPhase.Striking;
-						self.AddTimer(animTk, new WeaponAnimTimer()).DueInSeconds = delay/2;
-					}
-				} else {
-					if (distance > self.WeaponStrikeStopRange) {
+			} else {
+				if (distance > self.WeaponStrikeStopRange) {
+					self.AbortSkill();
+				} else if ((param.dueAt <= Globals.TimeInSeconds) &&
+						(distance <= self.WeaponRange)) {
+
+					Projectile projectile = self.WeaponProjectile;
+					if (projectile != null) {
+						switch (Globals.dice.Next(3)) {
+							case 0://arrow appears on ground
+								Item onGround = (Item) projectile.Dupe();
+								onGround.P(target);
+								onGround.Amount = 1;
+								break;
+							case 1://arrow appears in targets backpack
+								Item inPack = (Item) projectile.Dupe();
+								inPack.Cont = target.BackpackAsContainer;
+								inPack.Amount = 1;
+								break;
+							//else arrow disappears
+						}
+						uint amount = projectile.Amount;
+						if (amount < 2) {
+							projectile.Delete();
+						} else {
+							projectile.Amount = amount - 1;
+						}
+					} else if (self.WeaponProjectileType != ProjectileType.None) {
 						self.AbortSkill();
-					} else if ((param.dueAt <= Globals.TimeInSeconds) && 
-							(distance <= self.WeaponRange)) {
+						self.SysMessage("Nemáš støelivo.");
+						return;
+					}
 
-						Projectile projectile = self.WeaponProjectile;
-						if (projectile != null) {
-							switch (Globals.dice.Next(3)) {
-								case 0://arrow appears on ground
-									Item onGround = (Item) projectile.Dupe();
-									onGround.P(target);
-									onGround.Amount = 1;
-									break;
-								case 1://arrow appears in targets backpack
-									Item inPack = (Item) projectile.Dupe();
-									inPack.Cont = target.BackpackAsContainer;
-									inPack.Amount = 1;
-									break;
-								//else arrow disappears
-							}
-							uint amount = projectile.Amount;
-							if (amount < 2) {
-								projectile.Delete();
-							} else {
-								projectile.Amount = amount - 1;
-							}
-						} else if (self.WeaponProjectileType != ProjectileType.None) {
-							self.AbortSkill();
-							self.SysMessage("Nemáš støelivo.");
-							return;
-						}
+					if (!self.Flag_Moving) {
+						self.Direction = Point2D.GetDirFromTo(self, target);
+					}
 
-						if (!self.Flag_Moving) {
-							self.Direction = Point2D.GetDirFromTo(self, target);
-						}
+					int projectileAnim = self.WeaponProjectileAnim;
+					if (projectileAnim >= 0) {
+						EffectFactory.EffectFromTo(self, target, (ushort) projectileAnim, 10, 1, 0, 0, 0, 0);
+					}
 
-						int projectileAnim = self.WeaponProjectileAnim;
-						if (projectileAnim >= 0) {
-							EffectFactory.EffectFromTo(self, target, (ushort) projectileAnim, 10, 1, 0, 0, 0, 0);
-						}
-						
-						if (CheckSuccess(self, Globals.dice.Next(700))) {
-							Success(self);
-						} else {
-							Fail(self);
-						}
+					if (CheckSuccess(self, Globals.dice.Next(700))) {
+						this.Success(self);
+					} else {
+						this.Fail(self);
+					}
 
-						self.currentSkill = null;
-						if (!target.IsDeleted && !target.Flag_Dead) {
-							WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
-						} else {
-							WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);
-						}
+					self.currentSkill = null;
+					if (!target.IsDeleted && !target.Flag_Dead) {
+						WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
+					} else {
+						WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);
 					}
 				}
 			}
@@ -161,25 +153,20 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void Success(Character self) {
-			if (!Trigger_Success(self)) {
-				//self.SysMessage(this.Key+" succeeded");
-				Character target = (Character) self.currentSkillTarget1;
-				DamageManager.ProcessSwing(self, target);
-			}
+		protected override void On_Success(Character self) {
+			//self.SysMessage(this.Key+" succeeded");
+			Character target = (Character) self.currentSkillTarget1;
+			DamageManager.ProcessSwing(self, target);
 		}
 
-		public override void Fail(Character self) {
-			if (!Trigger_Fail(self)) {
-				//self.SysMessage(this.Key+" failed");
-				Character target = (Character) self.currentSkillTarget1;
-				target.Trigger_HostileAction(self);
-				SoundCalculator.PlayMissSound(self);
-			}
+		protected override void On_Fail(Character self) {
+			//self.SysMessage(this.Key+" failed");
+			Character target = (Character) self.currentSkillTarget1;
+			target.Trigger_HostileAction(self);
+			SoundCalculator.PlayMissSound(self);
 		}
 
-		protected internal override void Abort(Character self) {
-			this.Trigger_Abort(self);
+		protected override void On_Abort(Character self) {
 			Character target = self.currentSkillTarget1 as Character;
 			if (target != null) {
 				//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);

@@ -207,27 +207,27 @@ namespace SteamEngine.CompiledScripts {
 
         //public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
 
-		internal override void Start(Character ch) {
+		protected override void On_Start(Character ch) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void Fail(Character ch) {
+		protected override void On_Fail(Character ch) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		protected internal override void Abort(Character ch) {
+		protected override void On_Abort(Character ch) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void Stroke(Character ch) {
+		protected override void On_Stroke(Character ch) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void Success(Character ch) {
+		protected override void On_Success(Character ch) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void Select(AbstractCharacter ch) {
+		protected override void On_Select(Character ch) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 	}
