@@ -1,0 +1,901 @@
+/////////////////////////////////////
+//  N P C   R O U N D A T T A C K  //
+//         (c)-Sir Glorg-          //
+/////////////////////////////////////
+
+[events e_npc_roundattack]
+on=@aftergetswing
+on=@beforegeteffect
+on=@afterswing
+if (rand(4)==0)
+  f_npc_roundattack
+endif
+
+on=@beforedoeffect
+
+[function f_npc_roundattack]
+sound(512)
+newitemsafe(i_npc_roundattack_srcChanger)
+lastnew.p=<src.p>
+lastnew.z=-100
+lastnew.link=<uid>
+lastnew.timerd=1
+return 1
+
+[itemdef i_npc_roundattack_srcChanger]
+id=i_memory
+layer=77
+type=t_src_changer
+name=roundattack srcChanger
+
+on=@timer
+var(npc_roundattack_src,<link>)
+var(npc_roundattack_exception,<hval link.act>)
+sector.allchars(f_npc_rounddamage(<link.typedef.dam>)) // v argumentu je funkci poslany DMG definovany v chardefu 
+remove
+return 1
+
+[function f_npc_rounddamage]
+if (isgm)
+  return 1
+elseif (<flags>&statf_invisible) || (<flags>&statf_hidden)
+  return 1
+endif
+if (distancefrom(<var(npc_roundattack_src)>)<3) // && ((isplayer)||(ispet))
+  if !(<uid> == <var(npc_roundattack_exception)>) && !(<uid> == <npc_roundattack_src>) //roundattack se provede po rane, takze hrac, na ktereho npc utoci ma vyjimku, aby nedostal dvojak + Verbatimovi nevim proc vadilo, ze se to npc samo pri roundattacku mlati takze tomu taky zabranime (pozn. Yavanna).
+    events=-e_gethit 
+    arg(my_dmg,<eval {<argv(0)> <argv(1)>}>)
+    if (npc) && !(strcmpi(<act>,<npc_roundattack_src>))
+      damage(<eval <my_dmg>*6>,dam_physical,<uid>)
+    elseif (ispet)
+      damage(<eval <my_dmg>*10>,dam_physical,<uid>)
+    elseif (isplayer)
+      damage(<my_dmg>,dam_physical,<uid>)
+    endif
+    events=+e_gethit
+  endif
+endif
+
+
+//////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////
+//   N P C   C H A N G E   D M G   //
+//         (c)-Sir Glorg-          //
+/////////////////////////////////////
+
+[function f_npcChangeDmg]
+tag(changeDmgPercent,<argv(0)>)
+if !(isevent(e_npcChangeDmg))
+  events=+e_npcChangeDmg
+endif
+
+[function f_npcChangeDmgStop]
+tag.remove(changeDmgPercent)
+events=-e_npcChangeDmg
+
+
+[events e_npcChangeDmg]
+on=@afterswing
+arg(uber,<eval (<var(ubrano)>*<tag.changeDmgPercent>)/100>)
+var(ubrano,<var(ubrano)>-<arg(uber)>)
+
+on=@aftergetswing
+on=@beforedoeffect
+on=@beforegeteffect
+
+//////////////////////////////////////////////////////////////////////////
+
+[events e_inexhaustible]
+//Na Verbatimovu objednavku, draci sou joudove
+on=@step
+stam=<eval (<stam>+1)>
+
+on=@aftergetswing
+stam=<eval (<stam>+1)>
+
+on=@beforegeteffect
+stam=<eval (<stam>+1)>
+
+on=@beforedoeffect
+on=@afterswing
+
+[events e_duplicator]
+on=@aftergetswing
+if(tag(duped))
+ if(<eval tag(duped)> < <tag(dupecount)>)
+  tag(duped,<eval <tag(duped)>+1>) 
+  selfdupe
+  src.sysmessage(Obluda se rozdvojila!)
+ endif
+else
+ tag(duped,1)
+ selfdupe
+ src.sysmessage(Obluda se rozdvojila!)
+endif
+
+on=@beforedoeffect
+on=@beforegeteffect
+on=@afterswing
+
+[function selfdupe]
+newnpc(<obody>)
+lastnewchar.p=<eval(<p_x>+{-1 1})>,<eval(<p_y>+{-1 1})>,<p_z>,<mapplane>
+lastnewchar.update
+lastnewchar.events=-e_duplicator
+lastnewchar.tag(duped,3) //uz se nebude duplikovat
+
+[EVENTS e_summoneater]
+on=@HitTry
+//say hittry
+if(act.issumon) //cil je summon
+    //say je to summon!
+    act.remove
+    return 1
+else
+    return 0
+endif
+////////
+[EVENTS e_summoneater_vamp]
+on=@HitTry
+if(act.issumon) //cil je summon
+    //say je to summon!
+    str=<str>+<act.str>
+    dex=<dex>+<act.dex>
+    int=<int>+<act.int>
+    maxhits=<str>
+    hits=<hits>+<act.hits>
+    maxmana=<int>
+    mana=<mana>+<act.mana>
+    maxstam=<dex>
+    stam=<stam>+<act.stam>
+    act.remove
+    return 1
+else
+    return 0
+endif
+////////////////////////
+
+[events e_smrt] //vybrano z orcs.scp kde to nema co delat
+on=@death
+act.say Pred smrti zamumlal neco o sile sveho naroda a pak zemrel
+act.LINK=<uid>
+
+[events e_more_attackage] //vybrano z orcs.scp kde to nema co delat
+on=@hit 
+src.sound=snd_SPELL_LIGHTNING 
+SRC.EFFECT=2,i_FX_Energy_Ray,6,15,1 
+src.tag.dohit=1
+src.attackage <eval {1 10}> 
+return 0 
+
+[EVENTS e_scales] //vybrano z orcs.scp kde to nema co delat
+ON=@GETHIT 
+VAR.SCALE=<eval RAND{3}> 
+IF {<VAR.SCALE>==0} 
+SRC.SYSMESSAGE Jeho supiny absorbuji vetsinu tveho utoku!
+HITS=<HITS>+-{1 4} 
+RETURN 1
+ELSE 
+RETURN 0 
+ENDIF
+
+[EVENTS e_ovinovac]
+on=@PersonalSpace
+if(<eval tag(drzim)>||src.flag_invul)
+  return 1
+elseif src.isplayer
+  tag(narusitel,<src>)
+  tag(drzim,1)
+  src.flag_immobile=1 //to je nehejbat, jen utocit
+  src.sysmessage(Jsi lapen v osidlech teto zakerne rostliny)
+  flag_immobile=1
+  tag(narusitel).newequip(i_ovinovaccheck)
+  lastnew.tag(ovinovac,<UID>)
+  //say(drzim: <tag(drzim)>, narus:<tag(narusitel)>)
+endif
+
+on=@aftergetswing
+//say(Uspesny Zasah)
+if(<tag(drzim)>)
+ //say(Drzim)
+ if(strlen(<tag(kolik_ran)>))  
+   //say(Ran: <tag(kolik_ran)>)
+   if(<tag(kolik_ran)> > 0)
+    tag(kolik_ran,<eval (<tag(kolik_ran)>-1)>)
+   else
+    tag.remove(kolik_ran)
+    tag(narusitel).sysmessage(Sevreni povolilo...) 
+    tag(narusitel).flag_immobile=0
+    tag(narusitel).findid(i_ovinovaccheck).remove
+    tag.remove(narusitel)
+    tag(drzim,0)
+    flag_immobile=0
+   endif  
+ else
+   //say(Zacinam pocitat rany)
+   tag(kolik_ran,4)
+ endif
+endif
+
+on=@Death
+//say <uid.tag(narusitel)>
+if(strlen(<tag(narusitel)>))
+ tag(narusitel).sysmessage(Sevreni rostliny povolilo...) 
+ tag(narusitel).flag_immobile=0
+ tag(narusitel).findid(i_ovinovaccheck).remove
+ tag.remove(narusitel)
+ tag(drzim,0)
+endif
+
+on=@afterswing
+on=@beforegeteffect
+
+[itemdef i_ovinovaccheck]
+ID=i_memory
+TYPE=t_eq_script
+NAME=Ovinovac
+
+on=@create
+timer=3
+
+on=@unequip
+topobj.flag_immobile=0
+tag(ovinovac).flag_immobile=0
+tag(ovinovac).tag.remove(narusitel)
+
+on=@timer
+if (tag(ovinovac).p != topobj.p) || (tag(ovinovac).body==c_slime)
+ remove
+ return 1
+endif
+timer=2
+return 1
+
+/////////
+
+//[EVENTS e_immune_magic]
+//on=@spelleffect
+//src.redmessage(Cil se zda byt imunni vuci magii...)
+//return 1
+/////////
+//[EVENTS e_immune_bleed]
+//on=@aftergetswing
+//if(findid(i_krvaceni))
+// findid(i_krvaceni).remove
+// src.redmessage(Cil nemuze krvacet)
+//endif
+//return 1
+//////////////////////////////////
+
+[EVENTS e_looter]
+on=@ItemStep
+if (act.type==t_corpse) //108 ... t_corpse (pripadne lze "if(act.type==NID(t_corpse))")
+  if (act.rescount)
+    SRC.SAY Helemese co jsem nasel
+    act.contents(cont=<uid>)
+  endif
+endif
+
+[function selfresser] //argv(0) - time
+events=+e_selfreser
+tag(resstimer,<argv(0)>)
+
+//[events e_selfreser]
+//on=@create
+//events=+e_selfres
+
+[events e_selfreser]
+//on=@Death
+//tag(lastmurderbyf,<act>)
+//tag(killer,<act>) //ulozit na monstrum kdo ho zabil
+//finduid(#01).sysmessage(killer je act:<act>,src:<src>,uid:<uid> <tag(killer)>)
+
+on=@DeathCorpse
+//casovac oziveni
+//serv.sysmessage("killer: <tag(lastmurderbyf)>")
+//finduid(#01).sysmessage(killer je <tag(lastmurderbyf).name>)
+if (tag(lastmurderbyf))
+else
+ return 1
+endif
+if(argo) //kdyz nebude mrtvola tak na to seru ! 
+else
+ return 1	 
+endif
+finduid(<tag(lastmurderbyf)>).newitemsafe(i_selfress_timer) //item vytvori jeste to monstrum
+arg(timerr,<lastnew>)
+arg(timerr).tag(mrtvola,<argo>) //ulozit si mrtvolu
+arg(timerr).tag(lastmurderbyf,<src.tag(lastmurderbyf)>) //kdo zabil monstrum
+arg(timerr).tag(resstimer,<src.tag(resstimer)>) //timer z toho monstra 
+arg(timerr).tag(jake_monstrum,<src.obody>) //co pak bude vytvaret
+arg(timerr).tag(jmenomonstra,<src.name>) //pro spravne prejmenovani
+arg(timerr).tag(pozice,<p>) //kam soupnout nove monstrum (na misto stareho)
+arg(timerr).cont=<argo>  //item do tela
+//finduid(#01).sysmessage(Mam timer <tag(resstimer)>s!, jsem v <arg(timerr).cont.name>)
+arg(timerr).trigger(@containerchange) //specialni trigger
+
+[itemdef i_selfress_timer]
+id=i_memory
+type=t_eq_script
+Name=Selfresstimer
+
+on=@create
+attr=attr_movenever|attr_newbie|attr_invis
+
+on=@containerchange
+//removefromview
+if(<tag(resstimer)>)
+  timerdelay(<eval <tag(resstimer)>*10>)  //timer=(Cas) nelze !!!!!, *10 protoze decisekundy !
+  //finduid(#01).sysmessage(Mam timer <tag(resstimer)>s!)
+else
+  //finduid(#01).sysmessage(Nemam timer!)
+  remove
+endif
+
+on=@timer
+//finduid(#01).sysmessage(Zvedam se)
+//if (tag(lastmurderbyf)) //jen kdyz existuje vrah 
+// if(<finduid(<tag(lastmurderbyf)>)>)
+//  if(<finduid(<tag(lastmurderbyf)>).ischar>)
+//  else 
+//   if(<var(vypisy)>==1)
+//    finduid(09fa43).sysmessage(UID z tagu s vrahem neukazuje na zadny char)
+//   endif
+//   remove
+//   return 1
+//  endif
+// else
+//  if(<var(vypisy)>==1)
+//    finduid(09fa43).sysmessage(tag s vrahem neobsahuje spravne UID)
+//  endif
+//  remove
+//  return 1
+// endif
+//else
+// if(<var(vypisy)>==1)
+//  finduid(09fa43).sysmessage(neexistuje tag s UID vraha)
+// endif
+// remove
+// return 1
+//endif
+if (tag(mrtvola)) //existuje vubec jeste ta mrtvola? jestli ne tak na to serem !
+ if(<finduid(<tag(mrtvola)>)>)
+  if(<finduid(<tag(mrtvola)>).isitem>) 
+  else
+   if(<var(vypisy)>==1)
+    finduid(09fa43).sysmessage(UID z tagu s mrtvolou neukazuje na zadny char)
+   endif
+   remove
+   return 1
+  endif
+ else
+  if(<var(vypisy)>==1)
+   finduid(09fa43).sysmessage(tag s mrtvolou neobsahuje spravne UID)
+  endif
+  remove
+  return 1
+ endif
+else
+ if(<var(vypisy)>==1)
+  finduid(09fa43).sysmessage(neexistuje tag s UID mrtvoly)
+ endif
+ remove
+ return 1
+endif 
+ if (<finduid(<tag(mrtvola)>).tag(rozrezano)>) //je li nalezene telo rozrezane
+  if(tag(lastmurderbf))
+   finduid(<tag(lastmurderbyf)>).sysmessage(Mas stesti zes telo rozrezal!)
+  endif
+ else
+  //pomocne "zvedaci" NPCcko
+  //arg(vrah,<finduid(<tag(lastmurderbyf)>)>)
+  arg(vrah,<finduid(02d816)>)
+  vrah.invis=1
+  vrah.tag(oldp,<vrah.p>)
+  vrah.p=<tag(pozice)>  
+  vrah.newnpc(<tag(jake_monstrum)>)  
+  vrah.act.p=<tag(pozice)>
+  vrah.act.home=<tag(pozice)>
+  vrah.act.name=<tag(jmenomonstra)>  
+  //vrah.act.tag(resstimer,<tag(resstimer)>) - netreba protoze stejne ma decayer
+  vrah.act.tag(experience,0) //nebudou za nej expy podruhe! 
+  vrah.act.giveitem(i_ressedmonster_decayer)
+  vrah.act.findlayer(21).emptycont 
+  //////////////////////////
+  //NASRAT BLBNE TO A HOTOVO
+  //while(<finduid(<tag(mrtvola)>).rescount>) //starej nevyzvedlej loot dat novemu monstru
+  finduid(<tag(mrtvola)>).contents(cont=<vrah.act.findlayer(21)>)//neblbne, akorat i_gold :(
+  //endwhile
+  //////////////////////////
+  vrah.act.update 
+  vrah.act.effect=3,i_fx_bless_effect,6,15,1
+  vrah.act.sound=snd_spell_polymorph 
+  vrah.p=<vrah.tag(oldp)> //ozivovace NPCcek zpatky domu
+  if(tag(lastmurderbf))
+   finduid(<tag(lastmurderbyf)>).sysmessage(Monstrum vstalo z mrtvych!)
+  endif  
+  finduid(tag(mrtvola)).remove 
+ endif
+//endif
+remove
+
+[itemdef i_ressedmonster_decayer]
+id=i_memory
+type=t_eq_script
+name=Decay timer
+
+on=@create
+attr=attr_movenever|attr_invis
+timer=3600
+
+on=@timer
+topobj.events=-e_selfreser
+topobj.hits=0
+remove
+
+[events e_npc_reactivearmor] 
+on=@aftergetswing 
+if(<distancefrom(<src>)> > 2) || (src.tag(class)==Mystik)
+ return 1
+endif
+src.effect(3,<s_harm.EFFECTID>,6,15,1)
+src.sound=00a1
+src.events=-e_gethit
+//say Hrac zasadil ranu za: <var(ubrano)>
+src.damage(((<var(ubrano)>*<tag(hit_damage)>)+50)/100),dam_god,<uid>)
+src.events=+e_gethit 
+
+on=@beforegeteffect
+on=@afterswing
+on=@beforedoeffect
+
+[events e_elem_terror]
+on=@death
+while (memoryfindtype(0209c))
+ memoryfindtype(0209c).link.multi_damage(<tag(death_damage)>)
+ memoryfindtype(0209c).remove 
+endwhile
+ON=@npcseenewplayer
+sfx(00ef)
+
+
+[events e_necroslave]
+on=@death
+//finduid(#01).sysmessage(Umrel <name>)
+tag(undeadhandler,<undeadhandler>)
+
+on=@DeathCorpse
+//finduid(#01).sysmessage(Mrtvola <argo.name>)
+if (isplayer)
+ if !(region.tag(necro))
+  events=-e_necroslave
+  return 0
+ endif
+ newitemsafe(i_selfress_timer)
+elseif (issumon)
+  events=-e_necroslave
+  return 0
+else 
+ finduid(<tag(lastmurderbyf)>).newitemsafe(i_selfress_timer) //item vytvori jeste to monstrum
+endif
+if(argo) //kdyz nebude mrtvola tak na to seru ! 
+else
+ return 1	 
+endif
+arg(timerr,<lastnew>)
+arg(timerr).cont=<argo>  //item do tela
+arg(timerr).tag(mrtvola,<argo>) //ulozit si mrtvolu
+if (isplayer)
+ arg(timerr).tag(lastmurderbyf,<src>)
+ arg(timerr).tag(resstimer,10)
+else
+ arg(timerr).tag(lastmurderbyf,<src.tag(lastmurderbyf)>) //kdo zabil monstrum
+ arg(timerr).tag(resstimer,<src.tag(resstimer)>) //timer z toho monstra 
+endif
+arg(timerr).tag(jake_monstrum,<src.tag(undeadhandler)>) //co pak bude vytvaret
+arg(timerr).tag(jmenomonstra,<src.name>) //pro spravne prejmenovani
+arg(timerr).tag(pozice,<p>) //kam soupnout nove monstrum (na misto stareho)
+//finduid(#01).sysmessage(Mam timer <tag(resstimer)>s!, jsem v <arg(timerr).cont.name>)
+arg(timerr).trigger(@containerchange) //specialni trigger
+
+on=@gethit
+if (flag_spawned)
+  z=<memoryfindtype(MEMORY_ISPAWNED).link.z>
+endif
+
+[function undeadhandler]
+
+if (src.brain==13)
+ arg(undeadhandler,c_dragon_bone)
+elseif (src.findlayer(2))
+ if (src.findlayer(2).isbow)||(src.findlayer(2).issword)||(src.findlayer(2).isshield)
+  arg(undeadhandler,c_skeleton<undeadhandlerlayer2>)
+ else
+  if (src.findlayer(1))  
+   arg(undeadhandler,c_skeleton<undeadhandlerlayer1>)
+  else
+   arg(undeadhandler,c_skeleton_mage<undeadhandlerlevel>)  
+  endif
+ endif
+elseif (src.findlayer(1))
+ arg(undeadhandler,c_skeleton<undeadhandlerlayer1>)
+else
+ arg(undeadhandler,c_skeleton_mage<undeadhandlerlevel>)  
+endif   
+return<arg(undeadhandler)>
+
+
+
+[function undeadhandlerlevel]
+if (src.isplayer)//nastavi silu podle lvl hrace
+ if (src.tag(level)>11)&&(src.tag(level)<31)
+  arg(undeadlevel,_lvl_2)
+ elseif (src.tag(level)<51)&&(src.tag(level)>30)
+  dorand 3
+   arg(undeadlevel,_lvl_2)
+   arg(undeadlevel,_lvl_3)
+   arg(undeadlevel,_lvl_3)
+  enddo
+ elseif (src.tag(level)>50)
+  dorand 3
+   arg(undeadlevel,_lvl_4)
+   arg(undeadlevel,_lvl_3)
+   arg(undeadlevel,_lvl_3)
+  enddo
+ endif
+else//bude z npc
+  dorand 2
+   arg(undeadlevel,_lvl_2)
+   arg(undeadlevel,_lvl_3)
+  enddo
+endif
+return<arg(undeadlevel)>
+
+[function undeadhandlerlayer2]
+if (src.findlayer(2).isbow)
+ arg(undeadtype,_archer)
+elseif (src.findlayer(2).issword)
+ arg(undeadtype,_axe)
+elseif (src.findlayer(2).isshield)
+ arg(undeadtype,_knight)
+else
+ arg(undeadtype,_mage) 
+endif 
+return<arg.undeadtype><undeadhandlerlevel>
+
+
+[function undeadhandlerlayer1]
+if (src.findlayer(1).issword)||(src.findlayer(1).isfencing)
+ arg(undeadtype,_knight)
+else
+  arg(undeadtype,_mage)
+endif
+return<arg.undeadtype><undeadhandlerlevel>
+
+[EVENTS e_beridornecro]
+on=@aftergetswing
+tag(cnt,#+1)
+if (tag(cnt)==1)
+ say(Myslite, ze mate vyhrano ?)
+elseif (tag(cnt)==2)
+ say(Doufate, ze mne zastavite ?)
+elseif (tag(cnt)==3)
+ say(Teprve poznate silu temne magie !)
+elseif (tag(cnt) > 3)
+ dorand(3)
+  say(Aaaargh !)
+  say(Zhynte !)
+  say(Neeee!)  
+ enddo
+endif
+
+if (hits<(maxhits/2))&&(!(tag(drak)))
+ say(Konec legrace !)
+ Say(Heru Val Foalooke !)
+ say(Necht plamen pohlti vase duse!)
+ finduid(040033e25).timer=1
+ flag_freeze=1
+ tag(drak,1)
+ newitem(i_zmizni)
+ lastnew.timer=4
+ equip(<lastnew>)
+ invisg
+endif
+
+[EVENTS e_berserk_potvora] 
+on=@aftergetswing 
+tag(start,1) 
+if (hits<(maxhits))&&(tag(start)==1)&&(!(tag(jedem))) 
+tag(jedem,1) 
+tag(npc_speed,400) 
+tag(resist_fire,<tag.resist_fire>+150) 
+tag(resist_phys,<tag.resist_phys>+150) 
+temporary_null 
+elseif (hits<(maxhits/(13/10)))&&(tag(jedem)==1) 
+tag(jedem,2) 
+tag(npc_speed,600) 
+tag(resist_fire,<tag.resist_fire>-20) 
+tag(resist_phys,<tag.resist_phys>-20) 
+temporary_null 
+elseif (hits<(maxhits/(15/10)))&&(tag(jedem)==2) 
+tag(jedem,3) 
+tag(npc_speed,700) 
+tag(resist_fire,<tag.resist_fire>-25) 
+tag(resist_phys,<tag.resist_phys>-25) 
+temporary_null 
+elseif (hits<(maxhits/(18/10)))&&(tag(jedem)==3) 
+tag(jedem,4) 
+tag(npc_speed,800) 
+temporary_null 
+emote("becomes enraged.") 
+tag(resist_fire,<tag.resist_fire>-50) 
+tag(resist_phys,<tag.resist_phys>-50) 
+elseif (hits<(maxhits/2))&&(tag(jedem)==4) 
+tag(jedem,5) 
+tag(npc_speed,1200) 
+temporary_null 
+tag(resist_fire,<tag.resist_fire>-60) 
+tag(resist_phys,<tag.resist_phys>-60) 
+elseif (hits<(maxhits/(3/2)))&&(tag(jedem)==5) 
+tag(jedem,6) 
+tag(npc_speed,1800) 
+temporary_null 
+tag(resist_fire,<tag.resist_fire>-100) 
+tag(resist_phys,<tag.resist_phys>-100) 
+emote("becomes berserk.") 
+elseif (hits<(maxhits/3))&&(tag(jedem)==6) 
+tag(jedem,7) 
+tag(npc_speed,2000) 
+temporary_null 
+tag(resist_fire,<tag.resist_fire>-180) 
+tag(resist_phys,<tag.resist_phys>-180) 
+elseif (hits<(maxhits/(4)))&&(tag(jedem)==7) 
+emote("becomes frenzied.") 
+tag(jedem,8)
+tag(npc_speed,6000) 
+temporary_null 
+tag(resist_fire,<tag.resist_fire>-150) 
+tag(resist_phys,<tag.resist_phys>-150) 
+tag(resist_magic,<tag.resist_magic>-200) 
+tag(resist_poison,<tag.resist_poison>-400) 
+endif 
+on=@afterswing 
+on=@beforedoeffect 
+on=@beforegeteffect
+
+[EVENTS e_balrog] 
+on=@afterswing 
+tag(spalil,"") 
+if(rand(6)==1) 
+act.sysmessage("Popalil te Balroghuv ohen!") 
+act.effect=3,i_fire_column,6,16,0 
+act.damage(<eval {10 26}>,dam_fire) 
+tag(spalil,1) 
+SFX=snd_spell_flamestrike 
+elseif (rand(10)==1)&&(tag(spalil)!=1) 
+act.sysmessage("Balroghuv ohen te oslabil!") 
+act.effect=3,i_fire_column,6,16,0 
+act.stam=0 
+SFX=snd_spell_flamestrike 
+endif 
+on=@aftergetswing 
+if (rand(8)==1)&&(src.hits>25) 
+src.sysmessage("Cast tveho uderu byla odrazena zpet!") 
+src.damage(<eval {10 40}>,dam_magic) 
+endif 
+if(rand(6)==1)&&(src.hits<25) 
+src.sysmessage("Cast tveho uderu byla odrazena zpet!") 
+src.hits=0 
+endif 
+
+on=@beforedoeffect 
+on=@beforegeteffect 
+
+on=@spelleffect 
+if(!(tag(uzjsempryc)))&&(rand(6)==1) 
+act.effect=3,i_fx_glow_spike,6,120,0 
+tag(uzjsempryc,2) 
+act.newitem=i_zrus 
+act.act.timer=30 
+act.act.name=zruseni 
+act.equip=<act.act> 
+act.act.tag(znamte,<UID>) 
+act.newitem=i_prokleti_balroga 
+act.act.name=prokleti 
+act.act.tag(znamte,<UID>) 
+act.equip=<act.act> 
+endif 
+
+[itemdef i_zrus] 
+id=i_memory 
+type=t_eq_script 
+on=@unequip 
+src.findid(i_prokleti_balroga).remove 
+
+on=@timer 
+tag(znamte).tag(uzjsempryc,"") 
+
+[itemdef i_prokleti_balroga] 
+id=i_memory 
+type=t_eq_script 
+
+on=@create 
+timer=2 
+
+on=@equip 
+src.events(+e_prokleti_balroga) 
+src.sysmessage("Byl jsi zasazen stinovym kouzlem Balrogha!") 
+
+on=@unequip 
+src.events(-e_prokleti_balroga) 
+src.sysmessage("Stin Balrogha te opustil, opet muzes volne dychat.") 
+tag(znamte).tag(uzjsempryc,"") 
+
+on=@timer 
+tag(start,1) 
+timer=4 
+topobj.sysmessage("Dusis se!") 
+if(topobj.mana>10)&&(tag(start)==1)&&(!(tag(efekt))) 
+topobj.mana=mana-10 
+endif 
+if(topobj.hits>5) 
+topobj.damage(<eval{10 20}>,dam_magic) 
+if(topobj.mana<10) //ta spodni cast je kvuli nepretoceni do zaporu-tudiz nechtenyho navyseni na strasny hodnoty 
+topobj.mana=0 
+endif 
+if(topobj.hits<5) 
+topobj.hits=0 
+endif 
+return 1 
+
+[EVENTS e_prokleti_balroga] 
+on=@spellcast 
+sysmessage("Stin Balrogha te pohlcuje, nejsi schopen se soustredit!") 
+if(hits>10) 
+src.damage(10,dam_magic) 
+endif 
+if(mana>15) 
+endif 
+src.mana=mana-15 
+if(hits<10) 
+src.hits=0 
+endif 
+if(mana<15) 
+src.mana=0 
+endif 
+return 1
+
+[typedef t_telepad_block_macros]
+on=@step
+if (link.more2)
+return 1
+elseif (src.isplayer)
+src.sysmessage Cesta je pro tebe magicka zablokovana.
+src.go <morep>
+return 1
+endif
+
+[EVENTS e_test]  
+ON=@NPCSeeNewPlayer  
+if (src.flag_invul) 
+  return 1  
+endif
+say(Vidim <src.name>, bojuji: <qval(<isfighting>,Ano,Ne)> s kym ?: <act.name>)
+if(act)||(isfighting)||(isfigthing_melee)||(isfighting_ranged) //ma act
+ if (src.int<=act.int)  
+  attack(<act>) //pro jistotu, aby zustal utocit na toho samyho :) 
+ else
+  say(<src.name> Ma vic int nez <act.name> skacu na nej!)
+  say(Faroth Kel)
+  snd 510  
+  attack(<src>)
+  p=<src.p>
+  update    
+ endif 
+else
+ attack(<src>)
+endif
+
+[events e_stunattack]
+on=@afterswing
+if ({0 10000}<eval(tag(ra_stuntattack)*nastaveni_stuntattack_chance))&&(act.npc) && (action==skill_macefighting)
+ if (tag(weaponuid).type==T_WEAPON_MACE_SMITH)
+  classmessage(Omracil jsi cil!)
+  act.newitem(i_paralyze_item)
+  act.timer=<nastaveni_stuntattack>
+  act.equip(<act.act>)
+ endif
+endif
+return 0
+on=@beforedoeffect
+on=@aftergetswing
+on=@beforegeteffect
+
+
+[EVENTS e_bleed_bolt]
+on=@afterswing
+if (findlayer.layer_horse)
+  if (rand(10) == 1)
+    classmessage("V sedle nejsi <sex schopen schopna> s touto kusi dobre manipulovat")
+  endif
+else (action==Skill_archery)
+  if ( <eval (<tag(ra_bleed_bolt)>*45)> > <eval {0 999}>)
+    classmessage(Tvuj cil krvaci!)
+    var(swingedchar).redmessage(Krvacis!)
+    arg(bleeditem,<var(swingedchar).findid(i_krvaceni)>)
+    if (arg(bleeditem))
+      if (arg(bleeditem).timer<0)
+        arg(bleeditem).timer=1
+      endif
+    else
+      newitemsafe(i_krvaceni)
+      var(swingedchar).equip(<lastnew>)
+      lastnew.timer=1
+      arg(bleeditem,<lastnew>)
+    endif
+    arg(bleedpower,<eval <var(ubrano)>*10>)
+    arg(bleeditem).link=<uid>
+    arg(bleeditem).more1h={10 20}//opakovani krvaceni maximalne
+    arg(bleeditem).more1l=<arg(bleeditem).more1h>//aktualnich opakovani
+    arg(bleeditem).more2=<eval ((arg(bleedpower)*nastaveni_bleed_bolt)/1000)+arg(bleeditem).more2> //damage
+  endif
+endif
+return 0
+on=@beforedoeffect
+on=@aftergetswing
+on=@beforegeteffect
+
+
+[typedef t_weapon_bolt_jagged]
+
+[events e_dmgByLvl]
+on=@afterswing
+if (rand(2)==1)
+  if !(act.findid(i_dmgByLvl))
+    act.newequip(i_dmgByLvl)
+  endif
+endif
+
+on=@beforedoeffect
+on=@aftergetswing
+on=@beforegeteffect
+
+[itemdef i_dmgByLvl]
+id=i_memory
+type=t_eq_script
+name=DMG by Level timer
+
+on=@equip //tenhle balast je tu kvuli bugu s opakovanym provedenim trigeru afterswing
+topobj.events(-e_gethit)
+topobj.damage(<topobj.tag(level)>/3,dam_god,<topobj>)
+topobj.events(+e_gethit)
+cont.sysmessage("zranuju <eval <topobj.tag(level)>/3> hp")
+tag(already_damaged,1)
+timer=2
+
+on=@timer
+if (<tag(already_damaged)>)
+  remove
+endif
+
+return 1
+
+[events e_nbdung]
+on=@afterswing
+if (act.isplayer)
+ var(ubrano,0)
+ return 1
+endif
+on=@beforedoeffect
+if (act.isplayer)
+ var(spellpower,0)
+ return 1
+endif
+
+on=@aftergetswing
+on=@beforegeteffect
+
+
+
+[EOF]

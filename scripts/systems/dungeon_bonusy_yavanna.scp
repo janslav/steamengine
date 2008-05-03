@@ -1,0 +1,2054 @@
+[typedef t_negateDClick]
+on=@UserDClick
+return 1
+
+[function f_trap_yesno]
+if(src.isplayer)
+ if(<src.flags>&statf_dead)||(src.isgm)	//ne duch ni GM ! 
+  return 0
+ endif
+ if(strlen(<tag.tm>))
+  if(<tag.tm> < <serv.time>)&&(<more1>==1)	//deaktivovana a uz pres cas !  
+   tag.tm=""
+   more1=0
+  endif
+ endif
+ if(<eval more1>==0) //neni deaktivovana
+  IF (<tag.thief> > 0)&&(<src.removetrap> >= <tag.thief>)&&(rand(100) < <eval 25+(<src.removetrap>-<tag.thief>)/10>)
+   src.sysMessage("<src.sex Deaktivoval Deaktivovala> jsi past.")
+   tag.tm=<eval(<serv.time>+10*60*5)>
+   more1=1
+  elseif (<src.removetrap> > <eval (<tag.thief>*8)/10>)&&(rand(2)==1)
+   src.sysMessage("POZOR ! Past !")
+   tag.tm=<eval (<serv.time>+20)>
+   more1=1 //deactivate
+  else	//jde o hrace a past neni deaktivovana + pravdepodobnost 1:1
+   return 1
+  endif
+ endif
+endif
+return 0
+
+[function f_trap_move]
+if <safe.tag(orig_position)>
+  p=<tag(orig_position)>
+  move(<eval {0 <morex>}>,<eval {0 <morey>}>,0,0)
+endif
+
+
+/////////////////////////////
+// T R A P S   &   P A D S //
+/////////////////////////////   
+
+
+[itemDef i_npc_block]
+ID=0AEC
+NAME=nepusti npc
+
+CATEGORY=Noe
+SUBSECTION=misc
+DESCRIPTION=dlazdice proti duchum
+
+ON=@Create
+attr=090
+COLOR=0481
+
+ON=@step
+if (src.npc)
+  if (<strlen(<tag(certainID)>)>)
+    if !(<strcmpi(<src.ID>,<tag(certainID)>)>)
+      f_npc_block
+    endif
+  else
+    f_npc_block
+  endif
+endif
+
+ON=@UserDClick
+if (src.isGM)
+  dialog(d_npc_block)
+  return 1
+endif
+
+ON=@TargOn_Item
+if (moreX == 1)
+  link=<src.targ>
+  dialog(d_npc_block)
+  return 1
+endif
+
+[function f_npc_block]
+src.move(<dir_inttochar(<dir_revert(<src.dir>)>)>)
+src.memoryfindtype(0209c).remove
+src.act=""
+src.action=06D	//Go Home
+link.<tag(onNPCBlockFunction)>
+
+
+[dialog d_npc_block]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,400)
+argo.tag(vyska,265)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,133,238)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,374)
+argo.dialog_pozadi(<argo.tag(nexty)>,5,374)
+argo.dialog_pozadi(<argo.tag(nexty)>,0,133,238)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Obracec NPC")
+
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"ID NPC:")
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"Link UID:")
+argo.button(lastxpos+95,lastypos+(d_def_radek_vyska),0fa5,0fa7,1,0,2)//set Link
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"Funkce na Link:")
+argo.settext(11,"<?tag(certainID)?>") //ID NPC
+argo.settext(12,"<?link?>")
+argo.settext(13,"<?tag(onNPCBlockFunction)?>") //tag urcujici funkci, ktera se spusti pri naslapnuti spravnym NPC na linku
+argo.textentry(<argo.dialog_textpos(1,1)>,230,<d_def_radek_vyska>,textcolor,1,11)
+argo.text(lastxpos,lastypos+(d_def_radek_vyska),<d_def_readcolor>,12)
+argo.textentry(lastxpos,lastypos+(2*d_def_radek_vyska),230,<d_def_radek_vyska>,textcolor,2,13)
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_readcolor>,"HELP:")
+
+argo.settext(15,"ID NPC: Pokud chces, aby dlazka reagovala jenom na nejaky monstrum, napis jeho ID do tohodle radku (napr. c_zombie). Pokud nechas radek prazdny, dlazka bude reagovat na vsechny NPC<br><br>Link UID: ma-li dlazka krom otoceni npc jeste provadet na necem nejakou funkci (treba zavirat dvere) buttonem u Linku nastav na cem se funkce spusti.<br><br>Funkce na Link: Sem vepis nazev funkce, ktera se bude na Linku spoustet.<br><br>Priklady funkci:<br>f_closeThisDoor<br>... pro pridani nejake funkce kontaktuj scriptery")
+argo.htmlGump(<argo.dialog_textpos(3,0)>,374,95,15,0,1)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_npc_block button]
+on=0 // cancel
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=@AnyButton
+if (<strLen(<argTxt(1)>)>)
+  tag(certainID,<argTxt(1)>)
+endif
+if (<strLen(<argTxt(2)>)>)
+  tag(onNPCBlockFunction,<argTxt(2)>)
+endif
+if (argn == 2)	// set Link
+  moreX=1
+  target("Zamer predmet, na kterem se ma spustit funkce")
+endif
+
+
+
+/////////////////////////////
+// T R A P    M O V I N G  //
+/////////////////////////////
+
+[itemDef i_trap_move]
+ID=0AEC
+name=Moving Trap
+
+
+CATEGORY=Dungy
+SUBSECTION=Yavanna
+DESCRIPTION=Pohybliva past
+
+ON=@Create
+color=021
+attr_movenever(1)
+attr_invis(1)
+tag.thief=100.0
+more1=0
+tag.imune_duration=30
+MoreX=2
+MoreY=2
+tag.dmg=80	//sem se da dmg v %HP
+
+ON=@Dropon_Ground
+tag(orig_position,<p>)
+
+
+ON=@Step
+if f_trap_yesno
+  f_trap_move
+  if (src.findid(i_trap_moving_chartimer).link==<uid>)
+  else
+    src.events=-e_gethit 
+    src.damage(<eval (<src.MaxHits>*<tag(dmg)>)/100>,dam_god,<src>)
+    src.events=+e_gethit
+    src.newequip(i_trap_moving_chartimer)
+    lastnew.link=<uid>
+    lastnew.timer=<tag(imune_duration)>
+  endif
+endif
+
+on=@UserClick
+if (src.isgm)
+  message("Prodleva: <tag(imune_duration)> RemoveTrap: <tag.thief>")
+  message("<eval(((<tag.tm>)-(<serv.time>))/10)>s do dalsi aktivace")
+  message("DMG za <tag.dmg>% hp")
+  return 1
+endif
+
+on=@UserDClick
+if (src.isgm)
+  dialog(d_trap_moving,<tag.dmg>,<tag(imune_duration)>,<tag.thief>,<MoreX>,<MoreY>)
+  return 1
+endif
+
+[dialog d_trap_moving]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,200)
+argo.tag(vyska,165)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,5,93,78)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"DMG Pohybliva past")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"DMG v %:")
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"Imunita/s:")
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"RemoveTrap:")
+argo.texta(lastxpos,lastypos+(3*d_def_radek_vyska),<d_def_writecolor>,"Rozptyl X:")
+argo.texta(lastxpos,lastypos+(4*d_def_radek_vyska),<d_def_writecolor>,"Rozptyl Y:")
+
+argo.settext(1001,"<?argv(0)?>") //DMG
+argo.settext(1002,"<?argv(1)?>") //trvani imunity toho hrace, co dostal dmg
+argo.settext(1003,"<?argv(2)?>") //tag thief = potrebny skill remove trap
+argo.settext(1004,"<?argv(3)?>") //rozptyl X souradnice - presun po naslapu
+argo.settext(1005,"<?argv(4)?>") //rozptyl Y souradnice - presun po naslapu
+argo.textentry(<argo.dialog_textpos(1,1)>,98,<d_def_radek_vyska>,textcolor,1,1001)
+argo.textentry(lastxpos,lastypos+(d_def_radek_vyska),98,<d_def_radek_vyska>,textcolor,2,1002)
+argo.textentry(lastxpos,lastypos+(2*d_def_radek_vyska),98,<d_def_radek_vyska>,textcolor,3,1003)
+argo.textentry(lastxpos,lastypos+(3*d_def_radek_vyska),98,<d_def_radek_vyska>,textcolor,4,1004)
+argo.textentry(lastxpos,lastypos+(4*d_def_radek_vyska),98,<d_def_radek_vyska>,textcolor,5,1005)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+147,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb4,0fb6,1,0,2)//go home
+
+[dialog d_trap_moving button]
+on=0 // cancel
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1 // ok
+Src.sysMessage("Nastavujes nove hodnoty spawnu.")
+tag(dmg,<argtxt(1)>)
+if (<eval argtxt(2)> > 0)
+ tag(imune_duration,<eval argtxt(2)>)
+else
+ tag(imune_duration,450)
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi cas pro imunitu po zasahu! Automaticky prirazeno 45s")
+endif
+tag(thief,<argtxt(3)>)
+MoreX=<argtxt(4)>
+MoreY=<argtxt(5)>
+
+on=2 // go home
+p=<tag(orig_position)>
+
+[itemDef i_trap_moving_chartimer]
+id=i_memory
+type=t_eq_script
+
+on=@Timer
+remove
+
+////////////////////////////////
+//    S P I K E   T R A P     //
+////////////////////////////////
+
+
+[itemDef i_spik_trap]
+ID=0119a
+NAME=Podivne skviry
+TYPE=t_trap
+DUPELIST=0119b
+
+CATEGORY=Decoration - Dungeons and The Dead
+SUBSECTION=Traps
+DESCRIPTION=Floor Spikes Yavanna`s
+
+on=@Create
+attr=010
+More1=4507
+More2=<eval 120>	//dmg
+MoreX=<eval 1>
+events=+t_spik_trap
+
+[itemDef i_spik_trap_2]
+ID=011a0
+NAME=Podivne skviry
+TYPE=t_trap
+DUPELIST=011a1
+
+CATEGORY=Decoration - Dungeons and The Dead
+SUBSECTION=Traps
+DESCRIPTION=Floor Spikes 2 Yavanna`s
+
+on=@Create
+attr=010
+More1=4513
+More2=<eval 120>	//dmg
+MoreX=<eval 1>
+events=+t_spik_trap
+
+[itemDef i_wallspik_trap]
+ID=01108
+NAME=Podivne skviry
+TYPE=t_trap
+DUPELIST=01109
+
+CATEGORY=Decoration - Dungeons and The Dead
+SUBSECTION=Traps
+DESCRIPTION=Floor Spikes 2 Yavanna`s
+
+on=@Create
+attr=010
+More1=4361
+More2=<eval 120>	//dmg
+MoreX=<eval 1>
+events=+t_spik_trap
+
+
+[itemDef i_wallspik_trap_2]
+ID=0111b
+NAME=Podivne skviry
+TYPE=t_trap
+DUPELIST=0111c
+
+CATEGORY=Decoration - Dungeons and The Dead
+SUBSECTION=Traps
+DESCRIPTION=Floor Spikes 2 Yavanna`s
+
+on=@Create
+attr=010
+More1=4380
+More2=<eval 120>	//dmg
+MoreX=<eval 1>
+MoreY=1
+events=+t_spik_trap
+
+
+[typedef t_spik_trap]
+on=@UserDClick
+if (src.isgm)
+  dialog(d_spik_trap)
+else
+  if (<src.removetrap> > 900)
+    if (<eval safe.link.more2>==<eval moreY>)
+      src.sysMessage("Past se zda byt deaktivovana.")
+    else
+      src.sysMessage("Past je aktivni.")
+    endif
+  else
+    src.sysMessage("Nic jsi <src.sex(nezjistil,nezjistila)>.")
+  endif
+endif
+return 1
+
+on=@Step
+if (<src.flags>&statf_dead)
+  return 1
+elseif (src.isgm)
+  return 1
+elseif (<eval safe.link.more2>==<eval moreY>)
+  return 1
+endif
+
+on=@TargOn_Item
+link=<src.targ>
+src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na past.")
+dialog(d_spik_trap)
+return 1
+
+[dialog d_spik_trap]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,290)
+argo.tag(vyska,127)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Naslapna past - Spikes")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Link UID:")
+argo.button(lastxpos+88,lastypos,0fa5,0fa7,1,0,3)	//nastav link
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"DMG/s:")
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"SwitchPos:")
+
+
+argo.settext(1001,"<?eval more2L?>")	//velikost udelovaneho dmg na naslap
+argo.settext(1002,"<?eval moreY?>")	//velikost udelovaneho dmg na naslap
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,<link>)
+argo.textentry(lastxpos,lastypos+(d_def_radek_vyska),198,<d_def_radek_vyska>,textcolor,1,1001)
+argo.textentry(lastxpos,lastypos+(2*d_def_radek_vyska),198,<d_def_radek_vyska>,textcolor,2,1002)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_spik_trap button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes hodnoty pasti.")
+if (<eval argtxt(1)> > 0)
+ more2L=<argtxt(1)>
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi velikost dmg udelovane pasti! Ponechana puvodni.")
+endif
+moreY=<argtxt(2)>
+
+on=3
+target("Zamer link, ktery bude urcovat zda je past aktivni ci ne, napr i_switch_more2.")
+
+////////////////////////////////
+//    D M G   T Y P E D E F   //
+////////////////////////////////
+
+[typedef t_onStepDmg]
+//more2 dmg
+on=@Step
+if (src.isGM)
+  return 1
+elseif (<src.flags>&statf_dead)
+  return 1
+else
+  src.events=-e_gethit 
+  src.damage(<eval more2>,dam_god,<uid>)
+  src.events=+e_gethit
+  if (<strlen(<tag(stepMessage)>)>)
+    src.sysMessage(<tag(stepMessage)>)
+  endif
+  if (<strlen(<tag(hasSound)>)>)
+    src.sfx(<tag(hasSound)>)
+  endif
+endif
+
+on=@UserDClick
+if (src.isGM)
+  dialog(d_onStepDmg)
+  return 1
+endif
+
+[dialog d_onStepDmg]
+arg(textcolor,52)
+argo.SetLocation=35,250
+
+argo.tag(sirka,730)
+argo.tag(vyska,130)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,163,538)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Naslapna past - Type onStepDMG")
+
+argo.dialog_textpos(1,0)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"@Step DMG:")
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_writecolor>,"@Step Message:")
+argo.texta(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,<d_def_writecolor>,"Sound:")
+
+argo.checkBox(<lastxpos>+140,<lastypos>+1*<d_def_radek_vyska>,210,211,<strlen(<tag(stepMessage)>)>,1)
+argo.checkBox(<lastxpos>+140,<lastypos>+2*<d_def_radek_vyska>,210,211,<strlen(<tag(hasSound)>)>,2)
+
+
+argo.settext(1001,"<?eval more2?>")	//velikost udelovaneho dmg na naslap
+argo.settext(1002,"<?tag(stepMessage)?>")	//velikost udelovaneho dmg na naslap
+argo.settext(1003,"<?tag(hasSound)?>")	//velikost udelovaneho dmg na naslap
+
+argo.dialog_textpos(1,1)
+argo.textentry(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,120,<d_def_radek_vyska>,textcolor,1,1001)
+argo.textentry(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,520,<d_def_radek_vyska>,textcolor,2,1002)
+argo.textentry(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,120,<d_def_radek_vyska>,textcolor,3,1003)
+
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_onStepDmg button]
+on=0	//cancel
+src.sysMessage("Storno")
+
+on=1	//ok
+more2=<argTxt(1)>
+src.sysMessage("Dmg na naslap byl nastaven na: <eval more2>")
+if (0<argChk(1)>)
+  tag(stepMessage,<argTxt(2)>)
+  src.sysMessage("Step message nastavena.")
+else
+  tag.remove(stepMessage)
+endif
+if (0<argChk(2)>)
+  tag(hasSound,<argTxt(3)>)
+  src.sysMessage("Sound nastaven na <argTxt(3)>")
+else
+  tag.remove(hasSound)
+endif
+
+
+
+
+/////////////////////////////////
+//      S W I T C H E S        //
+/////////////////////////////////
+
+[itemDef i_switch_R]
+id=01092
+name=Packa
+type=t_normal
+flip=1
+dupelist=0108F
+
+on=@Create
+tag(pocetSpawnu,0)
+more1=120
+
+on=@UserDClick
+if (src.isGM)
+  dialog(d_switchMenu)
+  return 1
+endif
+if (f_guarditAdv_CheckSpawns)	// 1 == strazce je nazivu
+  src.sysMessage("Packu nema smysl prehazovat, dokud je strazce nazivu.")
+elseif (<more2> == 0)
+  if (dispID==01092)
+    dispID=01091
+  else
+    dispID=01090
+  endif
+  update
+  sfx(049)
+  more2 = 1
+  timer = <eval more1>
+  tag(switchedTill,<serv.time>+<eval more1>*10)
+else
+  timer=0
+endif
+return 1
+
+on=@Timer
+if (dispID==01091)
+  dispID=01092
+else
+  dispID=0108F
+endif
+update
+sfx(049)
+more2=0
+return 1
+
+on=@TargOn_Item
+if (src.targ.type == t_door)
+  src.targ.type=t_door_controledBySwitch
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+  src.targ.tag(mySwitch,<uid>)
+  tag(myLink,<src.targ>)
+  src.sysMessage("Link na dvere byl nastaven.")
+  dialog(d_switchMenu)
+  return 1
+else
+  src.redMessage("Zameruj jen itemy typu t_door !")
+  src.sysMessage("Pokud chces switchem ovlivnovat i jine predmety, kontaktuj Yavannu.")
+  dialog(d_switchMenu)
+  return 1
+endif
+
+[typedef t_door_controledBySwitch]
+on=@UserDClick
+if (dispid!=more2) 
+ type=t_door
+ dclick
+ type=t_door_controledBySwitch
+elseif (<eval tag(mySwitch).tag(switchedTill)> < <serv.time>)		// ubehl uz timer od prehozeni packy ?
+ if (src.isGM)
+  src.sysMessage("Dvere jsou ovladany packou a jsou stale zavrene.")
+  type=t_door
+  dclick
+  type=t_door_controledBySwitch
+ else
+   src.sysMessage("Dvere jsou pevne zamcene!")
+   if (<src.Lockpicking> > 50.0)
+     src.sysMessage("Zamek je mechanicky a odtud se k nemu nelze dostat.")
+   endif
+ endif
+else
+  type=t_door
+  dclick
+  type=t_door_controledBySwitch
+endif
+return 1
+
+on=@timer
+dispid=<more2>
+p=<morep>
+update
+return 1
+
+
+[dialog d_switchMenu]
+arg(textcolor,52)
+argo.SetLocation=285,50
+
+argo.tag(sirka,360)
+argo.tag(vyska,130)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,2,130,30,135,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,130,168,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Switch Menu")
+
+argo.dialog_textpos(1,0)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"GuardMenu")
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_writecolor>,"Set Link")
+argo.dialog_textpos(1,1)
+argo.button(<lastxpos>-5,<lastypos>+0*<d_def_radek_vyska>,0fbd,0fbf,1,0,2)		// Guard Menu
+argo.button(<lastxpos>-5,<lastypos>+1*<d_def_radek_vyska>,0fa5,0fa7,1,0,3)		// Set Link
+argo.texta(<lastxpos>+33,<lastypos>+0*<d_def_radek_vyska>,<d_def_readcolor>,"Pocet spawnu:")
+argo.texta(<lastxpos>+33,<lastypos>+1*<d_def_radek_vyska>,<d_def_readcolor>,"<?tag(myLink)?>")
+argo.dialog_textpos(1,2)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"<?eval tag(pocetSpawnu)?>")
+
+argo.dialog_textpos(2,0)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"Timer /s :")
+
+
+argo.dialog_textpos(2,1)
+argo.settext(1001,"<?eval more1?>")	//doba zapnuti switche v s (more1)
+argo.textentry(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,128,<d_def_radek_vyska>,textcolor,1,1001)
+
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+
+[dialog d_switchMenu button]
+on=0
+src.sysMessage("Nova nastaveni stornovana")
+
+on=@AnyButton
+more1=<argTxt(1)>
+if (argn == 2)	//pressed button 2 == set guardSpawns
+  dialog(d_guarditAdv,d_switchMenu)
+endif
+
+if (argn == 3)	//pressed button 3 == set door link
+  target("Zamer dvere, ktere ma switch otevirat")
+endif
+
+//////////////////////////////////////
+//  Packa s mnohonasobnym sepnutim  //
+//////////////////////////////////////
+
+
+[itemDef i_switch_paralel]
+id=01092
+name=Packa
+type=t_normal
+flip=1
+dupelist=0108F
+
+on=@Create
+tag(pocetSpawnu,0)
+more1=120
+
+on=@UserDClick
+if (src.isGM)
+  dialog(d_switcParalelhMenu)
+  return 1
+endif
+if (f_guarditAdv_CheckSpawns)	// 1 == strazce je nazivu
+  src.sysMessage("Packu nema smysl prehazovat, dokud je strazce nazivu.")
+elseif (<more2> == 0)
+  if (f_switchPrl_isSwitched)
+    link.timer=0
+  endif
+  if (dispID==01092)
+    dispID=01091
+  else
+    dispID=01090
+  endif
+  update
+  sfx(049)
+  more2 = 1
+  timer = <eval more1>
+  tag(switchedTill,<serv.time>+<eval more1>*10)
+else
+  timer=0
+endif
+return 1
+
+on=@Timer
+if (dispID==01091)
+  dispID=01092
+else
+  dispID=0108F
+endif
+update
+sfx(049)
+more2=0
+return 1
+
+on=@TargOn_Item
+if (moreX==0)
+  link=<src.targ>  
+  dialog(d_switcParalelhMenu)
+  return 1
+else
+  f_item_linkAdder(<src.targ>)
+  dialog(d_switcParalelhMenu)
+  return 1
+endif
+
+[dialog d_switcParalelhMenu]
+arg(textcolor,52)
+argo.SetLocation=285,50
+
+argo.tag(sirka,360)
+argo.tag(vyska,<eval 135+<eval <eval <tag(linkNumber)>>*<d_def_radek_vyska>>>)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,2,130,30,135,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,130,168,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,<eval tag(linkNumber)>,130,168,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Paralel Switches Menu")
+argo.button(<lastxpos>+301,<lastypos>-3,0fab,0fad,1,0,5)		//help
+
+argo.dialog_textpos(1,0)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"GuardMenu")
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_writecolor>,"Set Link")
+argo.dialog_textpos(1,1)
+argo.button(<lastxpos>-5,<lastypos>+0*<d_def_radek_vyska>,0fbd,0fbf,1,0,2)		// Guard Menu
+argo.button(<lastxpos>-5,<lastypos>+1*<d_def_radek_vyska>,0fa5,0fa7,1,0,3)		// Set Link
+argo.texta(<lastxpos>+33,<lastypos>+0*<d_def_radek_vyska>,<d_def_readcolor>,"Pocet spawnu:")
+argo.texta(<lastxpos>+33,<lastypos>+1*<d_def_radek_vyska>,<d_def_readcolor>,"<?Link?>")
+argo.dialog_textpos(1,2)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"<?eval tag(pocetSpawnu)?>")
+
+argo.dialog_textpos(2,0)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"Timer /s :")
+
+
+argo.dialog_textpos(2,1)
+argo.settext(1001,"<?eval more1?>")	//doba zapnuti switche v s (more1)
+argo.textentry(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,128,<d_def_radek_vyska>,textcolor,1,1001)
+
+argo.dialog_textpos(3,0)
+argo.f_dialog_LinkWriter(<uid>,130,299)
+
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+304,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,4)//add link
+
+
+[dialog d_switcParalelhMenu button]
+on=0
+src.sysMessage("Nova nastaveni stornovana")
+
+on=@AnyButton
+more1=<argTxt(1)>
+if (argn == 2)	//pressed button 2 == set guardSpawns
+  dialog(d_guarditAdv,d_switchMenu)
+endif
+
+if (argn == 3)	//pressed button 3 == set door link
+  moreX=0
+  target("Zamer predmet, ktery ma byt switchema ovlivnen.")
+endif
+
+if (argn == 4)	//pressed button 3 == set door link
+  moreX=1
+  target("Zamer dalsi switch.")
+endif
+
+if (argn == 5)
+  dialog(d_switcParalelhMenu)
+  dialog(d_switcParalelhMenu_help)
+endif
+
+if (<argn> >= 10)	//remove link
+  f_item_LinkRemover(10)
+  dialog(d_switcParalelhMenu)
+endif
+
+[dialog d_switcParalelhMenu_help]
+argo.setText(1," Link - Obsahuje Link na item, na kterem se spusti trigger timer v pripade, ze jsou prehozeny vsechny nalinkovany prepinace.<br><br> Timer/s - timer v sekundach ve kterem musi byt prehozeny vsechny switche. Ty na sebe musi byt navzajem nalinkovane!<br><br> GuardMenu - Vyskoci menu, ve kterem lze nastavit spawny guardu tohoto prepinace. Ten pak nepujde prepnout, dokud nebudou vsechny spawny vybite...")
+argo.f_dialog_HelpCreator("HELP - i_switch_paralel")
+
+[function f_switchPrl_isSwitched]
+arg(i,0)
+while (<arg(i)> < <eval tag(linkNumber)>)
+  if (tag(link_<eval arg(i)>).more2==0)
+    return 0
+  endif
+  arg(i,#+1)
+endwhile
+return 1
+
+[typedef t_onTimerSayHello]
+on=@Timer
+say("Hello")
+return 1
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+[itemDef i_switch_lever_1]
+id=0108C
+name=Paka
+type=t_switch_lever
+
+on=@Create
+attr=010
+more2=1
+
+[itemDef i_switch_lever_2]
+id=01093
+name=Paka
+type=t_switch_lever
+
+on=@Create
+attr=010
+more2=1
+
+
+[typedef t_switch_lever]
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+elseif (<distance> > 1)
+  src.sysMessage("Jsi prilis daleko!")
+else
+  Dialog(d_switch_lever)
+endif
+return 1
+
+[dialog d_switch_lever]
+305,100
+argo.resizepic(0,0,2620,190,120)
+argo.texta(45,20,<d_def_readcolor>,"Velka Paka")
+if (<more2> == 1)
+  argo.tilepichue(80,65,0108c)
+elseif (<more2>==2)
+  argo.tilepichue(80,58,0108d)
+else
+  argo.tilepichue(80,67,0108e)
+endif
+argo.button(20,50,0119c,0119c,1,0,1)	//move left
+argo.button(120,50,01196,01196,1,0,2)	//move right
+
+[dialog d_switch_lever button]
+on=0
+return 1
+
+on=1
+if (<src.flags>&statf_dead)
+  return 0
+elseif (<distance> > 1)
+  src.sysMessage("Jsi prilis daleko!")
+else
+  f_switch_lever_moveLeft
+  dialog(d_switch_lever)
+endif
+
+on=2
+if (<src.flags>&statf_dead)
+  return 0
+elseif (<distance> > 1)
+  src.sysMessage("Jsi prilis daleko!")
+else
+  f_switch_lever_moveRight
+  dialog(d_switch_lever)
+endif
+
+[function f_switch_lever_moveRight]
+if (baseID==i_switch_lever_1)
+  if (more2==1)
+    dispID=0108D
+    more2=2
+    sfx(565) //cvak
+  elseif (more2==2)
+    dispID=0108E
+    more2=3
+    sfx(565) //cvak
+  endif
+else
+  if (more2==1)
+    dispID=01094
+    more2=2
+    sfx(565) //cvak
+  elseif (more2==2)
+    dispID=01095
+    more2=3
+    sfx(565) //cvak
+  endif
+endif
+update
+
+[function f_switch_lever_moveLeft]
+if (baseID==i_switch_lever_1)
+  if (more2==3)
+    dispID=0108D
+    more2=2
+    sfx(565) //cvak
+  elseif (more2==2)
+    dispID=0108C
+    more2=1
+    sfx(565) //cvak
+  endif
+else
+  if (more2==3)
+    dispID=01094
+    more2=2
+    sfx(565) //cvak
+  elseif (more2==2)
+    dispID=01093
+    more2=1
+    sfx(565) //cvak
+  endif
+endif
+update
+
+[function f_switch_lever_setBasePos]
+if (baseID==i_switch_lever_1)
+  dispID=0108C
+  more2=1
+else
+  dispID=01093
+  more2=1
+endif
+update
+
+[itemDef i_switch_torch]
+id=i_torch_wall
+name=podivna louc
+type=t_light_out
+tdata3=i_torch_wall
+tdata4=i_torch_wall_lit
+//moreX => jde o multiswitch ? 0/1 (multiswitch je nalinkovany na jiny item, ktery zjistuje, jestli je vice switchu ve spravne pozici.)
+//moreZ => typ svetla
+//more1 => timer
+//more2 => switch vyp/zap 0/1
+
+on=@create
+moreZ=1
+attr=010
+
+on=@userDClick
+if (src.isgm)
+  dialog(d_switch_more2)
+  return 1
+endif
+if (more2 == 1)
+  src.sysMessage("Zhasinas louc.")
+  timer=0
+else
+  src.sysMessage("Rozsvecis louc.")
+  more2=1
+  dispID=i_torch_wall_lit
+  type=t_light_lit
+  timer=<more1>
+  if (moreX==1)
+    link.f_switch_multi_Check
+  endif
+endif
+update
+return 1
+
+on=@timer
+more2=0
+dispID=i_torch_wall
+type=t_light_out
+update
+if (moreX==1)
+  link.f_switch_multi_Check
+endif
+return 1
+
+[itemDef i_switch_torch_2]
+id=i_torch_wall2
+name=podivna louc
+type=t_light_out
+tdata3=i_torch_wall
+tdata4=i_torch_wall_lit
+//moreX => jde o multiswitch ? 0/1 (multiswitch je nalinkovany na jiny item, ktery zjistuje, jestli je vice switchu ve spravne pozici.)
+//moreZ => typ svetla	/nechce se mu nejak fungovat, pozn Yavanna
+//more1 => timer
+//more2 => switch vyp/zap 0/1
+
+on=@create
+moreZ=1
+attr=010
+
+on=@userDClick
+if (src.isgm)
+  dialog(d_switch_more2)
+  return 1
+endif
+if (more2 == 1)
+  src.sysMessage("Zhasinas louc.")
+  timer=0
+else
+  src.sysMessage("Rozsvecis louc.")
+  more2=1
+  dispID=i_torch_wall2_lit
+  type=t_light_lit
+  timer=<more1>
+  if (moreX==1)
+    link.f_switch_multi_Check
+  endif
+endif
+update
+return 1
+
+on=@timer
+more2=0
+dispID=i_torch_wall2
+type=t_light_out
+update
+if (moreX==1)
+  link.f_switch_multi_Check
+endif
+return 1
+
+[itemDef i_switch_more2]
+id=i_sconce
+name=podivna svice
+type=t_light_out
+//moreX => jde o multiswitch ? 0/1 (multiswitch je nalinkovany na jiny item, ktery zjistuje, jestli je vice switchu ve spravne pozici.)
+//moreZ => typ svetla
+//more1 => timer
+//more2 => switch vyp/zap 0/1
+
+on=@create
+moreZ=1
+attr=010
+
+on=@userDClick
+if (src.isgm)
+  dialog(d_switch_more2)
+  return 1
+endif
+if (more2 == 1)
+  src.sysMessage("Zhasinas svici.")
+  timer=0
+else
+  src.sysMessage("Rozsvecis svici.")
+  more2=1
+  dispID=i_sconce_lit
+  type=t_light_lit
+  timer=<more1>
+  if (moreX==1)
+    link.f_switch_multi_Check
+  endif
+endif
+update
+return 1
+
+on=@timer
+more2=0
+dispID=i_sconce
+type=t_light_out
+update
+if (moreX==1)
+  link.f_switch_multi_Check
+endif
+return 1
+
+[dialog d_switch_more2]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,290)
+argo.tag(vyska,90)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Prepinac - svice")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Timer zhasnuti:")
+
+argo.settext(1001,"<?eval more1?>")	//doba otevreni dveri v s (more1)
+
+argo.textentry(<argo.dialog_textpos(1,1)>,textcolor,<d_def_radek_vyska>,textcolor,1,1001)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_switch_more2 button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes hodnoty svice.")
+if (<eval argtxt(1)> > 0)
+ more1=<argtxt(1)>
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi dobu pro znovu-zhasnuti svice. vracena puvodni hodnota.")
+endif
+
+
+[typedef t_switch_multi]
+on=@targOn_Item
+src.targ.moreX=1	//informuje targetnuty switch, ze jde o multiswich (ma se hlasit pri prepnuti zpatky)
+src.targ.link=<uid>
+tag(switch_<eval tag(pocetSwitchu)>,<src.targ>,1)
+tag(pocetSwitchu,<eval tag(pocetSwitchu)>+1)
+dialog(d_switch_multi)
+return 1
+
+on=@userDClick
+if (src.isGM)
+  dialog(d_switch_multi)
+  return 1
+endif
+
+[dialog d_switch_multi]
+argo.SetLocation=225,50
+
+argo.tag(sirka,322)
+argo.tag(vyska,321)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,12,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Multi Switch.")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Switch Num.:")
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_writecolor>,"UID switche:")
+argo.texta(<argo.dialog_textpos(1,2)>,<d_def_writecolor>,"Pos")
+
+arg(pctRadku,0)
+argo.dialog_textpos(2,0)
+while (<arg(pctRadku)> < <eval tag(pocetSwitchu)>)
+  argo.f_switch_multi_dialRowCreate(<arg(pctRadku)>,<tag(switch_<eval arg(pctRadku)>)>)
+  arg(pctRadku,#+1)
+endwhile
+arg(pctRadku,0)
+argo.dialog_textpos(2,0)
+while (<arg(pctRadku)> < <eval tag(pocetSwitchu)>)
+  argo.f_switch_multi_dialSetText(<arg(pctRadku)>,<tag(switch_<eval arg(pctRadku)>)>)
+  arg(pctRadku,#+1)
+endwhile
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+268,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,2)//add spawn
+
+[dialog d_switch_multi button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes multi switch.")
+arg(swchNumber,0)
+while (<arg(swchNumber)> < <tag(pocetSwitchu)>)
+  f_switch_multi_SetSwitchPos(<arg(swchNumber)>,<argtxt(<arg(swchNumber)>+1)>,<tag(switch_<eval swchNumber>)>)
+  arg(swchNumber,#+1)
+endwhile
+
+
+on=2
+target("Pridej dalsi spawn.")
+
+on=@anybutton
+arg(swchNumber,<eval argn-10>)
+while (<arg(swchNumber)> < <eval <tag(pocetSwitchu)>-1>)
+  tag(switch_<eval swchNumber>,<tag(switch_<eval swchNumber+1>)>)
+  arg(swchNumber,#+1)
+endwhile
+tag(pocetSwitchu,<eval <tag(pocetSwitchu)>-1>)
+tag.remove(switch_<eval swchNumber>)
+dialog(d_switch_multi)
+
+[function f_switch_multi_dialRowCreate]
+texta(lastxpos,lastypos+(<argv(0)>*d_def_radek_vyska),<d_def_writecolor>,"Switch <eval <argv(0)>+1>:")
+button(lastxpos+88,lastypos+(<argv(0)>*d_def_radek_vyska),0fb1,0fb3,1,0,<argv(0)>+10)	//zrus existujici switch
+texta(lastxpos+125,lastypos+(<argv(0)>*d_def_radek_vyska),<d_def_readcolor>,<argv(1)>)
+
+[function f_switch_multi_dialSetText]
+arg(textNum,<eval 1001+argv(0)>)
+settext(<textNum>,"<?eval argv(2)?>")
+textentry(lastxpos+268,lastypos+(<argv(0)>*d_def_radek_vyska),20,<d_def_radek_vyska>,52,<argv(0)>+1,<textNum>)
+
+[function f_switch_multi_SetSwitchPos]
+tag(switch_<eval argv(0)>,<argv(2)>,<argv(1)>)
+
+[function f_switch_multi_Check]
+arg(swchNumber,0)
+while (<arg(swchNumber)> < <eval <tag(pocetSwitchu)>>)
+  if (f_switch_multi_CheckOnePos(<tag(switch_<eval swchNumber>)>))
+    arg(swchNumber,#+1)
+  else
+    more2 = 0
+    return 0
+  endif
+endwhile
+more2 = 1
+return 1
+
+[function f_switch_multi_CheckOnePos]
+if (<eval argv(0).more2>==<eval argv(1)>)
+  return 1
+else
+  return 0
+endif
+
+[typedef t_dinamicSwitchChanger]
+on=@Timer
+arg(newTimer,<eval {<eval more1/20> <more1>}>+1)
+timer=<newTimer>
+arg(newSwitch,<eval rand(<eval tag(pocetSwitchu)>)>)
+arg(linkNumber,0)
+if (<strlen(<tag(specificTagChanger)>)>)	// pokud je nastaveno zvlastni jmeno tagu na linku, ktere se ma menit
+  arg(changeTagName,<tag(specificTagChanger)>)	// jmeno meneneho tagu je hodnota v tagu specificTagChagner
+else				// neni nastaveno zvlastni jmeno pro tag -> zmena se uplatni na tagu 'switch'
+  arg(changeTagName,switch)
+endif
+if (<strlen(<tag(functionOnLinks)>)>)		// je nastavena funkce, ktera se ma spoustet na linkach -> tak zapneme cyklus co zaroven pousti tu funkci
+  var(dinamicSwitcher,<uid>)
+  while (<arg(linkNumber)> < <tag(pocetLinku)>)
+    arg(thisLink,<finduid(<tag(linkToChange_<eval arg(linkNumber)>)>)>)
+    arg(thisLink).tag(<arg(changeTagName)>,<tag(switchToChange_<eval arg(newSwitch)>)>)
+    arg(thisLink).<tag(functionOnLinks)>
+    arg(linkNumber,#+1)
+  endwhile
+  var(dinamicSwitcher,"")
+else						// pusteni cyklu bez zvlastni funkce spustene na linku.
+  while (<arg(linkNumber)> < <tag(pocetLinku)>)
+    finduid(<tag(linkToChange_<eval arg(linkNumber)>)>).tag(<arg(changeTagName)>,<tag(switchToChange_<eval arg(newSwitch)>)>)
+    arg(linkNumber,#+1)
+  endwhile
+endif
+more2=<eval arg(newSwitch)>
+if !(isevent(t_timerSeal))
+  events=+t_timerSeal
+endif
+
+on=@userDClick
+if (src.isgm)
+  dialog(d_dinamicSwitchChanger,<tag(pocetSwitchu)>,<tag(pocetLinku)>)
+elseif (<timer> < <more1>/20)
+  timer = <more1>/10
+endif
+return 1
+
+on=@targOn_Item
+if (MoreX==1)
+  tag(switchToChange_<eval tag(pocetSwitchu)>,<src.targ>)
+  tag(pocetSwitchu,<eval tag(pocetSwitchu)+1>)
+elseif (moreX==2)
+  tag(linkToChange_<eval tag(pocetLinku)>,<src.targ>)
+  tag(pocetLinku,<eval tag(pocetLinku)+1>)
+endif
+dialog(d_dinamicSwitchChanger,<tag(pocetSwitchu)>,<tag(pocetLinku)>)
+return 1
+
+[typedef t_timerSeal]
+on=@timer
+return 1
+  
+
+[dialog d_dinamicSwitchChanger]
+arg(textcolor,52)
+argo.SetLocation=185,0
+
+argo.tag(sirka,290)
+argo.tag(vyska,638)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,231,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,10,30,231)
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,14,30,231)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,100,161)
+
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Predmet menici linky na switch.")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Switche: --> ADD Switch")
+argo.button(lastxpos+229,lastypos-1,0fa5,0fa7,1,0,2)		//add switch
+arg(pctRadku,0)
+argo.dialog_textpos(2,0)
+while (<arg(pctRadku)> < <argv(0)>)
+  argo.button(lastxpos,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fb1,0fb3,1,0,<arg(pctRadku)>+10)	//nastav dalsi switch
+  argo.texta(lastxpos+35,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_writecolor>,"Switch <eval arg(pctRadku)+1>: <tag(switchToChange_<eval arg(pctRadku)>)>")
+  arg(pctRadku,#+1)
+endwhile
+
+argo.texta(<argo.dialog_textpos(3,0)>,<d_def_writecolor>,"Linky: --> ADD Link")
+argo.button(lastxpos+229,lastypos-1,0fa5,0fa7,1,0,3)		//add link
+arg(pctRadku,0)
+argo.dialog_textpos(4,0)
+while (<arg(pctRadku)> < <argv(1)>)
+  argo.button(lastxpos,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fb1,0fb3,1,0,<arg(pctRadku)>+100)	//nastav dalsi link
+  argo.texta(lastxpos+35,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_writecolor>,"Link <eval arg(pctRadku)+1>: <tag(linkToChange_<eval arg(pctRadku)>)>")
+  arg(pctRadku,#+1)
+endwhile
+
+argo.dialog_textpos(5,0)
+argo.texta(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,<d_def_writecolor>,"Timer:")
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_writecolor>,"SpecTag:")
+argo.texta(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,<d_def_writecolor>,"SpecFunction:")
+
+argo.dialog_textpos(5,1)
+argo.settext(101,"<?eval more1?>")		//doba po ktere se zmeni switch (more1)
+argo.settext(102,"<?tag(specificTagChanger)?>")	//specifikace jmena tagu, ktere se bude na linkach menit.
+argo.settext(103,"<?tag(functionOnLinks)?>")	//funkce spoustena na linkach po timeru (a az po prenastaveni tagu)
+argo.textentry(<lastxpos>,<lastypos>+0*<d_def_radek_vyska>,153,<d_def_radek_vyska>,textcolor,1,101)
+argo.textentry(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,153,<d_def_radek_vyska>,textcolor,2,102)
+argo.textentry(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,153,<d_def_radek_vyska>,textcolor,3,103)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)		//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)	//cancel
+argo.texta(<argo.tag(sirka)>-80,(<argo.tag(vyska)>-<d_def_okraj>)-20,42,"Help:")
+argo.button(<argo.tag(sirka)>-42,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fab,0fad,1,0,4)			//Help
+
+
+[dialog d_dinamicSwitchChanger button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes switch changer.")
+if (<eval <argtxt(1)>> > 0)
+ more1=<argtxt(1)>
+ Src.sysMessage("Timer se bude dinamicky menit mezi hodnotami <eval more1/20> a <eval more1>.")
+else
+ src.RedMessage("Pozor! <src.sex(Nenastavil,Nenastavila)> jsi dobu pro timer zmeny switche.")
+endif
+if (<strlen(<argTxt(2)>)>)
+  tag(specificTagChanger,<argTxt(2)>)
+endif
+if (<strlen(<argTxt(3)>)>)
+  tag(functionOnLinks,<argTxt(3)>)
+endif
+
+on=2
+MoreX=1
+target("Pridej dalsi Switch.")
+
+on=3
+moreX=2
+target("Pridej dalsi Link na predmet")
+
+on=4
+dialog(d_dinamicSwitchChanger,<tag(pocetSwitchu)>,<tag(pocetLinku)>)
+dialog(d_dinamicSwitchChanger_Help)
+
+on=@anybutton
+if (argn >= 100)
+  arg(swchNumber,<eval argn-100>)
+  while (<arg(swchNumber)> < <eval <tag(pocetLinku)>-1>)
+    tag(linkToChange_<eval swchNumber>,<tag(linkToChange_<eval swchNumber+1>)>)
+    arg(swchNumber,#+1)
+  endwhile
+  tag(pocetLinku,<eval <tag(pocetLinku)>-1>)
+  tag.remove(linkToChange_<eval swchNumber>)
+else
+  arg(swchNumber,<eval argn-10>)
+  while (<arg(swchNumber)> < <eval <tag(pocetSwitchu)>-1>)
+    tag(switchToChange_<eval swchNumber>,<tag(switchToChange_<eval swchNumber+1>)>)
+    arg(swchNumber,#+1)
+  endwhile
+  tag(pocetSwitchu,<eval <tag(pocetSwitchu)>-1>)
+  tag.remove(switchToChange_<eval swchNumber>)
+endif
+dialog(d_dinamicSwitchChanger,<tag(pocetSwitchu)>,<tag(pocetLinku)>)
+
+[dialog d_dinamicSwitchChanger_Help]
+argo.setText(1,"Timer: Timer se prenastavi vzdy po dobehnuti predchoziho - poprve je treba timer spustit rucne (.x timer=0). Nastavuje se nahodne na dobu v rozmezi urcene hodnoty a jeji dvacetinou, tedy obrovsky rozptyl.<br><br> Switche: Vzdy po dobehnuti timeru se vybere jeden jediny switch ze seznamu a vsem nastavenym linkum (spodni seznam) se nastavi tag(switch) (pokud neni urceno jinak v kolonce SpecTag) na uid prave vybraneho switche.<br><br>Samotny predmet pak nastavi svoje More2 na hodnotu switche, ktery je zrovna vybrany. Tak je hodnota snadno pristupna dalsim predmetum primo na tomto itemu.<br><br> SpecFunction : Funkce vepsana do tohoto radku se spusti na vsech lincich potom, co se jim zmeni urceny tag. Je to vhodny pro funkce uplatneni zmen na danym predmetu v zavislosti na novym linku.")
+argo.f_dialog_HelpCreator("HELP - t_dinamicSwitchChanger")
+
+[function f_dialog_HelpCreator]
+SetLocation=475,20
+tag(sirka,350)
+tag(vyska,230)
+dialog_prvni
+dialog_pozadi(<tag(nexty)>,1)
+dialog_pozadi(<tag(nexty)>,8)
+dialog_zpruhledni
+texta(<dialog_textpos(0,0)>,42,<argv(0)>)
+htmlGump(<dialog_textpos(1,0)>,320,150,1,0,1)
+button(<d_def_okraj>+<d_def_skvira>,(<tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,0)	//ok
+
+[function f_dialog_LinkWriter]//argv(0) -> uid itemu, na kterem jsou tagy ulozeny | argv(1) -> X pozice <uid> linku | argv(2) -> X pozice buttonu na smazani linku
+arg(i,0)
+while (<arg(i)> < <eval argv(0).tag(linkNumber)>)
+  texta(<lastxpos>,<lastypos>+<arg(i)>*<d_def_radek_vyska>,<d_def_writecolor>,"Link <eval <arg(i)>+1>:")
+  texta(<lastxpos>+<argv(1)>,<lastypos>+<arg(i)>*<d_def_radek_vyska>,<d_def_readcolor>,<argv(0).tag(link_<eval arg(i)>)>)
+  button(<lastxpos>+<argv(2)>,<lastypos>+<arg(i)>*<d_def_radek_vyska>,0fb1,0fb3,1,0,<eval arg(i)> + 100)
+  arg(i,#+1)
+endwhile
+
+[function f_item_LinkRemover]
+arg(lnkNumber,<eval argn-<argv(0)>>)
+while (<arg(lnkNumber)> < <eval <eval tag(linkNumber)>-1>)
+  tag(link_<eval lnkNumber>,<tag(link_<eval lnkNumber+1>)>)
+  arg(lnkNumber,#+1)
+endwhile
+tag(linkNumber,<eval tag(linkNumber)>-1)
+tag.remove(link_<eval lnkNumber>)
+
+[function f_item_LinkAdder] // jako argument posilame uid noveho linku
+tag(link_<eval tag(linkNumber)>,<argv(0)>)
+tag(linkNumber,<eval tag(linkNumber)>+1)
+
+
+/////////////////////////////////
+//    B L A D E   F I E L D    //
+/////////////////////////////////
+
+
+[itemDef i_spawn_blade_field]
+ID=0AEC
+Type=t_spawn_item
+NAME= Spawn Blade Field
+
+on=@create
+attr=090
+more1=i_bladefield
+more2=1
+tag(nextshot,0)
+tag(go,0)
+
+on=@step
+if (<src.flags>&statf_dead)
+  return 1
+endif
+if !(npc)
+  return 1
+elseif (<tag(nextshot)> < <serv.time>)
+  sector.allitems(f_spawn_blade_timer)
+endif
+
+on=@timer
+if (<tag(go)> == 0)
+  timer=-1
+  return 1
+endif
+tag(go,0)
+
+[function f_spawn_blade_timer]
+if !(id==i_spawn_blade_field)
+  return 1
+endif
+
+tag(nextshot,<serv.time>+100)
+tag(go,1)
+timer=1
+
+
+[itemDef i_bladefield]
+ID=037a0
+Type=t_anim_active
+Name Blade Field
+
+on=@create
+timer=5
+
+on=@timer
+remove
+
+
+/////////////////////////////////
+//  S H U T - D O O R   P A D  //
+/////////////////////////////////
+
+[itemDef i_shutDoorPad]
+ID=0AEC
+type=t_shutDoorPad
+name=Shut Door Pad
+
+on=@Create
+attr=090
+more1=300
+more2=1
+color=color_o_obsidian
+
+[typedef t_shutDoorPad]
+on=@step
+if (src.isgm)
+  return 1
+elseif (src.npc)
+  return 1
+elseif (<src.flags>&statf_dead)
+  return 1
+elseif (<eval safe.tag(switch).more2>==<eval more2>) && !(<eval safe.tag(switch).f_hcn_masSpawnerIsGuarded>)
+  if (link.type==t_door_locked)
+    sfx(565) //cvak
+    timer=0
+  endif
+  return 1
+elseif (<timer> > 0)
+  return 1
+elseif (link.type==t_door_locked)
+  return 1
+elseif (<link.timer> > 0)
+  link.timer=0
+endif
+
+safe.tag(door_2).type=t_door_locked
+link.type=t_door_locked
+timer=<more1>
+src.sysMessage("Na neco jsi <src.sex(slapl,slapla)>.")
+sfx(049) //cvak
+
+on=@timer
+link.type=t_door
+safe.tag(door_2).type=t_door
+return 1
+
+on=@userDClick
+if (src.isGM)
+  dialog(d_shutDoorPad)
+endif
+return 1
+
+on=@targOn_Item
+if (moreX==1)
+  if (src.targ.type==t_door)
+    link=<src.targ>
+    src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na dvere.")
+    dialog(d_shutDoorPad)
+  else
+    src.sysMessage("Cil ma spatny type. Je vyzadovan t_door.")
+  endif
+elseif (moreX==2)
+  tag(switch,<src.targ>)
+  src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na switch.")
+  dialog(d_shutDoorPad)
+elseif (moreX==3)
+  if (src.targ.type==t_door)
+    tag(door_2,<src.targ>)
+    src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na druhe dvere.")
+    dialog(d_shutDoorPad)
+  else
+    src.sysMessage("Cil ma spatny type. Je vyzadovan t_door.")
+  endif
+endif
+return 1
+
+[dialog d_shutDoorPad]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,290)
+argo.tag(vyska,167)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,4,123,138)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Dlazka zavirajici dvere")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Dvere UID:")
+argo.button(lastxpos+88,lastypos,0fa5,0fa7,1,0,2)	//nastav link na dvere
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"Switch UID:")
+argo.button(lastxpos+88,lastypos+(d_def_radek_vyska),0fa5,0fa7,1,0,3)	//nastav link na switch
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"Otevreni/s:")
+argo.texta(lastxpos,lastypos+(3*d_def_radek_vyska),<d_def_writecolor>,"SwitchPos:")	//v jaky pozici musi byt switch, aby se dvere nezavrely
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Dvere 2 UID:")
+argo.button(lastxpos+88,lastypos,0fa5,0fa7,1,0,4)	//nastav link na dvere
+
+
+argo.settext(1001,"<?eval more1?>")	//doba otevreni dveri v s (more1)
+argo.settext(1002,"<?eval more2?>")	//switch pos (more2)
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,<link>)
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_readcolor>,<safe.tag(switch)>)
+argo.textentry(lastxpos,lastypos+(2*d_def_radek_vyska),198,<d_def_radek_vyska>,textcolor,1,1001)
+argo.textentry(lastxpos,lastypos+(3*d_def_radek_vyska),198,<d_def_radek_vyska>,textcolor,2,1002)
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_readcolor>,<safe.tag(door_2)>)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_shutDoorPad button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes hodnoty naslapky.")
+if (<eval argtxt(1)> > 0)
+ more1=<argtxt(1)>
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi dobu pro znovu-otevreni dveri! Ponechana puvodni hodnota.")
+endif
+more2=<argtxt(2)>
+
+on=2
+moreX=1
+target("Zamer dvere, ktere se maji zavirat.")
+
+on=3
+moreX=2
+target("Zamer switch, ktery rozhodne o tom, zda se budou dvere zavirat")
+
+on=4
+moreX=3
+target("Zamer druhe dvere, ktere se maji zavirat.")
+
+//////////////////////////////////////////
+//	P A S S W O R D   D O O R	//
+//////////////////////////////////////////
+
+[function doorPassword]
+src.newequip(i_doorPasswordTarget)
+return 1
+
+[itemDef i_doorPasswordTarget]
+id=i_memory
+type=t_eq_script
+name=Door Password Target Memory
+
+on=@Equip
+target("Zamer dvere, ktere maji byt chraneny heslem")
+timer=60
+return 1
+
+on=@Timer
+remove
+return 1
+
+on=@TargOn_Item
+if (src.targ.type == t_door) || (src.targ.type == t_door_locked)
+  src.targ.dialog(d_doorPassword)
+  src.targ.type=t_door_password
+else
+  src.sysMessage("Musis zamerovat jen dvere typu t_door nebo t_door_locked")
+  return 1
+endif
+
+[dialog d_doorPassword]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,235)
+argo.tag(vyska,92)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,60,150)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Rozum mocnejsi nez sila!")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Heslo:")
+
+if (src.isGM)
+  argo.settext(1001,"<?tag(password)?>")	//soucasny heslo
+else
+  argo.settext(1001,"")				//hraci se soucasny heslo nezobrazi
+endif
+
+argo.textentry(<argo.dialog_textpos(1,1)>,98,<d_def_radek_vyska>,textcolor,1,1001)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_doorPassword button]
+on=0 // cancel
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1 // ok
+if (src.isGM)
+  src.sysMessage("Nastavujes nove heslo.")
+  tag(password,<argtxt(1)>)
+elseif (<STRCMPI(<tag.password>,<argtxt(1)>)>==0)
+  src.sysMessage("Smis projit !")
+  more2=<dispid>
+  morep=<p>
+  type=t_door
+  dclick
+  type=t_door_Password
+else
+ src.redMessage("Heslo neni spravne !")
+endif
+
+[typedef t_door_Password]
+on=@Timer
+dispid=<more2>
+p=<morep>
+update
+return 1
+
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if !(timer > 0)
+  dialog(d_doorPassword)
+else
+  src.sysMessage("Dvere jsou jiz otevrene !")
+endif
+return 1
+
+
+
+
+//////////////////////////////////
+//	P A S S W O R D   D O O R	//
+//////////////////////////////////
+
+[function guarditAdv]
+newequip(i_guarditAdv)
+
+[itemDef i_guarditAdv]
+id=i_memory
+type=t_eq_script
+name=guarditAdv rune
+
+on=@timer
+remove
+return 1
+
+on=@equip
+target("Zamer dvere, ktery maj byt strazeny.")
+src.sysMessage("Prozatim lze zamerit JEN dvere. V pripade potreby kontaktuj Yavannu")
+src.sysMessage("Funkci nebude tezke obohatit icq 228327044")
+timer=50
+return 1
+
+on=@TargOn_Item
+if (src.targ.type==t_door)||(src.targ.type==t_door_guardedAdv)
+  src.targ.type=t_door_guardedAdv
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+  if !(safe.src.targ.tag(pocetSpawnu))
+    src.targ.tag(pocetSpawnu,0)
+  endif
+  src.targ.dialog(d_guarditAdv)
+elseif (src.targ.type==t_door_guarded)
+  src.targ.type=t_door_guardedAdv
+  src.targ.tag(spawn_0,<src.targ.tag(spwnlink)>)
+  src.targ.tag.remove(spwnlink)
+  src.targ.tag(pocetSpawnu,1)
+  src.targ.dialog(d_guarditAdv)  
+endif
+
+[typedef t_door_guardedAdv]
+on=@UserDClick
+if (src.isGM)
+  dialog(d_guarditAdv)
+elseif (<src.flags>&statf_dead)
+  return 0
+endif
+if (dispid!=more2) 
+ type=t_door
+ dclick
+ type=t_door_guardedAdv
+elseif (f_guarditAdv_CheckSpawns)	// 1 == strazce je nazivu
+ if (src.isGM)
+  src.sysMessage("Strazce je stale nazivu.")
+  type=t_door
+  dclick
+  type=t_door_guardedAdv
+ else
+   src.sysMessage("Neprojdes, dokud je strazce pruchodu nazivu!")
+ endif
+else
+  type=t_door
+  dclick
+  type=t_door_guardedAdv
+endif
+return 1
+
+on=@timer
+dispid=<more2>
+p=<morep>
+update
+return 1
+
+[function f_guarditAdv_CheckSpawns]
+arg(i,0)
+while (<i> < <tag(pocetSpawnu)>)
+  if (tag(spawn_<eval i>).more2)
+    return 1
+  endif
+  arg(i,#+1)
+endwhile
+return 0
+
+[dialog d_guarditAdv]
+arg(textcolor,52)
+argo.SetLocation=285,50
+
+argo.tag(sirka,366)
+arg(v,<eval 115+(<eval <tag.pocetSpawnu>>*<d_def_radek_vyska>)>)
+src.sysMessage("v: <arg(v)>")
+argo.tag(vyska,<eval arg(v)>)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,133,204)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,100,30,138,30,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,<tag(pocetSpawnu)>,100,30,138,30,30)
+argo.dialog_zpruhledni
+
+if (<argvcount>)
+  argo.tag(baseDialog,<argv(0)>)
+endif
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Advanced Guard System")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Pocet Spawnu:")
+argo.settext(1001,"<?eval tag(pocetSpawnu)?>")	//doba otevreni dveri v s (more1)
+argo.textentry(<argo.dialog_textpos(1,2)>,128,<d_def_radek_vyska>,textcolor,1,1001)
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_readcolor>,"Spawn c.:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_readcolor>,"Ad")
+argo.texta(<argo.dialog_textpos(2,2)>,<d_def_readcolor>,"UID Spawnu:")
+argo.texta(<argo.dialog_textpos(2,3)>,<d_def_readcolor>,"Go")
+argo.texta(<argo.dialog_textpos(2,4)>,<d_def_readcolor>,"Del")
+
+arg(pctRadku,0)
+argo.dialog_textpos(3,0)
+while (<arg(pctRadku)> < <tag(pocetSpawnu)>)
+  argo.texta(lastxpos,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_writecolor>,"Spawn <eval arg(pctRadku)+1>:")
+  argo.texta(lastxpos+135,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_readcolor>,<tag(spawn_<eval arg(pctRadku)>)>)
+  argo.button(lastxpos+98,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fa5,0fa7,1,0,<eval <arg(pctRadku)>+10>)	//nastav novej spawn
+  argo.button(lastxpos+272,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fb4,0fb6,1,0,<eval <arg(pctRadku)>+1000>)	//jdi na spawn
+  argo.button(lastxpos+305,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fb1,0fb3,1,0,<eval <arg(pctRadku)>+2000>)	//delete spawn
+  arg(pctRadku,#+1)
+endwhile
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_guarditAdv button]
+on=0
+if (<strlen(argo.tag(baseDialog))>)
+  dialog(<argo.tag(baseDialog)>)
+endif
+return 1
+
+on=1
+Src.sysMessage("Nastavujes guardeni.")
+if (<eval argtxt(1)> > 0) && (<eval argtxt(1)> != <tag(pocetSpawnu)>)
+  tag(pocetSpawnu,<eval argtxt(1)>)
+  if (<strlen(argo.tag(baseDialog))>)
+    dialog(d_guarditAdv,<argo.tag(baseDialog)>)
+  else
+    dialog(d_guarditAdv)
+  endif
+else
+  src.sysMessage("OK.")
+  if (<strlen(argo.tag(baseDialog))>)
+    dialog(<argo.tag(baseDialog)>)
+  endif
+endif
+return 1
+
+on=@anybutton
+if (<argn> >= 2000)
+  src.sysMessage("remove")
+  arg(i,<argn>-2000)
+  while (<i+1> < <tag(pocetSpawnu)>)
+    tag(spawn_<eval i>,<tag(spawn_<eval i+1>)>)
+    arg(i,#+1)
+  endwhile
+  tag.remove(spawn_<eval i>)
+  tag(pocetSpawnu,#-1)
+  if (<strlen(argo.tag(baseDialog))>)
+    dialog(d_guarditAdv,<argo.tag(baseDialog)>)
+  else
+    dialog(d_guarditAdv)
+  endif
+elseif (<argn> >= 1000)
+  if (safe.tag(spawn_<eval <argn>-1000>))
+    src.go(<tag(spawn_<eval <argn>-1000>).p>)
+  else
+    src.redMessage("Nelze se presunout na spawn, ktery neni nastaveny !")
+  endif
+  if (<strlen(argo.tag(baseDialog))>)
+    dialog(d_guarditAdv,<argo.tag(baseDialog)>)
+  else
+    dialog(d_guarditAdv)
+  endif
+else (<argn> >= 10)
+  src.newEquip(i_guarditAdvTargetSpawn)
+  lastnew.more1=<eval argn-10>)
+  lastnew.link=<uid>
+  if (<strlen(argo.tag(baseDialog))>)
+    lastnew.tag(baseDialog,<argo.tag(baseDialog)>)
+  endif
+endif
+return 1
+
+[itemDef i_guarditAdvTargetSpawn]
+id=i_memory
+type=t_eq_script
+name=Advanced Guard Target Spawn
+
+on=@Equip
+target("Zamer spawn, ktery ma hlidat dvere.")
+timer=60
+
+on=@Timer
+remove
+return 1
+
+on=@TargOn_Item
+if (src.targ.type==t_spawn_char)
+  src.targ.tag(negateOnDeath,1)
+  link.tag(spawn_<eval more1>,<src.targ>)
+else
+  src.redMessage("Tohle neni spawn!")
+endif
+if (<strlen(tag(baseDialog))>)
+    link.dialog(d_guarditAdv,<tag(baseDialog)>)
+  else
+    link.dialog(d_guarditAdv)
+endif
+remove
+return 1
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+[function f_closeThisDoor]
+if (<timer> > 0)
+  timer=0
+endif
+
+
+////////////////////////////////////////////////////////
+
+[function projed_poklady]
+newequip(i_proskakej_poklady)
+
+[itemDef i_proskakej_poklady]
+id=i_memory
+type=t_eq_script
+
+on=@create
+timer=0
+src.sysMessage("tak a jedem")
+
+on=@timer
+if (<more1> == 0)
+ tag(my_home,<topobj.p>)
+elseif (<more1> == 1)
+ topobj.go(5216,1767,-18,0)
+ topobj.updatex
+ topobj.sysMessage("Etheria")
+elseif (<more1> == 2)
+ topobj.go(4941,405,0,0)
+ topobj.updatex
+ topobj.sysMessage("Dug Snagum 1. poklad")
+elseif (<more1> == 3)
+ topobj.go(4935,263,0,0)
+ topobj.updatex
+ topobj.sysMessage("Dug Snagum 2. poklad")
+elseif (<more1> == 4)
+ topobj.go(5644,2266,0,10)
+ topobj.updatex
+ topobj.sysMessage("Pevnost strachu 1.level poklady")
+elseif (<more1> == 5)
+ topobj.go(5514,2203,0,10)
+ topobj.updatex
+elseif (<more1> == 6)
+ topobj.go(5511,2229,0,10)
+ topobj.updatex
+elseif (<more1> == 7)
+ topobj.go(5550,2182,0,10)
+ topobj.updatex
+elseif (<more1> == 8)
+ topobj.go(5229,4024,0,0)
+ topobj.updatex
+ topobj.sysMessage("Pevnost strachu 2.level poklady")
+elseif (<more1> == 9)
+ topobj.go(5761,223,0,0)
+ topobj.updatex
+ topobj.sysMessage("MountDorlas Poklady")
+elseif (<more1> == 10)
+ topobj.go(5281,175,0,0)
+ topobj.updatex
+elseif (<more1> == 11)
+ topobj.go(5437,261,0,0)
+ topobj.updatex
+elseif (<more1> == 12)
+ topobj.go(5537,229,5,0)
+ topobj.updatex
+elseif (<more1> == 13)
+ topobj.go(5251,903,10,0)
+ topobj.updatex
+ topobj.sysMessage("Dol Guldur Poklad")
+elseif (<more1> == 14)
+ topobj.go(5302,2351,-22,0)
+ topobj.updatex
+ topobj.sysMessage("Carn Dum poklady")
+elseif (<more1> == 15)
+ topobj.go(5264,2298,-22,0)
+elseif (<more1> == 16)
+ topobj.go(5222,1962,-18,0)
+elseif (<more1> == 17)
+ topobj.go(5273,2242,-18,0)
+elseif (<more1> == 18)
+ topobj.go(5355,1191,10,10)
+ topobj.sysMessage("Mahat poklady")
+elseif (<more1> == 19)
+ topobj.go(5460,1385,30,0)
+elseif (<more1> == 20)
+ topobj.go(5385,1376,10,0)
+elseif (<more1> == 21)
+ topobj.go(5629,1324,10,0)
+elseif (<more1> == 22)
+ topobj.go(5774,2234,50,0)
+ topobj.sysMessage("Nexmirias poklad")
+elseif (<more1> == 23)
+ topobj.go(6120,3458,20,0)
+ topobj.sysMessage("Ledova Jeskyne poklad 1")
+elseif (<more1> == 24)
+ topobj.go(5914,3266,20,0)
+ topobj.sysMessage("Ledova Jeskyne poklad 2")
+elseif (<more1> == 25)
+ topobj.go(5738,2474,0,0)
+ topobj.sysMessage("Cardolanske pohrebiste poklad")
+elseif (<more1> == 26)
+ topobj.go(448,9,-28,2)
+ topobj.sysMessage("Tumma Osto poklady")
+elseif (<more1> == 27)
+ topobj.go(228,113,-29,2)
+elseif (<more1> == 28)
+ topobj.go(309,101,-28,2)
+elseif (<more1> == 29)
+ topobj.go(5211,128,0,0)
+ topobj.sysMessage("Beridor poklad")
+elseif (<more1> == 30)
+ topobj.go(311,394,45,0)
+ topobj.sysMessage("Ostrov Piratu poklad")
+elseif (<more1> == 31)
+ topobj.go(326,373,45,0)
+else
+ topobj.go(<tag(my_home)>)
+ topobj.tag.remove(my_home)
+ remove
+endif
+more1=<eval more1>+1
+timer=3
+return 1
+
+
+[eof]i                                                                        

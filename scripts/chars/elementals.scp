@@ -1,0 +1,2429 @@
+[CHARDEF c_elem_earth]
+
+ID=c_elem_earth_m
+NAME=Earth Elemental
+SOUND=snd_ELEMENTL_ERTHEL1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK
+attack=50
+ARMOR=60
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=15 t_arock,t_coin,t_ore,t_ingot
+DESIRES=t_rock
+BLOODCOLOR=072c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Earth Elemental
+
+ON=@Create
+color= {0709 0751}
+NPC=brain_monster
+FAME={10 20}
+KARMA=-3500
+STR={475 525}
+DEX={85 95}
+INT={85 105}
+
+
+maxhits={475 525}
+maxstam={85 95}
+maxmana=0
+
+tag.experience=<eval {25.0 29.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={120.0 150.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_earth_elder]
+
+ID=c_elem_earth_m
+NAME=Earth Elemental
+SOUND=snd_ELEMENTL_ERTHEL1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK
+attack=70
+ARMOR=80
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=15 t_arock,t_coin,t_ore,t_ingot
+DESIRES=t_rock
+BLOODCOLOR=072c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Earth Elemental Elder
+
+ON=@Create
+color=1888
+NPC=brain_monster
+FAME={20 80}
+KARMA=-3500
+STR={475 525}
+DEX={120 200}
+INT={85 105}
+
+
+maxhits={1000 1300}
+maxstam={120 200}
+maxmana=0
+
+tag.experience=<eval {39.0 51.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.hit_damage=<eval {5 15}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={120.0 150.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_earth_terror]
+
+ID=c_elem_earth_m
+NAME=Earth Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK
+attack=100
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=15 t_arock,t_coin,t_ore,t_ingot
+DESIRES=t_rock
+BLOODCOLOR=072c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Earth Elemental Terror
+
+ON=@Create
+color=0710
+NPC=brain_monster
+FAME={20 80}
+KARMA=-3500
+STR={475 525}
+DEX={120 200}
+INT={85 105}
+
+
+maxhits={130 260}
+maxstam={260 300}
+maxmana=0
+
+tag.experience=<eval {29.0 39.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 125}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+
+tag.resist_bleed=1000
+
+
+WRESTLING={120.0 150.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_water]
+
+ID=c_elem_water_m
+NAME=Water Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS
+attack=65
+ARMOR=80
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=t_water_wash
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Water Elemental
+
+ON=@Create
+
+NPC=brain_monster
+FAME=10
+KARMA={-100 -1500}
+STR={550 650}
+DEX={100 110}
+INT={90 110}
+
+
+maxhits={550 650}
+maxstam={100 110}
+maxmana=0
+
+tag.experience=<eval {24.0 28.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_water_elder]
+
+ID=c_elem_water_m
+NAME=Water Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS
+attack=45
+ARMOR=50
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=t_water_wash
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Water Elemental Elder
+
+ON=@Create
+
+NPC=brain_monster
+FAME=10
+KARMA={-100 -1500}
+STR={550 650}
+DEX={100 110}
+INT={90 110}
+
+
+maxhits={1000 1300}
+maxstam={260 300}
+maxmana=0
+
+tag.experience=<eval {39.0 51.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.hit_damage=<eval {5 15}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_water_terror]
+
+ID=c_elem_water_m
+NAME=Water Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS
+attack=120
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=t_water_wash
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Water Elemental Terror
+
+ON=@Create
+
+NPC=brain_monster
+FAME=10
+KARMA={-100 -1500}
+STR={550 650}
+DEX={100 110}
+INT={90 110}
+
+
+maxhits={130 260}
+maxstam={100 110}
+maxmana=0
+
+tag.experience=<eval {29.0 39.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_fire]
+
+ID=c_elem_fire_m
+NAME=Fire Elemental
+SOUND=snd_ELEMENTL_FIRELEM1
+ICON=i_pet_elem_fire
+
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS
+attack=50
+ARMOR=50
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=t_fire
+
+BLOODCOLOR=colors_red
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Fire Elemental
+
+ON=@Create
+
+NPC=brain_monster
+FAME={10 20}
+KARMA={-100 -2500}
+STR={600 700}
+DEX={110 120}
+INT={130 200}
+
+
+maxhits={600 700}
+maxstam={110 120}
+maxmana={1900 2000}
+
+tag.experience=<eval {42.0 46.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+ 
+
+tag.weapflag=dam_physical|dam_fire
+
+tag.resist_fire=1000
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+RESIST=200.0
+MAGERY={75.1 95.1}
+EI={90.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_fireball
+addspell=s_lightning
+addspell=s_paralyze
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_sulfur_ash,{ 10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_fire_elder]
+
+ID=c_elem_fire_m
+NAME=Fire Elemental
+SOUND=snd_ELEMENTL_FIRELEM1
+ICON=i_pet_elem_fire
+
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS
+attack=70
+ARMOR=70
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=t_fire
+
+BLOODCOLOR=colors_red
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Fire Elemental Elder
+
+ON=@Create
+
+NPC=brain_monster
+FAME={10 20}
+KARMA={-100 -2500}
+STR={600 700}
+DEX={110 120}
+INT={130 200}
+
+
+maxhits={1000 1300}
+maxstam={260 300}
+maxmana={1900 2000}
+
+tag.experience=<eval {45.0 55.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.hit_damage=<eval {5 15}>
+
+tag.weapflag=dam_physical|dam_fire
+
+tag(resist_fire,1000)
+tag(resist_poison,600)
+tag.resist_fire=1000
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+RESIST=200.0
+MAGERY={75.1 95.1}
+EI={90.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_fireball
+addspell=s_lightning
+addspell=s_paralyze
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_sulfur_ash,{ 10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_fire_terror]
+
+ID=c_elem_fire_m
+NAME=Fire Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_fire
+
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS
+attack=120
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+FOODTYPE=t_fire
+
+BLOODCOLOR=colors_red
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Fire Elemental Terror
+
+ON=@Create
+
+NPC=brain_monster
+FAME={10 20}
+KARMA={-100 -2500}
+STR={600 700}
+DEX={110 120}
+INT={130 200}
+
+
+maxhits={230 360}
+maxstam={110 120}
+maxmana={1900 2000}
+
+tag.experience=<eval {35.0 40.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+tag.weapflag=dam_physical|dam_fire
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+tag.resist_fire=1000
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+RESIST=200.0
+MAGERY={75.1 95.1}
+EI={90.0 100.0}
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_fireball
+addspell=s_lightning
+addspell=s_paralyze
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_sulfur_ash,{ 10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_air]
+
+ID=c_elem_air_m
+NAME=Air Elemental
+SOUND=snd_ELEMENTL_AIRELEM1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|MT_FLY|mt_run
+attack=55
+ARMOR=60
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR={0984 0985}
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Air Elemental
+
+ON=@Create
+Color={0984 0985}
+NPC=brain_monster
+FAME=20
+KARMA={-500 -1500}
+STR={600 700}
+DEX={180 200}
+INT={95 100}
+
+
+maxhits={600 700}
+maxstam={180 200}
+maxmana=0
+
+tag.experience=<eval {25.0 30.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING=80.0
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_scroll_blank, { 0 5 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_air_elder]
+
+ID=c_elem_air_m
+NAME=Air Elemental
+SOUND=snd_ELEMENTL_AIRELEM1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|MT_FLY|mt_run
+attack=80
+ARMOR=85
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR={0984 0985}
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Air Elemental
+
+ON=@Create
+Color={0984 0985}
+NPC=brain_monster
+FAME=20
+KARMA={-500 -1500}
+STR={600 700}
+DEX={180 200}
+INT={95 100}
+
+
+maxhits={1000 1300}
+maxstam={260 300}
+maxmana=0
+
+tag.experience=<eval {35.0 41.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.hit_damage=<eval {5 15}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING=80.0
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_scroll_blank, { 0 5 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_air_terror]
+
+ID=c_elem_air_m
+NAME=Air Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|MT_FLY|mt_run
+attack=135
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR={0984 0985}
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Air Elemental
+
+ON=@Create
+Color={0984 0985}
+NPC=brain_monster
+FAME=20
+KARMA={-500 -1500}
+STR={600 700}
+DEX={180 200}
+INT={95 100}
+
+
+maxhits={230 360}
+maxstam={180 200}
+maxmana=0
+
+tag.experience=<eval {20.0 30.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+
+tag.resist_bleed=1000
+
+
+WRESTLING=80.0
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_scroll_blank, { 0 5 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_blood]
+
+ID=c_elem_water_m
+NAME=Blood Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS|mt_run
+attack=60
+ARMOR=60
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+FOODTYPE=t_blood
+DESIRES=i_reag_blood_vial
+BLOODCOLOR=colors_blood
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Blood Elemental
+
+ON=@Create
+COLOR=colors_blood
+NPC=brain_monster
+FAME=30
+KARMA=-3500
+STR={800 900}
+DEX={150 155}
+INT={170 175}
+
+
+maxhits={800 900}
+maxstam={150 155}
+maxmana={1700 1750}
+
+tag.experience=<eval {45.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+tag.resist_bleed=300
+
+
+WRESTLING={80.0 100.0}
+MAGERY=120.0
+EI={50.0 100.0}
+RESIST=200.0
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_poison
+addspell=s_protection
+addspell=s_reveal
+addspell=s_paralyze
+addspell=s_summon_elem_earth
+addspell=s_mass_dispell
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_blood_vial, { 5 15 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_blood_elder]
+
+ID=c_elem_water_m
+NAME=Blood Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS|mt_run
+attack=80
+ARMOR=80
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+FOODTYPE=t_blood
+DESIRES=i_reag_blood_vial
+BLOODCOLOR=colors_blood
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Blood Elemental Elder
+
+ON=@Create
+COLOR=colors_blood
+NPC=brain_monster
+FAME=30
+KARMA=-3500
+STR={800 900}
+DEX={150 155}
+INT={170 175}
+
+
+maxhits={1000 1300}
+maxstam={260 300}
+maxmana={1700 1750}
+
+tag.experience=<eval {65.0 70.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.hit_damage=<eval {5 15}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=300
+
+
+WRESTLING={80.0 100.0}
+MAGERY=120.0
+EI={50.0 100.0}
+RESIST=200.0
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_poison
+addspell=s_protection
+addspell=s_reveal
+addspell=s_paralyze
+addspell=s_summon_elem_earth
+addspell=s_mass_dispell
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_blood_vial, { 5 15 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_blood_terror]
+
+ID=c_elem_water_m
+NAME=Blood Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS|mt_run
+attack=120
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+FOODTYPE=t_blood
+DESIRES=i_reag_blood_vial
+BLOODCOLOR=colors_blood
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Blood Elemental Teror
+
+ON=@Create
+COLOR=colors_blood
+NPC=brain_monster
+FAME=30
+KARMA=-3500
+STR={800 900}
+DEX={150 155}
+INT={170 175}
+
+
+maxhits={230 360}
+maxstam={150 155}
+maxmana={1700 1750}
+
+tag.experience=<eval {35.0 40.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+
+tag.resist_bleed=300
+
+
+WRESTLING={80.0 100.0}
+MAGERY=120.0
+EI={50.0 100.0}
+RESIST=200.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_poison
+addspell=s_protection
+addspell=s_reveal
+addspell=s_paralyze
+addspell=s_summon_elem_earth
+addspell=s_mass_dispell
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_blood_vial, { 5 15 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_snow]
+
+ID=c_elem_earth_m
+NAME=Snow Elemental
+SOUND=snd_ELEMENTL_AIRELEM1
+ICON=i_pet_elem_earth
+
+can=mt_walk|mt_run
+attack=40
+ARMOR=60
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BloodColor=color_snow
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Snow Elemental
+
+ON=@Create
+COLOR=color_snow
+NPC=brain_monster
+FAME=10
+KARMA={-4000 -4999}
+STR={590 610}
+DEX={95 105}
+INT={235 265}
+
+
+maxhits={590 610}
+maxstam={95 105}
+maxmana=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_snow_elder]
+
+ID=c_elem_earth_m
+NAME=Snow Elemental
+SOUND=snd_ELEMENTL_AIRELEM1
+ICON=i_pet_elem_earth
+
+can=mt_walk|mt_run
+attack=70
+ARMOR=90
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BloodColor=color_snow
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Snow Elemental Elder
+
+ON=@Create
+COLOR=color_snow
+NPC=brain_monster
+FAME=10
+KARMA={-4000 -4999}
+STR={590 610}
+DEX={95 105}
+INT={235 265}
+
+
+maxhits={1000 1300}
+maxstam={260 300}
+maxmana=0
+
+tag.experience=<eval {35.0 47.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.hit_damage=<eval {5 20}>
+
+
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_snow_terror]
+
+ID=c_elem_earth_m
+NAME=Snow Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_earth
+
+can=mt_walk|mt_run
+attack=120
+ARMOR=25
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BloodColor=color_snow
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Snow Elemental Terror
+
+ON=@Create
+COLOR=color_snow
+NPC=brain_monster
+FAME=10
+KARMA={-4000 -4999}
+STR={590 610}
+DEX={95 105}
+INT={235 265}
+
+
+maxhits={230 360}
+maxstam={95 105}
+maxmana=0
+
+tag.experience=<eval {20.0 25.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_ice]
+
+ID=c_elem_earth_m
+NAME=Ice Elemental
+SOUND=snd_ELEMENTL_ERTHEL1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK|mt_run
+attack=110
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Ice Elemental
+
+ON=@Create
+COLOR=color_ice
+NPC=brain_monster
+FAME=15
+KARMA=-3500
+STR={650 660}
+DEX={100 105}
+INT={275 280}
+
+
+maxhits={650 660}
+maxstam={100 105}
+maxmana=0
+
+tag.experience=<eval {38.0 42.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_ice_elder]
+
+ID=c_elem_earth_m
+NAME=Ice Elemental
+SOUND=snd_ELEMENTL_ERTHEL1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK|mt_run
+attack=120 
+ARMOR=40 
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Ice Elemental Elder
+
+ON=@Create
+COLOR=color_ice
+NPC=brain_monster
+FAME=15
+KARMA=-3500
+STR={650 660}
+DEX={100 105}
+INT={275 280}
+
+
+maxhits={1000 1300}
+maxstam={260 300}
+maxmana=0
+
+tag.experience=<eval {48.0 62.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.hit_damage=<eval {10 25}>
+
+
+
+tag(resist_poison,600)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_ice_terror]
+
+ID=c_elem_earth_m
+NAME=Ice Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK|mt_run
+attack=120
+ARMOR=0 
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Ice Elemental Terror
+
+ON=@Create
+COLOR=color_ice
+NPC=brain_monster
+FAME=15
+KARMA=-3500
+STR={650 660}
+DEX={100 105}
+INT={275 280}
+
+
+maxhits={230 360}
+maxstam={100 105}
+maxmana=0
+
+tag.experience=<eval {28.0 32.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+
+
+tag(resist_pierce,700)
+tag(resist_para,500)
+
+tag.resist_bleed=1000
+
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_rock]
+
+ID=c_elem_earth_m
+NAME=Rock Elemental
+SOUND=snd_ELEMENTL_ERTHEL1
+ICON=i_pet_elem_earth
+
+CAN=MT_WALK|mt_run|mt_equip|MT_USEHANDS
+attack=50
+ARMOR=150
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+DESIRES=t_rock
+BloodColor=098b
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Rock Elemental
+
+ON=@Create
+COLOR={0539 054a}
+NPC=brain_monster
+FAME=15
+KARMA=-3500
+STR={800 850}
+DEX={90 95}
+INT={300 305}
+
+
+maxhits={800 850}
+maxstam={65 75}
+maxmana=0
+
+tag.experience=<eval {45.0 60.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag(resist_poison,1000)
+tag.resist_fire=<eval {100 250}>
+
+tag.resist_bleed=1000
+
+
+wrestling=110.0
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=30.0
+
+ITEMnewbie=i_monster_create
+ITEMnewbie=i_bow_rock
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=tm_rocks
+ITEM=tm_rocks
+ITEM=tm_rocks
+ITEM=tm_rocks
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_efreet]
+
+ID=c_elem_air_m
+NAME=Efreet
+SOUND=snd_ELEMENTL_AIRELEM1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK
+attack=40
+ARMOR=40
+
+moverate=3
+
+
+RESOURCES=8 t_magic
+
+
+BloodColor=098b
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater_vamp
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Efreet
+
+ON=@Create
+COLOR=098b
+NPC=brain_monster
+FAME=15
+KARMA={-1000 -1200}
+STR={600 650}
+DEX={500 510}
+INT={150 175}
+
+
+maxhits={1600 1850}
+maxstam={500 510}
+maxmana={1200 1250}
+
+tag.experience=<eval {45.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag(resist_poison,400)
+
+
+ 
+
+
+WRESTLING={90.0 120.0}
+MAGERY=120.0
+EI=50.0
+RESIST=150.0
+SpiritSpeak=45.0
+
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_lightning
+addspell=s_clumsy
+addspell=s_magic_reflection
+addspell=s_archcure
+addspell=s_fireball
+addspell=s_mana_drain
+addspell=s_paralyze
+addspell=s_summon_elem_earth
+addspell=s_summon_elem_water
+addspell=s_summon_daemon
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+ITEM=i_reag_ginseng,{ 5 15 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_poison]
+
+ID=c_elem_air_m
+NAME=Poison Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|mt_run
+attack=45
+ARMOR=55
+
+moverate=3
+
+
+RESOURCES=3 t_magic
+
+DESIRES=i_reag_nightshade
+BloodColor=097f
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Poison Elemental
+
+ON=@Create
+COLOR={097f 1 099e 1}
+NPC=brain_monster
+FAME=20
+KARMA=-3000
+STR={700 750}
+DEX={150 160}
+INT={190 215}
+
+
+maxhits={700 1250}
+maxstam={150 160}
+maxmana={1500 1550}
+
+tag.experience=<eval {45.0 57.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag(resist_poison,1000)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={70.0 100.0}
+PARRYING={80.0 95.0}
+RESIST=200.0
+MAGERY=120.0
+POISON=25.0
+EI={90.0 100.0}
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_greater_heal 
+addspell=s_paralyze
+addspell=s_poison
+addspell=s_poison_field
+addspell=s_fireball
+addspell=s_mass_dispel
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_potion_poison, {0 1}
+ITEM=i_reag_nightshade, {10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_poison_elder]
+
+ID=c_elem_air_m
+NAME=Poison Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|mt_run
+attack=85
+ARMOR=75
+
+moverate=3
+
+
+RESOURCES=3 t_magic
+
+DESIRES=i_reag_nightshade
+BloodColor=097f
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Poison Elemental Elder
+
+ON=@Create
+COLOR={097f 1 099e 1}//colors_poison
+NPC=brain_monster
+FAME=20
+KARMA=-3000
+STR={700 750}
+DEX={150 160}
+INT={190 215}
+
+
+maxhits={1000 1600}
+maxstam={260 300}
+maxmana={1500 1550}
+
+tag.experience=<eval {65.0 75.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.hit_damage=<eval {5 15}>
+
+
+
+tag(resist_poison,1000)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={70.0 100.0}
+PARRYING={80.0 95.0}
+RESIST=200.0
+MAGERY=120.0
+POISON=25.0
+EI={90.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_greater_heal 
+addspell=s_paralyze
+addspell=s_poison
+addspell=s_poison_field
+addspell=s_fireball
+addspell=s_mass_dispel
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_potion_poison, {0 1}
+ITEM=i_reag_nightshade, {10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_poison_terror]
+
+ID=c_elem_air_m
+NAME=Poison Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|mt_run
+attack=120
+ARMOR=15
+
+moverate=3
+
+
+RESOURCES=3 t_magic
+
+DESIRES=i_reag_nightshade
+BloodColor=097f
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Poison Elemental Terror
+
+ON=@Create
+COLOR={097f 1 099e 1}//colors_poison
+NPC=brain_monster
+FAME=20
+KARMA=-3000
+STR={700 750}
+DEX={150 160}
+INT={190 215}
+
+
+maxhits={230 360}
+maxstam={150 160}
+maxmana={1500 1550}
+
+tag.experience=<eval {35.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+
+
+tag(resist_poison,1000)
+tag(resist_pierce,700)
+tag(resist_para,500)
+tag.resist_bleed=1000
+
+
+WRESTLING={70.0 100.0}
+PARRYING={80.0 95.0}
+RESIST=200.0
+MAGERY=120.0
+POISON=25.0
+EI={90.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ITEMNEWBIE=i_spellbook
+addspell=s_greater_heal 
+addspell=s_paralyze
+addspell=s_poison
+addspell=s_poison_field
+addspell=s_fireball
+addspell=s_mass_dispel
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_potion_poison, {0 1}
+ITEM=i_reag_nightshade, {10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_acid]
+
+ID=c_vortex_mage
+NAME=Acid Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|mt_run
+attack=45
+ARMOR=55
+
+moverate=3
+
+
+RESOURCES=3 t_magic
+
+DESIRES=i_reag_nightshade
+BloodColor=097f
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Acid Elemental
+
+ON=@Create
+COLOR=0637
+NPC=brain_monster
+FAME=20
+KARMA=-3000
+STR={700 750}
+DEX={150 160}
+INT={190 215}
+
+
+maxhits={1000 1600}
+maxstam={150 160}
+maxmana={1500 1550}
+
+tag.experience=<eval {45.0 57.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag(resist_poison,1000)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={70.0 100.0}
+PARRYING={80.0 95.0}
+RESIST=200.0
+MAGERY=120.0
+POISON=25.0
+EI={90.0 100.0}
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_greater_heal 
+addspell=s_paralyze
+addspell=s_poison
+addspell=s_poison_field
+addspell=s_fireball
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_potion_poison, {0 1}
+ITEM=i_reag_nightshade, {10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_acid_elder]
+
+ID=c_vortex_mage
+NAME=Acid Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|mt_run
+attack=85
+ARMOR=75
+
+moverate=3
+
+
+RESOURCES=3 t_magic
+
+DESIRES=i_reag_nightshade
+BloodColor=097f
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Acid Elemental Elder
+
+ON=@Create
+COLOR=0637
+NPC=brain_monster
+FAME=20
+KARMA=-3000
+STR={700 750}
+DEX={150 160}
+INT={190 215}
+
+
+maxhits={1000 1600}
+maxstam={260 300}
+maxmana={1500 1550}
+
+tag.experience=<eval {65.0 75.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.hit_damage=<eval {5 15}>
+
+
+
+tag(resist_poison,1000)
+
+
+tag.resist_bleed=1000
+
+
+WRESTLING={70.0 100.0}
+PARRYING={80.0 95.0}
+RESIST=200.0
+MAGERY=120.0
+POISON=25.0
+EI={90.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_greater_heal 
+addspell=s_paralyze
+addspell=s_poison
+addspell=s_poison_field
+addspell=s_fireball
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_potion_poison, {0 1}
+ITEM=i_reag_nightshade, {10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_acid_terror]
+
+ID=c_vortex_mage
+NAME=Acid Elemental
+SOUND=snd_ANIMALS_ALIGATR1
+ICON=i_pet_elem_air
+
+CAN=MT_WALK|mt_run
+attack=120
+ARMOR=15
+
+moverate=3
+
+
+RESOURCES=3 t_magic
+
+DESIRES=i_reag_nightshade
+BloodColor=097f
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_elem_terror
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Acid Elemental Terror
+
+ON=@Create
+COLOR=0637
+NPC=brain_monster
+FAME=20
+KARMA=-3000
+STR={700 750}
+DEX={150 160}
+INT={190 215}
+
+
+maxhits={230 360}
+maxstam={150 160}
+maxmana={1500 1550}
+
+tag.experience=<eval {35.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.death_damage=<eval {105 135}>
+
+
+
+tag(resist_poison,1000)
+tag(resist_pierce,700)
+tag(resist_para,500)
+tag.resist_bleed=1000
+
+
+WRESTLING={70.0 100.0}
+PARRYING={80.0 95.0}
+RESIST=200.0
+MAGERY=120.0
+POISON=25.0
+EI={90.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_light_source
+ITEMNEWBIE=i_spellbook
+addspell=s_greater_heal 
+addspell=s_paralyze
+addspell=s_poison
+addspell=s_poison_field
+addspell=s_fireball
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_potion_poison, {0 1}
+ITEM=i_reag_nightshade, {10 20 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_forrest]
+
+ID=c_CORPSER
+NAME=Forrest Elemental
+SOUND=snd_MONSTER_REAPER1
+ICON=i_pet_REAPER
+
+CAN=MT_WALK|mt_run
+attack=50
+ARMOR=60
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+
+
+BLOODCOLOR=072c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Forrest Elemental
+
+ON=@Create
+color={0232 0236}
+NPC=brain_monster
+FAME={10 20}
+KARMA=-3500
+STR={475 525}
+DEX={85 95}
+INT={85 105}
+
+
+maxhits={475 525}
+maxstam={260 300}
+maxmana=0
+
+tag.experience=<eval {25.0 29.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag(resist_poison,1000)
+tag(resist_pierce,500)
+
+tag.resist_bleed=1000
+
+
+WRESTLING={120.0 150.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+SpiritSpeak=35.0
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_shadow]
+
+ID=c_vortex_mage
+NAME=Shadow Elemental
+SOUND=snd_ELEMENTL_WATREL1
+ICON=i_pet_elem_water
+
+CAN=MT_WALK|MT_SWIM|MT_USEHANDS
+attack=65
+ARMOR=80
+
+moverate=3
+
+
+RESOURCES=8 t_MAGIC
+
+
+BLOODCOLOR=colors_blue
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_ovinovac
+TEVENTS=e_duplicator
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Elementals
+DESCRIPTION=Shadow Elemental
+
+ON=@Create
+color=07fff
+NPC=brain_monster
+FAME=10
+KARMA={-100 -1500}
+STR={550 650}
+DEX={100 110}
+INT={190 210}
+
+
+maxhits={1050 1850}
+maxstam={260 300}
+maxmana=1500
+
+tag.experience=<eval {34.0 48.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.dupecount=2
+
+
+
+tag(resist_poison,1000)
+tag(resist_para,600)
+tag(resist_summon,1000)
+tag(resist_pierce,500)
+tag.resist_bleed=1000
+
+WRESTLING={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+RESIST={85.0 100.0}
+HIDING={115.0 150.0}
+MAGERY=120.0
+EI={90.0 100.0}
+SpiritSpeak=50.0
+
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_lightning
+
+ON=@NPCRestock
+ITEM=loot_elem
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////

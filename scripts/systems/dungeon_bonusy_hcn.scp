@@ -1,0 +1,4525 @@
+/////////////////////////////////////////////////////////
+// H R O B K Y   C E R N Y C H   N U M E N O R E J C U //
+//                 (c) GM Yavanna                      //
+/////////////////////////////////////////////////////////
+
+[function f_hcn_enter]
+return 1
+
+[function f_hcn_exit]
+if !(<src.rescount(i_hcn_exit)>)
+  src.newequip(i_hcn_exit)
+endif
+
+
+[function f_hcn2_enter]
+return 1
+
+[function f_hcn2_exit]
+if !(<src.rescount(i_hcn_exit)>)
+  src.newequip(i_hcn_exit)
+endif
+
+[function f_hcn_exitRemoveThings]
+consume(25 i_hcn_clueStone)
+return 1
+
+[itemdef i_hcn_exit]
+id=i_memory
+type=t_eq_script
+name=HCN Exit
+
+on=@Create
+timer=1
+
+on=@Timer
+if (<strcmpi(<cont.region.name>,Hrobky Cernych Numenorejcu)> != 0) && (<strcmpi(<cont.region.name>,Hrobky Cernych Numenorejcu 2 Level)> != 0)
+  cont.sysMessage("<src.sex(Opustil,Opustila)> jsi hrobky.")
+  cont.f_hcn_exitRemoveThings
+  if (<strlen(<src.tag(hcn_mark)>)>)
+    cont.f_hcn_marker_removeMark
+  endif
+endif
+remove
+
+
+/////////////////////////////////////////
+
+[itemdef i_hcn_entrance_wall]
+id=03C8
+type=t_efectedByPickAxe
+
+on=@Timer
+if (dispID == 03C5)
+  dispID=03C8
+  update
+  sfx(0175)
+else
+  f_hcn_entrance_wall_crash
+endif
+return 1
+
+on=@TargOn_Item
+tag(wall_<more2>,<src.targ>)
+src.targ.type=t_hcn_entrance_wall
+src.targ.link=<uid>
+src.targ.more1=<more2>
+dialog(d_hcn_entrance_wall,<more1>)
+return 1
+
+on=@userDClick
+if (src.isGM)
+  dialog(d_hcn_entrance_wall,<more1>)
+endif
+return 1
+
+[function f_hcn_entrance_wall_crash]
+dispID=03C5
+sfx(04cf)
+update
+timer=<more1>
+tag(wall_01).moreX=<tag(wall_01).moreX>-2
+tag(wall_01).moreY=<tag(wall_01).moreY>+1
+tag(wall_01).move(-2,1,0,0)
+tag(wall_01).dispID=03BA
+tag(wall_01).timer=<more1>
+tag(wall_01).update
+tag(wall_02).dispID=03BF
+tag(wall_02).timer=<more1>
+tag(wall_02).update
+
+[typedef t_hcn_entrance_wall]
+on=@Timer
+if (dispID == 03C8)
+    link.f_hcn_entrance_wall_crash
+elseif (<more1> == 01)
+  move(2,-1,0,0)
+  dispID=03C8
+  update
+elseif (<more1> == 02)
+  dispID=03C8
+  update
+endif
+return 1
+
+on=@userDClick
+if (src.isGM)
+  link.dialog(d_hcn_entrance_wall,<link.more1>)
+endif
+return 1
+
+
+[dialog d_hcn_entrance_wall]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,290)
+argo.tag(vyska,127)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Zboritelna Zed")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Link 1:")
+argo.button(lastxpos+88,lastypos,0fa5,0fa7,1,0,3)	//nastav link prvni zdi
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"Link 2:")
+argo.button(lastxpos+88,lastypos+(d_def_radek_vyska),0fa5,0fa7,1,0,4)	//nastav link druhy zdi
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"Timer/s:")
+
+argo.settext(1001,"<?eval argv(0)?>")	//doba otevreni dveri v s (more1)
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,<tag(wall_01)>)
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_readcolor>,<tag(wall_02)>)
+argo.textentry(lastxpos,lastypos+(2*d_def_radek_vyska),198,<d_def_radek_vyska>,textcolor,1,1001)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_hcn_entrance_wall button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes dobu znovu-postaveni zdi.")
+if (<eval argtxt(1)> > 0)
+ more1=<argtxt(1)>
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi dobu pro znovu-postaveni zdi! Ponechana puvodni hodnota.")
+endif
+
+on=3
+more2=1
+target("Zamer prvni zed.")
+
+on=4
+more2=2
+target("Zamer druhou zed.")
+
+
+[typedef t_efectedByPickAxe]
+on=@userDclick
+if (src.isGM)
+  src.sysMessage("This item triggers timer by using pickaxe on it.")
+endif
+
+[itemdef i_hcn_firstClueWall]
+id=03C8
+type=t_efectedByPickAxe
+name=Podivna zed
+
+on=@Create
+attr=010
+
+on=@Timer
+if (more1 == 1)
+  if (dispID==03c8)
+    sfx(04cf)
+    dispID=03c5
+    src.sysMessage("A vida! Zed povolila a zjevne v sobe neco skryva.")
+    update
+  endif
+  more1=0
+  timer=3600
+else
+  dispID=03c8
+  update
+endif
+return 1
+
+on=@userDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (dispID==03c5)
+  src.sysMessage("Ve zdi jsi <src.sex(objevil,objevila)> kousek pergemenu.")
+  tag(clueControler).f_hcn_checkClues
+  sfx(79)
+  dialog(d_hcn_firstClueWall)
+  if (<timer> < 600)
+    timer=3000
+  endif
+  return 1
+endif
+
+[itemdef i_hcn_secondClueMat]
+id=011E7
+name=woven mat
+
+on=@Create
+attr=010
+
+on=@userDclick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+src.sysMessage("Pod rohozi jsi <src.sex(objevil,objevila)> kousek pergamenu.")
+tag(clueControler).f_hcn_checkClues
+sfx(79)
+dialog(d_hcn_secondClueMat)
+return 1
+
+[dialog d_hcn_firstClueWall]
+180,100
+argo.resizepic(0,0,9300,80,120)
+argo.texta(30,20,<d_def_readcolor>,"Nastav")
+argo.tilepichue(40,70,<hcn_clueIconA[<eval more2>]>)
+
+[dialog d_hcn_secondClueMat]
+260,100
+argo.resizepic(0,0,9300,62,120)
+argo.texta(1,20,<d_def_readcolor>,"eni  mec")
+argo.tilepichue(11,70,<hcn_clueIconA[<eval more2>]>)
+
+[dialog d_hcn_thirdClueBookCase]
+322,100
+argo.resizepic(0,0,9300,80,120)
+argo.texta(1,20,<d_def_readcolor>,"hanismu:")
+argo.tilepichue(0,70,<hcn_clueIconA[<eval more2>]>)
+
+[itemdef i_hcn_clueBook]
+id=i_book_of_truth
+name=Poznamky..
+type=t_normal
+
+on=@Create
+attr=010
+
+on=@userDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+sfx(85)
+dialog(d_hcn_clueBook)
+return 1
+
+[Dialog d_hcn_clueBook]
+180,100
+page 0
+argo.gumppic(0,0,01F4)
+
+page 1
+argo.button(356,0,01f6,01f6,0,2,0)
+
+argo.tilepichue(95,16,6173)
+argo.tilepichue(25,75,<hcn_clueIconA[0]>)
+argo.tilepichue(50,75,<hcn_clueIconB[1]>)
+argo.tilepichue(75,75,<hcn_clueIconA[2]>)
+argo.tilepichue(100,75,<hcn_clueIconB[3]>)
+argo.tilepichue(125,75,<hcn_clueIconA[4]>)
+argo.tilepichue(150,75,<hcn_clueIconB[5]>)
+
+argo.tilepichue(25,105,<hcn_clueIconA[6]>)
+argo.tilepichue(50,105,<hcn_clueIconB[7]>)
+argo.tilepichue(75,105,<hcn_clueIconA[8]>)
+argo.tilepichue(100,105,<hcn_clueIconB[9]>)
+argo.tilepichue(125,105,<hcn_clueIconA[10]>)
+argo.tilepichue(150,105,<hcn_clueIconB[11]>)
+
+argo.tilepichue(25,135,<hcn_clueIconA[12]>)
+argo.tilepichue(50,135,<hcn_clueIconB[13]>)
+argo.tilepichue(75,135,<hcn_clueIconA[14]>)
+argo.tilepichue(100,135,<hcn_clueIconB[15]>)
+argo.tilepichue(125,135,<hcn_clueIconA[16]>)
+argo.tilepichue(150,135,<hcn_clueIconB[17]>)
+
+argo.tilepichue(25,165,<hcn_clueIconA[18]>)
+argo.tilepichue(50,165,<hcn_clueIconB[19]>)
+argo.tilepichue(75,165,<hcn_clueIconA[20]>)
+argo.tilepichue(100,165,<hcn_clueIconB[21]>)
+argo.tilepichue(125,165,<hcn_clueIconA[22]>)
+argo.tilepichue(150,165,<hcn_clueIconB[23]>)
+
+
+argo.tilepichue(286,16,6174)
+argo.tilepichue(215,75,<hcn_clueIconA[6]>)
+argo.tilepichue(240,75,<hcn_clueIconB[9]>)
+argo.tilepichue(265,75,<hcn_clueIconA[12]>)
+argo.tilepichue(290,75,<hcn_clueIconB[15]>)
+argo.tilepichue(315,75,<hcn_clueIconA[18]>)
+argo.tilepichue(340,75,<hcn_clueIconB[21]>)
+
+argo.tilepichue(215,105,<hcn_clueIconA[24]>)
+argo.tilepichue(240,105,<hcn_clueIconB[5]>)
+argo.tilepichue(265,105,<hcn_clueIconA[8]>)
+argo.tilepichue(290,105,<hcn_clueIconB[11]>)
+argo.tilepichue(315,105,<hcn_clueIconA[14]>)
+argo.tilepichue(340,105,<hcn_clueIconB[17]>)
+
+argo.tilepichue(215,135,<hcn_clueIconA[20]>)
+argo.tilepichue(240,135,<hcn_clueIconB[23]>)
+argo.tilepichue(265,135,<hcn_clueIconA[2]>)
+argo.tilepichue(290,135,<hcn_clueIconB[5]>)
+argo.tilepichue(315,135,<hcn_clueIconA[8]>)
+argo.tilepichue(340,135,<hcn_clueIconB[11]>)
+
+argo.tilepichue(215,165,<hcn_clueIconA[14]>)
+argo.tilepichue(240,165,<hcn_clueIconB[17]>)
+argo.tilepichue(265,165,<hcn_clueIconA[20]>)
+argo.tilepichue(290,165,<hcn_clueIconB[23]>)
+argo.tilepichue(315,165,<hcn_clueIconA[9]>)
+argo.tilepichue(340,165,<hcn_clueIconB[12]>)
+
+
+page 2
+argo.button(0,0,01f5,01f5,0,1,0)
+argo.button(356,0,01f6,01f6,0,3,0)
+argo.tilepichue(95,16,6175)
+argo.tilepichue(25,75,<hcn_clueIconA[10]>)
+argo.tilepichue(50,75,<hcn_clueIconB[14]>)
+argo.tilepichue(75,75,<hcn_clueIconA[18]>)
+argo.tilepichue(100,75,<hcn_clueIconB[22]>)
+argo.tilepichue(125,75,<hcn_clueIconA[1]>)
+argo.tilepichue(150,75,<hcn_clueIconB[4]>)
+
+argo.tilepichue(25,105,<hcn_clueIconA[8]>)
+argo.tilepichue(50,105,<hcn_clueIconB[12]>)
+argo.tilepichue(75,105,<hcn_clueIconA[16]>)
+argo.tilepichue(100,105,<hcn_clueIconB[20]>)
+argo.tilepichue(125,105,<hcn_clueIconA[24]>)
+argo.tilepichue(150,105,<hcn_clueIconB[5]>)
+
+argo.tilepichue(25,135,<hcn_clueIconA[9]>)
+argo.tilepichue(50,135,<hcn_clueIconB[13]>)
+argo.tilepichue(75,135,<hcn_clueIconA[17]>)
+argo.tilepichue(100,135,<hcn_clueIconB[21]>)
+argo.tilepichue(125,135,<hcn_clueIconA[0]>)
+argo.tilepichue(150,135,<hcn_clueIconB[20]>)
+
+argo.tilepichue(25,165,<hcn_clueIconA[7]>)
+argo.tilepichue(50,165,<hcn_clueIconB[11]>)
+argo.tilepichue(75,165,<hcn_clueIconA[15]>)
+argo.tilepichue(100,165,<hcn_clueIconB[19]>)
+argo.tilepichue(125,165,<hcn_clueIconA[2]>)
+argo.tilepichue(150,165,<hcn_clueIconB[6]>)
+
+
+argo.tilepichue(286,16,6176)
+argo.tilepichue(215,75,<hcn_clueIconA[16]>)
+argo.tilepichue(240,75,<hcn_clueIconB[21]>)
+argo.tilepichue(265,75,<hcn_clueIconA[1]>)
+argo.tilepichue(290,75,<hcn_clueIconB[6]>)
+argo.tilepichue(315,75,<hcn_clueIconA[11]>)
+argo.tilepichue(340,75,<hcn_clueIconB[16]>)
+
+argo.tilepichue(215,105,<hcn_clueIconA[11]>)
+argo.tilepichue(240,105,<hcn_clueIconB[16]>)
+argo.tilepichue(265,105,<hcn_clueIconA[21]>)
+argo.tilepichue(290,105,<hcn_clueIconB[2]>)
+argo.tilepichue(315,105,<hcn_clueIconA[7]>)
+argo.tilepichue(340,105,<hcn_clueIconB[12]>)
+
+argo.tilepichue(215,135,<hcn_clueIconA[3]>)
+argo.tilepichue(240,135,<hcn_clueIconB[8]>)
+argo.tilepichue(265,135,<hcn_clueIconA[13]>)
+argo.tilepichue(290,135,<hcn_clueIconB[18]>)
+argo.tilepichue(315,135,<hcn_clueIconA[23]>)
+argo.tilepichue(340,135,<hcn_clueIconB[4]>)
+
+argo.tilepichue(215,165,<hcn_clueIconA[9]>)
+argo.tilepichue(240,165,<hcn_clueIconB[14]>)
+argo.tilepichue(265,165,<hcn_clueIconA[19]>)
+argo.tilepichue(290,165,<hcn_clueIconB[24]>)
+argo.tilepichue(315,165,<hcn_clueIconA[4]>)
+argo.tilepichue(340,165,<hcn_clueIconB[9]>)
+
+
+page 3
+argo.button(0,0,01f5,01f5,0,2,0)
+argo.tilepichue(95,16,6177)
+argo.tilepichue(25,75,<hcn_clueIconA[2]>)
+argo.tilepichue(50,75,<hcn_clueIconB[8]>)
+argo.tilepichue(75,75,<hcn_clueIconA[14]>)
+argo.tilepichue(100,75,<hcn_clueIconB[20]>)
+argo.tilepichue(125,75,<hcn_clueIconA[1]>)
+argo.tilepichue(150,75,<hcn_clueIconB[7]>)
+
+argo.tilepichue(25,105,<hcn_clueIconA[13]>)
+argo.tilepichue(50,105,<hcn_clueIconB[19]>)
+argo.tilepichue(75,105,<hcn_clueIconA[0]>)
+argo.tilepichue(100,105,<hcn_clueIconB[6]>)
+argo.tilepichue(125,105,<hcn_clueIconA[12]>)
+argo.tilepichue(150,105,<hcn_clueIconB[18]>)
+
+argo.tilepichue(25,135,<hcn_clueIconA[24]>)
+argo.tilepichue(50,135,<hcn_clueIconB[5]>)
+argo.tilepichue(75,135,<hcn_clueIconA[11]>)
+argo.tilepichue(100,135,<hcn_clueIconB[17]>)
+argo.tilepichue(125,135,<hcn_clueIconA[23]>)
+argo.tilepichue(150,135,<hcn_clueIconB[4]>)
+
+argo.tilepichue(25,165,<hcn_clueIconA[10]>)
+argo.tilepichue(50,165,<hcn_clueIconB[16]>)
+argo.tilepichue(75,165,<hcn_clueIconA[22]>)
+argo.tilepichue(100,165,<hcn_clueIconB[3]>)
+argo.tilepichue(125,165,<hcn_clueIconA[9]>)
+argo.tilepichue(150,165,<hcn_clueIconB[15]>)
+
+[function f_hcn_checkClues]
+if (<link.timer> < 3600)
+  link.timer=4000
+endif
+if (<more2>==<link.more2>)
+  return 1
+elseif (<link.more2> ==0)
+  doRand 8
+    f_hcn_clueSwitch(0,2,4)
+    f_hcn_clueSwitch(1,3,5)
+    f_hcn_clueSwitch(6,8,10)
+    f_hcn_clueSwitch(7,9,11)
+    f_hcn_clueSwitch(12,14,16)
+    f_hcn_clueSwitch(13,15,17)
+    f_hcn_clueSwitch(18,20,22)
+    f_hcn_clueSwitch(19,21,23)
+  enddo
+elseif (<link.more2> ==1)
+  doRand 8
+    f_hcn_clueSwitch(6,12,18)
+    f_hcn_clueSwitch(9,15,21)
+    f_hcn_clueSwitch(24,8,14)
+    f_hcn_clueSwitch(5,11,17)
+    f_hcn_clueSwitch(20,2,8)
+    f_hcn_clueSwitch(23,5,11)
+    f_hcn_clueSwitch(14,20,9)
+    f_hcn_clueSwitch(17,23,12)
+  enddo
+elseif (<link.more2> ==2)
+  doRand 8
+    f_hcn_clueSwitch(10,18,1)
+    f_hcn_clueSwitch(14,22,4)
+    f_hcn_clueSwitch(8,16,24)
+    f_hcn_clueSwitch(12,20,5)
+    f_hcn_clueSwitch(9,17,0)
+    f_hcn_clueSwitch(13,21,20)
+    f_hcn_clueSwitch(7,15,2)
+    f_hcn_clueSwitch(11,19,6)
+  enddo
+elseif (<link.more2> ==3)
+  doRand 8
+    f_hcn_clueSwitch(16,1,11)
+    f_hcn_clueSwitch(21,6,16)
+    f_hcn_clueSwitch(11,21,7)
+    f_hcn_clueSwitch(16,2,12)
+    f_hcn_clueSwitch(3,13,23)
+    f_hcn_clueSwitch(8,18,4)
+    f_hcn_clueSwitch(9,19,4)
+    f_hcn_clueSwitch(14,24,9)
+  enddo
+elseif (<link.more2> ==4)
+  doRand 8
+    f_hcn_clueSwitch(2,14,1)
+    f_hcn_clueSwitch(8,20,7)
+    f_hcn_clueSwitch(13,0,12)
+    f_hcn_clueSwitch(19,6,18)
+    f_hcn_clueSwitch(24,11,23)
+    f_hcn_clueSwitch(5,17,4)
+    f_hcn_clueSwitch(10,22,9)
+    f_hcn_clueSwitch(16,3,15)
+  enddo
+endif
+more2=<link.more2>
+
+[function f_hcn_clueSwitch]
+tag(linkClue_1).more2=<argv(0)>
+tag(linkClue_2).more2=<argv(1)>
+tag(linkClue_3).more2=<argv(2)>
+
+
+[typedef t_hcn_clueControler]
+on=@userDClick
+if (src.isGM)
+  dialog(d_hcn_clueControler)
+  return 1
+endif
+
+on=@TargOn_Item
+if (<moreX>)
+  tag(linkClue_<eval moreX>,<src.targ>)
+  src.targ.tag(clueControler,<uid>)
+  moreX=0
+else
+  link=<src.targ>
+endif
+dialog(d_hcn_clueControler)
+return 1
+
+[dialog d_hcn_clueControler]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,290)
+argo.tag(vyska,152)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,4,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Prehazovac Indicii")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Switcher:")
+argo.button(lastxpos+88,lastypos,0fa5,0fa7,1,0,2)	//nastav switcher
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"Indicie 1:")
+argo.button(lastxpos+88,lastypos+(d_def_radek_vyska),0fa5,0fa7,1,0,3)	//nastav link na prvni indicii
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"Indicie 2:")
+argo.button(lastxpos+88,lastypos+(2*d_def_radek_vyska),0fa5,0fa7,1,0,4)	//nastav link na druhou indicii
+argo.texta(lastxpos,lastypos+(3*d_def_radek_vyska),<d_def_writecolor>,"Indicie 3:")
+argo.button(lastxpos+88,lastypos+(3*d_def_radek_vyska),0fa5,0fa7,1,0,5)	//nastav link na treti indicii
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,<link>)
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_readcolor>,<tag(linkClue_1)>)
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_readcolor>,<tag(linkClue_2)>)
+argo.texta(lastxpos,lastypos+(3*d_def_radek_vyska),<d_def_readcolor>,<tag(linkClue_3)>)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_hcn_clueControler button]
+on=0
+src.sysMessage("Hodnoty ponechany nezmeneny.")
+
+on=1
+src.sysMessage("OK")
+
+on=2
+target("Zamer switcher naslapek")
+
+on=3
+moreX=1
+target("Zamer objekt s prvni indicii.")
+
+on=4
+moreX=2
+target("Zamer objekt s druhou indici.")
+
+on=5
+moreX=3
+target("Zamer objekt s treti indici.")
+
+
+[defnames def_hcn_clueIconsA]
+hcn_clueIconA[0]	2966
+hcn_clueIconA[1]	2980
+hcn_clueIconA[2]	2982
+hcn_clueIconA[3]	2984
+hcn_clueIconA[4]	2986
+hcn_clueIconA[5]	2988
+hcn_clueIconA[6]	2990
+hcn_clueIconA[7]	2992
+hcn_clueIconA[8]	2994
+hcn_clueIconA[9]	2996
+hcn_clueIconA[10]	2998
+hcn_clueIconA[11]	3000
+hcn_clueIconA[12]	3004
+hcn_clueIconA[13]	3006
+hcn_clueIconA[14]	3008
+hcn_clueIconA[15]	3010
+hcn_clueIconA[16]	3012
+hcn_clueIconA[17]	3014
+hcn_clueIconA[18]	3016
+hcn_clueIconA[19]	3018
+hcn_clueIconA[20]	3020
+hcn_clueIconA[21]	3022
+hcn_clueIconA[22]	3084
+hcn_clueIconA[23]	3086
+hcn_clueIconA[24]	3140
+
+
+[defnames def_hcn_clueIconsB]
+hcn_clueIconB[0]	2965
+hcn_clueIconB[1]	2979
+hcn_clueIconB[2]	2981
+hcn_clueIconB[3]	2983
+hcn_clueIconB[4]	2985
+hcn_clueIconB[5]	2987
+hcn_clueIconB[6]	2989
+hcn_clueIconB[7]	2991
+hcn_clueIconB[8]	2993
+hcn_clueIconB[9]	2995
+hcn_clueIconB[10]	2997
+hcn_clueIconB[11]	2999
+hcn_clueIconB[12]	3003
+hcn_clueIconB[13]	3005
+hcn_clueIconB[14]	3007
+hcn_clueIconB[15]	3009
+hcn_clueIconB[16]	3011
+hcn_clueIconB[17]	3013
+hcn_clueIconB[18]	3015
+hcn_clueIconB[19]	3017
+hcn_clueIconB[20]	3019
+hcn_clueIconB[21]	3021
+hcn_clueIconB[22]	3083
+hcn_clueIconB[23]	3085
+hcn_clueIconB[24]	3139
+
+
+[defnames def_hcn_clueIconsC]
+hcn_clueIconC[0]	3676
+hcn_clueIconC[1]	3679
+hcn_clueIconC[2]	3682
+hcn_clueIconC[3]	3685
+hcn_clueIconC[4]	3688
+
+
+
+
+
+
+///////////////////////////////////////
+//  R U I N E D   B O O K   C A S E  //
+///////////////////////////////////////
+
+[itemdef i_hcn_ruinedBookCase_1]
+id=3092
+Name=Rozpadla Knihovna
+type=t_book
+
+on=@create
+tag(kniha_1,kniha_054Gondor)
+tag(kniha_2,kniha_081Gondor)
+attr=010
+moreX=1
+
+on=@userDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (src.isGM)
+  dialog(d_hcn_ruinedBookCase_prop)
+endif
+if (moreX == 1)
+  src.sysMessage("<src.sex(Nasel,Nasla)> jsi pomerne zachovalou knihu.")
+elseif (moreX == 3)
+  tag(clueControler).f_hcn_checkClues
+  sfx(79)
+  dialog(d_hcn_thirdClueBookCase)
+  timer=600
+  return 1
+else
+  src.sysMessage("<src.sex(Nasel,Nasla)> jsi dalsi knihu, ktera prezila spoust co se tu odehrala.")
+endif
+timer=600
+more1=<tag(kniha_<eval moreX>)>
+moreX=<moreX>+1
+
+on=@Timer
+name=ruined bookcase
+moreX=1
+tag(bookCase_1).name=ruined bookcase
+tag(bookCase_1).more2=1
+tag(bookCase_2).name=ruined bookcase
+tag(bookCase_2).more2=1
+tag(bookCase_3).name=ruined bookcase
+tag(bookCase_3).more2=1
+tag(bookCase_4).name=hromada knih
+tag(bookCase_4).more2=1
+tag(bookCase_5).name=hromada knih
+tag(bookCase_5).more2=1
+return 1
+
+on=@TargOn_Item
+tag(bookCase_<eval moreX>,<src.targ>)
+dialog(d_hcn_ruinedBookCase_prop)
+return 1
+
+
+[dialog d_hcn_ruinedBookCase_prop]
+arg(textcolor,52)
+argo.SetLocation=285,250
+
+argo.tag(sirka,290)
+argo.tag(vyska,172)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,5,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Kontrola Jmen knihoven.")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Knihovna 1:")
+argo.button(lastxpos+88,lastypos,0fa5,0fa7,1,0,2)	//nastav link na prvni knihovnu
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_writecolor>,"Knihovna 2:")
+argo.button(lastxpos+88,lastypos+(d_def_radek_vyska),0fa5,0fa7,1,0,3)	//nastav link na druhou knihovnu
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_writecolor>,"Knihovna 3:")
+argo.button(lastxpos+88,lastypos+(2*d_def_radek_vyska),0fa5,0fa7,1,0,4)	//nastav link na treti knihovnu
+argo.texta(lastxpos,lastypos+(3*d_def_radek_vyska),<d_def_writecolor>,"Hromada 1:")
+argo.button(lastxpos+88,lastypos+(3*d_def_radek_vyska),0fa5,0fa7,1,0,5)	//nastav link na prvni hromadu knih
+argo.texta(lastxpos,lastypos+(4*d_def_radek_vyska),<d_def_writecolor>,"Hromada 2:")
+argo.button(lastxpos+88,lastypos+(4*d_def_radek_vyska),0fa5,0fa7,1,0,6)	//nastav link na druhou hromadu knih
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,<tag(bookCase_1)>)
+argo.texta(lastxpos,lastypos+(d_def_radek_vyska),<d_def_readcolor>,<tag(bookCase_2)>)
+argo.texta(lastxpos,lastypos+(2*d_def_radek_vyska),<d_def_readcolor>,<tag(bookCase_3)>)
+argo.texta(lastxpos,lastypos+(3*d_def_radek_vyska),<d_def_readcolor>,<tag(bookCase_4)>)
+argo.texta(lastxpos,lastypos+(4*d_def_radek_vyska),<d_def_readcolor>,<tag(bookCase_5)>)
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_hcn_ruinedBookCase_prop button]
+on=1
+src.sysMessage("OK")
+
+on=2
+moreX=1
+target("Oznac prvni knihovnu.")
+
+on=3
+moreX=2
+target("Oznac druhou knihovnu.")
+
+on=4
+moreX=3
+target("Oznac treti knihovnu.")
+
+on=5
+moreX=4
+target("Oznac prvni hromadu knih.")
+
+on=6
+moreX=5
+target("Oznac druhou hromadu knih.")
+
+[itemdef i_hcn_ruinedBookCase_2]
+id=3092
+Name=Rozpadla Knihovna
+type=t_book
+
+on=@create
+tag(kniha_1,kniha_053Gondor)
+tag(kniha_2,kniha_035Gondor)
+tag(kniha_3,kniha_025Gondor)
+attr=010
+more2=1
+events=+t_hcn_ruinedBookCase
+
+[itemdef i_hcn_ruinedBookCase_3]
+id=3093
+Name=Rozpadla Knihovna
+type=t_book
+
+on=@create
+tag(kniha_1,kniha_034Gondor)
+tag(kniha_2,kniha_036Gondor)
+tag(kniha_3,kniha_026Gondor)
+attr=010
+more2=1
+events=+t_hcn_ruinedBookCase
+
+[itemdef i_hcn_ruinedBookCase_4]
+id=3093
+Name=Rozpadla Knihovna
+type=t_book
+
+on=@create
+tag(kniha_1,kniha_028Gondor)
+tag(kniha_2,kniha_037Gondor)
+tag(kniha_3,kniha_028Gondor)
+attr=010
+more2=1
+events=+t_hcn_ruinedBookCase
+
+[itemdef i_hcn_ruinedBookCase_5]
+id=3094
+Name=Hromada Knih
+type=t_book
+
+on=@create
+tag(kniha_1,kniha_047Gondor)
+tag(kniha_2,kniha_049Gondor)
+tag(kniha_3,kniha_hcn_vstup)
+attr=010
+more2=1
+events=+t_hcn_ruinedBookCase
+
+[itemdef i_hcn_ruinedBookCase_6]
+id=3094
+Name=Hromada Knih
+type=t_book
+
+on=@create
+tag(kniha_1,kniha_067Gondor)
+tag(kniha_2,kniha_031Gondor)
+tag(kniha_3,kniha_038Gondor)
+attr=010
+more2=1
+events=+t_hcn_ruinedBookCase
+
+[typedef t_hcn_ruinedBookCase]
+on=@userDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (more2 == 1)
+  src.sysMessage("Hmm... v knihovne se skryva pomerne zachovala kniha.")
+else
+  src.sysMessage("<src.sex(Nasel,Nasla)> jsi knihu, ktera prezila spoust co se tu odehrala.")
+endif
+if (<more2> < 3)
+  more1=<tag(kniha_<eval more2>)>
+  more2=<more2>+1
+endif
+
+
+[BOOK kniha_hcn_vstup]
+PAGES=23
+TITLE="Kronika"
+AUTHOR=neznamy..
+
+[BOOK kniha_hcn_vstup 1]
+
+Kronika spravce hrobek
+
+
+  Pameti a poznamky.
+
+
+[BOOK kniha_hcn_vstup 2]
+den 44
+Hrobky jsou zajisteny,
+nikdo jiny uz tam
+neprojde. Mame prvni
+objet, Ihrael si
+zapomnel v kobce
+svacinu a nevedel o
+aktivaci pasti.
+
+[BOOK kniha_hcn_vstup 3]
+den 49
+Prace pokracuji.
+Necromanti zaklinaji
+prostory v kobkach hned
+jak prace skonci.
+Jsou velmi peclivi.
+Vsichni delnici si
+strezi sve svaciny.
+
+[BOOK kniha_hcn_vstup 4]
+den 56
+Prace v poslednich dnech
+pokracuji pomalu.
+Delnici jsou stale vice
+ospali a vystraseni.
+Chodbami se zacinaji
+rozlehat neprijemne
+zvuky. Sice jsem
+zkousel chlapy
+
+[BOOK kniha_hcn_vstup 5]
+presvedcit, ze na
+ne jen pusobi
+prepracovani a unava,
+ale zjevne to moc
+nezabralo a klid do
+jejich upocenych tel
+to nevneslo.
+
+Srabi ...
+
+[BOOK kniha_hcn_vstup 6]
+den 58
+Za posledni ctyri dny
+se toho mnoho nestalo.
+Prace probihaly kl...
+
+[BOOK kniha_hcn_vstup 7]
+Neco sem zaslech a
+odesel jsem...
+jinam...
+
+Nejspis to byl jen
+delnik co se prastil
+kladivem...
+
+[BOOK kniha_hcn_vstup 8]
+... do hlavy ...
+
+.. petkrat ...
+
+Jsem si naprosto
+jisty, ze nemam
+strach... Jen obavy...
+
+...o sve muze.
+
+
+[BOOK kniha_hcn_vstup 9]
+den 65
+Delnici venuji stale
+narustajicim ozvenam
+zbytecne velkou
+pozornost. Dokonce se
+mi zda, ze si prestali
+peclive hlidat
+svaciny. To nemuze
+dopadnout dobre.
+
+[BOOK kniha_hcn_vstup 10]
+den 71
+Po nehode pri
+spousteni mechanismu
+pasti v sektoru Z4
+jsme ztratili polovinu
+muzu. Z druhe pulky
+se polovina vzdala
+honorare a odesli.
+Bohuzel jen nedaleko
+
+[BOOK kniha_hcn_vstup 11]
+do pouste, kde je
+velmi hbite dohnali
+rozzureni necromanti.
+
+Nevim jak ostatni,
+ale ja tu urcite
+zustavam.
+
+[BOOK kniha_hcn_vstup 12]
+den 82
+Cele druhe podlazi je
+nyni hotove a
+zapecetene. Plany byly
+zniceny a nikdo by jiz
+nemel hrobky rusit.
+
+[BOOK kniha_hcn_vstup 13]
+den 89
+Trem delnikum se
+ztratily svaciny,
+dokonce odmitali dale
+pracovat, dokud 
+nedostanou nahradu.
+Vzhledem k ubytku
+pracovnich sil ted
+mame jidla dost, tak
+
+[BOOK kniha_hcn_vstup 14]
+jsem jim vyhovel.
+Od zaceleni spodniho
+patra tu panuje
+uvolnenejsi nalada
+a prace znovu zacinaji
+nabirat odpovidajici
+tempo.
+
+[BOOK kniha_hcn_vstup 15]
+den 100
+Dnes se nam podarilo
+nainstalovat opravdu
+rafinovanou past. Skoda,
+ze se o nich nesmim
+zminit. Rad bych znal
+navrhare techle veci.
+Kdyby to nebylo urceno
+k vrazdeni nevinnych,
+
+[BOOK kniha_hcn_vstup 16]
+rodinu zivicich, ve
+velmi tezkych podminkach
+pracujicich a lacnych
+vykradacu hrobek, musel
+bych toho cloveka
+obdivovat...
+Byl-li to vubec clovek.
+
+[BOOK kniha_hcn_vstup 17]
+den 112
+Zitra dostaneme tyden
+volno, vypada to na
+klidny den. Neni moc
+prace, staci po sobe
+trochu uklidit a
+zavrit vchod.
+
+[BOOK kniha_hcn_vstup 18]
+den 120
+HRUZA ! Nekdo se
+proplizil kolem strazi
+a dostal se do kobky !
+Alespon nam ozkouseli
+nektere pasti.
+Presto se jim vsak
+podarilo ukrast vse
+co dostali ze sten.
+
+[BOOK kniha_hcn_vstup 19]
+den 121
+Po peclivejsim prozkoumani
+stavu a konzultaci s
+architektem se rozhodlo,
+ze zazdime vchod. Musim
+se pochvalit, nebot to
+byl muj napad. V tehle
+pustine si kazdy hledi,
+aby mel dost jidla,
+
+[BOOK kniha_hcn_vstup 20]
+tezko s sebou potahne
+naradi na bourani zdi.
+Teda kdyby vubec vedel,
+kde zacit.
+
+[BOOK kniha_hcn_vstup 21]
+den 129
+Podarilo se nam opravit
+stare pasti a
+zbudovat znovuaktivacni
+system. Tahle technika
+velmi sikovne vyuziva
+podzemni vody. Je to
+vskutku rafinovana
+vec, koho by napadlo
+
+[BOOK kniha_hcn_vstup 22]
+podobny mechanismus
+postavit v pousti ! Ale 
+pracuje to skvele.
+Vazne bych toho
+technika rad poznal.
+Treba by u me moh 
+pracovat... Podminky
+mam myslim si vyborne,
+svaciny davam
+
+[BOOK kniha_hcn_vstup 23]
+pravidelne i s
+prilohou a nejvykonnejsi
+delnici dostanou
+i pridano.
+
+... ten by jiste
+dostal pridano.
+
+[BOOK kniha_hcn_vstup 24]
+den 141
+Posledni technika je na
+miste a zacala se navazet
+vyzdoba. V zivote jsem
+nevidel tolik jmeni
+pohromade. Vcelku jsem se
+divil, kdyz jediny muz
+zacal snaset veskere
+cennosti hluboko do
+
+[BOOK kniha_hcn_vstup 25]
+hrobky. To musel byt 
+tvurce. Zrejme je v celem
+systemu pasti logika,
+ktera umoznuje projit
+az zpet k hrobkam.
+Me tam uz nikdo nedostane
+Tedy ne ze bych se bal,
+ale co bych tam ted
+tak asi videl ? Musi
+
+[BOOK kniha_hcn_vstup 26]
+to tam byt stejne,
+jako jsme to tam
+nechavali. pred nekolika
+mesici. Vyjma nekolika
+povozu vyzdob, drahych
+kamenu, par pytlu
+zlata a starych velmi
+cennych zbroji...
+
+[BOOK kniha_hcn_vstup 27]
+den 150
+Nikdy bych nerekl, ze
+budou posledni detaily
+trvat tak dlouho...
+No jdu si zabalit,
+uz tady toho moc k
+pozorovani neni a za
+tyden mame dalsi praci.
+
+[BOOK kniha_hcn_vstup 28]
+
+POZN: Hlavne tady ten
+denik nesmim zapomenout.
+To by mi tak jeste
+schazelo.
+
+
+
+/////////////////////////////////
+//  S P A W N I N G   R U N E  //
+/////////////////////////////////
+
+[itemdef i_hcn_masSpawnerPad]
+id=i_rune_alchem_2
+name=Popsana Dlazdice
+
+on=@create
+tag(expireTimer,120)	// defaultni nastaveni znovuaktivovani spawnu za 120s
+moreX=3		// defaultne se bude dlazdice snazit spawnout na kazdem spawnu 3 monstra
+moreY=2		// prodleva mezi jednotlivymi spawny je defaultne 2s
+attr=010
+
+on=@Step
+if (<src.flags>&statf_dead)
+  return 1
+endif
+if (src.isGM)
+  return 1
+elseif (f_hcn_masSpawnerIsGuarded)
+  return 1
+elseif !(src.npc)
+  f_hcn_masSpawnLaunch
+endif
+
+on=@Timer
+//more1L	//urcuje, kolikatej spawn ted resim
+//more1H	//kolikaty jedu kolo spawnu (tj. mam spawnovat 3x, tak more1H urcuje, po kolikaty zrovna spawnuju pocinaje 1).
+if !(safe.tag(pocetSpawnu))
+  more1=0
+  return 1
+endif
+if (<safe.tag(expire)>)
+  tag.remove(expire)
+  more1=0
+  more2=0
+  return 1
+endif
+if (<eval more1L> == <tag(pocetSpawnu)>)
+  more1L=0
+  more1H=<more1H>+1
+  if (<more1H> == <moreX>+1) // uz dospawnoval, nastavuju hodnoty
+    more2=1
+    f_hcn_masSpawnCancel
+    tag(expire,1)
+    timer=<tag(expireTimer)>
+    return 1
+  else
+    finduid(<tag(spawn_<eval more1L>)>).timer=0
+  endif
+elseif (<eval more1H> == 1)	// jedu prvni kolo, je potreba nastavit spawny tak, aby se nam vubec spawnovaly
+  finduid(<tag(spawn_<eval more1L>)>).tag(masSpawn,1)
+  finduid(<tag(spawn_<eval more1L>)>).timer=0
+else
+  finduid(<tag(spawn_<eval more1L>)>).timer=0
+endif
+more1L=<more1L>+1
+timer=<moreY>
+return 1
+
+on=@userDClick
+if (src.isGM)
+  dialog(d_hcn_masSpawnerPad,<tag(pocetSpawnu)>)
+  return 1
+endif
+
+on=@TargOn_Item
+if (src.targ.type==t_spawn_char)
+  tag(spawn_<eval tag(pocetSpawnu)>,<src.targ>)
+  tag(pocetSpawnu,<eval <tag(pocetSpawnu)>+1>)
+  src.targ.events=+t_hcn_masSpawn
+  src.targ.tag(masSpawn,0)
+  src.targ.tag(removeAfterTimer,6000)
+  dialog(d_hcn_masSpawnerPad,<tag(pocetSpawnu)>,<uid>)
+else
+  src.sysMessage("Tohle neni spawn !")
+endif
+return 1
+
+[function f_hcn_masSpawnLaunch]
+if (<more1> == 0)
+  more1H=1
+  if !(<safe.tag(noSound)>)
+    sfx(049)
+  endif
+  timer=1
+endif
+
+[function f_hcn_masSpawnCancel]
+arg(spawNumber,0)
+while (<arg(spawNumber)> < <tag(pocetSpawnu)>)
+  finduid(<tag(spawn_<eval spawNumber>)>).tag(masSpawn,0)
+  finduid(<tag(spawn_<eval spawNumber>)>).timer=1
+  arg(spawNumber,#+1)
+endwhile
+return 1
+
+[function f_hcn_masSpawnerIsGuarded]
+arg(spawNumber,0)
+while (<arg(spawNumber)> < <tag(pocetSpawnu)>)
+  if (<eval finduid(<tag(spawn_<eval spawNumber>)>).more2>)
+    return 1
+  else
+    arg(spawNumber,#+1)
+  endif
+endwhile
+return 0
+
+[typedef t_hcn_masSpawn]
+on=@Timer
+if !(<tag(masSpawn)>)
+  return 1
+endif
+
+[dialog d_hcn_masSpawnerPad]
+arg(textcolor,52)
+argo.SetLocation=285,50
+
+argo.tag(sirka,290)
+argo.tag(vyska,321)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,123,138)
+argo.dialog_pozadi(<argo.tag(nexty)>,10,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Dlazka aktivujici spawny.")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Timer:")
+argo.texta(lastxpos,lastypos+d_def_radek_vyska,<d_def_writecolor>,"Spwnuj Xkrat:")
+argo.texta(lastxpos,lastypos+2*d_def_radek_vyska,<d_def_writecolor>,"Spwnuj po Xs:")
+argo.settext(1001,"<?eval tag(expireTimer)?>")	//doba otevreni dveri v s (more1)
+argo.settext(1002,"<?eval moreX?>")	//doba otevreni dveri v s (more1)
+argo.settext(1003,"<?eval moreY?>")	//doba otevreni dveri v s (more1)
+argo.textentry(<argo.dialog_textpos(1,1)>,128,<d_def_radek_vyska>,textcolor,1,1001)
+argo.textentry(lastxpos,lastypos+d_def_radek_vyska,128,<d_def_radek_vyska>,textcolor,2,1002)
+argo.textentry(lastxpos,lastypos+2*d_def_radek_vyska,128,<d_def_radek_vyska>,textcolor,3,1003)
+
+arg(pctRadku,0)
+argo.dialog_textpos(2,0)
+while (<arg(pctRadku)> < <argv(0)>)
+  argo.texta(lastxpos,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_writecolor>,"Spawn <eval arg(pctRadku)+1>:")
+  argo.texta(lastxpos+125,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_readcolor>,<tag(spawn_<eval arg(pctRadku)>)>)
+  argo.button(lastxpos+88,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fb1,0fb3,1,0,<arg(pctRadku)>+10)	//nastav novej spawn
+  arg(pctRadku,#+1)
+endwhile
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+234,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,2)//add spawn
+
+[dialog d_hcn_masSpawnerPad button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes dlazdici.")
+if (<eval argtxt(1)> > 0)
+ tag(expireTimer,<eval argtxt(1)>)
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi dobu pro timer moznosti znovuspusteni spawnu.")
+endif
+if (<eval argtxt(2)> > 0)
+ moreX=<eval argtxt(2)>
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi pocet spawnovanych monster.")
+endif
+moreY=<eval argtxt(3)>
+
+
+on=2
+target("Pridej dalsi spawn.")
+
+on=@anybutton
+arg(spwNumber,<eval argn-10>)
+while (<arg(spwNumber)> < <eval <tag(pocetSpawnu)>-1>)
+  tag(spawn_<eval spwNumber>,<tag(spawn_<eval spwNumber+1>)>)
+  arg(spwNumber,#+1)
+endwhile
+tag(pocetSpawnu,<eval <tag(pocetSpawnu)>-1>)
+tag.remove(spawn_<eval spwNumber>)
+dialog(d_hcn_masSpawnerPad,<tag(pocetSpawnu)>,<argv(1)>)
+
+[function f_hcn_reflectSDP_DispID]
+dispid=tag(switch_0).dispid>
+update
+
+
+/////////////////////////////////
+// S H U T   D O O R   R U N E //
+/////////////////////////////////
+
+
+[itemdef i_hcn_shutDoorPad_Switch]
+id=i_rune_alchem_1
+name=Shut Door Pad Switch
+
+on=@create
+attr=090
+more1=300
+more2=1
+color=color_o_obsidian
+
+on=@Step
+if (<src.flags>&statf_dead)
+  return 1
+elseif (src.isGM)
+  return 1
+elseif (src.npc)
+  return 1
+elseif (f_hcn_SDPS_checkPos) && !(f_hcn_SDPS_isGuarded)
+  if (link.type==t_door_locked)
+    sfx(565) //cvak
+    timer=0
+  endif
+  return 1
+elseif (<timer> > 0)
+  return 1
+elseif (link.type==t_door_locked)
+  return 1
+elseif (<link.timer> > 0)
+  link.timer=0
+endif
+link.type=t_door_locked
+timer=<more1>
+src.sysMessage("Na neco jsi <src.sex(slapl,slapla)>.")
+sfx(049) //cvak
+
+on=@Timer
+link.type=t_door
+return 1
+
+on=@userDClick
+if (src.isGM)
+  dialog(d_hcn_shutDoorPad_Switch,<tag(pocetSwitchu)>)
+endif
+return 1
+
+on=@TargOn_Item
+if (moreX==1)
+  if (src.targ.type==t_door)
+    link=<src.targ>
+    src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na dvere.")
+    dialog(d_hcn_shutDoorPad_Switch,<tag(pocetSwitchu)>)
+  else
+    src.sysMessage("Cil ma spatny type. Je vyzadovan t_door.")
+  endif
+elseif (moreX==2)
+  tag(switch_<eval tag(pocetSwitchu)>,<src.targ>)
+  tag(pocetSwitchu,<eval tag(pocetSwitchu)+1>)
+  src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na switch.")
+  dialog(d_hcn_shutDoorPad_Switch,<tag(pocetSwitchu)>)
+endif
+return 1
+
+
+[function f_hcn_SDPS_checkPos]
+arg(switchNumber,0)
+while (<arg(switchNumber)> < <tag(pocetSwitchu)>)
+  if !(<eval finduid(<tag(switch_<eval arg(switchNumber)>)>).more2>==<eval more2>)
+    return 0
+  endif
+  arg(switchNumber,#+1)
+endwhile
+return 1
+
+[function f_hcn_SDPS_isGuarded]
+arg(switchNumber,0)
+while (<arg(switchNumber)> < <tag(pocetSwitchu)>)
+  if (<eval finduid(<tag(switch_<eval arg(switchNumber)>)>).f_hcn_masSpawnerIsGuarded>)
+    return 1
+  endif
+  arg(switchNumber,#+1)
+endwhile
+return 0
+
+
+
+[dialog d_hcn_shutDoorPad_Switch]
+arg(textcolor,52)
+argo.SetLocation=285,50
+
+argo.tag(sirka,290)
+argo.tag(vyska,321)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,123,138)
+argo.dialog_pozadi(<argo.tag(nexty)>,10,123,138)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Dlazka zavirajici dvere.")
+argo.button(<lastxpos>+234,<lastypos>-3,0fab,0fad,1,0,4)		//help
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Otevreni/s:")
+argo.texta(lastxpos,lastypos+d_def_radek_vyska,<d_def_writecolor>,"SwitchPos:")
+argo.texta(lastxpos,lastypos+2*d_def_radek_vyska,<d_def_writecolor>,"Dvere UID:")
+argo.button(lastxpos+88,lastypos+2*d_def_radek_vyska,0fa5,0fa7,1,0,2)	//nastav link na dvere
+
+argo.settext(1001,"<?eval more1?>")	//doba otevreni dveri v s (more1)
+argo.settext(1002,"<?eval more2?>")	//doba otevreni dveri v s (more1)
+argo.textentry(<argo.dialog_textpos(1,1)>,128,<d_def_radek_vyska>,textcolor,1,1001)
+argo.textentry(lastxpos,lastypos+d_def_radek_vyska,128,<d_def_radek_vyska>,textcolor,2,1002)
+argo.texta(lastxpos,lastypos+2*d_def_radek_vyska,<d_def_readcolor>,<link>)
+
+arg(pctRadku,0)
+argo.dialog_textpos(2,0)
+while (<arg(pctRadku)> < <argv(0)>)
+  argo.texta(lastxpos,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_writecolor>,"Switch <eval arg(pctRadku)+1>:")
+  argo.texta(lastxpos+125,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),<d_def_readcolor>,<tag(switch_<eval arg(pctRadku)>)>)
+  argo.button(lastxpos+88,lastypos+(<arg(pctRadku)>*d_def_radek_vyska),0fb1,0fb3,1,0,<arg(pctRadku)>+10)	//nastav novej spawn
+  arg(pctRadku,#+1)
+endwhile
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+234,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,3)//add switch
+
+[dialog d_hcn_shutDoorPad_Switch button]
+on=0
+src.sysMessage("<src.sex Stornoval Stornovala> jsi volbu. Nastaveni zustava nezmeneno.")
+
+on=1
+Src.sysMessage("Nastavujes dlazdici.")
+if (<eval argtxt(1)> > 0)
+ more1=<eval argtxt(1)>
+else
+ src.RedMessage("Pozor! <src.sex Nenastavil Nenastavila> jsi dobu pro timer moznosti znovuspusteni spawnu.")
+endif
+more2=<eval argtxt(2)>
+
+
+on=2
+MoreX=1
+target("Pridej dvere.")
+
+on=3
+MoreX=2
+target("Pridej dalsi switch.")
+
+on=4
+dialog(d_hcn_shutDoorPad_Switch,<tag(pocetSwitchu)>)
+dialog(d_hcn_shutDoorPad_Switch_help)
+
+on=@anybutton
+arg(swchNumber,<eval argn-10>)
+while (<arg(swchNumber)> < <eval <tag(pocetSwitchu)>-1>)
+  tag(switch_<eval swchNumber>,<tag(switch_<eval swchNumber+1>)>)
+  arg(swchNumber,#+1)
+endwhile
+tag(pocetSwitchu,<eval <tag(pocetSwitchu)>-1>)
+tag.remove(switch_<eval swchNumber>)
+dialog(d_hcn_shutDoorPad_Switch,<tag(pocetSwitchu)>)
+
+[dialog d_hcn_shutDoorPad_Switch_help]
+argo.setText(1,"Otevreni/s : Cislo v sekundach, oznacujici po jake dobe se dvere znovu otevrou.<br><br>SwitchPos : Hodnota more2, kterou musi mit naprosto vsechny linky uvedeny dole, aby se dvere po naslapnuti nezavrely.<br><br>Dvere UID : dvere, ktere se maji zavrit pri naslapnuti.")
+argo.f_dialog_HelpCreator("HELP - i_hcn_shutDoorPad_Switch")
+
+
+//////////////////////////////////
+//     V A S E   S P A W N      //
+//////////////////////////////////
+
+[itemdef i_hcn_vase_spawn]
+id=0B47
+type=t_script
+name=large vase
+
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (src.isGM)
+  target("Zamer spawn tyhle vazy")
+elseif (<strlen(<tag(splinterClue)>)>)
+  if (<more1> > 0)
+    src.sysMessage("A hele, neco jsi tu <src.sex(nasel,nasla)>.")
+    if (<tag(splinterClue)> == 6)	// jde o listek s napovedou
+      dialog(d_hcn_pillarsClue)
+      return 1
+    endif
+    more1=<more1> - 1
+    src.newItem(i_hcn_clueStone).bounce
+    if (<tag(splinterClue)> == 1)
+      lastnew.color=color_vaseSwitch_1
+      lastnew.more1=1
+      lastnew.name=Odlita replika mozku se symbolem: I
+    elseif (<tag(splinterClue)> == 2)
+      lastnew.color=color_vaseSwitch_2
+      lastnew.more1=2
+      lastnew.name=Odlita replika mozku se symbolem: II
+    elseif (<tag(splinterClue)> == 3)
+      lastnew.color=color_vaseSwitch_3
+      lastnew.more1=3
+      lastnew.name=Odlita replika mozku se symbolem: III
+    elseif (<tag(splinterClue)> == 4)
+      lastnew.color=color_vaseSwitch_4
+      lastnew.more1=4
+      lastnew.name=Odlita replika mozku se symbolem: IV
+    elseif (<tag(splinterClue)> == 5)
+      lastnew.color=color_vaseSwitch_5
+      lastnew.more1=5
+      lastnew.name=Odlita replika mozku se symbolem: V
+    endif
+  else
+    src.sysMessage("Nic uz tu neni.")
+  endif
+elseif !(<link.more2>) && !(<more2>)
+  src.sysMessage("Ve vaze se neco hybe...")
+  more2=1
+  timer=2
+  link.tag(OnTimerSpawn,1)
+  link.timer=1
+else
+  src.sysMessage("Nic uz tu neni.")
+endif
+tag(vaseSwitcher).timer=3600
+return 1
+
+on=@Timer
+if (<more2> == 1) && (<strlen(<tag(splinterClue)>)>==0)
+  link.timer=0
+  more2=2	// hodnota cislo 2 nespusti po dclicknuti dalsi spawnuti monstra a zaroved po dobehnuti timeru v podstate resetuje vazu na hodnotu, kde zas bude moct spawnovat npc
+  timer=5600
+else
+  more2=0
+endif
+return 1
+
+on=@TargOn_Item
+if (src.targ.type==t_spawn_char)
+  src.targ.tag(removeAfterTimer,6000)
+  src.targ.tag(OnTimerSpawn,0)
+  src.targ.events=+t_hcn_vaseSpawn
+  src.targ.timer=1
+  link=<src.targ>
+  src.sysMessage("Uspesne jsi <src.sex(pridal,pridala)> link na spawn.")
+else
+  src.sysMessage("Tohle neni spawn.")
+endif
+return 1
+
+[typedef t_hcn_vaseSpawn]
+on=@Timer
+if (<tag(OnTimerSpawn)>)
+  tag(OnTimerSpawn,0)
+else
+  return 1
+endif
+
+[typedef t_hcn_vaseSwitcher]
+on=@UserDClick
+if (src.isGM)
+  dialog(d_hcn_vaseSwitcher)
+  return 1
+endif
+
+on=@Timer
+f_hcn_vaseSwitcher_reset
+return 1
+
+on=@TargOn_Item
+if (<moreX> == 0)	//dvere
+  src.sysMessage("Dvere zamereny.")
+  link=<src.targ>
+  src.targ.link=<uid>
+elseif (<moreX> < 6)
+  tag(hlava_<moreX>,<src.targ>)
+  src.targ.color=color_vaseSwitch_<moreX>
+  src.targ.link=<uid>
+  src.targ.more1=<moreX>
+  src.sysMessage("<src.sex(Zameril,Zamerila)> jsi hlavu c.<moreX>")
+else
+  tag(vase_<eval tag(vaseAmount)>,<src.targ>)
+  tag(vaseAmount,<eval <tag(vaseAmount)>+1>)
+  src.targ.tag(vaseSwitcher,<uid>)
+  src.targ.tag.remove(splinterClue)
+  src.sysMessage("Pridana dalsi vaza.")
+endif
+dialog(d_hcn_vaseSwitcher)
+return 1
+
+[dialog d_hcn_vaseSwitcher]
+argo.SetLocation=225,5
+
+argo.tag(sirka,322)
+argo.tag(vyska,595)
+argo.page(0)
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,2,123,171)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,5,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,18,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Vase Switcher.")
+argo.button(<lastxpos>+264,<lastypos>-3,0fab,0fad,1,0,10)		//help
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Dvere Link:")
+argo.button(<lastxpos>+88,<lastypos>,0fa5,0fa7,1,0,2)	//pridej link na dvere
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_writecolor>,"Vazy Comb.:")
+argo.button(<lastxpos>+88,<lastypos>+1*<d_def_radek_vyska>,0fb4,0fb6,1,0,9)	//resetuj nastaveni -> vyber vazy
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,"<?Link?>")
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_readcolor>,"<?eval tag(activeVase_1)+1?>-<?eval tag(activeVase_2)+1?>-<?eval tag(activeVase_3)+1?>-<?eval tag(activeVase_4)+1?>-<?eval tag(activeVase_5)+1?> / <?eval tag(activeVase_6)+1?>")
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Hlava c.:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"UID hlavy:")
+
+argo.texta(<argo.dialog_textpos(3,0)>,<d_def_writecolor>,"Hlava 1:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Hlava 2:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Hlava 3:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Hlava 4:")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_writecolor>,"Hlava 5:")
+argo.texta(<argo.dialog_textpos(3,1)>,<d_def_readcolor>,"<?tag(hlava_1)?>")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(hlava_2)?>")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(hlava_3)?>")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(hlava_4)?>")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(hlava_5)?>")
+argo.dialog_textpos(3,2)
+argo.button(lastxpos-4,lastypos+(0*<d_def_radek_vyska>),0fa5,0fa7,1,0,3)	//pridej link na 1.hlavu
+argo.button(lastxpos-4,lastypos+(1*<d_def_radek_vyska>),0fa5,0fa7,1,0,4)	//pridej link na 2.hlavu
+argo.button(lastxpos-4,lastypos+(2*<d_def_radek_vyska>),0fa5,0fa7,1,0,5)	//pridej link na 3.hlavu
+argo.button(lastxpos-4,lastypos+(3*<d_def_radek_vyska>),0fa5,0fa7,1,0,6)	//pridej link na 4.hlavu
+argo.button(lastxpos-4,lastypos+(4*<d_def_radek_vyska>),0fa5,0fa7,1,0,7)	//pridej link na 5.hlavu
+
+
+argo.texta(<argo.dialog_textpos(4,0)>,<d_def_writecolor>,"Vase Num.:")
+argo.texta(<argo.dialog_textpos(4,1)>,<d_def_writecolor>,"Vase UID.:")
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+268,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,8)//add vase
+
+argo.page(1)
+arg(pctRadku,0)
+arg(vaseNumber,0)
+arg(pagesCount,1)
+argo.dialog_textpos(5,0)
+while (<arg(vaseNumber)> < <eval tag(vaseAmount)>)
+  argo.f_vaseSwitch_dialRowCreate(<arg(pctRadku)>,<arg(vaseNumber)>,<tag(vase_<eval arg(vaseNumber)>)>)
+  arg(pctRadku,#+1)
+  arg(vaseNumber,#+1)
+  if (<arg(pctRadku)> == 18)
+    arg(pagesCount,#+1)
+    arg(pctRadku,0)
+    argo.button(261,<lastypos>+17*<d_def_radek_vyska>,0985,0986,0,<arg(pagesCount)>,0)  //next page
+    argo.page(<arg(pagesCount)>)
+    argo.button(261,<lastypos>+8,0983,0984,0,<eval <arg(pagesCount)>-1>,0)  //previous page
+  endif
+endwhile
+
+
+[dialog d_hcn_vaseSwitcher button]
+on=0
+return 1
+
+on=1//ok
+
+on=2 //link na dvere
+moreX=0
+target("Zamer dvere, ktere se maji zavirat/otvirat")
+
+on=3  //pridej link na 1.hlavu
+moreX=1
+target("pridej link na 1.hlavu")
+
+on=4  //pridej link na 2.hlavu
+moreX=2
+target("pridej link na 2.hlavu")
+
+on=5  //pridej link na 3.hlavu
+moreX=3
+target("pridej link na 3.hlavu")
+
+on=6  //pridej link na 4.hlavu
+moreX=4
+target("pridej link na 4.hlavu")
+
+on=7  //pridej link na 5.hlavu
+moreX=5
+target("pridej link na 5.hlavu")
+
+on=8  //pridej vazu
+moreX=6
+target("pridej vazu.")
+
+on=9  //reset -> vyber vazy
+f_hcn_vaseSwitcher_reset
+dialog(d_hcn_vaseSwitcher)
+
+on=10 //help
+dialog(d_hcn_vaseSwitcher)
+dialog(d_hcn_vaseSwitcher_help)
+
+on=@anyButton
+if (<eval argn> >= 1000)
+  arg(vaseNumber,<eval argn-1000>)
+  src.go(<tag(vase_<eval arg(vaseNumber)>).p>)
+else
+  arg(vaseNumber,<eval argn-100>)
+  while (<arg(vaseNumber)> < <eval <tag(vaseAmount)>-1>)
+    tag(vase_<eval vaseNumber>,<tag(vase_<eval vaseNumber+1>)>)
+    arg(vaseNumber,#+1)
+  endwhile
+  tag(vaseAmount,<eval <tag(vaseAmount)>-1>)
+  tag.remove(vase_<eval vaseNumber>)
+endif
+dialog(d_hcn_vaseSwitcher)
+
+[dialog d_hcn_vaseSwitcher_Help]
+argo.setText(1,"DvereLink: je link na padaci dvere ve spodni mistnosti.<br><br> VazyComb : je aktualni kombinace vybranych vaz (cisla vaz) ze seznamu dole. Zalezi na poradi a podle toho je prvni indicie ve vaze z prvniho mista kombinace atd.<br><br> Hlavy: Odkazy na hlavy : switcher jim po resetu nastavuje barvu a hodnotu na kterou reaguji.<br><br> Vases: Seznam vsech vaz k mani. Cili se item i_hcn_vase_spawn.<br><br> Reseni: Zna ho GM Yavanna icq 228327044.")
+argo.f_dialog_HelpCreator("HELP - i_hcn_vaseSwitcher")
+
+
+[function f_vaseSwitch_dialRowCreate]
+texta(lastxpos,lastypos+(<argv(0)>*d_def_radek_vyska),<d_def_writecolor>,"Vase <eval <argv(1)>+1>:")
+button(281,lastypos+(<argv(0)>*d_def_radek_vyska),0fb1,0fb3,1,0,<argv(1)>+100)	//zrus existujici vazu button
+button(106,lastypos+(<argv(0)>*d_def_radek_vyska),0fa5,0fa7,1,0,<argv(1)>+1000)	//goto UID button
+texta(lastxpos+125,lastypos+(<argv(0)>*d_def_radek_vyska),<d_def_readcolor>,<argv(2)>)
+
+[function f_vaseSwitch_choseVases]
+if (0<tag(vaseAmount)> < 6)
+  return 1
+endif
+arg(v,1)
+while (<v> < 7)
+  var(vase_<v>,<eval {0 <tag(vaseAmount)>-1}>)
+  while !(f_vaseSwitch_checkVaseNumber(<v>))
+    var(vase_<v>,#+1)
+    if (<var(vase_<v>)> == <tag(vaseAmount)>)
+      var(vase_<v>,0)
+    endif
+  endwhile
+  arg(v,#+1)
+endwhile
+
+[function f_vaseSwitch_checkVaseNumber]
+arg(i,6)
+while (i > 0)
+  if !(<argv(0)>==<i>)
+    if (<var(vase_<argv(0)>)> == <var(vase_<i>)>)
+      return 0
+    endif
+  endif
+  arg(i,#-1)
+endwhile
+return 1
+
+[function f_vaseSwitch_setVases]
+arg(i,1)
+while (<arg(i)> < 7)
+  tag(vase_<eval <tag(activeVase_<i>)>>).more1=0
+  tag(vase_<eval <tag(activeVase_<i>)>>).tag.remove(splinterClue)
+  arg(i,#+1)
+endwhile
+f_vaseSwitch_choseVases
+arg(i,1)
+while (<arg(i)> < 7)
+  tag(activeVase_<arg(i)>,<eval var(vase_<arg(i)>)>)
+  tag(vase_<eval <tag(activeVase_<arg(i)>)>>).more1=5	//pocet kamenu ve vaze
+  tag(vase_<eval <tag(activeVase_<arg(i)>)>>).tag(splinterClue,<arg(i)>)
+  tag(vase_<eval <tag(activeVase_<arg(i)>)>>).timer=0
+  arg(i,#+1)
+endwhile
+var(vase_1,"")
+var(vase_2,"")
+var(vase_3,"")
+var(vase_4,"")
+var(vase_5,"")
+var(vase_6,"")
+
+[function f_vaseSwitch_setPillars]
+arg(i,1)
+while (i < 6)
+  arg(randColor,<eval {1 5}>)
+  arg(thisPillar,<tag(hlava_<i>).tag(pillar)>)
+  arg(thisPillar).color=color_vaseSwitch_<randColor>
+  arg(thisPillar).more1=<randColor>
+  arg(thisPillar).more2=0
+  if (<strlen(<arg(thisPillar).tag(stone)>)>)
+    arg(thisPillar).tag(stone).remove
+    arg(thisPillar).tag.remove(stone)
+  endif
+  arg(i,#+1)
+endwhile
+
+[defnames def_vaseSwitch_colors]
+color_vaseSwitch_1	color_o_gold
+color_vaseSwitch_2	color_o_mithril
+color_vaseSwitch_3	color_o_obsidian
+color_vaseSwitch_4	color_o_valorite
+color_vaseSwitch_5	0ED
+
+
+[function f_hcn_vaseSwitcher_reset]
+f_vaseSwitch_setVases
+f_vaseSwitch_setPillars
+
+[itemdef i_hcn_headGuard]
+id=01EEA
+name=hlava
+
+on=@Create
+attr=010
+
+on=@UserDClick
+if (src.isGM)
+  target("Zamer sloup patrici hlave")
+  return 1
+endif
+
+on=@TargOn_Item
+tag(pillar,<src.targ>)
+src.targ.link=<uid>
+src.sysMessage("<src.sex(Pridal,Pridala)> jsi link na hlavu.")
+return 1
+
+[itemdef i_hcn_pillar]
+id=02D38
+name=silny sloup
+
+on=@Create
+attr=010
+
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (<moreX> > 0) && (<eval <safe.tag(stone).moreY>> == 0)	// na sloupu je kamen+ kamen neni zmrazenej
+  src.sysMessage("<src.sex(Vzal,Vzala)> jsi kamen ze sloupu.")
+  tag(stone).bounce
+  tag(stone).tag.remove(pillar)
+  tag.remove(stone)
+  moreX=0
+  more2=0
+  return 1
+endif
+
+[itemdef i_hcn_clueStone]
+id=013a7
+name=Popsany kamen
+weight=
+
+on=@Create
+attr=014
+
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (<cont>)
+  target("Na co chces kamen pouzit ?")
+elseif (<moreY> == 0)
+  src.sysMessage("<src.sex(Vzal,Vzala)> jsi kamen ze sloupu.")
+  bounce
+  tag(pillar).moreX=0
+  tag(pillar).more2=0
+  tag(pillar).tag.remove(stone)
+  tag.remove(pillar)
+endif
+return 1
+
+on=@TargOn_Item
+if (src.targ.id==i_hcn_pillar)
+  if (<src.targ.link.link.link.more1>!=0)	// dvere jsou zvednuty
+    src.newItem(i_fire_column)
+    lastnew.attr=attr_static|attr_decay
+    lastnew.timer=3
+    lastnew.p=<src.targ.p>
+    lastnew.z=<lastnew.z>+12
+    sfx(snd_spell_explosion)
+    src.sysMessage("Sloup zjevne dalsi kameny neprijma s chuti...")
+    remove
+    return 1
+  elseif (<strlen(<src.targ.tag(stone)>)>)	// pokud uz na sloupu kamen je, vymenis je
+    src.targ.tag(stone).bounce
+    src.targ.tag(stone).tag.remove(pillar)
+    src.targ.tag.remove(stone)
+    src.targ.moreX=0
+    src.targ.more2=0
+    src.sysMessage("Vymenujes kameny na sloupech.")    
+  else
+    src.sysMessage("Pokladas kamen na sloup.")
+  endif
+  tag(pillar,<src.targ>)
+  src.targ.tag(stone,<uid>)
+  src.targ.moreX=1
+  p=<src.targ.p>
+  z=12
+  src.targ.f_hcn_stoneOnPillarCheck(<more1>,<src>)
+elseif (src.targ.id==i_odpadkac_13)
+  src.targ.tag(insertedStones,<src.targ.tag(insertedStones)>+1)
+  src.sysMessage("Hazis kamen do kanalu.")
+  src.addexp(5)
+  sfx(482)
+  remove
+else
+  src.sysMessage("Nevis, jak by se zde dal kamen pouzit.")
+endif
+return 1
+
+on=@TargOn_Ground
+src.sysMessage("Tady ten kamen zrejme nic neudela.")
+return 1
+
+on=@TargOn_Char
+src.sysMessage("Pevny ten kamen je a myslenka pouzit ho jako vrhaci zbran je velmi lakava,")
+src.sysMessage("ale hazet s nim po nikom nebudes. Jeste se ti muze hodit.")
+return 1
+
+[function f_hcn_stoneOnPillarCheck]
+arg(pillarValue,<eval more1>+<eval <link.more1>>)
+if (<pillarValue> > 5)
+  arg(pillarValue,#-5)
+endif
+if (<argv(0)> == <pillarValue>) //hlava+sloup(hodnoty odvodi hrac od barvy) == stone(hodnota je napsana na kameni)
+  more2=1
+endif
+arg(i,1)
+arg(stoneSwitch,<link.link>)
+while (i < 6)
+  if (<stoneSwitch.tag(hlava_<i>).tag(pillar).more2> == 0)
+    return 1
+  endif
+  arg(i,#+1)  
+endwhile
+stoneSwitch.link.timer=2		// spoustim padaci dvere ! (uspesne polozeny vsechny kameny)
+
+arg(i,1)
+while (i < 6)
+  stoneSwitch.tag(hlava_<i>).tag(pillar).tag(stone).moreY = 1	// zmrazi kameny -> s hodnotou moreY > 0 s nima nelze manipulovat (dclick)
+  argv(1).newItem(i_fire_column)
+  lastnew.attr=attr_static|attr_decay
+  lastnew.timer=3
+  lastnew.p=<stoneSwitch.tag(hlava_<i>).p>
+  sfx(snd_spell_explosion)
+  arg(i,#+1)
+endwhile
+stoneSwitch.timer=2
+
+[dialog d_hcn_pillarsClue]
+180,100
+argo.resizepic(0,0,9300,380,280)
+argo.texta(30,20+0*<d_def_radek_vyska>,<d_def_readcolor>,"V hlubinach najdes temno, chlad a zhoubu,")
+argo.texta(30,20+1*<d_def_radek_vyska>,<d_def_readcolor>,"Nezapres bazen za tvari kamennou.")
+argo.texta(30,20+2*<d_def_radek_vyska>,<d_def_readcolor>,"Prohledat skryse! Oblect na sebe svou chloubu!")
+argo.texta(30,20+3*<d_def_radek_vyska>,<d_def_readcolor>,"Ta ti zde bude jen ubohou halenou.")
+argo.texta(30,20+5*<d_def_radek_vyska>,<d_def_readcolor>,"V hrobkach strazenych Auleho manzelkou")
+argo.texta(30,20+6*<d_def_radek_vyska>,<d_def_readcolor>,"Jesitnost ni spech s zivotem nezna se.")
+argo.texta(30,20+7*<d_def_radek_vyska>,<d_def_readcolor>,"Rozum v tvych dlanich k postupu zarukou,")
+argo.texta(30,20+8*<d_def_radek_vyska>,<d_def_readcolor>,"Neb hrave se vyrovna Sile i Krase.")
+
+
+[itemdef i_hcn_padaciDvere]
+name=padaci dvere
+id=06f5
+type=t_normal
+flip=1
+dupelist=06F6
+
+on=@Create
+attr=010
+moreZ=120
+
+on=@Timer
+if (<eval more1> < 9) && (<eval moreX> == 0)
+  f_moveUp
+  if (<more1> == 0)
+    sfx(557)
+  endif
+  timerD=2
+  more1=<more1> +1
+elseif (<eval more1> == 9) && (<eval moreX> == 0)
+  timer=<eval moreZ>
+  more2=9
+  moreX=1
+elseif (<eval more2> > 0)
+  f_moveDown
+  if (<more2> == 9)
+    sfx(557)
+  endif
+  timerD=2
+  more2=<more2> -1
+else	//dvere dopadly na zem
+  more1=0
+  more2=0
+  moreX=0
+  if (<link>)
+    link.f_hcn_vaseSwitcher_reset
+  endif
+endif
+return 1
+
+[function f_moveUp]
+z=<z>+2
+[function f_moveDown]
+z=<z>-2
+
+[function f_hcn_padaciDvere_shut]
+if <eval more2>
+  moreX=1
+  timer=0
+elseif <eval more1>
+  more2=<eval more1>
+  moreX=1
+  timer=0
+endif
+
+[function f_hcn_padaciDvere_open]
+if (<eval more1> < 9)
+  moreX=0
+  timer=0
+elseif (<eval more2> < 9)
+  more1=<eval more2>
+  moreX=0
+  timer=0
+endif
+
+[itemdef i_hcn_clueStoneDmgPad]
+id=0AEC
+name=No Clue Stone Field
+
+on=@Create
+attr=090
+color=color_o_gold
+
+on=@Step
+if !(src.isGM)
+  arg(kamenu,<src.rescount(i_hcn_clueStone)>)
+  if (<kamenu> > 0)
+    if (<kamenu> > 1)
+      src.sysMessage("Kameny v tvem batohu se prudce roztristily!")
+    else
+      src.sysMessage("Kamen v tvem batohu se prudce roztristil!")
+    endif
+    src.events=-e_gethit 
+    src.damage(<kamenu>*20,dam_god,<src>)
+    src.events=+e_gethit
+    src.sound=snd_spell_lightning
+    src.effect(2,i_FX_Energy_Ray,6,15,1)
+    src.consume(<kamenu> i_hcn_clueStone)
+  endif
+endif
+return 1
+
+[itemdef i_hcn_clueStoneInfoPad]
+id=0AEC
+name=No Clue Stone Field Info
+
+on=@Create
+attr=090
+color=color_o_silver
+
+on=@Step
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if !(src.isGM)
+  arg(kamenu,<src.rescount(i_hcn_clueStone)>)
+  if (<kamenu> > 0)
+    if (<kamenu> > 1)
+      src.sysMessage("Popsane kameny v tvem batohu neprijemne pulzuji!")
+    else
+      src.sysMessage("Popsany kamen v tvem batohu neprijemne pulzuje!")
+    endif
+    src.sfx(491)
+  endif
+endif
+return 1
+
+
+
+
+
+///////////////////////////////////////////////
+// L A V A   R O O M   F I R S T   F L O O R //
+///////////////////////////////////////////////
+
+[itemdef i_hcn_lavaRoom_pillar]
+id=02D38
+name=Hlidac mistnosti
+
+on=@Create
+attr=090 //invis, nevermove
+
+on=@UserDClick
+if (src.isGM)
+  dialog(d_hcn_lavaRoom_pillar)
+endif
+return 1
+
+on=@TargOn_Item
+if (moreX == 0)
+  tag(mainDoor_1,<src.targ>)
+  src.targ.link=<uid>
+elseif (moreX == 1)
+  tag(mainDoor_2,<src.targ>)
+  src.targ.link=<uid>
+  src.targ.more1=1	// rekne dverim, ze jsou pravy (tj ty na pravy strane) -> urcuje se podle toho, jak se maji otevirat (grafika)
+elseif (moreX == 2)
+  tag(lava_1,<src.targ>)
+elseif (moreX == 3)
+  tag(lava_2,<src.targ>)
+elseif (moreX == 4)
+  tag(lava_3,<src.targ>)
+elseif (moreX == 5)
+  tag(lava_4,<src.targ>)
+elseif (moreX == 6)
+  tag(lava_5,<src.targ>)
+elseif (moreX == 7)
+  tag(lava_6,<src.targ>)
+elseif (moreX == 8)
+  tag(lava_7,<src.targ>)
+elseif (moreX == 9)
+  tag(lava_8,<src.targ>)
+elseif (moreX == 10)
+  tag(lava_9,<src.targ>)
+elseif (moreX == 11)
+  tag(lava_10,<src.targ>)
+elseif (moreX == 12)
+  tag(armor_L,<src.targ>)
+elseif (moreX == 13)
+  tag(armor_R,<src.targ>)
+elseif (moreX == 14)
+  tag(switch_L,<src.targ>)
+elseif (moreX == 15)
+  tag(switch_R,<src.targ>)
+elseif (moreX == 16)
+  tag(DoorPad_1,<src.targ>)
+  src.targ.more1=1
+  src.targ.type=t_hcn_lavaRoom_pad
+  src.targ.link=<uid>
+elseif (moreX == 17)
+  tag(DoorPad_2,<src.targ>)
+  src.targ.more1=2
+  src.targ.type=t_hcn_lavaRoom_pad
+  src.targ.link=<uid>
+elseif (moreX == 18)
+  tag(DoorPad_3,<src.targ>)
+  src.targ.more1=3
+  src.targ.type=t_hcn_lavaRoom_pad
+  src.targ.link=<uid>
+elseif (moreX == 19)
+  tag(DoorPad_4,<src.targ>)
+  src.targ.more1=4
+  src.targ.type=t_hcn_lavaRoom_pad
+  src.targ.link=<uid>
+elseif (moreX == 20)
+  tag(RaisingDoor_L,<src.targ>)
+elseif (moreX == 21)
+  tag(RaisingDoor_R,<src.targ>)
+elseif (moreX == 22)
+  tag(mainStone,<src.targ>)
+elseif (moreX == 23)
+  tag(fountain,<src.targ>)
+endif
+dialog(d_hcn_lavaRoom_pillar)
+return 1
+
+
+
+on=@Timer
+if (more1 == 1) // vypousteni lavy
+  if (moreY == 0) // nulty bod vypousteni
+    tag(lava_7).dispID=01324
+    tag(lava_7).update
+    tag(lava_9).dispID=01324
+    tag(lava_9).update
+    timer=1
+    moreY=1
+  elseif (moreY == 1) // zmena id druhy dvojice lavy
+    tag(lava_8).dispID=01333
+    tag(lava_8).update
+    tag(lava_10).dispID=01333
+    tag(lava_10).update
+    timer=1
+    moreY=2
+  elseif (moreY == 2) // prehozeni lavy za diru a tim zpristupneni cesty ke kameni
+    tag(lava_5).z=-40
+    tag(lava_6).z=1
+    moreY=0
+    tag(fountain).f_hcn_fountainOfLife_raise	//vysune fontanu nahoru a vyhazi hrace co na ni stojej jinam.
+  endif
+elseif (more1 == 2) // napousteni lavy
+  if (moreY == 0) // nulty bod napousteni
+    tag(lava_1).dispID=01312
+    tag(lava_1).update
+    tag(lava_3).dispID=01312
+    tag(lava_3).update
+    timer=1
+    moreY=1
+  elseif (moreY == 1) // zmena id druhy dvojice lavy
+    tag(lava_2).dispID=01312
+    tag(lava_2).update
+    tag(lava_4).dispID=01312
+    tag(lava_4).update
+    timer=1
+    moreY=2
+  elseif (moreY == 2) // zmena id treti dvojice
+    tag(lava_7).dispID=03462
+    tag(lava_7).update
+    tag(lava_9).dispID=03447
+    tag(lava_9).update
+    timer=1
+    moreY=3
+  elseif (moreY == 3) // zmena id ctvrty dvojice
+    tag(lava_8).dispID=i_lava_bubble
+    tag(lava_8).update
+    tag(lava_10).dispID=03462
+    tag(lava_10).update
+    timer=1
+    moreY=4
+  elseif (moreY == 4) // prehozeni lavy za diru - zabarikadovani vchodu
+    tag(lava_5).z=1
+    tag(lava_6).z=-40
+    moreY=0
+  endif
+endif
+return 1
+
+
+[dialog d_hcn_lavaRoom_pillar]
+argo.SetLocation=225,5
+
+argo.tag(sirka,322)
+argo.tag(vyska,595)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,2,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,10,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,13,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Hlidac Mistnosti")
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Dvere 1:")
+button(lastxpos+88,lastypos,0fa5,0fa7,1,0,2)	//pridej link na dvere
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_writecolor>,"<?tag(mainDoor_1)?>")
+argo.dialog_textpos(1,0)
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 2:")
+button(lastxpos+88,lastypos+(1*<d_def_radek_vyska>),0fa5,0fa7,1,0,3)	//pridej link na dvere
+argo.dialog_textpos(1,1)
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"<?tag(mainDoor_2)?>")
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Lava:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"UID Lavy:")
+
+argo.texta(<argo.dialog_textpos(3,0)>,<d_def_writecolor>,"Leva 1:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Leva 2:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Prava 1:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Prava 2:")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_writecolor>,"Centr Lava:")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_writecolor>,"Centr Dira:")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_writecolor>,"L Stred 1:")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_writecolor>,"L Stred 2:")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_writecolor>,"P Stred 1:")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_writecolor>,"P Stred 2:")
+argo.texta(<argo.dialog_textpos(3,1)>,<d_def_readcolor>,"<?tag(lava_1)?>")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_2)?>")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_3)?>")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_4)?>")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_5)?>")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_6)?>")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_7)?>")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_8)?>")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_9)?>")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lava_10)?>")
+argo.dialog_textpos(3,2)
+button(lastxpos-4,lastypos+(0*<d_def_radek_vyska>),0fa5,0fa7,1,0,4)	//pridej link na 1.lavu
+button(lastxpos-4,lastypos+(1*<d_def_radek_vyska>),0fa5,0fa7,1,0,5)	//pridej link na 2.lavu
+button(lastxpos-4,lastypos+(2*<d_def_radek_vyska>),0fa5,0fa7,1,0,6)	//pridej link na 3.lavu
+button(lastxpos-4,lastypos+(3*<d_def_radek_vyska>),0fa5,0fa7,1,0,7)	//pridej link na 4.lavu
+button(lastxpos-4,lastypos+(4*<d_def_radek_vyska>),0fa5,0fa7,1,0,8)	//pridej link na 5.lavu
+button(lastxpos-4,lastypos+(5*<d_def_radek_vyska>),0fa5,0fa7,1,0,9)	//pridej link na 6.lavu
+button(lastxpos-4,lastypos+(6*<d_def_radek_vyska>),0fa5,0fa7,1,0,10)	//pridej link na 7.lavu
+button(lastxpos-4,lastypos+(7*<d_def_radek_vyska>),0fa5,0fa7,1,0,11)	//pridej link na 8.lavu
+button(lastxpos-4,lastypos+(8*<d_def_radek_vyska>),0fa5,0fa7,1,0,12)	//pridej link na 9.lavu
+button(lastxpos-4,lastypos+(9*<d_def_radek_vyska>),0fa5,0fa7,1,0,13)	//pridej link na 10.lavu
+
+
+argo.texta(<argo.dialog_textpos(4,0)>,<d_def_writecolor>,"Ostatni.:")
+argo.texta(<argo.dialog_textpos(4,1)>,<d_def_writecolor>,"UID.:")
+
+argo.settext(1001,"<?eval tag(mainDoorTimer)?>")	//doba otevreni dveri v s
+
+arg(pctRadku,0)
+argo.dialog_textpos(5,0)
+argo.texta(lastxpos,lastypos+(0*<d_def_radek_vyska>),<d_def_writecolor>,"Zbroj L:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Zbroj R:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Switch L:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Switch R:")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_writecolor>,"Naslapka 1:")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_writecolor>,"Naslapka 2:")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_writecolor>,"Naslapka 3:")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_writecolor>,"Naslapka 4:")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_writecolor>,"PadaciDvere L:")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_writecolor>,"PadaciDvere R:")
+argo.texta(lastxpos,lastypos+(10*<d_def_radek_vyska>),<d_def_writecolor>,"Main Stone:")
+argo.texta(lastxpos,lastypos+(11*<d_def_radek_vyska>),<d_def_writecolor>,"Fontana:")
+button(lastxpos+88,lastypos+(11*<d_def_radek_vyska>),0fb4,0fb6,1,0,26)	//vytahni/zandej Fontanu
+argo.texta(lastxpos,lastypos+(12*<d_def_radek_vyska>),<d_def_writecolor>,"Timer Dveri/s:")
+
+argo.dialog_textpos(5,1)
+argo.texta(lastxpos,lastypos+(0*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(armor_L)?>")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(armor_R)?>")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(switch_L)?>")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(switch_R)?>")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(DoorPad_1)?>")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(DoorPad_2)?>")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(DoorPad_3)?>")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(DoorPad_4)?>")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(RaisingDoor_L)?>")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(RaisingDoor_R)?>")
+argo.texta(lastxpos,lastypos+(10*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(mainStone)?>")
+argo.texta(lastxpos,lastypos+(11*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(fountain)?>")
+argo.textentry(lastxpos,lastypos+(12*d_def_radek_vyska),198,<d_def_radek_vyska>,52,1,1001)
+
+argo.dialog_textpos(5,2)
+button(lastxpos-4,lastypos+(0*<d_def_radek_vyska>),0fa5,0fa7,1,0,14)	//pridej link na levou zbroj
+button(lastxpos-4,lastypos+(1*<d_def_radek_vyska>),0fa5,0fa7,1,0,15)	//pridej link na pravou zbroj
+button(lastxpos-4,lastypos+(2*<d_def_radek_vyska>),0fa5,0fa7,1,0,16)	//pridej link na levej switch
+button(lastxpos-4,lastypos+(3*<d_def_radek_vyska>),0fa5,0fa7,1,0,17)	//pridej link na pravej switch
+button(lastxpos-4,lastypos+(4*<d_def_radek_vyska>),0fa5,0fa7,1,0,18)	//pridej link na naslapku 1
+button(lastxpos-4,lastypos+(5*<d_def_radek_vyska>),0fa5,0fa7,1,0,19)	//pridej link na naslapku 2
+button(lastxpos-4,lastypos+(6*<d_def_radek_vyska>),0fa5,0fa7,1,0,20)	//pridej link na naslapku 3
+button(lastxpos-4,lastypos+(7*<d_def_radek_vyska>),0fa5,0fa7,1,0,21)	//pridej link na naslapku 4
+button(lastxpos-4,lastypos+(8*<d_def_radek_vyska>),0fa5,0fa7,1,0,22)	//pridej link na levy padaci dvere
+button(lastxpos-4,lastypos+(9*<d_def_radek_vyska>),0fa5,0fa7,1,0,23)	//pridej link na pravy padaci dvere
+button(lastxpos-4,lastypos+(10*<d_def_radek_vyska>),0fa5,0fa7,1,0,24)	//pridej link na hlavni kamen - stred
+button(lastxpos-4,lastypos+(11*<d_def_radek_vyska>),0fa5,0fa7,1,0,25)	//pridej link na Fontanu
+
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_hcn_lavaRoom_pillar button]
+on=0
+return 1
+
+on=1//ok
+tag(mainDoorTimer,<eval argtxt(1)>)
+src.sysMessage("Timer Dveri na konci lvlu nastaven na <eval argtxt(1)>s")
+
+
+on=2 //link na dvere 1
+moreX=0
+target("Zamer prvni ze dvou dveri.")
+
+on=3  //link na dvere 2
+moreX=1
+target("Zamer druhe dvere.")
+
+on=4  //pridej link na 1.lavu
+moreX=2
+target("pridej link na 1.lavu")
+
+on=5  //pridej link na 2.lavu
+moreX=3
+target("pridej link na 2.lavu")
+
+on=6  //pridej link na 3.lavu
+moreX=4
+target("pridej link na 3.lavu")
+
+on=7  //pridej link na 4.lavu
+moreX=5
+target("pridej link na 4.lavu")
+
+on=8  //pridej link na 5.lavu
+moreX=6
+target("pridej link na 5.lavu")
+
+on=9  //pridej link na 6.lavu
+moreX=7
+target("pridej link na 6.lavu")
+
+on=10  //pridej link na 7.lavu
+moreX=8
+target("pridej link na 7.lavu")
+
+on=11  //pridej link na 8.lavu
+moreX=9
+target("pridej link na 8.lavu")
+
+on=12  //pridej link na 9.lavu
+moreX=10
+target("pridej link na 9.lavu")
+
+on=13  //pridej link na 10.lavu
+moreX=11
+target("pridej link na 10.lavu")
+
+on=14  //pridej link na levou zbroj
+moreX=12
+target("pridej link na levou zbroj")
+
+on=15  //pridej link na pravou zbroj
+moreX=13
+target("pridej link na pravou zbroj")
+
+on=16  //pridej link na levej switch
+moreX=14
+target("pridej link na levej switch")
+
+on=17  //pridej link na pravej switch
+moreX=15
+target("pridej link na pravej switch")
+
+on=18  //pridej link na prvni naslapku
+moreX=16
+target("pridej link na prvni naslapku")
+
+on=19  //pridej link na druhou naslapku
+moreX=17
+target("pridej link na druhou naslapku")
+
+on=20  //pridej link na treti naslapku
+moreX=18
+target("pridej link na treti naslapku")
+
+on=21  //pridej link na ctvrtou naslapku
+moreX=19
+target("pridej link na ctvrtou naslapku")
+
+on=22  //pridej link na Levy dvere
+moreX=20
+target("pridej link na Levy dvere")
+
+on=23  //pridej link na Pravy dvere
+moreX=21
+target("pridej link na Pravy dvere")
+
+on=24  //pridej link na main Stone
+moreX=22
+target("pridej link na hlavni sutr - stredni cast")
+
+on=25 // pridej link na fontanu
+moreX=23
+target("pridej link na fontanu -> spicka co se hejbe")
+
+on=26 // zvedni/zasun fontanu
+if (tag(fountain).moreZ==1)
+  tag(fountain).f_hcn_fountainOfLife_recede	//zasune
+else
+  tag(fountain).f_hcn_fountainOfLife_raise	//vysune fontanu nahoru a vyhazi hrace co na ni stojej jinam.
+endif
+dialog(d_hcn_lavaRoom_pillar)
+
+
+[function f_hcn_LavaCheck]
+if (<tag(switch_L).more2>) && (<tag(switch_R).more2>)
+  more1=1 // hodnota na hlidaci mistnosti zpusobi pri timeru vypousteni lavy, hodnota 2 ji pak napusti z5
+  timer=1
+  return 1
+else
+  return 0
+endif
+
+[function f_hcn_lavaRoom_reset]
+f_hcn_lavaRoom_setPads
+more1=2 // hodnota na hlidaci mistnosti zpusobi znovunapousteni lavy
+timer=1
+tag(armor_L).dispID=0151C
+tag(armor_L).update
+tag(armor_R).dispID=0151C
+tag(armor_R).update
+sfx(565)
+tag(switch_L).dispID=01092
+tag(switch_L).more2=0
+tag(switch_L).update
+tag(switch_L).more1=1
+tag(switch_L).timer=1
+tag(switch_R).dispID=01092
+tag(switch_R).more2=0
+tag(switch_R).update
+tag(switch_R).more1=1
+tag(switch_R).timer=1
+
+
+[function f_hcn_DrainDitch]
+tag(lava_5).z=-40
+tag(lava_5).attr=090
+tag(lava_6).z=1
+tag(lava_6).attr=010
+tag(lava_7).dispID=01324
+tag(lava_7).update
+tag(lava_8).dispID=01333
+tag(lava_8).update
+tag(lava_9).dispID=01324
+tag(lava_9).update
+tag(lava_10).dispID=01333
+tag(lava_10).update
+
+
+[function f_hcn_RefillDitch]
+tag(lava_1).dispID=01312
+tag(lava_1).update
+tag(lava_2).dispID=01312
+tag(lava_2).update
+tag(lava_3).dispID=01312
+tag(lava_3).update
+tag(lava_4).dispID=01312
+tag(lava_4).update
+tag(lava_5).z=1
+tag(lava_5).attr=010
+tag(lava_5).update
+tag(lava_6).z=-40
+tag(lava_6).attr=090
+tag(lava_6).update
+tag(lava_7).dispID=03462
+tag(lava_7).update
+tag(lava_8).dispID=i_lava_bubble
+tag(lava_8).update
+tag(lava_9).dispID=03447
+tag(lava_9).update
+tag(lava_10).dispID=03462
+tag(lava_10).update
+
+[itemdef i_hcn_lavaRoom_Guard_L]
+id=0151C
+name=Dekorativni Zbroj
+
+on=@UserDClick
+if (src.isGM)
+  target("Zamer hlidac mistnosti - sloup")
+endif
+return 1
+
+on=@TargOn_Item
+if (src.targ.id==i_hcn_lavaRoom_pillar)
+  link=<src.targ>
+  src.targ.tag(armor_L,<uid>)
+  src.sysMessage("OK Trefa")
+else
+  src.redMessage("Tohle neni hlidac mistnosti!")
+endif
+return 1
+
+on=@Timer
+if (more1==0)
+  more1=1
+  timer=1
+  dispID=0151D
+  update
+  sfx(565)
+elseif (more1==1)
+  more1=2
+  timer=1
+  link.tag(lava_1).dispID=01321
+  link.tag(lava_1).update
+elseif (more1==2)
+  more1=3
+  timer=1
+  link.tag(lava_2).dispID=0132A
+  link.tag(lava_2).update
+elseif (more1==3)
+  more1=0
+endif
+return 1
+
+[itemdef i_hcn_lavaRoom_Guard_R]
+id=0151C
+name=Dekorativni Zbroj
+
+on=@UserDClick
+if (src.isGM)
+  target("Zamer hlidac mistnosti - sloup")
+endif
+return 1
+
+on=@TargOn_Item
+if (src.targ.id==i_hcn_lavaRoom_pillar)
+  link=<src.targ>
+  src.targ.tag(armor_R,<uid>)
+  src.sysMessage("OK Trefa")
+else
+  src.redMessage("Tohle neni hlidac mistnosti!")
+endif
+return 1
+
+on=@Timer
+if (more1==0)
+  more1=1
+  timer=1
+  dispID=0151D
+  update
+  sfx(565)
+elseif (more1==1)
+  more1=2
+  timer=1
+  link.tag(lava_3).dispID=01348
+  link.tag(lava_3).update
+elseif (more1==2)
+  more1=3
+  timer=1
+  link.tag(lava_4).dispID=0132A
+  link.tag(lava_4).update
+elseif (more1==3)
+  more1=0
+endif
+return 1
+
+[itemdef i_hcn_lavaRoom_Switch_L]
+id=01092
+name=Packa
+type=t_normal
+
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (src.isGM)
+  target("Zamer hlidac mistnosti - sloup")
+elseif (more2==0)
+  dispID=01091
+  update
+  sfx(049)
+  more2=1
+  link.tag(armor_L).timer=1
+  link.tag(switch_R).more1=1
+  link.tag(switch_R).timer=0
+  more1=0
+  timer=4800
+else
+  src.sysMessage("Packa je prehozena a nejde vratit zpet.")  
+endif
+return 1
+
+on=@TargOn_Item
+if (src.targ.id==i_hcn_lavaRoom_pillar)
+  link=<src.targ>
+  src.targ.tag(switch_L,<uid>)
+  src.sysMessage("OK Trefa")
+else
+  src.redMessage("Tohle neni hlidac mistnosti!")
+endif
+return 1
+
+on=@Timer
+if !(more1)
+  link.f_hcn_lavaRoom_reset
+else
+  more1=0
+endif
+return 1
+
+[itemdef i_hcn_lavaRoom_Switch_R]
+id=01092
+name=Packa
+type=t_normal
+
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (src.isGM)
+  target("Zamer hlidac mistnosti - sloup")
+elseif (more2==0)
+  dispID=01091
+  update
+  sfx(049)
+  more2=1
+  link.tag(armor_R).timer=1
+  link.tag(switch_L).more1=1
+  link.tag(switch_L).timer=0
+  more1=0
+  timer=4800
+else
+  src.sysMessage("Packa je prehozena a nejde vratit zpet.")  
+endif
+return 1
+
+on=@TargOn_Item
+if (src.targ.id==i_hcn_lavaRoom_pillar)
+  link=<src.targ>
+  src.targ.tag(switch_R,<uid>)
+  src.sysMessage("OK Trefa")
+else
+  src.redMessage("Tohle neni hlidac mistnosti!")
+endif
+return 1
+
+on=@Timer
+if !(more1)
+  link.f_hcn_lavaRoom_reset
+else
+  more1=0
+endif
+return 1
+
+[typedef t_hcn_lavaRoom_Pad]
+on=@Step
+if (<src.flags>&statf_dead)
+  return 1
+endif
+if !(src.isGM)
+  if (<more2>==0)
+    if (<eval src.tag(hcn_mark)>==<eval more1>)
+      timer=0
+      tag(wantedPlayer,<src>)
+    endif
+  endif
+endif
+return 1
+
+on=@Timer
+if (<more2>==0)
+  more2=1
+  tag(wantedPlayer).events=+e_hcn_lavaRoom_Pad
+  tag(wantedPlayer).tag(hcn_lavaPad,<uid>)
+  tag(wantedPlayer).newItem(i_fx_sparkle)
+  lastnew.p=<p>
+  lastnew.timer=1  
+  sfx(1225)
+  link.f_hcn_lavaRoom_checkPads
+endif
+return 1
+
+[events e_hcn_lavaRoom_Pad]
+on=@Step
+tag(hcn_lavaPad).more2=0
+tag(hcn_lavaPad).link.f_hcn_lavaRoom_leavingPadCheck
+tag(hcn_lavaPad).link.f_hcn_lavaRoom_checkPads
+tag.remove(hcn_lavaPad)
+events=-e_hcn_lavaRoom_Pad
+sfx(1224)
+
+on=@Death
+tag(hcn_lavaPad).more2=0
+tag(hcn_lavaPad).link.f_hcn_lavaRoom_leavingPadCheck
+tag(hcn_lavaPad).link.f_hcn_lavaRoom_checkPads
+tag.remove(hcn_lavaPad)
+events=-e_hcn_lavaRoom_Pad
+sfx(1224)
+
+
+[function f_hcn_lavaRoom_setPads]  //nastaveni pro horni dvere - 2 naslapky nahodne
+dorand 6
+  tag(doorL_combination,"1,2")
+  tag(doorL_combination,"1,3")
+  tag(doorL_combination,"1,4")
+  tag(doorL_combination,"2,3")
+  tag(doorL_combination,"2,4")
+  tag(doorL_combination,"3,4")
+enddo
+dorand 6
+  tag(doorR_combination,"1,2")
+  tag(doorR_combination,"1,3")
+  tag(doorR_combination,"1,4")
+  tag(doorR_combination,"2,3")
+  tag(doorR_combination,"2,4")
+  tag(doorR_combination,"3,4")
+enddo
+while (strcmpi("<tag(doorL_combination)>","<tag(doorR_combination)>")==0)
+  dorand 6
+    tag(doorR_combination,"1,2")
+    tag(doorR_combination,"1,3")
+    tag(doorR_combination,"1,4")
+    tag(doorR_combination,"2,3")
+    tag(doorR_combination,"2,4")
+    tag(doorR_combination,"3,4")
+  enddo
+endwhile
+
+
+[function f_hcn_lavaRoom_checkPads]
+if (f_hcn_lavaRoom_doorCombination(<tag(doorL_combination)>))
+  tag(doorOpened_L,1)
+  tag(RaisingDoor_L).f_hcn_lavaRoom_padaciDvere_up
+elseif (f_hcn_lavaRoom_doorCombination(<tag(doorR_combination)>))
+  tag(doorOpened_R,1)
+  tag(RaisingDoor_R).f_hcn_lavaRoom_padaciDvere_up
+elseif (tag(DoorPad_1).more2==1) && (tag(DoorPad_2).more2==1) && (tag(DoorPad_3).more2==1) && (tag(DoorPad_4).more2==1)
+  f_hcn_LavaCheck	//zpusobi vypusteni lavy v pripade, ze jsou prepnuty oba vypinace na stranach.
+  tag(ditchOpened,1)
+  tag(mainStone).timer=3
+  tag(mainStone).moreY=0	// tahle hodnota na stonu znamena krok vpred
+endif
+
+[function f_hcn_lavaRoom_leavingPadCheck]
+if (<tag(doorOpened_L)>)
+  tag.remove(doorOpened_L)
+  tag(RaisingDoor_L).f_hcn_lavaRoom_padaciDvere_down
+elseif (<tag(doorOpened_R)>)
+  tag.remove(doorOpened_R)
+  tag(RaisingDoor_R).f_hcn_lavaRoom_padaciDvere_down
+elseif (<tag(ditchOpened)>)
+  tag.remove(ditchOpened)
+  tag(mainStone).timer=1
+  tag(mainStone).moreY=1	// tahle hodnota na stonu znamena ustup :)
+endif
+
+[function f_hcn_lavaRoom_doorCombination] //argv 0 a 1 jsou vybrana cisla naslapek, ktera maji aktivovat spawn.
+arg(i,1)
+while (<arg(i)> < 5)
+  if ((<arg(i)> == <argv(0)>) || (<arg(i)> == <argv(1)>)) // pokud jde o naslapku, ktera otevira dvere
+    if (tag(DoorPad_<arg(i)>).more2==0)		// je li ta naslapka nulova, nikdo na ni nestoji a proto vratime hodnotu 0 -> nedojde k aktivaci dveri
+      return 0
+    endif
+  else
+    if (tag(DoorPad_<arg(i)>).more2==1)		// je li ta naslapka nenulova, znamena to, ze nekdo stoji na spatny naslapce a tedy nedojde k otevreni dveri
+      return 0
+    endif
+  endif
+  arg(i,#+1)
+endwhile
+return 1 //
+
+
+[itemdef i_hcn_lavaRoom_padaciDvere]
+id=i_door_portculis
+type=t_normal
+name=padaci dvere
+
+on=@Create
+attr=010
+
+on=@Timer
+if (moreX == 0) //budeme dvere zvedat
+  if (<eval more1> < 9)	//urcuje, jak jsou dvere vysoko
+    if (<more1> == 0)
+      sfx(557)
+    endif
+    f_moveUp
+    timerD=1
+    more1=<more1> + 1
+  endif
+else		//dvere budou padat
+  if (<eval more1> > 0)
+    if (<more1> == 9)
+      sfx(557)
+    endif
+    f_moveDown
+    timerD=1
+    more1=<more1> - 1
+  else
+    moreX=0
+  endif
+endif
+return 1
+
+[function f_hcn_lavaRoom_padaciDvere_up]
+moreX=0
+timer=1
+
+[function f_hcn_lavaRoom_padaciDvere_down]
+moreX=1
+timer=1
+
+[itemdef i_hcn_lavaRoom_mainStone]
+id=01238
+name=Vyrezana stena s pakou uvnitr
+
+on=@Create
+attr=010
+color=0999	//ada
+
+on=@Timer
+if (moreY == 0) && (moreZ == 0)	//moreY je skutecna pozice stone pro pripad, ze hraci po tech naslapkach litaj jak zbesily. Hodnota se uklada az pri skutecnym premisteni, ne pri timeru jako moreY
+  f_hcn_lavaRoom_advance	//popostrci kameny vpred + zmeni moreZ na hodnotu 1 (znamena, ze JE vystrceno)
+elseif (moreY == 1) && (moreZ == 1)
+  f_hcn_lavaRoom_recede
+  link.tag(fountain).f_hcn_fountainOfLife_recede
+endif
+return 1
+
+
+on=@TargOn_Item
+if ( (moreX==0) && (src.targ.id==i_hcn_lavaRoom_pillar) )
+  link=<src.targ>
+  src.targ.tag(mainStone,<uid>)
+  src.sysMessage("OK Trefa")
+  moreX=1
+  target("zamer prvni zadni stenu")
+elseif (moreX == 1)
+  tag(backWall_1,<src.targ>)
+  src.targ.color=0999
+  moreX=2
+  target("zamer druhou zadni stenu")
+elseif (moreX == 2)
+  tag(backWall_2,<src.targ>)
+  src.targ.color=0999
+  moreX=3
+  target("zamer treti zadni stenu")
+elseif (moreX == 3)
+  tag(backWall_3,<src.targ>)
+  src.targ.color=0999
+  moreX=0
+endif
+return 1
+
+
+on=@UserDClick
+if (src.isGM)
+  if (more1==0)		//vyrobi postranni sutry a nalinkuje je na tenhle - jenom ulehceni pri vytvareni sutru...
+    src.newItem(01237)
+    lastnew.attr=010
+    lastnew.color=0999
+    lastnew.name=Vyrezana stena s pakou uvnitr
+    lastnew.p=<p>
+    lastnew.move(-1,0)
+    lastnew.link=<uid>
+    lastnew.type=t_link_dclick
+    tag(stoneL,<lastnew>)
+    
+    src.newItem(01239)
+    lastnew.attr=010
+    lastnew.color=0999
+    lastnew.name=Vyrezana stena s pakou uvnitr
+    lastnew.p=<p>
+    lastnew.move(1,0)
+    lastnew.link=<uid>
+    lastnew.type=t_link_dclick
+    tag(stoneR,<lastnew>)
+    more1=1    
+  endif
+  target("Zamer hlidac Mistnosti")
+elseif (<distance> > 1)
+  src.sysMessage("Nedosahnes na paku.")
+elseif (<tag(lastSwitchTime)> < <eval <serv.time>-<eval <link.tag(mainDoorTimer)>*10> >)
+  src.sysMessage("Prehazujes paku.")
+  tag(lastSwitchTime,<serv.time>)	// z tyhle hodnoty se vypocita otevreni dveri
+  sfx(565)
+  link.f_hcn_lavaRoom_reset
+else
+  src.sysMessage("Paka je uz prehozena.")  
+endif
+return 1
+
+[function f_hcn_lavaRoom_advance]
+sfx(502)
+moreZ=1		//oznamuje, ze jsou sutry vepredu
+move(0,1)
+tag(stoneL).move(0,1)
+tag(stoneR).move(0,1)
+tag(backWall_1).move(0,1)
+tag(backWall_1).z=1
+tag(backWall_2).move(0,1)
+tag(backWall_2).z=1
+tag(backWall_3).move(0,1)
+tag(backWall_3).z=1
+
+[function f_hcn_lavaRoom_recede]
+sfx(502)
+moreZ=0		//oznamuje, ze jsou sutry vzadu
+move(0,-1)
+tag(stoneL).move(0,-1)
+tag(stoneR).move(0,-1)
+tag(backWall_1).move(0,-1)
+tag(backWall_1).z=-10
+tag(backWall_2).move(0,-1)
+tag(backWall_2).z=-10
+tag(backWall_3).move(0,-1)
+tag(backWall_3).z=-10
+
+
+[itemdef i_hcn_firstLevel_mainDoor]
+id=i_door_metal
+type=t_door_locked
+name=pevna ocel
+
+on=@userDclick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (f_hcn_firstLevel_isDoorOpened)	//dvere jsou otevreny -> lava mistnost
+  if !(moreX)	//dvere jsou zavreny
+    f_hcn_firstLevel_mainDoor_open
+  else
+    f_hcn_firstLevel_mainDoor_close
+  endif
+else
+  if (<moreX>)
+    f_hcn_firstLevel_mainDoor_close
+  else
+    src.sysMessage("Dvere jsou pevne uzavreny.")
+  endif
+endif
+return 1
+
+on=@Timer
+f_hcn_firstLevel_mainDoor_close
+return 1
+
+[function f_hcn_firstLevel_mainDoor_open]
+if (more1==1)	// jsou to dvere napravo
+  move(1,1)
+  dispid(0678)
+else  
+  move(-1,1)
+  dispid(0676)
+endif
+moreX=1	//znaci, ze dvere jsou uz prehozeny
+timer=50
+update
+
+
+[function f_hcn_firstLevel_mainDoor_close]
+if (more1==1) && (moreX==1)	// jsou to dvere napravo + jsou otevreny
+  move(-1,-1)
+  dispid(0677)
+elseif (more1==0) && (moreX==1)	// levy dvere + otevreny
+  move(1,-1)
+  dispid(i_door_metal)
+endif
+update
+moreX=0
+
+
+[function f_hcn_firstLevel_isDoorOpened]
+if (<finduid(<link.tag(mainStone)>).tag(lastSwitchTime)> > (<serv.time>-<eval <link.tag(mainDoorTimer)>*10>) )
+  return 1
+else
+  return 0
+endif
+
+[itemdef i_hcn_fountainOfLife]
+id=019D3
+name=Fontana zivota
+type=t_normal
+
+on=@Create
+color=0995
+attr=010
+
+on=@UserDClick
+if (src.isGM)) // sem GM a jeste se fontana nerozlozila do stran
+  if (<more1> == 0)
+    src.newItem(019CF)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(0,1)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_1,<lastnew>)
+    src.newItem(019CE)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(0,2)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_2,<lastnew>)
+    src.newItem(i_fountain_2)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(0,3)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_3,<lastnew>)
+  
+    src.newItem(019D1)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(1,0)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_4,<lastnew>)
+    src.newItem(019D0)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(1,1)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_5,<lastnew>)
+    src.newItem(019CD)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(1,2)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_6,<lastnew>)
+    src.newItem(019C4)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(1,3)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_7,<lastnew>)
+  
+    src.newItem(019CA)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(2,0)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_8,<lastnew>)
+    src.newItem(019CB)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(2,1)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_9,<lastnew>)
+    src.newItem(019CC)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(2,2)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_10,<lastnew>)
+    src.newItem(019C5)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(2,3)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_11,<lastnew>)
+  
+    src.newItem(019C9)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(3,0)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_12,<lastnew>)
+    src.newItem(019C8)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(3,1)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_13,<lastnew>)
+    src.newItem(019C7)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(3,2)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_14,<lastnew>)
+    src.newItem(019C6)
+    lastnew.name=Fontana zivota
+    lastnew.p=<p>
+    lastnew.move(3,3)
+    lastnew.link=<uid>
+    lastnew.color=0995
+    lastnew.attr=010
+    lastnew.type=t_hcn_fountainOfLife
+    tag(dil_15,<lastnew>)
+    
+    more1=1	//rozlozeno
+    type=t_hcn_fountainOfLife
+  endif
+endif
+return 1
+
+on=@TargOn_Item
+if (<eval moreX> < 16)
+  tag(dil_<moreX>,<src.targ>)
+  dialog(d_hcn_fountainOfLife)
+else
+  target("Musis zacilit zem, ne predmet!")
+endif
+return 1
+
+on=@Step
+src.go(<tag(onStepKick)>)
+
+
+[dialog d_hcn_fountainOfLife]
+argo.SetLocation=225,5
+
+argo.tag(sirka,322)
+argo.tag(vyska,455)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,4,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,15,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Nastaveni Fontany.")
+
+argo.settext(1001,"<?eval tag(pocetHP)?>")	//kolik HP hrac po vypiti ziska
+argo.settext(1002,"<?eval tag(effecTimer)?>")	//jak dlouho hraci efekt vydrzi
+argo.settext(1003,"<?tag(onStepKick)?>")	//kolik HP hrac po vypiti ziska
+argo.settext(1004,"<?tag(jed_sila)?>")		//jak silny je jed
+argo.dialog_textpos(1,0)
+argo.texta(lastxpos,lastypos+(0*<d_def_radek_vyska>),<d_def_writecolor>,"Pocet HP:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Ucinek/s:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Vyhazuj na:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Sila jedu:")
+argo.dialog_textpos(1,1)
+argo.textentry(lastxpos,lastypos+(0*<d_def_radek_vyska>),198,<d_def_radek_vyska>,52,1,1001)
+argo.textentry(lastxpos,lastypos+(1*<d_def_radek_vyska>),198,<d_def_radek_vyska>,52,2,1002)
+argo.textentry(lastxpos,lastypos+(2*<d_def_radek_vyska>),198,<d_def_radek_vyska>,52,3,1003)
+argo.textentry(lastxpos,lastypos+(3*<d_def_radek_vyska>),198,<d_def_radek_vyska>,52,4,1004)
+argo.dialog_textpos(1,2)
+button(lastxpos-4,lastypos+(2*<d_def_radek_vyska>),0fa5,0fa7,1,0,17)	//pridej link na 1.dil
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Dily fontany:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"UID:")
+
+argo.texta(<argo.dialog_textpos(3,0)>,<d_def_writecolor>,"Dil 1:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 2:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 3:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 4:")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 5:")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 6:")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 7:")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 8:")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 9:")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 10:")
+argo.texta(lastxpos,lastypos+(10*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 11:")
+argo.texta(lastxpos,lastypos+(11*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 12:")
+argo.texta(lastxpos,lastypos+(12*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 13:")
+argo.texta(lastxpos,lastypos+(13*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 14:")
+argo.texta(lastxpos,lastypos+(14*<d_def_radek_vyska>),<d_def_writecolor>,"Dil 15:")
+argo.texta(<argo.dialog_textpos(3,1)>,<d_def_readcolor>,"<?tag(dil_1)?>")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_2)?>")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_3)?>")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_4)?>")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_5)?>")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_6)?>")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_7)?>")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_8)?>")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_9)?>")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_10)?>")
+argo.texta(lastxpos,lastypos+(10*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_11)?>")
+argo.texta(lastxpos,lastypos+(11*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_12)?>")
+argo.texta(lastxpos,lastypos+(12*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_13)?>")
+argo.texta(lastxpos,lastypos+(13*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_14)?>")
+argo.texta(lastxpos,lastypos+(14*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(dil_15)?>")
+argo.dialog_textpos(3,2)
+button(lastxpos-4,lastypos+(0*<d_def_radek_vyska>),0fa5,0fa7,1,0,2)	//pridej link na 1.dil
+button(lastxpos-4,lastypos+(1*<d_def_radek_vyska>),0fa5,0fa7,1,0,3)	//pridej link na 2.dil
+button(lastxpos-4,lastypos+(2*<d_def_radek_vyska>),0fa5,0fa7,1,0,4)	//pridej link na 3.dil
+button(lastxpos-4,lastypos+(3*<d_def_radek_vyska>),0fa5,0fa7,1,0,5)	//pridej link na 4.dil
+button(lastxpos-4,lastypos+(4*<d_def_radek_vyska>),0fa5,0fa7,1,0,6)	//pridej link na 5.dil
+button(lastxpos-4,lastypos+(5*<d_def_radek_vyska>),0fa5,0fa7,1,0,7)	//pridej link na 6.dil
+button(lastxpos-4,lastypos+(6*<d_def_radek_vyska>),0fa5,0fa7,1,0,8)	//pridej link na 7.dil
+button(lastxpos-4,lastypos+(7*<d_def_radek_vyska>),0fa5,0fa7,1,0,9)	//pridej link na 8.dil
+button(lastxpos-4,lastypos+(8*<d_def_radek_vyska>),0fa5,0fa7,1,0,10)	//pridej link na 9.dil
+button(lastxpos-4,lastypos+(9*<d_def_radek_vyska>),0fa5,0fa7,1,0,11)	//pridej link na 10.dil
+button(lastxpos-4,lastypos+(10*<d_def_radek_vyska>),0fa5,0fa7,1,0,12)	//pridej link na 11.dil
+button(lastxpos-4,lastypos+(11*<d_def_radek_vyska>),0fa5,0fa7,1,0,13)	//pridej link na 12.dil
+button(lastxpos-4,lastypos+(12*<d_def_radek_vyska>),0fa5,0fa7,1,0,14)	//pridej link na 13.dil
+button(lastxpos-4,lastypos+(13*<d_def_radek_vyska>),0fa5,0fa7,1,0,15)	//pridej link na 14.dil
+button(lastxpos-4,lastypos+(14*<d_def_radek_vyska>),0fa5,0fa7,1,0,16)	//pridej link na 15.dil
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_hcn_fountainOfLife button]
+on=0
+return 1
+
+on=1 //ok
+tag(pocetHP,<eval argtxt(1)>)
+tag(effecTimer,<eval argtxt(2)>)
+tag(onStepKick,"<argtxt(3)>")
+tag(jed_sila,<eval argtxt(4)>)
+
+on=2 //
+moreX=1
+target("pridej link na 1. dil")
+
+on=3 //
+moreX=2
+target("pridej link na 2. dil")
+
+on=4 //
+moreX=3
+target("pridej link na 3. dil")
+
+on=5 //
+moreX=4
+target("pridej link na 4. dil")
+
+on=6 //
+moreX=5
+target("pridej link na 5. dil")
+
+on=7 //
+moreX=6
+target("pridej link na 6. dil")
+
+on=8 //
+moreX=7
+target("pridej link na 7. dil")
+
+on=9 //
+moreX=8
+target("pridej link na 8. dil")
+
+on=10 //
+moreX=9
+target("pridej link na 9. dil")
+
+on=11 //
+moreX=10
+target("pridej link na 10. dil")
+
+on=12 //
+moreX=11
+target("pridej link na 11. dil")
+
+on=13 //
+moreX=12
+target("pridej link na 12. dil")
+
+on=14 //
+moreX=13
+target("pridej link na 13. dil")
+
+on=15 //
+moreX=14
+target("pridej link na 14. dil")
+
+on=16 //
+moreX=15
+target("pridej link na 15. dil")
+
+on=17 //
+tag(onStepKick,<src.p>)
+src.sysMessage("Zamerena pozice: <src.p>")
+dialog(d_hcn_fountainOfLife)
+
+[typedef t_hcn_fountainOfLife]
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (id==i_hcn_fountainOfLife)
+  arg(mainFountainID,<uid>)
+else
+  arg(mainFountainID,<link>)
+endif
+if (src.isGM)
+  arg(mainFountainID).dialog(d_hcn_fountainOfLife)
+elseif (<eval src.tag(hcn_mark)>)	// pokud ma hrac znamenko, musi stat na naslapkach ale voda z fontany mu da poison namisto boostu HP
+  src.newitemsafe(i_memory_jed)
+  lastnew.tag(jed_typ,poison_c)
+  lastnew.tag(jed_sila,<arg(mainFountainID).tag(jed_sila)>)
+  lastnew.tag(jed_rychlost,2)
+  src.equip(<lastnew>)
+  src.effect(3,i_fx_curse,6,15,1)
+  src.sound(49)
+else
+  if (<src.restest(i_hcn_fountainOfLife_effect)>)
+    src.findID(i_hcn_fountainOfLife_effect).remove
+    src.sysMessage("Blahodarny ucinnek se obnovil.")
+  else
+    src.sysMessage("Citis svym telem prostupovat obrovskou silu zivota.")
+  endif
+  src.newequip(i_hcn_fountainOfLife_effect)
+  if (ID==i_hcn_fountainOfLife)
+    lastnew.timer=<tag(effecTimer)>
+  else
+    lastnew.timer=<arg(mainFountainID).tag(effecTimer)>
+  endif
+  src.hits=<arg(mainFountainID).tag(pocetHP)>
+  src.sound(49)
+endif
+return 1
+
+on=@Step
+if (id==i_hcn_fountainOfLife)
+  src.go(<tag(onStepKick)>)
+else
+  src.go(<link.tag(onStepKick)>)
+endif
+
+[function f_hcn_fountainOfLife_recede]
+z=-40
+moreZ=0		//oznamuje, ze je fontana pod zemi a nelze ji pouzit
+arg(i,1)
+while (i<=15)
+  tag(dil_<i>).z=-40
+  arg(i,#+1)
+endwhile
+
+[function f_hcn_fountainOfLife_raise]
+z=6
+moreZ=1		//oznamuje, ze je fontana nad zemi
+arg(i,1)
+while (i<=15)
+  tag(dil_<i>).z=6
+  arg(i,#+1)
+endwhile
+
+[itemdef i_hcn_fountainOfLife_effect]
+id=i_memory
+type=t_eq_script
+name=HCN Fountain Effect
+
+on=@Timer
+if (<more1>=0)
+  cont.sysMessage("Ucinnek lektvaru z fontany zacina vyprchavat.")
+  more1=1
+  timer=2
+  return 1
+elseif (<cont.hits> > 1500)
+  cont.hits=<cont.hits>-1000
+  timer=2
+  return 1
+elseif (<cont.hits> > <cont.maxhits>)
+  cont.hits=<cont.maxhits>
+endif
+remove
+
+
+[itemdef i_hcn_marker_head]
+id=4367
+name=hlava
+type=t_normal
+
+on=@Create
+attr=010
+more1=4500
+
+on=@UserDClick
+if (src.isGM)
+  if !(link)
+    if (more2 == 1)
+      arg(rune_number,2)
+    elseif (more2 == 2)
+      arg(rune_number,6)
+    elseif (more2 == 3)
+      arg(rune_number,10)
+    elseif (more2 == 4)
+      arg(rune_number,12)
+    else
+      src.sysMessage("More2 urcuje, o kterou hlavu v poradi jde. Pro nastaveni hlavy zmen more2 a dclickni znovu.")
+      src.sysMessage("More1 urcuje, jak dlouho hraci vydrzi znamka na tele.")
+      return 1
+    endif
+    src.newitem(i_rune_alchem_<rune_number>)
+    lastnew.p=<p>
+    lastnew.color=099a
+    link=<lastnew>
+    lastnew.link=<uid>
+  else
+    src.sysMessage("Hlava je jiz nastavena. Pro reset nastaveni smaz dlazdici v linku a LINK vynuluj.")
+  endif
+  return 1
+endif
+
+on=@Step
+if (<src.flags>&statf_dead)
+  return 1
+endif
+if (src.isGM)
+  return 1
+endif
+if (<moreX>) || (<src.tag(hcn_mark)>)
+  return 1
+endif
+src.flag_freeze=1
+src.tag(hcn_mark,<eval more2>)
+src.tag(hcn_mark_src,<uid>)
+tag(markHasBeenGivenTo,<src>)
+src.redMessage("Jsi <src.sex(zachycen,zachycena)> obrovskou silou!")
+src.events(-e_gethit)
+src.damage(20,dam_god,<uid>)
+src.events(+e_gethit)
+dispID=4369
+update
+timer=2
+
+on=@Timer
+if (moreX==0)
+  timer=<eval more1>
+  moreX=1
+  tag(markHasBeenGivenTo).flag_freeze=0
+  tag(markHasBeenGivenTo).sysMessage("Magicky ohen ti na pazi vypalil symbol odpovidajici dlazdici, na kterou jsi <tag(markHasBeenGivenTo).sex(stoupl,stoupla)>.")
+  dispID=4367
+  update
+elseif (moreX==1)
+  tag(markHasBeenGivenTo).f_hcn_marker_removeMark
+else
+  tag.remove(markHasBeenGivenTo)
+  moreX=0
+endif
+return 1
+
+
+[function f_hcn_marker_removeMark]	// odebere hraci vypalenou znamku z tela + ustedri mensi vypalne
+tag(hcn_mark_src).moreX=2
+tag(hcn_mark_src).timer=1
+newItem(i_fire_column)
+lastnew.attr=attr_static|attr_decay
+lastnew.timer=3
+lastnew.p=<p>
+events(-e_gethit)
+damage(20,dam_god,<lastnew>)
+events(+e_gethit)
+sfx(snd_spell_flamestrike)
+tag.remove(hcn_mark)
+tag.remove(hcn_mark_src)
+sysMessage("Vypaleny symbol na tvem tele zmizel.")
+
+
+///////////////////////////////////////
+//  J A I L   F I R S T   F L O O R  //
+///////////////////////////////////////
+
+[itemdef i_hcn_jailRoom_pillar]
+id=02D38
+name=Hlidac mistnosti - Jail
+
+on=@Create
+attr=090 //invis, nevermove
+color=color_o_gold
+
+on=@UserDClick
+if (src.isGM)
+  dialog(d_hcn_jailRoom_pillar)
+endif
+return 1
+
+on=@TargOn_Item
+if (moreX == 2)
+  tag(lever_1,<src.targ>)
+  src.targ.more1=1
+  src.targ.tag(mark,I)
+elseif (moreX == 3)
+  tag(lever_2,<src.targ>)
+  src.targ.more1=2
+  src.targ.tag(mark,II)
+elseif (moreX == 4)
+  tag(lever_3,<src.targ>)
+  src.targ.more1=3
+  src.targ.tag(mark,III)
+elseif (moreX == 5)
+  tag(lever_4,<src.targ>)
+  src.targ.more1=4
+  src.targ.tag(mark,IV)
+elseif (moreX == 6)
+  tag(lever_5,<src.targ>)
+  src.targ.more1=5
+  src.targ.tag(mark,V)
+elseif (moreX == 7)
+  tag(lever_6,<src.targ>)
+  src.targ.more1=6
+  src.targ.tag(mark,VI)
+elseif (moreX == 8)
+  tag(door_1,<src.targ>)
+  src.targ.more1=1
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 9)
+  tag(door_2,<src.targ>)
+  src.targ.more1=2
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 10)
+  tag(door_3,<src.targ>)
+  src.targ.more1=3
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 11)
+  tag(door_4,<src.targ>)
+  src.targ.more1=4
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 12)
+  tag(door_5,<src.targ>)
+  src.targ.more1=5
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 13)
+  tag(door_6,<src.targ>)
+  src.targ.more1=6
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 14)
+  tag(door_7,<src.targ>)
+  src.targ.more1=7
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+elseif (moreX == 15)
+  tag(door_8,<src.targ>)
+  src.targ.more1=8
+  src.targ.type=t_hcn_jailDoor_controledByLever
+  src.targ.more2=<src.targ.dispid>
+  src.targ.morep=<src.targ.p>
+endif
+src.targ.tag(roomsGuard,<uid>)
+dialog(d_hcn_jailRoom_pillar)
+return 1
+
+on=@Timer
+f_hcn_jailRoom_reset
+timer=<tag(reseTime)>
+return 1
+
+
+
+[dialog d_hcn_jailRoom_pillar]
+argo.SetLocation=225,5
+
+argo.tag(sirka,322)
+argo.tag(vyska,582)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,2,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,14,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,8,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Hlidac mistnosti - Jail")
+
+argo.settext(1001,"<?tag(reseTime)?>")
+
+argo.dialog_textpos(1,2)
+argo.button(lastxpos-4,lastypos,0fb4,0fb6,1,0,2)	// reset door Order
+argo.dialog_textpos(1,0)
+argo.texta(lastxpos,lastypos+(0*<d_def_radek_vyska>),<d_def_writecolor>,"Poradi Dveri:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Timer Reset/s:")
+argo.dialog_textpos(1,1)
+argo.texta(lastxpos,lastypos+(0*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(roomsOrder)?>")
+argo.textentry(lastxpos,lastypos+(1*<d_def_radek_vyska>),198,<d_def_radek_vyska>,52,1,1001)
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Linky:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"UID Linku:")
+
+argo.texta(<argo.dialog_textpos(3,0)>,<d_def_writecolor>,"Paka 1:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Paka 2:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Paka 3:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Paka 4:")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_writecolor>,"Paka 5:")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_writecolor>,"Paka 6:")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 1:")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 2:")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 3:")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 4:")
+argo.texta(lastxpos,lastypos+(10*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 5:")
+argo.texta(lastxpos,lastypos+(11*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere 6:")
+argo.texta(lastxpos,lastypos+(12*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere Hlava 1:")
+argo.texta(lastxpos,lastypos+(13*<d_def_radek_vyska>),<d_def_writecolor>,"Dvere Hlava 2:")
+
+argo.texta(<argo.dialog_textpos(3,1)>,<d_def_readcolor>,"<?tag(lever_1)?>")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lever_2)?>")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lever_3)?>")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lever_4)?>")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lever_5)?>")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(lever_6)?>")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_1)?>")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_2)?>")
+argo.texta(lastxpos,lastypos+(8*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_3)?>")
+argo.texta(lastxpos,lastypos+(9*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_4)?>")
+argo.texta(lastxpos,lastypos+(10*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_5)?>")
+argo.texta(lastxpos,lastypos+(11*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_6)?>")
+argo.texta(lastxpos,lastypos+(12*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_7)?>")
+argo.texta(lastxpos,lastypos+(13*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(door_8)?>")
+argo.dialog_textpos(3,2)
+button(lastxpos-4,lastypos+(0*<d_def_radek_vyska>),0fa5,0fa7,1,0,3)	//pridej link na 1.paku
+button(lastxpos-4,lastypos+(1*<d_def_radek_vyska>),0fa5,0fa7,1,0,4)	//pridej link na 2.paku
+button(lastxpos-4,lastypos+(2*<d_def_radek_vyska>),0fa5,0fa7,1,0,5)	//pridej link na 3.paku
+button(lastxpos-4,lastypos+(3*<d_def_radek_vyska>),0fa5,0fa7,1,0,6)	//pridej link na 4.paku
+button(lastxpos-4,lastypos+(4*<d_def_radek_vyska>),0fa5,0fa7,1,0,7)	//pridej link na 5.paku
+button(lastxpos-4,lastypos+(5*<d_def_radek_vyska>),0fa5,0fa7,1,0,8)	//pridej link na 6.paku
+button(lastxpos-4,lastypos+(6*<d_def_radek_vyska>),0fa5,0fa7,1,0,9)	//pridej link na 1.dvere
+button(lastxpos-4,lastypos+(7*<d_def_radek_vyska>),0fa5,0fa7,1,0,10)	//pridej link na 2.dvere
+button(lastxpos-4,lastypos+(8*<d_def_radek_vyska>),0fa5,0fa7,1,0,11)	//pridej link na 3.dvere
+button(lastxpos-4,lastypos+(9*<d_def_radek_vyska>),0fa5,0fa7,1,0,12)	//pridej link na 4.dvere
+button(lastxpos-4,lastypos+(10*<d_def_radek_vyska>),0fa5,0fa7,1,0,13)	//pridej link na 5.dvere
+button(lastxpos-4,lastypos+(11*<d_def_radek_vyska>),0fa5,0fa7,1,0,14)	//pridej link na 6.dvere
+button(lastxpos-4,lastypos+(12*<d_def_radek_vyska>),0fa5,0fa7,1,0,15)	//pridej link na 7.dvere
+button(lastxpos-4,lastypos+(13*<d_def_radek_vyska>),0fa5,0fa7,1,0,16)	//pridej link na 8.dvere
+
+argo.texta(<argo.dialog_textpos(4,0)>,<d_def_writecolor>,"c. mistnosti:")
+argo.texta(<argo.dialog_textpos(4,1)>,<d_def_writecolor>,"Kombinace otevreni:")
+
+argo.texta(<argo.dialog_textpos(5,0)>,<d_def_writecolor>,"Mistnost 1:")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_writecolor>,"Mistnost 2:")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_writecolor>,"Mistnost 3:")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_writecolor>,"Mistnost 4:")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_writecolor>,"Mistnost 5:")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_writecolor>,"Mistnost 6:")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_writecolor>,"MistnostHL 1:")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_writecolor>,"MistnostHL 2:")
+
+argo.texta(<argo.dialog_textpos(5,1)>,<d_def_readcolor>,"<?tag(doorCombination_1)?>")
+argo.texta(lastxpos,lastypos+(1*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_2)?>")
+argo.texta(lastxpos,lastypos+(2*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_3)?>")
+argo.texta(lastxpos,lastypos+(3*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_4)?>")
+argo.texta(lastxpos,lastypos+(4*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_5)?>")
+argo.texta(lastxpos,lastypos+(5*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_6)?>")
+argo.texta(lastxpos,lastypos+(6*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_7)?>")
+argo.texta(lastxpos,lastypos+(7*<d_def_radek_vyska>),<d_def_readcolor>,"<?tag(doorCombination_8)?>")
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+
+[dialog d_hcn_jailRoom_pillar button]
+on=0
+return 1
+
+on=1//ok
+tag(reseTime,<argTxt(1)>)
+timer=<tag(reseTime)>
+
+
+on=2//reset
+f_hcn_jailRoom_reset
+dialog(d_hcn_jailRoom_pillar)
+
+on=3//paka 1
+moreX=2
+target("Zamer paku c.1 - Nesmi byt v mistnosti s hlavou !")
+
+on=4//paka 2
+moreX=3
+target("Zamer paku c.2 - Nesmi byt v mistnosti s hlavou !")
+
+on=5//paka 3
+moreX=4
+target("Zamer paku c.3 - Nesmi byt v mistnosti s hlavou !")
+
+on=6//paka 4
+moreX=5
+target("Zamer paku c.4 - Nesmi byt v mistnosti s hlavou !")
+
+on=7//paka 5
+moreX=6
+target("Zamer paku c.5 - Nesmi byt v mistnosti s hlavou !")
+
+on=8//paka 6
+moreX=7
+target("Zamer paku c.6 - Nesmi byt v mistnosti s hlavou !")
+
+on=9//dvere 1
+moreX=8
+target("Zamer dvere c.1 - Musi odpovidat mistnosti s pakou c.1 !")
+
+on=10//dvere 2
+moreX=9
+target("Zamer dvere c.2 - Musi odpovidat mistnosti s pakou c.2 !")
+
+on=11//dvere 3
+moreX=10
+target("Zamer dvere c.3 - Musi odpovidat mistnosti s pakou c.3 !")
+
+on=12//dvere 4
+moreX=11
+target("Zamer dvere c.4 - Musi odpovidat mistnosti s pakou c.4 !")
+
+on=13//dvere 5
+moreX=12
+target("Zamer dvere c.5 - Musi odpovidat mistnosti s pakou c.5 !")
+
+on=14//dvere 6
+moreX=13
+target("Zamer dvere c.6 - Musi odpovidat mistnosti s pakou c.6 !")
+
+on=15//dvere s 1. hlavou
+moreX=14
+target("Zamer dvere c.7 - Tyto dvere vedou k prvni hlave !")
+
+on=16//dvere s 2. hlavou
+moreX=15
+target("Zamer dvere c.8 - Tyto dvere vedou k druhe hlave !")
+
+
+[function f_hcn_jailRoom_reset]
+f_hcn_jailRoom_setOrderTag
+f_hcn_jailRoom_setDoorCombinations(<tag(roomsOrder)>)
+f_hcn_jailRoom_setDoorScratches
+f_hcn_jailRoom_leversToBasePos
+
+
+[function f_hcn_jailRoom_setOrderTag]
+arg(room_1,<eval {1 6}>)
+arg(room_2,<f_hcn_jailRoom_getOrder_nextNumber(<arg(room_1)>)>)
+arg(room_3,<f_hcn_jailRoom_getOrder_nextNumber(<arg(room_1)>,<arg(room_2)>)>)
+arg(room_4,<f_hcn_jailRoom_getOrder_nextNumber(<arg(room_1)>,<arg(room_2)>,<arg(room_3)>)>)
+arg(room_5,<f_hcn_jailRoom_getOrder_nextNumber(<arg(room_1)>,<arg(room_2)>,<arg(room_3)>,<arg(room_4)>)>)
+arg(room_6,<f_hcn_jailRoom_getOrder_nextNumber(<arg(room_1)>,<arg(room_2)>,<arg(room_3)>,<arg(room_4)>,<arg(room_5)>)>)
+tag(roomsOrder,"<arg(room_1)>,<arg(room_2)>,<arg(room_3)>,<arg(room_4)>,<arg(room_5)>,<arg(room_6)>")
+
+[function f_hcn_jailRoom_getOrder_nextNumber]	//argv(0) == cislo, ktery se nesmi rovnat ostatnim
+arg(thisNumber,<eval {1 6}>)
+while (<f_hcn_jailRoom_getOrder_isEqual(<arg(thisNumber)>,<args>)>)
+  if (<arg(thisNumber)> == 6)
+    arg(thisNumber,1)
+  else
+    arg(thisNumber,#+1)
+  endif
+endwhile
+return <arg(thisNumber)>
+
+[function f_hcn_jailRoom_getOrder_isEqual]	// zjistuje, zda je prvni argument roven nekteremu z dalsich
+arg(i,1)
+while (<i> < <argvcount>)
+  if (<argv(<i>)> == <argv(0)>)
+    return 1
+  endif
+  arg(i,#+1)
+endwhile
+return 0
+
+
+[function f_hcn_jailRoom_setDoorCombinations]
+//cisla v tagu doorCombination oznacuji pozici pak. 1 == zakladni pozice, 2 == pozice uprostred a 3 == pozice uplne "vpravo". Pozice paky odpovida hodnote more2 na dany pace. Poradi cisel presne odpovida poradi pak, tedy na prvnim miste v tagu je pozice prvni paky, na druhem miste je pozice druhe atd.
+//Cela sestava cisel (kombinace) pak oznacuje presnou kombinaci nastaveni prislusnych pak pro otevreni dveri. 
+tag(doorCombination_1,<f_hcn_jailRoom_getDoorComb(<argv(0)>,<tag(roomsOrder)>)>)	//1. argument -> cislo paky, kterou ted nastavujem
+tag(doorCombination_2,<f_hcn_jailRoom_getDoorComb(<argv(1)>,<tag(roomsOrder)>)>)
+tag(doorCombination_3,<f_hcn_jailRoom_getDoorComb(<argv(2)>,<tag(roomsOrder)>)>)
+tag(doorCombination_4,<f_hcn_jailRoom_getDoorComb(<argv(3)>,<tag(roomsOrder)>)>)
+tag(doorCombination_5,<f_hcn_jailRoom_getDoorComb(<argv(4)>,<tag(roomsOrder)>)>)
+tag(doorCombination_6,<f_hcn_jailRoom_getDoorComb(<argv(5)>,<tag(roomsOrder)>)>)
+tag(doorCombination_7,<f_hcn_jailRoom_getDoorComb(7,<tag(roomsOrder)>)>)		//sedmicka v argumentu zaridi, ze bude vyzadovano prehozeni 6. paky.
+tag(doorCombination_8,<f_hcn_jailRoom_getDoorComb(7,<tag(roomsOrder)>)>)
+
+[function f_hcn_jailRoom_getDoorComb]	//argv(0) 
+//y = x-1 -> {2 3}
+//y < x-1 -> {1 3}	-> y je cislo paky, x je poradi jednotlivych dveri
+arg(poradi,<eval <argv(0)>-1>)				// poradi predchozi mistnosti
+arg(i,1)
+while (<arg(i)> < 7)					// prozkoumat hodnoty u vsech pak
+  if (<arg(poradi)> == <argv(<arg(i)>)>)		// nastavime kombinaci paky v predchozi mistnosti na nestandartni pozici (cili jinou nez 1) abysme zarucili, ze do te mistnosti hraci MUSI
+    arg(sw<i>,<eval {2 3}>)
+  elseif (<arg(poradi)> > <argv(<arg(i)>)>)		// pokud je poradi mistnosti nizsi nez poradi mistnosti predchozi, pak smi byt kombinace pak naprosto libovolna, tedy pozice 1 az 3
+    if (<eval <arg(poradi)>-3> > <argv(<arg(i)>)>)		// zaridi, ze hraci nebudou nuceni stat u prvnich pak, tj nebude jich muset jit 6 -> to bude vyhodou, v opacnem pripade tak dostanou moznost pustit se z prvnich dvou mistnosti a jit do dalsich v poradi - tzn. min pocet == 5 hracu (4 v zakl. mistnostech, 5. smi navstivit hlavu)
+      src.sysMessage("vraceno pro: <argv(<arg(i)>)> a srazen: <eval <arg(poradi)>-3>")
+      arg(sw<i>,1)
+    else
+      arg(sw<i>,<eval {1 3}>)
+    endif
+  else							// pokud je poradi mistnosti vyzsi nez cislo predchozi mistnosti, pak je nutne zachovat potrebu zakladni pozice pro dane paky
+    arg(sw<i>,1)
+  endif
+  arg(i,#+1)
+endwhile
+return <arg(sw1)>,<arg(sw2)>,<arg(sw3)>,<arg(sw4)>,<arg(sw5)>,<arg(sw6)>
+
+
+[function f_hcn_jailRoom_setDoorScratches]
+tag(door_1).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_1)>)>)
+tag(door_2).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_2)>)>)
+tag(door_3).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_3)>)>)
+tag(door_4).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_4)>)>)
+tag(door_5).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_5)>)>)
+tag(door_6).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_6)>)>)
+tag(door_7).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_7)>)>)
+tag(door_8).tag(mark,<f_hcn_jailRoom_getDoorScratches(<tag(doorCombination_8)>)>)
+
+[function f_hcn_jailRoom_getDoorScratches]
+arg(scratch_1,<f_hcn_jailRoom_getScratch(<argv(0)>)>)
+arg(scratch_2,<f_hcn_jailRoom_getScratch(<argv(1)>)>)
+arg(scratch_3,<f_hcn_jailRoom_getScratch(<argv(2)>)>)
+arg(scratch_4,<f_hcn_jailRoom_getScratch(<argv(3)>)>)
+arg(scratch_5,<f_hcn_jailRoom_getScratch(<argv(4)>)>)
+arg(scratch_6,<f_hcn_jailRoom_getScratch(<argv(5)>)>)
+return <scratch_1>-<scratch_2>-<scratch_3>-<scratch_4>-<scratch_5>-<scratch_6>
+
+[function f_hcn_jailRoom_getScratch]
+if (<argv(0)> == 1)
+  arg(retSymbol,I)
+elseif (<argv(0)> == 2)
+  arg(retSymbol,II)
+elseif (<argv(0)> == 3)
+  arg(retSymbol,III)
+endif
+return<retSymbol>
+
+
+[typedef t_hcn_jailDoor_controledByLever]
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+endif
+if (<tag(roomsGuard).timer> < 3000)
+  tag(roomsGuard).timer=3600
+endif
+if (dispid!=more2) 
+ type=t_door
+ dclick
+ type=t_hcn_jailDoor_controledByLever
+elseif (<tag(roomsGuard).f_hcn_jailRoom_checkCombination(<eval more1>)>==0)		// if checkComb == 0 ==> paky jsou zprehazeny nespravne a hrac nesmi dal
+ if (src.isGM)
+  src.sysMessage("Dvere jsou ovladany pakami v okoli a mely by byt zavrene.")
+  type=t_door
+  dclick
+  type=t_hcn_jailDoor_controledByLever
+ else
+   src.sysMessage("Dvere jsou pevne zamcene!")
+   if (<src.Lockpicking> > 75.0)
+     src.sysMessage("Zamek je mechanicky a odtud se k nemu nelze dostat.")
+     src.sysMessage("V okoli musi byt nejake zarizeni pro otevreni zamku.")
+   endif
+   src.sysMessage("Na zamku dveri je vyryta znacka:")
+   src.sysMessage("<?tag(mark)?>")
+ endif
+else
+  type=t_door
+  dclick
+  type=t_hcn_jailDoor_controledByLever
+endif
+return 1
+
+on=@Timer
+dispid=<more2>
+p=<morep>
+update
+return 1
+
+[function f_hcn_jailRoom_checkCombination]
+if f_hcn_jailRoom_checkEachLever(<tag(doorCombination_<argv(0)>)>)
+  return 1
+else
+  return 0
+endif
+
+[function f_hcn_jailRoom_checkEachLever]
+arg(i,1)
+while (<arg(i)> < 7)	// projede vsechny paky od 1 do 6ti
+  if (<tag(lever_<arg(i)>).f_hcn_jailRoom_check(<argv(<arg(i)>-1)>)>)	// funkci jailRoom_check posle prislusny argument odpovidajici pace s hodnotou, kterou pozici ma paka mit
+    arg(i,#+1)
+  else
+    return 0		// pozice je spatna
+  endif
+endwhile
+return 1		// vse vyslo OK, dvere se smi otevrit
+
+[function f_hcn_jailRoom_check]		//zkontroluje, zda dana pozice paky odpovida poslane pozici
+if (<more2> == <argv(0)>)
+  return 1
+else
+  return 0
+endif
+
+
+[itemdef i_hcn_switch_lever_1]
+id=0108C
+name=Paka
+type=t_hcn_switch_lever
+
+on=@Create
+attr=010
+
+
+[itemdef i_hcn_switch_lever_2]
+id=01093
+name=Paka
+type=t_hcn_switch_lever
+
+on=@Create
+attr=010
+more2=1
+
+
+[typedef t_hcn_switch_lever]
+on=@UserDClick
+if (<src.flags>&statf_dead)
+  return 0
+elseif (<distance> > 1)
+  src.sysMessage("Jsi prilis daleko!")
+else
+  src.sysMessage("Ha! Na pace je vyryt nejaky symbol..")
+  Dialog(d_hcn_switch_lever)
+endif
+return 1
+
+[dialog d_hcn_switch_lever]
+305,100
+argo.resizepic(0,0,2620,190,120)
+argo.texta(15,18,<d_def_readcolor>,"Paka se symbolem:")
+argo.texta(90,38,<d_def_readcolor>,"<tag(mark)>")
+if (<more2> == 1)
+  argo.tilepichue(80,65,0108c)
+elseif (<more2>==2)
+  argo.tilepichue(80,58,0108d)
+else
+  argo.tilepichue(80,67,0108e)
+endif
+argo.button(20,50,0119c,0119c,1,0,1)	//move left
+argo.button(120,50,01196,01196,1,0,2)	//move right
+
+[dialog d_hcn_switch_lever button]
+on=0
+return 1
+
+on=1
+if (<src.flags>&statf_dead)
+  return 0
+elseif (<distance> > 1)
+  src.sysMessage("Jsi prilis daleko!")
+else
+  f_switch_lever_moveLeft
+  tag(roomsGuard).f_hcn_jailRoom_closeCertainDoor(<eval more1>)
+  dialog(d_hcn_switch_lever)
+endif
+
+on=2
+if (<src.flags>&statf_dead)
+  return 0
+elseif (<distance> > 1)
+  src.sysMessage("Jsi prilis daleko!")
+else
+  f_switch_lever_moveRight
+  tag(roomsGuard).f_hcn_jailRoom_closeCertainDoor(<eval more1>)
+  dialog(d_hcn_switch_lever)
+endif
+
+[function f_hcn_jailRoom_closeCertainDoor]
+if (<tag(door_<eval argv(0)>).timer> > 0)
+  tag(door_<eval argv(0)>).timer=0
+endif
+
+[function f_hcn_jailRoom_leversToBasePos]
+tag(lever_1).f_switch_lever_setBasePos
+tag(lever_2).f_switch_lever_setBasePos
+tag(lever_3).f_switch_lever_setBasePos
+tag(lever_4).f_switch_lever_setBasePos
+tag(lever_5).f_switch_lever_setBasePos
+tag(lever_6).f_switch_lever_setBasePos
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+[itemdef i_hcn_Pillar_StepPads]
+id=02D38
+name=StepPads Controler
+type=t_script
+
+on=@Create
+attr=090
+
+on=@Timer
+if (<f_hcn_firstLevel_isDoorOpened>)	// chceme zvedat pady
+  if (<moreZ> == 0) // jsou pady k zvednuti
+    f_hcn_stepPads_raise
+    timerD=2
+  else
+    return 1
+  endif
+else
+  if (<moreZ> == 1) // jeste jsou pady k schovani
+    f_hcn_stepPads_hide
+    timerD=2
+  else
+    return 1
+  endif
+endif
+return 1
+
+on=@userDclick
+if (src.isGm)
+  dialog(d_hcn_Pillar_StepPads)
+  return 1
+endif
+
+on=@TargOn_Item
+if (<moreX> == 0)	//switcher
+  src.sysMessage("Switch zameren.")
+  link=<src.targ>
+elseif (<moreX> == 1)
+  tag(doorLink,<src.targ>)
+  src.sysMessage("Dvere zamereny.")
+elseif (<moreX> == 2)
+  tag(keyPad,<src.targ>)
+  src.targ.type=t_hcn_StepPads_MainKey
+  src.targ.link=<uid>
+  src.targ.color=097F
+  src.sysMessage("Hlavni pad zameren")
+elseif (<moreX> == 3)
+  tag(pad_<eval tag(padAmount)>,<src.targ>)
+  tag(padAmount,<eval <tag(padAmount)>+1>)
+  src.targ.tag(padSwitcher,<uid>)
+  src.targ.type=t_hcn_ShutDoorPad_field
+  src.targ.color=099A
+  src.targ.attr=090
+  src.targ.z=-20
+  src.targ.update
+  src.sysMessage("Pridana dalsi naslapka.")
+endif
+dialog(d_hcn_Pillar_StepPads)
+return 1
+
+[function f_hcn_stepPads_raise]
+arg(cp,<more1>*3)
+arg(i,0)
+while (<arg(i)> < 3)
+  if (<tag(padAmount)> <= <eval arg(cp)>)  // za tehle podminky uz nemam dalsi pady na vynoreni a koncim
+    moreZ=1 //pady jsou videt
+    return 1
+  else
+    arg(pdLink,<tag(pad_<eval arg(cp)>)>)
+    pdLink.z=1
+    pdLink.attr=010
+    pdLink.update
+  endif
+  arg(i,#+1)
+  arg(cp,<arg(cp)>+1)
+endwhile
+if (<tag(padAmount)> > <eval arg(cp)>) // je jeste co vynorit v pristim kole?
+  more1=<more1>+1
+else
+  moreZ=1
+endif
+
+[function f_hcn_stepPads_hide]
+arg(cp,<more1>*3)
+arg(i,0)
+while (<arg(i)> < 3)
+  if (<tag(padAmount)> <= <eval arg(cp)>)  // za tehle podminky zkousim v davce vynorit vice padu, nez jich mam (kazda davka se snazi vynorit 6 padu)
+  else
+    arg(pdLink,<tag(pad_<eval arg(cp)>)>)
+    pdLink.z=-20
+    pdLink.attr=090
+    pdLink.update
+  endif
+  arg(i,#+1)
+  arg(cp,<arg(cp)>+1)
+endwhile
+if (<more1> > 0)	// je jeste co schovat v pristim kole ?
+  more1=<more1>-1
+else
+  moreZ=0 // pady jsou schovany...
+endif
+
+[dialog d_hcn_Pillar_StepPads]
+argo.SetLocation=225,5
+
+argo.tag(sirka,322)
+argo.tag(vyska,595)
+argo.page(0)
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,3,123,171)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,23,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"StepPads Controler")
+argo.button(<lastxpos>+264,<lastypos>-3,0fab,0fad,1,0,10)		//help
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Switch:")
+argo.button(<lastxpos>+88,<lastypos>,0fa5,0fa7,1,0,2)	//pridej link na switch, kterej urcuje, zda maji byt dlazky videt
+argo.texta(<lastxpos>,<lastypos>+<d_def_radek_vyska>,<d_def_writecolor>,"Dvere:")
+argo.button(<lastxpos>+88,<lastypos>+<d_def_radek_vyska>,0fa5,0fa7,1,0,3)	//pridej link na switch, kterej urcuje, zda maji byt dlazky videt
+argo.texta(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,<d_def_writecolor>,"Key Pad:")
+argo.button(<lastxpos>+88,<lastypos>+2*<d_def_radek_vyska>,0fa5,0fa7,1,0,4)	//pridej link na switch, kterej urcuje, zda maji byt dlazky videt
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,"<?Link?>")
+argo.texta(<lastxpos>,<lastypos>+<d_def_radek_vyska>,<d_def_readcolor>,"<?tag(doorLink)?>")
+argo.texta(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,<d_def_readcolor>,"<?tag(keyPad)?>")
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Pad Num.:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"Pad UID.:")
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+268,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,5)//add pad
+
+argo.tag(thisPage,<eval argv(0)>)
+arg(pctRadku,0)
+arg(padNumber,<argo.tag(thisPage)> * 23)
+argo.dialog_textpos(3,0)
+if (<argo.tag(thisPage)> > 0)
+  argo.button(261,<lastypos>+8,0983,0984,1,0,<eval argo.tag(thisPage)+1500>-1)  //previous page
+endif
+while (<arg(padNumber)> < <eval tag(padAmount)>) && (<arg(pctRadku)> < 23)
+  argo.f_padSwitch_dialRowCreate(<arg(pctRadku)>,<arg(padNumber)>,<tag(pad_<eval arg(padNumber)>)>)
+  arg(pctRadku,#+1)
+  arg(padNumber,#+1)
+  if (<arg(pctRadku)> == 23)
+    argo.button(261,<lastypos>+22*<d_def_radek_vyska>,0985,0986,1,0,<eval argo.tag(thisPage)+1500>+1)  //next page
+  endif
+endwhile
+
+
+[dialog d_hcn_Pillar_StepPads button]
+on=0
+return 1
+
+on=1//ok
+
+on=2 //link na switch
+moreX=0
+target("Zamer switch, ktery zapricini zobrazeni naslapek.")
+
+on=3 //link na dvere
+moreX=1
+target("Zamer dvere, ktery se budou zavirat.")
+
+on=4 //link na key pad
+moreX=2
+target("Zamer Key pad, ktery bude urcovat neutralni naslapku")
+
+on=5  //pridej pad
+moreX=3
+target("Zamer naslapku, kterou chces pridat.")
+
+on=10 //help
+dialog(d_hcn_Pillar_StepPads,<argo.tag(thisPage)>)
+dialog(d_hcn_Pillar_StepPads_help)
+
+on=@anyButton
+if (<eval argn> >= 1500)
+  dialog(d_hcn_Pillar_StepPads,<eval argn-1500>)
+  return 1
+elseif (<eval argn> >= 1000)
+  arg(padNumber,<eval argn-1000>)
+  src.go(<tag(pad_<eval arg(padNumber)>).p>)
+else
+  arg(padNumber,<eval argn-100>)
+  while (<arg(padNumber)> < <eval <tag(padAmount)>-1>)
+    tag(pad_<eval padNumber>,<tag(pad_<eval padNumber+1>)>)
+    arg(padNumber,#+1)
+  endwhile
+  tag(padAmount,<eval <tag(padAmount)>-1>)
+  tag.remove(pad_<eval padNumber>)
+endif
+dialog(d_hcn_Pillar_StepPads,<argo.tag(thisPage)>)
+
+[dialog d_hcn_Pillar_StepPads_Help]
+argo.setText(1," Switch - je linkem na item, jehoz kladna hodnota more2 urcuje, zda ma smysl dale zobrazovat naslapky.<br><br> Dvere - je link na dvere, ktere maji byt zavirany pri seslapnuti spatneho padu.<br><br> KeyPad - je link na klicovou naslapku, ktera urcuje, jaky typ padu je v dane chvili neaktivni a smi se na nej slapat. Na tomto hlavnim key padu lze dale pridavat dodatecne neutralni pady.<br><br> More2 - hodnota more2 na sloupu rika, jestli je nejaky pad seslapnuty. (kdyz ne tak je 0)")
+argo.f_dialog_HelpCreator("HELP - i_hcn_Pillar_StepPads")
+
+[function f_padSwitch_dialRowCreate]
+texta(lastxpos,lastypos+(<argv(0)>*d_def_radek_vyska),<d_def_writecolor>,"Pad <eval <argv(1)>+1>:")
+button(281,lastypos+(<argv(0)>*d_def_radek_vyska),0fb1,0fb3,1,0,<argv(1)>+100)	//zrus existujici pad button
+button(106,lastypos+(<argv(0)>*d_def_radek_vyska),0fa5,0fa7,1,0,<argv(1)>+1000)	//goto UID button
+texta(lastxpos+125,lastypos+(<argv(0)>*d_def_radek_vyska),<d_def_readcolor>,<argv(2)>)
+
+[typedef t_hcn_ShutDoorPad_field]
+on=@Step
+arg(door,<tag(padSwitcher).tag(doorLink)>)
+if (src.isgm)
+  return 1
+elseif (src.npc)
+  return 1
+elseif (<src.flags>&statf_dead)
+  return 1
+//elseif (<src.isevent(e_hcn_shp_field)>)
+  //return 1
+elseif (<tag(padSwitcher).tag(keyPad).more2> == <eval more1>)	//toto je zrovna neaktivni naslapka
+  return 1
+  
+  
+  if (<arg(door).
+    sfx(565) //cvak
+    timer=0
+  endif
+  return 1
+elseif (link.type==t_door_locked)
+  return 0
+elseif (<link.timer> > 0)
+  link.timer=0
+endif
+safe.tag(door_2).type=t_door_locked
+link.type=t_door_locked
+timer=<more1>
+src.sysMessage("Na neco jsi <src.sex(slapl,slapla)>.")
+sfx(049) //cvak
+
+on=@Timer
+link.type=t_door
+safe.tag(door_2).type=t_door
+return 1
+
+[typedef t_hcn_StepPads_KeyPad]
+
+[typedef t_hcn_StepPads_MainKey]	//hlavni pad urcujici, ktere 
+on=@UserDClick
+if (src.isGM)
+  dialog(d_hcn_StepPads_MainKey)
+  return 1
+endif
+
+on=@TargOn_Item
+src.targ.link=<uid>
+src.targ.type=t_hcn_StepPads_KeyPad
+src.targ.color=097F
+tag(pad_<eval tag(padAmount)>,<src.targ>)
+tag(padAmount,<eval <tag(padAmount)>+1>)
+src.sysMessage("Pridan dalsi klicovy pad")
+dialog(d_hcn_StepPads_MainKey)
+
+[dialog d_hcn_StepPads_MainKey]
+argo.SetLocation=225,5
+
+argo.tag(sirka,322)
+argo.tag(vyska,595)
+argo.page(0)
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,171)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,138,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,24,123,138,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Main KeyPad")
+argo.button(<lastxpos>+264,<lastypos>-3,0fab,0fad,1,0,10)		//help
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Controller:")
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,"<?Link?>")
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"Pad Num.:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"Pad UID.:")
+
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<d_def_okraj>+<d_def_skvira>+268,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,2)//add pad
+
+argo.tag(thisPage,<eval argv(0)>)
+arg(pctRadku,0)
+arg(padNumber,<argo.tag(thisPage)> * 24)
+argo.dialog_textpos(3,0)
+if (<argo.tag(thisPage)> > 0)
+  argo.button(261,<lastypos>+8,0983,0984,1,0,<eval argo.tag(thisPage)+1500>-1)  //previous page
+endif
+while (<arg(padNumber)> < <eval tag(padAmount)>) && (<arg(pctRadku)> < 24)
+  argo.f_padSwitch_dialRowCreate(<arg(pctRadku)>,<arg(padNumber)>,<tag(pad_<eval arg(padNumber)>)>)
+  arg(pctRadku,#+1)
+  arg(padNumber,#+1)
+  if (<arg(pctRadku)> == 24)
+    argo.button(261,<lastypos>+23*<d_def_radek_vyska>,0985,0986,1,0,<eval argo.tag(thisPage)+1500>+1)  //next page
+  endif
+endwhile
+
+
+[dialog d_hcn_StepPads_MainKey button]
+on=0
+return 1
+
+on=1//ok
+
+on=2  //pridej pad
+target("Zamer dalsi klicovy pad, ktery chces pridat.")
+
+on=10 //help
+dialog(d_hcn_StepPads_MainKey,<argo.tag(thisPage)>)
+dialog(d_hcn_StepPads_MainKey_help)
+
+on=@anyButton
+if (<eval argn> >= 1500)
+  dialog(d_hcn_StepPads_MainKey,<eval argn-1500>)
+  return 1
+elseif (<eval argn> >= 1000)
+  arg(padNumber,<eval argn-1000>)
+  src.go(<tag(pad_<eval arg(padNumber)>).p>)
+else
+  arg(padNumber,<eval argn-100>)
+  tag(pad_<eval padNumber>).color=099A
+  tag(pad_<eval padNumber>).type=t_hcn_ShutDoorPad_field
+  tag(pad_<eval padNumber>).update
+  while (<arg(padNumber)> < <eval <tag(padAmount)>-1>)
+    tag(pad_<eval padNumber>,<tag(pad_<eval padNumber+1>)>)
+    arg(padNumber,#+1)
+  endwhile
+  tag(padAmount,<eval <tag(padAmount)>-1>)
+  tag.remove(pad_<eval padNumber>)
+endif
+dialog(d_hcn_StepPads_MainKey,<argo.tag(thisPage)>)
+
+[dialog d_hcn_StepPads_MainKey_Help]
+argo.setText(1,"Main Pad je naslapka, na ktere bezi timer pri kterem se vzdy zmeni znak urcujici spici naslapky. Naslapky se stejnym symbolem jako tato klicova nebudou zavirat dvere v linku Pad Controlleru (sloup).<br><br> Na naslapce lze nastavit linky na dalsi klicove naslapky.")
+argo.f_dialog_HelpCreator("HELP - i_hcn_StepPads_MainKey")
+
+[itemdef i_hcn_pad_affectLinkTimer]
+name=Affect Link Timer
+id=0aec
+
+on=@Create
+attr=090
+color=color_o_valorite
+tag(checkingFunction,getTrue)
+
+on=@Step
+if (<src.flags>&statf_dead)
+  return 1
+endif
+if (src.isGM)
+  return 1
+endif
+if (<serv.time> > <link.tag(ALT_Pad_nextStep)>)
+  if (<link.<tag(checkingFunction)>>)
+    link.timer=<eval more2>
+    link.tag(ALT_Pad_nextStep,<serv.time>+10*<eval more1>)
+  endif
+endif
+return 1
+
+on=@UserDClick
+if (src.isGM)
+  dialog(d_hcn_pad_affectLinkTimer)
+  return 1
+endif
+
+on=@TargOn_Item
+//if (moreX==0)	//link
+src.sysMessage("Link zameren.")
+tag(link_<eval moreY>,<src.targ>)
+moreY=<moreY>+1
+dialog(d_hcn_pad_affectLinkTimer)
+return 1
+
+[dialog d_hcn_pad_affectLinkTimer]
+argo.SetLocation=200,120
+
+argo.tag(sirka,410)
+argo.tag(vyska,172+<eval moreY>*<d_def_radek_vyska>)
+argo.page(0)
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,4,123,259)
+argo.dialog_pozadi(<argo.tag(nexty)>,1,123,226,30)
+argo.dialog_pozadi(<argo.tag(nexty)>,<eval moreY>,123,226,30)
+argo.dialog_zpruhledni
+
+argo.texta(<argo.dialog_textpos(0,0)>,42,"Affect Link's timer pad")
+argo.button(<lastxpos>+351,<lastypos>-3,0fab,0fad,1,0,10)		//help
+argo.texta(<argo.dialog_textpos(1,0)>,<d_def_writecolor>,"Linku:")
+argo.texta(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,<d_def_writecolor>,"Funkce:")
+argo.texta(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,<d_def_writecolor>,"Next Step:")
+argo.texta(<lastxpos>,<lastypos>+3*<d_def_radek_vyska>,<d_def_writecolor>,"Affect Timer:")
+
+argo.texta(<argo.dialog_textpos(1,1)>,<d_def_readcolor>,"<?moreY?>")
+argo.settext(6,"<?tag(checkingFunction)?>")
+argo.settext(7,"<?eval more1?>")	// hodnota v s. urcujici, po jake dobe bude mozne znovu aktivovat timer na linku.
+argo.settext(8,"<?eval more2?>")	// hodnota v s. urcujici, na jak dlouho bude na linku timer nastaven.
+argo.textentry(<lastxpos>,<lastypos>+1*<d_def_radek_vyska>,255,<d_def_radek_vyska>,52,1,6)
+argo.textentry(<lastxpos>,<lastypos>+2*<d_def_radek_vyska>,120,<d_def_radek_vyska>,52,2,7)
+argo.textentry(<lastxpos>,<lastypos>+3*<d_def_radek_vyska>,120,<d_def_radek_vyska>,52,3,8)
+
+
+argo.texta(<argo.dialog_textpos(2,0)>,<d_def_writecolor>,"cislo linku:")
+argo.texta(<argo.dialog_textpos(2,1)>,<d_def_writecolor>,"UID:")
+argo.texta(<argo.dialog_textpos(2,2)>,<d_def_writecolor>,"Del")
+
+argo.dialog_textpos(3,0)
+argo.button(<d_def_okraj>+<d_def_skvira>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+argo.button(<d_def_okraj>+<d_def_skvira>+33,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb1,0fb3,1,0,0)//cancel
+argo.button(<lastxpos>+351,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fa5,0fa7,1,0,2)	//pridej link na switch, kterej urcuje, zda maji byt dlazky videt
+
+arg(i,0)
+while (<arg(i)> < <eval moreY>)
+  argo.texta(<lastxpos>,<lastypos>+<arg(i)>*<d_def_radek_vyska>,<d_def_writecolor>,"Link <eval <arg(i)>+1>:")
+  argo.texta(<lastxpos>+125,<lastypos>+<arg(i)>*<d_def_radek_vyska>,<d_def_readcolor>,<tag(link_<eval arg(i)>)>)
+  argo.button(<lastxpos>+351,<lastypos>+<arg(i)>*<d_def_radek_vyska>,0fb1,0fb3,1,0,<eval arg(i)> + 100)
+  arg(i,#+1)
+endwhile
+
+
+[dialog d_hcn_pad_affectLinkTimer button]
+on=0	// exit
+src.sysMessage("cancel")
+
+on=1	// OK
+src.sysMessage("Nastaveni potvrzeno.")
+tag(checkingFunction,<argtxt(1)>)
+more1=<argtxt(2)>
+more2=<argtxt(3)>
+
+on=2	// link na switch
+moreX=0
+target("Zamer link")
+
+on=10	// help
+dialog(d_hcn_pad_affectLinkTimer)
+dialog(d_hcn_pad_affectLinkTimer_help)
+
+on=@anyButton
+if (<argn> >= 100)	//remove link
+  arg(lnkNumber,<eval argn-100>)
+  while (<arg(lnkNumber)> < <eval <eval moreY>-1>)
+    tag(link_<eval lnkNumber>,<tag(link_<eval lnkNumber+1>)>)
+    arg(lnkNumber,#+1)
+  endwhile
+  moreY=<eval moreY>-1
+  tag.remove(link_<eval lnkNumber>)
+endif
+dialog(d_hcn_pad_affectLinkTimer)
+
+[dialog d_hcn_pad_affectLinkTimer_Help]
+argo.setText(1," Link: - Na linku se bude kontrolovat funkce, ktera zapricini vyhodnoceni, zda se ma timer linku ovlivnovat.<br><br> funkce: Tato funkce bude spustena a jeji vysledek ovlivni, zda bude na linku spusten timer. Pro platnost pri kazdem naslapnuti pouzijte funkci getTrue (defaultni). Pro docasne vypnuti naslapky je mozne pouzit fci getFalse.<br><br> Next Step: hodnota v s. urcujici, po jake dobe bude mozne znovu aktivovat timer na linku.<br><br> Affect Timer: hodnota v s. urcujici, na jak dlouho bude na linku timer nastaven.")
+argo.f_dialog_HelpCreator("HELP - i_hcn_pad_affectLinkTimer")
+
+[function getTrue]
+return 1
+
+[function getFalse]
+return 0
+[eof]

@@ -1,0 +1,292 @@
+/////////////////////////////////////
+//     D R A G O N   S T A M P     //
+//         (c)-Sir Glorg-          //
+/////////////////////////////////////
+//tag(stamp_dmg) // udava silu stampdmg (klesa se vzdalenosti)
+[function f_dragon_stamp]
+newequip(i_dupatko_timer)
+if (<argv(0)>)
+  lastnew.more1=<argv(0)>
+endif
+if (<argvcount> > 1)	// je nastavena ppst na kritik
+ lastnew.tag(critical,<argv(1)>)
+endif
+Flag_Immobile(1)
+if (body==c_dragon_lord)
+	anim 12
+else
+	dorand 2
+		anim 15
+		anim 16
+	enddo
+endif
+return 1
+
+[itemdef i_dupatko_timer]
+NAME=dupaci timer
+ID=i_memory
+TYPE=t_eq_script
+
+on=@Create
+timer=1
+
+on=@Timer
+cont.Flag_Immobile(0)
+cont.newitem(i_dupatko)
+arg(dupatko,<lastnew>)
+dupatko.p=<topobj.p>
+dupatko.link=<cont>
+dupatko.timer=0
+if (more1>0)
+  var(dragon_stamp_para,<more1>)
+endif
+if (<eval tag(critical)>)
+  var(dragon_stamp_critic,<eval tag(critical)>)
+endif
+
+[itemdef i_dupatko]
+NAME=dupaci soudek
+ID=i_KEG_WOOD
+TYPE=t_script
+
+on=@Timer
+sector.allchars(f_dragon_stamp_dmg(<uid>,<eval link.tag(stamp_dmg)>),<eval <tag(critical)>>)
+var(dragon_stamp_para,"")
+var(dragon_stamp_critic,"")
+
+[function f_dragon_stamp_dmg]
+if (npc) || (isgm)
+  return 0
+endif
+
+dorand 3
+  sound=543
+  sound=542
+  sound=755
+enddo
+
+arg(stamp_dmg,<argv(1)>-(<distancefrom(argv(0))>-1)*6)	// vzorec dupnuti
+if (<eval (safe var(dragon_stamp_critic))> > <eval {0 100}>)
+  sysMessage("Spadl na tebe kus stropu!")
+  newitemsafe(tm_rocks)
+  lastnew.p=<p>
+  lastnew.attr_movenever=1
+  lastnew.timer=120
+  arg(stamp_dmg,<arg(stamp_dmg)>+<eval {40 70}>)
+endif
+if (<stamp_dmg> > 0)
+  SysMessage("Zeme se pod tebou otrasla !")
+  events=-e_gethit
+  damage(<stamp_dmg>,dam_physical,<uid>)
+  events=+e_gethit
+  if (<eval dragon_stamp_para>)
+    events -e_spelleffect
+    newitemsafe(i_parafield_delay)
+    lastnew.timer=<dragon_stamp_para>
+    lastnew.cont=<uid>
+    events +e_spelleffect
+  endif
+endif
+
+
+/////////////////////////////////////
+//    D R A G O N   B R E A T H    //
+//         (c)-Sir Glorg-          //
+/////////////////////////////////////
+
+/////////////////////
+//     F I R E     //
+/////////////////////
+
+[function f_dragon_breath_fire]
+if (<act.ischar>)
+  var(dragon_breath_target,<act>)
+  newequip(i_firebreath_delay)
+  Flag_Immobile(1)
+  if (body==c_dragon_lord)
+	anim 5
+  else
+	anim 12
+  endif
+  return 1
+else
+  return 0
+endif
+
+[itemdef i_firebreath_delay]
+NAME=Dragon Breath Fire
+ID=i_memory
+TYPE=t_eq_script
+
+on=@Create
+timer=3
+
+on=@Timer
+if (more1==0)
+  topobj.newitemsafe(i_firebreath_target_changer)
+  lastnew.p=<var(dragon_breath_target).p>
+  if (<topobj.distancefrom(<lastnew>)> > 15) // pokud je act moc daleko
+    lastnew.remove
+  else
+    lastnew.more1=<topobj.tag(firebreath_dmg)>
+    lastnew.timer=0
+  endif
+  more1=1
+  timer=1
+else
+  topobj.Flag_Immobile(0)
+  remove
+endif
+return 1
+
+[itemdef i_firebreath_target_changer]
+NAME=Fire Breath
+ID=i_KEG_WOOD
+TYPE=t_script
+
+on=@Timer
+sector.allchars(f_dragon_breathdmg_fire(<uid>,<more1>))
+remove
+return 1
+
+[function f_dragon_breathdmg_fire]
+if (npc) || (isgm)
+  return 0
+endif
+
+if (<distancefrom(argv(0))> < 5)
+  events=-e_gethit 
+  damage(<argv(1)>,dam_dragon,<uid>)
+  events=+e_gethit
+  effect(3,<s_explosion.EFFECTID>,6,15,1)
+  sound=<s_explosion.sound>
+endif
+
+/////////////////////
+//   P O I S O N   //
+/////////////////////
+//tag(poisonbreath_dmg) // udava silu poisonu
+[function f_dragon_breath_poison]
+if (<act.ischar>)
+  topobj.newitemsafe(i_poisonbreath_target_changer)
+  arg(targchanger,<lastnew>)
+  if !(f_canseelos(<act>))
+    targchanger.remove
+    return 0
+  endif
+  targchanger.p=<topobj.act.p>
+  if (<topobj.distancefrom(<targchanger>)> > 10) // pokud je act moc daleko
+    targchanger.remove
+  else
+    targchanger.more1=<argv(0)>
+    targchanger.timer=0
+  endif
+  return 1
+else
+  return 0
+endif
+
+[itemdef i_poisonbreath_target_changer]
+NAME=Poison Breath
+ID=i_KEG_WOOD
+TYPE=t_script
+
+on=@Timer
+sector.allchars(f_dragon_breathdmg_poison(<uid>,<more1>))
+remove
+return 1
+
+[function f_dragon_breathdmg_poison]
+if (npc) || (isgm)
+  return 0
+endif
+
+if (<distancefrom(argv(0))> < 5)
+  newitemsafe(i_memory_jed)
+  lastnew.tag(jed_typ,poison_c)
+  lastnew.tag(jed_sila,<eval <argv(1)>>)
+  lastnew.tag(jed_rychlost,2)
+  equip(<lastnew>)
+  effect(3,i_fx_curse,6,15,1)
+  sound(586)
+endif
+
+/////////////////////
+//     A C I D     //
+/////////////////////
+
+[function f_dragon_acid_damage]
+newitem(i_acid)
+arg(AciDropItem,<lastnew>)
+AciDropItem.p=<p>
+AciDropItem.tag.acid_dmg=<argv(0)>
+AciDropItem.tag.acid_ppst=1000
+
+//////////////////////////////////////////////////////////////////////////////////////
+///////////////////// D R A G O N   B R A I N   by   M a n d o s /////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//tag(effectn,X)//kolik ma efektu celkem
+//tag(effect_1,15 f_blabla)
+//tag(effect_2,25 f_acid)
+//tag(effect_3,60 f_healself)
+//tag(brain_timer,X)//urcuje v sekundach, po jaky dobe se maji vybirat eventy z brainu - promenny 2 cisla X a Y oddeleny mezerou
+
+[events e_dragon_brain]
+on=@NPCSeeNewPlayer
+f_eqDragon_brain
+return 1
+
+on=@aftergetswing
+f_eqDragon_brain
+
+on=@beforegeteffect
+on=@afterswing
+on=@beforedoeffect
+
+[function f_eqDragon_brain]
+if !(rescount(i_mem_dragon_brain))
+  newequip(i_mem_dragon_brain)
+endif
+
+[itemdef i_mem_dragon_brain]
+name=dragon brain
+id=i_memory
+type=t_eq_script
+
+on=@equip
+timer={<cont.tag(brain_timer)>}//tag brain_timer urcuje jak casto se pouzti timer. Zadava se ve formatu tag(brain_timer,X Y) (rozptyl mezi X a Y oddeleny mezerou).
+
+on=@timer
+if (<eval cont.tag(brainRegeHP)>)
+  if (<cont.hits> < <cont.maxhits>)
+    cont.hits=<cont.hits>+<cont.tag(brainRegeHp)>
+    if (<cont.hits> > <cont.maxhits>)
+      cont.hits=<cont.maxhits>
+    endif
+  endif
+endif
+if !(dragonhandle)//funkce urcujici efekt - pokud nelze nikomu udelit dmg, vybere se za 1s novy event
+  timer=1
+else
+  timer={<cont.tag(brain_timer)>}
+endif
+return 1
+
+[function dragonhandle]
+arg(effect_number,1)
+arg(vyber,<eval {0 100}>)
+arg(ppst,0)
+while (<arg(effect_number)> <= <cont.tag(effectn)>)
+  singleparse(<topobj.tag(effect_<arg(effect_number)>)>)
+  arg(ppst,#+<var(firstnumb)>)
+  if (<vyber> <= <ppst>)
+    if cont.<var(secondnumb)>
+      return 1
+    else
+      return 0
+    endif
+  endif
+  arg(effect_number,#+1)
+endwhile
+
+[eof]

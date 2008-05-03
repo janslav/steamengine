@@ -1,0 +1,319 @@
+[FUNCTION f_namestek_valky_m]
+if (SRC.TARG.DISTANCE > 3)
+ SRC.SYSMESSAGE="Na takovou vzdalenost s tebou jednat nebude"
+ return 1
+endif
+if (src.tag.realm==2)
+ say="chces zautocit...."
+ DIALOG(d_namestek_valky_m) 
+ return 1
+else
+say="tahni...."
+endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[FUNCTION f_namestek_valky_g]
+if (SRC.TARG.DISTANCE > 3)
+ SRC.SYSMESSAGE="Na takovou vzdalenost s tebou jednat nebude"
+ return 1
+endif
+
+if (src.tag.realm==1)
+ say="chces zautocit...."
+ DIALOG(d_namestek_valky_g)
+ return 1
+else
+ say="tahni...."
+endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[SPEECH spk_namestek_valky_g]
+
+ON=*ahoj*
+ON=*hi*
+if (src.tag.realm==1)
+ say "hmmm ? "
+ DIALOG(d_namestek_valky_g)
+ return 1
+else
+ say="tahni...."
+endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[SPEECH spk_namestek_valky_m]
+
+ON=*ahoj*
+ON=*hi*
+if (src.tag.realm==2)
+ say="chces zautocit...."
+ DIALOG(d_namestek_valky_m)
+ return 1
+else
+ say="tahni...."
+endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+[dialog d_namestek_valky_g]
+5,5
+page 0
+resizepic 20 200 2620 640 350 
+gumppic 30 210 03182 // podklad pod ksichtiky	
+gumppic 40 215 03029 // ksichtik   3000-3164
+
+
+page 1
+HTMLGUMP(170,230,440,100,1,0,36)
+text 220 210 52 0     // Jmeno a titul pozdraveneho
+button 160 330 0988 0988 0 8 0  // vyhlasit utok ?
+text 200 332 1152 2    // 
+button 325 330 0988 0988 0 2 0  // Nejake drby ?
+text 350 330 1152 3    //
+button 490 330 0988 0988 0 3 0  // Obchodovat ?
+text 510 330 1152 4   //
+button 160 360 0988 0988 0 4 0  // Hledam praci
+text 190 360 1152 5   //
+button 325 360 0988 0988 0 5 0  // Nesu ti ...
+text 350 360 1152 6   //
+button 490 360 0988 0988 0 6 0  // Proverit
+text 520 360 1152 7   //
+
+page 2
+HTMLGUMP(170,230,440,140,8,0,6)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 3
+HTMLGUMP(170,230,440,140,9,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 4
+HTMLGUMP(170,230,440,140,10,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 5
+HTMLGUMP(170,230,440,140,11,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 16
+
+page 6
+HTMLGUMP(170,230,440,140,13,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 7
+HTMLGUMP(170,230,440,140,14,0,36)
+//button 25 395 0fa5 0fa7 0 8 0  //  obchodovat       
+//text 60 395 152 23
+
+page 8
+HTMLGUMP(170,230,440,140,14,0,36)
+button 25 395 0fa5 0fa7 0 9 0     
+text 60 395 152 17 //ano to mi vzhovuje zaplatim 50 000 GP
+button 25 415 0fa5 0fa7 0 1 0  //  jine otazky       
+text 60 415 152 18 //
+
+page 9
+HTMLGUMP(170,230,440,140,19,0,36)
+button 25 395 0fa5 0fa7 1 0 1     
+text 60 395 152 20 //ano to mi vzhovuje zaplatim 50 000 GP
+button 25 415 0fa5 0fa7 0 1 0  //  jine otazky       
+text 60 415 152 15 //
+
+[dialog d_namestek_valky_g text]
+Namestek valky   //    Jmeno a titul pozdraveneho
+Hmmm ?
+Vyhlasit utok 
+Nejake drby ?
+Obchodovat ?
+Hledam praci
+Nesu ti ...
+Prohlednout..   //7
+hehe..  Mno drby tak stim ti nepomohu ja je neposloucham ani neposilam dal.. 
+Myslis si ze jsem zde  od toho abych tu obchodoval ? Ja nejsem obchodnik jasny ?
+Jedine do Armady..  nic jineho nema budoucnost..  Ta te nakrmi pobavi i zahubi.. vse v jednom baleni..  Stalo by zato navtivit but kapitana mestske straze  nebo narukovat k Armade..   Inu to vis..Tohle je stred sveta.. Hlavni mesto 
+Pokracovat..
+Tak kam to bude ?    //12
+*INFO* Tento mlady muz rozhodne nevypada nato ze svou dosavadni sluzbu prozil prave v knihovne..  Na obliceji i na rukach 
+Jejda <?SRC.SEX "mladej panacek","slecna"?> porada utok na nove pevnosti ?  NO tak ber ale na vedomi ze te to bude neco stat. Uredni schvaleni, glejd, zalohy na leky pro ranene z fronty. No rekneme ze celkem mi sem slozis 50 tisic GP jasny ?
+neco jineho..
+vlastne nic nemam..
+ano to mi vyhovuje zaplatim 50 000 GP
+50 tisic je pro me moc penez, rad bzch neco jineho
+Dobra tedy, sloz penize <?SRC.SEX "dobyvateli","dobyvatelko"?> a ostatni veci si zarid zde na kameni 
+zaplatit 50 tisic
+
+
+[dialog d_namestek_valky_g button]
+on=0
+return 1
+
+on=1
+if(<eval src.tag(skillrank)> < 3 && <eval src.tag(level)> < 30)
+ say("Je mi lito na nejaky realny uspech ve valce nemas dostatek zkusenosti")
+ return 1
+endif
+if(strlen(<src.tag(captain)>) > 0) //uz je kapitanem
+ say("Ty uz kapitanem jsi. Starej se o svou pevnost a vedeni dalsi valky prenech jinemu")
+ return 1
+endif
+arg(jehorealm,<eval src.tag(realm)>)
+if(<jehorealm> == 1)
+ if(<eval var(war_declarator_<jehorealm>).tag(conquered)) == -3>
+  //Gondor uz dobyl vse az po pevnost -3
+  say("Vzdyt uz jsi tem Mordoranum vsechno dobyl!")
+  return 1
+ endif
+else
+ if(<eval var(war_declarator_<jehorealm>).tag(conquered)) == 3>
+  //Mordor uz dobyl vse az po pevnost -3
+  say("Vzdyt uz jsi tem prasivejm Gondorum vsechno dobyl!")
+  return 1
+ endif
+endif
+if(src.tag(can_declare_war_on_<qval <eval <jehorealm>-1>,"Gondor","Mordor">))
+ say("Je zbytecne platit mi za dalsi vyhlasovani valky kdyz uzs to jednou udelal")
+ return 1
+endif
+if(src.pay(50000))
+ src.tag(can_declare_war_on_<qval <eval <jehorealm>-1>,"Gondor","Mordor">,1)
+endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[dialog d_namestek_valky_m]
+5,5
+page 0
+resizepic 20 200 2620 640 350 
+gumppic 30 210 03182 // podklad pod ksichtiky	
+gumppic 40 215 03047 // ksichtik   3000-3164
+
+
+page 1
+HTMLGUMP(170,230,440,100,1,0,36)
+text 220 210 52 0     // Jmeno a titul pozdraveneho
+button 160 330 0988 0988 0 8 0  // vyhlasit utok ?
+text 200 332 1152 2    // 
+button 325 330 0988 0988 0 2 0  // Nejake drby ?
+text 350 330 1152 3    //
+button 490 330 0988 0988 0 3 0  // Obchodovat ?
+text 510 330 1152 4   //
+button 160 360 0988 0988 0 4 0  // Hledam praci
+text 190 360 1152 5   //
+button 325 360 0988 0988 0 5 0  // Nesu ti ...
+text 350 360 1152 6   //
+button 490 360 0988 0988 0 6 0  // Proverit
+text 520 360 1152 7   //
+
+page 2
+HTMLGUMP(170,230,440,140,8,0,6)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 3
+HTMLGUMP(170,230,440,140,9,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 4
+HTMLGUMP(170,230,440,140,10,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 5
+HTMLGUMP(170,230,440,140,11,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 16
+
+page 6
+HTMLGUMP(170,230,440,140,13,0,36)
+button 25 395 0fa5 0fa7 0 1 0  //  navrat
+text 60 395 152 15
+
+page 7
+HTMLGUMP(170,230,440,140,14,0,36)
+//button 25 395 0fa5 0fa7 0 8 0  //  obchodovat       
+//text 60 395 152 23
+
+page 8
+dorand 2
+	argo.HTMLGUMP(170,230,440,140,14,0,36)
+	argo.HTMLGUMP(170,230,440,140,21,0,36)
+enddo
+//HTMLGUMP(170,230,440,140,14,0,36)
+button 25 395 0fa5 0fa7 0 9 0     
+text 60 395 152 17 //ano to mi vzhovuje zaplatim 50 000 GP
+button 25 415 0fa5 0fa7 0 1 0  //  jine otazky       
+text 60 415 152 18 //
+
+page 9
+HTMLGUMP(170,230,440,140,19,0,36)
+button 25 395 0fa5 0fa7 1 0 1     
+text 60 395 152 20 //ano to mi vzhovuje zaplatim 50 000 GP
+button 25 415 0fa5 0fa7 0 1 0  //  jine otazky       
+text 60 415 152 15 //
+
+[dialog d_namestek_valky_m text]
+Namestek valky   //    Jmeno a titul pozdraveneho
+Hmmm ?
+Vyhlasit utok 
+Nejake drby ?
+Obchodovat ?
+Hledam praci
+Nesu ti ...
+Prohlednout..   //7
+hehe..  Mno drby tak stim ti nepomohu ja je neposloucham ani neposilam dal.. 
+<?SRC.SEX "Ty praseci jelito","ty drza snago"?> pripadam ti snad jako nejakej obchodnicek ?
+Jedine do Armady..  nic jineho nema budoucnost..  Ta te nakrmi pobavi i zahubi.. vse v jednom baleni..  Stalo by zato navtivit but kapitana mestske straze  nebo narukovat k Armade..   Inu to vis..Tohle je stred sveta.. Hlavni mesto 
+Pokracovat..
+Tak kam to bude ?    //12
+*INFO* Tento statny skurut rozhodne nevypada nato ze svou dosavadni sluzbu prozil v knihovne..  Neco ti rika, ze pokusit se jej nastvat by mohlo velmi snadno vyresit veskere problemy bidneho zivota. 
+Konecne rozumna rec <?SRC.SEX "chlape","zencka"?> poradne jim to nandame. Boli me kazde nadechnuti kdyz vim ze ti smrduti Gondori stale nejsou v nesem pevnem sevreni. A nebo jeste lip, mrtvej Gondor, dobrej Gondor!  Bouzel mam ale pro tebe jednu smutnou zpravu, bude te to neco stat. Posveceni Marghulem, a zalohy na alkohol pro oslavu vitezstvi. No rekneme ze celkem mi sem slozis 50 tisic GP, a bude to v cajku. Jasny ?
+neco jineho..
+vlastne nic nemam..
+ano to mi vyhovuje zaplatim 50 000 GP
+50 tisic je pro me moc penez, rad bzch neco jineho
+Dobra tedy, sloz penize <?SRC.SEX "dobyvateli","dobyvatelko"?> a ostatni veci si zarid zde na kameni. 
+zaplatit 50 tisic  //20
+Koukam ze stenata chtej zacit kousat co ?  <?SRC.SEX "chlape","zencka"?> Chlape poradne jim to nandejte. Boli me kazde nadechnuti kdyz vim ze ti smrduti Gondori stale nejsou pot drnem. Bouzel mam ale pro tebe jednu smutnou zpravu, bude te to neco stat. Posveceni Marghulem, a zalohy na muj duchod. No rekneme ze celkem mi sem slozis 50 tisic GP, a bude to v cajku. Jasny ?
+
+[dialog d_namestek_valky_m button]
+on=0
+return 1
+
+on=1
+if(<eval src.tag(skillrank)> < 3 && <eval src.tag(level)> < 30)
+ say("Je mi lito na nejaky realny uspech ve valce nemas dostatek zkusenosti")
+ return 1
+endif
+if(strlen(<src.tag(captain)>) > 0) //uz je kapitanem
+ say("Ty uz kapitanem jsi. Starej se o svou pevnost a vedeni dalsi valky prenech jinemu")
+ return 1
+endif
+arg(jehorealm,<eval src.tag(realm)>)
+if(<jehorealm> == 1)
+ if(<eval var(war_declarator_<jehorealm>).tag(conquered)) == -3>
+  //Gondor uz dobyl vse az po pevnost -3
+  say("Vzdyt uz jsi tem Mordoranum vsechno dobyl!")
+  return 1
+ endif
+else
+ if(<eval var(war_declarator_<jehorealm>).tag(conquered)) == 3>
+  //Mordor uz dobyl vse az po pevnost -3
+  say("Vzdyt uz jsi tem prasivejm Gondorum vsechno dobyl!")
+  return 1
+ endif
+endif
+if(src.tag(can_declare_war_on_<qval <eval <jehorealm>-1>,"Gondor","Mordor">))
+ say("Je zbytecne platit mi za dalsi vyhlasovani valky kdyz uzs to jednou udelal")
+ return 1
+endif
+if(src.pay(50000))
+ src.tag(can_declare_war_on_<qval <eval <jehorealm>-1>,"Gondor","Mordor">,1)
+endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+

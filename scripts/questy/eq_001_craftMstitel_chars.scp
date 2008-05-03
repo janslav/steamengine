@@ -1,0 +1,1871 @@
+[CHARDEF c_eq_cm_kravka_np]
+
+ID=c_cow_bw
+NAME=Krava
+SOUND=snd_ANIMALS_COW1
+ICON=i_pet_COW
+ANIM=017ff
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_run
+attack=60
+ARMOR=135
+
+moverate=6
+
+
+
+
+RESOURCES=20 i_ribs_raw,12 i_hide, 1 i_hide
+FOODTYPE=64 t_grass,25 t_grain, 25 I_HAY
+BLOODCOLOR=colors_red
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Animals
+DESCRIPTION=Cow (no provo)
+
+ON=@Create
+NPC=brain_monster
+FAME=1
+KARMA=-1500
+STR=2500
+DEX=500
+INT=300
+
+
+maxhits={5200 6200}
+maxstam={500 650}
+maxmana=0
+
+tag.experience=<eval {180.0 200.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 750}>
+tag.resist_poison=1000
+
+
+
+TACTICS=250.0
+WRESTLING=100.0
+POISONING=500.0
+provocation=100.0
+SpiritSpeak=60.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold{1000 1500}
+ITEM=random_reagent,{60 75}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_slepice]
+ID=c_chicken
+NAME=Slepice
+SOUND=snd_ANIMALS_CHICKEN1
+ICON=i_pet_CHICKEN
+ANIM=01fff
+
+attack=50
+ARMOR=160
+moverate=4
+
+RESOURCES=25 i_feather,I_BIRD_RAW
+CAN=MT_WALK|MT_RUN
+FOODTYPE=5 t_grain
+//=i_nest_with_eggs
+//=c_chicken,i_potion_shrink
+//=e_carnivores2
+DESCRIPTION=Chicken
+SUBSECTION=Air {Domestic}
+CATEGORY=Animals
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+ON=@Create
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -5999}
+STR=1000
+DEX=200
+INT=120
+
+
+maxhits={1500 1640}
+maxstam={150 250}
+maxmana=0
+
+tag.experience=<eval {50.0 60.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING=100.0
+poisoning=150.0
+TACTICS=100.0
+WRESTLING=100.0
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold{330 450}
+ITEM=i_chicken_leg
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_zlodejka_2]
+
+NAME=Zlodejka
+ID=c_woman
+DESIRES=i_gold,t_wand,t_reagent,t_bone
+AVERSIONS=t_TRAP,t_eerie_stuff
+ICON=i_pet_MAN
+CAN=MT_WALK|mt_run
+attack=70
+ARMOR=40
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR=020
+
+TEVENTS=e_character
+TEVENTS=e_monster
+TEVENTS=e_looter
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Craft mstitel
+DESCRIPTION=Zlodejka
+
+ON=@Create
+NAME=#NAMES_HUMANFEMALE
+Title=Zlodejka v zacviku
+COLOR=colors_skin
+NPC=brain_monster
+FAME=100
+KARMA=-5000
+STR=3500
+DEX=450
+INT=100
+
+
+maxhits={2000 2500}
+maxstam={300 320}
+maxmana=0
+
+tag.experience=<eval {80.0 110.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.weapflag=dam_physical|dam_slashing
+
+tag.resist_para=<eval {500 750}>
+tag.resist_bleed=650
+tag.resist_poison=650
+
+
+
+WRESTLING=120.0
+RESIST=200.0
+TACTICS=250.0
+PARRYING={120.0 145.0}
+SWORDSMANSHIP=100.0
+FENCING=100.0
+POISONING=500.0
+PROVOCATION=100.0
+PEACEMAKING=100.0
+SpiritSpeak=35.0
+
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_hair_long
+COLOR=0675
+ITEMNEWBIE=i_chainmail_tunic
+COLOR=0990
+ITEMNEWBIE=i_shield_round_metal
+COLOR=0990
+ITEMNEWBIE=i_leather_gorget
+COLOR=0985
+ITEMNEWBIE=i_leather_gloves
+COLOR=0990
+ITEMNEWBIE=i_leather_sleeves
+COLOR=0990
+ITEMNEWBIE=i_cutlass
+NAME=Cutlass kapsaru[Artefakt]
+COLOR=0995
+ITEMNEWBIE=i_sandals
+ITEMNEWBIE=i_armor_female_skirt
+COLOR=0990
+
+ON=@NPCRestock
+item=i_gold{450 900}
+ITEM=RANDOM_REAGENT,{10 20}
+ITEM=RANDOM_REAGENT_NECRO,{1 20}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[CHARDEF c_eq_cm_zlodejka]
+
+NAME=Zlodejka
+ID=c_woman
+DESIRES=i_gold,t_wand,t_reagent,t_bone
+AVERSIONS=t_TRAP,t_eerie_stuff
+ICON=i_pet_MAN
+CAN=MT_WALK|mt_run
+attack=30
+ARMOR=60
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR=020
+
+TEVENTS=e_character
+TEVENTS=e_monster
+TEVENTS=e_looter
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Craft mstitel
+DESCRIPTION=Zlodejka
+
+ON=@Create
+NAME=#NAMES_HUMANFEMALE
+Title=Zlodejka zacatecnice
+COLOR=colors_skin
+NPC=brain_monster
+FAME=100
+KARMA=-5000
+STR=800
+DEX=90
+INT=100
+
+
+maxhits={1000 1500}
+maxstam={100 150}
+maxmana=0
+
+tag.experience=<eval {60.0 70.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]> //str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+tag.weapflag=dam_physical|dam_slashing
+
+tag.resist_para=<eval {500 750}>
+tag.resist_bleed=1000
+tag.resist_poison=650
+
+
+
+WRESTLING=120.0
+RESIST=200.0
+TACTICS=250.0
+PARRYING={120.0 145.0}
+SWORDSMANSHIP=100.0
+FENCING=100.0
+POISONING=500.0
+PROVOCATION=100.0
+PEACEMAKING=100.0
+SpiritSpeak=35.0
+
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_hair_long
+COLOR=0675
+ITEMNEWBIE=i_armor_female_bustier
+COLOR=097F
+ITEMNEWBIE=i_shield_round_metal
+COLOR=097F
+ITEMNEWBIE=i_kryss
+NAME=Kryss zacatecnika(Artefakt)
+COLOR=044C
+ITEMNEWBIE=i_sandals
+COLOR=097F
+ITEMNEWBIE=i_armor_female_shorts
+COLOR=097F
+
+ON=@NPCRestock
+item=i_gold{500 600}
+ITEM=RANDOM_REAGENT,{10 20}
+ITEM=RANDOM_REAGENT_NECRO,{1 20}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+[CHARDEF c_eq_cm_vidlak_ochrance]
+
+NAME=Vidlak Ochrance
+ID=c_man 
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+ICON=i_pet_MAN
+CAN=MT_WALK|mt_run
+attack=90
+ARMOR=80
+
+moverate=5
+
+
+
+RESOURCES=8 t_magic
+
+ 
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_balrog
+TEVENTS=e_npc_roundattack
+TEVENTS=e_npc_warcry
+ 
+
+CATEGORY=Dungy
+SUBSECTION=JD
+DESCRIPTION=Vidlak Ochrance
+
+ON=@Create 
+NAME=Frantisek Faltus
+Title=Probuzeny Ochrance
+COLOR=colors_skin 
+NPC=brain_monster
+
+
+FAME=4500
+KARMA=-3000
+str={3500 4500}
+     dex={276 350}
+     int={780 1250}
+
+     maxhits={15400 16000}
+     maxstam={350 400}
+     maxmana=0
+
+tag.experience=<eval {900.0 950.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[10]> 
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=990
+ 
+tag.resist_summon=<eval {850 950}>
+
+tag.resist_para=<eval {550 650}>
+
+ 
+PARRYING={190.0 200.0}
+Resist=150.0
+TACTICS={90.0 100.0}
+WRESTLING={95.0 100.0}
+Fencing={95.0 100.0}
+SpiritSpeak=190.0
+
+
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_beard_mustache
+COLOR=0989
+ITEMNEWBIE=i_platemail_gorget
+COLOR=098E
+ITEMNEWBIE=i_platemail_chest
+COLOR=098E
+ITEMNEWBIE=i_platemail_gloves
+COLOR=098E
+ITEMNEWBIE=i_platemail_arms
+COLOR=098E
+ITEMNEWBIE=i_platemail_leggings
+COLOR=098E
+ITEMNEWBIE=i_hat_cape_2
+COLOR=098E
+ITEMNEWBIE=i_cape
+COLOR=0989
+ITEMNEWBIE=i_sash
+COLOR=0989
+ITEMNEWBIE=i_pitchfork
+COLOR=0981
+
+
+
+
+
+
+
+ON=@NPCRestock 
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{65 90}
+ITEM=i_mi_bag
+
+ON=@hit 
+IF (RAND(10)==1)
+DORAND 4
+SAYU Tak jen pojd bliz at ti muzu jednu ubalit
+SAYU Donalde slezte z toho lustru vidim Vas !!!!!!
+SAYU Tuhle ranu si seredne odskacete !!
+SAYU Hej mazej k truhlarovi at ti veme miru na rakev !!
+ENDO
+ENDIF
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_cunik]
+
+ID=c_pig
+NAME=Cunik 
+SOUND=snd_ANIMALS_PIG1
+ICON=i_pet_PIG
+ANIM=01fff
+CAN=MT_WALK|mt_run
+attack=75
+ARMOR=140
+
+MOVERATE=6
+
+
+RESOURCES=8 i_ribs_raw
+
+
+ 
+BLOODCOLOR=025
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TEVENTS=e_summoneater
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Revuv cunik
+DESCRIPTION=cunik
+
+ON=@Create
+
+NPC=brain_monster
+FAME={100 500}
+KARMA=-2000
+STR=1000
+DEX=300
+INT=130
+
+
+
+maxhits={2500 3900}
+maxstam={350 400}
+maxmana=400
+
+maxhits={500 600}
+maxstam={200 280}
+maxmana=0
+
+tag.experience=<eval {40.0 50.0}>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical
+
+tag.resist_poison={300 500}
+tag.resist_summon=<eval {490 600}>
+
+
+PARRYING=100.0
+RESIST=80.0
+TACTICS=100.0
+WRESTLING=100.0
+TAMING=99.0
+SpiritSpeak=30.0
+
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold{400 900}
+ITEM=i_pig_roast
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_sejdir]
+
+NAME=Sejdir
+ID=c_man
+ICON=i_pet_MAN
+CAN=MT_WALK|mt_run
+attack=30
+ARMOR=60
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+
+BLOODCOLOR=020
+
+TEVENTS=e_character
+TEVENTS=e_monster
+TEVENTS=e_looter
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Craft mstitel
+DESCRIPTION=Sejdir
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Pochybnej Sejdir
+COLOR=colors_skin
+NPC=brain_monster
+FAME=900
+KARMA={-5000 -9000}
+STR=3750
+DEX=350
+INT=0
+
+
+maxhits={4400 4700}
+maxstam={200 240}
+maxmana=0
+
+tag.experience=<eval {250.0 320.0}>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag(resist_bleed,1000)
+tag(resist_para,500)
+tag(resist_poison,700)
+
+
+TACTICS=100.0
+WRESTLING=120.0
+RESIST=180.0
+SpiritSpeak=35.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_dagger_iron
+item=i_gold
+
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_hair_long
+COLOR=038B
+ITEMNEWBIE=i_hat_feathered
+COLOR=038B
+ITEMNEWBIE=i_shirt_fancy
+COLOR=038B
+ITEMNEWBIE=i_kilt
+COLOR=038B
+ITEMNEWBIE=i_boots_calf
+COLOR=038B
+ITEMNEWBIE=i_dagger_iron
+COLOR=0995
+
+ON=@NPCRestock
+item=i_gold{500 600}
+ITEM=RANDOM_REAGENT,{10 20}
+
+///////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_pochybna_deva] 
+
+NAME=Pochybna Deva
+ID=c_woman
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+
+CAN=MT_WALK|mt_run
+attack=50
+ARMOR=60
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+
+//=r_mountains,r_caves,r_dungeon
+BLOODCOLOR=020
+
+TEVENTS=e_character
+TEVENTS=e_summoneater
+TEVENTS=e_monster
+TEVENTS=e_looter 
+TEVENTS=e_npc_warcry
+
+CATEGORY=Dungy
+SUBSECTION=Kraft Mstitel
+DESCRIPTION=pochybna deva
+
+
+ON=@Create 
+NAME=#NAMES_HUMANFEMALE
+Title=Pochybna Deva
+COLOR=colors_skin 
+NPC=brain_monster
+FAME=100
+KARMA=-5000
+STR=3500
+DEX=300
+INT=100
+
+maxhits={3333 3800}
+maxstam={560 620}
+maxmana=0
+
+tag.experience=<eval {110.0 150.0}> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+
+tag.weapflag=dam_physical|dam_slashing|dam_piercing
+
+
+
+tag.resist_para=<eval {500 750}>
+tag(resist_bleed,500.0)
+tag(resist_poison,500.0)
+
+
+provocation=100.0
+peacemaking=100.0
+TACTICS=120.0
+WRESTLING=100.0
+MACEFIGHTING={90.0 100.0}
+WRESTLING=120.0 
+fencing=100.0 
+tactics=100.0 
+SpiritSpeak=55.0
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_hair_long
+COLOR=021
+ITEMNEWBIE=i_earrings_gold 
+ITEMNEWBIE=i_studded_gorget_copper 
+Color=097F
+ITEMNEWBIE=i_armor_female_bustier
+Color=097F
+ITEMNEWBIE=i_club_valorite
+Color=05E5
+ITEMNEWBIE=i_armor_female_skirt
+Color=0598
+ITEMNEWBIE=i_sandals
+Color=0598
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+ITEM=i_reag_blood_moss {10 20}
+
+ON=@hit 
+IF (RAND(10)==1)
+DORAND 4
+SAYU Na zenskou se ti to dovoluje co?
+SAYU Hele nez na me sanhnes umej si laskave ruce!!
+SAYU Hej kdyz se mnou bojujes koukej se me do oci a ne nekam jinam !!!
+SAYU Jestli chlastas jako bojujes mno tak to me potes !!
+ENDO
+ENDIF
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[events e_vudce_smecky]
+
+on=@aftergetswing
+if rand(20)==1
+			EMOTE("Steka jak vzteklej")
+			sfx 533
+			gohome
+			newnpc(c_drapac)
+			lastnewchar.p=<eval(<p_x>+{-1 1})>,<eval(<p_y>+{-1 1})>,<p_z>,<mapplane>
+			lastnewchar.fame=0
+			lastnewchar.flag_conjured=1
+			lastnewchar.newequip(i_osklivejsmazse)
+			lastnew.timer=60
+			newnpc(c_vlkodaf)
+			lastnewchar.p=<eval(<p_x>+{-1 1})>,<eval(<p_y>+{-1 1})>,<p_z>,<mapplane>
+			lastnewchar.fame=0
+			lastnewchar.flag_conjured=1
+			lastnewchar.newequip(i_osklivejsmazse)
+			lastnew.timer=60
+			newnpc(c_drapac_blood)
+			lastnewchar.p=<eval(<p_x>+{-1 1})>,<eval(<p_y>+{-1 1})>,<p_z>,<mapplane>
+			lastnewchar.fame=0
+			lastnewchar.flag_conjured=1
+			lastnewchar.newequip(i_osklivejsmazse)
+			lastnew.timer=60
+endif
+if rand(20)==10
+			EMOTE("Steka jak vzteklej")
+			sfx 533
+			gohome
+			newnpc(c_drapac_blood)
+			lastnewchar.p=<eval(<p_x>+{-1 1})>,<eval(<p_y>+{-1 1})>,<p_z>,<mapplane>
+			lastnewchar.fame=0
+			lastnewchar.flag_conjured=1
+			lastnewchar.newequip(i_osklivejsmazse)
+			lastnew.timer=60
+endif
+
+on=@afterswing
+on=@beforedoeffect
+on=@beforegeteffect
+
+on=@death
+while (memoryfindtype(0209c))
+ 			memoryfindtype(0209c).link.multi_damage(100)
+ 			memoryfindtype(0209c).remove 
+endwhile
+			SAY("Ruth Mor")
+			newnpc(c_drapac)
+			lastnewchar.p=<eval(<p_x>+{-1 1})>,<eval(<p_y>+{-1 1})>,<p_z>,<mapplane>
+			lastnewchar.fame=0
+			lastnew.timer=600
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_vudce_smecky]
+
+ID=c_wolf
+NAME=Vudce smecky
+SOUND=snd_ANIMALS_WOLF1
+ICON=i_pet_wolf
+
+CAN=MT_WALK|mt_run
+attack=175
+ARMOR=135
+
+MOVERATE=3
+
+
+RESOURCES=6 i_ribs_raw
+FOODTYPE=55 t_FISH,64 i_ribs_raw
+
+
+
+
+
+
+BLOODCOLOR=0989
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_knockback
+TEVENTS=e_vudce_smecky
+
+
+CATEGORY=Monsters
+SUBSECTION=Animal Monsters
+DESCRIPTION=Vudce smecky
+
+
+ON=@Create
+Color=0989
+NPC=brain_monster
+FAME=1500
+KARMA={-5000 -6000}
+STR=9300
+DEX=600
+INT=100
+
+
+maxhits={16025 16275}
+maxstam={395 429}
+maxmana=0
+
+tag.experience=<eval {700.0 800.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[7]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+tag.resist_poison=990
+tag.resist_bleed=1000
+tag.resist_summon=<eval {500 750}>
+tag.resist_pierce=<eval {500 750}>
+tag.resist_para=<eval {500 750}>
+tag.resist_fire=<eval {550 750}>
+
+
+Resist=250.0
+WRESTLING=140.0
+SpiritSpeak=85.0
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+ITEM=loot_DAEMON
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_Ozrala] 
+
+ID=c_man
+NAME=Ozrala
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+ICON=i_pet_MAN
+CAN=MT_EQUIP|MT_WALK|MT_RUN|MT_USEHANDS
+attack=70
+ARMOR=60
+
+moverate=3
+
+BLOODCOLOR=020
+
+TEVENTS=e_notor
+TEVENTS=e_monster
+TEVENTS=e_character
+
+CATEGORY=Monsters
+SUBSECTION=human
+DESCRIPTION=Opilec
+
+ON=@CREATE 
+
+COLOR=colors_skin
+NPC=brain_monster
+FAME=0
+KARMA=-3000
+STR=3000 
+DEX=150
+INT=300 
+
+maxhits={3000 3500}
+maxstam={150 160}
+maxmana=0
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+tag.resist_poison=960
+
+
+
+tag.experience=<eval {330.0 400.0}>
+
+PARRYING=100.0 
+TACTICS=200.0 
+WRESTLING=150.0 
+resist=150.0
+Spiritspeak=45.0
+
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_beard_mustache
+COLOR=01
+ITEMNEWBIE=i_sandals
+COLOR=01
+ITEMNEWBIE=i_doublet
+COLOR=07D5
+ITEMNEWBIE=i_pants_short
+COLOR=089E
+
+ON=@NPCRestock
+ITEM=i_gold
+
+ON=@hit 
+IF (RAND(10)==1)
+DORAND 4
+SAYU Se ti to bojuje frajere kdyz te vidim trikrat co?
+SAYU Ti tu flasku omlatim o hlavu 
+SAYU Zapomen ze ze me nejakou flasku vymlatis
+SAYU Hele tu sekeru za tebe stejne nezatahnu 
+ENDIF
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ [EVENTS e_notor]  
+ON=@GETHIT  
+VAR.SCALE=<eval RAND{3}>  
+IF {<VAR.SCALE>==0}  
+SRC.SYSMESSAGE Ten ma tak tvrdy jatra, ze si tak maximalne otupis mec.
+HITS=<HITS>+-{1 4}  
+RETURN 1 
+ELSE  
+RETURN 0  
+ENDIF
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_ostrostrelec]
+
+NAME=Ostrostrelec
+ID=C_MAN
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+ICON=i_pet_MAN
+CAN=MT_EQUIP|MT_WALK|MT_RUN|MT_USEHANDS
+attack=60
+ARMOR=40
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+ 
+BLOODCOLOR=020
+
+TEVENTS=e_character
+TEVENTS=e_summoneater
+TEVENTS=e_monster
+TEVENTS=e_looter 
+
+
+CATEGORY=Dungy
+SUBSECTION=Kraft mstitel
+DESCRIPTION= Archer (male)
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Ostrostrelec
+COLOR=colors_skin
+NPC=brain_monster
+FAME=100
+KARMA=-5000
+STR=1000
+DEX=250
+INT=200
+
+
+maxhits={2800 3200}
+maxstam={120 140}
+maxmana=0
+
+tag.experience=<eval {90.0 110.0}> 
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.weapflag=dam_physical
+
+tag.resist_para=<eval {500 750}>
+tag.resist_bleed=450
+tag.resist_poison=650
+
+
+
+WRESTLING={150.0 200.0}
+RESIST={120.0 150.0}
+TACTICS={150.0 200.0}
+PARRYING={90.0 100.0}
+FENCING={150.0 200.0}
+SWORDSMANSHIP={150.0 200.0}
+ARCHERY={150.0 200.0}
+MACEFIGHTING={150.0 200.0}
+PROVOCATION=100.0
+PEACEMAKING=100.0
+SpiritSpeak=35.0
+
+ 
+ITEMnewbie=i_monster_create
+
+ITEM=i_npc_mount
+
+tag.mount=i_mt_ostard_zostrich 
+
+
+ITEMNEWBIE=random_male_hair
+COLOR=01
+ITEMNEWBIE=i_chainmail_tunic
+COLOR=098A
+ITEMNEWBIE=i_platemail_gloves
+COLOR=098A
+ITEMNEWBIE=i_platemail_gorget
+COLOR=098A
+ITEMNEWBIE=i_chainmail_leggings
+COLOR=098A
+ITEMNEWBIE=i_boots_thigh
+COLOR=01
+
+ITEMNEWBIE=i_bow
+COLOR=0981
+ITEMNEWBIE=i_arrow,500
+
+
+
+
+ON=@NPCRestock 
+ITEM=i_gold
+ITEM=RANDOM_REAGENT_NECRO,{1 20}
+ITEM=RANDOM_REAGENT,{10 20}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[CHARDEF c_eq_cm_tkadlena_2] 
+
+NAME=Tkadlena
+ID=c_woman
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+
+CAN=MT_WALK|mt_run
+attack=50
+ARMOR=60
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+
+//=r_mountains,r_caves,r_dungeon
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_knockback
+TEVENTS=e_npc_stun
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Kraft Mstitel
+DESCRIPTION=tkadlena
+
+
+ON=@Create 
+NAME=#NAMES_HUMANFEMALE
+Title=Tkadlena
+COLOR=colors_skin 
+NPC=brain_monster
+FAME=250
+KARMA=-10000
+STR=9000
+DEX=450
+INT=130
+
+
+maxhits={19000 21075}
+maxstam={395 420}
+maxmana=0
+
+tag.experience=<eval {800.0 1000.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[8]>
+tag.npc_knockback=90
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+tag.resist_poison=990
+tag.resist_bleed=<eval {500 750}>
+tag.resist_summon=<eval {500 750}>
+tag.resist_pierce=<eval {250 600}>
+tag.resist_para=<eval {750 850}>
+
+
+
+WRESTLING=130.0
+TACTICS=120.0
+Parrying=150.0
+SpiritSpeak=100.0
+
+
+
+ITEMNEWBIE=i_dress_full
+COLOR=<colors_all>
+ITEMNEWBIE=i_necklace_gold_beads
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[CHARDEF c_eq_cm_tkadlena] 
+
+NAME=Tkadlena
+ID=c_woman
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+
+CAN=MT_WALK|mt_run
+attack=50
+ARMOR=60
+
+moverate=4
+
+
+
+RESOURCES=8 t_magic
+
+
+//=r_mountains,r_caves,r_dungeon
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_berserk_potvora
+
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Kraft Mstitel
+DESCRIPTION=tkadlena
+
+
+ON=@Create 
+NAME=#NAMES_HUMANFEMALE
+Title=Tkadlena
+COLOR=colors_skin 
+NPC=brain_monster
+FAME=250
+KARMA=-6000
+STR=2200
+DEX=370
+INT=120
+
+
+maxhits={8025 9275}
+maxstam={305 355}
+maxmana=0
+
+tag.experience=<eval {150.0 190.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+
+tag.weapflag=dam_physical|dam_piercing
+
+
+
+tag.resist_poison=<eval {500 750}>
+
+tag.resist_summon=<eval {500 750}>
+
+tag.resist_para=<eval {500 750}>
+
+
+
+WRESTLING=160.0
+TACTICS=120.0
+Parrying=150.0
+SpiritSpeak=60.0
+
+ITEMnewbie=i_monster_create
+
+
+
+
+ITEMNEWBIE=i_dress_full
+COLOR=<colors_all>
+ITEMNEWBIE=i_bracelet_silver
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+
+on=@npc_seewantitem
+act.remove
+//////////////////////////////////////////////////////////////////////////////////////
+
+[CHARDEF c_eq_cm_straznej]
+
+NAME=Straznej
+ID=c_man 
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+ICON=i_pet_MAN
+CAN=MT_WALK|mt_run
+attack=160
+ARMOR=160
+
+MOVERATE=3
+
+
+
+
+
+//=r_mountains,r_caves,r_dungeon
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summonfrenzy
+
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Kraft mstitel
+DESCRIPTION=strazce
+
+ON=@Create
+color=color_skin
+
+NPC=brain_monster
+FAME=1500
+KARMA={-7500 -10000}
+STR=7000
+DEX=500
+INT=0
+
+
+maxhits={19500 20500}
+maxstam={330 360}
+maxmana=0
+
+tag.experience=<eval {1200.0 1500.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[10]>
+
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag(resist_bleed,1000)
+tag(resist_para,900)
+tag(resist_poison,1000)
+tag(resist_summon,<eval {850 900}>)
+tag.resist_pierce=500
+tag.resist_fire=500
+
+TACTICS=100.0
+WRESTLING=120.0
+RESIST=150.0
+SpiritSpeak=200.0
+
+ITEMnewbie=i_monster_create
+
+
+ITEMNEWBIE=i_surcoat
+COLOR=0997
+ITEMNEWBIE=i_boots_thigh
+COLOR=0994
+
+ON=@NPCRestock
+item=i_gold
+ITEM=loot_DAEMON
+////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_mag_lvl3]
+
+ID=c_man
+NAME=Arcimag
+ICON=i_pet_MAN
+CAN=MT_WALK|MT_RUN|MT_USEHANDS
+attack=72
+ARMOR=80
+
+moverate=4
+
+
+RESOURCES=t_magic
+FOODTYPE=t_spell
+ 
+BLOODCOLOR=025
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+CATEGORY=dungy
+SUBSECTION=Kraft mstitel
+DESCRIPTION=Arcimag
+
+ON=@Create
+NAME=Arcimag
+Title=Vladce Kouzel
+COLOR=colors_skin
+ 
+FAME=125
+KARMA=-5000
+STR=7000
+DEX=400
+INT=450
+
+
+maxhits={19500 20000}
+maxstam={350 390}
+maxmana={3500 4500}
+
+tag.experience=<eval {700.0 950.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[10]>
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_bleed=1000
+tag.resist_poison=1000
+tag.resist_para=<eval {800 950}>
+tag.resist_fire=750
+tag.resist_elect=750
+tag.resist_slash=750
+tag.resist_sharp=750
+
+
+ei=120.0
+magery=120.0
+Resist=200.0
+WRESTLING=200.0
+SpiritSpeak=200.0
+
+ITEMNEWBIE=i_surcoat
+ITEMNEWBIE=i_hat_straw
+ITEMNEWBIE=i_studded_tunic_iron
+ITEMNEWBIE=i_studded_sleeves_iron
+ITEMNEWBIE=i_pants_long
+Color=015C
+ITEMNEWBIE=i_boots_calf
+ITEMNEWBIE=i_cape
+Color=0ED
+ITEMNEWBIE=i_staff_gnarled_verite
+ITEMNEWBIE=i_hair_long
+COLOR=015C
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+itemnewbie=i_spellbook
+addspell=s_mass_dispel
+addspell=s_explosion
+addspell=s_energy_bolt
+addspell=s_summon_elem_air
+addspell=s_summon_elem_earth
+addspell=s_summon_elem_fire
+addspell=s_summon_elem_water
+addspell=s_magic_reflection
+addspell=s_mass_curse
+addspell=s_protection
+addspell=s_energy_vortex
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{50 75}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_mag_lvl2]
+
+ID=c_man
+NAME=Mag
+ICON=i_pet_MAN
+CAN=MT_WALK|MT_RUN|MT_USEHANDS
+attack=62
+ARMOR=70
+
+moverate=4
+
+
+RESOURCES=t_magic
+FOODTYPE=t_spell
+
+ 
+BLOODCOLOR=025
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+CATEGORY=Mag
+SUBSECTION=Kraft mstitel
+DESCRIPTION=Mag expert
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Mag Expert
+COLOR=colors_skin
+NPC=brain_monster
+FAME=125
+KARMA=-5000
+STR=6188
+DEX=400
+INT=380
+
+
+maxhits={16000 17188}
+maxstam={275 350}
+maxmana={2750 3500}
+
+tag.experience=<eval {660.0 800.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[8]>
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_bleed=<eval {900 1000}>
+tag.resist_poison=1000
+tag.resist_para=<eval {700 850}>
+tag.resist_fire=500
+tag.resist_elect=500
+tag.resist_slash=600
+tag.resist_sharp=600
+
+
+ei=120.0
+magery=120.0
+Resist=165.0
+WRESTLING=200.0
+SpiritSpeak=100.0
+
+ITEMNEWBIE=i_surcoat
+ITEMNEWBIE=i_hat_straw
+ITEMNEWBIE=i_studded_tunic_iron
+ITEMNEWBIE=i_studded_sleeves_iron
+ITEMNEWBIE=i_pants_long
+Color=015C
+ITEMNEWBIE=i_boots_calf
+ITEMNEWBIE=i_cape
+Color=0ED
+ITEMNEWBIE=i_staff_quarter_verite
+ITEMNEWBIE=i_hair_long
+COLOR=015C
+
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+itemnewbie=i_spellbook
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_mass_dispel
+addspell=s_magic_reflection
+addspell=s_mass_curse
+addspell=s_protection
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{50 75}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_mag_lvl1]
+
+ID=c_man
+NAME=Mag Zacatecnik
+ICON=i_pet_MAN
+CAN=MT_WALK|MT_RUN|MT_USEHANDS
+attack=52
+ARMOR=50
+
+moverate=4
+
+
+RESOURCES=t_magic
+FOODTYPE=t_spell
+
+ 
+BLOODCOLOR=025
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Kraft mstitel
+DESCRIPTION=mag lvl1
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Mag Zacatecnik
+COLOR=colors_skin
+FAME=125
+KARMA=-5000
+STR=4563
+DEX=300
+INT=300
+
+
+maxhits={10500 10900}
+maxstam={215 290}
+maxmana={2750 3500}
+
+tag.experience=<eval {320.0 450.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_bleed=<eval {500 600}>
+tag.resist_poison=<eval {800 950}>
+tag.resist_para=<eval {500 750}>
+tag.resist_fire=500
+ 
+tag.resist_slash=200
+tag.resist_sharp=200
+
+
+ei=120.0
+magery=120.0
+Resist=145.0
+WRESTLING=200.0
+SpiritSpeak=55.0
+ITEMNEWBIE=i_surcoat
+ITEMNEWBIE=i_hat_straw
+ITEMNEWBIE=i_studded_tunic_iron
+ITEMNEWBIE=i_studded_sleeves_iron
+ITEMNEWBIE=i_pants_long
+Color=015C
+ITEMNEWBIE=i_boots_calf
+ITEMNEWBIE=i_cape
+Color=0ED
+ITEMNEWBIE=i_staff_black_verite
+ITEMNEWBIE=i_hair_long
+COLOR=015C
+
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+itemnewbie=i_spellbook
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_clumsy
+addspell=s_magic_reflection
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{50 75}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_mag_ochrance]
+
+ID=c_woman
+NAME=Kotelnice
+ICON=i_pet_MAN
+CAN=MT_WALK|MT_RUN|MT_USEHANDS
+attack=72
+ARMOR=80
+
+moverate=4
+
+
+RESOURCES=t_magic
+FOODTYPE=t_spell
+ 
+BLOODCOLOR=025
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+CATEGORY=dungy
+SUBSECTION=Kraft mstitel
+DESCRIPTION=Arcimag
+
+ON=@Create
+NAME=Kotelnice
+Title=Vladkyne Kouzel
+COLOR=colors_skin
+ 
+FAME=125
+KARMA=-5000
+STR=7000
+DEX=450
+INT=500
+
+
+maxhits={19500 20000}
+maxstam={400 410}
+maxmana={3600 4700}
+
+tag.experience=<eval {700.0 950.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[10]>
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_bleed=1000
+tag.resist_poison=1000
+tag.resist_para=<eval {800 950}>
+tag.resist_fire=750
+tag.resist_elect=750
+tag.resist_slash=750
+tag.resist_sharp=750
+
+
+ei=125.0
+magery=120.0
+Resist=200.0
+WRESTLING=200.0
+SpiritSpeak=200.0
+
+ITEMNEWBIE=i_sandals
+Color=0984
+ITEMNEWBIE=i_armor_female_bustier
+Color=0984
+ITEMNEWBIE=i_armor_female_shorts
+Color=0984
+ITEMNEWBIE=i_hair_long
+COLOR=0981
+ITEMNEWBIE=i_hair_long
+COLOR=0981
+ITEMNEWBIE=i_necklace_metal_beads
+COLOR=0981
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+itemnewbie=i_spellbok
+COLOR=0981
+addspell=s_mass_dispel
+addspell=s_explosion
+addspell=s_flamestrike
+addspell=s_summon_elem_air
+addspell=s_summon_elem_earth
+addspell=s_summon_elem_fire
+addspell=s_summon_elem_water
+addspell=s_magic_reflection
+addspell=s_mass_curse
+addspell=s_protection
+addspell=s_energy_vortex
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{50 75}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[CHARDEF c_eq_cm_kozeluh]
+
+NAME=Kozeluh
+ID=c_man
+ICON=i_pet_MAN
+
+CAN=MT_RUN|MT_WALK|MT_FIRE_IMMUNE
+attack=55
+ARMOR=65
+
+moverate=4
+
+
+
+
+RESOURCES=2 i_ribs_raw, 50 i_feather
+FOODTYPE=6 t_FISH, 15 t_meat_raw
+BLOODCOLOR=020
+
+
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+CATEGORY=Monsters
+SUBSECTION=Dungy
+DESCRIPTION=Kozeluh
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Kozeluh
+COLOR=colors_skin
+NPC=brain_monster
+FAME=1000
+KARMA=-2000
+STR={800 1000}
+DEX={300 400}
+INT=100
+
+ITEMNEWBIE=i_hair_long
+COLOR=0847
+ITEMNEWBIE=i_apron_full
+COLOR=0747
+ITEMNEWBIE=i_sandals
+COLOR=038B
+ITEMNEWBIE=i_dagger
+COLOR=0984
+
+
+maxhits={2900 3090}
+maxstam={280 300}
+maxmana=0
+
+tag.experience=<eval {60.0 80.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical
+
+tag.resist_poison={850 950}
+tag.resist_summon=<eval {390 500}>
+
+
+Resist=140.0
+TACTICS={80.0 90.0}
+WRESTLING={90.0 100.0}
+Taming={125.0 150.0}
+AnimalLore=95.0
+SpiritSpeak=30.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[CHARDEF c_eq_cm_fletcher]
+
+NAME=Fletcher
+ID=c_man
+ICON=i_pet_MAN
+
+CAN=MT_RUN|MT_WALK|MT_FIRE_IMMUNE
+attack=65
+ARMOR=65
+
+moverate=4
+
+
+
+
+RESOURCES=2 i_ribs_raw, 50 i_feather
+FOODTYPE=6 t_FISH, 15 t_meat_raw
+BLOODCOLOR=020
+
+
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+CATEGORY=Monsters
+SUBSECTION=Dungy
+DESCRIPTION=Fletcher
+
+ON=@Create
+NAME=Andy
+Title=Fletcher
+COLOR=colors_skin
+
+NPC=brain_monster
+FAME=1000
+KARMA=-2500
+STR=2500
+DEX=300
+INT={50 65}
+
+
+maxhits={4300 5700}
+maxstam={380 420}
+maxmana=0
+
+
+ITEMNEWBIE=i_doublet
+COLOR=01
+ITEMNEWBIE=i_armor_female_shorts
+COLOR=01
+ITEMNEWBIE=i_shoes_plain
+COLOR=01
+ITEMNEWBIE=i_cape
+COLOR=01
+ITEMNEWBIE=i_dagger
+COLOR=098B
+
+tag.experience=<eval {150.0 220.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[7]>
+
+
+tag.weapflag=dam_physical
+
+tag.resist_poison={850 950}
+tag.resist_summon=750
+
+
+Resist={130.0 160.0}
+WRESTLING={120.0 160.0}
+POISONING=500.0
+Taming={135.0 170.0}
+AnimalLore=100.0
+SpiritSpeak=55.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+[eof]

@@ -1,0 +1,762 @@
+//-------------------------------MONSTRA DO ETHERIE-------------------
+
+//infikovana krysa z etherky
+
+[CHARDEF c_crunch_kryska]
+id=0D7
+NAME=Infikovana krysa
+CAN=MT_WALK
+attack=75
+ARMOR=45
+RESOURCES=10 t_eerie_stuff
+FOODTYPE=20 t_meat_raw
+//=i_gold,t_meat_raw, t_corpse
+//=r_dungeon,r_spooky
+//=t_TRAP,c_man
+BLOODCOLOR=colors_green
+TEVENTS=e_undead
+TEVENTS=e_monster
+TEVENTS=e_character
+
+ON=@Create
+NPC=brain_undead
+Color=0982
+STR=600
+DEX=180
+INT=80
+hits=<eval <hits>+100>
+maxhits=<eval <maxhits>+100>
+tag.experience=<eval {30.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag(resist_poison,<eval {80.0 120.0}>)
+PARRYING={95.0 100.0}
+TACTICS={85.0 120.0}
+WRESTLING={95.0 100.0}
+SpiritSpeak=45.0
+
+FAME=80
+KARMA=-{4000 4999}
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=loot_undead
+ITEM=random_reagent,{20 32}
+item=i_gold
+
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Infikovana krysa
+
+//vodni ropucha, 4lvl Eherky
+[CHARDEF c_crunch_vodnizaba]
+id=050
+NAME=Vodni ropucha
+CAN=MT_WALK|MT_USEHANDS
+attack=75
+ARMOR=55
+RESOURCES=10 t_eerie_stuff
+FOODTYPE=20 t_meat_raw
+//=i_gold,t_meat_raw, t_corpse
+//=r_dungeon,r_spooky
+//=t_TRAP,c_man
+BLOODCOLOR=colors_green
+TEVENTS=e_undead
+TEVENTS=e_monster
+TEVENTS=e_character
+
+ON=@Create
+NPC=brain_undead
+Color=0984
+STR=630
+DEX=100
+INT=80
+tag.experience=<eval {30.0 50.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+tag(resist_poison,<eval {80.0 120.0}>)
+PARRYING={95.0 100.0}
+TACTICS={85.0 120.0}
+WRESTLING={95.0 100.0}
+SpiritSpeak=40.0
+
+FAME=80
+KARMA={-4000 -4999}
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=random_reagent,{20 32}
+item=i_gold
+
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Vodni zaba
+
+// krvavy prisluhovac, 5lvl etherky
+
+[CHARDEF c_crunch_prisluhovac]
+NAME=Krvavy prisluhovac
+ID=C_MAN
+CAN=MT_WALK|MT_run|MT_FLY|MT_MALE
+//=i_gold,e_notoriety
+//=t_TRAP,t_eerie_stuff
+attack=73
+ARMOR=72
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_crunch_prisluhovac
+
+//tag.mount=i_mt_ostard_zostrich
+//tag.mountcolor=color_mount_chief
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Krvavy prisluhovac
+STR={1050 1250}
+DEX={150 200}
+INT={80 120}
+tag.experience=<eval {50.0 80.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+resist=50.0
+TACTICS=100.0
+PARRYING=100
+swordsmanship=100.0
+SpiritSpeak=50.0
+
+
+NPC=brain_monster
+
+KARMA=-6000
+FAME=100
+
+ITEM=i_npc_mount
+ITEMNEWBIE=random_male_hair
+COLOR=00832
+ITEMNEWBIE=random_facial_hair
+color=0982
+ITEMNEWBIE=i_platemail_chest
+color=0982
+name=Brneni krvaveho prisluhovace
+ITEMNEWBIE=i_platemail_leggings
+color=0982
+name=Brneni krvaveho prisluhovace
+ITEMNEWBIE=i_platemail_arms
+color=0982
+name=Brneni krvaveho prisluhovace
+ITEMNEWBIE=i_platemail_gloves
+color=0982
+name=Brneni krvaveho prisluhovace
+ITEMNEWBIE=i_platemail_gorget
+color=0982
+name=Brneni krvaveho prisluhovace
+ITEMNEWBIE=i_shield_heater
+color=0982
+name=stit krvaveho prisluhovace
+ITEMNEWBIE=i_sword_viking
+color=0982
+name=mec krvaveho prisluhovace
+
+ON=@NPCRestock
+ITEM=i_gold {1000 1500}
+ITEM=loot_elem
+
+
+[SPEECH spk_crunch_prisluhovac] 
+ON=*lol*
+SAY=Zadne lol, zemres <src.name>!!! 
+ON=*ress*
+SAY=Vysaju z tebe tvou krev <src.name>!
+ON=*boost*
+SAY=Zadny boost ti nepomuze k preziti!!!
+
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Krvavy prisluhovac
+
+
+// blood ocko
+[CHARDEF c_blood_eye]
+id=c_gazer
+NAME=Eye
+attack=60
+ARMOR=0
+moverate=4
+CAN=MT_WALK|MT_RUN|MT_FIRE_IMMUNE
+resources=i_reag_blood_vial 3
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Blood Eye
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_iron_eye
+
+ON=@Create
+NPC=brain_monster
+FAME=150
+KARMA=-2000
+color=0982
+//ALIGNMENT=EVIL
+STR=300
+DEX=800
+INT=500
+
+tag.experience=<eval {25.0 35.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+Resist=2000
+WRESTLING=1000
+SpritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=i_reag_blood_vial,{0 3}
+
+
+// water ocko
+[CHARDEF c_water_eye]
+id=c_gazer
+NAME=Eye
+attack=60
+ARMOR=0
+moverate=4
+CAN=MT_WALK|MT_RUN|MT_FIRE_IMMUNE
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Water Eye
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_iron_eye
+
+ON=@Create
+NPC=brain_monster
+FAME=150
+KARMA=-2000
+color=0984
+//ALIGNMENT=EVIL
+STR=300
+DEX=800
+INT=500
+
+tag.experience=<eval {25.0 35.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+Resist=2000
+WRESTLING=1000
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+
+// blood spiritek :P
+[CHARDEF c_spirit_blood]
+id=c_wisp
+NAME=Blood spirit
+attack=35
+ARMOR=38
+CAN=MT_WALK|MT_FLY|MT_FIRE_IMMUNE|MT_USEHANDS
+FOODTYPE=t_spell
+RESOURCES=t_magic
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Blood spirit
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater
+
+ON=@Create
+NPC=brain_animal
+FAME=2000
+KARMA=-5000
+color=0982
+STR=4863
+DEX=200
+INT=405
+tag.experience=<eval {120.0 250.0}>
+tag.resit_poison=700
+ei=90.0
+magery=89.0
+Resist=250.0
+WRESTLING=100.0
+ITEMNEWBIE=i_light_source
+ATTR=attr_magic|attr_newbie
+ITEMnewbie=i_monster_create
+itemnewbie=i_spellbook
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_reveal
+addspell=s_clumsy
+addspell=s_mass_curse
+
+ON=@NPCRestock
+ITEM=i_gold
+
+// water spiritek :P
+[CHARDEF c_spirit_water]
+id=c_wisp
+NAME=Water spirit
+attack=35
+ARMOR=38
+CAN=MT_WALK|MT_FLY|MT_FIRE_IMMUNE|MT_USEHANDS
+FOODTYPE=t_spell
+RESOURCES=t_magic
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Water spirit
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater
+
+ON=@Create
+NPC=brain_animal
+FAME=0
+KARMA=-5000
+color=color_o_valorite
+STR=4863
+DEX=200
+INT=405
+tag.experience=<eval {120.0 250.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+tag.resit_poison=700
+ei=90.0
+magery=89.0
+Resist=250.0
+WRESTLING=100.0
+SpiritSpeak=60.0
+
+ITEMNEWBIE=i_light_source
+ATTR=attr_magic|attr_newbie
+ITEMnewbie=i_monster_create
+itemnewbie=i_spellbook
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_reveal
+addspell=s_clumsy
+addspell=s_fire_field
+ON=@NPCRestock
+ITEM=i_gold
+
+// waterman - vodni verze minotaura
+[CHARDEF c_wasserman] // :-)
+ID=c_minotaur
+NAME=Water man
+SOUND=snd_ELEMENTL_ERTHEL1
+ICON=i_pet_elem_earth
+ANIM=079c7f
+attack=110
+ARMOR=130
+CAN=MT_WALK|mt_run
+RESOURCES=9 i_ore_copper 
+FOODTYPE=15 t_arock,t_coin,t_ore,t_ingot
+//=r_mountains,r_caves,r_dungeon
+//=r_caves
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater_vamp
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Wasserman
+
+
+ON=@Create
+NPC=brain_monster
+FAME=300
+KARMA={-1000 -2500}
+Color=0984
+STR=5800
+DEX=280
+INT=190
+
+maxhits=13500
+maxstam={500 650}
+maxmana=0
+
+tag.experience=<eval {550.0 650.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[8]>
+tag.resist_poison=900
+tag.resist_summon=600
+
+SpiritSpeak=95.0
+WRESTLING=150.0
+Resist=150.0
+Parrying=150.0
+tactics=150.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+ITEM=loot_elem
+ITEM=random_reagent,{15 25}
+
+
+// krvava verze ophidian kinga
+[CHARDEF c_blood_king] 
+NAME=Blood King
+ID=057
+CAN=MT_WALK|MT_RUN|MT_USEHANDS|MT_FIRE_IMMUNE|MT_EQUIP|MT_GHOST 
+attack=100
+ARMOR=150
+FOODTYPE=80 t_meat_raw 
+//=i_gold 
+//=r_caves,r_dungeon 
+//=r_civilization 
+BLOODCOLOR=0996
+//color=0982
+//TSPEECH=spk_crunch_bloodking
+TEVENTS=e_monster
+TEVENTS=e_character
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Blood king
+
+ON=@CREATE 
+NPC=brain_monster
+COLOR=0982
+STR=5800
+DEX=200
+INT=400
+KARMA=-8000 
+FAME=0
+tag.experience=<eval {250.0 300.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+SpiritSpeak=45.0
+PARRYING={100 150} 
+TACTICS={200 300} 
+WRESTLING={200 300} 
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock 
+ITEM=i_gold
+
+// dulezity npc v Etherce 4lvl v podobe sea serpenta
+[CHARDEF c_crunch_vodnihad]
+ID=096 //sea serpent
+NAME=Tearus
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_shark
+ANIM=01ff
+CAN=MT_SWIM
+attack=5,15
+ARMOR=15
+RESOURCES=50 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=25 t_meat_raw,t_fish
+//=t_ship
+//=r_water
+//=r_civilization
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Tearus
+
+TSPEECH=spk_crunch_tearus
+TEVENTS=e_monster
+TEVENTS=e_character
+
+ON=@Create
+NPC=brain_human
+FAME=1
+karma=5000
+COLOR=colors_blue
+STR={165 185}
+DEX={58 85}
+INT={53 85}
+tag.experience=<eval {14.0 17.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+SpiritSpeak=35.0
+PARRYING={65.0 75.0}
+TACTICS={60.0 70.0}
+WRESTLING={60.0 75.0}
+FISHING=80.0
+//ALIGNMENT=NEUTRAL
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SEA_SERPENT
+ITEM=i_gold,{0 100}
+
+[SPEECH spk_crunch_tearus] 
+ON=*hi*
+ON=*dobry den*
+ON=*ahoj* 
+ SAY="nemuzete prezit, vydate-li se dal podzemim a nebudete-li znat elfske kouzlo moci... Pokud si to budete prat, mozna si na nej vzpomenu... opravdu chcete pokracovat ve svem putovani?"
+
+ON=*Ano*
+ON=*Jiste*
+ SAY="Dobra tedy... ten z vas, kdo ma nejvetsi vuli a schopnost kouzlit, by mel na konci podzemi, az budete v nouzi, zakricet hlasite slovo EREANARON. Kouzlo vas bud pohlti, nebo pomuze v zaverecnem souboji... mnoho stesti!"
+
+[CHARDEF c_etheria_boss]
+ID=c_excelent
+NAME=Etherijsky strazce
+attack=120
+ARMOR=150
+CAN=MT_WALK|mt_run
+//RESOURCES=1 i_ore_mithril
+FOODTYPE=15 t_arock,t_coin,t_ore,t_ingot
+//=r_mountains,r_caves,r_dungeon
+//=r_caves
+TEVENTS=e_monster
+TEVENTS=e_character
+TSPEECH=spk_etheria_boss
+
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Etherijsky strazce (boss)
+
+
+ON=@Create
+npc=brain_human
+FAME=250
+KARMA=-5000
+color=0982 //krvava
+STR=20000
+DEX=180
+INT=1000
+tag.experience=<eval {900.0 1000.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[8]>
+tag.resist_poison=930.0
+poisoning={1000 2000}
+WRESTLING=140.0
+tactics=150.0
+armslore=130.0
+resist=250.0
+SpiritSpeak=105.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_ore_mithril,1
+item=i_gold {10000 20000}
+item=i_eth_boss_event
+//item=i_eth_boss_menic
+
+ON=@death
+newitemsafe=i_etheria_final_gate
+lastnew.p=<p>   
+lastnew.update
+lastnew.fix
+
+[speech spk_etheria_boss]
+ON=*ereanaron*
+   Say(Muuuaaaaarrrghhhhhhh)
+   effect=3,i_FIRE_COLUMN,6,15,1	// flamestrike
+   sound=snd_SPELL_POLYMORPH            //to zni hezky 
+   newitemsafe=i_etheria_boss_gate
+   lastnew.p=<p>   
+   lastnew.update
+   lastnew.fix
+   go(5416,3411) ////nastavi se kam ze se to ma portnout
+   removetarget //aby az je znova uvidi zase neco rekl ! 
+   removefight
+   npc=brain_monster //aby se choval normalne a nereagoval podruhe na slovo 
+   //newloot(i_eth_boss_menic) //aby prestal bejt invul
+   events -e_etheria_boss_first
+   events +e_etheria_boss_second
+   invul=0
+
+[itemdef i_etheria_boss_gate]
+Name=Vstup znamena smrt
+type=t_telepad
+id=i_moongate_red
+
+on=@create
+timer=90
+color=0982
+attr=attr_static|attr_decay
+morep=5423 3410  //nastavit kam to bude dotycne lidi portovat
+
+[itemdef i_etheria_final_gate]
+Name=Snad kyzeny cil...?
+type=t_telepad
+id=i_moongate_red
+
+on=@create
+timer=90
+color=0982
+attr=attr_static|attr_decay
+morep=5204 3531 17 //nastavit kam to bude dotycne lidi portovat
+
+[events e_etheria_boss_first]
+ON=@NPCSeeNewPLayer
+   Say(Nemate sanci se mi postavit, v teto stisnene mistnosti jste mi vydani napospas. Muhahaha)
+   attack
+
+[events e_etheria_boss_second]
+ON=@NPCSeeNewPLayer
+   say(Mozna jste me dostali elfskou magii na otevreny prostor, ale stejne zemrete.) 
+   say(Odtud neni uniku. Bud ja, nebo vy!)
+   attack
+
+//ty dva predmety dole takhle fungujou, nebavilo me se s tim vrklat tak to tak nechte ! 
+
+[itemdef i_eth_boss_event]
+id=i_memory
+name=Event Etherijskeho bosse
+type=t_eq_script
+
+on=@equip
+cont.speech=spk_etheria_boss
+src.invul
+src.events=+e_etheria_boss_first //a jeho event
+remove
+
+[itemdef i_eth_boss_menic] 
+id=i_memory
+name=Eth Boss menic
+type=t_eq_script
+
+on=@equip
+if(<src.flag_invul>==0)
+  src.flag_invul=1
+else
+  src.flag_invul=0
+endif
+remove
+
+////////// Detheanorus, npc bard, bude stat v etherce a hlidat tajnou cast etherky
+[CHARDEF c_crunch_Detheanorus]  
+NAME=Detheanorus, smutny bard 
+ID=c_man 
+ATTACK=60 
+ARMOR=80 
+CAN=MT_WALK|mt_run
+TSPEECH=crunch_Detheanorus
+TEVENTS=e_character 
+ 
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Detheanorus
+ 
+ON=@Create 
+STR=600 
+DEX=200 
+INT=100 
+NPC=brain_human 
+tag.experience=<eval {30.0 35.0}> 
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+SpiritSpeak=35.0
+WRESTLING=120.0 
+fencing=100.0 
+tactics=100.0 
+COLOR=colors_skin 
+ITEMNEWBIE=i_surcoat 
+COLOR=029c 
+ITEMNEWBIE=i_sandals 
+COLOR=01b6 
+ITEMNEWBIE=i_pants_long 
+COLOR=08f  
+
+ON=@NPCRestock 
+item=i_detheanorus_invul //jinak to nepujde !
+
+ON=@npcseenewplayer 
+   DORAND 3 
+     SAY= "Tve oci jsou jak pomnenky, ci jsou to jen domnenky? Hmm, to neni ono..." 
+     SAY= "Olala ma jedina, vypadas jak skret co kytky moci zaliva... Ehm, to se ji asi taky nebude libit..." 
+     SAY= "Tve rty se lesknou jako ta nejostrejsi cepel mych nozu... Ach jo, zas to neni to prave orechove.." 
+   enddo
+
+[itemdef i_detheanorus_invul]
+id=i_memory
+name=Detheanorova iunvulnerabilita
+type=t_eq_script
+
+on=@equip
+src.invul=1
+remove
+
+[SPEECH crunch_Detheanorus] 
+ON=*hi*
+ON=*dobry den*
+ON=*ahoj* 
+ SAY Zdravim! Kdyz mi pomuzete, pustim vas do svych tajnych komnat. Potrebuji zjistit posledni slovo do verse jedne rikanky... pomuzete?
+
+ON=*ano*
+SAY Ve chvilce vzdy posledni, jako bys to cekal, sesles chvatne formuli, na zachranny... a na to posledni slovo ne a ne prijit.. napada vas neco?
+
+ON=*recall*
+src.go 5638 3381 //nekde v prostorach etherie 1 patra, budou tam priserky obycejny ale s vice regama
+
+[CHARDEF c_etheria_warrior]
+ID=c_terathan_warrior
+NAME=Etheria Warrior
+SOUND=snd_MONSTER_TERA_WARRIOR1
+ICON=i_pet_terathan_war
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS
+attack=14,20
+ARMOR=25
+RESOURCES=20 i_ribs_raw
+FOODTYPE=15 t_meat_raw
+//=r_civilization
+//=e_TERATHAN
+TEVENTS=e_TERATHAN
+CATEGORY=Dungy
+SUBSECTION=Etheria
+DESCRIPTION=Etheria Warrior
+TEVENTS=e_monster
+TEVENTS=e_character
+
+ON=@Create
+color=0710
+NPC=brain_monster
+FAME=1
+KARMA={-3000 -4999}
+//ALIGNMENT=EVIL
+tag.experience=<eval {15.0 20.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+SpiritSpeak=45.0
+STR={165 215}
+DEX={96 145}
+INT={41 65}
+PARRYING={70.0 80.0}
+TACTICS={80.0 100.0}
+WRESTLING={80.0 90.0}
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_TERATHAN
+ITEM=i_gold
+item=random_reagent,{15 25}
+
+
+[EOF]

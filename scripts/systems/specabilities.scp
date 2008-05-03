@@ -1,0 +1,3705 @@
+[typedef t_tester]
+on=@equip
+kermel.sysMessage(Equipping)
+
+on=@unequip
+kermel.sysMessage(UnEquipping)
+
+[Function writelog]
+logmsg("<args>")
+logmsg(<args>)
+
+[Function f_abilitycheck]
+if (0<tag.level><1)
+ redmessage(Musis byt alespon na prvnim levelu.)
+else
+ f_setmainability
+ if (<profession>!=<?class_<args>?>)
+  redmessage(Toto umi pouzit pouze <?class_<args>.name?>.)
+ elseif (findid(i_spec_ability_counter))
+  findid(i_spec_ability_counter).remove
+  //COLOR= <oskin>
+ elseif (stamina<3)
+  redmessage(Nemas dost staminy.)
+ else 
+  stamina=<eval <stamina>-3>
+   newitemsafe(i_spec_ability_counter)
+   lastnew.equip  
+   return 1
+ endif
+endif
+return 0 
+
+[Function berserker]
+if (f_abilitycheck(War))
+ lastnew.name=berserker counter
+ classMessage(Nyni jsi schopen zasadit kriticky uder.)
+endif
+
+[Function sniper]
+if (f_abilitycheck(Ranger))
+ lastnew.name=sniper counter
+ classMessage(Nyni jsi schopen zasadit kriticky uder.)
+endif
+
+[Function ripper]
+if (f_abilitycheck(Thief))
+ lastnew.name=ripper counter
+ classMessage(Nyni jsi schopen zasadit krvacejici ranu.)
+ //COLOR= color_thief
+endif
+
+[Function enlightment]
+if (f_abilitycheck(Priest))
+ lastnew.name=enlightment counter
+ classMessage(Nyni jsi schopen rychleji lecit bandazemi.)
+endif
+
+[Function improvement]
+if (f_abilitycheck(Shaman))
+ lastnew.name=improvement counter
+ classMessage(Nyni jsi schopen lecit lepe.)
+ //COLOR= color_shaman
+endif
+
+[Function concentration]
+if (f_abilitycheck(Mag))
+ lastnew.name=concentration counter
+ classMessage(Nyni jsi schopen kouzlit za mene many.)
+ //COLOR= color_mag
+endif
+
+[Function astralpower]
+if (f_abilitycheck(Mystik))
+ lastnew.name=astralpower counter
+ classMessage(Tve udery jsou omracujici.)
+endif
+
+[Function astralmorph]
+if (profession==class_shaman)
+ if (<safe.tag.morphedbody>)
+  dismorph
+  return 1
+ endif
+ newitemsafe(i_astralmorph)
+ lastnew.equip
+else
+sysMessage Toto muze pouzit pouze Shaman.
+endif
+
+[itemdef i_astralmorph]
+id=i_Crystal_red
+type=t_eq_script
+name=astralmorph rune
+
+on=@create
+timer=60
+attr=attr_decay
+
+on=@timer
+remove
+return 1
+
+on=@equip
+target Do ceho se chces morphnout?
+
+on=@targon_char
+trigger(@targon_ground)
+return 1
+
+on=@targon_item
+if (src.targ.type==t_corpse)
+ if !(src.targ.link)
+  arg(morphdefname,<findres(chardef,<src.targ.morex>)>)
+  src.tag(morphedbody,<src.body>)
+  src.tag(morphedcolor,<src.color>)
+  if (<arg(morphdefname)>.mstatsVar)
+   src.tag(m_dexchange,<eval <src.dex>-(<mstat_dex>)>)
+   src.tag(m_strchange,<eval <src.str>-(<mstat_str>)>)
+   src.tag(m_vitchange,<eval <src.vit>-(<mstat_vit>)>)
+
+   
+   if (morphstatsum<=??)
+    src.changestat(vit,-<src.tag.m_vitchange>)
+    src.changestat(str,-<src.tag.m_strchange>) 
+    src.changestat(dex,-<src.tag.m_dexchange>)
+   endif
+  else
+   src.tag(m_dexchange,0)
+   src.tag(m_strchange,0)
+   src.tag(m_vitchange,0)
+   src.sysMessage("Tato prisera neni urcena k morfovani (pro alfatest je pripustne morfnout se ovsem bez zmeny statu)")
+  endif
+  //src.smsg vit:<mstat_vit> str:<mstat_str> dex: <mstat_dex>
+  src.body=<arg(morphdefname)>
+  src.color=<src.targ.color>
+  src.events +e_morphed
+  src.dismount
+  src.eqlayers(bounce)
+  var(mstat_vit,"")
+  var(mstat_str,"")
+  var(mstat_dex,"")
+  remove
+  return 1
+ else
+  target Toto neni telo monstra!
+  return 1
+ endif
+endif
+trigger(@targon_ground)
+return 1
+
+on=@targon_ground
+target Toto neni telo!
+return 1
+
+[Function morphstatsum]
+return <eval mstat_vit+mstat_str+mstat_dex>
+
+[typedef m_vit]
+[typedef m_str]
+[typedef m_dex]
+
+[Function mstatsVar]
+return <f_mstatsVar(<shelter>)>
+
+[Function f_mstatsVar]
+var(mstat_vit,0)
+var(mstat_str,0)
+var(mstat_dex,0)
+arg(u,0)
+while (arg(u)<argvcount)
+ singleparse(<argv(arg(u))>)
+ whichmstat(<firstnumb>,<secondnumb>)
+ arg(u,<arg(u)>+1)
+endwhile
+if (<mstat_vit>)
+elseif (<mstat_str>)
+elseif (<mstat_dex>)
+else
+return 0
+endif
+return 1
+
+[Function whichmstat]//cislo, jmeno
+if (<argv(1)>==m_vit)
+var(mstat_vit,<argv(0)>)
+return 0
+elseif (<argv(1)>==m_str)
+var(mstat_str,<argv(0)>)
+return 0
+elseif (<argv(1)>==m_dex)
+var(mstat_dex,<argv(0)>)
+return 0
+endif
+return 1
+
+[events e_morphed]
+on=@itemequip
+if (act.def.layer<25)
+ act.bounce
+ return 1
+endif
+return 0
+
+on=@gethit
+dismount
+
+on=@death
+dismorph
+
+[Function dismorph]
+changestat(dex,<src.tag.m_dexchange>)
+changestat(str,<src.tag.m_strchange>)   
+changestat(vit,<src.tag.m_vitchange>)
+src.tag(m_dexchange,"")
+src.tag(m_strchange,"")
+src.tag(m_vitchange,"")
+
+body=<tag.morphedbody>
+tag.morphedbody=
+events -e_morphed
+color=<tag.morphedcolor>
+tag.morphedcolor=
+
+[Function darkpower]
+if (f_abilitycheck(Necro))
+ lastnew.name=darkpower counter
+ classMessage(Nyni ti muze byt navracena spotrebovana magenergie.)
+ //COLOR= color_necro
+endif
+
+[Function vigour]
+if (f_abilitycheck(Craft))
+ lastnew.name=vigour counter
+ classMessage(Nyni jsi schopen nalezt lepsi materialy...)
+endif
+
+[itemdef i_spec_ability_counter]
+ID=i_memory
+TYPE=t_eq_script
+name=ability counter
+
+ON=@Equip
+more1=<nastaveni_ability_staminalowering>//mnozstvi many pridane za 10 sekund
+cont.tag(mi_stamreg,<eval <cont.tag.mi_stamreg>>-<more1>)
+cont.regenrefresh
+timer=1
+
+on=@timer
+if (<cont.stamina><5)
+ remove
+endif
+timer 1
+return 1
+
+on=@unequip
+cont.classMessage(Jsi zpatky v normalnim stavu.)
+cont.tag(mi_stamreg,<eval <cont.tag.mi_stamreg>>+<more1>)
+return 0
+
+[typedef t_crystal_prof]
+
+[itemdef i_Crystal_necro]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of dark power
+
+on=@create
+color=color_necro
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.darkpower
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_Mystik]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of astral powers
+
+on=@create
+color=color_mystik
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.astralpower
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_mag]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of concentration
+
+on=@create
+color=color_mag
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.concentration
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_priest]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of enlightment
+
+on=@create
+color=color_priest
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.enlightment
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_shaman]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of improvement
+
+on=@create
+color=color_shaman
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.improvement
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_war]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of berserker
+
+on=@create
+color=color_war
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.berserker
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_ranger]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of sniper
+
+on=@create
+color=color_ranger
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.sniper
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_thief]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of ripper
+
+on=@create
+color=color_thief
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.ripper
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_Crystal_craft]
+id=i_Crystal_red
+type=t_crystal_prof
+name=Crystal of vigour
+
+on=@create
+color=color_craft
+attr=attr_move_never|attr_newbie
+
+on=@userdclick
+src.vigour
+src.class
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[Function roundattack]
+if findid(i_mem_roundattack)
+ RedMessage("Jeste nelze pouzit.")
+ return 0
+endif
+ newitemsafe(i_mem_roundattack)
+ arg(rounditem,<lastnew>)
+//findid(i_crystal_war).dclick
+ rounditem.equip
+ rounditem.dclick
+
+[itemdef i_mem_roundattack]
+ID=i_memory
+TYPE=t_eq_script
+name=roundattack
+
+on=@create
+timer=2
+
+on=@UserDClick
+if (src.profession!=class_war)
+ src.RedMessage("Toto muze pouzit jen valecnik.")
+ remove
+ return 1
+elseif (src.isnonmobile)
+ src.sysMessage("You are frozen and cannot move.")
+ remove
+ return 1 
+elseif (src.tag(nextroundattack)>serv.time)&&(src.isgm==0)
+ src.RedMessage("Jeste nelze pouzit.")
+ remove
+ return 1
+elseif !(src.findlayer(2).type==t_weapon_sword)
+ src.sysMessage("S timhle paratkem je to nemozne.")
+ remove
+ return 1
+endif
+src.sysMessage("Chystas se tvrde uderit!")
+return 1
+
+on=@timer
+cont.f_roundattack
+remove
+
+[Function f_roundattack]
+if ({0 10000}>eval(tag(ra_roundattack)*nastaveni_roundattack_chance))
+ redmessage("Nepovedlo se.")
+ tag(nextroundattack,<eval serv.time+(nastaveni_roundattack_delay*10)>)
+ return 1 
+endif
+if (findlayer(2))
+ if (findlayer(2).type==t_weapon_sword)
+  tag(nextroundattack,<eval serv.time+(nastaveni_roundattack_delay*10)>)
+  stamina=<eval stamina-{10 20}>
+  sound(sex(1098,824))
+  sound(512)
+  sound(566,5)
+  sysMessage("Zurive bijes vse kolem sebe!")
+  roundattackthem
+ else
+  sysMessage("S timhle paratkem je to nemozne.")
+  return 1
+ endif
+endif
+
+
+[Function roundattackthem]
+  newitemsafe(i_roundattack_srcChanger)
+  lastnew.p=<src.p>
+  lastnew.z=-100
+  lastnew.link=<uid>
+  lastnew.timerd=1
+  flip
+  flip
+  flip
+  flip
+
+
+[itemdef i_roundattack_srcChanger]
+id=i_memory
+layer=77
+type=t_src_changer
+name=roundattack srcChanger
+
+on=@timer
+var(roundattack_src,<link>)
+sector.allchars(rounddamage)
+remove 
+return 1
+
+[Function rounddamage]
+if (distancefrom(var(roundattack_src))==1)
+src=var(roundattack_src)
+src.act=<uid>
+var(ubrano,<eval ((var(ubrano) * nastaveni_roundattack_postih)/100)>)
+src.combat_main_nonmystik
+endif 
+
+
+[Function backstab]
+if (findlayer(2))
+  if ( (findlayer(2).dispid==i_war_fork) || (findlayer(2).dispid==01405) || (findlayer(2).id==i_war_fork_mithril) || !(safe.findid(i_stealthbonus)) ) //neprobodavat vidlema
+    return 0
+  endif
+endif
+if (profession==class_thief)
+  //src.sysMessage("action: <action>")
+  if ((action == 0FFFFFFFF) || (action == 0) || (action == skill_hiding) || (action == 079))
+    if (isinvis)&&(!tag(isstabbing)) //hidden, invis, or insubst
+      if (targ.srccombatLOS)
+        if (targ.distance<2)
+	  if (targ.z > (<z>+5)) || (targ.z < (<z>-5))//resi vysku
+	   sysMessage("Nedosahnes na cil.")
+          return 1
+         endif
+          classMessage("Pripravujes se k bodnuti...")
+          skill -1
+          stopscriptedskills
+          newitemsafe(i_backstab)//opozdeny equipnuti
+          lastnew.p=<p>
+          lastnew.z=-80
+          lastnew.tag(tostab,<targ>)
+          lastnew.tag(source,<uid>)
+          if !(tag(hitspeed))
+            f_getspeed_nonmystik
+          endif
+//lastnew.timerd=<tag(hitspeed)>
+          lastnew.timerd=1
+          anim({9 11})
+          tag(isstabbing, 1)
+          return 1
+        else
+          sysMessage("Cil je moc daleko.")
+          return 1
+        endif
+      else
+        sysMessage("Nevidis na cil.")
+        return 1
+      endif
+    else
+      sysMessage("Nesmis byt videt...")
+    endif
+  else
+    sysMessage("Nesmis provadet zadny skill")
+  endif
+endif
+return 0
+
+[itemdef i_backstab]
+id=i_memory
+layer=77
+type=t_src_changer
+name=backstab timer
+
+on=@unequip
+cont.tag(isstabbing,"")
+
+on=@equip
+if (src.action == -1)
+  if (tag(tostab).srccombatLOS)
+    if (tag(tostab).distance<2)
+     if (<cont.findid(i_stealthbonus).tag(hidetime)> > (<serv.time>))
+      cont.sysMessage("Nejsi dostatecne dlouho skryty!")
+      cont.tag.remove(isstabbing)
+      remove 
+      return 1
+     endif
+      if (cont.act.isplayer)
+        if !(cont.act == cont)
+          if (eval(cont.tag(ra_backstab)*nastaveni_thief_backstabP_chance)>eval({0 999}))
+            cont.combat_main_nonmystik
+            cont.tag.remove(isstabbing)
+            cont.findid(i_stealthbonus).remove
+            remove 
+            return 1
+          endif
+        else
+          cont.sysMessage("Pokousis se probodnout sam sebe.")
+          cont.tag.remove(isstabbing)
+          remove 
+          return 1
+        endif
+      else
+        if (eval(cont.tag(ra_backstab)*nastaveni_thief_backstabM_chance)>eval({0 999}))
+          cont.tag(isstabbing, 1)
+          cont.combat_main_nonmystik
+          cont.tag.remove(isstabbing)
+          cont.findid(i_stealthbonus).remove
+          remove 
+          return 1
+        endif
+      endif
+      cont.sysMessage("Utok se nepovedl.")
+    else
+      cont.sysMessage("Cil prilis daleko.")
+    endif
+  else
+    cont.sysMessage("Nevidis na cil.")
+  endif
+endif
+cont.tag.remove(isstabbing)
+remove 
+return 1
+
+on=@timer
+tag(source).act=<tag(tostab)>
+safe tag(source).equip(<uid>)
+return 1
+
+[itemdef i_krvaceni]
+ID=i_memory
+TYPE=t_eq_script
+name=krvaceni
+
+on=@timer
+if (cont.hits)&&(more1l)
+ //more1h opakovani krvaceni maximalne
+ //more1l aktualnich opakovani
+ //more2  damage
+ arg(damag,<eval (more1l*more2)/more1h>)
+ if (arg(damag) > <nastaveni_maxbleed>)
+  arg(damag,<nastaveni_maxbleed>)
+ endif
+ arg(damag,<eval (<arg(damag)>-((<arg(damag)>*<cont.tag(resist_bleed)>)/1000))>) // - muj navrh -Dinivan - 
+ //arg(damag,<eval (arg(damag)-(arg(damag)/(1000/(cont.tag(resist_bleed)))))>) // - presunuto do funkce Handleresists -tart // presunuto spatne, protoze tam se to zpracuje jen pri swingu nebo co
+ if (arg(damag)<1)
+  remove
+ endif
+ cont.damage(<arg(damag)>,dam_bleed|dam_god)//,<link>)
+ if ({1 3}==2)//tretinova sance na fizz
+  cont.stopmagery
+ endif
+ cont.emote("bleeding")// <arg(damag)>
+ doswitch arg(damag)/5
+  link.classMessage("<?cont.name?> lehce krvaci")
+  link.classMessage("<?cont.name?> krvaci")
+  link.classMessage("<?cont.name?> silne krvaci")
+  link.classMessage("<?cont.name?> velmi silne krvaci")
+  link.classMessage("<?cont.name?> extreme krvaci")
+ enddo
+ more1l=<eval more1l-1>
+ timerd=<nastaveni_ability_ripperdelay>
+else
+ remove
+endif
+return 1
+
+[Function f_spelldone]
+if (npc)
+ return 0
+endif
+if (profession==class_mag)||(profession==class_necro)//||(profession==class_mystik)
+ if (actarg1 != 32) && (actarg1 != 52) && (actarg1 != 45) //neplati pro recall, mark a gate
+  if (specability)
+   if (args<100)
+    arg(mananeed,<findres(spell,<args>).MANAUSE>)
+   else
+    arg(mananeed,<a_MANAUSE[<args>]>)
+   endif 
+   arg(mananeed,<eval ((arg(mananeed)*nastaveni_ability_concentration)/1000)+tag(moremana)>)
+   tag(moremana,"")
+   if (profession==class_mag)
+    classMessage(setris manu!)
+   else
+    classMessage(mana navracena!)
+   endif
+   if (tag(scrollcast))
+    mana=<eval mana+(arg(mananeed)/2)>
+   else
+    mana=<eval mana+arg(mananeed)>
+   endif
+  endif
+ endif
+endif
+tag(scrollcast,"")
+
+[Function leap]
+if (profession!=class_war)
+ src.sysMessage(Toto muze pouzit jen valecnik.)
+ return 1
+elseif !(isfighting)
+ src.sysMessage(Lze pouzit jen pri boji)
+ return 1 
+elseif !(act)
+ src.sysMessage(Lze pouzit jen pri boji)
+ return 1 
+elseif !(act.isplayer)
+ src.sysMessage(Cil neni hrac)
+ return 1 
+elseif !(act.srccombatLOS) 
+ src.sysMessage(Nevidis na cil.)
+ return 1
+elseif (act.flag_hidden)
+ src.sysMessage(Nevidis na cil.)
+ return 1 
+elseif (act.distance>9)
+ src.sysMessage(Cil je prilis daleko.)
+ return 1 
+elseif (isnonmobile) 
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif ({0 10000}> eval(tag(ra_leap)*nastaveni_ability_leapchange))
+ src.redmessage(Utok se nepovedl.)
+ src.tag(nextleap,<eval serv.time+nastaveni_ability_leapdelay>)
+ return 1 
+elseif (tag(nextleap)>serv.time)
+ src.sysMessage(Jeste nelze pouzit.)
+ src.tag(nextleap,<eval serv.time+nastaveni_ability_leapdelay>)
+ return 1 
+elseif (act.region.tag(housenumber))
+ src.sysMessage(Nesmis utocit do domu.)
+ src.tag(nextleap,<eval serv.time+nastaveni_ability_leapdelay>)
+ return 1 
+endif
+//if (act.isconjured) //obsolete kdyz to jde jen na playery
+// src.sysMessage(Leap nelze pouzit na summony)
+// return 1
+//endif
+if (tag(rangearrowdst))
+ if (act.distance<eval(nastaveni_ability_leaprange+1+<tag(rangearrowdst)>)>) 
+  go <act.p>
+ else
+  runxtimes(<eval(nastaveni_ability_leaprange+<tag(rangearrowdst)>)>,movetoact)
+  src.classMessage(Nedostal ses az k cili...)
+  go <p>
+ endif
+else
+ if (act.distance<eval(nastaveni_ability_leaprange+1)) 
+  go <act.p>
+ else
+  runxtimes(<nastaveni_ability_leaprange>,movetoact)
+  src.classMessage(Nedostal ses az k cili...)
+  go <p>
+ endif
+endif
+tag(nextleap,<eval serv.time+nastaveni_ability_leapdelay>)
+
+[Function movetoact]
+dir=<getdir(<act>)>
+vpredsafe
+
+[Function movefromsrc]
+dir=<getdir(<act>)>
+vzadsafe
+
+
+[Function bankopen]
+return 
+if (<profession>!=class_craft)&&(src.isgm==0)
+src.classMessage(Nemuzes pouzit tuto schopnost.)
+return 0
+endif
+if (flag_dead)
+src.sysMessage Your ghostly hand passes through the object.
+elseif (region.tag(nobank))
+src.redmessage(Tady nemuzes pouzit tuto schopnost.)
+elseif (serv.time<tag(nextbank))&&(src.isgm==0)
+src.classMessage(Pokusit se o otevreni banky muzes za <eval (tag(nextbank)-serv.time)/600> minut, <eval ((tag(nextbank)-serv.time)-(((tag(nextbank)-serv.time)/600)*600))/10> sekund.)
+elseif ( {0 100000} > tag(ability))
+tag(nextbank,<eval serv.time+nastaveni_ability_openbankdelay_fail>)
+src.classMessage(Nepovedlo se ti otevrit banku.)
+else
+tag(nextbank,<eval serv.time+nastaveni_ability_openbankdelay_succes>)
+src.classMessage(Povedlo se ti otevrit banku.)
+bankself
+stamina=0
+endif
+
+[Function longrange]
+if (isnonmobile)
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif (stamina<10)
+ sysMessage("Uz ti nezbyvaji sily.")
+ return 1
+elseif findid(i_delayer_longrange)
+ sysMessage("Jeste nelze pouzit.")
+ return 1 
+elseif ({0 10000}>eval(tag(ra_rangearrow)*nastaveni_rangearrow_chance))
+ src.redmessage("Nepovedlo se.")
+ newequip(i_delayer_longrange)
+ return 1 
+endif
+src.sysMessage(dosah tve zbrane je vyssi)
+newequip(i_delayer_longrange)
+newequip(i_rangearrow_effect)
+stamina=<eval stamina-50>
+
+[itemdef i_delayer_longrange]
+id=i_memory
+type=t_eq_script
+name=delay_longrange
+
+on=@create
+timer=<nastaveni_rangearrow_delay>
+tag(fizzrecall,<serv.time>+100)
+
+on=@timer
+remove
+
+[itemdef i_rangearrow_effect]
+id=i_memory
+type=t_eq_script
+name="rangearrow"
+
+on=@equip
+src.tag(rangearrowdst,<eval nastaveni_rangearrow_dstbonus>)
+src.tag(knockback,0)
+timer=<eval nastaveni_rangearrow_effecttime>
+
+on=@timer
+src.tag(rangearrowdst,0)
+remove
+
+
+[Function knockback]
+if (profession!=class_ranger)
+ src.sysMessage(Toto muze pouzit jen ranger.)
+ return 1
+elseif (isnonmobile)
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif (stamina<10)
+ src.sysMessage(Uz ti nezbyvaji sily.)
+ return 1
+elseif ({0 10000}>eval(tag(ra_knockback)*nastaveni_knockback_chance))&&(src.isgm==0)
+ src.redmessage(Nepovedlo se.)
+ tag(nextrangearrow,<eval serv.time+(nastaveni_knockback_delay*10)>)
+ return 1 
+elseif (tag(nextrangearrow)>serv.time)
+ src.sysMessage(Jeste nelze pouzit.)
+ tag(nextrangearrow,<eval serv.time+(nastaveni_knockback_delay*10)>)
+ return 1 
+endif
+src.sysMessage(Ucinek tve strelby je drtivy.)
+newequip(i_knockback_effect)
+stamina=<eval stamina-{15 40}>
+ tag(nextrangearrow,<eval serv.time+(nastaveni_knockback_delay*10)>)
+
+[itemdef i_knockback_effect]
+id=i_memory
+type=t_eq_script
+name="knockback"
+
+on=@equip
+src.tag(knockback,<eval nastaveni_knockback_range>)
+src.tag(rangearrowdst,0)
+timer=<eval nastaveni_knockback_effecttime>
+
+on=@timer
+topobj.tag(knockback,0)
+remove
+
+[Function knockbackhim]
+runxtimes(<nastaveni_knockback_range>,movefromsrc)
+fizzmagictravel
+updatex
+  
+
+[Function warcry]
+if (profession!=class_war)
+ src.sysMessage(Toto muze pouzit jen valecnik.)
+ return 1
+elseif (<src.flags>&statf_dead)
+ src.sysMessage(You are dead!)
+ return 1
+elseif (isnonmobile)
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif ({0 10000}>eval(tag(ra_warcry)*nastaveni_warcry_chance))&&(src.isgm==0)
+ src.redmessage(Nepovedlo se.)
+ tag(nextcry,<eval serv.time+(nastaveni_warcry_delay*10)>)
+ return 1 
+elseif (tag(nextcry)>serv.time)&&(src.isgm==0)
+ src.sysMessage(Jeste nelze pouzit.)
+ return 1 
+endif
+emote(crying)
+tag(nextcry,<eval serv.time+(nastaveni_warcry_delay*10)>)
+stamina=<eval stamina-{2 8}>
+mana=0
+sound(sex(1098,824))
+newitemsafe(i_warcry_srcChanger)
+lastnew.p=<src.p>
+lastnew.z=-100
+lastnew.link=<uid>
+lastnew.timerd=1
+
+[itemdef i_warcry_srcChanger]
+id=i_memory
+layer=77
+type=t_src_changer
+name=warcry srcChanger
+
+on=@timer
+var(warcry_src,<link>)
+sector.allchars(warcryEffect)
+remove 
+return 1
+
+[Function warcryeffect]
+if (<uid>!=<var(warcry_src)>)
+  if (distancefrom(var(warcry_src))<=nastaveni_warcry_range)
+    redmessage("jses v soku!")
+    stopmagery
+//    newequip(i_warcry_effect)//zruseno, marek chce dat jen fizz
+  endif
+endif
+
+[itemdef i_warcry_effect]
+id=i_memory
+type=t_eq_script
+name="warcry effect"
+
+on=@equip
+src.events(+e_warcry_effect)
+timer=<eval nastaveni_warcry_effecttime*var(warcry_src).tag(ra_warcry)>
+
+on=@timer
+remove
+return 1
+
+on=@unequip
+src.events(-e_warcry_effect)
+
+[events e_warcry_effect]
+on=@spellcast
+sysMessage("Jses v soku, nemuzes kouzlit!")
+return 1
+
+[Function Resurrection]
+if (region.tag(arena)) && (flags>&statf_dead)
+ if (memoryfindtype(01000).link.UID.AGE>30)
+  spelleffect(59,1000)
+ return 0
+ endif
+ return 0
+endif
+if (profession!=class_priest)&&(src.isgm==0)
+ src.redmessage(Nemuzes pouzit tuto schopnost.)
+ return 0
+endif
+if !(flag_dead)
+ src.redmessage(Jsi nazivu, nepotrebujes se ozivovat.)
+elseif (serv.time<tag(nextress))&&(src.isgm==0)
+ src.sysMessage("Pokusit se o sebeoziveni se muzes za <?eval (<tag.nextress>- <serv.time>)/600?> minut, <?eval ((<tag.nextress>- <serv.time>)-(((<tag.nextress>-<serv.time>)/600)*600))/10 ?> sekund.")
+elseif ( {0 100000} >tag(ability))
+ tag(nextress,<eval serv.time+nastaveni_ability_resurrectiondelay_fail>)
+ src.sysMessage(Nepovedlo se ti ozivit se.)
+else
+ tag(nextress,<eval serv.time+nastaveni_ability_resurrectiondelay_succes>)
+ spelleffect(59,1000)
+ stamina=1
+ hits=<eval <str>/10>
+endif
+
+[Function mask]
+if (<profession>!=class_thief)&&(src.isgm==0)
+ src.classMessage(Nemuzes pouzit tuto schopnost.)
+elseif (isnazgul)
+ src.classMessage(Moc prstenu te zcela pohltila. Nemuzes pouzit svou gondorskou identitu)
+elseif (region.tag(nomask))
+ src.classMessage(ty hnusnej bugere. Nic nebude)
+elseif (flag_hidden==0)
+ src.classMessage(Pozor! Nesmi te pri tom videt.)
+elseif (tag(realmpits))
+ src.classMessage(v arene se nelze premaskovavat)
+elseif (mapplane==1)
+ src.classMessage(v lagru se nelze premaskovat)
+elseif !(strlen("<tag.maskattribs>"))
+ src.classMessage(Vyber si sve druhe jmeno.)
+ DIALOG d_maskname
+elseif (serv.time<tag(nextmask))&&(src.isgm==0)
+ src.classMessage("Pokusit se o premaskovani muzes znova za <?eval (tag(nextmask)-serv.time)/600?> minut, <?eval ((tag(nextmask)-serv.time)-(((tag(nextmask)-serv.time)/600)*600))/10?> sekund.")
+elseif ( {0 100000} > tag(ability))&&(src.isgm==0)
+ tag(nextmask,<eval serv.time+nastaveni_ability_maskdelay_fail>)
+ src.classMessage(Nepovedlo se ti premaskovat se.)
+else
+ tag(nextmask,<eval serv.time+nastaveni_ability_maskdelay_success>)
+ src.classMessage(Uspesne jsi se <src.sex(premaskoval,premaskovala)>.)
+ if (findid(i_rune_incognito))
+  arg(uidtorename,<findid(i_rune_incognito)>)
+ else
+  arg(uidtorename,<uid>)
+ endif
+ arg(tempkarma,<karma>)
+ arg(tempkills,<kills>)
+ arg(tempname,<arg(uidtorename).name>)
+ arg(temprealm,<tag(realm)>)
+ arg(temprealmchanges,<eval tag(realmchanges)>)
+ maskparse(<arg(uidtorename)>,<tag(maskattribs)>)
+ tag(maskattribs,"<arg(tempname)>,<arg.tempkarma>,<arg.tempkills>,<arg(temprealm)>")
+ if !(strlen(<src.tag(maskHome)>))	//Starym hracum pridame maskHome tag bo ho nemeli...
+   src.tag(maskHome,"<src.home>")
+ endif
+ arg(tempHome,"<src.home>")
+ src.home=<src.tag(maskHome)>
+ src.tag(maskHome,<arg(tempHome)>)
+ resync
+endif
+
+[Function maskparse]//uid pro name, name, karma, kills, realm, realmchanges
+finduid(argv(0)).name=<argv(1)>
+karma=<argv(2)>
+kills=<argv(3)>
+tag(realm,<argv(4)>)
+tag(realmchanges,<argv(5)>)
+
+[DIALOG d_maskname] // Main
+arg(origname,<name>)
+name=#<sex(NAMES_HUMANMALE,NAMES_HUMANfeMALE)>
+argo.settext(3,<name>)
+name=<arg(origname)>
+resizepic 190 175 2620 330 120 
+text 250 195 995 0 // how?
+text 230 215 995 1
+resizepic 220 235 3000 270 22 
+textentry 225 236 253 25 0 0 3 // Text Input
+button 340 260 2104 2103 1 0 1 // Opens OK
+text 355 255 0000 2 // OK
+
+[DIALOG d_maskname TEXT]
+Jake ma byt tve druhe jmeno? 
+(vybirej peclive, zustane ti naporad...)
+OK
+
+[DIALOG d_maskname BUTTON]
+ON=0
+SRC.sysMessage Jmeno zustalo nenastaveno.
+ON=1
+if (strcmpi(Man,<argtxt(0)>)==0)||(strcmpi(Woman,<argtxt(0)>)==0)
+ src.classMessage(Nemuzes se jmenovat <argtxt(0)>...)
+ DIALOG d_maskname
+ return 1
+endif
+tag(maskattribs,"<argtxt(0)>,<karma>,<kills>,<tag(realm)>")
+classMessage(Jmeno nastaveno, muzes se premaskovat.)
+RETURN 1
+
+[Function clearmask]
+tag(maskattribs,"")
+tag(maskname,"")
+tag(maskkarma,"")
+tag(maskkills,"")
+
+[Function throw]
+//src.sysMessage(hazim na: <src.act.name>)
+reveal
+findlayer(2).unequip
+if (act.ischar)
+  if (src.profession==class_thief)
+    if !(safe.findid(i_kudla))
+      sysMessage("Nemas u sebe ani jeden vrhaci nuz!")
+      return 1
+    endif
+    if (act.srccombatLOS)
+      if (act.distance < nastaveni_throw_dist+<eval tag(rangearrowdst)>)
+        //sysMessage(dist cile: <act.distance>, thrdist: <nastaveni_throw_dist>)
+        if (tag(nextthrow) < <serv.time>)
+          tag(nextthrow,<eval (<serv.time> + nastaveni_throw_delay)>)
+          if (findid(i_kudla)) 
+            arg(kudla,<findid(i_kudla)>)
+            ANIM 11
+            SOUND 0145 
+            act.effect(0,9598,5,0,0)
+            if ({0 10000} < <eval (tag(ra_throwing)*1000)>)
+             act.sound(sex(0436,0325))    
+             if (act.isplayer)//isplaeyr
+                //var(actstamina,<eval <act.stamina>-nastaveni_throw_staminaloss>)
+                arg(actstamina,<eval <act.stamina>-((<act.maxstam>*nastaveni_throw_staminaloss)/100)>)
+                if (<findid(i_delayer_longrange).tag(fizzrecall)> > <serv.time>) && (findid(i_delayer_longrange))
+                  act.fizzmagictravel
+                endif
+                if (arg(actstamina)<0)
+                  if (arg(actstamina)<14)               
+                   act.newitemsafe(i_parafield_delay)
+                   lastnew.timerd=5
+                   lastnew.cont=<act>
+                  endif
+                  arg(actstamina,0)
+                endif
+                act.stamina=<actstamina>
+             else
+              arg(actstamina,<eval <act.stamina>-50>)
+              if (arg(actstamina)<0)
+               arg(actstamina,0)
+              endif
+              act.stamina=<actstamina>
+              act.events=-e_gethit 
+                if (isevent(e_poison))
+                  events=-e_poison
+                  act.damage(1,dam_piercing|dam_physical|dam_god,<uid>)
+                  events=+e_poison
+                else
+                  act.damage(1,dam_piercing|dam_physical|dam_god,<uid>)
+                endif
+              act.events=+e_gethit
+	     endif
+             if ({0 4})
+              newitemsafe(i_kudla)
+              lastnew.p = <act.p>
+              lastnew.timer=300
+              lastnew.attr_decay=1
+             endif
+             if !(act.findid(i_memory_jed))&&(finduid(<arg(kudla)>).tag(jed_sila))//trefil sem ho a neni uz otravenej
+              act.newitemsafe(i_memory_jed)//custom jed
+              lastnew.tag(jed_typ,<finduid(<arg(kudla)>).tag(jed_typ)>)
+              lastnew.tag(jed_sila,<finduid(<arg(kudla)>).tag(jed_sila)>)
+              lastnew.tag(jed_rychlost,<nastaveni_poison_<finduid(<arg(kudla)>).tag(jed_typ)>>)
+              act.equip(<lastnew>)
+              //consume(1 i_kudla)//zakomenteno 
+              //return 1          // prej to ma brat staminu dycinky
+            endif
+            consume(1 i_kudla)
+           endif    
+          endif
+        else 
+          sysMessage("Ted nemuzes hazet.")
+        endif
+      endif 
+    endif
+  else
+    sysMessage("Toto muze pouzit jen zlodej.")
+  endif
+else 
+ sysMessage("Nemas zadny cil.")
+endif
+
+
+//voodoo
+[Function woodoo]
+if (src.profession!=class_shaman)
+ src.sysMessage(Co tim chces dokazat ?)
+ return 1
+elseif (src.tag(level)<30)
+ src.sysMessage("Nejsi jeste dost dobry saman.")
+ return 1
+elseif (src.isnonmobile)
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif ({0 10000}>eval(src.tag(ra_woodoo)*nastaveni_woodoo_chance))
+ src.sysMessage(Nepovedlo se.)
+ return 1 
+elseif (src.tag(nextwoodoo)>serv.time)&&(src.isgm==0)
+ src.sysMessage(Jeste nelze pouzit.)
+ return 1
+endif
+
+src.reveal
+src.say "Heru Curu Mor Tir"
+
+
+if (argv<10)
+ src.tag(nextwoodoo,<eval serv.time+(nastaveni_woodoo_delay*10)>)
+else
+ src.tag(nextwoodoo,<eval serv.time+(nastaveni_woodoo_delay)>)
+endif 
+
+src.act.link.woodoohandle(<argv>)
+if !(src.act.tag(vydrz))
+ src.act.tag(vydrz,100)
+else
+ if ({0 100} > src.act.tag(vydrz))
+  src.act.remove
+  src.sysMessage(hlava se rozpadla)
+ endif
+ src.act.tag(vydrz,<eval (src.act.tag(vydrz)-{1 10})>)
+ src.stamina=0
+ src.mana=(eval src.mana/2)
+endif
+
+
+[Function woodoohandle]
+newitemsafe(i_mem_woodoo)
+lastnew.tag(woodooeffect,<argv>)
+lastnew.tag(srcshaman,<src>)
+if (argv >10)
+ lastnew.timer=5
+else
+ lastnew.timer=10
+endif
+equip(lastnew)
+
+[Function woodooeffect]
+newitemsafe(i_woodooeffect)
+var(woodooboost,0)
+if (argv(0)==1)
+ lastnew.tag(woodooon,damage(hits/5))
+ lastnew.tag(woodoooff,say "Aaaach to je uleva")
+elseif (argv(0)==2)
+ lastnew.tag(woodooon,stamina=0)
+ lastnew.tag(woodoooff,say "Aaaach to je uleva")
+elseif (argv(0)==3)
+ lastnew.tag(woodooon,woodoobleed)
+ lastnew.tag(woodoooff,consume 1000 i_krvaceni)
+elseif (argv(0)==4)
+ lastnew.tag(woodooon,poison(1000))
+ lastnew.tag(woodoooff,consume 1000 i_rune_poison)
+elseif (argv(0)==5)
+ lastnew.tag(woodooon,events=+e_warcry_effect)
+ lastnew.tag(woodoooff,events=-e_warcry_effect)
+elseif (argv(0)==6)
+ lastnew.tag(woodooon,events=+e_noport)
+ lastnew.tag(woodoooff,events=-e_noport)
+elseif (argv(0)==7)
+ lastnew.tag(woodooon,events=+e_nohorse)
+ lastnew.tag(woodoooff,events=-e_nohorse)
+elseif (argv(0)==11)
+ var(woodooboost,1)
+ lastnew.tag(woodooon,f_effect_a_strength(<eval (1334*<finduid(<argv(1)>).spiritspeak>)/1000>))
+ lastnew.tag(gvoodoo,1)
+elseif (argv(0)==12)
+ var(woodooboost,1)
+ lastnew.tag(woodooon,f_effect_a_cunning(<eval (1334*<finduid(<argv(1)>).spiritspeak>)/1000>))
+ lastnew.tag(gvoodoo,1)
+elseif (argv(0)==13)
+ var(woodooboost,1)
+ lastnew.tag(woodooon,f_effect_a_agility(<eval (1334*<finduid(<argv(1)>).spiritspeak>)/1000>))
+ lastnew.tag(gvoodoo,1)
+elseif (argv(0)==14)
+ lastnew.tag(woodooon,spelleffect(15 2000))
+ lastnew.tag(gvoodoo,1)
+endif
+lastnew.timer=30
+equip(lastnew)
+if (argv(0)<8)
+ newequip(i_warcry_effect)
+endif
+
+
+[Function woodoobleed]
+newitemsafe(i_krvaceni)
+lastnew.more1h=100
+lastnew.more1l=100
+lastnew.more2=10
+lastnew.timer=1
+lastnew.equip
+
+[itemdef i_woodooeffect]
+ID=i_memory
+Name=woodooeffect
+TYPE=T_EQ_SCRIPT
+           
+ON=@CREATE
+ATTR=attr_invis|attr_decay
+
+ON=@equip
+cont.<tag(woodooon)>
+ON=@timer
+if (cont.findid(i_a_bless))||(tag(gvoodoo))
+ cont.sysMessage(voodoo pominulo)
+ cont.<tag(woodoooff)>
+ remove
+else
+ timer=30
+ cont.sysMessage(jsi pod prokletim voodoo)
+ cont.<tag(woodooon)> 
+ return 1
+endif
+
+[itemdef i_mem_woodoo]
+ID=i_memory
+Name=voodoo
+TYPE=T_EQ_SCRIPT
+           
+ON=@CREATE
+ATTR=attr_invis|attr_decay
+           
+on=@equip
+if  (<src.region.uid>==<tag(srcshaman).region.uid>)  
+ cont.sysMessage(Mas pocit jako by nekdo tancil na tvem hrobe!)
+ cont.sound(019d)
+ tag(srcshaman).sysMessage(prokleti voodoo seslano uspesne) 
+else
+ tag(srcshaman).sysMessage(prokleti nenalezlo cil.)
+ remove
+endif
+
+on=@timer
+if (tag(woodooeffect)<10)
+ if (cont.findid(i_a_bless))||(cont.findid(i_woodooeffect))
+  cont.sysMessage(neprijemny pocit pominul)
+  tag(srcshaman).sysMessage(cil <cont.name> odolal)
+ elseif (cont.flag_reflection==1)
+  tag(srcshaman).sysMessage(Tva magie byla odrazena !)
+  cont.sysMessage(Citis jakoby nekdo v dalce vykrikl prekvapenim.)
+  tag(srcshaman).woodooeffect(<tag(woodooeffect)>)
+  tag(srcshaman).newequip(i_warcry_effect)
+ else
+  tag(srcshaman).sysMessage(Cil podlehl voodoo!)
+  cont.sysMessage(jsi pod vlivem voodoo magie!)
+  cont.woodooeffect(<tag(woodooeffect)>,<tag(srcshaman)>)
+  remove
+ endif
+else
+tag(srcshaman).sysMessage(Cil podlehl voodoo!)
+cont.sysMessage(jsi pod vlivem voodoo magie!)
+cont.woodooeffect(<tag(woodooeffect)>,<tag(srcshaman)>)
+remove
+endif
+
+[Function gvoodoo]
+//player je src
+//link je cil
+//act nebo targ je item na kterej hodi target
+
+if (src.profession!=class_shaman)
+ src.sysMessage(Co tim chces dokazat ?)
+ return 1
+elseif (src.tag(level)<30)
+ src.sysMessage("Nejsi jeste dost dobry saman.")
+ return 1
+elseif (src.isnonmobile)
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif ({0 10000}>eval(src.tag(ra_woodoo)*nastaveni_woodoo_chance))
+ src.sysMessage(Nepovedlo se.)
+ return 1 
+elseif (src.tag(nextwoodoo)>serv.time)&&(src.isgm==0)
+ src.sysMessage(Jeste nelze pouzit.)
+ return 1
+endif
+
+src.reveal
+src.say "Heru Curu Mor Tir"
+
+
+src.tag(nextwoodoo,<eval serv.time+(nastaveni_woodoo_delay/10)>)
+
+if (src.act.id==i_potion_StrengthLess)
+ link.woodoohandle(11)
+elseif (src.act.id==i_potion_CleverLess)
+ link.woodoohandle(12)
+elseif (src.act.id==i_potion_AgilityLess)
+ link.woodoohandle(13)
+elseif (src.act.id==i_potion_Stoneskin)
+ link.woodoohandle(14)
+else
+src.sysMessage (radeji ne)
+endif
+return 
+
+
+//hazeni bombama
+
+[itemdef i_bombatargetitem]//pomocny item. Ten je realnym cilem bomby.
+id=i_memory
+type=t_normal
+name=cil pro bombu
+
+on=@create
+timer=6
+attr=attr_decay
+
+on=@timer
+remove
+
+
+[itemdef i_bombatarget]
+id=i_memory
+type=t_eq_script
+name=zamerovac pro bombu
+
+on=@create
+timer=5
+attr=attr_invis|attr_decay
+
+on=@timer
+remove
+return 1
+
+on=@equip
+targetg (Zamer cil)
+return 1
+
+on=@targon_char
+
+cont.newitemsafe(i_bombatargetitem)
+lastnew.p=<argo.p>
+lastnew.removefromview
+cont.resync
+var(cil,<lastnew>)
+cont.hodbombu
+return 1
+
+on=@targon_ground
+cont.newitemsafe(i_bombatargetitem)
+lastnew.P=<src.targp>
+lastnew.fix
+cont.resync
+var(cil,<lastnew>)
+cont.hodbombu
+return 1
+
+on=@targon_item
+cont.newitemsafe(i_bombatargetitem)
+lastnew.p=<argo.p>
+lastnew.fix
+lastnew.removefromview
+cont.resync
+var(cil,<lastnew>)
+cont.hodbombu
+return 1
+
+
+[Function throwdispel]
+if (findid(i_potion_explosiondispell))
+ var(dispellbomb,1)
+ newitemsafe(i_bombatarget)
+ lastnew.equip
+ findlayer(2).unequip
+else
+ sysMessage(nemas u sebe zadnou bombu)
+endif
+
+[Function throwexpl]
+if (findtype(t_potion_bomba))
+ newitemsafe(i_bombatarget)
+ lastnew.equip
+ findlayer(2).unequip
+else
+ sysMessage(nemas u sebe zadnou bombu)
+endif
+
+
+
+[Function bombahandle]
+ANIM 11
+SOUND 0145 
+if (var(dispellbomb))
+ if (findid(i_potion_explosiondispell))
+  findid(i_potion_explosiondispell).hazim
+ endif
+ return 1
+endif
+if (findid(i_potion_Lava))
+ findid(i_potion_Lava).hazim
+ return 1
+elseif (findid(i_potion_ExplosionGreat))
+ findid(i_potion_ExplosionGreat).hazim
+ return 1
+elseif (findid(i_potion_Explosion))
+ findid(i_potion_Explosion).hazim
+ return 1
+elseif (findid(i_potion_Explosionless))
+ findid(i_potion_Explosionless).hazim
+ return 1
+else
+ sysMessage(nemas explosion)
+endif
+
+
+[Function hazim]
+p=<var(cil).p>
+dclick
+finduid(<var(cil)>).remove
+
+[Function hodbombu]
+if (var(cil).srccombatlos)
+ if (var(cil).distance < nastaveni_throw_dist_bomb+<eval tag(rangearrowdst)>)
+  if (tag(nextthrow) < <serv.time>)
+   if ({0 10000} > <eval (tag(ra_throwing)*1000)>)
+    finduid(<var(cil)>).p=<eval <p_x>+{-7 7}>,<eval <p_y>+{-7 7}>
+    finduid(<var(cil)>).fix
+   endif
+   tag(nextthrow,<eval (<serv.time> + nastaveni_throw_delay)>)
+   newitemsafe(i_hazitko)
+   lastnew.tag(cil,<var(cil)>)
+   lastnew.equip
+   endif
+  endif
+ else
+ src.sysMessage "Cil je prilis daleko."
+ endif 
+else
+ src.sysMessage "Nevidis na cil."
+endif
+
+[itemdef i_hazitko]
+id=i_memory
+type=t_eq_script
+name=zamerovac pro bombu
+
+on=@create
+timer=1
+attr=attr_invis|attr_decay
+
+on=@timer
+//if ({0 100000}<eval(tag(ability)))
+   if (var(dispellbomb))
+    tag(cil).effect(0,i_bottle_black,5,0,0)
+    var(dispellbomb,"")
+   else
+    tag(cil).effect(0,i_bottle_purple,5,0,0)
+   endif
+   cont.bombahandle
+   remove
+//endif
+
+[Function forceback]
+if (profession!=class_priest)
+ src.sysMessage(Toto muze pouzit jen priest.)
+ return 1
+elseif (isnonmobile)
+ src.sysMessage(You are frozen and cannot move.)
+ return 1 
+elseif (stamina<10)//bude nahrazeno body chramu
+ src.sysMessage(Uz ti nezbyvaji sily.)
+ return 1
+elseif ({0 10000}>eval(tag(ra_knockback)*nastaveni_knockback_chance))&&(src.isgm==0)//pravdepodobnost nevim podle ceho bude
+ src.redmessage(Nepovedlo se.)
+ tag(nextforceback,<eval serv.time+(nastaveni_forceback_delay*10)>)
+ return 1 
+elseif (tag(nextforceback)>serv.time)
+ src.sysMessage(Jeste nelze pouzit.)
+ tag(nextforceback,<eval serv.time+(nastaveni_forceback_delay*10)>)
+ return 1 
+endif
+//tady by mel bejt nejakej grafickej efekt na klerikovi
+forcebackthem
+stamina=<eval stamina-{15 40}>//kolik staminy mu to veme
+ tag(nextforceback,<eval serv.time+(nastaveni_forceback_delay*10)>)
+
+
+
+
+
+
+[Function forcebackthem]
+newitemsafe(i_forceback_srcChanger)
+lastnew.p=<src.p>
+lastnew.z=-100
+lastnew.link=<uid>
+lastnew.timerd=1
+
+
+[itemdef i_forceback_srcChanger]
+id=i_memory
+layer=77
+type=t_src_changer
+name=forceback srcChanger
+
+on=@timer
+var(forceback_src,<link>)
+sector.allchars(forceback_effect)
+remove 
+return 1
+
+
+[Function forceback_effect]
+if (<uid>!=<var(forceback_src)>)&&(distancefrom(var(forceback_src))<6)
+ arg(xtime,6-<distancefrom(var(forceback_src))>)
+ src=<var(forceback_src)>                               
+ runxtimes(<arg(xtime)>,movefromsrc)
+ damage(1,dam_magic|dam_drain,<var(forceback_src)>)
+ updatex
+endif   
+
+[Function controlnpc]
+if (profession!=class_mystik)
+ sysMessage(Toto muze pouzit jen mystik.)
+ return 1
+elseif (tag(level)<30)
+ sysMessage("Nejsi dost dobry mystik")
+ return 1
+elseif !(restest(1,i_hypnotizer))
+  redMessage("Musis mit svou kristalovou kouli!")
+  return 1
+elseif (<src.flags>&statf_dead)
+ sysMessage(You are dead!)
+ return 1
+elseif (isnonmobile)
+ sysMessage(You are frozen and cannot move.)
+ return 1 
+endif
+newitemsafe(i_mem_controlnpc)
+lastnew.equip
+
+[itemdef i_mem_controlnpc]
+id=i_memory
+type=t_eq_script
+
+
+on=@timer
+remove
+return 0
+
+on=@equip
+timer 10
+target "Zamer npc."
+return 1
+
+on=@targon_char
+if (src.targ.flag_invul)||(src.targ.id==c_dog)
+ cont.redmessage("Cil nelze ovladnout")
+ return 1
+elseif (src.targ.animallore > <cont.animallore>)
+ cont.redmessage("V mysli cile se nedokazes orientovat") 
+ return 1
+endif
+if (src.targ.ispet)||(src.targ.issumon) 
+ if (src.targ.srccansee)
+  if (src.targ.distance>5)
+   src.redmessage("Cil je prilis daleko.")
+   return 1
+   remove
+  endif
+ else
+  src.redmessage("Nevidis na cil.")
+  return 1
+  remove
+ endif
+ src.newitemsafe(i_controlnpc)
+ lastnew.tag(my_control,<src.targ>)
+ src.equip(<lastnew>)
+else
+ src.redmessage(Nepovedlo se.)
+endif
+remove
+return 1
+
+[itemdef i_controlnpc]
+id=i_memory
+type=t_eq_script
+
+
+on=@timer
+if ({0 10000}>eval(cont.tag(ra_controlnpc)*nastaveni_controlnpc_chance))&&(cont.isgm==0)
+ src.redmessage(Nepovedlo se.)
+ return 1 
+else
+ src.redmessage(Ovladl jsi ho.)
+ finduid(<tag(my_control)>).newmemory(<src>)
+ finduid(<tag(my_control)>).act.color=<finduid(<tag(my_control)>).act.color>|MEMORY_IPET
+endif
+remove
+return 0
+
+on=@equip
+timer 5
+return 1
+
+[Function standcastdelay]
+flag_immobile=0
+tag.remove(standcasttimer)
+
+[events e_standcast]
+on=@spellcast
+if (flag_immobile==0)
+ tag(standcast,1)
+ flag_immobile=1
+ newitemsafe(i_delayed_Function)
+ lastnew.tag(funkce,standcastdelay)
+ tag(standcasttimer,<lastnew>)
+ lastnew.timerd=<nastaveni_spelltime_<findres(spell,<argn>).defname>>
+ lastnew.equip
+else
+ if (tag(standcasttimer))
+  arg(sctimer,<eval <finduid(<tag(standcasttimer)>).timerd>+<nastaveni_spelltime_<findres(spell,<argn>).defname>>>)
+  finduid(<tag(standcasttimer)>).timerd=<arg(sctimer)>
+ endif
+endif
+
+
+[Function standcast]
+if <isevent(e_standcast)>  
+  classMessage("Jsi zpatky v normalnim stavu.")
+  events=-e_standcast
+else
+  if ( (profession == class_mag) || (profession == class_necro) || (profession == class_shaman) )
+    classMessage("Nyni budes kouzlit s vetsim usilim.")
+    events=+e_standcast
+  else
+    classMessage("Tato funkce neni urcena pro tebe.")
+  endif
+endif
+
+[Function bloodritual]
+if (<flags>&statf_dead)
+ return 1
+endif
+if findid(i_prodleva_ritual)
+ sysMessage("Jsi jeste prilis <sex(vycerpany,vycerpana)> z predchoziho ritualu.")
+ return 1
+endif
+   sfx=01a0
+   src.EFFECT=3,i_fx_glow_spike,0,20,10
+if (<tag.level> < 30)
+ sysMessage("Na provedeni takoveho ritualu jsi jeste prilis <sex(mlady a nezkuseny,mlada a nezkusena)>!")
+ hits=maxhits/10
+ return 1
+elseif !(findid(i_bloodritual))
+  if hits<50
+   hits=0
+   return 1
+  else
+   hits={1 10}
+  endif
+ newequip(i_bloodritual)
+ lastnew.tag(ritual,1)
+ sysMessage("Cerpas magickou silu ze sve vlastni krve!")
+ events=+e_bloodritual
+elseif (findid(i_bloodritual)) && (findid(i_bloodritual).tag(ritual)==1)
+   if hits<10
+   hits=0
+   return 1
+    else
+   hits={1 10}
+   endif
+ maxhits=<maxhits>+60
+ maxstam=<maxstam>+60
+ int=<int>-60
+ maxmana=<maxmana>-60
+ mana=0
+ findid(i_bloodritual).tag(ritual,2)
+ sysMessage("Magicka sila krve posiluje tvou odolnost.")
+elseif (findid(i_bloodritual)) && (findid(i_bloodritual).tag(ritual)==2)
+ newequip(i_prodleva_ritual)
+ findid(i_bloodritual).remove
+ sysMessage("Sila krve je nyni v rovnovaze.")
+endif
+
+[itemdef i_bloodritual]
+
+id=i_memory
+type=t_eq_script
+name=ritual krve
+
+on=@create
+ attr=010
+
+on=@equip
+ cont.maxhits=<cont.maxhits>-30
+ cont.maxstam=<cont.maxstam>-30
+ cont.int=<cont.int>+30
+ cont.maxmana=<cont.maxmana>+30
+
+on=@unequip
+if tag(ritual)==1
+ cont.maxhits=<cont.maxhits>+30
+ cont.maxstam=<cont.maxstam>+30
+ cont.int=<cont.int>-30
+ cont.maxmana=<cont.maxmana>-30
+
+ if cont.mana > <cont.maxmana>
+  cont.mana=<cont.maxmana>
+ endif
+
+elseif tag(ritual)==2
+ cont.maxhits=<cont.maxhits>-30
+ cont.maxstam=<cont.maxstam>-30
+ cont.int=<cont.int>+30
+ cont.maxmana=<cont.maxmana>+30
+
+ if cont.hits > <cont.maxhits>
+  cont.hits=<cont.maxhits>
+ endif
+
+ if cont.stam > <cont.maxstam>
+  cont.stam=<cont.maxstam>
+ endif
+endif
+cont.events=-e_bloodritual
+
+[events e_bloodritual]
+
+on=@death
+findid(i_bloodritual).remove
+sysMessage("Sila krve te se smrti opousti.")
+events=-e_bloodritual
+
+[itemdef i_prodleva_ritual]
+
+id=i_memory
+type=t_eq_script
+name=prodleva
+
+on=@create 
+timer=600
+
+on=@timer
+remove
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////
+//                                                           //
+//  ///     ///  //    //   ///////  ////////  //   //////   //
+//  ////   ////   //  //   //           //     //  //    //  //
+//  // // // //    ////    //           //     //  //        //
+//  //  ///  //     //      ////        //     //  //        //
+//  //       //     //         ///      //     //  //        //
+//  //       //     //           //     //     //  //    //  //
+//  //       //     //     ///////      //     //   //////   //
+//                                                           //
+///////////////////////////////////////////////////////////////
+
+
+////////////////////
+// H Y P N O Z A  //
+////////////////////
+
+
+[Function hypnotize]
+//if !(isgm)
+// if (uid!=01a01a7) //relg
+//  redmessage(Momentalne v oprave)
+//  return 0
+// endif
+//endif
+if (!nastaveni_hypnoza_povolena)
+ redmessage(Hypnoza docasne zakazana)
+ return 1
+endif
+if !(restest(1,i_hypnotizer))
+  sysMessage("Musis mit svou kristalovou kouli!")
+  return 1
+elseif (<rescount i_buffSteal>)
+  src.redMessage("Tva mysl je prilis vycerpana na pouziti hypnozy.")
+  return 1
+elseif (findid(i_memory_catchField))
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+  return 1
+elseif (findid(i_catchitem))
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+  return 1
+endif
+if (profession==class_Mystik)||(isgm)
+ tag(hypnotizers_ball,<findid(i_hypnotizer)>)
+ if (tag(hypnotizers_ball).color==0445) //jsem uz zmenen v monstrum, menim se rucne zpet - cervena barva
+  hypnoswap_back
+  return 1
+ else //nejsem zmenen v monstrum  
+  dismount
+  if (findid(i_hypno_timer))
+   findid(i_hypno_timer).remove
+   sysMessage("<sex(Prerusil,Prerusila)> jsi koncentraci.")
+  endif
+  if (<flags>&statf_dead)
+   sysMessage("Ve svem stavu nejsi niceho <sex(schopen,schopna)>.")
+   return 1
+  endif
+  if (<flag_freeze>)
+   sysMessage("Nejsi ve stavu vhodnem pro hypnozu.")
+   return 1
+  endif  
+  newitemsafe(i_hypnotarget)
+  lastnew.tag(hypnotizer,<tag(hypnotizers_ball)>) //ulozit si tu runu
+  lastnew.equip
+ endif 
+else
+ redmessage("Toto umi pouzit pouze mystik!")
+endif  
+ 
+
+[itemdef i_hypnotarget]
+id=i_memory
+type=t_eq_script
+name=zamerovac pro hypnozu
+
+on=@create
+timer=20
+attr=attr_invis|attr_decay
+
+on=@timer
+remove
+return 0
+
+on=@equip
+target(Zamer monstrum)
+return 1
+
+on=@targon_char
+arg(hypnoTarget,<src.targ>)
+if (<arg(hypnoTarget).srccanseelos>)
+ if (<arg(hypnoTarget).distance> > 10)	// cil je prilis daleko
+  src.redMessage("Cil je prilis daleko!")
+  remove
+ elseif !(arg(hypnoTarget).npc)||(arg(hypnoTarget).ispet)//||(arg(hypnoTarget).flag_conjured)
+  src.redmessage("Zameruj pouze neochocena monstra!")
+  remove
+ else
+  if (<arg(hypnoTarget).tag(hypnotizable)>&flag_hypnoCanBe) //lze hypnotizovat  
+   if !(<src.findid(i_delayer)>)
+     src.newitemsafe(i_hypno_timer) //cas 24,12,8,6 sekund pro (<25,25-50,50-75,>75 levely) + znahodneni
+     arg(cas,<eval (8/(<src.zjisti_koef_return>))>)
+     arg(znahodneny_cas,<eval {<eval (<arg(cas)>-3)>  <eval (<arg(cas)>+3)>}>)
+     lastnew.timer=<arg(znahodneny_cas)> //24/koeficient sekund + nahoda
+     lastnew.link=<arg(hypnoTarget)>
+     lastnew.equip
+     src.sfx=586 //spiritspeak    
+    if (<src.flag_hidden>)
+     src.flag_hidden=0 //odkryt!
+    endif
+    remove
+   else //delayer
+    src.classMessage("Jsi jeste prilis <src.sex(unaven,unavena)> z predchoziho pokusu")
+    remove
+   endif //delayer
+  else //hypnotizable
+   src.sysMessage("Jevi se jako hypnoze netecny.")
+   remove
+  endif //hypnotizable 
+ endif //pet, npc
+else //canseelos
+ src.redmessage("Cil musis mit v dohledu!")
+ remove
+endif //canseelos
+return 1
+
+on=@targon_ground
+cont.redmessage("Tady nic k hypnotizovani neni!")
+remove
+return 1
+
+on=@targon_item
+cont.redmessage("Hypnotizovat veci? To nepujde ...")
+remove
+return 1
+
+[itemdef i_hypno_timer]
+id=i_memory
+type=t_eq_script
+name=Prodleva pred hypnozou
+
+on=@create
+attr=attr_invis|attr_decay
+
+on=@equip
+src.events(+e_hypnotizing)
+
+on=@unequip
+src.events(-e_hypnotizing)
+
+on=@timer
+cont.events(-e_hypnotizing)
+//cont.sysMessage(link: <link>, <finduid(link)>)
+if !(<finduid(<link>)>) //neexistuje to monstrum (treba mezitim umrelo) nebo zrovna umira (hits 0)
+ cont.sysMessage("Hypnotizovane monstrum jiz neni...")
+elseif (<cont.povedla_se_hypnoza(<link>)>)
+ cont.tag(hypnotizers_ball).color=0445 //jsem zmenen! 
+ cont.tag(hypnotizers_ball).updatex
+ cont.hypnoswap(<link>) 
+ cont.sfx=580 //mystery (jako u haluzi)
+ cont.newitemsafe(i_hypno_delka) //cas 4, 8, 12, 16 minut pro (<25,25-50,50-75,>75 levely) + znahodneni
+  arg(cas,<eval 100+(<cont.zjisti_koef_return>*60)>)
+  cont.sysMessage("cas je: <arg(cas)>")
+  arg(znahodneny_cas,<eval {<eval (<cas>-100)>  <eval (<cas>+60)>}>)
+  lastnew.timer=<znahodneny_cas> //2 minuty basic*koeficient*sekund
+  lastnew.equip
+endif
+remove
+return 0
+
+[itemdef i_hypno_delka]
+id=i_memory
+type=t_eq_script
+name=Timer hypnozy
+
+on=@create
+attr=attr_invis|attr_decay|attr_move_never
+
+on=@timer
+cont.classMessage(Spojeni s monstrem te jiz prilis vycerpalo)
+cont.hypnoswap_back
+remove
+return 0
+
+[Function povedla_se_hypnoza]
+//odstranit
+//return 1
+//odstranit
+if !(<argv(0).tag(experience)>) //nema expy - animate apd.
+ src.classMessage("Toto monstrum je zcela netecne tvym pokusum.")
+ src.prodleva_pred_novym_pokusem(20)
+ return 0
+endif
+if (<argv(0).tag(experience)> > 4000) //monstrum vic nez 400 exp
+ src.classMessage("Toto monstrum je na hypnozu prilis narocne.")
+ src.prodleva_pred_novym_pokusem(5)
+ return 0
+endif
+//src.sysMessage(src: <src>, uid: <uid>, level:<src.tag(level)>, expymonstra: <argv(0).tag(experience)>)
+arg(level,<eval (<src.tag(level)>*<src.zjisti_koef_return>)>)
+arg(znahodni,<eval {<eval (<arg(level)>-40)> <eval (<arg(level)>+20)>}>)
+//src.sysMessage(level: <arg(level)>, znahodneny level: <arg(znahodni)>) 
+arg(exp,<eval (<argv(0).tag(experience)>/10)>)
+if (<arg(znahodni)> >= <arg(exp)>)
+ return 1
+else 
+ src.classMessage("Hypnoza se nezdarila.")
+ arg(max_co_ovladne,<eval (<arg(level)>+20)>)
+ //kermel.sysMessage(ovladne do: <arg(max_co_ovladne)> exp) 
+ if (<arg(max_co_ovladne)> < <arg(exp)>) //zatim na to nema
+  src.classMessage("Citis, ze toto monstrum je nad tve sily.")
+ endif
+ src.prodleva_pred_novym_pokusem(5)
+ return 0
+endif
+
+[Function zjisti_koef_return]
+if (<tag(level)> < 25)
+  return 1
+elseif ((<tag(level)> >= 25)&&(<tag(level)> < 50))
+  return 2
+elseif ((<tag(level)> >= 50)&&(<tag(level)> < 75))
+  return 3
+else (<tag(level)> >= 75)
+  return 4
+endif
+
+[Function hypnoswap]//argv(0) - uid monstra
+accmsg("HYPNOZA")
+accmsg("Hrac <src>-<src.name> hypnotizuje monstrum <argv(0)>-<argv(0).name>")
+src.consume(1000 t_custom_dispellable)
+src.consume(1000 t_custom_spell) //lahve
+src.events(-e_spelleffect)
+src.spelleffect 41,1000 //dispell
+src.spelleffect 11,1000 //cure 
+src.events(+e_spelleffect)
+
+src.newnpc(<src.body>) //pomocny npc reprezentujici hrace
+src.tag(monster,<argv(0)>)
+src.tag(moje_alter_ego,<lastnewchar>) //pro sichr ulozit si
+src.tag(moje_alter_ego).flag_immobile=1
+src.tag(moje_alter_ego).flag_freeze=1
+src.tag(moje_alter_ego).npc=15 //hypnotizing mystic mozek
+src.tag(moje_alter_ego).name=<src.name>
+src.tag(moje_alter_ego).title=<src.title>
+src.tag(moje_alter_ego).body=<src.body>
+src.tag(moje_alter_ego).obody=<src.obody>
+src.tag(moje_alter_ego).color=<src.color>
+src.tag(moje_alter_ego).oskin=<src.oskin>
+if (<src.kills> > 15) //cervenej
+ src.tag(moje_alter_ego).karma= -10000
+else
+ if (<src.karma> < -2000) //sedej
+  src.tag(moje_alter_ego).karma= -5000
+ else //modrej 
+  src.tag(moje_alter_ego).karma= 8000 
+ endif
+endif
+src.tag(moje_alter_ego).fame=<src.fame>
+src.tag(moje_alter_ego).tag(karma_m,<src.karma>)
+src.tag(moje_alter_ego).tag(kills_m,<src.kills>) //neda se nic jinyho delat nez takhle 
+src.tag(moje_alter_ego).tag(profession_m,<src.profession>)
+src.tag(moje_alter_ego).tag(skillrank_m,<src.tag(skillrank)>)
+src.tag(moje_alter_ego).tag(race_m,<src.tag(race)>)
+src.tag(moje_alter_ego).tag(level_m,<src.tag(level)>)
+src.tag(moje_alter_ego).tag(expy,<src.tag(experience)>) //das ist wichtig ! :))
+src.tag(moje_alter_ego).p=<src.p>
+src.tag(moje_alter_ego).str=<src.str>
+src.tag(moje_alter_ego).dex=<src.dex>
+src.tag(moje_alter_ego).int=<src.int>
+src.tag(moje_alter_ego).maxhits=<src.maxhits>
+src.tag(moje_alter_ego).maxstam=<src.maxstam>
+src.tag(moje_alter_ego).maxmana=<src.maxmana>
+src.tag(moje_alter_ego).hits=<src.hits>
+src.tag(moje_alter_ego).stam=<src.stam>
+src.tag(moje_alter_ego).mana=<src.mana>
+src.tag(moje_alter_ego).events(+e_hypnotising_mystic_ego)
+src.tag(moje_alter_ego).events(-e_spelleffect)
+src.tag(moje_alter_ego).update
+src.tag(moje_alter_ego).action=-1
+src.tag(moje_alter_ego).flag_war=0
+src.tag(moje_alter_ego).newitemsafe(i_backpack) //vyrobit backpack
+ lastnew.layer=21
+ lastnew.attr=014 //newbie, movenever
+ lastnew.cont=<src.tag(moje_alter_ego)>
+ lastnew.update
+
+src.tag(moje_alter_ego).tag(master,<src>)
+src.tag(moje_alter_ego).tag(monster,<argv(0)>)
+
+//nejrive veci, pak skilly (proti bugu s magickymi vecmi (ukladaji se jejich staty a skilly...)
+src.newitemsafe(safe <src.findlayer(11).dispid>) //vlasy
+ lastnew.layer=11
+ lastnew.color=<src.findlayer(11).color>
+ lastnew.cont=<src.tag(moje_alter_ego)>
+ lastnew.update
+
+src.tag(hypno_mystik,1)
+src.tag(hypnotizers_ball).attr=010 //docasne nevermovable (aby mu zustal)
+transfer_items_layers(<src.tag(moje_alter_ego)>,<src>)
+src.tag(hypnotizers_ball).attr=00 //movable
+
+//pro jistotu ulozit dulezite i u hrace: 
+src.tag(name_m,<src.name>)
+src.tag(title_m,<src.title>)
+src.tag(str_m,<src.str>)
+src.tag(dex_m,<src.dex>)
+src.tag(int_m,<src.int>)
+src.tag(vit_m,<src.vit>)
+src.tag(maxhits_m,<src.maxhits>)
+src.tag(maxstam_m,<src.maxstam>)
+src.tag(maxmana_m,<src.maxmana>)
+src.tag(hits_m,<src.hits>)
+src.tag(stam_m,<src.stam>)
+src.tag(mana_m,<src.mana>)
+src.tag(combattype,npc)
+src.tag(profession_m,<src.profession>)
+src.tag(skillrank_m,<src.tag(skillrank)>)
+src.tag(race_m,<src.tag(race)>)
+src.tag(level_m,<src.tag(level)>)
+src.tag(p_x_m,<src.p_x>)
+src.tag(p_y_m,<src.p_y>)
+src.tag(p_z_m,<src.p_z>)
+src.tag(mapplane_m,<src.mapplane>)
+
+src.tag(skilly_m,1)//indikace ukladani skillu
+transfer_skills(<src>,<src>) //to ulozi do tagu
+transfer_skills(<src.tag(moje_alter_ego)>,<src>) //komu, od koho prevede skilly na toho panaka
+
+finduid(<src.tag(moje_alter_ego)>).tag(magery_m,<finduid(<src.tag(moje_alter_ego)>).magery>) //aby to hovado porad nekouzlilo jak debil >:-(
+finduid(<src.tag(moje_alter_ego)>).tag(hiding_m,<finduid(<src.tag(moje_alter_ego)>).hiding>) //aby se neschovaval, coz s oblibou dela
+finduid(<src.tag(moje_alter_ego)>).magery=0
+finduid(<src.tag(moje_alter_ego)>).hiding=0
+
+finduid(<src.tag(moje_alter_ego)>).name=<src.name>
+src.accmsg(Prenos skillu a itemu od hrace <src>-<src.name> k alteregu <src.tag(moje_alter_ego)>-<finduid(<src.tag(moje_alter_ego)>).name> dokoncen)
+
+//zmena hrace v monstrum
+src.null_skills 
+src.transfer_skills(<src>,<finduid(<argv(0)>)>)
+src.tag(stare_body,<src.body>) //pro navrat zpet
+
+src.tag(sm_m,<src.tag(sm)>)
+src.tag(sm,<finduid(argv(0)).tag(sm)>)
+src.name=<finduid(argv(0)).name>
+src.body=<finduid(argv(0)).body>
+src.tag(obody_m,<src.obody>)
+src.obody=<finduid(argv(0)).obody>
+src.tag(color_m,<src.color>)
+src.color=<finduid(argv(0)).color>
+src.tag(oskin_m,<src.oskin>)
+src.oskin=<finduid(argv(0)).oskin>
+src.tag(kills_m,<src.kills>)
+src.tag(karma_m,<src.karma>)
+src.tag(fame_m,<src.fame>)
+ //kermel.sysMessage(karma monstra: <finduid(<argv(0)>).karma>)
+ if (<finduid(<argv(0)>).karma> <= -800)
+  //src.kills=11 //aby mohl byt sedej i modrej nebo cervenej podle monster... 
+  src.karma=-10000
+ endif
+ if (<finduid(<argv(0)>).karma> > -800)&&(<finduid(<argv(0)>).karma> <= 0)
+  src.kills=0  //sedivej
+  src.karma=-5000
+ else
+  src.kills=0 //bude i modrej
+ endif
+src.fame=<finduid(argv(0)).fame>
+src.tag(expy_m,<src.tag(experience)>) //das ist wichtig  - pro monstrum! :))
+src.tag(experience,<finduid(argv(0)).tag(experience)>) //aby z nej byly expy jako z monstra
+src.p=<finduid(argv(0)).p_x> <finduid(argv(0)).p_y> <finduid(argv(0)).p_z> <finduid(argv(0)).mapplane>
+src.str=<finduid(argv(0)).str>
+//pozor na dex - pocita se z toho rychlost
+src.dex=<finduid(argv(0)).dex>
+src.tag(npc_speed,<finduid(<argv(0)>).tag(npc_speed)>)
+src.int=<finduid(argv(0)).int>
+src.maxhits=<finduid(argv(0)).maxhits>
+src.maxstam=<finduid(argv(0)).maxstam>
+src.maxmana=<finduid(argv(0)).maxmana> 
+src.hits=<finduid(argv(0)).hits>
+src.stam=<finduid(argv(0)).stam>
+src.mana=<finduid(argv(0)).mana>
+src.tag(events_m,<src.events>)
+src.events(+e_hypnotising_mystic)
+src.events(+e_monster)
+src.events(-e_hitsleech)
+src.events(-e_stamleech)
+src.events(-e_manaleech)
+src.events(-spk_allplayers)
+src.events(-e_mystik)
+//src.events=-e_allplayers //ten mu musi zustat ! 
+src.tag(dam,<finduid(argv(0)).typedef.dam>) //!!!!!!!!!!!!!!!!!!!!!!!!!!
+src.update
+if (<src.magery>)
+ src.magery=0 //zakaz kouzleni a uvidime co to udela
+endif
+if (src.body==c_man)||(src.body==c_woman) 
+ src.prenes_veci_od_npc(<argv(0)>)
+endif
+src.strelec
+
+//zmeny na monstru
+finduid(argv(0)).mapplane=250 //poslat do hajzlu
+finduid(argv(0)).action=-1
+finduid(argv(0)).flag_war=0
+finduid(argv(0)).flag_immobile=1
+finduid(argv(0)).events(+e_hypnotised)
+finduid(argv(0)).tag(homedist_m,<finduid(argv(0)).homedist>) //nejak to blbne
+finduid(argv(0)).update
+
+src.tag(moje_alter_ego).rozsyp_alarmy
+
+[Function rockbow] //odstraneni kuse na kameny
+if (<src.tag(hypno_mystik)>)
+ if (src.isthrowing_monster)
+  src.findid(i_bow_rock).remove 
+ endif
+endif
+
+[Function strelec] 
+//kermel.sysMessage(src:<src>, uid: <uid> srcobody:<src.obody>, obody: <obody>)
+arg(obody,<src.obody>)
+if (src.isthrowing_monster)
+ src.newitemsafe(i_bow_rock)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_rock_plain)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+endif
+if (src.isshooting_monster)
+ src.newitemsafe(i_bow_copper)
+ lastnew.attr=attr_move_never
+ lastnew.equip
+ src.newitemsafe(i_arrow_copper)
+ lastnew.attr=attr_move_never
+ lastnew.amount=50
+ lastnew.equip
+endif 
+if (<findid(i_crossbow_heavy)>)||(<findid(i_bow_copper)>) //pripad npccek s luky a kusemi
+ src.newitemsafe(i_arrow_copper)
+ lastnew.attr=attr_move_never
+ lastnew.amount=50
+ lastnew.equip
+ src.newitemsafe(i_xbolt_copper)
+ lastnew.attr=attr_move_never
+ lastnew.amount=50
+ lastnew.equip
+endif
+ 
+[Function non_strelec]
+consume(10 i_bow_rock)
+consume(10 i_bow_copper)
+consume(1000 i_arrow_copper)
+consume(1000 i_rock_plain)
+consume(1000 i_xbolt_copper)
+
+[Function prenes_veci_od_npc] //argv(0) - od kteryho
+accmsg("HYPNOZA")
+accmsg("Hypnoza <uid>-<name>: Prenos veci od npc <argv(0)> - <argv(0).name>")
+finduid(argv(0)).eqlayers(dej_me)
+if (<findlayer(25)>)//mame od npc nejaky jezditko - udelam si misto toho summona aby ty pravy jezditka nekradli smradi...
+ accmsg("HYPNOZA")
+ accmsg("Hypnoza <name>: Prenos kone od npc")
+ newnpc(mage_horse_brown)
+ lastnewchar.body=<finduid(<findlayer(25)>).typedef.tdata3.body>
+ lastnewchar.flag_conjured=1 //proti shrinkovani !
+ newitemsafe(i_summonremove)
+ lastnew.timer=540 //neni treba vic
+ lastnew.cont=<lastnewchar> //dat novemu koni
+ lastnew.update
+ newitemsafe(i_memory)
+ lastnew.attr=attr_newbie
+ lastnew.color=02 //kun je pet
+ lastnew.link=<uid> //komu ten kun patri
+ lastnew.cont=<lastnewchar>
+ lastnew.update
+ findlayer(25).remove //zmizet pripadneho kone, jinak se z nej da sesednout a ukraast :)
+ lastnewchar.dclick //nasednout na noveho "summona"
+endif
+
+[Function dej_me]
+src.newitemsafe(<baseid>)
+lastnew.color=<color>
+lastnew.attr=attr_move_never //nebudeme ty veci krast, zene :)
+src.equip(<lastnew>)
+
+[Function transfer_items_layers] //argv(0) - komu, argv(1) - od koho (src- od koho)
+//kermel.sysMessage(transfering: komu :<argv(0)>, od : <argv(1)>)
+finduid(argv(1)).newitemsafe(i_backpack) //na ulozeni veci
+lastnew.name=Veci layer
+lastnew.attr=attr_move_never
+lastnew.attr_invis=1
+lastnew.cont=<finduid(argv(1)).findlayer(29)>
+lastnew.update
+//lastnew.removefromview
+finduid(argv(1)).tag(backpack_layers,<lastnew>)
+//if (<finduid(argv(1)).findlayer(25)>) //mame kone 
+// accmsg(HYPNOZA)
+// accmsg("Hypnoza <argv(1)>-<argv(1).name>: Prenos noveho kone k npc <argv(0)> - <argv(0).name>")
+// finduid(<finduid(argv(1)).tag(moje_alter_ego)>).newitemsafe(<finduid(argv(1)).findlayer(25).dispid>) //kone pro panaka
+// lastnew.more1=<finduid(argv(1)).findlayer(25).more1> //typ toho kone aby i NPC sedel na mustech 
+// lastnew.name=<finduid(argv(1)).findlayer(25).name>  
+// lastnew.update
+// finduid(<finduid(argv(1)).tag(moje_alter_ego)>).equip(<lastnew>) //toho kone panakovi 
+// if (<finduid(<finduid(<argv(1)>).findlayer(25).more2>).flag_conjured>) //npc bude sedet na summonu
+//   finduid(<finduid(<argv(0)>).findlayer(25).more2>).flag_conjured=1
+// else //ulozime tagy pro navrat kone pri vraceni do tela
+//  finduid(argv(1)).tag(hashorse,1)
+//  finduid(argv(1)).tag(horse_m,<finduid(argv(1)).findlayer(25).more1>)
+//  finduid(argv(1)).tag(horsename_m,<finduid(argv(1)).findlayer(25).name>)
+// endif 
+// finduid(argv(1)).findlayer(25).remove //puvodniho pryc ! (jinak to blbne a beha moc rychle)
+//endif
+
+//if (<argv(0)>!=<argv(1)>) //prenasi se alteregu 
+if (strcmpi(<argv(0)>,<argv(1)>)) //prenasi se alteregu 
+ accmsg("HYPNOZA")
+ accmsg("Hypnoza <argv(1)>-<argv(1).name>: Prenasim itemy z layeru npccku <argv(0)> - <argv(0).name>")
+ src.eqlayers(prenes_itemy(<argv(0)>))
+endif
+
+finduid(argv(1)).newitemsafe(i_backpack) //na veci z baglu
+lastnew.name=Veci bagl
+lastnew.attr=attr_move_never
+lastnew.attr_invis=1
+lastnew.cont=<finduid(argv(1)).findlayer(29)>
+lastnew.update
+//lastnew.removefromview
+finduid(argv(1)).tag(backpack_bagl,<lastnew>)
+//kermel.sysMessage(atributy koule: <finduid(<argv(1)>).findid(i_hypnotizer).attr>)
+accmsg(HYPNOZA)
+accmsg("Hypnoza <argv(1)>-<argv(1).name>: Uklizim veci z batohu")
+finduid(argv(1)).findlayer(21).contents(movenonstatic(<lastnew>)) //nacpat do batuzku
+
+[Function prenes_itemy] //argv(0) - komu
+if (<baseid>!=i_ring_power)&&(<baseid>!=i_leading_ring_power)
+ topobj.accmsg("Prenos itemu <baseid> z layeru <layer> od <topobj>-<topobj.name> ke <argv(0)>-<finduid(<argv(0)>).name)>")
+ if (layer==25) //kone zalohovat
+  finduid(<argv(0)>).newitemsafe(<baseid>) //vytvorit novej kterej bude mit ten panak
+  lastnew.color=<color>
+  finduid(<argv(0)>).equip(<lastnew>) //panakovi  
+  topobj.newitemsafe(<baseid>) //sobe zalohu
+  arg(konisko,<lastnew>)
+  konisko.color=<color>
+  konisko.name=<topobj.findlayer(25).name>
+  konisko.cont=<topobj.tag(backpack_layers)>
+  //je li to pack, uschovame baglik a tak vubec! 
+  if (topobj.findlayer(25).tag(bagl))
+   arg(puvodnikun,<topobj.findlayer(25)>)
+   konisko.tag(mount_pack_id,<puvodnikun.tag(mount_pack_id)>)
+   konisko.more2=<puvodnikun.more2>
+   konisko.color=<puvodnikun.color>
+   konisko.tag(mycolor,<puvodnikun.tag(mycolor)>)//ne, neni to zbytecne ackoli to tak vypada
+   konisko.tag(myfood,<puvodnikun.tag(myfood)>)
+   konisko.timer=<puvodnikun.timer>
+   konisko.tag(mycurentfood,<puvodnikun.tag(mycurrentfood)>)
+   konisko.tag(myhits,<puvodnikun.tag(myhits)>)
+   konisko.tag(bagl,<puvodnikun.tag(bagl)>)   
+  endif 
+  topobj.findlayer(25).remove //odstranit kone  
+ else
+  finduid(<argv(0)>).newitemsafe(<baseid>) //vytvorit novej kterej bude mit ten panak
+  lastnew.color=<color>
+  finduid(<argv(0)>).equip(<lastnew>) //panakovi
+  //bounce //item na sobe
+  cont=<finduid(<topobj.tag(backpack_layers)>)> //nacpat do pomocneho batuzku
+  update //topobj=src, ale vypada to frajersky :)) 
+  //removefromview
+ endif
+endif
+
+[Function hypnoswap_back] src- mystik hrac
+accmsg("HYPNOZA ZPET")
+accmsg("Hypnoza navrat <uid>-<name>: Navrat zpet do tela")
+if !(strlen(<tag(monster)>)) //mame vubec co vracet? (mozna kdyz se vraci timerem a zaroven umre tak se to posere)
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Navrat z hypnozy se nezdaril, zmizel tag.monster")
+ sysMessage(Neznama chyba. Pokud ziskas pocit , ze je tvoje postava nejak pokazena, kontaktuj GM)
+ return 1
+endif
+//pro jistotu ochranit - anebo radsi ne
+//invis=1
+//invul=1
+if (findlayer.layer_horse)	// jsem na koni
+  arg(NpcHasHorse,1)
+else
+  arg(NpcHasHorse,0)
+endif
+if (<flag_freeze>)
+ finduid(<tag(monster)>).flag_freeze=1 //paralyzovat monstrum
+endif
+if (<findid(i_krvaceni)>)
+ findid(i_krvaceni).remove
+endif 
+consume(1000 t_custom_spell) //lahve
+consume(1000 t_custom_dispellable)
+events(-e_spelleffect)
+spelleffect(41,1000) //dispell
+spelleffect(11,1000) //cure 
+events(+e_spelleffect)
+
+findid(i_hypno_delka).remove
+prodleva_pred_novym_pokusem(30)
+//kermel.sysMessage(kdo je src - <src>'<src.tag(name_m)>', uid - <uid>'<name>', monstrum: <tag(monster)>)
+tag(hypnotizers_ball).color=0480 //ice - moznost jet znova
+tag(hypnotizers_ball).updatex
+//evt zmeny na puvodnim monstru, skill vracet netreba
+//kermel.sysMessage(monster: <tag(monster)>, name: <finduid(<tag(monster)>).name>)
+
+finduid(<tag(monster)>).hits=<hits>
+finduid(<tag(monster)>).stam=<stam>
+finduid(<tag(monster)>).mana=<mana>
+finduid(<tag(monster)>).p=<p>
+finduid(<tag(monster)>).mapplane=<mapplane>
+finduid(<tag(monster)>).update
+finduid(<tag(monster)>).events=-e_hypnotised
+finduid(<tag(monster)>).flag_immobile=0
+finduid(<tag(monster)>).homedist=<finduid(<tag(monster)>).tag(homedist_m)>
+finduid(<tag(monster)>).flag_war=0 //nebudeme zbytecne agresivni
+arg(kolik_naexpil,<eval (<tag(experience)> - <finduid(<tag(monster)>).tag(experience)>)>)
+finduid(<tag(monster)>).tag(experience,<tag(experience)>) //monstrum bylo naexpeno
+
+//panak vratit vse do hrace
+accmsg(HYPNOZA ZPET)
+accmsg("Hypnoza navrat <uid>-<name>: Pasaz vraceni zakladnich atributu postavy")
+events(-e_hypnotising_mystic) //pryc s tim nez se neco posere :)
+events(-e_monster)
+name=<tag(name_m)>
+ tag.remove(name_m)
+title=<tag(title_m)>
+ tag.remove(title_m)
+body=<tag(stare_body)>
+ tag.remove(stare_body)
+obody=<tag(obody_m)>
+ tag.remove(obody_m) 
+color=<tag(color_m)>
+ tag.remove(color_m)
+oskin=<tag(oskin_m)>
+ tag.remove(oskin_m)
+karma=<tag(karma_m)> 
+ tag.remove(karma_m)
+fame=<tag(fame_m)>
+ tag.remove(fame_m)
+kills=<tag(kills_m)> 
+ tag.remove(kills_m)
+profession=<tag(profession_m)>
+ tag.remove(profession_m)
+tag(skillrank,<tag(skillrank_m)>)
+ tag.remove(skillrank_m)
+tag(race,<tag(race_m)>)
+ tag.remove(race_m)
+tag(level,<tag(level_m)>)
+ tag.remove(level_m)
+tag(experience,<tag(expy_m)>) //vratit stary expy!
+ tag.remove(expy_m)
+p=<tag(p_x_m)> <tag(p_y_m)> <tag(p_z_m)> <tag(mapplane_m)>
+ tag.remove(p_x_m)
+ tag.remove(p_y_m)
+ tag.remove(p_z_m)
+ tag.remove(mapplane_m)
+update
+
+eqlayers(zrus_az_naprsten) //pokud neco na sobe mel - treba od NPCcek - pro jistotu proti magickym vecem
+
+str=<tag(str_m)>
+ tag.remove(str_m)
+dex=<tag(dex_m)>
+ tag.remove(dex_m)
+int=<tag(int_m)>
+ tag.remove(int_m)
+vit=<tag(vit_m)>
+ tag.remove(vit_m)
+
+
+if (tag(stam_m))
+ stam=<eval (<tag(stam_m)>/2)>
+else
+ stam=50
+endif
+ tag.remove(stam_m)
+if (tag(mana_m))
+ mana=<eval (<tag(mana_m)>/2)>
+else
+ mana=50
+endif
+ tag.remove(mana_m)
+
+maxhits=<vit>  
+maxstam=<vit>
+maxmana=<int>
+ tag.remove(maxhits_m)
+ tag.remove(maxstam_m)
+ tag.remove(maxmana_m)
+
+accmsg("HYPNOZA ZPET")
+accmsg("Hypnoza navrat <uid>-<name>: Osetreni navratu itemu a skillu")
+non_strelec //pokud npc strilelo /hazelo
+null_skills //monstri skilly nechceme
+transfer_skills(<uid>,<uid>) //komu, od koho (navraceni svych skillu z tagu)
+tag(hypnotizers_ball).attr=010 //docasne nevermovable (aby mu zustal)
+vrat_mi_itemy
+tag(hypnotizers_ball).attr=00 
+flag_war=0 //nebojujmez!
+
+//zmizet panaka a jeho alarmy
+accmsg("HYPNOZA ZPET")
+accmsg("Hypnoza navrat <uid>-<name>: Likvidace mystikova alterega")
+finduid(<tag(moje_alter_ego)>).smaz_alarmy
+finduid(<tag(moje_alter_ego)>).remove
+arg(lastchar,<lastnewchar>) //mohl by to byt bugly kun od alter ega... (stavalo se)
+if (strlen(<arg(lastchar)>))
+   kermel.sysMessage("posledni char : <lastchar>-<lastchar.name> je v <lastchar.p>")
+   if (lastchar.sector == sector) //je ve stejnem sektoru
+     kermel.sysMessage("dobrej sektor")
+     if (lastchar.id==c_man) //je to man
+       kermel.sysMessage("dobry ID")
+       if (!strcmpi(<lastchar.name>,ship)) //a navic blbe pojmenovanej => bugly jezditko navic
+         kermel.sysMessage("removing <lastchar>")
+         lastchar.remove // a hotovka :))
+      endif
+    endif
+  endif
+endif
+if !(<arg(NpcHasHorse)>)
+  tag(monster).findlayer(layer_horse).remove
+endif
+
+tag(combattype,mystik)
+tag(sm,<tag(sm_m)>)
+tag.remove(hypnotizers_ball)
+tag.remove(sm_m)
+tag.remove(stare_body)
+tag.remove(hypno_mystik)
+tag.remove(npc_speed)
+tag.remove(dam)
+tag.remove(monster)
+tag.remove(expy_m)
+tag.remove(moje_alter_ego)
+var(do_whilu,"")
+var(poc_dlaz,"")
+f_retreiveEvents(<tag(events_m)>)
+//events=+<tag(events_m)> //pozor " toi je takhle schvalne, uvozovky nechybej !!!
+tag.remove(events_m)
+
+addexp(<eval <arg(kolik_naexpil)>*2>)
+//invis=0
+//invul=0
+//vse hotovo, muzeme ho evt. zabit :)
+if (tag(po_zasahu)) //vrati se s malo HP - po trefeni panaka i po smrti
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Mystikovo alterego zasazeno nebo mystik umrel - <tag(po_zasahu)>, ubirame zivoty")
+ if (tag(hits_m))//divne ale jednou zmizelo  
+  hits=<eval (<tag(hits_m)>/<tag(po_zasahu)>)> //treba se neco zmenilo, ze...
+ else  
+  hits=50
+ endif
+ sysMessage("Citis se byt fyzicky velmi <sex(oslaben,oslabena)>")
+ tag.remove(po_zasahu)
+else
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Navrat bez zasazeni nebo umrti")
+ if (tag(hits_m))//divne ale jednou zmizelo
+  if (tag(death_m))
+   if (<tag(death_m)>==1)
+    hits=0
+   else
+    hits=10
+   endif
+  else
+    hits=<tag(hits_m)>
+  endif
+ else
+  if (tag(death_m))
+   if (<tag(death_m)>==1)
+    hits=0
+   else
+    hits=10
+   endif
+  else
+    hits=50
+  endif
+ endif
+endif
+ tag.remove(hits_m)
+ tag.remove(death_m)
+
+
+accmsg(HYPNOZA ZPET)
+accmsg("Hypnoza <uid>-<name>: NAVRAT Z HYPNOZY snad OK")
+
+[Function f_retreiveEvents]
+arg(i,0)
+while (<argvcount> > <arg(i)>)
+  events=+<argv(i)>
+  arg(i,#+1)
+endwhile
+
+[Function zrus_az_naprsten]
+if (<baseid>!=i_ring_power)&&(<baseid>!=i_leading_ring_power)
+ remove
+endif
+
+[Function vrat_mi_itemy]
+accmsg(HYPNOZA ZPET)
+accmsg("Hypnoza navrat <uid>-<name>: Navraceni vsech itemu")
+if (<tag(spellbook_m)>) //kniha co "melo" monstrum
+ finduid(<tag(spellbook_m)>).remove
+ tag.remove(spellbook_m)
+endif
+findlayer(21).contents(movenonstatic(<finduid(<tag(monster)>)>)) //pripadnej loot pripadne monstru
+if (strlen(<tag(backpack_layers)>) != 0)
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Navraceni itemu do layeru")
+ findlayer(25).remove //zmizime pripadneho kone co by mohl mit od NPCcek
+ finduid(<tag(backpack_layers)>).equipcontents(<uid>)
+ finduid(<tag(backpack_layers)>).remove 
+ tag.remove(backpack_layers)
+else 
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Chyba! Zmizel batoh s layery!") 
+endif
+//kermel.sysMessage(vracime backpack)
+if (strlen(<tag(backpack_bagl)>) != 0)
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Navraceni itemu do batohu")
+ finduid(<tag(backpack_bagl)>).movecontents(<findlayer(21)>)
+ //posledni upravy 
+ finduid(<tag(backpack_bagl)>).remove
+ tag.remove(backpack_bagl)
+else
+ accmsg(HYPNOZA ZPET)
+ accmsg("Hypnoza navrat <uid>-<name>: Chyba! Zmizel batoh s obsahem baglu") 
+endif
+//vracime kone
+//if (<tag(hashorse)>)
+// accmsg(HYPNOZA ZPET)
+// accmsg("Hypnoza navrat <uid>-<name>: Navraceni kone") 
+// findlayer(25).remove //zmizet pripadneho kone od npccek
+// newnpc(<tag(horse_m)>)
+// arg(newhorse,<lastnewchar>)
+// arg(newhorse).name=<tag(horsename_m)>
+// newitemsafe(i_memory)
+// lastnew.attr=attr_newbie
+// lastnew.color=02 //kun je pet
+// lastnew.link=<uid> //komu ten kun patri
+// lastnew.cont=<arg(newhorse)>
+// lastnew.update
+// tag.remove(hashorse)
+// tag.remove(horse_m)
+// tag.remove(horsename_m)
+// arg(newhorse).dclick
+ //kermel.sysMessage(equipujeme kone <findtype(t_eq_horse).dispid>) 
+//endif
+
+[Function rozsyp_alarmy] //src - mystik(player), uid - jeho alter ego tupe stojici
+//napred po obvodu
+arg(p_x,<p_x>)
+arg(p_y,<p_y>)
+var(do_whilu,0)
+var(poc_dlaz,1) //pocitac dlazdicek
+while(<var(do_whilu)> < 11)  //(0 az 10 - 11 celkem)
+ alarm(<eval ((<arg(p_x)>+<var(do_whilu)>)-5)>,<eval (<arg(p_y)>-5)>,<var(poc_dlaz)>) //horni rada (x-5 az x+5, y-5)
+ alarm(<eval ((<arg(p_x)>+<var(do_whilu)>)-5)>,<eval (<arg(p_y)>+5)>,<eval (var(poc_dlaz)+1)>) //dolni rada (x-5 az x+5, y+5)
+ var(do_whilu,#+1)
+ var(poc_dlaz,#+2)
+endwhile 
+var(do_whilu,0)
+while(<var(do_whilu)> < 9) //(0 az 8 - 9 celkem)
+ alarm(<eval (<arg(p_x)>-5)>,<eval ((<arg(p_y)>+<var(do_whilu)>)-4)>,<var(poc_dlaz)>) //horni rada (x-5 az x+5, y-5)
+ alarm(<eval (<arg(p_x)>+5)>,<eval ((<arg(p_y)>+<var(do_whilu)>)-4)>,<eval (var(poc_dlaz)+1)>) //dolni rada (x-5 az x+5, y+5)
+ var(do_whilu,#+1)
+ var(poc_dlaz,#+2)
+endwhile
+
+[Function smaz_alarmy]
+arg(i,1)
+while(<arg(i)> < 41)
+ finduid(<tag(dlazka<arg(i)>)>).remove
+ arg(i,#+1)
+endwhile
+
+[Function alarm]
+newitemsafe(i_alarm)
+lastnew.tag(koho_zabijet,<uid>)
+lastnew.p=<argv(0)> <argv(1)>
+lastnew.update
+tag(dlazka<argv(2)>,<lastnew>) //pro mazani, ulozit na panaka
+
+[itemdef i_alarm]
+id=i_tile_stone_sand
+name=Alarm
+
+on=@create
+color=01
+attr=attr_move_never
+attr_invis=1
+
+on=@step
+if (<src.npc>)
+ //kermel.sysMessage(Stoupl si <src>, mozkem <src.npc>, karmou <src.karma>, tag na mystika: <src.tag(na_mystika)>)
+ if (<src.karma> < 200) //zaporna karma
+  //src.say(jsem zlej)
+  src.attack(finduid(<tag(koho_zabijet)>))
+ else 
+   if (<src.tag(na_mystika)>)
+    src.say(jsem sice hodnej ale na panaky jsem zlej)
+    src.attack(finduid(<tag(koho_zabijet)>))
+   else
+    return 0
+   endif
+ endif
+else
+ return 0
+endif
+
+[Function transfer_skills] //argv0- komu,argv1- od koho
+if (<argv(0)>==<argv(1)>) //ze sebe na sebe - ulozit do tagu 
+ if (<finduid(argv(0)).tag(skilly_m)>) //bude se ukladat 
+  accmsg(HYPNOZA)
+  accmsg("Hypnoza <argv(0)>-<argv(0).name>: Ukladam vlastni skilly do tagu")
+  arg(u,0)
+  while (arg(u)<50)
+   arg(skillname,<findres(skill,<arg(u)>).name>) 
+   finduid(<argv(0)>).tag(<arg(skillname)>_m,<finduid(argv(1)).<arg(skillname)>>)
+   arg(u,#+1)
+  endwhile
+  finduid(argv(0)).tag(skilly_m,0)
+ else //bude se vracet
+  accmsg(HYPNOZA ZPET)
+  accmsg("Hypnoza konec <argv(0)>-<argv(0).name>: Vracim vlastni skilly z tagu")
+  arg(u,0)
+  while (arg(u)<50)
+   arg(skillname,<findres(skill,<arg(u)>).name>) 
+   finduid(<argv(0)>).<arg(skillname)>=<tag(<arg(skillname)>_m)>
+   finduid(<argv(0)>).tag.remove(<arg(skillname)>_m)
+   arg(u,#+1)
+  endwhile
+  finduid(argv(0)).tag.remove(skilly_m)
+ endif 
+else //je to na nekoho jinyho
+ accmsg(HYPNOZA)
+ accmsg("Hypnoza: Prevod skillu od <argv(1)>-<argv(1).name> ke <argv(0)>-<argv(0).name>")
+ arg(u,0)
+ while (arg(u)<50)
+  arg(skillname,<findres(skill,<arg(u)>).name>)
+  finduid(<argv(0)>).<arg(skillname)>=<finduid(argv(1)).<arg(skillname)>>
+  arg(u,#+1)
+ endwhile
+endif
+
+[Function null_skills]
+accmsg(HYPNOZA)
+accmsg("Hypnoza <uid>-<name>: Nuluji vlastni skilly")
+arg(u,0)
+while (arg(u)<50)
+ arg(skillname,<findres(skill,<arg(u)>).name>)
+ <arg(skillname)>=0
+ arg(u,#+1)
+endwhile
+
+[Function movenonstatic]
+if (<attr>&010) //je move never (krystaly, runy, batuzky)
+else
+ cont=<args>
+ update
+ removefromview
+endif
+
+[events e_hypnotised] //monstrum
+//nedelat nic, a hlavne nekouzlit!!
+on=@death
+hits=10
+return 1 //asi to buguje kdyz umre nebo kyho vyra :-/
+
+on=@npcseenewplayer
+action=-1
+flag_war=0
+return 1
+
+on=@aftergetswing
+action=-1
+flag_war=0
+return 1
+
+on=@beforegeteffect
+action=-1
+flag_war=0
+return 1
+
+on=@afterswing
+action=-1
+flag_war=0
+return 1
+
+[events e_hypnotising_mystic_ego] //panak
+//nedelat nic, a hlavne nekouzlit!!
+on=@npcseenewplayer
+//action=-1
+//flag_war=0
+return 1
+
+on=@aftergetswing
+hits=100
+finduid(<tag(master)>).sysMessage(Tvou mysl zalila rezava bolest)
+finduid(<tag(master)>).tag(po_zasahu,2) //vrati se s malo HP
+//kermel.sysMessage(zasah, tag: <finduid(<tag(master)>).tag(po_zasahu)>) //vrati se s malo HP
+finduid(<tag(master)>).hypnoswap_back
+return 1
+
+on=@beforegeteffect
+//action=-1
+//flag_war=0
+return 1
+
+on=@spelleffect
+//action=-1
+//flag_war=0
+hits=100
+finduid(<tag(master)>).sysMessage(Tvou mysli projela vlna energie)
+finduid(<tag(master)>).tag(po_zasahu,2) //vrati se s malo HP
+//kermel.sysMessage(zasah kouzlem, tag: <finduid(<tag(master)>).tag(po_zasahu)>)
+finduid(<tag(master)>).hypnoswap_back
+return 1
+
+on=@afterswing
+//action=-1
+//flag_war=0
+return 1
+
+on=@death //kdyby nahodou zakukal
+hits=100
+finduid(<tag(master)>).tag(death_m,1)
+finduid(<tag(master)>).hypnoswap_back
+return 1
+
+on=@deathcorpse
+argo.remove //odstranit
+
+[events e_hypnotising_mystic] //player
+on=@death
+tag(po_zasahu,5) //vrati se s malo HP
+//kermel.sysMessage(umrel, tag po zasahu: <tag(po_zasahu)>)
+hypnoswap_back
+return 1 //neumrit! 
+
+on=@itemstep
+if (<act.type>==t_telepad2)
+ src.sysMessage(V cizim tele nelze prochazet teleporty)
+ return 1
+endif
+if (<act.type>==t_moongate)
+ src.sysMessage(V cizim tele nelze prochazet moongatami)
+ return 1
+endif
+
+on=@itemdropon_obj //act - co, argo - na co/do ceho
+if (<argo.topobj>==<src>) //jen pro lootovani, nevztahuje se na podavani atd
+ if (<finduid(<src.tag(monster)>).tag(hypnotizable)>&flag_hypnoLoot) //lootit muze
+  var(jebook,0)
+  act.contents(isspellbook)
+  var(jescroll,0)
+  act.contents(isspellscrl)
+  if (<act.dispid>==i_spellbook)||(<var(jebook)>)||(<var(jescroll)>)||(<act.type>==t_scroll)||(<act.type>==t_customspell_scroll)
+   hod_do_baglu(<act>,1)
+  endif
+  if (<argo>!=<findlayer(21)>)//||(<argo.cont>==<findlayer(21)>)) //nedava do baglu nebo do tasky v baglu (zadnou tam implicitne nema tak to nevadi kdyz si nejako vezme - bugovat s tim nebude)
+   hod_do_baglu(<act>)
+  endif
+ else //lootit se nebude !
+  hod_na_zem(<act>)
+ endif
+endif
+
+on=@itemuserdclick
+if (<act.type>==t_allpotions)||(<act.type>==t_speedpotions)||(<act.type>==t_potion_bomba)
+ sysMessage(Nemas poneti k cemu tato lahvicka slouzi)
+ return 1
+endif
+if (<act.type>==t_bandage)
+ sysMessage(O pouziti hadriku nevis nic)
+ return 1
+endif
+
+[events e_hypnotizing] //priprava na hypnozu
+on=@step
+src.redmessage(Prerusil jsi sve soustredeni, hypnoza se nezdarila)
+src.consume(i_hypno_timer)
+
+on=@aftergetswing
+redmessage(Utok prerusil tve soustredeni, hypnoza se nezdarila)
+consume(i_hypno_timer)
+
+on=@beforegeteffect
+
+on=@afterswing
+
+[Function isspellscrl]
+if (<type>==t_scroll)||(<type==t_customspell_scroll)
+ var(jescroll,#+1)
+endif 
+
+[Function isspellbook]
+if (<dispid>==i_spellbook)
+ var(jebook,#+1)
+endif 
+
+[Function hod_na_zem] //Argv - co
+newitemsafe(i_hazec_na_zem)
+lastnew.link=<argv(0)>
+lastnew.timer=0
+lastnew.equip
+
+[itemdef i_hazec_na_zem]
+id=i_memory
+type=t_eq_script
+name=hazec veci na zem
+
+on=@timer
+cont.redmessage(V tomto tele nejsi schopen lootovani)
+link.drop
+remove
+return 0
+
+[Function hod_do_baglu] //argv - co
+newitemsafe(i_hazec_do_baglu)
+lastnew.link=<argv(0)>
+lastnew.tag(book,<argv(1)>)
+lastnew.timer=0
+lastnew.equip
+
+[itemdef i_hazec_do_baglu]
+id=i_memory
+type=t_eq_script
+name=hazec veci do baglu
+
+on=@timer
+if (<tag(book)>) 
+ cont.redmessage(Citis ze tuto vec opravdu nebudes potrebovat)
+ link.drop
+ remove
+ return 0
+endif
+link.cont=<cont.findlayer(21)>
+cont.redmessage(Loot pouze do hlavniho baglu!)
+remove
+return 0
+
+
+//////////////////////////////////////////////
+// M Y S T I K  - B U F F   S T E A L I N G //
+//     (c) Yavanna the Immense Power        //
+//////////////////////////////////////////////
+
+[defnames flags_hypno]
+flag_hypnoCanBe			01
+flag_hypnoLoot			02
+flag_Buff[1]			04		//steal int
+flag_Buff[2]			08		//steal str
+flag_Buff[3]			010		//steal dex
+flag_Buff[4]			020		//steal dmg
+BuffCount			4
+
+flag_BuffPower[1]		0400000		//23
+flag_BuffPower[2]		0800000		//24
+flag_BuffPower[3]		01000000	//25
+flag_BuffPower[4]		02000000	//26
+flag_BuffPower[5]		04000000	//27
+flag_BuffPower[6]		08000000	//28
+flag_BuffPower[7]		010000000	//29
+flag_BuffPower[8]		020000000	//30
+flag_BuffPower[9]		040000000	//31
+flag_BuffPower[10]		080000000	//32
+
+[defnames def_buffPower]
+def_buffStats[1]		2
+def_buffStats[2]		4
+def_buffStats[3]		7
+def_buffStats[4]		11
+def_buffStats[5]		16
+def_buffStats[6]		22
+def_buffStats[7]		29
+def_buffStats[8]		37
+def_buffStats[9]		46
+def_buffStats[10]		56
+
+def_buffDmg[1]			2
+def_buffDmg[2]			5
+def_buffDmg[3]			8
+def_buffDmg[4]			11
+def_buffDmg[5]			14
+def_buffDmg[6]			19
+def_buffDmg[7]			24
+def_buffDmg[8]			30
+def_buffDmg[9]			37
+def_buffDmg[10]			45
+
+def_buffDmgNPC[1]		20
+def_buffDmgNPC[2]		22
+def_buffDmgNPC[3]		24
+def_buffDmgNPC[4]		26
+def_buffDmgNPC[5]		28
+def_buffDmgNPC[6]		30
+def_buffDmgNPC[7]		32
+def_buffDmgNPC[8]		34
+def_buffDmgNPC[9]		36
+def_buffDmgNPC[10]		38
+
+
+[Function f_buffHulValue]
+if (hashul(elven))
+  return 2200
+elseif (hasul(eben))
+  return 1500
+elseif (hashul(mahagon))
+  return 1200
+elseif (hashu(teak))
+  return 950
+elseif (hashul(oak))
+  return 700
+elseif (hashul(chestnut))
+  return 400
+elseif (hashul(spruce))
+  return 200
+else
+  return 0
+endif
+
+
+[Function buffSteal]
+if !(0<tag(ra_buffSteal)>)
+  redMessage("Tuto schopnost neumis pouzit.")
+elseif (<src.flags>&statf_dead)
+  redMesasge("<sex(Mrtvy,Mrtva)> tuto abilitu nemuzes pouzit!")
+elseif !(restest(1,i_hypnotizer))
+  redMessage("Musis mit svou kristalovou kouli!")
+elseif (<tag(hypno_mystik)>)
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+elseif (findid(i_memory_catchField))
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+elseif (findid(i_catchitem))
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+elseif (<mana> < 100)
+  sysMessage("Nemas dost many.")
+elseif !(action == 0FFFFFFFF)
+  redMessage("Pro ukradnuti talentu musis byt v naprostem klidu.")
+elseif (<rescount i_buffSteal>)
+  redMessage("Tuto schopnost jeste nelze pouzit.")
+else
+  newequip(i_buffStealTarg)
+endif
+
+[itemdef i_buffStealTarg]
+name=BuffSteal Target
+id=i_memory
+type=t_eq_script
+
+on=@equip
+target("Zamer monstrum, ktere chces zbavit talentu.")
+timer=50
+
+on=@timer
+remove
+
+on=@TargOn_Char
+if !(src.targ.srccanseelos)
+  src.redMessage("Nemas s cilem primy kontakt.")
+elseif (<src.targ.rescount i_buffStealNPC>)
+  src.redMessage("Cili uz nekdo talent vzal.")
+elseif (<src.stamina> < 80)
+  src.sysMessage("Nemas dost staminy.")
+else
+  arg(buffNumber,1)
+  while !(<src.targ.tag(hypnotizable)>&<flag_Buff[<buffNumber>]>)
+    arg(buffNumber,#+1)
+    if (<buffNumber> > <BuffCount>)
+      src.sysMessage("Cil nema zadny talent.")
+      remove
+      return 1
+    endif
+  endwhile
+  src.newequip(i_buffSteal)
+  lastnew.link=<src.targ>
+  lastnew.more1=<buffNumber>
+  src.sysMessage("Pokusis se cili ukrast talent.")
+  src.sfx=586
+  return 1  
+endif
+remove
+return 1
+
+[itemdef i_buffSteal]
+name=Buff Steal Memory
+id=i_memory
+type=t_eq_script
+
+on=@equip
+timer=3
+
+on=@unequip
+if (<more2>==1)
+  if (<moreY>)		// nestal se fatal error. Hodnoty skillu se musi snizit na puvodni hodnotu
+    f_buffReturnDown(<more1>)
+  else			// fatal error. Hodnoty skillu se musi zvysit na puvodni hodnotu
+    f_buffReturnUp(<more1>)
+  endif
+endif
+
+on=@timer
+if (<more2>==0)
+  if !(link.srccanseelos)
+    cont.redMessage("<cont.sex(Ztratil,Ztratila)> jsi cil z dohledu.")
+    remove
+  elseif !(<topobj.action> == 0FFFFFFFF)
+    cont.redMessage("<cont.sex(Prerusil,Prerusila)> jsi soustredeni.")
+    remove
+  elseif (<link.issumon>)
+    cont.classMessage("Cil nema vlastni talent.")
+    remove
+  elseif (<link.rescount i_buffStealNPC>)
+    src.redMessage("Cili uz nekdo talent vzal.")
+    remove
+  else
+    if (<f_buffSteal(<more1>,<link>)>)
+      more2 = 1
+      timer=60
+    else
+      more2 = 2
+      timer=20
+    endif
+  endif
+elseif (<more2>==1)
+  if (<moreY>)		// nestal se fatal error. Hodnoty skillu se musi snizit na puvodni hodnotu
+    f_buffReturnDown(<eval more1>)
+  else			// fatal error. Hodnoty skillu se musi zvysit na puvodni hodnotu
+    f_buffReturnUp(<eval more1>)
+  endif
+  more2 = 2
+  timer=50+7*<moreX>	// cim silnejsi boost sem monstru vzal, tim delsi timer bude
+elseif (<more2> ==2)
+  remove
+endif
+return 1
+
+
+[itemdef i_buffStealNPC]
+name=Buff Steal NPC Memory
+id=i_memory
+type=t_eq_script
+
+on=@Equip
+timer=60
+
+on=@Timer
+f_buffReturnNPC(<more1>)
+remove
+
+
+[Function f_buffSteal]
+//check success
+cont.setplayer
+arg(silaMystika,<eval 10*<cont.tag(sm)>>+<topobj.f_buffHulValue>+<cont.tag(level)>*5)
+arg(silaMonstra,<eval {0 <eval 10*<argv(1).SpiritSpeak>>}>)
+if (<cont.tag(ra_buffSteal)> >= <rand(22)>) // Vyjde ppst na abilitu
+  if (<silaMystika> > <silaMonstra> ) // Vyslsa ppst a mystik muze krast talent
+    moreX=<f_setBuffPower>
+    cont.stamina=<cont.stamina> - <moreX>*6
+    if (<cont.stamina> < 0)
+      cont.stamina = 0
+    endif
+    if (<argv(0)> == 1) // steal INT
+      tag(changedValue,<def_buffStats[<moreX>]>)
+      cont.INT = <cont.INT> + <def_buffStats[<moreX>]>
+      cont.MaxMana = <cont.MaxMana> + <def_buffStats[<moreX>]>
+      link.newequip(i_buffStealNPC)
+      lastnew.more1=<argv(0)>
+      arg(reduce_value,(<def_buffDmgNPC[<moreX>]>*<link.EI>)/100)
+      lastnew.tag(changedValue,<reduce_value>)
+      link.EI = <link.EI> - <reduce_value>
+      cont.classMessage("<cont.sex(Ukradl,Ukradla)> jsi talent protivnika. Zvysena Inteligence.")
+      cont.setplayer
+    elseif (<argv(0)> == 2) // steal STR
+      tag(changedValue,<def_buffStats[<moreX>]>)
+      cont.STR = <cont.STR> + <def_buffStats[<moreX>]>
+      link.newequip(i_buffStealNPC)
+      lastnew.more1=<argv(0)>
+      link.f_npcChangeDmg(<def_buffDmgNPC[<moreX>]>)
+      cont.classMessage("<cont.sex(Ukradl,Ukradla)> jsi talent protivnika. Zvysena Sila.")
+      cont.setplayer
+    elseif (<argv(0)> == 3) // steal DEX
+      tag(changedValue,<def_buffStats[<moreX>]>)
+      cont.DEX = <cont.DEX> + <def_buffStats[<moreX>]>
+      link.newequip(i_buffStealNPC)
+      lastnew.more1=<argv(0)>
+      arg(reduce_value,(<def_buffDmgNPC[<moreX>]>*<link.DEX>)/100)
+      lastnew.tag(changedValue,<reduce_value>)
+      link.DEX = <link.DEX> - <reduce_value>
+      cont.classMessage("<cont.sex(Ukradl,Ukradla)> jsi talent protivnika. Zvysena Obratnost.")
+      cont.setplayer
+    elseif (<argv(0)> == 4)
+      cont.tag(buffDmgBonus,<def_buffDmg[<moreX>]>)
+      link.newequip(i_buffStealNPC)
+      lastnew.more1=<argv(0)>
+      link.f_npcChangeDmg(<def_buffDmgNPC[<moreX>]>)
+      cont.classMessage("<cont.sex(Ukradl,Ukradla)> jsi talent protivnika. Zvysen Utok.")
+    endif
+    MoreY=1	// po skonceni timeru se hodnoty vrati dolu
+    return 1
+  else
+    if (<eval {0 <eval 3*<silaMystika>>}> < <eval {0 <eval <silaMonstra>-<silaMystika>>}>)
+      arg(fatal,1)
+    else
+      moreX=<f_setBuffPower>
+      cont.stamina=<cont.stamina> - <moreX>*6
+      if (<cont.stamina> < 0)
+        cont.stamina = 0
+      endif
+      cont.classMessage("Nepodarilo se ti ovladnout talent cile.")
+      return 0 // pouze sem neuspel, timer pro dalsi pokus bude kratsi
+    endif
+  endif
+else
+  if (<eval {0 <eval 2*<silaMystika>>}> < <eval <silaMonstra>-<silaMystika>>)
+    arg(fatal,1)
+  else
+    moreX=<f_setBuffPower>
+    cont.stamina=<cont.stamina> - <moreX>*10
+    if (<cont.stamina> < 0)
+      cont.stamina = 0
+    endif
+    cont.classMessage("Nepodarilo se ti ovladnout talent cile.")
+    return 0 // pouze sem neuspel, timer pro dalsi pokus bude kratsi
+  endif
+endif
+if (<arg(fatal)>)	// Tady je nastaven prubeh Fatal Neuspechu
+  cont.redMessage("Pri pokusu ovladnout talent cile jsi fatalne <cont.sex(selhal,selhala)>!")
+  moreX=<f_setBuffPower>
+  cont.stamina=<cont.stamina> - 100
+  if (<cont.stamina> < 0)
+    cont.stamina = 0
+  endif
+  if (<argv(0)> == 1) // steal INT
+    tag(changedValue,<def_buffStats[<moreX>]>)
+    cont.INT = <cont.INT> - <def_buffStats[<moreX>]>
+    cont.MaxMana = <cont.MaxMana> - <def_buffStats[<moreX>]>
+    cont.classMessage("Docasne ochromena Inteligence.")
+    cont.setplayer
+  elseif (<argv(0)> == 2) // steal STR
+    tag(changedValue,<def_buffStats[<moreX>]>)
+    cont.STR = <cont.STR> - <def_buffStats[<moreX>]>
+    cont.classMessage("Docasne ochromena Sila.")
+    cont.setplayer
+  elseif (<argv(0)> == 3) // steal DEX
+    tag(changedValue,<def_buffStats[<moreX>]>)
+    cont.DEX = <cont.DEX> - <def_buffStats[<moreX>]>
+    cont.classMessage("Docasne ochromena Obratnost.")
+    cont.setplayer
+  elseif (<argv(0)> == 4)
+    cont.tag(buffDmgBonus,-<def_buffDmg[<moreX>]>)
+    cont.classMessage("Docasne ochromen Utok.")
+  endif
+  MoreY=0	// po skonceni timeru se hodnoty vrati nahoru
+  return 1
+endif
+
+
+[Function f_setBuffPower]
+arg(buffPower,1)
+while !(<link.tag(hypnotizable)>&<flag_BuffPower[<buffPower>]>)	// hledani flagu urcujiciho silu ukradnutyho buffu. hodnoty 1-10
+  arg(buffPower,#+1)
+  if (<buffPower> > 10)
+    src.redMessage("Cil nema definovanu silu boostu! Napis mail GM Yavanne se jmenem monstra a popisem teto chyby.")
+    remove
+    return 1
+  endif
+endwhile
+return<buffPower>
+
+
+[Function f_buffReturnUp]
+cont.classMessage("Ochromeni po neuspesnem kradeni talentu pominulo.")
+if (0<tag(changedValue)>)
+  if (<argv(0)> == 1)
+    cont.INT = <cont.INT> + <tag(changedValue)>
+    cont.MaxMana = <cont.MaxMana> + <tag(changedValue)>
+    if (<cont.Mana> > <cont.MaxMana>)
+      cont.Mana = <cont.MaxMana>
+    endif
+    cont.setplayer
+  elseif (<argv(0)> == 2)
+    cont.STR = <cont.STR> + <tag(changedValue)>
+    cont.setplayer
+  elseif (<argv(0)> == 3)
+    cont.DEX = <cont.DEX> + <tag(changedValue)>
+    cont.setplayer
+  endif
+elseif (<argv(0)> == 4)
+  cont.tag.remove(buffDmgBonus)
+endif
+
+[Function f_buffReturnDown]
+cont.classMessage("Ztracis ziskany talent.")
+if (0<tag(changedValue)>)
+  if (<argv(0)> == 1)
+    cont.INT = <cont.INT> - <tag(changedValue)>
+    cont.MaxMana = <cont.MaxMana> - <tag(changedValue)>
+    if (<cont.Mana> > <cont.MaxMana>)
+      cont.Mana = <cont.MaxMana>
+    endif
+    cont.setplayer
+  elseif (<argv(0)> == 2)
+    cont.STR = <cont.STR> - <tag(changedValue)>
+    cont.setplayer
+  elseif (<argv(0)> == 3)
+    cont.DEX = <cont.DEX> - <tag(changedValue)>
+    cont.setplayer
+  endif
+elseif (<argv(0)> == 4)
+  cont.tag.remove(buffDmgBonus)
+endif
+
+[Function f_buffReturnNPC]
+if (<argv(0)> == 1)
+  cont.EI = <cont.EI> + <tag(changedValue)>
+elseif (<argv(0)> == 2)
+  cont.f_npcChangeDmgStop
+elseif (<argv(0)> == 3)
+  cont.DEX = <cont.DEX> + <tag(changedValue)>
+elseif (<argv(0)> == 4)
+  cont.f_npcChangeDmgStop
+endif
+
+
+
+
+
+//////////////////////////////////////
+//     M Y S T I K  - C A T C H     //
+//         (c) just Macros          //
+//////////////////////////////////////
+
+
+[Function catch]
+if !(0<tag(ra_catch)>)
+  redMessage("Tuto schopnost neumis pouzit.")
+elseif findid(i_catchitem)
+  sysMessage("<sex(Uvolnil,Uvolnila)> jsi svou mysl i mysl nepritele.")
+  var(removecatch,1)
+  findid(i_catchitem).remove
+elseif (findid(i_memory_catchField))
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+elseif (!(profession==class_Mystik))
+  redMessage("Tuto abilitu nemuzes pouzit.")
+elseif (<flags>&statf_dead)
+  redMesasge("<sex(Mrtvy,Mrtva)> tuto abilitu nemuzes pouzit.")
+elseif !(findid(i_hypnotizer))
+  sysMessage("Musis mit u sebe kristalovou kouli.")
+elseif (tag(level)<20)
+  sysMessage("Nejsi jeste dost <sex(zkuseny,zkusena)>.")
+elseif (mana<20)
+  sysMessage("Nemas dost energie.")
+elseif (stamina<20)
+  sysMessage("Nemas dost energie.")
+else
+  newequip(i_sevreni_zamerovac)
+  lastnew.timer=25
+  mana=<mana>-10
+  stamina=<stam>-10
+endif
+
+[itemdef i_sevreni_zamerovac]
+id=i_memory
+name=zamerovac sevreni
+type=t_eq_script
+
+ON=@EQUIP
+target("Zamer monstrum, ktere chces zadrzet.")
+
+ON=@TARGON_ITEM
+src.sysMessage("Neni mozne pouzit na item!")
+remove
+RETURN 1 
+
+ON=@TARGON_GROUND
+src.sysMessage("Tady nic neni.")
+remove
+RETURN 1 
+
+ON=@TARGON_CHAR
+if (!(src.targ.srccanseelos))
+ src.sysMessage("Nevidis na cil.")
+ remove
+ return 1
+endif 
+if (src.targ.isplayer)
+ src.sysMessage("Toto nelze pouzit na hrace.")
+ remove
+ return 1
+endif
+if (<eval {0 <src.tag(ra_catch)>}> == 1)
+ src.sysMessage("Nepovedlo se.")
+ remove
+ return 1
+endif
+if (src.targ.tag(wascatched)==1)
+ src.sysMessage("Mysl monstra se vzeprela!")
+ src.damage(30)
+ remove
+ return 1
+endif
+src.newequip(i_catchitem)
+src.targ.tag(wascatched,1)
+lastnew.tag(catchedmonster,<src.targ.UID>)
+remove
+return 1
+
+[itemdef i_catchitem]
+
+id=i_memory
+name=CATCH
+type=t_eq_script
+
+on=@equip
+tag(maximum,25)
+timer=0
+
+on=@unequip
+if !(topobj.findid(i_hypno_delka)) && !(<var(removecatch)>==1)
+ topobj.sysMessage("Uz nemas silu monstrum drzet!")
+endif
+finduid(<tag(catchedmonster)>).flag_immobile=0
+topobj.flag_immobile=0
+
+on=@timer
+
+if (topobj.findid(i_hypno_delka)) || (<topobj.flags>&statf_dead)
+ remove
+endif
+
+tag(propocet,(<tag(expymonstra)>/(<topobj.tag(level)>*5))+(<tag(freezed)>*3))) //tady spocitame kolik to bude zrat many a stam
+
+if ( (<tag(propocet)> > <topobj.mana>) && !(tag(freezed)) )
+ topobj.mana=0
+endif
+
+if ( (<tag(propocet)> > <topobj.stam>) && !(tag(freezed)) )
+ topobj.stam=0
+endif
+
+if !(tag(freezed))
+ tag(freezed,1)
+ tag(expymonstra,<finduid(<tag(catchedmonster)>).tag(experience)>)
+ finduid(<tag(catchedmonster)>).flag_immobile=1
+ topobj.sysMessage("Drzis monstrum svou mysli na miste...")
+ topobj.flag_immobile=1
+ timer=1
+ return 1
+elseif (topobj.mana < 20) || (topobj.stamina < 20) || (<tag(maximum)> < <tag(freezed)>) || (<topobj.flags>&statf_dead)
+ remove
+ return 0
+else
+ topobj.mana=<topobj.mana> - <tag(propocet)>
+ topobj.stam=<topobj.stam> - (<tag(propocet)>/2)
+// topobj.say(<tag(propocet)>)
+ tag(freezed,#+1)
+ timer=1
+ return 1
+endif
+
+
+//////////////////////////////////////////////
+//   M Y S T I K  - C A T C H   F I E L D   //
+//     (c) Yavanna the Immense Power        //
+//////////////////////////////////////////////
+
+[Function catchField]
+if !(0<tag(ra_catch)>)
+  redMessage("Tuto schopnost neumis pouzit.")
+elseif (findid(i_memory_catchField))
+  findID(i_memory_catchField).remove
+elseif (findid(i_catchitem))
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+elseif (<tag(hypno_mystik)>)
+  sysMessage("Tva mysl je jiz plne zaneprazdnena.")
+elseif !(profession==class_Mystik)
+  redMessage("Tuto abilitu nemuzes pouzit.")
+elseif (<flags>&statf_dead)
+  redMesasge("<sex(Mrtvy,Mrtva)> tuto abilitu nemuzes pouzit.")
+elseif !(restest(1,i_hypnotizer))
+  redMessage("Musis mit svou kristalovou kouli!")
+elseif (<eval <safe.tag(catchField_nextds)>> > <serv.time>)
+  classMessage("Abilitu jeste nemuzes pouzit.")
+elseif (tag(level)<20)
+  sysMessage("Nejsi jeste dost <sex(zkuseny,zkusena)>.")
+elseif (mana<120) || (stamina<80)
+  sysMessage("Nemas dost energie.")
+else
+  if (isinvis)
+    reveal
+  endif
+  classMessage("Poutas na sebe monstra ve svem blizkem okoli.")
+  newequip(i_memory_catchField)
+endif
+
+[itemdef i_memory_catchField]
+name=CatchField Memory
+id=i_memory
+type=t_eq_script
+
+on=@Equip
+cont.mana=<cont.mana>-10
+cont.stamina=<cont.stam>-10
+tag(catchingEffort,3)
+if (<eval 2*<cont.tag(ra_catch)>> >= <rand(41)>) // Vyjde ppst na abilitu
+  f_catchField_capture
+  cont.f_catchField_effect
+  cont.tag(catchField_nextds,<serv.time>+36000) // na hodinu utrum
+  cont.flag_immobile=1
+else
+  cont.sysMessage("Nepovedlo se.")
+  cont.tag(catchField_nextds,<serv.time>+100)	// po neuspechu nelze 10s pouzit 
+  remove
+endif
+
+on=@Timer
+if (<cont.flags>&statf_dead)
+  remove
+elseif (cont.isinvis)
+  contreveal
+endif
+f_catchField_capture
+cont.action == 0FFFFFFFF
+cont.act=""
+if (<tag(catchingEffort)> > <cont.mana>)
+  cont.mana=0
+else
+  cont.mana=<cont.mana> - <tag(catchingEffort)>
+endif
+if (<eval <tag(catchingEffort)>/4> > <cont.stam>)
+  cont.stam=0
+else
+  cont.stam=<cont.stam> - <tag(catchingEffort)> / 4
+endif
+
+if !(<cont.stam>) || !(<cont.mana>)
+  remove
+endif
+return 1
+
+on=@UnEquip
+f_catchField_release
+cont.flag_immobile=0
+
+[Function f_catchField_capture]
+cont.newitem(i_catchFieldCollector)
+arg(collector,<lastnew>)
+collector.link=<cont>
+collector.more2=<uid>
+collector.p=<cont.p>
+collector.timer=0
+timer = 1
+
+[itemdef i_catchFieldCollector]
+name=CatchField Collector
+type=t_script
+id=i_gold
+
+on=@Timer
+sector.allchars(f_catchField_captureNPC(<link>,<more2>))
+remove 
+
+on=@UserDClick
+remove
+
+[Function f_catchField_captureNPC]
+if (<distancefrom(<argv(0)>)> < 4) && (npc)
+  if !(isevent(e_catchedInField))
+    if (<eval <safe.tag(wascatched)>+36000> < <serv.time>)
+      tag(catchPower,<tag(experience)> / 500)
+      tag(catchedBy,<argv(0)>)
+      finduid(<argv(1)>).tag(catchingEffort,<finduid(<argv(1)>).tag(catchingEffort)>+<tag(catchPower)>+2)
+      action == 0FFFFFFFF
+      act=""
+      if (findID(i_attack_guard))
+        findID(i_attack_guard).remove
+      endif
+      flag_freeze=1
+      flag_immobile=1
+      events=+e_catchedInField
+      tag(catchedBy).sysMessage("<name> je spoutan tvou mysli.")
+    endif
+  endif
+endif
+
+[Function f_catchField_release]
+cont.sysMessage("<cont.sex(Uvolnil,Uvolnila)> jsi svou mysl i mysl nepritele.")
+cont.newitem(i_catchFieldReleaser)
+arg(collector,<lastnew>)
+collector.link=<cont>
+collector.more2=<uid>
+collector.p=<cont.p>
+collector.timer=0
+
+[itemdef i_catchFieldReleaser]
+name=CatchField Releaser
+type=t_script
+id=i_gold
+
+on=@Timer
+sector.allchars(f_catchField_releaseNPC(<link>,<more2>))
+remove 
+
+on=@UserDClick
+remove
+
+[Function f_catchField_releaseNPC]
+if (npc)
+  if (<argv(0)> == <safe.tag(catchedBy)>)
+    argv(1).tag(catchingEffort,#-<tag(catchPower)>)
+    tag(wascatched,<serv.time>)
+    tag.remove(catchPower)
+    tag.remove(catchedBy)
+    events=-e_catchedInField
+    flag_immobile=0
+    flag_freeze=0
+  endif
+endif
+
+[events e_catchedInField]
+on=@aftergetswing
+f_catchField_releaseNPC(<tag(catchedBy)>,<tag(catchedBy).findID(i_memory_catchField)>)
+
+on=@afterswing
+on=@beforedoeffect
+on=@beforegeteffect
+
+[Function f_catchField_effect]
+sfx=586
+
+NewItemSafe=i_fx_sparkle
+lastnew.COLOR=0992
+lastnew.ATTR=attr_static|attr_decay 
+lastnew.TIMER=4
+lastnew.P=<P>
+
+NewItemSafe=i_fx_sparkle
+lastnew.COLOR=0995
+lastnew.ATTR=attr_static|attr_decay 
+lastnew.TIMER=4
+lastnew.P=<P>
+lastnew.MOVE(-3,-3,0,0) 
+if !(lastnew.srccanseelos)
+  lastnew.remove
+endif
+
+NewItemSafe=i_fx_sparkle
+lastnew.COLOR=0995
+lastnew.ATTR=attr_static|attr_decay 
+lastnew.TIMER=4
+lastnew.P=<P>
+lastnew.MOVE(3,-3,0,0) 
+if !(lastnew.srccanseelos)
+  lastnew.remove
+endif
+
+NewItemSafe=i_fx_sparkle
+lastnew.COLOR=0995
+lastnew.ATTR=attr_static|attr_decay 
+lastnew.TIMER=4
+lastnew.P=<P>
+lastnew.MOVE(-3,3,0,0)
+if !(lastnew.srccanseelos)
+  lastnew.remove
+endif
+
+NewItemSafe=i_fx_sparkle
+lastnew.COLOR=0995
+lastnew.ATTR=attr_static|attr_decay 
+lastnew.TIMER=4
+lastnew.P=<P>
+lastnew.MOVE(3,3,0,0) 
+if !(lastnew.srccanseelos)
+  lastnew.remove
+endif
+
+[eof]

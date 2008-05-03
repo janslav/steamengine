@@ -1,0 +1,64 @@
+[CHARDEF c_crunch_zoldak] 
+NAME=Gargamel sberatel lebek 
+ID=c_man 
+DESIRES=i_gold,t_wand,t_reagent,t_bone 
+AVERSIONS=t_TRAP,t_eerie_stuff 
+attack=65 
+ARMOR=20
+CAN=MT_WALK|mt_run
+TEVENTS=e_character
+TEVENTS=e_summoneater
+ 
+CATEGORY=Kvesty
+SUBSECTION=Sileny alchymista
+DESCRIPTION=Gargos
+
+ON=@Create 
+NPC=brain_monster
+FAME=100
+KARMA=-5000
+STR=3500
+DEX=200
+MAXSTAM=300
+INT=300
+maxstam=250
+maxhits=3500
+TACTICS=150.0
+WRESTLING=100.0
+swordsmanship=100.0
+POISONING=250.0 
+tag.experience=<eval {150.0 200.0}> 
+tag.resist_poison=100.0
+WRESTLING=120.0 
+fencing=100.0 
+tactics=100.0 
+COLOR=colors_skin 
+ITEMNEWBIE=i_bardiche
+COLOR=color_o_valorite
+ITEMNEWBIE=i_platemail_chest 
+COLOR=color_o_valorite
+ITEMNEWBIE=i_platemail_arms 
+COLOR=color_o_valorite
+ITEMNEWBIE=i_platemail_gloves 
+COLOR=color_o_valorite
+ITEMNEWBIE=i_platemail_gorget 
+COLOR=color_o_valorite
+ITEMNEWBIE=i_platemail_helm 
+COLOR=color_o_valorite
+ITEMNEWBIE=i_platemail_leggings
+color=color_o_valorite
+ITEMNEWBIE=i_boots_thigh 
+color=0982
+ITEMNEWBIE=i_platemail_leggings
+color=color_o_valorite
+ON=@NPCRestock 
+ 
+ON=@npcseenewplayer 
+DORAND 3 
+  SAY= "Ha! Prisel sis pro smrt <src.name>? Nuze ja cekam!" 
+  SAY= "HEJ <src.name>!!!Tak ukaz, co umis, srabe. Nebo jsi si <src.sex(prisel,prisla)> jen popovidat? To je smula, protoze ja te prave zabiju!" 
+  SAY= "HEJ <src.name>, Uz jsi <src.sex(mel,mela)> nekdy cepel zarazenou v brise az po ruku soupere? NE? Tak ja ti to ukazu!"
+enddo 
+attack
+
+ 

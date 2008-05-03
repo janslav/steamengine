@@ -1,0 +1,145 @@
+[function f_skillhide]
+stopscriptedskills
+skill -1
+reveal
+newitemsafe(i_hiding_timer)
+equip(lastnew)
+lastnew.link=<uid>
+lastnew.more1=1
+lastnew.timerdelay(<promilerange(<hiding>,<skill_hiding.delay>)>)
+
+[itemdef i_stealthbonus]
+ID=i_memory
+TYPE=t_eq_script
+name=stealthbonus
+
+on=@create
+timer=5
+tag(hidetime,<serv.time>+30) // probodavat az po 5 sekundach!
+
+on=@equip
+if safe src.findid(i_backstab)
+ findid(i_backstab).remove
+endif
+tag(dark,(<cont.sector.light>*10))
+cont.stealth=<eval <cont.stealth>+tag(dark)>
+return 0
+
+on=@unequip
+if (safe.tag(orig_stealth)) // podminku casem odebrat
+  cont.stealth=<tag(orig_stealth)>
+endif
+cont.stealth=<cont.stealth> - <tag(dark)>
+return 0
+
+on=@timer
+if (cont.flag_hidden==1) && !(cont.isdead)
+  if (safe.tag(tma)) // podminku casem odebrat
+    tag(dark,<tag(tma)>)
+    tag(tma,"")
+    tag(orig_stealth,"")
+  endif
+  arg(current_dark,<cont.sector.light>*10)
+  if (<tag(dark)> == <current_dark>)
+  else
+    cont.stealth=<cont.stealth>+<current_dark>-<tag(dark)>
+    tag(dark,<current_dark>)
+  endif
+  timer=5
+  return 1
+endif
+remove  
+
+[itemdef i_hiding_timer]
+ID=i_memory
+TYPE=t_eq_script
+name=hiding
+
+on=@timer
+src=<cont>
+if (more1)
+  if (src.hiding > rand(1025))
+    link.hide
+    src.classmessage(Skryti se povedlo.)
+    remove
+    return 1
+  endif
+endif
+src.redmessage(Nepovedlo se ti schovat.)
+remove
+return 1
+
+[function hide]
+events=-e_spelleffect
+spelleffect(s_invisibility,1000)
+events=+e_spelleffect
+flag_invisible=0
+flag_hidden=1
+if (findid(i_stealthbonus))
+else
+ newitemsafe(i_stealthbonus)
+ arg(hiditem,<lastnew>)
+ equip(hiditem)
+ hiditem.link=<uid>
+ hiditem.more1=1
+endif
+//resync
+
+
+//////////////////detect///////////////////
+
+
+[function f_testreveal]
+
+stopscriptedskills
+skill -1
+reveal
+if (isnonmobile)
+ sysmessage(You are frozen and cannot move.)
+ return 1 
+elseif (<src.flags>&statf_dead)
+ sysmesasge(You are dead!)
+ return 1
+elseif (tag(nextdetect)>serv.time)&&(src.isgm==0)
+ sysmessage(Jeste nelze pouzit.)
+ return 1
+endif
+tag(nextdetect,<eval serv.time+(<promilerange(<detectinghidden>,<skill_detecthidden.delay>)>)>)
+newitemsafe(i_detect_srcChanger)
+lastnew.p=<src.p>
+lastnew.z=-100
+lastnew.link=<uid>
+lastnew.timer=2//jak dlouho trva detect
+  
+ 
+
+
+[itemdef i_detect_srcChanger]
+id=i_memory
+layer=77
+type=t_src_changer
+name=detect srcChanger
+
+on=@timer
+var(detect_src,<link>)
+sector.allchars(tryreveal)
+link.sysmessage("Hledani ukonceno.")
+remove 
+return 1
+
+[function tryreveal]
+if (isgm)||(flag_invul==1)
+ return 1
+endif
+if (flag_invisible==1)||(flag_hidden==1) || ((flag_insubstantial==1) && tag(potvorathief)==1)
+//say <eval (var(detect_src).detectinghidden /5)>
+ if (distancefrom(var(detect_src)) < <eval (var(detect_src).detectinghidden /18)>)
+  sysmessage(<var(detect_src).name> se te pokousi objevit.)
+ endif
+  if ( <eval (var(detect_src).detectinghidden+(21-<eval distancefrom(var(detect_src))>))>  > <eval (hiding+{10 20})>)
+   reveal
+   var(detect_src).sysmessage(Objevil jsi <name>.)
+  endif
+endif 
+
+[eof]

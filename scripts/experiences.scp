@@ -1,0 +1,1062 @@
+[ITEMDEF i_dovedbod]
+ID=i_scroll_blank
+NAME=Dovednostni bod
+TYPE=T_SCRIPT
+VALUE=1
+WEIGHT=0.0
+CATEGORY=Noe
+SUBSECTION=SYSTEM SKILLU
+DESCRIPTION=DOVEDNOSTNI BOD
+
+ON=@Create
+attr=attr_newbie
+attr=attr_move_never
+color=0481
+
+ON=@userCLICK
+if (amount==1)
+name=Dovednostni bod
+elseif (amount<5)
+name=Dovednostni body
+else
+name=Dovednostnich bodu
+endif
+
+ON=@userDCLICK
+src.explevel
+return 1
+
+ON=@PICKUP_PACK
+attr=attr_move_never
+
+[itemdef i_srovnani_statu]
+ID=01172
+type=t_script
+name=Zarovnani statu
+
+on=@userdclick
+src.stats
+return 1
+
+[function stats]
+rarefresh
+newloot(i_crystal_<tag.class>)
+if (ismagic)
+  src.redmessage(Pro opravu statu nesmis byt pod zadnym magickym vlivem...)
+else
+  temporary_null
+  str=<tag.strlev>
+  dex=<tag.dexlev>
+  intel=<tag.intellev>
+  vit=<tag.vitlev>
+endif
+
+[DEFNAMES lvl_obtiznost]
+nextlevel	330
+
+[function f_ztratitfame]
+if (findid(i_checkstats_timer))||(tag(arena))//kdyz jsem po killu, nebo v arene, zadny expy
+ arg(losefame,0)
+else
+ arg(losefame,<eval ((tag(level)+1)*<nextlevel>)/20>)
+endif
+return <arg(losefame)>
+
+[itemdef i_checkstats_timer]
+NAME=checkstats timer
+id=i_memory
+TYPE=T_eq_SCRIPT 
+
+on=@create
+attr=attr_decay
+
+on=@timer
+if (cont)
+ cont.redmessage(Od teto chvile uz muzes smrti ztratit expy.)
+ remove
+else
+ link.f_deadcheck
+ if (link.findid(i_checkstats_timer))
+  link.findid.(i_checkstats_timer).remove
+ endif
+ link.equip(<uid>)
+ timer=300//zde se nastavi jak dlouho po smrti je clovek odolny proti sebrani expu
+endif
+return 1
+
+[function f_deadcheck]
+findlayer(32).remove
+findid(i_honorcounter).remove
+findid(i_fearcounter).remove
+f_kontrolastats
+str=<tag.strlev>
+dex=<tag.dexlev>
+intel=<tag.intellev>
+vit=<tag.vitlev>
+f_srazitskilly
+roundcombatskills
+tag.remove(armordef)
+tag.remove(magic)
+tag.remove(mi_hitsreg)
+tag.remove(mi_stamreg)
+tag.remove(mi_manareg)
+tag.remove(mi_weapflags)
+tag.remove(daemonbonus)
+tag.remove(dragonbonus)
+tag.remove(humanbonus)
+tag.remove(hitdrain)
+tag.remove(stamdrain)
+tag.remove(manadrain)
+tag.remove(paralising)
+
+//src.<finduid(0ce000000|<var.skillnumber>).name>=<?<finduid(0ce000000|<var.dupesk>).name>?>
+
+[function f_skillname]
+if (args==42)
+  return"OneHand"
+elseif (args==41)
+  return"Crushing"
+elseif (args==40)
+  return"TwoHand"
+elseif (args==49)
+  return""
+elseif (args==50)
+  return"VIT"
+elseif (args==51)
+  return"STR"
+elseif (args==52)
+  return"DEX"
+elseif (args==53)
+  return"INT"
+else
+  return"<findres(skill,args).name>"
+endif
+
+[function f_skillvalue]
+if (args==49)
+  return""
+elseif (args==50)
+  return"<VIT>"
+elseif (args==51)
+  return"<STR>"
+elseif (args==52)
+  return"<DEX>"
+elseif (args==53)
+  return"<INT>"
+else
+  return"<?<findres(skill,args).name>?>"
+endif
+
+[function f_srazitskilly]//loop funkce
+arg(skillnumber,0)
+while (arg(skillnumber)<50)
+ arg(skillname,<?findres(skill,<arg(skillnumber)>).name?>)
+ arg(skillmax,<eval (findres(profession,<profession>).<arg(skillname)>)>)
+ arg(skillmin,<eval <safe.base_<tag.class>_<arg(skillname)>>>)
+ arg(skillvalue,<eval arg(skillname)>)
+ if (arg(skillvalue)<arg(skillmin))
+  <arg(skillname)>=<arg(skillmin)>
+ endif
+ if (arg(skillvalue)>arg(skillmax))
+  //say <var.skillname>:<finduid(<profession>).<var.skillname>>
+  <arg(skillname)>=<arg(skillmax)>
+ endif
+ arg(skillnumber,#+1)
+endwhile
+
+[function explevel]
+if(<tag(hypno_mystik)>)
+ sysmessage(V tuto chvili tento prikaz nelze pouzit)
+ return 0
+endif
+if (tag(prevest))
+ raceclassdialog
+ return 1
+endif
+if !(<eval tag.level>)
+ tag(level,0)
+endif
+setplayer
+dialog d_explevel
+
+[function setplayer]
+title="(<?tag(race)?>) <?rankname?> <?titul_<tag(class)>[<titulnumber>]?>"
+if (profession==class_mystik)
+  tag(combattype,"mystik")
+else
+  tag(combattype,"nonmystik")
+endif
+f_getatack_<tag(combattype)>
+f_getspeed_<tag(combattype)>
+f_getmindpow
+f_getminddef
+f_srovnatlevel
+rarefresh
+
+[function f_levelstatbonus]
+if (tag(level)>39)
+  return 120
+elseif (tag(level)>29)
+  return <eval 100+((tag(level)-30)*2)>
+//elseif (tag(level)>19)
+//  return <eval 70+((tag(level)-20)*3)>
+elseif (tag(level)>9)
+  return <eval 40+((tag(level)-10)*3)>
+else
+  return <eval tag(level)*4>
+endif
+
+[function levstatstotal]
+return <eval tag(strlev)+tag(dexlev)+tag(intellev)+tag(vitlev)>
+
+[function ratotal]
+return <eval tag(ra_manareg)+tag(ra_hitsreg)+tag(ra_stamreg)+tag(ra_weapdodge)+tag(ra_speldodge)+tag(ra_hitsleech)+tag(ra_manaleech)+tag(ra_stamleech)+tag(ra_backstab)+tag(ra_warcry)+tag(ra_rangearrow)+tag(ra_stuntattack)+tag(ra_roundattack)+tag(ra_doubleswing)+tag(ra_woodoo)+tag(ra_archery)+tag(ra_crushing)+tag(ra_sharps)+tag(ra_twohand)+tag(ra_knockback)+tag(ra_throwing)+tag(ra_leap)+tag(ra_bleed_bolt)+tag(ra_controlnpc)+tag(ra_buffSteal)+tag(ra_catch)>
+
+[Dialog d_explevel]
+0,0
+page 0 
+resizepic 50 50 2620 400 250
+text 70 70 37 0
+text 70 90 3 1
+text 200 90 85 2
+text 70 110 3 3
+text 200 110 85 4
+text 70 130 3 5
+text 200 130 85 6
+text 70 150 3 7
+text 200 150 85 8
+text 70 170 3 9
+text 200 170 85 10
+text 70 190 3 11
+text 200 190 85 12
+text 70 210 3 13
+text 200 210 85 14
+text 70 230 3 15
+text 200 230 85 16
+button 70 260 2440 2440 1 0 1
+text 100 262 3 17
+button 240 260 2440 2440 1 0 2
+text 300 262 3 18
+
+
+[DIALOG d_explevel TEXT]
+<?tag.titul?> <?name?>
+Zkusenosti:
+<?eval <safe.tag.experience>?>/<?eval (<safe.tag.level>+1)*nextlevel?>
+Level: 
+<?eval <tag.level>?>
+Schopnost: 
+<?eval <tag(ability)>/1000?>%
+Utocne cislo: 
+<?eval <tag.UC>?>/<?eval tag.piercing?>  <?qval(<tag.atskill>==31,"(<safe.finduid(<tag.ammoid>).name>)",)?>
+Prodleva uderu:
+<?eval <tag.hitspeed>?>
+Sila mysli://<?qval (stuff ? true : false)?>
+<?eval <tag.SM>?>
+Obrana mysli:
+<?eval <tag.OM>?>
+RP Rank
+<?eval <tag.RP_Rank>?>
+Staty a skilly
+Ability
+
+[DIALOG d_explevel BUTTON]
+ON=1
+dialog d_levelbonus
+
+ON=2
+dialog d_rearability
+
+[function f_srovnatlevel]
+if !(isplayer)
+ return 0
+endif
+if !(tag(experience))
+ tag(experience,0)
+endif
+if !(tag(level))
+ tag(level,0)
+endif
+while (tag(experience)>eval((tag(level)+1)*nextlevel))
+    sfx snd_SPELL_GATE_TRAVEL
+    classmessage("Presel jsi na dalsi level!")
+    tag(level,#+1) 
+    //accmsg(Is now level <tag(level)>)
+    //arg(plusskill,<eval ((((((<tag.level>*100)/25)+5)/10)*10)+10)/10>)
+    //say plus: <eval <var.plusskill>>
+    bouncepoint(5)
+    tag(experience,#-(<tag.level>*<nextlevel>))
+endwhile
+//arg(ranknumber,(<tag.level>/5))
+f_setmainability
+
+[function rankname]
+if (tag(skillrank)>2)
+ return"Velmistr"
+elseif (tag(skillrank)>1)
+ return"Mistr"
+elseif (tag(skillrank))
+ return"Expert"
+else
+ return"Novic"
+endif
+
+[function bouncepoint]
+if (findlayer(21).findid(i_dovedbod))
+    findlayer(21).findid(i_dovedbod).amount=<findlayer(21).findid(i_dovedbod).amount>+<args>
+else
+    newitemsafe(i_dovedbod)
+    lastnew.amount=<args>
+    lastnew.cont=<findlayer(21)>
+endif
+
+[function f_setmainability]
+tag(ability,<eval ((3600-((60-statslevel)*(60-statslevel)))*264)/10>)
+
+[function nalevel]
+tag.level=0
+tag.experience=0
+consume(10000, i_dovedbod)
+arg(i,0)
+while (i<args)
+    addexp(0ffffff)
+    arg(i,#+1)
+endwhile
+
+[itemdef i_gate_exp]
+NAME=Gate of experience
+ID=i_moongate_blue
+TYPE=T_SCRIPT
+CATEGORY=Other
+SUBSECTION=gates
+DESCRIPTION=brana pro pridani exp
+on=@create
+more2=10
+morep=2000 2000
+
+on=@step
+if (src.isplayer)//npc NE !
+if (<src.tag(hypno_mystik)>)
+ src.sysmessage(Tuto gatu nemuzes pouzivat)
+ return 1
+endif
+if (<src.flags>&statf_dead)
+src.sysmessage musis byt nazivu
+return 1
+endif
+if (tag(hrac[<src>])>serv.time)
+ src.sysmessage Jeste nemuzes dostat experience.
+ else
+  tag(hrac[<src>],<eval serv.time+24*60*60*10>)
+  src.addexp(<more2>)
+endif
+src.go <morep>
+endif
+
+[itemdef i_gate_exp_lab]
+NAME=Gate
+ID=i_moongate_blue
+TYPE=T_SCRIPT
+CATEGORY=Other
+SUBSECTION=gates
+DESCRIPTION=brana pro pridani exp v labyrintu
+on=@create
+more2=500
+morep=2000 2000
+
+on=@step
+if (<src.tag(hypno_mystik)>)
+ src.sysmessage(Tuto gatu nemuzes pouzivat)
+ return 1
+endif
+if (<src.flags>&statf_dead)
+src.sysmessage musis byt nazivu
+return 1
+endif
+if (tag(hrac[<src>])>serv.time)
+ src.sysmessage Jeste nemuzes dostat experience.
+ else
+  tag(hrac[<src>],<eval serv.time+14*24*60*60*10>)
+  src.addexp(<more2>)
+endif
+src.gohome
+
+
+[DIALOG d_levelbonus]
+0,0
+argo.tag(sirka,630)
+argo.tag(radku,18)
+argo.tag(vyska,<eval ((2+argo.tag(radku))*<d_def_radek_vyska>)+(4*<d_def_skvira>)+(2*<d_def_okraj>)>)
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,<argo.tag(radku)>,29,110,50,29,110,50,29,110)
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+
+argo.dialog_zpruhledni
+
+argo.tag(from,<uid>)
+
+argo.texta(<argo.dialog_textpos(0,0)>,2301,"Zvol jakemu skillu/statu chces zvysit hodnotu.")
+
+arg(buttx,-3)
+arg(popisx,-2)
+arg(valuex,-1)
+
+arg(ypos,<argo.tag(obj_y[1])>)
+arg(index,0)
+while (index<54)
+ if !(index%argo.tag(radku))
+   arg(ypos,<argo.tag(obj_y[1])>)
+   arg(buttx,#+3)
+   arg(popisx,#+3)
+   arg(valuex,#+3)
+ endif
+ if (<?safe combskill_<findres(skill,index).name>?>)||(index>49)
+   argo.button(<argo.tag(sloupec_x[buttx])>,ypos,4005,4007,1,0,100+index) 
+ endif
+ argo.textA(<argo.tag(sloupec_x[popisx])>+<d_def_odsazeni>,ypos,2301,"<f_skillname(<index>)>")
+ argo.textA(<argo.tag(sloupec_x[valuex])>+<d_def_odsazeni>,ypos,2301,"<f_skillvalue(<index>)>")
+
+ arg(ypos,#+<d_def_radek_vyska>) 
+ arg(index,#+1) 
+endwhile
+argo.texta(<argo.dialog_textpos(2,0)>,2301,Doved. bodu: <?rescount(i_dovedbod)?>)
+argo.texta(<argo.dialog_textpos(2,6)>,2301,Stats bodu: <?eval (f_levelstatbonus+300)-levstatstotal?>)
+
+[DIALOG d_levelbonus TEXT] 
+//Doved. bodu: <?rescount i_dovedbod?>
+//Stats bodu: <?eval (f_levelstatbonus+300)-levstatstotal?>
+
+[DIALOG d_levelbonus BUTTON] 
+on=0
+explevel
+on=150
+addstatbonus(Vit,1)
+on=151
+addstatbonus(Str,2)
+on=152
+addstatbonus(Dex,3)
+on=153
+addstatbonus(Intel,4)
+
+on=@anybutton
+arg(skillname,<findres(skill,argn-100).name>)
+if (<safe combskill_<arg(skillname)>>)
+  if (ismagic)
+    src.classmessage(Jsi pod vlivem magie - nemuzes zvysovat sve dovednosti.)
+    return 0
+  endif
+  
+  roundskill(<arg(skillname)>)
+  arg(skillmax,<?<profession>.<arg(skillname)>?>)
+  //arg(skillvalue,<?<args>?>)
+  arg(skillvalue,<eval <arg(skillname)>>)
+  if (<eval arg(skillvalue)+50>>arg(skillmax))
+    src.classmessage(V tomto skillu jsi dosahl maximum.)
+  elseif (arg(skillvalue)==250)||(arg(skillvalue)==500)||(arg(skillvalue)==750)
+    src.classmessage(Na dalsi uroven v tomto skillu te musi vyucit mistr.)
+  else
+   if (rescount(i_dovedbod)<bodunaskill(<arg(skillvalue)>))
+    src.classmessage(Nemas dost bodu na zvyseni tohoto skillu.)
+   else
+   <arg(skillname)>=<eval arg(skillvalue)+50>
+   consume(<var(bodu)> i_dovedbod)
+   var(bodu,"")
+   endif
+  endif
+  DIALOG d_levelbonus
+endif
+
+[function bodunaskill]
+if (<args><500)
+var(bodu,1)
+elseif (<args><750)
+var(bodu,2)
+else
+var(bodu,3)
+endif
+return <bodu>
+
+[function addstatbonus]
+if (ismagic)
+  src.classmessage(Jsi pod vlivem magie, nemuzes zvysovat sve dovednosti.)
+  return 0
+elseif (((f_levelstatbonus+300)-levstatstotal)>0)
+ arg(statmax,<return_nth(<argv(1)>,<nastaveni_povolani_maxstats_<tag.class>>)>)
+ arg(statvalue,<?<argv(0)>?>)
+ if (arg(statmax))
+  if (arg(statvalue)>=arg(statmax))
+   src.classmessage("Dosahl jsi maximalni hodnoty.")
+   DIALOG d_levelbonus
+   return 1
+  endif
+ endif
+ <argv(0)>=<arg(statvalue)>+1
+ tag(<argv(0)>lev,<eval <tag.<argv(0)>lev>>+1)
+endif
+DIALOG d_levelbonus
+
+[Dialog d_rearability]
+50,70
+resizepic 0 0 2620 310 310
+text 20  20  37 0
+
+text 35  50  3  1
+text 200 50  85 2
+button 20 56 2104 2103 1 0 1
+text 35  70  3  3
+text 200 70  85 4
+button 20 76 2104 2103 1 0 2
+text 35  90  3  5
+text 200 90  85 6
+button 20 96 2104 2103 1 0 3
+text 35  110 3  7
+text 200 110 85 8
+button 20 116 2104 2103 1 0 4
+text 35  130 3  9
+text 200 130 85 10
+button 20 136 2104 2103 1 0 5
+text 35  150 3  11
+text 200 150 85 12
+button 20 156 2104 2103 1 0 6
+text 35  170 3  13
+text 200 170 85 14
+button 20 176 2104 2103 1 0 7
+text 35  190 3  15
+text 200 190 85 16
+button 20 196 2104 2103 1 0 8
+text 35  210 3  21//longrange
+text 200 210 85 22
+button 20 216 2104 2103 1 0 11
+text 35  230 3  41//throwing
+text 200 230 85 42
+button 20 236 2104 2103 1 0 21
+
+
+if (profession==class_thief)
+  argo.text(35,250,3,17)
+  argo.text(200,250,85,18)
+  argo.button(20,256,2104,2103,1,0,9)
+  argo.text(35,270,3,27)
+  argo.text(200,270,85,28)
+  argo.button(20,276,2104,2103,1,0,14)
+  argo.text(35,290,3,45)
+  argo.text(200,290,85,46)
+  argo.button(20,296,2104,2103,1,0,23)
+elseif (profession==class_priest)
+  argo.text(35,250,3,23)
+  argo.text(200,250,85,24)
+  argo.button(20,256,2104,2103,1,0,12)
+elseif (profession==class_mystik)
+  argo.text(35,250,3,47)
+  argo.text(200,250,85,48)
+  argo.button(20,256,2104,2103,1,0,24)
+  argo.text(35,270,3,49)
+  argo.text(200,270,85,50)
+  argo.button(20,276,2104,2103,1,0,25)
+  argo.text(35,290,3,51)
+  argo.text(200,290,85,52)
+  argo.button(20,296,2104,2103,1,0,26)
+elseif (profession==class_shaman)
+  argo.text(35,250,3,29)
+  argo.text(200,250,85,30)
+  argo.button(20,256,2104,2103,1,0,15)
+elseif (profession==class_war)
+  argo.text(35,250,3,19)
+  argo.text(200,250,85,20)
+  argo.button(20,256,2104,2103,1,0,10)
+  argo.text(35,270,3,23)
+  argo.text(200,270,85,24)
+  argo.button(20,276,2104,2103,1,0,12)
+  argo.text(35,290,3,25)
+  argo.text(200,290,85,26)
+  argo.button(20,296,2104,2103,1,0,13)
+  argo.text(35,310,3,27)
+  argo.text(200,310,85,28)
+  argo.button(20,316,2104,2103,1,0,14)
+  argo.text(35,330,3,43)
+  argo.text(200,330,85,44)
+  argo.button(20,336,2104,2103,1,0,22)
+elseif (profession==class_ranger)
+  argo.text(35,250,3,39)
+  argo.text(200,250,85,40)
+  argo.button(20,256,2104,2103,1,0,20)
+  argo.text(35,270,3,45)
+  argo.text(200,270,85,46)
+  argo.button(20,276,2104,2103,1,0,23)
+elseif (profession==class_craft)
+  argo.text(35,250,3,31)
+  argo.text(200,250,85,32)
+  argo.button(20,256,2104,2103,1,0,16)
+  argo.text(35,270,3,33)
+  argo.text(200,270,85,34)
+  argo.button(20,276,2104,2103,1,0,17)
+  argo.text(35,290,3,35)
+  argo.text(200,290,85,36)
+  argo.button(20,296,2104,2103,1,0,18)
+  argo.text(35,310,3,37)
+  argo.text(200,310,85,38)
+  argo.button(20,316,2104,2103,1,0,19)
+  argo.text(35,330,3,45)
+  argo.text(200,330,85,46)
+  argo.button(20,336,2104,2103,1,0,23)
+endif
+
+[DIALOG d_rearability TEXT]
+Vedlejsi ability: <?eval <eval tag(level)*2>-<ratotal>?> bodu
+Regenerace many
+<?eval tag(ra_manareg)?>
+Regenerace zivotu
+<?eval tag(ra_hitsreg)?>
+Regenerace staminy
+<?eval tag(ra_stamreg)?>
+Uhnuti uderu
+<?eval tag(ra_weapdodge)?>
+Absorbce kouzla
+<?eval tag(ra_speldodge)?>//10
+Vysavani zivotu
+<?eval tag(ra_hitsleech)?>
+Vysavani staminy
+<?eval tag(ra_stamleech)?>
+Vysavani many
+<?eval tag(ra_manaleech)?>
+Probodnuti ze zalohy
+<?eval tag(ra_backstab)?>
+Warcry
+<?eval tag(ra_warcry)?>
+Longrange attack
+<?eval tag(ra_rangearrow)?>
+Omracujici uder
+<?eval tag(ra_stuntattack)?>
+Roundattack
+<?eval tag(ra_roundattack)?>
+Dvojty zasah
+<?eval tag(ra_Doubleswing)?>
+Voodoo
+<?eval tag(ra_woodoo)?>
+Cesta luku
+<?eval tag(ra_archery)?>
+Cesta drtive sily
+<?eval tag(ra_crushing)?>
+Cesta mece
+<?eval tag(ra_sharps)?>
+Cesta prvni a druhe ruky 
+<?eval tag(ra_twohand)?>
+Knockback attack
+<?eval tag(ra_knockback)?>
+Hazeni
+<?eval tag(ra_throwing)?>
+Leap
+<?eval tag(ra_leap)?>
+Strelba zubatych sipek
+<?eval tag(ra_bleed_bolt)?>
+Ovladani NPC
+<?eval tag(ra_controlnpc)?>
+Ovladnuti talentu
+<?eval tag(ra_buffSteal)?>
+Uchopeni mysli
+<?eval tag(ra_catch)?>
+
+[DIALOG d_rearability BUTTON]
+on=0
+rarefresh
+on=1
+ra_add(manareg)
+on=2
+ra_add(hitsreg)
+on=3
+ra_add(stamreg)
+on=4
+ra_add(weapdodge)
+on=5
+ra_add(speldodge)
+on=6
+ra_add(hitsleech)
+on=7
+ra_add(stamleech)
+on=8
+ra_add(manaleech)
+on=9
+if (profession==class_thief)
+  ra_add(backstab)
+endif
+on=10
+if (profession==class_war)
+  ra_add(warcry)
+endif
+on=11
+ra_add(rangearrow)
+on=12
+if (profession==class_war)||(profession==class_priest)
+  ra_add(stuntattack)
+endif
+on=13
+if (profession==class_war)
+  ra_add(roundattack)
+endif
+on=14
+if (profession==class_war)||(profession==class_thief)
+ if (tag(level)>39)
+  ra_add(doubleswing)
+ endif
+endif
+on=15
+if (profession==class_shaman)
+  ra_add(woodoo)
+endif
+on=16
+if (profession==class_craft)
+  ra_add(archery)
+endif
+on=17
+if (profession==class_craft)
+  ra_add(crushing)
+endif
+on=18
+if (profession==class_craft)
+  ra_add(sharps)
+endif
+on=19
+if (profession==class_craft)
+  ra_add(twohand)
+endif
+on=20
+if (profession==class_ranger)
+  ra_add(knockback)
+endif
+on=21
+if (tag(level)>29)
+ ra_add(throwing)
+endif
+on=22
+if (profession==class_war)
+  ra_add(leap)
+endif
+on=23
+if (profession==class_ranger)||(profession==class_thief)||(profession==class_craft)
+  ra_add(bleed_bolt)
+endif
+on=24
+if (profession==class_mystik)
+  ra_add(controlnpc)
+endif
+on=25
+if (profession==class_mystik)
+  ra_add(buffSteal)
+endif
+on=26
+if (profession==class_mystik)
+  ra_add(catch)
+endif
+
+
+
+[function ra_add]
+if (ratotal >= <eval tag(level)*2>)
+ return 1
+endif
+if(<eval <tag.ra_<args>>><10)
+ tag(ra_<args>,<?eval <tag.ra_<args>>?>+1)
+elseif (<eval <tag.ra_<args>>> <20)
+ if (strmatch("<args>","manareg"))||(strmatch("<args>","hitsreg"))||(strmatch("<args>","stamreg"))||(strmatch("<args>","hitsleech"))||(strmatch("<args>","stamleech"))||(strmatch("<args>","manaleech"))||(strmatch("<args>","backstab"))||(strmatch("<args>","doubleswing"))||(strmatch("<args>","archery"))||(strmatch("<args>","crushing"))||(strmatch("<args>","sharps"))||(strmatch("<args>","twohand"))||(strmatch("<args>","speldodge"))||(strmatch("<args>","weapdodge"))||(strmatch("<args>","bleed_bolt"))||(strmatch("<args>","buffSteal"))||(strmatch("<args>","catch"))
+  tag(ra_<args>,<?eval <tag.ra_<args>>?>+1)
+ else
+  redMessage("Vic bodu do teto ability pridat nelze.")
+ endif
+elseif (strmatch("<args>","speldodge"))||(strmatch("<args>","weapdodge"))
+ if (tag(level) >60)&&(<eval <tag.ra_<args>>> <30)  
+  tag(ra_<args>,<?eval <tag.ra_<args>>?>+1)
+ else
+  redMessage("Vic bodu do teto ability pridat nelze.")
+ endif 
+else
+ redMessage("Vic bodu do teto ability pridat nelze.")
+endif
+DIALOG d_rearability 
+rarefresh
+
+[function rarefresh]
+regenrefresh
+if (manaleech_sum)
+ events=+e_manaleech
+else
+ events=-e_manaleech
+endif
+if (stamleech_sum)
+ events=+e_stamleech
+else
+ events=-e_stamleech
+endif
+if (hitsleech_sum)
+ events=+e_hitsleech
+else
+ events=-e_hitsleech
+endif
+if (tag(ra_stuntattack))
+ events=+e_stunattack
+else
+ events=-e_stunattack
+endif
+
+
+
+[function regenrefresh]
+if (manaregen_sum)||(hitsregen_sum)||(stamregen_sum)
+ if (findid(i_ra_regen))
+  if (findid(i_ra_regen).timer<0)
+   findid(i_ra_regen).timer=1
+  endif
+ else
+  newitemsafe(i_ra_regen)
+  equip(<lastnew>)
+ endif
+ freetag(ra_manareg)
+ freetag(ra_hitsreg)
+ freetag(ra_stamreg)
+ freetag(mi_manareg)
+ freetag(mi_hitsreg)
+ freetag(mi_stamreg)
+else 
+findid(i_ra_regen).remove
+endif
+
+[function manaleech_sum]
+return <eval <eval tag(ra_manaleech)/2>+tag(mi_manaleech)>
+[function stamleech_sum]
+return <eval <eval tag(ra_stamleech)/2>+tag(mi_stamleech)>
+[function hitsleech_sum]
+return <eval <eval tag(ra_hitsleech)/2>+tag(mi_hitsleech)>
+[function manaregen_sum]
+return <eval <eval tag(ra_manareg)/2>+tag(mi_manareg)>
+[function stamregen_sum]
+return <eval <eval tag(ra_stamreg)/2>+tag(mi_stamreg)>
+[function hitsregen_sum]
+return <eval <eval tag(ra_hitsreg)/2>+tag(mi_hitsreg)>
+
+[itemdef i_ra_regen]
+ID=i_memory
+TYPE=t_eq_script
+name=ra regenerace
+
+ON=@Equip
+timer 1
+morex=1//cetnost obnoveni
+
+on=@timer
+if !(cont)
+remove
+return 1
+endif
+timer=<morex>
+if (<cont.flags>&statf_dead)
+return 0
+endif
+if (cont.hits) //kdyz uz je na nule, mel by umrit, a ne regenerovat.
+	arg(regen_hits,<cont.hitsregen_sum>*<morex>)
+else
+	arg(regen_hits, 0)
+endif
+
+arg(regen_mana,<cont.manaregen_sum>*<morex>)
+arg(regen_stam,<cont.stamregen_sum>*<morex>)
+if (arg(regen_hits)==0)&&(arg(regen_mana)==0)&&(arg(regen_stam)==0)
+ remove
+ return 1
+endif
+if (<more>==10)
+ arg(datmana,<eval arg(regen_mana)-tag(zbytmana)>)
+ arg(dathits,<eval arg(regen_hits)-tag(zbythits)>)
+ arg(datstam,<eval arg(regen_stam)-tag(zbytstam)>)
+ more=0
+elseif (<more><10)&&(1<<more>)
+ arg(datmana,<eval (arg(regen_mana)-tag(zbytmana))/(11-more)>)
+ arg(dathits,<eval (arg(regen_hits)-tag(zbythits))/(11-more)>)
+ arg(datstam,<eval (arg(regen_stam)-tag(zbytstam))/(11-more)>)
+ tag(zbytmana,<eval tag(zbytmana)+arg(datmana)>)
+ tag(zbythits,<eval tag(zbythits)+arg(dathits)>)
+ tag(zbytstam,<eval tag(zbytstam)+arg(datstam)>)
+else
+ arg(datmana,<eval (arg(regen_mana))/10>)
+ arg(dathits,<eval (arg(regen_hits))/10>)
+ arg(datstam,<eval (arg(regen_stam))/10>)
+ tag(zbytmana,<arg(datmana)>)
+ tag(zbythits,<arg(dathits)>)
+ tag(zbytstam,<arg(datstam)>)
+endif
+cont.changestatpoint(hits,<arg(dathits)>)
+cont.changestatpoint(mana,<arg(datmana)>)
+cont.changestatpoint(stam,<arg(datstam)>)
+more=<more>+1
+return 1
+
+on=@userdclick
+src.sysmessage regenerace zivota:<cont.hitsregen_sum>/10 sec
+src.sysmessage regenerace staminy:<cont.stamregen_sum>/10 sec
+src.sysmessage regenerace many:<cont.manaregen_sum>/10 sec
+
+[function f_kontrolastats]
+if (ratotal > <eval tag(level)*2>)||(ratotal<0)
+  zakladabilities
+endif
+if (levstatstotal>(f_levelstatbonus+300))
+  zakladstats
+endif
+if (levstatstotal>(f_levelstatbonus+300))
+  tag(vitlev,1)
+  tag(strlev,1)
+  tag(dexlev,1)
+  tag(intellev,1)
+  str(<tag(basestr)>)
+  dex(<tag(basedex)>)
+  intel(<tag(baseintel)>)
+  vit(<tag(basevit)>)
+endif
+
+[function statslevel]
+arg(varstatslevel,<tag(level)>)
+if (arg(varstatslevel)>60)
+ arg(varstatslevel,60)
+endif
+return <arg(varstatslevel)>
+
+[function titulnumber]
+arg(lvl,<eval tag(level)>)
+if (profession!=class_craft)
+  if (<arg(lvl)> >= 200)
+    arg(statsLevel,9)
+  elseif (<arg(lvl)> >= 150)
+    arg(statsLevel,8)
+  elseif (<arg(lvl)> >= 100)
+    arg(statsLevel,7)
+  elseif (<arg(lvl)> >= 75)
+    arg(statsLevel,6)
+  elseif (<arg(lvl)> >= 50)
+    arg(statsLevel,5)
+  else
+    arg(statsLevel,<arg(lvl)>/10)
+  endif
+else
+  if (<arg(lvl)> >= 100)
+    arg(statsLevel,9)
+  elseif (<arg(lvl)> >= 85)
+    arg(statsLevel,8)
+  elseif (<arg(lvl)> >= 70)
+    arg(statsLevel,7)
+  else
+    arg(statsLevel,<arg(lvl)>/10)
+  endif
+endif
+return <eval arg(statsLevel)>
+
+[function zakladabilities]
+tag.remove(ra_manareg)
+tag.remove(ra_hitsreg)
+tag.remove(ra_stamreg)
+tag.remove(ra_weapdodge)
+tag.remove(ra_speldodge)
+tag.remove(ra_manaleech)
+tag.remove(ra_hitsleech)
+tag.remove(ra_stamleech)
+tag.remove(ra_backstab)
+tag.remove(ra_warcry)
+tag.remove(ra_rangearrow)
+tag.remove(ra_stuntattack)
+tag.remove(ra_roundattack)
+tag.remove(ra_doubleswing)
+tag.remove(ra_woodoo)
+tag.remove(ra_archery)
+tag.remove(ra_crushing)
+tag.remove(ra_sharps)
+tag.remove(ra_twohand)
+tag.remove(ra_knockback)
+tag.remove(ra_throwing)
+tag.remove(ra_leap)
+tag.remove(ra_bleed_bolt)
+tag.remove(ra_controlnpc)
+tag.remove(ra_buffSteal)
+tag.remove(ra_catch)
+
+[function vit]
+if (argvcount)
+maxhits=<argv(0)>
+endif
+maxstam=<maxhits>
+return <maxhits>
+
+[function intel]
+if (argvcount)
+int=<argv(0)>
+endif
+MAXMANA=<INT>
+return <INT>
+
+[function stren]
+if (argvcount)
+str=<argv(0)>
+endif
+maxhits=<str>
+return <str>
+
+[function dexte]
+if (argvcount)
+dex=<argv(0)>
+endif
+maxstam=<dex>
+return <dex>
+
+[function roundcombatskills]
+arg(skillnumber,0)
+while (skillnumber<50)
+ arg(skillname,<?findres(skill,<arg(skillnumber)>).name?>)
+ if (<safe combskill_<arg(skillname)>>)
+  roundskill(<arg(skillname)>)
+ endif
+ arg(skillnumber,#+1)
+endwhile
+
+[function roundskill]
+arg(skillvalue,<eval args>)
+arg(baseskill,<eval <safe.base_<tag.class>_<args>>>)
+<args>=<eval ((<arg(skillvalue)>+25)/50)*50>
+if (arg(skillvalue)<arg(baseskill))
+ <args>=<arg(baseskill)>
+endif
+
+[defnames combat_skills]
+combskill_Anatomy		1
+combskill_AnimalLore		1
+combskill_ItemID		1
+combskill_ArmsLore		1
+combskill_Parrying		1
+combskill_Begging		1
+combskill_Peacemaking		1
+combskill_Camping		1
+combskill_DetectingHidden	1
+combskill_Enticement		1
+combskill_EI			1
+combskill_Healing		1
+combskill_Forensics		1
+combskill_Herding		1
+combskill_Hiding		1
+combskill_Provocation		1
+combskill_Magery		1
+combskill_Resist		1
+combskill_Tactics		1
+combskill_Snooping		1
+combskill_Musicianship		1
+combskill_Poisoning		1
+combskill_Archery		1
+combskill_SpiritSpeak		1
+combskill_Stealing		1
+combskill_TasteID		1
+combskill_Tracking		1
+combskill_Veterinary		1
+combskill_Swordsmanship		1
+combskill_Macefighting		1
+combskill_Fencing		1
+combskill_Wrestling		1
+combskill_Meditation		1
+combskill_Stealth		1
+combskill_RemoveTrap		1
+
+[EOF]
