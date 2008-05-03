@@ -1,0 +1,938 @@
+/////////////QUEST S LOVENIM POTVOR///////////////
+
+[itemdef i_sign_gquest]
+id=i_sign_blank
+name=Vyhlaska
+type=00
+
+on=@userdclick
+if !(tag(givenexps))
+ tag(givenexps,0)
+endif
+if !(tag(givengold))
+ tag(givengold,0)
+endif
+if (src.isgm)
+ src.sysmessage("Touto vyveskou bylo vydano jiz <tag(givengold)> zlata a <tag(givenexps)> expu.")
+ src.sysmessage("Dnes se tu lovi potvora <tag(hunted)>")
+ if (tag(realmQ)==1)
+  src.sysmessage("Toto je Gondorska kvestovni vyveska.")
+ endif
+ if (tag(realmQ)==2)
+  src.sysmessage("Toto je Mordorska kvestovni vyveska.")
+ endif
+ return 1
+endif
+if (src.tag(level)<4)
+ src.sysmessage("Jsi prilis nezkuseny na lov monster. Musis jeste chvili trenovat.")
+return 1
+endif
+if (src.findid(i_qf_sign))
+ if (src.findid(i_qf_sign).tag(realmQ)==1) && (tag(realmQ)==2)
+  src.sysmessage("Co chce lovit vladce Mordoru je pro tebe nicotne.")
+  return 1
+ endif
+ if (src.findid(i_qf_sign).tag(realmQ)==2) && (tag(realmQ)==1)
+  src.sysmessage("Co chce lovit vladce Gondoru je pro tebe nicotne.")
+  return 1
+ endif
+ if (src.findid(i_qf_sign).tag(qday)!=<getDay>)
+  src.sysmessage("Tenhle lov uz skoncil.") 
+  src.findid(i_qf_sign).remove
+  return 1
+ endif
+endif
+if (!(tag(qday))) || (<tag(qday)>!=<getDay>)///tady vygenerujeme quest
+ tag(qday,<getDay>)
+ tag(hunted,"")
+ tag(hunteda,"")
+ tag(huntedb,"")
+ signnewquest
+ <tag(hlaska)>
+elseif !(src.findid(i_qf_sign)) //tady ho dame po vygenerovani cloveku
+ <tag(hlaska)>
+ src.newequip(i_qf_sign)
+ lastnew.tag(realmQ,<tag(realmQ)>)
+ lastnew.tag(qday,<tag(qday)>)
+ lastnew.tag(hunted,<tag(hunted)>)
+ lastnew.tag(huntedexperience,<tag(huntedexperience)>)
+ lastnew.tag(huntedgold,<tag(huntedgold)>)
+ lastnew.tag(qfcount,0)
+ if tag(hunteda) //alternativni loveny potvory
+   lastnew.tag(hunteda,<tag(hunteda)>)
+ endif
+ if tag(huntedb) //alternativni loveny potvory
+   lastnew.tag(huntedb,<tag(huntedb)>)
+ endif
+elseif (src.findid(i_qf_sign).tag(qfcount)>=3) // tady odmenime uspesne lovce
+ src.sysmessage("Odmena ti byla poslana do banky.")
+ say("<src.name> ulovil jsi <src.findid(i_qf_sign).tag(qfcount)> monster. Dostanes odmenu.")
+  if safe.finduid(#026600F)
+   finduid(#026600F).tag(givenexps,#+<eval ((<src.findid(i_qf_sign).tag(huntedexperience)>)*(src.findid(i_qf_sign).tag(qfcount))/2)>)
+   finduid(#026600F).tag(givengold,#+<eval ((<src.findid(i_qf_sign).tag(huntedgold)>)*(src.findid(i_qf_sign).tag(qfcount))*2)>)
+  endif
+ src.addexp((<src.findid(i_qf_sign).tag(huntedexperience)>)*(src.findid(i_qf_sign).tag(qfcount))/2)
+ src.newitem=i_cashiers_mesec
+ lastnew.more=((<src.findid(i_qf_sign).tag(huntedgold)>)*(src.findid(i_qf_sign).tag(qfcount))*2)
+ lastnew.cont=src.findlayer(29)
+ src.findid(i_qf_sign).tag(qfcount,0)
+elseif (src.findid(i_qf_sign).tag(hunted)!=tag(hunted)) //klikne na jinou vyvesku
+ src.findid(i_qf_sign).remove
+else
+ <tag(hlaska)>
+ if (src.findid(i_qf_sign).tag(qfcount)<1)
+  say("<src.name> ulovil jsi 0 monster, minimum jsou 3.")
+ else
+  say("<src.name> ulovil jsi <src.findid(i_qf_sign).tag(qfcount)> monster, minimum jsou 3.")
+ endif
+endif
+ return 1
+
+[function getquestvyveska]
+if safe.finduid(#026600F) && (isgm)
+ sysmessage("Quest-vyveskami bylo vydano <finduid(#026600F).tag(givenexps)> expu a <finduid(#026600F).tag(givengold)> gp.")
+endif
+
+[itemdef i_qf_sign]
+id=i_memory
+type=t_eq_script
+name=Quest!Nemazat!
+
+on=@create
+timer=86400
+
+on=@timer
+remove
+
+[function signnewquest]
+if ({1 100}<90)
+dorand(56)
+fq_Drapac
+fq_Krvavy_drapac
+fq_Hellcat
+fq_Phoenix
+fq_Phoenix_Poison
+fq_Vlkodaf
+fq_Gargoyle
+fq_Vampire
+fq_Vampire_Great
+fq_Harpy
+fq_Stone_harpy
+fq_Stone_Gargoyle
+fq_Efreet
+fq_Cyclop
+fq_Cyclop_king
+fq_Ogre
+fq_Titan
+fq_Titan_lord
+fq_Titan_mage
+fq_Iron_Eye
+fq_Shadow_Eye
+fq_Snow_Eye
+fq_Ice_Eye
+fq_Golem_copper
+fq_Golem_iron
+fq_Golem_silver
+fq_Golem_gold
+fq_Golem_verite
+fq_Giant_bug
+fq_Corpser
+fq_Ooze_poison
+fq_Slimak
+fq_Smarag_ooze
+fq_Lizard_king
+fq_Lizardman
+fq_Orc
+fq_Rat_Man
+fq_Cerna_vdova
+fq_Fire_spider
+fq_Black_spider
+fq_Liche
+fq_Stone_mummy
+fq_Spider_king
+fq_spider_queen
+fq_Tarantule
+fq_Spirit_copper
+fq_Spirit_silver
+fq_Spirit_gold
+fq_Spirit_verite
+fq_Spirit_valorite
+fq_wisp
+fq_deathelem
+fq_Skullhead
+fq_Zombie
+fq_Spectre
+enddo
+else
+fq_Troll
+endif
+
+[function fq_Krvavy_drapac]
+if !(tag(hunted)==c_drapac_blood)
+tag(hunted,c_drapac_blood)
+tag(huntedexperience,20)
+tag(huntedgold,80)
+tag(hlaska,fq_Krvavy_drapac)
+else
+say("Dnes se vyhlasuje lovenou stvurou premnozeny Krvavy Drapac.")
+endif
+
+[function fq_Hellcat]
+if !(tag(hunted)==c_hellcat)
+tag(hunted,c_hellcat)
+tag(huntedexperience,10)
+tag(huntedgold,40)
+tag(hlaska,fq_Hellcat)
+else
+say("Dnes je treba lovit stvuru zvanou Hellcat.")
+endif
+
+[function fq_Phoenix]
+if !(tag(hunted)==c_m_phoenix)
+tag(hunted,c_m_phoenix)
+tag(huntedexperience,30)
+tag(huntedgold,120)
+tag(hlaska,fq_Phoenix)
+else
+say("Dnes je treba lovit Phoenixe.")
+endif
+
+[function fq_Phoenix_Poison]
+if !(tag(hunted)==c_m_phoenix_poison)
+tag(hunted,c_m_phoenix_poison)
+tag(huntedexperience,40)
+tag(huntedgold,140)
+tag(hlaska,fq_Phoenix_Poison)
+else
+say("Dnes je treba lovit Poison Phoenixe.")
+endif
+
+[function fq_Vlkodaf]
+if !(tag(hunted)==c_vlkodaf)
+tag(hunted,c_vlkodaf)
+tag(huntedexperience,20)
+tag(huntedgold,80)
+tag(hlaska,fq_Vlkodaf)
+else
+say("Dnes je treba lovit premnozeneho Vlkodava.")
+endif
+
+[function fq_Gargoyle]
+if !(tag(hunted)==c_Gargoyle)
+tag(hunted,c_Gargoyle)
+tag(huntedexperience,15)
+tag(huntedgold,60)
+tag(hlaska,fq_Gargoyle)
+else
+say("Dnes je treba omezit vyskyt Gargoyl.")
+endif
+
+[function fq_Vampire]
+if !(tag(hunted)==c_vampire)
+tag(hunted,c_vampire)
+tag(huntedexperience,25)
+tag(huntedgold,65)
+tag(hlaska,fq_Vampire)
+else
+say("Dnes je treba omezit vyskyt nebezpecnych Vampiru.")
+endif
+
+[function fq_Vampire_Great]
+if !(tag(hunted)==c_vampire_great)
+tag(hunted,c_vampire_great)
+tag(huntedexperience,30)
+tag(huntedgold,70)
+tag(hlaska,fq_Vampire_Great)
+else
+say("Dnes je treba omezit vyskyt nebezpecnych Great Vampiru.")
+endif
+
+[function fq_Harpy]
+if !(tag(hunted)==c_harpy)
+tag(hunted,c_harpy)
+tag(huntedexperience,10)
+tag(huntedgold,25)
+tag(hlaska,fq_Harpy)
+else
+say("Dnes je treba omezit vyskyt straslivych Harpy.")
+endif
+
+[function fq_Stone_harpy]
+if !(tag(hunted)==c_harpy_stone)
+tag(hunted,c_harpy_stone)
+tag(huntedexperience,15)
+tag(huntedgold,35)
+tag(hlaska,fq_Stone_harpy)
+else
+say("Dnes je treba omezit vyskyt straslivych Stone Harpy.")
+endif
+
+[function fq_Efreet]
+if !(tag(hunted)==c_efreet)
+tag(hunted,c_efreet)
+tag(huntedexperience,30)
+tag(huntedgold,85)
+tag(hlaska,fq_Efreet)
+else
+say("Jdete a zbavte nas co nejvic Efreetu! Fuj Efreet!")
+endif
+
+[function fq_Cyclop]
+if !(tag(hunted)==c_cyclops)
+tag(hunted,c_cyclops)
+tag(huntedexperience,30)
+tag(huntedgold,100)
+tag(hlaska,fq_Cyclop)
+else
+say("Jdete a zbavte nas co nejvice Cyclopu! Cyclopum jsme rekli NE!")
+endif
+
+[function fq_Cyclop_king]
+if !(tag(hunted)==c_cyclops_king)
+tag(hunted,c_cyclops_king)
+tag(huntedexperience,50)
+tag(huntedgold,120)
+tag(hlaska,fq_Cyclop_king)
+else
+say("Jdete a zbavte nas co nejvice Cyclop Kingu! Jsou to zabijacke stvury!")
+endif
+
+[function fq_Ogre]
+if !(tag(hunted)==c_ogre)
+tag(hunted,c_ogre)
+tag(hunteda,c_ogre_lord)
+tag(huntedb,c_ogre_mage)
+tag(huntedexperience,30)
+tag(huntedgold,100)
+tag(hlaska,fq_Ogre)
+else
+say("Jdete a zbavte nas co nejvice jakychkoliv Obru Valecniku!")
+endif
+
+[function fq_Titan]
+if !(tag(hunted)==c_titan)
+tag(hunted,c_titan)
+tag(huntedexperience,40)
+tag(huntedgold,120)
+tag(hlaska,fq_Titan)
+else
+say("Jdete a zbavte nas co nejvice Titanu! Jsou to zabijacke stvury!")
+endif
+
+[function fq_Titan_mage]
+if !(tag(hunted)==c_titan_mage)
+tag(hunted,c_titan_mage)
+tag(huntedexperience,35)
+tag(huntedgold,125)
+tag(hlaska,fq_Titan_mage)
+else
+say("Jdete a zbavte nas co nejvice Titanu Magu! Jsou to zabijacke stvury!")
+endif
+
+[function fq_Titan_lord]
+if !(tag(hunted)==c_titan_lord)
+tag(hunted,c_titan_lord)
+tag(huntedexperience,50)
+tag(huntedgold,140)
+tag(hlaska,fq_Titan_lord)
+else
+say("Jdete a zbavte nas co nejvice Titan Lordu! Jsou to zabijacke stvury!")
+endif
+
+[function fq_Iron_Eye]
+if !(tag(hunted)==c_iron_eye)
+tag(hunted,c_iron_eye)
+tag(huntedexperience,10)
+tag(huntedgold,40)
+tag(hlaska,fq_Iron_Eye)
+else
+say("Odmenime vas kdyz dnes zabijete co nejvice Iron Eye!")
+endif
+
+[function fq_shadow_eye]
+if !(tag(hunted)==c_shadow_eye)
+tag(hunted,c_shadow_eye)
+tag(huntedexperience,20)
+tag(huntedgold,75)
+tag(hlaska,fq_shadow_eye)
+else
+say("Dnes se pokuste ulovit strasliva Shadow Eye!")
+endif
+
+[function fq_Snow_Eye]
+if !(tag(hunted)==c_Snow_Eye)
+tag(hunted,c_Snow_Eye)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_Snow_Eye)
+else
+say("Odmenime vas kdyz dnes zabijete co nejvice Snow Eye!")
+endif
+
+[function fq_Golem_copper]
+if !(tag(hunted)==c_Golem_copper)
+tag(hunted,c_Golem_copper)
+tag(huntedexperience,30)
+tag(huntedgold,100)
+tag(hlaska,fq_Golem_copper)
+else
+say("Dnes je vyhlasen lov Copper Golema!")
+endif
+
+[function fq_Golem_iron]
+if !(tag(hunted)==c_Golem_iron)
+tag(hunted,c_Golem_iron)
+tag(huntedexperience,40)
+tag(huntedgold,120)
+tag(hlaska,fq_Golem_iron)
+else
+say("Dnes je vyhlasen lov Iron Golema!")
+endif
+
+[function fq_Golem_silver]
+if !(tag(hunted)==c_Golem_silver)
+tag(hunted,c_Golem_silver)
+tag(huntedexperience,40)
+tag(huntedgold,120)
+tag(hlaska,fq_Golem_silver)
+else
+say("Dnes je vyhlasen lov Silver Golema!")
+endif
+
+[function fq_Golem_gold]
+if !(tag(hunted)==c_Golem_golden)
+tag(hunted,c_Golem_golden)
+tag(huntedexperience,40)
+tag(huntedgold,125)
+tag(hlaska,fq_Golem_gold)
+else
+say("Dnes je vyhlasen lov Gold Golema!")
+endif
+
+[function fq_Golem_verite]
+if !(tag(hunted)==c_Golem_verite)
+tag(hunted,c_Golem_verite)
+tag(huntedexperience,45)
+tag(huntedgold,150)
+tag(hlaska,fq_Golem_verite)
+else
+say("Dnes je vyhlasen lov Verite Golema!")
+endif
+
+[function fq_Giant_bug]
+if !(tag(hunted)==c_bug_giant)
+tag(hunted,c_bug_giant)
+tag(huntedexperience,30)
+tag(huntedgold,120)
+tag(hlaska,fq_Giant_bug)
+else
+say("Dnes je potreba zredukovat stav odpornych Giant bugu!")
+endif
+
+[function fq_Corpser]
+if !(tag(hunted)==c_corpser)
+tag(hunted,c_corpser)
+tag(huntedexperience,15)
+tag(huntedgold,35)
+tag(hlaska,fq_Corpser)
+else
+say("Corpseri zamoruji nas svet, zbavte nas jich co nejrychleji! Dnesek je dnem boje proti Corsperum!")
+endif
+
+
+[function fq_Ooze_poison]
+if !(tag(hunted)==c_poison_ooze)
+tag(hunted,c_poison_ooze)
+tag(huntedexperience,25)
+tag(huntedgold,55)
+tag(hlaska,fq_Ooze_poison)
+else
+say("Vyhlasuje se lov na zijici ziravinu jmenem Poison Ooze!")
+endif
+
+[function fq_Slimak]
+if !(tag(hunted)==c_slime)
+tag(hunted,c_slime)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_Slimak)
+else
+say("Vyhlasuje se lov na plivance jmenem Slime!")
+endif
+
+[function fq_Smarag_ooze]
+if !(tag(hunted)==c_Smaragd_ooze)
+tag(hunted,c_Smaragd_ooze)
+tag(huntedexperience,30)
+tag(huntedgold,75)
+tag(hlaska,fq_Smarag_ooze)
+else
+say("Vyhlasuje se lov na zijici ziravinu jmenem Smaragd Ooze!")
+endif
+
+[function fq_Lizard_king]
+if !(tag(hunted)==c_Lizard_king)
+tag(hunted,c_Lizard_king)
+tag(huntedexperience,50)
+tag(huntedgold,120)
+tag(hlaska,fq_Lizard_king)
+else
+say("Dnes zatocime s Lizard Kingy!")
+endif
+
+[function fq_Lizardman]
+if !(tag(hunted)==c_lizardman)
+tag(hunted,c_lizardman)
+tag(hunteda,c_lizardman_mace)
+tag(huntedb,c_lizardman_spear)
+tag(huntedexperience,8)
+tag(huntedgold,25)
+tag(hlaska,fq_Lizardman)
+else
+say("Dnes se lovi Lizardmani!")
+endif
+
+[function fq_Orc]
+if !(tag(hunted)==c_orc)
+tag(hunted,c_orc_king)
+tag(hunteda,c_orc)
+tag(huntedexperience,8)
+tag(huntedgold,25)
+tag(hlaska,fq_Orc)
+else
+say("Musime znicit orkskou pakaz! Zabte jich dnes co nejvice!")
+endif
+
+[function fq_Rat_Man]
+if !(tag(hunted)==c_ratman)
+tag(hunted,c_ratman)
+tag(hunteda,c_ratman_mace)
+tag(huntedexperience,8)
+tag(huntedgold,25)
+tag(hlaska,fq_Rat_Man)
+else
+say("Otravni krysaci obtezuji karavany, dnes jich pobijte co nejvic at vidi ze se dokazeme branit!")
+endif
+
+[function fq_Cerna_vdova]
+if !(tag(hunted)==c_black_vdova)
+tag(hunted,c_black_vdova)
+tag(huntedexperience,25)
+tag(huntedgold,75)
+tag(hlaska,fq_Cerna_vdova)
+else
+say("Cerne vdovy zabijeji cestovatele cestujici lesy, vyhladte je!")
+endif
+
+[function fq_Fire_spider]
+if !(tag(hunted)==c_spider_fire)
+tag(hunted,c_spider_fire)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_Fire_spider)
+else
+say("Dnes je vyhlasen lov na Ohnive pavouky!")
+endif
+
+[function fq_Black_spider]
+if !(tag(hunted)==c_spider_black)
+tag(hunted,c_spider_black)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_Black_spider)
+else
+say("Cerni pavouci zabijeji poutniky v lesech, nyni zabte vy je!")
+endif
+
+[function fq_Liche]
+if !(tag(hunted)==c_liche)
+tag(hunted,c_liche)
+tag(hunteda,c_liche_lord)
+tag(huntedb,c_liche_king)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_Liche)
+else
+say("Posledni dobou povstava cim dal vice Lichu, je treba zamezit teto hrozbe!")
+endif
+
+[function fq_Stone_mummy]
+if !(tag(hunted)==c_mummy_stone)
+tag(hunted,c_mummy_stone)
+tag(huntedexperience,35)
+tag(huntedgold,100)
+tag(hlaska,fq_Stone_mummy)
+else
+say("Dnes je vyhlasen lov na Stone Mummy!")
+endif
+
+[function fq_Spider_king]
+if !(tag(hunted)==c_spider_king)
+tag(hunted,c_spider_king)
+tag(huntedexperience,25)
+tag(huntedgold,75)
+tag(hlaska,fq_Spider_king)
+else
+say("Dnes je lovnou stvurou Spider king!")
+endif
+
+[function fq_Spider_queen]
+if !(tag(hunted)==c_spider_queen)
+tag(hunted,c_spider_queen)
+tag(huntedexperience,25)
+tag(huntedgold,75)
+tag(hlaska,fq_Spider_queen)
+else
+say("Dnes je lovnou stvurou Spider queen!")
+endif
+
+[function fq_Tarantule]
+if !(tag(hunted)==c_Tarantule)
+tag(hunted,c_Tarantule)
+tag(huntedexperience,40)
+tag(huntedgold,120)
+tag(hlaska,fq_Tarantule)
+else
+say("Premnozily se Tarantule, znicte jich co nejvice!")
+endif
+
+[function fq_Spirit_copper]
+if !(tag(hunted)==c_Spirit_copper)
+tag(hunted,c_Spirit_copper)
+tag(huntedexperience,40)
+tag(huntedgold,120)
+tag(hlaska,fq_Spirit_copper)
+else
+say("Dnes je vyhlasen lov na Copper Spirity!")
+endif
+
+[function fq_Spirit_iron]
+if !(tag(hunted)==c_Spirit_iron)
+tag(hunted,c_Spirit_iron)
+tag(huntedexperience,40)
+tag(huntedgold,125)
+tag(hlaska,fq_Spirit_iron)
+else
+say("Dnes je vyhlasen lov na Iron Spirity!")
+endif
+
+[function fq_Spirit_silver]
+if !(tag(hunted)==c_Spirit_silver)
+tag(hunted,c_Spirit_silver)
+tag(huntedexperience,40)
+tag(huntedgold,140)
+tag(hlaska,fq_Spirit_silver)
+else
+say("Dnes je vyhlasen lov na Silver Spirity")
+endif
+
+[function fq_Spirit_gold]
+if !(tag(hunted)==c_Spirit_gold)
+tag(hunted,c_Spirit_gold)
+tag(huntedexperience,40)
+tag(huntedgold,150)
+tag(hlaska,fq_Spirit_gold)
+else
+say("Dnes je vyhlasen lov na Golden Spirity")
+endif
+
+[function fq_Spirit_verite]
+if !(tag(hunted)==c_Spirit_verite)
+tag(hunted,c_Spirit_verite)
+tag(huntedexperience,45)
+tag(huntedgold,155)
+tag(hlaska,fq_Spirit_verite)
+else
+say("Dnes je vyhlasen lov na Verite Spirity!")
+endif
+
+[function fq_Spirit_valorite]
+if !(tag(hunted)==c_Spirit_valorite)
+tag(hunted,c_Spirit_valorite)
+tag(huntedexperience,50)
+tag(huntedgold,160)
+tag(hlaska,fq_Spirit_valorite)
+else
+say("Dnes je vyhlasen lov na Valorite Spirity!")
+endif
+
+[function fq_wisp]
+if !(tag(hunted)==c_wisp)
+tag(hunted,c_wisp)
+tag(huntedexperience,15)
+tag(huntedgold,25)
+tag(hlaska,fq_wisp)
+else
+say("Lovnou Stvurou je dnes Wisp!")
+endif
+
+[function fq_deathelem]
+if !(tag(hunted)==c_elem_death)
+tag(hunted,c_elem_death)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_deathelem)
+else
+say("Znicte dnes co nejvice zkazonosnych Elementalu Smrti")
+endif
+
+[function fq_Skullhead]
+if !(tag(hunted)==c_skull_head)
+tag(hunted,c_skull_head)
+tag(hunteda,c_skull_head_mage)
+tag(huntedexperience,5)
+tag(huntedgold,20)
+tag(hlaska,fq_Skullhead)
+else
+say("Pobijte co nejvice nenavidenych Skullheadu!")
+endif
+
+[function fq_Zombie]
+if !(tag(hunted)==c_Zombie)
+tag(hunted,c_Zombie)
+tag(huntedexperience,4)
+tag(huntedgold,20)
+tag(hlaska,fq_Zombie)
+else
+say("Povstava prilis mnoho zombii, znicte jich dnes co nejvice hrdinni lovci!")
+endif
+
+[function fq_spectre]
+if !(tag(hunted)==c_spectre)
+tag(hunted,c_spectre)
+tag(huntedexperience,4)
+tag(huntedgold,20)
+tag(hlaska,fq_spectre)
+else
+say("Odmenime vas kdyz dnes zabijete co nejvice Specter!")
+endif
+
+[function fq_troll]
+if !(tag(hunted)==c_troll)
+tag(hunted,c_troll)
+tag(hunteda,c_troll_mace)
+tag(huntedb,c_troll_axe)
+tag(huntedexperience,8)
+tag(huntedgold,35)
+tag(hlaska,fq_troll)
+else
+say("Lovte dnes Trolly!")
+endif
+
+[function fq_ettin]
+if !(tag(hunted)==c_ettin)
+tag(hunted,c_ettin)
+tag(hunteda,c_ettin_axe)
+tag(huntedb,c_ettin_lord)
+tag(huntedexperience,12)
+tag(huntedgold,50)
+tag(hlaska,fq_ettin)
+else
+say("Pobijte dnes co nejvice Ettinu!")
+endif
+
+[itemdef i_gemblersky_kostky]
+id=i_dice_cup
+type=00
+name=Hraci Kostky
+
+on=@create
+attr=010
+
+on=@userdclick
+if (tag(hrajede)==1)
+ src.sysmessage("Uz se hraje!")
+return 1
+endif
+if (safe.finduid(<tag(spawnnpchrace)>)) && (safe.finduid(<safe.finduid(<tag(spawnnpchrace)>).tag(lastspawned)>))
+ tag(npchrac,<eval (finduid(<tag(spawnnpchrace)>).tag(lastspawned))>)
+endif
+if !(safe.finduid(<tag(npchrac)>))
+ src.sysmessage("Neni s kym by sis zahral!")
+ return 1
+endif
+if (src.isgm) && !(tag(spawnnpchrace))
+ tag(vyhrano,00)
+ src.newequip(i_zamerovatko_npchrac)
+ lastnew.tag(uidkostek,<UID>)
+endif
+if (<finduid(<tag(npchrac)>).hits> < <finduid(<tag(npchrac)>).maxhits>)
+ src.sysmessage("Zraneny s tebou hrat nebude!")
+endif
+if (tag(vyhrano)>10000000)
+ src.sysmessage("Uz jste ho chudaka ozebracili!")
+ return 1
+endif
+if src.findid(i_velka_sazka)
+ if (<src.findid(i_velka_sazka).tag(vsazeno)>>100000)
+   src.sysmessage("Nejvyssi sazka je 100 000 gp")
+   return 1
+ endif  
+ tag(vsazeno,<src.findid(i_velka_sazka).tag(vsazeno)>)
+else
+ tag(vsazeno,1000)
+endif
+if !(tag(hrajem))
+ src.sysmessage("Dalsim poklikanim zahajis hru!")
+ src.sysmessage("Sazka bude <tag(vsazeno)> gp.")
+ src.sysmessage("Vetsi sazku urcis prikazem .sazka=vyse_sazky_v_gp")
+ tag(hrajem,1)
+ timer=10
+ return 1
+endif
+if (tag(hrajem)==1)
+ arg(spusthru,1)
+endif
+if safe.finduid(<tag(npchrac)>)
+ if (arg(spusthru)==1)
+ arg(spusthru,"")
+  if (src.pay(<tag(vsazeno)>))
+   if (src.findid(i_velka_sazka))
+    src.findid(i_velka_sazka).remove
+    src.sysmessage("Sazka je v banku!!!!")
+   endif
+   say("<src.name> sazi <tag(vsazeno)> gp.")
+   tag(hrajede,1)
+   src.sysmessage("Hazis kostkami!!!")
+   tag(hod1,<eval {1 6}>)
+   tag(hod2,<eval {1 6}>)
+   say("<src.name> <src.sex hodil,hodila> <tag(hod1)> , <tag(hod2)>")
+   src.sysmessage("Hodil jsi v souctu <eval (<tag(hod1)>+<tag(hod2)>)>.")
+   timer=3
+   tag(hrajem,0)
+   tag(hrac,<src.uid>)
+    if (<eval (<tag(hod1)>+<tag(hod2)>)>) > 8
+     finduid(<tag(npchrac)>).say("Pekny hod.. ted ja.")
+    else
+     finduid(<tag(npchrac)>).say("Hmm tak ted ja.")
+    endif
+  endif
+ else
+ src.sysmessage("Jeste na tebe neprisla rada!")
+ endif
+else
+src.sysmessage("Nemas proti komu hrat.")
+endif
+return 1
+
+on=@timer
+if (tag(hrajem))
+ tag(hrajem,0)
+ return 1
+endif
+if safe.finduid(<tag(npchrac)>)
+ finduid(<tag(npchrac)>).emote("rolling.")
+ tag(npchod1,<eval {1 6}>)
+ tag(npchod2,<eval {1 6}>) 
+ tag(npccelkem,<eval <tag(npchod1)>+<tag(npchod2)>>)
+ tag(hraccelkem,<eval tag(hod1)+tag(hod2)>)
+  if (<tag(npccelkem)>)<(<tag(hraccelkem)>) ///drobny podvod v ramci odlivu penez ze hry :)
+   if (tag(npchod1)<6) && rand(2)==1
+    tag(npchod1,#+1)
+   endif
+   if (tag(npchod2)<6) && rand(2)==1
+    tag(npchod2,#+1)
+   endif
+   if (tag(npchod1)<4) && rand(5)==1
+    tag(npchod1,#+2)
+   endif
+   if (tag(npchod2)<4) && rand(5)==1
+    tag(npchod2,#+2)
+   endif
+   if (tag(npchod1)<3) && rand(10)==1
+    tag(npchod1,#+3)
+   endif
+   if (tag(npchod2)<3) && rand(10)==1
+    tag(npchod1,#+3)
+   endif
+  endif
+ tag(npccelkem,<eval <tag(npchod1)>+<tag(npchod2)>>)
+ say("<finduid(<tag(npchrac)>).name> hodil <tag(npchod1)> , <tag(npchod2)>")
+ finduid(<tag(hrac)>).sysmessage("Souper hodil celkem <tag(npccelkem)>.")
+ if (<tag(npccelkem)>)<(<tag(hraccelkem)>)
+   if safe.finduid(#026600F)
+    finduid(#026600F).tag(vyhrano,#+<tag(vsazeno)*2>)
+   endif
+  tag(vyhrano,#+<tag(vsazeno)*2>)
+  finduid(<tag(hrac)>).say("<finduid(<tag(hrac)>).sex VYHRAL JSEM!,VYHRALA JSEM!>")
+  finduid(<tag(hrac)>).newitem=i_cashiers_mesec
+  lastnew.more=(<tag(vsazeno)>*2)
+  lastnew.cont=finduid(<tag(hrac)>).findlayer(21)
+ elseif (<tag(npccelkem)>)==(<tag(hraccelkem)>)
+  finduid(<tag(hrac)>).say("Je to plichta!")  
+  finduid(<tag(npchrac)>).say("Je to plichta!")
+  finduid(<tag(hrac)>).newitem=i_cashiers_mesec
+  lastnew.more=(<tag(vsazeno)>)
+  lastnew.cont=finduid(<tag(hrac)>).findlayer(21)
+  finduid(<tag(hrac)>).sysmessage("Dostavas zpet co sis vsadil.")
+ else
+  finduid(<tag(npchrac)>).say("VYHRAL JSEM!")
+  if safe.finduid(#026600F)
+   finduid(#026600F).tag(prohrano,#+<tag(vsazeno)*2>)
+  endif
+ endif
+endif
+tag(hrajede,"")
+return 1
+
+[function sazka]
+if (<argv(0)> > 0) && (<argv(0)> < 100000) && !(findid(i_velka_sazka))
+ newequip(i_velka_sazka)
+ lastnew.tag(vsazeno,<argv(0)>)
+ sysmessage("Pripravil sis sazku ve vysi <argv(0)> gp.")
+elseif (<argv(0)> > 0) && (findid(i_velka_sazka)) && (<argv(0)> < 100000)
+ findid(i_velka_sazka).tag(vsazeno,<argv(0)>)
+ sysmessage("Pripravil sis sazku ve vysi <argv(0)> gp.")
+else
+ sysmessage("Tuto sazku nelze prijmout!")
+endif
+
+[itemdef i_velka_sazka]
+id=i_memory
+name=sazka
+type=t_eq_script
+
+on=@create
+timer=25
+
+on=@timer
+remove
+return 0
+
+[function kostkygold]
+if (isgm)
+ if safe.finduid(#026600F)
+  sysmessage("Hraci prozatim vyhrali <finduid(#026600F).tag(vyhrano)> zlata a prohrali <finduid(#026600F).tag(prohrano)> zlata. Celkove prinesli do ekonomiky <eval (<finduid(#026600F).tag(vyhrano)>-<finduid(#026600F).tag(prohrano)>)> zlata.")
+ endif
+endif
+
+[itemdef i_zamerovatko_npchrac]
+id=i_memory
+name=zamerovatko npchrac
+type=t_eq_script
+
+on=@create
+timer=15
+
+on=@equip
+src.sysmessage("Zamer spawn npc gemblera!")
+src.sysmessage("Musi bejt blizko tech kostek jinak to nebude loggicky a musi mit tag lastspawned!!!")
+target
+
+ON=@TARGON_ITEM
+if (src.targ.tag(lastspawned))
+ finduid(<tag(uidkostek)>).tag(spawnnpchrace,<src.targ.UID>)
+ src.sysmessage("zameril jsi spawn npc hrace!")
+endif
+
+ON=@TARGON_GROUND
+src.sysmessage("nic tu neni")
+remove
+RETURN 1 
+
+ON=@TARGON_CHAR
+src.sysmessage("zameruj spawny!")
+remove
+RETURN 1 
+
+[eof]

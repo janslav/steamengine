@@ -1,0 +1,3172 @@
+[CHARDEF c_gurg_ath_archer]
+
+NAME=Gurg Ath
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 2
+DESCRIPTION=Archer {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Gurg-ath
+COLOR=color_npc_gurg_ath
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=150
+DEX=90
+INT=70
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+archery=80.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=35.0
+
+
+
+ITEMNEWBIE=random_male_hair
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_RINGMAIL_LEGGINGS
+ITEMNEWBIE=i_RINGMAIL_TUNIC
+ITEMNEWBIE=i_RINGMAIL_SLEEVES
+ITEMNEWBIE=i_crossbow_heavy
+COLOR=01c4
+ITEMNEWBIE=i_cape
+COLOR=06aa
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+item=i_arrow,{40 70}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_gurg_ath_thief]
+
+NAME=Gurg Ath
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 2
+DESCRIPTION=Thief {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Gurg-ath
+COLOR=color_npc_gurg_ath
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=150
+DEX=120
+INT=80
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.resist_poison=200
+
+fencing=90.0
+parrying=110.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=35.0
+ 
+ 
+ITEMNEWBIE=random_male_hair
+
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_CHAINMAIL_LEGGINGS
+ITEMNEWBIE=i_CHAINMAIL_TUNIC
+ITEMNEWBIE=i_shield_buckler
+COLOR=color_o_copper
+ITEMNEWBIE=i_kryss
+COLOR=color_o_copper
+ITEMNEWBIE=i_cape
+COLOR=06aa
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_gurg_ath_chief]
+
+NAME=Gurg Ath
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_feMALE
+attack=33
+ARMOR=40
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 2
+DESCRIPTION=Thief chief {female}
+
+ON=@Create
+NAME=#NAMES_ELF_FEMALE
+Title=The Gurg-ath
+COLOR=color_npc_gurg_ath
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=350
+DEX=100
+INT=70
+
+MAXHITS={1000 1200}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.resist_poison=200
+
+fencing=110.0
+parrying=130.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=35.0
+ 
+ 
+
+
+ITEMNEWBIE=random_female_hair
+ 
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_armor_female_plate
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+ITEMNEWBIE=i_PLATEMAIL_gloves
+ITEMNEWBIE=i_war_fork
+COLOR=color_o_copper
+ITEMNEWBIE=i_shield_round_metal
+COLOR=color_o_copper
+ITEMNEWBIE=i_cape
+COLOR=06aa
+ITEMnewbie=i_sash
+COLOR=06aa
+ITEM=i_npc_mount
+tag.mount=i_mt_ostard_forest
+tag.mountcolor=color_mount_chief
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skurut_hai_war]
+
+NAME=Skurut Hai
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_FEMALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 3
+DESCRIPTION=Warrior {female}
+
+ON=@Create
+NAME=#NAMES_ELF_FEMALE
+Title=The Skurut-Hai
+COLOR=color_npc_skurut_hai
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=200
+DEX=100
+INT=50
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.resist_poison=200
+
+fencing=100.0
+TACTICS=90.0
+parrying=90.0
+Resist={80.0 110.0}
+SpiritSpeak=25.0
+ 
+ 
+ITEMNEWBIE=random_female_hair
+COLOR=color_npc_skurut_hai
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_sword_viking
+COLOR=color_o_copper
+ITEMNEWBIE=i_armor_female_plate
+COLOR=color_o_copper
+ITEMNEWBIE=i_shield_heater
+COLOR=color_o_copper
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+COLOR=color_o_copper
+ITEMNEWBIE=i_PLATEMAIL_gloves
+COLOR=color_o_copper
+ITEMNEWBIE=i_cape
+color=color_npc_skurut_hai
+ITEMNEWBIE=i_copper_ringmail_sleeves
+ITEMnewbie=i_sash
+color=1
+ITEMNEWBIE=i_kilt
+color=color_npc_skurut_hai
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skurut_hai_berserk]
+
+NAME=Skurut Hai
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 3
+DESCRIPTION=Berserk {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Skurut-Hai
+COLOR=color_npc_skurut_hai
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=200
+DEX=90
+INT=50
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+swordsmanship=80.0
+TACTICS=90.0
+Resist={80.0 110.0}
+Spiritspeak=40.0
+ 
+ 
+
+ITEMNEWBIE=random_male_hair
+COLOR=color_npc_skurut_hai
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_spear_short
+COLOR=color_o_copper
+ITEMNEWBIE=i_ringmail_leggings
+COLOR=color_o_copper
+ITEMNEWBIE=i_CHAINMAIL_TUNIC
+COLOR=color_o_copper
+ITEMnewbie=i_sash
+color=1
+ITEMNEWBIE=i_cape
+color=color_npc_skurut_hai
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skurut_hai_chief]
+
+NAME=Skurut Hai
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=40
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 3
+DESCRIPTION=Berserk chief {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Skurut-Hai
+COLOR=color_npc_skurut_hai
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=330
+DEX=100
+INT=50
+
+MAXHITS={1000 1200}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+swordsmanship=120.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=40.0
+ 
+ 
+
+ITEMNEWBIE=random_male_hair
+COLOR=color_npc_skurut_hai
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE={i_bardiche 1 i_axe_battle_large 1  i_halberd 1}
+COLOR=color_o_iron
+ITEMNEWBIE=i_PLATEMAIL_chest
+COLOR=color_o_copper
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+COLOR=color_o_copper
+ITEMNEWBIE=i_platemail_gorget
+COLOR=color_o_copper
+ITEMNEWBIE=i_PLATEMAIL_ARMS
+COLOR=color_o_copper
+ITEMNEWBIE=i_PLATEMAIL_gloves
+COLOR=color_o_copper
+ITEMnewbie=i_sash
+color=1
+ITEMNEWBIE=i_cape
+color=color_npc_skurut_hai
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_saur_hat_archer]
+
+NAME= Saur Hat
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=25
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 4
+DESCRIPTION=Archer {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Saur-hat
+COLOR=color_npc_saur_hat
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=140
+DEX=100
+INT=80
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+archery=90.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=35.0
+ 
+ 
+
+ITEMNEWBIE=i_hair_long
+COLOR=color_o_copper
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_bow
+COLOR=color_l_verite
+ITEMNEWBIE=i_RINGMAIL_LEGGINGS
+COLOR=color_o_iron
+ITEMNEWBIE=i_CHAINMAIL_TUNIC
+COLOR=color_o_iron
+ITEMnewbie=i_sash
+COLOR=022a
+ITEMNEWBIE=i_cape
+COLOR=022a
+
+
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+item=i_arrow,{40 70}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_saur_hat_thief]
+
+NAME= Saur Hat
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 4
+DESCRIPTION=Thief {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Saur-hat
+COLOR=color_npc_saur_hat
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=140
+DEX=120
+INT=80
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+fencing=110.0
+parrying=110.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=45.0
+ 
+ 
+ITEMNEWBIE=i_hair_long
+COLOR=color_o_copper
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_scimitar
+COLOR=color_o_verite
+ITEMNEWBIE=i_CHAINMAIL_LEGGINGS
+COLOR=color_o_iron
+ITEMNEWBIE=i_CHAINMAIL_TUNIC
+COLOR=color_o_iron
+ITEMNEWBIE=i_SHIELD_round_metal
+COLOR=color_o_iron
+ITEMNEWBIE=i_cape
+COLOR=022a
+ITEMnewbie=i_sash
+COLOR=022a
+
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_saur_hat_war]
+
+NAME= Saur Hat
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_FEMALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 4
+DESCRIPTION=Warrior {female}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Saur-hat
+COLOR=color_npc_saur_hat
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=160
+DEX=100
+INT=80
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+macefighting=100.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=35.0
+ 
+ 
+
+ITEMNEWBIE=i_hair_long
+COLOR=color_o_copper
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_sword_long
+COLOR=color_o_verite
+ITEMNEWBIE=i_ringmail_tunic
+COLOR=color_o_iron
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+COLOR=color_o_iron
+ITEMNEWBIE=i_PLATEMAIL_gloves
+COLOR=color_o_iron
+ITEMNEWBIE=i_platemail_gorget
+COLOR=color_o_iron
+ITEMNEWBIE=i_SHIELD_heater
+COLOR=color_o_iron
+ITEMNEWBIE=i_kilt
+COLOR=022a
+ITEMNEWBIE=i_cape
+COLOR=022a
+ITEMnewbie=i_sash
+COLOR=022a
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_saur_hat_chief]
+
+NAME= Saur Hat
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=40
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 4
+DESCRIPTION=Archer chief {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Saur-hat Chief
+COLOR=color_npc_saur_hat
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=300
+DEX=120
+INT=150
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+wrestling=75.0
+Resist={80.0 110.0}
+TACTICS=90.0
+magery={80.0 100.0}
+EI=70.0
+SpiritSpeak=40.0
+
+ITEMNEWBIE=i_hair_long
+COLOR=color_o_copper
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_staff_gnarled
+COLOR=color_l_verite
+ITEMNEWBIE=i_robe
+COLOR=022a
+ITEMNEWBIE=i_cape
+COLOR=022a
+ITEMnewbie=i_sash
+COLOR=022a
+ITEM=i_npc_mount
+tag.mount=i_mt_ostard_forest
+tag.mountcolor=color_mount_chief
+
+ON=@NPCRestock
+ITEM=loot_human
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_nurn_man_war]
+
+NAME=Nurn Man
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=33
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 5
+DESCRIPTION=Warrior {male}
+
+ON=@Create
+NAME=#NAMES_ELF_FEMALE
+Title=The Nurn-man
+COLOR=color_npc_nurn_man
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=190
+DEX=100
+INT=100
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+fencing=85.0
+TACTICS=90.0
+parrying=85.0
+SpiritSpeak=35.0
+ 
+ITEMNEWBIE=random_male_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_axe_battle
+COLOR=color_o_obsidian
+ITEMNEWBIE=i_PLATEMAIL_CHEST
+COLOR=05e0
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+COLOR=05e0
+ITEMNEWBIE=i_PLATEMAIL_gloves
+COLOR=05e0
+ITEMNEWBIE=i_platemail_gorget
+COLOR=05e0
+ITEMNEWBIE=i_SHIELD_round_metal
+COLOR=05e0
+ITEMNEWBIE=i_cape
+COLOR=072a
+
+ON=@NPCRestock
+ITEM=loot_human
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_nurn_man_archer]
+
+NAME=Nurn Man
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_feMALE
+attack=25
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 5
+DESCRIPTION=Archer {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Nurn-man
+COLOR=color_npc_nurn_man
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=170
+DEX=100
+INT=100
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+archery=80.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=30.0
+ 
+ 
+
+ITEMNEWBIE=random_female_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_bow
+COLOR=color_o_obsidian
+ITEMNEWBIE=i_CHAINMAIL_LEGGINGS
+COLOR=05e0
+ITEMNEWBIE=i_CHAINMAIL_TUNIC
+COLOR=05e0
+ITEMNEWBIE=i_cape
+COLOR=072a
+
+
+ON=@NPCRestock
+item=i_arrow,{40 70}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_nurn_man_mage]
+
+NAME=Nurn Man
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=20
+ARMOR=25
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 5
+DESCRIPTION=Mage {male}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Nurn-man
+COLOR=color_npc_nurn_man
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=150
+DEX=100
+INT=150
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {25.0 35.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+wrestling=75.0
+Resist={80.0 110.0}
+TACTICS=90.0
+magery={80.0 100.0}
+EI=70.0
+SpiritSpeak=40.0
+ 
+ITEMNEWBIE=random_female_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_staff_black
+COLOR=color_o_obsidian
+ITEMNEWBIE=i_robe
+COLOR=072a
+
+ITEMNEWBIE=i_spellbook
+addspell s_harm
+addspell s_lightning
+addspell s_paralyze
+addspell s_magic_reflection
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_nurn_man_chief]
+
+NAME=Nurn Man
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=38
+ARMOR=40
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 5
+DESCRIPTION=Warrior {male}
+
+ON=@Create
+NAME=#NAMES_ELF_feMALE 
+Title=The Nurn-man chief
+COLOR=color_npc_nurn_man
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=300
+DEX=120
+INT=100
+
+MAXHITS={1200 1500}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag.resist_poison=200
+
+fencing=100.0
+TACTICS=90.0
+parrying=100.0
+Resist={80.0 110.0}
+SpiritSpeak=45.0
+ 
+ 
+ITEMNEWBIE=random_male_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_sword_viking
+color=color_o_valorite
+ITEMNEWBIE=i_platemail_chest
+COLOR=05aa
+ITEMNEWBIE=i_platemail_helm
+COLOR=05aa
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+COLOR=05aa
+ITEMNEWBIE=i_PLATEMAIL_gloves
+COLOR=05aa
+ITEMNEWBIE=i_platemail_gorget
+COLOR=05aa
+ITEMNEWBIE=i_platemail_arms
+COLOR=05aa
+ITEMNEWBIE=i_shield_heater
+COLOR=05aa
+ITEMNEWBIE=i_cape
+COLOR=072a
+ITEMNEWBIE=i_tunic
+COLOR=072a
+ITEM=i_npc_mount
+tag.mount=i_mt_ostard_forest
+tag.mountcolor=color_mount_chief
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+ITEM=i_boots_thigh
+color=color_npc_nurn_man
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_berserk_lord]
+
+NAME=Nurn Man
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=40
+ARMOR=30
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 6
+DESCRIPTION=Berserk lord {male}
+
+ON=@Create
+NAME=#NAMES_DREAD_LORD
+Title=The Berserk Lord
+COLOR=color_npc_maiar_dur
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=600
+DEX=150
+INT=0
+
+MAXHITS={1200 1500}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag.resist_poison=200
+
+swordsmanship=150.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=50.0
+ 
+ 
+
+ITEMNEWBIE=random_male_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE={i_bardiche_iron 1 i_axe_battle_large_Iron 1  i_halberd_Iron 1}
+ITEMNEWBIE=i_copper_PLATEMAIL
+color=color_mount_lord
+ITEMNEWBIE=i_copper_PLATE_helm
+color=color_mount_lord
+ITEMNEWBIE=i_copper_platemail_leggings
+color=color_mount_lord
+ITEMNEWBIE=i_copper_platemail_gorget
+color=color_mount_lord
+ITEMNEWBIE=i_copper_PLATEMAIL_ARMS
+color=color_mount_lord
+ITEMNEWBIE=i_copper_PLATEMAIL_gauntlets
+color=color_mount_lord
+ITEMnewbie=i_sash
+color=1
+ITEMnewbie=i_cape
+ITEM=i_npc_mount
+tag.mount=i_mt_ostard_forest
+tag.mountcolor=color_mount_chief
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_archer_lord]
+
+NAME=Nurn Man
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=40
+ARMOR=30
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 6
+DESCRIPTION=Archer lord {male}
+
+ON=@Create
+NAME=#NAMES_DREAD_LORD
+Title=The Archer Lord
+COLOR=color_npc_maiar_dur
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=550
+DEX=130
+INT=0
+
+MAXHITS={1200 1500}
+MAXSTAM={160 190}
+MAXMANA=0
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag.resist_poison=200
+
+archery=120.0
+TACTICS=90.0
+Resist={80.0 110.0}
+SpiritSpeak=45.0
+ 
+ 
+
+ITEMNEWBIE=random_male_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_chainmail_LEGGINGS
+color=color_mount_lord
+ITEMNEWBIE=i_chainmail_tunic
+color=color_mount_lord
+ITEMNEWBIE=i_chainmail_coif
+color=color_mount_lord
+ITEMNEWBIE=i_ringmail_sleeves
+color=color_mount_lord
+ITEMNEWBIE=i_ringmail_gloves
+color=color_mount_lord
+ITEMNEWBIE=i_bow
+ITEMnewbie=i_cape
+color=1
+ITEM=i_npc_mount
+tag.mount=i_mt_ostard_forest
+tag.mountcolor=color_mount_chief
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+item=i_arrow,{40 70}
+ITEM=i_boots_thigh
+color=color_mount_lord
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_necro_lord]
+
+NAME=Nurn Man
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_FEMALE
+attack=40
+ARMOR=30
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Druzina 6
+DESCRIPTION=Necroman lady {female}
+
+ON=@Create
+NAME=#NAMES_ELF_MALE
+Title=The Necromant Lady
+COLOR=color_npc_maiar_dur
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR=500
+DEX=150
+INT=200
+
+MAXHITS={1200 1500}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {29.0 45.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag.resist_poison=200
+
+Macefighting=90.0
+Resist={80.0 110.0}
+TACTICS=90.0
+magery=120.0
+EI=100.0
+SpiritSpeak=50.0
+ 
+ITEMNEWBIE=random_female_hair
+COLOR=colors_gray
+ITEMnewbie=i_monster_create
+
+ITEMNEWBIE=i_spellbook
+addspell s_harm
+addspell s_lightning
+addspell s_paralyze
+addspell s_magic_reflection
+
+ITEMnewbie=i_robe
+color=color_mount_lord
+ITEMNEWBIE=i_staff_gnarled
+color=color_l_verite
+ITEMnewbie=i_cape
+color=1
+ITEM=i_npc_mount
+tag.mount=i_mt_ostard_forest
+tag.mountcolor=color_mount_chief
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_velka_carodejnice]
+
+NAME=Carodejnice
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=30
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Samostatna NPC
+DESCRIPTION=Carodejnice silna {male}
+
+ON=@Create
+NAME=#NAMES_HUMANFEMALE
+Title=Zla carodejnice
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={200 250}
+DEX={50 80}
+INT={150 180}
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag.resist_poison=200
+
+RESIST={90.0 95.0}
+TACTICS={80.0 90.0}
+WRESTLING={40.0 55.0}
+MACEFIGHTING={75.0 95.0}
+MAGERY={75.0 95.0}
+SpiritSpeak=50.0
+ 
+ITEMNEWBIE=i_hair_long
+COLOR=00835
+ITEMNEWBIE=i_monster_create
+
+ITEMNEWBIE=i_dress_plain
+COLOR=0989
+ITEMNEWBIE=i_hat_wizards
+COLOR=1
+ITEMNEWBIE=i_boots_calf
+COLOR=0989
+
+ITEMNEWBIE=i_spellbook
+addspell s_harm
+addspell s_lightning
+addspell s_paralyze
+addspell s_magic_reflection
+
+ITEMNEWBIE=I_STAFF_BLACK
+COLOR=097a
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{150 300}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_warlock]
+
+NAME=Carodejnice
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=30
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Samostatna NPC
+DESCRIPTION=Carodej {male}
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Zly carodej
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={200 250}
+DEX={50 80}
+INT={120 180}
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+tag.resist_poison=200
+
+RESIST={90.0 95.0}
+TACTICS={80.0 90.0}
+WRESTLING={40.0 55.0}
+MACEFIGHTING={75.0 95.0}
+MAGERY={75.0 95.0}
+SpiritSpeak=45.0
+
+ITEMNEWBIE=i_hair_long
+COLOR=00835
+ITEMNEWBIE=i_monster_create
+
+ITEMNEWBIE=i_robe
+COLOR=1
+ITEMNEWBIE=i_hat_wizards
+COLOR=1
+ITEMNEWBIE=i_boots_calf
+COLOR=0989
+
+ITEMNEWBIE=i_spellbook
+addspell s_harm
+addspell s_lightning
+addspell s_paralyze
+addspell s_magic_reflection
+
+ITEMNEWBIE=i_staff_gnarled
+COLOR=097a
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{150 300}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_mala_carodejnice]
+
+NAME=Carodejnice
+ID=C_WOMAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=25
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Samostatna NPC
+DESCRIPTION=Carodejnice slabsi {male}
+
+ON=@Create
+NAME=#NAMES_HUMANFEMALE
+Title=Zla Carodejnice
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={150 200}
+DEX={50 80}
+INT={100 150}
+
+MAXHITS={600 1000}
+MAXSTAM={160 190}
+MAXMANA=1000
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.resist_poison=200
+
+RESIST={90.0 95.0}
+TACTICS={80.0 90.0}
+WRESTLING={40.0 55.0}
+MACEFIGHTING={75.0 95.0}
+MAGERY={65.0 75.0}
+SpiritSpeak=35.0
+
+ITEMNEWBIE=i_hair_long
+COLOR=00835
+ITEMNEWBIE=i_monster_create
+
+ITEMNEWBIE=i_shirt_fancy
+COLOR=0989
+ITEMNEWBIE=i_hat_wizards
+COLOR=1
+ITEMNEWBIE=i_boots_calf
+COLOR=0989
+ITEMNEWBIE=i_skirt_long
+COLOR=0989
+ITEMNEWBIE=i_staff_gnarled
+COLOR=097a
+
+ITEMNEWBIE=i_spellbook
+addspell s_harm
+addspell s_lightning
+addspell s_paralyze
+addspell s_magic_reflection
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{150 300}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_sileny_reznik]
+
+NAME=Tulak
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=38
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Potulna NPC
+DESCRIPTION=Sileny reznik {male}
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Sileny reznik
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={100 150}
+DEX={50 80}
+INT={20 40}
+
+MAXHITS={500 650}
+MAXSTAM={160 190}
+
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+tag.resist_poison=200
+
+Macefighting={40.0 60.0}
+Resist={80.0 110.0}
+TACTICS={85.0 95.0}
+PARRYING={55.0 78.0}
+SpiritSpeak=30.0
+
+ 
+ITEMNEWBIE=i_hair_long
+COLOR=00835
+ITEMNEWBIE=random_facial_hair
+COLOR=00835
+ITEMNEWBIE=0ec2  // Sekacek na maso
+COLOR=color_o_verite
+ITEMNEWBIE=01711 // Tight Boots
+ITEMNEWBIE=01fa1 // Tunic
+COLOR=0669
+ITEMNEWBIE=01539 // Long Pants
+
+ITEMNEWBIE=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{40 90}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_potulny_lupic]
+
+NAME=Tulak
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=38
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Potulna NPC
+DESCRIPTION=Potulny Lupic {male}
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Potulny Lupic
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={110 170}
+DEX={80 90}
+INT={20 40}
+
+MAXHITS={500 650}
+MAXSTAM={160 190}
+
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+
+
+tag.resist_poison=200
+
+Macefighting={55.0 65.0}
+Resist={80.0 110.0}
+TACTICS={85.0 95.0}
+PARRYING={55.0 78.0}
+SpiritSpeak=35.0
+
+ 
+ITEMNEWBIE=random_male_hair
+COLOR=00835
+
+
+ITEMNEWBIE=013b3 // Club
+ITEMNEWBIE=01711 // Tight Boots
+ITEMNEWBIE=i_robe
+color=color_mount_lord
+ITEMNEWBIE=01539 // Long Pants
+color=color_mount_lord
+ITEMNEWBIE=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{60 120}
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_potulny_valecnik]
+
+NAME=Tulak
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=38
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Potulna NPC
+DESCRIPTION=Potulny Valecnik {male}
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Potulny valecnik
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={180 220}
+DEX={80 90}
+INT={20 40}
+
+MAXHITS={500 650}
+MAXSTAM={160 190}
+
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+
+
+tag.resist_poison=200
+
+Macefighting={55.0 65.0}
+Resist={80.0 110.0}
+TACTICS={85.0 95.0}
+PARRYING={55.0 78.0}
+SpiritSpeak=30.0
+
+ 
+
+
+
+
+ITEMNEWBIE=i_sword_long   // LBA
+ITEMNEWBIE=01711 // Tight Boots
+ITEMNEWBIE=i_platemail_chest
+ITEMNEWBIE=i_platemail_helm
+ITEMNEWBIE=i_PLATEMAIL_LEGGINGS
+ITEMNEWBIE=i_PLATEMAIL_gloves
+ITEMNEWBIE=i_platemail_gorget
+ITEMNEWBIE=i_platemail_arms
+ITEMNEWBIE=i_shield_heater
+ITEMNEWBIE=i_cape
+color=color_mount_lord
+
+
+ITEMNEWBIE=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{80 140}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_potulny_vrah]
+
+NAME=Tulak
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=38
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Potulna NPC
+DESCRIPTION=Potulny Vrah {male}
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Potulny vrah
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={120 180}
+DEX={80 90}
+INT={20 40}
+
+MAXHITS={500 650}
+MAXSTAM={160 190}
+
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+
+
+
+tag.resist_poison=200
+
+Macefighting={85.0 95.0}
+Resist={80.0 110.0}
+TACTICS={85.0 95.0}
+PARRYING={55.0 78.0}
+SpiritSpeak=30.0
+
+ 
+ITEMNEWBIE=random_male_hair
+COLOR=00835
+ITEMNEWBIE=random_facial_hair
+COLOR=00835
+ITEMNEWBIE=0f51  // Dagger
+ITEMNEWBIE=01711 // Tight Boots
+ITEMNEWBIE=013c6 // Leather Gloves
+ITEMNEWBIE=013bf // Chainmail Tunic
+ITEMNEWBIE=013be // Chainmail Leggins
+ITEMNEWBIE=013bb // Chainmail Coif
+ITEMNEWBIE=01541 // Body Sash
+
+ITEMNEWBIE=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{80 140}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_potulny_boxer]
+
+NAME=Tulak
+ID=C_MAN
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run|MT_EQUIP|MT_MALE
+attack=20
+ARMOR=20
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TSPEECH=spk_human_prime
+ 
+
+CATEGORY=Monsters
+SUBSECTION=Zla Potulna NPC
+DESCRIPTION=Potulny Boxer {male}
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=Potulny Boxer
+COLOR=00358
+NPC=brain_Human
+KARMA=-6000
+FAME=250
+STR={200 280}
+DEX={80 90}
+INT={20 40}
+
+MAXHITS={500 650}
+MAXSTAM={160 190}
+
+
+tag.experience=<eval {15.0 19.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+
+
+
+tag.resist_poison=200
+
+WRESTLING={85.0 100.0}
+Resist={80.0 110.0}
+TACTICS={85.0 95.0}
+PARRYING={45.0 60.0}
+SpiritSpeak=45.0
+
+ 
+ITEMNEWBIE=random_male_hair
+COLOR=00835
+
+
+
+
+ITEMNEWBIE=013c6 // Leather Gloves
+ITEMNEWBIE=01541 // Body Sash
+color=0669
+ITEMNEWBIE=01539 // Long Pants
+color=0669
+ITEMNEWBIE=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_human
+item=i_gold{80 140}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_war]
+
+id=c_man
+NAME=Necromancer
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=80
+ARMOR=80
+
+moverate=3
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_necroslave
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=War male
+
+ON=@Create
+NAME=#NAMES_HUMANfeMALE
+Title=The Necromant
+Color=0400
+NPC=brain_human
+FAME={100 2000}
+KARMA=-5000
+STR=1500
+DEX=450
+INT=100
+
+MAXHITS={1200 1800}
+MAXSTAM=400
+MAXMANA=0
+
+tag.experience=<eval {100.0 110.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag(resstimer,18)
+tag.resist_poison=500
+tag.resist_summon=1000
+
+
+PARRYING={40.0 50.0}
+WRESTLING={40.0 50.0}
+resist=100.0
+SpiritSpeak=45.0
+
+
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_axe_exec
+Color=098A
+itemnewbie=i_sandals
+Color=098A
+itemnewbie=i_cape
+Color=098A
+itemnewbie=i_bone_gloves
+Color=098a
+itemnewbie=i_bone_helmet
+Color=098A
+itemnewbie=i_bone_arms
+Color=098A
+itemnewbie=i_bone_leggings
+Color=098A
+itemnewbie=i_bone_chest
+Color=098A
+
+ON=@NPCRestock
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_war_f]
+
+id=c_woman
+NAME=Necromancer
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=60
+ARMOR=40
+
+moverate=3
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_necroslave
+TEVENTS=e_summoneater
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=War female
+
+ON=@Create
+NAME=#NAMES_HUMANfeMALE
+Title=The Necromant
+Color=0421
+NPC=brain_human
+FAME=125
+KARMA=-5000
+str={500 700}
+dex={200 400}
+int={88 100}
+
+MAXHITS={500 700}
+MAXSTAM={300 400}
+MAXMANA=0
+
+tag.experience=<eval {60.0 75.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag(resstimer,18)
+tag.resist_poison=500
+tag.resist_summon=1000
+
+
+peacemaking=39.5
+tactics={94.0 96.3}
+wrestling={94.2 97.5}
+SpiritSpeak=45.0
+              
+ 
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_kryss
+Color=098A
+itemnewbie=i_copper_kite_wood_shield
+Color=098A
+itemnewbie=i_cape
+Color=0845
+itemnewbie=i_bone_gloves
+Color=098a
+itemnewbie=i_bone_helmet
+Color=098A
+itemnewbie=i_bone_arms
+Color=098A
+itemnewbie=i_boots_thigh
+Color=098A
+itemnewbie=i_IRON_FEMALE_PLATEMAIL
+Color=098A
+itemnewbie=i_armor_female_shorts
+Color=098A
+
+ON=@NPCRestock
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_archer]
+
+id=c_man
+NAME=Necromancer
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=35
+ARMOR=40
+
+moverate=3
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_necroslave
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=Archer male
+
+ON=@Create
+NAME=#NAMES_HUMANfeMALE
+Title=The Necromant
+Color=03FF
+NPC=brain_human
+FAME=190
+KARMA=-5000
+STR=1000
+DEX=170
+INT=0
+
+MAXHITS={900 1100}
+MAXSTAM=250
+MAXMANA=0
+
+tag.experience=<eval {105.0 120.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag(resstimer,18)
+tag.resist_summon=<eval {500 750}>
+tag(resist_poison,1000)
+ 
+
+ARCHERY={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+peacemaking=90.0
+provocation=90.0
+SpiritSpeak=45.0 
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_chainmail_tunic
+Color=0845
+itemnewbie=i_bow
+Color=098A
+itemnewbie=i_sash
+Color=098A
+itemnewbie=i_platemail_gorget
+Color=098A
+itemnewbie=i_COPPER_CHAINMAIL_LEGGINGS
+Color=0845
+itemnewbie=i_boots_calf
+Color=098A
+itemnewbie=i_cape
+Color=098A
+itemnewbie=i_bone_gloves
+Color=098A
+itemnewbie=i_bone_arms
+Color=098A
+itemnewbie=i_helm_orc
+Color=098A
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=i_arrow,{10 70}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_archer_f]
+
+id=c_woman
+NAME=Necromancer
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=25
+ARMOR=20
+
+moverate=3
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_necroslave
+
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=Archer female
+
+ON=@Create
+NAME=#NAMES_HUMANfeMALE
+Title=The Necromant
+Color=040e
+NPC=brain_human
+FAME=140
+KARMA=-5000
+STR=900
+DEX=130
+INT=0
+
+MAXHITS={800 1000}
+MAXSTAM=200
+MAXMANA=0
+
+tag.experience=<eval {35.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag(resstimer,18)
+tag(resist_poison,1000)
+tag.resist_summon=1000
+
+
+ARCHERY={80.0 90.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+peacemaking=90.0
+provocation=90.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_cape
+Color=0845
+itemnewbie=i_bow
+Color=098A
+itemnewbie=i_necklace_gold_beads
+Color=098A
+itemnewbie=i_bone_gloves
+Color=0845
+itemnewbie=i_armor_female_bustier
+Color=0845
+itemnewbie=i_sandals
+Color=0845
+itemnewbie=i_armor_female_skirt
+Color=0845
+itemnewbie=i_bonnet
+Color=0845
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=i_arrow,{10 70}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_mage]
+
+id=c_man
+NAME=Necromancer
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=45
+ARMOR=28
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_necroslave
+TEVENTS=e_summoneater
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=Mage male
+
+ON=@Create
+NAME=#NAMES_HUMANfeMALE
+Title=The Necromant
+Color=0414
+NPC=brain_human
+FAME=125
+KARMA=-5000
+STR=800
+DEX=200
+INT=300
+
+MAXHITS={700 900}
+MAXSTAM=200
+MAXMANA=450
+
+tag.experience=<eval {110.0 130.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag(resstimer,18)
+tag.resist_poison=<eval {500 750}>
+tag.resist_summon=1000
+ 
+
+ei=90.0
+MAGERY=120.1
+Resist=150.0
+WRESTLING=100.0
+peacemaking=100.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_tunic
+Color=098A
+itemnewbie=i_cape
+Color=098A
+itemnewbie=i_bone_arms
+Color=098A
+itemnewbie=i_bone_leggings
+Color=098A
+itemnewbie=i_bone_gloves
+Color=098A
+itemnewbie=i_mask_blue
+Color=098A
+itemnewbie=i_spellbook
+Color=098A
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_reveal
+addspell=s_clumsy
+addspell=s_fire_field
+itemnewbie=i_spellbook
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{15 25}
+ITEM=random_reagent_necro,{10 20}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_mage_f]
+
+id=c_woman
+NAME=Necromancer
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=45
+ARMOR=38
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_necroslave
+TEVENTS=e_summoneater
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=Mage female
+
+ON=@Create
+NAME=#NAMES_HUMANfeMALE
+Title=The Necromant
+Color=0418
+NPC=brain_human
+FAME=125
+KARMA=-5000
+STR=700
+DEX=200
+INT=340
+
+MAXHITS={600 800}
+MAXSTAM=200
+MAXMANA=450
+
+tag.experience=<eval {100.0 120.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag(resstimer,18)
+tag.resist_poison=<eval {500 750}>
+tag.resist_summon=1000
+ 
+
+ei=90.0
+MAGERY=89.0
+Resist=250.0
+WRESTLING=100.0
+peacemaking=100.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_necklace_gold
+Color=098A
+itemnewbie=i_cape
+Color=0845
+itemnewbie=i_armor_female_skirt
+Color=098A
+itemnewbie=i_armor_female_leather
+Color=098A
+itemnewbie=i_helm_orc
+Color=098A
+itemnewbie=i_bone_gloves
+Color=098A
+itemnewbie=i_bone_arms
+Color=098A
+itemnewbie=i_boots_calf
+Color=0845
+itemnewbie=i_spellbook
+Color=098A
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_reveal
+addspell=s_clumsy
+addspell=s_fire_field
+itemnewbie=i_staff_gnarled
+Color=0845
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{15 25}
+ITEM=random_reagent_necro,{10 20}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_beridor_necro]
+
+id=c_man
+NAME=Arghelior
+ICON=i_pet_MAN
+
+
+CAN=MT_WALK|MT_run
+attack=45
+ARMOR=28
+
+moverate=4
+
+
+
+RESOURCES=6 i_reag_bone
+FOODTYPE=
+
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_beridornecro
+TEVENTS=e_summoneater
+
+
+CATEGORY=Dungy
+SUBSECTION=Beridor
+DESCRIPTION=Hlavni nekromant
+
+ON=@Create
+NAME=Arghelior
+Title=The Necromant
+Color=040B
+NPC=brain_human
+FAME=125
+KARMA=-10000
+STR=700
+DEX=200
+INT=475
+
+MAXHITS=30000
+MAXSTAM=850
+MAXMANA=30000
+
+tag.experience=<eval {300.0 450.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[8]>
+
+
+tag.cnt=0
+tag.resist_poison=1000
+tag.resist_summon=1000
+
+
+ei=120.0
+MAGERY=120.0
+Resist=150.0
+WRESTLING=100.0
+peacemaking=100.0
+SpiritSpeak=100.0
+
+
+ITEMnewbie=i_monster_create
+itemnewbie=i_robe
+Color=0989
+itemnewbie=i_cape
+Color=098C
+itemnewbie=i_bone_gloves
+Color=098A
+itemnewbie=i_bone_helmet
+Color=098A
+itemnewbie=i_spellbook
+Color=098A
+addspell=s_harm
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_reveal
+addspell=s_clumsy
+addspell=s_fire_field
+itemnewbie=i_staff_gnarled
+Color=0845
+
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{15 25}
+ITEM=random_reagent_necro,{160 290}
+
+///////////////////////////////////////////////////////////
+[chardef 0303]
+
+defname=c_pirat
+NAME=Pirat
+ICON=i_pet_MAN
+anim=0ffc78c7f
+
+CAN=MT_WALK|MT_run
+attack=40,60
+ARMOR=40
+
+MOVERATE=3
+
+
+
+resources=i_flesh_head, i_flesh_torso, i_flesh_right_arm,i_flesh_left_arm,i_flesh_left_leg,i_flesh_right_leg, i_blood_2
+foodtype=15 t_food, t_fruit
+aversions=t_trap
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TEVENTS=e_npc_bleed
+
+
+CATEGORY=Monsters
+SUBSECTION=Pirati
+DESCRIPTION=Pirat chlapak
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=The Pirat
+
+NPC=brain_monster
+fame={2000 2999}              
+karma={-2999 -3999}
+     str={500 700}
+     dex={200 240}
+     int={88 100}
+
+     maxhits={500 700}
+     maxstam={200 240}
+     maxmana=0
+
+tag.experience=<eval {50.0 60.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.npc_bleed=70
+
+tag.resist_poison=1000
+
+
+
+     peacemaking=99.5
+     tactics={94.0 96.3}
+     wrestling={94.2 97.5}
+     SpiritSpeak=50.0
+              
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+ITEM=random_reagent_necro,{10 20}
+
+///////////////////////////////////////////////////////////
+[chardef 0305]
+
+defname=c_pirat_f
+NAME=Piratka
+ICON=i_pet_WOMAN
+anim=0ffc78c7f
+
+CAN=MT_WALK|MT_run
+attack=50,70
+ARMOR=50
+
+moverate=3
+
+
+
+resources=i_flesh_head, i_flesh_torso, i_flesh_right_arm, i_flesh_left_arm, i_flesh_left_leg, i_flesh_right_leg, i_blood_2
+foodtype=15 i_ribs_raw
+aversions=t_trap
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TEVENTS=e_npc_bleed
+
+
+CATEGORY=Monsters
+SUBSECTION=Pirati
+DESCRIPTION=Piratka
+
+ON=@Create
+NAME=#NAMES_HUMANFEMALE
+Title=The Pirat
+
+NPC=brain_monster
+     fame={100 300}
+     karma={-2000 -2999}
+     str={500 700}
+     dex={250 350}
+     int={96 189}
+
+     maxhits={500 700}
+     maxstam={250 280}
+     maxmana=0
+
+tag.experience=<eval {50.0 60.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.npc_bleed=50
+
+tag(resist_poison,1000)
+tag.resist_summon=<eval {500 750}>
+
+
+     magery={14.4 15.0}
+     tactics={87.2 96.2}
+     wrestling={85.1 88.0}
+     archery={90.0 100.0}
+     swordsmanship={70.0 90.0}
+     peacemaking=99.5
+     SpiritSpeak=50.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+ITEM=random_reagent_necro,{10 20}
+
+///////////////////////////////////////////////////////////
+[chardef 0302]
+
+defname=c_pirat_mage
+NAME=Piratka
+ICON=i_pet_WOMAN
+anim=0ffc78c7f
+
+CAN=MT_WALK|MT_run
+attack=50,70
+ARMOR=50
+
+moverate=4
+
+
+
+resources=i_flesh_head, i_flesh_torso, i_flesh_right_arm, i_flesh_left_arm, i_flesh_left_leg, i_flesh_right_leg, i_blood_2
+foodtype=15 t_food, t_fruit
+aversions=t_trap
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+ 
+
+
+CATEGORY=Monsters
+SUBSECTION=Pirati
+DESCRIPTION=Piratka (mage)
+
+ON=@Create
+NAME=#NAMES_HUMANFEMALE
+Title=The Pirat
+
+NPC=brain_monster
+     fame={100 300}
+     karma={-2000 -2999}
+     STR={500 700}
+     dex={127 145}
+     int=50
+
+     maxhits={500 700}
+     maxstam={127 145}
+     maxmana={2760 3040}
+
+tag.experience=<eval {60.0 70.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot>  
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+ 
+
+tag(resist_poison,1000)
+tag.resist_summon=<eval {500 750}>
+
+
+     resist={125.0 159.5}
+     tactics={72.1 87.7}
+     wrestling={65.1 81.7}
+     EI=52.0
+     magery={99.0 101.0}
+     peacemaking=155.2
+     SpiritSpeak=45.0
+
+     itemnewbie=i_spellbook
+
+     addspell=s_poison
+     addspell=s_curse
+     addspell=s_paralyze
+addspell=s_firebolt
+addspell=s_flamestrike
+
+ITEMnewbie=i_monster_create
+ON=@NPCRestock
+item=i_gold
+ITEM=random_reagent_necro,{10 20}
+
+///////////////////////////////////////////////////////////
+[chardef 0304]
+
+defname=c_pirat_mage_chief
+NAME=Pirat chief
+ICON=i_pet_MAN
+anim=0ffc78c7f
+
+CAN=MT_WALK|MT_run
+attack=90
+ARMOR=90
+
+moverate=4
+
+
+
+resources=i_flesh_head, i_flesh_torso, i_flesh_right_arm, i_flesh_left_arm, i_flesh_left_leg, i_flesh_right_leg, i_blood_2
+foodtype=15 t_food, t_fruit
+aversions=t_trap
+BLOODCOLOR=020
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_looter
+TEVENTS=e_summoneater_vamp
+TEVENTS=e_npc_bleed
+
+CATEGORY=Monsters
+SUBSECTION=Pirati
+DESCRIPTION=Pirat CHIEF (summon_vamp)
+
+ON=@Create
+NAME=#NAMES_HUMANMALE
+Title=The Pirat chief
+
+NPC=brain_monster
+     fame={3000 3999}
+     karma={-4999 -5999}
+     STR={4000 6000}
+     dex={248 293}
+     int=20
+
+     maxhits={5000 6000}
+     maxstam={148 453}
+     maxmana={5800 6130}
+
+tag.experience=<eval {350.0 500.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe>
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+
+tag.npc_bleed=80
+
+tag(resist_poison,1000)
+tag.resist_summon=<eval {750 950}>
+
+
+     parrying={155.0 165.0}
+     resist={190.0}
+     tactics={92.7 114.4}
+     wrestling={124.1 138.9}
+     EI=42.0
+     magery={99.0 101.0}
+     peacemaking=110.0
+     SpiritSpeak=60.0
+
+ITEMNEWBIE=i_spellbook
+addspell=s_meteor_swarm
+     addspell=s_mass_curse
+     addspell=s_greater_heal
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+
+///////////////////////////////////////////////////////////

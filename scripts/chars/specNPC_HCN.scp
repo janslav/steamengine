@@ -1,0 +1,111 @@
+[chardef c_hcn_undead_rat]
+id=0D7
+NAME=Pachnouci krysa
+CAN=MT_WALK
+attack=75
+ARMOR=45
+RESOURCES=10 t_eerie_stuff
+FOODTYPE=20 t_meat_raw
+
+BLOODCOLOR=colors_green
+TEVENTS=e_hcn_teleToTarget
+TEVENTS=e_monster
+TEVENTS=e_character
+
+ON=@Create
+NPC=brain_undead
+color=0774
+STR=600
+DEX=180
+INT=80
+maxhits={100 120}
+tag.experience=<eval {15.0 20.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag(resist_poison,<eval {100.0 120.0}>)
+PARRYING={95.0 100.0}
+TACTICS={85.0 120.0}
+WRESTLING={95.0 100.0}
+SpiritSpeak=45.0
+
+FAME=80
+KARMA=-{4000 4999}
+ITEMnewbie=i_monster_create
+ITEMnewbie=i_hcn_PlayerToTagTimer
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=loot_undead
+ITEM=random_reagent,{20 32}
+item=i_gold
+
+
+CATEGORY=Dungy
+SUBSECTION=HCN
+DESCRIPTION=Undead krysa
+
+[CHARDEF c_hcn_snake]
+id=c_snake
+NAME=Had
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_snake
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN
+
+attack=140
+ARMOR=70
+
+BLOODCOLOR=colors_gray
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_hcn_NPCPoison
+
+CATEGORY=Dungy
+SUBSECTION=HCN
+DESCRIPTION=Had malej
+
+ON=@Create
+name=Had
+color=0989
+NPC=brain_monster
+FAME=1000
+KARMA=-5000
+STR=7000
+DEX=400
+INT=450
+
+maxhits=500
+hits=500
+maxstam=200
+
+tag.experience=<eval {40.0 50.0}>
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[7]>
+
+tag.weapflag=dam_physical
+
+tag.resist_poison=1000
+tag.resist_para=<eval {800 950}>
+
+tag.jed_sila(14)
+
+Resist=100.0
+WRESTLING=200.0
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=75.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent,{25 35}
+
+[eof]

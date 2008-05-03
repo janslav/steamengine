@@ -1,0 +1,2751 @@
+[CHARDEF 015]
+
+DEFNAME=c_serpent_giant
+NAME=Giant Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=22
+ARMOR=15
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Giant Serpent
+
+ON=@Create
+COLOR=colors_snake
+NPC=brain_monster
+FAME={1 20}
+karma=-3000
+STR=250
+DEX=70
+INT=50
+
+
+maxhits={225 275}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {4.0 5.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[1]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=100
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=5.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_silver]
+
+ID=c_serpent_giant
+NAME=Silver Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=30
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Silver Serpent
+
+ON=@Create
+COLOR=color_o_silver
+NPC=brain_monster
+FAME={1 20}
+karma=-3000
+STR=300
+DEX=70
+INT=80
+
+
+maxhits={475 525}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {9.0 13.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[2]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=10.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_water]
+
+ID=c_serpent_giant
+NAME=Water Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=33
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Water Serpent
+
+ON=@Create
+COLOR={0847 084c}
+NPC=brain_monster
+FAME={1 20}
+karma=-3000
+STR=500
+DEX=70
+INT=50
+
+
+maxhits={450 550}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {10.0 13.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={170.0 300.0}
+SpiritSpeak=10.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_lava]
+
+ID=c_serpent_giant
+NAME=Lava Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=40
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Lava Serpent
+
+ON=@Create
+COLOR=065a
+NPC=brain_monster
+FAME={1 20}
+karma=-3000
+STR=1000
+DEX=70
+INT=70
+
+
+maxhits={900 1100}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {16.0 20.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={170.0 300.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_poison]
+
+ID=c_serpent_giant
+NAME=Poison Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=35
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Poison Serpent
+
+ON=@Create
+COLOR={097f 1 099e 1}
+NPC=brain_monster
+FAME={1 20}
+karma=-3000
+STR=1200
+DEX=70
+INT=70
+
+
+maxhits={800 1100}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {15.0 17.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={470.0 500.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_gold]
+
+ID=c_serpent_giant
+NAME=Gold Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=40
+ARMOR=20
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Gold Serpent
+
+ON=@Create
+COLOR=colors_drag_gold
+NPC=brain_monster
+karma=-3000
+FAME={1 20}
+STR=1100
+DEX=70
+INT=80
+
+
+maxhits={400 600}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {18.0 22.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={300.0 400.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_black]
+
+ID=c_serpent_giant
+NAME=Black Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=45
+ARMOR=30
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Black Serpent
+
+ON=@Create
+COLOR=0690
+NPC=brain_monster
+karma=-3000
+FAME={1 20}
+STR=900
+DEX=70
+INT=90
+
+
+maxhits={800 900}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {23.0 25.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={470.0 500.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_serpent_ice]
+
+ID=c_serpent_giant
+NAME=Ice Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_SNAKE_GIANT
+
+CAN=MT_WALK|MT_SWIM|MT_run
+attack=50
+ARMOR=30
+
+moverate=3
+
+
+RESOURCES=8 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Serpents
+DESCRIPTION=Ice Serpent
+
+ON=@Create
+COLOR=color_ice
+NPC=brain_monster
+FAME={1 20}
+karma=-3000
+STR=1300
+DEX=70
+INT=90
+
+
+maxhits={1200 1300}
+maxstam={55 85}
+maxmana=0
+
+tag.experience=<eval {24.0 27.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag(resist_poison,1000)
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={370.0 400.0}
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_serpent
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 01c]
+
+DEFNAME=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|mt_run
+attack=25
+ARMOR=5
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Giant Spider
+
+ON=@Create
+
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=250
+DEX=100
+INT=50
+
+
+maxhits={225 275}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {5.0 7.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+ 
+[CHARDEF c_spider_gray]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|mt_run
+attack=35
+ARMOR=13
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Gray Spider
+
+ON=@Create
+color=03c6
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=350
+DEX=100
+INT=70
+
+
+maxhits={300 400}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {8.0 12.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_silver]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|mt_run
+attack=45
+ARMOR=13
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Silver Spider
+
+ON=@Create
+color=color_o_silver
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=550
+DEX=100
+INT=80
+
+
+maxhits={500 600}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {15.0 17.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_fire]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_FIRE_IMMUNE
+attack=50
+ARMOR=17
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Fire Spider
+
+ON=@Create
+color=098e
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=700
+DEX=100
+INT=80
+
+
+maxhits={600 800}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {16.0 18.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_poison]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN
+attack=60
+ARMOR=17
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Poison Spider
+
+ON=@Create
+color={097f 1 099e 1}
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=1100
+DEX=100
+INT=90
+
+
+maxhits={1000 1200}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {23.0 26.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING=100.0
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_black]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN
+attack=55
+ARMOR=21
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Black Spider
+
+ON=@Create
+color=0690
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=900
+DEX=100
+INT=85
+
+
+maxhits={800 1000}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {18.0 20.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_black_noprovo]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN
+attack=55
+ARMOR=21
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Black Spider (no provo)
+
+ON=@Create
+color=0690
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=900
+DEX=100
+INT=85
+
+
+maxhits={800 1000}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {18.0 20.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+provocation=100.0 
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_eat]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|mt_run
+attack=45
+ARMOR=13
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Spider eat
+
+ON=@Create
+color=00432
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=1000
+DEX=100
+INT=80
+
+
+maxhits={900 1200}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {15.0 16.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+tag.resist_summon=1000
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=15.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_wamp]
+
+ID=c_spider_giant
+NAME=Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_FIRE_IMMUNE
+attack=50
+ARMOR=17
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater_vamp
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Spider Vamp
+
+ON=@Create
+color=098e
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=900
+DEX=100
+INT=80
+
+
+maxhits={800 1000}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {16.0 18.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING={70.0 100.0}
+SpiritSpeak=20.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_queen]
+
+ID=c_spider_giant
+NAME=Spider Queen
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN
+attack=50
+ARMOR=33
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Spider Queen
+
+ON=@Create
+color=04a5
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=1000
+DEX=450
+INT=100
+
+
+maxhits={900 1100}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {40.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING=100.0
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_spider_king]
+
+ID=c_spider_giant
+NAME=Spider King
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN
+attack=60
+ARMOR=33
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Spider King
+
+ON=@Create
+color=04aa
+NPC=brain_monster
+FAME=1
+KARMA={-999 -2999}
+STR=1500
+DEX=900
+INT=90
+
+
+maxhits={1400 1600}
+maxstam={80 120}
+maxmana=0
+
+tag.experience=<eval {30.0 40.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+TACTICS=100.0
+WRESTLING={70.0 100.0}
+POISONING=100.0
+SpiritSpeak=20.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_black_vdova]
+
+ID=c_spider_giant
+NAME=Cerna vdova
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_run
+attack=55
+ARMOR=100
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Cerna vdova
+
+ON=@Create
+COLOR=color_o_obsidian
+NPC=brain_monster
+FAME=200
+KARMA=-3000
+STR=750
+DEX=500
+INT=150
+
+
+maxhits={1800 2200}
+maxstam={450 600}
+maxmana=0
+
+tag.experience=<eval {65.0 85.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 750}>
+tag.resist_poison=1000
+
+
+
+TACTICS=200.0
+WRESTLING=200.0
+POISONING=500.0
+SpiritSpeak=35.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_black_vdova_noprovo]
+
+ID=c_spider_giant
+NAME=Cerna vdova
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_run
+attack=55
+ARMOR=100
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Cerna vdova (no provo)
+
+ON=@Create
+COLOR=color_o_obsidian
+NPC=brain_monster
+FAME=200
+KARMA=-3000
+STR=750
+DEX=500
+INT=150
+
+
+maxhits={1800 2200}
+maxstam={450 600}
+maxmana=0
+
+tag.experience=<eval {65.0 85.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 750}>
+tag.resist_poison=1000
+
+
+
+TACTICS=200.0
+WRESTLING=200.0
+POISONING=500.0
+provocation=100.0
+SpiritSpeak=35.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_tarantule]
+
+ID=c_spider_giant
+NAME=Tarantule
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_run
+attack=55
+ARMOR=120
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Tarantule
+
+ON=@Create
+COLOR=006cf
+NPC=brain_monster
+FAME=1
+KARMA=-1500
+STR=2000
+DEX=500
+INT=300
+
+
+maxhits={4800 5200}
+maxstam={500 650}
+maxmana=0
+
+tag.experience=<eval {180.0 200.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 750}>
+tag.resist_poison=1000
+
+
+
+TACTICS=250.0
+WRESTLING=100.0
+POISONING=500.0
+SpiritSpeak=55.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_tarantule_noprovo]
+
+ID=c_spider_giant
+NAME=Tarantule
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_run
+attack=55
+ARMOR=120
+
+moverate=5
+
+
+RESOURCES=5 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Tarantule (no provo)
+
+ON=@Create
+COLOR=006cf
+NPC=brain_monster
+FAME=1
+KARMA=-1500
+STR=2000
+DEX=500
+INT=300
+
+
+maxhits={4800 5200}
+maxstam={500 650}
+maxmana=0
+
+tag.experience=<eval {180.0 200.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 750}>
+tag.resist_poison=1000
+
+
+
+TACTICS=250.0
+WRESTLING=100.0
+POISONING=500.0
+provocation=100.0
+SpiritSpeak=60.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 0ad]
+
+DEFNAME=c_spider_elder
+Name=Elder Spider
+SOUND=snd_MONSTER_GISPIDR1
+ICON=i_pet_SPIDER_GIANT
+ANIM=078c7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|mt_run
+attack=100
+ARMOR=150
+
+moverate=5
+
+
+RESOURCES=70 i_reag_spider_silk, 10 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Spiders
+DESCRIPTION=Spider Elder
+
+ON=@Create
+
+NPC=brain_monster
+FAME={100 5000}
+karma=-3000
+STR=2000
+DEX=500
+INT=200
+
+
+maxhits={9001 11000}
+maxstam={800 1000}
+maxmana=0
+
+tag.experience=<eval {350.0 500.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[7]>
+
+
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {900 1000}>
+tag.resist_poison=1000
+
+
+
+WRESTLING=150.0
+tactics=250.0
+poisoning=700.0
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=65.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SPIDER
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 030]
+
+DEFNAME=c_scorpion_giant
+NAME=Giant Scorpion
+SOUND=snd_MONSTER_GSCORP1
+ICON=i_pet_SCORP
+ANIM=078c7f
+CAN=MT_WALK
+attack=22
+ARMOR=40
+
+moverate=4
+
+
+RESOURCES=8 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Scorpions
+DESCRIPTION=Giant Scorpion
+
+ON=@Create
+
+NPC=brain_monster
+FAME=100
+KARMA={-2000 -2999}
+STR=320
+DEX=160
+INT=60
+
+
+maxhits={300 350}
+maxstam={150 170}
+maxmana=0
+
+tag.experience=<eval {10.0 13.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+POISONING={10.0 20.0}
+SpiritSpeak=15.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_scorpion
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_scorpion_prince]
+
+ID=c_scorpion_giant
+NAME=Scorpion Prince
+SOUND=snd_MONSTER_GSCORP1
+ICON=i_pet_SCORP
+ID=c_scorpion_giant
+CAN=MT_WALK|MT_FIRE_IMMUNE
+attack=35
+ARMOR=40
+
+moverate=4
+
+
+RESOURCES=8 i_ribs_raw 
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Scorpions
+DESCRIPTION=Scorpion Prince
+
+ON=@Create
+color=04a3
+NPC=brain_monster
+FAME=100
+karma=-3000
+STR=680
+DEX=250
+INT=98
+
+
+maxhits={600 800}
+maxstam={200 300}
+maxmana=0
+
+tag.experience=<eval {15.0 20.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+PARRYING=100.0
+Resist=60.0
+TACTICS=100.0
+WRESTLING=100.0
+POISONING=130.0
+SpiritSpeak=30.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_scorpion
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_scorpion_queen]
+
+ID=c_scorpion_giant
+NAME=Scorpion Queen
+SOUND=snd_MONSTER_GSCORP1
+ICON=i_pet_SCORP
+ID=c_scorpion_giant
+CAN=MT_WALK|MT_FIRE_IMMUNE
+attack=40
+ARMOR=30
+
+moverate=4
+
+
+RESOURCES=8 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Scorpions
+DESCRIPTION=Scorpion Queen
+
+ON=@Create
+color=04a5
+NPC=brain_monster
+FAME=100
+KARMA={-400 -1200}
+STR=1400
+DEX=250
+INT=200
+
+
+maxhits={1300 1500}
+maxstam={200 300}
+maxmana={1800 2200}
+
+tag.experience=<eval {30.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 600}>
+tag.resist_poison=1000
+
+
+
+PARRYING=95.0
+Resist=90.0
+TACTICS=95.0
+WRESTLING=90.0
+POISONING=300.0
+MAGERY={500.0 600.0}
+DETECTINGHIDDEN={99.0 100.0}
+EI={90.0 95.0}
+SpiritSpeak=30.0
+
+NPC=brain_monster
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+
+ON=@NPCRestock
+ITEM=loot_scorpion
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_scorpion_king]
+
+ID=c_scorpion_giant
+NAME=Scorpion King
+SOUND=snd_MONSTER_GSCORP1
+ICON=i_pet_SCORP
+ID=c_scorpion_giant
+CAN=MT_WALK|MT_FIRE_IMMUNE
+attack=45
+ARMOR=40
+
+moverate=4
+
+
+RESOURCES=8 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Scorpions
+DESCRIPTION=Scorpion King
+
+ON=@Create
+color=04aa
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -4999}
+STR=1700
+DEX=900
+INT=300
+
+
+maxhits={1500 1900}
+maxstam={700 900}
+maxmana={1800 2200}
+
+tag.experience=<eval {50.0 60.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag.weapflag=dam_physical
+
+
+tag.resist_para=<eval {500 600}>
+tag.resist_poison=1000
+
+
+
+PARRYING=95.0
+Resist=90.0
+TACTICS=95.0
+WRESTLING=90.0
+POISONING=500.0
+MAGERY={500.0 600.0}
+DETECTINGHIDDEN={99.0 100.0}
+EI={90.0 95.0}
+SpiritSpeak=50.0
+
+NPC=brain_monster
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_paralyze
+
+ON=@NPCRestock
+ITEM=loot_scorpion
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 051]
+
+DEFNAME=c_bullfrog
+NAME=Bull Frog
+SOUND=snd_MONSTER_BULLFROG1
+ICON=i_pet_bullfrog
+ANIM=078c7f
+CAN=MT_WALK
+attack=30
+ARMOR=8
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw,4 i_hide
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_character
+TEVENTS=e_monster
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Frogs
+DESCRIPTION=Bull Frog
+
+ON=@Create
+
+NPC=brain_animal
+FAME=100
+KARMA={-2000 -2999}
+STR=150
+DEX={6 25}
+INT={11 20}
+
+
+maxhits={220 380}
+maxstam={6 25}
+maxmana=0
+
+tag.experience=<eval {5.0 6.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[1]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+PARRYING={38.0 72.0}
+TACTICS={40.0 60.0}
+WRESTLING={40.0 60.0}
+SpiritSpeak=5.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_BULLFROG
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 050]
+
+DEFNAME=c_toad_giant
+NAME=Giant Toad
+SOUND=snd_MONSTER_GIANTTOAD1
+ICON=i_pet_toad_giant
+ANIM=078c7f
+CAN=MT_WALK
+attack=25
+ARMOR=12
+
+moverate=4
+
+
+RESOURCES=6 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Frogs
+DESCRIPTION=Giant Toad
+
+ON=@Create
+
+NPC=brain_monster
+FAME=100
+KARMA={-2000 -2999}
+STR=250
+DEX=80
+INT=30
+
+
+maxhits={200 300}
+maxstam={60 100}
+maxmana=0
+
+tag.experience=<eval {4.0 5.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[2]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+PARRYING={38.0 72.0}
+TACTICS={40.0 60.0}
+WRESTLING={40.0 60.0}
+SpiritSpeak=10.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_BULLFROG
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 033]
+
+DEFNAME=c_slime
+NAME=Slime
+SOUND=snd_MONSTER_SLIME1
+ICON=i_pet_slime
+ANIM=060c7f
+CAN=MT_WALK
+attack=20
+ARMOR=80
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Oozes
+DESCRIPTION=Slime
+
+ON=@Create
+COLOR=colors_slime
+NPC=brain_monster
+FAME=100
+KARMA={-999 -1999}
+STR={22 34}
+DEX={16 21}
+INT=30
+
+
+maxhits={20 40}
+maxstam={15 25}
+maxmana=0
+
+tag.experience=<eval {10.0 15.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[2]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING={15.0 21.0}
+TACTICS={19.0 34.0}
+WRESTLING={19.0 34.0}
+POISONING={50.0 80.0}
+SpiritSpeak=5.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SLIME
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_frost_ooze]
+
+ID=c_slime
+NAME=Frost Ooze
+SOUND=snd_MONSTER_SLIME1
+ICON=i_pet_slime
+ANIM=060c7f
+CAN=MT_WALK
+attack=25
+ARMOR=150
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Oozes
+DESCRIPTION=Frost Ooze
+
+ON=@Create
+COLOR=color_snow
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -5999}
+STR={22 34}
+DEX={16 21}
+INT={16 20}
+
+
+maxhits={500 640}
+maxstam={150 250}
+maxmana=0
+
+tag.experience=<eval {40.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING={15.0 21.0}
+TACTICS={19.0 34.0}
+WRESTLING={19.0 34.0}
+SpiritSpeak=15.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SLIME
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_ancient_ooze]
+
+ID=c_slime
+NAME=Ancient Ooze
+SOUND=snd_MONSTER_SLIME1
+ICON=i_pet_slime
+ANIM=060c7f
+CAN=MT_WALK|MT_run
+attack=40
+ARMOR=150
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Oozes
+DESCRIPTION=Ancient Ooze
+
+ON=@Create
+COLOR=0012
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -5999}
+STR=1000
+DEX=200
+INT=120
+
+
+maxhits={1500 1640}
+maxstam={150 250}
+maxmana=0
+
+tag.experience=<eval {50.0 60.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING=100.0
+poisoning=150.0
+TACTICS=100.0
+WRESTLING=100.0
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SLIME
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_smaragd_ooze]
+
+ID=c_slime
+NAME=Smaragd Ooze
+SOUND=snd_MONSTER_SLIME1
+ICON=i_pet_slime
+ANIM=060c7f
+CAN=MT_WALK|MT_run
+attack=35
+ARMOR=150
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Oozes
+DESCRIPTION=Smaragd Ooze
+
+ON=@Create
+COLOR=0046
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -5999}
+STR=800
+DEX=150
+INT=80
+
+
+maxhits={200 440}
+maxstam={150 250}
+maxmana=0
+
+tag.experience=<eval {40.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING=100.0
+poisoning=150.0
+TACTICS=100.0
+WRESTLING=100.0
+SpiritSpeak=25.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SLIME
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_poison_ooze]
+
+ID=c_slime
+NAME=Poison Ooze
+SOUND=snd_MONSTER_SLIME1
+ICON=i_pet_slime
+ANIM=060c7f
+CAN=MT_WALK|MT_run
+attack=25
+ARMOR=150
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Oozes
+DESCRIPTION=Poison Ooze
+
+ON=@Create
+COLOR=colors_green
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -5999}
+STR=500
+DEX=150
+INT=85
+
+
+maxhits={500 640}
+maxstam={150 250}
+maxmana=0
+
+tag.experience=<eval {35.0 40.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING=100.0
+poisoning=150.0
+TACTICS=100.0
+WRESTLING=80.0
+SpiritSpeak=40.0
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SLIME
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_magic_ooze]
+
+ID=c_plague_beast
+NAME=Magic Ooze
+SOUND=snd_MONSTER_SLIME1
+ICON=i_pet_slime
+ANIM=060c7f
+CAN=MT_WALK|MT_run
+attack=25
+ARMOR=150
+
+moverate=4
+
+
+RESOURCES=2 i_ribs_raw
+FOODTYPE=
+
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Oozes
+DESCRIPTION=Magic Ooze
+
+ON=@Create
+COLOR=colors_yellow
+NPC=brain_monster
+FAME=100
+KARMA={-4000 -5999}
+STR=500
+DEX=150
+INT=285
+
+
+maxhits={1500 1640}
+maxstam={150 250}
+maxmana=0
+
+tag.experience=<eval {65.0 70.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+
+tag.weapflag=dam_physical
+
+tag.resist_summon=1000
+tag.resist_phys=986
+tag.resist_poison=1000
+
+
+
+PARRYING=100.0
+poisoning=150.0
+TACTICS=100.0
+WRESTLING=80.0
+MAGERY={500.0 600.0}
+EI={90.0 95.0}
+SpiritSpeak=30.0
+
+NPC=brain_monster
+ITEMnewbie=i_monster_create
+ITEMNEWBIE=i_spellbook
+addspell=s_lightning
+addspell=s_poison
+addspell=s_magic_reflection
+addspell=s_fireball
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SLIME
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 096]
+
+DEFNAME=c_sea_serpent
+NAME=Sea Serpent
+SOUND=snd_MONSTER_SEASERP1
+ICON=i_pet_shark
+ANIM=01ff
+CAN=MT_SWIM
+attack=25
+ARMOR=40
+
+moverate=4
+
+
+RESOURCES=50 i_ribs_raw,8 i_reag_serpent_scale
+FOODTYPE=
+
+
+
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Sea
+DESCRIPTION=Sea Serpent
+
+ON=@Create
+COLOR=colors_blue
+NPC=brain_monster
+FAME=1
+karma=-3000
+STR={165 185}
+DEX={58 85}
+INT={53 85}
+
+
+maxhits={500 640}
+maxstam={50 100}
+maxmana=0
+
+tag.experience=<eval {40.0 50.0}>
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+
+
+tag.weapflag=dam_physical
+
+
+
+tag.resist_poison=1000
+
+
+
+PARRYING={65.0 75.0}
+TACTICS={60.0 70.0}
+WRESTLING={60.0 75.0}
+FISHING=80.0
+SpiritSpeak=25.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SEA_SERPENT
+ITEM=i_gold
+
+///////////////////////////////////////////////////////////

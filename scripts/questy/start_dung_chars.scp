@@ -1,0 +1,132 @@
+//////////////////////////////////////////////////
+//////////////nb001 - koze a maso/////////////////
+//////////////////////////////////////////////////
+[CHARDEF c_nb001]
+ID=c_man
+NAME=Odlier
+TSPEECH=spk_nb001
+TEVENTS=e_character
+
+CATEGORY=MoriaNewbieRoom
+SUBSECTION=nb001-Lovec
+DESCRIPTION=Lovec
+
+ON=@Create
+NAME=Odlier
+NPC=brain_human
+STR=100
+DEX=100
+INT=100
+TITLE=Lovec
+
+ItemNewbie=random_male_hair
+Color=colors_hair
+
+Tag(hypnotizable,0)
+Tag(noanimate,1)
+Tag(experience,0)
+
+ON=@UserDClick
+if(src.targ.distance>3)
+	src.sysMessage("Na takovou vzdalenost s tebou jednat nebude")
+else
+	f_nb001
+endif
+
+ON=@NPCRestock
+ItemNewbie=i_leather_cap
+ItemNewbie=i_leather_gorget
+ItemNewbie=i_leather_tunic
+ItemNewbie=i_leather_sleeves
+ItemNewbie=i_leather_gloves
+ItemNewbie=i_leather_leggings
+ItemNewbie=i_boots_calf
+ItemNewbie=i_crossbow
+
+//////////////////////////////////////////////////
+//////////////nb002 - latka, bandy////////////////
+//////////////////////////////////////////////////
+[CHARDEF c_nb002]
+NAME=Mirana
+ID=c_woman
+TSPEECH=spk_nb002
+TEVENTS=e_character
+
+CATEGORY=MoriaNewbieRoom
+SUBSECTION=nb002-Akolytka
+DESCRIPTION=Akolytka
+
+ON=@Create
+NAME=Mirana
+NPC=brain_vendor
+STR=100
+DEX=100
+INT=100
+TITLE=Akolytka
+COLOR=Colors_skin
+
+ItemNewbie=i_hair_long
+	Color=1
+
+Tag(hypnotizable,0)
+Tag(noanimate,1)
+Tag.experience=0
+
+ON=@UserDClick
+if(src.targ.distance>3)
+	src.sysMessage("Na takovou vzdalenost s tebou jednat nebude")
+else
+	f_nb002
+endif
+
+ON=@NPCRestock
+ItemNEwbie=i_cape
+ItemNEwbie=i_robe
+ItemNEwbie=i_sash
+ItemNEwbie=i_bonnet
+ItemNEwbie=i_boots_calf
+ItemNEwbie=i_jester_suit
+ItemNEwbie=i_pants_long
+	
+//////////////////////////////////////////////////
+//////////////nb003 - copper a iron ore///////////
+//////////////////////////////////////////////////
+[CHARDEF c_nb003]
+ID=c_man
+NAME=Beorgrad
+TSPEECH=spk_nb003
+TEVENTS=e_character
+
+CATEGORY=MoriaNewbieRoom
+SUBSECTION=nb003-Kopac
+DESCRIPTION=Kopac
+
+ON=@Create
+NAME=Beorgrad
+NPC=brain_human
+STR=100
+DEX=100
+INT=100
+TITLE=Hornik
+
+ItemNewbie=random_male_hair
+Color=colors_hair
+
+Tag(hypnotizable,0)
+Tag(noanimate,1)
+Tag(experience,0)
+
+ON=@UserDClick
+if(src.targ.distance>3)
+	src.sysMessage("Na takovou vzdalenost s tebou jednat nebude")
+else
+	f_nb003
+endif
+
+ON=@NPCRestock
+ItemNewbie=i_apron_half
+Color=000
+ItemNewbie=i_shirt_plain
+ItemNewbie=i_pants_long
+ItemNewbie=i_boots_calf
+ItemNewbie=i_pickaxe

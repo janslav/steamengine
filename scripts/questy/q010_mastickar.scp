@@ -1,0 +1,265 @@
+//ITEMS//
+[ITEMDEF i_q010_mastickar_kolektor]
+ID=i_bag
+NAME=Vacek na zaludek Medveda Zabijaka
+TYPE=t_collector
+WEIGHT=5
+
+ON=@CREATE
+COLOR=034
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="zaludek medveda zabijaka"
+tag.contentsamount=0
+tag.maxcontents=1
+tag.target_remove=0
+tag.target_desc="Kteremu medvedovi zabijakovi vezmes zaludek? "
+tag.target_id="Body of Medved Zabijak"
+tag.absolute_success=100
+tag.value_to_check=100
+tag.contentscount=0
+
+//SPEECH//
+
+[speech spk_q010_mastickar]
+
+on = *ukol*
+on = *prace*
+on = *zdravim*
+on = *ahoj*
+
+if (<distance> > 3)
+ src.SYSMESSAGE("Na takovou vzdalenost s tebou jednat nebude")
+else
+ f_q010_mastickar
+endif
+
+
+[function f_q010_mastickar]
+f_q010_checkOldTags
+if (<src.flags>&statf_dead)
+ return 1
+elseif (0<src.qtag(q010_mastickar)> ==0)
+  DIALOG(d_q010_mastickar_1)
+elseif (0<src.qtag(q010_mastickar)> ==1)
+  DIALOG(d_q010_mastickar_2)
+elseif (0<src.qtag(q010_mastickar)> ==2)
+  DIALOG(d_q010_mastickar_3)
+endif
+
+[function f_q010_checkOldTags]
+if (<src.tag(q010_mastickar)>)
+  src.qtag(q010_mastickar,1)
+  src.tag.remove(q010_mastickar)
+endif
+if (<src.tag(splnen_kvest_010)> ==1)
+  src.qtag(q010_mastickar,2)
+  src.tag.remove(splnen_kvest_010)
+endif
+
+[dialog d_q010_mastickar_1]
+5,5
+page 0
+resizepic 20 200 2620 640 350 
+gumppic 30 210 03182 // podklad pod ksichtiky	
+gumppic 40 215 03008 // ksichtik   3000-3164
+text 220 210 52 0     // Jmeno a titul pozdraveneho
+button 160 330 0988 0988 0 1 0  // Kdo jsi ?     
+text 200 332 1152 4   // 
+button 325 330 0988 0988 0 4 0  // Mastickarstvi?
+text 350 330 1152 5    //
+button 490 330 0988 0988 1 0 3  // Obchodovat ?  
+text 510 330 1152 6   //
+button 160 360 0988 0988 0 9 0  // Hledam praci  
+text 190 360 1152 7   //
+button 325 360 0988 0988 0 10 0  // Nesu ti ...   
+text 350 360 1152 8   //
+button 490 360 0988 0988 0 11 0  // Prohlednout ...      
+text 520 360 1152 9   //
+
+page 1
+HTMLGUMP(170,230,440,100,1,0,36)
+button 25 395 0fa5 0fa7 0 2 0  //      
+text 60 395 152 2
+button 25 415 0fa5 0fa7 0 3 0  //         
+text 60 415 152 3
+
+page 2
+HTMLGUMP(170,230,440,100,10,0,36)
+
+page 3
+HTMLGUMP(170,230,440,100,11,0,36)
+
+page 4
+HTMLGUMP(170,230,440,100,12,0,36)
+button 25 395 0fa5 0fa7 0 5 0  //      
+text 60 395 152 13
+button 25 415 0fa5 0fa7 0 6 0  //         
+text 60 415 152 14
+button 25 435 0fa5 0fa7 1 0 1  //         
+text 60 435 152 15
+
+page 5
+HTMLGUMP(170,230,440,100,16,0,36)
+button 25 395 0fa5 0fa7 0 7 0  //      
+text 60 395 152 18
+button 25 415 0fa5 0fa7 1 0 1  //         
+text 60 415 152 19
+
+page 6
+HTMLGUMP(170,230,440,100,17,0,36)
+
+page 7
+HTMLGUMP(170,230,440,100,20,0,36)
+button 25 395 0fa5 0fa7 0 8 0  //      
+text 60 395 152 21
+button 25 415 0fa5 0fa7 1 0 1  //         
+text 60 415 152 22
+
+page 8
+HTMLGUMP(170,230,440,100,23,0,36)
+button 25 395 0fa5 0fa7 1 0 2  //      
+text 60 395 152 24
+button 25 415 0fa5 0fa7 1 0 1  //         
+text 60 415 152 25
+
+page 9
+HTMLGUMP(170,230,440,100,26,0,36)
+
+page 10
+HTMLGUMP(170,230,440,100,27,0,36)
+
+page 11
+HTMLGUMP(170,230,440,100,28,0,36)
+
+
+[dialog d_q010_mastickar_1 text]
+Mastickar Gregoriel
+Aaaaa vitej! Jmenuju se Gregoriel a zivim se vyrobou vsemoznych patlanin * Smeje se *, jsem mastickar ! Co te ke me privadi? Nahoda nebo osud, hehehe?
+Take te zdravim, jmenuji se <?src.name?> a jen prochazim kolem.
+To jiste osud me k vam privedl, no reknete, jiste hledate nekoho jako jsem ja, nu?
+Kdo jsi?
+Mastickarstvi?
+Obchodovat?
+Hledam praci
+Nesu ti ...
+Prohlednout
+Ahaa... no pojd si alespon trochu popovidat...
+Hehehe, osud!!! Ty opravdu veris na osud * Privetive se usmal *. No co, osud asi chtel, abychom si chvili popovidali! * Zarechtal se *
+Ohoo... ty se zajimas o mastickarstvi? Hm? No to me tesi, opravdu, hehehe. Hmno, ja beru svoji profesi jako vedu. Vis, hodne lidi se na me kouka skrz prsty, neveri sile prirody, ale kdyz je pak boli zada tak to joo, to jim je starej Greg dobrej..
+Ja mam mastickarstvi rad...
+No, preci jenom mam radeji lektvary.
+Nesnasim ty hnusne kase co vyrabite...
+Skutecne? No to je prekvapeni! To by te urcite zajimalo, ze jsem prisel na novy recept. Je uplne uzasny, ale jeste mu neco k dokonalosti chybi.
+No ano. Nekteri lide davaji prednost okamzitemu ucinku, bohuzel nevidi jake poskozeni nese dlouhodobe uzivani lektvaru. Ale nejsem tu od toho abych si hral na spasitele...
+A o co jde?
+Me takove veci nezajimaji, omlouvam se.
+Jde o mast ktera zrychluje leceni vaznych zraneni vic nez kterakoli jina. Chybi mi vsak jeste jedna prisada, abych ji mohl naplno vyzkouset, nechtel bys mi ji zkusit sehnat? Dobre bych se ti odmenil.
+Jiste! Oc jde? Povezte mi co vite a pokusim se tu prisadu sehnat...
+Ne... na to opravdu nemam cas...
+Jde o jisty druh rostliny, ktera vsak sveho ucinku dosahne az po spaseni a straveni v tele vzacneho druhu medveda - Medveda zabijaka. Bude to nebezpecne, ale dobre se ti odmenim. Zkusis ho najit? 
+Ano pokusim se o to.
+Ne, rozmyslel jsem si to.
+Tak to u me asi nepochodis, nikoho nepotrebuji, vystacim si sam a nevim kdo schani pracanta.
+Copak pro me mas?
+Mastickar Gregoriel vypada mile a pratelsky, na tvari mu stale hraje usmev a v obliceji privetivy vyraz. Take jeho hlas je vesely a radostny. 
+
+[dialog d_q010_mastickar_1 button]
+on=1
+SAY("Dobre dobre... vis... hm ted mam neco neodkladneho na praci. Zastav se jindy.")
+on=2
+SAY("Skvele, vezmi si tento vacek, az medveda zabijes, okamzite do nej vloz jeho zaludek, jinak ztrati hodnotu!")
+src.qtag(q010_mastickar,1)
+src.newitem=i_q010_mastickar_kolektor
+src.act.bounce
+
+on=3
+SAY=Zbozi na prodej, vseho dostatek, nejlepsi ceny jen u me.
+buy
+
+
+
+
+
+
+
+
+[dialog d_q010_mastickar_2]
+5,5
+page 0
+resizepic 20 200 2620 640 350 
+gumppic 30 210 03182 // podklad pod ksichtiky	
+gumppic 40 215 03008 // ksichtik   3000-3164
+text 220 210 52 0     // Jmeno a titul pozdraveneho
+button 490 330 0988 0988 1 0 3  // Obchodovat ?  
+text 510 330 1152 4   //
+
+HTMLGUMP(170,230,440,100,1,0,36)
+button 165 325 0fa5 0fa7 1 0 1  //      
+text 200 325 152 2
+button 165 350 0fa5 0fa7 1 0 2  //         
+text 200 350 152 3
+
+
+[dialog d_q010_mastickar_2 text]
+Mastickar Gregoriel
+Zdravim te priteli, jsem rad ze te vidim. Tak co jak jsi byl uspesny? Nasels medveda? No na co cekas, mluv! Jsem nedockavy!
+Ano! Mam to pro tebe... tady to mas.
+Ne zatim se mi to nepodarilo sehnat.
+Obchodovat?
+
+
+[dialog d_q010_mastickar_2 button]
+on=1
+if <src.restest i_q010_mastickar_kolektor> && (<src.findid(i_q010_mastickar_kolektor).tag.contentscount>==1) 
+  SAY("Vyborne! Dekuji ti mnohokrat. Ted konecne mohu svuj recept poradne vyzkouset.")
+  src.consume(i_q010_mastickar_kolektor)
+  src.qtag(q010_mastickar,2)
+  src.addexp(150)
+  src.givegold(1500)
+else
+  SAY("Jeste nemas to co jsem po tobe chtel, musis se vic snazit")
+endif
+
+on=2
+SAY("Tak prosim pospes, jsem nedockavy, chci vyzkouset svuj recept")
+
+on=3
+SAY=Zbozi na prodej, vseho dostatek, nejlepsi ceny jen u me.
+buy
+
+
+
+
+
+
+
+[dialog d_q010_mastickar_3]
+5,5
+page 0
+resizepic 20 200 2620 640 350 
+gumppic 30 210 03182 // podklad pod ksichtiky	
+gumppic 40 215 03008 // ksichtik   3000-3164
+text 220 210 52 0     // Jmeno a titul pozdraveneho
+button 490 330 0988 0988 1 0 3  // Obchodovat ?  
+text 510 330 1152 3   //
+
+HTMLGUMP(170,230,440,100,1,0,36)
+button 165 325 0fa5 0fa7 1 0 1  //      
+text 200 325 152 2
+
+
+[dialog d_q010_mastickar_3 text]
+Mastickar Gregoriel
+Zdravicko! Recept funguje primo skvele, ted jeste musim vymyslet, jak rozsirit moznosti jeho vyroby. Promin, ale ted se ti nemuzu venovat. Mej se a nekdy se zase zastav.
+* Rozloucit se *
+Obchodovat ?  
+
+
+[dialog d_q010_mastickar_3 button]
+on=1
+SAY("Tobe take hodne stesi priteli...")
+
+on=3
+SAY=Zbozi na prodej, vseho dostatek, nejlepsi ceny jen u me.
+buy

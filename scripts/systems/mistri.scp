@@ -1,0 +1,379 @@
+
+[SPEECH spk_mistr] 
+ON=*Dobry*
+ON=*den*
+ON=*mistr*
+ON=*expert*
+ON=*zdravim* 
+ON=*hi*
+ON=*hello*
+ON=*buy*
+src.roundskill(<tag(ucimskill)>)
+if (src.profession==prof_undeclared)
+ src.sysmessage "Mas poskozenou postavu... pouzij svuj krystal nebo zavolej GM..."
+ return 0
+elseif (src.ismagic)
+ src.sysmessage "Nesmis byt pod zadnym magickym vlivem..."
+ return 0
+endif
+
+IF (src.canbe_velmistr(<tag(ucimskill)>))
+ SAY "Vidim ze jsi pripraven stati se VELMISTREM <tag.ucimskill>. Pokud mas zajem staci rici ANO a za poplatek 30000gp te vytrenuji v tomto oboru."
+ return 0    
+elseif (src.canbe_mistr(<tag(ucimskill)>))
+ SAY "Vidim ze jsi pripraven stati se MISTREM <tag.ucimskill>. Pokud mas zajem staci rici ANO a za poplatek 15000gp te vytrenuji v tomto oboru."
+ return 0    
+elseIF (src.canbe_expert(<tag(ucimskill)>))
+ SAY "Vidim ze jsi pripraven stati se EXPERTEM <tag.ucimskill>. Pokud mas zajem staci rici ANO a za poplatek 5000gp te vytrenuji v tomto oboru."
+ return 0   
+else
+say "Nemohu te naucit vice o <tag.ucimskill>."
+return 0   
+endif
+ 
+ON=*YES* 
+ON=*ANO*
+if (src.profession==prof_undeclared)
+ src.sysmessage "Mas poskozenou postavu... pouzij svuj krystal nebo zavolej GM..."
+ return 0
+elseif (src.ismagic)
+ src.sysmessage "Nesmis byt pod zadnym magickym vlivem..."
+ return 0
+endif
+
+IF (src.canbe_velmistr(<tag.ucimskill>))
+ if (src.pay(30000))
+   src.<tag.ucimskill>=800
+   SAY "Byl jsi vytrenovan VELMISTREM <tag.ucimskill> "
+ else
+  SAY "Nemas patricnou sumu, za kterou bych te mohl vytrenovat."
+ endif
+elseif (src.canbe_MISTR(<tag.ucimskill>))
+ if (src.pay(15000))
+  src.<tag.ucimskill>=550
+  SAY "Byl jsi vytrenovan MISTREM <tag.ucimskill> "
+ else
+  SAY "Nemas patricnou sumu, za kterou bych te mohl vytrenovat."
+ endif
+elseIF (src.canbe_expert(<tag.ucimskill>))
+ if (src.pay(5000))
+ src.<tag.ucimskill>=300
+ SAY "Byl jsi vytrenovan EXPERTEM <tag.ucimskill> "
+ else
+  SAY "Nemas patricnou sumu, za kterou bych te mohl vytrenovat."
+ endif
+else
+say "Nemohu te naucit vice o <tag.ucimskill>."
+return 0
+endif
+
+[function canbe_expert]
+if (<?<args>?><=250)
+ if (<safe.src.tag(skillrank)>>=1)
+  if (<finduid(<profession>).<args>>>=300)
+   if (<?<args>?>>=250)
+    if (<src.tag(level)>>2)
+     return 1
+    else
+     sysmessage "Jsi na moc nizke urovni"
+    endif
+   else 
+    sysmessage "Pred dalsi lekci musis jeste trenovat."
+   endif
+  else
+   sysmessage "Dosahl jsi sveho maxima <args>."
+  endif
+ else
+  sysmessage "Jeste nejsi pripraven na dalsi lekci."
+ endif
+endif
+return 0
+
+[function canbe_mistr]
+if (<?<args>?>>250)&&(<?<args>?><=500)
+ if (<safe.src.tag(skillrank)>>=2)
+  if (<finduid(<profession>).<args>>>=55.0)
+   if (<?<args>?>==500)
+    if (<src.tag(level)>>5)
+     return 1
+     else
+     sysmessage "Jsi na moc nizke urovni"
+    endif
+   else 
+    sysmessage "Pred dalsi lekci musis jeste trenovat."
+   endif
+  else
+   sysmessage "Dosahl jsi sveho maxima <args>."
+  endif
+ else
+  sysmessage "Jeste nejsi pripraven na dalsi lekci."
+ endif
+endif
+return 0
+
+[function canbe_velmistr]
+if (<?<args>?>>500)&&(<?<args>?><=750)
+ if (<safe.src.tag(skillrank)>==3)
+  if (<finduid(<profession>).<args>>>=80.0)
+   if (<?<args>?>==750)
+    if (<src.tag(level)>>11)
+     return 1
+    else
+     sysmessage "Jsi na moc nizke urovni"
+    endif
+   else 
+    sysmessage "Pred dalsi lekci musis jeste trenovat."
+   endif
+  else
+   sysmessage "Dosahl jsi sveho maxima <args>."
+  endif
+ else
+  sysmessage "Jeste nejsi pripraven na dalsi lekci"
+ endif
+endif
+return 0
+
+[events e_mistr_craft]
+
+[speech spk_mistr_craft]
+on=*sell*
+on=*hi*
+on=*hello*
+on=*prod*
+on=*exp*
+if (src.profession==class_craft)||(src.isgm)
+  say "Poskytuji lekce na zaklade tvych zkusenosti s remeslnou vyrobou"
+  src.findid(i_buyer_tag_box).remove
+  src.newitemsafe(i_buyer_tag_box)
+  lastnew.equip
+  lastnew.link=<uid>
+  src.findlayer(21).contents(tryexpit)
+  src.findid(i_buyer_tag_box).dialog d_craftmistr
+else
+  say Nemohu slouzit...
+endif
+
+[function tryexpit]
+var(exps,0)
+//if !(baseid==i_dagger)&&!(type==t_scroll_blank)&&!(type==t_shaft)&&!(type==t_weapon_arrow)&&!(type==t_weapon_bolt)&&!(t_bottle_empty)
+//jezis co to je tohleto? proc? a tohle "(t_bottle_empty)" asi nebude moc platna podminka -tart
+//Marek si stezuje, ze se na stack vecech porad buguje a Mandos ze mu to zatezuje server na 100% a protoze sem musel urgentne
+//vypadnout tak jsem tam pred tema lahvema umazal type aby to nepoustelo a nelagoval server.
+if ((type==t_container)&&(safe rescount))
+  if (<eval src.tag(level)> > 56) //vezmeme maximalne 56. lvl hrace. Dal bude cena / 1 exp stejna
+  	arg(priceLvl,56)
+  else
+    arg(priceLvl,<eval src.tag(level)>)
+  endif
+  src.newitem <baseid>
+  arg(thisbag,<lastnew>)
+  lastnew.name="<name> (<rescount> ks)"
+  lastnew.dispid=<dispid>
+  lastnew.cont=<src.findid(i_buyer_tag_box)>
+  lastnew.tag.expforthis=<getitemexp>
+  lastnew.tag.price=<eval((lastnew.tag(expforthis)*nastaveni_craftexp_gold*(<arg(priceLvl)>+1))/1000)>
+  contents2(f_tryexpit(<lastnew>))
+  arg(thisbag).tag(expforthis,<eval (arg(thisbag).f_tryexpit)+var(exps)>)
+  arg(thisbag).tag.price=<eval((arg(thisbag).tag(expforthis)*nastaveni_craftexp_gold*(<arg(priceLvl)>+1))/1000)>
+  if !(arg(thisbag).tag(expforthis))//nulova cena, nechtit.
+    arg(thisbag).remove
+  endif
+else
+  f_tryexpit(<src.findid(i_buyer_tag_box)>)
+endif
+//endif
+
+[function f_tryexpit]//kontejner kam to hodit
+if (<attr>&0b0d4)
+  return 0
+endif
+arg(thisexp,<getitemexp>)
+if (arg(thisexp))
+  if (<eval src.tag(level)> > 56) //vezmeme maximalne 56. lvl hrace. Dal bude cena / 1 exp stejna
+  	arg(priceLvl,56)
+  else
+    arg(priceLvl,<eval src.tag(level)>)
+  endif
+  src.newitem i_vendor_item
+  lastnew.name="<?qval(<amount>>1,"<amount> ","")?><?name?>"
+  lastnew.link=<uid>
+  lastnew.dispid=<dispid>
+  lastnew.color=<color>
+  if (argvcount)
+    lastnew.cont=<args>
+  endif
+  lastnew.tag(expforthis,<arg(thisexp)>)
+  lastnew.tag.price=<eval((lastnew.tag(expforthis)*nastaveni_craftexp_gold*(<arg(priceLvl)>+1))/1000)>
+  var(exps,#+<arg(thisexp)>)
+endif
+return <arg(thisexp)>
+
+[function getitemexp]
+if (tag(CRAFTEDBY))
+ if (tag(CRAFTEDBY)==src)||(src.isgm)
+ //src.smsg itemis mine:<name>
+  if (eval(typedef.skillmake))&&(eval(typedef.resources))
+   //src.smsg <name>:
+   var(itemvalue,<eval ((f_skillmakesum(<typedef.skillmake>,)+50)/100)*((f_resourcesum(<baseid>,<typedef.resources>,)+50)/100)>)
+   var(itemvalue,<eval ((var(itemvalue)*quality*amount)+5000)/10000>)
+   var(itemvalue,<eval ((var(itemvalue)*nastaveni_craftexp_factor)+5000)/10000>)
+   //src.smsg <name>:<eval var(itemvalue)/10000>
+   return"<var(itemvalue)>"
+  endif
+ endif
+endif
+return 0
+
+[function f_skillmakesum]
+//src.smsg skillmake:
+var.skillmakesum=0
+var.skillmakenumb=0
+while (skillmakenumb<argvcount-1)//(strcmpi(<argv(skillmakenumb)>,<argv(skillmakenumb-1)>)
+  //src.smsg <argv(skillmakenumb)>
+ singleparse(<argv(skillmakenumb)>)
+ if (<firstnumb>>1)
+  if (safe <?nastaveni_craftexp_<secondnumb>?>)
+   var(skillmakesum,<eval var(skillmakesum)+(firstnumb*nastaveni_craftexp_<secondnumb>)>)
+  endif
+ endif
+ var(skillmakenumb,#+1)
+endwhile
+//src.smsg hodnota za skilly: <var(skillmakesum)>
+return"<var(skillmakesum)>"
+
+[function f_resourcesum]
+//src.smsg resource:
+var(resourcecountsum,0)
+arg(resourcecountnumb,1)
+while (arg(resourcecountnumb)<argvcount-1)//(strcmpi(<argv(skillmakenumb)>,<argv(skillmakenumb-1)>)
+ singleparse(<argv(arg(resourcecountnumb))>)
+ //var(resourcecounttype_<resourcecountnumb>,<finduid(<secondnumb>).type>)
+ //var(resource_type,<eval <secondnumb>.type>)
+ //if (<resource_type>==t_ingot)||(<resource_type>==t_log)
+ var(resource_value,<eval <secondnumb>.value>)
+ //endif
+ var(resourcecountsum,#+<eval firstnumb*resource_value>)
+ //src.smsg <argv(resourcecountnumb)>
+ arg(resourcecountnumb,#+1)
+endwhile
+//src.smsg hodnota za resources: <var(resourcecountsum)>
+return"<var(resourcecountsum)>"
+//singleparse(<argv(0)>)
+
+[DIALOG d_craftmistr]
+SetLocation=10,10
+argo.tag(firsti,<eval argv(0)>)//<eval argv(1)>
+if (argo.tag(firsti)<0)
+ argo.tag(firsti,0)
+endif
+argo.cv_radku(<rescount>)
+argo.tag(sirka,<cv_dialog_sirka>)
+argo.tag(vyska,<eval 23+(2*<d_def_radek_vyska>)+(argo.tag(radku)*cv_dialog_radek_vyska)+(4*<d_def_skvira>)+(2*<d_def_okraj>)>)
+
+argo.dialog_prvni
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+argo.dialog_pozadi(<argo.tag(nexty)>,1)
+
+var(d_def_radek_vyska,<cv_dialog_radek_vyska>)
+var(sloupec_noback[0],1)
+argo.dialog_pozadi(<argo.tag(nexty)>,<argo.tag(radku)>,20,60,330,100)
+var(sloupec_noback[0],"")
+//var(d_def_radek_vyska,"")
+//argo.dialog_pozadi(<argo.tag(nexty)>,1)
+//var(d_def_radek_vyska,<cv_dialog_radek_vyska>)
+argo.dialog_zpruhledni
+
+//texta(<argo.dialog_textpos(1,0,1)>,2301,kup)
+textA(<argo.dialog_textpos(1,2)>,2301,Nazev itemu)
+textA(<argo.dialog_textpos(1,3)>,2301,Cena za lekci)
+textA(<argo.dialog_textpos(1,4,1)>,2301,zkusenosti)
+
+button((<argo.tag(sirka)>-<d_def_okraj>)-33,<argo.tag(obj_y[0])>,0fb1,0fb3,1,0,9)//cancel
+
+if (argo.tag(firsti))
+ argo.button(<argo.tag(sirka)>-(<d_def_okraj>+<d_def_skvira>+16),<argo.tag(obj_y[2])>+1,0fa,0fb,1,0,1) // prev
+endif
+arg(imax,<argo.tag(firsti)>+<cv_dialog_maxradku>)
+if (imax>rescount)
+ arg(imax,<rescount>)
+else
+ argo.button(<argo.tag(sirka)>-(<d_def_okraj>+<d_def_skvira>+16),<argo.tag(obj_y[3])>-24,0fc,0fd,1,0,2) // next
+endif
+
+arg(ypos,<argo.tag(obj_y[2])>)
+arg(index,<argo.tag(firsti)>)
+while (index<imax)
+ arg(item,<findcont(index)>)
+ //argo.button(<argo.tag(sloupec_x[0])>,ypos,9905,9904,1,0,index+100)
+ argo.checkbox(<argo.tag(sloupec_x[0])>,ypos,9904,9903,0,index+100)
+ argo.tilepic(<argo.tag(sloupec_x[1])>,ypos,<arg(item).dispiddec)>)
+ argo.textA(<argo.tag(sloupec_x[2])>+<d_def_odsazeni>,ypos,2301,"<arg(item).name>")
+ argo.textA(<argo.tag(sloupec_x[3])>+<d_def_odsazeni>,ypos,2301,<arg(item).tag(price)>)
+ argo.textA(<argo.tag(sloupec_x[4])>+<d_def_odsazeni>,ypos,2301,<arg(item).tag(expforthis)>) 
+ arg(ypos,#+<d_def_radek_vyska>)
+ arg(index,#+1)
+endwhile
+
+ //argo.dialog_textpos(3,0,1)
+ //argo.button(lastxpos,lastypos-1,9905,9904,1,0,3)
+ //argo.textA(lastxpos+30,lastypos,2301,Ok)
+ argo.button(<d_def_okraj>,(<argo.tag(vyska)>-<d_def_okraj>)-23,0fb7,0fb9,1,0,1)//ok
+var(d_def_radek_vyska,"")
+
+
+
+
+[DIALOG d_craftmistr BUTTON]
+on=0
+on=1
+arg(index,0)
+//src.sysmessage("tato feature je jen v testovacim modu.")
+while (index<rescount)
+    if (argchk(index+100))
+        arg(item,<findcont(index)>)
+        var(expstoadd,0)
+        if (arg(item).type==t_container)&&(safe arg(item).rescount)
+            arg(item).contents2(changeforexp)
+        endif
+        arg(item).changeforexp
+        src.addexp(<var(expstoadd)>)
+    endif
+    arg(index,#+1)
+endwhile
+
+
+
+[function changeforexp]
+if (link)
+    if (src.pay(<tag(price)>))
+    	var(expstoadd,#+<tag(expforthis)>)
+        link.tag(craftedby,<hval(link.tag(craftedby)|craftexp_gotexp)>)
+        remove
+    endif
+//    src.sysmessage("Zaplatil bys <tag(price)> gp a dostal bys <tag(expforthis)> xp.")
+endif
+
+[defnames]
+craftexp_gotexp		010000000
+
+[eof]
+
+[comment]
+Spurce		10	//copper
+Chestnut	30	//iron
+Oak		100	//verite
+Teak		200	//valorite
+Mahagon		350	//obisidi
+Eben		550	//adami
+Elven		900	//mith
+
+Copper		10
+Iron		12
+Silver		30
+Gold		60
+Verite		120
+Valorite	250
+Obsidian	450
+Adamium		750
+Shadow		900
+Mithril		1000

@@ -1,0 +1,302 @@
+
+//////////////////////////////////////////////////////
+
+[itemdef i_velmistr_gate]
+NAME=Brana pro povyseni na Velmistra.
+ID=i_moongate_blue
+TYPE=T_SCRIPT
+CATEGORY=Moria system
+SUBSECTION=System povyseni
+DESCRIPTION=Velmistrovska brana
+
+on=@create
+more2=1000 ///// zde se nastaví pocet experience za cely dungeon
+
+
+on=@step
+if (<src.tag(skillrank)>==2)&&(<SRC.RESTEST 1 i_mistr_delay>)&&(<src.tag(level)> > 11)
+SRC.TAG(SKILLRANK,3)
+src.tag(bylina,)
+src.consume=i_mistr_delay
+SRC.EVENTS -e_povyseni
+src.classmessage(Blahoprejeme stal jsi se velmistrem od teto chvile mas moznost byt vytrenovan na velmistra v skillech, ktere ti to umoznuji.)
+src.addexp(<more2>)
+elseif (<SRC.RESTEST 1 i_mistr_delay>) 
+src.tag(bylina,)
+src.consume=i_mistr_delay
+SRC.EVENTS -e_povyseni
+else 
+src.redessage(Nemas potrebnou vysi levelu na dokonceni questu musis mit alespon 12 level.)
+endif
+src.gohome
+return 1
+
+
+//////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////
+
+[ITEMDEF i_mistr_stone]
+ID=01174
+TYPE=0
+NAME=Cesta k povyseni na Mistra
+
+CATEGORY=Moria system
+SUBSECTION=System povyseni
+DESCRIPTION=Cesta k povyseni na Mistra
+
+ON=@Create
+COLOR=00480
+ATTR=attr_move_never
+
+ON=@userClick
+SRC.sysMESSAGE Cesta k povyseni na Mistra
+
+ON=@userDClick
+src.classmessage(Otevrela se ti cesta k Mistrovskemu questu ...)
+sfx snd_SPELL_lightning
+SRC.NEWITEM=i_gate_mistr
+SRC.ACT.COLOR=0981
+SRC.ACT.ATTR=attr_static|attr_decay 
+SRC.ACT.TIMER=20
+SRC.ACT.P=<SRC.P>
+return 1
+
+
+///////////////////////////////////////////////////////
+
+[ITEMDEF i_velmistr_stone]
+ID=01174
+TYPE=0
+NAME=Cesta k povyseni na Velmistra
+
+CATEGORY=Moria system
+SUBSECTION=System povyseni
+DESCRIPTION=Cesta k povyseni na Velmistra
+
+ON=@Create
+COLOR=00480
+ATTR=attr_move_never
+
+ON=@userClick
+SRC.sysMESSAGE Cesta k povyseni na Velmistra.
+
+ON=@userDClick
+
+IF ((<serv.time>-<eval <MORE1>>)<(48000)) && (<eval <MORE1>>!=0)   // Prodleva = sekundy*10 => 36000=hodina
+VAR.QELAP=((<serv.time>-<eval <MORE1>>)/600)
+SRC.MESSAGE("Quest je jiz obsazen po dobu  <EVAL <VAR.QELAP>> minut, musis poseckat az vyprsi limit 90 minut.")
+RETURN 1
+
+
+ELSEIF (<src.tag(skillrank)>==2)&&(<src.tag(level)>>11)
+SRC.classmessage(Otevrela se ti cesta k Velmistrovskemu questu ...)
+sfx snd_SPELL_lightning
+SRC.NEWITEM=i_gate_velmistr
+SRC.ACT.COLOR=0981
+SRC.ACT.ATTR=attr_static|attr_decay 
+SRC.ACT.TIMER=20
+SRC.ACT.P=<SRC.P>
+MORE1=<serv.time>
+SRC.NEWNPC=c_rinald
+SRC.ACT.GO=5212,1558,-58,1
+RETURN 1
+
+ELSE
+SRC.classmessage(Jen mistr na alespon 12 levelu muze otevrit branu a vstoupit.)
+RETURN 1
+
+ENDIF
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+[itemdef i_gate_mistr]
+NAME=Cesta k mistrovskemu questu.
+ID=i_moongate_blue
+TYPE=T_SCRIPT
+CATEGORY=Moria system
+SUBSECTION=System povyseni
+DESCRIPTION=Vstupni brana k mistrovskemu questu
+
+on=@step
+if (<src.tag(skillrank)>==1)&&(<src.tag(level)>>5)
+SRC.GO 462,2577,10,1 // ZADAT LOKACI kam hodi pro splneni mistrovskeho questu
+else
+src.redmessage(Tato cesta neni urcena pro tebe!)
+endif
+
+////////////////////////////////////////
+
+[itemdef i_gate_velmistr]
+NAME=Cesta k velmistrovskemu questu.
+ID=i_moongate_blue
+TYPE=T_SCRIPT
+
+CATEGORY=Moria system
+SUBSECTION=System povyseni
+DESCRIPTION=Vstupni brana k velmistrovskemu questu
+
+on=@step
+IF (<src.tag(skillrank)>==2)&&(<src.tag(level)>>11)
+ src.newitem i_mistr_delay
+ src.act.equip
+ SRC.EVENTS +e_povyseni
+ SRC.GO 5287,1556,-18,5 // ZADAT LOKACI kam hodi pro splneni velmistrovskeho questu
+ MORE1=<var.time>
+ SRC.classmessage(Ve stanovenem limitu musis dokoncit svou pout.)
+ RETURN 1
+ELSEIF (<src.tag(level)><12)
+ SRC.classmessage("Nemas potrebny 12 level abys mohl  vstoupit - neprezil bys !!!!")
+ELSE 
+ SRC.classmessage("Tento kvest je urcen jen pro mistry !!!!")
+ENDIF
+
+
+/////////////////////////////////////
+
+[ITEMDEF i_mistr_delay]
+NAME=Delay mistr
+ID=i_handr_1
+TYPE=T_EQ_SCRIPT
+WEIGHT=
+LAYER=layer_special
+
+ON=@Create
+	ATTR=attr_invis|attr_decay
+	MORE1=3600 // zde se nastavuje jakou dobu maji na splneni povysujiciho questu
+	MOREP=a_helpdesk
+
+ON=@Equip
+	TIMER=1
+	
+ON=@Timer
+	// Take the effect we would like.
+	if ( <cont> )
+		if ( <more1> )
+			if (STRCMP(<region.name>,vm))
+				cont.EVENTS -e_povyseni
+				cont.consume=i_mistr_delay
+			endif
+			cont.sysmessage <EVAL(<more1>)> // put countdown above my head.
+			more1=<more1>-1
+			TIMER=1
+			return 1
+		else
+
+			cont.gohome  // zde se nastavi misto kam ho to hodi pokud vcas nestihne splnit quest
+			cont.redmessage(Ve stanovenem limitu jsi nestihl dojit na konec tve cesty muzes se pokusit znovu.)
+                        cont.EVENTS -e_povyseni
+		endif
+	endif
+	remove
+	return 1
+	
+	
+[ITEMDEF i_mistr_delay2]
+NAME=Delay mistr2
+ID=i_handr_1
+TYPE=T_EQ_SCRIPT
+WEIGHT=
+LAYER=layer_special
+
+ON=@Create
+	ATTR=attr_invis|attr_decay
+	MORE1=2500 // zde se nastavuje jakou dobu maji na splneni povysujiciho questu
+	MOREP=a_helpdesk
+
+ON=@Equip
+	TIMER=1
+	
+ON=@Timer
+	// Take the effect we would like.
+	if ( <cont> )
+		if ( <more1> )
+			cont.sysmessage <EVAL(<more1>)> // put countdown above my head.
+			more1=<more1>-1
+			TIMER=1
+			return 1
+		else
+
+//			cont.gohome  // zde se nastavi misto kam ho to hodi pokud vcas nestihne splnit quest
+			cont.redmessage(Ve stanovenem limitu jsi nestihl dojit na konec tve cesty muzes se pokusit znovu.)
+                        cont.EVENTS -e_povyseni
+		endif
+	endif
+	remove
+	return 1
+	
+///////////////////////////////////////////
+
+
+[ITEMDEF i_odchozi_teleport]
+ID=04f3
+NAME=Domovske mesto.
+
+CATEGORY=Moria system
+SUBSECTION=System povyseni
+DESCRIPTION=Velmistrovsky teleport domu
+
+ON=@Create
+attr=attr_newbie
+attr=attr_move_never
+COLOR=0481
+
+ON=@userCLICK
+src.sysmessage Cesta do domovskeho mesta.
+
+ON=@STEP
+IF !(src.isPlayer)
+RETURN 0
+ENDIF
+src.consume=i_mistr_delay
+SRC.EVENTS -e_povyseni
+src.gohome
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[ITEMDEF i_velmistr_delay]
+NAME=Delay velmistr
+ID=i_handr_1
+TYPE=T_EQ_SCRIPT
+WEIGHT=
+LAYER=layer_special
+
+ON=@Create
+	ATTR=attr_invis|attr_decay
+	MORE1=3600 // zde se nastavuje za jak dlouho rinald ci drak zmizi
+	MOREP=a_helpdesk
+	TIMER=1
+ON=@Equip
+	TIMER=1
+	
+ON=@Timer
+	// Take the effect we would like.
+	if ( <cont> )
+		if ( <more1> )
+//			cont.message <EVAL(<more1>)> // put countdown above my head.
+			more1=<more1>-1
+			TIMER=1
+			return 1
+		else
+cont.body=c_man
+cont.invul 1
+cont.name=Neznamy muz
+cont.remove
+		endif
+	endif
+	remove
+	return 1
+	
+	
+[events e_povyseni]
+on=@death
+src.consume=i_mistr_delay
+SRC.EVENTS -e_povyseni
+src.gohome
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+[EOF]

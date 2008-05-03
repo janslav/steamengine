@@ -1,0 +1,252 @@
+[SPEECH Cardolanske_pohrebiste_mag]
+
+ON=*zdravim*
+ON=*dobry vecer*
+ON=*dobry den*
+  DORAND 2
+    SAY Dobrej, dobrej. Zalezi na tom jak pro koho. Uz od rana mam chut na rybu.
+    SAY Jo jo, hlavne mi nelezte do teleporteru!
+  ENDDO
+
+ON=*gate*
+ON=*teleport*
+ON=*teleporter*
+  SAY Vcera se pretizil a zacal horet. Delam na tom od rana a uz to mam temer opravene. Jenze mi chybi modry krystal.
+  SAY Ne abyste do nej lezli, zanasi! taky by vas to mohlo hodit primo do skaly a to byste nejspis nechteli
+
+ON=*drahokam*
+ON=*kristal*
+ON=*sutr*
+ON=*krystal*
+  IF (<src.restest 1 i_Cardolanske_pohrebiste_krystal12 >)
+    SAY Proc me furt rusis? Coze? Ty mas krystal? Slava, konecne muzu ten stary kram opravit!
+    src.consume(i_Cardolanske_pohrebiste_krystal12,500)
+    tag(gate).MoreP=<tag(gate).tag(p1)>
+    tag(gate).TIMER=10   
+    tag(gate).More2=1
+    tag(gate).Color=0099E
+    SOUND=snd_SPELL_telekinesis
+  ELSE
+    SAY Potrebuju krystal, je z kristalu a ma kristalovou barvu. 
+  ENDIF
+
+ON=*rybicka*
+ON=*rybka*
+ON=*ryba*
+  IF (<SRC.RESTEST 1 i_Cardolanske_pohrebiste_rybazfontany >)
+    SAY Dekuji ti mcokrat, tady mas svoje penize. 
+    SAY Mindo, tady mas hlavicku na.
+    src.consume(i_Cardolanske_pohrebiste_rybazfontany,500)
+    SRC.NEWITEM=i_Cardolanske_pohrebiste_klic12
+    SRC.ACT.P=<tag(kocka).P>
+    SRC.ACT.P_Z=<SRC.ACT.P_Z>+3  
+    SRC.ACT.MORE2=<tag(kocka).tag(dvere)>
+    SOUND=snd_ANIMALS_CAT1 
+    tag(kocka).SAY mnau, aaauuuuuu
+    SRC.NEWITEM=i_gold
+    SRC.ACT.AMOUNT=1000
+    SRC.ACT.BOUNCE
+  ELSE
+    SAY Nemas rybicku? Ani malinkou? Zaplatim ti kdyz mi doneses.
+  ENDIF
+
+ON=*jak to jde?*
+  SAY jsem rad ze se ptas
+
+ON=*deda*
+ON=*predek*
+  SAY uz si na nej skoro nepamatuju, ale braval me sebou na ryby
+
+ON=*co tu delate?*
+ON=*co tu delas?*
+   SAY ctu ruzne knihy co tu mam po dedovi, obcas za nim zajdu a popovidame si, kdyz je cas
+   SAY chtel jsem se za nim podivat, ale ten zatraceny teleporter zase zanasi
+
+ON=*jidlo*
+   DORAND 2
+     SAY jestli mate dobrou rybu, tak se nebudu zlobit
+     SAY obcas mi sem farmarka donese darkovej kos plny dobrot
+   ENDDO
+
+ON=*farmarka*
+   SAY je to dobra zena, obcas mi sem prinese neco na zub
+
+ON=*menhir*
+   SAY z toho mam opravdu radost, lidi mi na nej nosi jidlo a ja jim dam par zlataku z dedeckova pokladu
+
+ON=*poklad*
+   SAY deda nashromazdil velke bohatstvi, myslim, ze nemusim mit strach, ze bych nekdy stradal
+
+ON=*knihy*
+ON=*co ctes?*
+ON=*co ctete?*
+  SAY zrovna mam rozecteny zajimavy tridilny svazek Necrocomuniconu
+  
+ON=*Necrocomunicon*
+  SAY velmi dobre cteni pred spanim
+
+ON=*kocka*
+ON=*Minda*
+  SAY to je moje kocicka, ma rada rybicky
+
+ON=*dedku*
+  SAY ja ti dam dedku!
+  SRC.kill
+
+ON=*zlodeji*
+ON=*pica*
+ON=*pico*
+ON=*lamo*
+ON=*hajzle*
+ON=*svine*
+ON=*kretene*
+ON=*debile*   
+ON=*zmetku*
+ON=*vole*
+ON=*tupce*
+ON=*sklerotiku*
+ON=*blbe*
+ON=*blbce*
+  IF (<src.body>==c_man)
+    SAY zadnej <SRC.Name> me urazet nebude
+  ELSE
+    SAY zadna <SRC.Name> me urazet nebude
+  ENDIF
+  SRC.Kill
+
+ON=*karty*
+  SAY karty mi tu zustaly po tete Milene, jsou an nich hezke obrazky
+  SAY deda rikal, ze se z nich da cist budoucnost
+
+ON=*particku*
+ON=*zahrajeme si?*
+ON=*zahrajete si?*
+ON=*zahrajes si?*
+  IF (<SRC.RESTEST 1000 i_gold >)
+    SAY ale proc ne? dnes mi v horoskopu vyslo, ze budu mit stesti ve hre
+    DORAND 3
+      tag(docasnej,"1")
+      tag(docasnej,"2")
+      tag(docasnej,"3")
+    ENDDO
+    IF ((<tag(docasnej)>==1)||(<tag(docasnej)>==2))
+      src.sysmessage=prohral jsi
+      src.consume(i_gold,1000)     
+    ELSE
+      src.sysmessage=vyhral jsi
+      SRC.NEWITEM=i_gold
+      SRC.ACT.AMOUNT=1000
+      SRC.ACT.BOUNCE
+    ENDIF 
+    tag(docasnej,"")
+  ELSE
+    SAY o co budeme hrat kdyz nemas penize?
+  ENDIF
+  
+ON=*budoucnost*
+  SAY tu z karet nelustim, ja ji ctu z hvezd
+
+ON=*hvezdy*
+  SAY neco mi rika, ze dnes prohrajes par minci v kartach
+
+
+
+[SPEECH Cardolanske_pohrebiste_farmarka]
+
+ON=*cau kote*
+  SAY ahoj brouku
+
+ON=*ahoj kote*
+  SAY cau brouku
+
+ON=*kote*
+  SAY ano brouku?
+
+ON=*Dobry den*
+ON=*ahoj*
+ON=*cau*
+  IF (<src.body>==c_man)
+    SAY Dobry den hrdino, neposila mi te sem samotna Epona?
+    EMOTE smeje se
+  ELSE
+    SAY Dobry den 
+  ENDIF
+
+ON=*bohyne*
+ON=*urody*
+ON=*uroda*
+ON=*obet*
+ON=*jidlo*
+  SAY chodim jednou tydne obetovat Epone kosik plny plodu z nasi zahrady
+  
+ON=*Epona*
+  SAY Epona je bohyne ... ehm ...  urody
+  EMOTE cervena se
+
+ON=*oltar*
+ON=*podstavec*
+ON=*obetiste*
+  SAY je kousek odsud, kdyz pujdes po ceste ja jih, tak narazis na lesik s potuckem
+  SAY u pramene potom najdes oltar a kdyz bude mit Epona dobrou naladu, odmeni se ti
+  SAY mozna ze naleznes i vchod do stareho pohrebiste
+
+ON=*plody*
+ON=*kosik*
+  SAY kdybys ji chtel taky obetovat, tak ti muzu kosik s jidlem pripravit, kdyz me hezky poprosis
+
+ON=*chci obetovat*
+ON=*chci ji obetovat*
+ON=*pujdu obetovat*
+ON=*pujdu ji obetovat*
+ON=*priprav mi kosik*
+ON=*prosimte kosik*
+ON=*prosim kosik*
+ON=*priprav kosik*
+ON=*priprav mi kosik*
+ON=*hezky prosim*
+ON=*pekne prosim*
+ON=*prosim pekne*
+ON=*prosim hezky*
+  IF (<SRC.RESTEST 1000 i_gold >)
+    SAY kdyz tak hezky prosis
+    EMOTE smej se
+    SRC.sysmessage=j  
+    SRC.NEWITEM=i_Cardolanske_pohrebiste_kos_s_ovocem
+    SRC.ACT.tag(podstavec,<tag(podstavec)>)
+    SRC.ACT.BOUNCE
+    src.sysmessage=vymenou za 1000 gp jsi dostal kosik plny jidla
+    src.consume(i_gold,1000)     
+  ELSE
+    SAY a mas penize? prece necekas, ze ti dam zadarmo?
+  ENDIF
+
+ON=*pohrebiste*
+  SAY povida se ze si ho psotavil nejaky kral za davnych dob, a ze ceka kazdy rok na zimni slunovrat
+
+ON=*slunovrat*
+  SAY taky se rika, ze pri zapadu slunce v den zimniho slunovratu si slunecni paprsek najde cestu primo do vstupni chodby a celou ji prozari jak se slunce odrazi od zlatych stitu jeho osobni straze
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

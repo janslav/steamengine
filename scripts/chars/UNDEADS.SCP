@@ -1,0 +1,3608 @@
+[CHARDEF 032]
+
+defname=c_skeleton
+NAME=Kostlivec
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS
+ATTACK=9
+ARMOR=4
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_bone
+
+//=r_spooky
+//=t_bone,i_gold
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec
+
+ON=@Create
+Color=0989
+NPC=brain_undead
+FAME=20
+KARMA={-999 -4999}
+STR=800
+DEX=80
+INT=35
+
+
+maxhits={100 120}
+maxstam=80
+maxmana=0
+
+tag.experience=<eval {4.0 5.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF 038]
+
+DEFNAME=c_skeleton_axe
+NAME=Kostlivec Sekernik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS
+ATTACK=11
+ARMOR=10
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Sekernik 1
+
+ON=@Create
+Color=0751
+NPC=brain_undead
+FAME={20 30}
+KARMA={-999 -5999}
+STR=800
+DEX=100
+INT=0
+
+
+maxhits={100 120}
+maxstam=100
+maxmana=0
+
+tag.experience=<eval {6.0 8.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+SWORDSMANSHIP={85.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSPeak=35.0
+
+ITEMnewbie=i_axe_battle
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_axe_battle
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_axe_lvl_2]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Sekernik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS
+ATTACK=20
+ARMOR=20
+
+MOVERATE=3
+
+
+RESOURCES=16 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Sekernik 2
+
+ON=@Create
+Color=0753
+NPC=brain_undead
+FAME={30 40}
+KARMA={-999 -5999}
+STR=800
+DEX=200
+INT=0
+
+
+maxhits={140 180}
+maxstam=160
+maxmana=0
+
+tag.experience=<eval {14.0 16.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+SWORDSMANSHIP={85.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=40.0
+
+
+ITEMnewbie=i_axe_battle
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_axe_battle
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_axe_lvl_3]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Sekernik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS
+ATTACK=40
+ARMOR=40
+
+MOVERATE=3
+
+
+RESOURCES=24 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Sekernik 3
+
+ON=@Create
+Color=0757
+NPC=brain_undead
+FAME={40 50}
+KARMA={-999 -5999}
+STR=800
+DEX=300
+INT=0
+
+
+maxhits={180 220}
+maxstam=200
+maxmana=0
+
+tag.experience=<eval {24.0 32.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {60 120}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {500 750}>
+
+
+
+
+
+SWORDSMANSHIP={85.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=45.0
+
+ITEMnewbie=i_axe_battle
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_axe_battle
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_axe_lvl_4]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Sekernik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS
+ATTACK=60
+ARMOR=60
+
+MOVERATE=3
+
+
+RESOURCES=32 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Sekernik 4
+
+ON=@Create
+Color=0759
+NPC=brain_undead
+FAME={50 60}
+KARMA={-999 -5999}
+STR=800
+DEX=400
+INT=0
+
+
+maxhits={240 380}
+maxstam=300
+maxmana=0
+
+tag.experience=<eval {50.0 64.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str 
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {500 750}>
+tag(resist_para,1000)
+
+
+
+
+SWORDSMANSHIP={85.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=50.0
+
+
+ITEMnewbie=i_axe_battle
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_axe_battle
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF 039]
+
+DEFNAME=c_skeleton_sword
+NAME=Kostlivec Valecnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS|MT_EQUIP
+ATTACK=11
+ARMOR=14
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Valecnik 1
+
+ON=@Create
+Color=0989
+NPC=brain_undead
+FAME=40
+KARMA={-999 -5999}
+STR=800
+DEX=80
+INT=0
+
+
+maxhits={100 120}
+maxstam=100
+maxmana=0
+
+tag.experience=<eval {6.0 9.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+Fencing={85.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=25.0
+
+
+ITEMnewbie=i_iron_buckler_shield
+ITEMnewbie=i_CUTLASS_iron
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_shield_buckler
+ITEM=i_CUTLASS_iron
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_sword_lvl_2]
+
+ID=c_skeleton_sword
+NAME=Kostlivec Valecnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS|MT_EQUIP
+ATTACK=16
+ARMOR=18
+
+MOVERATE=3
+
+
+RESOURCES=16 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Valecnik 2
+
+ON=@Create
+Color=0989
+NPC=brain_undead
+FAME=50
+KARMA={-999 -5999}
+STR=800
+DEX=80
+INT=0
+
+
+maxhits={180 220}
+maxstam=160
+maxmana=0
+
+tag.experience=<eval {12.0 16.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+Fencing={85.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_buckler_shield
+ITEMnewbie=i_CUTLASS
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_shield_buckler
+ITEM=i_CUTLASS_iron
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_knight]
+
+ID=c_skeleton_sword
+NAME=Kostlivec Rytir
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=25
+ARMOR=25
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Rytir 1
+
+ON=@Create
+Color=0997
+NPC=brain_undead
+FAME=90
+KARMA={-999 -5999}
+STR=1100
+DEX=150
+INT=0
+
+
+maxhits={180 220}
+maxstam=100
+maxmana=0
+
+tag.experience=<eval {16.0 22.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Fencing={85.0 100.0}
+SpiritSpeak=25.0
+
+ITEMnewbie=i_buckler_shield
+ITEMnewbie=i_CUTLASS_iron
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=loot_undead
+ITEM=i_CUTLASS_iron
+ITEM=i_shield_buckler
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_knight_lvl_2]
+
+ID=c_skeleton_sword
+NAME=Kostlivec Rytir
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=40
+ARMOR=45
+
+MOVERATE=3
+
+
+RESOURCES=16 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Rytir 2
+
+ON=@Create
+Color=0999
+NPC=brain_undead
+FAME=120
+KARMA={-999 -5999}
+STR=1100
+DEX=250
+INT=0
+
+
+maxhits={500 540}
+maxstam=160
+maxmana=0
+
+tag.experience=<eval {35.0 45.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {60 120}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Fencing={85.0 100.0}
+SpiritSpeak=30.0
+
+
+ITEMnewbie=i_buckler_shield
+ITEMnewbie=i_CUTLASS
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=loot_undead
+ITEM=i_CUTLASS_iron
+ITEM=i_shield_buckler
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_knight_lvl_3]
+
+ID=c_skeleton_sword
+NAME=Kostlivec Velmistr
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=75
+ARMOR=70
+
+MOVERATE=3
+
+
+RESOURCES=24 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Rytir 3
+
+ON=@Create
+Color=099B
+NPC=brain_undead
+FAME=150
+KARMA={-999 -5999}
+STR=1100
+DEX=350
+INT=0
+
+
+maxhits={1500 1640}
+maxstam=220
+maxmana=0
+
+tag.experience=<eval {100.0 110.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {60 120}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {900 950}>
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Fencing={85.0 100.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_buckler_shield
+ITEMnewbie=i_CUTLASS
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=loot_undead
+ITEM=i_CUTLASS_iron
+ITEM=i_shield_buckler
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_knight_lvl_4]
+
+ID=c_skeleton_sword
+NAME=Kostlivec Nesmrtelny
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=100
+ARMOR=110
+
+MOVERATE=3
+
+
+RESOURCES=32 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Rytir 4
+
+ON=@Create
+Color=0433
+NPC=brain_undead
+FAME=200
+KARMA={-999 -5999}
+STR=1100
+DEX=450
+INT=0
+
+
+maxhits={2500 2900}
+maxstam=320
+maxmana=0
+
+tag.experience=<eval {165.0 180.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {900 950}>
+tag(resist_para,1000)
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Fencing={85.0 100.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=60.0
+
+ITEMnewbie=i_buckler_shield
+ITEMnewbie=i_CUTLASS
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=loot_undead
+ITEM=i_CUTLASS_iron
+ITEM=i_shield_buckler
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+
+[CHARDEF c_skeleton_knight_lvl_5]
+ID=c_skeleton_sword
+NAME=Kostlivec Vudce
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=130
+ARMOR=110
+
+MOVERATE=3
+
+
+RESOURCES=32 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+TEVENTS=e_NPC_Leaper
+TEVENTS=e_NPC_Bleed
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Rytir 4
+
+ON=@Create
+Color=098B
+NPC=brain_undead
+FAME=200
+KARMA={-999 -5999}
+STR=1100
+DEX=1500
+INT=0
+
+
+maxhits={5000 5500}
+maxstam=320
+maxmana=0
+
+tag.experience=<eval {320.0 375.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[7]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {950 980}>
+tag(resist_para,1000)
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Fencing={85.0 100.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=60.0
+
+ITEMnewbie=i_buckler_shield
+ITEMnewbie=i_CUTLASS
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=loot_undead
+ITEM=i_CUTLASS_iron
+ITEM=i_shield_buckler
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {8 15}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_archer]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Lucistnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_RUN
+ATTACK=10
+ARMOR=10
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Lucistnik 1
+
+ON=@Create
+Color=0542
+NPC=brain_undead
+FAME=90
+KARMA={-999 -5999}
+STR=1100
+DEX=100
+INT=0
+
+
+maxhits={110 150}
+maxstam=70
+maxmana=0
+
+tag.experience=<eval {7.0 9.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+ARCHERY={70.0 80.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=30.0
+
+ITEMnewbie=i_bow
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_arrow,{10 70}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_archer_lvl_2]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Lucistnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_RUN
+ATTACK=25
+ARMOR=20
+
+MOVERATE=3
+
+
+RESOURCES=16 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Lucistnik 2
+
+ON=@Create
+Color=0544
+NPC=brain_undead
+FAME=140
+KARMA={-999 -5999}
+STR=1100
+DEX=200
+INT=0
+
+
+maxhits={500 540}
+maxstam=140
+maxmana=0
+
+tag.experience=<eval {30.0 40.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+ARCHERY={80.0 90.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=35.0
+
+
+ITEMnewbie=i_bow
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_arrow,{10 70}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_archer_lvl_3]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Lucistnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_RUN
+ATTACK=35
+ARMOR=40
+
+MOVERATE=3
+
+
+RESOURCES=24 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Lucistnik 3
+
+ON=@Create
+Color=0547
+NPC=brain_undead
+FAME=190
+KARMA={-999 -5999}
+STR=1100
+DEX=300
+INT=0
+
+
+maxhits={1500 1640}
+maxstam=190
+maxmana=0
+
+tag.experience=<eval {85.0 95.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {60 120}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {500 750}>
+
+
+
+
+
+ARCHERY={90.0 100.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+peacemaking=90.0
+provocation=90.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_bow
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_arrow,{10 70}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_archer_lvl_4]
+
+ID=c_skeleton_axe
+NAME=Kostlivec Lucistnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_EQUIP|MT_RUN
+ATTACK=45
+ARMOR=60
+
+MOVERATE=3
+
+
+RESOURCES=32 i_reag_bone
+
+//=t_bone,i_gold
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Lucistnik 4
+
+ON=@Create
+Color=054A
+NPC=brain_undead
+FAME=240
+KARMA={-999 -5999}
+STR=1100
+DEX=400
+INT=0
+
+
+maxhits={2500 2900}
+maxstam=240
+maxmana=0
+
+tag.experience=<eval {135.0 150.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {500 750}>
+tag(resist_para,1000)
+
+
+
+
+ARCHERY={100.0 120.0}
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=65.0
+
+ITEMnewbie=i_bow
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=i_arrow,{10 70}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF 148]
+
+DEFNAME=c_skeleton_mage
+NAME=Kostlivec Carodej
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=12
+ARMOR=10
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_bone
+
+//=t_bone,i_gold,t_wand,t_reagent
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Carodej 1
+
+ON=@Create
+COLOR=066E
+NPC=brain_undead
+FAME=90
+KARMA={-999 -5999}
+STR=1100
+DEX=100
+INT=80
+
+
+maxhits=150
+maxstam=100
+maxmana=200
+
+tag.experience=<eval {10.0 14.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+PARRYING={85.0 100.0}
+RESIST={65.0 80.0}
+TACTICS={85.0 100.0}
+WRESTLING=75.0
+MAGERY={90.0 100.0}
+EI={30.0 50.0}
+SpiritSpeak=35.0
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_strength
+addspell=s_fireball
+addspell=s_poison
+addspell=s_lightning
+addspell=s_paralyze
+
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{1 30}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_mage_lvl_2]
+
+ID=c_skeleton_mage
+NAME=Kostlivec Carodej
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=24
+ARMOR=20
+
+MOVERATE=3
+
+
+RESOURCES=16 i_reag_bone
+
+//=t_bone,i_gold,t_wand,t_reagent
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Carodej 2
+
+ON=@Create
+COLOR=0671
+NPC=brain_undead
+FAME=140
+KARMA={-999 -5999}
+STR=1100
+DEX=200
+INT=120
+
+
+maxhits={400 440}
+maxstam=200
+maxmana=300
+
+tag.experience=<eval {20.0 24.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+
+
+
+
+
+
+PARRYING={85.0 100.0}
+RESIST={65.0 80.0}
+TACTICS={85.0 100.0}
+WRESTLING=95.0
+MAGERY={80.0 90.0}
+EI={30.0 50.0}
+SpiritSpeak=40.0
+
+ITEMNEWBIE=i_spellbook
+
+addspell=s_strength
+addspell=s_fireball
+addspell=s_paralyze
+addspell=s_lightning
+addspell=s_harm
+
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{1 30}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_mage_lvl_3]
+
+ID=c_skeleton_mage
+NAME=Kostlivec Carodej
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=40
+ARMOR=40
+
+MOVERATE=3
+
+
+RESOURCES=24 i_reag_bone
+
+//=t_bone,i_gold,t_wand,t_reagent
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Carodej 3
+
+ON=@Create
+COLOR=0674
+NPC=brain_undead
+FAME=190
+KARMA={-999 -5999}
+STR=1100
+DEX=300
+INT=180
+
+
+maxhits={1200 1240}
+maxstam=300
+maxmana=400
+
+tag.experience=<eval {85.0 95.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {60 120}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {500 750}>
+
+
+
+
+
+PARRYING={85.0 100.0}
+RESIST={65.0 80.0}
+TACTICS={85.0 100.0}
+WRESTLING=100.0
+MAGERY={100.0 120.0}
+EI={50.0 70.0}
+peacemaking=90.0
+provocation=90.0
+SpiritSpeak=45.0
+
+ITEMNEWBIE=i_spellbook
+addspell=s_mass_curse 
+addspell=s_paralyze
+addspell=s_harm
+addspell=s_blade_spirits
+addspell=s_magic_reflection
+addspell=s_lightning
+
+
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{1 30}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skeleton_mage_lvl_4]
+
+ID=c_skeleton_mage
+NAME=Kostlivec Carodej
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=078c7f
+CAN=MT_WALK|MT_RUN|MT_EQUIP|MT_FIRE_IMMUNE
+ATTACK=45
+ARMOR=60
+
+MOVERATE=3
+
+
+RESOURCES=32 i_reag_bone
+
+//=t_bone,i_gold,t_wand,t_reagent
+//=r_spooky
+BLOODCOLOR=-1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Kostlivec Carodej 4
+
+ON=@Create
+COLOR=098d
+NPC=brain_undead
+FAME=240
+KARMA={-999 -5999}
+STR=1100
+DEX=400
+INT=320
+
+
+maxhits={1900 1920}
+maxstam=350
+maxmana=500
+
+tag.experience=<eval {130.0 140.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+tag(resist_poison,1000)
+tag(resist_bleed,1000)
+tag.resist_summon=<eval {500 750}>
+tag(resist_para,1000)
+
+
+
+
+PARRYING={85.0 100.0}
+RESIST={65.0 80.0}
+TACTICS={85.0 100.0}
+WRESTLING=110.0
+MAGERY={120.0 130.0}
+EI={120.0 135.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=60.0
+
+
+ITEMNEWBIE=i_spellbook
+addspell=s_mass_curse 
+addspell=s_paralyze
+addspell=s_lightning
+addspell=s_mass_dispel
+addspell=s_magic_reflection
+addspell=s_energy_vortex
+addspell=s_harm
+
+ITEMNEWBIE=i_light_source
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_SKELETON
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{1 30}
+ITEM=i_reag_executioners_cap, {3 10}
+
+///////////////////////////////////////////////////////////
+[CHARDEF 01a]
+
+DEFNAME=c_spectre
+NAME=Spectre
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_GHOUL
+
+CAN=MT_WALK|MT_EQUIP|mt_ghost
+ATTACK=52
+ARMOR=10
+
+MOVERATE=3
+
+
+RESOURCES=7 t_eerie_stuff
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Spectre
+
+ON=@Create
+
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=280
+DEX=110
+INT=40
+
+
+maxhits={100 120}
+maxstam=110
+maxmana=0
+
+tag.experience=<eval {6.0 7.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 90.0}
+WRESTLING={85.0 90.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+ITEM=random_reagent_necro,{1 5}
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=i_gold
+
+
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF 03]
+
+defname=c_zombie
+NAME=Zombie
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_ZOMBIE
+ANIM=078c7f
+CAN=MT_WALK
+ATTACK=16
+ARMOR=15
+
+MOVERATE=3
+
+
+RESOURCES=7 t_eerie_stuff
+
+//=r_dungeon,r_spooky
+//=i_gold
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Zombie
+
+ON=@Create
+
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=280
+DEX=60
+INT=30
+
+
+maxhits={35 50}
+maxstam=80
+maxmana=0
+
+tag.experience=<eval {3.0 4.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=30.0
+
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=random_reagent_necro,{4 10}
+ITEM=i_gold
+
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_mummy]
+
+ID=c_zombie
+NAME=Mummy
+SOUND=snd_MONSTER_ZOMBIE1
+ICON=i_pet_ZOMBIE
+ANIM=078c7f
+CAN=MT_WALK|MT_USEHANDS|MT_FIRE_IMMUNE
+ATTACK=38
+ARMOR=40
+
+MOVERATE=3
+
+
+RESOURCES=10 t_eerie_stuff
+
+//=r_dungeon,r_spooky
+//=t_TRAP,c_man
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Mummy
+
+ON=@Create
+Color=0481
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=280
+DEX=130
+INT=40
+
+
+maxhits={230 280}
+maxstam=120
+maxmana=0
+
+tag.experience=<eval {16.0 19.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {45 90}>)
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=loot_undead
+ITEM=random_reagent_necro,{4 10}
+ITEM=i_gold
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_ghoul]
+
+ID=c_zombie
+NAME=Ghoul
+SOUND=snd_MONSTER_ZOMBIE1
+ICON=i_pet_ZOMBIE
+ANIM=078c7f
+CAN=MT_WALK
+ATTACK=26
+ARMOR=15
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Ghoul
+
+ON=@Create
+Color=0989
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=280
+DEX=60
+INT=35
+
+
+maxhits={190 250}
+maxstam=100
+maxmana=0
+
+tag.experience=<eval {6.0 9.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=35.0
+
+
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=random_reagent_necro,{4 10}
+ITEM=i_gold
+
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_fext]
+
+ID=c_spectre
+NAME=Fext
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_GHOUL
+ANIM=07bc7f
+CAN=MT_WALK|MT_EQUIP|mt_ghost
+ATTACK=40
+ARMOR=20
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Fext
+
+ON=@Create
+COLOR=1
+NPC=brain_undead
+FAME=90
+KARMA={-2000 -4000}
+STR=280
+DEX=50
+INT=50
+
+
+maxhits={390 450}
+maxstam={60 80}
+maxmana=0
+
+tag.experience=<eval {9.0 12.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 90.0}
+WRESTLING={85.0 90.0}
+SpiritSpeak=30.0
+
+ITEMnewbie=i_monster_create
+
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=random_reagent_necro,{4 10}
+ITEM=i_gold
+
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_wraith]
+
+ID=c_spectre
+NAME=Wraith
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_GHOUL
+ANIM=07bc7f
+CAN=MT_WALK|MT_EQUIP|mt_ghost
+ATTACK=9
+ARMOR=15
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_iron_eye
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Wraith
+
+ON=@Create
+COLOR=colors_gray
+NPC=brain_undead
+FAME=70
+KARMA={-2000 -3999}
+STR=280
+DEX=110
+INT=45
+
+
+maxhits={390 450}
+maxstam=190
+maxmana=0
+
+tag.experience=<eval {7.0 8.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 90.0}
+WRESTLING={85.0 90.0}
+POISONING=180.0 
+SpiritSpeak=40.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_undead_body
+ITEM=random_reagent_necro,{4 10}
+ITEM=i_gold
+
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF 03ca]
+
+DEFNAME=c_ghost
+NAME=Ghost
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_ZOMBIE
+ANIM=07bc7f
+CAN=MT_WALK|MT_SWIM|MT_GHOST|MT_USEHANDS
+ATTACK=13
+ARMOR=20
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Ghost
+
+ON=@Create
+COLOR=07FFF
+NPC=brain_undead
+FAME=30
+KARMA={-2000 -3999}
+STR=280
+DEX=180
+INT=45
+
+
+maxhits={120 180}
+maxstam=250
+maxmana=0
+
+tag.experience=<eval {3.0 4.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_bleed,100)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+SpiritSpeak=30.0
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent_necro,{4 10}
+
+
+
+
+///////////////////////////////////////////////////////////
+[chardef 146]
+
+defname=c_shadow
+Name=Shadow
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_LICH
+
+CAN=MT_WALK|MT_SWIM|MT_GHOST|MT_USEHANDS
+ATTACK=24
+ARMOR=20
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=096c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_duplicator
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Shadow
+
+ON=@Create
+
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=1200
+DEX=100
+INT=200
+
+
+maxhits={250 350}
+maxstam=160
+maxmana=400
+
+tag.experience=<eval {16.0 21.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag.dupecount=1
+
+
+tag(resist_poison,1000)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+KARMA={-4000 -10000}
+MAGERY=100.0
+EI=80.0
+SpiritSpeak=40.0
+
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_cunning
+addspell=s_dispell
+addspell=s_weaken
+addspell=s_fireball
+addspell=s_poison
+addspell=s_lightning
+addspell=s_magic_reflection
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent_necro,{10 15}
+ITEM=i_reag_executioners_cap, {10 15}
+
+
+///////////////////////////////////////////////////////////
+[chardef c_shadow_lord]
+
+ID=c_shadow
+Name=Shadow Lord
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_LICH
+
+CAN=MT_WALK|MT_SWIM|MT_GHOST|MT_USEHANDS
+ATTACK=35
+ARMOR=40
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=096c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_duplicator
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Shadow Lord
+
+ON=@Create
+Color=098a
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=1650
+DEX=120
+INT=250
+
+
+maxhits={450 550}
+maxstam=230
+maxmana=600
+
+tag.experience=<eval {40.0 45.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag.dupecount=2
+
+
+tag(resist_poison,1000)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+KARMA={-4000 -10000}
+MAGERY=100.0
+EI=80.0
+SpiritSpeak=45.0
+
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_cunning
+addspell=s_dispell
+addspell=s_weaken
+addspell=s_fireball
+addspell=s_poison
+addspell=s_lightning
+addspell=s_magic_reflection
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent_necro,{10 15}
+ITEM=i_reag_executioners_cap, {10 15}
+
+
+///////////////////////////////////////////////////////////
+[chardef c_shadow_king]
+
+ID=c_shadow
+Name=Shadow King
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_LICH
+
+CAN=MT_WALK|MT_SWIM|MT_GHOST|MT_USEHANDS
+ATTACK=60
+ARMOR=60
+
+MOVERATE=3
+
+
+
+
+//=r_dungeon,r_spooky
+
+BLOODCOLOR=096c
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_duplicator
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Shadow King
+
+ON=@Create
+COLOR=0992
+NPC=brain_undead
+FAME=20
+KARMA={-2000 -3999}
+STR=2000
+DEX=140
+INT=350
+
+
+maxhits={650 800}
+maxstam=330
+maxmana=800
+
+tag.experience=<eval {60.0 90.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag.dupecount=1
+
+tag(resist_para,1000)
+tag(resist_poison,1000)
+
+
+
+
+
+PARRYING={85.0 100.0}
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+KARMA={-4000 -10000}
+MAGERY=100.0
+EI=80.0
+SpiritSpeak=50.0
+
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_cunning
+addspell=s_dispell
+addspell=s_weaken
+addspell=s_fireball
+addspell=s_poison
+addspell=s_lightning
+addspell=s_magic_reflection
+addspell=s_summon_undead
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=i_gold
+ITEM=random_reagent_necro,{10 15}
+ITEM=i_reag_executioners_cap, {10 15}
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_shadow_king_undead]
+
+ID=c_shadow
+NAME=Elder Shadow
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_LICH
+ANIM=07bc7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS|MT_GHOST 
+ATTACK=110
+ARMOR=80 
+
+MOVERATE=3
+
+
+RESOURCES=
+
+//=r_caves,r_dungeon 
+//=r_civilization 
+BLOODCOLOR=0998
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater
+TEVENTS=e_duplicator
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Shadow King Undead
+
+ON=@CREATE 
+COLOR=0690
+NPC=brain_undead 
+FAME=2000
+KARMA={-4000 -4999}
+STR=7598
+DEX=500
+INT=450
+
+
+maxhits={3000 3500}
+maxstam=330
+maxmana=3000
+
+tag.experience=<eval {350.0 450.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag.dupecount=1
+
+tag(resist_para,1000)
+tag(resist_poison,1000)
+tag(resist_bleed,600)
+
+
+
+
+PARRYING={85.0 100.0}
+resist=400.0 
+WRESTLING=100.0 
+MAGERY=150.0
+POISONING=200.0
+wrestling=100.0
+tactics=100.0 
+ei=150.0
+SpiritSpeak=60.0
+
+// knows spells 
+ITEMNEWBIE=i_spellbook
+addspell=s_summon_undead
+addspell=s_paralyze
+addspell=s_curse
+addspell=s_magic_reflection
+addspell=s_weaken
+addspell=s_mass_curse
+addspell=s_mass_dispell
+addspell=s_mass_curse
+addspell=s_chain_lightning
+addspell=s_summon_elem_fire
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRESTOCK 
+ITEM=loot_undead
+ITEM=loot_undead_body
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{15 80}
+ITEM=random_reagent_necro,{15 80}
+ITEM=i_shepherds_crook
+ITEM=RANDOM_SCROLL,{ 2 3 }
+
+///////////////////////////////////////////////////////////
+[CHARDEF 018]
+
+defname=c_liche
+NAME=Liche
+SOUND=snd_MONSTER_LICHE1
+ICON=i_pet_LICH
+ANIM=07bc7f
+CAN=MT_WALK|MT_RUN|MT_EQUIP|mt_usehands|MT_FIRE_IMMUNE
+ATTACK=24
+ARMOR=20
+
+MOVERATE=3
+
+
+RESOURCES=10 t_eerie_stuff
+
+//=r_dungeon,r_caves,r_spooky
+//=t_bone,i_gold,t_wand,t_reagent
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Liche
+
+ON=@Create
+
+NPC=brain_undead
+FAME=200
+KARMA={-4000 -4999}
+STR=750
+DEX=100
+INT=150
+
+
+maxhits={200 300}
+maxstam=130
+maxmana=400
+
+tag.experience=<eval {15.0 18.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[3]>
+
+tag.weapflag=dam_physical|dam_blunt
+[CHARDEF c_liche_lord]
+
+ID=c_liche
+NAME=Liche Lord
+SOUND=snd_MONSTER_LICHE1
+ICON=i_pet_LICH
+ANIM=07bc7f
+CAN=MT_WALK|MT_RUN|MT_EQUIP|mt_usehands|MT_FIRE_IMMUNE
+ATTACK=35
+ARMOR=40
+
+MOVERATE=3
+
+
+RESOURCES=
+
+//=r_dungeon,r_caves,r_spooky
+//=t_bone,i_gold,t_wand,t_reagent,e_undead
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Liche Lord
+
+ON=@Create
+Color=098a
+NPC=brain_undead
+FAME=500
+KARMA={-4000 -4999}
+STR=1650
+DEX=120
+INT=250
+
+
+maxhits={400 500}
+maxstam=230
+maxmana=800
+
+tag.experience=<eval {40.0 45.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_poison,500)
+
+
+
+
+
+PARRYING={85.0 100.0}
+Resist=140.0
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Macefighting={85.0 100.0}
+MAGERY=100.0
+EI=80.0
+SpiritSpeak=45.0
+
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_curse
+addspell=s_dispell
+addspell=s_fireball
+addspell=s_poison
+addspell=s_lightning
+addspell=s_magic_reflection
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_undead
+ITEM=loot_undead_body
+ITEM=i_gold
+ITEM=random_reagent_necro,{20 50}
+ITEM=i_shepherds_crook
+ITEM=RANDOM_SCROLL,{ 0 1 }
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_liche_king]
+
+ID=c_liche
+NAME=Liche King
+SOUND=snd_MONSTER_LICHE1
+ICON=i_pet_LICH
+ANIM=07bc7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS|MT_GHOST 
+ATTACK=60
+ARMOR=60
+
+MOVERATE=3
+
+
+RESOURCES=
+
+//=r_caves,r_dungeon 
+//=r_civilization 
+BLOODCOLOR=0998
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Liche King
+
+ON=@CREATE 
+COLOR=0992
+NPC=brain_undead 
+FAME=1000
+KARMA={-4000 -4999}
+STR=2000
+DEX=140
+INT=350
+
+
+maxhits={600 800}
+maxstam=330
+maxmana=1200
+
+tag.experience=<eval {60.0 90.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+tag(resist_para,500)
+tag(resist_poison,500)
+tag(resist_bleed,250)
+
+
+
+
+PARRYING={85.0 100.0}
+resist=170.0 
+WRESTLING=100.0 
+MAGERY=200.0
+Macefighting={85.0 100.0}
+POISONING=80.0 
+ei=100.0
+SpiritSpeak=60.0
+
+
+ITEMNEWBIE=i_spellbook
+addspell=s_harm
+addspell=s_fireball
+addspell=s_energy_bolt
+addspell=s_lightning
+addspell=s_paralyze
+addspell=s_magic_reflection
+addspell=s_poison
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRESTOCK 
+ITEM=loot_undead
+ITEM=loot_undead_body
+ITEM=i_gold
+ITEM=random_reagent_necro,{15 80}
+ITEM=i_shepherds_crook
+ITEM=RANDOM_SCROLL,{ 0 2 }
+
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_liche_king_undead]
+
+ID=c_liche
+NAME=Kral Nemrtvych
+SOUND=snd_MONSTER_LICHE1
+ICON=i_pet_LICH
+ANIM=07bc7f
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS|MT_GHOST 
+ATTACK=110
+ARMOR=80 
+
+MOVERATE=3
+
+
+RESOURCES=
+
+//=r_caves,r_dungeon 
+//=r_civilization 
+BLOODCOLOR=0998
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_summoneater
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Liche King Undead
+
+ON=@CREATE 
+COLOR=0690
+NPC=brain_undead 
+FAME=2000
+KARMA={-4000 -4999}
+STR=7598
+DEX=500
+INT=450
+
+
+maxhits={4000 4500}
+maxstam=330
+maxmana=2000
+
+tag.experience=<eval {350.0 450.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[6]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {50 120}>)
+
+
+tag(resist_para,1000)
+tag(resist_poison,1000)
+tag(resist_bleed,600)
+
+
+
+
+PARRYING={85.0 100.0}
+resist=400.0 
+WRESTLING=100.0 
+MAGERY=150.0
+POISONING=200.0
+wrestling=100.0
+tactics=100.0 
+ei=150.0
+SpiritSpeak=55.0
+
+// knows spells 
+ITEMNEWBIE=i_spellbook
+addspell=s_summon_undead
+addspell=s_paralyze
+addspell=s_fire_field
+addspell=s_curse
+addspell=s_magic_reflection
+addspell=s_weaken
+addspell=s_mass_curse
+addspell=s_wall_of_stone
+addspell=s_mass_dispell
+addspell=s_mass_curse
+addspell=s_chain_lightning
+addspell=s_summon_elem_fire
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRESTOCK 
+ITEM=loot_undead
+ITEM=loot_undead_body
+ITEM=i_gold
+ITEM=RANDOM_REAGENT,{15 80}
+ITEM=random_reagent_necro,{15 80}
+ITEM=i_shepherds_crook
+ITEM=RANDOM_SCROLL,{ 2 3 }
+
+///////////////////////////////////////////////////////////
+[chardef 0319]
+
+DEFNAME=c_skeleton_horse
+NAME=Undead Horse
+sound=snd_animals_horse1
+ICON=i_pet_HORSE
+
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN
+ATTACK=35
+ARMOR=50
+
+MOVERATE=3
+
+
+RESOURCES=i_horse_shoes
+
+//=r_dungeon,r_caves,r_spooky
+//=t_bone,i_gold,t_wand,t_reagent,e_undead
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Undead Horse
+
+ON=@Create
+COLOR=0989
+NPC=brain_undead
+FAME=500
+KARMA={-4000 -4999}
+STR=600
+DEX=130
+INT=0
+
+
+maxhits={600 800}
+maxstam=230
+maxmana=0
+
+tag.experience=<eval {30.0 35.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {50 120}>)
+
+
+
+tag(resist_poison,1000)
+
+
+
+
+PARRYING={85.0 100.0}
+Resist=140.0
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Macefighting={85.0 100.0}
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=45.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[chardef c_skeleton_horse_mage]
+
+ID=c_skeleton_horse
+NAME=Undead Horse
+sound=snd_animals_horse1
+ICON=i_pet_HORSE
+
+CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN
+ATTACK=35
+ARMOR=50
+
+MOVERATE=3
+
+
+RESOURCES=i_horse_shoes
+
+//=r_dungeon,r_caves,r_spooky
+//=t_bone,i_gold,t_wand,t_reagent,e_undead
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_selfreser
+TEVENTS=e_summoneater
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Undead Horse
+
+ON=@Create
+COLOR=098d
+NPC=brain_undead
+FAME=500
+KARMA={-4000 -4999}
+STR=500
+DEX=190
+INT=500
+
+
+maxhits={600 800}
+maxstam=230
+maxmana=800
+
+tag.experience=<eval {40.0 45.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+tag(resist_para,1000)
+tag(resist_poison,1000)
+
+
+
+
+PARRYING={85.0 100.0}
+Resist=200.0
+TACTICS={85.0 100.0}
+WRESTLING={85.0 100.0}
+Macefighting={85.0 100.0}
+ei=150.0
+MAGERY=150.0
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=50.0
+
+// knows spells 
+ITEMNEWBIE=i_spellbook
+addspell=s_paralyze
+addspell=s_hallucination
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+item=i_gold
+ITEM=random_reagent_necro,{15 80}
+ITEM=i_reag_executioners_cap, {10 15}
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_elem_death]
+
+ID=c_elem_water_m
+NAME=Death Elemental
+SOUND=snd_MONSTER_GHOST1
+ICON=i_pet_ELEM_WATER
+ANIM=07bc7f
+CAN=MT_WALK|MT_EQUIP|mt_usehands|
+ATTACK=35
+ARMOR=20
+
+MOVERATE=3
+
+
+RESOURCES=
+
+//=r_dungeon,r_caves,r_spooky
+//=t_bone,i_gold,t_wand,t_reagent,e_undead
+BLOODCOLOR=1
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Death Elemental
+
+ON=@Create
+COLOR=0989
+brain=BRAIN_undead
+FAME=400
+KARMA={-4000 -4999}
+STR=240
+DEX=600
+INT=100
+
+
+maxhits={400 600}
+maxstam=490
+maxmana=0
+
+tag.experience=<eval {16.0 22.0}> 
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {120 240}>)
+
+
+
+
+tag(resist_bleed,1000)
+
+
+
+PARRYING={120.0 150.0}
+TACTICS={120.0 150.0}
+WRESTLING={120.0 150.0}
+SpiritSpeak=40.0
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_elem
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF 068]
+
+DEFNAME=c_dragon_bone
+NAME=Bone Dragon
+SOUND=snd_MONSTER_DRAGON1
+ICON=i_pet_dragon
+
+CAN=MT_WALK|MT_FLY|MT_FIRE_IMMUNE|mt_run
+ATTACK=140
+ARMOR=140
+
+MOVERATE=3
+
+
+RESOURCES=8 i_reag_dragon_blood
+
+//=r_caves,r_dungeon
+//=r_civilization,r_water
+BLOODCOLOR=1
+
+TEVENTS=e_monster
+TEVENTS=e_looter
+TEVENTS=e_character
+TEVENTS=e_selfreser
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Dragon Bone
+
+ON=@Create
+COLOR=0990
+NPC=brain_dragon
+FAME=1400
+KARMA={-5000 -5999}
+STR=7400
+DEX=180
+INT=0
+
+
+maxhits={6000 8000}
+maxstam=730
+maxmana=0
+
+tag.experience=<eval {500.0 600.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[4]>//dmg
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[9]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+tag(resstimer,<eval {50 120}>)
+
+
+tag(resist_para,1000)
+tag(resist_poison,1000)
+tag.resist_bleed=1000
+
+
+
+poisoning={200.0 500.0}
+Resist={500.0 8.00}
+WRESTLING={110.0 130.0}
+SpiritSpeak=165.0
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_DRAGON
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[chardef 107]
+
+defname=c_skeleton_elder
+Name=Nemrtvy Valecnik
+SOUND=snd_MONSTER_SKLETN1
+ICON=i_pet_SKELETON
+ANIM=07bc7f
+CAN=MT_WALK|mt_run
+attack=45
+ARMOR=50
+
+MOVERATE=3
+
+
+RESOURCES=10 i_ribs_raw
+
+
+
+BLOODCOLOR=1
+TEVENTS=e_duplicator
+TEVENTS=e_monster
+TEVENTS=e_character
+TEVENTS=e_npc_reactivearmor
+TEVENTS=e_selfreser
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Nemrtvy Valecnik
+
+ON=@Create
+COLOR=07FFF
+NPC=brain_monster
+STR=1000
+DEX=200
+INT=0
+FAME={100 5000}
+KARMA=-8000
+
+
+maxhits={1600 1800}
+maxstam=230
+maxmana=0
+
+tag.experience=<eval {30.0 60.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoLoot> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[2]>//str
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[5]>
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+tag.dupecount=1
+tag(hit_damage,<eval {15 25}>)
+
+tag(resist_poison,1000)
+tag.resist_bleed=1000
+
+
+
+WRESTLING=100.0
+swordsmanship=150.0
+parrying=150.0
+tactics=200.0
+poisoning=200.0
+peacemaking=100.0
+provocation=100.0
+SpiritSpeak=45.0
+
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+ITEM=loot_undeads
+ITEM=i_gold
+ITEM=i_reag_executioners_cap, {10 15}
+
+///////////////////////////////////////////////////////////
+[CHARDEF 0232]
+
+defname=c_skull_head
+NAME=Skull head
+SOUND=snd_MONSTER_ZOMBIE1
+ICON=i_pet_SKELETON
+
+CAN=MT_WALK|mt_run
+attack=12
+ARMOR=25
+
+MOVERATE=3
+
+
+resources=i_bone_helmet
+
+//=i_gold,t_meat_raw, t_corpse
+//=r_dungeon,r_spooky
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Skull Head
+
+ON=@Create
+
+NPC=brain_undead
+STR=280
+DEX=150
+INT=0
+FAME=10
+KARMA=-8000
+
+
+maxhits={140 200}
+maxstam=200
+maxmana=0
+
+tag.experience=<eval {4.0 6.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[3]>//dex
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_poison,100)
+tag.resist_bleed=100
+
+
+
+WRESTLING={85.0 100.0}
+poisoning={20.0 40.0}
+SpiritSpeak=35.0
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+
+///////////////////////////////////////////////////////////
+[CHARDEF c_skull_head_mage]
+
+ID=c_skull_head
+NAME=Skull head
+SOUND=snd_MONSTER_ZOMBIE1
+ICON=i_pet_SKELETON
+
+CAN=MT_WALK|mt_run
+attack=12
+ARMOR=20
+
+MOVERATE=3
+
+
+resources=i_bone_helmet
+
+//=i_gold,t_meat_raw, t_corpse
+//=r_dungeon,r_spooky
+BLOODCOLOR=colors_green
+
+TEVENTS=e_monster
+TEVENTS=e_character
+
+
+
+
+
+CATEGORY=Monsters
+SUBSECTION=Undeads
+DESCRIPTION=Skullhead Mage
+
+ON=@Create
+COLOR=0433
+NPC=brain_undead
+STR=200
+DEX=200
+INT=500
+FAME=10
+KARMA=-8000
+
+
+maxhits={140 200}
+maxstam=250
+maxmana=490
+
+tag.experience=<eval {6.0 8.0}>
+
+
+tag(hypnotizable,0)
+tag.hypnotizable=<tag.hypnotizable>|<flag_hypnoCanBe> 
+tag.hypnotizable=<tag.hypnotizable>|<flag_Buff[1]>//int
+tag.hypnotizable=<tag.hypnotizable>|<flag_BuffPower[4]>
+
+
+tag.weapflag=dam_physical|dam_blunt
+
+
+
+
+
+tag(resist_poison,100)
+tag.resist_bleed=100
+
+
+
+WRESTLING={85.0 100.0}
+EI=150.0
+MAGERY=150.0
+SpiritSpeak=40.0
+
+// knows spells 
+ITEMNEWBIE=i_spellbook
+addspell=s_paralyze
+addspell=s_magic_reflection
+
+ITEMnewbie=i_monster_create
+
+ON=@NPCRestock
+item=i_gold
+ITEM=random_reagent_necro,{15 20}
+
+///////////////////////////////////////////////////////////

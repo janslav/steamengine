@@ -1,0 +1,308 @@
+[DEFNAMES SKILLGAINS]
+//	ZDE nastavit, na nic jinyho nesahat :)		
+//pomocne funkce
+advrate_cooking		130
+advrate_taming		600
+advrate_lockpicking	600
+
+[plevel 1]
+//gatewalk
+boosty
+vendoradd
+zobrazbody
+sazka
+mesec
+questy
+nakrm
+pocetafk
+buffsteal
+catch
+catchfield
+jezdik
+masktrap
+osedlej
+odsedlej
+whoami
+arrowend
+//resetwar
+controlnpc
+standcast
+knockback
+roundattack
+longrange
+throw
+throwexpl
+throwdispell
+forgetothers
+getbow
+heal0
+heal1
+heal2
+heal3
+heal4
+heal5
+heal6
+heal7
+heal8
+heal9
+samheal0
+samheal1
+samheal2
+samheal3
+samheal4
+samheal5
+samheal6
+samheal7
+samheal8
+samheal9
+equip1
+equip2
+equip3
+equip4
+equip5
+equip6
+equip7
+equip8
+equip9
+equip0
+setequip1
+setequip2
+setequip3
+setequip4
+setequip5
+setequip6
+setequip7
+setequip8
+setequip9
+setequip0
+
+reset
+setpassword
+necrobolt
+necroanimate
+necroDarkness
+necrosummon
+necroarmor
+
+CHECK
+nastaveni
+GMPAGE  
+s
+setreceivingcontainer
+abortmaking
+renamehouse    
+kde
+//switchbow//uz neni potreba
+switcharrow
+redeedship //sbaleni lode prikazem
+//spellcast//umoznuje bug s eval
+recallhome
+//bankopen//abilita crafta zrusena
+mask//abilita zlodeje
+resurrection//abilita kleriku
+stats//zarovnani statu
+leap//warova schopnost
+warcry
+
+provo
+
+//starostove, generalove, nazgulove
+fear
+honor
+navrhban //vsichni opravneni
+remember //pro ukladani uidcek hracu k navrhum na ban. atd
+remembered //vyvolani ulozeneho hrace
+rememberclear //uvolneni tagu
+towncontrol //starosta a general - pouze ve meste
+blacklist //pro mesto - starosta
+guardscontrol //general - pouze v libovolnem meste s kralovskymi strazemi
+keepcontrol //kapitan a general v pevnosti
+realm_blacklist //general - platne pro cely realm, neplest s vyvrhelem ! 
+keep_blacklist //kapitan pevnosti
+townguardskill
+townguardsstop
+townguardscontinue
+townguardsflee
+townguardscome
+kingguardskill
+kingguardsstop
+kingguardscontinue
+kingguardsflee
+kingguardscome
+//keepguardskill
+keepguardsstop
+keepguardscontinue
+keepguardsflee
+keepguardscome
+mordorblacklist //nazgul
+mordorrealm_blacklist //lord nazgul
+mordorguardscontrol //lord nazgul ve mestech 
+mordortowncontrol //nazgul ve meste
+mordorkeep_blacklist //kapitan v pevnosti
+mordorkeepcontrol //kapitan a prvni nazgul v pevnostech
+mordortownguardskill
+mordortownguardsstop
+mordortownguardscontinue
+mordortownguardsflee
+mordortownguardscome
+marghulsguardskill
+marghulsguardsstop
+marghulsguardscontinue
+marghulsguardsflee
+marghulsguardscome
+//mordorkeepguardskill
+mordorkeepguardsstop
+mordorkeepguardscontinue
+mordorkeepguardsflee
+mordorkeepguardscome
+
+//chatovaci
+chat
+//goch
+//evch
+zprava
+//~chatovaci
+
+//podpora//cislo 0-9 - podpurna kouzla //dava 1k many pri pouziti s demonem"""""
+//sumonner//cislo 0-9 - summony misto utocnych kouzel //zabugovany, davalo manu
+toulec//doplnovani a vysypavani z kontejneru
+namebag//pro pojmenovani kontejneru
+usering
+usehand//pouziti veci v ruce
+
+//potiony
+potionshrink
+potionnightsight
+potionmana//vypiti manarefu
+potioncure//vyity cure flasky
+potionexplosion//flaska exploze
+potionheal//flaska heal
+potionrefresh//flaska refresh
+potioninvis
+potionreactive
+potionreflex
+potionspellshield
+potionstoneskin
+potionenergy
+potionstrength
+potionclever
+potionagility
+potionmobility
+
+
+//kouzla
+mshield
+frostbolt
+fullbook
+movetype//presunuti stejnych predmetu z jednoho kontejneru do druhyho//bug s eval
+moveitem//presunuti predmetu stejneho typu z jednoho kontejneru do druhyho//bug s eval
+//stackitem//stacknuti vsech veci v danem pytliku (bez ohledu na stackovatelnost, takze pozor)
+explevel//dialog tykajici se levelu
+berserker//walecnikova abilita
+sniper//rangerova abilita
+ripper//zlodejova abilita
+enlightment//clerikova abilita
+concentration//magova abilita
+darkpower//necrova abilita
+improvement//shamanova a.
+vigour//craft abilita
+astralpower//mystic abilita
+hypnotize//mystik abilita
+rockbow //doplnek pro mystik abilitu hypnotize 
+bandage//pouziti bandazi
+bandageblood//pouziti krvavych bandazi
+regy//seznam regu
+emptybook//vysypani svitku
+//konec funkci navic :)
+AFK
+//ANIM
+RESEND
+//SYNC
+RESYNC
+//DETAIL
+//SLEEP
+UNDERWEAR
+WHERE
+HUNGRY
+//TELE
+//SUICIDE
+FLIP
+SELF
+LAST
+//BARK
+//HELP
+//PASSWORD
+//EMAIL
+HelpPage
+
+[PLEVEL 2]	// extra counselor commands.
+pages
+FIX
+INVIS
+INVUL
+TELE
+INFO
+GONAME
+INVISF
+PROPS
+TWEAK
+CLIENTS
+ADMIN
+PAGE
+GO
+GOUID
+GOCHAR
+GOSOCK
+GOCLI
+JAIL
+FORGIVE
+PARDON
+goplayer
+allshow
+lagr
+lagrmenu
+zlejgm
+lagrinfo
+kill
+newnpc
+
+[PLEVEL 4]
+//tempjail
+goplayer
+nukezup
+nukezdown
+nukez
+//spawnit//pouziti: .xspawnit - nastaveni prisery jako pohybliveho spawnu
+guardit//strazeni dveri, kontejneru nebo brany spawnem
+//countspawn//pocitani spawnu, argument 1 - teleportace ke spatnemu
+SAVE
+TILE
+GOTYPE
+GONAME
+LINKx
+NUKE
+
+[PLEVEL 5]
+SAVE
+inv
+
+[PLEVEL 6]
+ACCOUNT
+DIALOG
+BLOCKIP
+EXTRACT
+UNEXTRACT
+EXPORT
+IMPORT
+dupe
+tart
+namo
+shrink
+
+//[PLEVEL 7]
+
+
+
+[eof]
+
+

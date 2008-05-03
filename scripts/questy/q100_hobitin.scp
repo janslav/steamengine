@@ -1,0 +1,192 @@
+///:::::Ruzni obyvatele mest apod.:::::///
+///:::::Orfeus (Moria - www.moria.cz)::///
+///:::::Last update: 09/08/06::::::::::///
+///: Obsahuje:                         ///
+///:     1. Zahradnice Ambra           ///           
+//////////////////////////////////////////
+
+
+
+[speech spk_q100_hobitin_ambra]
+
+on = *ukol*
+on = *prace*
+on = *zdravim*
+on = *ahoj*
+
+if (<distance> > 3)
+ src.SYSMESSAGE("Na takovou vzdalenost s tebou jednat nebude")
+else
+ f_q100_hobitin_ambra
+endif
+
+
+[FUNCTION f_q100_hobitin_ambra]
+if (<src.tag.q100_hobitin_ambra_neuspel> !=0)
+SAY Prosim ted ne,mam spoustu prace!
+else
+DIALOG(d_q100_hobitin_ambra)
+
+
+
+[dialog d_q100_hobitin_ambra]
+5,5
+page 0
+resizepic 20 200 2620 640 350 
+gumppic 30 210 03182 // podklad pod ksichtiky     
+gumppic 40 215 03079 // ksichtik   3000-3164
+text 220 210 52 0     // Jmeno a titul pozdraveneho
+button 160 330 0988 0988 0 1 0  // Kdo jsi ?     
+text 210 331 1152 1   // 
+button 325 330 0988 0988 0 2 0  // Drby?
+text 385 331 1152 2    //
+button 490 330 0988 0988 0 3 0  // Obchodovat ?  
+text 535 331 1152 3   //
+button 160 360 0988 0988 0 4 0  // Hledam praci  
+text 198 361 1152 4   //
+button 325 360 0988 0988 0 5 0  // Nesu ti ...   
+text 375 361 1152 5   //
+button 490 360 0988 0988 0 6 0  // Prohlednout ...      
+text 530 361 1152 6   //
+
+page 1
+IF (<src.tag.q100_hobitin_ambra> !=0)
+argo.HTMLGUMP(170,230,440,100,19,0,36)
+else
+argo.HTMLGUMP(170,230,440,100,7,0,36)
+endif
+
+page 2
+HTMLGUMP(170,230,440,100,8,0,36)
+
+page 3
+HTMLGUMP(170,230,440,100,9,0,36)
+
+page 4
+IF (<src.tag.q100_hobitin_ambra> !=0)
+argo.HTMLGUMP(170,230,440,100,15,0,36)
+ELSE
+argo.HTMLGUMP(170,230,440,100,10,0,36)
+argo.button 25 395 0fa5 0fa7 1 0 1  //      
+argo.text 60 395 152 11
+endif
+
+
+page 5
+IF (<src.tag.q100_hobitin_ambra>==2)        ////////Jestlize byl uz ukol splnen
+argo.HTMLGUMP(170,230,440,100,17,0,36)
+ElseIF (<src.tag.q100_hobitin_ambra>==1)
+argo.HTMLGUMP(170,230,440,100,12,0,36) 
+argo.button 25 395 0fa5 0fa7 1 0 2  //     uz ho mam
+argo.text 60 395 152 20
+argo.button 25 415 0fa5 0fa7 0 7 0  //   jeste ho nemam
+argo.text 60 415 152 21
+argo.button 25 435 0fa5 0fa7 1 0 3  //   kaslu ti na to - tag neuspel
+argo.text 60 435 152 22
+else
+argo.HTMLGUMP(170,230,440,100,18,0,36) 
+endif
+
+
+page 6
+HTMLGUMP(170,230,440,100,14,0,36)
+
+page 7
+HTMLGUMP(170,230,440,100,16,0,36)
+
+
+
+
+[dialog d_q100_hobitin_ambra text]
+Zahradnice Ambra
+Kdo jsi?
+Drby?
+Obchodovat
+Hledam praci
+Nesu ti...
+Prohlednout...
+Zdravim, jmenuju se Ambra a staram se tady o pole s turinem.
+V tomhle nemuzu slouzit, vetsinou se snazim vypoustet vsechno co slysim, jsou z toho zbytecne problemy.
+Prodala bych ti nejakou zeleninu, ale tahle sklizen je uz bohuzel koupena.
+Skutecne? V tom pripade bych pro tebe neco mela.  Sama se nemuzu od pole vzdalit, nechci aby mi nekdo ukradl veskerou zeleninu, ale potrebovala bych necim hnojit, kdyz mi naplnis tenhle pytel hnojem, dalo by se uvazovat o nejake odmene *mrkla*. Beres to?
+Prijmam
+Tak co? Kde mas ten hnuj?
+Vyborne, vynikajici, diky, tady mas odmenu.
+Vypada celkem poctive, dela na tebe dojem slusneho hobitiho devcete.
+Uz pro tebe zadnou praci nemam. //15
+Tak si ale prosim pospes...
+Diky, ale uz od tebe nic nepotrebuju.
+Copak mi neses?
+Zdravim te...
+Uz ho mam
+Jeste ho nemam ale snazim se
+Kaslu ti na to, sezen si nekoho jineho!!!
+
+
+[dialog d_q100_hobitin_ambra button]
+on=1
+SRC.GIVEITEM=i_q100_hobitin_ambra_pytel
+src.tag.q100_hobitin_ambra=1
+
+
+on=2
+if <src.restest i_q100_hobitin_ambra_pytel_2>
+  SAY Dekuji ti mnohokrat...
+  src.addexp(30)
+  src.GIVEITEM=i_fruit_onion
+  src.tag.q100_hobitin_ambra=2
+  src.consume i_q100_hobitin_ambra_pytel_2
+else
+  SAY Vzdyt v tom pytli jeste neni hnuj!
+endif
+
+on=3
+SAY Dobra...jak chces...
+src.consume i_q100_hobitin_ambra_pytel
+src.consume i_q100_hobitin_ambra_pytel_2
+src.tag.remove(q100_hobitin_ambra)
+src.tag.q100_hobitin_ambra_neuspel=1
+
+
+///////Itemy (q100_hobitin_ambra)
+
+[ITEMDEF i_q100_hobitin_ambra_hnuj]
+ID=01ebd
+NAME=Hnuj
+TYPE=t_normal
+WEIGHT=4
+
+on=@userDCLICK
+if <src.restest i_q100_hobitin_ambra_pytel>
+  src.consume i_q100_hobitin_ambra_pytel
+  src.sysmessage("Nabral si hnuj")
+  src.giveitem=i_q100_hobitin_ambra_pytel_2
+ELSE
+  src.sysmessage("Nemas prazdny pytel na hnuj")
+ENDIF
+RETURN 1
+
+on=@CREATE
+ATTR=010
+COLOR=007e0
+
+
+[ITEMDEF i_q100_hobitin_ambra_pytel_2]
+ID=01039
+NAME=Pytel s hnojem
+TYPE=t_normal
+WEIGHT=4
+
+on=@CREATE
+ATTR=08010
+color=0750
+
+[ITEMDEF i_q100_hobitin_ambra_pytel]
+ID=01039
+NAME=Pytel na hnuj
+TYPE=t_normal
+WEIGHT=4
+
+on=@CREATE
+ATTR=08010
+

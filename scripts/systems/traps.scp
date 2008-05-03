@@ -1,0 +1,73 @@
+[itemdef i_past]
+id=02c72
+name=past
+type=t_trap_custom
+CATEGORY=pasti
+SUBSECTION=past
+DESCRIPTION=normalni past
+
+
+[typedef t_trap_custom]
+on=@step
+if(isdefined(src.tag(past)))
+ if (src.tag(past)==<p>)
+  return 1
+ endif
+endif
+src.tag(past,<p>)
+
+if (tag(bomba))
+ var(bomba_src,<tag(bomba)>)
+ src.exploze
+ remove
+elseif (tag(jed_typ))
+ src.newitemsafe(i_memory_jed)
+ lastnew.tag(jed_typ,<tag(jed_typ)>)
+ lastnew.tag(jed_sila,<tag(jed_sila)>)
+ lastnew.tag(jed_rychlost,<tag(jed_rychlost)>)
+ src.equip(lastnew)
+ src.damage({1 25})
+ tag.remove.jed_typ
+elseif (tag(natazeno))
+ src.damage({1 50})
+ src.events=-e_peacemade
+ tag.remove(natazeno)
+endif
+
+
+on=@userdclick
+src.sysmessage(co chces vlozit do pasti)
+target
+return 1
+
+on=@targon_item
+if (tag(mytimer)><serv.time)
+ src.sysmessage("Nebud zbrkly !")
+ src.damage({0 50})
+endif
+tag(mytimer,<serv.time>+600)
+if (argo.type==t_potion_bomba)
+ tag(bomba,<argo>)
+ argo.p=<p>
+ argo.attr_invis=1
+ src.sysmessage(nastrazil jsi explozi)
+elseif (argo.more1==s_poison)
+ if !(argo.tag(jed_typ))
+  argo.tag(jed_typ,poison)
+ endif 
+ tag(jed_typ,)
+ tag(jed_sila,<nastaveni_poison_<argo.id>>)
+ tag(jed_rychlost,<nastaveni_poison_<argo.tag(jed_typ)>>)
+ argo.remove
+ src.sysmessage(otravil jsi past)
+elseif (argo.type==t_trap_custom)
+ tag(natazeno,1)
+ src.sysmessage(natahl jsi past)
+endif
+return 1
+
+on=@dropon_item
+say(act <act>)
+say(argo <argo>)
+
+[eof]

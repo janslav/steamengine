@@ -1,0 +1,626 @@
+
+[ITEMDEF i_q30_zmocnenecg_collector_03]
+ID=i_bag
+NAME=Vacek na zuby Velkych potkanu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="zubu Velkych potkanu"
+tag.contentsamount=0
+tag.maxcontents=20
+tag.target_remove=1
+tag.target_desc="Kteremu Velkemu potkanu vytrhnes zub? "
+tag.target_id="Body of Velkej Potkan"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Jsi nesika, ten zub jsi zlomil!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_36]
+ID=i_bag
+NAME=Vacek na kosti Kostlivcu Sekerniku
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0F5
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="kosti"
+tag.contentsamount=0
+tag.maxcontents=9
+tag.target_remove=1
+tag.target_desc="Kteremu Kostlivci vezmes kost? "
+tag.target_id="Body of Kostlivec Sekernik"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Kdyz si ho zabijel vsechny kosti jsi polamal!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_612]
+ID=i_bag
+NAME=Vacek na oci Lichu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=023D
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="oci Lichu"
+tag.contentsamount=0
+tag.maxcontents=8
+tag.target_remove=1
+tag.target_desc="Kteremu Lichovi vyloupnes oci? "
+tag.target_id="Body of Liche"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Fuuuj, tak to se nepovedlo.."
+
+[ITEMDEF i_q30_zmocnenecg_collector_1215]
+ID=i_bag
+NAME=Vacek na drapy infikovanych krys
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="drapu infikovanych krys"
+tag.contentsamount=0
+tag.maxcontents=10
+tag.target_remove=1
+tag.target_desc="Ktere kryse utrhnes drap? "
+tag.target_id="Body of Infikovana Krysa"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Hmm utrhnout!! ne zlomit v pulce!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_1520]
+ID=i_bag
+NAME=Vacek na vajicka Cerne Vdovy
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=03D8
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="vajicek Cerne Vdovy"
+tag.contentsamount=0
+tag.maxcontents=7
+tag.target_remove=1
+tag.target_desc="Kterem Cerne vdove vezmes vejce? "
+tag.target_id="Body of Cerna Vdova"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Tohle je samecek troubo!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_2025]
+ID=i_bag
+NAME=Vacek na nehty Titanu 
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=023D
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="nehtu Titanu"
+tag.contentsamount=0
+tag.maxcontents=7
+tag.target_remove=1
+tag.target_desc="Kteremu Titanovi vytrhnes nehet? "
+tag.target_id="Body of Titan"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Tak a ted jsi ho zlomil!!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_2530]
+ID=i_bag
+NAME=Vacek na pirka z Jedoveho Fenixe
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="pirek Fenixe"
+tag.contentsamount=0
+tag.maxcontents=10
+tag.target_remove=1
+tag.target_desc="Kteremu Fenixovi vytrhnes pirko? "
+tag.target_id="Body of Poison Phoenix"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Po tak krutem boji zadne pouzitelne pirko nezustalo!
+
+[ITEMDEF i_q30_zmocnenecg_collector_3040]
+ID=i_bag
+NAME=Vacek na nehet Titan Lorda
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=023D
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="nehtu Titan Lordu"
+tag.contentsamount=0
+tag.maxcontents=6
+tag.target_remove=1
+tag.target_desc="Kteremu Lordu Titanu ulomis nehet? "
+tag.target_id="Body of Titan Lord"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Tenhle si nehty pravidelne strihal, z toho nic nebude!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_4050]
+ID=i_bag
+NAME=Vacek na vlasy Strazce Ohne
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=03D8
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="vlasu Strazce Ohne"
+tag.contentsamount=0
+tag.maxcontents=5
+tag.target_remove=1
+tag.target_desc="Kteremu Strazci Ohne vytrhnes vlas? "
+tag.target_id="Body of Strazce Ohne"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Skoda, zadny vlas nemel!!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_5060]
+ID=i_bag
+NAME=Vacek na obri prsty
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="obrich prstu"
+tag.contentsamount=0
+tag.maxcontents=8
+tag.target_remove=1
+tag.target_desc="Kteremu obrovi urezes prst? "
+tag.target_id="Body of Gladiator Lord"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Vsechny prsty ma zprerazene jak si do nej zbesile mlatil! Chudak, priste bud opatrnejsi"
+
+[ITEMDEF i_q30_zmocnenecg_collector_6070]
+ID=i_bag
+NAME=Vacek na srdce
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=03D8
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="srdci"
+tag.contentsamount=0
+tag.maxcontents=3
+tag.target_remove=1
+tag.target_desc="Komu vyrves srdce? "
+tag.target_id="Body of Evil"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Zadne srdce tam nebylo!?"
+
+[ITEMDEF i_q30_zmocnenecg_collector_7080]
+ID=i_bag
+NAME=Vacek na vetvicku z Excelenta
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0F5
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="vetvicek z Excelenta"
+tag.contentsamount=0
+tag.maxcontents=3
+tag.target_remove=1
+tag.target_desc="Kteremu Excelentovi ulomis vetev? "
+tag.target_id="Body of Excelent"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Vsechny vetvicky si polamal!"
+
+[ITEMDEF i_q30_zmocnenecg_collector_8090]
+ID=i_bag
+NAME=Vacek na usi obru z jeskyne
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0Fa
+ATTR=010|04
+tag.contentsinfo="Ve vacku jsou"
+tag.contentstype="usi"
+tag.contentsamount=0
+tag.maxcontents=5
+tag.target_remove=1
+tag.target_desc="Kteremu obrovi ufiknes ucho?"
+tag.target_id="Body of Snow Gladiator"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Jezisi tenhle zadny usi nema!"
+
+
+[ITEMDEF i_q30_zmocnenecg_collector_90100]
+ID=i_bag
+NAME=Vacek na draci srdce
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0Fa
+ATTR=010|04
+tag.contentsinfo="Ve vacku jsou"
+tag.contentstype="draci srdce"
+tag.contentsamount=0
+tag.maxcontents=4
+tag.target_remove=1
+tag.target_desc="Kteremu drakovi vyriznes srdce?"
+tag.target_id="Body of Drak"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Tohle neni srce! To je ledvina!"
+
+
+////////////////////// COLLECTORY ZMOCNENECE MORDORU ! 
+
+[ITEMDEF i_q30_zmocnenecm_collector_03]
+ID=i_bag
+NAME=Vacek na zuby Litych Vlku
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="zubu Litych Vlku"
+tag.contentsamount=0
+tag.maxcontents=20
+tag.target_remove=1
+tag.target_desc="Kteremu Litemu Vlkovi vytrhnes zub? "
+tag.target_id="Body of Lity Vlk"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Jsi nesika, ten zub si zlomil!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_36]
+ID=i_bag
+NAME=Vacek na prsty Trollu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0F5
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="prstu Trollu"
+tag.contentsamount=0
+tag.maxcontents=7
+tag.target_remove=1
+tag.target_desc="Kteremu Trollovi useknes prst? "
+tag.target_id="Body of Troll"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Hmm, tenhle ma vsechny prsty zprerazene"
+
+[ITEMDEF i_q30_zmocnenecm_collector_612]
+ID=i_bag
+NAME=Vacek na klepeta Velkych Skorpionu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=023D
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="klepet Velkych Skorpionu"
+tag.contentsamount=0
+tag.maxcontents=15
+tag.target_remove=1
+tag.target_desc="Kteremu skorpionovi utrhnes klepeto? "
+tag.target_id="Body of Giant Scorpion"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Cele klepeto, ne vrchni a spodni cast zvlast!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_1215]
+ID=i_bag
+NAME=Vacek na klepeta krale skorpionu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="klepet"
+tag.contentsamount=0
+tag.maxcontents=10
+tag.target_remove=1
+tag.target_desc="Kteremu skorpionovi vezmes klepeto? "
+tag.target_id="Body of Scorpion King"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Tak tohle klepeto uz v celku nedostanes!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_1520]
+ID=i_bag
+NAME=Vacek na prsty kralu lichu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="prstu"
+tag.contentsamount=0
+tag.maxcontents=5
+tag.target_remove=1
+tag.target_desc="Komu uriznes prst? "
+tag.target_id="Body of Liche King"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Vsechny prsty jsou uz v rozkladu"
+
+[ITEMDEF i_q30_zmocnenecm_collector_2025]
+ID=i_bag
+NAME=Vacek na oko Kyklopu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=03D8
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="oci Kyklopu"
+tag.contentsamount=0
+tag.maxcontents=7
+tag.target_remove=1
+tag.target_desc="Kteremu kyklopovi vypichnes oko? "
+tag.target_id="Body of Cyclop"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Fuuuj, co jsi to udelal ? Urcite ne to, co jsi chtel.. !"
+
+[ITEMDEF i_q30_zmocnenecm_collector_2530]
+ID=i_bag
+NAME=Vacek na pirka z Jedoveho Fenixe
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="pirek"
+tag.contentsamount=0
+tag.maxcontents=10
+tag.target_remove=1
+tag.target_desc="Kteremu Fenixovi vytrhnes pirko? "
+tag.target_id="Body of Poison Phoenix"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Zadne pouzitelne pirko uz nema!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_3040]
+ID=i_bag
+NAME=Vacek na nehet Krale Kyklopu
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=023D
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="nehtu Krale Kyklopu"
+tag.contentsamount=0
+tag.maxcontents=12
+tag.target_remove=1
+tag.target_desc="Kteremu Krali Kyklopu ulomis nehet? "
+tag.target_id="Body of Cyclops King"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Tak tenhle si nehty pravidelne striha, z toho nic nebude!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_4050]
+ID=i_bag
+NAME=Vacek na kuzi z Minotaura
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=03D8
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="kuzi z Minotaura"
+tag.contentsamount=0
+tag.maxcontents=5
+tag.target_remove=1
+tag.target_desc="Kteremu Minotaurovi vyriznes kus kuze? "
+tag.target_id="Body of Minotaur"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Cele jsi to rozrezal!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_5060]
+ID=i_bag
+NAME=Vacek na prsty obru
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=042
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="obrich prstu"
+tag.contentsamount=0
+tag.maxcontents=8
+tag.target_remove=1
+tag.target_desc="Kteremu z obru urezes prst? "
+tag.target_id="Body of Gladiator Lord"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Vsechny prsty ma zprerazene jak si do nej zbesile mlatil! Chudak! Priste bud opatrnejsi"
+
+
+[ITEMDEF i_q30_zmocnenecm_collector_6070]
+ID=i_bag
+NAME=Vacek na srdce prastareho pavouka
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=03D8
+ATTR=010|04
+tag.contentsinfo="Ve vacku jsou"
+tag.contentstype="srdce prastareho pavouka"
+tag.contentsamount=0
+tag.maxcontents=4
+tag.target_remove=1
+tag.target_desc="Kteremu pavoukovi vyriznes srdce? "
+tag.target_id="Body of Elder Spider"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Nasel jsi vevnitr spoustu odpornych veci, ale srdce ne."
+
+[ITEMDEF i_q30_zmocnenecm_collector_7080]
+ID=i_bag
+NAME=Vacek na vetvicku z Excelenta
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0F5
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="vetvicek z Excelenta"
+tag.contentsamount=0
+tag.maxcontents=3
+tag.target_remove=1
+tag.target_desc="Kteremu Excelentovi ulomis vetev? "
+tag.target_id="Body of Excelent"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Ses jak hrom dopolice, vsechny vetvicky si polamal!"
+
+[ITEMDEF i_q30_zmocnenecm_collector_8090]
+ID=i_bag
+NAME=Vacek na usi obru z jeskyne
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0Fa
+ATTR=010|04
+tag.contentsinfo="Ve vacku jsou"
+tag.contentstype="usi"
+tag.contentsamount=0
+tag.maxcontents=4
+tag.target_remove=1
+tag.target_desc="Kteremu obrovi ufiknes ucho?"
+tag.target_id="Body of Snow Gladiator"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Jezsi tenhle zadny usi nema!"
+
+
+[ITEMDEF i_q30_zmocnenecm_collector_90100]
+ID=i_bag
+NAME=Vacek na draci srdce
+TYPE=t_collector
+WEIGHT=10
+
+ON=@CREATE
+COLOR=0Fa
+ATTR=010|04
+tag.contentsinfo="Ve vacku je"
+tag.contentstype="srdci z draka"
+tag.contentsamount=0
+tag.maxcontents=4
+tag.target_remove=1
+tag.target_desc="Kteremu drakovi vyriznes srdce?"
+tag.target_id="Body of Dragon"
+tag.absolute_success=100
+tag.value_to_check=50
+tag.contentscount=0
+tag.fail_msg="Nedokazal jsi vyriznout srdce, znicil jsi ho!"
+
+[ITEMDEF i_q30_zmocnenecg_odmena]
+ID=i_cape
+NAME=Plast
+
+ON=@Create
+COLOR=0994
+WEIGHT=50 //jako tezkej je schvalne
+More1L=10000
+More1H=10000
+
+tag(imi_value[70], 10)  //+10 zivota
+tag(imi_value[102], 10)  //+10 na draky
+mif_finishitem
+
+NAME=Plast bojovnika
+
+[ITEMDEF i_q30_zmocnenecm_odmena]
+ID=i_cape
+NAME=Plast
+
+ON=@Create
+COLOR=0475
+WEIGHT=50 //jako tezkej je schvalne
+More1L=10000
+More1H=10000
+
+tag(imi_value[70], 10)  //+10 zivota
+tag(imi_value[102], 10)  //+10 na draky
+mif_finishitem
+
+NAME=Plast bojovnika

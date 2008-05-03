@@ -1,0 +1,46 @@
+[itemdef i_shrine_power]
+id=i_altar_stone //01216
+type=t_shrine_power
+name=Nazgul's shrine
+
+on=@create
+color=0692
+timer=10
+attr=attr_static|attr_move_never
+tag(leading,0)
+
+[itemdef i_leading_shrine_power]
+id=i_altar_stone //01216
+type=t_shrine_power
+name=First Nazgul's shrine
+
+on=@create
+color=0675
+timer=10
+attr=attr_static|attr_move_never
+tag(leading,1)
+
+[itemdef i_lordnazgulsstone]
+ID=i_grave_stone_5
+name=Lord Nazgul's stone
+type=t_lordnazgulmenu
+CATEGORY=GM Items
+SUBSECTION=Kameny
+DESCRIPTION=Lord Nazgul's Stone
+
+ON=@Create
+color=0990 //silver
+ATTR=attr_move_never
+
+[itemdef i_mordorcaptainstone]
+ID=i_grave_stone_5
+name=Mordor Captain's stone
+type=t_mordorcaptainmenu
+CATEGORY=GM Items
+SUBSECTION=Kameny
+DESCRIPTION=Mordor Captain's Stone
+
+ON=@Create
+color=099a //med
+ATTR=attr_move_never
+

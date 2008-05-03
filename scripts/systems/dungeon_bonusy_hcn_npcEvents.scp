@@ -1,0 +1,199 @@
+/////////////////////////////////////////////////////////
+// H R O B K Y   C E R N Y C H   N U M E N O R E J C U //
+//                 (c) GM Yavanna                      //
+/////////////////////////////////////////////////////////
+
+[EVENTS e_hcn_teleToTarget]
+ON=@NPCSeeNewPlayer
+if (src.flag_invul)
+ return 1
+endif
+attack(<src>)
+events(+e_NPC_teleToTarget)
+if(act)||(isfighting)||(iscasting)
+ if(act.int < src.int)
+  p=<src.p>
+  update
+  attack(<src>)
+  events(+e_NPC_teleToTarget)  
+ endif
+endif
+
+on=@hittry
+events(+e_NPC_teleToTarget)
+
+on=@afterswing
+f_hcn_TTT_Agro
+f_hcn_TTT_AttackAgro
+
+on=@beforedoeffect
+on=@aftergetswing
+on=@beforegeteffect
+
+[itemdef i_hcn_PlayerToTagTimer]
+id=i_memory
+type=t_eq_script
+name=HCN Memory
+
+on=@Equip
+timer=1
+
+on=@Timer
+if (<more1>)
+  if (<cont.f_canseelos(<cont.memoryfindtype(MEMORY_fight).link>)>)
+    timer=5
+    more1=0
+  else
+    if (more1==3)
+      more1=0
+      cont.memoryfindtype(MEMORY_fight).remove
+      cont.action=""
+      cont.f_hcn_TTT_Agro
+      cont.f_hcn_TTT_AttackAgro
+      timer={8 60}
+    else
+      more1=<more1>+1
+      timer=2
+    endif
+  endif
+else
+  cont.f_hcn_npc_tagMemoryClear
+  cont.newitem(i_hcn_SectorSearcher)
+  arg(AciDropItem,<lastnew>)
+  AciDropItem.p=<cont.p>
+  AciDropItem.link=<cont>
+  if (<cont.f_canseelos(<cont.memoryfindtype(MEMORY_fight).link>)>)
+    timer={8 60}
+  else
+    more1=1
+    timer=2
+  endif
+endif
+return 1
+
+[itemdef i_hcn_SectorSearcher]
+NAME=TagKeg
+ID=i_KEG_WOOD
+TYPE=t_script
+
+on=@Create
+timer=0
+
+on=@Timer
+sector.allchars(f_hcn_npc_addPlayerToTagMemory(<link>))
+
+[function f_hcn_npc_addPlayerToTagMemory]
+if !(npc)
+  if !(flag_invul)
+    if (<distancefrom(<argv(0)>)> < 30)
+      argv(0).tag(memoryPlayer_<eval <argv(0).tag(playersInMemory)>>,<uid>)
+      argv(0).tag(playersInMemory,#+1)
+    endif
+  endif
+endif
+
+[function f_hcn_npc_tagMemoryHasPlayer]
+arg(i,0)
+while (<arg(i)> < <eval tag(playersInMemory)>)
+  if !(<strlen(<argv(0)>,<tag(memoryPlayer_<eval arg(i)>)>)>)
+    return 1
+  endif
+  arg(i,#+1)
+endwhile
+return 0
+
+[function f_hcn_npc_tagMemoryRemovePlayer]
+arg(playerNumber,<eval argv(0)>)
+while (<arg(playerNumber)> < <eval <tag(playersInMemory)>-1>)
+  tag(memoryPlayer_<eval playerNumber>,<tag(memoryPlayer_<eval playerNumber+1>)>)
+  arg(playerNumber,#+1)
+endwhile
+tag(playersInMemory,<eval <tag(pocetLinku)>-1>)
+tag.remove(memoryPlayer_<eval playerNumber>)
+
+[function f_hcn_npc_tagMemoryClear]
+arg(i,0)
+while (<arg(i)> < <eval tag(playersInMemory)>)
+  tag.remove(memoryPlayer_<eval arg(i)>)
+  arg(i,#+1)
+endwhile
+tag(playersInMemory,0)
+
+[function f_hcn_TTT_Agro]
+arg(i,0)
+while (<arg(i)> < <eval tag(playersInMemory)>)
+  arg(thisPlayer,<tag(memoryPlayer_<eval arg(i)>)>)
+  if (f_canseelos(<thisPlayer>))
+    arg(distPenalty,<distancefrom(<arg(thisPlayer)>)>*10)
+    if (arg(thisPlayer).profession==class_mag)
+      tag(hcn_TTT_Agro_<eval arg(i)>,1000-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_necro)
+      tag(hcn_TTT_Agro_<eval arg(i)>,1000-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_priest)
+      tag(hcn_TTT_Agro_<eval arg(i)>,950-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_shaman)
+      tag(hcn_TTT_Agro_<eval arg(i)>,950-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_mystik)
+      tag(hcn_TTT_Agro_<eval arg(i)>,930-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_thief)
+      tag(hcn_TTT_Agro_<eval arg(i)>,900-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_war)
+      tag(hcn_TTT_Agro_<eval arg(i)>,900-<arg(distPenalty)>)
+    elseif (arg(thisPlayer).profession==class_craft)
+      tag(hcn_TTT_Agro_<eval arg(i)>,900-<arg(distPenalty)>)
+    endif
+  else	// na daneho hrace v pameti neni videt -> Agro 0
+    tag(hcn_TTT_Agro_<eval arg(i)>,0)
+  endif
+  arg(i,#+1)
+endwhile
+
+[function f_hcn_TTT_AttackAgro]	// Podle velikosti aggra vybereme, na koho budem dal utocit
+arg(topAgro,0)
+arg(i,0)
+while (<arg(i)> < <eval tag(playersInMemory)>)
+  if (<arg(topAgro)> < <tag(hcn_TTT_Agro_<eval arg(i)>)>)
+    arg(topAgro,<tag(hcn_TTT_Agro_<eval arg(i)>)>)
+    arg(currentTarg,<arg(i)>)
+  endif
+  arg(i,#+1)
+endwhile
+if (<arg(topAgro)> > 0)
+  //say("chci utocit na <tag(memoryPlayer_<eval arg(currentTarg)>).name>")
+  removememories
+  attack(<tag(memoryPlayer_<eval arg(currentTarg)>)>)
+  act=<tag(memoryPlayer_<eval arg(currentTarg)>)>
+  arg(dist,<distancefrom(<act>)>)
+  if (<arg(dist)> > 3)
+    arg(dist,3)    
+  endif
+  runxtimes(<arg(dist)>,runtovictim(<act>))
+endif
+
+///////////////////////////////
+// N P C   P O I S O N I N G //
+///////////////////////////////
+
+[events e_hcn_NPCPoison]	// sila jedu se nastavuje hodnotou tagu 'jed_sila'
+on=@afterswing
+if (<var(ubrano)>)
+  if (act.findID(i_poison_delay))	// cil ma imunitu
+    return 1
+  endif
+  if (act.findID(i_memory_jed))
+    return 1
+  else
+    act.newitemsafe(i_memory_jed)
+    arg(pois,<lastnew>)
+    pois.tag(jed_typ,poison_c)
+    pois.tag(jed_sila,<tag(jed_sila)>)
+    pois.tag(jed_rychlost,2)
+    act.equip(<pois>)
+  endif
+endif
+
+on=@beforedoeffect
+on=@aftergetswing
+on=@beforegeteffect
+
+[eof]
