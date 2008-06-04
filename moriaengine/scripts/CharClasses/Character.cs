@@ -1348,6 +1348,24 @@ namespace SteamEngine.CompiledScripts {
 		//}
 		#endregion skills
 
+		#region abilities
+		public virtual void On_AbilityAssign(Ability ab) {
+		}
+
+		public virtual void On_AbilityUnAssign(Ability ab) {
+		}
+
+		public virtual void On_AbilityActivate(Ability ab) {
+		}
+
+		public virtual void On_AbilityUnActivate(Ability ab) {
+		}
+
+		public virtual void On_AbilityFire(Ability ab) {
+		}
+
+		#endregion abilities
+
 		public Character Owner {
 			get {
 				return owner;

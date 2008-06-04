@@ -206,6 +206,24 @@
     <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.cs">
       <Link>inGameFeatures\storageBoxes\RegBox.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\Ability.cs">
+      <Link>systems\Abilities\Core\Ability.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\AbilityDef.cs">
+      <Link>systems\Abilities\Core\AbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\ActivableAbilityDef.cs">
+      <Link>systems\Abilities\Core\ActivableAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\ImmediateAbilityDef.cs">
+      <Link>systems\Abilities\Core\ImmediateAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
+      <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\TriggerBasedAbilityDef.cs">
+      <Link>systems\Abilities\Core\TriggerBasedAbilityDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCharsList.cs">
       <Link>systems\administration\accounts\AccCharsList.cs</Link>
     </Compile>

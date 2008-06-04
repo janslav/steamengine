@@ -76,14 +76,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Register a new hook to ClassManager - it will send the examined Types here and we will care for next.")]
 		public static void Bootstrap() {
-			ClassManager.RegisterHook(CheckGeneratedDataViewClass);
+			ClassManager.RegisterSupplySubclasses<IDataView>(CheckGeneratedDataViewClass);
+			//ClassManager.RegisterHook(CheckGeneratedDataViewClass);
 		}
 
 		[Summary("Method for checking if the given Type is a descendant of IDataView. If so, store it in the map"+
 				"with the HandledType as Key...")]
-		public static void CheckGeneratedDataViewClass(Type type) {
+		public static bool CheckGeneratedDataViewClass(Type type) {
 			if (!type.IsAbstract) {
-				if (typeof(IDataView).IsAssignableFrom(type)) {
+				//if (typeof(IDataView).IsAssignableFrom(type)) { //this should be managed by the ClassManager :)
 					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
 					if (ci != null) {
 						IDataView idv = (IDataView) ci.Invoke(new object[0] { });
@@ -97,8 +98,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					} else {
 						throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
 					}
-				}
+				//}
 			}
+			return true;
 		}
 	}
 
