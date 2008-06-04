@@ -33,12 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public delegate void SupplyInstance<T>(T instance);
 	
-	public static class ClassManager {
-		//delegate for registering hooks
-		public delegate void HookedMethod(Type type);
-		//list for storing hooked delegates
-		private static List<HookedMethod> hooksList = new List<HookedMethod>();
-
+	public static class ClassManager {		
 		public readonly static Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		
 		private static Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
@@ -123,16 +118,7 @@ namespace SteamEngine.CompiledScripts {
 			return mi;
 		}
 
-
-		[Summary("Register hook method (delegate). The hook method awaits Type as a parameter "+
-				"and returns bool value according to its implementation. Every managed Type will be"+
-				"sent to every delegate found in the delegList. The delegated methods in various classes"+
-				"can then perform any necessary actions on managed Types")]
-		public static void RegisterHook(HookedMethod hook) {
-			hooksList.Add(hook);
-		}
-
-		public static void RegisterSupplyDecoratedClasses<T>(SupplyDecoratedType<T> deleg, bool inherited) where T : Attribute {
+        public static void RegisterSupplyDecoratedClasses<T>(SupplyDecoratedType<T> deleg, bool inherited) where T : Attribute {
 			supplyDecoratedTypesDelegs.Add(new SupplyDecoratedTypeBaseTuple<T>(deleg, inherited));
 		}
 
@@ -275,12 +261,6 @@ namespace SteamEngine.CompiledScripts {
 					CompiledScriptHolderGenerator.AddCompiledSHType(meth);
 				}
 			}
-
-			//check every hooked delegates			
-			foreach (HookedMethod hmDeleg in hooksList) {
-				hmDeleg(type);
-			}
-
 
 			if (type.IsSubclassOf(typeof(TagHolder))) {
 				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup", 

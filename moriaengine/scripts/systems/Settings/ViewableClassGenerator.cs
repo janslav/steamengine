@@ -83,7 +83,8 @@ namespace SteamEngine.CompiledScripts {
 		public static void Bootstrap() {			
 			//register the CheckViewabilityClass method so every ClassManager managed Type will be
 			//checked here for its Viewability...
-		    ClassManager.RegisterHook(CheckViewabilityClass);
+			ClassManager.RegisterSupplySubclasses<object>(CheckViewabilityClass);			
+		    //ClassManager.RegisterHook(CheckViewabilityClass);
 		}
 
 		[Summary("Check if the given type is in the viewableSpecials array")]
@@ -98,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Method for checking if the given Type is Viewable. If so, put it to the list."+
 				"Used as hooked delegate in ClassManager")]
-		public static void CheckViewabilityClass(Type type) {
+		public static bool CheckViewabilityClass(Type type) {
 			//look if the type has this attribute, don't look to parent classes 
 			//(if the type has not the attribute but some parent has, we dont care - if we want
 			//it to be infoized, we must add a ViewableClass attribute to it)
@@ -116,6 +117,7 @@ namespace SteamEngine.CompiledScripts {
 					viewableDescriptorsForTypes.Add(descHandledType,descriptors); //we have found some descriptor class
 				}				
 			}
+			return true;
 		}
 
 		[Summary("Go through all descriptors and look if their handled type is assignable from the just generated one")]
