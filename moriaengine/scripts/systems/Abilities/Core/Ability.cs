@@ -59,11 +59,11 @@ namespace SteamEngine.CompiledScripts {
 				//run triggers if necessary
 				if(oldValue < value) {
 					if(value == 1) { //added first point
-						def.Trigger_Assign(cont,this);
+						def.Trigger_Assign(cont);
 					}
 				} else if(oldValue > value) {
 					if(value == 0) { //removed last point
-						def.Trigger_UnAssign(cont,this);
+						def.Trigger_UnAssign(cont);
 					}
 				}
 			}

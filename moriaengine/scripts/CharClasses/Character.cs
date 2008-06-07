@@ -17,6 +17,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using SteamEngine.Timers;
 using SteamEngine.Common;
@@ -1349,19 +1350,33 @@ namespace SteamEngine.CompiledScripts {
 		#endregion skills
 
 		#region abilities
-		public virtual void On_AbilityAssign(Ability ab) {
+		[Summary("Dictionary of character's (typically player's) abilities")]
+		private Dictionary<AbilityDef, Ability> abilities = new Dictionary<AbilityDef, Ability>();
+
+		public Ability GetAbility(AbilityDef aDef) {
+			Ability retAb = null;
+			abilities.TryGetValue(aDef, out retAb);
+			return retAb; //either null or Ability instance if the player has it
 		}
 
-		public virtual void On_AbilityUnAssign(Ability ab) {
+
+		internal virtual void On_AbilityAssign(AbilityDef aDef) {
 		}
 
-		public virtual void On_AbilityActivate(Ability ab) {
+		internal virtual void On_AbilityUnAssign(AbilityDef aDef) {
 		}
 
-		public virtual void On_AbilityUnActivate(Ability ab) {
+		internal virtual void On_AbilityActivate(AbilityDef aDef) {
+			Ability ab = GetAbility(aDef);
+			ab.Running = true;
 		}
 
-		public virtual void On_AbilityFire(Ability ab) {
+		internal virtual void On_AbilityUnActivate(AbilityDef aDef) {
+			Ability ab = GetAbility(aDef);
+			ab.Running = false;
+		}
+
+		internal virtual void On_AbilityFire(AbilityDef aDef) {
 		}
 
 		#endregion abilities

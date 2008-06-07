@@ -21,9 +21,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 
-namespace SteamEngine {
+namespace SteamEngine.CompiledScripts {
 
 	[Summary("Special ability class used for implementing abilities that will be run using SteamFunction." +
 			"Their effect will be immediate (e.g. warcry)")]
@@ -31,8 +30,10 @@ namespace SteamEngine {
 		public static readonly TriggerKey tkFire = TriggerKey.Get("Fire");
 		
 		[Summary("Field for holding the number information about the pause between another ability activation try." +
-				"You can use 0 for no delay")]
-		private FieldValue runDelay;
+				"You can use 0 for no delay. This field will be used in children classes and will be attributed as FieldValue "+
+				"in order to be settable")]
+		
+		protected FieldValue useDelay;
 
 		public ImmediateAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -40,16 +41,17 @@ namespace SteamEngine {
 			//the field will be in the LScript as follows:
 			//[ImmediateAbilityDef a_bility]
 			//...
-			//runDelay = 300
+			//useDelay = 300
 			//...
-			runDelay = InitField_Typed("runDelay", 0, typeof(int));
+			useDelay = InitField_Typed("useDelay", 0, typeof(int));
 		}
 
-		[Summary("Correct implementation of the activating method")]
-		public new void Activate(Ability ab) {
-			///TODO - dodelat nejakou kontrolu treba resourcu zejo...
-			if((Globals.TimeInSeconds - ab.LastUsage) >= this.RunDelay) {
-				Trigger_Fire(ab.Cont,ab); 
+		[Summary("Implementation of the activating method. Used for running the ability")]
+		internal override void Activate(Character chr) {
+			//if we are here, we can use the ability
+			Ability ab = chr.GetAbility(this);
+			if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) {
+				Trigger_Fire(chr); 
 			} else {
 				Trigger_NotYet(ab.Cont, ab);
 			}
@@ -61,12 +63,10 @@ namespace SteamEngine {
 
 		}
 
-		internal void Trigger_Fire(Character chr, Ability ab) {
+		internal void Trigger_Fire(Character chr) {
 			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @fire with arguments "ability"-the Ability class on character (it has its own reference to the char)
-				TryTrigger(chr, ImmediateAbilityDef.tkFire, sa);
-				chr.On_AbilityFire(ab);
+				TryTrigger(chr, ImmediateAbilityDef.tkFire, new ScriptArgs());
+				chr.On_AbilityFire(this);
 				On_Fire(chr);
 			}
 		}		
@@ -87,9 +87,11 @@ namespace SteamEngine {
 		}
 		#endregion triggerMethods
 
-		public int RunDelay {
+		public virtual int UseDelay {
 			get {
-				return (int)runDelay.CurrentValue;				
+				return (int)useDelay.CurrentValue;				
+			}
+			set {
 			}
 		}
 	}
