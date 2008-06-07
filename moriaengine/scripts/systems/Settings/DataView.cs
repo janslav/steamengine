@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				//}
 			}
-			return true;
+			return false;
 		}
 	}
 
