@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 					viewableDescriptorsForTypes.Add(descHandledType,descriptors); //we have found some descriptor class
 				}				
 			}
-			return true;
+			return false;
 		}
 
 		[Summary("Go through all descriptors and look if their handled type is assignable from the just generated one")]

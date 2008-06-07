@@ -274,14 +274,14 @@ namespace SteamEngine.CompiledScripts {
 			bool match = false;
 			foreach (TypeDelegPair entry in supplySubclassDelegs) {
 				if (entry.type.IsAssignableFrom(type)) {
-					match = entry.deleg(type);
+					match = match || entry.deleg(type);
 				}
 			}
 
 			foreach (SupplyDecoratedTypeBase entry in supplyDecoratedTypesDelegs) {
 				object[] attribs = type.GetCustomAttributes(entry.type, entry.inherited);
 				if (attribs.Length > 0) {
-					match = entry.InvokeDeleg(type, (Attribute) attribs[0]);
+					match = match || entry.InvokeDeleg(type, (Attribute) attribs[0]);
 					if (attribs.Length > 1) {
 						Logger.WriteWarning("Class "+type+" has more than one "+entry.type+" Attribute defined. What to do...?");
 					}
