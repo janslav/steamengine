@@ -212,6 +212,9 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\AbilityDef.cs">
       <Link>systems\Abilities\Core\AbilityDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\AbilityDialog.cs">
+      <Link>systems\Abilities\Core\AbilityDialog.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Core\ActivableAbilityDef.cs">
       <Link>systems\Abilities\Core\ActivableAbilityDef.cs</Link>
     </Compile>
@@ -223,6 +226,12 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Core\TriggerBasedAbilityDef.cs">
       <Link>systems\Abilities\Core\TriggerBasedAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
+      <Link>systems\Abilities\Warcry\Warcry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.Generated.cs">
+      <Link>systems\Abilities\Warcry\Warcry.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCharsList.cs">
       <Link>systems\administration\accounts\AccCharsList.cs</Link>

@@ -24,8 +24,9 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public class AbilityDef : AbstractDef {
-        public static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
+		public static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
         public static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
 
 		private static Dictionary<string, AbilityDef> byName = new Dictionary<string, AbilityDef>(StringComparer.OrdinalIgnoreCase);
@@ -37,20 +38,18 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Overall method for running the abilites. Its basic implementation does not allow to run the "+
 				"ability unless properly overriden in a child that is made to be run manually")]
-		public virtual void Activate(Ability ab) {
-			ab.Cont.RedMessage("Abilitu " + Name + " nelze spustit");
+		internal virtual void Activate(Character chr) {
+			chr.RedMessage("Abilitu " + Name + " nelze spustit");
 		}
 
         [Summary("This method implements the assigning of the first point to the Ability")]
         protected virtual void On_Assign(Character ch) {
         }
 
-        internal void Trigger_Assign(Character chr, Ability ab) {
+        internal void Trigger_Assign(Character chr) {
 			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @assign with argument "ability" (containing also info about its holder)
-				TryTrigger(chr, AbilityDef.tkAssign, sa);
-				chr.On_AbilityAssign(ab);
+				TryTrigger(chr, AbilityDef.tkAssign, new ScriptArgs());
+				chr.On_AbilityAssign(this);
 				On_Assign(chr);
 			}
         }
@@ -59,12 +58,10 @@ namespace SteamEngine.CompiledScripts {
 		protected void On_UnAssign(Character ch) {
         }
 
-		internal void Trigger_UnAssign(Character chr, Ability ab) {
+		internal void Trigger_UnAssign(Character chr) {
 			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @unassign with argument "ability" (containing also info about its holder)
-				TryTrigger(chr, AbilityDef.tkUnAssign, sa);
-				chr.On_AbilityUnAssign(ab);
+				TryTrigger(chr, AbilityDef.tkUnAssign, new ScriptArgs());
+				chr.On_AbilityUnAssign(this);
 				On_UnAssign(chr);
 			}
         }		
@@ -137,32 +134,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static AbilityDef LoadFromScripts(PropsSection input) {
+			//it is something like this in the .scp file: [headerType headerName] = [Warcry a_warcry] etc.
 			string typeName = input.headerType.ToLower();
-
-			PropsLine prop = input.PopPropsLine("defname");
-			if(prop == null) {
-				throw new Exception("Missing the defname field for this AbilityDef.");
-			}
-
-			string defName;
-			Match ma = TagMath.stringRE.Match(prop.value);
-			if(ma.Success) {
-				defName = String.Intern(ma.Groups["value"].Value);
-			} else {
-				defName = String.Intern(prop.value);
-			}
-
+			string abilityDefName = input.headerName.ToLower();			
+			
 			AbstractScript def;
-			byDefname.TryGetValue(defName, out def);
+			byDefname.TryGetValue(abilityDefName, out def);
 			AbilityDef abilityDef = def as AbilityDef;
 
 			ConstructorInfo constructor = abilityDefCtorsByName[typeName];
 
 			if(abilityDef == null) {
 				if(def != null) {//it isnt abilityDef
-					throw new ScriptException("AbilityDef " + LogStr.Ident(defName) + " has the same name as " + LogStr.Ident(def));
+					throw new ScriptException("AbilityDef " + LogStr.Ident(abilityDefName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] { defName, input.filename, input.headerLine };
+					object[] cargs = new object[] { abilityDefName, input.filename, input.headerLine };
 					abilityDef = (AbilityDef)constructor.Invoke(cargs);
 				}
             } else if (abilityDef.unloaded) {
@@ -177,12 +163,8 @@ namespace SteamEngine.CompiledScripts {
 
                 UnRegisterAbilityDef(abilityDef);//will be re-registered again
 			} else {
-				throw new OverrideNotAllowedException("AbilityDef " + LogStr.Ident(defName) + " defined multiple times.");
-			}
-
-            //if (!TagMath.TryParseUInt16(input.headerName, out abilityDef.id)) {
-		    //    throw new ScriptException("Unrecognized format of the id number in the abilitydef script header.");
-			//}
+				throw new OverrideNotAllowedException("AbilityDef " + LogStr.Ident(abilityDefName) + " defined multiple times.");
+			}          
 
 			//now do load the trigger code. 
 			if(input.TriggerCount > 0) {
@@ -222,7 +204,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return (ushort)maxPoints.CurrentValue;
 			}			
-		}	
+		}
 
 		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
@@ -251,6 +233,31 @@ namespace SteamEngine.CompiledScripts {
 
 		public override string ToString() {
 			return GetType().Name + " " + Name;
+		}
+
+		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
+		public static IEnumerable<AbilityDef> GetAllAbilities() {
+			if(byName != null) {
+				foreach(AbilityDef entry in byName.Values) {
+					yield return entry;					
+				}
+			}
+		}
+
+		[Summary("Can we use the ability? Do we have all resources, has the delay time passed... etc")]
+		public static bool CanUseAbility(Character chr, AbilityDef aDef) {
+			//check if we have the ability at all (at least 1 point)
+			Ability ab = chr.GetAbility(aDef);
+			if(ab == null) {
+				chr.RedMessage("Nesplòuješ podmínky pro použití ability " + aDef.Name);
+				return false;
+			}
+			
+			//here we will check the available resources (if any are needed)
+			//...
+
+			
+			return true;
 		}
 	}
 }

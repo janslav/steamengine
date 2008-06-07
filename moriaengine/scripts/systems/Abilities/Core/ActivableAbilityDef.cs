@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Field for holding the number information about the pause between another ability activation try."+
 				"You can use 0 for no delay")]
-		private FieldValue runDelay;
+		private FieldValue useDelay;
 
 		public ActivableAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -43,21 +43,22 @@ namespace SteamEngine.CompiledScripts {
 			//the field will be in the LScript as follows:
 			//[ActivableAbilityDef a_bility]
 			//...
-			//runDelay = 300
+			//useDelay = 300
 			//...
-			runDelay = InitField_Typed("runDelay", 0, typeof(int));
+			useDelay = InitField_Typed("useDelay", 0, typeof(int));
 		}
 
-		[Summary("Correct implementation of the activating method")]
-		public new void Activate(Ability ab) {
-			///TODO - dodelat nejakou kontrolu treba resourcu zejo...
+		[Summary("Implementation of the activating method. Used for activating/deactivating the ability")]
+		internal override void Activate(Character chr) {
+			///kdyz jsme zde, znamena to, ze muzeme abilitu spoustet (jiz po kontrole)
+			Ability ab = chr.GetAbility(this);
 			if(ab.Running) {
-				Trigger_UnActivate(ab.Cont,ab);
+				Trigger_UnActivate(chr);
 			} else {
-				if((Globals.TimeInSeconds - ab.LastUsage) >= this.RunDelay) {
-					Trigger_Activate(ab.Cont,ab);
+				if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) {
+					Trigger_Activate(chr);
 				} else {
-					Trigger_NotYet(ab.Cont,ab);
+					Trigger_NotYet(chr);
 				}
 			}
 		}
@@ -70,12 +71,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Trigger method called when the ability is unactivated")]
-		protected void Trigger_UnActivate(Character chr, Ability ab) {
+		protected void Trigger_UnActivate(Character chr) {
 			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @unactivate with argument "ability" (containing also info about its holder)
-				TryTrigger(chr, ActivableAbilityDef.tkUnActivate, sa);
-				chr.On_AbilityUnActivate(ab);
+				TryTrigger(chr, ActivableAbilityDef.tkUnActivate, new ScriptArgs());
+				chr.On_AbilityUnActivate(this);
 				On_UnActivate(chr);
 			}
 		}
@@ -89,35 +88,31 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Trigger method called when the ability is activated")]
-		protected void Trigger_Activate(Character chr, Ability ab) {
+		protected void Trigger_Activate(Character chr) {
 			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @activate with argument "ability" (containing also info about its holder)
-				TryTrigger(chr, ActivableAbilityDef.tkActivate, sa);
-				chr.On_AbilityActivate(ab);
+				TryTrigger(chr, ActivableAbilityDef.tkActivate, new ScriptArgs());
+				chr.On_AbilityActivate(this);
 				On_Activate(chr);
 			}
 		}
 
 		[Summary("This method implements the behavior when the ability is not yet allowed to be activated")]
 		protected virtual void On_NotYet(Character ch) {
-			//ch.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
+			ch.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
 		}
 
 		[Summary("Trigger method called when the ability is activated but it is not allowed yet to do it")]
-		protected void Trigger_NotYet(Character chr, Ability ab) {
+		protected void Trigger_NotYet(Character chr) {
 			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @activate with argument "ability" (containing also info about its holder)
-				TryTrigger(chr, ActivableAbilityDef.tkNotYet, sa);
+				TryTrigger(chr, ActivableAbilityDef.tkNotYet, new ScriptArgs());
 				On_NotYet(chr);
 			}
 		}
 		#endregion triggerMethods
 
-		public int RunDelay {
+		public int UseDelay {
 			get {
-				return (int)runDelay.CurrentValue;
+				return (int)useDelay.CurrentValue;
 			}
 		}
 	}

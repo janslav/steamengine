@@ -73,6 +73,14 @@ namespace SteamEngine.CompiledScripts {
 		IssuerDesc
 	}
 
+	[Summary("Various sorting criteria for displaying abilities")]
+	public enum AbilitiesSorting : int {
+		NameAsc,
+		NameDesc,
+		DefnameAsc,
+		DefnameDesc
+	}
+
 	[Summary("Various sorting criteria for displaying regions list")]
 	public enum RegionsSorting : int {
 		NameAsc,
