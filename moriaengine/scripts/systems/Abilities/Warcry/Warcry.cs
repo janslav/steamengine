@@ -38,13 +38,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		#region triggerMethods
+		protected override bool On_DenyUse(DenyAbilityArgs args) {
+			return base.On_DenyUse(args);
+			//TODO - zde implementovat nejake ty kontroly resourcù, to jestli dotyènej žije/nežije atd.
+		}
+
 		[Summary("This method implements firing the ability. Will be implemened ond special children")]
 		protected override void On_Fire(Character chr) {
 			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, ComputeRange(chr))) {
 				if(chr == plr) {
 					continue; //dont do selfwarcry ;)
 				}
-				//first try to get the plugin from the playr (he may be under the warcry effect from someone other)
+				//first try to get the plugin from the player (he may be under the warcry effect from someone else)
 				WarcryEffectPlugin wepl = plr.GetPlugin(WarcryEffectPlugin.warcyEffectPluginKey) as WarcryEffectPlugin;
 				if(wepl == null) {
 					wepl = (WarcryEffectPlugin)plr.AddNewPlugin(WarcryEffectPlugin.warcyEffectPluginKey, WarcryEffectPlugin.defInstance);				
