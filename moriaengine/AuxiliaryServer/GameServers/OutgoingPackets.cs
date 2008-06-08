@@ -47,5 +47,27 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 	}
 
+	public class ConsoleCommandLinePacket : OutgoingPacket {
+		int consoleId;
+		string accName, password;
+		private string command;
 
+		public void Prepare(int consoleId, string accName, string password, string command) {
+			this.consoleId = consoleId;
+			this.accName = accName;
+			this.password = password;
+			this.command = command;
+		}
+
+		public override byte Id {
+			get { return 3; }
+		}
+
+		protected override void Write() {
+			this.EncodeInt(this.consoleId);
+			this.EncodeUTF8String(this.accName);
+			this.EncodeUTF8String(this.password);
+			this.EncodeUTF8String(this.command);
+		}
+	}
 }

@@ -10,8 +10,12 @@ namespace SteamEngine.AuxiliaryServer {
 			new Logger();
 
 			SteamEngine.Common.Logger.OpenFile();
-			
+
+
+			Logger.OnConsoleWrite += ConsoleServer.ConsoleServer.WriteAsAux;
+			Logger.OnConsoleWriteLine += ConsoleServer.ConsoleServer.WriteLineAsAux;
 		}
+
 
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]

@@ -12,11 +12,11 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>..\..\bin\Debug.SteamEngine.GUI.exe</StartProgram>
+    <StartProgram>..\..\bin\Debug.SteamEngine.GameCore.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>..\..\bin\Sane.SteamEngine.GUI.exe</StartProgram>
+    <StartProgram>..\..\bin\Sane.SteamEngine.GameCore.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

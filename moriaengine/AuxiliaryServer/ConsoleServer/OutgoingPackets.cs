@@ -76,6 +76,25 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 	}
 
+	public class SendStringLinePacket : OutgoingPacket {
+		string str;
+		int uid;
+
+		public void Prepare(int uid, string str) {
+			this.uid = uid;
+			this.str = str;
+		}
+
+		public override byte Id {
+			get { return 5; }
+		}
+
+		protected override void Write() {
+			this.EncodeInt(this.uid);
+			this.EncodeUTF8String(this.str);
+		}
+	}
+
 	public class SendServersToStartPacket : OutgoingPacket {
 		private int count;
 		private List<int> numbers = new List<int>();
@@ -102,7 +121,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		public override byte Id {
-			get { return 5; }
+			get { return 6; }
 		}
 
 		protected override void Write() {

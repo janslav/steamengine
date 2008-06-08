@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				//call the method on the def, the max value can be dependant on the container's profession e.g.
 				return def.MaxPoints;
-			}			
+			}
 		}
 
 		public bool Running {

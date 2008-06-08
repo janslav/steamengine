@@ -86,6 +86,14 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 			LoggedInConsoles.RemoveGameServer(this);
 			GameServerServer.RemoveClient(this);
+
+			if (GameServerServer.GameServersCount == 0) {
+				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					if (!console.IsLoggedInAux) {
+						console.Conn.Close("Failed to identify");
+					}
+				}
+			}
 		}
 
 		public override string ToString() {
@@ -99,11 +107,11 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		internal void WriteToMyConsoles(string str) {
 			if (this.startupFinished) {
 				foreach (ConsoleServer.ConsoleClient console in LoggedInConsoles.AllConsolesIn(this)) {
-					console.WriteString(this.uid, str);
+					console.Write(this.uid, str);
 				}
 			} else {
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-					console.WriteString(this.uid, str);
+					console.Write(this.uid, str);
 				}
 			}
 		}

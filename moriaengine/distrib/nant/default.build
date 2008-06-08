@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="steamengine" default="runGUI" basedir="..\..\.">
+<project name="steamengine" default="runCore" basedir="..\..\.">
 	<property name="outputFilePrefix" value="Sane." overwrite="false"  />
 	
 	<property name="debug" value="true" overwrite="false"  />
@@ -22,7 +22,6 @@
 	<property name="commonFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Common.dll'}" />
 	<property name="communicationFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Communication.dll'}" />
 	<property name="auxiliaryServerFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.AuxiliaryServer.exe'}" />
-	<property name="guiFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GUI.exe'}" />
 	<property name="remoteConsoleFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.RemoteConsole.exe'}" />
 	<property name="gameCoreFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.GameCore.exe'}" />
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
@@ -36,15 +35,7 @@
 			</fileset>
 		</delete>
 	</target>
-	
-	<target name="cleanGUI">
-		<delete>
-			<fileset>
-				<include name="bin/*SteamEngine.GUI*" />
-			</fileset>
-		</delete>
-	</target>
-	
+		
 	<target name="cleanGameCore">
 		<delete>
 			<fileset>
@@ -93,7 +84,7 @@
 		</delete>
 	</target>
 	
-	<target name="clean" depends="cleanCommon,cleanGUI,cleanCommunication,cleanGameCore,cleanScripts,cleanConverter, cleanAuxiliaryServer">
+	<target name="clean" depends="cleanCommon,cleanCommunication,cleanGameCore,cleanScripts,cleanConverter, cleanAuxiliaryServer">
 	</target>
 	
 	<target name="buildCommon">
@@ -134,30 +125,6 @@
 			<arg line="${cmdLineParams}" />
 		</csc>
 	</target>	
-	
-	<target name="buildGUI" depends="buildCommon">
-		<csc 
-			target="${guiTargetType}" 
-			output="${guiFileName}" 
-			debug="${debug}" 
-			define="${defineSymbols}" 
-			optimize="${optimize} ">
-			
-			<sources>
-				<include name="WinConsole/**/*.cs" />
-			</sources>
-			<references>
-				<include name="bin/SteamDoc.dll" />
-				<include name="${commonFileName}" />
-				<include name="bin/NAnt.Core.dll" />
-			</references>
-			<arg line="${cmdLineParams}" />
-		</csc>
-		<copy 
-			file="Winconsole/App.config"
-    		tofile="${guiFileName+'.config'}"	/>
-	</target>
-	
 	
 	<target name="buildRemoteConsole" depends="buildCommunication">
 		<csc 
@@ -201,7 +168,7 @@
 			<arg line="${cmdLineParams}" />
 		</csc>
 		<copy 
-			file="Winconsole/App.config"
+			file="GameCore/App.config"
     		tofile="${gameCoreFileName+'.config'}"	/>
 	</target>
 	
@@ -296,7 +263,7 @@
 		</csc>
 	</target>
 
-	<target name="build" depends="buildCommunication,buildCore,buildGUI">
+	<target name="build" depends="buildCommunication,buildCore">
 	</target>
 	
 	<target name="echoInfo" >
@@ -304,16 +271,12 @@
 		<sysinfo verbose="true" />
 	</target>
 	
-	<target name="runGUI" depends="buildGUI">
-		<exec program="${guiFileName}" />
-	</target>
-	
 	<target name="runRemoteConsole" depends="buildRemoteConsole">
 		<exec program="${remoteConsoleFileName}" />
 	</target>
 	
-	<target name="runConverter" depends="buildGUI">
-		<exec program="${guiFileName}" commandline="Convert"/>
+	<target name="runConverter">
+		<exec program="${gameCoreFileName}" commandline="Convert"/>
 	</target>
 	
 	<target name="runCore" depends="buildCore">

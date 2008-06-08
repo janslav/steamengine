@@ -40,7 +40,7 @@ namespace SteamEngine {
 		//void WriteLine(LogStr data);
 		//bool IsNativeConsole { get; }
 		//AbstractCharacter Character { get; }
-		//GameAccount Account { get; }
+		AbstractAccount Account { get; }
 		//Conn ConnObj { get; }
 		//bool IsLoggedIn { get; }
 	}
@@ -169,7 +169,7 @@ namespace SteamEngine {
 				if (ch != null) {
 					return ch.Account;
 				}
-				ConsConn console = src as ConsConn;
+				ConsoleDummy console = src as ConsoleDummy;
 				if (console != null) {
 					return console.Account;
 				}
@@ -386,9 +386,12 @@ namespace SteamEngine {
 				
 				if (!exists) {
 					iniH.WriteToFile();
-					MainClass.keepRunning.Set();
+					MainClass.signalExit.Set();
 					throw new ShowMessageAndExitException(msgBox+"SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");
 				}
+
+				PauseServerTime();
+
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.Show(smaee.Message);
 				smaee.Show();
@@ -442,7 +445,7 @@ namespace SteamEngine {
 		}
 
 		public static void Exit() {
-			MainClass.keepRunning.Set();
+			MainClass.signalExit.Set();
 		}
 
 		public static void SetConsoleTitle(string title) {
@@ -566,10 +569,10 @@ namespace SteamEngine {
 			PropsLine timeLine = input.TryPopPropsLine("time");
 			long value;
 			if ((timeLine != null) && (ConvertTools.TryParseInt64(timeLine.value, out value))) {
-				lastMarkServerTime = value;
+				lastMarkServerTime = TimeSpan.FromTicks(value);
 			} else {
 				Logger.WriteWarning("The Globals section of save is missing the "+LogStr.Ident("Time")+" value or the value is invalid, setting server time to 0");
-				lastMarkServerTime = 0;
+				lastMarkServerTime = TimeSpan.Zero;
 			}
 
 			instance.LoadSectionLines(input);
@@ -666,16 +669,16 @@ namespace SteamEngine {
 			PacketStats.CompressionStats();
 		}
 
-		public static void Logout() {
-			ConsConn conn = Globals.Src as ConsConn;
-			if (conn!=null) {
-				if (!conn.IsNativeConsole) {
-					conn.Close("Commanded to log out.");
-				} else {
-					conn.WriteLine("Native console cannot be logged out.");
-				}
-			}
-		}
+		//public static void Logout() {
+		//    ConsoleDummy conn = Globals.Src as ConsoleDummy;
+		//    if (conn!=null) {
+		//        if (!conn.IsNativeConsole) {
+		//            conn.Close("Commanded to log out.");
+		//        } else {
+		//            conn.WriteLine("Native console cannot be logged out.");
+		//        }
+		//    }
+		//}
 
 		//public static void ConTest() {
 		//	Globals.src.WriteLine(">>>>>> Text Console Test"+Environment.NewLine);
@@ -704,54 +707,59 @@ namespace SteamEngine {
 		//	return WorldSaver.CurrentFile; 
 		//} }
 
-		private static long lastMarkRealTime;
-		private static long lastMarkServerTime;
-		private static bool paused = true;
+		private static DateTime lastMarkRealTime = DateTime.Now;
+		private static TimeSpan lastMarkServerTime;
+		private static int paused = 0;
 
 
 		public static long TimeInTicks {
 			get {
-				if (paused) {
-					return lastMarkServerTime;
-				} else {
-					long current = HighPerformanceTimer.TickCount;
-					return lastMarkServerTime + (current - lastMarkRealTime);
-				}
+				return TimeAsSpan.Ticks;
 			}
 		}
 
 		public static double TimeInSeconds {
 			get {
-				return HighPerformanceTimer.TicksToSeconds(TimeInTicks);
+				return TimeAsSpan.TotalSeconds;
 			}
 		}
 
 		public static TimeSpan TimeAsSpan {
 			get {
-				return HighPerformanceTimer.TicksToTimeSpan(TimeInTicks);
+				if (paused > 0) {
+					return lastMarkServerTime;
+				} else {
+					DateTime current = DateTime.Now;
+					return lastMarkServerTime + (current - lastMarkRealTime);
+				}
 			}
 		}
 
 		[Summary("For sphere compatibility, this returns servertime in tenths of second")]
 		public long Time {
 			get {
-				return (long) (HighPerformanceTimer.TicksToDMilliseconds(TimeInTicks)/100.0);
+				return (long) (TimeAsSpan.TotalSeconds/10d);
 			}
 		}
 
 		internal static void PauseServerTime() {
-			if (!paused) {
-				long current = HighPerformanceTimer.TickCount;
+			paused++;
+			if (paused == 1) {
+				DateTime current = DateTime.Now;
+
 				lastMarkServerTime = lastMarkServerTime + (current - lastMarkRealTime);
 				lastMarkRealTime = current;
-				paused = true;
+				
+				RunLevelManager.SetPaused();
 			}
 		}
 
 		internal static void UnPauseServerTime() {
-			if (paused) {
-				lastMarkRealTime = HighPerformanceTimer.TickCount;
-				paused = false;
+			paused--;
+			Sanity.IfTrueThrow(paused < 0, "Can't UnPause when not paused");
+			if (paused == 0) {
+				lastMarkRealTime = DateTime.Now;
+				RunLevelManager.UnsetPaused();
 			}
 		}
 	}

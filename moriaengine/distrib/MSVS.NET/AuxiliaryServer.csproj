@@ -63,6 +63,9 @@
     <Compile Include="..\..\auxiliaryserver\gameservers\OutgoingPackets.cs">
       <Link>GameServers\OutgoingPackets.cs</Link>
     </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoggedInConsoles.cs">
+      <Link>LoggedInConsoles.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\Logger.cs">
       <Link>Logger.cs</Link>
     </Compile>

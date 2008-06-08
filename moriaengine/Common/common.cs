@@ -25,8 +25,6 @@ using System.Security.Cryptography;
 
 
 namespace SteamEngine.Common {
-	public enum RunLevels {Unknown,Running,Startup,Shutdown,Paused,Dead,AwaitingRetry}
-
 	public static class Tools {
 
 		public readonly static string commonPipeName = @"\\.\pipe\steamAuxPipe";

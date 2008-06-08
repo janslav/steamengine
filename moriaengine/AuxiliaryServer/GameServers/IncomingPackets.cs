@@ -25,6 +25,9 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 				case 0x04:
 					return Pool<StartupFinishedPacket>.Acquire();
+
+				case 0x05:
+					return Pool<ConsoleWriteLinePacket>.Acquire();
 			}
 
 			return null;
@@ -90,8 +93,6 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(this.consoleId);
 			if (console != null) {
 				if (this.loginSuccessful) {
-					Console.WriteLine(state + " identified as " + this.accName + " with " + state.Name);
-
 					console.SetLoggedInTo(state);
 				} else {
 					console.CloseCmdWindow(state.Uid);
@@ -101,7 +102,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 						Settings.ForgetUser(console.AccountName);
 
 						string msg = "Failed to identify as " + this.accName;
-						console.WriteStringLine(0, msg);
+						console.WriteLine(0, msg);
 						console.Conn.Close(msg);
 					}
 				}
@@ -117,6 +118,24 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
 			state.SetStartupFinished(true);
+		}
+	}
+
+	internal class ConsoleWriteLinePacket : GameServerIncomingPacket {
+		int consoleId;
+		string line;
+
+		protected override ReadPacketResult Read() {
+			this.consoleId = this.DecodeInt();
+			this.line = this.DecodeUTF8String();
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(NamedPipeConnection<GameServerClient> conn, GameServerClient state) {
+			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(this.consoleId);
+			if (console != null) {
+				console.WriteLine(state.Uid, this.line);
+			}
 		}
 	}
 }

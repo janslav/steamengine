@@ -116,6 +116,9 @@
       <Link>Sanity.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common\SimpleQueue.cs">
+      <Link>SimpleQueue.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\TestSuite.cs">
       <Link>TestSuite.cs</Link>
       <SubType>Code</SubType>

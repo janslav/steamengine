@@ -141,7 +141,7 @@ namespace SteamEngine {
 				NetState.Resend(this);
 			} else {
 				uid=uidBeingLoaded;
-				this.point4d=new MutablePoint4D((ushort) Globals.dice.Next(0, 256), (ushort) Globals.dice.Next(0, 256), 0, 0);
+				this.point4d=new MutablePoint4D((ushort) Globals.dice.Next(0, 20), (ushort) Globals.dice.Next(0, 20), 0, 0);
 			}
 			Globals.lastNew=this;
 		}

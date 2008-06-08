@@ -223,13 +223,6 @@ namespace SteamEngine {
 			}
 		}
 		
-		//ISrc
-		public Conn ConnObj {
-			get {
-				return Conn;
-			}
-		}
-		
 		public bool IsPlevelAtLeast(int plevel) {
 			return (account != null && account.PLevel >= plevel);
 		}

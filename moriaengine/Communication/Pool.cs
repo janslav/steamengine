@@ -32,7 +32,7 @@ namespace SteamEngine.Communication {
 	}
 
 	public class Pool<T> : PoolBase where T : Poolable, new() {
-		static private Queue<T> queue = new Queue<T>();
+		static private SimpleQueue<T> queue = new SimpleQueue<T>();
 
 		static Pool<T> pool = new Pool<T>();
 

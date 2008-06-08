@@ -133,10 +133,21 @@ namespace SteamEngine.RemoteConsole {
 			if (uid >= 0) {
 				CommandLineDisplay cld;
 				if (this.displays.TryGetValue(uid, out cld)) {
-					cld.txtDisplay.Write(str);
+					cld.txtDisplay.WriteLine(str);
 				}
 			} else {
 				systemTabPage.WriteLine(str);
+			}
+		}
+
+		internal void Write(int uid, string str) {
+			if (uid >= 0) {
+				CommandLineDisplay cld;
+				if (this.displays.TryGetValue(uid, out cld)) {
+					cld.txtDisplay.Write(str);
+				}
+			} else {
+				systemTabPage.Write(str);
 			}
 		}
 

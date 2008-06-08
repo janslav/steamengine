@@ -30,27 +30,45 @@ using SteamEngine.Persistence;
 namespace SteamEngine.Timers {
 
 	public abstract class Timer : IDeletable {
-		private static SimpleQueue<Timer> toBeEnqueued = new SimpleQueue<Timer>();
+		private static SimpleQueue<Timer> changes = new SimpleQueue<Timer>();
 
 		private static TimerPriorityQueue priorityQueue = new TimerPriorityQueue();
 
 		private bool isDeleted = false;
+		private bool isInChangesQueue = false;
 
 		internal int index = -1; //index in the Priorityqueue. do not touch!
-		internal long fireAt = -1;//internal (instead of private) because of the priorityqueue. do not touch!
-		private long period = -1;//if this is > -1, it will be repeated.
+		internal TimeSpan fireAt = negativeOneSecond;//internal (instead of private) because of the priorityqueue. do not touch!
+		private TimeSpan period = negativeOneSecond;//if this is > -1, it will be repeated.
 
-		private bool isToBeEnqueued = false;
+		private static Thread timerThread;
 
-		public Timer() {
+		internal static void StartTimerThread() {
+			timerThread = new Thread(TimerThread);
+			timerThread.Start();
 		}
 
-		private static void ProcessToBeEnqueued() {
-			while (toBeEnqueued.Count > 0) {
-				Timer timer = toBeEnqueued.Dequeue();
-				timer.isToBeEnqueued = false;
-				if (!timer.isDeleted && timer.fireAt > -1) {
-					priorityQueue.Enqueue(timer);
+		private static void TimerThread() {
+			while (!MainClass.signalExit.WaitOne(5, false)) {
+				Cycle();
+			}
+		}
+
+		private static void Cycle() {
+			ProcessChanges();
+			ProcessTimingOut();
+		}
+
+		private static void ProcessChanges() {
+			while (changes.Count > 0) {
+				Timer timer = changes.Dequeue();
+				lock (timer) {
+					timer.isInChangesQueue = false;
+
+					priorityQueue.Remove(timer);
+					if (!timer.isDeleted && timer.fireAt >= TimeSpan.Zero) {
+						priorityQueue.Enqueue(timer);
+					}
 				}
 			}
 		}
@@ -61,71 +79,66 @@ namespace SteamEngine.Timers {
 		}
 
 		private static void ProcessTimingOut() {
-			long now = Globals.TimeInTicks;
+			TimeSpan now = Globals.TimeAsSpan;
 			while (priorityQueue.Count > 0) {
 				Timer timer = priorityQueue.Peek();
 				//Console.WriteLine("TimingOut timer "+timer);
-				if (timer.fireAt <= now) {
+
+				TimeSpan fireAt = timer.fireAt;
+				if (fireAt <= now) {
 					priorityQueue.Dequeue();//we have already peeked at it
-					if (timer.period > -1) {
-						timer.fireAt += timer.period;
-						toBeEnqueued.Enqueue(timer);
-						timer.isToBeEnqueued = true;
+					if (!timer.isInChangesQueue) {
+						lock (timer) {
+							if (timer.period >= TimeSpan.Zero) {
+								timer.fireAt = fireAt + timer.period;
+								changes.Enqueue(timer);
+								timer.isInChangesQueue = true;
+							}
+							currentTimer = timer;
+							try {
+								lock (MainClass.globalLock) {
+									timer.OnTimeout();
+								}
+							} catch (FatalException) {
+								throw;
+							} catch (Exception e) {
+								Logger.WriteError(e);
+							}
+						}
+						currentTimer = null;
 					}
-					currentTimer = timer;
-					try {
-						timer.OnTimeout();
-					} catch (FatalException) {
-						throw;
-					} catch (Exception e) {
-						Logger.WriteError(e);
-					}
-						
-					currentTimer = null;
 				} else {
 					return;
 				}
 			}
 		}
 
-		protected abstract void OnTimeout();
-
-		public static void Cycle() {
-			ProcessToBeEnqueued();
-			ProcessTimingOut();
-		}
-
 		public static void Clear() {
 			priorityQueue.Clear();
-			toBeEnqueued.Clear();
-		}
-
-		public virtual void Delete() {
-			priorityQueue.Remove(this);
-			isDeleted = true;
-		}
-
-		public bool IsDeleted {
-			get {
-				return isDeleted;
-			}
+			changes.Clear();
 		}
 		
+		public Timer() {
+		}
+
+		protected abstract void OnTimeout();
+
 		[Summary("The time interval between invocations, using TimeSpan values to measure time intervals.")]
 		[Remark("Specify negative one (-1) second (or any other negative number) to disable periodic signaling.")]
 		public TimeSpan PeriodSpan {
 			get {
-				if (period < 0) {
+				TimeSpan p = this.period;
+				if (p < TimeSpan.Zero) {
 					return negativeOneSecond;
 				} else {
-					return HighPerformanceTimer.TicksToTimeSpan(period);
+					return p;
 				}
 			}
 			set {
 				if (value < TimeSpan.Zero) {
-					period = -1;
+					this.period = negativeOneSecond;
 				} else {
-					period = HighPerformanceTimer.TimeSpanToTicks(value);
+					this.period = value;
 				}
 			}
 		}
@@ -134,17 +147,18 @@ namespace SteamEngine.Timers {
 		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to disable periodic signaling.")]
 		public double PeriodInSeconds {
 			get {
-				if (period < 0) {
+				TimeSpan p = this.period;
+				if (p < TimeSpan.Zero) {
 					return -1;
 				} else {
-					return HighPerformanceTimer.TicksToSeconds(period);
+					return p.TotalSeconds;
 				}
 			}
 			set {
 				if (value < 0) {
-					period = -1;
+					this.period = negativeOneSecond;
 				} else {
-					period = HighPerformanceTimer.SecondsToTicks(value);
+					this.period = TimeSpan.FromSeconds(value);
 				}
 			}
 		}
@@ -153,53 +167,66 @@ namespace SteamEngine.Timers {
 		[Remark("Specify negative one (-1) second (or any other negative number) to prevent the timer from starting (i.e. to pause it). Specify 0 to start the timer immediately.")]
 		public double DueInSeconds {
 			get {
-				return HighPerformanceTimer.TicksToSeconds(fireAt - Globals.TimeInTicks);
+				return this.DueInSpan.TotalSeconds;
 			}
 			set {
 				if (value < 0) {
-					fireAt = -1;
-					priorityQueue.Remove(this);
+					this.PrivateSetFireAt(negativeOneSecond);
 				} else {
-					fireAt = Globals.TimeInTicks+HighPerformanceTimer.SecondsToTicks(value);
-					priorityQueue.Remove(this);
-					if (!isToBeEnqueued) {
-						toBeEnqueued.Enqueue(this);
-						isToBeEnqueued = true;
-					}
+					this.PrivateSetFireAt(Globals.TimeAsSpan + TimeSpan.FromSeconds(value));
 				}
 			}
 		}
-
-		public static long SecondsToTicks(double value) {
-			return (long) (value * 10000000L);
-		}
-
-		public static double TicksToSeconds(long period) {
-			return period / 10000000.0;
-		}
-
-		public static readonly TimeSpan negativeOneSecond = TimeSpan.FromSeconds(-1);
 
 		[Summary("The amount of time to delay before the first invoking, using TimeSpan values to measure time intervals.")]
 		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to prevent the timer from starting (i.e. to pause it). Specify TimeSpan.Zero to start the timer immediately.")]
 		public TimeSpan DueInSpan {
 			get {
-				return HighPerformanceTimer.TicksToTimeSpan(fireAt - Globals.TimeInTicks);
+				return this.fireAt - Globals.TimeAsSpan;
 			}
 			set {
 				if (value < TimeSpan.Zero) {
-					fireAt = -1;
-					priorityQueue.Remove(this);
+					this.PrivateSetFireAt(negativeOneSecond);
 				} else {
-					fireAt = Globals.TimeInTicks+HighPerformanceTimer.TimeSpanToTicks(value);
-					priorityQueue.Remove(this);
-					if (!isToBeEnqueued) {
-						toBeEnqueued.Enqueue(this);
-						isToBeEnqueued = true;
-					}
+					this.PrivateSetFireAt(Globals.TimeAsSpan + value);
 				}
 			}
 		}
+
+		private void PrivateSetFireAt(TimeSpan value) {
+			this.ThrowIfDeleted();
+			lock (this) {
+				this.fireAt = value;
+				if (!this.isInChangesQueue) {
+					changes.Enqueue(this);
+					this.isInChangesQueue = true;
+				}
+			}
+		}
+
+		public virtual void Delete() {
+			lock (this) {
+				this.isDeleted = true;
+				if (!this.isInChangesQueue) {
+					changes.Enqueue(this);
+					this.isInChangesQueue = true;
+				}
+			}
+		}
+
+		public bool IsDeleted {
+			get {
+				return isDeleted;
+			}
+		}
+
+		protected void ThrowIfDeleted() {
+			if (this.isDeleted) {
+				throw new DeletedException("You can not manipulate a deleted timer (" + this + ")");
+			}
+		}
+
+		public static readonly TimeSpan negativeOneSecond = TimeSpan.FromSeconds(-1);
 
 		#region save/load
 		internal static void StartingLoading() {
@@ -207,11 +234,11 @@ namespace SteamEngine.Timers {
 		
 		[Save]
 		public virtual void Save(SaveStream output) {
-			if (fireAt != -1) {
-				output.WriteValue("fireAt", this.fireAt);
+			if (fireAt != negativeOneSecond) {
+				output.WriteValue("fireAt", this.fireAt.Ticks);
 			}
-			if (period != -1) {
-				output.WriteValue("period", this.period);
+			if (period != negativeOneSecond) {
+				output.WriteValue("period", this.period.Ticks);
 			}
 		}
 
@@ -219,23 +246,19 @@ namespace SteamEngine.Timers {
 		public virtual void LoadLine(string filename, int line, string name, string value) {
 			switch (name) {
 				case "fireat":
-					this.fireAt = ConvertTools.ParseInt64(value);
-					toBeEnqueued.Enqueue(this);
-					isToBeEnqueued = true;
+					this.PrivateSetFireAt(TimeSpan.FromTicks(ConvertTools.ParseInt64(value)));
 					break;
 				case "period":
-					this.period = ConvertTools.ParseInt64(value);
+					this.period = TimeSpan.FromTicks(ConvertTools.ParseInt64(value));
 					break;
 			}
 		}
-		
-		
 
 		internal static void LoadingFinished() {
 			Logger.WriteDebug("Loaded "+priorityQueue.Count+" timers.");
 
-			ProcessToBeEnqueued();
-			toBeEnqueued = new SimpleQueue<Timer>();//it could have been unnecessary big...
+			ProcessChanges();
+			changes = new SimpleQueue<Timer>();//it could have been unnecessary big...
 		}
 		#endregion save/load
 	}

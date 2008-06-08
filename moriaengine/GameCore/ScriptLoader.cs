@@ -86,11 +86,13 @@ namespace SteamEngine {
 			ICollection<ScriptFile> files = allFiles.GetChangedFiles();//this makes the entities unload
 			if (files.Count > 0) {
 				Server.BroadCast("Server is pausing for script resync...");
-				MainClass.SetRunLevel(RunLevels.Paused);
+
+				Sanity.IfTrueThrow(!RunLevelManager.IsRunning, "RunLevel != Running @ Resync");
+
 				Globals.PauseServerTime();
 				
-				bool loadingWas = MainClass.loading;
-				MainClass.loading = true;
+				RunLevelManager.SetStartup();
+
 				ObjectSaver.StartingLoading();
 				
 				foreach (ScriptFile f in files) {
@@ -104,7 +106,7 @@ namespace SteamEngine {
 					}
 				}
 
-				MainClass.loading = loadingWas;
+				//RunLevelManager.SetRunning();
 				
 				if (Globals.resolveEverythingAtStart) {
 					Constant.ResolveAll();
@@ -118,7 +120,6 @@ namespace SteamEngine {
 				//    t.region = null;
 				//}
 				
-				MainClass.SetRunLevel(RunLevels.Running);
 				Globals.UnPauseServerTime();
 				Server.BroadCast("Script resync finished.");
 			} else {
@@ -247,14 +248,14 @@ namespace SteamEngine {
 			if (fi.Exists) {
 				if (!allFiles.HasFile(fi)) {
 					Server.BroadCast("Server is pausing for script file loading...");
-					MainClass.SetRunLevel(RunLevels.Paused);
+					Globals.PauseServerTime();
 					
 					ScriptFile sf = allFiles.AddFile(fi);
 					Console.WriteLine("Loading "+LogStr.File(fi.FullName));
 					LoadFile(sf);
 					
 					DelayedResolver.ResolveAll();
-					MainClass.SetRunLevel(RunLevels.Running);
+					Globals.UnPauseServerTime();
 					Server.BroadCast("Script loading finished.");
 				} else {
 					throw new Exception("This file is already loaded.");

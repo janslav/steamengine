@@ -45,7 +45,7 @@ namespace SteamEngine.Communication {
 		private Thread workerAlpha;
 		private Thread workerBeta;
 		private Thread workerGamma;
-		private Queue<OutgoingMessage> outgoingPackets;
+		private SimpleQueue<OutgoingMessage> outgoingPackets;
 
 		internal readonly IProtocol<TConnection, TState, TEndPoint> protocol;
 
@@ -57,7 +57,7 @@ namespace SteamEngine.Communication {
 
 			this.protocol = protocol;
 
-			this.outgoingPackets = new Queue<OutgoingMessage>();
+			this.outgoingPackets = new SimpleQueue<OutgoingMessage>();
 
 			string threadsName = this.GetType().Name;
 
@@ -159,11 +159,11 @@ namespace SteamEngine.Communication {
 
 		//outgoing packets
 		private void WorkerThreadMethod() {
-			Queue<OutgoingMessage> secondQueue = new Queue<OutgoingMessage>();
+			SimpleQueue<OutgoingMessage> secondQueue = new SimpleQueue<OutgoingMessage>();
 
 			while (outgoingPacketsWaitingEvent.WaitOne()) {
 				lock (this.outgoingPackets) {
-					Queue<OutgoingMessage> temp = this.outgoingPackets;
+					SimpleQueue<OutgoingMessage> temp = this.outgoingPackets;
 					this.outgoingPackets = secondQueue;
 					secondQueue = temp;
 				}

@@ -324,13 +324,8 @@
     <Compile Include="..\..\GameCore\CompiledScripts\GeneratedCodeUtil.cs">
       <Link>CompiledScripts\GeneratedCodeUtil.cs</Link>
     </Compile>
-    <Compile Include="..\..\GameCore\Conn.cs">
-      <Link>Conn.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\ConsConn.cs">
-      <Link>ConsConn.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\GameCore\ConsoleDummy.cs">
+      <Link>ConsoleDummy.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\Constant.cs">
       <Link>Constant.cs</Link>
@@ -720,6 +715,9 @@
     <Compile Include="..\..\GameCore\Regions\StaticSector.cs">
       <Link>Regions\StaticSector.cs</Link>
     </Compile>
+    <Compile Include="..\..\GameCore\RunLevel.cs">
+      <Link>RunLevel.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\ScriptArgs.cs">
       <Link>ScriptArgs.cs</Link>
       <SubType>Code</SubType>
@@ -804,9 +802,8 @@
       <Link>Timers\MethodTimer.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\Timers\SimpleQueue.cs">
-      <Link>Timers\SimpleQueue.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\GameCore\Timers\SynchronizedQueue.cs">
+      <Link>Timers\SynchronizedQueue.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\Timers\Timer.cs">
       <Link>Timers\Timer.cs</Link>

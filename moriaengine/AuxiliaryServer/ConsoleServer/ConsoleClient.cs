@@ -86,6 +86,12 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			}
 		}
 
+		internal string Password {
+			get {
+				return this.password;
+			}
+		}
+
 		public void TryLoginToGameServer(GameServers.GameServerClient gameServer) {
 			GameServers.ConsoleLoginRequestPacket loginRequest = Pool<GameServers.ConsoleLoginRequestPacket>.Acquire();
 			loginRequest.Prepare(this.uid, this.accName, this.password);
@@ -139,14 +145,16 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			this.Conn.SendSinglePacket(packet);
 		}
 
-		public void WriteString(int serverUid, string str) {
+		public void Write(int serverUid, string str) {
 			SendStringPacket packet = Pool<SendStringPacket>.Acquire();
 			packet.Prepare(serverUid, str);
 			this.Conn.SendSinglePacket(packet);
 		}
 
-		public void WriteStringLine(int serverUid, string str) {
-			WriteString(serverUid, str + Environment.NewLine);
+		public void WriteLine(int serverUid, string str) {
+			SendStringLinePacket packet = Pool<SendStringLinePacket>.Acquire();
+			packet.Prepare(serverUid, str);
+			this.Conn.SendSinglePacket(packet);
 		}
 	}
 }

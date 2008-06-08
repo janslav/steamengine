@@ -24,6 +24,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					return Pool<RequestServersToStartPacket>.Acquire();
 				case 2:
 					return Pool<RequestStartGameServer>.Acquire();
+				case 3:
+					return Pool<CommandLinePacket>.Acquire();
 			}
 			return null;
 		}
@@ -47,17 +49,19 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			state.SetLoginData(this.accName, this.password);
 
-			if (GameServers.GameServerServer.GameServersCount > 0) {
+			bool failed = false;
+			if (Settings.CheckUser(this.accName, this.password)) {
+				state.SetLoggedInToAux(true);
+			} else {
+				failed = true;
+			}
 
+			if (GameServers.GameServerServer.GameServersCount > 0) {
 				foreach (GameServers.GameServerClient gameServer in GameServers.GameServerServer.AllGameServers) {
 					state.TryLoginToGameServer(gameServer);
 				}
-			} else {
-				if (Settings.CheckUser(this.accName, this.password)) {
-					state.SetLoggedInToAux(true);
-				} else {
-					conn.Close("Failed to identify as " + this.accName);
-				}
+			} else if (failed) {
+				conn.Close("Failed to identify as " + this.accName);
 			}
 		}
 	}
@@ -93,13 +97,13 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByNumber(this.serverNum);
 			if (cli != null) {
-				state.WriteStringLine(0, "Server already online, ignoring start command.");
+				state.WriteLine(0, "Server already online, ignoring start command.");
 				//server online, we do nothing
 			} else {
 				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
 				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
 				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
-				ConsoleServer.WriteLineAsAux("Compiling " + this.build + " build of server at " + sett.IniPath);
+				Console.WriteLine("Compiling " + this.build + " build of server at " + sett.IniPath);
 
 				AuxServNantLogger o = new AuxServNantLogger(this.serverNum, this.build, nantPath);
 				Thread t = new Thread(o.StartThread);
@@ -146,11 +150,42 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 				string file = nant.GetCompiledAssemblyName("gameCoreFileName");
 
-				ConsoleServer.WriteLineAsAux("Starting " + file);
+				Console.WriteLine("Starting " + file);
 				System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(file);
 				psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
 				System.Diagnostics.Process.Start(psi);
 			}
+		}
+	}
+
+	public class CommandLinePacket : ConsoleIncomingPacket {
+		private int id;
+		private string command;
+
+		protected override ReadPacketResult Read() {
+			this.id = this.DecodeInt();
+			this.command = this.DecodeUTF8String();
+
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+			if (this.id == 0) {
+				if (state.IsLoggedInAux) {
+					//TODO
+				}
+			} else {
+				GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByUid(this.id);
+				if (cli != null) {
+					if (LoggedInConsoles.IsLoggedIn(state, cli)) {
+						GameServers.ConsoleCommandLinePacket p = Pool<GameServers.ConsoleCommandLinePacket>.Acquire();
+						p.Prepare(state.Uid, state.AccountName, state.Password, this.command);
+						cli.Conn.SendSinglePacket(p);
+					}
+				}
+			}
+
+			state.WriteLine(0, "Invalid (not implemented/not logged in) id to command: " + this.id);
 		}
 	}
 }

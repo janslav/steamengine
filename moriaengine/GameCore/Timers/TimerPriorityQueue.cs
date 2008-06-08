@@ -30,82 +30,83 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace SteamEngine.Timers {
 	public class TimerPriorityQueue {
 		private int count;
 		private int capacity;
-		private int version;
+		//private int version;
 		private Timer[] heap;
 
 		public TimerPriorityQueue() {
-			capacity = 15;
-			heap = new Timer[capacity];
+			this.capacity = 15;
+			this.heap = new Timer[this.capacity];
 		}
 		
 		public void Clear() {
-			Array.Clear(heap, 0, heap.Length);
-			count = 0;
+			Array.Clear(this.heap, 0, this.heap.Length);
+			this.count = 0;
 		}
 
 		public Timer Dequeue() {
-			if (count == 0) {
+			if (this.count == 0) {
 				throw new InvalidOperationException();
 			}
-			Timer result = heap[0];
-			count--;
-			TrickleDown(0, heap[count]);
-			heap[count] = null;
-			version++;
+			Timer result = this.heap[0];
+			this.count--;
+			this.TrickleDown(0, this.heap[this.count]);
+			this.heap[this.count] = null;
+			//this.version++;
 			result.index = -1;
 			return result;
 		}
 		
 		public void Remove(Timer timer) {
 			if (timer.index > -1) {
-				RemoveAt(timer.index);
+				this.RemoveAt(timer.index);
 				timer.index = -1;
 			}
 		}
 		
 		private void RemoveAt(int i) {
-			count--;
-			TrickleDown(i, heap[count]);
-			heap[count] = null;
-			version++;
+			this.count--;
+			this.TrickleDown(i, this.heap[this.count]);
+			this.heap[this.count] = null;
+			//this.version++;
 		}
 		
 		public Timer Peek() {
-			if (count == 0) {
+			if (this.count == 0) {
 				throw new InvalidOperationException();
 			}
-			return heap[0];
+			return this.heap[0];
 		}
 
 		public void Enqueue(Timer timer) {
-			if (count == capacity) {
-				Grow();
+			if (this.count == this.capacity) {
+				this.Grow();
 			}
-			count++;
-			BubbleUp(count - 1, timer);
-			version++;
+			this.count++;
+			this.BubbleUp(this.count - 1, timer);
+			//this.version++;
 		}
 
 		private void BubbleUp(int index, Timer timer) {
-			int parent = GetParent(index);
+			int parent = this.GetParent(index);
 			// note: (index > 0) means there is a parent
 			while ((index > 0) && 
 					(heap[parent].fireAt > timer.fireAt)) {
 						//original line: (heap[parent].Priority.CompareTo(he.Priority) < 0)
 						//is true when parent priority is lower than our current priority - in case of timers means it higher time
-				Timer parentTimer = heap[parent];
+				Timer parentTimer = this.heap[parent];
 				parentTimer.index = index;
 				heap[index] = parentTimer;
 				index = parent;
-				parent = GetParent(index);
+				parent = this.GetParent(index);
 			}
 			timer.index = index;
-			heap[index] = timer;
+			this.heap[index] = timer;
 		}
 
 		private int GetLeftChild(int index) {
@@ -117,72 +118,83 @@ namespace SteamEngine.Timers {
 		}
 
 		private void Grow() {
-			capacity = (capacity * 2) + 1;
-			Timer[] newHeap = new Timer[capacity];
-			System.Array.Copy(heap, 0, newHeap, 0, count);
-			heap = newHeap;
+			this.capacity = (this.capacity * 2) + 1;
+			Timer[] newHeap = new Timer[this.capacity];
+			System.Array.Copy(this.heap, 0, newHeap, 0, this.count);
+			this.heap = newHeap;
 		}
 
 		private void TrickleDown(int index, Timer timer) {
-			int child = GetLeftChild(index);
-			while (child < count) {
-				if (((child + 1) < count) && 
-						(heap[child].fireAt > heap[child + 1].fireAt)) {
+			int child = this.GetLeftChild(index);
+			while (child < this.count) {
+				if (((child + 1) < this.count) &&
+						(this.heap[child].fireAt > this.heap[child + 1].fireAt)) {
 					//orig. line: (heap[child].Priority.CompareTo(heap[child + 1].Priority) < 0))
 					//is true when left child has lower priority than right one
 					child++;
 				}
-				Timer childTimer = heap[child];
+				Timer childTimer = this.heap[child];
 				childTimer.index = index;
-				heap[index] = childTimer;
+				this.heap[index] = childTimer;
 				index = child;
-				child = GetLeftChild(index);
+				child = this.GetLeftChild(index);
 			}
-			BubbleUp(index, timer);
+			this.BubbleUp(index, timer);
 		}
         
-		public IEnumerator GetEnumerator() {
-			return new PriorityQueueEnumerator(this);
-		}
+		//public IEnumerator GetEnumerator() {
+		//    return new PriorityQueueEnumerator(this);
+		//}
 
 		public int Count { get {
 			return count;
 		} }
 
-		private class PriorityQueueEnumerator : IEnumerator {
-			private int index;
-			private TimerPriorityQueue pq;
-			private int version;
+		//private class PriorityQueueEnumerator : IEnumerator<Timer> {
+		//    private int index;
+		//    private TimerPriorityQueue pq;
+		//    private int version;
 
-			public PriorityQueueEnumerator(TimerPriorityQueue pq) {
-				this.pq = pq;
-				Reset();
-			}
+		//    public PriorityQueueEnumerator(TimerPriorityQueue pq) {
+		//        this.pq = pq;
+		//        this.Reset();
+		//    }
 
-			private void checkVersion() {
-				if (version != pq.version)
-					throw new InvalidOperationException();
-			}
+		//    private void checkVersion() {
+		//        if (this.version != this.pq.version) {
+		//            throw new InvalidOperationException();
+		//        }
+		//    }
 
-			public void Reset() {
-				index = -1;
-				version = pq.version;
-			}
+		//    public void Reset() {
+		//        this.index = -1;
+		//        this.version = this.pq.version;
+		//    }
 
-			public object Current {
-				get { 
-					checkVersion();
-					return pq.heap[index]; 
-				}
-			}
+		//    public object Current {
+		//        get {
+		//            this.checkVersion();
+		//            return this.pq.heap[index]; 
+		//        }
+		//    }
 
-			public bool MoveNext() {
-				checkVersion();
-				if (index + 1 == pq.count) 
-					return false;
-				index++;
-				return true;
-			}
-		}
+		//    public bool MoveNext() {
+		//        this.checkVersion();
+		//        if (this.index + 1 == this.pq.count) 
+		//            return false;
+		//        this.index++;
+		//        return true;
+		//    }
+
+		//    Timer IEnumerator<Timer>.Current {
+		//        get {
+		//            this.checkVersion();
+		//            return this.pq.heap[index]; 
+		//        }
+		//    }
+
+		//    public void Dispose() {
+		//    }
+		//}
 	}
 }
