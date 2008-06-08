@@ -166,6 +166,7 @@ namespace SteamEngine {
 	}
 
 	public enum DenyResult {
+		//item manipulation denials
 		Deny_YouCannotPickThatUp=0,
 		Deny_ThatIsTooFarAway=1,
 		Deny_ThatIsOutOfSight=2,
@@ -175,7 +176,15 @@ namespace SteamEngine {
 		Deny_NoMessage=6,
 		Allow=7,
 		Deny_ThatIsLocked = 8,
-		Deny_ContainerClosed = 9 //You cannot peek into the container.
+		Deny_ContainerClosed = 9, //You cannot peek into the container.
+	}
+
+	//abilities running possible results
+	public enum DenyResultAbilities {
+		Allow = 1, //we can use the ability
+		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
+		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
+		Deny_WasRunning = 4 //the ability was currently running (for ActivableAbilities only) 
 	}
 
 	//for testing purposes

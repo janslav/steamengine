@@ -1,5 +1,7 @@
 [Warcry a_warcry]
 name="Warcry"
 
-//promenne usageDelay, effectDuration budou v nastaveni
-//range se bude pocitat z payerovych vlastnosti
+usageDelay = 180
+effectDuration = 10
+
+//range se bude pocitat z playerovych vlastnosti

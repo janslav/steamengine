@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+using System;
 using System.Timers;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
@@ -23,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	[Summary("This class holds information about one ability the user has - the number of ability points "+
 			 "and any additional info (such as timers connected with the ability running etc.)")]
-	public abstract class Ability {
+	public class Ability {
 		[Summary("Actual number of points in the ability")]
 		private ushort points;
 
@@ -54,15 +55,15 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort oldValue = this.points;
 				if((oldValue != value) && (value <= this.MaxPoints)) {//value has changed and is not at its maximum yet
-					this.points = value;
+					this.points = Math.Max((ushort)0,value); //dont go under zero
 				}
 				//run triggers if necessary
 				if(oldValue < value) {
-					if(value == 1) { //added first point
+					if(oldValue == 0) { //added first point(s)
 						def.Trigger_Assign(cont);
 					}
 				} else if(oldValue > value) {
-					if(value == 0) { //removed last point
+					if(this.points == 0) { //removed last point(s)
 						def.Trigger_UnAssign(cont);
 					}
 				}
@@ -107,6 +108,9 @@ namespace SteamEngine.CompiledScripts {
 		public double LastUsage {
 			get {
 				return lastUsage;
+			}
+			set {
+				lastUsage = value;
 			}
 		}
 	}
