@@ -45,9 +45,8 @@ namespace SteamEngine {
 	public static class Server  {
 		public const int maxPacketLen = 65536;
 		
-		internal static int consoles = 0;
 		internal static int clients = 0;
-		internal static LinkedList<Conn> connections = new LinkedList<Conn>();
+		internal static LinkedList<GameConn> connections = new LinkedList<GameConn>();
 		internal static TcpListener[] serverSockets;
 
 		internal static List<IPAddress> omitIPs = new List<IPAddress>();
@@ -61,8 +60,8 @@ namespace SteamEngine {
 		internal static PacketHandler _in;
 
 		public const int maxNotLoggedIn = 20; //maximum of connections that are not yet logged. this is a protection against some DoS attacks.
-		private static LinkedList<Conn> notLoggedIn = new LinkedList<Conn>();
-		private static SimpleQueue<Conn> toBeClosed = new SimpleQueue<Conn>();
+		private static LinkedList<GameConn> notLoggedIn = new LinkedList<GameConn>();
+		private static SimpleQueue<GameConn> toBeClosed = new SimpleQueue<GameConn>();
 
 		internal class IdleCheckTimer : SteamEngine.Timers.Timer {
 			private static TimeSpan idleCheckTimerInterval = TimeSpan.FromMinutes(2);
@@ -73,14 +72,11 @@ namespace SteamEngine {
 			}
 
 			protected sealed override void OnTimeout() {
-				foreach (Conn c in connections) {
-					GameConn conn = c as GameConn;
-					if (conn != null) {
-						if (conn.noResponse) {
-							conn.Close("No response in last minute - connection lost");
-						} else {
-							conn.noResponse = true;
-						}
+				foreach (GameConn conn in connections) {
+					if (conn.noResponse) {
+						conn.Close("No response in last minute - connection lost");
+					} else {
+						conn.noResponse = true;
 					}
 				}
 			}
@@ -329,7 +325,7 @@ namespace SteamEngine {
 			new IdleCheckTimer();
 		}
 		
-		internal static void RemoveConn(Conn conn) {
+		internal static void RemoveConn(GameConn conn) {
 			toBeClosed.Enqueue(conn);
 		}
 		
@@ -340,19 +336,13 @@ namespace SteamEngine {
 			NetState.Enable();//enable when there's more than 0 clients
 		}
 		
-		internal static void AddConn(ConsConn conn) {
-			notLoggedIn.AddLast(conn);
-			connections.AddFirst(conn);
-			consoles++;
-		}
-		
-		internal static void ConnLoggedIn(Conn conn) {
+		internal static void ConnLoggedIn(GameConn conn) {
 			notLoggedIn.Remove(conn);
 		}
 		
 		private static void EnsureMaxNotLoggedIn() {
 			while (notLoggedIn.Count > maxNotLoggedIn) {
-				LinkedListNode<Conn> node = notLoggedIn.First;//first, because we add to the end
+				LinkedListNode<GameConn> node = notLoggedIn.First;//first, because we add to the end
 				notLoggedIn.Remove(node);
 				node.Value.Close("Too many lingering clients. possible DoS attack?");
 			}
@@ -366,7 +356,7 @@ namespace SteamEngine {
 					IPEndPoint localEndpoint = (IPEndPoint) serverSocket.LocalEndpoint;
 					Socket socket = serverSocket.AcceptSocket();
 					if (localEndpoint.Port == Globals.port) {//gameconn
-						if (clients<Globals.maxConnections && MainClass.RunLevel==RunLevels.Running) {
+						if (clients < Globals.maxConnections && RunLevelManager.IsRunning) {
 							GameConn newConn = new GameConn(socket);
 							Console.WriteLine(LogStr.Ident(newConn)+" connected.");
 							AddConn(newConn);
@@ -378,43 +368,35 @@ namespace SteamEngine {
 							Console.WriteLine("Connection (Ip {0}) rejected - server is full and/or paused.", remoteEndpoint);
 							continue;
 						}
-					} else {//consconn
-						ConsConn newConn = new ConsConn(socket);
-						Console.WriteLine(LogStr.Ident(newConn)+" connected.");
-						AddConn(newConn);
 					}
 				}
 			}
 			
 			//loop through incoming packets
-			foreach (Conn c in connections) {
-				if (MainClass.RunLevel==RunLevels.Running || (c is ConsConn  && MainClass.RunLevel==RunLevels.AwaitingRetry)) {
+			foreach (GameConn c in connections) {
+				if (RunLevelManager.IsRunning) {
 					c.Cycle();
 				}
 			}
 			
 			//clean up closed connections
 			while (toBeClosed.Count > 0) {
-				Conn c = toBeClosed.Dequeue();
+				GameConn c = toBeClosed.Dequeue();
 				int preCount = connections.Count;
 				connections.Remove(c);
 				if (connections.Count < preCount) {//it was really there before
-					if (c is GameConn) {
-						clients--;
-						if (clients == 0) {
-							NetState.Disable();//disable when no client connected
-						}
-					} else if (c is ConsConn) {
-						consoles--;
+					clients--;
+					if (clients == 0) {
+						NetState.Disable();//disable when no client connected
 					}
 				}
 				notLoggedIn.Remove(c);//could have been in there. Maybe ;)
 			}
 		}
 
-		internal static void AboutToRecompile() {
+		internal static void BackupLinksToCharacters() {
 			foreach (GameConn conn in Server.AllGameConns) {
-				conn.AboutToRecompile();
+				conn.BackupLinksToCharacters();
 			}
 		}
 		
@@ -424,9 +406,9 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void RecompilingFinished() {
+		internal static void RemoveBackupLinks() {
 			foreach (GameConn conn in Server.AllGameConns) {
-				conn.RecompilingFinished();
+				conn.RemoveBackupLinks();
 			}
 		}
 
@@ -448,12 +430,11 @@ namespace SteamEngine {
 				}
 			}
 			if (connections != null) {
-				foreach (Conn conn in connections) {
+				foreach (GameConn conn in connections) {
 					conn.Close("exiting");
 				}
 			}
 			clients=0;
-			consoles=0;
 		}
 		/* 
 			Method: SendSystemMessage
@@ -808,14 +789,11 @@ namespace SteamEngine {
 				return GetAllGameConns();
 			}
 		}
+
 		public static IEnumerable<GameConn> GetAllGameConns() {
-			IEnumerable<Conn> currentList = Server.connections;
-			foreach (Conn c in currentList) {
-				GameConn conn = c as GameConn;
-				if (conn != null) {
-					yield return conn;
-				}
-			}
+			GameConn[] arr = new GameConn[connections.Count];
+			Server.connections.CopyTo(arr, 0);
+			return arr;
 		}
 		
 		public static IEnumerable<AbstractCharacter> AllPlayers {
@@ -824,10 +802,8 @@ namespace SteamEngine {
 			}
 		}
 		public static IEnumerable<AbstractCharacter> GetAllPlayers() {
-			IEnumerable<Conn> currentList = Server.connections;
-			foreach (Conn c in currentList) {
-				GameConn conn = c as GameConn;
-				if ((conn != null) && (conn.CurCharacter != null)) {
+			foreach (GameConn conn in Server.connections) {
+				if (conn.CurCharacter != null) {
 					yield return conn.CurCharacter;
 				}
 			}

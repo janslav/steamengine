@@ -33,90 +33,63 @@ using SteamEngine.Regions;
 using SteamEngine.AuxServerPipe;
 
 namespace SteamEngine {  
-	
-	//Do not add an access modifier to MainClass - Scripts should not be able to see INI settings, since they're
-	//all changeable right now, and changing them could have unintended effects.
-	
 	public static class MainClass {
 		
 		//public static Logger logger;
 
 		public static readonly object globalLock = new object();
 
-		public static ManualResetEvent keepRunning = new ManualResetEvent(false);
+		public static ManualResetEvent signalExit = new ManualResetEvent(false);
 		
-		internal static bool loading=true;
-		
-
-		public static bool Loading { get {
-			return loading;
-		} }
-		 
-		public static bool nativeConsole = false;
+		//public static bool nativeConsole = false;
 		public static bool saveFlag = false;
 		
-		private static RunLevels runLevel=RunLevels.Unknown;
-		private static Queue nativeCommands=null;
+		//private static Queue nativeCommands=null;
 		
-		internal static ConsConn winConsole;
-		
-		public static RunLevels RunLevel {
-			get { 
-				lock (globalLock) { 
-					return runLevel; 
-				}
-			}
-		}
-
-		internal static void SetRunLevel(RunLevels level) {
-			lock (globalLock) {
-				runLevel=level;
-			}
-		}
+		//internal static ConsConn winConsole;
 
 		//method: winConsoleCommand
 		//caled by the wincosole via reflection
-		public static void winConsoleCommand(string data) {
-			if (RunLevel==RunLevels.Running || RunLevel==RunLevels.AwaitingRetry) {
-				if (nativeConsole && nativeCommands!=null) {
-					lock (nativeCommands.SyncRoot) {
-						nativeCommands.Enqueue(data);
-					}
-				} else {
-					Logger.WriteWarning("SteamEngine.MainClass.winConsoleCommand() method called, even if SteamEngine is not runnig under native console!");
-				}
-			}
-		}
+		//public static void winConsoleCommand(string data) {
+		//    if (RunLevelManager.RunLevel == RunLevel.Running || RunLevelManager.RunLevel == RunLevel.AwaitingRetry) {
+		//        if (nativeConsole && nativeCommands!=null) {
+		//            lock (nativeCommands.SyncRoot) {
+		//                nativeCommands.Enqueue(data);
+		//            }
+		//        } else {
+		//            Logger.WriteWarning("SteamEngine.MainClass.winConsoleCommand() method called, even if SteamEngine is not runnig under native console!");
+		//        }
+		//    }
+		//}
 
 		//method: WinStart
 		//invoked instead of the Main() by the Winconsole if the server is run as console
 		//as the argument it gets Methodinfo of a method that sends its string argument to the console
 		//this also creates a ConsConn instance with an fake acc with admin plevel to represent the console
-		public static void WinStart(object consSend) {
-			//this is run if the server is started by the WinConsole
-			try {
-				nativeCommands=new Queue();
-				nativeConsole=true;
-				winConsole=new ConsConn((StringToSend) consSend);
-			} catch (Exception e) {
-				Console.WriteLine (e);
-				return;
-			}
-			SteamMain();
-		}
+		//public static void WinStart(object consSend) {
+		//    //this is run if the server is started by the WinConsole
+		//    try {
+		//        nativeCommands=new Queue();
+		//        nativeConsole=true;
+		//        winConsole=new ConsConn((StringToSend) consSend);
+		//    } catch (Exception e) {
+		//        Console.WriteLine (e);
+		//        return;
+		//    }
+		//    SteamMain();
+		//}
 
 		public static void Main(string[] args) {
 			SteamMain();
 		}
 
 		private static void SteamMain() {
-			keepRunning.Reset();
+			signalExit.Reset();
 			try {
 				long time = HighPerformanceTimer.TickCount; //initializing HighPerformanceTimer
 				Common.Tools.ExitBinDirectory();
-				SetRunLevel(RunLevels.Startup);
 				if (!Init()) {
-					SetRunLevel(RunLevels.Dead);
+					RunLevelManager.SetDead();
 					return;
 				}
 
@@ -126,17 +99,16 @@ namespace SteamEngine {
 				Logger.WriteFatal(smaee);
 				smaee.Show();
 			} catch (ThreadAbortException) {
-				SetRunLevel(RunLevels.Shutdown);
+				RunLevelManager.SetShutdown();
 				Logger.WriteFatal("Initialization process aborted");
 			} catch (Exception globalexp) {
 				Logger.WriteFatal(globalexp);
 			} finally {
-				if (RunLevel==RunLevels.Running)
-					SetRunLevel(RunLevels.Shutdown);
+				RunLevelManager.SetShutdown();
 				FastDLL.ShutDownFastDLL();
 				Console.WriteLine("Shutdown...");
 				Exit();
-				SetRunLevel(RunLevels.Dead);
+				RunLevelManager.SetDead();
 			}
 		}
 		
@@ -145,8 +117,10 @@ namespace SteamEngine {
 
 			CoreLogger.Init();
 
+			RunLevelManager.SetStartup();
+
 			AuxServerPipeClient.Init();
-			System.Threading.Thread.Sleep(1000);//wait to conne
+			System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 
 #if DEBUG
 			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (DEBUG build)"+" - "+Globals.serverName);
@@ -161,7 +135,7 @@ namespace SteamEngine {
 			Console.WriteLine("Running under "+Environment.OSVersion+", Framework version: "+Environment.Version+".");
 
 			Globals.Init();
-			if (keepRunning.WaitOne(0, false)) {
+			if (signalExit.WaitOne(0, false)) {
 				return false;
 			}
 
@@ -199,8 +173,8 @@ namespace SteamEngine {
 			ClassManager.InitScripts();
 			PluginDef.Init();
 			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
-			loading = false;
 			Globals.UnPauseServerTime();
+			RunLevelManager.SetRunning();
 			Logger.WriteDebug("triggering @startup");
 			Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
 
@@ -248,14 +222,17 @@ namespace SteamEngine {
 			using (StopWatch.StartAndDisplay("Recompiling...")) {
 				Commands.commandRunning = false;
 				Server.BroadCast("Server is pausing for script recompiling...");
+				RunLevelManager.SetRecompiling();
+				Globals.PauseServerTime();
+
+				WorldSaver.Save();
+
+				RunLevelManager.SetShutdown();
 				Logger.WriteDebug("triggering @shutdown");
 				if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
 					Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
 				}
-				SetRunLevel(RunLevels.Paused);
-				Globals.PauseServerTime();
-				WorldSaver.Save();
-				Server.AboutToRecompile();
+				Server.BackupLinksToCharacters();
 				UnLoadAll();
 				if (!LoadAll()) {
 					//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
@@ -263,7 +240,7 @@ namespace SteamEngine {
 					//SE calls RetryRecompilingScripts. So, "retry", "recompile", "resync", "r", and "die you evil compiler"
 					//(and whatever else they try) would all make SE attempt to recompile. Except for "exit", which, well,
 					//exits.
-					SetRunLevel(RunLevels.AwaitingRetry);
+					RunLevelManager.SetAwaitingRetry();
 					Server.BroadCast("Script recompiling failed, pausing until it has been retried and succeeds.");
 					/*while ((keepRunning) && commandsPaused) {
 						System.Windows.Forms.Application.DoEvents();
@@ -281,19 +258,19 @@ namespace SteamEngine {
 		//to the separate versions getting out of sync when someone changes one but misses the other.
 		private static void ScriptRecompilingSucceeded() {
 			CollectGarbage();
-			Server.RecompilingFinished();
-			SetRunLevel(RunLevels.Running);
-			Globals.UnPauseServerTime();
+			//RunLevelManager.SetPaused();	//Switch to paused until relinking & garbage collection have completed.
+			Server.RemoveBackupLinks();
+			//Globals.UnPauseServerTime();
+			//RunLevelManager.SetRunning();
 			Server.BroadCast("Script recompiling finished.");
 		}
 		
 		internal static void RetryRecompilingScripts() {
 			UnLoadAll();
 			if (!LoadAll()) {
-				SetRunLevel(RunLevels.AwaitingRetry);
+				RunLevelManager.SetAwaitingRetry();
 				Server.BroadCast("Script recompiling failed, remaining paused.");
 			} else {
-				SetRunLevel(RunLevels.Paused);	//Switch to paused until relinking & garbage collection have completed.
 				ScriptRecompilingSucceeded();
 			}
 		}
@@ -326,7 +303,7 @@ namespace SteamEngine {
 		//reload everything, including recompile
 		//this does basically the same as Init(), only less :)
 		private static bool LoadAll() {
-			loading = true;
+			RunLevelManager.SetStartup();
 			DelayedResolver.ClearAll();
 			ObjectSaver.ClearJobs();
 			if (!CompilerInvoker.CompileScripts(false)) {
@@ -346,37 +323,39 @@ namespace SteamEngine {
 			PluginDef.Init();
 			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
 			//Region.ResolveLoadedRegions();
-			loading = false;
+			Globals.UnPauseServerTime();
+			RunLevelManager.SetRunning();
 			Logger.WriteDebug("triggering @startup");
 			Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(false));
 			return true;
 		}
 
-		private static void HandleNativeCmds() {
-			if (nativeCommands!=null && nativeCommands.Count>0) {
-				string cmd;
-				lock (nativeCommands.SyncRoot) {
-					cmd=nativeCommands.Dequeue() as string;
-				}
-				if (cmd!=null) {
-					winConsole.DoCommand(cmd);
-				}
-			}
-		}
+		//private static void HandleNativeCmds() {
+		//    if (nativeCommands!=null && nativeCommands.Count>0) {
+		//        string cmd;
+		//        lock (nativeCommands.SyncRoot) {
+		//            cmd=nativeCommands.Dequeue() as string;
+		//        }
+		//        if (cmd!=null) {
+		//            winConsole.DoCommand(cmd);
+		//        }
+		//    }
+		//}
 
 		private static void Cycle() {
-			SetRunLevel(RunLevels.Running);
+			Console.WriteLine("Starting Main Loop");
+			Timers.Timer.StartTimerThread();
+
+			Thread.Sleep(5);
 			AuxServerPipe.AuxServerPipeClient.AnnounceStartupFinished();
 
-			Console.WriteLine("Starting Main Loop");
-
-			while (!keepRunning.WaitOne(5, false)) {
+			while (!signalExit.WaitOne(5, false)) {
 				lock (globalLock) {
-					HandleNativeCmds();
+					//HandleNativeCmds();
 
 					Server.Cycle();
-					if (MainClass.RunLevel==RunLevels.Running) {
-						SteamEngine.Timers.Timer.Cycle();
+					if (RunLevelManager.IsRunning) {
+						//SteamEngine.Timers.Timer.Cycle();
 						SteamEngine.Packets.NetState.ProcessAll();
 						if (saveFlag) {
 							WorldSaver.Save();
@@ -394,7 +373,7 @@ namespace SteamEngine {
 			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
 				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
 			}
-			keepRunning.Set();
+			signalExit.Set();
 			Timers.Timer.Clear();
 			Server.Exit();
 		}

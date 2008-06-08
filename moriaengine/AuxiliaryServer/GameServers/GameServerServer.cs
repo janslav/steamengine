@@ -48,6 +48,15 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			return null;
 		}
 
+		public static GameServerClient GetInstanceByUid(int uid) {
+			foreach (GameServerClient gsc in clients) {
+				if (gsc.Uid == uid) {
+					return gsc;
+				}
+			}
+			return null;
+		}
+
 		internal static void AddClient(GameServerClient gameServerClient) {
 			clients.AddFirst(gameServerClient);
 		}

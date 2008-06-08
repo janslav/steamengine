@@ -65,4 +65,22 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
+	public class CommandLinePacket : OutgoingPacket {
+		private int id;
+		private string command;
+
+		public void Prepare(int id, string command) {
+			this.id = id;
+			this.command = command;
+		}
+
+		public override byte Id {
+			get { return 3; }
+		}
+
+		protected override void Write() {
+			this.EncodeInt(this.id);
+			this.EncodeUTF8String(this.command);
+		}
+	}
 }

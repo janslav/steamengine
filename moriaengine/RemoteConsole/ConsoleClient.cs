@@ -63,7 +63,11 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		public static void SendCommand(int id, string command) {
-
+			if (connectedInstance != null) {
+				CommandLinePacket p = Pool<CommandLinePacket>.Acquire();
+				p.Prepare(id, command);
+				connectedInstance.conn.SendSinglePacket(p);
+			}
 		}
 
 		public static TCPConnection<ConsoleClient> Connect(EndPointSetting connectTo) {

@@ -156,11 +156,8 @@ namespace SteamEngine {
 		}
 
 		internal static void ClearAll() {
-			foreach (Conn c in Server.connections) {
-				GameConn conn = c as GameConn;
-				if (conn != null) {
-					conn.openedContainers.Clear();
-				}
+			foreach (GameConn c in Server.connections) {
+				c.openedContainers.Clear();
 			}
 			openedByConns.Clear();
 		}

@@ -88,4 +88,25 @@ namespace SteamEngine.AuxServerPipe {
 		protected override void Write() {
 		}
 	}
+
+	internal class ConsoleWriteLinePacket : OutgoingPacket {
+		int consoleId;
+		string line;
+
+		public void Prepare(int consoleId, string line) {
+			this.consoleId = consoleId;
+			this.line = line;
+		}
+
+		public override byte Id {
+			get {
+				return 0x05;
+			}
+		}
+
+		protected override void Write() {
+			this.EncodeInt(this.consoleId);
+			this.EncodeUTF8String(this.line);
+		}
+	}
 }

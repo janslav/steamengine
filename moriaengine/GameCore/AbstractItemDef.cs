@@ -43,7 +43,7 @@ namespace SteamEngine {
 		public AbstractItemDef(string defname, string filename, int headerLine)
 				: base(defname, filename, headerLine) {
 
-			type = InitField_Typed("type", "t_normal", typeof(TriggerGroup));
+			type = InitField_Typed("type", null, typeof(TriggerGroup));
 			singularName = InitField_Typed("singularName", "", typeof(string));
 			pluralName = InitField_Typed("pluralName", "", typeof(string));
 
@@ -128,15 +128,21 @@ namespace SteamEngine {
 		}
 
 		private static TriggerGroup t_normal;
+		private static TriggerGroup T_Normal {
+			get {
+				if (t_normal == null) {
+					t_normal = TriggerGroup.Get("t_normal");
+				}
+				return t_normal;
+			}
+		}
+
 		
 		public TriggerGroup Type {
 			get {
 				TriggerGroup tg = (TriggerGroup) type.CurrentValue;
 				if (tg == null) {
-					if (t_normal == null) {
-						t_normal = TriggerGroup.Get("t_normal");
-					}
-					return t_normal;
+					return T_Normal;
 				}
 				return (TriggerGroup) type.CurrentValue;
 			} 

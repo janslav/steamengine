@@ -42,6 +42,12 @@ namespace SteamEngine.AuxServerPipe {
 			}
 		}
 
+		public static AuxServerPipeClient ConnectedInstance {
+			get {
+				return connectedInstance;
+			}
+		}
+			 
 		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
 			NamedPipeConnection<AuxServerPipeClient> c =
 				clientFactory.Connect(Common.Tools.commonPipeName);
@@ -100,6 +106,12 @@ namespace SteamEngine.AuxServerPipe {
 		public ICompression Compression {
 			get {
 				return null;
+			}
+		}
+
+		public NamedPipeConnection<AuxServerPipeClient> PipeConnection {
+			get {
+				return this.pipe;
 			}
 		}
 	}

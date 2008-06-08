@@ -53,7 +53,15 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		public static void WriteLineAsAux(string msg) {
 			foreach (ConsoleClient cc in consoles.Values) {
 				if (cc.IsLoggedInAux) {
-					cc.WriteStringLine(0, msg);
+					cc.WriteLine(0, msg);
+				}
+			}
+		}
+
+		public static void WriteAsAux(string msg) {
+			foreach (ConsoleClient cc in consoles.Values) {
+				if (cc.IsLoggedInAux) {
+					cc.Write(0, msg);
 				}
 			}
 		}

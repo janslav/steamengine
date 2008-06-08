@@ -20,6 +20,9 @@ namespace SteamEngine.AuxServerPipe {
 				case 0x02:
 					return Pool<RequestAccountLoginPacket>.Acquire();
 
+
+				case 0x03:
+					return Pool<ConsoleCommandLinePacket>.Acquire();
 			}
 
 			return null;
@@ -87,4 +90,31 @@ namespace SteamEngine.AuxServerPipe {
 			}
 		}
 	}
+
+	public class ConsoleCommandLinePacket : AuxServerPipeIncomingPacket {
+		int consoleId;
+		string accName, password;
+		private string command;
+
+		protected override ReadPacketResult Read() {
+			this.consoleId = this.DecodeInt();
+			this.accName = this.DecodeUTF8String();
+			this.password = this.DecodeUTF8String();
+			this.command = this.DecodeUTF8String();
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
+			AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
+			if (acc != null) {
+				ConsoleDummy dummy = new ConsoleDummy(acc, this.consoleId);
+
+				Commands.ConsoleCommand(dummy, this.command);
+			} else {
+				//ignore? I think so.
+			}
+		}
+	}
 }
+
+

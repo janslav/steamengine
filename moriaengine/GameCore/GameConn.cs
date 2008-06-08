@@ -50,7 +50,7 @@ namespace SteamEngine {
 	public delegate void OnTargon(GameConn conn, IPoint3D getback, object parameter);
 	public delegate void OnTargon_Cancel(GameConn conn, object parameter);
 
-	public class GameConn : Conn {
+	public class GameConn : PluginHolder {
 		public static bool GameConnTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["GameConn Trace Messages"]);
 		public static bool MovementTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Movement Trace Messages"]);
 
@@ -154,7 +154,7 @@ namespace SteamEngine {
 		private bool hackMove = false;
 		internal ClientVersion clientVersion = ClientVersion.nullValue;
 		//const int MaxMoveRequests = 4;
-		private Queue<byte> moveRequests = new Queue<byte>();
+		private SimpleQueue<byte> moveRequests = new SimpleQueue<byte>();
 		private long lastStepReserve = 0;
 		private long secondLastStepReserve = 0;
 		private long thirdLastStepReserve = 0;
@@ -168,8 +168,24 @@ namespace SteamEngine {
 
 		internal bool restoringUpdateRange=false;	//The client, if sent an update range packet on login, apparently then requests 18 again, but does it after sending some other packets - this sure makes it hard for the client to not have to set the update range every time they login... So we block the next update range packet if we get this, but the block is removed if we get a 0x73 (ping) first. We can't remove it for any incoming packets becaues the client sends other stuff before it gets around to sending this.
 
-		public GameConn(Socket s)
-			: base(s) {
+		private IPAddress ip;
+		protected readonly Socket socket;
+		internal AbstractAccount curAccount;
+		public readonly int uid;
+
+		private static int uids = 0;
+
+		private bool closingStringDisplayed = false; //so that it wond show "client xxx disconnected" twice for one client
+
+		public GameConn(Socket socket) {
+			this.uid = uids++;
+			this.socket = socket;
+			socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.NoDelay, 1);	//Tcp?
+			LingerOption lingerOption = new LingerOption(false, 0);
+			socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, lingerOption);
+			ip = ((IPEndPoint) socket.RemoteEndPoint).Address;
+
+
 			curAccount= null;
 			curCharacter= null;
 			justConnected = true;
@@ -178,9 +194,95 @@ namespace SteamEngine {
 			noResponse = true;		//Close in 60 seconds if they do nothing.
 		}
 
-		protected GameConn()
-			: base() {
+		public void EchoMessage(string msg) {
+			Logger.Show(msg);
+			WriteLine(msg);
+		}
 
+		public AbstractAccount Account {
+			get {
+				return curAccount;
+			}
+		}
+
+		public IPAddress IP {
+			get {
+				return ip;
+			}
+		}
+
+		public bool IsConnected {
+			get {
+				return socket.Connected;
+			}
+		}
+
+		public virtual byte Plevel {
+			get {
+				if (curAccount == null) {
+					return 0;
+				} else {
+					return curAccount.PLevel;
+				}
+			}
+		}
+
+		public byte MaxPlevel {
+			get {
+				if (curAccount != null) {
+					return curAccount.MaxPLevel;
+				}
+				return 0;
+			}
+		}
+
+		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
+		public static void RegisterTriggerGroup(TriggerGroup tg) {
+			if (!registeredTGs.Contains(tg)) {
+				registeredTGs.Add(tg);
+			}
+		}
+
+		public override sealed void Trigger(TriggerKey td, ScriptArgs sa) {
+			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+				registeredTGs[i].Run(this, td, sa);
+			}
+			base.TryTrigger(td, sa);
+		}
+
+		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
+			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+				registeredTGs[i].TryRun(this, td, sa);
+			}
+			base.TryTrigger(td, sa);
+		}
+
+		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
+			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+				object retVal = registeredTGs[i].Run(this, td, sa);
+				try {
+					int retInt = Convert.ToInt32(retVal);
+					if (retInt == 1) {
+						return true;
+					}
+				} catch (Exception) {
+				}
+			}
+			return base.TryCancellableTrigger(td, sa);
+		}
+
+		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
+			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+				object retVal = registeredTGs[i].TryRun(this, td, sa);
+				try {
+					int retInt = Convert.ToInt32(retVal);
+					if (retInt == 1) {
+						return true;
+					}
+				} catch (Exception) {
+				}
+			}
+			return base.TryCancellableTrigger(td, sa);
 		}
 
 		public bool GodMode {
@@ -299,54 +401,61 @@ namespace SteamEngine {
 		//}
 
 		//may be called from within lock()ed code, so don't lock InSyncRoot or OutSyncRoot here!
-		public override void Close(string reason) {
+		public void Close(string reason) {
 
 			AbstractAccount accountToLogout = curAccount;
 			AbstractCharacter charToLogout = curCharacter;
 			// this is necessary, because AbstractCharacter.LogOut()
 			// is calling this method recursively
 
-			base.Close(reason);
-			Server.RemoveConn(this);
-
-			if (charToLogout != null) {
-				if (!charToLogout.IsDeleted) {
-					charToLogout.LogOut();
-				}
-				curCharacter = null;
+			if (!closingStringDisplayed) {
+				Console.WriteLine(LogStr.Ident(this) + " disconnected: " + reason);
+				closingStringDisplayed = true;
 			}
-			if (accountToLogout != null) {
-				curAccount = null;
-				accountToLogout.LogOut();
-			}
+			Close(accountToLogout, charToLogout);
 		}
 
-		public override void Close(LogStr reason) {
+		public void Close(LogStr reason) {
 			AbstractAccount accountToLogout = curAccount;
 			AbstractCharacter charToLogout = curCharacter;
 
-			base.Close(reason);
+			if (!closingStringDisplayed) {
+				Console.WriteLine(LogStr.Ident(this) + " disconnected: " + reason);
+				closingStringDisplayed = true;
+			}
+			Close(accountToLogout, charToLogout);
+		}
+
+		private void Close(AbstractAccount accountToLogout, AbstractCharacter charToLogout) {
+			//Who ever said there was anything wrong with paranoia? - SL
+			try {
+				socket.Shutdown(SocketShutdown.Both);
+			} catch { }
+			try {
+				socket.Close();
+			} catch { }
+
 			Server.RemoveConn(this);
 
 			if (curCharacter != null) {
 				if (!charToLogout.IsDeleted) {
 					charToLogout.LogOut();
 				}
-				curCharacter=null;
+				curCharacter = null;
 			}
 			if (curAccount != null) {
-				curAccount=null;
+				curAccount = null;
 				accountToLogout.LogOut();
 			}
 		}
 
-		public override bool IsLoggedIn {
+		public bool IsLoggedIn {
 			get {
 				return (curAccount != null);
 			}
 		}
 
-		internal override void Cycle() {
+		internal void Cycle() {
 			if (HasData) {
 				Server._in.Cycle(this);
 			}
@@ -604,7 +713,7 @@ namespace SteamEngine {
 				Sanity.IfTrueSay(gc.readIsAsync!=true, "Why did DoneReadCallback get called if we were not reading asynchronously?");
 				int read=0;
 				try {
-					read = gc.client.EndReceive(ar);
+					read = gc.socket.EndReceive(ar);
 				} catch (ObjectDisposedException) {
 					gc.Close("Connection lost");
 					return;
@@ -620,7 +729,7 @@ namespace SteamEngine {
 					Logger.WriteInfo(GameConnTracingOn, "Unfinished read, boosting buffer size to "+(newBuffer.Length));
 					Buffer.BlockCopy(gc.inBuffer, 0, newBuffer, 0, read);
 					try {
-						gc.client.BeginReceive(gc.inBuffer, read, read, SocketFlags.None, DoneReadCallback, gc);	//yep, start at 'read' and read 'read' bytes, because we just doubled the size of our completely full array which was 'read' bytes long...
+						gc.socket.BeginReceive(gc.inBuffer, read, read, SocketFlags.None, DoneReadCallback, gc);	//yep, start at 'read' and read 'read' bytes, because we just doubled the size of our completely full array which was 'read' bytes long...
 					} catch (ObjectDisposedException) {
 						gc.Close("Connection lost");
 					} catch (IOException) {	//added by SL, because without these if someone's client disconnects in the middle of being sent stuff by Send, then SE will crash.
@@ -645,7 +754,7 @@ namespace SteamEngine {
 			get {
 				//Logger.WriteInfo(GameConnTracingOn, "SyncHasData.");
 				try {
-					return client.Poll(0, SelectMode.SelectRead);
+					return socket.Poll(0, SelectMode.SelectRead);
 				} catch (Exception) {
 					return false;
 				}
@@ -675,7 +784,7 @@ namespace SteamEngine {
 								info.HasDataStart=HighPerformanceTimer.TickCount;
 								try {
 									info.BeginningGet=HighPerformanceTimer.TickCount;
-									client.BeginReceive(inBuffer, 0, inBuffer.Length, SocketFlags.None, DoneReadCallback, info);
+									socket.BeginReceive(inBuffer, 0, inBuffer.Length, SocketFlags.None, DoneReadCallback, info);
 								} catch (ObjectDisposedException) {
 									Close("Connection lost");
 									return false;
@@ -737,7 +846,7 @@ namespace SteamEngine {
 			try {
 				lock (InSyncRoot) {
 					readIsUndefined=true;
-					return (client.Receive(array, start, len, SocketFlags.None));
+					return (socket.Receive(array, start, len, SocketFlags.None));
 				}
 			} catch (Exception) {
 				return -1;
@@ -759,8 +868,13 @@ namespace SteamEngine {
 			}
 		}
 
-		internal override sealed void LogIn(AbstractAccount acc) {
-			base.LogIn(acc);
+
+		//called by GameAccount
+		internal void LogIn(AbstractAccount acc) {
+			curAccount = acc;
+			Server.ConnLoggedIn(this);
+			//Console.WriteLine(LogStr.Ident(this)+" logged in.");
+
 			for (int a=0; a<maxTargs; a++) {
 				targon[a]=null;
 			}
@@ -899,7 +1013,7 @@ namespace SteamEngine {
 				bool success=false;
 				int sent=0;
 				try {
-					sent = gc.client.EndSend(ar);
+					sent = gc.socket.EndSend(ar);
 					success=true;
 				} catch (ObjectDisposedException) {
 					gc.Close("Connection lost");
@@ -919,7 +1033,7 @@ namespace SteamEngine {
 						gc.outBuffer=info.Data;
 						info.BeginningSend=HighPerformanceTimer.TickCount;
 						try {
-							gc.client.BeginSend(gc.outBuffer, 0, gc.outBuffer.Length, SocketFlags.None, DoneSendCallback, gc);
+							gc.socket.BeginSend(gc.outBuffer, 0, gc.outBuffer.Length, SocketFlags.None, DoneSendCallback, gc);
 						} catch (ObjectDisposedException) {
 							gc.Close("Connection lost");
 						} catch (IOException) {	//added by SL, because without these if someone's client disconnects in the middle of being sent stuff by Send, then SE will crash.
@@ -949,7 +1063,7 @@ namespace SteamEngine {
 					outBuffer=buff;
 					info.BeginningSend=HighPerformanceTimer.TickCount;
 					try {
-						client.BeginSend(outBuffer, 0, outBuffer.Length, SocketFlags.None, DoneSendCallback, this);
+						socket.BeginSend(outBuffer, 0, outBuffer.Length, SocketFlags.None, DoneSendCallback, this);
 					} catch (ObjectDisposedException) {
 						Close("Connection lost");
 					} catch (IOException) {	//added by SL, because without these if someone's client disconnects in the middle of being sent stuff by Send, then SE will crash.
@@ -970,7 +1084,7 @@ namespace SteamEngine {
 		private void SyncSend(byte[] array, int start, int len) {
 			Logger.WriteInfo(GameConnTracingOn, "SyncSend.");
 			try {
-				client.Send(array, start, len, SocketFlags.None);
+				socket.Send(array, start, len, SocketFlags.None);
 			} catch (ObjectDisposedException) {
 				Close("Connection lost");
 			} catch (IOException) {	//added by SL, because without these if someone's client disconnects in the middle of being sent stuff by Send, then SE will crash.
@@ -1017,7 +1131,8 @@ namespace SteamEngine {
 				info.ByteCount=len;
 			}
 		}
-		public override void WriteLine(string data) {
+
+		public void WriteLine(string data) {
 			Server.SendSystemMessage(this, data, 0);
 		}
 
@@ -1079,7 +1194,7 @@ namespace SteamEngine {
 
 		private static TagKey charUidLinkTK = TagKey.Get("__charUidLink__");
 
-		internal void AboutToRecompile() {
+		internal void BackupLinksToCharacters() {
 			if (curCharacter != null) {
 				this.SetTag(charUidLinkTK, curCharacter.Uid);
 			}
@@ -1105,7 +1220,7 @@ namespace SteamEngine {
 			//theres no other simple way...
 		}
 
-		internal void RecompilingFinished() {
+		internal void RemoveBackupLinks() {
 			this.RemoveTag(charUidLinkTK);
 		}
 
@@ -1143,8 +1258,17 @@ namespace SteamEngine {
 			}
 			return false;
 		}
+
 		public override string ToString() {
-			return "Client ("+base.ToString()+")";
+			StringBuilder sb = new StringBuilder("Client (uid=");
+			sb.Append(this.uid);
+			if (curAccount != null) {
+				sb.Append(", acc='").Append(curAccount.Name).Append("'");
+			}
+			if (ip != null) {
+				sb.Append(", IP=").Append(ip.ToString());
+			}
+			return sb.Append(")").ToString();
 		}
 
 		public void CancelMovement() {

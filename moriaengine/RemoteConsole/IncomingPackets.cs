@@ -20,8 +20,10 @@ namespace SteamEngine.RemoteConsole {
 				case 3:
 					return Pool<RequestEnableCommandLinePacket>.Acquire();
 				case 4:
-					return Pool<WriteLinePacket>.Acquire();
+					return Pool<WriteStringPacket>.Acquire();
 				case 5:
+					return Pool<WriteLinePacket>.Acquire();
+				case 6:
 					return Pool<SendServersToStartPacket>.Acquire();
 			}
 
@@ -79,8 +81,7 @@ namespace SteamEngine.RemoteConsole {
 	public class RequestEnableCommandLinePacket : ConsoleIncomingPacket {
 		int uid;
 
-		private delegate void IntDeleg(int i);
-		private static IntDeleg deleg = EnableCommandLine;
+		private static Action<int> deleg = EnableCommandLine;
 
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid);
@@ -92,6 +93,28 @@ namespace SteamEngine.RemoteConsole {
 
 		protected override ReadPacketResult Read() {
 			this.uid = this.DecodeInt();
+			return ReadPacketResult.Success;
+		}
+	}
+
+	public class WriteStringPacket : ConsoleIncomingPacket {
+		int uid;
+		string str;
+
+		private delegate void IntAndStrDeleg(int i, string s);
+		private static IntAndStrDeleg deleg = Write;
+
+		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.Invoke(deleg, this.uid, this.str);
+		}
+
+		private static void Write(int uid, string str) {
+			MainClass.mainForm.Write(uid, str);
+		}
+
+		protected override ReadPacketResult Read() {
+			this.uid = this.DecodeInt();
+			this.str = this.DecodeUTF8String();
 			return ReadPacketResult.Success;
 		}
 	}
@@ -117,7 +140,6 @@ namespace SteamEngine.RemoteConsole {
 			return ReadPacketResult.Success;
 		}
 	}
-
 
 	public class SendServersToStartPacket : ConsoleIncomingPacket {
 		GameServerEntry[] entries;

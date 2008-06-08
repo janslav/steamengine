@@ -80,10 +80,10 @@ namespace SteamEngine {
 
 		//method: ConsoleCommand
 		//this is invoked directly by consoles
-		public static void ConsoleCommand(ConsConn c, string command) {
-			if (MainClass.RunLevel==RunLevels.AwaitingRetry) {
+		public static void ConsoleCommand(ConsoleDummy c, string command) {
+			if (RunLevelManager.IsAwaitingRetry) {
 				if (command=="exit") {//check if we can run it?
-					MainClass.keepRunning.Set();
+					MainClass.signalExit.Set();
 				} else {
 					MainClass.RetryRecompilingScripts();
 				}
@@ -100,53 +100,19 @@ namespace SteamEngine {
 		}
 
 		private static void LogCommand(ISrc commandSrc, string command, bool success, object err) {
-			string errText = "";
-			Exception e = err as Exception;
-			if (e != null) {
-				errText = e.Message;
-			} else {
-				errText = string.Concat(err);
-			}
-
-			ConsConn consConn = commandSrc as ConsConn;
-			bool isNativeConsole = false;
-			if (consConn != null) {
-				isNativeConsole = consConn.IsNativeConsole;
-			}
-
 			if (success) {
-				if (isNativeConsole) {
-					//ok, the console doesnt have to see it commanded something...but it should be written in the logs
-					Logger.Log("'WinConsole' commands '"+command+"'. OK");
-				} else {
-
-					Console.WriteLine("'"+GetSrcAccountName(commandSrc)+"' commands '"+command+"'. OK");
-				}
+				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. OK");
 			} else {
-				if (isNativeConsole) {
-					//ok, the console doesnt have to see it commanded something...but it should be written in the logs
-					Logger.Log("'WinConsole' commands '"+command+"'. ERR: "+errText);
+				string errText = "";
+				Exception e = err as Exception;
+				if (e != null) {
+					errText = e.Message;
 				} else {
-					Console.WriteLine("'"+GetSrcAccountName(commandSrc)+"' commands '"+command+"'. ERR: "+errText);
+					errText = string.Concat(err);
 				}
-				commandSrc.WriteLine("Command '"+command+"' failed - "+errText);
+				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. ERR: " + errText);
+				commandSrc.WriteLine("Command '" + command + "' failed - " + errText);
 			}
-		}
-
-		private static string GetSrcAccountName(ISrc commandSrc) {
-			AbstractAccount acc = null;
-			AbstractCharacter ch = commandSrc as AbstractCharacter;
-			if (ch != null) {
-				acc = ch.Account;
-			}
-			ConsConn console = commandSrc as ConsConn;
-			if (console != null) {
-				acc = console.Account;
-			}
-			if (acc != null) {
-				return acc.Name;
-			}
-			return "???";
 		}
 
 		public const string commandAuthorisationFailed = "No permission to run that command";
