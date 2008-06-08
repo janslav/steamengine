@@ -33,12 +33,12 @@ namespace SteamEngine.CompiledScripts {
 	public class ActivableAbilityDef : TriggerBasedAbilityDef {
 		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
 		internal static readonly TriggerKey tkUnActivate = TriggerKey.Get("UnActivate");
-		internal static readonly TriggerKey tkNotYet = TriggerKey.Get("NotYet");
 		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
 
 		[Summary("Field for holding the number information about the pause between another ability activation try."+
 				"You can use 0 for no delay")]
 		private FieldValue useDelay;
+		private FieldValue runMessage; //message displayed when the ability is run
 
 		public ActivableAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -47,25 +47,25 @@ namespace SteamEngine.CompiledScripts {
 			//[ActivableAbilityDef a_bility]
 			//...
 			//useDelay = 300
+			//runMessage = "Nyni muzes zabijet zlym pohledem"
 			//...
 			useDelay = InitField_Typed("useDelay", 0, typeof(int));
+			runMessage = InitField_Typed("runMessage", "", typeof(string));
 		}
 
 		[Summary("Implementation of the activating method. Used for activating/deactivating the ability")]
 		internal override void Activate(Character chr) {
-			///kdyz jsme zde, znamena to, ze muzeme abilitu spoustet (jiz po kontrole)
-			Ability ab = chr.GetAbility(this);
-			if(ab.Running) {
-				Trigger_UnActivate(chr);
-			} else {
-				if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) { //check the timing if OK
-					if(!Trigger_DenyUse(new DenyAbilityArgs(chr, this))) {//check all prerequisities
-						Trigger_Activate(chr);
-					}
-				} else {
-					NotYet(chr);
-				}
+			DenyAbilityArgs args = new DenyAbilityArgs(chr, this);
+			bool cancel = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
+			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
+
+			if(retVal == DenyResultAbilities.Allow) {
+				Trigger_Activate(chr);
+				//if we are here, we can use the ability
+				Ability ab = chr.GetAbility(this);
+				ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
 			}
+			SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
 		}
 
 		#region triggerMethods
@@ -99,30 +99,7 @@ namespace SteamEngine.CompiledScripts {
 				chr.On_AbilityActivate(this);
 				On_Activate(chr);
 			}
-		}
-
-		[Summary("This method fires the @notYet triggers. "
-				+ "Gets called when user activates the ability but it is not to be fired yet")]
-		internal void NotYet(Character chr) {
-			if(!this.Trigger_NotYet(chr)) {
-				this.On_NotYet(chr);//not cancelled (no return 1 in LScript), lets continue
-			}
-		}
-
-		[Summary("C# based @notYet trigger method")]
-		protected virtual void On_NotYet(Character ch) {
-			ch.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
-		}
-
-		[Summary("LScript based @notYet triggers")]
-		private bool Trigger_NotYet(Character chr) {
-			bool cancel = false;
-			cancel = this.TryCancellableTrigger(chr, ActivableAbilityDef.tkNotYet, null);
-			if(!cancel) {
-				cancel = chr.On_AbilityNotYet(this);				
-			}
-			return cancel;
-		}
+		}		
 
 		[Summary("This method fires the @denyUse triggers. "
 				+ "Their purpose is to check if all requirements for running the ability have been met")]
@@ -138,10 +115,26 @@ namespace SteamEngine.CompiledScripts {
 			return cancel;
 		}
 
-		[Summary("C# based @denyUse trigger method")]
+		[Summary("C# based @denyUse trigger method, implementation of common checks (ability presence, (not)running, timers...)")]
 		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
-			args.abiliter.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_DenyUse");
-			return false; //all ok, continue
+			//common check - do we have the ability?
+			Ability ab = args.abiliter.GetAbility(this);
+			if(ab == null) {
+				args.Result = DenyResultAbilities.Deny_DoesntHaveAbility;
+				return false;
+			}
+			//common check - isnt the ability running just now?
+			if(ab.Running) {
+				args.Result = DenyResultAbilities.Deny_WasRunning;
+				Trigger_UnActivate(args.abiliter); //ability is running, switch it off
+				return false;
+			}
+			//common check - is the usage timer OK?
+			if((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
+				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
+				return false;
+			}
+			return false; //continue
 		}
 		#endregion triggerMethods
 
@@ -152,6 +145,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				useDelay.CurrentValue = value;
+			}
+		}
+
+		[InfoField("Run Message")]
+		public string RunMessage {
+			get {
+				return (string)runMessage.CurrentValue;
+			}
+			set {
+				runMessage.CurrentValue = value;
 			}
 		}
 	}

@@ -39,11 +39,13 @@ namespace SteamEngine.CompiledScripts {
 		
 		#region triggerMethods
 		protected override bool On_DenyUse(DenyAbilityArgs args) {
-			return base.On_DenyUse(args);
-			//TODO - zde implementovat nejake ty kontroly resourcù, to jestli dotyènej žije/nežije atd.
+			bool retVal = base.On_DenyUse(args); //call superclass for common checks
+			
+			//TODO - zde ještì implementovat nejake ty kontroly resourcù, to jestli dotyènej žije/nežije atd.
+			return retVal;
 		}
 
-		[Summary("This method implements firing the ability. Will be implemened ond special children")]
+		[Summary("Functional implementation of warcry ability")]
 		protected override void On_Fire(Character chr) {
 			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, ComputeRange(chr))) {
 				if(chr == plr) {
@@ -76,20 +78,15 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Compute the warcry range using the information from character (using i.e char's level"+
 				" and the ability points...). Consider that 18 steps should be maximum (client limits)")]
 		private ushort ComputeRange(Character chr) {
-			//TODO - udelat to nejak sofistikovaneji
-			Ability ab = chr.GetAbility(this);
-			return ab.Points;
+			//TODO - udelat to nejak sofistikovaneji			
+			return GetPointsOf(chr);
 		}
 
 		[SteamFunction("Warcry")]
 		[Summary("Running the warcry (if the player has the ability)")]
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
 			Warcry wcrDef = SingletonScript<Warcry>.Instance;
-			if(chr.GetAbility(wcrDef) != null) {
-				wcrDef.Activate(chr);
-			} else {
-				chr.RedMessage("O abilitì "+wcrDef.Name+" nevíš vùbec nic");
-			}
+			wcrDef.Activate(chr);
 		}	
 	}
 

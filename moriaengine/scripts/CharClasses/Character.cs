@@ -91,6 +91,10 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class Character : AbstractCharacter {
 		Skill[] skills;//this CAN be null, altough it usually isn't
+
+		[Summary("Dictionary of character's (typically player's) abilities")]
+		private Dictionary<AbilityDef, Ability> abilities = new Dictionary<AbilityDef, Ability>();
+
 		float weight;
 		private CharModelInfo charModelInfo;
 
@@ -1349,16 +1353,49 @@ namespace SteamEngine.CompiledScripts {
 		//}
 		#endregion skills
 
-		#region abilities
-		[Summary("Dictionary of character's (typically player's) abilities")]
-		private Dictionary<AbilityDef, Ability> abilities = new Dictionary<AbilityDef, Ability>();
-
+		#region abilities		
 		public Ability GetAbility(AbilityDef aDef) {
 			Ability retAb = null;
 			abilities.TryGetValue(aDef, out retAb);
 			return retAb; //either null or Ability instance if the player has it
 		}
 
+		[Summary("If character already has the ability, add 1 point "+
+				"otherwise add the ability and add the first point to it")]
+		public void AddAbility(AbilityDef aDef) {
+			AddAbility(aDef, 1);
+		}
+
+		[Summary("Add the specified number of points to it (it the ability is not "+
+				"yet present, add it too")]
+		public void AddAbility(AbilityDef aDef, ushort points) {
+			Ability ab = GetAbility(aDef);
+			if(ab == null) {
+				ab = new Ability(aDef, this);
+				ab.Points = 1;
+				abilities.Add(aDef, ab);
+			} else {
+				//add only specified number of points
+				ab.Points += points;
+			}
+		}
+
+		[Summary("If character already has the ability, remove 1 point " +
+				"if there is only 1 point, remove the whole ability")]		
+		public void RemoveAbility(AbilityDef aDef) {
+			RemoveAbility(aDef, 1);
+		}
+
+		[Summary("Remove the specified number of points (ot the whole ability if there is not enough points)")]		
+		public void RemoveAbility(AbilityDef aDef, ushort points) {
+			Ability ab = GetAbility(aDef);
+			if(ab != null) {
+				ab.Points -= points;
+				if(ab.Points == 0) { //remove
+					abilities.Remove(aDef);
+				}
+			} 
+		}
 
 		internal virtual void On_AbilityAssign(AbilityDef aDef) {
 		}
@@ -1378,11 +1415,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal virtual bool On_AbilityFire(AbilityDef aDef) {
 			return false;
-		}
-
-		internal virtual bool On_AbilityNotYet(AbilityDef aDef) {
-			return false;
-		}
+		}		
 
 		internal virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
 			return false;

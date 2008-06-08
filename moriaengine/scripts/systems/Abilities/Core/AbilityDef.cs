@@ -188,8 +188,8 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		private FieldValue name;
-		protected FieldValue maxPoints;
+		private FieldValue name; //logical name of the ability
+		private FieldValue maxPoints; //maximum points allowed to assign
 		
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -242,6 +242,16 @@ namespace SteamEngine.CompiledScripts {
 			return GetType().Name + " " + Name;
 		}
 
+		#region utilities
+		[Summary("Return number of points of the ability the character has")]
+		public ushort GetPointsOf(Character chr) {
+			Ability ab = chr.GetAbility(this);
+			if(ab != null) {
+				return ab.Points;
+			}
+			return 0;
+		}
+
 		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
 		public static IEnumerable<AbilityDef> GetAllAbilities() {
 			if(byName != null) {
@@ -249,17 +259,60 @@ namespace SteamEngine.CompiledScripts {
 					yield return entry;					
 				}
 			}
-		}		
+		}
+
+		[Summary("Method for sending clients messages about their attempt of ability usage")]
+		protected void SendAbilityResultMessage(Character toWhom, DenyResultAbilities res) {
+			switch(res) {
+				case DenyResultAbilities.Allow:
+					//send the message (if any) - only for immediate or activable abilities
+					ImmediateAbilityDef iad = this as ImmediateAbilityDef;
+					if((iad != null) && (!iad.RunMessage.Equals(""))) {
+						toWhom.SysMessage(iad.RunMessage);
+						break;
+					}
+					ActivableAbilityDef aad = this as ActivableAbilityDef;
+					if((aad != null) && (!aad.RunMessage.Equals(""))){
+						toWhom.SysMessage(aad.RunMessage);
+						break;
+					}
+					break;
+				case DenyResultAbilities.Deny_DoesntHaveAbility:
+					toWhom.RedMessage("O abilitì " + Name + " nevíš vùbec nic");
+					break;
+				case DenyResultAbilities.Deny_TimerNotPassed:
+					toWhom.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
+					break;
+				case DenyResultAbilities.Deny_WasRunning:
+					toWhom.SysMessage("Abilita " + Name + " byla vypnuta");
+					break;
+			}
+		}
+		#endregion utilities
 	}
 
-	public class DenyAbilityArgs : DenyTriggerArgs {
+	public class DenyAbilityArgs : ScriptArgs {
 		public readonly Character abiliter;
 		public readonly AbilityDef runAbility;
 
-		public DenyAbilityArgs(Character abiliter, AbilityDef runAbility)
-			: base(DenyResult.Allow, abiliter, runAbility) {
+		public DenyAbilityArgs(params object[] argv)
+			: base(argv) {
+			Sanity.IfTrueThrow(!(argv[0] is DenyResultAbilities), "argv[0] is not DenyResultAbilities");
+		}
+
+		public DenyAbilityArgs(Character abiliter, AbilityDef runAbility) 
+			:	this(DenyResult.Allow, abiliter, runAbility) {
 			this.abiliter = abiliter;
 			this.runAbility = runAbility;
-		}		
+		}	
+
+		public DenyResultAbilities Result {
+			get {
+				return (DenyResultAbilities)Convert.ToInt32(argv[0]);
+			}
+			set {
+				argv[0] = value;
+			}
+		}
 	}
 }
