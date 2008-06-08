@@ -53,7 +53,6 @@ namespace SteamEngine {
 		public const int defaultWarningLevel=4;
 
 		public readonly static ushort port;   //Changing this after initialization has no effect. 
-		public readonly static ushort consoleport;   //Changing this after initialization has no effect. 
 		public readonly static string serverName;  //Can be changed while the server is running.
 		public readonly static string adminEmail;  //Can be changed while the server is running.
 
@@ -295,8 +294,6 @@ namespace SteamEngine {
 
 				IniFileSection ports = iniH.GetNewOrParsedSection("ports");
 				port = ports.GetValue<ushort>("game", 2595, "The port to listen on for client connections");
-				consoleport = ports.GetValue<ushort>("console", 2596, "The port to listen for (remote) console connections on");
-
 
 				IniFileSection text = iniH.GetNewOrParsedSection("text");
 				commandPrefix = text.GetValue<string>("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
@@ -420,7 +417,7 @@ namespace SteamEngine {
 
 		public static int StatClients {
 			get {
-				return Server.clients;
+				return Server.connections.Count;
 			}
 		}
 
@@ -506,7 +503,7 @@ namespace SteamEngine {
 		public static void Information() {
 			Globals.Src.WriteLine(string.Format(
 				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
-				version, serverName, Server.clients, AbstractItem.Instances, AbstractCharacter.Instances,
+				version, serverName, Server.connections.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false)/1024, Environment.NewLine));
 		}
 

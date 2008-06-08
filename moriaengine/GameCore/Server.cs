@@ -45,7 +45,6 @@ namespace SteamEngine {
 	public static class Server  {
 		public const int maxPacketLen = 65536;
 		
-		internal static int clients = 0;
 		internal static LinkedList<GameConn> connections = new LinkedList<GameConn>();
 		internal static TcpListener[] serverSockets;
 
@@ -301,24 +300,17 @@ namespace SteamEngine {
 					listener = new TcpListener(ip, Globals.port);
 					listener.Start();
 					list.Add(listener);
-					
-					listener = new TcpListener(ip, Globals.consoleport);
-					listener.Start();
-					list.Add(listener);
 				}
 			}
 			if (!loopbackUsed) {
 				listener = new TcpListener(IPAddress.Loopback,Globals.port);
 				listener.Start();
 				list.Add(listener);
-				listener = new TcpListener(IPAddress.Loopback,Globals.consoleport);
-				listener.Start();
-				list.Add(listener);
 			}
 
 			serverSockets = (TcpListener[]) list.ToArray(typeof(TcpListener));
 
-			Console.WriteLine("Listening on port "+LogStr.Number(Globals.port)+" (Game clients) and "+LogStr.Number(Globals.consoleport)+" (remote consoles)");
+			Console.WriteLine("Listening on port "+LogStr.Number(Globals.port)+" for Game clients");
 			
 			MethodInfo mi = typeof(Server).GetMethod("CheckIdles");
 
@@ -332,7 +324,6 @@ namespace SteamEngine {
 		internal static void AddConn(GameConn conn) {
 			notLoggedIn.AddLast(conn);
 			connections.AddFirst(conn);
-			clients++;
 			NetState.Enable();//enable when there's more than 0 clients
 		}
 		
@@ -356,7 +347,7 @@ namespace SteamEngine {
 					IPEndPoint localEndpoint = (IPEndPoint) serverSocket.LocalEndpoint;
 					Socket socket = serverSocket.AcceptSocket();
 					if (localEndpoint.Port == Globals.port) {//gameconn
-						if (clients < Globals.maxConnections && RunLevelManager.IsRunning) {
+						if (connections.Count < Globals.maxConnections && RunLevelManager.IsRunning) {
 							GameConn newConn = new GameConn(socket);
 							Console.WriteLine(LogStr.Ident(newConn)+" connected.");
 							AddConn(newConn);
@@ -384,11 +375,8 @@ namespace SteamEngine {
 				GameConn c = toBeClosed.Dequeue();
 				int preCount = connections.Count;
 				connections.Remove(c);
-				if (connections.Count < preCount) {//it was really there before
-					clients--;
-					if (clients == 0) {
-						NetState.Disable();//disable when no client connected
-					}
+				if (connections.Count == 0) {
+					NetState.Disable();//disable when no client connected
 				}
 				notLoggedIn.Remove(c);//could have been in there. Maybe ;)
 			}
@@ -419,7 +407,7 @@ namespace SteamEngine {
 		        Returns a byte from 0-100, saying how full the server is.
 		*/
 		public static byte PercentFull() {
-			return (byte) ((clients*100)/Globals.maxConnections);
+			return (byte) ((connections.Count * 100) / Globals.maxConnections);
 		}
 
 		internal static void Exit() {
@@ -434,7 +422,6 @@ namespace SteamEngine {
 					conn.Close("exiting");
 				}
 			}
-			clients=0;
 		}
 		/* 
 			Method: SendSystemMessage
