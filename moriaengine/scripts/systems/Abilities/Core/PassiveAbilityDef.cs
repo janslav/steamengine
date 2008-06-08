@@ -22,12 +22,14 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Summary("Special abiliy class used for implementing abilities that will automatically perform their action when the "+
 			"first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or "+
 			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability)")]
+	[ViewableClass]
 	public class PassiveAbilityDef : TriggerBasedAbilityDef {
 		public PassiveAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -36,22 +38,22 @@ namespace SteamEngine.CompiledScripts {
 		#region triggerMethods
 		[Summary("This method implements the unassigning of the last point from the Ability. "+
 				"Remove the plugin and trigger group from the holder")]
-		protected new void On_UnAssign(Character ch) {
-			base.On_UnAssign(ch);
-
+		protected override void On_UnAssign(Character ch) {			
 			ch.RemoveTriggerGroup(this.TriggerGroup);
 			ch.RemovePlugin(this.PluginKeyInstance);
+
+			ch.SysMessage("Ztratil jsi veškeré znalosti o abilitì " + Name);
 		}
 
 		[Summary("This method implements the assigning of the first point to the Ability"+        
 				"Add plugin and trigger group to the holder, if they exist")]
-		protected new void On_Assign(Character ch) {
-			base.On_Assign(ch);
-
+		protected override void On_Assign(Character ch) {			
 			ch.AddTriggerGroup(this.TriggerGroup);
 			if(this.PluginDef != null) {
 				ch.AddNewPlugin(this.PluginKeyInstance, this.PluginDef);
 			}
+
+			ch.SysMessage("Získal jsi abilitu " + Name);
 		}
 		#endregion triggerMethods
 	}

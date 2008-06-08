@@ -380,6 +380,9 @@
     <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\ListDataView.cs">
       <Link>systems\settings\Implementations\DataViews\ListDataView.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\AbilityDefDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\AbilityDefDescriptor.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\AccountDescriptors.cs">
       <Link>systems\settings\Implementations\Descriptors\AccountDescriptors.cs</Link>
     </Compile>

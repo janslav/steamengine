@@ -22,9 +22,10 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class AbilityDef : AbstractDef {
 		public static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
         public static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
@@ -44,23 +45,25 @@ namespace SteamEngine.CompiledScripts {
 
         [Summary("This method implements the assigning of the first point to the Ability")]
         protected virtual void On_Assign(Character ch) {
+			ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
         }
 
         internal void Trigger_Assign(Character chr) {
 			if(chr != null) {
-				TryTrigger(chr, AbilityDef.tkAssign, new ScriptArgs());
+				TryTrigger(chr, AbilityDef.tkAssign, null);
 				chr.On_AbilityAssign(this);
 				On_Assign(chr);
 			}
         }
 
         [Summary("This method implements the unassigning of the last point from the Ability")]
-		protected void On_UnAssign(Character ch) {
+		protected virtual void On_UnAssign(Character ch) {
+			ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_UnAssign");
         }
 
 		internal void Trigger_UnAssign(Character chr) {
 			if(chr != null) {
-				TryTrigger(chr, AbilityDef.tkUnAssign, new ScriptArgs());
+				TryTrigger(chr, AbilityDef.tkUnAssign, null);
 				chr.On_AbilityUnAssign(this);
 				On_UnAssign(chr);
 			}
@@ -94,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 			byName.Remove(ad.Name);
 		}
 
-		internal new static void UnloadScripts() {
+		internal static void UnloadScripts() {
 			//byDefname.Clear();
 			byName.Clear();
 			abilityDefCtorsByName.Clear();
@@ -186,7 +189,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private FieldValue name;
-		private FieldValue maxPoints;
+		protected FieldValue maxPoints;
 		
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -200,10 +203,14 @@ namespace SteamEngine.CompiledScripts {
 			}			
 		}
 
+		[InfoField("Max points")]		
 		public ushort MaxPoints {
 			get {
 				return (ushort)maxPoints.CurrentValue;
-			}			
+			}
+			set {
+				maxPoints.CurrentValue = value;
+			}
 		}
 
 		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
@@ -242,22 +249,17 @@ namespace SteamEngine.CompiledScripts {
 					yield return entry;					
 				}
 			}
-		}
+		}		
+	}
 
-		[Summary("Can we use the ability? Do we have all resources, has the delay time passed... etc")]
-		public static bool CanUseAbility(Character chr, AbilityDef aDef) {
-			//check if we have the ability at all (at least 1 point)
-			Ability ab = chr.GetAbility(aDef);
-			if(ab == null) {
-				chr.RedMessage("Nesplòuješ podmínky pro použití ability " + aDef.Name);
-				return false;
-			}
-			
-			//here we will check the available resources (if any are needed)
-			//...
+	public class DenyAbilityArgs : DenyTriggerArgs {
+		public readonly Character abiliter;
+		public readonly AbilityDef runAbility;
 
-			
-			return true;
-		}
+		public DenyAbilityArgs(Character abiliter, AbilityDef runAbility)
+			: base(DenyResult.Allow, abiliter, runAbility) {
+			this.abiliter = abiliter;
+			this.runAbility = runAbility;
+		}		
 	}
 }

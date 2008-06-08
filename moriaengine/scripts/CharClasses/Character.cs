@@ -1376,7 +1376,16 @@ namespace SteamEngine.CompiledScripts {
 			ab.Running = false;
 		}
 
-		internal virtual void On_AbilityFire(AbilityDef aDef) {
+		internal virtual bool On_AbilityFire(AbilityDef aDef) {
+			return false;
+		}
+
+		internal virtual bool On_AbilityNotYet(AbilityDef aDef) {
+			return false;
+		}
+
+		internal virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
+			return false;
 		}
 
 		#endregion abilities

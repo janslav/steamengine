@@ -58,14 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		}		
 		#endregion triggerMethods
 
-		[InfoField("Usage delay")]
-		public override int UseDelay {			
-			set {
-				useDelay.CurrentValue = value;		
-			}
-		}
-
-		[InfoField("Warcry effect duration")]
+		[InfoField("Effect duration")]
 		public int EffectDuration {
 			get {
 				return (int)effectDuration.CurrentValue;
@@ -87,8 +80,10 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Running the warcry (if the player has the ability)")]
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
 			Warcry wcrDef = SingletonScript<Warcry>.Instance;
-			if(AbilityDef.CanUseAbility(chr,wcrDef)) {
+			if(chr.GetAbility(wcrDef) != null) {
 				wcrDef.Activate(chr);
+			} else {
+				chr.RedMessage("O abilitì "+wcrDef.Name+" nevíš vùbec nic");
 			}
 		}	
 	}

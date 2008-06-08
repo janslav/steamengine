@@ -21,11 +21,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Summary("Special ability class used for implementing abilities that will be run using SteamFunction." +
 			"Their effect will be immediate (e.g. warcry)")]
+	[ViewableClass]
 	public class ImmediateAbilityDef : TriggerBasedAbilityDef {
 		public static readonly TriggerKey tkFire = TriggerKey.Get("Fire");
 		
@@ -50,48 +52,90 @@ namespace SteamEngine.CompiledScripts {
 		internal override void Activate(Character chr) {
 			//if we are here, we can use the ability
 			Ability ab = chr.GetAbility(this);
-			if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) {
-				Trigger_Fire(chr); 
+			if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) {//check the timing it OK
+				if(!Trigger_DenyUse(new DenyAbilityArgs(chr, this))) {//check all requisities
+					Fire(chr);
+				}
 			} else {
-				Trigger_NotYet(ab.Cont, ab);
+				NotYet(chr);
 			}
 		}
 
 		#region triggerMethods
-		[Summary("This method implements firing the ability. Will be implemened ond special children")]
-		protected virtual void On_Fire(Character chr) {
-
+		[Summary("This method fires the @fire triggers or trigger methods. "
+		+ "Gets called when every prerequisity has been fulfilled and the ability can be run now")]
+		internal void Fire(Character chr) {
+			if(!Trigger_Fire(chr)) {
+				On_Fire(chr);//not cancelled (no return 1 in LScript), lets continue
+			}
 		}
 
-		internal void Trigger_Fire(Character chr) {
-			if(chr != null) {
-				TryTrigger(chr, ImmediateAbilityDef.tkFire, new ScriptArgs());
-				chr.On_AbilityFire(this);
-				On_Fire(chr);
+		[Summary("C# based @fire trigger method")]
+		protected virtual void On_Fire(Character chr) {
+			chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Fire");
+		}
+
+		[Summary("LScript based @fire triggers")]
+		private bool Trigger_Fire(Character chr) {
+			bool cancel = false;
+			cancel = TryCancellableTrigger(chr, ImmediateAbilityDef.tkFire, null);
+			if(!cancel) {
+				cancel = chr.On_AbilityFire(this);
 			}
+			return cancel;
 		}		
 
-		[Summary("This method implements the behavior when the ability is not yet allowed to be activated")]
-		protected virtual void On_NotYet(Character ch) {
-			//ch.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
-		}
-
-		[Summary("Trigger method called when the ability is activated but it is not allowed yet to do it")]
-		protected void Trigger_NotYet(Character chr, Ability ab) {
-			if(chr != null) {
-				ScriptArgs sa = new ScriptArgs(ab);
-				//call the trigger @notYet with arguments "ability"-the Ability class on character (it has its own reference to the char)
-				TryTrigger(chr, ActivableAbilityDef.tkNotYet, sa);
+		[Summary("This method fires the @notYet triggers. "
+				+ "Gets called when user activates the ability but it is not to be fired yet")]
+		internal void NotYet(Character chr) {
+			if(!Trigger_NotYet(chr)) {
 				On_NotYet(chr);
 			}
 		}
+
+		[Summary("C# based @notYet trigger method")]
+		protected virtual void On_NotYet(Character ch) {
+			ch.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
+		}
+
+		[Summary("LScript based @notYet triggers")]
+		private bool Trigger_NotYet(Character chr) {
+			bool cancel = false;
+			cancel = this.TryCancellableTrigger(chr, ActivableAbilityDef.tkNotYet, null);
+			if(!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				cancel = chr.On_AbilityNotYet(this);
+			}
+			return cancel;
+		}
+
+		[Summary("This method fires the @denyUse triggers. "
+				+ "Their purpose is to check if all requirements for running the ability have been met")]
+		private bool Trigger_DenyUse(DenyAbilityArgs args) {
+			bool cancel = false;
+			cancel = this.TryCancellableTrigger(args.abiliter, ActivableAbilityDef.tkDenyUse, args);
+			if(!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				cancel = args.abiliter.On_AbilityDenyUse(args);
+				if(!cancel) {//still not cancelled, try the C# method
+					cancel = On_DenyUse(args);
+				}
+			}
+			return cancel;
+		}
+
+		[Summary("C# based @denyUse trigger method")]		
+		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
+			args.abiliter.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_DenyUse");
+			return false; //all ok, continue
+		}
 		#endregion triggerMethods
 
+		[InfoField("Usage delay")]		
 		public virtual int UseDelay {
 			get {
 				return (int)useDelay.CurrentValue;				
 			}
 			set {
+				useDelay.CurrentValue = value;
 			}
 		}
 	}

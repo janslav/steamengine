@@ -22,12 +22,14 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Summary("Ability class serving as a parent for special types of abilities that can assign a plugin or a "+
 			"trigger group (or both) to the ability holder when activated/fired. This class specially offers only fields "+
 			"for storing the plugin/trigger group info. The assigning will be managed on children classes")]
+	[ViewableClass]
 	public class TriggerBasedAbilityDef : AbilityDef {
 		//fields for storing the keys (comming from LScript or set in constructor of children)
 		private FieldValue triggerGroupKey;
@@ -51,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
 				"for appending trigger groups to the ability holder")]
-		protected TriggerGroup TriggerGroup {
+		public TriggerGroup TriggerGroup {
 			get {
 				if(triggerGroup == null && !triggerGroupKey.CurrentValue.Equals("")) {
 					//we can load
@@ -63,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Plugindef connected with this ability (can be null if no key is specified). It will be used "+
 				"for creating plugin instances and setting them to the ability holder")]
-		protected PluginDef PluginDef {
+		public PluginDef PluginDef {
 			get {
 				if(pluginDef == null && !pluginKey.CurrentValue.Equals("")) {
 					//we can load
@@ -74,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Return plugin key from the field value (used e.g. for removing plugins)")]
-		protected PluginKey PluginKeyInstance {
+		public PluginKey PluginKeyInstance {
 			get {
 				return PluginKey.Get(pluginKey.CurrentValue.ToString());
 			}

@@ -22,16 +22,19 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Summary("Special ability class used for implementing abilities that can be activated (usually by calling some SteamFunction)."+
 			"The performing of the ability ends when it is either manually deactivated or some other conditions are fulfilled"+
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
+	[ViewableClass]
 	public class ActivableAbilityDef : TriggerBasedAbilityDef {
-		public static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
-		public static readonly TriggerKey tkUnActivate = TriggerKey.Get("UnActivate");
-		public static readonly TriggerKey tkNotYet = TriggerKey.Get("NotYet");
+		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
+		internal static readonly TriggerKey tkUnActivate = TriggerKey.Get("UnActivate");
+		internal static readonly TriggerKey tkNotYet = TriggerKey.Get("NotYet");
+		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
 
 		[Summary("Field for holding the number information about the pause between another ability activation try."+
 				"You can use 0 for no delay")]
@@ -55,31 +58,33 @@ namespace SteamEngine.CompiledScripts {
 			if(ab.Running) {
 				Trigger_UnActivate(chr);
 			} else {
-				if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) {
-					Trigger_Activate(chr);
+				if((Globals.TimeInSeconds - ab.LastUsage) >= this.UseDelay) { //check the timing if OK
+					if(!Trigger_DenyUse(new DenyAbilityArgs(chr, this))) {//check all prerequisities
+						Trigger_Activate(chr);
+					}
 				} else {
-					Trigger_NotYet(chr);
+					NotYet(chr);
 				}
 			}
 		}
 
 		#region triggerMethods
-		[Summary("This method implements the deactivating of the ability")]
+		[Summary("C# based @notYet trigger method")]
 		protected virtual void On_UnActivate(Character ch) {
 			ch.RemoveTriggerGroup(this.TriggerGroup);
 			ch.RemovePlugin(this.PluginKeyInstance);
 		}
 
-		[Summary("Trigger method called when the ability is unactivated")]
+		[Summary("LScript based @unactivate triggers and all unactivate trigger methods")]
 		protected void Trigger_UnActivate(Character chr) {
 			if(chr != null) {
-				TryTrigger(chr, ActivableAbilityDef.tkUnActivate, new ScriptArgs());
+				TryTrigger(chr, ActivableAbilityDef.tkUnActivate, null);
 				chr.On_AbilityUnActivate(this);
 				On_UnActivate(chr);
 			}
 		}
 
-		[Summary("This method implements the activating of the ability")]
+		[Summary("C# based @activate trigger method")]
 		protected virtual void On_Activate(Character ch) {
 			ch.AddTriggerGroup(this.TriggerGroup);
 			if(this.PluginDef != null) {
@@ -87,32 +92,66 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Trigger method called when the ability is activated")]
+		[Summary("LScript based @activate triggers and all activate trigger methods")]
 		protected void Trigger_Activate(Character chr) {
 			if(chr != null) {
-				TryTrigger(chr, ActivableAbilityDef.tkActivate, new ScriptArgs());
+				TryTrigger(chr, ActivableAbilityDef.tkActivate, null);
 				chr.On_AbilityActivate(this);
 				On_Activate(chr);
 			}
 		}
 
-		[Summary("This method implements the behavior when the ability is not yet allowed to be activated")]
+		[Summary("This method fires the @notYet triggers. "
+				+ "Gets called when user activates the ability but it is not to be fired yet")]
+		internal void NotYet(Character chr) {
+			if(!this.Trigger_NotYet(chr)) {
+				this.On_NotYet(chr);//not cancelled (no return 1 in LScript), lets continue
+			}
+		}
+
+		[Summary("C# based @notYet trigger method")]
 		protected virtual void On_NotYet(Character ch) {
 			ch.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
 		}
 
-		[Summary("Trigger method called when the ability is activated but it is not allowed yet to do it")]
-		protected void Trigger_NotYet(Character chr) {
-			if(chr != null) {
-				TryTrigger(chr, ActivableAbilityDef.tkNotYet, new ScriptArgs());
-				On_NotYet(chr);
+		[Summary("LScript based @notYet triggers")]
+		private bool Trigger_NotYet(Character chr) {
+			bool cancel = false;
+			cancel = this.TryCancellableTrigger(chr, ActivableAbilityDef.tkNotYet, null);
+			if(!cancel) {
+				cancel = chr.On_AbilityNotYet(this);				
 			}
+			return cancel;
+		}
+
+		[Summary("This method fires the @denyUse triggers. "
+				+ "Their purpose is to check if all requirements for running the ability have been met")]
+		private bool Trigger_DenyUse(DenyAbilityArgs args) {
+			bool cancel = false;
+			cancel = this.TryCancellableTrigger(args.abiliter, ActivableAbilityDef.tkDenyUse, args);
+			if(!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				cancel = args.abiliter.On_AbilityDenyUse(args);
+				if(!cancel) {//still not cancelled
+					cancel = On_DenyUse(args);
+				}
+			}
+			return cancel;
+		}
+
+		[Summary("C# based @denyUse trigger method")]
+		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
+			args.abiliter.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_DenyUse");
+			return false; //all ok, continue
 		}
 		#endregion triggerMethods
 
-		public int UseDelay {
+		[InfoField("Usage delay")]
+		public virtual int UseDelay {
 			get {
 				return (int)useDelay.CurrentValue;
+			}
+			set {
+				useDelay.CurrentValue = value;
 			}
 		}
 	}
