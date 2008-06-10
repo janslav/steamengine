@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 			 "and any additional info (such as timers connected with the ability running etc.)")]
 	public class Ability {
 		[Summary("Actual number of points in the ability")]
-		private ushort points;
+		private int points;
 
 		[Summary("Is the ability actually running?")]
 		private bool running;
@@ -48,12 +48,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get or set actual ability points for this ability. Considers using of triggers if necessary")]
-		public ushort Points {
+		public int Points {
 			get {
 				return points;
 			}
 			set {
-				ushort oldValue = this.points;
+				int oldValue = this.points;
 				if((oldValue != value) && (value <= this.MaxPoints)) {//value has changed and is not at its maximum yet
 					this.points = Math.Max((ushort)0,value); //dont go under zero
 				}
@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool Running {
+		internal bool Running {
 			get {
 				return running;
 			}
@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double LastUsage {
+		internal double LastUsage {
 			get {
 				return lastUsage;
 			}

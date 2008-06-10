@@ -27,12 +27,12 @@ namespace SteamEngine.CompiledScripts {
 
 	[Summary("War's warcry")]
 	[ViewableClass]
-	public class Warcry : ImmediateAbilityDef {
+	public class WarcryDef : ImmediateAbilityDef {
 
 		[Summary("Number of seconds the warcry effect will last on the hit player")]
 		private FieldValue effectDuration;
 		
-		public Warcry(string defname, string filename, int headerLine)
+		public WarcryDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			effectDuration = InitField_Typed("effectDuration", 10, typeof(int));
 		}
@@ -79,13 +79,13 @@ namespace SteamEngine.CompiledScripts {
 				" and the ability points...). Consider that 18 steps should be maximum (client limits)")]
 		private ushort ComputeRange(Character chr) {
 			//TODO - udelat to nejak sofistikovaneji			
-			return GetPointsOf(chr);
+			return (ushort)chr.GetAbilityPoints(this);
 		}
 
 		[SteamFunction("Warcry")]
 		[Summary("Running the warcry (if the player has the ability)")]
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
-			Warcry wcrDef = SingletonScript<Warcry>.Instance;
+			WarcryDef wcrDef = SingletonScript<WarcryDef>.Instance;
 			wcrDef.Activate(chr);
 		}	
 	}

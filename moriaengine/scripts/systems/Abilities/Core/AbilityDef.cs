@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Overall method for running the abilites. Its basic implementation does not allow to run the "+
 				"ability unless properly overriden in a child that is made to be run manually")]
 		internal virtual void Activate(Character chr) {
-			chr.RedMessage("Abilitu " + Name + " nelze spustit");
+			chr.RedMessage("Abilitu " + Name + " nelze spustit tímto zpùsobem");
 		}
 
         [Summary("This method implements the assigning of the first point to the Ability")]
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static AbilityDef LoadFromScripts(PropsSection input) {
-			//it is something like this in the .scp file: [headerType headerName] = [Warcry a_warcry] etc.
+			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
 			string typeName = input.headerType.ToLower();
 			string abilityDefName = input.headerName.ToLower();			
 			
@@ -242,16 +242,7 @@ namespace SteamEngine.CompiledScripts {
 			return GetType().Name + " " + Name;
 		}
 
-		#region utilities
-		[Summary("Return number of points of the ability the character has")]
-		public ushort GetPointsOf(Character chr) {
-			Ability ab = chr.GetAbility(this);
-			if(ab != null) {
-				return ab.Points;
-			}
-			return 0;
-		}
-
+		#region utilities		
 		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
 		public static IEnumerable<AbilityDef> GetAllAbilities() {
 			if(byName != null) {
@@ -264,26 +255,14 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Method for sending clients messages about their attempt of ability usage")]
 		protected void SendAbilityResultMessage(Character toWhom, DenyResultAbilities res) {
 			switch(res) {
-				case DenyResultAbilities.Allow:
-					//send the message (if any) - only for immediate or activable abilities
-					ImmediateAbilityDef iad = this as ImmediateAbilityDef;
-					if((iad != null) && (!iad.RunMessage.Equals(""))) {
-						toWhom.SysMessage(iad.RunMessage);
-						break;
-					}
-					ActivableAbilityDef aad = this as ActivableAbilityDef;
-					if((aad != null) && (!aad.RunMessage.Equals(""))){
-						toWhom.SysMessage(aad.RunMessage);
-						break;
-					}
-					break;
+				//case DenyResultAbilities.Allow:									
 				case DenyResultAbilities.Deny_DoesntHaveAbility:
 					toWhom.RedMessage("O abilitì " + Name + " nevíš vùbec nic");
 					break;
 				case DenyResultAbilities.Deny_TimerNotPassed:
 					toWhom.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
 					break;
-				case DenyResultAbilities.Deny_WasRunning:
+				case DenyResultAbilities.Deny_WasSwitchedOff:
 					toWhom.SysMessage("Abilita " + Name + " byla vypnuta");
 					break;
 			}
@@ -293,17 +272,19 @@ namespace SteamEngine.CompiledScripts {
 
 	public class DenyAbilityArgs : ScriptArgs {
 		public readonly Character abiliter;
-		public readonly AbilityDef runAbility;
+		public readonly AbilityDef runAbilityDef;
+		public readonly Ability runAbility;
 
 		public DenyAbilityArgs(params object[] argv)
 			: base(argv) {
 			Sanity.IfTrueThrow(!(argv[0] is DenyResultAbilities), "argv[0] is not DenyResultAbilities");
 		}
 
-		public DenyAbilityArgs(Character abiliter, AbilityDef runAbility) 
-			:	this(DenyResult.Allow, abiliter, runAbility) {
+		public DenyAbilityArgs(Character abiliter, AbilityDef runAbilityDef, Ability runAbility) 
+			:	this(DenyResult.Allow, abiliter, runAbilityDef, runAbility) {
 			this.abiliter = abiliter;
-			this.runAbility = runAbility;
+			this.runAbilityDef = runAbilityDef;
+			this.runAbility = runAbility; //this can be null (if we dont have the ability)
 		}	
 
 		public DenyResultAbilities Result {
