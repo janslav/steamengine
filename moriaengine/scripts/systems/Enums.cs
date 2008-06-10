@@ -81,6 +81,14 @@ namespace SteamEngine.CompiledScripts {
 		DefnameDesc
 	}
 
+	//abilities running possible results
+	public enum DenyResultAbilities {
+		Allow = 1, //we can use the ability
+		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
+		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
+		Deny_WasSwitchedOff = 4 //the ability was currently running (for ActivableAbilities only) so we switched it off
+	}
+
 	[Summary("Various sorting criteria for displaying regions list")]
 	public enum RegionsSorting : int {
 		NameAsc,

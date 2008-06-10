@@ -179,14 +179,6 @@ namespace SteamEngine {
 		Deny_ContainerClosed = 9, //You cannot peek into the container.
 	}
 
-	//abilities running possible results
-	public enum DenyResultAbilities {
-		Allow = 1, //we can use the ability
-		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
-		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
-		Deny_WasRunning = 4 //the ability was currently running (for ActivableAbilities only) 
-	}
-
 	//for testing purposes
 	internal static class DenyResultGenerator {
 		static int i;

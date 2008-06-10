@@ -1360,41 +1360,46 @@ namespace SteamEngine.CompiledScripts {
 			return retAb; //either null or Ability instance if the player has it
 		}
 
-		[Summary("If character already has the ability, add 1 point "+
-				"otherwise add the ability and add the first point to it")]
-		public void AddAbility(AbilityDef aDef) {
-			AddAbility(aDef, 1);
+		[Summary("Get number of points the character has for specified AbilityDef (0 if he doesnt have it at all)")]
+		public int GetAbilityPoints(AbilityDef aDef) {
+			Ability retAb = null;
+			abilities.TryGetValue(aDef, out retAb);
+			return (retAb == null ? 0 : retAb.Points); //either null or Ability instance if the player has it
 		}
 
-		[Summary("Add the specified number of points to it (it the ability is not "+
-				"yet present, add it too")]
-		public void AddAbility(AbilityDef aDef, ushort points) {
+		[Summary("Add specified number of points the character has for specified AbilityDef. If the result is"+
+				"<= 0 then we will remove the ability")]
+		public void AddAbilityPoints(AbilityDef aDef, int points) {
 			Ability ab = GetAbility(aDef);
-			if(ab == null) {
-				ab = new Ability(aDef, this);
-				ab.Points = 1;
-				abilities.Add(aDef, ab);
-			} else {
-				//add only specified number of points
+			if(ab != null) {
 				ab.Points += points;
+				CheckRemoveAbility(aDef, ab);
+			} else if(points > 0) { //we wont create a new ability with 0 or <0 number of points!
+				AddNewAbility(aDef, points);		
 			}
 		}
 
-		[Summary("If character already has the ability, remove 1 point " +
-				"if there is only 1 point, remove the whole ability")]		
-		public void RemoveAbility(AbilityDef aDef) {
-			RemoveAbility(aDef, 1);
-		}
-
-		[Summary("Remove the specified number of points (ot the whole ability if there is not enough points)")]		
-		public void RemoveAbility(AbilityDef aDef, ushort points) {
+		[Summary("Set specified number of points the character has for specified AbilityDef, check for positive value afterwards.")]
+		public void SetAbilityPoints(AbilityDef aDef, int points) {
 			Ability ab = GetAbility(aDef);
 			if(ab != null) {
-				ab.Points -= points;
-				if(ab.Points == 0) { //remove
-					abilities.Remove(aDef);
-				}
-			} 
+				ab.Points = points;
+				CheckRemoveAbility(aDef, ab);
+			} else if(points > 0) { //we wont create a new ability with 0 or <0 number of points!
+				AddNewAbility(aDef, points);
+			}		
+		}
+
+		private void AddNewAbility(AbilityDef aDef, int points) {
+			Ability ab = new Ability(aDef, this);
+			abilities.Add(aDef, ab);
+			ab.Points = points;				
+		}
+
+		private void CheckRemoveAbility(AbilityDef aDef, Ability ab) {
+			if(ab.Points <= 0) {
+				abilities.Remove(aDef);
+			}
 		}
 
 		internal virtual void On_AbilityAssign(AbilityDef aDef) {
@@ -1404,13 +1409,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal virtual void On_AbilityActivate(AbilityDef aDef) {
-			Ability ab = GetAbility(aDef);
-			ab.Running = true;
 		}
 
 		internal virtual void On_AbilityUnActivate(AbilityDef aDef) {
-			Ability ab = GetAbility(aDef);
-			ab.Running = false;
 		}
 
 		internal virtual bool On_AbilityFire(AbilityDef aDef) {
@@ -1418,6 +1419,8 @@ namespace SteamEngine.CompiledScripts {
 		}		
 
 		internal virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
+			//args contain DenyResultAbilities, Character, AbilityDef and Ability as parameters 
+			//(Ability can be null)
 			return false;
 		}
 
