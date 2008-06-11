@@ -32,11 +32,9 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class TriggerBasedAbilityDef : AbilityDef {
 		//fields for storing the keys (comming from LScript or set in constructor of children)
-		private FieldValue triggerGroupKey;
+		private FieldValue triggerGroup;
+		private FieldValue pluginDef;
 		private FieldValue pluginKey;
-
-		private TriggerGroup triggerGroup;
-		private PluginDef pluginDef;
 
 		public TriggerBasedAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -45,21 +43,20 @@ namespace SteamEngine.CompiledScripts {
 			//...
 			//triggerGroup=t_some_triggergroup
 			//...
-			//plugin=p_some_plugindef
-			//these keys will be then used for assigning TG / plugin to the ability holder
-			triggerGroupKey = InitField_Typed("triggerGroup", "", typeof(string));
-			pluginKey = InitField_Typed("plugin", "", typeof(string));
+			//pluginDef=p_some_plugindef
+			//...
+			//pluginKey=p_some_pluginkey
+			//these values will be then used for assigning TG / plugin to the ability holder
+			triggerGroup = InitField_Typed("triggerGroup", null, typeof(TriggerGroup));
+			pluginDef = InitField_Typed("pluginDef", null, typeof(PluginDef));
+			pluginKey = InitField_Typed("pluginKey", null, typeof(PluginKey));
 		}
 
 		[Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
 				"for appending trigger groups to the ability holder")]
 		public TriggerGroup TriggerGroup {
 			get {
-				if(triggerGroup == null && !triggerGroupKey.CurrentValue.Equals("")) {
-					//we can load
-					triggerGroup = TriggerGroup.Get(triggerGroupKey.CurrentValue.ToString());
-				}
-				return triggerGroup;
+				return triggerGroup.CurrentValue as TriggerGroup;
 			}
 		}
 
@@ -67,18 +64,14 @@ namespace SteamEngine.CompiledScripts {
 				"for creating plugin instances and setting them to the ability holder")]
 		public PluginDef PluginDef {
 			get {
-				if(pluginDef == null && !pluginKey.CurrentValue.Equals("")) {
-					//we can load
-					pluginDef = PluginDef.Get(pluginKey.CurrentValue.ToString());
-				}
-				return pluginDef;
+				return pluginDef.CurrentValue as PluginDef;
 			}
 		}
 
 		[Summary("Return plugin key from the field value (used e.g. for removing plugins)")]
 		public PluginKey PluginKeyInstance {
 			get {
-				return PluginKey.Get(pluginKey.CurrentValue.ToString());
+				return pluginKey.CurrentValue as PluginKey;				
 			}
 		}
 	}

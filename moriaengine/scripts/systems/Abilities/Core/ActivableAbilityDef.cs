@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts {
 			//common check - is the usage timer OK?
 			if((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
 				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
-				return false;
+				return true;//same as "return 1" from LScript - cancel trigger sequence
 			}
 			return false; //continue
 		}

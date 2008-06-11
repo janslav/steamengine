@@ -1392,14 +1392,18 @@ namespace SteamEngine.CompiledScripts {
 
 		private void AddNewAbility(AbilityDef aDef, int points) {
 			Ability ab = new Ability(aDef, this);
-			abilities.Add(aDef, ab);
-			ab.Points = points;				
+			abilities.Add(aDef, ab); //first add the object to the dictionary
+			ab.Points = points; //then set points (which causes also calling of "assign" trigger)				 
 		}
 
-		private void CheckRemoveAbility(AbilityDef aDef, Ability ab) {
+		internal void CheckRemoveAbility(AbilityDef aDef, Ability ab) {
 			if(ab.Points <= 0) {
-				abilities.Remove(aDef);
+				RemoveAbility(aDef);
 			}
+		}
+
+		internal void RemoveAbility(AbilityDef aDef) {
+			abilities.Remove(aDef);
 		}
 
 		internal virtual void On_AbilityAssign(AbilityDef aDef) {
