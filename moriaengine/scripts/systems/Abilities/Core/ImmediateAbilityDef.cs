@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Special ability class used for implementing abilities that will be run using SteamFunction." +
 			"Their effect will be immediate (e.g. warcry)")]
 	[ViewableClass]
-	public class ImmediateAbilityDef : TriggerBasedAbilityDef {
+	public class ImmediateAbilityDef : AbilityDef {
 		public static readonly TriggerKey tkFire = TriggerKey.Get("Fire");
 		
 		[Summary("Field for holding the number information about the pause between another ability activation try." +
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 			//common check - is the usage timer OK?
 			if((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
 				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
-				return false;
+				return true;//same as "return 1" from LScript - cancel trigger sequence
 			} 
 			return false; //continue
 		}

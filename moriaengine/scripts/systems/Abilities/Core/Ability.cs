@@ -25,19 +25,14 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("This class holds information about one ability the user has - the number of ability points "+
 			 "and any additional info (such as timers connected with the ability running etc.)")]
 	public class Ability {
-		[Summary("Actual number of points in the ability")]
 		private int points;
-
-		[Summary("Is the ability actually running?")]
+		
 		private bool running;
 
-		[Summary("Character who possesses this ability")]
 		private Character cont;
 
-		[Summary("Link to the abilitydef")]
 		private AbilityDef def;
 
-		[Summary("Server time of the last usage")]
 		private double lastUsage;
 		
 		public Ability(AbilityDef def, Character cont) {
@@ -55,7 +50,9 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				int oldValue = this.points;
 				if((oldValue != value) && (value <= this.MaxPoints)) {//value has changed and is not at its maximum yet
-					this.points = Math.Max((ushort)0,value); //dont go under zero
+					this.points = Math.Max(0,value); //dont go under zero
+				} else if (value > this.MaxPoints) {
+					this.points = this.MaxPoints; //dont allow to go over MaxPoints!
 				}
 				//run triggers if necessary
 				if(oldValue < value) {
@@ -65,6 +62,8 @@ namespace SteamEngine.CompiledScripts {
 				} else if(oldValue > value) {
 					if(this.points == 0) { //removed last point(s)
 						def.Trigger_UnAssign(cont);
+						//remove the ability from cont
+						cont.RemoveAbility(def);
 					}
 				}
 			}
@@ -78,11 +77,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal bool Running {
+		[Summary("Is the ability actually running?")]
+		public bool Running {
 			get {
 				return running;
 			}
-			set {
+			internal set {
 				running = value;
 			}
 		}
@@ -93,6 +93,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Summary("Character who possesses this ability")]		
 		public Character Cont {
 			get {
 				return cont;
@@ -105,11 +106,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal double LastUsage {
+		[Summary("Server time of the last usage")]
+		
+		public double LastUsage {
 			get {
 				return lastUsage;
 			}
-			set {
+			internal set {
 				lastUsage = value;
 			}
 		}
