@@ -27,8 +27,10 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class AbilityDef : AbstractDef {
-		public static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
-        public static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
+		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
+        internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
+		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
+		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
 
 		private static Dictionary<string, AbilityDef> byName = new Dictionary<string, AbilityDef>(StringComparer.OrdinalIgnoreCase);
 		
@@ -43,7 +45,53 @@ namespace SteamEngine.CompiledScripts {
 			chr.RedMessage("Abilitu " + Name + " nelze spustit tímto zpùsobem");
 		}
 
-        [Summary("This method implements the assigning of the first point to the Ability")]
+		#region triggerMethods
+		[Summary("C# based @activate trigger method")]
+		protected virtual bool On_Activate(Character chr) {
+			chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Activate");
+			return false; //no cancelling
+		}
+		
+		[Summary("LScript based @activate triggers" +
+				"Gets called when every prerequisity has been fulfilled and the ability can be run now")]
+		protected bool Trigger_Activate(Character chr) {
+			bool cancel = false;
+			cancel = TryCancellableTrigger(chr, AbilityDef.tkActivate, null);
+			if (!cancel) {
+				cancel = chr.On_AbilityActivate(this);
+				if (!cancel) {//still not cancelled
+					cancel = On_Activate(chr);
+				}
+			}
+			return cancel;
+		}		
+
+		[Summary("This method fires the @denyUse triggers. "
+				+ "Their purpose is to check if all requirements for running the ability have been met")]
+		protected bool Trigger_DenyUse(DenyAbilityArgs args) {
+			bool cancel = false;
+			cancel = this.TryCancellableTrigger(args.abiliter, AbilityDef.tkDenyUse, args);
+			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				cancel = args.abiliter.On_AbilityDenyUse(args);
+				if (!cancel) {//still not cancelled
+					cancel = On_DenyUse(args);
+				}
+			}
+			return cancel;
+		}
+
+		[Summary("C# based @denyUse trigger method, implementation of common checks (timers...)")]
+		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
+			Ability ab = args.runAbility;
+			//common check - is the usage timer OK?
+			if ((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
+				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
+				return true;//same as "return 1" from LScript - cancel trigger sequence
+			}
+			return false; //continue
+		}
+
+		[Summary("This method implements the assigning of the first point to the Ability")]
         protected virtual void On_Assign(Character ch) {
 			ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
         }
@@ -67,7 +115,8 @@ namespace SteamEngine.CompiledScripts {
 				chr.On_AbilityUnAssign(this);
 				On_UnAssign(chr);
 			}
-        }		
+		}
+		#endregion triggerMethods
 
 		public static AbilityDef ByDefname(string defname) {
 			AbstractScript script;

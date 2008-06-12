@@ -28,7 +28,9 @@ namespace SteamEngine.CompiledScripts {
 
 	[Summary("Special abiliy class used for implementing abilities that will automatically perform their action when the "+
 			"first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or "+
-			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability)")]
+			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability) "+
+			"We make this class to be child of ActivableAbilityDef because we want to have the possibility to swithc (even the passive) "+
+			"ability off - e.g. hypothetical ability 'Healing nearby comrades' might be switched of in some hardcore dungeon where healing is not allowed etc.")]
 	[ViewableClass]
 	public class PassiveAbilityDef : ActivableAbilityDef {
 		public PassiveAbilityDef(string defname, string filename, int headerLine)
@@ -36,24 +38,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region triggerMethods
-		[Summary("This method implements the unassigning of the last point from the Ability. "+
-				"Remove the plugin and trigger group from the holder")]
-		protected override void On_UnAssign(Character ch) {			
-			ch.RemoveTriggerGroup(this.TriggerGroup);
-			ch.RemovePlugin(this.PluginKeyInstance);
-
-			ch.SysMessage("Ztratil jsi veškeré znalosti o abilitì " + Name);
-		}
-
 		[Summary("This method implements the assigning of the first point to the Ability"+        
-				"Add plugin and trigger group to the holder, if they exist")]
-		protected override void On_Assign(Character ch) {			
-			ch.AddTriggerGroup(this.TriggerGroup);
-			if(this.PluginDef != null) {
-				ch.AddNewPlugin(this.PluginKeyInstance, this.PluginDef);
-			}
+				"Just call the activate method from parent (this will ensure assigning all TGs and Plugins")]
+		protected override void On_Assign(Character ch) {
 			Activate(ch); //activate the ability automatically
-			ch.SysMessage("Získal jsi abilitu " + Name);
 		}
 		#endregion triggerMethods
 	}

@@ -1377,7 +1377,6 @@ namespace SteamEngine.CompiledScripts {
 			Ability ab = GetAbility(aDef);
 			if(ab != null) {
 				ab.Points += points;
-				CheckRemoveAbility(aDef, ab);
 			} else if(points > 0) { //we wont create a new ability with 0 or <0 number of points!
 				AddNewAbility(aDef, points);		
 			}
@@ -1388,7 +1387,6 @@ namespace SteamEngine.CompiledScripts {
 			Ability ab = GetAbility(aDef);
 			if(ab != null) {
 				ab.Points = points;
-				CheckRemoveAbility(aDef, ab);
 			} else if(points > 0) { //we wont create a new ability with 0 or <0 number of points!
 				AddNewAbility(aDef, points);
 			}		
@@ -1402,13 +1400,7 @@ namespace SteamEngine.CompiledScripts {
 			abilities.Add(aDef, ab); //first add the object to the dictionary			
 			ab.Points = points; //then set points 
 			aDef.Trigger_Assign(this); //then call the assign trigger
-		}
-
-		internal void CheckRemoveAbility(AbilityDef aDef, Ability ab) {
-			if(ab.Points <= 0) {
-				RemoveAbility(aDef);
-			}
-		}
+		}		
 
 		internal void RemoveAbility(AbilityDef aDef) {
 			abilities.Remove(aDef);
@@ -1421,15 +1413,12 @@ namespace SteamEngine.CompiledScripts {
 		internal virtual void On_AbilityUnAssign(AbilityDef aDef) {
 		}
 
-		internal virtual void On_AbilityActivate(AbilityDef aDef) {
+		internal virtual bool On_AbilityActivate(AbilityDef aDef) {
+			return false;
 		}
 
 		internal virtual void On_AbilityUnActivate(AbilityDef aDef) {
 		}
-
-		internal virtual bool On_AbilityFire(AbilityDef aDef) {
-			return false;
-		}		
 
 		internal virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
 			//args contain DenyResultAbilities, Character, AbilityDef and Ability as parameters 
