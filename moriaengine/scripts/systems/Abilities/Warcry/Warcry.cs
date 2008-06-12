@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Functional implementation of warcry ability")]
-		protected override void On_Fire(Character chr) {
+		protected override bool On_Fire(Character chr) {
 			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, ComputeRange(chr))) {
 				if(chr == plr) {
 					continue; //dont do selfwarcry ;)
@@ -62,6 +62,7 @@ namespace SteamEngine.CompiledScripts {
 					wepl.Timer = EffectDuration;
 				}
 			}
+			return false; //no cancel needed
 		}		
 		#endregion triggerMethods
 

@@ -25,19 +25,21 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-
-	[Summary("Special ability class used for implementing abilities that can be activated (usually by calling some SteamFunction)."+
+	[Summary("Ability class serving as a parent for special types of abilities that can assign a plugin or a " +
+			"trigger group (or both) to the ability holder when activated/fired. This class specially offers only fields " +
+			"for storing the plugin/trigger group info it can be also activated (usually by calling some SteamFunction)."+
 			"The performing of the ability ends when it is either manually deactivated or some other conditions are fulfilled"+
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
 	[ViewableClass]
-	public class ActivableAbilityDef : TriggerBasedAbilityDef {
+	public class ActivableAbilityDef : AbilityDef {
 		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
 		internal static readonly TriggerKey tkUnActivate = TriggerKey.Get("UnActivate");
 		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
 
-		[Summary("Field for holding the number information about the pause between another ability activation try."+
-				"You can use 0 for no delay")]
-		private FieldValue useDelay;
+		//fields for storing the keys (comming from LScript or set in constructor of children)
+		private FieldValue triggerGroup;
+		private FieldValue pluginDef;
+		private FieldValue pluginKey;
 		
 		public ActivableAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -45,44 +47,65 @@ namespace SteamEngine.CompiledScripts {
 			//the field will be in the LScript as follows:
 			//[ActivableAbilityDef a_bility]
 			//...
-			//useDelay = 300
-			//runMessage = "Nyni muzes zabijet zlym pohledem"
+			//triggerGroup=t_some_triggergroup
+			//pluginDef=p_some_plugindef
+			//pluginKey=p_some_pluginkey
+			//these values will be then used for assigning TG / plugin to the ability holder
 			//...
-			useDelay = InitField_Typed("useDelay", 0, typeof(int));
+			//we expect the values from Lscript as follows
+			triggerGroup = InitField_Typed("triggerGroup", null, typeof(TriggerGroup));
+			pluginDef = InitField_Typed("pluginDef", null, typeof(PluginDef));
+			pluginKey = InitField_Typed("pluginKey", null, typeof(PluginKey));
 		}
 
 		[Summary("Check the ability on the character, if he has it, chesk its state and decide what to do next."+
 				"If its is running - deactivate, otherwise - activate.")]
 		public void ActivateOrUnactivate(Character chr) {
 			Ability ab = chr.GetAbility(this);
-			DenyResultAbilities retVal = 0;
-			if(ab == null || ab.Points == 0) {//"0th" common check - do we have the ability?
+			if(ab != null || ab.Points > 0) {//"0th" common check - do we have the ability?
 				if(ab.Running) {
-					ab.Running = false;
-					Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)			
-					retVal = DenyResultAbilities.Deny_WasSwitchedOff; //inform about switching off
+					UnActivate(chr, ab);			
 				} else {
 					Activate(chr, ab);//try to activate
 				}
 			} else {
-				retVal = DenyResultAbilities.Deny_DoesntHaveAbility;
-			}
-			if(retVal != 0) {
-				//ability either not existed or was running - send the message now
-				SendAbilityResultMessage(chr, retVal);
+				chr.RedMessage("O abilitì " + Name + " nevíš vùbec nic");
+			}			
+		}
+
+		[Summary("Common method for simple switching the ability off")]		
+		public void UnActivate(Character chr) {
+			Ability ab = chr.GetAbility(this);
+			if (ab == null || ab.Points == 0) {
+				chr.RedMessage("O abilitì " + Name + " nevíš vùbec nic, není co vypínat.");
+			} else {
+				UnActivate(chr, ab);
 			}
 		}
 
-		[Summary("Different Activate method than in AbilityDef - called only privately after availability- and running- checks")]
-		private void Activate(Character chr, Ability ab) {
-			DenyResultAbilities retVal = 0;
-			if(ab == null || ab.Points == 0) {//"0th" common check - do we have the ability?
-				retVal = DenyResultAbilities.Deny_DoesntHaveAbility;				
-			} else {
-				DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
-				bool cancel = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
-				retVal = args.Result;//this value contains the info if we can or cannot run the ability
+		private void UnActivate(Character chr, Ability ab) {
+			if (ab.Running) { //do it only if running
+				ab.Running = false;
+				Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)
+				chr.SysMessage("Abilita " + Name + " byla vypnuta");//inform about switching off
 			}
+		}
+
+		[Summary("Common method for simple switching the ability on")]
+		public override void Activate(Character chr) {
+			Ability ab = chr.GetAbility(this);
+			if (ab == null || ab.Points == 0) {
+				chr.RedMessage("O abilitì " + Name + " nevíš vùbec nic.");
+			} else {
+				Activate(chr, ab);
+			}
+		}
+
+		private void Activate(Character chr, Ability ab) {
+			DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
+			bool cancel = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
+			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
+			
 			if(retVal == DenyResultAbilities.Allow) {
 				Trigger_Activate(chr);
 				//if we are here, we can use the ability
@@ -152,14 +175,27 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion triggerMethods
 
-		[InfoField("Usage delay")]
-		public virtual int UseDelay {
+		[Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
+				"for appending trigger groups to the ability holder")]
+		public TriggerGroup TriggerGroup {
 			get {
-				return (int)useDelay.CurrentValue;
+				return (TriggerGroup) triggerGroup.CurrentValue;
 			}
-			set {
-				useDelay.CurrentValue = value;
+		}
+
+		[Summary("Plugindef connected with this ability (can be null if no key is specified). It will be used " +
+				"for creating plugin instances and setting them to the ability holder")]
+		public PluginDef PluginDef {
+			get {
+				return (PluginDef) pluginDef.CurrentValue;
 			}
-		}		
+		}
+
+		[Summary("Return plugin key from the field value (used e.g. for removing plugins)")]
+		public PluginKey PluginKeyInstance {
+			get {
+				return (PluginKey) pluginKey.CurrentValue;
+			}
+		}
 	}
 }

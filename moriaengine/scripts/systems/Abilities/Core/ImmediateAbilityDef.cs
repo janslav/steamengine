@@ -31,29 +31,15 @@ namespace SteamEngine.CompiledScripts {
 	public class ImmediateAbilityDef : AbilityDef {
 		public static readonly TriggerKey tkFire = TriggerKey.Get("Fire");
 		
-		[Summary("Field for holding the number information about the pause between another ability activation try." +
-				"You can use 0 for no delay. This field will be used in children classes and will be attributed as FieldValue "+
-				"in order to be settable")]
-		
-		private FieldValue useDelay;
-		
 		public ImmediateAbilityDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
-			//initialize the field value
-			//the field will be in the LScript as follows:
-			//[ImmediateAbilityDef a_bility]
-			//...
-			//useDelay = 300
-			//runMessage = "Nyni muzes zabijet zlym pohledem"
-			//...
-			useDelay = InitField_Typed("useDelay", 0, typeof(int));
+			: base(defname, filename, headerLine) {			
 		}
 
 		[Summary("Implementation of the activating method. Used for running the ability")]
-		internal override void Activate(Character chr) {
+		public override void Activate(Character chr) {
 			Ability ab = chr.GetAbility(this);			
 			DenyResultAbilities retVal = 0;
-			if(ab == null || ab.Points == 0) {//"0th" common check - do we have the ability?
+			if(ab == null) {//"0th" common check - do we have the ability?
 				retVal = DenyResultAbilities.Deny_DoesntHaveAbility;
 			} else {
 				DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
@@ -61,32 +47,29 @@ namespace SteamEngine.CompiledScripts {
 				retVal = args.Result;//this value contains the info if we can or cannot run the ability
 			}			
 			if(retVal == DenyResultAbilities.Allow) {
-				Fire(chr);
+				bool cancel = Trigger_Fire(chr);
 				ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
 			} 
 			SendAbilityResultMessage(chr,retVal); //send result(message) of the "activate" call to the client
 		}
 
 		#region triggerMethods
-		[Summary("This method fires the @fire triggers or trigger methods. "
-			+ "Gets called when every prerequisity has been fulfilled and the ability can be run now")]
-		internal void Fire(Character chr) {
-			if(!Trigger_Fire(chr)) {
-				On_Fire(chr);//not cancelled (no return 1 in LScript), lets continue
-			}
-		}
-
 		[Summary("C# based @fire trigger method")]
-		protected virtual void On_Fire(Character chr) {
+		protected virtual bool On_Fire(Character chr) {
 			chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Fire");
+			return false; //no cancelling
 		}
 
-		[Summary("LScript based @fire triggers")]
+		[Summary("LScript based @fire triggers"+
+				"Gets called when every prerequisity has been fulfilled and the ability can be run now")]
 		private bool Trigger_Fire(Character chr) {
 			bool cancel = false;
 			cancel = TryCancellableTrigger(chr, ImmediateAbilityDef.tkFire, null);
 			if(!cancel) {
 				cancel = chr.On_AbilityFire(this);
+				if (!cancel) {//still not cancelled
+					cancel = On_Fire(chr);
+				}
 			}
 			return cancel;
 		}			
@@ -115,16 +98,6 @@ namespace SteamEngine.CompiledScripts {
 			} 
 			return false; //continue
 		}
-		#endregion triggerMethods
-
-		[InfoField("Usage delay")]		
-		public virtual int UseDelay {
-			get {
-				return (int)useDelay.CurrentValue;				
-			}
-			set {
-				useDelay.CurrentValue = value;
-			}
-		}		
+		#endregion triggerMethods		
 	}
 }

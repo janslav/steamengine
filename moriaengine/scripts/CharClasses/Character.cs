@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 		Skill[] skills;//this CAN be null, altough it usually isn't
 
 		[Summary("Dictionary of character's (typically player's) abilities")]
-		private Dictionary<AbilityDef, Ability> abilities = new Dictionary<AbilityDef, Ability>();
+		private Dictionary<AbilityDef, Ability> abilities = null;
 
 		float weight;
 		private CharModelInfo charModelInfo;
@@ -1356,14 +1356,18 @@ namespace SteamEngine.CompiledScripts {
 		#region abilities		
 		public Ability GetAbility(AbilityDef aDef) {
 			Ability retAb = null;
-			abilities.TryGetValue(aDef, out retAb);
+			if (abilities != null) {
+				abilities.TryGetValue(aDef, out retAb);
+			}
 			return retAb; //either null or Ability instance if the player has it
 		}
 
 		[Summary("Get number of points the character has for specified AbilityDef (0 if he doesnt have it at all)")]
 		public int GetAbilityPoints(AbilityDef aDef) {
 			Ability retAb = null;
-			abilities.TryGetValue(aDef, out retAb);
+			if (abilities != null) {
+				abilities.TryGetValue(aDef, out retAb);
+			}
 			return (retAb == null ? 0 : retAb.Points); //either null or Ability instance if the player has it
 		}
 
@@ -1392,8 +1396,12 @@ namespace SteamEngine.CompiledScripts {
 
 		private void AddNewAbility(AbilityDef aDef, int points) {
 			Ability ab = new Ability(aDef, this);
-			abilities.Add(aDef, ab); //first add the object to the dictionary
-			ab.Points = points; //then set points (which causes also calling of "assign" trigger)				 
+			if (abilities == null) {
+				abilities = new Dictionary<AbilityDef, Ability>(); //preapare the container if it doesnt exist
+			}
+			abilities.Add(aDef, ab); //first add the object to the dictionary			
+			ab.Points = points; //then set points 
+			aDef.Trigger_Assign(this); //then call the assign trigger
 		}
 
 		internal void CheckRemoveAbility(AbilityDef aDef, Ability ab) {
@@ -1404,6 +1412,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal void RemoveAbility(AbilityDef aDef) {
 			abilities.Remove(aDef);
+			aDef.Trigger_UnAssign(this); //then call the unassign trigger
 		}
 
 		internal virtual void On_AbilityAssign(AbilityDef aDef) {
