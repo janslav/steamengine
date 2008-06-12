@@ -224,9 +224,6 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
       <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\TriggerBasedAbilityDef.cs">
-      <Link>systems\Abilities\Core\TriggerBasedAbilityDef.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
     </Compile>

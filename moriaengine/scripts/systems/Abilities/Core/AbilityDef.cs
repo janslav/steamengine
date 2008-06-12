@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Overall method for running the abilites. Its basic implementation does not allow to run the "+
 				"ability unless properly overriden in a child that is made to be run manually")]
-		internal virtual void Activate(Character chr) {
+		public virtual void Activate(Character chr) {
 			chr.RedMessage("Abilitu " + Name + " nelze spustit tímto zpùsobem");
 		}
 
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//now do load the trigger code. 
 			if(input.TriggerCount > 0) {
-				//input.headerName = "t__" + input.headerName + "__";
+				input.headerName = "t__" + input.headerName + "__"; //naming of the trigger group for @assign, unassign etd. triggers
 				abilityDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
                 abilityDef.scriptedTriggers = null;
@@ -190,10 +190,15 @@ namespace SteamEngine.CompiledScripts {
 
 		private FieldValue name; //logical name of the ability
 		private FieldValue maxPoints; //maximum points allowed to assign
+		[Summary("Field for holding the number information about the pause between another ability activation try." +
+				"You can use 0 for no delay")]
+		private FieldValue useDelay;
+
 		
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
             name = InitField_Typed("name", "", typeof(string));
+			useDelay = InitField_Typed("useDelay", 0, typeof(double));			
 			maxPoints = InitField_Typed("maxPoints", 0, typeof(ushort));			
 		}
 
@@ -210,6 +215,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				maxPoints.CurrentValue = value;
+			}
+		}
+
+		[InfoField("Usage delay")]
+		public double UseDelay {
+			get {
+				return (double) useDelay.CurrentValue;
+			}
+			set {
+				useDelay.CurrentValue = value;
 			}
 		}
 

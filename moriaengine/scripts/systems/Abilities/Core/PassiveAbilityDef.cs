@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 			"first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or "+
 			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability)")]
 	[ViewableClass]
-	public class PassiveAbilityDef : TriggerBasedAbilityDef {
+	public class PassiveAbilityDef : ActivableAbilityDef {
 		public PassiveAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			if(this.PluginDef != null) {
 				ch.AddNewPlugin(this.PluginKeyInstance, this.PluginDef);
 			}
-
+			Activate(ch); //activate the ability automatically
 			ch.SysMessage("Získal jsi abilitu " + Name);
 		}
 		#endregion triggerMethods

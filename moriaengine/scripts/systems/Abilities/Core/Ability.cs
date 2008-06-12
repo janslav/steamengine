@@ -50,18 +50,11 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				int oldValue = this.points;
 				if((oldValue != value) && (value <= this.MaxPoints)) {//value has changed and is not at its maximum yet
-					this.points = Math.Max(0,value); //dont go under zero
-				} else if (value > this.MaxPoints) {
-					this.points = this.MaxPoints; //dont allow to go over MaxPoints!
-				}
+					this.points = Math.Max(0, Math.Min(value, this.MaxPoints)); //dont go under zero and dont allow to go over MaxPoints!
+				} 
 				//run triggers if necessary
-				if(oldValue < value) {
-					if(oldValue == 0) { //added first point(s)
-						def.Trigger_Assign(cont);
-					}
-				} else if(oldValue > value) {
+				if(oldValue > value) {
 					if(this.points == 0) { //removed last point(s)
-						def.Trigger_UnAssign(cont);
 						//remove the ability from cont
 						cont.RemoveAbility(def);
 					}
