@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 					Activate(chr, ab);//try to activate
 				}
 			} else {
-				chr.RedMessage("O abilitì " + Name + " nevíš vùbec nic");
+				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
 			}			
 		}
 
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 		public void UnActivate(Character chr) {
 			Ability ab = chr.GetAbility(this);
 			if (ab == null || ab.Points == 0) {
-				chr.RedMessage("O abilitì " + Name + " nevíš vùbec nic, není co vypínat.");
+				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
 			} else {
 				UnActivate(chr, ab);
 			}
@@ -85,21 +85,11 @@ namespace SteamEngine.CompiledScripts {
 			if (ab.Running) { //do it only if running
 				ab.Running = false;
 				Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)
-				chr.SysMessage("Abilita " + Name + " byla vypnuta");//inform about switching off
+				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_WasSwitchedOff);//inform about switching off
 			}
-		}
+		}		
 
-		[Summary("Common method for simple switching the ability on")]
-		public override void Activate(Character chr) {
-			Ability ab = chr.GetAbility(this);
-			if (ab == null || ab.Points == 0) {
-				chr.RedMessage("O abilitì " + Name + " nevíš vùbec nic.");
-			} else {
-				Activate(chr, ab);
-			}
-		}
-
-		private void Activate(Character chr, Ability ab) {
+		protected override void Activate(Character chr, Ability ab) {
 			DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
 			bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
 			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability

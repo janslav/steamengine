@@ -39,10 +39,19 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerGroup scriptedTriggers;
 
-		[Summary("Overall method for running the abilites. Its basic implementation does not allow to run the "+
-				"ability unless properly overriden in a child that is made to be run manually")]
-		public virtual void Activate(Character chr) {
-			chr.RedMessage("Abilitu " + Name + " nelze spustit tímto zpùsobem");
+		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability"+
+				"and in case he has, it runs the protected activation method")]
+		public virtual void Activate(Character chr) {			
+			Ability ab = chr.GetAbility(this);
+			if (ab == null || ab.Points == 0) {
+				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
+			} else {
+				Activate(chr, ab);
+			}
+		}
+
+		protected virtual void Activate(Character chr, Ability ab) {
+			chr.RedMessage("Abilitu " + Name + " nelze použít tímto zpùsobem");
 		}
 
 		#region triggerMethods

@@ -35,22 +35,16 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {			
 		}
 
-		[Summary("Implementation of the activating method. Used for running the ability")]
-		public override void Activate(Character chr) {
-			Ability ab = chr.GetAbility(this);			
-			DenyResultAbilities retVal = 0;
-			if(ab == null) {//"0th" common check - do we have the ability?
-				retVal = DenyResultAbilities.Deny_DoesntHaveAbility;
-			} else {
-				DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
-				bool cancel = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
-				retVal = args.Result;//this value contains the info if we can or cannot run the ability
-			}			
-			if(retVal == DenyResultAbilities.Allow) {
-				bool cancel = Trigger_Activate(chr);
+		protected override void Activate(Character chr, Ability ab) {			
+			DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
+			bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
+			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
+			
+			if (retVal == DenyResultAbilities.Allow) {
+				bool cancelActivate = Trigger_Activate(chr);
 				ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
-			} 
-			SendAbilityResultMessage(chr,retVal); //send result(message) of the "activate" call to the client
-		}		
+			}
+			SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
+		}
 	}
 }
