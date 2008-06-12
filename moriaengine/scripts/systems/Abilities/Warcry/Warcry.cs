@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		
 		public WarcryDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			effectDuration = InitField_Typed("effectDuration", 10, typeof(int));
+			effectDuration = InitField_Typed("effectDuration", 10, typeof(double));
 		}
 		
 		#region triggerMethods
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Functional implementation of warcry ability")]
-		protected override bool On_Fire(Character chr) {
+		protected override bool On_Activate(Character chr) {
 			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, ComputeRange(chr))) {
 				if(chr == plr) {
 					continue; //dont do selfwarcry ;)
@@ -67,9 +67,9 @@ namespace SteamEngine.CompiledScripts {
 		#endregion triggerMethods
 
 		[InfoField("Effect duration")]
-		public int EffectDuration {
+		public double EffectDuration {
 			get {
-				return (int)effectDuration.CurrentValue;
+				return (double) effectDuration.CurrentValue;
 			}
 			set {
 				effectDuration.CurrentValue = value;

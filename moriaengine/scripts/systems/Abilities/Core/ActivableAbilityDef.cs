@@ -32,10 +32,8 @@ namespace SteamEngine.CompiledScripts {
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
 	[ViewableClass]
 	public class ActivableAbilityDef : AbilityDef {
-		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
 		internal static readonly TriggerKey tkUnActivate = TriggerKey.Get("UnActivate");
-		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
-
+		
 		//fields for storing the keys (comming from LScript or set in constructor of children)
 		private FieldValue triggerGroup;
 		private FieldValue pluginDef;
@@ -103,11 +101,11 @@ namespace SteamEngine.CompiledScripts {
 
 		private void Activate(Character chr, Ability ab) {
 			DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
-			bool cancel = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
+			bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
 			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
 			
 			if(retVal == DenyResultAbilities.Allow) {
-				Trigger_Activate(chr);
+				bool cancelActivate = Trigger_Activate(chr);
 				//if we are here, we can use the ability
 				ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
 				ab.Running = true;
@@ -116,6 +114,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region triggerMethods
+		[Summary("When unassigning, do not forget to deactivate the ability (and additionally remove TGs and plugins)")]
+		protected override void On_UnAssign(Character ch) {
+			UnActivate(ch); //unactivate the ability automatically
+		}
+
 		[Summary("C# based @notYet trigger method")]
 		protected virtual void On_UnActivate(Character ch) {
 			ch.RemoveTriggerGroup(this.TriggerGroup);
@@ -130,50 +133,16 @@ namespace SteamEngine.CompiledScripts {
 				chr.On_AbilityUnActivate(this);
 				On_UnActivate(chr);
 			}
-		}
-
-		[Summary("C# based @activate trigger method")]
-		protected virtual void On_Activate(Character ch) {
+		}		
+		#endregion triggerMethods
+		[Summary("C# based @activate trigger method, Overriden from parent - add TG / Plugin to ability holder")]
+		protected override bool On_Activate(Character ch) {
 			ch.AddTriggerGroup(this.TriggerGroup);
-			if(this.PluginDef != null) {
+			if (this.PluginDef != null) {
 				ch.AddNewPlugin(this.PluginKeyInstance, this.PluginDef);
 			}
+			return false;//no cancelling, correctly return
 		}
-
-		[Summary("LScript based @activate triggers and all activate trigger methods")]
-		protected void Trigger_Activate(Character chr) {
-			if(chr != null) {
-				TryTrigger(chr, ActivableAbilityDef.tkActivate, null);
-				chr.On_AbilityActivate(this);
-				On_Activate(chr);
-			}
-		}		
-
-		[Summary("This method fires the @denyUse triggers. "
-				+ "Their purpose is to check if all requirements for running the ability have been met")]
-		private bool Trigger_DenyUse(DenyAbilityArgs args) {
-			bool cancel = false;
-			cancel = this.TryCancellableTrigger(args.abiliter, ActivableAbilityDef.tkDenyUse, args);
-			if(!cancel) {//not cancelled (no return 1 in LScript), lets continue
-				cancel = args.abiliter.On_AbilityDenyUse(args);
-				if(!cancel) {//still not cancelled
-					cancel = On_DenyUse(args);
-				}
-			}
-			return cancel;
-		}
-
-		[Summary("C# based @denyUse trigger method, implementation of common checks (ability presence, (not)running, timers...)")]
-		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
-			Ability ab = args.runAbility;			
-			//common check - is the usage timer OK?
-			if((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
-				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
-				return true;//same as "return 1" from LScript - cancel trigger sequence
-			}
-			return false; //continue
-		}
-		#endregion triggerMethods
 
 		[Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
 				"for appending trigger groups to the ability holder")]
