@@ -17,7 +17,7 @@
 
 using System;
 using System.Text.RegularExpressions;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
@@ -27,8 +27,15 @@ namespace SteamEngine {
 	enum FieldValueType : byte {
 		Model, Typed, Typeless, ThingDefType
 	}
+
+	public interface IFieldValueParser {
+		Type HandledType { get; }
+		bool TryParse(string input, out object retVal);
+	}
 	
 	public sealed class FieldValue : IUnloadable {
+		private static Dictionary<Type, IFieldValueParser> parsers = new Dictionary<Type, IFieldValueParser>();
+
 		string name;
 		FieldValueType fvType;
 		Type type;
@@ -52,6 +59,20 @@ namespace SteamEngine {
 			this.type = type;
 
 			this.SetFromCode(value);
+		}
+
+		public static void Bootstrap() {
+			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<IFieldValueParser>(RegisterParser, false, false);
+		}
+
+		public static void RegisterParser(IFieldValueParser parser) {
+			Type t = parser.HandledType;
+			foreach (Type knownType in parsers.Keys) {
+				if (t.IsAssignableFrom(knownType) || knownType.IsAssignableFrom(t)) {
+					throw new Exception(parser + " is incompatible with " + parsers[knownType] + " as FieldValue parser");
+				}
+			}
+			parsers[t] = parser;
 		}
 
 		public void Unload() {
@@ -136,14 +157,13 @@ namespace SteamEngine {
 						return true;
 					} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
 						return true;
+					} else if (TryResolveWithExternalParser(null, value, ref retVal)) {
+						return true;
 					}
 					break;
 				case FieldValueType.Typed:
 					TypeCode code = Type.GetTypeCode(this.type);
 					switch (code) {
-						case TypeCode.Empty:
-						case TypeCode.DateTime:
-							break;
 						case TypeCode.Boolean:
 							bool b;
 							if (ConvertTools.TryParseBoolean(value, out b)) {
@@ -151,12 +171,18 @@ namespace SteamEngine {
 								return true;
 							}
 							break;
+						case TypeCode.Empty:
+						case TypeCode.DateTime:
 						case TypeCode.Object:
-							if (typeof(AbstractScript).IsAssignableFrom(type)) {
+							if (typeof(AbstractScript).IsAssignableFrom(this.type)) {
 								if (TryResolveAsScript(value, ref retVal)) {
 									return true;
 								}
 							}
+							if (TryResolveWithExternalParser(this.type, value, ref retVal)) {
+								return true;
+							}
+
 							break;
 						case TypeCode.String:
 							string str = value.Trim().Trim('"');
@@ -207,6 +233,23 @@ namespace SteamEngine {
 			}
 
 			retVal = null;
+			return false;
+		}
+
+		private bool TryResolveWithExternalParser(Type returnType, string value, ref object retVal) {
+			if (returnType != null) {
+				IFieldValueParser parser;
+				if (parsers.TryGetValue(returnType, out parser)) {
+					return parser.TryParse(value, out retVal);
+				}
+			}
+			foreach (KeyValuePair<Type, IFieldValueParser> pair in parsers) {
+				if ((returnType == null) || (returnType.IsAssignableFrom(pair.Key))) {
+					if (pair.Value.TryParse(value, out retVal)) {
+						return true;
+					}
+				}
+			}
 			return false;
 		}
 
