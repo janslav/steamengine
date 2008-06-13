@@ -46,12 +46,22 @@ namespace SteamEngine.CompiledScripts {
 			if (ab == null || ab.Points == 0) {
 				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
 			} else {
-				Activate(chr, ab);
+				DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
+				bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
+				DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
+
+				if (retVal == DenyResultAbilities.Allow) {
+					bool cancelActivate = Trigger_Activate(chr);
+					ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
+					Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)
+				}
+				SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
 			}
 		}
 
 		protected virtual void Activate(Character chr, Ability ab) {
-			chr.RedMessage("Abilitu " + Name + " nelze použít tímto zpùsobem");
+			//default without implementation, children can contain some specific behaviour which goes 
+			//beyond the Activate(Character) method capabilities...
 		}
 
 		#region triggerMethods

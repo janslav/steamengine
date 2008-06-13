@@ -26,8 +26,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Ability class serving as a parent for special types of abilities that can assign a plugin or a " +
-			"trigger group (or both) to the ability holder when activated/fired. This class specially offers only fields " +
-			"for storing the plugin/trigger group info it can be also activated (usually by calling some SteamFunction)."+
+			"trigger group (or both) to the ability holder when activated."+
 			"The performing of the ability ends when it is either manually deactivated or some other conditions are fulfilled"+
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
 	[ViewableClass]
@@ -51,9 +50,9 @@ namespace SteamEngine.CompiledScripts {
 			//these values will be then used for assigning TG / plugin to the ability holder
 			//...
 			//we expect the values from Lscript as follows
-			triggerGroup = InitField_Typed("triggerGroup", null, typeof(TriggerGroup));
-			pluginDef = InitField_Typed("pluginDef", null, typeof(PluginDef));
-			pluginKey = InitField_Typed("pluginKey", null, typeof(PluginKey));
+			triggerGroup = InitField_Typed("triggerGroup", null, typeof(TriggerGroup)); //which trigger group will be stored on ability holder
+			pluginDef = InitField_Typed("pluginDef", null, typeof(PluginDef)); //which plugin will be stored on ability holder
+			pluginKey = InitField_Typed("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
 		}
 
 		[Summary("Check the ability on the character, if he has it, chesk its state and decide what to do next."+
@@ -64,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 				if(ab.Running) {
 					UnActivate(chr, ab);			
 				} else {
-					Activate(chr, ab);//try to activate
+					Activate(chr);//try to activate
 				}
 			} else {
 				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
@@ -85,22 +84,12 @@ namespace SteamEngine.CompiledScripts {
 			if (ab.Running) { //do it only if running
 				ab.Running = false;
 				Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)
-				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_WasSwitchedOff);//inform about switching off
 			}
 		}		
 
 		protected override void Activate(Character chr, Ability ab) {
-			DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
-			bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
-			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
-			
-			if(retVal == DenyResultAbilities.Allow) {
-				bool cancelActivate = Trigger_Activate(chr);
-				//if we are here, we can use the ability
-				ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
-				ab.Running = true;
-			}
-			SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
+			//TODO - logging, Ability object state switching
+			ab.Running = true;
 		}
 
 		#region triggerMethods
@@ -109,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 			UnActivate(ch); //unactivate the ability automatically
 		}
 
-		[Summary("C# based @notYet trigger method")]
+		[Summary("C# based trigger method")]
 		protected virtual void On_UnActivate(Character ch) {
 			ch.RemoveTriggerGroup(this.TriggerGroup);
 			ch.RemovePlugin(this.PluginKeyInstance);
@@ -150,7 +139,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Return plugin key from the field value (used e.g. for removing plugins)")]
+		[Summary("Return plugin key from the field value (used e.g. for adding/removing plugins to the character)")]
 		public PluginKey PluginKeyInstance {
 			get {
 				return (PluginKey) pluginKey.CurrentValue;
