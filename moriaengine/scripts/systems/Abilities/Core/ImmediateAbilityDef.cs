@@ -29,22 +29,8 @@ namespace SteamEngine.CompiledScripts {
 			"Their effect will be immediate (e.g. warcry)")]
 	[ViewableClass]
 	public class ImmediateAbilityDef : AbilityDef {
-		public static readonly TriggerKey tkFire = TriggerKey.Get("Fire");
-		
 		public ImmediateAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {			
-		}
-
-		protected override void Activate(Character chr, Ability ab) {			
-			DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
-			bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
-			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
-			
-			if (retVal == DenyResultAbilities.Allow) {
-				bool cancelActivate = Trigger_Activate(chr);
-				ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
-			}
-			SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
-		}
+		}		
 	}
 }
