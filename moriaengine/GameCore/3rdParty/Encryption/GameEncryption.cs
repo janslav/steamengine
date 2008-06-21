@@ -7,7 +7,7 @@ namespace SteamEngine.Packets
 {
 	public class GameEncryption : IClientEncryption
 	{
-		private TwofishEncryption engine;
+		private SteamEngine.Networking.TwofishEncryption engine;
 
 		private ushort recvPos; // Position in our CipherTable (Recv)
 		private byte sendPos; // Offset in our XOR Table (Send)
@@ -26,7 +26,7 @@ namespace SteamEngine.Packets
 			key[3] = key[7] = key[11] = key[15] = (byte)(seed & 0xff);
 
 			byte[] iv = new byte[0];
-			engine = new TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, TwofishBase.EncryptionDirection.Decrypting);
+			engine = new SteamEngine.Networking.TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, SteamEngine.Networking.TwofishBase.EncryptionDirection.Decrypting);
 
 			// Initialize table
 			for ( int i = 0; i < 256; ++i )

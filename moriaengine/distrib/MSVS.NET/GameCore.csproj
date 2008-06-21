@@ -602,6 +602,24 @@
       <Link>MultiData.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\GameCore\Networking\GameClient.cs">
+      <Link>Networking\GameClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\GameCompression.cs">
+      <Link>Networking\GameCompression.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\GameEncryption.cs">
+      <Link>Networking\GameEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\GameServer.cs">
+      <Link>Networking\GameServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\IncomingPackets.cs">
+      <Link>Networking\IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\OutgoingPackets.cs">
+      <Link>Networking\OutgoingPackets.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\ObjectPropertiesContainer.cs">
       <Link>ObjectPropertiesContainer.cs</Link>
     </Compile>
