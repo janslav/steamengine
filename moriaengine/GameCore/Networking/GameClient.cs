@@ -1,0 +1,77 @@
+/*
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	Or visit http://www.gnu.org/copyleft/gpl.html
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
+using SteamEngine.Common;
+using System.IO;
+using System.Net;
+
+namespace SteamEngine.Networking {
+	public class GameClient : Poolable,
+	IConnectionState<TCPConnection<GameClient>, GameClient, IPEndPoint> {
+
+		static int uids;
+
+		int uid;
+
+		IEncryption encryption;
+
+		protected override void On_Reset() {
+			encryption = new GameEncryption();
+			uid = uids++;
+
+			base.On_Reset();
+		}
+
+		public IEncryption Encryption {
+			get {
+				return encryption;
+			}
+		}
+
+		public ICompression Compression {
+			get {
+				return null;
+			}
+		}
+
+		public void On_Init(TCPConnection<GameClient> conn) {
+			Console.WriteLine(this + " connected from " + conn.EndPoint);
+		}
+
+		public void On_Close(string reason) {
+			Console.WriteLine(this + " closed: " + reason);
+		}
+
+		public override string ToString() {
+			return "LoginClient " + uid;
+		}
+
+		//public override void Handle(IncomingPacket packet) {
+		//    ConsoleServerPacketGroup pg = Pool<ConsoleServerPacketGroup>.Acquire();
+
+		//    pg.AddPacket(Pool<ConsoleServerOutgoingPacket>.Acquire());
+
+		//    //MainClass.server.SendPacketGroup(this, pg);
+		//}
+	}
+
+}

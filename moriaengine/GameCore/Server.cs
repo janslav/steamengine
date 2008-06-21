@@ -312,8 +312,6 @@ namespace SteamEngine {
 
 			Console.WriteLine("Listening on port "+LogStr.Number(Globals.port)+" for Game clients");
 			
-			MethodInfo mi = typeof(Server).GetMethod("CheckIdles");
-
 			new IdleCheckTimer();
 		}
 		
