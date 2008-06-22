@@ -351,9 +351,9 @@ namespace SteamEngine {
 							AddConn(newConn);
 							Globals.instance.TryTrigger(TriggerKey.clientAttach, new ScriptArgs(newConn)); // 
 						} else {
+							EndPoint remoteEndpoint = socket.RemoteEndPoint;
 							socket.Send(new byte[2] {0x82, 0x04});
 							socket.Close();
-							EndPoint remoteEndpoint = socket.RemoteEndPoint;
 							Console.WriteLine("Connection (Ip {0}) rejected - server is full and/or paused.", remoteEndpoint);
 							continue;
 						}
