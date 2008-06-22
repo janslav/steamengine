@@ -26,7 +26,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 
-	internal class ThingLinkedList : IEnumerable<Thing>  {
+	internal class ThingLinkedList : IEnumerable<Thing>, IEnumerable<AbstractItem>  {
 		private readonly object cont;
 		internal Thing firstThing;
 		internal ushort count;
@@ -124,11 +124,15 @@ namespace SteamEngine {
 			return new ThingLinkedListEnumerator(this);
 		}
 
-		public IEnumerator GetEnumerator() {
+		public IEnumerator<AbstractItem> GetEnumerator() {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() {
 			return new ThingLinkedListEnumerator(this);
 		}
 
-		private class ThingLinkedListEnumerator : IEnumerator<Thing> {
+		private class ThingLinkedListEnumerator : IEnumerator<Thing>, IEnumerator<AbstractItem> {
 			ThingLinkedList cont;
 			Thing current;
 			Thing next;//this is because of the possibility 
@@ -162,6 +166,12 @@ namespace SteamEngine {
 			object IEnumerator.Current {
 				get {
 					return current;
+				}
+			}
+
+			AbstractItem IEnumerator<AbstractItem>.Current {
+				get {
+					return (AbstractItem) current;
 				}
 			}
 

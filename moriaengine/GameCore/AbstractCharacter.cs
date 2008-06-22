@@ -1424,12 +1424,12 @@ namespace SteamEngine {
 			return count;
 		} }
 
-		public override sealed System.Collections.IEnumerator GetEnumerator() {
+		public override sealed IEnumerator<AbstractItem> GetEnumerator() {
 			ThrowIfDeleted();
 			return new EquipsEnumerator(this);
 		}
 	}
-	public class EquipsEnumerator: System.Collections.IEnumerator {
+	public class EquipsEnumerator : IEnumerator<AbstractItem> {
 		private const int STATE_VISIBLES = 0;
 		private const int STATE_DRAGGING = 1;
 		private const int STATE_SPECIAL = 2;
@@ -1533,13 +1533,20 @@ namespace SteamEngine {
 			}
     		return false;
     	}
-    	
-    	public AbstractItem Current { get {
-    	      return current;
-    	} }
-    	
-    	object IEnumerator.Current { get {
-    	      return current;
-    	} }
+
+		public void Dispose() {
+		}
+
+		public AbstractItem Current {
+			get {
+				return current;
+			}
+		}
+
+		object IEnumerator.Current {
+			get {
+				return current;
+			}
+		}
 	}
 }

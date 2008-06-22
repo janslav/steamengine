@@ -34,7 +34,7 @@ namespace SteamEngine {
 		int Uid { get; set; }
 	}
 
-	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable, ObjectWithUid {
+	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem>, ObjectWithUid {
 		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
 		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
 
@@ -581,7 +581,11 @@ namespace SteamEngine {
 
 		public abstract AbstractItem FindCont(int index);
 
-		public abstract IEnumerator GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() {
+			return this.GetEnumerator();
+		}
+
+		public abstract IEnumerator<AbstractItem> GetEnumerator();
 
 		//------------------------
 		//Private & internal stuff
