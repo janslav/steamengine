@@ -219,7 +219,7 @@ namespace SteamEngine.Persistence {
 			if (t.IsEnum) {
 				return Convert.ToUInt64(value).ToString();
 			} else if (TagMath.IsNumberType(t)) {
-				return value.ToString();
+				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} else if (t.Equals(typeof(String))) {
 				string stringAsSingleLine = Utility.EscapeNewlines((string) value);
 				return "\""+stringAsSingleLine+"\""; //returns the string in ""

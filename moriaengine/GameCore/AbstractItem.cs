@@ -571,7 +571,7 @@ namespace SteamEngine {
 			if (tll == null) {
 				return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
 			} else {
-				return tll.GetEnumerator();
+				return tll.GetItemEnumerator();
 			}
 		}
 	}

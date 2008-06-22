@@ -26,7 +26,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 
-	internal class ThingLinkedList : IEnumerable<Thing>, IEnumerable<AbstractItem>  {
+	internal class ThingLinkedList : IEnumerable<Thing> {
 		private readonly object cont;
 		internal Thing firstThing;
 		internal ushort count;
@@ -42,16 +42,16 @@ namespace SteamEngine {
 		}
 
 		internal void Add(Thing thing) {
-			Sanity.IfTrueThrow((thing.prevInList != null || thing.nextInList != null), 
-				"'"+thing+"' being added into a ThingLinkedList while being in another cont already");
-			Thing next=firstThing;
-			firstThing=thing;
-			thing.prevInList=null;
-			thing.nextInList=next;
-			if (next!=null) {
-				next.prevInList=thing;
+			Sanity.IfTrueThrow((thing.prevInList != null || thing.nextInList != null),
+				"'" + thing + "' being added into a ThingLinkedList while being in another cont already");
+			Thing next = firstThing;
+			firstThing = thing;
+			thing.prevInList = null;
+			thing.nextInList = next;
+			if (next != null) {
+				next.prevInList = thing;
 			}
-			thing.contOrTLL=this;
+			thing.contOrTLL = this;
 			count++;
 		}
 
@@ -63,10 +63,10 @@ namespace SteamEngine {
 					thing.prevInList.nextInList = thing.nextInList;
 				}
 				if (thing.nextInList != null) {
-					thing.nextInList.prevInList=thing.prevInList;
+					thing.nextInList.prevInList = thing.prevInList;
 				}
-				thing.prevInList=null;
-				thing.nextInList=null;
+				thing.prevInList = null;
+				thing.nextInList = null;
 				count--;
 				return true;
 			}
@@ -124,7 +124,7 @@ namespace SteamEngine {
 			return new ThingLinkedListEnumerator(this);
 		}
 
-		public IEnumerator<AbstractItem> GetEnumerator() {
+		public IEnumerator<AbstractItem> GetItemEnumerator() {
 			return new ThingLinkedListEnumerator(this);
 		}
 
@@ -149,15 +149,15 @@ namespace SteamEngine {
 			}
 
 			public bool MoveNext() {
-				current=next;
-				if (current==null) {
+				current = next;
+				if (current == null) {
 					return false;
 				}
-				next=current.nextInList;
+				next = current.nextInList;
 				return true;
 			}
 
-			public Thing Current {
+			Thing IEnumerator<Thing>.Current {
 				get {
 					return current;
 				}
