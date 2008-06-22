@@ -89,6 +89,23 @@ namespace SteamEngine.CompiledScripts {
 		Deny_WasSwitchedOff = 4 //the ability was currently running (for ActivableAbilities only) so we switched it off
 	}
 
+	//specification of various localities where to look for resources
+	public enum ResourcesLocality {
+		NonSpecified = 1, //not specified where to look for resources (used for abilities,skills,triggergroups etc)
+		//following usages are usually for resource of type "itemdef" - where should we search for the items
+		WearableLayers = 2, //search among worn items (gloves, helm, rings etc)
+		Backpack = 3, //look to the backpack only
+		Bank = 4,	 //look to the bank only
+		BackpackAndBank = 5, //look to both main containers
+		Everywhere = 6 //searchevery place on the character (wearables, backapck, bank etc.)
+	}
+
+	//specificy how many items should we try to find at the specified location
+	public enum ItemFindQuantity {
+		FindAll = 1, //searches the whole location and returns the list of all items that correspond to the desired one
+		FindFirst = 2 //searches until the first corresponding item is found
+	}
+
 	[Summary("Various sorting criteria for displaying regions list")]
 	public enum RegionsSorting : int {
 		NameAsc,
@@ -136,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 		Single
 	}
 
-	[Summary("Result of settign a single field in the info or settings dialogs")]
+	[Summary("Result of setting a single field in the info or settings dialogs")]
 	public enum SettingsOutcome {
 		NotChanged,//field has not changed at all
 		ChangedOK, //field has changed successfully

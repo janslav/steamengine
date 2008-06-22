@@ -362,6 +362,66 @@
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceCounters\ItemsCounter.cs">
+      <Link>systems\Resources\ResourceCounters\ItemsCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceCounters\ResourceCounter.cs">
+      <Link>systems\Resources\ResourceCounters\ResourceCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceCounters\TriggerGroupsCounter.cs">
+      <Link>systems\Resources\ResourceCounters\TriggerGroupsCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\AbilityResource.cs">
+      <Link>systems\Resources\ResourceListItems\AbilityResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\ItemResource.cs">
+      <Link>systems\Resources\ResourceListItems\ItemResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\SkillResource.cs">
+      <Link>systems\Resources\ResourceListItems\SkillResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatDexResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatDexResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatIntResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatIntResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatStrResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatStrResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatVitResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatVitResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\TriggerGroupResource.cs">
+      <Link>systems\Resources\ResourceListItems\TriggerGroupResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourcesList.cs">
+      <Link>systems\Resources\ResourcesList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourcesParser.cs">
+      <Link>systems\Resources\ResourcesParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\AllItemsLocalizer.cs">
+      <Link>systems\Resources\Searching\AllItemsLocalizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\BackpackAndBankItemsLocalizer.cs">
+      <Link>systems\Resources\Searching\BackpackAndBankItemsLocalizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\BackpackItemsLocalizer.cs">
+      <Link>systems\Resources\Searching\BackpackItemsLocalizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\BankItemsLocalizer.cs">
+      <Link>systems\Resources\Searching\BankItemsLocalizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\ItemsLocalizer.cs">
+      <Link>systems\Resources\Searching\ItemsLocalizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\ResourceItemFinder.cs">
+      <Link>systems\Resources\Searching\ResourceItemFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\WearableLayersItemsLocalizer.cs">
+      <Link>systems\Resources\Searching\WearableLayersItemsLocalizer.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>
     </Compile>

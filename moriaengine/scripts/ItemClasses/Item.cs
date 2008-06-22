@@ -28,6 +28,17 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
     public partial class Item : AbstractItem {
+		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 "+
+				" then the item will be deleted. Method returns the actually consumed amount.")]
+		public uint Consume(uint howMuch) {
+			uint canBeConsumed = Math.Min(howMuch, Amount);
+			Amount -= canBeConsumed;
+			if (Amount == 0) {//consumed all
+				Delete();
+			}
+			return canBeConsumed;//this is how much was really consumed
+		}
+
 		public override byte FlagsToSend {
 			get {	//It looks like only 080 (invis) and 020 (static) are actually used
 				int ret = 0;
