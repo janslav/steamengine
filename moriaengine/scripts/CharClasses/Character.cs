@@ -1353,7 +1353,16 @@ namespace SteamEngine.CompiledScripts {
 		//}
 		#endregion skills
 
-		#region abilities		
+		#region abilities
+		[Summary("Check if character has the desired ability (according to the ability def)")]
+		public bool HasAbility(AbilityDef aDef) {
+			Ability retAb = null;
+			if (abilities != null) {
+				return abilities.TryGetValue(aDef, out retAb);
+			}
+			return false;//doesnt have any ability at all
+		}
+
 		public Ability GetAbility(AbilityDef aDef) {
 			Ability retAb = null;
 			if (abilities != null) {
