@@ -564,8 +564,9 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-				
-		public override sealed IEnumerator GetEnumerator() {
+
+		public override sealed IEnumerator<AbstractItem> GetEnumerator() {
+			this.ThrowIfDeleted();
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
