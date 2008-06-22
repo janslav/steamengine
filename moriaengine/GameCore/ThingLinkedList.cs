@@ -125,7 +125,7 @@ namespace SteamEngine {
 		}
 
 		public IEnumerator<AbstractItem> GetEnumerator() {
-			throw new Exception("The method or operation is not implemented.");
+			return new ThingLinkedListEnumerator(this);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
