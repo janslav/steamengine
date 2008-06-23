@@ -57,6 +57,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+
+		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
+			//realy, this method should not be used in this way!
+			throw new SEException("Disallowed usage of present checking method for ItemResource");
+		}
 		#endregion
 
 		#region IResourceListItemMultiplicable Members
@@ -65,6 +70,6 @@ namespace SteamEngine.CompiledScripts {
 			return new ItemsCounter(itemDef, number);
 		}
 
-		#endregion
+		#endregion		
 	}
 }

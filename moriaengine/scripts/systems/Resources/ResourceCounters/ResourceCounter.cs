@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if the given item corresponds to this particular resource item (i.e. is of the same " +
 				"itemdef, has the desired triggergroup (as type) etc)")]
-		internal abstract bool ItemCorresponds(AbstractItem itm);
+		internal abstract bool ItemCorresponds(Item itm);
 
 		[Summary("Add the item to the found items list and count its amount for resource's multiplicity determining")]
 		internal void IncludeItem(Item itm) {

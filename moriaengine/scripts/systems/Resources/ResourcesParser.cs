@@ -53,7 +53,6 @@ namespace SteamEngine.CompiledScripts {
 					double nmr = ConvertTools.ParseDouble(number);
 					resList.Add(createResListItem(nmr, value));					
 				}
-				resList.PrepareResourceCounters();//for multiplicable resources we will need their Counter classes...
 				retVal = resList;
 				return true;
 			} else {

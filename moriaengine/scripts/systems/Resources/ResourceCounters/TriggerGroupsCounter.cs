@@ -28,11 +28,8 @@ namespace SteamEngine.CompiledScripts {
 			this.toLookFor = tgToLookFor;			
 		}
 
-		internal override bool ItemCorresponds(AbstractItem itm) {
-			if (itm.Type == toLookFor) {
-				return true;
-			}
-			return false;
+		internal override bool ItemCorresponds(Item itm) {
+			return (itm.Type == toLookFor);
 		}		
 	}
 }

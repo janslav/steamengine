@@ -29,11 +29,8 @@ namespace SteamEngine.CompiledScripts {
 			this.toLookFor = iDefToLookFor;
 		}
 
-		internal override bool ItemCorresponds(AbstractItem itm) {
-			if (itm.TypeDef == toLookFor) {
-				return true;
-			}
-			return false;
+		internal override bool ItemCorresponds(Item itm) {
+			return (itm.TypeDef == toLookFor);			
 		}
 	}
 }
