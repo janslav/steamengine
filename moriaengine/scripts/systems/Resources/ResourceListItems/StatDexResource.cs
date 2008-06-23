@@ -45,11 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsSameResource(IResourceListItem newOne) {
-			StatDexResource newResource = newOne as StatDexResource;
-			if (newResource != null) {
-				return true;
-			}
-			return false;
+			return ((newOne as StatDexResource) != null);			
 		}
 
 		public bool IsResourcePresent(Character chr, ResourcesLocality where) {

@@ -60,8 +60,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
-			//we dont care "where", a TG is a TG
-			return chr.HasTriggerGroup(triggerGroup);
+			//realy, this method should not be used in this way!
+			throw new SEException("Disallowed usage of present checking method for TriggerGroupResource");
 		}
 		#endregion
 

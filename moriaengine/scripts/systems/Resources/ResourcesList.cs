@@ -28,8 +28,6 @@ namespace SteamEngine.CompiledScripts {
 		private List<IResourceListItemMultiplicable> multiplicablesSubList = new List<IResourceListItemMultiplicable>();
 		//sublist of other resources used usually only for "is present" check
 		private List<IResourceListItem> nonMultiplicablesSubList = new List<IResourceListItem>();
-		//list of resource counters corresponding to the list of "multiplicable" resources
-		private List<ResourceCounter> resourceCounters = new List<ResourceCounter>();
 			
 		[Summary("Add new ResourceListItem to the list")]
 		internal void Add(IResourceListItem newItem) {			
@@ -61,45 +59,53 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check if character has all resources from the resource list")]
 		public bool HasResourcesPresent(Character chr, ResourcesLocality where) {
 			//first check non-multiplicables (these are easy to check (usually some "Has..." method))
-			foreach (IResourceListItem rli in resourceItemsList) {
-				if (!rli.IsResourcePresent(chr, where)) { //first not found resource ends the cycle 
-					return false;
-				}				
+			if (!CheckNonMultiplicableItems(chr)) {
+				return false;
 			}
 			
+			//list of resource counters corresponding to the list of "multiplicable" resources
+			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
-			ResourceItemFinder finder = ResourceItemFinder.GetInstance(where);
-			finder.LocalizeItems(chr, resourceCounters);
-			//now check if all resources has been found in adequate amount
-			foreach (ResourceCounter ctr in resourceCounters) {
-				if (ctr.Multiplicity == 0) {//the desired resource cannot be consumed in desired amount
-					return false; 
-				}
+			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+				return false;
 			}
+			
 			return true; //all resources present
 		}
 
 		[Summary("Consume the whole resource list from the character as many times as specified")]
-		public void ConsumeResources(uint howManyTimes) {
-			uint availableOnly = ResListAvailableTimes();
-			if (howManyTimes > availableOnly) {
-				//sanity check, this should not happen if the scripter is wise
-				throw new SEException(LogStr.Error("Resource list demanded "+howManyTimes+" times but is available only "+availableOnly+" times")); 
+		public bool ConsumeResources(Character chr, ResourcesLocality where) {
+			if (!CheckNonMultiplicableItems(chr)) {
+				return false;
 			}
+			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
+			//then check multiplicables (these may desire some items iterating e.t.c)
+			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+				return false;
+			}
+			//if we are here then there is for every ResourceCounter the multiplicity at least 1 (which is enough for us)
 			foreach (ResourceCounter ctr in resourceCounters) {
-				ctr.ConsumeItems(howManyTimes);
+				ctr.ConsumeItems(1);
 			}
+			return true;
 		}
 
-		[Summary("How many times do we have the whole resource list available? (Usable e.g for massive "+
-				"items crafting e.t.c), consuming the resorces more than once")]
-		public uint ResListAvailableTimes() {
-			uint leastMultiplicity = uint.MaxValue;
-			foreach (ResourceCounter ctr in resourceCounters) {
-				//check every resource counter and get their multiplicities (we will use the lowest one)
-				leastMultiplicity = Math.Min(leastMultiplicity, ctr.Multiplicity);
+		[Summary("Consume the whole resource list from the character as many times as possible, return information "+
+				"about how many times it has been consumed")]
+		public uint ConsumeResources(Character chr, ResourcesLocality where, bool asManyAsPossible) {
+			if (!CheckNonMultiplicableItems(chr)) {
+				return 0;
 			}
-			return leastMultiplicity;
+			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
+			//then check multiplicables (these may desire some items iterating e.t.c)
+			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+				return 0;
+			}
+			uint availableOnly = ResListAvailableTimes(resourceCounters);			
+			foreach (ResourceCounter ctr in resourceCounters) {
+				ctr.ConsumeItems(availableOnly);
+			}
+			return availableOnly;
 		}
 
 		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]		
@@ -115,11 +121,46 @@ namespace SteamEngine.CompiledScripts {
 				return nonMultiplicablesSubList;
 			}
 		}
-
-		internal void PrepareResourceCounters() {
-			foreach (IResourceListItemMultiplicable rli in multiplicablesSubList) {
-				resourceCounters.Add(rli.GetCounter());
+		
+		//look to the resource counters and find out how many times we can consume the resource list
+		private uint ResListAvailableTimes(List<ResourceCounter> resourceCounters) {
+			uint leastMultiplicity = uint.MaxValue;
+			foreach (ResourceCounter ctr in resourceCounters) {
+				//check every resource counter and get their multiplicities (we will use the lowest one)
+				leastMultiplicity = Math.Min(leastMultiplicity, ctr.Multiplicity);
 			}
+			return leastMultiplicity;
+		}
+
+		private List<ResourceCounter> PrepareResourceCounters() {
+			List<ResourceCounter> retList = new List<ResourceCounter>();
+			foreach (IResourceListItemMultiplicable rli in multiplicablesSubList) {
+				retList.Add(rli.GetCounter());
+			}
+			return retList;
+		}
+
+		private bool CheckNonMultiplicableItems(Character chr) {
+			foreach (IResourceListItem rli in nonMultiplicablesSubList) {
+				if (!rli.IsResourcePresent(chr, ResourcesLocality.NonSpecified)) { //first not found resource ends the cycle 
+					return false;
+				}
+			}
+			return true;
+		}
+
+		//check multiplicable items for their presence in the specified ResourcesLocality, initializes also the 
+		//list of ResourceCounters
+		private bool CheckMultiplicableItems(Character chr, ResourcesLocality where, List<ResourceCounter> resourceCounters) {
+			ResourceItemFinder finder = ResourceItemFinder.GetInstance(where);
+			finder.LocalizeItems(chr, resourceCounters);
+			//now check if all resources has been found in adequate amount
+			foreach (ResourceCounter ctr in resourceCounters) {
+				if (ctr.Multiplicity == 0) {//the desired resource cannot be consumed in desired amount
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 
@@ -147,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Interface for single resource stored in resource lists. These items can be multiplicable - "+
 			"e.g. itemdefs, allowing us to say 'how many times the resourcelist has been found at the char's"+
 			"(usable for crafting more than 1 item at a time e.t.c)")]
-	public interface IResourceListItemMultiplicable {
+	public interface IResourceListItemMultiplicable : IResourceListItem {
 		[Summary("Return the resource counter object for this resource")]
 		ResourceCounter GetCounter();
 	}		
