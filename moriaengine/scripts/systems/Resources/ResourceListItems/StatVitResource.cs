@@ -48,8 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			return ((newOne as StatVitResource) != null);
 		}
 
-		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
-			//we dont care "where", vitality is vitality
+		public bool IsResourcePresent(Character chr) {
 			return chr.MaxHits >= DesiredCount;
 		}
 

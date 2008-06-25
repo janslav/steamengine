@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
+		public bool IsResourcePresent(Character chr) {
 			//realy, this method should not be used in this way!
 			throw new SEException("Disallowed usage of present checking method for TriggerGroupResource");
 		}

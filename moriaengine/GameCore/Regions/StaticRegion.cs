@@ -542,7 +542,7 @@ namespace SteamEngine.Regions {
 			try {
 				foreach(StaticRegion child in children) {
 					child.parent = this.parent; //reset parents!
-					if(typeof(StaticRegion).IsAssignableFrom(child.GetType())) {
+					if(child is StaticRegion) {
 						//if child is StaticRegion), make it activable - we dont care for DynamicRegions etc				
 						((StaticRegion)child).canBeActivated = true;
 					}

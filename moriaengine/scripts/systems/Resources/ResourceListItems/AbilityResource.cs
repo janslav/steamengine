@@ -58,11 +58,10 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
-			//we dont care "where", an ability is an ability
-			return chr.HasAbility(abilityDef);
+		public bool IsResourcePresent(Character chr) {
+			//method returns number of ability points or 0 if we dont have the ability
+			return chr.GetAbilityPoints(abilityDef) >= number;			
 		}
-
 		#endregion
 	}
 }

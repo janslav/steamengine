@@ -258,16 +258,17 @@ namespace SteamEngine.CompiledScripts {
 
 		private FieldValue name; //logical name of the ability
 		private FieldValue maxPoints; //maximum points allowed to assign
-		[Summary("Field for holding the number information about the pause between another ability activation try." +
-				"You can use 0 for no delay")]
 		private FieldValue useDelay;
-
+		private FieldValue resourcesConsumed;//resourcelist of resources to be consumed for ability using
+		private FieldValue resourcesPresent;//resourcelist of resources that player must have intending to run the ability
 		
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
             name = InitField_Typed("name", "", typeof(string));
-			useDelay = InitField_Typed("useDelay", 0, typeof(double));			
-			maxPoints = InitField_Typed("maxPoints", 0, typeof(ushort));			
+			useDelay = InitField_Typed("useDelay", 0, typeof(double));
+			maxPoints = InitField_Typed("maxPoints", 0, typeof(ushort));
+			resourcesConsumed = InitField_Typed("resourcesConsumed", null, typeof(ResourcesList));
+			resourcesPresent = InitField_Typeless("resourcesPresent", null);
 		}
 
         public string Name {
@@ -287,6 +288,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[InfoField("Usage delay")]
+		[Summary("Field for holding the number information about the pause between next activation try." +
+				"You can use 0 for no delay")]		
 		public double UseDelay {
 			get {
 				return (double) useDelay.CurrentValue;
@@ -325,7 +328,7 @@ namespace SteamEngine.CompiledScripts {
 			return GetType().Name + " " + Name;
 		}
 
-		#region utilities		
+		#region utilities
 		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
 		public static IEnumerable<AbilityDef> GetAllAbilities() {
 			if(byName != null) {

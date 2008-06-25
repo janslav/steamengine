@@ -17,6 +17,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine;
@@ -378,12 +379,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//get the column we are adding the component to
 				GUTAColumn columnToAccess = (GUTAColumn)components[col];
 				//now check what is the component:
-				GUTAComponent addedObj = null;
-				if(typeof(GUTAComponent).IsAssignableFrom(value.GetType())) {
-					addedObj = (GUTAComponent)value; //the component is added directly					
-				} else if(typeof(string).IsAssignableFrom(value.GetType())) {
-					addedObj = TextFactory.CreateText((string)value); //create the text component now
+				GUTAComponent addedObj = value as GUTAComponent;//the component will be added directly	
+				if (addedObj == null) {
+					string strVal;
+					if (ConvertTools.TryConvertToString(value, out strVal)) {
+						addedObj = TextFactory.CreateText(strVal); //create the text component now					
+					} else {
+						throw new SEException("Unhandled object type for dialog column " + value.GetType());						
+					}
 				}
+				
 				//move the component to the desired row
 				addedObj.YPos += row * rowHeight;
 				//and add the component
