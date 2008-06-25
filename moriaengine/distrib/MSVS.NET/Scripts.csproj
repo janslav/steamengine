@@ -401,26 +401,8 @@
     <Compile Include="..\..\scripts\systems\Resources\ResourcesParser.cs">
       <Link>systems\Resources\ResourcesParser.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Resources\Searching\AllItemsLocalizer.cs">
-      <Link>systems\Resources\Searching\AllItemsLocalizer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Resources\Searching\BackpackAndBankItemsLocalizer.cs">
-      <Link>systems\Resources\Searching\BackpackAndBankItemsLocalizer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Resources\Searching\BackpackItemsLocalizer.cs">
-      <Link>systems\Resources\Searching\BackpackItemsLocalizer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Resources\Searching\BankItemsLocalizer.cs">
-      <Link>systems\Resources\Searching\BankItemsLocalizer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Resources\Searching\ItemsLocalizer.cs">
-      <Link>systems\Resources\Searching\ItemsLocalizer.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Resources\Searching\ResourceItemFinder.cs">
       <Link>systems\Resources\Searching\ResourceItemFinder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Resources\Searching\WearableLayersItemsLocalizer.cs">
-      <Link>systems\Resources\Searching\WearableLayersItemsLocalizer.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>

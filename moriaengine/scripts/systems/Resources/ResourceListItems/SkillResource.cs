@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
+		public bool IsResourcePresent(Character chr) {
 			//we dont care "where", the skill is a skill
 			return skillDef.SkillValueOfChar(chr) >= DesiredCount;
 		}

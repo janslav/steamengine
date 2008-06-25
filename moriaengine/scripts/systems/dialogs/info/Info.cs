@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			string headline;
 			//decide the headline according to the dialog type (info/setting)
-			if(typeof(SettingsMetaCategory).IsAssignableFrom(target.GetType())) {
+			if(target is SettingsMetaCategory) {
 				headline = "Settings dialog " + (viewCls == null ? "" : " - " + viewCls.GetName(target));
 			} else {
 				headline = "Info dialog" + (viewCls == null ? "" : " - "+viewCls.GetName(target));

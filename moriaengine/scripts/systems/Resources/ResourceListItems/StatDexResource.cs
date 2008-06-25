@@ -48,8 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			return ((newOne as StatDexResource) != null);			
 		}
 
-		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
-			//we dont care "where", dex is dex
+		public bool IsResourcePresent(Character chr) {
 			return chr.Dex >= DesiredCount;
 		}
 

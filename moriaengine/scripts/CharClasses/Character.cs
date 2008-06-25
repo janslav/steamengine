@@ -1355,10 +1355,10 @@ namespace SteamEngine.CompiledScripts {
 
 		#region abilities
 		[Summary("Check if character has the desired ability (according to the ability def)")]
-		public bool HasAbility(AbilityDef aDef) {
-			Ability retAb = null;
+		public bool HasAbility(AbilityDef aDef, out Ability abil) {
+			abil = null;
 			if (abilities != null) {
-				return abilities.TryGetValue(aDef, out retAb);
+				return abilities.TryGetValue(aDef, out abil);
 			}
 			return false;//doesnt have any ability at all
 		}

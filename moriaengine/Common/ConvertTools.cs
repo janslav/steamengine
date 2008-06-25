@@ -120,7 +120,25 @@ namespace SteamEngine.Common {
 			} catch (Exception) {
 				retVal = null;
 				return false;
+			}			
+		}
+
+		[Summary("Try converting the given object to string")]
+		public static bool TryConvertToString(object obj, out string retVal) {
+			//first try formattable
+			IFormattable valueCast1 = obj as IFormattable;
+			if (valueCast1 != null) {
+				retVal = valueCast1.ToString(null, CultureInfo.InvariantCulture);
+				return true;
 			}
+			//then convertible
+			IConvertible valueCast2 = obj as IConvertible;
+			if (valueCast2 != null) {
+				retVal = valueCast2.ToString(CultureInfo.InvariantCulture);
+				return true;
+			}
+			retVal = null;
+			return false;			
 		}
 
 		public static bool IsNumber(object o) {

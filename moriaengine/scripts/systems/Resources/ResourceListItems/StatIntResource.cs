@@ -48,8 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			return ((newOne as StatIntResource) != null);
 		}
 
-		public bool IsResourcePresent(Character chr, ResourcesLocality where) {
-			//we dont care "where", int is int
+		public bool IsResourcePresent(Character chr) {
 			return chr.Int >= DesiredCount;
 		}
 
