@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
-
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 

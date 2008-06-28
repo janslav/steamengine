@@ -21,7 +21,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as AbilityDef")]
-	public class AbilityResource : IResourceListItem {
+	public class AbilityResource : IResourceListItemNonMultiplicable {
 		private AbilityDef abilityDef;
 		private double number;
 		private string definition;
@@ -57,7 +57,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+		#endregion
 
+		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			//method returns number of ability points or 0 if we dont have the ability
 			return chr.GetAbilityPoints(abilityDef) >= number;			

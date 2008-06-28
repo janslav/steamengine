@@ -111,7 +111,7 @@ namespace SteamEngine.Communication {
 				Buffer newCompressed = new Buffer(this.compressedLen);
 				System.Buffer.BlockCopy(this.compressed.bytes, 0, newCompressed.bytes, 0, this.compressedLen);
 
-				this.myPool = null;
+				this.MyPool = null;
 
 				this.compressed.Dispose();
 				this.compressed = null;

@@ -23,9 +23,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-using SteamEngine.Common;
-
-namespace SteamEngine.Communication {
+namespace SteamEngine.Common {
 	public class Poolable : Disposable {
 		internal PoolBase myPool;
 
@@ -47,6 +45,15 @@ namespace SteamEngine.Communication {
 		}
 
 		protected virtual void On_Reset() {
+		}
+
+		public PoolBase MyPool {
+			get {
+				return myPool;
+			}
+			set {
+				myPool = value;
+			}
 		}
 	}
 }

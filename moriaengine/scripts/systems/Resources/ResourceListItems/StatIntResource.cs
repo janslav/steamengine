@@ -21,7 +21,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as characters Intelligence")]
-	public class StatIntResource : IResourceListItem {
+	public class StatIntResource : IResourceListItemNonMultiplicable {
 		private double number;
 
 		internal StatIntResource(double number) {
@@ -47,7 +47,9 @@ namespace SteamEngine.CompiledScripts {
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatIntResource) != null);
 		}
+		#endregion
 
+		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			return chr.Int >= DesiredCount;
 		}

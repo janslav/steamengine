@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		//sublist of resources allowing us to use the resource list more than once (consuming) at a time (typically "itemdef" resources)
 		private List<IResourceListItemMultiplicable> multiplicablesSubList = new List<IResourceListItemMultiplicable>();
 		//sublist of other resources used usually only for "is present" check
-		private List<IResourceListItem> nonMultiplicablesSubList = new List<IResourceListItem>();
+		private List<IResourceListItemNonMultiplicable> nonMultiplicablesSubList = new List<IResourceListItemNonMultiplicable>();
 			
 		[Summary("Add new ResourceListItem to the list")]
 		internal void Add(IResourceListItem newItem) {			
@@ -36,8 +36,10 @@ namespace SteamEngine.CompiledScripts {
 				//put the new item also to the special sublist
 				if(newItem is IResourceListItemMultiplicable) {
 					multiplicablesSubList.Add((IResourceListItemMultiplicable) newItem);
-				} else {
-					nonMultiplicablesSubList.Add(newItem);
+				} else if (newItem is IResourceListItemNonMultiplicable) {
+					//this wil be the rest of resources for now, 
+					//but who knows that type of resource may appear in a few months :)
+					nonMultiplicablesSubList.Add((IResourceListItemNonMultiplicable) newItem);
 				}
 			}
 		}
@@ -69,7 +71,9 @@ namespace SteamEngine.CompiledScripts {
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
 				return false;
 			}
-			
+
+			//dispose counters
+			Disposable.DisposeAll(resourceCounters);
 			return true; //all resources present
 		}
 
@@ -87,6 +91,9 @@ namespace SteamEngine.CompiledScripts {
 			foreach (ResourceCounter ctr in resourceCounters) {
 				ctr.ConsumeItems(1);
 			}
+
+			//dispose counters
+			Disposable.DisposeAll(resourceCounters);
 			return true;
 		}
 
@@ -105,6 +112,9 @@ namespace SteamEngine.CompiledScripts {
 			foreach (ResourceCounter ctr in resourceCounters) {
 				ctr.ConsumeItems(availableOnly);
 			}
+
+			//dispose counters
+			Disposable.DisposeAll(resourceCounters);
 			return availableOnly;
 		}
 
@@ -116,7 +126,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get all non-multiplicable resources from the list separated in their own sublist")]
-		public List<IResourceListItem> NonMultiplicablesSublist {
+		public List<IResourceListItemNonMultiplicable> NonMultiplicablesSublist {
 			get {
 				return nonMultiplicablesSubList;
 			}
@@ -138,10 +148,10 @@ namespace SteamEngine.CompiledScripts {
 				retList.Add(rli.GetCounter());
 			}
 			return retList;
-		}
+		}		
 
 		private bool CheckNonMultiplicableItems(Character chr) {
-			foreach (IResourceListItem rli in nonMultiplicablesSubList) {
+			foreach (IResourceListItemNonMultiplicable rli in nonMultiplicablesSubList) {
 				if (!rli.IsResourcePresent(chr)) { //first not found resource ends the cycle 
 					return false;
 				}
@@ -177,9 +187,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Check if the 'newOne' is the same resource as the actual one.")]
-		bool IsSameResource(IResourceListItem newOne);
+		bool IsSameResource(IResourceListItem newOne);		
+	}
 
-		[Summary("Does the character have this particular resource? (in desired amount). Check only the presence "+
+	[Summary("Interface for resource list items that cannot be multiplicated (e.g. Ability - if the resourcelist "+
+			"demands 5 a_warcry then it makes no sense using the reslist repeatedly and demad 10 a_warcry (unlike e.g. i_apple)")]	
+	public interface IResourceListItemNonMultiplicable : IResourceListItem {
+		[Summary("Does the character have this particular resource? (in desired amount). Check only the presence " +
 				"do not consume or anything else...")]
 		bool IsResourcePresent(Character chr);
 	}
@@ -188,7 +202,8 @@ namespace SteamEngine.CompiledScripts {
 			"e.g. itemdefs, allowing us to say 'how many times the resourcelist has been found at the char's"+
 			"(usable for crafting more than 1 item at a time e.t.c)")]
 	public interface IResourceListItemMultiplicable : IResourceListItem {
-		[Summary("Return the resource counter object for this resource")]
+		[Summary("Return the resource counter object for this resource, we are using the Object Pool pattern "+
+			" for acquiring and storing desired instances")]
 		ResourceCounter GetCounter();
 	}		
 }

@@ -21,7 +21,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as characters Dexterity")]
-	public class StatDexResource : IResourceListItem {
+	public class StatDexResource : IResourceListItemNonMultiplicable {
 		private double number;
 
 		internal StatDexResource(double number) {
@@ -45,9 +45,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsSameResource(IResourceListItem newOne) {
-			return ((newOne as StatDexResource) != null);			
+			return ((newOne as StatDexResource) != null);
 		}
+		#endregion
 
+		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			return chr.Dex >= DesiredCount;
 		}

@@ -23,8 +23,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-using SteamEngine.Common;
-namespace SteamEngine.Communication {
+namespace SteamEngine.Common {
 	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm
 
 	public abstract class Disposable : IDisposable {
@@ -46,6 +45,13 @@ namespace SteamEngine.Communication {
 
 			GC.SuppressFinalize(this); // remove this from gc finalizer list
 
+		}
+
+		[Summary("Utility method for disposing the whole contents of some Enumerable (such as list etc)")]
+		public static void DisposeAll<T>(IEnumerable<T> disposables) where T : IDisposable {
+			foreach (IDisposable disposable in disposables) {
+				disposable.Dispose();
+			}
 		}
 
 		protected void ThrowIfDisposed() {
