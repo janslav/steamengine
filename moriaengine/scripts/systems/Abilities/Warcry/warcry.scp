@@ -1,7 +1,7 @@
-[Warcry a_warcry]
+[WarcryDef a_warcry]
 name="Warcry"
 
-usageDelay = 180
+useDelay = 180
 effectDuration = 10
 
 //range se bude pocitat z playerovych vlastnosti

@@ -31,14 +31,16 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 "+
 				" then the item will be deleted. Method returns the actually consumed amount.")]
 		public uint Consume(uint howMuch) {
-			uint nowHaving = Amount;
-			uint canBeConsumed = Math.Min(howMuch, nowHaving);		
-			if ((nowHaving - canBeConsumed) == 0) {//will be consumed all
-				Delete();
+			uint prevAmount = this.Amount;
+			long resultAmount = prevAmount - howMuch;
+
+			if (resultAmount < 1) {
+				this.Delete();
+				return prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
 			} else {
-				Amount -= canBeConsumed;//just reduce the amount
+				this.Amount = (uint) resultAmount;
+				return howMuch; //consumed the desired amount
 			}
-			return canBeConsumed;//this is how much was really consumed
 		}
 
 		public override byte FlagsToSend {

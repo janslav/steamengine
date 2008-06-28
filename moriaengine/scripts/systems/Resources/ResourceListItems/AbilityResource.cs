@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 		private double number;
 		private string definition;
 
-		internal AbilityResource(AbilityDef abilityDef, double number, string definiton) {
+		internal AbilityResource(AbilityDef abilityDef, double number, string definition) {
 			this.number = number;
 			this.abilityDef = abilityDef;
 			this.definition = definition;
