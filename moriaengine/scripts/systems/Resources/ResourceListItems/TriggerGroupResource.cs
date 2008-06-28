@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		private double number;
 		private string definition;
 
-		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, string definiton) {
+		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, string definition) {
 			this.number = number;			
 			this.triggerGroup = triggerGroup;
 			this.definition = definition;
@@ -58,17 +58,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
-
-		public bool IsResourcePresent(Character chr) {
-			//realy, this method should not be used in this way!
-			throw new SEException("Disallowed usage of present checking method for TriggerGroupResource");
-		}
 		#endregion
 
 		#region IResourceListItemMultiplicable Members
-
 		public ResourceCounter GetCounter() {
-			return new TriggerGroupsCounter(triggerGroup, number);
+			TriggerGroupsCounter tgc = Pool<TriggerGroupsCounter>.Acquire();//get from pool
+			tgc.SetParameters(triggerGroup, number);//initialize
+			return tgc;
 		}
 		#endregion
 	}

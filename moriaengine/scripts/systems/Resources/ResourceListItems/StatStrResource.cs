@@ -21,7 +21,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as characters Strength")]
-	public class StatStrResource : IResourceListItem {
+	public class StatStrResource : IResourceListItemNonMultiplicable {
 		private double number;
 
 		internal StatStrResource(double number) {
@@ -47,7 +47,9 @@ namespace SteamEngine.CompiledScripts {
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatStrResource) != null);
 		}
+		#endregion
 
+		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			return chr.Str >= DesiredCount;
 		}

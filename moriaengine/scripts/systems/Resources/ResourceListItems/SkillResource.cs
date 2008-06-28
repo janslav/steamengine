@@ -21,7 +21,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as SkillDef")]
-	public class SkillResource : IResourceListItem {
+	public class SkillResource : IResourceListItemNonMultiplicable {
 		private SkillDef skillDef;
 		private double number;
 		private string definition;
@@ -57,7 +57,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+		#endregion
 
+		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			//we dont care "where", the skill is a skill
 			return skillDef.SkillValueOfChar(chr) >= DesiredCount;

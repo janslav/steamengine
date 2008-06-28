@@ -24,12 +24,24 @@ namespace SteamEngine.CompiledScripts {
 	public class TriggerGroupsCounter : ResourceCounter {
 		private TriggerGroup toLookFor;
 		
-		internal TriggerGroupsCounter(TriggerGroup tgToLookFor, double desiredCount) : base(desiredCount) {
-			this.toLookFor = tgToLookFor;			
+		//internal TriggerGroupsCounter(TriggerGroup tgToLookFor, double desiredCount) : base(desiredCount) {
+		//	this.toLookFor = tgToLookFor;			
+		//}
+
+		[Summary("Method for setting the counters parameters (used after acquiring from pool)")]
+		internal void SetParameters(TriggerGroup toLookFor, double desiredCount) {
+			this.toLookFor = toLookFor;
+			this.desiredCount = desiredCount;
 		}
 
 		internal override bool ItemCorresponds(Item itm) {
 			return (itm.Type == toLookFor);
-		}		
+		}
+
+		//clear the trigger group reference (the rest of the clearing is on parent)
+		protected override void On_Reset() {
+			base.On_Reset();
+			toLookFor = null;
+		}
 	}
 }

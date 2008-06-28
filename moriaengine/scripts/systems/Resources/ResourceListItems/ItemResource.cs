@@ -26,10 +26,10 @@ namespace SteamEngine.CompiledScripts {
 		private double number;
 		private string definition;
 
-		internal ItemResource(ItemDef itemDef, double number, string defin) {
+		internal ItemResource(ItemDef itemDef, double number, string definition) {
 			this.number = number;
 			this.itemDef = itemDef;
-			this.definition = defin;
+			this.definition = definition;
 		}		
 
 		#region IResourceListItem Members
@@ -57,19 +57,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
-
-		public bool IsResourcePresent(Character chr) {
-			//realy, this method should not be used in this way!
-			throw new SEException("Disallowed usage of present checking method for ItemResource");
-		}
 		#endregion
 
 		#region IResourceListItemMultiplicable Members
-
 		public ResourceCounter GetCounter() {
-			return new ItemsCounter(itemDef, number);
+			ItemsCounter ic = Pool<ItemsCounter>.Acquire();//get from pool
+			ic.SetParameters(itemDef, number);//initialize
+			return ic;
 		}
-
 		#endregion		
 	}
 }

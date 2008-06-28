@@ -24,13 +24,25 @@ namespace SteamEngine.CompiledScripts {
 	public class ItemsCounter : ResourceCounter {
 		private ItemDef toLookFor;
 
-		internal ItemsCounter(ItemDef iDefToLookFor, double desiredCount)
-			: base(desiredCount) {
-			this.toLookFor = iDefToLookFor;
+		//internal ItemsCounter(ItemDef iDefToLookFor, double desiredCount)
+		//	: base(desiredCount) {
+		//	this.toLookFor = iDefToLookFor;
+		//}
+
+		[Summary("Method for setting the counters parameters (used after acquiring from pool)")]
+		internal void SetParameters(ItemDef toLookFor, double desiredCount) {
+			this.toLookFor = toLookFor;
+			this.desiredCount = desiredCount;
 		}
 
 		internal override bool ItemCorresponds(Item itm) {
 			return (itm.TypeDef == toLookFor);			
+		}
+
+		//clear the item def reference (the rest of the clearing is on parent)
+		protected override void On_Reset() {
+			base.On_Reset();
+			toLookFor = null;
 		}
 	}
 }

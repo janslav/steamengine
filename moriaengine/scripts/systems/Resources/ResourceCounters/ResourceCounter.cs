@@ -23,15 +23,19 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Abstract class - parent of counter classes for multiplicable resources (such as Items, TriggerGroups) " +
 			"used for storing information about found char's corresponding items and their amount " +
 			"allowing us also to consume the desired amount of found item's")]
-	public abstract class ResourceCounter {
-		private double desiredCount; //how many item occurences we need? (e.g. 5 i_apple)
+	public abstract class ResourceCounter : Poolable {
+		protected double desiredCount; //how many item occurences we need? (e.g. 5 i_apple)
 		private List<Item> foundItems = new List<Item>();
-		private uint foundCount; //how many occurences have found so far? (counted from amounts of found items)
+		private uint foundCount; //how many occurences have been found so far? (counted from amounts of found items)
 
-		protected ResourceCounter(double desiredCount) {
-			this.desiredCount = desiredCount;
+		internal ResourceCounter() {
+			//non parametric constructor for pooling
 			this.foundCount = 0;
 		}
+
+		//protected ResourceCounter(double desiredCount) : this() {
+		//	this.desiredCount = desiredCount;			
+		//}
 
 		[Summary("Check if the given item corresponds to this particular resource item (i.e. is of the same " +
 				"itemdef, has the desired triggergroup (as type) etc)")]
@@ -62,6 +66,15 @@ namespace SteamEngine.CompiledScripts {
 					break; //desired amount has been already consumed, stop iterating
 				}
 			}
+		}
+
+		//clear the desired count, the found count information and clear the 
+		//list of found items
+		protected override void On_Reset() {
+			base.On_Reset();
+			desiredCount = 0;
+			foundCount = 0;
+			foundItems.Clear();//clear the list (but let it keep its actual size!)
 		}
 	}
 }

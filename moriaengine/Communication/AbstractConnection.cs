@@ -23,7 +23,6 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
@@ -90,7 +89,7 @@ namespace SteamEngine.Communication {
 
 		public void Close(string reason) {
 
-			if (!this.disposed) {
+			if (!this.IsDisposed) {
 				lock (this.core.LockObject) {
 					this.state.On_Close(reason);
 				}

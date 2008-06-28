@@ -81,6 +81,9 @@
       <Link>ConvertTools.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common\Disposable.cs">
+      <Link>Disposable.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\EmptyCollection.cs">
       <Link>EmptyCollection.cs</Link>
     </Compile>
@@ -111,6 +114,12 @@
     </Compile>
     <Compile Include="..\..\Common\NantLauncher.cs">
       <Link>NantLauncher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Pool.cs">
+      <Link>Pool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Poolable.cs">
+      <Link>Poolable.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\Sanity.cs">
       <Link>Sanity.cs</Link>

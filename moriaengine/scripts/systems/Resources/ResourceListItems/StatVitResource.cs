@@ -21,7 +21,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as characters Vitality")]
-	public class StatVitResource : IResourceListItem {
+	public class StatVitResource : IResourceListItemNonMultiplicable {
 		private double number;
 
 		internal StatVitResource(double number) {
@@ -47,7 +47,9 @@ namespace SteamEngine.CompiledScripts {
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatVitResource) != null);
 		}
+		#endregion
 
+		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			return chr.MaxHits >= DesiredCount;
 		}
