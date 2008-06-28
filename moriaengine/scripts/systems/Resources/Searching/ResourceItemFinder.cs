@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 				"and if so, prepare the ResourceCounter object for it")]
 		private static void LocalizeWearableItems(Character chr, List<ResourceCounter> resCountersList) {
 			foreach (Item i in chr.GetVisibleEquip()) {
-				switch ((LayerNames) i.Layer) {
+				switch ((LayerNames) i.Z) {
 					case LayerNames.Arms:
 					case LayerNames.Bracelet:
 					case LayerNames.Cape:
