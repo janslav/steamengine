@@ -67,14 +67,14 @@ namespace SteamEngine.CompiledScripts {
 			AbstractScript resource = ThingDef.Get(definition);
 			if (resource != null && ((ThingDef)resource).IsItemDef) {
 				//this resource is item
-				return new ItemResource((ItemDef)resource, number, definition) as IResourceListItem;
+				return new ItemResource((ItemDef)resource, number, definition);
 			}
 			//try TriggerGroup (t_light)
 			resource = TriggerGroup.Get(definition);
 			if (resource != null) {
 				//we dont specify the number here, we know that for trigger groups their presence in the
 				//resource list always means '1' (just to 'have it')
-				return new TriggerGroupResource((TriggerGroup) resource, number, definition) as IResourceListItem;
+				return new TriggerGroupResource((TriggerGroup) resource, number, definition);
 			}
 			//try Skilldef
 			resource = SkillDef.ByKey(definition);

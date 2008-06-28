@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Consume the whole resource list from the character as many times as possible, return information "+
 				"about how many times it has been consumed")]
-		public uint ConsumeResources(Character chr, ResourcesLocality where) {
+		public int ConsumeResources(Character chr, ResourcesLocality where) {
 			if (!CheckNonMultiplicableItems(chr)) {
 				return 0;
 			}
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
 				return 0;
 			}
-			uint availableOnly = ResListAvailableTimes(resourceCounters);			
+			int availableOnly = ResListAvailableTimes(resourceCounters);			
 			foreach (ResourceCounter ctr in resourceCounters) {
 				ctr.ConsumeItems(availableOnly);
 			}
@@ -133,8 +133,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		//look to the resource counters and find out how many times we can consume the resource list
-		private uint ResListAvailableTimes(List<ResourceCounter> resourceCounters) {
-			uint leastMultiplicity = uint.MaxValue;
+		private int ResListAvailableTimes(List<ResourceCounter> resourceCounters) {
+			int leastMultiplicity = int.MaxValue;
 			foreach (ResourceCounter ctr in resourceCounters) {
 				//check every resource counter and get their multiplicities (we will use the lowest one)
 				leastMultiplicity = Math.Min(leastMultiplicity, ctr.Multiplicity);

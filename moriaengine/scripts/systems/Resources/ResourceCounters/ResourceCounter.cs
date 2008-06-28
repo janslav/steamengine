@@ -48,19 +48,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("How many times can we consume the desired amount of resources?")]
-		internal uint Multiplicity {
+		internal int Multiplicity {
 			get {
-				return (uint) (foundCount / desiredCount);
+				return (int) (foundCount / desiredCount);
 			}
 		}
 
 		[Summary("Look to the foundItems list and consume desiredCount*howManyTimes items found inside. "+
 				"These should be available via their 'amounts'")]
-		internal void ConsumeItems(uint howManyTimes) {
-			uint toConsume = (uint)(desiredCount * howManyTimes);
+		internal void ConsumeItems(int howManyTimes) {
+			long toConsume = (long)(desiredCount * howManyTimes);
 			foreach (Item itm in foundItems) {
 				//try consume as much as possible of this item
-				uint wasConsumed = itm.Consume(toConsume);
+				uint wasConsumed = itm.Consume((uint)toConsume);
 				toConsume -= wasConsumed;
 				if (toConsume == 0) {
 					break; //desired amount has been already consumed, stop iterating
