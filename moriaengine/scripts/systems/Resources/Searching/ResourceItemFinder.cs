@@ -57,28 +57,33 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Iterate through all items in character's wearable layers check if it is in the resource items list " +
 				"and if so, prepare the ResourceCounter object for it")]
 		private static void LocalizeWearableItems(Character chr, List<ResourceCounter> resCountersList) {
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Arms), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Bracelet), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Cape), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Collar), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Dragging), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Earrings), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Gloves), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Gorget), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Half_apron), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Hand1), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Hand2), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Helmet), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Chest), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Leggins), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Light), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Pants), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Ring), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Robe), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Shirt), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Shoes), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Skirt), resCountersList);
-			CheckByCounters((Item) chr.FindLayer(LayerNames.Tunic), resCountersList);
+			foreach (Item i in chr.GetVisibleEquip()) {
+				switch ((LayerNames) i.Layer) {
+					case LayerNames.Arms:
+					case LayerNames.Bracelet:
+					case LayerNames.Cape:
+					case LayerNames.Collar:
+					case LayerNames.Dragging:
+					case LayerNames.Earrings:
+					case LayerNames.Gloves:
+					case LayerNames.Half_apron:
+					case LayerNames.Hand1:
+					case LayerNames.Hand2:
+					case LayerNames.Helmet:
+					case LayerNames.Chest:
+					case LayerNames.Leggins:
+					case LayerNames.Light:
+					case LayerNames.Pants:
+					case LayerNames.Ring:
+					case LayerNames.Robe:
+					case LayerNames.Shirt:
+					case LayerNames.Shoes:
+					case LayerNames.Skirt:
+					case LayerNames.Tunic:
+						CheckByCounters(i, resCountersList);
+						break;
+				}
+			}
 		}
 
 		[Summary("Iterate through all items in character's backpack check if it is in the resource items list " +
