@@ -28,13 +28,13 @@ namespace SteamEngine.CompiledScripts {
 		internal static void LocalizeItems(Character chr, ResourcesLocality where, List<ResourceCounter> resCountersList) {
 			//the bahaviour of ResourcesLocality is like of a bitmask - there can be more locations specified at once (
 			//e.g. backpack and bank; everywhere etc...
-			if (where & ResourcesLocality.WearableLayers) {
+			if ((where & ResourcesLocality.WearableLayers) == ResourcesLocality.WearableLayers) {
 				LocalizeWearableItems(chr, resCountersList);
 			}
-			if (where & ResourcesLocality.Backpack) {
+			if ((where & ResourcesLocality.Backpack) == ResourcesLocality.Backpack) {
 				LocalizeBackpackItems(chr, resCountersList);
 			}
-			if (where & ResourcesLocality.Bank) {
+			if ((where & ResourcesLocality.Bank) == ResourcesLocality.Bank) {
 				LocalizeBankItems(chr, resCountersList);
 			}
 		}
