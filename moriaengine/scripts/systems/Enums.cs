@@ -92,11 +92,11 @@ namespace SteamEngine.CompiledScripts {
 	[Flags]
 	[Summary("specification of various localities where to look for resources")]
 	public enum ResourcesLocality : int {
-		NonSpecified = 0x001, //not specified where to look for resources (used for abilities,skills,triggergroups etc)
+		NonSpecified = 0x000, //not specified where to look for resources (used for abilities,skills,triggergroups etc)
 		//following usages are usually for resource of type "itemdef" - where should we search for the items
-		WearableLayers = 0x002, //search among worn items (gloves, helm, rings etc)
-		Backpack = 0x004, //look to the backpack only
-		Bank = 0x008,	 //look to the bank only
+		WearableLayers = 0x001, //search among worn items (gloves, helm, rings etc)
+		Backpack = 0x002, //look to the backpack only
+		Bank = 0x004,	 //look to the bank only
 		BackpackAndBank = Backpack | Bank, //look to both main containers
 		Everywhere = WearableLayers | Backpack | Bank //searchevery place on the character (wearables, backapck, bank etc.)
 	}
