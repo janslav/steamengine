@@ -89,15 +89,16 @@ namespace SteamEngine.CompiledScripts {
 		Deny_WasSwitchedOff = 4 //the ability was currently running (for ActivableAbilities only) so we switched it off
 	}
 
-	//specification of various localities where to look for resources
-	public enum ResourcesLocality {
-		NonSpecified = 1, //not specified where to look for resources (used for abilities,skills,triggergroups etc)
+	[Flags]
+	[Summary("specification of various localities where to look for resources")]
+	public enum ResourcesLocality : int {
+		NonSpecified = 0x001, //not specified where to look for resources (used for abilities,skills,triggergroups etc)
 		//following usages are usually for resource of type "itemdef" - where should we search for the items
-		WearableLayers = 2, //search among worn items (gloves, helm, rings etc)
-		Backpack = 3, //look to the backpack only
-		Bank = 4,	 //look to the bank only
-		BackpackAndBank = 5, //look to both main containers
-		Everywhere = 6 //searchevery place on the character (wearables, backapck, bank etc.)
+		WearableLayers = 0x002, //search among worn items (gloves, helm, rings etc)
+		Backpack = 0x004, //look to the backpack only
+		Bank = 0x008,	 //look to the bank only
+		BackpackAndBank = Backpack | Bank, //look to both main containers
+		Everywhere = WearableLayers | Backpack | Bank //searchevery place on the character (wearables, backapck, bank etc.)
 	}
 
 	//specificy how many items should we try to find at the specified location

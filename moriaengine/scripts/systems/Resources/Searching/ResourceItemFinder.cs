@@ -26,31 +26,16 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Get all items from the character in specified locality (e.g. all items from chars bank) and look if they are desired "+
 				"as resources in the list - initiate the resource counters list")]
 		internal static void LocalizeItems(Character chr, ResourcesLocality where, List<ResourceCounter> resCountersList) {
-			switch (where) {
-				case ResourcesLocality.WearableLayers:
-					LocalizeWearableItems(chr, resCountersList);
-					break;
-				case ResourcesLocality.Backpack:
-					LocalizeBackpackItems(chr, resCountersList);
-					break;
-				case ResourcesLocality.Bank:
-					LocalizeBankItems(chr, resCountersList);
-					break;
-				case ResourcesLocality.BackpackAndBank:
-					//try two locations
-					LocalizeBackpackItems(chr, resCountersList);
-					LocalizeBankItems(chr, resCountersList);
-					break;
-				case ResourcesLocality.Everywhere:
-					//try all three locations
-					LocalizeWearableItems(chr, resCountersList);
-					LocalizeBackpackItems(chr, resCountersList);
-					LocalizeBankItems(chr, resCountersList);
-					break;
-				case ResourcesLocality.NonSpecified:
-					//dont do anything
-				default:
-					break;
+			//the bahaviour of ResourcesLocality is like of a bitmask - there can be more locations specified at once (
+			//e.g. backpack and bank; everywhere etc...
+			if (where & ResourcesLocality.WearableLayers) {
+				LocalizeWearableItems(chr, resCountersList);
+			}
+			if (where & ResourcesLocality.Backpack) {
+				LocalizeBackpackItems(chr, resCountersList);
+			}
+			if (where & ResourcesLocality.Bank) {
+				LocalizeBankItems(chr, resCountersList);
 			}
 		}
 
