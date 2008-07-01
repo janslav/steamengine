@@ -296,6 +296,7 @@ namespace SteamEngine {
 			AbstractSkillDef.UnloadScripts();
 			//Region.UnloadScripts();
 			//ExportImport.UnloadScripts();
+			FieldValue.UnloadScripts();
 			
 			Console.WriteLine("Definitions unloaded");
 		}

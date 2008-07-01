@@ -75,6 +75,10 @@ namespace SteamEngine {
 			parsers[t] = parser;
 		}
 
+		internal static void UnloadScripts() {
+			parsers.Clear();
+		}
+
 		public void Unload() {
 			if (this.changedValue) {
 				unloaded = true;
