@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 			long toConsume = (long)(desiredCount * howManyTimes);
 			foreach (Item itm in foundItems) {
 				//try consume as much as possible of this item
-				uint wasConsumed = itm.Consume((uint)toConsume);
+				uint wasConsumed = itm.Consume(toConsume);
 				toConsume -= wasConsumed;
 				if (toConsume == 0) {
 					break; //desired amount has been already consumed, stop iterating

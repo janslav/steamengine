@@ -168,12 +168,12 @@ namespace SteamEngine.CompiledScripts {
                 return;
             }
 
-            ushort selfHealing = self.Skills[(int)SkillName.Healing].RealValue;
+            ushort selfHealing = self.SkillById((int)SkillName.Healing).RealValue;
 
             //pokud se leceni zdarilo
 			if (SingletonScript<HealingSkillDef>.Instance.CheckSuccess(self, Globals.dice.Next(200))) {
 
-				targetted.Hits += (short) ScriptUtil.EvalRangePermille(self.Skills[17].RealValue + self.Skills[1].RealValue, SingletonScript<HealingSkillDef>.Instance.Effect);
+				targetted.Hits += (short) ScriptUtil.EvalRangePermille(self.SkillById((int) SkillName.Healing).RealValue + self.SkillById((int) SkillName.Anatomy).RealValue, SingletonScript<HealingSkillDef>.Instance.Effect);
 
                 if (targetted.Hits > targetted.MaxHits)
                     targetted.Hits = targetted.MaxHits;

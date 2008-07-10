@@ -69,6 +69,8 @@ namespace SteamEngine.CompiledScripts {
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+				//dispose counters
+				Disposable.DisposeAll(resourceCounters);			
 				return false;
 			}
 
@@ -85,6 +87,8 @@ namespace SteamEngine.CompiledScripts {
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+				//dispose counters before exit
+				Disposable.DisposeAll(resourceCounters);			
 				return false;
 			}
 			//if we are here then there is for every ResourceCounter the multiplicity at least 1 (which is enough for us)
@@ -106,6 +110,8 @@ namespace SteamEngine.CompiledScripts {
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+				//dispose counters
+				Disposable.DisposeAll(resourceCounters);			
 				return 0;
 			}
 			int availableOnly = ResListAvailableTimes(resourceCounters);			

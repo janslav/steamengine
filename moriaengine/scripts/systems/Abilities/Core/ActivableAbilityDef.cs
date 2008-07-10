@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check the ability on the character, if he has it, chesk its state and decide what to do next."+
 				"If its is running - deactivate, otherwise - activate.")]
 		public void ActivateOrUnactivate(Character chr) {
-			Ability ab = chr.GetAbility(this);
+			Ability ab = chr.GetAbilityObject(this);
 			if(ab != null || ab.Points > 0) {//"0th" common check - do we have the ability?
 				if(ab.Running) {
 					UnActivate(chr, ab);			
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Common method for simple switching the ability off")]		
 		public void UnActivate(Character chr) {
-			Ability ab = chr.GetAbility(this);
+			Ability ab = chr.GetAbilityObject(this);
 			if (ab == null || ab.Points == 0) {
 				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
 			} else {

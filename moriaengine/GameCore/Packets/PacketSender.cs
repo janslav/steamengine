@@ -1357,7 +1357,8 @@ namespace SteamEngine.Packets {
 			Compress();			
 		}
 		
-		public static void PrepareAllSkillsUpdate(ISkill[] skills, bool displaySkillCaps) {
+		//public static void PrepareAllSkillsUpdate(ISkill[] skills, bool displaySkillCaps) {
+		public static void PrepareAllSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
 			Sanity.IfTrueThrow(skills==null, "PrepareAllSkillsUpdate called with a null 'skills'.");
 			StartGenerating();
 			EncodeByte(0x3A, 0);
@@ -1367,9 +1368,11 @@ namespace SteamEngine.Packets {
 				EncodeByte(0x00, 3);//full list without skillcaps
 			}
 			short blockSize = 4;
-			for (ushort i = 0; i<46 ; i++) {
-				ISkill s = skills[i];
-				EncodeUShort((ushort) (i+1), blockSize);
+			//for (ushort i = 0; i<46 ; i++) {			
+			//	ISkill s = skills[i];
+			//  EncodeUShort((ushort) (i+1), blockSize);
+			foreach(ISkill s in skills) {
+				EncodeUShort((ushort)(s.Id+1), blockSize);
 				EncodeUShort(s.RealValue, blockSize+2);
 				EncodeUShort(s.RealValue, blockSize+4);
 				EncodeByte((byte) s.Lock, blockSize+6);

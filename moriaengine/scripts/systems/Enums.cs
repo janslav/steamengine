@@ -86,7 +86,9 @@ namespace SteamEngine.CompiledScripts {
 		Allow = 1, //we can use the ability
 		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
 		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
-		Deny_WasSwitchedOff = 4 //the ability was currently running (for ActivableAbilities only) so we switched it off
+		Deny_WasSwitchedOff = 4, //the ability was currently running (for ActivableAbilities only) so we switched it off
+		Deny_NotEnoughResourcesToConsume = 5,//missing some resources from "to consume" list
+		Deny_NotEnoughResourcesPresent = 6//missing some resources from "has present" list
 	}
 
 	[Flags]
@@ -97,6 +99,7 @@ namespace SteamEngine.CompiledScripts {
 		WearableLayers = 0x001, //search among worn items (gloves, helm, rings etc)
 		Backpack = 0x002, //look to the backpack only
 		Bank = 0x004,	 //look to the bank only
+		BackpackAndLayers = Backpack | WearableLayers, //loook to the backpack and worn items
 		BackpackAndBank = Backpack | Bank, //look to both main containers
 		Everywhere = WearableLayers | Backpack | Bank //searchevery place on the character (wearables, backapck, bank etc.)
 	}

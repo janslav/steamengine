@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability"+
 				"and in case he has, it runs the protected activation method")]
 		public virtual void Activate(Character chr) {			
-			Ability ab = chr.GetAbility(this);
+			Ability ab = chr.GetAbilityObject(this);
 			if (ab == null || ab.Points == 0) {
 				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
 			} else {
@@ -51,9 +51,14 @@ namespace SteamEngine.CompiledScripts {
 				DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
 
 				if (retVal == DenyResultAbilities.Allow) {
-					bool cancelActivate = Trigger_Activate(chr);
-					ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
-					Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)
+					//last check before run
+					BeforeRun(args);//method for running last "pre-run" events, after these follows only ability running
+					retVal = args.Result;
+					if (retVal == DenyResultAbilities.Allow) {//still OK :)						
+						bool cancelActivate = Trigger_Activate(chr);
+						ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
+						Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)
+					}
 				}
 				SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
 			}
@@ -62,6 +67,20 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void Activate(Character chr, Ability ab) {
 			//default without implementation, children can contain some specific behaviour which goes 
 			//beyond the Activate(Character) method capabilities...
+		}
+
+		[Summary("Last method that is run immediately before the ability running - it is run after all checks "+
+			"and its primary purpose is to carry out thigs that are irreversible (such as resources consuming) and "+
+			"that should be therefore run first when we are sure that the ability will not be stopped from running.")]
+		protected virtual void BeforeRun(DenyAbilityArgs args) {
+			//check consumable resources
+			ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
+			if (resConsum != null) {
+				//look to the backpack and to among the items that we are wearing
+				if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers)) {
+					args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
+				}
+			}
 		}
 
 		#region triggerMethods
@@ -107,6 +126,15 @@ namespace SteamEngine.CompiledScripts {
 				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
 				return true;//same as "return 1" from LScript - cancel trigger sequence
 			}
+			//check resources present (if needed)
+			ResourcesList resPresent = resourcesPresent.CurrentValue as ResourcesList;
+			if (resPresent != null) {
+				if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers)) {
+					args.Result = DenyResultAbilities.Deny_NotEnoughResourcesPresent;
+					return true;
+				}
+			}
+			//resources to consume will be checked immediately before run, not now!
 			return false; //continue
 		}
 
@@ -341,7 +369,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Method for sending clients messages about their attempt of ability usage")]
 		protected void SendAbilityResultMessage(Character toWhom, DenyResultAbilities res) {
 			switch(res) {
-				//case DenyResultAbilities.Allow:									
+				//case DenyResultAbilities.Allow:								
 				case DenyResultAbilities.Deny_DoesntHaveAbility:
 					toWhom.RedMessage("O abilitì " + Name + " nevíš vùbec nic");
 					break;
@@ -350,6 +378,12 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				case DenyResultAbilities.Deny_WasSwitchedOff:
 					toWhom.SysMessage("Abilita " + Name + " byla vypnuta");
+					break;
+				case DenyResultAbilities.Deny_NotEnoughResourcesToConsume:
+					toWhom.RedMessage("Nedostatek zdrojù ke spotøebì pro spuštìní ability "+ Name);
+					break;
+				case DenyResultAbilities.Deny_NotEnoughResourcesPresent:
+					toWhom.RedMessage("Nedostatek zdrojù pro spuštìní ability " + Name);
 					break;
 			}
 		}
@@ -367,7 +401,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public DenyAbilityArgs(Character abiliter, AbilityDef runAbilityDef, Ability runAbility) 
-			:	this(DenyResult.Allow, abiliter, runAbilityDef, runAbility) {
+			:	this(DenyResultAbilities.Allow, abiliter, runAbilityDef, runAbility) {
 			this.abiliter = abiliter;
 			this.runAbilityDef = runAbilityDef;
 			this.runAbility = runAbility; //this can be null (if we dont have the ability)

@@ -209,10 +209,7 @@ namespace SteamEngine {
 		public ushort Id  {
 			get {
 				return id;
-			}
-			set {
-				id = value;
-			}
+			}			
 		}
 		
 		public TriggerGroup TG  {

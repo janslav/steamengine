@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Select(Character self) {
 			//temp code, just to see it does *something*
 
-			self.SysMessage("I clicked the button of the skill " + this + " which has value " + self.Skills[this.Id].RealValue + " and cap " + self.Skills[this.Id].Cap);
+			self.SysMessage("I clicked the button of the skill " + this + " which has value " + ((Skill) self.SkillsAbilities[this]).RealValue + " and cap " + ((Skill) self.SkillsAbilities[this]).Cap);
 			self.ClilocSysMessage(500014); //That skill cannot be used directly.
 		}
 
