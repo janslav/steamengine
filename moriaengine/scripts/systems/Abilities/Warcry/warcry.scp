@@ -1,7 +1,10 @@
 [WarcryDef a_warcry]
 name="Warcry"
-
+maxPoints=10
 useDelay = 180
 effectDuration = 10
 
-//range se bude pocitat z playerovych vlastnosti
+
+resourcesPresent = 5 int, 32.8 hiding
+resourcesConsumed = 2 i_fruit_apple
+

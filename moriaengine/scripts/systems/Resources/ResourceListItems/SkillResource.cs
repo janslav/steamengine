@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 		private double number;
 		private string definition;
 
-		internal SkillResource(SkillDef skillDef, double number, string definition) {
+		internal SkillResource(SkillDef skillDef, double number, string definition){
 			this.number = number;
 			this.skillDef = skillDef;
 			this.definition = definition;

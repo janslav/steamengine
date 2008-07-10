@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!self.CanReachWithMessage(conta)) {
 				this.Fail(self);
 			} else {
-				if (SkillDef.CheckSuccess(self.Skills[(int) SkillName.Snooping].RealValue, 800)) {
+				if (SkillDef.CheckSuccess(self.SkillById((int) SkillName.Snooping).RealValue, 800)) {
 					this.Success(self);
 				} else {
 					this.Fail(self);

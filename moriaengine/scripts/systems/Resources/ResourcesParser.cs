@@ -46,12 +46,12 @@ namespace SteamEngine.CompiledScripts {
 				ResourcesList resList = new ResourcesList();
 				int n = m.Groups["resource"].Captures.Count; //number of found resources
 				CaptureCollection numbers = m.Groups["number"].Captures;
-				CaptureCollection values = m.Groups["valuer"].Captures;
+				CaptureCollection values = m.Groups["value"].Captures;
 				for (int i = 0; i < n; i++) {
 					string number = numbers[i].Value.Equals("") ? "1" : numbers[i].Value; //either number or "" if no number is specified (in this case take 1)
 					string value = values[i].Value; //resource name (trimmed)
 					double nmr = ConvertTools.ParseDouble(number);
-					resList.Add(createResListItem(nmr, value));					
+					resList.Add(createResListItem(nmr, value));
 				}
 				retVal = resList;
 				return true;
@@ -77,7 +77,10 @@ namespace SteamEngine.CompiledScripts {
 				return new TriggerGroupResource((TriggerGroup) resource, number, definition);
 			}
 			//try Skilldef
-			resource = SkillDef.ByKey(definition);
+			resource = SkillDef.ByKey(definition); //"hiding", "anatomy" etc.
+			if (resource == null) {
+				resource = SkillDef.ByDefname(definition);//"skill_hiding, "skill_anatomy" etc.
+			}
 			if (resource != null) {
 				return new SkillResource((SkillDef)resource, number, definition);
 			}

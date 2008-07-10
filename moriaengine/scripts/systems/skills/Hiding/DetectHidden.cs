@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			ushort pointY = point.y;
 			int s = 0;
 			foreach (Character person in map.GetCharsInRange(pointX, pointY, (ushort) GetEffectForChar(self))) {
-				if (CheckSuccess(self, person.Skills[(int) SkillName.Hiding].RealValue)) {
+				if (CheckSuccess(self, person.SkillById((int) SkillName.Hiding).RealValue)) {
 					s++;
 					self.currentSkillTarget1 = person;
 					this.Success(self);

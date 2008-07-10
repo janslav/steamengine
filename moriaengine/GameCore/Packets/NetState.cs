@@ -206,7 +206,8 @@ namespace SteamEngine.Packets {
 			for (int i = 0; i<changedSkillsCount; i++) {
 				ushort id = changedSkills[i];
 				Logger.WriteInfo(NetStateTracingOn, "UpdateSkill: "+AbstractSkillDef.ById(id).Key);
-				ISkill curSkill = ((AbstractCharacter) thing).Skills[id];
+				//ISkill curSkill = ((AbstractCharacter) thing).Skills[id];
+				ISkill curSkill = ((AbstractCharacter) thing).SkillById(id);
 				PacketSender.PrepareSingleSkillUpdate(curSkill, displaySkillCaps);
 				PacketSender.SendTo(conn, true);
 			}

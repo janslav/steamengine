@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Functional implementation of warcry ability")]
 		protected override bool On_Activate(Character chr) {
-			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, ComputeRange(chr))) {
+			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort)ComputeRange(chr))) {
 				if(chr == plr) {
 					continue; //dont do selfwarcry ;)
 				}
@@ -78,9 +78,9 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Compute the warcry range using the information from character (using i.e char's level"+
 				" and the ability points...). Consider that 18 steps should be maximum (client limits)")]
-		private ushort ComputeRange(Character chr) {
+		private int ComputeRange(Character chr) {
 			//TODO - udelat to nejak sofistikovaneji			
-			return (ushort)chr.GetAbilityPoints(this);
+			return chr.GetAbility(this);
 		}
 
 		[SteamFunction("Warcry")]

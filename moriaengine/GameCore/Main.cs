@@ -84,6 +84,9 @@ namespace SteamEngine {
 		}
 
 		private static void SteamMain() {
+			//name the console window for better recognizability
+			Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+
 			signalExit.Reset();
 			try {
 				long time = HighPerformanceTimer.TickCount; //initializing HighPerformanceTimer

@@ -13,6 +13,9 @@ namespace SteamEngine.AuxiliaryServer {
 		public static readonly object globalLock = new object();
 
 		static void Main(string[] args) {
+			//name the console window for better recognizability
+			Console.Title = "SE Auxiliary Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+
 			Tools.ExitBinDirectory();
 
 			try {

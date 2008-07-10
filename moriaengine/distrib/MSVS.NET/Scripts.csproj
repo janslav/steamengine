@@ -206,6 +206,9 @@
     <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.cs">
       <Link>inGameFeatures\storageBoxes\RegBox.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\AbilitiesEnumerator.cs">
+      <Link>systems\Abilities\Core\AbilitiesEnumerator.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Core\Ability.cs">
       <Link>systems\Abilities\Core\Ability.cs</Link>
     </Compile>
@@ -517,6 +520,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\SkillName.cs">
       <Link>systems\skills\SkillName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\SkillsEnumerator.cs">
+      <Link>systems\skills\SkillsEnumerator.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\SkillUtils.cs">
       <Link>systems\skills\SkillUtils.cs</Link>

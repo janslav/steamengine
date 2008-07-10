@@ -1275,10 +1275,12 @@ namespace SteamEngine {
 			}
 		}
 		
-		public abstract ISkill[] Skills { get; }
+		//public abstract ISkill[] Skills { get; }
+		public abstract IEnumerable<ISkill> Skills { get; }
+		public abstract ISkill SkillById(int id);
+		
 		[Summary("Gets called by the core when the player presses the skill button/runs the macro")]
-		public abstract void SelectSkill(int skillId);
-		//public abstract void SelectSkill(int skillId);
+		public abstract void SelectSkill(int skillId);		
 		
 		public abstract byte StatLockByte { get; }
 		public abstract StatLockType StrLock { get; set; }

@@ -379,9 +379,11 @@ namespace SteamEngine.Packets {
 			//TODO? should we call some triggers or something? :)
 			packetLenUsed = DecodeShort(1);
 			short skillId = DecodeShort(3);
-			ISkill[] skills = c.CurCharacter.Skills;
-			if ((skillId >= 0) && (skillId < skills.Length)) {
-				ISkill skill = skills[skillId];
+			//ISkill[] skills = c.CurCharacter.Skills;
+			//if ((skillId >= 0) && (skillId < skills.Length)) {
+			//	ISkill skill = skills[skillId];
+			if((skillId >= 0) && (skillId < AbstractSkillDef.SkillsCount)) {
+				ISkill skill = c.CurCharacter.SkillById(skillId);
 				skill.Lock = (SkillLockType) packet[5];
 				Logger.WriteDebug("SkillLock of skill "+skill+" changed to "+skill.Lock);
 			} else {

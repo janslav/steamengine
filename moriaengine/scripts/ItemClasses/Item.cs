@@ -30,16 +30,16 @@ namespace SteamEngine.CompiledScripts {
     public partial class Item : AbstractItem {
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 "+
 				" then the item will be deleted. Method returns the actually consumed amount.")]
-		public uint Consume(uint howMuch) {
-			uint prevAmount = this.Amount;
+		public uint Consume(long howMuch) {
+			long prevAmount = this.Amount;
 			long resultAmount = prevAmount - howMuch;
-
+			
 			if (resultAmount < 1) {
 				this.Delete();
-				return prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
+				return (uint)prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
 			} else {
 				this.Amount = (uint) resultAmount;
-				return howMuch; //consumed the desired amount
+				return (uint)howMuch; //consumed the desired amount
 			}
 		}
 
