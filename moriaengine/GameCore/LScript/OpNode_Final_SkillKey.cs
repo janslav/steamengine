@@ -58,7 +58,8 @@ namespace SteamEngine.LScript {
 
 			try {
 				AbstractCharacter ch = (AbstractCharacter) oSelf;
-				ch.SkillById(skillId).RealValue = Convert.ToUInt16(result);
+				//ch.SkillById(skillId).RealValue = Convert.ToUInt16(result);
+				ch.SetSkill(skillId, Convert.ToUInt16(result));
 				//ch.Skills[skillId].RealValue = Convert.ToUInt16(result);
 				return null;
 			} catch (Exception e) {
@@ -69,7 +70,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			AbstractCharacter ch = (AbstractCharacter) vars.self;
-			ch.SkillById(skillId).RealValue = Convert.ToUInt16(results[0]);
+			ch.SetSkill(skillId, Convert.ToUInt16(results[0]));
 			//ch.Skills[skillId].RealValue = Convert.ToUInt16(results[0]);
 			return null;
 		}
@@ -91,7 +92,7 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			try {
 				AbstractCharacter ch = (AbstractCharacter) vars.self;
-				return ch.SkillById(skillId).RealValue;
+				return ch.GetSkill(skillId);
 				//return ch.Skills[skillId].RealValue;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating SkillKey (skill id "+this.skillId+") expression", 
@@ -101,7 +102,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			AbstractCharacter ch = (AbstractCharacter) vars.self;
-			return ch.SkillById(skillId).RealValue;
+			return ch.GetSkill(skillId);
 			//return ch.Skills[skillId].RealValue;
 		}
 
