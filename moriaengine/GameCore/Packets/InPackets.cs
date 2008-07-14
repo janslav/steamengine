@@ -383,9 +383,13 @@ namespace SteamEngine.Packets {
 			//if ((skillId >= 0) && (skillId < skills.Length)) {
 			//	ISkill skill = skills[skillId];
 			if((skillId >= 0) && (skillId < AbstractSkillDef.SkillsCount)) {
-				ISkill skill = c.CurCharacter.SkillById(skillId);
-				skill.Lock = (SkillLockType) packet[5];
-				Logger.WriteDebug("SkillLock of skill "+skill+" changed to "+skill.Lock);
+				ISkill skill = null;
+				if(c.CurCharacter.HasSkill(skillId, out skill)) {				
+					skill.Lock = (SkillLockType) packet[5];
+					Logger.WriteDebug("SkillLock of skill " + skill + " changed to " + skill.Lock);
+				} else {
+					Logger.WriteDebug("SkillLock of skill change not performed, skill with id " + skillId + " is missing");
+				}
 			} else {
 				Logger.WriteDebug("SkillLock of skillid "+skillId+" requested - out of range");
 			}

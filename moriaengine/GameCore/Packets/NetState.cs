@@ -207,9 +207,13 @@ namespace SteamEngine.Packets {
 				ushort id = changedSkills[i];
 				Logger.WriteInfo(NetStateTracingOn, "UpdateSkill: "+AbstractSkillDef.ById(id).Key);
 				//ISkill curSkill = ((AbstractCharacter) thing).Skills[id];
-				ISkill curSkill = ((AbstractCharacter) thing).SkillById(id);
-				PacketSender.PrepareSingleSkillUpdate(curSkill, displaySkillCaps);
-				PacketSender.SendTo(conn, true);
+				ISkill curSkill = null;
+				if(((AbstractCharacter)thing).HasSkill(id, out curSkill)) {
+					PacketSender.PrepareSingleSkillUpdate(curSkill, displaySkillCaps);
+					PacketSender.SendTo(conn, true);
+				} else {
+					Logger.WriteDebug("Updating of skill with id " + id + " not performed, skill not present on player");
+				}
 			}
 		}
 		

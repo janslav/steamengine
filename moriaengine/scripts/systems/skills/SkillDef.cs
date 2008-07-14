@@ -98,15 +98,16 @@ namespace SteamEngine.CompiledScripts {
 
 		public ushort SkillValueOfChar(Character ch) {
 			//return ch.Skills[this.id].RealValue;
-			return ((Skill)ch.SkillsAbilities[this]).RealValue;
+			return ch.GetSkill(this.Id);
+			//return ((Skill)ch.SkillsAbilities[this]).RealValue;
 		}
 
 		public static ushort SkillValueOfChar(Character ch, ushort id) {
-			return ch.SkillById(id).RealValue;
+			return ch.GetSkill(id);
 		}
 
 		public static ushort SkillValueOfChar(Character ch, SkillName id) {
-			return ch.SkillById((int) id).RealValue;
+			return ch.GetSkill((int) id);
 		}
 
 		public double AdvRateForValue(ushort skillValue) {

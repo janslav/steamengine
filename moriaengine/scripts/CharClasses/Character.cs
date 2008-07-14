@@ -1130,7 +1130,7 @@ namespace SteamEngine.CompiledScripts {
 			//	int n = skills.Length;
 			//	for (ushort i = 0; i<n; i++) {
 			//		Skill s = skills[i];
-			if(HasSomeSkills()) {
+			//if(HasSomeSkills()) {
 				foreach(Skill s in Skills) {
 					string defsKey = AbstractSkillDef.ById(s.Id).Key;
 					if (s.RealValue != 0) {
@@ -1148,7 +1148,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 				}
-			}
+			//}
 
 			base.On_Save(output);
 		}
@@ -1161,8 +1161,8 @@ namespace SteamEngine.CompiledScripts {
 				if (ps != null) {
 					ushort val;
 					if (TagMath.TryParseUInt16(ps.value, out val)) {
-						InstantiateSkillsIfNotYetDone();
-						SkillById(i).RealValue = val;
+						//InstantiateSkillsIfNotYetDone();
+						SetSkill(i, val);
 						//InstantiateSkillsArrayIfNull();						
 						//skills[i].RealValue = val;
 					} else {
@@ -1174,8 +1174,13 @@ namespace SteamEngine.CompiledScripts {
 				if (ps != null) {
 					ushort val;
 					if (TagMath.TryParseUInt16(ps.value, out val)) {
-						InstantiateSkillsIfNotYetDone();
-						SkillById(i).Cap = val;
+						//InstantiateSkillsIfNotYetDone();
+						ISkill skill = null;
+						if (HasSkill(i, out skill)) {
+							//if the skill exists in the Save then it will be loaded by now
+							//(in the previous step)
+							skill.Cap = val;
+						}
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Cap = val;
 					} else {
@@ -1185,21 +1190,39 @@ namespace SteamEngine.CompiledScripts {
 
 				ps = input.TryPopPropsLine("SkillLock."+skillKey);
 				if (ps != null) {
-					InstantiateSkillsIfNotYetDone();
+					//InstantiateSkillsIfNotYetDone();
 					//InstantiateSkillsArrayIfNull();
 					if (string.Compare("Lock", ps.value, true)==0) {
-						InstantiateSkillsIfNotYetDone();
-						SkillById(i).Lock = SkillLockType.Locked;
+						//InstantiateSkillsIfNotYetDone();
+						ISkill skill = null;
+						if (HasSkill(i, out skill)) {
+							//if the skill exists in the Save then it will be loaded by now
+							//(in the previous step)
+							skill.Lock = SkillLockType.Locked;
+						}
+						//SkillById(i).Lock = SkillLockType.Locked;
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Lock = SkillLockType.Locked;
 					} else if (string.Compare("Down", ps.value, true)==0) {
-						InstantiateSkillsIfNotYetDone();
-						SkillById(i).Lock = SkillLockType.Down;
+						//InstantiateSkillsIfNotYetDone();
+						ISkill skill = null;
+						if (HasSkill(i, out skill)) {
+							//if the skill exists in the Save then it will be loaded by now
+							//(in the previous step)
+							skill.Lock = SkillLockType.Down;
+						}
+						//SkillById(i).Lock = SkillLockType.Down;
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Lock = SkillLockType.Down;
 					} else if (string.Compare("Up", ps.value, true)==0) {
-						InstantiateSkillsIfNotYetDone();
-						SkillById(i).Lock = SkillLockType.Increase;
+						//InstantiateSkillsIfNotYetDone();
+						ISkill skill = null;
+						if (HasSkill(i, out skill)) {
+							//if the skill exists in the Save then it will be loaded by now
+							//(in the previous step)
+							skill.Lock = SkillLockType.Increase;
+						}						
+						//SkillById(i).Lock = SkillLockType.Increase;
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Lock = SkillLockType.Increase;
 					} else {
@@ -1215,19 +1238,67 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Enumerator of all character's skills")]
 		public override IEnumerable<ISkill> Skills {
 			get {
-				InstantiateSkillsIfNotYetDone();
+				//InstantiateSkillsIfNotYetDone();
 				return new SkillsEnumerator(this);
 			}
 		}
 
 		[Summary("Find the appropriate Skill instance by given ID (look to the dictionary)")]
-		public override ISkill SkillById(int id) {
+		public ISkill GetSkillObject(int id) {
 			AbstractSkillDef def = SkillDef.ById(id);
 			object retVal = null;
-			if(SkillsAbilities.TryGetValue(def,out retVal)) {
-				return (ISkill)retVal;
+			if (SkillsAbilities.TryGetValue(def, out retVal)) {
+				return (ISkill) retVal;//return either Skill or null if not present
 			}
-			throw new SEException("The demanded skill with id " + id + " does not exist!");			
+			return null;
+		}
+
+		[Summary("Check if character has the desired skill (according to the given ID) "+
+				"if yes it also instantiates the returning value")]
+		public override bool HasSkill(int id, out ISkill skl) {
+			//skl gets ISkill or null value if skill is or is not present
+			return ((skl = GetSkillObject(id)) != null);
+		}
+
+		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present "+
+				"create a new instance on the character")]
+		public override void SetSkill(int id, ushort value) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				skl.RealValue = value;
+			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
+				AddNewSkill(id, value);
+			}
+		}
+
+		[Summary("Find the skill by given ID and add the prescribed value. If the skill is not present " +
+				"create a new instance on the character")]
+		public void AddSkill(int id, int value) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				ushort resultValue = (ushort)Math.Max(0, (int) skl.RealValue + value); //value can be negative!
+				skl.RealValue = resultValue;
+			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
+				AddNewSkill(id, (ushort)value);
+			}
+		}
+
+		//instantiate new skill and set the specified points, used when the skill does not exist
+		private void AddNewSkill(int id, ushort value) {
+			AbstractSkillDef newSkillDef = AbstractSkillDef.ById(id);
+			ISkill skl = new Skill((ushort) id, this);
+			SkillsAbilities[newSkillDef] = skl; //add to dict
+			skl.RealValue = value; //set value
+		}
+
+		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
+		public override ushort GetSkill(int id) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				return skl.RealValue;
+			} else {
+				return 0;
+			}
 		}
 
 		[SteamFunction]
@@ -1240,24 +1311,24 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//check if there are some Skills in the skillsAbilities dictionary
-		private bool HasSomeSkills() {
-			//try to find one skill in the dictionary (if there is one, there are all...)
-			SkillDef oneSkillDef = SkillDef.ById(SkillName.Alchemy);
-			object outVal = null;
-			return SkillsAbilities.TryGetValue(oneSkillDef, out outVal);
-		}
+		//private bool HasSomeSkills() {
+		//	//try to find one skill in the dictionary (if there is one, there are all...)
+		//	SkillDef oneSkillDef = SkillDef.ById(SkillName.Alchemy);
+		//	object outVal = null;
+		//	return SkillsAbilities.TryGetValue(oneSkillDef, out outVal);
+		//}
 
-		private void InstantiateSkillsIfNotYetDone() {
-			if (!HasSomeSkills()) {
-				//not found, time to instantiate all and put them in the dict...
-				AbstractSkillDef oneSkillDef = null;
-				Skill oneSkill = null;
-				for(ushort i = 0; i < AbstractSkillDef.SkillsCount; i++) {
-					oneSkillDef = AbstractSkillDef.ById(i);
-					oneSkill = new Skill(i, this);
-					SkillsAbilities[oneSkillDef] = oneSkill;
-				}
-			}
+		//private void InstantiateSkillsIfNotYetDone() {
+		//	if (!HasSomeSkills()) {
+		//		//not found, time to instantiate all and put them in the dict...
+		//		AbstractSkillDef oneSkillDef = null;
+		//		Skill oneSkill = null;
+		//		for(ushort i = 0; i < AbstractSkillDef.SkillsCount; i++) {
+		//			oneSkillDef = AbstractSkillDef.ById(i);
+		//			oneSkill = new Skill(i, this);
+		//			SkillsAbilities[oneSkillDef] = oneSkill;
+		//		}
+		//	}
 			//if (skills == null) {
 			//    skills = new Skill[AbstractSkillDef.SkillsCount];
 			//    int n = skills.Length;
@@ -1265,7 +1336,7 @@ namespace SteamEngine.CompiledScripts {
 			//        skills[i] = new Skill(i, this);
 			//    }
 			//}
-		}
+		//}
 
 		//public override ISkill[] Skills {
 		//    get {
@@ -1460,9 +1531,8 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Get number of points the character has for specified AbilityDef (0 if he doesnt have it at all)")]
 		public int GetAbility(AbilityDef aDef) {
-			object retAb = null;
-			SkillsAbilities.TryGetValue(aDef, out retAb);
-			return (retAb == null ? 0 : ((Ability)retAb).Points); //either null or Ability instance if the player has it
+			Ability retAb = GetAbilityObject(aDef);
+			return (retAb == null ? 0 : retAb.Points); //either null or Ability instance if the player has it
 		}
 
 		[Summary("Add specified number of points the character has for specified AbilityDef. If the result is"+
