@@ -1413,7 +1413,30 @@ namespace SteamEngine.Packets {
 			
 			Compress();	
 		}
-		
+
+		public static void PrepareSingleSkillNulled(int skillID, bool displaySkillCap) {
+			StartGenerating();
+			EncodeByte(0x3A, 0);
+
+			if (displaySkillCap) {
+				EncodeShort(13, 1);//blocksize
+				EncodeByte(0xDF, 3);//single skill update with cap
+				EncodeUShort(1000, 11);//former skill.Cap
+				DoneGenerating(13);
+			} else {
+				EncodeShort(11, 1);//blocksize
+				EncodeByte(0xFF, 3);//single skill update without skillcap
+				DoneGenerating(11);
+			}
+
+			EncodeUShort((ushort) (skillID), 4);
+			EncodeUShort(0, 6); //former RealValue, now ZERO
+			EncodeUShort(0, 8); //former RealValue, now ZERO
+			EncodeByte((byte) SkillLockType.Unlocked, 10); //unlocked will be OK
+
+			Compress();
+		}
+
 		public static void PrepareRequestCliVer() {
 			StartGenerating();
 			EncodeByte(0xbd, 0);
