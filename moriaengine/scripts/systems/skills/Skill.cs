@@ -58,6 +58,10 @@ namespace SteamEngine.CompiledScripts {
 					this.realValue = value;
 					cont.Trigger_SkillChange(this, oldValue);
 				}
+				//delete if all is default
+				if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+					cont.RemoveSkill(id);
+				}
 			}
 		}
 		
@@ -68,6 +72,11 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				NetState.AboutToChangeSkill(cont, id);
 				this.cap = value;
+
+				//delete if all is default
+				if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+					cont.RemoveSkill(id);
+				}
 			}
 		}
 		
@@ -90,6 +99,11 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				NetState.AboutToChangeSkill(cont, id);
 				this.lockType = value;
+
+				//delete if all is default
+				if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+					cont.RemoveSkill(id);
+				}
 			}
 		}
 	}

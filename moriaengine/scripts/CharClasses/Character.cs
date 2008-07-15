@@ -1174,13 +1174,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ps != null) {
 					ushort val;
 					if (TagMath.TryParseUInt16(ps.value, out val)) {
-						//InstantiateSkillsIfNotYetDone();
-						ISkill skill = null;
-						if (HasSkill(i, out skill)) {
-							//if the skill exists in the Save then it will be loaded by now
-							//(in the previous step)
-							skill.Cap = val;
-						}
+						SetSkillCap(i, val);
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Cap = val;
 					} else {
@@ -1193,36 +1187,15 @@ namespace SteamEngine.CompiledScripts {
 					//InstantiateSkillsIfNotYetDone();
 					//InstantiateSkillsArrayIfNull();
 					if (string.Compare("Lock", ps.value, true)==0) {
-						//InstantiateSkillsIfNotYetDone();
-						ISkill skill = null;
-						if (HasSkill(i, out skill)) {
-							//if the skill exists in the Save then it will be loaded by now
-							//(in the previous step)
-							skill.Lock = SkillLockType.Locked;
-						}
-						//SkillById(i).Lock = SkillLockType.Locked;
+						SetSkillLockType(i, SkillLockType.Locked);
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Lock = SkillLockType.Locked;
 					} else if (string.Compare("Down", ps.value, true)==0) {
-						//InstantiateSkillsIfNotYetDone();
-						ISkill skill = null;
-						if (HasSkill(i, out skill)) {
-							//if the skill exists in the Save then it will be loaded by now
-							//(in the previous step)
-							skill.Lock = SkillLockType.Down;
-						}
-						//SkillById(i).Lock = SkillLockType.Down;
+						SetSkillLockType(i, SkillLockType.Down);						
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Lock = SkillLockType.Down;
 					} else if (string.Compare("Up", ps.value, true)==0) {
-						//InstantiateSkillsIfNotYetDone();
-						ISkill skill = null;
-						if (HasSkill(i, out skill)) {
-							//if the skill exists in the Save then it will be loaded by now
-							//(in the previous step)
-							skill.Lock = SkillLockType.Increase;
-						}						
-						//SkillById(i).Lock = SkillLockType.Increase;
+						SetSkillLockType(i, SkillLockType.Increase);						
 						//InstantiateSkillsArrayIfNull();
 						//skills[i].Lock = SkillLockType.Increase;
 					} else {
@@ -1244,7 +1217,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Find the appropriate Skill instance by given ID (look to the dictionary)")]
-		public ISkill GetSkillObject(int id) {
+		public override ISkill GetSkillObject(int id) {
 			AbstractSkillDef def = SkillDef.ById(id);
 			object retVal = null;
 			if (SkillsAbilities.TryGetValue(def, out retVal)) {
@@ -1255,9 +1228,9 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if character has the desired skill (according to the given ID) "+
 				"if yes it also instantiates the returning value")]
-		public override bool HasSkill(int id, out ISkill skl) {
-			//skl gets ISkill or null value if skill is or is not present
-			return ((skl = GetSkillObject(id)) != null);
+		public override bool HasSkill(int id) {
+			AbstractSkillDef def = SkillDef.ById(id);
+			return SkillsAbilities.ContainsKey(def);
 		}
 
 		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present "+
@@ -1271,12 +1244,34 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Summary("Find the skill by given ID and set the prescribed lock type. If the skill is not present " +
+				"create a new instance on the character")]
+		public override void SetSkillLockType(int id, SkillLockType type) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				skl.Lock = type;
+			} else if((byte)type != 0) { //we wont create a new skill with default lock type
+				AddNewSkill(id, type);
+			}
+		}
+
+		[Summary("Find the skill by given ID and set the prescribed skillcap. If the skill is not present " +
+				"create a new instance on the character")]
+		public void SetSkillCap(int id, ushort cap) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				skl.Cap = cap;
+			} else if (cap < 1000) { //we wont create a new skill with default cap (0)
+				AddNewSkill(id, 0, cap);
+			}
+		}
+
 		[Summary("Find the skill by given ID and add the prescribed value. If the skill is not present " +
 				"create a new instance on the character")]
 		public void AddSkill(int id, int value) {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
-				ushort resultValue = (ushort)Math.Max(0, (int) skl.RealValue + value); //value can be negative!
+				ushort resultValue = (ushort)Math.Max(0, skl.RealValue + value); //value can be negative!
 				skl.RealValue = resultValue;
 			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
 				AddNewSkill(id, (ushort)value);
@@ -1285,11 +1280,31 @@ namespace SteamEngine.CompiledScripts {
 
 		//instantiate new skill and set the specified points, used when the skill does not exist
 		private void AddNewSkill(int id, ushort value) {
+			AddNewSkill(id, value, 1000); //call the same method with default cap
+		}
+
+		//instantiate new skill and set the specified lock type, used when the skill does not exist
+		private void AddNewSkill(int id, SkillLockType type) {
+			AbstractSkillDef newSkillDef = AbstractSkillDef.ById(id);
+			ISkill skl = new Skill((ushort) id, this);
+			SkillsAbilities[newSkillDef] = skl; //add to dict
+			skl.Lock = type; //set lock type
+		}
+
+		//instantiate new skill and set the specified value and cap, used when the skill does not exist
+		private void AddNewSkill(int id, ushort value, ushort cap) {
 			AbstractSkillDef newSkillDef = AbstractSkillDef.ById(id);
 			ISkill skl = new Skill((ushort) id, this);
 			SkillsAbilities[newSkillDef] = skl; //add to dict
 			skl.RealValue = value; //set value
+			skl.Cap = cap; //set lock type
 		}
+
+		internal void RemoveSkill(ushort id) {
+			AbstractSkillDef aDef = AbstractSkillDef.ById(id);			
+			SkillsAbilities.Remove(aDef);			
+		}
+
 
 		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
 		public override ushort GetSkill(int id) {
@@ -1298,6 +1313,16 @@ namespace SteamEngine.CompiledScripts {
 				return skl.RealValue;
 			} else {
 				return 0;
+			}
+		}
+
+		[Summary("Get value of the lock type of skill with given ID, if the skill is not present return default")]
+		public SkillLockType GetSkillLockType(int id) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				return skl.Lock;
+			} else {
+				return SkillLockType.Increase; //default value
 			}
 		}
 

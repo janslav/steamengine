@@ -1278,8 +1278,10 @@ namespace SteamEngine {
 		//public abstract ISkill[] Skills { get; }
 		public abstract IEnumerable<ISkill> Skills { get; }
 		//public abstract ISkill SkillById(int id);
-		public abstract bool HasSkill(int id, out ISkill skl);
+		public abstract bool HasSkill(int id);
 		public abstract void SetSkill(int id, ushort value);
+		public abstract void SetSkillLockType(int id, SkillLockType type);
+		public abstract ISkill GetSkillObject(int id);
 		public abstract ushort GetSkill(int id);
 		
 		[Summary("Gets called by the core when the player presses the skill button/runs the macro")]
