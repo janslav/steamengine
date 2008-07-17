@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 					cont.Trigger_SkillChange(this, oldValue);
 				}
 				//delete if all is default
-				if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+				if (IsDefault) {
 					cont.RemoveSkill(id);
 				}
 			}
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 				this.cap = value;
 
 				//delete if all is default
-				if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+				if (IsDefault) {
 					cont.RemoveSkill(id);
 				}
 			}
@@ -101,9 +101,15 @@ namespace SteamEngine.CompiledScripts {
 				this.lockType = value;
 
 				//delete if all is default
-				if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+				if (IsDefault) {
 					cont.RemoveSkill(id);
 				}
+			}
+		}
+
+		private bool IsDefault {
+			get {
+				return (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase);
 			}
 		}
 	}

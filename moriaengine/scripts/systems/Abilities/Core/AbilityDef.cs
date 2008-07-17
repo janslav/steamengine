@@ -358,12 +358,15 @@ namespace SteamEngine.CompiledScripts {
 
 		#region utilities
 		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
-		public static IEnumerable<AbilityDef> GetAllAbilities() {
-			if(byName != null) {
-				foreach(AbilityDef entry in byName.Values) {
-					yield return entry;					
+		//public static Dictionary<string,AbilityDef>.ValueCollection AllAbilities {
+		public static IEnumerable<AbilityDef>AllAbilities {
+			get {
+				if (byName != null) {
+					return byName.Values;
+				} else {
+					return null;
 				}
-			}
+			}			
 		}
 
 		[Summary("Method for sending clients messages about their attempt of ability usage")]

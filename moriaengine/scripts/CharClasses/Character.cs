@@ -1126,29 +1126,32 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
-			//if (skills != null) {
-			//	int n = skills.Length;
-			//	for (ushort i = 0; i<n; i++) {
-			//		Skill s = skills[i];
-			//if(HasSomeSkills()) {
-				foreach(Skill s in Skills) {
-					string defsKey = AbstractSkillDef.ById(s.Id).Key;
-					if (s.RealValue != 0) {
-						output.WriteValue(defsKey, s.RealValue);
-					}
-					//in sphere, the caps are done by Professions or some such... so this may change in the future
-					if (s.Cap != 1000) {
-						output.WriteValue("Cap." + defsKey, s.Cap);
-					}
-					if (s.Lock != SkillLockType.Increase) {
-						if (s.Lock == SkillLockType.Locked) {
-							output.WriteLine("SkillLock." + defsKey + "=Lock");
-						} else {//down
-							output.WriteLine("SkillLock." + defsKey + "=Down");
-						}
+			foreach(Skill s in Skills) {
+				string defsKey = AbstractSkillDef.ById(s.Id).Key;
+				ushort realValue = s.RealValue;
+				if (realValue != 0) {
+					output.WriteValue(defsKey, realValue);
+				}
+				//in sphere, the caps are done by Professions or some such... so this may change in the future
+				if (s.Cap != 1000) {
+					output.WriteValue("Cap." + defsKey, s.Cap);
+				}
+				if (s.Lock != SkillLockType.Increase) {
+					if (s.Lock == SkillLockType.Locked) {
+						output.WriteLine("SkillLock." + defsKey + "=Lock");
+					} else {//down
+						output.WriteLine("SkillLock." + defsKey + "=Down");
 					}
 				}
-			//}
+			}
+
+			//now abilities
+			foreach (Ability ab in Abilities) {
+				int points = ab.Points;
+				if (points != 0) {
+					output.WriteValue(ab.DefName, points);
+				}
+			}
 
 			base.On_Save(output);
 		}
@@ -1161,10 +1164,7 @@ namespace SteamEngine.CompiledScripts {
 				if (ps != null) {
 					ushort val;
 					if (TagMath.TryParseUInt16(ps.value, out val)) {
-						//InstantiateSkillsIfNotYetDone();
 						SetSkill(i, val);
-						//InstantiateSkillsArrayIfNull();						
-						//skills[i].RealValue = val;
 					} else {
 						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
 					}
@@ -1175,8 +1175,6 @@ namespace SteamEngine.CompiledScripts {
 					ushort val;
 					if (TagMath.TryParseUInt16(ps.value, out val)) {
 						SetSkillCap(i, val);
-						//InstantiateSkillsArrayIfNull();
-						//skills[i].Cap = val;
 					} else {
 						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
 					}
@@ -1184,25 +1182,31 @@ namespace SteamEngine.CompiledScripts {
 
 				ps = input.TryPopPropsLine("SkillLock."+skillKey);
 				if (ps != null) {
-					//InstantiateSkillsIfNotYetDone();
-					//InstantiateSkillsArrayIfNull();
 					if (string.Compare("Lock", ps.value, true)==0) {
-						SetSkillLockType(i, SkillLockType.Locked);
-						//InstantiateSkillsArrayIfNull();
-						//skills[i].Lock = SkillLockType.Locked;
+						SetSkillLockType(i, SkillLockType.Locked);						
 					} else if (string.Compare("Down", ps.value, true)==0) {
-						SetSkillLockType(i, SkillLockType.Down);						
-						//InstantiateSkillsArrayIfNull();
-						//skills[i].Lock = SkillLockType.Down;
+						SetSkillLockType(i, SkillLockType.Down);
 					} else if (string.Compare("Up", ps.value, true)==0) {
-						SetSkillLockType(i, SkillLockType.Increase);						
-						//InstantiateSkillsArrayIfNull();
-						//skills[i].Lock = SkillLockType.Increase;
+						SetSkillLockType(i, SkillLockType.Increase);
 					} else {
 						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
 					}
 				}
 			}
+
+			//now load abilities (they are saved by defnames)
+			foreach(AbilityDef abDef in AbilityDef.AllAbilities) {
+				string defName = abDef.Defname;
+				PropsLine ps = input.TryPopPropsLine(defName);
+				if (ps != null) {
+					int val;
+					if (TagMath.TryParseInt32(ps.value, out val)) {
+						AddNewAbility(abDef, val);						
+					} else {
+						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+					}
+				}
+			}			
 
 			base.On_Load(input);
 		}
@@ -1211,7 +1215,6 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Enumerator of all character's skills")]
 		public override IEnumerable<ISkill> Skills {
 			get {
-				//InstantiateSkillsIfNotYetDone();
 				return new SkillsEnumerator(this);
 			}
 		}
@@ -1228,7 +1231,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if character has the desired skill (according to the given ID) "+
 				"if yes it also instantiates the returning value")]
-		public override bool HasSkill(int id) {
+		public bool HasSkill(int id) {
 			AbstractSkillDef def = SkillDef.ById(id);
 			return SkillsAbilities.ContainsKey(def);
 		}
@@ -1261,7 +1264,7 @@ namespace SteamEngine.CompiledScripts {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
 				skl.Cap = cap;
-			} else if (cap < 1000) { //we wont create a new skill with default cap (0)
+			} else if (cap < 1000) { //we wont create a new skill with default cap (1000)
 				AddNewSkill(id, 0, cap);
 			}
 		}
@@ -1272,7 +1275,7 @@ namespace SteamEngine.CompiledScripts {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
 				ushort resultValue = (ushort)Math.Max(0, skl.RealValue + value); //value can be negative!
-				skl.RealValue = resultValue;
+				skl.RealValue = resultValue;			
 			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
 				AddNewSkill(id, (ushort)value);
 			}
@@ -1530,7 +1533,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region abilities
 		[Summary("Enumerator of all character's abilities")]
-		public IEnumerator<Ability> Abilities {
+		public IEnumerable<Ability> Abilities {
 			get {
 				return new AbilitiesEnumerator(this);
 			}

@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if(abList == null) {
 				//vzit seznam abilit dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				abList = ListifyAbilities(AbilityDef.GetAllAbilities(), TagMath.SGetTag(args, D_AbilitiesList.tagCriteriumTK));
+				abList = ListifyAbilities(AbilityDef.AllAbilities, TagMath.SGetTag(args, D_AbilitiesList.tagCriteriumTK));
 				SortAbilities(abList, (AbilitiesSorting)args.GetTag(D_AbilitiesList.sortingTK));
 				args.SetTag(D_AbilitiesList.tagListTK, abList); //ulozime to do argumentu dialogu				
 			}

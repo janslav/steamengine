@@ -22,7 +22,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("This class will be used fo iterating over the character's abilities")]
-	internal class AbilitiesEnumerator : IEnumerator<Ability> {
+	internal class AbilitiesEnumerator : IEnumerator<Ability>, IEnumerable<Ability> {
 		private Ability current;
 		private IEnumerator valuesEnum;
 
@@ -65,6 +65,18 @@ namespace SteamEngine.CompiledScripts {
 		public void Reset() {
 			current = null;
 			valuesEnum.Reset();
+		}
+		#endregion
+
+		#region IEnumerable<Ability> Members
+		public IEnumerator<Ability> GetEnumerator() {
+			return this;
+		}
+		#endregion
+
+		#region IEnumerable Members
+		IEnumerator IEnumerable.GetEnumerator() {
+			return this;
 		}
 		#endregion
 	}
