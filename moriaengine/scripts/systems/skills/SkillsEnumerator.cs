@@ -70,11 +70,9 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 
 		#region IEnumerable<ISkill> Members
-
 		public IEnumerator<ISkill> GetEnumerator() {
 			return this;
 		}
-
 		#endregion
 
 		#region IEnumerable Members
