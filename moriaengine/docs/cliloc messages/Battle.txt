@@ -1,0 +1,4 @@
+500221	Ha ha!  Missed me!
+500236	You should throw it now!
+500237	Target cannot be seen.
+500263	*Acid blood scars your weapon!*

@@ -1,4 +1,4 @@
-500000	Reputation aversion triggered.
+﻿500000	Reputation aversion triggered.
 500001	I have no reaction to you.
 500002	I am going home.
 500003	Searching.
@@ -276,7 +276,7 @@
 500275	You can only build this in a house.
 500276	You can only place this in a house or on a ship that you own!
 500277	Construction aborted. Please try again.
-500278	As a young player, you may not cast beneficial spells onto older players.
+500278	As a young player, you may not cast beneficial spells onto older players.     ******
 500279	You pour the potion into a bottle...
 500280	...and place it into your backpack.
 500281	...but there is no room in your backpack.
