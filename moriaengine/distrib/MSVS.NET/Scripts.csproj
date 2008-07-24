@@ -155,6 +155,12 @@
     <Compile Include="..\..\scripts\ItemClasses\Destroyable.Generated.cs">
       <Link>ItemClasses\Destroyable.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Door.cs">
+      <Link>ItemClasses\Door.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Door.Generated.cs">
+      <Link>ItemClasses\Door.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Equippable.cs">
       <Link>ItemClasses\Equippable.cs</Link>
     </Compile>

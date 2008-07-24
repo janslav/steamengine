@@ -1,0 +1,11 @@
+500253	max = 
+500254	rate = 
+500255	level = 
+500256	satisfaction = 
+500259	Enter the area of operation for the terrain scan, in (x, y) (x, y) format:
+500260	Setting of operations area cancelled.
+500261	Format for operations area incorrect.
+500262	Terrain scan complete.
+500266	What would you like to add?
+500267	No type defined! ERROR.
+500273	This add-on deed is blank.

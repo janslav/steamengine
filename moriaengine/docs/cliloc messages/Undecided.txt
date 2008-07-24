@@ -1,0 +1,12 @@
+500220	OW!  THAT SMARTS!
+500239	default
+
+500245	Time to start opening.
+500246	Still opening.
+500247	Curtain is open now.
+500248	Time to start opening.
+500249	Still opening.
+500250	Curtain is open now.
+
+500264	Honestly, I'm not a key.
+500265	Honestly, I'm not a key.

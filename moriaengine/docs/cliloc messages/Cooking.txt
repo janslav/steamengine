@@ -1,0 +1,12 @@
+500222	What should I cook this on?
+500223	What should I cook this on?
+500224	What should I cook this on?
+500225	What should I cook this on?
+500226	What should I cook this on?
+500238	Select an ingredient to mix with or a fire to cook on.
+500240	What should I cook this on?
+500242	What should I cook this on?
+500243	You cook the pie.
+500244	What should I cook this on?
+500257	What should I cook this on?
+500258	What should I cook this on?

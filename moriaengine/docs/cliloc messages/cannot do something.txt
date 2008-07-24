@@ -6,3 +6,16 @@
 500177	Access to bank not allowed anymore.
 500178	Access to bank not allowed anymore.
 500204	You cannot say anything, you have been squelched.
+500241	name incorrect
+500251	That location is too far away.
+500252	A ship cannot be created here.
+500268	This object needs to be mounted on something.
+500269	You cannot build that there.
+500270	You cannot build that there.
+500271	You cannot build near the door.
+500272	You cannot build near the stairs.
+500274	You can only place this in a house that you own!
+500275	You can only build this in a house.
+500276	You can only place this in a house or on a ship that you own!
+500277	Construction aborted. Please try again.
+500278	As a young player, you may not cast beneficial spells onto older players.
