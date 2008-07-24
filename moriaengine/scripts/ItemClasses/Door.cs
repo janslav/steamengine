@@ -57,7 +57,6 @@ namespace SteamEngine.CompiledScripts {
         public DoorType Info() {
             ushort grafic = this.Model;
             DoorType dType = null;
-            dType.baseType = 0x1111;
             if (grafic >= 0x675 && grafic <= 0x684) {
                 dType.baseType = 0x675;
                 dType.description = "iron door";
