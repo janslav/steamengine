@@ -24,7 +24,13 @@ namespace SteamEngine.CompiledScripts {
     [Dialogs.ViewableClass]
     public partial class Door : Item {
 
-        public bool opened = false;
+        public bool opened;
+        private ushort rd = 16;
+
+        private void Set() {
+            DoorType dt = this.Info();
+            rd = (ushort)(dt.baseType - this.Model);        //Stands for relative position of graphic
+        }
 
         public static bool IsOpen(Door door) {
             if (door.opened == true) {
@@ -35,6 +41,9 @@ namespace SteamEngine.CompiledScripts {
         }
 
         public override void On_DClick(AbstractCharacter user) {
+            if (rd == 16) {        //does only on first time of use
+                this.Set();
+            }
             Character person = user as Character;
             if (person.CanReach(this) == DenyResult.Allow) {
                 if (opened == false) {
@@ -47,10 +56,64 @@ namespace SteamEngine.CompiledScripts {
 
         public void Open(Character person) {
             opened = true;
+            if (rd == 0) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 2) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 4) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 6) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 8) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 10) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 12) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 14) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y - 1);
+            }
+            this.Model = (ushort)(this.Model + 1);
+            rd = (ushort)(rd + 1);
         }
 
         public void Close(Character person) {
             opened = false;
+            if (rd == 1) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 3) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 5) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 7) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 9) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 11) {
+                this.X = (ushort)(this.X - 1);
+                this.Y = (ushort)(this.Y + 1);
+            } else if (rd == 13) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y - 1);
+            } else if (rd == 15) {
+                this.X = (ushort)(this.X + 1);
+                this.Y = (ushort)(this.Y + 1);
+            }
+            this.Model = (ushort)(this.Model - 1);
+            rd = (ushort)(rd - 1);
         }
 
         [Summary("Method returning info about doors. E.G. opened, direction, description...")]
@@ -96,11 +159,10 @@ namespace SteamEngine.CompiledScripts {
             } else {
                 throw new SEException("This isn´t a door.");
             }
-            return RotationAndDirection(dType, grafic);
+            return this.RotationAndDirection(dType);
         }
 
-        private static DoorType RotationAndDirection(DoorType dt, ushort grafic) {
-            ushort rd = (ushort)(grafic - dt.baseType);
+        private DoorType RotationAndDirection(DoorType dt) {
             if (rd == 0) {
                 dt.direction = Direction.North;
                 dt.opened = false;
