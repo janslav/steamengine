@@ -17,6 +17,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				case 0x80:
 					return Pool<GameLoginPacket>.Acquire();
 
+                case 0xcf:
+                    return Pool<IGRLoginPacket>.Acquire();
+
 				case 0xa4:
 					return Pool<GameSpyPacket>.Acquire();
 
@@ -77,6 +80,16 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				}
 			}
 			return true;
+		}
+	}
+
+	//dunno exactly what it means, but I think we can ignore it and just treat it as 0x80
+	//IGR=Internetgame room. I know no further details about thismechanismthough.
+	public class IGRLoginPacket : GameLoginPacket {
+		protected override ReadPacketResult Read() {
+			base.Read();
+			this.SeekFromCurrent(16);
+			return ReadPacketResult.Success;
 		}
 	}
 

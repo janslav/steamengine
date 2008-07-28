@@ -363,6 +363,7 @@ namespace SteamEngine {
 						SteamEngine.Packets.NetState.ProcessAll();
 						if (saveFlag) {
 							WorldSaver.Save();
+							RunLevelManager.SetRunning();
 							saveFlag=false;
 						}
 					}

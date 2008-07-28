@@ -25,7 +25,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			}
 
 
-			if (buffer[packetOffset+4] == 0x80 && buffer[packetOffset+34] == 0x00 && buffer[packetOffset+64] == 0x00) {
+			if ((buffer[packetOffset + 4] == 0x80 || buffer[packetOffset + 4] == 0xcf) && buffer[packetOffset + 34] == 0x00 && buffer[packetOffset + 64] == 0x00) {
 				if (CheckCorrectASCIIString(buffer, 5, 30) && CheckCorrectASCIIString(buffer, 35, 30)) {
 					bytesUsed = 4;
 					return EncryptionInitResult.SuccessNoEncryption;
@@ -64,7 +64,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					this.Decrypt(buffer, 4, bytes, 0, length - 4);
 
 					// Check if it decrypted correctly
-					if (bytes[0] == 0x80 && CheckCorrectASCIIString(bytes, 1, 30) && CheckCorrectASCIIString(bytes, 31, 30)) {
+					if ((bytes[0] == 0x80 || bytes[0] == 0xcf) && CheckCorrectASCIIString(bytes, 1, 30) && CheckCorrectASCIIString(bytes, 31, 30)) {
 						// Reestablish our current state
 						table1 = orgTable1;
 						table2 = orgTable2;
