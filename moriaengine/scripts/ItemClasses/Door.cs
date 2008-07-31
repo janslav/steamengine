@@ -22,9 +22,7 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
     [Dialogs.ViewableClass]
     public partial class Door : Item {
-
-        private ushort rd = 0;
-        ushort[] bType = new ushort[] {
+		private static ushort[] baseModels = new ushort[] {
             0xE8,     //secret stone door		
             0x314,    //secret stone door
             0x324,    //secret stone door
@@ -44,29 +42,13 @@ namespace SteamEngine.CompiledScripts {
             0x84c,    //iron bar gate external
             0x866,    //dark wooden short door
             0x1fed,   //barred metal door
-            0x190e    //bar door - retarded doors, only 2 grafics. needs to stay last
+            //0x190e    //bar door - irregular doors, only 2 models.
         };
 
-        private void Validity() {
-            if (this.GetBaseType() == 0x190e) {
-                if (!((rd == 1) || (rd == 0))) {
-                    throw new SEException("rd of retarded BAR doors is out of range.");
-                } else {
-                    rd = (ushort)(this.Model - this.GetBaseType());
-                }
-            }
-            if (rd != (this.Model - this.GetBaseType())) {
-                if ((rd > 15) || (rd < 0)) {
-                    throw new SEException("rd of doors is out of range.");
-                } else {
-                    rd = (ushort)(this.Model - this.GetBaseType());
-                }
-            }
-        }
+		private ushort baseModel = 0;
 
         public override void On_DClick(AbstractCharacter user) {
-            this.Validity();
-            if (!this.IsOpen()) {
+            if (!this.IsOpen) {
                 Trigger_Open();
             } else {
                 Trigger_Close();
@@ -94,8 +76,8 @@ namespace SteamEngine.CompiledScripts {
         public void On_Close() { }
 
         public void SetOpen() {
-            if (!this.IsOpen()) {           //For case of opening opened doors.
-                switch (rd) {
+            if (!this.IsOpen) {           //For case of opening opened doors.
+				switch (this.RD) {
                     case 0:
                         this.X--;
                         this.Y++;
@@ -126,13 +108,13 @@ namespace SteamEngine.CompiledScripts {
                         break;
                 }
                 this.Model++;
-                rd++;
+				//this.baseModel++;
             }
         }
 
         public void SetClose() {
-            if (this.IsOpen()) {            //For case of closing closed doors.
-                switch (rd) {
+            if (this.IsOpen) {            //For case of closing closed doors.
+				switch (this.RD) {
                     case 1:
                         this.X++;
                         this.Y--;
@@ -163,59 +145,87 @@ namespace SteamEngine.CompiledScripts {
                         break;
                 }
                 this.Model--;
-                rd--;
+				//this.baseModel--;
             }
         }
 
-        [Summary("Is doors orthogonal(kolmé) on which direction?")]
-        public Direction GetDirection() {
-            this.Validity();
-            switch (rd / 4) {
-                case 0:
-                    return Direction.North;
-                case 1:
-                    return Direction.South;
-                case 2:
-                    return Direction.West;
-                case 3:
-                    return Direction.East;
-            }
-            throw new SEException("Something is wrong, maybe it isnt a door?");
+		[Summary("Is doors orthogonal(kolmé) on which direction?")]
+		public Direction DoorDirection {
+			get {
+				this.SetBaseDoorModelOrThrow();
+				switch (this.RD / 4) {
+					case 0:
+						return Direction.North;
+					case 1:
+						return Direction.South;
+					case 2:
+						return Direction.West;
+					case 3:
+						return Direction.East;
+				}
+				throw new SEException(this + " is Door with incompatible model.");
+			}
+		}
+
+        public bool IsOpen {
+			get {
+				this.SetBaseDoorModelOrThrow();
+				if ((this.RD % 2) == 0) {
+					return false;
+				} else {
+					return true;
+				}
+			}
         }
 
-        public bool IsOpen() {
-            this.Validity();
-            if ((rd % 2) == 0) {
-                return false;
-            } else {
-                return true;
-            }
+		public DoorRotation DoorRotation {
+			get {
+				this.SetBaseDoorModelOrThrow();
+				if (((this.RD / 2) % 2) == 0) {
+					return DoorRotation.Left;
+				} else {
+					return DoorRotation.Right;
+				}
+			}
         }
 
-        public Rotation GetRotation() {
-            this.Validity();
-            if (((rd / 2) % 2) == 0) {
-                return Rotation.Left;
-            } else {
-                return Rotation.Right;
-            }
-        }
+		public ushort BaseDoorModel {
+			get {
+				this.SetBaseDoorModelOrThrow();
+				return this.baseModel;
+			}
+		}
 
-        public ushort GetBaseType() {       //This metod doesnt need (no use of rd) and CANNOT call Validity method (infinite loop)
-            ushort grafic = this.Model;
-            if ((grafic == 0x190e) || (grafic == 0x190f)) {     //bar door.
-                return 0x190e;
-                for (int i = 0; i < 19; i++) {      //20 doors (0-19) but the last door are retarded bar door.
-                    if ((grafic >= bType[i]) && (grafic <= (bType[i] + 15))) {
-                        return bType[i];
-                    }
-                }
-                throw new SEException("This isnt a door perhaps.");
-            }
-        }
+		private int RD {
+			get {
+				return this.Model - this.baseModel;
+			}
+		}
+
+		private void SetBaseDoorModelOrThrow() {
+			ushort model = this.Model;
+			switch (model) {
+				case 0x190e://bar door.
+				case 0x190f:
+					this.baseModel = 0x190e;
+					return;
+			}
+
+			if ((model < this.baseModel) || (model > (this.baseModel + 15))) {
+				for (int i = 0, n = baseModels.Length; i < n; i++) {      //20 doors (0-19) but the last door are irregular bar door.
+					ushort bm = baseModels[i];
+					if ((model >= bm) && (model <= (bm + 15))) {
+						this.baseModel = bm;
+						return;
+					}
+				}
+				throw new SEException(this + " is Door with incompatible model.");
+			}
+		}
     }
-    [Summary("Does doors rotate by left or right side?")]
-    public enum Rotation {
+
+    [Summary("Do doors rotate by left or right side?")]
+	public enum DoorRotation {
         Left,
         Right
     }
