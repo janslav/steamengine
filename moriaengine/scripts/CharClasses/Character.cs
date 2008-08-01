@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 		//[Summary("Dictionary of character's (typically player's) abilities")]
 		//private Dictionary<AbilityDef, Ability> abilities = null;
 
-		[Summary("Dictionary of character's skills and abilities. Key is (ability/skill)def, value is instance of "+
+		[Summary("Dictionary of character's skills and abilities. Key is (ability/skill)def, value is instance of " +
 				"Ability/Skill object of the desired entity")]
 		private Dictionary<AbstractDef, object> skillsabilities = null;
 
@@ -133,19 +133,19 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Flag_Dead {
 			get {
-				return ((flags&0x0002)==0x0002);
+				return ((flags & 0x0002) == 0x0002);
 			}
 			private set {
-				flags = (ushort) (value?(flags|0x0002):(flags&~0x0002));
+				flags = (ushort) (value ? (flags | 0x0002) : (flags & ~0x0002));
 			}
 		}
 
 		public bool Flag_Insubst {
 			get {
-				return ((flags&0x0004)==0x0004);
+				return ((flags & 0x0004) == 0x0004);
 			}
 			set {
-				ushort newFlags = (ushort) (value?(flags|0x0004):(flags&~0x0004));
+				ushort newFlags = (ushort) (value ? (flags | 0x0004) : (flags & ~0x0004));
 				if (newFlags != flags) {
 					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
@@ -155,10 +155,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Flag_InvisByMagic {
 			get {
-				return ((flags&0x0008)==0x0008);
+				return ((flags & 0x0008) == 0x0008);
 			}
 			set {
-				ushort newFlags = (ushort) (value?(flags|0x0008):(flags&~0x0008));
+				ushort newFlags = (ushort) (value ? (flags | 0x0008) : (flags & ~0x0008));
 				if (newFlags != flags) {
 					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
@@ -168,10 +168,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Flag_Hidden {
 			get {
-				return ((flags&0x0010)==0x0010);
+				return ((flags & 0x0010) == 0x0010);
 			}
 			set {
-				ushort newFlags = (ushort) (value?(flags|0x0010):(flags&~0x0010));
+				ushort newFlags = (ushort) (value ? (flags | 0x0010) : (flags & ~0x0010));
 				if (newFlags != flags) {
 					NetState.AboutToChangeVisibility(this);
 					flags = newFlags;
@@ -181,10 +181,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool Flag_WarMode {
 			get {
-				return ((flags&0x0020)==0x0020);
+				return ((flags & 0x0020) == 0x0020);
 			}
 			set {
-				ushort newFlags = (ushort) (value?(flags|0x0020):(flags&~0x0020));
+				ushort newFlags = (ushort) (value ? (flags | 0x0020) : (flags & ~0x0020));
 				if (newFlags != flags) {
 					NetState.AboutToChangeFlags(this);
 					flags = newFlags;
@@ -221,12 +221,12 @@ namespace SteamEngine.CompiledScripts {
 		//(they should set Mount instead) but it needs to be settable from within Character itself.
 		public override bool Flag_Riding {
 			get {
-				return ((flags&0x2000)==0x2000);
+				return ((flags & 0x2000) == 0x2000);
 			}
 		}
 
 		private void SetFlag_Riding(bool value) {
-			flags=(ushort) (value?(flags|0x2000):(flags&~0x2000));
+			flags = (ushort) (value ? (flags | 0x2000) : (flags & ~0x2000));
 		}
 
 
@@ -235,11 +235,11 @@ namespace SteamEngine.CompiledScripts {
 		*/
 		public AbstractCharacter Rider {
 			get {
-				if (mountorrider!=null) {
+				if (mountorrider != null) {
 					if (!Flag_Riding) {
 						if (mountorrider.IsDeleted) {
 							NetState.AboutToChangeMount(this);
-							mountorrider=null;
+							mountorrider = null;
 						} else {
 							return mountorrider;
 						}
@@ -254,12 +254,12 @@ namespace SteamEngine.CompiledScripts {
 		*/
 		public override sealed AbstractCharacter Mount {
 			get {
-				if (mountorrider!=null) {
+				if (mountorrider != null) {
 					if (Flag_Riding) {
 						if (mountorrider.IsDeleted) {
 							NetState.AboutToChangeMount(this);
 							SetFlag_Riding(false);
-							mountorrider=null;
+							mountorrider = null;
 						}
 					}
 				}
@@ -267,17 +267,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				NetState.AboutToChangeMount(this);
-				if (value==null) {	//automatically call Dismount if 'mount=null;' is done.
-					if (mountorrider!=null && !mountorrider.IsDeleted) {
+				if (value == null) {	//automatically call Dismount if 'mount=null;' is done.
+					if (mountorrider != null && !mountorrider.IsDeleted) {
 						Dismount();
 					} else {
 						NetState.AboutToChangeMount(this);
 						SetFlag_Riding(false);
-						mountorrider=null;
+						mountorrider = null;
 					}
 					return;
 				}
-				if (mountorrider!=null) {
+				if (mountorrider != null) {
 					if (!mountorrider.IsDeleted) {
 						Dismount();
 					}
@@ -285,9 +285,9 @@ namespace SteamEngine.CompiledScripts {
 				if (value.Flag_Riding) {
 					throw new ArgumentException("You can't ride something that's riding something else!");
 				} else {
-					mountorrider=(Character) value;
+					mountorrider = (Character) value;
 					SetFlag_Riding(true);
-					mountorrider.mountorrider=this;
+					mountorrider.mountorrider = this;
 					mountorrider.Disconnect();
 				}
 			}
@@ -295,23 +295,23 @@ namespace SteamEngine.CompiledScripts {
 
 		public void Dismount() {
 			NetState.AboutToChangeMount(this);
-			if (Flag_Riding && mountorrider!=null) {
-				if (mountorrider.mountorrider==this) {
+			if (Flag_Riding && mountorrider != null) {
+				if (mountorrider.mountorrider == this) {
 					//mountorrider.AboutToChange();
 
 					//move it to where we are
 					mountorrider.P(this);
-					mountorrider.Direction=Direction;
+					mountorrider.Direction = Direction;
 
 					//set it's rider to null
-					mountorrider.mountorrider=null;
+					mountorrider.mountorrider = null;
 					mountorrider.Reconnect();
 				} else {
-					Logger.WriteCritical("Dismount(): Mounted character doesn't know who's riding it or thinks the wrong person is (["+this+"] is, but the mount thinks ["+mountorrider.mountorrider+"] is)!");
+					Logger.WriteCritical("Dismount(): Mounted character doesn't know who's riding it or thinks the wrong person is ([" + this + "] is, but the mount thinks [" + mountorrider.mountorrider + "] is)!");
 				}
 			}
 			SetFlag_Riding(false);
-			mountorrider=null;
+			mountorrider = null;
 		}
 
 		public override bool CanSeeVisibility(Thing target) {
@@ -351,8 +351,8 @@ namespace SteamEngine.CompiledScripts {
 				if (this.IsGM()) {
 					return true;
 				} else {
-                    HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
-					return ((ssp != null) && 
+					HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+					return ((ssp != null) &&
 						(ssp.hadDetectedMe != null) &&
 						(ssp.hadDetectedMe.Contains(this)));
 				}
@@ -383,11 +383,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 		public override StatLockType StrLock {
 			get {
-				return (StatLockType) ((statLockByte>>4)&0x3);
+				return (StatLockType) ((statLockByte >> 4) & 0x3);
 			}
 			set {
 				if (value != StrLock) {
-					statLockByte=(byte) ((statLockByte&0xCF)+((((byte) value)&0x3)<<4));
+					statLockByte = (byte) ((statLockByte & 0xCF) + ((((byte) value) & 0x3) << 4));
 					GameConn c = Conn;
 					if (c != null) {
 						PacketSender.PrepareStatLocks(this);
@@ -398,11 +398,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 		public override StatLockType DexLock {
 			get {
-				return (StatLockType) ((statLockByte>>2)&0x3);
+				return (StatLockType) ((statLockByte >> 2) & 0x3);
 			}
 			set {
 				if (value != DexLock) {
-					statLockByte=(byte) ((statLockByte&0xF3)+((((byte) value)&0x3)<<2));
+					statLockByte = (byte) ((statLockByte & 0xF3) + ((((byte) value) & 0x3) << 2));
 					GameConn c = Conn;
 					if (c != null) {
 						PacketSender.PrepareStatLocks(this);
@@ -413,11 +413,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 		public override StatLockType IntLock {
 			get {
-				return (StatLockType) ((statLockByte)&0x3);
+				return (StatLockType) ((statLockByte) & 0x3);
 			}
 			set {
 				if (value != IntLock) {
-					statLockByte=(byte) ((statLockByte&0xFC)+((((byte) value)&0x3)));
+					statLockByte = (byte) ((statLockByte & 0xFC) + ((((byte) value) & 0x3)));
 					GameConn c = Conn;
 					if (c != null) {
 						PacketSender.PrepareStatLocks(this);
@@ -438,7 +438,7 @@ namespace SteamEngine.CompiledScripts {
 						CauseDeath((Character) Globals.SrcCharacter);
 					} else {
 						NetState.AboutToChangeHitpoints(this);
-						hitpoints=value;
+						hitpoints = value;
 					}
 				}
 			}
@@ -451,7 +451,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != maxHitpoints) {
 					NetState.AboutToChangeHitpoints(this);
-					maxHitpoints=value;
+					maxHitpoints = value;
 				}
 			}
 		}
@@ -463,7 +463,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != mana) {
 					NetState.AboutToChangeMana(this);
-					mana=value;
+					mana = value;
 				}
 			}
 		}
@@ -475,7 +475,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != maxMana) {
 					NetState.AboutToChangeMana(this);
-					maxMana=value;
+					maxMana = value;
 				}
 			}
 		}
@@ -487,7 +487,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != stamina) {
 					NetState.AboutToChangeStamina(this);
-					stamina=value;
+					stamina = value;
 				}
 			}
 		}
@@ -499,7 +499,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != maxStamina) {
 					NetState.AboutToChangeStamina(this);
-					maxStamina=value;
+					maxStamina = value;
 				}
 			}
 		}
@@ -512,7 +512,7 @@ namespace SteamEngine.CompiledScripts {
 				if (value != strength) {
 					NetState.AboutToChangeStats(this);
 					InvalidateCombatWeaponValues();
-					strength=value;
+					strength = value;
 				}
 			}
 		}
@@ -526,7 +526,7 @@ namespace SteamEngine.CompiledScripts {
 				if (value != dexterity) {
 					NetState.AboutToChangeStats(this);
 					InvalidateCombatWeaponValues();
-					dexterity=value;
+					dexterity = value;
 				}
 			}
 		}
@@ -539,7 +539,7 @@ namespace SteamEngine.CompiledScripts {
 				if (value != intelligence) {
 					NetState.AboutToChangeStats(this);
 					InvalidateCombatWeaponValues();
-					intelligence=value;
+					intelligence = value;
 				}
 			}
 		}
@@ -575,7 +575,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != tithingPoints) {
 					NetState.AboutToChangeStats(this);
-					tithingPoints=value;
+					tithingPoints = value;
 				}
 			}
 		}
@@ -829,7 +829,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override string PaperdollName {
 			get {
-				if (title!=null) {
+				if (title != null) {
 					return string.Concat(Name, ", ", title);
 				}
 				return Name;
@@ -841,7 +841,7 @@ namespace SteamEngine.CompiledScripts {
 				return title;
 			}
 			set {
-				title=value;
+				title = value;
 			}
 		}
 
@@ -1097,21 +1097,21 @@ namespace SteamEngine.CompiledScripts {
 			if (i != null) {
 				if (i.Cont != this) {
 					i.Delete();
-					throw new Exception("'"+i+"' ended not equipped on the char... Wtf?");
+					throw new Exception("'" + i + "' ended not equipped on the char... Wtf?");
 				}
 				return i;
 			}
 			if (t != null) {
 				t.Delete();//we created something else
 			}
-			throw new SEException(factory+" did not create an equippable item.");
+			throw new SEException(factory + " did not create an equippable item.");
 		}
 
 		public override void On_Dupe(Thing model) {
 			Character copyFrom = (Character) model;
 
 			//rewritten using dictionary of skills and abilities
-			foreach(Skill skl in copyFrom.Skills) {
+			foreach (Skill skl in copyFrom.Skills) {
 				Skill newSkill = new Skill(skl, this); //create a copy
 				SkillsAbilities.Add(SkillDef.ById(newSkill.Id), newSkill);//add to the duped char's storage
 			}
@@ -1126,7 +1126,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
-			foreach(Skill s in Skills) {
+			foreach (Skill s in Skills) {
 				string defsKey = AbstractSkillDef.ById(s.Id).Key;
 				ushort realValue = s.RealValue;
 				if (realValue != 0) {
@@ -1158,8 +1158,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Load(PropsSection input) {
 			int n = AbstractSkillDef.SkillsCount;
-			for (ushort i = 0; i<n; i++) {
-				string skillKey = AbstractSkillDef.ById(i).Key;			
+			for (ushort i = 0; i < n; i++) {
+				string skillKey = AbstractSkillDef.ById(i).Key;
 				PropsLine ps = input.TryPopPropsLine(skillKey);
 				if (ps != null) {
 					ushort val;
@@ -1170,7 +1170,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 
-				ps = input.TryPopPropsLine("Cap."+skillKey);
+				ps = input.TryPopPropsLine("Cap." + skillKey);
 				if (ps != null) {
 					ushort val;
 					if (TagMath.TryParseUInt16(ps.value, out val)) {
@@ -1180,13 +1180,13 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 
-				ps = input.TryPopPropsLine("SkillLock."+skillKey);
+				ps = input.TryPopPropsLine("SkillLock." + skillKey);
 				if (ps != null) {
-					if (string.Compare("Lock", ps.value, true)==0) {
-						SetSkillLockType(i, SkillLockType.Locked);						
-					} else if (string.Compare("Down", ps.value, true)==0) {
+					if (string.Compare("Lock", ps.value, true) == 0) {
+						SetSkillLockType(i, SkillLockType.Locked);
+					} else if (string.Compare("Down", ps.value, true) == 0) {
 						SetSkillLockType(i, SkillLockType.Down);
-					} else if (string.Compare("Up", ps.value, true)==0) {
+					} else if (string.Compare("Up", ps.value, true) == 0) {
 						SetSkillLockType(i, SkillLockType.Increase);
 					} else {
 						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
@@ -1195,18 +1195,18 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//now load abilities (they are saved by defnames)
-			foreach(AbilityDef abDef in AbilityDef.AllAbilities) {
+			foreach (AbilityDef abDef in AbilityDef.AllAbilities) {
 				string defName = abDef.Defname;
 				PropsLine ps = input.TryPopPropsLine(defName);
 				if (ps != null) {
 					int val;
 					if (TagMath.TryParseInt32(ps.value, out val)) {
-						AddNewAbility(abDef, val);						
+						AddNewAbility(abDef, val);
 					} else {
 						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
 					}
 				}
-			}			
+			}
 
 			base.On_Load(input);
 		}
@@ -1229,14 +1229,14 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		[Summary("Check if character has the desired skill (according to the given ID) "+
+		[Summary("Check if character has the desired skill (according to the given ID) " +
 				"if yes it also instantiates the returning value")]
 		public bool HasSkill(int id) {
 			AbstractSkillDef def = SkillDef.ById(id);
 			return SkillsAbilities.ContainsKey(def);
 		}
 
-		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present "+
+		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present " +
 				"create a new instance on the character")]
 		public override void SetSkill(int id, ushort value) {
 			ISkill skl = GetSkillObject(id);
@@ -1253,7 +1253,7 @@ namespace SteamEngine.CompiledScripts {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
 				skl.Lock = type;
-			} else if((byte)type != 0) { //we wont create a new skill with default lock type
+			} else if ((byte) type != 0) { //we wont create a new skill with default lock type
 				AddNewSkill(id, type);
 			}
 		}
@@ -1274,10 +1274,10 @@ namespace SteamEngine.CompiledScripts {
 		public void AddSkill(int id, int value) {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
-				ushort resultValue = (ushort)Math.Max(0, skl.RealValue + value); //value can be negative!
-				skl.RealValue = resultValue;			
+				ushort resultValue = (ushort) Math.Max(0, skl.RealValue + value); //value can be negative!
+				skl.RealValue = resultValue;
 			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
-				AddNewSkill(id, (ushort)value);
+				AddNewSkill(id, (ushort) value);
 			}
 		}
 
@@ -1304,8 +1304,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void RemoveSkill(ushort id) {
-			AbstractSkillDef aDef = AbstractSkillDef.ById(id);			
-			SkillsAbilities.Remove(aDef);			
+			AbstractSkillDef aDef = AbstractSkillDef.ById(id);
+			SkillsAbilities.Remove(aDef);
 		}
 
 
@@ -1332,9 +1332,9 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		[Summary("Method for new skill storing testing purposes")]
 		public static void TrySkills() {
-			Character chr = (Character)Globals.SrcCharacter;
-			foreach(Skill skl in chr.Skills) {
-				chr.SysMessage(skl.Name + "-"+skl.RealValue);
+			Character chr = (Character) Globals.SrcCharacter;
+			foreach (Skill skl in chr.Skills) {
+				chr.SysMessage(skl.Name + "-" + skl.RealValue);
 			}
 		}
 
@@ -1357,13 +1357,13 @@ namespace SteamEngine.CompiledScripts {
 		//			SkillsAbilities[oneSkillDef] = oneSkill;
 		//		}
 		//	}
-			//if (skills == null) {
-			//    skills = new Skill[AbstractSkillDef.SkillsCount];
-			//    int n = skills.Length;
-			//    for (ushort i = 0; i<n; i++) {
-			//        skills[i] = new Skill(i, this);
-			//    }
-			//}
+		//if (skills == null) {
+		//    skills = new Skill[AbstractSkillDef.SkillsCount];
+		//    int n = skills.Length;
+		//    for (ushort i = 0; i<n; i++) {
+		//        skills[i] = new Skill(i, this);
+		//    }
+		//}
 		//}
 
 		//public override ISkill[] Skills {
@@ -1461,14 +1461,16 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TimerKey skillTimerKey = TimerKey.Get("_skillTimer_");
 
-		[SaveableClass][DeepCopyableClass]
+		[SaveableClass]
+		[DeepCopyableClass]
 		public class SkillStrokeTimer : BoundTimer {
-			[LoadingInitializer][DeepCopyImplementation]
+			[LoadingInitializer]
+			[DeepCopyImplementation]
 			public SkillStrokeTimer() {
 			}
 
 			protected sealed override void OnTimeout(TagHolder cont) {
-				Logger.WriteDebug("SkillStrokeTimer OnTimeout on "+this.Cont);
+				Logger.WriteDebug("SkillStrokeTimer OnTimeout on " + this.Cont);
 				Character self = cont as Character;
 				if (self != null) {
 					self.DelayedSkillStroke();
@@ -1478,7 +1480,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void DelaySkillStroke(double seconds) {
 			Sanity.IfTrueThrow((currentSkill == null),
-				"DelaySkillStroke called on "+this+", which currently does no skill.");
+				"DelaySkillStroke called on " + this + ", which currently does no skill.");
 
 			//this.RemoveTimer(skillTimerKey);
 			this.AddTimer(skillTimerKey, new SkillStrokeTimer()).DueInSeconds = seconds;
@@ -1522,7 +1524,7 @@ namespace SteamEngine.CompiledScripts {
 		//}
 		#endregion skills
 
-		internal Dictionary<AbstractDef,object> SkillsAbilities {
+		internal Dictionary<AbstractDef, object> SkillsAbilities {
 			get {
 				if (skillsabilities == null) {
 					skillsabilities = new Dictionary<AbstractDef, object>();
@@ -1547,14 +1549,14 @@ namespace SteamEngine.CompiledScripts {
 			if (hasOrNot) {
 				abil = (Ability) retVal; //found ability, cast the return value
 			}
-			
+
 			return hasOrNot;
 		}
 
 		public Ability GetAbilityObject(AbilityDef aDef) {
 			object retVal = null;
 			SkillsAbilities.TryGetValue(aDef, out retVal);
-			return (Ability)retVal; //either null or Ability instance if the player has it
+			return (Ability) retVal; //either null or Ability instance if the player has it
 		}
 
 		[Summary("Get number of points the character has for specified AbilityDef (0 if he doesnt have it at all)")]
@@ -1563,25 +1565,25 @@ namespace SteamEngine.CompiledScripts {
 			return (retAb == null ? 0 : retAb.Points); //either null or Ability instance if the player has it
 		}
 
-		[Summary("Add specified number of points the character has for specified AbilityDef. If the result is"+
+		[Summary("Add specified number of points the character has for specified AbilityDef. If the result is" +
 				"<= 0 then we will remove the ability")]
 		public void AddAbilityPoints(AbilityDef aDef, int points) {
 			Ability ab = GetAbilityObject(aDef);
-			if(ab != null) {
+			if (ab != null) {
 				ab.Points += points;
-			} else if(points > 0) { //we wont create a new ability with 0 or <0 number of points!
-				AddNewAbility(aDef, points);		
+			} else if (points > 0) { //we wont create a new ability with 0 or <0 number of points!
+				AddNewAbility(aDef, points);
 			}
 		}
 
 		[Summary("Set specified number of points the character has for specified AbilityDef, check for positive value afterwards.")]
 		public void SetAbilityPoints(AbilityDef aDef, int points) {
 			Ability ab = GetAbilityObject(aDef);
-			if(ab != null) {
+			if (ab != null) {
 				ab.Points = points;
-			} else if(points > 0) { //we wont create a new ability with 0 or <0 number of points!
+			} else if (points > 0) { //we wont create a new ability with 0 or <0 number of points!
 				AddNewAbility(aDef, points);
-			}		
+			}
 		}
 
 		private void AddNewAbility(AbilityDef aDef, int points) {
@@ -1589,7 +1591,7 @@ namespace SteamEngine.CompiledScripts {
 			SkillsAbilities.Add(aDef, ab); //first add the object to the dictionary			
 			ab.Points = points; //then set points 
 			aDef.Trigger_Assign(this); //then call the assign trigger
-		}		
+		}
 
 		internal void RemoveAbility(AbilityDef aDef) {
 			SkillsAbilities.Remove(aDef);
@@ -1624,7 +1626,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (this.IsPlayer) {
 					//AboutToChange();
-					owner=value;	//always Character
+					owner = value;	//always Character
 				} else {
 					throw new ScriptException("You cannot give a player an owner.");
 				}
@@ -1638,13 +1640,13 @@ namespace SteamEngine.CompiledScripts {
 				Has no effect on players.
 		*/
 		public void GM() {
-			AbstractAccount acc=Account;
-			if (acc!=null) {
-				if (acc.PLevel<acc.MaxPLevel) {
-					acc.PLevel=acc.MaxPLevel;
-					Conn.WriteLine("GM mode on (Plevel "+acc.PLevel+").");
+			AbstractAccount acc = Account;
+			if (acc != null) {
+				if (acc.PLevel < acc.MaxPLevel) {
+					acc.PLevel = acc.MaxPLevel;
+					Conn.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
 				} else {
-					acc.PLevel=1;
+					acc.PLevel = 1;
 					Conn.WriteLine("GM mode off (Plevel 1).");
 				}
 			}
@@ -1659,13 +1661,13 @@ namespace SteamEngine.CompiledScripts {
 		//Parameters:
 		//	i - 1 to turn GM mode on, 0 to turn it off off.
 		public void GM(int i) {
-			AbstractAccount acc=Account;
-			if (acc!=null) {
-				if (i>0) {
-					acc.PLevel=acc.MaxPLevel;
-					Conn.WriteLine("GM mode on (Plevel "+acc.PLevel+").");
+			AbstractAccount acc = Account;
+			if (acc != null) {
+				if (i > 0) {
+					acc.PLevel = acc.MaxPLevel;
+					Conn.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
 				} else {
-					acc.PLevel=1;
+					acc.PLevel = 1;
 					Conn.WriteLine("GM mode off (Plevel 1).");
 				}
 			}
@@ -1678,12 +1680,12 @@ namespace SteamEngine.CompiledScripts {
 
 		//for pets
 		public bool IsOwnerOf(Character cre) {
-			return ((cre.IsPlayer) && cre.Owner!=null && cre.owner.Equals(this));
+			return ((cre.IsPlayer) && cre.Owner != null && cre.owner.Equals(this));
 		}
 
 		public bool IsPet {
 			get {
-				return ((this.IsPlayer) && (this.Owner!=null));
+				return ((this.IsPlayer) && (this.Owner != null));
 			}
 		}
 
@@ -1695,7 +1697,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
 			Character target = (Character) chr;
-			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner==this && CanReach(chr) == DenyResult.Allow));
+			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner == this && CanReach(chr) == DenyResult.Allow));
 		}
 
 		//public override bool CanEquip(AbstractItem i) {
@@ -1705,12 +1707,12 @@ namespace SteamEngine.CompiledScripts {
 		public override bool CanRename(AbstractCharacter to) {
 			Character target = (Character) to;
 			Character targetOwner = target.owner;
-			return ((to.IsPlayer) && targetOwner!=null && targetOwner.Equals(this));
+			return ((to.IsPlayer) && targetOwner != null && targetOwner.Equals(this));
 		}
 
 		public virtual bool IsMountable {
 			get {
-				return MountItem!=0;
+				return MountItem != 0;
 			}
 		}
 
@@ -1726,22 +1728,29 @@ namespace SteamEngine.CompiledScripts {
 		//Character`s implementation of @Dclick trigger, 
 		//paperdoll raising and mounting is/will be handled here
 		public override void On_DClick(AbstractCharacter from) {
-			ThrowIfDeleted();
-			if (from!=null && from.IsPlayer) {
+			if (from != null && from.IsPlayer) {
 				//PC
-				if (from==this && Mount!=null) {
-					Dismount();
+				if (from == this && this.Mount != null) {
+					this.Dismount();
 				} else {
 					GameConn conn = from.Conn;
-					if (from!=this && IsMountableBy(from)) {
-						from.Mount=this;
+					if (from != this && this.IsMountableBy(from)) {
+						from.Mount = this;
 					} else {
-						if (conn!=null) {
-							ShowPaperdollTo(from.Conn);
+						if (conn != null) {
+							this.ShowPaperdollTo(from.Conn);
 						}
 					}
 				}
 			}
+		}
+
+		public override void On_ItemDClick(AbstractItem dClicked) {
+
+			//TODO? maybe not in all cases (healing?)? maybe not at all?
+			this.Trigger_Disrupt();
+
+			base.On_ItemDClick(dClicked);
 		}
 
 		public override HighlightColor GetHighlightColorFor(AbstractCharacter viewer) {
@@ -1759,7 +1768,7 @@ namespace SteamEngine.CompiledScripts {
 			NetState.AboutToChangeStats(this);
 			float w = Def.Weight;
 			foreach (AbstractItem i in this) {
-				if (i!=null) {
+				if (i != null) {
 					i.FixWeight();
 					w += i.Weight;
 				}
@@ -1773,13 +1782,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Destroy() {
-			if (mountorrider!=null) {
+			if (mountorrider != null) {
 				if (Flag_Riding) {//I am the rider
 					if (!mountorrider.IsDeleted) {
 						mountorrider.Delete();
 					}
 					SetFlag_Riding(false);
-					mountorrider=null;
+					mountorrider = null;
 				} else {//I am the mount
 					mountorrider.Dismount();
 				}
@@ -1870,7 +1879,7 @@ namespace SteamEngine.CompiledScripts {
 		public override short StatusArmorClass {
 			get {
 				CalculateCombatArmorValues();
-				return (short) ((combatArmorValues.armorVsP+combatArmorValues.armorVsM)/2);
+				return (short) ((combatArmorValues.armorVsP + combatArmorValues.armorVsM) / 2);
 			}
 		}
 
@@ -1906,7 +1915,7 @@ namespace SteamEngine.CompiledScripts {
 		public override short StatusMindDefense {
 			get {
 				CalculateCombatArmorValues();
-				return (short) ((combatArmorValues.mindDefenseVsP+combatArmorValues.mindDefenseVsM)/2);
+				return (short) ((combatArmorValues.mindDefenseVsP + combatArmorValues.mindDefenseVsM) / 2);
 			}
 		}
 
@@ -2037,12 +2046,12 @@ namespace SteamEngine.CompiledScripts {
 		public Projectile WeaponProjectile {
 			get {
 				if ((weaponProjectile != null) &&
-						(weaponProjectile.IsDeleted || 
-						(weaponProjectile.TopObj() != this) || 
+						(weaponProjectile.IsDeleted ||
+						(weaponProjectile.TopObj() != this) ||
 						(weaponProjectile.Amount < 1))) {
 					weaponProjectile = null;//we had ammo but now don't have it anymore
 					InvalidateCombatWeaponValues();
-				} else if ((weaponProjectile == null) && (this.combatWeaponValues != null) && 
+				} else if ((weaponProjectile == null) && (this.combatWeaponValues != null) &&
 						(this.combatWeaponValues.projectileType != ProjectileType.None)) {
 					InvalidateCombatWeaponValues();//we have no ammo but we should, let's look for it
 				}
@@ -2115,15 +2124,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_AfterGetSwing(WeaponSwingArgs args) {
 		}
-        
 
-        [Summary("hodi zbran do batohu")]
-        public void DisArm()
-        {
-            Weapon w = this.Weapon;
-            if (w != null)
-                w.Cont = this.BackpackAsContainer;
-        }
+
+		[Summary("hodi zbran do batohu")]
+		public void DisArm() {
+			Weapon w = this.Weapon;
+			if (w != null)
+				w.Cont = this.BackpackAsContainer;
+		}
 		#endregion combat
 
 		public override void On_LogOut() {
@@ -2235,5 +2243,13 @@ namespace SteamEngine.CompiledScripts {
 			return result;
 		}
 
+
+		public virtual bool On_DenyOpenDoor(DenySwitchDoorArgs args) {
+			return false;
+		}
+
+		public virtual bool On_DenyCloseDoor(DenySwitchDoorArgs args) {
+			return false;
+		}
 	}
 }

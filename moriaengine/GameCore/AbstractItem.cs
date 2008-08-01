@@ -31,7 +31,7 @@ namespace SteamEngine {
 		private string name;
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
 		//and coords of an item inside a container should only be changed through MoveInsideContainer
-		
+
 		private TriggerGroup type;
 
 		internal object contentsOrComponents = null;
@@ -41,7 +41,7 @@ namespace SteamEngine {
 				return (AbstractItemDef) Def;
 			}
 		}
-		
+
 		//Don't set the disconnected flag (0x01) by tweaking flags.
 		protected byte flags;
 		/* Flags:
@@ -58,17 +58,18 @@ namespace SteamEngine {
 		 * 0x0400: Provides partial cover (Doesn't block LOS but does assess combat penalties)
 		 * */
 		//private byte netChangeFlags = 0;
-		
+
 		private static uint instances = 0;
 		private static ArrayList registeredTGs = new ArrayList();
 		public TriggerGroup Type {
 			get {
 				return type;
-			} set {
-				type=value;
+			}
+			set {
+				type = value;
 			}
 		}
-		
+
 		//On ground
 		//public AbstractItem(ThingDef myDef, ushort x, ushort y, sbyte z, byte m) : base(myDef, x, y,z,m) {
 		//	instances++;
@@ -78,37 +79,39 @@ namespace SteamEngine {
 		//	this.amount=1;
 		//	this.name=-1;
 		//}
-		
-		public AbstractItem(ThingDef myDef) : base(myDef) {
+
+		public AbstractItem(ThingDef myDef)
+			: base(myDef) {
 			instances++;
-			this.name=null;
+			this.name = null;
 			this.type = ((AbstractItemDef) myDef).Type;
-			this.flags=0;
-			this.amount=1;
+			this.flags = 0;
+			this.amount = 1;
 
 			//MoveInsideContainer((ushort) Globals.dice.Next(20,100),(ushort) Globals.dice.Next(20,100));
 			//cont.InternalAddItem(this);//also resends
-			Globals.lastNewItem=this;
+			Globals.lastNewItem = this;
 		}
-		
-		public AbstractItem(AbstractItem copyFrom) : base(copyFrom) { //copying constuctor
+
+		public AbstractItem(AbstractItem copyFrom)
+			: base(copyFrom) { //copying constuctor
 			instances++;
-			name=copyFrom.name;
-			flags=copyFrom.flags;
-			amount=copyFrom.amount;
-			Globals.lastNewItem=this;
+			name = copyFrom.name;
+			flags = copyFrom.flags;
+			amount = copyFrom.amount;
+			Globals.lastNewItem = this;
 		}
-		
-		public static uint Instances { 
+
+		public static uint Instances {
 			get {
 				return instances;
-			} 
+			}
 		}
-		
-		public bool IsStackable { 
-			get { 
+
+		public bool IsStackable {
+			get {
 				return ((AbstractItemDef) Def).IsStackable;
-			} 
+			}
 		}
 
 		public int Count {
@@ -123,11 +126,11 @@ namespace SteamEngine {
 
 		public bool IsEmpty {
 			get {
-				return (Count==0);
+				return (Count == 0);
 			}
 		}
 
-		public override int Height { 
+		public override int Height {
 			get {
 				int defHeight = Def.Height;
 				if (defHeight > 0) {
@@ -136,18 +139,18 @@ namespace SteamEngine {
 				if (this.IsContainer) {
 					return 4;
 				}
-				ItemDispidInfo idi=ItemDispidInfo.Get(this.Model);
+				ItemDispidInfo idi = ItemDispidInfo.Get(this.Model);
 				if (idi == null) {
 					return 1;
 				}
 				return idi.height;
-			} 
+			}
 		}
-		
-		public uint Amount { 
+
+		public uint Amount {
 			get {
 				return amount;
-			} 
+			}
 			set {
 				if (value != amount) {
 					this.ChangingProperties();
@@ -158,34 +161,35 @@ namespace SteamEngine {
 					}
 					amount = value;
 				}
-			} 
+			}
 		}
 
 		public ushort ShortAmount {
 			get {
-				return (amount>50000?(ushort)50000:(ushort)amount);
+				return (amount > 50000 ? (ushort) 50000 : (ushort) amount);
 			}
 		}
 
 		public virtual bool IsTwoHanded {
-			get { 
+			get {
 				return false;
 			}
 		}
-		
-		public sealed override uint FlaggedUid { 
+
+		public sealed override uint FlaggedUid {
 			get {
-				return (uint) (Uid|0x40000000);
-			} 
+				return (uint) (Uid | 0x40000000);
+			}
 		}
-		
+
 		public override bool Flag_Disconnected {
 			get {
-				return ((flags&0x01)==0x01);
-			} set {
-				if (Flag_Disconnected!=value) {
+				return ((flags & 0x01) == 0x01);
+			}
+			set {
+				if (Flag_Disconnected != value) {
 					NetState.AboutToChangeVisibility(this);
-					flags=(byte) (value?(flags|0x01):(flags&~0x01));
+					flags = (byte) (value ? (flags | 0x01) : (flags & ~0x01));
 					if (value) {
 						GetMap().Disconnected(this);
 					} else {
@@ -194,26 +198,28 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
-		public bool IsInVisibleLayer { get {
-			if (point4d.x == 7000) {
-				return (point4d.z < 26);
+
+		public bool IsInVisibleLayer {
+			get {
+				if (point4d.x == 7000) {
+					return (point4d.z < 26);
+				}
+				return true;
 			}
-			return true;
-		} } 
-		
-		public virtual byte Layer { 
+		}
+
+		public virtual byte Layer {
 			get {
 				return (int) LayerNames.None;
-			} 
+			}
 		}
-		
-		public virtual ushort Gump { 
+
+		public virtual ushort Gump {
 			get {
 				return 0;
-			} 
+			}
 		}
-		
+
 		//commands:
 		public override AbstractItem FindCont(int index) {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
@@ -223,20 +229,20 @@ namespace SteamEngine {
 				return (AbstractItem) tll[index];
 			}
 		}
-		
+
 		public void OpenTo(AbstractCharacter viewer) {
 			if (this.IsContainer) {
 				if (viewer != null && viewer.IsPlayer) {
 					ThrowIfDeleted();
 					viewer.ThrowIfDeleted();
 					GameConn viewerConn = viewer.Conn;
-					if (viewerConn!=null) {
+					if (viewerConn != null) {
 						//send container
 						bool sendProperties = false;
 						OpenedContainers.SetContainerOpened(viewerConn, this);
 						using (BoundPacketGroup packets = PacketSender.NewBoundGroup()) {
 							PacketSender.PrepareOpenContainer(this);
-							if (Count>0) {
+							if (Count > 0) {
 								if (PacketSender.PrepareContainerContents(this, viewerConn, viewer)) {
 									sendProperties = true;
 								}
@@ -259,7 +265,7 @@ namespace SteamEngine {
 					}
 				}
 			} else {
-				throw new InvalidOperationException("The item ("+this+") is not a container");
+				throw new InvalidOperationException("The item (" + this + ") is not a container");
 			}
 		}
 
@@ -283,72 +289,72 @@ namespace SteamEngine {
 				tll.Empty();
 			}
 		}
-		
-		public override string Name { 
+
+		public override string Name {
 			get {
-				if (name==null) {
-					return Amount>1?TypeDef.PluralName:TypeDef.SingularName;
+				if (name == null) {
+					return Amount > 1 ? TypeDef.PluralName : TypeDef.SingularName;
 				} else {
 					return name;
 				}
-			} 
+			}
 			set {
 				this.ChangingProperties();
 				if (!string.IsNullOrEmpty(value)) {
-					name=String.Intern(value);
+					name = String.Intern(value);
 				} else {
-					name=null;
+					name = null;
 				}
-			} 
+			}
 		}
-	
+
 		public override void On_Create() {
 			AbstractItemDef aidef = (AbstractItemDef) def;
 			AbstractItemDef dupe = aidef.DupeItem;
-			if (dupe!=null) {
+			if (dupe != null) {
 				def = dupe;
 			}
 			Type = aidef.Type;
 			base.On_Create();
 		}
-				
+
 		public void Flip() {
 			Model = TypeDef.GetNextFlipModel(Model);
 		}
-		
+
 		public static new void RegisterTriggerGroup(TriggerGroup tg) {
 			if (!registeredTGs.Contains(tg)) {
 				registeredTGs.Add(tg);
 			}
 		}
-		
+
 		public override void Trigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
 				tg.Run(this, td, sa);
 			}
 			base.TryTrigger(td, sa);
-			if (type!=null) {
+			if (type != null) {
 				type.Run(this, td, sa);
 			}
 		}
-		
+
 		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
 				tg.TryRun(this, td, sa);
 			}
 			base.TryTrigger(td, sa);
-			if (type!=null) {
+			if (type != null) {
 				type.TryRun(this, td, sa);
 			}
 		}
-		
+
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
 				object retVal = tg.Run(this, td, sa);
 				try {
@@ -362,7 +368,7 @@ namespace SteamEngine {
 			if (base.CancellableTrigger(td, sa)) {
 				return true;
 			} else {
-				if (type!=null) {
+				if (type != null) {
 					object retVal = type.Run(this, td, sa);
 					try {
 						int retInt = Convert.ToInt32(retVal);
@@ -375,10 +381,10 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
+
 		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
 				object retVal = tg.TryRun(this, td, sa);
 				try {
@@ -392,7 +398,7 @@ namespace SteamEngine {
 			if (base.TryCancellableTrigger(td, sa)) {
 				return true;
 			} else {
-				if (type!=null) {
+				if (type != null) {
 					object retVal = type.TryRun(this, td, sa);
 					try {
 						int retInt = Convert.ToInt32(retVal);
@@ -405,52 +411,41 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
-		internal override sealed bool TriggerSpecific_Click(AbstractCharacter clickingChar, ScriptArgs sa) {
+
+		internal override sealed bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
 			//helper method for Trigger_Click
-			bool cancel=false;
-			cancel=clickingChar.TryCancellableTrigger(TriggerKey.itemClick, sa);
+			bool cancel = false;
+			cancel = clickingChar.TryCancellableTrigger(TriggerKey.itemClick, sa);
 			if (!cancel) {
-				clickingChar.act=this;
-				cancel=clickingChar.On_ItemClick(this);
+				clickingChar.act = this;
+				cancel = clickingChar.On_ItemClick(this);
 			}
 			return cancel;
 		}
-		
-		internal override sealed bool TriggerSpecific_DClick(AbstractCharacter dClickingChar, ScriptArgs sa) {
-			//helper method for Trigger_Click
-			bool cancel=false;
-			cancel=dClickingChar.TryCancellableTrigger(TriggerKey.itemDClick, sa);
-			if (!cancel) {
-				dClickingChar.act=this;
-				cancel=dClickingChar.On_ItemDClick(this);
-			}
-			return cancel;
-		}
-		
+
 		public void Trigger_Step(AbstractCharacter steppingChar, int repeated) {
 			ThrowIfDeleted();
 			bool cancel = false;
-			bool rep = (repeated!=0);
+			bool rep = (repeated != 0);
 			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated);
-			steppingChar.act=this;
-			cancel=steppingChar.TryCancellableTrigger(TriggerKey.itemStep, sa);
+			steppingChar.act = this;
+			cancel = steppingChar.TryCancellableTrigger(TriggerKey.itemStep, sa);
 			if (!cancel) {
 				//@item/charStep on src did not return 1
-				cancel=steppingChar.On_ItemStep(this, rep);//sends true if repeated=1
+				cancel = steppingChar.On_ItemStep(this, rep);//sends true if repeated=1
 				if (!cancel) {
-					cancel=TryCancellableTrigger(TriggerKey.step, sa);
+					cancel = TryCancellableTrigger(TriggerKey.step, sa);
 					if (!cancel) {
 						On_Step(steppingChar, rep);
 					}
 				}
 			}
 		}
-		
+
 		public virtual void On_Step(AbstractCharacter stepping, bool repeated) {
 			//Globals.src is stepping/standing on this
 		}
-		
+
 		public override void Save(SaveStream output) {
 			base.Save(output);
 			AbstractItemDef def = this.TypeDef;
@@ -467,13 +462,13 @@ namespace SteamEngine {
 			if (flags != 0) {
 				output.WriteValue("flags", flags);
 			}
-			if ((type != null) && (type!= def.Type)) {
-				output.WriteLine("type="+type.Defname);
+			if ((type != null) && (type != def.Type)) {
+				output.WriteLine("type=" + type.Defname);
 			}
 		}
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
-			switch(valueName) {
+			switch (valueName) {
 				case "cont":
 					ObjectSaver.Load(valueString, new LoadObject(LoadCont_Delayed), filename, line);
 					break;
@@ -507,33 +502,33 @@ namespace SteamEngine {
 			}
 		}
 
-		
-		public override sealed bool IsItem { 
+
+		public override sealed bool IsItem {
 			get {
 				return true;
-			} 
+			}
 		}
-		
-		public override sealed bool IsEquipped { 
+
+		public override sealed bool IsEquipped {
 			get {
 				Thing t = Cont;
-				return (t!=null && t.IsChar);
-			} 
+				return (t != null && t.IsChar);
+			}
 		}
-		
-		public override sealed bool IsOnGround { 
+
+		public override sealed bool IsOnGround {
 			get {
-				return (Cont==null);
-			} 
+				return (Cont == null);
+			}
 		}
-		
-		public override sealed bool IsInContainer { 
+
+		public override sealed bool IsInContainer {
 			get {
 				Thing c = Cont;
 				return (c != null && c.IsItem);
-			} 
+			}
 		}
-		
+
 		public override sealed Thing TopObj() {
 			Thing c = Cont;
 			if (c != null) {
@@ -548,10 +543,10 @@ namespace SteamEngine {
 				return (Direction) 0;
 			}
 			set {
-				throw new NotSupportedException("You can't set Direction to "+this.GetType());
+				throw new NotSupportedException("You can't set Direction to " + this.GetType());
 			}
 		}
-		
+
 		//returns true if this is in given container or its subcontainers
 		public bool IsWithinCont(Thing container) {
 			Thing myCont = Cont;

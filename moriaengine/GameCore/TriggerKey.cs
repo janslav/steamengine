@@ -119,6 +119,9 @@ namespace SteamEngine {
 		public static readonly TriggerKey charDClick=Get("charDClick");
 		public static readonly TriggerKey itemDClick=Get("itemDClick");
 		public static readonly TriggerKey dClick=Get("DClick");
+		public static readonly TriggerKey denyCharDClick = Get("denyCharDClick");
+		public static readonly TriggerKey denyItemDClick = Get("denyItemDClick");
+		public static readonly TriggerKey denyDClick = Get("denyDClick");
 		
 		public static readonly TriggerKey charClick=Get("charClick");
 		public static readonly TriggerKey itemClick=Get("itemClick");

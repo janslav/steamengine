@@ -36,10 +36,6 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public override void On_DClick(AbstractCharacter ac) {
-			Character dClicker = ac as Character;
-			if (dClicker.currentSkill != null) {
-				dClicker.AbortSkill();
-			}
 			this.Dialog(ac, SingletonScript<Dialogs.D_RegBox>.Instance);
 		}
 

@@ -30,15 +30,15 @@ namespace SteamEngine.CompiledScripts {
 
 		public override ushort Gump {
 			get {
-				ushort gump=TypeDef.Gump;
-				if (gump==0xffff) {		//It has no defined gump
+				ushort gump = TypeDef.Gump;
+				if (gump == 0xffff) {		//It has no defined gump
 					AbstractItemDef idef = ThingDef.FindItemDef((uint) Model);
 					ContainerDef cdef = idef as ContainerDef;
-					if (cdef!=null) {
-						gump=cdef.Gump;
+					if (cdef != null) {
+						gump = cdef.Gump;
 					}
-					if (gump==0xffff) {	//That one didn't exist, wasn't a container, or had no defined gump either.
-						gump=0x3c;		//The backpack gump.
+					if (gump == 0xffff) {	//That one didn't exist, wasn't a container, or had no defined gump either.
+						gump = 0x3c;		//The backpack gump.
 					}
 				}
 				return gump;
@@ -51,28 +51,28 @@ namespace SteamEngine.CompiledScripts {
 			if (i != null) {
 				if (i.Cont != this) {
 					i.Delete();
-					throw new Exception("'"+i+"' ended outside the container... Wtf?");
+					throw new Exception("'" + i + "' ended outside the container... Wtf?");
 				}
 				if (i.IsStackable) {
-					i.Amount=amount;
+					i.Amount = amount;
 				}
 				return i;
 			}
 			if (t != null) {
 				t.Delete();//we created a character, wtf? :)
 			}
-			throw new SEException(factory+" did not create an item.");
+			throw new SEException(factory + " did not create an item.");
 		}
 
 		public override void On_DClick(AbstractCharacter from) {
 			//(TODO): check ownership(?), trigger snooping(done), etc...
-            Character topChar = this.TopObj() as Character;
-            if ((topChar != null) && (topChar != from) && (!((Character)from).IsGM())) {
-                ((Character)from).currentSkillTarget1 = this as Container;
-                from.SelectSkill((int)SkillName.Snooping);
-            } else {
-                OpenTo(from);
-            }
+			Character topChar = this.TopObj() as Character;
+			if ((topChar != null) && (topChar != from) && (!((Character) from).IsGM())) {
+				((Character) from).currentSkillTarget1 = this;
+				from.SelectSkill((int) SkillName.Snooping);
+			} else {
+				this.OpenTo(from);
+			}
 		}
 
 		public void Open() {
@@ -93,36 +93,36 @@ namespace SteamEngine.CompiledScripts {
 
 		[RegisterWithRunTests]
 		public static void TestContainers() {
-			Item backpack=null, sword=null, sword2=null;
+			Item backpack = null, sword = null, sword2 = null;
 
 			try {
 				Logger.Show("TestSuite", "Creating a backpack.");
 				AbstractDef i_backpack = ThingDef.Get("i_backpack");
-				Sanity.IfTrueThrow(i_backpack==null, "i_backpack does not exist!");
+				Sanity.IfTrueThrow(i_backpack == null, "i_backpack does not exist!");
 				Sanity.IfTrueThrow(!(i_backpack is ContainerDef), "i_backpack is not a ContainerDef!");
 				backpack = (Item) ((ContainerDef) i_backpack).Create(1000, 500, 20, 0);
-				Sanity.IfTrueThrow(backpack==null, "The backpack was not created!");
+				Sanity.IfTrueThrow(backpack == null, "The backpack was not created!");
 				Sanity.IfTrueThrow(!(backpack is Container), "The backpack is not a Container!");
 				Logger.Show("TestSuite", "Creating a longsword inside the backpack.");
 				AbstractDef i_sword_long = ThingDef.Get("i_sword_long");
-				Sanity.IfTrueThrow(i_sword_long==null, "i_sword_long does not exist!");
+				Sanity.IfTrueThrow(i_sword_long == null, "i_sword_long does not exist!");
 				Sanity.IfTrueThrow(!(i_sword_long is EquippableDef), "i_sword_long is not an EquippableDef!");
 				sword = (Item) ((EquippableDef) i_sword_long).Create(backpack);
-				Sanity.IfTrueThrow(sword==null, "The sword was not created!");
+				Sanity.IfTrueThrow(sword == null, "The sword was not created!");
 				Sanity.IfTrueThrow(!(sword is Equippable), "The sword is not an Equippable!");
-				Sanity.IfTrueThrow(sword.Cont!=backpack, "The sword was not created in the backpack!");
-				Sanity.IfTrueThrow(backpack.Count!=1, "The backpack thinks it has "+backpack.Count+" items, not 1!");
-				Sanity.IfTrueThrow(backpack.FindCont(0)!=sword, "The backpack doesn't have the sword as its first item!");
+				Sanity.IfTrueThrow(sword.Cont != backpack, "The sword was not created in the backpack!");
+				Sanity.IfTrueThrow(backpack.Count != 1, "The backpack thinks it has " + backpack.Count + " items, not 1!");
+				Sanity.IfTrueThrow(backpack.FindCont(0) != sword, "The backpack doesn't have the sword as its first item!");
 				Logger.Show("TestSuite", "Duping the sword.");
 				uint suid = sword.FlaggedUid;
 				sword2 = (Item) sword.Dupe();
-				Sanity.IfTrueThrow(sword.FlaggedUid==sword2.FlaggedUid, "The duped sword has the same UID.");
-				Sanity.IfTrueThrow(sword.FlaggedUid!=suid, "The original sword's UID has changed!");
+				Sanity.IfTrueThrow(sword.FlaggedUid == sword2.FlaggedUid, "The duped sword has the same UID.");
+				Sanity.IfTrueThrow(sword.FlaggedUid != suid, "The original sword's UID has changed!");
 
 			} finally {
-				if (sword2!=null && sword2.FlaggedUid!=sword.FlaggedUid) sword2.Delete();
-				if (sword!=null) sword.Delete();
-				if (backpack!=null) backpack.Delete();
+				if (sword2 != null && sword2.FlaggedUid != sword.FlaggedUid) sword2.Delete();
+				if (sword != null) sword.Delete();
+				if (backpack != null) backpack.Delete();
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void FixWeight() {
 			float w = Def.Weight;
 			foreach (AbstractItem i in this) {
-				if (i!=null) {
+				if (i != null) {
 					i.FixWeight();
 					w += i.Weight;
 				}
