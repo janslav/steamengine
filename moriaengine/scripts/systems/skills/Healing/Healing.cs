@@ -10,7 +10,9 @@ namespace SteamEngine.CompiledScripts {
     }
 
     public class t_bandage : CompiledTriggerGroup {
-        public void On_Dclick(Item self, Character clicker) {
+        public void On_DClick(Item self, Character clicker) {
+			//TODO? use resource system for consuming bandages
+
             if (self.TopObj() == clicker) {
                 StartHealing(clicker, self);
             } else {
@@ -43,10 +45,10 @@ namespace SteamEngine.CompiledScripts {
         }
 
         protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
-            if (self.currentSkill != null) {
-                self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
-                return false;
-            }
+			//if (self.currentSkill != null) {
+			//    self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
+			//    return false;
+			//}
 
             //TODO: kontrola jestli neni zmrzlej nebo tak neco
 

@@ -559,19 +559,13 @@ namespace SteamEngine.Packets {
 			} else {
 				t = Thing.UidGetThing(Thing.UidClearFlags(uid));
 			}
-			if (t == null) {
+			AbstractCharacter curChar = c.CurCharacter;
+			if ((t == null) || (!curChar.CanSeeForUpdate(t)))  {
 				PacketSender.PrepareRemoveFromView(uid);
 				PacketSender.SendTo(c, true);
 			} else if (t.IsItem) {
-				AbstractCharacter curChar = c.CurCharacter;
-				DenyResult canReach = curChar.CanReach(t);
-				if (canReach == DenyResult.Allow) {
-					t.Trigger_DClick(curChar);
-				} else {
-					Server.SendDenyResultMessage(c, t, canReach);
-				}
+				t.Trigger_DClick(curChar);
 			} else {
-				//for characters, reach is not tested, at least not here.
 				if (paperdollFlag) {
 					((AbstractCharacter) t).ShowPaperdollTo(c);
 				} else {

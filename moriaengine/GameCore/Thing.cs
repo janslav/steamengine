@@ -43,14 +43,14 @@ namespace SteamEngine {
 		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
 		internal readonly MutablePoint4D point4d = new MutablePoint4D(0xffff, 0xffff, 0, 0); //made this internal because SetPosImpl is now abstract... -tar
-		private int uid=-2;
+		private int uid = -2;
 		//internal Region region;
 		internal NetState netState;//No one is to touch this but the NetState class itself!
 
 		internal object contOrTLL; //internal cos of ThingLinkedList
 
-		private static int savedCharacters=0;
-		private static int savedItems=0;
+		private static int savedCharacters = 0;
+		private static int savedItems = 0;
 		private static List<bool> alreadySaved = new List<bool>();
 
 		private static int loadedCharacters;
@@ -62,37 +62,37 @@ namespace SteamEngine {
 		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
 
 		private static UIDArray<Thing> things = new UIDArray<Thing>();
-		private static int uidBeingLoaded=-1;
+		private static int uidBeingLoaded = -1;
 		public static TagKey weightTag = TagKey.Get("_weight_");
 
 
 		public sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?[\da-f]+)\s*$",
-				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 			public string FileNameToSave {
 				get { return "things"; }
 			}
 
 			public void StartingLoading() {
-				loadedCharacters=0;
-				loadedItems=0;
+				loadedCharacters = 0;
+				loadedItems = 0;
 			}
 
 			public void SaveAll(SaveStream output) {
 				Logger.WriteDebug("Saving Things.");
 				output.WriteComment("Things");
 				output.WriteLine();
-				savedCharacters=0;
-				savedItems=0;
+				savedCharacters = 0;
+				savedItems = 0;
 				alreadySaved = new List<bool>(things.HighestElement);
 				foreach (Thing t in things) {
 					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
 				}
 				Logger.WriteDebug(string.Format(
 												"Saved {0} things: {1} items and {2} characters.",
-												savedCharacters+savedItems, savedItems, savedCharacters));
-												
+												savedCharacters + savedItems, savedItems, savedCharacters));
+
 				alreadySaved = null;
 			}
 
@@ -102,7 +102,7 @@ namespace SteamEngine {
 				things.LoadingFinished();
 				Logger.WriteDebug(string.Format(
 												"Loaded {0} things: {1} items and {2} characters.",
-												loadedItems+loadedCharacters, loadedItems, loadedCharacters));
+												loadedItems + loadedCharacters, loadedItems, loadedCharacters));
 				foreach (Thing t in things) {
 					t.On_AfterLoad();
 				}
@@ -113,7 +113,7 @@ namespace SteamEngine {
 			}
 
 			public string GetReferenceLine(object value) {
-				return "#"+((Thing) value).uid;
+				return "#" + ((Thing) value).uid;
 			}
 
 			public Regex ReferenceLineRecognizer {
@@ -126,36 +126,36 @@ namespace SteamEngine {
 				if (thing != null) {
 					return thing;
 				} else {
-					throw new NonExistingObjectException("There is no thing with uid "+LogStr.Number(uid)+" to load.");
+					throw new NonExistingObjectException("There is no thing with uid " + LogStr.Number(uid) + " to load.");
 				}
 			}
 		}
 
 		//still needs to be put into the world
 		protected Thing(ThingDef myDef) {
-			this.def=myDef;
+			this.def = myDef;
 			this.model = myDef.Model;
 			this.color = myDef.Color;
-			if (uidBeingLoaded==-1) {
+			if (uidBeingLoaded == -1) {
 				things.Add(this);//sets uid
 				NetState.Resend(this);
 			} else {
-				uid=uidBeingLoaded;
-				this.point4d=new MutablePoint4D((ushort) Globals.dice.Next(0, 20), (ushort) Globals.dice.Next(0, 20), 0, 0);
+				uid = uidBeingLoaded;
+				this.point4d = new MutablePoint4D((ushort) Globals.dice.Next(0, 20), (ushort) Globals.dice.Next(0, 20), 0, 0);
 			}
-			Globals.lastNew=this;
+			Globals.lastNew = this;
 		}
 
 		protected Thing(Thing copyFrom)
-				: base(copyFrom) { //copying constuctor
+			: base(copyFrom) { //copying constuctor
 			NetState.Resend(this);
 			things.Add(this);//sets uid
-			point4d=new MutablePoint4D(copyFrom.point4d);
-			def=copyFrom.def;
-			color=copyFrom.color;
-			model=copyFrom.model;
+			point4d = new MutablePoint4D(copyFrom.point4d);
+			def = copyFrom.def;
+			color = copyFrom.color;
+			model = copyFrom.model;
 			//SetSectorPoint4D();
-			Globals.lastNew=this;
+			Globals.lastNew = this;
 		}
 
 		//Property: Enumerable
@@ -329,23 +329,23 @@ namespace SteamEngine {
 		}
 
 		public void NudgeUp(short amt) {
-			sbyte tmpZ=Z;
+			sbyte tmpZ = Z;
 			try {
-				tmpZ=checked((sbyte) (tmpZ+amt));
-				Z=tmpZ;
+				tmpZ = checked((sbyte) (tmpZ + amt));
+				Z = tmpZ;
 			} catch (OverflowException) {
 				//OverheadMessage("This cannot be nudged that much (It would make its z coordinate too high).");
-				Z=-128;
+				Z = -128;
 			}
 		}
 		public void NudgeDown(short amt) {
-			sbyte tmpZ=Z;
+			sbyte tmpZ = Z;
 			try {
-				tmpZ=checked((sbyte) (tmpZ-amt));
-				Z=tmpZ;
+				tmpZ = checked((sbyte) (tmpZ - amt));
+				Z = tmpZ;
 			} catch (OverflowException) {
 				//OverheadMessage("This cannot be nudged that much (It would make its z coordinate too low).");
-				Z=127;
+				Z = 127;
 			}
 		}
 
@@ -362,13 +362,13 @@ namespace SteamEngine {
 				return color;
 			}
 			set {
-				if (value>=0 && (value&~0xc000)<=0xbb6) {
+				if (value >= 0 && (value & ~0xc000) <= 0xbb6) {
 					if (IsItem) {
 						NetState.ItemAboutToChange((AbstractItem) this);
 					} else {
 						NetState.AboutToChangeBaseProps((AbstractCharacter) this);
 					}
-					color=value;
+					color = value;
 				}
 			}
 		}
@@ -383,7 +383,7 @@ namespace SteamEngine {
 				} else {
 					NetState.AboutToChangeBaseProps((AbstractCharacter) this);
 				}
-				model=value;
+				model = value;
 			}
 		}
 
@@ -399,7 +399,7 @@ namespace SteamEngine {
 
 		public abstract int Height { get; }
 
-		public override bool IsDeleted { get { return (uid==-1); } }
+		public override bool IsDeleted { get { return (uid == -1); } }
 
 		//------------------------
 		//Static Thing methods
@@ -409,11 +409,11 @@ namespace SteamEngine {
 
 
 		public static int UidClearFlags(int uid) {
-			return (int) (((uint) uid)&~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
+			return (int) (((uint) uid) & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
 		public static int UidClearFlags(uint uid) {
-			return (int) (uid&~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
+			return (int) (uid & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
 		public static AbstractCharacter UidGetCharacter(int uid) {
@@ -444,7 +444,7 @@ namespace SteamEngine {
 
 		public override void Trigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				tg.Run(this, td, sa);
 			}
@@ -454,7 +454,7 @@ namespace SteamEngine {
 
 		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				tg.TryRun(this, td, sa);
 			}
@@ -464,7 +464,7 @@ namespace SteamEngine {
 
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				object retVal = tg.Run(this, td, sa);
 				try {
@@ -484,7 +484,7 @@ namespace SteamEngine {
 
 		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			ThrowIfDeleted();
-			for (int i = 0, n = registeredTGs.Count; i<n; i++) {
+			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				object retVal = tg.TryRun(this, td, sa);
 				try {
@@ -604,16 +604,16 @@ namespace SteamEngine {
 			ThingDef thingDef = ThingDef.Get(input.headerName) as ThingDef;
 
 			if (thingDef == null) {
-				Logger.WriteError(input.filename, input.headerLine, "Defname '"+LogStr.Ident(input.headerName)+"' not found. Thing loading interrupted.");
+				Logger.WriteError(input.filename, input.headerLine, "Defname '" + LogStr.Ident(input.headerName) + "' not found. Thing loading interrupted.");
 				return null;
 			}
 
 			int _uid;
 			PropsLine prop = input.TryPopPropsLine("uid");
-			if (prop==null) {
-				prop=input.TryPopPropsLine("serial");
+			if (prop == null) {
+				prop = input.TryPopPropsLine("serial");
 			}
-			if (prop!=null) {
+			if (prop != null) {
 				if (!TagMath.TryParseInt32(prop.value, out _uid)) {
 					Logger.WriteError(input.filename, prop.line, "Unrecognized UID property format. Thing loading interrupted.");
 					return null;
@@ -687,7 +687,7 @@ namespace SteamEngine {
 		}
 
 		public static uint GetFakeItemUid() {
-			return (uint) things.GetFakeUid()|0x40000000;
+			return (uint) things.GetFakeUid() | 0x40000000;
 		}
 
 		public static void DisposeFakeUid(int uid) {
@@ -700,7 +700,7 @@ namespace SteamEngine {
 
 		internal static void SaveThis(SaveStream output, Thing t) {
 			if (t.IsDeleted) {
-				Logger.WriteError("Thing "+LogStr.Ident(t)+" is already deleted.");
+				Logger.WriteError("Thing " + LogStr.Ident(t) + " is already deleted.");
 				return;
 			}
 			t.SaveWithHeader(output);
@@ -708,7 +708,7 @@ namespace SteamEngine {
 
 		[Save]
 		public void SaveWithHeader(SaveStream output) {
-			while (alreadySaved.Count<=this.uid) {
+			while (alreadySaved.Count <= this.uid) {
 				alreadySaved.Add(false);
 			}
 			if (!alreadySaved[this.uid]) {
@@ -737,7 +737,7 @@ namespace SteamEngine {
 
 			output.WriteValue("p", this.P());
 
-			if (color!=0) {
+			if (color != 0) {
 				output.WriteValue("color", color);
 			}
 
@@ -771,9 +771,9 @@ namespace SteamEngine {
 		public void Dupe(int ntimes) {
 			ThrowIfDeleted();
 			//precondition sanity checks
-			Sanity.IfTrueThrow(ntimes<=0, "Dupe called with "+ntimes+" times - Only values above 0 are valid.");
+			Sanity.IfTrueThrow(ntimes <= 0, "Dupe called with " + ntimes + " times - Only values above 0 are valid.");
 
-			while (ntimes>0) {
+			while (ntimes > 0) {
 				Dupe();
 				ntimes--;
 			}
@@ -850,7 +850,7 @@ namespace SteamEngine {
 			this.Trigger_Destroy();
 
 			things.RemoveAt(uid);
-			uid=-1;
+			uid = -1;
 
 		}
 
@@ -876,18 +876,18 @@ namespace SteamEngine {
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
 		public void Trigger_AosClick(AbstractCharacter clicker) {
 			ThrowIfDeleted();
-			if (clicker==null)
+			if (clicker == null)
 				return;
 			if (!clicker.CanSeeForUpdate(this)) {
-				if (clicker.Conn!=null) {
+				if (clicker.Conn != null) {
 					PacketSender.PrepareRemoveFromView(this);
 					PacketSender.SendTo(clicker.Conn, true);
 				}
 			} else {
 				bool cancel = false;
 				ScriptArgs sa = new ScriptArgs(clicker, this);
-				clicker.act=this;
-				cancel=TryCancellableTrigger(TriggerKey.aosClick, sa);
+				clicker.act = this;
+				cancel = TryCancellableTrigger(TriggerKey.aosClick, sa);
 				if (!cancel) {
 					//@aosClick on thing did not return 1
 					On_AosClick(clicker);
@@ -899,21 +899,21 @@ namespace SteamEngine {
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
 		public void Trigger_Click(AbstractCharacter clicker) {
 			ThrowIfDeleted();
-			if (clicker==null)
+			if (clicker == null)
 				return;
 			if (!clicker.CanSeeForUpdate(this)) {
-				if (clicker.Conn!=null) {
+				if (clicker.Conn != null) {
 					PacketSender.PrepareRemoveFromView(this);
 					PacketSender.SendTo(clicker.Conn, true);
 				}
 			} else {
 				bool cancel = false;
 				ScriptArgs sa = new ScriptArgs(clicker, this);
-				clicker.act=this;
-				cancel=TriggerSpecific_Click(clicker, sa);
+				clicker.act = this;
+				cancel = Trigger_SpecificClick(clicker, sa);
 				if (!cancel) {
 					//@itemclick or @charclick on src did not return 1
-					cancel=TryCancellableTrigger(TriggerKey.click, sa);
+					cancel = TryCancellableTrigger(TriggerKey.click, sa);
 					if (!cancel) {
 						//@click on item did not return 1
 						On_Click(clicker);
@@ -922,7 +922,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal abstract bool TriggerSpecific_Click(AbstractCharacter clickingChar, ScriptArgs sa);
+		internal abstract bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa);
 
 		public virtual void GetNameCliloc(out uint id, out string argument) {
 			id = 1042971;
@@ -990,38 +990,75 @@ namespace SteamEngine {
 		//fires the @itemDClick / @charDClick and @dclick triggers where this is the Thing being doubleclicked.
 		public void Trigger_DClick(AbstractCharacter dclicker) {
 			ThrowIfDeleted();
-			if (dclicker==null)
+			if (dclicker == null)
 				return;
-			if (!dclicker.CanSeeForUpdate(this)) {
-				if (dclicker.Conn!=null) {
-					PacketSender.PrepareRemoveFromView(this);
-					PacketSender.SendTo(dclicker.Conn, true);
+
+			//deny triggers first
+			DenyClickArgs denyArgs = new DenyClickArgs(dclicker, this);
+			bool cancel = false;
+			bool isItem = this.IsItem;
+			if (isItem) {
+				cancel = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
+				if (!cancel) {
+					try {
+						cancel = dclicker.On_DenyItemDClick(denyArgs);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			} else {
-				bool cancel=false;
-				ScriptArgs sa = new ScriptArgs(dclicker, this);
-				dclicker.act=this;
-				cancel=TriggerSpecific_DClick(dclicker, sa);
+				cancel = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
 				if (!cancel) {
-					//@itemDClick or @charDClick on src did not return 1
-					cancel=TryCancellableTrigger(TriggerKey.dClick, sa);
-					if (!cancel) {
-						//@DClick on item did not return 1
-						On_DClick(dclicker);
-					}
+					try {
+						cancel = dclicker.On_DenyItemDClick(denyArgs);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
-		}
 
-		internal virtual bool TriggerSpecific_DClick(AbstractCharacter src, ScriptArgs sa) {
-			throw new NotSupportedException(this+" is nor AbstractItem nor Character?");
+			if (!cancel) {
+				cancel = this.TryCancellableTrigger(TriggerKey.denyDClick, denyArgs);
+				if (!cancel) {
+					try {
+						cancel = this.On_DenyDClick(denyArgs);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				}
+			}
+
+			DenyResult result = denyArgs.Result;
+
+			if (result != DenyResult.Allow) {
+				GameConn c = dclicker.Conn;
+				if (c != null) {
+					Server.SendDenyResultMessage(c, this, result);
+				}
+			} else {//action triggers
+				ScriptArgs sa = new ScriptArgs(dclicker, this);
+
+				if (isItem) {
+					dclicker.TryTrigger(TriggerKey.itemDClick, sa);
+					try {
+						dclicker.On_ItemDClick((AbstractItem) this);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} else {
+					dclicker.TryTrigger(TriggerKey.charDClick, sa);
+					try {
+						dclicker.On_CharDClick((AbstractCharacter) this);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				}
+
+				this.TryTrigger(TriggerKey.dClick, sa);
+				try {
+					this.On_DClick(dclicker);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			}
 		}
 
 		//method:On_DClick
 		//Thing`s implementation of trigger @DClick,
 		//does nothing.
-		public virtual void On_DClick(AbstractCharacter from) {
+		public virtual void On_DClick(AbstractCharacter dclicker) {
+		}
 
+		public virtual bool On_DenyDClick(DenyClickArgs args) {
+			return false;
 		}
 
 		public virtual bool On_StackOn(AbstractCharacter stackingCharacter, AbstractItem i, ref object objX, ref object objY) {
@@ -1037,7 +1074,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return Name+" (0x"+Uid.ToString("x")+")";
+			return Name + " (0x" + Uid.ToString("x") + ")";
 		}
 
 		public override int GetHashCode() {
@@ -1047,7 +1084,7 @@ namespace SteamEngine {
 		public override bool Equals(Object obj) {
 			if (obj is Thing) {
 				Thing tobj = (Thing) obj;
-				return (tobj.Uid==this.Uid);
+				return (tobj.Uid == this.Uid);
 			} else {
 				return false;
 			}
@@ -1150,7 +1187,7 @@ namespace SteamEngine {
 		}
 
 		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump, DialogArgs args) {
-			if (sendTo != null) {				
+			if (sendTo != null) {
 				return sendTo.SendGump(this, gump, args);
 			}
 			return null;
@@ -1230,7 +1267,7 @@ namespace SteamEngine {
 			@param arg The text to say
 		 */
 		public void Say(string arg) {
-			Sanity.IfTrueThrow(arg==null, "arg cannot be null in Say.");
+			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Say.");
 			Speech(arg, 0, SpeechType.Speech, 0, 3, null, null);
 		}
 
@@ -1241,7 +1278,7 @@ namespace SteamEngine {
 			@param color The color the text should be
 		 */
 		public void Say(string arg, ushort color) {
-			Sanity.IfTrueThrow(arg==null, "arg cannot be null in Say.");
+			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Say.");
 			Speech(arg, 0, SpeechType.Speech, color, 3, null, null);
 		}
 
@@ -1253,7 +1290,7 @@ namespace SteamEngine {
 			@param font The font to use for the text (The default is 3)
 		 */
 		public void Say(string arg, ushort color, byte font) {
-			Sanity.IfTrueThrow(arg==null, "arg cannot be null in Say.");
+			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Say.");
 			Speech(arg, 0, SpeechType.Speech, color, font, null, null);
 		}
 
@@ -1298,7 +1335,7 @@ namespace SteamEngine {
 		 */
 		public void Yell(string arg, ushort color) {
 			ThrowIfDeleted();
-			Sanity.IfTrueThrow(arg==null, "arg cannot be null in Yell.");
+			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Yell.");
 			Speech(arg, 0, SpeechType.Yell, color, 3, null, null);
 		}
 
@@ -1322,7 +1359,7 @@ namespace SteamEngine {
 		 */
 		public void Whisper(string arg, ushort color) {
 			ThrowIfDeleted();
-			Sanity.IfTrueThrow(arg==null, "arg cannot be null in Whisper.");
+			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Whisper.");
 			Speech(arg, 0, SpeechType.Whisper, color, 3, null, null);
 		}
 
@@ -1346,7 +1383,7 @@ namespace SteamEngine {
 		 */
 		public void Emote(string arg, ushort color) {
 			ThrowIfDeleted();
-			Sanity.IfTrueThrow(arg==null, "arg cannot be null in Emote.");
+			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Emote.");
 			Speech(arg, 0, SpeechType.Emote, color, 3, null, null);
 		}
 
@@ -1441,113 +1478,113 @@ namespace SteamEngine {
 		public void Move(string dir, int amount) {
 			switch (dir) {
 				case ("n"): {
-						int y=Y-amount;
-						if (y<0) {
-							y=0;
-						} else if (y>Server.MaxY(M)) {
-							y=Server.MaxY(M);
+						int y = Y - amount;
+						if (y < 0) {
+							y = 0;
+						} else if (y > Server.MaxY(M)) {
+							y = Server.MaxY(M);
 						}
-						Y=(ushort) y;
+						Y = (ushort) y;
 						break;
 					}
 				case ("ne"): {
-						int y=Y-amount;
-						int x=X+amount;
-						if (y<0) {
-							y=0;
-						} else if (y>Server.MaxY(M)) {
-							y=Server.MaxY(M);
+						int y = Y - amount;
+						int x = X + amount;
+						if (y < 0) {
+							y = 0;
+						} else if (y > Server.MaxY(M)) {
+							y = Server.MaxY(M);
 						}
-						if (x<0) {
-							x=0;
-						} else if (x>Server.MaxX(M)) {
-							x=Server.MaxX(M);
+						if (x < 0) {
+							x = 0;
+						} else if (x > Server.MaxX(M)) {
+							x = Server.MaxX(M);
 						}
 						P((ushort) x, (ushort) y, Z);	//This won't change our Z coordinate, whereas P(x,y) would.
 						break;
 					}
 				case ("e"): {
-						int x=X+amount;
-						if (x<0) {
-							x=0;
-						} else if (x>Server.MaxX(M)) {
-							x=Server.MaxX(M);
+						int x = X + amount;
+						if (x < 0) {
+							x = 0;
+						} else if (x > Server.MaxX(M)) {
+							x = Server.MaxX(M);
 						}
-						X=(ushort) x;
+						X = (ushort) x;
 						break;
 					}
 				case ("se"): {
-						int y=Y+amount;
-						int x=X+amount;
-						if (y<0) {
-							y=0;
-						} else if (y>Server.MaxY(M)) {
-							y=Server.MaxY(M);
+						int y = Y + amount;
+						int x = X + amount;
+						if (y < 0) {
+							y = 0;
+						} else if (y > Server.MaxY(M)) {
+							y = Server.MaxY(M);
 						}
-						if (x<0) {
-							x=0;
-						} else if (x>Server.MaxX(M)) {
-							x=Server.MaxX(M);
+						if (x < 0) {
+							x = 0;
+						} else if (x > Server.MaxX(M)) {
+							x = Server.MaxX(M);
 						}
 						P((ushort) x, (ushort) y, Z);	//This won't change our Z coordinate, whereas P(x,y) would.
 						break;
 					}
 				case ("s"): {
-						int y=Y+amount;
-						if (y<0) {
-							y=0;
-						} else if (y>Server.MaxY(M)) {
-							y=Server.MaxY(M);
+						int y = Y + amount;
+						if (y < 0) {
+							y = 0;
+						} else if (y > Server.MaxY(M)) {
+							y = Server.MaxY(M);
 						}
-						Y=(ushort) y;
+						Y = (ushort) y;
 						break;
 					}
 				case ("sw"): {
-						int y=Y+amount;
-						int x=X-amount;
-						if (y<0) {
-							y=0;
-						} else if (y>Server.MaxY(M)) {
-							y=Server.MaxY(M);
+						int y = Y + amount;
+						int x = X - amount;
+						if (y < 0) {
+							y = 0;
+						} else if (y > Server.MaxY(M)) {
+							y = Server.MaxY(M);
 						}
-						if (x<0) {
-							x=0;
-						} else if (x>Server.MaxX(M)) {
-							x=Server.MaxX(M);
+						if (x < 0) {
+							x = 0;
+						} else if (x > Server.MaxX(M)) {
+							x = Server.MaxX(M);
 						} else {
-							x=(ushort) X;
+							x = (ushort) X;
 						}
 						P((ushort) x, (ushort) y, Z);
 						break;
 					}
 				case ("w"): {
-						int x=X-amount;
-						if (x<0) {
-							x=0;
-						} else if (x>Server.MaxX(M)) {
-							x=Server.MaxX(M);
+						int x = X - amount;
+						if (x < 0) {
+							x = 0;
+						} else if (x > Server.MaxX(M)) {
+							x = Server.MaxX(M);
 						}
-						X=(ushort) x;
+						X = (ushort) x;
 						break;
 					}
 				case ("nw"): {
-						int y=Y-amount;
-						int x=X-amount;
-						if (y<0) {
-							y=0;
-						} else if (y>Server.MaxY(M)) {
-							y=Server.MaxY(M);
+						int y = Y - amount;
+						int x = X - amount;
+						if (y < 0) {
+							y = 0;
+						} else if (y > Server.MaxY(M)) {
+							y = Server.MaxY(M);
 						}
-						if (x<0) {
-							x=0;
-						} else if (y>Server.MaxX(M)) {
-							y=Server.MaxX(M);
+						if (x < 0) {
+							x = 0;
+						} else if (y > Server.MaxX(M)) {
+							y = Server.MaxX(M);
 						}
 						P((ushort) x, (ushort) y, Z);
 						break;
 					}
 				default: {
-						throw new SEException(dir+" isn't a direction I'll accept. Use n, nw, ne, w, e, s, sw, or se.");
+						throw new SEException(dir + " isn't a direction I'll accept. Use n, nw, ne, w, e, s, sw, or se.");
 					}
 			}
 		}
@@ -1555,7 +1592,7 @@ namespace SteamEngine {
 		internal void ChangedP(Point4D oldP) {
 			Map.ChangedP(this, oldP);
 			AbstractCharacter self = this as AbstractCharacter;
-			if (self!=null) {
+			if (self != null) {
 				self.Trigger_NewPosition();
 			}
 		}
@@ -1583,34 +1620,34 @@ namespace SteamEngine {
 			//todo: speech triggers?
 			AbstractCharacter self = this as AbstractCharacter;
 
-			string lang=null;
+			string lang = null;
 			if (self != null) {
 				if (self.IsPlayer) {
 					GameConn conn = self.Conn;
-					if (conn!=null) {
-						lang=conn.lang;
+					if (conn != null) {
+						lang = conn.lang;
 					}
 					self.Trigger_Say(speech, type, keywords);
 				}
 			}
 
-			uint dist=0;
+			uint dist = 0;
 			switch (type) {
 				case SpeechType.Speech:
-					dist=Globals.speechDistance;
+					dist = Globals.speechDistance;
 					break;
 				case SpeechType.Emote:
-					dist=Globals.emoteDistance;
+					dist = Globals.emoteDistance;
 					break;
 				case SpeechType.Whisper:
-					dist=Globals.whisperDistance;
+					dist = Globals.whisperDistance;
 					break;
 				case SpeechType.Yell:
-					dist=Globals.yellDistance;
+					dist = Globals.yellDistance;
 					break;
 				default:
-					dist=Globals.speechDistance;
-					type=SpeechType.Speech;
+					dist = Globals.speechDistance;
+					type = SpeechType.Speech;
 					break;
 			}
 
@@ -1623,15 +1660,15 @@ namespace SteamEngine {
 					chr.Trigger_Hear(self, speech, clilocSpeech, type, color, font, lang, keywords, args);
 				}
 			} else {//item is speaking... no triggers fired, just send it to players
-				bool packetPrepared=false;
+				bool packetPrepared = false;
 				foreach (GameConn conn in map.GetClientsInRange(x, y, (ushort) dist)) {
 					if (!packetPrepared) {
-						if (speech==null) {
-							PacketSender.PrepareClilocMessage(this, clilocSpeech, type, font, color, args==null?null:string.Join("\t", args));
+						if (speech == null) {
+							PacketSender.PrepareClilocMessage(this, clilocSpeech, type, font, color, args == null ? null : string.Join("\t", args));
 						} else {
 							PacketSender.PrepareSpeech(this, speech, type, font, color, lang);
 						}
-						packetPrepared=true;
+						packetPrepared = true;
 					}
 					PacketSender.SendTo(conn, false);
 				}
@@ -1664,17 +1701,29 @@ namespace SteamEngine {
 		 */
 		[Conditional("DEBUG")]
 		internal void CheckForInvalidCoords() {
-			bool throwExcep=false;
+			bool throwExcep = false;
 			if (!IsDeleted && IsOnGround) {
-				if (X>Server.MaxX(M)) {
-					throwExcep=true;
-				} else if (Y>Server.MaxY(M)) {
-					throwExcep=true;
+				if (X > Server.MaxX(M)) {
+					throwExcep = true;
+				} else if (Y > Server.MaxY(M)) {
+					throwExcep = true;
 				}
 				if (throwExcep) {
-					throw new SanityCheckException("Invalid coordinates detected: ("+X+","+Y+","+Z+","+M+")");
+					throw new SanityCheckException("Invalid coordinates detected: (" + X + "," + Y + "," + Z + "," + M + ")");
 				}
 			}
+		}
+	}
+
+	public class DenyClickArgs : DenyTriggerArgs {
+		public readonly AbstractCharacter clickingChar;
+		public readonly Thing target;
+
+		public DenyClickArgs(AbstractCharacter clickingChar, Thing target)
+			: base(DenyResult.Allow, clickingChar, target) {
+
+			this.clickingChar = clickingChar;
+			this.target = target;
 		}
 	}
 }

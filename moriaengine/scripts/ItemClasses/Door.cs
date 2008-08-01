@@ -49,105 +49,176 @@ namespace SteamEngine.CompiledScripts {
 
         public override void On_DClick(AbstractCharacter user) {
             if (!this.IsOpen) {
-                Trigger_Open();
+				this.Trigger_Open((Character) user);
             } else {
-                Trigger_Close();
+				this.Trigger_Close((Character) user);
             }
         }
 
-        public void Trigger_Open() {
-            On_DenyOpen();
-            On_Open();
-            SetOpen();
+		public static readonly TriggerKey tkOpen = TriggerKey.Get("open");
+		public static readonly TriggerKey tkClose = TriggerKey.Get("close");
+		public static readonly TriggerKey tkDenyOpen = TriggerKey.Get("denyOpen");
+		public static readonly TriggerKey tkDenyOpenDoor = TriggerKey.Get("denyOpenDoor");
+		public static readonly TriggerKey tkDenyClose = TriggerKey.Get("denyClose");
+		public static readonly TriggerKey tkDenyCloseDoor = TriggerKey.Get("denyCloseDoor");
+
+		private void Trigger_Open(Character user) {
+			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
+
+			bool cancel = user.TryCancellableTrigger(tkDenyOpenDoor, args);
+			if (!cancel) {
+				try {
+					cancel = user.On_DenyOpenDoor(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(tkDenyOpen, args);
+					if (!cancel) {
+						try {
+							cancel = this.On_DenyOpen(args);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+
+			DenyResult result = args.Result;
+
+			if (result == DenyResult.Allow) {
+				this.SetOpen();
+			} else {
+				GameConn c = user.Conn;
+				if (c != null) {
+					Server.SendDenyResultMessage(c, this, result);
+				}
+			}
         }
 
-        public void Trigger_Close() {
-            On_DenyClose();
-            On_Close();
-            SetClose();
-        }
+		private void Trigger_Close(Character user) {
+			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
 
-        public void On_DenyOpen() { }
+			bool cancel = user.TryCancellableTrigger(tkDenyCloseDoor, args);
+			if (!cancel) {
+				try {
+					cancel = user.On_DenyCloseDoor(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(tkDenyClose, args);
+					if (!cancel) {
+						try {
+							cancel = this.On_DenyClose(args);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
 
-        public void On_Open() { }
+			DenyResult result = args.Result;
 
-        public void On_DenyClose() { }
+			if (result == DenyResult.Allow) {
+				this.SetClose();
+			} else {
+				GameConn c = user.Conn;
+				if (c != null) {
+					Server.SendDenyResultMessage(c, this, result);
+				}
+			}
+		}
 
-        public void On_Close() { }
+		public virtual bool On_DenyOpen(DenySwitchDoorArgs args) {
+			return false;
+		}
 
-        public void SetOpen() {
-            if (!this.IsOpen) {           //For case of opening opened doors.
+		public virtual bool On_DenyClose(DenySwitchDoorArgs args) {
+			return false;
+		}
+
+		public void SetOpen() {
+			if (!this.IsOpen) {           //For case of opening opened doors.
 				switch (this.RD) {
-                    case 0:
-                        this.X--;
-                        this.Y++;
-                        break;
-                    case 2:
-                        this.X++;
-                        this.Y++;
-                        break;
-                    case 4:
-                        this.X--;
-                        break;
-                    case 6:
-                        this.X++;
-                        this.Y--;
-                        break;
-                    case 8:
-                        this.X++;
-                        this.Y++;
-                        break;
-                    case 10:
-                        this.X++;
-                        this.Y--;
-                        break;
-                    case 12:
-                        break;
-                    case 14:
-                        this.Y--;
-                        break;
-                }
-                this.Model++;
+					case 0:
+						this.X--;
+						this.Y++;
+						break;
+					case 2:
+						this.X++;
+						this.Y++;
+						break;
+					case 4:
+						this.X--;
+						break;
+					case 6:
+						this.X++;
+						this.Y--;
+						break;
+					case 8:
+						this.X++;
+						this.Y++;
+						break;
+					case 10:
+						this.X++;
+						this.Y--;
+						break;
+					case 12:
+						break;
+					case 14:
+						this.Y--;
+						break;
+				}
+				this.Model++;
 				//this.baseModel++;
-            }
-        }
 
-        public void SetClose() {
-            if (this.IsOpen) {            //For case of closing closed doors.
+				try {
+					this.On_Open();
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				this.TryTrigger(tkOpen, null);
+			}
+		}
+
+		public virtual void On_Open() { 
+		}
+
+		public void SetClose() {
+			if (this.IsOpen) {            //For case of closing closed doors.
 				switch (this.RD) {
-                    case 1:
-                        this.X++;
-                        this.Y--;
-                        break;
-                    case 3:
-                        this.X--;
-                        this.Y--;
-                        break;
-                    case 5:
-                        this.X++;
-                        break;
-                    case 7:
-                        this.X--;
-                        this.Y++;
-                        break;
-                    case 9:
-                        this.X--;
-                        this.Y--;
-                        break;
-                    case 11:
-                        this.X--;
-                        this.Y++;
-                        break;
-                    case 13:
-                        break;
-                    case 15:
-                        this.Y++;
-                        break;
-                }
-                this.Model--;
+					case 1:
+						this.X++;
+						this.Y--;
+						break;
+					case 3:
+						this.X--;
+						this.Y--;
+						break;
+					case 5:
+						this.X++;
+						break;
+					case 7:
+						this.X--;
+						this.Y++;
+						break;
+					case 9:
+						this.X--;
+						this.Y--;
+						break;
+					case 11:
+						this.X--;
+						this.Y++;
+						break;
+					case 13:
+						break;
+					case 15:
+						this.Y++;
+						break;
+				}
+				this.Model--;
 				//this.baseModel--;
-            }
-        }
+
+				try {
+					this.On_Close();
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				this.TryTrigger(tkClose, null);
+			}
+		}
+
+		public virtual void On_Close() { 
+		}
 
 		[Summary("Is doors orthogonal(kolmé) on which direction?")]
 		public Direction DoorDirection {
@@ -212,7 +283,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if ((model < this.baseModel) || (model > (this.baseModel + 15))) {
-				for (int i = 0, n = baseModels.Length; i < n; i++) {      //20 doors (0-19) but the last door are irregular bar door.
+				for (int i = 0, n = baseModels.Length; i < n; i++) {
 					ushort bm = baseModels[i];
 					if ((model >= bm) && (model <= (bm + 15))) {
 						this.baseModel = bm;
@@ -229,4 +300,28 @@ namespace SteamEngine.CompiledScripts {
         Left,
         Right
     }
+
+	public class DenySwitchDoorArgs : DenyTriggerArgs {
+		public readonly Character user;
+		public readonly Door door;
+
+		public DenySwitchDoorArgs(Character user, Door door)
+			: base(DenyResult.Allow, user, door) {
+
+			this.user = user;
+			this.door = door;
+		}
+	}
+
+	public class SwitchDoorArgs : ScriptArgs {
+		public readonly Character user;
+		public readonly Door door;
+
+		public SwitchDoorArgs(Character user, Door door)
+			: base(DenyResult.Allow, user, door) {
+
+			this.user = user;
+			this.door = door;
+		}
+	}
 }

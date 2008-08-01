@@ -44,9 +44,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_DClick(AbstractCharacter from) {
 			if (this.IsEquippable) {
-				//first unequip whatever we may already have equipped
-				//now pick it up and equip
-				//(TODO): check ownership(?), trigger snooping...
+				//pick it up into dragging layer, then equip it. 
+				//We want the same triggers fired as if the client dragged it manually (yes, a lot of triggers)
 				DenyResult dr = from.TryPickupItem(this, 1);
 				if (dr == DenyResult.Allow) {
 					dr = from.TryEquipItemOnChar(from);

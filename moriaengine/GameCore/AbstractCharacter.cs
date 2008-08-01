@@ -1051,7 +1051,7 @@ namespace SteamEngine {
 			return false;
 		}
 		
-		internal override sealed bool TriggerSpecific_Click(AbstractCharacter clickingChar, ScriptArgs sa) {
+		internal override sealed bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
 			//helper method for Trigger_Click
 			bool cancel=false;
 			cancel=clickingChar.TryCancellableTrigger(TriggerKey.charClick, sa);
@@ -1139,26 +1139,23 @@ namespace SteamEngine {
 
 		public virtual void On_Say(string speech, SpeechType type, int[] keywords) {
 		}
-
-		internal override sealed bool TriggerSpecific_DClick(AbstractCharacter dClickingChar, ScriptArgs sa) {
-			//helper method for Trigger_Click
-			bool cancel=false;
-			cancel=dClickingChar.TryCancellableTrigger(TriggerKey.charDClick, sa);
-			if (!cancel) {
-				dClickingChar.act=this;
-				cancel=dClickingChar.On_CharDClick(this);
-			}
-			return cancel;
-		}
-		
-		public virtual bool On_ItemDClick(AbstractItem dClicked) {
-			return false;
-		}
-		
-		public virtual bool On_CharDClick(AbstractCharacter dClicked) {
-			return false;
+	
+		public virtual void On_ItemDClick(AbstractItem dClicked) {
 		}
 
+		public virtual void On_CharDClick(AbstractCharacter dClicked) {
+		}
+
+		public virtual bool On_DenyItemDClick(DenyClickArgs args) {
+			DenyResult result = args.clickingChar.CanReach(args.target);
+			args.Result = result;
+			return result != DenyResult.Allow;
+		}
+
+		public virtual bool On_DenyCharDClick(DenyClickArgs args) {
+			//default implementation only for item... char can be dclicked even if outa range (paperdoll)
+			return false;
+		}
 
 		public abstract void AttackRequest(AbstractCharacter target);
 
@@ -1434,6 +1431,7 @@ namespace SteamEngine {
 			return new EquipsEnumerator(this);
 		}
 	}
+
 	public class EquipsEnumerator : IEnumerator<AbstractItem> {
 		private const int STATE_VISIBLES = 0;
 		private const int STATE_DRAGGING = 1;
