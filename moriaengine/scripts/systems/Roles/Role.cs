@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
         }
 
         [Summary("Trigger called when the new member adding is requested from this role")]
-        internal virtual bool On_RoleDenyMemberAddRequest(DenyRoleMemberAddArgs args) {
+		internal virtual bool On_RoleDenyMemberAddRequest(DenyRoleTriggerArgs args) {
             return false; //dont cancel
         }
 
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
         }
 
         [Summary("Trigger called when the member remove is requested from this role")]
-        internal virtual bool On_RoleDenyMemberRemoveRequest(DenyRoleMemberRemoveArgs args) {
+		internal virtual bool On_RoleDenyMemberRemoveRequest(DenyRoleTriggerArgs args) {
             return false; //dont cancel
         }        
         #endregion triggers

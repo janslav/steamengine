@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 
         #region triggerMethods
         protected virtual void On_Create(Character chr, Role role) {
-            chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_Create");            
+            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_Create");            
         }
 
         protected void Trigger_Create(Role role) {
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
         }
 
         protected virtual bool On_Destroy(Character chr, Role role) {
-            chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_Destroy");
+            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_Destroy");
             return false; //no cancelling
         }
 
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
         }        
 
         protected virtual void On_MemberAdded(Character chr, Role role) {
-            chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_MemberAdded");            
+            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_MemberAdded");            
         }
 
         internal void Trigger_MemberAdded(Character chr, Role role) {
@@ -91,17 +91,12 @@ namespace SteamEngine.CompiledScripts {
             On_MemberAdded(chr, role);            
         }
 
-        protected virtual bool On_DenyMemberAddRequest(DenyRoleMemberAddArgs args) {
-            Role rle = args.assgdRole;
-            //common check - what if the member already has the role?
-            if (args.assignee.HasRole(rle)) {
-                args.Result = DenyResultRolesMemberAdd.Deny_AlreadyHasRole;
-                return true;//same as "return 1" from LScript - cancel trigger sequence
-            }
+		protected virtual bool On_DenyMemberAddRequest(DenyRoleTriggerArgs args) {
+            //imeplementation of possible "add preventing" checks such as "too many people in that role etc"
             return false; //continue
         }
 
-        internal bool Trigger_DenyMemberAddRequest(DenyRoleMemberAddArgs args) {
+		internal bool Trigger_DenyMemberAddRequest(DenyRoleTriggerArgs args) {
             bool cancel = false;
             cancel = this.TryCancellableTrigger(args.assignee, RoleDef.tkDenyMemberAddRequest, args);
             if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
@@ -114,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
         }
 
         protected virtual void On_MemberRemoved(Character chr, Role role) {
-            chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_MemberRemoved");            
+            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_MemberRemoved");            
         }
 
         internal void Trigger_MemberRemoved(Character chr, Role role) {
@@ -126,17 +121,12 @@ namespace SteamEngine.CompiledScripts {
             }
         }
 
-        protected virtual bool On_DenyMemberRemoveRequest(DenyRoleMemberRemoveArgs args) {
-            Role rle = args.assgdRole;
-            //common check - does the member have the role?
-            if (!args.assignee.HasRole(rle)){
-                args.Result = DenyResultRolesMemberRemove.Deny_DoesntHaveRole;
-                return true;//same as "return 1" from LScript - cancel trigger sequence
-            }           
+		protected virtual bool On_DenyMemberRemoveRequest(DenyRoleTriggerArgs args) {
+			//imeplementation of possible "remove preventing" checks such as "comeone must stay in the role etc"
             return false; //continue
         }
 
-        internal bool Trigger_DenyMemberRemoveRequest(DenyRoleMemberRemoveArgs args) {
+		internal bool Trigger_DenyMemberRemoveRequest(DenyRoleTriggerArgs args) {
             bool cancel = false;
             cancel = this.TryCancellableTrigger(args.assignee, RoleDef.tkDenyMemberRemoveRequest, args);
             if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
@@ -321,57 +311,29 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}		
 		#endregion utilities
-	}
-
-    [Summary("Argument wrapper used in DenyMemberRemoveRequest trigger")]
-	public class DenyRoleMemberRemoveArgs : ScriptArgs {
-	    public readonly Character assignee;
-	    public readonly RoleDef runRoleDef;
-	    public readonly Role assgdRole;
-
-	    public DenyRoleMemberRemoveArgs(params object[] argv)
-	        : base(argv) {
-            Sanity.IfTrueThrow(!(argv[0] is DenyResultRolesMemberRemove), "argv[0] is not DenyResultRolesMemberRemove");
-	    }
-
-        public DenyRoleMemberRemoveArgs(Character assignee, Role assgdRole)
-            : this(DenyResultRolesMemberRemove.Allow, assignee, assgdRole.RoleDef, assgdRole) {
-            this.assignee = assignee;
-            this.runRoleDef = assgdRole.RoleDef;
-            this.assgdRole = assgdRole;
-	    }
-
-        public DenyResultRolesMemberRemove Result {
-	        get {
-                return (DenyResultRolesMemberRemove)Convert.ToInt32(argv[0]);
-	        }
-	        set {
-	            argv[0] = value;
-	        }
-	    }
-	}
+	}    
 
     [Summary("Argument wrapper used in DenyMemberAddRequest trigger")]	
-    public class DenyRoleMemberAddArgs : ScriptArgs {
+    public class DenyRoleTriggerArgs : ScriptArgs {
         public readonly Character assignee;
         public readonly RoleDef runRoleDef;
         public readonly Role assgdRole;
 
-        public DenyRoleMemberAddArgs(params object[] argv)
+        public DenyRoleTriggerArgs(params object[] argv)
             : base(argv) {
-            Sanity.IfTrueThrow(!(argv[0] is DenyResultRolesMemberAdd), "argv[0] is not DenyResultRolesMemberAdd");
+			Sanity.IfTrueThrow(!(argv[0] is DenyResultRoles), "argv[0] is not DenyResultRoles");
         }
 
-        public DenyRoleMemberAddArgs(Character assignee, Role assgdRole)
-                    : this(DenyResultRolesMemberAdd.Allow, assignee, assgdRole.RoleDef, assgdRole) {
+		public DenyRoleTriggerArgs(Character assignee, Role assgdRole)
+			: this(DenyResultRoles.Allow, assignee, assgdRole.RoleDef, assgdRole) {
             this.assignee = assignee;
             this.runRoleDef = assgdRole.RoleDef;
             this.assgdRole = assgdRole;
         }
 
-        public DenyResultRolesMemberAdd Result {
+		public DenyResultRoles Result {
             get {
-                return (DenyResultRolesMemberAdd)Convert.ToInt32(argv[0]);
+				return (DenyResultRoles) Convert.ToInt32(argv[0]);
             }
             set {
                 argv[0] = value;

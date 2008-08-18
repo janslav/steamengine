@@ -91,24 +91,13 @@ namespace SteamEngine.CompiledScripts {
 		Deny_NotEnoughResourcesPresent = 6//missing some resources from "has present" list
 	}
 
-    [Summary("roles member removing possible results")]
-    public enum DenyResultRolesMemberRemove {
-        Allow = 1, //we can remove the member
-        Deny_DoesntHaveRole = 2, //we dont have the role (cannot remove)
-
+    [Summary("Roles member adding/removing possible results")]
+	public enum DenyResultRoles {
+        Allow = 1, //we can add/remove the member
+        
         //specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
-        //it will be accompanied by the role specific remove failure message
-        Deny_RoleSpecificRemoveFailure = 100 
-    }
-
-    [Summary("Roles member adding possible results")]
-    public enum DenyResultRolesMemberAdd {
-        Allow = 1, //we can add the member
-        Deny_AlreadyHasRole = 2, //we already have the role (cannot add again)       
- 
-        //specific problem for particular role (e.g. "too many friends of the house")
-        //it will be accompanied by the role specific add failure message
-        Deny_RoleSpecificAddFailure = 100 
+        //it will be accompanied by the role specific failure message
+        Deny_NoMessage = 100
     }
 
 	[Flags]
