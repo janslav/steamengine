@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine.Common {
-	public class HashSet<T> : ICollection<T> {
+	public class HashSet<T> : ICollection<T>, ICollection {
 		private int[] buckets;
 		private int count;
 		private Entry[] entries;
@@ -304,6 +304,23 @@ namespace SteamEngine.Common {
 			get { return false; }
 		}
 
+		#endregion
+
+		#region ICollection Members
+		public void CopyTo(Array array, int index) {
+			foreach (T entry in this) {
+				array.SetValue(entry, index);
+				index++;
+			}
+		}
+
+		public bool IsSynchronized {
+			get { return false; }
+		}
+
+		public object SyncRoot {
+			get { return this; }
+		}
 		#endregion
 	}
 }

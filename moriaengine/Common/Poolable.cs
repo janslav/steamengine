@@ -41,7 +41,7 @@ namespace SteamEngine.Common {
 		internal void Reset() {
 			this.disposed = false;
 
-			On_Reset();
+			this.On_Reset();
 		}
 
 		protected virtual void On_Reset() {

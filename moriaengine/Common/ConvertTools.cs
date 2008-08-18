@@ -87,7 +87,7 @@ namespace SteamEngine.Common {
 			if ((objectType == type) || (type.IsAssignableFrom(objectType))) {
 				return obj;
 			} else if (type.Equals(typeof(String))) {
-				return obj.ToString();
+				return ToString(obj);
 			} else if (type.Equals(typeof(Boolean))) {
 				return ToBoolean(obj);
 			} else if (type.IsEnum) {
@@ -125,20 +125,33 @@ namespace SteamEngine.Common {
 
 		[Summary("Try converting the given object to string")]
 		public static bool TryConvertToString(object obj, out string retVal) {
-			//first try formattable
-			IFormattable valueCast1 = obj as IFormattable;
-			if (valueCast1 != null) {
-				retVal = valueCast1.ToString(null, CultureInfo.InvariantCulture);
+			IConvertible asConvertible = obj as IConvertible;
+			if (asConvertible != null) {
+				retVal = asConvertible.ToString(invariantCulture);
 				return true;
 			}
-			//then convertible
-			IConvertible valueCast2 = obj as IConvertible;
-			if (valueCast2 != null) {
-				retVal = valueCast2.ToString(CultureInfo.InvariantCulture);
+			IFormattable asFormattable = obj as IFormattable;
+			if (asFormattable != null) {
+				retVal = asFormattable.ToString(null, invariantCulture);
 				return true;
 			}
+
 			retVal = null;
 			return false;			
+		}
+
+		[Summary("Try converting the given object to string")]
+		public static string ToString(object obj) {
+			IConvertible asConvertible = obj as IConvertible;
+			if (asConvertible != null) {
+				return asConvertible.ToString(invariantCulture);
+			}
+			IFormattable asFormattable = (IFormattable) obj; //throws exception if impossible
+			if (asFormattable != null) {
+				return asFormattable.ToString(null, invariantCulture);
+			} else {
+				return "";
+			}
 		}
 
 		public static bool IsNumber(object o) {
