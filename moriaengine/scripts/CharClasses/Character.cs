@@ -100,6 +100,9 @@ namespace SteamEngine.CompiledScripts {
 				"Ability/Skill object of the desired entity")]
 		private Dictionary<AbstractDef, object> skillsabilities = null;
 
+        [Summary("List of all roles that this char has been cast to")]		
+        internal HashSet<Role> assignedRoles = null;
+
 		float weight;
 		private CharModelInfo charModelInfo;
 
@@ -1619,7 +1622,57 @@ namespace SteamEngine.CompiledScripts {
 
 		#endregion abilities
 
-		public Character Owner {
+        #region roles
+        [Summary("Check if character has been cast to the given role")]
+        public bool HasRole(Role role) {
+            if (assignedRoles != null) {
+                return assignedRoles.Contains(role);
+            }
+            return false;
+        }
+
+        [Summary("Check if character has been cast to any role created by given RoleDef "+
+                "e.g. useful for finding out if char is member of any house or citizen of any town etc.")]
+        public bool HasRole(RoleDef roledef) {
+            if (assignedRoles != null) {
+                foreach(Role role in assignedRoles) {
+                    if (role.RoleDef == roledef) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        [Summary("Method for adding a given role to the character assignedRoles. "+
+                "Called internally from the RolesManagement.CastCharToRole method")]        
+        internal void AssignToRole(Role role) {
+            if (assignedRoles == null) {
+                assignedRoles = new HashSet<Role>();
+            }
+            assignedRoles.Add(role);
+        }
+
+        [Summary("Method for remioving a given role from the character assignedRoles. " +
+                "Called internally from the RolesManagement.UnCastCharFromRole method. "+
+                "Return the result of the unassignment")]
+        internal bool UnAssignFromRole(Role role) {
+            if (assignedRoles != null) {
+                return assignedRoles.Remove(role);
+            }
+            return false; //no roles - no unassignment
+        }
+
+        [Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
+        internal virtual void On_RoleAssign(Role role) {
+        }
+
+        [Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
+        internal virtual void On_RoleUnAssign(Role role) {
+        }
+        #endregion roles
+
+        public Character Owner {
 			get {
 				return owner;
 			}

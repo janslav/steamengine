@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Parent(object target) {
 			Region parent = ((Region)target).Parent;
 			if (parent != null) {
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(((Region)target).Parent));
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(parent));
 			} else {
 				D_Display_Text.ShowError("Neexistuje rodièovský region");
 				return;
@@ -43,9 +43,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Rectangles")]
 		public static void Rectangles(object target) {
-			//params:	1 - Region
-			//			2 - prvni rect na strance
-			//			3 - seznam
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_Region_Rectangles.regionTK, (Region)target);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance,newArgs);
