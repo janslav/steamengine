@@ -20,7 +20,8 @@ namespace SteamEngine.AuxiliaryServer {
 
 		private static readonly HashSet<GameServerInstanceSettings> knownGameServersSet = new HashSet<GameServerInstanceSettings>();
 		private static readonly List<GameServerInstanceSettings> knownGameServersList = new List<GameServerInstanceSettings>();
-		private static readonly ReadOnlyCollection<GameServerInstanceSettings> knownGameServersListWrapper = new ReadOnlyCollection<GameServerInstanceSettings>(knownGameServersList);
+		private static readonly System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings> knownGameServersListWrapper =
+			new System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings>(knownGameServersList);
 
 		public static readonly string iniFileName = "steamaux.ini";
 
