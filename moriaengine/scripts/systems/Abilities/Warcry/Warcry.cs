@@ -28,8 +28,6 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("War's warcry")]
 	[ViewableClass]
 	public class WarcryDef : ImmediateAbilityDef {
-
-		[Summary("Number of seconds the warcry effect will last on the hit player")]
 		private FieldValue effectDuration;
 		
 		public WarcryDef(string defname, string filename, int headerLine)
@@ -39,14 +37,16 @@ namespace SteamEngine.CompiledScripts {
 		
 		#region triggerMethods
 		protected override bool On_DenyUse(DenyAbilityArgs args) {
-			bool retVal = base.On_DenyUse(args); //call superclass for common checks
-			
-			//TODO - zde ještì implementovat nejake ty kontroly resourcù, to jestli dotyènej žije/nežije atd.
+			bool retVal = false;			
+			//TODO - zde ještì implementovat to jestli dotyènej žije/nežije atd.
+
+			retVal = base.On_DenyUse(args); //call superclass for common checks - including resources consuming etc
 			return retVal;
 		}
 
 		[Summary("Functional implementation of warcry ability")]
 		protected override bool On_Activate(Character chr) {
+			//TODO - taky nejak zarvat nebo co !
 			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort)ComputeRange(chr))) {
 				if(chr == plr) {
 					continue; //dont do selfwarcry ;)
@@ -67,6 +67,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion triggerMethods
 
 		[InfoField("Effect duration")]
+		[Summary("Number of seconds the warcry effect will last on the hit player")]		
 		public double EffectDuration {
 			get {
 				return (double) effectDuration.CurrentValue;

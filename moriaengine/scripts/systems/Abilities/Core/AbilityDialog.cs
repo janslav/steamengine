@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}	
 
-		[Summary("Display a lsit of all abilities. Function accessible from the game." +
+		[Summary("Display a list of all abilities. Function accessible from the game." +
 				"The function is designed to be triggered using .AbilitiesList(criteria)")]
 		[SteamFunction]
 		public static void AbilitiesList(Character self, ScriptArgs text) {
