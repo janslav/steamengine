@@ -147,7 +147,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("This method implements the assigning of the first point to the Ability")]
         protected virtual void On_Assign(Character ch) {
-			ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
+			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
         }
 
         internal void Trigger_Assign(Character chr) {
