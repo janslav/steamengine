@@ -52,13 +52,13 @@ namespace SteamEngine.CompiledScripts {
 
 				if (retVal == DenyResultAbilities.Allow) {
 					//last check before run
-					BeforeRun(args);//method for running last "pre-run" events, after these follows only ability running
-					retVal = args.Result;
-					if (retVal == DenyResultAbilities.Allow) {//still OK :)						
+					//BeforeRun(args);//method for running last "pre-run" events, after these follows only ability running
+					//retVal = args.Result;
+					//if (retVal == DenyResultAbilities.Allow) {//still OK :)						
 						bool cancelActivate = Trigger_Activate(chr);
 						ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
 						Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)
-					}
+					//}
 				}
 				SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
 			}
@@ -69,19 +69,19 @@ namespace SteamEngine.CompiledScripts {
 			//beyond the Activate(Character) method capabilities...
 		}
 
-		[Summary("Last method that is run immediately before the ability running - it is run after all checks "+
-			"and its primary purpose is to carry out thigs that are irreversible (such as resources consuming) and "+
-			"that should be therefore run first when we are sure that the ability will not be stopped from running.")]
-		protected virtual void BeforeRun(DenyAbilityArgs args) {
-			//check consumable resources
-			ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
-			if (resConsum != null) {
-				//look to the backpack and to among the items that we are wearing
-				if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers)) {
-					args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
-				}
-			}
-		}
+		//[Summary("Last method that is run immediately before the ability running - it is run after all checks "+
+		//    "and its primary purpose is to carry out thigs that are irreversible (such as resources consuming) and "+
+		//    "that should be therefore run first when we are sure that the ability will not be stopped from running.")]
+		//protected virtual void BeforeRun(DenyAbilityArgs args) {
+		//    //check consumable resources
+		//    ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
+		//    if (resConsum != null) {
+		//        //look to the backpack and to among the items that we are wearing
+		//        if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers)) {
+		//            args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
+		//        }
+		//    }
+		//}
 
 		#region triggerMethods
 		[Summary("C# based @activate trigger method")]
@@ -134,7 +134,14 @@ namespace SteamEngine.CompiledScripts {
 					return true;
 				}
 			}
-			//resources to consume will be checked immediately before run, not now!
+			//check consumable resources
+			ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
+			if (resConsum != null) {
+				//look to the backpack and to among the items that we are wearing
+				if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers)) {
+					args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
+				}
+			}
 			return false; //continue
 		}
 
@@ -359,7 +366,7 @@ namespace SteamEngine.CompiledScripts {
 		#region utilities
 		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
 		//public static Dictionary<string,AbilityDef>.ValueCollection AllAbilities {
-		public static IEnumerable<AbilityDef>AllAbilities {
+		public static IEnumerable<AbilityDef> AllAbilities {
 			get {
 				if (byName != null) {
 					return byName.Values;

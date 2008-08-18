@@ -43,6 +43,14 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Assign(Character ch) {
 			Activate(ch); //activate the ability automatically
 		}
+
+		[NoShow] //not necessary to be seen as it is defaultly 0 and unchangeable!
+		public new double UseDelay {
+			get {
+				return UseDelay;
+			}
+			//no setter default is 0 
+		}
 		#endregion triggerMethods
 	}
 }

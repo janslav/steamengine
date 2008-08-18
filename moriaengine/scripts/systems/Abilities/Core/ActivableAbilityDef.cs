@@ -72,19 +72,16 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Common method for simple switching the ability off")]		
 		public void UnActivate(Character chr) {
-			Ability ab = chr.GetAbilityObject(this);
-			if (ab == null || ab.Points == 0) {
-				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
-			} else {
-				UnActivate(chr, ab);
-			}
+			Ability ab = chr.GetAbilityObject(this); //will return null if the ability was unassigned
+			UnActivate(chr, ab);
 		}
 
 		private void UnActivate(Character chr, Ability ab) {
-			if (ab.Running) { //do it only if running
+			if (ab != null && ab.Running) { //do it only if present and running
+				//might have been zeroed (removed) int his case just call the trigger
 				ab.Running = false;
-				Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)
 			}
+			Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)			
 		}		
 
 		protected override void Activate(Character chr, Ability ab) {
