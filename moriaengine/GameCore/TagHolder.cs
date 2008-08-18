@@ -186,7 +186,7 @@ namespace SteamEngine {
 
 		#region Tags
 		[Summary("Return enumerable containing all tags")]
-		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {			
+		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
 					TagKey tk = entry.Key as TagKey;

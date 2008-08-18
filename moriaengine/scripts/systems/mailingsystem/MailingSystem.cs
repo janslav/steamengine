@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Static class for operating with clients delayed messages.")]
 	public static class MsgsBoard {		
 		[Summary("A unique tag name for holding a list of client delayed messages")]
-		internal static TagKey _delayed_msgs_ = TagKey.Get("_delayed_msgs_");
+		internal static TagKey tkDelayedMsgs = TagKey.Get("_delayed_msgs_");
 
 		[Summary("Default senders name (if the sender was not specified)")]
 		public const string NO_SENDER = "System";
@@ -62,10 +62,10 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Private utility method returning the characters list of messages")]
 		private static ArrayList GetMessages(Character whose) {
-			ArrayList retList = (ArrayList)whose.GetTag(_delayed_msgs_);
+            ArrayList retList = (ArrayList)whose.GetTag(tkDelayedMsgs);
 			if (retList == null) { // no messages previously posted
 				retList = new ArrayList();
-				whose.SetTag(_delayed_msgs_, retList);
+                whose.SetTag(tkDelayedMsgs, retList);
 			}
 			return retList;
 		}
