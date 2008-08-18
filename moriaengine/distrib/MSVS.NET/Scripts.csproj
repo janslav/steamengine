@@ -233,6 +233,27 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
       <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\Hits\HitsRegeneration.cs">
+      <Link>systems\Abilities\Regenerations\Hits\HitsRegeneration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\Mana\ManaRegeneration.cs">
+      <Link>systems\Abilities\Regenerations\Mana\ManaRegeneration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationPlugin.cs">
+      <Link>systems\Abilities\Regenerations\RegenerationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationPlugin.Generated.cs">
+      <Link>systems\Abilities\Regenerations\RegenerationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\Stamina\StaminaRegeneration.cs">
+      <Link>systems\Abilities\Regenerations\Stamina\StaminaRegeneration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
+      <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.Generated.cs">
+      <Link>systems\Abilities\Specials\Berserker\Berserker.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
     </Compile>
@@ -412,6 +433,15 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Resources\Searching\ResourceItemFinder.cs">
       <Link>systems\Resources\Searching\ResourceItemFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Role.cs">
+      <Link>systems\Roles\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RoleDef.cs">
+      <Link>systems\Roles\RoleDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RolesManagement.cs">
+      <Link>systems\Roles\RolesManagement.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>

@@ -157,5 +157,13 @@ namespace SteamEngine.RemoteConsole {
 				cc.Conn.SendPacketGroup(RequestServersToStartPacket.group);
 			}
 		}
+
+		private void systemTabPage_Load(object sender, EventArgs e) {
+
+		}
+
+		private void MainForm_Load(object sender, EventArgs e) {
+
+		}
 	}
 }
