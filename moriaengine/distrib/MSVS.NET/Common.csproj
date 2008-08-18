@@ -70,9 +70,20 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Common\Common.cs">
-      <Link>Common.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\Common\Collections\EmptyCollection.cs">
+      <Link>Collections\EmptyCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Collections\EnumCollection.cs">
+      <Link>Collections\EnumCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Collections\HashSet.cs">
+      <Link>Collections\HashSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Collections\ReadOnlyCollection.cs">
+      <Link>Collections\ReadOnlyCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Collections\SimpleQueue.cs">
+      <Link>Collections\SimpleQueue.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\ConAttrs.cs">
       <Link>ConAttrs.cs</Link>
@@ -84,18 +95,9 @@
     <Compile Include="..\..\Common\Disposable.cs">
       <Link>Disposable.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common\EmptyCollection.cs">
-      <Link>EmptyCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Common\EnumCollection.cs">
-      <Link>EnumCollection.cs</Link>
-    </Compile>
     <Compile Include="..\..\Common\Exceptions.cs">
       <Link>Exceptions.cs</Link>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\Common\HashSet.cs">
-      <Link>HashSet.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\HighPerformanceTimer.cs">
       <Link>HighPerformanceTimer.cs</Link>
@@ -125,12 +127,12 @@
       <Link>Sanity.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\Common\SimpleQueue.cs">
-      <Link>SimpleQueue.cs</Link>
-    </Compile>
     <Compile Include="..\..\Common\TestSuite.cs">
       <Link>TestSuite.cs</Link>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\Common\Tools.cs">
+      <Link>Tools.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
