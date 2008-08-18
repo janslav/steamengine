@@ -91,12 +91,6 @@ namespace SteamEngine.Common {
 		private static readonly FontFamily defaultFamily=new FontFamily(GenericFontFamilies.SansSerif);
 		private static readonly Color defaultColor=Color.Black;
 		private LogStyle[] logStyles=new LogStyle[((int) lastStyleElement)+1];
-		private string RawString;
-		private string chunk;
-		private int ProcessingIndex;
-		private string title;
-		private LogStyles logStyle;
-		private Stack styleStack;
 
 		#region Log Style Configuration
 		public float DefaultSize {
@@ -191,8 +185,6 @@ namespace SteamEngine.Common {
 
 		#endregion
 		public void DefaultSettings() {
-			RawString="";
-			ProcessingIndex=0;
 			logStyles[(int) LogStyles.Default]		= new LogStyle(defaultColor, defaultFontStyle, defaultFamily, defaultSize);
 			logStyles[(int) LogStyles.Warning]		= new LogStyle(Color.Red, defaultFontStyle);
 			logStyles[(int) LogStyles.Error]		= new LogStyle(Color.Red, defaultFontStyle);
@@ -205,127 +197,11 @@ namespace SteamEngine.Common {
 			logStyles[(int) LogStyles.File]			= new LogStyle(Color.Purple, defaultFontStyle);
 			logStyles[(int) LogStyles.Number]		= new LogStyle(Color.Blue, defaultFontStyle);
 			logStyles[(int) LogStyles.Ident]		= new LogStyle(Color.Blue, FontStyle.Bold);
-
-			logStyle=LogStyles.Default;
 		}
 
 		public ConAttrs() {
 			DefaultSettings();
-			styleStack=new Stack();
 		}
-		#region Public Methods
-		public String Strip() {
-			string str="";
-			int idx, idx2;
-
-			idx=0;
-			try {
-				while (idx>=0 && idx<RawString.Length) {
-					while (idx>=0 && RawString[idx]==separatorChar) {
-						idx++;
-						idx2=RawString.IndexOf(separatorChar, idx);
-
-						if (idx2>idx)
-							idx=idx2+1;
-					}
-					idx2=RawString.IndexOf(separatorChar, idx);
-
-					if (idx2>idx) {
-						str+=RawString.Substring(idx, idx2-idx);
-					} else {
-						str+=RawString.Substring(idx, RawString.Length-idx);
-					}
-
-					idx=idx2;
-				}
-			} catch (Exception) {
-			}
-
-			return str;
-		}
-
-		public void Process() {
-			logStyle=LogStyles.Default;
-			OnStyleChanged(logStyle);
-			styleStack.Clear();
-			while (ProcessChunk()) { }
-		}
-
-		public void SetString(string str) {
-			RawString=str;
-			ProcessingIndex=0;
-		}
-
-		public bool ProcessChunk() {
-			int idx;
-
-			if (ProcessingIndex<0 || ProcessingIndex>=RawString.Length)
-				return false;
-
-			try {
-				while (RawString[ProcessingIndex]==separatorChar) {
-					ProcessingIndex++;
-					idx=RawString.IndexOf(separatorChar, ProcessingIndex);
-
-					if (idx>ProcessingIndex) {
-						switch (RawString[ProcessingIndex++]) {
-							case eosChar:
-								if (styleStack.Count>0) {
-									logStyle=(LogStyles) styleStack.Pop();
-									OnStyleChanged(logStyle);
-								} else {
-									OnStyleChanged(LogStyles.Default);
-								}
-								break;
-							case titleChar:
-								title=RawString.Substring(ProcessingIndex, idx-ProcessingIndex);
-								OnTitleChanged(title);
-								break;
-							case styleChar:
-								try {
-									int i;
-									LogStyles old=logStyle;
-
-									i = int.Parse(RawString.Substring(ProcessingIndex, idx - ProcessingIndex));
-									if (i<=(int) lastStyleElement && i>=0) {
-										logStyle=(LogStyles) i;
-									} else {
-										logStyle = LogStyles.Default;
-									}
-
-									if (logStyle!=old) {
-										styleStack.Push(old);
-										OnStyleChanged(logStyle);
-									}
-								} catch (Exception) {
-									// something goes wrong, setting default text style
-									logStyle = LogStyles.Default;
-								}
-								break;
-							default:
-								// Non-standard tag
-								break;
-						}
-						ProcessingIndex=idx+1;
-					}
-				}
-				idx=RawString.IndexOf(separatorChar, ProcessingIndex);
-
-				if (idx>ProcessingIndex) {
-					chunk=RawString.Substring(ProcessingIndex, idx-ProcessingIndex);
-				} else {
-					chunk=RawString.Substring(ProcessingIndex, RawString.Length-ProcessingIndex);
-				}
-
-				OnNextChunk(chunk);
-
-				ProcessingIndex=idx;
-			} catch (Exception) {
-			}
-
-			return true;
-		}
-		#endregion
 #endif
 	}
 
@@ -356,32 +232,35 @@ namespace SteamEngine.Common {
 			string[] tokens = logStrEncoded.Split(separatorArray);
 			int tokenLen = tokens.Length;
 			if (tokenLen > 0) {
-				foreach (string token in tokens) {
+				for (int i = 0; i<tokenLen; i++) {
+					string token = tokens[i];
+
 					if (string.IsNullOrEmpty(token)) {
 						continue;
 					}
-					switch (token[0]) {
-						case ConAttrs.eosChar:
-							if (styleStack.Count > 0) {
-								styleStack.Pop();
-							}
-							break;
-						case ConAttrs.titleChar:
-							string title = token.Substring(1);
-							if (title.Length > 0) {
-								this.display.SetTitle(title);
-							} else {
-								this.display.SetTitleToDefault();
-							}
-							break;
-						case ConAttrs.styleChar:
-							int i = int.Parse(token.Substring(1));
-							this.styleStack.Push((LogStyles) i);
-							break;
-						default:
-							this.display.Write(token, this.CurrentStyle);
-							break;
+					if (i % 2 == 1) {
+						switch (token[0]) {
+							case ConAttrs.eosChar:
+								if (styleStack.Count > 0) {
+									styleStack.Pop();
+								}
+								continue;
+							case ConAttrs.titleChar:
+								string title = token.Substring(1);
+								if (title.Length > 0) {
+									this.display.SetTitle(title);
+								} else {
+									this.display.SetTitleToDefault();
+								}
+								continue;
+							case ConAttrs.styleChar:
+								int num = int.Parse(token.Substring(1));
+								this.styleStack.Push((LogStyles) num);
+								continue;
+						}
 					}
+
+					this.display.Write(token, this.CurrentStyle);
 				}
 			}
 		}
