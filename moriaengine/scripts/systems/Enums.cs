@@ -49,6 +49,8 @@ namespace SteamEngine.CompiledScripts {
 	public enum SortingCriteria : int {
 		NameAsc,
 		NameDesc,
+		DefnameAsc,
+		DefnameDesc,
 		AccountAsc,
 		AccountDesc,
 		LocationAsc,
@@ -58,7 +60,9 @@ namespace SteamEngine.CompiledScripts {
 		IPAsc,
 		IPDesc,
 		UnreadAsc,
-		UnreadDesc
+		UnreadDesc,
+		RunningAsc, //useful for abilities list
+		RunningDesc
 	}
 
 	[Summary("Various sorting criteria for displaying account notes or crimes")]
@@ -71,14 +75,6 @@ namespace SteamEngine.CompiledScripts {
 		AFKDesc,
 		IssuerAsc,
 		IssuerDesc
-	}
-
-	[Summary("Various sorting criteria for displaying abilities")]
-	public enum AbilitiesSorting : int {
-		NameAsc,
-		NameDesc,
-		DefnameAsc,
-		DefnameDesc
 	}
 
 	//abilities running possible results
