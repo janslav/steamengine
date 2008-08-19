@@ -227,6 +227,9 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\ActivableAbilityDef.cs">
       <Link>systems\Abilities\Core\ActivableAbilityDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\CharsAbilitiesDialog.cs">
+      <Link>systems\Abilities\Core\CharsAbilitiesDialog.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Core\ImmediateAbilityDef.cs">
       <Link>systems\Abilities\Core\ImmediateAbilityDef.cs</Link>
     </Compile>
@@ -434,11 +437,17 @@
     <Compile Include="..\..\scripts\systems\Resources\Searching\ResourceItemFinder.cs">
       <Link>systems\Resources\Searching\ResourceItemFinder.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\CharsRolesDialog.cs">
+      <Link>systems\Roles\CharsRolesDialog.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Roles\Role.cs">
       <Link>systems\Roles\Role.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Roles\RoleDef.cs">
       <Link>systems\Roles\RoleDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RolesDialog.cs">
+      <Link>systems\Roles\RolesDialog.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Roles\RolesManagement.cs">
       <Link>systems\Roles\RolesManagement.cs</Link>

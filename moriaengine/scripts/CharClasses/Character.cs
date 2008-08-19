@@ -1149,7 +1149,7 @@ namespace SteamEngine.CompiledScripts {
 			foreach (Ability ab in Abilities) {
 				int points = ab.Points;
 				if (points != 0) {
-					output.WriteValue(ab.DefName, points);
+					output.WriteValue(ab.AbilityDef.Defname, points);
 				}
 			}
 

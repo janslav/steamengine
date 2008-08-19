@@ -93,14 +93,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public string DefName {
+		public AbilityDef AbilityDef {
 			get {
-				return def.Defname;
+				return def;
 			}
-		}
+		}		
 
-		[Summary("Server time of the last usage")]
-		
+		[Summary("Server time of the last usage")]		
 		public double LastUsage {
 			get {
 				return lastUsage;
