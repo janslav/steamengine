@@ -90,7 +90,6 @@ namespace SteamEngine {
 				Sanity.IfTrueThrow(!RunLevelManager.IsRunning, "RunLevel != Running @ Resync");
 
 				Globals.PauseServerTime();
-				
 				RunLevelManager.SetStartup();
 
 				ObjectSaver.StartingLoading();
@@ -106,8 +105,6 @@ namespace SteamEngine {
 					}
 				}
 
-				//RunLevelManager.SetRunning();
-				
 				if (Globals.resolveEverythingAtStart) {
 					Constant.ResolveAll();
 					AbstractDef.ResolveAll();
@@ -121,6 +118,8 @@ namespace SteamEngine {
 				//}
 				
 				Globals.UnPauseServerTime();
+				RunLevelManager.SetRunning();
+
 				Server.BroadCast("Script resync finished.");
 			} else {
 				ISrc src = Globals.Src;
