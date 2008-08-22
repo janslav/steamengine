@@ -1,0 +1,14 @@
+[HitsRegenDef a_regen_hits]
+name="Regeneration Hitpoints"
+maxPoints=10
+regenSpeedCoef=10 //number of points to regenerate 1stat/1sec
+
+[StaminaRegenDef a_regen_stam]
+name="Regeneration Stamina"
+maxPoints=10
+regenSpeedCoef=10 //number of points to regenerate 1stat/1sec
+
+[ManaRegenDef a_regen_mana]
+name="Regeneration Mana"
+maxPoints=10
+regenSpeedCoef=10 //number of points to regenerate 1stat/1sec
