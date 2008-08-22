@@ -28,19 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private string dispText;
 		private Hues textColor;
 
-		internal static TagKey textHueTK = TagKey.Get("_text_hue_");		
-
-		[Summary("Instance of the D_Display_Text, for possible access from other dialogs, buttons etc.")]
-		private static D_Display_Text instance;
-		public static D_Display_Text Instance {
-			get {
-				return instance;
-			}
-		}
-		[Summary("Set the static reference to the instance of this dialog")]
-		public D_Display_Text() {
-			instance = this;
-		}
+		internal static TagKey textHueTK = TagKey.Get("_text_hue_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			label = string.Concat(args.ArgsArray[0]); //the gump's label

@@ -397,12 +397,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //text prohresku
 						//první parametr je nadpis, druhy je zobrazeny text)
-						newGi = gi.Cont.Dialog(D_Display_Text.Instance, new DialogArgs("Popis prohøešku", crime.text));
+						newGi = gi.Cont.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("Popis prohøešku", crime.text));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 2: //text trestu
 						//první parametr je nadpis, druhy je zobrazeny text)
-						newGi = gi.Cont.Dialog(D_Display_Text.Instance, new DialogArgs("Popis trestu", crime.punishment));
+						newGi = gi.Cont.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("Popis trestu", crime.punishment));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //issuer info

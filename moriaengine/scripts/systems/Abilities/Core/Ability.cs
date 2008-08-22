@@ -25,17 +25,17 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("This class holds information about one ability the user has - the number of ability points "+
 			 "and any additional info (such as timers connected with the ability running etc.)")]
 	public class Ability {
-		private int points;
+		protected int points;
+
+        protected bool running;
+
+        protected Character cont;
+
+        protected AbilityDef def;
+
+        protected double lastUsage;
 		
-		private bool running;
-
-		private Character cont;
-
-		private AbilityDef def;
-
-		private double lastUsage;
-		
-		public Ability(AbilityDef def, Character cont) {
+		internal Ability(AbilityDef def, Character cont) {
 			this.points = 0;
 			this.running = false;
 			this.cont = cont;
@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get or set actual ability points for this ability. Considers using of triggers if necessary")]
-		public int Points {
+		public virtual int Points {
 			get {
 				return points;
 			}

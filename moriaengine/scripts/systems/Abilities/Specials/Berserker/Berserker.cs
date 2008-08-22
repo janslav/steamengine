@@ -65,9 +65,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[ViewableClass]
-	public partial class BerserkerPlugin {
-		//public static readonly BerserkerPluginDef defInstance = new BerserkerPluginDef("p_berserker", "C#scripts", -1);
-		
+	public partial class E_Berserker : CompiledTriggerGroup {
 		public void On_AfterSwing(WeaponSwingArgs args) {
 			Character attacker = args.attacker;
 			if (attacker.CurrentSkillName != SkillName.Archery) { //archery is unmodified (we have sniper ability for rangers)

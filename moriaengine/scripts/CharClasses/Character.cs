@@ -1562,7 +1562,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Get number of points the character has for specified AbilityDef (0 if he doesnt have it at all)")]
 		public int GetAbility(AbilityDef aDef) {
 			Ability retAb = GetAbilityObject(aDef);
-			return (retAb == null ? 0 : retAb.Points); //either null or Ability instance if the player has it
+			return (retAb == null ? 0 : retAb.Points); //either null or Ability.Points if the player has it
 		}
 
 		[Summary("Add specified number of points the character has for specified AbilityDef. If the result is" +
@@ -1587,7 +1587,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void AddNewAbility(AbilityDef aDef, int points) {
-			Ability ab = new Ability(aDef, this);
+            Ability ab = aDef.Create(this);
 			SkillsAbilities.Add(aDef, ab); //first add the object to the dictionary			
 			ab.Points = points; //then set points 
 			aDef.Trigger_Assign(this); //then call the assign trigger

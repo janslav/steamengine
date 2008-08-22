@@ -122,6 +122,13 @@ namespace SteamEngine.LScript {
 				return unloaded;
 			}
 		}
+
+		public override string Description {
+			get {
+				return filename + "(L" + line + ")";
+			}
+		}
+
 	}
 	
 	public class ScriptVars {

@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 				On_UnActivate(chr);
 			}
 		}		
-		#endregion triggerMethods
+		
 		[Summary("C# based @activate trigger method, Overriden from parent - add TG / Plugin to ability holder")]
 		protected override bool On_Activate(Character ch) {
 			ch.AddTriggerGroup(this.TriggerGroup);
@@ -118,9 +118,10 @@ namespace SteamEngine.CompiledScripts {
 				ch.AddNewPlugin(this.PluginKeyInstance, this.PluginDef);
 			}
 			return false;//no cancelling, correctly return
-		}
+        }
+        #endregion triggerMethods
 
-		[Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
+        [Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
 				"for appending trigger groups to the ability holder")]
 		public TriggerGroup TriggerGroup {
 			get {

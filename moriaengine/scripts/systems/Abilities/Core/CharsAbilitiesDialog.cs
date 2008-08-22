@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
+			//seznam abilit bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<Ability> abList = (List<Ability>) args.GetTag(D_CharsAbilitiesList.listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
@@ -129,32 +129,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //name asc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.NameAsc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //name desc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.NameDesc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //roledefname asc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.DefnameAsc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //roledefname desc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.DefnameDesc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //running asc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.RunningAsc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 7: //running desc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.RunningDesc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}

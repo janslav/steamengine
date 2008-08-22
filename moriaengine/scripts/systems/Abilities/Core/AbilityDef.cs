@@ -39,6 +39,12 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerGroup scriptedTriggers;
 
+        [Summary("Method for instatiating Abilities. Basic implementation is easy but can be overriden " +
+                "if we want to return some descendants of the Ability class - e.g. RegenAbility...")]
+        public virtual Ability Create(Character chr) {
+            return new Ability(this, chr);
+        }       
+
 		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability"+
 				"and in case he has, it runs the protected activation method")]
 		public virtual void Activate(Character chr) {			
@@ -51,14 +57,9 @@ namespace SteamEngine.CompiledScripts {
 				DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
 
 				if (retVal == DenyResultAbilities.Allow) {
-					//last check before run
-					//BeforeRun(args);//method for running last "pre-run" events, after these follows only ability running
-					//retVal = args.Result;
-					//if (retVal == DenyResultAbilities.Allow) {//still OK :)						
-						bool cancelActivate = Trigger_Activate(chr);
-						ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
-						Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)
-					//}
+					bool cancelActivate = Trigger_Activate(chr);
+					ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
+					Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)					
 				}
 				SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
 			}
