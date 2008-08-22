@@ -1,4 +1,0 @@
-[HitsRegenDef a_regen_hits]
-name="Regeneration Hitpoints"
-maxPoints=10
-//no use delay, it is passive ability!

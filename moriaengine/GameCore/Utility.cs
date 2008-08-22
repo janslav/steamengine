@@ -172,6 +172,18 @@ namespace SteamEngine {
 			return sb.ToString();
 		}
 
+        [Summary("Count the arithmetic mean of the given values")]
+        public static double ArithmeticMean(params double[] values) {
+            if (values.Length == 0)
+                throw new SanityCheckException("ArithmeticMean called on no values");
+
+            double sum = 0;
+            foreach (double val in values) {
+                sum += val;
+            }
+            return sum / values.Length;
+        }
+
 		private static bool CharNeedsEscaping(char ch, out char escapedEquivalent) {
 			escapedEquivalent = ch;
 			switch (ch) {

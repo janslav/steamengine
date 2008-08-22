@@ -236,11 +236,17 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
       <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\Hits\HitsRegeneration.cs">
-      <Link>systems\Abilities\Regenerations\Hits\HitsRegeneration.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\HitsRegenerationDef.cs">
+      <Link>systems\Abilities\Regenerations\HitsRegenerationDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\Mana\ManaRegeneration.cs">
-      <Link>systems\Abilities\Regenerations\Mana\ManaRegeneration.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\ManaRegenerationDef.cs">
+      <Link>systems\Abilities\Regenerations\ManaRegenerationDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenAbility.cs">
+      <Link>systems\Abilities\Regenerations\RegenAbility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationDef.cs">
+      <Link>systems\Abilities\Regenerations\RegenerationDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationPlugin.cs">
       <Link>systems\Abilities\Regenerations\RegenerationPlugin.cs</Link>
@@ -248,8 +254,8 @@
     <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationPlugin.Generated.cs">
       <Link>systems\Abilities\Regenerations\RegenerationPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\Stamina\StaminaRegeneration.cs">
-      <Link>systems\Abilities\Regenerations\Stamina\StaminaRegeneration.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\StaminaRegenerationDef.cs">
+      <Link>systems\Abilities\Regenerations\StaminaRegenerationDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
@@ -286,6 +292,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\firewall\FirewallDialog.cs">
       <Link>systems\administration\Firewall\FirewallDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Functions\FunctionsList.cs">
+      <Link>systems\administration\Functions\FunctionsList.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
       <Link>systems\administration\Pages\GMPage.cs</Link>

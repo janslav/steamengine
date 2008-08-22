@@ -3,7 +3,7 @@ name="Berserker"
 maxPoints=10
 useDelay = 180
 
-damage_modifier=1.3 //damage coefficient
+damageModifier=1.3 //damage coefficient 
 
 pluginDef=p_berserker
 pluginKey=_berserker_

@@ -25,7 +25,8 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public abstract class CompiledScriptHolder : ScriptHolder {
-
+		protected string desc;
+		
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclassInstances<CompiledScriptHolder>(null, false, false);
 		}
@@ -39,6 +40,13 @@ namespace SteamEngine.CompiledScripts {
 			: base(name) {
 
 		}
+
+        [Summary("Description provided in any SteamDocAttribute on the SteamFunction")]
+        public override string Description {
+            get {
+                return desc;
+            }
+        }
 	}
 
 	[AttributeUsage(AttributeTargets.Method)]
@@ -186,21 +194,25 @@ namespace SteamEngine.CompiledScripts {
 				input);
 		}
 
-		private class GeneratedInstance {
+        private class GeneratedInstance {
 			MethodInfo method;
 			string name;
+            string desc; //obtained from the "summary" or "remark" (or any other SteamDocBaseAttribute)
 
 			internal GeneratedInstance(MethodInfo method, SteamFunctionAttribute sfa) {
 				if (!method.IsStatic) {
 					throw new Exception("The method with [SteamFunctionAttribute] must be static");
 				}
 
-
-				this.method = method;
+                this.method = method;
 				this.name = sfa.newFunctionName;
 				if (string.IsNullOrEmpty(this.name)) {
 					this.name = method.Name;
 				}
+				SummaryAttribute sma = Attribute.GetCustomAttribute(method, typeof(SummaryAttribute)) as SummaryAttribute;
+                if (sma != null) {
+                    desc = sma.Text;
+                }							
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
@@ -209,10 +221,9 @@ namespace SteamEngine.CompiledScripts {
 				codeTypeDeclatarion.BaseTypes.Add(typeof(CompiledScriptHolder));
 				codeTypeDeclatarion.IsClass = true;
 
-				codeTypeDeclatarion.Members.Add(GenerateConstructor());
+                codeTypeDeclatarion.Members.Add(GenerateConstructor());
 				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
-
-				return codeTypeDeclatarion;
+                return codeTypeDeclatarion;
 			}
 
 			private CodeMemberMethod GenerateConstructor() {
@@ -222,7 +233,10 @@ namespace SteamEngine.CompiledScripts {
 
 				retVal.Statements.Add(new CodeMethodInvokeExpression(
 					new CodeBaseReferenceExpression(), "RegisterAsFunction"));
-
+                
+                //initialize the desc. field
+                retVal.Statements.Add(new CodeAssignStatement(
+                    new CodeVariableReferenceExpression("desc"), new CodePrimitiveExpression(desc)));
 				return retVal;
 			}
 

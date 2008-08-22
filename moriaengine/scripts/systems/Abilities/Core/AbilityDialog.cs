@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
+			//seznam abilitydefu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
             List<AbilityDef> abList = (List<AbilityDef>)args.GetTag(D_AbilitiesList.listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
@@ -111,27 +111,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(D_AbilitiesList.criteriumTK, nameCriteria);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //name asc
 						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.NameAsc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //name desc
 						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.NameDesc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //defname asc
 						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.DefnameAsc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //defname desc
 						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.DefnameDesc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
+						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}

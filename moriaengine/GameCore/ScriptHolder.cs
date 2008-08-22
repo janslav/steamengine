@@ -30,13 +30,14 @@ using SteamEngine.LScript;
 namespace SteamEngine {
 	public abstract class ScriptHolder {
 		public readonly string name;
+
 		internal bool unloaded = false;
 		internal TriggerGroup contTriggerGroup;
 		
 		internal bool lastRunSuccesful = false;
 		internal Exception lastRunException;
-		
-		private static Dictionary<string,ScriptHolder> functionsByName = new Dictionary<string,ScriptHolder>(StringComparer.OrdinalIgnoreCase);
+
+        private static Dictionary<string,ScriptHolder> functionsByName = new Dictionary<string,ScriptHolder>(StringComparer.OrdinalIgnoreCase);
 		
 		public static ScriptHolder GetFunction(string name) {
 			ScriptHolder sh;
@@ -70,6 +71,21 @@ namespace SteamEngine {
 		internal static void UnloadAll() {
 			functionsByName.Clear();
 		}
+
+		[Summary("Return enumerable containing all functions (copying the values from the main dictionary)")]
+		public static IEnumerable<ScriptHolder> AllFunctions {
+			get {
+				if (functionsByName != null) {
+					return functionsByName.Values;
+				} else {
+					return null;
+				}
+			}
+		}
+
+		public abstract string Description {
+			get;
+		}
 		
 		public abstract object Run(object self, ScriptArgs sa);
 		
@@ -101,7 +117,6 @@ namespace SteamEngine {
 			} else {
 				return contTriggerGroup.Defname+": @"+name;
 			}
-		}
-		
+		}        
 	}
 }		

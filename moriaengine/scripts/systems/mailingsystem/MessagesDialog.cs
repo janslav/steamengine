@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							msg.color = msg.color + 3;//trosku ztmavit barvu
 						}
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
-						Gump newGi = gi.Cont.Dialog(D_Display_Text.Instance, new DialogArgs("Text zprávy", msg.text));
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("Text zprávy", msg.text));
 						//stacknout messageslist pro navrat
 						DialogStacking.EnstackDialog(gi, newGi);
                         break;
