@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 
     [Summary("Mana Regeneration")]
     [ViewableClass]
-    public class ManaRegenDef : PassiveAbilityDef {
+	public class ManaRegenDef : RegenerationDef {
 
         public ManaRegenDef(string defname, string filename, int headerLine)
             : base(defname, filename, headerLine) {
