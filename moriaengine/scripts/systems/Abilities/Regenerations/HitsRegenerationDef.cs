@@ -31,29 +31,6 @@ namespace SteamEngine.CompiledScripts {
 		
 		public HitsRegenDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {			
-		}
-
-		#region triggerMethods
-		[Summary("Assign regeneration plugin and set its properties")]
-		protected override bool On_Activate(Character chr) {
-			RegenerationPlugin regPlug = (RegenerationPlugin)chr.GetPlugin(RegenerationPlugin.regenerationsPluginKey);
-			if (regPlug == null) {
-				//set him the regeneration plugin (used for all regenerations)
-				regPlug = (RegenerationPlugin)chr.AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
-			}
-			regPlug.isHitsRegen = true;
-			return false; //no cancel needed
-		}
-
-		protected override void On_UnAssign(Character ch) {
-			//just remove the info about regeneration
-			RegenerationPlugin regPlug = (RegenerationPlugin) ch.GetPlugin(RegenerationPlugin.regenerationsPluginKey);
-			regPlug.isHitsRegen = false;
-
-			if (!regPlug.isManaRegen && !regPlug.isStamRegen) { //no regenerations left, remove the plugin
-				ch.RemovePlugin(regPlug);
-			}
-		}
-		#endregion triggerMethods					
+		}						
 	}
 }

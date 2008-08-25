@@ -42,8 +42,6 @@ namespace SteamEngine.CompiledScripts {
         }
 
         [InfoField("Regeneration Speed")]
-        [Summary("Field for holding the number information about the pause between next activation try." +
-                "You can use 0 for no delay")]
         public ushort RegenerationSpeed {
             get {
                 return (ushort)regenSpeed.CurrentValue;
@@ -51,6 +49,18 @@ namespace SteamEngine.CompiledScripts {
             set {
                 regenSpeed.CurrentValue = value;
             }
-        }
+		}
+
+		#region triggerMethods
+		[Summary("Assign regeneration plugin and set its properties")]
+		protected override bool On_Activate(Character chr) {
+			if (!chr.HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
+				//set him the regeneration plugin (used for all regenerations)
+				RegenerationPlugin regPlug = (RegenerationPlugin) chr.AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
+				regPlug.Timer = RegenerationPlugin.MIN_TIMER; //basic timer
+			}
+			return false; //no cancel needed
+		}
+		#endregion triggerMethods
 	}
 }

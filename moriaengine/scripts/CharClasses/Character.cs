@@ -439,6 +439,15 @@ namespace SteamEngine.CompiledScripts {
 					} else {
 						NetState.AboutToChangeHitpoints(this);
 						hitpoints = value;
+
+						//check the hitpoints regeneration
+						if ((hitpoints <= MaxHits) && (hitsRegenSpeed != 0)) {
+							//check if he already has the regen. plugin
+							if (!HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
+								RegenerationPlugin regplug = (RegenerationPlugin)AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
+								regplug.Timer = RegenerationPlugin.MIN_TIMER; //set the basic timer
+							}
+						}
 					}
 				}
 			}
@@ -464,6 +473,14 @@ namespace SteamEngine.CompiledScripts {
 				if (value != mana) {
 					NetState.AboutToChangeMana(this);
 					mana = value;
+
+					//regeneration...
+					if ((mana <= MaxMana) && (manaRegenSpeed != 0)) {
+						if (!HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
+							RegenerationPlugin regplug = (RegenerationPlugin) AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
+							regplug.Timer = RegenerationPlugin.MIN_TIMER; //set the basic timer
+						}
+					}
 				}
 			}
 		}
@@ -488,6 +505,14 @@ namespace SteamEngine.CompiledScripts {
 				if (value != stamina) {
 					NetState.AboutToChangeStamina(this);
 					stamina = value;
+
+					//regeneration...
+					if ((stamina <= MaxStam) && (stamRegenSpeed != 0)) {
+						if (!HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
+							RegenerationPlugin regplug = (RegenerationPlugin) AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
+							regplug.Timer = RegenerationPlugin.MIN_TIMER; //set the basic timer
+						}
+					}
 				}
 			}
 		}
@@ -826,6 +851,42 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion
 
+		#region regenerace
+		[Summary("How many hitpoints is regenerated in one second")]
+		public double HitsRegenSpeed {
+			get {
+				return hitsRegenSpeed;
+			}			
+		}
+
+		[Summary("How many stamina points is regenerated in one second")]
+		public double ManaRegenSpeed {
+			get {
+				return manaRegenSpeed;
+			}
+		}
+
+		[Summary("How many mana points is regenerated in one second")]
+		public double StamRegenSpeed {
+			get {
+				return stamRegenSpeed;
+			}
+		}
+
+		[Summary("Recount the regeneration speed for the given ability. Method is called when the number of"+
+				" ability points has changed")]
+		internal void RefreshRegenSpeed(RegenAbility regAb) {
+			AbilityDef def = regAb.AbilityDef;
+			ushort regenSpeedCoef = ((RegenerationDef)def).RegenerationSpeed;
+			if (def is HitsRegenDef) {
+				hitsRegenSpeed = regAb.Points / regenSpeedCoef;
+			} else if (def is ManaRegenDef) {
+				manaRegenSpeed = regAb.Points / regenSpeedCoef;
+			} else if (def is StaminaRegenDef) {
+				stamRegenSpeed = regAb.Points / regenSpeedCoef;
+			}
+		}
+		#endregion regenerace
 
 		public override string PaperdollName {
 			get {
@@ -851,6 +912,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Death(Character killedBy) {
+			//stop regenerating
+			Plugin regPlug = this.GetPlugin(RegenerationPlugin.regenerationsPluginKey);
+			if (regPlug != null) {
+				regPlug.Delete();
+			}			
 		}
 
 		private static TriggerKey deathTK = TriggerKey.Get("death");
@@ -920,7 +986,7 @@ namespace SteamEngine.CompiledScripts {
 		public void Resurrect() {
 			if (Flag_Dead) {
 				NetState.AboutToChangeHitpoints(this);
-				this.hitpoints = 1;
+				this.Hits = 1;
 				this.Model = this.OModel;
 				this.ReleaseOModelTag();
 				this.Color = this.OColor;
@@ -1589,7 +1655,7 @@ namespace SteamEngine.CompiledScripts {
 		private void AddNewAbility(AbilityDef aDef, int points) {
             Ability ab = aDef.Create(this);
 			SkillsAbilities.Add(aDef, ab); //first add the object to the dictionary			
-			ab.Points = points; //then set points 
+			ab.Points = points; //then set points
 			aDef.Trigger_Assign(this); //then call the assign trigger
 		}
 
