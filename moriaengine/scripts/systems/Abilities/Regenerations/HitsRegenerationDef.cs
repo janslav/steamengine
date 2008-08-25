@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[Summary("Hitpoints Regeneration")]
 	[ViewableClass]
-	public class HitsRegenDef : PassiveAbilityDef {
+	public class HitsRegenDef : RegenerationDef {
 		
 		public HitsRegenDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {			
