@@ -16,6 +16,7 @@
 
 [PluginTemplate RegenerationPlugin : TimerPlugin]
 Vars:
-	public bool isHitsRegen = false
-	public bool isManaRegen = false
-	public bool isStamRegen = false
+	//the rest of points that should be regenereated in the next regen round (always in <0,1) )
+	private double residuumHits = 0.0
+	private double residuumStam = 0.0
+	private double residuumMana = 0.0

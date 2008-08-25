@@ -37,9 +37,8 @@ namespace SteamEngine.CompiledScripts {
             }
             set {                
                 points = Math.Min(value, this.MaxPoints); //we can go under zero but not over MaxPoints!                                
-                //refresh the stored abilitypoints information on the RegenerationPlugin
-                RegenerationPlugin regPlug = (RegenerationPlugin)cont.GetPlugin(RegenerationPlugin.regenerationsPluginKey);
-                regPlug.RefreshRegenPoints();
+                //refresh the regeneration speed on the character
+				cont.RefreshRegenSpeed(this);                
             }
         }   
     }
