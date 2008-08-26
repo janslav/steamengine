@@ -50,7 +50,8 @@ namespace SteamEngine.CompiledScripts {
         }
 
         protected virtual Role CreateImpl(string name) {
-            return new Role(this, name);
+            Role newRole = new Role(this);
+			newRole.Name = name;
         }
 
         #region triggerMethods

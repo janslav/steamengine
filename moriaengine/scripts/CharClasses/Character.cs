@@ -442,11 +442,7 @@ namespace SteamEngine.CompiledScripts {
 
 						//check the hitpoints regeneration
 						if ((hitpoints <= MaxHits) && (hitsRegenSpeed != 0)) {
-							//check if he already has the regen. plugin
-							if (!HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
-								RegenerationPlugin regplug = (RegenerationPlugin)AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
-								regplug.Timer = RegenerationPlugin.MIN_TIMER; //set the basic timer
-							}
+							RegenerationPlugin.TryAddPlugin(this);
 						}
 					}
 				}
@@ -476,10 +472,7 @@ namespace SteamEngine.CompiledScripts {
 
 					//regeneration...
 					if ((mana <= MaxMana) && (manaRegenSpeed != 0)) {
-						if (!HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
-							RegenerationPlugin regplug = (RegenerationPlugin) AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
-							regplug.Timer = RegenerationPlugin.MIN_TIMER; //set the basic timer
-						}
+						RegenerationPlugin.TryAddPlugin(this);
 					}
 				}
 			}
@@ -508,10 +501,7 @@ namespace SteamEngine.CompiledScripts {
 
 					//regeneration...
 					if ((stamina <= MaxStam) && (stamRegenSpeed != 0)) {
-						if (!HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
-							RegenerationPlugin regplug = (RegenerationPlugin) AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
-							regplug.Timer = RegenerationPlugin.MIN_TIMER; //set the basic timer
-						}
+						RegenerationPlugin.TryAddPlugin(this);						
 					}
 				}
 			}
@@ -856,13 +846,19 @@ namespace SteamEngine.CompiledScripts {
 		public double HitsRegenSpeed {
 			get {
 				return hitsRegenSpeed;
-			}			
+			}
+			set {
+				hitsRegenSpeed = value;
+			}
 		}
 
 		[Summary("How many stamina points is regenerated in one second")]
 		public double ManaRegenSpeed {
 			get {
 				return manaRegenSpeed;
+			}
+			set {
+				manaRegenSpeed = value;
 			}
 		}
 
@@ -871,21 +867,10 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return stamRegenSpeed;
 			}
-		}
-
-		[Summary("Recount the regeneration speed for the given ability. Method is called when the number of"+
-				" ability points has changed")]
-		internal void RefreshRegenSpeed(RegenAbility regAb) {
-			AbilityDef def = regAb.AbilityDef;
-			ushort regenSpeedCoef = ((RegenerationDef)def).RegenerationSpeed;
-			if (def is HitsRegenDef) {
-				hitsRegenSpeed = regAb.Points / regenSpeedCoef;
-			} else if (def is ManaRegenDef) {
-				manaRegenSpeed = regAb.Points / regenSpeedCoef;
-			} else if (def is StaminaRegenDef) {
-				stamRegenSpeed = regAb.Points / regenSpeedCoef;
+			set {
+				stamRegenSpeed = value;
 			}
-		}
+		}	
 		#endregion regenerace
 
 		public override string PaperdollName {
@@ -1670,6 +1655,9 @@ namespace SteamEngine.CompiledScripts {
 		internal virtual void On_AbilityUnAssign(AbilityDef aDef) {
 		}
 
+		internal virtual void On_AbilityValueChanged(Ability ab, int previousValue) {
+		}
+
 		internal virtual bool On_AbilityActivate(AbilityDef aDef) {
 			return false;
 		}
@@ -1682,7 +1670,6 @@ namespace SteamEngine.CompiledScripts {
 			//(Ability can be null)
 			return false;
 		}
-
 		#endregion abilities
 
         #region roles

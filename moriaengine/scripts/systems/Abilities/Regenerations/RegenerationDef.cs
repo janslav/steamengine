@@ -34,13 +34,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
             regenSpeed = InitField_Typed("regenSpeedCoef", 10, typeof(ushort));
 		}
-
-        [Summary("Overriden create method, instantiate the ability as RegenAbility which "+
-                "wont disappear when reaching 0 value")]
-        public override Ability Create(Character chr) {
-            return new RegenAbility(this, chr);
-        }
-
+        
         [InfoField("Regeneration Speed")]
         public ushort RegenerationSpeed {
             get {
@@ -49,18 +43,6 @@ namespace SteamEngine.CompiledScripts {
             set {
                 regenSpeed.CurrentValue = value;
             }
-		}
-
-		#region triggerMethods
-		[Summary("Assign regeneration plugin and set its properties")]
-		protected override bool On_Activate(Character chr) {
-			if (!chr.HasPlugin(RegenerationPlugin.regenerationsPluginKey)) {
-				//set him the regeneration plugin (used for all regenerations)
-				RegenerationPlugin regPlug = (RegenerationPlugin) chr.AddNewPlugin(RegenerationPlugin.regenerationsPluginKey, RegenerationPlugin.defInstance);
-				regPlug.Timer = RegenerationPlugin.MIN_TIMER; //basic timer
-			}
-			return false; //no cancel needed
-		}
-		#endregion triggerMethods
+		}		
 	}
 }

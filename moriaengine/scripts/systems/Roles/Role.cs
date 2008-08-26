@@ -31,10 +31,9 @@ namespace SteamEngine.CompiledScripts {
         protected RoleDef roledef;
         protected string name;
 
-        internal Role(RoleDef roledef, string name) {
+        internal Role(RoleDef roledef) {
             this.uid = uids++;
             this.roledef = roledef;
-            this.name = name;
         }
 
         [Summary("Special message informing the target character that there is some problem removing him "+

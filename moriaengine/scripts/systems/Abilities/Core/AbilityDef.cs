@@ -29,6 +29,7 @@ namespace SteamEngine.CompiledScripts {
 	public class AbilityDef : AbstractDef {
 		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
         internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
+		internal static readonly TriggerKey tkValueChanged = TriggerKey.Get("ValueChanged");
 		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
 		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
 
@@ -69,21 +70,7 @@ namespace SteamEngine.CompiledScripts {
 			//default without implementation, children can contain some specific behaviour which goes 
 			//beyond the Activate(Character) method capabilities...
 		}
-
-		//[Summary("Last method that is run immediately before the ability running - it is run after all checks "+
-		//    "and its primary purpose is to carry out thigs that are irreversible (such as resources consuming) and "+
-		//    "that should be therefore run first when we are sure that the ability will not be stopped from running.")]
-		//protected virtual void BeforeRun(DenyAbilityArgs args) {
-		//    //check consumable resources
-		//    ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
-		//    if (resConsum != null) {
-		//        //look to the backpack and to among the items that we are wearing
-		//        if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers)) {
-		//            args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
-		//        }
-		//    }
-		//}
-
+			
 		#region triggerMethods
 		[Summary("C# based @activate trigger method")]
 		protected virtual bool On_Activate(Character chr) {
@@ -169,6 +156,18 @@ namespace SteamEngine.CompiledScripts {
 				TryTrigger(chr, AbilityDef.tkUnAssign, null);
 				chr.On_AbilityUnAssign(this);
 				On_UnAssign(chr);
+			}
+		}
+
+		[Summary("This method implements changing ability points")]
+		protected virtual void On_ValueChanged(Character ch, Ability ab, int previousValue) {
+		}
+
+		internal void Trigger_ValueChanged(Character chr, Ability ab, int previousValue) {
+			if (chr != null) {				
+				TryTrigger(chr, AbilityDef.tkValueChanged, new ScriptArgs(ab, previousValue));
+				chr.On_AbilityValueChanged(ab, previousValue);
+				On_ValueChanged(chr, ab, previousValue);
 			}
 		}
 		#endregion triggerMethods

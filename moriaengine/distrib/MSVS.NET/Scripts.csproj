@@ -242,9 +242,6 @@
     <Compile Include="..\..\scripts\systems\Abilities\Regenerations\ManaRegenerationDef.cs">
       <Link>systems\Abilities\Regenerations\ManaRegenerationDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenAbility.cs">
-      <Link>systems\Abilities\Regenerations\RegenAbility.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationDef.cs">
       <Link>systems\Abilities\Regenerations\RegenerationDef.cs</Link>
     </Compile>
