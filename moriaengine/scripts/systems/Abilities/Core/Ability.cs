@@ -24,16 +24,16 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	[Summary("This class holds information about one ability the user has - the number of ability points "+
 			 "and any additional info (such as timers connected with the ability running etc.)")]
-	public class Ability {
-		protected int points;
+	public sealed class Ability {
+		private int points;
 
-        protected bool running;
+		private bool running;
 
-        protected Character cont;
+		private Character cont;
 
-        protected AbilityDef def;
+		private AbilityDef def;
 
-        protected double lastUsage;
+		private double lastUsage;
 		
 		internal Ability(AbilityDef def, Character cont) {
 			this.points = 0;
@@ -43,20 +43,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get or set actual ability points for this ability. Considers using of triggers if necessary")]
-		public virtual int Points {
+		public int Points {
 			get {
 				return points;
 			}
 			set {
 				int oldValue = this.points;
-				if((oldValue != value) && (value <= this.MaxPoints)) {//value has changed and is not at its maximum yet
-					this.points = Math.Max(0, Math.Min(value, this.MaxPoints)); //dont go under zero and dont allow to go over MaxPoints!
-				} 
-				//run triggers if necessary
-				if(oldValue > value) {
-					if(this.points == 0) { //removed last point(s)
-						//remove the ability from cont
-						cont.RemoveAbility(def);
+				int newValue = Math.Min(0, Math.Max(value, this.MaxPoints)); //allow to go only in <0,this.MaxPoints>
+				if(oldValue != newValue) {//do we change at all?
+					this.points = newValue;
+					def.Trigger_ValueChanged(cont, this, oldValue); //call changetrigger with information about previous value
+
+					if (this.points == 0) { //removed last point(s)						
+						cont.RemoveAbility(def);//remove the ability from cont
 					}
 				}
 			}

@@ -32,5 +32,11 @@ namespace SteamEngine.CompiledScripts {
         public ManaRegenDef(string defname, string filename, int headerLine)
             : base(defname, filename, headerLine) {
         }
+
+		//recount regeneration speed
+		protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {
+			//add the difference (can be positive or negative)
+			ch.ManaRegenSpeed += (ab.Points - previousValue) / RegenerationSpeed;
+		}
     }
 }

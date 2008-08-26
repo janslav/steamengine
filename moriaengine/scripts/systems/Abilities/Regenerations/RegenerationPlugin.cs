@@ -37,7 +37,11 @@ namespace SteamEngine.CompiledScripts {
         private const double ALLOWED_TIMER_DIFF = 1.5d; //allowed difference between the ideal and counted mean timer
         private const double MAX_TIMER = 1.0d; //maximal timer usable
 
-		//periodically checking and regenerating
+		public void On_Assign() {
+			Timer = MIN_TIMER; //set the basic timer for the first regen round
+		}
+
+		[Summary("Periodically check stats and regenerate computed amount of points (if any)")]
 		public void On_Timer() {            
             if (!ModifyAnything()) {
                 //delete the plugin for now. it will be renewed when hits/mana/stamina lowers
@@ -161,5 +165,16 @@ namespace SteamEngine.CompiledScripts {
 
             return retVal;
         }
+
+		[Summary("Check if character can have this plugin and if true, add it")]
+		public static void TryAddPlugin(Character futureCont) {
+			//check if adept pluginholder is not dead
+			if (!futureCont.Flag_Dead) {
+				//check if he doesn't have the plugin already
+				if (!futureCont.HasPlugin(regenerationsPluginKey)) {
+					RegenerationPlugin regplug = (RegenerationPlugin) futureCont.AddNewPlugin(regenerationsPluginKey, defInstance);
+				}
+			}
+		}
 	}
 }
