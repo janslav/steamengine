@@ -53,6 +53,9 @@
     <Compile Include="..\..\Communication\Buffer.cs">
       <Link>Buffer.cs</Link>
     </Compile>
+    <Compile Include="..\..\Communication\CommunicationUtils.cs">
+      <Link>CommunicationUtils.cs</Link>
+    </Compile>
     <Compile Include="..\..\Communication\Enums.cs">
       <Link>Enums.cs</Link>
     </Compile>

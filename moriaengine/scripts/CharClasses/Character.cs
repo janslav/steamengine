@@ -24,6 +24,7 @@ using SteamEngine.Common;
 using SteamEngine.Packets;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -116,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 					ret |= 0x80;
 				}
 				if (Flag_WarMode) {
-					ret |= 0x40;
+					ret |= 0x41 ; //both 0x40 (for aos clients) and 0x01 (for older clients?) hope it won't break much
 				}
 				return (byte) ret;
 			}
@@ -147,7 +148,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value ? (flags | 0x0004) : (flags & ~0x0004));
 				if (newFlags != flags) {
-					NetState.AboutToChangeVisibility(this);
+					CharSyncQueue.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}
@@ -160,7 +161,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value ? (flags | 0x0008) : (flags & ~0x0008));
 				if (newFlags != flags) {
-					NetState.AboutToChangeVisibility(this);
+					CharSyncQueue.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}
@@ -173,7 +174,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value ? (flags | 0x0010) : (flags & ~0x0010));
 				if (newFlags != flags) {
-					NetState.AboutToChangeVisibility(this);
+					CharSyncQueue.AboutToChangeVisibility(this);
 					flags = newFlags;
 				}
 			}
@@ -186,7 +187,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newFlags = (ushort) (value ? (flags | 0x0020) : (flags & ~0x0020));
 				if (newFlags != flags) {
-					NetState.AboutToChangeFlags(this);
+					CharSyncQueue.AboutToChangeFlags(this);
 					flags = newFlags;
 					Trigger_WarModeChange();
 				}
@@ -238,7 +239,7 @@ namespace SteamEngine.CompiledScripts {
 				if (mountorrider != null) {
 					if (!Flag_Riding) {
 						if (mountorrider.IsDeleted) {
-							NetState.AboutToChangeMount(this);
+							CharSyncQueue.AboutToChangeMount(this);
 							mountorrider = null;
 						} else {
 							return mountorrider;
@@ -257,7 +258,7 @@ namespace SteamEngine.CompiledScripts {
 				if (mountorrider != null) {
 					if (Flag_Riding) {
 						if (mountorrider.IsDeleted) {
-							NetState.AboutToChangeMount(this);
+							CharSyncQueue.AboutToChangeMount(this);
 							SetFlag_Riding(false);
 							mountorrider = null;
 						}
@@ -266,12 +267,12 @@ namespace SteamEngine.CompiledScripts {
 				return mountorrider;
 			}
 			set {
-				NetState.AboutToChangeMount(this);
+				CharSyncQueue.AboutToChangeMount(this);
 				if (value == null) {	//automatically call Dismount if 'mount=null;' is done.
 					if (mountorrider != null && !mountorrider.IsDeleted) {
 						Dismount();
 					} else {
-						NetState.AboutToChangeMount(this);
+						CharSyncQueue.AboutToChangeMount(this);
 						SetFlag_Riding(false);
 						mountorrider = null;
 					}
@@ -294,7 +295,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Dismount() {
-			NetState.AboutToChangeMount(this);
+			CharSyncQueue.AboutToChangeMount(this);
 			if (Flag_Riding && mountorrider != null) {
 				if (mountorrider.mountorrider == this) {
 					//mountorrider.AboutToChange();
@@ -437,7 +438,7 @@ namespace SteamEngine.CompiledScripts {
 					if (!Flag_Dead && value < 1) {
 						CauseDeath((Character) Globals.SrcCharacter);
 					} else {
-						NetState.AboutToChangeHitpoints(this);
+						CharSyncQueue.AboutToChangeHitpoints(this);
 						hitpoints = value;
 
 						//check the hitpoints regeneration
@@ -455,7 +456,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != maxHitpoints) {
-					NetState.AboutToChangeHitpoints(this);
+					CharSyncQueue.AboutToChangeHitpoints(this);
 					maxHitpoints = value;
 				}
 			}
@@ -467,7 +468,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != mana) {
-					NetState.AboutToChangeMana(this);
+					CharSyncQueue.AboutToChangeMana(this);
 					mana = value;
 
 					//regeneration...
@@ -484,7 +485,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != maxMana) {
-					NetState.AboutToChangeMana(this);
+					CharSyncQueue.AboutToChangeMana(this);
 					maxMana = value;
 				}
 			}
@@ -496,7 +497,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != stamina) {
-					NetState.AboutToChangeStamina(this);
+					CharSyncQueue.AboutToChangeStamina(this);
 					stamina = value;
 
 					//regeneration...
@@ -513,7 +514,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != maxStamina) {
-					NetState.AboutToChangeStamina(this);
+					CharSyncQueue.AboutToChangeStamina(this);
 					maxStamina = value;
 				}
 			}
@@ -525,7 +526,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != strength) {
-					NetState.AboutToChangeStats(this);
+					CharSyncQueue.AboutToChangeStats(this);
 					InvalidateCombatWeaponValues();
 					strength = value;
 				}
@@ -539,7 +540,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != dexterity) {
-					NetState.AboutToChangeStats(this);
+					CharSyncQueue.AboutToChangeStats(this);
 					InvalidateCombatWeaponValues();
 					dexterity = value;
 				}
@@ -552,56 +553,74 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != intelligence) {
-					NetState.AboutToChangeStats(this);
+					CharSyncQueue.AboutToChangeStats(this);
 					InvalidateCombatWeaponValues();
 					intelligence = value;
 				}
 			}
 		}
 
-		public override short ExtendedStatusNum1 {
+		public override short ExtendedStatusNum01 {
 			get {
 				return 0;
 			}
 		}
 
-		public override short ExtendedStatusNum2 {
+		public override short ExtendedStatusNum02 {
 			get {
 				return 0;
 			}
 		}
 
-		public override short ExtendedStatusNum3 {
+		public override short ExtendedStatusNum03 {
 			get {
 				return 0;
 			}
 		}
 
-		public override short ExtendedStatusNum5 {
+		public override short ExtendedStatusNum04 {
 			get {
 				return 0;
 			}
 		}
 
-		public override long TithingPoints {
+		public override short TithingPoints {
 			get {
 				return tithingPoints;
 			}
 			set {
 				if (value != tithingPoints) {
-					NetState.AboutToChangeStats(this);
+					CharSyncQueue.AboutToChangeStats(this);
 					tithingPoints = value;
 				}
 			}
 		}
 
-		public override short ExtendedStatusNum6 {
+		public override short ExtendedStatusNum05 {
 			get {
 				return 0;
 			}
 		}
 
-		public override short ExtendedStatusNum7 {
+		public override short ExtendedStatusNum06 {
+			get {
+				return 0;
+			}
+		}
+
+		public override byte ExtendedStatusNum07 {
+			get {
+				return 0;
+			}
+		}
+
+		public override byte ExtendedStatusNum08 {
+			get {
+				return 0;
+			}
+		}
+
+		public override ushort ExtendedStatusNum09 {
 			get {
 				return 0;
 			}
@@ -919,7 +938,7 @@ namespace SteamEngine.CompiledScripts {
 				TryTrigger(deathTK, new ScriptArgs(killedBy));
 				On_Death(killedBy);
 
-				NetState.AboutToChangeHitpoints(this);
+				CharSyncQueue.AboutToChangeHitpoints(this);
 				this.hitpoints = 0;
 
 				CorpseDef cd = this.TypeDef.CorpseDef;
@@ -935,7 +954,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				BoundPacketGroup bpg = null;
-				foreach (GameConn viewerConn in this.GetMap().GetClientsWhoCanSee(this)) {
+				foreach (GameConn viewerConn in this.GetMap().GetGameConnsWhoCanSee(this)) {
 					if (myConn != viewerConn) {
 						if (bpg == null) {
 							bpg = PacketSender.NewBoundGroup();
@@ -969,8 +988,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Resurrect() {
-			if (Flag_Dead) {
-				NetState.AboutToChangeHitpoints(this);
+			if (this.Flag_Dead) {
+				CharSyncQueue.AboutToChangeHitpoints(this);
 				this.Hits = 1;
 				this.Model = this.OModel;
 				this.ReleaseOModelTag();
@@ -1234,11 +1253,11 @@ namespace SteamEngine.CompiledScripts {
 				ps = input.TryPopPropsLine("SkillLock." + skillKey);
 				if (ps != null) {
 					if (string.Compare("Lock", ps.value, true) == 0) {
-						SetSkillLockType(i, SkillLockType.Locked);
+						this.SetSkillLockType(i, SkillLockType.Locked);
 					} else if (string.Compare("Down", ps.value, true) == 0) {
-						SetSkillLockType(i, SkillLockType.Down);
+						this.SetSkillLockType(i, SkillLockType.Down);
 					} else if (string.Compare("Up", ps.value, true) == 0) {
-						SetSkillLockType(i, SkillLockType.Increase);
+						this.SetSkillLockType(i, SkillLockType.Increase);
 					} else {
 						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
 					}
@@ -1438,12 +1457,16 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Sphere's command for starting a skill")]
 		public void Skill(int skillId) {
-			SelectSkill(skillId);
+			this.SelectSkill(skillId);
+		}
+
+		public override void SelectSkill(AbstractSkillDef skillDef) {
+			this.SelectSkill((SkillDef) skillDef);
 		}
 
 		[Summary("Start a skill. "
 		+ "Is also called when client does the useskill macro")]
-		public override void SelectSkill(int skillId) {
+		public void SelectSkill(int skillId) {
 			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
 			if (skillDef != null) {
 				skillDef.Select(this);
@@ -1726,14 +1749,14 @@ namespace SteamEngine.CompiledScripts {
 				Has no effect on players.
 		*/
 		public void GM() {
-			AbstractAccount acc = Account;
+			AbstractAccount acc = this.Account;
 			if (acc != null) {
 				if (acc.PLevel < acc.MaxPLevel) {
 					acc.PLevel = acc.MaxPLevel;
-					Conn.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
+					this.GameState.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
 				} else {
 					acc.PLevel = 1;
-					Conn.WriteLine("GM mode off (Plevel 1).");
+					this.GameState.WriteLine("GM mode off (Plevel 1).");
 				}
 			}
 		}
@@ -1751,10 +1774,10 @@ namespace SteamEngine.CompiledScripts {
 			if (acc != null) {
 				if (i > 0) {
 					acc.PLevel = acc.MaxPLevel;
-					Conn.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
+					this.GameState.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
 				} else {
 					acc.PLevel = 1;
-					Conn.WriteLine("GM mode off (Plevel 1).");
+					this.GameState.WriteLine("GM mode off (Plevel 1).");
 				}
 			}
 		}
@@ -1819,13 +1842,10 @@ namespace SteamEngine.CompiledScripts {
 				if (from == this && this.Mount != null) {
 					this.Dismount();
 				} else {
-					GameConn conn = from.Conn;
 					if (from != this && this.IsMountableBy(from)) {
 						from.Mount = this;
 					} else {
-						if (conn != null) {
-							this.ShowPaperdollTo(from.Conn);
-						}
+						this.ShowPaperdollTo(from);
 					}
 				}
 			}
@@ -1851,7 +1871,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void FixWeight() {
-			NetState.AboutToChangeStats(this);
+			CharSyncQueue.AboutToChangeStats(this);
 			float w = Def.Weight;
 			foreach (AbstractItem i in this) {
 				if (i != null) {
@@ -1863,7 +1883,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void AdjustWeight(float adjust) {
-			NetState.AboutToChangeStats(this);
+			CharSyncQueue.AboutToChangeStats(this);
 			weight += adjust;
 		}
 
@@ -1925,10 +1945,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region combat
-		public override void AttackRequest(AbstractCharacter target) {
+		public override void Trigger_PlayerAttackRequest(AbstractCharacter target) {
 			if (this == target || target == null) {
 				return;
 			}
+
+			//TODO? triggers
 
 			WeaponSkillTargetQueuePlugin.AddTarget(this, (Character) target);
 		}
@@ -2022,28 +2044,28 @@ namespace SteamEngine.CompiledScripts {
 
 		public void InvalidateCombatWeaponValues() {
 			if (combatWeaponValues != null) {
-				Packets.NetState.AboutToChangeStats(this);
+				CharSyncQueue.AboutToChangeStats(this);
 				combatWeaponValues = null;
 			}
 		}
 
 		public void InvalidateCombatArmorValues() {
 			if (combatArmorValues != null) {
-				Packets.NetState.AboutToChangeStats(this);
+				CharSyncQueue.AboutToChangeStats(this);
 				combatArmorValues = null;
 			}
 		}
 
 		private void CalculateCombatWeaponValues() {
 			if (combatWeaponValues == null) {
-				Packets.NetState.AboutToChangeStats(this);
+				CharSyncQueue.AboutToChangeStats(this);
 				combatWeaponValues = CombatCalculator.CalculateCombatWeaponValues(this);
 			}
 		}
 
 		private void CalculateCombatArmorValues() {
 			if (combatArmorValues == null) {
-				Packets.NetState.AboutToChangeStats(this);
+				CharSyncQueue.AboutToChangeStats(this);
 				combatArmorValues = CombatCalculator.CalculateCombatArmorValues(this);
 			}
 		}
@@ -2286,9 +2308,9 @@ namespace SteamEngine.CompiledScripts {
 			if (result == DenyResult.Allow) {
 				return true;
 			} else {
-				GameConn conn = this.Conn;
-				if (conn != null) {
-					Server.SendDenyResultMessage(conn, target, result);
+				GameState state = this.GameState;
+				if (state != null) {
+					PacketSequences.SendDenyResultMessage(state.Conn, target, result);
 				}
 				return false;
 			}
@@ -2299,8 +2321,7 @@ namespace SteamEngine.CompiledScripts {
 				return DenyResult.Allow;
 			}
 
-			GameConn conn = this.Conn;
-			if (conn == null) {
+			if (!this.IsOnline) {
 				return DenyResult.Deny_NoMessage;
 			}
 
@@ -2312,7 +2333,7 @@ namespace SteamEngine.CompiledScripts {
 			if (c != null) {
 				Item contAsItem = c as Item;
 				if (contAsItem != null) {
-					result = OpenedContainers.HasContainerOpen(conn, contAsItem);
+					result = OpenedContainers.HasContainerOpen(this, contAsItem);
 				} else if (c != this) {
 					result = this.CanReach(c);
 					if (result == DenyResult.Allow) {

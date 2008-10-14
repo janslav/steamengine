@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using SteamEngine;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
     [Dialogs.ViewableClass]
@@ -85,9 +86,9 @@ namespace SteamEngine.CompiledScripts {
 			if (result == DenyResult.Allow) {
 				this.SetOpen();
 			} else {
-				GameConn c = user.Conn;
-				if (c != null) {
-					Server.SendDenyResultMessage(c, this, result);
+				GameState state = user.GameState;
+				if (state != null) {
+					PacketSequences.SendDenyResultMessage(state.Conn, this, result);
 				}
 			}
         }
@@ -115,9 +116,9 @@ namespace SteamEngine.CompiledScripts {
 			if (result == DenyResult.Allow) {
 				this.SetClose();
 			} else {
-				GameConn c = user.Conn;
-				if (c != null) {
-					Server.SendDenyResultMessage(c, this, result);
+				GameState state = user.GameState;
+				if (state != null) {
+					PacketSequences.SendDenyResultMessage(state.Conn, this, result);
 				}
 			}
 		}
@@ -318,7 +319,7 @@ namespace SteamEngine.CompiledScripts {
 		public readonly Door door;
 
 		public SwitchDoorArgs(Character user, Door door)
-			: base(DenyResult.Allow, user, door) {
+			: base(user, door) {
 
 			this.user = user;
 			this.door = door;

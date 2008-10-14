@@ -98,9 +98,9 @@ namespace SteamEngine {
 				return GetAllFiles();
 			} else {
 				List<ScriptFile> list = new List<ScriptFile>();
-				if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
+				//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
 					FindNewFiles(mainDir, list);
-				}
+				//}
 				FindChangedFiles(list);
 				return list;
 			}

@@ -196,7 +196,7 @@
     		tofile="${auxiliaryServerFileName+'.config'}"	/>
 	</target>
 	
-	<target name="buildScripts">
+	<target name="buildScripts" depends="buildCommon, buildCommunication, buildCore">
 		<csc 
 			target="library" 
 			output="${scriptsFileName}" 
@@ -210,7 +210,7 @@
 			<references>
 				<include name="${commonFileName}" />
 				<include name="${gameCoreFileName}" />
-			
+				<include name="${communicationFileName}" />
 				<include name="bin/SteamDoc.dll" />
 				<include name="bin/NAnt.Core.dll" />
 				<includesfile name="${scriptsReferencesListPath}" />
@@ -233,6 +233,7 @@
 			<references>
 				<include name="${commonFileName}" />
 				<include name="${gameCoreFileName}" />
+				<include name="${communicationFileName}" />
 				<include name="${scriptsFileName}" />
 				<include name="bin/SteamDoc.dll" />
 				<includesfile name="${scriptsReferencesListPath}" />

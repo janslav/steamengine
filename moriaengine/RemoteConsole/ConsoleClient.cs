@@ -7,21 +7,25 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.RemoteConsole {
-	public class ConsoleClient : IConnectionState<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+	public class ConsoleClient : Poolable, IConnectionState<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 		static TCPClientFactory<ConsoleClient> factory = new TCPClientFactory<ConsoleClient>(
 			ConsoleProtocol.instance, MainClass.globalLock);
 
 
 		private static ConsoleClient connectedInstance;
+		private TCPConnection<ConsoleClient> conn;
+
+		protected override void On_Reset() {
+			this.conn = null;
+
+			base.On_Reset();
+		}
 
 		public static ConsoleClient ConnectedInstance {
 			get {
 				return connectedInstance;
 			}
 		}
-
-		private TCPConnection<ConsoleClient> conn;
-
 
 		public TCPConnection<ConsoleClient> Conn {
 			get {
@@ -89,27 +93,6 @@ namespace SteamEngine.RemoteConsole {
 				connectedInstance.conn.Close(reason);
 			}
 		}
-
 	}
-
-
-	//    protected override void Handle(IncomingPacket p) {
-	//        ConsoleIncomingPacket packet = (ConsoleIncomingPacket) p;
-	//        packet.Handle();
-	//    }
-
-	//    protected override IncomingPacket GetPacketImplementation(byte id) {
-	//        return Pool<ConsoleIncomingPacket>.Acquire();
-	//    }
-
-	//    protected override void On_Close(SteamEngine.Common.LogStr reason) {
-	//        base.On_Close(reason);
-	//    }
-
-	//    protected override void On_Close(string reason) {
-	//        base.On_Close(reason);
-	//    }
-	//}
-
 }
 

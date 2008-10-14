@@ -30,7 +30,7 @@ using SteamEngine.Communication;
 namespace SteamEngine.Communication.TCP {
 	public sealed class TCPConnection<TState> :
 		AbstractConnection<TCPConnection<TState>, TState, IPEndPoint>
-		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
 
 
 		internal Socket socket;
@@ -59,8 +59,8 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		protected override void On_Init() {
-			this.BeginReceive();
 			base.On_Init();
+			this.BeginReceive();
 		}
 
 		private void BeginReceive() {
@@ -83,7 +83,7 @@ namespace SteamEngine.Communication.TCP {
 				}
 
 			} catch (Exception e) {
-				//Logger.WriteError(e);
+				Logger.WriteDebug(e);
 				this.Close(e.Message);
 			}
 

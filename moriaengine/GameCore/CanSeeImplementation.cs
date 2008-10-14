@@ -27,6 +27,8 @@ using System.Threading;
 using System.Configuration;
 using SteamEngine.CompiledScripts;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
+
 
 namespace SteamEngine {
 	public abstract partial class AbstractCharacter {
@@ -40,19 +42,20 @@ namespace SteamEngine {
 		*/
 		public byte UpdateRange {
 			get {
-				GameConn c = Conn;
-				if (c != null) {
-					return c.UpdateRange;
+				GameState state = this.GameState;
+				if (state != null) {
+					return state.UpdateRange;
 				} else {
 					return Globals.MaxUpdateRange;
 				}
 			}
 		}
+
 		public byte RequestedUpdateRange {
 			get {
-				GameConn c = Conn;
-				if (c != null) {
-					return c.RequestedUpdateRange;
+				GameState state = this.GameState;
+				if (state != null) {
+					return state.RequestedUpdateRange;
 				} else {
 					return Globals.MaxUpdateRange;
 				}
@@ -69,18 +72,18 @@ namespace SteamEngine {
 		*/
 		public int VisionRange {
 			get {
-				GameConn c = Conn;
-				if (c != null) {
-					return c.VisionRange;
+				GameState state = this.GameState;
+				if (state != null) {
+					return state.VisionRange;
 				} else {
 					return Globals.MaxUpdateRange;
 				}
 			}
 			set {
-				GameConn c = Conn;
-				if (c != null) {
-					int oldValue = c.VisionRange;
-					c.VisionRange = value;
+				GameState state = this.GameState;
+				if (state != null) {
+					int oldValue = state.VisionRange;
+					state.VisionRange = value;
 					if (value > oldValue) {
 						this.SendNearbyStuff();//could be optimalized but... how often do you change vision range anyway ;)
 					}
@@ -92,20 +95,20 @@ namespace SteamEngine {
 
 		[Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
 		public virtual bool CanSeeForUpdate(Thing target) {
-			return CanSeeImpl(this, target.TopPoint, target);
+			return this.CanSeeImpl(this, target.TopPoint, target);
 		}
 
 		internal bool CanSeeForUpdateFrom(IPoint4D fromCoordinates, Thing target) {
-			return CanSeeImpl(fromCoordinates, target.TopPoint, target);
+			return this.CanSeeImpl(fromCoordinates, target.TopPoint, target);
 		}
 
 		internal bool CanSeeForUpdateAt(IPoint4D targetMapCoordinates, Thing target) {
-			return CanSeeImpl(this, targetMapCoordinates, target);
+			return this.CanSeeImpl(this, targetMapCoordinates, target);
 		}
 
 		private bool CanSeeImpl(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target) {
 			if (target.IsOnGround) {
-				bool success = CanSeeCoordinatesFrom(fromCoordinates, targetMapCoordinates);
+				bool success = this.CanSeeCoordinatesFrom(fromCoordinates, targetMapCoordinates);
 				if (!success) {
 					return false;
 				}
@@ -119,7 +122,7 @@ namespace SteamEngine {
 			} else if (target.IsEquipped) {
 				if (target.Z<AbstractCharacter.sentLayers) {
 					Thing container = target.TopObj();//the char that has this item equipped
-					if (CanSeeImpl(fromCoordinates, targetMapCoordinates, container)) {
+					if (this.CanSeeImpl(fromCoordinates, targetMapCoordinates, container)) {
 						return this.CanSeeVisibility(target);
 					}
 				}
@@ -131,7 +134,7 @@ namespace SteamEngine {
 		}
 
 		public virtual bool CanSeeVisibility(Thing target) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (target == null) {
 				return false;
 			}
@@ -145,11 +148,11 @@ namespace SteamEngine {
 		}
 
 		public bool CanSeeCoordinates(IPoint4D target) {
-			return CanSeeCoordinatesFrom(this, target);
+			return this.CanSeeCoordinatesFrom(this, target);
 		}
 
 		internal bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, IPoint4D target) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (target == null) {
 				return false;
 			}
@@ -166,7 +169,7 @@ namespace SteamEngine {
 
 		[Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {
-			return CanReachFromAt(this, target.TopPoint, target, true);
+			return this.CanReachFromAt(this, target.TopPoint, target, true);
 		}
 
 		internal DenyResult CanReachFromAt(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target, bool checkTopObj) {
@@ -196,9 +199,8 @@ namespace SteamEngine {
 
 			AbstractItem container = target.Cont as AbstractItem;
 			if (container != null) {
-				GameConn conn = this.Conn;
-				if (conn != null) {
-					return OpenedContainers.HasContainerOpenFromAt(conn, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
+				if (this.IsOnline) {
+					return OpenedContainers.HasContainerOpenFromAt(this, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
 				} else {
 					return DenyResult.Deny_NoMessage; //only logged-in players can reach stuff in containers
 				}

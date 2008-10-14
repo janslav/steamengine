@@ -31,6 +31,12 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			this.startupFinished = p;
 		}
 
+		public bool StartupFinished {
+			get {
+				return this.startupFinished;
+			}
+		}
+
 		public string Name {
 			get {
 				return this.settings.Name;

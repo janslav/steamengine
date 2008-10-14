@@ -33,6 +33,7 @@ namespace SteamEngine.Timers {
 		private static SimpleQueue<Timer> changes = new SimpleQueue<Timer>();
 
 		private static TimerPriorityQueue priorityQueue = new TimerPriorityQueue();
+		private static ManualResetEvent manualResetEvent = new ManualResetEvent(false);
 
 		private bool isDeleted = false;
 		private bool isInChangesQueue = false;
@@ -45,12 +46,19 @@ namespace SteamEngine.Timers {
 
 		internal static void StartTimerThread() {
 			timerThread = new Thread(TimerThread);
+			timerThread.IsBackground = true;
 			timerThread.Start();
 		}
 
 		private static void TimerThread() {
-			while (!MainClass.signalExit.WaitOne(5, false)) {
+			while (manualResetEvent.WaitOne()) {
 				Cycle();
+
+				if ((priorityQueue.Count == 0) && (changes.Count == 0)) {
+					manualResetEvent.Reset();
+				}
+
+				Thread.Sleep(5);
 			}
 		}
 
@@ -68,6 +76,7 @@ namespace SteamEngine.Timers {
 					priorityQueue.Remove(timer);
 					if (!timer.isDeleted && timer.fireAt >= TimeSpan.Zero) {
 						priorityQueue.Enqueue(timer);
+						manualResetEvent.Set();
 					}
 				}
 			}
@@ -92,6 +101,7 @@ namespace SteamEngine.Timers {
 							if (timer.period >= TimeSpan.Zero) {
 								timer.fireAt = fireAt + timer.period;
 								changes.Enqueue(timer);
+								manualResetEvent.Set();
 								timer.isInChangesQueue = true;
 							}
 							currentTimer = timer;
@@ -199,6 +209,7 @@ namespace SteamEngine.Timers {
 				this.fireAt = value;
 				if (!this.isInChangesQueue) {
 					changes.Enqueue(this);
+					manualResetEvent.Set();
 					this.isInChangesQueue = true;
 				}
 			}
@@ -209,6 +220,7 @@ namespace SteamEngine.Timers {
 				this.isDeleted = true;
 				if (!this.isInChangesQueue) {
 					changes.Enqueue(this);
+					manualResetEvent.Set();
 					this.isInChangesQueue = true;
 				}
 			}

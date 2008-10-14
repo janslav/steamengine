@@ -24,4 +24,14 @@ namespace SteamEngine.Communication {
 			}
 		}
 	}
+
+	public class ListBuffer<T> : Poolable {
+		public readonly List<T> list = new List<T>();
+
+		protected override void On_Reset() {
+			list.Clear();
+
+			base.On_Reset();
+		}
+	}
 }

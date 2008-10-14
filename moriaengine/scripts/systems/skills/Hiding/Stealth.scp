@@ -1,6 +1,7 @@
 [DETECTHIDDENSKILLDEF 14]
 DEFNAME=Skill_DetectHidden
 KEY="DetectingHidden"
+StartByMacroEnabled = true
 DELAY=3.0,2.0
 EFFECT=3,7	//Radius of detecting
 ADVRATE=2.5,50.0,200.0
@@ -8,6 +9,7 @@ ADVRATE=2.5,50.0,200.0
 [HIDINGSKILLDEF 21]
 DEFNAME=Skill_Hiding
 KEY="Hiding"
+StartByMacroEnabled = true
 //TITLE="Rogue"
 //PROMPTMSG=""
 DELAY = 1.0, 2.0

@@ -18,7 +18,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		IEncryption encryption;
 
 		protected override void On_Reset() {
-			encryption = new LoginEncryption();
+			this.encryption = new LoginEncryption();
 			uid = uids++;
 
 			base.On_Reset();

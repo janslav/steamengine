@@ -19,7 +19,7 @@ using System;
 using System.Reflection;
 using System.Collections;
 using SteamEngine;
-using SteamEngine.Packets;
+using SteamEngine.Networking;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -54,13 +54,11 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort oldValue = this.realValue;
 				if (oldValue != value) {
-					NetState.AboutToChangeSkill(cont, id);
+					CharSyncQueue.AboutToChangeSkill(cont, id);
 					this.realValue = value;
 					cont.Trigger_SkillChange(this, oldValue);
-				}
-				//delete if all is default
-				if (IsDefault) {
-					cont.RemoveSkill(id);
+
+					this.RemoveIfDefault();
 				}
 			}
 		}
@@ -70,12 +68,11 @@ namespace SteamEngine.CompiledScripts {
 				return cap;
 			}
 			set {
-				NetState.AboutToChangeSkill(cont, id);
-				this.cap = value;
+				if (this.cap != value) {
+					CharSyncQueue.AboutToChangeSkill(cont, id);
+					this.cap = value;
 
-				//delete if all is default
-				if (IsDefault) {
-					cont.RemoveSkill(id);
+					this.RemoveIfDefault();
 				}
 			}
 		}
@@ -97,20 +94,23 @@ namespace SteamEngine.CompiledScripts {
 				return lockType;
 			}
 			set {
-				NetState.AboutToChangeSkill(cont, id);
-				this.lockType = value;
+				if (this.lockType != value) {
+					CharSyncQueue.AboutToChangeSkill(cont, id);
+					this.lockType = value;
 
-				//delete if all is default
-				if (IsDefault) {
-					cont.RemoveSkill(id);
+					this.RemoveIfDefault();
 				}
 			}
 		}
 
-		private bool IsDefault {
-			get {
-				return (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase);
+		private void RemoveIfDefault() {
+			if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+				cont.RemoveSkill(id);
 			}
+		}
+
+		public ushort ModifiedValue {
+			get { return this.realValue; }
 		}
 	}
 }

@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
 
 namespace SteamEngine {
 	public abstract class Static : IPoint4D {
@@ -106,7 +107,7 @@ namespace SteamEngine {
 		}
 
 		public void OverheadMessage(string arg, int color) {
-			Server.SendOverheadMessageFrom(Globals.SrcGameConn, this, arg, (ushort) color);
+			PacketSequences.SendOverheadMessageFrom(Globals.SrcTCPConnection, this, arg, (ushort) color);
 		}
 
 		public IPoint4D TopPoint {

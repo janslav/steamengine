@@ -32,7 +32,7 @@ namespace SteamEngine.Communication.TCP {
 	public sealed class TCPClientFactory<TState> :
 		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,  
 		IClientFactory<TCPConnection<TState>, TState, IPEndPoint>
-		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
 
 		public TCPClientFactory(IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
 			: base(protocol, lockObject) {
@@ -50,86 +50,4 @@ namespace SteamEngine.Communication.TCP {
 			return newConn;
 		}
 	}
-
-
-	//public class TCPClient : TCPConnection {
-	//    internal Client client;
-
-	//    public TCPClient() {
-
-	//    }
-
-	//    public override IEncryption Encryption {
-	//        get {
-	//            return client.Encryption;
-	//        }
-	//    }
-
-	//    protected override void On_Close(LogStr reason) {
-	//        this.client.On_Close(reason);
-	//        this.client.Dispose();
-	//    }
-
-	//    protected override void On_Close(string reason) {
-	//        this.client.On_Close(reason);
-	//        this.client.Dispose();
-	//    }
-	//}
-
-	//public abstract class Client : TCPImplementation<TCPClient> {
-	//    TCPClient ss;
-
-	//    public Client() {
-	//        this.ss = Pool<TCPClient>.Acquire();
-	//        this.ss.client = this;
-	//    }
-
-	//    public void Connect(string remoteHost, int remotePort) {
-	//        this.ss.socket = this.CreateSocket();
-	//        this.ss.socket.Connect(remoteHost, remotePort);
-
-	//        this.BeginReceive(this.ss);
-	//    }
-
-	//    public virtual IEncryption Encryption {
-	//        get {
-	//            return null;
-	//        }
-	//    }
-
-	//    public void SendPacketGroup(PacketGroup group) {
-	//        ThrowIfDisposed();
-	//        if ((ss.socket == null) || (!ss.socket.Connected)) {
-	//            throw new InvalidOperationException("Client not connected");
-	//        }
-
-	//        group.Enqueued();
-
-	//        lock (this.outgoingPackets) {
-	//            outgoingPackets.Enqueue(new OutgoingMessage(this.ss, group));
-	//        }
-
-	//        outgoingPacketsWaitingEvent.Set();
-	//    }
-
-	//    public void Close(string reason) {
-	//        this.ss.Close(reason);
-	//    }
-
-	//    public void Close(LogStr reason) {
-	//        this.ss.Close(reason);
-	//    }
-
-	//    protected override void DisposeUnmanagedResources() {
-	//        this.ss.Dispose();
-
-	//        base.DisposeUnmanagedResources();
-	//    }
-
-	//    protected internal virtual void On_Close(LogStr reason) {
-	//    }
-
-	//    protected internal virtual void On_Close(string reason) {
-	//    }
-	//}
 }

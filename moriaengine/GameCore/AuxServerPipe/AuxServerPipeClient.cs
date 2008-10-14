@@ -9,7 +9,7 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
-	public class AuxServerPipeClient : 
+	public class AuxServerPipeClient : Poolable, 
 		IConnectionState<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
 
 		private static NamedPipeClientFactory<AuxServerPipeClient> clientFactory;
@@ -27,6 +27,13 @@ namespace SteamEngine.AuxServerPipe {
 			this.onConsoleWriteLine = Logger_OnConsoleWriteLine;
 		}
 
+		protected override void On_Reset() {
+			this.pipe = null;
+			this.sendLogStrings = false;
+
+			base.On_Reset();
+		}
+
 		internal static void Init() {
 			clientFactory = new NamedPipeClientFactory<AuxServerPipeClient>(
 				AuxServerPipeProtocol.instance,
@@ -34,12 +41,6 @@ namespace SteamEngine.AuxServerPipe {
 
 			connectingTimer.Change(TimeSpan.Zero, TimeSpan.Zero);
 
-		}
-
-		internal static void AnnounceStartupFinished() {
-			if (connectedInstance != null) {
-				connectedInstance.pipe.SendPacketGroup(StartupFinishedPacket.group);
-			}
 		}
 
 		public static AuxServerPipeClient ConnectedInstance {
@@ -70,6 +71,24 @@ namespace SteamEngine.AuxServerPipe {
 			IdentifyGameServerPacket packet = Pool<IdentifyGameServerPacket>.Acquire();
 			packet.Prepare();
 			conn.SendSinglePacket(packet);
+
+			new AnnounceStartupFinishedTimer(conn);
+		}
+
+		private class AnnounceStartupFinishedTimer : Timers.Timer {
+			NamedPipeConnection<AuxServerPipeClient> conn;
+
+			public AnnounceStartupFinishedTimer(NamedPipeConnection<AuxServerPipeClient> conn) {
+				this.conn = conn;
+				this.DueInSeconds = 0;
+			}
+
+			protected override void OnTimeout() {
+				if (this.conn.IsConnected) {
+					this.conn.SendPacketGroup(StartupFinishedPacket.group);
+				}
+				this.Delete();
+			}
 		}
 
 		private void Logger_OnConsoleWriteLine(string data) {

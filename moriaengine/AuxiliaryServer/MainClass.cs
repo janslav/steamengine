@@ -33,6 +33,7 @@ namespace SteamEngine.AuxiliaryServer {
 		private static void Init() {
 			Logger.Init();
 			Settings.Init();
+			LoginServer.ServerUtils.Init();
 
 			LoginServer.LoginServer.Init();
 			ConsoleServer.ConsoleServer.Init();

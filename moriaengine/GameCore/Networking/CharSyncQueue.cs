@@ -1,0 +1,884 @@
+/*
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	Or visit http://www.gnu.org/copyleft/gpl.html
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
+using SteamEngine.Common;
+using System.IO;
+using System.Net;
+using SteamEngine.Regions;
+
+namespace SteamEngine.Networking {
+	public sealed class CharSyncQueue : SyncQueue {
+		internal static CharSyncQueue instance = new CharSyncQueue();
+
+		private SimpleQueue<CharState> queue = new SimpleQueue<CharState>();
+
+		private CharSyncQueue() {
+		}
+
+		protected override void ProcessQueue() {
+			while (this.queue.Count > 0) {
+				CharState ch = this.queue.Dequeue();
+				ch.ProcessChar();
+				ch.Dispose();
+			}
+		}
+
+		[Summary("Call when a thing is being created")]
+		public static void Resend(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "Resend(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).changeflags |= NSFlags.Resend;
+			}
+		}
+
+		public static void PropertiesChanged(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeProperty(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).changeflags |= NSFlags.Property;
+			}
+		}
+
+		public static void AboutToChangeSkill(AbstractCharacter thing, ushort skillId) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeSkill(" + thing + ", " + skillId + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeSkill(skillId);
+			}
+		}
+
+		[Summary("Call when name is about to be changed")]
+		public static void AboutToChangeName(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeName(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeName();
+			}
+		}
+
+		[Summary("Call when base properties (model/color) are about to be changed")]
+		public static void AboutToChangeBaseProps(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeBaseProps(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeBaseProps();
+			}
+		}
+
+		[Summary("Call when direction is about to be changed")]
+		public static void AboutToChangeDirection(AbstractCharacter thing, bool requested) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeDirection(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeDirection(requested);
+			}
+		}
+
+
+		[Summary("Call when Flags are about to be changed")]
+		public static void AboutToChangeFlags(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeFlags(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeFlags();
+			}
+		}
+
+		[Summary("Call when visibility is about to be changed")]
+		public static void AboutToChangeVisibility(AbstractCharacter ch) {
+			if (enabled) {
+				instance.PopAndEnqueueInstance(ch).AboutToChangeVisibility();
+			}
+		}
+
+		[Summary("Call when position is about to be changed")]
+		public static void AboutToChangePosition(AbstractCharacter thing, MovementType movType) {
+			if (enabled) {
+				int movTypeInt = (int) movType;
+				Sanity.IfTrueThrow((movTypeInt < 1 || movTypeInt > 8), "Incorrect MovementType.");
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangePosition(" + thing + ", " + movType + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangePosition(movTypeInt);
+			}
+		}
+
+		[Summary("Call when mount is about to be changed")]
+		public static void AboutToChangeMount(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeMount(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeMount();
+			}
+		}
+
+		[Summary("Call when highlight (notoriety color) is about to be changed")]
+		public static void AboutToChangeHighlight(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeHighlight(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).changeflags |= NSFlags.Highlight;
+			}
+		}
+
+		[Summary("Call when hitpoints are about to be changed")]
+		public static void AboutToChangeHitpoints(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeHitpoints(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeHitpoints();
+			}
+		}
+		[Summary("Call when mana is about to be changed")]
+		public static void AboutToChangeMana(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeMana(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeMana();
+			}
+		}
+
+		[Summary("Call when stamina is about to be changed")]
+		public static void AboutToChangeStamina(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeStamina(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeStamina();
+			}
+		}
+
+		[Summary("Call when stats  are about to be changed")]
+		[Remark("The stats are following: Strength, Dexterity, Intelligence, Gender, Gold, "
+		+ "PhysicalResist (armor), Weight, FireResist, ColdResist, PoisonResist, "
+		+ "EnergyResist, Luck, MinDamage, MaxDamage and TithingPoints")]
+		public static void AboutToChangeStats(AbstractCharacter thing) {
+			if (enabled) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeStats(" + thing + ") called");
+				instance.PopAndEnqueueInstance(thing).AboutToChangeStats();
+			}
+		}
+
+		internal class CharState : Poolable {
+			internal AbstractCharacter thing;
+			internal NSFlags changeflags;
+
+			private Point4D point;
+			private string name;
+			private byte flagsToSend;
+			//private ushort flags;
+			//private uint flaggedUid;
+			private AbstractCharacter mount;
+			private int mountUid;
+
+			private ushort model;
+			private ushort color;
+			private Direction direction;
+
+			private short hitpoints;
+			private short maxHitpoints;
+			private short stamina;
+			private short maxStamina;
+			private short mana;
+			private short maxMana;
+			private short str;
+			private short intel;
+			private short dex;
+			private bool isFemale;
+			private ulong gold;
+
+			private short armorClass;
+			private short stat1;
+			private short stat2;
+			private short stat3;
+			private short stat4;
+			private float weight;
+			private short stat5;
+			private short stat6;
+			private short stat7;
+			private long tithingPoints;
+
+			private int[] changedSkills = new int[AbstractSkillDef.SkillsCount];
+			private int changedSkillsCount;
+
+			protected override void On_Reset() {
+				base.On_Reset();
+
+				this.changeflags = NSFlags.None;
+			}
+
+
+			private bool IsNewAndPositiveBit(NSFlags flagBeingSet) {
+				if ((this.changeflags & flagBeingSet) != flagBeingSet) {
+					this.changeflags |= flagBeingSet;
+					return true;
+				}
+				return false;
+			}
+
+			protected override void On_DisposeManagedResources() {
+				lock (MainClass.globalLock) {
+					this.thing.syncState = null;
+					this.thing = null;
+				}
+				base.On_DisposeManagedResources();
+			}
+
+			internal void AboutToChangeSkill(int skillId) {
+				for (int i = 0; i < this.changedSkillsCount; i++) {
+					if (this.changedSkills[i] == skillId) {
+						return;//we know about this change already
+					}
+				}
+				this.changedSkills[changedSkillsCount] = skillId;
+				this.changedSkillsCount++;
+			}
+
+			internal void AboutToChangeName() {
+				if (this.IsNewAndPositiveBit(NSFlags.Name)) {
+					name = thing.Name;
+				}
+			}
+			private bool GetNameChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Name) == NSFlags.Name) && (!this.name.Equals(this.thing.Name)));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "NameChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeBaseProps() {
+				if (this.IsNewAndPositiveBit(NSFlags.BaseProps)) {
+					this.model = this.thing.Model;
+					this.color = this.thing.Color;
+				}
+			}
+
+			private bool GetBasePropsChanged() {
+				bool retVal = (((this.changeflags & NSFlags.BaseProps) == NSFlags.BaseProps)
+					&& ((this.model != this.thing.Model) || (this.color != this.thing.Color)));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetBasePropsChanged (model/color): " + retVal);
+				return retVal;
+			}
+
+			private bool GetDirectionChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Direction) == NSFlags.Direction)
+					&& (this.direction != ((AbstractCharacter) this.thing).Direction));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetDirectionChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeFlags() {
+				if (this.IsNewAndPositiveBit(NSFlags.Flags)) {
+					this.flagsToSend = this.thing.FlagsToSend;
+				}
+			}
+
+			private bool GetChangedFlags(out bool invisChanges, out bool warModeChanges) {
+				invisChanges = false;
+				warModeChanges = false;
+				bool retVal = false;
+				if ((this.changeflags & NSFlags.Flags) == NSFlags.Flags) {
+					byte newFlagsToSend = this.thing.FlagsToSend;
+
+					if ((this.flagsToSend & 0x40) != (newFlagsToSend & 0x40)) {
+						warModeChanges = true;
+					}
+
+					retVal = ((this.flagsToSend & ~0x40) != (newFlagsToSend & ~0x40));
+
+					if ((this.changeflags & NSFlags.Visibility) == NSFlags.Visibility) {
+						invisChanges = true;
+					}
+					if (!invisChanges) {
+						invisChanges = ((this.flagsToSend & 0x80) != (newFlagsToSend & 0x80));
+					}
+				}
+
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal && retVal, "GetFlagsChanged: " + retVal + ", invisChanges " + invisChanges);
+				return retVal;
+			}
+
+			internal void AboutToChangeVisibility() {
+				this.changeflags |= NSFlags.Visibility;
+				if (this.IsNewAndPositiveBit(NSFlags.Flags)) {
+					flagsToSend = this.thing.FlagsToSend;
+				}
+			}
+
+			internal void AboutToChangePosition(int movType) {
+				if (this.IsNewAndPositiveBit(NSFlags.Position)) {
+					this.point = new Point4D(this.thing);
+				}
+				this.changeflags |= (NSFlags) movType;//a dirty change of the enum type....
+			}
+
+			private bool GetPositionChanged(out bool teleported, out bool running, out bool requestedStep) {
+				teleported = false;
+				running = false;
+				requestedStep = false;
+				bool retVal = false;
+				if (((this.changeflags & NSFlags.Position) == NSFlags.Position) && (!Point4D.Equals(this.point, this.thing))) {
+					retVal = true;
+					if ((this.changeflags & NSFlags.Running) == NSFlags.Running) {
+						running = true;
+					} else if ((this.changeflags & NSFlags.Teleport) == NSFlags.Teleport) {
+						teleported = true;
+					}
+				}
+				if ((this.changeflags & NSFlags.RequestedStep) == NSFlags.RequestedStep) {
+					requestedStep = true;
+				}
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetPositionChanged: " + retVal + ", teleported:"
+					+ teleported + ", running:" + running + ", requestedStep:" + requestedStep);
+				return retVal;
+			}
+
+			internal void AboutToChangeMount() {
+				if (this.IsNewAndPositiveBit(NSFlags.Mount)) {
+					this.mount = this.thing.Mount;
+					if (this.mount != null) {
+						this.mountUid = mount.Uid;
+					}
+				}
+			}
+
+			private bool GetMountChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Mount) == NSFlags.Mount) && (this.mount != this.thing.Mount));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetMountChanged: " + retVal);
+				return retVal;
+			}
+
+			private bool GetHighlightChanged() {
+				bool retVal = ((changeflags & NSFlags.Highlight) == NSFlags.Highlight);
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetHighlightChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeHitpoints() {
+				if (this.IsNewAndPositiveBit(NSFlags.Hits)) {
+					hitpoints = this.thing.Hits;
+					maxHitpoints = this.thing.MaxHits;
+				}
+			}
+
+			private bool GetHitpointsChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Hits) == NSFlags.Hits)
+					&& ((this.hitpoints != thing.Hits) || (this.maxHitpoints != thing.MaxHits)));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetHitpointsChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeMana() {
+				if (this.IsNewAndPositiveBit(NSFlags.Mana)) {
+					mana = this.thing.Mana;
+					maxMana = this.thing.MaxMana;
+				}
+			}
+
+			private bool GetManaChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Mana) == NSFlags.Mana)
+					&& ((this.mana != this.thing.Mana) || (this.maxMana != this.thing.MaxMana)));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetManaChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeStamina() {
+				if (this.IsNewAndPositiveBit(NSFlags.Stam)) {
+					stamina = this.thing.Stam;
+					maxStamina = this.thing.MaxStam;
+				}
+			}
+			private bool GetStaminaChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Stam) == NSFlags.Stam)
+					&& ((this.stamina != this.thing.Stam) || (this.maxStamina != this.thing.MaxStam)));
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetStaminaChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeStats() {
+				if (this.IsNewAndPositiveBit(NSFlags.Stats)) {
+					str = this.thing.Str;
+					dex = this.thing.Dex;
+					intel = this.thing.Int;
+					isFemale = this.thing.IsFemale;
+					gold = this.thing.Gold;
+					armorClass = this.thing.StatusArmorClass;
+					weight = this.thing.Weight;
+					stat1 = this.thing.ExtendedStatusNum01;
+					stat2 = this.thing.ExtendedStatusNum02;
+					stat3 = this.thing.ExtendedStatusNum03;
+					stat4 = this.thing.StatusMindDefense;
+					stat5 = this.thing.ExtendedStatusNum04;
+					stat6 = this.thing.ExtendedStatusNum05;
+					stat7 = this.thing.ExtendedStatusNum06;
+					tithingPoints = this.thing.TithingPoints;
+				}
+			}
+
+			private bool GetStatsChanged() {
+				bool retVal = (((this.changeflags & NSFlags.Stats) == NSFlags.Stats)
+					&& ((this.str != this.thing.Str) || (this.dex != this.thing.Dex) || (this.intel != this.thing.Int) ||
+					(this.isFemale != this.thing.IsFemale) || (this.gold != this.thing.Gold) ||
+					(this.armorClass != this.thing.StatusArmorClass) ||
+					(this.weight != this.thing.Weight) || (this.stat1 != this.thing.ExtendedStatusNum01) ||
+					(this.stat2 != this.thing.ExtendedStatusNum02) || (this.stat3 != this.thing.ExtendedStatusNum03) ||
+					(this.stat4 != this.thing.StatusMindDefense) || (this.stat5 != this.thing.ExtendedStatusNum04) ||
+					(this.stat6 != this.thing.ExtendedStatusNum05) || (this.stat7 != this.thing.ExtendedStatusNum06) ||
+					(this.tithingPoints != this.thing.TithingPoints)));
+
+				Logger.WriteInfo(Globals.netSyncingTracingOn && retVal, "GetStatsChanged: " + retVal);
+				return retVal;
+			}
+
+			internal void AboutToChangeDirection(bool requested) {
+				if (this.IsNewAndPositiveBit(NSFlags.Direction)) {
+					this.direction = thing.Direction;
+					if (requested) {
+						this.changeflags |= NSFlags.RequestedStep;
+					} else {
+						this.changeflags = this.changeflags & ~NSFlags.RequestedStep;
+					}
+				}
+			}
+
+			internal void ProcessChar() {
+				if (!this.thing.IsDeleted) {//deleted items are supposed to be removedfromview by the delete code
+					if (this.changeflags == NSFlags.None) {
+						//nothing? wtf?
+					} else {
+						if ((changeflags & NSFlags.Resend) == NSFlags.Resend) {
+							this.ProcessCharResend(this.thing);
+						} else {
+							this.ProcessCharUpdate(this.thing);
+						}
+					}
+				}
+			}
+
+			private static PacketGroup[] charInfoPackets = new PacketGroup[(int) HighlightColor.NumHighlightColors]; //0x78
+
+			private void ProcessCharResend(AbstractCharacter ch) {
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessCharResend " + ch);
+
+				Array.Clear(charInfoPackets, 0, charInfoPackets.Length);
+				bool propertiesExist = true;
+				ObjectPropertiesContainer iopc = null;
+
+				foreach (AbstractCharacter viewer in ch.GetMap().GetPlayersInRange(ch.X, ch.Y, Globals.MaxUpdateRange)) {
+					if (viewer != ch) {
+						GameState viewerState = viewer.GameState;
+						if (viewerState != null) {
+							if (viewer.CanSeeForUpdate(ch)) {
+								HighlightColor highlightColor = ch.GetHighlightColorFor(viewer);
+								int highlight = (int) highlightColor;
+								PacketGroup pg = charInfoPackets[highlight];
+								if (pg == null) {
+									pg = Pool<PacketGroup>.Acquire();
+									pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, highlightColor); //0x78
+									charInfoPackets[highlight] = pg;
+								}
+								TCPConnection<GameState> viewerConn = viewerState.Conn;
+								viewerConn.SendPacketGroup(pg);
+								if (Globals.aos && viewerState.Version.aosToolTips) {
+									if (propertiesExist) {
+										propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			private static bool ProcessCharProperties(AbstractCharacter target, ref ObjectPropertiesContainer iopc, GameState viewerState, TCPConnection<GameState> viewerConn) {
+				if (iopc == null) {
+					iopc = target.GetProperties();
+					if (iopc != null) {
+						iopc.SendIdPacket(viewerState, viewerConn);
+						return true;
+					}
+				} else {
+					iopc.SendIdPacket(viewerState, viewerConn);
+					return true;
+				}
+				return false;
+			}
+
+			private static PacketGroup[] myCharInfos = new PacketGroup[(int) HighlightColor.NumHighlightColors];
+			private static PacketGroup[] myMovings = new PacketGroup[(int) HighlightColor.NumHighlightColors];
+
+			private void ProcessCharUpdate(AbstractCharacter ch) {
+				//TODO: party update
+				//triggers - @seenewplayer and stuff?
+
+				Array.Clear(myCharInfos, 0, myCharInfos.Length);
+				Array.Clear(myMovings, 0, myMovings.Length);
+				
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessCharUpdate " + ch);
+				bool invisChanged, warModeChanges;
+				bool flagsChanged = this.GetChangedFlags(out invisChanged, out warModeChanges);
+				bool highlightChanged = this.GetHighlightChanged();
+				bool hitsChanged = this.GetHitpointsChanged();
+				bool nameChanged = this.GetNameChanged();
+				bool mountChanged = this.GetMountChanged();
+				bool teleported, running, requestedStep;
+				bool posChanged = this.GetPositionChanged(out teleported, out running, out requestedStep);
+				bool directionChanged = this.GetDirectionChanged();
+				bool basePropsChanged = this.GetBasePropsChanged();
+				bool propertiesChanged = (changeflags & NSFlags.Property) == NSFlags.Property;
+				bool propertiesExist = propertiesChanged;
+				ObjectPropertiesContainer iopc = null;
+
+				Map chMap = ch.GetMap();
+				ushort chX = ch.X;
+				ushort chY = ch.Y;
+
+				PacketGroup pgRemoveMount = null, pgUpdateMount = null;
+
+				{
+					GameState myState = ch.GameState;
+					if (myState != null) {
+						TCPConnection<GameState> myConn = myState.Conn;
+						this.UpdateSkills(myState, myConn);
+
+						if (propertiesChanged) {
+							if (Globals.aos && myState.Version.aosToolTips) {
+								propertiesExist = ProcessCharProperties(ch, ref iopc, myState, myConn);
+							}
+						}
+						if (this.GetStatsChanged() || nameChanged) {
+							Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending StatusBar to self");
+							StatusBarInfoOutPacket sbiop = Pool<StatusBarInfoOutPacket>.Acquire();
+							sbiop.Prepare(ch, StatusBarType.Me); //0x11
+							myConn.SendSinglePacket(sbiop);
+						} else {
+							bool manaChanged = GetManaChanged();
+							bool staminaChanged = GetStaminaChanged();
+							if (hitsChanged && manaChanged && staminaChanged) {//all 3 stats
+								Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Stats to self");
+								MobAttributesOutPacket maop = Pool<MobAttributesOutPacket>.Acquire();
+								maop.Prepare(ch, true); //0x2d
+								myConn.SendSinglePacket(maop);
+							} else {
+								if (manaChanged) {
+									Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Mana to self");
+									UpdateCurrentManaOutPacket ucmop = Pool<UpdateCurrentManaOutPacket>.Acquire();
+									ucmop.Prepare(ch.FlaggedUid, ch.Mana, ch.MaxMana, true); //0xa2
+									myConn.SendSinglePacket(ucmop);
+								}
+								if (staminaChanged) {
+									Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Stamina to self");
+									UpdateCurrentStaminaOutPacket ucsop = Pool<UpdateCurrentStaminaOutPacket>.Acquire();
+									ucsop.Prepare(ch.FlaggedUid, ch.Stam, ch.MaxStam, true); //0xa3
+									myConn.SendSinglePacket(ucsop);
+								}
+								if (hitsChanged) {
+									Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Hitpoints to self");
+									UpdateCurrentHealthOutPacket uchop = Pool<UpdateCurrentHealthOutPacket>.Acquire();
+									uchop.Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, true); //0xa1
+									myConn.SendSinglePacket(uchop);
+								}
+							}
+						}
+						if (flagsChanged || highlightChanged || basePropsChanged || ((directionChanged || posChanged) && (!requestedStep))) {
+							Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending LocationInformation to self");
+							DrawGamePlayerOutPacket dgpop = Pool<DrawGamePlayerOutPacket>.Acquire();
+							dgpop.Prepare(myState, ch); //0x20
+							myConn.SendSinglePacket(dgpop);
+						}
+						if (warModeChanges) {
+							PreparedPacketGroups.SendWarMode(myConn, ch.Flag_WarMode);
+						}
+						if (posChanged) {
+							Map oldMap = point.GetMap();
+							bool mapChanged = oldMap != chMap;
+							byte updateRange = ch.UpdateRange;
+
+							if (mapChanged) {//other map. We must clear the view, and possibly change client's facet
+								byte newFacet = chMap.Facet;
+								if (oldMap.Facet != newFacet) {
+									PreparedPacketGroups.SendFacetChange(myConn, newFacet);
+								}
+								PacketGroup pg = null;
+								foreach (Thing thing in oldMap.GetThingsInRange(point.x, point.y, updateRange)) {
+									Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing thing (" + thing + ") from own view");
+									if (pg == null) {
+										pg = Pool<PacketGroup>.Acquire();
+									}
+									pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(thing);
+								}
+								if (pg != null) {
+									myConn.SendPacketGroup(pg);
+								}
+							}
+							foreach (Thing thingInRange in chMap.GetThingsInRange(chX, chY, updateRange)) {
+								if (thingInRange != ch) {//it isn't me
+									if (ch.CanSeeForUpdate(thingInRange) && (mapChanged ||
+									!ch.CanSeeForUpdateFrom(point, thingInRange))) {//I can see it now, but couldn't see it before
+										Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending thing (" + thingInRange + ") to self");
+										AbstractCharacter newChar = thingInRange as AbstractCharacter;
+										if (newChar != null) {
+											PacketSequences.SendCharInfoWithPropertiesTo(ch, myState, myConn, newChar);
+											UpdateCurrentHealthOutPacket uchop = Pool<UpdateCurrentHealthOutPacket>.Acquire();
+											uchop.Prepare(newChar.FlaggedUid, newChar.Hits, newChar.MaxHits, false); //0xa1
+											myConn.SendSinglePacket(uchop);
+										} else {
+											AbstractItem newItem = (AbstractItem) thingInRange;
+											newItem.GetOnGroundUpdater().SendTo(ch, myState, myConn);
+
+											PacketSequences.TrySendPropertiesTo(myState, myConn, newItem);
+										}
+									}
+								}
+							}
+						}
+						if (mountChanged) {
+							this.SendMountChange(myConn, ch, ref pgRemoveMount, ref pgUpdateMount);
+						}
+					}
+				}
+
+				if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged ||
+						invisChanged || hitsChanged || nameChanged || mountChanged || basePropsChanged) {
+					int range = Globals.MaxUpdateRange;
+					if (teleported) {
+						this.RemoveFromViewIfNeeded();
+					} else if (posChanged) {
+						range++;//not teleported, that means only step, so we update wider range
+					}
+
+					PacketGroup pgDeleteObject = null;
+					PacketGroup pgPetStatus = null;
+					PacketGroup pgOtherStatus = null;
+					PacketGroup pgHitsPacket = null;
+
+					foreach (AbstractCharacter viewer in chMap.GetPlayersInRange(chX, chY, (ushort) range)) {
+						if (viewer != ch) {
+							GameState viewerState = viewer.GameState;
+								if (viewerState != null) {
+									TCPConnection<GameState> viewerConn = viewerState.Conn;
+							bool viewerCanSeeForUpdateAtPointChecked = false;
+							bool viewerCanSeeForUpdateAtPoint = false;
+							bool viewerCanSeeForUpdateChecked = false;
+							bool viewerCanSeeForUpdate = false;
+
+								if ((!teleported) && (invisChanged || posChanged)) { //if teleported, we're already done
+									if (!invisChanged) {
+										viewerCanSeeForUpdateAtPoint = viewer.CanSeeForUpdateAt(point, ch);
+										viewerCanSeeForUpdateAtPointChecked = true;
+									}
+									if (invisChanged || viewerCanSeeForUpdateAtPoint) {
+										viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch);
+										viewerCanSeeForUpdateChecked = true;
+										if (!viewerCanSeeForUpdate) {//they did see us, but now they dont. RemoveFromView.
+											if (pgDeleteObject == null) {
+												pgDeleteObject = Pool<PacketGroup>.Acquire();
+												pgDeleteObject.AcquirePacket<DeleteObjectOutPacket>().Prepare(ch);
+											}
+											Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing "+ch+" from view of " + viewerState);
+											viewerConn.SendPacketGroup(pgDeleteObject);
+										}
+									}
+								}
+								if (!viewerCanSeeForUpdateChecked) {
+									viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch);
+								}
+								if (viewerCanSeeForUpdate) {
+									bool hitsSent = false;
+									bool newCharSent = false;
+									if (invisChanged || posChanged) {
+										if (!invisChanged) {
+											if (!viewerCanSeeForUpdateAtPointChecked) {
+												viewerCanSeeForUpdateAtPoint = viewer.CanSeeForUpdateAt(point, ch);
+											}
+										}
+										if (invisChanged || !viewerCanSeeForUpdateAtPoint) {
+											//viewer didn't see us, but he does now - we send newchar packet
+											int highlight = (int) ch.GetHighlightColorFor(viewer);
+											PacketGroup myCharInfo = myCharInfos[highlight];
+											if (myCharInfo == null) {
+												myCharInfo = Pool<PacketGroup>.Acquire();
+												myCharInfo.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, (HighlightColor) highlight); //0x78
+												myCharInfos[highlight] = myCharInfo;
+											}
+											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending new char info to " + viewerState);
+											viewerConn.SendPacketGroup(myCharInfo);
+											newCharSent = true;
+											if (propertiesExist && Globals.aos && viewerState.Version.aosToolTips) {
+												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
+											}
+										}
+									}
+									if (!newCharSent) {
+										if (propertiesChanged && propertiesExist) {
+											if (Globals.aos && viewerState.Version.aosToolTips) {
+												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
+											}
+										}
+										if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || basePropsChanged) {
+											int highlight = (int) ch.GetHighlightColorFor(viewer);
+											PacketGroup myMoving = myMovings[highlight];
+											if (myMoving == null) {
+												myMoving = Pool<PacketGroup>.Acquire();
+												myMoving.AcquirePacket<UpdatePlayerPacket>().Prepare(ch, running, (HighlightColor) highlight); //0x77
+												myMovings[highlight] = myMoving;
+											}
+											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending moving char to " + viewerState);
+											viewerConn.SendPacketGroup(myMoving);
+										}
+										if (mountChanged) {
+											this.SendMountChange(viewerConn, ch, ref pgRemoveMount, ref pgUpdateMount);
+										}
+									}
+									if (nameChanged) {
+										hitsSent = true;
+										if (viewer.CanRename(ch)) {
+											if (pgPetStatus == null) {
+												pgPetStatus = Pool<PacketGroup>.Acquire();
+												pgPetStatus.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Pet);
+											}
+											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending pet status " + viewerState);
+											viewerConn.SendPacketGroup(pgPetStatus);
+										} else {
+											if (pgOtherStatus == null) {
+												pgOtherStatus = Pool<PacketGroup>.Acquire();
+												pgOtherStatus.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Other);
+											}
+											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending simple status " + viewerState);
+											viewerConn.SendPacketGroup(pgOtherStatus);
+										}
+									}
+									if (hitsChanged && !hitsSent) {
+										if (pgHitsPacket == null) {
+											pgHitsPacket = Pool<PacketGroup>.Acquire();
+											pgHitsPacket.AcquirePacket<UpdateCurrentHealthOutPacket>().Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
+										}
+										Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending hits packet " + viewerState);
+										viewerConn.SendPacketGroup(pgHitsPacket);
+									}
+								}
+							}
+						}
+					}
+
+					ch.Flag_Moving = false;
+				}
+			}
+
+			private void SendMountChange(TCPConnection<GameState> viewerConn, AbstractCharacter ch, ref PacketGroup pgRemoveMount, ref PacketGroup pgUpdateMount) {
+				AbstractCharacter myMount = ch.Mount;
+				if (myMount == null) {
+					if (pgRemoveMount == null) {
+						pgRemoveMount = Pool<PacketGroup>.Acquire();
+						pgRemoveMount.AcquirePacket<DeleteObjectOutPacket>().Prepare(mountUid | 0x40000000);
+					}
+					Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing mount (#" + mountUid.ToString("x") + ") for " + viewerConn.State.Character);
+					viewerConn.SendPacketGroup(pgRemoveMount);
+				} else {
+					if (pgUpdateMount == null) {
+						pgUpdateMount = Pool<PacketGroup>.Acquire();
+						pgUpdateMount.AcquirePacket<WornItemOutPacket>().PrepareMount(ch.FlaggedUid, myMount);
+					}
+					Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending mount (#" + mountUid.ToString("x") + ") to " + viewerConn.State.Character);
+					viewerConn.SendPacketGroup(pgUpdateMount);
+				}
+			}
+
+			private void RemoveFromViewIfNeeded() {
+				ImmutableRectangle rect = new ImmutableRectangle(this.point, Globals.MaxUpdateRange);
+
+				PacketGroup pg = null;
+				Map map = this.point.GetMap();
+
+				foreach (AbstractCharacter viewer in map.GetPlayersInRectangle(rect)) {
+					GameState state = viewer.GameState;
+					if (state != null) {
+						if ((viewer.CanSeeForUpdateAt(this.point, this.thing)) && (!viewer.CanSeeForUpdate(this.thing))) {
+							if (pg == null) {
+								pg = Pool<PacketGroup>.Acquire();
+								pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(this.thing);
+							}
+							Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing thing (" + thing + ") from the view of " + viewer);
+							state.Conn.SendPacketGroup(pg);
+						}
+					}
+				}
+			}
+
+			private void UpdateSkills(GameState myState, TCPConnection<GameState> myConn) {
+				if (this.changedSkillsCount > 0) {
+					SendSkillsOutPacket ssop = Pool<SendSkillsOutPacket>.Acquire();
+					if (this.changedSkillsCount == 1) {
+						ISkill skill = this.thing.GetSkillObject(this.changedSkills[0]);
+						Logger.WriteInfo(Globals.netSyncingTracingOn, "UpdateSkill: " + AbstractSkillDef.ById(this.changedSkills[0]).Key);
+						if (myState.Version.displaySkillCaps) {
+							ssop.PrepareSingleSkillUpdate(skill.Id, skill.RealValue, skill.ModifiedValue, skill.Lock, skill.Cap);
+						} else {
+							ssop.PrepareSingleSkillUpdate(skill.Id, skill.RealValue, skill.ModifiedValue, skill.Lock);
+						}
+					} else {
+						ssop.PrepareMultipleSkillsUpdate(this.YieldSkillsToUpdate(), myState.Version.displaySkillCaps);
+					}
+					myConn.SendSinglePacket(ssop);
+				}
+			}
+
+			private IEnumerable<ISkill> YieldSkillsToUpdate() {
+				for (int i = 0; i < changedSkillsCount; i++) {
+					int id = changedSkills[i];
+					Logger.WriteInfo(Globals.netSyncingTracingOn, "UpdateSkill: " + AbstractSkillDef.ById(id).Key);
+					yield return this.thing.GetSkillObject(id);
+				}
+			}
+		}
+
+		//get an ItemState instance from the pool, or create a new one
+		private CharState PopAndEnqueueInstance(AbstractCharacter ch) {
+			CharState state = ch.syncState;
+			if (state != null) {
+				return state; //we assume it's enqueued already and stuff. No one is to touch AbstractCharacter.syncState but this class!
+			}
+			state = Pool<CharState>.Acquire();
+			state.thing = ch;
+			ch.syncState = state;
+			queue.Enqueue(state);
+			this.autoResetEvent.Set();
+			return state;
+		}
+
+		[Flags]
+		internal enum NSFlags : int {
+			None = 0x00000000,
+			Resend = 0x10000000, //complete update - after creation
+
+			//these are same as in MovementType - do not change the values
+			Walking = 0x00000001,
+			Running = 0x00000002,
+			RequestedStep = 0x00000004,
+			Teleport = 0x00000008,
+
+			//char updates
+			BaseProps = 0x00000010, //Model, Color
+			Direction = 0x00000020,
+			Name = 0x00000040,
+			Flags = 0x00000080,
+			Position = 0x00000100,
+			Visibility = 0x00000200, //we can change visibility even without changing flags (for particular people etc.)
+			Mount = 0x00000400,
+			Highlight = 0x00000800,
+
+			//status
+			Hits = 0x00001000,
+			Mana = 0x00002000,
+			Stam = 0x00004000,
+			Stats = 0x00008000, //str, dex, int + extended status props - gender, gold, resists, luck, damage, tithingpoints, weight, etc.
+
+			//Property - for both char and item
+			Property = 0x00010000
+		}
+	}
+}

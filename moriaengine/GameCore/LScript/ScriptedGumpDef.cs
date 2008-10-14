@@ -178,9 +178,7 @@ namespace SteamEngine.LScript {
 			}
 
 			if (layoutScript.lastRunSuccesful) {
-				returnedInstance.CompilePacketData();
-				returnedInstance.cont = sendTo;
-				returnedInstance.focus = focus;
+				returnedInstance.FinishCompilingPacketData(focus, sendTo);
 				return returnedInstance;
 			}
 			return null;
@@ -193,13 +191,13 @@ namespace SteamEngine.LScript {
 					if (rt.IsInBounds(pressedButton)) {
 						ScriptArgs sa = new ScriptArgs(
 							instance,							//0
-							instance.cont,						//1
+							instance.Cont,						//1
 							pressedButton,						//2
 							new ArgTxtHolder(returnedTexts),	//3
 							new ArgChkHolder(selectedSwitches),	//4
 							new ArgNumHolder(responseNumbers)	//5
 						);
-						rt.script.TryRun(instance.focus, sa);
+						rt.script.TryRun(instance.Focus, sa);
 						return;
 					}
 				}
@@ -431,11 +429,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public void SetLocation(int x, int y) {
-			if ((x < 0)||(y < 0)) {
-				throw new SEException("A gump can not be placed to negative position");
-			}
-			this.X = (uint) x;
-			this.Y = (uint) y;
+			this.X = x;
+			this.Y = y;
 		}
 
 		public void NoClose() {

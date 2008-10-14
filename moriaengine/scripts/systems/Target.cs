@@ -22,12 +22,20 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.LScript;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
 	public abstract class AbstractTargetDef : AbstractDef {
+
+		Networking.OnTargon targon;
+		Networking.OnTargon_Cancel targonCancel;
+
 		internal AbstractTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
+
+			this.targon = this.On_Targon;
+			this.targonCancel = this.On_TargonCancel;
 		}
 
 		public static new AbstractTargetDef Get(string defname) {
@@ -37,25 +45,25 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Assign(Character ch) {
-			On_Start(ch, null);
+			this.On_Start(ch, null);
 		}
 
 		internal void Assign(Character ch, object parameter) {
-			On_Start(ch, parameter);
+			this.On_Start(ch, parameter);
 		}
 
 		virtual protected void On_Start(Character ch, object parameter) {
-			GameConn conn = ch.Conn;
-			if (conn != null) {
-				conn.Target(this.AllowGround, On_Targon, On_TargonCancel, parameter);
+			GameState state = ch.GameState;
+			if (state != null) {
+				state.Target(this.AllowGround, targon, targonCancel, parameter);
 			}
 		}
 
 		abstract protected bool AllowGround { get; }
 
-		abstract protected void On_Targon(GameConn conn, IPoint3D getback, object parameter);
+		abstract protected void On_Targon(GameState state, IPoint3D getback, object parameter);
 
-		abstract protected void On_TargonCancel(GameConn conn, object parameter);
+		abstract protected void On_TargonCancel(GameState state, object parameter);
 	}
 
 	public abstract class CompiledTargetDef : AbstractTargetDef {
@@ -86,8 +94,8 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetType().Name;
 		}
 
-		protected sealed override void On_Targon(GameConn conn, IPoint3D getback, object parameter) {
-			Character self = conn.CurCharacter as Character;
+		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
+			Character self = state.Character as Character;
 			if (self != null) {
 				if (On_TargonPoint(self, getback, parameter)) {
 					On_Start(self, parameter);
@@ -95,10 +103,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected sealed override void On_TargonCancel(GameConn conn, object parameter) {
-			Character self = conn.CurCharacter as Character; 
+		protected sealed override void On_TargonCancel(GameState state, object parameter) {
+			Character self = state.Character as Character; 
 			if (self != null) {
-				On_TargonCancel(self, parameter);
+				this.On_TargonCancel(self, parameter);
 			}
 		}
 
@@ -298,8 +306,8 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(ch, parameter);
 		}
 
-		protected override sealed void On_Targon(GameConn conn, IPoint3D getback, object parameter) {
-			Player player = conn.CurCharacter as Player;
+		protected override sealed void On_Targon(GameState state, IPoint3D getback, object parameter) {
+			Player player = state.Character as Player;
 			if (player != null) {
 				if (targon_point != null) {
 					if (TryRunTrigger(targon_point, player, getback, parameter)) {
@@ -354,12 +362,12 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
-			Server.SendClilocSysMessage(conn, 1046439, 0);//That is not a valid target.
+			PacketSequences.SendClilocSysMessage(state.Conn, 1046439, 0);//That is not a valid target.
 			On_Start(player, parameter);
 		}
 
-		protected override sealed void On_TargonCancel(GameConn conn, object parameter) {
-			AbstractCharacter ch = conn.CurCharacter;
+		protected override sealed void On_TargonCancel(GameState state, object parameter) {
+			AbstractCharacter ch = state.Character;
 			if ((ch != null) && (targon_cancel != null)) {
 				targon_cancel.TryRun(ch, parameter);
 			}

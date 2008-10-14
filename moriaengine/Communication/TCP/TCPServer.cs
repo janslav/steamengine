@@ -31,7 +31,7 @@ namespace SteamEngine.Communication.TCP {
 	public class TCPServer<TState> : 
 		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,
 		IServer<TCPConnection<TState>, TState, IPEndPoint>
-		where TState : IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
 
 		private AsyncCallback onAccept;
 		Socket listener;

@@ -66,11 +66,11 @@ namespace SteamEngine.CompiledScripts {
 			HiddenHelperPlugin ssp = person.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
 			if (ssp != null) {
 				if (ssp.hadDetectedMe == null) {
-					Packets.NetState.AboutToChangeVisibility(person);
+					Networking.CharSyncQueue.AboutToChangeVisibility(person);
 					ssp.hadDetectedMe = new LinkedList<Character>();
 					ssp.hadDetectedMe.AddFirst(self);
 				} else if (!ssp.hadDetectedMe.Contains(self)) {
-					Packets.NetState.AboutToChangeVisibility(person);
+					Networking.CharSyncQueue.AboutToChangeVisibility(person);
 					ssp.hadDetectedMe.AddFirst(self);
 				}
 			}

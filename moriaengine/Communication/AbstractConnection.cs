@@ -28,7 +28,7 @@ using SteamEngine.Common;
 namespace SteamEngine.Communication {
 	public abstract class AbstractConnection<TConnection, TState, TEndPoint> : Poolable
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		private AsyncCore<TConnection, TState, TEndPoint> core;
 
@@ -57,6 +57,8 @@ namespace SteamEngine.Communication {
 			this.decompressBuffer = Pool<Buffer>.Acquire();
 			this.decompressedDataOffset = 0;
 			this.decompressedDataLength = 0;
+
+			this.receivedDataLength = 0;
 
 			this.encryptionInitialised = false;
 			this.useEncryption = true;
@@ -93,6 +95,7 @@ namespace SteamEngine.Communication {
 				lock (this.core.LockObject) {
 					this.state.On_Close(reason);
 				}
+				this.state.Dispose();
 			}
 			//On_Close(reason);
 			base.Dispose();
@@ -110,13 +113,11 @@ namespace SteamEngine.Communication {
 		internal void Init(AsyncCore<TConnection, TState, TEndPoint> core) {
 			this.core = core;
 			this.On_Init();
-
-			this.state = new TState();
-			this.state.On_Init((TConnection) this);
 		}
 
 		protected virtual void On_Init() {
-
+			this.state = Pool<TState>.Acquire();
+			this.state.On_Init((TConnection) this);
 		}
 
 		#region Receiving data
@@ -145,31 +146,43 @@ namespace SteamEngine.Communication {
 				bool loop = true;
 				while (loop && (length > 0)) {
 					byte id = bytes[offset];
-					IncomingPacket<TConnection, TState, TEndPoint> packet = this.core.protocol.GetPacketImplementation(id);
+					bool discardAfterReading;
+					IncomingPacket<TConnection, TState, TEndPoint> packet = this.core.protocol.GetPacketImplementation(id, (TConnection) this, this.state, out discardAfterReading);
 					length--;
 					offset++;
 
 					int read;
 					ReadPacketResult result;
 					if (packet != null) {
-						Logger.WriteDebug("Handling packet 0x"+id.ToString("x"));
 						result = packet.Read(bytes, offset, length, out read);
 					} else {
 						result = ReadPacketResult.DiscardAll;
 						read = 0;
 						Logger.WriteDebug("Unknown packet 0x"+id.ToString("x"));
-						//TODO: write out packet
+
+						CommunicationUtils.OutputPacketLog(bytes, offset, length);
 					}
 
 					switch (result) {
 						case ReadPacketResult.NeedMoreData:
+							length++;
+							offset--;
 							loop = false;
 							break;
 						case ReadPacketResult.Success:
-							this.core.HandlePacket((TConnection) this, this.state, packet);
+							if (discardAfterReading) {
+								Logger.WriteDebug("Discarding packet 0x" + id.ToString("x"));
+							} else {
+								Logger.WriteDebug("Handling packet 0x" + id.ToString("x"));
+								this.core.HandlePacket((TConnection) this, this.state, packet);
+							}
 							goto default;
 						case ReadPacketResult.DiscardAll:
+							Logger.WriteDebug("Discarding packet 0x" + id.ToString("x")+ " (and all following)");
 							read = length;
+							goto default;
+						case ReadPacketResult.DiscardSingle:
+							Logger.WriteDebug("Discarding packet 0x" + id.ToString("x"));
 							goto default;
 						default:
 							Sanity.IfTrueThrow(read < 0, "read bytes can't be negative!");
@@ -212,16 +225,17 @@ namespace SteamEngine.Communication {
 						EncryptionInitResult result = encryption.Init(bytes, offset, length, out read);
 						switch (result) {
 							case EncryptionInitResult.SuccessUseEncryption:
-								Console.WriteLine(this.State+": using encryption "+encryption);
+								Logger.WriteDebug(this.State.ToString() + " using " + encryption.ToString());
 								offset += read;
 								length -= read;
 								this.receivedDataLength = 0;
 								this.encryptionInitialised = true;
 								break;
 							case EncryptionInitResult.SuccessNoEncryption:
-								Console.WriteLine(this.State+": using no encryption");
+								Logger.WriteDebug(this.State.ToString()+" using no encryption");
 								offset += read;
 								length -= read;
+								this.receivedDataLength = 0;
 								this.useEncryption = false;
 								break;
 							case EncryptionInitResult.InvalidData:

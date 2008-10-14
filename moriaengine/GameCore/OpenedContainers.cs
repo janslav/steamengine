@@ -30,136 +30,150 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public static class OpenedContainers {
-		private readonly static Dictionary<AbstractItem, LinkedList<GameConn>> openedByConns = new Dictionary<AbstractItem, LinkedList<GameConn>>();
+		private readonly static Dictionary<AbstractItem, LinkedList<AbstractCharacter>> charsByContainer = new Dictionary<AbstractItem, LinkedList<AbstractCharacter>>();
+		private readonly static Dictionary<AbstractCharacter, HashSet<AbstractItem>> containersByChar = new Dictionary<AbstractCharacter, HashSet<AbstractItem>>();
 
-		public static DenyResult HasContainerOpen(GameConn conn, AbstractItem container) {
-			if (conn.openedContainers.Contains(container)) {
-				AbstractCharacter curCharacter = conn.CurCharacter;
-				DenyResult retVal = DenyResult.Deny_NoMessage;
-				if (curCharacter != null) {
-					retVal = curCharacter.CanReach(container);
-			    }
-				if (retVal != DenyResult.Allow) {
-					SetContainerClosed(conn, container);
+		public static DenyResult HasContainerOpen(AbstractCharacter ch, AbstractItem container) {
+			HashSet<AbstractItem> conts;
+			if (containersByChar.TryGetValue(ch, out conts)) {
+				if (conts.Contains(container)) {
+					DenyResult retVal = ch.CanReach(container);
+					if (retVal != DenyResult.Allow) {
+						SetContainerClosed(ch, container);
+					}
+					return retVal;
 				}
-				return retVal;
 			}
 			return DenyResult.Deny_ContainerClosed;
 		}
 
-		internal static DenyResult HasContainerOpenFromAt(GameConn conn, IPoint4D fromPoint, IPoint4D targetPoint, AbstractItem container, bool checkTopobj) {
-			if (conn.openedContainers.Contains(container)) {
-				AbstractCharacter curCharacter = conn.CurCharacter;
-				DenyResult retVal = DenyResult.Deny_NoMessage;
-				if (curCharacter != null) {
-					retVal = curCharacter.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj);
-			    }
-				if (retVal != DenyResult.Allow) {
-					SetContainerClosed(conn, container);
+		internal static DenyResult HasContainerOpenFromAt(AbstractCharacter ch, IPoint4D fromPoint, IPoint4D targetPoint, AbstractItem container, bool checkTopobj) {
+			HashSet<AbstractItem> conts;
+			if (containersByChar.TryGetValue(ch, out conts)) {
+				if (conts.Contains(container)) {
+					DenyResult retVal = DenyResult.Deny_NoMessage;
+					if (ch != null) {
+						retVal = ch.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj);
+					}
+					if (retVal != DenyResult.Allow) {
+						SetContainerClosed(ch, container);
+					}
+					return retVal;
 				}
-				return retVal;
 			}
 			return DenyResult.Deny_ContainerClosed;
 		}
 
-		public static void SetContainerOpened(GameConn conn, AbstractItem container) {
-			conn.openedContainers.Add(container);
-			LinkedList<GameConn> openedBy;
-			if (!openedByConns.TryGetValue(container, out openedBy)) {
-				openedBy = new LinkedList<GameConn>();
-				openedByConns[container] = openedBy;
+		public static void SetContainerOpened(AbstractCharacter ch, AbstractItem container) {
+			HashSet<AbstractItem> conts;
+			if (!containersByChar.TryGetValue(ch, out conts)) {
+				conts = new HashSet<AbstractItem>();
+				containersByChar[ch] = conts;
 			}
-			if (!openedBy.Contains(conn)) {
-				openedBy.AddFirst(conn);
+			conts.Add(container);
+
+			LinkedList<AbstractCharacter> openedBy;
+			if (!charsByContainer.TryGetValue(container, out openedBy)) {
+				openedBy = new LinkedList<AbstractCharacter>();
+				charsByContainer[container] = openedBy;
+			}
+			if (!openedBy.Contains(ch)) {
+				openedBy.AddFirst(ch);
 			}
 		}
 
-		public static void SetContainerClosed(GameConn conn, AbstractItem container) {
-			conn.openedContainers.Remove(container);
-			LinkedList<GameConn> openedBy;
-			if (openedByConns.TryGetValue(container, out openedBy)) {
-				openedBy.Remove(conn);
+		public static void SetContainerClosed(AbstractCharacter ch, AbstractItem container) {
+			HashSet<AbstractItem> conts;
+			if (containersByChar.TryGetValue(ch, out conts)) {
+				conts.Remove(container);
+				if (conts.Count == 0) {
+					containersByChar.Remove(ch);
+				}
+			}
+
+			LinkedList<AbstractCharacter> openedBy;
+			if (charsByContainer.TryGetValue(container, out openedBy)) {
+				openedBy.Remove(ch);
 				if (openedBy.Count == 0) {
-					openedByConns.Remove(container);//opened for no one
+					charsByContainer.Remove(container);//opened for no one
 				}
 			}
 		}
 
 		public static void SetContainerClosed(AbstractItem container) {
-			LinkedList<GameConn> openedBy;
-			if (openedByConns.TryGetValue(container, out openedBy)) {
-				openedByConns.Remove(container);
-				foreach (GameConn conn in openedBy) {
-					conn.openedContainers.Remove(container);
+			LinkedList<AbstractCharacter> openedBy;
+			if (charsByContainer.TryGetValue(container, out openedBy)) {
+				charsByContainer.Remove(container);
+
+				foreach (AbstractCharacter ch in openedBy) {
+					HashSet<AbstractItem> conts;
+					if (containersByChar.TryGetValue(ch, out conts)) {
+						conts.Remove(container);
+						if (conts.Count == 0) {
+							containersByChar.Remove(ch);
+						}
+					}
 				}
 			}
 		}
 
-		public static IEnumerable<AbstractItem> GetOpenedContainers(GameConn conn) {
-			AbstractCharacter curCharacter = conn.CurCharacter;
-			if (curCharacter != null) {
-				HashSet<AbstractItem> openedContainers = conn.openedContainers;
+		public static IEnumerable<AbstractItem> GetOpenedContainers(AbstractCharacter ch) {
+			ch.ThrowIfDeleted();
+
+			HashSet<AbstractItem> conts;
+
+			if (containersByChar.TryGetValue(ch, out conts)) {
 				List<AbstractItem> toRemove = null;
 
-				foreach (AbstractItem con in openedContainers) {
-					if (con.IsDeleted || curCharacter.CanReach(con) != DenyResult.Allow) {
+				foreach (AbstractItem con in conts) {
+					if (ch.CanReach(con) != DenyResult.Allow) {
 						if (toRemove == null) {
 							toRemove = new List<AbstractItem>();
 						}
 						toRemove.Add(con);
 					}
 				}
+
 				if (toRemove != null) {
 					foreach (AbstractItem con in toRemove) {
-						openedContainers.Remove(con);
+						SetContainerClosed(ch, con);
 					}
 				}
-				return openedContainers;
+				return conts;
 			}
 			return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
 		}
 
-		public static IEnumerable<GameConn> GetConnsWithOpened(AbstractItem container) {
-			LinkedList<GameConn> openedBy;
-			if (openedByConns.TryGetValue(container, out openedBy)) {
-				List<LinkedListNode<GameConn>> toRemove = null;
-				LinkedListNode<GameConn> node = openedBy.First;
-				while (node != null) {
-					GameConn conn = node.Value;
-					AbstractCharacter curCharacter = conn.CurCharacter;
-					if (curCharacter != null) {
-						if (curCharacter.CanReach(container) != DenyResult.Allow) {
-							if (toRemove == null) {
-								toRemove = new List<LinkedListNode<GameConn>>();
-							}
-							toRemove.Add(node);
-						}
-					} else {
+		public static IEnumerable<AbstractCharacter> GetViewers(AbstractItem container) {
+			container.ThrowIfDeleted();
+
+			LinkedList<AbstractCharacter> openedBy;
+			if (charsByContainer.TryGetValue(container, out openedBy)) {
+				List<AbstractCharacter> toRemove = null;
+
+				foreach (AbstractCharacter ch in openedBy) {
+					if (ch.CanReach(container) != DenyResult.Allow) {
 						if (toRemove == null) {
-							toRemove = new List<LinkedListNode<GameConn>>();
+							toRemove = new List<AbstractCharacter>();
 						}
-						toRemove.Add(node);
+						toRemove.Add(ch);
 					}
-					node = node.Next;
 				}
+
 				if (toRemove != null) {
-					foreach (LinkedListNode<GameConn> nodeToRemove in toRemove) {
-						openedBy.Remove(nodeToRemove);
+					foreach (AbstractCharacter ch in toRemove) {
+						SetContainerClosed(ch, container);
 					}
 				}
-				if (openedBy.Count == 0) {
-					openedByConns.Remove(container);
-				}
+
 				return openedBy;
 			}
-			return EmptyReadOnlyGenericCollection<GameConn>.instance;
+			return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
 		}
 
 		internal static void ClearAll() {
-			foreach (GameConn c in Server.connections) {
-				c.openedContainers.Clear();
-			}
-			openedByConns.Clear();
+			charsByContainer.Clear();
+			containersByChar.Clear();
 		}
 	}
 }

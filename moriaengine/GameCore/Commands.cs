@@ -22,13 +22,13 @@ using System.Text;
 using System.IO;
 using System.Collections;
 using System.Reflection;
-using SteamEngine.Packets;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using System.Configuration;
-
+using SteamEngine.Common;
+using SteamEngine.Networking;
 using SteamEngine.LScript;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
 	public static class Commands {
@@ -37,11 +37,11 @@ namespace SteamEngine {
 
 		internal static bool commandRunning;
 
-		public static void PlayerCommand(GameConn c, string command) {
+		public static void PlayerCommand(GameState state, string command) {
 			string lower = command.ToLower();
 			string noprefix;
 
-			AbstractCharacter commandSrc = c.CurCharacter;
+			AbstractCharacter commandSrc = state.CharacterNotNull;
 
 			if ((lower.StartsWith("x ") || lower.StartsWith("x."))) {
 				noprefix = command.Substring(2);
@@ -53,14 +53,14 @@ namespace SteamEngine {
 #endif
 				InvokeCommand(commandSrc, commandSrc, command);
 #if DEBUG
-				Logger.WriteDebug("Command took (in ms): "+ HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
+				Logger.WriteDebug("Command took (in ms): " + HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
 #endif
 				return;
 			}
 
 			if (AuthorizeCommand(commandSrc, "x")) {
-				c.WriteLine("Command who or what?");
-				c.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel, 
+				state.WriteLine("Command who or what?");
+				state.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel,
 					new XCommandParameter(commandSrc, noprefix));
 				LogCommand(commandSrc, command, true, null);
 			} else {
@@ -68,7 +68,38 @@ namespace SteamEngine {
 			}
 		}
 
-		private struct XCommandParameter {
+//        public static void PlayerCommand(GameConn c, string command) {
+//            string lower = command.ToLower();
+//            string noprefix;
+
+//            AbstractCharacter commandSrc = c.CurCharacter;
+
+//            if ((lower.StartsWith("x ") || lower.StartsWith("x."))) {
+//                noprefix = command.Substring(2);
+//            } else if ((lower.StartsWith("set ") || lower.StartsWith("set."))) {
+//                noprefix = command.Substring(4);
+//            } else {
+//#if DEBUG
+//                long ticksBefore = HighPerformanceTimer.TickCount;
+//#endif
+//                InvokeCommand(commandSrc, commandSrc, command);
+//#if DEBUG
+//                Logger.WriteDebug("Command took (in ms): "+ HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
+//#endif
+//                return;
+//            }
+
+//            if (AuthorizeCommand(commandSrc, "x")) {
+//                c.WriteLine("Command who or what?");
+//                c.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel, 
+//                    new XCommandParameter(commandSrc, noprefix));
+//                LogCommand(commandSrc, command, true, null);
+//            } else {
+//                LogCommand(commandSrc, command, false, commandAuthorisationFailed);
+//            }
+//        }
+
+		private class XCommandParameter {
 			internal readonly ISrc commandSrc;
 			internal readonly string commandWithoutPrefix;
 
@@ -136,7 +167,7 @@ namespace SteamEngine {
 			}
 		}
 
-		static CacheDictionary<string, LScriptHolder> gmCommandsCache = new CacheDictionary<string, LScriptHolder>(1000, StringComparer.Ordinal);
+		static CacheDictionary<string, LScriptHolder> gmCommandsCache = new CacheDictionary<string, LScriptHolder>(1000, false, StringComparer.Ordinal);
 
 		public static void ClearGmCommandsCache() {
 			gmCommandsCache.Clear();
@@ -192,14 +223,14 @@ namespace SteamEngine {
 			//Console.WriteLine("lscript: "+HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - start)+" ms");
 		}
 
-		private static OnTargon xCommand_Targon = new OnTargon(XCommand_Targon);
-		private static OnTargon_Cancel xCommand_Cancel = new OnTargon_Cancel(XCommand_Cancel);
+		private static SteamEngine.Networking.OnTargon xCommand_Targon = XCommand_Targon;
+		private static SteamEngine.Networking.OnTargon_Cancel xCommand_Cancel = XCommand_Cancel;
 
-		public static void XCommand_Cancel(GameConn c, object parameter) {
+		public static void XCommand_Cancel(GameState state, object parameter) {
 			//?
 		}
 
-		public static void XCommand_Targon(GameConn c, IPoint3D getback, object parameter) {
+		public static void XCommand_Targon(GameState state, IPoint3D getback, object parameter) {
 			TagHolder self = getback as TagHolder;
 			if (self != null) {
 				XCommandParameter xcp = (XCommandParameter) parameter;

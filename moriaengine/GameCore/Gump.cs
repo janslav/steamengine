@@ -43,7 +43,7 @@ namespace SteamEngine {
 	[Summary("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)"+
 			"the array's length is unmodifiable so the only way to put args into it is to put them during constructor call."+
 			"Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example "+
-			"label and text in the Info/Error dialog-messages). Other args should be added as normal tags!")]
+			"label and text in the Info/Error dialog-messages). Other args should be added as tags!")]
 	public class DialogArgs : TagHolder {
 		private object[] fldArgs;
 
@@ -68,10 +68,10 @@ namespace SteamEngine {
 		public readonly uint uid;
 		public readonly GumpDef def;
 		internal DialogArgs inputArgs;//arguments the gump is called with
-		internal AbstractCharacter cont;//the player who sees this instance (src)
-		internal Thing focus;//the thing this gump was "launched on"
-		internal uint x;
-		internal uint y;
+		private AbstractCharacter cont;//the player who sees this instance (src)
+		private Thing focus;//the thing this gump was "launched on"
+		private int x;
+		private int y;
 		internal readonly StringBuilder layout = new StringBuilder();
 		internal List<int> numEntryIDs;
 		internal Dictionary<int, int> entryTextIds;
@@ -99,7 +99,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public uint X {
+		public int X {
 			get {
 				return x;
 			}
@@ -108,7 +108,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public uint Y {
+		public int Y {
 			get {
 				return y;
 			}
@@ -148,16 +148,18 @@ namespace SteamEngine {
 		}
 
 		//this is the final method where all the elements are compiled into the string
-		public void CompilePacketData() {
-			if (!movable) {
+		public void FinishCompilingPacketData(Thing focus, AbstractCharacter cont) {
+			if (!this.movable) {
 				layout.Insert(0, "{nomove}");
 			}
-			if (!closable) {
+			if (!this.closable) {
 				layout.Insert(0, "{noclose}");
 			}
-			if (!disposable) {//what does it really mean? :)
+			if (!this.disposable) {//what does it really mean? :)
 				layout.Insert(0, "{nodispose}");
 			}
+			this.focus = focus;
+			this.cont = cont;
 		}
 
 		private void CreateTexts() {

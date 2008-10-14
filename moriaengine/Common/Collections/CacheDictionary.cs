@@ -1,78 +1,100 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.Timers;
 
 namespace SteamEngine {
 	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxQueueCount' usages of the dictionary. "
 		+"The maxQueueLength number should typically be pretty big, in thousands or more.")]
 	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
-		private SimpleQueue<TKey> queue = new SimpleQueue<TKey>();
-		private int maxQueueCount;
+		private LinkedList<TKey> linkedList = new LinkedList<TKey>();
+		public readonly int maxCacheItems;
+		public readonly bool disposeOnRemove;
 
-		public CacheDictionary(int maxQueueLength) {
-			if (maxQueueLength < 1) {
+		public CacheDictionary(int maxCacheItems, bool disposeOnRemove) {
+			if (maxCacheItems < 1) {
 				throw new ArgumentException("maxQueueCount must be higher than 0");
 			}
 			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>();
-			this.maxQueueCount = maxQueueLength;
+			this.maxCacheItems = maxCacheItems;
+			this.disposeOnRemove = disposeOnRemove;
 		}
 
-		public CacheDictionary(int maxQueueLength, IEqualityComparer<TKey> comparer) {
-			if (maxQueueLength < 1) {
+		public CacheDictionary(int maxCacheItems, bool disposeOnRemove, IEqualityComparer<TKey> comparer) {
+			if (maxCacheItems < 1) {
 				throw new ArgumentException("maxQueueCount must be higher than 0");
 			}
 			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>(comparer);
-			this.maxQueueCount = maxQueueLength;
+			this.maxCacheItems = maxCacheItems;
+			this.disposeOnRemove = disposeOnRemove;
 		}
-
-		public int MaxQueueCount { get {
-			return maxQueueCount;
-		} }
 
 		private struct CacheDictionaryKeyEntry {
 			internal TValue value;
-			internal int usageCounter;
-			internal CacheDictionaryKeyEntry(TValue value, int usageCounter) {
+			internal LinkedListNode<TKey> node;
+			internal CacheDictionaryKeyEntry(TValue value, LinkedListNode<TKey> node) {
 				this.value = value;
-				this.usageCounter = usageCounter;
+				this.node = node;
 			}
 		}
 
 		#region IDictionary<TKey, TValue> Members
 		public void Add(TKey key, TValue value) {
-			CacheDictionaryKeyEntry valueEntry;
-			if (dict.TryGetValue(key, out valueEntry)) {
-				dict.Add(key, new CacheDictionaryKeyEntry(value, valueEntry.usageCounter+1));
+			if (this.dict.ContainsKey(key)) {
+				throw new ArgumentException("Adding duplicate");
 			} else {
-				dict.Add(key, new CacheDictionaryKeyEntry(value, 1));
+				this.linkedList.AddFirst(key);
+				dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
+				this.PurgeLastIfNeeded();
 			}
-			EnqueueAndOrPurge(key);
+		}
+
+		private void PurgeLastIfNeeded() {
+			if (this.linkedList.Count > this.maxCacheItems) {
+				LinkedListNode<TKey> node = this.linkedList.Last;
+				this.linkedList.RemoveLast();
+				if (this.disposeOnRemove) {
+					IDisposable disposable = this.dict[node.Value] as IDisposable;
+					if (disposable != null) {
+						disposable.Dispose();
+					}
+				}
+				this.dict.Remove(node.Value);
+			}
 		}
 
 		public bool ContainsKey(TKey key) {
 			CacheDictionaryKeyEntry valueEntry;
 			if (dict.TryGetValue(key, out valueEntry)) {
-				valueEntry.usageCounter++;
-				dict[key] = valueEntry;//it's a struct we must re-enter it :\
-				EnqueueAndOrPurge(key);
+				this.linkedList.Remove(valueEntry.node);
+				this.linkedList.AddFirst(valueEntry.node);//put our node on the first place
 				return true;
 			}
 			return false;
 		}
 
 		public bool Remove(TKey key) {
-			return dict.Remove(key);
+			CacheDictionaryKeyEntry valueEntry;
+			if (dict.TryGetValue(key, out valueEntry)) {
+				this.linkedList.Remove(valueEntry.node);
+				dict.Remove(key);
+				if (this.disposeOnRemove) {
+					IDisposable disposable = valueEntry.value as IDisposable;
+					if (disposable != null) {
+						disposable.Dispose();
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public bool TryGetValue(TKey key, out TValue value) {
 			CacheDictionaryKeyEntry valueEntry;
 			if (dict.TryGetValue(key, out valueEntry)) {
-				valueEntry.usageCounter++;
-				dict[key] = valueEntry;//it's a struct we must re-enter it :\
+				this.linkedList.Remove(valueEntry.node);
+				this.linkedList.AddFirst(valueEntry.node);//put our node on the first place
 				value = valueEntry.value;
-				EnqueueAndOrPurge(key);
 				return true;
 			}
 			value = default(TValue);
@@ -81,35 +103,18 @@ namespace SteamEngine {
 
 		public TValue this[TKey key] {
 			get {
-				CacheDictionaryKeyEntry valueEntry = dict[key];
-				valueEntry.usageCounter++;
-				dict[key] = valueEntry;//it's a struct we must re-enter it :\
-				EnqueueAndOrPurge(key);
-				return valueEntry.value;
+				return dict[key].value;
 			}
 			set {
 				CacheDictionaryKeyEntry valueEntry;
 				if (dict.TryGetValue(key, out valueEntry)) {
-					dict[key] = new CacheDictionaryKeyEntry(value, valueEntry.usageCounter+1);
+					this.linkedList.Remove(valueEntry.node);
+					this.linkedList.AddFirst(valueEntry.node);//put our node on the first place
+					dict[key] = new CacheDictionaryKeyEntry(value, valueEntry.node);
 				} else {
-					dict[key] = new CacheDictionaryKeyEntry(value, 1);
-				}
-				EnqueueAndOrPurge(key);
-			}
-		}
-
-		private void EnqueueAndOrPurge(TKey key) {
-			queue.Enqueue(key);
-			if (queue.Count > maxQueueCount) {
-				TKey removedKey = queue.Dequeue();
-				CacheDictionaryKeyEntry valueEntry;
-				if (dict.TryGetValue(key, out valueEntry)) {
-					valueEntry.usageCounter--;
-					if (valueEntry.usageCounter < 1) {
-						dict.Remove(removedKey);
-					} else {
-						dict[key] = valueEntry;//it's a struct we must re-enter it :\
-					}
+					this.linkedList.AddFirst(key);
+					dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
+					this.PurgeLastIfNeeded();
 				}
 			}
 		}
@@ -135,11 +140,11 @@ namespace SteamEngine {
 
 		public void Clear() {
 			dict.Clear();
-			queue.Clear();
+			linkedList.Clear();
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item) {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			return this.ContainsKey(item.Key);
 		}
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {

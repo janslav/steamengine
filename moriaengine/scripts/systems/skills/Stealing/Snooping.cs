@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_Timer() {
 			foreach (Container cont in this.snoopedBackpacks) {
-				if (OpenedContainers.HasContainerOpen(((Character) this.Cont).Conn, cont) == DenyResult.Allow) {
+				if (OpenedContainers.HasContainerOpen((Character) this.Cont, cont) == DenyResult.Allow) {
 					this.Timer = duration;
 					return;
 				}

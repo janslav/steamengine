@@ -133,6 +133,8 @@ namespace SteamEngine {
 		public static readonly TriggerKey exit=Get("exit");//character exiting/entering a region. can be cancellable...
 		public static readonly TriggerKey clientAttach=Get("ClientAttach");
 
+		public static readonly TriggerKey containerOpen = Get("containerOpen");
+
 	}
 
 

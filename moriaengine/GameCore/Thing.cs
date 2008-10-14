@@ -28,6 +28,9 @@ using System.Diagnostics;
 using System.Configuration;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
 	internal interface ObjectWithUid {
@@ -45,7 +48,7 @@ namespace SteamEngine {
 		internal readonly MutablePoint4D point4d = new MutablePoint4D(0xffff, 0xffff, 0, 0); //made this internal because SetPosImpl is now abstract... -tar
 		private int uid = -2;
 		//internal Region region;
-		internal NetState netState;//No one is to touch this but the NetState class itself!
+		//internal NetState netState;//No one is to touch this but the NetState class itself!
 
 		internal object contOrTLL; //internal cos of ThingLinkedList
 
@@ -104,7 +107,9 @@ namespace SteamEngine {
 												"Loaded {0} things: {1} items and {2} characters.",
 												loadedItems + loadedCharacters, loadedItems, loadedCharacters));
 				foreach (Thing t in things) {
-					t.On_AfterLoad();
+					try {
+						t.On_AfterLoad();
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
 
@@ -138,7 +143,7 @@ namespace SteamEngine {
 			this.color = myDef.Color;
 			if (uidBeingLoaded == -1) {
 				things.Add(this);//sets uid
-				NetState.Resend(this);
+				this.Resend();
 			} else {
 				uid = uidBeingLoaded;
 				this.point4d = new MutablePoint4D((ushort) Globals.dice.Next(0, 20), (ushort) Globals.dice.Next(0, 20), 0, 0);
@@ -148,7 +153,8 @@ namespace SteamEngine {
 
 		protected Thing(Thing copyFrom)
 			: base(copyFrom) { //copying constuctor
-			NetState.Resend(this);
+
+			this.Resend();
 			things.Add(this);//sets uid
 			point4d = new MutablePoint4D(copyFrom.point4d);
 			def = copyFrom.def;
@@ -191,7 +197,7 @@ namespace SteamEngine {
 
 		public abstract byte FlagsToSend { get; }
 		//Normal = 0x00,
-		//Unknown = 0x01,
+		//Unknown = 0x01, (also warmode?)
 		//CanAlterPaperdoll = 0x02,
 		//Poisoned = 0x04,
 		//GoldenHealth = 0x08,
@@ -364,9 +370,9 @@ namespace SteamEngine {
 			set {
 				if (value >= 0 && (value & ~0xc000) <= 0xbb6) {
 					if (IsItem) {
-						NetState.ItemAboutToChange((AbstractItem) this);
+						ItemSyncQueue.AboutToChange((AbstractItem) this);
 					} else {
-						NetState.AboutToChangeBaseProps((AbstractCharacter) this);
+						CharSyncQueue.AboutToChangeBaseProps((AbstractCharacter) this);
 					}
 					color = value;
 				}
@@ -379,9 +385,9 @@ namespace SteamEngine {
 			}
 			set {
 				if (IsItem) {
-					NetState.ItemAboutToChange((AbstractItem) this);
+					ItemSyncQueue.AboutToChange((AbstractItem) this);
 				} else {
-					NetState.AboutToChangeBaseProps((AbstractCharacter) this);
+					CharSyncQueue.AboutToChangeBaseProps((AbstractCharacter) this);
 				}
 				model = value;
 			}
@@ -420,6 +426,10 @@ namespace SteamEngine {
 			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
 		}
 
+		public static AbstractCharacter UidGetCharacter(uint uid) {
+			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
+		}
+
 		public static AbstractItem UidGetContainer(int uid) {
 			AbstractItem i = things.Get(UidClearFlags(uid)) as AbstractItem;
 			if ((i != null) && (i.IsContainer)) {
@@ -432,7 +442,15 @@ namespace SteamEngine {
 			return things.Get(UidClearFlags(uid)) as AbstractItem;
 		}
 
+		public static AbstractItem UidGetItem(uint uid) {
+			return things.Get(UidClearFlags(uid)) as AbstractItem;
+		}
+
 		public static Thing UidGetThing(int uid) {
+			return things.Get(UidClearFlags(uid));
+		}
+
+		public static Thing UidGetThing(uint uid) {
 			return things.Get(UidClearFlags(uid));
 		}
 
@@ -630,7 +648,10 @@ namespace SteamEngine {
 			Thing.things.AddLoaded(constructed, _uid);
 
 			//now load the rest of the properties
-			constructed.On_Load(input);
+			try {
+				constructed.On_Load(input);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
 			constructed.LoadSectionLines(input);
 			if (constructed.IsChar) loadedCharacters++;
 			if (constructed.IsItem) loadedItems++;
@@ -652,11 +673,11 @@ namespace SteamEngine {
 			switch (valueName) {
 				case "p":
 					object o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
-					string v = o as string;
-					if (v != null) {
-						MutablePoint4D.Parse(this.point4d, valueString);
+					Point4D asPoint = o as Point4D;
+					if (asPoint != null) {
+						point4d.SetP(asPoint);
 					} else {
-						point4d.SetP((Point4D) o);
+						MutablePoint4D.Parse(this.point4d, (string) o);
 					}
 					//it will be put in world later by map or Cont
 					break;
@@ -746,7 +767,9 @@ namespace SteamEngine {
 			}
 
 			output.WriteValue("createdat", createdAt);
-			On_Save(output);
+			try {
+				this.On_Save(output);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			base.Save(output);//tagholder save
 		}
 
@@ -856,8 +879,10 @@ namespace SteamEngine {
 
 		//fires the @destroy trigger on this Thing, after that removes the item from world. 
 		internal virtual void Trigger_Destroy() {
-			TryTrigger(TriggerKey.destroy, null);
-			On_Destroy();
+			this.TryTrigger(TriggerKey.destroy, null);
+			try {
+				this.On_Destroy();
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		//method:On_Destroy
@@ -868,29 +893,32 @@ namespace SteamEngine {
 		}
 
 		public void Click() {
-			ThrowIfDeleted();
-			Trigger_Click(Globals.SrcCharacter);
+			this.Trigger_Click(Globals.SrcCharacter);
 		}
 
 		//method: Trigger_Click
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
 		public void Trigger_AosClick(AbstractCharacter clicker) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (clicker == null)
 				return;
-			if (!clicker.CanSeeForUpdate(this)) {
-				if (clicker.Conn != null) {
-					PacketSender.PrepareRemoveFromView(this);
-					PacketSender.SendTo(clicker.Conn, true);
-				}
-			} else {
-				bool cancel = false;
-				ScriptArgs sa = new ScriptArgs(clicker, this);
-				clicker.act = this;
-				cancel = TryCancellableTrigger(TriggerKey.aosClick, sa);
-				if (!cancel) {
-					//@aosClick on thing did not return 1
-					On_AosClick(clicker);
+
+			GameState clickerState = clicker.GameState;
+			if (clickerState != null) {
+				TCPConnection<GameState> clickerConn = clickerState.Conn;
+				if (!clicker.CanSeeForUpdate(this)) {
+					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
+				} else {
+					bool cancel = false;
+					ScriptArgs sa = new ScriptArgs(clicker, clickerState, clickerConn, this);
+					clicker.act = this;
+					cancel = this.TryCancellableTrigger(TriggerKey.aosClick, sa);
+					if (!cancel) {
+						//@aosClick on thing did not return 1
+						try {
+							this.On_AosClick(clicker, clickerState, clickerConn);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
 				}
 			}
 		}
@@ -898,25 +926,29 @@ namespace SteamEngine {
 		//method: Trigger_Click
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
 		public void Trigger_Click(AbstractCharacter clicker) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (clicker == null)
 				return;
-			if (!clicker.CanSeeForUpdate(this)) {
-				if (clicker.Conn != null) {
-					PacketSender.PrepareRemoveFromView(this);
-					PacketSender.SendTo(clicker.Conn, true);
-				}
-			} else {
-				bool cancel = false;
-				ScriptArgs sa = new ScriptArgs(clicker, this);
-				clicker.act = this;
-				cancel = Trigger_SpecificClick(clicker, sa);
-				if (!cancel) {
-					//@itemclick or @charclick on src did not return 1
-					cancel = TryCancellableTrigger(TriggerKey.click, sa);
+
+			GameState clickerState = clicker.GameState;
+			if (clickerState != null) {
+				TCPConnection<GameState> clickerConn = clickerState.Conn;
+				if (!clicker.CanSeeForUpdate(this)) {
+					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
+				} else {
+					bool cancel = false;
+					ScriptArgs sa = new ScriptArgs(clicker, this);
+					clicker.act = this;
+					cancel = this.Trigger_SpecificClick(clicker, sa);
 					if (!cancel) {
-						//@click on item did not return 1
-						On_Click(clicker);
+						//@itemclick or @charclick on src did not return 1
+						cancel = this.TryCancellableTrigger(TriggerKey.click, sa);
+						if (!cancel) {
+							//@click on item did not return 1
+							try {
+								this.On_Click(clicker, clickerState, clickerConn);
+							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						}
 					}
 				}
 			}
@@ -924,72 +956,33 @@ namespace SteamEngine {
 
 		internal abstract bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa);
 
-		public virtual void GetNameCliloc(out uint id, out string argument) {
-			id = 1042971;
-			argument = this.Name;
-		}
-
-		public virtual void AddProperties(ObjectPropertiesContainer opc) {
-
-		}
-
-		public ObjectPropertiesContainer GetProperties() {
-			ObjectPropertiesContainer opc = ObjectPropertiesContainer.Get(this);
-			if (opc != null) {
-				if (opc.Frozen) {
-					return opc;//unchanged
-				}
-			}
-			if (opc == null) {
-				opc = new ObjectPropertiesContainer(this);
-			}
-
-			uint id;
-			string argument;
-			GetNameCliloc(out id, out argument);
-			opc.AddLine(id, argument);
-
-			AddProperties(opc);
-			opc.Freeze();
-
-			return opc;//new or changed
-		}
-
 		//method: On_Click
 		//Thing`s implementation of trigger @Click,
 		//sends the name (DecoratedName) of this Thing as plain overheadmessage
-		public virtual void On_Click(AbstractCharacter clicker) {
-			Server.SendNameFrom(clicker.Conn, this,
+		public virtual void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				this.Name, 0);
 		}
-
-		public virtual void On_AosClick(AbstractCharacter clicker) {
+		
+		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
 			ObjectPropertiesContainer opc = this.GetProperties();
-			Server.SendClilocNameFrom(clicker.Conn, this,
+			PacketSequences.SendClilocNameFrom(clicker.GameState.Conn, this,
 				opc.FirstId, 0, opc.FirstArgument);
 		}
 
-		public void ChangingProperties() {
-			NetState.AboutToChangeProperty(this);
-			ObjectPropertiesContainer opc = ObjectPropertiesContainer.Get(this);
-			if (opc != null) {
-				opc.Unfreeze();
-			}
-		}
-
 		public void DClick() {
-			Trigger_DClick(Globals.SrcCharacter);
+			this.Trigger_DClick(Globals.SrcCharacter);
 		}
 
 		public void Use() {
-			Trigger_DClick(Globals.SrcCharacter);
+			this.Trigger_DClick(Globals.SrcCharacter);
 		}
 
 		//method: Trigger_DClick
 		//fires the @itemDClick / @charDClick and @dclick triggers where this is the Thing being doubleclicked.
 		public void Trigger_DClick(AbstractCharacter dclicker) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (dclicker == null)
 				return;
 
@@ -1025,9 +1018,9 @@ namespace SteamEngine {
 			DenyResult result = denyArgs.Result;
 
 			if (result != DenyResult.Allow) {
-				GameConn c = dclicker.Conn;
-				if (c != null) {
-					Server.SendDenyResultMessage(c, this, result);
+				GameState dclickerState = dclicker.GameState;
+				if (dclickerState != null) {
+					PacketSequences.SendDenyResultMessage(dclickerState.Conn, this, result);
 				}
 			} else {//action triggers
 				ScriptArgs sa = new ScriptArgs(dclicker, this);
@@ -1074,7 +1067,11 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return Name + " (0x" + Uid.ToString("x") + ")";
+			if (this.def != null) {
+				return this.Name + " (0x" + Uid.ToString("x") + ")";
+			} else {
+				return "incomplete Thing (0x" + Uid.ToString("x") + ")";
+			}
 		}
 
 		public override int GetHashCode() {
@@ -1145,14 +1142,42 @@ namespace SteamEngine {
 		}
 
 		public void RemoveFromView() {
-			PacketSender.PrepareRemoveFromView(this);
-			PacketSender.SendToClientsWhoCanSee(this);
+			DeleteObjectOutPacket p = Pool<DeleteObjectOutPacket>.Acquire();
+			GameServer.SendToClientsWhoCanSee(this, p);
 		}
 
-		public void Resend() {
-			NetState.Resend(this);
+		public abstract void Resend();
+
+		public ObjectPropertiesContainer GetProperties() {
+			ObjectPropertiesContainer opc = ObjectPropertiesContainer.GetFromCache(this);
+			if (opc != null) {
+				return opc;
+			}
+
+			opc = Pool<ObjectPropertiesContainer>.Acquire();
+
+			uint id;
+			string argument;
+			this.GetNameCliloc(out id, out argument);
+			opc.AddLine(id, argument);
+
+			this.AddProperties(opc);
+			opc.InitDone(this);
+
+			return opc;//new or changed
 		}
 
+		public virtual void GetNameCliloc(out uint id, out string argument) {
+			id = 1042971;
+			argument = this.Name;
+		}
+
+		public virtual void AddProperties(ObjectPropertiesContainer opc) {
+		}
+
+		public virtual void InvalidateProperties() {
+			ObjectPropertiesContainer.RemoveFromCache(this);
+		}
 
 		//public Gump Dialog(string gumpName) {
 		//	GumpDef GumpDef = GumpDef.Get(gumpName);
@@ -1194,37 +1219,33 @@ namespace SteamEngine {
 		}
 
 		public void Message(string arg) {
-			Message(arg, 0);
+			this.Message(arg, 0);
 		}
 
-		public void Message(string arg, int color) {
-			ThrowIfDeleted();
-			Server.SendOverheadMessageFrom(Globals.SrcGameConn, this, arg, (ushort) color);
+		public void Message(string arg, ushort color) {
+			this.ThrowIfDeleted();
+			PacketSequences.SendOverheadMessageFrom(Globals.SrcTCPConnection, this, arg, color);
 		}
 
 		public void ClilocMessage(uint msg, string args) {
-			ThrowIfDeleted();
-			PacketSender.PrepareClilocMessage(this, msg, SpeechType.Speech, 3, 0, args);
-			PacketSender.SendTo(Globals.SrcGameConn, true);
+			this.ThrowIfDeleted();
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
 		}
+
 		public void ClilocMessage(uint msg, params string[] args) {
-			ThrowIfDeleted();
-			PacketSender.PrepareClilocMessage(this, msg, SpeechType.Speech, 3, 0, string.Join("\t", args));
-			PacketSender.SendTo(Globals.SrcGameConn, true);
+			this.ThrowIfDeleted();
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
 		}
 
-
-		public void ClilocMessage(uint msg, int color, string args) {
-			ThrowIfDeleted();
-			PacketSender.PrepareClilocMessage(this, msg, SpeechType.Speech, 3, (ushort) color, args);
-			PacketSender.SendTo(Globals.SrcGameConn, true);
-		}
-		public void ClilocMessage(uint msg, int color, params string[] args) {
-			ThrowIfDeleted();
-			PacketSender.PrepareClilocMessage(this, msg, SpeechType.Speech, 3, (ushort) color, string.Join("\t", args));
-			PacketSender.SendTo(Globals.SrcGameConn, true);
+		public void ClilocMessage(uint msg, ushort color, string args) {
+			this.ThrowIfDeleted();
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
 		}
 
+		public void ClilocMessage(uint msg, ushort color, params string[] args) {
+			this.ThrowIfDeleted();
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
+		}
 
 		public void SoundTo(ushort soundId, GameConn toClient) {
 			if (soundId != 0xffff) {
@@ -1267,8 +1288,9 @@ namespace SteamEngine {
 			@param arg The text to say
 		 */
 		public void Say(string arg) {
-			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Say.");
-			Speech(arg, 0, SpeechType.Speech, 0, 3, null, null);
+			if (!string.IsNullOrEmpty(arg)) {
+				this.Speech(arg, 0, SpeechType.Speech, 0, 3, null, null);
+			}
 		}
 
 		/**
@@ -1278,8 +1300,9 @@ namespace SteamEngine {
 			@param color The color the text should be
 		 */
 		public void Say(string arg, ushort color) {
-			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Say.");
-			Speech(arg, 0, SpeechType.Speech, color, 3, null, null);
+			if (!string.IsNullOrEmpty(arg)) {
+				this.Speech(arg, 0, SpeechType.Speech, color, 3, null, null);
+			}
 		}
 
 		/**
@@ -1290,8 +1313,9 @@ namespace SteamEngine {
 			@param font The font to use for the text (The default is 3)
 		 */
 		public void Say(string arg, ushort color, byte font) {
-			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Say.");
-			Speech(arg, 0, SpeechType.Speech, color, font, null, null);
+			if (!string.IsNullOrEmpty(arg)) {
+				this.Speech(arg, 0, SpeechType.Speech, color, font, null, null);
+			}
 		}
 
 		/**
@@ -1301,7 +1325,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocSay(uint arg, params string[] args) {
-			Speech(null, arg, SpeechType.Speech, 0, 3, null, args);
+			this.Speech(null, arg, SpeechType.Speech, 0, 3, null, args);
 		}
 
 		/**
@@ -1312,7 +1336,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocSay(uint arg, ushort color, params string[] args) {
-			Speech(null, arg, SpeechType.Speech, color, 3, null, args);
+			this.Speech(null, arg, SpeechType.Speech, color, 3, null, args);
 		}
 
 		/**
@@ -1324,7 +1348,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocSay(uint arg, ushort color, byte font, params string[] args) {
-			Speech(null, arg, SpeechType.Speech, color, font, null, args);
+			this.Speech(null, arg, SpeechType.Speech, color, font, null, args);
 		}
 
 		/**
@@ -1334,9 +1358,9 @@ namespace SteamEngine {
 			@param color The color the text should be
 		 */
 		public void Yell(string arg, ushort color) {
-			ThrowIfDeleted();
-			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Yell.");
-			Speech(arg, 0, SpeechType.Yell, color, 3, null, null);
+			if (!string.IsNullOrEmpty(arg)) {
+				this.Speech(arg, 0, SpeechType.Yell, color, 3, null, null);
+			}
 		}
 
 		/**
@@ -1347,8 +1371,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocYell(uint arg, ushort color, params string[] args) {
-			ThrowIfDeleted();
-			Speech(null, arg, SpeechType.Yell, color, 3, null, args);
+			this.Speech(null, arg, SpeechType.Yell, color, 3, null, args);
 		}
 
 		/**
@@ -1358,9 +1381,9 @@ namespace SteamEngine {
 			@param color  The color the text should be
 		 */
 		public void Whisper(string arg, ushort color) {
-			ThrowIfDeleted();
-			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Whisper.");
-			Speech(arg, 0, SpeechType.Whisper, color, 3, null, null);
+			if (!string.IsNullOrEmpty(arg)) {
+				this.Speech(arg, 0, SpeechType.Whisper, color, 3, null, null);
+			}
 		}
 
 		/**
@@ -1371,8 +1394,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocWhisper(uint arg, ushort color, params string[] args) {
-			ThrowIfDeleted();
-			Speech(null, arg, SpeechType.Whisper, color, 3, null, args);
+			this.Speech(null, arg, SpeechType.Whisper, color, 3, null, args);
 		}
 
 		/**
@@ -1382,9 +1404,9 @@ namespace SteamEngine {
 			@param color  The color the text should be
 		 */
 		public void Emote(string arg, ushort color) {
-			ThrowIfDeleted();
-			Sanity.IfTrueThrow(arg == null, "arg cannot be null in Emote.");
-			Speech(arg, 0, SpeechType.Emote, color, 3, null, null);
+			if (!string.IsNullOrEmpty(arg)) {
+				this.Speech(arg, 0, SpeechType.Emote, color, 3, null, null);
+			}
 		}
 
 		/**
@@ -1395,8 +1417,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocEmote(uint arg, ushort color, params string[] args) {
-			ThrowIfDeleted();
-			Speech(null, arg, SpeechType.Emote, color, 3, null, args);
+			this.Speech(null, arg, SpeechType.Emote, color, 3, null, args);
 		}
 
 		/**
@@ -1405,7 +1426,7 @@ namespace SteamEngine {
 			@param arg The text to yell
 		 */
 		public void Yell(string arg) {
-			Yell(arg, 0);
+			this.Yell(arg, 0);
 		}
 
 		/**
@@ -1415,7 +1436,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocYell(uint arg, params string[] args) {
-			ClilocYell(arg, 0);
+			this.ClilocYell(arg, 0);
 		}
 
 		/**
@@ -1424,7 +1445,7 @@ namespace SteamEngine {
 			@param arg The text to whisper
 		 */
 		public void Whisper(string arg) {
-			Whisper(arg, 0);
+			this.Whisper(arg, 0);
 		}
 		/**
 			Makes this thing send a whisper to all clients who can hear it.
@@ -1433,7 +1454,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocWhisper(uint arg, params string[] args) {
-			ClilocWhisper(arg, 0);
+			this.ClilocWhisper(arg, 0);
 		}
 
 		/**
@@ -1442,7 +1463,7 @@ namespace SteamEngine {
 			@param arg The text to emote
 		 */
 		public void Emote(string arg) {
-			Emote(arg, 0x22);
+			this.Emote(arg, 0x22);
 		}
 		/**
 			Makes this thing send an emote to all clients in range.
@@ -1451,7 +1472,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocEmote(uint arg, params string[] args) {
-			ClilocEmote(arg, 0x22);
+			this.ClilocEmote(arg, 0x22);
 		}
 
 		public void Fix() {
@@ -1617,21 +1638,29 @@ namespace SteamEngine {
 					Unicode doesn't support special fonts like runic.
 		 */
 		public void Speech(string speech, uint clilocSpeech, SpeechType type, ushort color, ushort font, int[] keywords, string[] args) {
-			//todo: speech triggers?
 			AbstractCharacter self = this as AbstractCharacter;
 
-			string lang = null;
+			string language = "enu";
 			if (self != null) {
-				if (self.IsPlayer) {
-					GameConn conn = self.Conn;
-					if (conn != null) {
-						lang = conn.lang;
-					}
-					self.Trigger_Say(speech, type, keywords);
+				GameState state = self.GameState;
+				if (state != null) {
+					language = state.Language;
 				}
 			}
+			this.Speech(speech, clilocSpeech, type, color, font, language, keywords, args);
+		}
 
-			uint dist = 0;
+		public void Speech(string speech, uint clilocSpeech, SpeechType type, ushort color, ushort font, string language, int[] keywords, string[] args) {
+			this.ThrowIfDeleted();
+
+			AbstractCharacter self = this as AbstractCharacter;
+
+			bool selfIsPlayer = ((self != null) && (self.IsPlayer));
+			if (selfIsPlayer) {
+				self.Trigger_Say(speech, type, keywords);
+			}
+
+			ushort dist = 0;
 			switch (type) {
 				case SpeechType.Speech:
 					dist = Globals.speechDistance;
@@ -1647,7 +1676,7 @@ namespace SteamEngine {
 					break;
 				default:
 					dist = Globals.speechDistance;
-					type = SpeechType.Speech;
+					//type = SpeechType.Speech; //or should we? could this cause something bad? -tar
 					break;
 			}
 
@@ -1655,31 +1684,26 @@ namespace SteamEngine {
 			ushort x = this.point4d.x;
 			ushort y = this.point4d.y;
 
-			if ((self != null) && (self.IsPlayer)) {
-				foreach (AbstractCharacter chr in map.GetCharsInRange(x, y, (ushort) dist)) {
-					chr.Trigger_Hear(self, speech, clilocSpeech, type, color, font, lang, keywords, args);
+			if (selfIsPlayer) {
+				foreach (AbstractCharacter chr in map.GetCharsInRange(x, y, dist)) {
+					chr.Trigger_Hear(self, speech, clilocSpeech, type, color, font, language, keywords, args);
 				}
-			} else {//item is speaking... no triggers fired, just send it to players
-				bool packetPrepared = false;
-				foreach (GameConn conn in map.GetClientsInRange(x, y, (ushort) dist)) {
-					if (!packetPrepared) {
+			} else {//item/npc is speaking... no triggers fired, just send it to players
+				PacketGroup pg = null;
+				foreach (GameState state in map.GetClientsInRange(x, y, dist)) {
+					if (pg == null) {
+						pg = Pool<PacketGroup>.Acquire();
 						if (speech == null) {
-							PacketSender.PrepareClilocMessage(this, clilocSpeech, type, font, color, args == null ? null : string.Join("\t", args));
+							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocSpeech, this.Name, type, font, color, 
+								args == null ? null : string.Join("\t", args));
 						} else {
-							PacketSender.PrepareSpeech(this, speech, type, font, color, lang);
+							pg.AddPacket(PacketSequences.PrepareMessagePacket(
+								this, speech, this.Name, type, font, color, language));
 						}
-						packetPrepared = true;
 					}
-					PacketSender.SendTo(conn, false);
-				}
-				if (packetPrepared) {
-					PacketSender.DiscardLastPacket();
+					state.Conn.SendPacketGroup(pg);
 				}
 			}
-		}
-
-		public virtual void On_BeingSentTo(GameConn viewerConn) {
-			//Console.WriteLine(this+" being sent to "+viewerConn.CurCharacter);
 		}
 
 		/*
@@ -1720,7 +1744,7 @@ namespace SteamEngine {
 		public readonly Thing target;
 
 		public DenyClickArgs(AbstractCharacter clickingChar, Thing target)
-			: base(DenyResult.Allow, clickingChar, target) {
+			: base( DenyResult.Allow, clickingChar, target) {
 
 			this.clickingChar = clickingChar;
 			this.target = target;

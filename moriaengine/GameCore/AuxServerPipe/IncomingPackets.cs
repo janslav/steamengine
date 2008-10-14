@@ -12,7 +12,8 @@ namespace SteamEngine.AuxServerPipe {
 		public static readonly AuxServerPipeProtocol instance = new AuxServerPipeProtocol();
 
 
-		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> GetPacketImplementation(byte id) {
+		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> GetPacketImplementation(byte id, NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state, out bool discardAfterReading) {
+			discardAfterReading = false;
 			switch (id) {
 				case 0x01:
 					return Pool<RequestSendingLogStringsPacket>.Acquire();

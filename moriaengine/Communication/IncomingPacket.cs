@@ -36,7 +36,7 @@ namespace SteamEngine.Communication {
 
 	public abstract class IncomingPacket<TConnection, TState, TEndPoint> : Poolable
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		private byte[] buffer;
 		private int offset;
@@ -61,7 +61,7 @@ namespace SteamEngine.Communication {
 			}
 
 			lengthOut = this.lastPosition - offset;
-			if (lengthOut < 0) {
+			if ((lengthOut < 0) || (lengthOut > lengthIn)) {
 				lengthOut = 0;
 				return ReadPacketResult.NeedMoreData;
 			}
@@ -71,46 +71,33 @@ namespace SteamEngine.Communication {
 			return result;
 		}
 
+		[System.Diagnostics.Conditional("DEBUG")]
+		public void OutputPacketLog() {
+			Logger.WriteDebug("Incoming packet 0x" + this.buffer[this.offset - 1].ToString("x"));
+			CommunicationUtils.OutputPacketLog(this.buffer, this.offset, this.length);
+		}
+
+		[System.Diagnostics.Conditional("DEBUG")]
+		public void OutputPacketLog(string message) {
+			Logger.WriteDebug(string.Concat(message, " (packet 0x", this.buffer[this.offset - 1].ToString("x"), ")"));
+			CommunicationUtils.OutputPacketLog(this.buffer, this.offset, this.length);
+		}
+
+		protected int LengthIn {
+			get {
+				return this.length;
+			}
+		}
+
+		protected int Position {
+			get {
+				return this.position;
+			}
+		}
+
 		protected abstract ReadPacketResult Read();
 
 		internal protected abstract void Handle(TConnection conn, TState state);
-
-
-		internal void OutputPacketLog() {
-			OutputPacketLog(this.buffer, this.offset, this.length);
-		}
-
-		[Conditional("DEBUG")]
-		public static void OutputPacketLog(Byte[] array, int offset, int length) {
-			Logger.WriteDebug("Packet Contents: ("+length+" bytes)");
-			string s = "";
-			string t = "";
-			for (int a=0; a<length; a++) {
-				t = array[a+offset].ToString("X");
-				while (t.Length<2) {
-					t="0"+t;
-				}
-				s += " "+t;
-				if (a%10==0) {
-					Logger.WriteDebug(s);
-					s="";
-				}
-			}
-			Logger.WriteDebug(s);
-			s="";
-			for (int a=0; a<length; a++) {
-				t = ""+(char) array[a];
-				if (array[a+offset]<32 || array[a+offset]>126) {
-					t=""+(char) 128;
-				}
-				s += " "+t;
-				if (a%10==0) {
-					Logger.WriteDebug(s);
-					s="";
-				}
-			}
-			Logger.WriteDebug(s);
-		}
 
 		protected void SeekFromStart(int count) {
 			this.position = this.offset + count;
@@ -125,14 +112,14 @@ namespace SteamEngine.Communication {
 		[Summary("Decodes a unicode string, truncating it if it contains endlines (and replacing tabs with spaces).")]
 		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
 		[Param(0, "The number of bytes to decode (two per character)")]
-		protected string DecodeUnicodeString(int len) {
-			return DecodeUnicodeString(len, true);
+		protected string DecodeBigEndianUnicodeString(int len) {
+			return DecodeBigEndianUnicodeString(len, true);
 		}
 
 		[Summary("Decodes a unicode string.")]
 		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
 		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
-		protected string DecodeUnicodeString(int len, bool truncateEndlines) {
+		protected string DecodeBigEndianUnicodeString(int len, bool truncateEndlines) {
 			string str = Encoding.BigEndianUnicode.GetString(this.buffer, this.position, len);
 			int indexOfZero = str.IndexOf((char) 0);
 			if (indexOfZero > -1) {
@@ -144,6 +131,15 @@ namespace SteamEngine.Communication {
 			} else {
 				return str;
 			}
+		}
+
+		[Summary("Decodes an ascii string, which is expected to be null-terminated, truncating it if it contains endlines (and replacing tabs with spaces).")]
+		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
+		protected string DecodeTerminatedAsciiString() {
+			int indexOfEnd = Array.IndexOf<byte>(this.buffer, 0, this.position);
+			int len = indexOfEnd - this.position;
+
+			return DecodeAsciiString(len, true);
 		}
 
 		[Summary("Decodes an ascii string, truncating it if it contains endlines (and replacing tabs with spaces).")]
@@ -159,12 +155,12 @@ namespace SteamEngine.Communication {
 		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
 		protected string DecodeAsciiString(int len, bool truncateEndlines) {
 			string str="";
-			try {
+			//try {
 				str = Encoding.UTF8.GetString(this.buffer, this.position, len);
-			} catch (ArgumentOutOfRangeException) {
-				//return null;
-				throw;
-			}
+			//} catch (ArgumentOutOfRangeException) {
+			//    //return null;
+			//    throw;
+			//}
 			int indexOfZero = str.IndexOf((char) 0);
 			if (indexOfZero > -1) {
 				str = str.Substring(0, indexOfZero);

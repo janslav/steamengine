@@ -14,7 +14,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		private uint table2;
 
 		public override string ToString() {
-			return this.name;
+			return this.name + " encryption";
 		}
 
 

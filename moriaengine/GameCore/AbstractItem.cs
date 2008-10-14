@@ -24,13 +24,24 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
-	public abstract partial class AbstractItem : Thing, PacketSender.ICorpseEquipInfo {
+	public interface ICorpseEquipInfo {
+		uint FlaggedUid { get; }
+		byte Layer { get; }
+		ushort Color { get; }
+		ushort Model { get; }
+	}
+
+	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
 		private uint amount;
 		private string name;
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
 		//and coords of an item inside a container should only be changed through MoveInsideContainer
+
+		internal ItemSyncQueue.SyncFlags syncFlags;
 
 		private TriggerGroup type;
 
@@ -153,8 +164,8 @@ namespace SteamEngine {
 			}
 			set {
 				if (value != amount) {
-					this.ChangingProperties();
-					NetState.ItemAboutToChange(this);
+					this.InvalidateProperties();
+					ItemSyncQueue.AboutToChange(this);
 					Thing c = this.Cont;
 					if (c != null) {
 						c.AdjustWeight(this.def.Weight * (value - amount));
@@ -166,7 +177,7 @@ namespace SteamEngine {
 
 		public ushort ShortAmount {
 			get {
-				return (amount > 50000 ? (ushort) 50000 : (ushort) amount);
+				return (ushort) Math.Max(ushort.MaxValue, this.amount);
 			}
 		}
 
@@ -187,8 +198,12 @@ namespace SteamEngine {
 				return ((flags & 0x01) == 0x01);
 			}
 			set {
-				if (Flag_Disconnected != value) {
-					NetState.AboutToChangeVisibility(this);
+				if (this.Flag_Disconnected != value) {
+					if (value) {
+						OpenedContainers.SetContainerClosed(this);
+						this.RemoveFromView();
+					}
+					ItemSyncQueue.AboutToChange(this);
 					flags = (byte) (value ? (flags | 0x01) : (flags & ~0x01));
 					if (value) {
 						GetMap().Disconnected(this);
@@ -221,6 +236,10 @@ namespace SteamEngine {
 		}
 
 		//commands:
+		public override void Resend() {
+			ItemSyncQueue.Resend(this);
+		}
+
 		public override AbstractItem FindCont(int index) {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
@@ -231,46 +250,51 @@ namespace SteamEngine {
 		}
 
 		public void OpenTo(AbstractCharacter viewer) {
+			GameState viewerState = viewer.GameState;
+			this.OpenTo(viewer, viewerState, viewerState.Conn);
+		}
+
+		public void OpenTo(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
 			if (this.IsContainer) {
-				if (viewer != null && viewer.IsPlayer) {
-					ThrowIfDeleted();
-					viewer.ThrowIfDeleted();
-					GameConn viewerConn = viewer.Conn;
-					if (viewerConn != null) {
-						//send container
-						bool sendProperties = false;
-						OpenedContainers.SetContainerOpened(viewerConn, this);
-						using (BoundPacketGroup packets = PacketSender.NewBoundGroup()) {
-							PacketSender.PrepareOpenContainer(this);
-							if (Count > 0) {
-								if (PacketSender.PrepareContainerContents(this, viewerConn, viewer)) {
-									sendProperties = true;
-								}
-							}
-							packets.SendTo(viewerConn);
-						}
-						if (sendProperties) {
-							if (Globals.aos && viewerConn.Version.aosToolTips) {
-								foreach (AbstractItem contained in this) {
-									if (viewer.CanSeeVisibility(contained)) {
-										ObjectPropertiesContainer containedOpc = contained.GetProperties();
-										if (containedOpc != null) {
-											containedOpc.SendIdPacket(viewerConn);
-										}
-									}
-								}
-							}
-						}
-						On_ContainerOpen(viewerConn);
-					}
-				}
+				this.ThrowIfDeleted();
+				viewer.ThrowIfDeleted();
+
+				//send container
+				OpenedContainers.SetContainerOpened(viewer, this);
+				DrawContainerOutPacket packet = Pool<DrawContainerOutPacket>.Acquire();
+				packet.Prepare(this.FlaggedUid, this.Gump);
+				viewerConn.SendSinglePacket(packet);
+
+				PacketSequences.SendContainerContentsWithPropertiesTo(viewer, viewerState, viewerConn, this);
+
+				this.Trigger_ContainerOpen(viewer, viewerState, viewerConn);
 			} else {
 				throw new InvalidOperationException("The item (" + this + ") is not a container");
 			}
 		}
 
+		private void Trigger_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
+			ScriptArgs sa = new ScriptArgs(viewer, viewerState, viewerConn);
+			this.TryTrigger(TriggerKey.containerOpen, sa);
+			try {
+				this.On_ContainerOpen(viewer, viewerState, viewerConn);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		}
+
+		public virtual void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
+		}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public virtual void On_ContainerOpen(GameConn viewerConn) {
 
+		}
+
+		public virtual ItemOnGroundUpdater GetOnGroundUpdater() {
+			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);
+			if (iogu == null) {
+				iogu = new ItemOnGroundUpdater(this);
+			}
+			return iogu;
 		}
 
 		internal override void Trigger_Destroy() {
@@ -299,7 +323,7 @@ namespace SteamEngine {
 				}
 			}
 			set {
-				this.ChangingProperties();
+				this.InvalidateProperties();
 				if (!string.IsNullOrEmpty(value)) {
 					name = String.Intern(value);
 				} else {
@@ -511,9 +535,8 @@ namespace SteamEngine {
 
 		public override sealed bool IsEquipped {
 			get {
-				Thing t = Cont;
-				return (t != null && t.IsChar);
-			}
+				return (this.Cont is AbstractCharacter);
+			} 
 		}
 
 		public override sealed bool IsOnGround {
@@ -568,6 +591,11 @@ namespace SteamEngine {
 			} else {
 				return tll.GetItemEnumerator();
 			}
+		}
+
+		public override void InvalidateProperties() {
+			ItemSyncQueue.PropertiesChanged(this);
+			base.InvalidateProperties();
 		}
 	}
 }

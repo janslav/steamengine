@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int rowCntr = 0;
 			for(int i = firstiVal; i < imax; i++) {
 				AbstractAccount ga = accList[i];
-				Hues nameColor = ga.Online ? Hues.OnlineColor : Hues.OfflineColor;
+				Hues nameColor = ga.IsOnline ? Hues.OnlineColor : Hues.OfflineColor;
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, i + 10); //account info
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(nameColor, ga.Name); //acc name

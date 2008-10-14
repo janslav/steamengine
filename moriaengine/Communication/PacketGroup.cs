@@ -62,6 +62,12 @@ namespace SteamEngine.Communication {
 			packets.Add(packet);
 		}
 
+		public T AcquirePacket<T>() where T : OutgoingPacket, new() {
+			T packet = Pool<T>.Acquire();
+			this.AddPacket(packet);
+			return packet;
+		}
+
 		protected override void On_Reset() {
 			this.isWritten = false;
 			this.compressionDone = false;
@@ -179,6 +185,13 @@ namespace SteamEngine.Communication {
 			this.packets.Clear();
 
 			base.On_DisposeManagedResources();
+		}
+
+
+		public static PacketGroup CreateFreePG() {
+			PacketGroup pg = new PacketGroup();
+			pg.SetType(PacketGroupType.Free);
+			return pg;
 		}
 	}
 }

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using SteamEngine.Timers;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine.Persistence {
 	public delegate IUnloadable LoadSection(PropsSection data);
@@ -35,21 +36,22 @@ namespace SteamEngine.Persistence {
 		//    }
 		//}
 		
-		public static void Save() {
+		internal static bool Save() {
+
 			using (StopWatch.StartAndDisplay("Saving world data...")) {
-				Server.BroadCast("Server is pausing for worldsave...");
-				Globals.PauseServerTime();
+				PacketSequences.BroadCast("Server is pausing for worldsave...");
+
 				WeakRefDictionaryUtils.PurgeAll();
 
 				//-1 because we will save new files now.
 				if (!TrySave()) {
-					Server.BroadCast("Saving failed!");//we do not throw an exception to kill the server, 
+					PacketSequences.BroadCast("Saving failed!");//we do not throw an exception to kill the server, 
 					//the admin should do that, after he tries to fix the problem somehow...
+					return false;
 				} else {
-					Server.BroadCast("Saving finished.");
+					PacketSequences.BroadCast("Saving finished.");
+					return true;
 				}
-
-				Globals.UnPauseServerTime();
 			}
 		}
 		

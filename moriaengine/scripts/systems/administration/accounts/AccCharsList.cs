@@ -35,8 +35,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//mame-li ho, ulozme si ho do parametru pro pozdejsi pouziti
 			args.SetTag(D_Acc_Characters.accountTK, acc);
 
-			List<AbstractCharacter> chars = acc.Characters;
-			
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(600);
@@ -62,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			foreach(AbstractCharacter oneChar in chars) {
+			foreach(AbstractCharacter oneChar in acc.Characters) {
 				if(oneChar == null) {
 					continue;
 				}
@@ -95,8 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
 				int row = (int)(gr.pressedButton - 10);
-				List<AbstractCharacter> chars = acc.Characters;
-				Character oneChar = (Character)chars[row];
+				Character oneChar = (Character) acc.Characters[row];
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);

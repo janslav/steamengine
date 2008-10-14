@@ -20,6 +20,8 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Packets;
 using SteamEngine.Common;
+using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -28,25 +30,25 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
     public partial class Item : AbstractItem {
-		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 "+
+		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
 				" then the item will be deleted. Method returns the actually consumed amount.")]
-		public uint Consume(long howMuch) {
+		public uint Consume(long howMany) {
 			long prevAmount = this.Amount;
-			long resultAmount = prevAmount - howMuch;
-			
+			long resultAmount = prevAmount - howMany;
+
 			if (resultAmount < 1) {
 				this.Delete();
-				return (uint)prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
+				return (uint) prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
 			} else {
 				this.Amount = (uint) resultAmount;
-				return (uint)howMuch; //consumed the desired amount
+				return (uint) howMany; //consumed the desired amount
 			}
 		}
 
 		public override byte FlagsToSend {
 			get {	//It looks like only 080 (invis) and 020 (static) are actually used
 				int ret = 0;
-				if (IsNotVisible) {
+				if (this.IsNotVisible) {
 					ret |= 0x80;
 				}
 				return (byte) ret;
@@ -65,8 +67,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				byte newFlags = (byte) (value?(flags|0x80):(flags&~0x80));
-				if (newFlags != flags) {
-					NetState.AboutToChangeVisibility(this);
+				if (newFlags != this.flags) {
+					if (value) {
+						OpenedContainers.SetContainerClosed(this);
+						this.RemoveFromView();
+					}
+					ItemSyncQueue.AboutToChange(this);
 					flags = newFlags;
 				}
 			}
@@ -74,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override sealed bool IsNotVisible {
 			get {
-				return (Flag_Invisible || !IsInVisibleLayer || Flag_Disconnected);
+				return (this.Flag_Invisible || !this.IsInVisibleLayer || this.Flag_Disconnected);
 			}
 		}
 
@@ -168,12 +174,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_Click(AbstractCharacter clicker) {
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
 			uint amount = this.Amount;
 			if (this.Amount <= 1) {
-				Server.SendNameFrom(clicker.Conn, this, this.Name, 0);
+				PacketSequences.SendNameFrom(clickerConn, this, this.Name, 0);
 			} else {
-				Server.SendNameFrom(clicker.Conn, this, string.Concat(amount.ToString(), " ", this.Name), 0);
+				PacketSequences.SendNameFrom(clickerConn, this, string.Concat(amount.ToString(), " ", this.Name), 0);
 			}
 		}
 

@@ -31,7 +31,7 @@ namespace SteamEngine.Packets {
 		private static FreedPacketGroup[] hackMove;
 		private static FreedPacketGroup[] targettingCursor;
 		private static FreedPacketGroup cancelTargettingCursor;
-		private static FreedPacketGroup[] warMode;
+		//private static FreedPacketGroup[] warMode;
 		private static FreedPacketGroup[] rejectDeleteRequest;
 		private static FreedPacketGroup[] failedLogin;
 		private static FreedPacketGroup requestClientVersion;
@@ -66,9 +66,9 @@ namespace SteamEngine.Packets {
 
 			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareCancelTargettingCursor(); cancelTargettingCursor = pg.Free();
 			
-			warMode = new FreedPacketGroup[2];
-			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(false); warMode[0] = pg.Free();
-			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(true); warMode[1] = pg.Free();
+			//warMode = new FreedPacketGroup[2];
+			//pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(false); warMode[0] = pg.Free();
+			//pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(true); warMode[1] = pg.Free();
 
 			deathMessages = new FreedPacketGroup[3];
 			pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(0); deathMessages[0] = pg.Free();
@@ -84,20 +84,20 @@ namespace SteamEngine.Packets {
 			rejectDeleteRequest = new FreedPacketGroup[8];
 			for (int index=0; index<6; index++) {
 				pg = PacketSender.NewBoundGroup();
-				PacketSender.PrepareRejectDeleteRequest((DeleteRequestReturnValue) index);
+				PacketSender.PrepareRejectDeleteRequest((DeleteCharacterResult) index);
 				rejectDeleteRequest[index] = pg.Free();
 			}
 			pg = PacketSender.NewBoundGroup();
-			PacketSender.PrepareRejectDeleteRequest(DeleteRequestReturnValue.RejectWithoutSendingAMessage);
+			PacketSender.PrepareRejectDeleteRequest(DeleteCharacterResult.Deny_NoMessage);
 			rejectDeleteRequest[6] = pg.Free();
 			pg = PacketSender.NewBoundGroup();
-			PacketSender.PrepareRejectDeleteRequest(DeleteRequestReturnValue.AcceptedRequest);
+			PacketSender.PrepareRejectDeleteRequest(DeleteCharacterResult.Allow);
 			rejectDeleteRequest[7] = pg.Free();
 			
-			failedLogin = new FreedPacketGroup[(int)FailedLoginReason.Count];
-			for (int index=0; index<(int)FailedLoginReason.Count; index++) {
+			failedLogin = new FreedPacketGroup[5];
+			for (int index=0; index<5; index++) {
 				pg = PacketSender.NewBoundGroup();
-				PacketSender.PrepareFailedLogin((FailedLoginReason)index);
+				PacketSender.PrepareFailedLogin((LoginDeniedReason)index);
 				failedLogin[index] = pg.Free();
 			}
 
@@ -131,7 +131,8 @@ namespace SteamEngine.Packets {
 			PacketSender.PrepareSeasonAndCursor(season, cursor);
 			seasonAndCursor[(int) season, (int) cursor] = pg.Free();
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void SendSeasonAndCursor(GameConn c, Season season, CursorType cursor) {
 			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 			Sanity.IfTrueThrow((((byte) season) < 0 || ((byte) season) > 4), "Illegal season value.");
@@ -140,6 +141,7 @@ namespace SteamEngine.Packets {
 			seasonAndCursor[(int) season, (int) cursor].SendTo(c);
 		}
 
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void SendFacetChange(GameConn c, byte facet) {
 			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 			Sanity.IfTrueThrow(facet>facetChange.Length, "Invalid facet "+facet+".");
@@ -164,29 +166,32 @@ namespace SteamEngine.Packets {
 			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 			cancelTargettingCursor.SendTo(c);
 		}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendWarMode(GameConn c, AbstractCharacter character) {
+		//    SendWarMode(c, character.Flag_WarMode);
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendWarMode(GameConn c, bool enabled) {
+		//    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
+		//    warMode[enabled?1:0].SendTo(c);
+		//}
 		
-		public static void SendWarMode(GameConn c, AbstractCharacter character) {
-			SendWarMode(c, character.Flag_WarMode);
-		}
-		
-		public static void SendWarMode(GameConn c, bool enabled) {
+		//public static void SendRejectDeleteRequest(GameConn c, DeleteCharacterResult msg) {
+		//    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
+		//    int imsg = (int) msg;
+		//    if (imsg>=254) {
+		//        imsg-=248;
+		//    }
+		//    Sanity.IfTrueThrow(imsg<0 || imsg>7, "Invalid DeleteRequestReturnValue '"+msg+"'.");
+		//    rejectDeleteRequest[imsg].SendTo(c);
+		//}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
+		public static void SendFailedLogin(GameConn c, LoginDeniedReason msg) {
 			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
-			warMode[enabled?1:0].SendTo(c);
-		}
-		
-		public static void SendRejectDeleteRequest(GameConn c, DeleteRequestReturnValue msg) {
-			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
-			int imsg = (int) msg;
-			if (imsg>=254) {
-				imsg-=248;
-			}
-			Sanity.IfTrueThrow(imsg<0 || imsg>7, "Invalid DeleteRequestReturnValue '"+msg+"'.");
-			rejectDeleteRequest[imsg].SendTo(c);
-		}
-		
-		public static void SendFailedLogin(GameConn c, FailedLoginReason msg) {
-			Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
-			Sanity.IfTrueThrow((int)msg<0 || (int)msg>(int)FailedLoginReason.Count, "Invalid FailedLoginReason '"+msg+"'.");
+			Sanity.IfTrueThrow((int)msg<0 || (int)msg>5, "Invalid FailedLoginReason '"+msg+"'.");
 			failedLogin[(int)msg].SendTo(c);
 		}
 		

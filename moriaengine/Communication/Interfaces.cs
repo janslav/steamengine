@@ -31,7 +31,7 @@ namespace SteamEngine.Communication {
 	public interface IClientFactory<TConnection, TState, TEndPoint> //:
 		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		TConnection Connect(TEndPoint endpoint);
 	}
@@ -40,7 +40,7 @@ namespace SteamEngine.Communication {
 		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
 		//where TProtocol : IProtocol<TConnection, TState, TEndPoint>, new()
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		void Bind(TEndPoint endpoint);
 		TEndPoint BoundTo { get; }
@@ -59,15 +59,15 @@ namespace SteamEngine.Communication {
 	public interface IProtocol<TConnection, TState, TEndPoint>
 		//where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 		
-		IncomingPacket<TConnection, TState, TEndPoint> GetPacketImplementation(byte id);
+		IncomingPacket<TConnection, TState, TEndPoint> GetPacketImplementation(byte id, TConnection conn, TState state, out bool discardAfterReading);
 	}
 
 	public interface IConnectionState<TConnection, TState, TEndPoint>
 		//where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		IEncryption Encryption { get; }
 
@@ -90,7 +90,10 @@ namespace SteamEngine.Communication {
 	}
 
 	public interface ICompression {
+		// Compress outgoing data
 		int Compress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
+
+		// Decompress incoming data
 		int Decompress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length);
 	}
 }

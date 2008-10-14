@@ -797,6 +797,10 @@
       <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="Communication.csproj">
+      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="GameCore.csproj">
       <Project>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</Project>
       <Name>GameCore</Name>

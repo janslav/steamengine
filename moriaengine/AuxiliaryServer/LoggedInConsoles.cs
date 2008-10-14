@@ -9,10 +9,10 @@ using SteamEngine.Common;
 namespace SteamEngine.AuxiliaryServer {
 
 	public static class LoggedInConsoles {
-		static Dictionary<GameServers.GameServerClient, LinkedList<ConsoleServer.ConsoleClient>> consoles = 
-			new Dictionary<GameServers.GameServerClient,LinkedList<ConsoleServer.ConsoleClient>>();
-		static Dictionary<ConsoleServer.ConsoleClient, LinkedList<GameServers.GameServerClient>> gameServers = 
-			new Dictionary<ConsoleServer.ConsoleClient,LinkedList<GameServers.GameServerClient>>();
+		static Dictionary<GameServers.GameServerClient, LinkedList<ConsoleServer.ConsoleClient>> consoles =
+			new Dictionary<GameServers.GameServerClient, LinkedList<ConsoleServer.ConsoleClient>>();
+		static Dictionary<ConsoleServer.ConsoleClient, LinkedList<GameServers.GameServerClient>> gameServers =
+			new Dictionary<ConsoleServer.ConsoleClient, LinkedList<GameServers.GameServerClient>>();
 
 
 		internal static void AddPair(ConsoleServer.ConsoleClient console, GameServers.GameServerClient gameServer) {

@@ -23,6 +23,7 @@ using SteamEngine.Common;
 using SteamEngine.LScript;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
@@ -49,31 +50,30 @@ namespace SteamEngine.CompiledScripts {
 
 		[Button("Skills")]
 		public void ShowSkills() {
-			ShowSkillsTo(Globals.SrcGameConn);
+			GameState state = Globals.SrcGameState;
+			if (state != null) {
+				this.ShowSkillsTo(state.Conn, state);
+			}
 		}
 
 		public void AllShow() {
-			if (Account!=null) {
-				if (IsPlevelAtLeast(Globals.plevelOfGM)) {
-					if (Account.AllShow) {
-						Account.AllShow=false;
-						Globals.SrcWriteLine("AllShow off.");
-					} else {
-						Account.AllShow=true;
-						Globals.SrcWriteLine("AllShow on.");
-					}
+			GameState state = this.GameState;
+			if (state != null) {
+				if (state.AllShow) {
+					state.AllShow = false;
+					Globals.SrcWriteLine("AllShow off.");
 				} else {
-					throw new SEException("You need to be plevel "+Globals.plevelOfGM+" (Currently "+Account.PLevel+"/"+Account.MaxPLevel+") or above to use allShow.");
+					state.AllShow = true;
+					Globals.SrcWriteLine("AllShow on.");
 				}
 			}
 		}
 
 		public void AllShow(bool value) {
-			if (Account!=null) {
-				if (IsPlevelAtLeast(Globals.plevelOfGM)) {
-					Account.AllShow=value;
-					Globals.SrcWriteLine("AllShow "+(Account.AllShow?"on":"off"));
-				}
+			GameState state = this.GameState;
+			if (state != null) {
+				state.AllShow = value;
+				Globals.SrcWriteLine("AllShow " + (value ? "on" : "off"));
 			}
 		}
 
@@ -81,15 +81,14 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_LogOut() {
 			//TODO: In safe/nonsafe areas, settings, etc.
 
-			//this.RemoveTimer(charLingeringTimerTK);
-			this.AddTimer(charLingeringTimerTK, new CharLingeringTimer()).DueInSeconds = 5;
+			//this.AddTimer(charLingeringTimerTK, new CharLingeringTimer()).DueInSeconds = 5;
 
-			if (DbManager.Config.useDb) {
-				DbMethods.loginLogs.GameLogout(this.Conn);
-				Logger.WriteDebug(ScriptUtil.GetLogString(this.Conn, "Logged out"));
-			} else {
-				Console.WriteLine(ScriptUtil.GetLogString(this.Conn, "Logged out"));
-			}
+			//if (DbManager.Config.useDb) {
+			//    DbMethods.loginLogs.GameLogout(this.Conn);
+			//    Logger.WriteDebug(ScriptUtil.GetLogString(this.Conn, "Logged out"));
+			//} else {
+			//    Console.WriteLine(ScriptUtil.GetLogString(this.Conn, "Logged out"));
+			//}
 
 			base.On_LogOut();
 		}
@@ -97,12 +96,12 @@ namespace SteamEngine.CompiledScripts {
 		public override bool On_LogIn() {
 			bool stopLogin = base.On_LogIn();
 			if (!stopLogin) {
-				if (DbManager.Config.useDb) {
-					DbMethods.loginLogs.GameLogin(this.Conn);
-					Logger.WriteDebug(ScriptUtil.GetLogString(this.Conn, "Logged in"));
-				} else {
-					Console.WriteLine(ScriptUtil.GetLogString(this.Conn, "Logged in"));
-				}
+				//if (DbManager.Config.useDb) {
+				//    DbMethods.loginLogs.GameLogin(this.Conn);
+				//    Logger.WriteDebug(ScriptUtil.GetLogString(this.Conn, "Logged in"));
+				//} else {
+				//    Console.WriteLine(ScriptUtil.GetLogString(this.Conn, "Logged in"));
+				//}
 			}
 			return stopLogin;
 		}
@@ -192,25 +191,25 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Add(ThingDef addedDef) {
-			GameConn conn = this.Conn;
-			if (conn != null) {
+			GameState state = this.GameState;
+			if (state != null) {
 				if (addedDef != null) {
 					string name = addedDef.Name;
-					SysMessage("Kam chceš umístit '"+name+"' ?");
+					this.SysMessage("Kam chceš umístit '" + name + "' ?");
 
 					ItemDef idef = addedDef as ItemDef;
 					if ((idef != null) && (idef.MultiData != null)) {
-						conn.TargetForMultis(idef.Model, Add_OnTargon, null, addedDef);
+						state.TargetForMultis(idef.Model, this.Add_OnTargon, null, addedDef);
 					} else {
-						conn.Target(true, Add_OnTargon, null, addedDef);
+						state.Target(true, this.Add_OnTargon, null, addedDef);
 					}
 				} else {
-					SysMessage("Nenalezen odpovidajici ThingDef.");
+					this.SysMessage("Nenalezen odpovidajici ThingDef.");
 				}
 			}
 		}
 
-		private void Add_OnTargon(GameConn conn, IPoint3D getback, object parameter) {
+		private void Add_OnTargon(GameState state, IPoint3D getback, object parameter) {
 			ThingDef addedDef = parameter as ThingDef;
 			if (addedDef == null) {
 				return;
@@ -220,6 +219,6 @@ namespace SteamEngine.CompiledScripts {
 				getback = targettedItem.TopObj();
 			}
 			addedDef.Create(getback.X, getback.Y, getback.Z, this.M);
-		}		
+		}
 	}
 }
