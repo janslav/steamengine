@@ -18,8 +18,10 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		public void Prepare(byte[] ip) {
 			this.names.Clear();
-			foreach (GameServerInstanceSettings server in Settings.KnownGameServersList) {
-				this.names.Add(server.Name);
+			foreach (GameServers.GameServerClient server in GameServers.GameServerServer.AllGameServers) {
+				if (server.StartupFinished) {
+					this.names.Add(server.Setting.Name);
+				}
 			}
 			this.ip = ip;
 			this.timezone = Settings.timeZone;

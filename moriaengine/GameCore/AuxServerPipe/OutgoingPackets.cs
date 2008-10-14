@@ -72,9 +72,8 @@ namespace SteamEngine.AuxServerPipe {
 
 	internal class StartupFinishedPacket : OutgoingPacket {
 		static StartupFinishedPacket() {
-			group = new PacketGroup();
+			group = PacketGroup.CreateFreePG();
 			group.AddPacket(new StartupFinishedPacket());
-			group.SetType(PacketGroupType.Free);
 		}
 
 		public override byte Id {

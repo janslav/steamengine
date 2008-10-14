@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
-	
+
 namespace SteamEngine {
 	public abstract class AbstractSkillDef : AbstractDef/*TriggerGroupHolder*/ {
 
@@ -35,20 +35,26 @@ namespace SteamEngine {
 		private static Dictionary<string, ConstructorInfo> skillDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 		//string-ConstructorInfo pairs  ("CombatSkillDef" - CombatSkillDef.ctor)
 
+
+		private FieldValue key;
+		private ushort id;
+		private FieldValue startByMacroEnabled;
+
 		private TriggerGroup scriptedTriggers;
-		
+
+
 		public static AbstractSkillDef ByDefname(string defname) {
 			AbstractScript script;
 			byDefname.TryGetValue(defname, out script);
 			return script as AbstractSkillDef;
 		}
-		
+
 		public static AbstractSkillDef ByKey(string key) {
 			AbstractSkillDef retVal;
 			byKey.TryGetValue(key, out retVal);
 			return retVal;
 		}
-		
+
 		public static AbstractSkillDef ById(int id) {
 			if ((id >= 0) || (id < byId.Count)) {
 				return byId[id];
@@ -56,10 +62,12 @@ namespace SteamEngine {
 			return null;
 		}
 
-		public static int SkillsCount { get {
-			return byId.Count;
-		} }
-		
+		public static int SkillsCount {
+			get {
+				return byId.Count;
+			}
+		}
+
 		public static void RegisterSkillDef(AbstractSkillDef sd) {
 			ushort id = sd.Id;
 			while (byId.Count <= id) {
@@ -73,13 +81,13 @@ namespace SteamEngine {
 			byDefname[sd.Defname] = sd;
 			byKey[sd.Key] = sd;
 		}
-		
+
 		public static void UnRegisterSkillDef(AbstractSkillDef sd) {
 			byId[sd.Id] = null;
 			byDefname.Remove(sd.Defname);
 			byKey.Remove(sd.Key);
 		}
-		
+
 		internal new static void UnloadScripts() {
 			//byDefname.Clear();
 			byKey.Clear();
@@ -95,14 +103,14 @@ namespace SteamEngine {
 		public static new bool ExistsDefType(string name) {
 			return skillDefCtorsByName.ContainsKey(name);
 		}
-		
-		private static Type[] skillDefConstructorParamTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
-		
+
+		private static Type[] skillDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
 		//called by ClassManager
 		internal static bool RegisterSkillDefType(Type skillDefType) {
 			ConstructorInfo ci;
 			if (skillDefCtorsByName.TryGetValue(skillDefType.Name, out ci)) { //we have already a ThingDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class "+LogStr.Ident(ci.DeclaringType)+" in the register of SkillDef classes.");
+				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SkillDef classes.");
 			}
 			ci = skillDefType.GetConstructor(skillDefConstructorParamTypes);
 			if (ci == null) {
@@ -112,19 +120,19 @@ namespace SteamEngine {
 			return false;
 		}
 
-		
+
 		internal static void StartingLoading() {
-			
+
 		}
-		
+
 		internal static AbstractSkillDef LoadFromScripts(PropsSection input) {
 			string typeName = input.headerType.ToLower();
-			
+
 			PropsLine prop = input.PopPropsLine("defname");
-			if (prop==null) {
+			if (prop == null) {
 				throw new Exception("Missing the defname field for this SkillDef.");
 			}
-			
+
 			string defName;
 			Match ma = TagMath.stringRE.Match(prop.value);
 			if (ma.Success) {
@@ -132,18 +140,18 @@ namespace SteamEngine {
 			} else {
 				defName = String.Intern(prop.value);
 			}
-			
+
 			AbstractScript def;
 			byDefname.TryGetValue(defName, out def);
 			AbstractSkillDef skillDef = def as AbstractSkillDef;
 
 			ConstructorInfo constructor = skillDefCtorsByName[typeName];
-			
+
 			if (skillDef == null) {
 				if (def != null) {//it isnt skilldef
-					throw new ScriptException("SkillDef "+LogStr.Ident(defName)+" has the same name as "+LogStr.Ident(def));	
+					throw new ScriptException("SkillDef " + LogStr.Ident(defName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] {defName, input.filename, input.headerLine};
+					object[] cargs = new object[] { defName, input.filename, input.headerLine };
 					skillDef = (AbstractSkillDef) constructor.Invoke(cargs);
 				}
 			} else if (skillDef.unloaded) {
@@ -158,13 +166,13 @@ namespace SteamEngine {
 
 				UnRegisterSkillDef(skillDef);//will be re-registered again
 			} else {
-				throw new OverrideNotAllowedException("SkillDef "+LogStr.Ident(defName)+" defined multiple times.");
+				throw new OverrideNotAllowedException("SkillDef " + LogStr.Ident(defName) + " defined multiple times.");
 			}
-			
+
 			if (!TagMath.TryParseUInt16(input.headerName, out skillDef.id)) {
 				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
 			}
-		
+
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
 				input.headerName = "t__" + input.headerName + "__";
@@ -172,50 +180,58 @@ namespace SteamEngine {
 			} else {
 				skillDef.scriptedTriggers = null;
 			}
-			
+
 			skillDef.LoadScriptLines(input);
-			
+
 			RegisterSkillDef(skillDef);
-			
+
 			return skillDef;
 		}
-		
+
 		internal static void LoadingFinished() {
-			
+
 		}
-		
-		private FieldValue key;
-		private ushort id;
-		
-		public AbstractSkillDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
-			key = InitField_Typed("key", "", typeof(string));
+
+		public AbstractSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+			this.key = this.InitField_Typed("key", "", typeof(string));
+			this.startByMacroEnabled = this.InitField_Typed("startByMacroEnabled", false, typeof(bool));
 		}
-		
-		public string Key  {
+
+		public ushort Id {
 			get {
-				return (string) key.CurrentValue;
-			} 
+				return id;
+			}
+		}
+
+		public string Key {
+			get {
+				return (string) this.key.CurrentValue;
+			}
 			set {
 				string prev = Key;
 				key.CurrentValue = value;
 				string after = Key;
-				if (string.Compare(prev, after, true)!=0) {
+				if (string.Compare(prev, after, true) != 0) {
 					byKey.Remove(prev);
 					byKey[after] = this;
 				}
 			}
 		}
-		
-		public ushort Id  {
+
+		public bool StartByMacroEnabled {
 			get {
-				return id;
-			}			
+				return (bool) this.startByMacroEnabled.CurrentValue;
+			}
+			set {
+				this.startByMacroEnabled.CurrentValue = value;
+			}
 		}
-		
-		public TriggerGroup TG  {
+
+		public TriggerGroup TG {
 			get {
 				return this.scriptedTriggers;
-			} 
+			}
 		}
 
 		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
@@ -259,19 +275,20 @@ namespace SteamEngine {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			base.LoadScriptLine(filename, line, param, args);
 		}
-		
+
 		//internal protected abstract void Select(AbstractCharacter ch);
-		
+
 		public override string ToString() {
-			return GetType().Name+" "+Key;
+			return GetType().Name + " " + Key;
 		}
 	}
-	
+
 	[Summary("Instances of this class store the skill values of each character")]
 	public interface ISkill {
-		ushort RealValue {get; set;}
-		ushort Cap {get; set;}
-		SkillLockType Lock {get; set;}
-		ushort Id {get;}
+		ushort RealValue { get; set;}
+		ushort ModifiedValue { get; }
+		ushort Cap { get; set;}
+		SkillLockType Lock { get; set;}
+		ushort Id { get;}
 	}
 }

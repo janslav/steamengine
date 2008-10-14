@@ -31,7 +31,7 @@ namespace SteamEngine.Communication {
 	public abstract class AsyncCore<TConnection, TState, TEndPoint> : Disposable//,
 		//IAsyncCore<TConnection, TState, TEndPoint>
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 
 
@@ -43,8 +43,8 @@ namespace SteamEngine.Communication {
 		private ManualResetEvent workersNeedStopping = new ManualResetEvent(false);
 
 		private Thread workerAlpha;
-		private Thread workerBeta;
-		private Thread workerGamma;
+		//private Thread workerBeta;
+		//private Thread workerGamma;
 		private SimpleQueue<OutgoingMessage> outgoingPackets;
 
 		internal readonly IProtocol<TConnection, TState, TEndPoint> protocol;
@@ -62,8 +62,8 @@ namespace SteamEngine.Communication {
 			string threadsName = this.GetType().Name;
 
 			this.workerAlpha = CreateAndStartWorkerThread(threadsName+"_Worker_Alpha");
-			this.workerBeta = CreateAndStartWorkerThread(threadsName+"_Worker_Beta");
-			this.workerGamma = CreateAndStartWorkerThread(threadsName+"_Worker_Gamma");
+			//this.workerBeta = CreateAndStartWorkerThread(threadsName+"_Worker_Beta");
+			//this.workerGamma = CreateAndStartWorkerThread(threadsName+"_Worker_Gamma");
 
 			this.lockObject = lockObject;
 		}

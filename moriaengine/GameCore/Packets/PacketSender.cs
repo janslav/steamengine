@@ -26,252 +26,253 @@ namespace SteamEngine.Packets {
 		}
 		
 		//----------------- Packet Preparation Methods ----------------
-		
-		public static void PrepareRemoveFromView(Thing thing) {
-			PrepareRemoveFromView(thing.FlaggedUid);
-		}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareRemoveFromView(Thing thing) {
+		//    PrepareRemoveFromView(thing.FlaggedUid);
+		//}
+
 		//for backwards compatibility
-		public static void PrepareRemoveFromView(int uid) {
-			uint uuid = (uint) uid;
-			PrepareRemoveFromView(uuid);
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareRemoveFromView(int uid) {
+		//    uint uuid = (uint) uid;
+		//    PrepareRemoveFromView(uuid);
+		//}
+
 		//This is used by a few things. Most notably, NetState uses it for things which have been deleted,
 		//and it is used when mounts are dismounted, since mountitem UIDs are sent as the mount's UID flagged with
 		//the item flag (0x40000000).
-		public static void PrepareRemoveFromView(uint uid) {
-			StartGenerating();
-			EncodeByte(0x1d, 0);
-			EncodeUInt(uid, 1);
-			DoneGenerating(5);
-			Compress();
-		}
-		
-		public static void PrepareVersions(uint[] vals) {
-			StartGenerating();
-			EncodeByte(0x3e, 0);
-			int blockSize=1;
-			for (int a=0; a<9; a++) {
-				if (vals.Length>a) {
-					EncodeUInt(vals[a], blockSize);
-				} else {
-					EncodeInt(0, blockSize);
-				}
-				blockSize+=4;
-			}
-			DoneGenerating(blockSize);	//37
-			Compress();
-		}
-		
-		public static void PreparePaperdollItem(AbstractItem item) {
-			Sanity.IfTrueThrow(item==null, "PreparePaperdollItem called with a null item.");
-			StartGenerating();
-			EncodeByte(0x2e, 0);
-			EncodeUInt(item.FlaggedUid,1);
-			EncodeUShort(item.Model,5);
-			EncodeByte(0, 7);
-			EncodeByte((byte) item.point4d.z, 8);
-			EncodeUInt(item.Cont.FlaggedUid,9);
-			EncodeUShort(item.Color,13);
-			DoneGenerating(15);
-			Compress();
-		}
-		
-		public static void PrepareMountInfo(AbstractCharacter rider) {
-			AbstractCharacter mount = rider.Mount;
-			
-			StartGenerating();
-			EncodeByte(0x2e, 0);
-			EncodeUInt((uint) (mount.Uid|0x40000000), 1);
-			EncodeUShort(mount.MountItem, 5);
-			EncodeByte(0, 7);
-			EncodeByte(25, 8);
-			EncodeUInt(rider.FlaggedUid, 9);
-			EncodeUShort(mount.Color, 13);
-			DoneGenerating(15);
-			Compress();
-		}
-		
-		public static void PrepareUpdateStats(AbstractCharacter cre, bool showReal) {
-			Sanity.IfTrueThrow(cre==null, "PrepareUpdateStats called with a null character.");
-			StartGenerating();
-			EncodeByte(0x2d, 0);
-			EncodeUInt(cre.FlaggedUid, 1);
-			short curval=cre.Hits;
-			short maxval=cre.MaxHits;
-			EncodeCurMaxVals(curval, maxval, showReal, 5);
-			curval=cre.Mana;
-			maxval=cre.MaxMana;
-			EncodeCurMaxVals(curval, maxval, showReal, 9);
-			curval=cre.Stam;
-			maxval=cre.MaxStam;
-			EncodeCurMaxVals(curval, maxval, showReal, 13);
-			DoneGenerating(17);
-			Compress();
-		}
-		
-		public static void PrepareUpdateHitpoints(AbstractCharacter cre, bool showReal) {
-			Sanity.IfTrueThrow(cre==null, "PrepareUpdateHitpoints called with a null character.");
-			StartGenerating();
-			EncodeByte(0xa1, 0);
-			EncodeUInt(cre.FlaggedUid, 1);
-			short curval=cre.Hits;
-			short maxval=cre.MaxHits;
-			EncodeCurMaxVals(curval, maxval, showReal, 5);
-			DoneGenerating(9);
-			Compress();
-		}
-		public static void PrepareUpdateMana(AbstractCharacter cre, bool showReal) {
-			Sanity.IfTrueThrow(cre==null, "PrepareUpdateMana called with a null character.");
-			StartGenerating();
-			EncodeByte(0xa2, 0);
-			EncodeUInt(cre.FlaggedUid, 1);
-			short curval=cre.Mana;
-			short maxval=cre.MaxMana;
-			EncodeCurMaxVals(curval, maxval, showReal, 5);
-			DoneGenerating(9);
-			Compress();
-		}
-		public static void PrepareUpdateStamina(AbstractCharacter cre, bool showReal) {
-			Sanity.IfTrueThrow(cre==null, "PrepareUpdateStamina called with a null character.");
-			StartGenerating();
-			EncodeByte(0xa3, 0);
-			EncodeUInt(cre.FlaggedUid, 1);
-			short curval=cre.Stam;
-			short maxval=cre.MaxStam;
-			EncodeCurMaxVals(curval, maxval, showReal, 5);
-			DoneGenerating(9);
-			Compress();
-		}
-		
-		public static void PrepareStatusBar(AbstractCharacter cre, StatusBarType type) {
-			Sanity.IfTrueThrow(cre==null, "PrepareStatusBar called with a null character.");
-			Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType),type),"Invalid value "+type+" for StatusBarType in PrepareStatusBar.");
-			StartGenerating();
-			EncodeByte(0x11, 0);
-			EncodeInt(cre.Uid, 3);
-			EncodeString(cre.Name, 7, 30);
-			short blockSize=0;
-			short hitpoints=cre.Hits;
-			short maxhitpoints=cre.MaxHits;
-			int moreInfo=0;
-			if (type==StatusBarType.Me) {
-				EncodeByte(0, 41);	//name change valid
-				moreInfo=4;
-				EncodeShort(hitpoints, 37);
-				EncodeShort(maxhitpoints, 39);
-			} else {
-				if (type==StatusBarType.Pet) {
-					EncodeByte(1, 41);
-				} else {
-					EncodeByte(0, 41);
-				}
-				moreInfo=0;
-				EncodeShort((short)(((int)hitpoints<<8)/maxhitpoints), 37);
-				EncodeShort(256, 39);
-			}
-			EncodeByte((byte)moreInfo, 42);	//more information
-			blockSize=43;
-			if (moreInfo>=1) {
-				blockSize=66;
-				EncodeByte((cre.IsFemale ? (byte) 1 : (byte) 0), 43);
-				short strength=cre.Str;
-				short dexterity=cre.Dex;
-				short intelligence=cre.Int;
-				short stamina=cre.Stam;
-				short maxStamina=cre.MaxStam;
-				short mana=cre.Mana;
-				short maxMana=cre.MaxMana;
-				ulong lgold = cre.Gold;
-				uint gold=(uint)(lgold>0xffffffff?0xffffffff:lgold);
-				short armor=cre.StatusArmorClass;
-				ushort weight=(ushort) cre.Weight;
-				EncodeShort(strength, 44);
-				EncodeShort(dexterity, 46);
-				EncodeShort(intelligence, 48);
-				EncodeShort(stamina, 50);
-				EncodeShort(maxStamina, 52);
-				EncodeShort(mana, 54);
-				EncodeShort(maxMana, 56);
-				EncodeUInt(gold, 58);
-				EncodeShort(armor, 62);
-				EncodeUShort(weight, 64);
-			}
-			if (moreInfo>=3) {
-				blockSize = 69;
-				EncodeUShort(300, 66); 			//(TODO): stat cap
-				EncodeByte(0, 68);				//(TODO): num pets
-				EncodeByte(6, 69);				//(TODO): max pets
-			}
-			if (moreInfo>=4) {
-				blockSize = 88;
-				short fireResist=cre.ExtendedStatusNum1;
-				short coldResist=cre.ExtendedStatusNum2;
-				short poisonResist=cre.ExtendedStatusNum3;
-				short energyResist=cre.StatusMindDefense;
-				short luck=cre.ExtendedStatusNum5;
-				short minDamage=cre.ExtendedStatusNum6;
-				short maxDamage=cre.ExtendedStatusNum7;
-				long ltithingPoints=cre.TithingPoints;
-				int tithingPoints=(int)(ltithingPoints>0xffffffff?0xffffffff:ltithingPoints);
-				EncodeShort(fireResist, 70);
-				EncodeShort(coldResist, 72);
-				EncodeShort(poisonResist, 74);
-				EncodeShort(energyResist, 76);
-				EncodeShort(luck, 78);
-				EncodeShort(minDamage, 80);
-				EncodeShort(maxDamage, 82);
-				EncodeInt(tithingPoints, 84);
-			}
-			EncodeShort(blockSize, 1);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareRemoveFromView(uint uid) {
+		//    StartGenerating();
+		//    EncodeByte(0x1d, 0);
+		//    EncodeUInt(uid, 1);
+		//    DoneGenerating(5);
+		//    Compress();
+		//}
 
-		public static void PrepareInitialPlayerInfo(AbstractCharacter chr) {
-			Sanity.IfTrueThrow(chr==null, "PrepareInitialPlayerInfo called with a null character.");
-			StartGenerating();
-			EncodeByte(0x1b, 0);
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PreparePaperdollItem(AbstractItem item) {
+		//    Sanity.IfTrueThrow(item==null, "PreparePaperdollItem called with a null item.");
+		//    StartGenerating();
+		//    EncodeByte(0x2e, 0);
+		//    EncodeUInt(item.FlaggedUid,1);
+		//    EncodeUShort(item.Model,5);
+		//    EncodeByte(0, 7);
+		//    EncodeByte((byte) item.point4d.z, 8);
+		//    EncodeUInt(item.Cont.FlaggedUid,9);
+		//    EncodeUShort(item.Color,13);
+		//    DoneGenerating(15);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareMountInfo(AbstractCharacter rider) {
+		//    AbstractCharacter mount = rider.Mount;
 			
-			EncodeUInt(chr.FlaggedUid,1);
-			//EncodeInt(0x25, 5);
-			EncodeZeros(4, 5);
-			EncodeUShort(chr.Model, 9);
-			EncodeUShort(chr.X, 11);
-			EncodeUShort(chr.Y, 13);
-			EncodeByte(0, 15);
-			EncodeSByte(chr.Z, 16);
-			EncodeByte((byte)chr.Direction, 17);
+		//    StartGenerating();
+		//    EncodeByte(0x2e, 0);
+		//    EncodeUInt((uint) (mount.Uid|0x40000000), 1);
+		//    EncodeUShort(mount.MountItem, 5);
+		//    EncodeByte(0, 7);
+		//    EncodeByte(25, 8);
+		//    EncodeUInt(rider.FlaggedUid, 9);
+		//    EncodeUShort(mount.Color, 13);
+		//    DoneGenerating(15);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareUpdateStats(AbstractCharacter cre, bool showReal) {
+		//    Sanity.IfTrueThrow(cre==null, "PrepareUpdateStats called with a null character.");
+		//    StartGenerating();
+		//    EncodeByte(0x2d, 0);
+		//    EncodeUInt(cre.FlaggedUid, 1);
+		//    short curval=cre.Hits;
+		//    short maxval=cre.MaxHits;
+		//    EncodeCurMaxVals(curval, maxval, showReal, 5);
+		//    curval=cre.Mana;
+		//    maxval=cre.MaxMana;
+		//    EncodeCurMaxVals(curval, maxval, showReal, 9);
+		//    curval=cre.Stam;
+		//    maxval=cre.MaxStam;
+		//    EncodeCurMaxVals(curval, maxval, showReal, 13);
+		//    DoneGenerating(17);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareUpdateHitpoints(AbstractCharacter cre, bool showReal) {
+		//    Sanity.IfTrueThrow(cre==null, "PrepareUpdateHitpoints called with a null character.");
+		//    StartGenerating();
+		//    EncodeByte(0xa1, 0);
+		//    EncodeUInt(cre.FlaggedUid, 1);
+		//    short curval=cre.Hits;
+		//    short maxval=cre.MaxHits;
+		//    EncodeCurMaxVals(curval, maxval, showReal, 5);
+		//    DoneGenerating(9);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareUpdateMana(AbstractCharacter cre, bool showReal) {
+		//    Sanity.IfTrueThrow(cre==null, "PrepareUpdateMana called with a null character.");
+		//    StartGenerating();
+		//    EncodeByte(0xa2, 0);
+		//    EncodeUInt(cre.FlaggedUid, 1);
+		//    short curval=cre.Mana;
+		//    short maxval=cre.MaxMana;
+		//    EncodeCurMaxVals(curval, maxval, showReal, 5);
+		//    DoneGenerating(9);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareUpdateStamina(AbstractCharacter cre, bool showReal) {
+		//    Sanity.IfTrueThrow(cre==null, "PrepareUpdateStamina called with a null character.");
+		//    StartGenerating();
+		//    EncodeByte(0xa3, 0);
+		//    EncodeUInt(cre.FlaggedUid, 1);
+		//    short curval=cre.Stam;
+		//    short maxval=cre.MaxStam;
+		//    EncodeCurMaxVals(curval, maxval, showReal, 5);
+		//    DoneGenerating(9);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareStatusBar(AbstractCharacter cre, StatusBarType type) {
+		//    Sanity.IfTrueThrow(cre==null, "PrepareStatusBar called with a null character.");
+		//    Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType),type),"Invalid value "+type+" for StatusBarType in PrepareStatusBar.");
+		//    StartGenerating();
+		//    EncodeByte(0x11, 0);
+		//    EncodeInt(cre.Uid, 3);
+		//    EncodeString(cre.Name, 7, 30);
+		//    short blockSize=0;
+		//    short hitpoints=cre.Hits;
+		//    short maxhitpoints=cre.MaxHits;
+		//    int moreInfo=0;
+		//    if (type==StatusBarType.Me) {
+		//        EncodeByte(0, 41);	//name change valid
+		//        moreInfo=4;
+		//        EncodeShort(hitpoints, 37);
+		//        EncodeShort(maxhitpoints, 39);
+		//    } else {
+		//        if (type==StatusBarType.Pet) {
+		//            EncodeByte(1, 41);
+		//        } else {
+		//            EncodeByte(0, 41);
+		//        }
+		//        moreInfo=0;
+		//        EncodeShort((short)(((int)hitpoints<<8)/maxhitpoints), 37);
+		//        EncodeShort(256, 39);
+		//    }
+		//    EncodeByte((byte)moreInfo, 42);	//more information
+		//    blockSize=43;
+		//    if (moreInfo>=1) {
+		//        blockSize=66;
+		//        EncodeByte((cre.IsFemale ? (byte) 1 : (byte) 0), 43);
+		//        short strength=cre.Str;
+		//        short dexterity=cre.Dex;
+		//        short intelligence=cre.Int;
+		//        short stamina=cre.Stam;
+		//        short maxStamina=cre.MaxStam;
+		//        short mana=cre.Mana;
+		//        short maxMana=cre.MaxMana;
+		//        ulong lgold = cre.Gold;
+		//        uint gold=(uint)(lgold>0xffffffff?0xffffffff:lgold);
+		//        short armor=cre.StatusArmorClass;
+		//        ushort weight=(ushort) cre.Weight;
+		//        EncodeShort(strength, 44);
+		//        EncodeShort(dexterity, 46);
+		//        EncodeShort(intelligence, 48);
+		//        EncodeShort(stamina, 50);
+		//        EncodeShort(maxStamina, 52);
+		//        EncodeShort(mana, 54);
+		//        EncodeShort(maxMana, 56);
+		//        EncodeUInt(gold, 58);
+		//        EncodeShort(armor, 62);
+		//        EncodeUShort(weight, 64);
+		//    }
+		//    if (moreInfo>=3) {
+		//        blockSize = 69;
+		//        EncodeUShort(cre.ExtendedStatusNum09, 66); //stat cap
+		//        EncodeByte(cre.ExtendedStatusNum07, 68);//current pets count
+		//        EncodeByte(cre.ExtendedStatusNum08, 69);//max pets count
+		//    }
+		//    if (moreInfo>=4) {
+		//        blockSize = 88;
+		//        short fireResist=cre.ExtendedStatusNum01;
+		//        short coldResist=cre.ExtendedStatusNum02;
+		//        short poisonResist=cre.ExtendedStatusNum03;
+		//        short energyResist=cre.StatusMindDefense;
+		//        short luck=cre.ExtendedStatusNum04;
+		//        short minDamage=cre.ExtendedStatusNum05;
+		//        short maxDamage=cre.ExtendedStatusNum06;
+		//        long ltithingPoints=cre.TithingPoints;
+		//        int tithingPoints=(int)(ltithingPoints>0xffffffff?0xffffffff:ltithingPoints);
+		//        EncodeShort(fireResist, 70);
+		//        EncodeShort(coldResist, 72);
+		//        EncodeShort(poisonResist, 74);
+		//        EncodeShort(energyResist, 76);
+		//        EncodeShort(luck, 78);
+		//        EncodeShort(minDamage, 80);
+		//        EncodeShort(maxDamage, 82);
+		//        EncodeInt(tithingPoints, 84);
+		//    }
+		//    EncodeShort(blockSize, 1);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareInitialPlayerInfo(AbstractCharacter chr) {
+		//    Sanity.IfTrueThrow(chr==null, "PrepareInitialPlayerInfo called with a null character.");
+		//    StartGenerating();
+		//    EncodeByte(0x1b, 0);
 			
-			EncodeByte(0, 18);
-			EncodeByte(0xff, 19);
-			EncodeByte(0xff, 20);
-			EncodeByte(0xff, 21);
-			EncodeByte(0xff, 22);
-			EncodeUShort(0, 23);	//UL X coordinate of the server/map
-			EncodeUShort(0, 25);	//UL Y coordinate of the server/map
+		//    EncodeUInt(chr.FlaggedUid,1);
+		//    //EncodeInt(0x25, 5);
+		//    EncodeZeros(4, 5);
+		//    EncodeUShort(chr.Model, 9);
+		//    EncodeUShort(chr.X, 11);
+		//    EncodeUShort(chr.Y, 13);
+		//    EncodeByte(0, 15);
+		//    EncodeSByte(chr.Z, 16);
+		//    EncodeByte((byte)chr.Direction, 17);
 			
-			//Map Width (According to Kair's packet guide, "The total number of tiles in the X-axis minus eight.")
-			EncodeUShort((ushort)(Map.GetMapSizeX(0)-8), 27);
-			//Map Height (According to Kair's packet guide, "The total number of tiles in the Y-axis.")
-			EncodeUShort((ushort) Map.GetMapSizeY(0), 29);
+		//    EncodeByte(0, 18);
+		//    EncodeByte(0xff, 19);
+		//    EncodeByte(0xff, 20);
+		//    EncodeByte(0xff, 21);
+		//    EncodeByte(0xff, 22);
+		//    EncodeUShort(0, 23);	//UL X coordinate of the server/map
+		//    EncodeUShort(0, 25);	//UL Y coordinate of the server/map
 			
-			//unknown
-			EncodeZeros(6, 31);
+		//    //Map Width (According to Kair's packet guide, "The total number of tiles in the X-axis minus eight.")
+		//    EncodeUShort((ushort)(Map.GetMapSizeX(0)-8), 27);
+		//    //Map Height (According to Kair's packet guide, "The total number of tiles in the Y-axis.")
+		//    EncodeUShort((ushort) Map.GetMapSizeY(0), 29);
 			
-			DoneGenerating(37);
-			Compress();
-		}
+		//    //unknown
+		//    EncodeZeros(6, 31);
+			
+		//    DoneGenerating(37);
+		//    Compress();
+		//}
 		
-		//For use by Server's various speech methods (Which can send to multiple clients).
-		public static void PrepareSpeech(Thing from, string msg, SpeechType type, ushort font, ushort color, string lang) {
-			if (Globals.supportUnicode && font==3 && !(type==SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
-				PrepareUnicodeMessage(from, from.Model, from.Name, msg, type, font, color, lang);
-			} else {
-				PrepareAsciiMessage(from, from.Model, from.Name, msg, type, font, color);
-			}
-		}
+		////For use by Server's various speech methods (Which can send to multiple clients).
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareSpeech(Thing from, string msg, SpeechType type, ushort font, ushort color, string lang) {
+		//    if (Globals.supportUnicode && font==3 && !(type==SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
+		//        PrepareUnicodeMessage(from, from.Model, from.Name, msg, type, font, color, lang);
+		//    } else {
+		//        PrepareAsciiMessage(from, from.Model, from.Name, msg, type, font, color);
+		//    }
+		//}
 		
 		//'from' can be null.
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareUnicodeMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color, string language) {
 			Sanity.IfTrueThrow(sourceName==null, "PrepareUnicodeMessage called with a null 'sourceName'.");
 			Sanity.IfTrueThrow(msg==null, "PrepareUnicodeMessage called with a null 'msg'.");
@@ -292,7 +293,7 @@ namespace SteamEngine.Packets {
 			}
 			EncodeUShort(model, 7);
 			EncodeByte((byte) type, 9);
-			EncodeUShort(color ,10); //text color
+			EncodeUShort(color, 10); //text color
 			EncodeUShort(font, 12); //font
 			EncodeString(language, 14, 4);
 			
@@ -304,6 +305,7 @@ namespace SteamEngine.Packets {
 		}
 		
 		//'from' can be null.
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareAsciiMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color) {
 			Sanity.IfTrueThrow(sourceName==null, "PrepareAsciiMessage called with a null 'sourceName'.");
 			Sanity.IfTrueThrow(msg==null, "PrepareAsciiMessage called with a null 'msg'.");
@@ -327,69 +329,73 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		/**
-			This method is internal because it can screw up the client if it is prepared but not sent. So only prepare
-			it if you're really going to send it. (Because this method resets conn.moveSeqNum to 0, because the client
-			expects it to be reset whenever a 0x20 is sent)
+		///**
+		//    This method is internal because it can screw up the client if it is prepared but not sent. So only prepare
+		//    it if you're really going to send it. (Because this method resets conn.moveSeqNum to 0, because the client
+		//    expects it to be reset whenever a 0x20 is sent)
 			
-			This method is only needed when the game is started and when a client is resynced (and if the client's color or model changes).
-		*/
-		internal static void PrepareLocationInformation(GameConn conn) {
-			AbstractCharacter chr=conn.CurCharacter;
-			Sanity.IfTrueThrow(conn==null, "PrepareLocationInformation called with a null conn.");
-			Sanity.IfTrueThrow(chr==null, "PrepareLocationInformation called with a conn which doesn't have a logged-in character.");
-			StartGenerating();
-			EncodeByte(0x20, 0);
-			EncodeUInt(chr.FlaggedUid, 1);
-			EncodeUShort(chr.Model, 5);
-			EncodeByte(0, 7);
-			EncodeUShort(chr.Color, 8);
-			EncodeByte(chr.FlagsToSend, 10);
-			EncodeUShort(chr.X, 11);
-			EncodeUShort(chr.Y, 13);
-			EncodeZeros(2, 15);
-			EncodeByte((byte)chr.Direction, 17);
-			EncodeSByte(chr.Z, 18);
-			DoneGenerating(19);
-			Compress();
-			Logger.WriteInfo(MovementTracingOn, "0x20 sending: Reset moveSeqNum to 0.");
-			Sanity.StackTraceIf(MovementTracingOn);
-			conn.CancelMovement();
-		}
-		
-		public static void SendBadMove(GameConn conn) {
-			AbstractCharacter chr=conn.CurCharacter;
-			Sanity.IfTrueThrow(conn==null, "PrepareAndSendLocationInformation called with a null conn.");
-			Sanity.IfTrueThrow(chr==null, "PrepareAndSendLocationInformation called with a conn which doesn't have a logged-in character.");
-			Logger.WriteInfo(MovementTracingOn, "SendBadMove("+conn+") (we have "+conn.moveSeqNum+") x("+chr.X+") y("+chr.Y+") z("+chr.Z+") dir("+chr.Direction+").");
-			StartGenerating();
-			EncodeByte(0x21, 0);
-			EncodeByte(conn.MoveSeqNumToSend(), 1);
-			EncodeUShort(chr.X, 2);
-			EncodeUShort(chr.Y, 4);
-			EncodeByte((byte)chr.Direction, 6);
-			EncodeSByte(chr.Z, 7);
-			DoneGenerating(8);
-			Compress();
-			conn.CancelMovement();
-			Logger.WriteInfo(MovementTracingOn, "0x21 (BadMove) sending: Reset moveSeqNum to 0.");
-			SendTo(conn, true);
-		}
-		
-		public static void SendGoodMove(GameConn conn) {
-			AbstractCharacter chr=conn.CurCharacter;
-			Sanity.IfTrueThrow(conn==null, "PrepareAndSendLocationInformation called with a null conn.");
-			Sanity.IfTrueThrow(chr==null, "PrepareAndSendLocationInformation called with a conn which doesn't have a logged-in character.");
-			Logger.WriteInfo(MovementTracingOn, "SendGoodMove("+conn+") (we have "+conn.moveSeqNum+") x("+chr.X+") y("+chr.Y+") z("+chr.Z+") dir("+chr.Direction+").");
-			StartGenerating();
-			EncodeByte(0x22, 0);
-			EncodeByte(conn.MoveSeqNumToSend(), 1);
-			EncodeByte(0, 2);
-			DoneGenerating(3);
-			Compress();
-			SendTo(conn, true);
-		}			
-		
+		//    This method is only needed when the game is started and when a client is resynced (and if the client's color or model changes).
+		//*/
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//internal static void PrepareLocationInformation(GameConn conn) {
+		//    AbstractCharacter chr=conn.CurCharacter;
+		//    Sanity.IfTrueThrow(conn==null, "PrepareLocationInformation called with a null conn.");
+		//    Sanity.IfTrueThrow(chr==null, "PrepareLocationInformation called with a conn which doesn't have a logged-in character.");
+		//    StartGenerating();
+		//    EncodeByte(0x20, 0);
+		//    EncodeUInt(chr.FlaggedUid, 1);
+		//    EncodeUShort(chr.Model, 5);
+		//    EncodeByte(0, 7);
+		//    EncodeUShort(chr.Color, 8);
+		//    EncodeByte(chr.FlagsToSend, 10);
+		//    EncodeUShort(chr.X, 11);
+		//    EncodeUShort(chr.Y, 13);
+		//    EncodeZeros(2, 15);
+		//    EncodeByte((byte)chr.Direction, 17);
+		//    EncodeSByte(chr.Z, 18);
+		//    DoneGenerating(19);
+		//    Compress();
+		//    Logger.WriteInfo(MovementTracingOn, "0x20 sending: Reset moveSeqNum to 0.");
+		//    Sanity.StackTraceIf(MovementTracingOn);
+		//    conn.CancelMovement();
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendBadMove(GameConn conn) {
+		//    AbstractCharacter chr=conn.CurCharacter;
+		//    Sanity.IfTrueThrow(conn==null, "PrepareAndSendLocationInformation called with a null conn.");
+		//    Sanity.IfTrueThrow(chr==null, "PrepareAndSendLocationInformation called with a conn which doesn't have a logged-in character.");
+		//    Logger.WriteInfo(MovementTracingOn, "SendBadMove("+conn+") (we have "+conn.moveSeqNum+") x("+chr.X+") y("+chr.Y+") z("+chr.Z+") dir("+chr.Direction+").");
+		//    StartGenerating();
+		//    EncodeByte(0x21, 0);
+		//    EncodeByte(conn.MoveSeqNumToSend(), 1);
+		//    EncodeUShort(chr.X, 2);
+		//    EncodeUShort(chr.Y, 4);
+		//    EncodeByte((byte)chr.Direction, 6);
+		//    EncodeSByte(chr.Z, 7);
+		//    DoneGenerating(8);
+		//    Compress();
+		//    conn.CancelMovement();
+		//    Logger.WriteInfo(MovementTracingOn, "0x21 (BadMove) sending: Reset moveSeqNum to 0.");
+		//    SendTo(conn, true);
+		//}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendGoodMove(GameConn conn) {
+		//    AbstractCharacter chr=conn.CurCharacter;
+		//    Sanity.IfTrueThrow(conn==null, "PrepareAndSendLocationInformation called with a null conn.");
+		//    Sanity.IfTrueThrow(chr==null, "PrepareAndSendLocationInformation called with a conn which doesn't have a logged-in character.");
+		//    Logger.WriteInfo(MovementTracingOn, "SendGoodMove("+conn+") (we have "+conn.moveSeqNum+") x("+chr.X+") y("+chr.Y+") z("+chr.Z+") dir("+chr.Direction+").");
+		//    StartGenerating();
+		//    EncodeByte(0x22, 0);
+		//    EncodeByte(conn.MoveSeqNumToSend(), 1);
+		//    EncodeByte(0, 2);
+		//    DoneGenerating(3);
+		//    Compress();
+		//    SendTo(conn, true);
+		//}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareOpenContainer(AbstractItem cont) {
 			Sanity.IfTrueThrow(cont==null, "PrepareContainerInfo was passed a null container.");
 			StartGenerating();
@@ -399,7 +405,8 @@ namespace SteamEngine.Packets {
 			DoneGenerating(7);
 			Compress();
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static bool PrepareContainerContents(AbstractItem cont, GameConn viewerConn, AbstractCharacter viewer) {
 			StartGenerating();
 			EncodeByte(0x3c, 0);
@@ -417,7 +424,6 @@ namespace SteamEngine.Packets {
 					EncodeUInt(cont.FlaggedUid, blockSize+13);
 					EncodeUShort(i.Color, blockSize+17);
 					blockSize+=19;
-					i.On_BeingSentTo(viewerConn);
 				}
 			}
 			if (blockSize == 0) {
@@ -430,7 +436,8 @@ namespace SteamEngine.Packets {
 			Compress();
 			return true;
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareItemInContainer(AbstractItem i) {
 			Sanity.IfTrueThrow(i==null, "PrepareItemInContainer called with a null item.");
 			StartGenerating();
@@ -445,6 +452,96 @@ namespace SteamEngine.Packets {
 			EncodeUShort(i.Color, 18);
 			DoneGenerating(20);
 			Compress();
+		}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
+		public static void PrepareItemInCorpse(AbstractItem corpse, ICorpseEquipInfo i) {
+			Sanity.IfTrueThrow(i == null, "PrepareItemInContainer called with a null item.");
+			StartGenerating();
+			EncodeByte(0x25, 0);
+			EncodeUInt(i.FlaggedUid, 1);
+			EncodeUShort(i.Model, 5);
+			EncodeByte(0, 7);
+			EncodeUShort(1, 8);
+			EncodeUShort(0, 10);
+			EncodeUShort(0, 12);
+			EncodeUInt(corpse.FlaggedUid, 14);
+			EncodeUShort(i.Color, 18);
+			DoneGenerating(20);
+			Compress();
+		}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
+		public static void PrepareCorpseEquip(AbstractItem corpse, IEnumerable<ICorpseEquipInfo> items) {
+			StartGenerating();
+			EncodeByte(0x89, 0);
+			int len = 7;
+			EncodeUInt(corpse.FlaggedUid, 3);
+			foreach (ICorpseEquipInfo iulp in items) {
+				EncodeByte(iulp.Layer, len);
+				EncodeUInt(iulp.FlaggedUid, len + 1);
+				len += 5;
+			}
+
+			EncodeByte(0, len);//terminator
+			len++;
+			EncodeShort((short) len, 1);
+			DoneGenerating(len);
+			Compress();
+		}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
+		public static bool PrepareCorpseContents(AbstractItem corpse, IEnumerable<AbstractItem> items, ICorpseEquipInfo hair, ICorpseEquipInfo beard) {
+			StartGenerating();
+			EncodeByte(0x3c, 0);
+			ushort blockSize = 5;
+			ushort numSegments = 0;
+			foreach (AbstractItem i in items) {
+				numSegments++;
+				EncodeUInt(i.FlaggedUid, blockSize);
+				EncodeUShort(i.Model, blockSize + 4);
+				EncodeByte(0, blockSize + 6);
+				EncodeUShort(i.ShortAmount, blockSize + 7);
+				EncodeUShort(i.X, blockSize + 9);
+				EncodeUShort(i.Y, blockSize + 11);
+				EncodeUInt(corpse.FlaggedUid, blockSize + 13);
+				EncodeUShort(i.Color, blockSize + 17);
+				blockSize += 19;
+			}
+			if (hair != null) {
+				numSegments++;
+				EncodeUInt(hair.FlaggedUid, blockSize);
+				EncodeUShort(hair.Model, blockSize + 4);
+				EncodeByte(0, blockSize + 6);
+				EncodeUShort(1, blockSize + 7);
+				EncodeUShort(0, blockSize + 9);
+				EncodeUShort(0, blockSize + 11);
+				EncodeUInt(corpse.FlaggedUid, blockSize + 13);
+				EncodeUShort(hair.Color, blockSize + 17);
+				blockSize += 19;
+			}
+			if (beard != null) {
+				numSegments++;
+				EncodeUInt(beard.FlaggedUid, blockSize);
+				EncodeUShort(beard.Model, blockSize + 4);
+				EncodeByte(0, blockSize + 6);
+				EncodeUShort(1, blockSize + 7);
+				EncodeUShort(0, blockSize + 9);
+				EncodeUShort(0, blockSize + 11);
+				EncodeUInt(corpse.FlaggedUid, blockSize + 13);
+				EncodeUShort(beard.Color, blockSize + 17);
+				blockSize += 19;
+			}
+
+			if (blockSize == 0) {
+				DiscardUncompressed();
+				return false;
+			}
+			EncodeUShort(blockSize, 1);
+			EncodeUShort(numSegments, 3);
+			DoneGenerating(blockSize);
+			Compress();
+			return true;
 		}
 		
 		/*		Doesn't work, just crashes the client. Oh well, it was worth a shot!
@@ -557,7 +654,8 @@ namespace SteamEngine.Packets {
 			DoneGenerating(19);
 			Compress();
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareWarMode(AbstractCharacter cre) {
 			StartGenerating();
 			EncodeByte(0x72, 0);
@@ -568,6 +666,8 @@ namespace SteamEngine.Packets {
 			DoneGenerating(5);
 			Compress();
 		}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareWarMode(bool warMode) {
 			StartGenerating();
 			EncodeByte(0x72, 0);
@@ -592,7 +692,7 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		public static void SendRejectDeleteRequest(GameConn conn, DeleteRequestReturnValue reason) {
+		public static void SendRejectDeleteRequest(GameConn conn, DeleteCharacterResult reason) {
 			StartGenerating();
 			EncodeByte(0x85, 0);
 			EncodeByte((byte)reason, 1);
@@ -600,14 +700,15 @@ namespace SteamEngine.Packets {
 			Compress();
 			SendTo(conn, true);
 		}
-		public static void PrepareRejectDeleteRequest(DeleteRequestReturnValue reason) {
+		public static void PrepareRejectDeleteRequest(DeleteCharacterResult reason) {
 			StartGenerating();
 			EncodeByte(0x85, 0);
 			EncodeByte((byte)reason, 1);
 			DoneGenerating(2);
 			Compress();
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareItemInformation(AbstractItem item) {
 			PrepareItemInformation(item, MoveRestriction.Normal);
 		}
@@ -616,6 +717,7 @@ namespace SteamEngine.Packets {
 			For flags, 0x20 makes the item always movable, and 0x80 shades it hidden-grey.
 			Nothing else seems to have any effect.
 		*/
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		internal static void PrepareItemInformation(AbstractItem item, MoveRestriction restrict) {
 			StartGenerating();
 			EncodeByte(0x1a, 0);
@@ -678,7 +780,8 @@ namespace SteamEngine.Packets {
 			DoneGenerating(6);
 			Compress();
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareMovingCharacter(AbstractCharacter chr, bool running, HighlightColor highlight) {
 			Sanity.IfTrueThrow(chr==null, "PrepareMovingCharacter called with a null chr.");
 			StartGenerating();
@@ -703,6 +806,7 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareCharacterInformation(AbstractCharacter cre, HighlightColor highlight) {
 			Sanity.IfTrueThrow(cre==null, "PrepareCharacterInformation called with null cre.");
 			Logger.WriteDebug("Prepare to send character information for Character "+cre+".");
@@ -760,15 +864,18 @@ namespace SteamEngine.Packets {
 			DoneGenerating(blockSize);
 			Compress();
 		}
-		
-		public static void SendUncompressedFailedLogin(GameConn c, FailedLoginReason reason) {
+
+		[Obsolete("Functionality moved to AuxiliaryServer", false)]
+		public static void SendUncompressedFailedLogin(GameConn c, LoginDeniedReason reason) {
 			StartGenerating();
 			EncodeByte(0x82, 0);
 			EncodeByte((byte)reason, 1);
 			DoneGenerating(2);
 			SendUncompressed(c, true);
 		}
-		public static void SendFailedLogin(GameConn c, FailedLoginReason reason) {
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
+		public static void SendFailedLogin(GameConn c, LoginDeniedReason reason) {
 			StartGenerating();
 			EncodeByte(0x82, 0);
 			EncodeByte((byte)reason, 1);
@@ -776,46 +883,49 @@ namespace SteamEngine.Packets {
 			Compress();
 			SendTo(c, true);
 		}
-		public static void PrepareFailedLogin(FailedLoginReason reason) {
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
+		public static void PrepareFailedLogin(LoginDeniedReason reason) {
 			StartGenerating();
 			EncodeByte(0x82, 0);
 			EncodeByte((byte)reason, 1);
 			DoneGenerating(2);
 			Compress();
 		}
-		
-		public static void SendCharacterListAfterDelete(GameConn c) {
-			ushort blockSize = 4+60*5;
-			StartGenerating();
-			EncodeByte(0x86, 0);
-			AbstractAccount acc = c.curAccount;
-			EncodeUShort(blockSize, 1);
-			EncodeByte((byte) AbstractAccount.maxCharactersPerGameAccount, 3);
-			for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
-				AbstractCharacter cre = acc.GetCharacterInSlot(charNum);
-				string charName="";
-				if (cre!=null) {
-					charName = cre.Name;
-				}
-				int len = charName.Length;
-				if (len>30) {
-					len=30;
-				}
+
+		//public static void SendCharacterListAfterDelete(GameConn c) {
+		//    ushort blockSize = 4+60*5;
+		//    StartGenerating();
+		//    EncodeByte(0x86, 0);
+		//    AbstractAccount acc = c.curAccount;
+		//    EncodeUShort(blockSize, 1);
+		//    EncodeByte((byte) AbstractAccount.maxCharactersPerGameAccount, 3);
+		//    for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
+		//        AbstractCharacter cre = acc.GetCharacterInSlot(charNum);
+		//        string charName="";
+		//        if (cre!=null) {
+		//            charName = cre.Name;
+		//        }
+		//        int len = charName.Length;
+		//        if (len>30) {
+		//            len=30;
+		//        }
 			
-				EncodeString(charName, 4+charNum*60, 30);
-				EncodeZeros(30, 4+charNum*60+30);
+		//        EncodeString(charName, 4+charNum*60, 30);
+		//        EncodeZeros(30, 4+charNum*60+30);
 				
-			}
-			DoneGenerating(blockSize);
-			Compress();
-			SendTo(c, true);
-		}
+		//    }
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//    SendTo(c, true);
+		//}
 		
 		/**
 		Note: If you are sending this packet to character's conn, DON'T include 0x02 in the flags, or
 		the paperdoll will show the [War] button even if the character isn't in war mode. Go figure.
 		[AOS 2d client 4.0.0l] -SL
 		*/
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PreparePaperdoll(AbstractCharacter character, bool canEquip) {
 			StartGenerating();
 			EncodeByte(0x88, 0);
@@ -833,151 +943,155 @@ namespace SteamEngine.Packets {
 			DoneGenerating(66);
 			Compress();
 		}
+
+		//[Obsolete("Functionality moved to AuxiliaryServer", false)]
+		//public static void SendLoginToServer(GameConn c, ushort server) {
+		//    Logger.WriteDebug("Sending login information for server "+server+".");
+		//    IPAddress ep=c.IP;
+		//    byte[] ipbytes=ep.GetAddressBytes();
+		//    StartGenerating();	
+		//    EncodeByte(0x8c, 0);
+		//    if (Server.routerIPstr==null) {
+		//        if (server<0 || server>=Server.numIPs) {
+		//            DoneGenerating(1);
+		//            DiscardUncompressed();
+		//            c.Close("Requested nonexistant server number "+server+".");
+		//            return;
+		//        }
+		//        Logger.WriteDebug(string.Format("Sending IP #{0}:{1}.{2}.{3}.{4}.",server,Server.localIPs[server,0],Server.localIPs[server,1],Server.localIPs[server,2],Server.localIPs[server,3]));
+		//        EncodeBytes(Server.localIPs, server, 1);			//4 bytes
+		//    } else {
+		//        int localIPnum=Server.IsLocalIP(ipbytes);
+		//        if (localIPnum==-1) {
+		//            Logger.WriteDebug(string.Format("Sending router IP:{0}.",Server.routerIPstr));
+		//            EncodeBytes(Server.routerIP, 1);				//4 bytes
+		//        } else {
+		//            Logger.WriteDebug(string.Format("Sending Local IP #{0}:{1}.{2}.{3}.{4}.",localIPnum,Server.localIPs[localIPnum,0],Server.localIPs[localIPnum,1],Server.localIPs[localIPnum,2],Server.localIPs[localIPnum,3]));
+		//            EncodeBytes(Server.localIPs, localIPnum, 1);	//4 bytes
+		//        }
+		//    }	
+		//    EncodeUShort(Globals.port, 5);
+		//    /*
+		//        UOX sends 7f 00 00 01,	(Looking at UOX code from August 2004)
+		//        RunUO 1.0 RC0 sends a random number, but RunUO used to send ff ff ff ff (I don't know in what version this was changed).
+		//        Wolfpack 12.9.8 sends ff ff ff ff.
+		//        SE sends 00 00 00 00 now, but used to send ff ff ff ff.
+		//    */
+		//    EncodeZeros(4, 7);
+		//    DoneGenerating(11);
+		//    SendUncompressed(c, true);
+		//}
 		
-		public static void SendLoginToServer(GameConn c, ushort server) {
-			Logger.WriteDebug("Sending login information for server "+server+".");
-			IPAddress ep=c.IP;
-			byte[] ipbytes=ep.GetAddressBytes();
-			StartGenerating();	
-			EncodeByte(0x8c, 0);
-			if (Server.routerIPstr==null) {
-				if (server<0 || server>=Server.numIPs) {
-					DoneGenerating(1);
-					DiscardUncompressed();
-					c.Close("Requested nonexistant server number "+server+".");
-					return;
-				}
-				Logger.WriteDebug(string.Format("Sending IP #{0}:{1}.{2}.{3}.{4}.",server,Server.localIPs[server,0],Server.localIPs[server,1],Server.localIPs[server,2],Server.localIPs[server,3]));
-				EncodeBytes(Server.localIPs, server, 1);			//4 bytes
-			} else {
-				int localIPnum=Server.IsLocalIP(ipbytes);
-				if (localIPnum==-1) {
-					Logger.WriteDebug(string.Format("Sending router IP:{0}.",Server.routerIPstr));
-					EncodeBytes(Server.routerIP, 1);				//4 bytes
-				} else {
-					Logger.WriteDebug(string.Format("Sending Local IP #{0}:{1}.{2}.{3}.{4}.",localIPnum,Server.localIPs[localIPnum,0],Server.localIPs[localIPnum,1],Server.localIPs[localIPnum,2],Server.localIPs[localIPnum,3]));
-					EncodeBytes(Server.localIPs, localIPnum, 1);	//4 bytes
-				}
-			}	
-			EncodeUShort(Globals.port, 5);
-			/*
-				UOX sends 7f 00 00 01,	(Looking at UOX code from August 2004)
-				RunUO 1.0 RC0 sends a random number, but RunUO used to send ff ff ff ff (I don't know in what version this was changed).
-				Wolfpack 12.9.8 sends ff ff ff ff.
-				SE sends 00 00 00 00 now, but used to send ff ff ff ff.
-			*/
-			EncodeZeros(4, 7);
-			DoneGenerating(11);
-			SendUncompressed(c, true);
-		}
-		
-		//This still isn't as nice as I would like, but it doesn't want to be simplified any more.
-		//It's much nicer than the one in OutPackets, at least.
-		// -SL
-		public static void SendServersList(GameConn c) {
-			StartGenerating();
-			EncodeByte(0xa8, 0);
-			EncodeByte(0x5d, 3);	//0x13; //unknown //0x5d on RunUo
-			//EncodeUShort((ushort)Server.numIPs, 4);
-			ushort blockSize=6;
+		////This still isn't as nice as I would like, but it doesn't want to be simplified any more.
+		////It's much nicer than the one in OutPackets, at least.
+		//// -SL
+		//[Obsolete("Functionality moved to AuxiliaryServer", false)]
+		//public static void SendServersList(GameConn c) {
+		//    StartGenerating();
+		//    EncodeByte(0xa8, 0);
+		//    EncodeByte(0x5d, 3);	//0x13; //unknown //0x5d on RunUo
+		//    //EncodeUShort((ushort)Server.numIPs, 4);
+		//    ushort blockSize=6;
 			
-			if (Server.routerIPstr==null) {
-				EncodeUShort((ushort)Server.numIPs, 4);
-				for (int server=0; server<Server.numIPs; server++) {
-					EncodeUShort((ushort)server, blockSize);
-					string serverName = Globals.serverName;
-					serverName += "("+Server.ipStrings[server]+")";
-					EncodeString(serverName, blockSize+2, 30);
-					EncodeZeros(2, blockSize+32);
-					EncodeByte(Server.PercentFull(), blockSize+34); //percent full
-					EncodeSByte(Globals.timeZone, blockSize+35);
+		//    if (Server.routerIPstr==null) {
+		//        EncodeUShort((ushort)Server.numIPs, 4);
+		//        for (int server=0; server<Server.numIPs; server++) {
+		//            EncodeUShort((ushort)server, blockSize);
+		//            string serverName = Globals.serverName;
+		//            serverName += "("+Server.ipStrings[server]+")";
+		//            EncodeString(serverName, blockSize+2, 30);
+		//            EncodeZeros(2, blockSize+32);
+		//            EncodeByte(Server.PercentFull(), blockSize+34); //percent full
+		//            EncodeSByte(Globals.timeZone, blockSize+35);
 					
-					EncodeBytesReversed(Server.localIPs, server, blockSize+36);	//4 bytes
-					blockSize+=40;
-				}
+		//            EncodeBytesReversed(Server.localIPs, server, blockSize+36);	//4 bytes
+		//            blockSize+=40;
+		//        }
 				
-			} else {
-				Logger.WriteDebug("routerIP="+Server.routerIPstr);
-				EncodeUShort(1, 4);
-				//get their IP
-				byte[] ipbytes=c.IP.GetAddressBytes();
+		//    } else {
+		//        Logger.WriteDebug("routerIP="+Server.routerIPstr);
+		//        EncodeUShort(1, 4);
+		//        //get their IP
+		//        byte[] ipbytes=c.IP.GetAddressBytes();
 				
-				EncodeZeros(2, blockSize);
-				string serverName = Globals.serverName;
-				EncodeString(serverName, blockSize+2, 30);
-				EncodeZeros(2, blockSize+32);
-				EncodeByte(Server.PercentFull(), blockSize+34); //percent full
-				EncodeSByte(Globals.timeZone, blockSize+35);
+		//        EncodeZeros(2, blockSize);
+		//        string serverName = Globals.serverName;
+		//        EncodeString(serverName, blockSize+2, 30);
+		//        EncodeZeros(2, blockSize+32);
+		//        EncodeByte(Server.PercentFull(), blockSize+34); //percent full
+		//        EncodeSByte(Globals.timeZone, blockSize+35);
 				
-				int localIPnum=Server.IsLocalIP(ipbytes);
-				if (localIPnum==-1) {
-					Logger.WriteDebug("Sending router IP: "+Server.routerIPstr);
-					EncodeBytesReversed(Server.routerIP, blockSize+36);	//4 bytes
-				} else {
-					Logger.WriteDebug(String.Format("Sending Local IP #{0}:{1}.{2}.{3}.{4}.",localIPnum,Server.localIPs[localIPnum,0],Server.localIPs[localIPnum,1],Server.localIPs[localIPnum,2],Server.localIPs[localIPnum,3]));
-					EncodeBytesReversed(Server.localIPs, localIPnum, blockSize+36);	//4 bytes
-				}
-				blockSize+=40;
-			}
-			EncodeUShort(blockSize, 1);
-			DoneGenerating(blockSize);
-			SendUncompressed(c, true);
-		}
-		
-		public static void SendCharList(GameConn c) {
-			StartGenerating();
-			//EncodeByte(0xb9, 0);
-			//EncodeUShort(Globals.featuresFlags, 1);
-			EncodeByte(0xa9, 0);
-			byte numChars = 0;
+		//        int localIPnum=Server.IsLocalIP(ipbytes);
+		//        if (localIPnum==-1) {
+		//            Logger.WriteDebug("Sending router IP: "+Server.routerIPstr);
+		//            EncodeBytesReversed(Server.routerIP, blockSize+36);	//4 bytes
+		//        } else {
+		//            Logger.WriteDebug(String.Format("Sending Local IP #{0}:{1}.{2}.{3}.{4}.",localIPnum,Server.localIPs[localIPnum,0],Server.localIPs[localIPnum,1],Server.localIPs[localIPnum,2],Server.localIPs[localIPnum,3]));
+		//            EncodeBytesReversed(Server.localIPs, localIPnum, blockSize+36);	//4 bytes
+		//        }
+		//        blockSize+=40;
+		//    }
+		//    EncodeUShort(blockSize, 1);
+		//    DoneGenerating(blockSize);
+		//    SendUncompressed(c, true);
+		//}
+
+		//[Obsolete("Functionality moved to AuxiliaryServer", false)]
+		//public static void SendCharList(GameConn c) {
+		//    StartGenerating();
+		//    //EncodeByte(0xb9, 0);
+		//    //EncodeUShort(Globals.featuresFlags, 1);
+		//    EncodeByte(0xa9, 0);
+		//    byte numChars = 0;
 			
-			ushort blockSize=4;
+		//    ushort blockSize=4;
 			
-			//characters
-			for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
-				AbstractAccount acc = c.curAccount;
-				AbstractCharacter cre=acc.GetCharacterInSlot(charNum);
-				//int charId = -1;
-				//string charName = "";
-				if (cre!=null) {
-					//charId=cre.uid;
-					//charName = cre.Name;
-					EncodeString(cre.Name, blockSize, 30);
-					EncodeZeros(30, blockSize+30);
-					numChars++;
-				} else {
-					EncodeZeros(60, blockSize);
-				}
-				blockSize+=60;
+		//    //characters
+		//    for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
+		//        AbstractAccount acc = c.curAccount;
+		//        AbstractCharacter cre=acc.GetCharacterInSlot(charNum);
+		//        //int charId = -1;
+		//        //string charName = "";
+		//        if (cre!=null) {
+		//            //charId=cre.uid;
+		//            //charName = cre.Name;
+		//            EncodeString(cre.Name, blockSize, 30);
+		//            EncodeZeros(30, blockSize+30);
+		//            numChars++;
+		//        } else {
+		//            EncodeZeros(60, blockSize);
+		//        }
+		//        blockSize+=60;
 				
-			}
-			EncodeByte(numChars, 3);
+		//    }
+		//    EncodeByte(numChars, 3);
 			
-			//cities
-			EncodeByte(1, blockSize);
-			EncodeByte(0, blockSize+1);
-			string area = "London";
-			EncodeString(area, blockSize+2, 30);
-			EncodeByte(0, blockSize+32);
-			EncodeString(area, blockSize+33, 30);
-			EncodeByte(0, blockSize+63);
+		//    //cities
+		//    EncodeByte(1, blockSize);
+		//    EncodeByte(0, blockSize+1);
+		//    string area = "London";
+		//    EncodeString(area, blockSize+2, 30);
+		//    EncodeByte(0, blockSize+32);
+		//    EncodeString(area, blockSize+33, 30);
+		//    EncodeByte(0, blockSize+63);
 			
-			//TODO: Login Flags as bools in globals.
-			//Login Flags:
-			//0x14 = One character only
-			//0x08 = Right-click menus
-			//0x20 = AOS features
-			//0x40 = Six characters instead of five
+		//    //TODO: Login Flags as bools in globals.
+		//    //Login Flags:
+		//    //0x14 = One character only
+		//    //0x08 = Right-click menus
+		//    //0x20 = AOS features
+		//    //0x40 = Six characters instead of five
 			
-			EncodeUInt(Globals.loginFlags, blockSize+64);
+		//    EncodeUInt(Globals.loginFlags, blockSize+64);
 			
-			blockSize+=68;
-			EncodeUShort((ushort)(blockSize), 1);
-			DoneGenerating(blockSize);
-			Compress();
-			SendTo(c, true);
-		}
-		
+		//    blockSize+=68;
+		//    EncodeUShort((ushort)(blockSize), 1);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//    SendTo(c, true);
+		//}
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareEnableFeatures(ushort features) {
 			StartGenerating();
 			EncodeByte(0xb9, 0);
@@ -987,6 +1101,7 @@ namespace SteamEngine.Packets {
 		}
 		
 		//use the Prepared version
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		internal static void PrepareSeasonAndCursor(Season season, CursorType cursor) {
 			StartGenerating();
 			EncodeByte(0xbc, 0);
@@ -1011,13 +1126,14 @@ namespace SteamEngine.Packets {
 			DoneGenerating(12);
 			Compress();
 		}
-		
-		public static void PrepareStartGame() {
-			StartGenerating();
-			EncodeByte(0x55, 0);
-			DoneGenerating(1);
-			Compress();
-		}
+
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareStartGame() {
+		//    StartGenerating();
+		//    EncodeByte(0x55, 0);
+		//    DoneGenerating(1);
+		//    Compress();
+		//}
 		
 		/**
 			Shows the character doing a particular animation.
@@ -1154,7 +1270,8 @@ namespace SteamEngine.Packets {
 			SendTo(c, true);
 		}
 		*/
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void SendUpdateRange(GameConn c, byte updateRange) {
 			Logger.WriteDebug("Sending update range "+updateRange+" to "+c);
 			StartGenerating();
@@ -1206,65 +1323,65 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		//First test results: Crashes the client. Heh! Hopefully that's because I didn't enable AOS stuff and
-		//it wasn't expecting this. -SL
-		public static void PrepareCharacterName(AbstractCharacter character) {
-			StartGenerating();
-			EncodeByte(0x98, 0);
-			ushort blockSize=37;
-			EncodeUInt(character.FlaggedUid, 3);
-			EncodeString(character.Name, 7, 29);
-			EncodeByte(0, 36);
-			EncodeUShort(blockSize, 1);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+		////First test results: Crashes the client. Heh! Hopefully that's because I didn't enable AOS stuff and
+		////it wasn't expecting this. -SL
+		//public static void PrepareCharacterName(AbstractCharacter character) {
+		//    StartGenerating();
+		//    EncodeByte(0x98, 0);
+		//    ushort blockSize=37;
+		//    EncodeUInt(character.FlaggedUid, 3);
+		//    EncodeString(character.Name, 7, 29);
+		//    EncodeByte(0, 36);
+		//    EncodeUShort(blockSize, 1);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//}
 		
-		public static void PrepareGump(Gump instance) {
-			//1+2+4+4+4+4+2+instance.layout.Length+1+2+(instance.textsLength+(instance.texts.Length*2)) -tar
-			//lol -SL
-			StartGenerating();
-			EncodeByte(0xb0, 0);
-			EncodeUInt(instance.focus.FlaggedUid, 3);
-			EncodeUInt(instance.uid, 7);
-			EncodeUInt(instance.x, 11);
-			EncodeUInt(instance.y, 15);
-			string layout = instance.layout.ToString();
-			int layoutLength = layout.Length;
-			if (layoutLength == 0) {
-				//throw new SEException("The gump is empty!");
-				Logger.WriteWarning("The Gump "+instance+" represents an empty gump?!");
-			}
-			Sanity.IfTrueThrow(layoutLength>32768,"GumpDef layout for '"+instance.def.Defname+"' is too long ("+layout.Length+"). That would take at least several seconds to send, and you'd probably crash the client by sending something that big, if it was sendable at all (Also, the packet's size can never be > 65535 bytes (It has to be stored in a ushort and sent to the client, and that's the highest value a ushort can hold)).");
-			EncodeUShort((ushort)(layoutLength+1), 19);
-			//no idea why does it have to be +1, but it wont work without it... it is not written in any packet guide, I sniffed it from sphere, tried it, and it worked :) -tar
-			//It probably includes the null terminator. Just another little inconsistancy in the packets, nothing unusual... -SL
+//        public static void PrepareGump(Gump instance) {
+//            //1+2+4+4+4+4+2+instance.layout.Length+1+2+(instance.textsLength+(instance.texts.Length*2)) -tar
+//            //lol -SL
+//            StartGenerating();
+//            EncodeByte(0xb0, 0);
+//            EncodeUInt(instance.Focus.FlaggedUid, 3);
+//            EncodeUInt(instance.uid, 7);
+//            EncodeInt(instance.X, 11);
+//            EncodeInt(instance.Y, 15);
+//            string layout = instance.layout.ToString();
+//            int layoutLength = layout.Length;
+//            if (layoutLength == 0) {
+//                //throw new SEException("The gump is empty!");
+//                Logger.WriteWarning("The Gump "+instance+" represents an empty gump?!");
+//            }
+//            Sanity.IfTrueThrow(layoutLength>32768,"GumpDef layout for '"+instance.def.Defname+"' is too long ("+layout.Length+"). That would take at least several seconds to send, and you'd probably crash the client by sending something that big, if it was sendable at all (Also, the packet's size can never be > 65535 bytes (It has to be stored in a ushort and sent to the client, and that's the highest value a ushort can hold)).");
+//            EncodeUShort((ushort)(layoutLength+1), 19);
+//            //no idea why does it have to be +1, but it wont work without it... it is not written in any packet guide, I sniffed it from sphere, tried it, and it worked :) -tar
+//            //It probably includes the null terminator. Just another little inconsistancy in the packets, nothing unusual... -SL
 			
-			ushort blockSize = (ushort) (21+EncodeString(layout, 21));
-			EncodeByte(0, blockSize);	//null terminator for the layout string
-			int numTextLines;
-			if (instance.textsList != null) {
-				numTextLines = instance.textsList.Count;
-			} else {
-				numTextLines = 0;
-			}
-			EncodeUShort((ushort)numTextLines, blockSize+1);
-			blockSize+=3;
-			for (int i = 0; i<numTextLines; i++) {
-				string line = instance.textsList[i];
-#if DEBUG
-				if (line.Length>4096) {
-					Sanity.IfTrueThrow(true, "You're trying to send a text line in '"+instance.def.Defname+"' which is "+line.Length+" bytes long. Are you trying to crash the client? This line begins with '"+line.Substring(0, 30)+"'.");
-				}
-#endif
-				ushort bytelen = (ushort) EncodeUnicodeString(line, blockSize+2);
-				EncodeUShort((ushort)line.Length, blockSize);
-				blockSize+=(ushort)(bytelen+2);
-			}
-			EncodeUShort(blockSize, 1);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+//            ushort blockSize = (ushort) (21+EncodeString(layout, 21));
+//            EncodeByte(0, blockSize);	//null terminator for the layout string
+//            int numTextLines;
+//            if (instance.textsList != null) {
+//                numTextLines = instance.textsList.Count;
+//            } else {
+//                numTextLines = 0;
+//            }
+//            EncodeUShort((ushort)numTextLines, blockSize+1);
+//            blockSize+=3;
+//            for (int i = 0; i<numTextLines; i++) {
+//                string line = instance.textsList[i];
+//#if DEBUG
+//                if (line.Length>4096) {
+//                    Sanity.IfTrueThrow(true, "You're trying to send a text line in '"+instance.def.Defname+"' which is "+line.Length+" bytes long. Are you trying to crash the client? This line begins with '"+line.Substring(0, 30)+"'.");
+//                }
+//#endif
+//                ushort bytelen = (ushort) EncodeUnicodeString(line, blockSize+2);
+//                EncodeUShort((ushort)line.Length, blockSize);
+//                blockSize+=(ushort)(bytelen+2);
+//            }
+//            EncodeUShort(blockSize, 1);
+//            DoneGenerating(blockSize);
+//            Compress();
+//        }
 		
 		//0xbf:
 		//BYTE cmd
@@ -1322,7 +1439,8 @@ namespace SteamEngine.Packets {
 			DoneGenerating(2);
 			Compress();
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareClilocMessage(Thing from, uint msg, SpeechType type, ushort font, ushort color, string args) {
 			string sourceName = from==null?"":from.Name;
 			ushort model = (from==null?(ushort)0xffff:from.Model);
@@ -1358,6 +1476,7 @@ namespace SteamEngine.Packets {
 		}
 		
 		//public static void PrepareAllSkillsUpdate(ISkill[] skills, bool displaySkillCaps) {
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareAllSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
 			Sanity.IfTrueThrow(skills==null, "PrepareAllSkillsUpdate called with a null 'skills'.");
 			StartGenerating();
@@ -1389,7 +1508,8 @@ namespace SteamEngine.Packets {
 			DoneGenerating(blockSize);
 			Compress();	
 		}
-		
+
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareSingleSkillUpdate(ISkill skill, bool displaySkillCap) {
 			Sanity.IfTrueThrow(skill==null, "PrepareSingleSkillUpdate called with a null 'skill'.");
 			StartGenerating();
@@ -1414,6 +1534,7 @@ namespace SteamEngine.Packets {
 			Compress();	
 		}
 
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareSingleSkillNulled(int skillID, bool displaySkillCap) {
 			StartGenerating();
 			EncodeByte(0x3A, 0);
@@ -1445,6 +1566,7 @@ namespace SteamEngine.Packets {
 			Compress();	
 		}
 
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PreparePropertiesRefresh(Thing t, int propertiesUid) {
 			StartGenerating();
 			EncodeByte(0xdc, 0);
@@ -1454,6 +1576,7 @@ namespace SteamEngine.Packets {
 			Compress();	
 		}
 
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareOldPropertiesRefresh(Thing t, int propertiesUid) {
 			StartGenerating();
 			EncodeByte(0xbf, 0);
@@ -1465,6 +1588,7 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 
+		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareMegaCliloc(Thing t, int propertiesUid, IList<uint> ids, IList<string> strings) {
 			StartGenerating();
 			EncodeByte(0xd6, 0);
@@ -1510,100 +1634,6 @@ namespace SteamEngine.Packets {
 			EncodeByte(0x2c, 0);
 			EncodeByte(type, 1);
 			DoneGenerating(2);
-			Compress();
-		}
-
-		public interface ICorpseEquipInfo {
-			uint FlaggedUid { get; }
-			byte Layer { get; }
-			ushort Color { get; }
-			ushort Model { get; }
-		}
-
-		public static void PrepareCorpseEquip(AbstractItem corpse, IEnumerable<ICorpseEquipInfo> items) {
-			StartGenerating();
-			EncodeByte(0x89, 0);
-			int len = 7;
-			EncodeUInt(corpse.FlaggedUid, 3);
-			foreach (ICorpseEquipInfo iulp in items) {
-				EncodeByte(iulp.Layer, len);
-				EncodeUInt(iulp.FlaggedUid, len+1);
-				len += 5;
-			}
-
-			EncodeByte(0, len);//terminator
-			len++;
-			EncodeShort((short) len, 1);
-			DoneGenerating(len);
-			Compress();
-		}
-
-		public static bool PrepareCorpseContents(AbstractItem corpse, IEnumerable<AbstractItem> items, ICorpseEquipInfo hair, ICorpseEquipInfo beard) {
-			StartGenerating();
-			EncodeByte(0x3c, 0);
-			ushort blockSize = 5;
-			ushort numSegments = 0;
-			foreach (AbstractItem i in items) {
-				numSegments++;
-				EncodeUInt(i.FlaggedUid, blockSize);
-				EncodeUShort(i.Model, blockSize+4);
-				EncodeByte(0, blockSize+6);
-				EncodeUShort(i.ShortAmount, blockSize+7);
-				EncodeUShort(i.X, blockSize+9);
-				EncodeUShort(i.Y, blockSize+11);
-				EncodeUInt(corpse.FlaggedUid, blockSize+13);
-				EncodeUShort(i.Color, blockSize+17);
-				blockSize+=19;
-			}
-			if (hair != null) {
-				numSegments++;
-				EncodeUInt(hair.FlaggedUid, blockSize);
-				EncodeUShort(hair.Model, blockSize+4);
-				EncodeByte(0, blockSize+6);
-				EncodeUShort(1, blockSize+7);
-				EncodeUShort(0, blockSize+9);
-				EncodeUShort(0, blockSize+11);
-				EncodeUInt(corpse.FlaggedUid, blockSize+13);
-				EncodeUShort(hair.Color, blockSize+17);
-				blockSize+=19;
-			}
-			if (beard != null) {
-				numSegments++;
-				EncodeUInt(beard.FlaggedUid, blockSize);
-				EncodeUShort(beard.Model, blockSize+4);
-				EncodeByte(0, blockSize+6);
-				EncodeUShort(1, blockSize+7);
-				EncodeUShort(0, blockSize+9);
-				EncodeUShort(0, blockSize+11);
-				EncodeUInt(corpse.FlaggedUid, blockSize+13);
-				EncodeUShort(beard.Color, blockSize+17);
-				blockSize+=19;
-			}
-
-			if (blockSize == 0) {
-				DiscardUncompressed();
-				return false;
-			}
-			EncodeUShort(blockSize, 1);
-			EncodeUShort(numSegments, 3);
-			DoneGenerating(blockSize);
-			Compress();
-			return true;
-		}
-
-		public static void PrepareItemInCorpse(AbstractItem corpse, ICorpseEquipInfo i) {
-			Sanity.IfTrueThrow(i==null, "PrepareItemInContainer called with a null item.");
-			StartGenerating();
-			EncodeByte(0x25, 0);
-			EncodeUInt(i.FlaggedUid, 1);
-			EncodeUShort(i.Model, 5);
-			EncodeByte(0, 7);
-			EncodeUShort(1, 8);
-			EncodeUShort(0, 10);
-			EncodeUShort(0, 12);
-			EncodeUInt(corpse.FlaggedUid, 14);
-			EncodeUShort(i.Color, 18);
-			DoneGenerating(20);
 			Compress();
 		}
 	}

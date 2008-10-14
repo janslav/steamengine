@@ -23,6 +23,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 1]
 DEFNAME=Skill_Anatomy
 KEY="Anatomy"
+StartByMacroEnabled = true
 //TITLE="Scholar"
 ////PROMPTMSG="Whom shall I examine?"
 //DELAY=3.0,1.0
@@ -44,6 +45,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 2]
 DEFNAME=Skill_Animal_Lore
 KEY="AnimalLore"
+StartByMacroEnabled = true
 //TITLE="Scholar"
 ////PROMPTMSG="What animal should I look at?"
 //DELAY=3.0,1.0
@@ -63,6 +65,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 3]
 DEFNAME=Skill_Appraise
 KEY="ItemID"
+StartByMacroEnabled = true
 //TITLE="Merchant"
 ////PROMPTMSG="What do you wish to appraise and identify?"
 //DELAY=1.0
@@ -81,6 +84,7 @@ ON=@Fail
 [ArmsLoreSkillDef 4]
 DEFNAME=Skill_Armslore
 KEY="ArmsLore"
+StartByMacroEnabled = true
 EFFECT=76
 //TITLE="Arms%s"
 ////PROMPTMSG="What would you like to evaluate?"
@@ -114,6 +118,7 @@ ADVRATE=800.0,800.0,800.0
 [SCRIPTEDSKILLDEF 6]
 DEFNAME=Skill_Begging
 KEY="Begging"
+StartByMacroEnabled = true
 //TITLE="Beggar"
 //PROMPTMSG="To whom do you wish to grovel?"
 //DELAY=2.0
@@ -167,6 +172,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 9]
 DEFNAME=Skill_Peacemaking
 KEY="Peacemaking"
+StartByMacroEnabled = true
 //TITLE="Bard"
 //PROMPTMSG=""
 //DELAY=2.0
@@ -222,6 +228,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 12]
 DEFNAME=Skill_CARTOGRAPHY
 KEY="Cartography"
+StartByMacroEnabled = true
 //TITLE="Cartographer"
 //PROMPTMSG=""
 //DELAY=2.0
@@ -260,6 +267,7 @@ ON=@Fail
 [DISCORDANCESKILLDEF 15]
 DEFNAME=Skill_Discordance
 KEY="Discordance"
+StartByMacroEnabled = true
 DELAY=4.0
 ADVRATE=2.5,50.0,200.0
 
@@ -267,6 +275,7 @@ ADVRATE=2.5,50.0,200.0
 // Used to be called EvalInt or ??
 DEFNAME=Skill_EvalInt
 KEY="EvaluatingIntel"
+StartByMacroEnabled = true
 //TITLE="Scholar"
 //PROMPTMSG="Select char to inspect."
 //DELAY=1.0
@@ -304,6 +313,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 19]
 DEFNAME=Skill_Forensics
 KEY="Forensics"
+StartByMacroEnabled = true
 //TITLE="Scholar"
 //PROMPTMSG="What corpse would you like to examine?"
 //DELAY=1.0
@@ -341,6 +351,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 22]
 DEFNAME=Skill_Provocation
 KEY="Provocation"
+StartByMacroEnabled = true
 //TITLE="Bard"
 //PROMPTMSG="Whom do you wish to incite?"
 //DELAY=3.0
@@ -359,6 +370,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 23]
 DEFNAME=Skill_Inscription
 KEY="Inscription"
+StartByMacroEnabled = true
 //TITLE="Scribe"
 //PROMPTMSG="What spell do you want to inscribe?"
 //DELAY=3.0
@@ -450,6 +462,7 @@ ADVRATE=2.5,50.0,200.0
 [SCRIPTEDSKILLDEF 30]
 DEFNAME=Skill_Poisoning
 KEY="Poisoning"
+StartByMacroEnabled = true
 //TITLE="Assassin"
 //PROMPTMSG="To what do you wish to apply the poison?"
 //DELAY=2.0
@@ -469,6 +482,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 32]
 DEFNAME=Skill_Spiritspeak
 KEY="SpiritSpeak"
+StartByMacroEnabled = true
 //TITLE="Medium"
 //PROMPTMSG=""
 //DELAY=2.0
@@ -487,6 +501,7 @@ ON=@Fail
 [STEALINGSKILLDEF 33]
 DEFNAME=Skill_Stealing
 KEY="Stealing"
+StartByMacroEnabled = true
 DELAY=2.5
 ADVRATE=10.0,200.0,800.0
 
@@ -512,6 +527,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 35]
 DEFNAME=Skill_Taming
 KEY="Taming"
+StartByMacroEnabled = true
 //TITLE="Animal Tamer"
 //PROMPTMSG="Tame which animal?"
 //DELAY=2.0
@@ -530,6 +546,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 36]
 DEFNAME=Skill_tasteid
 KEY="TasteID"
+StartByMacroEnabled = true
 //TITLE="Food Taster"
 //PROMPTMSG="What would you like to taste?"
 //DELAY=1.0
@@ -567,6 +584,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 38]
 DEFNAME=Skill_Tracking
 KEY="Tracking"
+StartByMacroEnabled = true
 //TITLE="Ranger"
 //PROMPTMSG=""
 //DELAY=4.0

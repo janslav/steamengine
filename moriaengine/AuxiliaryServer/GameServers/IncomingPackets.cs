@@ -12,7 +12,8 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		public static readonly GameServerProtocol instance = new GameServerProtocol();
 
 
-		public IncomingPacket<NamedPipeConnection<GameServerClient>, GameServerClient, string> GetPacketImplementation(byte id) {
+		public IncomingPacket<NamedPipeConnection<GameServerClient>, GameServerClient, string> GetPacketImplementation(byte id, NamedPipeConnection<GameServerClient> conn, GameServerClient state, out bool discardAfterReading) {
+			discardAfterReading = false;
 			switch (id) {
 				case 0x01:
 					return Pool<IdentifyGameServerPacket>.Acquire();

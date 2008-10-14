@@ -32,7 +32,7 @@ namespace SteamEngine.Communication.NamedPipes {
 	public sealed class NamedPipeClientFactory<TState> :
 		AsyncCore<NamedPipeConnection<TState>, TState, string>,
 		IClientFactory<NamedPipeConnection<TState>, TState, string>
-		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
+		where TState : Poolable, IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
 
 

@@ -18,6 +18,8 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections;
 using SteamEngine.Common;
+using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -67,11 +69,12 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_DClick(AbstractCharacter from) {
 			//(TODO): check ownership(?), trigger snooping(done), etc...
 			Character topChar = this.TopObj() as Character;
-			if ((topChar != null) && (topChar != from) && (!((Character) from).IsGM())) {
-				((Character) from).currentSkillTarget1 = this;
-				from.SelectSkill((int) SkillName.Snooping);
+			Character fromAsChar = (Character) from;
+			if ((topChar != null) && (topChar != fromAsChar) && (!fromAsChar.IsGM())) {
+				fromAsChar.currentSkillTarget1 = this;
+				fromAsChar.SelectSkill(SkillName.Snooping);
 			} else {
-				this.OpenTo(from);
+				this.OpenTo(fromAsChar);
 			}
 		}
 
@@ -156,9 +159,9 @@ namespace SteamEngine.CompiledScripts {
 			//~1_COUNT~ items, ~2_WEIGHT~ stones
 		}
 
-		public override void On_Click(AbstractCharacter clicker) {
-			base.On_Click(clicker);
-			Server.SendNameFrom(clicker.Conn, this,
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+			base.On_Click(clicker, clickerState, clickerConn);
+			Networking.PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				String.Concat(this.Count.ToString(), " items, ", this.Weight.ToString(), " stones"),
 				0);
 		}

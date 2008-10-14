@@ -60,15 +60,15 @@ namespace SteamEngine {
 		private static StatType statsSyncOut;
 		private static StatType statsAsyncOut;
 
-		//These numbers are based on me running/walking/etc in game and recording the "Time between movement"
-		//output of the movement info stuff. They're slightly higher than the highest values I saw,
-		//which means that like this they should slow all clients to the same rate, so perhaps different
-		//clients with different graphics-drawing speeds will actually move at the same rates instead of
-		//at different ones. Or maybe not, since I have a pretty good graphics card. (SL)
-		private readonly long RunStepTime = HighPerformanceTimer.SecondsToTicks(0.18);
-		//private readonly long WalkStepTime = HighPerformanceTimer.SecondsToTicks(0.35);
-		private readonly long RidingRunStepTime = HighPerformanceTimer.SecondsToTicks(0.09);
-		//private readonly long RidingWalkStepTime = HighPerformanceTimer.SecondsToTicks(0.18);
+		////These numbers are based on me running/walking/etc in game and recording the "Time between movement"
+		////output of the movement info stuff. They're slightly higher than the highest values I saw,
+		////which means that like this they should slow all clients to the same rate, so perhaps different
+		////clients with different graphics-drawing speeds will actually move at the same rates instead of
+		////at different ones. Or maybe not, since I have a pretty good graphics card. (SL)
+		//private readonly long RunStepTime = HighPerformanceTimer.SecondsToTicks(0.18);
+		////private readonly long WalkStepTime = HighPerformanceTimer.SecondsToTicks(0.35);
+		//private readonly long RidingRunStepTime = HighPerformanceTimer.SecondsToTicks(0.09);
+		////private readonly long RidingWalkStepTime = HighPerformanceTimer.SecondsToTicks(0.18);
 
 		//If I'm reading Wolfpack's code correctly, someone could hack their client to walk at run speeds in Wolfpack,
 		//and thus not pay the stamina cost of running, since they only check mountedness, not whether the client
@@ -136,35 +136,34 @@ namespace SteamEngine {
 		private AbstractCharacter curCharacter;
 		public bool noResponse;
 		public bool justConnected;
-		internal byte moveSeqNum;
-		internal byte reqMoveSeqNum;
+		//internal byte moveSeqNum;
+		//internal byte reqMoveSeqNum;
 		//public byte[] initCode = new byte [4];
-		public const uint maxTargs = 1;
-		public OnTargon[] targon = new OnTargon[maxTargs];
-		public OnTargon_Cancel[] targon_cancel = new OnTargon_Cancel[maxTargs];
-		public object[] targon_parameters = new object[maxTargs];
-		public ushort nextTarg = 0;
+		//public const uint maxTargs = 1;
+		//public OnTargon[] targon = new OnTargon[maxTargs];
+		//public OnTargon_Cancel[] targon_cancel = new OnTargon_Cancel[maxTargs];
+		//public object[] targon_parameters = new object[maxTargs];
+		//public ushort nextTarg = 0;
 		//public FastWalkStack FastWalk;
 		public string lang = "enu";
 		private Dictionary<uint, Gump> gumpInstancesByUid = new Dictionary<uint, Gump>();
 		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
-		internal HashSet<AbstractItem> openedContainers = new HashSet<AbstractItem>();
 
 		private bool godMode = false;
 		private bool hackMove = false;
-		internal ClientVersion clientVersion = ClientVersion.nullValue;
+		//internal ClientVersion clientVersion = ClientVersion.nullValue;
 		//const int MaxMoveRequests = 4;
-		private SimpleQueue<byte> moveRequests = new SimpleQueue<byte>();
-		private long lastStepReserve = 0;
-		private long secondLastStepReserve = 0;
-		private long thirdLastStepReserve = 0;
-		private long lastMovementTime = 0;
-		private long nextMovementTime = 0;
+		//private SimpleQueue<byte> moveRequests = new SimpleQueue<byte>();
+		//private long lastStepReserve = 0;
+		//private long secondLastStepReserve = 0;
+		//private long thirdLastStepReserve = 0;
+		//private long lastMovementTime = 0;
+		//private long nextMovementTime = 0;
 		internal Encryption encryption = new Encryption();
 
-		private byte updateRange=18;
-		private int visionRange=18;	//for scripts to fiddle with
-		private byte requestedUpdateRange=18;
+		//private byte updateRange=18;
+		//private int visionRange=18;	//for scripts to fiddle with
+		//private byte requestedUpdateRange=18;
 
 		internal bool restoringUpdateRange=false;	//The client, if sent an update range packet on login, apparently then requests 18 again, but does it after sending some other packets - this sure makes it hard for the client to not have to set the update range every time they login... So we block the next update range packet if we get this, but the block is removed if we get a 0x73 (ping) first. We can't remove it for any incoming packets becaues the client sends other stuff before it gets around to sending this.
 
@@ -189,8 +188,8 @@ namespace SteamEngine {
 			curAccount= null;
 			curCharacter= null;
 			justConnected = true;
-			moveSeqNum = 0;
-			reqMoveSeqNum = 0;
+			//moveSeqNum = 0;
+			//reqMoveSeqNum = 0;
 			noResponse = true;		//Close in 60 seconds if they do nothing.
 		}
 
@@ -305,62 +304,62 @@ namespace SteamEngine {
 		}
 		//private Hashtable openedContainers = new Hashtable();
 
-		internal byte RequestedUpdateRange {
-			get {
-				return requestedUpdateRange;
-			}
-			set {
-				if (restoringUpdateRange) {
-					restoringUpdateRange=false;
-					return;
-				}
-				requestedUpdateRange=value;
-				byte oldUpdateRange=updateRange;
-				RecalcUpdateRange();
-				if (CurCharacter!=null && oldUpdateRange!=updateRange) {
-					PacketSender.SendUpdateRange(this, updateRange);
-				}
-			}
-		}
+		//internal byte RequestedUpdateRange {
+		//    get {
+		//        return requestedUpdateRange;
+		//    }
+		//    set {
+		//        if (restoringUpdateRange) {
+		//            restoringUpdateRange=false;
+		//            return;
+		//        }
+		//        requestedUpdateRange=value;
+		//        byte oldUpdateRange=updateRange;
+		//        RecalcUpdateRange();
+		//        if (CurCharacter!=null && oldUpdateRange!=updateRange) {
+		//            PacketSender.SendUpdateRange(this, updateRange);
+		//        }
+		//    }
+		//}
 
-		internal int VisionRange {
-			get {
-				return visionRange;
-			}
-			set {
-				visionRange=value;
-				byte oldUpdateRange=updateRange;
-				RecalcUpdateRange();
-				if (CurCharacter!=null && oldUpdateRange!=updateRange) {
-					PacketSender.SendUpdateRange(this, updateRange);
-				}
-			}
-		}
-		public byte UpdateRange {
-			get {
-				return updateRange;
-			}
-		}
-		private void RecalcUpdateRange() {
-			if (visionRange<=requestedUpdateRange) {
-				if (visionRange<0) {
-					updateRange=0;
-				} else if (visionRange>Globals.MaxUpdateRange) {
-					updateRange=Globals.MaxUpdateRange;
-				} else {
-					updateRange=(byte) visionRange;
-				}
-			} else {
-				updateRange=requestedUpdateRange;
-			}
-		}
+		//internal int VisionRange {
+		//    get {
+		//        return visionRange;
+		//    }
+		//    set {
+		//        visionRange=value;
+		//        byte oldUpdateRange=updateRange;
+		//        RecalcUpdateRange();
+		//        if (CurCharacter!=null && oldUpdateRange!=updateRange) {
+		//            PacketSender.SendUpdateRange(this, updateRange);
+		//        }
+		//    }
+		//}
+		//public byte UpdateRange {
+		//    get {
+		//        return updateRange;
+		//    }
+		//}
+		//private void RecalcUpdateRange() {
+		//    if (visionRange<=requestedUpdateRange) {
+		//        if (visionRange<0) {
+		//            updateRange=0;
+		//        } else if (visionRange>Globals.MaxUpdateRange) {
+		//            updateRange=Globals.MaxUpdateRange;
+		//        } else {
+		//            updateRange=(byte) visionRange;
+		//        }
+		//    } else {
+		//        updateRange=requestedUpdateRange;
+		//    }
+		//}
 
-		public void DecreaseVisionRangeBy(int amount) {
-			VisionRange-=amount;
-		}
-		public void IncreaseVisionRangeBy(int amount) {
-			VisionRange+=amount;
-		}
+		//public void DecreaseVisionRangeBy(int amount) {
+		//    VisionRange-=amount;
+		//}
+		//public void IncreaseVisionRangeBy(int amount) {
+		//    VisionRange+=amount;
+		//}
 
 		public AbstractCharacter CurCharacter {
 			get {
@@ -368,11 +367,11 @@ namespace SteamEngine {
 			}
 		}
 
-		public ClientVersion Version {
-			get {
-				return clientVersion;
-			}
-		}
+		//public ClientVersion Version {
+		//    get {
+		//        return clientVersion;
+		//    }
+		//}
 
 		public Encryption Encryption {
 			get {
@@ -380,18 +379,18 @@ namespace SteamEngine {
 			}
 		}
 
-		internal byte MoveSeqNumToSend() {
-			byte retVal = moveSeqNum; // (byte) (moveSeqNum - moveRequests.Count);
+		//internal byte MoveSeqNumToSend() {
+		//    byte retVal = moveSeqNum; // (byte) (moveSeqNum - moveRequests.Count);
 
-			if (moveSeqNum==255) {
-				Logger.WriteInfo(MovementTracingOn, "moveSeqNum wraps around to 1.");
-				moveSeqNum=1;
-			} else {
-				moveSeqNum++;
-			}
+		//    if (moveSeqNum==255) {
+		//        Logger.WriteInfo(MovementTracingOn, "moveSeqNum wraps around to 1.");
+		//        moveSeqNum=1;
+		//    } else {
+		//        moveSeqNum++;
+		//    }
 
-			return retVal;
-		}
+		//    return retVal;
+		//}
 
 		//Exists only for convenience.
 		//private void DisconnectOSI3DClient() {
@@ -439,14 +438,14 @@ namespace SteamEngine {
 
 			if (curCharacter != null) {
 				if (!charToLogout.IsDeleted) {
-					charToLogout.LogOut();
+					charToLogout.Trigger_LogOut();
 				}
 				curCharacter = null;
 			}
-			if (curAccount != null) {
-				curAccount = null;
-				accountToLogout.LogOut();
-			}
+			//if (curAccount != null) {
+			//    curAccount = null;
+			//    accountToLogout.LogOut();
+			//}
 		}
 
 		public bool IsLoggedIn {
@@ -459,89 +458,89 @@ namespace SteamEngine {
 			if (HasData) {
 				Server._in.Cycle(this);
 			}
-			if (curCharacter != null) {
-				if (moveRequests.Count>0) {
-					ProcessMovement(moveRequests.Dequeue());
-				}
-			}
+			//if (curCharacter != null) {
+			//    if (moveRequests.Count>0) {
+			//        ProcessMovement(moveRequests.Dequeue());
+			//    }
+			//}
 		}
 
-		internal void MovementRequest(byte dir) {
-			if (moveRequests.Count > 0) {
-				moveRequests.Enqueue(dir);
-			} else {
-				ProcessMovement(dir);
-			}
-		}
+		//internal void MovementRequest(byte dir) {
+		//    if (moveRequests.Count > 0) {
+		//        moveRequests.Enqueue(dir);
+		//    } else {
+		//        ProcessMovement(dir);
+		//    }
+		//}
 
-		private void ProcessMovement(byte dir) {
-			if (curCharacter==null) return;
+		//private void ProcessMovement(byte dir) {
+		//    if (curCharacter==null) return;
 
-			bool running = false;
-			Direction direction = (Direction) dir;
-			if ((dir&0x80)==0x80) {
-				direction = (Direction) (dir - 0x80);
-				running = true;
-			}
+		//    bool running = false;
+		//    Direction direction = (Direction) dir;
+		//    if ((dir&0x80)==0x80) {
+		//        direction = (Direction) (dir - 0x80);
+		//        running = true;
+		//    }
 
-			if (direction != curCharacter.Direction) {//no speedcheck if we're just changing direction
-				if (moveRequests.Count == 0) {
-					Movement(direction, running);
-				}
-				return;
-			}
+		//    if (direction != curCharacter.Direction) {//no speedcheck if we're just changing direction
+		//        if (moveRequests.Count == 0) {
+		//            Movement(direction, running);
+		//        }
+		//        return;
+		//    }
 
-			if ((CanMoveAgain()) || (Plevel >= Globals.plevelOfGM)) {
-				Movement(direction, running);
-			} else {
-				moveRequests.Enqueue(dir);
-			}
-		}
+		//    if ((CanMoveAgain()) || (Plevel >= Globals.plevelOfGM)) {
+		//        Movement(direction, running);
+		//    } else {
+		//        moveRequests.Enqueue(dir);
+		//    }
+		//}
 
-		private bool CanMoveAgain() {
-			long currentTime = HighPerformanceTimer.TickCount;
-			long diff = currentTime - nextMovementTime;
+		//private bool CanMoveAgain() {
+		//    long currentTime = HighPerformanceTimer.TickCount;
+		//    long diff = currentTime - nextMovementTime;
 
-			Logger.WriteInfo(MovementTracingOn, "Time between movement = "+HighPerformanceTimer.TicksToSeconds(currentTime-lastMovementTime));
+		//    Logger.WriteInfo(MovementTracingOn, "Time between movement = "+HighPerformanceTimer.TicksToSeconds(currentTime-lastMovementTime));
 
-			long reserves = lastStepReserve + secondLastStepReserve + thirdLastStepReserve;
+		//    long reserves = lastStepReserve + secondLastStepReserve + thirdLastStepReserve;
 
-			if (diff + reserves >= 0) {
-				Logger.WriteInfo(MovementTracingOn, "Time later than allowed = "+HighPerformanceTimer.TicksToSeconds(diff + reserves));
+		//    if (diff + reserves >= 0) {
+		//        Logger.WriteInfo(MovementTracingOn, "Time later than allowed = "+HighPerformanceTimer.TicksToSeconds(diff + reserves));
 
-				if (curCharacter.Flag_Riding) {
-					nextMovementTime = (currentTime + RidingRunStepTime);
-				} else {
-					nextMovementTime = (currentTime + RunStepTime);
-				}
-				thirdLastStepReserve = secondLastStepReserve;
-				secondLastStepReserve = lastStepReserve;
-				lastStepReserve = Math.Max(diff, 0);
-				lastMovementTime = currentTime;//...because sometimes the client tends to send more steps at once (or it looks like that), but it still isn't speedhacking
-				return true;
-			} else {
-				////Logger.WriteInfo(MovementTracingOn, "Delaying movement, the packet is "+seconds+" seconds early.");
-				//if (MovementTracingOn) { 
-				//    //we need not spam the console with warnings. Players simply can't speedhack, end of story.
-				//    Logger.WriteWarning("The client "+LogStr.Ident(this)+" is moving too fast. The packet came "+
-				//        LogStr.Number(HighPerformanceTimer.TicksToSeconds(-(diff + reserves)))+" s earlier than allowed.");
-				//}
-				return false;
-			}
-		}
+		//        if (curCharacter.Flag_Riding) {
+		//            nextMovementTime = (currentTime + RidingRunStepTime);
+		//        } else {
+		//            nextMovementTime = (currentTime + RunStepTime);
+		//        }
+		//        thirdLastStepReserve = secondLastStepReserve;
+		//        secondLastStepReserve = lastStepReserve;
+		//        lastStepReserve = Math.Max(diff, 0);
+		//        lastMovementTime = currentTime;//...because sometimes the client tends to send more steps at once (or it looks like that), but it still isn't speedhacking
+		//        return true;
+		//    } else {
+		//        ////Logger.WriteInfo(MovementTracingOn, "Delaying movement, the packet is "+seconds+" seconds early.");
+		//        //if (MovementTracingOn) { 
+		//        //    //we need not spam the console with warnings. Players simply can't speedhack, end of story.
+		//        //    Logger.WriteWarning("The client "+LogStr.Ident(this)+" is moving too fast. The packet came "+
+		//        //        LogStr.Number(HighPerformanceTimer.TicksToSeconds(-(diff + reserves)))+" s earlier than allowed.");
+		//        //}
+		//        return false;
+		//    }
+		//}
 
-		private void Movement(Direction dir, bool running) {
-			Logger.WriteInfo(MovementTracingOn, "Moving.");
-			bool success=curCharacter.WalkRunOrFly((Direction) dir, running, true);	//we don't want to get a 0x77 for ourself, our client knows we're moving if it gets the verify move packet.
-			if (success) {
-				PacketSender.SendGoodMove(this);
-				NetState.ProcessThing(curCharacter);//I think this is really needed. We can't wait to the end of the cycle, because movement 
-				//should be as much synced between clients as possible
-			} else {
-				PacketSender.SendBadMove(this);
-				return;
-			}
-		}
+		//private void Movement(Direction dir, bool running) {
+		//    Logger.WriteInfo(MovementTracingOn, "Moving.");
+		//    bool success=curCharacter.WalkRunOrFly((Direction) dir, running, true);	//we don't want to get a 0x77 for ourself, our client knows we're moving if it gets the verify move packet.
+		//    if (success) {
+		//        PacketSender.SendGoodMove(this);
+		//        //NetState.ProcessThing(curCharacter);//I think this is really needed. We can't wait to the end of the cycle, because movement 
+		//        //should be as much synced between clients as possible
+		//    } else {
+		//        PacketSender.SendBadMove(this);
+		//        return;
+		//    }
+		//}
 
 		public object InSyncRoot { get { return waitingInPacketData; } }	//we could return their SyncRoot instead, but their SyncRoot is themselves, so that would be pointless.
 		public object OutSyncRoot { get { return waitingOutPacketData; } }
@@ -869,117 +868,118 @@ namespace SteamEngine {
 		}
 
 
-		//called by GameAccount
-		internal void LogIn(AbstractAccount acc) {
-			curAccount = acc;
-			Server.ConnLoggedIn(this);
-			//Console.WriteLine(LogStr.Ident(this)+" logged in.");
+		////called by GameAccount
+		//internal void LogIn(AbstractAccount acc) {
+		//    curAccount = acc;
+		//    Server.ConnLoggedIn(this);
+		//    //Console.WriteLine(LogStr.Ident(this)+" logged in.");
 
-			for (int a=0; a<maxTargs; a++) {
-				targon[a]=null;
-			}
-		}
+		//    for (int a=0; a<maxTargs; a++) {
+		//        targon[a]=null;
+		//    }
+		//}
 
-		public void Target(bool ground, OnTargon targon, OnTargon_Cancel targCancel, object targon_parameter) {
-			this.targon[0]=targon;
-			this.targon_cancel[0]=targCancel;
-			this.targon_parameters[0]=targon_parameter;
-			Packets.Prepared.SendTargettingCursor(this, ground);
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public void Target(bool ground, OnTargon targon, OnTargon_Cancel targCancel, object targon_parameter) {
+		//    this.targon[0]=targon;
+		//    this.targon_cancel[0]=targCancel;
+		//    this.targon_parameters[0]=targon_parameter;
+		//    Packets.Prepared.SendTargettingCursor(this, ground);
+		//}
 
-		public void TargetForMultis(int model, OnTargon targon, OnTargon_Cancel targCancel, object targon_parameter) {
-			this.targon[0]=targon;
-			this.targon_cancel[0]=targCancel;
-			this.targon_parameters[0]=targon_parameter;
-			PacketSender.PrepareTargettingCursorForMultis(model);
-			PacketSender.SendTo(this, true);
-		}
+		//public void TargetForMultis(int model, OnTargon targon, OnTargon_Cancel targCancel, object targon_parameter) {
+		//    this.targon[0]=targon;
+		//    this.targon_cancel[0]=targCancel;
+		//    this.targon_parameters[0]=targon_parameter;
+		//    PacketSender.PrepareTargettingCursorForMultis(model);
+		//    PacketSender.SendTo(this, true);
+		//}
 
-		public void ClearTarget(int targNum) {
-			if (targNum>=0 && targNum<maxTargs) {
-				targon[targNum]=null;
-			}
-		}
+		//public void ClearTarget(int targNum) {
+		//    if (targNum>=0 && targNum<maxTargs) {
+		//        targon[targNum]=null;
+		//    }
+		//}
 
-		public void HandleTarget(byte targGround, int uid, ushort x, ushort y, sbyte z, ushort dispId) {
-			int targNum=0;
-			Logger.WriteDebug("HandleTarget: TG="+targGround+" uid="+uid+" x="+x+" y="+y+" z="+z+" dispId="+dispId);
-			//figure out what it is
-			OnTargon targpoint4d = this.targon[targNum];
-			object parameter = this.targon_parameters[targNum];
-			targpoint4d = null;
-			if (x==0xffff && y==0xffff && uid==0 && z==0 && dispId==0) {
-				//cancel
-				this.ClearTarget(targNum);
-				OnTargon_Cancel targcancel = this.targon_cancel[targNum];
-				if (targcancel!=null) {
-					targcancel(this, parameter);
-				}
-				return;
-			} else {
-				if (targGround==0) {
-					uid = Thing.UidClearFlags(uid);
-					Thing thing = Thing.UidGetThing(uid);
-					if (thing!=null) {
-						OnTargon targ = this.targon[targNum];
-						this.ClearTarget(targNum);
-						if (targ!=null) {
-							targ(this, thing, parameter);
-							return;
-						}
-					}
-				} else {
-					if (dispId==0) {
-						OnTargon targ = this.targon[targNum];
-						this.ClearTarget(targNum);
-						if (targ!=null) {
-							targ(this, new Point3D(x, y, z), parameter);
-							return;
-						}
-					} else {
-						Map map = this.curCharacter.GetMap();
-						Static sta = map.GetStatic(x, y, z, dispId);
-						if (sta != null) {
-							OnTargon targ = this.targon[targNum];
-							this.ClearTarget(targNum);
-							if (targ!=null) {
-								targ(this, sta, parameter);
-								return;
-							}
-						}
-						MultiItemComponent mic = map.GetMultiComponent(x, y, z, dispId);
-						if (mic != null) {
-							OnTargon targ = this.targon[targNum];
-							this.ClearTarget(targNum);
-							if (targ!=null) {
-								targ(this, mic, parameter);
-								return;
-							}
-						}
-					}
-				}
-			}
-			Server.SendClilocSysMessage(this, 1046439, 0);//That is not a valid target.
-		}
+		//public void HandleTarget(byte targGround, int uid, ushort x, ushort y, sbyte z, ushort dispId) {
+		//    int targNum=0;
+		//    Logger.WriteDebug("HandleTarget: TG="+targGround+" uid="+uid+" x="+x+" y="+y+" z="+z+" dispId="+dispId);
+		//    //figure out what it is
+		//    OnTargon targpoint4d = this.targon[targNum];
+		//    object parameter = this.targon_parameters[targNum];
+		//    targpoint4d = null;
+		//    if (x==0xffff && y==0xffff && uid==0 && z==0 && dispId==0) {
+		//        //cancel
+		//        this.ClearTarget(targNum);
+		//        OnTargon_Cancel targcancel = this.targon_cancel[targNum];
+		//        if (targcancel!=null) {
+		//            targcancel(this, parameter);
+		//        }
+		//        return;
+		//    } else {
+		//        if (targGround==0) {
+		//            uid = Thing.UidClearFlags(uid);
+		//            Thing thing = Thing.UidGetThing(uid);
+		//            if (thing!=null) {
+		//                OnTargon targ = this.targon[targNum];
+		//                this.ClearTarget(targNum);
+		//                if (targ!=null) {
+		//                    targ(this, thing, parameter);
+		//                    return;
+		//                }
+		//            }
+		//        } else {
+		//            if (dispId==0) {
+		//                OnTargon targ = this.targon[targNum];
+		//                this.ClearTarget(targNum);
+		//                if (targ!=null) {
+		//                    targ(this, new Point3D(x, y, z), parameter);
+		//                    return;
+		//                }
+		//            } else {
+		//                Map map = this.curCharacter.GetMap();
+		//                Static sta = map.GetStatic(x, y, z, dispId);
+		//                if (sta != null) {
+		//                    OnTargon targ = this.targon[targNum];
+		//                    this.ClearTarget(targNum);
+		//                    if (targ!=null) {
+		//                        targ(this, sta, parameter);
+		//                        return;
+		//                    }
+		//                }
+		//                MultiItemComponent mic = map.GetMultiComponent(x, y, z, dispId);
+		//                if (mic != null) {
+		//                    OnTargon targ = this.targon[targNum];
+		//                    this.ClearTarget(targNum);
+		//                    if (targ!=null) {
+		//                        targ(this, mic, parameter);
+		//                        return;
+		//                    }
+		//                }
+		//            }
+		//        }
+		//    }
+		//    Server.SendClilocSysMessage(this, 1046439, 0);//That is not a valid target.
+		//}
 
-		public ushort GetTargNum() {
-			ushort orig = nextTarg;
-			nextTarg++;
-			if (nextTarg>maxTargs-1) {
-				nextTarg=0;
-			}
-			while (targon[nextTarg]!=null) {
-				if (nextTarg>maxTargs-1) {
-					nextTarg=0;
-				}
-				if (nextTarg==orig) {
-					break;
-					//throw new ServerException("Out of targetting cursors.");
-				}
-				nextTarg++;
-			}
-			return orig;
-		}
+		//public ushort GetTargNum() {
+		//    ushort orig = nextTarg;
+		//    nextTarg++;
+		//    if (nextTarg>maxTargs-1) {
+		//        nextTarg=0;
+		//    }
+		//    while (targon[nextTarg]!=null) {
+		//        if (nextTarg>maxTargs-1) {
+		//            nextTarg=0;
+		//        }
+		//        if (nextTarg==orig) {
+		//            break;
+		//            //throw new ServerException("Out of targetting cursors.");
+		//        }
+		//        nextTarg++;
+		//    }
+		//    return orig;
+		//}
 
 		//stuff for asynchronous sending/receiving.
 		private bool sending = false;
@@ -1155,97 +1155,98 @@ namespace SteamEngine {
 			Logger.WriteError(data);
 		}
 
-		internal void SentGump(Gump gi) {
-			gumpInstancesByUid[gi.uid] = gi;
-			GumpDef thisGump = gi.def;
-			LinkedList<Gump> instancesOfThisGump;
-			if (!gumpInstancesByGump.TryGetValue(thisGump, out instancesOfThisGump)) {
-				instancesOfThisGump = new LinkedList<Gump>();
-				gumpInstancesByGump[thisGump] = instancesOfThisGump;
-			}
-			instancesOfThisGump.AddFirst(gi);
-		}
+		//internal void SentGump(Gump gi) {
+		//    gumpInstancesByUid[gi.uid] = gi;
+		//    GumpDef thisGump = gi.def;
+		//    LinkedList<Gump> instancesOfThisGump;
+		//    if (!gumpInstancesByGump.TryGetValue(thisGump, out instancesOfThisGump)) {
+		//        instancesOfThisGump = new LinkedList<Gump>();
+		//        gumpInstancesByGump[thisGump] = instancesOfThisGump;
+		//    }
+		//    instancesOfThisGump.AddFirst(gi);
+		//}
 
-		internal ICollection<Gump> FindGumpInstances(GumpDef gd) {
-			LinkedList<Gump> retVal;
-			if (gumpInstancesByGump.TryGetValue(gd, out retVal)) {
-				return retVal;
-			}
-			return EmptyReadOnlyGenericCollection<Gump>.instance;
-		}
+		//internal ICollection<Gump> FindGumpInstances(GumpDef gd) {
+		//    LinkedList<Gump> retVal;
+		//    if (gumpInstancesByGump.TryGetValue(gd, out retVal)) {
+		//        return retVal;
+		//    }
+		//    return EmptyReadOnlyGenericCollection<Gump>.instance;
+		//}
 
-		internal Gump PopGump(uint uid) {
-			Gump gi;
-			if (gumpInstancesByUid.TryGetValue(uid, out gi)) {
-				gumpInstancesByUid.Remove(uid);
+		//internal Gump PopGump(uint uid) {
+		//    Gump gi;
+		//    if (gumpInstancesByUid.TryGetValue(uid, out gi)) {
+		//        gumpInstancesByUid.Remove(uid);
 
-				GumpDef gd = gi.def;
-				LinkedList<Gump> list;
-				if (gumpInstancesByGump.TryGetValue(gd, out list)) {
-					list.Remove(gi);
-					if (list.Count == 0) {
-						gumpInstancesByGump.Remove(gd);
-					}
-				}
-				return gi;
-			}
-			return null;
-		}
+		//        GumpDef gd = gi.def;
+		//        LinkedList<Gump> list;
+		//        if (gumpInstancesByGump.TryGetValue(gd, out list)) {
+		//            list.Remove(gi);
+		//            if (list.Count == 0) {
+		//                gumpInstancesByGump.Remove(gd);
+		//            }
+		//        }
+		//        return gi;
+		//    }
+		//    return null;
+		//}
 
-		private static TagKey charUidLinkTK = TagKey.Get("__charUidLink__");
+		//private static TagKey charUidLinkTK = TagKey.Get("__charUidLink__");
 
-		internal void BackupLinksToCharacters() {
-			if (curCharacter != null) {
-				this.SetTag(charUidLinkTK, curCharacter.Uid);
-			}
-		}
+		//internal void BackupLinksToCharacters() {
+		//    if (curCharacter != null) {
+		//        this.SetTag(charUidLinkTK, curCharacter.Uid);
+		//    }
+		//}
 
-		internal void RelinkCharacter() {
-			object o = this.GetTag(charUidLinkTK);
-			if (o != null) {
-				AbstractCharacter newChar = Thing.UidGetCharacter(Convert.ToInt32(o));
-				if (newChar == null) {
-					Close("Character lost while recompiling...?");
-				} else {
-					newChar.Account.LogIn(this);
-					curAccount = newChar.Account;
-					curCharacter = newChar;
-					newChar.ReLinkToGameConn();
-				}
-			}
+		//internal void RelinkCharacter() {
+		//    object o = this.GetTag(charUidLinkTK);
+		//    if (o != null) {
+		//        AbstractCharacter newChar = Thing.UidGetCharacter(Convert.ToInt32(o));
+		//        if (newChar == null) {
+		//            Close("Character lost while recompiling...?");
+		//        } else {
+		//            newChar.Account.LogIn(this);
+		//            curAccount = newChar.Account;
+		//            curCharacter = newChar;
+		//            newChar.ReLinkToGameState();
+		//        }
+		//    }
 
-			gumpInstancesByUid.Clear();
-			gumpInstancesByGump.Clear();
-			//clear old opened containers and gumps... they just get lost and player has to open them again
-			//theres no other simple way...
-		}
+		//    gumpInstancesByUid.Clear();
+		//    gumpInstancesByGump.Clear();
 
-		internal void RemoveBackupLinks() {
-			this.RemoveTag(charUidLinkTK);
-		}
+		//    //clear old opened containers and gumps... they just get lost and player has to open them again
+		//    //theres no other simple way...
+		//}
 
-		//this is called by InPackets.LoginChar
-		internal AbstractCharacter LoginCharacter(int index) {
-			Sanity.IfTrueThrow(index<0 || index>=AbstractAccount.maxCharactersPerGameAccount, "Call was made to LoginCharacter with an invalid character index "+index+", valid values being from 0 to "+AbstractAccount.maxCharactersPerGameAccount+".");
-			Sanity.IfTrueThrow(curAccount==null, "curAccount is null!");
-			if (curCharacter!=null) {
-				Close("Character login with a character already logged, wtf?!");
-				return null;
-			}
-			AbstractCharacter cre = curAccount.GetLingeringCharacter();
-			if (cre==null) {//if we've already a lingering char on this acc, 
-				//we ignore the selection and login the lingering one
-				cre=curAccount.GetCharacterInSlot(index);
-			}
+		//internal void RemoveBackupLinks() {
+		//    this.RemoveTag(charUidLinkTK);
+		//}
 
-			if (cre!=null) {
-				curCharacter=cre;
-				if (!cre.AttemptLogIn()) {	//returns true for success
-					curCharacter=null;
-				}
-			}
-			return curCharacter;
-		}
+		////this is called by InPackets.LoginChar
+		//internal AbstractCharacter LoginCharacter(int index) {
+		//    Sanity.IfTrueThrow(index<0 || index>=AbstractAccount.maxCharactersPerGameAccount, "Call was made to LoginCharacter with an invalid character index "+index+", valid values being from 0 to "+AbstractAccount.maxCharactersPerGameAccount+".");
+		//    Sanity.IfTrueThrow(curAccount==null, "curAccount is null!");
+		//    if (curCharacter!=null) {
+		//        Close("Character login with a character already logged, wtf?!");
+		//        return null;
+		//    }
+		//    AbstractCharacter cre = curAccount.GetLingeringCharacter();
+		//    if (cre==null) {//if we've already a lingering char on this acc, 
+		//        //we ignore the selection and login the lingering one
+		//        cre=curAccount.GetCharacterInSlot(index);
+		//    }
+
+		//    if (cre!=null) {
+		//        curCharacter=cre;
+		//        if (!cre.TryLogIn()) {	//returns true for success
+		//            curCharacter=null;
+		//        }
+		//    }
+		//    return curCharacter;
+		//}
 
 		public override int GetHashCode() {
 			return uid;
@@ -1271,10 +1272,10 @@ namespace SteamEngine {
 			return sb.Append(")").ToString();
 		}
 
-		public void CancelMovement() {
-			moveSeqNum=0;
-			reqMoveSeqNum=0;
-			moveRequests.Clear();
-		}				
+		//public void CancelMovement() {
+		//    moveSeqNum=0;
+		//    reqMoveSeqNum=0;
+		//    moveRequests.Clear();
+		//}				
 	}
 }

@@ -51,7 +51,7 @@ namespace SteamEngine {
 	[Summary("This is the base class for implementation of our \"lightweight polymorphism\". "
 		+ "TagHolder class holds tags (values indexed by names) and Timers.")]
 	public class TagHolder : IDeletable, ITagHolder {
-		internal Hashtable tags = null; //in this tagholder are stored tags, Timers, and by PluginHolder also Plugins
+		internal Hashtable tags = null; //in this Hashtable are stored Tags, Timers, and by PluginHolder class also Plugins and TGListNodes
 
 		public TagHolder() {
 		}

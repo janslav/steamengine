@@ -23,6 +23,8 @@ using System.Diagnostics;
 using System.Configuration;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.Regions {
 	
@@ -49,7 +51,7 @@ namespace SteamEngine.Regions {
 		private Sector[,] sectors;
 		internal StaticRegion[] regions;
 		public readonly byte m;
-		private LinkedList<Region> dynamicRegions = new LinkedList<Region>();
+		private SimpleQueue<Region> dynamicRegions = new SimpleQueue<Region>();
 		
 		private static GroundTileType t_rock;
 		private static GroundTileType t_grass;
@@ -571,129 +573,80 @@ namespace SteamEngine.Regions {
 		//    return (enumer.MoveNext());	//return true if there is a player somewhere, false if not.
 			
 		//}
-		
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
-		public IEnumerable<GameConn> GetClientsInRange(ushort x, ushort y, ushort range) {
+
+		public IEnumerable<GameState> GetClientsInRange(ushort x, ushort y, ushort range) {
 			return GetClientsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 		
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, ushort range) {
+			return GetGameConnsInRectangle(new ImmutableRectangle(x, y, range));
+		}
+		
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y, ushort range) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y, ushort range) {
 			return GetThingsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y, ushort range) {
 			return GetItemsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y, ushort range) {
 			return GetCharsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y, ushort range) {
 			return GetStaticsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y, ushort range) {
 			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y, ushort range) {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
-		public IEnumerable<GameConn> GetClientsInRange(ushort x, ushort y) {
+		public IEnumerable<GameState> GetClientsInRange(ushort x, ushort y) {
 			return GetClientsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
+		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y) {
+			return GetGameConnsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+		}
+
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y) {
 			return GetThingsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y) {
 			return GetItemsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y) {
 			return GetCharsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y) {
 			return GetStaticsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y) {
 			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify coordinates to look near.
-		*/
+
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y) {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		
-		
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify a rectangle to look in.
-		*/
-		public IEnumerable<GameConn> GetClientsInRectangle(ImmutableRectangle rectangle) {
+		public IEnumerable<GameConn> GetGameConnsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
 					GameConn conn = player.Conn;
@@ -703,10 +656,18 @@ namespace SteamEngine.Regions {
 				}
 			}
 		}
-		/**
-			This is used by Thing's similarly named methods, but this version allows
-			you to explicitly specify a rectangle to look in.
-		*/
+
+		public IEnumerable<GameState> GetClientsInRectangle(ImmutableRectangle rectangle) {
+			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
+				foreach (AbstractCharacter player in sector.players) {
+					GameState state = player.GameState;
+					if ((state != null) && (rectangle.Contains(player))) {
+						yield return state;
+					}
+				}
+			}
+		}
+
 		public IEnumerable<AbstractCharacter> GetPlayersInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
@@ -833,7 +794,7 @@ namespace SteamEngine.Regions {
 			checks that too and whether the client has it open.
 			(This is all done by CanSee, mind you)
 		*/
-		public IEnumerable<GameConn> GetClientsWhoCanSee(Thing thing) {
+		public IEnumerable<GameConn> GetGameConnsWhoCanSee(Thing thing) {
 			Thing t = thing.TopObj();
 			ImmutableRectangle rectangle = new ImmutableRectangle(t.X, t.Y, Globals.MaxUpdateRange);
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
@@ -841,6 +802,19 @@ namespace SteamEngine.Regions {
 					GameConn conn = player.Conn;
 					if ((conn != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
 						yield return conn;
+					}
+				}
+			}
+		}
+
+		public IEnumerable<TCPConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
+			Thing top = thing.TopObj();
+			ImmutableRectangle rectangle = new ImmutableRectangle(top.X, top.Y, Globals.MaxUpdateRange);
+			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
+				foreach (AbstractCharacter player in sector.players) {
+					GameState state = player.GameState;
+					if ((state != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
+						yield return state.Conn;
 					}
 				}
 			}

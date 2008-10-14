@@ -33,9 +33,8 @@ namespace SteamEngine.RemoteConsole {
 		public static readonly PacketGroup group;
 
 		static RequestServersToStartPacket() {
-			group = new PacketGroup();
+			group = PacketGroup.CreateFreePG();
 			group.AddPacket(new RequestServersToStartPacket());
-			group.SetType(PacketGroupType.Free);
 		}
 
 		public override byte Id {

@@ -5,58 +5,75 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.Packets;
+using SteamEngine.Networking;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
-	public class ObjectPropertiesContainer {
+
+	public class ObjectPropertiesContainer : Poolable {
 		private int uid;
-		private readonly Thing thing;
-		private bool frozen = false;
+		private Thing thing;
 		private List<uint> ids = new List<uint>(3);
 		private List<string> arguments = new List<string>(3);
+		private bool initDone;
 
-		FreedPacketGroup oldIdGroup;
-		FreedPacketGroup newIdGroup;
-		FreedPacketGroup dataGroup;
+		//SteamEngine.Packets.FreedPacketGroup oldIdGroup;
+		//SteamEngine.Packets.FreedPacketGroup newIdGroup;
+		//SteamEngine.Packets.FreedPacketGroup dataGroup;
+
+		PacketGroup oldIdNGroup;
+		PacketGroup newIdNGroup;
+		PacketGroup dataNGroup;
 
 		private static CacheDictionary<Thing, ObjectPropertiesContainer> cache = 
-			new CacheDictionary<Thing, ObjectPropertiesContainer>(50000);//znate nekdo nejaky lepsi cislo? :)
+			new CacheDictionary<Thing, ObjectPropertiesContainer>(50000, true);//znate nekdo nejaky lepsi cislo? :)
 		private static int uids;
 
-
-		public ObjectPropertiesContainer(Thing thing) {
-			this.thing = thing;
-			cache[thing] = this;
-			uid = uids++;
+		public ObjectPropertiesContainer() {
 		}
 
-		public static ObjectPropertiesContainer Get(Thing thing) {
+		public static ObjectPropertiesContainer GetFromCache(Thing thing) {
 			ObjectPropertiesContainer opc;
 			cache.TryGetValue(thing, out opc);
 			return opc;
 		}
 
-		public void Unfreeze() {
-			if (frozen) {
-				frozen = false;
-				uid = uids++;
-				ids.Clear();
-				arguments.Clear();
-				oldIdGroup = null;
-				newIdGroup = null;
-				dataGroup = null;
-			}
+		public static void RemoveFromCache(Thing thing) {
+			cache.Remove(thing);
 		}
 
-		public void Freeze() {
-			if (!frozen) {
-				frozen = true;
-			}
+		protected override void On_Reset() {
+			base.On_Reset();
+
+			this.uid = uids++;
+			this.ids.Clear();
+			this.arguments.Clear();
+			//this.oldIdGroup = null;
+			//this.newIdGroup = null;
+			//this.dataGroup = null;
+			this.initDone = false;
+			this.thing = null;
 		}
 
-		public bool Frozen {
+		public override void Dispose() {
+			if (this.initDone) {
+				cache.Remove(this.thing);
+				this.initDone = false;
+			}
+
+			base.Dispose();
+		}
+
+		public void InitDone(Thing thing) {
+			this.thing = thing;
+			cache[thing] = this;
+			this.initDone = true;
+		}
+
+		public bool IsInitDone {
 			get {
-				return frozen;
+				return this.initDone;
 			}
 		}
 
@@ -67,45 +84,62 @@ namespace SteamEngine {
 		//}
 
 		public void AddLine(uint clilocId) {
-			Sanity.IfTrueThrow(frozen, "You can't modify a frozen ObjectPropertiesContainer, Unfreeze first");
+			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			ids.Add(clilocId);
 			arguments.Add(null);
 		}
 
 		public void AddLine(uint clilocId, string arg) {
-			Sanity.IfTrueThrow(frozen, "You can't modify a frozen ObjectPropertiesContainer, Unfreeze first");
+			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			this.ids.Add(clilocId);
 			this.arguments.Add(arg);
 		}
 
 		public void AddLine(uint clilocId, string arg0, string arg1) {
-			Sanity.IfTrueThrow(frozen, "You can't modify a frozen ObjectPropertiesContainer, Unfreeze first");
+			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			this.ids.Add(clilocId);
 			this.arguments.Add(string.Concat(arg0, "\t", arg1));
 		}
 
 		public void AddLine(uint clilocId, params string[] args) {
-			Sanity.IfTrueThrow(frozen, "You can't modify a frozen ObjectPropertiesContainer, Unfreeze first");
+			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			this.ids.Add(clilocId);
 			this.arguments.Add(string.Join("\t", args));
 		}
 
-		//0xbf 0x10 or 0xdc
-		public void SendIdPacket(GameConn c) {
-			if (c.Version.oldAosToolTips) {
-				if (oldIdGroup == null) {
-					BoundPacketGroup bpg = PacketSender.NewBoundGroup();
-					PacketSender.PrepareOldPropertiesRefresh(thing, uid);
-					oldIdGroup = bpg.Free();
+		////0xbf 0x10 or 0xdc
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public void SendIdPacket(GameConn c) {
+		//    if (c.Version.oldAosToolTips) {
+		//        if (oldIdGroup == null) {
+		//            SteamEngine.Packets.BoundPacketGroup bpg = SteamEngine.Packets.PacketSender.NewBoundGroup();
+		//            SteamEngine.Packets.PacketSender.PrepareOldPropertiesRefresh(thing, uid);
+		//            oldIdGroup = bpg.Free();
+		//        }
+		//        oldIdGroup.SendTo(c);
+		//    } else {
+		//        if (newIdGroup == null) {
+		//            SteamEngine.Packets.BoundPacketGroup bpg = SteamEngine.Packets.PacketSender.NewBoundGroup();
+		//            SteamEngine.Packets.PacketSender.PreparePropertiesRefresh(thing, uid);
+		//            newIdGroup = bpg.Free();
+		//        }
+		//        newIdGroup.SendTo(c);
+		//    }
+		//}
+
+		public void SendIdPacket(GameState state, TCPConnection<GameState> conn) {
+			if (state.Version.oldAosToolTips) {
+				if (this.oldIdNGroup == null) {
+					this.oldIdNGroup = PacketGroup.CreateFreePG();
+					this.oldIdNGroup.AcquirePacket<OldPropertiesRefreshOutPacket>().Prepare(thing.FlaggedUid, this.uid);
 				}
-				oldIdGroup.SendTo(c);
+				conn.SendPacketGroup(this.oldIdNGroup);
 			} else {
-				if (newIdGroup == null) {
-					BoundPacketGroup bpg = PacketSender.NewBoundGroup();
-					PacketSender.PreparePropertiesRefresh(thing, uid);
-					newIdGroup = bpg.Free();
+				if (this.newIdNGroup == null) {
+					this.newIdNGroup = PacketGroup.CreateFreePG();
+					this.newIdNGroup.AcquirePacket<PropertiesRefreshOutPacket>().Prepare(thing.FlaggedUid, this.uid);
 				}
-				newIdGroup.SendTo(c);
+				conn.SendPacketGroup(this.newIdNGroup);
 			}
 		}
 
@@ -122,13 +156,21 @@ namespace SteamEngine {
 		}
 
 		//0xd6 - megacliloc
-		public void SendDataPacket(GameConn c) {
-			if (dataGroup == null) {
-				BoundPacketGroup bpg = PacketSender.NewBoundGroup();
-				PacketSender.PrepareMegaCliloc(thing, uid, ids, arguments);
-				dataGroup = bpg.Free();
+		//public void SendDataPacket(GameConn c) {
+		//    if (dataGroup == null) {
+		//        SteamEngine.Packets.BoundPacketGroup bpg = SteamEngine.Packets.PacketSender.NewBoundGroup();
+		//        SteamEngine.Packets.PacketSender.PrepareMegaCliloc(thing, uid, ids, arguments);
+		//        dataGroup = bpg.Free();
+		//    }
+		//    dataGroup.SendTo(c);
+		//}
+
+		internal void SendDataPacket(TCPConnection<GameState> conn, GameState state) {
+			if (this.dataNGroup == null) {
+				this.dataNGroup = PacketGroup.CreateFreePG();
+				this.dataNGroup.AcquirePacket<MegaClilocOutPacket>().Prepare(thing.FlaggedUid, uid, ids, arguments);
 			}
-			dataGroup.SendTo(c);
+			conn.SendPacketGroup(this.dataNGroup);
 		}
 
 		public static void ClearCache() {

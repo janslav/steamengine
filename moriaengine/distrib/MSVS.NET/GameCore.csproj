@@ -254,9 +254,6 @@
     <Compile Include="..\..\GameCore\AuxServerPipe\OutgoingPackets.cs">
       <Link>AuxServerPipe\OutgoingPackets.cs</Link>
     </Compile>
-    <Compile Include="..\..\GameCore\CacheDictionary.cs">
-      <Link>CacheDictionary.cs</Link>
-    </Compile>
     <Compile Include="..\..\GameCore\CanSeeImplementation.cs">
       <Link>CanSeeImplementation.cs</Link>
     </Compile>
@@ -602,8 +599,11 @@
       <Link>MultiData.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\Networking\GameClient.cs">
-      <Link>Networking\GameClient.cs</Link>
+    <Compile Include="..\..\GameCore\Networking\CharSyncQueue.cs">
+      <Link>Networking\CharSyncQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\Enums.cs">
+      <Link>Networking\Enums.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\Networking\GameCompression.cs">
       <Link>Networking\GameCompression.cs</Link>
@@ -614,11 +614,35 @@
     <Compile Include="..\..\GameCore\Networking\GameServer.cs">
       <Link>Networking\GameServer.cs</Link>
     </Compile>
+    <Compile Include="..\..\GameCore\Networking\GameServerProtocol.cs">
+      <Link>Networking\GameServerProtocol.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\GameState.cs">
+      <Link>Networking\GameState.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\Networking\IncomingPackets.cs">
       <Link>Networking\IncomingPackets.cs</Link>
     </Compile>
+    <Compile Include="..\..\GameCore\Networking\ItemOnGroundUpdater.cs">
+      <Link>Networking\ItemOnGroundUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\ItemSyncQueue.cs">
+      <Link>Networking\ItemSyncQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\MovementState.cs">
+      <Link>Networking\MovementState.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\Networking\OutgoingPackets.cs">
       <Link>Networking\OutgoingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\PacketSequences.cs">
+      <Link>Networking\PacketSequences.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\PreparedPacketGroups.cs">
+      <Link>Networking\PreparedPacketGroups.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GameCore\Networking\SyncQueue.cs">
+      <Link>Networking\SyncQueue.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\ObjectPropertiesContainer.cs">
       <Link>ObjectPropertiesContainer.cs</Link>

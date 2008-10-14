@@ -87,6 +87,9 @@
     <Compile Include="..\..\AuxiliaryServer\LoginServer\OutgoingPackets.cs">
       <Link>LoginServer\OutgoingPackets.cs</Link>
     </Compile>
+    <Compile Include="..\..\AuxiliaryServer\LoginServer\ServerUtils.cs">
+      <Link>LoginServer\ServerUtils.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\MainClass.cs">
       <Link>MainClass.cs</Link>
     </Compile>

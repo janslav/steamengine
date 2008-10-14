@@ -41,6 +41,8 @@ namespace SteamEngine.RemoteConsole {
 			// chckAutoScroll
 			// 
 			this.chckAutoScroll.AutoSize = true;
+			this.chckAutoScroll.Checked = true;
+			this.chckAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.chckAutoScroll.Location = new System.Drawing.Point(3, 3);
 			this.chckAutoScroll.Name = "chckAutoScroll";
 			this.chckAutoScroll.Size = new System.Drawing.Size(72, 17);

@@ -2,34 +2,35 @@ using System;
 using System.Net;
 using System.IO;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
 	public static class Settings {
-		public static readonly byte[] lanIP;
-		public static readonly byte[] wanIP;
-
 		public static readonly string logPath;
 		public static readonly sbyte timeZone;
 		public static readonly IPEndPoint loginServerEndpoint;
 
 		public static readonly IPEndPoint consoleServerEndpoint;
 
-		private static readonly HashSet<GameServerInstanceSettings> knownGameServersSet = new HashSet<GameServerInstanceSettings>();
-		private static readonly List<GameServerInstanceSettings> knownGameServersList = new List<GameServerInstanceSettings>();
-		private static readonly System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings> knownGameServersListWrapper =
-			new System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings>(knownGameServersList);
+		private static readonly HashSet<GameServerInstanceSettings> knownGameServersSet;
+		private static readonly List<GameServerInstanceSettings> knownGameServersList;
+		private static readonly System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings> knownGameServersListWrapper;
 
 		public static readonly string iniFileName = "steamaux.ini";
 
-		public static IList<GameServerInstanceSettings> KnownGameServersList { get {
-			return knownGameServersListWrapper;
-		} }
+		public static System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings> KnownGameServersList {
+			get {
+				return knownGameServersListWrapper;
+			}
+		}
 
 		static Settings() {
+			knownGameServersSet = new HashSet<GameServerInstanceSettings>();
+			knownGameServersList = new List<GameServerInstanceSettings>();
+			knownGameServersListWrapper = new System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings>(knownGameServersList);
+
 			IniFile ini = new IniFile(iniFileName);
 
 			IniFileSection files = ini.GetNewOrParsedSection("Files");
@@ -70,16 +71,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 			ini.WriteToFile();
 
-			Console.WriteLine(iniFileName+" loaded and written.");
-
-			IPAddress[] wanIPs = Dns.GetHostAddresses(Dns.GetHostName());
-			wanIP = wanIPs[0].GetAddressBytes();
-			Sanity.IfTrueThrow(wanIP.Length != 4, "wanIP has not 4 bytes, need IPv6 compatibility implemented?");
-
-			
-			IPAddress[] lanIPs = Dns.GetHostAddresses("localhost");
-			lanIP = lanIPs[0].GetAddressBytes();
-			Sanity.IfTrueThrow(lanIP.Length != 4, "lanIP has not 4 bytes, need IPv6 compatibility implemented?");
+			Console.WriteLine(iniFileName + " loaded and written.");
 		}
 
 		public static bool TryAddKnownGameServer(GameServerInstanceSettings gsig) {
@@ -139,7 +131,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal static void Init() {
-			
+
 		}
 	}
 

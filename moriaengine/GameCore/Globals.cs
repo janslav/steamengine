@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Globalization; 
@@ -25,12 +25,17 @@ using System.Net;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 using SteamEngine.Packets;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
+using SteamEngine.Communication.TCP;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Diagnostics;
 using System.ComponentModel;
+#if !MONO
+using Microsoft.Win32;	//for RegistryKey
+#endif
 
 namespace SteamEngine {
 	public interface ISrc {
@@ -47,10 +52,10 @@ namespace SteamEngine {
 
 	public class Globals : PluginHolder {
 		//The minimum and maximum ranges that a client can get packets within
-		public const int MaxUpdateRange=18;
-		public const int MaxUpdateRangeSquared=MaxUpdateRange*MaxUpdateRange;
-		public const int MinUpdateRange=5;
-		public const int defaultWarningLevel=4;
+		public const int MaxUpdateRange = 18;
+		public const int MaxUpdateRangeSquared = MaxUpdateRange * MaxUpdateRange;
+		public const int MinUpdateRange = 5;
+		public const int defaultWarningLevel = 4;
 
 		public readonly static ushort port;   //Changing this after initialization has no effect. 
 		public readonly static string serverName;  //Can be changed while the server is running.
@@ -87,8 +92,8 @@ namespace SteamEngine {
 
 		public readonly static ushort reachRange;
 		public readonly static int squaredReachRange;
-		public readonly static uint sightRange;
-		public readonly static int squaredSightRange;
+		//public readonly static ushort sightRange;
+		//public readonly static int squaredSightRange;
 		public readonly static ushort serverMessageColor;
 		public readonly static ushort defaultUnicodeMessageColor;
 
@@ -110,6 +115,8 @@ namespace SteamEngine {
 
 		public readonly static bool sendTileDataSpam;
 		public readonly static bool fastStartUp;
+		public readonly static bool netSyncingTracingOn;
+
 		public readonly static bool writeMulDocsFiles;
 
 		public readonly static bool resolveEverythingAtStart;
@@ -121,10 +128,10 @@ namespace SteamEngine {
 		public readonly static int maxConnections;
 
 		public readonly static bool supportUnicode;
-		public readonly static uint speechDistance;
-		public readonly static uint emoteDistance;
-		public readonly static uint whisperDistance;
-		public readonly static uint yellDistance;
+		public readonly static ushort speechDistance;
+		public readonly static ushort emoteDistance;
+		public readonly static ushort whisperDistance;
+		public readonly static ushort yellDistance;
 		public readonly static bool asciiForNames;
 		public readonly static uint loginFlags;
 		public readonly static ushort featuresFlags;
@@ -137,6 +144,8 @@ namespace SteamEngine {
 		public readonly static bool scriptFloats;
 
 		public readonly static bool aos;
+
+		public readonly static IList<IPAddress> omitip;
 
 		[Summary("The last new item or character or memory or whatever created.")]
 		public static TagHolder lastNew = null;
@@ -181,6 +190,26 @@ namespace SteamEngine {
 				AbstractCharacter ch = src as AbstractCharacter;
 				if (ch != null) {
 					return ch.Conn;
+				}
+				return null;
+			}
+		}
+
+		public static GameState SrcGameState {
+			get {
+				AbstractCharacter ch = src as AbstractCharacter;
+				if (ch != null) {
+					return ch.GameState;
+				}
+				return null;
+			}
+		}
+
+		public static TCPConnection<GameState> SrcTCPConnection {
+			get {
+				AbstractCharacter ch = src as AbstractCharacter;
+				if (ch != null) {
+					return ch.GameState.Conn;
 				}
 				return null;
 			}
@@ -256,32 +285,35 @@ namespace SteamEngine {
 				IniFileSection login = iniH.GetNewOrParsedSection("login");
 				alwaysUpdateRouterIPOnStartup = (bool) login.GetValue<bool>("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
 				string omit = login.GetValue<string>("omitip", "5.0.0.0", "IP to omit from server lists, for example, omitIP=5.0.0.0. You can have multiple omitIP values, separated by comma.");
+				omitip = new List<IPAddress>();
 				foreach (string ip in omit.Split(',')) {
 					Server.AddOmitIP(IPAddress.Parse(ip));
+					omitip.Add(IPAddress.Parse(ip));
 				}
+				omitip = new System.Collections.ObjectModel.ReadOnlyCollection<IPAddress>(omitip);
 
 				bool exists;
-				string msgBox="";
+				string msgBox = "";
 				if (iniH.FileExists) {
-					exists=true;
+					exists = true;
 					string routerIP = login.GetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
 					//if (routerIP.Length>0) {
 					Server.SetRouterIP(routerIP);
 					//}
 					mulPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
 				} else {
-					string mulsPath=Server.GetMulsPath();
-					if (mulsPath==null) {
-						msgBox+="Unable to locate the UO MUL files. Please either place them in the 'muls' folder or specify the proper path in steamengine.ini (change mulPath=muls to the proper path)\n\n";
+					string mulsPath = GetMulsPath();
+					if (mulsPath == null) {
+						msgBox += "Unable to locate the UO MUL files. Please either place them in the 'muls' folder or specify the proper path in steamengine.ini (change mulPath=muls to the proper path)\n\n";
 						mulsPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
 					} else {
 						mulsPath = files.GetValue<string>("mulPath", mulsPath, "Path to the mul files");
 					}
-					exists=false;
-					string[] ret=Server.FindMyIP();
-					string routerIP=ret[1];
-					msgBox+=ret[0];
-					if (routerIP==null) {
+					exists = false;
+					string[] ret = Server.FindMyIP();
+					string routerIP = ret[1];
+					msgBox += ret[0];
+					if (routerIP == null) {
 						login.SetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
 					} else {
 						login.SetValue<string>("routerIP", routerIP, "The IP to show to people who are outside your LAN");
@@ -306,15 +338,16 @@ namespace SteamEngine {
 				IniFileSection ranges = iniH.GetNewOrParsedSection("ranges");
 				reachRange = ranges.GetValue<ushort>("reachRange", 5, "The distance (in spaces) a character can reach.");
 				squaredReachRange = reachRange * reachRange;
-				sightRange = ranges.GetValue<uint>("sightRange", 15, "The distance (in spaces) a character can see.");
-				speechDistance = ranges.GetValue<uint>("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
-				emoteDistance = ranges.GetValue<uint>("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
-				whisperDistance = ranges.GetValue<uint>("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
-				yellDistance = ranges.GetValue<uint>("yellDistance", 20, "The maximum distance from which a yell can be heard.");
+				//sightRange = ranges.GetValue<ushort>("sightRange", 15, "The distance (in spaces) a character can see.");
+
+				speechDistance = ranges.GetValue<ushort>("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
+				emoteDistance = ranges.GetValue<ushort>("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
+				whisperDistance = ranges.GetValue<ushort>("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
+				yellDistance = ranges.GetValue<ushort>("yellDistance", 20, "The maximum distance from which a yell can be heard.");
 
 				IniFileSection plevels = iniH.GetNewOrParsedSection("plevels");
 				maximalPlevel = plevels.GetValue<byte>("maximalPlevel", 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");
-				plevelOfGM = plevels.GetValue<int>("plevelOfGM",  4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
+				plevelOfGM = plevels.GetValue<int>("plevelOfGM", 4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
 				plevelToLscriptCommands = plevels.GetValue<int>("plevelToLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
 
 				IniFileSection scripts = iniH.GetNewOrParsedSection("scripts");
@@ -324,8 +357,8 @@ namespace SteamEngine {
 				scriptFloats = scripts.GetValue<bool>("scriptFloats", true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
 				Logger.showCoreExceptions = scripts.GetValue<bool>("showCoreExceptions", true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
 
-				loginFlags=0;
-				featuresFlags=0;
+				loginFlags = 0;
+				featuresFlags = 0;
 
 				IniFileSection features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
@@ -338,9 +371,9 @@ namespace SteamEngine {
 				//RightClickMenus
 				//Perhaps Chat and LBR too? Right now they default to enabled.
 
-				featuresFlags|=0x3;
+				featuresFlags |= 0x3;
 				if (aos) {
-					loginFlags|=0x20;
+					loginFlags |= 0x20;
 					//featuresFlags|=0x801c;
 					featuresFlags = 0xFFFF;
 				}
@@ -376,15 +409,18 @@ namespace SteamEngine {
 				temporary.AddComment("These are temporary INI settings, which will be going away in future versions.");
 				fastStartUp = temporary.GetValue<bool>("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
 				sendTileDataSpam = temporary.GetValue<bool>("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
+				netSyncingTracingOn = temporary.GetValue<bool>("netSyncingTracingOn", false, "Networking.SyncQueue info messages");
+
+
 				temporary.AddComment("");
 				temporary.AddComment("SteamEngine determines if someone is on your LAN by comparing their IP with all of yours. If the first three parts of the IPs match, they're considered to be on your LAN. Note that this will probably not work for people on very big LANs. If you're on one, please post a feature request on our SourceForge site.");
 				temporary.AddComment("http://steamengine.sf.net/");
 
-				
+
 				if (!exists) {
 					iniH.WriteToFile();
 					MainClass.signalExit.Set();
-					throw new ShowMessageAndExitException(msgBox+"SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");
+					throw new ShowMessageAndExitException(msgBox + "SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");
 				}
 
 				PauseServerTime();
@@ -398,6 +434,47 @@ namespace SteamEngine {
 				Logger.WriteFatal(globalexp);
 				MainClass.Exit();
 			}
+		}
+
+		/**
+			Looks in the registry to find the path to the MUL files. If both 2d and 3d are installed,
+			it isn't specified which this will find.
+		*/
+		public static string GetMulsPath() {
+#if !MONO
+			RegistryKey rk = Registry.LocalMachine;
+			rk = rk.OpenSubKey("SOFTWARE");
+			if (rk != null) {
+				rk = rk.OpenSubKey("Origin Worlds Online");
+				if (rk != null) {
+					string[] names = rk.GetSubKeyNames();
+					foreach (string name in names) {
+						RegistryKey uoKey = rk.OpenSubKey(name);
+						if (uoKey != null) {
+							string[] names2 = uoKey.GetSubKeyNames();
+							foreach (string name2 in names2) {
+								RegistryKey verKey = uoKey.OpenSubKey(name2);
+								object s = verKey.GetValue("InstCDPath");
+								if (s != null && s is string) {
+									return (string) s;
+									//} else {
+									//Console.WriteLine("It ain't a string (Type is "+s.GetType().ToString()+") : "+s.ToString());
+								}
+							}
+						} else {
+							Logger.WriteWarning("Unable to open 'uoKeys' in registry");
+						}
+					}
+				} else {
+					Logger.WriteWarning("Unable to open 'Origin Worlds Online' in registry");
+				}
+			} else {
+				Logger.WriteWarning("Unable to open 'SOFTWARE' in registry");
+			}
+#else
+			Logger.WriteWarning("TODO: Implement some way to find the muls when running from MONO?");
+#endif
+			return null;
 		}
 
 		//public static readonly string version="1.0.0"; 
@@ -446,11 +523,16 @@ namespace SteamEngine {
 		}
 
 		public static void SetConsoleTitle(string title) {
-			Console.WriteLine("Reseting console title to '"+title+"'"+LogStr.Title(title));
+			Console.WriteLine("Reseting console title to '" + title + "'" + LogStr.Title(title));
 		}
 
 		public static void Save() {
-			MainClass.saveFlag=true;
+			//Packets.NetState.ProcessAll();
+			SyncQueue.ProcessAll();
+
+			Globals.PauseServerTime();
+			WorldSaver.Save();
+			Globals.UnPauseServerTime();
 		}
 
 		public static void G() {
@@ -480,7 +562,7 @@ namespace SteamEngine {
 
 		public static Type se(string typename) {
 			//Console.WriteLine("type: "+Type.GetType("SteamEngine."+typename));
-			return Type.GetType("SteamEngine."+typename, true, true);
+			return Type.GetType("SteamEngine." + typename, true, true);
 		}
 
 		//sphere compatibility
@@ -493,7 +575,7 @@ namespace SteamEngine {
 		}
 
 		public static string Hex(int numb) {
-			return "0x"+Convert.ToString(numb, 16);
+			return "0x" + Convert.ToString(numb, 16);
 		}
 
 		public static string Dec(int numb) {
@@ -504,7 +586,7 @@ namespace SteamEngine {
 			Globals.Src.WriteLine(string.Format(
 				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
 				version, serverName, Server.connections.Count, AbstractItem.Instances, AbstractCharacter.Instances,
-				GC.GetTotalMemory(false)/1024, Environment.NewLine));
+				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
 		}
 
 		public static void I() {
@@ -512,7 +594,7 @@ namespace SteamEngine {
 		}
 
 		public static void B(string msg) {
-			Server.BroadCast(msg);
+			PacketSequences.BroadCast(msg);
 		}
 
 		//public static void Echo(ParsedCommandsList commandlist) {
@@ -546,7 +628,7 @@ namespace SteamEngine {
 		}
 
 		internal static void ClearAll() {
-			instance=new Globals();
+			instance = new Globals();
 		}
 
 		internal static void SaveGlobals(SaveStream output) {
@@ -568,7 +650,7 @@ namespace SteamEngine {
 			if ((timeLine != null) && (ConvertTools.TryParseInt64(timeLine.value, out value))) {
 				lastMarkServerTime = TimeSpan.FromTicks(value);
 			} else {
-				Logger.WriteWarning("The Globals section of save is missing the "+LogStr.Ident("Time")+" value or the value is invalid, setting server time to 0");
+				Logger.WriteWarning("The Globals section of save is missing the " + LogStr.Ident("Time") + " value or the value is invalid, setting server time to 0");
 				lastMarkServerTime = TimeSpan.Zero;
 			}
 
@@ -577,12 +659,12 @@ namespace SteamEngine {
 
 #if MSWIN
 		private static void ndocExited(object source, EventArgs e) {
-			if (ndocProcess.ExitCode!=0) {
-				Logger.WriteError("NDOC was not finished correctly (exit code: "+ndocProcess.ExitCode+").");
+			if (ndocProcess.ExitCode != 0) {
+				Logger.WriteError("NDOC was not finished correctly (exit code: " + ndocProcess.ExitCode + ").");
 			} else {
 				Console.WriteLine("NDoc finished successfuly");
 			}
-			ndocProcess=null;
+			ndocProcess = null;
 		}
 #endif
 
@@ -590,52 +672,52 @@ namespace SteamEngine {
 		[Remark("This is first documentation in Steamengine, that uses SteamDoc attributes.")]
 		[Return("Nothing")]
 		public static void CompileDocs() {
-			if (ndocProcess!=null) {
+			if (ndocProcess != null) {
 				Logger.WriteError("NDoc is already running.");
 				return;
 			}
 			try {
 				Console.WriteLine("Generating Common XML documentation file");
-				DocScanner scanner=new DocScanner();
+				DocScanner scanner = new DocScanner();
 				Assembly asm = ClassManager.CommonAssembly;
 				scanner.ScanAssembly(asm);
-				scanner.WriteToFile("bin\\"+asm.GetName().Name+".xml");
+				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
 				Console.WriteLine("Generating Core XML documentation file");
 				asm = ClassManager.CoreAssembly;
-				scanner=new DocScanner();
+				scanner = new DocScanner();
 				scanner.ScanAssembly(asm);
-				scanner.WriteToFile("bin\\"+asm.GetName().Name+".xml");
+				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
 				Console.WriteLine("Generating Scripts XML documentation file");
 				asm = ClassManager.ScriptsAssembly;
-				scanner=new DocScanner();
+				scanner = new DocScanner();
 				scanner.ScanAssembly(asm);
-				scanner.WriteToFile("bin\\"+asm.GetName().Name+".xml");
+				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
 			} catch (Exception e) {
 				Logger.WriteError(e);
 			}
 
 #if MSWIN
-			if (ndocExe.Length!=0) {
+			if (ndocExe.Length != 0) {
 				Console.WriteLine("Invoking NDOC, documentation will be generated to docs/sourceDoc");
 				try {
 #if DEBUG
-					string project="debug.ndoc";
+					string project = "debug.ndoc";
 #elif SANE
 					string project="sane.ndoc";
 #elif OPTIMIZED
 					string project="optimized.ndoc";
 #endif
-					ProcessStartInfo info=new ProcessStartInfo(ndocExe, "-project="+project);
-					info.WorkingDirectory=".\\distrib\\";
-					info.WindowStyle=ProcessWindowStyle.Normal;
-					info.UseShellExecute=true;
-					ndocProcess=new Process();
-					ndocProcess.StartInfo=info;
-					ndocProcess.Exited+=new EventHandler(ndocExited);
-					ndocProcess.EnableRaisingEvents=true;
+					ProcessStartInfo info = new ProcessStartInfo(ndocExe, "-project=" + project);
+					info.WorkingDirectory = ".\\distrib\\";
+					info.WindowStyle = ProcessWindowStyle.Normal;
+					info.UseShellExecute = true;
+					ndocProcess = new Process();
+					ndocProcess.StartInfo = info;
+					ndocProcess.Exited += new EventHandler(ndocExited);
+					ndocProcess.EnableRaisingEvents = true;
 					ndocProcess.Start();
 				} catch (Exception e) {
 					Logger.WriteError(e);
@@ -735,7 +817,7 @@ namespace SteamEngine {
 		[Summary("For sphere compatibility, this returns servertime in tenths of second")]
 		public long Time {
 			get {
-				return (long) (TimeAsSpan.TotalSeconds/10d);
+				return (long) (TimeAsSpan.TotalSeconds / 10d);
 			}
 		}
 
@@ -746,7 +828,7 @@ namespace SteamEngine {
 
 				lastMarkServerTime = lastMarkServerTime + (current - lastMarkRealTime);
 				lastMarkRealTime = current;
-				
+
 				RunLevelManager.SetPaused();
 			}
 		}

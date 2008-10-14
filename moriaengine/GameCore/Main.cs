@@ -31,6 +31,7 @@ using SteamEngine.CompiledScripts.ClassTemplates;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 using SteamEngine.AuxServerPipe;
+using SteamEngine.Networking;
 
 namespace SteamEngine {  
 	public static class MainClass {
@@ -42,7 +43,6 @@ namespace SteamEngine {
 		public static ManualResetEvent signalExit = new ManualResetEvent(false);
 		
 		//public static bool nativeConsole = false;
-		public static bool saveFlag = false;
 		
 		//private static Queue nativeCommands=null;
 		
@@ -89,6 +89,8 @@ namespace SteamEngine {
 
 			signalExit.Reset();
 			try {
+				Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+
 				long time = HighPerformanceTimer.TickCount; //initializing HighPerformanceTimer
 				Common.Tools.ExitBinDirectory();
 				if (!Init()) {
@@ -96,7 +98,13 @@ namespace SteamEngine {
 					return;
 				}
 
-				Cycle();
+				//Thread t = new Thread(Cycle);
+				//t.IsBackground = true;
+				//t.Name = "Main cycle thread";
+				//t.Start();
+
+				Console.WriteLine("Init done.");
+				Console.ReadLine();
 
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.WriteFatal(smaee);
@@ -107,11 +115,7 @@ namespace SteamEngine {
 			} catch (Exception globalexp) {
 				Logger.WriteFatal(globalexp);
 			} finally {
-				RunLevelManager.SetShutdown();
-				FastDLL.ShutDownFastDLL();
-				Console.WriteLine("Shutdown...");
 				Exit();
-				RunLevelManager.SetDead();
 			}
 		}
 		
@@ -152,7 +156,7 @@ namespace SteamEngine {
 			Tools.EnsureDirectory(Globals.mulPath, true);
 			//ExportImport.Init();
 
-			if (!Globals.fastStartUp) {
+			//if (!Globals.fastStartUp) {
 				using (StopWatch.StartAndDisplay("Loading .idx and .mul files from "+LogStr.File(Globals.mulPath)+"...")) {
 					TileData.Init();
 					SoundMul.Init();
@@ -165,9 +169,10 @@ namespace SteamEngine {
 
 
 				WorldSaver.Load();
-			}
+			//}
 			
-			Server.Init();
+			//Server.Init();
+			Networking.GameServer.Init();
 					
 			//Console.WriteLine("Resolving object references...");
 			DelayedResolver.ResolveAll();
@@ -181,10 +186,12 @@ namespace SteamEngine {
 			Logger.WriteDebug("triggering @startup");
 			Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
 
-			if (!Globals.fastStartUp) {
+			//if (!Globals.fastStartUp) {
 				Console.WriteLine("Checking to see if any scripts have changed.");
 				Globals.Resync();
-			}
+			//}
+
+			Timers.Timer.StartTimerThread();
 
 			return true;
 		}
@@ -209,6 +216,7 @@ namespace SteamEngine {
 			OpenedContainers.ClearAll();
 			Commands.ClearGmCommandsCache();
 			ObjectPropertiesContainer.ClearCache();
+			Networking.ItemOnGroundUpdater.ClearCache();
 		}
 		
 		//returns false if nothing was changing, otherwise true
@@ -224,34 +232,40 @@ namespace SteamEngine {
 		internal static void RecompileScripts() {
 			using (StopWatch.StartAndDisplay("Recompiling...")) {
 				Commands.commandRunning = false;
-				Server.BroadCast("Server is pausing for script recompiling...");
+
 				RunLevelManager.SetRecompiling();
 				Globals.PauseServerTime();
 
-				WorldSaver.Save();
+				if (WorldSaver.Save()) {
 
-				RunLevelManager.SetShutdown();
-				Logger.WriteDebug("triggering @shutdown");
-				if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
-					Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
-				}
-				Server.BackupLinksToCharacters();
-				UnLoadAll();
-				if (!LoadAll()) {
-					//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
-					//connections & native commands, though SE doesn't care what they type, and whatever it is,
-					//SE calls RetryRecompilingScripts. So, "retry", "recompile", "resync", "r", and "die you evil compiler"
-					//(and whatever else they try) would all make SE attempt to recompile. Except for "exit", which, well,
-					//exits.
-					RunLevelManager.SetAwaitingRetry();
-					Server.BroadCast("Script recompiling failed, pausing until it has been retried and succeeds.");
-					/*while ((keepRunning) && commandsPaused) {
-						System.Windows.Forms.Application.DoEvents();
-						System.Threading.Thread.Sleep(20);
-					}*/
-				} else {	//If recompiling fails, we do not run this section. Instead, after a recompile succeeds,
-					//the same code will be run in RetryRecompilingScripts.
-					ScriptRecompilingSucceeded();
+					PacketSequences.BroadCast("Server is pausing for script recompiling...");
+					RunLevelManager.SetShutdown();
+
+					Logger.WriteDebug("triggering @shutdown");
+					if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
+						Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
+					}
+					GameServer.BackupLinksToCharacters();
+					UnLoadAll();
+					if (!LoadAll()) {
+						//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
+						//connections & native commands, though SE doesn't care what they type, and whatever it is,
+						//SE calls RetryRecompilingScripts. So, "retry", "recompile", "resync", "r", and "die you evil compiler"
+						//(and whatever else they try) would all make SE attempt to recompile. Except for "exit", which, well,
+						//exits.
+						RunLevelManager.SetAwaitingRetry();
+						PacketSequences.BroadCast("Script recompiling failed, pausing until it has been retried and succeeds.");
+						/*while ((keepRunning) && commandsPaused) {
+							System.Windows.Forms.Application.DoEvents();
+							System.Threading.Thread.Sleep(20);
+						}*/
+					} else {	//If recompiling fails, we do not run this section. Instead, after a recompile succeeds,
+						//the same code will be run in RetryRecompilingScripts.
+						ScriptRecompilingSucceeded();
+					}
+				} else {//saving failed
+					Globals.UnPauseServerTime();
+					RunLevelManager.SetRunning();
 				}
 			}
 		}
@@ -262,17 +276,17 @@ namespace SteamEngine {
 		private static void ScriptRecompilingSucceeded() {
 			CollectGarbage();
 			//RunLevelManager.SetPaused();	//Switch to paused until relinking & garbage collection have completed.
-			Server.RemoveBackupLinks();
+			GameServer.RemoveBackupLinks();
 			//Globals.UnPauseServerTime();
 			//RunLevelManager.SetRunning();
-			Server.BroadCast("Script recompiling finished.");
+			PacketSequences.BroadCast("Script recompiling finished.");
 		}
 		
 		internal static void RetryRecompilingScripts() {
 			UnLoadAll();
 			if (!LoadAll()) {
 				RunLevelManager.SetAwaitingRetry();
-				Server.BroadCast("Script recompiling failed, remaining paused.");
+				PacketSequences.BroadCast("Script recompiling failed, remaining paused.");
 			} else {
 				ScriptRecompilingSucceeded();
 			}
@@ -314,14 +328,14 @@ namespace SteamEngine {
 				return false;
 			}
 			//ExportImport.Init();
-			if (!Globals.fastStartUp) {
+			//if (!Globals.fastStartUp) {
 				ScriptLoader.Load();
 				TriggerGroup.ReAddGlobals();
 			
 				WorldSaver.Load();
 				DelayedResolver.ResolveAll();
-			}
-			Server.ReLinkCharacters();
+			//}
+			GameServer.ReLinkCharacters();
 			Map.Init();
 			ClassManager.InitScripts();
 			PluginDef.Init();
@@ -346,41 +360,35 @@ namespace SteamEngine {
 		//    }
 		//}
 
-		private static void Cycle() {
-			Console.WriteLine("Starting Main Loop");
-			Timers.Timer.StartTimerThread();
+		//private static void Cycle() {
+		//    Console.WriteLine("Starting Main Loop");
+		//    Timers.Timer.StartTimerThread();
 
-			Thread.Sleep(5);
-			AuxServerPipe.AuxServerPipeClient.AnnounceStartupFinished();
+		//    Thread.Sleep(5);
 
-			while (!signalExit.WaitOne(5, false)) {
-				lock (globalLock) {
-					//HandleNativeCmds();
+		//    while (!signalExit.WaitOne(5, false)) {
+		//        if (RunLevelManager.IsRunning) {
+		//            lock (globalLock) {
+		//                SteamEngine.Packets.NetState.ProcessAll();
+		//            }
+		//        }
+		//    }
 
-					Server.Cycle();
-					if (RunLevelManager.IsRunning) {
-						//SteamEngine.Timers.Timer.Cycle();
-						SteamEngine.Packets.NetState.ProcessAll();
-						if (saveFlag) {
-							WorldSaver.Save();
-							RunLevelManager.SetRunning();
-							saveFlag=false;
-						}
-					}
-				}
-			}
-
-			Console.WriteLine("Leaving Main Loop");
-		}
+		//    Console.WriteLine("Leaving Main Loop");
+		//}
 		
 		internal static void Exit() {
-			Logger.WriteDebug("triggering @shutdown");
+			RunLevelManager.SetShutdown();
+			FastDLL.ShutDownFastDLL();
+			Console.WriteLine("Shutdown...");			
 			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
+				Logger.WriteDebug("triggering @shutdown");
 				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
 			}
 			signalExit.Set();
 			Timers.Timer.Clear();
 			Server.Exit();
+			RunLevelManager.SetDead();
 		}
 	}
 }

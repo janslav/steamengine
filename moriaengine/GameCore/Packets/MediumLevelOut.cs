@@ -219,7 +219,7 @@ namespace SteamEngine.Packets {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsInRange("+point+","+range+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsInRange called when generatingState is "+generatingState+" - Expected it to be Ready.");
 			Sanity.IfTrueThrow(groupState!=GroupState.SingleBlocking, "SendToClientsInRange called when groupState is "+groupState+" - Expected it to be SingleBlocking.");
-			foreach (GameConn conn in point.GetMap().GetClientsInRange(point.X, point.Y, range)) {
+			foreach (GameConn conn in point.GetMap().GetGameConnsInRange(point.X, point.Y, range)) {
 				SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
 			}
 			generatingState=GeneratingState.Ready;
@@ -232,7 +232,7 @@ namespace SteamEngine.Packets {
 			Logger.WriteInfo(PacketSenderTracingOn, "SendToClientsInRect("+mapplane+","+rect+")");
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsInRect called when generatingState is "+generatingState+" - Expected it to be Ready.");
 			Sanity.IfTrueThrow(groupState!=GroupState.SingleBlocking, "SendToClientsInRect called when groupState is "+groupState+" - Expected it to be SingleBlocking.");
-			foreach (GameConn conn in Map.GetMap(mapplane).GetClientsInRectangle(rect)) {
+			foreach (GameConn conn in Map.GetMap(mapplane).GetGameConnsInRectangle(rect)) {
 				SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
 			}
 			generatingState=GeneratingState.Ready;
@@ -252,14 +252,17 @@ namespace SteamEngine.Packets {
 			if (asItem != null) {
 				AbstractItem contAsItem = asItem.Cont as AbstractItem;
 				if (contAsItem != null) {
-					foreach (GameConn conn in OpenedContainers.GetConnsWithOpened(contAsItem)) {
-						SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
+					foreach (AbstractCharacter ch in OpenedContainers.GetViewers(contAsItem)) {
+						GameConn conn = ch.Conn;
+						if (conn != null) {
+							SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
+						}
 					}
 					sent = true;
 				}
 			}
 			if (!sent) {
-				foreach (GameConn conn in thing.GetMap().GetClientsWhoCanSee(thing)) {
+				foreach (GameConn conn in thing.GetMap().GetGameConnsWhoCanSee(thing)) {
 					SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
 				}
 			}
@@ -275,7 +278,7 @@ namespace SteamEngine.Packets {
 			Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready, "SendToClientsWhoCanSee called when generatingState is "+generatingState+" - Expected it to be Ready.");
 			Sanity.IfTrueThrow(groupState!=GroupState.SingleBlocking, "SendToClientsWhoCanSee called when groupState is "+groupState+" - Expected it to be SingleBlocking.");
 
-			foreach (GameConn conn in thing.GetMap().GetClientsWhoCanSee(thing)) {
+			foreach (GameConn conn in thing.GetMap().GetGameConnsWhoCanSee(thing)) {
 				SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
 			}
 
@@ -292,11 +295,14 @@ namespace SteamEngine.Packets {
 
 			AbstractItem contAsItem = thing.Cont as AbstractItem;
 			if (contAsItem != null) {
-				foreach (GameConn conn in OpenedContainers.GetConnsWithOpened(contAsItem)) {
-					SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
+				foreach (AbstractCharacter ch in OpenedContainers.GetViewers(contAsItem)) {
+					GameConn conn = ch.Conn;
+					if (conn != null) {
+						SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
+					}
 				}
 			} else {
-				foreach (GameConn conn in thing.GetMap().GetClientsWhoCanSee(thing)) {
+				foreach (GameConn conn in thing.GetMap().GetGameConnsWhoCanSee(thing)) {
 					SendCompressedBytes(conn, lastCPacketStart, lastCPacketSize);
 				}
 			}

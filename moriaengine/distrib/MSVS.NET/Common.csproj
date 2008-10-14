@@ -70,6 +70,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common\Collections\CacheDictionary.cs">
+      <Link>Collections\CacheDictionary.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\Collections\EmptyCollection.cs">
       <Link>Collections\EmptyCollection.cs</Link>
     </Compile>

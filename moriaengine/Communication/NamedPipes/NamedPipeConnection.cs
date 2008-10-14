@@ -30,7 +30,7 @@ using SteamEngine.Communication;
 namespace SteamEngine.Communication.NamedPipes {
 	public sealed class NamedPipeConnection<TState> :
 		AbstractConnection<NamedPipeConnection<TState>, TState, string>
-		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
+		where TState : Poolable, IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
 		private string pipename;
 		private SafeFileHandle handle;
@@ -65,8 +65,8 @@ namespace SteamEngine.Communication.NamedPipes {
 
 		protected override void On_Init() {
 			this.isConnected = true;
-			this.BeginReceive();
 			base.On_Init();
+			this.BeginReceive();
 		}
 
 		private void BeginReceive() {
@@ -87,7 +87,7 @@ namespace SteamEngine.Communication.NamedPipes {
 					this.Close("Other side closed the pipe.");
 				}
 			} catch (Exception e) {
-				//Logger.WriteError(e);
+				Logger.WriteError(e);
 				this.Close(e.Message);
 			}
 

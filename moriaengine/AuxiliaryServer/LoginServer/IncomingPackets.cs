@@ -12,7 +12,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		public static readonly LoginServerProtocol instance = new LoginServerProtocol();
 
 
-		public IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id) {
+		public IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<LoginClient> conn, LoginClient state, out bool discardAfterReading) {
+			discardAfterReading = false;
 			switch (id) {
 				case 0x80:
 					return Pool<GameLoginPacket>.Acquire();
@@ -60,11 +61,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 			ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
 			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
-			if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
-				serverList.Prepare(Settings.lanIP);
-			} else {
-				serverList.Prepare(Settings.wanIP);
-			}
+
+			serverList.Prepare(ServerUtils.GetMatchingInterfaceAddress(remoteAddress));
 
 			conn.SendSinglePacket(serverList);
 		}
@@ -104,13 +102,10 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
 			LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
 			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
-			if (GameLoginPacket.ByteArraysEquals(remoteAddress, Settings.lanIP)) {
-				packet.Prepare(Settings.lanIP, Settings.KnownGameServersList[this.chosenServer].Port);
-			} else {
-				packet.Prepare(Settings.wanIP, Settings.KnownGameServersList[this.chosenServer].Port);
-			}
 
-			//packet.Prepare(new byte[] { 89, 185, 242, 165 }, 2593); //moria 
+			byte[] localAddress = ServerUtils.GetMatchingInterfaceAddress(remoteAddress);
+
+			packet.Prepare(localAddress, Settings.KnownGameServersList[this.chosenServer].Port);
 
 			conn.SendSinglePacket(packet);
 		}

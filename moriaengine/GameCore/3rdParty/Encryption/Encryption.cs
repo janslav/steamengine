@@ -84,7 +84,7 @@ namespace SteamEngine.Packets
 			//ns.Dispose(true);
 			
 			ns.WriteLine("Unencrypted connections are not allowed on this server.");
-			Prepared.SendFailedLogin(ns, FailedLoginReason.CommunicationsProblem);
+			Prepared.SendFailedLogin(ns, LoginDeniedReason.CommunicationsProblem);
 			
 			ns.Close("Unencrypted client detected");
 		}

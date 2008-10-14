@@ -23,55 +23,49 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 using System.IO;
 using System.Net;
+using System.Threading;
+using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
-	public class GameClient : Poolable,
-	IConnectionState<TCPConnection<GameClient>, GameClient, IPEndPoint> {
+	public abstract class SyncQueue {
+		private Thread thread;
+		protected AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
-		static int uids;
+		static protected bool enabled = false;
 
-		int uid;
-
-		IEncryption encryption;
-
-		protected override void On_Reset() {
-			encryption = new GameEncryption();
-			uid = uids++;
-
-			base.On_Reset();
+		protected SyncQueue() {
+			this.thread = new Thread(this.Cycle);
+			this.thread.IsBackground = true;
+			this.thread.Start();
 		}
 
-		public IEncryption Encryption {
-			get {
-				return encryption;
+		private void Cycle() {
+			while (this.autoResetEvent.WaitOne()) {
+				lock (MainClass.globalLock) {
+					this.ProcessQueue();
+				}
 			}
 		}
 
-		public ICompression Compression {
+		protected abstract void ProcessQueue();
+
+		public static void Enable() {
+			enabled = true;
+		}
+
+		public static void Disable() {
+			enabled = false;
+		}
+
+		public static bool IsEnabled {
 			get {
-				return null;
+				return enabled;
 			}
 		}
 
-		public void On_Init(TCPConnection<GameClient> conn) {
-			Console.WriteLine(this + " connected from " + conn.EndPoint);
+		public static void ProcessAll() {
+			ItemSyncQueue.instance.ProcessQueue();
+			CharSyncQueue.instance.ProcessQueue();
 		}
-
-		public void On_Close(string reason) {
-			Console.WriteLine(this + " closed: " + reason);
-		}
-
-		public override string ToString() {
-			return "LoginClient " + uid;
-		}
-
-		//public override void Handle(IncomingPacket packet) {
-		//    ConsoleServerPacketGroup pg = Pool<ConsoleServerPacketGroup>.Acquire();
-
-		//    pg.AddPacket(Pool<ConsoleServerOutgoingPacket>.Acquire());
-
-		//    //MainClass.server.SendPacketGroup(this, pg);
-		//}
 	}
-
 }

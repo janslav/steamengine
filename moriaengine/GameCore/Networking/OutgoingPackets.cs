@@ -26,5 +26,1425 @@ using System.Net;
 
 namespace SteamEngine.Networking {
 
+	//ushort size at the beginning of the packet
 
+
+	public abstract class GameOutgoingPacket : OutgoingPacket {
+		protected void EncodeStatVals(short curval, short maxval, bool showReal) {
+			if (showReal) {
+				this.EncodeShort(maxval);
+				this.EncodeShort(curval);
+			} else {
+				this.EncodeShort(255);
+				this.EncodeShort((short) (((int) curval << 8) / maxval));
+			}
+		}
+	}
+
+	public abstract class DynamicLengthOutPacket : GameOutgoingPacket {
+
+		protected override sealed void Write() {
+			this.SeekFromCurrent(2);
+			this.WriteDynamicPart();
+			this.SeekFromStart(1);
+			this.EncodeUShort((ushort) this.CurrentSize);
+		}
+
+		protected abstract void WriteDynamicPart();
+
+	}
+
+	public abstract class GeneralInformationOutPacket : DynamicLengthOutPacket {
+		public override sealed byte Id {
+			get { return 0xBF; }
+		}
+
+		public abstract ushort SubCmdId {
+			get;
+		}
+
+		protected override sealed void WriteDynamicPart() {
+			this.EncodeUShort(this.SubCmdId);
+			this.WriteSubCmd();
+		}
+
+		protected abstract void WriteSubCmd();
+	}
+
+	public sealed class LoginDeniedOutPacket : GameOutgoingPacket {
+		byte why;
+
+		public void Prepare(LoginDeniedReason why) {
+			this.why = (byte) why;
+		}
+
+		public override byte Id {
+			get { return 0x82; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.why);
+		}
+	}
+
+	public sealed class EnableLockedClientFeaturesOutPacket : GameOutgoingPacket {
+		ushort features;
+
+		public void Prepare(ushort features) {
+			this.features = features;
+		}
+
+		public override byte Id {
+			get { return 0xB9; }
+		}
+
+		protected override void Write() {
+			this.EncodeUShort(this.features);
+		}
+	}
+
+	public sealed class CharactersListOutPacket : DynamicLengthOutPacket {
+		string[] charNames = new string[AbstractAccount.maxCharactersPerGameAccount];
+		uint loginFlags;
+
+		public void Prepare(AbstractAccount charsSource, uint loginFlags) {
+			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				AbstractCharacter ch = charsSource.GetCharacterInSlot(i);
+				if (ch != null) {
+					this.charNames[i] = ch.Name;
+				} else {
+					this.charNames[i] = null;
+				}
+			}
+			this.loginFlags = loginFlags;
+		}
+
+		public override byte Id {
+			get { return 0xA9; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.SeekFromCurrent(1); //skip numOfCharacters byte
+
+			int numOfCharacters = 0;
+			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				string name = this.charNames[i];
+				if (name != null) {
+					this.EncodeASCIIString(name, 30);
+					this.EncodeZeros(30);
+					numOfCharacters++;
+				} else {
+					this.EncodeZeros(60);
+				}
+			}
+
+			this.EncodeByte(1);//just 1 location, no meaning anyway
+			this.EncodeByte(0);//index 0
+			this.EncodeASCIIString("London", 31);
+			this.EncodeASCIIString("London", 31);
+
+			//TODO: Login Flags as bools in globals.
+			//Login Flags:
+			//0x14 = One character only
+			//0x08 = Right-click menus
+			//0x20 = AOS features
+			//0x40 = Six characters instead of five
+			this.EncodeUInt(this.loginFlags);
+
+			this.SeekFromStart(3);
+			this.EncodeByte((byte) numOfCharacters);
+		}
+	}
+
+	public sealed class LoginConfirmationOutPacket : GameOutgoingPacket {
+		uint flaggedUid;
+		ushort model, x, y, mapSizeX, mapSizeY;
+		sbyte z;
+		byte direction;
+
+		public void Prepare(AbstractCharacter chr, int mapSizeX, int mapSizeY) {
+			this.flaggedUid = chr.FlaggedUid;
+			this.model = chr.Model;
+			this.x = chr.X;
+			this.y = chr.Y;
+			this.z = chr.Z;
+			this.direction = chr.Dir;
+
+			this.mapSizeX = (ushort) (mapSizeX - 8);
+			this.mapSizeY = (ushort) mapSizeY;
+		}
+
+		public override byte Id {
+			get { return 0x1B; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeZeros(4);
+			this.EncodeUShort(this.model);
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeByte(0);
+			this.EncodeSByte(this.z);
+			this.EncodeByte(this.direction);
+			this.EncodeZeros(9);
+			//EncodeByte(0xff, 19); //old SE code was sending 0xff, dunno why
+			//EncodeByte(0xff, 20);
+			//EncodeByte(0xff, 21);
+			//EncodeByte(0xff, 22);
+			this.EncodeUShort(this.mapSizeX);
+			this.EncodeUShort(this.mapSizeY);
+			this.EncodeZeros(6);
+		}
+	}
+
+	public sealed class SetFacetOutPacket : GeneralInformationOutPacket {
+		byte facet;
+
+		public void Prepare(byte facet) {
+			this.facet = facet;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x08; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(this.facet);
+		}
+	}
+
+	public sealed class SeasonalInformationOutPacket : GameOutgoingPacket {
+		byte season, cursor;
+
+		public void Prepare(Season season, CursorType cursor) {
+			this.season = (byte) season;
+			this.cursor = (byte) cursor;
+		}
+
+		public override byte Id {
+			get { return 0xBC; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.season);
+			this.EncodeByte(this.cursor);
+		}
+	}
+
+	public sealed class DrawGamePlayerOutPacket : GameOutgoingPacket {
+		uint flaggedUid;
+		ushort model, color, x, y;
+		sbyte z;
+		byte flagsToSend, direction;
+
+		public void Prepare(GameState state, AbstractCharacter ch) {
+			this.flaggedUid = ch.FlaggedUid;
+			this.model = ch.Model;
+			this.color = ch.Color;
+			MutablePoint4D p = ch.point4d;
+			this.x = p.x;
+			this.y = p.y;
+			this.z = p.z;
+			this.flagsToSend = ch.FlagsToSend;
+			this.direction = ch.Dir;
+
+			state.movementState.ResetMovementSequence();
+		}
+
+		public override byte Id {
+			get { return 0x20; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(0);
+			this.EncodeUShort(this.color);
+			this.EncodeByte(this.flagsToSend);
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeZeros(2);
+			this.EncodeByte(this.direction);
+			this.EncodeSByte(this.z);
+		}
+	}
+
+	public sealed class SetWarModeOutPacket : GameOutgoingPacket {
+		bool warModeEnabled;
+
+		public void Prepare(bool warModeEnabled) {
+			this.warModeEnabled = warModeEnabled;
+		}
+
+		public override byte Id {
+			get { return 0x72; }
+		}
+
+		protected override void Write() {
+			this.EncodeBool(this.warModeEnabled);
+			this.EncodeByte(0);
+			this.EncodeByte(32);
+			this.EncodeByte(0);
+		}
+	}
+
+	public sealed class ClientViewRangeOutPacket : GameOutgoingPacket {
+		byte range;
+
+		public void Prepare(byte range) {
+			this.range = range;
+		}
+
+		public override byte Id {
+			get { return 0xC8; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.range);
+		}
+	}
+
+	public sealed class LoginCompleteOutPacket : GameOutgoingPacket {
+		public override byte Id {
+			get { return 0x55; }
+		}
+
+		protected override void Write() {
+		}
+	}
+
+	public sealed class DrawObjectOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		ushort model, x, y, color;
+		sbyte z;
+		byte dir, flagsToSend, highlight;
+		List<ItemInfo> items = new List<ItemInfo>();
+
+
+		private struct ItemInfo {
+			internal readonly uint flaggedUid;
+			internal readonly ushort color, model;
+			internal readonly byte layer;
+
+			internal ItemInfo(uint flaggedUid, ushort color, ushort model, byte layer) {
+				this.flaggedUid = flaggedUid;
+				this.color = color;
+				this.model = model;
+				this.layer = layer;
+			}
+		}
+
+		public void Prepare(AbstractCharacter ch, HighlightColor highlight) {
+			this.flaggedUid = ch.FlaggedUid;
+			this.model = ch.Model;
+			MutablePoint4D point = ch.point4d;
+			this.x = point.x;
+			this.y = point.y;
+			this.z = point.z;
+			this.dir = ch.Dir;
+			this.color = ch.Color;
+			this.flagsToSend = ch.FlagsToSend;
+			this.highlight = (byte) highlight;
+
+			items.Clear();
+			foreach (AbstractItem i in ch.visibleLayers) {
+				items.Add(new ItemInfo(i.FlaggedUid, i.Color, i.Model, i.Layer));
+			}
+
+			AbstractCharacter mount = ch.Mount;
+			if (mount != null) {
+				items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.Color, mount.MountItem, (byte) LayerNames.Mount));
+			}
+		}
+
+		public override byte Id {
+			get { return 0x78; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeSByte(this.z);
+			this.EncodeByte(this.dir);
+			this.EncodeUShort(this.color);
+			this.EncodeByte(this.flagsToSend);
+			this.EncodeByte(this.highlight);
+
+			foreach (ItemInfo i in this.items) {
+				this.EncodeUInt(i.flaggedUid);
+				if (i.color == 0) {
+					this.EncodeUShort(i.model);
+					this.EncodeByte(i.layer);
+				} else {
+					this.EncodeUShort((ushort) (i.model | 0x8000));
+					this.EncodeByte(i.layer);
+					this.EncodeUShort(i.color);
+				}
+			}
+
+			this.EncodeZeros(4);
+		}
+	}
+
+	public sealed class UpdatePlayerPacket : GameOutgoingPacket {
+		uint flaggedUid;
+		ushort model, x, y, color;
+		sbyte z;
+		byte dir, flagsToSend, highlight;
+
+		public void Prepare(AbstractCharacter chr, bool running, HighlightColor highlight) {
+			this.flaggedUid = chr.FlaggedUid;
+			this.model = chr.Model;
+			this.x = chr.X;
+			this.y = chr.Y;
+			this.z = chr.Z;
+			this.color = chr.Color;
+			this.flagsToSend = chr.FlagsToSend;
+			this.highlight = (byte) highlight;
+
+			this.dir = chr.Dir;
+			if (running) {
+				this.dir |= 0x80;
+			}
+		}
+
+		public override byte Id {
+			get { return 0x77; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeSByte(this.z);
+			this.EncodeByte(this.dir);
+			this.EncodeUShort(this.color);
+			this.EncodeByte(this.flagsToSend);
+			this.EncodeByte(this.highlight);
+		}
+	}
+
+	public sealed class DrawContainerOutPacket : GameOutgoingPacket {
+		uint flaggedUid;
+		ushort gump;
+
+		public void Prepare(uint flaggedUid, ushort gump) {
+			this.flaggedUid = flaggedUid;
+			this.gump = gump;
+		}
+
+		public override byte Id {
+			get { return 0x24; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.gump);
+		}
+	}
+
+	public sealed class AddItemToContainerOutPacket : GameOutgoingPacket {
+		uint flaggedUid, contFlaggedUid;
+		ushort model, x, y, color, amount;
+
+		public void Prepare(uint contFlaggedUid, AbstractItem i) {
+			this.flaggedUid = i.FlaggedUid;
+			this.contFlaggedUid = i.Cont.FlaggedUid;
+			this.model = i.Model;
+			this.x = i.X;
+			this.y = i.Y;
+			this.color = i.Color;
+			this.amount = i.ShortAmount;
+		}
+
+		public void PrepareItemInCorpse(uint corpseUid, ICorpseEquipInfo i) {
+			this.flaggedUid = i.FlaggedUid;
+			this.contFlaggedUid = corpseUid;
+			this.model = i.Model;
+			this.x = 0;
+			this.y = 0;
+			this.color = i.Color;
+			this.amount = 1;
+		}
+
+		public override byte Id {
+			get { return 0x25; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(0); //unknown
+			this.EncodeUShort(this.amount);
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeUInt(this.contFlaggedUid);
+			this.EncodeUShort(this.color);
+		}
+	}
+
+	public sealed class CorpseClothingOutPacket : DynamicLengthOutPacket {
+		List<ItemInfo> items = new List<ItemInfo>();
+		uint corpseUid;
+
+		public void Prepare(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
+			this.corpseUid = corpseUid;
+
+			this.items.Clear();
+			foreach (ICorpseEquipInfo iulp in equippedItems) {
+				this.items.Add(new ItemInfo(iulp.FlaggedUid, iulp.Layer));
+			}
+		}
+
+		private struct ItemInfo {
+			internal readonly uint flaggedUid;
+			internal readonly byte layer;
+
+			internal ItemInfo(uint flaggedUid, byte layer) {
+				this.flaggedUid = flaggedUid;
+				this.layer = layer;
+			}
+		}
+
+		public override byte Id {
+			get { return 0x89; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.corpseUid);
+			foreach (ItemInfo i in this.items) {
+				this.EncodeByte(i.layer);
+				this.EncodeUInt(i.flaggedUid);
+			}
+			this.EncodeByte(0); //terminator
+		}
+	}
+
+	public sealed class ItemsInContainerOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		private List<ItemInfo> items = new List<ItemInfo>();
+
+		private struct ItemInfo {
+			internal readonly uint flaggedUid;
+			internal readonly ushort color, model, amount, x, y;
+
+			internal ItemInfo(AbstractItem i) {
+				this.flaggedUid = i.FlaggedUid;
+				this.color = i.Color;
+				this.model = i.Model;
+				this.amount = i.ShortAmount;
+				this.x = i.X;
+				this.y = i.Y;
+			}
+
+			internal ItemInfo(ICorpseEquipInfo i) {
+				this.flaggedUid = i.FlaggedUid;
+				this.color = i.Color;
+				this.model = i.Model;
+				this.amount = 1;
+				this.x = 0;
+				this.y = 0;
+			}
+		}
+
+		public bool Prepare(AbstractItem cont, AbstractCharacter viewer, IList<AbstractItem> visibleItems) {
+			this.flaggedUid = cont.FlaggedUid;
+
+			items.Clear();
+
+			foreach (AbstractItem i in cont) {
+				if (viewer.CanSeeVisibility(i)) {
+					items.Add(new ItemInfo(i));
+					visibleItems.Add(i);
+				}
+			}
+
+			return items.Count > 0;
+		}
+
+		public bool Prepare(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
+			this.flaggedUid = corpseUid;
+
+			this.items.Clear();
+			foreach (ICorpseEquipInfo i in equippedItems) {
+				this.items.Add(new ItemInfo(i));
+			}
+
+			return this.items.Count > 0;
+		}
+
+		public override byte Id {
+			get { return 0x3c; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUShort((ushort) this.items.Count);
+
+			foreach (ItemInfo i in this.items) {
+				this.EncodeUInt(i.flaggedUid);
+				this.EncodeUShort(i.model);
+				this.EncodeByte(0);
+				this.EncodeUShort(i.amount);
+				this.EncodeUShort(i.x);
+				this.EncodeUShort(i.y);
+				this.EncodeUInt(this.flaggedUid);
+				this.EncodeUShort(i.color);
+			}
+		}
+	}
+
+	public sealed class OldPropertiesRefreshOutPacket : GeneralInformationOutPacket {
+		uint flaggedUid;
+		int propertiesUid;
+
+		public void Prepare(uint flaggedUid, int propertiesUid) {
+			this.flaggedUid = flaggedUid;
+			this.propertiesUid = propertiesUid;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x10; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeInt(this.propertiesUid);
+		}
+	}
+
+	public sealed class PropertiesRefreshOutPacket : GameOutgoingPacket {
+		uint flaggedUid;
+		int propertiesUid;
+
+		public void Prepare(uint flaggedUid, int propertiesUid) {
+			this.flaggedUid = flaggedUid;
+			this.propertiesUid = propertiesUid;
+		}
+
+		public override byte Id {
+			get { return 0xdc; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeInt(this.propertiesUid);
+		}
+	}
+
+	public sealed class ObjectInfoOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		ushort amount, model, x, y, color;
+		sbyte z;
+		byte dir, flagsToSend;
+		MoveRestriction restrict;
+
+		public void Prepare(AbstractItem item, MoveRestriction restrict) {
+			this.flaggedUid = item.FlaggedUid;
+			this.amount = item.ShortAmount;
+			this.model = item.Model;
+			MutablePoint4D point = item.point4d;
+			this.x = point.x;
+			this.y = point.y;
+			this.z = point.z;
+			this.dir = (byte) item.Direction;
+			this.flagsToSend = item.FlagsToSend;
+			this.restrict = restrict;
+			this.color = item.Color;
+		}
+
+		public override byte Id {
+			get { return 0x1A; }
+		}
+
+		protected override void WriteDynamicPart() {
+			if (this.amount != 1) {
+				this.EncodeUInt(this.flaggedUid | 0x80000000);
+				this.EncodeUShort(this.model);
+				this.EncodeUShort(this.amount);
+			} else {
+				this.EncodeUInt(this.flaggedUid);
+				this.EncodeUShort(this.model);
+			}
+
+			if (this.dir != 0) {
+				this.x |= 0x8000;
+			}
+			this.EncodeUShort(this.x);
+			if (this.color != 0) {
+				this.y |= 0x8000;
+			}
+			if (this.flagsToSend != 0) {
+				this.y |= 0x4000;
+			}
+			this.EncodeUShort(this.y);
+			if (this.dir != 0) {
+				this.EncodeByte(this.dir);
+			}
+			this.EncodeSByte(this.z);
+
+			if (this.color != 0) {
+				this.EncodeUShort(this.color);
+			}
+			if (this.flagsToSend != 0) {
+				this.EncodeByte(this.flagsToSend);
+			}
+		}
+	}
+
+	public sealed class MobAttributesOutPacket : GameOutgoingPacket {
+		bool showReal;
+		short mana, maxMana, hits, maxHits, stam, maxStam;
+		uint flaggedUid;
+
+		public void Prepare(AbstractCharacter cre, bool showReal) {
+			this.flaggedUid = cre.FlaggedUid;
+			this.mana = cre.Mana;
+			this.maxMana = cre.MaxMana;
+			this.hits = cre.Hits;
+			this.maxHits = cre.MaxHits;
+			this.stam = cre.Stam;
+			this.maxStam = cre.MaxStam;
+			this.showReal = showReal;
+		}
+
+		public override byte Id {
+			get { return 0x2d; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeStatVals(this.hits, this.maxHits, this.showReal);
+			this.EncodeStatVals(this.mana, this.maxMana, this.showReal);
+			this.EncodeStatVals(this.stam, this.maxStam, this.showReal);
+		}
+	}
+
+	public sealed class UpdateCurrentHealthOutPacket : GameOutgoingPacket {
+		bool showReal;
+		short hits, maxHits;
+		uint flaggedUid;
+
+		public void Prepare(uint flaggedUid, short hits, short maxHits, bool showReal) {
+			this.flaggedUid = flaggedUid;
+			this.hits = hits;
+			this.maxHits = maxHits;
+			this.showReal = showReal;
+		}
+
+		public override byte Id {
+			get { return 0xa1; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeStatVals(this.hits, this.maxHits, this.showReal);
+		}
+	}
+
+	public sealed class UpdateCurrentManaOutPacket : GameOutgoingPacket {
+		bool showReal;
+		short mana, maxMana;
+		uint flaggedUid;
+
+		public void Prepare(uint flaggedUid, short mana, short maxMana, bool showReal) {
+			this.flaggedUid = flaggedUid;
+			this.mana = mana;
+			this.maxMana = maxMana;
+			this.showReal = showReal;
+		}
+
+		public override byte Id {
+			get { return 0xa2; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeStatVals(this.mana, this.maxMana, this.showReal);
+		}
+	}
+
+	public sealed class UpdateCurrentStaminaOutPacket : GameOutgoingPacket {
+		bool showReal;
+		short stam, maxStam;
+		uint flaggedUid;
+
+		public void Prepare(uint flaggedUid, short stam, short maxStam, bool showReal) {
+			this.flaggedUid = flaggedUid;
+			this.stam = stam;
+			this.maxStam = maxStam;
+			this.showReal = showReal;
+		}
+
+		public override byte Id {
+			get { return 0xa3; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeStatVals(this.stam, this.maxStam, this.showReal);
+		}
+	}
+
+	public sealed class StatusBarInfoOutPacket : DynamicLengthOutPacket {
+		StatusBarType type;
+		uint flaggedUid, gold;
+		string charName;
+		short mana, maxMana, hits, maxHits, stam, maxStam, strength, dexterity, intelligence, armor,
+			fireResist, coldResist, poisonResist, energyResist, luck, minDamage, maxDamage, tithingPoints;
+		byte currentPets, maxPets;
+		ushort statCap, weight;
+		bool isFemale;
+		bool canRenameSelf;
+
+		public void Prepare(AbstractCharacter ch, StatusBarType type) {
+			Sanity.IfTrueThrow(ch == null, "PrepareStatusBar called with a null character.");
+			Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType), type), "Invalid value " + type + " for StatusBarType in PrepareStatusBar.");
+
+			this.type = type;
+			this.charName = ch.Name;
+
+			this.hits = ch.Hits;
+			this.maxHits = ch.MaxHits;
+			this.flaggedUid = ch.FlaggedUid;
+
+			if (type == StatusBarType.Me) {
+				this.mana = ch.Mana;
+				this.maxMana = ch.MaxMana;
+				this.stam = ch.Stam;
+				this.maxStam = ch.MaxStam;
+
+				this.strength = ch.Str;
+				this.dexterity = ch.Dex;
+				this.intelligence = ch.Int;
+
+				ulong lgold = ch.Gold;
+				this.gold = (uint) (lgold > 0xffffffff ? 0xffffffff : lgold);
+				this.armor = ch.StatusArmorClass;
+				this.weight = (ushort) ch.Weight;
+
+				this.currentPets = ch.ExtendedStatusNum07;
+				this.maxPets = ch.ExtendedStatusNum08;
+				this.statCap = ch.ExtendedStatusNum09;
+
+				this.fireResist = ch.ExtendedStatusNum01;
+				this.coldResist = ch.ExtendedStatusNum02;
+				this.poisonResist = ch.ExtendedStatusNum03;
+				this.energyResist = ch.StatusMindDefense;
+				this.luck = ch.ExtendedStatusNum04;
+				this.minDamage = ch.ExtendedStatusNum05;
+				this.maxDamage = ch.ExtendedStatusNum06;
+				this.tithingPoints = ch.TithingPoints;
+
+				this.isFemale = ch.IsFemale;
+
+				this.canRenameSelf = ch.CanRename(ch);
+			}
+		}
+
+		public override byte Id {
+			get { return 0x11; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeASCIIString(this.charName, 30);
+
+			if (this.type == StatusBarType.Me) {
+				this.EncodeShort(this.hits);
+				this.EncodeShort(this.maxHits);
+				this.EncodeBool(this.canRenameSelf);
+				this.EncodeByte(4); //more data following
+			} else {
+				this.EncodeShort((short) (((int) this.hits << 8) / this.maxHits));
+				this.EncodeShort(256);
+				if (this.type == StatusBarType.Pet) {
+					this.EncodeByte(1);
+				} else {
+					this.EncodeByte(0);
+				}
+				this.EncodeByte(0); //no data following
+				return;
+			}
+
+			this.EncodeBool(this.isFemale);
+
+			this.EncodeShort(this.strength);
+			this.EncodeShort(this.dexterity);
+			this.EncodeShort(this.intelligence);
+			this.EncodeShort(this.stam);
+			this.EncodeShort(this.maxStam);
+			this.EncodeShort(this.mana);
+			this.EncodeShort(this.maxMana);
+			this.EncodeUInt(this.gold);
+			this.EncodeShort(this.armor);
+			this.EncodeUShort(this.weight);
+
+			this.EncodeByte(0); //unknown
+
+			this.EncodeUShort(this.statCap);
+			this.EncodeByte(this.currentPets);
+			this.EncodeByte(this.maxPets);
+
+			this.EncodeShort(this.fireResist);
+			this.EncodeShort(this.coldResist);
+			this.EncodeShort(this.poisonResist);
+			this.EncodeShort(this.energyResist);
+			this.EncodeShort(this.luck);
+			this.EncodeShort(this.minDamage);
+			this.EncodeShort(this.maxDamage);
+			this.EncodeInt(this.tithingPoints);
+
+		}
+	}
+
+
+	public sealed class SendSkillsOutPacket : DynamicLengthOutPacket {
+		List<SkillInfo> skillList = new List<SkillInfo>();
+		bool displaySkillCaps, singleSkill;
+		byte type;
+		//0x00= full list, 0xFF = single skill update, 
+		//0x02 full list with skillcap, 0xDF single skill update with cap
+
+		public void PrepareMultipleSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
+			this.singleSkill = false;
+			this.displaySkillCaps = displaySkillCaps;
+			if (displaySkillCaps) {
+				this.type = 0x02;//full list with skillcaps
+			} else {
+				this.type = 0x00;//full list without skillcaps
+			}
+
+			skillList.Clear();
+			foreach (ISkill s in skills) {
+				skillList.Add(new SkillInfo(s.Id, s.RealValue, s.ModifiedValue, s.Cap, s.Lock));
+			}
+		}
+
+		public void PrepareSingleSkillUpdate(ushort skillId, ushort realValue, ushort modifiedValue, SkillLockType skillLock) {
+			this.displaySkillCaps = false;
+			this.singleSkill = true;
+			this.type = 0xFF;
+			skillList.Clear();
+			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, 0, skillLock));
+		}
+
+		public void PrepareSingleSkillUpdate(ushort skillId, ushort realValue, ushort modifiedValue, SkillLockType skillLock, ushort cap) {
+			this.displaySkillCaps = true;
+			this.singleSkill = true;
+			this.type = 0xDF;
+			skillList.Clear();
+			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, cap, skillLock));
+		}
+
+		private struct SkillInfo {
+			public readonly ushort realValue, modifiedValue, cap, id;
+			public readonly SkillLockType skillLock;
+
+			public SkillInfo(ushort id, ushort realValue, ushort modifiedValue, ushort cap, SkillLockType skillLock) {
+				this.realValue = realValue;
+				this.modifiedValue = modifiedValue;
+				this.cap = cap;
+				this.id = id;
+				this.skillLock = skillLock;
+			}
+		}
+
+		public override byte Id {
+			get { return 0x3A; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeByte(this.type);
+
+			foreach (SkillInfo s in this.skillList) {
+				this.EncodeUShort((ushort) (s.id + 1));
+				this.EncodeUShort(s.modifiedValue);
+				this.EncodeUShort(s.realValue);
+				this.EncodeByte((byte) s.skillLock);
+				if (this.displaySkillCaps) {
+					this.EncodeUShort(s.cap);
+				}
+			}
+
+			if (!this.singleSkill) {
+				this.EncodeUShort(0);
+			}
+		}
+	}
+
+
+	public sealed class DeleteObjectOutPacket : GameOutgoingPacket {
+		uint flaggedUid;
+
+		public void Prepare(uint flaggedUid) {
+			this.flaggedUid = flaggedUid;
+		}
+
+		public void Prepare(int uid) {
+			this.flaggedUid = (uint) uid;
+		}
+
+		public void Prepare(Thing thing) {
+			this.flaggedUid = thing.FlaggedUid;
+		}
+
+		public override byte Id {
+			get { return 0x1d; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+		}
+	}
+
+	public sealed class MegaClilocOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		int propertiesUid;
+		IList<uint> ids;
+		IList<string> strings;
+
+		public void Prepare(uint flaggedUid, int propertiesUid, IList<uint> ids, IList<string> strings) {
+			this.flaggedUid = flaggedUid;
+			this.propertiesUid = propertiesUid;
+			this.ids = ids;
+			this.strings = strings;
+		}
+
+		public override byte Id {
+			get { return 0xd6; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeShort(0x0001);
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeZeros(2);
+			this.EncodeInt(this.propertiesUid);
+
+			for (int i = 0, n = ids.Count; i < n; i++) {
+				this.EncodeUInt(ids[i]);
+				string msg = strings[i];
+				if (msg == null) {
+					msg = "";
+				}
+				this.EncodeLittleEndianUnicodeStringWithLen(msg);
+			}
+
+			this.EncodeZeros(4);
+		}
+	}
+
+	public sealed class SendSpeechOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		ushort model, color, font;
+		string sourceName, message;
+		byte type;
+
+		//from can be null
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, ushort color) {
+			if (from == null) {
+				this.flaggedUid = 0xffffffff;
+				this.model = 0xffff;
+			} else {
+				this.flaggedUid = from.FlaggedUid;
+				this.model = from.Model;
+			}
+
+			this.sourceName = sourceName;
+			this.message = message;
+			this.type = (byte) type;
+			this.color = color;
+			this.font = font;
+		}
+
+		public override byte Id {
+			get { return 0x1c; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(this.type);
+			this.EncodeUShort(this.color);
+			this.EncodeUShort(this.font);
+			this.EncodeASCIIString(this.sourceName, 30);
+			this.EncodeASCIIString(this.message);
+		}
+	}
+
+	public sealed class UnicodeSpeechOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		ushort model, color, font;
+		string sourceName, message, language;
+		byte type;
+
+		//from can be null
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, ushort color, string language) {
+			if (from == null) {
+				this.flaggedUid = 0xffffffff;
+				this.model = 0xffff;
+			} else {
+				this.flaggedUid = from.FlaggedUid;
+				this.model = from.Model;
+			}
+
+			this.sourceName = sourceName;
+			this.message = message;
+			this.language = language;
+			this.type = (byte) type;
+			this.color = color;
+			this.font = font;
+		}
+
+		public override byte Id {
+			get { return 0xAE; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(this.type);
+			this.EncodeUShort(this.color);
+			this.EncodeUShort(this.font);
+			this.EncodeASCIIString(this.language, 4);
+			this.EncodeASCIIString(this.sourceName, 30);
+			this.EncodeBigEndianUnicodeString(this.message);
+			this.EncodeZeros(2);
+		}
+	}
+
+	public sealed class ClilocMessageOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		ushort model, color, font;
+		string sourceName, args;
+		uint message;
+		byte type;
+
+		//from can be null
+		public void Prepare(Thing from, uint message, string sourceName, SpeechType type, ushort font, ushort color, string args) {
+			if (from == null) {
+				this.flaggedUid = 0xffffffff;
+				this.model = 0xffff;
+			} else {
+				this.flaggedUid = from.FlaggedUid;
+				this.model = from.Model;
+			}
+
+			this.sourceName = sourceName;
+			this.message = message;
+			this.args = args;
+			this.type = (byte) type;
+			this.color = color;
+			this.font = font;
+		}
+
+		public override byte Id {
+			get { return 0xAE; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(this.type);
+			this.EncodeUShort(this.color);
+			this.EncodeUShort(this.font);
+			this.EncodeUInt(this.message);
+			this.EncodeASCIIString(this.sourceName, 30);
+			this.EncodeLittleEndianUnicodeString(this.args);
+			this.EncodeZeros(2);//msg terminator
+		}
+	}
+
+	public sealed class TargetCursorCommandsOutPacket : GameOutgoingPacket {
+		byte type;
+		byte cursorType;//3 = cancel
+
+		public void Prepare(bool ground) {
+			this.type = ground ? (byte) 1 : (byte) 0;
+			this.cursorType = 0;
+		}
+
+		public void PrepareAsCancel() {
+			this.type = 0;
+			this.cursorType = 3;
+		}
+
+		public override byte Id {
+			get { return 0x6c; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.type);
+			this.EncodeZeros(4);
+			this.EncodeByte(this.cursorType);
+			this.EncodeZeros(12);
+		}
+	}
+
+	public sealed class GiveBoatOrHousePlacementViewOutPacket : GameOutgoingPacket {
+		ushort model;
+
+		public void Prepare(ushort model) {
+			this.model = model;
+		}
+
+		public override byte Id {
+			get { return 0x99; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(1);
+			this.EncodeZeros(16);
+			this.EncodeShort((short) (this.model & 0x8fff));
+			this.EncodeZeros(6);
+		}
+	}
+
+	public sealed class OpenPaperdollOutPacket : GameOutgoingPacket {
+		uint flaggedUid;
+		string text;
+		byte flagsToSend;
+
+		public void Prepare(AbstractCharacter character, bool canEquip) {
+			this.flaggedUid = character.FlaggedUid;
+			this.text = character.PaperdollName;
+			this.flagsToSend = character.FlagsToSend;
+
+			Sanity.IfTrueThrow((flagsToSend & 0x02) > 0, character + "'s FlagsToSend included 0x02, which is the 'can equip items on' flag for paperdoll packets - FlagsToSend should never include it.");
+			if (canEquip) {	//include 0x02 if we can equip stuff on them.
+				flagsToSend |= 0x02;
+			}
+		}
+
+		public override byte Id {
+			get { return 0x88; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeASCIIString(this.text, 60);
+			this.EncodeByte(this.flagsToSend);
+		}
+	}
+
+	public sealed class WornItemOutPacket : GameOutgoingPacket {
+		uint itemFlaggedUid, charUid;
+		sbyte layer;
+		ushort model, color;
+
+		public void PrepareItem(uint charUid, AbstractItem item) {
+			this.charUid = charUid;
+			this.itemFlaggedUid = item.FlaggedUid;
+			this.layer = item.Z;
+			this.model = item.Model;
+			this.color = item.Color;
+		}
+
+		public void PrepareMount(uint charUid, AbstractCharacter mount) {
+			this.charUid = charUid;
+			this.itemFlaggedUid = (uint) (mount.Uid | 0x40000000);
+			this.layer = (sbyte) LayerNames.Mount;
+			this.model = mount.MountItem;
+			this.color = mount.Color;
+		}
+
+		public override byte Id {
+			get { return 0x2e; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.itemFlaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(0);
+			this.EncodeSByte(this.layer);
+			this.EncodeUInt(this.charUid);
+			this.EncodeUShort(this.color);
+		}
+	}
+
+	public sealed class CharacterMoveAcknowledgeOutPacket : GameOutgoingPacket {
+		byte sequence, highlight;
+
+		public void Prepare(byte sequence, HighlightColor highlight) {
+			this.sequence = sequence;
+			this.highlight = (byte) highlight;
+		}
+
+		public override byte Id {
+			get { return 0x22; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.sequence);
+			this.EncodeByte(this.highlight);
+		}
+	}
+
+	public sealed class CharMoveRejectionOutPacket : GameOutgoingPacket {
+		byte sequence, direction;
+		ushort x, y;
+		sbyte z;
+
+		public void Prepare(byte sequence, AbstractCharacter ch) {
+			this.sequence = sequence;
+			this.direction = ch.Dir;
+			this.x = ch.X;
+			this.y = ch.Y;
+			this.z = ch.Z;
+		}
+
+		public override byte Id {
+			get { return 0x21; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.sequence);
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeByte(this.direction);
+			this.EncodeSByte(this.z);
+		}
+	}
+
+	public sealed class RejectMoveItemRequestOutPacket : GameOutgoingPacket {
+		byte denyResult;
+
+		public void Prepare(DenyResult denyResult) {
+			this.denyResult = (byte) denyResult;
+		}
+
+		public override byte Id {
+			get { return 0x27; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.denyResult);
+		}
+	}
+
+	public sealed class RejectDeleteCharacterOutPacket : GameOutgoingPacket {
+		byte reason;
+
+		public void Prepare(DeleteCharacterResult reason) {
+			this.reason = (byte) reason;
+		}
+
+		public override byte Id {
+			get { return 0x85; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.reason);
+		}
+	}
+
+	public sealed class ResendCharactersAfterDeleteOutPacket : DynamicLengthOutPacket {
+		string[] names = new string[AbstractAccount.maxCharactersPerGameAccount];
+
+		public void Prepare(IList<AbstractCharacter> chars) {
+			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				AbstractCharacter ch = chars[i];
+				if (ch != null) {
+					names[i] = ch.Name;
+				} else {
+					names[i] = string.Empty;
+				}
+			}
+		}
+
+		public override byte Id {
+			get { return 0x86; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeByte((byte) AbstractAccount.maxCharactersPerGameAccount);
+
+			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				this.EncodeASCIIString(this.names[i], 30);
+				this.EncodeZeros(30);
+			}
+		}
+	}
+
+	public sealed class AllNamesOutPacket : DynamicLengthOutPacket {
+		int flaggedUid;
+		string name;
+
+		public void Prepare(int flaggedUid, string name) {
+			this.flaggedUid = flaggedUid;
+			this.name = name;
+		}
+
+		public override byte Id {
+			get { return 0x98; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeInt(this.flaggedUid);
+			this.EncodeASCIIString(this.name);
+		}
+	}
+
+	public sealed class SendGumpMenuDialogPacket : DynamicLengthOutPacket {
+		uint focusFlaggedUid, gumpUid;
+		int x, y;
+		string layoutText;
+		List<string> strings = new List<string>();
+
+		public void Prepare(Gump gump) {
+			this.focusFlaggedUid = gump.Focus.FlaggedUid;
+			this.gumpUid = gump.uid;
+			this.x = gump.X;
+			this.y = gump.Y;
+			this.layoutText = gump.layout.ToString();
+
+			this.strings.Clear();
+			int numTextLines;
+			if (gump.textsList != null) {
+				this.strings.AddRange(gump.textsList);
+			}
+		}
+
+		public override byte Id {
+			get { return 0xb0; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.focusFlaggedUid);
+			this.EncodeUInt(this.gumpUid);
+			this.EncodeInt(this.x);
+			this.EncodeInt(this.y);
+
+			this.EncodeUShort((ushort) (this.layoutText.Length + 1)); //+1 cos of null terminator
+			this.EncodeASCIIString(this.layoutText);
+
+			this.EncodeUShort((ushort) this.strings.Count);
+			foreach (string s in this.strings) {
+				this.EncodeUShort((ushort)s.Length);
+				this.EncodeBigEndianUnicodeString(s);
+			}
+		}
+	}
+
+	public sealed class CloseGenericGumpOutPacket : GeneralInformationOutPacket {
+		uint gumpUid;
+		int buttonId;
+
+		public void Prepare(uint gumpUid, int buttonId) {
+			this.gumpUid = gumpUid;
+			this.buttonId = buttonId;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x04; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeUInt(this.gumpUid);
+			this.EncodeInt(this.buttonId);
+		}
+	}
 }

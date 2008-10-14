@@ -18,7 +18,9 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.Packets;
+using SteamEngine.Networking;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -31,10 +33,9 @@ namespace SteamEngine.CompiledScripts {
 		uint hairFakeUid = Thing.GetFakeItemUid();
 		uint beardFakeUid = Thing.GetFakeItemUid();
 
-		FreedPacketGroup equippedItemsPackets;
 		bool hasEquippedItems = true;
 
-		FreedPacketGroup hairItemsPackets;
+		PacketGroup hairItemsPackets;
 		bool hasHairItems = true;
 
 		CharacterDef charDef;
@@ -58,15 +59,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_Click(AbstractCharacter clicker) {
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
-			Server.SendNameFrom(clicker.Conn, this, this.Name, 0);
+			PacketSequences.SendNameFrom(clickerConn, this, this.Name, 0);
 		}
 
-		public override void On_AosClick(AbstractCharacter clicker) {
+		public override void On_AosClick(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
 			ObjectPropertiesContainer opc = this.GetProperties();
-			Server.SendClilocNameFrom(clicker.Conn, this,
+			PacketSequences.SendClilocNameFrom(clickerConn, this,
 				opc.FirstId, 0, opc.FirstArgument);
 		}
 
@@ -102,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 				if (equipped.CanFallToCorpse && equipped != pack && equipped != hair && equipped != beard) {
 					equipped.Cont = this;
 					if (equippedItems == null) {
-						equippedItems = new Dictionary<PacketSender.ICorpseEquipInfo, AbstractItem>();
+						equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
 					}
 					equippedItems[equipped] = equipped;
 				}
@@ -128,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 				return direction;
 			}
 			set {
-				SteamEngine.Packets.NetState.ItemAboutToChange(this);
+				SteamEngine.Networking.ItemSyncQueue.AboutToChange(this);
 				direction = value;
 			}
 		}
@@ -137,9 +138,14 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Destroy();
 			Thing.DisposeFakeUid(hairFakeUid);
 			Thing.DisposeFakeUid(beardFakeUid);
+
+			if (this.hairItemsPackets != null) {
+				this.hairItemsPackets.Dispose();
+				this.hairItemsPackets = null;
+			}
 		}
 
-		internal class CorpseEquipInfo : PacketSender.ICorpseEquipInfo {
+		internal class CorpseEquipInfo : ICorpseEquipInfo {
 			uint flaggedUid;
 			byte layer;
 			ushort color;
@@ -169,104 +175,136 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_BeingSentTo(GameConn viewerConn) {
-			base.On_BeingSentTo(viewerConn);
-
-			if (IsOnGround && hasEquippedItems) {
-				if (equippedItemsPackets == null) {
-					CorpseEquipInfo hair = null;
-					CorpseEquipInfo beard = null;
-
-					if (equippedItems == null) {
-						equippedItems = new Dictionary<PacketSender.ICorpseEquipInfo, AbstractItem>();
-					} else {
-						List<AbstractItem> toRemove = null;
-						foreach (AbstractItem item in equippedItems.Values) {
-							if (item.Cont != this) {
-								if (toRemove == null) {
-									toRemove = new List<AbstractItem>();
-								}
-								toRemove.Add(item);
-							}
-						}
-						if (toRemove != null) {
-							foreach (AbstractItem noMoreEquipped in toRemove) {
-								equippedItems.Remove(noMoreEquipped);
-							}
-						}
-					}
-
-					if (hairModel != 0) {
-						hair = new CorpseEquipInfo(
-							hairFakeUid, (byte) LayerNames.Hair, hairColor, hairModel);
-						equippedItems[hair] = null;
-					}
-					if (beardModel != 0) {
-						beard = new CorpseEquipInfo(
-							beardFakeUid, (byte) LayerNames.Beard, beardColor, beardModel);
-						equippedItems[beard] = null;
-					}
-
-					BoundPacketGroup bpg = PacketSender.NewBoundGroup();
-					PacketSender.PrepareCorpseEquip(this, equippedItems.Keys);
-					if (hair != null) {
-						equippedItems.Remove(hair);
-					}
-					if (beard != null) {
-						equippedItems.Remove(beard);
-					}
-
-					if (!PacketSender.PrepareCorpseContents(this, equippedItems.Values, hair, beard)) {
-						hasEquippedItems = false;
-						bpg.Dispose();
-						return;
-					} else {
-						equippedItemsPackets = bpg.Free();
-					}
-					if (equippedItems.Count == 0) {
-						equippedItems = null;
-					}
+		public override ItemOnGroundUpdater GetOnGroundUpdater() {
+			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);
+			if (iogu == null) {
+				if (this.hasEquippedItems) {
+					iogu = new CorpseOnGroundUpdater(this);
+				} else {
+					iogu = new ItemOnGroundUpdater(this);
 				}
-				equippedItemsPackets.SendTo(viewerConn);
+			}
+			return iogu;
+		}			
+
+		public class CorpseOnGroundUpdater : ItemOnGroundUpdater {
+			PacketGroup equippedItemsPackets;
+
+			public CorpseOnGroundUpdater(Corpse corpse)
+				: base(corpse) {
+			}
+
+			public override void SendTo(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TCPConnection<GameState> viewerConn) {
+				base.SendTo(viewer, viewerState, viewerConn);
+
+				Corpse corpse = (Corpse) this.item;
+				if (corpse.hasEquippedItems) {
+					if (this.equippedItemsPackets == null) {
+						CorpseEquipInfo hair = null;
+						CorpseEquipInfo beard = null;
+
+						if (corpse.equippedItems != null) {
+							List<AbstractItem> toRemove = null;
+							foreach (AbstractItem item in corpse.equippedItems.Values) {
+								if (item.Cont != corpse) {
+									if (toRemove == null) {
+										toRemove = new List<AbstractItem>();
+									}
+									toRemove.Add(item);
+								}
+							}
+							if (toRemove != null) {
+								foreach (AbstractItem noMoreEquipped in toRemove) {
+									corpse.equippedItems.Remove(noMoreEquipped);
+								}
+							}
+						}
+
+						if (corpse.hairModel != 0) {
+							hair = new CorpseEquipInfo(
+								corpse.hairFakeUid, (byte) LayerNames.Hair, corpse.hairColor, corpse.hairModel);
+							if (corpse.equippedItems == null) {
+								corpse.equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
+							}
+							corpse.equippedItems[hair] = null;
+						}
+						if (corpse.beardModel != 0) {
+							beard = new CorpseEquipInfo(
+								corpse.beardFakeUid, (byte) LayerNames.Beard, corpse.beardColor, corpse.beardModel);
+							if (corpse.equippedItems == null) {
+								corpse.equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
+							}
+							corpse.equippedItems[beard] = null;
+						}
+
+						if ((corpse.equippedItems != null) && (corpse.equippedItems.Count > 0)) {
+							this.equippedItemsPackets = PacketGroup.CreateFreePG();
+							this.equippedItemsPackets.AcquirePacket<CorpseClothingOutPacket>().Prepare(corpse.FlaggedUid, corpse.equippedItems.Keys);//0x89
+							this.equippedItemsPackets.AcquirePacket<ItemsInContainerOutPacket>().Prepare(corpse.FlaggedUid, corpse.equippedItems.Keys);//0x3c
+
+							if (hair != null) {
+								corpse.equippedItems.Remove(hair);
+							}
+							if (beard != null) {
+								corpse.equippedItems.Remove(beard);
+							}
+
+						} else {
+							corpse.equippedItems = null;
+							corpse.hasEquippedItems = false;
+						}
+					}
+
+					viewerConn.SendPacketGroup(this.equippedItemsPackets);
+				}
+			}
+
+			public override void Dispose() {
+				base.Dispose();
+
+				if (this.equippedItemsPackets != null) {
+					this.equippedItemsPackets.Dispose();
+					this.equippedItemsPackets = null;
+				}
 			}
 		}
 
-		public override void On_ContainerOpen(GameConn viewerConn) {
-			base.On_ContainerOpen(viewerConn);
-			if (IsOnGround && hasHairItems) {
-				if (hairItemsPackets == null) {
-					hasHairItems = false;
-					BoundPacketGroup bpg = PacketSender.NewBoundGroup();
+		public override void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TCPConnection<GameState> viewerConn) {
+			base.On_ContainerOpen(viewer, viewerState, viewerConn);
+
+			if (this.IsOnGround && this.hasHairItems) {
+				if (this.hairItemsPackets == null) {
+					this.hairItemsPackets = PacketGroup.CreateFreePG();
 					if (hairModel != 0) {
 						CorpseEquipInfo hair = new CorpseEquipInfo(
 							hairFakeUid, (byte) LayerNames.Hair, hairColor, hairModel);
-						PacketSender.PrepareItemInCorpse(this, hair);
+						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, hair);
 						hasHairItems = true;
 					}
 					if (beardModel != 0) {
 						CorpseEquipInfo beard = new CorpseEquipInfo(
 							beardFakeUid, (byte) LayerNames.Beard, beardColor, beardModel);
-						PacketSender.PrepareItemInCorpse(this, beard);
+
+						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, beard);
 						hasHairItems = true;
 					}
-					if (hasHairItems) {
-						hairItemsPackets = bpg.Free();
-					} else {
-						bpg.Dispose();
+
+					if (!this.hasHairItems) {
+						this.hairItemsPackets.Dispose();
+						this.hairItemsPackets = null;
 						return;
 					}
 				}
-				hairItemsPackets.SendTo(viewerConn);
+				viewerConn.SendPacketGroup(this.hairItemsPackets);
 			}
 		}
 
-		public override bool On_PickupFrom(AbstractCharacter pickingChar, AbstractItem i, ref object amount) {
+		public override void On_ItemLeave(ItemInItemArgs args) {
 			if (equippedItems != null) {
-				if (equippedItems.ContainsKey(i)) {
-					equippedItemsPackets = null;
+				if (equippedItems.ContainsKey(args.manipulatedItem)) {
+					ItemOnGroundUpdater.RemoveFromCache(this);
 				}
 			}
-			return base.On_PickupFrom(pickingChar, i, ref amount);
 		}
 
 		public override sealed Thing Link {

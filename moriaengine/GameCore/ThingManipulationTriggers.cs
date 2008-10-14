@@ -27,6 +27,7 @@ using SteamEngine.Persistence;
 using System.Threading;
 using System.Configuration;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
 
 namespace SteamEngine {
 
@@ -161,7 +162,7 @@ namespace SteamEngine {
 			if (!IsLimbo) {
 				OpenedContainers.SetContainerClosed(this);
 				this.RemoveFromView();
-				NetState.ItemAboutToChange(this);
+				ItemSyncQueue.AboutToChange(this);
 
 				Thing cont = this.Cont;
 				if (cont == null) {
@@ -318,7 +319,7 @@ namespace SteamEngine {
 		}
 
 		internal void InternalItemEnter(AbstractItem i) {
-			this.ChangingProperties();
+			this.InvalidateProperties();
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				tll = new ThingLinkedList(this);
@@ -568,11 +569,6 @@ namespace SteamEngine {
 			maxY = 120;
 		}
 
-		public virtual bool On_PickupFrom(AbstractCharacter pickingChar, AbstractItem i, ref object amount) {
-			//pickingChar is picking up amount of AbstractItem i from this
-			return false;
-		}
-
 		/**
 			Drop this item on the ground.
 		*/
@@ -589,7 +585,7 @@ namespace SteamEngine {
 
 			ThingLinkedList tll = (ThingLinkedList) i.contOrTLL;
 			tll.Remove(i);
-			this.ChangingProperties();//changing Count
+			this.InvalidateProperties();//changing Count
 			this.AdjustWeight(-i.Weight);
 		}
 
@@ -610,7 +606,8 @@ namespace SteamEngine {
 				}
 
 				if ((this.point4d.x != x) || (this.point4d.y != y)) {
-					NetState.ItemAboutToChange(this);
+					OpenedContainers.SetContainerClosed(this);//if I am a container too, I get closed also
+					ItemSyncQueue.AboutToChange(this);
 					point4d.x = x;
 					point4d.y = y;
 				}
@@ -867,20 +864,21 @@ namespace SteamEngine {
 		public bool TryGetRidOfDraggedItem() {
 			AbstractItem i = draggingLayer;
 			if (i != null) {
-				GameConn conn = this.Conn;
-
 				DenyResult result = this.TryPutItemOnItem(this.Backpack);
 				if (result != DenyResult.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
-					if (conn != null) {
-						Server.SendDenyResultMessage(conn, i, result);
+					GameState state = this.GameState;
+					SteamEngine.Communication.TCP.TCPConnection<GameState> conn = null;
+					if (state != null) {
+						conn = state.Conn;
+						PacketSequences.SendDenyResultMessage(conn, i, result);
 					}
 
 					MutablePoint4D point = this.point4d;
 					result = this.TryPutItemOnGround(point.x, point.y, point.z);
 
 					if (result != DenyResult.Allow && this.draggingLayer == i) {//can't even put item on ground?
-						if (conn != null) {
-							Server.SendDenyResultMessage(conn, i, result);
+						if (state != null) {
+							PacketSequences.SendDenyResultMessage(conn, i, result);
 						}
 						//The player is not allowed to put the item anywhere. 
 						//Too bad we can't tell the client
@@ -981,11 +979,6 @@ namespace SteamEngine {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
-			GameConn conn = this.Conn;
-			if (conn == null) {
-				return DenyResult.Deny_NoMessage;
-			}
-
 			AbstractItem item = draggingLayer;
 			if (item == null) {
 				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+targetCont+"'");
@@ -1021,26 +1014,10 @@ namespace SteamEngine {
 				DenyResult retVal = args.Result;
 
 				if ((!cancel) && (retVal == DenyResult.Allow)) {
-					if (conn.openedContainers.Contains(targetCont)) {//is considered open
-						//but we still need to check if it is rightfully considered such
-						retVal = OpenedContainers.HasContainerOpen(conn, targetCont);
-					} else {
-						Thing c = targetCont.Cont;
-						if (c != null) {
-							AbstractItem contContAsItem = c as AbstractItem;
-							if (contContAsItem != null) {
-								if (conn.openedContainers.Contains(contContAsItem)) {//cont.cont is considered open
-									retVal = this.CanOpenContainer(targetCont);//so we can check if targetCont would be openable (it also does canreach checks)
-								} else {
-									retVal = DenyResult.Deny_ThatIsOutOfSight;//the container is in a closed container
-								}
-							} else {
-								//it's probably someones backpack/bank
-								retVal = this.CanOpenContainer(targetCont);//we check if targetCont is be openable (it also does canreach checks)
-							}
-						} else {//is on ground
-							retVal = this.CanOpenContainer(targetCont);//we check if targetCont is be openable (it also does canreach checks)
-						}
+					retVal = OpenedContainers.HasContainerOpen(this, targetCont);
+
+					if (retVal != DenyResult.Allow) {//we don't have it open, let's check if we could
+						retVal = this.CanOpenContainer(targetCont);//we check if targetCont could be openable (it also does canreach checks)
 					}
 				}
 
@@ -1176,7 +1153,7 @@ namespace SteamEngine {
 				retVal = this.CanReachCoordinates(point);
 			}
 
-			//equip into dragging layer
+
 			if (retVal == DenyResult.Allow) {
 				item.MakeLimbo();
 				item.Trigger_EnterRegion(point.X, point.Y, point.Z, point.M);
@@ -1236,7 +1213,7 @@ namespace SteamEngine {
 		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem item = draggingLayer;
+			AbstractItem item = this.draggingLayer;
 			if (item == null) {
 				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
 			}
@@ -1245,7 +1222,6 @@ namespace SteamEngine {
 			if (item.IsEquippable) {
 				byte layer = item.Layer;
 				if ((layer < sentLayers) && (layer > 0)) {
-
 					bool succeededUnequipping = true;
 					if (layer != (byte) LayerNames.Special) {
 						if ((layer == (byte) LayerNames.Hand1) || (layer == (byte) LayerNames.Hand2)) {
@@ -1302,7 +1278,7 @@ namespace SteamEngine {
 
 					DenyResult result = args.Result;
 
-					if (!cancel && result == DenyResult.Allow) {
+					if (result == DenyResult.Allow) {
 						if (this != target) {
 							result = this.CanReach(target);
 						}

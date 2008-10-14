@@ -14,9 +14,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class ConsoleServerProtocol : IProtocol<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 		public static readonly ConsoleServerProtocol instance = new ConsoleServerProtocol();
 
+		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
+			discardAfterReading = false;
 
-
-		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id) {
 			switch (id) {
 				case 0:
 					return Pool<RequestLoginPacket>.Acquire();

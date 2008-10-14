@@ -5,13 +5,12 @@ PlayerStartZ		20
 PlayerStartM		0
 
 //the suffix "_allconns" makes it global for all Conn instances
-[TriggerGroup e_playercreation_allconns]
+[function CreatePlayerCharacter]
 
-//this is a GameConn instance
+//this is Globals instance
 //argv[0] is a CreateCharArguments instance
-//we are supposed to create a character and assign it to this conn (and account), 
-//most probably using the "MakeBePlayer" method
-on=@newPC
+//we are supposed to create a character and return it
+
 if (argo.gender)
 	local.ch = c_woman.Create(PlayerStartX, PlayerStartY, PlayerStartZ, PlayerStartM)
 	local.pants = local.ch.NewEquip(i_skirt_long)
@@ -19,8 +18,6 @@ else
 	local.ch = c_man.Create(PlayerStartX, PlayerStartY, PlayerStartZ, PlayerStartM)
 	local.pants = local.ch.NewEquip(i_pants_long)
 endif
-
-local.ch.MakeBePlayer(this.Account)
 
 local.ch.Name = argo.charname
 //local.ch.gender = argo.gender
@@ -62,156 +59,13 @@ if (<argo.startInt> > 60)
 	local.ch.Int = 60
 endif
 
+//TODO? check the skill values
+local.ch.SetSkill(argo.SkillId1, argo.SkillValue1)
+local.ch.SetSkill(argo.SkillId2, argo.SkillValue2)
+local.ch.SetSkill(argo.SkillId3, argo.SkillValue3)
+
 //add whatever you wish here :)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			
-////create character
-//
-//string defstr=gender==0?"c_man":"c_woman";
-//ThingDef def = (ThingDef) ThingDef.FindDef(defstr);
-//Sanity.IfTrueThrow(def==null, "Unable to find chardef for "+defstr+"!");
-//
-//Logger.WriteDebug("Creating character "+def);
-//AbstractCharacter cre = (AbstractCharacter) def.Create(Globals.startPosX, Globals.startPosY, Globals.startPosZ, 0);
-//Server.src = cre;
-//cre.Name = charname;
-//
-////acc.characters[charSlot]=cre;	//MakeBePlayer now has account add the character.
-//cre.MakeBePlayer(acc);
-//cre.gender=gender;
-//cre.Color=(ushort)skinColor;
-//				
-////make hair
-//
-////We disable NetState here so that we don't send updates for these items, because NetState will be
-////sending the entire character later.
-//NetState.Disable();
-//AbstractItem pack = cre.Backpack;
-////if (hairStyle!=0) {
-////	AbstractItem hair = cre.NewEquip(ThingDef.FindItemDef(hairStyle));
-////	hair.Color=hairColor;
-////}
-//////make beard
-////if (facialHair!=0 && gender==0) {
-////	AbstractItem facial = cre.NewEquip(ThingDef.FindItemDef(facialHair));
-////	facial.Color=facialHairColor;
-////}
-//
-//ScriptArgs sa = new ScriptArgs(shirtColor, pantsColor, str, dex, intel);
-//cre.TryTrigger(cre, TriggerKey.newPC, sa);
-//
-//NetState.Enable();
-//
-//Logger.WriteDebug("Logging in character "+def);
-//AbstractCharacter cre2 = c.LoginCharacter(charSlot);
-//Sanity.IfTrueThrow(cre2==null || cre2!=cre, "LoginCharacter failed, but we created the character right before calling it.");
-////Logger.WriteDebug("account = "+c.curAccount);
-////Logger.WriteDebug("curCharacter = "+c.curCharacter);
-//c.noResponse = false;
-//
-//Logger.WriteDebug("Starting game for character "+def);
-//Server.StartGame(c);
-
-
-
-
-//namespace SteamEngine.Scripts {
-//	using System;
-//	using SteamEngine;
-//	using System.Collections;
-//	
-//	public class e_playercreation_allconns : Script {
-//		static ThingDef i_gold;	//Gotta initialize this in Init(), because Scripts are loaded before ThingDef.
-//		
-//		//The constructor is called before thingDefs are loaded, so we don't want to reference a thingdef here
-//		//unless we use DelayedResolver.
-//		public Stats() : base("e_stats_allcharacters") {
-//		}
-//		
-//		//Init runs after all scripts are loaded, etc, so the defs will all be loaded.
-//		public static void Init() {
-//			i_gold=ThingDef.FindDef("i_gold");
-//		}
-//		
-//		public void on_newPC(TagHolder self, ushort shirtColor, ushort pantsColor, int str, int dex, int intel) {
-//			Character cre=self as Character;
-//			//add pants, shirt
-//			Item shirt = cre.NewEquip("i_shirt_plain");
-//			shirt.color=shirtColor;
-//			Item pants = cre.NewEquip("i_pants_long");
-//			pants.color=pantsColor;
-//			
-//			if (str<10) str=10;
-//			if (dex<10) dex=10;
-//			if (intel<10) intel=10;
-//			if (str>60) str=60;
-//			if (dex>60) dex=60;
-//			if (intel>60) intel=60;
-//			while (str+dex+intel>80) {
-//				if (str>10) {
-//					if (10+dex+intel>=80) {
-//						str=10;
-//					} else {
-//						str=80-(dex+intel);
-//					}
-//				} else if (dex>10) {
-//					if (10+str+intel>=80) {
-//						dex=10;
-//					} else {
-//						dex=80-(str+intel);
-//					}
-//				} else if (intel>10) {
-//					if (10+str+dex>=80) {
-//						intel=10;
-//					} else {
-//						intel=80-(str+dex);
-//					}
-//				}
-//			}
-//			
-//			cre.SetTag(strength,str);
-//			cre.SetTag(dexterity,dex);
-//			cre.SetTag(intelligence,intel);
-//			
-//		}
-//	}	
-//}
+return local.ch

@@ -234,7 +234,9 @@ namespace SteamEngine {
 		public void Trigger_Create(Thing createdThing) {
 			this.On_Create(createdThing);
 			createdThing.TryTrigger(TriggerKey.create, null);
-			createdThing.On_Create();
+			try {
+				createdThing.On_Create();
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		protected virtual void On_Create(Thing t) {

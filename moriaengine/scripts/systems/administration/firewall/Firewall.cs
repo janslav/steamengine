@@ -26,7 +26,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using SteamEngine;
-using SteamEngine.Packets;
+using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 using SteamEngine.Persistence;
 
 //using ICSharpCode.SharpZipLib.Zip;
@@ -35,9 +36,9 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
     public class E_Firewall_Global : CompiledTriggerGroup {
         public void On_ClientAttach(Globals ignored, ScriptArgs sa) {
-            GameConn conn = (GameConn)sa.argv[0];
-            if (Firewall.IsBlockedIP(conn.IP)) {
-				Prepared.SendFailedLogin(conn, FailedLoginReason.Blocked);
+			TCPConnection<GameState> conn = (TCPConnection<GameState>) sa.argv[1];
+			if (Firewall.IsBlockedIP(conn.EndPoint.Address)) {
+				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.Blocked);
                 conn.Close("IP Blocked");
             }
         }

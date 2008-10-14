@@ -11,7 +11,9 @@ namespace SteamEngine.RemoteConsole {
 	public class ConsoleProtocol : IProtocol<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint>  {
 		public static readonly ConsoleProtocol instance = new ConsoleProtocol();
 
-		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id) {
+		
+		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
+			discardAfterReading = false;
 			switch (id) {
 				case 1:
 					return Pool<RequestOpenGameServerWindowPacket>.Acquire();

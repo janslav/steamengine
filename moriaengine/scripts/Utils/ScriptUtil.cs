@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	public static class ScriptUtil {
@@ -34,6 +35,23 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				return string.Concat(
 					"Client ", conn.uid, ": " + message);
+			}
+		}
+
+		public static string GetLogString(GameState state, string message) {
+			AbstractAccount acc = state.Account;
+			AbstractCharacter ch = state.Character;
+			if (acc != null) {
+				if (ch != null) {
+					return string.Concat(
+						"Acc '", acc.Name, "', char '", ch.Name, "' (#", ch.Uid.ToString("x"), "): " + message);
+				} else {
+					return string.Concat(
+						"Acc '", acc.Name, "': " + message);
+				}
+			} else {
+				return string.Concat(
+					"Client ", state.Uid, ": " + message);
 			}
 		}
 

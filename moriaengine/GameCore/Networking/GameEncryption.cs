@@ -36,15 +36,19 @@ namespace SteamEngine.Networking {
 		private byte[] xorData; // This table is used for encrypting the server->client stream
 
 		public EncryptionInitResult Init(byte[] bytesIn, int offsetIn, int lengthIn, out int bytesUsed) {
-			if (lengthIn < 4) {
+			if (lengthIn < 5) {//if it's just the seed it's not enough, we need the first packet to check if there's any encryption
 				bytesUsed = 0;
 				return EncryptionInitResult.NotEnoughData;
 			}
 
-			uint seed = (uint) ((bytesIn[offsetIn] << 24) | (bytesIn[offsetIn + 1] << 16) | (bytesIn[offsetIn + 2] << 8) | bytesIn[offsetIn + 3]);
+			//uint seed = (uint) ((bytesIn[offsetIn] << 24) | (bytesIn[offsetIn + 1] << 16) | (bytesIn[offsetIn + 2] << 8) | bytesIn[offsetIn + 3]);
 			bytesUsed = 4;
 
-			if (bytesIn[offsetIn] == '\x91' && bytesIn[offsetIn + 1] == ((seed >> 24) & 0xFF) && bytesIn[offsetIn + 2] == ((seed >> 16) & 0xFF) && bytesIn[offsetIn + 3] == ((seed >> 8) & 0xFF) && bytesIn[offsetIn + 4] == (seed & 0xFF)) {
+			if ((bytesIn[offsetIn + 4] == 0x91) && //0x91 packet and matching seed in the packet = no encryption
+				(bytesIn[offsetIn + 5] == bytesIn[offsetIn]) &&
+				(bytesIn[offsetIn + 6] == bytesIn[offsetIn + 1]) &&
+				(bytesIn[offsetIn + 7] == bytesIn[offsetIn + 2]) &&
+				(bytesIn[offsetIn + 8] == bytesIn[offsetIn + 3])) {
 				return EncryptionInitResult.SuccessNoEncryption;
 			}
 
@@ -53,10 +57,10 @@ namespace SteamEngine.Networking {
 
 			// Set up the crypt key
 			byte[] key = new byte[16];
-			key[0] = key[4] = key[8] = key[12] = (byte) ((seed >> 24) & 0xff);
-			key[1] = key[5] = key[9] = key[13] = (byte) ((seed >> 16) & 0xff);
-			key[2] = key[6] = key[10] = key[14] = (byte) ((seed >> 8) & 0xff);
-			key[3] = key[7] = key[11] = key[15] = (byte) (seed & 0xff);
+			key[0] = key[4] = key[8] = key[12] = bytesIn[offsetIn]; // (byte) ((seed >> 24) & 0xff);
+			key[1] = key[5] = key[9] = key[13] = bytesIn[offsetIn + 1]; // (byte) ((seed >> 16) & 0xff);
+			key[2] = key[6] = key[10] = key[14] = bytesIn[offsetIn + 2]; // (byte) ((seed >> 8) & 0xff);
+			key[3] = key[7] = key[11] = key[15] = bytesIn[offsetIn + 3]; // (byte) (seed & 0xff);
 
 			byte[] iv = new byte[0];
 			this.engine = new SteamEngine.Networking.TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, SteamEngine.Networking.TwofishBase.EncryptionDirection.Decrypting);
@@ -122,7 +126,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public override string ToString() {
-			return "GameClient Encryption";
+			return "GameClient Twofish Encryption";
 		}
 	}
 }

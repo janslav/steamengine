@@ -62,7 +62,7 @@ Vars:	//vars defined in the class, so they basically do what tags do, but better
 	double hitsRegenSpeed=0.0
 	double manaRegenSpeed=0.0
 	double stamRegenSpeed=0.0
-	long tithingPoints=0
+	short tithingPoints=0
 	//TODO: Stat-locks
 	byte statLockByte=0
 	Character owner = null

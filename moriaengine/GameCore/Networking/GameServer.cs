@@ -25,22 +25,154 @@ using System.IO;
 using System.Net;
 
 namespace SteamEngine.Networking {
-	public class GameServer : TCPServer<GameClient> {
+	public class GameServer : TCPServer<GameState> {
+
+		private static GameServer instance = new GameServer();
+
+		private static HashSet<GameState> clients;
+		private static ReadOnlyCollection<GameState> clientsReadOnly;
+
+		static GameServer() {
+			clients = new HashSet<GameState>();
+			clientsReadOnly = new ReadOnlyCollection<GameState>(clients);
+		}
+
 		private GameServer()
 			: base(GameServerProtocol.instance, MainClass.globalLock) {
 
 		}
 
-		private static GameServer instance = new GameServer();
-
 		internal static void Init() {
-			//TODO: vykrast init kod z Server tridy
+			instance.Bind(new IPEndPoint(IPAddress.Any, Globals.port));
+		}
 
-			instance.Bind(new IPEndPoint(IPAddress.Loopback, Globals.port));
+		internal static void On_ClientInit(GameState gc) {
+			clients.Add(gc);
+
+			SyncQueue.Enable();
+		}
+
+		internal static void On_ClientClose(GameState gc) {
+			clients.Remove(gc);
+
+			if (clients.Count == 0) {
+				SyncQueue.Disable();
+			}
 		}
 
 		internal static void Exit() {
 			instance.Dispose();
+		}
+
+		public static ReadOnlyCollection<GameState> AllClients {
+			get {
+				return clientsReadOnly;
+			}
+		}
+
+		public static void SendToClientsWhoCanSee(Thing thing, OutgoingPacket outPacket) {
+			PacketGroup pg = null;
+
+			try {
+				AbstractItem asItem = thing as AbstractItem;
+				if (asItem != null) {
+					AbstractItem contAsItem = asItem.Cont as AbstractItem;
+					if (contAsItem != null) {
+						foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
+							GameState state = viewer.GameState;
+							if (state != null) {
+								if (pg == null) {
+									pg = Pool<PacketGroup>.Acquire();
+									pg.AddPacket(outPacket);
+								}
+								state.Conn.SendPacketGroup(pg);
+							}
+						}
+						return;
+					}
+				}
+
+				foreach (TCPConnection<GameState> conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
+					if (pg == null) {
+						pg = Pool<PacketGroup>.Acquire();
+						pg.AddPacket(outPacket);
+					}
+					conn.SendPacketGroup(pg);
+				}
+			} finally {
+				if (pg == null) {//wasn't sent
+					outPacket.Dispose();
+				}
+			}
+		}
+
+		public static void SendToClientsWhoCanSee(AbstractCharacter ch, OutgoingPacket outPacket) {
+			PacketGroup pg = null;
+
+			try {
+				foreach (TCPConnection<GameState> conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
+					if (pg == null) {
+						pg = Pool<PacketGroup>.Acquire();
+						pg.AddPacket(outPacket);
+					}
+					conn.SendPacketGroup(pg);
+				}
+			} finally {
+				if (pg == null) {//wasn't sent
+					outPacket.Dispose();
+				}
+			}
+		}
+
+		public static void SendToClientsWhoCanSee(AbstractItem item, OutgoingPacket outPacket) {
+			PacketGroup pg = null;
+
+			try {
+				AbstractItem contAsItem = item.Cont as AbstractItem;
+				if (contAsItem != null) {
+					foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
+						GameState state = viewer.GameState;
+						if (state != null) {
+							if (pg == null) {
+								pg = Pool<PacketGroup>.Acquire();
+								pg.AddPacket(outPacket);
+							}
+							state.Conn.SendPacketGroup(pg);
+						}
+					}
+					return;
+				} else {
+					foreach (TCPConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
+						if (pg == null) {
+							pg = Pool<PacketGroup>.Acquire();
+							pg.AddPacket(outPacket);
+						}
+						conn.SendPacketGroup(pg);
+					}
+				}
+			} finally {
+				if (pg == null) {//wasn't sent
+					outPacket.Dispose();
+				}
+			}
+		}
+
+		internal static void BackupLinksToCharacters() {
+			foreach (GameState state in clients) {
+				state.BackupLinksToCharacters();
+			}
+		}
+		
+		internal static void ReLinkCharacters() {
+			foreach (GameState state in clients) {
+				state.RelinkCharacter();
+			}
+		}
+
+		internal static void RemoveBackupLinks() {
+			foreach (GameState state in clients) {
+				state.RemoveBackupLinks();
+			}
 		}
 	}
 }

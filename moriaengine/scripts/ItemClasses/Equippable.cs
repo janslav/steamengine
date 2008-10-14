@@ -17,6 +17,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -51,9 +52,9 @@ namespace SteamEngine.CompiledScripts {
 					dr = from.TryEquipItemOnChar(from);
 				}
 				if (dr != DenyResult.Allow) {
-					GameConn conn = from.Conn;
-					if (conn != null) {
-						Server.SendDenyResultMessage(conn, this, dr);
+					GameState state = from.GameState;
+					if (state != null) {
+						PacketSequences.SendDenyResultMessage(state.Conn, this, dr);
 					}
 				}
 			}

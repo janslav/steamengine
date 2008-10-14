@@ -26,6 +26,7 @@ using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
 	
 namespace SteamEngine {
 	public class ScriptLoader {
@@ -85,7 +86,7 @@ namespace SteamEngine {
 		public static void Resync() {
 			ICollection<ScriptFile> files = allFiles.GetChangedFiles();//this makes the entities unload
 			if (files.Count > 0) {
-				Server.BroadCast("Server is pausing for script resync...");
+				PacketSequences.BroadCast("Server is pausing for script resync...");
 
 				Sanity.IfTrueThrow(!RunLevelManager.IsRunning, "RunLevel != Running @ Resync");
 
@@ -120,7 +121,7 @@ namespace SteamEngine {
 				Globals.UnPauseServerTime();
 				RunLevelManager.SetRunning();
 
-				Server.BroadCast("Script resync finished.");
+				PacketSequences.BroadCast("Script resync finished.");
 			} else {
 				ISrc src = Globals.Src;
 				if (src != null) {
@@ -246,7 +247,7 @@ namespace SteamEngine {
 
 			if (fi.Exists) {
 				if (!allFiles.HasFile(fi)) {
-					Server.BroadCast("Server is pausing for script file loading...");
+					PacketSequences.BroadCast("Server is pausing for script file loading...");
 					Globals.PauseServerTime();
 					
 					ScriptFile sf = allFiles.AddFile(fi);
@@ -255,7 +256,7 @@ namespace SteamEngine {
 					
 					DelayedResolver.ResolveAll();
 					Globals.UnPauseServerTime();
-					Server.BroadCast("Script loading finished.");
+					PacketSequences.BroadCast("Script loading finished.");
 				} else {
 					throw new Exception("This file is already loaded.");
 				}

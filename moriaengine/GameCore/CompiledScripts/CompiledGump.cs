@@ -68,9 +68,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.gumpInstance != null) {
 					gi = this.gumpInstance;
 					this.gumpInstance = null;
-					gi.cont = sendTo;
-					gi.focus = focus;
-					gi.CompilePacketData();
+					gi.FinishCompilingPacketData(focus, sendTo);
 					return gi;
 				}
 			} catch (FatalException) {
@@ -280,31 +278,22 @@ namespace SteamEngine.CompiledScripts {
 				return (int) GumpInstance.X;
 			}
 			set {
-				if (value < 0) {
-					throw new SEException("A gump can not be placed to negative position");
-				}
-				GumpInstance.X = (uint) value;
+				GumpInstance.X = value;
 			}
 		}
 		//RunUO interface
 		public int Y {
 			get {
-				return (int) GumpInstance.Y;
+				return GumpInstance.Y;
 			}
 			set {
-				if (value < 0) {
-					throw new SEException("A gump can not be placed to negative position");
-				}
-				GumpInstance.Y = (uint) value;
+				GumpInstance.Y = value;
 			}
 		}
 		//sphere interface
 		public void SetLocation(int x, int y) {
-			if ((x < 0)||(y < 0)) {
-				throw new SEException("A gump can not be placed to negative position");
-			}
-			GumpInstance.X = (uint) x;
-			GumpInstance.Y = (uint) y;
+			GumpInstance.X = x;
+			GumpInstance.Y = y;
 		}
 
 		public void NoClose() {
