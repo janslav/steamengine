@@ -36,7 +36,7 @@ namespace SteamEngine.Regions {
 			get {
 				return this.MaxY - this.MinY;
 			}
-		}		
+		}
 
 		public bool Contains(Static p) {
 			ushort px = p.X;
@@ -93,7 +93,7 @@ namespace SteamEngine.Regions {
 
 		public int TilesNumber {
 			get {
-				return ((this.MaxX - this.MinX)*(this.MaxY - this.MinY));
+				return ((this.MaxX - this.MinX) * (this.MaxY - this.MinY));
 			}
 		}
 	}
@@ -112,7 +112,7 @@ namespace SteamEngine.Regions {
 
 		public ImmutableRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY) {
 			Sanity.IfTrueThrow((minX > maxX) || (minY > maxY),
-				"Rectangle ("+minX+","+minY+","+maxX+","+maxY+"). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");
+				"Rectangle (" + minX + "," + minY + "," + maxX + "," + maxY + "). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");
 			this.minX = minX;
 			this.minY = minY;
 			this.maxX = maxX;
@@ -126,25 +126,26 @@ namespace SteamEngine.Regions {
 			this.minY = start.Y;
 			this.maxX = end.X;
 			this.maxY = end.Y;
-		}*/		
+		}*/
 
-		[Summary("Return a rectangle created from the central point with the specific range around the point"+
+		[Summary("Return a rectangle created from the central point with the specific range around the point" +
 				"(square 'around')")]
-		public ImmutableRectangle(ushort x, ushort y, ushort range) {
-			this.minX = (ushort)(x - range);
-			this.minY = (ushort)(y - range);
-			this.maxX = (ushort)(x + range);
-			this.maxY = (ushort)(y + range);
+		public ImmutableRectangle(ushort x, ushort y, int range) {
+			this.minX = (ushort) (x - range);
+			this.minY = (ushort) (y - range);
+			this.maxX = (ushort) (x + range);
+			this.maxY = (ushort) (y + range);
 		}
-		
-		public ImmutableRectangle(IPoint2D center, ushort range) : this(center.X, center.Y, range) {			
-		}		
+
+		public ImmutableRectangle(IPoint2D center, ushort range)
+			: this(center.X, center.Y, range) {
+		}
 
 		public static ImmutableRectangle GetIntersection(ImmutableRectangle a, ImmutableRectangle b) {
-			ushort maxStartX = (ushort)Math.Max(a.minX, b.minX);
-			ushort minEndX = (ushort)Math.Min(a.maxX, b.maxX);
-			ushort maxStartY = (ushort)Math.Max(a.minY, b.minY);
-			ushort minEndY = (ushort)Math.Min(a.maxY, b.maxY);
+			ushort maxStartX = (ushort) Math.Max(a.minX, b.minX);
+			ushort minEndX = (ushort) Math.Min(a.maxX, b.maxX);
+			ushort maxStartY = (ushort) Math.Max(a.minY, b.minY);
+			ushort minEndY = (ushort) Math.Min(a.maxY, b.maxY);
 			if ((minEndX >= maxStartX) && (minEndY >= maxStartY)) {
 				return new ImmutableRectangle(maxStartX, maxStartY, minEndX, minEndY);
 			}
@@ -170,9 +171,9 @@ namespace SteamEngine.Regions {
 		}
 
 		public override sealed ushort MaxY {
-			get { 
-				return this.maxY; 
+			get {
+				return this.maxY;
 			}
 		}
-	}	
+	}
 }

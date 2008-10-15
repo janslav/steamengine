@@ -574,44 +574,44 @@ namespace SteamEngine.Regions {
 			
 		//}
 
-		public IEnumerable<GameState> GetClientsInRange(ushort x, ushort y, ushort range) {
-			return GetClientsInRectangle(new ImmutableRectangle(x, y, range));
+		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(ushort x, ushort y, int range) {
+			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		
-		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, ushort range) {
+
+		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, int range) {
 			return GetGameConnsInRectangle(new ImmutableRectangle(x, y, range));
 		}
-		
-		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y, ushort range) {
+
+		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y, int range) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y, ushort range) {
+		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y, int range) {
 			return GetThingsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y, ushort range) {
+		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y, int range) {
 			return GetItemsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y, ushort range) {
+		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y, int range) {
 			return GetCharsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y, ushort range) {
+		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y, int range) {
 			return GetStaticsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y, ushort range) {
+		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y, int range) {
 			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y, ushort range) {
+		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y, int range) {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<GameState> GetClientsInRange(ushort x, ushort y) {
-			return GetClientsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(ushort x, ushort y) {
+			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y) {
@@ -657,12 +657,12 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public IEnumerable<GameState> GetClientsInRectangle(ImmutableRectangle rectangle) {
+		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
 					GameState state = player.GameState;
 					if ((state != null) && (rectangle.Contains(player))) {
-						yield return state;
+						yield return state.Conn;
 					}
 				}
 			}

@@ -150,22 +150,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 }
 
-//public virtual int GetDeathSound()
-//{
-//    if (this.m_BaseSoundID != 0)
-//    {
-//        return (this.m_BaseSoundID + 4);
-//    }
-//    if (this.m_Body.IsHuman)
-//    {
-//        return Utility.Random(this.m_Female ? 788 : 1059, this.m_Female ? 4 : 5);
-//    }
-//    return -1;
-//}
-
-
-
-
 
 
 

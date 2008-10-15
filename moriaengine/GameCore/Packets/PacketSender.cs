@@ -272,62 +272,62 @@ namespace SteamEngine.Packets {
 		//}
 		
 		//'from' can be null.
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareUnicodeMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color, string language) {
-			Sanity.IfTrueThrow(sourceName==null, "PrepareUnicodeMessage called with a null 'sourceName'.");
-			Sanity.IfTrueThrow(msg==null, "PrepareUnicodeMessage called with a null 'msg'.");
-			Sanity.IfTrueThrow(language==null, "PrepareUnicodeMessage called with a null 'language'.");
-			StartGenerating();
-			int msgByteLen = msg.Length+msg.Length;
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareUnicodeMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color, string language) {
+		//    Sanity.IfTrueThrow(sourceName==null, "PrepareUnicodeMessage called with a null 'sourceName'.");
+		//    Sanity.IfTrueThrow(msg==null, "PrepareUnicodeMessage called with a null 'msg'.");
+		//    Sanity.IfTrueThrow(language==null, "PrepareUnicodeMessage called with a null 'language'.");
+		//    StartGenerating();
+		//    int msgByteLen = msg.Length+msg.Length;
 			
-			if (color==0) {	//black, which only shows in the journal.
-				color=Globals.defaultUnicodeMessageColor;
-			}
-			EncodeByte(0xae, 0);
-			ushort blockSize = (ushort) (48+msgByteLen+2);
-			EncodeUShort(blockSize, 1);
-			if (from==null) {
-				EncodeInt(-1, 3);
-			} else {
-				EncodeUInt(from.FlaggedUid, 3);
-			}
-			EncodeUShort(model, 7);
-			EncodeByte((byte) type, 9);
-			EncodeUShort(color, 10); //text color
-			EncodeUShort(font, 12); //font
-			EncodeString(language, 14, 4);
+		//    if (color==0) {	//black, which only shows in the journal.
+		//        color=Globals.defaultUnicodeMessageColor;
+		//    }
+		//    EncodeByte(0xae, 0);
+		//    ushort blockSize = (ushort) (48+msgByteLen+2);
+		//    EncodeUShort(blockSize, 1);
+		//    if (from==null) {
+		//        EncodeInt(-1, 3);
+		//    } else {
+		//        EncodeUInt(from.FlaggedUid, 3);
+		//    }
+		//    EncodeUShort(model, 7);
+		//    EncodeByte((byte) type, 9);
+		//    EncodeUShort(color, 10); //text color
+		//    EncodeUShort(font, 12); //font
+		//    EncodeString(language, 14, 4);
 			
-			EncodeString(sourceName, 18, 40);
-			int len = EncodeUnicodeString(msg, 48, 512);
-			EncodeZeros(2, 48+len);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+		//    EncodeString(sourceName, 18, 40);
+		//    int len = EncodeUnicodeString(msg, 48, 512);
+		//    EncodeZeros(2, 48+len);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//}
 		
-		//'from' can be null.
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareAsciiMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color) {
-			Sanity.IfTrueThrow(sourceName==null, "PrepareAsciiMessage called with a null 'sourceName'.");
-			Sanity.IfTrueThrow(msg==null, "PrepareAsciiMessage called with a null 'msg'.");
-			StartGenerating();
-			EncodeByte(0x1c, 0);
-			ushort blockSize = (ushort) (44+msg.Length+1);
-			EncodeUShort(blockSize, 1);
-			if (from==null) {
-				EncodeInt(-1, 3);
-			} else {
-				EncodeUInt(from.FlaggedUid, 3);
-			}
-			EncodeUShort(model, 7);
-			EncodeByte((byte) type, 9);
-			EncodeUShort(color, 10); //text color
-			EncodeUShort(font, 12); //font
-			EncodeString(sourceName, 14, 40);
-			int len = EncodeString(msg, 44, 1024);
-			EncodeByte(0, 44+len);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+		////'from' can be null.
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareAsciiMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color) {
+		//    Sanity.IfTrueThrow(sourceName==null, "PrepareAsciiMessage called with a null 'sourceName'.");
+		//    Sanity.IfTrueThrow(msg==null, "PrepareAsciiMessage called with a null 'msg'.");
+		//    StartGenerating();
+		//    EncodeByte(0x1c, 0);
+		//    ushort blockSize = (ushort) (44+msg.Length+1);
+		//    EncodeUShort(blockSize, 1);
+		//    if (from==null) {
+		//        EncodeInt(-1, 3);
+		//    } else {
+		//        EncodeUInt(from.FlaggedUid, 3);
+		//    }
+		//    EncodeUShort(model, 7);
+		//    EncodeByte((byte) type, 9);
+		//    EncodeUShort(color, 10); //text color
+		//    EncodeUShort(font, 12); //font
+		//    EncodeString(sourceName, 14, 40);
+		//    int len = EncodeString(msg, 44, 1024);
+		//    EncodeByte(0, 44+len);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//}
 		
 		///**
 		//    This method is internal because it can screw up the client if it is prepared but not sent. So only prepare
@@ -395,154 +395,154 @@ namespace SteamEngine.Packets {
 		//    SendTo(conn, true);
 		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareOpenContainer(AbstractItem cont) {
-			Sanity.IfTrueThrow(cont==null, "PrepareContainerInfo was passed a null container.");
-			StartGenerating();
-			EncodeByte(0x24, 0);
-			EncodeUInt(cont.FlaggedUid, 1);
-			EncodeUShort(cont.Gump, 5);
-			DoneGenerating(7);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareOpenContainer(AbstractItem cont) {
+		//    Sanity.IfTrueThrow(cont==null, "PrepareContainerInfo was passed a null container.");
+		//    StartGenerating();
+		//    EncodeByte(0x24, 0);
+		//    EncodeUInt(cont.FlaggedUid, 1);
+		//    EncodeUShort(cont.Gump, 5);
+		//    DoneGenerating(7);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static bool PrepareContainerContents(AbstractItem cont, GameConn viewerConn, AbstractCharacter viewer) {
-			StartGenerating();
-			EncodeByte(0x3c, 0);
-			ushort blockSize = 5;
-			ushort numSegments = 0;
-			foreach (AbstractItem i in cont) {
-				if (viewer.CanSeeVisibility(i)) {
-					numSegments++;
-					EncodeUInt(i.FlaggedUid, blockSize);
-					EncodeUShort(i.Model, blockSize+4);
-					EncodeByte(0, blockSize+6);
-					EncodeUShort(i.ShortAmount, blockSize+7);
-					EncodeUShort(i.X, blockSize+9);
-					EncodeUShort(i.Y, blockSize+11);
-					EncodeUInt(cont.FlaggedUid, blockSize+13);
-					EncodeUShort(i.Color, blockSize+17);
-					blockSize+=19;
-				}
-			}
-			if (blockSize == 0) {
-				DiscardUncompressed();
-				return false;
-			}
-			EncodeUShort(blockSize, 1);
-			EncodeUShort(numSegments, 3);
-			DoneGenerating(blockSize);
-			Compress();
-			return true;
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static bool PrepareContainerContents(AbstractItem cont, GameConn viewerConn, AbstractCharacter viewer) {
+		//    StartGenerating();
+		//    EncodeByte(0x3c, 0);
+		//    ushort blockSize = 5;
+		//    ushort numSegments = 0;
+		//    foreach (AbstractItem i in cont) {
+		//        if (viewer.CanSeeVisibility(i)) {
+		//            numSegments++;
+		//            EncodeUInt(i.FlaggedUid, blockSize);
+		//            EncodeUShort(i.Model, blockSize+4);
+		//            EncodeByte(0, blockSize+6);
+		//            EncodeUShort(i.ShortAmount, blockSize+7);
+		//            EncodeUShort(i.X, blockSize+9);
+		//            EncodeUShort(i.Y, blockSize+11);
+		//            EncodeUInt(cont.FlaggedUid, blockSize+13);
+		//            EncodeUShort(i.Color, blockSize+17);
+		//            blockSize+=19;
+		//        }
+		//    }
+		//    if (blockSize == 0) {
+		//        DiscardUncompressed();
+		//        return false;
+		//    }
+		//    EncodeUShort(blockSize, 1);
+		//    EncodeUShort(numSegments, 3);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//    return true;
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareItemInContainer(AbstractItem i) {
-			Sanity.IfTrueThrow(i==null, "PrepareItemInContainer called with a null item.");
-			StartGenerating();
-			EncodeByte(0x25, 0);
-			EncodeUInt(i.FlaggedUid, 1);
-			EncodeUShort(i.Model, 5);
-			EncodeByte(0, 7);
-			EncodeUShort(i.ShortAmount, 8);
-			EncodeUShort(i.X, 10);
-			EncodeUShort(i.Y, 12);
-			EncodeUInt(i.Cont.FlaggedUid, 14);
-			EncodeUShort(i.Color, 18);
-			DoneGenerating(20);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareItemInContainer(AbstractItem i) {
+		//    Sanity.IfTrueThrow(i==null, "PrepareItemInContainer called with a null item.");
+		//    StartGenerating();
+		//    EncodeByte(0x25, 0);
+		//    EncodeUInt(i.FlaggedUid, 1);
+		//    EncodeUShort(i.Model, 5);
+		//    EncodeByte(0, 7);
+		//    EncodeUShort(i.ShortAmount, 8);
+		//    EncodeUShort(i.X, 10);
+		//    EncodeUShort(i.Y, 12);
+		//    EncodeUInt(i.Cont.FlaggedUid, 14);
+		//    EncodeUShort(i.Color, 18);
+		//    DoneGenerating(20);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareItemInCorpse(AbstractItem corpse, ICorpseEquipInfo i) {
-			Sanity.IfTrueThrow(i == null, "PrepareItemInContainer called with a null item.");
-			StartGenerating();
-			EncodeByte(0x25, 0);
-			EncodeUInt(i.FlaggedUid, 1);
-			EncodeUShort(i.Model, 5);
-			EncodeByte(0, 7);
-			EncodeUShort(1, 8);
-			EncodeUShort(0, 10);
-			EncodeUShort(0, 12);
-			EncodeUInt(corpse.FlaggedUid, 14);
-			EncodeUShort(i.Color, 18);
-			DoneGenerating(20);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareItemInCorpse(AbstractItem corpse, ICorpseEquipInfo i) {
+		//    Sanity.IfTrueThrow(i == null, "PrepareItemInContainer called with a null item.");
+		//    StartGenerating();
+		//    EncodeByte(0x25, 0);
+		//    EncodeUInt(i.FlaggedUid, 1);
+		//    EncodeUShort(i.Model, 5);
+		//    EncodeByte(0, 7);
+		//    EncodeUShort(1, 8);
+		//    EncodeUShort(0, 10);
+		//    EncodeUShort(0, 12);
+		//    EncodeUInt(corpse.FlaggedUid, 14);
+		//    EncodeUShort(i.Color, 18);
+		//    DoneGenerating(20);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareCorpseEquip(AbstractItem corpse, IEnumerable<ICorpseEquipInfo> items) {
-			StartGenerating();
-			EncodeByte(0x89, 0);
-			int len = 7;
-			EncodeUInt(corpse.FlaggedUid, 3);
-			foreach (ICorpseEquipInfo iulp in items) {
-				EncodeByte(iulp.Layer, len);
-				EncodeUInt(iulp.FlaggedUid, len + 1);
-				len += 5;
-			}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareCorpseEquip(AbstractItem corpse, IEnumerable<ICorpseEquipInfo> items) {
+		//    StartGenerating();
+		//    EncodeByte(0x89, 0);
+		//    int len = 7;
+		//    EncodeUInt(corpse.FlaggedUid, 3);
+		//    foreach (ICorpseEquipInfo iulp in items) {
+		//        EncodeByte(iulp.Layer, len);
+		//        EncodeUInt(iulp.FlaggedUid, len + 1);
+		//        len += 5;
+		//    }
 
-			EncodeByte(0, len);//terminator
-			len++;
-			EncodeShort((short) len, 1);
-			DoneGenerating(len);
-			Compress();
-		}
+		//    EncodeByte(0, len);//terminator
+		//    len++;
+		//    EncodeShort((short) len, 1);
+		//    DoneGenerating(len);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static bool PrepareCorpseContents(AbstractItem corpse, IEnumerable<AbstractItem> items, ICorpseEquipInfo hair, ICorpseEquipInfo beard) {
-			StartGenerating();
-			EncodeByte(0x3c, 0);
-			ushort blockSize = 5;
-			ushort numSegments = 0;
-			foreach (AbstractItem i in items) {
-				numSegments++;
-				EncodeUInt(i.FlaggedUid, blockSize);
-				EncodeUShort(i.Model, blockSize + 4);
-				EncodeByte(0, blockSize + 6);
-				EncodeUShort(i.ShortAmount, blockSize + 7);
-				EncodeUShort(i.X, blockSize + 9);
-				EncodeUShort(i.Y, blockSize + 11);
-				EncodeUInt(corpse.FlaggedUid, blockSize + 13);
-				EncodeUShort(i.Color, blockSize + 17);
-				blockSize += 19;
-			}
-			if (hair != null) {
-				numSegments++;
-				EncodeUInt(hair.FlaggedUid, blockSize);
-				EncodeUShort(hair.Model, blockSize + 4);
-				EncodeByte(0, blockSize + 6);
-				EncodeUShort(1, blockSize + 7);
-				EncodeUShort(0, blockSize + 9);
-				EncodeUShort(0, blockSize + 11);
-				EncodeUInt(corpse.FlaggedUid, blockSize + 13);
-				EncodeUShort(hair.Color, blockSize + 17);
-				blockSize += 19;
-			}
-			if (beard != null) {
-				numSegments++;
-				EncodeUInt(beard.FlaggedUid, blockSize);
-				EncodeUShort(beard.Model, blockSize + 4);
-				EncodeByte(0, blockSize + 6);
-				EncodeUShort(1, blockSize + 7);
-				EncodeUShort(0, blockSize + 9);
-				EncodeUShort(0, blockSize + 11);
-				EncodeUInt(corpse.FlaggedUid, blockSize + 13);
-				EncodeUShort(beard.Color, blockSize + 17);
-				blockSize += 19;
-			}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static bool PrepareCorpseContents(AbstractItem corpse, IEnumerable<AbstractItem> items, ICorpseEquipInfo hair, ICorpseEquipInfo beard) {
+		//    StartGenerating();
+		//    EncodeByte(0x3c, 0);
+		//    ushort blockSize = 5;
+		//    ushort numSegments = 0;
+		//    foreach (AbstractItem i in items) {
+		//        numSegments++;
+		//        EncodeUInt(i.FlaggedUid, blockSize);
+		//        EncodeUShort(i.Model, blockSize + 4);
+		//        EncodeByte(0, blockSize + 6);
+		//        EncodeUShort(i.ShortAmount, blockSize + 7);
+		//        EncodeUShort(i.X, blockSize + 9);
+		//        EncodeUShort(i.Y, blockSize + 11);
+		//        EncodeUInt(corpse.FlaggedUid, blockSize + 13);
+		//        EncodeUShort(i.Color, blockSize + 17);
+		//        blockSize += 19;
+		//    }
+		//    if (hair != null) {
+		//        numSegments++;
+		//        EncodeUInt(hair.FlaggedUid, blockSize);
+		//        EncodeUShort(hair.Model, blockSize + 4);
+		//        EncodeByte(0, blockSize + 6);
+		//        EncodeUShort(1, blockSize + 7);
+		//        EncodeUShort(0, blockSize + 9);
+		//        EncodeUShort(0, blockSize + 11);
+		//        EncodeUInt(corpse.FlaggedUid, blockSize + 13);
+		//        EncodeUShort(hair.Color, blockSize + 17);
+		//        blockSize += 19;
+		//    }
+		//    if (beard != null) {
+		//        numSegments++;
+		//        EncodeUInt(beard.FlaggedUid, blockSize);
+		//        EncodeUShort(beard.Model, blockSize + 4);
+		//        EncodeByte(0, blockSize + 6);
+		//        EncodeUShort(1, blockSize + 7);
+		//        EncodeUShort(0, blockSize + 9);
+		//        EncodeUShort(0, blockSize + 11);
+		//        EncodeUInt(corpse.FlaggedUid, blockSize + 13);
+		//        EncodeUShort(beard.Color, blockSize + 17);
+		//        blockSize += 19;
+		//    }
 
-			if (blockSize == 0) {
-				DiscardUncompressed();
-				return false;
-			}
-			EncodeUShort(blockSize, 1);
-			EncodeUShort(numSegments, 3);
-			DoneGenerating(blockSize);
-			Compress();
-			return true;
-		}
+		//    if (blockSize == 0) {
+		//        DiscardUncompressed();
+		//        return false;
+		//    }
+		//    EncodeUShort(blockSize, 1);
+		//    EncodeUShort(numSegments, 3);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//    return true;
+		//}
 		
 		/*		Doesn't work, just crashes the client. Oh well, it was worth a shot!
 		
@@ -573,13 +573,13 @@ namespace SteamEngine.Packets {
 		}
 		*/
 		
-		internal static void PreparePickupFailed(DenyResult msg) {
-			StartGenerating();
-			EncodeByte(0x27, 0);
-			EncodeByte((byte)msg, 1);
-			DoneGenerating(2);
-			Compress();
-		}
+		//internal static void PreparePickupFailed(DenyResult msg) {
+		//    StartGenerating();
+		//    EncodeByte(0x27, 0);
+		//    EncodeByte((byte)msg, 1);
+		//    DoneGenerating(2);
+		//    Compress();
+		//}
 		
 		//One of these is probably what the UO client expects, we don't know yet, the various packet guides call this
 		//packet different names, etc.
@@ -634,50 +634,50 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 
-		public static void PrepareTargettingCursorForMultis(int model) {
-			StartGenerating();
-			EncodeByte(0x99, 0);
-			EncodeByte(1, 1);
-			//EncodeImt(??, 2);ID of deed... why? let's try to ignore that
-			EncodeZeros(23, 3);
-			EncodeShort((short) (model&0x8fff), 18);
-			DoneGenerating(26);
-			Compress();
-		}
+		//public static void PrepareTargettingCursorForMultis(int model) {
+		//    StartGenerating();
+		//    EncodeByte(0x99, 0);
+		//    EncodeByte(1, 1);
+		//    //EncodeImt(??, 2);ID of deed... why? let's try to ignore that
+		//    EncodeZeros(23, 3);
+		//    EncodeShort((short) (model&0x8fff), 18);
+		//    DoneGenerating(26);
+		//    Compress();
+		//}
 		
-		public static void PrepareCancelTargettingCursor() {
-			StartGenerating();
-			EncodeByte(0x6c, 0);
-			EncodeByte(0, 1);
-			EncodeZeros(17, 2);
-			EncodeByte(3, 6);
-			DoneGenerating(19);
-			Compress();
-		}
+		//public static void PrepareCancelTargettingCursor() {
+		//    StartGenerating();
+		//    EncodeByte(0x6c, 0);
+		//    EncodeByte(0, 1);
+		//    EncodeZeros(17, 2);
+		//    EncodeByte(3, 6);
+		//    DoneGenerating(19);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareWarMode(AbstractCharacter cre) {
-			StartGenerating();
-			EncodeByte(0x72, 0);
-			EncodeBool(cre.Flag_WarMode, 1);
-			EncodeByte(0, 2);
-			EncodeByte(32, 3);
-			EncodeByte(0, 4);
-			DoneGenerating(5);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareWarMode(AbstractCharacter cre) {
+		//    StartGenerating();
+		//    EncodeByte(0x72, 0);
+		//    EncodeBool(cre.Flag_WarMode, 1);
+		//    EncodeByte(0, 2);
+		//    EncodeByte(32, 3);
+		//    EncodeByte(0, 4);
+		//    DoneGenerating(5);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareWarMode(bool warMode) {
-			StartGenerating();
-			EncodeByte(0x72, 0);
-			EncodeBool(warMode, 1);
-			EncodeByte(0, 2);
-			EncodeByte(32, 3);
-			EncodeByte(0, 4);
-			DoneGenerating(5);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareWarMode(bool warMode) {
+		//    StartGenerating();
+		//    EncodeByte(0x72, 0);
+		//    EncodeBool(warMode, 1);
+		//    EncodeByte(0, 2);
+		//    EncodeByte(32, 3);
+		//    EncodeByte(0, 4);
+		//    DoneGenerating(5);
+		//    Compress();
+		//}
 		
 		//Experimental.
 		public static void PrepareForceMove(AbstractCharacter cre, bool running) {
@@ -692,85 +692,85 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 		
-		public static void SendRejectDeleteRequest(GameConn conn, DeleteCharacterResult reason) {
-			StartGenerating();
-			EncodeByte(0x85, 0);
-			EncodeByte((byte)reason, 1);
-			DoneGenerating(2);
-			Compress();
-			SendTo(conn, true);
-		}
-		public static void PrepareRejectDeleteRequest(DeleteCharacterResult reason) {
-			StartGenerating();
-			EncodeByte(0x85, 0);
-			EncodeByte((byte)reason, 1);
-			DoneGenerating(2);
-			Compress();
-		}
+		//public static void SendRejectDeleteRequest(GameConn conn, DeleteCharacterResult reason) {
+		//    StartGenerating();
+		//    EncodeByte(0x85, 0);
+		//    EncodeByte((byte)reason, 1);
+		//    DoneGenerating(2);
+		//    Compress();
+		//    SendTo(conn, true);
+		//}
+		//public static void PrepareRejectDeleteRequest(DeleteCharacterResult reason) {
+		//    StartGenerating();
+		//    EncodeByte(0x85, 0);
+		//    EncodeByte((byte)reason, 1);
+		//    DoneGenerating(2);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareItemInformation(AbstractItem item) {
-			PrepareItemInformation(item, MoveRestriction.Normal);
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareItemInformation(AbstractItem item) {
+		//    PrepareItemInformation(item, MoveRestriction.Normal);
+		//}
 		
-		/**
-			For flags, 0x20 makes the item always movable, and 0x80 shades it hidden-grey.
-			Nothing else seems to have any effect.
-		*/
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		internal static void PrepareItemInformation(AbstractItem item, MoveRestriction restrict) {
-			StartGenerating();
-			EncodeByte(0x1a, 0);
-			ushort blockSize = 1;
-			uint uid=item.FlaggedUid;
-			ushort amt = item.ShortAmount;
-			if (amt>1) {
-				uid=uid|0x80000000;
-				EncodeUInt(uid, 3);
-				//Logger.WriteDebug("Preparin' stackable "+item.ToString());
-				EncodeUShort(amt, 9);
-				blockSize=11;
-			} else {
-				EncodeUInt(uid, 3);
-				blockSize=9;
-			}
-			EncodeUShort(item.Model, 7);
-			byte direction = (byte) item.Direction;
-			int ypos=blockSize+2;
-			if (direction > 0) {
-				EncodeUShort((ushort) (item.X|0x8000), blockSize);
-				EncodeByte(direction, blockSize+4);
-				EncodeSByte(item.Z, blockSize+5);
-				blockSize+=6;
-			} else {
-				EncodeUShort(item.X, blockSize);
-				EncodeSByte(item.Z, blockSize+4);
-				blockSize+=5;
-			} 
+		///**
+		//    For flags, 0x20 makes the item always movable, and 0x80 shades it hidden-grey.
+		//    Nothing else seems to have any effect.
+		//*/
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//internal static void PrepareItemInformation(AbstractItem item, MoveRestriction restrict) {
+		//    StartGenerating();
+		//    EncodeByte(0x1a, 0);
+		//    ushort blockSize = 1;
+		//    uint uid=item.FlaggedUid;
+		//    ushort amt = item.ShortAmount;
+		//    if (amt>1) {
+		//        uid=uid|0x80000000;
+		//        EncodeUInt(uid, 3);
+		//        //Logger.WriteDebug("Preparin' stackable "+item.ToString());
+		//        EncodeUShort(amt, 9);
+		//        blockSize=11;
+		//    } else {
+		//        EncodeUInt(uid, 3);
+		//        blockSize=9;
+		//    }
+		//    EncodeUShort(item.Model, 7);
+		//    byte direction = (byte) item.Direction;
+		//    int ypos=blockSize+2;
+		//    if (direction > 0) {
+		//        EncodeUShort((ushort) (item.X|0x8000), blockSize);
+		//        EncodeByte(direction, blockSize+4);
+		//        EncodeSByte(item.Z, blockSize+5);
+		//        blockSize+=6;
+		//    } else {
+		//        EncodeUShort(item.X, blockSize);
+		//        EncodeSByte(item.Z, blockSize+4);
+		//        blockSize+=5;
+		//    } 
 			
-			ushort y=item.Y;
-			byte flags=item.FlagsToSend;
-			if (restrict==MoveRestriction.Movable) {
-				flags=(byte) (flags|0x20);
-			//} else if (restrict==MoveRestriction.Immovable) {
-			//	flags=(byte) (flags|0x10);	//Doesn't seem to work. None of the other flags seem to either. Hmmm...
-			}
-			ushort color = item.Color;
-			if (color>0) {
-				y=(ushort) (y|0x8000);
-				EncodeUShort(color, blockSize);
-				blockSize+=2;
-			}
-			if (flags>0) {
-				y=(ushort) (y|0x4000);
-				EncodeByte(flags, blockSize);
-				blockSize++;
-			}
-			EncodeUShort(y, ypos);
-			EncodeUShort(blockSize, 1);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+		//    ushort y=item.Y;
+		//    byte flags=item.FlagsToSend;
+		//    if (restrict==MoveRestriction.Movable) {
+		//        flags=(byte) (flags|0x20);
+		//    //} else if (restrict==MoveRestriction.Immovable) {
+		//    //	flags=(byte) (flags|0x10);	//Doesn't seem to work. None of the other flags seem to either. Hmmm...
+		//    }
+		//    ushort color = item.Color;
+		//    if (color>0) {
+		//        y=(ushort) (y|0x8000);
+		//        EncodeUShort(color, blockSize);
+		//        blockSize+=2;
+		//    }
+		//    if (flags>0) {
+		//        y=(ushort) (y|0x4000);
+		//        EncodeByte(flags, blockSize);
+		//        blockSize++;
+		//    }
+		//    EncodeUShort(y, ypos);
+		//    EncodeUShort(blockSize, 1);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//}
 		
 		public static void PrepareSpecialHighlight(AbstractCharacter cre, byte amount) {
 			StartGenerating();
@@ -781,108 +781,108 @@ namespace SteamEngine.Packets {
 			Compress();
 		}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareMovingCharacter(AbstractCharacter chr, bool running, HighlightColor highlight) {
-			Sanity.IfTrueThrow(chr==null, "PrepareMovingCharacter called with a null chr.");
-			StartGenerating();
-			EncodeByte(0x77, 0);
-			EncodeUInt(chr.FlaggedUid, 1);
-			EncodeUShort(chr.Model, 5);
-			MutablePoint4D point = chr.point4d;
-			EncodeUShort(point.x, 7);
-			EncodeUShort(point.y, 9);
-			EncodeSByte(point.z, 11);
-			byte dir = (byte)chr.Direction;
-			if (running) {
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareMovingCharacter(AbstractCharacter chr, bool running, HighlightColor highlight) {
+		//    Sanity.IfTrueThrow(chr==null, "PrepareMovingCharacter called with a null chr.");
+		//    StartGenerating();
+		//    EncodeByte(0x77, 0);
+		//    EncodeUInt(chr.FlaggedUid, 1);
+		//    EncodeUShort(chr.Model, 5);
+		//    MutablePoint4D point = chr.point4d;
+		//    EncodeUShort(point.x, 7);
+		//    EncodeUShort(point.y, 9);
+		//    EncodeSByte(point.z, 11);
+		//    byte dir = (byte)chr.Direction;
+		//    if (running) {
 				
-				dir|=0x80;
-			}
-			EncodeByte(dir, 12);
-			EncodeUShort(chr.Color, 13);
-			EncodeByte(chr.FlagsToSend, 15);
-			//Logger.WriteDebug("Flags Sent=0x"+opacket[15].ToString("x"));
-			EncodeByte((byte) highlight, 16);
-			DoneGenerating(17);
-			Compress();
-		}
+		//        dir|=0x80;
+		//    }
+		//    EncodeByte(dir, 12);
+		//    EncodeUShort(chr.Color, 13);
+		//    EncodeByte(chr.FlagsToSend, 15);
+		//    //Logger.WriteDebug("Flags Sent=0x"+opacket[15].ToString("x"));
+		//    EncodeByte((byte) highlight, 16);
+		//    DoneGenerating(17);
+		//    Compress();
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareCharacterInformation(AbstractCharacter cre, HighlightColor highlight) {
-			Sanity.IfTrueThrow(cre==null, "PrepareCharacterInformation called with null cre.");
-			Logger.WriteDebug("Prepare to send character information for Character "+cre+".");
-			StartGenerating();
-			EncodeByte(0x78, 0);
-			ushort blockSize = 1;
-			EncodeUInt(cre.FlaggedUid, 3);
-			EncodeUShort(cre.Model, 7);
-			MutablePoint4D point = cre.point4d;
-			EncodeUShort(point.x, 9);
-			EncodeUShort(point.y, 11);
-			EncodeSByte(point.z, 13);
-			EncodeByte(cre.Dir, 14);
-			EncodeUShort(cre.Color, 15);
-			EncodeByte(cre.FlagsToSend, 17);
-			EncodeByte((byte) highlight, 18);
-			//equipped
-			blockSize=19;
-			if (cre.visibleLayers != null) {
-				foreach (AbstractItem it in cre.visibleLayers) {
-					Sanity.IfTrueThrow(it.Cont!=cre, LogStr.Ident(cre)+" thinks that "+LogStr.Ident(it)+" is equipped, but its cont is "+LogStr.Ident(it.Cont)+".");
-					//Logger.WriteDebug("Layer "+it.Layer+" is "+it+" IsEq="+it.IsEquippable+" IsCont="+it.IsContainer+" type="+it.GetType()+" FlaggedUid="+it.FlaggedUid+" Model="+it.Model+" Color="+it.Color);
-					EncodeUInt(it.FlaggedUid, blockSize);
-					ushort color = it.Color;
-					if (color == 0) {
-						EncodeUShort(it.Model, blockSize+4);
-						EncodeByte((byte) it.point4d.z, blockSize+6);
-						blockSize+=7;
-					} else {
-						EncodeUShort((ushort) (it.Model|0x8000), blockSize+4);
-						EncodeByte((byte) it.point4d.z, blockSize+6);
-						EncodeUShort(color, blockSize+7);
-						blockSize+=9;
-					}
-				}
-			}
-			AbstractCharacter mount = cre.Mount;
-			if (mount!=null) {
-				EncodeInt(mount.Uid|0x40000000, blockSize);
-				if (mount.Color==0) {
-					EncodeUShort(mount.MountItem, blockSize+4);
-					EncodeByte(25, blockSize+6);
-					blockSize+=7;
-				} else {
-					EncodeUShort((ushort) (mount.MountItem|0x8000), blockSize+4);
-					EncodeByte(25, blockSize+6);
-					EncodeUShort(mount.Color, blockSize+7);
-					blockSize+=9;
-				}
-			}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareCharacterInformation(AbstractCharacter cre, HighlightColor highlight) {
+		//    Sanity.IfTrueThrow(cre==null, "PrepareCharacterInformation called with null cre.");
+		//    Logger.WriteDebug("Prepare to send character information for Character "+cre+".");
+		//    StartGenerating();
+		//    EncodeByte(0x78, 0);
+		//    ushort blockSize = 1;
+		//    EncodeUInt(cre.FlaggedUid, 3);
+		//    EncodeUShort(cre.Model, 7);
+		//    MutablePoint4D point = cre.point4d;
+		//    EncodeUShort(point.x, 9);
+		//    EncodeUShort(point.y, 11);
+		//    EncodeSByte(point.z, 13);
+		//    EncodeByte(cre.Dir, 14);
+		//    EncodeUShort(cre.Color, 15);
+		//    EncodeByte(cre.FlagsToSend, 17);
+		//    EncodeByte((byte) highlight, 18);
+		//    //equipped
+		//    blockSize=19;
+		//    if (cre.visibleLayers != null) {
+		//        foreach (AbstractItem it in cre.visibleLayers) {
+		//            Sanity.IfTrueThrow(it.Cont!=cre, LogStr.Ident(cre)+" thinks that "+LogStr.Ident(it)+" is equipped, but its cont is "+LogStr.Ident(it.Cont)+".");
+		//            //Logger.WriteDebug("Layer "+it.Layer+" is "+it+" IsEq="+it.IsEquippable+" IsCont="+it.IsContainer+" type="+it.GetType()+" FlaggedUid="+it.FlaggedUid+" Model="+it.Model+" Color="+it.Color);
+		//            EncodeUInt(it.FlaggedUid, blockSize);
+		//            ushort color = it.Color;
+		//            if (color == 0) {
+		//                EncodeUShort(it.Model, blockSize+4);
+		//                EncodeByte((byte) it.point4d.z, blockSize+6);
+		//                blockSize+=7;
+		//            } else {
+		//                EncodeUShort((ushort) (it.Model|0x8000), blockSize+4);
+		//                EncodeByte((byte) it.point4d.z, blockSize+6);
+		//                EncodeUShort(color, blockSize+7);
+		//                blockSize+=9;
+		//            }
+		//        }
+		//    }
+		//    AbstractCharacter mount = cre.Mount;
+		//    if (mount!=null) {
+		//        EncodeInt(mount.Uid|0x40000000, blockSize);
+		//        if (mount.Color==0) {
+		//            EncodeUShort(mount.MountItem, blockSize+4);
+		//            EncodeByte(25, blockSize+6);
+		//            blockSize+=7;
+		//        } else {
+		//            EncodeUShort((ushort) (mount.MountItem|0x8000), blockSize+4);
+		//            EncodeByte(25, blockSize+6);
+		//            EncodeUShort(mount.Color, blockSize+7);
+		//            blockSize+=9;
+		//        }
+		//    }
 
-			EncodeUInt(0, blockSize);
-			blockSize+=4;
-			EncodeUShort(blockSize, 1);
-			DoneGenerating(blockSize);
-			Compress();
-		}
+		//    EncodeUInt(0, blockSize);
+		//    blockSize+=4;
+		//    EncodeUShort(blockSize, 1);
+		//    DoneGenerating(blockSize);
+		//    Compress();
+		//}
 
-		[Obsolete("Functionality moved to AuxiliaryServer", false)]
-		public static void SendUncompressedFailedLogin(GameConn c, LoginDeniedReason reason) {
-			StartGenerating();
-			EncodeByte(0x82, 0);
-			EncodeByte((byte)reason, 1);
-			DoneGenerating(2);
-			SendUncompressed(c, true);
-		}
+		//[Obsolete("Functionality moved to AuxiliaryServer", false)]
+		//public static void SendUncompressedFailedLogin(GameConn c, LoginDeniedReason reason) {
+		//    StartGenerating();
+		//    EncodeByte(0x82, 0);
+		//    EncodeByte((byte)reason, 1);
+		//    DoneGenerating(2);
+		//    SendUncompressed(c, true);
+		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void SendFailedLogin(GameConn c, LoginDeniedReason reason) {
-			StartGenerating();
-			EncodeByte(0x82, 0);
-			EncodeByte((byte)reason, 1);
-			DoneGenerating(2);
-			Compress();
-			SendTo(c, true);
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendFailedLogin(GameConn c, LoginDeniedReason reason) {
+		//    StartGenerating();
+		//    EncodeByte(0x82, 0);
+		//    EncodeByte((byte)reason, 1);
+		//    DoneGenerating(2);
+		//    Compress();
+		//    SendTo(c, true);
+		//}
 
 		[Obsolete("Use the alternative from Networking namespace", false)]
 		public static void PrepareFailedLogin(LoginDeniedReason reason) {
@@ -925,24 +925,24 @@ namespace SteamEngine.Packets {
 		the paperdoll will show the [War] button even if the character isn't in war mode. Go figure.
 		[AOS 2d client 4.0.0l] -SL
 		*/
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PreparePaperdoll(AbstractCharacter character, bool canEquip) {
-			StartGenerating();
-			EncodeByte(0x88, 0);
-			EncodeUInt(character.FlaggedUid, 1);
-			//EncodeZeros(60, 5);
-			EncodeString(character.PaperdollName, 5, 60);
-			//For the paperdoll, canEquip is apparently the only one which matters.
-			byte flagsToSend = character.FlagsToSend;
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PreparePaperdoll(AbstractCharacter character, bool canEquip) {
+		//    StartGenerating();
+		//    EncodeByte(0x88, 0);
+		//    EncodeUInt(character.FlaggedUid, 1);
+		//    //EncodeZeros(60, 5);
+		//    EncodeString(character.PaperdollName, 5, 60);
+		//    //For the paperdoll, canEquip is apparently the only one which matters.
+		//    byte flagsToSend = character.FlagsToSend;
 			
-			Sanity.IfTrueThrow((flagsToSend&0x02)>0, ""+character+"'s FlagsToSend included 0x02, which is the 'can equip items on' flag for paperdoll packets - FlagsToSend should never include it.");
-			if (canEquip) {	//include 0x02 if we can equip stuff on them.
-				flagsToSend|=0x02;	//does this not work or something? Arrrgh.
-			}
-			EncodeByte(flagsToSend, 65);
-			DoneGenerating(66);
-			Compress();
-		}
+		//    Sanity.IfTrueThrow((flagsToSend&0x02)>0, ""+character+"'s FlagsToSend included 0x02, which is the 'can equip items on' flag for paperdoll packets - FlagsToSend should never include it.");
+		//    if (canEquip) {	//include 0x02 if we can equip stuff on them.
+		//        flagsToSend|=0x02;	//does this not work or something? Arrrgh.
+		//    }
+		//    EncodeByte(flagsToSend, 65);
+		//    DoneGenerating(66);
+		//    Compress();
+		//}
 
 		//[Obsolete("Functionality moved to AuxiliaryServer", false)]
 		//public static void SendLoginToServer(GameConn c, ushort server) {
@@ -1091,41 +1091,41 @@ namespace SteamEngine.Packets {
 		//    SendTo(c, true);
 		//}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void PrepareEnableFeatures(ushort features) {
-			StartGenerating();
-			EncodeByte(0xb9, 0);
-			EncodeUShort(features, 1);
-			DoneGenerating(3);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void PrepareEnableFeatures(ushort features) {
+		//    StartGenerating();
+		//    EncodeByte(0xb9, 0);
+		//    EncodeUShort(features, 1);
+		//    DoneGenerating(3);
+		//    Compress();
+		//}
 		
 		//use the Prepared version
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		internal static void PrepareSeasonAndCursor(Season season, CursorType cursor) {
-			StartGenerating();
-			EncodeByte(0xbc, 0);
-			EncodeByte((byte)season, 1);
-			EncodeByte((byte)cursor, 2);
-			DoneGenerating(3);
-			Compress();
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//internal static void PrepareSeasonAndCursor(Season season, CursorType cursor) {
+		//    StartGenerating();
+		//    EncodeByte(0xbc, 0);
+		//    EncodeByte((byte)season, 1);
+		//    EncodeByte((byte)cursor, 2);
+		//    DoneGenerating(3);
+		//    Compress();
+		//}
 		
-		public static void PrepareSound(IPoint4D source, ushort sound) {
-			Sanity.IfTrueThrow(source==null, "PrepareSound called with a null source.");
-			StartGenerating();
-			source = source.TopPoint;
-			EncodeByte(0x54, 0);
-			EncodeByte(0x01, 1);
-			EncodeUShort(sound, 2);
-			EncodeUShort(0, 4);
-			EncodeUShort(source.X,6);
-			EncodeUShort(source.Y,8);
-			EncodeByte(0, 10);
-			EncodeSByte(source.Z,11);
-			DoneGenerating(12);
-			Compress();
-		}
+		//public static void PrepareSound(IPoint4D source, ushort sound) {
+		//    Sanity.IfTrueThrow(source==null, "PrepareSound called with a null source.");
+		//    StartGenerating();
+		//    source = source.TopPoint;
+		//    EncodeByte(0x54, 0);
+		//    EncodeByte(0x01, 1);
+		//    EncodeUShort(sound, 2);
+		//    EncodeUShort(0, 4);
+		//    EncodeUShort(source.X,6);
+		//    EncodeUShort(source.Y,8);
+		//    EncodeByte(0, 10);
+		//    EncodeSByte(source.Z,11);
+		//    DoneGenerating(12);
+		//    Compress();
+		//}
 
 		//[Obsolete("Use the alternative from Networking namespace", false)]
 		//public static void PrepareStartGame() {
@@ -1135,103 +1135,58 @@ namespace SteamEngine.Packets {
 		//    Compress();
 		//}
 		
-		/**
-			Shows the character doing a particular animation.
-			
-			[ I did quite a lot of testing of this packet, since none of the packet guides seemed to have correct information about it.
-				All testing on this packet was done with the AOS 2D client.
-				Things that Jerrith's has wrong about this packet:
-					Anim is a byte, not a ushort, and it starts at pos 6. If anim is greater than the # of valid anims for that character's model (It's out-of-range), then anim 0 is drawn. The byte at pos 5 doesn't seem to do anything (If it were a ushort, the client would display out-of-range-anim# behavior if you set byte 5 to something; It doesn't, it only looks at byte 6 for the anim#.). However, there are also anims which may not exist - for human (and equippables) models, these draw as some other anim instead. There are anims in the 3d client which don't exist in the 2d, too.
-					Byte 5 is ignored by the client (But I said that already).
-					Jerrith's "direction" variable isn't direction at all; The client knows the direction the character is facing already. It isn't a byte either. Read the next line:
-					Bytes 7 and 8, which Jerrith's calls "unknown" and "direction," are actually a ushort which I call numBackwardsFrames. What it does is really weird - it's the number of frames to draw when the anim is drawn backwards, IF 'backwards' is true. If you send 0, it draws a blank frame (i.e. the character vanishes, but reappears after the frame is over). If you send something greater than the number of frames in the anim, then it draws a blank frame for both forwards AND backwards! It's beyond me how that behavior could have been useful for anything, but that's what it does...
-					What Jerrith's calls "repeat" isn't the number of times to repeat the anim, it is the number of anims to draw, starting with 'anim'. If you specify 0 for this, though, it will continue drawing anims until the cows come home (and it apparently goes back to 0 after it draws the last one!).
-					Jerrith's has "forward/backward" correct, although it doesn't mention what happens if you have both this and 'repeat' (undo) set to true (In that case it runs in reverse, and then runs forward).
-					What Jerrith's calls "repeat flag" doesn't make the anim repeat. What it REALLY does is make the anim run once, and then run in reverse immediately after (so I call it "undo" :P). If 'backwards' is true, then it's going to run backwards and then forwards, but it still looks like it's undo'ing the anim it just drew, so :).
-					Jerrith's has 'frame delay' correct.
-			]
-			
-			
-			
-			@param anim The animation the character should perform.
-			@param numBackwardsFrames If backwards is true, this is the number of frames to do when going backwards. 0 makes the character blink invisible for the first frame of the backwards anim. Anything above the number of frames in that particular anim makes the character blink invisible for both forwards and backwards, but ONLY if backwards is true. This is rather bizarre, considering how numAnims works, and how various anims have different frame amounts.
-			@param numAnims The number of anims to do, starting with 'anim' and counting up from there. 0 means 'keep going forever'. If this exceeds the number of valid anims, it wraps back around to anim 0 and keeps going. So if you specify 0, it really WILL run forever, or at least until another anim is drawn for that character, including if it isn't through an anim packet (like if it moves or turns or something).
-			@param backwards If true, perform the animation in reverse.
-			@param undo If true, the animation is run, and then the opposite of the animation is run, and this is done for each anim which would be drawn (according to numAnims). If backwards is also true, then you will see the animation performed backwards and then forwards. Conversely, if backwards is false, then with undo true you will see the animation performed forwards and then backwards.
-			@param frameDelay The delay time between animations: 0 makes the animation fastest, higher values make it proportionally slower (0xff is like watching glaciers drift).
-				I timed some different values with a normal anim 14, which has 7 frames. (Using only my eyes and the windows clock, mind you, so it isn't super-accurate or anything.
-					(~ means approximately)
-					0: ~2s
-					1: ~3s
-					5: ~5s (4.5s?)
-					10: ~8s
-					50: ~36s
-					
-					What I gathered from those results:
-					.25-.3 second delay between frames by default.
-					.65-.7 seconds * frameDelay extra delay (for all 7 frames, so if it were .7 then it would be .1*frameDelay per frame)
-					
-					I did some more math and decided .25 and .7->.1 were probably pretty accurate estimates, and so:
-					
-					(.25*7)+(.7*frameDelay)=how many seconds UO should spend showing the anim
-					(.25*7)+(.7*50)=36.75
-					(.25*7)+(.7*1)=2.45
-					(.25*7)+(.7*0)=1.75
-					
-					Or for anims without 7 frames:
-					(.25*numFrames)+(.1*numFrames*frameDelay)=how many seconds UO should spend showing the anim
-		*/
-		public static void PrepareAnimation(AbstractCharacter cre, byte anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
-			Logger.WriteDebug("PrepareAnimation("+cre+",anim:"+anim+",numAnims:"+numAnims+",backwards:"+backwards+",undo:"+undo+",frameDelay:"+frameDelay+")");
-			StartGenerating();
-			EncodeByte(0x6e, 0);
-			EncodeUInt(cre.FlaggedUid, 1);
-			EncodeShort(anim, 5);
-			EncodeByte(1, 7);//used to be numBackwardsFrames...?
-			EncodeByte((byte) ((cre.Dir - 4)&0x7), 8);
-			EncodeUShort(numAnims, 9);
-			EncodeBool(backwards, 11);
-			EncodeBool(undo, 12);
-			EncodeByte(frameDelay, 13);
-			DoneGenerating(14);
-			Compress();
-		}
+
+		//public static void PrepareAnimation(AbstractCharacter cre, byte anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+		//    Logger.WriteDebug("PrepareAnimation("+cre+",anim:"+anim+",numAnims:"+numAnims+",backwards:"+backwards+",undo:"+undo+",frameDelay:"+frameDelay+")");
+		//    StartGenerating();
+		//    EncodeByte(0x6e, 0);
+		//    EncodeUInt(cre.FlaggedUid, 1);
+		//    EncodeShort(anim, 5);
+		//    EncodeByte(1, 7);//used to be numBackwardsFrames...?
+		//    EncodeByte((byte) ((cre.Dir - 4)&0x7), 8);
+		//    EncodeUShort(numAnims, 9);
+		//    EncodeBool(backwards, 11);
+		//    EncodeBool(undo, 12);
+		//    EncodeByte(frameDelay, 13);
+		//    DoneGenerating(14);
+		//    Compress();
+		//}
 		
-		public static void PrepareEffect(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-			StartGenerating();
-			EncodeByte(0xc0, 0);
-			EncodeByte(type, 1);
-			source = source.TopPoint;
-			target = target.TopPoint;
-			Thing sourceAsThing = source as Thing;
-			if (sourceAsThing != null) {
-				EncodeUInt(sourceAsThing.FlaggedUid, 2);
-			} else {
-				EncodeUInt(0xffffffff, 2);
-			}
-			Thing targetAsThing = target as Thing;
-			if (targetAsThing != null) {
-				EncodeUInt(targetAsThing.FlaggedUid, 6);
-			} else {
-				EncodeUInt(0xffffffff, 6);
-			}
-			EncodeUShort(effect, 10);
-			EncodeUShort(source.X, 12);
-			EncodeUShort(source.Y, 14);
-			EncodeSByte(source.Z, 16);
-			EncodeUShort(target.X, 17);
-			EncodeUShort(target.Y, 19);
-			EncodeSByte(target.Z, 21);
-			EncodeByte(speed, 22);
-			EncodeByte(duration, 23);
-			EncodeUShort(unk, 25);
-			EncodeByte(fixedDirection, 26);
-			EncodeByte(explodes, 27);
-			EncodeUInt(hue, 28);
-			EncodeUInt(renderMode, 32);
-			DoneGenerating(36);
-			Compress();
-		}
+		//public static void PrepareEffect(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
+		//    StartGenerating();
+		//    EncodeByte(0xc0, 0);
+		//    EncodeByte(type, 1);
+		//    source = source.TopPoint;
+		//    target = target.TopPoint;
+		//    Thing sourceAsThing = source as Thing;
+		//    if (sourceAsThing != null) {
+		//        EncodeUInt(sourceAsThing.FlaggedUid, 2);
+		//    } else {
+		//        EncodeUInt(0xffffffff, 2);
+		//    }
+		//    Thing targetAsThing = target as Thing;
+		//    if (targetAsThing != null) {
+		//        EncodeUInt(targetAsThing.FlaggedUid, 6);
+		//    } else {
+		//        EncodeUInt(0xffffffff, 6);
+		//    }
+		//    EncodeUShort(effect, 10);
+		//    EncodeUShort(source.X, 12);
+		//    EncodeUShort(source.Y, 14);
+		//    EncodeSByte(source.Z, 16);
+		//    EncodeUShort(target.X, 17);
+		//    EncodeUShort(target.Y, 19);
+		//    EncodeSByte(target.Z, 21);
+		//    EncodeByte(speed, 22);
+		//    EncodeByte(duration, 23);
+		//    EncodeUShort(unk, 25);
+		//    EncodeByte(fixedDirection, 26);
+		//    EncodeByte(explodes, 27);
+		//    EncodeUInt(hue, 28);
+		//    EncodeUInt(renderMode, 32);
+		//    DoneGenerating(36);
+		//    Compress();
+		//}
 		
 		/*
 		public static void SendInitFastwalk(GameConn c) {
@@ -1271,16 +1226,16 @@ namespace SteamEngine.Packets {
 		}
 		*/
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void SendUpdateRange(GameConn c, byte updateRange) {
-			Logger.WriteDebug("Sending update range "+updateRange+" to "+c);
-			StartGenerating();
-			EncodeByte(0xc8, 0);
-			EncodeByte(updateRange, 1);
-			DoneGenerating(2);
-			Compress();
-			SendTo(c, true);
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendUpdateRange(GameConn c, byte updateRange) {
+		//    Logger.WriteDebug("Sending update range "+updateRange+" to "+c);
+		//    StartGenerating();
+		//    EncodeByte(0xc8, 0);
+		//    EncodeByte(updateRange, 1);
+		//    DoneGenerating(2);
+		//    Compress();
+		//    SendTo(c, true);
+		//}
 		
 		//public static void PrepareMovingItemAnimation(IItemState former, IItemState current) {
 		//	PrepareMovingItemAnimation(former, current, former.ShortAmount);
@@ -1291,37 +1246,37 @@ namespace SteamEngine.Packets {
 		//public static void PrepareMovingItemAnimation(IItemState former, IItemState current, IPoint6D formerP, IPoint6D currentP) {
 		//	PrepareMovingItemAnimation(former, current, formerP, currentP, former.ShortAmount);
 		//}
-		public static void PrepareMovingItemAnimation(IPoint4D from, IPoint4D to, AbstractItem i) {
-			//PrepareSound(former.TopObj(), SoundFX.AmbientOwl);
-			StartGenerating();
-			EncodeByte(0x23, 0);
-			EncodeUShort(i.Model, 1);
-			EncodeZeros(3, 3);
-			EncodeUShort(i.ShortAmount, 6);
-			from = from.TopPoint;
-			Thing asThing = from as Thing;
-			if (asThing != null) {
-				EncodeUInt(asThing.FlaggedUid, 8);
-			} else {
-				EncodeUInt(0xffffffff, 8);
-			}
-			EncodeUShort(from.X, 12);
-			EncodeUShort(from.Y, 14);
-			EncodeSByte(from.Z, 16);
+		//public static void PrepareMovingItemAnimation(IPoint4D from, IPoint4D to, AbstractItem i) {
+		//    //PrepareSound(former.TopObj(), SoundFX.AmbientOwl);
+		//    StartGenerating();
+		//    EncodeByte(0x23, 0);
+		//    EncodeUShort(i.Model, 1);
+		//    EncodeZeros(3, 3);
+		//    EncodeUShort(i.ShortAmount, 6);
+		//    from = from.TopPoint;
+		//    Thing asThing = from as Thing;
+		//    if (asThing != null) {
+		//        EncodeUInt(asThing.FlaggedUid, 8);
+		//    } else {
+		//        EncodeUInt(0xffffffff, 8);
+		//    }
+		//    EncodeUShort(from.X, 12);
+		//    EncodeUShort(from.Y, 14);
+		//    EncodeSByte(from.Z, 16);
 
-			to = to.TopPoint;
-			asThing = to as Thing;
-			if (to != null) {
-				EncodeUInt(asThing.FlaggedUid, 17);
-			} else {
-				EncodeUInt(0xffffffff, 17);
-			}
-			EncodeUShort(to.X, 21);
-			EncodeUShort(to.Y, 23);
-			EncodeSByte(to.Z, 25);
-			DoneGenerating(26);
-			Compress();
-		}
+		//    to = to.TopPoint;
+		//    asThing = to as Thing;
+		//    if (to != null) {
+		//        EncodeUInt(asThing.FlaggedUid, 17);
+		//    } else {
+		//        EncodeUInt(0xffffffff, 17);
+		//    }
+		//    EncodeUShort(to.X, 21);
+		//    EncodeUShort(to.Y, 23);
+		//    EncodeSByte(to.Z, 25);
+		//    DoneGenerating(26);
+		//    Compress();
+		//}
 		
 		////First test results: Crashes the client. Heh! Hopefully that's because I didn't enable AOS stuff and
 		////it wasn't expecting this. -SL

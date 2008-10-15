@@ -1247,38 +1247,37 @@ namespace SteamEngine {
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
 		}
 
-		public void SoundTo(ushort soundId, GameConn toClient) {
-			if (soundId != 0xffff) {
-				if (toClient != null) {
-					PacketSender.PrepareSound(this, soundId);
-					PacketSender.SendTo(toClient, true);
-				}
-			}
-		}
+		//public void SoundTo(ushort soundId, GameState toClient) {
+		//    if (soundId != 0xffff) {
+		//        if (toClient != null) {
+		//            PacketSender.PrepareSound(this, soundId);
+		//            PacketSender.SendTo(toClient, true);
+		//        }
+		//    }
+		//}
 
 		public void SoundTo(ushort soundId, AbstractCharacter toPlayer) {
 			if (soundId != 0xffff) {
 				if (toPlayer != null) {
-					GameConn conn = toPlayer.Conn;
-					if (conn != null) {
-						PacketSender.PrepareSound(this, soundId);
-						PacketSender.SendTo(conn, true);
+					GameState state = toPlayer.GameState;
+					if (state != null) {
+						PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
+						p.Prepare(this, soundId);
+						state.Conn.SendSinglePacket(p);
 					}
 				}
 			}
 		}
 
 		public void Sound(ushort soundId) {
-			if (soundId != 0xffff) {
-				PacketSender.PrepareSound(this, soundId);
-				PacketSender.SendToClientsInRange(this.TopPoint, Globals.MaxUpdateRange);
-			}
+			this.Sound(soundId, Globals.MaxUpdateRange);
 		}
 
-		public void Sound(ushort soundId, ushort range) {
+		public void Sound(ushort soundId, int range) {
 			if (soundId != 0xffff) {
-				PacketSender.PrepareSound(this, soundId);
-				PacketSender.SendToClientsInRange(this.TopPoint, range);
+				PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
+				p.Prepare(this, soundId);
+				GameServer.SendToClientsInRange(this, range, p);
 			}
 		}
 
@@ -1660,7 +1659,7 @@ namespace SteamEngine {
 				self.Trigger_Say(speech, type, keywords);
 			}
 
-			ushort dist = 0;
+			int dist = 0;
 			switch (type) {
 				case SpeechType.Speech:
 					dist = Globals.speechDistance;
@@ -1690,7 +1689,7 @@ namespace SteamEngine {
 				}
 			} else {//item/npc is speaking... no triggers fired, just send it to players
 				PacketGroup pg = null;
-				foreach (GameState state in map.GetClientsInRange(x, y, dist)) {
+				foreach (TCPConnection<GameState> conn in map.GetConnectionsInRange(x, y, dist)) {
 					if (pg == null) {
 						pg = Pool<PacketGroup>.Acquire();
 						if (speech == null) {
@@ -1701,7 +1700,7 @@ namespace SteamEngine {
 								this, speech, this.Name, type, font, color, language));
 						}
 					}
-					state.Conn.SendPacketGroup(pg);
+					conn.SendPacketGroup(pg);
 				}
 			}
 		}

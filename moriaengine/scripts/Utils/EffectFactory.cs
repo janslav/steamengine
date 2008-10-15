@@ -22,37 +22,42 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.Packets;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	public static class EffectFactory {
 		//More detailed effects.
 		public static void LightningEffectAt(IPoint4D point) {
-			PacketSender.PrepareEffect(point, point, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-			PacketSender.SendToClientsInRange(point);
+			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+			p.Prepare(point, point, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+			GameServer.SendToClientsInRange(point, Globals.MaxUpdateRange, p);
 		}
 
 		[SteamFunction]
 		public static void LightningEffect(Thing self) {
-			PacketSender.PrepareEffect(self, self, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-			PacketSender.SendToClientsWhoCanSee(self);
+			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+			p.Prepare(self, self, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+			GameServer.SendToClientsWhoCanSee(self, p);
 		}
 
 		[SteamFunction]
 		public static void StationaryEffect(Thing self, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-			PacketSender.PrepareEffect(self, self, 3, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-			PacketSender.SendToClientsWhoCanSee(self);
+			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+			p.Prepare(self, self, 3, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
+			GameServer.SendToClientsWhoCanSee(self, p);
 		}
 
 		public static void StationaryEffectAt(IPoint4D point, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-			PacketSender.PrepareEffect(point, point, 2, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-			PacketSender.SendToClientsInRange(point);
+			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+			p.Prepare(point, point, 2, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
+			GameServer.SendToClientsInRange(point, Globals.MaxUpdateRange, p);
 		}
 
 		[SteamFunction]
 		public static void EffectFromTo(IPoint4D source, IPoint4D target, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
-			PacketSender.PrepareEffect(source, target, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
-			PacketSender.SendToClientsInRange(source);
+			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+			p.Prepare(source, target, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
+			GameServer.SendToClientsInRange(source, Globals.MaxUpdateRange, p);
 		}
 	}
 }

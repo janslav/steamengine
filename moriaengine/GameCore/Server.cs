@@ -386,10 +386,10 @@ namespace SteamEngine {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public static void SendSystemMessage(GameConn c, string msg, ushort color) {
-			SendMessage(c, null, 0xffff, "System", msg, SpeechType.Speech, 3, color);
-		}
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public static void SendSystemMessage(GameConn c, string msg, ushort color) {
+		//    SendMessage(c, null, 0xffff, "System", msg, SpeechType.Speech, 3, color);
+		//}
 
 		/* 
 			Method: SendSystemMessage
@@ -643,16 +643,16 @@ namespace SteamEngine {
 		//    }
 		//}
 
-		//For use by Server's various message sending methods (Which send to one client).
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		internal static void SendMessage(GameConn c, Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color) {
-			if (Globals.supportUnicode && font == 3 && !(type == SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
-				PacketSender.PrepareUnicodeMessage(from, model, sourceName, msg, type, font, color, c.lang);
-			} else {
-				PacketSender.PrepareAsciiMessage(from, model, sourceName, msg, type, font, color);
-			}
-			PacketSender.SendTo(c, true);
-		}
+		////For use by Server's various message sending methods (Which send to one client).
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//internal static void SendMessage(GameConn c, Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color) {
+		//    if (Globals.supportUnicode && font == 3 && !(type == SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
+		//        PacketSender.PrepareUnicodeMessage(from, model, sourceName, msg, type, font, color, c.lang);
+		//    } else {
+		//        PacketSender.PrepareAsciiMessage(from, model, sourceName, msg, type, font, color);
+		//    }
+		//    PacketSender.SendTo(c, true);
+		//}
 
 		//[Obsolete("Use the alternative from Networking namespace", false)]
 		//public static void StartGame(GameConn c) {
