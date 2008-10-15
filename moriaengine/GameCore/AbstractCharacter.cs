@@ -1194,42 +1194,32 @@ namespace SteamEngine {
 		//Commands
 
 		public void Anim(int anim) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, (byte) anim, 1, false, false, 0x01);
-			PacketSender.SendToClientsWhoCanSee(this);
+			this.Anim(anim, 1, false, false, 0x01);
 		}
 		public void Anim(int anim, byte frameDelay) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, (byte) anim, 1, false, false, frameDelay);
-			PacketSender.SendToClientsWhoCanSee(this);
+			this.Anim(anim, 1, false, false, frameDelay);
 		}
 
 		public void Anim(int anim, bool backwards) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, (byte) anim, 1, backwards, false, 0x01);
-			PacketSender.SendToClientsWhoCanSee(this);
+			this.Anim(anim, 1, backwards, false, 0x01);
 		}
+
 		public void Anim(int anim, bool backwards, bool undo) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, (byte) anim, 1, backwards, undo, 0x01);
-			PacketSender.SendToClientsWhoCanSee(this);
+			this.Anim(anim, 1, backwards, undo, 0x01);
 		}
 
 		public void Anim(int anim, bool backwards, byte frameDelay) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, (byte) anim, 1, backwards, false, frameDelay);
-			PacketSender.SendToClientsWhoCanSee(this);
-		}
-		public void Anim(int anim, bool backwards, bool undo, byte frameDelay) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, (byte) anim, 1, backwards, undo, frameDelay);
-			PacketSender.SendToClientsWhoCanSee(this);
+			this.Anim(anim, 1, backwards, false, frameDelay);
 		}
 
-		public void Anim(byte anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
-			//NetState.ProcessThing(this);
-			PacketSender.PrepareAnimation(this, anim, numAnims, backwards, undo, frameDelay);
-			PacketSender.SendToClientsWhoCanSee(this);
+		public void Anim(int anim, bool backwards, bool undo, byte frameDelay) {
+			this.Anim(anim, 1, backwards, undo, frameDelay);
+		}
+
+		public void Anim(int anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+			CharacterAnimationOutPacket p = Pool<CharacterAnimationOutPacket>.Acquire();
+			p.Prepare(this, (ushort) anim, numAnims, backwards, undo, frameDelay);
+			GameServer.SendToClientsWhoCanSee(this, p);
 		}
 
 		//[Obsolete("Use the alternative from Networking namespace", false)]

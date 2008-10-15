@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.Packets;
+using SteamEngine.Networking;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
@@ -119,9 +119,10 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				default:
 					Logger.WriteWarning("Unknown effect type '"+type+"'. Sending it anyways.");
-					PacketSender.PrepareEffect(Globals.SrcCharacter,
+					GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+					p.Prepare(Globals.SrcCharacter,
 						self, type, effect, speed, duration, 0, fixedDirection, 0, 0, 0);
-					PacketSender.SendToClientsWhoCanSee(self);
+					GameServer.SendToClientsWhoCanSee(self, p);
 					break;
 			}
 		}

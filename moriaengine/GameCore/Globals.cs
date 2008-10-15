@@ -128,10 +128,10 @@ namespace SteamEngine {
 		public readonly static int maxConnections;
 
 		public readonly static bool supportUnicode;
-		public readonly static ushort speechDistance;
-		public readonly static ushort emoteDistance;
-		public readonly static ushort whisperDistance;
-		public readonly static ushort yellDistance;
+		public readonly static int speechDistance;
+		public readonly static int emoteDistance;
+		public readonly static int whisperDistance;
+		public readonly static int yellDistance;
 		public readonly static bool asciiForNames;
 		public readonly static uint loginFlags;
 		public readonly static ushort featuresFlags;
@@ -340,10 +340,10 @@ namespace SteamEngine {
 				squaredReachRange = reachRange * reachRange;
 				//sightRange = ranges.GetValue<ushort>("sightRange", 15, "The distance (in spaces) a character can see.");
 
-				speechDistance = ranges.GetValue<ushort>("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
-				emoteDistance = ranges.GetValue<ushort>("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
-				whisperDistance = ranges.GetValue<ushort>("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
-				yellDistance = ranges.GetValue<ushort>("yellDistance", 20, "The maximum distance from which a yell can be heard.");
+				speechDistance = ranges.GetValue<int>("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
+				emoteDistance = ranges.GetValue<int>("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
+				whisperDistance = ranges.GetValue<int>("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
+				yellDistance = ranges.GetValue<int>("yellDistance", 20, "The maximum distance from which a yell can be heard.");
 
 				IniFileSection plevels = iniH.GetNewOrParsedSection("plevels");
 				maximalPlevel = plevels.GetValue<byte>("maximalPlevel", 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");

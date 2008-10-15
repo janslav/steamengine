@@ -1213,9 +1213,9 @@ namespace SteamEngine.Networking {
 			this.text = character.PaperdollName;
 			this.flagsToSend = character.FlagsToSend;
 
-			Sanity.IfTrueThrow((flagsToSend & 0x02) > 0, character + "'s FlagsToSend included 0x02, which is the 'can equip items on' flag for paperdoll packets - FlagsToSend should never include it.");
+			Sanity.IfTrueThrow((this.flagsToSend & 0x02) > 0, character + "'s FlagsToSend included 0x02, which is the 'can equip items on' flag for paperdoll packets - FlagsToSend should never include it.");
 			if (canEquip) {	//include 0x02 if we can equip stuff on them.
-				flagsToSend |= 0x02;
+				this.flagsToSend |= 0x02;
 			}
 		}
 
@@ -1445,6 +1445,240 @@ namespace SteamEngine.Networking {
 		protected override void WriteSubCmd() {
 			this.EncodeUInt(this.gumpUid);
 			this.EncodeInt(this.buttonId);
+		}
+	}
+
+	public sealed class PlaySoundEffectOutPacket : GameOutgoingPacket {
+		ushort sound;
+		ushort x, y;
+		sbyte z;
+
+		public void Prepare(IPoint3D source, ushort sound) {
+			this.sound = sound;
+			this.x = source.X;
+			this.y = source.Y;
+			this.z = source.Z;
+		}
+
+		public override byte Id {
+			get { return 0x54; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(0x01); //mode (0x00=quiet, repeating, 0x01=single normally played sound effect) . TODO? enable the 0 mode
+			this.EncodeUShort(this.sound);
+			this.EncodeZeros(2); //unknown3 (speed/volume modifier? Line of sight stuff?) 
+			this.EncodeUShort(this.x);
+			this.EncodeUShort(this.y);
+			this.EncodeByte(0); //z as short, again?
+			this.EncodeSByte(this.z);
+		}
+	}
+
+
+	/**
+		Shows the character doing a particular animation.
+			
+		[ I did quite a lot of testing of this packet, since none of the packet guides seemed to have correct information about it.
+			All testing on this packet was done with the AOS 2D client.
+			Things that Jerrith's has wrong about this packet:
+				Anim is a byte, not a ushort, and it starts at pos 6. If anim is greater than the # of valid anims for that character's model (It's out-of-range), then anim 0 is drawn. The byte at pos 5 doesn't seem to do anything (If it were a ushort, the client would display out-of-range-anim# behavior if you set byte 5 to something; It doesn't, it only looks at byte 6 for the anim#.). However, there are also anims which may not exist - for human (and equippables) models, these draw as some other anim instead. There are anims in the 3d client which don't exist in the 2d, too.
+				Byte 5 is ignored by the client (But I said that already).
+				Jerrith's "direction" variable isn't direction at all; The client knows the direction the character is facing already. It isn't a byte either. Read the next line:
+				Bytes 7 and 8, which Jerrith's calls "unknown" and "direction," are actually a ushort which I call numBackwardsFrames. What it does is really weird - it's the number of frames to draw when the anim is drawn backwards, IF 'backwards' is true. If you send 0, it draws a blank frame (i.e. the character vanishes, but reappears after the frame is over). If you send something greater than the number of frames in the anim, then it draws a blank frame for both forwards AND backwards! It's beyond me how that behavior could have been useful for anything, but that's what it does...
+				What Jerrith's calls "repeat" isn't the number of times to repeat the anim, it is the number of anims to draw, starting with 'anim'. If you specify 0 for this, though, it will continue drawing anims until the cows come home (and it apparently goes back to 0 after it draws the last one!).
+				Jerrith's has "forward/backward" correct, although it doesn't mention what happens if you have both this and 'repeat' (undo) set to true (In that case it runs in reverse, and then runs forward).
+				What Jerrith's calls "repeat flag" doesn't make the anim repeat. What it REALLY does is make the anim run once, and then run in reverse immediately after (so I call it "undo" :P). If 'backwards' is true, then it's going to run backwards and then forwards, but it still looks like it's undo'ing the anim it just drew, so :).
+				Jerrith's has 'frame delay' correct.
+		]
+			
+			
+			
+		@param anim The animation the character should perform.
+		@param numBackwardsFrames If backwards is true, this is the number of frames to do when going backwards. 0 makes the character blink invisible for the first frame of the backwards anim. Anything above the number of frames in that particular anim makes the character blink invisible for both forwards and backwards, but ONLY if backwards is true. This is rather bizarre, considering how numAnims works, and how various anims have different frame amounts.
+		@param numAnims The number of anims to do, starting with 'anim' and counting up from there. 0 means 'keep going forever'. If this exceeds the number of valid anims, it wraps back around to anim 0 and keeps going. So if you specify 0, it really WILL run forever, or at least until another anim is drawn for that character, including if it isn't through an anim packet (like if it moves or turns or something).
+		@param backwards If true, perform the animation in reverse.
+		@param undo If true, the animation is run, and then the opposite of the animation is run, and this is done for each anim which would be drawn (according to numAnims). If backwards is also true, then you will see the animation performed backwards and then forwards. Conversely, if backwards is false, then with undo true you will see the animation performed forwards and then backwards.
+		@param frameDelay The delay time between animations: 0 makes the animation fastest, higher values make it proportionally slower (0xff is like watching glaciers drift).
+			I timed some different values with a normal anim 14, which has 7 frames. (Using only my eyes and the windows clock, mind you, so it isn't super-accurate or anything.
+				(~ means approximately)
+				0: ~2s
+				1: ~3s
+				5: ~5s (4.5s?)
+				10: ~8s
+				50: ~36s
+					
+				What I gathered from those results:
+				.25-.3 second delay between frames by default.
+				.65-.7 seconds * frameDelay extra delay (for all 7 frames, so if it were .7 then it would be .1*frameDelay per frame)
+					
+				I did some more math and decided .25 and .7->.1 were probably pretty accurate estimates, and so:
+					
+				(.25*7)+(.7*frameDelay)=how many seconds UO should spend showing the anim
+				(.25*7)+(.7*50)=36.75
+				(.25*7)+(.7*1)=2.45
+				(.25*7)+(.7*0)=1.75
+					
+				Or for anims without 7 frames:
+				(.25*numFrames)+(.1*numFrames*frameDelay)=how many seconds UO should spend showing the anim
+	*/
+	public sealed class CharacterAnimationOutPacket : GameOutgoingPacket {
+		uint charUid;
+		byte dir, frameDelay;
+		ushort anim, numAnims;
+		bool backwards, undo;
+
+		public void Prepare(AbstractCharacter cre, ushort anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+			this.charUid = cre.FlaggedUid;
+			this.dir = cre.Dir;
+			this.anim = anim;
+			this.numAnims = numAnims;
+			this.backwards = backwards;
+			this.undo = undo;
+			this.frameDelay = frameDelay;
+		}
+
+		public override byte Id {
+			get { return 0x6E; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.charUid);
+			this.EncodeUShort(this.anim);
+			this.EncodeByte(1);
+			this.EncodeByte((byte) ((this.dir - 4) & 0x7)); //-4? huh ?
+			this.EncodeUShort(this.numAnims);
+			this.EncodeBool(this.backwards);
+			this.EncodeBool(this.undo);
+			this.EncodeByte(this.frameDelay);
+		}
+	}
+
+	public sealed class GraphicalEffectOutPacket : GameOutgoingPacket {
+		uint sourceUid, targetUid, renderMode, hue;
+		byte type, speed, duration, fixedDirection, explodes;
+		ushort effect, unk, sourceX, sourceY, targetX, targetY;
+		sbyte sourceZ, targetZ;
+
+		public void Prepare(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
+			source = source.TopPoint;
+			target = target.TopPoint;
+			Thing sourceAsThing = source as Thing;
+			if (sourceAsThing != null) {
+				this.sourceUid = sourceAsThing.FlaggedUid;
+				MutablePoint4D p = sourceAsThing.point4d;
+				this.sourceX = p.x;
+				this.sourceY = p.y;
+				this.sourceZ = p.z;
+			} else {
+				this.sourceUid = 0xffffffff;
+				this.sourceX = source.X;
+				this.sourceY = source.Y;
+				this.sourceZ = source.Z;
+			}
+			Thing targetAsThing = target as Thing;
+			if (targetAsThing != null) {
+				this.targetUid = targetAsThing.FlaggedUid;
+				MutablePoint4D p = targetAsThing.point4d;
+				this.targetX = p.x;
+				this.targetY = p.y;
+				this.targetZ = p.z;
+			} else {
+				this.targetUid = 0xffffffff;
+				this.targetX = target.X;
+				this.targetY = target.Y;
+				this.targetZ = target.Z;
+			}
+			this.type = type;
+			this.effect = effect;
+			this.speed = speed;
+			this.duration = duration;
+			this.unk = unk;
+			this.fixedDirection = fixedDirection;
+			this.explodes = explodes;
+			this.hue = hue;
+			this.renderMode = renderMode;
+		}
+
+		public override byte Id {
+			get { return 0xC0; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.type);
+			this.EncodeUInt(this.sourceUid);
+			this.EncodeUInt(this.targetUid);
+			this.EncodeUShort(this.effect);
+			this.EncodeUShort(this.sourceX);
+			this.EncodeUShort(this.sourceY);
+			this.EncodeSByte(this.sourceZ);
+			this.EncodeUShort(this.targetX);
+			this.EncodeUShort(this.targetY);
+			this.EncodeSByte(this.targetZ);
+			this.EncodeByte(this.speed);
+			this.EncodeByte(this.duration);
+			this.EncodeUShort(this.unk);
+			this.EncodeByte(this.fixedDirection);
+			this.EncodeByte(this.explodes);
+			this.EncodeUInt(this.hue);
+			this.EncodeUInt(this.renderMode);
+		}
+	}
+
+	public sealed class DraggingOfItemOutPacket : GameOutgoingPacket {
+		uint sourceUid, targetUid;
+		ushort model, amount, sourceX, sourceY, targetX, targetY;
+		sbyte sourceZ, targetZ;
+
+		public void Prepare(IPoint4D source, IPoint4D target, AbstractItem i) {
+			source = source.TopPoint;
+			target = target.TopPoint;
+			Thing sourceAsThing = source as Thing;
+			if (sourceAsThing != null) {
+				this.sourceUid = sourceAsThing.FlaggedUid;
+				MutablePoint4D p = sourceAsThing.point4d;
+				this.sourceX = p.x;
+				this.sourceY = p.y;
+				this.sourceZ = p.z;
+			} else {
+				this.sourceUid = 0xffffffff;
+				this.sourceX = source.X;
+				this.sourceY = source.Y;
+				this.sourceZ = source.Z;
+			}
+			Thing targetAsThing = target as Thing;
+			if (targetAsThing != null) {
+				this.targetUid = targetAsThing.FlaggedUid;
+				MutablePoint4D p = targetAsThing.point4d;
+				this.targetX = p.x;
+				this.targetY = p.y;
+				this.targetZ = p.z;
+			} else {
+				this.targetUid = 0xffffffff;
+				this.targetX = target.X;
+				this.targetY = target.Y;
+				this.targetZ = target.Z;
+			}
+			this.model = i.Model;
+			this.amount = i.ShortAmount;
+		}
+
+		public override byte Id {
+			get { return 0x23; }
+		}
+
+		protected override void Write() {
+			this.EncodeUShort(this.model);
+			this.EncodeZeros(3);
+			this.EncodeUShort(this.amount);
+			this.EncodeUInt(this.sourceUid);
+			this.EncodeUShort(this.sourceX);
+			this.EncodeUShort(this.sourceY);
+			this.EncodeSByte(this.sourceZ);
+			this.EncodeUInt(this.targetUid);
+			this.EncodeUShort(this.targetX);
+			this.EncodeUShort(this.targetY);
+			this.EncodeSByte(this.targetZ);
 		}
 	}
 }

@@ -157,6 +157,24 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		public static void SendToClientsInRange(IPoint4D point, int range, OutgoingPacket outPacket) {
+			PacketGroup pg = null;
+
+			try {
+				foreach (TCPConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {
+					if (pg == null) {
+						pg = Pool<PacketGroup>.Acquire();
+						pg.AddPacket(outPacket);
+					}
+					conn.SendPacketGroup(pg);
+				}
+			} finally {
+				if (pg == null) {//wasn't sent
+					outPacket.Dispose();
+				}
+			}
+		}
+
 		internal static void BackupLinksToCharacters() {
 			foreach (GameState state in clients) {
 				state.BackupLinksToCharacters();

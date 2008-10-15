@@ -889,9 +889,10 @@ namespace SteamEngine {
 			return this.draggingLayer == null;
 		}
 
-		private void SendMovingItemAnimation(Thing from, Thing to, AbstractItem i) {
-			PacketSender.PrepareMovingItemAnimation(from, to, i);
-			PacketSender.SendToClientsWhoCanSee(this);
+		private void SendMovingItemAnimation(IPoint4D from, IPoint4D to, AbstractItem i) {
+			DraggingOfItemOutPacket p = Pool<DraggingOfItemOutPacket>.Acquire();
+			p.Prepare(from, to, i);
+			GameServer.SendToClientsWhoCanSee(this, p);
 		}
 
 		#region client 
@@ -960,6 +961,15 @@ namespace SteamEngine {
 
 			//equip into dragging layer
 			if (retVal == DenyResult.Allow) {
+				IPoint4D oldPoint = item.TopObj();
+				if (oldPoint != this) {
+					if (oldPoint == item) {
+						oldPoint = item.P();
+					}
+				} else {
+					oldPoint = null;
+				}
+
 				uint amountToPick = args.Amount;
 				uint amountSum = item.Amount;
     			if (!item.IsEquipped && amountToPick < amountSum) {
@@ -970,6 +980,9 @@ namespace SteamEngine {
 
 				item.MakeLimbo();
 				item.Trigger_EnterChar(this, (byte) LayerNames.Dragging);
+				if (oldPoint != null) {
+					this.SendMovingItemAnimation(oldPoint, this, item);
+				}
 			}
 			return retVal;
 		}
@@ -1034,10 +1047,14 @@ namespace SteamEngine {
 					} else if (y > maxY) {
 						y = maxY;
 					}
+
 					item.MakeLimbo();
 					item.Trigger_EnterItem(targetCont, x, y);
 					if (tryStacking) {
 						targetCont.TryStackToAnyInside(item);
+					}
+					if (targetCont.TopObj() != this) {
+						this.SendMovingItemAnimation(this, targetCont, item);
 					}
 				}
 				return retVal;
@@ -1157,6 +1174,7 @@ namespace SteamEngine {
 			if (retVal == DenyResult.Allow) {
 				item.MakeLimbo();
 				item.Trigger_EnterRegion(point.X, point.Y, point.Z, point.M);
+				this.SendMovingItemAnimation(this, point, item);
 			}
 
 			return retVal;
@@ -1287,6 +1305,9 @@ namespace SteamEngine {
 					if (result == DenyResult.Allow) {
 						item.MakeLimbo();
 						item.Trigger_EnterChar(target, layer);
+						if (this != target) {
+							this.SendMovingItemAnimation(this, target, item);
+						}
 					}
 
 					return result;

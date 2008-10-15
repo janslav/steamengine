@@ -1133,7 +1133,7 @@ namespace SteamEngine {
 		}
 
 		public void WriteLine(string data) {
-			Server.SendSystemMessage(this, data, 0);
+			//Server.SendSystemMessage(this, data, 0);
 		}
 
 		//public override void WriteLine(LogStr data){
