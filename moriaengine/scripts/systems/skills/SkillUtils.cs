@@ -63,11 +63,11 @@ namespace SteamEngine.CompiledScripts {
 		private static int GetBellCurve(int valDiff) {
 			// Produce a log curve.
 			//
-			// 50+
+			// 50    +
 			//       |
 			//       |
 			//       |
-			// 25|  +
+			// 25    |  +
 			//       |
 			//       |         +
 			//       |                +

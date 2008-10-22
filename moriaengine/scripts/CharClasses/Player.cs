@@ -77,6 +77,23 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		#region Profession
+		public Profession Profession {
+			get {
+				return profession;
+			}
+
+			internal set {//internal since we dont want to set this using property uncontrollably!
+				profession = value;
+			}
+		}
+
+		internal virtual void On_ProfessionAssign(ProfessionDef profDef) {
+			//this trigger is called after the profession ahs been assigned, so we can use it now
+			Profession.Init();
+		}
+		#endregion Profession
+
 		private static TimerKey charLingeringTimerTK = TimerKey.Get("_charLingeringTimer_");
 		public override void On_LogOut() {
 			//TODO: In safe/nonsafe areas, settings, etc.
@@ -105,6 +122,65 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return stopLogin;
 		}
+
+		[Summary("Add a profession-powered skill checkings. Check if the skill value doesn't go "+
+				"above the maximal limit")]
+		public override void On_SkillChange(Skill skill, ushort oldValue) {
+			short skillMaxValue = (short)(profession.ProfessionDef.MaxSkill(skill.Id) + GetSkillMaxModifier(skill.Name));
+			if(skill.RealValue > skillMaxValue) {
+				skill.RealValue = (ushort)Math.Min((ushort)0, skillMaxValue); //don't allow to go over maximum or under 0
+			}
+
+			base.On_SkillChange(skill, oldValue);
+		}
+
+		[Summary("@Death trigger - check if none of the skills goes above the maximal limit")]
+		public override void On_Death(Character killedBy) {
+			CheckSkillMaximums();
+			base.On_Death(killedBy);
+		}
+
+		[Summary("Return the modifier of the skill's maximum value (it is normally determined by "+
+				"selected profession, but can be altered e.g. by magic items etc...)")]
+		internal short GetSkillMaxModifier(SkillName name) {
+			if (maxSkillModifier != null) {
+				short outVal = 0;
+				if (maxSkillModifier.TryGetValue(name, out outVal)) {
+					return outVal;//skill is modified somehow
+				} else {
+					return 0; //skill is not modified
+				}
+			}
+			return 0;
+		}
+
+		[Summary("Set the special modifier to the given skill's maximum value (the player will be "+
+				"allowed to go over his normal profession's maximum for this particular skill")]
+		internal void SetSkillMaxModifier(SkillName name, short value) {
+			if(maxSkillModifier == null) {
+				maxSkillModifier = new Dictionary<SkillName,short>();
+			}
+			if(value == 0) {//remove the value from the dictionary
+				maxSkillModifier.Remove(name);
+				if(maxSkillModifier.Keys.Count == 0) {
+					maxSkillModifier = null; //no modifiers left, release the reference
+				}
+			} else {
+				maxSkillModifier[name] = value;
+			}
+		}
+
+		private void CheckSkillMaximums() {
+			//check all skills and fix any possible overlaps
+			short skillMaxValue;
+			foreach (ISkill skl in this.Skills) {
+				skillMaxValue = (short)(profession.ProfessionDef.MaxSkill(skl.Id) + GetSkillMaxModifier(((Skill)skl).Name));
+				if (skl.RealValue > skillMaxValue) {
+					skl.RealValue = (ushort) Math.Min((ushort)0, skillMaxValue); //don't allow to go over maximum or under 0
+				}
+			}
+		}
+
 
 		[SaveableClass]
 		public class CharLingeringTimer : BoundTimer {
