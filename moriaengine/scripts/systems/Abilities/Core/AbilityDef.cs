@@ -28,6 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class AbilityDef : AbstractDef {
 		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
+		internal static readonly TriggerKey tkDenyAssign = TriggerKey.Get("DenyAssign");
         internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
 		internal static readonly TriggerKey tkValueChanged = TriggerKey.Get("ValueChanged");
 		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
@@ -145,6 +146,25 @@ namespace SteamEngine.CompiledScripts {
 				On_Assign(chr);
 			}
         }
+
+		[Summary("This method fires the @denyAssign triggers. "
+				+ "Their purpose is to check if character can be assigned this ability")]
+		protected virtual bool On_DenyAssign(DenyAbilityArgs args) {
+			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_DenyAssign");
+			return false; //continue
+        }
+
+		internal bool Trigger_DenyAssign(DenyAbilityArgs args) {
+			bool cancel = false;
+			cancel = this.TryCancellableTrigger(args.abiliter, AbilityDef.tkDenyAssign, args);
+			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				cancel = args.abiliter.On_AbilityDenyAssign(args);
+				if (!cancel) {//still not cancelled
+					cancel = On_DenyAssign(args);
+				}
+			}
+			return cancel;
+		}
 
         [Summary("This method implements the unassigning of the last point from the Ability")]
 		protected virtual void On_UnAssign(Character ch) {
@@ -377,7 +397,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Method for sending clients messages about their attempt of ability usage")]
-		protected void SendAbilityResultMessage(Character toWhom, DenyResultAbilities res) {
+		internal void SendAbilityResultMessage(Character toWhom, DenyResultAbilities res) {
 			switch(res) {
 				//case DenyResultAbilities.Allow:								
 				case DenyResultAbilities.Deny_DoesntHaveAbility:
@@ -394,6 +414,9 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				case DenyResultAbilities.Deny_NotEnoughResourcesPresent:
 					toWhom.RedMessage("Nedostatek zdrojù pro spuštìní ability " + Name);
+					break;
+				case DenyResultAbilities.Deny_NotAllowedToHaveThisAbility:
+					toWhom.RedMessage("Nejsi oprávnìn mít abilitu " + Name);
 					break;
 			}
 		}

@@ -398,6 +398,12 @@
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\Profession.cs">
+      <Link>systems\Professions\Profession.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\ProfessionDef.cs">
+      <Link>systems\Professions\ProfessionDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
     </Compile>

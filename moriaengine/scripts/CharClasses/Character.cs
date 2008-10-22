@@ -915,7 +915,7 @@ namespace SteamEngine.CompiledScripts {
 			CauseDeath((Character) Globals.SrcCharacter);
 		}
 
-		public void On_Death(Character killedBy) {
+		public virtual void On_Death(Character killedBy) {
 			//stop regenerating
 			Plugin regPlug = this.GetPlugin(RegenerationPlugin.regenerationsPluginKey);
 			if (regPlug != null) {
@@ -1281,7 +1281,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Load(input);
 		}
 
-		#region skills
+		#region Skills
 		[Summary("Enumerator of all character's skills")]
 		public override IEnumerable<ISkill> Skills {
 			get {
@@ -1468,9 +1468,10 @@ namespace SteamEngine.CompiledScripts {
 		+ "Is also called when client does the useskill macro")]
 		public void SelectSkill(int skillId) {
 			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
-			if (skillDef != null) {
-				skillDef.Select(this);
-			}
+			SelectSkill(skillDef); //better :-)
+			//if (skillDef != null) {
+			//	skillDef.Select(this);
+			//}
 		}
 
 		[Summary("Start a skill.")]
@@ -1488,13 +1489,14 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
 		public void StartSkill(int skillId) {
 			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
-			if (skillDef != null) {
-				if (currentSkill != null) {
-					this.AbortSkill();
-				}
-				currentSkill = skillDef;
-				skillDef.Start(this);
-			}
+			StartSkill(skillDef); //better :)
+			//if (skillDef != null) {
+			//    if (currentSkill != null) {
+			//        this.AbortSkill();
+			//    }
+			//    currentSkill = skillDef;
+			//    skillDef.Start(this);
+			//}
 		}
 
 		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
@@ -1596,7 +1598,7 @@ namespace SteamEngine.CompiledScripts {
 		//public virtual bool On_SkillMakeItem(int id, AbstractItem item) {
 		//	return false;
 		//}
-		#endregion skills
+		#endregion Skills
 
 		internal Dictionary<AbstractDef, object> SkillsAbilities {
 			get {
@@ -1661,10 +1663,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void AddNewAbility(AbilityDef aDef, int points) {
-            Ability ab = aDef.Create(this);
-			SkillsAbilities.Add(aDef, ab); //first add the object to the dictionary			
-			ab.Points = points; //then set points
-			aDef.Trigger_Assign(this); //then call the assign trigger
+			Ability ab = aDef.Create(this);
+
+			DenyAbilityArgs args = new DenyAbilityArgs(this, aDef, ab);
+			bool cancelAssign = aDef.Trigger_DenyAssign(args); //return value means only that the trigger has been cancelled
+			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot assign the ability
+
+			if (retVal == DenyResultAbilities.Allow) {
+				SkillsAbilities.Add(aDef, ab); //first add the object to the dictionary			
+				ab.Points = points; //then set points
+				aDef.Trigger_Assign(this); //then call the assign trigger
+			}
+			aDef.SendAbilityResultMessage(this, retVal); //send result(message) of the "activate" call to the client
 		}
 
 		internal void RemoveAbility(AbilityDef aDef) {
@@ -1689,6 +1699,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
+			//args contain DenyResultAbilities, Character, AbilityDef and Ability as parameters 
+			//(Ability can be null)
+			return false;
+		}
+
+		internal virtual bool On_AbilityDenyAssign(DenyAbilityArgs args) {
 			//args contain DenyResultAbilities, Character, AbilityDef and Ability as parameters 
 			//(Ability can be null)
 			return false;
