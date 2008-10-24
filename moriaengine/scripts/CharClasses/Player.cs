@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal virtual void On_ProfessionAssign(ProfessionDef profDef) {
+		public virtual void On_ProfessionAssign(ProfessionDef profDef) {
 			//this trigger is called after the profession ahs been assigned, so we can use it now
 			Profession.Init();
 		}

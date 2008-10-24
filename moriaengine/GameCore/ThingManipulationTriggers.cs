@@ -159,7 +159,7 @@ namespace SteamEngine {
 		}
 
 		internal override void MakeLimbo() {
-			if (!IsLimbo) {
+			if (!this.IsLimbo) {
 				OpenedContainers.SetContainerClosed(this);
 				this.RemoveFromView();
 				ItemSyncQueue.AboutToChange(this);

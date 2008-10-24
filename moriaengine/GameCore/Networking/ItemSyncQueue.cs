@@ -165,26 +165,26 @@ namespace SteamEngine.Networking {
 							if (isOnGround) {
 								if (viewer.IsPlevelAtLeast(Globals.plevelOfGM)) {
 									if (allmoveItemInfo == null) {
-										allmoveItemInfo = Pool<PacketGroup>.Acquire();
+										allmoveItemInfo = PacketGroup.AcquireMultiUsePG();
 										allmoveItemInfo.AcquirePacket<ObjectInfoOutPacket>().Prepare(item, MoveRestriction.Movable); //0x1a
 									}
 									conn.SendPacketGroup(allmoveItemInfo);
 								} else {
 									if (pg == null) {
-										pg = Pool<PacketGroup>.Acquire();
+										pg = PacketGroup.AcquireMultiUsePG();
 										pg.AcquirePacket<ObjectInfoOutPacket>().Prepare(item, MoveRestriction.Normal); //0x1a
 									}
 									conn.SendPacketGroup(pg);
 								}
 							} else if (isEquippedAndVisible) {
 								if (pg == null) {
-									pg = Pool<PacketGroup>.Acquire();
+									pg = PacketGroup.AcquireMultiUsePG();
 									pg.AcquirePacket<WornItemOutPacket>().PrepareItem(item.Cont.FlaggedUid, item);//0x2e
 								}
 								conn.SendPacketGroup(pg);
 							} else { //isInContainer
 								if (pg == null) {
-									pg = Pool<PacketGroup>.Acquire();
+									pg = PacketGroup.AcquireMultiUsePG();
 									pg.AcquirePacket<AddItemToContainerOutPacket>().Prepare(item.Cont.FlaggedUid, item);//0x25
 								}
 								conn.SendPacketGroup(pg);
@@ -204,6 +204,13 @@ namespace SteamEngine.Networking {
 							}
 						}
 					}
+				}
+
+				if (pg != null) {
+					pg.Dispose();
+				}
+				if (allmoveItemInfo != null) {
+					allmoveItemInfo.Dispose();
 				}
 			}
 		}

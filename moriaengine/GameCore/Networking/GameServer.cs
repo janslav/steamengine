@@ -73,105 +73,104 @@ namespace SteamEngine.Networking {
 		public static void SendToClientsWhoCanSee(Thing thing, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 
-			try {
-				AbstractItem asItem = thing as AbstractItem;
-				if (asItem != null) {
-					AbstractItem contAsItem = asItem.Cont as AbstractItem;
-					if (contAsItem != null) {
-						foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
-							GameState state = viewer.GameState;
-							if (state != null) {
-								if (pg == null) {
-									pg = Pool<PacketGroup>.Acquire();
-									pg.AddPacket(outPacket);
-								}
-								state.Conn.SendPacketGroup(pg);
-							}
-						}
-						return;
-					}
-				}
-
-				foreach (TCPConnection<GameState> conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
-					if (pg == null) {
-						pg = Pool<PacketGroup>.Acquire();
-						pg.AddPacket(outPacket);
-					}
-					conn.SendPacketGroup(pg);
-				}
-			} finally {
-				if (pg == null) {//wasn't sent
-					outPacket.Dispose();
-				}
-			}
-		}
-
-		public static void SendToClientsWhoCanSee(AbstractCharacter ch, OutgoingPacket outPacket) {
-			PacketGroup pg = null;
-
-			try {
-				foreach (TCPConnection<GameState> conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
-					if (pg == null) {
-						pg = Pool<PacketGroup>.Acquire();
-						pg.AddPacket(outPacket);
-					}
-					conn.SendPacketGroup(pg);
-				}
-			} finally {
-				if (pg == null) {//wasn't sent
-					outPacket.Dispose();
-				}
-			}
-		}
-
-		public static void SendToClientsWhoCanSee(AbstractItem item, OutgoingPacket outPacket) {
-			PacketGroup pg = null;
-
-			try {
-				AbstractItem contAsItem = item.Cont as AbstractItem;
+			AbstractItem asItem = thing as AbstractItem;
+			if (asItem != null) {
+				AbstractItem contAsItem = asItem.Cont as AbstractItem;
 				if (contAsItem != null) {
 					foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
 						GameState state = viewer.GameState;
 						if (state != null) {
 							if (pg == null) {
-								pg = Pool<PacketGroup>.Acquire();
+								pg = PacketGroup.AcquireMultiUsePG();
 								pg.AddPacket(outPacket);
 							}
 							state.Conn.SendPacketGroup(pg);
 						}
 					}
 					return;
-				} else {
-					foreach (TCPConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
+				}
+			}
+
+			foreach (TCPConnection<GameState> conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
+				if (pg == null) {
+					pg = PacketGroup.AcquireMultiUsePG();
+					pg.AddPacket(outPacket);
+				}
+				conn.SendPacketGroup(pg);
+			}
+
+			if (pg == null) {//wasn't sent
+				outPacket.Dispose();
+			} else {
+				pg.Dispose();
+			}
+		}
+
+		public static void SendToClientsWhoCanSee(AbstractCharacter ch, OutgoingPacket outPacket) {
+			PacketGroup pg = null;
+
+			foreach (TCPConnection<GameState> conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
+				if (pg == null) {
+					pg = PacketGroup.AcquireMultiUsePG();
+					pg.AddPacket(outPacket);
+				}
+				conn.SendPacketGroup(pg);
+			}
+			if (pg == null) {//wasn't sent
+				outPacket.Dispose();
+			} else {
+				pg.Dispose();
+			}
+		}
+
+		public static void SendToClientsWhoCanSee(AbstractItem item, OutgoingPacket outPacket) {
+			PacketGroup pg = null;
+
+			AbstractItem contAsItem = item.Cont as AbstractItem;
+			if (contAsItem != null) {
+				foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
+					GameState state = viewer.GameState;
+					if (state != null) {
 						if (pg == null) {
-							pg = Pool<PacketGroup>.Acquire();
+							pg = PacketGroup.AcquireMultiUsePG();
 							pg.AddPacket(outPacket);
 						}
-						conn.SendPacketGroup(pg);
+						state.Conn.SendPacketGroup(pg);
 					}
 				}
-			} finally {
-				if (pg == null) {//wasn't sent
-					outPacket.Dispose();
+				return;
+			} else {
+				foreach (TCPConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
+					if (pg == null) {
+						pg = PacketGroup.AcquireMultiUsePG();
+						pg.AddPacket(outPacket);
+					}
+					conn.SendPacketGroup(pg);
 				}
+			}
+
+			if (pg == null) {//wasn't sent
+				outPacket.Dispose();
+			} else {
+				pg.Dispose();
 			}
 		}
 
 		public static void SendToClientsInRange(IPoint4D point, int range, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 
-			try {
-				foreach (TCPConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {
-					if (pg == null) {
-						pg = Pool<PacketGroup>.Acquire();
-						pg.AddPacket(outPacket);
-					}
-					conn.SendPacketGroup(pg);
+			foreach (TCPConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {
+				if (pg == null) {
+					pg = PacketGroup.AcquireMultiUsePG();
+					pg.AddPacket(outPacket);
 				}
-			} finally {
-				if (pg == null) {//wasn't sent
-					outPacket.Dispose();
-				}
+				conn.SendPacketGroup(pg);
+			}
+
+			if (pg == null) {//wasn't sent
+				outPacket.Dispose();
+			} else {
+				pg.Dispose();
 			}
 		}
 

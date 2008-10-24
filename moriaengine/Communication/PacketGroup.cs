@@ -42,6 +42,7 @@ namespace SteamEngine.Communication {
 		private bool isWritten;
 		private bool compressionDone;
 		private int isQueued;
+		private bool isEmpty;
 
 		private bool isMadeFree;
 
@@ -60,6 +61,7 @@ namespace SteamEngine.Communication {
 		public void AddPacket(OutgoingPacket packet) {
 			Sanity.IfTrueSay((isQueued > 0 || this.compressionDone || this.isWritten) , "Can't add new packets to a locked group. They're ignored.");
 			packets.Add(packet);
+			this.isEmpty = false;
 		}
 
 		public T AcquirePacket<T>() where T : OutgoingPacket, new() {
@@ -74,6 +76,7 @@ namespace SteamEngine.Communication {
 			this.isQueued = 0;
 			this.type = PacketGroupType.SingleUse;
 			this.isMadeFree = false;
+			this.isEmpty = true;
 
 			this.uncompressed = Pool<Buffer>.Acquire();
 			this.compressed = Pool<Buffer>.Acquire();
@@ -95,9 +98,9 @@ namespace SteamEngine.Communication {
 		}
 
 		internal int GetFinalBytes(ICompression compression, out byte[] bytes) {
-			ThrowIfDisposed();
+			this.ThrowIfDisposed();
 
-			WritePackets();
+			this.WritePackets();
 
 			if (!this.compressionDone) {
 				if (compression != null) {
@@ -150,7 +153,7 @@ namespace SteamEngine.Communication {
 
 		public override void Dispose() {
 			if (this.isQueued > 0) {
-				throw new InvalidOperationException("Can't directly dispose a packet group that is queued for sending. Set it's type to SingleUse before the last intended use instead.");
+				this.SetType(PacketGroupType.SingleUse);
 			} else {
 				base.Dispose();
 			}
@@ -187,11 +190,28 @@ namespace SteamEngine.Communication {
 			base.On_DisposeManagedResources();
 		}
 
-
 		public static PacketGroup CreateFreePG() {
 			PacketGroup pg = new PacketGroup();
 			pg.SetType(PacketGroupType.Free);
 			return pg;
+		}
+
+		public static PacketGroup AcquireMultiUsePG() {
+			PacketGroup pg = Pool<PacketGroup>.Acquire();
+			pg.SetType(PacketGroupType.MultiUse);
+			return pg;
+		}
+
+		public static PacketGroup AcquireSingleUsePG() {
+			PacketGroup pg = Pool<PacketGroup>.Acquire();
+			pg.SetType(PacketGroupType.SingleUse);
+			return pg;
+		}
+
+		internal bool IsEmpty {
+			get {
+				return this.isEmpty;
+			}
 		}
 	}
 }

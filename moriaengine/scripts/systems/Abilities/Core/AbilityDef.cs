@@ -210,12 +210,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static void RegisterAbilityDef(AbilityDef ad) {
+		private static void RegisterAbilityDef(AbilityDef ad) {
 			byDefname[ad.Defname] = ad;
 			byName[ad.Name] = ad;
 		}
 
-		public static void UnRegisterAbilityDef(AbilityDef ad) {
+		private static void UnRegisterAbilityDef(AbilityDef ad) {
 			byDefname.Remove(ad.Defname);
 			byName.Remove(ad.Name);
 		}

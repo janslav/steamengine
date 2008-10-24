@@ -128,7 +128,7 @@ namespace SteamEngine.Networking {
 				case LoginAttemptResult.Success:
 					Console.WriteLine(LogStr.Ident(state) + " logged in.");
 
-					PacketGroup pg = Pool<PacketGroup>.Acquire();
+					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 					pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
 					pg.AcquirePacket<CharactersListOutPacket>().Prepare(acc, Globals.loginFlags);
 					conn.SendPacketGroup(pg);

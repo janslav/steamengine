@@ -30,7 +30,7 @@ namespace SteamEngine.Networking {
 		internal static void SendStartGameSequence(TCPConnection<GameState> conn, GameState state, AbstractAccount acc, AbstractCharacter ch) {
 			Logger.WriteDebug("Starting game for character " + ch);
 
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
+			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
 			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, Regions.Map.GetMapSizeX(0), Regions.Map.GetMapSizeY(0)); //0x1B
 

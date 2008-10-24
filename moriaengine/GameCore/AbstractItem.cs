@@ -177,7 +177,7 @@ namespace SteamEngine {
 
 		public ushort ShortAmount {
 			get {
-				return (ushort) Math.Max(ushort.MaxValue, this.amount);
+				return (ushort) Math.Min(ushort.MaxValue, this.amount);
 			}
 		}
 

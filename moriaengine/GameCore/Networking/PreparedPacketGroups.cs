@@ -53,10 +53,9 @@ namespace SteamEngine.Networking {
 			targetGround = PacketGroup.CreateFreePG();
 			targetGround.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(true);
 			targetXYZ = PacketGroup.CreateFreePG();
-			targetGround.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(false);
+			targetXYZ.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(false);
 			targetCancelled = PacketGroup.CreateFreePG();
-			targetGround.AcquirePacket<TargetCursorCommandsOutPacket>().PrepareAsCancel();
-
+			targetCancelled.AcquirePacket<TargetCursorCommandsOutPacket>().PrepareAsCancel();
 
 			warMode = new PacketGroup[2];
 			warMode[0] = PacketGroup.CreateFreePG();
@@ -107,7 +106,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public static void SendWarMode(TCPConnection<GameState> conn, bool enabled) {
-			conn.SendPacketGroup(warMode[enabled ? 0 : 1]);
+			conn.SendPacketGroup(warMode[enabled ? 1 : 0]);
 		}
 
 		public static void SendRejectMoveItemRequest(TCPConnection<GameState> conn, DenyResult msg) {

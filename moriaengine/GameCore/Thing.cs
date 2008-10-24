@@ -1143,6 +1143,7 @@ namespace SteamEngine {
 
 		public void RemoveFromView() {
 			DeleteObjectOutPacket p = Pool<DeleteObjectOutPacket>.Acquire();
+			p.Prepare(this);
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
 
@@ -1288,7 +1289,7 @@ namespace SteamEngine {
 		 */
 		public void Say(string arg) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Speech, 0, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Speech, Globals.serverMessageColor, 3, null, null);
 			}
 		}
 
@@ -1324,7 +1325,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocSay(uint arg, params string[] args) {
-			this.Speech(null, arg, SpeechType.Speech, 0, 3, null, args);
+			this.Speech(null, arg, SpeechType.Speech, Globals.serverMessageColor, 3, null, args);
 		}
 
 		/**
@@ -1691,7 +1692,7 @@ namespace SteamEngine {
 				PacketGroup pg = null;
 				foreach (TCPConnection<GameState> conn in map.GetConnectionsInRange(x, y, dist)) {
 					if (pg == null) {
-						pg = Pool<PacketGroup>.Acquire();
+						pg = PacketGroup.AcquireMultiUsePG();
 						if (speech == null) {
 							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocSpeech, this.Name, type, font, color, 
 								args == null ? null : string.Join("\t", args));
@@ -1701,6 +1702,9 @@ namespace SteamEngine {
 						}
 					}
 					conn.SendPacketGroup(pg);
+				}
+				if (pg != null) {
+					pg.Dispose();
 				}
 			}
 		}
