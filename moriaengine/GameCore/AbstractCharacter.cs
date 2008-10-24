@@ -515,7 +515,7 @@ namespace SteamEngine {
 		public void SysMessage(string arg) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendSystemMessage(state.Conn, arg, 0);
+				PacketSequences.SendSystemMessage(state.Conn, arg, Globals.serverMessageColor);
 			}
 		}
 
@@ -529,13 +529,13 @@ namespace SteamEngine {
 		public void ClilocSysMessage(uint msg, string args) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, 0, args);
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, Globals.serverMessageColor, args);
 			}
 		}
 		public void ClilocSysMessage(uint msg, params string[] args) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, 0, args);
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, Globals.serverMessageColor, args);
 			}
 		}
 
@@ -552,40 +552,6 @@ namespace SteamEngine {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, (ushort) color, args);
 			}
 		}
-
-		//internal static MutablePoint4D GetPointAtDirection(MutablePoint4D oldPoint, Direction dir) {
-		//    MutablePoint4D newPoint;
-		//    switch (dir) {
-		//        case Direction.North:
-		//            newPoint = new MutablePoint4D(oldPoint.x, (ushort) (oldPoint.y-1), oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.NorthEast:
-		//            newPoint = new MutablePoint4D((ushort) (oldPoint.x+1), (ushort) (oldPoint.y-1), oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.East:
-		//            newPoint = new MutablePoint4D((ushort) (oldPoint.x+1), oldPoint.y, oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.SouthEast:
-		//            newPoint = new MutablePoint4D((ushort) (oldPoint.x+1), (ushort) (oldPoint.y+1), oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.South:
-		//            newPoint = new MutablePoint4D((ushort) oldPoint.x, (ushort) (oldPoint.y+1), oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.SouthWest:
-		//            newPoint = new MutablePoint4D((ushort) (oldPoint.x-1), (ushort) (oldPoint.y+1), oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.West:
-		//            newPoint = new MutablePoint4D((ushort) (oldPoint.x-1), oldPoint.y, oldPoint.z, oldPoint.m);
-		//            break;
-		//        case Direction.NorthWest:
-		//            newPoint = new MutablePoint4D((ushort) (oldPoint.x-1), (ushort) (oldPoint.y-1), oldPoint.z, oldPoint.m);
-		//            break;
-		//        default: 
-		//            newPoint = oldPoint;
-		//            break;
-		//    }
-		//    return newPoint;
-		//}
 
 		private class DefaultMovementSettings : IMovementSettings {
 			public bool CanCrossLand { get { return true; } }
@@ -908,7 +874,7 @@ namespace SteamEngine {
 			if (state != null) {
 				TCPConnection<GameState> conn = state.Conn;
 
-				PacketGroup pg = Pool<PacketGroup>.Acquire();
+				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
 				pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(this.Season, this.Cursor);
 				pg.AcquirePacket<SetFacetOutPacket>().Prepare(this.GetMap().Facet);

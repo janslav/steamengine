@@ -37,8 +37,18 @@ namespace SteamEngine.Networking {
 		protected override void ProcessQueue() {
 			while (this.queue.Count > 0) {
 				CharState ch = this.queue.Dequeue();
-				ch.ProcessChar();
+				if (ch.thing != null) {
+					ch.ProcessChar();
+				}
 				ch.Dispose();
+			}
+		}
+
+		public static void ProcessChar(AbstractCharacter ch) {
+			if (ch.syncState != null) {
+				ch.syncState.ProcessChar();
+				ch.syncState.thing = null;
+				ch.syncState = null;
 			}
 		}
 
@@ -222,9 +232,11 @@ namespace SteamEngine.Networking {
 			}
 
 			protected override void On_DisposeManagedResources() {
-				lock (MainClass.globalLock) {
-					this.thing.syncState = null;
-					this.thing = null;
+				if (this.thing != null) {
+					lock (MainClass.globalLock) {
+						this.thing.syncState = null;
+						this.thing = null;
+					}
 				}
 				base.On_DisposeManagedResources();
 			}
@@ -464,7 +476,6 @@ namespace SteamEngine.Networking {
 			private void ProcessCharResend(AbstractCharacter ch) {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessCharResend " + ch);
 
-				Array.Clear(charInfoPackets, 0, charInfoPackets.Length);
 				bool propertiesExist = true;
 				ObjectPropertiesContainer iopc = null;
 
@@ -477,7 +488,7 @@ namespace SteamEngine.Networking {
 								int highlight = (int) highlightColor;
 								PacketGroup pg = charInfoPackets[highlight];
 								if (pg == null) {
-									pg = Pool<PacketGroup>.Acquire();
+									pg = PacketGroup.AcquireMultiUsePG();
 									pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, highlightColor); //0x78
 									charInfoPackets[highlight] = pg;
 								}
@@ -490,6 +501,14 @@ namespace SteamEngine.Networking {
 								}
 							}
 						}
+					}
+				}
+
+				for (int i = 0, n = charInfoPackets.Length; i < n; i++) {
+					PacketGroup pg = charInfoPackets[i];
+					if (pg != null) {
+						pg.Dispose();
+						charInfoPackets[i] = null;
 					}
 				}
 			}
@@ -515,9 +534,6 @@ namespace SteamEngine.Networking {
 				//TODO: party update
 				//triggers - @seenewplayer and stuff?
 
-				Array.Clear(myCharInfos, 0, myCharInfos.Length);
-				Array.Clear(myMovings, 0, myMovings.Length);
-				
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessCharUpdate " + ch);
 				bool invisChanged, warModeChanges;
 				bool flagsChanged = this.GetChangedFlags(out invisChanged, out warModeChanges);
@@ -607,7 +623,7 @@ namespace SteamEngine.Networking {
 								foreach (Thing thing in oldMap.GetThingsInRange(point.x, point.y, updateRange)) {
 									Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing thing (" + thing + ") from own view");
 									if (pg == null) {
-										pg = Pool<PacketGroup>.Acquire();
+										pg = PacketGroup.AcquireSingleUsePG();
 									}
 									pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(thing);
 								}
@@ -651,6 +667,9 @@ namespace SteamEngine.Networking {
 						range++;//not teleported, that means only step, so we update wider range
 					}
 
+					bool myCharInfosTouched = false;
+					bool myMovingsTouched = false;
+
 					PacketGroup pgDeleteObject = null;
 					PacketGroup pgPetStatus = null;
 					PacketGroup pgOtherStatus = null;
@@ -659,12 +678,12 @@ namespace SteamEngine.Networking {
 					foreach (AbstractCharacter viewer in chMap.GetPlayersInRange(chX, chY, (ushort) range)) {
 						if (viewer != ch) {
 							GameState viewerState = viewer.GameState;
-								if (viewerState != null) {
-									TCPConnection<GameState> viewerConn = viewerState.Conn;
-							bool viewerCanSeeForUpdateAtPointChecked = false;
-							bool viewerCanSeeForUpdateAtPoint = false;
-							bool viewerCanSeeForUpdateChecked = false;
-							bool viewerCanSeeForUpdate = false;
+							if (viewerState != null) {
+								TCPConnection<GameState> viewerConn = viewerState.Conn;
+								bool viewerCanSeeForUpdateAtPointChecked = false;
+								bool viewerCanSeeForUpdateAtPoint = false;
+								bool viewerCanSeeForUpdateChecked = false;
+								bool viewerCanSeeForUpdate = false;
 
 								if ((!teleported) && (invisChanged || posChanged)) { //if teleported, we're already done
 									if (!invisChanged) {
@@ -676,10 +695,10 @@ namespace SteamEngine.Networking {
 										viewerCanSeeForUpdateChecked = true;
 										if (!viewerCanSeeForUpdate) {//they did see us, but now they dont. RemoveFromView.
 											if (pgDeleteObject == null) {
-												pgDeleteObject = Pool<PacketGroup>.Acquire();
+												pgDeleteObject = PacketGroup.AcquireMultiUsePG();
 												pgDeleteObject.AcquirePacket<DeleteObjectOutPacket>().Prepare(ch);
 											}
-											Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing "+ch+" from view of " + viewerState);
+											Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing " + ch + " from view of " + viewerState);
 											viewerConn.SendPacketGroup(pgDeleteObject);
 										}
 									}
@@ -698,10 +717,11 @@ namespace SteamEngine.Networking {
 										}
 										if (invisChanged || !viewerCanSeeForUpdateAtPoint) {
 											//viewer didn't see us, but he does now - we send newchar packet
+											myCharInfosTouched = true;
 											int highlight = (int) ch.GetHighlightColorFor(viewer);
 											PacketGroup myCharInfo = myCharInfos[highlight];
 											if (myCharInfo == null) {
-												myCharInfo = Pool<PacketGroup>.Acquire();
+												myCharInfo = PacketGroup.AcquireMultiUsePG();
 												myCharInfo.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, (HighlightColor) highlight); //0x78
 												myCharInfos[highlight] = myCharInfo;
 											}
@@ -720,10 +740,11 @@ namespace SteamEngine.Networking {
 											}
 										}
 										if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || basePropsChanged) {
+											myMovingsTouched = true;
 											int highlight = (int) ch.GetHighlightColorFor(viewer);
 											PacketGroup myMoving = myMovings[highlight];
 											if (myMoving == null) {
-												myMoving = Pool<PacketGroup>.Acquire();
+												myMoving = PacketGroup.AcquireMultiUsePG();
 												myMoving.AcquirePacket<UpdatePlayerPacket>().Prepare(ch, running, (HighlightColor) highlight); //0x77
 												myMovings[highlight] = myMoving;
 											}
@@ -738,14 +759,14 @@ namespace SteamEngine.Networking {
 										hitsSent = true;
 										if (viewer.CanRename(ch)) {
 											if (pgPetStatus == null) {
-												pgPetStatus = Pool<PacketGroup>.Acquire();
+												pgPetStatus = PacketGroup.AcquireMultiUsePG();
 												pgPetStatus.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Pet);
 											}
 											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending pet status " + viewerState);
 											viewerConn.SendPacketGroup(pgPetStatus);
 										} else {
 											if (pgOtherStatus == null) {
-												pgOtherStatus = Pool<PacketGroup>.Acquire();
+												pgOtherStatus = PacketGroup.AcquireMultiUsePG();
 												pgOtherStatus.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Other);
 											}
 											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending simple status " + viewerState);
@@ -754,7 +775,7 @@ namespace SteamEngine.Networking {
 									}
 									if (hitsChanged && !hitsSent) {
 										if (pgHitsPacket == null) {
-											pgHitsPacket = Pool<PacketGroup>.Acquire();
+											pgHitsPacket = PacketGroup.AcquireMultiUsePG();
 											pgHitsPacket.AcquirePacket<UpdateCurrentHealthOutPacket>().Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
 										}
 										Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending hits packet " + viewerState);
@@ -765,7 +786,46 @@ namespace SteamEngine.Networking {
 						}
 					}
 
+					if (pgDeleteObject != null) {
+						pgDeleteObject.Dispose();
+					}
+					if (pgPetStatus != null) {
+						pgPetStatus.Dispose();
+					}
+					if (pgOtherStatus != null) {
+						pgOtherStatus.Dispose();
+					}
+					if (pgHitsPacket != null) {
+						pgHitsPacket.Dispose();
+					}
+
+					if (myMovingsTouched) {
+						for (int i = 0, n = myMovings.Length; i < n; i++) {
+							PacketGroup pg = myMovings[i];
+							if (pg != null) {
+								pg.Dispose();
+								myMovings[i] = null;
+							}
+						}
+					}
+
+					if (myCharInfosTouched) {
+						for (int i = 0, n = myCharInfos.Length; i < n; i++) {
+							PacketGroup pg = myCharInfos[i];
+							if (pg != null) {
+								pg.Dispose();
+								myCharInfos[i] = null;
+							}
+						}
+					}
+
 					ch.Flag_Moving = false;
+				}
+				if (pgRemoveMount != null) {
+					pgRemoveMount.Dispose();
+				}
+				if (pgUpdateMount != null) {
+					pgUpdateMount.Dispose();
 				}
 			}
 
@@ -773,14 +833,14 @@ namespace SteamEngine.Networking {
 				AbstractCharacter myMount = ch.Mount;
 				if (myMount == null) {
 					if (pgRemoveMount == null) {
-						pgRemoveMount = Pool<PacketGroup>.Acquire();
+						pgRemoveMount = PacketGroup.AcquireMultiUsePG();
 						pgRemoveMount.AcquirePacket<DeleteObjectOutPacket>().Prepare(mountUid | 0x40000000);
 					}
 					Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing mount (#" + mountUid.ToString("x") + ") for " + viewerConn.State.Character);
 					viewerConn.SendPacketGroup(pgRemoveMount);
 				} else {
 					if (pgUpdateMount == null) {
-						pgUpdateMount = Pool<PacketGroup>.Acquire();
+						pgUpdateMount = PacketGroup.AcquireMultiUsePG();
 						pgUpdateMount.AcquirePacket<WornItemOutPacket>().PrepareMount(ch.FlaggedUid, myMount);
 					}
 					Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending mount (#" + mountUid.ToString("x") + ") to " + viewerConn.State.Character);
@@ -799,13 +859,16 @@ namespace SteamEngine.Networking {
 					if (state != null) {
 						if ((viewer.CanSeeForUpdateAt(this.point, this.thing)) && (!viewer.CanSeeForUpdate(this.thing))) {
 							if (pg == null) {
-								pg = Pool<PacketGroup>.Acquire();
+								pg = PacketGroup.AcquireMultiUsePG();
 								pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(this.thing);
 							}
 							Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing thing (" + thing + ") from the view of " + viewer);
 							state.Conn.SendPacketGroup(pg);
 						}
 					}
+				}
+				if (pg != null) {
+					pg.Dispose();
 				}
 			}
 

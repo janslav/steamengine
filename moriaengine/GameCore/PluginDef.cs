@@ -150,7 +150,7 @@ namespace SteamEngine {
 					throw new OverrideNotAllowedException("You can not change the class of a Plugindef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
 				pluginDef.unloaded = false;
-				byDefname.Remove(pluginDef.Defname); ;//will be re-registered again
+				byDefname.Remove(pluginDef.Defname);//will be put back again
 			} else {
 				throw new OverrideNotAllowedException("PluginDef "+LogStr.Ident(defname)+" defined multiple times. Ignoring.");
 			}

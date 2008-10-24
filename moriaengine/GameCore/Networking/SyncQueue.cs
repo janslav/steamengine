@@ -42,7 +42,9 @@ namespace SteamEngine.Networking {
 		private void Cycle() {
 			while (this.autoResetEvent.WaitOne()) {
 				lock (MainClass.globalLock) {
-					this.ProcessQueue();
+					try {
+						this.ProcessQueue();
+					} catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
 		}

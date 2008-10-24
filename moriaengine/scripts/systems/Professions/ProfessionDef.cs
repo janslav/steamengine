@@ -69,12 +69,12 @@ namespace SteamEngine.CompiledScripts {
 			return retVal;
 		}
 
-		public static void RegisterProfessionDef(ProfessionDef pd) {
+		private static void RegisterProfessionDef(ProfessionDef pd) {
 			byDefname[pd.Defname] = pd;
 			byName[pd.Name] = pd;
 		}
 
-		public static void UnRegisterProfessionDef(ProfessionDef pd) {
+		private static void UnRegisterProfessionDef(ProfessionDef pd) {
 			byDefname.Remove(pd.Defname);
 			byName.Remove(pd.Name);
 		}

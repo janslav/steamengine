@@ -204,7 +204,7 @@ namespace SteamEngine.Networking {
 				CharacterMoveAcknowledgeOutPacket packet = Pool<CharacterMoveAcknowledgeOutPacket>.Acquire();
 				packet.Prepare(this.movementSequenceOut, ch.GetHighlightColorFor(ch));
 				this.gameState.Conn.SendSinglePacket(packet);
-				//NetState.ProcessThing(curCharacter);//I think this is really needed. We can't wait to the end of the cycle, because movement 
+				CharSyncQueue.ProcessChar(ch);//I think this is really needed. We can't wait to the end of the cycle, because movement 
 				//should be as much synced between clients as possible
 
 				if (this.movementSequenceOut == 255) {

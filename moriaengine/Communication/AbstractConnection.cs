@@ -262,12 +262,15 @@ namespace SteamEngine.Communication {
 		public void SendPacketGroup(PacketGroup group) {
 			ThrowIfDisposed();
 
-			this.core.EnqueueOutgoing((TConnection) this, group);
+			if (!group.IsEmpty) {
+				this.core.EnqueueOutgoing((TConnection) this, group);
+			} else {
+				Logger.WriteWarning("Sending an empty PacketGroup? Ignoring."); //display stack trace?
+			}
 		}
 
 		public void SendSinglePacket(OutgoingPacket packet) {
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
-			pg.SetType(PacketGroupType.SingleUse);
+			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 			pg.AddPacket(packet);
 			this.SendPacketGroup(pg);
 		}

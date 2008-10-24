@@ -160,12 +160,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static void RegisterRoleDef(RoleDef rd) {
+		private static void RegisterRoleDef(RoleDef rd) {
 			byDefname[rd.Defname] = rd;
 			byName[rd.Name] = rd;
 		}
 
-		public static void UnRegisterRoleDef(RoleDef rd) {
+		private static void UnRegisterRoleDef(RoleDef rd) {
 			byDefname.Remove(rd.Defname);
 			byName.Remove(rd.Name);
 		}
