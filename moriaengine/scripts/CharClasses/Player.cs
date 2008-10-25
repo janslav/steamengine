@@ -123,16 +123,16 @@ namespace SteamEngine.CompiledScripts {
 			return stopLogin;
 		}
 
-		[Summary("Add a profession-powered skill checkings. Check if the skill value doesn't go "+
-				"above the maximal limit")]
-		public override void On_SkillChange(Skill skill, ushort oldValue) {
-			short skillMaxValue = (short)(profession.ProfessionDef.MaxSkill(skill.Id) + GetSkillMaxModifier(skill.Name));
-			if(skill.RealValue > skillMaxValue) {
-				skill.RealValue = (ushort)Math.Min((ushort)0, skillMaxValue); //don't allow to go over maximum or under 0
-			}
+		//[Summary("Add a profession-powered skill checkings. Check if the skill value doesn't go "+
+		//        "above the maximal limit")]
+		//public override void On_SkillChange(Skill skill, ushort oldValue) {
+		//    short skillMaxValue = (short)(profession.ProfessionDef.MaxSkill(skill.Id) + GetSkillMaxModifier(skill.Name));
+		//    if(skill.RealValue > skillMaxValue) {
+		//        skill.RealValue = (ushort)Math.Min((ushort)0, skillMaxValue); //don't allow to go over maximum or under 0
+		//    }
 
-			base.On_SkillChange(skill, oldValue);
-		}
+		//    base.On_SkillChange(skill, oldValue);
+		//}
 
 		[Summary("@Death trigger - check if none of the skills goes above the maximal limit")]
 		public override void On_Death(Character killedBy) {
