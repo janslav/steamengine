@@ -54,6 +54,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		public void Prepare(byte[] ip, ushort port) {
+			Logger.WriteDebug("Sending shard IP: " + new System.Net.IPEndPoint(new System.Net.IPAddress(ip), port));
 			this.ip = ip;
 			this.port = port;
 		}
