@@ -122,10 +122,10 @@
     <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
       <Link>CharClasses\Player.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\inGameFeatures\System\Treasures.cs">
+    <Compile Include="..\..\scripts\inGameFeatures\System\treasures\Treasures.cs">
       <Link>inGameFeatures\System\treasures\Treasures.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\inGameFeatures\System\treasures.Generated.cs">
+    <Compile Include="..\..\scripts\inGameFeatures\System\treasures\treasures.Generated.cs">
       <Link>inGameFeatures\System\treasures\treasures.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\GemBox.cs">
