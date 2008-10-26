@@ -1,0 +1,8 @@
+[TreasureSpawnDef i_treasureSpawn]
+CATEGORY = Dungeony
+SUBSECTION = Poklady
+DESCRIPTION = Poklad Spawn
+
+NAME = "Poklad"
+WEIGHT = 30
+model = 0x0E7C

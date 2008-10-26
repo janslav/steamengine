@@ -218,7 +218,9 @@ namespace SteamEngine {
 		}
 		
 		public object GetTag(TagKey td) {
-			if (tags==null) return null;
+			if (tags == null) {
+				return null;
+			}
 			return tags[td];
 		}
 
