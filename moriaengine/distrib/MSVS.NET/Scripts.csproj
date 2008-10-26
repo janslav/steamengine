@@ -50,6 +50,15 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;MSWIN</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <Name>ICSharpCode.SharpZipLib</Name>
@@ -113,11 +122,20 @@
     <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
       <Link>CharClasses\Player.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\GemBox.cs">
-      <Link>inGameFeatures\storageBoxes\GemBox.cs</Link>
+    <Compile Include="..\..\scripts\inGameFeatures\System\Treasures.cs">
+      <Link>inGameFeatures\System\treasures\Treasures.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\storageBoxes.Generated.cs">
-      <Link>inGameFeatures\storageBoxes\storageBoxes.Generated.cs</Link>
+    <Compile Include="..\..\scripts\inGameFeatures\System\treasures.Generated.cs">
+      <Link>inGameFeatures\System\treasures\treasures.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\GemBox.cs">
+      <Link>inGameFeatures\World\storageBoxes\GemBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\RegBox.cs">
+      <Link>inGameFeatures\World\storageBoxes\RegBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\storageBoxes.Generated.cs">
+      <Link>inGameFeatures\World\storageBoxes\storageBoxes.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.cs">
       <Link>ItemClasses\ColoredArmor.cs</Link>
@@ -208,9 +226,6 @@
     </Compile>
     <Compile Include="..\..\scripts\ItemClasses\Wearable.Generated.cs">
       <Link>ItemClasses\Wearable.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\inGameFeatures\storageBoxes\RegBox.cs">
-      <Link>inGameFeatures\storageBoxes\RegBox.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Core\AbilitiesEnumerator.cs">
       <Link>systems\Abilities\Core\AbilitiesEnumerator.cs</Link>
