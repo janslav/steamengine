@@ -1,4 +1,4 @@
-[TreasureSpawnDef i_treasureSpawn]
+[TreasureChestDef i_treasureChest]
 CATEGORY = Dungeony
 SUBSECTION = Poklady
 DESCRIPTION = Poklad Spawn
