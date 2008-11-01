@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			return cancel;
-		}		
+		}
 
 		[Summary("This method fires the @denyUse triggers. "
 				+ "Their purpose is to check if all requirements for running the ability have been met")]

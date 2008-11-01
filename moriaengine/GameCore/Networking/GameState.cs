@@ -27,7 +27,7 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
 
-	public delegate void OnTargon(GameState state, IPoint3D getback, object parameter);
+	public delegate void OnTargon(GameState state, IPoint4D getback, object parameter);
 	public delegate void OnTargon_Cancel(GameState state, object parameter);
 
 	public class GameState : Poolable, IConnectionState<TCPConnection<GameState>, GameState, IPEndPoint> {
@@ -60,7 +60,8 @@ namespace SteamEngine.Networking {
 
 		private string language = "enu";
 
-		public  int lastSkillMacroId;
+		public int lastSkillMacroId;
+		public int lastSpellMacroId;
 
 		private Dictionary<uint, Gump> gumpInstancesByUid = new Dictionary<uint, Gump>();
 		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
@@ -374,25 +375,33 @@ namespace SteamEngine.Networking {
 					if (!targGround) {
 						Thing thing = Thing.UidGetThing(uid);
 						if (thing != null) {
-							targ(this, thing, parameter);
-							return;
+							if (this.CharacterNotNull.CanSeeForUpdate(thing)) {
+								targ(this, thing, parameter);
+								return;
+							}
 						}
 					} else {
 						if (model == 0) {
-
-							targ(this, new Point3D(x, y, z), parameter);
-							return;
-						} else {
-							Map map = this.CharacterNotNull.GetMap();
-							Static sta = map.GetStatic(x, y, z, model);
-							if (sta != null) {
-								targ(this, sta, parameter);
+							AbstractCharacter self = this.CharacterNotNull;
+							Point4D point = new Point4D(x, y, z, self.M);
+							if (self.CanSeeCoordinates(point)) {
+								targ(this, point, parameter);
 								return;
 							}
-							MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
-							if (mic != null) {
-								targ(this, mic, parameter);
-								return;
+						} else {
+							AbstractCharacter self = this.CharacterNotNull;
+							if (self.CanSeeCoordinates(x, y, z, self.M)) {								
+								Map map = self.GetMap();
+								Static sta = map.GetStatic(x, y, z, model);
+								if (sta != null) {
+									targ(this, sta, parameter);
+									return;
+								}
+								MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
+								if (mic != null) {
+									targ(this, mic, parameter);
+									return;
+								}
 							}
 						}
 					}

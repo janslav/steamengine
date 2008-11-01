@@ -1099,6 +1099,12 @@ namespace SteamEngine {
 			}
 		}
 
+		//public virtual bool CanPutItemsOn {
+		//    get {
+		//        return this.CanContain;
+		//    }
+		//}
+
 		public bool IsMulti {
 			get {
 				return Def.multiData != null;

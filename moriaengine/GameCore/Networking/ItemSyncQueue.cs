@@ -62,13 +62,15 @@ namespace SteamEngine.Networking {
 		protected override void ProcessQueue() {
 			while (this.queue.Count > 0) {
 				AbstractItem item = this.queue.Dequeue();
-				SyncFlags syncFlags = item.syncFlags;
-				item.syncFlags = SyncFlags.None;
+				if ((item != null) && (!item.IsDeleted)) {
+					SyncFlags syncFlags = item.syncFlags;
+					item.syncFlags = SyncFlags.None;
 
-				if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
-					this.UpdateItemAndProperties(item);
-				} else if (Globals.aos) {//only new properties
-					this.SendItemPropertiesOnly(item);
+					if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
+						this.UpdateItemAndProperties(item);
+					} else if (Globals.aos) {//only new properties
+						this.SendItemPropertiesOnly(item);
+					}
 				}
 			}
 		}

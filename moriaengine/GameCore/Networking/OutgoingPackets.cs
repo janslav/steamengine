@@ -432,9 +432,14 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		ushort gump;
 
-		public void Prepare(uint flaggedUid, ushort gump) {
+		public void PrepareContainer(uint flaggedUid, ushort gump) {
 			this.flaggedUid = flaggedUid;
 			this.gump = gump;
+		}
+		
+		public void PrepareSpellbook(uint flaggedUid) {
+			this.flaggedUid = flaggedUid;
+			this.gump = 0xffff;
 		}
 
 		public override byte Id {
@@ -549,9 +554,18 @@ namespace SteamEngine.Networking {
 				this.x = 0;
 				this.y = 0;
 			}
+
+			internal ItemInfo(uint flaggedUid, ushort amount) {
+				this.flaggedUid = flaggedUid;
+				this.color = 0;
+				this.model = 0;
+				this.amount = amount;
+				this.x = 0;
+				this.y = 0;
+			}
 		}
 
-		public bool Prepare(AbstractItem cont, AbstractCharacter viewer, IList<AbstractItem> visibleItems) {
+		public bool PrepareContainer(AbstractItem cont, AbstractCharacter viewer, IList<AbstractItem> visibleItems) {
 			this.flaggedUid = cont.FlaggedUid;
 
 			items.Clear();
@@ -566,7 +580,7 @@ namespace SteamEngine.Networking {
 			return items.Count > 0;
 		}
 
-		public bool Prepare(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
+		public bool PrepareCorpse(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
 			this.flaggedUid = corpseUid;
 
 			this.items.Clear();
@@ -575,6 +589,19 @@ namespace SteamEngine.Networking {
 			}
 
 			return this.items.Count > 0;
+		}
+
+		public void PrepareSpellbook(int offset, ulong content, uint flaggedUid) {
+			this.flaggedUid = flaggedUid;
+
+			items.Clear();
+
+			ulong mask = 1;
+			for (int i = 0; i < 64; i++, mask <<= 1) {
+				if ((content & mask) != 0) {
+					this.items.Add(new ItemInfo((uint) (0x7FFFFFFF - i), (ushort) (i + offset)));
+				}
+			}
 		}
 
 		public override byte Id {

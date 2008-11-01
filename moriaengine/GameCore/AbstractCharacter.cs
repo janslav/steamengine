@@ -931,11 +931,11 @@ namespace SteamEngine {
 		public AbstractItem Backpack {
 			get {
 				AbstractItem foundPack = null;
-				if (visibleLayers != null) {
-					foundPack = (AbstractItem) visibleLayers.FindByZ((int) LayerNames.Pack);
+				if (this.visibleLayers != null) {
+					foundPack = (AbstractItem) this.visibleLayers.FindByZ((int) LayerNames.Pack);
 				}
 				if (foundPack == null) {
-					foundPack = AddBackpack();
+					foundPack = this.AddBackpack();
 				}
 				return foundPack;
 			}
@@ -1263,6 +1263,9 @@ namespace SteamEngine {
 
 		[Summary("Gets called by the core when the player presses the skill button/runs the macro")]
 		public abstract void SelectSkill(AbstractSkillDef skillDef);
+
+		[Summary("Gets called by the core when the player presses the spell icon/runs the macro")]
+		public abstract void TryCastSpellFromBook(int spellid);
 
 		public abstract byte StatLockByte { get; }
 		public abstract StatLockType StrLock { get; set; }

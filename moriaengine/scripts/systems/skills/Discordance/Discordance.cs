@@ -103,12 +103,12 @@ namespace SteamEngine.CompiledScripts {
 
 	public class Targ_Discordance : CompiledTargetDef {
 
-		protected override void On_Start(Character self, object parameter) {
+		protected override void On_Start(Player self, object parameter) {
 			self.SysMessage("Koho chces zkusit oslabit?");
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
+		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
 			if (targetted.IsPlayer) {
 				self.SysMessage("Zameruj jenom monstra!");
 				return false;
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			self.SysMessage("Predmety nelze oslabit.");
 			return false;
 		}

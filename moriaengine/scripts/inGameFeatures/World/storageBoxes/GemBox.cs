@@ -152,12 +152,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	public class Targ_GemBox : CompiledTargetDef {
 
-		protected override void On_Start(Character self, object parameter) {
+		protected override void On_Start(Player self, object parameter) {
 			self.SysMessage("Zamìø drahý kámen, který chceš vložit do bedny.");
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			GemBox focus = parameter as GemBox;
 			if ( (!self.CanReachWithMessage(focus)) || (!self.CanReachWithMessage(targetted)) ) {
 				return false;
@@ -184,7 +184,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return true;
 		}
 
-		protected override void On_TargonCancel(Character self, object parameter) {
+		protected override void On_TargonCancel(Player self, object parameter) {
 			GemBox focus = parameter as GemBox;
 			focus.Dialog(self, SingletonScript<Dialogs.D_GemBox>.Instance);
 		}

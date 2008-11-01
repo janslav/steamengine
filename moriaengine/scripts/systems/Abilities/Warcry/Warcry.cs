@@ -29,15 +29,15 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class WarcryDef : ImmediateAbilityDef {
 		private FieldValue effectDuration;
-		
+
 		public WarcryDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			effectDuration = InitField_Typed("effectDuration", 10, typeof(double));
 		}
-		
+
 		#region triggerMethods
 		protected override bool On_DenyUse(DenyAbilityArgs args) {
-			bool retVal = false;			
+			bool retVal = false;
 			//TODO - zde ještì implementovat to jestli dotyènej žije/nežije atd.
 
 			retVal = base.On_DenyUse(args); //call superclass for common checks - including resources consuming etc
@@ -47,27 +47,27 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Functional implementation of warcry ability")]
 		protected override bool On_Activate(Character chr) {
 			//TODO - taky nejak zarvat nebo co !
-			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort)ComputeRange(chr))) {
-				if(chr == plr) {
+			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort) ComputeRange(chr))) {
+				if (chr == plr) {
 					continue; //dont do selfwarcry ;)
 				}
 				//first try to get the plugin from the player (he may be under the warcry effect from someone else)
 				WarcryEffectPlugin wepl = plr.GetPlugin(WarcryEffectPlugin.warcyEffectPluginKey) as WarcryEffectPlugin;
-				if(wepl == null) {
-					wepl = (WarcryEffectPlugin)plr.AddNewPlugin(WarcryEffectPlugin.warcyEffectPluginKey, WarcryEffectPlugin.defInstance);				
+				if (wepl == null) {
+					wepl = (WarcryEffectPlugin) plr.AddNewPlugin(WarcryEffectPlugin.warcyEffectPluginKey, WarcryEffectPlugin.defInstance);
 				}
 				//anyways, set the duration of the warcry effect (either on the newly added plugin or the old one)
-				if(wepl.Timer < EffectDuration) {
+				if (wepl.Timer < EffectDuration) {
 					//but dont make it shorter >:-)
 					wepl.Timer = EffectDuration;
 				}
 			}
 			return false; //no cancel needed
-		}		
+		}
 		#endregion triggerMethods
 
 		[InfoField("Effect duration")]
-		[Summary("Number of seconds the warcry effect will last on the hit player")]		
+		[Summary("Number of seconds the warcry effect will last on the hit player")]
 		public double EffectDuration {
 			get {
 				return (double) effectDuration.CurrentValue;
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Compute the warcry range using the information from character (using i.e char's level"+
+		[Summary("Compute the warcry range using the information from character (using i.e char's level" +
 				" and the ability points...). Consider that 18 steps should be maximum (client limits)")]
 		private int ComputeRange(Character chr) {
 			//TODO - udelat to nejak sofistikovaneji			
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
 			WarcryDef wcrDef = SingletonScript<WarcryDef>.Instance;
 			wcrDef.Activate(chr);
-		}	
+		}
 	}
 
 	[ViewableClass]
@@ -97,13 +97,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public static readonly WarcryEffectPluginDef defInstance = new WarcryEffectPluginDef("p_warcryEffect", "C#scripts", -1);
 		internal static PluginKey warcyEffectPluginKey = PluginKey.Get("_warcryEffect_");
-		
+
 		//TODO - az bde magie tak sem udelat nejakj on_spellcast zrusit kouzlo... 
 
 		public void On_Assign(Character cont) {
 			cont.RedMessage("Jsi v šoku!");
 		}
-		
+
 		public void On_UnAssign(Character cont) {
 			cont.SysMessage("Neblahé úèinky warcry pominuly");
 		}

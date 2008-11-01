@@ -1,0 +1,91 @@
+[SpellBookDef 0xefa]
+CATEGORY = Provisions - Alchemy & Magic
+SUBSECTION = Magical Items
+DESCRIPTION = Spellbook
+
+TYPE = T_SPELLBOOK
+WEIGHT = 10
+//RESOURCES = 80 I_PARCHMENT, 1 I_HIDE, 1 I_CLOTH // commented out by Converter 
+LAYER = 1 // this is wrong in TILEDATA ? 
+DEFNAME = i_spellbook
+
+[SpellBookDef i_spellbook_1]
+name = "spellbook 1"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xff
+
+[SpellBookDef i_spellbook_2]
+name = "spellbook 2"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffff
+
+[SpellBookDef i_spellbook_3]
+name = "spellbook 3"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffffff
+
+[SpellBookDef i_spellbook_4]
+name = "spellbook 4"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffffffff
+
+[SpellBookDef i_spellbook_5]
+name = "spellbook 5"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffffffffff
+
+[SpellBookDef i_spellbook_6]
+name = "spellbook 6"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffffffffffff
+
+[SpellBookDef i_spellbook_7]
+name = "spellbook 7"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffffffffffffff
+
+[SpellBookDef i_spellbook_8]
+name = "spellbook 8"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xff
+
+[SpellBookDef i_spellbook_necro]
+name = "necro spellbook"
+model = i_spellbook
+layer = 1 //Set by Converter 
+//value = 300 // commented out by Converter 
+
+on=@create
+this.Contents = 0xffffffffffffff
