@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public class Targ_Remove : CompiledTargetDef {
-			protected override bool On_TargonThing(Character self, Thing targetted, object parameter) {
+			protected override bool On_TargonThing(Player self, Thing targetted, object parameter) {
 				targetted.Delete();
 				return false;
 			}
@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public class Targ_Tele : CompiledTargetDef {
-			protected override bool On_TargonPoint(Character self, IPoint3D targetted, object parameter) {
+			protected override bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
 				self.Go(targetted.X, targetted.Y, targetted.Z, self.M);
 				return false;
 			}

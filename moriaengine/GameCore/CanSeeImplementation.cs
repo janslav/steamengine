@@ -151,15 +151,24 @@ namespace SteamEngine {
 			return this.CanSeeCoordinatesFrom(this, target);
 		}
 
+		public bool CanSeeCoordinates(ushort targetX, ushort targetY, sbyte targetZ, byte targetM) {
+			return this.CanSeeCoordinatesFrom(this, targetX, targetY, targetZ, targetM);
+		}
+
 		internal bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, IPoint4D target) {
-			this.ThrowIfDeleted();
 			if (target == null) {
 				return false;
 			}
-			if (fromCoordinates.M != target.M) {
+
+			return CanSeeCoordinatesFrom(fromCoordinates, target.X, target.Y, target.Z, target.M);
+		}
+
+		private bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, ushort targetX, ushort targetY, sbyte targetZ, byte targetM) {
+			this.ThrowIfDeleted();
+			if (fromCoordinates.M != targetM) {
 				return false;
 			}
-			int dist = Point2D.GetSimpleDistance(fromCoordinates, target);
+			int dist = Point2D.GetSimpleDistance(fromCoordinates.X, fromCoordinates.Y, targetX, targetY);
 			return dist <= this.UpdateRange;
 		}
 

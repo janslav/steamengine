@@ -36,19 +36,19 @@ namespace SteamEngine.CompiledScripts {
 			modifier -= hasResistPhysical * resistingChar.ResistPhysical;
 
 			//phase 2
-			double hasResistFire =		((intDamageType & 0x0004) == 0)? 0.0 : 1;
-			double hasResistElectric =	((intDamageType & 0x0008) == 0)? 0.0 : 1;
-			double hasResistAcid =		((intDamageType & 0x0010) == 0)? 0.0 : 1;
-			double hasResistCold =		((intDamageType & 0x0020) == 0)? 0.0 : 1;
-			double hasResistPoison =	((intDamageType & 0x0040) == 0)? 0.0 : 1;
-			double hasResistMystical =	((intDamageType & 0x0080) == 0)? 0.0 : 1;
-			double hasResistSlashing =	((intDamageType & 0x0100) == 0)? 0.0 : 1;
-			double hasResistStabbing =	((intDamageType & 0x0200) == 0)? 0.0 : 1;
-			double hasResistBlunt =		((intDamageType & 0x0400) == 0)? 0.0 : 1;
-			double hasResistArchery =	((intDamageType & 0x0800) == 0)? 0.0 : 1;
-			double hasResistBleed =		((intDamageType & 0x1000) == 0)? 0.0 : 1;
-			double hasResistSummon =	((intDamageType & 0x2000) == 0)? 0.0 : 1;
-			double hasResistDragon =	((intDamageType & 0x4000) == 0)? 0.0 : 1;
+			double hasResistFire =		((intDamageType & (int) DamageType.Fire) == 0)? 0.0 : 1;
+			double hasResistElectric = ((intDamageType & (int) DamageType.Electric) == 0) ? 0.0 : 1;
+			double hasResistAcid = ((intDamageType & (int) DamageType.Acid) == 0) ? 0.0 : 1;
+			double hasResistCold = ((intDamageType & (int) DamageType.Cold) == 0) ? 0.0 : 1;
+			double hasResistPoison = ((intDamageType & (int) DamageType.Poison) == 0) ? 0.0 : 1;
+			double hasResistMystical = ((intDamageType & (int) DamageType.Mystical) == 0) ? 0.0 : 1;
+			double hasResistSlashing = ((intDamageType & (int) DamageType.Slashing) == 0) ? 0.0 : 1;
+			double hasResistStabbing = ((intDamageType & (int) DamageType.Stabbing) == 0) ? 0.0 : 1;
+			double hasResistBlunt = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
+			double hasResistArchery = ((intDamageType & (int) DamageType.Archery) == 0) ? 0.0 : 1;
+			double hasResistBleed = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
+			double hasResistSummon = ((intDamageType & (int) DamageType.Summon) == 0) ? 0.0 : 1;
+			double hasResistDragon = ((intDamageType & (int) DamageType.Dragon) == 0) ? 0.0 : 1;
 
 			resistCount = hasResistFire + hasResistElectric + hasResistAcid + hasResistCold +
 				hasResistPoison + hasResistMystical + hasResistSlashing + hasResistStabbing +

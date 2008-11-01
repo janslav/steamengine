@@ -240,7 +240,7 @@ namespace SteamEngine.CompiledScripts {
 						if ((corpse.equippedItems != null) && (corpse.equippedItems.Count > 0)) {
 							this.equippedItemsPackets = PacketGroup.CreateFreePG();
 							this.equippedItemsPackets.AcquirePacket<CorpseClothingOutPacket>().Prepare(corpse.FlaggedUid, corpse.equippedItems.Keys);//0x89
-							this.equippedItemsPackets.AcquirePacket<ItemsInContainerOutPacket>().Prepare(corpse.FlaggedUid, corpse.equippedItems.Keys);//0x3c
+							this.equippedItemsPackets.AcquirePacket<ItemsInContainerOutPacket>().PrepareCorpse(corpse.FlaggedUid, corpse.equippedItems.Keys);//0x3c
 
 							if (hair != null) {
 								corpse.equippedItems.Remove(hair);

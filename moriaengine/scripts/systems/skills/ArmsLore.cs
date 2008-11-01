@@ -55,33 +55,33 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class Targ_ArmsLore : CompiledTargetDef {
-		protected override void On_Start(Character self, object parameter) {
+		protected override void On_Start(Player self, object parameter) {
 			self.SysMessage("Co chces prohlednout?");
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
+		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
 			self.SysMessage("Zameruj pouze zbrane a zbroje!");
 			return false;
 		}
 
-		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			self.currentSkillTarget1 = targetted;
 			self.StartSkill(SkillName.ArmsLore);
 			return false;
 		}
 
-		protected override bool On_TargonStatic(Character self, Static targetted, object parameter) {
+		protected override bool On_TargonStatic(Player self, Static targetted, object parameter) {
 			self.SysMessage("Zameruj pouze zbrane a zbroje!");
 			return true;
 		}
 
-		protected override bool On_TargonGround(Character self, IPoint3D targetted, object parameter) {
+		protected override bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
 			self.SysMessage("Zameruj pouze zbrane a zbroje!");
 			return true;
 		}
 
-		protected override void On_TargonCancel(Character self, object parameter) {
+		protected override void On_TargonCancel(Player self, object parameter) {
 			self.SysMessage("Target zrusen");
 		}
 	}

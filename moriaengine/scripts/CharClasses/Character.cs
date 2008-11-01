@@ -660,6 +660,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistMagic;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMagicTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistMagicTK);
 				}
 			}
 		}
@@ -673,6 +675,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistFire;
 				if (dynamicPart != 0) {
 					this.SetTag(resistFireTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistFireTK);
 				}
 			}
 		}
@@ -686,6 +690,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistElectric;
 				if (dynamicPart != 0) {
 					this.SetTag(resistElectricTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistElectricTK);
 				}
 			}
 		}
@@ -699,6 +705,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistAcid;
 				if (dynamicPart != 0) {
 					this.SetTag(resistAcidTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistAcidTK);
 				}
 			}
 		}
@@ -712,6 +720,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistCold;
 				if (dynamicPart != 0) {
 					this.SetTag(resistColdTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistColdTK);
 				}
 			}
 		}
@@ -725,6 +735,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistPoison;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPoisonTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistPoisonTK);
 				}
 			}
 		}
@@ -738,6 +750,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistMystical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMysticalTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistMysticalTK);
 				}
 			}
 		}
@@ -751,6 +765,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistPhysical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPhysicalTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistPhysicalTK);
 				}
 			}
 		}
@@ -764,6 +780,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistSlashing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSlashingTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistSlashingTK);
 				}
 			}
 		}
@@ -777,6 +795,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistStabbing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistStabbingTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistStabbingTK);
 				}
 			}
 		}
@@ -790,6 +810,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistBlunt;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBluntTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistBluntTK);
 				}
 			}
 		}
@@ -803,6 +825,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistArchery;
 				if (dynamicPart != 0) {
 					this.SetTag(resistArcheryTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistArcheryTK);
 				}
 			}
 		}
@@ -816,6 +840,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistBleed;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBleedTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistBleedTK);
 				}
 			}
 		}
@@ -829,6 +855,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistSummon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSummonTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistSummonTK);
 				}
 			}
 		}
@@ -842,6 +870,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistDragon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistDragonTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistDragonTK);
 				}
 			}
 		}
@@ -855,6 +885,8 @@ namespace SteamEngine.CompiledScripts {
 				int dynamicPart = value - TypeDef.ResistParalyse;
 				if (dynamicPart != 0) {
 					this.SetTag(resistParalyseTK, dynamicPart);
+				} else {
+					this.RemoveTag(resistParalyseTK);
 				}
 			}
 		}
@@ -1743,6 +1775,19 @@ namespace SteamEngine.CompiledScripts {
         internal virtual void On_RoleUnAssign(Role role) {
         }
         #endregion roles
+
+		public override void TryCastSpellFromBook(int spellid) {
+			SpellDef sd = SpellDef.ById(spellid);
+			if (sd != null) {
+				this.TryCastSpellFromBook(sd);
+			} //else ?
+		}
+
+		public void TryCastSpellFromBook(SpellDef spellDef) {
+			Sanity.IfTrueThrow(spellDef == null, "spellDef == null");
+
+
+		}
 
         public Character Owner {
 			get {

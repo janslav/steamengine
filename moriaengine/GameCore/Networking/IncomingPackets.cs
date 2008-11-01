@@ -860,11 +860,14 @@ namespace SteamEngine.Networking {
 					break;
 				case 0x56: //spell
 					if (this.actionParsed) {
-						if (this.actionParseResult == 0) {
-							Temporary.UseLastSpellRequest(state.CharacterNotNull);
+						int spellId;
+						if (this.actionParseResult == 0) {//last spell
+							spellId = state.lastSpellMacroId;
 						} else {
-							Temporary.UseSpellNumberRequest(state.CharacterNotNull, this.actionParseResult);
+							spellId = this.actionParseResult;
+							state.lastSpellMacroId = spellId;
 						}
+						state.CharacterNotNull.TryCastSpellFromBook(spellId);
 					}
 					break;
 				case 0x58: //opendoor

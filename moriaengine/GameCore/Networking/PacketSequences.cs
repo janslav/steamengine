@@ -87,7 +87,7 @@ namespace SteamEngine.Networking {
 				ItemsInContainerOutPacket iicp = Pool<ItemsInContainerOutPacket>.Acquire();
 
 				using (ListBuffer<AbstractItem> listBuffer = Pool<ListBuffer<AbstractItem>>.Acquire()) {
-					if (iicp.Prepare(container, viewer, listBuffer.list)) {
+					if (iicp.PrepareContainer(container, viewer, listBuffer.list)) {
 						viewerConn.SendSinglePacket(iicp);
 						if (Globals.aos && viewerState.Version.aosToolTips) {
 							foreach (AbstractItem contained in listBuffer.list) {
@@ -369,8 +369,8 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendDenyResultMessage(TCPConnection<GameState> c, Thing t, DenyResult trr) {
-			switch (trr) {
+		public static void SendDenyResultMessage(TCPConnection<GameState> c, Thing t, DenyResult denyResult) {
+			switch (denyResult) {
 				case DenyResult.Deny_RemoveFromView:
 					if ((t != null) && (!t.IsDeleted)) {
 						DeleteObjectOutPacket packet = Pool<DeleteObjectOutPacket>.Acquire();

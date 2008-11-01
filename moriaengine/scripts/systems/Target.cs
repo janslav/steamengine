@@ -44,16 +44,16 @@ namespace SteamEngine.CompiledScripts {
 			return script as AbstractTargetDef;
 		}
 
-		internal void Assign(Character ch) {
-			this.On_Start(ch, null);
+		internal void Assign(Player self) {
+			this.On_Start(self, null);
 		}
 
-		internal void Assign(Character ch, object parameter) {
-			this.On_Start(ch, parameter);
+		internal void Assign(Player self, object parameter) {
+			this.On_Start(self, parameter);
 		}
 
-		virtual protected void On_Start(Character ch, object parameter) {
-			GameState state = ch.GameState;
+		virtual protected void On_Start(Player self, object parameter) {
+			GameState state = self.GameState;
 			if (state != null) {
 				state.Target(this.AllowGround, targon, targonCancel, parameter);
 			}
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
-			Character self = state.Character as Character;
+			Player self = state.Character as Player;
 			if (self != null) {
 				if (On_TargonPoint(self, getback, parameter)) {
 					On_Start(self, parameter);
@@ -104,16 +104,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected sealed override void On_TargonCancel(GameState state, object parameter) {
-			Character self = state.Character as Character; 
+			Player self = state.Character as Player; 
 			if (self != null) {
 				this.On_TargonCancel(self, parameter);
 			}
 		}
 
-		protected virtual void On_TargonCancel(Character self, object parameter) {
+		protected virtual void On_TargonCancel(Player self, object parameter) {
 		}
 
-		protected virtual bool On_TargonPoint(Character self, IPoint3D targetted, object parameter) {
+		protected virtual bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
 			Thing thing = targetted as Thing;
 			if (thing != null) {
 				return On_TargonThing(self, thing, parameter);
@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 			return On_TargonGround(self, targetted, parameter);
 		}
 
-		protected virtual bool On_TargonThing(Character self, Thing targetted, object parameter) {
+		protected virtual bool On_TargonThing(Player self, Thing targetted, object parameter) {
 			Character ch = targetted as Character;
 			if (ch != null) {
 				return On_TargonChar(self, ch, parameter);
@@ -137,21 +137,21 @@ namespace SteamEngine.CompiledScripts {
 			return true;//item nor char? huh?
 		}
 
-		protected virtual bool On_TargonChar(Character self, Character targetted, object parameter) {
+		protected virtual bool On_TargonChar(Player self, Character targetted, object parameter) {
 			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
 			return true;
 		}
 
-		protected virtual bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected virtual bool On_TargonItem(Player self, Item targetted, object parameter) {
 			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
 			return true;
 		}
 
-		protected virtual bool On_TargonStatic(Character self, Static targetted, object parameter) {
+		protected virtual bool On_TargonStatic(Player self, Static targetted, object parameter) {
 			return On_TargonGround(self, targetted, parameter);
 		}
 
-		protected virtual bool On_TargonGround(Character self, IPoint3D targetted, object parameter) {
+		protected virtual bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
 			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
 			return true;
 		}
@@ -291,7 +291,7 @@ namespace SteamEngine.CompiledScripts {
 				LoadFromScripts, false);
 		}
 
-		protected override sealed void On_Start(Character ch, object parameter) {
+		protected override sealed void On_Start(Player ch, object parameter) {
 			ThrowIfUnloaded();
 			if (on_start != null) {
 				if (TryRunTrigger(on_start, ch, parameter)) {

@@ -39,12 +39,12 @@ namespace SteamEngine.CompiledScripts {
 
     public class Targ_Healing : CompiledTargetDef {
 
-        protected override void On_Start(Character self, object parameter) {
+		protected override void On_Start(Player self, object parameter) {
             self.SysMessage("Koho se chceš pokusit léèit?");
             base.On_Start(self, parameter);
         }
 
-        protected override bool On_TargonChar(Character self, Character targetted, object parameter) {
+		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
 			//if (self.currentSkill != null) {
 			//    self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
 			//    return false;
@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
             return false;
         }
 
-        protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
             self.SysMessage("Pøedmìty nelze léèit.");
             return false;
         }

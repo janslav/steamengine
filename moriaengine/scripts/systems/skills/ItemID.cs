@@ -55,12 +55,12 @@ namespace SteamEngine.CompiledScripts {
 
 	public class Targ_ItemID : CompiledTargetDef {
 
-		protected override void On_Start(Character self, object parameter) {
+		protected override void On_Start(Player self, object parameter) {
 			self.SysMessage("Co chces identifikovat ?");
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 
 			self.currentSkillTarget1 = targetted;
 			self.StartSkill(SkillName.ItemID);

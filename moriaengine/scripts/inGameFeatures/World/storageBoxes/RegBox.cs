@@ -148,12 +148,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	public class Targ_RegBox : CompiledTargetDef {
 
-		protected override void On_Start(Character self, object parameter) {
+		protected override void On_Start(Player self, object parameter) {
 			self.SysMessage("Zamìø reagent, který chceš vložit do bedny.");
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Character self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			RegBox focus = parameter as RegBox;
 			if ( (!self.CanReachWithMessage(focus)) || (!self.CanReachWithMessage(targetted)) ) {
 				return false;
@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return true;
 		}
 
-		protected override void On_TargonCancel(Character self, object parameter) {
+		protected override void On_TargonCancel(Player self, object parameter) {
 			RegBox focus = parameter as RegBox;
 			focus.Dialog(self, SingletonScript<Dialogs.D_RegBox>.Instance);
 		}

@@ -177,11 +177,16 @@ namespace SteamEngine.CompiledScripts {
 		Irresistable = 0x000000,
 		[Summary("Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)")]
 		Magic = 0x000001,
-		MagicFire = Magic | 0x000004,
-		Electric = Magic | 0x000008,
-		Acid = Magic | 0x000010,
-		Cold = Magic | 0x000020,
-		MagicPoison = Magic | 0x000040,
+		Fire = 0x000004,
+		MagicFire = Magic | Fire,
+		Poison = 0x000040,
+		MagicPoison = Magic | Poison,
+		Electric = 0x000008,
+		MagicElectric = Magic | Electric,
+		Acid = 0x000010,
+		MagicAcid = Magic | Acid,
+		Cold = 0x000020,
+		MagicCold = Magic | Cold,		
 		[Summary("Mystikuv utok")]
 		Mystical = Magic | 0x000080,
 		[Summary("Damage redukovano fyzickym rezistem (neplest s armorem)")]
@@ -199,9 +204,7 @@ namespace SteamEngine.CompiledScripts {
 		Bleed = Physical | 0x001000,
 
 		Summon = 0x002000,
-		Dragon = 0x004000,
-		NonMagicFire = 0x000004,
-		NonMagicPoison = 0x000040
+		Dragon = 0x004000
 	}
 
 

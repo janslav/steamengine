@@ -262,7 +262,7 @@ namespace SteamEngine {
 				//send container
 				OpenedContainers.SetContainerOpened(viewer, this);
 				DrawContainerOutPacket packet = Pool<DrawContainerOutPacket>.Acquire();
-				packet.Prepare(this.FlaggedUid, this.Gump);
+				packet.PrepareContainer(this.FlaggedUid, this.Gump);
 				viewerConn.SendSinglePacket(packet);
 
 				PacketSequences.SendContainerContentsWithPropertiesTo(viewer, viewerState, viewerConn, this);

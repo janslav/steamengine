@@ -138,7 +138,7 @@ namespace SteamEngine {
 #else
 			throw new SanityCheckException("None of these flags were set: DEBUG, SANE, or OPTIMIZED?");
 #endif
-			Console.WriteLine("http://steamengine.sourceforge.net");
+			Console.WriteLine("http://kec.cz:8008/trac");
 			Console.WriteLine("Running under "+Environment.OSVersion+", Framework version: "+Environment.Version+".");
 
 			Globals.Init();
