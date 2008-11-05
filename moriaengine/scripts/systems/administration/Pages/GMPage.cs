@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 		private static void NotifyOnlineGMs(AbstractCharacter sender) {
 			bool isGMOnline = false;
 			foreach (Character plr in Server.AllPlayers) {
-				if (plr.IsGM()) {
+				if (plr.IsGM) {
 					plr.SysMessage("Prisla nova page. Pocet nevyrizenych pagi: " + CountUnresolved());
 					isGMOnline = true;
 				}

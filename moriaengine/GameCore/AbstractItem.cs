@@ -175,6 +175,13 @@ namespace SteamEngine {
 			}
 		}
 
+		protected internal override void AdjustWeight(float adjust) {
+			Thing c = this.Cont;
+			if (c != null) {
+				c.AdjustWeight(adjust);
+			}
+		}
+
 		public ushort ShortAmount {
 			get {
 				return (ushort) Math.Min(ushort.MaxValue, this.amount);

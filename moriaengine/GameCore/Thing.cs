@@ -834,7 +834,7 @@ namespace SteamEngine {
 
 		public abstract void FixWeight();
 
-		public abstract void AdjustWeight(float adjust);
+		internal protected abstract void AdjustWeight(float adjust);
 
 		//internal virtual void DecreaseWeightBy(float adjust) {
 		//}

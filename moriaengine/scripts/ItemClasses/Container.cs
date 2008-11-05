@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 			//(TODO): check ownership(?), trigger snooping(done), etc...
 			Character topChar = this.TopObj() as Character;
 			Character fromAsChar = (Character) from;
-			if ((topChar != null) && (topChar != fromAsChar) && (!fromAsChar.IsGM())) {
+			if ((topChar != null) && (topChar != fromAsChar) && (!fromAsChar.IsGM)) {
 				fromAsChar.currentSkillTarget1 = this;
 				fromAsChar.SelectSkill(SkillName.Snooping);
 			} else {
@@ -146,12 +146,9 @@ namespace SteamEngine.CompiledScripts {
 			weight = w;
 		}
 
-		public override void AdjustWeight(float adjust) {
-			weight += adjust;
-			Thing c = Cont;
-			if (c != null) {
-				c.AdjustWeight(adjust);
-			}
+		protected override void AdjustWeight(float adjust) {
+			this.weight += adjust;
+			base.AdjustWeight(adjust);
 		}
 
 		public override void AddProperties(ObjectPropertiesContainer opc) {

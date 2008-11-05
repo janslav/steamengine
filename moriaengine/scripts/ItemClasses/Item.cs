@@ -131,10 +131,6 @@ namespace SteamEngine.CompiledScripts {
 		public override void FixWeight() {
 		}
 
-		public override void AdjustWeight(float adjust) {
-			throw new InvalidOperationException("You can not set the weight of an ordinary (a.e. non-container) item");
-		}
-
 		public Item FindType(TriggerGroup type) {
 			ThrowIfDeleted();
 			foreach (Item i in this.EnumDeep()) {

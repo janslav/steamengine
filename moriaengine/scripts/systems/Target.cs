@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 
 		abstract protected bool AllowGround { get; }
 
-		abstract protected void On_Targon(GameState state, IPoint3D getback, object parameter);
+		abstract protected void On_Targon(GameState state, IPoint4D getback, object parameter);
 
 		abstract protected void On_TargonCancel(GameState state, object parameter);
 	}
@@ -94,11 +94,11 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetType().Name;
 		}
 
-		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
+		protected sealed override void On_Targon(GameState state, IPoint4D getback, object parameter) {
 			Player self = state.Character as Player;
 			if (self != null) {
-				if (On_TargonPoint(self, getback, parameter)) {
-					On_Start(self, parameter);
+				if (this.On_TargonPoint(self, getback, parameter)) {
+					this.On_Start(self, parameter);
 				}
 			}
 		}
@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void On_TargonCancel(Player self, object parameter) {
 		}
 
-		protected virtual bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
+		protected virtual bool On_TargonPoint(Player self, IPoint4D targetted, object parameter) {
 			Thing thing = targetted as Thing;
 			if (thing != null) {
 				return On_TargonThing(self, thing, parameter);
@@ -151,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 			return On_TargonGround(self, targetted, parameter);
 		}
 
-		protected virtual bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
+		protected virtual bool On_TargonGround(Player self, IPoint4D targetted, object parameter) {
 			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
 			return true;
 		}
@@ -306,7 +306,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(ch, parameter);
 		}
 
-		protected override sealed void On_Targon(GameState state, IPoint3D getback, object parameter) {
+		protected override sealed void On_Targon(GameState state, IPoint4D getback, object parameter) {
 			Player player = state.Character as Player;
 			if (player != null) {
 				if (targon_point != null) {

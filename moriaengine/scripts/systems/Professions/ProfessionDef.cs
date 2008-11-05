@@ -521,7 +521,7 @@ namespace SteamEngine.CompiledScripts {
 		
 		public virtual bool On_SkillSelect(Character self, ScriptArgs sa) {
 			//sa contains "self" and "skill ID"
-			if (self.IsGM()) {//GM always allowed, stop checking
+			if (self.IsGM) {//GM always allowed, stop checking
 				return false;
 			}
 			return false;
@@ -529,21 +529,21 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual bool On_SkillStart(Character self, ScriptArgs sa) {
 			//sa contains "self" and "skill ID"
-			if (self.IsGM()) {//GM always allowed, stop checking
+			if (self.IsGM) {//GM always allowed, stop checking
 				return false;
 			}
 			return false;
 		}
 
 		public virtual bool On_AbilityDenyAssign(DenyAbilityArgs args) {
-			if (args.abiliter.IsGM()) {//GM always allowed, stop checking
+			if (args.abiliter.IsGM) {//GM always allowed, stop checking
 				return false;
 			}
 			return false;
 		}
 
 		public virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
-			if (args.abiliter.IsGM()) {//GM always allowed, stop checking
+			if (args.abiliter.IsGM) {//GM always allowed, stop checking
 				return false;
 			}
 			return false;

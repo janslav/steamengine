@@ -103,16 +103,16 @@ namespace SteamEngine.CompiledScripts {
 			stealer.currentSkillTarget2 = (Item) args.manipulatedItem;
 			stealer.SelectSkill((int) SkillName.Stealing);
 			if ((conta != null) && (this.Contains(conta))) {
-				if ((stealer.currentSkillParam != null) && (int) stealer.currentSkillParam == 1) {          // currentSkillParam == 1 if stealing successed
-					stealer.currentSkillParam = null;
+				if ((stealer.currentSkillParam1 != null) && (int) stealer.currentSkillParam1 == 1) {          // currentSkillParam == 1 if stealing successed
+					stealer.currentSkillParam1 = null;
 					return false;
 				} else {
 					args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-					stealer.currentSkillParam = null;
+					stealer.currentSkillParam1 = null;
 					return true;
 				}
 			}
-			stealer.currentSkillParam = null;
+			stealer.currentSkillParam1 = null;
 			return false;
 		}
 

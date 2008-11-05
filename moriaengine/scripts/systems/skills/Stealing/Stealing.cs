@@ -57,14 +57,14 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_Success(Character self) {
 			self.ClilocSysMessage(500174);      // You successfully steal the item!
-			self.currentSkillParam = 1;         // for On_DenyPickupItem in snooping skill
+			self.currentSkillParam1 = 1;         // for On_DenyPickupItem in snooping skill
 		}
 
 		protected override void On_Fail(Character self) {
 			self.ClilocSysMessage(500172);	    // I failed to steal.
 			((Character) ((Item) self.currentSkillTarget2).TopObj()).Trigger_HostileAction(self);
 			self.ClilocSysMessage(500167);	    // You are now a criminal.
-			self.currentSkillParam = 0;
+			self.currentSkillParam1 = 0;
 		}
 
         protected override void On_Abort(Character self) {

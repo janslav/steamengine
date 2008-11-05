@@ -512,6 +512,11 @@ namespace SteamEngine {
 			this.SysMessage(arg);
 		}
 
+		public void AnnounceBug() {
+			this.ClilocSysMessage(501634, 0x21);	//Error!  This is a bug, please report it!
+			//0x21 = red, hopefully
+		}
+
 		public void SysMessage(string arg) {
 			GameState state = this.GameState;
 			if (state != null) {
@@ -536,6 +541,13 @@ namespace SteamEngine {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, Globals.serverMessageColor, args);
+			}
+		}
+
+		public void ClilocSysMessage(uint msg, int color) {
+			GameState state = this.GameState;
+			if (state != null) {
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, (ushort) color, "");
 			}
 		}
 

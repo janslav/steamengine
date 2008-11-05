@@ -219,7 +219,7 @@ namespace SteamEngine.CompiledScripts {
 
 					defender.Hits = (short) (defender.Hits - damage);
 
-					if (!defender.IsDeleted && !defender.Flag_Dead) {
+					if (!defender.IsDeleted && !(defender.Flag_Dead || defender.Flag_Insubst)) {
 						//TODO create blood?
 
 						SoundCalculator.PlayHurtSound(defender);

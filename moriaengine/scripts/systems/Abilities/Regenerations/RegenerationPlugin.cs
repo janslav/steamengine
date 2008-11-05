@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!futureCont.Flag_Dead) {
 				//check if he doesn't have the plugin already
 				if (!futureCont.HasPlugin(regenerationsPluginKey)) {
-					RegenerationPlugin regplug = (RegenerationPlugin) futureCont.AddNewPlugin(regenerationsPluginKey, defInstance);
+					futureCont.AddNewPlugin(regenerationsPluginKey, defInstance);
 				}
 			}
 		}

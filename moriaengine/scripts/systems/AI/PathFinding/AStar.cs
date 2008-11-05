@@ -284,7 +284,7 @@ namespace SteamEngine.CompiledScripts {
 				instance = this;
 			}
 
-			protected override bool On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
+			protected override bool On_TargonPoint(Player ignored, IPoint4D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
 				IMovementSettings settings  = (IMovementSettings) arr[1];
@@ -339,7 +339,7 @@ namespace SteamEngine.CompiledScripts {
 				instance = this;
 			}
 
-			protected override bool On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
+			protected override bool On_TargonPoint(Player ignored, IPoint4D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
 				double seconds  = Convert.ToDouble(arr[1]);

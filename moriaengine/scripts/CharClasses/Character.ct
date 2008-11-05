@@ -63,9 +63,13 @@ Vars:	//vars defined in the class, so they basically do what tags do, but better
 	double manaRegenSpeed=0.0
 	double stamRegenSpeed=0.0
 	short tithingPoints=0
-	//TODO: Stat-locks
 	byte statLockByte=0
 	Character owner = null
 	string title = null
 	Character mountorrider = null
 	
+	public SkillDef currentSkill = null
+	public IPoint4D currentSkillTarget1 = null
+	public IPoint4D currentSkillTarget2 = null
+	public Object currentSkillParam1 = null
+	public Object currentSkillParam2 = null

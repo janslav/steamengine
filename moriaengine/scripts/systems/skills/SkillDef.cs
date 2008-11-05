@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetDelayForChar(Character ch) {
-			if (ch.IsGM()) {
+			if (ch.IsGM) {
 				return 0;
 			} else {
 				return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Delay);
@@ -188,15 +188,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckSuccess(Character ch, int difficulty) {
-			if (ch.IsGM()) {
+			if (ch.IsGM) {
 				return true;
 			} else {
 				return SkillUtils.CheckSuccess(SkillValueOfChar(ch), difficulty);
 			}
 		}
 
-		[Summary("This method fires the @skillselect triggers. "
-		+ "Gets usually called immediately after the user clicks on the button in skillgump or uses the useskill macro")]
 		internal void Select(AbstractCharacter ch) {
 			Character self = (Character) ch;
 			if (!this.Trigger_Select(self)) {
@@ -207,7 +205,7 @@ namespace SteamEngine.CompiledScripts {
 		protected abstract void On_Select(Character ch);
 
 		private bool Trigger_Select(Character self) {
-			if (self.Flag_Dead)
+			if (!self.CheckAliveWithMessage())
 				return true;
 			bool cancel = false;
 			ScriptArgs sa = new ScriptArgs(self, Id);
@@ -221,17 +219,11 @@ namespace SteamEngine.CompiledScripts {
 			return cancel;
 		}
 
-		[Summary("This method fires the @skillstart triggers. "
-		+ "Gets usually called after the target of the skill was set")]
 		internal void Start(Character ch) {
 			if (!this.Trigger_Start(ch)) {
 				this.On_Start(ch);
 			}
 		}
-
-		[Summary("This method implements the start of the skill. "
-		+"Usually calls Trigger_Start at some point")]
-		protected abstract void On_Start(Character ch);
 
 		private bool Trigger_Start(Character self) {
 			if (self==null) return false;
@@ -247,8 +239,11 @@ namespace SteamEngine.CompiledScripts {
 			return cancel;
 		}
 
+		[Summary("This method implements the start phase of the skill.")]
+		protected abstract void On_Start(Character ch);
+
 		[Summary("This method fires the @skillStroke triggers. "
-		+ "Gets usually at some \"important\" moment during the execution of the skill, like one strike of the blacksmither's hammer")]
+		+ "Gets usually called by the SkillTimer.")]
 		public void Stroke(Character ch){
 			if (!this.Trigger_Stroke(ch)) {
 				this.On_Stroke(ch);

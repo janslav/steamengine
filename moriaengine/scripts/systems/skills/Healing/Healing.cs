@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts {
                 self.SysMessage("Léèení se ti nezdaøilo!");
 
                 if (targetted != self)
-                    targetted.SysMessage(self.Name + " se nepodaøilo tì ošetøit!");
+                    targetted.SysMessage(self.Name + " selhal pøi pokusu tì ošetøit!");
 
             }
         }

@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		protected override bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
+		protected override bool On_TargonGround(Player self, IPoint4D targetted, object parameter) {
 			self.SysMessage("Zameruj pouze zbrane a zbroje!");
 			return true;
 		}
