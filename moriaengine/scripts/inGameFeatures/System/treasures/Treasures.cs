@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	{
 		public override void On_DClick(AbstractCharacter ac) {
 			Player p = ac as Player;
-			if (p.IsGM()) {
+			if (p.IsGM) {
 				this.Dialog(ac, SingletonScript<Dialogs.D_TreasureChest>.Instance);
 			} else {
 				p.SysMessage("otvirame poklad");

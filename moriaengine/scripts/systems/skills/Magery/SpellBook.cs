@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void EmptyBook(Player self) {
-			if (!self.Flag_Dead) {
+			if (!self.CheckAliveWithMessage()) {
 				self.Target(SingletonScript<EmptyBookTargetDef>.Instance);
 			}
 		}

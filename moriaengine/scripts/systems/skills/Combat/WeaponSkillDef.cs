@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			Character target = self.currentSkillTarget1 as Character;
 			if (target != null) {
 				WeaponSkillTargetTrackerPlugin.InstallTargetTracker(target, self);
-				self.currentSkillParam = new WeaponSkillParam(
+				self.currentSkillParam1 = new WeaponSkillParam(
 					WeaponSkillPhase.Drawing,
 					0);
 					self.DelayedSkillStroke();
@@ -69,9 +69,9 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_Stroke(Character self) {
 			//self.SysMessage(this.Key+" stroking");
-			WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam;
+			WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam1;
 			Character target = self.currentSkillTarget1 as Character;
-			if (target.IsDeleted || target.Flag_Dead) {
+			if (target.IsDeleted || target.Flag_Dead || target.Flag_Insubst) {
 				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				return;
 			}
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 
 					self.currentSkill = null;
-					if (!target.IsDeleted && !target.Flag_Dead) {
+					if (!target.IsDeleted && !(target.Flag_Dead || target.Flag_Insubst)) {
 						WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
 					} else {
 						WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);

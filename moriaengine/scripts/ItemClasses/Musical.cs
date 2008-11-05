@@ -31,9 +31,8 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_DClick(AbstractCharacter ac) {
 			Character clicker = ac as Character;
 			if (clicker != null) {
-				if (clicker.currentSkill != null) {
-					clicker.AbortSkill();
-				}
+				clicker.AbortSkill();
+
 				clicker.currentSkillTarget2 = this;
 				clicker.SelectSkill((int) SkillName.Musicianship);//select Musicianship
 			}

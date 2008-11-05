@@ -25,7 +25,24 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
+
+	[Flags]
 	public enum SpellFlag : int {
+		None = 0, 
+		CanTargetStatic = 0x0001,
+		CanTargetGround = 0x0002,
+		CanTargetItem = 0x0004,
+		CanTargetChar = 0x0008,
+		CanTargetAnything = CanTargetStatic | CanTargetGround | CanTargetItem | CanTargetChar,
+		AlwaysTargetSelf = 0x0010,
+		TargetNeedsLOS = 0x0020,
+		CanEffectStatic = 0x0040,
+		CanEffectGround = 0x0080,
+		CanEffectItem = 0x0100,
+		CanEffectChar = 0x0200,
+		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
+		EffectNeedsLOS  = 0x0400,
+		IsMassSpell = 0x0800,
 
 	}
 
@@ -72,6 +89,8 @@ namespace SteamEngine.CompiledScripts {
 				return byId.Values;
 			}
 		}
+
+		#region Loading from scripts
 
 		public static new void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<SpellDef>(RegisterSpellDefType);
@@ -162,10 +181,13 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
+		#endregion Loading from scripts
+
 		public override string ToString() {
 			return string.Concat(this.defname, " (spellId ", this.id.ToString(), ")");
 		}
 
+		#region FieldValues
 		private FieldValue scrollItem;
 		private FieldValue runeItem;
 		private FieldValue name;
@@ -319,6 +341,113 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				this.runes.CurrentValue = value;
 			}
+		}
+		#endregion FieldValues
+
+		internal void Trigger_Select(Character ch) {
+			//Checked so far: death, book on self
+			//TODO: Check zones, frozen?, hypnoform?, cooldown?
+			SpellFlag flags = this.Flags;
+			if ((flags & SpellFlag.AlwaysTargetSelf) == SpellFlag.AlwaysTargetSelf) {
+				ch.currentSkillTarget1 = ch;
+				ch.StartSkill(SkillName.Magery);
+				return;
+			} else if ((flags & SpellFlag.CanTargetAnything) != SpellFlag.None) {
+				if (ch.currentSkillTarget1 == null) {//if not null, it already has a target
+					Player self = ch as Player;
+					if (self != null) {
+						self.Target(SingletonScript<SpellTargetDef>.Instance, this);
+					} else {
+						ch.AnnounceBug();
+						throw new SEException("Only Players can target spells");
+					}
+				}
+			}
+
+			throw new SEException("SpellDef.Trigger_Select - unfinished");
+		}
+	}
+
+
+	public sealed class SpellTargetDef : CompiledTargetDef {
+		//better without message?
+		//protected override void On_Start(Player self, object parameter) {
+		//    self.SysMessage("Vyber cíl kouzla");
+		//    base.On_Start(self, parameter);
+		//}
+
+		protected override void On_TargonCancel(Player self, object parameter) {
+			if (this.CheckTargetValidity(self, parameter)) {
+				self.currentSkillParam1 = null;
+				self.currentSkillParam2 = null;
+				self.currentSkillTarget1 = null;
+				self.currentSkillTarget2 = null;
+			}
+		}
+
+		protected override bool On_TargonGround(Player self, IPoint4D targetted, object parameter) {
+			if (this.CheckTargetValidity(self, parameter)) {
+				SpellDef spell = (SpellDef) parameter;
+				SpellFlag flags = spell.Flags;
+				if ((flags & SpellFlag.CanTargetGround) == SpellFlag.CanTargetGround) {
+					if (targetted is Thing) {//we pretend to have targetted the ground, so we don't want it to move
+						self.currentSkillTarget1 = new Point4D(targetted.TopPoint);
+					} else {
+						self.currentSkillTarget1 = targetted;
+					}
+					self.StartSkill(SkillName.Magery);
+				} else {
+					return true; //repeat targetting
+				}
+			}
+			return false;
+		}
+
+		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+			SpellDef spell = (SpellDef) parameter;
+			SpellFlag flags = spell.Flags;
+			if ((flags & SpellFlag.CanTargetChar) == SpellFlag.CanTargetChar) {
+				if (this.CheckTargetValidity(self, parameter)) {
+					self.currentSkillTarget1 = targetted;
+					self.StartSkill(SkillName.Magery);
+				}
+			} else {//
+				return this.On_TargonGround(self, targetted, parameter);
+			}
+			return false;
+		}
+
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+			SpellDef spell = (SpellDef) parameter;
+			SpellFlag flags = spell.Flags;
+			if ((flags & SpellFlag.CanTargetItem) == SpellFlag.CanTargetItem) {
+				if (this.CheckTargetValidity(self, parameter)) {
+					self.currentSkillTarget1 = targetted;
+					self.StartSkill(SkillName.Magery);
+				}
+			} else {//
+				return this.On_TargonGround(self, targetted, parameter);
+			}
+			return false;
+		}
+
+		protected override bool On_TargonStatic(Player self, Static targetted, object parameter) {
+			SpellDef spell = (SpellDef) parameter;
+			SpellFlag flags = spell.Flags;
+			if ((flags & SpellFlag.CanTargetStatic) == SpellFlag.CanTargetStatic) {
+				if (this.CheckTargetValidity(self, parameter)) {
+					self.currentSkillTarget1 = targetted;
+					self.StartSkill(SkillName.Magery);
+				}
+			} else {//
+				return this.On_TargonGround(self, targetted, parameter);
+			}
+			return false;
+		}
+
+		private bool CheckTargetValidity(Player self, object parameter) {
+			//parameter = spelldef
+			return ((self.currentSkill == null) && (self.currentSkillParam1 == parameter) && (self.currentSkillTarget1 == null));
 		}
 	}
 }

@@ -47,8 +47,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public class Targ_Tele : CompiledTargetDef {
-			protected override bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
-				self.Go(targetted.X, targetted.Y, targetted.Z, self.M);
+			protected override bool On_TargonPoint(Player self, IPoint4D targetted, object parameter) {
+				self.Go(targetted);
 				return false;
 			}
 		}

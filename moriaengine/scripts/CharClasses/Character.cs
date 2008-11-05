@@ -104,11 +104,6 @@ namespace SteamEngine.CompiledScripts {
 		float weight;
 		private CharModelInfo charModelInfo;
 
-		public SkillDef currentSkill;
-		public IPoint3D currentSkillTarget1 = null;
-		public IPoint3D currentSkillTarget2 = null;
-		public Object currentSkillParam = null;
-
 		public override sealed byte FlagsToSend {
 			get {
 				//We don't want to send 0x02 if it is set, so we &0xfd to get rid of it.
@@ -192,6 +187,17 @@ namespace SteamEngine.CompiledScripts {
 					Trigger_WarModeChange();
 				}
 			}
+		}
+
+		public bool CheckAliveWithMessage() {
+			if (this.Flag_Dead) {
+				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
+				return false;
+			} else if (this.Flag_Insubst && !this.IsGM) {
+				this.ClilocSysMessage(500590, 0x3B2);  //You're a ghost, and can't do that.
+				return false;
+			}
+			return true;
 		}
 
 		private static TriggerKey warModeChangeTK = TriggerKey.Get("warModeChange");
@@ -340,16 +346,16 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 			if (target.Flag_Insubst) {//ghosts, insubst GMs
-				if (this.IsGM()) {
+				if (this.IsGM) {
 					return this.Plevel > target.Plevel; //can see other GMs only if they have lowe plevel
 				}
 				return false;
 			}
 			if (target.Flag_InvisByMagic) {
-				return this.IsGM();
+				return this.IsGM;
 			}
 			if (target.Flag_Hidden) {
-				if (this.IsGM()) {
+				if (this.IsGM) {
 					return true;
 				} else {
 					HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
@@ -370,7 +376,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (target.IsNotVisible) {
 				if (!target.Flag_Disconnected) {
-					return this.IsGM();
+					return this.IsGM;
 				}
 				return false;
 			}
@@ -436,7 +442,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != hitpoints) {
 					if (!Flag_Dead && value < 1) {
-						CauseDeath((Character) Globals.SrcCharacter);
+						this.CauseDeath((Character) Globals.SrcCharacter);
 					} else {
 						CharSyncQueue.AboutToChangeHitpoints(this);
 						hitpoints = value;
@@ -958,7 +964,7 @@ namespace SteamEngine.CompiledScripts {
 		private static TriggerKey deathTK = TriggerKey.Get("death");
 
 		public void CauseDeath(Character killedBy) {
-			if (!Flag_Dead) {
+			if (!this.Flag_Dead) {
 
 				this.Trigger_HostileAction(killedBy);
 				this.Trigger_Disrupt();
@@ -1518,7 +1524,7 @@ namespace SteamEngine.CompiledScripts {
 			SelectSkill((int) skillName);
 		}
 
-		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
+		[Summary("Call the \"Start\" phase of a skill. This should typically be called from within implementation of the skill's Select phase.")]
 		public void StartSkill(int skillId) {
 			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
 			StartSkill(skillDef); //better :)
@@ -1531,20 +1537,19 @@ namespace SteamEngine.CompiledScripts {
 			//}
 		}
 
-		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
+		[Summary("Call the \"Start\" phase of a skill. This should typically be called from within implementation of the skill's Select phase.")]
 		public void StartSkill(SkillDef skillDef) {
 			if (skillDef != null) {
-				if (currentSkill != null) {
-					this.AbortSkill();
-				}
+				this.TryAbortSkill();
+
 				currentSkill = skillDef;
 				skillDef.Start(this);
 			}
 		}
 
-		[Summary("Call the \"Start\" phase oi a skill. This should typically be called from within implementation of the skill's Select phase.")]
+		[Summary("Call the \"Start\" phase of a skill. This should typically be called from within implementation of the skill's Select phase.")]
 		public void StartSkill(SkillName skillName) {
-			StartSkill((int) skillName);
+			this.StartSkill((int) skillName);
 		}
 
 		public SkillName CurrentSkillName {
@@ -1556,12 +1561,25 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public bool TryAbortSkill() {
+			if (currentSkill != null) {
+				currentSkill.Abort(this);
+				this.ClearSkillFields();
+				return true;
+			}
+			return false;
+		}
+
 		public void AbortSkill() {
 			if (currentSkill != null) {
 				currentSkill.Abort(this);
-				currentSkill = null;
 			}
-			this.currentSkillParam = null;
+			this.ClearSkillFields();
+		}
+
+		public void ClearSkillFields() {
+			this.currentSkill = null;
+			this.currentSkillParam1 = null;
 			this.currentSkillTarget1 = null;
 			this.currentSkillTarget2 = null;
 			this.RemoveTimer(skillTimerKey);
@@ -1777,16 +1795,11 @@ namespace SteamEngine.CompiledScripts {
         #endregion roles
 
 		public override void TryCastSpellFromBook(int spellid) {
-			SpellDef sd = SpellDef.ById(spellid);
-			if (sd != null) {
-				this.TryCastSpellFromBook(sd);
-			} //else ?
+			MagerySkillDef.TryCastSpellFromBook(this, spellid);
 		}
 
 		public void TryCastSpellFromBook(SpellDef spellDef) {
-			Sanity.IfTrueThrow(spellDef == null, "spellDef == null");
-
-
+			MagerySkillDef.TryCastSpellFromBook(this, spellDef);
 		}
 
         public Character Owner {
@@ -1844,8 +1857,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Check if the current character has plevel greater than 1 (is more than player)")]
-		public bool IsGM() {
-			return Account.PLevel > 1;
+		public bool IsGM {
+			get {
+				return Account.PLevel > 1;
+			}
 		}
 
 		//for pets
@@ -1943,9 +1958,9 @@ namespace SteamEngine.CompiledScripts {
 			weight = w;
 		}
 
-		public override void AdjustWeight(float adjust) {
+		protected override void AdjustWeight(float adjust) {
 			CharSyncQueue.AboutToChangeStats(this);
-			weight += adjust;
+			this.weight += adjust;
 		}
 
 		public override void On_Destroy() {
@@ -2304,7 +2319,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion combat
 
 		public override void On_LogOut() {
-			AbortSkill();
+			this.AbortSkill();
 			base.On_LogOut();
 		}
 
@@ -2378,7 +2393,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override DenyResult CanOpenContainer(AbstractItem targetContainer) {
-			if (this.IsGM()) {
+			if (this.IsGM) {
 				return DenyResult.Allow;
 			}
 

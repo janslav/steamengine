@@ -1,4 +1,4 @@
-	/*
+/*
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation; either version 2 of the License, or
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Stroke(Character self) {
 			if (SkillValueOfChar(((Character) self.currentSkillTarget1)) != 0) {
 				self.SysMessage("Tohle nelze oslabit.");
-			} else if (Convert.ToInt32(self.currentSkillParam) == 1) {
+			} else if (Convert.ToInt32(self.currentSkillParam1) == 1) {
 				double targExperience = ((Character) self.currentSkillTarget1).Experience;
 				if ((SkillValueOfChar(self) * 0.3) < targExperience) {
 					self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 			self.SelectSkill(SkillName.Musicianship);
-			if ((int) self.currentSkillParam == 2) {
+			if ((int) self.currentSkillParam1 == 2) {
 				return false;
 			}
 			self.currentSkillTarget1 = targetted;
