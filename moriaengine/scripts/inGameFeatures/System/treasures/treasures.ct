@@ -13,13 +13,14 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate TreasureChest : Item]
+[ThingTemplate TreasureChest : Container]
 Def:	//vars on the def
 Vars:	//vars defined in the class, so they basically do what tags do, but better
-	public List<TreasureItemEntry> treasureItems = new List<TreasureItemEntry>()
-	public List<TreasureSpawnEntry> treasureSpawns = new List<TreasureSpawnEntry>()
-	public int prachy = 100
-	public int check  = 0
-	public int lockpick = 0
-	public int periode = 846000
-	public long lastOpen = 0
+	private List<TreasureItemEntry> treasureItems = null
+	private List<TreasureSpawnEntry> treasureSpawns = null
+	private int moneyCoefficient = 100
+	private int check  = 0
+	private int lockpick = 0
+	private int cycleTime = 84600
+	private long lastOpen = 0
+	private bool wasSpawned = false
