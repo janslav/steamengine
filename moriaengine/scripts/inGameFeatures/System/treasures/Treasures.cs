@@ -15,6 +15,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+
 using SteamEngine;
 using System;
 using System.Collections;
@@ -24,23 +25,93 @@ using SteamEngine.Packets;
 using SteamEngine.LScript;
 using SteamEngine.Persistence;
 
+
+
+/* TO DO !:
+ * ? Exceptions in getters of TreasureChest's private fields ? // dunno whether it should be there or not
+ * System.Collections.ObjectModel.ReadOnlyCollection for Spawn&ItemEntry - I guess I'll pend this one... at least for now
+ * adding Gold -> goldBags and goldBoxes are needed to be done first...
+ * Clean unnecessary functions ... are those functions in english ? or is there a word like 'methode' or sth ... grh..
+ * Add lockpicking
+ * ?Add chest hiding? and probably re-seting after timer (I'll think this over, there may be another aproach..)
+ * Add monster spawning and guarding system
+ */
+
+
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class TreasureChest : Item
+	public partial class TreasureChest : Container
 	{
+		private static CharacterDef defaultTreasureSpawn = null;
+		private static ItemDef defaultTreasureItem = null;
+
+		public CharacterDef DefaultTreasureSpawn {
+			get {
+				if (defaultTreasureSpawn == null) {
+					defaultTreasureSpawn = (CharacterDef) CharacterDef.Get("c_ostard_zostrich");
+				}
+				return defaultTreasureSpawn;
+			}
+		}
+
+		public ItemDef DefaultTreasureItem {
+			get {
+				if (defaultTreasureItem == null) {
+					defaultTreasureItem = (ItemDef) ItemDef.Get("i_bag");
+				}
+				return defaultTreasureItem;
+			}
+		}
+
 		public override void On_DClick(AbstractCharacter ac) {
 			Player p = ac as Player;
 			if (p.IsGM) {
 				this.Dialog(ac, SingletonScript<Dialogs.D_TreasureChest>.Instance);
 			} else {
 				p.SysMessage("otvirame poklad");
+				EnsureListItemEntry();
+				EnsureListSpawnEntry();
+				if (GetLastopenTimeDifference()/cycleTime >= 1) {	//it's time to generate another treasure;
+					/*if (isLocked) { // some isLocked condition and locked container condidito and blah blah ...
+					 * ac.SysMessage("");
+					}
+					if (!wasSpawned) {
+					 * ac.SysMessage("");
+					 * SpawnMonsters();
+					}*/
+					int per;
+					//removeGuts of the container so that in the treasure will be just those items I really want to..
+					foreach (TreasureItemEntry tie in treasureItems) {
+						if (tie.periodic > 0) {
+							per = (int) (GetLastopenTimeDifference()/cycleTime) * tie.periodic;
+							p.SysMessage("Periode is counted as: " + per.ToString());
+
+						} else {
+							per = 1;
+						}
+						for (int i = 0; i < tie.amount; i++) {
+							for (int j = 0; j < per; j++) {	//periodes
+								if (tie.chance > 0) {	// zero chance equals 100% chance...
+									if (!(tie.chance > Globals.dice.Next(0, 99))) {	//chance failed
+										continue;
+									}
+								}
+								tie.itemID.Create(this);
+							}
+						}
+					}
+					SetLastopen();	// we set the lastOpen field at the very time in which we generate the treasure.
+					OpenTo(ac);
+				} else {
+					OpenTo(ac);	//Too early, there is no reward to give yet.
+				}
 			}
 		}
 
 		public override void On_Create() {
 			SetLastopen();
 		}
-		
+
 		public void SetLastopen() {
 			lastOpen=(long) Globals.TimeInSeconds;
 		}
@@ -71,9 +142,87 @@ namespace SteamEngine.CompiledScripts {
 				return Convert.ToString(Globals.TimeInSeconds - lastOpen);
 			}
 		}
-		
+
+		public List<TreasureItemEntry> TreasureItems {
+			get {
+				EnsureListItemEntry();
+				return treasureItems;
+			}
+		}
+
+		public List<TreasureSpawnEntry> TreasureSpawns {
+			get {
+				EnsureListSpawnEntry();
+				return treasureSpawns;
+			}
+		}
+
+		public int MoneyCoefficient {
+			get {
+				return moneyCoefficient;
+			}
+			set {
+				if (value > 0) {
+					moneyCoefficient = value;
+				} else {
+					// exception
+				}
+			}
+		}
+
+		public int Check {
+			get {
+				return check;
+			}
+			set {
+				if (value > 0) {
+					check = value;
+				} else {
+					// exception
+				}
+			}
+		}
+
+		public int CycleTime {
+			get {
+				return cycleTime;
+			}
+			set {
+				if (value > 0) {
+				} else {
+					//exception
+				}
+			}
+		}
+
+		public int Lockpick {
+			get {
+				return lockpick;
+			}
+			set {
+				if (value > 0) {
+					lockpick = value;
+				} else {
+					// exception
+				}
+			}
+		}
+
+		public void EnsureListItemEntry() {
+			if (treasureItems == null) {
+				treasureItems = new List<TreasureItemEntry>();
+			}
+		}
+
+		public void EnsureListSpawnEntry() {
+			if (treasureSpawns  == null) {
+				treasureSpawns  = new List<TreasureSpawnEntry>();
+			}
+		}
+
 		[Summary("Adds new item into TreasureItem List")]
 		public void AddTreasureItem(ItemDef item, int amount, int chance, int periodic) {
+			EnsureListItemEntry();
 			TreasureItemEntry newItem = new TreasureItemEntry();
 			newItem.itemID = item;
 			newItem.amount = amount;
@@ -84,6 +233,10 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Overwrites attributes of one paticular TreasureItemEntry in the list of treasureItems")]
 		public void OverwriteTreasureItem(int itemIndex, ItemDef item, int amount, int chance, int periodic) {
+			if (treasureItems.Count <= itemIndex) {
+				// chyba !
+				return;
+			}
 			treasureItems[itemIndex].itemID = item;
 			treasureItems[itemIndex].amount = amount;
 			treasureItems[itemIndex].chance = chance;
@@ -92,11 +245,16 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Removes an item from the list of treasureItems")]
 		public void RemoveTreasureItem(int itemIndex) {
+			if (treasureItems.Count <= itemIndex) {
+				// chyba !
+				return;
+			}
 			treasureItems.RemoveAt(itemIndex);
 		}
 
 		[Summary("Adds new item into treasureSpawns List")]
 		public void AddTreasureSpawn(CharacterDef charDef, int amount) {
+			EnsureListSpawnEntry();
 			TreasureSpawnEntry newSpawn = new TreasureSpawnEntry();
 			newSpawn.charDef = charDef;
 			newSpawn.amount = amount;
@@ -105,12 +263,20 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Overwrites attributes of one paticular TreasureSpawnEntry in the list of treasureSpawns")]
 		public void OverwriteTreasureSpawn(int spawnIndex, CharacterDef charDef, int amount) {
+			if (treasureSpawns.Count <= spawnIndex) {
+				// chyba !
+				return;
+			}
 			treasureSpawns[spawnIndex].charDef = charDef;
 			treasureSpawns[spawnIndex].amount = amount;
 		}
 
 		[Summary("Removes an item from the list of treasureSpawns")]
 		public void RemoveTreasureSpawn(int spawnIndex) {
+			if (treasureSpawns.Count <= spawnIndex) {
+				// chyba !
+				return;
+			}
 			treasureSpawns.RemoveAt(spawnIndex);
 		}
 	}
@@ -129,6 +295,7 @@ namespace SteamEngine.CompiledScripts {
         public int chance;
         [SaveableData]
         public int periodic;
+
     }
 
 	[SaveableClass][Dialogs.ViewableClass]
@@ -152,6 +319,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
 			TreasureChest treasure = focus as TreasureChest;
+			treasure.EnsureListItemEntry();
+			treasure.EnsureListSpawnEntry();
 			dialogHandler.CreateBackground(300);
 			dialogHandler.SetLocation(70, 50);
 
@@ -164,20 +333,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable.RowHeight = ButtonFactory.D_BUTTON_HEIGHT;
 			dialogHandler.AddTable(new GUTATable(6, 100, 0, ButtonFactory.D_BUTTON_WIDTH));
 
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateText("Prachy (exp):");
-			dialogHandler.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 1, Convert.ToString(treasure.prachy));
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,10); // goto treasurePrachyHlp gump
+			dialogHandler.LastTable[0, 0] = TextFactory.CreateText("Peníze (exp):");
+			dialogHandler.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 1, Convert.ToString(treasure.MoneyCoefficient));
+			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,10); // goto treasuremoneyCoefficientHlp gump
 
-			dialogHandler.LastTable[1, 0] = TextFactory.CreateText("Check:");
-			dialogHandler.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 2, Convert.ToString(treasure.check));
+			dialogHandler.LastTable[1, 0] = TextFactory.CreateText("Šek:");
+			dialogHandler.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 2, Convert.ToString(treasure.Check));
 			dialogHandler.LastTable[1, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,11); // goto treasureCheckHlp gump
 			
 			dialogHandler.LastTable[2, 0] = TextFactory.CreateText("Perioda:");
-			dialogHandler.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 3, Convert.ToString(treasure.periode));
-			dialogHandler.LastTable[2, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,12); // goto treasurePeriodicHlp gump
+			dialogHandler.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 3, Convert.ToString(treasure.CycleTime));
+			dialogHandler.LastTable[2, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,12); // goto treasureperiodicHlp gump
 			
 			dialogHandler.LastTable[3, 0] = TextFactory.CreateText("Lockpick:");
-			dialogHandler.LastTable[3, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 4, Convert.ToString(treasure.lockpick));
+			dialogHandler.LastTable[3, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 4, Convert.ToString(treasure.Lockpick));
 			dialogHandler.LastTable[3, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,13); // goto treasureLockpickHlp gump
 
 			dialogHandler.LastTable[4, 0] = TextFactory.CreateText("LastOpened:");
@@ -195,10 +364,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(2, ButtonFactory.D_BUTTON_WIDTH, 100, 0));
 			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2); // goto treasureBounty gump
 			dialogHandler.LastTable[0, 1] = TextFactory.CreateText("Poklad");
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(" "+Convert.ToString(treasure.treasureItems.Count));
+			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(" "+Convert.ToString(treasure.TreasureItems.Count));
 			dialogHandler.LastTable[1, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3); // goto treasureSpawns gump
 			dialogHandler.LastTable[1, 1] = TextFactory.CreateText("Spawny");
-			dialogHandler.LastTable[1, 2] = TextFactory.CreateText(" "+Convert.ToString(treasure.treasureSpawns.Count));
+			dialogHandler.LastTable[1, 2] = TextFactory.CreateText(" "+Convert.ToString(treasure.TreasureSpawns.Count));
 
 			dialogHandler.MakeLastTableTransparent();
 
@@ -221,22 +390,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					return;
 				case 1:	// OK
 					if (gr.GetNumberResponse(1) > 0) {
-						treasure.prachy = (int) gr.GetNumberResponse(1);
+						treasure.MoneyCoefficient = (int) gr.GetNumberResponse(1);
 					} else {
-						p.RedMessage("Hodnota Prachy musí být kladná !");
+						p.RedMessage("Hodnota moneyCoefficient musí být kladná !");
 					}
 					if (gr.GetNumberResponse(2) >= 0) {
-						treasure.check = (int) gr.GetNumberResponse(2);
+						treasure.Check = (int) gr.GetNumberResponse(2);
 					} else {
 						p.RedMessage("Hodnota Check musí být kladná !");
 					}
 					if (gr.GetNumberResponse(3) > 0) {
-						treasure.periode = (int) gr.GetNumberResponse(3);
+						treasure.CycleTime = (int) gr.GetNumberResponse(3);
 					} else {
 						p.RedMessage("Hodnota Perioda musí být kladná !");
 					}
 					if (gr.GetNumberResponse(4) >= 0) {
-						treasure.lockpick = (int) gr.GetNumberResponse(4);
+						treasure.Lockpick = (int) gr.GetNumberResponse(4);
 					} else {
 						p.RedMessage("Hodnota lockpick musí být kladná !");
 					}
@@ -258,17 +427,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					return;
 
 				// Help dialogy
-				case 10:	//help prachy
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Prachy", "Promìnná 'Prachy' udává poèet penìz generovaných stáøím pokladu");
+				case 10:	//help moneyCoefficient
+					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Peníze", "Promìnná 'Peníze' udává poèet penìz generovaných stáøím pokladu");
 					break;
 				case 11:	//help check
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Check",	"Promìnná 'Check' je konstantní poèet penìz, který bude pokaždé do pokladu vložen.<br>"+
-																								"Nemá vliv na hodnotu 'prachy'. Suma vypoèítaná z této složky se prostì pøiète k celkovému výnosu.");
+					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Šek",	"Promìnná 'Šek' je konstantní poèet penìz, který bude pokaždé do pokladu vložen.<br>"+
+																								"Nemá vliv na hodnotu 'moneyCoefficient'. Suma vypoèítaná z této složky se prostì pøiète k celkovému výnosu.");
 					break;
 				case 12:	//help perioda
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Prachy",	"Promìnná 'perioda' je èas, po kterém se násobí periodic itemy. Èas posledního otevøení pokladu je uložen "+
-																								"a po dalším otevøení hráèi se rozdíl èasù podìlí periodic konstantou. Výsledná hodnota udává poèet cyklù, "+
-																								"které budou generovat itemy z pokladu s kladným attributem periodic.");
+					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Perioda",	"Promìnná 'perioda' je èas v sekundách, po kterém se násobí periodic itemy. Èas posledního otevøení pokladu "+
+																								"je uložen a po dalším otevøení hráèi se rozdíl èasù podìlí periodic konstantou. Výsledná hodnota udává poèet cyklù, "+
+																								"které budou generovat itemy z pokladu s kladným attributem periodic.<br>"+
+																								" vzorec pro periodic itemy:<br><\t> (lastOpened/Perioda)*itemPeriodic");
 					break;
 				case 13:	//help lockpick
 					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Lockpick",	"Promìnná 'lockpick' udává minimální potøebný skill pro odemèení pokladu. Nulová hodnota nechá poklad"+
@@ -292,8 +462,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
-			List<TreasureItemEntry> trItems = (focus as TreasureChest).treasureItems;
-			int rowCount=trItems.Count;
+			TreasureChest treasure = focus as TreasureChest;
+			List<TreasureItemEntry> trItems = (focus as TreasureChest).TreasureItems;
+			int rowCount = treasure.TreasureItems.Count;
 			int i=0;
 			//TreasureChest treasure = focus as TreasureChest;
 			dialogHandler.CreateBackground(500);
@@ -308,9 +479,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable.RowHeight = ButtonFactory.D_BUTTON_HEIGHT;
 			dialogHandler.AddTable(new GUTATable(1, 220, 70, 70, 80, ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.LastTable[0, 0] = TextFactory.CreateText(" Itemdef");
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" Amount");
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(" Chance");
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateText(" Periodic");
+			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" amount");
+			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(" chance");
+			dialogHandler.LastTable[0, 3] = TextFactory.CreateText(" periodic");
 			
 			// Second row
 			dialogHandler.AddTable(new GUTATable(rowCount, 220, 70, 70, 80, ButtonFactory.D_BUTTON_WIDTH));
@@ -347,7 +518,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					if (gr.pressedButton > 2) {	// not OK or add button - i.e. removing button
 						ignore = Convert.ToInt32(gr.pressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
 					}
-					for(int i = 0; i < treasure.treasureItems.Count; i++) {
+					for(int i = 0; i < treasure.TreasureItems.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
 							thisItem = ItemDef.Get(thisDef) as ItemDef;
@@ -355,13 +526,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								p.RedMessage("'" + thisDef + "' neni platny defname!");
 								err = true;
 							} else if (gr.GetNumberResponse(i * 10 + 2) < 1) {
-								p.RedMessage("Amount pro '" + thisDef + "' musi byt kladny!");
+								p.RedMessage("amount pro '" + thisDef + "' musi byt kladny!");
 								err = true;
 							} else if (gr.GetNumberResponse(i * 10 + 3) < 1) {
-								p.RedMessage("Chance pro '" + thisDef + "' musi byt kladny!");
+								p.RedMessage("chance pro '" + thisDef + "' musi byt kladny!");
 								err = true;
 							} else if (gr.GetNumberResponse(i * 10 + 4) < 0) {
-								p.RedMessage("Periodic pro '" + thisDef + "' nesmi byt zaporny!");
+								p.RedMessage("periodic pro '" + thisDef + "' nesmi byt zaporny!");
 								err = true;
 							} else {
 								treasure.OverwriteTreasureItem(i, thisItem, (int) gr.GetNumberResponse(i * 10 + 2), (int) gr.GetNumberResponse(i * 10 + 3), (int) gr.GetNumberResponse(i * 10 + 4));
@@ -369,13 +540,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 					}
 					if (gr.pressedButton > 2) { // not OK or add button
-						treasure.RemoveTreasureItem(Convert.ToInt32(gr.pressedButton) - 10);	//Gets the value correspondent to the position of an item in the arrayList of treasureItems
+						treasure.RemoveTreasureItem(Convert.ToInt32(gr.pressedButton) - 10);	//Gets the value correspondent to the position of an item in the List of treasureItems
 						treasure.Dialog(p, this);
 						return;
 					}
 					if (gr.pressedButton == 2) { //add
 						p.SysMessage("Pøidán defaultní item.");
-						treasure.AddTreasureItem((ItemDef) ItemDef.Get("i_bag"), 1, 100, 0);
+						treasure.AddTreasureItem(treasure.DefaultTreasureItem, 1, 100, 0);
 						treasure.Dialog(p, this);
 						return;
 					}
@@ -396,8 +567,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
-			List<TreasureSpawnEntry> trSpawns = ((TreasureChest) focus).treasureSpawns;
-			int rowCount = trSpawns.Count;
+			List<TreasureSpawnEntry> trSpawns = ((TreasureChest) focus).TreasureSpawns;
+			TreasureChest treasure = focus as TreasureChest;
+			int rowCount = treasure.TreasureSpawns.Count;
 			int i=0;
 			//TreasureChest treasure = focus as TreasureChest;
 			dialogHandler.CreateBackground(430);
@@ -412,7 +584,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.LastTable.RowHeight = ButtonFactory.D_BUTTON_HEIGHT;
 			dialogHandler.AddTable(new GUTATable(1, 300, 70, ButtonFactory.D_BUTTON_WIDTH));
 			dialogHandler.LastTable[0, 0] = TextFactory.CreateText(" Character Def");
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" Amount");
+			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" amount");
 			
 			// Second row
 			dialogHandler.AddTable(new GUTATable(rowCount, 300, 70, ButtonFactory.D_BUTTON_WIDTH));
@@ -443,11 +615,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					bool err=false;
 					string thisDef;
 					CharacterDef thisChar;
-					int ignore=-1;					// variable ignore has assigned a safe value, which garantees that all values will be modified
+					int ignore=-1;					// a safe value was assigned to the variable ignore, which garantees that all values will be modified
 					if (gr.pressedButton > 2) {	// not OK or Add button - i.e. removing button
 						ignore = Convert.ToInt32(gr.pressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
 					}
-					for(int i = 0; i < treasure.treasureSpawns.Count; i++) {
+					for(int i = 0; i < treasure.TreasureSpawns.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
 							thisChar = CharacterDef.Get(thisDef) as CharacterDef;
@@ -455,7 +627,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								p.RedMessage("'" + thisDef + "' neni platny characterDef!");
 								err = true;
 							} else if (gr.GetNumberResponse(i * 10 + 2) < 1) {
-								p.RedMessage("Amount pro characterDef '" + thisDef + "' musi byt kladny!");
+								p.RedMessage("amount pro characterDef '" + thisDef + "' musi byt kladny!");
 								err = true;
 							} else {
 								treasure.OverwriteTreasureSpawn(i, thisChar, (int) gr.GetNumberResponse(i * 10 + 2));
@@ -463,7 +635,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 					}
 					if (gr.pressedButton > 2) { // not OK or Add button
-						treasure.RemoveTreasureSpawn(Convert.ToInt32(gr.pressedButton) - 10);	//Gets the value correspondent to the position of an item in the arrayList of treasureItems
+						treasure.RemoveTreasureSpawn(Convert.ToInt32(gr.pressedButton) - 10);	//Gets the value correspondent to the position of an item in the List of treasureItems
 						treasure.Dialog(p, this);
 						return;
 					}
