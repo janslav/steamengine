@@ -276,7 +276,7 @@
 500275	You can only build this in a house.
 500276	You can only place this in a house or on a ship that you own!
 500277	Construction aborted. Please try again.
-500278	As a young player, you may not cast beneficial spells onto older players.     ******
+500278	As a young player, you may not cast beneficial spells onto older players.
 500279	You pour the potion into a bottle...
 500280	...and place it into your backpack.
 500281	...but there is no room in your backpack.
@@ -798,7 +798,7 @@
 500797	under Help and Guidance / Playguide / Counselors.
 500798	Enter OBJ_NUM, (X, Y) (X, Y)
 500799	Object Deletion cancelled.
-500800	Format for operations area incorrect.
+500800	Format for operations area incorrect.			*******	****	***	****	****	**
 500801	A sense of warmth fills your body!
 500802	A feeling of power surges through your veins!
 500803	You feel as though you've slept for days!
