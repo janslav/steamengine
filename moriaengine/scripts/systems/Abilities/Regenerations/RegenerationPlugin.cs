@@ -28,7 +28,6 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Plugin managing all characters regenerations, on timer periodically checks all regens"+
 			"and adds correct number of points to be regenerated")]
 	public partial class RegenerationPlugin {		
-		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
 		internal static PluginKey regenerationsPluginKey = PluginKey.Get("_regenerations_");
 
         private double lastServerTime; //last time the holder obtained some stats by regen
@@ -38,6 +37,7 @@ namespace SteamEngine.CompiledScripts {
         private const double MAX_TIMER = 1.0d; //maximal timer usable
 
 		public void On_Assign() {
+			lastServerTime = Globals.TimeInSeconds; //set the first time to be used for regeneration
 			Timer = MIN_TIMER; //set the basic timer for the first regen round
 		}
 
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_Timer() {            
             if (!ModifyAnything()) {
                 //delete the plugin for now. it will be renewed when hits/mana/stamina lowers
-				//or when the abilities get some point...
+				//or when the regenerations get some point...
 				Delete();                
             }
 			
@@ -61,17 +61,38 @@ namespace SteamEngine.CompiledScripts {
 			//count the number of modified stats points (if any!)
 			short hitsChange = 0, stamChange = 0, manaChange = 0;
 			if (hitsRegenSpeed != 0 && holder.Hits != holder.MaxHits) {
-				hitsChange = CountStatChange(hitsRegenSpeed, ref residuumHits, timeElapsed);
+				short countedChange = CountStatChange(hitsRegenSpeed, ref residuumHits, timeElapsed);
+				//do not overgo the maxhits or undergo the 0
+				if (countedChange < 0) {
+					//we are substracting - do not go below zero!
+					hitsChange = (short) Math.Max(-holder.Hits, countedChange);
+				} else {
+					hitsChange = (short) Math.Min(holder.MaxHits - holder.Hits, countedChange);
+				}
 			} else {
 				residuumHits = 0.0; //nothing should be left for the next round!
 			}
 			if (stamRegenSpeed != 0 && holder.Stam != holder.MaxStam) {
-				stamChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed);
+				short countedChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed)
+				//do not overgo the maxstam or undergo the 0
+				if (countedChange < 0) {
+					//we are substracting - do not go below zero!
+					stamChange = (short) Math.Max(-holder.Stam, countedChange);
+				} else {
+					stamChange = (short) Math.Min(holder.MaxStam - holder.Stam, countedChange);
+				}
 			} else {
 				residuumStam = 0.0;
 			}
 			if (manaRegenSpeed != 0 && holder.Mana != holder.MaxMana) {
-				manaChange = CountStatChange(manaRegenSpeed, ref residuumMana, timeElapsed);
+				short countedChange = CountStatChange(manaRegenSpeed, ref residuumMana, timeElapsed);
+				//do not overgo the maxstam or undergo the 0
+				if (countedChange < 0) {
+					//we are substracting - do not go below zero!
+					manaChange = (short) Math.Max(-holder.Mana, countedChange);
+				} else {
+					manaChange = (short) Math.Min(holder.MaxMana - holder.Mana, countedChange);
+				}
 			} else {
 				residuumMana = 0.0;
 			}
@@ -124,17 +145,31 @@ namespace SteamEngine.CompiledScripts {
             return true;
         }
 
+		[Remark("When do we modify anything?")]
         private bool ModifyAnything() {
             Character holder = (Character)this.Cont;
-            //either all stats are full
-            if (holder.Hits == holder.MaxHits && holder.Mana == holder.MaxMana && holder.Stam == holder.MaxStam) {
-                return false;
+            //either some stat is not full and has positive regeneration - adding values
+			if ((holder.Hits < holder.MaxHits && holder.HitsRegenSpeed > 0) ||
+				(holder.Mana < holder.MaxMana && holder.ManaRegenSpeed > 0) ||
+				(holder.Stam < holder.MaxStam && holder.StamRegenSpeed > 0)) {
+                return true;
             }
-            //or all abilities are zeroized (speed is 0)
-            if (holder.HitsRegenSpeed == 0 && holder.StamRegenSpeed == 0 && holder.ManaRegenSpeed == 0) {
-                return false;
-            }
-            return true;
+			
+			//or some non-zeroized stat has negative regeneration - subtracting values
+			if ((holder.Hits > 0 && holder.HitsRegenSpeed < 0) ||
+				(holder.Mana > 0 && holder.ManaRegenSpeed < 0) ||
+				(holder.Stam > 0 && holder.StamRegenSpeed < 0)) {
+				return true;
+			}
+
+			//or some stat is greater than its maximal value - we will decrease it
+			if (holder.Hits > holder.MaxHits ||
+				holder.Mana > holder.MaxMana ||
+				holder.Stam > holder.MaxStam) {
+				return true;
+			}
+
+            return false;
         }
 
         [Summary("Count and return the ideal timer for the given regenSpeed - this means "+
@@ -172,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!futureCont.Flag_Dead) {
 				//check if he doesn't have the plugin already
 				if (!futureCont.HasPlugin(regenerationsPluginKey)) {
-					futureCont.AddNewPlugin(regenerationsPluginKey, defInstance);
+					futureCont.AddNewPlugin(regenerationsPluginKey, SingletonScript<RegenerationPluginDef>.Instance);
 				}
 			}
 		}
