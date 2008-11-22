@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Common method for simple switching the ability off")]		
-		public void UnActivate(Character chr) {
+		private void UnActivate(Character chr) {
 			Ability ab = chr.GetAbilityObject(this); //will return null if the ability was unassigned
 			UnActivate(chr, ab);
 		}

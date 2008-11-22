@@ -21,18 +21,13 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[ViewableClass]
-	[Summary("This class holds the ability of a profession assigned to one character (cont field). "+
+	[ViewableClass("Profession")]
+	[Summary("This class holds the profession assigned to one character (cont field). "+
 			"it holds a reference to the ProfessionDef, dispatches all trigger calls etc.")]
-	public sealed class Profession {
-		private Character cont;
+	public sealed partial class ProfessionPlugin {
+		internal static PluginKey professionKey = PluginKey.Get("profession");
 
 		private ProfessionDef def;
-
-		internal Profession(ProfessionDef def, Character cont) {
-			this.cont = cont;
-			this.def = def;
-		}
 
 		[Summary("Initialize the profession on the character")]
 		internal void Init() {			
@@ -45,22 +40,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Name of the profession")]
-		public string Name {
+		public string ProfessionName {
 			get {
 				return def.Name;
-			}
-		}
-
-		[Summary("Character who has this profession")]
-		public Character Cont {
-			get {
-				return cont;
 			}
 		}
 
 		public ProfessionDef ProfessionDef {
 			get {
 				return def;
+			}
+			internal set {//just internal, not to be settable via the dialog!
+				def = value;
 			}
 		}
 	}

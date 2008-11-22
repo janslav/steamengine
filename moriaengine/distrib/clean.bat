@@ -1,4 +1,4 @@
 @echo off
 @echo off
 
-nant -buildfile:nant/default.build clean
+..\bin\nant -buildfile:nant/default.build clean
