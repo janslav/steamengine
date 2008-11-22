@@ -407,6 +407,9 @@
     <Compile Include="..\..\scripts\systems\Professions\Profession.cs">
       <Link>systems\Professions\Profession.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\Profession.Generated.cs">
+      <Link>systems\Professions\Profession.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Professions\ProfessionDef.cs">
       <Link>systems\Professions\ProfessionDef.cs</Link>
     </Compile>

@@ -38,8 +38,9 @@ namespace SteamEngine.CompiledScripts {
 		
 		[Summary("Method for assigning the selected profession to specified player")]
 		public void AssignTo(Player plr) {
-			Profession prof = new Profession(this, plr);
-			plr.Profession = prof;
+			ProfessionPlugin pplInst = plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
+			pplInst.Cont = plr;//set the reference on player and the professiondef
+			pplInst.Def = this;
 			plr.AddTriggerGroup(scriptedTriggers); //LScript trigs. (if any)
 			plr.AddTriggerGroup(CompiledTriggers); //compiled trigs. (if any)
 			Trigger_Assign(prof, plr);
@@ -50,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 			//implement if needed...
 		}
 
-		protected void Trigger_Assign(Profession prof, Player plr) {
+		protected void Trigger_Assign(ProfessionPlugin prof, Player plr) {
 			TryTrigger(plr, ProfessionDef.tkAssign, new ScriptArgs(prof));
 			plr.On_ProfessionAssign(this);
 			On_Assign(plr);

@@ -78,18 +78,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Profession
-		public Profession Profession {
+		public ProfessionPlugin Profession {
 			get {
-				return profession;
-			}
-
-			internal set {//internal since we dont want to set this using property uncontrollably!
-				profession = value;
+				return (ProfessionPlugin)GetPlugin(ProfessionPlugin.professionKey);
 			}
 		}
 
 		public virtual void On_ProfessionAssign(ProfessionDef profDef) {
-			//this trigger is called after the profession ahs been assigned, so we can use it now
+			//this trigger is called after the profession has been assigned, so we can use it now
 			Profession.Init();
 		}
 		#endregion Profession

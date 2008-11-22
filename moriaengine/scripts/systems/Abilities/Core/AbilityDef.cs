@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability"+
 				"and in case he has, it runs the protected activation method")]
-		public virtual void Activate(Character chr) {			
+		public void Activate(Character chr) {			
 			Ability ab = chr.GetAbilityObject(this);
 			if (ab == null || ab.Points == 0) {
 				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
