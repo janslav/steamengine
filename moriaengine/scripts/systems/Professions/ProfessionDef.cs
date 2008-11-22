@@ -38,23 +38,42 @@ namespace SteamEngine.CompiledScripts {
 		
 		[Summary("Method for assigning the selected profession to specified player")]
 		public void AssignTo(Player plr) {
-			ProfessionPlugin pplInst = plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
+			ProfessionPlugin pplInst = plr.GetPlugin(ProfessionPlugin.professionKey);
+			if (pplInst != null) {//we already have some profession...
+				//first remove the old profession (including proper unassignment of all TGs etc.)
+				Trigger_UnAssign(pplInst.Def, plr);
+			}
+			//add the new profession
+			plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
 			pplInst.Cont = plr;//set the reference on player and the professiondef
 			pplInst.Def = this;
-			plr.AddTriggerGroup(scriptedTriggers); //LScript trigs. (if any)
-			plr.AddTriggerGroup(CompiledTriggers); //compiled trigs. (if any)
 			Trigger_Assign(prof, plr);
 		}
 
 		#region triggerMethods
 		protected virtual void On_Assign(Player plr) {
-			//implement if needed...
+			plr.AddTriggerGroup(scriptedTriggers); //LScript trigs. (if any)
+			plr.AddTriggerGroup(CompiledTriggers); //compiled trigs. (if any)
 		}
 
 		protected void Trigger_Assign(ProfessionPlugin prof, Player plr) {
 			TryTrigger(plr, ProfessionDef.tkAssign, new ScriptArgs(prof));
 			plr.On_ProfessionAssign(this);
 			On_Assign(plr);
+		}
+
+		protected virtual void On_UnAssign(Player plr) {
+			plr.RemoveTriggerGroup(scriptedTriggers); //remove both TGs (if any)
+			plr.RemoveTriggerGroup(CompiledTriggers);
+			plr.RemovePlugin(ProfessionPlugin.professionKey);//and also the plugin...
+		}
+
+		[Remark("This trigger method should be called only when assigning another profession over one old "+
+				"so the player never stays without the profession as a result")]
+		protected void Trigger_UnAssign(ProfessionPlugin prof, Player plr) {
+			TryTrigger(plr, ProfessionDef.tk_UnAssign, new ScriptArgs(prof));
+			plr.On_ProfessionUnAssign(this);
+			On_UnAssign(plr);
 		}
 		#endregion triggerMethods
 
