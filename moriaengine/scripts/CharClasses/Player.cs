@@ -84,9 +84,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Remark("Trigger method called when the profession is assigned to the player. "+
+				"It initializes all skills' min and max values.")]
 		public virtual void On_ProfessionAssign(ProfessionDef profDef) {
 			//this trigger is called after the profession has been assigned, so we can use it now
 			Profession.Init();
+		}
+
+		public virtual void On_ProfessionUnAssign(ProfessionDef profDef) {
+				
 		}
 		#endregion Profession
 
