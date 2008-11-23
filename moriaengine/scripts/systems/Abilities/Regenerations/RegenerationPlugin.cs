@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 				residuumHits = 0.0; //nothing should be left for the next round!
 			}
 			if (stamRegenSpeed != 0 && holder.Stam != holder.MaxStam) {
-				short countedChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed)
+				short countedChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed);
 				//do not overgo the maxstam or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
