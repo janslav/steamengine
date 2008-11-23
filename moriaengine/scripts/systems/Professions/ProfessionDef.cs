@@ -27,7 +27,8 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class ProfessionDef : AbstractDef {
-		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");        
+		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
+		internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
 
 		private static Dictionary<string, ProfessionDef> byName = new Dictionary<string, ProfessionDef>(StringComparer.OrdinalIgnoreCase);
 
@@ -38,16 +39,15 @@ namespace SteamEngine.CompiledScripts {
 		
 		[Summary("Method for assigning the selected profession to specified player")]
 		public void AssignTo(Player plr) {
-			ProfessionPlugin pplInst = plr.GetPlugin(ProfessionPlugin.professionKey);
+			ProfessionPlugin pplInst = (ProfessionPlugin)plr.GetPlugin(ProfessionPlugin.professionKey);
 			if (pplInst != null) {//we already have some profession...
 				//first remove the old profession (including proper unassignment of all TGs etc.)
-				Trigger_UnAssign(pplInst.Def, plr);
+				Trigger_UnAssign(pplInst, plr);
 			}
-			//add the new profession
-			plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
-			pplInst.Cont = plr;//set the reference on player and the professiondef
-			pplInst.Def = this;
-			Trigger_Assign(prof, plr);
+			//add the new profession (update the local variable reference to ProfessionPlugin
+			pplInst = (ProfessionPlugin)plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
+			pplInst.ProfessionDef = this;
+			Trigger_Assign(pplInst, plr);
 		}
 
 		#region triggerMethods
@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts {
 		[Remark("This trigger method should be called only when assigning another profession over one old "+
 				"so the player never stays without the profession as a result")]
 		protected void Trigger_UnAssign(ProfessionPlugin prof, Player plr) {
-			TryTrigger(plr, ProfessionDef.tk_UnAssign, new ScriptArgs(prof));
+			TryTrigger(plr, ProfessionDef.tkUnAssign, new ScriptArgs(prof));
 			plr.On_ProfessionUnAssign(this);
 			On_UnAssign(plr);
 		}

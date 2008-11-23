@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void Init() {			
 			//assign all skills - set the basic values
 			SkillName oneName;
-			foreach (ISkill skill in cont.Skills) {
+			foreach (ISkill skill in ((Player)Cont).Skills) {//the Cont of the Profession is always Player...
 				oneName = (SkillName) skill.Id;
 				skill.RealValue = Math.Min(def.BasicSkill(oneName), def.MaxSkill(oneName));
 			}
