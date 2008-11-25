@@ -42,7 +42,7 @@ namespace SteamEngine {
 			get {
 				return formatArgs;
 			}
-			set {
+			internal set {
 				formatArgs = value;
 				args = null;
 			}

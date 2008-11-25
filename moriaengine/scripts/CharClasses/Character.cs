@@ -189,8 +189,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public bool IsAliveAndValid {
+			get {
+				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !this.Flag_Insubst;
+			}
+		}
+
 		public bool CheckAliveWithMessage() {
-			if (this.Flag_Dead) {
+			if (this.Flag_Disconnected) {
+				return false;
+			} else if (this.Flag_Dead) {
 				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
 				return false;
 			} else if (this.Flag_Insubst && !this.IsGM) {
@@ -354,16 +362,16 @@ namespace SteamEngine.CompiledScripts {
 			if (target.Flag_InvisByMagic) {
 				return this.IsGM;
 			}
-			if (target.Flag_Hidden) {
-				if (this.IsGM) {
-					return true;
-				} else {
-					HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
-					return ((ssp != null) &&
-						(ssp.hadDetectedMe != null) &&
-						(ssp.hadDetectedMe.Contains(this)));
-				}
-			}
+			//if (target.Flag_Hidden) {
+			//    if (this.IsGM) {
+			//        return true;
+			//    } else {
+			//        HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+			//        return ((ssp != null) &&
+			//            (ssp.hadDetectedMe != null) &&
+			//            (ssp.hadDetectedMe.Contains(this)));
+			//    }
+			//}
 			return true;
 		}
 
@@ -381,6 +389,19 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 			return true;
+		}
+
+		public bool CanInteractWith(Character target) {
+			if (this.Flag_Dead) {
+				return false;
+			}
+
+			bool canSee = this.CanSeeVisibility(target);
+			if (!canSee) {
+				return false;
+			}
+
+			return !target.Flag_Dead;
 		}
 
 		public override byte StatLockByte {
@@ -1267,37 +1288,40 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Load(PropsSection input) {
 			int n = AbstractSkillDef.SkillsCount;
 			for (ushort i = 0; i < n; i++) {
-				string skillKey = AbstractSkillDef.ById(i).Key;
-				PropsLine ps = input.TryPopPropsLine(skillKey);
-				if (ps != null) {
-					ushort val;
-					if (TagMath.TryParseUInt16(ps.value, out val)) {
-						SetSkill(i, val);
-					} else {
-						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+				AbstractSkillDef skillDef = AbstractSkillDef.ById(i);
+				if (skillDef != null) {
+					string skillKey = skillDef.Key;
+					PropsLine ps = input.TryPopPropsLine(skillKey);
+					if (ps != null) {
+						ushort val;
+						if (TagMath.TryParseUInt16(ps.value, out val)) {
+							SetSkill(i, val);
+						} else {
+							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+						}
 					}
-				}
 
-				ps = input.TryPopPropsLine("Cap." + skillKey);
-				if (ps != null) {
-					ushort val;
-					if (TagMath.TryParseUInt16(ps.value, out val)) {
-						SetSkillCap(i, val);
-					} else {
-						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+					ps = input.TryPopPropsLine("Cap." + skillKey);
+					if (ps != null) {
+						ushort val;
+						if (TagMath.TryParseUInt16(ps.value, out val)) {
+							SetSkillCap(i, val);
+						} else {
+							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+						}
 					}
-				}
 
-				ps = input.TryPopPropsLine("SkillLock." + skillKey);
-				if (ps != null) {
-					if (string.Compare("Lock", ps.value, true) == 0) {
-						this.SetSkillLockType(i, SkillLockType.Locked);
-					} else if (string.Compare("Down", ps.value, true) == 0) {
-						this.SetSkillLockType(i, SkillLockType.Down);
-					} else if (string.Compare("Up", ps.value, true) == 0) {
-						this.SetSkillLockType(i, SkillLockType.Increase);
-					} else {
-						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+					ps = input.TryPopPropsLine("SkillLock." + skillKey);
+					if (ps != null) {
+						if (string.Compare("Lock", ps.value, true) == 0) {
+							this.SetSkillLockType(i, SkillLockType.Locked);
+						} else if (string.Compare("Down", ps.value, true) == 0) {
+							this.SetSkillLockType(i, SkillLockType.Down);
+						} else if (string.Compare("Up", ps.value, true) == 0) {
+							this.SetSkillLockType(i, SkillLockType.Increase);
+						} else {
+							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+						}
 					}
 				}
 			}
@@ -1329,10 +1353,12 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Find the appropriate Skill instance by given ID (look to the dictionary)")]
 		public override ISkill GetSkillObject(int id) {
-			AbstractSkillDef def = SkillDef.ById(id);
-			object retVal = null;
-			if (SkillsAbilities.TryGetValue(def, out retVal)) {
-				return (ISkill) retVal;//return either Skill or null if not present
+			if (this.skillsabilities != null) {
+				AbstractSkillDef def = SkillDef.ById(id);
+				object retVal = null;
+				if (this.skillsabilities.TryGetValue(def, out retVal)) {
+					return (ISkill) retVal;//return either Skill or null if not present
+				}
 			}
 			return null;
 		}
@@ -1340,8 +1366,11 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check if character has the desired skill (according to the given ID) " +
 				"if yes it also instantiates the returning value")]
 		public bool HasSkill(int id) {
-			AbstractSkillDef def = SkillDef.ById(id);
-			return SkillsAbilities.ContainsKey(def);
+			if (this.skillsabilities != null) {
+				AbstractSkillDef def = SkillDef.ById(id);
+				return this.skillsabilities.ContainsKey(def);
+			}
+			return false;
 		}
 
 		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present " +
@@ -1446,41 +1475,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//check if there are some Skills in the skillsAbilities dictionary
-		//private bool HasSomeSkills() {
-		//	//try to find one skill in the dictionary (if there is one, there are all...)
-		//	SkillDef oneSkillDef = SkillDef.ById(SkillName.Alchemy);
-		//	object outVal = null;
-		//	return SkillsAbilities.TryGetValue(oneSkillDef, out outVal);
-		//}
-
-		//private void InstantiateSkillsIfNotYetDone() {
-		//	if (!HasSomeSkills()) {
-		//		//not found, time to instantiate all and put them in the dict...
-		//		AbstractSkillDef oneSkillDef = null;
-		//		Skill oneSkill = null;
-		//		for(ushort i = 0; i < AbstractSkillDef.SkillsCount; i++) {
-		//			oneSkillDef = AbstractSkillDef.ById(i);
-		//			oneSkill = new Skill(i, this);
-		//			SkillsAbilities[oneSkillDef] = oneSkill;
-		//		}
-		//	}
-		//if (skills == null) {
-		//    skills = new Skill[AbstractSkillDef.SkillsCount];
-		//    int n = skills.Length;
-		//    for (ushort i = 0; i<n; i++) {
-		//        skills[i] = new Skill(i, this);
-		//    }
-		//}
-		//}
-
-		//public override ISkill[] Skills {
-		//    get {
-		//        InstantiateSkillsArrayIfNull();
-		//        return skills;
-		//    }
-		//}
-
 		private static TriggerKey skillChangeTK = TriggerKey.Get("skillChange");
 		public void Trigger_SkillChange(Skill skill, ushort oldValue) {
 			ushort newValue = skill.RealValue;
@@ -1498,146 +1492,79 @@ namespace SteamEngine.CompiledScripts {
 			this.SelectSkill(skillId);
 		}
 
-		public override void SelectSkill(AbstractSkillDef skillDef) {
-			this.SelectSkill((SkillDef) skillDef);
+		[Summary("Start a skill.")]
+		public void SelectSkill(SkillName skillName) {
+			SelectSkill((SkillDef) AbstractSkillDef.ById((int) skillName));
+		}
+
+		[Summary("Start a skill.")]
+		public void SelectSkill(int skillId) {
+			SelectSkill((SkillDef) AbstractSkillDef.ById(skillId));
 		}
 
 		[Summary("Start a skill. "
 		+ "Is also called when client does the useskill macro")]
-		public void SelectSkill(int skillId) {
-			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
-			SelectSkill(skillDef); //better :-)
-			//if (skillDef != null) {
-			//	skillDef.Select(this);
-			//}
+		public override void SelectSkill(AbstractSkillDef skillDef) {
+			this.SelectSkill((SkillDef) skillDef);
 		}
 
 		[Summary("Start a skill.")]
 		public void SelectSkill(SkillDef skillDef) {
 			if (skillDef != null) {
-				skillDef.Select(this);
+				SkillSequenceArgs args = SkillSequenceArgs.Acquire(this, skillDef);
+				args.PhaseSelect();
 			}
 		}
 
-		[Summary("Start a skill.")]
-		public void SelectSkill(SkillName skillName) {
-			SelectSkill((int) skillName);
+		public void SelectSkill(SkillSequenceArgs skillSeqArgs) {
+			Sanity.IfTrueThrow(skillSeqArgs.Self != this, "skillSeqArgs.Self != this");
+			skillSeqArgs.PhaseSelect();
 		}
 
-		[Summary("Call the \"Start\" phase of a skill. This should typically be called from within implementation of the skill's Select phase.")]
-		public void StartSkill(int skillId) {
-			SkillDef skillDef = (SkillDef) AbstractSkillDef.ById(skillId);
-			StartSkill(skillDef); //better :)
-			//if (skillDef != null) {
-			//    if (currentSkill != null) {
-			//        this.AbortSkill();
-			//    }
-			//    currentSkill = skillDef;
-			//    skillDef.Start(this);
-			//}
-		}
-
-		[Summary("Call the \"Start\" phase of a skill. This should typically be called from within implementation of the skill's Select phase.")]
-		public void StartSkill(SkillDef skillDef) {
-			if (skillDef != null) {
-				this.TryAbortSkill();
-
-				currentSkill = skillDef;
-				skillDef.Start(this);
+		public SkillDef CurrentSkill {
+			get {
+				SkillSequenceArgs ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
+				if (ssa != null) {
+					return ssa.SkillDef;
+				}
+				return null;
 			}
-		}
-
-		[Summary("Call the \"Start\" phase of a skill. This should typically be called from within implementation of the skill's Select phase.")]
-		public void StartSkill(SkillName skillName) {
-			this.StartSkill((int) skillName);
 		}
 
 		public SkillName CurrentSkillName {
 			get {
-				if (currentSkill == null) {
-					return SkillName.None;
+				SkillSequenceArgs ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
+				if (ssa != null) {
+					return (SkillName) ssa.SkillDef.Id;
 				}
-				return (SkillName) currentSkill.Id;
+				return SkillName.None;
 			}
-		}
-
-		public bool TryAbortSkill() {
-			if (currentSkill != null) {
-				currentSkill.Abort(this);
-				this.ClearSkillFields();
-				return true;
-			}
-			return false;
 		}
 
 		public void AbortSkill() {
-			if (currentSkill != null) {
-				currentSkill.Abort(this);
-			}
-			this.ClearSkillFields();
+			SkillSequenceArgs.AbortSkill(this);
 		}
 
-		public void ClearSkillFields() {
-			this.currentSkill = null;
-			this.currentSkillParam1 = null;
-			this.currentSkillTarget1 = null;
-			this.currentSkillTarget2 = null;
-			this.RemoveTimer(skillTimerKey);
-		}
-
-		private static TimerKey skillTimerKey = TimerKey.Get("_skillTimer_");
-
-		[SaveableClass]
-		[DeepCopyableClass]
-		public class SkillStrokeTimer : BoundTimer {
-			[LoadingInitializer]
-			[DeepCopyImplementation]
-			public SkillStrokeTimer() {
-			}
-
-			protected sealed override void OnTimeout(TagHolder cont) {
-				Logger.WriteDebug("SkillStrokeTimer OnTimeout on " + this.Cont);
-				Character self = cont as Character;
-				if (self != null) {
-					self.DelayedSkillStroke();
-				}
-			}
-		}
-
-		public void DelaySkillStroke(double seconds) {
-			Sanity.IfTrueThrow((currentSkill == null),
-				"DelaySkillStroke called on " + this + ", which currently does no skill.");
-
-			//this.RemoveTimer(skillTimerKey);
-			this.AddTimer(skillTimerKey, new SkillStrokeTimer()).DueInSeconds = seconds;
-		}
-
-		public void DelayedSkillStroke() {
-			if (currentSkill != null) {
-				currentSkill.Stroke(this);
-			}
-		}
-
-		public virtual bool On_SkillSelect(int id) {
+		public virtual bool On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
 			return false;
 		}
 
-		public virtual bool On_SkillStart(int id) {
+		public virtual bool On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			return false;
 		}
 
-		public virtual void On_SkillAbort(int id) {
+		public virtual void On_SkillAbort(SkillSequenceArgs skillSeqArgs) {
 		}
 
-		public virtual bool On_SkillFail(int id) {
+		public virtual bool On_SkillFail(SkillSequenceArgs skillSeqArgs) {
 			return false;
 		}
 
-		public virtual bool On_SkillStroke(int id) {
+		public virtual bool On_SkillStroke(SkillSequenceArgs skillSeqArgs) {
 			return false;
 		}
 
-		public virtual bool On_SkillSuccess(int id) {
+		public virtual bool On_SkillSuccess(SkillSequenceArgs skillSeqArgs) {
 			return false;
 		}
 
@@ -1795,12 +1722,12 @@ namespace SteamEngine.CompiledScripts {
         #endregion roles
 
 		public override void TryCastSpellFromBook(int spellid) {
-			MagerySkillDef.TryCastSpellFromBook(this, spellid);
+			//MagerySkillDef.TryCastSpellFromBook(this, spellid);
 		}
 
-		public void TryCastSpellFromBook(SpellDef spellDef) {
-			MagerySkillDef.TryCastSpellFromBook(this, spellDef);
-		}
+		//public void TryCastSpellFromBook(SpellDef spellDef) {
+		//    MagerySkillDef.TryCastSpellFromBook(this, spellDef);
+		//}
 
         public Character Owner {
 			get {
@@ -2279,7 +2206,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double WeaponDelay {
+		public TimeSpan WeaponDelay {
 			get {
 				//TODO: mana-dependant for mystic
 				CalculateCombatWeaponValues();

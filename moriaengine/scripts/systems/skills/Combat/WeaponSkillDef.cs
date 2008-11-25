@@ -1,18 +1,18 @@
 /*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	Or visit http://www.gnu.org/copyleft/gpl.html
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
 using System;
@@ -25,6 +25,9 @@ using SteamEngine.Timers;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class WeaponSkillDef : SkillDef {
+		//param1 = WeaponSkillPhase
+		//param2 = duein TimeSpan
+
 		public enum WeaponSkillPhase {
 			Drawing,//first phase, the target must get in under startsrike range
 			Striking//second phase, can strike after delay if target close <= range
@@ -41,65 +44,67 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public WeaponSkillDef(string defname, string filename, int headerLine)
-				: base(defname, filename, headerLine) {
+			: base(defname, filename, headerLine) {
 		}
 
-		protected override void On_Select(Character self) {
-			//self.SysMessage(this.Key+" selected");
-			Character target = self.currentSkillTarget1 as Character;
-			if (target != null) {
-				self.StartSkill(this);
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+			if (skillSeqArgs.Target1 == null || skillSeqArgs.Target1 == skillSeqArgs.Self) {
+				return true;
 			}
+			return false;
 		}
 
-		protected override void On_Start(Character self) {
-			Character target = self.currentSkillTarget1 as Character;
-			if (target != null) {
-				WeaponSkillTargetTrackerPlugin.InstallTargetTracker(target, self);
-				self.currentSkillParam1 = new WeaponSkillParam(
-					WeaponSkillPhase.Drawing,
-					0);
-					self.DelayedSkillStroke();
-			} else {
-				self.AbortSkill();
-			}
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			Character self = (Character) skillSeqArgs.Self;
+			Character target = (Character) skillSeqArgs.Target1;
+			self.AbortSkill(); //abort previous skill
+
+			WeaponSkillTargetTrackerPlugin.InstallTargetTracker(target, self);
+			skillSeqArgs.Param1 = WeaponSkillPhase.Drawing;
+			skillSeqArgs.DelayInSeconds = 0;
+			skillSeqArgs.DelayStroke();
+
+			return true;//cancel because we're not using the skill's delay just yet
 		}
 
 		static TimerKey animTk = TimerKey.Get("_weaponAnimDelay_");
 
-		protected override void On_Stroke(Character self) {
-			//self.SysMessage(this.Key+" stroking");
-			WeaponSkillParam param = (WeaponSkillParam) self.currentSkillParam1;
-			Character target = self.currentSkillTarget1 as Character;
-			if (target.IsDeleted || target.Flag_Dead || target.Flag_Insubst) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = (Character) skillSeqArgs.Self;
+			Character target = (Character) skillSeqArgs.Target1;
+			if (!self.CanInteractWith(target)) {
 				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
-				return;
+				self.AbortSkill();
+				return true;
 			}
 			int distance = Point2D.GetSimpleDistance(self, target);
-			if (param.phase == WeaponSkillPhase.Drawing) {
+			WeaponSkillPhase phase = (WeaponSkillPhase) Convert.ToInt64(skillSeqArgs.Param1);
+			if (phase == WeaponSkillPhase.Drawing) {
 				if (distance <= self.WeaponStrikeStartRange) {
-					double delay = self.WeaponDelay;
-					self.DelaySkillStroke(delay);
-					param.dueAt = Globals.TimeInSeconds + delay;
-					param.phase = WeaponSkillPhase.Striking;
-					self.AddTimer(animTk, new WeaponAnimTimer()).DueInSeconds = delay / 2;
+					skillSeqArgs.Param1 = WeaponSkillPhase.Striking;
+					TimeSpan delay = self.WeaponDelay;
+					skillSeqArgs.Param2 = Globals.TimeAsSpan + delay;
+					skillSeqArgs.DelaySpan = delay;
+					skillSeqArgs.DelayStroke();
+					self.AddTimer(animTk, new WeaponAnimTimer()).DueInSeconds = delay.TotalSeconds / 2;
+					return true;
 				}
 			} else {
 				if (distance > self.WeaponStrikeStopRange) {
 					self.AbortSkill();
-				} else if ((param.dueAt <= Globals.TimeInSeconds) &&
+				} else if ((((TimeSpan) skillSeqArgs.Param2) <= Globals.TimeAsSpan) &&
 						(distance <= self.WeaponRange)) {
 
 					Projectile projectile = self.WeaponProjectile;
 					if (projectile != null) {
 						switch (Globals.dice.Next(3)) {
 							case 0://arrow appears on ground
-								Item onGround = (Item) projectile.Dupe();
+								Projectile onGround = (Projectile) projectile.Dupe();
 								onGround.P(target);
 								onGround.Amount = 1;
 								break;
 							case 1://arrow appears in targets backpack
-								Item inPack = (Item) projectile.Dupe();
+								Projectile inPack = (Projectile) projectile.Dupe();
 								inPack.Cont = target.BackpackAsContainer;
 								inPack.Amount = 1;
 								break;
@@ -111,10 +116,10 @@ namespace SteamEngine.CompiledScripts {
 						} else {
 							projectile.Amount = amount - 1;
 						}
-					} else if (self.WeaponProjectileType != ProjectileType.None) {
-						self.AbortSkill();
+					} else if (self.WeaponProjectileType != ProjectileType.None) {						
 						self.SysMessage("Nemáš støelivo.");
-						return;
+						self.AbortSkill();
+						return true;
 					}
 
 					if (!self.Flag_Moving) {
@@ -126,25 +131,29 @@ namespace SteamEngine.CompiledScripts {
 						EffectFactory.EffectFromTo(self, target, (ushort) projectileAnim, 10, 1, 0, 0, 0, 0);
 					}
 
-					if (CheckSuccess(self, Globals.dice.Next(700))) {
-						this.Success(self);
-					} else {
-						this.Fail(self);
-					}
+					skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 
-					self.currentSkill = null;
-					if (!target.IsDeleted && !(target.Flag_Dead || target.Flag_Insubst)) {
+					if (self.CanInteractWith(target)) {
 						WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
 					} else {
 						WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);
 					}
+
+					return false;
 				}
 			}
+
+			skillSeqArgs.DelaySpan = TimeSpan.FromSeconds(1);
+			skillSeqArgs.DelayStroke();//we keep stroking, this needs to be the current skill...
+			return true;
 		}
 
-		[Dialogs.ViewableClass][Persistence.SaveableClass][DeepCopyableClass]
+		[Dialogs.ViewableClass]
+		[Persistence.SaveableClass]
+		[DeepCopyableClass]
 		public class WeaponAnimTimer : BoundTimer {
-			[Persistence.LoadingInitializer][DeepCopyImplementation]
+			[Persistence.LoadingInitializer]
+			[DeepCopyImplementation]
 			public WeaponAnimTimer() {
 			}
 
@@ -153,22 +162,27 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override void On_Success(Character self) {
-			//self.SysMessage(this.Key+" succeeded");
-			Character target = (Character) self.currentSkillTarget1;
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = (Character) skillSeqArgs.Self;
+			Character target = (Character) skillSeqArgs.Target1;
+
 			DamageManager.ProcessSwing(self, target);
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
-			//self.SysMessage(this.Key+" failed");
-			Character target = (Character) self.currentSkillTarget1;
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			Character self = (Character) skillSeqArgs.Self;
+			Character target = (Character) skillSeqArgs.Target1;
+
 			target.Trigger_HostileAction(self);
 			SoundCalculator.PlayMissSound(self);
+			return false;
 		}
 
-		protected override void On_Abort(Character self) {
-			Character target = self.currentSkillTarget1 as Character;
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			Character target = (Character) skillSeqArgs.Target1;
 			if (target != null) {
+				Character self = (Character) skillSeqArgs.Self;
 				//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 			}

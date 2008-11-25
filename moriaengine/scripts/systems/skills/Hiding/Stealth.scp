@@ -42,38 +42,36 @@ ADVRATE=10.0,200.0,800.0
 
 on=@Select
 if (Flag_Hidden)
-	this.StartSkill(Skill_Stealth)
+	return 0
 else
-	ClilocSysMessage(502725) //You must hide first
+	this.ClilocSysMessage(502725) //You must hide first
 endif
 return 1
 
 on=@Start
-if (Skill_Stealth.CheckSuccess(this, {0 700}))
-	Skill_Stealth.Success(this)
-else
-	Skill_Stealth.Fail(this)
-endif
-CurrentSkill = null;
+argo.Success = Skill_Stealth.CheckSuccess(this, {0 700})
+argo.PhaseStroke()
+return 1
 	
 on=@Success
-arg.p = GetPlugin(@@hiddenHelper)
+arg.p = this.GetPlugin(@@hiddenHelper)
 if (arg.p == null)
-	arg.p = AddNewPlugin(@@hiddenHelper, p_stealthStep)
+	arg.p = this.AddNewPlugin(@@hiddenHelper, p_stealthStep)
 endif
-arg.p.stealthStepsLeft = (Stealth / 50) + 1
-ClilocSysMessage(502730) //You begin to move quietly.
+arg.p.stealthStepsLeft = (this.Stealth / 50) + 1
+this.ClilocSysMessage(502730) //You begin to move quietly.
 
 on=@Fail
-ClilocSysMessage(502731) //You fail in your attempt to move unnoticed.
-UnHide()
+this.ClilocSysMessage(502731) //You fail in your attempt to move unnoticed.
+this.UnHide()
+
 
 [HiddenHelperPluginDef p_hiddenHelper]
 //todo: looting others should also unhide
 
 On=@SkillStart
 //according to uo stratics, these skills do not unhide...
-switch (argv(1))
+switch (argo.Skilldef.Id)
 	case SkillName.DetectHidden
 	case SkillName.ItemID
 	case SkillName.Anatomy

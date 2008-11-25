@@ -98,7 +98,7 @@ namespace SteamEngine {
 			throw new Exception("This should not happen");
 		}
 
-		public static IEnumerable<AbstractScript> AllScrips {
+		public static IEnumerable<AbstractScript> AllScripts {
 			get {
 				return byDefname.Values;
 			}

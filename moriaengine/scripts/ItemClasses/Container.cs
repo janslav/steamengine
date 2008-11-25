@@ -67,12 +67,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_DClick(AbstractCharacter from) {
-			//(TODO): check ownership(?), trigger snooping(done), etc...
+			//(TODO): check ownership(?), trigger snooping(done?), etc...
 			Character topChar = this.TopObj() as Character;
 			Character fromAsChar = (Character) from;
 			if ((topChar != null) && (topChar != fromAsChar) && (!fromAsChar.IsGM)) {
-				fromAsChar.currentSkillTarget1 = this;
-				fromAsChar.SelectSkill(SkillName.Snooping);
+				SkillSequenceArgs ssa = SkillSequenceArgs.Acquire(fromAsChar, SkillName.Snooping, this, null, null, null, null);
+				ssa.PhaseSelect();
 			} else {
 				this.OpenTo(fromAsChar);
 			}

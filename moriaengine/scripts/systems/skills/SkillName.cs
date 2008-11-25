@@ -22,7 +22,7 @@ using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	public enum SkillName : short {
+	public enum SkillName {
 		None = -1,
 		Alchemy = 0,
 		Anatomy = 1,

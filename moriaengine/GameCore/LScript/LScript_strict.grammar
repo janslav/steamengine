@@ -187,6 +187,7 @@ TimerKey = OP_MOD STRING; //%somename
 QuotedString = 
 QUOTE {
 	STRING
+
 	| QUERYMARK
 	| ARGCHK
 	| ARGTXT
@@ -231,23 +232,28 @@ QUOTE {
 	| EvalExpression
 	| StrongEvalExpression
 	| VarKey
-	| FOREACH
-	| IN
-	| ENDFOREACH
-	| FOR
-	| ENDFOR
-	| SWITCH
-	| CASE
-	| ENDSWITCH
-	| BREAK
-	| DEFAULT
-	| ESCAPEDCHAR
-	| WHILE
-	| ENDWHILE
-} QUOTE;
-
-Argument = 
-	(
+	| IF            
+	| ELSE		    
+	| ELSEIF		
+	| ENDIF		    
+	| ADDTIMER	   
+	| DEFAULT	
+	| FOREACH		
+	| IN            
+	| ENDFOREACH    
+	| FOR           
+	| ENDFOR        
+	| SWITCH        
+	| CASE          
+	| ENDSWITCH     
+	| BREAK         
+	| ESCAPEDCHAR   
+	| WHILE                         	    
+	| ENDWHILE                  
+} QUOTE;                        
+                                
+Argument =                      
+	(                           
 		(
 			( ARGCHK | ARGTXT | ARGNUM | ARGO | ARGN | ARGNN | ARGON | ARGVN ) 
 			|

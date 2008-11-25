@@ -132,11 +132,10 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-
 		internal static void StartingLoading() {
 		}
 
-		internal static ProfessionDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [ProfessionDef class_necro] etc.
 			string typeName = input.headerType.ToLower();
 			string profDefName = input.headerName.ToLower();
@@ -181,7 +180,11 @@ namespace SteamEngine.CompiledScripts {
 
 			RegisterProfessionDef(profDef);
 
-			return profDef;
+			if (profDef.scriptedTriggers == null) {
+				return profDef;
+			} else {
+				return new UnloadableGroup(profDef, profDef.scriptedTriggers);
+			}
 		}
 
 		internal static void LoadingFinished() {

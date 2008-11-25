@@ -31,14 +31,12 @@ namespace SteamEngine {
 	[Summary("Decorate your class by this attribute if you want it to be cloneable using the DeepCopyFactory framework."
 	+ "When this attribute is used, LoadingInitializerAttribute is expected to be found on a corresponding member, and will be used to initialize a new instance."
 	+ "Members with SaveableData attribute will be considered the members to be copied.")]
-	[SeeAlso(typeof(LoadingInitializerAttribute))]
 	[AttributeUsage(AttributeTargets.Class|AttributeTargets.Struct)]
 	public class DeepCopyableClassAttribute : Attribute {
 	}
 
 	[Summary("In classes that have [DeepCopyableClass], use this attribute to decorate public instance fields and properties"
 	+ " that are supposed to be copied by the deepcopy framework along with the main object.")]
-	[SeeAlso(typeof(LoadingInitializerAttribute))]
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
 	public class CopyableDataAttribute : Attribute {
 	}

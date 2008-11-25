@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//pusti se automaticky po druhym loadu novyho sveta
 		public static void SetColorOnDefsWithMaterial() {
-			foreach (AbstractScript scp in AbstractScript.AllScrips) {
+			foreach (AbstractScript scp in AbstractScript.AllScripts) {
 				IObjectWithMaterial materialObj = scp as IObjectWithMaterial;
 				if (materialObj != null) {
 					materialObj.Color = GetHueForMaterial(materialObj.Material, materialObj.MaterialType);

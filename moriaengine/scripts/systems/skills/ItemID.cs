@@ -11,45 +11,45 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override void On_Select(Character ch) {
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Player self = ch as Player;
+			Player self = skillSeqArgs.Self as Player;
 			if (self != null) {
-				self.Target(SingletonScript<Targ_ItemID>.Instance);
+				self.Target(SingletonScript<Targ_ItemID>.Instance, skillSeqArgs);
 			}
+			return true;
 		}
 
-		protected override void On_Start(Character self) {
-			self.currentSkill = this;
-			DelaySkillStroke(self);
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
 
-		protected override void On_Stroke(Character self) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			//todo: various state checks...
-			if (CheckSuccess(self, Globals.dice.Next(700))) {
-				this.Success(self);
-			} else {
-				this.Fail(self);
-			}
-			self.currentSkill = null;
+			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+			return false;
 		}
 
-		protected override void On_Success(Character self) {
-			self.SysMessage("SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
-			Item targetted = self.currentSkillTarget1 as Item;
-			if (targetted != null) {
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			self.SysMessage("ItemId SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
+			Item targetted = (Item) skillSeqArgs.Target1;
+			if (targetted == null || targetted.IsDeleted) {
 				self.SysMessage(targetted.Name + " se vyrabi z !RESOURCES!" + ", vazi " + targetted.Weight + " a barva je " + targetted.Color);
 			} else {
 				self.SysMessage("Zapomel jsi co mas identifikovat!"); // ztrata targetu
 			}
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
-			self.SysMessage("Fail");
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Fail");
+			return false;
 		}
 
-		protected override void On_Abort(Character self) {
-			self.SysMessage("Identification aborted.");
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Identification aborted.");
 		}
 	}
 
@@ -61,10 +61,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+			if (!self.CanReachWithMessage(targetted)) {
+				return false;
+			}
 
-			self.currentSkillTarget1 = targetted;
-			self.StartSkill(SkillName.ItemID);
-
+			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+			skillSeq.Target1 = targetted;
+			skillSeq.PhaseStart();
 			return false;
 		}
 	}

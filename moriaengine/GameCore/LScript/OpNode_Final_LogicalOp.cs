@@ -34,11 +34,23 @@ namespace SteamEngine.LScript {
 		
 		internal override object Run(ScriptVars vars) {
 			object leftVar = left.Run(vars);
-			object righVar = right.Run(vars);
+			bool leftVarBool;
+
 			try {
-				return (TagMath.ToBoolean(leftVar) && TagMath.ToBoolean(righVar));
+				leftVarBool = TagMath.ToBoolean(leftVar);
+				if (!leftVarBool) {
+					return false;
+				}
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating && operator", 
+					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+			}
+
+			object righVar = right.Run(vars);
+			try {
+				return TagMath.ToBoolean(righVar);
+			} catch (Exception e) {
+				throw new InterpreterException("Exception while evaluating && operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -51,11 +63,23 @@ namespace SteamEngine.LScript {
 		
 		internal override object Run(ScriptVars vars) {
 			object leftVar = left.Run(vars);
+			bool leftVarBool;
+
+			try {
+				leftVarBool = TagMath.ToBoolean(leftVar);
+				if (leftVarBool) {
+					return true;
+				}
+			} catch (Exception e) {
+				throw new InterpreterException("Exception while evaluating || operator",
+					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+			}
+
 			object righVar = right.Run(vars);
 			try {
-				return (TagMath.ToBoolean(leftVar) || TagMath.ToBoolean(righVar));
+				return TagMath.ToBoolean(righVar);
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating || operator", 
+				throw new InterpreterException("Exception while evaluating || operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}

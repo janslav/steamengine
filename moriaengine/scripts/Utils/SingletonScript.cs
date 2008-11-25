@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void FindSingletonInstance() {
-			foreach (AbstractScript script in AbstractScript.AllScrips) {
+			foreach (AbstractScript script in AbstractScript.AllScripts) {
 				T castScript = script as T;
 				if (castScript != null) {
 					if (instance != null) {

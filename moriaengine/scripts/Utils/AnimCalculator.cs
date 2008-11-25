@@ -860,7 +860,7 @@ namespace SteamEngine.CompiledScripts {
 				anim = (int) GetAnimalRandomAttackAnim(cmi.AnimsAvailable);
 			}
 
-			double seconds = self.WeaponDelay;
+			double seconds = self.WeaponDelay.TotalSeconds;
 			byte frameDelay = 0;
 			seconds = seconds - (0.25*attackAnimFrames);
 			if (seconds > 0) {

@@ -1169,7 +1169,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public override byte Id {
-			get { return 0xAE; }
+			get { return 0xC1; }
 		}
 
 		protected override void WriteDynamicPart() {
@@ -1481,6 +1481,7 @@ namespace SteamEngine.Networking {
 		sbyte z;
 
 		public void Prepare(IPoint3D source, ushort sound) {
+			source = source.TopPoint;
 			this.sound = sound;
 			this.x = source.X;
 			this.y = source.Y;

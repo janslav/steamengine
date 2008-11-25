@@ -1282,9 +1282,10 @@ namespace SteamEngine {
 
 		public void Sound(ushort soundId, int range) {
 			if (soundId != 0xffff) {
+				Thing top = this.TopObj();
 				PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
-				p.Prepare(this, soundId);
-				GameServer.SendToClientsInRange(this, range, p);
+				p.Prepare(top, soundId);
+				GameServer.SendToClientsInRange(top, range, p);
 			}
 		}
 

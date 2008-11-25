@@ -93,9 +93,9 @@ namespace SteamEngine.Timers {
 				Timer timer = priorityQueue.Peek();
 				//Console.WriteLine("TimingOut timer "+timer);
 
-				TimeSpan fireAt = timer.fireAt;
-				if (fireAt <= now) {
-					priorityQueue.Dequeue();//we have already peeked at it
+				if (timer.fireAt < now) {
+					timer = priorityQueue.Dequeue();
+					TimeSpan fireAt = timer.fireAt;
 					if (!timer.isInChangesQueue) {
 						lock (timer) {
 							if (timer.period >= TimeSpan.Zero) {
@@ -107,6 +107,7 @@ namespace SteamEngine.Timers {
 							currentTimer = timer;
 							try {
 								lock (MainClass.globalLock) {
+
 									timer.OnTimeout();
 								}
 							} catch (FatalException) {

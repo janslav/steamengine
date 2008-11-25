@@ -98,9 +98,6 @@ EFFECT=76
 //BONUSSTATS=25
 ADVRATE=2.5,50.0,200.0
 
-ON=@Fail
-	src.message "You are uncertain about this item "
-
 [SCRIPTEDSKILLDEF 5]
 DEFNAME=Skill_Parrying
 KEY="Parrying"

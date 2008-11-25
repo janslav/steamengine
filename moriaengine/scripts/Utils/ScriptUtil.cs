@@ -127,5 +127,32 @@ namespace SteamEngine.CompiledScripts {
 			double diff = max - min;
 			return min + (randomValue * diff);
 		}
+
+		public static void ListScripts(string args) {
+			string testString = String.Concat(args);
+			Globals.SrcWriteLine("Listing scripts containing string '<testString>' in their defname:");
+
+			Regex re = new System.Text.RegularExpressions.Regex(testString);
+
+			foreach (AbstractScript script in AbstractScript.AllScripts) {
+				string defname = script.Defname;
+				if ((defname != null) && re.IsMatch(defname)) {
+					Globals.SrcWriteLine(script.ToString());
+				} else {
+					AbstractDef def = script as AbstractDef;
+					if (def != null) {
+						defname = def.altdefname;
+						if ((defname != null) && re.IsMatch(defname)) {
+							Globals.SrcWriteLine(script.ToString());
+						}
+					}
+				}
+			}
+		}
+
+		[SteamFunction("ListScripts")]
+		public static void ListScriptsSF(object ignored, ScriptArgs sa) {
+			ListScripts(sa.Args);
+		}
 	}
 }

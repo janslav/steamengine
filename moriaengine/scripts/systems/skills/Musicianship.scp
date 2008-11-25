@@ -3,50 +3,58 @@ DEFNAME=Skill_Musicianship
 KEY="Musicianship"
 //TITLE="Bard"
 //PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=20
-//STAT_INT=50
-//STAT_DEX=70
-//BONUS_STR=0
-//BONUS_DEX=80
-//BONUS_INT=20
-//BONUSSTATS=10
+DELAY=0.5
 ADVRATE=2.5,50.0,200.0
-
 	
 on=@Select
 	//TODO: unhide, etc.
-	if (currentSkillTarget2 is Musical)
-		if (currentSkillTarget2.TopObj != this) //nemame nastroj u sebe
-			currentSkillTarget2 = Backpack.FindByClass(typeof(Musical))
+	if (argo.Tool is Musical)
+		if (argo.Tool.TopObj != this) //nemame nastroj u sebe
+			argo.Tool = Backpack.FindByClass(typeof(Musical))
 		endif
 	else
-		currentSkillTarget2 = Backpack.FindByClass(typeof(Musical))
+		argo.Tool = Backpack.FindByClass(typeof(Musical))
 	endif
 		
-	if (currentSkillTarget2 != null)
-		StartSkill(29) //start Skill_Musicianship
+	if (argo.Tool != null)
+		return 0 //continue to @start
+	else
+		this.SysMessage("Nemáš u sebe hudební nástroj.")
+		argo.Success = false
 		return 1
-	else
-		src.sysMessage("Nemas u sebe hudebni nastroj.")
-		currentSkillParam = 2
+	endif
+
+//on=@Start
+
+on=@Stroke
+	if (argo.Tool.TopObj != this) //nemame nastroj u sebe
+		this.SysMessage("Nemáš u sebe hudební nástroj.")
+		argo.Success = false
+		return 1	
+	endif
+	argo.Success = Skill_Musicianship.CheckSuccess(this, {0 700})
 	
-	endif
-	return 1
-
-
-on=@Start
-	if (Skill_Musicianship.CheckSuccess(this, {0 700}))
-		Skill_Musicianship.Success(this)
-	else
-		Skill_Musicianship.Fail(this)
-	endif
+	return 0 //continue to @Success/@Fail
 	
 on=@Success
-	currentSkillTarget2.SuccessSnd()
-	currentSkillParam = 1
+	argo.Tool.SuccessSnd()
+		
+	if (argo.Param1) 
+		return 1 //don't Dispose the skillseqargs. This is for usage in other bardic skills
+	else
+		return 0 //continue to Disposing the skillseqargs
+	endif
 
 ON=@Fail
-	currentSkillTarget2.FailureSnd()
-	src.ClilocSysMessage(500612)	//You play poorly, and there is no effect.
-	currentSkillParam = 0
+	argo.Tool.FailureSnd()
+	this.ClilocSysMessage(500612)	//You play poorly, and there is no effect.
+	
+	if (argo.Param1) 
+		return 1 //don't Dispose the skillseqargs. This is for usage in other bardic skills
+	else
+		return 0 //continue to Disposing the skillseqargs
+	endif
+
+on=@abort
+	this.SysMessage("Tvé hraní bylo pøerušeno")
+	
