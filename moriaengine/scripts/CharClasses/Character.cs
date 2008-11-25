@@ -1722,12 +1722,12 @@ namespace SteamEngine.CompiledScripts {
         #endregion roles
 
 		public override void TryCastSpellFromBook(int spellid) {
-			//MagerySkillDef.TryCastSpellFromBook(this, spellid);
+			MagerySkillDef.TryCastSpellFromBook(this, spellid);
 		}
 
-		//public void TryCastSpellFromBook(SpellDef spellDef) {
-		//    MagerySkillDef.TryCastSpellFromBook(this, spellDef);
-		//}
+		public void TryCastSpellFromBook(SpellDef spellDef) {
+			MagerySkillDef.TryCastSpellFromBook(this, spellDef);
+		}
 
         public Character Owner {
 			get {
