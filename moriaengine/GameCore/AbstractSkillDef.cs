@@ -37,7 +37,7 @@ namespace SteamEngine {
 
 
 		private FieldValue key;
-		private ushort id;
+		private int id;
 		private FieldValue startByMacroEnabled;
 
 		private TriggerGroup scriptedTriggers;
@@ -69,7 +69,7 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterSkillDef(AbstractSkillDef sd) {
-			ushort id = sd.Id;
+			int id = sd.Id;
 			while (byId.Count <= id) {
 				byId.Add(null);
 			}
@@ -125,7 +125,7 @@ namespace SteamEngine {
 
 		}
 
-		internal static AbstractSkillDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			string typeName = input.headerType.ToLower();
 
 			PropsLine prop = input.PopPropsLine("defname");
@@ -169,9 +169,12 @@ namespace SteamEngine {
 				throw new OverrideNotAllowedException("SkillDef " + LogStr.Ident(defName) + " defined multiple times.");
 			}
 
-			if (!TagMath.TryParseUInt16(input.headerName, out skillDef.id)) {
+			ushort skillId;
+			if (!TagMath.TryParseUInt16(input.headerName, out skillId)) {
 				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
 			}
+
+			skillDef.id = skillId;
 
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
@@ -185,7 +188,11 @@ namespace SteamEngine {
 
 			RegisterSkillDef(skillDef);
 
-			return skillDef;
+			if (skillDef.scriptedTriggers == null) {
+				return skillDef;
+			} else {
+				return new UnloadableGroup(skillDef, skillDef.scriptedTriggers);
+			}
 		}
 
 		internal static void LoadingFinished() {
@@ -198,7 +205,7 @@ namespace SteamEngine {
 			this.startByMacroEnabled = this.InitField_Typed("startByMacroEnabled", false, typeof(bool));
 		}
 
-		public ushort Id {
+		public int Id {
 			get {
 				return id;
 			}
@@ -272,9 +279,9 @@ namespace SteamEngine {
 		//    throw new NotImplementedException();
 		//}
 
-		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			base.LoadScriptLine(filename, line, param, args);
-		}
+		//protected override void LoadScriptLine(string filename, int line, string param, string args) {
+		//    base.LoadScriptLine(filename, line, param, args);
+		//}
 
 		//internal protected abstract void Select(AbstractCharacter ch);
 

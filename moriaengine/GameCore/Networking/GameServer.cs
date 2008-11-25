@@ -157,6 +157,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public static void SendToClientsInRange(IPoint4D point, int range, OutgoingPacket outPacket) {
+			point = point.TopPoint;
 			PacketGroup pg = null;
 
 			foreach (TCPConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {

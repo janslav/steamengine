@@ -205,28 +205,27 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static double CauseDamage(Character attacker, Character defender, DamageType flags, double damage) {
-			defender.Trigger_HostileAction(attacker);
-			defender.Trigger_Disrupt();//nebo jen pri damage > 0 ?
+			if (!defender.IsDeleted && !defender.Flag_Dead && !defender.Flag_Insubst) {
+				defender.Trigger_HostileAction(attacker);
+				defender.Trigger_Disrupt();//nebo jen pri damage > 0 ?
 
-			damage *= GetResistModifier(defender, flags);
+				damage *= GetResistModifier(defender, flags);
 
-			DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
-			if (!Trigger_Damage(damageArgs)) {
+				DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
+				if (!Trigger_Damage(damageArgs)) {
 
-				damage = damageArgs.Damage;
-				if (damage > 0.5) {//0.5 gets rounded to 0...
+					damage = damageArgs.Damage;
+					if (damage > 0.5) {//0.5 gets rounded to 0...
 
 
-					defender.Hits = (short) (defender.Hits - damage);
+						defender.Hits = (short) (defender.Hits - damage);
 
-					if (!defender.IsDeleted && !(defender.Flag_Dead || defender.Flag_Insubst)) {
 						//TODO create blood?
-
 						SoundCalculator.PlayHurtSound(defender);
 						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
-					}
 
-					return damage;
+						return damage;
+					}
 				}
 			}
 

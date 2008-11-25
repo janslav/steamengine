@@ -66,7 +66,6 @@ namespace SteamEngine.Common {
 			get { throw new Exception("The method or operation is not implemented."); }
 		}
 
-
 		bool ICollection<T>.IsReadOnly {
 			get { return true; }
 		}

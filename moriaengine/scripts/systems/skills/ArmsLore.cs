@@ -11,78 +11,76 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override void On_Select(Character ch) {
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Player self = ch as Player;
+			Player self = skillSeqArgs.Self as Player;
 			if (self != null) {
-				self.Target(SingletonScript<Targ_ArmsLore>.Instance);
+				self.Target(SingletonScript<Targ_ArmsLore>.Instance, skillSeqArgs);
 			}
+			return true;
 		}
 
-		protected override void On_Start(Character self) {
-			self.currentSkill = this;
-			DelaySkillStroke(self);
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
 
-		protected override void On_Stroke(Character self) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			//todo: various state checks...
-			if (CheckSuccess(self, Globals.dice.Next(700))) {
-				this.Success(self);
-			} else {
-				this.Fail(self);
+			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+			return false;
+		}
+
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			self.SysMessage("Arms lore SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
+			Destroyable targetted = (Destroyable) skillSeqArgs.Target1;
+			if (targetted == null || targetted.IsDeleted) {
+				self.SysMessage("Zapomel jsi co zkoumáš!"); // ztrata targetu
+			} else if (self.CanReachWithMessage(targetted)) {
+				self.SysMessage("Armor už umíme, doplníme. Vypisujeme testovaci hlasku: " + targetted.Name + " model je: " + targetted.Model);
+
+				//Destroyable = zbran (Weapon) nebo brneni/obleceni (Wearable)
+
 			}
-
-			self.currentSkill = null;
+			return false;
 		}
 
-		protected override void On_Success(Character self) {
-			self.SysMessage("SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
-			Item targetted = self.currentSkillTarget1 as Item;
-			if (targetted != null) {
-				self.SysMessage("Armor ani DMG este neumime, doplnime. Vypisujeme testovaci hlasku: " + targetted.Name + " model je: " + targetted.Model);
-			} else {
-				self.SysMessage("Zapomel jsi co zkoumas!"); // ztrata targetu
-			}
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Arms lore se nepovedlo.");
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
-			self.SysMessage("Fail");
-		}
-
-		protected override void On_Abort(Character self) {
-			self.SysMessage("Arms lore aborted.");
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Arms lore pøerušeno.");
 		}
 	}
 
 	public class Targ_ArmsLore : CompiledTargetDef {
 		protected override void On_Start(Player self, object parameter) {
-			self.SysMessage("Co chces prohlednout?");
+			self.SysMessage("Co chceš prohlédnout?");
 			base.On_Start(self, parameter);
 		}
 
 		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
-			self.SysMessage("Zameruj pouze zbrane a zbroje!");
+			self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
 			return false;
 		}
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-			self.currentSkillTarget1 = targetted;
-			self.StartSkill(SkillName.ArmsLore);
-			return false;
-		}
+			if (!self.CanReachWithMessage(targetted)) {
+				return false;
+			}
 
-		protected override bool On_TargonStatic(Player self, Static targetted, object parameter) {
-			self.SysMessage("Zameruj pouze zbrane a zbroje!");
-			return true;
-		}
-
-		protected override bool On_TargonGround(Player self, IPoint4D targetted, object parameter) {
-			self.SysMessage("Zameruj pouze zbrane a zbroje!");
-			return true;
-		}
-
-		protected override void On_TargonCancel(Player self, object parameter) {
-			self.SysMessage("Target zrusen");
+			if (targetted is Destroyable) {
+				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+				skillSeq.Target1 = targetted;
+				skillSeq.PhaseStart();
+				return false;
+			} else {
+				self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
+				return false;
+			}
 		}
 	}
 }

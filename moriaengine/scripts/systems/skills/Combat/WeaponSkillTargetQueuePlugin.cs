@@ -1,18 +1,18 @@
 /*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	Or visit http://www.gnu.org/copyleft/gpl.html
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void AddTarget(Character self, Character target) {
-			CombatPluginCreate(self).AddTarget(target);
+			AcquireCombatPlugin(self).AddTarget(target);
 		}
 
 		[SteamFunction]
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				targetQueue.AddFirst(target);
 			}
-			
+
 			FightCurrentTarget();
 		}
 
@@ -87,13 +87,24 @@ namespace SteamEngine.CompiledScripts {
 		public void FightCurrentTarget() {
 			if (targetQueue.Count > 0) {
 				this.Timer = CombatSettings.instance.secondsToRememberTargets;
-				Character target = targetQueue.First.Value;
-				Cont.AbortSkill();
-				Cont.currentSkillTarget1 = target;
-				Cont.SelectSkill(GetSkillNameByWeaponType(Cont.WeaponType));
-			} else {
-				this.Delete();//also aborts the skill
+				Character target = null;
+				while (true) {
+					target = targetQueue.First.Value;
+					if (!target.IsAliveAndValid) {
+						targetQueue.RemoveFirst();
+						target = null;
+					} else {
+						break;
+					}
+				}
+				if (target != null) {
+					SkillName skill = GetSkillNameByWeaponType(this.Cont.WeaponType);
+					SkillSequenceArgs seq = SkillSequenceArgs.Acquire(this.Cont, skill, target, null, this.Cont.Weapon, null, null);
+					seq.PhaseSelect();
+					return;
+				}
 			}
+			this.Delete();//also aborts the skill
 		}
 
 		public static SkillName GetSkillNameByWeaponType(WeaponType weapType) {
@@ -126,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_UnAssign(Character cont) {
-			if (cont.currentSkill is WeaponSkillDef) {
+			if (cont.CurrentSkill is WeaponSkillDef) {
 				cont.AbortSkill();
 			}
 		}
@@ -145,14 +156,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_NewPosition() {
 			Character cont = this.Cont;
+			SkillSequenceArgs skillSeq = SkillSequenceArgs.GetSkillSequenceArgs(cont);
 
-			if (cont.CurrentSkillName == SkillName.Marksmanship) {//nonrun archery
-				cont.AbortSkill();
-				this.FightCurrentTarget();
-			} else {
-				WeaponSkillDef skill = cont.currentSkill as WeaponSkillDef;
-				if (skill != null) {
-					skill.Stroke(cont);
+			if (skillSeq != null) {
+				if (skillSeq.SkillDef.Id == (int) SkillName.Marksmanship) {//nonrun archery
+					cont.AbortSkill();
+					this.FightCurrentTarget();
+				} else if (skillSeq.SkillDef is WeaponSkillDef) {
+					skillSeq.PhaseStroke();
 				}
 			}
 		}
@@ -160,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_ItemEnter(Character cont, Item i) {
 			if (i is Weapon) {
 				cont.InvalidateCombatWeaponValues();
-				if (cont.currentSkill is WeaponSkillDef) {
+				if (cont.CurrentSkill is WeaponSkillDef) {
 					cont.AbortSkill();
 					//this.FightCurrentTarget();
 				}
@@ -170,7 +181,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_ItemLeave(Character cont, Item i) {
 			if (i is Weapon) {
 				cont.InvalidateCombatWeaponValues();
-				if (cont.currentSkill is WeaponSkillDef) {
+				if (cont.CurrentSkill is WeaponSkillDef) {
 					cont.AbortSkill();
 					//this.FightCurrentTarget();
 				}
@@ -180,17 +191,12 @@ namespace SteamEngine.CompiledScripts {
 		private static PluginKey combatPluginPK = PluginKey.Get("_combatPlugin_");
 
 		[SteamFunction]
-		public static WeaponSkillTargetQueuePlugin CombatPluginCreate(Character self) {
+		public static WeaponSkillTargetQueuePlugin AcquireCombatPlugin(Character self) {
 			WeaponSkillTargetQueuePlugin p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 			if (p == null) {
 				p = (WeaponSkillTargetQueuePlugin) self.AddNewPlugin(combatPluginPK, WeaponSkillTargetQueuePluginDef.instance);
 			}
 			return p;
-		}
-
-		[SteamFunction]
-		public static WeaponSkillTargetQueuePlugin CombatPluginNoCreate(Character self) {
-			return self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 		}
 	}
 

@@ -19,15 +19,15 @@ namespace SteamEngine.CompiledScripts {
 		public static int Action(Character self, ScriptArgs sa) {
 			if ((sa != null) && (sa.argv.Length > 0)) {
 				int value = Convert.ToInt32(sa.argv[0]);
-				if ((value != self.currentSkill.Id) || (value < 0) || (value >= AbstractSkillDef.SkillsCount)) {
+				if ((value != (int) self.CurrentSkillName) || (value < 0) || (value >= AbstractSkillDef.SkillsCount)) {
 					self.AbortSkill();
 				}
 				return 0;
 			} else {
-				if (self.currentSkill == null) {
+				if (self.CurrentSkill == null) {
 					return -1;
 				}
-				return self.currentSkill.Id;
+				return (int) self.CurrentSkillName;
 			}
 		}
 

@@ -290,7 +290,7 @@ namespace SteamEngine.Persistence {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
 			} else if (implementorsByType.ContainsKey(t)) {//should we somehow also support type hierarchy?
-			} else if ((t.IsArray) && implementorsByType.ContainsKey(typeof(Array))) {
+			} else if ((t.IsArray) && implementorsByType.ContainsKey(typeof(Array)) && IsSaveableType(t.GetElementType())) {
 			} else {
 				return false;
 			}

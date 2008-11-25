@@ -28,26 +28,28 @@ namespace SteamEngine.CompiledScripts {
 		public ScriptedSkillDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 		}
 
-		protected override void On_Select(Character self) {
-			//temp code, just to see it does *something*
-
-			self.SysMessage("I clicked the button of the skill " + this + " which has value " + ((Skill) self.SkillsAbilities[this]).RealValue + " and cap " + ((Skill) self.SkillsAbilities[this]).Cap);
-			self.ClilocSysMessage(500014); //That skill cannot be used directly.
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+			return false;
+			//self.ClilocSysMessage(500014); //That skill cannot be used directly.
 		}
 
-		protected override void On_Start(Character self) {
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
 
-		protected override void On_Stroke(Character self) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
 
-		protected override void On_Success(Character self) {
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
-		
-		protected override void On_Abort(Character self) {
+
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
 		}
 	}
 }

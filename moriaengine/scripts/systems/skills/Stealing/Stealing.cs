@@ -1,18 +1,18 @@
 /*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	Or visit http://www.gnu.org/copyleft/gpl.html
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
 using System;
@@ -24,51 +24,53 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
-    [Dialogs.ViewableClass]
-    public class StealingSkillDef : SkillDef {
+	[Dialogs.ViewableClass]
+	public class StealingSkillDef : SkillDef {
 
-        public StealingSkillDef(string defname, string filename, int headerLine)
-            : base(defname, filename, headerLine) {
-        }
+		public StealingSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+		}
 
-		protected override void On_Select(Character self) {
-            //todo: various state checks...
-            self.StartSkill(SkillName.Stealing);
-        }
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+			//todo: various state checks...
+			return false;
+		}
 
-		protected override void On_Start(Character self) {
-			self.currentSkill = this;
-			Item item = (Item) self.currentSkillTarget2 as Item;
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.PhaseStroke();
+			return true;//cancel - don't delay
+		}
+
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			Item item = (Item) skillSeqArgs.Target1;
+
 			if (self.CanReach(item) == DenyResult.Allow) {
 				int diff = (int) (700 + 100 * Math.Log(item.Weight + 1));
-				if (SkillDef.CheckSuccess(self.GetSkill((int) SkillName.Stealing), diff)) {
-					this.Success(self);
-				} else {
-					this.Fail(self);
-				}
+				skillSeqArgs.Success = SkillDef.CheckSuccess(self.GetSkill((int) SkillName.Stealing), diff);
+			} else {
+				skillSeqArgs.Success = false;
 			}
-			self.currentSkill = null;
-			self.currentSkillTarget2 = null;
+			return false;
 		}
 
-		protected override void On_Stroke(Character self) {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-		protected override void On_Success(Character self) {
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			self.ClilocSysMessage(500174);      // You successfully steal the item!
-			self.currentSkillParam1 = 1;         // for On_DenyPickupItem in snooping skill
+			return true; //true = no default disposing of skillSeqArgs, Snooping implementation does the rest
 		}
 
-		protected override void On_Fail(Character self) {
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			Item item = (Item) skillSeqArgs.Target1;
 			self.ClilocSysMessage(500172);	    // I failed to steal.
-			((Character) ((Item) self.currentSkillTarget2).TopObj()).Trigger_HostileAction(self);
-			self.ClilocSysMessage(500167);	    // You are now a criminal.
-			self.currentSkillParam1 = 0;
+			((Character) item.TopObj()).Trigger_HostileAction(self);
+			//self.ClilocSysMessage(500167);	    // You are now a criminal.
+			return true; //true = no default disposing of skillSeqArgs, Snooping implementation does the rest
 		}
 
-        protected override void On_Abort(Character self) {
-            self.SysMessage("Okrádání bylo pøedèasnì ukonèeno.");
-        }
-    }
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Okrádání bylo pøedèasnì ukonèeno.");
+		}
+	}
 }

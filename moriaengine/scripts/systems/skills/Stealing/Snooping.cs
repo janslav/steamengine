@@ -1,18 +1,18 @@
 /*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	Or visit http://www.gnu.org/copyleft/gpl.html
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
 using System;
@@ -33,35 +33,31 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
 
-		protected override void On_Select(Character self) {
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			self.StartSkill(SkillName.Snooping);
+			return false;
 		}
 
-		protected override void On_Start(Character self) {
-			self.currentSkill = this;
-			DelaySkillStroke(self);
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			return false;
 		}
 
-		protected override void On_Stroke(Character self) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Container conta = self.currentSkillTarget1 as Container;
-			if (!self.CanReachWithMessage(conta)) {
-				this.Fail(self);
+			Character self = skillSeqArgs.Self;
+			Container cnt = (Container) skillSeqArgs.Target1;
+			if (!self.CanReachWithMessage(cnt)) {
+				skillSeqArgs.Success = false;
 			} else {
-				if (SkillDef.CheckSuccess(self.GetSkill((int) SkillName.Snooping), 800)) {
-					this.Success(self);
-				} else {
-					this.Fail(self);
-				}
+				skillSeqArgs.Success = SkillDef.CheckSuccess(self.GetSkill((int) SkillName.Snooping), 800);
 			}
-			self.currentSkill = null;
-			self.currentSkillTarget1 = null;
+			return false;
 		}
 
-		protected override void On_Success(Character self) {
-			Container cnt = (Container) self.currentSkillTarget1;
-			self.SysMessage("Vidíš do batohu hráèe " + (cnt.TopObj()).Name + ".");
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			Container cnt = (Container) skillSeqArgs.Target1;
+			self.SysMessage("Vidíš do batohu osoby " + cnt.TopObj().Name + ".");
 			cnt.OpenTo(self);
 			SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
 			if (sb == null) {
@@ -69,24 +65,31 @@ namespace SteamEngine.CompiledScripts {
 			}
 			sb.Add(cnt);
 			sb.Timer = SnoopingPlugin.duration;
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
-			Character steal = (Character) (((Container) self.currentSkillTarget1).TopObj());
-			self.ClilocSysMessage(500210);      // You failed to peek into the container. 
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			Character victim = (Character) (((Container) skillSeqArgs.Target1).TopObj());
+			self.ClilocSysMessage(500210); // You failed to peek into the container. 
 			int ran = (int) Globals.dice.Next(4);
-			if (ran == 3) {
-				steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
-				steal.Trigger_HostileAction(self);
-				self.DisArm();                  // Bonus for fatal fail. Can be more
-			} else if ((ran == 2) || (ran == 1)) {
-				steal.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
-				steal.Trigger_HostileAction(self);
+			switch (ran) {
+				case 3: //fatal failure
+					victim.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
+					victim.Trigger_HostileAction(self);
+					self.DisArm(); // Bonus for fatal fail. Can be more
+					break;
+				case 2: //regular failure. Maybe no hostile trigger in this case?
+				case 1:
+					victim.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
+					victim.Trigger_HostileAction(self);
+					break;
 			}
+			return false;
 		}
 
-		protected override void On_Abort(Character self) {
-			self.SysMessage("Šacování pøedèasnì ukonèeno.");
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Šacování pøedèasnì ukonèeno.");
 		}
 	}
 
@@ -99,20 +102,22 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool On_DenyPickupItem(DenyPickupArgs args) {
 			Container conta = args.manipulatedItem.Cont as Container;
-			Character stealer = args.pickingChar as Character;
-			stealer.currentSkillTarget2 = (Item) args.manipulatedItem;
-			stealer.SelectSkill((int) SkillName.Stealing);
-			if ((conta != null) && (this.Contains(conta))) {
-				if ((stealer.currentSkillParam1 != null) && (int) stealer.currentSkillParam1 == 1) {          // currentSkillParam == 1 if stealing successed
-					stealer.currentSkillParam1 = null;
-					return false;
-				} else {
+
+			if (this.Contains(conta)) {
+				Sanity.IfTrueThrow(conta == null, "conta == null");
+				Character thief = args.pickingChar as Character;
+
+				SkillSequenceArgs stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.manipulatedItem, null, null, null, null);
+				stealing.PhaseSelect();
+				bool success = stealing.Success;
+				stealing.Dispose();
+
+				if (!success) {
 					args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
-					stealer.currentSkillParam1 = null;
 					return true;
 				}
 			}
-			stealer.currentSkillParam1 = null;
+
 			return false;
 		}
 

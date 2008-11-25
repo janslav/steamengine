@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static MassSettingsByClass() {
 			if (defs == null) {
 				defs = new List<DefType>();
-				foreach (AbstractScript scp in AbstractScript.AllScrips) {
+				foreach (AbstractScript scp in AbstractScript.AllScripts) {
 					DefType def = scp as DefType;
 					if (def != null) {
 						defs.Add(def);
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static MassSettingsByModel() {
 			if (models == null) {
 				HashSet<ushort> modelsSet = new HashSet<ushort>();
-				foreach (AbstractScript scp in AbstractScript.AllScrips) {
+				foreach (AbstractScript scp in AbstractScript.AllScripts) {
 					DefType weap = scp as DefType;
 					if (weap != null) {
 						modelsSet.Add(weap.Model);
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					ushort model = models[i];
 					List<DefType> list = new List<DefType>();
 					defs[i] = list;
-					foreach (AbstractScript scp in AbstractScript.AllScrips) {
+					foreach (AbstractScript scp in AbstractScript.AllScripts) {
 						DefType def = scp as DefType;
 						if ((def != null) && 
 								(def.Model == model) &&
@@ -362,7 +362,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						defSets[i, j] = new List<DefType>();
 					}
 				}
-				foreach (AbstractScript scp in AbstractScript.AllScrips) {
+				foreach (AbstractScript scp in AbstractScript.AllScripts) {
 					DefType def = scp as DefType;
 					IObjectWithMaterial withMaterial = scp as IObjectWithMaterial;
 					if ((def != null) && (withMaterial != null)) {

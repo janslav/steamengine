@@ -1,18 +1,18 @@
 /*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	Or visit http://www.gnu.org/copyleft/gpl.html
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
 using System;
@@ -25,8 +25,9 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class HidingSkillDef : SkillDef {
-		
-		public HidingSkillDef(string defname, string filename, int headerLine) : base( defname, filename, headerLine ) {
+
+		public HidingSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 		}
 
 		public static PluginKey pluginKey = PluginKey.Get("hiddenHelper");
@@ -41,37 +42,35 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override void On_Select(Character self) {
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			self.StartSkill(SkillName.Hiding);
+			return false; //continue to @start
 		}
 
-		protected override void On_Start(Character self) {
-			self.currentSkill = this;
-			DelaySkillStroke(self);
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			return false; //continue to delay, then @stroke
 		}
 
-		protected override void On_Stroke(Character self) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			//todo: various state checks...
-			if (CheckSuccess(self, Globals.dice.Next(700))) {
-				this.Success(self);
-			} else {
-				this.Fail(self);
-			}
+			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 
-			self.currentSkill = null;
+			return false; //continue to @success or @fail
 		}
 
-		protected override void On_Success(Character self) {
-			Hide(self);
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Hide(skillSeqArgs.Self);
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
-			self.ClilocSysMessage(501241);//You can't seem to hide here.
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.ClilocSysMessage(501241);//You can't seem to hide here.
+			return false;
 		}
-		
-		protected override void On_Abort(Character self) {
-			self.SysMessage("Hiding aborted.");
+
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Hiding aborted.");
 		}
 
 		[SteamFunction]

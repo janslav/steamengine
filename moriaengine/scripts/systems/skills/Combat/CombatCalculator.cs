@@ -278,7 +278,7 @@ namespace SteamEngine.CompiledScripts {
 			internal int range;
 			internal int strikeStartRange;
 			internal int strikeStopRange;
-			internal double delay;
+			internal TimeSpan delay;
 			internal double attackVsP;
 			internal double attackVsM;
 			internal double piercing;
@@ -360,7 +360,7 @@ namespace SteamEngine.CompiledScripts {
 				double delay = Math.Sqrt((double) self.Dex);
 				delay *=  weapSpeed;
 				delay *=  CombatSettings.instance.weaponSpeedGlobal;
-				retVal.delay = (0xfffff/1000)/delay;//dedictvi z morie. funguje to tak proc to menit :)
+				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000) / delay);//dedictvi z morie. funguje to tak proc to menit :)
 
 				double tacticsAttack = SkillDef.ById(SkillName.Tactics).GetEffectForChar(self);
 				double anatomyAttack = SkillDef.ById(SkillName.Anatomy).GetEffectForChar(self);
@@ -390,7 +390,7 @@ namespace SteamEngine.CompiledScripts {
 					retVal.range = npcDef.WeaponRange;
 					retVal.strikeStartRange = npcDef.StrikeStartRange;
 					retVal.strikeStopRange = npcDef.StrikeStopRange;
-					retVal.delay = npcDef.WeaponDelay;
+					retVal.delay = TimeSpan.FromSeconds(npcDef.WeaponDelay);
 					retVal.attackVsM = npcDef.WeaponAttack;
 					retVal.attackVsP = retVal.attackVsM;
 					retVal.piercing = npcDef.WeaponPiercing;

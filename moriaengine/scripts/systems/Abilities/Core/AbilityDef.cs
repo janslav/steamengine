@@ -259,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		internal static AbilityDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
 			string typeName = input.headerType.ToLower();
 			string abilityDefName = input.headerName.ToLower();			
@@ -304,7 +304,11 @@ namespace SteamEngine.CompiledScripts {
 
             RegisterAbilityDef(abilityDef);
 
-            return abilityDef;
+			if (abilityDef.scriptedTriggers == null) {
+				return abilityDef;
+			} else {
+				return new UnloadableGroup(abilityDef, abilityDef.scriptedTriggers);
+			}
 		}
 
 		internal static void LoadingFinished() {

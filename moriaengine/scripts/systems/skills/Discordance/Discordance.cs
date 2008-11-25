@@ -1,18 +1,18 @@
 /*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	Or visit http://www.gnu.org/copyleft/gpl.html
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
 using System;
@@ -31,106 +31,135 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		private static TriggerGroup t_Musical;
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+            Character self = skillSeqArgs.Self;
+            Musical instrument = skillSeqArgs.Tool as Musical;
+            if (instrument != null) {
+                if (instrument.TopObj() != self) {
+                    instrument = null;
+                }
+            }
+            if (instrument == null) {
+                instrument = (Musical) self.BackpackAsContainer.FindByClass(typeof(Musical));
+            }
+            if (instrument == null) {
+				self.SysMessage("Nemáš u sebe hudební nástroj.");
+				skillSeqArgs.Success = false;
+                return true;
+            }
+			skillSeqArgs.Tool = instrument;
 
-		public TriggerGroup T_Musical {
-			get {
-				if (t_Musical == null) {
-					t_Musical = TriggerGroup.Get("t_musical");
+			Character target = skillSeqArgs.Target1 as Character;
+			if (target == null) {
+				Player selfAsPlayer = self as Player;
+				if (selfAsPlayer != null) {
+					selfAsPlayer.Target(SingletonScript<Targ_Discordance>.Instance, skillSeqArgs);
+					return true;
+				} else {
+					throw new Exception("Discordance target not set for nonplayer");
 				}
-				return t_Musical;
+			}
+
+            return false;
+        }
+
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			using (SkillSequenceArgs musicianship = SkillSequenceArgs.Acquire(self, SkillName.Musicianship, skillSeqArgs.Tool, true)) { //true = parameter for the musicianship @Stroke, it won't proceed with the skill
+				musicianship.PhaseStroke();
+
+				if (musicianship.Tool != null) {
+					skillSeqArgs.Success = musicianship.Success;
+
+					self.SysMessage("Pokousis se oslabit " + ((Character) skillSeqArgs.Target1).Name + ".");
+					return false;
+				} else {
+					skillSeqArgs.Dispose();
+					return true; //we lost the instrument or something
+				}
 			}
 		}
 
-		protected override void On_Select(Character ch) {
-			Character self = (Character) ch;
-			self.currentSkillTarget2 = ((Item) self.BackpackAsContainer).FindType(T_Musical);
-			((Player) self).Target(SingletonScript<Targ_Discordance>.Instance);
-		}
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 
-		protected override void On_Start(Character self) {
-			self.SysMessage("Pokousis se oslabit " + ((Character) self.currentSkillTarget1).Name + ".");
-			DelaySkillStroke(self);
-		}
+			if (skillSeqArgs.Tool.IsDeleted || skillSeqArgs.Tool.TopObj() != self) {
+				self.SysMessage("Nemáš u sebe hudební nástroj.");
+				skillSeqArgs.PhaseAbort();
+				return true;
+			}
 
-		protected override void On_Stroke(Character self) {
-			if (SkillValueOfChar(((Character) self.currentSkillTarget1)) != 0) {
+			Character target = (Character) skillSeqArgs.Target1;
+
+			if (this.SkillValueOfChar(target) > 0) {
 				self.SysMessage("Tohle nelze oslabit.");
-			} else if (Convert.ToInt32(self.currentSkillParam1) == 1) {
-				double targExperience = ((Character) self.currentSkillTarget1).Experience;
-				if ((SkillValueOfChar(self) * 0.3) < targExperience) {
+			} else if (skillSeqArgs.Success) { //set by Musicianship in @Start
+				double targExperience = target.Experience;
+				int mySkillValue = this.SkillValueOfChar(self);
+				if ((mySkillValue * 0.3) < targExperience) {
 					self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
 				} else {
-					double discordancePower = ScriptUtil.EvalRandomFaktor(SkillValueOfChar(self), 0, 300);
-					if (discordancePower > targExperience) {
-						this.Success(self);
-						return;
-					} else {
-						self.SysMessage("Oslabeni se nepovedlo.");
-					}
+					double discordancePower = ScriptUtil.EvalRandomFaktor(mySkillValue, 0, 300);
+					if (discordancePower <= targExperience) {
+						skillSeqArgs.Success = false;
+					} //else success stays true
 				}
-			} else {
-				self.SysMessage("Oslabeni se nepovedlo.");
 			}
-			this.Fail(self);
+			return false;
 		}
 
 		internal static PluginKey effectPluginKey = PluginKey.Get("_discordanceEffect_");
 
-		protected override void On_Success(Character self) {
-			Character skillTarget = (Character) self.currentSkillTarget1;
+		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			Character target = (Character) skillSeqArgs.Target1;
 
-			if (skillTarget.HasPlugin(effectPluginKey)) {
-				self.SysMessage("Cil je jiz oslaben.");
+			if (target.HasPlugin(effectPluginKey)) {
+				self.SysMessage("Cíl je již oslaben.");
 			} else {
-				self.SysMessage("Uspesne jsi oslabil cil.");
+				self.SysMessage("Úspìšnì jsi oslabil cíl.");
 				DiscordanceEffectPlugin plugin = (DiscordanceEffectPlugin) DiscordanceEffectPlugin.defInstance.Create();
-				plugin.discordEffectPower = SkillValueOfChar(self);
-				skillTarget.AddPluginAsSimple(effectPluginKey, plugin);
+				plugin.discordEffectPower = this.SkillValueOfChar(self);
+				target.AddPluginAsSimple(effectPluginKey, plugin);
+				self.Trigger_HostileAction(self);
 			}
-			self.currentSkill = null;
+			return false;
 		}
 
-		protected override void On_Fail(Character self) {
+		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+
+			self.SysMessage("Oslabení se nepovedlo.");
 			self.Trigger_HostileAction(self);
-			self.currentSkill = null;
+			return false;
 		}
 
-		protected override void On_Abort(Character self) {
-			self.SysMessage("Oslabovani bylo predcasne preruseno.");
+		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.SysMessage("Oslabování bylo pøedcasnì pøerušeno.");
 		}
 	}
 
 	public class Targ_Discordance : CompiledTargetDef {
 
 		protected override void On_Start(Player self, object parameter) {
-			self.SysMessage("Koho chces zkusit oslabit?");
+			self.SysMessage("Koho chceš zkusit oslabit?");
 			base.On_Start(self, parameter);
 		}
 
 		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+
 			if (targetted.IsPlayer) {
-				self.SysMessage("Zameruj jenom monstra!");
-				return false;
-			} else if (self.currentSkill != null) {
-				self.ClilocSysMessage(500118);                    //You must wait a few moments to use another skill.
+				self.SysMessage("Zamìøuj jenom monstra!");
 				return false;
 			} else if (targetted.HasPlugin(DiscordanceSkillDef.effectPluginKey)) {
-				self.SysMessage("Cil je jiz oslaben.");
-				self.currentSkill = null;
+				self.SysMessage("Cíl je již oslaben.");
 				return false;
 			}
-			self.SelectSkill(SkillName.Musicianship);
-			if ((int) self.currentSkillParam1 == 2) {
-				return false;
-			}
-			self.currentSkillTarget1 = targetted;
-			self.StartSkill(SkillName.Discordance);
-			return false;
-		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-			self.SysMessage("Predmety nelze oslabit.");
+			skillSeq.Target1 = targetted;				
+			skillSeq.PhaseStart();
+
 			return false;
 		}
 	}
@@ -151,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 			lowed_hits = (short) DiscordanceValueLower(cont.MaxHits, lowerConst);
 			lowed_mana = (short) DiscordanceValueLower(cont.MaxMana, lowerConst);
 			lowed_stam = (short) DiscordanceValueLower(cont.MaxStam, lowerConst);
-			lowed_ei = (ushort) DiscordanceValueLower(cont.GetSkill((int)SkillName.EvalInt), lowerConst);
+			lowed_ei = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.EvalInt), lowerConst);
 			lowed_magery = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Magery), lowerConst);
 			lowed_resist = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.MagicResist), lowerConst);
 			lowed_poison = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Poisoning), lowerConst);
@@ -167,7 +196,7 @@ namespace SteamEngine.CompiledScripts {
 			cont.MaxHits -= lowed_hits;
 			cont.MaxMana -= lowed_mana;
 			cont.MaxStam -= lowed_stam;
-			cont.AddSkill((int) SkillName.EvalInt,  -lowed_ei);
+			cont.AddSkill((int) SkillName.EvalInt, -lowed_ei);
 			cont.AddSkill((int) SkillName.Magery, -lowed_magery);
 			cont.AddSkill((int) SkillName.MagicResist, -lowed_resist);
 			cont.AddSkill((int) SkillName.Poisoning, -lowed_poison);
@@ -204,7 +233,7 @@ namespace SteamEngine.CompiledScripts {
 			cont.AddSkill((int) SkillName.Swords, lowed_twohand);
 			cont.AddSkill((int) SkillName.Macing, lowed_mace);
 			cont.AddSkill((int) SkillName.Fencing, lowed_onehand);
-			cont.AddSkill((int) SkillName.Wrestling, lowed_wrestl);			
+			cont.AddSkill((int) SkillName.Wrestling, lowed_wrestl);
 		}
 
 		private static int DiscordanceValueLower(int value, int lowerConst) {

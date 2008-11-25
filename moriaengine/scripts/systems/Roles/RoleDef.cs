@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 		internal static void StartingLoading() {
 		}
 
-		internal static RoleDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [RoleDef ro_starosta] etc.
 			string typeName = input.headerType.ToLower();
 			string roleDefName = input.headerName.ToLower();
@@ -253,7 +253,11 @@ namespace SteamEngine.CompiledScripts {
 
 			RegisterRoleDef(roleDef);
 
-            return roleDef;
+			if (roleDef.scriptedTriggers == null) {
+				return roleDef;
+			} else {
+				return new UnloadableGroup(roleDef, roleDef.scriptedTriggers);
+			}
 		}
 
 		internal static void LoadingFinished() {

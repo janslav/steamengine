@@ -92,21 +92,21 @@ namespace SteamEngine.CompiledScripts {
 		public double MaxAdvRate {
 			get {
 				double[] arr = AdvRate;
-				return arr[arr.Length-1];
+				return arr[arr.Length - 1];
 			}
 		}
 
-		public ushort SkillValueOfChar(Character ch) {
+		public int SkillValueOfChar(Character ch) {
 			//return ch.Skills[this.id].RealValue;
 			return ch.GetSkill(this.Id);
 			//return ((Skill)ch.SkillsAbilities[this]).RealValue;
 		}
 
-		public static ushort SkillValueOfChar(Character ch, ushort id) {
+		public static int SkillValueOfChar(Character ch, ushort id) {
 			return ch.GetSkill(id);
 		}
 
-		public static ushort SkillValueOfChar(Character ch, SkillName id) {
+		public static int SkillValueOfChar(Character ch, SkillName id) {
 			return ch.GetSkill((int) id);
 		}
 
@@ -136,7 +136,7 @@ namespace SteamEngine.CompiledScripts {
 		public double MaxDelay {
 			get {
 				double[] arr = Delay;
-				return arr[arr.Length-1];
+				return arr[arr.Length - 1];
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts {
 		public double MaxEffect {
 			get {
 				double[] arr = Effect;
-				return arr[arr.Length-1];
+				return arr[arr.Length - 1];
 			}
 		}
 
@@ -195,157 +195,132 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal void Select(AbstractCharacter ch) {
-			Character self = (Character) ch;
-			if (!this.Trigger_Select(self)) {
-				this.On_Select(self);
-			}
-		}
-
-		protected abstract void On_Select(Character ch);
-
-		private bool Trigger_Select(Character self) {
+		internal bool Trigger_Select(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage())
 				return true;
-			bool cancel = false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel = this.TryCancellableTrigger(self, tkSelect, sa);
+			bool cancel = self.TryCancellableTrigger(tkSkillSelect, skillSeqArgs.scriptArgs);
 			if (!cancel) {
-				cancel = self.TryCancellableTrigger(tkSkillSelect, sa);
+				try {
+					cancel = self.On_SkillSelect(skillSeqArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (!cancel) {
-					cancel = self.On_SkillSelect(Id);
+					cancel = this.TryCancellableTrigger(self, tkSelect, skillSeqArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							cancel = this.On_Select(skillSeqArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
 				}
 			}
 			return cancel;
 		}
 
-		internal void Start(Character ch) {
-			if (!this.Trigger_Start(ch)) {
-				this.On_Start(ch);
-			}
-		}
-
-		private bool Trigger_Start(Character self) {
-			if (self==null) return false;
-			bool cancel=false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableTrigger(self, tkStart, sa);
+		internal bool Trigger_Start(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			bool cancel = self.TryCancellableTrigger(tkSkillStart, skillSeqArgs.scriptArgs);
 			if (!cancel) {
-				cancel=self.TryCancellableTrigger(tkSkillStart, sa);
+				try {
+					cancel = self.On_SkillStart(skillSeqArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (!cancel) {
-					cancel=self.On_SkillStart(Id);
+					cancel = this.TryCancellableTrigger(self, tkStart, skillSeqArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							cancel = this.On_Start(skillSeqArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
 				}
 			}
 			return cancel;
 		}
 
-		[Summary("This method implements the start phase of the skill.")]
-		protected abstract void On_Start(Character ch);
-
-		[Summary("This method fires the @skillStroke triggers. "
-		+ "Gets usually called by the SkillTimer.")]
-		public void Stroke(Character ch){
-			if (!this.Trigger_Stroke(ch)) {
-				this.On_Stroke(ch);
+		internal bool Trigger_Stroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			bool cancel = self.TryCancellableTrigger(tkSkillStroke, skillSeqArgs.scriptArgs);
+			if (!cancel) {
+				try {
+					cancel = self.On_SkillStroke(skillSeqArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(self, tkStroke, skillSeqArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							cancel = this.On_Stroke(skillSeqArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
 			}
+			return cancel;
 		}
+
+		internal bool Trigger_Fail(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			bool cancel = self.TryCancellableTrigger(tkSkillFail, skillSeqArgs.scriptArgs);
+			if (!cancel) {
+				try {
+					cancel = self.On_SkillFail(skillSeqArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(self, tkFail, skillSeqArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							cancel = this.On_Fail(skillSeqArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+			return cancel;
+		}
+
+		internal bool Trigger_Success(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			bool cancel = self.TryCancellableTrigger(tkSkillSuccess, skillSeqArgs.scriptArgs);
+			if (!cancel) {
+				try {
+					cancel = self.On_SkillSuccess(skillSeqArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(self, tkSuccess, skillSeqArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							cancel = this.On_Success(skillSeqArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+			return cancel;
+		}
+
+		internal void Trigger_Abort(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			self.TryCancellableTrigger(tkSkillAbort, skillSeqArgs.scriptArgs);
+			try {
+				self.On_SkillAbort(skillSeqArgs);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			this.TryCancellableTrigger(self, tkAbort, skillSeqArgs.scriptArgs);
+			try {
+				this.On_Abort(skillSeqArgs);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		}
+
+		[Summary("This method implements the Select phase of the skill.")]
+		protected abstract bool On_Select(SkillSequenceArgs skillSeqArgs);
+
+		[Summary("This method implements the Start phase of the skill.")]
+		protected abstract bool On_Start(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the \"stroke\" of the skill, that means some important moment \"in the middle\".")]
-		protected abstract void On_Stroke(Character ch);
-
-		private bool Trigger_Stroke(Character self) {
-			if (self == null) return false;
-			bool cancel = false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel = TryCancellableTrigger(self, tkStroke, sa);
-			if (!cancel) {
-				cancel = self.TryCancellableTrigger(tkSkillStroke, sa);
-				if (!cancel) {
-					cancel = self.On_SkillStroke(Id);
-				}
-			}
-			return cancel;
-		}
-
-		[Summary("This method fires the @skillFail triggers. "
-		+ "Gets usually called when the skill chance fails, which is something else than being forced to abort")]
-		public void Fail(Character ch) {
-			if (!this.Trigger_Fail(ch)) {
-				this.On_Fail(ch);
-			}
-		}
+		protected abstract bool On_Stroke(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the failing of the skill. ")]
-		protected abstract void On_Fail(Character ch);
+		protected abstract bool On_Fail(SkillSequenceArgs skillSeqArgs);
 
-		private bool Trigger_Fail(Character self) {
-			if (self==null) return false;
-			bool cancel=false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel=TryCancellableTrigger(self, tkFail, sa);
-			if (!cancel) {
-				cancel=self.TryCancellableTrigger(tkSkillFail, sa);
-				if (!cancel) {
-					cancel=self.On_SkillFail(Id);
-				}
-			}
-			return cancel;
-		}
+		[Summary("This method implements the succes of the skill, a.e. skillgaiin and the success effect.")]
+		protected abstract bool On_Success(SkillSequenceArgs skillSeqArgs);
 
-		[Summary("This method fires the @skillGain triggers. "
-		+ "Gets called when the Character`s about to gain in this skill, with the chance and skillcap as additional args")]
-		public void Success(Character ch) {
-			if (!this.Trigger_Success(ch)) {
-				this.On_Success(ch);
-			}
-		}
-
-		[Summary("This method implements the succes of the skill, a.e. skillgaiin and the success effect."
-		+ "Usually calls Trigger_Success at some point")]
-		protected abstract void On_Success(Character ch);
-
-		private bool Trigger_Success(Character self) {
-			if (self == null) return false;
-			bool cancel = false;
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			cancel = TryCancellableTrigger(self, tkSuccess, sa);
-			if (!cancel) {
-				cancel = self.TryCancellableTrigger(tkSkillSuccess, sa);
-				if (!cancel) {
-					cancel = self.On_SkillSuccess(Id);
-				}
-			}
-			return cancel;
-		}
-
-		[Summary("This method fires the @skillAbort triggers. "
-		+ "Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
-		internal void Abort(Character self) {
-			Trigger_Abort(self);
-			On_Abort(self);
-		}
-
-		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... "
-		+"Usually calls Trigger_Abort at some point")]
-		protected abstract void On_Abort(Character self);
-
-		private void Trigger_Abort(Character self) {
-			if (self==null) 
-				return;
-
-			ScriptArgs sa = new ScriptArgs(self, Id);
-			TryTrigger(self, tkAbort, sa);
-			self.TryTrigger(tkSkillAbort, sa);
-			self.On_SkillAbort(Id);
-		}
-
-		public void DelaySkillStroke(double seconds, Character self) {
-			self.DelaySkillStroke(seconds);
-		}
-
-		public void DelaySkillStroke(Character self) {
-			self.DelaySkillStroke(GetDelayForChar(self));
-		}
+		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... ")]
+		protected abstract void On_Abort(SkillSequenceArgs skillSeqArgs);
 
 		//[Summary("This method fires the @skillMakeItem triggers. "
 		//+"Gets usually called after an item has been crafted, with the AbstractItem as additional argument")]
@@ -379,5 +354,284 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly TriggerKey tkSkillSuccess = TriggerKey.Get("SkillSuccess");
 		//public static readonly TriggerKey tkGain = TriggerKey.Get("Gain");
 		//public static readonly TriggerKey tkSkillGain = TriggerKey.Get("SkillGain");
+	}
+
+	[Persistence.SaveableClass]
+	public class SkillSequenceArgs : Poolable {
+		private Character self; //set when calling @Select
+		private SkillDef skillDef; //set when calling @Select
+		private IPoint4D target1, target2; //set in @Select or before it
+		private object param1, param2; //set in @Select or before it
+		private Item tool;
+		private TimeSpan delay; //set in @Start
+		private bool success;
+
+		public readonly ScriptArgs scriptArgs;
+
+		[Persistence.LoadingInitializer]
+		public SkillSequenceArgs()
+			: base() {
+
+			this.scriptArgs = new ScriptArgs(this);
+		}
+
+		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef) {
+			SkillSequenceArgs args = Pool<SkillSequenceArgs>.Acquire();
+			args.self = self;
+			args.skillDef = skillDef;
+			args.target1 = null;
+			args.target2 = null;
+			args.param1 = null;
+			args.param2 = null;
+			args.tool = null;
+			args.success = false;
+			args.delay = Timers.Timer.negativeOneSecond;
+			return args;
+		}
+
+		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef, IPoint4D target1, IPoint4D target2, Item tool, object param1, object param2) {
+			SkillSequenceArgs args = Pool<SkillSequenceArgs>.Acquire();
+			args.self = self;
+			args.skillDef = skillDef;
+			args.target1 = target1;
+			args.target2 = target2;
+			args.param1 = param1;
+			args.param2 = param2;
+			args.tool = tool;
+			args.success = false;
+			args.delay = Timers.Timer.negativeOneSecond;
+			return args;
+		}
+
+		public static SkillSequenceArgs Acquire(Character self, SkillName skillName) {
+			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName));
+		}
+
+		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool) {
+			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName), null, null, tool, null, null);
+		}
+
+		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool, object param1) {
+			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName), null, null, tool, param1, null);
+		}
+
+		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, IPoint4D target1, IPoint4D target2, Item tool, object param1, object param2) {
+			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName), target1, target2, tool, param1, param2);
+		}
+
+		public Character Self {
+			get {
+				return this.self;
+			}
+		}
+
+		public SkillDef SkillDef {
+			get {
+				return this.skillDef;
+			}
+		}
+
+		[Persistence.Save]
+		public void Save(SteamEngine.Persistence.SaveStream output) {
+			if (this.self != null) {
+				output.WriteValue("self", this.self);
+			}
+			if (this.skillDef != null) {
+				output.WriteValue("skillDef", this.skillDef);
+			}
+		}
+
+		[Persistence.LoadLine]
+		public void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName) {
+				case "self":
+					Persistence.ObjectSaver.Load(valueString, delegate(object loaded, string f, int l) {
+						this.self = (Character) loaded;
+					}, filename, line);
+					break;
+				case "skilldef":
+					this.skillDef = (SkillDef) Persistence.ObjectSaver.OptimizedLoad_Script(valueName);
+					break;
+			}
+		}
+
+		[Persistence.SaveableData]
+		public IPoint4D Target1 {
+			get {
+				return this.target1;
+			}
+			set {
+				this.target1 = value;
+			}
+		}
+
+		[Persistence.SaveableData]
+		public IPoint4D Target2 {
+			get {
+				return this.target2;
+			}
+			set {
+				this.target2 = value;
+			}
+		}
+
+		[Persistence.SaveableData]
+		public object Param1 {
+			get {
+				return this.param1;
+			}
+			set {
+				this.param1 = value;
+			}
+		}
+
+		[Persistence.SaveableData]
+		public object Param2 {
+			get {
+				return this.param2;
+			}
+			set {
+				this.param2 = value;
+			}
+		}
+
+		[Persistence.SaveableData]
+		public Item Tool {
+			get {
+				return this.tool;
+			}
+			set {
+				this.tool = value;
+			}
+		}
+
+		[Persistence.SaveableData]
+		public TimeSpan DelaySpan {
+			get {
+				return this.delay;
+			}
+			set {
+				this.delay = value;
+			}
+		}
+
+		public double DelayInSeconds {
+			get {
+				return this.delay.TotalSeconds;
+			}
+			set {
+				this.delay = TimeSpan.FromSeconds(value);
+			}
+		}
+
+		[Persistence.SaveableData]
+		public bool Success {
+			get {
+				return this.success;
+			}
+			set {
+				this.success = value;
+			}
+		}
+
+		public void PhaseSelect() {
+			if (!this.skillDef.Trigger_Select(this)) {
+				this.PhaseStart();
+			}
+		}
+
+		public void PhaseStart() {
+			if (!this.skillDef.Trigger_Start(this)) {
+				AbortSkill(this.self);
+
+				this.DelayInSeconds = this.skillDef.GetDelayForChar(this.self);
+				this.DelayStroke();
+			}
+		}
+
+		public void DelayStroke() {
+			if (this.delay < TimeSpan.Zero) {
+				this.PhaseStroke();
+			} else {
+				this.self.AddTimer(skillTimerKey, new SkillStrokeTimer(this)).DueInSpan = this.delay;;
+			}
+		}
+
+		[Summary("This method fires the @skillStroke triggers. "
+		+ "Gets usually called by the SkillTimer.")]
+		public void PhaseStroke() {
+			if (!this.skillDef.Trigger_Stroke(this)) {
+				if (this.success) {
+					this.PhaseSuccess();
+				} else {
+					this.PhaseFail();
+				}
+			}
+		}
+
+		[Summary("This method fires the @skillFail triggers. Gets usually called from the Stroke phase")]
+		[Remark("Failing is something else than being forced to abort")]
+		public void PhaseFail() {
+			if (!this.skillDef.Trigger_Fail(this)) {
+				this.Dispose();
+			}
+		}
+
+		[Summary("This method fires the @Success triggers. Gets usually called from the Stroke phase")]
+		public void PhaseSuccess() {
+			if (!this.skillDef.Trigger_Success(this)) {
+				this.Dispose();
+			}
+		}
+
+		[Summary("This method fires the @skillAbort triggers. "
+		+ "Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
+		public void PhaseAbort() {
+			this.skillDef.Trigger_Abort(this);
+			this.Dispose();
+		}
+
+		public static void AbortSkill(Character self) {
+			SkillStrokeTimer timer = (SkillStrokeTimer) self.RemoveTimer(skillTimerKey);
+			if (timer != null) {
+				timer.skillSeqArgs.PhaseAbort();
+				timer.skillSeqArgs = null;
+				timer.Delete();
+			}
+		}
+
+		public static SkillSequenceArgs GetSkillSequenceArgs(Character self) {
+			SkillStrokeTimer timer = (SkillStrokeTimer) self.GetTimer(skillTimerKey);
+			if (timer != null) {
+				return timer.skillSeqArgs;
+			}
+			return null;
+		}
+
+		private static Timers.TimerKey skillTimerKey = Timers.TimerKey.Get("_skillTimer_");
+
+		[Persistence.SaveableClass]
+		[DeepCopyableClass]
+		public class SkillStrokeTimer : Timers.BoundTimer {
+
+			[CopyableData]
+			[Persistence.SaveableData]
+			public SkillSequenceArgs skillSeqArgs;
+
+			[Persistence.LoadingInitializer]
+			[DeepCopyImplementation]
+			public SkillStrokeTimer() {
+			}
+
+			public SkillStrokeTimer(SkillSequenceArgs skillSeqArgs) {
+				Sanity.IfTrueThrow(skillSeqArgs == null, "skillSeqArgs == null");
+				this.skillSeqArgs = skillSeqArgs;
+			}
+
+			protected sealed override void OnTimeout(TagHolder cont) {
+				Logger.WriteDebug("SkillStrokeTimer OnTimeout on " + this.Cont);
+				this.skillSeqArgs.PhaseStroke();
+			}
+		}
 	}
 }

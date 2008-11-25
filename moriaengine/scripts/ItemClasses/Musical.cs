@@ -26,24 +26,17 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class Musical : Item {
-		private SkillDef musicianshipDef = (SkillDef) SkillDef.ByKey("musicianship");
-
 		public override void On_DClick(AbstractCharacter ac) {
 			Character clicker = ac as Character;
-			if (clicker != null) {
-				clicker.AbortSkill();
-
-				clicker.currentSkillTarget2 = this;
-				clicker.SelectSkill((int) SkillName.Musicianship);//select Musicianship
-			}
+			clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Musicianship, this));//select Musicianship
 		}
 		
 		public void SuccessSnd() {
-			this.Sound(TypeDef.SuccessSound);
+			this.Sound(this.TypeDef.SuccessSound);
 		}
 		
 		public void FailureSnd() {
-			this.Sound(TypeDef.FailureSound);
+			this.Sound(this.TypeDef.FailureSound);
 		}
 
 		public override bool IsMusicalInstrument { get {

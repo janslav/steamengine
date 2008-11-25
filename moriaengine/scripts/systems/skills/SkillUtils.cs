@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 		public const int skillCheckVariance = 250;
 
 
-		public static bool CheckSuccess(ushort skillValue, int difficulty) {
+		public static bool CheckSuccess(int skillValue, int difficulty) {
 			// Chance to complete skill check given skill x and difficulty y
 			// ARGS:
 			//  skillValue = 0-1000
