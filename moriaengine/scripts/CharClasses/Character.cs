@@ -391,7 +391,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		public bool CanInteractWith(Character target) {
+		public bool CanInteractWith(Thing target) {
 			if (this.Flag_Dead) {
 				return false;
 			}
@@ -401,7 +401,11 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 
-			return !target.Flag_Dead;
+			Character targetAsChar = target as Character;
+			if (targetAsChar != null) {
+				return !targetAsChar.Flag_Dead;
+			}
+			return true;
 		}
 
 		public override byte StatLockByte {
