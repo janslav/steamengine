@@ -140,17 +140,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double GetDelayForValue(ushort skillValue) {
-			return ScriptUtil.EvalRangePermille(skillValue, Delay);
-		}
 
-		public double GetDelayForChar(Character ch) {
-			if (ch.IsGM) {
-				return 0;
-			} else {
-				return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Delay);
-			}
-		}
 
 		public double[] Effect {
 			get {

@@ -47,6 +47,12 @@ namespace SteamEngine.CompiledScripts {
 			GameServer.SendToClientsWhoCanSee(self, p);
 		}
 
+		public static void StationaryEffect(Thing self, ushort effect, byte speed) {
+			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+			p.Prepare(self, self, 3, effect, speed, duration, 0, true, false, 0, 0);
+			GameServer.SendToClientsWhoCanSee(self, p);
+		}
+
 		public static void StationaryEffectAt(IPoint4D point, ushort effect, byte speed, byte duration, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
 			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 			p.Prepare(point, point, 2, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);

@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
 		EffectNeedsLOS = 0x0400,
 		IsMassSpell = 0x0800,
-
+		TargetCanMove = 0x1000
 	}
 
 	[ViewableClass]
@@ -352,6 +352,7 @@ namespace SteamEngine.CompiledScripts {
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.AlwaysTargetSelf) == SpellFlag.AlwaysTargetSelf) {
 				mageryArgs.Target1 = caster;
+				mageryArgs.DelayInSeconds = this.CastTime;
 				mageryArgs.PhaseStart();
 				return;
 			} else if ((flags & SpellFlag.CanTargetAnything) != SpellFlag.None) {
@@ -366,10 +367,15 @@ namespace SteamEngine.CompiledScripts {
 					}
 				} else {
 					mageryArgs.PhaseStart();
+					return;
 				}
 			}
 
 			throw new SEException("SpellDef.Trigger_Select - unfinished");
+		}
+
+		internal void On_Success(SkillSequenceArgs skillSeqArgs) {
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 
@@ -392,11 +398,13 @@ namespace SteamEngine.CompiledScripts {
 			SpellFlag flags = spell.Flags;
 
 			if ((flags & SpellFlag.CanTargetGround) == SpellFlag.CanTargetGround) {
-				if (targetted is Thing) {//we pretend to have targetted the ground, cos we don't want it to move
+				if (((flags & SpellFlag.TargetCanMove) != SpellFlag.TargetCanMove) && targetted is Thing) {
+					//we pretend to have targetted the ground, cos we don't want it to move
 					mageryArgs.Target1 = new Point4D(targetted.TopPoint);
 				} else {
 					mageryArgs.Target1 = targetted;
 				}
+				mageryArgs.DelayInSeconds = spell.CastTime;
 				mageryArgs.PhaseStart();
 			} else {
 				return true; //repeat targetting
@@ -423,6 +431,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if ((flags & targetSF) == targetSF) {
 				mageryArgs.Target1 = targetted;
+				mageryArgs.DelayInSeconds = spell.CastTime;
 				mageryArgs.PhaseStart();
 			} else {
 				return this.On_TargonGround(caster, targetted, parameter);
