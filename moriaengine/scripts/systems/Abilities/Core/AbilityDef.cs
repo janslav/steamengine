@@ -220,12 +220,6 @@ namespace SteamEngine.CompiledScripts {
 			byName.Remove(ad.Name);
 		}
 
-		internal static void UnloadScripts() {
-			//byDefname.Clear();
-			byName.Clear();
-			abilityDefCtorsByName.Clear();
-		}
-
 		public static new void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<AbilityDef>(RegisterAbilityDefType);
 		}

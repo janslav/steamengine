@@ -170,11 +170,6 @@ namespace SteamEngine.CompiledScripts {
 			byName.Remove(rd.Name);
 		}
 
-		internal static void UnloadScripts() {
-			byName.Clear();
-			roleDefCtorsByName.Clear();
-		}
-
 		public static new void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<RoleDef>(RegisterRoleDefType);
 		}

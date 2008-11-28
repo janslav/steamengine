@@ -26,4 +26,5 @@ Def:	//vars on the def
 	int range = 1
 	int strikeStartRange = 5
 	int strikeStopRange = 10
-	
+	double mindPowerVsM = -1
+	double mindPowerVsP = -1

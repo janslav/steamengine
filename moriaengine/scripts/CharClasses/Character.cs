@@ -558,7 +558,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != strength) {
 					CharSyncQueue.AboutToChangeStats(this);
-					InvalidateCombatWeaponValues();
+					this.InvalidateCombatWeaponValues();
 					strength = value;
 				}
 			}
@@ -572,7 +572,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != dexterity) {
 					CharSyncQueue.AboutToChangeStats(this);
-					InvalidateCombatWeaponValues();
+					this.InvalidateCombatWeaponValues();
 					dexterity = value;
 				}
 			}
@@ -585,7 +585,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != intelligence) {
 					CharSyncQueue.AboutToChangeStats(this);
-					InvalidateCombatWeaponValues();
+					this.InvalidateCombatWeaponValues();
 					intelligence = value;
 				}
 			}
@@ -957,33 +957,30 @@ namespace SteamEngine.CompiledScripts {
 
 		public override string PaperdollName {
 			get {
-				if (title != null) {
-					return string.Concat(Name, ", ", title);
+				if (!String.IsNullOrEmpty(this.title)) {
+					return string.Concat(this.Name, ", ", title);
 				}
-				return Name;
+				return this.Name;
 			}
 		}
 
 		public string Title {
 			get {
-				return title;
+				return this.title;
 			}
 			set {
-				title = value;
+				this.title = value;
 			}
 		}
 
 		public void Kill() {
 			//TODO effect?
-			CauseDeath((Character) Globals.SrcCharacter);
+			this.CauseDeath((Character) Globals.SrcCharacter);
 		}
 
 		public virtual void On_Death(Character killedBy) {
 			//stop regenerating
-			Plugin regPlug = this.GetPlugin(RegenerationPlugin.regenerationsPluginKey);
-			if (regPlug != null) {
-				regPlug.Delete();
-			}			
+			this.DeletePlugin(RegenerationPlugin.regenerationsPluginKey);	
 		}
 
 		private static TriggerKey deathTK = TriggerKey.Get("death");
@@ -1965,10 +1962,10 @@ namespace SteamEngine.CompiledScripts {
 		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
 			switch ((SkillName) skill.Id) {
 				case SkillName.Parry:
-					InvalidateCombatArmorValues();
+					this.InvalidateCombatArmorValues();
 					break;
 				case SkillName.Tactics:
-					InvalidateCombatWeaponValues();
+					this.InvalidateCombatWeaponValues();
 					break;
 			}
 		}
@@ -1979,118 +1976,118 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ArmorClassVsP {
 			get {
-				CalculateCombatArmorValues();
-				return combatArmorValues.armorVsP;
+				this.CalculateCombatArmorValues();
+				return this.combatArmorValues.armorVsP;
 			}
 		}
 
 		public int ArmorClassVsM {
 			get {
-				CalculateCombatArmorValues();
-				return combatArmorValues.armorVsM;
+				this.CalculateCombatArmorValues();
+				return this.combatArmorValues.armorVsM;
 			}
 		}
 
 		public override short StatusArmorClass {
 			get {
-				CalculateCombatArmorValues();
-				return (short) ((combatArmorValues.armorVsP + combatArmorValues.armorVsM) / 2);
+				this.CalculateCombatArmorValues();
+				return (short) ((this.combatArmorValues.armorVsP + this.combatArmorValues.armorVsM) / 2);
 			}
 		}
 
 		private static TagKey armorClassModifierTK = TagKey.Get("_armorClassModifier_");
 		public int ArmorClassModifier {
 			get {
-				return Convert.ToInt32(GetTag(armorClassModifierTK));
+				return Convert.ToInt32(this.GetTag(armorClassModifierTK));
 			}
 			set {
-				InvalidateCombatArmorValues();
+				this.InvalidateCombatArmorValues();
 				if (value != 0) {
-					SetTag(armorClassModifierTK, value);
+					this.SetTag(armorClassModifierTK, value);
 				} else {
-					RemoveTag(armorClassModifierTK);
+					this.RemoveTag(armorClassModifierTK);
 				}
 			}
 		}
 
 		public int MindDefenseVsP {
 			get {
-				CalculateCombatArmorValues();
-				return combatArmorValues.mindDefenseVsP;
+				this.CalculateCombatArmorValues();
+				return this.combatArmorValues.mindDefenseVsP;
 			}
 		}
 
 		public int MindDefenseVsM {
 			get {
-				CalculateCombatArmorValues();
-				return combatArmorValues.mindDefenseVsM;
+				this.CalculateCombatArmorValues();
+				return this.combatArmorValues.mindDefenseVsM;
 			}
 		}
 
 		public override short StatusMindDefense {
 			get {
-				CalculateCombatArmorValues();
-				return (short) ((combatArmorValues.mindDefenseVsP + combatArmorValues.mindDefenseVsM) / 2);
+				this.CalculateCombatArmorValues();
+				return (short) ((this.combatArmorValues.mindDefenseVsP + this.combatArmorValues.mindDefenseVsM) / 2);
 			}
 		}
 
 		private static TagKey mindDefenseModifierTK = TagKey.Get("_mindDefenseModifier_");
 		public int MindDefenseModifier {
 			get {
-				return Convert.ToInt32(GetTag(mindDefenseModifierTK));
+				return Convert.ToInt32(this.GetTag(mindDefenseModifierTK));
 			}
 			set {
-				InvalidateCombatArmorValues();
+				this.InvalidateCombatArmorValues();
 				if (value != 0) {
-					SetTag(mindDefenseModifierTK, value);
+					this.SetTag(mindDefenseModifierTK, value);
 				} else {
-					RemoveTag(mindDefenseModifierTK);
+					this.RemoveTag(mindDefenseModifierTK);
 				}
 			}
 		}
 
 		public void InvalidateCombatWeaponValues() {
-			if (combatWeaponValues != null) {
+			if (this.combatWeaponValues != null) {
 				CharSyncQueue.AboutToChangeStats(this);
-				combatWeaponValues = null;
+				this.combatWeaponValues = null;
 			}
 		}
 
 		public void InvalidateCombatArmorValues() {
-			if (combatArmorValues != null) {
+			if (this.combatArmorValues != null) {
 				CharSyncQueue.AboutToChangeStats(this);
-				combatArmorValues = null;
+				this.combatArmorValues = null;
 			}
 		}
 
 		private void CalculateCombatWeaponValues() {
-			if (combatWeaponValues == null) {
+			if (this.combatWeaponValues == null) {
 				CharSyncQueue.AboutToChangeStats(this);
-				combatWeaponValues = CombatCalculator.CalculateCombatWeaponValues(this);
+				this.combatWeaponValues = CombatCalculator.CalculateCombatWeaponValues(this);
 			}
 		}
 
 		private void CalculateCombatArmorValues() {
-			if (combatArmorValues == null) {
+			if (this.combatArmorValues == null) {
 				CharSyncQueue.AboutToChangeStats(this);
-				combatArmorValues = CombatCalculator.CalculateCombatArmorValues(this);
+				this.combatArmorValues = CombatCalculator.CalculateCombatArmorValues(this);
 			}
 		}
 
 		public override void On_ItemEnter(ItemInCharArgs args) {
 			if (args.manipulatedItem is Wearable) {
-				InvalidateCombatArmorValues();
+				this.InvalidateCombatArmorValues();
 			} else if (args.manipulatedItem is Weapon) {
-				InvalidateCombatWeaponValues();
+				this.InvalidateCombatWeaponValues();
 			}
 			base.On_ItemEnter(args);
 		}
 
 		public override void On_ItemLeave(ItemInCharArgs args) {
 			if (args.manipulatedItem is Wearable) {
-				InvalidateCombatArmorValues();
+				this.InvalidateCombatArmorValues();
 			} else if (args.manipulatedItem is Weapon) {
-				InvalidateCombatWeaponValues();
+				this.InvalidateCombatWeaponValues();
 			}
 			base.On_ItemLeave(args);
 		}
@@ -2098,7 +2095,7 @@ namespace SteamEngine.CompiledScripts {
 		public virtual bool IsPlayerForCombat {
 			get {
 				//TODO: false for hypnomystic
-				return IsPlayer;
+				return this.IsPlayer;
 			}
 		}
 
@@ -2111,110 +2108,110 @@ namespace SteamEngine.CompiledScripts {
 
 		public Weapon Weapon {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.weapon;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.weapon;
 			}
 		}
 
 		public double WeaponAttackVsP {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.attackVsP;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.attackVsP;
 			}
 		}
 
 		public double WeaponAttackVsM {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.attackVsM;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.attackVsM;
 			}
 		}
 
 		public double WeaponPiercing {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.piercing;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.piercing;
 			}
 		}
 
 		public WeaponType WeaponType {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.weaponType;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.weaponType;
 			}
 		}
 
 		public DamageType WeaponDamageType {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.damageType;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.damageType;
 			}
 		}
 
 		public WeaponAnimType WeaponAnimType {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.weaponAnimType;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.weaponAnimType;
 			}
 		}
 
 		public Projectile WeaponProjectile {
 			get {
-				if ((weaponProjectile != null) &&
-						(weaponProjectile.IsDeleted ||
-						(weaponProjectile.TopObj() != this) ||
-						(weaponProjectile.Amount < 1))) {
-					weaponProjectile = null;//we had ammo but now don't have it anymore
-					InvalidateCombatWeaponValues();
+				if ((this.weaponProjectile != null) &&
+						(this.weaponProjectile.IsDeleted ||
+						(this.weaponProjectile.TopObj() != this) ||
+						(this.weaponProjectile.Amount < 1))) {
+					this.weaponProjectile = null;//we had ammo but now don't have it anymore
+					this.InvalidateCombatWeaponValues();
 				} else if ((weaponProjectile == null) && (this.combatWeaponValues != null) &&
 						(this.combatWeaponValues.projectileType != ProjectileType.None)) {
-					InvalidateCombatWeaponValues();//we have no ammo but we should, let's look for it
+					this.InvalidateCombatWeaponValues();//we have no ammo but we should, let's look for it
 				}
-				CalculateCombatWeaponValues();
-				return weaponProjectile;
+				this.CalculateCombatWeaponValues();
+				return this.weaponProjectile;
 			}
 		}
 
 		public int WeaponProjectileAnim {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.projectileAnim;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.projectileAnim;
 			}
 		}
 
 		public ProjectileType WeaponProjectileType {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.projectileType;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.projectileType;
 			}
 		}
 
 		public int WeaponRange {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.range;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.range;
 			}
 		}
 
 		public int WeaponStrikeStartRange {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.strikeStartRange;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.strikeStartRange;
 			}
 		}
 
 		public int WeaponStrikeStopRange {
 			get {
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.strikeStopRange;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.strikeStopRange;
 			}
 		}
 
 		public TimeSpan WeaponDelay {
 			get {
 				//TODO: mana-dependant for mystic
-				CalculateCombatWeaponValues();
-				return combatWeaponValues.delay;
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.delay;
 			}
 		}
 
@@ -2239,7 +2236,6 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_AfterGetSwing(WeaponSwingArgs args) {
 		}
-
 
 		[Summary("hodi zbran do batohu")]
 		public void DisArm() {

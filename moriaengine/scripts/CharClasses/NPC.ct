@@ -15,7 +15,8 @@
 
 [ThingTemplate NPC : Character]
 Defs:
-	double weaponAttack = 1
+	double mindPower = 1000
+	double weaponAttack = 1	
 	double weaponPiercing = 0
 	double weaponDelay = 2.0
 	WeaponType weaponType = WeaponType.Undefined
