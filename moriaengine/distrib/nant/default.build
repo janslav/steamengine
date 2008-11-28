@@ -56,6 +56,8 @@
 		<delete>
 			<fileset>
 				<include name="bin/*SteamEngine.Scripts*" />
+				<include name="bin/**/*.Generated.*" />
+				<include name="scripts/**/*.Generated.cs" />
 			</fileset>
 		</delete>
 	</target>
