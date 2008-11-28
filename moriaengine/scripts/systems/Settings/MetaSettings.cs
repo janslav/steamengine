@@ -52,5 +52,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return CombatSettings.instance;
 			}
 		}
+
+		[InfoField("Magery Settings")]
+		public MagerySettings MagerySettings {
+			get {
+				return MagerySettings.instance;
+			}
+		}
 	}	
 }

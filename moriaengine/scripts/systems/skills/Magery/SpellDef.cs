@@ -43,7 +43,10 @@ namespace SteamEngine.CompiledScripts {
 		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
 		EffectNeedsLOS = 0x0400,
 		IsMassSpell = 0x0800,
-		TargetCanMove = 0x1000
+		TargetCanMove = 0x1000, 
+		UseMindPower = 0x2000, //otherwise, magery value is used, multiplied by the spells Effect value
+		IsHarmful = 0x4000,
+		IsBeneficial = 0x8000
 	}
 
 	[ViewableClass]
@@ -76,12 +79,6 @@ namespace SteamEngine.CompiledScripts {
 		private static void UnRegisterSpellDef(SpellDef sd) {
 			byDefname.Remove(sd.Defname);
 			byId.Remove(sd.id);
-		}
-
-		internal static void UnloadScripts() {
-			//byDefname.Clear();
-			byId.Clear();
-			spellDefCtorsByName.Clear();
 		}
 
 		public static ICollection<SpellDef> AllSpellDefs {
@@ -201,6 +198,7 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue duration;
 		private FieldValue sound;
 		private FieldValue runes;
+		private FieldValue effectRange;
 
 		public SpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -210,7 +208,7 @@ namespace SteamEngine.CompiledScripts {
 			this.runeItem = this.InitField_ThingDef("runeItem", null, typeof(ItemDef));
 			this.castTime = this.InitField_Typed("castTime", null, typeof(double));
 			this.flags = this.InitField_Typed("flags", null, typeof(SpellFlag));
-			this.manaUse = this.InitField_Typed("manaUse", null, typeof(int));
+			this.manaUse = this.InitField_Typed("manaUse", 10, typeof(int));
 			this.requirements = this.InitField_Typed("requirements", null, typeof(ResourcesList));
 			this.resources = this.InitField_Typed("resources", null, typeof(ResourcesList));
 			this.difficulty = this.InitField_Typed("difficulty", null, typeof(int));
@@ -218,6 +216,7 @@ namespace SteamEngine.CompiledScripts {
 			this.duration = this.InitField_Typed("duration", null, typeof(double[]));
 			this.sound = this.InitField_Typed("sound", null, typeof(SoundNames));
 			this.runes = this.InitField_Typed("runes", null, typeof(string));
+			this.effectRange = this.InitField_Typed("effectRange", 5, typeof(int));
 		}
 
 		public int Id {
@@ -375,7 +374,80 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void On_Success(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			//target LOS and being alive checked in magery stroke
+
+			IPoint4D target = skillSeqArgs.Target1;
+
+		}
+
+	}
+
+	public class SpellEffectArgs : Poolable {
+		Character source;
+		IPoint4D currentTarget;
+		IPoint4D mainTarget;
+		SpellDef spellDef;
+		int spellPower;
+
+		public readonly ScriptArgs scriptArgs;
+
+		public SpellEffectArgs()
+			: base() {
+			this.scriptArgs = new ScriptArgs(this);
+		}
+
+		public static SpellEffectArgs Acquire(Character source, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower) {
+			SpellEffectArgs retVal = Pool<SpellEffectArgs>.Acquire();
+			retVal.source = source;
+			retVal.mainTarget = mainTarget;
+			retVal.currentTarget = currentTarget;
+			retVal.spellDef = spellDef;
+			retVal.spellPower = spellPower;
+			return retVal;
+		}
+
+		//protected override void On_Reset() {
+		//    this.source = null;
+		//    this.target = null;
+		//    this.spellDef = null;
+		//    this.spellPower = 0;
+		//    base.On_Reset();
+		//}
+
+		public Character Source {
+			get {
+				return this.source;
+			}
+		}
+
+		public IPoint4D MainTarget {
+			get {
+				return this.mainTarget;
+			}
+		}
+
+		public IPoint4D CurrentTarget {
+			get {
+				return this.currentTarget;
+			}
+			set {
+				this.currentTarget = value;
+			}
+		}
+
+		public SpellDef SpellDef {
+			get {
+				return this.spellDef;
+			}
+		}
+
+		public int SpellPower {
+			get {
+				return this.spellPower;
+			}
+			set {
+				this.spellPower = value;
+			}
 		}
 	}
 

@@ -285,6 +285,8 @@ namespace SteamEngine.CompiledScripts {
 			internal WeaponAnimType weaponAnimType;
 			internal int projectileAnim = -1;
 			internal ProjectileType projectileType;
+			internal double mindPowerVsP;
+			internal double mindPowerVsM;
 		}
 
 		private static Projectile TryFindProjectile(Character self, ProjectileType type) {
@@ -325,9 +327,7 @@ namespace SteamEngine.CompiledScripts {
 			retVal.weapon = weapon;
 
 			if (self.IsPlayerForCombat) {
-				double weapSpeed;
-				double weapAttackVsP;
-				double weapAttackVsM;
+				double weapSpeed, weapAttackVsP, weapAttackVsM, mindPowerVsP, mindPowerVsM;
 				if (weapon != null) {
 					retVal.weaponType = weapon.WeaponType;
 					retVal.weaponAnimType = weapon.WeaponAnimType;
@@ -345,6 +345,8 @@ namespace SteamEngine.CompiledScripts {
 					weapSpeed = weapon.Speed;
 					weapAttackVsP = weapon.AttackVsP;
 					weapAttackVsM = weapon.AttackVsM;
+					mindPowerVsP = weapon.MindPowerVsP;
+					mindPowerVsM = weapon.MindPowerVsM;
 				} else {
 					retVal.weaponType = WeaponType.BareHands;
 					retVal.weaponAnimType = WeaponAnimType.BareHands;
@@ -356,6 +358,8 @@ namespace SteamEngine.CompiledScripts {
 					weapSpeed = CombatSettings.instance.bareHandsSpeed;
 					weapAttackVsP = CombatSettings.instance.bareHandsAttackVsP;
 					weapAttackVsM = CombatSettings.instance.bareHandsAttackVsM;
+					mindPowerVsP = MagerySettings.instance.bareHandsMindPowerVsP;
+					mindPowerVsM = MagerySettings.instance.bareHandsMindPowerVsP;
 				}
 				double delay = Math.Sqrt((double) self.Dex);
 				delay *=  weapSpeed;
@@ -393,6 +397,8 @@ namespace SteamEngine.CompiledScripts {
 					retVal.delay = TimeSpan.FromSeconds(npcDef.WeaponDelay);
 					retVal.attackVsM = npcDef.WeaponAttack;
 					retVal.attackVsP = retVal.attackVsM;
+					retVal.mindPowerVsM = npcDef.MindPower;
+					retVal.mindPowerVsP = retVal.mindPowerVsM;
 					retVal.piercing = npcDef.WeaponPiercing;
 					self.weaponProjectile = null;
 				} else {

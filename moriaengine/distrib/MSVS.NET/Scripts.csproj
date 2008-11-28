@@ -578,6 +578,9 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Magery.cs">
       <Link>systems\skills\Magery\Magery.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\MagerySettings.cs">
+      <Link>systems\skills\Magery\MagerySettings.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\SpellBook.cs">
       <Link>systems\skills\Magery\SpellBook.cs</Link>
     </Compile>

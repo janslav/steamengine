@@ -30,69 +30,94 @@ namespace SteamEngine.CompiledScripts {
 		//at durability 0, attacknumber is halved
 		public int AttackVsM {
 			get {
-				double attackHalved = TypeDef.AttackVsM/2;
-				return (int) (attackHalved + (((attackHalved * this.Durability) / this.MaxDurability)));
+				double halved = this.TypeDef.AttackVsM / 2;
+				return (int) (halved + (((halved * this.Durability) / this.MaxDurability)));
 			}
 		}
 
 		public int AttackVsP {
 			get {
-				double attackHalved = TypeDef.AttackVsP/2;
-				return (int) (attackHalved + (((attackHalved * this.Durability) / this.MaxDurability)));
+				double halved = this.TypeDef.AttackVsP / 2;
+				return (int) (halved + (((halved * this.Durability) / this.MaxDurability)));
+			}
+		}
+
+		public int MindPowerVsM {
+			get {
+				double defValue = this.TypeDef.MindPowerVsM;
+				double bareHands = MagerySettings.instance.bareHandsMindPowerVsM;
+				return this.CalculateMPDurabilty(defValue, bareHands);
+			}
+		}
+
+		public int MindPowerVsP {
+			get {
+				double defValue = this.TypeDef.MindPowerVsP;
+				double bareHands = MagerySettings.instance.bareHandsMindPowerVsP;
+				return this.CalculateMPDurabilty(defValue, bareHands);
+			}
+		}
+
+		private int CalculateMPDurabilty(double defValue, double bareHands) {
+			if (defValue >= 0) {
+				double halved = (defValue - bareHands) / 2;
+				return (int) (bareHands + halved + (((halved * this.Durability) / this.MaxDurability)));
+			} else {
+				return (int) bareHands;
 			}
 		}
 
 		public double Piercing {
 			get {
-				return TypeDef.Piercing;
+				return this.TypeDef.Piercing;
 			}
 		}
 		
 		public WeaponType WeaponType {
 			get {
-				return TypeDef.WeaponType;
+				return this.TypeDef.WeaponType;
 			}
 		}
 
 		public int Range {
 			get {
-				return TypeDef.Range;
+				return this.TypeDef.Range;
 			}
 		}
 
 		public int StrikeStartRange {
 			get {
-				return TypeDef.StrikeStartRange;
+				return this.TypeDef.StrikeStartRange;
 			}
 		}
 
 		public int StrikeStopRange {
 			get {
-				return TypeDef.StrikeStopRange;
+				return this.TypeDef.StrikeStopRange;
 			}
 		}
 
 		public double Speed {
 			get {
-				return TypeDef.Speed;
+				return this.TypeDef.Speed;
 			}
 		}
 
 		public WeaponAnimType WeaponAnimType {
 			get {
-				return TypeDef.WeaponAnimType;
+				return this.TypeDef.WeaponAnimType;
 			}
 		}
 
 		public ProjectileType ProjectileType {
 			get {
-				return TypeDef.ProjectileType;
+				return this.TypeDef.ProjectileType;
 			}
 		}
 
 		public int ProjectileAnim {
 			get {
-				return TypeDef.ProjectileAnim;
+				return this.TypeDef.ProjectileAnim;
 			}
 		}
 	}

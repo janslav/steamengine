@@ -364,9 +364,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				foreach (AbstractScript scp in AbstractScript.AllScripts) {
 					DefType def = scp as DefType;
-					IObjectWithMaterial withMaterial = scp as IObjectWithMaterial;
-					if ((def != null) && (withMaterial != null)) {
-						Material mat = withMaterial.Material;
+					if (def != null) {
+						Material mat = def.Material;
 						WearableType type = def.WearableType;
 						if (((mat >= Material.Copper) && (mat <= Material.Mithril)) &&
 							((type >= WearableType.Studded) && (type <= WearableType.Plate))) {

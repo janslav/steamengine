@@ -99,11 +99,6 @@ namespace SteamEngine.CompiledScripts {
 			byName.Remove(pd.Name);
 		}
 
-		internal static void UnloadScripts() {
-			byName.Clear();
-			profDefCtorsByName.Clear();
-		}
-
 		public static new void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<ProfessionDef>(RegisterProfessionDefType);
 		}
