@@ -1584,11 +1584,12 @@ namespace SteamEngine.Networking {
 
 	public sealed class GraphicalEffectOutPacket : GameOutgoingPacket {
 		uint sourceUid, targetUid, renderMode, hue;
-		byte type, speed, duration, fixedDirection, explodes;
+		byte type, speed, duration;
+		bool fixedDirection, explodes;
 		ushort effect, unk, sourceX, sourceY, targetX, targetY;
 		sbyte sourceZ, targetZ;
 
-		public void Prepare(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
+		public void Prepare(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, bool fixedDirection, bool explodes, uint hue, uint renderMode) {
 			source = source.TopPoint;
 			target = target.TopPoint;
 			Thing sourceAsThing = source as Thing;
@@ -1646,8 +1647,8 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.speed);
 			this.EncodeByte(this.duration);
 			this.EncodeUShort(this.unk);
-			this.EncodeByte(this.fixedDirection);
-			this.EncodeByte(this.explodes);
+			this.EncodeBool(this.fixedDirection);
+			this.EncodeBool(this.explodes);
 			this.EncodeUInt(this.hue);
 			this.EncodeUInt(this.renderMode);
 		}
