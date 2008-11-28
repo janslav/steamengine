@@ -102,26 +102,26 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		public static void Effect(Thing self, byte type, ushort effect, byte speed, byte duration, byte fixedDirection) {
+		public static void Effect(Thing self, byte type, ushort effect, byte speed, byte duration, bool fixedDirection) {
 			switch (type) {
 				case 0:
 					EffectFactory.EffectFromTo(Globals.SrcCharacter, self,
-						effect, speed, duration, fixedDirection, 0, 0, 0);
+						effect, speed, duration, fixedDirection, false, 0, 0);
 					break;
 				case 1:
 					EffectFactory.LightningEffect(self);
 					break;
 				case 2:
-					EffectFactory.StationaryEffectAt(self, effect, speed, duration, fixedDirection, 0, 0, 0);
+					EffectFactory.StationaryEffectAt(self, effect, speed, duration, fixedDirection, false, 0, 0);
 					break;
 				case 3:
-					EffectFactory.StationaryEffect(self, effect, speed, duration, fixedDirection, 0, 0, 0);
+					EffectFactory.StationaryEffect(self, effect, speed, duration, fixedDirection, false, 0, 0);
 					break;
 				default:
 					Logger.WriteWarning("Unknown effect type '"+type+"'. Sending it anyways.");
 					GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 					p.Prepare(Globals.SrcCharacter,
-						self, type, effect, speed, duration, 0, fixedDirection, 0, 0, 0);
+						self, type, effect, speed, duration, 0, fixedDirection, false, 0, 0);
 					GameServer.SendToClientsWhoCanSee(self, p);
 					break;
 			}

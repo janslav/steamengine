@@ -140,7 +140,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public double GetDelayForValue(ushort skillValue) {
+			return ScriptUtil.EvalRangePermille(skillValue, this.Delay);
+		}
 
+		public double GetDelayForChar(Character ch) {
+			return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Delay);
+		}
 
 		public double[] Effect {
 			get {
@@ -165,11 +171,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetEffectForValue(ushort skillValue) {
-			return ScriptUtil.EvalRangePermille(skillValue, Effect);
+			return ScriptUtil.EvalRangePermille(skillValue, this.Effect);
 		}
 
 		public double GetEffectForChar(Character ch) {
-			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), Effect);
+			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), this.Effect);
 		}
 
 		public static bool CheckSuccess(ushort skillValue, int difficulty) {
@@ -534,7 +540,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!this.skillDef.Trigger_Start(this)) {
 				AbortSkill(this.self);
 
-				this.DelayInSeconds = this.skillDef.GetDelayForChar(this.self);
+				this.DelayInSeconds = this.skillDef.GetEffectForChar(this.self);
 				this.DelayStroke();
 			}
 		}
