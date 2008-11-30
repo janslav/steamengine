@@ -15,7 +15,6 @@
 
 [ThingTemplate NPC : Character]
 Defs:
-	double mindPower = 1000
 	double weaponAttack = 1	
 	double weaponPiercing = 0
 	double weaponDelay = 2.0
@@ -24,6 +23,7 @@ Defs:
 	int strikeStartRange = 5
 	int strikeStopRange = 10
 	int projectileAnim = -1
+	double mindPower = 1	
 	
 Vars:	//vars defined in the class, so they basically do what tags do, but better
 	private IMovementSettings movementSettings = null 

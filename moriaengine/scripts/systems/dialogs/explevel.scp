@@ -28,9 +28,9 @@ Obranné èíslo (P, M):
 Obrana mysli (P, M):
 <MindDefenseVsP>, <MindDefenseVsM>
 Útoèné èíslo/Piercing (P, M): 
-<WeaponAttackVsP>/<WeaponPiercing> <WeaponAttackVsM>/<WeaponPiercing>
+<WeaponAttackVsP>/<WeaponPiercing>, <WeaponAttackVsM>/<WeaponPiercing>
 Prodleva úderu:
 <WeaponDelay>
-Síla mysli:
-0
+Síla mysli (P, M):
+<MindPowerVsP>, <MindPowerVsM>
 

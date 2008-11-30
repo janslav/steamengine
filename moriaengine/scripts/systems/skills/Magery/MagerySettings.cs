@@ -39,6 +39,9 @@ namespace SteamEngine.CompiledScripts {
 		[SaveableData]
 		public double bareHandsMindPowerVsM = 700;
 
+		[SaveableData]
+		public double mindPowerIntModifier = 0.700;
+
 		public MetaMassSetting<WeaponMindPowerVsMMassSetting, ColoredWeaponDef, double> mindPowerVsM = new MetaMassSetting<WeaponMindPowerVsMMassSetting, ColoredWeaponDef, double>();
 
 		public MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double> mindPowerVsP = new MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double>();

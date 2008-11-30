@@ -1961,10 +1961,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
 			switch ((SkillName) skill.Id) {
-				case SkillName.Parry:
+				case SkillName.Parry: //Efficiency of shield
 					this.InvalidateCombatArmorValues();
 					break;
-				case SkillName.Tactics:
+				case SkillName.Tactics: //Attack
+				case SkillName.Anatomy: //Attack
+				case SkillName.ArmsLore: //Attack
+				case SkillName.SpiritSpeak: //MindPower
+				case SkillName.EvalInt: //MindPower
 					this.InvalidateCombatWeaponValues();
 					break;
 			}
@@ -2113,24 +2117,24 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double WeaponAttackVsP {
+		public int WeaponAttackVsP {
 			get {
 				this.CalculateCombatWeaponValues();
-				return this.combatWeaponValues.attackVsP;
+				return (int) this.combatWeaponValues.attackVsP;
 			}
 		}
 
-		public double WeaponAttackVsM {
+		public int WeaponAttackVsM {
 			get {
 				this.CalculateCombatWeaponValues();
-				return this.combatWeaponValues.attackVsM;
+				return (int) this.combatWeaponValues.attackVsM;
 			}
 		}
 
-		public double WeaponPiercing {
+		public int WeaponPiercing {
 			get {
 				this.CalculateCombatWeaponValues();
-				return this.combatWeaponValues.piercing;
+				return (int) this.combatWeaponValues.piercing;
 			}
 		}
 
@@ -2212,6 +2216,20 @@ namespace SteamEngine.CompiledScripts {
 				//TODO: mana-dependant for mystic
 				this.CalculateCombatWeaponValues();
 				return this.combatWeaponValues.delay;
+			}
+		}
+
+		public int MindPowerVsP {
+			get {
+				this.CalculateCombatWeaponValues();
+				return (int) this.combatWeaponValues.mindPowerVsP;
+			}
+		}
+
+		public int MindPowerVsM {
+			get {
+				this.CalculateCombatWeaponValues();
+				return (int) this.combatWeaponValues.mindPowerVsM;
 			}
 		}
 

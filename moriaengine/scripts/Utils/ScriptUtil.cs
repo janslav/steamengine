@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			return min + (range * ratio);
 		}
 
-		[Summary("Works like EvalRangeDouble, only the ratio parameter is in per mille (a.e. typical for skills).")]
+		[Summary("Works like EvalRangeDouble, only the ratio parameter is in per mille (i.e. typical for skills).")]
 		public static double EvalRangePermille(double pmratio, double min, double max) {
 			return EvalRangeDouble(pmratio / 1000.0, min, max);
 		}
