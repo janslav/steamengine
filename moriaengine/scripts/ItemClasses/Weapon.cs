@@ -28,21 +28,21 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Weapon : Destroyable {
 
 		//at durability 0, attacknumber is halved
-		public int AttackVsM {
+		public double AttackVsM {
 			get {
 				double halved = this.TypeDef.AttackVsM / 2;
-				return (int) (halved + (((halved * this.Durability) / this.MaxDurability)));
+				return (halved + (((halved * this.Durability) / this.MaxDurability)));
 			}
 		}
 
-		public int AttackVsP {
+		public double AttackVsP {
 			get {
 				double halved = this.TypeDef.AttackVsP / 2;
-				return (int) (halved + (((halved * this.Durability) / this.MaxDurability)));
+				return (halved + (((halved * this.Durability) / this.MaxDurability)));
 			}
 		}
 
-		public int MindPowerVsM {
+		public double MindPowerVsM {
 			get {
 				double defValue = this.TypeDef.MindPowerVsM;
 				double bareHands = MagerySettings.instance.bareHandsMindPowerVsM;
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public int MindPowerVsP {
+		public double MindPowerVsP {
 			get {
 				double defValue = this.TypeDef.MindPowerVsP;
 				double bareHands = MagerySettings.instance.bareHandsMindPowerVsP;
@@ -58,12 +58,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private int CalculateMPDurabilty(double defValue, double bareHands) {
+		private double CalculateMPDurabilty(double defValue, double bareHands) {
 			if (defValue >= 0) {
 				double halved = (defValue - bareHands) / 2;
-				return (int) (bareHands + halved + (((halved * this.Durability) / this.MaxDurability)));
+				return bareHands + halved + (((halved * this.Durability) / this.MaxDurability));
 			} else {
-				return (int) bareHands;
+				return bareHands;
 			}
 		}
 

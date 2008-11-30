@@ -327,7 +327,7 @@ namespace SteamEngine.CompiledScripts {
 			retVal.weapon = weapon;
 
 			if (self.IsPlayerForCombat) {
-				double weapSpeed, weapAttackVsP, weapAttackVsM, mindPowerVsP, mindPowerVsM;
+				double weapSpeed, weapAttackVsP, weapAttackVsM, weapMindPowerVsP, weapMindPowerVsM;
 				if (weapon != null) {
 					retVal.weaponType = weapon.WeaponType;
 					retVal.weaponAnimType = weapon.WeaponAnimType;
@@ -345,8 +345,8 @@ namespace SteamEngine.CompiledScripts {
 					weapSpeed = weapon.Speed;
 					weapAttackVsP = weapon.AttackVsP;
 					weapAttackVsM = weapon.AttackVsM;
-					mindPowerVsP = weapon.MindPowerVsP;
-					mindPowerVsM = weapon.MindPowerVsM;
+					weapMindPowerVsP = weapon.MindPowerVsP;
+					weapMindPowerVsM = weapon.MindPowerVsM;
 				} else {
 					retVal.weaponType = WeaponType.BareHands;
 					retVal.weaponAnimType = WeaponAnimType.BareHands;
@@ -358,13 +358,13 @@ namespace SteamEngine.CompiledScripts {
 					weapSpeed = CombatSettings.instance.bareHandsSpeed;
 					weapAttackVsP = CombatSettings.instance.bareHandsAttackVsP;
 					weapAttackVsM = CombatSettings.instance.bareHandsAttackVsM;
-					mindPowerVsP = MagerySettings.instance.bareHandsMindPowerVsP;
-					mindPowerVsM = MagerySettings.instance.bareHandsMindPowerVsP;
+					weapMindPowerVsP = MagerySettings.instance.bareHandsMindPowerVsP;
+					weapMindPowerVsM = MagerySettings.instance.bareHandsMindPowerVsP;
 				}
 				double delay = Math.Sqrt((double) self.Dex);
 				delay *=  weapSpeed;
 				delay *=  CombatSettings.instance.weaponSpeedGlobal;
-				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000) / delay);//dedictvi z morie. funguje to tak proc to menit :)
+				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000.0) / delay);//dedictvi z morie. funguje to tak proc to menit :)
 
 				double tacticsAttack = SkillDef.ById(SkillName.Tactics).GetEffectForChar(self);
 				double anatomyAttack = SkillDef.ById(SkillName.Anatomy).GetEffectForChar(self);
@@ -373,6 +373,15 @@ namespace SteamEngine.CompiledScripts {
 				double sum = (tacticsAttack + anatomyAttack + armsloreAttack + strAttack) / 1000;
 				retVal.attackVsP = weapAttackVsP * sum;
 				retVal.attackVsM = weapAttackVsM * sum;
+
+				double evalIntMP = SkillDef.ById(SkillName.EvalInt).GetEffectForChar(self);
+				double spiritSpeakMP = SkillDef.ById(SkillName.SpiritSpeak).GetEffectForChar(self);
+				double intMP = self.Int * MagerySettings.instance.mindPowerIntModifier;
+				sum = (evalIntMP + spiritSpeakMP + intMP) / 1000;
+				retVal.mindPowerVsM = weapMindPowerVsM * sum;
+				retVal.mindPowerVsP = weapMindPowerVsP * sum;
+
+//#error vypocet mindpower
 			} else {
 				NPCDef npcDef = self.DefForCombat as NPCDef;
 				if (npcDef != null) {

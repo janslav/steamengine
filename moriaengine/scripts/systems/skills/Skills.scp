@@ -1,21 +1,9 @@
 [SCRIPTEDSKILLDEF 0]
 DEFNAME=Skill_Alchemy
 KEY=Alchemy
-//TITLE="Alchemist"
-//
-DELAY=3.0, 1.0 // per stroke.
-//EFFECT=0.0,100.0
+DELAY=3, 1 // per stroke.
 ADVRATE=10.0 //,200.0,800.0
-////VALUES=1,20,100
-//
-//BONUSSTATS=10
-//BONUS_STR=0
-//BONUS_DEX=20
-//BONUS_INT=80
-//
-//STAT_STR=5
-//STAT_INT=75
-//STAT_DEX=40
+
 
 ON=@Fail
 	src.message "You toss the failed mixture from the mortar, unable to create a potion from it."
@@ -24,20 +12,8 @@ ON=@Fail
 DEFNAME=Skill_Anatomy
 KEY="Anatomy"
 StartByMacroEnabled = true
-//TITLE="Scholar"
-////PROMPTMSG="Whom shall I examine?"
-//DELAY=3.0,1.0
-ADVRATE=2.5,50.0,200.0
-EFFECT=155
-//
-//BONUSSTATS=50
-//BONUS_STR=0
-//BONUS_DEX=0
-//BONUS_INT=100
-//
-//STAT_STR=15
-//STAT_INT=70
-//STAT_DEX=15
+DELAY=3, 1
+EFFECT=0, 155 //bonus k utocnymu cislu
 
 ON=@Fail
 	src.message "You can't think of anything about this creature"
@@ -46,18 +22,7 @@ ON=@Fail
 DEFNAME=Skill_Animal_Lore
 KEY="AnimalLore"
 StartByMacroEnabled = true
-//TITLE="Scholar"
-////PROMPTMSG="What animal should I look at?"
-//DELAY=3.0,1.0
-ADVRATE=2.5,50.0,200.0
-//
-//STAT_STR=0
-//STAT_INT=70
-//STAT_DEX=0
-//BONUS_STR=0
-//BONUS_DEX=0
-//BONUS_INT=100
-//BONUSSTATS=50
+DELAY=3, 1
 
 ON=@Fail
 	src.message "You can't think of anything off hand"
@@ -66,17 +31,7 @@ ON=@Fail
 DEFNAME=Skill_Appraise
 KEY="ItemID"
 StartByMacroEnabled = true
-//TITLE="Merchant"
-////PROMPTMSG="What do you wish to appraise and identify?"
-//DELAY=1.0
-//ADVRATE=2.5,50.0,200.0
-//STAT_STR=0
-//STAT_INT=85
-//STAT_DEX=0
-//BONUS_STR=0
-//BONUS_DEX=0
-//BONUS_INT=100
-//BONUSSTATS=25
+DELAY=3, 1
 
 ON=@Fail
 	src.message "You can't think of anything off hand"
@@ -85,62 +40,27 @@ ON=@Fail
 DEFNAME=Skill_Armslore
 KEY="ArmsLore"
 StartByMacroEnabled = true
-EFFECT=76
-//TITLE="Arms%s"
-////PROMPTMSG="What would you like to evaluate?"
-//DELAY=1.0
-//STAT_STR=10
-//STAT_INT=50
-//STAT_DEX=15
-//BONUS_STR=33
-//BONUS_DEX=33
-//BONUS_INT=34
-//BONUSSTATS=25
-ADVRATE=2.5,50.0,200.0
+EFFECT=0, 76 //bonus k utocnymu cislu
+DELAY=1.0
+
 
 [SCRIPTEDSKILLDEF 5]
 DEFNAME=Skill_Parrying
 KEY="Parrying"
-//TITLE="Shieldfighter"
-ADVRATE=800.0,800.0,800.0
-//EFFECT=0.0,90.0
-//STAT_STR=75
-//STAT_INT=15
-//STAT_DEX=25
-//BONUS_STR=50
-//BONUS_DEX=50
-//BONUS_INT=0
-//BONUSSTATS=10
 
 [SCRIPTEDSKILLDEF 6]
 DEFNAME=Skill_Begging
 KEY="Begging"
 StartByMacroEnabled = true
-//TITLE="Beggar"
 //PROMPTMSG="To whom do you wish to grovel?"
-//DELAY=2.0
+DELAY=3, 1
 ADVRATE=2.5,50.0,200.0
-//STAT_STR=5
-//STAT_INT=55
-//STAT_DEX=25
-//BONUS_STR=0
-//BONUS_DEX=50
-//BONUS_INT=50
-//BONUSSTATS=10
+
 
 [SCRIPTEDSKILLDEF 7]
 DEFNAME=Skill_Blacksmith
 KEY="Blacksmithing"
-//TITLE="Blacksmith"
-//PROMPTMSG=""
-//DELAY=1.0
-//STAT_STR=95
-//STAT_INT=15
-//STAT_DEX=25
-//BONUS_STR=75
-//BONUS_DEX=20
-//BONUS_INT=5
-//BONUSSTATS=10
+DELAY=1.0 //per stroke?
 ADVRATE=2.5,50.0,200.0
 //VALUES=1,20,100
 
@@ -150,16 +70,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 8]
 DEFNAME=Skill_Bowcraft
 KEY="Bowcraft"
-//TITLE="Bowyer"
-//PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=40
-//STAT_INT=45
-//STAT_DEX=70
-//BONUS_STR=15
-//BONUS_DEX=70
-//BONUS_INT=15
-//BONUSSTATS=20
+DELAY=2.0
 ADVRATE=10.0,200.0,800.0
 //VALUES=1,30,200
 
@@ -170,16 +81,7 @@ ON=@Fail
 DEFNAME=Skill_Peacemaking
 KEY="Peacemaking"
 StartByMacroEnabled = true
-//TITLE="Bard"
-//PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=0
-//STAT_INT=70
-//STAT_DEX=70
-//BONUS_STR=0
-//BONUS_DEX=50
-//BONUS_INT=50
-//BONUSSTATS=5
+DELAY=2.0
 ADVRATE=2.5,50.0,200.0
 
 ON=@Fail
@@ -188,16 +90,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 10]
 DEFNAME=Skill_Camping
 KEY="Camping"
-//TITLE="Camper"
-//PROMPTMSG=""
-//DELAY=6.0
-//STAT_STR=30
-//STAT_INT=30
-//STAT_DEX=30
-//BONUS_STR=33
-//BONUS_DEX=33
-//BONUS_INT=34
-//BONUSSTATS=50
+DELAY=6.0
 ADVRATE=2.5,50.0,200.0
 
 ON=@Fail
@@ -206,16 +99,7 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 11]
 DEFNAME=Skill_Carpentry
 KEY="Carpentry"
-//TITLE="Carpenter"
-//PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=60
-//STAT_INT=40
-//STAT_DEX=30
-//BONUS_STR=50
-//BONUS_DEX=30
-//BONUS_INT=20
-//BONUSSTATS=25
+DELAY=2.0
 ADVRATE=2.5,50.0,200.0
 //VALUES=1,20,80
 
@@ -226,16 +110,7 @@ ON=@Fail
 DEFNAME=Skill_CARTOGRAPHY
 KEY="Cartography"
 StartByMacroEnabled = true
-//TITLE="Cartographer"
-//PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=15
-//STAT_INT=70
-//STAT_DEX=20
-//BONUS_STR=0
-//BONUS_DEX=20
-//BONUS_INT=80
-//BONUSSTATS=15
+DELAY=2.0
 ADVRATE=2.5,50.0,200.0
 //VALUES=1,20,80
 
@@ -245,16 +120,8 @@ ON=@Fail
 [SCRIPTEDSKILLDEF 13]
 DEFNAME=Skill_Cooking
 KEY="Cooking"
-//TITLE="Chef"
 //PROMPTMSG="What would you like to cook?"
-//DELAY=2.0
-//STAT_STR=25
-//STAT_INT=45
-//STAT_DEX=20
-//BONUS_STR=0
-//BONUS_DEX=40
-//BONUS_INT=60
-//BONUSSTATS=50
+DELAY=2.0
 ADVRATE=2.5,50.0,200.0
 //VALUES=1,20,80
 
@@ -269,21 +136,11 @@ DELAY=4.0
 ADVRATE=2.5,50.0,200.0
 
 [SCRIPTEDSKILLDEF 16]
-// Used to be called EvalInt or ??
 DEFNAME=Skill_EvalInt
 KEY="EvaluatingIntel"
 StartByMacroEnabled = true
-//TITLE="Scholar"
-//PROMPTMSG="Select char to inspect."
-//DELAY=1.0
-//STAT_STR=5
-//STAT_INT=60
-//STAT_DEX=10
-//BONUS_STR=0
-//BONUS_DEX=0
-//BONUS_INT=100
-//BONUSSTATS=50
-ADVRATE=2.5,50.0,200.0
+DELAY=3, 1
+Effect=0, 100
 
 ON=@Fail
 	src.message "You cannot seem to judge the creature correctly."
@@ -420,16 +277,7 @@ ADVRATE=10.0,200.0,800.0
 [SCRIPTEDSKILLDEF 27]
 DEFNAME=Skill_Tactics
 KEY="Tactics"
-//TITLE="Warrior"
-//STAT_STR=60
-//STAT_INT=40
-//STAT_DEX=70
-//BONUS_STR=50
-//BONUS_DEX=50
-//BONUS_INT=0
-//BONUSSTATS=10
-ADVRATE=10.0,150.0,600.0
-EFFECT=303
+EFFECT=0, 303 //bonus k utocnymu cislu
 
 [SNOOPINGSKILLDEF 28]
 DEFNAME=Skill_Snooping
@@ -461,17 +309,8 @@ ON=@Fail
 DEFNAME=Skill_Spiritspeak
 KEY="SpiritSpeak"
 StartByMacroEnabled = true
-//TITLE="Medium"
-//PROMPTMSG=""
-//DELAY=2.0
-//STAT_STR=20
-//STAT_INT=70
-//STAT_DEX=30
-//BONUS_STR=0
-//BONUS_DEX=0
-//BONUS_INT=100
-//BONUSSTATS=50
-ADVRATE=2.5,50.0,200.0
+DELAY=1, 3
+Effect=0, 25
 
 ON=@Fail
 	src.message "You fail your attempt at contacting the netherworld."
