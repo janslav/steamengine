@@ -16,6 +16,9 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				if (instance == null) {
 					FindSingletonInstance();
+					if (instance == null) {
+						throw new FatalException("No instance found of class " + typeof(T) + ".");
+					}
 				}
 				return instance;
 			}
