@@ -27,7 +27,10 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	[Summary("Plugin managing all characters regenerations, on timer periodically checks all regens"+
 			"and adds correct number of points to be regenerated")]
-	public partial class RegenerationPlugin {		
+	public partial class RegenerationPlugin {
+		//this is to initialize (create the instance) of the Regen.Plug.Def. it must be here as bellow or 
+		//somewhere in the LScript as simple [RegenerationPluginDef p_regenerations]
+		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
 		internal static PluginKey regenerationsPluginKey = PluginKey.Get("_regenerations_");
 
         private double lastServerTime; //last time the holder obtained some stats by regen
