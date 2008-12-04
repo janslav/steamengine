@@ -145,7 +145,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetDelayForChar(Character ch) {
-			return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Delay);
+			//GM is always immediate
+			if (ch.IsGM) {
+				return 0; 
+			} else {
+				return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Delay);
+			}
 		}
 
 		public double[] Effect {
@@ -184,6 +189,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckSuccess(Character ch, int difficulty) {
+			//GM is always immediate
 			if (ch.IsGM) {
 				return true;
 			} else {
@@ -540,7 +546,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!this.skillDef.Trigger_Start(this)) {
 				AbortSkill(this.self);
 
-				this.DelayInSeconds = this.skillDef.GetEffectForChar(this.self);
+				this.DelayInSeconds = this.skillDef.GetDelayForChar(this.self);
 				this.DelayStroke();
 			}
 		}
