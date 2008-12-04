@@ -107,13 +107,12 @@ namespace SteamEngine.CompiledScripts {
 			((Character)Cont).ManaRegenSpeed += this.additionalManaRegenSpeed;
 		}
 
-		public void On_UnAssign() {
-			Character plh = (Character) Cont;
-			plh.ManaRegenSpeed -= this.additionalManaRegenSpeed;
-			if (plh.Mana >= plh.MaxMana) {//meditation finished
-				plh.ClilocSysMessage(501846);//You are at peace.
+		public void On_UnAssign(Character formerCont) {
+			formerCont.ManaRegenSpeed -= this.additionalManaRegenSpeed;
+			if (formerCont.Mana >= formerCont.MaxMana) {//meditation finished
+				formerCont.ClilocSysMessage(501846);//You are at peace.
 			} else {//meditation somehow aborted
-				plh.ClilocSysMessage(501848);//You cannot focus your concentration
+				formerCont.ClilocSysMessage(501848);//You cannot focus your concentration
 			}
 		}
 
