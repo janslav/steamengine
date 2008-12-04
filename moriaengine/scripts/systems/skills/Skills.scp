@@ -473,23 +473,6 @@ ADVRATE=2.5,50.0,200.0
 ON=@Fail
 	src.message "You loosen some rocks but fail to find any useable ore."
 
-[SCRIPTEDSKILLDEF 46]
-DEFNAME=Skill_Meditation
-KEY="Meditation"
-//TITLE="Stoic"
-//DELAY=2.0,1.0
-//STAT_STR=10
-//STAT_INT=100
-//STAT_DEX=10
-//BONUS_STR=5
-//BONUS_DEX=90
-//BONUS_INT=5
-//BONUSSTATS=20
-ADVRATE=10.0,200.0,800.0
-
-ON=@Fail
-	src.clilocsysmessage(501848) //"you can not focus your concentration"
-
 [SCRIPTEDSKILLDEF 48]
 DEFNAME=Skill_Remove_Trap
 KEY="RemoveTrap"

@@ -489,6 +489,11 @@ namespace SteamEngine.CompiledScripts {
 				if (value != maxHitpoints) {
 					CharSyncQueue.AboutToChangeHitpoints(this);
 					maxHitpoints = value;
+
+					//check the hitpoints regeneration
+					if ((hitpoints <= MaxHits) && (hitsRegenSpeed != 0)) {
+						RegenerationPlugin.TryAddPlugin(this);
+					}
 				}
 			}
 		}
@@ -506,6 +511,14 @@ namespace SteamEngine.CompiledScripts {
 					if ((mana <= MaxMana) && (manaRegenSpeed != 0)) {
 						RegenerationPlugin.TryAddPlugin(this);
 					}
+					//meditation finish
+					if (mana >= MaxMana) {
+						Plugin mpl = this.GetPlugin(MeditationPlugin.meditationPluginKey);
+						if (mpl != null) {//we have been meditating, now we will finish. the message can be sent only if the plugin was present
+							this.ClilocSysMessage(501846);//You are at peace.
+							this.DeletePlugin(MeditationPlugin.meditationPluginKey);
+						}
+					}
 				}
 			}
 		}
@@ -518,6 +531,11 @@ namespace SteamEngine.CompiledScripts {
 				if (value != maxMana) {
 					CharSyncQueue.AboutToChangeMana(this);
 					maxMana = value;
+
+					//regeneration...
+					if ((mana <= MaxMana) && (manaRegenSpeed != 0)) {
+						RegenerationPlugin.TryAddPlugin(this);
+					}
 				}
 			}
 		}
@@ -547,6 +565,11 @@ namespace SteamEngine.CompiledScripts {
 				if (value != maxStamina) {
 					CharSyncQueue.AboutToChangeStamina(this);
 					maxStamina = value;
+
+					//regeneration...
+					if ((stamina <= MaxStam) && (stamRegenSpeed != 0)) {
+						RegenerationPlugin.TryAddPlugin(this);
+					}
 				}
 			}
 		}

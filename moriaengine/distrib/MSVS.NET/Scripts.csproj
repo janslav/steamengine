@@ -596,6 +596,12 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\SpellScroll.Generated.cs">
       <Link>systems\skills\Magery\SpellScroll.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Meditation\Meditation.cs">
+      <Link>systems\skills\Meditation\Meditation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Meditation\MeditationPlugin.Generated.cs">
+      <Link>systems\skills\Meditation\MeditationPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\ScriptedSkillDef.cs">
       <Link>systems\skills\ScriptedSkillDef.cs</Link>
     </Compile>
