@@ -225,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 					(mindDefVsMLegs * 0.2) +
 					(mindDefVsMFeet * 0.05));
 			}
-			CombatArmorValues retVal = new CombatArmorValues();
+			CombatArmorValues retVal = Pool<CombatArmorValues>.Acquire();
 			retVal.armorVsP = armorClassVsP;
 			retVal.armorVsM += armorClassVsM;
 			retVal.mindDefenseVsP += mindDefenseVsP;
@@ -264,14 +264,14 @@ namespace SteamEngine.CompiledScripts {
 			throw new ArgumentOutOfRangeException("weapType");
 		}
 
-		internal class CombatArmorValues {
+		internal class CombatArmorValues : Poolable {
 			internal int armorVsP;
 			internal int mindDefenseVsP;
 			internal int armorVsM;
 			internal int mindDefenseVsM;
 		}
 
-		internal class CombatWeaponValues {
+		internal class CombatWeaponValues : Poolable {
 			internal Weapon weapon;
 			internal WeaponType weaponType;
 			internal DamageType damageType;
@@ -318,7 +318,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
-			CombatWeaponValues retVal = new CombatWeaponValues();
+			CombatWeaponValues retVal = Pool<CombatWeaponValues>.Acquire();
 
 			Weapon weapon = self.FindLayer(1) as Weapon;
 			if (weapon == null) {
@@ -380,8 +380,6 @@ namespace SteamEngine.CompiledScripts {
 				sum = (evalIntMP + spiritSpeakMP + intMP) / 1000;
 				retVal.mindPowerVsM = weapMindPowerVsM * sum;
 				retVal.mindPowerVsP = weapMindPowerVsP * sum;
-
-//#error vypocet mindpower
 			} else {
 				NPCDef npcDef = self.DefForCombat as NPCDef;
 				if (npcDef != null) {

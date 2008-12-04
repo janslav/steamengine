@@ -2053,6 +2053,7 @@ namespace SteamEngine.CompiledScripts {
 		public void InvalidateCombatWeaponValues() {
 			if (this.combatWeaponValues != null) {
 				CharSyncQueue.AboutToChangeStats(this);
+				this.combatWeaponValues.Dispose();
 				this.combatWeaponValues = null;
 			}
 		}
@@ -2060,6 +2061,7 @@ namespace SteamEngine.CompiledScripts {
 		public void InvalidateCombatArmorValues() {
 			if (this.combatArmorValues != null) {
 				CharSyncQueue.AboutToChangeStats(this);
+				this.combatArmorValues.Dispose();
 				this.combatArmorValues = null;
 			}
 		}
