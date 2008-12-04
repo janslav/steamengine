@@ -513,11 +513,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 					//meditation finish
 					if (mana >= MaxMana) {
-						Plugin mpl = this.GetPlugin(MeditationPlugin.meditationPluginKey);
-						if (mpl != null) {//we have been meditating, now we will finish. the message can be sent only if the plugin was present
-							this.ClilocSysMessage(501846);//You are at peace.
-							this.DeletePlugin(MeditationPlugin.meditationPluginKey);
-						}
+						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
 					}
 				}
 			}
