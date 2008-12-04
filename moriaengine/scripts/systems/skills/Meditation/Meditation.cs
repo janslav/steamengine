@@ -42,8 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
-			bool canWe = CheckPrerequisities(skillSeqArgs);
-			if (!canWe) {
+			if (!CheckPrerequisities(skillSeqArgs)) {
 				return true;//stop
 			}
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
@@ -56,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 
 			self.ClilocSysMessage(501851);//You enter a meditative trance.
 			MeditationPlugin mpl = (MeditationPlugin) MeditationPlugin.defInstance.Create();
-			mpl.additionalManaRegenSpeed = this.GetEffectForChar(skillSeqArgs.Self);
+			mpl.additionalManaRegenSpeed = this.GetEffectForChar(self);
 			self.AddPlugin(MeditationPlugin.meditationPluginKey, mpl);
 			return false;
 		}
@@ -67,11 +66,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			skillSeqArgs.Self.SysMessage("Meditation aborted.");
+			skillSeqArgs.Self.ClilocSysMessage(501848);//You cannot focus your concentration
 		}
 
 		[Remark("Check if we are alive, don't have weapons etc.... Return false if the trigger above"+
-				" should be stopped or true if we can continue")]
+				" should be cancelled or true if we can continue")]
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
@@ -102,18 +101,27 @@ namespace SteamEngine.CompiledScripts {
 	public partial class MeditationPlugin {
 		public static readonly MeditationPluginDef defInstance = new MeditationPluginDef("p_meditation", "C#scripts", -1);
 		internal static PluginKey meditationPluginKey = PluginKey.Get("_meditation_");
-
-		public void On_Assign(Character cont) {
+		
+		public void On_Assign() {
 			//add the regeneration speed to character
-			cont.ManaRegenSpeed += this.additionalManaRegenSpeed;
+			((Character)Cont).ManaRegenSpeed += this.additionalManaRegenSpeed;
 		}
 
-		public void On_UnAssign(Character cont) {
-			cont.ManaRegenSpeed -= this.additionalManaRegenSpeed;
+		public void On_UnAssign() {
+			Character plh = (Character) Cont;
+			plh.ManaRegenSpeed -= this.additionalManaRegenSpeed;
+			if (plh.Mana >= plh.MaxMana) {//meditation finished
+				plh.ClilocSysMessage(501846);//You are at peace.
+			} else {//meditation somehow aborted
+				plh.ClilocSysMessage(501848);//You cannot focus your concentration
+			}
 		}
 
-		public void On_Step(MeditationPlugin mpl, ScriptArgs args) {
-			((Character)Cont).ClilocSysMessage(501848);//You cannot focus your concentration
+		public void On_Step(ScriptArgs args) {
+			Delete();
+		}
+
+		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			Delete();
 		}
 
