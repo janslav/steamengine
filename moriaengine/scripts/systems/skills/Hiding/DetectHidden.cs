@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 
 			foreach (Character target in self.GetMap().GetCharsInRange(self.X, self.Y, (int) range)) {
 				if (target.Flag_Hidden) {
-					if (this.CheckSuccess(self, target.GetSkill((int) SkillName.Hiding))) {
+					if (this.CheckSuccess(self, target.GetSkill(SkillName.Hiding))) {
 						skillSeqArgs.Success = true;
 						skillSeqArgs.Target1 = target;
 						skillSeqArgs.PhaseSuccess();

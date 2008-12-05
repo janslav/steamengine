@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Regions;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
@@ -42,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 		CanEffectChar = 0x0200,
 		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
 		EffectNeedsLOS = 0x0400,
-		IsMassSpell = 0x0800,
+		IsAreaSpell = 0x0800,
 		TargetCanMove = 0x1000, 
 		UseMindPower = 0x2000, //otherwise, magery value is used, multiplied by the spells Effect value
 		IsHarmful = 0x4000,
@@ -161,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + spellDefName + "__"; //naming of the trigger group for @assign, unassign etd. triggers
+				input.headerName = "t__" + spellDefName + "__";
 				spellDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
 				spellDef.scriptedTriggers = null;
@@ -182,6 +183,21 @@ namespace SteamEngine.CompiledScripts {
 
 		public override string ToString() {
 			return string.Concat(this.defname, " (spellId ", this.id.ToString(), ")");
+		}
+
+		public bool TryCancellableTrigger(IPoint4D self, TriggerKey td, ScriptArgs sa) {
+			//cancellable trigger just for the one triggergroup
+			if (this.scriptedTriggers != null) {
+				object retVal = this.scriptedTriggers.TryRun(self, td, sa);
+				try {
+					int retInt = Convert.ToInt32(retVal);
+					if (retInt == 1) {
+						return true;
+					}
+				} catch (Exception) {
+				}
+			}
+			return false;
 		}
 
 		#region FieldValues
@@ -341,17 +357,30 @@ namespace SteamEngine.CompiledScripts {
 				this.runes.CurrentValue = value;
 			}
 		}
+
+		public int EffectRange {
+			get {
+				return (int) this.effectRange.CurrentValue;
+			}
+			set {
+				this.effectRange.CurrentValue = value;
+			}
+		}
 		#endregion FieldValues
 
 		internal void Trigger_Select(SkillSequenceArgs mageryArgs) {
 			//Checked so far: death, book on self
 			//TODO: Check zones, frozen?, hypnoform?, cooldown?
 			Character caster = mageryArgs.Self;
+			//ResourcesList req = this.Requirements;
+			//if (req != null) {
+			//    if (!req.HasResourcesPresent(
+			//}
+
 
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.AlwaysTargetSelf) == SpellFlag.AlwaysTargetSelf) {
 				mageryArgs.Target1 = caster;
-				mageryArgs.DelayInSeconds = this.CastTime;
 				mageryArgs.PhaseStart();
 				return;
 			} else if ((flags & SpellFlag.CanTargetAnything) != SpellFlag.None) {
@@ -366,6 +395,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				} else {
 					mageryArgs.PhaseStart();
+					//ConsumeResources(mageryArgs, caster);
 					return;
 				}
 			}
@@ -373,13 +403,206 @@ namespace SteamEngine.CompiledScripts {
 			throw new SEException("SpellDef.Trigger_Select - unfinished");
 		}
 
-		internal void On_Success(SkillSequenceArgs skillSeqArgs) {
-			//target LOS and being alive checked in magery stroke
+		//private static void ConsumeResources(SkillSequenceArgs mageryArgs, Character caster) {
+		//    if (SkillSequenceArgs.GetSkillSequenceArgs(caster) == mageryArgs) {
 
-			IPoint4D target = skillSeqArgs.Target1;
+		//    }
+		//}
 
+		internal void On_Success(SkillSequenceArgs mageryArgs) {
+			//target visibility/distance/LOS and self being alive checked in magery stroke
+			SpellFlag flags = this.Flags;
+			IPoint4D target = mageryArgs.Target1;
+			Character caster = mageryArgs.Self;
+			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
+
+			SpellEffectArgs sea = null;
+
+			bool singleEffectDone = false;
+			Character targetAsChar = target as Character;
+			if (targetAsChar != null) {
+				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {
+					singleEffectDone = true;
+					sea = this.GetSpellPowerAgainstChar(caster, target, targetAsChar, sea);
+					if (this.CheckSpellPowerWithMessage(sea)) {
+						this.Trigger_EffectChar(targetAsChar, sea);
+					}
+				}
+			} else {
+				Item targetAsItem = target as Item;
+				if (targetAsItem != null) {
+					if ((flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem) {
+						singleEffectDone = true;
+						sea = this.GetSpellPowerAgainstNonChar(caster, target, targetAsItem, sea);
+						if (this.CheckSpellPowerWithMessage(sea)) {
+							this.Trigger_EffectItem(targetAsItem, sea);							
+						}
+					}
+				}
+			}
+			if (!singleEffectDone) {
+				if (((flags & SpellFlag.CanEffectGround) == SpellFlag.CanEffectGround) ||
+					(((flags & SpellFlag.CanEffectStatic) == SpellFlag.CanEffectStatic) && (target is Static))) {
+					singleEffectDone = true;
+
+					sea = this.GetSpellPowerAgainstNonChar(caster, target, target, sea);
+					if (this.CheckSpellPowerWithMessage(sea)) {
+						this.Trigger_EffectGround(target, sea);
+					}
+				}
+			}
+
+			if (!singleEffectDone) {
+				throw new Exception(this + ": Invalid target and/or spell flag?!");
+			}
+
+			if (isArea) {
+				Map map = target.GetMap();
+				ushort x = target.X;
+				ushort y = target.Y;
+				int range = this.EffectRange;
+				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
+				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
+				if (canEffectItem || canEffectChar) {
+					foreach (Thing t in map.GetThingsInRange(x, y, range)) {
+						Character ch = t as Character;
+						if (ch != null) {
+							if (canEffectChar) {
+								sea = this.GetSpellPowerAgainstChar(caster, target, ch, sea);
+								if (this.CheckSpellPowerWithMessage(sea)) {
+									this.Trigger_EffectChar(ch, sea);
+								}
+							}
+						} else if (canEffectItem) {
+							Item i = t as Item;
+							if (i != null) {
+								sea = this.GetSpellPowerAgainstNonChar(caster, target, i, sea);
+								if (this.CheckSpellPowerWithMessage(sea)) {
+									this.Trigger_EffectItem(i, sea);
+								}
+							}
+						}
+					}
+
+					//TODO? effect ground in the whole area? Or only statics?
+				}
+			}
+
+			if (sea != null) {
+				sea.Dispose();
+			}
 		}
 
+		private bool CheckSpellPowerWithMessage(SpellEffectArgs sea) {
+			SpellFlag flags = this.Flags;
+			if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
+				if (sea.SpellPower < 1) {
+					sea.Source.SysMessage("Cíl odolal kouzlu!");
+					Character targetAsChar = sea.CurrentTarget as Character;
+					if (targetAsChar != null) {
+						targetAsChar.ClilocSysMessage(501783); // You feel yourself resisting magical energy.
+					}
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private SpellEffectArgs GetSpellPowerAgainstChar(Character caster, IPoint4D mainTarget, Character currentTarget, SpellEffectArgs sea) {
+			int spellPower;
+			SpellFlag flags = this.Flags;
+			if ((flags & SpellFlag.UseMindPower) == SpellFlag.UseMindPower) {
+				int mindDef;
+				if (caster.IsPlayerForCombat) {
+					mindDef = currentTarget.MindDefenseVsP;
+				} else {
+					mindDef = currentTarget.MindDefenseVsM;
+				}
+				if (currentTarget.IsPlayerForCombat) {
+					spellPower = caster.MindPowerVsP - mindDef;
+				} else {
+					spellPower = caster.MindPowerVsM - mindDef;
+				}
+			} else {
+				spellPower = caster.GetSkill(SkillName.Magery);
+			}
+
+			if (sea != null) {
+				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower);				
+			} else {
+				sea.CurrentTarget = currentTarget;
+				sea.SpellPower = spellPower;
+			}
+			return sea;
+		}
+
+		private SpellEffectArgs GetSpellPowerAgainstNonChar(Character caster, IPoint4D target, IPoint4D currentTarget, SpellEffectArgs sea) {
+			int spellPower = caster.GetSkill(SkillName.Magery);
+			if (sea != null) {
+				sea = SpellEffectArgs.Acquire(caster, target, currentTarget, this, spellPower);
+			} else {
+				sea.CurrentTarget = currentTarget;
+				sea.SpellPower = spellPower;
+			}
+			return sea;
+		}
+
+		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
+		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
+		private static TriggerKey tkEffectItem = TriggerKey.Get("effectitem");
+		private static TriggerKey tkEffectGround = TriggerKey.Get("effectground");
+
+		private void Trigger_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
+			if (!cancel) {
+				try {
+					cancel = target.On_SpellEffect(spellEffectArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(target, tkEffectChar, spellEffectArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							this.On_EffectChar(target, spellEffectArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+		}
+
+		private void Trigger_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
+			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
+			if (!cancel) {
+				try {
+					cancel = target.On_SpellEffect(spellEffectArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(target, tkEffectItem, spellEffectArgs.scriptArgs);
+					if (!cancel) {
+						try {
+							this.On_EffectItem(target, spellEffectArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+		}
+
+		private void Trigger_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+			bool cancel = this.TryCancellableTrigger(target, tkEffectGround, spellEffectArgs.scriptArgs);
+			if (!cancel) {
+				try {
+					this.On_EffectGround(target, spellEffectArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			}
+		}
+
+		public virtual void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+		}
+
+		public virtual void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+		}
+
+		public virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
+		}
 	}
 
 	public class SpellEffectArgs : Poolable {
@@ -476,7 +699,6 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					mageryArgs.Target1 = targetted;
 				}
-				mageryArgs.DelayInSeconds = spell.CastTime;
 				mageryArgs.PhaseStart();
 			} else {
 				return true; //repeat targetting
@@ -503,7 +725,6 @@ namespace SteamEngine.CompiledScripts {
 
 			if ((flags & targetSF) == targetSF) {
 				mageryArgs.Target1 = targetted;
-				mageryArgs.DelayInSeconds = spell.CastTime;
 				mageryArgs.PhaseStart();
 			} else {
 				return this.On_TargonGround(caster, targetted, parameter);

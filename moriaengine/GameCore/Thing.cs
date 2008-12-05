@@ -1001,7 +1001,7 @@ namespace SteamEngine {
 				cancel = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
 				if (!cancel) {
 					try {
-						cancel = dclicker.On_DenyItemDClick(denyArgs);
+						cancel = dclicker.On_DenyCharDClick(denyArgs);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}

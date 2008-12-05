@@ -505,7 +505,7 @@ namespace SteamEngine {
 					PluginKey pk = entry.Key as PluginKey;
 					if(pk != null) {
 						//returning PluginKey-Plugin pair (if the key is of type PluginKey then we expect Plugin as a value
-						yield return new KeyValuePair<PluginKey, Plugin>(pk, entry.Value as Plugin);
+						yield return new KeyValuePair<PluginKey, Plugin>(pk, (Plugin) entry.Value);
 					}
 				}
 			}

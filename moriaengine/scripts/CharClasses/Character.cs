@@ -191,7 +191,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsAliveAndValid {
 			get {
-				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !this.Flag_Insubst;
+				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !(this.Flag_Insubst || this.IsGM);
 			}
 		}
 
@@ -1438,6 +1438,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public void AddSkill(SkillName id, int value) {
+			this.AddSkill((int) id, value);
+		}
+
 		//instantiate new skill and set the specified points, used when the skill does not exist
 		private void AddNewSkill(int id, ushort value) {
 			AddNewSkill(id, value, 1000); //call the same method with default cap
@@ -1474,6 +1478,10 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				return 0;
 			}
+		}
+
+		public ushort GetSkill(SkillName id) {
+			return this.GetSkill((int) id);
 		}
 
 		[Summary("Get value of the lock type of skill with given ID, if the skill is not present return default")]
@@ -1747,6 +1755,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public void TryCastSpellFromBook(SpellDef spellDef) {
 			MagerySkillDef.TryCastSpellFromBook(this, spellDef);
+		}
+
+		public virtual bool On_SpellEffect(SpellEffectArgs spellEffectArgs) {
+			return false;
 		}
 
         public Character Owner {

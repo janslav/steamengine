@@ -92,27 +92,45 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			if (!CanSeeTargetWithMessage(skillSeqArgs, self)) {
-				
-				skillSeqArgs.Dispose();
-				return true;
+			if (CanSeeTargetWithMessage(skillSeqArgs, self)) {
+				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+				int manaUse = spell.ManaUse;
+				int mana = self.Mana;
+				if (self.Mana >= manaUse) {					
+					if (spell.Requirements.HasResourcesPresent(self, ResourcesLocality.WearableLayers | ResourcesLocality.Backpack) &&
+							spell.Resources.ConsumeResourcesOnce(self, ResourcesLocality.Backpack)) {
+						self.Mana = (short) (mana - manaUse);
+						skillSeqArgs.DelayInSeconds = spell.CastTime;
+						return false;
+					} else {
+						self.ClilocSysMessage(502630); // More reagents are needed for this spell.
+					}
+				} else {
+					self.ClilocSysMessage(502625); // Insufficient mana for this spell.
+				}
 			}
-			return false;
+			skillSeqArgs.Dispose();
+			return true;
 		}
 
 		private static bool CanSeeTargetWithMessage(SkillSequenceArgs skillSeqArgs, Character self) {
 			IPoint4D target = skillSeqArgs.Target1;
+			IPoint4D targetTop = target.TopPoint;
 			Thing targetAsThing = target as Thing;
 
-			if (targetAsThing != null) {
-				if ((!targetAsThing.IsDeleted) && (!targetAsThing.Flag_Disconnected)) {
-					if (self.CanSeeForUpdate(targetAsThing) && (self.GetMap().CanSeeLOSFromTo(self, targetAsThing.TopObj()))) {
+			int m = self.M;
+			if (m == targetTop.M) {
+				Regions.Map map = Regions.Map.GetMap(m);
+				if (targetAsThing != null) {
+					if ((!targetAsThing.IsDeleted) && (!targetAsThing.Flag_Disconnected)) {
+						if (self.CanSeeForUpdate(targetAsThing) && (map.CanSeeLOSFromTo(self, targetTop))) {
+							return true;
+						}
+					}
+				} else if (target != null) {
+					if ((Point2D.GetSimpleDistance(self, targetTop) <= Globals.MaxUpdateRange) && (map.CanSeeLOSFromTo(self, targetTop))) {
 						return true;
 					}
-				}
-			} else if (target != null) {
-				if (self.GetMap().CanSeeLOSFromTo(self, target.TopPoint)) {
-					return true;
 				}
 			}
 
@@ -155,14 +173,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			EffectFactory.StationaryEffect(self, 0x3735, 6, 30);
-			self.Sound(0x5C);
+			Fizzle(skillSeqArgs.Self);
 			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			Fizzle(skillSeqArgs.Self);
+		}
+
+		private static void Fizzle(Character self) {
+			EffectFactory.StationaryEffect(self, 0x3735, 6, 30);
+			self.Sound(0x5C);
+			self.ClilocMessage(502632); // The spell fizzles.
 		}
 	}
 }

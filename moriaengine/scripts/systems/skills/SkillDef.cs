@@ -184,7 +184,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static bool CheckSuccess(ushort skillValue, int difficulty) {
-			//TODO algorhitm
 			return SkillUtils.CheckSuccess(skillValue, difficulty);
 		}
 
@@ -562,11 +561,13 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This method fires the @skillStroke triggers. "
 		+ "Gets usually called by the SkillTimer.")]
 		public void PhaseStroke() {
-			if (!this.skillDef.Trigger_Stroke(this)) {
-				if (this.success) {
-					this.PhaseSuccess();
-				} else {
-					this.PhaseFail();
+			if (this.self.IsAliveAndValid) {
+				if (!this.skillDef.Trigger_Stroke(this)) {
+					if (this.success) {
+						this.PhaseSuccess();
+					} else {
+						this.PhaseFail();
+					}
 				}
 			}
 		}
