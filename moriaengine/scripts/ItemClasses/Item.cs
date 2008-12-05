@@ -221,5 +221,9 @@ namespace SteamEngine.CompiledScripts {
 		//public virtual void On_DropSound(AbstractCharacter droppingChar) {
 		//    this.SoundTo(this.TypeDef.DropSound, droppingChar);
 		//}
+
+		public virtual bool On_SpellEffect(SpellEffectArgs spellEffectArgs) {
+			return false;
+		}
 	}
 }

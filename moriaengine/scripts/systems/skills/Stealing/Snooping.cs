@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!self.CanReachWithMessage(cnt)) {
 				skillSeqArgs.Success = false;
 			} else {
-				skillSeqArgs.Success = SkillDef.CheckSuccess(self.GetSkill((int) SkillName.Snooping), 800);
+				skillSeqArgs.Success = this.CheckSuccess(self, 800);
 			}
 			return false;
 		}

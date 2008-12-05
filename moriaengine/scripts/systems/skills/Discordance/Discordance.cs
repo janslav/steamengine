@@ -180,15 +180,15 @@ namespace SteamEngine.CompiledScripts {
 			lowed_hits = (short) DiscordanceValueLower(cont.MaxHits, lowerConst);
 			lowed_mana = (short) DiscordanceValueLower(cont.MaxMana, lowerConst);
 			lowed_stam = (short) DiscordanceValueLower(cont.MaxStam, lowerConst);
-			lowed_ei = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.EvalInt), lowerConst);
-			lowed_magery = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Magery), lowerConst);
-			lowed_resist = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.MagicResist), lowerConst);
-			lowed_poison = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Poisoning), lowerConst);
-			lowed_archer = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Archery), lowerConst);
-			lowed_twohand = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Swords), lowerConst);
-			lowed_mace = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Macing), lowerConst);
-			lowed_onehand = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Fencing), lowerConst);
-			lowed_wrestl = (ushort) DiscordanceValueLower(cont.GetSkill((int) SkillName.Wrestling), lowerConst);
+			lowed_ei = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.EvalInt), lowerConst);
+			lowed_magery = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Magery), lowerConst);
+			lowed_resist = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.MagicResist), lowerConst);
+			lowed_poison = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Poisoning), lowerConst);
+			lowed_archer = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Archery), lowerConst);
+			lowed_twohand = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Swords), lowerConst);
+			lowed_mace = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Macing), lowerConst);
+			lowed_onehand = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Fencing), lowerConst);
+			lowed_wrestl = (ushort) DiscordanceValueLower(cont.GetSkill(SkillName.Wrestling), lowerConst);
 
 			cont.Dex -= lowed_dex;
 			cont.Str -= lowed_str;
@@ -196,15 +196,15 @@ namespace SteamEngine.CompiledScripts {
 			cont.MaxHits -= lowed_hits;
 			cont.MaxMana -= lowed_mana;
 			cont.MaxStam -= lowed_stam;
-			cont.AddSkill((int) SkillName.EvalInt, -lowed_ei);
-			cont.AddSkill((int) SkillName.Magery, -lowed_magery);
-			cont.AddSkill((int) SkillName.MagicResist, -lowed_resist);
-			cont.AddSkill((int) SkillName.Poisoning, -lowed_poison);
-			cont.AddSkill((int) SkillName.Archery, -lowed_archer);
-			cont.AddSkill((int) SkillName.Swords, -lowed_twohand);
-			cont.AddSkill((int) SkillName.Macing, -lowed_mace);
-			cont.AddSkill((int) SkillName.Fencing, -lowed_onehand);
-			cont.AddSkill((int) SkillName.Wrestling, -lowed_wrestl);
+			cont.AddSkill(SkillName.EvalInt, -lowed_ei);
+			cont.AddSkill(SkillName.Magery, -lowed_magery);
+			cont.AddSkill(SkillName.MagicResist, -lowed_resist);
+			cont.AddSkill(SkillName.Poisoning, -lowed_poison);
+			cont.AddSkill(SkillName.Archery, -lowed_archer);
+			cont.AddSkill(SkillName.Swords, -lowed_twohand);
+			cont.AddSkill(SkillName.Macing, -lowed_mace);
+			cont.AddSkill(SkillName.Fencing, -lowed_onehand);
+			cont.AddSkill(SkillName.Wrestling, -lowed_wrestl);
 
 			if (cont.Hits > cont.MaxHits) {
 				cont.Hits = cont.MaxHits;
@@ -225,15 +225,15 @@ namespace SteamEngine.CompiledScripts {
 			cont.MaxHits += lowed_hits;
 			cont.MaxMana += lowed_mana;
 			cont.MaxStam += lowed_stam;
-			cont.AddSkill((int) SkillName.EvalInt, lowed_ei);
-			cont.AddSkill((int) SkillName.Magery, lowed_magery);
-			cont.AddSkill((int) SkillName.MagicResist, lowed_resist);
-			cont.AddSkill((int) SkillName.Poisoning, lowed_poison);
-			cont.AddSkill((int) SkillName.Archery, lowed_archer);
-			cont.AddSkill((int) SkillName.Swords, lowed_twohand);
-			cont.AddSkill((int) SkillName.Macing, lowed_mace);
-			cont.AddSkill((int) SkillName.Fencing, lowed_onehand);
-			cont.AddSkill((int) SkillName.Wrestling, lowed_wrestl);
+			cont.AddSkill(SkillName.EvalInt, lowed_ei);
+			cont.AddSkill(SkillName.Magery, lowed_magery);
+			cont.AddSkill(SkillName.MagicResist, lowed_resist);
+			cont.AddSkill(SkillName.Poisoning, lowed_poison);
+			cont.AddSkill(SkillName.Archery, lowed_archer);
+			cont.AddSkill(SkillName.Swords, lowed_twohand);
+			cont.AddSkill(SkillName.Macing, lowed_mace);
+			cont.AddSkill(SkillName.Fencing, lowed_onehand);
+			cont.AddSkill(SkillName.Wrestling, lowed_wrestl);
 		}
 
 		private static int DiscordanceValueLower(int value, int lowerConst) {
