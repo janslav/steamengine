@@ -1071,7 +1071,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, ushort color) {
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, int color) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1083,7 +1083,7 @@ namespace SteamEngine.Networking {
 			this.sourceName = sourceName;
 			this.message = message;
 			this.type = (byte) type;
-			this.color = color;
+			this.color = Utility.NormalizeDyedColor(color, Globals.defaultASCIIMessageColor);
 			this.font = font;
 		}
 
@@ -1109,7 +1109,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, ushort color, string language) {
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, int color, string language) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1122,7 +1122,7 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.language = language;
 			this.type = (byte) type;
-			this.color = color;
+			this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor);
 			this.font = font;
 		}
 
@@ -1151,7 +1151,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, uint message, string sourceName, SpeechType type, ushort font, ushort color, string args) {
+		public void Prepare(Thing from, uint message, string sourceName, SpeechType type, ushort font, int color, string args) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1164,7 +1164,7 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.args = args;
 			this.type = (byte) type;
-			this.color = color;
+			this.color = this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
 			this.font = font;
 		}
 

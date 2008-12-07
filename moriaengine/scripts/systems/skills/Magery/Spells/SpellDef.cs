@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 		CanTargetChar = 0x0008,
 		CanTargetAnything = CanTargetStatic | CanTargetGround | CanTargetItem | CanTargetChar,
 		AlwaysTargetSelf = 0x0010,
-		TargetNeedsLOS = 0x0020,
+		//TargetNeedsLOS = 0x0020,
 		CanEffectStatic = 0x0040,
 		CanEffectGround = 0x0080,
 		CanEffectItem = 0x0100,
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		internal static SpellDef LoadFromScripts(PropsSection input) {
+		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
 			string typeName = input.headerType.ToLower();
 
@@ -172,7 +172,11 @@ namespace SteamEngine.CompiledScripts {
 
 			RegisterSpellDef(spellDef);
 
-			return spellDef;
+			if (spellDef.scriptedTriggers == null) {
+				return spellDef;
+			} else {
+				return new UnloadableGroup(spellDef, spellDef.scriptedTriggers);
+			}
 		}
 
 		internal static void LoadingFinished() {
@@ -331,6 +335,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public double GetEffectForValue(double spellpower) {
+			return ScriptUtil.EvalRangePermille(spellpower, this.Effect);
+		}
+
 		public double[] Duration {
 			get {
 				return (double[]) this.duration.CurrentValue;
@@ -338,6 +346,10 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				this.duration.CurrentValue = value;
 			}
+		}
+
+		public double GetDurationForValue(double spellpower) {
+			return ScriptUtil.EvalRangePermille(spellpower, this.Duration);
 		}
 
 		public SoundNames Sound {
@@ -402,20 +414,28 @@ namespace SteamEngine.CompiledScripts {
 
 			throw new SEException("SpellDef.Trigger_Select - unfinished");
 		}
+		
+		private static TriggerKey tkSuccess = TriggerKey.Get("success");
+		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
+		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
+		private static TriggerKey tkEffectItem = TriggerKey.Get("effectitem");
+		private static TriggerKey tkEffectGround = TriggerKey.Get("effectground");
 
-		//private static void ConsumeResources(SkillSequenceArgs mageryArgs, Character caster) {
-		//    if (SkillSequenceArgs.GetSkillSequenceArgs(caster) == mageryArgs) {
-
-		//    }
-		//}
-
-		internal void On_Success(SkillSequenceArgs mageryArgs) {
+		internal void Trigger_Success(SkillSequenceArgs mageryArgs) {
 			//target visibility/distance/LOS and self being alive checked in magery stroke
+			Character caster = mageryArgs.Self;
+
+			bool cancel = this.TryCancellableTrigger(caster, tkSuccess, mageryArgs.scriptArgs);
+			if (!cancel) {
+				cancel = this.On_Success(mageryArgs);
+			}
+			if (cancel) {
+				return;
+			}
+
 			SpellFlag flags = this.Flags;
 			IPoint4D target = mageryArgs.Target1;
-			Character caster = mageryArgs.Self;
 			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
-
 			SpellEffectArgs sea = null;
 
 			bool singleEffectDone = false;
@@ -457,17 +477,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (isArea) {
-				Map map = target.GetMap();
-				ushort x = target.X;
-				ushort y = target.Y;
-				int range = this.EffectRange;
 				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
 				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
 				if (canEffectItem || canEffectChar) {
-					foreach (Thing t in map.GetThingsInRange(x, y, range)) {
+					foreach (Thing t in target.GetMap().GetThingsInRange(target.X, target.Y, this.EffectRange)) {
 						Character ch = t as Character;
 						if (ch != null) {
 							if (canEffectChar) {
+								//TODO: do not effect allies if harmful? Do not effect enemy if beneficial?
 								sea = this.GetSpellPowerAgainstChar(caster, target, ch, sea);
 								if (this.CheckSpellPowerWithMessage(sea)) {
 									this.Trigger_EffectChar(ch, sea);
@@ -483,7 +500,6 @@ namespace SteamEngine.CompiledScripts {
 							}
 						}
 					}
-
 					//TODO? effect ground in the whole area? Or only statics?
 				}
 			}
@@ -497,7 +513,7 @@ namespace SteamEngine.CompiledScripts {
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				if (sea.SpellPower < 1) {
-					sea.Source.SysMessage("Cíl odolal kouzlu!");
+					sea.Caster.SysMessage("Cíl odolal kouzlu!");
 					Character targetAsChar = sea.CurrentTarget as Character;
 					if (targetAsChar != null) {
 						targetAsChar.ClilocSysMessage(501783); // You feel yourself resisting magical energy.
@@ -527,7 +543,7 @@ namespace SteamEngine.CompiledScripts {
 				spellPower = caster.GetSkill(SkillName.Magery);
 			}
 
-			if (sea != null) {
+			if (sea == null) {
 				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower);				
 			} else {
 				sea.CurrentTarget = currentTarget;
@@ -538,7 +554,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private SpellEffectArgs GetSpellPowerAgainstNonChar(Character caster, IPoint4D target, IPoint4D currentTarget, SpellEffectArgs sea) {
 			int spellPower = caster.GetSkill(SkillName.Magery);
-			if (sea != null) {
+			if (sea == null) {
 				sea = SpellEffectArgs.Acquire(caster, target, currentTarget, this, spellPower);
 			} else {
 				sea.CurrentTarget = currentTarget;
@@ -546,11 +562,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return sea;
 		}
-
-		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
-		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
-		private static TriggerKey tkEffectItem = TriggerKey.Get("effectitem");
-		private static TriggerKey tkEffectGround = TriggerKey.Get("effectground");
 
 		private void Trigger_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
@@ -595,10 +606,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public virtual bool On_Success(SkillSequenceArgs mageryArgs) {
+			return false;
+		}
+
 		public virtual void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
 		}
 
 		public virtual void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+			if ((this.Flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
+				target.Trigger_HostileAction(spellEffectArgs.Caster);
+			}
 		}
 
 		public virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
@@ -606,7 +624,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class SpellEffectArgs : Poolable {
-		Character source;
+		Character caster;
 		IPoint4D currentTarget;
 		IPoint4D mainTarget;
 		SpellDef spellDef;
@@ -619,9 +637,9 @@ namespace SteamEngine.CompiledScripts {
 			this.scriptArgs = new ScriptArgs(this);
 		}
 
-		public static SpellEffectArgs Acquire(Character source, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower) {
+		public static SpellEffectArgs Acquire(Character caster, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower) {
 			SpellEffectArgs retVal = Pool<SpellEffectArgs>.Acquire();
-			retVal.source = source;
+			retVal.caster = caster;
 			retVal.mainTarget = mainTarget;
 			retVal.currentTarget = currentTarget;
 			retVal.spellDef = spellDef;
@@ -637,9 +655,9 @@ namespace SteamEngine.CompiledScripts {
 		//    base.On_Reset();
 		//}
 
-		public Character Source {
+		public Character Caster {
 			get {
-				return this.source;
+				return this.caster;
 			}
 		}
 
@@ -721,9 +739,8 @@ namespace SteamEngine.CompiledScripts {
 		private bool TargonNonGround(Player caster, IPoint4D targetted, object parameter, SpellFlag targetSF) {
 			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
 			SpellDef spell = (SpellDef) mageryArgs.Param1;
-			SpellFlag flags = spell.Flags;
 
-			if ((flags & targetSF) == targetSF) {
+			if ((spell.Flags & targetSF) == targetSF) {
 				mageryArgs.Target1 = targetted;
 				mageryArgs.PhaseStart();
 			} else {

@@ -212,5 +212,12 @@ namespace SteamEngine {
 			return false;
 		}
 
+		public static ushort NormalizeDyedColor(int color, ushort defaultColor) {
+			if ((color < 2) || (color > 1001)) {
+				return defaultColor;
+			} else {
+				return (ushort) color;
+			}
+		}
 	}
 }

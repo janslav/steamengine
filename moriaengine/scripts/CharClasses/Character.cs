@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckAliveWithMessage() {
-			if (this.Flag_Disconnected) {
+			if ((this.Flag_Disconnected) || (this.IsDeleted)){
 				return false;
 			} else if (this.Flag_Dead) {
 				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.

@@ -94,7 +94,7 @@ namespace SteamEngine {
 		public readonly static int squaredReachRange;
 		//public readonly static ushort sightRange;
 		//public readonly static int squaredSightRange;
-		public readonly static ushort serverMessageColor;
+		public readonly static ushort defaultASCIIMessageColor;
 		public readonly static ushort defaultUnicodeMessageColor;
 
 		internal static bool useMap;
@@ -332,7 +332,7 @@ namespace SteamEngine {
 				alternateCommandPrefix = text.GetValue<string>("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
 				supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
 				asciiForNames = text.GetValue<bool>("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
-				serverMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
+				defaultASCIIMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
 				defaultUnicodeMessageColor = text.GetValue<ushort>("defaultUnicodeMessageColor", 0x0394, "The color to use for unicode messages with no specified color (or a specified color of 0, which is not really valid for unicode messages).");
 
 				IniFileSection ranges = iniH.GetNewOrParsedSection("ranges");

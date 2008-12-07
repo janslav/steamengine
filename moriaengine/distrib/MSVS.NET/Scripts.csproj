@@ -587,14 +587,20 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\SpellBook.Generated.cs">
       <Link>systems\skills\Magery\SpellBook.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\SpellDef.cs">
-      <Link>systems\skills\Magery\SpellDef.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\SpellScroll.cs">
       <Link>systems\skills\Magery\SpellScroll.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\SpellScroll.Generated.cs">
       <Link>systems\skills\Magery\SpellScroll.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\DamageSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
+      <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\StatModSpellDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Meditation\Meditation.cs">
       <Link>systems\skills\Meditation\Meditation.cs</Link>

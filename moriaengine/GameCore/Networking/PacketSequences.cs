@@ -134,7 +134,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendSystemMessage(TCPConnection<GameState> c, string msg, ushort color) {
+		public static void SendSystemMessage(TCPConnection<GameState> c, string msg, int color) {
 			if (c != null) {
 				InternalSendMessage(c, null, msg, "System", SpeechType.Speech, 3, color);
 			}
@@ -149,7 +149,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 				args - Additional arguments needed for the cliloc message, if any.
 		*/
-		public static void SendClilocSysMessage(TCPConnection<GameState> c, uint msg, ushort color, string args) {
+		public static void SendClilocSysMessage(TCPConnection<GameState> c, uint msg, int color, string args) {
 			if (c != null) {
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(null, msg, "System", SpeechType.Speech, 3, color, args);
@@ -166,7 +166,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 				args - Additional arguments needed for the cliloc message, if any.
 		*/
-		public static void SendClilocSysMessage(TCPConnection<GameState> c, uint msg, ushort color, params string[] args) {
+		public static void SendClilocSysMessage(TCPConnection<GameState> c, uint msg, int color, params string[] args) {
 			if (c != null) {
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(null, msg, "System", SpeechType.Speech, 3, color, string.Join("\t", args));
@@ -183,7 +183,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendOverheadMessage(TCPConnection<GameState> c, string msg, ushort color) {
+		public static void SendOverheadMessage(TCPConnection<GameState> c, string msg, int color) {
 			if (c != null) {
 				AbstractCharacter cre = c.State.CharacterNotNull;
 				InternalSendMessage(c, cre, msg, "System", SpeechType.Speech, 3, color);
@@ -202,7 +202,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 		*/
 
-		public static void SendNameFrom(TCPConnection<GameState> c, Thing from, string msg, ushort color) {
+		public static void SendNameFrom(TCPConnection<GameState> c, Thing from, string msg, int color) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				InternalSendMessage(c, from, msg, "", SpeechType.Name, 3, color);
@@ -222,7 +222,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 		*/
 
-		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, ushort color, string args) {
+		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -243,7 +243,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 		*/
 
-		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, ushort color, string arg1, string arg2) {
+		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string arg1, string arg2) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -264,7 +264,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 		*/
 
-		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, ushort color, params string[] args) {
+		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, params string[] args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -273,7 +273,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, ushort color, string args) {
+		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -281,7 +281,7 @@ namespace SteamEngine.Networking {
 				c.SendSinglePacket(packet);
 			}
 		}
-		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, ushort color, string arg1, string arg2) {
+		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string arg1, string arg2) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -290,7 +290,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, ushort color, params string[] args) {
+		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, params string[] args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -309,7 +309,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendOverheadMessageFrom(TCPConnection<GameState> c, Thing from, string msg, ushort color) {
+		public static void SendOverheadMessageFrom(TCPConnection<GameState> c, Thing from, string msg, int color) {
 			if (c != null) {
 				//if (from == null) 
 				//if (from is AbstractCharacter) {
@@ -331,7 +331,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendOverheadMessageFrom(TCPConnection<GameState> c, Static from, string msg, ushort color) {
+		public static void SendOverheadMessageFrom(TCPConnection<GameState> c, Static from, string msg, int color) {
 			if (c != null) {
 				//if (from == null) throw new ArgumentNullException("from cannot be null in SendOverheadMessageFrom.");
 
@@ -348,7 +348,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendOverheadServerMessage(TCPConnection<GameState> c, string msg, ushort color) {
+		public static void SendOverheadServerMessage(TCPConnection<GameState> c, string msg, int color) {
 			if (c != null) {
 				AbstractCharacter cre = c.State.CharacterNotNull;
 				InternalSendMessage(c, cre, msg, "System", SpeechType.Server, 0, color);
@@ -363,7 +363,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendServerMessage(TCPConnection<GameState> c, string msg, ushort color) {
+		public static void SendServerMessage(TCPConnection<GameState> c, string msg, int color) {
 			if (c != null) {
 				InternalSendMessage(c, null, msg, "System", SpeechType.Server, 0, color);
 			}
@@ -415,16 +415,16 @@ namespace SteamEngine.Networking {
 		internal static void BroadCast(string msg) {
 			Console.WriteLine("Broadcasting: " + msg);
 			foreach (GameState state in GameServer.AllClients) {
-				SendServerMessage(state.Conn, msg, Globals.serverMessageColor);
+				SendServerMessage(state.Conn, msg, -1);
 			}
 		}
 
-		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, ushort color) {
+		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, int color) {
 			InternalSendMessage(c, from, msg, sourceName, type, font, color, c.State.Language);
 		}
 
 		//For use by Server's various message sending methods (Which send to one client).
-		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, ushort color, string lang) {
+		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
 			if (Globals.supportUnicode && font == 3 && !(type == SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
 				UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
 				if (string.IsNullOrEmpty(lang)) {
@@ -439,7 +439,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ushort font, ushort color, string lang) {
+		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
 			if (Globals.supportUnicode && font == 3 && !(type == SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
 				UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
 				packet.Prepare(from, msg, sourceName, type, font, color, lang);

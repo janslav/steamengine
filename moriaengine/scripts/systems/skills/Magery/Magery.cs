@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 				SkillSequenceArgs magery = SkillSequenceArgs.Acquire(ch, SkillName.Magery, book, spellDef);
 				magery.PhaseSelect();
 			} else {
-				ch.ClilocMessage(500015); // You do not have that spell!
+				ch.ClilocSysMessage(500015); // You do not have that spell!
 			}
 		}
 
@@ -96,12 +96,19 @@ namespace SteamEngine.CompiledScripts {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 				int manaUse = spell.ManaUse;
 				int mana = self.Mana;
-				if (self.Mana >= manaUse) {					
-					if (spell.Requirements.HasResourcesPresent(self, ResourcesLocality.WearableLayers | ResourcesLocality.Backpack) &&
-							spell.Resources.ConsumeResourcesOnce(self, ResourcesLocality.Backpack)) {
+				if (self.Mana >= manaUse) {
+					ResourcesList req = spell.Requirements;
+					ResourcesList res = spell.Resources;
+
+					if (((req == null) || (req.HasResourcesPresent(self, ResourcesLocality.WearableLayers | ResourcesLocality.Backpack))) &&
+							((res == null) || (res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack)))) {
 						self.Mana = (short) (mana - manaUse);
+						AnimCalculator.PerformAnim(self, GenericAnim.Cast);
+
+						self.AbortSkill();
 						skillSeqArgs.DelayInSeconds = spell.CastTime;
-						return false;
+						skillSeqArgs.DelayStroke();
+						return true; //default = set delay by magery skilldef
 					} else {
 						self.ClilocSysMessage(502630); // More reagents are needed for this spell.
 					}
@@ -168,7 +175,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
-			spell.On_Success(skillSeqArgs);
+			spell.Trigger_Success(skillSeqArgs);
 			return false;
 		}
 

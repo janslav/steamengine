@@ -351,7 +351,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public void WriteLine(string msg) {
-			PacketSequences.SendSystemMessage(this.conn, msg, Globals.serverMessageColor);
+			PacketSequences.SendSystemMessage(this.conn, msg, -1);
 		}
 
 		internal void HandleTarget(bool targGround, uint uid, ushort x, ushort y, sbyte z, ushort model) {

@@ -868,19 +868,20 @@ namespace SteamEngine.Networking {
 							state.lastSpellMacroId = spellId;
 						}
 						state.CharacterNotNull.TryCastSpellFromBook(spellId);
+						return;
 					}
 					break;
 				case 0x58: //opendoor
 					Temporary.OpenDoorMacroRequest(state.CharacterNotNull);
-					break;
+					return;
 				case 0x7c: //anim
 					switch (this.actionStr) {
 						case "bow":
 							Temporary.AnimRequest(state.CharacterNotNull, RequestableAnim.Bow);
-							break;
+							return;
 						case "salute":
 							Temporary.AnimRequest(state.CharacterNotNull, RequestableAnim.Salute);
-							break;
+							return;
 					}
 					break;
 			}

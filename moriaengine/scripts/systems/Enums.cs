@@ -275,7 +275,8 @@ namespace SteamEngine.CompiledScripts {
 		AttackBareHands = 14,
 		Bow = 15,
 		Salute = 16,
-		Drink = 17, Eat = 17
+		Drink = 17, Eat = 17,
+		Cast = 18
 	}
 
 	public enum HumanAnim : byte {
@@ -305,7 +306,7 @@ namespace SteamEngine.CompiledScripts {
 		MountedWalk = 23,
 		MountedRun = 24,
 		MountedStandStill = 25,
-		MountedRightHandAttack = 26,
+		MountedRightHandAttack = 26, MountedCast = 26,
 		MountedFireBow = 27,
 		MountedFireCrossbow = 28,
 		MountedLeftHandAttack = 29,
