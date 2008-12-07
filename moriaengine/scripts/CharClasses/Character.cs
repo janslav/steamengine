@@ -191,7 +191,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsAliveAndValid {
 			get {
-				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !(this.Flag_Insubst || this.IsGM);
+				//check if char isnt deleted, disconnected, dead and (insubst without being a GM)
+				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !(this.Flag_Insubst && !this.IsGM);
 			}
 		}
 

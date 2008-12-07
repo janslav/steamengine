@@ -30,13 +30,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam lidi z parametru (if any)
-			ArrayList playersList = null;
-			if(!args.HasTag(D_Admin.playersListTK)) {
+			ArrayList playersList = (ArrayList) args.GetTag(D_Admin.playersListTK);
+			if (playersList == null) {
 				playersList = ScriptUtil.ArrayListFromEnumerable(Server.AllPlayers);
 				args.SetTag(D_Admin.playersListTK, playersList);//ulozime do parametru dialogu
-			} else {
-				playersList = (ArrayList)args.GetTag(D_Admin.playersListTK);
-			}
+			} 
             //zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);//prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
@@ -82,7 +80,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             dialogHandler.AddTable(new GUTATable(imax-firstiVal));
 			dialogHandler.CopyColsFromLastTable();
 
-			switch ((SortingCriteria)args.GetTag(D_Admin.plrListSortTK)) {
+			//sorting = 0th position
+			switch ((SortingCriteria)args.ArgsArray[0]) {
 				case SortingCriteria.NameAsc:
 					playersList.Sort(CharComparerByName.instance);                   
 					break;
@@ -142,27 +141,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
                         break;
                     case 1: //acc tøídit asc
-						args.SetTag(D_Admin.plrListSortTK, SortingCriteria.AccountAsc);//uprav info o sortovani
+						args.ArgsArray[0] = SortingCriteria.AccountAsc;
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                     case 2: //hráèi tøídit asc
-						args.SetTag(D_Admin.plrListSortTK, SortingCriteria.NameAsc);//uprav info o sortovani
+						args.ArgsArray[0] = SortingCriteria.NameAsc;
+						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.NameAsc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                     case 3: //lokace tøídit asc
-						args.SetTag(D_Admin.plrListSortTK, SortingCriteria.LocationAsc);//uprav info o sortovani
+						args.ArgsArray[0] = SortingCriteria.LocationAsc;
+						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.LocationAsc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;                    
                     case 4: //acc tøídit desc
-						args.SetTag(D_Admin.plrListSortTK, SortingCriteria.AccountDesc);//uprav info o sortovani
+						args.ArgsArray[0] = SortingCriteria.AccountDesc;
+						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.AccountDesc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                     case 5: //hráèi tøídit desc
-						args.SetTag(D_Admin.plrListSortTK, SortingCriteria.NameDesc);//uprav info o sortovani
+						args.ArgsArray[0] = SortingCriteria.NameDesc;
+						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.NameDesc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                     case 6: //lokace tøídit desc
-						args.SetTag(D_Admin.plrListSortTK, SortingCriteria.LocationDesc);//uprav info o sortovani
+						args.ArgsArray[0] = SortingCriteria.LocationDesc;
+						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.LocationDesc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
                 }
