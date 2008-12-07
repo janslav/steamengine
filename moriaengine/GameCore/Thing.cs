@@ -1296,7 +1296,7 @@ namespace SteamEngine {
 		 */
 		public void Say(string arg) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Speech, Globals.serverMessageColor, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Speech, -1, 3, null, null);
 			}
 		}
 
@@ -1332,7 +1332,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocSay(uint arg, params string[] args) {
-			this.Speech(null, arg, SpeechType.Speech, Globals.serverMessageColor, 3, null, args);
+			this.Speech(null, arg, SpeechType.Speech, -1, 3, null, args);
 		}
 
 		/**
@@ -1644,7 +1644,7 @@ namespace SteamEngine {
 					a font. If this is not 3, then the speech will be sent in ASCII instead of Unicode, because
 					Unicode doesn't support special fonts like runic.
 		 */
-		public void Speech(string speech, uint clilocSpeech, SpeechType type, ushort color, ushort font, int[] keywords, string[] args) {
+		public void Speech(string speech, uint clilocSpeech, SpeechType type, int color, ushort font, int[] keywords, string[] args) {
 			AbstractCharacter self = this as AbstractCharacter;
 
 			string language = "enu";
@@ -1657,7 +1657,7 @@ namespace SteamEngine {
 			this.Speech(speech, clilocSpeech, type, color, font, language, keywords, args);
 		}
 
-		public void Speech(string speech, uint clilocSpeech, SpeechType type, ushort color, ushort font, string language, int[] keywords, string[] args) {
+		public void Speech(string speech, uint clilocSpeech, SpeechType type, int color, ushort font, string language, int[] keywords, string[] args) {
 			this.ThrowIfDeleted();
 
 			AbstractCharacter self = this as AbstractCharacter;

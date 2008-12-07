@@ -520,48 +520,48 @@ namespace SteamEngine {
 		public void SysMessage(string arg) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendSystemMessage(state.Conn, arg, Globals.serverMessageColor);
+				PacketSequences.SendSystemMessage(state.Conn, arg, -1);
 			}
 		}
 
 		public void SysMessage(string arg, int color) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendSystemMessage(state.Conn, arg, (ushort) color);
+				PacketSequences.SendSystemMessage(state.Conn, arg, color);
 			}
 		}
 
 		public void ClilocSysMessage(uint msg, string args) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, Globals.serverMessageColor, args);
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, args);
 			}
 		}
 		public void ClilocSysMessage(uint msg, params string[] args) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, Globals.serverMessageColor, args);
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, args);
 			}
 		}
 
 		public void ClilocSysMessage(uint msg, int color) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, (ushort) color, "");
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, "");
 			}
 		}
 
 		public void ClilocSysMessage(uint msg, int color, string args) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, (ushort) color, args);
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
 			}
 		}
 
 		public void ClilocSysMessage(uint msg, int color, params string[] args) {
 			GameState state = this.GameState;
 			if (state != null) {
-				PacketSequences.SendClilocSysMessage(state.Conn, msg, (ushort) color, args);
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
 			}
 		}
 
@@ -1085,7 +1085,7 @@ namespace SteamEngine {
 
 		//this method fires the [speech] triggers
 		internal void Trigger_Hear(AbstractCharacter speaker, string speech, uint clilocSpeech,
-				SpeechType type, ushort color, ushort font, string lang, int[] keywords, string[] args) {
+				SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
 
 			ScriptArgs sa = new ScriptArgs(speaker, speech, clilocSpeech, type, color, font, lang, keywords, args);
 			this.TryTrigger(TriggerKey.hear, sa);
@@ -1094,7 +1094,7 @@ namespace SteamEngine {
 			speech = ConvertTools.ToString(saArgv[1]);
 			clilocSpeech = ConvertTools.ToUInt32(saArgv[2]);
 			type = (SpeechType) ConvertTools.ToInt64(saArgv[3]);
-			color = ConvertTools.ToUInt16(saArgv[4]);
+			color = ConvertTools.ToInt32(saArgv[4]);
 			font = ConvertTools.ToUInt16(saArgv[5]);
 			lang = ConvertTools.ToString(saArgv[6]);
 			keywords = (int[]) saArgv[7];
@@ -1116,7 +1116,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual void On_Hear(AbstractCharacter speaker, string speech, uint clilocSpeech, SpeechType type, ushort color, ushort font, string lang, int[] keywords, string[] args) {
+		public virtual void On_Hear(AbstractCharacter speaker, string speech, uint clilocSpeech, SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
 
 		}
 

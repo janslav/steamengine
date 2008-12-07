@@ -6,7 +6,7 @@ using SteamEngine.Common;
 namespace SteamEngine.Communication {
 
 	public class Buffer : Poolable {
-		public const int bufferLen = 10*1024;
+		public const int bufferLen = 50*1024;
 
 		public readonly byte[] bytes;
 

@@ -175,34 +175,26 @@ namespace SteamEngine.CompiledScripts {
 						realAnim=AnimalAnim.StandStill;
 					}
 					break;
-				case GenericAnim.AttackSwing:
-					if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
-						realAnim=AnimalAnim.Attack;
-					} else if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
-						realAnim=AnimalAnim.Attack2;
-					} else {
-						realAnim=AnimalAnim.StandStill;
-					}
-					break;
 				case GenericAnim.AttackStab: 
 					if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
 						realAnim=AnimalAnim.Attack2;
 					} else if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
 						realAnim=AnimalAnim.Attack;
+					} else {
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
-				case GenericAnim.AttackOverhead:
-					if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
-						realAnim=AnimalAnim.Attack;
-					} else if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
-						realAnim=AnimalAnim.Attack2;
-					}
-					break;
+				case GenericAnim.AttackSwing:
+				case GenericAnim.AttackOverhead:				
 				case GenericAnim.AttackShoot:
+				case GenericAnim.AttackBareHands:
+				case GenericAnim.Cast:
 					if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
 						realAnim=AnimalAnim.Attack;
 					} else if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
 						realAnim=AnimalAnim.Attack2;
+					} else {
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.GetHit:
@@ -239,13 +231,6 @@ namespace SteamEngine.CompiledScripts {
 						realAnim=AnimalAnim.Unknown;
 					} else {
 						realAnim=AnimalAnim.StandStill;
-					}
-					break;
-				case GenericAnim.AttackBareHands:
-					if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
-						realAnim=AnimalAnim.Attack;
-					} else if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
-						realAnim=AnimalAnim.Attack2;
 					}
 					break;
 				case GenericAnim.Bow:
@@ -450,6 +435,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 						break;
 					}
+				case GenericAnim.Cast: //TODO? check if this makes sense
 				case GenericAnim.AttackBareHands: {
 						if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
 							realAnim=MonsterAnim.Attack6;
@@ -684,6 +670,18 @@ namespace SteamEngine.CompiledScripts {
 						realAnim=HumanAnim.MountedSalute;
 					} else {
 						realAnim=HumanAnim.Drink;
+					}
+					break;
+				case GenericAnim.Cast:
+					if (self.Flag_Riding) {
+						realAnim = HumanAnim.MountedCast;
+					} else {
+						double dbl = Globals.dice.NextDouble();
+						if (dbl < .5) {
+							realAnim = HumanAnim.Cast;
+						} else {
+							realAnim = HumanAnim.CastForward;
+						}
 					}
 					break;
 				default:

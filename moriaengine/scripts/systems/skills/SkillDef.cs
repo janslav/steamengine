@@ -162,19 +162,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double MinEffect {
-			get {
-				return Effect[0];
-			}
-		}
-
-		public double MaxEffect {
-			get {
-				double[] arr = Effect;
-				return arr[arr.Length - 1];
-			}
-		}
-
 		public double GetEffectForValue(ushort skillValue) {
 			return ScriptUtil.EvalRangePermille(skillValue, this.Effect);
 		}
@@ -554,7 +541,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.delay < TimeSpan.Zero) {
 				this.PhaseStroke();
 			} else {
-				this.self.AddTimer(skillTimerKey, new SkillStrokeTimer(this)).DueInSpan = this.delay;;
+				this.self.AddTimer(skillTimerKey, new SkillStrokeTimer(this)).DueInSpan = this.delay;
 			}
 		}
 

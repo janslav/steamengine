@@ -89,7 +89,7 @@ namespace SteamEngine {
 			using (new MagicObject()) 
 #endif
 			{
-				currentLevel = RunLevel.Paused | (currentLevel & ~RunLevel.Running);
+				currentLevel |= RunLevel.Paused;
 			}
 		}
 
