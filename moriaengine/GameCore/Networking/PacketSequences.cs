@@ -452,5 +452,14 @@ namespace SteamEngine.Networking {
 		}
 
 		#endregion messages
+
+		public static void SendStatLocks(AbstractCharacter ch) {
+			GameState state = ch.GameState;
+			if (state != null) {
+				ExtendedStatsOutPacket p = Pool<ExtendedStatsOutPacket>.Acquire();
+				p.Prepare(ch.FlaggedUid, ch.StatLockByte);
+				state.Conn.SendSinglePacket(p);
+			}
+		}
 	}
 }

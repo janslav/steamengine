@@ -25,6 +25,8 @@ using SteamEngine.Packets;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 using SteamEngine.Networking;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -409,23 +411,20 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		public override byte StatLockByte {
+		public override sealed byte StatLockByte {
 			get {
 				return statLockByte;
 			}
 		}
+
 		public override StatLockType StrLock {
 			get {
 				return (StatLockType) ((statLockByte >> 4) & 0x3);
 			}
 			set {
-				if (value != StrLock) {
+				if (value != this.StrLock) {
 					statLockByte = (byte) ((statLockByte & 0xCF) + ((((byte) value) & 0x3) << 4));
-					GameConn c = Conn;
-					if (c != null) {
-						PacketSender.PrepareStatLocks(this);
-						PacketSender.SendTo(c, true);
-					}
+					PacketSequences.SendStatLocks(this);
 				}
 			}
 		}
@@ -436,11 +435,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != DexLock) {
 					statLockByte = (byte) ((statLockByte & 0xF3) + ((((byte) value) & 0x3) << 2));
-					GameConn c = Conn;
-					if (c != null) {
-						PacketSender.PrepareStatLocks(this);
-						PacketSender.SendTo(c, true);
-					}
+					PacketSequences.SendStatLocks(this);
 				}
 			}
 		}
@@ -451,11 +446,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != IntLock) {
 					statLockByte = (byte) ((statLockByte & 0xFC) + ((((byte) value) & 0x3)));
-					GameConn c = Conn;
-					if (c != null) {
-						PacketSender.PrepareStatLocks(this);
-						PacketSender.SendTo(c, true);
-					}
+					PacketSequences.SendStatLocks(this);
 				}
 			}
 		}
@@ -1028,19 +1019,21 @@ namespace SteamEngine.CompiledScripts {
 					//NetState.ProcessThing(corpse);
 				}
 
-				GameConn myConn = this.Conn;
-				if (myConn != null) {
-					Prepared.SendYouAreDeathMessage(myConn);
+				GameState state = this.GameState;
+				TCPConnection<GameState> conn = null;
+				if (state != null) {
+					conn = state.Conn;
+					PreparedPacketGroups.SendYouAreDeathMessage(conn);
 				}
 
-				BoundPacketGroup bpg = null;
-				foreach (GameConn viewerConn in this.GetMap().GetGameConnsWhoCanSee(this)) {
-					if (myConn != viewerConn) {
-						if (bpg == null) {
-							bpg = PacketSender.NewBoundGroup();
-							PacketSender.PrepareDeathAnim(this, corpse);
+				PacketGroup pg = null;
+				foreach (TCPConnection<GameState> viewerConn in this.GetMap().GetConnectionsWhoCanSee(this)) {
+					if (conn != viewerConn) {
+						if (pg == null) {
+							pg = PacketGroup.AcquireMultiUsePG();
+							pg.AcquirePacket<DisplayDeathActionOutPacket>().Prepare(this.FlaggedUid, corpse);
 						}
-						bpg.SendTo(viewerConn);
+						viewerConn.SendPacketGroup(pg);
 					}
 				}
 
@@ -1061,8 +1054,8 @@ namespace SteamEngine.CompiledScripts {
 
 				//NetState.ProcessThing(this);
 
-				if (bpg != null) {
-					bpg.Dispose();
+				if (pg != null) {
+					pg.Dispose();
 				}
 			}
 		}
@@ -1091,9 +1084,9 @@ namespace SteamEngine.CompiledScripts {
 					c.ReturnStuffToChar(this);
 				}
 
-				GameConn myConn = this.Conn;
-				if (myConn != null) {
-					Prepared.SendResurrectMessage(myConn);
+				GameState state = this.GameState;
+				if (state != null) {
+					PreparedPacketGroups.SendResurrectMessage(state.Conn);
 				}
 			}
 		}
@@ -2299,6 +2292,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_LogOut() {
 			this.AbortSkill();
+			Dialogs.DialogStacking.ClearDialogStack(this);
 			base.On_LogOut();
 		}
 

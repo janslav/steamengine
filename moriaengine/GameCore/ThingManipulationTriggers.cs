@@ -515,8 +515,12 @@ namespace SteamEngine {
 		}
 
 		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {
-			MakeLimbo();
-			Trigger_EnterRegion(x, y, z, m);
+			if (Map.IsValidPos(x, y, m)) {
+				MakeLimbo();
+				Trigger_EnterRegion(x, y, z, m);
+			} else {
+				throw new ArgumentOutOfRangeException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
+			}
 		}
 
 		public virtual void On_LeaveItem(ItemInItemArgs args) {

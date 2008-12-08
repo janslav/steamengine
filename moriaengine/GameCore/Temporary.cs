@@ -107,29 +107,6 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow(cre==null,"Character is null in AnimRequest.");
 			Logger.WriteWarning("Unimplemented: AnimRequest called on "+cre+". Requested '"+anim+"'.");
 		}
-				
-		/*
-			Method: GodClientCommandRequest
-				This is called when we recieve a command from a God Client. This is called whether it
-				is in god mode or not, but if it isn't, then any message above 32 characters will be
-				truncated (before it is displayed).
-				
-				We don't label sending god-commands without god-mode a suspicious error because the GC
-				does like to send one before entering god-mode - We do ignore them though.
-			
-			Parameters:
-				cre - The character making the request.
-				anim - A string containing the name of the anim, such as "bow" or "salute".
-		*/
-		internal static void GodClientCommandRequest(GameConn conn, string cmd) {
-			Sanity.IfTrueThrow(conn==null,"Source connection is null in GodClientCommandRequest.");
-			Sanity.IfTrueThrow(cmd==null,"Command is null in GodClientCommandRequest.");
-			if (conn.GodMode) {
-				Logger.WriteWarning("Unimplemented: GodClientCommandRequest from "+conn+". It commanded '"+cmd+"'");
-			} else {
-				Logger.WriteWarning("Disregarding God Client command from a client which isn't in god mode ("+conn+"). It commanded '"+cmd+"'.");
-			}
-		}
 		
 		/*
 			Method: UsePrimaryAbilityRequest

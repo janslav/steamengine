@@ -214,15 +214,15 @@ namespace SteamEngine {
 			}
 		}
 
-		public GameConn Conn {
-			get {
-				if (this.account != null) {
-					return this.account.Conn;
-				} else {
-					return null;
-				}
-			}
-		}
+		//public GameConn Conn {
+		//    get {
+		//        if (this.account != null) {
+		//            return this.account.Conn;
+		//        } else {
+		//            return null;
+		//        }
+		//    }
+		//}
 
 		public GameState GameState {
 			get {
@@ -646,9 +646,9 @@ namespace SteamEngine {
 			return true;
 		}
 
-		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {
-			CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
+		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {			
 			if (Map.IsValidPos(x, y, m)) {
+				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
 				Point4D oldP = this.P();
 				Region oldRegion = Map.GetMap(oldP.m).GetRegionFor(oldP.x, oldP.y);
 				Region newRegion = Map.GetMap(m).GetRegionFor(x, y);

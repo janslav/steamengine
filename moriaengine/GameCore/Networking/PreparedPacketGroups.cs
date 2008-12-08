@@ -36,15 +36,15 @@ namespace SteamEngine.Networking {
 
 		private static PacketGroup[] facetChange = new PacketGroup[5];
 
-		private static PacketGroup[] warMode = new PacketGroup[5];
+		private static PacketGroup[] warMode = new PacketGroup[2];
 
 		private static PacketGroup[] pickUpFailed = new PacketGroup[7];
 
 		private static PacketGroup[] rejectDeleteCharacter = new PacketGroup[8];
-		
+
+		private static PacketGroup[] deathMessages = new PacketGroup[3];		
 
 		static PreparedPacketGroups() {
-
 			for (int i = 0, n = loginDeniedPGs.Length; i < n; i++) {
 				loginDeniedPGs[i] = PacketGroup.CreateFreePG();
 				loginDeniedPGs[i].AcquirePacket<LoginDeniedOutPacket>().Prepare((LoginDeniedReason) i);
@@ -56,8 +56,7 @@ namespace SteamEngine.Networking {
 			targetXYZ.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(false);
 			targetCancelled = PacketGroup.CreateFreePG();
 			targetCancelled.AcquirePacket<TargetCursorCommandsOutPacket>().PrepareAsCancel();
-
-			warMode = new PacketGroup[2];
+			
 			warMode[0] = PacketGroup.CreateFreePG();
 			warMode[0].AcquirePacket<SetWarModeOutPacket>().Prepare(false);
 			warMode[1] = PacketGroup.CreateFreePG();
@@ -76,6 +75,11 @@ namespace SteamEngine.Networking {
 			rejectDeleteCharacter[6].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare(DeleteCharacterResult.Deny_NoMessage);
 			rejectDeleteCharacter[7] = PacketGroup.CreateFreePG();
 			rejectDeleteCharacter[7].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare(DeleteCharacterResult.Allow);
+
+			for (byte i = 0, n = (byte) deathMessages.Length; i < n; i++) {
+				deathMessages[i] = PacketGroup.CreateFreePG();
+				deathMessages[i].AcquirePacket<ResurrectionMenuOutPacket>().Prepare(i);
+			}
 		}
 
 		public static void SendLoginDenied(TCPConnection<GameState> conn,  LoginDeniedReason why) {
@@ -120,6 +124,14 @@ namespace SteamEngine.Networking {
 			}
 			Sanity.IfTrueThrow(imsg < 0 || imsg > 7, "Invalid DeleteCharacterResult '" + msg + "'.");
 			conn.SendPacketGroup(rejectDeleteCharacter[(int) msg]);
+		}
+
+		public static void SendYouAreDeathMessage(TCPConnection<GameState> conn) {
+			conn.SendPacketGroup(deathMessages[2]);
+		}
+
+		public static void SendResurrectMessage(TCPConnection<GameState> conn) {
+			conn.SendPacketGroup(deathMessages[1]);
 		}
 	}
 }

@@ -1429,7 +1429,6 @@ namespace SteamEngine.Networking {
 			this.layoutText = gump.layout.ToString();
 
 			this.strings.Clear();
-			int numTextLines;
 			if (gump.textsList != null) {
 				this.strings.AddRange(gump.textsList);
 			}
@@ -1708,6 +1707,67 @@ namespace SteamEngine.Networking {
 			this.EncodeUShort(this.targetX);
 			this.EncodeUShort(this.targetY);
 			this.EncodeSByte(this.targetZ);
+		}
+	}
+
+	public sealed class ExtendedStatsOutPacket : GeneralInformationOutPacket {
+		byte statLockByte;
+		uint flaggedUid;
+
+		public void Prepare(uint flaggedUid, byte statLockByte) {
+			this.flaggedUid = flaggedUid;
+			this.statLockByte = statLockByte;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x19; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(0x02);
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeByte(0);
+			this.EncodeByte(this.statLockByte);
+		}
+	}
+
+	public sealed class ResurrectionMenuOutPacket : GameOutgoingPacket {
+		byte action;
+
+		public void Prepare(byte action) {
+			this.action = action;
+		}
+
+		public override byte Id {
+			get { return 0x2c; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.action);
+		}
+	}
+
+	
+	public sealed class DisplayDeathActionOutPacket : GameOutgoingPacket {
+		uint charUid, corpseUid;
+
+		public void Prepare(uint charUid, AbstractItem corpse) {
+			this.charUid = charUid;
+			if (corpse == null) {
+				this.corpseUid = 0xffffffff;
+			} else {
+				this.corpseUid = corpse.FlaggedUid;
+			}
+		}
+
+		public override byte Id {
+			get { return 0xAF; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.charUid);
+			this.EncodeUInt(this.corpseUid);
+			this.EncodeZeros(4);
 		}
 	}
 }

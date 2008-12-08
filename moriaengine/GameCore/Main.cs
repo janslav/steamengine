@@ -146,8 +146,6 @@ namespace SteamEngine {
 				return false;
 			}
 
-			Packets.Prepared.Init();
-
 			ClassTemplateParser.Init();
 			
 			if (!CompilerInvoker.CompileScripts(true)) {
@@ -387,7 +385,6 @@ namespace SteamEngine {
 			}
 			signalExit.Set();
 			Timers.Timer.Clear();
-			Server.Exit();
 			RunLevelManager.SetDead();
 		}
 	}
