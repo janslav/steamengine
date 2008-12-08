@@ -23,7 +23,7 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using SteamEngine;
+using SteamEngine.Networking;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using MySql.Data.MySqlClient;
@@ -49,34 +49,34 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			public void GameLogin(GameConn conn) {
-				AbstractCharacter ch = conn.CurCharacter;
-				AbstractAccount acc = conn.Account;
+			public void GameLogin(GameState state) {
+				AbstractCharacter ch = state.Character;
+				AbstractAccount acc = state.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogin");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
-				this.AddLine(acc.Name, conn.IP.ToString(), ch.Name, ch.Uid.ToString(), "1",
+				this.AddLine(acc.Name, state.Conn.EndPoint.ToString(), ch.Name, ch.Uid.ToString(), "1",
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Globals.TimeInTicks.ToString(),
-					"0", conn.uid.ToString());
+					"0", state.Uid.ToString());
 			}
 
-			public void GameLogout(GameConn conn) {
-				AbstractCharacter ch = conn.CurCharacter;
-				AbstractAccount acc = conn.Account;
+			public void GameLogout(GameState state) {
+				AbstractCharacter ch = state.Character;
+				AbstractAccount acc = state.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogout");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
-				this.AddLine(acc.Name, conn.IP.ToString(), ch.Name, ch.Uid.ToString(), "0",
+				this.AddLine(acc.Name, state.Conn.EndPoint.ToString(), ch.Name, ch.Uid.ToString(), "0",
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Globals.TimeInTicks.ToString(),
-					"0", conn.uid.ToString());
+					"0", state.Uid.ToString());
 			}
 
-            public void ItemMove(GameConn conn) {
-                AbstractCharacter ch = conn.CurCharacter;
-                AbstractAccount acc = conn.Account;
+			public void ItemMove(GameState state) {
+                AbstractCharacter ch = state.Character;
+                AbstractAccount acc = state.Account;
                 Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogin");
                 Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
-                this.AddLine(acc.Name, conn.IP.ToString(), ch.Name, ch.Uid.ToString(), "1",
+				this.AddLine(acc.Name, state.Conn.EndPoint.ToString(), ch.Name, ch.Uid.ToString(), "1",
                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Globals.TimeInTicks.ToString(),
-                    "0", conn.uid.ToString());
+                    "0", state.Uid.ToString());
             }
 
 			//needs implementing of the calling side, too lazy for that now

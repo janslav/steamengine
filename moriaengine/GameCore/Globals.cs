@@ -87,7 +87,7 @@ namespace SteamEngine {
 		public readonly static int plevelOfGM;
 		public readonly static int plevelToLscriptCommands;
 
-		public readonly static bool kickOnSuspiciousErrors;
+		//public readonly static bool kickOnSuspiciousErrors;
 		public readonly static bool allowUnencryptedClients;
 
 		public readonly static ushort reachRange;
@@ -123,8 +123,8 @@ namespace SteamEngine {
 
 		public readonly static bool autoAccountCreation;
 		public readonly static bool blockOSI3DClient;
-		public readonly static bool alwaysUpdateRouterIPOnStartup;
-		public readonly static sbyte timeZone;
+		//public readonly static bool alwaysUpdateRouterIPOnStartup;
+		//public readonly static sbyte timeZone;
 		public readonly static int maxConnections;
 
 		public readonly static bool supportUnicode;
@@ -145,7 +145,7 @@ namespace SteamEngine {
 
 		public readonly static bool aos;
 
-		public readonly static IList<IPAddress> omitip;
+		//public readonly static IList<IPAddress> omitip;
 
 		[Summary("The last new item or character or memory or whatever created.")]
 		public static TagHolder lastNew = null;
@@ -185,15 +185,15 @@ namespace SteamEngine {
 			}
 		}
 
-		public static GameConn SrcGameConn {
-			get {
-				AbstractCharacter ch = src as AbstractCharacter;
-				if (ch != null) {
-					return ch.Conn;
-				}
-				return null;
-			}
-		}
+		//public static GameConn SrcGameConn {
+		//    get {
+		//        AbstractCharacter ch = src as AbstractCharacter;
+		//        if (ch != null) {
+		//            return ch.Conn;
+		//        }
+		//        return null;
+		//    }
+		//}
 
 		public static GameState SrcGameState {
 			get {
@@ -260,7 +260,7 @@ namespace SteamEngine {
 				adminEmail = setup.GetValue<string>("adminEmail", "admin@email.com", "Your Email to be displayed in status web, etc.");
 				hashPasswords = setup.GetValue<bool>("hashPasswords", false, "This hashes passwords (for accounts) using SHA512, which isn't reversable. Instead of writing passwords to the save files, the hash is written. If you disable this, then passwords will be recorded instead of the hashes, and will be stored instead of the hashes, which means that if someone obtains access to your accounts file, they will be able to read the passwords. It's recommended to leave this on. Note: If you switch this off after it's been on, passwords that are hashed will stay hashed, because hashing is one-way, until that account logs in, at which point the password (if it matches) will be recorded again in place of the hash. If you use text saves, you should be able to write password=whatever in the account save, and the password will be changed to that when that save is loaded, even if you're using hashed passwords.");
 
-				kickOnSuspiciousErrors = setup.GetValue<bool>("kickOnSuspiciousErrors", true, "Kicks the user if a suspiciously erroneous value is recieved in a packet from their client.");
+				//kickOnSuspiciousErrors = setup.GetValue<bool>("kickOnSuspiciousErrors", true, "Kicks the user if a suspiciously erroneous value is recieved in a packet from their client.");
 
 				allowUnencryptedClients = setup.GetValue<bool>("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
 
@@ -283,23 +283,23 @@ namespace SteamEngine {
 				writeMulDocsFiles = files.GetValue<bool>("writeMulDocsFiles", false, "If this is true/on/1, then SteamEngine will write out some files with general information gathered from various MUL files into the 'docs/MUL file docs' folder. These should be distributed with SteamEngine anyways, but this is useful sometimes (like when a new UO expansion is released).");
 
 				IniFileSection login = iniH.GetNewOrParsedSection("login");
-				alwaysUpdateRouterIPOnStartup = (bool) login.GetValue<bool>("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
-				string omit = login.GetValue<string>("omitip", "5.0.0.0", "IP to omit from server lists, for example, omitIP=5.0.0.0. You can have multiple omitIP values, separated by comma.");
-				omitip = new List<IPAddress>();
-				foreach (string ip in omit.Split(',')) {
-					Server.AddOmitIP(IPAddress.Parse(ip));
-					omitip.Add(IPAddress.Parse(ip));
-				}
-				omitip = new System.Collections.ObjectModel.ReadOnlyCollection<IPAddress>(omitip);
+				//alwaysUpdateRouterIPOnStartup = (bool) login.GetValue<bool>("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
+				//string omit = login.GetValue<string>("omitip", "5.0.0.0", "IP to omit from server lists, for example, omitIP=5.0.0.0. You can have multiple omitIP values, separated by comma.");
+				//omitip = new List<IPAddress>();
+				//foreach (string ip in omit.Split(',')) {
+				//    Server.AddOmitIP(IPAddress.Parse(ip));
+				//    omitip.Add(IPAddress.Parse(ip));
+				//}
+				//omitip = new System.Collections.ObjectModel.ReadOnlyCollection<IPAddress>(omitip);
 
 				bool exists;
 				string msgBox = "";
 				if (iniH.FileExists) {
 					exists = true;
-					string routerIP = login.GetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
-					//if (routerIP.Length>0) {
-					Server.SetRouterIP(routerIP);
-					//}
+					//string routerIP = login.GetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
+					////if (routerIP.Length>0) {
+					//Server.SetRouterIP(routerIP);
+					////}
 					mulPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
 				} else {
 					string mulsPath = GetMulsPath();
@@ -310,16 +310,16 @@ namespace SteamEngine {
 						mulsPath = files.GetValue<string>("mulPath", mulsPath, "Path to the mul files");
 					}
 					exists = false;
-					string[] ret = Server.FindMyIP();
-					string routerIP = ret[1];
-					msgBox += ret[0];
-					if (routerIP == null) {
-						login.SetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
-					} else {
-						login.SetValue<string>("routerIP", routerIP, "The IP to show to people who are outside your LAN");
-					}
+					//string[] ret = Server.FindMyIP();
+					//string routerIP = ret[1];
+					//msgBox += ret[0];
+					//if (routerIP == null) {
+					//    login.SetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
+					//} else {
+					//    login.SetValue<string>("routerIP", routerIP, "The IP to show to people who are outside your LAN");
+					//}
 				}
-				timeZone = login.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
+				//timeZone = login.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
 				maxConnections = login.GetValue<int>("maxConnections", 100, "The cap on # of connections. Affects the percentage-full number sent to UO client.");
 				autoAccountCreation = login.GetValue<bool>("autoAccountCreation", false, "Automatically create accounts when someone attempts to log in");
 				blockOSI3DClient = login.GetValue<bool>("blockOSI3DClient", true, "Block the OSI 3D client from connecting. Said client is not supported, since it tends to do things in a stupid manner.");
@@ -494,7 +494,7 @@ namespace SteamEngine {
 
 		public static int StatClients {
 			get {
-				return Server.connections.Count;
+				return GameServer.AllClients.Count;
 			}
 		}
 
@@ -510,13 +510,13 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static IPAddress[] ips;
+		//internal static IPAddress[] ips;
 
-		public string IP {
-			get {
-				return Tools.ObjToString(ips);
-			}
-		}
+		//public string IP {
+		//    get {
+		//        return Tools.ObjToString(ips);
+		//    }
+		//}
 
 		public static void Exit() {
 			MainClass.signalExit.Set();
@@ -585,7 +585,7 @@ namespace SteamEngine {
 		public static void Information() {
 			Globals.Src.WriteLine(string.Format(
 				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
-				version, serverName, Server.connections.Count, AbstractItem.Instances, AbstractCharacter.Instances,
+				version, serverName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
 		}
 
@@ -733,9 +733,9 @@ namespace SteamEngine {
 			Globals.Src.WriteLine("Script file loaded.");
 		}
 
-		public static void NetStats() {
-			GameConn.NetStats();
-		}
+		//public static void NetStats() {
+		//    GameConn.NetStats();
+		//}
 
 		public static string GetMulDocPathFor(string filename) {
 			string docPath = Path.Combine(Globals.docsPath, "defaults");
@@ -744,9 +744,9 @@ namespace SteamEngine {
 			return Path.Combine(docPath, filename);
 		}
 
-		public static void CompressionStats() {
-			PacketStats.CompressionStats();
-		}
+		//public static void CompressionStats() {
+		//    PacketStats.CompressionStats();
+		//}
 
 		//public static void Logout() {
 		//    ConsoleDummy conn = Globals.Src as ConsoleDummy;
@@ -779,7 +779,7 @@ namespace SteamEngine {
 
 		public static void RunTests() {
 			TestSuite.RunAllTests();
-			PacketSender.DiscardAll();
+			//PacketSender.DiscardAll();
 		}
 
 		//public static string CurrentFile { get {

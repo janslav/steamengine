@@ -70,6 +70,15 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		public static IEnumerable<AbstractCharacter> GetAllPlayers() {
+			foreach (GameState state in clients) {
+				AbstractCharacter ch = state.Character;
+				if (ch != null) {
+					yield return ch;
+				}
+			}
+		}
+
 		public static void SendToClientsWhoCanSee(Thing thing, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 

@@ -22,7 +22,7 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts {
 
 	public static class ScriptedCommands {
-		public static OnTargon skillsetTargon;
+		//public static OnTargon skillsetTargon;
 		//public static OnTargon dragonTileTargon = DragonTileTargon;
 		public static object[] args;
 

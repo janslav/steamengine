@@ -1504,117 +1504,48 @@ namespace SteamEngine {
 		}
 
 		public void Move(string dir, int amount) {
-			switch (dir) {
-				case ("n"): {
-						int y = Y - amount;
-						if (y < 0) {
-							y = 0;
-						} else if (y > Server.MaxY(M)) {
-							y = Server.MaxY(M);
-						}
-						Y = (ushort) y;
-						break;
-					}
-				case ("ne"): {
-						int y = Y - amount;
-						int x = X + amount;
-						if (y < 0) {
-							y = 0;
-						} else if (y > Server.MaxY(M)) {
-							y = Server.MaxY(M);
-						}
-						if (x < 0) {
-							x = 0;
-						} else if (x > Server.MaxX(M)) {
-							x = Server.MaxX(M);
-						}
-						P((ushort) x, (ushort) y, Z);	//This won't change our Z coordinate, whereas P(x,y) would.
-						break;
-					}
-				case ("e"): {
-						int x = X + amount;
-						if (x < 0) {
-							x = 0;
-						} else if (x > Server.MaxX(M)) {
-							x = Server.MaxX(M);
-						}
-						X = (ushort) x;
-						break;
-					}
-				case ("se"): {
-						int y = Y + amount;
-						int x = X + amount;
-						if (y < 0) {
-							y = 0;
-						} else if (y > Server.MaxY(M)) {
-							y = Server.MaxY(M);
-						}
-						if (x < 0) {
-							x = 0;
-						} else if (x > Server.MaxX(M)) {
-							x = Server.MaxX(M);
-						}
-						P((ushort) x, (ushort) y, Z);	//This won't change our Z coordinate, whereas P(x,y) would.
-						break;
-					}
-				case ("s"): {
-						int y = Y + amount;
-						if (y < 0) {
-							y = 0;
-						} else if (y > Server.MaxY(M)) {
-							y = Server.MaxY(M);
-						}
-						Y = (ushort) y;
-						break;
-					}
-				case ("sw"): {
-						int y = Y + amount;
-						int x = X - amount;
-						if (y < 0) {
-							y = 0;
-						} else if (y > Server.MaxY(M)) {
-							y = Server.MaxY(M);
-						}
-						if (x < 0) {
-							x = 0;
-						} else if (x > Server.MaxX(M)) {
-							x = Server.MaxX(M);
-						} else {
-							x = (ushort) X;
-						}
-						P((ushort) x, (ushort) y, Z);
-						break;
-					}
-				case ("w"): {
-						int x = X - amount;
-						if (x < 0) {
-							x = 0;
-						} else if (x > Server.MaxX(M)) {
-							x = Server.MaxX(M);
-						}
-						X = (ushort) x;
-						break;
-					}
-				case ("nw"): {
-						int y = Y - amount;
-						int x = X - amount;
-						if (y < 0) {
-							y = 0;
-						} else if (y > Server.MaxY(M)) {
-							y = Server.MaxY(M);
-						}
-						if (x < 0) {
-							x = 0;
-						} else if (y > Server.MaxX(M)) {
-							y = Server.MaxX(M);
-						}
-						P((ushort) x, (ushort) y, Z);
-						break;
-					}
-				default: {
-						throw new SEException(dir + " isn't a direction I'll accept. Use n, nw, ne, w, e, s, sw, or se.");
-					}
+			if (this.TopObj() != this) {
+				throw new SEException("Can't use the Move command for something not on ground.");
 			}
+
+			int x = this.point4d.x;
+			int y = this.point4d.y;
+
+			switch (dir) {
+				case ("n"):
+					y -= amount;
+					break;
+				case ("ne"):
+					y -= amount;
+					x += amount;
+					break;
+				case ("e"):
+					x += amount;
+					break;
+				case ("se"):
+					y += amount;
+					x += amount;
+					break;
+				case ("s"):
+					y += amount;
+					break;
+				case ("sw"):
+					y += amount;
+					x -= amount;
+					break;
+				case ("w"):
+					x -= amount;
+					break;
+				case ("nw"):
+					y -= amount;
+					x -= amount;
+					break;
+				default:
+					throw new SEException(dir + " isn't a direction I'll accept. Use n, nw, ne, w, e, s, sw, or se.");
+
+			}
+
+			this.P((ushort) x, (ushort) y, this.Z);	//This won't change our Z coordinate, whereas P(x,y) would.
 		}
 
 		internal void ChangedP(Point4D oldP) {
@@ -1716,37 +1647,37 @@ namespace SteamEngine {
 			}
 		}
 
-		/*
-			Method: CheckForInvalidCoords
-				This function only exists in the debug build, and is not run in non-debug builds.
+		///*
+		//    Method: CheckForInvalidCoords
+		//        This function only exists in the debug build, and is not run in non-debug builds.
 				
-				Checks the coords to see if they are outside the map. Since maps start at 0,0 and coordinates
-				are unsigned, X and Y are only checked against the max X and Y for the map, and not against 0,0.
+		//        Checks the coords to see if they are outside the map. Since maps start at 0,0 and coordinates
+		//        are unsigned, X and Y are only checked against the max X and Y for the map, and not against 0,0.
 				
-				This will definitely trip (Throw a SanityCheckException) if the item never got real coordinates
-				after BeingDroppedFromContainer was called, so this is called as a sanity check by methods which
-				call BeingDroppedFromContainer but rely on other methods to give it a real location
-				(after the other methods have been called).
+		//        This will definitely trip (Throw a SanityCheckException) if the item never got real coordinates
+		//        after BeingDroppedFromContainer was called, so this is called as a sanity check by methods which
+		//        call BeingDroppedFromContainer but rely on other methods to give it a real location
+		//        (after the other methods have been called).
 				
-				This will not trip if the item is in a container (or equipped), since invalid coordinates ARE
-				used for equipped items (Specifically, X=7000).
+		//        This will not trip if the item is in a container (or equipped), since invalid coordinates ARE
+		//        used for equipped items (Specifically, X=7000).
 				
-				This does not check Z.
-		 */
-		[Conditional("DEBUG")]
-		internal void CheckForInvalidCoords() {
-			bool throwExcep = false;
-			if (!IsDeleted && IsOnGround) {
-				if (X > Server.MaxX(M)) {
-					throwExcep = true;
-				} else if (Y > Server.MaxY(M)) {
-					throwExcep = true;
-				}
-				if (throwExcep) {
-					throw new SanityCheckException("Invalid coordinates detected: (" + X + "," + Y + "," + Z + "," + M + ")");
-				}
-			}
-		}
+		//        This does not check Z.
+		// */
+		//[Conditional("DEBUG")]
+		//internal void CheckForInvalidCoords() {
+		//    bool throwExcep = false;
+		//    if (!IsDeleted && IsOnGround) {
+		//        if (X > Server.MaxX(M)) {
+		//            throwExcep = true;
+		//        } else if (Y > Server.MaxY(M)) {
+		//            throwExcep = true;
+		//        }
+		//        if (throwExcep) {
+		//            throw new SanityCheckException("Invalid coordinates detected: (" + X + "," + Y + "," + Z + "," + M + ")");
+		//        }
+		//    }
+		//}
 	}
 
 	public class DenyClickArgs : DenyTriggerArgs {

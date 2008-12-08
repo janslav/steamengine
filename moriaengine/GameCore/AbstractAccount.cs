@@ -61,7 +61,7 @@ namespace SteamEngine {
 		public bool blocked = false;
 		private string name = null;
 
-		private GameConn conn = null;
+		//private GameConn conn = null;
 		private GameState gameState = null;
 
 		internal static void ClearAll() {
@@ -255,15 +255,15 @@ namespace SteamEngine {
 
 		public bool IsOnline {
 			get {
-				return (this.conn != null) || (this.gameState != null);
+				return (this.gameState != null);
 			}
 		}
 
-		public GameConn Conn {
-			get {
-				return this.conn;
-			}
-		}
+		//public GameConn Conn {
+		//    get {
+		//        return this.conn;
+		//    }
+		//}
 
 		public GameState GameState {
 			get {

@@ -291,10 +291,10 @@ namespace SteamEngine {
 		public virtual void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
 		}
 
-		[Obsolete("Use the alternative from Networking namespace", false)]
-		public virtual void On_ContainerOpen(GameConn viewerConn) {
+		//[Obsolete("Use the alternative from Networking namespace", false)]
+		//public virtual void On_ContainerOpen(GameConn viewerConn) {
 
-		}
+		//}
 
 		public virtual ItemOnGroundUpdater GetOnGroundUpdater() {
 			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);

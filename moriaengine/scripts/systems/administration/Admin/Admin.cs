@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//seznam lidi z parametru (if any)
 			ArrayList playersList = (ArrayList) args.GetTag(D_Admin.playersListTK);
 			if (playersList == null) {
-				playersList = ScriptUtil.ArrayListFromEnumerable(Server.AllPlayers);
+				playersList = ScriptUtil.ArrayListFromEnumerable(Networking.GameServer.GetAllPlayers());
 				args.SetTag(D_Admin.playersListTK, playersList);//ulozime do parametru dialogu
 			} 
             //zjistit zda bude paging, najit maximalni index na strance

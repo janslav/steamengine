@@ -578,9 +578,9 @@ namespace SteamEngine.Regions {
 			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, int range) {
-			return GetGameConnsInRectangle(new ImmutableRectangle(x, y, range));
-		}
+		//public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, int range) {
+		//    return GetGameConnsInRectangle(new ImmutableRectangle(x, y, range));
+		//}
 
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y, int range) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
@@ -614,9 +614,9 @@ namespace SteamEngine.Regions {
 			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y) {
-			return GetGameConnsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
-		}
+		//public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y) {
+		//    return GetGameConnsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+		//}
 
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
@@ -646,16 +646,16 @@ namespace SteamEngine.Regions {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<GameConn> GetGameConnsInRectangle(ImmutableRectangle rectangle) {
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (AbstractCharacter player in sector.players) {
-					GameConn conn = player.Conn;
-					if ((conn != null) && (rectangle.Contains(player))) {
-						yield return conn;
-					}
-				}
-			}
-		}
+		//public IEnumerable<GameConn> GetGameConnsInRectangle(ImmutableRectangle rectangle) {
+		//    foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
+		//        foreach (AbstractCharacter player in sector.players) {
+		//            GameConn conn = player.Conn;
+		//            if ((conn != null) && (rectangle.Contains(player))) {
+		//                yield return conn;
+		//            }
+		//        }
+		//    }
+		//}
 
 		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
@@ -785,27 +785,27 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		/**
-			This is used by Thing's similarly named method, but this version allows
-			you to explicitly specify an IPoint6D to find clients who can see :).
+		///**
+		//    This is used by Thing's similarly named method, but this version allows
+		//    you to explicitly specify an IPoint6D to find clients who can see :).
 			
-			This checks LOS and the actual UpdateRange of each client, etc. It calls
-			each client character's CanSee. If the point is in a container, it
-			checks that too and whether the client has it open.
-			(This is all done by CanSee, mind you)
-		*/
-		public IEnumerable<GameConn> GetGameConnsWhoCanSee(Thing thing) {
-			Thing t = thing.TopObj();
-			ImmutableRectangle rectangle = new ImmutableRectangle(t.X, t.Y, Globals.MaxUpdateRange);
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (AbstractCharacter player in sector.players) {
-					GameConn conn = player.Conn;
-					if ((conn != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
-						yield return conn;
-					}
-				}
-			}
-		}
+		//    This checks LOS and the actual UpdateRange of each client, etc. It calls
+		//    each client character's CanSee. If the point is in a container, it
+		//    checks that too and whether the client has it open.
+		//    (This is all done by CanSee, mind you)
+		//*/
+		//public IEnumerable<GameConn> GetGameConnsWhoCanSee(Thing thing) {
+		//    Thing t = thing.TopObj();
+		//    ImmutableRectangle rectangle = new ImmutableRectangle(t.X, t.Y, Globals.MaxUpdateRange);
+		//    foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
+		//        foreach (AbstractCharacter player in sector.players) {
+		//            GameConn conn = player.Conn;
+		//            if ((conn != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
+		//                yield return conn;
+		//            }
+		//        }
+		//    }
+		//}
 
 		public IEnumerable<TCPConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
 			Thing top = thing.TopObj();
