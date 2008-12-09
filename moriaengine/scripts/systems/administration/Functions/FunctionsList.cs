@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                 //vzit seznam fci dle vyhledavaciho kriteria
                 //toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				fList = ListifyFunctions(ScriptHolder.AllFunctions, TagMath.SGetTag(args, D_Functions.criteriaTK));
-				SortFunctions(fList, (SortingCriteria) args.GetTag(D_Functions.sortTK));
+				SortFunctions(fList, (SortingCriteria) TagMath.IGetTag(args, D_Functions.sortTK));
 				args.SetTag(D_Functions.listTK, fList); //ulozime to do argumentu dialogu				
             }
             int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance

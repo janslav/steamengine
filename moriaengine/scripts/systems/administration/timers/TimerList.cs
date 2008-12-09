@@ -32,22 +32,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
-		
+
 		[Summary("Seznam parametru: 0 - thing jehoz timery zobrazujeme, " +
 				"	1 - index ze seznamu timeru ktery bude na strance jako prvni" +
 				"	2 - vyhledavaci kriterium pro jmena timeru(timerkeye)" +
 				"	3 - ulozeny timerlist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
-			TagHolder th = (TagHolder)args.GetTag(D_TimerList.holderTK); //z koho budeme timery brat?
+			TagHolder th = (TagHolder) args.GetTag(D_TimerList.holderTK); //z koho budeme timery brat?
 			List<KeyValuePair<TimerKey, BoundTimer>> timerList = args.GetTag(D_TimerList.timerListTK) as List<KeyValuePair<TimerKey, BoundTimer>>;
-			if(timerList == null) {
+			if (timerList == null) {
 				//vzit seznam timeru dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				timerList = ListifyTimers(th.GetAllTimers(), TagMath.SGetTag(args, D_TimerList.timerCriteriumTK));
 				timerList.Sort(TimersComparer.instance);
-				args.SetTag(D_TimerList.timerListTK,timerList); //ulozime to do argumentu dialogu
-			} 
+				args.SetTag(D_TimerList.timerListTK, timerList); //ulozime to do argumentu dialogu
+			}
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, timerList.Count);
@@ -92,14 +92,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				KeyValuePair<TimerKey, BoundTimer> de = timerList[i];
 				BoundTimer tmr = de.Value;
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2*i)+10);
+				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2 * i) + 10);
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText((de.Key).name);
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tmr.DueInSeconds.ToString()); //hodnota tagu, vcetne prefixu oznacujicim typ
-				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (2*i)+11);
+				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (2 * i) + 11);
 
 				rowCntr++;
 			}
@@ -113,10 +113,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam timeru bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<TimerKey, BoundTimer>> timerList = (List<KeyValuePair<TimerKey, BoundTimer>>)args.GetTag(D_TimerList.timerListTK);
-			int firstOnPage = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);
-			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch(gr.pressedButton) {
+			List<KeyValuePair<TimerKey, BoundTimer>> timerList = (List<KeyValuePair<TimerKey, BoundTimer>>) args.GetTag(D_TimerList.timerListTK);
+			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.pressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -126,7 +126,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args.SetTag(D_TimerList.timerCriteriumTK, nameCriteria);//uloz info o vyhledavacim kriteriu
 						args.RemoveTag(D_TimerList.timerListTK);//vycistit soucasny odkaz na timerlist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
-						break;					
+						break;
 					case 2: //zalozit novy timer - TOTO ZATIM DELAT NEBUDEME
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
@@ -134,16 +134,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, timerList.Count, 1)) {//kliknuto na paging?
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, timerList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int)(gr.pressedButton - 10) / 2;
-				int buttNum = (int)(gr.pressedButton - 10) % 2;
+				int row = (int) (gr.pressedButton - 10) / 2;
+				int buttNum = (int) (gr.pressedButton - 10) % 2;
 				KeyValuePair<TimerKey, BoundTimer> de = timerList[row];
-				switch(buttNum) {
+				switch (buttNum) {
 					case 0: //smazat timer
-						TagHolder timerOwner = (TagHolder)args.GetTag(D_TimerList.holderTK);
+						TagHolder timerOwner = (TagHolder) args.GetTag(D_TimerList.holderTK);
 						timerOwner.RemoveTimer(de.Key);
 						//na zaver smazat timerlist (musi se reloadnout)
 						args.RemoveTag(D_TimerList.timerListTK);
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //upravit timer
 						DialogArgs newArgs = new DialogArgs();
 						newArgs.SetTag(D_EditTimer.editedTimerTK, de.Value);//editovany timer
-						newArgs.SetTag(D_TimerList.holderTK, (TagHolder)args.GetTag(D_TimerList.holderTK));//majitel timeru
+						newArgs.SetTag(D_TimerList.holderTK, (TagHolder) args.GetTag(D_TimerList.holderTK));//majitel timeru
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_EditTimer>.Instance, newArgs); //posleme si parametr toho typka na nemz editujeme timer a taky timer sam
 						//uložit info o dialogu pro návrat						
 						DialogStacking.EnstackDialog(gi, newGi);
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<KeyValuePair<TimerKey, BoundTimer>> timersList = new List<KeyValuePair<TimerKey, BoundTimer>>();
 			foreach (KeyValuePair<TimerKey, BoundTimer> entry in tags) {
 				//entry in this hashtable is TimerKey and its Timer value
-				if(criteria == null || criteria.Equals("")) {
+				if (criteria == null || criteria.Equals("")) {
 					timersList.Add(entry);//bereme vse
 				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					timersList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu timeru
@@ -177,7 +177,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Display a timers ist. Function accessible from the game." +
 				"The function is designed to be triggered using .x TimersList(criteria)" +
-			    "but it can be used also normally .TimerList(criteria) to display runner's own timers")]
+				"but it can be used also normally .TimerList(criteria) to display runner's own timers")]
 		[SteamFunction]
 		public static void TimerList(TagHolder self, ScriptArgs text) {
 			//zavolat dialog, 
@@ -186,8 +186,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//treti parametr vyhledavani dle parametru, if any...
 			//ctvrty parametr = volny jeden prvek pole pro seznam timeru, pouzito az v dialogu
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_TimerList.holderTK,self); //na sobe budeme zobrazovat timery
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			newArgs.SetTag(D_TimerList.holderTK, self); //na sobe budeme zobrazovat timery
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TimerList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_TimerList.timerCriteriumTK, text.Args);//vyhl. kriterium				

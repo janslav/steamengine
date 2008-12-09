@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//vzit seznam abilit dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
                 abList = ListifyAbilities(AbilityDef.AllAbilities, TagMath.SGetTag(args, D_AbilitiesList.criteriumTK));
-				SortAbilityDefs(abList, (SortingCriteria) args.GetTag(D_AbilitiesList.sortingTK));
+				SortAbilityDefs(abList, (SortingCriteria) TagMath.IGetTag(args, D_AbilitiesList.sortingTK));
                 args.SetTag(D_AbilitiesList.listTK, abList); //ulozime to do argumentu dialogu				
 			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance

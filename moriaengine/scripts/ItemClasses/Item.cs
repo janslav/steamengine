@@ -186,13 +186,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey linkTK = TagKey.Get("link");
+		private static TagKey linkTK = TagKey.Get("_link_");
 		public virtual Thing Link {
 			get {
 				return this.GetTag(linkTK) as Thing;
 			}
 			set {
-				this.SetTag(linkTK, value);
+				if (value == null) {
+					this.RemoveTag(linkTK);
+				} else {
+					this.SetTag(linkTK, value);
+				}
 			}
 		}
 

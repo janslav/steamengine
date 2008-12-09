@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Static class for operating with clients delayed messages.")]
-	public static class MsgsBoard {		
+	public static class MsgsBoard {
 		[Summary("A unique tag name for holding a list of client delayed messages")]
 		internal static TagKey tkDelayedMsgs = TagKey.Get("_delayed_msgs_");
 
@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 			//get the client messages (empty list if no messages present)
 			ArrayList list = GetMessages(whose);
 			//if the list is empty, return it now, else make a copy of the messages list
-			if(list.Count == 0) {
+			if (list.Count == 0) {
 				return list;
 			} else {
 				return new ArrayList(list);
@@ -62,10 +62,10 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Private utility method returning the characters list of messages")]
 		private static ArrayList GetMessages(Character whose) {
-            ArrayList retList = (ArrayList)whose.GetTag(tkDelayedMsgs);
+			ArrayList retList = (ArrayList) whose.GetTag(tkDelayedMsgs);
 			if (retList == null) { // no messages previously posted
 				retList = new ArrayList();
-                whose.SetTag(tkDelayedMsgs, retList);
+				whose.SetTag(tkDelayedMsgs, retList);
 			}
 			return retList;
 		}
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Sorting method when the list is obtained first: Sorting parameters available are senders name, time and read/unread messages first")]
 		public static ArrayList GetSortedBy(ArrayList messages, SortingCriteria criterion) {
 			//get a new copy of the list			
-			switch(criterion) {
+			switch (criterion) {
 				case SortingCriteria.NameAsc: //order by sender alphabetically
 					messages.Sort(senderComparator);
 					break;
@@ -108,8 +108,8 @@ namespace SteamEngine.CompiledScripts {
 			return messages;
 		}
 
-		[Summary("Return the number of unread messages (those the recipient has not opened by "+
-                "'read/display detail' button")]
+		[Summary("Return the number of unread messages (those the recipient has not opened by " +
+				"'read/display detail' button")]
 		public static int CountUnread(ArrayList msgs) {
 			int counter = 0;
 			foreach (DelayedMsg msg in msgs) {
@@ -126,8 +126,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("The object of the clients delayed message. Holds the info about the sender, sending time and "+
-            "the message body")]
+	[Summary("The object of the clients delayed message. Holds the info about the sender, sending time and " +
+			"the message body")]
 	[SaveableClass]
 	public class DelayedMsg {
 		[LoadingInitializer]

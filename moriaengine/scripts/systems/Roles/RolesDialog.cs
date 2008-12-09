@@ -34,12 +34,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
             //vzit seznam roli
             List<RoleDef> rlList = args.GetTag(D_RolesList.listTK) as List<RoleDef>;
-
             if (rlList == null) {
                 //vzit seznam roli dle vyhledavaciho kriteria
                 //toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
                 rlList = ListifyRoles(RoleDef.AllRoles, TagMath.SGetTag(args, D_RolesList.criteriumTK));
-				SortRoleDefs(rlList, (SortingCriteria) args.GetTag(D_RolesList.sortingTK));
+				SortRoleDefs(rlList, (SortingCriteria) TagMath.IGetTag(args, D_RolesList.sortingTK));
                 args.SetTag(D_RolesList.listTK, rlList); //ulozime to do argumentu dialogu				
             }
             int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance

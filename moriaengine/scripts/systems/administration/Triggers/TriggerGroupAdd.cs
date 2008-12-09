@@ -30,10 +30,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 		private static readonly TagKey prefilledDefnameTK = TagKey.Get("_trigger_group_to_add_defname_");
-		
+
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			PluginHolder ph = (PluginHolder)args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
+			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
 			//zkusime se mrknout jestli uz nemame defname predvyplneno (napriklad pri neuspesnem zadani - preklep apd.)
 			string filledDefname = TagMath.SGetTag(args, D_NewTriggerGroup.prefilledDefnameTK);
 
@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového trigger groupy na "+ph.ToString());
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového trigger groupy na " + ph.ToString());
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.AddTable(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeLastTableTransparent(); //zpruhledni posledni radek
@@ -65,15 +65,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if(gr.pressedButton == 0) {
+			if (gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				return;
-			} else if(gr.pressedButton == 1) {
+			} else if (gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
-				string tgDefname = gr.GetTextResponse(10);				
+				string tgDefname = gr.GetTextResponse(10);
 				//zkusime getnout TriggerGroupu
-                TriggerGroup tg = TriggerGroup.Get(tgDefname);
-				if(tg == null) {
+				TriggerGroup tg = TriggerGroup.Get(tgDefname);
+				if (tg == null) {
 					//zobrait chybovou hlasku
 					Gump newGi = D_Display_Text.ShowError("Trigger group s defnamem '" + tgDefname + "' nenalezena!");
 					//ulozime do tagu vlozene defname
@@ -83,16 +83,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					return;
 				} else {
 					//ulozit a vubec
-					PluginHolder ph = (PluginHolder)args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
-					ph.AddTriggerGroup(tg);			
+					PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
+					ph.AddTriggerGroup(tg);
 				}
 				//vzit jeste predchozi dialog, musime smazat tglist aby se pregeneroval
 				//a obsahoval tu nove pridanou trigger groupu
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
 				//overovat netreba, proste odstranime tag se seznamem at uz existuje nebo ne
-				prevStacked.InputArgs.RemoveTag(D_TriggerGroupsList.tgListTK);				
+				prevStacked.InputArgs.RemoveTag(D_TriggerGroupsList.tgListTK);
 				DialogStacking.ResendAndRestackDialog(prevStacked);
-			} 
-		}        
+			}
+		}
 	}
 }

@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+using System;
 using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.LScript;
@@ -21,8 +22,8 @@ using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog that will display a desired text with a desired label (e.g. displaying larger texts "+
-            "in pages dialog etc.")]
+	[Summary("Dialog that will display a desired text with a desired label (e.g. displaying larger texts " +
+			"in pages dialog etc.")]
 	public class D_Display_Text : CompiledGumpDef {
 		private string label;
 		private string dispText;
@@ -33,8 +34,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			label = string.Concat(args.ArgsArray[0]); //the gump's label
 			dispText = string.Concat(args.ArgsArray[1]); //the text to be displayed
-			if(args.HasTag(D_Display_Text.textHueTK)) {
-				textColor = (Hues)args.GetTag(D_Display_Text.textHueTK); //barva titulku volitelna
+
+			object hue = args.GetTag(D_Display_Text.textHueTK);
+			if (hue != null) {
+				textColor = (Hues) Convert.ToInt32(hue); //barva titulku volitelna
 			} else {
 				textColor = Hues.HeadlineColor; //normalni nadpisek
 			}
@@ -50,15 +53,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first row - the label of the dialog
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0,0] = TextFactory.CreateHeadline(label, textColor);
-			dialogHandler.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline(label, textColor);
+			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dialogHandler.MakeLastTableTransparent();
 
 			//at least three rows of a button height (scrollbar has some demands)
-			dialogHandler.AddTable(new GUTATable(3,0));
-			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;						
+			dialogHandler.AddTable(new GUTATable(3, 0));
+			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			//unbounded, scrollable html text area
-			dialogHandler.LastTable[0,0] = TextFactory.CreateHTML(dispText, false, true);
+			dialogHandler.LastTable[0, 0] = TextFactory.CreateHTML(dispText, false, true);
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();
@@ -79,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (args != null && args.Args.Length != 2) {
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs(args.Args[0], args.Args[1]));
 			} else {
-				Globals.SrcCharacter.Message("DisplayText musí být volána se dvìma parametry - label + text", (int)Hues.Red);
+				Globals.SrcCharacter.Message("DisplayText musí být volána se dvìma parametry - label + text", (int) Hues.Red);
 			}
 		}
 
@@ -88,17 +91,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
 				DialogArgs newArgs = new DialogArgs("CHYBA", args.argv[0]);
-				newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);							
+				newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {
-				Globals.SrcCharacter.Message("ShowError musí být volána s parametrem - text chyby", (int)Hues.Red);
+				Globals.SrcCharacter.Message("ShowError musí být volána s parametrem - text chyby", (int) Hues.Red);
 			}
 		}
 
 		[Summary("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
 		public static Gump ShowError(string text) {
 			DialogArgs newArgs = new DialogArgs("CHYBA", text);
-			newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);				
+			newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}
 

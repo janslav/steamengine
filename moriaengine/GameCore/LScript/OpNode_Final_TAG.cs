@@ -17,15 +17,15 @@
 
 using System;
 using PerCederberg.Grammatica.Parser;
-	
+
 namespace SteamEngine.LScript {
 	public class OpNode_SetTag : OpNode, IOpNodeHolder, ITriable {
 		private readonly TagKey name;
 		private OpNode arg;
 
-		internal OpNode_SetTag(IOpNodeHolder parent, string filename, 
+		internal OpNode_SetTag(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name, OpNode arg)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.name = TagKey.Get(name);
 		}
@@ -34,7 +34,7 @@ namespace SteamEngine.LScript {
 			if (arg == oldNode) {
 				arg = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace SteamEngine.LScript {
 					vars.self = oSelf;
 				}
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 			return null;
@@ -60,7 +60,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				th.SetTag(name, results[0]);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 			return null;
@@ -70,13 +70,13 @@ namespace SteamEngine.LScript {
 			return string.Concat("TAG ", name, " = ", arg);
 		}
 	}
-	
+
 	public class OpNode_GetTag : OpNode, ITriable {
 		private readonly TagKey name;
 
-		internal OpNode_GetTag(IOpNodeHolder parent, string filename, 
+		internal OpNode_GetTag(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.name = TagKey.Get(name);
 		}
 
@@ -85,7 +85,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				return th.GetTag(name);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 		}
@@ -95,7 +95,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				return th.GetTag(name);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 		}
@@ -104,13 +104,13 @@ namespace SteamEngine.LScript {
 			return string.Concat("TAG(", name, ")");
 		}
 	}
-	
+
 	public class OpNode_RemoveTag : OpNode, ITriable {
 		private readonly TagKey name;
 
-		internal OpNode_RemoveTag(IOpNodeHolder parent, string filename, 
+		internal OpNode_RemoveTag(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.name = TagKey.Get(name);
 		}
 
@@ -119,7 +119,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				th.RemoveTag(name);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 			return null;
@@ -130,7 +130,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				th.RemoveTag(name);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 			return null;
@@ -140,15 +140,15 @@ namespace SteamEngine.LScript {
 			return string.Concat("TAG.remove(", name, ")");
 		}
 	}
-	
-	
-	
+
+
+
 	public class OpNode_TagExists : OpNode, ITriable {
 		private readonly TagKey name;
 
-		internal OpNode_TagExists(IOpNodeHolder parent, string filename, 
+		internal OpNode_TagExists(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.name = TagKey.Get(name);
 		}
 
@@ -157,7 +157,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				return th.HasTag(name);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 		}
@@ -167,7 +167,7 @@ namespace SteamEngine.LScript {
 			if (th != null) {
 				return th.HasTag(name);
 			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.", 
+				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					line, column, filename, ParentScriptHolder.GetDecoratedName());
 			}
 		}
@@ -176,4 +176,4 @@ namespace SteamEngine.LScript {
 			return string.Concat("TAG.EXISTS(", name, ")");
 		}
 	}
-}	
+}
