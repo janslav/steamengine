@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void EnsureDictionary() {
 			if (inBoxReags == null) {
-				inBoxReags = new Dictionary<ItemDef,int>();
+				inBoxReags = new Dictionary<ItemDef, int>();
 			}
 		}
 
@@ -52,10 +52,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
-			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int,ItemDef>();
+			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int, ItemDef>();
 			int buttonsCount = 0;
 			int radku = 0;
-			RegBox box = (RegBox)focus;
+			RegBox box = (RegBox) focus;
 			if (box.inBoxReags == null) {
 				radku = 0;
 				i = 0;
@@ -103,8 +103,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			RegBox box = (RegBox)gi.Focus;
-			if (!((Player)gi.Cont).CanReachWithMessage(box)) {
+			RegBox box = (RegBox) gi.Focus;
+			if (!((Player) gi.Cont).CanReachWithMessage(box)) {
 				return;
 			}
 			if (gr.pressedButton == 0) {			// cancel
@@ -112,20 +112,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.pressedButton == 1) {		// Add reags
 				((Player) gi.Cont).Target(SingletonScript<Targ_RegBox>.Instance, gi.Focus);
 			} else if (gr.pressedButton == 2) {		// OK -> give selected reags
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)args.GetTag(D_RegBox.buttonsForReagsTK);
-				int buttonsCount = TagMath.IGetTag(args,D_RegBox.buttonsCountTK);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
+				int buttonsCount = TagMath.IGetTag(args, D_RegBox.buttonsCountTK);
 				int i = 0;
 				int reagsToGive = 0;
 				while (i < buttonsCount) {
-					if ( (gr.IsSwitched(i)) && (gr.responseNumbers[i].number > 0) ){	// player wants to take at least one reagent
-						if (box.inBoxReags[buttonShowItemDef[i]] < (int)gr.responseNumbers[i].number) {
-							((Player)gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho regù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
+					if ((gr.IsSwitched(i)) && (gr.responseNumbers[i].number > 0)) {	// player wants to take at least one reagent
+						if (box.inBoxReags[buttonShowItemDef[i]] < (int) gr.responseNumbers[i].number) {
+							((Player) gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho regù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
 							reagsToGive = box.inBoxReags[buttonShowItemDef[i]];
 						} else {
-							reagsToGive = (int)gr.responseNumbers[i].number;
+							reagsToGive = (int) gr.responseNumbers[i].number;
 						}
-						buttonShowItemDef[i].Create(((Player)gi.Cont).BackpackAsContainer);
-						Globals.lastNewItem.Amount = (uint)reagsToGive;
+						buttonShowItemDef[i].Create(((Player) gi.Cont).BackpackAsContainer);
+						Globals.lastNewItem.Amount = (uint) reagsToGive;
 						gi.Cont.SysMessage("Vyndáváš z bedny " + Convert.ToString(reagsToGive) + "ks regu " + buttonShowItemDef[i].Name + ".");
 						box.inBoxReags[buttonShowItemDef[i]] -= reagsToGive;
 						box.pocetRegu -= reagsToGive;
@@ -136,10 +136,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					i++;
 				}
 			} else if (gr.pressedButton >= 1000) {
-				int thisButtonValue = (int)gr.pressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>)args.GetTag(D_RegBox.buttonsForReagsTK);
-				buttonShowItemDef[thisButtonValue].Create(((Player)gi.Cont).BackpackAsContainer);
-				Globals.lastNewItem.Amount = (uint)box.inBoxReags[buttonShowItemDef[thisButtonValue]];
+				int thisButtonValue = (int) gr.pressedButton - 1000;
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
+				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).BackpackAsContainer);
+				Globals.lastNewItem.Amount = (uint) box.inBoxReags[buttonShowItemDef[thisButtonValue]];
 				box.inBoxReags.Remove(buttonShowItemDef[thisButtonValue]);
 				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_RegBox>.Instance);
 			}
@@ -155,7 +155,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			RegBox focus = parameter as RegBox;
-			if ( (!self.CanReachWithMessage(focus)) || (!self.CanReachWithMessage(targetted)) ) {
+			if ((!self.CanReachWithMessage(focus)) || (!self.CanReachWithMessage(targetted))) {
 				return false;
 			}
 			if (targetted.Type.Defname == "t_reagent") {
@@ -164,14 +164,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (!focus.inBoxReags.TryGetValue(targetted.TypeDef, out previousCount)) {
 					previousCount = 0;
 				}
-				if (focus.pocetRegu + (int)targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
+				if (focus.pocetRegu + (int) targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
 					int reagsToTake = focus.TypeDef.Capacity - focus.pocetRegu;
-					targetted.Amount -= (uint)reagsToTake;
+					targetted.Amount -= (uint) reagsToTake;
 					focus.pocetRegu += reagsToTake;
 					focus.inBoxReags[targetted.TypeDef] = previousCount + reagsToTake;
 				} else {
-					focus.pocetRegu += (int)targetted.Amount;
-					focus.inBoxReags[targetted.TypeDef] = previousCount + (int)targetted.Amount;
+					focus.pocetRegu += (int) targetted.Amount;
+					focus.inBoxReags[targetted.TypeDef] = previousCount + (int) targetted.Amount;
 					targetted.Delete();
 				}
 			} else {

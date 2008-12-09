@@ -30,9 +30,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//field containing the results for display
-            List<SettingResult> setResults = (List<SettingResult>)args.GetTag(D_Settings_Result.resultsListTK);
+			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(D_Settings_Result.resultsListTK);
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //first index on the page (0 if not present)
-			
+
 			//max index (20 lines) + check the list end !
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, setResults.Count);
 
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
 
-			dlg.AddTable(new GUTATable(1, 175, 175, 175, 0));			
+			dlg.AddTable(new GUTATable(1, 175, 175, 175, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateText("Název");//name of the datafield
 			dlg.LastTable[0, 1] = TextFactory.CreateText("Souèasná hodnota");//after setting
 			dlg.LastTable[0, 2] = TextFactory.CreateText("Pùvodní hodnota");//filled when successfully changed
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				SettingResult sres = setResults[i];
 				Hues color = SettingsProvider.ResultColor(sres);
 				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(color, sres.Name); //nam of the editable field
@@ -78,14 +78,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-            List<SettingResult> setResults = (List<SettingResult>)args.GetTag(D_Settings_Result.resultsListTK);
-			if(gr.pressedButton == 0) { //end				
+			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(D_Settings_Result.resultsListTK);
+			if (gr.pressedButton == 0) { //end				
 				return;
 				//dont redirect to any dialog - former info/settings dialog is already open
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, setResults.Count, 1)) {//kliknuto na paging?
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, setResults.Count, 1)) {//kliknuto na paging?
 				//1 sloupecek
 				return;
-			} 
-		}		
-	}	
+			}
+		}
+	}
 }

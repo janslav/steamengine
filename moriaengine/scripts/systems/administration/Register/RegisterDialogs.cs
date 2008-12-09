@@ -29,25 +29,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey issuesListTK = TagKey.Get("_acc_issues_list_"); //used for notes, crimes
 		internal static readonly TagKey issuesSortingTK = TagKey.Get("_acc_issues_sorting_"); //used the smae way
 		private static int width = 800;
-		
+
 		[Summary("Seznam parametru: 0 - account jehoz noty zobrazujeme, " +
 				"	1 - tridici kriterium" +
-				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +				
+				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +
 				"	3 - ulozeny noteslist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ScriptedAccount acc = (ScriptedAccount)args.GetTag(D_AccountNotes.accountTK); //vzit seznam notu z accountu prisleho v parametru dialogu
-			List<AccountNote> notesList = null;
-			if(!args.HasTag(D_AccountNotes.issuesListTK)) {
+			ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK); //vzit seznam notu z accountu prisleho v parametru dialogu
+
+			List<AccountNote> notesList = (List<AccountNote>) args.GetTag(D_AccountNotes.issuesListTK); //taglist si posilame v argumentu (napriklad pri pagingu)
+			if (notesList == null) {
 				//vzit seznam notu a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				notesList = AccountRegister.GetNotes(acc, (AccountNotesSorting)args.GetTag(D_AccountNotes.issuesSortingTK));
+				notesList = AccountRegister.GetNotes(acc, (AccountNotesSorting) TagMath.IGetTag(args, D_AccountNotes.issuesSortingTK));
 				args.SetTag(D_AccountNotes.issuesListTK, notesList); //ulozime to do argumentu dialogu
-			} else {
-				//taglist si posilame v argumentu (napriklad pri pagingu)
-				notesList = (List<AccountNote>)args.GetTag(D_AccountNotes.issuesListTK);
 			}
+
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);//prvni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, notesList.Count);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -78,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Text poznámky");
 			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 6); //tridit dle issuera asc
 			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7); //tridit dle issuera desc
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Autor");			
+			dlg.LastTable[0, 3] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Autor");
 			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Smaž");
 			dlg.MakeLastTableTransparent();
 
@@ -88,22 +87,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				AccountNote note = notesList[i];
 
 				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(note.time.ToString("hh:mm:ss dd.MM.yyyy"));
-				if(note.referredChar != null) {
+				if (note.referredChar != null) {
 					dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (4 * i)); //info o postave
 					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.referredChar.Name); //postava
 				} else {
 					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(AccountRegister.ALL_CHARS); //tyka se vsech postav na acc
 				}
-				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,11 + (4 * i)); //zobrazit text zpravy
+				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + (4 * i)); //zobrazit text zpravy
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.text); //text zpravy
 				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 12 + (4 * i)); //info o issuerovi
 				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.issuer.Name); //issuer
 
-				if(sendTo == note.issuer || sendTo.Plevel > note.issuer.Plevel) {
+				if (sendTo == note.issuer || sendTo.Plevel > note.issuer.Plevel) {
 					dlg.LastTable[rowCntr, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 13 + (4 * i)); //smaz
 				} else {
 					//pokud ten co se diva neni ten kdo zpravu postnul a ani nema vyssi plevel, pak nesmi poznamku smazat!
@@ -118,10 +117,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam poznamek bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<AccountNote> notesList = (List<AccountNote>)args.GetTag(D_AccountNotes.issuesListTK);
-			int firstOnPage = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);
-			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-				switch(gr.pressedButton) {
+			List<AccountNote> notesList = (List<AccountNote>) args.GetTag(D_AccountNotes.issuesListTK);
+			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch (gr.pressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -131,7 +130,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						newArgs.SetTag(D_AccountNotes.accountTK, args.GetTag(D_AccountNotes.accountTK));//account (char nepotrebujeme)
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
-						break;						
+						break;
 					case 2: //time asc
 						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
@@ -144,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 4: //refcar asc
 						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.RefCharAsc);
-						args.RemoveTag(D_AccountNotes.issuesListTK);						
+						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //refchar desc
@@ -159,7 +158,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 7: //issuer desc
 						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerDesc);
-						args.RemoveTag(D_AccountNotes.issuesListTK);						
+						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -168,11 +167,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int)gr.pressedButton - 10) / 4;
-				int buttNo = ((int)gr.pressedButton - 10) % 4;
+				int row = ((int) gr.pressedButton - 10) / 4;
+				int buttNo = ((int) gr.pressedButton - 10) % 4;
 				AccountNote note = notesList[row];
 				Gump newGi;
-				switch(buttNo) {
+				switch (buttNo) {
 					case 0: //char info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(note.referredChar));
 						DialogStacking.EnstackDialog(gi, newGi);
@@ -188,19 +187,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 3: //smazat poznamku (to muze jen jeji autor nebo clovek s vyssim plevelem)
 						//ScriptedAccount acc = (ScriptedAccount)args[0];
-						ScriptedAccount acc = (ScriptedAccount)args.GetTag(D_AccountNotes.accountTK);
+						ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK);
 						acc.RemoveNote(note);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
 			}
-		}		
+		}
 
 		[Summary("Display an account notes. Function accessible from the game." +
 				"The function is designed to be triggered using .x AccNotes or .AccNotes" +
-				"but it can be also called from other dialogs - such as info..."+
-				"Default sorting is by Time, desc."+
+				"but it can be also called from other dialogs - such as info..." +
+				"Default sorting is by Time, desc." +
 				"Another way to use is: .AccNotes('acc_name'[,'sorting']).")]
 		[SteamFunction]
 		public static void AccNotes(Thing self, ScriptArgs text) {
@@ -209,35 +208,35 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//2. param - trideni dle...
 			//3. od kolikate poznamky zaciname (0), 3. prostor pro potreby dialogu
 			DialogArgs newArgs = new DialogArgs();
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				AbstractCharacter refChar = self as AbstractCharacter;
-				if(refChar == null) {
-					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer hrace", (int)Hues.Red);
+				if (refChar == null) {
+					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer hrace", (int) Hues.Red);
 					return;
 				}
-				if(refChar.IsPlayer) {
+				if (refChar.IsPlayer) {
 					newArgs.SetTag(D_AccountNotes.accountTK, refChar.Account);//nastavit account
 					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				} else {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
-				}				
+				}
 			} else {
-				ScriptedAccount acc = (ScriptedAccount)AbstractAccount.Get(text.argv[0].ToString());
-				if(acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem "+text.argv[0].ToString()+" neexistuje.", (int)Hues.Red);
+				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.argv[0].ToString());
+				if (acc == null) {
+					Globals.SrcCharacter.SysMessage("Account se jménem " + text.argv[0].ToString() + " neexistuje.", (int) Hues.Red);
 					return;
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);//nastavit account					
-				if(text.argv.Length == 1) { //mame jen nazev accountu
+				if (text.argv.Length == 1) { //mame jen nazev accountu
 					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				} else { //mame i trideni
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (AccountNotesSorting)text.argv[1]);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (AccountNotesSorting) text.argv[1]);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				}
 			}
-		}		
+		}
 	}
 
 	[Summary("Dialog listing all account's crimes")]
@@ -249,19 +248,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +
 				"	3 - ulozeny noteslist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ScriptedAccount acc = (ScriptedAccount)args.GetTag(D_AccountNotes.accountTK);
-			List<AccountCrime> crimesList = null;
-			if(!args.HasTag(D_AccountNotes.issuesListTK)) {
+			ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK);
+
+			List<AccountCrime> crimesList = (List<AccountCrime>) args.GetTag(D_AccountNotes.issuesListTK);	//taglist si posilame v argumentu (napriklad pri pagingu)
+			if (crimesList == null) {
 				//vzit seznam crimu a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				crimesList = AccountRegister.GetCrimes(acc, (AccountNotesSorting)args.GetTag(D_AccountNotes.issuesSortingTK));
+				crimesList = AccountRegister.GetCrimes(acc, (AccountNotesSorting) TagMath.IGetTag(args, D_AccountNotes.issuesSortingTK));
 				args.SetTag(D_AccountNotes.issuesListTK, crimesList); //ulozime to do argumentu dialogu								
-			} else {
-				//taglist si posilame v argumentu (napriklad pri pagingu)
-				crimesList = (List<AccountCrime>)args.GetTag(D_AccountNotes.issuesListTK);	
 			}
+
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args,ImprovedDialog.pagingIndexTK);//prvni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, crimesList.Count);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -303,11 +301,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				AccountCrime crime = crimesList[i];
 
 				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(crime.time.ToString("hh:mm:ss dd.MM.yyyy"));
-				if(crime.referredChar != null) {
+				if (crime.referredChar != null) {
 					dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (5 * i)); //info o postave
 					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.referredChar.Name); //postava
 				} else {
@@ -321,7 +319,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 13 + (5 * i)); //info o issuerovi
 				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.issuer.Name); //issuer
 
-				if(sendTo == crime.issuer || sendTo.Plevel > crime.issuer.Plevel) {
+				if (sendTo == crime.issuer || sendTo.Plevel > crime.issuer.Plevel) {
 					dlg.LastTable[rowCntr, 5] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 14 + (5 * i)); //smaz
 				} else {
 					//pokud ten co se diva neni ten kdo zpravu postnul a ani nema vyssi plevel, pak nesmi trest smazat!
@@ -336,10 +334,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam crimu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<AccountCrime> crimesList = (List<AccountCrime>)args.GetTag(D_AccountNotes.issuesListTK);
+			List<AccountCrime> crimesList = (List<AccountCrime>) args.GetTag(D_AccountNotes.issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-				switch(gr.pressedButton) {
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch (gr.pressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -372,25 +370,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 6: //issuer asc
 						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerAsc);
-						args.RemoveTag(D_AccountNotes.issuesListTK);						
+						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 7: //issuer desc
 						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerDesc);
-						args.RemoveTag(D_AccountNotes.issuesListTK);						
+						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, crimesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, crimesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
 				//1 sloupecek
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int)gr.pressedButton - 10) / 5;
-				int buttNo = ((int)gr.pressedButton - 10) % 5;
+				int row = ((int) gr.pressedButton - 10) / 5;
+				int buttNo = ((int) gr.pressedButton - 10) % 5;
 				AccountCrime crime = crimesList[row];
 				Gump newGi;
-				switch(buttNo) {
+				switch (buttNo) {
 					case 0: //char info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(crime.referredChar));
 						DialogStacking.EnstackDialog(gi, newGi);
@@ -410,7 +408,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 4: //smazat trest (to muze jen jeji autor nebo clovek s vyssim plevelem)
-						ScriptedAccount acc = (ScriptedAccount)args.GetTag(D_AccountNotes.accountTK);
+						ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK);
 						acc.RemoveCrime(crime);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
@@ -431,13 +429,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//2. param - trideni dle...
 			//3. od kolikate poznamky zaciname (0), 3. prostor pro potreby dialogu
 			DialogArgs newArgs = new DialogArgs();
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				AbstractCharacter refChar = self as AbstractCharacter;
-				if(refChar == null) {
-					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer hrace", (int)Hues.Red);
+				if (refChar == null) {
+					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer hrace", (int) Hues.Red);
 					return;
 				}
-				if(refChar.IsPlayer) {
+				if (refChar.IsPlayer) {
 					newArgs.SetTag(D_AccountNotes.accountTK, refChar.Account);
 					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
@@ -445,17 +443,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
 				}
 			} else {
-				ScriptedAccount acc = (ScriptedAccount)AbstractAccount.Get(text.argv[0].ToString());
-				if(acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem " + text.argv[0].ToString() + " neexistuje.", (int)Hues.Red);
+				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.argv[0].ToString());
+				if (acc == null) {
+					Globals.SrcCharacter.SysMessage("Account se jménem " + text.argv[0].ToString() + " neexistuje.", (int) Hues.Red);
 					return;
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);
-				if(text.argv.Length == 1) { //mame jen nazev accountu
+				if (text.argv.Length == 1) { //mame jen nazev accountu
 					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				} else { //mame i trideni
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (AccountNotesSorting)text.argv[1]);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (AccountNotesSorting) text.argv[1]);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				}
 			}
@@ -467,23 +465,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey issuedCharTK = TagKey.Get("_issued_char_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			bool isCrime = (bool)args.GetTag(D_New_AccountNote.isCrimeTK); //true - crime note, false - normal note
+			bool isCrime = TagMath.ToBoolean(args.GetTag(D_New_AccountNote.isCrimeTK)); //true - crime note, false - normal note
 			AbstractCharacter refChar = args.GetTag(D_New_AccountNote.issuedCharTK) as AbstractCharacter; //if not present the note is for the whole account
 			ScriptedAccount acc = args.GetTag(D_AccountNotes.accountTK) as ScriptedAccount; //the account could or might not have arrived... :]
 
 			string dlgHeadline; //crime / note
 			string textFldLabel; //crime desc / record
 			string target; //who is this note for?
-			if(refChar != null) { //we have player, we dont care for the account any more
+			if (refChar != null) { //we have player, we dont care for the account any more
 				target = "hráèe " + refChar.Name;
 			} else {
-				if(acc != null) {
+				if (acc != null) {
 					target = "account " + acc.Name;
 				} else {
 					target = "account";
 				}
 			}
-			if(isCrime) {
+			if (isCrime) {
 				dlgHeadline = "Nový záznam trestu pro " + target;
 				textFldLabel = "Prohøešek";
 			} else {
@@ -502,19 +500,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			dlg.AddTable(new GUTATable((isCrime ? 3 : 2), 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel(textFldLabel);
-			if(refChar == null) {
+			if (refChar == null) {
 				dlg.LastTable[0, 0] = TextFactory.CreateLabel("Account");
-				if(acc == null) { //account didnt come					
+				if (acc == null) { //account didnt come					
 					dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10);
 				} else {
 					dlg.LastTable[0, 1] = TextFactory.CreateText(acc.Name);
 				}
 			} else {//we have player
 				dlg.LastTable[0, 0] = TextFactory.CreateLabel("Postava");
-				dlg.LastTable[0, 1] = TextFactory.CreateText(refChar.Name);				
+				dlg.LastTable[0, 1] = TextFactory.CreateText(refChar.Name);
 			}
 			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11);
-			if(isCrime) { //crimes have more fields...
+			if (isCrime) { //crimes have more fields...
 				dlg.LastTable[2, 0] = TextFactory.CreateLabel("Trest");
 				dlg.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 12);
 			}
@@ -523,34 +521,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Uložit");
-			dlg.MakeLastTableTransparent(); 
+			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			bool isCrime = (bool)args.GetTag(D_New_AccountNote.isCrimeTK); //true - crime note, false - normal note
+			bool isCrime = TagMath.ToBoolean(args.GetTag(D_New_AccountNote.isCrimeTK)); //true - crime note, false - normal note
 			AbstractCharacter refChar = args.GetTag(D_New_AccountNote.issuedCharTK) as AbstractCharacter; //if not present the note is for the whole account
 			ScriptedAccount acc = args.GetTag(D_AccountNotes.accountTK) as ScriptedAccount; //the account could or might not have arrived... :]
 
-			if(gr.pressedButton == 0) {
-				DialogStacking.ShowPreviousDialog(gi);			
-			} else if(gr.pressedButton == 1) {
-				if(refChar != null) {//creating note for the player
-					acc = (ScriptedAccount)refChar.Account; //get the account
+			if (gr.pressedButton == 0) {
+				DialogStacking.ShowPreviousDialog(gi);
+			} else if (gr.pressedButton == 1) {
+				if (refChar != null) {//creating note for the player
+					acc = (ScriptedAccount) refChar.Account; //get the account
 				} else {
-					if(acc == null) {//try to load the account
+					if (acc == null) {//try to load the account
 						string accName = gr.GetTextResponse(10);
-						acc = (ScriptedAccount)AbstractAccount.Get(accName);
-						if(acc == null) {//failed to find the acc
-							gi.Cont.SysMessage("Account se jménem "+accName+" neexistuje!",(int)Hues.Red);
+						acc = (ScriptedAccount) AbstractAccount.Get(accName);
+						if (acc == null) {//failed to find the acc
+							gi.Cont.SysMessage("Account se jménem " + accName + " neexistuje!", (int) Hues.Red);
 							DialogStacking.ResendAndRestackDialog(gi);
 						}
 					}
 				}
 				//and now the note itself
-				string noteDesc = gr.GetTextResponse(11);					
-				if(isCrime) {
+				string noteDesc = gr.GetTextResponse(11);
+				if (isCrime) {
 					string punishmentDesc = gr.GetTextResponse(12);
 					AccountCrime newCrime = new AccountCrime(gi.Cont, refChar, punishmentDesc, noteDesc);
 					acc.AddCrime(newCrime);
@@ -561,18 +559,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//if the previous dialog is the accnotes or acccrimes list, we have to clear the list in the stacked instance
 				//so it can be reread again with the newly created note
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
-				if(prevStacked != null) {
+				if (prevStacked != null) {
 					//uz neni treba kontrolovat, odstranujeme jenom tag...
 					//if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_AccountNotes)) ||
 					//  prevStacked.def.GetType().IsAssignableFrom(typeof(D_AccountCrimes))) {
-						prevStacked.InputArgs.RemoveTag(D_AccountNotes.issuesListTK);
+					prevStacked.InputArgs.RemoveTag(D_AccountNotes.issuesListTK);
 					//}
 					DialogStacking.ResendAndRestackDialog(prevStacked);
-				}				
-			} 
+				}
+			}
 		}
 
-		[Summary("Display the dialog for creating a new AccountNote."+
+		[Summary("Display the dialog for creating a new AccountNote." +
 				"Is called directly by .x NewAccNote on the target player")]
 		[SteamFunction]
 		public static void NewAccNote(Thing self, ScriptArgs text) {
@@ -580,13 +578,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//1 - true (isCrime) / false (isNote)
 			//2 - referred character
 			//3 - referred account (not necessary)
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				//no player, no account specified - we will use the "self" as the target player
 				AbstractCharacter refChar = self as AbstractCharacter;
-				if(refChar == null) {
-					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer playera", (int)Hues.Red);
+				if (refChar == null) {
+					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer playera", (int) Hues.Red);
 				}
-				if(refChar.IsPlayer) {
+				if (refChar.IsPlayer) {
 					DialogArgs newArgs = new DialogArgs();
 					newArgs.SetTag(D_New_AccountNote.isCrimeTK, false);
 					newArgs.SetTag(D_New_AccountNote.issuedCharTK, self);
@@ -608,13 +606,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//1 - true (isCrime) / false (isNote)
 			//2 - referred character
 			//3 - referred account (not necessary)
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				//no player, no account specified - we will use the "self" as the target player
 				AbstractCharacter refChar = self as AbstractCharacter;
-				if(refChar == null) {
-					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer playera", (int)Hues.Red);
+				if (refChar == null) {
+					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer playera", (int) Hues.Red);
 				}
-				if(refChar.IsPlayer) {
+				if (refChar.IsPlayer) {
 					DialogArgs newArgs = new DialogArgs();
 					newArgs.SetTag(D_New_AccountNote.isCrimeTK, true);
 					newArgs.SetTag(D_New_AccountNote.issuedCharTK, self);

@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Character whose = (Character) focus;
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				abList = ListifyAbilities(whose.Abilities, TagMath.SGetTag(args, D_CharsAbilitiesList.criteriumTK));
-				SortAbilities(abList, (SortingCriteria) args.GetTag(D_CharsAbilitiesList.sortingTK));
+				SortAbilities(abList, (SortingCriteria) TagMath.IGetTag(args, D_CharsAbilitiesList.sortingTK));
 				args.SetTag(D_CharsAbilitiesList.listTK, abList); //ulozime to do argumentu dialogu				
 			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
@@ -94,8 +94,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//infodialog
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + 2 * i);
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(hue, ab.Name);
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(hue, ab.Points+"/"+ab.MaxPoints);
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(hue, Globals.TimeInSeconds - ab.LastUsage +"secs ago");
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(hue, ab.Points + "/" + ab.MaxPoints);
+				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(hue, Globals.TimeInSeconds - ab.LastUsage + "secs ago");
 				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText(hue, ab.Running ? "Y" : "N");
 				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(hue, ab.AbilityDef.Defname);
 				//abilitydef info dialog
@@ -269,7 +269,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Ability x, Ability y) {
-			if (x.Running) 
+			if (x.Running)
 				return 1; //x running => always larger or equals to y
 			return (y.Running ? -1 : 1); //x not running => if y is running x is less. otherwise is equal
 		}

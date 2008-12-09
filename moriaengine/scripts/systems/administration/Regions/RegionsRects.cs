@@ -31,17 +31,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 450;
 
 		[Summary("Seznam parametru: 0 - region" +
-				"	1 - paging"+
+				"	1 - paging" +
 				"	2 - rectangly v listu(je totiž možno pøidávat dynamicky)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			Region reg = (Region)args.GetTag(D_Region_Rectangles.regionTK);
-			List<MutableRectangle> rectList = null;
-			if(args.HasTag(D_Region_Rectangles.rectsListTK)) {
-				rectList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
-			} else {
+			Region reg = (Region) args.GetTag(D_Region_Rectangles.regionTK);
+			List<MutableRectangle> rectList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
+			if (rectList == null) {
 				//vezmeme je z regionu
 				rectList = MutableRectangle.TakeRectsFromRegion(reg);
-				args.SetTag(D_Region_Rectangles.rectsListTK,rectList); //ulozime to do argumentu dialogu
+				args.SetTag(D_Region_Rectangles.rectsListTK, rectList); //ulozime to do argumentu dialogu
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -68,7 +66,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//popis sloupcu (Info, Height, Width, StartPoint, EndPoint, Tiles)
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 35, 35, 130, 0, 35));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Edit");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Smaž");			
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Smaž");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Šíøka");
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Výška");
 			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Poèáteèní bod");
@@ -82,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				MutableRectangle rect = rectList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (2 * i)); //editovat
@@ -109,11 +107,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
-			StaticRegion reg = (StaticRegion)args.GetTag(D_Region_Rectangles.regionTK);
-			List<MutableRectangle> rectsList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
+			StaticRegion reg = (StaticRegion) args.GetTag(D_Region_Rectangles.regionTK);
+			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-				switch(gr.pressedButton) {
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch (gr.pressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -126,8 +124,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //ulozit
 						//nastavenim rectanglu dojde k reinicializaci vsech regionu
-						if(reg.SetRectangles(rectsList)) {
-							if(!reg.ContainsPoint(reg.P)) {//jeste zkoukneme pozici - mohla zmizet smazáním/resizem rectanglu
+						if (reg.SetRectangles(rectsList)) {
+							if (!reg.ContainsPoint(reg.P)) {//jeste zkoukneme pozici - mohla zmizet smazáním/resizem rectanglu
 								D_Display_Text.ShowError("Home pozice je mimo region - je potøeba ji pøenastavit");
 							} else {
 								D_Display_Text.ShowInfo("Ukládání rectanglù bylo úspìšné");
@@ -139,19 +137,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							DialogStacking.EnstackDialog(gi, infoGi); //vlozime dialog do stacku pro navrat						
 							break;
 						}
-						//pokud to nekde spadne, tak to uvidime v konzoli - to uz je zavazny problem a nesmi to jen tak projit! (=nechytam vyjimku)
-						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-						//break;
+					//pokud to nekde spadne, tak to uvidime v konzoli - to uz je zavazny problem a nesmi to jen tak projit! (=nechytam vyjimku)
+					//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+					//break;
 				}
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, rectsList.Count, 1)) {//kliknuto na paging?
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, rectsList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime si radek a cudlik v nem
-				int row = ((int)gr.pressedButton - 10) / 2;
-				int buttNo = ((int)gr.pressedButton - 10) % 2;
+				int row = ((int) gr.pressedButton - 10) / 2;
+				int buttNo = ((int) gr.pressedButton - 10) % 2;
 				MutableRectangle rect = rectsList[row];
 				Gump newGi;
-				switch(buttNo) {
+				switch (buttNo) {
 					case 0: //region rectangle info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(rect));
 						DialogStacking.EnstackDialog(gi, newGi);
@@ -162,6 +160,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			}
-		}		
+		}
 	}
 }

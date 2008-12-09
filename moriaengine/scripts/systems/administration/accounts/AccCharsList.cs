@@ -27,9 +27,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Acc_Characters : CompiledGumpDef {
 		private static readonly TagKey accountTK = TagKey.Get("_account_with_chars_");
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			AbstractAccount acc = AbstractAccount.Get((string)args.ArgsArray[0]); //jmeno accountu
-			if(acc == null) {
-				Globals.SrcCharacter.SysMessage("Account se jménem " + args.ArgsArray[0] + " neexistuje!", (int)Hues.Red);
+			AbstractAccount acc = AbstractAccount.Get((string) args.ArgsArray[0]); //jmeno accountu
+			if (acc == null) {
+				Globals.SrcCharacter.SysMessage("Account se jménem " + args.ArgsArray[0] + " neexistuje!", (int) Hues.Red);
 				return;
 			}
 			//mame-li ho, ulozme si ho do parametru pro pozdejsi pouziti
@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 600);
 
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam postav na accountu "+acc.Name);
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam postav na accountu " + acc.Name);
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
 
@@ -55,16 +55,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Pozice");
 			dlg.MakeLastTableTransparent();
 
-			dlg.AddTable(new GUTATable((int)AbstractAccount.maxCharactersPerGameAccount));
+			dlg.AddTable(new GUTATable((int) AbstractAccount.maxCharactersPerGameAccount));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			foreach(AbstractCharacter oneChar in acc.Characters) {
-				if(oneChar == null) {
+			foreach (AbstractCharacter oneChar in acc.Characters) {
+				if (oneChar == null) {
 					continue;
 				}
-				Player castChar = (Player)oneChar;
+				Player castChar = (Player) oneChar;
 				///TODO poresit barvy podle prislusnosti ke strane!
 				Hues color = Hues.WriteColor;
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, rowCntr + 10); //char info
@@ -82,17 +82,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			AbstractAccount acc = (AbstractAccount)args.GetTag(D_Acc_Characters.accountTK);
-			
-			if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch(gr.pressedButton) {
+			AbstractAccount acc = (AbstractAccount) args.GetTag(D_Acc_Characters.accountTK);
+
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.pressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-						break;					
+						break;
 				}
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = (int)(gr.pressedButton - 10);
+				int row = (int) (gr.pressedButton - 10);
 				Character oneChar = (Character) acc.Characters[row];
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat
@@ -100,22 +100,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a list of characters on the account list. "+
+		[Summary("Display a list of characters on the account list. " +
 				"Usage - .x AccChars. or .AccChars('accname')")]
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {
-			if(text.argv == null || text.argv.Length == 0) {
+			if (text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(target.Account.Name));
 			} else {
-				string accName = (String)text.argv[0];
+				string accName = (String) text.argv[0];
 				//overime zda existuje (uz ted)
 				AbstractAccount acc = AbstractAccount.Get(accName);
-				if(acc == null) {
+				if (acc == null) {
 					D_Display_Text.ShowError("Account se jménem " + accName + " neexistuje!");
 					return;
 				}
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(accName));
 			}
 		}
-	}	
+	}
 }

@@ -88,14 +88,14 @@ namespace SteamEngine.CompiledScripts {
 		Deny_NotAllowedToHaveThisAbility = 7 //other reason why not allow to have the ability (e.g. wrong profession etc.)
 	}
 
-    [Summary("Roles member adding/removing possible results")]
+	[Summary("Roles member adding/removing possible results")]
 	public enum DenyResultRoles {
-        Allow = 1, //we can add/remove the member
-        
-        //specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
-        //it will be accompanied by the role specific failure message
-        Deny_NoMessage = 100
-    }
+		Allow = 1, //we can add/remove the member
+
+		//specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
+		//it will be accompanied by the role specific failure message
+		Deny_NoMessage = 100
+	}
 
 	[Flags]
 	[Summary("specification of various localities where to look for resources")]
@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 		Acid = 0x000010,
 		MagicAcid = Magic | Acid,
 		Cold = 0x000020,
-		MagicCold = Magic | Cold,		
+		MagicCold = Magic | Cold,
 		[Summary("Mystikuv utok")]
 		Mystical = Magic | 0x000080,
 		[Summary("Damage redukovano fyzickym rezistem (neplest s armorem)")]
