@@ -1234,7 +1234,7 @@ namespace SteamEngine {
 
 		public void ShowSkillsTo(TCPConnection<GameState> viewerConn, GameState viewerState) {
 			SendSkillsOutPacket packet = Pool<SendSkillsOutPacket>.Acquire();
-			packet.PrepareMultipleSkillsUpdate(this.Skills, viewerState.Version.displaySkillCaps);
+			packet.PrepareAllSkillsUpdate(this.Skills, viewerState.Version.displaySkillCaps);
 			viewerConn.SendSinglePacket(packet);
 		}
 

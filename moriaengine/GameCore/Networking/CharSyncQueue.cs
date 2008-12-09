@@ -98,7 +98,6 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-
 		[Summary("Call when Flags are about to be changed")]
 		public static void AboutToChangeFlags(AbstractCharacter thing) {
 			if (enabled) {
@@ -220,6 +219,7 @@ namespace SteamEngine.Networking {
 				base.On_Reset();
 
 				this.changeflags = NSFlags.None;
+				this.changedSkillsCount = 0;
 			}
 
 
@@ -247,7 +247,7 @@ namespace SteamEngine.Networking {
 						return;//we know about this change already
 					}
 				}
-				this.changedSkills[changedSkillsCount] = skillId;
+				this.changedSkills[this.changedSkillsCount] = skillId;
 				this.changedSkillsCount++;
 			}
 
@@ -459,9 +459,7 @@ namespace SteamEngine.Networking {
 
 			internal void ProcessChar() {
 				if (!this.thing.IsDeleted) {//deleted items are supposed to be removedfromview by the delete code
-					if (this.changeflags == NSFlags.None) {
-						//nothing? wtf?
-					} else {
+					if ((this.changeflags != NSFlags.None) || (this.changedSkillsCount > 0))  {
 						if ((changeflags & NSFlags.Resend) == NSFlags.Resend) {
 							this.ProcessCharResend(this.thing);
 						} else {
@@ -874,27 +872,14 @@ namespace SteamEngine.Networking {
 
 			private void UpdateSkills(GameState myState, TCPConnection<GameState> myConn) {
 				if (this.changedSkillsCount > 0) {
-					SendSkillsOutPacket ssop = Pool<SendSkillsOutPacket>.Acquire();
-					if (this.changedSkillsCount == 1) {
-						ISkill skill = this.thing.GetSkillObject(this.changedSkills[0]);
-						Logger.WriteInfo(Globals.netSyncingTracingOn, "UpdateSkill: " + AbstractSkillDef.ById(this.changedSkills[0]).Key);
-						if (myState.Version.displaySkillCaps) {
-							ssop.PrepareSingleSkillUpdate(skill.Id, skill.RealValue, skill.ModifiedValue, skill.Lock, skill.Cap);
-						} else {
-							ssop.PrepareSingleSkillUpdate(skill.Id, skill.RealValue, skill.ModifiedValue, skill.Lock);
-						}
-					} else {
-						ssop.PrepareMultipleSkillsUpdate(this.YieldSkillsToUpdate(), myState.Version.displaySkillCaps);
+					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+					for (int i = 0; i < changedSkillsCount; i++) {
+						int skillId = changedSkills[i];
+						ISkill skill = this.thing.GetSkillObject(skillId);
+						Logger.WriteInfo(Globals.netSyncingTracingOn, "UpdateSkill id: " + skillId);
+						pg.AcquirePacket<SendSkillsOutPacket>().PrepareSingleSkillUpdate((ushort) skillId, skill, myState.Version.displaySkillCaps);
 					}
-					myConn.SendSinglePacket(ssop);
-				}
-			}
-
-			private IEnumerable<ISkill> YieldSkillsToUpdate() {
-				for (int i = 0; i < changedSkillsCount; i++) {
-					int id = changedSkills[i];
-					Logger.WriteInfo(Globals.netSyncingTracingOn, "UpdateSkill: " + AbstractSkillDef.ById(id).Key);
-					yield return this.thing.GetSkillObject(id);
+					myConn.SendPacketGroup(pg);
 				}
 			}
 		}

@@ -936,7 +936,7 @@ namespace SteamEngine.Networking {
 		//0x00= full list, 0xFF = single skill update, 
 		//0x02 full list with skillcap, 0xDF single skill update with cap
 
-		public void PrepareMultipleSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
+		public void PrepareAllSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
 			this.singleSkill = false;
 			this.displaySkillCaps = displaySkillCaps;
 			if (displaySkillCaps) {
@@ -951,10 +951,32 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		public void PrepareSingleSkillUpdate(ushort skillId, ISkill skill, bool displaySkillCaps) {
+			ushort realValue, modifiedValue, cap;
+			SkillLockType skillLock;
+			if (skill == null) {
+				realValue = 0;
+				modifiedValue = 0;
+				cap = 1000;
+				skillLock = SkillLockType.Increase;
+			} else {
+				realValue = skill.RealValue;
+				modifiedValue = skill.ModifiedValue;
+				cap = skill.Cap;
+				skillLock = skill.Lock;
+			}
+
+			if (displaySkillCaps) {
+				this.PrepareSingleSkillUpdate(skillId, realValue, modifiedValue, skillLock, cap);
+			} else {
+				this.PrepareSingleSkillUpdate(skillId, realValue, modifiedValue, skillLock);
+			}
+		}
+
 		public void PrepareSingleSkillUpdate(ushort skillId, ushort realValue, ushort modifiedValue, SkillLockType skillLock) {
 			this.displaySkillCaps = false;
 			this.singleSkill = true;
-			this.type = 0xFF;
+			this.type = 0xFF; //partial list without caps
 			skillList.Clear();
 			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, 0, skillLock));
 		}
@@ -962,7 +984,7 @@ namespace SteamEngine.Networking {
 		public void PrepareSingleSkillUpdate(ushort skillId, ushort realValue, ushort modifiedValue, SkillLockType skillLock, ushort cap) {
 			this.displaySkillCaps = true;
 			this.singleSkill = true;
-			this.type = 0xDF;
+			this.type = 0xDF; //partial list with caps
 			skillList.Clear();
 			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, cap, skillLock));
 		}
@@ -988,7 +1010,11 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.type);
 
 			foreach (SkillInfo s in this.skillList) {
-				this.EncodeUShort((ushort) (s.id + 1));
+				if (this.singleSkill) {
+					this.EncodeUShort(s.id);
+				} else {
+					this.EncodeUShort((ushort) (s.id + 1));
+				}
 				this.EncodeUShort(s.modifiedValue);
 				this.EncodeUShort(s.realValue);
 				this.EncodeByte((byte) s.skillLock);
@@ -997,9 +1023,9 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			if (!this.singleSkill) {
-				this.EncodeUShort(0);
-			}
+			//if (this.type == 0x00) {
+			//    this.EncodeUShort(0);
+			//}
 		}
 	}
 

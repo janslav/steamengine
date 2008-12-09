@@ -1459,10 +1459,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void RemoveSkill(ushort id) {
+			CharSyncQueue.AboutToChangeSkill(this, id);
 			AbstractSkillDef aDef = AbstractSkillDef.ById(id);
-			SkillsAbilities.Remove(aDef);
+			SkillsAbilities.Remove(aDef);			
 		}
-
 
 		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
 		public override ushort GetSkill(int id) {
