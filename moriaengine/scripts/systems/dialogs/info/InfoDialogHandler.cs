@@ -275,13 +275,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			switch(gr.pressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
-					args.SetTag(D_Info.pagingFieldsTK, TagMath.IGetTag(args, D_Info.pagingFieldsTK)) - PAGE_ROWS * fieldsColumnsCount);
+					args.SetTag(D_Info.pagingFieldsTK, TagMath.IGetTag(args, D_Info.pagingFieldsTK) - PAGE_ROWS * fieldsColumnsCount);
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
 					//set the first indexes one page forwards
-					args.SetTag(D_Info.pagingFieldsTK, TagMath.IGetTag(args, D_Info.pagingFieldsTK)) + PAGE_ROWS * fieldsColumnsCount);
+					args.SetTag(D_Info.pagingFieldsTK, TagMath.IGetTag(args, D_Info.pagingFieldsTK) + PAGE_ROWS * fieldsColumnsCount);
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
