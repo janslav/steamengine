@@ -56,8 +56,12 @@ namespace SteamEngine.Networking {
 				case 0x0b:
 					this.subPacket = Pool<SetLanguageSubPacket>.Acquire();
 					break;
+				case 0x06:
+					this.subPacket = Pool<PartySubPacket>.Acquire();
+					break;					
 				default:
 					Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
+					this.OutputPacketLog();
 					return ReadPacketResult.DiscardSingle;
 			}
 
@@ -67,6 +71,14 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
 			this.subPacket.Handle(this, conn, state);
+		}
+
+		public override void Dispose() {
+			if (this.subPacket != null) {
+				this.subPacket.Dispose();
+				this.subPacket = null;
+			}
+			base.Dispose();
 		}
 
 		public abstract class SubPacket : Poolable {
@@ -94,7 +106,6 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-
 		public sealed class SetLanguageSubPacket : SubPacket {
 			string language;
 
@@ -108,6 +119,183 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		public sealed class PartySubPacket : SubPacket {
+			SubPacket subSubPacket;
+
+			protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+				byte subSubId = packet.DecodeByte();
+				switch (subSubId) {
+					case 0x01:
+						this.subSubPacket = Pool<AddAPartyMemberSubSubPacket>.Acquire();
+						break;
+					case 0x02:
+						this.subSubPacket = Pool<RemoveAPartyMemberSubSubPacket>.Acquire();
+						break;
+					case 0x03:
+						this.subSubPacket = Pool<TellPartyMemberAMessageSubSubPacket>.Acquire();
+						break;
+					case 0x04:
+						this.subSubPacket = Pool<TellFullPartyAMessageSubSubPacket>.Acquire();
+						break;
+					case 0x06:
+						this.subSubPacket = Pool<PartyCanLootMeSubSubPacket>.Acquire();
+						break;
+					case 0x08:
+						this.subSubPacket = Pool<AcceptJoinPartyInvitationSubSubPacket>.Acquire();
+						break;
+					case 0x09:
+						this.subSubPacket = Pool<DeclineJoinPartyInvitationSubSubPacket>.Acquire();
+						break;
+					default:
+						Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x6 (Party) - subsubpacket " + subSubId.ToString("x") + " (len " + blockSize + ")");
+						packet.OutputPacketLog();
+						return ReadPacketResult.DiscardSingle;
+				}
+
+				Logger.WriteDebug("Handling packet 0xbf - subpacket 0x6 (Party) - subsubpacket " + subSubId.ToString("x") + " (len " + blockSize + ")");
+				return this.subSubPacket.ReadSubPacket(packet, blockSize);
+			}
+
+			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				this.subSubPacket.Handle(packet, conn, state);
+			}
+
+			public override void Dispose() {
+				if (this.subSubPacket != null) {
+					this.subSubPacket.Dispose();
+					this.subSubPacket = null;
+				}
+				base.Dispose();
+			}
+
+			public sealed class AddAPartyMemberSubSubPacket : SubPacket {
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnAdd(state.CharacterNotNull);
+					}
+				}
+			}
+
+			public sealed class RemoveAPartyMemberSubSubPacket : SubPacket {
+				int uid;
+
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					this.uid = packet.DecodeInt();
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnRemove(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
+					}
+				}
+			}
+
+			public sealed class TellPartyMemberAMessageSubSubPacket : SubPacket {
+				int uid;
+				string message;
+
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					this.uid = packet.DecodeInt();
+					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 8);
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnPrivateMessage(state.CharacterNotNull, Thing.UidGetCharacter(this.uid), this.message);
+					}
+				}
+			}
+
+			public sealed class TellFullPartyAMessageSubSubPacket : SubPacket {
+				string message;
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 4);
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnPublicMessage(state.CharacterNotNull, this.message);
+					}
+				}
+			}
+
+			public sealed class PartyCanLootMeSubSubPacket : SubPacket {
+				bool canLoot;
+
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					this.canLoot = packet.DecodeBool();
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnSetCanLoot(state.CharacterNotNull, this.canLoot);
+					}
+				}
+			}
+
+			public sealed class AcceptJoinPartyInvitationSubSubPacket : SubPacket {
+				int uid;
+
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					this.uid = packet.DecodeInt();
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnAccept(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
+					}
+				}
+			}
+
+			public sealed class DeclineJoinPartyInvitationSubSubPacket : SubPacket {
+				int uid;
+
+				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+					this.uid = packet.DecodeInt();
+					return ReadPacketResult.Success;
+				}
+
+				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+					PartyCommands instance = PartyCommands.Handler;
+					if (instance != null) {
+						instance.OnDecline(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
+					}
+				}
+			}
+		}
+	}
+
+	//yes, this is a dirty copy from RunUO :)
+	public abstract class PartyCommands {
+		private static PartyCommands instance;
+
+		public static PartyCommands Handler {
+			get { return instance; }
+			protected set { instance = value; }
+		}
+
+		public abstract void OnAdd(AbstractCharacter self);
+		public abstract void OnRemove(AbstractCharacter self, AbstractCharacter target);
+		public abstract void OnPrivateMessage(AbstractCharacter self, AbstractCharacter target, string text);
+		public abstract void OnPublicMessage(AbstractCharacter self, string text);
+		public abstract void OnSetCanLoot(AbstractCharacter self, bool canLoot);
+		public abstract void OnAccept(AbstractCharacter self, AbstractCharacter leader);
+		public abstract void OnDecline(AbstractCharacter self, AbstractCharacter leader);
 	}
 
 	public sealed class GameServerLoginInPacket : GameIncomingPacket {
