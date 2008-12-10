@@ -227,9 +227,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			CombatArmorValues retVal = Pool<CombatArmorValues>.Acquire();
 			retVal.armorVsP = armorClassVsP;
-			retVal.armorVsM += armorClassVsM;
-			retVal.mindDefenseVsP += mindDefenseVsP;
-			retVal.mindDefenseVsM += mindDefenseVsM;
+			retVal.armorVsM = armorClassVsM;
+			retVal.mindDefenseVsP = mindDefenseVsP;
+			retVal.mindDefenseVsM = mindDefenseVsM;
 
 			int acModifier = self.ArmorClassModifier;
 			int mdModifier = self.MindDefenseModifier;
