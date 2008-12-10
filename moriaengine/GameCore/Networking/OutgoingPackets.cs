@@ -1796,4 +1796,115 @@ namespace SteamEngine.Networking {
 			this.EncodeZeros(4);
 		}
 	}
+
+	public sealed class AddPartyMembersOutPacket : GeneralInformationOutPacket {
+		List<uint> members = new List<uint>();
+
+		public void Prepare(IEnumerable<AbstractCharacter> members) {
+			this.members.Clear();
+			foreach (AbstractCharacter ch in members) {
+				this.members.Add(ch.FlaggedUid);
+			}
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x6; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(0x01);
+			int n = this.members.Count;
+			this.EncodeByte((byte) n);
+			for (int i = 0; i < n; i++) {
+				this.EncodeUInt(this.members[i]);
+			}
+		}
+	}
+
+	public sealed class RemoveAPartyMemberOutPacket : GeneralInformationOutPacket {
+		List<uint> members = new List<uint>();
+
+		public void PrepareEmpty(AbstractCharacter self) {
+			this.members.Clear();
+			this.members.Add(self.FlaggedUid);
+		}
+
+		public void Prepare(AbstractCharacter removedMember, IEnumerable<AbstractCharacter> members) {
+			this.members.Clear();
+			this.members.Add(removedMember.FlaggedUid);
+			foreach (AbstractCharacter ch in members) {
+				this.members.Add(ch.FlaggedUid);
+			}
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x6; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(0x02);
+			int n = this.members.Count;
+			this.EncodeByte((byte) (n - 1));
+			for (int i = 0; i < n; i++) {
+				this.EncodeUInt(this.members[i]);
+			}
+		}
+	}
+
+	public sealed class TellPartyMemberAMessageOutPacket : GeneralInformationOutPacket {
+		uint sourceUid;
+		string message;
+
+		public void Prepare(uint sourceUid, string message) {
+			this.sourceUid = sourceUid;
+			this.message = message;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x6; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(0x03);
+			this.EncodeUInt(this.sourceUid);
+			this.EncodeBigEndianUnicodeString(this.message);
+		}
+	}
+
+	public sealed class TellFullPartyAMessageOutPacket : GeneralInformationOutPacket {
+		uint sourceUid;
+		string message;
+
+		public void Prepare(uint sourceUid, string message) {
+			this.sourceUid = sourceUid;
+			this.message = message;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x6; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(0x04);
+			this.EncodeUInt(this.sourceUid);
+			this.EncodeBigEndianUnicodeString(this.message);
+		}
+	}
+
+	public sealed class PartyInvitationOutPacket : GeneralInformationOutPacket {
+		uint leaderUid;
+
+		public void Prepare(uint leaderUid) {
+			this.leaderUid = leaderUid;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x6; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(0x07);
+			this.EncodeUInt(this.leaderUid);
+		}
+	}
 }
