@@ -30,117 +30,75 @@ namespace SteamEngine.CompiledScripts {
 		internal static readonly TriggerKey tkMemberAdded = TriggerKey.Get("MemberAdded");
 		internal static readonly TriggerKey tkMemberRemoved = TriggerKey.Get("MemberRemoved");
 		internal static readonly TriggerKey tkCreate = TriggerKey.Get("Create");
-        internal static readonly TriggerKey tkDestroy = TriggerKey.Get("Destroy");
-        internal static readonly TriggerKey tkDenyMemberRemoveRequest = TriggerKey.Get("DenyMemberRemoveRequest");
-        internal static readonly TriggerKey tkDenyMemberAddRequest = TriggerKey.Get("DenyMemberAddRequest");
+		internal static readonly TriggerKey tkDestroy = TriggerKey.Get("Destroy");
+		internal static readonly TriggerKey tkDenyRemoveMember = TriggerKey.Get("DenyRemoveMember");
+		internal static readonly TriggerKey tkDenyAddMember = TriggerKey.Get("DenyAddMember");
 
-		private static Dictionary<string, RoleDef> byName = new Dictionary<string, RoleDef>(StringComparer.OrdinalIgnoreCase);
-		
+		//private static Dictionary<string, RoleDef> byName = new Dictionary<string, RoleDef>(StringComparer.OrdinalIgnoreCase);
+
 		private static Dictionary<string, ConstructorInfo> roleDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
-        //asi nebude potreba...
-        private TriggerGroup scriptedTriggers;
+		private TriggerGroup scriptedTriggers;
 
-        [Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden "+
-                "in every RoleDef's descendant!")]
-        public virtual Role Create(string name) {
-            Role newRole = CreateImpl(name);
-            Trigger_Create(newRole);
-            return newRole;
-        }
-
-        protected virtual Role CreateImpl(string name) {
-            Role newRole = new Role(this);
-			newRole.Name = name;
-
+		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
+				"in every RoleDef's descendant!")]
+		public Role Create(RoleDef def, RoleKey key) {
+			Role newRole = CreateImpl();
+			newRole.RoleDef = def;
+			newRole.Key = key;
+			this.Trigger_Create(newRole);
 			return newRole;
-        }
+		}
 
-        #region triggerMethods
-        protected virtual void On_Create(Character chr, Role role) {
-            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_Create");            
-        }
+		protected virtual Role CreateImpl() {
+			return Pool<Role>.Acquire();
+		}
 
-        protected void Trigger_Create(Role role) {
-            TryTrigger(Globals.SrcCharacter, RoleDef.tkCreate, null);
-            role.On_RoleCreate(this);
-            On_Create((Character)Globals.SrcCharacter, role);            
-        }
+		#region triggerMethods
 
-        protected virtual bool On_Destroy(Character chr, Role role) {
-            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_Destroy");
-            return false; //no cancelling
-        }
+		protected void Trigger_Create(Role role) {
+			this.TryTrigger(role, RoleDef.tkCreate, null);
+			try {
+				role.On_Create();
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		}
 
-        protected bool Trigger_Destroy(Character chr, Role role) {
-            bool cancel = false;
-            cancel = TryCancellableTrigger(chr, RoleDef.tkDestroy, null);
-            if (!cancel) {
-                cancel = role.On_RoleDestroy(this);
-                if (!cancel) {//still not cancelled
-                    cancel = On_Destroy(chr, role);
-                }
-            }
-            return cancel;
-        }        
+		protected void Trigger_Destroy(Role role) {
+			this.TryTrigger(role, RoleDef.tkDestroy, null);
+			try {
+				role.On_Destroy();
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		}
 
-        protected virtual void On_MemberAdded(Character chr, Role role) {
-            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_MemberAdded");            
-        }
+		internal DenyResultRoles Trigger_DenyAddMember(Character chr, Role role) {
+			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, role);
+			bool cancel = this.TryCancellableTrigger(role, RoleDef.tkDenyAddMember, args);
+			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				role.On_DenyAddMember(args);
+			}
+			return args.Result;
+		}
 
-        internal void Trigger_MemberAdded(Character chr, Role role) {
-            TryTrigger(chr, RoleDef.tkMemberAdded, null);
-            role.On_RoleMemberAdded(this, chr);
-            On_MemberAdded(chr, role);            
-        }
+		internal void Trigger_MemberAdded(Character chr, Role role) {
+			TryTrigger(role, RoleDef.tkMemberAdded, new ScriptArgs(chr));
+			role.On_MemberAdded(chr);
+		}
 
-		protected virtual bool On_DenyMemberAddRequest(DenyRoleTriggerArgs args) {
-            //imeplementation of possible "add preventing" checks such as "too many people in that role etc"
-            return false; //continue
-        }
+		internal DenyResultRoles Trigger_DenyRemoveMember(Character chr, Role role) {
+			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, role);
+			bool cancel = this.TryCancellableTrigger(role, RoleDef.tkDenyRemoveMember, args);
+			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
+				role.On_DenyRemoveMember(args);
+			}
+			return args.Result;
+		}
 
-		internal bool Trigger_DenyMemberAddRequest(DenyRoleTriggerArgs args) {
-            bool cancel = false;
-            cancel = this.TryCancellableTrigger(args.assignee, RoleDef.tkDenyMemberAddRequest, args);
-            if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
-                cancel = args.assgdRole.On_RoleDenyMemberAddRequest(args);
-                if (!cancel) {//still not cancelled
-                    cancel = On_DenyMemberAddRequest(args);
-                }
-            }
-            return cancel;
-        }
+		internal void Trigger_MemberRemoved(Character chr, Role role) {
+			this.TryTrigger(role, RoleDef.tkMemberRemoved, new ScriptArgs(chr));
+			role.On_MemberRemoved(chr);
+		}
 
-        protected virtual void On_MemberRemoved(Character chr, Role role) {
-            //chr.SysMessage("Role " + Name + " nemá implementaci trigger metody On_MemberRemoved");            
-        }
-
-        internal void Trigger_MemberRemoved(Character chr, Role role) {
-            //not cancellable trigger - it is run after the DenyMemberRemoveRequest
-            if(chr != null && role != null) {
-                TryTrigger(chr, RoleDef.tkMemberRemoved, null);
-                role.On_RoleMemberRemoved(this, chr);
-                On_MemberRemoved(chr, role);
-            }
-        }
-
-		protected virtual bool On_DenyMemberRemoveRequest(DenyRoleTriggerArgs args) {
-			//imeplementation of possible "remove preventing" checks such as "comeone must stay in the role etc"
-            return false; //continue
-        }
-
-		internal bool Trigger_DenyMemberRemoveRequest(DenyRoleTriggerArgs args) {
-            bool cancel = false;
-            cancel = this.TryCancellableTrigger(args.assignee, RoleDef.tkDenyMemberRemoveRequest, args);
-            if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
-                cancel = args.assgdRole.On_RoleDenyMemberRemoveRequest(args);
-                if (!cancel) {//still not cancelled
-                    cancel = On_DenyMemberRemoveRequest(args);
-                }
-            }
-            return cancel;
-        }
-        #endregion triggerMethods
+		#endregion triggerMethods
 
 		public static RoleDef ByDefname(string defname) {
 			AbstractScript script;
@@ -148,26 +106,28 @@ namespace SteamEngine.CompiledScripts {
 			return script as RoleDef;
 		}
 
-		public static RoleDef ByName(string key) {
-			RoleDef retVal;
-			byName.TryGetValue(key, out retVal);
-			return retVal;
-		}
+		//public static RoleDef ByName(string key) {
+		//    RoleDef retVal;
+		//    byName.TryGetValue(key, out retVal);
+		//    return retVal;
+		//}
 
-		public static int RolesCount {
-			get {
-				return byName.Count;
-			}
-		}
+		//public static int RolesCount {
+		//    get {
+		//        return byName.Count;
+		//    }
+		//}
+
+		#region Loading from scripts
 
 		private static void RegisterRoleDef(RoleDef rd) {
 			byDefname[rd.Defname] = rd;
-			byName[rd.Name] = rd;
+			//byName[rd.Name] = rd;
 		}
 
 		private static void UnRegisterRoleDef(RoleDef rd) {
 			byDefname.Remove(rd.Defname);
-			byName.Remove(rd.Name);
+			//byName.Remove(rd.Name);
 		}
 
 		public static new void Bootstrap() {
@@ -237,12 +197,12 @@ namespace SteamEngine.CompiledScripts {
 
 			//now do load the trigger code. 
 			//possibly will not be used until we decide to widen the roledef's functionality
-            if (input.TriggerCount > 0) {
-                input.headerName = "t__" + input.headerName + "__"; //naming of the trigger group for @assign, unassign etd. triggers
-                roleDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-            } else {
-                roleDef.scriptedTriggers = null;
-            }
+			if (input.TriggerCount > 0) {
+				input.headerName = "t__" + input.headerName + "__"; //naming of the trigger group for @assign, unassign etc. triggers
+				roleDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+			} else {
+				roleDef.scriptedTriggers = null;
+			}
 
 			roleDef.LoadScriptLines(input);
 
@@ -258,24 +218,25 @@ namespace SteamEngine.CompiledScripts {
 		internal static void LoadingFinished() {
 
 		}
+		#endregion Loading from scripts
 
-		private FieldValue name; //logical name of the ability
-		
+		//private FieldValue name; //logical name of the ability
+
 		public RoleDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			name = InitField_Typed("name", "", typeof(string));			
+			//name = InitField_Typed("name", "", typeof(string));
 		}
 
-		public string Name {
-			get {
-				return (string) name.CurrentValue;
-			}
-		}
+		//public string Name {
+		//    get {
+		//        return (string) name.CurrentValue;
+		//    }
+		//}
 
-		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+		public bool TryCancellableTrigger(Role role, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
-				object retVal = this.scriptedTriggers.TryRun(self, td, sa);
+				object retVal = this.scriptedTriggers.TryRun(role, td, sa);
 				try {
 					int retInt = Convert.ToInt32(retVal);
 					if (retInt == 1) {
@@ -287,59 +248,54 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+		public void TryTrigger(Role role, TriggerKey td, ScriptArgs sa) {
 			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.TryRun(self, td, sa);
+				this.scriptedTriggers.TryRun(role, td, sa);
 			}
 		}
 
-		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			base.LoadScriptLine(filename, line, param, args);
-		}
-
 		public override string ToString() {
-			return GetType().Name + " " + Name;
+			return this.GetType().Name + " " + this.Defname;
 		}
 
 		#region utilities
 		[Summary("Return enumerable containing all roles (copying the values from the main dictionary)")]
 		public static IEnumerable<RoleDef> AllRoles {
 			get {
-				if (byName != null) {
-					return byName.Values;
-				} else {
-					return null;
+				foreach (AbstractScript script in AllScripts) {
+					RoleDef roleDef = script as RoleDef;
+					if (roleDef != null) {
+						yield return roleDef;
+					}
 				}
 			}
-		}		
+		}
 		#endregion utilities
-	}    
+	}
 
-    [Summary("Argument wrapper used in DenyMemberAddRequest trigger")]	
-    public class DenyRoleTriggerArgs : ScriptArgs {
-        public readonly Character assignee;
-        public readonly RoleDef runRoleDef;
-        public readonly Role assgdRole;
+	[Summary("Argument wrapper used in DenyMemberAddRequest trigger")]
+	public class DenyRoleTriggerArgs : ScriptArgs {
+		public readonly Character assignee;
+		public readonly Role role;
 
-        public DenyRoleTriggerArgs(params object[] argv)
-            : base(argv) {
+		public DenyRoleTriggerArgs(params object[] argv)
+			: base(argv) {
 			Sanity.IfTrueThrow(!(argv[0] is DenyResultRoles), "argv[0] is not DenyResultRoles");
-        }
+		}
 
-		public DenyRoleTriggerArgs(Character assignee, Role assgdRole)
-			: this(DenyResultRoles.Allow, assignee, assgdRole.RoleDef, assgdRole) {
-            this.assignee = assignee;
-            this.runRoleDef = assgdRole.RoleDef;
-            this.assgdRole = assgdRole;
-        }
+		public DenyRoleTriggerArgs(Character assignee, Role role)
+			: this(DenyResultRoles.Allow, assignee, role) {
+			this.assignee = assignee;
+			this.role = role;
+		}
 
 		public DenyResultRoles Result {
-            get {
+			get {
 				return (DenyResultRoles) Convert.ToInt32(argv[0]);
-            }
-            set {
-                argv[0] = value;
-            }
-        }
-    }
+			}
+			set {
+				argv[0] = value;
+			}
+		}
+	}
 }

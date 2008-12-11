@@ -1713,34 +1713,17 @@ namespace SteamEngine.CompiledScripts {
         #region roles
         [Summary("Check if character has been cast to the given role")]
         public bool HasRole(Role role) {
-			HashSet<Role> myRoles = RolesManagement.charactersRoles[this];
-			if (myRoles != null) {
-				return RolesManagement.charactersRoles[this].Contains(role);
-			}
-            return false;
+            return RolesManagement.HasRole(this, role);
         }
 
-        [Summary("Check if character has been cast to any role created by given RoleDef "+
-                "e.g. useful for finding out if char is member of any house or citizen of any town etc.")]
-        public bool HasRole(RoleDef roledef) {
-			HashSet<Role> myRoles = RolesManagement.charactersRoles[this];
-			if (myRoles != null) {
-				foreach (Role role in myRoles) {
-                    if (role.RoleDef == roledef) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+		//these triggers might get alive if they prove to be needed. For now I dont think so
+		//[Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
+		//internal virtual void On_RoleAssign(Role role) {
+		//}
 
-        [Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
-        internal virtual void On_RoleAssign(Role role) {
-        }
-
-        [Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
-        internal virtual void On_RoleUnAssign(Role role) {
-        }
+		//[Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
+		//internal virtual void On_RoleUnAssign(Role role) {
+		//}
         #endregion roles
 
 		public override void TryCastSpellFromBook(int spellid) {

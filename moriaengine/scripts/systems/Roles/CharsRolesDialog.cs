@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (rlList == null) {
 				//vzit seznam roli z focusa dle vyhledavaciho kriteria
 				Character whose = (Character) focus;
-				HashSet<Role> rolesSet = RolesManagement.GetCharactersRoles(whose);
+				ICollection<Role> rolesSet = RolesManagement.GetCharactersRoles(whose);
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				rlList = ListifyRoles(rolesSet, TagMath.SGetTag(args, D_CharsRolesList.criteriumTK));
 				SortRoles(rlList, (SortingCriteria) TagMath.IGetTag(args, D_CharsRolesList.sortingTK));
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Role rl = rlList[i];
 				//infodialog
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + 2 * i);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rl.Name);
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rl.Key.name);
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(rl.RoleDef.Defname);
 				//roledef info dialog
 				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + 2 * i);
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			foreach (Role entry in roles) {
 				if (criteria == null || criteria.Equals("")) {
 					rlsList.Add(entry);//bereme vse
-				} else if (entry.Name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					rlsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu ability
 				}
 			}
@@ -217,7 +217,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Role x, Role y) {
-			return String.Compare(x.Name, y.Name, true);
+			return String.Compare(x.Key.name, y.Key.name, true);
 		}
 	}
 

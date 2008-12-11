@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             for (int i = firstiVal; i < imax; i++) {
                 RoleDef rd = rlList[i];
 
-                dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(rd.Name);
+				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(rd.Defname);
                 dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rd.Defname);
                 //a na zaver odkaz do infodialogu
                 dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + i);
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             foreach (RoleDef entry in roles) {
                 if (criteria == null || criteria.Equals("")) {
                     rlsList.Add(entry);//bereme vse
-                } else if (entry.Name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Defname.ToUpper().Contains(criteria.ToUpper())) {
                     rlsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu ability
                 }
             }
@@ -203,7 +203,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
 
         public int Compare(RoleDef x, RoleDef y) {
-            return String.Compare(x.Name, y.Name, true);
+			return String.Compare(x.Defname, y.Defname, true);
         }
     }
 
