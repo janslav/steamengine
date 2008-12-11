@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	//abilities running possible results
-	public enum DenyResultAbilities {
+	public enum DenyResultAbilities : int {
 		Allow = 1, //we can use the ability
 		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
 		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Summary("Roles member adding/removing possible results")]
-	public enum DenyResultRoles {
+	public enum DenyResultRoles : int {
 		Allow = 1, //we can add/remove the member
 
 		//specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	//specificy how many items should we try to find at the specified location
-	public enum ItemFindQuantity {
+	public enum ItemFindQuantity : int {
 		FindAll = 1, //searches the whole location and returns the list of all items that correspond to the desired one
 		FindFirst = 2 //searches until the first corresponding item is found
 	}
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 		InputNumber
 	}
 
-	public enum SettingsDisplay {
+	public enum SettingsDisplay : int {
 		[Summary("Zobrazit vsechny kategorie v jednom dialogu")]
 		All,
 		[Summary("Zobrazit jen jednu vybranou kategorii")]
@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Summary("Result of setting a single field in the info or settings dialogs")]
-	public enum SettingsOutcome {
+	public enum SettingsOutcome : int {
 		NotChanged,//field has not changed at all
 		ChangedOK, //field has changed successfully
 		ChangedError //field has not changed due to some fault
@@ -413,6 +413,5 @@ namespace SteamEngine.CompiledScripts {
 		Adamantinum = 8, Eben = 8,
 		Mithril = 9, Elven = 9,
 		Sand = 10
-
 	}
 }

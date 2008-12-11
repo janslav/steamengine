@@ -18,94 +18,144 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using SteamEngine.Packets;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public class Role {
-        internal static int uids;
+	public class Role : Poolable {
+        private RoleDef def;
+		private RoleKey key;
 
-        protected int uid;
+		internal List<Character> members;
+		private System.Collections.ObjectModel.ReadOnlyCollection<Character> membersReadOnly;
 
-        protected RoleDef roledef;
-        protected string name;
-
-        internal Role(RoleDef roledef) {
-            this.uid = uids++;
-            this.roledef = roledef;
+		public Role() {
+			members = new List<Character>();
+			membersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<Character>(this.members);
         }
 
-        [Summary("Special message informing the target character that there is some problem removing him "+
-                "from this particular role")]
-        internal virtual void SendSpecialMemeberRemoveFailureMessage(Character toWho) {
-            //toWho.RedMessage("Something");
-        }
-
-        [Summary("Special message informing the target character that there is some problem adding him " +
-                "to this particular role")]
-        internal virtual void SendSpecialMemeberAddFailureMessage(Character toWho) {
-            //toWho.RedMessage("Something");
-        }
+		protected override void On_Reset() {
+			this.def = null;
+			this.key = null;
+			this.members.Clear();
+			base.On_Reset();
+		}
 
         #region triggers
         [Summary("Trigger called when the new role is created")]
-        internal virtual void On_RoleCreate(RoleDef roledef) {            
+		internal virtual void On_Create() {
         }
 
         [Summary("Trigger called when the role is destroyed")]
-        internal virtual bool On_RoleDestroy(RoleDef roledef) {
-            return false; //dont cancel
+		internal virtual void On_Destroy() {
         }
+
+		[Summary("Trigger called when the new member adding is requested from this role")]
+		internal virtual bool On_DenyAddMember(DenyRoleTriggerArgs args) {
+			return false; //dont cancel
+		}
 
         [Summary("Trigger called when the new member is assigned to this role")]
-        internal virtual void On_RoleMemberAdded(RoleDef roledef, Character chr) {
-            //no cancelling, this trigger will be run after the checkings in the 
-            //"denymemberaddrequest"
+        internal virtual void On_MemberAdded(Character newMember) {
+			//this trigger will be run after @DenyAddMember
         }
 
-        [Summary("Trigger called when the new member adding is requested from this role")]
-		internal virtual bool On_RoleDenyMemberAddRequest(DenyRoleTriggerArgs args) {
-            return false; //dont cancel
+		[Summary("Trigger called when the member remove is requested from this role")]
+		internal virtual bool On_DenyRemoveMember(DenyRoleTriggerArgs args) {
+			return false; //dont cancel
+		}   
+		
+		[Summary("Trigger called when the member is unassigned from this role")]
+		internal virtual void On_MemberRemoved(Character exMember) {
+			//this trigger will be run after @DenyRemoveMember
         }
-
-        [Summary("Trigger called when the member is unassigned from this role")]
-        internal virtual void On_RoleMemberRemoved(RoleDef roledef, Character chr) {
-            //no cancelling, this trigger will be run after the checkings in the 
-            //"denymemberremoverequest"
-        }
-
-        [Summary("Trigger called when the member remove is requested from this role")]
-		internal virtual bool On_RoleDenyMemberRemoveRequest(DenyRoleTriggerArgs args) {
-            return false; //dont cancel
-        }        
+     
         #endregion triggers
 
         public RoleDef RoleDef {
             get {
-                return roledef;
+                return def;
             }
+			internal set {
+				this.def = value;
+			}
         }
 
-        public string Name {
+        public RoleKey Key {
             get {
-                return name;
+                return key;
             }
-            set {
-                name = value;
-            }
+			internal set {
+				this.key = value;
+			}
         }
 
-        public override int GetHashCode() {
-            return uid;
-        }
+		public override string ToString() {
+			return string.Concat(this.GetType().ToString(), " °", this.key.name);
+		}
 
-        public override string ToString() {
-            return name;
-        }
+		public System.Collections.ObjectModel.ReadOnlyCollection<Character> Members {
+			get {
+				return this.membersReadOnly;
+			}
+		}
 
-        public override bool Equals(Object obj) {
-            return this == obj;
-        }
+		public override void Dispose() {
+			while (this.members.Count > 0) {
+				RolesManagement.UnAssign(this.members[0], this);
+			}
+
+			base.Dispose();
+		}
 	}
-}
+
+	public class RoleKey : AbstractKey {
+		private static Dictionary<string, RoleKey> byName = new Dictionary<string, RoleKey>(StringComparer.OrdinalIgnoreCase);
+
+		private RoleKey(string name, int uid)
+			: base(name, uid) {
+		}
+
+		public static RoleKey Get(string name) {
+			RoleKey key;
+			if (byName.TryGetValue(name, out key)) {
+				return key;
+			}
+			key = new RoleKey(name, uids++);
+			byName[name] = key;
+			return key;
+		}
+	}
+
+
+	public sealed class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+		public static Regex re = new Regex(@"^\°(?<value>.+)\s*$",                     
+			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+		public Type HandledType {
+			get {
+				return typeof(PluginKey);
+			}
+		}
+		
+		public Regex LineRecognizer { get {
+			return re;
+		} }
+		
+		public string Save(object objToSave) {
+			return "°" + ((PluginKey) objToSave).name;
+		}
+		
+		public object Load(Match match) {
+			return PluginKey.Get(match.Groups["value"].Value);
+		}
+		
+		public string Prefix {
+			get {
+				return "°";
+			}
+		}
+	}
+}		
