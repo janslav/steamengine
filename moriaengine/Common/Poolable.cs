@@ -28,7 +28,7 @@ namespace SteamEngine.Common {
 		internal PoolBase myPool;
 
 		public Poolable() {
-			this.On_Reset();
+			this.Reset();
 		}
 
 		protected override void On_DisposeManagedResources() {

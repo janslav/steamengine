@@ -203,7 +203,7 @@ namespace SteamEngine.Networking {
 
 				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
 					this.uid = packet.DecodeInt();
-					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 8);
+					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 10);
 					return ReadPacketResult.Success;
 				}
 
@@ -218,7 +218,7 @@ namespace SteamEngine.Networking {
 			public sealed class TellFullPartyAMessageSubSubPacket : SubPacket {
 				string message;
 				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
-					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 4);
+					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 6);
 					return ReadPacketResult.Success;
 				}
 

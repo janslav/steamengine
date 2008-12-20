@@ -41,7 +41,9 @@ namespace SteamEngine.CompiledScripts {
 			this.def = null;
 			this.key = null;
 			this.name = null;
-			this.members.Clear();
+			if (this.members != null) {
+				this.members.Clear();
+			}
 			base.On_Reset();
 		}
 

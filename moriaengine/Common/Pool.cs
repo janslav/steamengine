@@ -42,7 +42,7 @@ namespace SteamEngine.Common {
 		internal override void Release(Poolable p) {
 			T instance = (T) p;
 			lock (pool) {
-				Sanity.IfTrueThrow(queue.Contains(instance), "Pool.Release: Packet already in queue. This should not happen");
+				Sanity.IfTrueThrow(queue.Contains(instance), "Pool.Release: '"+p.ToString()+"' already in queue. This should not happen");
 				queue.Enqueue(instance);
 			}
 		}
