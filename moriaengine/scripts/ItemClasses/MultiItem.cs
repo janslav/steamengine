@@ -161,8 +161,8 @@ namespace SteamEngine.CompiledScripts {
 					string defname = gc["defname"].Value;
 					ItemDef def = ThingDef.Get(defname) as ItemDef;
 					if (def == null) {
-						uint model;
-						if (ConvertTools.TryParseUInt32(defname, out model)) {
+						int model;
+						if (ConvertTools.TryParseInt32(defname, out model)) {
 							def = ThingDef.FindItemDef(model) as ItemDef;
 						}
 						if (def == null) {

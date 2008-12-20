@@ -264,8 +264,8 @@ namespace SteamEngine.CompiledScripts {
 			InfoMessage("Nova vyznamna zprava, celkem neprectenych: "+MsgsBoard.CountUnread(this));
 		}
 
-		public void Add(uint model) {
-			Add(ThingDef.Get(model));
+		public void Add(int model) {
+			this.Add(ThingDef.Get(model));
 		}
 
 		public void Add(ThingDef addedDef) {

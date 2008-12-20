@@ -365,16 +365,16 @@ namespace SteamEngine.CompiledScripts {
 			if (target.Flag_InvisByMagic) {
 				return this.IsGM;
 			}
-			//if (target.Flag_Hidden) {
-			//    if (this.IsGM) {
-			//        return true;
-			//    } else {
-			//        HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
-			//        return ((ssp != null) &&
-			//            (ssp.hadDetectedMe != null) &&
-			//            (ssp.hadDetectedMe.Contains(this)));
-			//    }
-			//}
+			if (target.Flag_Hidden) {
+				if (this.IsGM) {
+					return true;
+				} else {
+					HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+					return ((ssp != null) &&
+						(ssp.hadDetectedMe != null) &&
+						(ssp.hadDetectedMe.Contains(this)));
+				}
+			}
 			return true;
 		}
 

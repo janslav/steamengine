@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				ushort gump = TypeDef.Gump;
 				if (gump == 0xffff) {		//It has no defined gump
-					AbstractItemDef idef = ThingDef.FindItemDef((uint) Model);
+					AbstractItemDef idef = ThingDef.FindItemDef(this.Model);
 					ContainerDef cdef = idef as ContainerDef;
 					if (cdef != null) {
 						gump = cdef.Gump;

@@ -24,7 +24,7 @@ Def:	//vars on the def
 	ushort HurtSound = SoundNames.None
 	ushort DeathSound = SoundNames.None
 
-	uint corpseModel = 0x2006
+	ushort corpseModel = 0x2006
 	
 	uint AnimsAvailable = 0xffffffff /*all anims by default*/
 	

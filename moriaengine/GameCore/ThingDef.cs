@@ -59,10 +59,10 @@ namespace SteamEngine {
 		//private static AbstractItemDef[] itemModelDefs = new AbstractItemDef[MaxItemModels];
 		//private static AbstractCharacterDef[] charModelDefs = new AbstractCharacterDef[MaxCharModels];
 
-		private static Dictionary<uint, AbstractItemDef> itemModelDefs = new Dictionary<uint, AbstractItemDef>();
-		private static Dictionary<uint, AbstractCharacterDef> charModelDefs = new Dictionary<uint, AbstractCharacterDef>();
-		private static uint highestItemModel = 0;
-		private static uint highestCharModel = 0;
+		private static Dictionary<int, AbstractItemDef> itemModelDefs = new Dictionary<int, AbstractItemDef>();
+		private static Dictionary<int, AbstractCharacterDef> charModelDefs = new Dictionary<int, AbstractCharacterDef>();
+		private static int highestItemModel = 0;
+		private static int highestCharModel = 0;
 		
 		internal ThingDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 			name = InitField_Typed("name", "", typeof(string));
@@ -323,7 +323,7 @@ namespace SteamEngine {
 			
 			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
 		*/
-		public static ThingDef Get(uint defnumber) {
+		public static ThingDef Get(int defnumber) {
 			ThingDef tdone = null;
 			tdone=FindCharDef(defnumber);
 			if (tdone==null) {
@@ -382,7 +382,7 @@ namespace SteamEngine {
 			
 			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
 		*/
-		public static AbstractItemDef FindItemDef(uint defnumber) {
+		public static AbstractItemDef FindItemDef(int defnumber) {
 			AbstractItemDef def;
 			itemModelDefs.TryGetValue(defnumber, out def);
 			return def;
@@ -397,7 +397,7 @@ namespace SteamEngine {
 			
 			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
 		*/
-		public static AbstractCharacterDef FindCharDef(uint defnumber) {
+		public static AbstractCharacterDef FindCharDef(int defnumber) {
 			AbstractCharacterDef def;
 			charModelDefs.TryGetValue(defnumber, out def);
 			return def;
@@ -476,15 +476,14 @@ namespace SteamEngine {
 			thingDef.ClearTriggerGroups();//maybe clear other things too?
 			
 			if (isNumeric) {
-				uint idefnum=(uint) defnum;
 				if (thingDef is AbstractItemDef) {
-					if (idefnum>highestItemModel) highestItemModel=idefnum;
+					if (defnum>highestItemModel) highestItemModel=defnum;
 					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
-					itemModelDefs[idefnum] = (AbstractItemDef) thingDef;
+					itemModelDefs[defnum] = (AbstractItemDef) thingDef;
 				} else if (thingDef is AbstractCharacterDef) {
-					if (idefnum>highestCharModel) highestCharModel=idefnum;
+					if (defnum>highestCharModel) highestCharModel=defnum;
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
-					charModelDefs[idefnum] = (AbstractCharacterDef) thingDef;
+					charModelDefs[defnum] = (AbstractCharacterDef) thingDef;
 				}
 			}
 		

@@ -42,63 +42,24 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
 				"in every RoleDef's descendant!")]
-		public Role Create(RoleDef def, RoleKey key) {
+		public Role Create(RoleKey key, string name) {
+			Role newRole = Create(key);
+			newRole.Name = name;			
+			return newRole;
+		}
+
+		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
+				"in every RoleDef's descendant!")]
+		public Role Create(RoleKey key) {
 			Role newRole = CreateImpl();
-			newRole.RoleDef = def;
-			newRole.Key = key;
-			this.Trigger_Create(newRole);
+			newRole.Init(this, key);
+			newRole.Trigger_Create();
 			return newRole;
 		}
 
 		protected virtual Role CreateImpl() {
 			return Pool<Role>.Acquire();
 		}
-
-		#region triggerMethods
-
-		protected void Trigger_Create(Role role) {
-			this.TryTrigger(role, RoleDef.tkCreate, null);
-			try {
-				role.On_Create();
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-		}
-
-		protected void Trigger_Destroy(Role role) {
-			this.TryTrigger(role, RoleDef.tkDestroy, null);
-			try {
-				role.On_Destroy();
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-		}
-
-		internal DenyResultRoles Trigger_DenyAddMember(Character chr, Role role) {
-			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, role);
-			bool cancel = this.TryCancellableTrigger(role, RoleDef.tkDenyAddMember, args);
-			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
-				role.On_DenyAddMember(args);
-			}
-			return args.Result;
-		}
-
-		internal void Trigger_MemberAdded(Character chr, Role role) {
-			TryTrigger(role, RoleDef.tkMemberAdded, new ScriptArgs(chr));
-			role.On_MemberAdded(chr);
-		}
-
-		internal DenyResultRoles Trigger_DenyRemoveMember(Character chr, Role role) {
-			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, role);
-			bool cancel = this.TryCancellableTrigger(role, RoleDef.tkDenyRemoveMember, args);
-			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
-				role.On_DenyRemoveMember(args);
-			}
-			return args.Result;
-		}
-
-		internal void Trigger_MemberRemoved(Character chr, Role role) {
-			this.TryTrigger(role, RoleDef.tkMemberRemoved, new ScriptArgs(chr));
-			role.On_MemberRemoved(chr);
-		}
-
-		#endregion triggerMethods
 
 		public static RoleDef ByDefname(string defname) {
 			AbstractScript script;

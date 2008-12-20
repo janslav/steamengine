@@ -232,7 +232,7 @@ namespace SteamEngine {
 				int lastItemNum = 0;
 				ItemDispidInfo lastItem = null;
 				for (int a=0; a<ItemDispidInfo.Num(); a++) {
-					AbstractItemDef def = ThingDef.FindItemDef((uint)a);
+					AbstractItemDef def = ThingDef.FindItemDef(a);
 					if (def==null) {
 						ItemDispidInfo idi = ItemDispidInfo.Get(a);
 						if (idi.isEmpty) {

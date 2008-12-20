@@ -26,7 +26,7 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public sealed class CharModelInfo {
-		private static Dictionary<ushort, CharModelInfo> animsByModel = new Dictionary<ushort, CharModelInfo>();
+		private static Dictionary<int, CharModelInfo> animsByModel = new Dictionary<int, CharModelInfo>();
 		private static CharAnimType[] bodyTable;
 
 		public readonly ushort model;
@@ -70,8 +70,8 @@ namespace SteamEngine.CompiledScripts {
 	        }
 		}
 
-		private CharModelInfo(ushort model) {
-			this.model = model;
+		private CharModelInfo(int model) {
+			this.model = (ushort) model;
 			this.charDef = (CharacterDef) ThingDef.FindCharDef(model);
 			if (this.charDef == null) {
 				throw new Exception("There is no Chardef for model 0x"+model.ToString("x"));
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts {
 			this.isGhost = IsGhostModel(model);
 		}
 
-		public static CharModelInfo Get(ushort model) {
+		public static CharModelInfo Get(int model) {
 			CharModelInfo info;
 			if (animsByModel.TryGetValue(model, out info)) {
 				return info;
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-	    private static bool IsMaleModel(int model) {
+		public static bool IsMaleModel(int model) {
 			switch (model) {
 				case 183:
 				case 185:
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 	    }
 
-		private static bool IsFemaleModel(int model) {
+		public static bool IsFemaleModel(int model) {
 			switch (model) {
 				case 184:
 				case 186:
@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 	    }
 
-		private static bool IsGhostModel(int model) {
+		public static bool IsGhostModel(int model) {
 			switch (model) {
 				case 402:
 				case 403:
@@ -149,5 +149,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 	    }
+
+		public static bool IsHumanModel(int model) {
+			return (CharModelInfo.Get(model).charAnimType & CharAnimType.Human) == CharAnimType.Human;
+		}
 	}
 }

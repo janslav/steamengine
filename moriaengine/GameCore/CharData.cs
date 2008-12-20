@@ -22,13 +22,13 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	class CharData {
-		private static Dictionary<uint, bool> knownDispids = new Dictionary<uint, bool>();
+		private static Dictionary<int, bool> knownDispids = new Dictionary<int, bool>();
 		
-		public static void AddDispid(uint uid) {
+		public static void AddDispid(int uid) {
 			knownDispids[uid]=true;
 		}
 		
-		public static bool Exists(uint num) {
+		public static bool Exists(int num) {
 			//Sanity.IfTrueThrow(num>ThingDef.MaxCharModels, "CharData.Exists("+num+") called: "+num+" is an invalid value (valid values are 0-"+ThingDef.MaxCharModels+")");
 			return knownDispids.ContainsKey(num);
 		}
@@ -66,7 +66,7 @@ namespace SteamEngine {
 							Logger.WriteWarning("Bodyconv.def contains a line in an unexpected format. That line is '"+line+"'");
 							break;
 						} else {
-							uint model = TagMath.ParseUInt32(args[0]);
+							int model = TagMath.ParseInt32(args[0]);
 							if (!Exists(model)) {
 								AddDispid(model);
 								AbstractCharacterDef def = ThingDef.FindCharDef(model);
