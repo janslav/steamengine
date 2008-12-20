@@ -217,13 +217,13 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public sealed class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class RoleKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
 		public static Regex re = new Regex(@"^\°(?<value>.+)\s*$",                     
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		public Type HandledType {
 			get {
-				return typeof(PluginKey);
+				return typeof(RoleKey);
 			}
 		}
 		
@@ -232,11 +232,11 @@ namespace SteamEngine.CompiledScripts {
 		} }
 		
 		public string Save(object objToSave) {
-			return "°" + ((PluginKey) objToSave).name;
+			return "°" + ((RoleKey) objToSave).name;
 		}
 		
 		public object Load(Match match) {
-			return PluginKey.Get(match.Groups["value"].Value);
+			return RoleKey.Get(match.Groups["value"].Value);
 		}
 		
 		public string Prefix {
