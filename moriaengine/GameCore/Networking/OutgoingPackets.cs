@@ -1211,6 +1211,60 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	public enum AffixType : byte {
+		Append = 0x00,
+		Prepend = 0x01,
+		//System = 0x02
+	}
+
+	public sealed class ClilocMessageAffixOutPacket : DynamicLengthOutPacket {
+		uint flaggedUid;
+		ushort model, color, font;
+		string sourceName, args, affix;
+		uint message;
+		byte type, flags;
+
+		//from can be null
+		public void Prepare(Thing from, uint message, string sourceName, SpeechType type, ushort font, int color, AffixType flags, string affix, string args) {
+			if (from == null) {
+				this.flaggedUid = 0xffffffff;
+				this.model = 0xffff;
+				this.flags = 0x02;
+			} else {
+				this.flaggedUid = from.FlaggedUid;
+				this.model = from.Model;
+				this.flags = 0x00;
+			}
+
+			this.flags |= (byte) flags;
+			this.sourceName = sourceName;
+			this.message = message;
+			this.args = args;
+			this.type = (byte) type;
+			this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
+			this.font = font;
+			this.affix = affix;
+		}
+
+		public override byte Id {
+			get { return 0xCC; }
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.model);
+			this.EncodeByte(this.type);
+			this.EncodeUShort(this.color);
+			this.EncodeUShort(this.font);
+			this.EncodeUInt(this.message);
+			this.EncodeByte(this.flags);
+			this.EncodeASCIIString(this.sourceName, 30);
+			this.EncodeASCIIString(this.affix);
+			this.EncodeBigEndianUnicodeString(this.args);
+			this.EncodeZeros(2);//msg terminator
+		}
+	}
+
 	public sealed class TargetCursorCommandsOutPacket : GameOutgoingPacket {
 		byte type;
 		byte cursorType;//3 = cancel

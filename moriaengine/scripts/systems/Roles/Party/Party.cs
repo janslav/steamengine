@@ -51,8 +51,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Reset() {
-			this.candidates.Clear();
+			if (this.candidates != null) {
+				this.candidates.Clear();
+			}
 			this.leader = null;
+			base.On_Reset();
 		}
 
 		public bool IsLeader(AbstractCharacter ch) {
@@ -122,9 +125,10 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState candidateState = newCandidate.GameState;
 			if (candidateState != null) {
-				PartyInvitationOutPacket p = Common.Pool<PartyInvitationOutPacket>.Acquire();
-				p.Prepare(leader.FlaggedUid);
-				candidateState.Conn.SendSinglePacket(p);
+				PacketGroup pg = PacketGroup.AcquireMultiUsePG();
+				pg.AcquirePacket<PartyInvitationOutPacket>().Prepare(leader.FlaggedUid);
+				pg.AcquirePacket<ClilocMessageAffixOutPacket>().Prepare(null, 1008089, "System", SpeechType.Name, 3, -1, AffixType.Prepend, leader.Name, "");//  : You are invited to join the party. Type /accept to join or /decline to decline the offer.
+				candidateState.Conn.SendPacketGroup(pg);
 
 				leader.ClilocSysMessage(1008090); // You have invited them to join the party.
 				if (!this.candidates.Contains(newCandidate)) {
@@ -202,21 +206,22 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		protected override void On_MemberRemoved(AbstractCharacter exMember, bool beingDestroyed) {
-			if (this.IsLeader(exMember)) {
+			if (!beingDestroyed && this.IsLeader(exMember)) {
 				this.Disband();
 				beingDestroyed = true;
+			}
+
+			GameState exState = exMember.GameState;
+			if (exState != null) {
+				RemoveAPartyMemberOutPacket empty = Common.Pool<RemoveAPartyMemberOutPacket>.Acquire();
+				empty.Prepare(exMember, null);
+				exState.Conn.SendSinglePacket(empty);
 			}
 
 			if (beingDestroyed) {
 				exMember.ClilocSysMessage(1005449); // Your party has disbanded.
 			} else {
-				GameState exState = exMember.GameState;
-				if (exState != null) {
-					RemoveAPartyMemberOutPacket empty = Common.Pool<RemoveAPartyMemberOutPacket>.Acquire();
-					empty.Prepare(exMember, null);
-
-					exMember.ClilocSysMessage(1005451); // You have been removed from the party.
-				}
+				exMember.ClilocSysMessage(1005451); // You have been removed from the party.
 
 				ReadOnlyCollection<AbstractCharacter> members = this.Members;
 				if (members.Count > 0) {
