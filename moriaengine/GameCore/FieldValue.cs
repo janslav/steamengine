@@ -215,8 +215,8 @@ namespace SteamEngine {
 					}
 					break;
 				case FieldValueType.ThingDefType:
-					uint id;
-					if (ConvertTools.TryParseUInt32(value, out id)) {
+					int id;
+					if (ConvertTools.TryParseInt32(value, out id)) {
 						ThingDef def;
 						if (typeof(AbstractItemDef).IsAssignableFrom(this.type)) {
 							def = ThingDef.FindItemDef(id);
@@ -560,7 +560,7 @@ namespace SteamEngine {
 						ThingDef td = value as ThingDef;
 						if (td == null) {
 							if (TagMath.IsNumberType(value.GetType())) {
-								uint id = ConvertTools.ToUInt32(value);
+								int id = ConvertTools.ToInt32(value);
 								if (typeof(AbstractItemDef).IsAssignableFrom(type)) {
 									td = ThingDef.FindItemDef(id);
 								} else {

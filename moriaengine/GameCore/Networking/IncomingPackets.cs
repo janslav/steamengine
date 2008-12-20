@@ -174,9 +174,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnAdd(state.CharacterNotNull);
+						instance.RequestAddMember(state.CharacterNotNull);
 					}
 				}
 			}
@@ -190,9 +190,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnRemove(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
+						instance.RequestRemoveMember(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
 					}
 				}
 			}
@@ -208,9 +208,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnPrivateMessage(state.CharacterNotNull, Thing.UidGetCharacter(this.uid), this.message);
+						instance.RequestPrivateMessage(state.CharacterNotNull, Thing.UidGetCharacter(this.uid), this.message);
 					}
 				}
 			}
@@ -223,9 +223,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnPublicMessage(state.CharacterNotNull, this.message);
+						instance.RequestPublicMessage(state.CharacterNotNull, this.message);
 					}
 				}
 			}
@@ -239,9 +239,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnSetCanLoot(state.CharacterNotNull, this.canLoot);
+						instance.SetCanLoot(state.CharacterNotNull, this.canLoot);
 					}
 				}
 			}
@@ -255,9 +255,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnAccept(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
+						instance.AcceptJoinRequest(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
 					}
 				}
 			}
@@ -271,9 +271,9 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Handler;
+					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
-						instance.OnDecline(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
+						instance.DeclineJoinRequest(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
 					}
 				}
 			}
@@ -284,18 +284,21 @@ namespace SteamEngine.Networking {
 	public abstract class PartyCommands {
 		private static PartyCommands instance;
 
-		public static PartyCommands Handler {
+		public static PartyCommands Instance {
 			get { return instance; }
-			protected set { instance = value; }
 		}
 
-		public abstract void OnAdd(AbstractCharacter self);
-		public abstract void OnRemove(AbstractCharacter self, AbstractCharacter target);
-		public abstract void OnPrivateMessage(AbstractCharacter self, AbstractCharacter target, string text);
-		public abstract void OnPublicMessage(AbstractCharacter self, string text);
-		public abstract void OnSetCanLoot(AbstractCharacter self, bool canLoot);
-		public abstract void OnAccept(AbstractCharacter self, AbstractCharacter leader);
-		public abstract void OnDecline(AbstractCharacter self, AbstractCharacter leader);
+		public PartyCommands() {
+			instance = this;
+		}
+
+		public abstract void RequestAddMember(AbstractCharacter self);
+		public abstract void RequestRemoveMember(AbstractCharacter self, AbstractCharacter target);
+		public abstract void RequestPrivateMessage(AbstractCharacter self, AbstractCharacter target, string text);
+		public abstract void RequestPublicMessage(AbstractCharacter self, string text);
+		public abstract void SetCanLoot(AbstractCharacter self, bool canLoot);
+		public abstract void AcceptJoinRequest(AbstractCharacter self, AbstractCharacter leader);
+		public abstract void DeclineJoinRequest(AbstractCharacter self, AbstractCharacter leader);
 	}
 
 	public sealed class GameServerLoginInPacket : GameIncomingPacket {

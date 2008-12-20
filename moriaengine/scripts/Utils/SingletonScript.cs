@@ -12,13 +12,14 @@ namespace SteamEngine.CompiledScripts {
 	public static class SingletonScript<T> where T : AbstractScript {
 		static T instance;
 
+		static SingletonScript() {
+			FindSingletonInstance();
+		}
+
 		public static T Instance {
 			get {
 				if (instance == null) {
-					FindSingletonInstance();
-					if (instance == null) {
-						throw new FatalException("No instance found of class " + typeof(T) + ".");
-					}
+					throw new FatalException("No instance found of class " + typeof(T) + ".");
 				}
 				return instance;
 			}
@@ -29,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 				T castScript = script as T;
 				if (castScript != null) {
 					if (instance != null) {
-						throw new FatalException(typeof(T)+" is not a singleton script class, you can't use it as such.");
+						throw new FatalException(typeof(T) + " is not a singleton script class, you can't use it as such.");
 					}
 					instance = castScript;
 				}

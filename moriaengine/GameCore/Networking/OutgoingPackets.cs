@@ -1190,7 +1190,7 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.args = args;
 			this.type = (byte) type;
-			this.color = this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
+			this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
 			this.font = font;
 		}
 
@@ -1832,8 +1832,10 @@ namespace SteamEngine.Networking {
 		public void Prepare(AbstractCharacter removedMember, IEnumerable<AbstractCharacter> members) {
 			this.members.Clear();
 			this.members.Add(removedMember.FlaggedUid);
-			foreach (AbstractCharacter ch in members) {
-				this.members.Add(ch.FlaggedUid);
+			if (members != null) {
+				foreach (AbstractCharacter ch in members) {
+					this.members.Add(ch.FlaggedUid);
+				}
 			}
 		}
 

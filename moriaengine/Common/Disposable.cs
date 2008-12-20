@@ -44,7 +44,6 @@ namespace SteamEngine.Common {
 			}
 
 			GC.SuppressFinalize(this); // remove this from gc finalizer list
-
 		}
 
 		[Summary("Utility method for disposing the whole contents of some Enumerable (such as list etc)")]
@@ -74,7 +73,7 @@ namespace SteamEngine.Common {
 				}
 				On_DisposeUnmanagedResources();
 			}
-			disposed = true;
+			this.disposed = true;
 		}
 
 		~Disposable() // maps to finalize
