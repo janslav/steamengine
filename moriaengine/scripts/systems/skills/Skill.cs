@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private void RemoveIfDefault() {
 			if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
-				cont.RemoveSkill(id);
+				cont.InternalRemoveSkill(id);
 			}
 		}
 

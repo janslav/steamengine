@@ -674,163 +674,6 @@ namespace SteamEngine {
 			base.On_Create();
 		}
 
-		//		//The code for each of these SendUpdate* methods is identical except for the method which is called
-		//		//in PacketSender by each. It would be more elegant if only one method did the actual work, but
-		//		//the only efficient way I can think of to do that, would be to have a 'static MethodInfo[] updateMethods'
-		//		//on Character, holding one MW for each update method, with the MWs pointing to the appropriate method in
-		//		//PacketSender. The real implementation would be in a new SendUpdateFor(UpdateType) method, with UpdateType being
-		//		//an enum containing Stats, Hitpoints, Mana, and Stamina. To call the prepare-packet method, it would
-		//		//call updateMethods[(int) updateType].Invoke(this, true); or (this, false);
-		//		
-		//		/*
-		//			Method: SendUpdateStats
-		//				This sends the current and maximum hitpoints, mana, and stamina, of this character,
-		//				to all clients who can see this character and are close enough for this character to be in
-		//				their update range.
-		//				
-		//				For sending to everyone but this character and GMs (with plevel >= plevelToSeeRealStats),
-		//				the stats are scaled to [0-255] to hide their real values.
-		//				
-		//				If only need to update only one of hitpoints, mana, or stamina, use SendUpdateHitpoints,
-		//				SendUpdateMana, or SendUpdateStamina. If you would need to call two or more of those methods,
-		//				then this method (SendUpdateStas) is actually more efficient.
-		//		*/
-		//		public void SendUpdateStats() {
-		//			PacketGroup groupScaled = null;
-		//			PacketGroup groupReal = null;
-		//			
-		//			foreach (AbstractCharacter viewer in PlayersInRange(Globals.MaxUpdateRange)) {
-		//				if (viewer.Conn!=null && (viewer==this || viewer.CanSee(this))) {
-		//					if (viewer==this || viewer.plevel>=Globals.plevelToSeeRealStats) {
-		//						if (groupReal==null) {
-		//							groupReal = new PacketGroup();
-		//							PacketSender.PrepareUpdateStats(this, true);
-		//						}
-		//						groupReal.SendTo(viewer.Conn);
-		//					} else {
-		//						if (groupScaled==null) {
-		//							groupScaled = new PacketGroup();
-		//							PacketSender.PrepareUpdateStats(this, false);
-		//						}
-		//						groupScaled.SendTo(viewer.Conn);
-		//					}
-		//				}
-		//			}
-		//			if (groupReal!=null) groupReal.Dispose();
-		//			if (groupScaled!=null) groupScaled.Dispose();
-		//		}
-		//		
-		//		/*
-		//			Method: SendUpdateHitpoints
-		//				This sends the current and maximum hitpoints of this character,
-		//				to all clients who can see this character and are close enough for the character to be in
-		//				their update range.
-		//				
-		//				For sending to everyone but this character and GMs (with plevel >= plevelToSeeRealStats),
-		//				the stats are scaled to [0-255] to hide their real values.
-		//				
-		//				If you need to update more than just hitpoints and maxhitpoints, you should use SendUpdateStats,
-		//				which would be more efficient than calling this method plus another.
-		//		*/
-		//		public void SendUpdateHitpoints() {
-		//			PacketGroup groupScaled = null;
-		//			PacketGroup groupReal = null;
-		//			
-		//			foreach (AbstractCharacter viewer in PlayersInRange(Globals.MaxUpdateRange)) {
-		//				if (viewer.Conn!=null && (viewer==this || viewer.CanSee(this))) {
-		//					if (viewer==this || viewer.plevel>=Globals.plevelToSeeRealStats) {
-		//						if (groupReal==null) {
-		//							groupReal = new PacketGroup();
-		//							PacketSender.PrepareUpdateHitpoints(this, true);
-		//						}
-		//						groupReal.SendTo(viewer.Conn);
-		//					} else {
-		//						if (groupScaled==null) {
-		//							groupScaled = new PacketGroup();
-		//							PacketSender.PrepareUpdateHitpoints(this, false);
-		//						}
-		//						groupScaled.SendTo(viewer.Conn);
-		//					}
-		//				}
-		//			}
-		//			if (groupReal!=null) groupReal.Dispose();
-		//			if (groupScaled!=null) groupScaled.Dispose();
-		//		}
-		//		
-		//		/*
-		//			Method: SendUpdateMana
-		//				This sends the current and maximum mana of this character,
-		//				to all clients who can see this character and are close enough for the character to be in
-		//				their update range.
-		//				
-		//				For sending to everyone but this character and GMs (with plevel >= plevelToSeeRealStats),
-		//				the stats are scaled to [0-255] to hide their real values.
-		//				
-		//				If you need to update more than just mana and maxmana, you should use SendUpdateStats,
-		//				which would be more efficient than calling this method plus another.
-		//		*/
-		//		public void SendUpdateMana() {
-		//			PacketGroup groupScaled = null;
-		//			PacketGroup groupReal = null;
-		//			
-		//			foreach (AbstractCharacter viewer in PlayersInRange(Globals.MaxUpdateRange)) {
-		//				if (viewer.Conn!=null && (viewer==this || viewer.CanSee(this))) {
-		//					if (viewer==this || viewer.plevel>=Globals.plevelToSeeRealStats) {
-		//						if (groupReal==null) {
-		//							groupReal = new PacketGroup();
-		//							PacketSender.PrepareUpdateMana(this, true);
-		//						}
-		//						groupReal.SendTo(viewer.Conn);
-		//					} else {
-		//						if (groupScaled==null) {
-		//							groupScaled = new PacketGroup();
-		//							PacketSender.PrepareUpdateMana(this, false);
-		//						}
-		//						groupScaled.SendTo(viewer.Conn);
-		//					}
-		//				}
-		//			}
-		//			if (groupReal!=null) groupReal.Dispose();
-		//			if (groupScaled!=null) groupScaled.Dispose();
-		//		}
-		//		
-		//		/*
-		//			Method: SendUpdateStamina
-		//				This sends the current and maximum stamina of this character,
-		//				to all clients who can see this character and are close enough for the character to be in
-		//				their update range.
-		//				
-		//				For sending to everyone but this character and GMs (with plevel >= plevelToSeeRealStats),
-		//				the stats are scaled to [0-255] to hide their real values.
-		//				
-		//				If you need to update more than just stamina and maxstamina, you should use SendUpdateStats,
-		//				which would be more efficient than calling this method plus another.
-		//		*/
-		//		public void SendUpdateStamina() {
-		//			PacketGroup groupScaled = null;
-		//			PacketGroup groupReal = null;
-		//			
-		//			foreach (AbstractCharacter viewer in PlayersInRange(Globals.MaxUpdateRange)) {
-		//				if (viewer.Conn!=null && (viewer==this || viewer.CanSee(this))) {
-		//					if (viewer==this || viewer.plevel>=Globals.plevelToSeeRealStats) {
-		//						if (groupReal==null) {
-		//							groupReal = new PacketGroup();
-		//							PacketSender.PrepareUpdateStamina(this, true);
-		//						}
-		//						groupReal.SendTo(viewer.Conn);
-		//					} else {
-		//						if (groupScaled==null) {
-		//							groupScaled = new PacketGroup();
-		//							PacketSender.PrepareUpdateStamina(this, false);
-		//						}
-		//						groupScaled.SendTo(viewer.Conn);
-		//					}
-		//				}
-		//			}
-		//			if (groupReal!=null) groupReal.Dispose();
-		//			if (groupScaled!=null) groupScaled.Dispose();
-		//		}
-
 		public bool IsStandingOn(AbstractItem i) {
 			int zdiff = Math.Abs(i.Z - Z);
 			return (X == i.X && Y == i.Y && zdiff >= 0 && zdiff <= i.Height);
@@ -1038,24 +881,6 @@ namespace SteamEngine {
 			return false;
 		}
 
-		//This is called directly by InPackets if the client directly requests the paperdoll
-		//(dclick with the 0x80000000 flag), so that if they use the paperdoll macro or the paperdoll button
-		//while mounted, they won't dismount.
-		//public void ShowPaperdollTo(GameConn conn) {
-		//    if (conn != null) {
-		//        AbstractCharacter connChar = conn.CurCharacter;
-		//        if (connChar != null) {
-		//            bool canEquip = true;
-		//            if (connChar != this) {
-		//                canEquip = connChar.CanEquipItemsOn(this);
-		//            }
-		//            PacketSender.PreparePaperdoll(this, canEquip);
-		//            PacketSender.SendTo(conn, true);
-		//        }
-		//    }
-		//}
-
-
 		public void ShowPaperdollToSrc() {
 			this.ShowPaperdollTo(Globals.SrcCharacter);
 		}
@@ -1170,7 +995,6 @@ namespace SteamEngine {
 		}
 
 		//Commands
-
 		public void Anim(int anim) {
 			this.Anim(anim, 1, false, false, 0x01);
 		}
@@ -1199,24 +1023,6 @@ namespace SteamEngine {
 			p.Prepare(this, (ushort) anim, numAnims, backwards, undo, frameDelay);
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
-
-		//[Obsolete("Use the alternative from Networking namespace", false)]
-		//public void ShowStatusBarTo(GameConn conn) {
-		//    if (this.Equals(conn.CurCharacter)) {
-		//        PacketSender.PrepareStatusBar(this, StatusBarType.Me);
-		//    } else if (conn.CurCharacter.CanRename(this)) {
-		//        PacketSender.PrepareStatusBar(this, StatusBarType.Pet);
-		//    } else {
-		//        PacketSender.PrepareStatusBar(this, StatusBarType.Other);
-		//    }
-		//    PacketSender.SendTo(conn, true);
-		//}
-
-		//[Obsolete("Use the alternative from Networking namespace", false)]
-		//public void ShowSkillsTo(GameConn conn) {
-		//    PacketSender.PrepareAllSkillsUpdate(Skills, conn.Version.displaySkillCaps);
-		//    PacketSender.SendTo(conn, true);
-		//}
 
 		public void ShowStatusBarTo(AbstractCharacter viewer, TCPConnection<GameState> viewerConn) {
 			StatusBarInfoOutPacket packet = Pool<StatusBarInfoOutPacket>.Acquire();
@@ -1327,6 +1133,13 @@ namespace SteamEngine {
 
 		public abstract HighlightColor GetHighlightColorFor(AbstractCharacter viewer);
 
+		public virtual ICollection<AbstractCharacter> PartyMembers {
+			get {
+				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
+			}
+		}
+
+
 		public void CancelTarget() {
 			GameState state = this.GameState;
 			if (state != null) {
@@ -1346,42 +1159,32 @@ namespace SteamEngine {
 			ImmutableRectangle rect = new ImmutableRectangle(this, this.UpdateRange);
 			Map map = this.GetMap();
 
-			foreach (AbstractItem item in map.GetItemsInRectangle(rect)) {
-				if (this.CanSeeForUpdate(item)) {
-					item.GetOnGroundUpdater().SendTo(this, state, conn);
+			foreach (Thing t in map.GetThingsInRectangle(rect)) {
+				this.ProcessSendNearbyThing(state, conn, t);
+			}
 
-					PacketSequences.TrySendPropertiesTo(state, conn, item);
+			if (state.AllShow) {
+				foreach (Thing thing in map.GetDisconnectsInRectangle(rect)) {
+					this.ProcessSendNearbyThing(state, conn, thing);
 				}
 			}
-			foreach (AbstractCharacter ch in map.GetCharsInRectangle(rect)) {
+		}
+
+		private void ProcessSendNearbyThing(GameState state, TCPConnection<GameState> conn, Thing t) {
+			AbstractItem item = t as AbstractItem;
+			if (item != null) {
+				if (this.CanSeeForUpdate(item)) {
+					item.GetOnGroundUpdater().SendTo(this, state, conn);
+					PacketSequences.TrySendPropertiesTo(state, conn, item);
+				}
+			} else {
+				AbstractCharacter ch = (AbstractCharacter) t;
 				if ((this != ch) && this.CanSeeForUpdate(ch)) {
 					PacketSequences.SendCharInfoWithPropertiesTo(this, state, conn, ch);
-
 					UpdateCurrentHealthOutPacket packet = Pool<UpdateCurrentHealthOutPacket>.Acquire();
 					packet.Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
 					conn.SendSinglePacket(packet);
 				}
-			}
-			if (state.AllShow) {
-				foreach (Thing thing in map.GetDisconnectsInRectangle(rect)) {
-					if ((this != thing) && this.CanSeeForUpdate(thing)) {
-						AbstractItem item = thing as AbstractItem;
-						if (item != null) {
-							item.GetOnGroundUpdater().SendTo(this, state, conn);
-
-							PacketSequences.TrySendPropertiesTo(state, conn, item);
-						} else {
-							AbstractCharacter ch = (AbstractCharacter) thing;
-
-							PacketSequences.SendCharInfoWithPropertiesTo(this, state, conn, ch);
-
-							UpdateCurrentHealthOutPacket packet = Pool<UpdateCurrentHealthOutPacket>.Acquire();
-							packet.Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
-							conn.SendSinglePacket(packet);
-						}
-					}
-				}
-
 			}
 		}
 

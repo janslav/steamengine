@@ -545,7 +545,9 @@ namespace SteamEngine.Networking {
 				bool basePropsChanged = this.GetBasePropsChanged();
 				bool propertiesChanged = (changeflags & NSFlags.Property) == NSFlags.Property;
 				bool propertiesExist = propertiesChanged;
-				ObjectPropertiesContainer iopc = null;
+				ObjectPropertiesContainer iopc = null;				
+				ICollection<AbstractCharacter> partyMembers = ch.PartyMembers;
+				bool hasParty = (partyMembers != null && partyMembers.Count > 1);
 
 				Map chMap = ch.GetMap();
 				ushort chX = ch.X;
@@ -574,27 +576,43 @@ namespace SteamEngine.Networking {
 							bool staminaChanged = GetStaminaChanged();
 							if (hitsChanged && manaChanged && staminaChanged) {//all 3 stats
 								Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Stats to self");
-								MobAttributesOutPacket maop = Pool<MobAttributesOutPacket>.Acquire();
-								maop.Prepare(ch, true); //0x2d
-								myConn.SendSinglePacket(maop);
+								PacketGroup statsPG = PacketGroup.AcquireMultiUsePG();
+								statsPG.AcquirePacket<MobAttributesOutPacket>().Prepare(ch, true); //0x2d
+								myConn.SendPacketGroup(statsPG);
+								if (hasParty) {
+									SendPGToPartyMembers(ch, partyMembers, statsPG);
+								}
+								statsPG.Dispose();
 							} else {
 								if (manaChanged) {
 									Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Mana to self");
-									UpdateCurrentManaOutPacket ucmop = Pool<UpdateCurrentManaOutPacket>.Acquire();
-									ucmop.Prepare(ch.FlaggedUid, ch.Mana, ch.MaxMana, true); //0xa2
-									myConn.SendSinglePacket(ucmop);
+									PacketGroup manaPG = PacketGroup.AcquireMultiUsePG();
+									manaPG.AcquirePacket<UpdateCurrentManaOutPacket>().Prepare(ch.FlaggedUid, ch.Mana, ch.MaxMana, true); //0xa2
+									myConn.SendPacketGroup(manaPG);
+									if (hasParty) {
+										SendPGToPartyMembers(ch, partyMembers, manaPG);
+									}
+									manaPG.Dispose();
 								}
 								if (staminaChanged) {
 									Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Stamina to self");
-									UpdateCurrentStaminaOutPacket ucsop = Pool<UpdateCurrentStaminaOutPacket>.Acquire();
-									ucsop.Prepare(ch.FlaggedUid, ch.Stam, ch.MaxStam, true); //0xa3
-									myConn.SendSinglePacket(ucsop);
+									PacketGroup stamPG = PacketGroup.AcquireMultiUsePG();
+									stamPG.AcquirePacket<UpdateCurrentStaminaOutPacket>().Prepare(ch.FlaggedUid, ch.Stam, ch.MaxStam, true); //0xa3
+									myConn.SendPacketGroup(stamPG);
+									if (hasParty) {
+										SendPGToPartyMembers(ch, partyMembers, stamPG);
+									}
+									stamPG.Dispose();
 								}
 								if (hitsChanged) {
 									Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending Hitpoints to self");
-									UpdateCurrentHealthOutPacket uchop = Pool<UpdateCurrentHealthOutPacket>.Acquire();
-									uchop.Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, true); //0xa1
-									myConn.SendSinglePacket(uchop);
+									PacketGroup hitsPG = PacketGroup.AcquireMultiUsePG();
+									hitsPG.AcquirePacket<UpdateCurrentHealthOutPacket>().Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, true); //0xa1
+									myConn.SendPacketGroup(hitsPG);
+									if (hasParty) {
+										SendPGToPartyMembers(ch, partyMembers, hitsPG);
+									}
+									hitsPG.Dispose();
 								}
 							}
 						}
@@ -662,7 +680,7 @@ namespace SteamEngine.Networking {
 					if (teleported) {
 						this.RemoveFromViewIfNeeded();
 					} else if (posChanged) {
-						range++;//not teleported, that means only step, so we update wider range
+						range++;//not teleported, that means only a step, so we update wider range
 					}
 
 					bool myCharInfosTouched = false;
@@ -729,6 +747,11 @@ namespace SteamEngine.Networking {
 											if (propertiesExist && Globals.aos && viewerState.Version.aosToolTips) {
 												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
 											}
+
+											if (!hasParty || !partyMembers.Contains(viewer)) { //new char, send hitpoints
+												SendPercentHitsPacket(ch, ref pgHitsPacket, viewerState, viewerConn);
+											}
+											hitsSent = true;
 										}
 									}
 									if (!newCharSent) {
@@ -772,12 +795,9 @@ namespace SteamEngine.Networking {
 										}
 									}
 									if (hitsChanged && !hitsSent) {
-										if (pgHitsPacket == null) {
-											pgHitsPacket = PacketGroup.AcquireMultiUsePG();
-											pgHitsPacket.AcquirePacket<UpdateCurrentHealthOutPacket>().Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
+										if (!hasParty || !partyMembers.Contains(viewer)) {
+											SendPercentHitsPacket(ch, ref pgHitsPacket, viewerState, viewerConn);
 										}
-										Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending hits packet " + viewerState);
-										viewerConn.SendPacketGroup(pgHitsPacket);
 									}
 								}
 							}
@@ -824,6 +844,26 @@ namespace SteamEngine.Networking {
 				}
 				if (pgUpdateMount != null) {
 					pgUpdateMount.Dispose();
+				}
+			}
+
+			private static void SendPercentHitsPacket(AbstractCharacter ch, ref PacketGroup pgHitsPacket, GameState viewerState, TCPConnection<GameState> viewerConn) {
+				if (pgHitsPacket == null) {
+					pgHitsPacket = PacketGroup.AcquireMultiUsePG();
+					pgHitsPacket.AcquirePacket<UpdateCurrentHealthOutPacket>().Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
+				}
+				Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending hits packet " + viewerState);
+				viewerConn.SendPacketGroup(pgHitsPacket);
+			}
+
+			private static void SendPGToPartyMembers(AbstractCharacter self, ICollection<AbstractCharacter> partyMembers, PacketGroup statsPG) {
+				foreach (AbstractCharacter partyMember in partyMembers) {
+					if (self.CanSeeCoordinates(partyMember)) {
+						GameState partyState = partyMember.GameState;
+						if (partyState != null) {
+							partyState.Conn.SendPacketGroup(statsPG);
+						}
+					}
 				}
 			}
 
