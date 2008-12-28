@@ -1458,7 +1458,7 @@ namespace SteamEngine.CompiledScripts {
 			skl.Cap = cap; //set lock type
 		}
 
-		internal void RemoveSkill(ushort id) {
+		internal void InternalRemoveSkill(ushort id) {
 			CharSyncQueue.AboutToChangeSkill(this, id);
 			AbstractSkillDef aDef = AbstractSkillDef.ById(id);
 			SkillsAbilities.Remove(aDef);			
@@ -2389,6 +2389,22 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual bool On_DenyCloseDoor(DenySwitchDoorArgs args) {
 			return false;
+		}
+
+		public Party Party {
+			get {
+				return Party.GetParty(this);
+			}
+		}
+
+		public override ICollection<AbstractCharacter> PartyMembers {
+			get {
+				Party p = Party.GetParty(this);
+				if (p != null) {
+					return p.Members;
+				}
+				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
+			}
 		}
 	}
 }
