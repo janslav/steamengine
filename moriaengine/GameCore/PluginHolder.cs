@@ -95,11 +95,17 @@ namespace SteamEngine {
 		#region Triggergroups
 
 		public void AddTriggerGroup(TriggerGroup tg) {
-			if (tg == null) 
-				return;
+			if (this.PrivateAddTriggerGroup(tg)) {
+				tg.TryRun(this, TriggerKey.assign, null);
+			}
+		}
+
+		private bool PrivateAddTriggerGroup(TriggerGroup tg) {
+			if (tg != null)
+				return false;
 			if (tags != null) {
 				if (tags.ContainsKey(tg)) {
-					return;
+					return false;
 				}
 			} else {
 				tags = new Hashtable();
@@ -112,7 +118,7 @@ namespace SteamEngine {
 				listNode.nextNode = firstTGListNode;
 			}
 			firstTGListNode = listNode;
-			tg.TryRun(this, TriggerKey.assign, null);
+			return true;
 		}
 		
 		public void RemoveTriggerGroup(TriggerGroup tg) {
@@ -326,7 +332,7 @@ namespace SteamEngine {
 					}
 					TriggerGroup tg = TriggerGroup.Get(tgName);
 					if (tg != null) {
-						AddTriggerGroup(tg);
+						this.PrivateAddTriggerGroup(tg);
 					} else {
 						throw new Exception("TriggerGroup '"+tgName+"' does not exist.");
 					}
