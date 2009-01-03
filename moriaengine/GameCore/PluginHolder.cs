@@ -101,7 +101,7 @@ namespace SteamEngine {
 		}
 
 		private bool PrivateAddTriggerGroup(TriggerGroup tg) {
-			if (tg != null)
+			if (tg == null)
 				return false;
 			if (tags != null) {
 				if (tags.ContainsKey(tg)) {
