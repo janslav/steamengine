@@ -375,7 +375,7 @@ namespace SteamEngine {
 				if (aos) {
 					loginFlags |= 0x20;
 					//featuresFlags|=0x801c;
-					featuresFlags = 0xFFFF;
+					featuresFlags |= 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x8000;
 				}
 
 				//'loginFlags' variable:

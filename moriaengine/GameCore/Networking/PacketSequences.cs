@@ -42,12 +42,15 @@ namespace SteamEngine.Networking {
 
 			pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(ch.Season, ch.Cursor); //0xBC
 			pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags); //0xB9
-			pg.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Me); //0x11
 			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch));
+			pg.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Me); //0x11
 
-			pg.AcquirePacket<LoginCompleteOutPacket>();
+			pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55
 			//TODO? 0x5B - current time
-
+			
 			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
 
 			conn.SendPacketGroup(pg);
