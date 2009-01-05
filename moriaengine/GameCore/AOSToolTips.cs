@@ -11,7 +11,7 @@ using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
 
-	public class ObjectPropertiesContainer : Poolable {
+	public class AOSToolTips : Poolable {
 		private int uid;
 		private Thing thing;
 		private List<uint> ids = new List<uint>(3);
@@ -26,17 +26,17 @@ namespace SteamEngine {
 		PacketGroup newIdNGroup;
 		PacketGroup dataNGroup;
 
-		private static CacheDictionary<Thing, ObjectPropertiesContainer> cache = 
-			new CacheDictionary<Thing, ObjectPropertiesContainer>(50000, true);//znate nekdo nejaky lepsi cislo? :)
+		private static CacheDictionary<Thing, AOSToolTips> cache = 
+			new CacheDictionary<Thing, AOSToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
 		private static int uids;
 
-		public ObjectPropertiesContainer() {
+		public AOSToolTips() {
 		}
 
-		public static ObjectPropertiesContainer GetFromCache(Thing thing) {
-			ObjectPropertiesContainer opc;
-			cache.TryGetValue(thing, out opc);
-			return opc;
+		public static AOSToolTips GetFromCache(Thing thing) {
+			AOSToolTips toolTips;
+			cache.TryGetValue(thing, out toolTips);
+			return toolTips;
 		}
 
 		public static void RemoveFromCache(Thing thing) {
@@ -49,9 +49,9 @@ namespace SteamEngine {
 			this.uid = uids++;
 			this.ids.Clear();
 			this.arguments.Clear();
-			//this.oldIdGroup = null;
-			//this.newIdGroup = null;
-			//this.dataGroup = null;
+			this.oldIdNGroup = null;
+			this.newIdNGroup = null;
+			this.dataNGroup = null;
 			this.initDone = false;
 			this.thing = null;
 		}

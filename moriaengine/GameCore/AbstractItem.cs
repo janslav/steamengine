@@ -600,7 +600,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public override void InvalidateProperties() {
+		public sealed override void InvalidateProperties() {
 			ItemSyncQueue.PropertiesChanged(this);
 			base.InvalidateProperties();
 		}

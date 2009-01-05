@@ -729,15 +729,15 @@ namespace SteamEngine {
 			if (state != null) {
 				TCPConnection<GameState> conn = state.Conn;
 
-				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
-				pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(this.Season, this.Cursor);
-				pg.AcquirePacket<SetFacetOutPacket>().Prepare(this.GetMap().Facet);
-				pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, this);
-				pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange);
-				//(Not To-do, or to-do much later on): 0xbf map patches (INI flag) (.. We don't need this on custom maps, and it makes it more complicated to load the maps/statics)
-				//(TODO): 0x4e and 0x4f personal and global light levels
-				conn.SendPacketGroup(pg);
+				//pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(this.Season, this.Cursor);
+				//pg.AcquirePacket<SetFacetOutPacket>().Prepare(this.GetMap().Facet);
+				//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, this);
+				//pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange);
+				////(Not To-do, or to-do much later on): 0xbf map patches (INI flag) (.. We don't need this on custom maps, and it makes it more complicated to load the maps/statics)
+				////(TODO): 0x4e and 0x4f personal and global light levels
+				//conn.SendPacketGroup(pg);
 
 				PreparedPacketGroups.SendWarMode(conn, this.Flag_WarMode);
 
@@ -889,19 +889,28 @@ namespace SteamEngine {
 			if (viewer != null) {
 				GameState state = viewer.GameState;
 				if (state != null) {
-					this.ShowPaperdollTo(viewer, state.Conn);
+					this.ShowPaperdollTo(viewer, state, state.Conn);
 				}
 			}
 		}
 
-		public void ShowPaperdollTo(AbstractCharacter viewer, TCPConnection<GameState> conn) {
+		public void ShowPaperdollTo(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
 			bool canEquip = true;
 			if (viewer != this) {
 				canEquip = viewer.CanEquipItemsOn(this);
 			}
 			OpenPaperdollOutPacket packet = Pool<OpenPaperdollOutPacket>.Acquire();
 			packet.Prepare(this, canEquip);
-			conn.SendSinglePacket(packet);
+			viewerConn.SendSinglePacket(packet);
+
+			if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+				foreach (AbstractItem equipped in this.GetVisibleEquip()) {
+					AOSToolTips toolTips = equipped.GetAOSToolTips();
+					if (toolTips != null) {
+						toolTips.SendIdPacket(viewerState, viewerConn);
+					}
+				}
+			}
 		}
 
 		public virtual bool CanEquipItemsOn(AbstractCharacter targetChar) {
@@ -1213,7 +1222,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public override void InvalidateProperties() {
+		public sealed override void InvalidateProperties() {
 			CharSyncQueue.PropertiesChanged(this);
 			base.InvalidateProperties();
 		}

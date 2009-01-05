@@ -57,7 +57,12 @@ namespace SteamEngine.CompiledScripts {
 			if (state != null) {
 				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 				pg.AcquirePacket<DrawContainerOutPacket>().PrepareSpellbook(this.FlaggedUid);
-				pg.AcquirePacket<ItemsInContainerOutPacket>().PrepareSpellbook(this.FirstSpellId, this.contents, this.FlaggedUid);
+
+				if (state.Version.needsNewSpellbook) {
+					pg.AcquirePacket<NewSpellbookOutPacket>().Prepare(this.FlaggedUid, this.Model, (short) this.FirstSpellId, this.contents);
+				} else {
+					pg.AcquirePacket<ItemsInContainerOutPacket>().PrepareSpellbook(this.FlaggedUid, this.FirstSpellId, this.contents);
+				}
 				state.Conn.SendPacketGroup(pg);
 			}
 		}
@@ -157,7 +162,6 @@ namespace SteamEngine.CompiledScripts {
 							}
 						}
 					}
-
 					return false;
 				}
 				PacketSequences.SendDenyResultMessage(self.GameState.Conn, targetted, canReach);

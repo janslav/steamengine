@@ -42,13 +42,14 @@ namespace SteamEngine {
 
 		public readonly ClientType type;
 		public readonly string versionString;//what we got from the client
-		OSI2DVersionNumber osi2dVerNum = OSI2DVersionNumber.nullValue;
+		private OSI2DVersionNumber osi2dVerNum = OSI2DVersionNumber.nullValue;
 		//int palanthirVerNum = 0;
 
 		//flags:
 		public readonly bool displaySkillCaps = false;
 		public readonly bool aosToolTips = false;
 		public readonly bool oldAosToolTips = false;
+		public readonly bool needsNewSpellbook = false;
 
 		private ClientVersion() {
 			type = ClientType.Unknown;
@@ -66,20 +67,20 @@ namespace SteamEngine {
 					byte minor = byte.Parse(m.Groups["minor"].Value);
 					byte revision = byte.Parse(m.Groups["revision"].Value);
 					char letter = m.Groups["letter"].Value[0];
-					type = ClientType.OSI2D;
-					osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
+					this.type = ClientType.OSI2D;
+					this.osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
 
 					int number = osi2dVerNum.comparableNumber;
 					if (number >= 3000803) {//client 3.0.8d
-						displaySkillCaps = true;
+						this.displaySkillCaps = true;
 					}
 					if (number > 3000816) {//client 3.0.8o
-						aosToolTips = true;
+						this.aosToolTips = true;
 						if (number < 4000500) {//client 4.0.5? not sure here.
-							oldAosToolTips = true;
+							this.oldAosToolTips = true;
 						}
 					}
-
+					this.needsNewSpellbook = number >= 4000000;
 				}
 			} catch (Exception e) {
 				Logger.WriteWarning("While evaluating '"+LogStr.Ident(versionString)+"' as client version string", e);

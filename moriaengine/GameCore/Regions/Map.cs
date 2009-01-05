@@ -38,9 +38,7 @@ namespace SteamEngine.Regions {
 		public const int mulSectorAnd = ~7;	
 		
 		//sectorAnd and mulSectorAnd are also used to calculate relative x/y coordinates - much faster than using shifts.
-		
-		private static readonly ushort[] mapSizeX = {6144, 6144}; //7168x4096 for the new map0.mul
-		private static readonly ushort[] mapSizeY = {4096, 4096};
+
 		private static Map[] maps = new Map[0x100];
 		private static ArrayList mapsList = new ArrayList();
 		
@@ -93,16 +91,6 @@ namespace SteamEngine.Regions {
 			}
 			return retVal;
 		}
-		
-		/**
-			This returns the real map number for a particular mapplane. For most mapplanes, that is 0.
-
-				255 should always resolve to 0 with this function, that much is expected. Statics usually are on map 255,
-				BUT 255 should NOT probably be visible from Malas, Ilshenar (sp?), etc. Hmmm. -SL
-		*/
-		public byte Facet { get {
-			return 0;//this will be other once we have support for more mapxx.mul
-		} }
 
 		/**
 			This determines if the specified x/y coordinates are within the specified mapplane.
@@ -171,29 +159,58 @@ namespace SteamEngine.Regions {
 				map.InactivateRegions(true); //true - clear also the dynamic regions
 			}
 		}
-		
+
+		#region facets
+
+		//private static readonly ushort[] mapSizeX = { 6144 }; //7168x4096 for the new map0.mul
+		//private static readonly ushort[] mapSizeY = { 4096 };
+
 		/**
 			Returns the number of X tiles in the specified mapplane.
 		*/
 		public static int GetMapSizeX(int mapplane) {
-			if (mapplane>=0 && mapplane<mapSizeX.Length) {
-				return mapSizeX[mapplane];
-			} else {
-				return mapSizeX[0];
-			}
+			//if (mapplane >= 0 && mapplane < mapSizeX.Length) {
+			//    return mapSizeX[mapplane];
+			//} else {
+			//	return mapSizeX[0];
+			//}
+			return 6144;
 		}
-		
+
 		/**
 			Returns the number of Y tiles in the specified mapplane.
 		*/
 		public static int GetMapSizeY(int mapplane) {
-			if (mapplane>=0 && mapplane<mapSizeY.Length) {
-				return mapSizeY[mapplane];
-			} else {
-				return mapSizeY[0];
+			//if (mapplane >= 0 && mapplane < mapSizeY.Length) {
+			//    return mapSizeY[mapplane];
+			//} else {
+			//    return mapSizeY[0];
+			//}
+			return 4096;
+		}
+
+		/**
+			This returns the real map number for a particular mapplane. Currently, it's 0 for all mapplanes.
+		*/
+		public byte Facet {
+			get {
+				return 0;//this will be variable once (if) we have support for more mapxx.mul
 			}
 		}
-		
+
+		public static int GetFacetCount() {
+			return 1;
+		}
+
+		public static int GetFacetPatchesMapCount(int facet) {
+			return 0; //we have no support for map patches (yet?) so we ignore them
+		}
+
+		public static int GetFacetPatchesStaticsCount(int facet) {
+			return 0; //we have no support for map patches (yet?) so we ignore them
+		}
+		#endregion
+
 		/**
 			This returns the number of X sectors in the MUL files. This is based on MUL sectors being 8x8.
 
@@ -252,8 +269,8 @@ namespace SteamEngine.Regions {
 		
 		private Map(byte m) {
 			this.m = m;
-			sizeX = GetMapSizeX(m);
-			sizeY = GetMapSizeY(m);
+			this.sizeX = GetMapSizeX(m);
+			this.sizeY = GetMapSizeY(m);
 			Logger.WriteDebug("Initializing map "+m);
 			numXSectors=(uint) (sizeX>>sectorFactor);
 			numYSectors=(uint) (sizeY>>sectorFactor);

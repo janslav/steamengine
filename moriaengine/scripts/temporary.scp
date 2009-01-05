@@ -1,0 +1,3 @@
+[function f]
+stationaryeffect(0x3735, 6, 30, 1, 1, 1, 1)
+Sound(0x5C)

@@ -81,11 +81,12 @@ layer = 1 //Set by Converter
 on=@create
 this.Contents = 0xff
 
-[SpellBookDef i_spellbook_necro]
-name = "necro spellbook"
-model = i_spellbook
+[SpellBookDef 0x2253]
+name = "necromancer book"
+defname = i_spellbook_necro
 layer = 1 //Set by Converter 
 //value = 300 // commented out by Converter 
+FirstSpellId = 100
 
 on=@create
 this.Contents = 0xffffffffffffff

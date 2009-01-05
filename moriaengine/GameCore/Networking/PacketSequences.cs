@@ -27,38 +27,65 @@ using System.Net;
 namespace SteamEngine.Networking {
 	public static class PacketSequences {
 
-		internal static void SendStartGameSequence(TCPConnection<GameState> conn, GameState state, AbstractAccount acc, AbstractCharacter ch) {
+		internal class DelayedLoginTimer : SteamEngine.Timers.Timer {
+			AbstractCharacter ch;
+
+			internal DelayedLoginTimer(AbstractCharacter ch) {
+				this.ch = ch;
+			}
+
+			protected sealed override void OnTimeout() {
+				GameState state = this.ch.GameState;
+				if (state == null) {
+					this.Delete();
+				}
+				if (state.Version != ClientVersion.nullValue) {
+					SendStartGameSequence(this.ch);
+					this.Delete();
+				}
+			}
+		}
+
+		internal static void SendStartGameSequence(AbstractCharacter ch) {
+			GameState state = ch.GameState;
+			if (state == null) {
+				return;
+			}
+			TCPConnection<GameState> conn = state.Conn;
+
 			Logger.WriteDebug("Starting game for character " + ch);
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
-			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, Regions.Map.GetMapSizeX(0), Regions.Map.GetMapSizeY(0)); //0x1B
+			Regions.Map map = ch.GetMap();
+			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.sizeX, map.sizeY); //0x1B
 
-			byte facet = ch.GetMap().Facet;
-			if (facet != 0) {
-				pg.AcquirePacket<SetFacetOutPacket>().Prepare(facet);//0xBF 0x08
-			}
-			//TODO? 0xBF 0x04
+			//pg.AcquirePacket<SetFacetOutPacket>().Prepare(map.Facet);//0xBF 0x08
+			//conn.SendPacketGroup(pg);
 
-			pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(ch.Season, ch.Cursor); //0xBC
-			pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags); //0xB9
-			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
-			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
-			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
-			pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch));
-			pg.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Me); //0x11
+			//PreparedPacketGroups.SendEnableMapDiffFiles(conn); //0xBF 0x18
 
-			pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55
-			//TODO? 0x5B - current time
+			//pg = PacketGroup.AcquireSingleUsePG();
+			//pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(ch.Season, ch.Cursor); //0xBC
 			
-			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
+			//pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch));
+			//pg.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Me); //0x11
+
+			//pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55
+			//pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55
+			//TODO? 0x5B - current time
+
+			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
 
 			conn.SendPacketGroup(pg);
 
-			PreparedPacketGroups.SendWarMode(conn, ch.Flag_WarMode);
+			//PreparedPacketGroups.SendWarMode(conn, ch.Flag_WarMode);
 
-			//state.WriteLine("Welcome to " + Globals.serverName);
-			new DelayedResyncTimer(ch).DueInSeconds = 2;
+			
+			new DelayedResyncTimer(ch).DueInSeconds = 1;
 		}
 
 		internal class DelayedResyncTimer : SteamEngine.Timers.Timer {
@@ -69,7 +96,17 @@ namespace SteamEngine.Networking {
 			}
 
 			protected sealed override void OnTimeout() {
-				ch.Resync();
+				GameState state = this.ch.GameState;
+				if (state != null) {
+					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+					pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55 //jak se ukazalo tohle musi bejt az po ty pauze, i kdyz tezko rict proc. Vyssi klienti (402+) to tezko snasely v jedny davce s 0x1B
+					state.Conn.SendPacketGroup(pg);
+
+					this.ch.Resync();
+
+					
+					state.WriteLine("Welcome to " + Globals.serverName);
+				}
 			}
 		}
 
@@ -92,11 +129,11 @@ namespace SteamEngine.Networking {
 				using (ListBuffer<AbstractItem> listBuffer = Pool<ListBuffer<AbstractItem>>.Acquire()) {
 					if (iicp.PrepareContainer(container, viewer, listBuffer.list)) {
 						viewerConn.SendSinglePacket(iicp);
-						if (Globals.aos && viewerState.Version.aosToolTips) {
+						if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
 							foreach (AbstractItem contained in listBuffer.list) {
-								ObjectPropertiesContainer containedOpc = contained.GetProperties();
-								if (containedOpc != null) {
-									containedOpc.SendIdPacket(viewerState, viewerConn);
+								AOSToolTips toolTips = contained.GetAOSToolTips();
+								if (toolTips != null) {
+									toolTips.SendIdPacket(viewerState, viewerConn);
 								}
 							}
 						}
@@ -108,10 +145,10 @@ namespace SteamEngine.Networking {
 		}
 
 		public static void TrySendPropertiesTo(GameState viewerState, TCPConnection<GameState> viewerConn, Thing target) {
-			if (Globals.aos && viewerState.Version.aosToolTips) {
-				ObjectPropertiesContainer iopc = target.GetProperties();
-				if (iopc != null) {
-					iopc.SendIdPacket(viewerState, viewerConn);
+			if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+				AOSToolTips toolTips = target.GetAOSToolTips();
+				if (toolTips != null) {
+					toolTips.SendIdPacket(viewerState, viewerConn);
 				}
 			}
 		}

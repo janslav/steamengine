@@ -591,7 +591,7 @@ namespace SteamEngine.Networking {
 			return this.items.Count > 0;
 		}
 
-		public void PrepareSpellbook(int offset, ulong content, uint flaggedUid) {
+		public void PrepareSpellbook(uint flaggedUid, int offset, ulong content) {
 			this.flaggedUid = flaggedUid;
 
 			items.Clear();
@@ -618,8 +618,38 @@ namespace SteamEngine.Networking {
 				this.EncodeUShort(i.amount);
 				this.EncodeUShort(i.x);
 				this.EncodeUShort(i.y);
+				//TODO? post 6.0.1.7: byte gridindex
 				this.EncodeUInt(this.flaggedUid);
 				this.EncodeUShort(i.color);
+			}
+		}
+	}
+
+	public sealed class NewSpellbookOutPacket : GeneralInformationOutPacket {
+		uint flaggedUid;
+		ushort bookModel;
+		short firstSpellId;
+		ulong content;
+
+		public void Prepare(uint bookUid, ushort bookModel, short firstSpellId, ulong content) {
+			this.flaggedUid = bookUid;
+			this.bookModel = bookModel;
+			this.firstSpellId = firstSpellId;
+			this.content = content;
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x1b; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeShort(1);
+			this.EncodeUInt(this.flaggedUid);
+			this.EncodeUShort(this.bookModel);
+			this.EncodeShort(this.firstSpellId);
+
+			for (int i = 0; i < 8; i++) {
+				this.EncodeByte((byte) (this.content >> (i * 8)));
 			}
 		}
 	}
@@ -1826,7 +1856,6 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.action);
 		}
 	}
-
 	
 	public sealed class DisplayDeathActionOutPacket : GameOutgoingPacket {
 		uint charUid, corpseUid;
@@ -1961,6 +1990,78 @@ namespace SteamEngine.Networking {
 		protected override void WriteSubCmd() {
 			this.EncodeByte(0x07);
 			this.EncodeUInt(this.leaderUid);
+		}
+	}
+
+	public sealed class EnableMapDiffFilesOutPacket : GeneralInformationOutPacket {
+		byte facetsCount;
+		List<int> mapPatches = new List<int>();
+		List<int> staticsPatches = new List<int>();
+
+		public void Prepare() {
+			this.facetsCount = (byte) Regions.Map.GetFacetCount();
+			this.mapPatches.Clear();
+			this.staticsPatches.Clear();
+			for (int i = 0; i < this.facetsCount; i++) {
+				this.mapPatches.Add(Regions.Map.GetFacetPatchesMapCount(i));
+				this.staticsPatches.Add(Regions.Map.GetFacetPatchesStaticsCount(i));
+			}
+		}
+
+		public override ushort SubCmdId {
+			get { return 0x18; }
+		}
+
+		protected override void WriteSubCmd() {
+			this.EncodeByte(this.facetsCount);
+			for (int i = 0; i < this.facetsCount; i++) {
+				this.EncodeInt(this.mapPatches[i]);
+				this.EncodeInt(this.staticsPatches[i]);
+			}
+		}
+	}
+	
+	public sealed class ClientVersionOutPacket : DynamicLengthOutPacket {
+		public override byte Id {
+			get { return 0xBD; }
+		}
+
+		protected override void WriteDynamicPart() {
+		}
+	}
+
+	public sealed class PersonalLightLevelOutPacket : GameOutgoingPacket {
+		uint charUid;
+		byte lightLevel;
+
+		public void Prepare(uint charUid, byte lightLevel) {
+			this.charUid = charUid;
+			this.lightLevel = lightLevel;
+		}
+
+		public override byte Id {
+			get { return 0x4E; }
+		}
+
+		protected override void Write() {
+			this.EncodeUInt(this.charUid);
+			this.EncodeByte(this.lightLevel);
+		}
+	}
+
+	public sealed class OverallLightLevelOutPacket : GameOutgoingPacket {
+		byte lightLevel;
+
+		public void Prepare(byte lightLevel) {
+			this.lightLevel = lightLevel;
+		}
+
+		public override byte Id {
+			get { return 0x4f; }
+		}
+
+		protected override void Write() {
+			this.EncodeByte(this.lightLevel);
 		}
 	}
 }
