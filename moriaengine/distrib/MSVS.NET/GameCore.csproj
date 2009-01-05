@@ -241,6 +241,9 @@
       <Link>AbstractSkillDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\GameCore\AOSToolTips.cs">
+      <Link>AOSToolTips.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
       <SubType>Code</SubType>
@@ -643,9 +646,6 @@
     </Compile>
     <Compile Include="..\..\GameCore\Networking\SyncQueue.cs">
       <Link>Networking\SyncQueue.cs</Link>
-    </Compile>
-    <Compile Include="..\..\GameCore\ObjectPropertiesContainer.cs">
-      <Link>ObjectPropertiesContainer.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\OpenedContainers.cs">
       <Link>OpenedContainers.cs</Link>

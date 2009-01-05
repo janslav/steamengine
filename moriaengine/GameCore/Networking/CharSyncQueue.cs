@@ -475,7 +475,7 @@ namespace SteamEngine.Networking {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessCharResend " + ch);
 
 				bool propertiesExist = true;
-				ObjectPropertiesContainer iopc = null;
+				AOSToolTips toolTips = null;
 
 				foreach (AbstractCharacter viewer in ch.GetMap().GetPlayersInRange(ch.X, ch.Y, Globals.MaxUpdateRange)) {
 					if (viewer != ch) {
@@ -492,9 +492,9 @@ namespace SteamEngine.Networking {
 								}
 								TCPConnection<GameState> viewerConn = viewerState.Conn;
 								viewerConn.SendPacketGroup(pg);
-								if (Globals.aos && viewerState.Version.aosToolTips) {
+								if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
 									if (propertiesExist) {
-										propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
+										propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
 									}
 								}
 							}
@@ -511,15 +511,15 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			private static bool ProcessCharProperties(AbstractCharacter target, ref ObjectPropertiesContainer iopc, GameState viewerState, TCPConnection<GameState> viewerConn) {
-				if (iopc == null) {
-					iopc = target.GetProperties();
-					if (iopc != null) {
-						iopc.SendIdPacket(viewerState, viewerConn);
+			private static bool ProcessCharProperties(AbstractCharacter target, ref AOSToolTips toolTips, GameState viewerState, TCPConnection<GameState> viewerConn) {
+				if (toolTips == null) {
+					toolTips = target.GetAOSToolTips();
+					if (toolTips != null) {
+						toolTips.SendIdPacket(viewerState, viewerConn);
 						return true;
 					}
 				} else {
-					iopc.SendIdPacket(viewerState, viewerConn);
+					toolTips.SendIdPacket(viewerState, viewerConn);
 					return true;
 				}
 				return false;
@@ -545,7 +545,7 @@ namespace SteamEngine.Networking {
 				bool basePropsChanged = this.GetBasePropsChanged();
 				bool propertiesChanged = (changeflags & NSFlags.Property) == NSFlags.Property;
 				bool propertiesExist = propertiesChanged;
-				ObjectPropertiesContainer iopc = null;				
+				AOSToolTips toolTips = null;				
 				ICollection<AbstractCharacter> partyMembers = ch.PartyMembers;
 				bool hasParty = (partyMembers != null && partyMembers.Count > 1);
 
@@ -562,8 +562,8 @@ namespace SteamEngine.Networking {
 						this.UpdateSkills(myState, myConn);
 
 						if (propertiesChanged) {
-							if (Globals.aos && myState.Version.aosToolTips) {
-								propertiesExist = ProcessCharProperties(ch, ref iopc, myState, myConn);
+							if (Globals.aosToolTips && myState.Version.aosToolTips) {
+								propertiesExist = ProcessCharProperties(ch, ref toolTips, myState, myConn);
 							}
 						}
 						if (this.GetStatsChanged() || nameChanged) {
@@ -744,8 +744,8 @@ namespace SteamEngine.Networking {
 											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending new char info to " + viewerState);
 											viewerConn.SendPacketGroup(myCharInfo);
 											newCharSent = true;
-											if (propertiesExist && Globals.aos && viewerState.Version.aosToolTips) {
-												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
+											if (propertiesExist && Globals.aosToolTips && viewerState.Version.aosToolTips) {
+												propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
 											}
 
 											if (!hasParty || !partyMembers.Contains(viewer)) { //new char, send hitpoints
@@ -756,8 +756,8 @@ namespace SteamEngine.Networking {
 									}
 									if (!newCharSent) {
 										if (propertiesChanged && propertiesExist) {
-											if (Globals.aos && viewerState.Version.aosToolTips) {
-												propertiesExist = ProcessCharProperties(ch, ref iopc, viewerState, viewerConn);
+											if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+												propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
 											}
 										}
 										if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || basePropsChanged) {

@@ -107,7 +107,6 @@ namespace SteamEngine.Timers {
 							currentTimer = timer;
 							try {
 								lock (MainClass.globalLock) {
-
 									timer.OnTimeout();
 								}
 							} catch (FatalException) {
@@ -150,6 +149,9 @@ namespace SteamEngine.Timers {
 					this.period = negativeOneSecond;
 				} else {
 					this.period = value;
+					if (this.fireAt == negativeOneSecond) { //if we aren't ticking, we start.
+						this.PrivateSetFireAt(Globals.TimeAsSpan + this.period);
+					}
 				}
 			}
 		}
@@ -170,6 +172,9 @@ namespace SteamEngine.Timers {
 					this.period = negativeOneSecond;
 				} else {
 					this.period = TimeSpan.FromSeconds(value);
+					if (this.fireAt == negativeOneSecond) { //if we aren't ticking, we start.
+						this.PrivateSetFireAt(Globals.TimeAsSpan + this.period);
+					}
 				}
 			}
 		}
@@ -193,7 +198,11 @@ namespace SteamEngine.Timers {
 		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to prevent the timer from starting (i.e. to pause it). Specify TimeSpan.Zero to start the timer immediately.")]
 		public TimeSpan DueInSpan {
 			get {
-				return this.fireAt - Globals.TimeAsSpan;
+				if (this.fireAt == negativeOneSecond) {
+					return negativeOneSecond;
+				} else {
+					return this.fireAt - Globals.TimeAsSpan;
+				}
 			}
 			set {
 				if (value < TimeSpan.Zero) {

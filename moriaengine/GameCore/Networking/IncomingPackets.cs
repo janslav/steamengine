@@ -58,14 +58,19 @@ namespace SteamEngine.Networking {
 					break;
 				case 0x06:
 					this.subPacket = Pool<PartySubPacket>.Acquire();
-					break;					
+					break;
+				case 0x24:
+					this.subPacket = Pool<UnknownSubPacket>.Acquire();
+					break;	
 				default:
 					Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
 					this.OutputPacketLog();
 					return ReadPacketResult.DiscardSingle;
 			}
 
-			Logger.WriteDebug("Handling packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
+			if (subCmd != 0x24) { //0x24 is boringly frequent, albeit ignored
+				Logger.WriteDebug("Handling packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
+			}
 			return this.subPacket.ReadSubPacket(this, blockSize);
 		}
 
@@ -103,6 +108,16 @@ namespace SteamEngine.Networking {
 
 			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
 				Logger.WriteDebug(state + " reports screen resolution " + this.x + "x" + this.y);
+			}
+		}
+
+		public sealed class UnknownSubPacket : SubPacket {
+			protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+				return ReadPacketResult.DiscardSingle;
+			}
+
+			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
@@ -320,9 +335,13 @@ namespace SteamEngine.Networking {
 					Console.WriteLine(LogStr.Ident(state) + " logged in.");
 
 					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-					//pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
+					//if (Globals.aos) {
+					//	pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
+					//}
 					pg.AcquirePacket<CharactersListOutPacket>().Prepare(acc, Globals.loginFlags);
 					conn.SendPacketGroup(pg);
+
+					PreparedPacketGroups.SendClientVersionQuery(conn);
 
 					break;
 				case LoginAttemptResult.Failed_AlreadyOnline:
@@ -371,9 +390,12 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
-			state.SetClientVersion(ClientVersion.Get(this.ver));
+			ClientVersion cv = ClientVersion.Get(this.ver);
+			if (cv != state.Version) {
+				Console.WriteLine(LogStr.Ident(state.ToString()) + (" claims to be: " + cv.ToString()));
+				state.InternalSetClientVersion(cv);
+			}
 		}
-
 	}
 
 	public sealed class GetPlayerStatusInPacket : GameIncomingPacket {
@@ -424,7 +446,7 @@ namespace SteamEngine.Networking {
 
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.uids.Clear();
-			if (Globals.aos) {
+			if (Globals.aosToolTips) {
 				int dataBlockSize = blockSize - 3;
 				if ((dataBlockSize >= 0) && ((dataBlockSize % 4) == 0)) {
 					int count = dataBlockSize / 4;
@@ -439,15 +461,15 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
-			if (Globals.aos) {
+			if (Globals.aosToolTips) {
 				AbstractCharacter curChar = state.CharacterNotNull;
 				foreach (int uid in this.uids) {
 					Thing t = Thing.UidGetThing(uid);
 					if ((t != null) && (!t.IsDeleted)) {
-						ObjectPropertiesContainer iopc = t.GetProperties();
-						if (iopc != null) {
+						AOSToolTips toolTips = t.GetAOSToolTips();
+						if (toolTips != null) {
 							if (curChar.CanSeeForUpdate(t)) {
-								iopc.SendDataPacket(conn, state);
+								toolTips.SendDataPacket(conn, state);
 							}
 						}
 					}
@@ -627,7 +649,7 @@ namespace SteamEngine.Networking {
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
 			Thing thing = Thing.UidGetThing(this.uid);
 			if (thing != null) {
-				if (Globals.aos && state.Version.aosToolTips) {
+				if (Globals.aosToolTips && state.Version.aosToolTips) {
 					thing.Trigger_AosClick(state.CharacterNotNull);
 				} else {
 					thing.Trigger_Click(state.CharacterNotNull);
@@ -663,7 +685,7 @@ namespace SteamEngine.Networking {
 				thing.Trigger_DClick(ch);
 			} else {
 				if (this.paperdollFlag) {
-					((AbstractCharacter) thing).ShowPaperdollTo(ch, conn);
+					((AbstractCharacter) thing).ShowPaperdollTo(ch, state, conn);
 				} else {
 					thing.Trigger_DClick(ch);
 				}

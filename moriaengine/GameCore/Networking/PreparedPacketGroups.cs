@@ -42,7 +42,13 @@ namespace SteamEngine.Networking {
 
 		private static PacketGroup[] rejectDeleteCharacter = new PacketGroup[8];
 
-		private static PacketGroup[] deathMessages = new PacketGroup[3];		
+		private static PacketGroup[] deathMessages = new PacketGroup[3];
+
+		private static PacketGroup enableMapDiffFiles;
+
+		private static PacketGroup clientVersion;	
+	
+		private static PacketGroup clientFeatures;		
 
 		static PreparedPacketGroups() {
 			for (int i = 0, n = loginDeniedPGs.Length; i < n; i++) {
@@ -80,6 +86,15 @@ namespace SteamEngine.Networking {
 				deathMessages[i] = PacketGroup.CreateFreePG();
 				deathMessages[i].AcquirePacket<ResurrectionMenuOutPacket>().Prepare(i);
 			}
+
+			enableMapDiffFiles = PacketGroup.CreateFreePG();
+			enableMapDiffFiles.AcquirePacket<EnableMapDiffFilesOutPacket>().Prepare();
+
+			clientVersion = PacketGroup.CreateFreePG();
+			clientVersion.AcquirePacket<ClientVersionOutPacket>();
+
+			clientFeatures = PacketGroup.CreateFreePG();
+			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
 		}
 
 		public static void SendLoginDenied(TCPConnection<GameState> conn,  LoginDeniedReason why) {
@@ -133,5 +148,18 @@ namespace SteamEngine.Networking {
 		public static void SendResurrectMessage(TCPConnection<GameState> conn) {
 			conn.SendPacketGroup(deathMessages[1]);
 		}
+
+		public static void SendEnableMapDiffFiles(TCPConnection<GameState> conn) {
+			conn.SendPacketGroup(enableMapDiffFiles);
+		}
+
+		public static void SendClientVersionQuery(TCPConnection<GameState> conn) {
+			conn.SendPacketGroup(clientVersion);
+		}
+
+		public static void SendClientFeatures(TCPConnection<GameState> conn) {
+			conn.SendPacketGroup(clientFeatures);
+		}
+		
 	}
 }

@@ -966,9 +966,9 @@ namespace SteamEngine {
 		
 		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
-			ObjectPropertiesContainer opc = this.GetProperties();
+			AOSToolTips toolTips = this.GetAOSToolTips();
 			PacketSequences.SendClilocNameFrom(clicker.GameState.Conn, this,
-				opc.FirstId, 0, opc.FirstArgument);
+				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
 
 		public void DClick() {
@@ -1155,23 +1155,23 @@ namespace SteamEngine {
 
 		public abstract void Resend();
 
-		public ObjectPropertiesContainer GetProperties() {
-			ObjectPropertiesContainer opc = ObjectPropertiesContainer.GetFromCache(this);
-			if (opc != null) {
-				return opc;
+		public AOSToolTips GetAOSToolTips() {
+			AOSToolTips toolTips = AOSToolTips.GetFromCache(this);
+			if (toolTips != null) {
+				return toolTips;
 			}
 
-			opc = Pool<ObjectPropertiesContainer>.Acquire();
+			toolTips = Pool<AOSToolTips>.Acquire();
 
 			uint id;
 			string argument;
 			this.GetNameCliloc(out id, out argument);
-			opc.AddLine(id, argument);
+			toolTips.AddLine(id, argument);
 
-			this.AddProperties(opc);
-			opc.InitDone(this);
+			this.BuildAOSToolTips(toolTips);
+			toolTips.InitDone(this);
 
-			return opc;//new or changed
+			return toolTips;//new or changed
 		}
 
 		public virtual void GetNameCliloc(out uint id, out string argument) {
@@ -1179,11 +1179,11 @@ namespace SteamEngine {
 			argument = this.Name;
 		}
 
-		public virtual void AddProperties(ObjectPropertiesContainer opc) {
+		public virtual void BuildAOSToolTips(AOSToolTips opc) {
 		}
 
 		public virtual void InvalidateProperties() {
-			ObjectPropertiesContainer.RemoveFromCache(this);
+			AOSToolTips.RemoveFromCache(this);
 		}
 
 		//public Gump Dialog(string gumpName) {

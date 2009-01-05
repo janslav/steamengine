@@ -219,7 +219,12 @@ namespace SteamEngine.Networking {
 					Logger.WriteWarning("Invalid account - Fixing.");
 					ch.MakeBePlayer(this.account);
 				}
-				PacketSequences.SendStartGameSequence(this.conn, this, this.account, ch);
+
+				//PreparedPacketGroups.SendClientVersionQuery(this.conn);
+
+				PacketSequences.DelayedLoginTimer timer = new PacketSequences.DelayedLoginTimer(ch);
+				timer.DueInSeconds = 0;
+				timer.PeriodInSeconds = 0.5;
 			} else {
 				this.character = null;//we don't want @logout called when @login was cancelled
 
@@ -250,8 +255,8 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		internal void SetClientVersion(ClientVersion clientVersion) {
-			Console.WriteLine(LogStr.Ident(this.ToString()) + (" claims to be: " + clientVersion.ToString()));
+		internal void InternalSetClientVersion(ClientVersion clientVersion) {
+			this.clientVersion = clientVersion;
 		}
 
 		public int Uid {

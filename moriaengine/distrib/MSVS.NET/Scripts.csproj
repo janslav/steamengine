@@ -662,6 +662,9 @@
     <Compile Include="..\..\scripts\systems\utilities\ColorsDlg.cs">
       <Link>systems\utilities\ColorsDlg.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Temporary.cs">
+      <Link>Temporary.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Tests\CompoundDialog.cs">
       <Link>Tests\CompoundDialog.cs</Link>
     </Compile>

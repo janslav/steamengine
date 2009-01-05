@@ -143,7 +143,7 @@ namespace SteamEngine {
 
 		public readonly static bool scriptFloats;
 
-		public readonly static bool aos;
+		public readonly static bool aosToolTips;
 
 		//public readonly static IList<IPAddress> omitip;
 
@@ -362,21 +362,22 @@ namespace SteamEngine {
 
 				IniFileSection features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
-				aos = features.GetValue<bool>("AOS", false, "If this is on, AOS features (like objprops) are enabled.");
+				aosToolTips = features.GetValue<bool>("aosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
+				
+				featuresFlags |= 0x2;
+				if (aosToolTips) {
+					loginFlags |= 0x20;
+					featuresFlags |= 0x0008 | 0x8000;
+				}				
+				//for now we only set whether tooltips work.
 
-				//TODO:
+				//TODO?:
 				//OneCharacterOnly
 				//SixCharacters
 				//RightClickMenus
-				//Perhaps Chat and LBR too? Right now they default to enabled.
-
-				featuresFlags |= 0x3;
-				if (aos) {
-					loginFlags |= 0x20;
-					//featuresFlags|=0x801c;
-					featuresFlags |= 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x8000;
-				}
+				//Chat? (now disabled)
+				//LBR? (now enabled)
 
 				//'loginFlags' variable:
 				//0x14 = One character only

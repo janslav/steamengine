@@ -29,14 +29,16 @@ namespace SteamEngine.Networking {
 		public static readonly GameServerProtocol instance = new GameServerProtocol();
 
 		public IncomingPacket<TCPConnection<GameState>, GameState, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<GameState> conn, GameState state, out bool discardAfterReading) {
+			bool isLoggedIn = state.IsLoggedIn;
+			bool hasChar = state.Character != null;
 
-			discardAfterReading = !state.IsLoggedIn && state.Character != null;
+			discardAfterReading = !isLoggedIn || !hasChar;
 			//general rule for most packets: if not logged in completely (i.e. both account and char), discard.
 			//exceptions are obviously the login packets and some "innocent" info packets
 
 			switch (id) {
 				case 0x00:
-					discardAfterReading = !state.IsLoggedIn; //discard if not yet logged into account
+					discardAfterReading = !isLoggedIn; //discard if not yet logged into account
 					return Pool<CreateCharacterInPacket>.Acquire();
 				case 0x01:
 					discardAfterReading = false;
@@ -69,7 +71,7 @@ namespace SteamEngine.Networking {
 				case 0x34:
 					return Pool<GetPlayerStatusInPacket>.Acquire();
 				case 0x5d:
-					discardAfterReading = !state.IsLoggedIn; //discard if not yet logged into account
+					discardAfterReading = !isLoggedIn; //discard if not yet logged into account
 					return Pool<LoginCharacterInPacket>.Acquire();
 				case 0x6c:
 					return Pool<TargetCursorCommandsInPacket>.Acquire();
@@ -80,7 +82,7 @@ namespace SteamEngine.Networking {
 				case 0x83:
 					return Pool<DeleteCharacterInPacket>.Acquire();
 				case 0x91:
-					discardAfterReading = state.IsLoggedIn; //discard if already logged in
+					discardAfterReading = isLoggedIn; //discard if already logged in
 					return Pool<GameServerLoginInPacket>.Acquire();
 				case 0x98:
 					return Pool<AllNamesInPacket>.Acquire();
@@ -91,7 +93,7 @@ namespace SteamEngine.Networking {
 				case 0xb1:
 					return Pool<GumpMenuSelectionInPacket>.Acquire();
 				case 0xbd:
-					discardAfterReading = false;
+					discardAfterReading = false; //never discard
 					return Pool<ClientVersionInPacket>.Acquire();
 				case 0xbf:
 					return Pool<GeneralInformationInPacket>.Acquire();

@@ -118,19 +118,21 @@ namespace SteamEngine {
 				Exit();
 			}
 		}
-		
+
 		private static bool Init() {
+
 			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			CoreLogger.Init();
 
 			RunLevelManager.SetStartup();
 
-			AuxServerPipeClient.Init();
-			System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
+			using (StopWatch.StartAndDisplay("Server Initialisation")) {
+				AuxServerPipeClient.Init();
+				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 
 #if DEBUG
-			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (DEBUG build)"+" - "+Globals.serverName);
+				Console.WriteLine("Starting SteamEngine ver. " + Globals.version + " (DEBUG build)" + " - " + Globals.serverName);
 #elif SANE
 			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (SANE build)"+" - "+Globals.serverName);
 #elif OPTIMIZED
@@ -138,24 +140,24 @@ namespace SteamEngine {
 #else
 			throw new SanityCheckException("None of these flags were set: DEBUG, SANE, or OPTIMIZED?");
 #endif
-			Console.WriteLine("http://kec.cz:8008/trac");
-			Console.WriteLine("Running under "+Environment.OSVersion+", Framework version: "+Environment.Version+".");
+				Console.WriteLine("http://kec.cz:8008/trac");
+				Console.WriteLine("Running under " + Environment.OSVersion + ", Framework version: " + Environment.Version + ".");
 
-			Globals.Init();
-			if (signalExit.WaitOne(0, false)) {
-				return false;
-			}
+				Globals.Init();
+				if (signalExit.WaitOne(0, false)) {
+					return false;
+				}
 
-			ClassTemplateParser.Init();
-			
-			if (!CompilerInvoker.CompileScripts(true)) {
-				return false;
-			}
-			Tools.EnsureDirectory(Globals.mulPath, true);
-			//ExportImport.Init();
+				ClassTemplateParser.Init();
 
-			//if (!Globals.fastStartUp) {
-				using (StopWatch.StartAndDisplay("Loading .idx and .mul files from "+LogStr.File(Globals.mulPath)+"...")) {
+				if (!CompilerInvoker.CompileScripts(true)) {
+					return false;
+				}
+				Tools.EnsureDirectory(Globals.mulPath, true);
+				//ExportImport.Init();
+
+				//if (!Globals.fastStartUp) {
+				using (StopWatch.StartAndDisplay("Loading .idx and .mul files from " + LogStr.File(Globals.mulPath) + "...")) {
 					TileData.Init();
 					SoundMul.Init();
 					MultiData.Init();
@@ -167,31 +169,32 @@ namespace SteamEngine {
 
 
 				WorldSaver.Load();
-			//}
-			
-			//Server.Init();
-			Networking.GameServer.Init();
-					
-			//Console.WriteLine("Resolving object references...");
-			DelayedResolver.ResolveAll();
-			//Region.ResolveLoadedRegions();
-			Map.Init();   //Sectors are created and items sorted on startup. 
-			ClassManager.InitScripts();
-			PluginDef.Init();
-			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
-			Globals.UnPauseServerTime();
-			RunLevelManager.SetRunning();
-			Logger.WriteDebug("triggering @startup");
-			Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
+				//}
 
-			//if (!Globals.fastStartUp) {
+				//Server.Init();
+				Networking.GameServer.Init();
+
+				//Console.WriteLine("Resolving object references...");
+				DelayedResolver.ResolveAll();
+				//Region.ResolveLoadedRegions();
+				Map.Init();   //Sectors are created and items sorted on startup. 
+				ClassManager.InitScripts();
+				PluginDef.Init();
+				DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
+				Globals.UnPauseServerTime();
+				RunLevelManager.SetRunning();
+				Logger.WriteDebug("triggering @startup");
+				Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
+
+				//if (!Globals.fastStartUp) {
 				Console.WriteLine("Checking to see if any scripts have changed.");
 				Globals.Resync();
-			//}
+				//}
 
-			Timers.Timer.StartTimerThread();
+				Timers.Timer.StartTimerThread();
 
-			return true;
+				return true;
+			}
 		}
 		
 		public static void CollectGarbage() {
@@ -213,7 +216,7 @@ namespace SteamEngine {
 			ObjectSaver.ClearJobs();
 			OpenedContainers.ClearAll();
 			Commands.ClearGmCommandsCache();
-			ObjectPropertiesContainer.ClearCache();
+			AOSToolTips.ClearCache();
 			Networking.ItemOnGroundUpdater.ClearCache();
 		}
 		

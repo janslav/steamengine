@@ -41,6 +41,10 @@ namespace SteamEngine.Communication {
 			}
 		}
 
+		protected override void On_Reset() {
+			base.On_Reset();
+		}
+
 		public int Write(byte[] bytes, int offset) {
 			this.buffer = bytes;
 			this.offset = offset;

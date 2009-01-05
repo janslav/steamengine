@@ -68,7 +68,7 @@ namespace SteamEngine.Networking {
 
 					if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
 						this.UpdateItemAndProperties(item);
-					} else if (Globals.aos) {//only new properties
+					} else if (Globals.aosToolTips) {//only new properties
 						this.SendItemPropertiesOnly(item);
 					}
 				}
@@ -105,19 +105,19 @@ namespace SteamEngine.Networking {
 				enumerator = top.GetMap().GetPlayersInRange(top.X, top.Y, Globals.MaxUpdateRange);
 			}
 
-			ObjectPropertiesContainer iopc = null;
+			AOSToolTips toolTips = null;
 			foreach (AbstractCharacter player in enumerator) {
 				GameState state = player.GameState;
 				if (state != null) {
 					TCPConnection<GameState> conn = state.Conn;
 					if (state.Version.aosToolTips) {
-						if (iopc == null) {
-							iopc = item.GetProperties();
-							if (iopc == null) {
+						if (toolTips == null) {
+							toolTips = item.GetAOSToolTips();
+							if (toolTips == null) {
 								break;
 							}
 						}
-						iopc.SendIdPacket(state, conn);
+						toolTips.SendIdPacket(state, conn);
 					}
 				}
 			}
@@ -145,7 +145,7 @@ namespace SteamEngine.Networking {
 			if (isOnGround || isEquippedAndVisible || isInContainer) {
 				PacketGroup pg = null;//iteminfo or paperdollinfo or itemincontainer
 				PacketGroup allmoveItemInfo = null;
-				ObjectPropertiesContainer iopc = null;
+				AOSToolTips toolTips = null;
 
 				IEnumerable<AbstractCharacter> enumerator;
 				AbstractItem contAsItem = item.Cont as AbstractItem;
@@ -193,15 +193,15 @@ namespace SteamEngine.Networking {
 							}
 
 							if (propertiesExist) {
-								if (Globals.aos && state.Version.aosToolTips) {
-									if (iopc == null) {
-										iopc = item.GetProperties();
-										if (iopc == null) {
+								if (Globals.aosToolTips && state.Version.aosToolTips) {
+									if (toolTips == null) {
+										toolTips = item.GetAOSToolTips();
+										if (toolTips == null) {
 											propertiesExist = false;
 											continue;
 										}
 									}
-									iopc.SendIdPacket(state, conn);
+									toolTips.SendIdPacket(state, conn);
 								}
 							}
 						}

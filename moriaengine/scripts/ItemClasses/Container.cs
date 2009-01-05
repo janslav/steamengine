@@ -151,8 +151,8 @@ namespace SteamEngine.CompiledScripts {
 			base.AdjustWeight(adjust);
 		}
 
-		public override void AddProperties(ObjectPropertiesContainer opc) {
-			opc.AddLine(1050044, this.Count.ToString(), this.Weight.ToString());
+		public override void BuildAOSToolTips(AOSToolTips toolTips) {
+			toolTips.AddLine(1050044, this.Count.ToString(), this.Weight.ToString());
 			//~1_COUNT~ items, ~2_WEIGHT~ stones
 		}
 
