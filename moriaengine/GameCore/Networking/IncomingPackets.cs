@@ -877,10 +877,10 @@ namespace SteamEngine.Networking {
 	}
 	
 	public sealed class MoveRequestInPacket : GameIncomingPacket {
-		byte direction,sequence;
+		byte dir,sequence;
 
 		protected override ReadPacketResult Read() {
-			this.direction = (byte) (this.DecodeByte() & 0x87); //we only want 0x80 and 0..7
+			this.dir = (byte) (this.DecodeByte() & 0x87); //we only want 0x80 and 0..7
 			this.sequence = this.DecodeByte();
 			//TODO? check this.LengthIn for fastwalk presence
 			this.SeekFromCurrent(4);//skip the fastwalk key, we don't use it
@@ -889,7 +889,11 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
 			MovementState ms = state.movementState;
-			ms.HandleMoveRequest(conn, state, direction, sequence);
+
+			bool running = ((this.dir & 0x80) == 0x80);
+			Direction direction = (Direction) (this.dir & 0x07);
+
+			ms.MovementRequest(direction, running,  sequence);
 		}
 	}
 
