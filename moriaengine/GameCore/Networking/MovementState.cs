@@ -46,19 +46,26 @@ namespace SteamEngine.Networking {
 
 		private readonly LinkedListNode<MovementState> listNode;
 
-		private readonly SimpleQueue<byte> moveRequests = new SimpleQueue<byte>();
+		private readonly SimpleQueue<MoveRequest> moveRequests = new SimpleQueue<MoveRequest>();
 		private long lastStepReserve;
 		private long secondLastStepReserve;
 		private long thirdLastStepReserve;
 		private long lastMovementTime;
 		private long nextMovementTime;
 
-		private byte movementSequenceOut;
-		private byte movementSequenceIn;
-		//private byte altMovementSequenceIn;
-
 		private GameState gameState;
 
+		private struct MoveRequest {
+			internal Direction direction;
+			internal bool running;
+			internal byte sequence;
+
+			internal MoveRequest(Direction direction, bool running, byte sequence) {
+				this.direction = direction;
+				this.running = running;
+				this.sequence = sequence;
+			}
+		}
 
 		static MovementState() {
 			thread = new Thread(Cycle);
@@ -97,7 +104,6 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-
 		internal MovementState(GameState gameState) {
 			this.listNode = new LinkedListNode<MovementState>(this);
 
@@ -110,52 +116,17 @@ namespace SteamEngine.Networking {
 			this.thirdLastStepReserve = 0;
 			this.lastMovementTime = 0;
 			this.nextMovementTime = 0;
-			this.movementSequenceOut = 0;
-			this.movementSequenceIn = 0;
 			this.moveRequests.Clear();
 		}
 
-		internal void HandleMoveRequest(TCPConnection<GameState> conn, GameState state, byte direction, byte sequence) {
-			if (this.CheckMovSeqInWithMsg(sequence)) {
-				this.MovementRequest(direction);
-			} else {
-				CharMoveRejectionOutPacket packet = Pool<CharMoveRejectionOutPacket>.Acquire();
-				packet.Prepare(sequence, state.CharacterNotNull);
-				conn.SendSinglePacket(packet);
-				this.ResetMovementSequence();
-			}
-		}
-
-		internal bool CheckMovSeqInWithMsg(byte seq) {
-			if (seq == this.movementSequenceIn) {
-				return true;
-			//} else if (seq == this.altMovementSequenceIn) {
-			//    Logger.WriteDebug("Invalid seqNum " + LogStr.Number(seq) + ", expecting " + LogStr.Number(this.movementSequenceIn) + ", alternative worked");
-			//    this.movementSequenceOut = seq;
-			//    return true;
-			} else {
-				Logger.WriteError("Invalid seqNum " + LogStr.Number(seq) + ", expecting " + LogStr.Number(this.movementSequenceIn) + ".");// or " + LogStr.Number(this.altMovementSequenceIn));
-				return false;
-			}
-		}
-
 		//called from incomingpacket.Handle, so we're also under lock(globallock)
-		internal void MovementRequest(byte dir) {
-			//iterating incoming sequence number
-			if (this.movementSequenceIn == 255) {
-				//Logger.WriteInfo(MovementTracingOn, "reqMoveSeqNum wraps around to 1.");
-				this.movementSequenceIn = 1;
-			} else {
-				//Logger.WriteInfo(MovementTracingOn, "reqMoveSeqNum gets increased.");
-				this.movementSequenceIn++;
-			}
-
+		internal void MovementRequest(Direction direction, bool running, byte sequence) {
 			lock (queue) {
 				int requestCount = moveRequests.Count;
 				if (requestCount == 0) {
-					this.ProcessMovement(dir);
+					this.ProcessMovement(new MoveRequest(direction, running, sequence));
 				} else {
-					this.moveRequests.Enqueue(dir);
+					this.moveRequests.Enqueue(new MoveRequest(direction, running, sequence));
 				}
 				if ((requestCount == 0) && (moveRequests.Count == 1)) {
 					queue.AddFirst(this.listNode);
@@ -164,27 +135,24 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		private void ProcessMovement(byte dir) {
+		private void ProcessMovement(MoveRequest mr) {
 			AbstractCharacter ch = this.gameState.Character;
 			if (ch == null) {
 				this.moveRequests.Clear();
 				return;
 			}
 
-			bool running = ((dir & 0x80) == 0x80);
-			Direction direction = (Direction) (dir & 0x07);
-
-			if (direction != ch.Direction) {//no speedcheck if we're just changing direction
+			if (mr.direction != ch.Direction) {//no speedcheck if we're just changing direction
 				if (moveRequests.Count == 0) {
-					this.Movement(direction, running);
+					this.Movement(mr.direction, mr.running, mr.sequence);
 				}
 				return;
 			}
 
 			if ((this.CanMoveAgain()) || (this.gameState.Account.PLevel >= Globals.plevelOfGM)) {
-				this.Movement(direction, running);
+				this.Movement(mr.direction, mr.running, mr.sequence);
 			} else {
-				this.moveRequests.Enqueue(dir);
+				this.moveRequests.Enqueue(mr);
 			}
 		}
 
@@ -220,28 +188,21 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		private void Movement(Direction dir, bool running) {
+		private void Movement(Direction dir, bool running, byte sequence) {
 			AbstractCharacter ch = this.gameState.CharacterNotNull;
 
 			//Logger.WriteInfo(MovementTracingOn, "Moving.");
-			bool success = ch.WalkRunOrFly((Direction) dir, running, true);	//true = we don't want to get a 0x77 for ourself, our client knows we're moving if it gets the verify move packet.
+			bool success = ch.WalkRunOrFly(dir, running, true);	//true = we don't want to get a 0x77 for ourself, our client knows we're moving if it gets the verify move packet.
 			if (success) {
 				CharacterMoveAcknowledgeOutPacket packet = Pool<CharacterMoveAcknowledgeOutPacket>.Acquire();
-				packet.Prepare(this.movementSequenceOut, ch.GetHighlightColorFor(ch));
+				packet.Prepare(sequence, ch.GetHighlightColorFor(ch));
 				this.gameState.Conn.SendSinglePacket(packet);
 				CharSyncQueue.ProcessChar(ch);//I think this is really needed. We can't wait to the end of the cycle, because movement 
 				//should be as much synced between clients as possible
-
-				if (this.movementSequenceOut == 255) {
-				    //Logger.WriteInfo(MovementTracingOn, "moveSeqNum wraps around to 1.");
-				    this.movementSequenceOut = 1;
-				} else {
-				    this.movementSequenceOut++;
-				}
 			} else {
 
 				CharMoveRejectionOutPacket packet = Pool<CharMoveRejectionOutPacket>.Acquire();
-				packet.Prepare(this.movementSequenceOut, ch);
+				packet.Prepare(sequence, ch);
 				this.gameState.Conn.SendSinglePacket(packet);
 
 				this.ResetMovementSequence();
@@ -250,9 +211,6 @@ namespace SteamEngine.Networking {
 		}
 
 		internal void ResetMovementSequence() {
-			this.movementSequenceOut = 0;
-			//this.altMovementSequenceIn = this.movementSequenceIn;
-			this.movementSequenceIn = 0;
 			this.moveRequests.Clear();
 		}
 	}

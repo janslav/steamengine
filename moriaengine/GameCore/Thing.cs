@@ -344,6 +344,7 @@ namespace SteamEngine {
 				Z = -128;
 			}
 		}
+
 		public void NudgeDown(short amt) {
 			sbyte tmpZ = Z;
 			try {

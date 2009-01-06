@@ -278,7 +278,7 @@ namespace SteamEngine {
 			//}
 		}
 
-		public override void Resend() {
+		public override sealed void Resend() {
 			CharSyncQueue.Resend(this);
 		}
 

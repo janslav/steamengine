@@ -617,10 +617,11 @@ namespace SteamEngine.Networking {
 							}
 						}
 						if (flagsChanged || highlightChanged || basePropsChanged || ((directionChanged || posChanged) && (!requestedStep))) {
-							Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending LocationInformation to self");
-							DrawGamePlayerOutPacket dgpop = Pool<DrawGamePlayerOutPacket>.Acquire();
-							dgpop.Prepare(myState, ch); //0x20
-							myConn.SendSinglePacket(dgpop);
+							Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending char info to self");
+							PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+							pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78
+							//might not be necessary pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(myState, ch); //0x20							
+							myConn.SendPacketGroup(pg);
 						}
 						if (warModeChanges) {
 							PreparedPacketGroups.SendWarMode(myConn, ch.Flag_WarMode);

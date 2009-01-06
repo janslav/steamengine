@@ -243,7 +243,7 @@ namespace SteamEngine {
 		}
 
 		//commands:
-		public override void Resend() {
+		public override sealed void Resend() {
 			ItemSyncQueue.Resend(this);
 		}
 
