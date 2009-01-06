@@ -889,16 +889,7 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
 			MovementState ms = state.movementState;
-
-			if (ms.MovementSequenceIn == this.sequence) {
-				ms.MovementRequest(this.direction);
-			} else {
-				Logger.WriteError("Invalid seqNum " + LogStr.Number(this.sequence) + ", expecting " + LogStr.Number(ms.MovementSequenceIn));
-				CharMoveRejectionOutPacket packet = Pool<CharMoveRejectionOutPacket>.Acquire();
-				packet.Prepare(this.sequence, state.CharacterNotNull);
-				conn.SendSinglePacket(packet);
-				ms.ResetMovementSequence();
-			}
+			ms.HandleMoveRequest(conn, state, direction, sequence);
 		}
 	}
 
@@ -1195,6 +1186,23 @@ namespace SteamEngine.Networking {
 			} else if (result != DeleteCharacterResult.Deny_NoMessage) {
 				PreparedPacketGroups.SendRejectDeleteCharacter(conn, result);
 			}
+		}
+	}
+
+	public sealed class ResyncRequestInPacket : GameIncomingPacket {
+		protected override ReadPacketResult Read() {
+			this.SeekFromCurrent(2);
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+			AbstractCharacter ch = state.CharacterNotNull;
+			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch);//0x20
+			pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78
+			//TODO? also send nearby stuff?
+
+			conn.SendPacketGroup(pg);
 		}
 	}
 
