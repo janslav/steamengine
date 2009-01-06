@@ -55,6 +55,7 @@ namespace SteamEngine.Networking {
 
 		private byte movementSequenceOut;
 		private byte movementSequenceIn;
+		//private byte altMovementSequenceIn;
 
 		private GameState gameState;
 
@@ -112,6 +113,30 @@ namespace SteamEngine.Networking {
 			this.movementSequenceOut = 0;
 			this.movementSequenceIn = 0;
 			this.moveRequests.Clear();
+		}
+
+		internal void HandleMoveRequest(TCPConnection<GameState> conn, GameState state, byte direction, byte sequence) {
+			if (this.CheckMovSeqInWithMsg(sequence)) {
+				this.MovementRequest(direction);
+			} else {
+				CharMoveRejectionOutPacket packet = Pool<CharMoveRejectionOutPacket>.Acquire();
+				packet.Prepare(sequence, state.CharacterNotNull);
+				conn.SendSinglePacket(packet);
+				this.ResetMovementSequence();
+			}
+		}
+
+		internal bool CheckMovSeqInWithMsg(byte seq) {
+			if (seq == this.movementSequenceIn) {
+				return true;
+			//} else if (seq == this.altMovementSequenceIn) {
+			//    Logger.WriteDebug("Invalid seqNum " + LogStr.Number(seq) + ", expecting " + LogStr.Number(this.movementSequenceIn) + ", alternative worked");
+			//    this.movementSequenceOut = seq;
+			//    return true;
+			} else {
+				Logger.WriteError("Invalid seqNum " + LogStr.Number(seq) + ", expecting " + LogStr.Number(this.movementSequenceIn) + ".");// or " + LogStr.Number(this.altMovementSequenceIn));
+				return false;
+			}
 		}
 
 		//called from incomingpacket.Handle, so we're also under lock(globallock)
@@ -208,10 +233,10 @@ namespace SteamEngine.Networking {
 				//should be as much synced between clients as possible
 
 				if (this.movementSequenceOut == 255) {
-					//Logger.WriteInfo(MovementTracingOn, "moveSeqNum wraps around to 1.");
-					this.movementSequenceOut = 1;
+				    //Logger.WriteInfo(MovementTracingOn, "moveSeqNum wraps around to 1.");
+				    this.movementSequenceOut = 1;
 				} else {
-					this.movementSequenceOut++;
+				    this.movementSequenceOut++;
 				}
 			} else {
 
@@ -226,14 +251,9 @@ namespace SteamEngine.Networking {
 
 		internal void ResetMovementSequence() {
 			this.movementSequenceOut = 0;
+			//this.altMovementSequenceIn = this.movementSequenceIn;
 			this.movementSequenceIn = 0;
 			this.moveRequests.Clear();
-		}
-
-		internal byte MovementSequenceIn {
-			get {
-				return this.movementSequenceIn;
-			}
 		}
 	}
 }

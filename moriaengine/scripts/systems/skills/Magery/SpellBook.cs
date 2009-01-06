@@ -37,8 +37,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool On_DenyDClick(DenyClickArgs args) {
 			Character ch = (Character) args.clickingChar;
-			Thing c = this.Cont;
-			if ((c == ch) || (c == ch.Backpack)) {
+			Thing cont = this.Cont;
+			if (ch.IsGM || (cont == ch) || (cont == ch.Backpack)) {
 				return base.On_DenyDClick(args);
 			}
 
@@ -55,15 +55,32 @@ namespace SteamEngine.CompiledScripts {
 		public void DisplayTo(Character viewer) {
 			GameState state = viewer.GameState;
 			if (state != null) {
+				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				
+				//this is probably not necessary. We'll see if it breaks :)
+				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+				//Thing cont = this.Cont;
+				//if (cont == null) {
+				//    ItemOnGroundUpdater updater = this.GetOnGroundUpdater();
+				//    updater.SendTo(viewer, state, conn);
+				//} else if (cont is Item) {
+				//    pg.AcquirePacket<AddItemToContainerOutPacket>().Prepare(cont.FlaggedUid, this);
+				//} else {
+				//    pg.AcquirePacket<WornItemOutPacket>().PrepareItem(cont.FlaggedUid, this);
+				//}
+				//conn.SendPacketGroup(pg);
+
 				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 				pg.AcquirePacket<DrawContainerOutPacket>().PrepareSpellbook(this.FlaggedUid);
+				conn.SendPacketGroup(pg);
 
+				pg = PacketGroup.AcquireSingleUsePG();//the 2 packets can't be in one group. Don't ask me why.
 				if (state.Version.needsNewSpellbook) {
 					pg.AcquirePacket<NewSpellbookOutPacket>().Prepare(this.FlaggedUid, this.Model, (short) this.FirstSpellId, this.contents);
 				} else {
 					pg.AcquirePacket<ItemsInContainerOutPacket>().PrepareSpellbook(this.FlaggedUid, this.FirstSpellId, this.contents);
 				}
-				state.Conn.SendPacketGroup(pg);
+				conn.SendPacketGroup(pg);
 			}
 		}
 

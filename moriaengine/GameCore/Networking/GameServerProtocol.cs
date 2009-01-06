@@ -65,7 +65,8 @@ namespace SteamEngine.Networking {
 					return Pool<SetLanguageInPacket>.Acquire();
 				case 0x13:
 					return Pool<DropToWearItemInPacket>.Acquire();
-				//TODO? case 0x22: resync movement
+				case 0x22:
+					return Pool<ResyncRequestInPacket>.Acquire();
 				case 0x3a:
 					return Pool<SetSkillLockStateInPacket>.Acquire();
 				case 0x34:
