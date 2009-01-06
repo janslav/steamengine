@@ -59,6 +59,9 @@ namespace SteamEngine.Networking {
 				case 0x06:
 					this.subPacket = Pool<PartySubPacket>.Acquire();
 					break;
+				case 0x1c:
+					this.subPacket = Pool<SpellSelectedSubPacket>.Acquire();
+					break;	
 				case 0x24:
 					this.subPacket = Pool<UnknownSubPacket>.Acquire();
 					break;	
@@ -131,6 +134,20 @@ namespace SteamEngine.Networking {
 
 			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
 				state.Language = this.language;
+			}
+		}
+
+		public sealed class SpellSelectedSubPacket : SubPacket {
+			short spellId;
+
+			protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
+				packet.SeekFromCurrent(2);
+				this.spellId = packet.DecodeShort();
+				return ReadPacketResult.Success;
+			}
+
+			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				state.CharacterNotNull.TryCastSpellFromBook(this.spellId);
 			}
 		}
 
