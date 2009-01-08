@@ -27,23 +27,6 @@ DELAY=3, 1
 ON=@Fail
 	src.message "You can't think of anything off hand"
 
-[SCRIPTEDSKILLDEF 3]
-DEFNAME=Skill_Appraise
-KEY="ItemID"
-StartByMacroEnabled = true
-DELAY=3, 1
-
-ON=@Fail
-	src.message "You can't think of anything off hand"
-
-[ArmsLoreSkillDef 4]
-DEFNAME=Skill_Armslore
-KEY="ArmsLore"
-StartByMacroEnabled = true
-EFFECT=0, 76 //bonus k utocnymu cislu
-DELAY=1.0
-
-
 [SCRIPTEDSKILLDEF 5]
 DEFNAME=Skill_Parrying
 KEY="Parrying"
@@ -397,25 +380,6 @@ ADVRATE=2.5,50.0,200.0
 
 ON=@Fail
 	src.message "Tinkering failed."
-
-[SCRIPTEDSKILLDEF 38]
-DEFNAME=Skill_Tracking
-KEY="Tracking"
-StartByMacroEnabled = true
-//TITLE="Ranger"
-//PROMPTMSG=""
-//DELAY=4.0
-//STAT_STR=25
-//STAT_INT=50
-//STAT_DEX=50
-//BONUS_STR=0
-//BONUS_DEX=50
-//BONUS_INT=50
-//BONUSSTATS=25
-ADVRATE=2.5,50.0,200.0
-
-ON=@Fail
-	src.message "Tracking failed."
 
 [SCRIPTEDSKILLDEF 39]
 DEFNAME=Skill_Vet

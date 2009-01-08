@@ -25,6 +25,8 @@ Def:	//vars on the def
 	ushort DeathSound = SoundNames.None
 
 	ushort corpseModel = 0x2006
+
+	ushort icon = 0
 	
 	uint AnimsAvailable = 0xffffffff /*all anims by default*/
 	

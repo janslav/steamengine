@@ -30,6 +30,7 @@ namespace SteamEngine.CompiledScripts {
 		private static CharAnimType[] bodyTable;
 
 		public readonly ushort model;
+		public readonly ushort icon; //shrinked char's statue
 		public readonly CharacterDef charDef;
 		public readonly CharAnimType charAnimType;
 		public readonly Gender gender;

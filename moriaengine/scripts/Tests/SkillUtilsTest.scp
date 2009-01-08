@@ -13,3 +13,7 @@ print arg.counter/1000
 //for (arg.i, -1000, 1000)
 //	print("<arg.i> : <SkillUtils.GetSCurve(arg.i)>")
 //endfor
+
+[function trackInfo]
+//run the infodialog for the skill Tracking
+SkillDef.ById(SkillName.Tracking).info

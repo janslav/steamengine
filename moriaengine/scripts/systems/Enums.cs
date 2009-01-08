@@ -45,7 +45,8 @@ namespace SteamEngine.CompiledScripts {
 		SettingsFailedColor = 35 //setting items that weren't possible to be set
 	}
 
-	[Summary("Various sorting criteria used in different dialogs")]
+	#region Dialog enums
+	[Summary("Various sorting criteria used in various dialogs")]
 	public enum SortingCriteria : int {
 		NameAsc,
 		NameDesc,
@@ -61,14 +62,12 @@ namespace SteamEngine.CompiledScripts {
 		IPDesc,
 		UnreadAsc,
 		UnreadDesc,
-		RunningAsc, //useful for abilities list
-		RunningDesc
-	}
 
-	[Summary("Various sorting criteria for displaying account notes or crimes")]
-	public enum AccountNotesSorting : int {
-		TimeAsc,
-		TimeDesc,
+		//useful for abilities list
+		RunningAsc,
+		RunningDesc,
+
+		//useful for account notes
 		RefCharAsc,
 		RefCharDesc,
 		AFKAsc,
@@ -77,51 +76,14 @@ namespace SteamEngine.CompiledScripts {
 		IssuerDesc
 	}
 
-	//abilities running possible results
-	public enum DenyResultAbilities : int {
-		Allow = 1, //we can use the ability
-		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
-		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
-		Deny_WasSwitchedOff = 4, //the ability was currently running (for ActivableAbilities only) so we switched it off
-		Deny_NotEnoughResourcesToConsume = 5,//missing some resources from "to consume" list
-		Deny_NotEnoughResourcesPresent = 6, //missing some resources from "has present" list
-		Deny_NotAllowedToHaveThisAbility = 7 //other reason why not allow to have the ability (e.g. wrong profession etc.)
-	}
+	public enum DialogAlignment : int {
+		Align_Left,
+		Align_Right,
+		Align_Center,
 
-	[Summary("Roles member adding/removing possible results")]
-	public enum DenyResultRoles : int {
-		Allow = 1, //we can add/remove the member
-
-		//specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
-		//it will be accompanied by the role specific failure message
-		Deny_NoMessage = 100
-	}
-
-	[Flags]
-	[Summary("specification of various localities where to look for resources")]
-	public enum ResourcesLocality : int {
-		NonSpecified = 0x000, //not specified where to look for resources (used for abilities,skills,triggergroups etc)
-		//following usages are usually for resource of type "itemdef" - where should we search for the items
-		WearableLayers = 0x001, //search among worn items (gloves, helm, rings etc)
-		Backpack = 0x002, //look to the backpack only
-		Bank = 0x004,	 //look to the bank only
-		BackpackAndLayers = Backpack | WearableLayers, //loook to the backpack and worn items
-		BackpackAndBank = Backpack | Bank, //look to both main containers
-		Everywhere = WearableLayers | Backpack | Bank //searchevery place on the character (wearables, backapck, bank etc.)
-	}
-
-	//specificy how many items should we try to find at the specified location
-	public enum ItemFindQuantity : int {
-		FindAll = 1, //searches the whole location and returns the list of all items that correspond to the desired one
-		FindFirst = 2 //searches until the first corresponding item is found
-	}
-
-	[Summary("Various sorting criteria for displaying regions list")]
-	public enum RegionsSorting : int {
-		NameAsc,
-		NameDesc,
-		DefnameAsc,
-		DefnameDesc
+		Valign_Top,
+		Valign_Bottom,
+		Valign_Center
 	}
 
 	[Summary("Various types of GUTA Leaf Components")]
@@ -156,18 +118,55 @@ namespace SteamEngine.CompiledScripts {
 		InputNumber
 	}
 
-	public enum SettingsDisplay : int {
-		[Summary("Zobrazit vsechny kategorie v jednom dialogu")]
-		All,
-		[Summary("Zobrazit jen jednu vybranou kategorii")]
-		Single
-	}
+	public enum SettingsEnums : int {
+		All, //Zobrazit vsechny kategorie v jednom dialogu
+		Single, //Zobrazit jen jednu vybranou kategorii
 
-	[Summary("Result of setting a single field in the info or settings dialogs")]
-	public enum SettingsOutcome : int {
+		//Result of setting a single field in the info or settings dialogs
 		NotChanged,//field has not changed at all
 		ChangedOK, //field has changed successfully
 		ChangedError //field has not changed due to some fault
+	}
+	#endregion Dialog enums
+
+	//abilities running possible results
+	public enum DenyResultAbilities : int {
+		Allow = 1, //we can use the ability
+		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
+		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
+		Deny_WasSwitchedOff = 4, //the ability was currently running (for ActivableAbilities only) so we switched it off
+		Deny_NotEnoughResourcesToConsume = 5,//missing some resources from "to consume" list
+		Deny_NotEnoughResourcesPresent = 6, //missing some resources from "has present" list
+		Deny_NotAllowedToHaveThisAbility = 7 //other reason why not allow to have the ability (e.g. wrong profession etc.)
+	}
+
+	[Summary("Roles member adding/removing possible results")]
+	public enum DenyResultRoles : int {
+		Allow = 1, //we can add/remove the member
+
+		//specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
+		//it will be accompanied by the role specific failure message
+		Deny_NoMessage = 100
+	}
+
+	[Flags]
+	[Summary("specification of various localities where to look for resources")]
+	public enum ResourcesLocality : int {
+		NonSpecified = 0x000, //not specified where to look for resources (used for resources of type: abilities,skills,triggergroups etc)
+		
+		//following usages are usually for resource of type "itemdef" - where should we search for the items
+		WearableLayers = 0x001, //search among worn items (gloves, helm, rings etc)
+		Backpack = 0x002, //look to the backpack only
+		Bank = 0x004,	 //look to the bank only
+		BackpackAndLayers = Backpack | WearableLayers, //loook to the backpack and worn items
+		BackpackAndBank = Backpack | Bank, //look to both main containers
+		Everywhere = WearableLayers | Backpack | Bank //search every place on the character (wearables, backapck, bank etc.)
+	}
+
+	//specificy how many items should we try to find at the specified location
+	public enum ItemFindQuantity : int {
+		FindAll = 1, //searches the whole location and returns the list of all items that correspond to the desired one
+		FindFirst = 2 //searches until the first corresponding item is found
 	}
 
 	[Flags]
@@ -207,7 +206,7 @@ namespace SteamEngine.CompiledScripts {
 		Dragon = 0x004000
 	}
 
-
+	#region Weapons enums
 	//Jednorucni (Broad Sword, Cutlass, Katana, Kryss, Long Sword, Scimitar, Short Spear, Spear, Viking Sword, War Fork) - Fencing
 	//Obourucni (Dagger, Axe, Bardiche, Battle Axe, Battle Large Axe, Executioner"s Axe, Double Axe, Halberd, Spear, Two Handed Axe, War Axe)- Swordsmanship
 	//Tupe (Mace, War Mace, Hammer Pick, War Hammer, Maul)- Macefighting
@@ -246,6 +245,7 @@ namespace SteamEngine.CompiledScripts {
 		Jagged = 0x08
 		//?
 	}
+	#endregion Weapons enums
 
 	public enum WearableType : byte {
 		Clothing = 0,
@@ -255,6 +255,46 @@ namespace SteamEngine.CompiledScripts {
 		Chain = 4,
 		Ring = 5,
 		Plate = 6
+	}
+
+	public enum MaterialType : byte {
+		None = 0,
+		Metal = 1,
+		Ore = 2,
+		Wood = 3
+	}
+
+	public enum Material : byte {
+		None = 0,
+		Copper = 1,
+		Spruce = 1,
+		Iron = 2,
+		Chestnut = 2,
+		Silver = 3,
+		Gold = 4,
+		Verite = 5,
+		Oak = 5,
+		Valorite = 6,
+		Teak = 6,
+		Obsidian = 7,
+		Mahagon = 7,
+		Adamantinum = 8,
+		Eben = 8,
+		Mithril = 9,
+		Elven = 9,
+		Sand = 10
+	}
+
+	#region Various anims
+	//taken from runuo
+	[Flags]
+	public enum CharAnimType : byte {
+		Empty = 0x00,
+		Monster = 0x01,
+		Animal = 0x02,
+		Sea = Animal | 0x04,
+		Human = 0x08,
+		Equipment = 0x10
 	}
 
 	public enum GenericAnim : byte {
@@ -363,6 +403,7 @@ namespace SteamEngine.CompiledScripts {
 		Die2 = 12,	//This looks identical to 5 (attack) on all the animals I've tested so far...
 		NumAnims = 13
 	}
+	#endregion Various anims
 
 	public enum Gender : byte {
 		Undefined = 0,
@@ -370,11 +411,13 @@ namespace SteamEngine.CompiledScripts {
 		Female = 2
 	}
 
-	public enum MaterialType : byte {
-		None = 0,
-		Metal = 1,
-		Ore = 2,
-		Wood = 3
+	[Summary("Recognized types of characters. Can be used e.g. in skills (tracking etc.)")]
+	public enum CharacterTypes : byte {
+		All = 0,
+		Animals = 1,
+		NPCs = 2,
+		Players = 3,
+		Monsters = 4
 	}
 
 	//[Flags]
@@ -388,30 +431,12 @@ namespace SteamEngine.CompiledScripts {
 	//    Male =		0x20,
 	//    Female =	0x40,
 	//    Ghost =		0x80
-	//}
+	//}	
 
-	//taken from runuo
-	[Flags]
-	public enum CharAnimType : byte {
-		Empty = 0x00,
-		Monster = 0x01,
-		Animal = 0x02,
-		Sea = Animal | 0x04,
-		Human = 0x08,
-		Equipment = 0x10
-	}
-
-	public enum Material : byte {
-		None = 0,
-		Copper = 1, Spruce = 1,
-		Iron = 2, Chestnut = 2,
-		Silver = 3,
-		Gold = 4,
-		Verite = 5, Oak = 5,
-		Valorite = 6, Teak = 6,
-		Obsidian = 7, Mahagon = 7,
-		Adamantinum = 8, Eben = 8,
-		Mithril = 9, Elven = 9,
-		Sand = 10
+	[Summary("Category of characters to track, tracking phases")]
+	public enum TrackingEnums : byte {
+		//tracking phases
+		Phase_Characters_Seek = 1, //after the category is selected - in this phase the surroundings will be checked for all trackable chars
+		Phase_Character_Track = 2 //particular character checked to tbe tracked (displaying his footsteps)
 	}
 }

@@ -31,9 +31,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static readonly int dlgWidth = 850; //sirka dialogu
 		
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			//zjistit zda bude paging, najit maximalni index na strance
 			int startingColor = Convert.ToInt32(args.ArgsArray[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
-			int firstiVal = Convert.ToInt32(args.ArgsArray[1]);   //prvni barva na strance - pro paging
+			//zjistit zda bude paging, najit maximalni index na strance
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS*columnsCnt), lastColor);
@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//input field pro vyber barvy
-			dlg.AddTable(new GUTATable(1, 100, 40, 0));
+			dlg.AddTable(new GUTATable(1, 160, 40, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zadej poèáteèní barvu: ");
 			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 10, startingColor.ToString());
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
@@ -68,6 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for(int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
 				for(int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor ; j++, colorCntr++) { //a v nem kazdy radek
 					//vlozit priklad jedne pouzite barvy (dokud nedojdou barvy)
+					//dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + String.Format("{0:X2}", colorCntr) + ")");
 					dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + colorCntr + ")");
 				}
 			}
@@ -87,7 +88,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
                         break;
                     case 1: //vybrat prvni barvu
 						args.ArgsArray[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
-						args.ArgsArray[1] = (int)gr.GetNumberResponse(10); //ta bude zaroven prvni na strance
+						args.SetTag(ImprovedDialog.pagingIndexTK, (int) gr.GetNumberResponse(10)); //ta bude zaroven prvni na strance
+						//args.ArgsArray[1] = (int)gr.GetNumberResponse(10);
 						DialogStacking.ResendAndRestackDialog(gi);
                         break;
                 }
@@ -111,11 +113,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
 			if(text == null || text.Args.Length == 0) {
-				//zaciname od nulte barvy
-				sender.Dialog(SingletonScript<D_Colors>.Instance, new DialogArgs(0,0)); //zaciname od 0. barvy, a 0. barva bude prvni na strance
+				DialogArgs newArgs = new DialogArgs(0); //zaciname od 0. barvy
+				newArgs.SetTag(ImprovedDialog.pagingIndexTK, 0); //prvni na strance bude ta 0.
+				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			} else {
-				//zacneme od zvolene barvy (argv0 bude prvni na strance i se od ni bude zacinat)
-				sender.Dialog(SingletonScript<D_Colors>.Instance, new DialogArgs(Convert.ToInt32(text.argv[0]), Convert.ToInt32(text.argv[0])));
+				DialogArgs newArgs = new DialogArgs(Convert.ToInt32(text.argv[0])); //zaciname od zvolene barvy
+				newArgs.SetTag(ImprovedDialog.pagingIndexTK, Convert.ToInt32(text.argv[0])); //prvni na strance bude ta zvolena
+				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			}
 		}	
 	}

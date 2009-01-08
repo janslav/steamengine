@@ -167,7 +167,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetEffectForChar(Character ch) {
-			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), this.Effect);
+			//GM is treated as having the maximal skill
+			if (ch.IsGM) {
+				return ScriptUtil.EvalRangePermille(1000.0, this.Effect);
+			} else {
+				return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), this.Effect);
+			}
 		}
 
 		public static bool CheckSuccess(ushort skillValue, int difficulty) {

@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			object sorting = args.GetTag(D_Regions.regsSortingTK);
 			if (sorting != null) {//mame cim tridit?
-				SortBy(regionsList, (RegionsSorting) Convert.ToInt32(sorting));
+				SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -115,22 +115,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 3: //name asc						
 						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameAsc);
+						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameAsc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //name desc
 						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameDesc);
+						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameDesc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //defname asc
 						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.DefnameAsc);
+						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.DefnameAsc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //defname desc
 						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, RegionsSorting.DefnameDesc);
+						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.DefnameDesc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -148,19 +148,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		private void SortBy(List<StaticRegion> regList, RegionsSorting criterium) {
+		private void SortBy(List<StaticRegion> regList, SortingCriteria criterium) {
 			switch (criterium) {
-				case RegionsSorting.NameAsc:
+				case SortingCriteria.NameAsc:
 					regList.Sort(RegionComparerByName.instance);
 					break;
-				case RegionsSorting.NameDesc:
+				case SortingCriteria.NameDesc:
 					regList.Sort(RegionComparerByName.instance);
 					regList.Reverse();
 					break;
-				case RegionsSorting.DefnameAsc:
+				case SortingCriteria.DefnameAsc:
 					regList.Sort(RegionComparerByDefname.instance);
 					break;
-				case RegionsSorting.DefnameDesc:
+				case SortingCriteria.DefnameDesc:
 					regList.Sort(RegionComparerByDefname.instance);
 					regList.Reverse();
 					break;

@@ -38,31 +38,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				string newStringValue = resp.GetTextResponse(key); //get the value from the edit field
 				if(!typeof(Enum).IsAssignableFrom(field.FieldType) && !newStringValue.Equals(field.GetStringValue(target))) {
 					//hnadled type is not Enum and it has changed somehow...
-					oneRes.Outcome = SettingsOutcome.ChangedOK; //assume it will be OK
+					oneRes.Outcome = SettingsEnums.ChangedOK; //assume it will be OK
 					//something has changed - try to make the setting
 					try {
 						field.SetStringValue(target, newStringValue);
 					} catch {
 						//setting failed for some reason
-						oneRes.Outcome = SettingsOutcome.ChangedError; //it wasnt OK... :-(
+						oneRes.Outcome = SettingsEnums.ChangedError; //it wasnt OK... :-(
 						//store the attempted string
 						oneRes.ErroneousValue = newStringValue;
 					}
 					resList.Add(oneRes);//add to the list (only if changed somehow)
 				} else if(typeof(Enum).IsAssignableFrom(field.FieldType) && SettingsProvider.IsEnumValueChanged(field,target,newStringValue)) {
 					//if the field handles the Enum type, we have to check it a slightly different way...
-					oneRes.Outcome = SettingsOutcome.ChangedOK;
+					oneRes.Outcome = SettingsEnums.ChangedOK;
 					try {
 						//try to set the enumeration value
 						field.SetValue(target,Enum.Parse(field.FieldType, newStringValue, true));
 					} catch {
-						oneRes.Outcome = SettingsOutcome.ChangedError;
+						oneRes.Outcome = SettingsEnums.ChangedError;
 						oneRes.ErroneousValue = newStringValue;
 					}
 					resList.Add(oneRes);//add to the list (only if changed somehow)
 				} else {
 					//nothing changed
-					oneRes.Outcome = SettingsOutcome.NotChanged;
+					oneRes.Outcome = SettingsEnums.NotChanged;
 				}								
 			}
 			return resList;
@@ -71,9 +71,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Look on the outcome value and return the correct color for the dialog")]
 		public static Hues ResultColor(SettingResult sres) {
 			switch(sres.Outcome) {
-				case SettingsOutcome.ChangedError:
+				case SettingsEnums.ChangedError:
 					return Hues.SettingsFailedColor;
-				case SettingsOutcome.ChangedOK:
+				case SettingsEnums.ChangedOK:
 					return Hues.SettingsCorrectColor;
 				default:
 					return Hues.SettingsNormalColor; //but thos won't happen :)
@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static int CountSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
 			foreach(SettingResult sres in results) {
-				if(sres.Outcome == SettingsOutcome.ChangedOK) {
+				if (sres.Outcome == SettingsEnums.ChangedOK) {
 					resCntr++;
 				}
 			}
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static int CountUnSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
 			foreach(SettingResult sres in results) {
-				if(sres.Outcome == SettingsOutcome.ChangedError) {
+				if (sres.Outcome == SettingsEnums.ChangedError) {
 					resCntr++;
 				}
 			}
@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private object target;
 
 		//was the setting succesfull/erroneous or even not provided at all ? 
-		private SettingsOutcome outcome;
+		private SettingsEnums outcome;
 		//here will be the value we tried to set and it resulted in some error
 		private string erroneousValue;
 
@@ -203,7 +203,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Summary("What is the result of the setting?")]
-		public SettingsOutcome Outcome {
+		public SettingsEnums Outcome {
 			get {
 				return outcome;
 			}

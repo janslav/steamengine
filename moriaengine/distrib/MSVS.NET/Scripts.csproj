@@ -395,6 +395,9 @@
     <Compile Include="..\..\scripts\systems\Enums.cs">
       <Link>systems\Enums.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\GumpIDs.cs">
+      <Link>systems\GumpIDs.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\mailingsystem\MailingSystem.cs">
       <Link>systems\mailingsystem\MailingSystem.cs</Link>
     </Compile>
@@ -485,6 +488,9 @@
     <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
       <Link>systems\ScriptedAccount.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\ScriptSector.cs">
+      <Link>systems\ScriptSector.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\settings\DataView.cs">
       <Link>systems\settings\DataView.cs</Link>
     </Compile>
@@ -539,8 +545,8 @@
     <Compile Include="..\..\scripts\systems\settings\ViewableClassGenerator.cs">
       <Link>systems\settings\ViewableClassGenerator.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
-      <Link>systems\skills\ArmsLore.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\ArmsLore\ArmsLore.cs">
+      <Link>systems\skills\ArmsLore\ArmsLore.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Combat\CombatCalculator.cs">
       <Link>systems\skills\Combat\CombatCalculator.cs</Link>
@@ -581,8 +587,8 @@
     <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
       <Link>systems\skills\Hiding\Hiding.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
-      <Link>systems\skills\ItemID.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\ItemID\ItemID.cs">
+      <Link>systems\skills\ItemID\ItemID.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Magery.cs">
       <Link>systems\skills\Magery\Magery.cs</Link>
@@ -643,6 +649,21 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Stealing\Stealing.cs">
       <Link>systems\skills\Stealing\Stealing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\Tracking.cs">
+      <Link>systems\skills\Tracking\Tracking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingCategoriesDialog.cs">
+      <Link>systems\skills\Tracking\TrackingCategoriesDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingCharactersDialog.cs">
+      <Link>systems\skills\Tracking\TrackingCharactersDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingPlugin.Generated.cs">
+      <Link>systems\skills\Tracking\TrackingPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackPoint.cs">
+      <Link>systems\skills\Tracking\TrackPoint.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Speech.cs">
       <Link>systems\Speech.cs</Link>

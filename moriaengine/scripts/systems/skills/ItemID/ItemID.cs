@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			self.SysMessage("ItemId SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
+			//self.SysMessage("ItemId SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
 			Item targetted = (Item) skillSeqArgs.Target1;
 			if (targetted == null || targetted.IsDeleted) {
 				self.SysMessage(targetted.Name + " se vyrabi z !RESOURCES!" + ", vazi " + targetted.Weight + " a barva je " + targetted.Color);
@@ -44,7 +44,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			skillSeqArgs.Self.SysMessage("Fail");
+			//skillSeqArgs.Self.SysMessage("Fail");
+			skillSeqArgs.Self.ClilocSysMessage(500353);//You are not certain...
 			return false;
 		}
 
@@ -56,7 +57,8 @@ namespace SteamEngine.CompiledScripts {
 	public class Targ_ItemID : CompiledTargetDef {
 
 		protected override void On_Start(Player self, object parameter) {
-			self.SysMessage("Co chces identifikovat ?");
+			//self.SysMessage("Co chces identifikovat ?");
+			self.ClilocSysMessage(500349);//What item do you wish to get information about?
 			base.On_Start(self, parameter);
 		}
 
