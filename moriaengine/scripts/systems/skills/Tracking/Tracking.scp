@@ -1,0 +1,16 @@
+[TRACKINGSKILLDEF 38]
+DEFNAME=Skill_Tracking
+KEY="Tracking"
+StartByMacroEnabled=true
+DELAY=3.0,1.0
+EFFECT=4.0,15.0 //used for tracking area size computing (4 fields around at skill 0, 15 at skill 100)
+//TITLE="Ranger"
+//PROMPTMSG=""
+//STAT_STR=25
+//STAT_INT=50
+//STAT_DEX=50
+//BONUS_STR=0
+//BONUS_DEX=50
+//BONUS_INT=50
+//BONUSSTATS=25
+//ADVRATE=2.5,50.0,200.0

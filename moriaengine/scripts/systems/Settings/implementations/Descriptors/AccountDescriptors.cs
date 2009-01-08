@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void AccNotes(object target) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount)target);
-			newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+			newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 		}
 
@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void AccCrimes(object target) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount)target);
-			newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+			newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 		}
 

@@ -1292,6 +1292,7 @@ CATEGORY = Ground Tiles
 SUBSECTION = Mud and Footprints
 DESCRIPTION = Footprints
 
+defname=i_footstep
 
 [ItemDef 0x1e05]
 CATEGORY = Ground Tiles

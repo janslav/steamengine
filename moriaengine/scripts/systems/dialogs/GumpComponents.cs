@@ -268,6 +268,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"can be specified using the appropriate setter")]
 		private int rowHeight = ButtonFactory.D_BUTTON_HEIGHT;
 
+		[Summary("Should the inner rows of every column in this table be delimited by thin line?")]
+		private bool innerRowsDelimited = false;
+
 		[Summary("Shall the table's columns be made as transparent after writing out?")]
 		private bool transparent;
 		public bool Transparent {
@@ -305,7 +308,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//if the one-before-last column is zero sized, the next column will be added 'as last'				
 				shallBeLast = (columnSizes[i] == 0) && (i == columnSizes.Length - 2);
 			}
-		}			
+		}
 
 		[Summary("Allows to customize also border and background properties")]
 		public GUTATable(int rowCount, string gumpBorders, string gumpBackground) {
@@ -340,7 +343,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			get {
 				if(height == 0) {
 					//height has not yet been computed, compute it now
-					height = rowCount * rowHeight + 2 * ImprovedDialog.D_COL_SPACE;
+					height = rowCount * rowHeight + 2 * ImprovedDialog.D_COL_SPACE + 
+						//if the inner rows are to be delimited, add corresponding number of space for it
+						(innerRowsDelimited ? (rowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
 					return height;
 				} else {
 					//the height has been computed, use it instead of computing it again...
@@ -349,6 +354,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			set {
 				height = value;
+			}
+		}
+
+		public bool InnerRowsDelimited {
+			get {
+				return innerRowsDelimited;
+			}
+			set {
+				innerRowsDelimited = value;
+				if (innerRowsDelimited && (rowCount > 1)) { //makes sense only for more than 1 row...
+					foreach (GUTAColumn child in components) {
+						child.DelimitRows = true;
+					}
+				}
 			}
 		}
 
@@ -391,6 +410,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				
 				//move the component to the desired row
 				addedObj.YPos += row * rowHeight;
+				if (InnerRowsDelimited) { //add the proper space !
+					addedObj.YPos += (row - 1) * ImprovedDialog.D_COL_SPACE; //from the second row we must add some pixels...
+				}
 				//and add the component
 				columnToAccess.AddComponent(addedObj);
 			}
@@ -512,6 +534,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"'from the right side'")]
 		private bool isLast;
 
+		[Summary("Should the inner 'rows' be delimited by thin line?")]
+		private bool delimitRows;
+
 		[Summary("Basic column - after it is added to the GUTATable it will take the row's size")]
 		public GUTAColumn() {
 		}
@@ -557,7 +582,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			get {
 				if(height == 0) {
 					//height is not yet set
-					height = RowCount * ((GUTATable)parent).RowHeight;
+					height = RowCount * ((GUTATable) parent).RowHeight + 
+						//in case of delimiting the rows, add the delimiting spaces
+						(delimitRows ? (rowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
 					return height;
 				} else {
 					return height;
@@ -571,6 +598,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			set {
 				isLast = value;
+			}
+		}
+
+		public bool DelimitRows {
+			get {
+				return delimitRows;
+			}
+			set {
+				delimitRows = value;
 			}
 		}
 
@@ -625,6 +661,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			if (((GUTATable)parent).Transparent) {//the parent table is set to be transparent
 				SetTransparency();//make it transparent after writing out
+			}
+			if (!NoWrite) {
+				//and also check the delimiting spaces for rows..., after the transparency check
+				if (delimitRows) {
+					int rowHeight = ((GUTATable) parent).RowHeight;
+					for (int i = 0; i < rowCount - 1; i++) {
+						//add after each "row" one pixel beige line...
+						gump.AddGumpPicTiled(xPos, yPos + (i + 1) * rowHeight + (i) * ImprovedDialog.D_COL_SPACE, width - ImprovedDialog.D_COL_SPACE, 1, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
+					}
+				}
 			}
 			//write children (another inner GUTATable or leaf components)
 			WriteChildren();

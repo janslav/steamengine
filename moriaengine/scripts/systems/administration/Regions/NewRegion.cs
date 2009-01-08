@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args.SetTag(parentDefTK,gr.GetTextResponse(24)); //parentuv defname
 
 				DialogArgs newArgs = new DialogArgs();
-				newArgs.SetTag(D_Regions.regsSortingTK, RegionsSorting.NameAsc);//zakladni trideni			
+				newArgs.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameAsc);//zakladni trideni			
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_SelectParent>.Instance,newArgs);
 				DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku				
 			}

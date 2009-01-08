@@ -92,8 +92,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		public static void Meditate(Character self) {			
-			//self.AddNewPlugin(MeditationPlugin.meditationPluginKey, MeditationPlugin.defInstance);
+		public static void Meditate(Character self) {
+			self.SelectSkill(SkillName.Meditation);
 		}
 	}
 

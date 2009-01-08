@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Factory class for creating buttons according to the given button type. Including special buttons"+
             " such as Checkbox or Radio Button")]
 	public class ButtonFactory {
-        internal static Hashtable buttonGumps = new Hashtable();
+        internal static Dictionary<LeafComponentTypes,ButtonGump> buttonGumps = new Dictionary<LeafComponentTypes,ButtonGump>();
 
         static ButtonFactory() {
             //0fb1, 0fb3 Cross button
@@ -65,8 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0fb4, 0fb6 Crossed circle button 
 			buttonGumps.Add(LeafComponentTypes.ButtonNoOperation, new ButtonGump(4020, 4022));
 
-
-            //0d2, 0d3 Checkbox (unchecked, checked)
+			//0d2, 0d3 Checkbox (unchecked, checked)
             buttonGumps.Add(LeafComponentTypes.CheckBox, new ButtonGump(210, 211));
             //0d0, 0d1 Radiobutton (unselected, selected)
             buttonGumps.Add(LeafComponentTypes.RadioButton, new ButtonGump(208, 209));
@@ -108,58 +107,64 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Factory method for creating a given type of the button. We have to provide the _relative_"+
                 "x and y position (relative to the parent column) and the button ID, we have to also specify the page "+
-                "opened by this button and whether the button is active or not")]
-        public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int page, int id) {
-			return new Button(id, xPos, yPos, (ButtonGump)buttonGumps[type], active, page);
+                "opened by this button and whether the button is active or not. Allows specifying the valign")]
+        public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int page, int id, DialogAlignment valign) {
+			return new Button(id, xPos, yPos, buttonGumps[type], active, page, valign);
 		}
 
-		[Summary("Basic method - it adds the button automatically to the beginning of the column")]
+		[Summary("Basic method - it adds the button automatically to the beginning of the column.")]
 		public static Button CreateButton(LeafComponentTypes type, int id) {
-			return CreateButton(type, 0, 0, true, 0, id);
+			return CreateButton(type, 0, 0, true, 0, id, DialogAlignment.Valign_Top);
+		}
+
+		[Summary("Basic method - it adds the button automatically to the beginning of the column. "+
+				 "Allows specifying the valign")]
+		public static Button CreateButton(LeafComponentTypes type, int id, DialogAlignment valign) {
+			return CreateButton(type, 0, 0, true, 0, id, valign);
 		}
 
 		[Summary("Basic method - allows to specify the button position")]
         public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, int id) {
-			return CreateButton(type, xPos, yPos, true, 0, id);
+			return CreateButton(type, xPos, yPos, true, 0, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Basic method - allows to specify the button position and activity")]
         public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int id) {
-			return CreateButton(type, xPos, yPos, active, 0, id);
+			return CreateButton(type, xPos, yPos, active, 0, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Basic method - it adds the button automatically to the beginning of the column"+
                 "allows us to specify if the button is active or not")]
         public static Button CreateButton(LeafComponentTypes type, bool active, int id) {
-			return CreateButton(type, 0, 0, active, 0, id);
+			return CreateButton(type, 0, 0, active, 0, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Basic method - it adds the button automatically to the beginning of the column" +
                 "allows us to specify if the button is active or not and the page opened")]
         public static Button CreateButton(LeafComponentTypes type, bool active, int page, int id) {
-			return CreateButton(type, 0, 0, active, page, id);
+			return CreateButton(type, 0, 0, active, page, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Create a checkbox using the _relative_ position in the column, the check/unchecked flag"+
                 "and the id")]
-		public static CheckBox CreateCheckbox(int xPos, int yPos, bool isChecked, int id) {
-			return new CheckBox(xPos, yPos, (ButtonGump)buttonGumps[LeafComponentTypes.CheckBox], isChecked, id);
+		public static CheckBox CreateCheckbox(int xPos, int yPos, bool isChecked, int id, DialogAlignment valign) {
+			return new CheckBox(xPos, yPos, buttonGumps[LeafComponentTypes.CheckBox], isChecked, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Create checkbox using the 1 or 0 as a marker if the checkbox is checked or not")]
 		public static CheckBox CreateCheckbox(int xPos, int yPos, int isChecked, int id) {
-			return CreateCheckbox(xPos, yPos, isChecked == 1 ? true : false, id);
+			return CreateCheckbox(xPos, yPos, isChecked == 1 ? true : false, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Create a radio button using the _relative_ position in the column, the check/unchecked flag" +
                 "and the id")]
-		public static RadioButton CreateRadio(int xPos, int yPos, bool isChecked, int id) {
-			return new RadioButton(xPos, yPos, (ButtonGump)buttonGumps[LeafComponentTypes.RadioButton], isChecked, id);
+		public static RadioButton CreateRadio(int xPos, int yPos, bool isChecked, int id, DialogAlignment valign) {
+			return new RadioButton(xPos, yPos, buttonGumps[LeafComponentTypes.RadioButton], isChecked, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Create radio button using the 1 or 0 as a marker if the checkbox is checked or not")]
 		public static RadioButton CreateRadio(int xPos, int yPos, int isChecked, int id) {
-			return CreateRadio(xPos, yPos, isChecked == 1 ? true : false, id);
+			return CreateRadio(xPos, yPos, isChecked == 1 ? true : false, id, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("The Button component class - it handles the button writing to the client")]
@@ -170,18 +175,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private int page = 0;
 			private bool active = true;
 
+			[Summary("Text vertical alignment")]
+			protected DialogAlignment valign = DialogAlignment.Valign_Top;
+
 			[Summary("This constructor is here only for the buttons children classes")]
 			internal Button() {
 			}
 
 			[Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
-			internal Button(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page) {
+			internal Button(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign) {
 				this.id = id;
 				this.xPos = xPos;
 				this.yPos = yPos;
                 this.gumps = gumps;
                 this.active = active;
 				this.page = page;
+				this.valign = valign;
 			}
 
 			[Summary("When added, we must recompute the Buttons absolute position in the dialog (we "+
@@ -189,12 +198,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
-				//set the column row (counted from the relative position
-				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
 
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable) parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
+
+				int valignOffset = 0;
+				switch (valign) {
+					case DialogAlignment.Valign_Center:
+						valignOffset = grandpa.RowHeight / 2 - ButtonFactory.D_BUTTON_HEIGHT / 2; //moves the button to the middle of the column
+						break;
+					case DialogAlignment.Valign_Bottom:
+						valignOffset = grandpa.RowHeight - ButtonFactory.D_BUTTON_HEIGHT; //moves the button to the bottom
+						break;
+				}
 				//no space here, the used button gumps have themselves some space...
 				xPos += parent.XPos;
-				yPos += parent.YPos;				
+				yPos += parent.YPos + valignOffset;				
 			}
 
 			[Summary("Simply write the button (send the method request to the underlaying gump)")]
@@ -223,25 +244,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private bool isChecked;
 
 			[Summary("Creates a checkbox with the given format")]
-			internal CheckBox(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id) {
+			internal CheckBox(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id, DialogAlignment valign) {
 				this.xPos = xPos;
 				this.yPos = yPos;
                 this.gumps = gumps;
 				this.isChecked = isChecked;
 				this.id = id;
+				this.valign = valign;
 			}
-
-			[Summary("Set the position which was specified relatively")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
-				//set the column row (counted from the relative position
-				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
-
-				xPos = xPos + parent.XPos;
-				yPos = yPos + parent.YPos;
-			}
-
+			
 			[Summary("Simply call the gumps method for writing the checkbox")]
 			internal override void WriteComponent() {
                                              //unchecked!!!,    checked !!!
@@ -257,24 +268,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private bool isChecked;
 
 			[Summary("Creates a radio button")]
-			internal RadioButton(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id) {
+			internal RadioButton(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id, DialogAlignment valign) {
 				this.xPos = xPos;
 				this.yPos = yPos;
                 this.gumps = gumps;
 				this.isChecked = isChecked;
 				this.id = id;
-			}
-
-			[Summary("Set the position which was specified relatively")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
-				//set the column row (counted from the relative position
-				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
-
-				xPos = xPos + parent.XPos;
-				yPos = yPos + parent.YPos;
-			}
+				this.valign = valign;
+			}			
 
 			[Summary("Simply call the gumps method for writing the radiobutton")]
 			internal override void WriteComponent() {
@@ -396,8 +397,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
-				//set the column row (counted from the relative position
-				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable) parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
+
+//				//set the column row (counted from the relative position
+//				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
 
 				xPos += parent.XPos;
 				yPos += parent.YPos;
@@ -466,6 +473,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return CreateText(Hues.LabelColor, text);
 		}
 
+		[Summary("Creating labels - of columns, of input fields etc. Allows alignment specifying")]
+		public static Text CreateLabel(string text, DialogAlignment align, DialogAlignment valign) {
+			return CreateText(Hues.LabelColor, text, align, valign);
+		}
+
 		[Summary("Creating labels - of columns, of input fields etc")]
 		public static Text CreateLabel(int xPos, int yPos, string text) {
 			return CreateText(xPos, yPos, Hues.LabelColor, text);
@@ -478,44 +490,54 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Titulek tabulky, ovsem s volbou barvy")]
 		public static Text CreateHeadline(string text, Hues color) {
-			return CreateText(color, text);
+			return CreateText(color, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
 		public static Text CreateText(int hue, string text) {
-			return new Text(0, 0, hue, text);
+			return new Text(0, 0, hue, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
 		public static Text CreateText(Hues hue, string text) {
-			return new Text(0, 0, hue, text);
+			return new Text(0, 0, (int)hue, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
-		[Summary("The simplest factory method lets the dialog to determine the position and the color of the text")]
+		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
+		public static Text CreateText(Hues hue, string text, DialogAlignment align, DialogAlignment valign) {
+			return new Text(0, 0, (int)hue, text, align, valign);
+		}
+
+		[Summary("The simplest factory method just to display the desired text with the basic color")]
 		public static Text CreateText(string text) {
-			return new Text(0, 0, Hues.WriteColor, text);
+			return new Text(0, 0, (int)Hues.WriteColor, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
+		}
+
+		[Summary("The simplest factory method lets the dialog to determine the position of the text")]
+		public static Text CreateText(string text, DialogAlignment align, DialogAlignment valign) {
+			return new Text(0, 0, (int) Hues.WriteColor, text, align, valign);
 		}
 
 		[Summary("Basic factory method creates the text field with a given _relative_ position in the column"+
 			   " and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, string text) {
-			return new Text(xPos, yPos, hue, text);
+			return new Text(xPos, yPos, (int)hue, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Basic factory method creates the text field form the previously added text (by ID) with a given _relative_ " +
                 " position in the column and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, int textId) {
-			return new Text(xPos, yPos, hue, textId);
+			return new Text(xPos, yPos, (int)hue, textId, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Factory method awaiting the text string but no special hue (the default will be used)")]
 		public static Text CreateText(int xPos, int yPos, string text) {
-			return new Text(xPos, yPos, Hues.WriteColor, text);
+			return new Text(xPos, yPos, (int)Hues.WriteColor, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Factory method awaiting the textId but no special hue (the default will be used)")]
 		public static Text CreateText(int xPos, int yPos, int textId) {
-			return new Text(xPos, yPos, Hues.WriteColor, textId);
+			return new Text(xPos, yPos, (int)Hues.WriteColor, textId, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Basic fafctory method for building a html gump - we can specify all")]
@@ -563,28 +585,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private int textId;
 			private string text;
 
-			[Summary("First complete constructor - awaits the text in the string form."+
-					"Using color as int and not Hue enumeration")]
-			public Text(int xPos, int yPos, int hue, string text) {
+			[Summary("Text horizontal alignment")]
+			private DialogAlignment align = DialogAlignment.Align_Left;
+			[Summary("Text vertical alignment")]
+			private DialogAlignment valign = DialogAlignment.Valign_Top;
+
+			private Text(int xPos, int yPos, int hue, DialogAlignment align, DialogAlignment valign) {
 				this.xPos = xPos;
 				this.yPos = yPos;
 				this.textHue = hue;
-				this.text = text;
+				this.align = align;
+				this.valign = valign;
 			}
 
-			[Summary("First complete constructor - awaits the text in the string form")]
-			public Text(int xPos, int yPos, Hues hue, string text) {
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.textHue = (int)hue;
-				this.text = text;
+			[Summary("First complete constructor - awaits the text in the string form."+
+					"Using color as int and not Hue enumeration. Allows specifying the alignment")]
+			public Text(int xPos, int yPos, int hue, string text, DialogAlignment align, DialogAlignment valign) 
+					: this(xPos, yPos, hue, align, valign) {
+				this.text = text;				
 			}
 
-			[Summary("First complete constructor - awaits the text in the textId")]
-			public Text(int xPos, int yPos, Hues hue, int textId) {
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.textHue = (int)hue;
+			[Summary("First complete constructor - awaits the text in the textId. Allows specifying the alignment")]
+			public Text(int xPos, int yPos, int hue, int textId, DialogAlignment align, DialogAlignment valign) 
+					: this(xPos, yPos, hue, align, valign) {
 				this.textId = textId;
 			}
 
@@ -592,12 +615,36 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
-				//set the column row (counted from the relative position
-				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+				
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable)parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
 
-				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
-				xPos += parent.XPos;
-				yPos += parent.YPos;
+				int alignOffset = 0;
+				int valignOffset = 0;
+				if (text != null) { //we are not using the ID of the text, we can do some alignment computings if necessary
+					int parentWidth = parent.Width;
+					int textWidth = ImprovedDialog.TextLength(text);
+					switch (align) {
+						case DialogAlignment.Align_Center:
+							alignOffset = parentWidth/2 - textWidth/2; //moves the text to the middle of the column
+							break;
+						case DialogAlignment.Align_Right:
+							alignOffset = parentWidth - textWidth - 1; //moves the text to the right (1 pix added - it is the border)
+							break;
+					}
+					switch (valign) {
+						case DialogAlignment.Valign_Center:
+							valignOffset = grandpa.RowHeight / 2 - ImprovedDialog.D_TEXT_HEIGHT / 2; //moves the text to the middle of the column
+							break;
+						case DialogAlignment.Valign_Bottom:
+							valignOffset = grandpa.RowHeight - ImprovedDialog.D_CHARACTER_HEIGHT; //moves the text to the bottom
+							break;
+					}
+				}
+				xPos += parent.XPos + alignOffset;
+				yPos += parent.YPos + valignOffset;
 
 				if(text == null) {
 					text = "null"; //we cannot display null so stringify it
@@ -633,34 +680,36 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private string text;
 			private int textId;
 
-			[Summary("First complete constructor - awaits the text in the string form")]
-			public HTMLText(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
+			private HTMLText(int x, int y, int width, int height, bool hasBoundBox, bool isScrollable) {
 				this.xPos = x;
 				this.yPos = y;
 				this.width = width;
 				this.height = height;
-				this.text = text;
 				this.hasBoundBox = hasBoundBox;
 				this.isScrollable = isScrollable;
 			}
 
+			[Summary("First complete constructor - awaits the text in the string form")]
+			public HTMLText(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) 
+					: this(x, y, width, height, hasBoundBox, isScrollable) {
+				this.text = text;
+			}
+
 			[Summary("Second complete constructor - awaits the text in the textId")]
-			public HTMLText(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-				this.xPos = x;
-				this.yPos = y;
-				this.width = width;
-				this.height = height;
+			public HTMLText(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) 
+					: this(x, y, width, height, hasBoundBox, isScrollable) {
 				this.textId = textId;
-				this.hasBoundBox = hasBoundBox;
-				this.isScrollable = isScrollable;
 			}
 
 			[Summary("When added to the column we have to specify the position (count the absolute)")]
 			protected override void OnBeforeWrite(GUTAComponent parent) {
 				//set the level
 				level = parent.Level + 1;
-				//set the column row (counted from the relative position
-				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable) parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
 
 				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
 				xPos += parent.XPos;
@@ -695,5 +744,133 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return linesTabsOffset + "->HTMLText(" + text + ")";
 			}
 		}
+	}
+
+	[Summary("ImageFactory creates an image field in the dialog containing the specified image")]
+	public class ImageFactory {
+		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
+		public static Image CreateImage(GumpIDs gumpId) {
+			return new Image(0, 0, gumpId);
+		}
+
+		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
+		public static Image CreateImage(int xPos, int yPos, GumpIDs gumpId) {
+			return new Image(xPos, yPos, gumpId);
+		}
+
+		//[Summary("Factory method for creating a simple tiled image, position and measures are fully taken from the parent")]
+		//public static ImageTiled CreateImageTiled(GumpIDs gumpId) {
+		//    return new ImageTiled(0, 0, gumpId, 0, 0);
+		//}
+
+		//[Summary("Factory method for creating a tiled image with predefined measures, position is taken from the parents")]
+		//public static ImageTiled CreateImageTiled(GumpIDs gumpId, int width, int height) {
+		//    return new ImageTiled(0, 0, gumpId, width, height);
+		//}
+
+		//[Summary("Factory method for creating a tiled image with predefined position, measures is taken from the parents")]
+		//public static ImageTiled CreateImageTiled(int xPos, int yPos, GumpIDs gumpId) {
+		//    return new ImageTiled(xPos, yPos, gumpId, 0, 0);
+		//}
+
+		//[Summary("Factory method for creating a tiled image with everything defined")]
+		//public static ImageTiled CreateImageTiled(int xPos, int yPos, GumpIDs gumpId, int width, int height) {
+		//    return new ImageTiled(xPos, yPos, gumpId, width, height);
+		//}
+
+		public class Image : LeafGUTAComponent {
+			protected GumpIDs gumpId;
+
+			[Summary("This constructor is here only for the image's children classes")]
+			internal Image() {
+			}
+
+			[Summary("Basic constructor awaiting the gump ID and its position")]
+			internal Image(int xPos, int yPos, GumpIDs gumpId) {
+				this.xPos = xPos;
+				this.yPos = yPos;
+                this.gumpId = gumpId;
+			}
+
+			[Summary("When added to the column we have to specify the position (count the absolute)")]
+			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable) parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
+
+				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
+				xPos += parent.XPos;
+				yPos += parent.YPos;
+			}
+
+			[Summary("Call the underlaying gump istance's methods")]
+			internal override void WriteComponent() {
+				gump.AddTilePic(xPos, yPos, (int) gumpId);
+			}
+
+			public override string ToString() {
+				string linesTabsOffset = "\r\n";
+				//add as much rows as is the row which this item lies in
+				for (int i = 0; i < columnRow; i++) {
+					linesTabsOffset += "\r\n";
+				}
+				for (int i = 0; i < level; i++) {
+					linesTabsOffset += "\t";
+				}
+				return linesTabsOffset + "->Image(" + gumpId + ")";
+			}
+		}
+
+		//public class ImageTiled : Image {
+		//    [Summary("Creates a checkbox with the given format")]
+		//    internal ImageTiled(int xPos, int yPos, GumpIDs gumpId, int width, int height) {
+		//        this.xPos = xPos;
+		//        this.yPos = yPos;
+		//        this.gumpId = gumpId;
+		//        this.width = width;
+		//        this.height = height;
+		//    }
+
+		//    [Summary("When added to the column we have to specify the position (count the absolute)")]
+		//    protected override void OnBeforeWrite(GUTAComponent parent) {
+		//        //set the level
+		//        level = parent.Level + 1;
+		//        //set the column row (counted from the relative position
+		//        columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+
+		//        //dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
+		//        xPos += parent.XPos;
+		//        yPos += parent.YPos;
+
+		//        //if not specified, take the size from the parent
+		//        if (height == 0) {
+		//            height = parent.Height;
+		//        }
+		//        if (width == 0) {
+		//            width = parent.Width;
+		//        }
+		//    }
+
+		//    [Summary("Call the underlaying gump istance's methods")]
+		//    internal override void WriteComponent() {
+		//        gump.AddGumpPicTiled(xPos, yPos, width, height, (int)gumpId);				
+		//    }
+
+		//    public override string ToString() {
+		//        string linesTabsOffset = "\r\n";
+		//        //add as much rows as is the row which this item lies in
+		//        for (int i = 0; i < columnRow; i++) {
+		//            linesTabsOffset += "\r\n";
+		//        }
+		//        for (int i = 0; i < level; i++) {
+		//            linesTabsOffset += "\t";
+		//        }
+		//        return linesTabsOffset + "->ImageTiled(" + gumpId + ")";
+		//    }
+		//}
 	}
 }

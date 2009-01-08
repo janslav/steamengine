@@ -27,46 +27,46 @@ namespace SteamEngine.CompiledScripts {
 	public static class AccountRegister {
 		public static readonly string ALL_CHARS = "all";
 
-		public static List<AccountNote> GetNotes(ScriptedAccount acc, AccountNotesSorting sortBy) {
+		public static List<AccountNote> GetNotes(ScriptedAccount acc, SortingCriteria sortBy) {
 			List<AccountNote> notes = acc.AccNotes;
 			NotesListSort(notes, sortBy); //sort, if necessary
 			return notes;
 		}
 
-		public static List<AccountCrime> GetCrimes(ScriptedAccount acc, AccountNotesSorting sortBy) {
+		public static List<AccountCrime> GetCrimes(ScriptedAccount acc, SortingCriteria sortBy) {
 			List<AccountCrime> crimes = acc.AccCrimes;
 			NotesListSort(crimes, sortBy); //sort, if necessary
 			return crimes;
 		}
 
 		[Summary("Sorting of the account notes/crimes list")]
-		private static void NotesListSort<T>(List<T> list, AccountNotesSorting criteria) where T : AccountNote {
+		private static void NotesListSort<T>(List<T> list, SortingCriteria criteria) where T : AccountNote {
 			switch (criteria) {
-				case AccountNotesSorting.TimeAsc:
+				case SortingCriteria.TimeAsc:
 					list.Sort(NotesTimeComparer<T>.instance);
 					break;
-				case AccountNotesSorting.TimeDesc:
+				case SortingCriteria.TimeDesc:
 					list.Sort(NotesTimeComparer<T>.instance);
 					list.Reverse();
 					break;
-				case AccountNotesSorting.RefCharAsc:
+				case SortingCriteria.RefCharAsc:
 					list.Sort(NotesRefCharComparer<T>.instance);
 					break;
-				case AccountNotesSorting.RefCharDesc:
+				case SortingCriteria.RefCharDesc:
 					list.Sort(NotesRefCharComparer<T>.instance);
 					list.Reverse();
 					break;
-				case AccountNotesSorting.IssuerAsc:
+				case SortingCriteria.IssuerAsc:
 					list.Sort(NotesIssuerComparer<T>.instance);
 					break;
-				case AccountNotesSorting.IssuerDesc:
+				case SortingCriteria.IssuerDesc:
 					list.Sort(NotesIssuerComparer<T>.instance);
 					list.Reverse();
 					break;
-				case AccountNotesSorting.AFKAsc:
+				case SortingCriteria.AFKAsc:
 					list.Sort(CrimesAFKComparer<T>.instance);
 					break;
-				case AccountNotesSorting.AFKDesc:
+				case SortingCriteria.AFKDesc:
 					list.Sort(CrimesAFKComparer<T>.instance);
 					list.Reverse();
 					break;

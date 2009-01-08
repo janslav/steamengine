@@ -1,0 +1,140 @@
+[function picDialog]
+dialog(src, d_picDialog)
+
+[dialog d_picDialog]
+arg dialog = ImprovedDialog(argv(0)) 
+
+dialog.CreateBackground(480)
+dialog.SetLocation(80,50)
+
+//nadpis tabulky
+dialog.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH)) 
+dialog.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Co chceš stopovat?"))
+dialog.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dialog.MakeLastTableTransparent()
+
+dialog.Add(GUTATable(8,0)) 
+dialog.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("abcdefghijklmnopqrstuvwxyz"))
+dialog.LastTable.AddToCell(1,0,TextFactory.CreateHeadline("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+dialog.LastTable.AddToCell(2,0,TextFactory.CreateHeadline("123456789 0"))
+dialog.LastTable.AddToCell(3,0,TextFactory.CreateHeadline("!?()"))
+dialog.LastTable.AddToCell(4,0,TextFactory.CreateLabel("abcdefghijklmnopqrstuvwxyz"))
+dialog.LastTable.AddToCell(5,0,TextFactory.CreateLabel("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+dialog.LastTable.AddToCell(6,0,TextFactory.CreateLabel("123456789 0"))
+dialog.LastTable.AddToCell(7,0,TextFactory.CreateLabel("!?()"))
+dialog.MakeLastTableTransparent()
+
+arg rowCnt = 10
+arg picTable = GUTATable(rowCnt,150,0,150)
+picTable.InnerRowsDelimited = true
+dialog.Add(picTable)
+arg i = 0
+
+while (<i> < <rowCnt>)
+	dialog.LastTable.AddToCell(i,0, TextFactory.CreateLabel("Bunka 1, radek " + i))
+	dialog.LastTable.AddToCell(i,1, TextFactory.CreateLabel("Bunka 2, radek " + i))
+	dialog.LastTable.AddToCell(i,2, TextFactory.CreateLabel("Bunka 3, radek " + i))
+	arg i = <i> + 1
+endwhile
+dialog.MakeLastTableTransparent()
+
+arg picTable = GutaTable(4,43,0,ButtonFactory.D_BUTTON_WIDTH)
+picTable.RowHeight = 50
+picTable.InnerRowsDelimited = true
+dialog.Add(picTable)
+dialog.LastTable.AddToCell(0,0,ImageFactory.CreateImage(0,3,GumpIDs.Figurine_Llama))
+dialog.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Zvíøata", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center))
+
+dialog.LastTable.AddToCell(1,0,ImageFactory.CreateImage(3,3,GumpIDs.Figurine_Ogre))
+dialog.LastTable.AddToCell(1,1,TextFactory.CreateLabel("Monstra", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(1,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center))
+
+dialog.LastTable.AddToCell(2,0,ImageFactory.CreateImage(10,3,GumpIDs.Figurine_Man))
+dialog.LastTable.AddToCell(2,1,TextFactory.CreateLabel("Hráèe", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(2,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center))
+
+dialog.LastTable.AddToCell(3,0,ImageFactory.CreateImage(GumpIDs.Figurine_NPC))
+dialog.LastTable.AddToCell(3,1,TextFactory.CreateLabel("NPC", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(3,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center))
+dialog.MakeLastTableTransparent()
+
+dialog.WriteOut()
+
+[DIALOG d_picDialog BUTTON]
+on=0 //exitting dialog by right click
+return 0
+
+on=1 //animal clicked
+src.sysmessage("Klix na zvíøe")
+return 0
+
+on=2 //monster clicked
+src.sysmessage("Klix na monstrum")
+return 0
+
+on=3 //monster clicked
+src.sysmessage("Klix na playera")
+return 0
+
+on=4 //monster clicked
+src.sysmessage("Klix na NPCèko")
+return 0
+
+[function trackPrototype]
+dialog(src, d_track_proto)
+
+[dialog d_track_proto]
+arg dialog = ImprovedDialog(argv(0)) 
+
+dialog.CreateBackground(200)
+dialog.SetLocation(80,50)
+
+//nadpis tabulky
+dialog.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH)) 
+dialog.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Co chceš stopovat?"))
+dialog.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dialog.MakeLastTableTransparent()
+
+arg picTable = GutaTable(4,43,0,ButtonFactory.D_BUTTON_WIDTH)
+picTable.RowHeight = 50
+picTable.InnerRowsDelimited = true
+dialog.Add(picTable)
+dialog.LastTable.AddToCell(0,0,ImageFactory.CreateImage(0,3,GumpIDs.Figurine_Llama))
+dialog.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Zvíøata", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center))
+
+dialog.LastTable.AddToCell(1,0,ImageFactory.CreateImage(3,3,GumpIDs.Figurine_Ogre))
+dialog.LastTable.AddToCell(1,1,TextFactory.CreateLabel("Monstra", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(1,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center))
+
+dialog.LastTable.AddToCell(2,0,ImageFactory.CreateImage(10,3,GumpIDs.Figurine_Man))
+dialog.LastTable.AddToCell(2,1,TextFactory.CreateLabel("Hráèe", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(2,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center))
+
+dialog.LastTable.AddToCell(3,0,ImageFactory.CreateImage(GumpIDs.Figurine_NPC))
+dialog.LastTable.AddToCell(3,1,TextFactory.CreateLabel("NPC", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dialog.LastTable.AddToCell(3,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center))
+dialog.MakeLastTableTransparent()
+
+dialog.WriteOut()
+
+[DIALOG d_track_proto BUTTON]
+on=0 //exitting dialog by right click
+return 0
+
+on=1 //animal clicked
+src.sysmessage("Klix na zvíøe")
+return 0
+
+on=2 //monster clicked
+src.sysmessage("Klix na monstrum")
+return 0
+
+on=3 //monster clicked
+src.sysmessage("Klix na playera")
+return 0
+
+on=4 //monster clicked
+src.sysmessage("Klix na NPCèko")
+return 0

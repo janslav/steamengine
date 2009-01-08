@@ -30,6 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class RegenerationPlugin {
 		//this is to initialize (create the instance) of the Regen.Plug.Def. it must be here as bellow or 
 		//somewhere in the LScript as simple [RegenerationPluginDef p_regenerations]
+		//if the instance is not pre-created in either way it will crash during attempt to assign this plugin...
 		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
 		internal static PluginKey regenerationsPluginKey = PluginKey.Get("_regenerations_");
 
@@ -62,39 +63,39 @@ namespace SteamEngine.CompiledScripts {
             bool modifyAllStats = ModifyAllStats();//first check if we will modify all three stats
 
 			//count the number of modified stats points (if any!)
-			short hitsChange = 0, stamChange = 0, manaChange = 0;
+			int hitsChange = 0, stamChange = 0, manaChange = 0;
 			if (hitsRegenSpeed != 0 && holder.Hits != holder.MaxHits) {
-				short countedChange = CountStatChange(hitsRegenSpeed, ref residuumHits, timeElapsed);
+				int countedChange = CountStatChange(hitsRegenSpeed, ref residuumHits, timeElapsed);
 				//do not overgo the maxhits or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
-					hitsChange = (short) Math.Max(-holder.Hits, countedChange);
+					hitsChange = Math.Max(-holder.Hits, countedChange);
 				} else {
-					hitsChange = (short) Math.Min(holder.MaxHits - holder.Hits, countedChange);
+					hitsChange = Math.Min(holder.MaxHits - holder.Hits, countedChange);
 				}
 			} else {
 				residuumHits = 0.0; //nothing should be left for the next round!
 			}
 			if (stamRegenSpeed != 0 && holder.Stam != holder.MaxStam) {
-				short countedChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed);
+				int countedChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed);
 				//do not overgo the maxstam or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
-					stamChange = (short) Math.Max(-holder.Stam, countedChange);
+					stamChange = Math.Max(-holder.Stam, countedChange);
 				} else {
-					stamChange = (short) Math.Min(holder.MaxStam - holder.Stam, countedChange);
+					stamChange = Math.Min(holder.MaxStam - holder.Stam, countedChange);
 				}
 			} else {
 				residuumStam = 0.0;
 			}
 			if (manaRegenSpeed != 0 && holder.Mana != holder.MaxMana) {
-				short countedChange = CountStatChange(manaRegenSpeed, ref residuumMana, timeElapsed);
+				int countedChange = CountStatChange(manaRegenSpeed, ref residuumMana, timeElapsed);
 				//do not overgo the maxstam or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
-					manaChange = (short) Math.Max(-holder.Mana, countedChange);
+					manaChange = Math.Max(-holder.Mana, countedChange);
 				} else {
-					manaChange = (short) Math.Min(holder.MaxMana - holder.Mana, countedChange);
+					manaChange = Math.Min(holder.MaxMana - holder.Mana, countedChange);
 				}
 			} else {
 				residuumMana = 0.0;
@@ -127,9 +128,9 @@ namespace SteamEngine.CompiledScripts {
                 }
             }
 			//modify stats
-			holder.Hits += hitsChange;
-			holder.Stam += stamChange;
-			holder.Mana += manaChange;
+			holder.Hits += (short) hitsChange;
+			holder.Stam += (short) stamChange;
+			holder.Mana += (short) manaChange;
 
             this.Timer = usedTimer; //use the count timer
             lastServerTime = Globals.TimeInSeconds; //remember the last usage

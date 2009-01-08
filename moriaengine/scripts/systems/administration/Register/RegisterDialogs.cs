@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (notesList == null) {
 				//vzit seznam notu a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				notesList = AccountRegister.GetNotes(acc, (AccountNotesSorting) TagMath.IGetTag(args, D_AccountNotes.issuesSortingTK));
+				notesList = AccountRegister.GetNotes(acc, (SortingCriteria) TagMath.IGetTag(args, D_AccountNotes.issuesSortingTK));
 				args.SetTag(D_AccountNotes.issuesListTK, notesList); //ulozime to do argumentu dialogu
 			}
 
@@ -132,32 +132,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //time asc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeAsc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //time desc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //refcar asc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.RefCharAsc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.RefCharAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //refchar desc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.RefCharDesc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.RefCharDesc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //issuer asc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerAsc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.IssuerAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 7: //issuer desc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerDesc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.IssuerDesc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
@@ -216,7 +216,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				if (refChar.IsPlayer) {
 					newArgs.SetTag(D_AccountNotes.accountTK, refChar.Account);//nastavit account
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				} else {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
@@ -229,10 +229,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);//nastavit account					
 				if (text.argv.Length == 1) { //mame jen nazev accountu
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				} else { //mame i trideni
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (AccountNotesSorting) text.argv[1]);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (SortingCriteria) text.argv[1]);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				}
 			}
@@ -254,7 +254,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (crimesList == null) {
 				//vzit seznam crimu a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				crimesList = AccountRegister.GetCrimes(acc, (AccountNotesSorting) TagMath.IGetTag(args, D_AccountNotes.issuesSortingTK));
+				crimesList = AccountRegister.GetCrimes(acc, (SortingCriteria) TagMath.IGetTag(args, D_AccountNotes.issuesSortingTK));
 				args.SetTag(D_AccountNotes.issuesListTK, crimesList); //ulozime to do argumentu dialogu								
 			}
 
@@ -349,32 +349,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //time asc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeAsc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //time desc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //refcar asc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.RefCharAsc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.RefCharAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //refchar desc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.RefCharDesc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.RefCharDesc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //issuer asc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerAsc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.IssuerAsc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 7: //issuer desc
-						args.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.IssuerDesc);
+						args.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.IssuerDesc);
 						args.RemoveTag(D_AccountNotes.issuesListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
@@ -437,7 +437,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				if (refChar.IsPlayer) {
 					newArgs.SetTag(D_AccountNotes.accountTK, refChar.Account);
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				} else {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
@@ -450,10 +450,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);
 				if (text.argv.Length == 1) { //mame jen nazev accountu
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, AccountNotesSorting.TimeDesc);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				} else { //mame i trideni
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (AccountNotesSorting) text.argv[1]);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (SortingCriteria) text.argv[1]);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				}
 			}

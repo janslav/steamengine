@@ -26,6 +26,52 @@ using SteamEngine.CompiledScripts;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Wrapper class used to manage and create dialogs easily.")]
 	public class ImprovedDialog {
+		private static Dictionary<char, byte> charsLength = new Dictionary<char, byte>();
+
+		[Summary("Map of all main characters and their pixel length")]
+		static ImprovedDialog() {
+			charsLength.Add('a', 6);	charsLength.Add('A', 8);    charsLength.Add('1', 4);
+			charsLength.Add('b', 6);    charsLength.Add('B', 8);    charsLength.Add('2', 8);
+			charsLength.Add('c', 6);    charsLength.Add('C', 8);    charsLength.Add('3', 8);
+			charsLength.Add('d', 6);	charsLength.Add('D', 8);    charsLength.Add('4', 8);
+			charsLength.Add('e', 6);    charsLength.Add('E', 7);    charsLength.Add('5', 8);
+			charsLength.Add('f', 6);    charsLength.Add('F', 7);    charsLength.Add('6', 8);
+			charsLength.Add('g', 6);    charsLength.Add('G', 8);    charsLength.Add('7', 8);
+			charsLength.Add('h', 6);    charsLength.Add('H', 8);    charsLength.Add('8', 8);
+			charsLength.Add('i', 3);    charsLength.Add('I', 3);    charsLength.Add('9', 8);
+			charsLength.Add('j', 6);    charsLength.Add('J', 8);    charsLength.Add('0', 8);
+			charsLength.Add('k', 6);    charsLength.Add('K', 8);    charsLength.Add('!', 3);
+			charsLength.Add('l', 3);    charsLength.Add('L', 7);    charsLength.Add('?', 7);
+			charsLength.Add('m', 9);    charsLength.Add('M', 10);   charsLength.Add('(', 4);
+			charsLength.Add('n', 6);	charsLength.Add('N', 8);	charsLength.Add(')', 4);
+			charsLength.Add('o', 6);	charsLength.Add('O', 8);	charsLength.Add(' ', 8);
+			charsLength.Add('p', 6);    charsLength.Add('P', 8);
+			charsLength.Add('q', 6);    charsLength.Add('Q', 9);
+			charsLength.Add('r', 6);    charsLength.Add('R', 8);
+			charsLength.Add('s', 6);    charsLength.Add('S', 8);
+			charsLength.Add('t', 6);    charsLength.Add('T', 7);
+			charsLength.Add('u', 6);    charsLength.Add('U', 8);
+			charsLength.Add('v', 6);    charsLength.Add('V', 8);
+			charsLength.Add('w', 8);    charsLength.Add('W', 12);
+			charsLength.Add('x', 6);    charsLength.Add('X', 8);
+			charsLength.Add('y', 6);    charsLength.Add('Y', 9);
+			charsLength.Add('z', 6);    charsLength.Add('Z', 8);
+		}
+
+		[Summary("Compute the length of the text (mainly for dialog purposes)")]
+		public static int TextLength(string text) {
+			int retVal = 0;
+			byte val;
+			for(int i = 0; i < text.Length; i++) {
+				if (charsLength.TryGetValue(text[i], out val)) {
+					retVal += val;
+				} else {//default approx value
+					retVal += ImprovedDialog.D_CHARACTER_WIDTH;
+				}
+			}
+			return retVal + 1; //last letter ends with its boundary (1 pixel)
+		}
+
 		[Summary("The gump instance to send gump creating method calls to")]
 		protected Gump instance;
 
@@ -371,7 +417,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public const int D_BORDER = 10;
 		public const int D_OFFSET = 5;
 
-		public const int D_CHARACTER_WIDTH = 5; //approximate width of the normal character
+		public const int D_CHARACTER_WIDTH = 6; //approximate width of the normal character
+		public const int D_CHARACTER_HEIGHT = 18; //approximate height of the normal character
+		public const int D_TEXT_HEIGHT = 22; //approx height of the text field (character + some automatical offset)
 
 		[Summary("Number of pixels of which the label from the label-value fields will be indented from the left")]
 		public static int ITEM_INDENT = 20;
