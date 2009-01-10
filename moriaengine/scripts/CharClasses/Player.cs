@@ -96,6 +96,54 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Profession
 
+		[Summary("Every step is monitored by the ScriptSector system")]
+		public override bool On_Step(byte direction, bool running) {
+			WriteCharPosition();
+			return base.On_Step(direction, running);
+		}
+
+		private void WriteCharPosition() {
+			//get actual sector
+			Point4D myPos = this.P();
+			ScriptSector mySector = ScriptSector.GetScriptSector(myPos);
+
+			//check if we already have this any of char's trackpoints in this sector
+			Dictionary<Point2D, TrackPoint> myTrackPoints;
+			if (!mySector.CharsPassing.TryGetValue(this, out myTrackPoints)) {
+				myTrackPoints = new Dictionary<Point2D, TrackPoint>();
+				mySector.CharsPassing.Add(this, myTrackPoints);
+			}
+
+			TrackPoint myActualPoint;
+			if (!myTrackPoints.TryGetValue(myPos, out myActualPoint)) {
+				//the char doesn't step on this position before
+				myActualPoint = new TrackPoint(myPos, this);
+				myTrackPoints.Add(myPos, myActualPoint);
+			}
+			myActualPoint.LastStepTime = Globals.TimeAsSpan; //set the last step time on this position
+			switch (this.Direction) {
+				case Direction.North://0
+				case Direction.NorthEast://1
+					myActualPoint.Model = (ushort) GumpIDs.Footprint_North; //0x1e04
+					break;
+				case Direction.East://2
+				case Direction.SouthEast://3
+					myActualPoint.Model = (ushort) GumpIDs.Footprint_East; //0x1e05
+					break;
+				case Direction.South://4
+				case Direction.SouthWest://5
+					myActualPoint.Model = (ushort) GumpIDs.Footprint_South; //0x1e06
+					break;
+				case Direction.West://6
+				case Direction.NorthWest://7
+					myActualPoint.Model = (ushort) GumpIDs.Footprint_West; //0x1e03
+					break;
+			}
+			//tohle bude ovsem lepsi :-)
+			//aha tak nebude, ty modely jsou posunuty a nejnizsi je "west" :-/
+			//myActualPoint.Model = (ushort)(TrackingPlugin.FOOTPRINT + ((ushort) ((byte) this.Direction / 2)));
+		}
+
 		private static TimerKey charLingeringTimerTK = TimerKey.Get("_charLingeringTimer_");
 		public override void On_LogOut() {
 			//TODO: In safe/nonsafe areas, settings, etc.

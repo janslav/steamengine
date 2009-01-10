@@ -16,5 +16,5 @@
 
 [PluginTemplate TrackingPlugin : Plugin]
 Vars:
-	internal int trackingRange = 0
+	internal MutableRectangle trackingRectangle = null
 	internal TimeSpan maxFootstepAge = default(TimeSpan)

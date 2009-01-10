@@ -30,20 +30,23 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class TrackingSkillDef : SkillDef {
 		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 0")]
-		private double minFootstepAge = 15;
+		private FieldValue minFootstepAge;
 		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 100")]
-		private double maxFootstepAge = 120;
+		private FieldValue maxFootstepAge;
 
 		[Summary("Maximum characters to be recognized at skill 0")]
-		private int minToTrack = 3;
-
+		private FieldValue minCharsToTrack;
 		[Summary("Maximum characters to be recognized at skill 100")]
-		private int maxToTrack = 20;
+		private FieldValue maxCharsToTrack;
 
 		public TrackingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
+			minFootstepAge = InitField_Typed("minFootstepAge", 15, typeof(double));
+			maxFootstepAge = InitField_Typed("maxFootstepAge", 120, typeof(double));
+			minCharsToTrack = InitField_Typed("minCharsToTrack", 3, typeof(int));
+			maxCharsToTrack = InitField_Typed("maxCharsToTrack", 20, typeof(int));
 		}
-
+		
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
 			if (!CheckPrerequisities(skillSeqArgs)) {
@@ -79,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			ScriptRectangle rect = GetTrackingArea(skillSeqArgs);
+			MutableRectangle rect = GetTrackingArea(skillSeqArgs);
 			TimeSpan maxAge = GetMaxFootstepsAge(skillSeqArgs);
 			switch ((TrackingEnums) skillSeqArgs.Param2) {
 				case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
@@ -105,7 +108,7 @@ namespace SteamEngine.CompiledScripts {
 
 					//and forward the tracking management to the special plugin
 					TrackingPlugin tpl = (TrackingPlugin) TrackingPlugin.defInstance.Create();
-					tpl.trackingRange = rect.Range;//for recomputing the rect when OnStep...
+					tpl.trackingRectangle = rect;//for recomputing the rect when OnStep...
 					tpl.maxFootstepAge = maxAge;//for refreshing the footsteps when OnStep...
 					tpl.footsteps = charsSteps;//initial list of footsteps
 
@@ -180,10 +183,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//get the area to look for any footsteps in
-		private ScriptRectangle GetTrackingArea(SkillSequenceArgs ssa) {
+		private MutableRectangle GetTrackingArea(SkillSequenceArgs ssa) {
 			Character self = ssa.Self;
-			int range = (int)ssa.SkillDef.GetEffectForChar(self);
-			return new ScriptRectangle(self.P(),range);
+			ushort range = (ushort)ssa.SkillDef.GetEffectForChar(self);
+			return new MutableRectangle(self.P(), range);
 		}
 
 		//get the maximum age of the footsteps to be found
@@ -193,7 +196,7 @@ namespace SteamEngine.CompiledScripts {
 			if (self.IsGM) {
 				maxAge = ScriptSector.CleaningPeriod; //get the maximal lifetime of the footsteps
 			} else {
-				maxAge = ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), minFootstepAge, maxFootstepAge);
+				maxAge = ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), (double) minFootstepAge.CurrentValue, (double)maxFootstepAge.CurrentValue);
 			}
 			return TimeSpan.FromSeconds(maxAge);
 		}
@@ -205,7 +208,7 @@ namespace SteamEngine.CompiledScripts {
 			if (self.IsGM) {
 				maxChars = int.MaxValue; //unlimited, GM sees everything
 			} else {
-				maxChars = (int)ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), minToTrack, maxToTrack);
+				maxChars = (int)ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), (double)minCharsToTrack.CurrentValue, (double)maxCharsToTrack.CurrentValue);
 			}
 			return maxChars;
 		}
@@ -213,40 +216,40 @@ namespace SteamEngine.CompiledScripts {
 		[InfoField("Min age [sec.0-skill]")]
 		public double MinFootstepAge {
 			get {
-				return minFootstepAge;
+				return (double)minFootstepAge.CurrentValue;
 			}
 			set {
-				minFootstepAge = value;
+				minFootstepAge.CurrentValue = value;
 			}
 		}
 
 		[InfoField("Max age[sec.100-skill]")]
 		public double MaxFootstepAge {
 			get {
-				return maxFootstepAge;
+				return (double)maxFootstepAge.CurrentValue;
 			}
 			set {
-				maxFootstepAge = value;
+				maxFootstepAge.CurrentValue = value;
 			}
 		}
 
 		[InfoField("Trackables [char.0/skill]")]
 		public int MinCharsToTrack {
 			get {
-				return minToTrack;
+				return (int)minCharsToTrack.CurrentValue;
 			}
 			set {
-				minToTrack = value;
+				minCharsToTrack.CurrentValue = value;
 			}
 		}
 
 		[InfoField("Trackables [char.100/skill]")]
 		public int MaxCharsToTrack {
 			get {
-				return maxToTrack;
+				return (int)maxCharsToTrack.CurrentValue;
 			}
 			set {
-				maxToTrack = value;
+				maxCharsToTrack.CurrentValue = value;
 			}
 		}
 
@@ -263,13 +266,6 @@ namespace SteamEngine.CompiledScripts {
 
 		internal LinkedList<TrackPoint> footsteps = new LinkedList<TrackPoint>();
 
-		//models for footprints (unfortunatelly we have only 4 directions although we need 8 :-/)
-		//internal const ushort FOOTPRINT = 0x1e03; //basic (west) footprint
-		internal const ushort FOOTPRINT_WEST = 0x1e03;
-		internal const ushort FOOTPRINT_NORTH = 0x1e04;
-		internal const ushort FOOTPRINT_EAST = 0x1e05;
-		internal const ushort FOOTPRINT_SOUTH = 0x1e06;
-
 		internal const ushort WORST_COLOR = 1827; //worst visible footsteps
 		internal const ushort BEST_COLOR = 1835; //best visible footsteps
 
@@ -283,7 +279,7 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState trackersState = ((Character) Cont).GameState;
 			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pgToSend = PacketGroup.AcquireMultiUsePG();
+				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
 				foreach (TrackPoint tp in footsteps) {
 					//check if the tp is not too old...
 					if (tp.LastStepTime < worstVisibleAt) {
