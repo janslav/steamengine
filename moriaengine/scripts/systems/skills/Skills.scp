@@ -27,6 +27,19 @@ DELAY=3, 1
 ON=@Fail
 	src.message "You can't think of anything off hand"
 
+[ITEMIDSKILLDEF 3]
+DEFNAME=Skill_Appraise
+KEY="ItemID"
+StartByMacroEnabled = true
+DELAY=3, 1
+
+[ArmsLoreSkillDef 4]
+DEFNAME=Skill_Armslore
+KEY="ArmsLore"
+StartByMacroEnabled = true
+EFFECT=0, 76 //bonus k utocnymu cislu
+DELAY=1.0
+
 [SCRIPTEDSKILLDEF 5]
 DEFNAME=Skill_Parrying
 KEY="Parrying"

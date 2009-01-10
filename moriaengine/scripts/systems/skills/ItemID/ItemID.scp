@@ -1,5 +1,0 @@
-[ITEMIDSKILLDEF 3]
-DEFNAME=Skill_Appraise
-KEY="ItemID"
-StartByMacroEnabled = true
-DELAY=3, 1

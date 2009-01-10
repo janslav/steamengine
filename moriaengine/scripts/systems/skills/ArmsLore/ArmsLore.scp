@@ -1,6 +1,0 @@
-[ArmsLoreSkillDef 4]
-DEFNAME=Skill_Armslore
-KEY="ArmsLore"
-StartByMacroEnabled = true
-EFFECT=0, 76 //bonus k utocnymu cislu
-DELAY=1.0
