@@ -4,6 +4,12 @@ KEY="Tracking"
 StartByMacroEnabled=true
 DELAY=3.0,1.0
 EFFECT=4.0,15.0 //used for tracking area size computing (4 fields around at skill 0, 15 at skill 100)
+
+minFootstepAge = 15 //how old steps will be seen at skill 0
+maxFootstepAge = 120 //how old steps will be seen at skill 100
+minCharsToTrack = 3 //how many chars will be trackable (will appear in the dialog at once) at skill 0
+maxCharsToTrack = 20 //how many chars will be trackable (will appear in the dialog at once) at skill 100
+
 //TITLE="Ranger"
 //PROMPTMSG=""
 //STAT_STR=25

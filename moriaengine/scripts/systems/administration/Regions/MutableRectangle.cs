@@ -28,12 +28,27 @@ namespace SteamEngine.CompiledScripts {
 				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, minY, maxX, maxY;
+		private byte map;
 
 		public MutableRectangle(AbstractRectangle copiedOne) {
 			this.minX = copiedOne.MinX;
 			this.minY = copiedOne.MinY;
 			this.maxX = copiedOne.MaxX;
 			this.maxY = copiedOne.MaxY;
+		}
+
+		public MutableRectangle(IPoint4D center, ushort range)
+			: this(center.X, center.Y, range) {
+			this.map = center.M; //set also the mapplane (it can be useful, e.g. in ScriptSectors)
+		}
+
+		[Summary("Return a rectangle created from the central point with the specific range around the point" +
+				"(square 'around')")]
+		public MutableRectangle(ushort x, ushort y, int range) {
+			this.minX = (ushort) (x - range);
+			this.minY = (ushort) (y - range);
+			this.maxX = (ushort) (x + range);
+			this.maxY = (ushort) (y + range);
 		}
 
 		public MutableRectangle(ushort startX, ushort startY, ushort endX, ushort endY) {
@@ -69,6 +84,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public byte Map {
+			get {
+				return map;
+			}
+
+			set {
+				map = value;
+			}
+		}
+
 		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes.")]
 		public MutableRectangle Move(int timesX, int timesY) {
 			minX += (ushort)(minX + timesX);
@@ -79,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 			return this;
 		}
 
-		[Summary("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the unmutable ones)")]
+		[Summary("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the immutable ones)")]
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
 			List<MutableRectangle> retList = new List<MutableRectangle>();
 			foreach(ImmutableRectangle regRect in reg.Rectangles) {

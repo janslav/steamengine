@@ -545,8 +545,8 @@
     <Compile Include="..\..\scripts\systems\settings\ViewableClassGenerator.cs">
       <Link>systems\settings\ViewableClassGenerator.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\ArmsLore\ArmsLore.cs">
-      <Link>systems\skills\ArmsLore\ArmsLore.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
+      <Link>systems\skills\ArmsLore.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Combat\CombatCalculator.cs">
       <Link>systems\skills\Combat\CombatCalculator.cs</Link>
@@ -587,8 +587,8 @@
     <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
       <Link>systems\skills\Hiding\Hiding.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\ItemID\ItemID.cs">
-      <Link>systems\skills\ItemID\ItemID.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
+      <Link>systems\skills\ItemID.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Magery.cs">
       <Link>systems\skills\Magery\Magery.cs</Link>

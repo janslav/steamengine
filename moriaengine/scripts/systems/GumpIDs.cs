@@ -26,6 +26,12 @@ namespace SteamEngine.CompiledScripts {
 		Figurine_Llama = 0x20f6,
 		Figurine_Man = 0x20cd,
 		Figurine_Woman = 0x20ce,
-		Figurine_NPC = 0x2106
+		Figurine_NPC = 0x2106,
+
+		//models for footprints (unfortunatelly we have only 4 directions although we need 8 :-/)
+		Footprint_West = 0x1e03,
+		Footprint_North = 0x1e04,
+		Footprint_East = 0x1e05,
+		Footprint_South = 0x1e06
 	}	
 }

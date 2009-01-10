@@ -716,7 +716,7 @@ namespace SteamEngine.Networking {
 		[Summary("Prepare method for creating the 'fake item' packets")]
 		public void PrepareFakeItem(uint itemUid, ushort model, Point4D point4D, ushort amount, Direction dir, ushort color) {
 			//this must be the item UID (containing 0x40000000)
-			this.flaggedUid = ((itemUid & 0x40000000) == 0x40000000) ? itemUid : (itemUid | 0x40000000);
+			this.flaggedUid = itemUid | 0x40000000;
 			this.amount = amount;
 			this.model = model;
 			MutablePoint4D point = new MutablePoint4D(point4D);

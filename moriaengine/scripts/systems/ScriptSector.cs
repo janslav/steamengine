@@ -28,11 +28,12 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[Summary("Sector-defining class used in various scripts")]
 	public class ScriptSector {
-		[Remark("Dictionary mapping the computed Point2D to the ScriptSector")]
-		internal static Dictionary<Point2D, ScriptSector> scriptSectors = new Dictionary<Point2D, ScriptSector>();
+		[Remark("Dictionary mapping the computed Point4D to the ScriptSector "+
+			    "we use computed X and Y (byte shift) and the normal M for determining the ScriptSector ")]
+		internal static Dictionary<Point4D, ScriptSector> scriptSectors = new Dictionary<Point4D, ScriptSector>();
 
 		[Remark("Power of 2 determining the size of the sector i.e. size 5 means a rectangle 32*32 fields.")]
-		private static int scriptSectorSize = 5;
+		private const int scriptSectorSize = 5;
 
 		[Remark("Time in seconds for how long we allow all information to remain in the ScriptSector "+
 				"(if not refreshed) - e.g. player's TrackPoints etc.")]
@@ -44,11 +45,11 @@ namespace SteamEngine.CompiledScripts {
 
 		private ScriptSectorTimer sectorTimer;
 		
-		[Remark("Computed Point2D determining a set of map fields that belong to this sector - "+
+		[Remark("Computed Point4D determining a set of map fields that belong to this sector - "+
 				" see the GetScriptSector method")]
-		private Point2D sectorIdentifier;
+		private Point4D sectorIdentifier;
 
-		public ScriptSector(Point2D sectorIdentifier) {
+		public ScriptSector(Point4D sectorIdentifier) {
 			this.sectorIdentifier = sectorIdentifier;
 			sectorTimer = new ScriptSectorTimer(this);
 			sectorTimer.DueInSeconds = cleaningTime;//set the first timeout for checking
@@ -96,9 +97,9 @@ namespace SteamEngine.CompiledScripts {
 			scriptSectors.Remove(this.sectorIdentifier);
 		}
 
-		[Summary("For the given map Point2D compute and return the corresponding ScriptSector for further purposes")]
-		public static ScriptSector GetScriptSector(Point2D forPoint) {
-			Point2D determiningPoint = new Point2D((ushort)(forPoint.x >> scriptSectorSize), (ushort)(forPoint.y >> scriptSectorSize));
+		[Summary("For the given map Point4D compute and return the corresponding ScriptSector for further purposes")]
+		public static ScriptSector GetScriptSector(Point4D forPoint) {
+			Point4D determiningPoint = new Point4D((ushort)(forPoint.x >> scriptSectorSize), (ushort)(forPoint.y >> scriptSectorSize), 0, forPoint.m);
 			ScriptSector retSector;
 			if (!scriptSectors.TryGetValue(determiningPoint, out retSector)) {
 				retSector = new ScriptSector(determiningPoint);//create new
@@ -111,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 			"characters contained inside if they also belong to the rectangle, check if the "+
 			"character in the rect. is of the desired type and if its footsteps are not too old. "+
 			"Return the list of found characters.")]
-		public static List<Character> GetCharactersInRectangle(ScriptRectangle rect, CharacterTypes charType, TimeSpan maxAge) {
+		public static List<Character> GetCharactersInRectangle(MutableRectangle rect, CharacterTypes charType, TimeSpan maxAge) {
 			List<Character> retChars = new List<Character>();
 			List<ScriptSector> intersectingSectors = GetScriptSectorsInRectangle(rect);
 			TimeSpan now = Globals.TimeAsSpan; //actual server time
@@ -161,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Method stolen from the Map class. Find all ScriptSectors that intersect the given "+
 				"ImmutableRectangle (can be ScriptRectangle etc)")]
-		public static List<ScriptSector> GetScriptSectorsInRectangle(ImmutableRectangle rectangle) {
+		public static List<ScriptSector> GetScriptSectorsInRectangle(MutableRectangle rectangle) {
 			List<ScriptSector> retSectors = new List<ScriptSector>();
 			ushort startX = rectangle.MinX;
 			ushort startY = rectangle.MinY;
@@ -177,7 +178,7 @@ namespace SteamEngine.CompiledScripts {
 			//check all computed sector identifiers if some ScriptSector exists for them and if so, return it
 			for (ushort sx = ssPointStart.x; sx <= ssPointEnd.x; sx++) {
 				for (ushort sy = ssPointStart.y; sy <= ssPointEnd.y; sy++) {
-					if (scriptSectors.TryGetValue(new Point2D(sx, sy), out oneSector)) {
+					if (scriptSectors.TryGetValue(new Point4D(sx, sy, 0, rectangle.Map), out oneSector)) {
 						retSectors.Add(oneSector);
 					}	
 				}
@@ -187,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle "+
 				"and which are not older than specified")]
-		public static LinkedList<TrackPoint> GetCharsPath(Character whose, ScriptRectangle rect, TimeSpan maxAge) {
+		public static LinkedList<TrackPoint> GetCharsPath(Character whose, MutableRectangle rect, TimeSpan maxAge) {
 			List<TrackPoint> footsteps = new List<TrackPoint>();
 			TimeSpan allowedAge = Globals.TimeAsSpan - maxAge;
 			List<ScriptSector> sectorsInRect = GetScriptSectorsInRectangle(rect);//get only relevant ScriptSectors
@@ -217,14 +218,10 @@ namespace SteamEngine.CompiledScripts {
 			scriptSectors.Clear();
 		}
 
-		[Dialogs.InfoField("Sector size - change visely!")]
+		[Dialogs.InfoField("Sector size")]
 		public static int ScriptSectorSize {
 			get {
 				return scriptSectorSize;
-			}
-			set {
-				scriptSectorSize = value;
-				ScriptSector.Reset();
 			}
 		}
 
