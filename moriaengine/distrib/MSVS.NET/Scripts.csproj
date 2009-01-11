@@ -404,6 +404,9 @@
     <Compile Include="..\..\scripts\systems\mailingsystem\MessagesDialog.cs">
       <Link>systems\mailingsystem\MessagesDialog.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Notoriety.cs">
+      <Link>systems\Notoriety.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
@@ -464,6 +467,9 @@
     <Compile Include="..\..\scripts\systems\Roles\CharsRolesDialog.cs">
       <Link>systems\Roles\CharsRolesDialog.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Guild\Guild.cs">
+      <Link>systems\Roles\Guild\Guild.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Roles\Party\Party.cs">
       <Link>systems\Roles\Party\Party.cs</Link>
     </Compile>
@@ -472,6 +478,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Roles\Party\PartyDef.cs">
       <Link>systems\Roles\Party\PartyDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RankSystem.cs">
+      <Link>systems\Roles\RankSystem.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Roles\Role.cs">
       <Link>systems\Roles\Role.cs</Link>

@@ -17,8 +17,10 @@ namespace SteamEngine.RemoteConsole {
 		[STAThread]
 		static void Main() {
 			//name the console window for better recognizability
-			Console.Title = "SE Remote Console - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
-
+			try {
+				Console.Title = "SE Remote Console - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+			} catch { }
+			
 			Tools.ExitBinDirectory();
 
 			Application.EnableVisualStyles();

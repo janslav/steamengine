@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
 				"in every RoleDef's descendant!")]
 		public Role Create(RoleKey key, string name) {
-			Role newRole = Create(key);
+			Role newRole = this.Create(key);
 			newRole.Name = name;			
 			return newRole;
 		}
@@ -51,14 +51,13 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
 				"in every RoleDef's descendant!")]
 		public Role Create(RoleKey key) {
-			Role newRole = CreateImpl();
-			newRole.Init(this, key);
+			Role newRole = this.CreateImpl(key);
 			newRole.Trigger_Create();
 			return newRole;
 		}
 
-		protected virtual Role CreateImpl() {
-			return Pool<Role>.Acquire();
+		protected virtual Role CreateImpl(RoleKey key) {
+			return new Role(this, key);
 		}
 
 		public static RoleDef ByDefname(string defname) {

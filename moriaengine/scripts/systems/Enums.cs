@@ -439,4 +439,20 @@ namespace SteamEngine.CompiledScripts {
 		Phase_Characters_Seek = 1, //after the category is selected - in this phase the surroundings will be checked for all trackable chars
 		Phase_Character_Track = 2 //particular character checked to tbe tracked (displaying his footsteps)
 	}
+
+	public enum Realm {
+		MordorOutcast = -2,
+		Mordor = -1,
+		Neutral = 0, Unknown = 0, None = 0,
+		Gondor = 1,
+		GondorOutcast = 2
+	}
+	
+	public enum CharRelation {
+		AlwaysHostile = -2, //Another realm, evil NPC vs player
+		TempHostile = -1, //aggressor, guild in war
+		Neutral = 0, Unknown = 0, None = 0,
+		Allied = 1, //same realm
+		Friendly = 2 //same guild/allied guild, party
+	}
 }

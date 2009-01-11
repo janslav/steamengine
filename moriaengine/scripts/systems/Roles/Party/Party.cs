@@ -45,17 +45,11 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public Party() {
+		internal Party(PartyDef def, RoleKey key)
+			: base(def, key) {
+
 			this.candidates = new List<Character>();
 			this.candidatesReadonly = new ReadOnlyCollection<Character>(this.candidates);
-		}
-
-		protected override void On_Reset() {
-			if (this.candidates != null) {
-				this.candidates.Clear();
-			}
-			this.leader = null;
-			base.On_Reset();
 		}
 
 		public bool IsLeader(AbstractCharacter ch) {

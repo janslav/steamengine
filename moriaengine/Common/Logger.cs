@@ -702,8 +702,10 @@ namespace SteamEngine.Common {
 		
 		~Logger() {
 			try {
-				if (fileopen)
+				if (fileopen) {
 					file.Close();
+					fileopen = false;
+				}
 			} catch (FatalException fe) {
 				throw new FatalException("Re-throwing", fe);
 			} catch (Exception) {	//sometimes the file is disposed ahead of time without fileopen being set to false.
