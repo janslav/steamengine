@@ -28,9 +28,9 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[Summary("Sector-defining class used in various scripts")]
 	public class ScriptSector {
-		[Remark("Dictionary mapping the computed Point4D to the ScriptSector "+
+		[Remark("Dictionary mapping the computed SectorKey to the ScriptSector " +
 			    "we use computed X and Y (byte shift) and the normal M for determining the ScriptSector ")]
-		internal static Dictionary<Point4D, ScriptSector> scriptSectors = new Dictionary<Point4D, ScriptSector>();
+		internal static Dictionary<SectorKey, ScriptSector> scriptSectors = new Dictionary<SectorKey, ScriptSector>();
 
 		[Remark("Power of 2 determining the size of the sector i.e. size 5 means a rectangle 32*32 fields.")]
 		private const int scriptSectorSize = 5;
@@ -41,15 +41,16 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("The dictionary containing all characters that passed through this sector. Everyone leaves an information "+
 				"about the fields he stepped onto. For character Tracking purposes.")]
-		private Dictionary<Character, Dictionary<Point2D, TrackPoint>> charsPassing = new Dictionary<Character, Dictionary<Point2D, TrackPoint>>();
+		//private Dictionary<Character, Dictionary<Point2D, TrackPoint>> charsPassing = new Dictionary<Character, Dictionary<Point2D, TrackPoint>>();
+		private Dictionary<Character, Queue<TrackPoint>> charsPassing = new Dictionary<Character, Queue<TrackPoint>>();
 
 		private ScriptSectorTimer sectorTimer;
 		
-		[Remark("Computed Point4D determining a set of map fields that belong to this sector - "+
+		[Remark("Computed SEctorKey determining a set of map fields that belong to this sector - "+
 				" see the GetScriptSector method")]
-		private Point4D sectorIdentifier;
+		private SectorKey sectorIdentifier;
 
-		public ScriptSector(Point4D sectorIdentifier) {
+		private ScriptSector(SectorKey sectorIdentifier) {
 			this.sectorIdentifier = sectorIdentifier;
 			sectorTimer = new ScriptSectorTimer(this);
 			sectorTimer.DueInSeconds = cleaningTime;//set the first timeout for checking
@@ -64,19 +65,20 @@ namespace SteamEngine.CompiledScripts {
 			
 			List<Character> charsToRemove = new List<Character>();
 			foreach(Character oneChar in charsPassing.Keys) {
-				Dictionary<Point2D, TrackPoint> charsPath = charsPassing[oneChar];
+				Queue<TrackPoint> charsPath = charsPassing[oneChar];
 
-				List<Point2D> pointsToRemove = new List<Point2D>();
-				foreach (TrackPoint tPoint in charsPath.Values) {
-					if (tPoint.LastStepTime <= boundaryTime) {
-						pointsToRemove.Add(tPoint.Location); //we will remove the point later
+				bool canRemove = true;
+				while (canRemove) {
+					TrackPoint oneTP = charsPath.Peek();
+					if (oneTP.LastStepTime <= boundaryTime) {//check the oldest Queue element
+						charsPath.Dequeue();//if its too old, remove it and continue with another
+					} else {
+						//if its not too old, we can stop iterating through the queue as following elements will be only younger and younger...
+						canRemove = false; 
 					}
 				}
-				foreach (Point2D pointToRemove in pointsToRemove) {//now remove all old TrackPoints
-					charsPath.Remove(pointToRemove);
-				}
 
-				if (charsPath.Count == 0) {
+				if (charsPath.Count == 0) {//nothing is left in the queue
 					charsToRemove.Add(oneChar); //we will remove the char later
 				}
 			}
@@ -99,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("For the given map Point4D compute and return the corresponding ScriptSector for further purposes")]
 		public static ScriptSector GetScriptSector(Point4D forPoint) {
-			Point4D determiningPoint = new Point4D((ushort)(forPoint.x >> scriptSectorSize), (ushort)(forPoint.y >> scriptSectorSize), 0, forPoint.m);
+			SectorKey determiningPoint = new SectorKey((ushort) (forPoint.x >> scriptSectorSize), (ushort) (forPoint.y >> scriptSectorSize), forPoint.m);
 			ScriptSector retSector;
 			if (!scriptSectors.TryGetValue(determiningPoint, out retSector)) {
 				retSector = new ScriptSector(determiningPoint);//create new
@@ -108,13 +110,13 @@ namespace SteamEngine.CompiledScripts {
 			return retSector;
 		}
 
-		[Summary("Get all ScriptSectors that intersect with the given rectangle, then check all "+
+		[Summary("Get all ScriptSectors that intersect with the given rectangle (lying in the give mapplane), then check all "+
 			"characters contained inside if they also belong to the rectangle, check if the "+
 			"character in the rect. is of the desired type and if its footsteps are not too old. "+
 			"Return the list of found characters.")]
-		public static List<Character> GetCharactersInRectangle(MutableRectangle rect, CharacterTypes charType, TimeSpan maxAge) {
+		public static List<Character> GetCharactersInRectangle(AbstractRectangle rect, CharacterTypes charType, TimeSpan maxAge, byte mapplane) {
 			List<Character> retChars = new List<Character>();
-			List<ScriptSector> intersectingSectors = GetScriptSectorsInRectangle(rect);
+			List<ScriptSector> intersectingSectors = GetScriptSectorsInRectangle(rect, mapplane);
 			TimeSpan now = Globals.TimeAsSpan; //actual server time
 			foreach (ScriptSector sSec in intersectingSectors) {
 				foreach (Character candidate in sSec.CharsPassing.Keys) {
@@ -145,7 +147,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 					//now get the characters' TrackPoints and check if they belong go the rectangle
 					//and that they are not too old
-					foreach(TrackPoint passingPoint in sSec.CharsPassing[candidate].Values) {
+					foreach(TrackPoint passingPoint in sSec.CharsPassing[candidate]) {
 						if((now - passingPoint.LastStepTime) <= maxAge) {//the footstep is not too old
 							if(rect.Contains(passingPoint.Location)) {//footstep lies in the rectangle
 								if (!retChars.Contains(candidate)) {//add him to the list only if he is not yet inside... (e.g. for more than 1 sector this can happen...)
@@ -161,8 +163,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Method stolen from the Map class. Find all ScriptSectors that intersect the given "+
-				"ImmutableRectangle (can be ScriptRectangle etc)")]
-		public static List<ScriptSector> GetScriptSectorsInRectangle(MutableRectangle rectangle) {
+				"Rectangle (can be ScriptRectangle etc) lying in the given mapplane")]
+		public static List<ScriptSector> GetScriptSectorsInRectangle(AbstractRectangle rectangle, byte mapplane) {
 			List<ScriptSector> retSectors = new List<ScriptSector>();
 			ushort startX = rectangle.MinX;
 			ushort startY = rectangle.MinY;
@@ -178,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 			//check all computed sector identifiers if some ScriptSector exists for them and if so, return it
 			for (ushort sx = ssPointStart.x; sx <= ssPointEnd.x; sx++) {
 				for (ushort sy = ssPointStart.y; sy <= ssPointEnd.y; sy++) {
-					if (scriptSectors.TryGetValue(new Point4D(sx, sy, 0, rectangle.Map), out oneSector)) {
+					if (scriptSectors.TryGetValue(new SectorKey(sx, sy, mapplane), out oneSector)) {
 						retSectors.Add(oneSector);
 					}	
 				}
@@ -186,15 +188,15 @@ namespace SteamEngine.CompiledScripts {
 			return retSectors;
 		}
 
-		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle "+
+		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane "+
 				"and which are not older than specified")]
-		public static LinkedList<TrackPoint> GetCharsPath(Character whose, MutableRectangle rect, TimeSpan maxAge) {
+		public static LinkedList<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
 			List<TrackPoint> footsteps = new List<TrackPoint>();
 			TimeSpan allowedAge = Globals.TimeAsSpan - maxAge;
-			List<ScriptSector> sectorsInRect = GetScriptSectorsInRectangle(rect);//get only relevant ScriptSectors
+			List<ScriptSector> sectorsInRect = GetScriptSectorsInRectangle(rect, mapplane);//get only relevant ScriptSectors
 			foreach (ScriptSector relevantSec in sectorsInRect) {
-				Dictionary<Point2D, TrackPoint> charPoints = relevantSec.CharsPassing[whose];
-				foreach (TrackPoint onePoint in charPoints.Values) {
+				Queue<TrackPoint> charPoints = relevantSec.CharsPassing[whose];
+				foreach (TrackPoint onePoint in charPoints) {
 					if (rect.Contains(onePoint.Location)) {//the point is in the rectangle
 						if (onePoint.LastStepTime >= allowedAge) { //the footprint is not too old
 							footsteps.Add(onePoint);
@@ -235,7 +237,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public Point2D Identifier {
+		public SectorKey Identifier {
 			get {
 				return sectorIdentifier;
 			}
@@ -247,7 +249,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public Dictionary<Character, Dictionary<Point2D, TrackPoint>> CharsPassing {
+		public Dictionary<Character, Queue<TrackPoint>> CharsPassing {
 			get {
 				return charsPassing;
 			}
@@ -268,19 +270,47 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Simple rectangle used e.g. in tracking to mark some area around the tracking player")]
-	public class ScriptRectangle : ImmutableRectangle {
-		private int range;
+	[Summary("Special immutable key for determining ScriptSectors. It is specified by computed X, Y (byteshifted position) "+
+			"and the mapplane it lies in")]
+	public struct SectorKey {
+		private readonly ushort x, y;
+		private readonly byte m;
 
-		public ScriptRectangle(Point2D center, int range)
-			: base(center, (ushort) range) {
-			this.range = range;
+		public SectorKey(ushort x, ushort y, byte m) {
+			this.x = x;
+			this.y = y;
+			this.m = m;
 		}
 
-		public int Range {
+		public ushort X {
 			get {
-				return range;
+				return x;
 			}
+		}
+
+		public ushort Y {
+			get {
+				return y;
+			}
+		}
+
+		public byte M {
+			get {
+				return m;
+			}
+		}
+
+		public override bool Equals(object obj) {
+			if (obj is SectorKey) {
+				SectorKey sk = (SectorKey) obj;
+				return ((this.x == sk.x) && (this.y == sk.y) && (this.m == sk.m));
+			}
+			return false;
+		}
+
+		//stolen from PointXD
+		public override int GetHashCode() {
+			return ((37*17^x)^y)^m;
 		}
 	}
 }

@@ -28,18 +28,12 @@ namespace SteamEngine.CompiledScripts {
 				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, minY, maxX, maxY;
-		private byte map;
-
+		
 		public MutableRectangle(AbstractRectangle copiedOne) {
 			this.minX = copiedOne.MinX;
 			this.minY = copiedOne.MinY;
 			this.maxX = copiedOne.MaxX;
 			this.maxY = copiedOne.MaxY;
-		}
-
-		public MutableRectangle(IPoint4D center, ushort range)
-			: this(center.X, center.Y, range) {
-			this.map = center.M; //set also the mapplane (it can be useful, e.g. in ScriptSectors)
 		}
 
 		[Summary("Return a rectangle created from the central point with the specific range around the point" +
@@ -49,6 +43,11 @@ namespace SteamEngine.CompiledScripts {
 			this.minY = (ushort) (y - range);
 			this.maxX = (ushort) (x + range);
 			this.maxY = (ushort) (y + range);
+		}
+
+		[Summary("Create a rectangle using the center point and the area around (=>square)")]
+		public MutableRectangle(IPoint4D center, ushort range)
+			: this(center.X, center.Y, range) {
 		}
 
 		public MutableRectangle(ushort startX, ushort startY, ushort endX, ushort endY) {
@@ -81,16 +80,6 @@ namespace SteamEngine.CompiledScripts {
 		public override ushort MaxY {
 			get {
 				return maxY;
-			}
-		}
-
-		public byte Map {
-			get {
-				return map;
-			}
-
-			set {
-				map = value;
 			}
 		}
 

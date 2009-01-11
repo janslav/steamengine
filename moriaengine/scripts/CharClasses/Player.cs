@@ -108,19 +108,17 @@ namespace SteamEngine.CompiledScripts {
 			ScriptSector mySector = ScriptSector.GetScriptSector(myPos);
 
 			//check if we already have this any of char's trackpoints in this sector
-			Dictionary<Point2D, TrackPoint> myTrackPoints;
+			Queue<TrackPoint> myTrackPoints;
 			if (!mySector.CharsPassing.TryGetValue(this, out myTrackPoints)) {
-				myTrackPoints = new Dictionary<Point2D, TrackPoint>();
+				myTrackPoints = new Queue<TrackPoint>();
 				mySector.CharsPassing.Add(this, myTrackPoints);
 			}
 
-			TrackPoint myActualPoint;
-			if (!myTrackPoints.TryGetValue(myPos, out myActualPoint)) {
-				//the char doesn't step on this position before
-				myActualPoint = new TrackPoint(myPos, this);
-				myTrackPoints.Add(myPos, myActualPoint);
-			}
+			//add the actually stepped point to the queue (no matter if we have stepped on it previously)
+			TrackPoint myActualPoint = new TrackPoint(myPos, this);
 			myActualPoint.LastStepTime = Globals.TimeAsSpan; //set the last step time on this position
+			myTrackPoints.Enqueue(myActualPoint);
+
 			switch (this.Direction) {
 				case Direction.North://0
 				case Direction.NorthEast://1

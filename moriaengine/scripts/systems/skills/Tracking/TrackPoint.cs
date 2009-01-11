@@ -28,13 +28,13 @@ namespace SteamEngine.CompiledScripts {
 	
 	public class TrackPoint {
 		private Point4D location;
-		private Character owner;
+		private Player owner;
 		private TimeSpan lastStepTime;
 		private ushort model;//model of the "footprint"
 
 		private uint fakeUID;
 
-		public TrackPoint(Point4D location, Character owner) {
+		public TrackPoint(Point4D location, Player owner) {
 			this.location = location;
 			this.owner = owner;
 		}
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public Character Owner {
+		public Player Owner {
 			get {
 				return Owner;
 			}
