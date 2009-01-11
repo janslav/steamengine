@@ -36,8 +36,8 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override Role CreateImpl() {
-			return Pool<Party>.Acquire();
+		protected override Role CreateImpl(RoleKey key) {
+			return new Party(this, key);
 		}
 
 		public static Party NewParty(Character leader) {

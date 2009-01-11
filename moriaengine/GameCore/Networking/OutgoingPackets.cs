@@ -1714,7 +1714,7 @@ namespace SteamEngine.Networking {
 		ushort effect, unk, sourceX, sourceY, targetX, targetY;
 		sbyte sourceZ, targetZ;
 
-		public void Prepare(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, bool fixedDirection, bool explodes, uint hue, uint renderMode) {
+		public void Prepare(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, bool fixedDirection, bool explodes, uint hue, RenderModes renderMode) {
 			source = source.TopPoint;
 			target = target.TopPoint;
 			Thing sourceAsThing = source as Thing;
@@ -1751,7 +1751,7 @@ namespace SteamEngine.Networking {
 			this.fixedDirection = fixedDirection;
 			this.explodes = explodes;
 			this.hue = hue;
-			this.renderMode = renderMode;
+			this.renderMode = (uint) renderMode;
 		}
 
 		public override byte Id {

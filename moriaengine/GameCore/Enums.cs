@@ -107,6 +107,14 @@ namespace SteamEngine {
 		Command = 15,
 	}
 
+	public enum RenderModes : uint {
+		Opaque = 0,      // not_transparent (just as you see regular effects in uo)
+		Black = 1,       // will be all black shape with no sighns of texture
+		HardLighten = 2, // will be lightened, might lose some detail of original texture (good for flares)
+		Lighten =3,      // will be softly lightened, (great for smokes!)
+		Transparent = 4  // Just regular trannparent sprite (about 50% alpha)
+	}
+
 	//Used by the core status-bar sending code.
 	//-SL
 	public enum StatusBarType {
@@ -241,9 +249,5 @@ namespace SteamEngine {
 		PlayUO,
 		Palanthir,
 		Unknown
-	}
-
-	public enum ContOrPoint {
-		Cont, Point
 	}
 }

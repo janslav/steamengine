@@ -44,14 +44,14 @@ namespace SteamEngine.LScript {
 			TestSnippet(1, "TestMethod_NoParams", "calling zero param method without caller ()");
 			TestSnippet(1, "TestMethod_NoParams()", "calling zero param method with ()");
 			TestSnippet(0, "TestMethod_NoParams=", typeof(SEException), "calling zero param method with =");
-			TestSnippet(0, "TestMethod_NoParams 186", 
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong args", 
+			TestSnippet(0, "TestMethod_NoParams 186",
+				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments", 
 				"calling zero param method with an argument after whitespace");
-			TestSnippet(0, "TestMethod_NoParams(786)", 
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong args", 
+			TestSnippet(0, "TestMethod_NoParams(786)",
+				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments", 
 				"calling zero param method with an argument in ()");
-			TestSnippet(0, "TestMethod_NoParams =74123", 
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong args", 
+			TestSnippet(0, "TestMethod_NoParams =74123",
+				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments", 
 				"calling zero param method with an argument after =");
 			
 			TestSnippet(3789, "TestMethod_OneParam 3789", "calling one param method without parens");
@@ -69,11 +69,11 @@ namespace SteamEngine.LScript {
 			TestSnippet(1.2195, "TestMethod_OneParam 1.2195", "calling one param method without parens, decimal number with leading number");
 			TestSnippet(0.2195, "TestMethod_OneParam .2195", "calling one param method without parens, decimal number without leading number");
 			
-			TestSnippet(0, "TestMethod_OneParam", 
-				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong args", 
+			TestSnippet(0, "TestMethod_OneParam",
+				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments", 
 				"calling one param method without parens and without any parameter");
 			TestSnippet(0, "TestMethod_OneParam()",
-				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong args", 
+				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments", 
 				"calling one param method with parens without any argument");
 
 			TestSnippet(1, "TestMethod_OneStringParam gfdyushgd", 

@@ -437,6 +437,7 @@ namespace SteamEngine {
 						il.Emit(OpCodes.Ldarg_1);//push the "this" object
 						EmitConvertOrUnBox(il, declaringType);
 						if (declaringType.IsValueType) {
+							il.DeclareLocal(declaringType);
 							il.Emit(OpCodes.Stloc_0);//set as local 0
 							il.Emit(OpCodes.Ldloca_S, 0);//load it's address
 						}
@@ -462,6 +463,7 @@ namespace SteamEngine {
 					il.Emit(OpCodes.Ldarg_1);//push the "this" object
 					EmitConvertOrUnBox(il, declaringType);
 					if (declaringType.IsValueType) {
+						il.DeclareLocal(declaringType);
 						il.Emit(OpCodes.Stloc_0);//set as local 0
 						il.Emit(OpCodes.Ldloca_S, 0);//load it's address
 					}
@@ -577,6 +579,7 @@ namespace SteamEngine {
 					il.Emit(OpCodes.Ldarg_1);//push the "this" object
 					EmitConvertOrUnBox(il, declaringType);
 					if (declaringType.IsValueType) {
+						il.DeclareLocal(declaringType);
 						il.Emit(OpCodes.Stloc_0);
 						il.Emit(OpCodes.Ldloca_S, 0);
 					}

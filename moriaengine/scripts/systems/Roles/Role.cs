@@ -24,7 +24,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public class Role : Poolable {
+	public class Role : Disposable {
         private RoleDef def;
 		private RoleKey key;
 		private string name;
@@ -32,25 +32,12 @@ namespace SteamEngine.CompiledScripts {
 		private List<AbstractCharacter> members;
 		private System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter> membersReadOnly;
 
-		public Role() {
+		internal Role(RoleDef def, RoleKey key) {
 			members = new List<AbstractCharacter>();
 			membersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(this.members);
-        }
-
-		protected override void On_Reset() {
-			this.def = null;
-			this.key = null;
-			this.name = null;
-			if (this.members != null) {
-				this.members.Clear();
-			}
-			base.On_Reset();
-		}
-
-		internal void Init(RoleDef def, RoleKey key) {
 			this.key = key;
 			this.def = def;
-		}
+        }
 
 		internal void InternalAddMember(AbstractCharacter newMember) {
 			this.members.Add(newMember);
