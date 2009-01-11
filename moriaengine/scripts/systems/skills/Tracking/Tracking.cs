@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 				case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
 					CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
 			
-					List<Character> charsAround = ScriptSector.GetCharactersInRectangle(rect, charType, maxAge);
+					List<Character> charsAround = ScriptSector.GetCharactersInRectangle(rect, charType, maxAge, self.M);
 
 					//check if tracking is possible (with message)
 					//i.e. too many chars or none at all
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 					Character charToTrack = (Character)skillSeqArgs.Param1;
 
 					//get the set of characters visible footsteps
-					LinkedList<TrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge);
+					LinkedList<TrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
 
 					//and forward the tracking management to the special plugin
 					TrackingPlugin tpl = (TrackingPlugin) TrackingPlugin.defInstance.Create();
