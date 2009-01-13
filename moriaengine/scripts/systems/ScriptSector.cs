@@ -58,6 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
+
 		[Remark("Perform all check necesarry to do on timeout")]
 		internal void CheckOnTimeout() {
 			//check and clean all old TrackPoints left by passing characters
@@ -67,16 +68,16 @@ namespace SteamEngine.CompiledScripts {
 			foreach(Character oneChar in charsPassing.Keys) {
 				Queue<TrackPoint> charsPath = charsPassing[oneChar];
 
-				if (charsPath.Count > 0) {
-					while (charsPath.Peek().LastStepTime <= boundaryTime) {//check the oldest Queue element
-						TrackPoint oneTP = charsPath.Dequeue();//too old -> remove it
-						uint uid;
-						if ((uid = oneTP.FakeUID) != default(uint)) {
-							Thing.DisposeFakeUid(uid);//dont forget to dispose the borrowed uid (if any) !!!
-						}
+				while (charsPath.Count > 0) {
+					TrackPoint oneTP = charsPath.Peek();
+					if (oneTP.LastStepTime <= boundaryTime) {//check the oldest Queue element
+						charsPath.Dequeue();//too old -> remove it
+						oneTP.Dispose();
+					} else {
+						break;
 					}
 				}
-				
+			
 				if (charsPath.Count == 0) {//nothing is left in the queue
 					charsToRemove.Add(oneChar); //we will remove the char later
 				}

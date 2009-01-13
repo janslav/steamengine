@@ -369,6 +369,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_UnAssign(Character formerCont) {
 			formerCont.ClilocSysMessage(502989);//Tracking failed.
+
+			GameState trackersState = formerCont.GameState;
+			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
+				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
+				foreach (TrackPoint tp in this.footsteps) {
+					if (Point2D.GetSimpleDistance(formerCont, tp.Location) <= trackersState.UpdateRange) {
+						RemoveFootstepFromView(tp, pgToSend);
+					}
+				}
+				trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
+			}
 		}
 
 		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)

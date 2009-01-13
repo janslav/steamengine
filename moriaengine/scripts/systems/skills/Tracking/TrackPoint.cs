@@ -26,7 +26,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	
-	public class TrackPoint {
+	public class TrackPoint : Disposable {
 		private Point4D location;
 		private Player owner;
 		private TimeSpan lastStepTime;
@@ -79,17 +79,23 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override bool Equals(object o) {
-			TrackPoint tp = o as TrackPoint;
-			if (tp != null) {
-				return (location.Equals(tp.location) && //same point
-						(owner == tp.owner)); //for the same Character
-			}
-			return false;
-		}
+		//public override bool Equals(object o) {
+		//    TrackPoint tp = o as TrackPoint;
+		//    if (tp != null) {
+		//        return (location.Equals(tp.location) && //same point
+		//                (owner == tp.owner)); //for the same Character
+		//    }
+		//    return false;
+		//}
 
-		public override int GetHashCode() {
-			return location.GetHashCode();
+		//public override int GetHashCode() {
+		//    return location.GetHashCode();
+		//}
+
+		protected override void On_DisposeUnmanagedResources() { //it's not unmanaged resource but we want it to be called even when finalizing
+			if (this.fakeUID != default(uint)) {
+				Thing.DisposeFakeUid(this.fakeUID);//dont forget to dispose the borrowed uid (if any) !!!
+			}
 		}
 	}
 }

@@ -84,7 +84,7 @@ namespace SteamEngine {
 		#endregion DeepCopy implementation
 
 		public virtual string Name { get {
-			return "<tagholder instance>";
+			return "<nameless TagHolder>";
 		} set {
 		
 		} }

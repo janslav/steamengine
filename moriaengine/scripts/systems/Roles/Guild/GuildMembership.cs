@@ -22,59 +22,42 @@ using SteamEngine.Persistence;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
 	[SaveableClass]
-	public class Guild : RankSystem {
+	public class GuildMembership : Rank {
+		public bool canShowAbbrev = false;
 
-		public static readonly RoleKey guildRK = RoleKey.Get("_guild_");
+		internal GuildMembership(RankDef def, RoleKey key)
+			: base(def, key) {
 
-		private static readonly List<Guild> allGuilds = new List<Guild>();
-
-		public Guild()
-			: base() {
-
-			allGuilds.Add(this);
 		}
 
-		public Guild(string name)
-			: base(name) {
-
-			allGuilds.Add(this);
-		}
-
-		public static bool AreInOneGuild(Character a, Character b) {
-			return false;
-		}
-
-		public static Guild GetGuild(Character self) {
-			return null;
-		}
-
-		//TODO?
-		public static bool AreAllied(Guild a, Guild b) {
-			return false;
-		}
-
-		//TODO?
-		public static bool AreInWar(Guild a, Guild b) {
-			return false;
-		}
-
-
-
-
-		public override void LoadLine(string filename, int line, string valueName, string valueString) {
-			base.LoadLine(filename, line, valueName, valueString);
-		}
-
-		public override void Save(SteamEngine.Persistence.SaveStream output) {
+		public override void Save(SaveStream output) {
+			if (canShowAbbrev) {
+				output.WriteValue("canShowAbbrev", canShowAbbrev);
+			}
 			base.Save(output);
 		}
 
-		protected override void On_DisposeManagedResources() {
-			allGuilds.Remove(this);
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName) {
+				case "canShowAbbrev":
+					this.canShowAbbrev = ConvertTools.ParseBoolean(valueString);
+					return;
+			}
+			base.LoadLine(filename, line, valueName, valueString);
+		}
+	}
 
-			base.On_DisposeManagedResources();
+	public class GuildMembershipDef : RankDef {
+		public static readonly GuildMembershipDef instance = new GuildMembershipDef("r_guild", "C# scripts", -1);
+
+		public GuildMembershipDef(string defname, string filename, int headerline)
+			: base(defname, filename, headerline) {
+
+		}
+
+		protected override Role CreateImpl(RoleKey key) {
+			return new GuildMembership(this, key);
 		}
 	}
 }		

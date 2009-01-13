@@ -65,6 +65,11 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Assign chr to role. Ignores @deny triggers.")]
 		public static void Assign(Character chr, Role role) {
+			InternalAddLoadedRole(role, chr);
+			role.InternalAddMember(chr);
+		}
+
+		internal static void InternalAddLoadedRole(Role role, Character chr) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
@@ -82,9 +87,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			rolesByKey[key] = role;
-			role.InternalAddMember(chr);
+			//role.InternalAddMember(chr); this is done when calling this method
 		}
-
 
         [Summary("Find a list of characters for given role and remove the specified character from it " +
                 "then remove the role from the character's roles list ")]
@@ -199,6 +203,6 @@ namespace SteamEngine.CompiledScripts {
                     //no message here
                     break;
             }
-        }        
+        }
 	}
 }
