@@ -61,6 +61,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
+		[LoadLine]
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			base.LoadLine(filename, line, valueName, valueString);
 		}
