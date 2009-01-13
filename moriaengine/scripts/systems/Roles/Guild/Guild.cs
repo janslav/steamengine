@@ -30,6 +30,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static readonly List<Guild> allGuilds = new List<Guild>();
 
+		[LoadingInitializer]
 		public Guild()
 			: base() {
 
@@ -60,13 +61,11 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-
-
-
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			base.LoadLine(filename, line, valueName, valueString);
 		}
 
+		[Save]
 		public override void Save(SteamEngine.Persistence.SaveStream output) {
 			base.Save(output);
 		}
