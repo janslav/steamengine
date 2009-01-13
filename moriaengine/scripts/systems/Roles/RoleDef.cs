@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 				"in every RoleDef's descendant!")]
 		public Role Create(RoleKey key, string name) {
 			Role newRole = this.Create(key);
-			newRole.Name = name;			
+			newRole.Name = name;
 			return newRole;
 		}
 
@@ -53,6 +53,11 @@ namespace SteamEngine.CompiledScripts {
 		public Role Create(RoleKey key) {
 			Role newRole = this.CreateImpl(key);
 			newRole.Trigger_Create();
+			return newRole;
+		}
+
+		internal Role CreateWhenLoading(RoleKey key) {
+			Role newRole = this.CreateImpl(key);
 			return newRole;
 		}
 

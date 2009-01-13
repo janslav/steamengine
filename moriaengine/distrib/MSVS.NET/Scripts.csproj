@@ -470,6 +470,9 @@
     <Compile Include="..\..\scripts\systems\Roles\Guild\Guild.cs">
       <Link>systems\Roles\Guild\Guild.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Guild\GuildMembership.cs">
+      <Link>systems\Roles\Guild\GuildMembership.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Roles\Party\Party.cs">
       <Link>systems\Roles\Party\Party.cs</Link>
     </Compile>

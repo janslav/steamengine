@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 
 				PropsLine lengthLine = input.PopPropsLine("length");
 				currentLineNumber = lengthLine.line;
-				int length = int.Parse(lengthLine.value);
+				int length = ConvertTools.ParseInt32(lengthLine.value);
 
 				Array arr = Array.CreateInstance(elemType, length);
 

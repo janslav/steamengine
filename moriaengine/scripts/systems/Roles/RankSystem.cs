@@ -21,9 +21,150 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Packets;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class RankSystem {
+	[SaveableClass]
+	public class RankSystem : Disposable,  IList<Rank> {
+		private List<Rank> list = new List<Rank>();
+
+		private string name;
+
+		[LoadingInitializer]
+		public RankSystem() {
+		}
+
+		public RankSystem(string name) {
+			this.name = name;
+		}
+
+		public int IndexOf(Rank item) {
+			return this.list.IndexOf(item);
+		}
+
+		public void Insert(int index, Rank item) {
+			this.ClearAndSetRS(item);
+			this.list.Insert(index, item);
+		}
+
+		public void RemoveAt(int index) {
+			this.ClearRSAtIndex(index);
+			this.list.RemoveAt(index);
+		}
+
+		public Rank this[int index] {
+			get {
+				return this.list[index];
+			}
+			set {
+				this.ClearRSAtIndex(index);
+				this.ClearAndSetRS(value);
+				this.list[index] = value;
+			}
+		}
+
+		public void Add(Rank item) {
+			this.ClearAndSetRS(item);
+			this.list.Add(item);
+		}
+
+		public void Clear() {
+			for (int i = 0, n = this.list.Count; i < n; i++) {
+				this.ClearRSAtIndex(i);
+			}
+			this.list.Clear();
+		}
+
+		public bool Contains(Rank item) {
+			return this.list.Contains(item);
+		}
+
+		public int Count {
+			get { return this.list.Count; ; }
+		}
+
+		public bool Remove(Rank item) {
+			int index = this.list.IndexOf(item);
+			if (index >= 0) {
+				this.list.RemoveAt(index);
+				item.InternalSetRankSystem(null);
+				return true;
+			}
+			return false;
+		}
+
+		public IEnumerator<Rank> GetEnumerator() {
+			return this.list.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() {
+			return this.list.GetEnumerator();
+		}
+
+		void ICollection<Rank>.CopyTo(Rank[] array, int arrayIndex) {
+			this.list.CopyTo(array, arrayIndex);
+		}
+
+		bool ICollection<Rank>.IsReadOnly {
+			get { return false; }
+		}
+
+
+		private void ClearRSAtIndex(int index) {
+			Rank previous = this.list[index];
+			if (previous != null) {
+				previous.InternalSetRankSystem(null);
+			}
+		}
+
+		private void ClearAndSetRS(Rank item) {
+			RankSystem rs = item.RankSystem;
+			if (rs != null) {
+				rs.Remove(item);
+			}
+			item.InternalSetRankSystem(this);
+		}
+
+		[Save]
+		public virtual void Save(SaveStream output) {
+			if (this.name != null) {
+				output.WriteValue("name", this.name);
+			}
+			for (int i = 0, n = this.list.Count; i < n; i++) {
+				output.WriteValue(i.ToString(), this.list[i]);
+			}
+		}
+
+		[LoadLine]
+		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName) {
+				case "name":
+					this.name = (string) ObjectSaver.OptimizedLoad_String(valueString);
+					return;
+				default:
+					int i;
+					if (ConvertTools.TryParseInt32(valueName, out i)) {
+						ObjectSaver.Load(valueString, this.Load_Member, filename, line, i);
+						return;
+					}
+					break;
+			}
+			throw new ScriptException("Invalid data '" + LogStr.Ident(valueName) + "' = '" + LogStr.Number(valueString) + "'.");
+		}
+
+		private void Load_Member(object resolvedObject, string filename, int line, object parameter) {
+			Rank loaded = (Rank) resolvedObject;
+			int index = (int) parameter;
+			while (this.list.Count < index) {
+				this.list.Add(null);
+			}
+			this[index] = loaded;
+		}
+
+		protected override void On_DisposeManagedResources() {
+			this.Clear();
+			base.On_DisposeManagedResources();
+		}
 
 	}
 

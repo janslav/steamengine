@@ -21,9 +21,11 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Packets;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
+	[SaveableClass]
 	public class Role : Disposable {
         private RoleDef def;
 		private RoleKey key;
@@ -185,6 +187,78 @@ namespace SteamEngine.CompiledScripts {
 			this.Trigger_Destroy();
 			base.On_DisposeManagedResources();
 		}
+
+		[Save]
+		public virtual void Save(SaveStream output) {
+			output.WriteValue("def", this.def);
+			output.WriteValue("key", this.key);
+			if (this.name != null) {
+				output.WriteValue("name", this.name);
+			}
+			int count = this.members.Count;
+			output.WriteValue("count", count);
+			for (int i = 0; i < count; i++) {
+				output.WriteValue(i.ToString(), this.members[i]);
+			}
+		}
+
+		[LoadSection]
+		public static Role LoadSection(PropsSection input) {
+			int currentLineNumber = input.headerLine;
+			try {
+				PropsLine pl = input.PopPropsLine("def");
+				currentLineNumber = pl.line;
+				RoleDef def = (RoleDef) ObjectSaver.OptimizedLoad_Script(pl.value);
+
+				pl = input.PopPropsLine("key");
+				currentLineNumber = pl.line;
+				RoleKey key = (RoleKey) ObjectSaver.OptimizedLoad_SimpleType(pl.value, typeof(RoleKey));
+
+				pl = input.PopPropsLine("count");
+				currentLineNumber = pl.line;
+				int count = ConvertTools.ParseInt32(pl.value);
+
+				Role role = def.CreateWhenLoading(key);
+
+				for (int i = 0; i < count; i++) {
+					pl = input.PopPropsLine(i.ToString());
+					if (pl != null) {
+						ObjectSaver.Load(pl.value, role.Load_RoleMember, input.filename, pl.line);
+					}
+				}
+
+				foreach (PropsLine p in input.GetPropsLines()) {
+					try {
+						role.LoadLine(input.filename, p.line, p.name.ToLower(), p.value);
+					} catch (FatalException) {
+						throw;
+					} catch (Exception ex) {
+						Logger.WriteWarning(input.filename, p.line, ex);
+					}
+				}
+
+				return role;
+			} catch (FatalException) {
+				throw;
+			} catch (SEException sex) {
+				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				throw;
+			} catch (Exception e) {
+				throw new SEException(input.filename, currentLineNumber, e);
+			}
+		}
+
+		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
+			if (valueName.Equals("name", StringComparison.OrdinalIgnoreCase)) {
+				this.name = (string) ObjectSaver.OptimizedLoad_String(valueString);
+			}
+		}
+
+		private void Load_RoleMember(object resolvedObject, string filename, int line) {
+			Character loaded = (Character) resolvedObject;
+			RolesManagement.InternalAddLoadedRole(this, loaded);
+			this.members.Add(loaded);
+		}
 	}
 
 	public class RoleKey : AbstractKey {
@@ -206,7 +280,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public sealed class RoleKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class RoleKeySaveImplementor : ISimpleSaveImplementor {
 		public static Regex re = new Regex(@"^\°(?<value>.+)\s*$",                     
 			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
