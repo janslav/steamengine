@@ -85,10 +85,10 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes.")]
 		public MutableRectangle Move(int timesX, int timesY) {
-			minX += (ushort)(minX + timesX);
-			maxX += (ushort)(maxX + timesX);
-			minY += (ushort)(minY + timesY);
-			maxY += (ushort)(maxY + timesY);
+			minX += (ushort)timesX;
+			maxX += (ushort)timesX;
+			minY += (ushort)timesY;
+			maxY += (ushort)timesY;
 
 			return this;
 		}

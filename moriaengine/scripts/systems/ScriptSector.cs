@@ -67,17 +67,16 @@ namespace SteamEngine.CompiledScripts {
 			foreach(Character oneChar in charsPassing.Keys) {
 				Queue<TrackPoint> charsPath = charsPassing[oneChar];
 
-				bool canRemove = true;
-				while (canRemove) {
-					TrackPoint oneTP = charsPath.Peek();
-					if (oneTP.LastStepTime <= boundaryTime) {//check the oldest Queue element
-						charsPath.Dequeue();//if its too old, remove it and continue with another
-					} else {
-						//if its not too old, we can stop iterating through the queue as following elements will be only younger and younger...
-						canRemove = false; 
+				if (charsPath.Count > 0) {
+					while (charsPath.Peek().LastStepTime <= boundaryTime) {//check the oldest Queue element
+						TrackPoint oneTP = charsPath.Dequeue();//too old -> remove it
+						uint uid;
+						if ((uid = oneTP.FakeUID) != default(uint)) {
+							Thing.DisposeFakeUid(uid);//dont forget to dispose the borrowed uid (if any) !!!
+						}
 					}
 				}
-
+				
 				if (charsPath.Count == 0) {//nothing is left in the queue
 					charsToRemove.Add(oneChar); //we will remove the char later
 				}
@@ -119,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 			List<ScriptSector> intersectingSectors = GetScriptSectorsInRectangle(rect, mapplane);
 			TimeSpan now = Globals.TimeAsSpan; //actual server time
 			foreach (ScriptSector sSec in intersectingSectors) {
-				foreach (Character candidate in sSec.CharsPassing.Keys) {
+				foreach (Character candidate in sSec.charsPassing.Keys) {
 					//check if the character is of the desired type (first filter)
 					switch (charType) {
 						case CharacterTypes.All:
@@ -147,7 +146,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 					//now get the characters' TrackPoints and check if they belong go the rectangle
 					//and that they are not too old
-					foreach(TrackPoint passingPoint in sSec.CharsPassing[candidate]) {
+					foreach(TrackPoint passingPoint in sSec.charsPassing[candidate]) {
 						if((now - passingPoint.LastStepTime) <= maxAge) {//the footstep is not too old
 							if(rect.Contains(passingPoint.Location)) {//footstep lies in the rectangle
 								if (!retChars.Contains(candidate)) {//add him to the list only if he is not yet inside... (e.g. for more than 1 sector this can happen...)
@@ -190,25 +189,70 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane "+
 				"and which are not older than specified")]
-		public static LinkedList<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
+		public static List<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
 			List<TrackPoint> footsteps = new List<TrackPoint>();
 			TimeSpan allowedAge = Globals.TimeAsSpan - maxAge;
 			List<ScriptSector> sectorsInRect = GetScriptSectorsInRectangle(rect, mapplane);//get only relevant ScriptSectors
 			foreach (ScriptSector relevantSec in sectorsInRect) {
-				Queue<TrackPoint> charPoints = relevantSec.CharsPassing[whose];
-				foreach (TrackPoint onePoint in charPoints) {
-					if (rect.Contains(onePoint.Location)) {//the point is in the rectangle
-						if (onePoint.LastStepTime >= allowedAge) { //the footprint is not too old
-							footsteps.Add(onePoint);
+				Queue<TrackPoint> charPoints;
+				if (relevantSec.charsPassing.TryGetValue(whose, out charPoints)) {//only if the char is still loaded on sector (i.e. it was not yet cleaned)
+					foreach (TrackPoint onePoint in charPoints) {
+						if (rect.Contains(onePoint.Location)) {//the point is in the rectangle
+							if (onePoint.LastStepTime >= allowedAge) { //the footprint is not too old
+								footsteps.Add(onePoint);
+							}
 						}
 					}
 				}
 			}
 			//sort the list by footsteps' age (first - the oldest, last - the newest footstep)
+			//(important for displaying as in the list there can exist more TPs for the same position so we need
+			//the newest one to be displayed last (most fresh footstep)
 			footsteps.Sort(delegate(TrackPoint a, TrackPoint b) {
 								return a.LastStepTime.CompareTo(b.LastStepTime);
 							}); 
-			return new LinkedList<TrackPoint>(footsteps);
+			return footsteps;
+		}
+
+		[Summary("For the given player make a record of his actual position as a new tracking step")]
+		internal static void AddTrackingStep(Player whose, byte direction) {
+			//get actual sector
+			Point4D hisPos = whose.P();
+			ScriptSector hisSector = ScriptSector.GetScriptSector(hisPos);
+
+			//check if we already have this any of char's trackpoints in this sector
+			Queue<TrackPoint> hisTrackPoints;
+			if (!hisSector.charsPassing.TryGetValue(whose, out hisTrackPoints)) {
+				hisTrackPoints = new Queue<TrackPoint>();
+				hisSector.charsPassing.Add(whose, hisTrackPoints);
+			}
+
+			//add the actually stepped point to the queue (no matter if we have stepped on it previously)
+			TrackPoint hisActualPoint = new TrackPoint(hisPos, whose);
+			hisActualPoint.LastStepTime = Globals.TimeAsSpan; //set the last step time on this position
+			hisTrackPoints.Enqueue(hisActualPoint);
+
+			switch ((Direction)direction) {
+				case Direction.North://0
+				case Direction.NorthEast://1
+					hisActualPoint.Model = (ushort) GumpIDs.Footprint_North; //0x1e04
+					break;
+				case Direction.East://2
+				case Direction.SouthEast://3
+					hisActualPoint.Model = (ushort) GumpIDs.Footprint_East; //0x1e05
+					break;
+				case Direction.South://4
+				case Direction.SouthWest://5
+					hisActualPoint.Model = (ushort) GumpIDs.Footprint_South; //0x1e06
+					break;
+				case Direction.West://6
+				case Direction.NorthWest://7
+					hisActualPoint.Model = (ushort) GumpIDs.Footprint_West; //0x1e03
+					break;
+			}
+			//tohle bude ovsem lepsi :-)
+			//aha tak nebude, ty modely jsou posunuty a nejnizsi je "west" :-/
+			//myActualPoint.Model = (ushort)(TrackingPlugin.FOOTPRINT + ((ushort) ((byte) this.Direction / 2)));
 		}
 
 		[Remark("Used especially when 'resizing' the sectors - everything needs to be recomputed")]
@@ -246,12 +290,6 @@ namespace SteamEngine.CompiledScripts {
 		public ScriptSectorTimer CleaningTimer {
 			get {
 				return sectorTimer;
-			}
-		}
-
-		public Dictionary<Character, Queue<TrackPoint>> CharsPassing {
-			get {
-				return charsPassing;
 			}
 		}
 	}

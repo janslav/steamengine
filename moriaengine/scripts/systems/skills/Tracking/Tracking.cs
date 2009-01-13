@@ -39,12 +39,19 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Maximum characters to be recognized at skill 100")]
 		private FieldValue maxCharsToTrack;
 
+		[Summary("Max steps before tracking chance is recomputed at skill 0")]
+		private FieldValue minSafeSteps;
+		[Summary("Max steps before tracking chance is recomputed at skill 100")]
+		private FieldValue maxSafeSteps;
+
 		public TrackingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			minFootstepAge = InitField_Typed("minFootstepAge", 15, typeof(double));
 			maxFootstepAge = InitField_Typed("maxFootstepAge", 120, typeof(double));
 			minCharsToTrack = InitField_Typed("minCharsToTrack", 3, typeof(int));
 			maxCharsToTrack = InitField_Typed("maxCharsToTrack", 20, typeof(int));
+			minSafeSteps = InitField_Typed("minSafeSteps", 1, typeof(int));
+			maxSafeSteps = InitField_Typed("maxSafeSteps", 10, typeof(int));
 		}
 		
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
@@ -103,14 +110,16 @@ namespace SteamEngine.CompiledScripts {
 				case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
 					Character charToTrack = (Character)skillSeqArgs.Param1;
 
-					//get the set of characters visible footsteps
-					LinkedList<TrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
+					//get the list of characters visible footsteps
+					List<TrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
 
 					//and forward the tracking management to the special plugin
 					TrackingPlugin tpl = (TrackingPlugin) TrackingPlugin.defInstance.Create();
-					tpl.trackingRectangle = rect;//for recomputing the rect when OnStep...
-					tpl.maxFootstepAge = maxAge;//for refreshing the footsteps when OnStep...
-					tpl.footsteps = charsSteps;//initial list of footsteps
+					tpl.trackingRectangle = rect; //for recomputing the rect when OnStep...
+					tpl.maxFootstepAge = maxAge; //for refreshing the footsteps when OnStep...
+					tpl.whoToTrack = charToTrack; //for refreshing the footsteps when OnStep...
+					tpl.footsteps = charsSteps; //initial list of footsteps
+					tpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
 
 					self.AddPlugin(TrackingPlugin.trackingPluginKey, tpl);
 					
@@ -196,7 +205,7 @@ namespace SteamEngine.CompiledScripts {
 			if (self.IsGM) {
 				maxAge = ScriptSector.CleaningPeriod; //get the maximal lifetime of the footsteps
 			} else {
-				maxAge = ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), (double) minFootstepAge.CurrentValue, (double)maxFootstepAge.CurrentValue);
+				maxAge = ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), MinFootstepAge, MaxFootstepAge);
 			}
 			return TimeSpan.FromSeconds(maxAge);
 		}
@@ -208,9 +217,21 @@ namespace SteamEngine.CompiledScripts {
 			if (self.IsGM) {
 				maxChars = int.MaxValue; //unlimited, GM sees everything
 			} else {
-				maxChars = (int)ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), (double)minCharsToTrack.CurrentValue, (double)maxCharsToTrack.CurrentValue);
+				maxChars = (int)ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), MinCharsToTrack, MaxCharsToTrack);
 			}
 			return maxChars;
+		}
+
+		//get the maximum number of safe steps the tracker will be able to do (before another tracking chance recomputing)
+		private int GetMaxSafeSteps(SkillSequenceArgs ssa) {
+			Character self = ssa.Self;
+			int maxSteps;
+			if (self.IsGM) {
+				maxSteps = int.MaxValue; //unlimited, GM can go as far as he wants
+			} else {
+				maxSteps = (int) ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), MinSafeSteps, MaxSafeSteps);
+			}
+			return maxSteps;
 		}
 
 		[InfoField("Min age [sec.0-skill]")]
@@ -253,6 +274,26 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[InfoField("SafeSteps [char.0/skill]")]
+		public int MinSafeSteps {
+			get {
+				return (int) minSafeSteps.CurrentValue;
+			}
+			set {
+				minSafeSteps.CurrentValue = value;
+			}
+		}
+
+		[InfoField("SafeSteps [char.100/skill]")]
+		public int MaxSafeSteps {
+			get {
+				return (int) maxSafeSteps.CurrentValue;
+			}
+			set {
+				maxSafeSteps.CurrentValue = value;
+			}
+		}
+
 		[SteamFunction]
 		public static void Track(Character self) {
 			self.SelectSkill(SkillName.Tracking);
@@ -264,7 +305,9 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly TrackingPluginDef defInstance = new TrackingPluginDef("p_tracking", "C#scripts", -1);
 		internal static PluginKey trackingPluginKey = PluginKey.Get("_tracking_");
 
-		internal LinkedList<TrackPoint> footsteps = new LinkedList<TrackPoint>();
+		internal List<TrackPoint> footsteps = new List<TrackPoint>();
+
+		private int stepsCntr;
 
 		internal const ushort WORST_COLOR = 1827; //worst visible footsteps
 		internal const ushort BEST_COLOR = 1835; //best visible footsteps
@@ -315,25 +358,69 @@ namespace SteamEngine.CompiledScripts {
 			pgToSend.AcquirePacket<ObjectInfoOutPacket>()
 					.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort)(color+1));
 					//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
-					//while in the .colorsdialog we can see 0 = black but this is true only for text!
+					//in the .colorsdialog we can see 0 = black but this is true only for text!
 		}
 
 		public void On_Assign() {
 			//display all footsteps to the player
 			RefreshFootsteps();
+			stepsCntr = safeSteps; //set the counter
 		}
 
 		public void On_UnAssign(Character formerCont) {
-			//formerCont.ManaRegenSpeed -= this.additionalManaRegenSpeed;
-			//if (formerCont.Mana >= formerCont.MaxMana) {//meditation finished
-			//	formerCont.ClilocSysMessage(501846);//You are at peace.
-			//} else {//meditation somehow aborted
-			//	formerCont.ClilocSysMessage(501848);//You cannot focus your concentration
-			//}
+			formerCont.ClilocSysMessage(502989);//Tracking failed.
 		}
 
-		public void On_Step(ScriptArgs args) {
-			//Delete();
+		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
+			//check the steps counter
+			stepsCntr--;
+			if (stepsCntr == 0) {//force another check of tracking success
+				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess((Character) Cont, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
+					Delete();
+					return;
+				} else {
+					stepsCntr = safeSteps; //reset the counter
+				}
+			}
+			//now recompute the rectangle
+			int moveX = 0, moveY = 0;
+			switch ((Direction) args.argv[0]) {
+				case Direction.North:
+					moveY = -1;
+					moveX = 0;
+					break;
+				case Direction.NorthWest:
+					moveY = -1;
+					moveX = -1;
+					break;
+				case Direction.NorthEast:
+					moveY = -1;
+					moveX = 1;
+					break;
+				case Direction.East:
+					moveY = 0;
+					moveX = 1;
+					break;
+				case Direction.West:
+					moveY = 0;
+					moveX = -1;
+					break;
+				case Direction.South:
+					moveY = 1;
+					moveX = 0;
+					break;
+				case Direction.SouthWest:
+					moveY = 1;
+					moveX = -1;
+					break;
+				case Direction.SouthEast:
+					moveY = 1;
+					moveX = 1;
+					break;
+			}
+			trackingRectangle.Move(moveX, moveY);//alter the rectangle
+			footsteps =	ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, ((Character)Cont).M);//get the actual list of steps
+			RefreshFootsteps();//and refresh them
 		}
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
