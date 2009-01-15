@@ -22,6 +22,8 @@ using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Timers;
 using SteamEngine.Regions;
+using SteamEngine.Communication;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	
@@ -251,9 +253,42 @@ namespace SteamEngine.CompiledScripts {
 					hisActualPoint.Model = (ushort) GumpIDs.Footprint_West; //0x1e03
 					break;
 			}
-			//tohle bude ovsem lepsi :-)
-			//aha tak nebude, ty modely jsou posunuty a nejnizsi je "west" :-/
-			//myActualPoint.Model = (ushort)(TrackingPlugin.FOOTPRINT + ((ushort) ((byte) this.Direction / 2)));
+			
+			//check if we are being tracked and in this case, send the information about the new step made
+			List<Character> tbList = (List<Character>) whose.GetTag(TrackingSkillDef.trackedByTK);
+			if(tbList != null && tbList.Count > 0) {
+				SendStepToTrackers(tbList, hisActualPoint);
+			}
+		}
+
+		//send the information about the step to the people(trackers) who are tracking
+		private static void SendStepToTrackers(List<Character> trackers, TrackPoint whichPoint) {
+			PacketGroup pg = null;
+			TrackingPlugin trackersPlugin = null;
+			List<GameState> whoToSend = new List<GameState>();
+			foreach (Character tracker in trackers) {
+				GameState trackerState = tracker.GameState;
+				if(trackerState != null) {
+					trackersPlugin = (TrackingPlugin)tracker.GetPlugin(TrackingPlugin.trackingPluginKey);
+					if (trackersPlugin.trackingRectangle.Contains(whichPoint.Location)) {//send the position only if it fits to the tracker's tracking area
+						if (pg == null) {//if not yet prepared, prepare it now (only once!)
+							pg = PacketGroup.AcquireMultiUsePG();
+							//check if tp has its fake UID assigned and if not, gather one
+							if (whichPoint.FakeUID == 0) {
+								whichPoint.FakeUID = Thing.GetFakeItemUid();
+							}
+							pg.AcquirePacket<ObjectInfoOutPacket>()
+								.PrepareFakeItem(whichPoint.FakeUID, whichPoint.Model, whichPoint.Location, 1, Direction.North, TrackingPlugin.BEST_COLOR);
+						}
+						trackersPlugin.footsteps.Add(whichPoint);//add the new point to the monitored list...
+						whoToSend.Add(trackerState);
+					}
+				}
+			}
+			foreach (GameState oneState in whoToSend) {
+				oneState.Conn.SendPacketGroup(pg);//if any GameState is in the list then the pg is not null
+			}
+			pg.Dispose();
 		}
 
 		[Remark("Used especially when 'resizing' the sectors - everything needs to be recomputed")]
