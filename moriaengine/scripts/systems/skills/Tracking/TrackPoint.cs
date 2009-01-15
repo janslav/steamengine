@@ -31,6 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		private Player owner;
 		private TimeSpan lastStepTime;
 		private ushort model;//model of the "footprint"
+		private ushort color;//last displayed color of this footstep
 
 		private uint fakeUID;
 
@@ -51,6 +52,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {//we need the setter for refreshing
 				model = value;
+			}
+		}
+
+		public ushort Color {
+			get {
+				return color;
+			}
+			set {//we need the setter for refreshing
+				color = value;
 			}
 		}
 

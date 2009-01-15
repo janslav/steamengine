@@ -14,7 +14,7 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate TrackingPlugin : Plugin]
+[PluginTemplate TrackingPlugin : TimerPlugin]
 Vars:
 	internal MutableRectangle trackingRectangle = null
 	internal TimeSpan maxFootstepAge = default(TimeSpan)

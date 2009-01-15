@@ -29,6 +29,9 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class TrackingSkillDef : SkillDef {
+		//tag key for the tag with the list of trackers to the tracked character
+		internal static TagKey trackedByTK = TagKey.Get("_tracked_by_");
+
 		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 0")]
 		private FieldValue minFootstepAge;
 		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 100")]
@@ -120,9 +123,19 @@ namespace SteamEngine.CompiledScripts {
 					tpl.whoToTrack = charToTrack; //for refreshing the footsteps when OnStep...
 					tpl.footsteps = charsSteps; //initial list of footsteps
 					tpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
-
+					tpl.Timer = TrackingPlugin.refreshTimeout;//set the first timer
 					self.AddPlugin(TrackingPlugin.trackingPluginKey, tpl);
 					
+					//to the tracked char's list add the actual tracker
+					List<Character> tbList = (List<Character>) charToTrack.GetTag(TrackingSkillDef.trackedByTK);
+					if (tbList == null) {
+						tbList = new List<Character>();
+						charToTrack.SetTag(TrackingSkillDef.trackedByTK, tbList);
+					}
+					if (!tbList.Contains(self)) {
+						tbList.Add(self);
+					}
+
 					break;
 			}
 			return false;
@@ -305,6 +318,8 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly TrackingPluginDef defInstance = new TrackingPluginDef("p_tracking", "C#scripts", -1);
 		internal static PluginKey trackingPluginKey = PluginKey.Get("_tracking_");
 
+		internal static int refreshTimeout = 10; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
+
 		internal List<TrackPoint> footsteps = new List<TrackPoint>();
 
 		private int stepsCntr;
@@ -323,42 +338,57 @@ namespace SteamEngine.CompiledScripts {
 			GameState trackersState = ((Character) Cont).GameState;
 			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
 				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
+				List<TrackPoint> fsToRemove = new List<TrackPoint>();
 				foreach (TrackPoint tp in footsteps) {
 					//check if the tp is not too old...
 					if (tp.LastStepTime < worstVisibleAt) {
-						RemoveFootstepFromView(tp, pgToSend);
+						if (RemoveFootstepFromView(tp, pgToSend)) {
+							fsToRemove.Add(tp);
+						}
 						continue;
 					}
 					//check if tp has its fake UID assigned and if not, gather one
-					if (tp.FakeUID == default(uint)) {
+					if (tp.FakeUID == 0) {
 						tp.FakeUID = Thing.GetFakeItemUid();
 					}
 					ShowFootstep(tp, pgToSend, worstVisibleAt, bestVisibleAt);
 				}
-				trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
+				if (!pgToSend.IsEmpty) {
+					trackersState.Conn.SendPacketGroup(pgToSend);//send the packets
+				}
+				foreach (TrackPoint toBeRemoved in fsToRemove) {
+					footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
+				}
+			}
+			if (footsteps.Count == 0) {
+				Delete();//no footsteps left - no need to continue
 			}
 		}
 
 		//check if the footstep has been displayed and if so, prepare the removal packet
-		//otherwise simply remove it from the list of trackpoints
-		private void RemoveFootstepFromView(TrackPoint tp, PacketGroup pgToSend) {
+		//return the TrackPoint if it is to be removed
+		private bool RemoveFootstepFromView(TrackPoint tp, PacketGroup pgToSend) {
 			uint uid;
-			if ((uid = tp.FakeUID) != default(uint)) {
+			if ((uid = tp.FakeUID) != 0) {
 				//prepare the item removal packet (0x1d)
 				pgToSend.AcquirePacket<DeleteObjectOutPacket>().Prepare(uid);
 				Thing.DisposeFakeUid(uid);//return the borrowed UID
+				return true; //will be removed from footsteps list
 			}
-			footsteps.Remove(tp); //dont show it anymore
+			return false;//dont remove it
 		}
 
 		//prepare a packet about the footstep
 		private void ShowFootstep(TrackPoint tp, PacketGroup pgToSend, TimeSpan worstVisibleAt, TimeSpan bestVisibleAt) {
 			//count the color according to the lastStepTime using a linear dependency
-			int color = (int)(WORST_COLOR + (BEST_COLOR-WORST_COLOR)*((tp.LastStepTime.TotalSeconds - worstVisibleAt.TotalSeconds) / (bestVisibleAt.TotalSeconds - worstVisibleAt.TotalSeconds)));
-			pgToSend.AcquirePacket<ObjectInfoOutPacket>()
-					.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort)(color+1));
-					//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
-					//in the .colorsdialog we can see 0 = black but this is true only for text!
+			ushort color = (ushort)(WORST_COLOR + (BEST_COLOR-WORST_COLOR)*((tp.LastStepTime.TotalSeconds - worstVisibleAt.TotalSeconds) / (bestVisibleAt.TotalSeconds - worstVisibleAt.TotalSeconds)));
+			if (tp.Color != color) {
+				tp.Color = color; //store the color and we will prepare the packet
+				pgToSend.AcquirePacket<ObjectInfoOutPacket>()
+					.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
+				//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
+				//in the .colorsdialog we can see 0 = black but this is true only for text!
+			}
 		}
 
 		public void On_Assign() {
@@ -373,12 +403,27 @@ namespace SteamEngine.CompiledScripts {
 			GameState trackersState = formerCont.GameState;
 			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
 				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
+				List<TrackPoint> fsToRemove = new List<TrackPoint>();
 				foreach (TrackPoint tp in this.footsteps) {
 					if (Point2D.GetSimpleDistance(formerCont, tp.Location) <= trackersState.UpdateRange) {
-						RemoveFootstepFromView(tp, pgToSend);
+						if (RemoveFootstepFromView(tp, pgToSend)) {
+							fsToRemove.Add(tp);
+						}
 					}
 				}
-				trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
+				if (!pgToSend.IsEmpty) {
+					trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
+				}
+				foreach (TrackPoint toBeRemoved in fsToRemove) {
+					footsteps.Remove(toBeRemoved); //remove removed footsteps
+				}
+				
+			}
+			//remove from the trackedBy list on the tracked character
+			List<Character> tbList = (List<Character>)whoToTrack.GetTag(TrackingSkillDef.trackedByTK);
+			tbList.Remove(formerCont);
+			if (tbList.Count == 0) {
+				whoToTrack.RemoveTag(TrackingSkillDef.trackedByTK);
 			}
 		}
 
@@ -430,12 +475,37 @@ namespace SteamEngine.CompiledScripts {
 					break;
 			}
 			trackingRectangle.Move(moveX, moveY);//alter the rectangle
-			footsteps =	ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, ((Character)Cont).M);//get the actual list of steps
-			RefreshFootsteps();//and refresh them
+			List<TrackPoint> newFootsteps =	ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, ((Character)Cont).M);//get the actual list of steps
+			List<TrackPoint> oldFootsteps = new List<TrackPoint>();
+			foreach (TrackPoint fs in footsteps) {
+				if (!newFootsteps.Contains(fs)) {
+					oldFootsteps.Add(fs); //this footstep is to be removed
+				}
+			}
+			RemoveFootsteps(oldFootsteps);
+			RefreshFootsteps();//and refresh all necessary footsteps
 		}
+
+		//remove specified list of footsteps (usually "@onStep")
+		private void RemoveFootsteps(List<TrackPoint> which) {
+			GameState trackersState = ((Character)Cont).GameState;
+			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
+				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
+				foreach (TrackPoint tp in which) {
+					RemoveFootstepFromView(tp, pgToSend);//this will also remove it from the 'footsteps' list in the plugin
+				}
+				trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
+			}
+		}
+
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			Delete();
+		}
+
+		public void On_Timer() {
+			RefreshFootsteps(); //force to recompute the displayed footsteps color and send the necessary refresh packets
+			this.Timer = TrackingPlugin.refreshTimeout;
 		}
 	}
 }

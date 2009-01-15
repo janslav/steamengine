@@ -208,7 +208,7 @@ namespace SteamEngine.Communication {
 			return pg;
 		}
 
-		internal bool IsEmpty {
+		public bool IsEmpty {
 			get {
 				return this.isEmpty;
 			}

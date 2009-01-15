@@ -21,14 +21,20 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine;
 using SteamEngine.Regions;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[Summary("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
 				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
+	[SaveableClass]
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, minY, maxX, maxY;
 		
+		[LoadingInitializer]
+		public MutableRectangle() {
+		}
+
 		public MutableRectangle(AbstractRectangle copiedOne) {
 			this.minX = copiedOne.MinX;
 			this.minY = copiedOne.MinY;
@@ -100,6 +106,33 @@ namespace SteamEngine.CompiledScripts {
 				retList.Add(new MutableRectangle(regRect));
 			}
 			return retList;
+		}
+
+		[LoadLine]
+		public void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName.ToLowerInvariant()) {
+				case "minx":
+					this.minX = (ushort) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(ushort));
+					return;
+				case "miny":
+					this.minY = (ushort) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(ushort));
+					return;
+				case "maxx":
+					this.maxX = (ushort) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(ushort));
+					return;
+				case "maxy":
+					this.maxX = (ushort) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(ushort));
+					return;
+			}
+			throw new ScriptException("Invalid data '" + LogStr.Ident(valueName) + "' = '" + LogStr.Number(valueString) + "'.");
+		}
+
+		[Save]
+		public void Save(SteamEngine.Persistence.SaveStream output) {
+			output.WriteValue("minX", this.minX);
+			output.WriteValue("minY", this.minY);
+			output.WriteValue("maxX", this.maxX);
+			output.WriteValue("maxY", this.maxY);
 		}
 	}
 }
