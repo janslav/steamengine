@@ -491,6 +491,9 @@
     <Compile Include="..\..\scripts\systems\Roles\RoleDef.cs">
       <Link>systems\Roles\RoleDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RoleKey.cs">
+      <Link>systems\Roles\RoleKey.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Roles\RolesDialog.cs">
       <Link>systems\Roles\RolesDialog.cs</Link>
     </Compile>

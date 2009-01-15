@@ -52,6 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			this.list.RemoveAt(index);
 		}
 
+		[SteamEngine.CompiledScripts.Dialogs.NoShow]
 		public Rank this[int index] {
 			get {
 				return this.list[index];

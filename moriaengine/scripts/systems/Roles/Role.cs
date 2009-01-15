@@ -188,6 +188,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_DisposeManagedResources();
 		}
 
+		#region persistence
 		[Save]
 		public virtual void Save(SaveStream output) {
 			output.WriteValue("def", this.def);
@@ -259,53 +260,6 @@ namespace SteamEngine.CompiledScripts {
 			RolesManagement.InternalAddLoadedRole(this, loaded);
 			this.members.Add(loaded);
 		}
-	}
-
-	public class RoleKey : AbstractKey {
-		private static Dictionary<string, RoleKey> byName = new Dictionary<string, RoleKey>(StringComparer.OrdinalIgnoreCase);
-
-		private RoleKey(string name, int uid)
-			: base(name, uid) {
-		}
-
-		public static RoleKey Get(string name) {
-			RoleKey key;
-			if (byName.TryGetValue(name, out key)) {
-				return key;
-			}
-			key = new RoleKey(name, uids++);
-			byName[name] = key;
-			return key;
-		}
-	}
-
-
-	public sealed class RoleKeySaveImplementor : ISimpleSaveImplementor {
-		public static Regex re = new Regex(@"^\°(?<value>.+)\s*$",                     
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-
-		public Type HandledType {
-			get {
-				return typeof(RoleKey);
-			}
-		}
-		
-		public Regex LineRecognizer { get {
-			return re;
-		} }
-		
-		public string Save(object objToSave) {
-			return "°" + ((RoleKey) objToSave).name;
-		}
-		
-		public object Load(Match match) {
-			return RoleKey.Get(match.Groups["value"].Value);
-		}
-		
-		public string Prefix {
-			get {
-				return "°";
-			}
-		}
+		#endregion persistence
 	}
 }		
