@@ -13,7 +13,6 @@ DEFNAME = i_spellbook
 name = "spellbook 1"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xff
@@ -22,7 +21,6 @@ this.Contents = 0xff
 name = "spellbook 2"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xffff
@@ -31,7 +29,6 @@ this.Contents = 0xffff
 name = "spellbook 3"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xffffff
@@ -40,7 +37,6 @@ this.Contents = 0xffffff
 name = "spellbook 4"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xffffffff
@@ -49,7 +45,6 @@ this.Contents = 0xffffffff
 name = "spellbook 5"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xffffffffff
@@ -58,7 +53,6 @@ this.Contents = 0xffffffffff
 name = "spellbook 6"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xffffffffffff
@@ -67,7 +61,6 @@ this.Contents = 0xffffffffffff
 name = "spellbook 7"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xffffffffffffff
@@ -76,17 +69,51 @@ this.Contents = 0xffffffffffffff
 name = "spellbook 8"
 model = i_spellbook
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
 
 on=@create
 this.Contents = 0xff
 
 [SpellBookDef 0x2253]
-name = "necromancer book"
+name = "Book of necromancy"
 defname = i_spellbook_necro
 layer = 1 //Set by Converter 
-//value = 300 // commented out by Converter 
-FirstSpellId = 100
+FirstSpellId = 101
+
+on=@create
+this.Contents = 0x1FFFF //17 spells
+
+[SpellBookDef 0x2252]
+name = "Book of Chivalry/Paladin"
+defname = i_spellbook_paladin
+layer = 1 //Set by Converter 
+FirstSpellId = 201
+
+on=@create
+this.Contents = 0x3FF //10 spells
+
+[SpellBookDef 0x238C]
+name = "Book of Bushido/Samurai"
+defname = i_spellbook_samurai
+layer = 1 //Set by Converter 
+FirstSpellId = 401
+
+on=@create
+this.Contents = 0x3F //6 spells
+
+[SpellBookDef 0x23A0]
+name = "Book of Ninjitsu"
+defname = i_spellbook_ninja
+layer = 1 //Set by Converter 
+FirstSpellId = 501
+
+on=@create
+this.Contents = 0xff //8 spells
+
+[SpellBookDef 0x2D50]
+name = "Book of Spellweaving/Arcanist"
+defname = i_spellbook_arcanist
+layer = 1 //Set by Converter 
+FirstSpellId = 601
 
 on=@create
 this.Contents = 0xffffffffffffff
