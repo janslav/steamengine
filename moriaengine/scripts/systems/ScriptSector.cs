@@ -113,40 +113,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get all ScriptSectors that intersect with the given rectangle (lying in the give mapplane), then check all "+
-			"characters contained inside if they also belong to the rectangle, check if the "+
+			"characters (typically Players) contained inside if they also belong to the rectangle, check if the "+
 			"character in the rect. is of the desired type and if its footsteps are not too old. "+
 			"Return the list of found characters.")]
-		public static List<Character> GetCharactersInRectangle(AbstractRectangle rect, CharacterTypes charType, TimeSpan maxAge, byte mapplane) {
+		public static List<Character> GetCharactersInRectangle(AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
 			List<Character> retChars = new List<Character>();
 			List<ScriptSector> intersectingSectors = GetScriptSectorsInRectangle(rect, mapplane);
 			TimeSpan now = Globals.TimeAsSpan; //actual server time
 			foreach (ScriptSector sSec in intersectingSectors) {
 				foreach (Character candidate in sSec.charsPassing.Keys) {
-					//check if the character is of the desired type (first filter)
-					switch (charType) {
-						case CharacterTypes.All:
-							break; //always OK
-						case CharacterTypes.Animals:
-							if (!candidate.IsAnimal) {
-								continue;
-							}
-							break;
-						case CharacterTypes.Monsters:
-							if (!candidate.IsMonster) {
-								continue;
-							}
-							break;
-						case CharacterTypes.Players:
-							if (!(candidate is Player)) {
-								continue;
-							}
-							break;
-						case CharacterTypes.NPCs:
-							if (!candidate.IsHuman || (candidate is Player)) { 
-								continue;
-							}
-							break;
-					}
 					//now get the characters' TrackPoints and check if they belong go the rectangle
 					//and that they are not too old
 					foreach(TrackPoint passingPoint in sSec.charsPassing[candidate]) {
@@ -193,7 +168,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane "+
 				"and which are not older than specified")]
 		public static List<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
-			List<TrackPoint> footsteps = new List<TrackPoint>();
+			Dictionary<Point4D, TrackPoint> uniqueFootsteps = new Dictionary<Point4D, TrackPoint>();
 			TimeSpan allowedAge = Globals.TimeAsSpan - maxAge;
 			List<ScriptSector> sectorsInRect = GetScriptSectorsInRectangle(rect, mapplane);//get only relevant ScriptSectors
 			foreach (ScriptSector relevantSec in sectorsInRect) {
@@ -202,19 +177,25 @@ namespace SteamEngine.CompiledScripts {
 					foreach (TrackPoint onePoint in charPoints) {
 						if (rect.Contains(onePoint.Location)) {//the point is in the rectangle
 							if (onePoint.LastStepTime >= allowedAge) { //the footprint is not too old
-								footsteps.Add(onePoint);
+								//footsteps.Add(onePoint);
+								//return only 1 TrackPoint to the unique location
+								//they are stored in the queue in order of their age so this will result in 
+								//a collection of the newest TrackPoints to be returned
+								uniqueFootsteps[onePoint.Location] = onePoint;
 							}
 						}
 					}
 				}
 			}
+			return new List<TrackPoint>(uniqueFootsteps.Values);
+			//unique list of footsteps per position doesn't need any sorting anymore
 			//sort the list by footsteps' age (first - the oldest, last - the newest footstep)
 			//(important for displaying as in the list there can exist more TPs for the same position so we need
 			//the newest one to be displayed last (most fresh footstep)
-			footsteps.Sort(delegate(TrackPoint a, TrackPoint b) {
-								return a.LastStepTime.CompareTo(b.LastStepTime);
-							}); 
-			return footsteps;
+			//footsteps.Sort(delegate(TrackPoint a, TrackPoint b) {
+			//					return a.LastStepTime.CompareTo(b.LastStepTime);
+			//				}); 
+			//return footsteps;
 		}
 
 		[Summary("For the given player make a record of his actual position as a new tracking step")]
@@ -274,9 +255,8 @@ namespace SteamEngine.CompiledScripts {
 						if (pg == null) {//if not yet prepared, prepare it now (only once!)
 							pg = PacketGroup.AcquireMultiUsePG();
 							//check if tp has its fake UID assigned and if not, gather one
-							if (whichPoint.FakeUID == 0) {
-								whichPoint.FakeUID = Thing.GetFakeItemUid();
-							}
+							whichPoint.TryGetFakeUID();
+
 							pg.AcquirePacket<ObjectInfoOutPacket>()
 								.PrepareFakeItem(whichPoint.FakeUID, whichPoint.Model, whichPoint.Location, 1, Direction.North, TrackingPlugin.BEST_COLOR);
 						}
@@ -288,16 +268,9 @@ namespace SteamEngine.CompiledScripts {
 			foreach (GameState oneState in whoToSend) {
 				oneState.Conn.SendPacketGroup(pg);//if any GameState is in the list then the pg is not null
 			}
-			pg.Dispose();
-		}
-
-		[Remark("Used especially when 'resizing' the sectors - everything needs to be recomputed")]
-		internal static void Reset() {
-			//computed sectors are no longer available
-			foreach (ScriptSector sec in scriptSectors.Values) {
-				sec.sectorTimer.Delete();//remove all timers
+			if (pg != null) {
+				pg.Dispose();
 			}
-			scriptSectors.Clear();
 		}
 
 		[Dialogs.InfoField("Sector size")]

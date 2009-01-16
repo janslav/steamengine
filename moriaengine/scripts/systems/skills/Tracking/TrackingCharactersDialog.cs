@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				List<Character> charsAround = (List<Character>) args.ArgsArray[1];
 				Character charToTrack = charsAround[(int)gr.pressedButton - 10];
 
-				ssa.Param1 = charToTrack;
+				ssa.Target1 = charToTrack;
 				ssa.Param2 = TrackingEnums.Phase_Character_Track; //track the particular character
 				ssa.PhaseStart();//start again (but with another parameters)
 			}

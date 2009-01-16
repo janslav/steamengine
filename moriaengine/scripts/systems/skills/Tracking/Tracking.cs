@@ -97,8 +97,11 @@ namespace SteamEngine.CompiledScripts {
 			switch ((TrackingEnums) skillSeqArgs.Param2) {
 				case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
 					CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
-			
-					List<Character> charsAround = ScriptSector.GetCharactersInRectangle(rect, charType, maxAge, self.M);
+
+					List<Character> charsAround = null;
+					if (charType == CharacterTypes.Players) {//players are in the ScriptSectors
+						charsAround = ScriptSector.GetCharactersInRectangle(rect, maxAge, self.M);
+					}
 
 					//check if tracking is possible (with message)
 					//i.e. too many chars or none at all
@@ -111,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 					self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
 					break;
 				case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
-					Character charToTrack = (Character)skillSeqArgs.Param1;
+					Character charToTrack = (Character)skillSeqArgs.Target1;
 
 					//get the list of characters visible footsteps
 					List<TrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
@@ -337,25 +340,35 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState trackersState = ((Character) Cont).GameState;
 			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
+				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 				List<TrackPoint> fsToRemove = new List<TrackPoint>();
+				int i = 0;
 				foreach (TrackPoint tp in footsteps) {
 					//check if the tp is not too old...
 					if (tp.LastStepTime < worstVisibleAt) {
-						if (RemoveFootstepFromView(tp, pgToSend)) {
-							fsToRemove.Add(tp);
+						if (Point2D.GetSimpleDistance((Character) Cont, tp.Location) <= trackersState.UpdateRange) {
+							//remove it explicitely only if it's not too far....
+							DeleteObjectOutPacket doop = new DeleteObjectOutPacket();
+							doop.Prepare(tp.FakeUID);
+							trackersState.Conn.SendSinglePacket(doop);
+							Thing.DisposeFakeUid(tp.FakeUID);
+							//if (RemoveFootstepFromView(tp, pg)) {
+							//	fsToRemove.Add(tp);
+							//}
 						}
 						continue;
 					}
 					//check if tp has its fake UID assigned and if not, gather one
-					if (tp.FakeUID == 0) {
-						tp.FakeUID = Thing.GetFakeItemUid();
-					}
-					ShowFootstep(tp, pgToSend, worstVisibleAt, bestVisibleAt);
+					tp.TryGetFakeUID();
+					i++;
+					ShowFootstep(tp, pg, worstVisibleAt, bestVisibleAt);
 				}
-				if (!pgToSend.IsEmpty) {
-					trackersState.Conn.SendPacketGroup(pgToSend);//send the packets
-				}
+				//if (!pg.IsEmpty) {
+				//	((Character) Cont).SysMessage("Sending " + i + " packets");
+				//	trackersState.Conn.SendPacketGroup(pg);//send the packets
+				//} else {
+					pg.Dispose(); //not used - dispose
+				//}
 				foreach (TrackPoint toBeRemoved in fsToRemove) {
 					footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
 				}
@@ -368,8 +381,8 @@ namespace SteamEngine.CompiledScripts {
 		//check if the footstep has been displayed and if so, prepare the removal packet
 		//return the TrackPoint if it is to be removed
 		private bool RemoveFootstepFromView(TrackPoint tp, PacketGroup pgToSend) {
-			uint uid;
-			if ((uid = tp.FakeUID) != 0) {
+			uint uid = tp.FakeUID;
+			if (uid != 0) {
 				//prepare the item removal packet (0x1d)
 				pgToSend.AcquirePacket<DeleteObjectOutPacket>().Prepare(uid);
 				Thing.DisposeFakeUid(uid);//return the borrowed UID
@@ -379,16 +392,26 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//prepare a packet about the footstep
-		private void ShowFootstep(TrackPoint tp, PacketGroup pgToSend, TimeSpan worstVisibleAt, TimeSpan bestVisibleAt) {
+		private void ShowFootstep(TrackPoint tp, PacketGroup pg, TimeSpan worstVisibleAt, TimeSpan bestVisibleAt) {
+			Character tracker = (Character) Cont;
 			//count the color according to the lastStepTime using a linear dependency
 			ushort color = (ushort)(WORST_COLOR + (BEST_COLOR-WORST_COLOR)*((tp.LastStepTime.TotalSeconds - worstVisibleAt.TotalSeconds) / (bestVisibleAt.TotalSeconds - worstVisibleAt.TotalSeconds)));
-			if (tp.Color != color) {
-				tp.Color = color; //store the color and we will prepare the packet
-				pgToSend.AcquirePacket<ObjectInfoOutPacket>()
-					.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
-				//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
-				//in the .colorsdialog we can see 0 = black but this is true only for text!
+			ushort lastColor;
+			if(tp.ColorToTracker.TryGetValue(tracker, out lastColor)) {;//do we have some previous color?
+				if (lastColor == color) {
+					return; //same color, no change, nothing to send
+				}
 			}
+			//otherwise (no color was set yet or the new color is different):
+			tp.ColorToTracker[tracker] = color; //store the new color and we will prepare the packet
+			ObjectInfoOutPacket oiop = new ObjectInfoOutPacket();
+			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
+			tracker.GameState.Conn.SendSinglePacket(oiop);
+			//pg.AcquirePacket<ObjectInfoOutPacket>()
+			//	.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
+			//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
+			//in the .colorsdialog we can see 0 = black but this is true only for text!
+			
 		}
 
 		public void On_Assign() {
@@ -400,25 +423,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_UnAssign(Character formerCont) {
 			formerCont.ClilocSysMessage(502989);//Tracking failed.
 
-			GameState trackersState = formerCont.GameState;
-			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
-				List<TrackPoint> fsToRemove = new List<TrackPoint>();
-				foreach (TrackPoint tp in this.footsteps) {
-					if (Point2D.GetSimpleDistance(formerCont, tp.Location) <= trackersState.UpdateRange) {
-						if (RemoveFootstepFromView(tp, pgToSend)) {
-							fsToRemove.Add(tp);
-						}
-					}
-				}
-				if (!pgToSend.IsEmpty) {
-					trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
-				}
-				foreach (TrackPoint toBeRemoved in fsToRemove) {
-					footsteps.Remove(toBeRemoved); //remove removed footsteps
-				}
-				
-			}
+			RemoveFootsteps(footsteps, formerCont, false); //false - don't bother with removing footsteps from the list...
 			//remove from the trackedBy list on the tracked character
 			List<Character> tbList = (List<Character>)whoToTrack.GetTag(TrackingSkillDef.trackedByTK);
 			tbList.Remove(formerCont);
@@ -428,76 +433,68 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
+			Character tracker = (Character) Cont;
 			//check the steps counter
 			stepsCntr--;
 			if (stepsCntr == 0) {//force another check of tracking success
-				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess((Character) Cont, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
+				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					Delete();
 					return;
 				} else {
 					stepsCntr = safeSteps; //reset the counter
 				}
 			}
+
 			//now recompute the rectangle
 			int moveX = 0, moveY = 0;
-			switch ((Direction) args.argv[0]) {
-				case Direction.North:
-					moveY = -1;
-					moveX = 0;
-					break;
-				case Direction.NorthWest:
-					moveY = -1;
-					moveX = -1;
-					break;
-				case Direction.NorthEast:
-					moveY = -1;
-					moveX = 1;
-					break;
-				case Direction.East:
-					moveY = 0;
-					moveX = 1;
-					break;
-				case Direction.West:
-					moveY = 0;
-					moveX = -1;
-					break;
-				case Direction.South:
-					moveY = 1;
-					moveX = 0;
-					break;
-				case Direction.SouthWest:
-					moveY = 1;
-					moveX = -1;
-					break;
-				case Direction.SouthEast:
-					moveY = 1;
-					moveX = 1;
-					break;
-			}
+			Map.Offset((Direction)args.argv[0], ref moveX, ref moveY); //prepare the movement X and Y modifications (1, 0 or -1 for both directions)
+			
 			trackingRectangle.Move(moveX, moveY);//alter the rectangle
-			List<TrackPoint> newFootsteps =	ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, ((Character)Cont).M);//get the actual list of steps
+			List<TrackPoint> newFootsteps = ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, tracker.M);//get the actual list of steps
 			List<TrackPoint> oldFootsteps = new List<TrackPoint>();
 			foreach (TrackPoint fs in footsteps) {
 				if (!newFootsteps.Contains(fs)) {
 					oldFootsteps.Add(fs); //this footstep is to be removed
 				}
 			}
-			RemoveFootsteps(oldFootsteps);
+			RemoveFootsteps(oldFootsteps, tracker, true); //true - remove footsteps also from the list on the plugin
+			footsteps = newFootsteps; //replace the list of footsteps
 			RefreshFootsteps();//and refresh all necessary footsteps
 		}
 
-		//remove specified list of footsteps (usually "@onStep")
-		private void RemoveFootsteps(List<TrackPoint> which) {
-			GameState trackersState = ((Character)Cont).GameState;
+		//remove specified list of footsteps (usually "@onStep" or "@unassign")
+		//clearlist - shall the removed footstep be aslo removed fro mthe footsteps list? (this is not necessary on Unassign 
+		//because the plugin is disposed anyways...
+		private void RemoveFootsteps(List<TrackPoint> which, Character forWho, bool clearList) {
+			GameState trackersState = forWho.GameState;
 			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pgToSend = PacketGroup.AcquireSingleUsePG();
+				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+				List<TrackPoint> fsToRemove = new List<TrackPoint>();
 				foreach (TrackPoint tp in which) {
-					RemoveFootstepFromView(tp, pgToSend);//this will also remove it from the 'footsteps' list in the plugin
+					if (Point2D.GetSimpleDistance(forWho, tp.Location) <= trackersState.UpdateRange) {
+						DeleteObjectOutPacket doop = new DeleteObjectOutPacket();
+						doop.Prepare(tp.FakeUID);
+						trackersState.Conn.SendSinglePacket(doop);
+						Thing.DisposeFakeUid(tp.FakeUID);
+						//if (RemoveFootstepFromView(tp, pg)) {
+						    if (clearList) {
+						        fsToRemove.Add(tp);
+						    }
+						//}
+					}					
 				}
-				trackersState.Conn.SendPacketGroup(pgToSend);//and send the packets
+				//if (!pg.IsEmpty) {
+				//	trackersState.Conn.SendPacketGroup(pg);//and send the packets
+				//} else {
+					pg.Dispose(); //not used - dispose
+				//}
+				if (clearList) {
+					foreach (TrackPoint toBeRemoved in fsToRemove) {
+						footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
+					}
+				}
 			}
 		}
-
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			Delete();

@@ -714,15 +714,14 @@ namespace SteamEngine.Networking {
 		}
 
 		[Summary("Prepare method for creating the 'fake item' packets")]
-		public void PrepareFakeItem(uint itemUid, ushort model, Point4D point4D, ushort amount, Direction dir, ushort color) {
+		public void PrepareFakeItem(uint itemUid, ushort model, IPoint4D point4D, ushort amount, Direction dir, ushort color) {
 			//this must be the item UID (containing 0x40000000)
 			this.flaggedUid = itemUid | 0x40000000;
 			this.amount = amount;
 			this.model = model;
-			MutablePoint4D point = new MutablePoint4D(point4D);
-			this.x = point.x;
-			this.y = point.y;
-			this.z = point.z;
+			this.x = point4D.X;
+			this.y = point4D.Y;
+			this.z = point4D.Z;
 			this.dir = (byte) dir;
 			this.flagsToSend = 0x00;//Normal
 			this.restrict = MoveRestriction.Normal; //this means Not Movable?
