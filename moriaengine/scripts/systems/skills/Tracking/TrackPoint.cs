@@ -31,13 +31,20 @@ namespace SteamEngine.CompiledScripts {
 		private Player owner;
 		private TimeSpan lastStepTime;
 		private ushort model;//model of the "footprint"
-		private ushort color;//last displayed color of this footstep
-
+		//last displayed color for the particular tracker (more trackers can be tracking this TrackPoint and everyone can have his own color!)
+		private Dictionary<Character, ushort> colorToTracker = new Dictionary<Character, ushort>();
+		
 		private uint fakeUID;
 
 		public TrackPoint(Point4D location, Player owner) {
 			this.location = location;
 			this.owner = owner;
+		}
+
+		internal void TryGetFakeUID() {
+			if (fakeUID == 0) {
+				fakeUID = Thing.GetFakeItemUid();
+			}
 		}
 
 		public Point4D Location {
@@ -55,12 +62,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ushort Color {
+		public Dictionary<Character, ushort> ColorToTracker {
 			get {
-				return color;
-			}
-			set {//we need the setter for refreshing
-				color = value;
+				return colorToTracker;
 			}
 		}
 

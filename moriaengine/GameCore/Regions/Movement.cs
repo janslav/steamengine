@@ -570,7 +570,7 @@ namespace SteamEngine.Regions {
 				zTop = pointZ;
 		}
 
-		public void Offset(Direction d, ref int x, ref int y) {
+		public static void Offset(Direction d, ref int x, ref int y) {
 			switch (d) {
 				case Direction.North: --y; break;
 				case Direction.South: ++y; break;
