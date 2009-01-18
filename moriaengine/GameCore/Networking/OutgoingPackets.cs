@@ -2079,4 +2079,33 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.lightLevel);
 		}
 	}
+
+	public sealed class QuestArrowOutPacket : GameOutgoingPacket {
+		bool active;
+		ushort xPos, yPos;
+
+		public void Prepare(bool active, ushort xPos, ushort yPos) {
+			this.active = active;
+			this.xPos = xPos;
+			this.yPos = yPos;
+		}
+
+		public void Prepare(bool active, IPoint2D position) {
+			this.active = active;
+			this.xPos = position.X;
+			this.yPos = position.Y;
+		}
+
+		public override byte Id {
+			get {
+				return 0xba;
+			}
+		}
+
+		protected override void Write() {
+			this.EncodeBool(this.active);
+			this.EncodeUShort(this.xPos);
+			this.EncodeUShort(this.yPos);
+		}
+	}
 }

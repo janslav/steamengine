@@ -83,10 +83,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//sorting = 0th position
 			switch ((SortingCriteria)args.ArgsArray[0]) {
 				case SortingCriteria.NameAsc:
-					playersList.Sort(CharComparerByName.instance);                   
+					playersList.Sort(CharComparerByName<Player>.instance);                   
 					break;
                 case SortingCriteria.NameDesc:
-                    playersList.Sort(CharComparerByName.instance);
+					playersList.Sort(CharComparerByName<Player>.instance);
                     playersList.Reverse();
                     break;
 				case SortingCriteria.LocationAsc:
@@ -199,14 +199,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
     [Summary("Comparer for sorting players (chars) by name asc")]
-    public class CharComparerByName : IComparer<Character>, IComparer {
-        public readonly static CharComparerByName instance = new CharComparerByName();
+    public class CharComparerByName<T> : IComparer<T>, IComparer where T : AbstractCharacter{
+        public readonly static CharComparerByName<T> instance = new CharComparerByName<T>();
 
         public int Compare(object a, object b) {
-            return Compare((Character)a, (Character)b);
+			return Compare((T) a, (T) b);
         }
 
-        public int Compare(Character x, Character y) {
+        public int Compare(T x, T y) {
             return string.Compare(x.Name,y.Name);
         }
     }

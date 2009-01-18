@@ -28,8 +28,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			SkillSequenceArgs ssa = (SkillSequenceArgs)args.ArgsArray[0];
 			CharacterTypes charType = (CharacterTypes)ssa.Param1;
-			List<Character> charsAround = (List<Character>) args.ArgsArray[1];//trackable characters around
-			charsAround.Sort(CharComparerByName.instance); //sort by name (why not? :-) )
+			List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args.ArgsArray[1];//trackable characters around
+			charsAround.Sort(CharComparerByName<AbstractCharacter>.instance); //sort by name (why not? :-) )
 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, charsAround.Count);
@@ -74,10 +74,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					displayGump = GumpIDs.Figurine_NPC;
 					break;
 				default:
-					break; //for All or Players we need to determine either the whole Icon or at lease the Player's gender
+					break; //for All or Players we need to determine either the whole Icon or at least the Player's gender
 			}
 			for (int i = firstiVal; i < imax; i++) {
-				Character chr = charsAround[i];
+				Character chr = (Character)charsAround[i];
 				if (charType == CharacterTypes.Players) {
 					displayGump = chr.IsMale ? GumpIDs.Figurine_Man : GumpIDs.Figurine_Woman;
 				} else if (charType == CharacterTypes.All) {//for "all" determine the icon char by char
@@ -105,8 +105,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//check which character from the list is to be tracked
 				SkillSequenceArgs ssa = (SkillSequenceArgs) args.ArgsArray[0];
-				List<Character> charsAround = (List<Character>) args.ArgsArray[1];
-				Character charToTrack = charsAround[(int)gr.pressedButton - 10];
+				List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args.ArgsArray[1];
+				Character charToTrack = (Character)charsAround[(int)gr.pressedButton - 10];
 
 				ssa.Target1 = charToTrack;
 				ssa.Param2 = TrackingEnums.Phase_Character_Track; //track the particular character

@@ -77,6 +77,20 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Summary("Display (or remove) a quest arrow pointing towards the specified coordinates")]
+		public void QuestArrow(bool active, ushort xPos, ushort yPos) {
+			QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
+			qaop.Prepare(active, xPos, yPos);
+			this.GameState.Conn.SendSinglePacket(qaop);
+		}
+
+		[Summary("Display (or remove) a quest arrow pointing towards the specified location")]
+		public void QuestArrow(bool active, IPoint2D position) {
+			QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
+			qaop.Prepare(active, position);
+			this.GameState.Conn.SendSinglePacket(qaop);
+		}
+
 		#region Profession
 		public ProfessionPlugin Profession {
 			get {

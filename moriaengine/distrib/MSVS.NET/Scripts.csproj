@@ -677,6 +677,9 @@
     <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingPlugin.Generated.cs">
       <Link>systems\skills\Tracking\TrackingPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingPlugins.cs">
+      <Link>systems\skills\Tracking\TrackingPlugins.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Tracking\TrackPoint.cs">
       <Link>systems\skills\Tracking\TrackPoint.cs</Link>
     </Compile>

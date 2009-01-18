@@ -31,8 +31,6 @@ namespace SteamEngine.CompiledScripts {
 		private Player owner;
 		private TimeSpan lastStepTime;
 		private ushort model;//model of the "footprint"
-		//last displayed color for the particular tracker (more trackers can be tracking this TrackPoint and everyone can have his own color!)
-		private Dictionary<Character, ushort> colorToTracker = new Dictionary<Character, ushort>();
 		
 		private uint fakeUID;
 
@@ -44,6 +42,13 @@ namespace SteamEngine.CompiledScripts {
 		internal void TryGetFakeUID() {
 			if (fakeUID == 0) {
 				fakeUID = Thing.GetFakeItemUid();
+			}
+		}
+
+		internal void TryDisposeFakeUID() {
+			if (fakeUID != 0) {
+				Thing.DisposeFakeUid(fakeUID);//return borrowed UID
+				fakeUID = 0; //set to zero so no duplicities can occur!
 			}
 		}
 
@@ -59,12 +64,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {//we need the setter for refreshing
 				model = value;
-			}
-		}
-
-		public Dictionary<Character, ushort> ColorToTracker {
-			get {
-				return colorToTracker;
 			}
 		}
 
@@ -107,8 +106,78 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		protected override void On_DisposeUnmanagedResources() { //it's not unmanaged resource but we want it to be called even when finalizing
-			if (this.fakeUID != default(uint)) {
+			if (this.fakeUID != 0) {
 				Thing.DisposeFakeUid(this.fakeUID);//dont forget to dispose the borrowed uid (if any) !!!
+				this.fakeUID = 0;
+			}
+		}
+	}
+
+	[Summary("Special structure for holding the TrackPoint along with its display color for the particular tracker")]
+	public struct WatchedTrackPoint {
+		private readonly TrackPoint tp;//this will be immutable
+		private ushort color;
+
+		public WatchedTrackPoint(TrackPoint tp) {
+			this.tp = tp;
+			this.color = PlayerTrackingPlugin.BEST_COLOR; //if unspecified, start with the best color
+		}
+
+		public WatchedTrackPoint(TrackPoint tp, ushort color) {
+			this.tp = tp;
+			this.color = color;
+		}
+
+		public TrackPoint TrackPoint {
+			get {
+				return tp;
+			}
+		}
+
+		public ushort Color {
+			get {
+				return color;
+			}
+			set {
+				color = value;
+			}
+		}
+
+		//forward the property to the TrackPoint
+		public TimeSpan LastStepTime {
+			get {
+				return tp.LastStepTime;
+			}
+			set {//we need the setter for refreshing
+				tp.LastStepTime = value;
+			}
+		}
+
+		//forward the property to the TrackPoint
+		public Point4D Location {
+			get {
+				return tp.Location;
+			}
+		}
+
+		//forward the property to the TrackPoint
+		public uint FakeUID {
+			get {
+				return tp.FakeUID;
+			}
+
+			internal set {
+				tp.FakeUID = value;
+			}
+		}
+
+		//forward the property to the TrackPoint
+		public ushort Model {
+			get {
+				return tp.Model;
+			}
+			set {//we need the setter for refreshing
+				tp.Model = value;
 			}
 		}
 	}
