@@ -739,6 +739,21 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
+		public IEnumerable<AbstractCharacter> GetNPCsInRectangle(ImmutableRectangle rectangle) {
+			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
+				foreach (Thing thing in sector.things) {
+					AbstractCharacter ch = thing as AbstractCharacter;
+					//Account == null is from "IsPlayer" property (but the property also Logs the query - who knows why...?)
+					if ((ch != null) && (ch.Account == null) && (rectangle.Contains(ch))) {
+						yield return ch;
+					}
+				}
+			}
+		}
+		/**
+			This is used by Thing's similarly named methods, but this version allows
+			you to explicitly specify a rectangle to look in.
+		*/
 		public IEnumerable<Static> GetStaticsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (Static s in sector.Statics) {

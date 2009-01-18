@@ -116,8 +116,8 @@ namespace SteamEngine.CompiledScripts {
 			"characters (typically Players) contained inside if they also belong to the rectangle, check if the "+
 			"character in the rect. is of the desired type and if its footsteps are not too old. "+
 			"Return the list of found characters.")]
-		public static List<Character> GetCharactersInRectangle(AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
-			List<Character> retChars = new List<Character>();
+		public static List<AbstractCharacter> GetCharactersInRectangle(AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
+			List<AbstractCharacter> retChars = new List<AbstractCharacter>();
 			List<ScriptSector> intersectingSectors = GetScriptSectorsInRectangle(rect, mapplane);
 			TimeSpan now = Globals.TimeAsSpan; //actual server time
 			foreach (ScriptSector sSec in intersectingSectors) {
@@ -167,7 +167,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane "+
 				"and which are not older than specified")]
-		public static List<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
+		public static List<WatchedTrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan maxAge, byte mapplane) {
 			Dictionary<Point4D, TrackPoint> uniqueFootsteps = new Dictionary<Point4D, TrackPoint>();
 			TimeSpan allowedAge = Globals.TimeAsSpan - maxAge;
 			List<ScriptSector> sectorsInRect = GetScriptSectorsInRectangle(rect, mapplane);//get only relevant ScriptSectors
@@ -187,7 +187,11 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
-			return new List<TrackPoint>(uniqueFootsteps.Values);
+			List<WatchedTrackPoint> retList = new List<WatchedTrackPoint>();
+			foreach (TrackPoint tp in uniqueFootsteps.Values) {
+				retList.Add(new WatchedTrackPoint(tp));
+			}
+			return retList;
 			//unique list of footsteps per position doesn't need any sorting anymore
 			//sort the list by footsteps' age (first - the oldest, last - the newest footstep)
 			//(important for displaying as in the list there can exist more TPs for the same position so we need
@@ -238,27 +242,27 @@ namespace SteamEngine.CompiledScripts {
 			//check if we are being tracked and in this case, send the information about the new step made
 			List<Character> tbList = (List<Character>) whose.GetTag(TrackingSkillDef.trackedByTK);
 			if(tbList != null && tbList.Count > 0) {
-				SendStepToTrackers(tbList, hisActualPoint);
+				SendStepToTrackers(tbList, new WatchedTrackPoint(hisActualPoint));
 			}
 		}
 
 		//send the information about the step to the people(trackers) who are tracking
-		private static void SendStepToTrackers(List<Character> trackers, TrackPoint whichPoint) {
+		private static void SendStepToTrackers(List<Character> trackers, WatchedTrackPoint whichPoint) {
 			PacketGroup pg = null;
-			TrackingPlugin trackersPlugin = null;
+			PlayerTrackingPlugin trackersPlugin = null;
 			List<GameState> whoToSend = new List<GameState>();
 			foreach (Character tracker in trackers) {
 				GameState trackerState = tracker.GameState;
 				if(trackerState != null) {
-					trackersPlugin = (TrackingPlugin)tracker.GetPlugin(TrackingPlugin.trackingPluginKey);
+					trackersPlugin = (PlayerTrackingPlugin)tracker.GetPlugin(PlayerTrackingPlugin.trackingPluginKey);
 					if (trackersPlugin.trackingRectangle.Contains(whichPoint.Location)) {//send the position only if it fits to the tracker's tracking area
 						if (pg == null) {//if not yet prepared, prepare it now (only once!)
 							pg = PacketGroup.AcquireMultiUsePG();
 							//check if tp has its fake UID assigned and if not, gather one
-							whichPoint.TryGetFakeUID();
+							whichPoint.TrackPoint.TryGetFakeUID();
 
 							pg.AcquirePacket<ObjectInfoOutPacket>()
-								.PrepareFakeItem(whichPoint.FakeUID, whichPoint.Model, whichPoint.Location, 1, Direction.North, TrackingPlugin.BEST_COLOR);
+								.PrepareFakeItem(whichPoint.FakeUID, whichPoint.Model, whichPoint.Location, 1, Direction.North, (ushort)(whichPoint.Color + 1));
 						}
 						trackersPlugin.footsteps.Add(whichPoint);//add the new point to the monitored list...
 						whoToSend.Add(trackerState);

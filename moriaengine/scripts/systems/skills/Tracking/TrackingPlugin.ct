@@ -14,9 +14,15 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate TrackingPlugin : TimerPlugin]
+[PluginTemplate PlayerTrackingPlugin : TimerPlugin]
 Vars:
 	internal MutableRectangle trackingRectangle = null
 	internal TimeSpan maxFootstepAge = default(TimeSpan)
 	internal int safeSteps = 0
 	internal Character whoToTrack = null
+	
+[PluginTemplate NPCTrackingPlugin : TimerPlugin]
+Vars:
+	internal int maxAllowedDist = 0
+	internal int safeSteps = 0
+	internal Character whoToTrack = null	

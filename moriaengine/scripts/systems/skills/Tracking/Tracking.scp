@@ -5,6 +5,7 @@ StartByMacroEnabled=true
 DELAY=3.0,1.0
 EFFECT=4.0,8.0 //used for tracking area size computing (4 fields around at skill 0, 15 at skill 100)
 
+pvmEffect = 16.0,64.0 //size of the searched area when tracking animals/monsters/NPCs
 minFootstepAge = 15 //how old steps will be seen at skill 0
 maxFootstepAge = 120 //how old steps will be seen at skill 100
 minCharsToTrack = 3 //how many chars will be trackable (will appear in the dialog at once) at skill 0

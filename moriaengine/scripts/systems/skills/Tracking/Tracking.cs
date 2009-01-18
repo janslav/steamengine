@@ -47,6 +47,9 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Max steps before tracking chance is recomputed at skill 100")]
 		private FieldValue maxSafeSteps;
 
+		[Summary("Similar as Effect but for tracking monsters,animals and NPCs")]
+		private FieldValue pvmEffect;
+
 		public TrackingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			minFootstepAge = InitField_Typed("minFootstepAge", 15, typeof(double));
@@ -55,6 +58,7 @@ namespace SteamEngine.CompiledScripts {
 			maxCharsToTrack = InitField_Typed("maxCharsToTrack", 20, typeof(int));
 			minSafeSteps = InitField_Typed("minSafeSteps", 1, typeof(int));
 			maxSafeSteps = InitField_Typed("maxSafeSteps", 10, typeof(int));
+			pvmEffect = InitField_Typed("pvmEffect", new double[]{16.0,64,0}, typeof(double[]));
 		}
 		
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
@@ -83,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 					skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700)); //normally check for success...
 					break;
 				case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
-					skillSeqArgs.Success = true;//select the character to display its footsteps, no need to check for success
+					skillSeqArgs.Success = true;//select the character to display its footsteps or to navigate to it, no need to check for success
 					break;
 			}
 
@@ -92,54 +96,79 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			MutableRectangle rect = GetTrackingArea(skillSeqArgs);
-			TimeSpan maxAge = GetMaxFootstepsAge(skillSeqArgs);
-			switch ((TrackingEnums) skillSeqArgs.Param2) {
-				case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
-					CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
+			CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
+			AbstractRectangle rect = GetTrackingArea(skillSeqArgs);
 
-					List<Character> charsAround = null;
-					if (charType == CharacterTypes.Players) {//players are in the ScriptSectors
-						charsAround = ScriptSector.GetCharactersInRectangle(rect, maxAge, self.M);
-					}
+			if (charType == CharacterTypes.Players) {//tracking Players
+				TimeSpan maxAge = GetMaxFootstepsAge(skillSeqArgs);
+				switch ((TrackingEnums) skillSeqArgs.Param2) {
+					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
+						List<AbstractCharacter> charsAround = ScriptSector.GetCharactersInRectangle(rect, maxAge, self.M);
+						
+						//check if tracking is possible (with message)
+						//i.e. too many chars or none at all
+						if (CheckTrackImpossible(skillSeqArgs, charsAround.Count, charType)) {
+							return true;
+						}
 
-					//check if tracking is possible (with message)
-					//i.e. too many chars or none at all
-					if (CheckTrackImpossible(skillSeqArgs, charsAround, charType)) {
-						return true;
-					}
+						//display a dialog with the found trackable characters
+						self.ClilocSysMessage(1018093);//Select the one you would like to track.
+						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
+						break;
+					case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
+						Character charToTrack = (Character) skillSeqArgs.Target1;
 
-					//display a dialog with the found trackable characters
-					self.ClilocSysMessage(1018093);//Select the one you would like to track.
-					self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
-					break;
-				case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
-					Character charToTrack = (Character)skillSeqArgs.Target1;
+						//get the list of characters visible footsteps
+						List<WatchedTrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
 
-					//get the list of characters visible footsteps
-					List<TrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
+						//and forward the tracking management to the special plugin
+						PlayerTrackingPlugin tpl = (PlayerTrackingPlugin) PlayerTrackingPlugin.defInstance.Create();
+						tpl.trackingRectangle = (MutableRectangle)rect; //for recomputing the rect when OnStep...
+						tpl.maxFootstepAge = maxAge; //for refreshing the footsteps when OnStep...
+						tpl.whoToTrack = charToTrack; //for refreshing the footsteps when OnStep...
+						tpl.footsteps = charsSteps; //initial list of footsteps
+						tpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
+						tpl.Timer = PlayerTrackingPlugin.refreshTimeout;//set the first timer
+						self.AddPlugin(PlayerTrackingPlugin.trackingPluginKey, tpl);
 
-					//and forward the tracking management to the special plugin
-					TrackingPlugin tpl = (TrackingPlugin) TrackingPlugin.defInstance.Create();
-					tpl.trackingRectangle = rect; //for recomputing the rect when OnStep...
-					tpl.maxFootstepAge = maxAge; //for refreshing the footsteps when OnStep...
-					tpl.whoToTrack = charToTrack; //for refreshing the footsteps when OnStep...
-					tpl.footsteps = charsSteps; //initial list of footsteps
-					tpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
-					tpl.Timer = TrackingPlugin.refreshTimeout;//set the first timer
-					self.AddPlugin(TrackingPlugin.trackingPluginKey, tpl);
-					
-					//to the tracked char's list add the actual tracker
-					List<Character> tbList = (List<Character>) charToTrack.GetTag(TrackingSkillDef.trackedByTK);
-					if (tbList == null) {
-						tbList = new List<Character>();
-						charToTrack.SetTag(TrackingSkillDef.trackedByTK, tbList);
-					}
-					if (!tbList.Contains(self)) {
-						tbList.Add(self);
-					}
+						//to the tracked char's list add the actual tracker
+						List<Character> tbList = (List<Character>) charToTrack.GetTag(TrackingSkillDef.trackedByTK);
+						if (tbList == null) {
+							tbList = new List<Character>();
+							charToTrack.SetTag(TrackingSkillDef.trackedByTK, tbList);
+						}
+						if (!tbList.Contains(self)) {
+							tbList.Add(self);
+						}
 
-					break;
+						break;
+				}
+			} else {//tracking animals, monsters or NPCs
+				switch ((TrackingEnums) skillSeqArgs.Param2) {
+					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
+						List<AbstractCharacter> charsAround = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect));//for non-players tracking, we have the rect as Immutable
+
+						//check if tracking is possible (with message) - i.e. too many chars or none at all
+						if (CheckTrackImpossible(skillSeqArgs, charsAround.Count, charType)) {
+							return true;
+						}
+
+						//display a dialog with the found trackable characters
+						self.ClilocSysMessage(1018093);//Select the one you would like to track.
+						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
+						break;
+					case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
+						Character charToTrack = (Character) skillSeqArgs.Target1;
+
+						NPCTrackingPlugin npctpl = (NPCTrackingPlugin) NPCTrackingPlugin.defInstance.Create();
+						npctpl.maxAllowedDist = GetMaxRange(self, charType); //maximal distance before the tracked character disappears...						
+						npctpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
+						npctpl.whoToTrack = charToTrack;
+						npctpl.Timer = NPCTrackingPlugin.refreshTimeout;//set the first timer
+						
+						self.AddPlugin(NPCTrackingPlugin.npcTrackingPluginKey, npctpl);
+						break;
+				}
 			}
 			return false;
 		}
@@ -168,9 +197,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//check if there isn't too much or none chars to track, return true if impossible
-		private bool CheckTrackImpossible(SkillSequenceArgs ssa, List<Character> charsAround, CharacterTypes charType) {
+		private bool CheckTrackImpossible(SkillSequenceArgs ssa, int charsAroundCount, CharacterTypes charType) {
 			Character self = ssa.Self;
-			if (charsAround.Count == 0) {
+			if (charsAroundCount == 0) {
 				switch (charType) {
 					case CharacterTypes.Animals:
 						self.ClilocSysMessage(502991); //You see no evidence of animals in the area.
@@ -187,7 +216,7 @@ namespace SteamEngine.CompiledScripts {
 					//1018092	You see no evidence of those in the area.
 				}
 			}
-			if (charsAround.Count > GetMaxTrackableChars(ssa)) {
+			if (charsAroundCount > GetMaxTrackableChars(ssa)) {
 				switch (charType) {
 					case CharacterTypes.Animals:
 						self.ClilocSysMessage(502990); //This area is too crowded to track any individual animal.
@@ -208,10 +237,28 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//get the area to look for any footsteps in
-		private MutableRectangle GetTrackingArea(SkillSequenceArgs ssa) {
+		private AbstractRectangle GetTrackingArea(SkillSequenceArgs ssa) {
 			Character self = ssa.Self;
-			ushort range = (ushort)ssa.SkillDef.GetEffectForChar(self);
-			return new MutableRectangle(self.P(), range);
+			CharacterTypes trackMode = (CharacterTypes) ssa.Param1;
+			if (trackMode == CharacterTypes.Players) {
+				return new MutableRectangle(self.P(), GetMaxRange(self, trackMode));
+			} else {//animals, monsters, npcs
+				return new ImmutableRectangle(self.P(), GetMaxRange(self, trackMode));
+			}
+		}
+
+		//get the Tracking range  - either for computing the scanned Rectangle or determining the maximal tracking distance
+		private ushort GetMaxRange(Character forWho, CharacterTypes trackMode) {
+			if (trackMode == CharacterTypes.Players) {
+				return (ushort) this.GetEffectForChar(forWho); //tracking players - use the Effect field
+			} else {
+				//tracking other types of characters (animals, monsters, NPCs) - use the PVMEffect field
+				if (forWho.IsGM) {
+					return (ushort) ScriptUtil.EvalRangePermille(1000.0, this.PVMEffect);
+				} else {
+					return (ushort) ScriptUtil.EvalRangePermille(SkillValueOfChar(forWho), this.PVMEffect);
+				}
+			}
 		}
 
 		//get the maximum age of the footsteps to be found
@@ -310,199 +357,25 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[InfoField("PVM Effect")]
+		public double[] PVMEffect {
+			get {
+				return (double[]) pvmEffect.CurrentValue;
+			}
+			set {
+				pvmEffect.CurrentValue = value;
+			}
+		}
+
 		[SteamFunction]
 		public static void Track(Character self) {
 			self.SelectSkill(SkillName.Tracking);
 		}
-	}
 
-	[ViewableClass]
-	public partial class TrackingPlugin {
-		public static readonly TrackingPluginDef defInstance = new TrackingPluginDef("p_tracking", "C#scripts", -1);
-		internal static PluginKey trackingPluginKey = PluginKey.Get("_tracking_");
-
-		internal static int refreshTimeout = 10; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
-
-		internal List<TrackPoint> footsteps = new List<TrackPoint>();
-
-		private int stepsCntr;
-
-		internal const ushort WORST_COLOR = 1827; //worst visible footsteps
-		internal const ushort BEST_COLOR = 1835; //best visible footsteps
-
-		//Get all available TrackPoints and send a fake item packet to the Cont about it
-		private void RefreshFootsteps() {
-			//lower bound of the footsteps visibility-age (upper bound is Globals.TimeAsSpan)
-			//the footsteps LastStepTime must lie between these two bounds for the footprint to be visible
-			//the maxFootstepAge is computed from the tracker's skill
-			TimeSpan worstVisibleAt = Globals.TimeAsSpan - maxFootstepAge;
-			TimeSpan bestVisibleAt = Globals.TimeAsSpan;
-
-			GameState trackersState = ((Character) Cont).GameState;
-			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-				List<TrackPoint> fsToRemove = new List<TrackPoint>();
-				int i = 0;
-				foreach (TrackPoint tp in footsteps) {
-					//check if the tp is not too old...
-					if (tp.LastStepTime < worstVisibleAt) {
-						if (Point2D.GetSimpleDistance((Character) Cont, tp.Location) <= trackersState.UpdateRange) {
-							//remove it explicitely only if it's not too far....
-							DeleteObjectOutPacket doop = new DeleteObjectOutPacket();
-							doop.Prepare(tp.FakeUID);
-							trackersState.Conn.SendSinglePacket(doop);
-							Thing.DisposeFakeUid(tp.FakeUID);
-							//if (RemoveFootstepFromView(tp, pg)) {
-							//	fsToRemove.Add(tp);
-							//}
-						}
-						continue;
-					}
-					//check if tp has its fake UID assigned and if not, gather one
-					tp.TryGetFakeUID();
-					i++;
-					ShowFootstep(tp, pg, worstVisibleAt, bestVisibleAt);
-				}
-				//if (!pg.IsEmpty) {
-				//	((Character) Cont).SysMessage("Sending " + i + " packets");
-				//	trackersState.Conn.SendPacketGroup(pg);//send the packets
-				//} else {
-					pg.Dispose(); //not used - dispose
-				//}
-				foreach (TrackPoint toBeRemoved in fsToRemove) {
-					footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
-				}
-			}
-			if (footsteps.Count == 0) {
-				Delete();//no footsteps left - no need to continue
-			}
-		}
-
-		//check if the footstep has been displayed and if so, prepare the removal packet
-		//return the TrackPoint if it is to be removed
-		private bool RemoveFootstepFromView(TrackPoint tp, PacketGroup pgToSend) {
-			uint uid = tp.FakeUID;
-			if (uid != 0) {
-				//prepare the item removal packet (0x1d)
-				pgToSend.AcquirePacket<DeleteObjectOutPacket>().Prepare(uid);
-				Thing.DisposeFakeUid(uid);//return the borrowed UID
-				return true; //will be removed from footsteps list
-			}
-			return false;//dont remove it
-		}
-
-		//prepare a packet about the footstep
-		private void ShowFootstep(TrackPoint tp, PacketGroup pg, TimeSpan worstVisibleAt, TimeSpan bestVisibleAt) {
-			Character tracker = (Character) Cont;
-			//count the color according to the lastStepTime using a linear dependency
-			ushort color = (ushort)(WORST_COLOR + (BEST_COLOR-WORST_COLOR)*((tp.LastStepTime.TotalSeconds - worstVisibleAt.TotalSeconds) / (bestVisibleAt.TotalSeconds - worstVisibleAt.TotalSeconds)));
-			ushort lastColor;
-			if(tp.ColorToTracker.TryGetValue(tracker, out lastColor)) {;//do we have some previous color?
-				if (lastColor == color) {
-					return; //same color, no change, nothing to send
-				}
-			}
-			//otherwise (no color was set yet or the new color is different):
-			tp.ColorToTracker[tracker] = color; //store the new color and we will prepare the packet
-			ObjectInfoOutPacket oiop = new ObjectInfoOutPacket();
-			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
-			tracker.GameState.Conn.SendSinglePacket(oiop);
-			//pg.AcquirePacket<ObjectInfoOutPacket>()
-			//	.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
-			//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
-			//in the .colorsdialog we can see 0 = black but this is true only for text!
-			
-		}
-
-		public void On_Assign() {
-			//display all footsteps to the player
-			RefreshFootsteps();
-			stepsCntr = safeSteps; //set the counter
-		}
-
-		public void On_UnAssign(Character formerCont) {
-			formerCont.ClilocSysMessage(502989);//Tracking failed.
-
-			RemoveFootsteps(footsteps, formerCont, false); //false - don't bother with removing footsteps from the list...
-			//remove from the trackedBy list on the tracked character
-			List<Character> tbList = (List<Character>)whoToTrack.GetTag(TrackingSkillDef.trackedByTK);
-			tbList.Remove(formerCont);
-			if (tbList.Count == 0) {
-				whoToTrack.RemoveTag(TrackingSkillDef.trackedByTK);
-			}
-		}
-
-		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
-			Character tracker = (Character) Cont;
-			//check the steps counter
-			stepsCntr--;
-			if (stepsCntr == 0) {//force another check of tracking success
-				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
-					Delete();
-					return;
-				} else {
-					stepsCntr = safeSteps; //reset the counter
-				}
-			}
-
-			//now recompute the rectangle
-			int moveX = 0, moveY = 0;
-			Map.Offset((Direction)args.argv[0], ref moveX, ref moveY); //prepare the movement X and Y modifications (1, 0 or -1 for both directions)
-			
-			trackingRectangle.Move(moveX, moveY);//alter the rectangle
-			List<TrackPoint> newFootsteps = ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, tracker.M);//get the actual list of steps
-			List<TrackPoint> oldFootsteps = new List<TrackPoint>();
-			foreach (TrackPoint fs in footsteps) {
-				if (!newFootsteps.Contains(fs)) {
-					oldFootsteps.Add(fs); //this footstep is to be removed
-				}
-			}
-			RemoveFootsteps(oldFootsteps, tracker, true); //true - remove footsteps also from the list on the plugin
-			footsteps = newFootsteps; //replace the list of footsteps
-			RefreshFootsteps();//and refresh all necessary footsteps
-		}
-
-		//remove specified list of footsteps (usually "@onStep" or "@unassign")
-		//clearlist - shall the removed footstep be aslo removed fro mthe footsteps list? (this is not necessary on Unassign 
-		//because the plugin is disposed anyways...
-		private void RemoveFootsteps(List<TrackPoint> which, Character forWho, bool clearList) {
-			GameState trackersState = forWho.GameState;
-			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-				List<TrackPoint> fsToRemove = new List<TrackPoint>();
-				foreach (TrackPoint tp in which) {
-					if (Point2D.GetSimpleDistance(forWho, tp.Location) <= trackersState.UpdateRange) {
-						DeleteObjectOutPacket doop = new DeleteObjectOutPacket();
-						doop.Prepare(tp.FakeUID);
-						trackersState.Conn.SendSinglePacket(doop);
-						Thing.DisposeFakeUid(tp.FakeUID);
-						//if (RemoveFootstepFromView(tp, pg)) {
-						    if (clearList) {
-						        fsToRemove.Add(tp);
-						    }
-						//}
-					}					
-				}
-				//if (!pg.IsEmpty) {
-				//	trackersState.Conn.SendPacketGroup(pg);//and send the packets
-				//} else {
-					pg.Dispose(); //not used - dispose
-				//}
-				if (clearList) {
-					foreach (TrackPoint toBeRemoved in fsToRemove) {
-						footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
-					}
-				}
-			}
-		}
-
-		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
-			Delete();
-		}
-
-		public void On_Timer() {
-			RefreshFootsteps(); //force to recompute the displayed footsteps color and send the necessary refresh packets
-			this.Timer = TrackingPlugin.refreshTimeout;
+		[SteamFunction]
+		public static void StopTrack(Character self) {
+			self.RemovePlugin(PlayerTrackingPlugin.trackingPluginKey);
+			self.RemovePlugin(NPCTrackingPlugin.npcTrackingPluginKey);
 		}
 	}
 }
