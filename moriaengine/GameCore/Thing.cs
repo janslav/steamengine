@@ -1549,14 +1549,6 @@ namespace SteamEngine {
 			this.P((ushort) x, (ushort) y, this.Z);	//This won't change our Z coordinate, whereas P(x,y) would.
 		}
 
-		internal void ChangedP(Point4D oldP) {
-			Map.ChangedP(this, oldP);
-			AbstractCharacter self = this as AbstractCharacter;
-			if (self != null) {
-				self.Trigger_NewPosition();
-			}
-		}
-
 		/*
 			Method: Speech
 				Does the work of sending speech (of any type) to everyone within range, calling

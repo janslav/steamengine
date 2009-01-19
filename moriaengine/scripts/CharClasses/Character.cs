@@ -1795,7 +1795,11 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check if the current character has plevel greater than 1 (is more than player)")]
 		public bool IsGM {
 			get {
-				return Account.PLevel > 1;
+				AbstractAccount acc = this.Account;
+				if (acc != null) {
+					return acc.PLevel > 1;
+				}
+				return false;
 			}
 		}
 

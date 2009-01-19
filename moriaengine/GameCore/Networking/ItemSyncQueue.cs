@@ -33,7 +33,7 @@ namespace SteamEngine.Networking {
 
 		[Summary("Call when a thing is about to be created/changed")]
 		public static void Resend(AbstractItem item) {
-			if (enabled) {
+			if (IsEnabled) {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "Resend(" + item + ") called");
 				instance.SetFlagsOnItem(item, SyncFlags.Resend);
 			}
@@ -42,7 +42,7 @@ namespace SteamEngine.Networking {
 		[Summary("Call when an item is about to be changed")]
 		public static void AboutToChange(AbstractItem item) {
 			ItemOnGroundUpdater.RemoveFromCache(item);
-			if (enabled) {
+			if (IsEnabled) {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "ItemAboutToChange(" + item + ") called");
 				instance.SetFlagsOnItem(item, SyncFlags.ItemUpdate);
 			}
@@ -50,7 +50,7 @@ namespace SteamEngine.Networking {
 
 		[Summary("Call when an item is about to be changed")]
 		public static void PropertiesChanged(AbstractItem item) {
-			if (enabled) {
+			if (IsEnabled) {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "ItemPropertiesChanged(" + item + ") called");
 				instance.SetFlagsOnItem(item, SyncFlags.Property);
 			}

@@ -16,10 +16,11 @@
 
 [PluginTemplate PlayerTrackingPlugin : TimerPlugin]
 Vars:
-	internal MutableRectangle trackingRectangle = null
-	internal TimeSpan maxFootstepAge = default(TimeSpan)
-	internal int safeSteps = 0
-	internal Character whoToTrack = null
+	private TimeSpan maxFootstepAge = TimeSpan.Zero
+	private int safeSteps = 0
+	private Character trackedChar = null
+	private int stepsCntr = 0
+	private int rectWidth = 0
 	
 [PluginTemplate NPCTrackingPlugin : TimerPlugin]
 Vars:
