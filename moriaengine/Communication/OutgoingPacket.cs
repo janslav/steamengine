@@ -67,10 +67,14 @@ namespace SteamEngine.Communication {
 
 		protected abstract void Write();
 
-		public string FullName {
+		public virtual string FullName {
 			get {
 				return string.Concat(this.Name, " ( 0x", this.Id.ToString("x"), " )");
 			}
+		}
+
+		public override string ToString() {
+			return "0x" + this.Id.ToString("X");
 		}
 
 		public void SeekFromStart(int count) {
