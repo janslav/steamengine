@@ -24,21 +24,14 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[SaveableClass]
-	public class Guild : RankSystem {
+	public partial class Guild : RankSystem {
 
 		public static readonly RoleKey guildRK = RoleKey.Get("_guild_");
 
 		private static readonly List<Guild> allGuilds = new List<Guild>();
 
-		[LoadingInitializer]
-		public Guild()
-			: base() {
-
-			allGuilds.Add(this);
-		}
-
-		public Guild(string name)
-			: base(name) {
+		public Guild(GuildDef def, RoleKey key)
+			: base(def, key) {
 
 			allGuilds.Add(this);
 		}
@@ -61,20 +54,30 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[LoadLine]
-		public override void LoadLine(string filename, int line, string valueName, string valueString) {
-			base.LoadLine(filename, line, valueName, valueString);
-		}
+		//[LoadLine]
+		//public override void LoadLine(string filename, int line, string valueName, string valueString) {
+		//    base.LoadLine(filename, line, valueName, valueString);
+		//}
 
-		[Save]
-		public override void Save(SteamEngine.Persistence.SaveStream output) {
-			base.Save(output);
-		}
+		//[Save]
+		//public override void Save(SteamEngine.Persistence.SaveStream output) {
+		//    base.Save(output);
+		//}
 
 		protected override void On_DisposeManagedResources() {
 			allGuilds.Remove(this);
 
 			base.On_DisposeManagedResources();
+		}
+	}
+
+	public class GuildDef : RankSystemDef {
+		public GuildDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+		}
+
+		protected override Role CreateImpl(RoleKey key) {
+			return new Guild(this, key);
 		}
 	}
 }		

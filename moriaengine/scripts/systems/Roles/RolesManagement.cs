@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Utility class managing everything about roles including assigning and storing information about casts")]
 	public static class RolesManagement {
 		//dictionary holding a set of assigned roles to all characters that have any...
-		internal static Dictionary<AbstractCharacter, Dictionary<RoleKey, Role>> charactersRoles = new Dictionary<AbstractCharacter, Dictionary<RoleKey, Role>>();
+		internal static Dictionary<Character, Dictionary<RoleKey, Role>> charactersRoles = new Dictionary<Character, Dictionary<RoleKey, Role>>();
 
 		[Summary("Try assign chr to role. Runs and obeys @deny triggers.")]
 		[Return("true = chr is now member of role, false = it's not")]
@@ -100,13 +100,14 @@ namespace SteamEngine.CompiledScripts {
 				Role prevRole;
 				if (rolesByKey.TryGetValue(key, out prevRole)) {
 					if (role == prevRole) {
-						if (role.Trigger_DenyRemoveMember(chr) == DenyResultRoles.Allow) {							
+						Role.IRoleMembership membership = role.GetMembership(chr);
+						if (role.Trigger_DenyRemoveMember(chr, membership) == DenyResultRoles.Allow) {							
 							if (rolesByKey.Count == 1) { //last role of that char
 								charactersRoles.Remove(chr);
 							} else {
 								rolesByKey.Remove(key);
 							}
-							role.InternalRemoveMember(chr);
+							role.InternalRemoveMember(chr, membership);
 							return true; //unassign succesful
 						} else {
 							return false; //unassign denied
@@ -117,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 			return true; //wasn't member in the first place
 		}
 
-		public static void UnAssign(AbstractCharacter chr, Role role) {
+		public static void UnAssign(Character chr, Role role) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
@@ -129,7 +130,7 @@ namespace SteamEngine.CompiledScripts {
 						} else {
 							rolesByKey.Remove(key);
 						}
-						role.InternalRemoveMember(chr);
+						role.InternalRemoveMember(chr, role.GetMembership(chr));
 					}
 				}
 			}
@@ -137,7 +138,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static void UnassignAll(Role role, bool beingDestroyed) {
 			RoleKey key = role.Key;
-			foreach (AbstractCharacter chr in role.Members) {
+			foreach (Character chr in role.Members) {
 				Dictionary<RoleKey, Role> rolesByKey;
 				if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 					rolesByKey.Remove(key);
@@ -179,11 +180,11 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public static IList<AbstractCharacter> GetCharactersInRole(Role role) {
+		public static ICollection<Character> GetCharactersInRole(Role role) {
 			if (role != null) {
 				return role.Members;
 			}
-			return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
+			return EmptyReadOnlyGenericCollection<Character>.instance;
 		}
 
 		public static ICollection<Role> GetCharactersRoles(Character chr) {

@@ -71,6 +71,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		//TODO? loot setting
+		//protected class PartyMembership : RoleMembership {
+		//    public bool canBeLooted;
+		//    internal PartyMembership(Character member) : base(member) {
+		//    }
+		//}
+		//protected override Role.IRoleMembership CreateMembershipObject(Character member) {
+		//    return new PartyMembership(member);
+		//}
+
 		public void Disband() {
 			this.Dispose();
 		}
@@ -170,13 +180,11 @@ namespace SteamEngine.CompiledScripts {
 		//    //todo realms
 		//}
 
-		protected override void On_MemberAdded(AbstractCharacter ach) {
-			Character newMember = (Character) ach;
-
+		protected override void On_MemberAdded(Character newMember, Role.IRoleMembership membership) {
 			////  : joined the party.
 			//SendToAll(new MessageLocalizedAffix(Serial.MinusOne, -1, MessageType.Label, 0x3B2, 3, 1008094, "", AffixType.Prepend | AffixType.System, from.Name, ""));
 
-			ReadOnlyCollection<AbstractCharacter> members = this.Members;
+			ICollection<Character> members = this.Members;
 			if (members.Count > 1) {
 				newMember.ClilocSysMessage(1005445); // You have been added to the party.
 			} else {
@@ -184,8 +192,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 			this.candidates.Remove(newMember);
 
-			using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {				
-				pg.AcquirePacket<AddPartyMembersOutPacket>().Prepare(members);
+			using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
+				pg.AcquirePacket<AddPartyMembersOutPacket>().Prepare((IEnumerable<AbstractCharacter>) members);
 				foreach (Character ch in members) {
 					GameState state = ch.GameState;
 					if (state != null) {
@@ -199,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 		//    return base.On_DenyRemoveMember(args);
 		//}
 
-		protected override void On_MemberRemoved(AbstractCharacter exMember, bool beingDestroyed) {
+		protected override void On_MemberRemoved(Character exMember, IRoleMembership membership, bool beingDestroyed) {
 			if (!beingDestroyed && this.IsLeader(exMember)) {
 				this.Disband();
 				beingDestroyed = true;
@@ -217,10 +225,10 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				exMember.ClilocSysMessage(1005451); // You have been removed from the party.
 
-				ReadOnlyCollection<AbstractCharacter> members = this.Members;
+				ICollection<Character> members = this.Members;
 				if (members.Count > 0) {
 					using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
-						pg.AcquirePacket<RemoveAPartyMemberOutPacket>().Prepare(exMember, members);
+						pg.AcquirePacket<RemoveAPartyMemberOutPacket>().Prepare(exMember, (IEnumerable<AbstractCharacter>) members);
 						pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(null, 1005452, "System", SpeechType.Speech, 3, -1, ""); // 1005452 = A player has been removed from your party.
 						foreach (Character ch in members) {
 							GameState state = ch.GameState;

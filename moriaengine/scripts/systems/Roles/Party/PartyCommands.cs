@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (self != null) {
 					Party p = Party.GetParty(self);
 					if (p != null) {
-						if (p.IsMember(target)) {
+						if (p.IsMember((Character) target)) {
 							p.SendPrivateMessage(self, target, text);
 						}
 					} else {

@@ -240,6 +240,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[Summary("Argument wrapper used in DenyMemberAddRequest trigger")]
 	public class DenyRoleTriggerArgs : ScriptArgs {
+		public readonly Role.IRoleMembership membership;
 		public readonly Character assignee;
 		public readonly Role role;
 
@@ -248,10 +249,11 @@ namespace SteamEngine.CompiledScripts {
 			Sanity.IfTrueThrow(!(argv[0] is DenyResultRoles), "argv[0] is not DenyResultRoles");
 		}
 
-		public DenyRoleTriggerArgs(Character assignee, Role role)
-			: this(DenyResultRoles.Allow, assignee, role) {
-			this.assignee = assignee;
+		public DenyRoleTriggerArgs(Character assignee, Role.IRoleMembership membership, Role role)
+			: this(DenyResultRoles.Allow, assignee, membership, role) {
+			this.membership = membership;
 			this.role = role;
+			this.assignee = assignee;
 		}
 
 		public DenyResultRoles Result {
