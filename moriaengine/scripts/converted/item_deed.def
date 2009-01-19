@@ -339,7 +339,8 @@ SUBSECTION = Item Deeds
 DESCRIPTION = Training Dummy (N)
 
 NAME = "Deed to a Training Dummy (North)"
-model = i_deed,i_training_dummy_n
+//RESOURCES = i_deed,i_training_dummy_n // commented out by Converter
+model = i_deed
 
 [ItemDef I_DEED_ARCHBUTTEW]
 CATEGORY = Provisions - Deeds

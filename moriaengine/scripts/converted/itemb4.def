@@ -2636,11 +2636,11 @@ DUPEITEM = 0x1363
 
 [ItemDef 0x1367]
 DUPEITEM = 0x1363
-//DEFNAME = i_rock_2 // commented out by Converter 
+DEFNAME = i_rock_2
 
 [ItemDef 0x1368]
 DUPEITEM = 0x1363
-//DEFNAME = i_rock_3 // commented out by Converter 
+DEFNAME = i_rock_3
 
 [ItemDef 0x1369]
 DUPEITEM = 0x1363
@@ -2653,7 +2653,7 @@ DUPEITEM = 0x1363
 
 [ItemDef 0x136c]
 DUPEITEM = 0x1363
-//DEFNAME = i_rock_7 // commented out by Converter 
+DEFNAME = i_rock_7
 
 [ItemDef 0x136d]
 DUPEITEM = 0x1363

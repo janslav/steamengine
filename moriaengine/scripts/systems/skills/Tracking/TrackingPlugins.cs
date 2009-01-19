@@ -46,8 +46,8 @@ namespace SteamEngine.CompiledScripts {
 			//lower bound of the footsteps visibility-age (upper bound is Globals.TimeAsSpan)
 			//the footsteps LastStepTime must lie between these two bounds for the footprint to be visible
 			//the maxFootstepAge is computed from the tracker's skill
-			TimeSpan worstVisibleAt = Globals.TimeAsSpan - maxFootstepAge;
 			TimeSpan bestVisibleAt = Globals.TimeAsSpan;
+			TimeSpan worstVisibleAt = bestVisibleAt - maxFootstepAge;
 
 			GameState trackersState = ((Character) Cont).GameState;
 			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts {
 					oldFootsteps.Add(fs); //this footstep is to be removed
 				}
 			}
-			RemoveFootsteps(oldFootsteps, tracker, true); //true - remove footsteps also from the list on the plugin
+			RemoveFootsteps(oldFootsteps, tracker, false); //false - not necessary to remove anything from the footsteps list as we will replace it whole
 			footsteps = newFootsteps; //replace the list of footsteps
 			RefreshFootsteps();//and refresh all necessary footsteps
 		}
@@ -199,7 +199,7 @@ namespace SteamEngine.CompiledScripts {
 				//} else {
 				//	pg.Dispose(); //not used - dispose
 				//}
-				((Character) Cont).SysMessage("Sending " + i + " removal packets");
+				forWho.SysMessage("Sending " + i + " removal packets");
 				if (clearList) {
 					foreach (WatchedTrackPoint toBeRemoved in fsToRemove) {
 						footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
@@ -226,27 +226,51 @@ namespace SteamEngine.CompiledScripts {
 		
 		private int stepsCntr;
 
-		//Get all available TrackPoints and send a fake item packet to the Cont about it
-		private void RefreshArrow() {
-			Player self = (Player)Cont;
+		private void CheckDistance(Player tracker) {
 			//check the distance to the tracked target
-			int currentDist = Point2D.GetSimpleDistance(self, whoToTrack);
-			//TADY TODO...
+			int currentDist = Point2D.GetSimpleDistance(tracker, whoToTrack);
+			if (currentDist > maxAllowedDist) {
+				Delete();
+			}
+		}
+
+		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
+			Player tracker = (Player) Cont;
+			//check the steps counter
+			stepsCntr--;
+			if (stepsCntr == 0) {//force another check of tracking success
+				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
+					Delete();
+					return;
+				} else {
+					stepsCntr = safeSteps; //reset the counter
+				}
+			}
+
+			//now check the arrow
+			CheckDistance(tracker);
 		}
 
 		public void On_Assign() {
-			//display all footsteps to the player
-			RefreshArrow();
+			//send the QuestArrow displaying packet
+			((Player) Cont).QuestArrow(true, whoToTrack);
 			stepsCntr = safeSteps; //set the counter
 		}
 
 		public void On_UnAssign(Character formerCont) {
 			formerCont.ClilocSysMessage(502989);//Tracking failed
+
+			//send the QuestArrow removal packet
+			((Player) formerCont).QuestArrow(false, formerCont);
 		}
 
 		public void On_Timer() {
-			RefreshArrow(); //force to recompute the displayed footsteps color and send the necessary refresh packets
+			CheckDistance((Player) Cont); //force check the distance to the target
 			this.Timer = PlayerTrackingPlugin.refreshTimeout;
+		}
+
+		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
+			Delete();
 		}
 	}
 }

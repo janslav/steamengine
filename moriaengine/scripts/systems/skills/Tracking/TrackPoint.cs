@@ -115,7 +115,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[Summary("Special structure for holding the TrackPoint along with its display color for the particular tracker")]
 	public struct WatchedTrackPoint {
-		private readonly TrackPoint tp;//this will be immutable
+		private readonly TrackPoint tp;
 		private ushort color;
 
 		public WatchedTrackPoint(TrackPoint tp) {

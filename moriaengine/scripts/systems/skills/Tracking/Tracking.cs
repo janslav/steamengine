@@ -146,16 +146,40 @@ namespace SteamEngine.CompiledScripts {
 			} else {//tracking animals, monsters or NPCs
 				switch ((TrackingEnums) skillSeqArgs.Param2) {
 					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
-						List<AbstractCharacter> charsAround = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect));//for non-players tracking, we have the rect as Immutable
-
+						List<AbstractCharacter> trackables = null;
+						switch (charType) {
+							case CharacterTypes.Animals:
+								trackables = new List<AbstractCharacter>();
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect)) {
+									if(chr.IsAnimal) trackables.Add(chr);
+								}
+								break;
+							case CharacterTypes.Monsters:
+								trackables = new List<AbstractCharacter>();
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect)) {
+									if(chr.IsMonster) trackables.Add(chr);
+								}
+								break;
+							case CharacterTypes.NPCs:
+								trackables = new List<AbstractCharacter>();
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect)) {
+									if(chr.IsHuman) trackables.Add(chr);
+								}
+								break;
+							case CharacterTypes.All:
+								//monsters, animals and human NPCs
+								trackables = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect));
+								break;
+						}
+						
 						//check if tracking is possible (with message) - i.e. too many chars or none at all
-						if (CheckTrackImpossible(skillSeqArgs, charsAround.Count, charType)) {
+						if (CheckTrackImpossible(skillSeqArgs, trackables.Count, charType)) {
 							return true;
 						}
 
 						//display a dialog with the found trackable characters
 						self.ClilocSysMessage(1018093);//Select the one you would like to track.
-						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
+						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, trackables));
 						break;
 					case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
 						Character charToTrack = (Character) skillSeqArgs.Target1;
