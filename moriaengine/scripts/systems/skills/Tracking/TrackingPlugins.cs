@@ -30,182 +30,261 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class PlayerTrackingPlugin {
 		public static readonly PlayerTrackingPluginDef defInstance = new PlayerTrackingPluginDef("p_tracking", "C#scripts", -1);
-		internal static PluginKey trackingPluginKey = PluginKey.Get("_tracking_");
+		private readonly static PluginKey trackingPluginKey = PluginKey.Get("_tracking_");
 
-		internal static int refreshTimeout = 10; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
+		public const int refreshTimeout = 5; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
 
-		internal List<WatchedTrackPoint> footsteps = new List<WatchedTrackPoint>();
+		private ImmutableRectangle trackingRectangle = null;
+		private TimeSpan lastRefreshAt;
 
-		private int stepsCntr;
+		internal static void InstallOnChar(Character trackingChar, Character trackedChar, ImmutableRectangle playerRect, TimeSpan maxAge, int safeSteps) {
+			trackingChar.DeletePlugin(PlayerTrackingPlugin.trackingPluginKey);
+			PlayerTrackingPlugin tpl = (PlayerTrackingPlugin) PlayerTrackingPlugin.defInstance.Create();
+			tpl.Init(trackedChar, playerRect, maxAge, safeSteps);
+			trackingChar.AddPlugin(PlayerTrackingPlugin.trackingPluginKey, tpl);
+		}
 
-		internal const ushort WORST_COLOR = 1827; //worst visible footsteps
-		internal const ushort BEST_COLOR = 1835; //best visible footsteps
+		internal static void UninstallPlugin(Character self) {
+			self.DeletePlugin(PlayerTrackingPlugin.trackingPluginKey);
+		}
+
+		private void Init(Character trackedChar, ImmutableRectangle rectangle, TimeSpan maxAge, int safeSteps) {
+			this.trackedChar = trackedChar;
+			this.safeSteps = safeSteps;
+			this.trackingRectangle = rectangle;
+			this.maxFootstepAge = maxAge;
+			this.rectWidth = (ushort) rectangle.Width;
+			this.Timer = PlayerTrackingPlugin.refreshTimeout;//set the first timer
+		}
+
+		public static PlayerTrackingPlugin GetInstalledPlugin(Character self) {
+			return (PlayerTrackingPlugin) self.GetPlugin(trackingPluginKey);
+		}
+
+		public bool IsObservingPoint(IPoint4D point) {
+			Character cont = (Character) this.Cont;
+			if (cont.M == point.M) {
+				return this.trackingRectangle.Contains(point);
+			}
+			return false;
+		}
+
+		public TimeSpan MaxFootstepAge {
+			get {
+				return this.maxFootstepAge;
+			}
+		}
+
+		public int SafeSteps {
+			get {
+				return this.safeSteps;
+			}
+		}
+
+		public Character TrackedChar {
+			get {
+				return this.trackedChar;
+			}
+		}
+
+		public int StepsCounter {
+			get {
+				return this.stepsCntr;
+			}
+		}
+
+		public int RectangleWidth {
+			get {
+				return this.rectWidth;
+			}
+		}
+
+		public ImmutableRectangle TrackingRectangle {
+			get {
+				return this.trackingRectangle;
+			}
+		}
+
+		public TimeSpan LastRefreshAt {
+			get {
+				return this.lastRefreshAt;
+			}
+		}
 
 		//Get all available TrackPoints and send a fake item packet to the Cont about it
-		private void RefreshFootsteps() {
+		private void SendAllVisibleFootsteps() {
 			//lower bound of the footsteps visibility-age (upper bound is Globals.TimeAsSpan)
 			//the footsteps LastStepTime must lie between these two bounds for the footprint to be visible
 			//the maxFootstepAge is computed from the tracker's skill
-			TimeSpan bestVisibleAt = Globals.TimeAsSpan;
-			TimeSpan worstVisibleAt = bestVisibleAt - maxFootstepAge;
-
-			GameState trackersState = ((Character) Cont).GameState;
-			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-				List<WatchedTrackPoint> fsToRemove = new List<WatchedTrackPoint>();
-				int i = 0, j = 0;
-				foreach (WatchedTrackPoint tp in footsteps) {
-					//check if the tp is not too old...
-					if (tp.LastStepTime < worstVisibleAt) {
-						if (Point2D.GetSimpleDistance((Character) Cont, tp.Location) <= trackersState.UpdateRange) {
-							//remove it explicitely only if it's not too far....
-							DeleteObjectOutPacket doop = Pool<DeleteObjectOutPacket>.Acquire();
-							doop.Prepare(tp.FakeUID);
-							trackersState.Conn.SendSinglePacket(doop);
-							tp.TrackPoint.TryDisposeFakeUID();
-							j++;
-							//if (RemoveFootstepFromView(tp, pg)) {
-							fsToRemove.Add(tp);
-							//}
-						}
-						continue;
-					}
-					//check if tp has its fake UID assigned and if not, gather one
-					tp.TrackPoint.TryGetFakeUID();
-					i++;
-					ShowFootstep(tp, pg, worstVisibleAt, bestVisibleAt);
-				}
-				//if (!pg.IsEmpty) {
-				((Character) Cont).SysMessage("Sending " + i + " refresh packets and " + j + " removal packets");
-				//	trackersState.Conn.SendPacketGroup(pg);//send the packets
-				//} else {
-				pg.Dispose(); //not used - dispose
-				//}
-				foreach (WatchedTrackPoint toBeRemoved in fsToRemove) {
-					footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
-				}
-			}
-			if (footsteps.Count == 0) {
-				Delete();//no footsteps left - no need to continue
-			}
-		}
-
-		//check if the footstep has been displayed and if so, prepare the removal packet
-		//return the TrackPoint if it is to be removed
-		private bool RemoveFootstepFromView(WatchedTrackPoint tp, PacketGroup pg) {
-			uint uid = tp.FakeUID;
-			if (uid != 0) {
-				//prepare the item removal packet (0x1d)
-				pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(uid);
-				tp.TrackPoint.TryDisposeFakeUID();
-				return true; //will be removed from footsteps list
-			}
-			return false;//dont remove it
-		}
-
-		//prepare a packet about the footstep
-		private void ShowFootstep(WatchedTrackPoint tp, PacketGroup pg, TimeSpan worstVisibleAt, TimeSpan bestVisibleAt) {
 			Character tracker = (Character) Cont;
-			//count the color according to the lastStepTime using a linear dependency
-			ushort color = (ushort) (WORST_COLOR + (BEST_COLOR - WORST_COLOR) * ((tp.LastStepTime.TotalSeconds - worstVisibleAt.TotalSeconds) / (bestVisibleAt.TotalSeconds - worstVisibleAt.TotalSeconds)));
-			if (tp.Color == color) {//color has not changed...
+			GameState state = tracker.GameState;
+			if (state != null) {
+				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				this.lastRefreshAt = Globals.TimeAsSpan;
+				this.trackingRectangle = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
+				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, this.lastRefreshAt, this.maxFootstepAge, tracker.M)) {
+					this.SendObjectPacket(this.lastRefreshAt, conn, tp);
+				}
+			}
+		}
+
+		private void RefreshVisibleFootsteps() {
+			if ((this.lastRefreshAt == TimeSpan.Zero) || this.trackingRectangle == null) {
+				this.SendAllVisibleFootsteps();
 				return;
 			}
-			//otherwise (no color was set yet or the new color is different):
-			tp.Color = color; //store the new color and we will prepare the packet
-			ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
-			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
-			tracker.GameState.Conn.SendSinglePacket(oiop);
-			//pg.AcquirePacket<ObjectInfoOutPacket>()
-			//	.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, (ushort) (color + 1));
-			//the color is +1 because for items 0 means default (not black) and other colors start from 1 (black, etc.)
-			//in the .colorsdialog we can see 0 = black but this is true only for text!
 
+			Character tracker = (Character) Cont;
+			GameState state = tracker.GameState;
+			if (state != null) {
+				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				TimeSpan now =  Globals.TimeAsSpan;
+				TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
+				TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
+				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, now, totalMaxAge, tracker.M)) {
+					this.SendRefreshObject(now, conn, tp);
+				}
+				this.lastRefreshAt = now;
+			}
+		}
+
+		//remove all visible points from view
+		private void SendDeleteAllVisibleFootsteps(Character tracker) {
+			if ((this.lastRefreshAt == TimeSpan.Zero) || this.trackingRectangle == null) {
+				return;
+			}
+
+			GameState state = tracker.GameState;
+			if (state != null) {
+				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+
+				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, Globals.TimeAsSpan, this.maxFootstepAge, tracker.M)) {
+					SendDeletePacket(conn, tp);
+				}
+				this.lastRefreshAt = TimeSpan.Zero;
+				this.trackingRectangle = null;
+			}
 		}
 
 		public void On_Assign() {
 			//display all footsteps to the player
-			RefreshFootsteps();
-			stepsCntr = safeSteps; //set the counter
+			this.RefreshVisibleFootsteps();
+			this.stepsCntr = this.safeSteps; //set the counter
+
+			Character cont = (Character) this.Cont;
+			//to the tracked char's list add the actual tracker
+			List<Character> tbList = (List<Character>) trackedChar.GetTag(TrackingSkillDef.trackedByTK);
+			if (tbList == null) {
+				tbList = new List<Character>();
+				trackedChar.SetTag(TrackingSkillDef.trackedByTK, tbList);
+			}
+			if (!tbList.Contains(cont)) {
+				tbList.Add(cont);
+			}
 		}
 
 		public void On_UnAssign(Character formerCont) {
 			formerCont.ClilocSysMessage(502989);//Tracking failed.
 
-			RemoveFootsteps(footsteps, formerCont, false); //false - don't bother with removing footsteps from the list...
+			this.SendDeleteAllVisibleFootsteps(formerCont);
 			//remove from the trackedBy list on the tracked character
-			List<Character> tbList = (List<Character>) whoToTrack.GetTag(TrackingSkillDef.trackedByTK);
+			List<Character> tbList = (List<Character>) trackedChar.GetTag(TrackingSkillDef.trackedByTK);
 			tbList.Remove(formerCont);
 			if (tbList.Count == 0) {
-				whoToTrack.RemoveTag(TrackingSkillDef.trackedByTK);
+				trackedChar.RemoveTag(TrackingSkillDef.trackedByTK);
 			}
 		}
 
-		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
-			Character tracker = (Character) Cont;
+		public void On_NewPosition(Point4D oldP) {
+			Player tracker = (Player) Cont;
 			//check the steps counter
-			stepsCntr--;
+			this.stepsCntr--;
 			if (stepsCntr == 0) {//force another check of tracking success
 				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
-					Delete();
+					this.Delete();
 					return;
 				} else {
-					stepsCntr = safeSteps; //reset the counter
+					this.stepsCntr = this.safeSteps; //reset the counter
 				}
 			}
 
-			//now recompute the rectangle
-			int moveX = 0, moveY = 0;
-			Map.Offset((Direction) args.argv[0], ref moveX, ref moveY); //prepare the movement X and Y modifications (1, 0 or -1 for both directions)
+			ImmutableRectangle oldRect = this.trackingRectangle;
+			ImmutableRectangle newRect = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
+			this.trackingRectangle = newRect;
+			int dist = Point2D.GetSimpleDistance(oldRect.MinX, oldRect.MinY, newRect.MinX, newRect.MinY);
+			TimeSpan now = Globals.TimeAsSpan;
 
-			trackingRectangle.Move(moveX, moveY);//alter the rectangle
-			List<WatchedTrackPoint> newFootsteps = ScriptSector.GetCharsPath(whoToTrack, trackingRectangle, maxFootstepAge, tracker.M);//get the actual list of steps
-			List<WatchedTrackPoint> oldFootsteps = new List<WatchedTrackPoint>();
-			foreach (WatchedTrackPoint fs in footsteps) {
-				if (!newFootsteps.Contains(fs)) {
-					oldFootsteps.Add(fs); //this footstep is to be removed
+			GameState state = tracker.GameState;
+			if (state != null) {
+				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				if (dist > this.rectWidth) {//old and new have no intersection. We treat them separately, and only send delete packets in the area still visible to client
+					ImmutableRectangle updateRect = new ImmutableRectangle(tracker, state.UpdateRange);
+					ImmutableRectangle oldRectVisible = ImmutableRectangle.GetIntersection(oldRect, updateRect);
+					foreach (TrackPoint tp in ScriptSector.GetCharsPath(trackedChar, oldRectVisible, now, maxFootstepAge, tracker.M)) {
+						SendDeletePacket(conn, tp);
+					}
+					foreach (TrackPoint tp in ScriptSector.GetCharsPath(trackedChar, newRect, now, maxFootstepAge, tracker.M)) {
+						this.SendObjectPacket(now, conn, tp);
+					}
+				} else {
+					ushort bigRectMinX = Math.Min(oldRect.minX, newRect.minX);
+					ushort bigRectMinY = Math.Min(oldRect.minY, newRect.minY);
+					ushort bigRectMaxX = Math.Max(oldRect.maxX, newRect.maxX);
+					ushort bigRectMaxY = Math.Max(oldRect.maxY, newRect.maxY);
+					ImmutableRectangle bigRect = new ImmutableRectangle(bigRectMinX, bigRectMinY, bigRectMaxX, bigRectMaxY);
+
+					TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
+					TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
+
+					foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, bigRect, now, totalMaxAge, tracker.M)) {
+						Point4D loc = tp.Location;
+						if (newRect.Contains(loc)) {
+							if (oldRect.Contains(loc)) {//intersection. We only refresh colors/remove too old
+								this.SendRefreshObject(now, conn, tp);
+							} else { //new Footstep. We send it.
+								this.SendObjectPacket(now, conn, tp);
+							}
+						} else if (oldRect.Contains(loc)) {
+							if (newRect.Contains(loc)) {//intersection. We only refresh colors/remove too old
+								this.SendRefreshObject(now, conn, tp);
+							} else { //footstep out of tracking range. We send delete packet. (or do we?)
+								SendDeletePacket(conn, tp);
+							}
+						}
+					}
 				}
+
+				this.lastRefreshAt = now;
 			}
-			RemoveFootsteps(oldFootsteps, tracker, false); //false - not necessary to remove anything from the footsteps list as we will replace it whole
-			footsteps = newFootsteps; //replace the list of footsteps
-			RefreshFootsteps();//and refresh all necessary footsteps
 		}
 
-		//remove specified list of footsteps (usually "@onStep" or "@unassign")
-		//clearlist - shall the removed footstep be aslo removed fro mthe footsteps list? (this is not necessary on Unassign 
-		//because the plugin is disposed anyways...
-		private void RemoveFootsteps(List<WatchedTrackPoint> which, Character forWho, bool clearList) {
-			GameState trackersState = forWho.GameState;
-			if (trackersState != null) {//only if the player is connected (otherwise it makes no sense)
-				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-				List<WatchedTrackPoint> fsToRemove = new List<WatchedTrackPoint>();
-				int i = 0;
-				foreach (WatchedTrackPoint tp in which) {
-					if (Point2D.GetSimpleDistance(forWho, tp.Location) <= trackersState.UpdateRange) {
-						DeleteObjectOutPacket doop = Pool<DeleteObjectOutPacket>.Acquire();
-						doop.Prepare(tp.FakeUID);
-						trackersState.Conn.SendSinglePacket(doop);
-						tp.TrackPoint.TryDisposeFakeUID();
-						i++;
-						//if (RemoveFootstepFromView(tp, pg)) {
-						if (clearList) {
-							fsToRemove.Add(tp);
-						}
-						//}
-					}
+		private void SendObjectPacket(TimeSpan now, Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
+			ushort color = tp.GetColor(now, this.maxFootstepAge);
+			ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
+			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, color);
+			conn.SendSinglePacket(oiop);
+		}
+
+		private void SendRefreshObject(TimeSpan now, Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
+			TimeSpan minTimeToShow = now - this.maxFootstepAge;
+			TimeSpan tpCreatedAt = tp.CreatedAt;
+			if (tpCreatedAt >= minTimeToShow) {
+				ushort oldColor = tp.GetColor(this.lastRefreshAt, this.maxFootstepAge);
+				ushort newColor = tp.GetColor(now, this.maxFootstepAge);
+				if (oldColor != newColor) {
+					ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
+					oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, newColor);
+					conn.SendSinglePacket(oiop);
 				}
-				//if (!pg.IsEmpty) {
-				//	trackersState.Conn.SendPacketGroup(pg);//and send the packets
-				//} else {
-				//	pg.Dispose(); //not used - dispose
-				//}
-				forWho.SysMessage("Sending " + i + " removal packets");
-				if (clearList) {
-					foreach (WatchedTrackPoint toBeRemoved in fsToRemove) {
-						footsteps.Remove(toBeRemoved); //remove removed footsteps :-)
-					}
-				}
+			} else {
+				SendDeletePacket(conn, tp);
 			}
+		}
+
+		private static void SendDeletePacket(Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
+			DeleteObjectOutPacket doop = Pool<DeleteObjectOutPacket>.Acquire();
+			doop.Prepare(tp.FakeUID);
+			conn.SendSinglePacket(doop);
 		}
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
@@ -213,8 +292,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Timer() {
-			RefreshFootsteps(); //force to recompute the displayed footsteps color and send the necessary refresh packets
-			this.Timer = PlayerTrackingPlugin.refreshTimeout;
+			if (!this.IsDeleted && this.Cont != null) {
+				this.RefreshVisibleFootsteps(); //force to recompute the displayed footsteps color and send the necessary refresh packets
+				this.Timer = PlayerTrackingPlugin.refreshTimeout;
+			}
 		}
 	}
 
@@ -229,26 +310,26 @@ namespace SteamEngine.CompiledScripts {
 		private void CheckDistance(Player tracker) {
 			//check the distance to the tracked target
 			int currentDist = Point2D.GetSimpleDistance(tracker, whoToTrack);
-			if (currentDist > maxAllowedDist) {
-				Delete();
+			if (currentDist > this.maxAllowedDist) {
+				this.Delete();
 			}
 		}
 
 		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
 			Player tracker = (Player) Cont;
 			//check the steps counter
-			stepsCntr--;
+			this.stepsCntr--;
 			if (stepsCntr == 0) {//force another check of tracking success
 				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
-					Delete();
+					this.Delete();
 					return;
 				} else {
-					stepsCntr = safeSteps; //reset the counter
+					this.stepsCntr = this.safeSteps; //reset the counter
 				}
 			}
 
 			//now check the arrow
-			CheckDistance(tracker);
+			this.CheckDistance(tracker);
 		}
 
 		public void On_Assign() {

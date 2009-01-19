@@ -665,6 +665,14 @@ namespace SteamEngine {
 			}
 		}
 
+		private void ChangedP(Point4D oldP) {
+			Map.ChangedP(this, oldP);
+			AbstractCharacter self = this as AbstractCharacter;
+			if (self != null) {
+				self.Trigger_NewPosition(oldP);
+			}
+		}
+
 		public virtual bool On_Step(byte direction, bool running) {
 			return false;
 		}
@@ -685,8 +693,8 @@ namespace SteamEngine {
 			return (zdiff >= 0 && zdiff <= i.Height);
 		}
 
-		public void Trigger_NewPosition() {
-			this.TryTrigger(TriggerKey.newPosition, null);
+		public void Trigger_NewPosition(Point4D oldP) {
+			this.TryTrigger(TriggerKey.newPosition, new ScriptArgs(oldP));
 			try {
 				this.On_NewPosition();
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }

@@ -61,7 +61,7 @@ namespace SteamEngine.Networking {
 
 		public static bool IsEnabled {
 			get {
-				return enabled;
+				return enabled && RunLevelManager.IsRunning;
 			}
 		}
 

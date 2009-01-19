@@ -25,24 +25,30 @@ using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	
-	public class TrackPoint : Disposable {
-		private Point4D location;
-		private Player owner;
-		private TimeSpan lastStepTime;
-		private ushort model;//model of the "footprint"
-		
+
+	public sealed class TrackPoint : Disposable {
+		public const ushort WORST_COLOR = 1827; //worst visible footsteps
+		public const ushort BEST_COLOR = 1835; //best visible footsteps
+
+		private readonly Point4D location;
+		private readonly Player owner;
+		private readonly ushort model;//model of the "footprint"
+		private readonly TimeSpan createdAt;
+
+		private TrackPoint newer;
+		private TrackPoint older;
+		private LinkedQueue queue;
+
 		private uint fakeUID;
 
-		public TrackPoint(Point4D location, Player owner) {
-			this.location = location;
-			this.owner = owner;
-		}
-
-		internal void TryGetFakeUID() {
-			if (fakeUID == 0) {
-				fakeUID = Thing.GetFakeItemUid();
+		public TrackPoint(IPoint4D location, Player owner, ushort model) {
+			this.location = location as Point4D;
+			if (this.location == null) {
+				this.location = new Point4D(location);
 			}
+			this.owner = owner;
+			this.model = model;
+			this.createdAt = Globals.TimeAsSpan;
 		}
 
 		internal void TryDisposeFakeUID() {
@@ -54,41 +60,70 @@ namespace SteamEngine.CompiledScripts {
 
 		public Point4D Location {
 			get {
-				return location;
+				return this.location;
 			}
 		}
 
 		public ushort Model {
 			get {
-				return model;
-			}
-			set {//we need the setter for refreshing
-				model = value;
+				return this.model;
 			}
 		}
 
 		public Player Owner {
 			get {
-				return Owner;
+				return this.owner;
 			}
 		}
 
-		public TimeSpan LastStepTime {
+		public TimeSpan CreatedAt {
 			get {
-				return lastStepTime;
-			}
-			set {//we need the setter for refreshing
-				lastStepTime = value;
+				return this.createdAt;
 			}
 		}
 
 		public uint FakeUID {
 			get {
-				return fakeUID;
+				if (this.fakeUID == 0) {
+					this.fakeUID = Thing.GetFakeItemUid();
+				}
+				return this.fakeUID;
 			}
+		}
 
-			internal set {
-				fakeUID = value;
+		public ushort GetColor(TimeSpan now, TimeSpan maxAge) {
+			if (this.createdAt >= now) { //created in the future
+				return BEST_COLOR;
+			}
+			double createdAtSeconds = this.createdAt.TotalSeconds;
+			double nowSeconds = now.TotalSeconds;
+			double maxAgeSeconds = maxAge.TotalSeconds;
+
+			ushort color = (ushort) (BEST_COLOR - (BEST_COLOR - WORST_COLOR) * ((nowSeconds - createdAtSeconds) / maxAgeSeconds));
+
+			if (BEST_COLOR > WORST_COLOR) {
+				Sanity.IfTrueThrow(((color > BEST_COLOR) || (color < WORST_COLOR)), "color out of range");
+			//} else { //commented because of unreachable code warning
+			//    Sanity.IfTrueThrow(((color < BEST_COLOR) || (color > WORST_COLOR)), "color out of range");
+			}
+			return color;
+		}
+
+		public TrackPoint OlderNeighbor {
+			get {
+				return this.older;
+			}
+		}
+
+		public TrackPoint NewerNeighbor {
+			get {
+				return this.newer;
+			}
+		}
+
+		internal LinkedQueue Queue {
+			get {
+				return this.queue;
 			}
 		}
 
@@ -111,73 +146,120 @@ namespace SteamEngine.CompiledScripts {
 				this.fakeUID = 0;
 			}
 		}
-	}
 
-	[Summary("Special structure for holding the TrackPoint along with its display color for the particular tracker")]
-	public struct WatchedTrackPoint {
-		private readonly TrackPoint tp;
-		private ushort color;
+		internal class LinkedQueue {
+			private TrackPoint newest;
+			private TrackPoint oldest;
+			private int count;
 
-		public WatchedTrackPoint(TrackPoint tp) {
-			this.tp = tp;
-			this.color = PlayerTrackingPlugin.BEST_COLOR; //if unspecified, start with the best color
-		}
-
-		public WatchedTrackPoint(TrackPoint tp, ushort color) {
-			this.tp = tp;
-			this.color = color;
-		}
-
-		public TrackPoint TrackPoint {
-			get {
-				return tp;
-			}
-		}
-
-		public ushort Color {
-			get {
-				return color;
-			}
-			set {
-				color = value;
-			}
-		}
-
-		//forward the property to the TrackPoint
-		public TimeSpan LastStepTime {
-			get {
-				return tp.LastStepTime;
-			}
-			set {//we need the setter for refreshing
-				tp.LastStepTime = value;
-			}
-		}
-
-		//forward the property to the TrackPoint
-		public Point4D Location {
-			get {
-				return tp.Location;
-			}
-		}
-
-		//forward the property to the TrackPoint
-		public uint FakeUID {
-			get {
-				return tp.FakeUID;
+			public TrackPoint Newest {
+				get {
+					return this.newest;
+				}
 			}
 
-			internal set {
-				tp.FakeUID = value;
+			public TrackPoint Oldest {
+				get {
+					return this.oldest;
+				}
 			}
-		}
 
-		//forward the property to the TrackPoint
-		public ushort Model {
-			get {
-				return tp.Model;
+
+			public int Count {
+				get {
+					return this.count;
+				}
 			}
-			set {//we need the setter for refreshing
-				tp.Model = value;
+
+			internal void AddNewest(TrackPoint tp) {
+				Sanity.IfTrueThrow(tp.queue != null, "tp.queue != null");
+
+				if (this.newest != null) {
+					this.newest.newer = tp;
+					tp.older = this.newest;
+				} else {
+					tp.older = null; //we're alone
+					this.oldest = tp;
+				}
+
+				tp.newer = null; //no one is newer than newest
+				this.newest = tp;
+				tp.queue = this;
+				this.count++;
+			}
+
+			internal void SliceOldest(TrackPoint newQueueOldest) {
+				if (newQueueOldest == null) {
+					this.Clear();
+				} else {
+					Sanity.IfTrueThrow(newQueueOldest.queue != this, "newQueueStart.queue != this");
+
+					TrackPoint next = newQueueOldest.older;
+					while (next != null) {
+						TrackPoint tp = next;
+						next = tp.older;
+						tp.queue = null;
+						tp.Dispose();
+						this.count--;
+					}
+					newQueueOldest.older = null;
+					this.oldest = newQueueOldest;
+				}
+			}
+			
+
+			public IEnumerable<TrackPoint> EnumerateFromOldest() {
+				TrackPoint next = this.newest;
+				if (next != null) {
+					do {
+						TrackPoint tp = next;
+						next = tp.OlderNeighbor;
+						yield return tp;
+					} while (next != null);
+				}
+			}
+
+			internal void RemoveAndDispose(TrackPoint tp) {
+				Sanity.IfTrueThrow(tp.queue != this, "tp.queue != this");
+
+				if (tp == this.oldest) {
+					this.oldest = tp.newer;
+					if (this.oldest != null) {
+						this.oldest.older = null; //no one is older than oldest
+					}
+				} else if (tp.newer != null) {
+					tp.newer.older = tp.older;
+				}
+
+				if (tp == this.newest) {
+					this.newest = tp.older;
+					if (this.newest != null) {
+						this.newest.newer = null; //no one is newer than newest
+					}
+				} else if (tp.older != null) {
+					tp.older.newer = tp.newer;
+				}
+
+				tp.queue = null;
+				this.count--;
+				tp.Dispose();
+			}
+
+			//not exactly invariant-safe, but we're all internal here anyway
+			public void Clear() {
+				TrackPoint next = this.newest;
+				if (next != null) {
+					do {
+						TrackPoint tp = next;
+						next = tp.OlderNeighbor;
+						tp.queue = null;
+						tp.Dispose();
+					} while (next != null);
+					this.newest = null;
+				}				
+				this.oldest = null;
+
+				this.count = 0;
 			}
 		}
 	}

@@ -58,9 +58,9 @@ namespace SteamEngine.CompiledScripts {
 			maxCharsToTrack = InitField_Typed("maxCharsToTrack", 20, typeof(int));
 			minSafeSteps = InitField_Typed("minSafeSteps", 1, typeof(int));
 			maxSafeSteps = InitField_Typed("maxSafeSteps", 10, typeof(int));
-			pvmEffect = InitField_Typed("pvmEffect", new double[]{16.0,64,0}, typeof(double[]));
+			pvmEffect = InitField_Typed("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
 		}
-		
+
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
 			if (!CheckPrerequisities(skillSeqArgs)) {
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			Character self = skillSeqArgs.Self;
 			self.ClilocSysMessage(1011350);//What do you wish to track?
-			self.Dialog(self,SingletonScript<D_Tracking_Categories>.Instance, new DialogArgs(skillSeqArgs));
+			self.Dialog(self, SingletonScript<D_Tracking_Categories>.Instance, new DialogArgs(skillSeqArgs));
 			return true; //stop it, other triggers will be run from the tracking dialog
 		}
 
@@ -97,17 +97,18 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
-			AbstractRectangle rect = GetTrackingArea(skillSeqArgs);
+			TimeSpan now = Globals.TimeAsSpan;
 
 			if (charType == CharacterTypes.Players) {//tracking Players
-				TimeSpan maxAge = GetMaxFootstepsAge(skillSeqArgs);
+				ImmutableRectangle playerRect = this.GetPlayerTrackingArea(self);
+				TimeSpan maxAge = GetMaxFootstepsAge(self);
 				switch ((TrackingEnums) skillSeqArgs.Param2) {
 					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
-						List<AbstractCharacter> charsAround = ScriptSector.GetCharactersInRectangle(rect, maxAge, self.M);
-						
+						List<AbstractCharacter> charsAround = ScriptSector.GetCharactersInRectangle(playerRect, now, maxAge, self.M);
+
 						//check if tracking is possible (with message)
 						//i.e. too many chars or none at all
-						if (CheckTrackImpossible(skillSeqArgs, charsAround.Count, charType)) {
+						if (this.CheckTrackImpossible(skillSeqArgs, charsAround.Count, charType)) {
 							return true;
 						}
 
@@ -116,64 +117,45 @@ namespace SteamEngine.CompiledScripts {
 						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
 						break;
 					case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
-						Character charToTrack = (Character) skillSeqArgs.Target1;
-
-						//get the list of characters visible footsteps
-						List<WatchedTrackPoint> charsSteps = ScriptSector.GetCharsPath(charToTrack, rect, maxAge, self.M);
+						Character trackedChar = (Character) skillSeqArgs.Target1;
 
 						//and forward the tracking management to the special plugin
-						PlayerTrackingPlugin tpl = (PlayerTrackingPlugin) PlayerTrackingPlugin.defInstance.Create();
-						tpl.trackingRectangle = (MutableRectangle)rect; //for recomputing the rect when OnStep...
-						tpl.maxFootstepAge = maxAge; //for refreshing the footsteps when OnStep...
-						tpl.whoToTrack = charToTrack; //for refreshing the footsteps when OnStep...
-						tpl.footsteps = charsSteps; //initial list of footsteps
-						tpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
-						tpl.Timer = PlayerTrackingPlugin.refreshTimeout;//set the first timer
-						self.AddPlugin(PlayerTrackingPlugin.trackingPluginKey, tpl);
-
-						//to the tracked char's list add the actual tracker
-						List<Character> tbList = (List<Character>) charToTrack.GetTag(TrackingSkillDef.trackedByTK);
-						if (tbList == null) {
-							tbList = new List<Character>();
-							charToTrack.SetTag(TrackingSkillDef.trackedByTK, tbList);
-						}
-						if (!tbList.Contains(self)) {
-							tbList.Add(self);
-						}
+						PlayerTrackingPlugin.InstallOnChar(self, trackedChar, playerRect, maxAge, this.GetMaxSafeSteps(self));
 
 						break;
 				}
 			} else {//tracking animals, monsters or NPCs
+				ImmutableRectangle npcRect = this.GetNPCTrackingArea(self);
 				switch ((TrackingEnums) skillSeqArgs.Param2) {
 					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
 						List<AbstractCharacter> trackables = null;
 						switch (charType) {
 							case CharacterTypes.Animals:
 								trackables = new List<AbstractCharacter>();
-								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect)) {
-									if(chr.IsAnimal) trackables.Add(chr);
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect)) {
+									if (chr.IsAnimal) trackables.Add(chr);
 								}
 								break;
 							case CharacterTypes.Monsters:
 								trackables = new List<AbstractCharacter>();
-								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect)) {
-									if(chr.IsMonster) trackables.Add(chr);
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect)) {
+									if (chr.IsMonster) trackables.Add(chr);
 								}
 								break;
 							case CharacterTypes.NPCs:
 								trackables = new List<AbstractCharacter>();
-								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect)) {
-									if(chr.IsHuman) trackables.Add(chr);
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect)) {
+									if (chr.IsHuman) trackables.Add(chr);
 								}
 								break;
 							case CharacterTypes.All:
 								//monsters, animals and human NPCs
-								trackables = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) rect));
+								trackables = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect));
 								break;
 						}
-						
+
 						//check if tracking is possible (with message) - i.e. too many chars or none at all
-						if (CheckTrackImpossible(skillSeqArgs, trackables.Count, charType)) {
+						if (this.CheckTrackImpossible(skillSeqArgs, trackables.Count, charType)) {
 							return true;
 						}
 
@@ -185,11 +167,11 @@ namespace SteamEngine.CompiledScripts {
 						Character charToTrack = (Character) skillSeqArgs.Target1;
 
 						NPCTrackingPlugin npctpl = (NPCTrackingPlugin) NPCTrackingPlugin.defInstance.Create();
-						npctpl.maxAllowedDist = GetMaxRange(self, charType); //maximal distance before the tracked character disappears...						
-						npctpl.safeSteps = GetMaxSafeSteps(skillSeqArgs); //number of safe steps
+						npctpl.maxAllowedDist = this.GetNPCMaxRange(self); //maximal distance before the tracked character disappears...						
+						npctpl.safeSteps = this.GetMaxSafeSteps(self); //number of safe steps
 						npctpl.whoToTrack = charToTrack;
 						npctpl.Timer = NPCTrackingPlugin.refreshTimeout;//set the first timer
-						
+
 						self.AddPlugin(NPCTrackingPlugin.npcTrackingPluginKey, npctpl);
 						break;
 				}
@@ -206,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 			skillSeqArgs.Self.SysMessage("Tracking aborted");
 		}
 
-		[Remark("Check if we are alive, have enuogh stamina etc.... Return false if the trigger above"+
+		[Remark("Check if we are alive, have enuogh stamina etc.... Return false if the trigger above" +
 				" should be cancelled or true if we can continue")]
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
@@ -216,7 +198,7 @@ namespace SteamEngine.CompiledScripts {
 			if (self.Stam <= self.MaxStam / 10) {
 				self.ClilocSysMessage(502988);//You are too weary to make anything from the clues of nature.
 				return false; //stop
-			}			
+			}
 			return true;
 		}
 
@@ -240,7 +222,7 @@ namespace SteamEngine.CompiledScripts {
 					//1018092	You see no evidence of those in the area.
 				}
 			}
-			if (charsAroundCount > GetMaxTrackableChars(ssa)) {
+			if (charsAroundCount > this.GetMaxTrackableChars(self)) {
 				switch (charType) {
 					case CharacterTypes.Animals:
 						self.ClilocSysMessage(502990); //This area is too crowded to track any individual animal.
@@ -261,62 +243,57 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//get the area to look for any footsteps in
-		private AbstractRectangle GetTrackingArea(SkillSequenceArgs ssa) {
-			Character self = ssa.Self;
-			CharacterTypes trackMode = (CharacterTypes) ssa.Param1;
-			if (trackMode == CharacterTypes.Players) {
-				return new MutableRectangle(self.P(), GetMaxRange(self, trackMode));
-			} else {//animals, monsters, npcs
-				return new ImmutableRectangle(self.P(), GetMaxRange(self, trackMode));
-			}
+		private ImmutableRectangle GetPlayerTrackingArea(Character self) {
+			return new ImmutableRectangle(self, (ushort) this.GetPlayerMaxRange(self));
+		}
+
+		private ImmutableRectangle GetNPCTrackingArea(Character self) {
+			return new ImmutableRectangle(self, (ushort) this.GetNPCMaxRange(self));
+		}
+
+		public int GetPlayerMaxRange(Character forWho) {
+			return (int) this.GetEffectForChar(forWho); //tracking players - use the Effect field
 		}
 
 		//get the Tracking range  - either for computing the scanned Rectangle or determining the maximal tracking distance
-		private ushort GetMaxRange(Character forWho, CharacterTypes trackMode) {
-			if (trackMode == CharacterTypes.Players) {
-				return (ushort) this.GetEffectForChar(forWho); //tracking players - use the Effect field
-			} else {
-				//tracking other types of characters (animals, monsters, NPCs) - use the PVMEffect field
-				if (forWho.IsGM) {
-					return (ushort) ScriptUtil.EvalRangePermille(1000.0, this.PVMEffect);
-				} else {
-					return (ushort) ScriptUtil.EvalRangePermille(SkillValueOfChar(forWho), this.PVMEffect);
-				}
-			}
-		}
-
-		//get the maximum age of the footsteps to be found
-		private TimeSpan GetMaxFootstepsAge(SkillSequenceArgs ssa) {
-			Character self = ssa.Self;
-			double maxAge;
+		public int GetNPCMaxRange(Character self) {
+			//tracking other types of characters (animals, monsters, NPCs) - use the PVMEffect field
 			if (self.IsGM) {
-				maxAge = ScriptSector.CleaningPeriod; //get the maximal lifetime of the footsteps
+				return (int) ScriptUtil.EvalRangePermille(1000.0, this.PVMEffect);
 			} else {
-				maxAge = ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), MinFootstepAge, MaxFootstepAge);
+				return (int) ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), this.PVMEffect);
 			}
-			return TimeSpan.FromSeconds(maxAge);
 		}
 
 		//get the maximum age of the footsteps to be found
-		private int GetMaxTrackableChars(SkillSequenceArgs ssa) {
-			Character self = ssa.Self;
+		public TimeSpan GetMaxFootstepsAge(Character self) {
+			TimeSpan maxAge;
+			if (self.IsGM) {
+				maxAge = ScriptSector.maxEntityAge; //get the maximal lifetime of the footsteps
+			} else {
+				maxAge = TimeSpan.FromSeconds(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), this.MinFootstepAge, this.MaxFootstepAge));
+			}
+			return maxAge;
+		}
+
+		//get the maximum age of the footsteps to be found
+		public int GetMaxTrackableChars(Character self) {
 			int maxChars;
 			if (self.IsGM) {
 				maxChars = int.MaxValue; //unlimited, GM sees everything
 			} else {
-				maxChars = (int)ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), MinCharsToTrack, MaxCharsToTrack);
+				maxChars = (int) ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), this.MinCharsToTrack, this.MaxCharsToTrack);
 			}
 			return maxChars;
 		}
 
 		//get the maximum number of safe steps the tracker will be able to do (before another tracking chance recomputing)
-		private int GetMaxSafeSteps(SkillSequenceArgs ssa) {
-			Character self = ssa.Self;
+		public int GetMaxSafeSteps(Character self) {
 			int maxSteps;
 			if (self.IsGM) {
 				maxSteps = int.MaxValue; //unlimited, GM can go as far as he wants
 			} else {
-				maxSteps = (int) ScriptUtil.EvalRangePermille(ssa.SkillDef.SkillValueOfChar(self), MinSafeSteps, MaxSafeSteps);
+				maxSteps = (int) ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), this.MinSafeSteps, this.MaxSafeSteps);
 			}
 			return maxSteps;
 		}
@@ -324,7 +301,7 @@ namespace SteamEngine.CompiledScripts {
 		[InfoField("Min age [sec.0-skill]")]
 		public double MinFootstepAge {
 			get {
-				return (double)minFootstepAge.CurrentValue;
+				return (double) minFootstepAge.CurrentValue;
 			}
 			set {
 				minFootstepAge.CurrentValue = value;
@@ -334,7 +311,7 @@ namespace SteamEngine.CompiledScripts {
 		[InfoField("Max age[sec.100-skill]")]
 		public double MaxFootstepAge {
 			get {
-				return (double)maxFootstepAge.CurrentValue;
+				return (double) maxFootstepAge.CurrentValue;
 			}
 			set {
 				maxFootstepAge.CurrentValue = value;
@@ -344,7 +321,7 @@ namespace SteamEngine.CompiledScripts {
 		[InfoField("Trackables [char.0/skill]")]
 		public int MinCharsToTrack {
 			get {
-				return (int)minCharsToTrack.CurrentValue;
+				return (int) minCharsToTrack.CurrentValue;
 			}
 			set {
 				minCharsToTrack.CurrentValue = value;
@@ -354,7 +331,7 @@ namespace SteamEngine.CompiledScripts {
 		[InfoField("Trackables [char.100/skill]")]
 		public int MaxCharsToTrack {
 			get {
-				return (int)maxCharsToTrack.CurrentValue;
+				return (int) maxCharsToTrack.CurrentValue;
 			}
 			set {
 				maxCharsToTrack.CurrentValue = value;
@@ -398,8 +375,8 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void StopTrack(Character self) {
-			self.RemovePlugin(PlayerTrackingPlugin.trackingPluginKey);
-			self.RemovePlugin(NPCTrackingPlugin.npcTrackingPluginKey);
+			PlayerTrackingPlugin.UninstallPlugin(self);
+			self.DeletePlugin(NPCTrackingPlugin.npcTrackingPluginKey);
 		}
 	}
 }
