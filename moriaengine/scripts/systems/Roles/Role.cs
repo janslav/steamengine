@@ -31,34 +31,67 @@ namespace SteamEngine.CompiledScripts {
 		private RoleKey key;
 		private string name;
 
-		private List<AbstractCharacter> members;
-		private System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter> membersReadOnly;
+		private Dictionary<Character, IRoleMembership> members = new Dictionary<Character, IRoleMembership>();
+
+		//private System.Collections.ObjectModel.ReadOnlyCollection<Character> membersReadOnly;
 
 		internal Role(RoleDef def, RoleKey key) {
-			members = new List<AbstractCharacter>();
-			membersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(this.members);
+			//this.members = new List<Character>();
+			//this.memberships = new List<IRoleMembership>();
+			//this.membersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<IRoleMembership>(this.members);
 			this.key = key;
 			this.def = def;
         }
 
-		internal void InternalAddMember(AbstractCharacter newMember) {
-			this.members.Add(newMember);
-			this.Trigger_MemberAdded((Character) newMember);
+		internal void InternalAddMember(Character newMember) {
+			IRoleMembership membership = this.CreateMembershipObject(newMember);
+			Sanity.IfTrueThrow(newMember != membership.Member, "newMember != membership.Member");
+
+			this.members.Add(newMember, membership);
+			this.Trigger_MemberAdded(newMember, membership);
 		}
 
-		internal void InternalRemoveMember(AbstractCharacter newMember) {
-			this.members.Remove(newMember);
-			this.Trigger_MemberRemoved((Character) newMember, false);
+		internal void InternalRemoveMember(Character removedMember, IRoleMembership membership) {
+			Sanity.IfTrueThrow(removedMember != membership.Member, "removedMember != membership.Member");
+			
+			bool removed = this.members.Remove(removedMember);
+			Sanity.IfTrueThrow(!removed, "!this.members.ContainsKey(removedMember)");
+
+			this.Trigger_MemberRemoved(removedMember, membership, false);
 		}
 
 		internal void InternalClearMembers(bool beingDestroyed) {
 			if (this.members.Count > 0) {
-				AbstractCharacter[] oldMembers = this.members.ToArray();
+				KeyValuePair<Character, IRoleMembership>[] oldMembers = new KeyValuePair<Character, IRoleMembership>[this.members.Count];
+				((ICollection<KeyValuePair<Character, IRoleMembership>>) this.members).CopyTo(oldMembers, 0);
 				this.members.Clear();
-				foreach (Character ch in oldMembers) {
-					this.Trigger_MemberRemoved(ch, beingDestroyed);
+				foreach (KeyValuePair<Character, IRoleMembership> pair in oldMembers) {
+					this.Trigger_MemberRemoved(pair.Key, pair.Value, beingDestroyed);
 				}
 			}
+		}
+
+		public interface IRoleMembership : IDisposable {
+			Character Member { get;}
+		}
+
+		public class RoleMembership : IRoleMembership {
+			private readonly Character member;
+
+			internal RoleMembership(Character member) {
+				this.member = member;
+			}
+
+			public Character Member {
+				get { return this.member; }
+			}
+
+			public void Dispose() {
+			}
+		}
+
+		protected virtual IRoleMembership CreateMembershipObject(Character member) {
+			return new RoleMembership(member);
 		}
 
 		#region triggers
@@ -80,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal DenyResultRoles Trigger_DenyAddMember(Character chr) {
-			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, this);
+			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, null, this);
 			bool cancel = this.def.TryCancellableTrigger(this, RoleDef.tkDenyAddMember, args);
 			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
 				try {
@@ -90,15 +123,15 @@ namespace SteamEngine.CompiledScripts {
 			return args.Result;
 		}
 
-		internal void Trigger_MemberAdded(Character chr) {
-			this.def.TryTrigger(this, RoleDef.tkMemberAdded, new ScriptArgs(chr));
+		private void Trigger_MemberAdded(Character newMember, IRoleMembership membership) {
+			this.def.TryTrigger(this, RoleDef.tkMemberAdded, new ScriptArgs(newMember, membership));
 			try {
-				this.On_MemberAdded(chr);
+				this.On_MemberAdded(newMember, membership);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		internal DenyResultRoles Trigger_DenyRemoveMember(Character chr) {
-			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, this);
+		internal DenyResultRoles Trigger_DenyRemoveMember(Character chr, IRoleMembership membership) {
+			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, membership, this);
 			bool cancel = this.def.TryCancellableTrigger(this, RoleDef.tkDenyRemoveMember, args);
 			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
 				try {
@@ -108,10 +141,10 @@ namespace SteamEngine.CompiledScripts {
 			return args.Result;
 		}
 
-		internal void Trigger_MemberRemoved(Character chr, bool beingDestroyed) {
-			this.def.TryTrigger(this, RoleDef.tkMemberRemoved, new ScriptArgs(chr, beingDestroyed));
+		internal void Trigger_MemberRemoved(Character chr, IRoleMembership membership, bool beingDestroyed) {
+			this.def.TryTrigger(this, RoleDef.tkMemberRemoved, new ScriptArgs(chr, membership, beingDestroyed));
 			try {
-				this.On_MemberRemoved(chr, beingDestroyed);
+				this.On_MemberRemoved(chr, membership, beingDestroyed);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
@@ -129,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
         [Summary("Trigger called when the new member is assigned to this role")]
-		protected virtual void On_MemberAdded(AbstractCharacter newMember) {
+		protected virtual void On_MemberAdded(Character newMember, IRoleMembership membership) {
 			//this trigger will be run after @DenyAddMember
         }
 
@@ -139,7 +172,7 @@ namespace SteamEngine.CompiledScripts {
 		}   
 		
 		[Summary("Trigger called when the member is unassigned from this role")]
-		protected virtual void On_MemberRemoved(AbstractCharacter exMember, bool beingDestroyed) {
+		protected virtual void On_MemberRemoved(Character exMember, IRoleMembership membership, bool beingDestroyed) {
 			//this trigger will be run after @DenyRemoveMember
         }
      
@@ -170,15 +203,26 @@ namespace SteamEngine.CompiledScripts {
 			return string.Concat(this.GetType().ToString(), " °", this.key.name);
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter> Members {
+		public ICollection<Character> Members {
 			get {
-				return this.membersReadOnly;
+				return this.members.Keys;
+			}
+		}
+		public ICollection<IRoleMembership> Memberships {
+			get {
+				return this.members.Values;
 			}
 		}
 
-		internal bool IsMember(AbstractCharacter target) {
+		public IRoleMembership GetMembership(Character ch) {
+			IRoleMembership retVal;
+			this.members.TryGetValue(ch, out retVal);
+			return retVal;
+		}
+
+		internal bool IsMember(Character target) {
 			if (target != null) {
-				return this.members.Contains(target);
+				return this.members.ContainsKey(target);
 			}
 			return false;
 		}
@@ -198,8 +242,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 			int count = this.members.Count;
 			output.WriteValue("count", count);
-			for (int i = 0; i < count; i++) {
-				output.WriteValue(i.ToString(), this.members[i]);
+			int i = 0;
+			foreach (IRoleMembership membership in this.members.Values) {
+				output.WriteValue(i.ToString(), membership);
+				i++;
 			}
 		}
 
@@ -249,16 +295,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
+		protected virtual void LoadLine(string filename, int line, string valueName, string valueString) {
 			if (valueName.Equals("name", StringComparison.OrdinalIgnoreCase)) {
 				this.name = (string) ObjectSaver.OptimizedLoad_String(valueString);
 			}
 		}
 
 		private void Load_RoleMember(object resolvedObject, string filename, int line) {
-			Character loaded = (Character) resolvedObject;
-			RolesManagement.InternalAddLoadedRole(this, loaded);
-			this.members.Add(loaded);
+			IRoleMembership loaded = (IRoleMembership) resolvedObject;
+			RolesManagement.InternalAddLoadedRole(this, loaded.Member);
+			this.members.Add(loaded.Member, loaded);
 		}
 		#endregion persistence
 	}

@@ -2405,7 +2405,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				Party p = Party.GetParty(this);
 				if (p != null) {
-					return p.Members;
+					return (ICollection<AbstractCharacter>) p.Members;
 				}
 				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
 			}
