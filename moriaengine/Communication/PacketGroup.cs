@@ -213,5 +213,16 @@ namespace SteamEngine.Communication {
 				return this.isEmpty;
 			}
 		}
+
+		public override string ToString() {
+			StringBuilder sb = new StringBuilder("PacketGroup (");
+			sb.Append(this.packets.Count).Append(" packets - ");
+			foreach (OutgoingPacket p in this.packets) {
+				sb.Append(p.ToString()).Append(", ");
+			}
+			sb.Length -= 2;
+			sb.Append(")");
+			return sb.ToString();
+		}
 	}
 }

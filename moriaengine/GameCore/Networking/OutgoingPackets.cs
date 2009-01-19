@@ -69,6 +69,16 @@ namespace SteamEngine.Networking {
 		}
 
 		protected abstract void WriteSubCmd();
+
+		public override string FullName {
+			get {
+				return string.Concat(this.Name, " ( 0x", this.Id.ToString("X"), "-0x", this.SubCmdId.ToString("X"), " )");
+			}
+		}
+
+		public override string ToString() {
+			return string.Concat("0x", this.Id.ToString("X"), "-0x", this.SubCmdId.ToString("X"));
+		}
 	}
 
 	public sealed class LoginDeniedOutPacket : GameOutgoingPacket {
