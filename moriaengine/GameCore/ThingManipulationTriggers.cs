@@ -140,10 +140,10 @@ namespace SteamEngine {
 							this.MakeLimbo();
 							Trigger_EnterChar((AbstractCharacter) value, layer);
 						} else {
-							throw new SEException("Item '"+ this + "' is equippable, but has Layer not set.");
+							throw new SEException("Item '" + this + "' is equippable, but has Layer not set.");
 						}
 					} else {
-						throw new SEException("Item '"+ this + "' is not equippable.");
+						throw new SEException("Item '" + this + "' is not equippable.");
 					}
 				} else if (contItem.IsContainer) {
 					this.MakeLimbo();
@@ -153,7 +153,7 @@ namespace SteamEngine {
 
 					contItem.TryStackToAnyInside(this);
 				} else {
-					throw new SEException("Item '"+ value + "' is not a container, it can't contain items.");
+					throw new SEException("Item '" + value + "' is not a container, it can't contain items.");
 				}
 			}
 		}
@@ -203,7 +203,7 @@ namespace SteamEngine {
 
 		private void ReturnIntoItemIfNeeded(AbstractItem originalCont, ushort x, ushort y) {
 			if (this.Cont != originalCont) {
-				Logger.WriteWarning(this+" has been moved in the implementation of one of the @LeaveItem/@EnterItem triggers. Don't do this. Putting back.");
+				Logger.WriteWarning(this + " has been moved in the implementation of one of the @LeaveItem/@EnterItem triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
 				this.Trigger_EnterItem(originalCont, x, y);
 			}
@@ -251,7 +251,7 @@ namespace SteamEngine {
 
 		private void ReturnIntoCharIfNeeded(AbstractCharacter originalCont, byte layer) {
 			if ((this.Cont != originalCont) || this.point4d.z != layer) {
-				Logger.WriteWarning(this+" has been moved in the implementation of one of the @LeaveChar triggers. Don't do this. Putting back.");
+				Logger.WriteWarning(this + " has been moved in the implementation of one of the @LeaveChar triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
 				this.Trigger_EnterChar(originalCont, layer);
 			}
@@ -278,7 +278,7 @@ namespace SteamEngine {
 
 		private void ReturnOnGroundIfNeeded(Point4D point) {
 			if ((this.Cont != null) || (!point.Equals(this))) {
-				Logger.WriteWarning(this+" has been moved in the implementation of one of the @Leave/EnterGround triggers. Don't do this. Putting back.");
+				Logger.WriteWarning(this + " has been moved in the implementation of one of the @Leave/EnterGround triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
 				this.Trigger_EnterRegion(point.x, point.y, point.z, point.m);
 			}
@@ -341,14 +341,14 @@ namespace SteamEngine {
 							return true;
 						}
 					}
-					stackWith=(AbstractItem) stackWith.nextInList;
+					stackWith = (AbstractItem) stackWith.nextInList;
 				}
 			}
 			return false;
 		}
 
 		public static bool CouldBeStacked(AbstractItem a, AbstractItem b) {
-			return ((a.IsStackable && b.IsStackable) && 
+			return ((a.IsStackable && b.IsStackable) &&
 					(a.def == b.def) &&
 					(a.Color == b.Color) &&
 					(a.Model == b.Model));
@@ -363,7 +363,7 @@ namespace SteamEngine {
 				//Amount overflow checking:
 				uint tmpAmount = waitingStack.Amount;
 				try {
-					tmpAmount=checked(tmpAmount+toStack.Amount);
+					tmpAmount = checked(tmpAmount + toStack.Amount);
 				} catch (OverflowException) {
 					return false;
 				}
@@ -409,7 +409,7 @@ namespace SteamEngine {
 				//Amount overflow checking:
 				uint tmpAmount = waitingStack.Amount;
 				try {
-					tmpAmount=checked(tmpAmount+toStack.Amount);
+					tmpAmount = checked(tmpAmount + toStack.Amount);
 				} catch (OverflowException) {
 					return false;
 				}
@@ -646,7 +646,7 @@ namespace SteamEngine {
 			if (Cont == null) {
 				Thing t = resolvedObj as Thing;
 				if (t != null) {
-					if ((t.IsChar)&&(this.IsEquippable)) {
+					if ((t.IsChar) && (this.IsEquippable)) {
 						((AbstractCharacter) t).AddLoadedItem(this);
 						return;
 					} else if (t.IsContainer) {
@@ -656,11 +656,11 @@ namespace SteamEngine {
 					}
 				}
 				//contOrTLL=null;
-				Logger.WriteWarning("The saved cont object ("+resolvedObj+") for item '"+this.ToString()+"' is not a valid container. Removing.");
+				Logger.WriteWarning("The saved cont object (" + resolvedObj + ") for item '" + this.ToString() + "' is not a valid container. Removing.");
 				this.InternalDeleteNoRFV();
 				return;
 			}
-			Logger.WriteWarning("The object ("+resolvedObj+") is being loaded as cont for item '"+this.ToString()+"', but it already does have it's cont. This should not happen.");
+			Logger.WriteWarning("The object (" + resolvedObj + ") is being loaded as cont for item '" + this.ToString() + "', but it already does have it's cont. This should not happen.");
 		}
 
 		[Summary("Someone is trying to pick me up")]
@@ -687,10 +687,10 @@ namespace SteamEngine {
 		public virtual bool On_DenyPutItemIn(DenyPutInItemArgs args) {
 			return false;
 		}
-		
+
 		[Summary("I am being put on another item")]
 		public virtual bool On_PutOnItem(ItemOnItemArgs args) {
- 			return false;
+			return false;
 		}
 
 		[Summary("Another item is being put on me")]
@@ -753,7 +753,7 @@ namespace SteamEngine {
 						MutablePoint4D p = this.point4d;
 						prevItem.P(p.x, p.y, p.z, p.m);
 					}
-					Sanity.IfTrueThrow(this.FindLayer(layer) != null, "Layer "+layer+" is supposed to be empty after it's contents was removed.");
+					Sanity.IfTrueThrow(this.FindLayer(layer) != null, "Layer " + layer + " is supposed to be empty after it's contents was removed.");
 				}
 			}
 
@@ -857,7 +857,7 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-		
+
 		//
 		public void TryEquip(AbstractItem i) {
 			i.Cont = this;
@@ -899,12 +899,12 @@ namespace SteamEngine {
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
 
-		#region client 
+		#region client
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
 		public DenyResult TryPickupItem(AbstractItem item, uint amt) {
-            this.ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
 
 			if (!this.TryGetRidOfDraggedItem()) {
@@ -915,7 +915,7 @@ namespace SteamEngine {
 			DenyPickupArgs args = new DenyPickupArgs(this, item, amt);
 
 			bool cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
-            if (!cancel) {
+			if (!cancel) {
 				try {
 					cancel = this.On_DenyPickupItem(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -976,7 +976,7 @@ namespace SteamEngine {
 
 				uint amountToPick = args.Amount;
 				uint amountSum = item.Amount;
-    			if (!item.IsEquipped && amountToPick < amountSum) {
+				if (!item.IsEquipped && amountToPick < amountSum) {
 					AbstractItem dupedItem = (AbstractItem) item.Dupe();
 					dupedItem.Amount = (amountSum - amountToPick);
 					item.Amount = amountToPick;
@@ -998,7 +998,7 @@ namespace SteamEngine {
 
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+targetCont+"'");
+				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1063,7 +1063,7 @@ namespace SteamEngine {
 				}
 				return retVal;
 			} else {
-				throw new InvalidOperationException("The item ("+targetCont+") is not a container");
+				throw new InvalidOperationException("The item (" + targetCont + ") is not a container");
 			}
 		}
 
@@ -1073,7 +1073,7 @@ namespace SteamEngine {
 			target.ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
+				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1138,7 +1138,7 @@ namespace SteamEngine {
 			ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '"+this+"' has no item dragged to drop on ground");
+				throw new Exception("Character '" + this + "' has no item dragged to drop on ground");
 			}
 			item.ThrowIfDeleted();
 
@@ -1190,7 +1190,7 @@ namespace SteamEngine {
 			target.ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
+				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1237,7 +1237,7 @@ namespace SteamEngine {
 			target.ThrowIfDeleted();
 			AbstractItem item = this.draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '"+this+"' has no item dragged to drop on '"+target+"'");
+				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1322,7 +1322,7 @@ namespace SteamEngine {
 		}
 
 		private bool TryUnequip(AbstractItem i) {
-            DenyResult dr = this.TryPickupItem(i, 1);
+			DenyResult dr = this.TryPickupItem(i, 1);
 			if (dr == DenyResult.Allow) {
 				return this.TryGetRidOfDraggedItem();
 			}
@@ -1377,12 +1377,12 @@ namespace SteamEngine {
 
 	public class ItemStackArgs : ScriptArgs {
 		public readonly Thing manipulatedItem;
-		public readonly Thing waitingStack ;
+		public readonly Thing waitingStack;
 
 		public ItemStackArgs(Thing manipulatedItem, Thing waitingStack)
-				: base(manipulatedItem, waitingStack ) {
+			: base(manipulatedItem, waitingStack) {
 			this.manipulatedItem = manipulatedItem;
-			this.waitingStack  = waitingStack ;
+			this.waitingStack = waitingStack;
 		}
 	}
 
@@ -1425,7 +1425,7 @@ namespace SteamEngine {
 
 	public class DenyTriggerArgs : ScriptArgs {
 		public DenyTriggerArgs(params object[] argv)
-				: base(argv) {
+			: base(argv) {
 			Sanity.IfTrueThrow(!(argv[0] is DenyResult), "argv[0] is not DenyResult");
 		}
 
@@ -1444,7 +1444,7 @@ namespace SteamEngine {
 		public readonly AbstractItem manipulatedItem;
 
 		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, uint amount)
-				: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
+			: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
 			this.pickingChar = pickingChar;
 			this.manipulatedItem = manipulatedItem;
 		}
@@ -1497,8 +1497,8 @@ namespace SteamEngine {
 		public readonly AbstractItem manipulatedItem;
 		public readonly AbstractItem waitingItem;
 
-		public ItemOnItemArgs( AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractItem waitingItem)
-				: base(puttingChar, manipulatedItem, waitingItem) {
+		public ItemOnItemArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractItem waitingItem)
+			: base(puttingChar, manipulatedItem, waitingItem) {
 			this.puttingChar = puttingChar;
 			this.manipulatedItem = manipulatedItem;
 			this.waitingItem = waitingItem;
@@ -1526,7 +1526,7 @@ namespace SteamEngine {
 		public readonly byte layer;
 
 		public DenyEquipArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont, byte layer)
-				: base(DenyResult.Allow, puttingChar, manipulatedItem, cont, layer) {
+			: base(DenyResult.Allow, puttingChar, manipulatedItem, cont, layer) {
 
 			this.puttingChar = puttingChar;
 			this.cont = cont;
