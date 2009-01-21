@@ -27,21 +27,38 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	public class RankSystem : Role {
 
-		private List<string> rankNames = new List<string>();
+		private List<string> rankNames;
+		private ReadOnlyCollection<string> rankNamesReadonly;
 
 		internal RankSystem(RankSystemDef def, RoleKey key)
 			: base(def, key) {
 
+			this.rankNames = new List<string>();
+			this.rankNamesReadonly = new ReadOnlyCollection<string>(this.rankNames);
+		}
+
+		public void InsertRankName(string name, int index) {
+			this.rankNames.Insert(index, name);
+		}
+
+		public void AddRankName(string name) {
+			this.rankNames.Add(name);
+		}
+
+		public void SetRankName(string name, int index) {
+			this.rankNames[index] = name;
+		}
+
+		public void RemoveRankName(int index) {
+			this.rankNames.RemoveAt(index);
 		}
 
 		[SaveableClass]
 		public class RankMembership : RoleMembership {
 			private int rankIndex;
-			RankSystem cont;
 
 			internal RankMembership(Character member, RankSystem cont)
-				: base(member) {
-				this.cont = cont;
+				: base(member, cont) {
 			}
 
 			public int RankIndex {
@@ -49,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 					return this.rankIndex;
 				}
 				set {
-					if (value >= 0 && value < this.cont.rankNames.Count) {
+					if (value >= 0 && value < ((RankSystem) this.Cont).rankNames.Count) {
 						this.rankIndex = value;
 					} else {
 						throw new SEException("There's no rank indexed " + value);
@@ -59,16 +76,39 @@ namespace SteamEngine.CompiledScripts {
 
 			public string Name {
 				get {
-					return this.cont.rankNames[this.rankIndex];
+					return ((RankSystem) this.Cont).rankNames[this.rankIndex];
 				}
 			}
 
+			#region persistence
+			[LoadSection]
+			public RankMembership(PropsSection input)
+				: base(input) {
+			}
+
+			protected override void LoadLine(string filename, int line, string valueName, string valueString) {
+				switch (valueName) {
+					case "rankindex":
+						this.rankIndex = ConvertTools.ParseInt32(valueString);
+						return;
+				}
+				base.LoadLine(filename, line, valueName, valueString);
+			}
+
+			[Save]
+			public override void Save(SaveStream output) {
+				base.Save(output);
+				output.WriteValue("rankIndex", this.rankIndex);
+			}
+			#endregion persistence
 		}
 
 		protected override IRoleMembership CreateMembershipObject(Character member) {
 			return new RankMembership(member, this);
 		}
 
+		#region persistence
+		[Save]
 		public override void Save(SaveStream output) {
 			base.Save(output);
 			output.WriteValue("rankNames", this.rankNames);
@@ -85,7 +125,9 @@ namespace SteamEngine.CompiledScripts {
 
 		private void Load_RankNames(object resolvedObject, string filename, int line) {
 			this.rankNames = (List<string>) resolvedObject;
+			this.rankNamesReadonly = new ReadOnlyCollection<string>(this.rankNames);
 		}
+		#endregion persistence
 	}
 
 	public class RankSystemDef : RoleDef {
