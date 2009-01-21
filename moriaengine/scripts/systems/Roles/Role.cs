@@ -26,7 +26,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[SaveableClass]
-	public class Role : Disposable {
+	public partial class Role : Disposable {
         private RoleDef def;
 		private RoleKey key;
 		private string name;
@@ -60,6 +60,11 @@ namespace SteamEngine.CompiledScripts {
 			this.Trigger_MemberRemoved(removedMember, membership, false);
 		}
 
+		internal void InternalLoadMembership(IRoleMembership loaded) {
+			RolesManagement.InternalAddLoadedRole(this, loaded.Member);
+			this.members.Add(loaded.Member, loaded);
+		}
+
 		internal void InternalClearMembers(bool beingDestroyed) {
 			if (this.members.Count > 0) {
 				KeyValuePair<Character, IRoleMembership>[] oldMembers = new KeyValuePair<Character, IRoleMembership>[this.members.Count];
@@ -75,23 +80,8 @@ namespace SteamEngine.CompiledScripts {
 			Character Member { get;}
 		}
 
-		public class RoleMembership : IRoleMembership {
-			private readonly Character member;
-
-			internal RoleMembership(Character member) {
-				this.member = member;
-			}
-
-			public Character Member {
-				get { return this.member; }
-			}
-
-			public void Dispose() {
-			}
-		}
-
 		protected virtual IRoleMembership CreateMembershipObject(Character member) {
-			return new RoleMembership(member);
+			return new RoleMembership(member, this);
 		}
 
 		#region triggers
@@ -242,10 +232,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 			int count = this.members.Count;
 			output.WriteValue("count", count);
-			int i = 0;
+			//int i = 0;
 			foreach (IRoleMembership membership in this.members.Values) {
-				output.WriteValue(i.ToString(), membership);
-				i++;
+				//output.WriteValue(i.ToString(), membership);				
+				//i++;
+				ObjectSaver.Save(membership);
 			}
 		}
 
@@ -267,12 +258,12 @@ namespace SteamEngine.CompiledScripts {
 
 				Role role = def.CreateWhenLoading(key);
 
-				for (int i = 0; i < count; i++) {
-					pl = input.PopPropsLine(i.ToString());
-					if (pl != null) {
-						ObjectSaver.Load(pl.value, role.Load_RoleMember, input.filename, pl.line);
-					}
-				}
+				//for (int i = 0; i < count; i++) {
+				//    pl = input.PopPropsLine(i.ToString());
+				//    if (pl != null) {
+				//        ObjectSaver.Load(pl.value, role.Load_RoleMembership, input.filename, pl.line);
+				//    }
+				//}
 
 				foreach (PropsLine p in input.GetPropsLines()) {
 					try {
@@ -299,13 +290,9 @@ namespace SteamEngine.CompiledScripts {
 			if (valueName.Equals("name", StringComparison.OrdinalIgnoreCase)) {
 				this.name = (string) ObjectSaver.OptimizedLoad_String(valueString);
 			}
+			throw new ScriptException("Invalid data '" + LogStr.Ident(valueName) + "' = '" + LogStr.Number(valueString) + "'.");
 		}
 
-		private void Load_RoleMember(object resolvedObject, string filename, int line) {
-			IRoleMembership loaded = (IRoleMembership) resolvedObject;
-			RolesManagement.InternalAddLoadedRole(this, loaded.Member);
-			this.members.Add(loaded.Member, loaded);
-		}
 		#endregion persistence
 	}
 }		

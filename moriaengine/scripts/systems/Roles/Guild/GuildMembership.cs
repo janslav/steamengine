@@ -32,22 +32,29 @@ namespace SteamEngine.CompiledScripts {
 
 			}
 
-			//[Save]
-			//public override void Save(SaveStream output) {
-			//    if (canShowAbbrev) {
-			//        output.WriteValue("canShowAbbrev", canShowAbbrev);
-			//    }
-			//    base.Save(output);
-			//}
+			#region persistence
+			[LoadSection]
+			public GuildMembership(PropsSection input)
+				: base(input) {
+			}
 
-			//public override void LoadLine(string filename, int line, string valueName, string valueString) {
-			//    switch (valueName) {
-			//        case "canShowAbbrev":
-			//            this.canShowAbbrev = ConvertTools.ParseBoolean(valueString);
-			//            return;
-			//    }
-			//    base.LoadLine(filename, line, valueName, valueString);
-			//}
+			[Save]
+			public override void Save(SaveStream output) {
+				if (this.canShowAbbrev) {
+					output.WriteValue("canShowAbbrev", canShowAbbrev);
+				}
+				base.Save(output);
+			}
+
+			protected override void LoadLine(string filename, int line, string valueName, string valueString) {
+				switch (valueName) {
+					case "canShowAbbrev":
+						this.canShowAbbrev = ConvertTools.ParseBoolean(valueString);
+						return;
+				}
+				base.LoadLine(filename, line, valueName, valueString);
+			}
+			#endregion persistence
 		}
 
 	}

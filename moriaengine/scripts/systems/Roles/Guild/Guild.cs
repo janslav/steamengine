@@ -24,6 +24,8 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[SaveableClass]
+
+	//TODO!
 	public partial class Guild : RankSystem {
 
 		public static readonly RoleKey guildRK = RoleKey.Get("_guild_");
@@ -63,6 +65,10 @@ namespace SteamEngine.CompiledScripts {
 		//public override void Save(SteamEngine.Persistence.SaveStream output) {
 		//    base.Save(output);
 		//}
+
+		protected override Role.IRoleMembership CreateMembershipObject(Character member) {
+			return new GuildMembership(member, this);
+		}
 
 		protected override void On_DisposeManagedResources() {
 			allGuilds.Remove(this);
