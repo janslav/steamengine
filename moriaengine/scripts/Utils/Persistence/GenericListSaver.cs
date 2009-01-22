@@ -26,22 +26,26 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 
 	public sealed class GenericListSaver : ISaveImplementor, IDeepCopyImplementor {
-		public string HeaderName { get {
-			return "GenericList";
-		} }
+		public string HeaderName {
+			get {
+				return "GenericList";
+			}
+		}
 
-		public Type HandledType { get {
-			return typeof(List<>);
-		} }
-		
+		public Type HandledType {
+			get {
+				return typeof(List<>);
+			}
+		}
+
 		public void Save(object objToSave, SaveStream writer) {
 			IList list = (IList) objToSave;
 			Type listType = list.GetType();
 			Type memberType = listType.GetGenericArguments()[0];
 			int count = list.Count;
 			writer.WriteValue("count", count);
-			writer.WriteLine("type="+GenericListSaver.GetTypeName(memberType));
-			for (int i = 0; i<count; i++) {
+			writer.WriteLine("type=" + GenericListSaver.GetTypeName(memberType));
+			for (int i = 0; i < count; i++) {
 				writer.WriteValue(i.ToString(), list[i]);
 			}
 		}
@@ -60,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 				Type typeOfList = typeof(List<>).MakeGenericType(elemType);
 				IList list = (IList) Activator.CreateInstance(typeOfList, new object[] { count });
 
-				for (int i = 0; i<count; i++) {
+				for (int i = 0; i < count; i++) {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
@@ -96,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 				return type.FullName;
 			}
 		}
-		
+
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
 			GenericListLoadHelper alip = (GenericListLoadHelper) param;
 			alip.list[alip.index] = ConvertTools.ConvertTo(alip.elemType, loadedObj);
@@ -106,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 			GenericListLoadHelper alip = (GenericListLoadHelper) param;
 			alip.list[alip.index] = ConvertTools.ConvertTo(alip.elemType, loadedObj);
 		}
-		
+
 		private class GenericListLoadHelper {
 			internal IList list;
 			internal int index;
@@ -127,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 			Type typeOfList = typeof(List<>).MakeGenericType(elemType);
 			IList newList = (IList) Activator.CreateInstance(typeOfList, new object[] { n });
 
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				newList.Add(null);
 				GenericListLoadHelper alip = new GenericListLoadHelper(newList, i, elemType);
 				DeepCopyFactory.GetCopyDelayed(copyFromList[i], DelayedCopy_Index, alip);

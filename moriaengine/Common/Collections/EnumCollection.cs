@@ -60,7 +60,7 @@ namespace SteamEngine.Common {
 		private static string GetEnumDescription(T value) {
 			FieldInfo fi = typeof(T).GetField(value.ToString());
 
-			DescriptionAttribute[] attributes =	(DescriptionAttribute[]) fi.GetCustomAttributes(
+			DescriptionAttribute[] attributes = (DescriptionAttribute[]) fi.GetCustomAttributes(
 				typeof(DescriptionAttribute), false);
 
 			if (attributes != null && attributes.Length > 0) {
@@ -81,14 +81,14 @@ namespace SteamEngine.Common {
 		}
 
 		public long Value {
-			get { 
-				return Convert.ToInt64(this.value); 
+			get {
+				return Convert.ToInt64(this.value);
 			}
 		}
 
 		public string Description {
-			get { 
-				return this.description; 
+			get {
+				return this.description;
 			}
 		}
 	}

@@ -25,8 +25,8 @@ namespace SteamEngine.CompiledScripts {
 			switch (param) {
 				case "armor":
 				case "minddefense":
-					base.LoadScriptLine(filename, line, param+"vsp", args);
-					base.LoadScriptLine(filename, line, param+"vsm", args);
+					base.LoadScriptLine(filename, line, param + "vsp", args);
+					base.LoadScriptLine(filename, line, param + "vsm", args);
 					return;
 			}
 			base.LoadScriptLine(filename, line, param, args);

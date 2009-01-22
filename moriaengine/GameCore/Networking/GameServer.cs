@@ -189,7 +189,7 @@ namespace SteamEngine.Networking {
 				state.BackupLinksToCharacters();
 			}
 		}
-		
+
 		internal static void ReLinkCharacters() {
 			foreach (GameState state in clients) {
 				state.RelinkCharacter();

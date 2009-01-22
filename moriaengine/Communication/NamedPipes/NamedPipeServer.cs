@@ -48,7 +48,7 @@ namespace SteamEngine.Communication.NamedPipes {
 
 			this.listenThread = new Thread(ListenForClients);
 			this.listenThread.IsBackground = true;
-			this.listenThread.Name = this.GetType().Name+"_PipeServerListener";
+			this.listenThread.Name = this.GetType().Name + "_PipeServerListener";
 			this.listenThread.Start();
 		}
 
@@ -57,7 +57,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		/// Listens for client connections
 		/// </summary>
 		private void ListenForClients() {
-			Console.WriteLine("Listening on named pipe '"+this.pipename+"'");
+			Console.WriteLine("Listening on named pipe '" + this.pipename + "'");
 			this.running = true;
 
 			while (true) {
@@ -77,7 +77,7 @@ namespace SteamEngine.Communication.NamedPipes {
 					try {
 						clientHandle.Close();
 					} catch { }
-					throw new Exception("Failed to create listening named pipe '"+this.pipename+"'");
+					throw new Exception("Failed to create listening named pipe '" + this.pipename + "'");
 				}
 
 				int success = ServerKernelFunctions.ConnectNamedPipe(clientHandle, IntPtr.Zero);
@@ -87,7 +87,7 @@ namespace SteamEngine.Communication.NamedPipes {
 					try {
 						clientHandle.Close();
 					} catch { }
-					throw new Exception("Failed to connect client to named pipe '"+this.pipename+"'");
+					throw new Exception("Failed to connect client to named pipe '" + this.pipename + "'");
 				}
 
 				NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
@@ -125,7 +125,7 @@ namespace SteamEngine.Communication.NamedPipes {
 	}
 
 	internal static class ServerKernelFunctions {
-		[DllImport("kernel32.dll", SetLastError=true)]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		internal static extern SafeFileHandle CreateNamedPipe(
 		   String pipeName,
 		   uint dwOpenMode,
@@ -136,7 +136,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		   uint nDefaultTimeOut,
 		   IntPtr lpSecurityAttributes);
 
-		[DllImport("kernel32.dll", SetLastError=true)]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		internal static extern int ConnectNamedPipe(
 		   SafeFileHandle hNamedPipe,
 		   IntPtr lpOverlapped);

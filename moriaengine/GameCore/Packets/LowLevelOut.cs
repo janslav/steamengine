@@ -16,17 +16,17 @@
 
 
 //namespace SteamEngine.Packets {
-	
+
 //    public class LowLevelOut : PacketStats {
 //        public static bool PacketSenderTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["PacketSender Trace Messages"]);
 //        public static bool DumpAllPacketsCompressedForSending = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Dump all packets compressed for sending"]);
-		
+
 //        internal static byte[] ucBuffer = new byte [Server.maxPacketLen];
 //        internal static byte[] cBuffer = new byte [Server.maxPacketLen];
 //        internal static int[] flatBitTable;
 //        internal static int[,] bitTable;
 //        internal static uint[] bitAmtTable;
-		
+
 //        protected static int gPacketSize;				//- Set by Generate* methods.
 //        protected static List<BoundPacketGroup> groups;
 //        internal static BoundPacketGroup curGroup;			//Internal so PacketGroup can set it.
@@ -38,7 +38,7 @@
 //        protected static int lastGroupEnd=0;				//- The first pos after the end of the last group's data.
 
 //        //If groupState is not SingleBlocking, then lastCPacketStart, Size, and End have no meaning.
-		
+
 //        static LowLevelOut() {
 //            gPacketSize=0;
 //            groups = new List<BoundPacketGroup>();
@@ -47,14 +47,14 @@
 //            generatingState=GeneratingState.Ready;
 //            ConstructBitTables();
 //        }
-		
+
 //        protected static void StartGenerating() {
 //            Logger.WriteInfo(PacketSenderTracingOn, "StartGenerating()");
 //            Sanity.IfTrueThrow(generatingState!=GeneratingState.Ready,"StartGenerating called when generatingState is not Ready!");
 //            generatingState=GeneratingState.Generating;
 //            //Requires generatingState==Ready, sets generatingState=Generating.
 //        }
-		
+
 //        protected static void DoneGenerating(int gpLength) {
 //            Logger.WriteInfo(PacketSenderTracingOn, "DoneGenerating("+gpLength+")");
 //            Sanity.IfTrueThrow(generatingState!=GeneratingState.Generating,"DoneGenerating called when generatingState is not Generating!");
@@ -73,13 +73,13 @@
 
 //        //---------------------------------------------------------------------------------------------------------------
 //        // Data encoding methods:
-		
+
 //        protected static void EncodeBytes(byte[] array, int start) {
 //            for (int idx=0; idx<array.Length; idx++) {
 //                ucBuffer[start+idx]=array[idx];
 //            }
 //        }
-		
+
 //        /**
 //            Given an array with two dimensions, and a specified index 'firstIndex' for the first dimension,
 //            this copies all the elements of array[firstIndex,*] into the uncompressed-data-buffer at the specified
@@ -98,24 +98,24 @@
 //                ucBuffer[start+idx]=array[firstIndex, len-idx];
 //            }
 //        }
-		
+
 //        protected static void EncodeBytesReversed(byte[] array, int start) {
 //            int len=array.Length-1;
 //            for (int idx=0; idx<=len; idx++) {
 //                ucBuffer[start+idx]=array[len-idx];
 //            }
 //        }
-					
+
 //        /**
 //            Encodes the string as unicode data at the specified start position, and returns the number of bytes
 //            written.
-			
+
 //            You can do something like this, if you want: blockSize+=EncodeUnicodeString(line, blockSize);
-			
+
 //            But you can't do that with the EncodeUnicodeString method which takes a maxlen parameter.
 
 //            @returns the number of bytes written, which is actually always double the length of the string.
-			
+
 //            Example:
 //                int numBytes = EncodeUnicodeString("foo", 0);
 //                That writes "foo" in unicode, which takes 6 bytes, so numBytes would be 6.
@@ -124,12 +124,12 @@
 //            int len=value.Length;
 //            return Encoding.BigEndianUnicode.GetBytes(value, 0, len, ucBuffer, start);
 //        }
-		
+
 //        protected static int EncodeLittleEndianUnicodeString(string value, int start) {
 //            int len=value.Length;
 //            return Encoding.Unicode.GetBytes(value, 0, len, ucBuffer, start);
 //        }
-		
+
 //        /**
 //            Encodes the string as unicode data at the specified start position, 
 //            with the specified maximum length (in characters, NOT bytes),
@@ -138,7 +138,7 @@
 
 //            @returns the number of bytes written (not counting the extra zeros), which is either double the length
 //            of the string, or double maxlen, whichever is lower.
-			
+
 //            Example #1:
 //                int numBytes = EncodeUnicodeString("foo", 0, 5);
 //                That writes "foo" in unicode, which takes 6 bytes, so numBytes would be 6, but since only 3
@@ -150,8 +150,8 @@
 //                the number of bytes which the string would take up, since it's just double the string's length, EXCEPT
 //                that you'd really also need to check whether the string was longer than maxlen - and since this method
 //                is already doing that, there's no sense in doing that twice, so that's what the method returns.
-				
-				
+
+
 //        */
 //        protected static int EncodeUnicodeString(string value, int start, int maxlen) {
 //            int len=value.Length;
@@ -165,7 +165,7 @@
 //            }
 //            return written;
 //        }
-		
+
 //        protected static int EncodeLittleEndianUnicodeString(string value, int start, int maxlen) {
 //            int len=value.Length;
 //            int written=Encoding.Unicode.GetBytes(value, 0, (maxlen>len?len:maxlen), ucBuffer, start);
@@ -208,7 +208,7 @@
 //                ucBuffer[startpos+amount]=0;
 //            }
 //        }
-		
+
 //        protected static void EncodeInt(int value, int startpos) {
 //            ucBuffer[startpos] = (byte) (value>>24);	//first byte
 //            ucBuffer[startpos+1] = (byte) (value>>16);	//second byte
@@ -221,12 +221,12 @@
 //            ucBuffer[startpos+2] = (byte) (value>>8);	//third byte
 //            ucBuffer[startpos+3] = (byte) (value);		//fourth byte
 //        }
-		
+
 //        protected static void EncodeShort(short value, int startpos) {
 //            ucBuffer[startpos] = (byte) (value>>8);		//first byte
 //            ucBuffer[startpos+1] = (byte) (value);		//second byte
 //        }
-		
+
 //        protected static void EncodeUShort(ushort value, int startpos) {
 //            ucBuffer[startpos] = (byte) (value>>8);		//first byte
 //            ucBuffer[startpos+1] = (byte) (value);		//second byte
@@ -247,10 +247,10 @@
 //            } else {
 //                EncodeShort (255, pos);
 //                EncodeShort ((short)(((int)curval<<8)/maxval), pos+2);
-				
+
 //            }
 //        }
-		
+
 //        [Conditional("DEBUG")]
 //        protected static void OutputPacketLog(byte[] array, int len) {
 //            OutputPacketLog(array, 0, len);
@@ -286,7 +286,7 @@
 //            }
 //            Logger.WriteDebug(s);
 //        }
-		
+
 //        //This builds our compression-tables. bitAmtTable is used by some of the compression methods,
 //        //but not the fastest ones.
 //        //flatBitTable is faster to access than bitTable.
@@ -296,7 +296,7 @@
 //                bitAmtTable[a] = (uint) ((1<<a)-1);
 //            }
 //            bitAmtTable[31]=0xffffffff;	//our formula won't work for #31 because 1<<31 would be too big to fit in 32 bits, though (1<<31 - 1) would just fit, so we just store that...
-			
+
 //            bitTable = new int[257,2];
 //            bitTable[0,0] = 0x2;
 //            bitTable[0,1] = 0x0;
@@ -812,13 +812,13 @@
 //            bitTable[255,1] = 0x62;
 //            bitTable[256,0] = 0x4;
 //            bitTable[256,1] = 0xd;
-			
+
 //            flatBitTable = new int [514];
 //            for (int a=0; a<257; a++) {
 //                flatBitTable[a<<1]=bitTable[a,0];
 //                flatBitTable[(a<<1)|1]=bitTable[a,1];
 //            }
-			
+
 //        }
 //    }
 //}

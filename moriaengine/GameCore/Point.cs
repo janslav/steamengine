@@ -46,17 +46,17 @@ namespace SteamEngine {
 		public readonly ushort y;
 
 		public static int GetSimpleDistance(ushort ax, ushort ay, ushort bx, ushort by) {
-			return Math.Max(Math.Abs(ax-bx), Math.Abs(ay-by));
+			return Math.Max(Math.Abs(ax - bx), Math.Abs(ay - by));
 		}
 
 		public static int GetSimpleDistance(Point2D a, Point2D b) {
-			return Math.Max(Math.Abs(a.x-b.x), Math.Abs(a.y-b.y));
+			return Math.Max(Math.Abs(a.x - b.x), Math.Abs(a.y - b.y));
 		}
 
 		public static int GetSimpleDistance(IPoint2D a, IPoint2D b) {
 			a = a.TopPoint;
 			b = b.TopPoint;
-			return Math.Max(Math.Abs(a.X-b.X), Math.Abs(a.Y-b.Y));
+			return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
 		}
 
 		public static Direction GetDirFromTo(IPoint2D start, IPoint2D target) {
@@ -64,8 +64,8 @@ namespace SteamEngine {
 			start = start.TopPoint;
 			target = target.TopPoint;
 
-			int dx = (start.X-target.X);
-			int dy = (start.Y-target.Y);
+			int dx = (start.X - target.X);
+			int dy = (start.Y - target.Y);
 
 			int ax = Math.Abs(dx);
 			int ay = Math.Abs(dy);
@@ -101,7 +101,7 @@ namespace SteamEngine {
 
 		[Common.Summary("Add the diff's X and Y to owns X and Y")]
 		public Point2D Add(int diffX, int diffY) {
-			return new Point2D((ushort)(x + diffX), (ushort)(y + diffY));
+			return new Point2D((ushort) (x + diffX), (ushort) (y + diffY));
 		}
 
 		public Point2D(ushort x, ushort y) {
@@ -140,10 +140,10 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return "("+x+","+y+")";
+			return "(" + x + "," + y + ")";
 		}
 
-		public static bool operator==(Point2D first, Point2D second) {
+		public static bool operator ==(Point2D first, Point2D second) {
 			if (object.ReferenceEquals(first, null)) {
 				if (object.ReferenceEquals(second, null)) {
 					return true;
@@ -167,12 +167,12 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public static bool operator!=(Point2D first, Point2D second) {
-			return !(first==second);
+		public static bool operator !=(Point2D first, Point2D second) {
+			return !(first == second);
 		}
 
 		public override int GetHashCode() {
-			return (37*17^x)^y;
+			return (37 * 17 ^ x) ^ y;
 		}
 
 		IPoint2D IPoint2D.TopPoint {
@@ -200,7 +200,7 @@ namespace SteamEngine {
 
 		[Common.Summary("Add the diff's X, Y and Z to owns X, Y and Z")]
 		public Point3D Add(int diffX, int diffY, int diffZ) {
-			return new Point3D((ushort)(x + diffX), (ushort)(y + diffY), (sbyte)(z + diffZ));
+			return new Point3D((ushort) (x + diffX), (ushort) (y + diffY), (sbyte) (z + diffZ));
 		}
 
 		public static bool Equals(Point3D a, Point3D b) {
@@ -218,10 +218,10 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return "("+x+","+y+","+z+")";
+			return "(" + x + "," + y + "," + z + ")";
 		}
 
-		public static bool operator==(Point3D first, Point3D second) {
+		public static bool operator ==(Point3D first, Point3D second) {
 			if (object.ReferenceEquals(first, null)) {
 				if (object.ReferenceEquals(second, null)) {
 					return true;
@@ -245,12 +245,12 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public static bool operator!=(Point3D first, Point3D second) {
-			return !(first==second);
+		public static bool operator !=(Point3D first, Point3D second) {
+			return !(first == second);
 		}
 
 		public override int GetHashCode() {
-			return ((37*17^x)^y)^z;
+			return ((37 * 17 ^ x) ^ y) ^ z;
 		}
 
 		IPoint3D IPoint3D.TopPoint {
@@ -295,16 +295,16 @@ namespace SteamEngine {
 		internal static void Parse(MutablePoint4D point, string value) {
 			Match m = Point4D.positionRE.Match(value);
 			if (m.Success) {
-				GroupCollection gc=m.Groups;
+				GroupCollection gc = m.Groups;
 				ushort thisx = TagMath.ParseUInt16(gc["x"].Value);
 				ushort thisy = TagMath.ParseUInt16(gc["y"].Value);
-				string zstr=gc["z"].Value;
-				string mstr=gc["m"].Value;
+				string zstr = gc["z"].Value;
+				string mstr = gc["m"].Value;
 				sbyte thisz;
 				byte thism;
-				if (zstr.Length>0) {
+				if (zstr.Length > 0) {
 					thisz = TagMath.ParseSByte(zstr);
-					if (mstr.Length>0) {
+					if (mstr.Length > 0) {
 						thism = TagMath.ParseByte(mstr);
 					} else {
 						thism = 0;
@@ -316,7 +316,7 @@ namespace SteamEngine {
 
 				point.SetP(thisx, thisy, thisz, thism);
 			} else {
-				throw new SEException("Invalid input string for Point4D parse: '"+value+"'");
+				throw new SEException("Invalid input string for Point4D parse: '" + value + "'");
 			}
 		}
 
@@ -386,16 +386,16 @@ namespace SteamEngine {
 		public static Point4D Parse(string value) {
 			Match m = positionRE.Match(value);
 			if (m.Success) {
-				GroupCollection gc=m.Groups;
+				GroupCollection gc = m.Groups;
 				ushort thisx = TagMath.ParseUInt16(gc["x"].Value);
 				ushort thisy = TagMath.ParseUInt16(gc["y"].Value);
-				string zstr=gc["z"].Value;
-				string mstr=gc["m"].Value;
+				string zstr = gc["z"].Value;
+				string mstr = gc["m"].Value;
 				sbyte thisz;
 				byte thism;
-				if (zstr.Length>0) {
+				if (zstr.Length > 0) {
 					thisz = TagMath.ParseSByte(zstr);
-					if (mstr.Length>0) {
+					if (mstr.Length > 0) {
 						thism = TagMath.ParseByte(mstr);
 					} else {
 						thism = 0;
@@ -406,22 +406,22 @@ namespace SteamEngine {
 				}
 				return new Point4D(thisx, thisy, thisz, thism);
 			} else {
-				throw new SEException("Invalid input string for Point4D parse: '"+value+"'");
+				throw new SEException("Invalid input string for Point4D parse: '" + value + "'");
 			}
 		}
 
 		internal static Regex positionRE = new Regex(@"\s*(?<x>\d+)\s*(,|\s)\s*(?<y>\d+)\s*((,|\s)\s*(?<z>-?\d+))?\s*((,|\s)\s*(?<m>\d+))?\s*",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public override string ToString() {
-			return "("+x+","+y+","+z+","+m+")";
+			return "(" + x + "," + y + "," + z + "," + m + ")";
 		}
 
 		public string ToNormalString() {
 			return x + "," + y + "," + z + "," + m;
 		}
 
-		public static bool operator==(Point4D first, Point4D second) {
+		public static bool operator ==(Point4D first, Point4D second) {
 			if (object.ReferenceEquals(first, null)) {
 				if (object.ReferenceEquals(second, null)) {
 					return true;
@@ -430,7 +430,7 @@ namespace SteamEngine {
 			} else if (object.ReferenceEquals(second, null)) {
 				return false;
 			}
-			return ((first.x == second.x) && (first.y == second.y)&& (first.z == second.z) && (first.m == second.m));
+			return ((first.x == second.x) && (first.y == second.y) && (first.z == second.z) && (first.m == second.m));
 		}
 
 		public override bool Equals(object o) {
@@ -445,12 +445,12 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public static bool operator!=(Point4D first, Point4D second) {
-			return !(first==second);
+		public static bool operator !=(Point4D first, Point4D second) {
+			return !(first == second);
 		}
 
 		public override int GetHashCode() {
-			return (((37*17^x)^y)^z)^m;
+			return (((37 * 17 ^ x) ^ y) ^ z) ^ m;
 		}
 
 		public Map GetMap() {

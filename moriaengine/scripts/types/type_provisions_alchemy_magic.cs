@@ -21,22 +21,22 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_scroll_blank : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_mortar : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_spellbook : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_potion_empty : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_rune : CompiledTriggerGroup {
-		
+
 	}
 }

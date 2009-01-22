@@ -83,11 +83,14 @@ namespace SteamEngine {
 
 		#endregion DeepCopy implementation
 
-		public virtual string Name { get {
-			return "<nameless TagHolder>";
-		} set {
-		
-		} }
+		public virtual string Name {
+			get {
+				return "<nameless TagHolder>";
+			}
+			set {
+
+			}
+		}
 
 		#region Timers
 		//called by Timer after load, do not use otherwise.
@@ -134,9 +137,9 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		public void DeleteTimers() {
-			if (tags==null) {
+			if (tags == null) {
 				return;
 			}
 			List<TimerKey> toBeRemoved = new List<TimerKey>();
@@ -146,13 +149,13 @@ namespace SteamEngine {
 					toBeRemoved.Add(key);
 				}
 			}
-			
+
 			foreach (TimerKey key in toBeRemoved) {
 				RemoveTimer(key).Delete();
 			}
 			ReleaseTagsTableIfEmpty();
 		}
-		
+
 		public bool HasTimer(TimerKey key) {
 			if (tags != null) {
 				return (tags.ContainsKey(key));
@@ -172,7 +175,7 @@ namespace SteamEngine {
 		}
 
 		[Summary("Return enumerable containing all timers")]
-		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {			
+		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
 					TimerKey tk = entry.Key as TimerKey;
@@ -180,7 +183,7 @@ namespace SteamEngine {
 						yield return new KeyValuePair<TimerKey, BoundTimer>(tk, (BoundTimer) entry.Value);
 					}
 				}
-			}			
+			}
 		}
 		#endregion Timers
 
@@ -194,7 +197,7 @@ namespace SteamEngine {
 						yield return new KeyValuePair<TagKey, Object>(tk, entry.Value);
 					}
 				}
-			}			
+			}
 		}
 
 		internal void EnsureTagsTable() {
@@ -214,9 +217,9 @@ namespace SteamEngine {
 		public void SetTag(TagKey tk, object value) {
 			EnsureTagsTable();
 			//Console.WriteLine("TagKey["+tk+"]="+value);
-			tags[tk]=value;
+			tags[tk] = value;
 		}
-		
+
 		public object GetTag(TagKey td) {
 			if (tags == null) {
 				return null;
@@ -225,19 +228,19 @@ namespace SteamEngine {
 		}
 
 		public bool HasTag(TagKey td) {
-			if (tags==null) {
+			if (tags == null) {
 				return false;
 			}
 			return (tags.ContainsKey(td));
 		}
-		
+
 		public void RemoveTag(TagKey td) {
-			if (tags==null) return;
+			if (tags == null) return;
 			tags.Remove(td);
 		}
-		
+
 		public void ClearTags() {
-			if (tags==null) {
+			if (tags == null) {
 				return;
 			}
 			List<TagKey> toBeRemoved = new List<TagKey>();
@@ -252,7 +255,7 @@ namespace SteamEngine {
 			}
 			ReleaseTagsTableIfEmpty();
 		}
-		
+
 		public string ListTags() {
 			int tagcount = 0;
 			StringBuilder sb = null;
@@ -260,7 +263,7 @@ namespace SteamEngine {
 				sb = new StringBuilder("Tags of the object '").Append(this).Append("' :").Append(Environment.NewLine);
 				foreach (DictionaryEntry entry in tags) {
 					if (entry.Key is TagKey) {
-						sb.Append(entry.Key ).Append(" = ").Append(entry.Value).Append(Environment.NewLine);
+						sb.Append(entry.Key).Append(" = ").Append(entry.Value).Append(Environment.NewLine);
 						tagcount++;
 					}
 				}
@@ -269,7 +272,7 @@ namespace SteamEngine {
 			if (tagcount > 0) {
 				return sb.ToString();
 			} else {
-				return "Object '"+this+"' has no tags";
+				return "Object '" + this + "' has no tags";
 			}
 		}
 		#endregion Tags
@@ -280,17 +283,17 @@ namespace SteamEngine {
 		}
 
 		private static string ListProperties(Type type, string name) {
-			PropertyInfo[] props=type.GetProperties(BindingFlags.Public|BindingFlags.Instance);
-			StringBuilder propNames=new StringBuilder("(");
+			PropertyInfo[] props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			StringBuilder propNames = new StringBuilder("(");
 			foreach (PropertyInfo propertyInfo in props) {
-				if (name==null || String.Compare(propertyInfo.Name, name, true)==0) {
-					if (propNames.Length>1) {
+				if (name == null || String.Compare(propertyInfo.Name, name, true) == 0) {
+					if (propNames.Length > 1) {
 						propNames.Append(", ");
 					}
 					propNames.Append(propertyInfo.Name);
 				}
 			}
-			if (propNames.Length==1) {
+			if (propNames.Length == 1) {
 				propNames.Append("[Sorry, no properties found])");
 			} else {
 				propNames.Append(")");
@@ -303,27 +306,27 @@ namespace SteamEngine {
 		}
 
 		private static string ListMethods(Type type, string name) {
-			MethodInfo[] meths=type.GetMethods(BindingFlags.Public|BindingFlags.Instance);
-			StringBuilder methNames=new StringBuilder("(");
+			MethodInfo[] meths = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+			StringBuilder methNames = new StringBuilder("(");
 			foreach (MethodInfo methodInfo in meths) {
-				if (name==null || String.Compare(methodInfo.Name, name, true)==0) {
-					if (methNames.Length>1) {
+				if (name == null || String.Compare(methodInfo.Name, name, true) == 0) {
+					if (methNames.Length > 1) {
 						methNames.Append(", ");
 					}
 					methNames.Append(methodInfo.Name);
 				}
 			}
-			if (methNames.Length==1) {
+			if (methNames.Length == 1) {
 				methNames.Append("[Sorry, no methods found])");
 			} else {
 				methNames.Append(")");
 			}
 			return methNames.ToString();
 		}
-		
+
 		public void Help() {
-			Globals.Src.WriteLine("Properties: "+ListProperties(GetType()));
-			Globals.Src.WriteLine("Methods: "+ListMethods(GetType()));
+			Globals.Src.WriteLine("Properties: " + ListProperties(GetType()));
+			Globals.Src.WriteLine("Methods: " + ListMethods(GetType()));
 		}
 		#endregion HELP
 
@@ -344,10 +347,10 @@ namespace SteamEngine {
 								continue;//we don't save deleted values
 							}
 						}
-						output.WriteValue("tag."+key, value);
+						output.WriteValue("tag." + key, value);
 					} else if (key is TimerKey) {
-						output.WriteValue("%"+key.ToString(), value);
-					//} else {
+						output.WriteValue("%" + key.ToString(), value);
+						//} else {
 						//Logger.WriteError(string.Format("This should not happen. Unknown key-value pair: {0} - {1}", key, value));
 					}
 				}
@@ -359,8 +362,8 @@ namespace SteamEngine {
 
 		//regular expressions for textual loading
 		//tag.name
-		internal static Regex tagRE= new Regex(@"tag\.(?<name>\w+)\s*",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		internal static Regex tagRE = new Regex(@"tag\.(?<name>\w+)\s*",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -379,9 +382,9 @@ namespace SteamEngine {
 				ObjectSaver.Load(valueString, DelayedLoad_Timer, filename, line, tk);
 				return;
 			}
-			throw new ScriptException("Invalid data '"+LogStr.Ident(valueName)+"' = '"+LogStr.Number(valueString)+"'.");
+			throw new ScriptException("Invalid data '" + LogStr.Ident(valueName) + "' = '" + LogStr.Number(valueString) + "'.");
 		}
-		
+
 		//used by loaders (Thing, GameAccount...)
 		internal void LoadSectionLines(PropsSection ps) {
 			foreach (PropsLine p in ps.props.Values) {
@@ -390,11 +393,11 @@ namespace SteamEngine {
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
-					Logger.WriteWarning(ps.filename,p.line,ex);
+					Logger.WriteWarning(ps.filename, p.line, ex);
 				}
 			}
 		}
-		
+
 		private void DelayedLoad_Tag(object resolvedObject, string filename, int line, object tagKey) {
 			//throw new Exception("LoadTag_Delayed");
 			SetTag((TagKey) tagKey, resolvedObject);
@@ -417,7 +420,7 @@ namespace SteamEngine {
 				try {
 					this.Delete();
 				} catch { }
-				throw new Exception("This object is in Limbo state ("+this+"). This should not happen.");
+				throw new Exception("This object is in Limbo state (" + this + "). This should not happen.");
 			}
 		}
 

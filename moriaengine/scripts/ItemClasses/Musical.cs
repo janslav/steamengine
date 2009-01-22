@@ -30,18 +30,20 @@ namespace SteamEngine.CompiledScripts {
 			Character clicker = ac as Character;
 			clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Musicianship, this));//select Musicianship
 		}
-		
+
 		public void SuccessSnd() {
 			this.Sound(this.TypeDef.SuccessSound);
 		}
-		
+
 		public void FailureSnd() {
 			this.Sound(this.TypeDef.FailureSound);
 		}
 
-		public override bool IsMusicalInstrument { get {
-			return true;
-		} }
+		public override bool IsMusicalInstrument {
+			get {
+				return true;
+			}
+		}
 	}
 }
 

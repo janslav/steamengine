@@ -31,22 +31,22 @@ namespace SteamEngine {
 		//Thing.Load
 		//ThingDef.LoadDefsSection
 		//Globals.LoadGlobals
-		
+
 		//regular expressions for stream loading
 		//[type name]//comment
-		public static Regex headerRE= new Regex(@"^\[\s*(?<type>.*?)(\s+(?<name>.*?))?\s*\]\s*(//(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		public static Regex headerRE = new Regex(@"^\[\s*(?<type>.*?)(\s+(?<name>.*?))?\s*\]\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		//name=value //comment
-		public static Regex valueRE= new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		public static Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		//"triggerkey=@triggername//comment"
 		//"triggerkey @triggername//comment"
 		//triggerkey can be "ON", "ONTRIGGER", "ONBUTTON", or ""
-		internal static Regex triggerRE= new Regex(@"^\s*(?<triggerkey>(on|ontrigger|onbutton))((\s*=\s*)|(\s+))@?\s*(?<triggername>\w*)\s*(//(?<comment>.*))?(?<ignored>.*)$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-			
+		internal static Regex triggerRE = new Regex(@"^\s*(?<triggerkey>(on|ontrigger|onbutton))((\s*=\s*)|(\s+))@?\s*(?<triggername>\w*)\s*(//(?<comment>.*))?(?<ignored>.*)$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
 		//private static int line;
-		
+
 		//private static void Warning(string s) {
 		//	Logger.WriteWarning(WorldSaver.CurrentFile,line,s);
 		//}
@@ -54,79 +54,79 @@ namespace SteamEngine {
 		//private static void Error(string s) {
 		//	Logger.WriteError(WorldSaver.CurrentFile,line,s);
 		//}
-		
+
 		public static IEnumerable<PropsSection> Load(string filename, TextReader stream, CanStartAsScript isScript) {
 			int line = 0;
-			PropsSection curSection=null;
-			TriggerSection curTrigger=null; //these are also added to curSection...
+			PropsSection curSection = null;
+			TriggerSection curTrigger = null; //these are also added to curSection...
 
 			while (true) {
 				string curLine = stream.ReadLine();
 				line++;
-				if (curLine!=null) {
+				if (curLine != null) {
 					curLine = curLine.Trim();
-					if ((curLine.Length==0)||(curLine.StartsWith("//"))) {
+					if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
 						//it is a comment or a blank line
-						if (curTrigger!=null) {
+						if (curTrigger != null) {
 							//in script compiler do also blank lines count, so we can`t ignore them.
 							curTrigger.AddLine(curLine);
 						}//else the comment gets lost... :\
 						continue;
 					}
-					Match m= headerRE.Match(curLine);
+					Match m = headerRE.Match(curLine);
 					if (m.Success) {
-						if (curSection!=null) {//send the last section
+						if (curSection != null) {//send the last section
 							yield return curSection;
 						}
 						GroupCollection gc = m.Groups;
-						curSection=new PropsSection(filename, gc["type"].Value, gc["name"].Value, line, gc["comment"].Value);
+						curSection = new PropsSection(filename, gc["type"].Value, gc["name"].Value, line, gc["comment"].Value);
 						if (isScript(curSection.headerType)) {
 							//if it is something like [function xxx]
-							curTrigger=new TriggerSection(filename, line, curSection.headerType, curSection.headerName, gc["comment"].Value);
+							curTrigger = new TriggerSection(filename, line, curSection.headerType, curSection.headerName, gc["comment"].Value);
 							curSection.AddTrigger(curTrigger);
 						} else {
-							curTrigger=null;
+							curTrigger = null;
 						}
 						continue;
 					}
-					m= triggerRE.Match(curLine);
+					m = triggerRE.Match(curLine);
 					//on=@blah
 					if (m.Success) {
 						//create a new triggersection
 						GroupCollection gc = m.Groups;
-						curTrigger=new TriggerSection(filename, line, gc["triggerkey"].Value, gc["triggername"].Value, gc["comment"].Value);
-						if (curSection==null) {
+						curTrigger = new TriggerSection(filename, line, gc["triggerkey"].Value, gc["triggername"].Value, gc["comment"].Value);
+						if (curSection == null) {
 							//a trigger section without real section?
-							Logger.WriteWarning(filename,line,"No section for this trigger section...?");
+							Logger.WriteWarning(filename, line, "No section for this trigger section...?");
 						} else {
-							curSection.AddTrigger(curTrigger);                            
+							curSection.AddTrigger(curTrigger);
 						}
 						continue;
 					}
-					if (curTrigger!=null) {
-						if (curSection!=null) {
+					if (curTrigger != null) {
+						if (curSection != null) {
 							curTrigger.AddLine(curLine);
 						} else {
 							//this shouldnt be, a trigger without section...?
-							Logger.WriteWarning(filename,line,"Skipping line '"+curLine+"'.");
+							Logger.WriteWarning(filename, line, "Skipping line '" + curLine + "'.");
 						}
 						continue;
 					}
-					m= valueRE.Match(curLine);
+					m = valueRE.Match(curLine);
 					if (m.Success) {
-						if (curSection!=null) {
+						if (curSection != null) {
 							GroupCollection gc = m.Groups;
 							curSection.AddPropsLine(gc["name"].Value, gc["value"].Value, line, gc["comment"].Value);
 						} else {
 							//this shouldnt be, a property without header...?
-							Logger.WriteWarning(filename,line,"No section for this value. Skipping line '"+curLine+"'.");
+							Logger.WriteWarning(filename, line, "No section for this value. Skipping line '" + curLine + "'.");
 						}
 						continue;
 					}
-					Logger.WriteError(filename,line,"Unrecognizable data '"+curLine+"'.");
+					Logger.WriteError(filename, line, "Unrecognizable data '" + curLine + "'.");
 				} else {
 					//end of file
-					if (curSection!=null) {
+					if (curSection != null) {
 						yield return curSection;
 					}
 					break;
@@ -134,7 +134,7 @@ namespace SteamEngine {
 			} //end of (while (true)) - for each line of the file
 		}
 	}
-	
+
 	public class PropsSection {
 		public readonly string headerComment;
 		public readonly string headerType;
@@ -143,17 +143,17 @@ namespace SteamEngine {
 		public readonly string filename;
 		internal Dictionary<string, PropsLine> props;//table of PropsLines
 		private List<TriggerSection> triggerSections;//list of TriggerSections
-		
+
 		internal PropsSection(string filename, string type, string name, int line, string comment) {
 			this.filename = filename;
-			this.headerType=type;
-			this.headerName=name;
-			this.headerLine=line;
-			this.headerComment=comment;
-			this.props = new Dictionary<string,PropsLine>(StringComparer.OrdinalIgnoreCase);
+			this.headerType = type;
+			this.headerName = name;
+			this.headerLine = line;
+			this.headerComment = comment;
+			this.props = new Dictionary<string, PropsLine>(StringComparer.OrdinalIgnoreCase);
 			this.triggerSections = new List<TriggerSection>();
 		}
-		
+
 		public TriggerSection GetTrigger(int index) {
 			return triggerSections[index];
 		}
@@ -170,7 +170,7 @@ namespace SteamEngine {
 		public TriggerSection PopTrigger(string name) {
 			int i = 0, n = triggerSections.Count;
 			TriggerSection s = null;
-			for (; i<n; i++ ) {
+			for (; i < n; i++) {
 				s = triggerSections[i];
 				if (string.Compare(name, s.triggerName, true) == 0) {
 					n = -1;
@@ -183,27 +183,29 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-		
-		public int TriggerCount { get {
-			return triggerSections.Count;
-		} }
-		
+
+		public int TriggerCount {
+			get {
+				return triggerSections.Count;
+			}
+		}
+
 		internal void AddTrigger(TriggerSection value) {
 			triggerSections.Add(value);
 		}
-		
+
 		internal void AddPropsLine(string name, string value, int line, string comment) {
-			PropsLine p=new PropsLine(name, value, line, comment);
+			PropsLine p = new PropsLine(name, value, line, comment);
 			string origKey = name;
 			string key = origKey;
-			for (int a=0;props.ContainsKey(key);a++) {
-				key=origKey+a.ToString();
+			for (int a = 0; props.ContainsKey(key); a++) {
+				key = origKey + a.ToString();
 				//duplicite properties get a counted name
 				//like if there is more "events=..." lines, they are in the hashtable with keys
 				//events, events0, events1, etc. 
 				//these entries wont be probably looked up by their name anyways.
 			}
-			props[key]=p;
+			props[key] = p;
 		}
 
 		public PropsLine TryPopPropsLine(string name) {
@@ -212,13 +214,13 @@ namespace SteamEngine {
 			props.Remove(name);
 			return line;
 		}
-		
+
 		public PropsLine PopPropsLine(string name) {
 			PropsLine line;
 			props.TryGetValue(name, out line);
 			props.Remove(name);
 			if (line == null) {
-				throw new SEException(LogStr.FileLine(this.filename, this.headerLine)+"There is no '"+name+"' line!");
+				throw new SEException(LogStr.FileLine(this.filename, this.headerLine) + "There is no '" + name + "' line!");
 			}
 			return line;
 		}
@@ -226,12 +228,12 @@ namespace SteamEngine {
 		public ICollection<PropsLine> GetPropsLines() {
 			return props.Values;
 		}
-		
+
 		public override string ToString() {
-			return string.Format("[{0} {1}]", headerType, headerName);	
+			return string.Format("[{0} {1}]", headerType, headerName);
 		}
 	}
-	
+
 	public class TriggerSection {
 		public readonly string triggerComment;
 		public readonly string triggerKey;	//"on", "ontrigger", "onbutton", or just ""
@@ -239,29 +241,29 @@ namespace SteamEngine {
 		public readonly int startline;
 		public readonly string filename;
 		public StringBuilder code;	//code
-		
+
 		internal TriggerSection(string filename, int startline, string key, string name, string comment) {
-			this.filename=filename;
-			this.triggerKey=key;
-			this.triggerName=name;
+			this.filename = filename;
+			this.triggerKey = key;
+			this.triggerName = name;
 			this.startline = startline;
 			this.code = new StringBuilder();
 			this.triggerComment = comment;
 		}
-		
+
 		internal void AddLine(string data) {
 			code.Append(data).Append(Environment.NewLine);
 		}
-		
-//		internal void AddLine() {
-//			code.Append(Environment.NewLine);
-//		}
-		
+
+		//		internal void AddLine() {
+		//			code.Append(Environment.NewLine);
+		//		}
+
 		public override string ToString() {
 			return string.Concat(triggerKey, "=@", triggerName);
 		}
 	}
-	
+
 	public class PropsLine {
 		public readonly string comment;
 		public readonly string name;
@@ -274,9 +276,9 @@ namespace SteamEngine {
 			this.line = line;
 			this.comment = comment;
 		}
-	
+
 		public override string ToString() {
-			return name+" = "+value;	
+			return name + " = " + value;
 		}
 	}
 }

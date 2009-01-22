@@ -28,13 +28,13 @@ namespace SteamEngine.CompiledScripts {
 		private List<IResourceListItemMultiplicable> multiplicablesSubList = new List<IResourceListItemMultiplicable>();
 		//sublist of other resources used usually only for "is present" check
 		private List<IResourceListItemNonMultiplicable> nonMultiplicablesSubList = new List<IResourceListItemNonMultiplicable>();
-			
+
 		[Summary("Add new ResourceListItem to the list")]
-		internal void Add(IResourceListItem newItem) {			
+		internal void Add(IResourceListItem newItem) {
 			if (!Contains(newItem)) {//check if the new resource is not present in the list					
 				resourceItemsList.Add(newItem);
 				//put the new item also to the special sublist
-				if(newItem is IResourceListItemMultiplicable) {
+				if (newItem is IResourceListItemMultiplicable) {
 					multiplicablesSubList.Add((IResourceListItemMultiplicable) newItem);
 				} else if (newItem is IResourceListItemNonMultiplicable) {
 					//this wil be the rest of resources for now, 
@@ -44,14 +44,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Take a look to the previously added items if any of them is not of the same definition, "+
+		[Summary("Take a look to the previously added items if any of them is not of the same definition, " +
 				 " if yes add just the number value to the found item")]
 		private bool Contains(IResourceListItem newItem) {
 			//there won't be many items in the list hence repeated iterating is not such a big deal
 			foreach (IResourceListItem item in resourceItemsList) {
 				if (item.IsSameResource(newItem)) {
 					item.DesiredCount += newItem.DesiredCount; //just add the number
-					LogStr.Warning("Resource list contains duplicity ("+newItem.Definition+")");
+					LogStr.Warning("Resource list contains duplicity (" + newItem.Definition + ")");
 					return true;
 				}
 			}
@@ -64,13 +64,13 @@ namespace SteamEngine.CompiledScripts {
 			if (!CheckNonMultiplicableItems(chr)) {
 				return false;
 			}
-			
+
 			//list of resource counters corresponding to the list of "multiplicable" resources
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
 				//dispose counters
-				Disposable.DisposeAll(resourceCounters);			
+				Disposable.DisposeAll(resourceCounters);
 				return false;
 			}
 
@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
 				//dispose counters before exit
-				Disposable.DisposeAll(resourceCounters);			
+				Disposable.DisposeAll(resourceCounters);
 				return false;
 			}
 			//if we are here then there is for every ResourceCounter the multiplicity at least 1 (which is enough for us)
@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		[Summary("Consume the whole resource list from the character as many times as possible, return information "+
+		[Summary("Consume the whole resource list from the character as many times as possible, return information " +
 				"about how many times it has been consumed")]
 		public int ConsumeResources(Character chr, ResourcesLocality where) {
 			if (!CheckNonMultiplicableItems(chr)) {
@@ -111,10 +111,10 @@ namespace SteamEngine.CompiledScripts {
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
 				//dispose counters
-				Disposable.DisposeAll(resourceCounters);			
+				Disposable.DisposeAll(resourceCounters);
 				return 0;
 			}
-			int availableOnly = ResListAvailableTimes(resourceCounters);			
+			int availableOnly = ResListAvailableTimes(resourceCounters);
 			foreach (ResourceCounter ctr in resourceCounters) {
 				ctr.ConsumeItems(availableOnly);
 			}
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 			return availableOnly;
 		}
 
-		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]		
+		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
 		public List<IResourceListItemMultiplicable> MultiplicablesSublist {
 			get {
 				return multiplicablesSubList;
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 				return nonMultiplicablesSubList;
 			}
 		}
-		
+
 		//look to the resource counters and find out how many times we can consume the resource list
 		private int ResListAvailableTimes(List<ResourceCounter> resourceCounters) {
 			int leastMultiplicity = int.MaxValue;
@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 				retList.Add(rli.GetCounter());
 			}
 			return retList;
-		}		
+		}
 
 		private bool CheckNonMultiplicableItems(Character chr) {
 			foreach (IResourceListItemNonMultiplicable rli in nonMultiplicablesSubList) {
@@ -193,23 +193,23 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Check if the 'newOne' is the same resource as the actual one.")]
-		bool IsSameResource(IResourceListItem newOne);		
+		bool IsSameResource(IResourceListItem newOne);
 	}
 
-	[Summary("Interface for resource list items that cannot be multiplicated (e.g. Ability - if the resourcelist "+
-			"demands 5 a_warcry then it makes no sense using the reslist repeatedly and demad 10 a_warcry (unlike e.g. i_apple)")]	
+	[Summary("Interface for resource list items that cannot be multiplicated (e.g. Ability - if the resourcelist " +
+			"demands 5 a_warcry then it makes no sense using the reslist repeatedly and demad 10 a_warcry (unlike e.g. i_apple)")]
 	public interface IResourceListItemNonMultiplicable : IResourceListItem {
 		[Summary("Does the character have this particular resource? (in desired amount). Check only the presence " +
 				"do not consume or anything else...")]
 		bool IsResourcePresent(Character chr);
 	}
 
-	[Summary("Interface for single resource stored in resource lists. These items can be multiplicable - "+
-			"e.g. itemdefs, allowing us to say 'how many times the resourcelist has been found at the char's"+
+	[Summary("Interface for single resource stored in resource lists. These items can be multiplicable - " +
+			"e.g. itemdefs, allowing us to say 'how many times the resourcelist has been found at the char's" +
 			"(usable for crafting more than 1 item at a time e.t.c)")]
 	public interface IResourceListItemMultiplicable : IResourceListItem {
-		[Summary("Return the resource counter object for this resource, we are using the Object Pool pattern "+
+		[Summary("Return the resource counter object for this resource, we are using the Object Pool pattern " +
 			" for acquiring and storing desired instances")]
 		ResourceCounter GetCounter();
-	}		
+	}
 }

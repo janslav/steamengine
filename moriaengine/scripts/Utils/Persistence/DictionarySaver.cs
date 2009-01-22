@@ -41,12 +41,12 @@ namespace SteamEngine.CompiledScripts {
 			int count = dict.Count;
 			writer.WriteValue("count", count);
 			Type[] genericArguments = objToSave.GetType().GetGenericArguments();
-			writer.WriteLine("TKey="+GenericListSaver.GetTypeName(genericArguments[0]));
-			writer.WriteLine("TValue="+GenericListSaver.GetTypeName(genericArguments[1]));
+			writer.WriteLine("TKey=" + GenericListSaver.GetTypeName(genericArguments[0]));
+			writer.WriteLine("TValue=" + GenericListSaver.GetTypeName(genericArguments[1]));
 			int i = 0;
 			foreach (DictionaryEntry entry in dict) {
-				writer.WriteValue(i+".K", entry.Key);
-				writer.WriteValue(i+".V", entry.Value);
+				writer.WriteValue(i + ".K", entry.Key);
+				writer.WriteValue(i + ".V", entry.Value);
 				i++;
 			}
 		}
@@ -67,9 +67,9 @@ namespace SteamEngine.CompiledScripts {
 				PropsLine countLine = input.PopPropsLine("count");
 				currentLineNumber = countLine.line;
 				int count = int.Parse(countLine.value);
-				for (int i = 0; i<count; i++) {
-					PropsLine keyLine = input.PopPropsLine(i+".K");
-					PropsLine valueLine = input.PopPropsLine(i+".V");
+				for (int i = 0; i < count; i++) {
+					PropsLine keyLine = input.PopPropsLine(i + ".K");
+					PropsLine valueLine = input.PopPropsLine(i + ".V");
 					DictionaryLoadHelper helper = new DictionaryLoadHelper(dict, genericTypes[0], genericTypes[1]);
 					currentLineNumber = keyLine.line;
 					ObjectSaver.Load(keyLine.value, new LoadObject(helper.DelayedLoad_Key), input.filename, keyLine.line);

@@ -21,14 +21,14 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_bedroll : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_bed : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_table : CompiledTriggerGroup {
-		
+
 	}
 }

@@ -37,286 +37,286 @@ using System.Text;
 
 namespace PerCederberg.Grammatica.Parser {
 
-    /**
-     * A parse exception.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  1.1
-     */
-    public class ParseException : Exception {
+	/**
+	 * A parse exception.
+	 *
+	 * @author   Per Cederberg, <per at percederberg dot net>
+	 * @version  1.1
+	 */
+	public class ParseException : Exception {
 
-        /**
-         * The error type enumeration.
-         */
-        public enum ErrorType {
+		/**
+		 * The error type enumeration.
+		 */
+		public enum ErrorType {
 
-            /*
-             * The internal error type is only used to signal an error
-             * that is a result of a bug in the parser or tokenizer
-             * code.
-             */
-            INTERNAL, 
+			/*
+			 * The internal error type is only used to signal an error
+			 * that is a result of a bug in the parser or tokenizer
+			 * code.
+			 */
+			INTERNAL,
 
-            /*
-             * The I/O error type is used for stream I/O errors. 
-             */
-            IO,
-    
-            /*
-             * The unexpected end of file error type is used when end
-             * of file is encountered instead of a valid token.
-             */
-            UNEXPECTED_EOF,
+			/*
+			 * The I/O error type is used for stream I/O errors. 
+			 */
+			IO,
 
-            /*
-             * The unexpected character error type is used when a
-             * character is read that isn't handled by one of the
-             * token patterns.
-             */
-            UNEXPECTED_CHAR,
+			/*
+			 * The unexpected end of file error type is used when end
+			 * of file is encountered instead of a valid token.
+			 */
+			UNEXPECTED_EOF,
 
-            /*
-             * The unexpected token error type is used when another
-             * token than the expected one is encountered.
-             */
-            UNEXPECTED_TOKEN,
-    
-            /*
-             * The invalid token error type is used when a token
-             * pattern with an error message is matched. The
-             * additional information provided should contain the
-             * error message.
-             */
-            INVALID_TOKEN,
+			/*
+			 * The unexpected character error type is used when a
+			 * character is read that isn't handled by one of the
+			 * token patterns.
+			 */
+			UNEXPECTED_CHAR,
 
-            /*
-             * The analysis error type is used when an error is
-             * encountered in the analysis. The additional information
-             * provided should contain the error message.
-             */
-            ANALYSIS
-        }
+			/*
+			 * The unexpected token error type is used when another
+			 * token than the expected one is encountered.
+			 */
+			UNEXPECTED_TOKEN,
 
-        /**
-         * The error type.
-         */
-        private ErrorType type;
-    
-        /**
-         * The additional information string.
-         */
-        private string info;
+			/*
+			 * The invalid token error type is used when a token
+			 * pattern with an error message is matched. The
+			 * additional information provided should contain the
+			 * error message.
+			 */
+			INVALID_TOKEN,
 
-        /**
-         * The additional details information. This variable is only
-         * used for unexpected token errors.
-         */
-        private ArrayList details;
+			/*
+			 * The analysis error type is used when an error is
+			 * encountered in the analysis. The additional information
+			 * provided should contain the error message.
+			 */
+			ANALYSIS
+		}
 
-        /**
-         * The line number.
-         */
-        private int line;
-    
-        /**
-         * The column number.
-         */
-        private int column;
+		/**
+		 * The error type.
+		 */
+		private ErrorType type;
 
-        /**
-         * Creates a new parse exception.
-         * 
-         * @param type           the parse error type
-         * @param info           the additional information
-         * @param line           the line number, or -1 for unknown
-         * @param column         the column number, or -1 for unknown
-         */
-        public ParseException(ErrorType type, 
-                              string info, 
-                              int line, 
-                              int column) 
-            : this(type, info, null, line, column) {
-        }
+		/**
+		 * The additional information string.
+		 */
+		private string info;
 
-        /**
-         * Creates a new parse exception. This constructor is only
-         * used to supply the detailed information array, which is
-         * only used for expected token errors. The list then contains
-         * descriptions of the expected tokens.
-         * 
-         * @param type           the parse error type
-         * @param info           the additional information
-         * @param details        the additional detailed information
-         * @param line           the line number, or -1 for unknown
-         * @param column         the column number, or -1 for unknown
-         */
-        public ParseException(ErrorType type, 
-                              string info,
-                              ArrayList details,
-                              int line, 
-                              int column) {
+		/**
+		 * The additional details information. This variable is only
+		 * used for unexpected token errors.
+		 */
+		private ArrayList details;
 
-            this.type = type;
-            this.info = info;
-            this.details = details;
-            this.line = line;
-            this.column = column;
-        }
+		/**
+		 * The line number.
+		 */
+		private int line;
 
-        /**
-         * The message property. This property contains the detailed
-         * exception error message.
-         */
-        public override string Message {
-            get{
-                return GetMessage(); 
-            }   
-        }
+		/**
+		 * The column number.
+		 */
+		private int column;
 
-        /**
-         * Returns the error type. 
-         * 
-         * @return the error type
-         */
-        public ErrorType GetErrorType() {
-            return type;
-        }
+		/**
+		 * Creates a new parse exception.
+		 * 
+		 * @param type           the parse error type
+		 * @param info           the additional information
+		 * @param line           the line number, or -1 for unknown
+		 * @param column         the column number, or -1 for unknown
+		 */
+		public ParseException(ErrorType type,
+							  string info,
+							  int line,
+							  int column)
+			: this(type, info, null, line, column) {
+		}
 
-        /**
-         * Returns the additional error information.
-         * 
-         * @return the additional error information
-         */
-        public string GetInfo() {
-            return info;
-        }
+		/**
+		 * Creates a new parse exception. This constructor is only
+		 * used to supply the detailed information array, which is
+		 * only used for expected token errors. The list then contains
+		 * descriptions of the expected tokens.
+		 * 
+		 * @param type           the parse error type
+		 * @param info           the additional information
+		 * @param details        the additional detailed information
+		 * @param line           the line number, or -1 for unknown
+		 * @param column         the column number, or -1 for unknown
+		 */
+		public ParseException(ErrorType type,
+							  string info,
+							  ArrayList details,
+							  int line,
+							  int column) {
 
-        /**
-         * Returns the additional detailed error information. 
-         * 
-         * @return the additional detailed error information
-         */
-        public ArrayList GetDetails() {
-            return new ArrayList(details);
-        }
+			this.type = type;
+			this.info = info;
+			this.details = details;
+			this.line = line;
+			this.column = column;
+		}
 
-        /**
-         * Returns the line number where the error occured.
-         * 
-         * @return the line number of the error, or 
-         *         -1 if unknown
-         */
-        public int GetLine() {
-            return line;
-        }
-    
-        /**
-         * Returns the column number where the error occured.
-         * 
-         * @return the column number of the error, or 
-         *         -1 if unknown
-         */
-        public int GetColumn() {
-            return column;
-        }
-    
-        /**
-         * Returns a default error message.
-         * 
-         * @return a default error message
-         */
-        public string GetMessage() {
-            StringBuilder  buffer = new StringBuilder();
+		/**
+		 * The message property. This property contains the detailed
+		 * exception error message.
+		 */
+		public override string Message {
+			get {
+				return GetMessage();
+			}
+		}
 
-            // Add error description
-            buffer.Append(GetErrorMessage());
+		/**
+		 * Returns the error type. 
+		 * 
+		 * @return the error type
+		 */
+		public ErrorType GetErrorType() {
+			return type;
+		}
 
-            // Add line and column
-            if (line > 0 && column > 0) {
-                buffer.Append(", on line: ");
-                buffer.Append(line);
-                buffer.Append(" column: ");
-                buffer.Append(column);
-            }
+		/**
+		 * Returns the additional error information.
+		 * 
+		 * @return the additional error information
+		 */
+		public string GetInfo() {
+			return info;
+		}
 
-            return buffer.ToString();
-        }
+		/**
+		 * Returns the additional detailed error information. 
+		 * 
+		 * @return the additional detailed error information
+		 */
+		public ArrayList GetDetails() {
+			return new ArrayList(details);
+		}
 
-        /**
-         * Returns the error message. This message will contain all the 
-         * information available, except for the line and column number 
-         * information.
-         * 
-         * @return the error message
-         */
-        public string GetErrorMessage() {
-            StringBuilder  buffer = new StringBuilder();
-    
-            // Add type and info
-            switch (type) {
-            case ErrorType.IO:
-                buffer.Append("I/O error: ");
-                buffer.Append(info);
-                break;
-            case ErrorType.UNEXPECTED_EOF:
-                buffer.Append("unexpected end of file");
-                break;
-            case ErrorType.UNEXPECTED_CHAR:
-                buffer.Append("unexpected character '");
-                buffer.Append(info);
-                buffer.Append("'");
-                break;
-            case ErrorType.UNEXPECTED_TOKEN:
-                buffer.Append("unexpected token ");
-                buffer.Append(info);
+		/**
+		 * Returns the line number where the error occured.
+		 * 
+		 * @return the line number of the error, or 
+		 *         -1 if unknown
+		 */
+		public int GetLine() {
+			return line;
+		}
+
+		/**
+		 * Returns the column number where the error occured.
+		 * 
+		 * @return the column number of the error, or 
+		 *         -1 if unknown
+		 */
+		public int GetColumn() {
+			return column;
+		}
+
+		/**
+		 * Returns a default error message.
+		 * 
+		 * @return a default error message
+		 */
+		public string GetMessage() {
+			StringBuilder buffer = new StringBuilder();
+
+			// Add error description
+			buffer.Append(GetErrorMessage());
+
+			// Add line and column
+			if (line > 0 && column > 0) {
+				buffer.Append(", on line: ");
+				buffer.Append(line);
+				buffer.Append(" column: ");
+				buffer.Append(column);
+			}
+
+			return buffer.ToString();
+		}
+
+		/**
+		 * Returns the error message. This message will contain all the 
+		 * information available, except for the line and column number 
+		 * information.
+		 * 
+		 * @return the error message
+		 */
+		public string GetErrorMessage() {
+			StringBuilder buffer = new StringBuilder();
+
+			// Add type and info
+			switch (type) {
+				case ErrorType.IO:
+					buffer.Append("I/O error: ");
+					buffer.Append(info);
+					break;
+				case ErrorType.UNEXPECTED_EOF:
+					buffer.Append("unexpected end of file");
+					break;
+				case ErrorType.UNEXPECTED_CHAR:
+					buffer.Append("unexpected character '");
+					buffer.Append(info);
+					buffer.Append("'");
+					break;
+				case ErrorType.UNEXPECTED_TOKEN:
+					buffer.Append("unexpected token ");
+					buffer.Append(info);
 #if DEBUG
-                if (details != null) {
-                    buffer.Append(", expected ");
-                    if (details.Count > 1) {
-                        buffer.Append("one of ");
-                    }
-                    buffer.Append(GetMessageDetails());
-                }
+					if (details != null) {
+						buffer.Append(", expected ");
+						if (details.Count > 1) {
+							buffer.Append("one of ");
+						}
+						buffer.Append(GetMessageDetails());
+					}
 #endif
-                break;
-            case ErrorType.INVALID_TOKEN:
-                buffer.Append(info);
-                break;
-            case ErrorType.ANALYSIS:
-                buffer.Append(info);
-                break;
-            default:
-                buffer.Append("internal error");
-                if (info != null) {
-                	buffer.Append(": ");
-                	buffer.Append(info);
-                }
-                break;
-            }
+					break;
+				case ErrorType.INVALID_TOKEN:
+					buffer.Append(info);
+					break;
+				case ErrorType.ANALYSIS:
+					buffer.Append(info);
+					break;
+				default:
+					buffer.Append("internal error");
+					if (info != null) {
+						buffer.Append(": ");
+						buffer.Append(info);
+					}
+					break;
+			}
 
-            return buffer.ToString();
-        }
-    
-        /**
-         * Returns a string containing all the detailed information in
-         * a list. The elements are separated with a comma.
-         * 
-         * @return the detailed information string
-         */
-        private string GetMessageDetails() {
-            StringBuilder  buffer = new StringBuilder();
-        
-            for (int i = 0; i < details.Count; i++) {
-                if (i > 0) {
-                    buffer.Append(", ");
-                    if (i + 1 == details.Count) {
-                        buffer.Append("or ");
-                    }
-                }
-                buffer.Append(details[i]);
-            }
+			return buffer.ToString();
+		}
 
-            return buffer.ToString();
-        }
-    }
+		/**
+		 * Returns a string containing all the detailed information in
+		 * a list. The elements are separated with a comma.
+		 * 
+		 * @return the detailed information string
+		 */
+		private string GetMessageDetails() {
+			StringBuilder buffer = new StringBuilder();
+
+			for (int i = 0; i < details.Count; i++) {
+				if (i > 0) {
+					buffer.Append(", ");
+					if (i + 1 == details.Count) {
+						buffer.Append("or ");
+					}
+				}
+				buffer.Append(details[i]);
+			}
+
+			return buffer.ToString();
+		}
+	}
 }

@@ -28,38 +28,41 @@ namespace SteamEngine {
 		void Unload();
 		bool IsUnloaded { get; }
 	}
-	
+
 	internal class CompScriptFileCollection : ScriptFileCollection {
 		internal Assembly assembly;
-		internal CompScriptFileCollection(string dirPath, string extension) : base(dirPath, extension) {
+		internal CompScriptFileCollection(string dirPath, string extension)
+			: base(dirPath, extension) {
 		}
 	}
 
 	internal class ScriptFileCollection {
-		private Dictionary<string,ScriptFile> scriptFiles;
+		private Dictionary<string, ScriptFile> scriptFiles;
 		private List<string> extensions = new List<string>();
 		private DirectoryInfo mainDir;
 		private DateTime newestDateTime = DateTime.MinValue;
 		private List<string> avoided = new List<string>();
 		private long lengthSum;
-		
-		internal long LengthSum { get {
-			return lengthSum;
-		} }
-		
+
+		internal long LengthSum {
+			get {
+				return lengthSum;
+			}
+		}
+
 		internal ScriptFileCollection(string dirPath, string extension) {
 			mainDir = new DirectoryInfo(dirPath);
 			extensions.Add(extension);
 		}
-		
+
 		internal void AddExtension(string extension) {
 			extensions.Add(extension);
 		}
-		
+
 		internal void AddAvoided(string folder) {
 			avoided.Add(folder);
 		}
-		
+
 		internal ScriptFile AddFile(FileInfo file) {
 			ScriptFile sf = new ScriptFile(file);
 			if (scriptFiles == null) {
@@ -70,7 +73,7 @@ namespace SteamEngine {
 			lengthSum += file.Length;
 			return sf;
 		}
-		
+
 		internal bool HasFile(FileInfo file) {
 			if (scriptFiles != null) {
 				return scriptFiles.ContainsKey(file.FullName);
@@ -78,10 +81,12 @@ namespace SteamEngine {
 				return false;
 			}
 		}
-		
-		internal DateTime NewestDateTime { get {
-			return newestDateTime;
-		} }
+
+		internal DateTime NewestDateTime {
+			get {
+				return newestDateTime;
+			}
+		}
 
 		internal ICollection<ScriptFile> GetAllFiles() {
 			if (scriptFiles == null) {
@@ -92,20 +97,20 @@ namespace SteamEngine {
 			}
 			return scriptFiles.Values;
 		}
-		
+
 		internal ICollection<ScriptFile> GetChangedFiles() {
 			if (scriptFiles == null) {
 				return GetAllFiles();
 			} else {
 				List<ScriptFile> list = new List<ScriptFile>();
 				//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
-					FindNewFiles(mainDir, list);
+				FindNewFiles(mainDir, list);
 				//}
 				FindChangedFiles(list);
 				return list;
 			}
 		}
-		
+
 		internal string[] GetAllFileNames() {
 			ICollection<ScriptFile> sfs = GetAllFiles();
 			string[] fileNames = new string[sfs.Count];
@@ -116,9 +121,9 @@ namespace SteamEngine {
 			}
 			return fileNames;
 		}
-		
+
 		private void FindNewFiles(DirectoryInfo dir, List<ScriptFile> list) {
-			foreach (FileSystemInfo entry in dir.GetFileSystemInfos())  { 
+			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
 				if (entry is DirectoryInfo) {
 					DirectoryInfo di = (DirectoryInfo) entry;
 					if (!IsAvoidedDirectory(di)) {
@@ -134,9 +139,9 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		private void FindChangedFiles(List<ScriptFile> list) {
-			foreach (ScriptFile fs in scriptFiles.Values)  {
+			foreach (ScriptFile fs in scriptFiles.Values) {
 				long prevLength = fs.Length;
 				if (fs.HasChanged) {
 					list.Add(fs);
@@ -151,10 +156,10 @@ namespace SteamEngine {
 				newestDateTime = file.LastWriteTime;
 			}
 		}
-		
+
 		private void InitializeList(DirectoryInfo dir) {
-			foreach (FileSystemInfo entry in dir.GetFileSystemInfos())  { 
-				if ((entry.Attributes&FileAttributes.Directory)==FileAttributes.Directory) {
+			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
+				if ((entry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
 					DirectoryInfo di = (DirectoryInfo) entry;
 					if (!IsAvoidedDirectory(di)) {
 						InitializeList(di);
@@ -166,7 +171,7 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		private bool IsAvoidedDirectory(DirectoryInfo di) {
 			foreach (string avoid in avoided) {
 				if (String.Compare(di.Name, avoid, true, CultureInfo.InvariantCulture) == 0) { //ignore case
@@ -175,7 +180,7 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
+
 		private bool IsRightExtension(string tryThis) {
 			foreach (string extension in extensions) {
 				if (string.Compare(tryThis, extension, true) == 0) {
@@ -192,13 +197,15 @@ namespace SteamEngine {
 		private DateTime time;
 		private List<IUnloadable> scripts;
 		private long length;
-		
-		internal long Length { get {
-			return length;
-		} }
-		
+
+		internal long Length {
+			get {
+				return length;
+			}
+		}
+
 		//LastWriteTime
-		
+
 		//TODO: was private
 		internal ScriptFile(FileInfo file) {
 			this.file = file;
@@ -207,11 +214,11 @@ namespace SteamEngine {
 			length = file.Length;
 			scripts = new List<IUnloadable>();
 		}
-		
+
 		internal void Add(IUnloadable script) {
 			scripts.Add(script);
 		}
-		
+
 		internal void Unload() {
 			if (scripts != null) {
 				foreach (IUnloadable script in scripts) {
@@ -219,37 +226,45 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
-		internal bool HasChanged { get {
-			file.Refresh();
-			if (file.Exists) {
-				if (attribs == file.Attributes) {
-					if (time == file.LastWriteTime) {
-						if (length == file.Length) {
-							return false;
+
+		internal bool HasChanged {
+			get {
+				file.Refresh();
+				if (file.Exists) {
+					if (attribs == file.Attributes) {
+						if (time == file.LastWriteTime) {
+							if (length == file.Length) {
+								return false;
+							}
 						}
 					}
+					attribs = file.Attributes;
+					time = file.LastWriteTime;
+					length = file.Length;
 				}
-				attribs = file.Attributes;
-				time = file.LastWriteTime;
-				length = file.Length;
+				Unload(); //a little hack :) it makes this a not-only -classical-property, but who cares, its internal -tar
+				return true;
 			}
-			Unload(); //a little hack :) it makes this a not-only -classical-property, but who cares, its internal -tar
-			return true;
-		} }
-		
-		internal bool Exists { get {
-			return file.Exists;
-		} }
-		
-		internal string FullName { get {
-			return file.FullName;
-		} }
-		
-		internal string Name { get {
-			return file.Name;
-		} }
-		
+		}
+
+		internal bool Exists {
+			get {
+				return file.Exists;
+			}
+		}
+
+		internal string FullName {
+			get {
+				return file.FullName;
+			}
+		}
+
+		internal string Name {
+			get {
+				return file.Name;
+			}
+		}
+
 		internal StreamReader OpenText() {
 			return new StreamReader(file.FullName, Encoding.Default);
 		}

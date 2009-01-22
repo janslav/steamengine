@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using System.Globalization; 
+using System.Globalization;
 using System.IO;
 using System.Net;
 using SteamEngine.Common;
@@ -364,12 +364,12 @@ namespace SteamEngine {
 				//features.Comment("These are features which can be toggled on or off.");
 				aosToolTips = features.GetValue<bool>("aosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
-				
+
 				featuresFlags |= 0x2;
 				if (aosToolTips) {
 					loginFlags |= 0x20;
 					featuresFlags |= 0x0008 | 0x8000;
-				}				
+				}
 				//for now we only set whether tooltips work.
 
 				//TODO?:

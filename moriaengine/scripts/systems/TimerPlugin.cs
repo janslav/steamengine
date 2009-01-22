@@ -28,8 +28,9 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 
 	public partial class TimerPluginDef : PluginDef {
-		
-		public TimerPluginDef(String defname, String filename, Int32 headerLine) : 
+
+		public TimerPluginDef(String defname, String filename, Int32 headerLine)
+			:
 				base(defname, filename, headerLine) {
 		}
 
@@ -41,15 +42,16 @@ namespace SteamEngine.CompiledScripts {
 			PluginDef.RegisterPluginDef(typeof(TimerPluginDef), typeof(TimerPlugin));
 		}
 	}
-	
+
 	[DeepCopyableClassAttribute]
 	[SaveableClassAttribute]
 	public partial class TimerPlugin : Plugin {
 		[DeepCopyImplementationAttribute]
-		public TimerPlugin(TimerPlugin copyFrom) : 
+		public TimerPlugin(TimerPlugin copyFrom)
+			:
 				base(copyFrom) {
 		}
-		
+
 		[LoadingInitializerAttribute]
 		public TimerPlugin() {
 		}
@@ -86,9 +88,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[SaveableClass][DeepCopyableClass]
+		[SaveableClass]
+		[DeepCopyableClass]
 		public class PluginTimer : BoundTimer {
-			[DeepCopyImplementation][LoadingInitializer]
+			[DeepCopyImplementation]
+			[LoadingInitializer]
 			public PluginTimer() {
 			}
 

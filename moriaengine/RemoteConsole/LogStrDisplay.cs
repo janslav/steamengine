@@ -44,7 +44,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		public void WriteLine(string logStrEncoded) {
-			this.Invoke(this.writeDeferred, logStrEncoded+Environment.NewLine);
+			this.Invoke(this.writeDeferred, logStrEncoded + Environment.NewLine);
 		}
 
 		public void Write(SteamEngine.Common.LogStr data) {
@@ -97,7 +97,7 @@ namespace SteamEngine.RemoteConsole {
 		private void SetFontAndColor(LogStyles style) {
 			Font f;
 			if (!this.fonts.TryGetValue(style, out f)) {
-				f = new Font(conAttrs.GetFontFamily(style),conAttrs.GetSize(style),conAttrs.GetFontStyle(style));
+				f = new Font(conAttrs.GetFontFamily(style), conAttrs.GetSize(style), conAttrs.GetFontStyle(style));
 				this.fonts[style] = f;
 			}
 			this.txtBox.SelectionFont = f;
@@ -105,7 +105,7 @@ namespace SteamEngine.RemoteConsole {
 
 			Color color = conAttrs.GetColor(style);
 			this.txtBox.SelectionColor = color;
-			
+
 		}
 
 		public void SetTitle(string data) {

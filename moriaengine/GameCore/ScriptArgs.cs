@@ -24,19 +24,19 @@ namespace SteamEngine {
 		private string formatArgs;
 		public readonly object[] argv;
 		private string args;
-		
+
 		private static object[] zeroArray = new object[0];
-		
+
 		//public object[] Argv { get {
 		//                           return argv;
 		//                       } 
 		//}
-		
-//		[Obsolete("no more used, could have caused badly recognized calls", true)]
-//		public ScriptArgs(string formatArgs, params object[] argv) {//function parameters
-//			this.argv = argv;
-//			this.formatArgs = formatArgs;
-//		}
+
+		//		[Obsolete("no more used, could have caused badly recognized calls", true)]
+		//		public ScriptArgs(string formatArgs, params object[] argv) {//function parameters
+		//			this.argv = argv;
+		//			this.formatArgs = formatArgs;
+		//		}
 
 		public string FormatString {
 			get {
@@ -47,7 +47,7 @@ namespace SteamEngine {
 				args = null;
 			}
 		}
-		
+
 		public ScriptArgs(params object[] argv) {//core trigger`s parameters
 			if (argv != null) {
 				this.argv = argv;
@@ -55,29 +55,29 @@ namespace SteamEngine {
 				this.argv = zeroArray;
 			}
 		}
-		
-		public string Args { 
+
+		public string Args {
 			get {
 				if (args == null) {
 					if (formatArgs == null) {
 						if (argv.Length > 0) {//we fake the args of the function, in case it was actually called from compiled code
 							StringBuilder sb = new StringBuilder();
-							for (int i = 0, n = argv.Length - 1; i<n; i++) {
-								sb.Append("{"+i+"}, ");
+							for (int i = 0, n = argv.Length - 1; i < n; i++) {
+								sb.Append("{" + i + "}, ");
 							}
-							sb.Append("{"+(argv.Length-1)+"}");
+							sb.Append("{" + (argv.Length - 1) + "}");
 							formatArgs = sb.ToString();
 						} else {
 							formatArgs = "";
 						}
-					}	
+					}
 					//Console.WriteLine("format string: '{0}', with {1} args", formatArgs, argv.Length);
 					args = string.Format(formatArgs, argv);
 				}
 				return args;
-			} 
+			}
 		}
-		
+
 		//a little hack because of Dialogs. No more needed, yay!
 		//public void InsertArgo(object obj) {
 		//    string ignoreTheWarning = Args;//instantiate the Args, so it doesnt get affected by this; mono compiler knows we dont use the variable ;) thus the name of it

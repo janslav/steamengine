@@ -70,12 +70,12 @@ namespace SteamEngine.CompiledScripts {
 					list.Sort(CrimesAFKComparer<T>.instance);
 					list.Reverse();
 					break;
-			}			
-		}		
+			}
+		}
 	}
 
 	[Summary("Comparer for sorting account notes by time")]
-	public class NotesTimeComparer<T> : IComparer<T> where T: AccountNote {
+	public class NotesTimeComparer<T> : IComparer<T> where T : AccountNote {
 		public readonly static NotesTimeComparer<T> instance = new NotesTimeComparer<T>();
 
 		private NotesTimeComparer() {
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Summary("Comparer for sorting account notes by note issuer")]
-	public class NotesIssuerComparer<T> : IComparer<T> where T: AccountNote {
+	public class NotesIssuerComparer<T> : IComparer<T> where T : AccountNote {
 		public readonly static NotesIssuerComparer<T> instance = new NotesIssuerComparer<T>();
 
 		private NotesIssuerComparer() {
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Summary("Comparer for sorting account notes its AFK or nonAFK type")]
-	public class CrimesAFKComparer<T> : IComparer<T> where T: AccountNote {
+	public class CrimesAFKComparer<T> : IComparer<T> where T : AccountNote {
 		public readonly static CrimesAFKComparer<T> instance = new CrimesAFKComparer<T>();
 
 		private CrimesAFKComparer() {
@@ -125,8 +125,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int Compare(T x, T y) {
-			AccountCrime a = (AccountCrime)(AccountNote)x;
-			AccountCrime b = (AccountCrime)(AccountNote)y;
+			AccountCrime a = (AccountCrime) (AccountNote) x;
+			AccountCrime b = (AccountCrime) (AccountNote) y;
 			return a.isAFK.CompareTo(b.isAFK);
 		}
 	}
@@ -159,18 +159,18 @@ namespace SteamEngine.CompiledScripts {
 		[LoadingInitializer]
 		public AccountCrime() {
 		}
-		
+
 		[SaveableData]
 		public string punishment; //the punishment description		
 
-		[SaveableData]		
+		[SaveableData]
 		public bool isAFK; //is it the AFK crime?
 
 		public AccountCrime(AbstractCharacter issuer, AbstractCharacter referredChar, string punishment, string crime)
 			: base(issuer, referredChar, crime) {
-			this.punishment = punishment;			
+			this.punishment = punishment;
 		}
-		
+
 		public bool AFK { //setter for the AFK property
 			set {
 				isAFK = value;

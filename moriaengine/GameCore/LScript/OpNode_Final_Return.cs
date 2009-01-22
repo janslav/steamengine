@@ -29,16 +29,16 @@ namespace SteamEngine.LScript {
 	public class OpNode_Return : OpNode, IOpNodeHolder {
 		private OpNode arg;
 
-		internal OpNode_Return(IOpNodeHolder parent, string filename, 
+		internal OpNode_Return(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, OpNode arg)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			ParentScriptHolder.nodeToReturn = arg;
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			if (arg != oldNode) {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				arg = newNode;
 				ParentScriptHolder.nodeToReturn = newNode;
@@ -59,17 +59,17 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return "return("+arg+")";
+			return "return(" + arg + ")";
 		}
 	}
-	
+
 	public class OpNode_Return_String : OpNode, IOpNodeHolder {
 		private readonly OpNode[] args;
 		private readonly string formatString;
 
-		internal OpNode_Return_String(IOpNodeHolder parent, string filename, 
+		internal OpNode_Return_String(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, OpNode[] args, string formatString)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.args = args;
 			this.formatString = formatString;
 		}
@@ -80,13 +80,13 @@ namespace SteamEngine.LScript {
 				args[index] = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
 			int argsCount = args.Length;
 			object[] results = new object[argsCount];
-			for (int i = 0; i<argsCount; i++) {
+			for (int i = 0; i < argsCount; i++) {
 				results[i] = args[i].Run(vars);
 			}
 			string resultString = String.Format(formatString, results);
@@ -97,10 +97,10 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("return((");
-			for (int i = 0, n = args.Length; i<n; i++) {
+			for (int i = 0, n = args.Length; i < n; i++) {
 				str.Append(args[i].ToString()).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}
 	}
-}	
+}

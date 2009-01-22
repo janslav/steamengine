@@ -13,7 +13,7 @@
 //using SteamEngine.Common;
 
 //namespace SteamEngine.Packets {
-	
+
 //    /**
 //        This is the parent class of PacketGroup and FreedPacketGroup. All of them have the same SendTo* methods.
 //    */
@@ -30,11 +30,11 @@
 //        public abstract int Count {
 //            get;
 //        }
-		
+
 //        [Summary("This sends the packets in this PacketGroup to a specific GameConn.")]
 //        public abstract void SendTo(GameConn conn);
 //    }
-	
+
 //    /**
 //        Example of usage:
 //            using (PacketGroup packets = new PacketGroup()) {
@@ -44,11 +44,11 @@
 //                }
 //                packets.SendTo(conn);
 //            }
-		
+
 //        Basically, you create a group using a line like that 'using' line in the example, and then you
 //        call Prepare* methods on PacketSender to get all your packets prepared, and then you use
 //        the SendTo methods.
-		
+
 //        You can call Free() on a PacketGroup to get a FreedPacketGroup.
 //    */
 //    public sealed class BoundPacketGroup : AbstractPacketGroup, IDisposable {
@@ -122,7 +122,7 @@
 //                PacketSender.SendCompressedBytes(conn, packetStartPositions[packet], packetSizes[packet]);
 //            }
 //        }
-		
+
 //        public FreedPacketGroup Free() {
 //            FreedPacketGroup fpg = null;
 //            //To be more efficient, we have a special FreedSPacketGroup class for groups with only one packet.
@@ -134,33 +134,33 @@
 //            PacketSender.DiscardGroup(this);
 //            return fpg;
 //        }
-		
+
 //        public void Dispose() {
 //            if (!IsDeleted) {
 //                PacketSender.DiscardGroup(this);
 //            }
 //        }
 //    }
-	
+
 //    /**
 //        You create one of these by calling Free() on a PacketGroup.
-	
+
 //        If you want to compress a packet or packets and then keep them to send (much) later to whoever you want,
 //        FreedPacketGroups are an efficient way to do it.
-		
+
 //        Also there are actually two FreedPacketGroup classes, one for normal groups with multiple packets, and one
 //        specifically for groups containing only one packet - you will get the appropriate one automatically and
 //        you don't ever have to distinguish between them, but you'll know that if you use a single-packet group,
 //        it will still be efficient. Having a class for single-packet groups ensures that these are just as
 //        efficient (In fact, more efficient) in terms of memory usage than a conventional Packet object).
-		
+
 //        However, you can't recompile a PacketGroup if you want to change it, because it does not store its
 //        original data, only the compressed data. For that, you would need a specialized Packet object
 //        (or RepeatablePacket, if I code them, which would depend on whether I think we could gain
 //        a performance/efficiency gain from having something like that for certain packets).
 //    */
 //    public abstract class FreedPacketGroup : AbstractPacketGroup {
-				
+
 //        public override bool IsDeleted {
 //            get {
 //                return false;
@@ -174,7 +174,7 @@
 //        internal FreedPacketGroup(BoundPacketGroup pg) {
 //        }
 //    }
-	
+
 //    /**
 //        This FPG is used when the PG it is created from has more than one packet.
 //    */
@@ -185,7 +185,7 @@
 //#if DEBUG
 //        private byte[] packetIds;
 //#endif
-		
+
 //        internal FreedMPacketGroup(BoundPacketGroup pg) : base(pg) {
 //            Sanity.IfTrueThrow(pg.Count<1,"It would be rather pointless to create a FreedPacketGroup from a BoundPacketGroup with no packets.");
 //            Sanity.IfTrueThrow(pg.Count==1,"FreedSPacketGroup should be being created on groups containing only a single packet.");
@@ -218,7 +218,7 @@
 //                return true;
 //            }
 //        }
-		
+
 //        public override void SendTo(GameConn conn) {
 //            int count = Count;
 //            Logger.WriteInfo(PacketSender.PacketSenderTracingOn, "Freed (multiple) Group SendTo("+conn+"): Sending "+count+" packets.");
@@ -230,11 +230,11 @@
 //            }
 //        }
 //    }
-	
+
 //    /**
 //        This FPG is used when the PG it is created from has only one packet. This is more efficient
 //        than a FreedMPacketGroup, and, in fact, is also more efficient than a Packet.
-		
+
 //        However, as with all FreedPacketGroups, you cannot modify the information and recompress it,
 //        since the uncompressed data does not exist anymore and PGs and FPGs have no knowledge of how
 //        to recreate it or any part of it - But that's one reason why these are more efficient than
@@ -245,7 +245,7 @@
 //#if DEBUG
 //        private byte packetId;
 //#endif
-		
+
 //        internal FreedSPacketGroup(BoundPacketGroup pg) : base(pg) {
 //            Sanity.IfTrueThrow(pg.Count<1,"It would be rather pointless to create a FreedPacketGroup from a BoundPacketGroup with no packets.");
 //            Sanity.IfTrueThrow(pg.Count>1,"FreedMPacketGroup should be being created on groups containing more than one packet.");
@@ -268,7 +268,7 @@
 //                return true;
 //            }
 //        }
-		
+
 //        public override void SendTo(GameConn conn) {
 //            //int count = Count;
 //#if DEBUG

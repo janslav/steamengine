@@ -19,28 +19,28 @@ using System;
 using PerCederberg.Grammatica.Parser;
 using System.Collections;
 using System.Globalization;
-	
+
 namespace SteamEngine.LScript {
 	internal class DebugAnalyzer : StrictAnalyzer {
 		private string indent = "";
-		
+
 		public override Node Exit(Node node) {
-			indent=indent.Substring(0, indent.Length-2);
+			indent = indent.Substring(0, indent.Length - 2);
 			return node;
 		}
-		
+
 		public override void Enter(Node node) {
-			Console.WriteLine(indent+"entering "+node);
-			indent+="  ";
+			Console.WriteLine(indent + "entering " + node);
+			indent += "  ";
 		}
-		
+
 	}
-			
+
 	internal class LScriptAnalyzer : StrictAnalyzer {
 		private int flag = 0;
 		private bool isInQuotes;
 		private Stack quotes = new Stack();
-		
+
 		public override Node Analyze(Node node) {
 			flag = 0;
 			node = base.Analyze(node);
@@ -49,7 +49,7 @@ namespace SteamEngine.LScript {
 			flag = 2;
 			return base.Analyze(node);
 		}
-		
+
 		public override void Enter(Node node) {
 			if (flag == 1) {
 				base.Enter(node);
@@ -59,20 +59,20 @@ namespace SteamEngine.LScript {
 		public override Node Exit(Node node) {
 			if (flag == 0) {
 				if (node.GetId() != (int) StrictConstants.ARGS_LIST) {
-					if (node.GetChildCount()==1) {
+					if (node.GetChildCount() == 1) {
 						return node.GetChildAt(0);
 					}
 				}
 			} else if (flag == 1) {
 				base.Exit(node);
 			} else {
-				if (node.GetChildCount()==1) {
+				if (node.GetChildCount() == 1) {
 					return node.GetChildAt(0);
 				}
 			}
 			return node;
 		}
-		
+
 		public override void EnterQuotedString(Production node) {
 			quotes.Push(isInQuotes);
 			isInQuotes = true;
@@ -82,7 +82,7 @@ namespace SteamEngine.LScript {
 			isInQuotes = (bool) quotes.Pop();
 			return node;
 		}
-		
+
 		public override void EnterEvalExpression(Production node) {
 			quotes.Push(isInQuotes);
 			isInQuotes = false;
@@ -92,7 +92,7 @@ namespace SteamEngine.LScript {
 			isInQuotes = (bool) quotes.Pop();
 			return node;
 		}
-		
+
 		public override void EnterStrongEvalExpression(Production node) {
 			quotes.Push(isInQuotes);
 			isInQuotes = false;
@@ -102,33 +102,33 @@ namespace SteamEngine.LScript {
 			isInQuotes = (bool) quotes.Pop();
 			return node;
 		}
-		
+
 		public override Node ExitArg(Token node) {
 			return node;
 		}
- 	
-		
-		
+
+
+
 		//a function call that looks like "funcname arg1 arg2 arg3" is parsed as "funcname(arg1(arg2(arg3)))"
 		//this method makes it "back" ti the desired form "funcname(arg1, arg2, arg3)"
 		//of course, it`s not perfect :) But people should anyway write their functions properly :)
 		public override Node ExitArgsList(Production argsList) {
 			//Console.WriteLine("ExitArgsList "+LScript.GetString(argsList)+" "+argsList.GetChildCount());
 			if (argsList.GetChildCount() >= 1) {
-				Node subnode = argsList.GetChildAt(argsList.GetChildCount()-1);
-				if (subnode.GetChildCount()>=2) {
+				Node subnode = argsList.GetChildAt(argsList.GetChildCount() - 1);
+				if (subnode.GetChildCount() >= 2) {
 					//2 because it is some string and whitespaceassigner
 					if (HasArgsListAsLast(subnode)) {
-						
-					} else if (HasArgsListAsLast(subnode.GetChildAt(subnode.GetChildCount()-1))) {
-						subnode = subnode.GetChildAt(subnode.GetChildCount()-1);
+
+					} else if (HasArgsListAsLast(subnode.GetChildAt(subnode.GetChildCount() - 1))) {
+						subnode = subnode.GetChildAt(subnode.GetChildCount() - 1);
 					} else {
 						return argsList;
 					}
-		
-					Production assigner = (Production) ((Production)subnode).PopChildAt(subnode.GetChildCount()-1); //is no more needed
+
+					Production assigner = (Production) ((Production) subnode).PopChildAt(subnode.GetChildCount() - 1); //is no more needed
 					argsList.children.AddRange(assigner.children);
-					int lastIndex = argsList.children.Count-1;
+					int lastIndex = argsList.children.Count - 1;
 					Node lastNode = argsList.GetChildAt(lastIndex);
 					if (lastNode.GetId() == (int) StrictConstants.ARGS_LIST) {
 						Production subArgsList = (Production) lastNode;
@@ -139,15 +139,15 @@ namespace SteamEngine.LScript {
 			}
 			return argsList;
 		}
-		
+
 		private static bool HasArgsListAsLast(Node node) {
-			Node lastnode =  node.GetChildAt(node.GetChildCount()-1);
+			Node lastnode = node.GetChildAt(node.GetChildCount() - 1);
 			if ((lastnode != null)
-					&&(lastnode.GetId() == (int) StrictConstants.WHITE_SPACE_ASSIGNER)) {
+					&& (lastnode.GetId() == (int) StrictConstants.WHITE_SPACE_ASSIGNER)) {
 				//Console.WriteLine("I am "+node);
 				return true;
 			}
 			return false;
 		}
 	}
-}	
+}

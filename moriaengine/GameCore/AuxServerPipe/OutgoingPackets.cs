@@ -18,7 +18,7 @@ namespace SteamEngine.AuxServerPipe {
 
 		public override byte Id {
 			get {
-				return 0x01; 
+				return 0x01;
 			}
 		}
 

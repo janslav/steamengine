@@ -21,18 +21,18 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_weapon_mace_staff : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_xbow : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_mace_crook : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_axe : CompiledTriggerGroup {
-		
+
 	}
 }

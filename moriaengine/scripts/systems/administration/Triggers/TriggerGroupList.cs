@@ -33,18 +33,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
-			PluginHolder ph = (PluginHolder)args.GetTag(D_PluginList.holderTK); //z koho budeme triggergroupy brat?
+			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme triggergroupy brat?
 			List<TriggerGroup> tgList = args.GetTag(D_TriggerGroupsList.tgListTK) as List<TriggerGroup>;
-			if(tgList == null) {
+			if (tgList == null) {
 				//vzit seznam triggergroup dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				tgList = ListifyTriggerGroups(ph.GetAllTriggerGroups(), TagMath.SGetTag(args, D_TriggerGroupsList.tgCriteriumTK));
 				tgList.Sort(TriggerGroupsComparer.instance); //setridit podle abecedy
 				args.SetTag(D_TriggerGroupsList.tgListTK, tgList); //ulozime to do argumentu dialogu				
-			} 
+			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tgList.Count);
-			
+
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(width);
@@ -55,12 +55,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech trigger group na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tgList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
-			
+
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
+			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na pridani nove triggergroupy
@@ -71,45 +71,45 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");			
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno Trigger groupy");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Defname");
 			dlg.MakeLastTableTransparent();
 
 			//seznam tgcek
-			dlg.AddTable(new GUTATable(imax-firstiVal));
+			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				TriggerGroup tg = tgList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (i));
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(tg.PrettyDefname);
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tg.Defname);	
-				rowCntr++;			
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tg.Defname);
+				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//ted paging
-			dlg.CreatePaging(tgList.Count, firstiVal, 1);			
+			dlg.CreatePaging(tgList.Count, firstiVal, 1);
 
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			PluginHolder tgOwner = (PluginHolder)args.GetTag(D_PluginList.holderTK); //z koho budeme tg brat?				
+			PluginHolder tgOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme tg brat?				
 			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<TriggerGroup> tgList = (List<TriggerGroup>)args.GetTag(D_TriggerGroupsList.tgListTK);
+			List<TriggerGroup> tgList = (List<TriggerGroup>) args.GetTag(D_TriggerGroupsList.tgListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);			
-            if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-                switch(gr.pressedButton) {
-                    case 0: //exit
+			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.pressedButton) {
+					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
-                    case 1: //vyhledat dle zadani
+					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(D_TriggerGroupsList.tgCriteriumTK, nameCriteria);
@@ -120,41 +120,41 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogArgs newArgs = new DialogArgs();
 						newArgs.SetTag(D_PluginList.holderTK, tgOwner);
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_NewTriggerGroup>.Instance, newArgs);
-						DialogStacking.EnstackDialog(gi, newGi);						
+						DialogStacking.EnstackDialog(gi, newGi);
 						break;
-                }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, tgList.Count, 1)) {//kliknuto na paging?
+				}
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, tgList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime si radek
-				int row = (int)gr.pressedButton - 10;
-				int buttNo = ((int)gr.pressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
+				int row = (int) gr.pressedButton - 10;
+				int buttNo = ((int) gr.pressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
 				TriggerGroup tg = tgList[row];
-				switch(buttNo) {
+				switch (buttNo) {
 					case 0: //smazat						
 						tgOwner.RemoveTriggerGroup(tg);
 						args.RemoveTag(D_TriggerGroupsList.tgListTK);//na zaver smazat tglist (musi se reloadnout)
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
-				}				
+				}
 			}
 		}
 
 		[Summary("Retreives the list of all trigger groups the given PluginHolder has")]
 		private List<TriggerGroup> ListifyTriggerGroups(IEnumerable<TriggerGroup> tgs, string criteria) {
 			List<TriggerGroup> tgList = new List<TriggerGroup>();
-			foreach(TriggerGroup entry in tgs) {
-				if(criteria == null || criteria.Equals("")) {
+			foreach (TriggerGroup entry in tgs) {
+				if (criteria == null || criteria.Equals("")) {
 					tgList.Add(entry);//bereme vse
-				} else if(entry.Defname.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Defname.ToUpper().Contains(criteria.ToUpper())) {
 					tgList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
 				}
 			}
 			return tgList;
 		}
 
-		[Summary("Display a trigger group list. Function accessible from the game."+
-				"The function is designed to be triggered using .x TriggerGroupList(criteria)"+
+		[Summary("Display a trigger group list. Function accessible from the game." +
+				"The function is designed to be triggered using .x TriggerGroupList(criteria)" +
 			   "but it can be used also normally .TriggerGroupList(criteria) to display runner's own plugins")]
 		[SteamFunction]
 		public static void TriggerGroupList(PluginHolder self, ScriptArgs text) {
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvni pluginy co ma
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_PluginList.holderTK, self); //na kom budeme zobrazovat tagy
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TriggerGroupsList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_TriggerGroupsList.tgCriteriumTK, text.Args);//vyhl. kriterium
@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(TriggerGroup x, TriggerGroup y) {
 			string nameA = x.Defname;
 			string nameB = y.Defname;
-			return String.Compare(nameA,nameB,true);
+			return String.Compare(nameA, nameB, true);
 		}
 	}
 }

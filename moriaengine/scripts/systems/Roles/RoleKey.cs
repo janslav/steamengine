@@ -44,31 +44,33 @@ namespace SteamEngine.CompiledScripts {
 
 
 	public sealed class RoleKeySaveImplementor : ISimpleSaveImplementor {
-		public static Regex re = new Regex(@"^\°(?<value>.+)\s*$",                     
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		public static Regex re = new Regex(@"^\°(?<value>.+)\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public Type HandledType {
 			get {
 				return typeof(RoleKey);
 			}
 		}
-		
-		public Regex LineRecognizer { get {
-			return re;
-		} }
-		
+
+		public Regex LineRecognizer {
+			get {
+				return re;
+			}
+		}
+
 		public string Save(object objToSave) {
 			return "°" + ((RoleKey) objToSave).name;
 		}
-		
+
 		public object Load(Match match) {
 			return RoleKey.Get(match.Groups["value"].Value);
 		}
-		
+
 		public string Prefix {
 			get {
 				return "°";
 			}
 		}
 	}
-}		
+}

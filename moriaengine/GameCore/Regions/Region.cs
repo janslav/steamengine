@@ -24,15 +24,15 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
-	
+
 	public class Region : PluginHolder {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		protected string defname; //protected, we will make use of it in StaticRegion loading part...
 		protected Point4D p; //spawnpoint
 		protected string name; //this is typically not unique, containing spaces etc.
-		
+
 		internal IList<RegionRectangle> rectangles = new List<RegionRectangle>();
 		protected Region parent;
 		protected byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
@@ -40,39 +40,40 @@ namespace SteamEngine.Regions {
 		protected int hierarchyIndex = -1;
 		protected DateTime createdAt = DateTime.Now;
 
-		
+
 
 		//private readonly static Type[] constructorTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
-		public Region() : base() {
-			this.p = new Point4D(0,0,0,0); //spawnpoint
+		public Region()
+			: base() {
+			this.p = new Point4D(0, 0, 0, 0); //spawnpoint
 			this.name = ""; //this is typically not unique, containing spaces etc.
 			this.inactivated = false; //defaultly is activated
 		}
 
-		public Region Parent { 
+		public Region Parent {
 			get {
 				return parent;
 			}
 		}
 
-		public string Defname { 
+		public string Defname {
 			get {
 				return defname;
 			}
 		}
 
-		public DateTime CreatedAt { 
+		public DateTime CreatedAt {
 			get {
 				return createdAt;
-			} 
+			}
 		}
 
-		public IList<ImmutableRectangle> Rectangles { 
+		public IList<ImmutableRectangle> Rectangles {
 			get {
 				RegionRectangle[] arr = new RegionRectangle[this.rectangles.Count];
 				rectangles.CopyTo(arr, 0);
 				return arr;
-			} 
+			}
 		}
 
 		public bool IsWorldRegion {
@@ -81,13 +82,13 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public int HierarchyIndex { 
+		public int HierarchyIndex {
 			get {
 				return hierarchyIndex;
-			} 
+			}
 		}
-		
-		public byte Mapplane { 
+
+		public byte Mapplane {
 			get {
 				if (!mapplaneIsSet) {
 					mapplane = P.m;
@@ -96,15 +97,15 @@ namespace SteamEngine.Regions {
 				return mapplane;
 			}
 		}
-		
+
 		public virtual Point4D P {
 			get {
 				return p;
 			}
 			set {
 				ThrowIfDeleted();
-				if(!ContainsPoint((Point2D)value)) {
-					throw new SEException("Spawnpoint "+value.ToString()+" is not contained in the region "+ToString());
+				if (!ContainsPoint((Point2D) value)) {
+					throw new SEException("Spawnpoint " + value.ToString() + " is not contained in the region " + ToString());
 				}
 				p = value;
 			}
@@ -130,7 +131,7 @@ namespace SteamEngine.Regions {
 				return FindCommonParent(a.parent, b);
 			}
 		}
-		
+
 		public static bool TryExitAndEnter(Region oldRegion, Region newRegion, AbstractCharacter ch) {
 			Region sharedParent = FindCommonParent(oldRegion, newRegion);
 			while (oldRegion != sharedParent) {
@@ -144,7 +145,7 @@ namespace SteamEngine.Regions {
 			}
 			return true;
 		}
-		
+
 		private static bool TryEnterHierarchy(Region parent, Region child, AbstractCharacter ch) {//enters the parent first, and then all the children till the given child
 			if (child.parent != parent) {
 				if (!TryEnterHierarchy(parent, child.parent, ch)) {
@@ -153,7 +154,7 @@ namespace SteamEngine.Regions {
 			}
 			return child.TryEnter(ch);
 		}
-		
+
 		public static void ExitAndEnter(Region oldRegion, Region newRegion, AbstractCharacter ch) {//exit and enter all the regions in hierarchy
 			Region sharedParent = FindCommonParent(oldRegion, newRegion);
 			while (oldRegion != sharedParent) {
@@ -164,7 +165,7 @@ namespace SteamEngine.Regions {
 				EnterHierarchy(sharedParent, newRegion, ch);
 			}
 		}
-		
+
 		private static void EnterHierarchy(Region parent, Region child, AbstractCharacter ch) {//enters the parent first, and then all the children till the given child
 			if (child.parent != parent) {
 				EnterHierarchy(parent, child.parent, ch);
@@ -267,7 +268,7 @@ namespace SteamEngine.Regions {
 
 		private static void ReturnItemOnGroundIfNeeded(AbstractItem item, Point4D point) {
 			if ((item.Cont != null) || (!point.Equals(item))) {
-				Logger.WriteWarning(item+" has been moved in the implementation of one of the @LeaveGround triggers. Don't do this. Putting back.");
+				Logger.WriteWarning(item + " has been moved in the implementation of one of the @LeaveGround triggers. Don't do this. Putting back.");
 				item.MakeLimbo();
 				item.Trigger_EnterRegion(point.x, point.y, point.z, point.m);
 			}
@@ -280,39 +281,39 @@ namespace SteamEngine.Regions {
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
 			ThrowIfDeleted();
 		}
-		
-		public bool ContainsPoint(Point2D point) {
-			foreach(ImmutableRectangle rect in Rectangles) {
-				if(rect.Contains(point)) {
-					return true;
-				}
-			}			
-			return false;
-		}
 
-		public bool ContainsPoint(ushort x, ushort y) {
-			foreach(ImmutableRectangle rect in Rectangles) {
-				if(rect.Contains(x,y)) {
+		public bool ContainsPoint(Point2D point) {
+			foreach (ImmutableRectangle rect in Rectangles) {
+				if (rect.Contains(point)) {
 					return true;
 				}
 			}
 			return false;
 		}
-		
-		public override string ToString() {
-			return GetType().Name+" "+defname;
+
+		public bool ContainsPoint(ushort x, ushort y) {
+			foreach (ImmutableRectangle rect in Rectangles) {
+				if (rect.Contains(x, y)) {
+					return true;
+				}
+			}
+			return false;
 		}
-		
-		public string HierarchyName { 
+
+		public override string ToString() {
+			return GetType().Name + " " + defname;
+		}
+
+		public string HierarchyName {
 			get {
 				if (parent == null) {
 					return Name;
 				} else {
-					return Name+" in "+parent.HierarchyName;
+					return Name + " in " + parent.HierarchyName;
 				}
-			} 
+			}
 		}
-		
+
 		public bool TryEnter(AbstractCharacter ch) {
 			ThrowIfDeleted();
 			if (!TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
@@ -322,7 +323,7 @@ namespace SteamEngine.Regions {
 			}
 			return false;
 		}
-		
+
 		public bool TryExit(AbstractCharacter ch) {
 			ThrowIfDeleted();
 			if (!TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
@@ -332,28 +333,28 @@ namespace SteamEngine.Regions {
 			}
 			return false;
 		}
-		
+
 		public void Enter(AbstractCharacter ch) {
 			ThrowIfDeleted();
 			TryTrigger(TriggerKey.enter, new ScriptArgs(ch, 1));
 			On_Enter(ch, true);
 		}
-		
+
 		public void Exit(AbstractCharacter ch) {
 			ThrowIfDeleted();
 			TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
 			On_Exit(ch, true);
 		}
-		
+
 		public virtual bool On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
-			Logger.WriteDebug(ch+" entered "+this);
-			ch.SysMessage("You have just entered "+this);
+			Logger.WriteDebug(ch + " entered " + this);
+			ch.SysMessage("You have just entered " + this);
 			return false;//maybe we could just return false or whatever...
 		}
-		
+
 		public virtual bool On_Exit(AbstractCharacter ch, bool forced) {
-			Logger.WriteDebug(ch+" left "+this);
-			ch.SysMessage("You have just left "+this);
+			Logger.WriteDebug(ch + " left " + this);
+			ch.SysMessage("You have just left " + this);
 			return false;
 		}
 
@@ -361,13 +362,13 @@ namespace SteamEngine.Regions {
 		//this will be set to false when the region is going to be edited
 		//after succesful editing (changing of P or changing rectnagles) it will be then reset to true
 		//without this, the region won't be activated (Error will occur)
-		protected bool canBeActivated = true;		
+		protected bool canBeActivated = true;
 
 		public bool IsInactivated {
 			get {
 				return inactivated;
 			}
-		}		
+		}
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
@@ -393,7 +394,7 @@ namespace SteamEngine.Regions {
 						ushort y2 = TagMath.ParseUInt16(gc["y2"].Value);
 						//Point2D point1 = new Point2D(x1, y1);
 						//Point2D point2 = new Point2D(x2, y2);
-						RegionRectangle rr = new RegionRectangle(x1,y1,x2,y2, this);
+						RegionRectangle rr = new RegionRectangle(x1, y1, x2, y2, this);
 						//RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
 						this.rectangles.Add(rr);
 					} else {
@@ -480,8 +481,8 @@ namespace SteamEngine.Regions {
 		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
 				"Returns a new (moved) instance")]
 		internal RegionRectangle Move(int timesX, int timesY) {
-			return new RegionRectangle((ushort)(minX + timesX), (ushort)(minY + timesY),
-									   (ushort)(maxX + timesX), (ushort)(maxY + timesY), region);
+			return new RegionRectangle((ushort) (minX + timesX), (ushort) (minY + timesY),
+									   (ushort) (maxX + timesX), (ushort) (maxY + timesY), region);
 		}
 	}
 }

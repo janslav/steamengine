@@ -26,7 +26,7 @@ using SteamEngine.Networking;
 namespace SteamEngine.Persistence {
 	public delegate IUnloadable LoadSection(PropsSection data);
 	public delegate bool CanStartAsScript(string data);
-	
+
 	public class WorldSaver {
 
 		//internal static string currentfile;
@@ -35,7 +35,7 @@ namespace SteamEngine.Persistence {
 		//        return currentfile;
 		//    }
 		//}
-		
+
 		internal static bool Save() {
 
 			using (StopWatch.StartAndDisplay("Saving world data...")) {
@@ -54,10 +54,10 @@ namespace SteamEngine.Persistence {
 				}
 			}
 		}
-		
+
 		static bool TrySave() {
 			string path = Globals.savePath;
-			
+
 			ScriptArgs sa = new ScriptArgs(path);
 			Globals.instance.TryTrigger(TriggerKey.beforeSave, sa);
 			path = string.Concat(sa.argv[0]);
@@ -65,11 +65,11 @@ namespace SteamEngine.Persistence {
 				path = Globals.savePath;
 			}
 
-			
+
 			Tools.EnsureDirectory(path, true);
 
 			ObjectSaver.StartingSaving();
-			
+
 			bool success = false;
 			try {
 
@@ -103,11 +103,11 @@ namespace SteamEngine.Persistence {
 				Globals.instance.TryTrigger(TriggerKey.afterSave, new ScriptArgs(path, success));
 				CloseSaveStreams();
 			}
-			
+
 			ObjectSaver.SavingFinished();
 			return success;
 		}
-		
+
 		static SaveStream GetSaveStream(string path, object file) {
 			//object file is either string or Stream or TextWriter
 			TextWriter tw = file as TextWriter;
@@ -121,21 +121,21 @@ namespace SteamEngine.Persistence {
 				return new SaveStream(new StreamWriter(s));
 			}
 			string filename = string.Concat(file);
-			string filepath = Path.Combine(path, filename+".sav");
+			string filepath = Path.Combine(path, filename + ".sav");
 			return new SaveStream(new StreamWriter(File.Create(filepath)));
 		}
-		
+
 		private static SaveStream globalsSaver;
-		
+
 		static void CloseSaveStreams() {
 			try {
-				globalsSaver.Close(); 
+				globalsSaver.Close();
 			} catch (Exception e) {
 				Logger.WriteDebug(e);
 			}
 		}
-		
-////////////////////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////////////////////////////
 
 		public static void Load() {
 			using (StopWatch.StartAndDisplay("Loading world data...")) {
@@ -143,13 +143,13 @@ namespace SteamEngine.Persistence {
 				}
 			}
 		}
-		
+
 		private static bool TryLoad() {
 			Timer.StartingLoading();
 			ObjectSaver.StartingLoading();
-			
+
 			string path = "";
-						
+
 			try {
 				path = Globals.savePath;
 				ScriptArgs sa = new ScriptArgs(path);
@@ -172,12 +172,12 @@ namespace SteamEngine.Persistence {
 					sa = new ScriptArgs(path, name);
 					Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
 					TextReader loadStream = GetLoadStream(path, sa.argv[1]);
-					InvokeLoad(loadStream, Path.Combine(path, name+".sav"));
+					InvokeLoad(loadStream, Path.Combine(path, name + ".sav"));
 					try {
 						loadStream.Close();
 					} catch { }
 				}
-				
+
 				sa = new ScriptArgs(path, "globals");
 				Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
 				globalsLoader = GetLoadStream(path, sa.argv[1]);
@@ -210,7 +210,7 @@ namespace SteamEngine.Persistence {
 			//Thing.LoadingFinished();//Things must come after regions
 			return true;
 		}
-		
+
 		private static void InvokeLoad(TextReader stream, string filename) {
 			//currentfile = filename;
 			EOFMarked = false;
@@ -220,7 +220,7 @@ namespace SteamEngine.Persistence {
 				string type = section.headerType.ToLower();
 				string name = section.headerName;
 				if (EOFMarked) {
-					Logger.WriteWarning(section.filename, section.headerLine, "[EOF] reached. Skipping "+section);
+					Logger.WriteWarning(section.filename, section.headerLine, "[EOF] reached. Skipping " + section);
 					continue;
 				}
 				if (name == "") {
@@ -242,19 +242,19 @@ namespace SteamEngine.Persistence {
 					AbstractDef.LoadSectionFromSaves(section);
 					continue;
 				}
-				Logger.WriteError(section.filename, section.headerLine, "Unknown section "+LogStr.Ident(section));
+				Logger.WriteError(section.filename, section.headerLine, "Unknown section " + LogStr.Ident(section));
 			}
 			if (!EOFMarked) {
 				throw new Exception("EOF Marker not reached!");
 			}
 		}
-		
+
 		public static bool StartsAsScript(string headerType) {
 			return false;
 		}
-		
+
 		private static bool EOFMarked;
-		
+
 		static TextReader GetLoadStream(string path, object file) {
 			//object file is either string or Stream or TextWriter
 			TextReader tr = file as TextReader;
@@ -266,15 +266,15 @@ namespace SteamEngine.Persistence {
 				return new StreamReader(s);
 			}
 			string filename = string.Concat(file);
-			string filepath = Path.Combine(path, filename+".sav");
+			string filepath = Path.Combine(path, filename + ".sav");
 			return new StreamReader(File.OpenRead(filepath));
 		}
 
 		private static TextReader globalsLoader;
-		
+
 		static void CloseLoadStreams() {
 			try {
-				globalsLoader.Close(); 
+				globalsLoader.Close();
 			} catch { }
 		}
 	}

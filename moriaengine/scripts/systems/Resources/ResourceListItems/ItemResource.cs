@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 			this.number = number;
 			this.itemDef = itemDef;
 			this.definition = definition;
-		}		
+		}
 
 		#region IResourceListItem Members
 		public double DesiredCount {
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsSameResource(IResourceListItem newOne) {
 			ItemResource newResource = newOne as ItemResource;
-			if(newResource != null) {
+			if (newResource != null) {
 				if (itemDef == newResource.itemDef) {
 					return true;
 				}
@@ -65,6 +65,6 @@ namespace SteamEngine.CompiledScripts {
 			ic.SetParameters(itemDef, number);//initialize
 			return ic;
 		}
-		#endregion		
+		#endregion
 	}
 }

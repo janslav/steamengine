@@ -29,10 +29,10 @@ namespace SteamEngine.CompiledScripts {
 				list.Add(t as Character);
 			}
 			Thing[] arr = (Thing[]) list.ToArray(typeof(Thing));
-			
+
 			globals.SetTag(TagKey.Get("_testArrayList"), list);
 			globals.SetTag(TagKey.Get("_testArray"), arr);
-			
+
 		}
 	}
 }

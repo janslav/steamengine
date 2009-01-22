@@ -28,21 +28,21 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Hitpoints Regeneration")]
 	[ViewableClass]
 	public class RegenerationDef : PassiveAbilityDef {
-        private FieldValue regenSpeed;//how many points do we need to have to regenerate 1stat/1sec
+		private FieldValue regenSpeed;//how many points do we need to have to regenerate 1stat/1sec
 
-        public RegenerationDef(string defname, string filename, int headerLine)
+		public RegenerationDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-            regenSpeed = InitField_Typed("regenSpeedCoef", 10, typeof(ushort));
+			regenSpeed = InitField_Typed("regenSpeedCoef", 10, typeof(ushort));
 		}
-        
-        [InfoField("Regeneration Speed")]
-        public ushort RegenerationSpeed {
-            get {
-                return (ushort)regenSpeed.CurrentValue;
-            }
-            set {
-                regenSpeed.CurrentValue = value;
-            }
-		}		
+
+		[InfoField("Regeneration Speed")]
+		public ushort RegenerationSpeed {
+			get {
+				return (ushort) regenSpeed.CurrentValue;
+			}
+			set {
+				regenSpeed.CurrentValue = value;
+			}
+		}
 	}
 }

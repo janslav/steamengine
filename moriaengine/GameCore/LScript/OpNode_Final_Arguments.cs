@@ -40,7 +40,7 @@ namespace SteamEngine.LScript {
 			try {
 				return vars.scriptArgs.argv[Convert.ToInt32(indexVal)];
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting ARG", 
+				throw new InterpreterException("Exception while getting ARG",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -49,7 +49,7 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARGV(", nodeIndex, ")");
 		}
 	}
-	
+
 	public class OpNode_GetArgv_Constant : OpNode_Argument {
 		internal OpNode_GetArgv_Constant(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, int intIndex)
@@ -57,12 +57,12 @@ namespace SteamEngine.LScript {
 
 			this.intIndex = intIndex;
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			try {
 				return vars.scriptArgs.argv[intIndex];
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting ARG", 
+				throw new InterpreterException("Exception while getting ARG",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -73,7 +73,7 @@ namespace SteamEngine.LScript {
 	}
 
 	public class OpNode_SetArgv : OpNode_Argument {
-		internal OpNode_SetArgv(IOpNodeHolder parent, string filename, 
+		internal OpNode_SetArgv(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, OpNode nodeIndex, OpNode arg)
 			: base(parent, filename, line, column, origNode) {
 
@@ -82,7 +82,7 @@ namespace SteamEngine.LScript {
 			this.arg = arg;
 			arg.parent = this;
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -98,7 +98,7 @@ namespace SteamEngine.LScript {
 				vars.scriptArgs.argv[Convert.ToInt32(indexVal)] = argVal;
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting ARG", 
+				throw new InterpreterException("Exception while setting ARG",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -107,7 +107,7 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARGV(", nodeIndex, ") = ", arg);
 		}
 	}
-	
+
 	public class OpNode_SetArgv_Constant : OpNode_Argument {
 		internal OpNode_SetArgv_Constant(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, int intIndex, OpNode arg)
@@ -117,7 +117,7 @@ namespace SteamEngine.LScript {
 			this.arg = arg;
 			arg.parent = this;
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -131,7 +131,7 @@ namespace SteamEngine.LScript {
 				vars.scriptArgs.argv[intIndex] = argVal;
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting ARG", 
+				throw new InterpreterException("Exception while setting ARG",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -140,13 +140,13 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARGV", intIndex, " = ", arg);
 		}
 	}
-	
+
 	public class OpNode_GetArgs : OpNode {
-		internal OpNode_GetArgs(IOpNodeHolder parent, string filename, 
+		internal OpNode_GetArgs(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			return vars.scriptArgs.Args;
 		}
@@ -155,13 +155,13 @@ namespace SteamEngine.LScript {
 			return "ARGS";
 		}
 	}
-	
+
 	public class OpNode_ArgvCount : OpNode {
-		internal OpNode_ArgvCount(IOpNodeHolder parent, string filename, 
+		internal OpNode_ArgvCount(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			return vars.scriptArgs.argv.Length;
 		}

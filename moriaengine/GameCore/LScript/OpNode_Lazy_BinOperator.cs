@@ -25,44 +25,45 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
-	
+
 namespace SteamEngine.LScript {
 	public class OpNode_Lazy_BinOperator : OpNode, IOpNodeHolder {
 		internal OpNode left;
 		internal OpNode right;
-		
+
 		private object leftResult;
 		private object rightResult;
-		
+
 		internal static OpNode_Lazy_BinOperator Construct(IOpNodeHolder parent, Node code) {
 			return new OpNode_Lazy_BinOperator(parent, code);
 		}
-		
-		internal OpNode_Lazy_BinOperator(IOpNodeHolder parent, Node code) :
-			base(parent, LScript.GetParentScriptHolder(parent).filename, code.GetStartLine()+LScript.startLine, 
+
+		internal OpNode_Lazy_BinOperator(IOpNodeHolder parent, Node code)
+			:
+			base(parent, LScript.GetParentScriptHolder(parent).filename, code.GetStartLine() + LScript.startLine,
 			code.GetStartColumn(), code) {
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (left == oldNode) {
 				left = newNode;
-			} else if (right == oldNode){
+			} else if (right == oldNode) {
 				right = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			string opString = LScript.GetString(origNode).Trim().ToLower();
 			leftResult = left.Run(vars);
 			rightResult = right.Run(vars);
-			
+
 			try {
 				ITriable newNode = null;
-				
+
 				switch (opString) {
-					case("+"):
+					case ("+"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_AddOperator(parent, origNode);
 						} else if ((leftResult is string) || (rightResult is string)) {
@@ -71,14 +72,14 @@ namespace SteamEngine.LScript {
 							newNode = FindOperatorMethod("op_Addition");
 						}
 						break;
-					case("-"):
+					case ("-"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_SubOperator(parent, origNode);
 						} else {
 							newNode = FindOperatorMethod("op_Subtraction");
 						}
 						break;
-					case("/"):
+					case ("/"):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_DivOperator_Double(parent, origNode);
@@ -89,40 +90,40 @@ namespace SteamEngine.LScript {
 							newNode = FindOperatorMethod("op_Division");
 						}
 						break;
-					case("div"):
+					case ("div"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_DivOperator_Int(parent, origNode);
 						}
 						break;
-					case("*"):
+					case ("*"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_MulOperator(parent, origNode);
 						} else {
 							newNode = FindOperatorMethod("op_Multiply");
 						}
 						break;
-					case("%"):
+					case ("%"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_ModOperator(parent, origNode);
 						} else {
 							newNode = FindOperatorMethod("op_Modulus");
 						}
 						break;
-					case("&"):
+					case ("&"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_BinaryAndOperator(parent, origNode);
 						} else {
 							newNode = FindOperatorMethod("op_BitwiseAnd");
 						}
 						break;
-					case("|"):
+					case ("|"):
 						if (OperandsAreNumbers()) {
 							newNode = new OpNode_BinaryOrOperator(parent, origNode);
 						} else {
 							newNode = FindOperatorMethod("op_BitwiseOr");
 						}
 						break;
-					case("=="):
+					case ("=="):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_EqualityOperator_Double(parent, origNode);
@@ -136,7 +137,7 @@ namespace SteamEngine.LScript {
 							}
 						}
 						break;
-					case("!="):
+					case ("!="):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_InEqualityOperator_Double(parent, origNode);
@@ -150,7 +151,7 @@ namespace SteamEngine.LScript {
 							}
 						}
 						break;
-					case("<="):
+					case ("<="):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_LessThanOrEqualOperator_Double(parent, origNode);
@@ -161,7 +162,7 @@ namespace SteamEngine.LScript {
 							newNode = FindOperatorMethod("op_LessThanOrEqual");
 						}
 						break;
-					case(">="):
+					case (">="):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_GreaterThanOrEqualOperator_Double(parent, origNode);
@@ -172,7 +173,7 @@ namespace SteamEngine.LScript {
 							newNode = FindOperatorMethod("op_GreaterThanOrEqual");
 						}
 						break;
-					case("<"):
+					case ("<"):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_LessThanOperator_Double(parent, origNode);
@@ -183,7 +184,7 @@ namespace SteamEngine.LScript {
 							newNode = FindOperatorMethod("op_LessThan");
 						}
 						break;
-					case(">"):
+					case (">"):
 						if (OperandsAreNumbers()) {
 							if (Globals.scriptFloats) {
 								newNode = new OpNode_GreaterThanOperator_Double(parent, origNode);
@@ -195,17 +196,17 @@ namespace SteamEngine.LScript {
 						}
 						break;
 					default:
-						throw new Exception("Operator "+opString+" unkown or not implemented.");
+						throw new Exception("Operator " + opString + " unkown or not implemented.");
 				}
-				
+
 				if (newNode != null) {
 					object retVal;
 					if (newNode is OpNode_Lazy_BinOperator) {
-						((OpNode_Lazy_BinOperator) newNode).left = left; 
+						((OpNode_Lazy_BinOperator) newNode).left = left;
 						((OpNode_Lazy_BinOperator) newNode).right = right;
 					}
 					ReplaceSelf((OpNode) newNode);
-					retVal = newNode.TryRun(vars, new object[] {leftResult, rightResult});
+					retVal = newNode.TryRun(vars, new object[] { leftResult, rightResult });
 					if ((left is OpNode_Object) && (right is OpNode_Object)) {
 						//both operands are constant -> result is also constant
 						OpNode constNode = OpNode_Object.Construct(parent, retVal);
@@ -214,17 +215,17 @@ namespace SteamEngine.LScript {
 					return retVal;
 				}
 				throw new Exception(string.Format("Operator {0} is not applicable to these operands(type {1} and {2}).",
-					opString, 
-					(leftResult == null?"<null>":leftResult.GetType().Name),
-					(rightResult == null?"<null>":rightResult.GetType().Name)));
+					opString,
+					(leftResult == null ? "<null>" : leftResult.GetType().Name),
+					(rightResult == null ? "<null>" : rightResult.GetType().Name)));
 			} catch (InterpreterException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating binary operator", 
+				throw new InterpreterException("Exception while evaluating binary operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		private bool OperandsAreNumbers() {
 			if (leftResult == null) {
 				if (rightResult == null) {
@@ -236,7 +237,7 @@ namespace SteamEngine.LScript {
 			}
 			return ((TagMath.IsNumberType(leftResult.GetType())) && (TagMath.IsNumberType(rightResult.GetType())));
 		}
-		
+
 		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
 			if (leftResult == null) {
 				if (rightResult == null) {
@@ -253,11 +254,11 @@ namespace SteamEngine.LScript {
 				return FindOperatorMethodOnType(methodName, rightResult.GetType());
 			}
 		}
-		
+
 		private OpNode_MethodWrapper FindOperatorMethodOnType(string methodName, Type type) {
 			List<MethodInfo> matches = new List<MethodInfo>();
-			
-			MethodInfo[] methods = type.GetMethods(BindingFlags.Public|BindingFlags.Static);
+
+			MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 			foreach (MethodInfo mi in methods) {
 				if (mi.Name.Equals(methodName)) { //true for case insensitive
 					ParameterInfo[] pars = mi.GetParameters();
@@ -271,8 +272,8 @@ namespace SteamEngine.LScript {
 			}
 			if (matches.Count == 1) {
 				MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) matches[0]);
-				OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(parent, filename, 
-					line, column, origNode, method, new OpNode[] {left, right});
+				OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(parent, filename,
+					line, column, origNode, method, new OpNode[] { left, right });
 				return newNode;
 			} else if (matches.Count > 1) {
 				//List<MethodInfo> resolvedAmbiguities;
@@ -285,16 +286,18 @@ namespace SteamEngine.LScript {
 					sb.Append(Environment.NewLine);
 					sb.AppendFormat("{0} {1}.{2}", mi.ReturnType, mi.DeclaringType, mi);
 				}
-				throw new InterpreterException(sb.ToString(), 
+				throw new InterpreterException(sb.ToString(),
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 			}
 			return null;
 		}
-		
-		internal override string OrigString { get {
-			return left.OrigString+LScript.GetString(origNode)+left.OrigString;
-		} }
-		
+
+		internal override string OrigString {
+			get {
+				return left.OrigString + LScript.GetString(origNode) + left.OrigString;
+			}
+		}
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
 			str.Append(left.ToString());
@@ -304,4 +307,4 @@ namespace SteamEngine.LScript {
 			return str.ToString();
 		}
 	}
-}	
+}

@@ -39,19 +39,23 @@ namespace SteamEngine.Timers {
 	}
 
 	public sealed class TimerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
-		public Type HandledType { get {
-			return typeof(TimerKey);
-		} }
-		
-		
-		public Regex LineRecognizer { get {
-			return TagHolder.timerKeyRE;
-		} }
-		
-		public string Save(object objToSave) {
-			return "%"+((TimerKey) objToSave).name;
+		public Type HandledType {
+			get {
+				return typeof(TimerKey);
+			}
 		}
-		
+
+
+		public Regex LineRecognizer {
+			get {
+				return TagHolder.timerKeyRE;
+			}
+		}
+
+		public string Save(object objToSave) {
+			return "%" + ((TimerKey) objToSave).name;
+		}
+
 		public object Load(Match match) {
 			return TimerKey.Get(match.Groups["value"].Value);
 		}

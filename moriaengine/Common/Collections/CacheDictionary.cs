@@ -4,7 +4,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxQueueCount' usages of the dictionary. "
-		+"The maxQueueLength number should typically be pretty big, in thousands or more.")]
+		+ "The maxQueueLength number should typically be pretty big, in thousands or more.")]
 	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
 		private LinkedList<TKey> linkedList = new LinkedList<TKey>();
@@ -158,8 +158,8 @@ namespace SteamEngine {
 		}
 
 		public bool IsReadOnly {
-			get { 
-				return false; 
+			get {
+				return false;
 			}
 		}
 

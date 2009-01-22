@@ -21,10 +21,10 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_foliage : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_tree : CompiledTriggerGroup {
-		
+
 	}
 }

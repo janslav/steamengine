@@ -21,7 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Regions;
-	
+
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class MultiItemDef : ItemDef {
@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 					rectangleHelpers.Add(new MultiRegionRectangleHelper(args));
 					return;
 			}
- 			base.LoadScriptLine(filename, line, param, args);
+			base.LoadScriptLine(filename, line, param, args);
 		}
 
 		protected override void On_Create(Thing t) {
@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 			int n = components.Length;
 			if (n > 0) {
 				Item[] items = new Item[n];
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					items[i] = components[i].Create(t.X, t.Y, t.Z, t.M); ;
 				}
 				mi.components = items;
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
-					Logger.WriteWarning(filename,line,ex);
+					Logger.WriteWarning(filename, line, ex);
 				}
 				return null;
 			}
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal class MultiRegionRectangleHelper {
 			public static Regex rectRE = new Regex(@"(?<x1>-?(0x)?\d+)\s*(,|/s+)\s*(?<y1>-?(0x)?\d+)\s*(,|/s+)\s*(?<x2>-?(0x)?\d+)\s*(,|/s+)\s*(?<y2>-?(0x)?\d+)",
-				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 			private int startX;
 			private int startY;
@@ -120,13 +120,13 @@ namespace SteamEngine.CompiledScripts {
 					endX = TagMath.ParseInt32(gc["x2"].Value);
 					endY = TagMath.ParseInt32(gc["y2"].Value);
 				} else {
-					throw new SEException("Unrecognized Rectangle format ('"+args+"')");
+					throw new SEException("Unrecognized Rectangle format ('" + args + "')");
 				}
 			}
 
 			internal ImmutableRectangle CreateRect(IPoint2D p) {
-				return new ImmutableRectangle((ushort)(p.X + startX), (ushort)(p.Y + startY),
-											  (ushort)(p.X + endX), (ushort)(p.Y + endY));				
+				return new ImmutableRectangle((ushort) (p.X + startX), (ushort) (p.Y + startY),
+											  (ushort) (p.X + endX), (ushort) (p.Y + endY));
 			}
 		}
 
@@ -146,18 +146,18 @@ namespace SteamEngine.CompiledScripts {
 
 			internal Item Create(ushort centerX, ushort centerY, sbyte centerZ, byte m) {
 				return (Item) def.Create(
-					(ushort) (centerX+offsetX),
-					(ushort) (centerY+offsetY),
-					(sbyte) (centerZ+offsetZ), m);
+					(ushort) (centerX + offsetX),
+					(ushort) (centerY + offsetY),
+					(sbyte) (centerZ + offsetZ), m);
 			}
 
 			internal static Regex dmicdRE = new Regex(@"\s*(?<defname>[a-z_0-9]+)\s*(,|\s)\s*(?<x>-?\d+)\s*(,|\s)\s*(?<y>-?\d+)\s*((,|\s)\s*(?<z>-?\d+))?\s*",
-				RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 			internal static DynamicMultiItemComponentDescription Parse(string str) {
 				Match m = dmicdRE.Match(str);
 				if (m.Success) {
-					GroupCollection gc=m.Groups;
+					GroupCollection gc = m.Groups;
 					string defname = gc["defname"].Value;
 					ItemDef def = ThingDef.Get(defname) as ItemDef;
 					if (def == null) {
@@ -166,22 +166,22 @@ namespace SteamEngine.CompiledScripts {
 							def = ThingDef.FindItemDef(model) as ItemDef;
 						}
 						if (def == null) {
-							throw new SEException("Unrecognized Itemdef in Component parse: '"+defname+"'");
+							throw new SEException("Unrecognized Itemdef in Component parse: '" + defname + "'");
 						}
 					}
 
 					short x = TagMath.ParseInt16(gc["x"].Value);
 					short y = TagMath.ParseInt16(gc["y"].Value);
-					string zstr=gc["z"].Value;
+					string zstr = gc["z"].Value;
 					sbyte z;
-					if (zstr.Length>0) {
+					if (zstr.Length > 0) {
 						z = TagMath.ParseSByte(zstr);
 					} else {
 						z = 0;
 					}
 					return new DynamicMultiItemComponentDescription(def, x, y, z);
 				}
-				throw new SEException("Invalid input string for Component parse: '"+str+"'");
+				throw new SEException("Invalid input string for Component parse: '" + str + "'");
 			}
 		}
 	}
@@ -190,13 +190,15 @@ namespace SteamEngine.CompiledScripts {
 	public partial class MultiItem : Item {
 		protected MultiRegion region;
 
-		public int ComponentCount { get {
-			if (components != null) {
-				return components.Length;
+		public int ComponentCount {
+			get {
+				if (components != null) {
+					return components.Length;
+				}
+				return 0;
 			}
-			return 0;
-		} }
-		
+		}
+
 		public Item GetComponent(int index) {
 			if (components != null) {
 				if ((index > 0) && (index < this.components.Length)) {
@@ -237,7 +239,7 @@ namespace SteamEngine.CompiledScripts {
 			int n = TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
 				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
 				region = new MultiRegion(this, newRectangles);
@@ -260,7 +262,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return GetType().Name+" "+Name;
+			return GetType().Name + " " + Name;
 		}
 
 		public override string Name {

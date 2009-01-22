@@ -20,16 +20,16 @@ using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 
-	
+
 	//t_rock is in type_buildings_floors.cs instead.
 
 	public class t_dirt : GroundTileType {
 		public override bool IsTypeOfMapTile(int mapTileId) {
-			return	(IsMapTileInRange(mapTileId, 0x0009, 0x0015)) ||
+			return (IsMapTileInRange(mapTileId, 0x0009, 0x0015)) ||
 					(IsMapTileInRange(mapTileId, 0x0150, 0x015c));
 		}
 	}
-	
+
 	public class t_grass : GroundTileType {
 		public override bool IsTypeOfMapTile(int mapTileId) {
 			//This should be faster than having a bunch of [if (foo) return true;] lines.
@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			//(so that the range with the most map tiles on the normal UO map would be first, the next most second, etc)
 			//TODO: Find out how many tiles of each range are on the standard map 0, the other maps, custom maps, etc,
 			//and see if this order can be optimized somehow for all of them (hmm...)
-			return	(IsMapTileInRange(mapTileId, 0x0003, 0x0006)) ||
+			return (IsMapTileInRange(mapTileId, 0x0003, 0x0006)) ||
 					(IsMapTileInRange(mapTileId, 0x007d, 0x008c)) ||
 					(IsMapTileInRange(mapTileId, 0x00c0, 0x00db)) ||
 					(IsMapTileInRange(mapTileId, 0x00f8, 0x00fb)) ||
@@ -75,14 +75,14 @@ namespace SteamEngine.CompiledScripts {
 		//			(IsMapTileInRange(mapTileId, 0x0136, 0x0137));
 		//}
 	}
-	
+
 	public class t_rock : GroundTileType {
 		public override bool IsTypeOfMapTile(int mapTileId) {
 			//This should be faster than having a bunch of [if (foo) return true;] lines.
 			//But perhaps the ranges should be sorted by how many map tiles each has (not tileIDs, the actual number
 			//of tiles on the map that are in each range), so that this would be even faster.
 			//(so that the range with the most map tiles on the normal UO map would be first, the next most second, etc)
-			return	(IsMapTileInRange(mapTileId, 0x00dc, 0x00e7)) ||
+			return (IsMapTileInRange(mapTileId, 0x00dc, 0x00e7)) ||
 					(IsMapTileInRange(mapTileId, 0x00ec, 0x00f7)) ||
 					(IsMapTileInRange(mapTileId, 0x00fc, 0x0107)) ||
 					(IsMapTileInRange(mapTileId, 0x010c, 0x0117)) ||

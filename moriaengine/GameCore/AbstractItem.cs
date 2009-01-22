@@ -543,7 +543,7 @@ namespace SteamEngine {
 		public override sealed bool IsEquipped {
 			get {
 				return (this.Cont is AbstractCharacter);
-			} 
+			}
 		}
 
 		public override sealed bool IsOnGround {

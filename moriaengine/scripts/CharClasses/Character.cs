@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 					ret |= 0x80;
 				}
 				if (Flag_WarMode) {
-					ret |= 0x41 ; //both 0x40 (for aos clients) and 0x01 (for older clients?) hope it won't break much
+					ret |= 0x41; //both 0x40 (for aos clients) and 0x01 (for older clients?) hope it won't break much
 				}
 				return (byte) ret;
 			}
@@ -199,7 +199,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckAliveWithMessage() {
-			if ((this.Flag_Disconnected) || (this.IsDeleted)){
+			if ((this.Flag_Disconnected) || (this.IsDeleted)) {
 				return false;
 			} else if (this.Flag_Dead) {
 				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
@@ -364,7 +364,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (target.Flag_InvisByMagic) {
 				return this.IsGM;
-			}			
+			}
 			if (target.Flag_Hidden) {
 				if (this.IsGM) {
 					return true;
@@ -539,7 +539,7 @@ namespace SteamEngine.CompiledScripts {
 
 					//regeneration...
 					if ((stamina <= MaxStam) && (stamRegenSpeed != 0)) {
-						RegenerationPlugin.TryAddPlugin(this);						
+						RegenerationPlugin.TryAddPlugin(this);
 					}
 				}
 			}
@@ -963,7 +963,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				stamRegenSpeed = value;
 			}
-		}	
+		}
 		#endregion regenerace
 
 		public override string PaperdollName {
@@ -991,7 +991,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual void On_Death(Character killedBy) {
 			//stop regenerating
-			this.DeletePlugin(RegenerationPlugin.regenerationsPluginKey);	
+			this.DeletePlugin(RegenerationPlugin.regenerationsPluginKey);
 		}
 
 		private static TriggerKey deathTK = TriggerKey.Get("death");
@@ -1461,7 +1461,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void InternalRemoveSkill(ushort id) {
 			CharSyncQueue.AboutToChangeSkill(this, id);
 			AbstractSkillDef aDef = AbstractSkillDef.ById(id);
-			SkillsAbilities.Remove(aDef);			
+			SkillsAbilities.Remove(aDef);
 		}
 
 		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
@@ -1710,11 +1710,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion abilities
 
-        #region roles
-        [Summary("Check if character has been cast to the given role")]
-        public bool HasRole(Role role) {
-            return RolesManagement.HasRole(this, role);
-        }
+		#region roles
+		[Summary("Check if character has been cast to the given role")]
+		public bool HasRole(Role role) {
+			return RolesManagement.HasRole(this, role);
+		}
 
 		//these triggers might get alive if they prove to be needed. For now I dont think so
 		//[Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
@@ -1724,7 +1724,7 @@ namespace SteamEngine.CompiledScripts {
 		//[Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
 		//internal virtual void On_RoleUnAssign(Role role) {
 		//}
-        #endregion roles
+		#endregion roles
 
 		public override void TryCastSpellFromBook(int spellid) {
 			MagerySkillDef.TryCastSpellFromBook(this, spellid);
@@ -1738,7 +1738,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-        public Character Owner {
+		public Character Owner {
 			get {
 				return owner;
 			}

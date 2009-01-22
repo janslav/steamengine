@@ -33,15 +33,15 @@
 //        AsyncSend:		Written. Tested. Appears to be working.
 //        SyncSend:		Written. Tested. Appears to be working.
 //        Send/Write/Etc:	Written. Tested. Appears to be working.
-		
+
 //        HasData:		Written. Tested. Appears to be working.
 //        Read:			Written. Tested. Appears to be working.
 //        AsyncRead:		Written. Tested. Appears to be working.
 //        SyncRead:		Written. Tested. Appears to be working.
-		
+
 //        Statistics collection: Written. Undergoing testing.
 //        Statistics display: Written. Undergoing testing.
-		
+
 //        -SL
 //*/
 
@@ -997,7 +997,7 @@
 //        block on sending and receiving and such, but ... We'll see. All that's left now is
 //        to add performance measuring stuff, and then we'll have async and sync both running, 
 //        and collecting data, so we can see which one really works better with a real server.
-		
+
 //        -SL
 //        */
 

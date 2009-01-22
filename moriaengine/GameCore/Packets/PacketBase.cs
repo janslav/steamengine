@@ -28,7 +28,7 @@ namespace SteamEngine.Packets {
 		//        array[a+1]=temp;
 		//    }*/
 		//}
-		
+
 		//internal int EncodeUnicodeStringInArray(string value, byte[] array, int start, int maxlen) {
 		//    int len=value.Length*2;
 		//    Encoding.BigEndianUnicode.GetBytes(value, 0, (maxlen>len?len:maxlen), array, start);
@@ -51,7 +51,7 @@ namespace SteamEngine.Packets {
 		//    Encoding.UTF8.GetBytes(value, 0, value.Length, array, start);
 		//    return value.Length;
 		//}
-		
+
 		//internal int EncodeStringInArray(string value, byte[] array, int start, int maxlen) {
 		//    Encoding.UTF8.GetBytes(value, 0, (maxlen>value.Length?value.Length:maxlen), array, start);
 		//    if (value.Length<maxlen) {
@@ -61,8 +61,8 @@ namespace SteamEngine.Packets {
 		//    }
 		//    return maxlen;
 		//}
-		
-		
+
+
 		//internal void EncodeIntInArray(int value, byte[] array, int startpos) {
 		//    array[startpos] = (byte) (value>>24);	//first byte
 		//    array[startpos+1] = (byte) (value>>16);	//second byte
@@ -75,12 +75,12 @@ namespace SteamEngine.Packets {
 		//    array[startpos+2] = (byte) (value>>8);	//third byte
 		//    array[startpos+3] = (byte) (value);	//fourth byte
 		//}
-		
+
 		//internal void EncodeShortInArray(short value, byte[] array, int startpos) {
 		//    array[startpos] = (byte) (value>>8);	//third byte
 		//    array[startpos+1] = (byte) (value);	//fourth byte
 		//}
-		
+
 		//internal void EncodeUShortInArray(ushort value, byte[] array, int startpos) {
 		//    array[startpos] = (byte) (value>>8);	//third byte
 		//    array[startpos+1] = (byte) (value);	//fourth byte
@@ -88,40 +88,40 @@ namespace SteamEngine.Packets {
 		//internal void EncodeSByteInArray(sbyte value, byte[] array, int startpos) {
 		//    array[startpos]=(byte) value;
 		//}
-			
+
 		[Conditional("DEBUG")]
 		internal void OutputPacketLog(Byte[] array, int len) {
-			Logger.WriteDebug("Packet Contents: ("+len+" bytes)");
+			Logger.WriteDebug("Packet Contents: (" + len + " bytes)");
 			string s = "";
 			string t = "";
-			for (int a=0; a<len; a++) {
+			for (int a = 0; a < len; a++) {
 				t = array[a].ToString("X");
-				while (t.Length<2) {
-					t="0"+t;
+				while (t.Length < 2) {
+					t = "0" + t;
 				}
-				s += " "+t;
-				if (a%10==0) {
+				s += " " + t;
+				if (a % 10 == 0) {
 					Logger.WriteDebug(s);
-					s="";
+					s = "";
 				}
 			}
 			Logger.WriteDebug(s);
-			s="";
-			for (int a=0; a<len; a++) {
-				t = ""+(char) array[a];
-				if (array[a]<32 || array[a]>126) {
-					t=""+(char) 128;
+			s = "";
+			for (int a = 0; a < len; a++) {
+				t = "" + (char) array[a];
+				if (array[a] < 32 || array[a] > 126) {
+					t = "" + (char) 128;
 				}
-				s += " "+t;
-				if (a%10==0) {
+				s += " " + t;
+				if (a % 10 == 0) {
 					Logger.WriteDebug(s);
-					s="";
+					s = "";
 				}
 			}
 			Logger.WriteDebug(s);
 		}
-		
-		
-		
+
+
+
 	}
 }

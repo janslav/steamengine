@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 400;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			TagHolder th = (TagHolder)args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
-			Timer tm = (Timer)args.GetTag(D_EditTimer.editedTimerTK); //timer ktery editujeme
+			TagHolder th = (TagHolder) args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
+			Timer tm = (Timer) args.GetTag(D_EditTimer.editedTimerTK); //timer ktery editujeme
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Úprava timeru "+tm+" na "+th.ToString());
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Úprava timeru " + tm + " na " + th.ToString());
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.AddTable(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeLastTableTransparent(); //zpruhledni posledni radek
@@ -64,21 +64,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if(gr.pressedButton == 0) {
+			if (gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				return;
-			} else if(gr.pressedButton == 1) {
+			} else if (gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
-				Timer tm = (Timer)args.GetTag(D_EditTimer.editedTimerTK);
+				Timer tm = (Timer) args.GetTag(D_EditTimer.editedTimerTK);
 				tm.DueInSeconds = timerTime;
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
-				if(prevStacked.def is D_TimerList) {
+				if (prevStacked.def is D_TimerList) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
 					prevStacked.InputArgs.RemoveTag(D_TimerList.timerListTK);
 				}
-				DialogStacking.ResendAndRestackDialog(prevStacked);								
-			} 
-		}		
+				DialogStacking.ResendAndRestackDialog(prevStacked);
+			}
+		}
 	}
 }

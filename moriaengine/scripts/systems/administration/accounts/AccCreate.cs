@@ -25,21 +25,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("An account creating dialog")]
 	public class D_NewAccount : CompiledGumpDef {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {			
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(500);
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0,0] = TextFactory.CreateHeadline("Vytvoøení nového hráèského úètu");
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vytvoøení nového hráèského úètu");
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0,1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
 
 			//dvousloupeckovy dialozek
-			dlg.AddTable(new GUTATable(3,0,300)); //1.sl - napisy, 2.sl - editacni pole
+			dlg.AddTable(new GUTATable(3, 0, 300)); //1.sl - napisy, 2.sl - editacni pole
 			//napred napisy 
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Jméno úètu");
 			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Heslo");
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.AddTable(new GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
 			dlg.MakeLastTableTransparent(); //zpruhledni posledni radek
@@ -61,9 +61,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if(gr.pressedButton == 0) {
+			if (gr.pressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
-			} else if(gr.pressedButton == 1) {
+			} else if (gr.pressedButton == 1) {
 				//nacteme obsah input fieldu
 				string accName = gr.GetTextResponse(10);
 				string pass = gr.GetTextResponse(11);
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Create a new gm account using the dialog. Function accessible from the game")]
 		[SteamFunction]
-		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {			
+		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {
 			sender.Dialog(SingletonScript<D_NewAccount>.Instance);
 		}
 	}

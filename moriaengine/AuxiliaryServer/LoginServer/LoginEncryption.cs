@@ -41,20 +41,19 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		}
 
-		private bool InitEncrypion(byte[] buffer, int offset, int length) 
-		{
-			uint seed = (uint) ((buffer[offset] << 24) | (buffer[offset+1] << 16) | (buffer[offset+2] << 8) | buffer[offset+3]);
+		private bool InitEncrypion(byte[] buffer, int offset, int length) {
+			uint seed = (uint) ((buffer[offset] << 24) | (buffer[offset + 1] << 16) | (buffer[offset + 2] << 8) | buffer[offset + 3]);
 
 			// Try to find a valid key
 
 			// Initialize our tables (cache them, they will be modified)
-			uint orgTable1 = ( ( ( ~seed ) ^ 0x00001357 ) << 16 ) | ( ( seed ^ 0xffffaaaa ) & 0x0000ffff );
-			uint orgTable2 = ( ( seed ^ 0x43210000 ) >> 16 ) | ( ( ( ~seed ) ^ 0xabcdffff ) & 0xffff0000 );
+			uint orgTable1 = (((~seed) ^ 0x00001357) << 16) | ((seed ^ 0xffffaaaa) & 0x0000ffff);
+			uint orgTable2 = ((seed ^ 0x43210000) >> 16) | (((~seed) ^ 0xabcdffff) & 0xffff0000);
 
 			using (Communication.Buffer b = Pool<Communication.Buffer>.Acquire()) {
 				byte[] bytes = b.bytes;
 
-				for (int i = 0, n = LoginKey.loginKeys.Length; i<n; i++) {
+				for (int i = 0, n = LoginKey.loginKeys.Length; i < n; i++) {
 					table1 = orgTable1;
 					table2 = orgTable2;
 					key1 = LoginKey.loginKeys[i].key1;
@@ -81,7 +80,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		private bool CheckCorrectASCIIString(byte[] bytes, int start, int len) {
 			bool nullsFromNowOn = false;
-			for (int i = start, n = start+len; i<n; i++) {
+			for (int i = start, n = start + len; i < n; i++) {
 				byte value = bytes[i];
 				if (nullsFromNowOn) {
 					if (value != 0) {
@@ -108,7 +107,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			uint eax, ecx, edx, esi;
 
 			for (int i = 0; i < length; i++) {
-				bytesOut[i] = (byte) (bytesIn[offsetIn+i] ^ (byte) (table1 & 0xFF));
+				bytesOut[i] = (byte) (bytesIn[offsetIn + i] ^ (byte) (table1 & 0xFF));
 				edx = table2;
 				esi = table1 << 31;
 				eax = table2 >> 1;

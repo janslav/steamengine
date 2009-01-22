@@ -32,35 +32,43 @@ namespace SteamEngine.CompiledScripts {
 	public delegate bool SupplyDecoratedType<T>(Type type, T attr) where T : Attribute;
 
 	public delegate void SupplyInstance<T>(T instance);
-	
-	public static class ClassManager {		
+
+	public static class ClassManager {
 		public readonly static Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-		
+
 		private static Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
 
 		private static List<SupplyDecoratedTypeBase> supplyDecoratedTypesDelegs = new List<SupplyDecoratedTypeBase>();
 
 		private static List<SupplySubclassInstanceBase> supplySubclassInstanceDelegs = new List<SupplySubclassInstanceBase>();
-			
+
 		private static List<TypeDelegPair> supplySubclassDelegs = new List<TypeDelegPair>();
 
 		private static Assembly commonAssembly = typeof(ConAttrs).Assembly;
-		public static Assembly CommonAssembly { get {
-			return commonAssembly;
-		} }
+		public static Assembly CommonAssembly {
+			get {
+				return commonAssembly;
+			}
+		}
 
 		private static Assembly coreAssembly = typeof(ClassManager).Assembly;
-		public static Assembly CoreAssembly { get {
-			return coreAssembly;
-		} }
+		public static Assembly CoreAssembly {
+			get {
+				return coreAssembly;
+			}
+		}
 
-		public static Assembly ScriptsAssembly { get {
-			return CompilerInvoker.compiledScripts.assembly;
-		} }
+		public static Assembly ScriptsAssembly {
+			get {
+				return CompilerInvoker.compiledScripts.assembly;
+			}
+		}
 
-		public static Assembly GeneratedAssembly { get {
-			return GeneratedCodeUtil.generatedAssembly;
-		} }
+		public static Assembly GeneratedAssembly {
+			get {
+				return GeneratedCodeUtil.generatedAssembly;
+			}
+		}
 
 		//removes all non-core references
 		internal static void UnLoadScripts() {
@@ -118,7 +126,7 @@ namespace SteamEngine.CompiledScripts {
 			return mi;
 		}
 
-        public static void RegisterSupplyDecoratedClasses<T>(SupplyDecoratedType<T> deleg, bool inherited) where T : Attribute {
+		public static void RegisterSupplyDecoratedClasses<T>(SupplyDecoratedType<T> deleg, bool inherited) where T : Attribute {
 			supplyDecoratedTypesDelegs.Add(new SupplyDecoratedTypeBaseTuple<T>(deleg, inherited));
 		}
 
@@ -163,8 +171,8 @@ namespace SteamEngine.CompiledScripts {
 		private class SupplySubclassInstanceTuple<T> : SupplySubclassInstanceBase {
 			SupplyInstance<T> deleg;
 
-			internal SupplySubclassInstanceTuple(SupplyInstance<T> deleg, bool sealedOnly, bool throwIfNoCtor) 
-					: base(sealedOnly, throwIfNoCtor, typeof(T)) {
+			internal SupplySubclassInstanceTuple(SupplyInstance<T> deleg, bool sealedOnly, bool throwIfNoCtor)
+				: base(sealedOnly, throwIfNoCtor, typeof(T)) {
 				this.deleg = deleg;
 			}
 
@@ -217,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static bool InitClasses(Assembly assembly) {
 			Type[] types = assembly.GetTypes();
-			if (!InitClasses(types, assembly.GetName().Name, (coreAssembly == assembly) )) {
+			if (!InitClasses(types, assembly.GetName().Name, (coreAssembly == assembly))) {
 				Logger.WriteCritical("Scripts invalid.");
 				return false;
 			}
@@ -225,25 +233,25 @@ namespace SteamEngine.CompiledScripts {
 			//allTypesbyName.Values.CopyTo(allTypes, 0);
 			return true;
 		}
-			
+
 		private static bool InitClasses(Type[] types, string assemblyName, bool isCoreAssembly) {
 			bool success = true;
 
 			//first call the Bootstrap methods (if present)
-			for(int i = 0; i < types.Length; i++) {
+			for (int i = 0; i < types.Length; i++) {
 				MethodInfo m = types[i].GetMethod("Bootstrap", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
-				if(m != null) {
+				if (m != null) {
 					m.Invoke(null, null);
 				}
 			}
 			//then Initialize the classes as needed
-			for (int i=0; i<types.Length; i++) {
+			for (int i = 0; i < types.Length; i++) {
 				try {
 					InitClass(types[i], isCoreAssembly);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
-					Logger.WriteError(assemblyName,types[i].Name, e);
+					Logger.WriteError(assemblyName, types[i].Name, e);
 					success = false;
 				}
 			}
@@ -253,7 +261,7 @@ namespace SteamEngine.CompiledScripts {
 		private static void InitClass(Type type, bool isCoreAssembly) {
 			allTypesbyName[type.Name] = type;
 
-			foreach (MethodInfo meth in type.GetMethods(BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly)) {
+			foreach (MethodInfo meth in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)) {
 				if (Attribute.IsDefined(meth, typeof(RegisterWithRunTestsAttribute))) {
 					TestSuite.AddTest(meth);
 				}
@@ -263,8 +271,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (type.IsSubclassOf(typeof(TagHolder))) {
-				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup", 
-					BindingFlags.Public | BindingFlags.Static, null, new Type[] {typeof(TriggerGroup)}, null);
+				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup",
+					BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(TriggerGroup) }, null);
 				if (rtgmi != null) {
 					RegisterTGDeleg rtgd = (RegisterTGDeleg) Delegate.CreateDelegate(typeof(RegisterTGDeleg), rtgmi);
 					registerTGmethods[type.Name] = rtgd;
@@ -283,7 +291,7 @@ namespace SteamEngine.CompiledScripts {
 				if (attribs.Length > 0) {
 					match = match || entry.InvokeDeleg(type, (Attribute) attribs[0]);
 					if (attribs.Length > 1) {
-						Logger.WriteWarning("Class "+type+" has more than one "+entry.type+" Attribute defined. What to do...?");
+						Logger.WriteWarning("Class " + type + " has more than one " + entry.type + " Attribute defined. What to do...?");
 					}
 				}
 			}
@@ -292,7 +300,7 @@ namespace SteamEngine.CompiledScripts {
 				object instance = null;
 				foreach (SupplySubclassInstanceBase entry in supplySubclassInstanceDelegs) {
 					if (entry.type.IsAssignableFrom(type)) {
-						if ((type.IsAbstract) || 
+						if ((type.IsAbstract) ||
 							((entry.sealedOnly) && (!type.IsSealed))) {
 							continue;
 						}
@@ -325,24 +333,24 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//called by Main on the end of startup/recompile process
-		internal static void InitScripts() { 
+		internal static void InitScripts() {
 			Type[] types = commonAssembly.GetTypes();
 			if (!ClassManager.InitClasses(types, commonAssembly.GetName().Name, false)) {
 				throw new SEException("Common library invalid.");
 			}
-			
+
 			Logger.WriteDebug("Initializing Scripts.");
 			foreach (Type type in allTypesbyName.Values) {
 				Assembly a = type.Assembly;
 				if ((coreAssembly != a) && (commonAssembly != a)) {
-					MethodInfo m = type.GetMethod("Init", BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly );
-					if (m!=null) {
+					MethodInfo m = type.GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+					if (m != null) {
 						try {
 							m.Invoke(null, null);
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
-							Logger.WriteError(type.Name,m.Name, e);
+							Logger.WriteError(type.Name, m.Name, e);
 						}
 					}
 				}

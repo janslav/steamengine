@@ -19,23 +19,23 @@ using System;
 using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
-	
+
 	public class t_bee_hive : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_food : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_food_raw : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_container : CompiledTriggerGroup {
-		
+
 	}
-	
+
 	public class t_container_locked : CompiledTriggerGroup {
 		//public int on_PickedUpFrom() {
 		//    //src attempts to pick up something from the container. If it wasnt some kind of cheater, 
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		//    }
 		//    return 1;
 		//}
-		
+
 		//public int On_DClick() {
 		//    //src attempts to open this container
 		//    Globals.SrcWriteLine("The container is locked.");
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		//    }
 		//    return 1;
 		//}
-		
+
 		//public int On_StackOn() {
 		//    //src attempts to drop something in this container
 		//    Globals.src.WriteLine("The container is locked.");
@@ -67,115 +67,115 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_fruit : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_drink : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_meat_raw : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_water_wash : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_fish_pole : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_fish : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_scissors : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_game_board : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_yarn : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_hair_dye : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_crystal_ball : CompiledTriggerGroup {
-		
+
 	}
 
 	//The functions of t_musical are implemented in the Musical item type.
 	public class t_musical : CompiledTriggerGroup {
-		
+
 		//public void on_create(Item self) {
 		//    throw new ScriptException("t_musical is obsolete and should not be used: Musical instruments' defs should be defined as [Musical i_foobar], and they don't need a type. (Musical is defined in scripts/defaults/classtemplates/professionItems.ct)");
 		//}
 	}
 
 	public class t_shovel : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_arrow : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_cloth_bolt : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_sewing_kit : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_thread : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_dye : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_dye_vat : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_anvil : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_forge : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_mace_smith : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_book : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_archery_butte : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_spinwheel : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_feather : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_shaft : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_carpentry : CompiledTriggerGroup {
@@ -183,82 +183,82 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_clock : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_sextant : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_loom : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_leather : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_train_dummy : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_hide : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_fence : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_fur : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_grain : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_map : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_lockpick : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_chair : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_cloth : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_light_out : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_reagent_raw : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_crops : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_weapon_bolt : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_train_pickpocket : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_tinker_tools : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_arock : CompiledTriggerGroup {
-		
+
 	}
 }

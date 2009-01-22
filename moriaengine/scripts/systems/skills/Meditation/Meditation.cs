@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 			skillSeqArgs.Self.ClilocSysMessage(501848);//You cannot focus your concentration
 		}
 
-		[Remark("Check if we are alive, don't have weapons etc.... Return false if the trigger above"+
+		[Remark("Check if we are alive, don't have weapons etc.... Return false if the trigger above" +
 				" should be cancelled or true if we can continue")]
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
@@ -101,10 +101,10 @@ namespace SteamEngine.CompiledScripts {
 	public partial class MeditationPlugin {
 		public static readonly MeditationPluginDef defInstance = new MeditationPluginDef("p_meditation", "C#scripts", -1);
 		internal static PluginKey meditationPluginKey = PluginKey.Get("_meditation_");
-		
+
 		public void On_Assign() {
 			//add the regeneration speed to character
-			((Character)Cont).ManaRegenSpeed += this.additionalManaRegenSpeed;
+			((Character) Cont).ManaRegenSpeed += this.additionalManaRegenSpeed;
 		}
 
 		public void On_UnAssign(Character formerCont) {

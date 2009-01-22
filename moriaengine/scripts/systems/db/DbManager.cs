@@ -31,22 +31,26 @@ using MySql.Data.MySqlClient;
 namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
 	public static class DbManager {
-		[SavedMember("DBConfig","Database configuration")]
-		[Summary("This will appear as a subdialog in the settings dialog, allowing us to set "+
+		[SavedMember("DBConfig", "Database configuration")]
+		[Summary("This will appear as a subdialog in the settings dialog, allowing us to set " +
 				"database parametes online.")]
 		private static DbConfig config = new DbConfig();
 
-		public static DbConfig Config { get {
-			return config;
-		} }
+		public static DbConfig Config {
+			get {
+				return config;
+			}
+		}
 
 		private static MySqlConnection connection;
-		public static MySqlConnection Connection { get {
-			if ((connection == null) || (connection.State != ConnectionState.Open)) {
-				InitConnection();
+		public static MySqlConnection Connection {
+			get {
+				if ((connection == null) || (connection.State != ConnectionState.Open)) {
+					InitConnection();
+				}
+				return connection;
 			}
-			return connection;
-		} }
+		}
 
 		private static void InitConnection() {
 			if (connection != null)
@@ -55,10 +59,10 @@ namespace SteamEngine.CompiledScripts {
 			string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
 				config.server, config.user, config.password, config.dbName);
 
-			Logger.WriteDebug("Connecting to MySql server at "+config.server);
+			Logger.WriteDebug("Connecting to MySql server at " + config.server);
 			connection = new MySqlConnection(connStr);
 			connection.Open();
-			Logger.WriteDebug("Connected to MySql server version "+connection.ServerVersion);
+			Logger.WriteDebug("Connected to MySql server version " + connection.ServerVersion);
 		}
 
 		public static void CloseConnection() {
@@ -75,7 +79,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[SaveableClass][Dialogs.ViewableClass("Database Settings")]
+	[SaveableClass]
+	[Dialogs.ViewableClass("Database Settings")]
 	public class DbConfig {
 		[LoadingInitializer]
 		public DbConfig() {

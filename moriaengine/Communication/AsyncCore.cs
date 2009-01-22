@@ -61,7 +61,7 @@ namespace SteamEngine.Communication {
 
 			string threadsName = this.GetType().Name;
 
-			this.workerAlpha = CreateAndStartWorkerThread(threadsName+"_Worker_Alpha");
+			this.workerAlpha = CreateAndStartWorkerThread(threadsName + "_Worker_Alpha");
 			//this.workerBeta = CreateAndStartWorkerThread(threadsName+"_Worker_Beta");
 			//this.workerGamma = CreateAndStartWorkerThread(threadsName+"_Worker_Gamma");
 

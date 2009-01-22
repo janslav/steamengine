@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						ss = entry;
 						break;
 					default:
-						throw new ScriptException("Unknown section type '"+entry.name+". Valid section types: (def, defvars, or defs), (var, vars, or tags)");
+						throw new ScriptException("Unknown section type '" + entry.name + ". Valid section types: (def, defvars, or defs), (var, vars, or tags)");
 				}
 			}
 
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					yield return new PluginTemplate(section, ss);
 					break;
 				default:
-					throw new Exception("Unknown classtemplate "+section.templateName);
+					throw new Exception("Unknown classtemplate " + section.templateName);
 			}
 		}
 

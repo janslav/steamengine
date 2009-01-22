@@ -21,10 +21,10 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_spy_glass : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_bboard : CompiledTriggerGroup {
-		
+
 	}
 }

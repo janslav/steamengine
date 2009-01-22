@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 			if (hue != null) {
 				return Convert.ToUInt16(hue.Value);
 			}
-			throw new SEException("Can't find the hue for Material."+material+" of MaterialType."+type);
+			throw new SEException("Can't find the hue for Material." + material + " of MaterialType." + type);
 		}
 
 		private static Constant GetConstantForWood(Material wood) {
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 					constantName = "color_elven";
 					break;
 				default:
-					throw new SEException("Can't find the hue for wooden Material."+wood+".");
+					throw new SEException("Can't find the hue for wooden Material." + wood + ".");
 			}
 			return Constant.Get(constantName);
 		}
@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts {
 					constantName = "color_o_mithril";
 					break;
 				default:
-					throw new SEException("Can't find the hue for metallic Material."+metal+".");
+					throw new SEException("Can't find the hue for metallic Material." + metal + ".");
 			}
 			return Constant.Get(constantName);
 		}

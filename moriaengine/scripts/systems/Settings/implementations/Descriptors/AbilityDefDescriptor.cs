@@ -28,6 +28,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		new string[] { "filename", "headerLine", "altdefname", "Filepos" }
 		)]
 	public static class AbilityDefDescriptor {
-		
-	}	
+
+	}
 }

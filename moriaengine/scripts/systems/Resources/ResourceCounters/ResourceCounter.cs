@@ -54,10 +54,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Look to the foundItems list and consume desiredCount*howManyTimes items found inside. "+
+		[Summary("Look to the foundItems list and consume desiredCount*howManyTimes items found inside. " +
 				"These should be available via their 'amounts'")]
 		internal void ConsumeItems(int howManyTimes) {
-			long toConsume = (long)(desiredCount * howManyTimes);
+			long toConsume = (long) (desiredCount * howManyTimes);
 			foreach (Item itm in foundItems) {
 				//try consume as much as possible of this item
 				uint wasConsumed = itm.Consume(toConsume);

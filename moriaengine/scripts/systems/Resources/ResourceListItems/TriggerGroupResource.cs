@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as TriggerGroup (used only for 'type' checking of char's items), we dont use "+
+	[Summary("Resource as TriggerGroup (used only for 'type' checking of char's items), we dont use " +
 			"resource triggergroups for checking character's available triggergroups!")]
 	public class TriggerGroupResource : IResourceListItemMultiplicable {
 		private TriggerGroup triggerGroup;
@@ -28,10 +28,10 @@ namespace SteamEngine.CompiledScripts {
 		private string definition;
 
 		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, string definition) {
-			this.number = number;			
+			this.number = number;
 			this.triggerGroup = triggerGroup;
 			this.definition = definition;
-		}		
+		}
 
 		#region IResourceListItem Members
 		public double DesiredCount {

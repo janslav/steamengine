@@ -70,7 +70,8 @@ namespace SteamEngine {
 		public PluginHolder() {
 		}
 
-		public PluginHolder(PluginHolder copyFrom) : base(copyFrom) { //copying constuctor
+		public PluginHolder(PluginHolder copyFrom)
+			: base(copyFrom) { //copying constuctor
 			if (copyFrom.firstTGListNode != null) {
 				EnsureTagsTable();
 				TGListNode curNode = new TGListNode(copyFrom.firstTGListNode.storedTG);
@@ -120,9 +121,9 @@ namespace SteamEngine {
 			firstTGListNode = listNode;
 			return true;
 		}
-		
+
 		public void RemoveTriggerGroup(TriggerGroup tg) {
-			if (tg == null) 
+			if (tg == null)
 				return;
 			if (tags != null) {
 				TGListNode listNode = tags[tg] as TGListNode;
@@ -139,7 +140,7 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		public bool HasTriggerGroup(TriggerGroup tg) {
 			if (tags != null) {
 				return tags.ContainsKey(tg);
@@ -154,7 +155,7 @@ namespace SteamEngine {
 				curNode = curNode.nextNode;
 			}
 		}
-	
+
 		public void ClearTriggerGroups() {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
@@ -168,7 +169,7 @@ namespace SteamEngine {
 			public readonly TriggerGroup storedTG;
 			internal TGListNode prevNode = null;
 			internal TGListNode nextNode = null;
-		
+
 			internal TGListNode(TriggerGroup storedTG) {
 				this.storedTG = storedTG;
 			}
@@ -203,7 +204,7 @@ namespace SteamEngine {
 				curPlugin = curPlugin.nextInList;
 			}
 		}
-		
+
 		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
@@ -216,7 +217,7 @@ namespace SteamEngine {
 				curPlugin = curPlugin.nextInList;
 			}
 		}
-		
+
 		/*
 			Method: CancellableTrigger
 			Executes the trigger, reads return values, and returns true if anything returned 1 (returning false otherwise).
@@ -240,7 +241,7 @@ namespace SteamEngine {
 			} catch { }
 			return false;
 		}
-		
+
 		public virtual bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
@@ -292,9 +293,9 @@ namespace SteamEngine {
 						Plugin value = (Plugin) entry.Value;
 						if (!value.IsDeleted) {
 							if ((value == this.firstPlugin) || (value.prevInList != null) || (value.nextInList != null)) {
-								output.WriteValue("@@"+key.ToString(), value);
+								output.WriteValue("@@" + key.ToString(), value);
 							} else {
-								output.WriteValue("@@"+key.ToString()+"*", value);
+								output.WriteValue("@@" + key.ToString() + "*", value);
 							}
 						}
 					}
@@ -324,7 +325,7 @@ namespace SteamEngine {
 				case "triggergroup":
 				case "type":
 					string tgName;
-					m= ObjectSaver.abstractScriptRE.Match(valueString);
+					m = ObjectSaver.abstractScriptRE.Match(valueString);
 					if (m.Success) {
 						tgName = m.Groups["value"].Value;
 					} else {
@@ -334,7 +335,7 @@ namespace SteamEngine {
 					if (tg != null) {
 						this.PrivateAddTriggerGroup(tg);
 					} else {
-						throw new Exception("TriggerGroup '"+tgName+"' does not exist.");
+						throw new Exception("TriggerGroup '" + tgName + "' does not exist.");
 					}
 					return;
 			}
@@ -504,12 +505,12 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Return enumerable containing all plugins")]		
+		[Summary("Return enumerable containing all plugins")]
 		public IEnumerable<KeyValuePair<PluginKey, Plugin>> GetAllPluginsWithKeys() {
-			if(tags != null) {
-				foreach(DictionaryEntry entry in tags) {
+			if (tags != null) {
+				foreach (DictionaryEntry entry in tags) {
 					PluginKey pk = entry.Key as PluginKey;
-					if(pk != null) {
+					if (pk != null) {
 						//returning PluginKey-Plugin pair (if the key is of type PluginKey then we expect Plugin as a value
 						yield return new KeyValuePair<PluginKey, Plugin>(pk, (Plugin) entry.Value);
 					}

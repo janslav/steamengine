@@ -50,12 +50,12 @@ namespace SteamEngine.Converter {
 		protected List<LineImplTask[]> firstStageImplementations = new List<LineImplTask[]>();
 		protected List<LineImplTask[]> secondStageImplementations = new List<LineImplTask[]>();
 		protected List<LineImplTask[]> thirdStageImplementations = new List<LineImplTask[]>();
-		
+
 		public ConvertedDef(PropsSection input) {
 			this.origData = input;
 			this.origFile = input.filename;
 			this.convertFile = ConverterMain.currentIFile;
-			
+
 			headerType = input.headerType;
 			headerName = input.headerName;
 		}
@@ -67,7 +67,7 @@ namespace SteamEngine.Converter {
 				writtenData.Add(String.Format("{0} = {1} //{2} ", line.name, line.value, line.comment));
 			}
 		}
-				
+
 		public void Set(string key, string value, string comment) {
 			if ((comment == null) || (comment.Length == 0)) {
 				writtenData.Add(String.Format("{0} = {1}", key, value));
@@ -75,21 +75,21 @@ namespace SteamEngine.Converter {
 				writtenData.Add(String.Format("{0} = {1} //{2} ", key, value, comment));
 			}
 		}
-		
+
 		public virtual void Dump(TextWriter writer) {
 			writer.WriteLine();
 			string header = String.Concat("[", headerType, " ", headerName, "]");
 
 			if (origData.headerComment.Length > 0) {
-				header = header + " //"+origData.headerComment;
+				header = header + " //" + origData.headerComment;
 			}
 			if (dontDump) {
-				header = "//"+header+" //(commented out by Converter) ";
+				header = "//" + header + " //(commented out by Converter) ";
 			}
 			writer.WriteLine(header);
 
 			foreach (string line in writtenData) {
-				writer.WriteLine(dontDump?("//"+line):line);
+				writer.WriteLine(dontDump ? ("//" + line) : line);
 			}
 		}
 
@@ -102,10 +102,10 @@ namespace SteamEngine.Converter {
 					string key = origKey;
 					PropsLine line = origData.TryPopPropsLine(key);
 
-					for (int a=0;(line!=null);a++) {
+					for (int a = 0; (line != null); a++) {
 						deleg(this, line);
 
-						key=origKey+a.ToString();
+						key = origKey + a.ToString();
 						line = origData.TryPopPropsLine(key);
 					}
 				}
@@ -115,7 +115,7 @@ namespace SteamEngine.Converter {
 		public void DontDump() {
 			dontDump = true;
 		}
-		
+
 		public virtual void FirstStage() {
 			bool needspace = false;
 			PropsLine line = origData.TryPopPropsLine("category");
@@ -144,7 +144,7 @@ namespace SteamEngine.Converter {
 
 		public virtual void ThirdStage() {
 			BasicStageImpl(thirdStageImplementations);
-			
+
 			foreach (PropsLine line in origData.GetPropsLines()) {
 				if (line.name.ToLower().StartsWith("tag.")) {
 					WriteAsIs(this, line);
@@ -153,14 +153,14 @@ namespace SteamEngine.Converter {
 				}
 			}
 		}
-		
+
 		//public override string tostring() {
 		//	return "converteddef";
 		//}
 
 		public void Info(int linenum, string message) {
 			if (ConverterMain.AdditionalConverterMessages) {
-				Console.WriteLine("Info: "+LogStr.FileLine(this.convertFile.origPath, linenum)+LogStr.Highlight(message));
+				Console.WriteLine("Info: " + LogStr.FileLine(this.convertFile.origPath, linenum) + LogStr.Highlight(message));
 			}
 		}
 
@@ -172,12 +172,12 @@ namespace SteamEngine.Converter {
 			Logger.WriteError(this.convertFile.origPath, linenum, message);
 		}
 
-//generic line implementations
+		//generic line implementations
 		protected static string WriteAsIs(ConvertedDef def, PropsLine line) {
 			def.Set(line);
 			return line.value;
 		}
-		
+
 		protected static string WriteInQuotes(ConvertedDef def, PropsLine line) {
 			string value;
 			Match ma = TagMath.stringRE.Match(line.value);
@@ -186,7 +186,7 @@ namespace SteamEngine.Converter {
 			} else {
 				value = line.value;
 			}
-			value = "\""+value+"\"";
+			value = "\"" + value + "\"";
 			def.Set(line.name, value, line.comment);
 			return value;
 		}
@@ -204,7 +204,7 @@ namespace SteamEngine.Converter {
 		//}
 
 		protected static string WriteAsComment(ConvertedDef def, PropsLine line) {
-			def.Set("//"+line.name, line.value, line.comment+" commented out by Converter");
+			def.Set("//" + line.name, line.value, line.comment + " commented out by Converter");
 			return line.value;
 		}
 
@@ -224,7 +224,7 @@ namespace SteamEngine.Converter {
 			try {
 				object number = ConvertTools.ParseAnyNumber(line.value.Replace(".", ""));
 				long i = Convert.ToInt64(number);
-				retVal = "0x"+i.ToString("x");
+				retVal = "0x" + i.ToString("x");
 			} catch (Exception) {
 			}
 			def.Set(line.name, retVal, line.comment);

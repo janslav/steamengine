@@ -21,15 +21,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
-	
+
 namespace SteamEngine.LScript {
 	public abstract class OpNode_Argument : OpNode, IOpNodeHolder {
 		protected OpNode arg;
 		protected OpNode nodeIndex;
 		protected int intIndex;
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int curLine = code.GetStartLine()+LScript.startLine;
+			int curLine = code.GetStartLine() + LScript.startLine;
 			int curCol = code.GetStartColumn();
 			string filename = LScript.GetParentScriptHolder(parent).filename;
 
@@ -95,7 +95,7 @@ namespace SteamEngine.LScript {
 					constantIndex = Convert.ToInt32(retVal);
 					indexOpNode = null;
 				} else {
-					Logger.WriteWarning(filename, indexNode.GetStartLine()+LScript.startLine, "ARGV needs a number as it's indexer, '"+constIndexOpNode.obj+"' is not a number.");
+					Logger.WriteWarning(filename, indexNode.GetStartLine() + LScript.startLine, "ARGV needs a number as it's indexer, '" + constIndexOpNode.obj + "' is not a number.");
 				}
 			}
 
@@ -122,11 +122,11 @@ namespace SteamEngine.LScript {
 			return newNode;
 		}
 
-		internal OpNode_Argument(IOpNodeHolder parent, string filename, 
+		internal OpNode_Argument(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		private static int GetIndex(string name) {
 			//if (string.Compare(name, "argo", StringComparison.OrdinalIgnoreCase) == 0) {
 			//    return 0;
@@ -136,9 +136,9 @@ namespace SteamEngine.LScript {
 			string intStr = name.Substring(4);
 			return int.Parse(intStr, NumberStyles.Integer);
 		}
-		
+
 		private static bool HasNumberAttached(Node code) {
-			return ((IsType(code, StrictConstants.ARGNN)) || 
+			return ((IsType(code, StrictConstants.ARGNN)) ||
 				(IsType(code, StrictConstants.ARGVN)) || (IsType(code, StrictConstants.ARGON)));
 		}
 
@@ -148,8 +148,8 @@ namespace SteamEngine.LScript {
 			} else if (arg == oldNode) {
 				arg = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-	}	
-}	
+	}
+}

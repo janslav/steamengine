@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		private IEnumerator valuesEnum;
 
 		internal SkillsEnumerator(Character chr) {
-			valuesEnum = chr.SkillsAbilities.Values.GetEnumerator();			
+			valuesEnum = chr.SkillsAbilities.Values.GetEnumerator();
 		}
 
 		#region IEnumerator<ISkill> Members

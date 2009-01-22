@@ -11,14 +11,14 @@
 //using SteamEngine.Common;
 
 //namespace SteamEngine.Packets {
-	
+
 //    public class HighLevelOut : MediumLevelOut {
 //        //See docs/plans/packetsender.txt
-		
+
 //        static HighLevelOut() {}
-		
+
 //        //----------------- Internal Methods, used for PacketGroups, but now only used internally -----------------
-		
+
 //        public static BoundPacketGroup NewBoundGroup() {
 //            BoundPacketGroup bpg = new BoundPacketGroup();
 //            if (PacketSender.groupState == GroupState.Open) {
@@ -29,12 +29,12 @@
 //            PacketSender.groupState = GroupState.Open;
 //            return bpg;
 //        }
-		
+
 //        /**
 //            This locks the group so it can be sent, and returns a reference to the group.
 //            This is called by PacketGroup the first time it is told to send the group,
 //            or when you call Lock() on the PacketGroup.
-			
+
 //            You shouldn't ever need to call this yourself.
 //        */
 //        internal static BoundPacketGroup LockGroup() {
@@ -47,12 +47,12 @@
 //            curGroup.Locked();
 //            return curGroup;
 //        }
-		
+
 //        /**
 //            This discards a specific PacketGroup.
 //            You shouldn't ever need to call this yourself. Either make the group with a 'using' statement
 //            or call Dispose() on the group when you're done with it.
-			
+
 //            This can't be used if you have a single packet blocking
 //            operations (i.e. If you had no open groups and called a Prepare* method). In that case, you would
 //            have to call DiscardLastPacket to discard that packet before any groups could be discarded.

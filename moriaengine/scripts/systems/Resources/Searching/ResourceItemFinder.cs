@@ -23,7 +23,7 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Summary("Class for finding items from the resourcelist")]
 	public static class ResourceItemFinder {
-		[Summary("Get all items from the character in specified locality (e.g. all items from chars bank) and look if they are desired "+
+		[Summary("Get all items from the character in specified locality (e.g. all items from chars bank) and look if they are desired " +
 				"as resources in the list - initiate the resource counters list")]
 		internal static void LocalizeItems(Character chr, ResourcesLocality where, List<ResourceCounter> resCountersList) {
 			//the bahaviour of ResourcesLocality is like of a bitmask - there can be more locations specified at once (
@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts {
 				"and if so, prepare the ResourceCounter object for it. Do it recurcively for inner containers")]
 		private static void LocalizeBankItems(Character chr, List<ResourceCounter> resCountersList) {
 			CheckItemsInside((Item) chr.FindLayer(LayerNames.Bankbox), resCountersList);
-		}		
+		}
 
 		//check all items in the specified item if they are among the reslist items in the specified list
 		//can be called recursively (useful for containers :) )
@@ -125,5 +125,5 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
-	}	
+	}
 }

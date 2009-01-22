@@ -22,7 +22,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
-	[Summary("This class holds information about one ability the user has - the number of ability points "+
+	[Summary("This class holds information about one ability the user has - the number of ability points " +
 			 "and any additional info (such as timers connected with the ability running etc.)")]
 	public sealed class Ability {
 		private int points;
@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		private AbilityDef def;
 
 		private double lastUsage;
-		
+
 		internal Ability(AbilityDef def, Character cont) {
 			this.points = 0;
 			this.running = false;
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				int oldValue = this.points;
 				int newValue = Math.Min(0, Math.Max(value, this.MaxPoints)); //allow to go only in <0,this.MaxPoints>
-				if(oldValue != newValue) {//do we change at all?
+				if (oldValue != newValue) {//do we change at all?
 					this.points = newValue;
 					def.Trigger_ValueChanged(cont, this, oldValue); //call changetrigger with information about previous value
 
@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Character who possesses this ability")]		
+		[Summary("Character who possesses this ability")]
 		public Character Cont {
 			get {
 				return cont;
@@ -96,9 +96,9 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return def;
 			}
-		}		
+		}
 
-		[Summary("Server time of the last usage")]		
+		[Summary("Server time of the last usage")]
 		public double LastUsage {
 			get {
 				return lastUsage;

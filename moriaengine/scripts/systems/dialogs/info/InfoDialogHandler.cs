@@ -263,16 +263,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Summary("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
-		public static bool PagingHandled(Gump gi, GumpResponse gr) {			
+		public static bool PagingHandled(Gump gi, GumpResponse gr) {
 			DialogArgs args = gi.InputArgs;//arguments of the dialog		
 			object target = args.ArgsArray[0];
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
 			int buttonCount = viewCls.GetActionButtonsCount(target);
-            int fieldsCount = viewCls.GetFieldsCount(target);
+			int fieldsCount = viewCls.GetFieldsCount(target);
 			//how many columns for fields do we have?
 			int fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
 			bool pagingHandled = false; //indicator if the pressed button was the paging one.
-			switch(gr.pressedButton) {
+			switch (gr.pressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
 					args.SetTag(D_Info.pagingFieldsTK, TagMath.IGetTag(args, D_Info.pagingFieldsTK) - PAGE_ROWS * fieldsColumnsCount);
@@ -287,15 +287,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 				case ID_JUMP_PAGE_BUTTON:
 					//get the selected page number (absolute value - make it a bit idiot proof :) )
-					int selectedPage = (int)gr.GetNumberResponse(ID_PAGE_NO_INPUT);
-					if(selectedPage < 1) {
+					int selectedPage = (int) gr.GetNumberResponse(ID_PAGE_NO_INPUT);
+					if (selectedPage < 1) {
 						//idiot proof adjustment
 						gi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;
 					}
 					//count the index of the first item
 					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * fieldsColumnsCount);
-					if(newFirstFldIndex > fieldsCount) {
+					if (newFirstFldIndex > fieldsCount) {
 						int lastPage = (fieldsCount / (PAGE_ROWS * fieldsColumnsCount)) + 1; //(int) casted last page number
 						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * fieldsColumnsCount; //counted first item on the last page
 					}

@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("Cont", typeof(PluginHolder))]
 		public static object GetCont(object target) {
-			return ((Plugin)target).Cont;
+			return ((Plugin) target).Cont;
 		}
 	}
 }

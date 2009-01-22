@@ -32,9 +32,9 @@ namespace SteamEngine.LScript {
 		private readonly string formatString;
 		private readonly int argsCount;
 
-		internal OpNode_Function(IOpNodeHolder parent, string filename, 
+		internal OpNode_Function(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, ScriptHolder function, OpNode[] args, string formatString)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.args = args;
 			this.function = function;
 			this.formatString = formatString;
@@ -44,7 +44,7 @@ namespace SteamEngine.LScript {
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(args, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				args[index] = newNode;
 			}
@@ -53,10 +53,10 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			object[] results = new object[argsCount];  
-			
+			object[] results = new object[argsCount];
+
 			try {
-				for (int i = 0; i<argsCount; i++) {
+				for (int i = 0; i < argsCount; i++) {
 					results[i] = args[i].Run(vars);
 				}
 			} finally {
@@ -81,10 +81,10 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("function {0}(", function.name);
-			for (int i = 0, n = args.Length; i<n; i++) {
+			for (int i = 0, n = args.Length; i < n; i++) {
 				str.Append(args[i].ToString()).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}
 	}
-}	
+}

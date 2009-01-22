@@ -33,5 +33,5 @@ namespace SteamEngine.CompiledScripts {
 		Footprint_North = 0x1e04,
 		Footprint_East = 0x1e05,
 		Footprint_South = 0x1e06
-	}	
+	}
 }

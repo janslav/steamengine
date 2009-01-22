@@ -28,14 +28,15 @@ namespace SteamEngine.Converter {
 	public class ConvertedTemplateDef : ConvertedDef {
 
 		bool hasNumericDefname = false;
-		
-		public ConvertedTemplateDef(PropsSection input) : base(input) {
+
+		public ConvertedTemplateDef(PropsSection input)
+			: base(input) {
 		}
 
 		public override void FirstStage() {
 			int defnum;
 			if (ConvertTools.TryParseInt32(headerName, out defnum)) {
-				headerName="td_0x"+defnum.ToString("x");
+				headerName = "td_0x" + defnum.ToString("x");
 				hasNumericDefname = true;
 			}
 		}
@@ -57,7 +58,7 @@ namespace SteamEngine.Converter {
 					switch (name.ToLower()) {
 						case "defname":
 							if (hasNumericDefname) {
-								Info(linenum, "Ignoring the numeric defname of TemplateDef '"+value+"'.");
+								Info(linenum, "Ignoring the numeric defname of TemplateDef '" + value + "'.");
 								headerName = value;
 								//origData.headerComment = origData.headerComment+" // "+comment;
 							} else {
@@ -105,7 +106,7 @@ namespace SteamEngine.Converter {
 
 		internal static string FixRandomExpression(string input) {
 			while (true) {
-				string temp = Regex.Replace(input, @"{(?<prefix>.*?)(?<first>[a-zA-Z0-9_-]+)\s+(?<second>[a-zA-Z0-9_-]+)(?<postfix>.*?)}", 
+				string temp = Regex.Replace(input, @"{(?<prefix>.*?)(?<first>[a-zA-Z0-9_-]+)\s+(?<second>[a-zA-Z0-9_-]+)(?<postfix>.*?)}",
 					"{${prefix}${first}, ${second}${postfix}}");
 				if (temp.Equals(input)) {
 					break;

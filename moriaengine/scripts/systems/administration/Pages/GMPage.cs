@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
 	public static class GMPages {
-        [SavedMember]
+		[SavedMember]
 		public static Hashtable gmPages = new Hashtable();
 
 		[Summary("Returns a copy of the GMPages Hashtable (usable for sorting etc.)")]
@@ -54,24 +54,24 @@ namespace SteamEngine.CompiledScripts {
 				case SortingCriteria.NameAsc:
 					pages.Sort(GMPageNameComparator.instance);
 					break;
-                case SortingCriteria.NameDesc:
+				case SortingCriteria.NameDesc:
 					pages.Sort(GMPageNameComparator.instance);
-                    pages.Reverse();
-                    break;
-                case SortingCriteria.AccountAsc:
+					pages.Reverse();
+					break;
+				case SortingCriteria.AccountAsc:
 					pages.Sort(GMPageAccountComparator.instance);
 					break;
-                case SortingCriteria.AccountDesc:
-                    pages.Sort(GMPageAccountComparator.instance);
-                    pages.Reverse();
-                    break;                
-                case SortingCriteria.TimeAsc:
+				case SortingCriteria.AccountDesc:
+					pages.Sort(GMPageAccountComparator.instance);
+					pages.Reverse();
+					break;
+				case SortingCriteria.TimeAsc:
 					pages.Sort(GMPageTimeComparator.instance);
 					break;
-                case SortingCriteria.TimeDesc:
+				case SortingCriteria.TimeDesc:
 					pages.Sort(GMPageTimeComparator.instance);
-                    pages.Reverse();
-                    break;				
+					pages.Reverse();
+					break;
 				default:
 					pages.Sort(GMPageTimeComparator.instance);
 					break;

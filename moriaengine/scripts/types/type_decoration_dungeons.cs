@@ -21,18 +21,18 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_sign_gump : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_trap : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_blood : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_bone : CompiledTriggerGroup {
-		
+
 	}
 }

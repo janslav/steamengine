@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 namespace SteamEngine {
-	
+
 	//a very simple queue class, which uses sort of "circular" algorhitm, 
 	[System.Diagnostics.DebuggerDisplay("Count = {Count}")]
 	public class SimpleQueue<T> {
@@ -38,7 +38,8 @@ namespace SteamEngine {
 		public int Count {
 			get {
 				return this.count;
-		} }
+			}
+		}
 
 		public T Peek() {
 			if (this.count == 0) {
@@ -55,7 +56,7 @@ namespace SteamEngine {
 			this.array[headindex] = default(T);
 			this.headindex = ((this.headindex + 1) % this.array.Length);
 			this.count--;
-			return t;   
+			return t;
 		}
 
 		public void Enqueue(T obj) {
@@ -73,14 +74,13 @@ namespace SteamEngine {
 			this.tailindex = 0;
 			this.count = 0;
 		}
-	
+
 		private void Grow() {
 			T[] newArray = new T[this.array.Length * 2 + 1];
 			if (this.count > 0) {
 				if (this.headindex < this.tailindex) {
 					Array.Copy(this.array, this.headindex, newArray, 0, this.count);
-				}
-				else {
+				} else {
 					Array.Copy(this.array, this.headindex, newArray, 0, (this.array.Length - this.headindex));
 					Array.Copy(this.array, 0, newArray, (this.array.Length - this.headindex), this.tailindex);
 				}

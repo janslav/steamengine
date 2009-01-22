@@ -37,7 +37,7 @@ namespace SteamEngine.Communication {
 		public static void OutputPacketLog(byte[] array, int start, int len) {
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("Packet Contents: (" + len + " bytes)");
-			for (int i = start, n = start+len; i < n; i++) {
+			for (int i = start, n = start + len; i < n; i++) {
 				sb.Append(array[i].ToString("X2")).Append(" ");
 				if (i % 10 == 0) {
 					sb.AppendLine();

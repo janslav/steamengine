@@ -23,19 +23,19 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using Microsoft.CSharp; 
+using Microsoft.CSharp;
 //#if !MONO
 //using Microsoft.JScript;
 //#endif
 using Microsoft.VisualBasic;
 using System.Text;
-using System.Globalization; 
+using System.Globalization;
 using SteamEngine.Timers;
 using SteamEngine.Common;
 using NAnt.Core;
 
-namespace SteamEngine.CompiledScripts { 
-	
+namespace SteamEngine.CompiledScripts {
+
 	internal static class CompilerInvoker {
 		internal static CompScriptFileCollection compiledScripts;//CompScriptFileCollection instances
 		//all types of Steamengine namespace, regardless if from scripts or core. 
@@ -44,10 +44,12 @@ namespace SteamEngine.CompiledScripts {
 		//internal static void UnLoadScripts() {
 		//    compiledScripts = null;
 		//}
-	
-		internal static bool SourcesHaveChanged { get {
-			return compiledScripts.GetChangedFiles().Count > 0;
-		} }
+
+		internal static bool SourcesHaveChanged {
+			get {
+				return compiledScripts.GetChangedFiles().Count > 0;
+			}
+		}
 
 		internal static uint compilenumber = 0;
 
@@ -87,9 +89,9 @@ namespace SteamEngine.CompiledScripts {
 			nant.SetTarget("buildScripts");
 
 			nant.SetProperty("scriptsNumber", compilenumber.ToString());
-			nant.SetProperty("scriptsReferencesListPath", 
+			nant.SetProperty("scriptsReferencesListPath",
 				Path.Combine(Globals.scriptsPath, "referencedAssemblies.txt"));
-			nant.SetSourceFileNames(fileCollection.GetAllFileNames(), 
+			nant.SetSourceFileNames(fileCollection.GetAllFileNames(),
 				Path.Combine(Globals.scriptsPath, "scriptSources.Generated.txt"));
 
 			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
@@ -130,9 +132,9 @@ namespace SteamEngine.CompiledScripts {
 				Assembly scripts = compiledScripts.assembly;
 				if (scripts != null) {
 					Type[] types = scripts.GetTypes();
-					for (int i=0; i<types.Length; i++) {
-						MethodInfo m = types[i].GetMethod("Init", BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly);
-						if (m!=null) {
+					for (int i = 0; i < types.Length; i++) {
+						MethodInfo m = types[i].GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+						if (m != null) {
 							m.Invoke(null, null);
 						}
 					}

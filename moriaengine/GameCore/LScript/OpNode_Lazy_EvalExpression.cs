@@ -29,48 +29,48 @@ namespace SteamEngine.LScript {
 	public class OpNode_Lazy_EvalExpression : OpNode, IOpNodeHolder {
 		//accepts EvalExpression, StrongEvalExpression
 		protected OpNode arg;
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_EvalExpression constructed = new OpNode_Lazy_EvalExpression(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-				
+
 			//todo ?
-			
+
 			if (IsType(code, StrictConstants.STRONG_EVAL_EXPRESSION)) {
 				constructed.arg = LScript.CompileNode(constructed, code.GetChildAt(2), true);
 			} else {
 				constructed.arg = LScript.CompileNode(constructed, code.GetChildAt(1), true);
 			}
-			
+
 			if (constructed.arg is OpNode_Object) {
 				return constructed.arg;
 			}
-			
+
 			return constructed;
 		}
-		
+
 		protected OpNode_Lazy_EvalExpression(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (arg != oldNode) {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				arg = newNode;
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object retVar = arg.Run(vars);
 			ReplaceSelf(arg);
 			return retVar;
 		}
-		
+
 		public override string ToString() {
-			return "<"+arg+">";
+			return "<" + arg + ">";
 		}
 	}
-}	
+}

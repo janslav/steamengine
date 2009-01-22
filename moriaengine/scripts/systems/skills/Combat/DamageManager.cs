@@ -25,8 +25,8 @@ namespace SteamEngine.CompiledScripts {
 			int intDamageType = (int) damageType;
 
 			//phase 1
-			double hasResistMagic =		((intDamageType & 0x0001) == 0)? 0.0 : 1;
-			double hasResistPhysical =	((intDamageType & 0x0002) == 0)? 0.0 : 1;
+			double hasResistMagic = ((intDamageType & 0x0001) == 0) ? 0.0 : 1;
+			double hasResistPhysical = ((intDamageType & 0x0002) == 0) ? 0.0 : 1;
 
 			double modifier = 1;
 			double resistCount = hasResistMagic + hasResistPhysical;
@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 			modifier -= hasResistPhysical * resistingChar.ResistPhysical;
 
 			//phase 2
-			double hasResistFire =		((intDamageType & (int) DamageType.Fire) == 0)? 0.0 : 1;
+			double hasResistFire = ((intDamageType & (int) DamageType.Fire) == 0) ? 0.0 : 1;
 			double hasResistElectric = ((intDamageType & (int) DamageType.Electric) == 0) ? 0.0 : 1;
 			double hasResistAcid = ((intDamageType & (int) DamageType.Acid) == 0) ? 0.0 : 1;
 			double hasResistCold = ((intDamageType & (int) DamageType.Cold) == 0) ? 0.0 : 1;
@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 				attack *= settings.weapAttackVsM;
 				armorClass *= settings.armorClassM;
 			}
-			
+
 
 			return new WeaponSwingArgs(attacker, defender, attack, piercing, armorClass);
 		}
@@ -179,7 +179,7 @@ namespace SteamEngine.CompiledScripts {
 			CombatSettings settings = CombatSettings.instance;
 
 			double damageMod = 1.0;
-			
+
 			bool isMvP = false;
 			if (defenderIsPlayer) {
 				if (attackerIsPlayer) {
@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts {
 				damageMod = settings.swingDamageM;
 			}
 
-			double armor = swingArgs.ArmorClass * (1000-swingArgs.Piercing) / 1000;
+			double armor = swingArgs.ArmorClass * (1000 - swingArgs.Piercing) / 1000;
 			if (!isMvP) {
 				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMin);
 			}
@@ -257,7 +257,7 @@ namespace SteamEngine.CompiledScripts {
 		public readonly DamageType flags;
 
 		public DamageArgs(Character attacker, Character defender, DamageType flags, double damage)
-				: base(attacker, defender, flags, damage) {
+			: base(attacker, defender, flags, damage) {
 			this.defender = defender;
 			this.attacker = attacker;
 			this.flags = flags;
@@ -278,7 +278,7 @@ namespace SteamEngine.CompiledScripts {
 		public readonly Character attacker;
 
 		public WeaponSwingArgs(Character attacker, Character defender, double attack, double piercing, double armorClass)
-				: base(attacker, defender, attack, piercing, armorClass, -1, -1) {
+			: base(attacker, defender, attack, piercing, armorClass, -1, -1) {
 			this.attacker = attacker;
 			this.defender = defender;
 		}

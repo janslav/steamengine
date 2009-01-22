@@ -139,4 +139,4 @@ namespace SteamEngine.CompiledScripts {
 			return new RankSystem(this, key);
 		}
 	}
-}		
+}

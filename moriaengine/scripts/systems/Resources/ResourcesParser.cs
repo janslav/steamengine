@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 	public class ResourcesParser : IFieldValueParser {
 		//(^(\s*0x?[0-9a-f]+\s*)$)|(^(\s*\d+(\.\d+)?)$) = pattern for recognizing hex, float and decimal numbers together
 		//regular expression for recogninzing the whole reslist (first resource is obligatory, others are voluntary (separated by commas), all resources contain from a number-value pair where number can be hex, float and decimal
-        public static readonly Regex re = new Regex(@"^ (?<resource>\s* (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) (\s*,\s* (?<resource> (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) )* $",
+		public static readonly Regex re = new Regex(@"^ (?<resource>\s* (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) (\s*,\s* (?<resource> (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) )* $",
 				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
 		#region IFieldValueParser Members
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 				retVal = resList;
 				return true;
 			} else {
-				throw new SEException(LogStr.Error("Unexpected resources string: "+input));
+				throw new SEException(LogStr.Error("Unexpected resources string: " + input));
 			}
 		}
 		#endregion
@@ -65,9 +65,9 @@ namespace SteamEngine.CompiledScripts {
 			//we will try to find what does the 'definition' define
 			//try ItemDef (i_apple)		
 			AbstractScript resource = ThingDef.Get(definition);
-			if (resource != null && ((ThingDef)resource).IsItemDef) {
+			if (resource != null && ((ThingDef) resource).IsItemDef) {
 				//this resource is item
-				return new ItemResource((ItemDef)resource, number, definition);
+				return new ItemResource((ItemDef) resource, number, definition);
 			}
 			//try TriggerGroup (t_light)
 			resource = TriggerGroup.Get(definition);
@@ -82,12 +82,12 @@ namespace SteamEngine.CompiledScripts {
 				resource = SkillDef.ByDefname(definition);//"skill_hiding, "skill_anatomy" etc.
 			}
 			if (resource != null) {
-				return new SkillResource((SkillDef)resource, number, definition);
+				return new SkillResource((SkillDef) resource, number, definition);
 			}
 			//try AbilityDef
 			resource = AbilityDef.ByDefname(definition);
 			if (resource != null) {
-				return new AbilityResource((AbilityDef)resource, number, definition);
+				return new AbilityResource((AbilityDef) resource, number, definition);
 			}
 			//try stats
 			if (definition.Equals("str", StringComparison.InvariantCultureIgnoreCase)) {
@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts {
 			if (definition.Equals("vit", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatVitResource(number);
 			}
-			throw new SEException(LogStr.Error("Unresolved resource: " + number + " "+definition));
+			throw new SEException(LogStr.Error("Unresolved resource: " + number + " " + definition));
 		}
 	}
 }

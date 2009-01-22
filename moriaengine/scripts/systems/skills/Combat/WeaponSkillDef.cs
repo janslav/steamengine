@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 						} else {
 							projectile.Amount = amount - 1;
 						}
-					} else if (self.WeaponProjectileType != ProjectileType.None) {						
+					} else if (self.WeaponProjectileType != ProjectileType.None) {
 						self.SysMessage("Nemáš støelivo.");
 						self.AbortSkill();
 						return true;

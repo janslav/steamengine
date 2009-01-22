@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		//I know it is not perfect, but it should be enough for our purposes.
 		public static Regex re = new Regex(@"^\::(?<value>([0-3]?\d?\.[01]?\d?\.\d\d\d\d)\s*([012]?\d?:[0-5]\d(:[0-5]\d(\.\d{1,7})?)?)?)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-		
+
 		public Type HandledType {
 			get {
 				return typeof(DateTime);
@@ -59,11 +59,11 @@ namespace SteamEngine.CompiledScripts {
 			//return "::"+((DateTime) value).Ticks;
 			//we will return the date in some more acceptable form
 			//the FFF... notation cuts off any possible zeros, it works only if decimal part of the seconds is null				
-			string dateString = ((DateTime)objToSave).ToString("dd.MM.yyyy HH:mm:ss.FFFFFFF");
+			string dateString = ((DateTime) objToSave).ToString("dd.MM.yyyy HH:mm:ss.FFFFFFF");
 			//cut off the last zeros, we dot need them, hour was not specified
-			if(dateString.EndsWith("00:00:00")) {//no hours at all?					
+			if (dateString.EndsWith("00:00:00")) {//no hours at all?					
 				dateString = dateString.Substring(0, dateString.Length - 8).Trim();
-			} else if(dateString.EndsWith(":00")) {//or no seconds?
+			} else if (dateString.EndsWith(":00")) {//or no seconds?
 				dateString = dateString.Substring(0, dateString.Length - 3).Trim();
 			}
 			return "::" + dateString;
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//prepare formatter for parsing and parse the date from the string
 			IFormatProvider culture = new CultureInfo("cs-CZ", true);
-			return DateTime.Parse(gc["value"].Value, culture);						
+			return DateTime.Parse(gc["value"].Value, culture);
 		}
 
 		public string Prefix {
@@ -116,11 +116,11 @@ namespace SteamEngine.CompiledScripts {
 		public string Save(object objToSave) {
 			//return ":"+((TimeSpan) value).Ticks;
 			//the TimeSpan has it own way how to transform to string, no need to rewrite this
-			return ":" + ((TimeSpan)objToSave).ToString();
+			return ":" + ((TimeSpan) objToSave).ToString();
 		}
 
 		public object Load(Match match) {
-			return TimeSpan.Parse(match.Groups["value"].Value);			
+			return TimeSpan.Parse(match.Groups["value"].Value);
 		}
 
 		public string Prefix {

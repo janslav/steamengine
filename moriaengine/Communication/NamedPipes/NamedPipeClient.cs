@@ -67,7 +67,7 @@ namespace SteamEngine.Communication.NamedPipes {
 
 	internal static class ClientKernelFunctions {
 
-		[DllImport("kernel32.dll", SetLastError=true)]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		internal static extern SafeFileHandle CreateFile(
 		   String pipeName,
 		   uint dwDesiredAccess,

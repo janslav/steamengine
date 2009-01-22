@@ -21,30 +21,30 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_pitcher_empty : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_kindling : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_campfire : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_garbage : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_key : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_keyring : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_comm_crystal : CompiledTriggerGroup {
-		
+
 	}
 }

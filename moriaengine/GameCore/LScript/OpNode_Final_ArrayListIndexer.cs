@@ -31,9 +31,9 @@ namespace SteamEngine.LScript {
 		private OpNode arg;
 		private OpNode index;
 
-		internal OpNode_ArrayListIndex(IOpNodeHolder parent, string filename, 
+		internal OpNode_ArrayListIndex(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, OpNode arg, OpNode index)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.index = index;
 		}
@@ -44,7 +44,7 @@ namespace SteamEngine.LScript {
 			} else if (index == oldNode) {
 				index = oldNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace SteamEngine.LScript {
 				}
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating [] operator", 
+				throw new InterpreterException("Exception while evaluating [] operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -98,4 +98,4 @@ namespace SteamEngine.LScript {
 			}
 		}
 	}
-}	
+}

@@ -32,21 +32,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
-            Character self = skillSeqArgs.Self;
-            Musical instrument = skillSeqArgs.Tool as Musical;
-            if (instrument != null) {
-                if (instrument.TopObj() != self) {
-                    instrument = null;
-                }
-            }
-            if (instrument == null) {
-                instrument = (Musical) self.BackpackAsContainer.FindByClass(typeof(Musical));
-            }
-            if (instrument == null) {
+			Character self = skillSeqArgs.Self;
+			Musical instrument = skillSeqArgs.Tool as Musical;
+			if (instrument != null) {
+				if (instrument.TopObj() != self) {
+					instrument = null;
+				}
+			}
+			if (instrument == null) {
+				instrument = (Musical) self.BackpackAsContainer.FindByClass(typeof(Musical));
+			}
+			if (instrument == null) {
 				self.SysMessage("Nemáš u sebe hudební nástroj.");
 				skillSeqArgs.Success = false;
-                return true;
-            }
+				return true;
+			}
 			skillSeqArgs.Tool = instrument;
 
 			Character target = skillSeqArgs.Target1 as Character;
@@ -60,8 +60,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-            return false;
-        }
+			return false;
+		}
 
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
@@ -157,7 +157,7 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 
-			skillSeq.Target1 = targetted;				
+			skillSeq.Target1 = targetted;
 			skillSeq.PhaseStart();
 
 			return false;

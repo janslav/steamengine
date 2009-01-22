@@ -35,17 +35,17 @@ namespace SteamEngine.CompiledScripts {
 		private static Dictionary<string, ConstructorInfo> profDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
 		//triggery class-specific
-        private TriggerGroup scriptedTriggers; //specified in the LScript code of the profession
-		
+		private TriggerGroup scriptedTriggers; //specified in the LScript code of the profession
+
 		[Summary("Method for assigning the selected profession to specified player")]
 		public void AssignTo(Player plr) {
-			ProfessionPlugin pplInst = (ProfessionPlugin)plr.GetPlugin(ProfessionPlugin.professionKey);
+			ProfessionPlugin pplInst = (ProfessionPlugin) plr.GetPlugin(ProfessionPlugin.professionKey);
 			if (pplInst != null) {//we already have some profession...
 				//first remove the old profession (including proper unassignment of all TGs etc.)
 				Trigger_UnAssign(pplInst, plr);
 			}
 			//add the new profession (update the local variable reference to ProfessionPlugin
-			pplInst = (ProfessionPlugin)plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
+			pplInst = (ProfessionPlugin) plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
 			pplInst.ProfessionDef = this;
 			Trigger_Assign(pplInst, plr);
 		}
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 			plr.RemovePlugin(ProfessionPlugin.professionKey);//and also the plugin...
 		}
 
-		[Remark("This trigger method should be called only when assigning another profession over one old "+
+		[Remark("This trigger method should be called only when assigning another profession over one old " +
 				"so the player never stays without the profession as a result")]
 		protected void Trigger_UnAssign(ProfessionPlugin prof, Player plr) {
 			TryTrigger(plr, ProfessionDef.tkUnAssign, new ScriptArgs(prof));
@@ -189,12 +189,12 @@ namespace SteamEngine.CompiledScripts {
 		//CPROFESSIONPROP(Name,		CSCRIPTPROP_ARG1S, "Profession Name")
 		//CPROFESSIONPROP(SkillSum,	0, "Max Sum of skills allowed")
 		//CPROFESSIONPROP(StatSum,	0, "Max Sum of stats allowed")		
-        private FieldValue name; //logical name of the profession (such as "Necro")
-        private FieldValue skillSum; //Max Sum of skills allowed
-        private FieldValue statSum; //Max Sum of stats allowed
+		private FieldValue name; //logical name of the profession (such as "Necro")
+		private FieldValue skillSum; //Max Sum of skills allowed
+		private FieldValue statSum; //Max Sum of stats allowed
 
-        #region Maximum skill values
-        private FieldValue maxAlchemy;
+		#region Maximum skill values
+		private FieldValue maxAlchemy;
 		private FieldValue maxAnatomy;
 		private FieldValue maxAnimalLore;
 		private FieldValue maxItemID;
@@ -247,8 +247,8 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue maxMarksmanship;
 		private FieldValue maxChivalry;
 		private FieldValue maxBushido;
-        private FieldValue maxNinjitsu;
-        #endregion
+		private FieldValue maxNinjitsu;
+		#endregion
 
 		#region Basic skill values
 		private FieldValue basicAlchemy;
@@ -308,13 +308,13 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 		private FieldValue[] maxSkills;
 		private FieldValue[] basicSkills;
-        public ProfessionDef(string defname, string filename, int headerLine)
+		public ProfessionDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			name = InitField_Typed("name", "", typeof(string));
-            skillSum = InitField_Typed("skillSum", 0, typeof(int));
-            statSum = InitField_Typed("statSum", 0, typeof(int));
+			skillSum = InitField_Typed("skillSum", 0, typeof(int));
+			statSum = InitField_Typed("statSum", 0, typeof(int));
 			//max skills
-            maxAlchemy = InitField_Typed("maxAlchemy", 1000, typeof(ushort));
+			maxAlchemy = InitField_Typed("maxAlchemy", 1000, typeof(ushort));
 			maxAnatomy = InitField_Typed("maxAnatomy", 1000, typeof(ushort));
 			maxAnimalLore = InitField_Typed("maxAnimalLore", 1000, typeof(ushort));
 			maxItemID = InitField_Typed("maxItemID", 1000, typeof(ushort));
@@ -424,8 +424,8 @@ namespace SteamEngine.CompiledScripts {
 			basicBushido = InitField_Typed("basicBushido", 1000, typeof(ushort));
 			basicNinjitsu = InitField_Typed("basicNinjutsu", 1000, typeof(ushort));
 
-            //now prepare the array with skills indexed by numbers in SkillName enumeration
-            maxSkills = new FieldValue[] {maxAlchemy,maxAnatomy,maxAnimalLore,maxItemID,maxArmsLore,
+			//now prepare the array with skills indexed by numbers in SkillName enumeration
+			maxSkills = new FieldValue[] {maxAlchemy,maxAnatomy,maxAnimalLore,maxItemID,maxArmsLore,
                             maxParry,maxBegging,maxBlacksmith,maxFletching,maxPeacemaking,maxCamping,
                             maxCarpentry,maxCartography,maxCooking,maxDetectHidden,maxDiscordance,
                             maxEvalInt,maxHealing,maxFishing,maxForensics,maxHerding,maxHiding,maxProvocation,
@@ -520,7 +520,7 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 			if ((args == null) || (args.Args == null) || args.argv.Length == 0) {
-				Globals.SrcCharacter.Message("Nebylo zvoleno povolání pro pøiøazení", (int)Hues.Red);
+				Globals.SrcCharacter.Message("Nebylo zvoleno povolání pro pøiøazení", (int) Hues.Red);
 				return;
 			}
 			ProfessionDef profDef = ProfessionDef.ByDefname(args.Args);
@@ -533,10 +533,10 @@ namespace SteamEngine.CompiledScripts {
 		#endregion utilities
 	}
 
-	[Summary("Triggergroup holding all possible triggers for profession that can have some influence on players actions "+
+	[Summary("Triggergroup holding all possible triggers for profession that can have some influence on players actions " +
 			" - cancellable triggers that can cancel the performed action if the profession doesn't allow it")]
 	public class E_Profession : CompiledTriggerGroup {
-		
+
 		public virtual bool On_SkillSelect(Character self, ScriptArgs sa) {
 			//sa contains "self" and "skill ID"
 			if (self.IsGM) {//GM always allowed, stop checking

@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state = tracker.GameState;
 			if (state != null) {
 				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
-				TimeSpan now =  Globals.TimeAsSpan;
+				TimeSpan now = Globals.TimeAsSpan;
 				TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
 				TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
 				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, now, totalMaxAge, tracker.M)) {
@@ -304,7 +304,7 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly NPCTrackingPluginDef defInstance = new NPCTrackingPluginDef("p_NPCtracking", "C#scripts", -1);
 		internal static PluginKey npcTrackingPluginKey = PluginKey.Get("_NPCtracking_");
 		internal static int refreshTimeout = 10; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
-		
+
 		private int stepsCntr;
 
 		private void CheckDistance(Player tracker) {

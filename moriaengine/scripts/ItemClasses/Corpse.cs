@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			return iogu;
-		}			
+		}
 
 		public class CorpseOnGroundUpdater : ItemOnGroundUpdater {
 			PacketGroup equippedItemsPackets;
@@ -364,8 +364,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 	}
-	
+
 	public class T_Corpse : CompiledTriggerGroup {
-		
+
 	}
 }

@@ -158,7 +158,7 @@ namespace SteamEngine.Communication {
 					} else {
 						result = ReadPacketResult.DiscardAll;
 						read = 0;
-						Logger.WriteDebug("Unknown packet 0x"+id.ToString("x"));
+						Logger.WriteDebug("Unknown packet 0x" + id.ToString("x"));
 
 						CommunicationUtils.OutputPacketLog(bytes, offset, length);
 					}
@@ -178,7 +178,7 @@ namespace SteamEngine.Communication {
 							}
 							goto default;
 						case ReadPacketResult.DiscardAll:
-							Logger.WriteDebug("Discarding packet 0x" + id.ToString("x")+ " (and all following)");
+							Logger.WriteDebug("Discarding packet 0x" + id.ToString("x") + " (and all following)");
 							read = length;
 							goto default;
 						case ReadPacketResult.DiscardSingle:
@@ -232,7 +232,7 @@ namespace SteamEngine.Communication {
 								this.encryptionInitialised = true;
 								break;
 							case EncryptionInitResult.SuccessNoEncryption:
-								Logger.WriteDebug(this.State.ToString()+" using no encryption");
+								Logger.WriteDebug(this.State.ToString() + " using no encryption");
 								offset += read;
 								length -= read;
 								this.receivedDataLength = 0;

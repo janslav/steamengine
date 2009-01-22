@@ -21,18 +21,18 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_deed : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_guildstone : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_stone_town : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_normal : CompiledTriggerGroup {
-		
+
 	}
 }

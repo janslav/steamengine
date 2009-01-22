@@ -23,17 +23,17 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 //using SteamEngine.PScript;
-	
+
 namespace SteamEngine {
 	public abstract class AbstractDefTriggerGroupHolder : AbstractDef, ITriggerGroupHolder {
 
-		protected AbstractDefTriggerGroupHolder(string defname, string filename, int headerLine) 
-				: base(defname, filename, headerLine) {
+		protected AbstractDefTriggerGroupHolder(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			switch(param) {
+			switch (param) {
 				case "event":
 				case "events":
 				//case "type":
@@ -51,13 +51,13 @@ namespace SteamEngine {
 		internal PluginHolder.TGListNode firstTGListNode = null; //linked list of triggergroup references
 		//This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
 		internal void ResolveTriggerGroup(object[] args) {
-			string name=(string) args[0];
-			if (name!="0") {	//"0" means nothing
-				TriggerGroup tg=TriggerGroup.Get(name);
-				if (tg==null) {
+			string name = (string) args[0];
+			if (name != "0") {	//"0" means nothing
+				TriggerGroup tg = TriggerGroup.Get(name);
+				if (tg == null) {
 					string filename = (string) args[1];
 					int line = (int) args[2];
-					Logger.WriteWarning(LogStr.FileLine(filename, line)+"'"+LogStr.Ident(name)+"' is not a valid TriggerGroup (Event/Type).");
+					Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(name) + "' is not a valid TriggerGroup (Event/Type).");
 				} else {
 					AddTriggerGroup(tg);
 				}
@@ -99,7 +99,7 @@ namespace SteamEngine {
 				} while (curNode != null);
 			}
 		}
-			
+
 
 
 		/*

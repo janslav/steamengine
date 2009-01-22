@@ -27,7 +27,7 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.Timers;
 
 namespace SteamEngine.Persistence {
-	
+
 	public delegate void LoadObject(object resolvedObject, string filename, int line);
 	public delegate void LoadObjectParam(object resolvedObject, string filename, int line, object additionalParameter);
 
@@ -46,22 +46,22 @@ namespace SteamEngine.Persistence {
 		[Param(1, "The text stream for the save to be written to. "
 		+ "Note that this may not be immediately written to a file. (Or, in some extreme case, maybe not saved at all)")]
 		void Save(object objToSave, SaveStream writer);
-		
-		
+
+
 		[Summary("Returns the .NET Type of the object that it can load and save.")]
 		[Remark("The returned type is used when determining which implementor to use when saving"
 		+ "individual objects. Therefore, there can be only one implementor for loading of one class, "
 		+ "and this class can not be auto-loadable (by decorating it by SaveableClassAttribute,etc.), "
 		+ "because for those classes, ISaveImplementor instances are created, too.")]
 		Type HandledType { get; }
-		
-		
+
+
 		[Summary("Load the object from the previously saved section.")]
 		[Return("The loaded object")]
 		[ExceptionDoc(typeof(UnrecognizedValueException), "if the format of the string is not recognized.")]
 		[ExceptionDoc(typeof(InsufficientDataException), "if this section can not be resolved to the desired object. ")]
 		object LoadSection(PropsSection input);
-		
+
 		[Summary("Get the string that identifies this implementor.")]
 		[Remark("The returned string is used in the header of the saved sections. When the sections are loaded,"
 		+ "we know that they should be passed to the \"LoadSection\" method of this instance. "
@@ -98,7 +98,7 @@ namespace SteamEngine.Persistence {
 		[Summary("This will be typically called on the end of the loading process, and is supposed to return the loaded object by the Match of the recognizer regex")]
 		object Load(Match m);
 	}
-	
+
 	[Summary("Use this interface to implement saving and loading of simple custom object types.")]
 	[Remark("Note that once you write a class implementing this interface in the scripts, it is supposed to be"
 	+ "automatically registered with the ObjectSaver class. "
@@ -110,14 +110,14 @@ namespace SteamEngine.Persistence {
 		+ "and this class can not auto-loadable (by decorating it by SaveableClassAttribute,etc.), "
 		+ "because for those classes, ISaveImplementor instances are created, too.")]
 		Type HandledType { get; }
-		
-		
+
+
 		[Summary("Get the regular expression object to match the saved strings.")]
 		[Remark("The returned regex object will be used to match the saved strings. It is supposed "
 		+ "to be unique among the format of other saved types, and the produced Match object must be recognisable"
 		+ "by your Load method on this instance.")]
 		Regex LineRecognizer { get; }
-		
+
 		[Summary("Return the one-line string, from which this object can be loaded later.")]
 		[Remark("The returned string must really be one-line, and it must be compatible with the regex"
 		+ "returned by the LineRecognizer property. Note that if called by the ObjectSaver class, "
@@ -125,7 +125,7 @@ namespace SteamEngine.Persistence {
 		[Param(0, "The object to be saved")]
 		[Return("The the one-line string to be written in the save file.")]
 		string Save(object objToSave);
-		
+
 		[Summary("Load the object from the previously saved line.")]
 		[Param(0, "The Match object produced by the Regex of this instance. "
 		+ "It is passed here only after a succesful match.")]
@@ -138,11 +138,11 @@ namespace SteamEngine.Persistence {
 		object Load(Match match);
 
 		[Summary("Return the prefix used to identify this item type in the save file")]
-		[Remark("The returned value is e.g. (4D) for point4D, (IP) for IP address etc. We will use it"+
-				"in settings dialogs for better writing out the values (without these texts)")]		
+		[Remark("The returned value is e.g. (4D) for point4D, (IP) for IP address etc. We will use it" +
+				"in settings dialogs for better writing out the values (without these texts)")]
 		string Prefix { get; }
 	}
-	
+
 	[Summary("Class used to load and save (serialize and deserialize) various non-standard objects to savefiles.")]
 	[Remark("There are basically three ways to implement the saving and loading of your custom (scripted) classes."
 	+ "One is writing a helper class implementing the ISimpleSaveImplementor, second to write ISaveImplementor. "
@@ -155,26 +155,27 @@ namespace SteamEngine.Persistence {
 	+ "On the other hand, it can and should be used to everything that can be written on one line, such as references "
 	+ "to scripted objects (like TriggerGroups) or simple wrappers (TriggerKey, TimerKey, ...)."
 	+ "ISimpleSaveImplementor will mostly be used for very simple classes that can be saved on one line, like valuetypes.")]
-	[SeeAlso(typeof(ISaveImplementor))][SeeAlso(typeof(SaveableClassAttribute))]
+	[SeeAlso(typeof(ISaveImplementor))]
+	[SeeAlso(typeof(SaveableClassAttribute))]
 	[SeeAlso(typeof(ISimpleSaveImplementor))]
 	public static partial class ObjectSaver {
 		public static readonly Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		public static readonly Regex genericUidRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		//public static Regex dateTimeRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
-			//RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		
+		//RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
 		private static DelayedLoader loadersList; //this is the list of the pending jobs :)
 		private static DelayedLoader lastLoader;  //it is emptied when LoadingFinished is called
 		private static ArrayList loadedObjectsByUid;
-			
+
 		private static DelayedSaver saversList;//this is the cache to flush by FlushCache :)
 		private static DelayedSaver lastSaver;
-		private static Dictionary<object, uint> savedUidsByObjects = new Dictionary<object,uint>(new ReferenceEqualityComparer());
+		private static Dictionary<object, uint> savedUidsByObjects = new Dictionary<object, uint>(new ReferenceEqualityComparer());
 		//object-uint pairs. uses Object.ReferenceEquality for finding out if the objects are or are not equal.
-		
-		private static Dictionary<string, ISaveImplementor> implementorsByName = new Dictionary<string,ISaveImplementor>(StringComparer.OrdinalIgnoreCase);
+
+		private static Dictionary<string, ISaveImplementor> implementorsByName = new Dictionary<string, ISaveImplementor>(StringComparer.OrdinalIgnoreCase);
 		private static Dictionary<Type, ISaveImplementor> implementorsByType = new Dictionary<Type, ISaveImplementor>();
 		private static Dictionary<Type, IBaseClassSaveCoordinator> coordinatorsByType = new Dictionary<Type, IBaseClassSaveCoordinator>();
 		private static Dictionary<ISaveImplementor, IBaseClassSaveCoordinator> coordinatorsByImplementor = new Dictionary<ISaveImplementor, IBaseClassSaveCoordinator>();
@@ -214,7 +215,7 @@ namespace SteamEngine.Persistence {
 				}
 			}
 
-			Type t=value.GetType();
+			Type t = value.GetType();
 
 			if (t.IsEnum) {
 				return Convert.ToUInt64(value).ToString();
@@ -222,9 +223,9 @@ namespace SteamEngine.Persistence {
 				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} else if (t.Equals(typeof(String))) {
 				string stringAsSingleLine = Utility.EscapeNewlines((string) value);
-				return "\""+stringAsSingleLine+"\""; //returns the string in ""
+				return "\"" + stringAsSingleLine + "\""; //returns the string in ""
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
-				return "#"+((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
+				return "#" + ((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
 			} else if (value == Globals.instance) {
 				return "#globals";
 			} else {
@@ -258,10 +259,10 @@ namespace SteamEngine.Persistence {
 					}
 				}
 
-				throw new UnsaveableTypeException("The object is of an unsaveable type "+t);
+				throw new UnsaveableTypeException("The object is of an unsaveable type " + t);
 			}
 		}
-		
+
 		[Summary("Writes out the object previously cached by the Save method.")]
 		[Remark("If any of the previous calls to the Save method required to save some more complex "
 		+ "object,only a string-reference to them has been returned by it, and they were cached here. "
@@ -272,7 +273,7 @@ namespace SteamEngine.Persistence {
 			while (SaverListIsNotEmpty) {
 				try {
 					PopDelayedSaver().Run(writer);
-					
+
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
@@ -329,7 +330,7 @@ namespace SteamEngine.Persistence {
 		public static bool IsKnownSectionName(string name) {
 			return implementorsByName.ContainsKey(name);
 		}
-		
+
 		[Summary("Load the one-line string previously returned by the Save method.")]
 		[Remark("This is the simplest method for object loading. Use it only if you know that the "
 		+ "object saved on the given line was simple enough to be saved just in this line, "
@@ -348,7 +349,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			Match m;
-			for (int i = 0, n = coordinatorsRGs.Count; i<n; i++) {
+			for (int i = 0, n = coordinatorsRGs.Count; i < n; i++) {
 				RGBCSCPair pair = coordinatorsRGs[i];
 				m = pair.re.Match(input);
 				if (m.Success) {
@@ -365,11 +366,11 @@ namespace SteamEngine.Persistence {
 						return o;
 					}
 				}
-				throw new InsufficientDataException("The object with uid "+LogStr.Number(uid)+" is not (yet?) known.");
+				throw new InsufficientDataException("The object with uid " + LogStr.Number(uid) + " is not (yet?) known.");
 			}
-			throw new UnrecognizedValueException("We really do not know what could the loaded string '"+LogStr.Ident(input)+"' refer to.");
+			throw new UnrecognizedValueException("We really do not know what could the loaded string '" + LogStr.Ident(input) + "' refer to.");
 		}
-		
+
 		private static bool LoadSimple(string input, out object retVal) {
 			retVal = null;
 
@@ -383,20 +384,20 @@ namespace SteamEngine.Persistence {
 				return true;
 			}
 
-			if (string.Compare(input, "true", true)==0) {//true: ignore case
+			if (string.Compare(input, "true", true) == 0) {//true: ignore case
 				retVal = true;
 				return true;
 			}
-			if (string.Compare(input, "false", true)==0) {
+			if (string.Compare(input, "false", true) == 0) {
 				retVal = false;
 				return true;
 			}
 
-			if (string.Compare(input, "null", true)==0) {
+			if (string.Compare(input, "null", true) == 0) {
 				retVal = null;
 				return true;
 			}
-			for (int i = 0, n = simpleImplementorsRGs.Count; i<n; i++) {
+			for (int i = 0, n = simpleImplementorsRGs.Count; i < n; i++) {
 				RGSSIPair pair = simpleImplementorsRGs[i];
 				Match m = pair.re.Match(input);
 				if (m.Success) {
@@ -421,7 +422,7 @@ namespace SteamEngine.Persistence {
 					retVal = script;
 					return true;
 				} else {
-					throw new InsufficientDataException("The AbstractScript '"+LogStr.Ident(defname)+"' is not known.");
+					throw new InsufficientDataException("The AbstractScript '" + LogStr.Ident(defname) + "' is not known.");
 				}
 			}
 			return false;
@@ -436,7 +437,7 @@ namespace SteamEngine.Persistence {
 			}
 			return false;
 		}
-		
+
 		[Summary("Load the one-line string previously returned by the Save method.")]
 		[Remark("This is the method for delayed object loading. It will recognize the supplied string, "
 		+ "and return the object that is associated with it as soon as possible. "
@@ -452,7 +453,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			Match m;
-			for (int i = 0, n = coordinatorsRGs.Count; i<n; i++) {
+			for (int i = 0, n = coordinatorsRGs.Count; i < n; i++) {
 				RGBCSCPair pair = coordinatorsRGs[i];
 				m = pair.re.Match(input);
 				if (m.Success) {
@@ -468,7 +469,7 @@ namespace SteamEngine.Persistence {
 				return;
 			}
 		}
-		
+
 		[Summary("Load the one-line string previously returned by the Save method.")]
 		[Remark("This method works similarly as the \"public static void Load(string value, LoadObject deleg)\", "
 		+ "only it allows you to pass additional parameter to the callback delegate.")]
@@ -481,9 +482,9 @@ namespace SteamEngine.Persistence {
 				deleg(retVal, filename, line, additionalParameter);
 				return;
 			}
-			
+
 			Match m;
-			for (int i = 0, n = coordinatorsRGs.Count; i<n; i++) {
+			for (int i = 0, n = coordinatorsRGs.Count; i < n; i++) {
 				RGBCSCPair pair = coordinatorsRGs[i];
 				m = pair.re.Match(input);
 				if (m.Success) {
@@ -499,11 +500,11 @@ namespace SteamEngine.Persistence {
 				PushDelayedLoader(new GenericDelayedLoader_Param(deleg, filename, line, additionalParameter, uid));
 				return;
 			}
-			throw new UnrecognizedValueException("We really do not know what could the loaded string '"+LogStr.Ident(input)+"' refer to.");
+			throw new UnrecognizedValueException("We really do not know what could the loaded string '" + LogStr.Ident(input) + "' refer to.");
 		}
 
 		[Summary("Use this if you know that the loaded value is supposed to be a string. "
-		+"If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
 		public static object OptimizedLoad_String(string input) {
 			object retVal = null;
 			if (TryLoadString(input, ref retVal)) {
@@ -513,7 +514,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		[Summary("Use this if you know that the loaded value is supposed to be an AbstractScript instance. "
-		+"If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
 		public static object OptimizedLoad_Script(string input) {
 			object retVal = null;
 			if (TryLoadScriptReference(input, ref retVal)) {
@@ -523,7 +524,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		[Summary("Use this if you know that the loaded value is supposed to be of a simple-saveable type (other than a number or enum). "
-		+"If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
 		public static object OptimizedLoad_SimpleType(string input, Type suggestedType) {
 			ISimpleSaveImplementor issi;
 			if (simpleImplementorsByType.TryGetValue(suggestedType, out issi)) {
@@ -563,7 +564,7 @@ namespace SteamEngine.Persistence {
 					Logger.WriteError(input.filename, input.headerLine, e);
 				}
 			} else {
-				throw new UnrecognizedValueException("We really do not know what could the loaded header name '"+LogStr.Ident(name)+"' refer to.");
+				throw new UnrecognizedValueException("We really do not know what could the loaded header name '" + LogStr.Ident(name) + "' refer to.");
 			}
 		}
 
@@ -571,7 +572,7 @@ namespace SteamEngine.Persistence {
 		internal static void RegisterCoordinator(IBaseClassSaveCoordinator coordinator) {
 			Type type = coordinator.BaseType;
 			if (coordinatorsByType.ContainsKey(type)) {
-				throw new OverrideNotAllowedException("There is already a IBaseClassSaveCoordinator ("+implementorsByType[type]+") registered for handling the type "+type);
+				throw new OverrideNotAllowedException("There is already a IBaseClassSaveCoordinator (" + implementorsByType[type] + ") registered for handling the type " + type);
 			}
 			coordinatorsByType[type] = coordinator;
 			coordinatorsRGs.Add(new RGBCSCPair(coordinator, coordinator.ReferenceLineRecognizer));
@@ -581,7 +582,7 @@ namespace SteamEngine.Persistence {
 					IBaseClassSaveCoordinator ibcsc;
 					if (coordinatorsByImplementor.TryGetValue(pair.Value, out ibcsc)) {
 						if (ibcsc != coordinator) {
-							throw new Exception("ISaveImplementor "+pair.Value+" is supposedly handled by two IBaseClassSaveCoordinators: '"+ibcsc+"' and '"+coordinator+"'. This should not happen.");
+							throw new Exception("ISaveImplementor " + pair.Value + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + coordinator + "'. This should not happen.");
 						} else {
 							continue;
 						}
@@ -598,22 +599,22 @@ namespace SteamEngine.Persistence {
 				}
 			}
 		}
-		
+
 		//called by ClassManager
 		internal static void RegisterImplementor(ISaveImplementor implementor) {
 			Type type = implementor.HandledType;
 			if (implementorsByType.ContainsKey(type)) {
-				throw new OverrideNotAllowedException("There is already a ISaveImplementor ("+implementorsByType[type]+") registered for handling the type "+type);  
+				throw new OverrideNotAllowedException("There is already a ISaveImplementor (" + implementorsByType[type] + ") registered for handling the type " + type);
 			}
 			implementorsByType[type] = implementor;
 			string name = implementor.HeaderName;
 			implementorsByName[name] = implementor;
-			foreach (KeyValuePair<Type,IBaseClassSaveCoordinator> pair in coordinatorsByType) {
+			foreach (KeyValuePair<Type, IBaseClassSaveCoordinator> pair in coordinatorsByType) {
 				if (pair.Key.IsAssignableFrom(type)) {
 					IBaseClassSaveCoordinator ibcsc;
 					if (coordinatorsByImplementor.TryGetValue(implementor, out ibcsc)) {
 						if (ibcsc != pair.Value) {
-							throw new Exception("ISaveImplementor "+implementor+" is supposedly handled by two IBaseClassSaveCoordinators: '"+ibcsc+"' and '"+pair.Value+"'. This should not happen.");
+							throw new Exception("ISaveImplementor " + implementor + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + pair.Value + "'. This should not happen.");
 						} else {
 							continue;
 						}
@@ -622,17 +623,17 @@ namespace SteamEngine.Persistence {
 				}
 			}
 		}
-		
+
 		//called by ClassManager
 		internal static void RegisterSimpleImplementor(ISimpleSaveImplementor implementor) {
 			Type type = implementor.HandledType;
 			if (simpleImplementorsByType.ContainsKey(type)) {
-				throw new OverrideNotAllowedException("There is already a ISimpleSaveImplementor ("+simpleImplementorsByType[type]+") registered for handling the type "+type);  
+				throw new OverrideNotAllowedException("There is already a ISimpleSaveImplementor (" + simpleImplementorsByType[type] + ") registered for handling the type " + type);
 			}
 			simpleImplementorsByType[type] = implementor;
 			simpleImplementorsRGs.Add(new RGSSIPair(implementor, implementor.LineRecognizer));
 		}
-		
+
 		[Summary("Call this before you start using this class for loading.")]
 		public static void StartingLoading() {
 			loadedObjectsByUid = new ArrayList();
@@ -640,7 +641,7 @@ namespace SteamEngine.Persistence {
 				pair.bcsc.StartingLoading();
 			}
 		}
-		
+
 		[Summary("Call this after you finish loading using this class.")]
 		public static void LoadingFinished() {
 			while (LoaderListIsNotEmpty) {
@@ -660,7 +661,7 @@ namespace SteamEngine.Persistence {
 				pair.bcsc.LoadingFinished();
 			}
 		}
-		
+
 		[Summary("Call this before you start using this class for saving.")]
 		public static void StartingSaving() {
 			saversList = null;
@@ -668,12 +669,12 @@ namespace SteamEngine.Persistence {
 			savedUidsByObjects.Clear();
 			uids = 0;
 		}
-		
+
 		[Summary("Call this after you finish saving using this class.")]
 		public static void SavingFinished() {
 
 		}
-		
+
 		//unloads instences that come from scripts.
 		internal static void UnloadScripts() {
 			Assembly coreAssembly = ClassManager.CoreAssembly;
@@ -705,21 +706,23 @@ namespace SteamEngine.Persistence {
 				}
 			}
 		}
-		
+
 		internal static void ClearJobs() {
 			loadersList = null;
 			lastLoader = null;
 			loadedObjectsByUid = null;
-			
+
 			saversList = null;
 			lastSaver = null;
 			savedUidsByObjects.Clear();
 		}
-		
-		private static bool LoaderListIsNotEmpty { get {
-			return loadersList != null;
-		} }
-		
+
+		private static bool LoaderListIsNotEmpty {
+			get {
+				return loadersList != null;
+			}
+		}
+
 		private static void PushDelayedLoader(DelayedLoader dl) {
 			if (loadersList == null) {
 				loadersList = dl;
@@ -729,17 +732,19 @@ namespace SteamEngine.Persistence {
 			}
 			lastLoader = dl;
 		}
-		
+
 		private static DelayedLoader PopDelayedLoader() {
 			DelayedLoader dl = loadersList;
 			loadersList = loadersList.next;//throws nullpointerexc...
 			return dl;
 		}
-		
-		private static bool SaverListIsNotEmpty { get {
-			return saversList != null;
-		} }
-		
+
+		private static bool SaverListIsNotEmpty {
+			get {
+				return saversList != null;
+			}
+		}
+
 		private static void PushDelayedSaver(DelayedSaver ds) {
 			if (saversList == null) {
 				saversList = ds;
@@ -749,14 +754,14 @@ namespace SteamEngine.Persistence {
 			}
 			lastSaver = ds;
 		}
-		
+
 		private static DelayedSaver PopDelayedSaver() {
 			DelayedSaver ds = saversList;
 			saversList = saversList.next;//throws nullpointerexc...
 			return ds;
 		}
 
-		[Summary("Forwards call for finding a SimpleSaveImplementor for given Type."+
+		[Summary("Forwards call for finding a SimpleSaveImplementor for given Type." +
 				"Returns the ISimpleSaveImplementor instance or null if nothing was found")]
 		public static ISimpleSaveImplementor GetSimpleSaveImplementorByType(Type t) {
 			ISimpleSaveImplementor retVal = null;
@@ -766,7 +771,7 @@ namespace SteamEngine.Persistence {
 
 
 
-//embedded classes:
+		//embedded classes:
 
 		private class DelayedSaver {
 			internal DelayedSaver next;//instances will be all stored in a linked list
@@ -777,7 +782,7 @@ namespace SteamEngine.Persistence {
 				this.objToSave = objToSave;
 				this.implementor = implementor;
 			}
-			
+
 			internal virtual void Run(SaveStream writer) {
 				implementor.Save(objToSave, writer);
 			}
@@ -787,18 +792,18 @@ namespace SteamEngine.Persistence {
 			internal uint uid;
 
 			internal GenericDelayedSaver(object objToSave, ISaveImplementor implementor, uint uid)
-					: base(objToSave, implementor) {
+				: base(objToSave, implementor) {
 				this.uid = uid;
 			}
-			
+
 			internal override void Run(SaveStream writer) {
 				writer.WriteSection(implementor.HeaderName, uid.ToString());
 				base.Run(writer);
 			}
 		}
 
-		
-		
+
+
 		private abstract class DelayedLoader {
 			internal DelayedLoader next;//instances will be all stored in a linked list
 			internal string filename;
@@ -811,65 +816,66 @@ namespace SteamEngine.Persistence {
 
 			internal abstract void Run();
 		}
-		
+
 		private abstract class DelayedLoader_NoParam : DelayedLoader {
 			protected LoadObject deleg;
-			
-			internal DelayedLoader_NoParam(LoadObject deleg, string filename, int line) : base(filename, line) {
+
+			internal DelayedLoader_NoParam(LoadObject deleg, string filename, int line)
+				: base(filename, line) {
 				this.deleg = deleg;
 			}
 		}
-		
+
 		private abstract class DelayedLoader_Param : DelayedLoader {
 			protected LoadObjectParam deleg;
 			protected object param;
 
 			internal DelayedLoader_Param(LoadObjectParam deleg, string filename, int line, object param)
-					: base(filename, line) {
+				: base(filename, line) {
 				this.deleg = deleg;
 				this.param = param;
 			}
 		}
-		
+
 		private class BaseClassDelayedLoader_NoParam : DelayedLoader_NoParam {
 			Match m;
 			IBaseClassSaveCoordinator coordinator;
 
 			internal BaseClassDelayedLoader_NoParam(LoadObject deleg, string filename, int line, Match m, IBaseClassSaveCoordinator coordinator)
-					: base(deleg, filename, line) {
+				: base(deleg, filename, line) {
 				this.m = m;
 				this.coordinator = coordinator;
 			}
-			
+
 			internal override void Run() {
 				object o = coordinator.Load(m);
 				deleg(o, filename, line);
 			}
 		}
-		
+
 		private class BaseClassDelayedLoader_Param : DelayedLoader_Param {
 			Match m;
 			IBaseClassSaveCoordinator coordinator;
 
 			internal BaseClassDelayedLoader_Param(LoadObjectParam deleg, string filename, int line, object param, Match m, IBaseClassSaveCoordinator coordinator)
-					: base(deleg, filename, line, param) {
+				: base(deleg, filename, line, param) {
 				this.m = m;
 				this.coordinator = coordinator;
 			}
-			
+
 			internal override void Run() {
 				object o = coordinator.Load(m);
 				deleg(o, filename, line, param);
 			}
 		}
-		
+
 		private class GenericDelayedLoader_NoParam : DelayedLoader_NoParam {
 			int objectUid;
 			internal GenericDelayedLoader_NoParam(LoadObject deleg, string filename, int line, int objectUid)
-					: base(deleg, filename, line) {
+				: base(deleg, filename, line) {
 				this.objectUid = objectUid;
 			}
-			
+
 			internal override void Run() {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (objectUid < loadedObjectsCount) {
@@ -879,17 +885,17 @@ namespace SteamEngine.Persistence {
 						return;
 					}
 				}
-				throw new NonExistingObjectException("There is no object with uid "+LogStr.Number(objectUid)+" to load.");
+				throw new NonExistingObjectException("There is no object with uid " + LogStr.Number(objectUid) + " to load.");
 			}
 		}
-		
+
 		private class GenericDelayedLoader_Param : DelayedLoader_Param {
 			uint objectUid;
 			internal GenericDelayedLoader_Param(LoadObjectParam deleg, string filename, int line, object param, uint objectUid)
-					: base(deleg, filename, line, param) {
+				: base(deleg, filename, line, param) {
 				this.objectUid = objectUid;
 			}
-			
+
 			internal override void Run() {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (objectUid < loadedObjectsCount) {
@@ -899,14 +905,14 @@ namespace SteamEngine.Persistence {
 						return;
 					}
 				}
-				throw new NonExistingObjectException("There is no object with uid "+LogStr.Number(objectUid)+" to load.");
+				throw new NonExistingObjectException("There is no object with uid " + LogStr.Number(objectUid) + " to load.");
 			}
 		}
-		
+
 		private struct RGSSIPair {
 			internal ISimpleSaveImplementor ssi;
 			internal Regex re;
-			
+
 			internal RGSSIPair(ISimpleSaveImplementor ssi, Regex re) {
 				this.ssi = ssi;
 				this.re = re;
@@ -935,20 +941,20 @@ namespace SteamEngine.Persistence {
 	}
 
 	public class SaveStream {
-		TextWriter writer; 
-		
+		TextWriter writer;
+
 		public SaveStream(TextWriter writer) {
 			this.writer = writer;
 		}
-		
+
 		public void WriteLine(string value) {
 			writer.WriteLine(value);
-		}	
-		
+		}
+
 		public void WriteLine() {
 			writer.WriteLine();
 		}
-		
+
 		public void Close() {
 			try {
 				writer.Flush();
@@ -958,14 +964,14 @@ namespace SteamEngine.Persistence {
 			} catch { }
 			writer = null;
 		}
-		
+
 		public void WriteValue(string name, object value) {
 			//TagMath.SaveValue(writer, name+"=", value, -1);
 			writer.Write(name);
 			writer.Write("=");
 			writer.WriteLine(ObjectSaver.Save(value));
 		}
-		
+
 		public void WriteSection(string type, string name) {
 			writer.Write("[");
 			writer.Write(type);
@@ -973,9 +979,9 @@ namespace SteamEngine.Persistence {
 			writer.Write(name);
 			writer.WriteLine("]");
 		}
-		
+
 		public void WriteComment(string line) {
-			writer.WriteLine("//"+line);
-		}	
+			writer.WriteLine("//" + line);
+		}
 	}
 }

@@ -28,14 +28,14 @@ namespace SteamEngine.Regions {
 			throw new NotSupportedException("The constructor without paramaters is not supported");
 		}
 
-		public DynamicRegion(ImmutableRectangle[] newRects) 
-				: base() {
-			
+		public DynamicRegion(ImmutableRectangle[] newRects)
+			: base() {
+
 			int n = newRects.Length;
 			rectangles = new RegionRectangle[n];
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				rectangles[i] = new RegionRectangle(newRects[i], this);
-			}						
+			}
 		}
 
 		public override string Name {
@@ -47,9 +47,9 @@ namespace SteamEngine.Regions {
 		[Summary("Serves to place the region to the map for the first time (after creation)")]
 		public bool Place(Point4D p) {
 			ThrowIfDeleted();
-			if(p != null) { //already placed!
+			if (p != null) { //already placed!
 				throw new SEException("This Dynamic region has already been placed to the map. For movement try setting its P");
-			} 
+			}
 			this.p = p;
 
 			Map map = Map.GetMap(p.m);
@@ -67,20 +67,20 @@ namespace SteamEngine.Regions {
 				if (value == null) {
 					throw new ArgumentNullException("P");
 				}
-				if(Step(value)) { //first move to the desired position after performing necessary checks
+				if (Step(value)) { //first move to the desired position after performing necessary checks
 					//(trying to move over another dynamic region causes movement to fail!)
 					base.P = value;
-				} 
+				}
 			}
 		}
 
-		[Summary("Tries to move the specified amount of fields in X and Y axes. First examines if it is possible"+
-				"to move that way to the desired location and if so, it moves every rectangle there."+
+		[Summary("Tries to move the specified amount of fields in X and Y axes. First examines if it is possible" +
+				"to move that way to the desired location and if so, it moves every rectangle there." +
 				"We expect the timesX and timesY parameteres to be small numbers")]
 		public bool Step(int timesX, int timesY) {
 			//a new list of changed (moved) rectangles
 			List<RegionRectangle> movedRects = new List<RegionRectangle>();
-			foreach(RegionRectangle oneRect in rectangles) {
+			foreach (RegionRectangle oneRect in rectangles) {
 				movedRects.Add(oneRect.Move(timesX, timesY));
 			}
 			Map oldMap = Map.GetMap(p.m); //the dynamic region's old Map
@@ -89,13 +89,13 @@ namespace SteamEngine.Regions {
 			//add it without checks (these were performed when setting the rectangles)
 			//we will add either the new array of rectangles or the old one if there were problems
 			oldMap.AddDynamicRegion(this, false);
-			if(result) { //OK - alter the position also
-				p = new Point4D((ushort)(p.x + timesX), (ushort)(p.y + timesY), p.z, p.m);
+			if (result) { //OK - alter the position also
+				p = new Point4D((ushort) (p.x + timesX), (ushort) (p.y + timesY), p.z, p.m);
 			}
-			return result;			
+			return result;
 		}
 
-		[Summary("Method called on position change - it recounts the region's rectangles' position and also makes "+
+		[Summary("Method called on position change - it recounts the region's rectangles' position and also makes " +
 				"sure that no confilicts with other dynamic regions occurs when moving!")]
 		private bool Step(Point4D newP) {
 			Point4D oldPos = p; //store the old position for case the movement fails!
@@ -107,14 +107,14 @@ namespace SteamEngine.Regions {
 			Map oldMap = Map.GetMap(p.m); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
 			bool movingOK = true;//indicator if the movement success
-			if(xyChanged) {
+			if (xyChanged) {
 				int diffX = newP.x - p.x;
 				int diffY = newP.y - p.y;
 				List<RegionRectangle> movedRects = new List<RegionRectangle>();
-				foreach(RegionRectangle oneRect in rectangles) {
+				foreach (RegionRectangle oneRect in rectangles) {
 					movedRects.Add(oneRect.Move(diffX, diffY));
-				}				
-				if(mapChanged) {
+				}
+				if (mapChanged) {
 					Map newMap = Map.GetMap(newP.m);
 					this.parent = newMap.GetRegionFor(newP);
 					movingOK = SetRectangles(movedRects, newMap);
@@ -124,7 +124,7 @@ namespace SteamEngine.Regions {
 					movingOK = SetRectangles(movedRects, oldMap);
 					oldMap.AddDynamicRegion(this, false);//and place (no checks as well)
 				}
-			} else if(mapChanged) {
+			} else if (mapChanged) {
 				Map newMap = Map.GetMap(newP.m);
 				this.parent = newMap.GetRegionFor(newP);
 				movingOK = SetRectangles(rectangles, newMap); //here set the old rectangles (but to the new map)
@@ -132,7 +132,7 @@ namespace SteamEngine.Regions {
 			} else { //nothing at all :) - set to the same position
 				oldMap.AddDynamicRegion(this, false);//return it			
 			}
-			if(!movingOK) {
+			if (!movingOK) {
 				//return the parent and place the region to the old position to the map without checkings!
 				this.parent = oldMap.GetRegionFor(oldPos);
 				oldMap.AddDynamicRegion(this, false);//return
@@ -140,19 +140,19 @@ namespace SteamEngine.Regions {
 			return movingOK;
 		}
 
-		[Summary("Take the list of rectangles and make an array of RegionRectangles of it."+
-				"The purpose is the same as for StaticRegion but the checks are different."+
+		[Summary("Take the list of rectangles and make an array of RegionRectangles of it." +
+				"The purpose is the same as for StaticRegion but the checks are different." +
 				"The map parameter allows us to specifiy the map where the region should be")]
 		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
-			for(int i = 0; i < list.Count; i++) {
+			for (int i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
 				newArr[i] = new RegionRectangle(list[i].MinX, list[i].MinY, list[i].MaxX, list[i].MaxY, this);
 			}
 			//now the checking phase!
 			inactivated = true;
-			foreach(RegionRectangle rect in newArr) {
-				if(!map.CheckDynRectIntersection(rect)) {
+			foreach (RegionRectangle rect in newArr) {
+				if (!map.CheckDynRectIntersection(rect)) {
 					//check the intercesction of the dynamic region, in case of any trouble immediatelly finish
 					return false;
 				}

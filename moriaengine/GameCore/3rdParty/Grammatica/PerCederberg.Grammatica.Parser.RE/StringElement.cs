@@ -35,99 +35,99 @@ using System.IO;
 
 namespace PerCederberg.Grammatica.Parser.RE {
 
-    /**
-     * A regular expression string element. This element only matches
-     * an exact string. Once created, the string element is immutable.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  1.0
-     */
-    internal class StringElement : Element {
-    
-        /**
-         * The string to match with.
-         */
-        private string value;
-    
-        /**
-         * Creates a new string element.
-         * 
-         * @param c              the character to match with
-         */
-        public StringElement(char c) 
-            : this(c.ToString()) {
-        }
+	/**
+	 * A regular expression string element. This element only matches
+	 * an exact string. Once created, the string element is immutable.
+	 *
+	 * @author   Per Cederberg, <per at percederberg dot net>
+	 * @version  1.0
+	 */
+	internal class StringElement : Element {
 
-        /**
-         * Creates a new string element.
-         * 
-         * @param str            the string to match with
-         */
-        public StringElement(string str) {
-            value = str;
-        }
+		/**
+		 * The string to match with.
+		 */
+		private string value;
 
-        /**
-         * Returns the string to be matched.
-         * 
-         * @return the string to be matched
-         */
-        public string GetString() {
-            return value;
-        }
+		/**
+		 * Creates a new string element.
+		 * 
+		 * @param c              the character to match with
+		 */
+		public StringElement(char c)
+			: this(c.ToString()) {
+		}
 
-        /**
-         * Returns this element as it is immutable. 
-         * 
-         * @return this string element
-         */
-        public override object Clone() {
-            return this;
-        }
+		/**
+		 * Creates a new string element.
+		 * 
+		 * @param str            the string to match with
+		 */
+		public StringElement(string str) {
+			value = str;
+		}
 
-        /**
-         * Returns the length of a matching string starting at the
-         * specified position. The number of matches to skip can also
-         * be specified, but numbers higher than zero (0) cause a
-         * failed match for any element that doesn't attempt to
-         * combine other elements.
-         *
-         * @param m              the matcher being used 
-         * @param str            the string to match
-         * @param start          the starting position
-         * @param skip           the number of matches to skip
-         * 
-         * @return the length of the longest matching string, or
-         *         -1 if no match was found
-         */
-        public override int Match(Matcher m, 
-                                  string str, 
-                                  int start, 
-                                  int skip) {
+		/**
+		 * Returns the string to be matched.
+		 * 
+		 * @return the string to be matched
+		 */
+		public string GetString() {
+			return value;
+		}
 
-            if (skip != 0) {
-                return -1;
-            }
-            for (int i = 0; i < value.Length; i++) {
-                if (start + i >= str.Length) {
-                    m.SetReadEndOfString();
-                    return -1;
-                }
-                if (str[start + i] != value[i]) {
-                    return -1;
-                }
-            }
-            return value.Length;
-        }
+		/**
+		 * Returns this element as it is immutable. 
+		 * 
+		 * @return this string element
+		 */
+		public override object Clone() {
+			return this;
+		}
 
-        /**
-         * Prints this element to the specified output stream.
-         * 
-         * @param output         the output stream to use
-         * @param indent         the current indentation
-         */
-        public override void PrintTo(TextWriter output, string indent) {
-            output.WriteLine(indent + "'" + value + "'");
-        }
-    }
+		/**
+		 * Returns the length of a matching string starting at the
+		 * specified position. The number of matches to skip can also
+		 * be specified, but numbers higher than zero (0) cause a
+		 * failed match for any element that doesn't attempt to
+		 * combine other elements.
+		 *
+		 * @param m              the matcher being used 
+		 * @param str            the string to match
+		 * @param start          the starting position
+		 * @param skip           the number of matches to skip
+		 * 
+		 * @return the length of the longest matching string, or
+		 *         -1 if no match was found
+		 */
+		public override int Match(Matcher m,
+								  string str,
+								  int start,
+								  int skip) {
+
+			if (skip != 0) {
+				return -1;
+			}
+			for (int i = 0; i < value.Length; i++) {
+				if (start + i >= str.Length) {
+					m.SetReadEndOfString();
+					return -1;
+				}
+				if (str[start + i] != value[i]) {
+					return -1;
+				}
+			}
+			return value.Length;
+		}
+
+		/**
+		 * Prints this element to the specified output stream.
+		 * 
+		 * @param output         the output stream to use
+		 * @param indent         the current indentation
+		 */
+		public override void PrintTo(TextWriter output, string indent) {
+			output.WriteLine(indent + "'" + value + "'");
+		}
+	}
 }

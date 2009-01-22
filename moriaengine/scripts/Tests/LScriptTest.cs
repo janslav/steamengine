@@ -28,32 +28,32 @@ using SteamEngine.Regions;
 namespace SteamEngine.LScript {
 	public class LScriptTest {
 		public static LScriptTesterObject testObj = new LScriptTesterObject();
-		
+
 		//temporary for direct launching while writing the tests
 		//public void def__RunLScriptTests(TagHolder ignored) {
 		//	RunLScriptTests();
 		//}
-	
+
 		[RegisterWithRunTests]
 		public static void RunLScriptTests() {
-			
+
 			//Logger.Show("TestSuite", "Running ");
-			
-			
+
+
 			//calling methods
 			TestSnippet(1, "TestMethod_NoParams", "calling zero param method without caller ()");
 			TestSnippet(1, "TestMethod_NoParams()", "calling zero param method with ()");
 			TestSnippet(0, "TestMethod_NoParams=", typeof(SEException), "calling zero param method with =");
 			TestSnippet(0, "TestMethod_NoParams 186",
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments", 
+				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
 				"calling zero param method with an argument after whitespace");
 			TestSnippet(0, "TestMethod_NoParams(786)",
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments", 
+				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
 				"calling zero param method with an argument in ()");
 			TestSnippet(0, "TestMethod_NoParams =74123",
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments", 
+				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
 				"calling zero param method with an argument after =");
-			
+
 			TestSnippet(3789, "TestMethod_OneParam 3789", "calling one param method without parens");
 			TestSnippet(7893, "TestMethod_OneParam(7893)", "calling one param method with parens, syntax 1");
 			TestSnippet(7893, "TestMethod_OneParam (7893)", "calling one param method with parens, syntax 2");
@@ -68,53 +68,53 @@ namespace SteamEngine.LScript {
 			TestSnippet(0x2195, "TestMethod_OneParam 0x2195", "calling one param method without parens, hexa without x");
 			TestSnippet(1.2195, "TestMethod_OneParam 1.2195", "calling one param method without parens, decimal number with leading number");
 			TestSnippet(0.2195, "TestMethod_OneParam .2195", "calling one param method without parens, decimal number without leading number");
-			
+
 			TestSnippet(0, "TestMethod_OneParam",
-				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments", 
+				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments",
 				"calling one param method without parens and without any parameter");
 			TestSnippet(0, "TestMethod_OneParam()",
-				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments", 
+				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments",
 				"calling one param method with parens without any argument");
 
-			TestSnippet(1, "TestMethod_OneStringParam gfdyushgd", 
+			TestSnippet(1, "TestMethod_OneStringParam gfdyushgd",
 				"calling one string param method without parens");
-			TestSnippet(1, "TestMethod_OneStringParam(gfdyushgd)", 
+			TestSnippet(1, "TestMethod_OneStringParam(gfdyushgd)",
 				"calling one string param method with parens");
-			TestSnippet(1, "TestMethod_OneStringParam=gfdyushgd", 
+			TestSnippet(1, "TestMethod_OneStringParam=gfdyushgd",
 				"calling one string param method with =");
-				
-			TestSnippet(1, "TestMethod_OneStringParam gf gfds hgf456 fd", 
+
+			TestSnippet(1, "TestMethod_OneStringParam gf gfds hgf456 fd",
 				"calling one string param method without parens with multiple params");
-			TestSnippet(1, "TestMethod_OneStringParam(gf gfds 7hgf456 fd)", 
+			TestSnippet(1, "TestMethod_OneStringParam(gf gfds 7hgf456 fd)",
 				"calling one string param method with parens with multiple params");
-			TestSnippet(1, "TestMethod_OneStringParam=gf gfds 7hgf456 fd", 
+			TestSnippet(1, "TestMethod_OneStringParam=gf gfds 7hgf456 fd",
 				"calling one string param method with = with multiple params");
-				
+
 			//returning value
 			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return 5"), 5), "Error while return integer");
-			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"), 
+			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"),
 				"Error while returning quoted string");
-			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return \" \\\" \""), " \" "), 
+			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return \" \\\" \""), " \" "),
 				"Error while returning quoted string with escaped character");
-			
-			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"), 
+
+			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"),
 				"Error while returning nonquoted string");
-			
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return GetInteger"), 564), 
+
+			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return GetInteger"), 564),
 				"Error while returning integer from a method");
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <GetInteger>"), 564), 
+			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <GetInteger>"), 564),
 				"Error while returning integer from a <method>");
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <GetInteger()>"), 564), 
+			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <GetInteger()>"), 564),
 				"Error while returning integer from a <method()>");
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <?GetInteger?>"), 564), 
+			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <?GetInteger?>"), 564),
 				"Error while returning integer from a <method>");
-				
+
 			TestSnippet(2, "TestMethod_NoParams;TestMethod_NoParams", "calling two expressions in a row, syntax 1");
 			TestSnippet(2, "TestMethod_NoParams; TestMethod_NoParams", "calling two expressions in a row, syntax 2");
 			TestSnippet(2, "TestMethod_NoParams ;TestMethod_NoParams", "calling two expressions in a row, syntax 3");
 			TestSnippet(2, "TestMethod_NoParams ; TestMethod_NoParams", "calling two expressions in a row, syntax 4");
-		
-		
+
+
 			//these will be a bit difficult... :\
 			//TestSnippet(+1, "TestMethod_OneParam +1", "integer unary '+' without parens");
 			//TestSnippet(-1, "TestMethod_OneParam -1", "integer unary '-' without parens");
@@ -122,7 +122,7 @@ namespace SteamEngine.LScript {
 			//TestSnippet(-564, "TestMethod_OneParam -GetInteger()", "general expression unary '-' without parens");				
 			//Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Get("testtimerkey").Equals(LScript.RunSnippet(testObj, "return %testtimerkey")), "timerkey");
 			//Sanity.IfTrueThrow(!SteamEngine.Timers.TriggerKey.Get("testtriggerkey").Equals(LScript.RunSnippet(testObj, "return @testtriggerkey ")), "triggerkey");
-			
+
 			TestSnippet(1, "TestMethod_OneParam(+1)", "integer unary '+' with parens");
 			TestSnippet(1, "TestMethod_OneParam=+1", "integer unary '+' with =");
 			TestSnippet(-1, "TestMethod_OneParam(-1)", "integer unary '-' with parens");
@@ -131,34 +131,34 @@ namespace SteamEngine.LScript {
 			TestSnippet(564, "TestMethod_OneParam=+GetInteger()", "general expression unary '+' with =");
 			TestSnippet(-564, "TestMethod_OneParam(-GetInteger())", "general expression unary '-' with parens");
 			TestSnippet(-564, "TestMethod_OneParam=-GetInteger()", "general expression unary '-' with =");
-			
-			TestSnippet(56+7, "TestMethod_OneParam 56+7", "integer binary '+' without parens");
-			TestSnippet(56+7, "TestMethod_OneParam(56+7)", "integer binary '+' with parens");
-			TestSnippet(56+7, "TestMethod_OneParam=56+7", "integer binary '+' with =");
-			TestSnippet(56-7, "TestMethod_OneParam 56-7", "integer binary '-' without parens");
-			TestSnippet(56-7, "TestMethod_OneParam(56-7)", "integer binary '-' with parens");
-			TestSnippet(56-7, "TestMethod_OneParam=56-7", "integer binary '-' with =");
-			TestSnippet(56*7, "TestMethod_OneParam 56*7", "integer binary '*' without parens");
-			TestSnippet(56*7, "TestMethod_OneParam(56*7)", "integer binary '*' with parens");
-			TestSnippet(56*7, "TestMethod_OneParam=56*7", "integer binary '*' with =");
-			TestSnippet(56/7, "TestMethod_OneParam 56/7", "integer binary '/' without parens");
-			TestSnippet(56/7, "TestMethod_OneParam(56/7)", "integer binary '/' with parens");
-			TestSnippet(56/7, "TestMethod_OneParam=56/7", "integer binary '/' with =");
-			
-			TestSnippet(double.PositiveInfinity , "TestMethod_OneParam(56/0)", "division by zero");
-			
-			
+
+			TestSnippet(56 + 7, "TestMethod_OneParam 56+7", "integer binary '+' without parens");
+			TestSnippet(56 + 7, "TestMethod_OneParam(56+7)", "integer binary '+' with parens");
+			TestSnippet(56 + 7, "TestMethod_OneParam=56+7", "integer binary '+' with =");
+			TestSnippet(56 - 7, "TestMethod_OneParam 56-7", "integer binary '-' without parens");
+			TestSnippet(56 - 7, "TestMethod_OneParam(56-7)", "integer binary '-' with parens");
+			TestSnippet(56 - 7, "TestMethod_OneParam=56-7", "integer binary '-' with =");
+			TestSnippet(56 * 7, "TestMethod_OneParam 56*7", "integer binary '*' without parens");
+			TestSnippet(56 * 7, "TestMethod_OneParam(56*7)", "integer binary '*' with parens");
+			TestSnippet(56 * 7, "TestMethod_OneParam=56*7", "integer binary '*' with =");
+			TestSnippet(56 / 7, "TestMethod_OneParam 56/7", "integer binary '/' without parens");
+			TestSnippet(56 / 7, "TestMethod_OneParam(56/7)", "integer binary '/' with parens");
+			TestSnippet(56 / 7, "TestMethod_OneParam=56/7", "integer binary '/' with =");
+
+			TestSnippet(double.PositiveInfinity, "TestMethod_OneParam(56/0)", "division by zero");
+
+
 			TestSnippet(Globals.port, "return Globals.port", "dotted expression");
-			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"), 
+			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"),
 				"dotted expression: method and constructor witn no params"); //this could outcome false if someone changed the ObjToString method...
-			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"), 
+			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"),
 				"dotted expression: method and constructor witn one param with parens"); //this could outcome false if someone changed the ObjToString method...
-			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList=0)"), "[]"), 
+			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList=0)"), "[]"),
 				"dotted expression: method and constructor witn one param with with ="); //this could outcome false if someone changed the ObjToString method...	
 			//this doesn't work (it should never have I think...)
 			//Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList 0)"), "[]"), 
 			//	"dotted expression: method and constructor with one param without parens"); //this could outcome false if someone changed the ObjToString method...
-			
+
 			TestSnippet(1, "arg testlocal 1; TestMethod_OneParam arg testlocal", "ARG/LOCAL, syntax 1");
 			TestSnippet(2, "arg testlocal = 2; TestMethod_OneParam arg testlocal", "ARG/LOCAL, syntax 2");
 			TestSnippet(3, "arg.testlocal 3; TestMethod_OneParam arg.testlocal", "ARG/LOCAL, syntax 3");
@@ -171,36 +171,36 @@ namespace SteamEngine.LScript {
 			TestSnippet(4, "local.testlocal = 4; TestMethod_OneParam local.testlocal", "ARG/LOCAL, syntax 10");
 			TestSnippet(5, "local(testlocal,5); TestMethod_OneParam local(testlocal)", "ARG/LOCAL, syntax 11");
 			TestSnippet(6, "local(testlocal, 6); TestMethod_OneParam local(testlocal)", "ARG/LOCAL, syntax 12");
-			
+
 			TestSnippet(1, "var testvariable 1; TestMethod_OneParam var testvariable", "VAR, syntax 1");
 			TestSnippet(2, "var testvariable = 2; TestMethod_OneParam var testvariable", "VAR, syntax 2");
 			TestSnippet(3, "var.testvariable 3; TestMethod_OneParam var.testvariable", "VAR, syntax 3");
 			TestSnippet(4, "var.testvariable = 4; TestMethod_OneParam var.testvariable", "VAR, syntax 4");
 			TestSnippet(5, "var(testvariable,5); TestMethod_OneParam var(testvariable)", "VAR, syntax 5");
 			TestSnippet(6, "var(testvariable, 6); TestMethod_OneParam var(testvariable)", "VAR, syntax 6");
-			
+
 			TestSnippet(1, "tag testtag 1; TestMethod_OneParam tag testtag", "TAG, syntax 1");
 			TestSnippet(2, "tag testtag = 2; TestMethod_OneParam tag testtag", "TAG, syntax 2");
 			TestSnippet(3, "tag.testtag 3; TestMethod_OneParam tag.testtag", "TAG, syntax 3");
 			TestSnippet(4, "tag.testtag = 4; TestMethod_OneParam tag.testtag", "TAG, syntax 4");
 			TestSnippet(5, "tag(testtag,5); TestMethod_OneParam tag(testtag)", "TAG, syntax 5");
 			TestSnippet(6, "tag(testtag, 6); TestMethod_OneParam tag(testtag)", "TAG, syntax 6");
-			
+
 			//ambiguity test
 			TestSnippet(5, "TestMethod_IPointParam(Point4D(1,2,3,4))", "ambiguity test 1");
 			TestSnippet(6, "TestMethod_IPointParam(Point3D(1,2,3))", "ambiguity test 2");
 			TestSnippet(7, "TestMethod_IPointParam(Point2D(1,2))", "ambiguity test 3");
-			
+
 			TestSnippet(2, "TestMethod_PointAndIpointParam(Point4D(1,2,3,4))", "ambiguity test 4");
 			TestSnippet(3, "TestMethod_PointAndIpointParam(Point3D(1,2,3))", "ambiguity test 5");
 			TestSnippet(4, "TestMethod_PointAndIpointParam(Point2D(1,2))", "ambiguity test 6");
-			
+
 			TestSnippet(5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
 			TestSnippet(5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
-			
+
 			Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Get("testtimerkey").Equals(LScript.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
 			Sanity.IfTrueThrow(!TriggerKey.Get("testtriggerkey").Equals(LScript.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
-			
+
 			LScript.RunSnippet(testObj, "return {0 1}");
 			LScript.RunSnippet(testObj, "return { 0 1}");
 			LScript.RunSnippet(testObj, "return {0 1 }");
@@ -217,66 +217,66 @@ namespace SteamEngine.LScript {
 			LScript.RunSnippet(testObj, "return({ 0,1})");
 			LScript.RunSnippet(testObj, "return({0,1 })");
 			LScript.RunSnippet(testObj, "return({ 0,1 })");
-			
+
 			Console.WriteLine("LScript tests complete.");
 		}
-		
+
 		private static void TestSnippet(double difference, string script, Type expectedException, string errormessage) {
 			try {
 				LScript.RunSnippet(testObj, script);
 			} catch (Exception e) {
 				if ((expectedException != null)) {
-					while (e.InnerException!=null) {
-						e=e.InnerException;
+					while (e.InnerException != null) {
+						e = e.InnerException;
 					}
 					if (expectedException.IsInstanceOfType(e)) {
 						testObj.CheckCounter(difference, errormessage);
 						return;
 					}
 				}
-				throw new SanityCheckException("Error while "+errormessage+": "+e);
+				throw new SanityCheckException("Error while " + errormessage + ": " + e);
 			}
-			throw new SanityCheckException("Error while "+errormessage+": Expected exception was not thrown.");
+			throw new SanityCheckException("Error while " + errormessage + ": Expected exception was not thrown.");
 		}
-		
+
 		private static void TestSnippet(double difference, string script, string expectedExcString, string errormessage) {
-			if ((expectedExcString != null)&&(expectedExcString.Length==0)) {
+			if ((expectedExcString != null) && (expectedExcString.Length == 0)) {
 				expectedExcString = null;
 			}
 			bool wasException = false;
 			try {
 				LScript.RunSnippet(testObj, script);
 			} catch (Exception e) {
-				if ((expectedExcString != null)&&
+				if ((expectedExcString != null) &&
 						(expectedExcString == e.Message)) {
 					wasException = true;
 				} else {
-					throw new SanityCheckException("Error while "+errormessage+": "+e);
+					throw new SanityCheckException("Error while " + errormessage + ": " + e);
 				}
 			}
-			if ((expectedExcString != null)&&(!wasException)) {
-				throw new SanityCheckException("Error while "+errormessage+": Expected exception was not thrown.");
+			if ((expectedExcString != null) && (!wasException)) {
+				throw new SanityCheckException("Error while " + errormessage + ": Expected exception was not thrown.");
 			}
 			testObj.CheckCounter(difference, errormessage);
 		}
-		
+
 		private static void TestSnippet(double difference, string script, string errormessage) {
 			try {
 				LScript.RunSnippet(testObj, script);
 			} catch (Exception e) {
-				throw new SanityCheckException("Error while "+errormessage+": "+e);
+				throw new SanityCheckException("Error while " + errormessage + ": " + e);
 			}
 			testObj.CheckCounter(difference, errormessage);
 		}
 	}
-	
-	
+
+
 	public class LScriptTesterIPoint4D : IPoint4D {
-		public ushort X { get {return 0; } } 
-		public ushort Y { get {return 0; } } 
-		public sbyte Z { get {return 0; } }
-		public byte M { get {return 0; } }
-		
+		public ushort X { get { return 0; } }
+		public ushort Y { get { return 0; } }
+		public sbyte Z { get { return 0; } }
+		public byte M { get { return 0; } }
+
 		public IEnumerable ThingsInRange() { return null; }
 		public IEnumerable ItemsInRange() { return null; }
 		public IEnumerable CharsInRange() { return null; }
@@ -306,30 +306,30 @@ namespace SteamEngine.LScript {
 			get { return this; }
 		}
 	}
-		
-	
+
+
 	public class LScriptTesterObject : PluginHolder {
 		public double currentCounter = 0;
 		public double lastCounter = 0;
-		
+
 		private void Incr() {
 			currentCounter++;
 		}
-		
+
 		private void Incr(double difference) {
 			currentCounter += difference;
 		}
-		
+
 		internal void CheckCounter(double difference, string failureMessage) {
-			double shouldbe = lastCounter+difference;
-			Sanity.IfTrueThrow(shouldbe!=currentCounter, "Error while "+failureMessage);
+			double shouldbe = lastCounter + difference;
+			Sanity.IfTrueThrow(shouldbe != currentCounter, "Error while " + failureMessage);
 			lastCounter = currentCounter;
 		}
-		
+
 		public void TestMethod_NoParams() {
 			Incr();
 		}
-		
+
 		public void TestMethod_OneParam(double difference) {
 			//Console.WriteLine("TestMethod_OneParam("+difference+")");
 			Incr(difference);
@@ -344,17 +344,17 @@ namespace SteamEngine.LScript {
 
 		public void TestMethod_PointAndIpointParam(Point4D point) {
 			Console.WriteLine("TestMethod_PointAndIpointParam(Point4D)");
-		    Incr(2);
+			Incr(2);
 		}
 
 		public void TestMethod_PointAndIpointParam(Point3D point) {
 			Console.WriteLine("TestMethod_PointAndIpointParam(Point3D)");
-		    Incr(3);
+			Incr(3);
 		}
-        
+
 		public void TestMethod_PointAndIpointParam(Point2D point) {
 			Console.WriteLine("TestMethod_PointAndIpointParam(Point2D)");
-		    Incr(4);
+			Incr(4);
 		}
 
 		public void TestMethod_PointAndIpointParam(IPoint4D point) {
@@ -386,19 +386,19 @@ namespace SteamEngine.LScript {
 			Console.WriteLine("TestMethod_OneParam(IPoint2D)");
 			Incr(7);
 		}
-		
+
 		public void TestMethod_OneStringParam(string str) {
 			Incr();
 		}
-		
+
 		public int GetInteger() {
 			return 564;
 		}
-		
+
 		public string GetString() {
 			return "test string";
 		}
-		
+
 		public object GetSelf() {
 			return this;
 		}

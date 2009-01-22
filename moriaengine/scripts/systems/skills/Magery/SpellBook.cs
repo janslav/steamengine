@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state = viewer.GameState;
 			if (state != null) {
 				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
-				
+
 				//this is probably not necessary. We'll see if it breaks :)
 				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 				//Thing cont = this.Cont;

@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	public class MutableRectangle : AbstractRectangle {
 		public ushort minX, minY, maxX, maxY;
-		
+
 		[LoadingInitializer]
 		public MutableRectangle() {
 		}
@@ -58,17 +58,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public MutableRectangle(ushort startX, ushort startY, ushort endX, ushort endY) {
 			Sanity.IfTrueThrow((startX > endX) || (startY > endY),
-				"MutableRectangle (" + startX + "," + startY + "," + endX + "," + endY + "). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");			
+				"MutableRectangle (" + startX + "," + startY + "," + endX + "," + endY + "). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");
 			this.minX = startX;
 			this.minY = startY;
 			this.maxX = endX;
 			this.maxY = endY;
-		}		
+		}
 
 		public override ushort MinX {
 			get {
 				return minX;
-			}			
+			}
 		}
 
 		public override ushort MinY {
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 				return maxX;
 			}
 		}
-		
+
 		public override ushort MaxY {
 			get {
 				return maxY;
@@ -91,10 +91,10 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes.")]
 		public MutableRectangle Move(int timesX, int timesY) {
-			minX += (ushort)timesX;
-			maxX += (ushort)timesX;
-			minY += (ushort)timesY;
-			maxY += (ushort)timesY;
+			minX += (ushort) timesX;
+			maxX += (ushort) timesX;
+			minY += (ushort) timesY;
+			maxY += (ushort) timesY;
 
 			return this;
 		}
@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the immutable ones)")]
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
 			List<MutableRectangle> retList = new List<MutableRectangle>();
-			foreach(ImmutableRectangle regRect in reg.Rectangles) {
+			foreach (ImmutableRectangle regRect in reg.Rectangles) {
 				retList.Add(new MutableRectangle(regRect));
 			}
 			return retList;

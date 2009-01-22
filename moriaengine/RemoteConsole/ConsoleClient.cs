@@ -59,7 +59,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void NoParamDeleg();
 
 		public void On_Close(string reason) {
-			MainClass.mainForm.SystemDisplay.WriteLine("Disconnected from " + conn.EndPoint + ": "+ reason);
+			MainClass.mainForm.SystemDisplay.WriteLine("Disconnected from " + conn.EndPoint + ": " + reason);
 
 			connectedInstance = null;
 			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.SetConnectedFalse));

@@ -27,23 +27,23 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.LScript {
-	
+
 	public class OpNode_Is : OpNode, IOpNodeHolder {
 		private Type type;
 		internal OpNode opNode;
 
 		internal static OpNode_Is Construct(IOpNodeHolder parent, Node code, int typeNameFromIndex) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			string filename = LScript.GetParentScriptHolder(parent).filename;
 
 			OpNode_Is constructed = new OpNode_Is(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-			
+
 			//LScript.DisplayTree(code);
 
 			StringBuilder sb = new StringBuilder();
-			for (int i = typeNameFromIndex, n = code.GetChildCount(); i<n; i++) {
+			for (int i = typeNameFromIndex, n = code.GetChildCount(); i < n; i++) {
 				Node node = code.GetChildAt(i);
 				sb.Append(((Token) node).GetImage().Trim());
 			}
@@ -54,7 +54,7 @@ namespace SteamEngine.LScript {
 				type = Type.GetType(typeName, false, true);
 			}
 			if (type == null) {
-				throw new InterpreterException("Type '"+typeName+"' not recognised.",
+				throw new InterpreterException("Type '" + typeName + "' not recognised.",
 					line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
 			}
 
@@ -63,25 +63,25 @@ namespace SteamEngine.LScript {
 			return constructed;
 		}
 
-		protected OpNode_Is(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+		protected OpNode_Is(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
-			
+
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (oldNode == opNode) {
 				opNode = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object obj = opNode.Run(vars);
 
 			return type.IsInstanceOfType(obj);
 		}
-		
+
 		public override string ToString() {
 			return string.Concat(opNode.ToString(), " IS ", type.Name);
 		}
@@ -89,7 +89,7 @@ namespace SteamEngine.LScript {
 
 	public static class OpNode_Typeof {
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			string filename = LScript.GetParentScriptHolder(parent).filename;
 
@@ -99,7 +99,7 @@ namespace SteamEngine.LScript {
 			}
 
 			StringBuilder sb = new StringBuilder();
-			for (int i = 2; i<n; i++) {
+			for (int i = 2; i < n; i++) {
 				Node node = code.GetChildAt(i);
 				sb.Append(((Token) node).GetImage().Trim());
 			}
@@ -110,7 +110,7 @@ namespace SteamEngine.LScript {
 				type = Type.GetType(typeName, false, true);
 			}
 			if (type == null) {
-				throw new InterpreterException("Type '"+typeName+"' not recognised.",
+				throw new InterpreterException("Type '" + typeName + "' not recognised.",
 					line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
 			}
 
@@ -119,4 +119,4 @@ namespace SteamEngine.LScript {
 	}
 
 
-}	
+}

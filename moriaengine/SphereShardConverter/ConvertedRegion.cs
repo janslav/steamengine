@@ -25,14 +25,14 @@ using System.Globalization;
 using SteamEngine.Common;
 using System.Configuration;
 using SteamEngine.Regions;
-	
+
 namespace SteamEngine.Converter {
 
 	public class ConvertedRegion : ConvertedDef {
 		private static Dictionary<string, ConvertedRegion> regionsByDefname = new Dictionary<string, ConvertedRegion>(StringComparer.OrdinalIgnoreCase);
 		private static List<ConvertedRegion> allRegions = new List<ConvertedRegion>();
 		private static ArrayList temp = new ArrayList();
-		
+
 		private List<ImmutableRectangle> rectangles = new List<ImmutableRectangle>();
 		private Point2D[] points;//corners of the rectangles. its not too accurate, but who cares... :)
 		private byte mapplane;
@@ -41,7 +41,7 @@ namespace SteamEngine.Converter {
 
 		private bool mapplaneSet = false;
 		private PropsLine mapplaneLine;
-	
+
 
 
 		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
@@ -86,28 +86,29 @@ namespace SteamEngine.Converter {
 
 		static Regex nonCharacterSplitRE = new Regex(@"[^\w]+", RegexOptions.Compiled);
 
-		public ConvertedRegion(PropsSection input) : base(input) {
+		public ConvertedRegion(PropsSection input)
+			: base(input) {
 			this.firstStageImplementations.Add(firstStageImpl);
 
 			Set("createdat", Persistence.ObjectSaver.Save(DateTime.Now), "");
 
 			string name = input.headerName;
-			Set("Name", "\""+name+"\"", "");
+			Set("Name", "\"" + name + "\"", "");
 			if (string.Compare(name, "%servname%", true) == 0) {
 				//headerType = "WorldRegion";
 				hierarchyIndex = 0;
-			//} else {
+				//} else {
 				//headerType = "Region";
 			}
 			headerType = "Region";
 			//todo: make this strip all non-ascii characters
 			string[] splitted = nonCharacterSplitRE.Split(name);
-			splitted[0] = "a_"+splitted[0];
+			splitted[0] = "a_" + splitted[0];
 			name = string.Join("_", splitted);//we make "a_local_mine" out of "local mine"
 			string defname = name;
 			int toAdd = 2;
 			while (regionsByDefname.ContainsKey(defname)) {
-				defname = name+"_"+toAdd;
+				defname = name + "_" + toAdd;
 				toAdd++;
 			}
 			regionsByDefname[defname] = this;
@@ -154,13 +155,13 @@ namespace SteamEngine.Converter {
 					minY = y2;
 					maxY = y1;
 				}
-				maxX--;maxY--; //this is because sphere has weird system of rectangle coordinates
+				maxX--; maxY--; //this is because sphere has weird system of rectangle coordinates
 				string retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
 				def.Set("Rect", retVal, line.comment);
 				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(minX, minY, maxX, maxY));
 				return retVal;
 			} else {
-				def.Warning(line.line, "Unrecognized Rectangle format ('"+line.value+"')");
+				def.Warning(line.line, "Unrecognized Rectangle format ('" + line.value + "')");
 			}
 			return "";
 		}
@@ -214,7 +215,7 @@ namespace SteamEngine.Converter {
 				//if (def.headerType.StartsWith("World")) {
 				//    def.headerType = "WorldFlaggedRegion";
 				//} else {
-					def.headerType = "FlaggedRegion";
+				def.headerType = "FlaggedRegion";
 				//}
 				def.Set(name, line.value, line.comment);
 				return line.value;
@@ -224,15 +225,15 @@ namespace SteamEngine.Converter {
 
 		public override void SecondStage() {
 			int rectanglesCount = rectangles.Count;
-			points = new Point2D[rectanglesCount*4];
+			points = new Point2D[rectanglesCount * 4];
 			for (int i = 0; i < rectanglesCount; i++) {
 				ImmutableRectangle rect = (ImmutableRectangle) rectangles[i];
-				points[(i*4)+0] = new Point2D(rect.MinX, rect.MinY);//left lower
-				points[(i*4)+1] = new Point2D(rect.MinX, rect.MaxY);//left upper
-				points[(i*4)+2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
-				points[(i*4)+3] = new Point2D(rect.MaxX, rect.MinY);//right lower
+				points[(i * 4) + 0] = new Point2D(rect.MinX, rect.MinY);//left lower
+				points[(i * 4) + 1] = new Point2D(rect.MinX, rect.MaxY);//left upper
+				points[(i * 4) + 2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
+				points[(i * 4) + 3] = new Point2D(rect.MaxX, rect.MinY);//right lower
 			}
-			
+
 			temp.Clear();
 			foreach (ConvertedRegion reg in allRegions) {
 				if (HasSameMapplane(reg)) {
@@ -243,7 +244,7 @@ namespace SteamEngine.Converter {
 			int tempCount = temp.Count;
 			int highestResult = 0;
 			int occurences = 0;
-			for (int i = 0; i<tempCount; i++) {
+			for (int i = 0; i < tempCount; i++) {
 				DictionaryEntry entry = (DictionaryEntry) temp[i];
 				int result = (int) entry.Key;
 				ConvertedRegion p = (ConvertedRegion) entry.Value;
@@ -258,11 +259,11 @@ namespace SteamEngine.Converter {
 				}
 			}
 			if ((occurences == 0) && (hierarchyIndex != 0)) {
-				Warning(origData.headerLine, "Region "+this.headerName+" has no parents!");
+				Warning(origData.headerLine, "Region " + this.headerName + " has no parents!");
 			}
 			parents = new ConvertedRegion[occurences];
 			int index = 0;
-			for (int i = 0; i<tempCount; i++) {
+			for (int i = 0; i < tempCount; i++) {
 				DictionaryEntry entry = (DictionaryEntry) temp[i];
 				int result = (int) entry.Key;
 				ConvertedRegion p = (ConvertedRegion) entry.Value;
@@ -274,7 +275,7 @@ namespace SteamEngine.Converter {
 
 			//Console.WriteLine("possible parents for "+this.headerName+" are "+Globals.ObjToString(parents));
 		}
-		
+
 		public override void ThirdStage() {
 			if (mapplaneLine != null) {
 				Set("Mapplane", mapplane.ToString(), mapplaneLine.comment);
@@ -282,7 +283,7 @@ namespace SteamEngine.Converter {
 				Set("Mapplane", mapplane.ToString(), "");
 			}
 		}
-		
+
 		private bool HasSameMapplane(ConvertedRegion reg) {
 			if (this.mapplane == reg.mapplane) {
 				return true;
@@ -293,28 +294,28 @@ namespace SteamEngine.Converter {
 			}
 			return false;
 		}
-		
+
 		private int ContainsPoints(Point2D[] ps) {
 			int counter = 0;
-			for (int i = 0, n = ps.Length; i<n; i++) {
+			for (int i = 0, n = ps.Length; i < n; i++) {
 				Point2D p = ps[i];
 				foreach (ImmutableRectangle rect in rectangles) {
 					if (rect.Contains(p)) {
-						counter ++;
+						counter++;
 						continue;
 					}
 				}
 			}
 			return counter;
 		}
-		
+
 		private bool TryDefinitiveParent() {
 			if (hierarchyIndex != -1) {
 				return true;
 			}
 			int highestHierarchyIndex = -2;
 			int highestHierarchyIndexAt = -1;
-			for (int i = 0, n = parents.Length; i<n ; i++) {
+			for (int i = 0, n = parents.Length; i < n; i++) {
 				ConvertedRegion reg = parents[i];
 				if (reg.hierarchyIndex == -1) {
 					return false;
@@ -324,13 +325,13 @@ namespace SteamEngine.Converter {
 				}
 			}
 			ConvertedRegion definitiveParent = parents[highestHierarchyIndexAt];
-			parents = new ConvertedRegion[] {definitiveParent};
-			hierarchyIndex = definitiveParent.hierarchyIndex +1;
-			Set("Parent", "("+definitiveParent.headerName+")", "calculated by Converter");
+			parents = new ConvertedRegion[] { definitiveParent };
+			hierarchyIndex = definitiveParent.hierarchyIndex + 1;
+			Set("Parent", "(" + definitiveParent.headerName + ")", "calculated by Converter");
 			//Console.WriteLine("Parent for "+this.headerName+"set to "+definitiveParent.headerName);
 			return true;
 		}
-		
+
 		//internal static void ResolveRegionsHierarchy() {
 		public static void SecondStageFinished() {
 			temp = new ArrayList(allRegions);//copy list of all regions
@@ -341,16 +342,16 @@ namespace SteamEngine.Converter {
 					Logger.WriteError("Region hierarchy not completely resolvable - No regions converted!");
 					Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "These are the unresolved ones:");
 					foreach (ConvertedRegion reg in temp) {
-						reg.Info(reg.origData.headerLine, reg+", possible parents: "+Tools.ObjToString(reg.parents));
+						reg.Info(reg.origData.headerLine, reg + ", possible parents: " + Tools.ObjToString(reg.parents));
 					}
-					
+
 					foreach (ConvertedRegion reg in allRegions) {
 						reg.DontDump();
 					}
 					return;
 				}
 				lastCount = temp.Count;
-				for (int i = 0; i<temp.Count;) {
+				for (int i = 0; i < temp.Count; ) {
 					ConvertedRegion r = (ConvertedRegion) temp[i];
 					if (r.TryDefinitiveParent()) {
 						temp.RemoveAt(i);
@@ -360,9 +361,9 @@ namespace SteamEngine.Converter {
 				}
 			}
 		}
-//		
+		//		
 		public override string ToString() {
-			return "ConvertedRegion "+headerName+"("+hierarchyIndex+")";
+			return "ConvertedRegion " + headerName + "(" + hierarchyIndex + ")";
 		}
 	}
 }

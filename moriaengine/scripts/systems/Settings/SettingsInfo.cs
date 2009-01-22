@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
 
-			dlg.AddTable(new GUTATable(1, 85, 50, 40, 0, 185));			
+			dlg.AddTable(new GUTATable(1, 85, 50, 40, 0, 185));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Popis hodnoty");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zkratka typu");
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Prefix");
@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = TextFactory.CreateText("(Glob)");
 			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "#");
 			dlg.LastTable[0, 3] = TextFactory.CreateText("Globals (nepoužívané v normálním nastavení)");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#globals (doslova)");			
+			dlg.LastTable[0, 4] = TextFactory.CreateText("#globals (doslova)");
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();//a vykreslíme ten info dialog
@@ -194,9 +194,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam nastavenych nebo zkousenych polozek
-			if(gr.pressedButton == 0) { //end
+			if (gr.pressedButton == 0) { //end
 				DialogStacking.ShowPreviousDialog(gi);
 			}
 		}
-	}	
+	}
 }

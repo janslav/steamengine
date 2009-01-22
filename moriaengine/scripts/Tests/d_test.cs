@@ -25,40 +25,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int headerColor = 1;
 			string header = "Carpentry Menu";
 			//int contentColor = 1;
-			string content ="blablub blöb";
+			string content = "blablub blöb";
 			int width = 200;
 			int height = 220;
 
-			ResizePic(0, 0, 5054, width, height+100);
-			
+			ResizePic(0, 0, 5054, width, height + 100);
+
 			GumpPicTiled(10, 10, width - 20, 20, 2624);
 			CheckerTrans(10, 10, width - 20, 20);
 			TextA(10, 10, headerColor, header);
-			
+
 			GumpPicTiled(10, 40, width - 20, height - 80, 2624);
 			CheckerTrans(10, 40, width - 20, height - 80);
-			
+
 			HTMLGumpA(10, 40, width - 20, height - 80, content, false, true);
-			
+
 			GumpPicTiled(10, height - 30, width - 20, 20, 2624);
 			CheckerTrans(10, height - 30, width - 20, 20);
 			Button(10, height - 30, 4005, 4007, true, 0, 1);
-			CheckBox(10, height + 30, 210,211, true, 786);
-			TextEntryA(10, height + 50, 500,100, 1, 762, "this is texentry ìšèøžýá");
-			
-			NumberEntryA(10, height + 70, 500,100, 1, 763, 5.5);
-			
+			CheckBox(10, height + 30, 210, 211, true, 786);
+			TextEntryA(10, height + 50, 500, 100, 1, 762, "this is texentry ìšèøžýá");
+
+			NumberEntryA(10, height + 70, 500, 100, 1, 763, 5.5);
+
 			XMFHTMLGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			Console.WriteLine("OnResponse");
-			gi.Cont.SysMessage("OnResponse from "+gi);
-			gi.Cont.SysMessage("button : "+gr.pressedButton);
-			gi.Cont.SysMessage("checkbutton: "+gr.IsSwitched(786));
-			gi.Cont.SysMessage("textentry: "+gr.GetTextResponse(762));
-			gi.Cont.SysMessage("number textentry: "+gr.GetTextResponse(763));
-			gi.Cont.SysMessage("numberentry: "+gr.GetNumberResponse(763));
+			gi.Cont.SysMessage("OnResponse from " + gi);
+			gi.Cont.SysMessage("button : " + gr.pressedButton);
+			gi.Cont.SysMessage("checkbutton: " + gr.IsSwitched(786));
+			gi.Cont.SysMessage("textentry: " + gr.GetTextResponse(762));
+			gi.Cont.SysMessage("number textentry: " + gr.GetTextResponse(763));
+			gi.Cont.SysMessage("numberentry: " + gr.GetNumberResponse(763));
 		}
 	}
 }

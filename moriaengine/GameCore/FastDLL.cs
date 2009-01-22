@@ -44,23 +44,23 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	internal class FastDLL {
-		
+
 		static FastDLL() {
-			#if USEFASTDLL
+#if USEFASTDLL
 				SetupTables();
 				PrepareToInitBuffers();
 				InitBuffers(inBufferHandle.AddrOfPinnedObject(), outBufferHandle.AddrOfPinnedObject());
-			#endif
+#endif
 		}
-		
+
 		internal static void ShutDownFastDLL() {
-			#if USEFASTDLL
+#if USEFASTDLL
 			inBufferHandle.Free();
 			outBufferHandle.Free();
-			#endif
+#endif
 		}
-		
-		#if USEFASTDLL
+
+#if USEFASTDLL
 			private static GCHandle outBufferHandle;
 			private static GCHandle inBufferHandle;
 			private static void PrepareToInitBuffers() {
@@ -72,11 +72,11 @@ namespace SteamEngine {
 				
 			}
 			
-			#if DEBUG
+#if DEBUG
 				private const string FastDLLPath = "bin/Debug_fastdll.dll";
-			#else
+#else
 				private const string FastDLLPath = "bin/fastdll.dll";
-			#endif
+#endif
 			
 			[DllImport(FastDLLPath)]
 			public static extern void InitBuffers(IntPtr unpacked, IntPtr retval);
@@ -128,7 +128,7 @@ namespace SteamEngine {
 			[DllImport(FastDLLPath)]
 			public static extern int Crushify14(int retstart, int len);
 			
-		#endif
-		
+#endif
+
 	}
 }

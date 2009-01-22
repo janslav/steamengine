@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 		//TODO - az bde magie tak sem udelat nejakj on_spellcast zrusit kouzlo... 
 
 		public void On_Assign() {
-			((Character)Cont).RedMessage("Jsi v šoku!");
+			((Character) Cont).RedMessage("Jsi v šoku!");
 		}
 
 		public void On_UnAssign(Character formerCont) {

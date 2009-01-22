@@ -35,30 +35,34 @@ namespace SteamEngine {
 		private const int uidOffset = 1; //low uids (particularly 0) have been found to cause problems in client.
 		private const int queueMaxCount = 1000;
 
-		private const int highestUid = 0x00ffffff-1;
+		private const int highestUid = 0x00ffffff - 1;
 
-		internal int HighestElement { get {
-			return highestElement;
-		} }
+		internal int HighestElement {
+			get {
+				return highestElement;
+			}
+		}
 
-		internal int Count { get {
-			return count;
-		} }
+		internal int Count {
+			get {
+				return count;
+			}
+		}
 
 		internal UIDArray() {
-			highestElement=0;	//we don't have any elements yet
-			count=0;
-			loadingFinished=false;
-			array=new ElementType[minimalLength];
+			highestElement = 0;	//we don't have any elements yet
+			count = 0;
+			loadingFinished = false;
+			array = new ElementType[minimalLength];
 		}
 
 		internal void Clear() {
 			freeSlots.Clear();
 			freeFakeSlots.Clear();
 			fakeSlots.Clear();
-			highestElement=0;
-			count=0;
-			array=new ElementType[array.Length];
+			highestElement = 0;
+			count = 0;
+			array = new ElementType[array.Length];
 			loadingFinished = false;
 		}
 
@@ -67,24 +71,24 @@ namespace SteamEngine {
 			if (loadingFinished) {
 				throw new ApplicationException("Add(object,index) disabled after LoadingFinished");
 			}
-			if (index<0) {
-				throw new IndexOutOfRangeException("Object with non-positive UID "+index+" found");
+			if (index < 0) {
+				throw new IndexOutOfRangeException("Object with non-positive UID " + index + " found");
 			}
-			if (index>=array.Length) { //index is too high, make the array bigger!
+			if (index >= array.Length) { //index is too high, make the array bigger!
 				ResizeArray(index);
 			}
-			if (array[index]!=null) {
+			if (array[index] != null) {
 				throw new IndexOutOfRangeException("Two objects attempted to take the same UID");
 			}
-			if (index>highestElement) {
-				highestElement=index;
+			if (index > highestElement) {
+				highestElement = index;
 			}
-			array[index]=o;
+			array[index] = o;
 			count++;
 		}
 
 		internal void Add(ElementType o) {
-			if (freeSlots.Count==0) {	//no indexes in the freeSlots queue
+			if (freeSlots.Count == 0) {	//no indexes in the freeSlots queue
 				FillFreeSlotQueue();
 			}
 			int index = freeSlots.Dequeue();
@@ -105,7 +109,7 @@ namespace SteamEngine {
 			freeSlots.Clear();
 
 			int count = 0;
-			for (int i = 0, n = array.Length; i<n; i++) {
+			for (int i = 0, n = array.Length; i < n; i++) {
 				if (array[i] == null) {
 					freeSlots.Enqueue(i);
 					count++;
@@ -121,22 +125,22 @@ namespace SteamEngine {
 		}
 
 		private void ResizeArray() {
-			ResizeImpl(array.Length*2);
+			ResizeImpl(array.Length * 2);
 		}
 
 		private void ResizeArray(int highestElement) {
-			int newSize = Math.Max(highestElement + minimalLength, array.Length*2);
+			int newSize = Math.Max(highestElement + minimalLength, array.Length * 2);
 			ResizeImpl(newSize);
 		}
 
 		private void ResizeImpl(int newSize) {
-			ElementType[] temp=new ElementType[newSize];
+			ElementType[] temp = new ElementType[newSize];
 			Array.Copy(this.array, temp, array.Length);
-			array=temp;
+			array = temp;
 		}
 
 		internal void LoadingFinished() {
-			loadingFinished=true;
+			loadingFinished = true;
 		}
 
 		internal ElementType Get(int uid) { //may return a null object
@@ -151,7 +155,7 @@ namespace SteamEngine {
 			int index = uid - uidOffset;
 			if (!Object.Equals(array[index], default(ElementType))) { //only add to queue if not already null
 				array[index] = default(ElementType);
-				if (index==highestElement) {
+				if (index == highestElement) {
 					highestElement--;
 				} else {
 					freeSlots.Enqueue(index);
@@ -165,18 +169,18 @@ namespace SteamEngine {
 			int n = origArray.Length;
 			ElementType[] newArray = new ElementType[n];
 
-			for (int i = 0, newI = 0; i<n; i++) {
+			for (int i = 0, newI = 0; i < n; i++) {
 				ElementType elem = origArray[i];
 				if (!Object.Equals(elem, default(ElementType))) {
 					newArray[newI] = elem;
-					elem.Uid = newI+uidOffset;
+					elem.Uid = newI + uidOffset;
 					newI++;
 				}
 			}
 		}
 
 		internal int GetFakeUid() {
-			if (freeFakeSlots.Count==0) {	//no indexes in the freeSlots queue
+			if (freeFakeSlots.Count == 0) {	//no indexes in the freeSlots queue
 				FillFreeFakeSlotQueue();
 			}
 			int index = freeFakeSlots.Dequeue();
@@ -188,7 +192,7 @@ namespace SteamEngine {
 			freeFakeSlots.Clear();
 
 			int count = 0;
-			for (int i = 0, n = fakeSlots.Capacity; i<n; i++) {
+			for (int i = 0, n = fakeSlots.Capacity; i < n; i++) {
 				if (i >= fakeSlots.Count) {
 					fakeSlots.Add(false);
 				}
@@ -236,8 +240,8 @@ namespace SteamEngine {
 			}
 
 			public void Reset() {
-				currIdx=1;
-				current=default(ElementType);
+				currIdx = 1;
+				current = default(ElementType);
 			}
 
 			public ElementType Current {
@@ -252,7 +256,7 @@ namespace SteamEngine {
 			}
 
 			public bool MoveNext() {
-				while (currIdx<=source.HighestElement) {
+				while (currIdx <= source.HighestElement) {
 					current = source.Get(currIdx);
 					currIdx++;
 					if (!Object.Equals(current, default(ElementType))) {

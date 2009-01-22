@@ -88,13 +88,13 @@ namespace SteamEngine.CompiledScripts {
 									armorVsPHead = Math.Max(armorVsPHead, armorVsP);
 									mindDefVsPHead = Math.Max(mindDefVsPHead, mindDefVsP);
 									armorVsMHead = Math.Max(armorVsMHead, armorVsM);
-									mindDefVsMHead = Math.Max(mindDefVsMHead, mindDefVsM); 
+									mindDefVsMHead = Math.Max(mindDefVsMHead, mindDefVsM);
 									break;
 								case LayerNames.Collar:
 									armorVsPNeck = Math.Max(armorVsPNeck, armorVsP);
 									mindDefVsPNeck = Math.Max(mindDefVsPNeck, mindDefVsP);
 									armorVsMNeck = Math.Max(armorVsMNeck, armorVsM);
-									mindDefVsMNeck = Math.Max(mindDefVsMNeck, mindDefVsM); 
+									mindDefVsMNeck = Math.Max(mindDefVsMNeck, mindDefVsM);
 									break;
 								case LayerNames.Shirt:
 								case LayerNames.Chest:       // 13 = armor chest
@@ -106,13 +106,13 @@ namespace SteamEngine.CompiledScripts {
 									armorVsMBack = Math.Max(armorVsMBack, armorVsM);
 									armorVsMChest = Math.Max(armorVsMChest, armorVsM);
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
-									mindDefVsMChest = Math.Max(mindDefVsMChest, mindDefVsM); 
+									mindDefVsMChest = Math.Max(mindDefVsMChest, mindDefVsM);
 									break;
 								case LayerNames.Arms:                // 19 = armor
 									armorVsPArms = Math.Max(armorVsPArms, armorVsP);
 									mindDefVsPArms = Math.Max(mindDefVsPArms, mindDefVsP);
 									armorVsMArms = Math.Max(armorVsMArms, armorVsM);
-									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM); 
+									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
 									break;
 								case LayerNames.Pants:
 								case LayerNames.Skirt:
@@ -120,19 +120,19 @@ namespace SteamEngine.CompiledScripts {
 									armorVsPLegs = Math.Max(armorVsPLegs, armorVsP);
 									mindDefVsPLegs = Math.Max(mindDefVsPLegs, mindDefVsM);
 									armorVsMLegs = Math.Max(armorVsMLegs, armorVsM);
-									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM); 
+									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
 									break;
 								case LayerNames.Shoes:
 									armorVsPFeet = Math.Max(armorVsPFeet, armorVsP);
 									mindDefVsPFeet = Math.Max(mindDefVsPFeet, mindDefVsP);
 									armorVsMFeet = Math.Max(armorVsMFeet, armorVsM);
-									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM); 
+									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM);
 									break;
 								case LayerNames.Gloves:      // 7
 									armorVsPHands = Math.Max(armorVsPHands, armorVsP);
 									mindDefVsPHands = Math.Max(mindDefVsPHands, mindDefVsP);
 									armorVsMHands = Math.Max(armorVsMHands, armorVsM);
-									mindDefVsMHands = Math.Max(mindDefVsMHands, mindDefVsM); 
+									mindDefVsMHands = Math.Max(mindDefVsMHands, mindDefVsM);
 									break;
 								case LayerNames.Cape:                // 20 = cape
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 									armorVsMBack = Math.Max(armorVsMBack, armorVsM);
 									armorVsMArms = Math.Max(armorVsMArms, armorVsM);
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
-									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM); 
+									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
 									break;
 								case LayerNames.Robe:                // 22 = robe over all.
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
 									mindDefVsMChest = Math.Max(mindDefVsMChest, mindDefVsM);
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
-									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM); 
+									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
 									break;
 								case LayerNames.Leggins:
 									armorVsPLegs = Math.Max(armorVsPLegs, armorVsP);
@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts {
 									armorVsMLegs = Math.Max(armorVsMLegs, armorVsM);
 									armorVsMFeet = Math.Max(armorVsMFeet, armorVsM);
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
-									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM); 
+									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM);
 									break;
 								case LayerNames.Hand2: //shield
 									int parrying = SkillDef.SkillValueOfChar(self, SkillName.Parry);
@@ -183,7 +183,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 
-				armorVsPTotal += 
+				armorVsPTotal +=
 					(armorVsPHead * 0.1) +
 					(armorVsPNeck * 0.05) +
 					(armorVsPBack * 0.1) +
@@ -204,7 +204,7 @@ namespace SteamEngine.CompiledScripts {
 					(mindDefVsPLegs * 0.2) +
 					(mindDefVsPFeet * 0.05));
 
-				armorVsMTotal += 
+				armorVsMTotal +=
 					(armorVsMHead * 0.1) +
 					(armorVsMNeck * 0.05) +
 					(armorVsMBack * 0.1) +
@@ -293,8 +293,8 @@ namespace SteamEngine.CompiledScripts {
 			if (type != ProjectileType.None) {
 				Projectile retVal = self.weaponProjectile;
 				if ((retVal != null) &&
-						(retVal.IsDeleted || 
-						(retVal.TopObj() != self) || 
+						(retVal.IsDeleted ||
+						(retVal.TopObj() != self) ||
 						(retVal.Amount < 1))) {
 					retVal = null;
 				}
@@ -362,8 +362,8 @@ namespace SteamEngine.CompiledScripts {
 					weapMindPowerVsM = MagerySettings.instance.bareHandsMindPowerVsP;
 				}
 				double delay = Math.Sqrt((double) self.Dex);
-				delay *=  weapSpeed;
-				delay *=  CombatSettings.instance.weaponSpeedGlobal;
+				delay *= weapSpeed;
+				delay *= CombatSettings.instance.weaponSpeedGlobal;
 				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000.0) / delay);//dedictvi z morie. funguje to tak proc to menit :)
 
 				double tacticsAttack = SkillDef.ById(SkillName.Tactics).GetEffectForChar(self);
@@ -410,7 +410,7 @@ namespace SteamEngine.CompiledScripts {
 					self.weaponProjectile = null;
 				} else {
 					//else ?!
-					Logger.WriteError("Can't calculate combat values for '"+self+"'. It says it's a NPC but has no NPCDef.");
+					Logger.WriteError("Can't calculate combat values for '" + self + "'. It says it's a NPC but has no NPCDef.");
 				}
 			}
 

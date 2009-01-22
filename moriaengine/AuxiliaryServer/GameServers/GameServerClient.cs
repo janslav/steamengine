@@ -84,7 +84,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 
 		public void On_Close(string reason) {
-			Console.WriteLine(this + " closed: "+reason);
+			Console.WriteLine(this + " closed: " + reason);
 
 			foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 				console.CloseCmdWindow(this.uid);
@@ -103,7 +103,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 
 		public override string ToString() {
-			return "GameServerClient "+uid;
+			return "GameServerClient " + uid;
 		}
 
 		internal void SetIdentificationData(GameServerInstanceSettings settings) {

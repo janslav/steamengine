@@ -87,7 +87,7 @@ namespace SteamEngine.Common {
 		public IniFileSection GetSection(string sectionName) {
 			IniFileSection section;
 			if (!sectionsByName.TryGetValue(sectionName, out section)) {
-				throw new Exception("Missing section "+sectionName+" from the ini file.");
+				throw new Exception("Missing section " + sectionName + " from the ini file.");
 			}
 			return section;
 		}
@@ -123,23 +123,23 @@ namespace SteamEngine.Common {
 
 		//regular expressions for stream loading
 		//[type name]//comment
-		private static Regex headerRE= new Regex(@"^\[\s*(?<name>.*?)\s*\]\s*(((//)|(#))(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		private static Regex headerRE = new Regex(@"^\[\s*(?<name>.*?)\s*\]\s*(((//)|(#))(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		//name=value //comment
-		private static Regex valueRE= new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(((//)|(#))(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		private static Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(((//)|(#))(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private static IEnumerable<IniFileSection> Parse(string filename, TextReader stream) {
 			int line = 0;
-			IniFileSection curSection=null;
+			IniFileSection curSection = null;
 			StringBuilder comments = new StringBuilder();
 
 			while (true) {
 				string curLine = stream.ReadLine();
 				line++;
-				if (curLine!=null) {
+				if (curLine != null) {
 					curLine = curLine.Trim();
-					if (curLine.Length==0) {
+					if (curLine.Length == 0) {
 						comments.AppendLine();
 						continue;
 					} else if (curLine.StartsWith("//") || curLine.StartsWith("# ")) {
@@ -154,7 +154,7 @@ namespace SteamEngine.Common {
 					}
 					Match m = headerRE.Match(curLine);
 					if (m.Success) {
-						if (curSection!=null) {//send the last section
+						if (curSection != null) {//send the last section
 							yield return curSection;
 						}
 						GroupCollection gc = m.Groups;
@@ -174,14 +174,14 @@ namespace SteamEngine.Common {
 
 						} else {
 							//this shouldnt be, a property without header...?
-							Logger.WriteWarning(filename, line, "No section for this value. Skipping line '"+curLine+"'.");
+							Logger.WriteWarning(filename, line, "No section for this value. Skipping line '" + curLine + "'.");
 						}
 						continue;
 					}
-					Logger.WriteError(filename, line, "Unrecognizable data '"+curLine+"'.");
+					Logger.WriteError(filename, line, "Unrecognizable data '" + curLine + "'.");
 				} else {
 					//end of file
-					if (curSection!=null) {
+					if (curSection != null) {
 						curSection.AddComment(comments.ToString());
 						yield return curSection;
 					}
@@ -223,7 +223,7 @@ namespace SteamEngine.Common {
 		internal void SetParsedValue(IniFileValueLine valueLine) {
 			string valueName = valueLine.name;
 			if (props.ContainsKey(valueName)) {
-				throw new Exception("One section can't have more values of the same name (section ["+this.name+"], value name '"+valueName+"'");
+				throw new Exception("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'");
 			}
 			props[valueName] = valueLine;
 			parts.Add(valueLine);
@@ -263,7 +263,7 @@ namespace SteamEngine.Common {
 			if (this.props.TryGetValue(name, out value)) {
 				return value.GetValue<T>();
 			} else {
-				throw new Exception("Missing value "+name+" from the ini file.");
+				throw new Exception("Missing value " + name + " from the ini file.");
 			}
 		}
 
@@ -320,8 +320,8 @@ namespace SteamEngine.Common {
 		internal bool valueSet;
 		internal object value;
 
-		internal IniFileValueLine(string name, string valueString, string commentAbove, bool wrap, string commentNext) 
-				: base(commentAbove, wrap, commentNext) {
+		internal IniFileValueLine(string name, string valueString, string commentAbove, bool wrap, string commentNext)
+			: base(commentAbove, wrap, commentNext) {
 
 			if (name.Trim(stringWhitespaceChars).IndexOfAny(stringWhitespaceChars) > -1) {
 				throw new Exception("No whitespace characters allowed in value name");
@@ -380,19 +380,19 @@ namespace SteamEngine.Common {
 					continue;
 				}
 
-				string strOut="# "+line;
+				string strOut = "# " + line;
 				if (this.wrap) {
-					while (strOut.Length>80) {
-						int space=strOut.LastIndexOf(' ', 80);
-						if (space>-1) {
+					while (strOut.Length > 80) {
+						int space = strOut.LastIndexOf(' ', 80);
+						if (space > -1) {
 							if (space < 2) {
 								space = strOut.IndexOf(' ', 80);
 								if (space < 0) {
 									break;
 								}
 							}
-							string s=strOut.Substring(0, space);
-							strOut="# "+strOut.Substring(space);
+							string s = strOut.Substring(0, space);
+							strOut = "# " + strOut.Substring(space);
 							stream.WriteLine(s);
 
 						} else {
@@ -402,7 +402,7 @@ namespace SteamEngine.Common {
 				}
 				stream.WriteLine(strOut);
 			}
-			
+
 		}
 	}
 }

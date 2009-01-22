@@ -22,7 +22,7 @@ using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	
+
 	public abstract class OpNode_Switch : OpNode, IOpNodeHolder {
 		protected OpNode switchNode;
 		protected Hashtable cases;
@@ -44,14 +44,14 @@ namespace SteamEngine.LScript {
 			}
 		}
 		protected static NullOpNode nullOpNode = new NullOpNode();
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			string filename = LScript.GetParentScriptHolder(parent).filename;
-			
+
 			//LScript.DisplayTree(code);
-			
+
 			Production switchProd = (Production) code;
 			int caseBlocksCount = switchProd.GetChildCount() - 4;
 			if (caseBlocksCount == 0) {//we just run the expression
@@ -63,8 +63,8 @@ namespace SteamEngine.LScript {
 				Hashtable cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
 				bool isString = false;
 				bool isInteger = false;
-				for (int i = 0; i<caseBlocksCount; i++) {
-					Production caseProd = (Production) switchProd.GetChildAt(i+3);
+				for (int i = 0; i < caseBlocksCount; i++) {
+					Production caseProd = (Production) switchProd.GetChildAt(i + 3);
 					Node caseValue = caseProd.GetChildAt(1);
 					object key = null;
 					bool isDefault = false;
@@ -84,7 +84,7 @@ namespace SteamEngine.LScript {
 						}
 						if (key == null) {
 							throw new InterpreterException("The expression in a Case must be either convertible to an integer, or a string.",
-								caseProd.GetStartLine()+LScript.startLine, caseProd.GetStartColumn(),
+								caseProd.GetStartLine() + LScript.startLine, caseProd.GetStartColumn(),
 								filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
 						}
 					}
@@ -141,20 +141,20 @@ namespace SteamEngine.LScript {
 				return constructed;
 			}
 		}
-		
+
 		private static void AddToCases(Hashtable cases, object key, OpNode code, int line, string file) {
 			if (cases.Contains(key)) {
-				Logger.WriteWarning(file, line, "The case key "+LogStr.Ident(key)+" is duplicate. Only the first occurence is valid.");
+				Logger.WriteWarning(file, line, "The case key " + LogStr.Ident(key) + " is duplicate. Only the first occurence is valid.");
 			} else {
 				cases[key] = code;
 			}
 		}
-		
-		protected OpNode_Switch(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+
+		protected OpNode_Switch(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
-			
+
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (switchNode == oldNode) {
 				switchNode = newNode;
@@ -173,12 +173,12 @@ namespace SteamEngine.LScript {
 				}
 			}
 			if (!foundSome) {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-		
+
 		internal override abstract object Run(ScriptVars vars);
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("Switch (");
 			str.Append(switchNode).Append(")").Append(Environment.NewLine);
@@ -190,12 +190,12 @@ namespace SteamEngine.LScript {
 			return str.ToString();
 		}
 	}
-	
+
 	public class OpNode_Switch_String : OpNode_Switch {
-		internal OpNode_Switch_String(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+		internal OpNode_Switch_String(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object value = String.Concat(switchNode.Run(vars));
 			OpNode node = (OpNode) cases[value];
@@ -210,18 +210,18 @@ namespace SteamEngine.LScript {
 			return null;
 		}
 	}
-	
+
 	public class OpNode_Switch_Integer : OpNode_Switch {
-		internal OpNode_Switch_Integer(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+		internal OpNode_Switch_Integer(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object value;
 			try {
 				value = Convert.ToInt32(switchNode.Run(vars));
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while parsing integer", 
+				throw new InterpreterException("Exception while parsing integer",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 			OpNode node = (OpNode) cases[value];
@@ -236,6 +236,6 @@ namespace SteamEngine.LScript {
 			return null;
 		}
 	}
-	
-	
-}	
+
+
+}

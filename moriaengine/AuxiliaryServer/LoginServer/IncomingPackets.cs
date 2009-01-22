@@ -18,8 +18,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				case 0x80:
 					return Pool<GameLoginPacket>.Acquire();
 
-                case 0xcf:
-                    return Pool<IGRLoginPacket>.Acquire();
+				case 0xcf:
+					return Pool<IGRLoginPacket>.Acquire();
 
 				case 0xa4:
 					return Pool<GameSpyPacket>.Acquire();
@@ -60,7 +60,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
-			Console.WriteLine(state+" identified as "+this.accname);
+			Console.WriteLine(state + " identified as " + this.accname);
 
 			ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
 			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
@@ -75,7 +75,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			if (len != b.Length) {
 				return false;
 			}
-			for (int i = 0; i<len; i++) {
+			for (int i = 0; i < len; i++) {
 				if (a[i] != b[i]) {
 					return false;
 				}

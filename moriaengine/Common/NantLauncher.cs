@@ -27,10 +27,10 @@ using NAnt.Core;
 
 namespace SteamEngine.Common {
 
-	
+
 	[Summary("Use this class to run tasks from the ./distrib/nant/default.build and/or other NAnt build files.")]
 	public class NantLauncher {
-		
+
 		Project nantProject;
 		string target = "build";
 		Exception exception;
@@ -39,32 +39,33 @@ namespace SteamEngine.Common {
 		string sourceFileNamesFile;
 
 		public const string defaultPathInProject = "./distrib/nant/default.build";
-	
-		public NantLauncher() :
+
+		public NantLauncher()
+			:
 				this(defaultPathInProject) {
-			
+
 		}
-		
+
 		public NantLauncher(string buildFilename) {
 			nantProject = new NAnt.Core.Project(buildFilename, Level.Info, 0);
 		}
-	
+
 		public void SetOutputFilePrefix(string prefix) {
 			nantProject.Properties["outputFilePrefix"] = prefix;
 		}
-		
+
 		public void SetDebugMode(bool debug) {
 			nantProject.Properties["debug"] = debug.ToString();
 		}
-		
+
 		public void SetOptimizeMode(bool optimize) {
 			nantProject.Properties["optimize"] = optimize.ToString();
 		}
-		
+
 		public void SetDefineSymbols(string symbols) {
 			nantProject.Properties["defineSymbols"] = symbols;
 		}
-		
+
 		public void SetLogger(IBuildLogger logger) {
 			this.logger = logger;
 		}
@@ -77,7 +78,7 @@ namespace SteamEngine.Common {
 		public void SetProperty(string name, string value) {
 			nantProject.Properties[name] = value;
 		}
-		
+
 		public void SetPropertiesAsSelf() {
 #if DEBUG
 			SetDebugMode(true);
@@ -94,18 +95,18 @@ namespace SteamEngine.Common {
 			string symbols = "OPTIMIZED";
 #endif
 
-//not all of these are used. Maybe. Anyway, thay can't harm.
+			//not all of these are used. Maybe. Anyway, thay can't harm.
 #if TRACE
-			symbols = symbols+",TRACE";
+			symbols = symbols + ",TRACE";
 #endif
 #if MSWIN
-			symbols = symbols+",MSWIN";
+			symbols = symbols + ",MSWIN";
 #endif
 #if TESTRUNUO
 			symbols = symbols+",TESTRUNUO";
 #endif
 #if MSVS
-			symbols = symbols+",MSVS";
+			symbols = symbols + ",MSVS";
 #endif
 #if USEFASTDLL
 			symbols = symbols+",USEFASTDLL";
@@ -117,16 +118,16 @@ namespace SteamEngine.Common {
 
 			SetDefineSymbols(symbols);
 		}
-		
+
 		public void SetTarget(string target) {
 			this.target = target;
 		}
-		
+
 		private void OnBuildFinished(object sender, BuildEventArgs e) {
 			exception = e.Exception;
 		}
 
-		
+
 		public void Execute() {
 			FileInfo fileListFile = null;
 			if (sourceFileNames != null) {
@@ -147,17 +148,17 @@ namespace SteamEngine.Common {
 			nantProject.AttachBuildListeners(lListeners);
 
 			nantProject.BuildFinished += new BuildEventHandler(OnBuildFinished);
-			
+
 			nantProject.BuildTargets.Add(target);
 
 			nantProject.Run();
 		}
-		
+
 		public bool WasSuccess() {
 			return exception == null;
 		}
 
-		
+
 		public Assembly GetCompiledAssembly(string filenameproperty) {
 			return Assembly.LoadFile(GetCompiledAssemblyName(filenameproperty));
 		}
@@ -165,21 +166,21 @@ namespace SteamEngine.Common {
 		public string GetCompiledAssemblyName(string filenameproperty) {
 			return System.IO.Path.GetFullPath(nantProject.Properties[filenameproperty]);
 		}
-		
+
 		public Exception Exception {
 			get {
 				return exception;
 			}
 		}
-		
-		
-		private static Regex compileErrorRE = new Regex(@"^\[csc\] (?<filename>.+)\((?<linenumber>\d+),(?<colnumber>\d+)\):(?<errtext>.*)$",                   
-		//private static Regex compileErrorRE = new Regex(@"^\[csc\](?<filename>.+)$",                   
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-			
+
+
+		private static Regex compileErrorRE = new Regex(@"^\[csc\] (?<filename>.+)\((?<linenumber>\d+),(?<colnumber>\d+)\):(?<errtext>.*)$",
+			//private static Regex compileErrorRE = new Regex(@"^\[csc\](?<filename>.+)$",                   
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
 		public static object GetDecoratedLogMessage(string msg) {
 			msg = msg.Trim();
-			
+
 			if (msg.Length == 0) {
 				return null;
 			}
@@ -187,7 +188,7 @@ namespace SteamEngine.Common {
 			if (msg.StartsWith("Buildfile:") || msg.StartsWith("Target framework:") || msg.StartsWith("Target(s) specified:")) {
 				return null;
 			}
-			
+
 			Match m = compileErrorRE.Match(msg);
 			if (m.Success) {
 				LogStr logstr;
@@ -210,10 +211,10 @@ namespace SteamEngine.Common {
 
 			return null;//msg - should we want anything else?
 		}
-		
-//		public void Execute() {
-//		
-//		Assembly.LoadFrom(exePath);
-//		}
+
+		//		public void Execute() {
+		//		
+		//		Assembly.LoadFrom(exePath);
+		//		}
 	}
 }

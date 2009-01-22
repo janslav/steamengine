@@ -10,31 +10,37 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	public sealed class Point2DSaveImplementor : ISimpleSaveImplementor {
 		private static Point2DSaveImplementor instance;
-		public static Point2DSaveImplementor Instance { get {
-			return instance;
-		} }
+		public static Point2DSaveImplementor Instance {
+			get {
+				return instance;
+			}
+		}
 
 		public Point2DSaveImplementor() {
 			instance = this;
 		}
 
 		public static Regex re = new Regex(@"^\(2D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-	
-		public Type HandledType { get {
-			return typeof(Point2D);
-		} }
-		
-		
-		public Regex LineRecognizer { get {
-			return re;
-		} }
-		
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		public Type HandledType {
+			get {
+				return typeof(Point2D);
+			}
+		}
+
+
+		public Regex LineRecognizer {
+			get {
+				return re;
+			}
+		}
+
 		public string Save(object objToSave) {
 			Point2D p = (Point2D) objToSave;
-			return "(2D)"+p.x+","+p.y;
+			return "(2D)" + p.x + "," + p.y;
 		}
-		
+
 		public object Load(Match match) {
 			GroupCollection gc = match.Groups;
 			ushort x = ConvertTools.ParseUInt16(gc["x"].Value);
@@ -52,16 +58,18 @@ namespace SteamEngine.CompiledScripts {
 
 	public sealed class Point3DSaveImplementor : ISimpleSaveImplementor {
 		private static Point3DSaveImplementor instance;
-		public static Point3DSaveImplementor Instance { get {
-			return instance;
-		} }
+		public static Point3DSaveImplementor Instance {
+			get {
+				return instance;
+			}
+		}
 
 		public Point3DSaveImplementor() {
 			instance = this;
 		}
 
 		public static Regex re = new Regex(@"^\(3D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*(,\s*(?<z>-?\d+))?\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public Type HandledType {
 			get {
@@ -79,9 +87,9 @@ namespace SteamEngine.CompiledScripts {
 		public string Save(object objToSave) {
 			Point3D p = (Point3D) objToSave;
 			if (p.z == 0) {
-				return "(3D)"+p.x+","+p.y;
+				return "(3D)" + p.x + "," + p.y;
 			} else {
-				return "(3D)"+p.x+","+p.y+","+p.z;
+				return "(3D)" + p.x + "," + p.y + "," + p.z;
 			}
 		}
 
@@ -90,9 +98,9 @@ namespace SteamEngine.CompiledScripts {
 			ushort x = ConvertTools.ParseUInt16(gc["x"].Value);
 			ushort y = ConvertTools.ParseUInt16(gc["y"].Value);
 
-			string zstr=gc["z"].Value;
+			string zstr = gc["z"].Value;
 			sbyte z = 0;
-			if (zstr.Length>0) {
+			if (zstr.Length > 0) {
 				z = TagMath.ParseSByte(zstr);
 			}
 
@@ -108,16 +116,18 @@ namespace SteamEngine.CompiledScripts {
 
 	public sealed class Point4DSaveImplementor : ISimpleSaveImplementor {
 		private static Point4DSaveImplementor instance;
-		public static Point4DSaveImplementor Instance { get {
-			return instance;
-		} }
+		public static Point4DSaveImplementor Instance {
+			get {
+				return instance;
+			}
+		}
 
 		public Point4DSaveImplementor() {
 			instance = this;
 		}
 
 		public static Regex re = new Regex(@"^\(4D\)\s*(?<x>\d+)\s*,\s*(?<y>\d+)\s*(,\s*(?<z>-?\d+))?\s*(,\s*(?<m>\d+))?\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public Type HandledType {
 			get {
@@ -137,12 +147,12 @@ namespace SteamEngine.CompiledScripts {
 			string mzPart = "";
 			if (p.m == 0) {
 				if (p.z != 0) {
-					mzPart = ","+p.z;
+					mzPart = "," + p.z;
 				}
 			} else {
-				mzPart = ","+p.z+","+p.m;
+				mzPart = "," + p.z + "," + p.m;
 			}
-			return "(4D)"+p.x+","+p.y+mzPart; ;
+			return "(4D)" + p.x + "," + p.y + mzPart; ;
 		}
 
 		public object Load(Match match) {
@@ -150,13 +160,13 @@ namespace SteamEngine.CompiledScripts {
 			ushort x = ConvertTools.ParseUInt16(gc["x"].Value);
 			ushort y = ConvertTools.ParseUInt16(gc["y"].Value);
 
-			string zstr=gc["z"].Value;
-			string mstr=gc["m"].Value;
+			string zstr = gc["z"].Value;
+			string mstr = gc["m"].Value;
 			sbyte z = 0;
 			byte m = 0;
-			if (zstr.Length>0) {
+			if (zstr.Length > 0) {
 				z = TagMath.ParseSByte(zstr);
-				if (mstr.Length>0) {
+				if (mstr.Length > 0) {
 					m = TagMath.ParseByte(mstr);
 				}
 			}

@@ -14,8 +14,8 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 
 		public override byte Id {
-			get { 
-				return 0x01; 
+			get {
+				return 0x01;
 			}
 		}
 

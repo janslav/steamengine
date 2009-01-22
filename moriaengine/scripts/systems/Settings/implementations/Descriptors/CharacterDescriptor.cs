@@ -24,7 +24,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Character), "Character",
-		new string[] {"StatLockByte"} //non displayed fields (testing purposes here) :)
+		new string[] { "StatLockByte" } //non displayed fields (testing purposes here) :)
 		)]
 	public static class CharacterDescriptor {
 		/*We will add here a ressurect, kill, dismount etc...
@@ -32,22 +32,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Dismount")]
 		public static void Dismount(object target) {
-			((Character)target).Dismount();
+			((Character) target).Dismount();
 		}
 
 		[Button("Disarm")]
 		public static void Disarm(object target) {
-			((Character)target).DisArm();
+			((Character) target).DisArm();
 		}
 
 		[Button("Kill")]
 		public static void Kill(object target) {
-			((Character)target).Kill();
+			((Character) target).Kill();
 		}
 
 		[Button("Resurrect")]
 		public static void Resurrect(object target) {
-			((Character)target).Resurrect();
+			((Character) target).Resurrect();
 		}
 	}
 }

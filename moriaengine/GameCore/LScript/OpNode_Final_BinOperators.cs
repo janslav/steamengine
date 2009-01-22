@@ -28,15 +28,16 @@ using PerCederberg.Grammatica.Parser;
 namespace SteamEngine.LScript {
 	public class OpNode_ConcatOperator : OpNode_Lazy_BinOperator, ITriable {
 		//gets created from OpNode
-		internal OpNode_ConcatOperator(IOpNodeHolder parent, Node code):base(parent, code) {
+		internal OpNode_ConcatOperator(IOpNodeHolder parent, Node code)
+			: base(parent, code) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			return string.Concat(left.Run(vars), right.Run(vars));
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			return string.Concat(results[0], results[1]);
 		}
 	}
-}	
+}

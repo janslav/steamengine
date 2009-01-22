@@ -92,10 +92,10 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			CodeConstructor ctdCopyConstructor = new CodeConstructor();
 			ctdCopyConstructor.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(DeepCopyImplementationAttribute))));
-			ctdCopyConstructor.Attributes=MemberAttributes.Public|MemberAttributes.Final;
+			ctdCopyConstructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			ctdCopyConstructor.Parameters.Add(new CodeParameterDeclarationExpression(section.className, "copyFrom"));
 			ctdCopyConstructor.BaseConstructorArgs.Add(new CodeArgumentReferenceExpression("copyFrom"));
-			
+
 			if (this.subSection != null) {
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
 					ctdCopyConstructor.Statements.Add(CopyFieldStatement(ctif));
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		}
 
 		private CodeStatement CopyFieldStatement(ClassTemplateInstanceField field) {
-			CodeExpression copyFrom= new CodeFieldReferenceExpression(
+			CodeExpression copyFrom = new CodeFieldReferenceExpression(
 				new CodeArgumentReferenceExpression("copyFrom"),
 				field.uncapName);
 
@@ -134,8 +134,8 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		private CodeMemberMethod DelayedCopyMethod(ClassTemplateInstanceField field) {
 			CodeMemberMethod method = new CodeMemberMethod();
 
-			method.Name="DelayedCopy_"+field.capName;
-			method.Attributes=MemberAttributes.Private;
+			method.Name = "DelayedCopy_" + field.capName;
+			method.Attributes = MemberAttributes.Private;
 			method.Parameters.Add(
 				new CodeParameterDeclarationExpression(typeof(object), "copy"));
 
@@ -156,17 +156,17 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 
 			generatedType.Members.Add(method);
-			return method;	
+			return method;
 		}
 
 
 		private void Save() {
-			if ((this.subSection != null) &&  (this.subSection.fields.Count > 0)) {
+			if ((this.subSection != null) && (this.subSection.fields.Count > 0)) {
 				CodeMemberMethod save = new CodeMemberMethod();
-				save.Name="Save";
-				save.Attributes=MemberAttributes.Public|MemberAttributes.Override;
+				save.Name = "Save";
+				save.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				save.Parameters.Add(new CodeParameterDeclarationExpression("SaveStream", "output"));
-				save.ReturnType=new CodeTypeReference(typeof(void));
+				save.ReturnType = new CodeTypeReference(typeof(void));
 
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
 					save.Statements.Add(SaveFieldStatement(ctif));
@@ -201,10 +201,10 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		}
 
 		private void LoadLine() {
-			if ((this.subSection != null) &&  (this.subSection.fields.Count > 0)) {
+			if ((this.subSection != null) && (this.subSection.fields.Count > 0)) {
 				CodeMemberMethod load = new CodeMemberMethod();
 				load.Name = "LoadLine";
-				load.Attributes = MemberAttributes.Public|MemberAttributes.Override;
+				load.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "filename"));
 				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "line"));
 				load.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "valueName"));
@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 				load.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (valueName) {\n"));
 
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
-					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \""+ctif.uncapName.ToLower()+"\":"));
+					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \"" + ctif.uncapName.ToLower() + "\":"));
 					load.Statements.Add(LoadFieldStatement(ctif));
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tbreak;\n"));
 				}
@@ -237,7 +237,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 
 		private CodeStatement LoadFieldStatement(ClassTemplateInstanceField field) {
-			if ((field.type != null) && 
+			if ((field.type != null) &&
 					SteamEngine.Persistence.ObjectSaver.IsSimpleSaveableType(field.type)) {
 
 				return new CodeAssignStatement(
@@ -250,8 +250,8 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 			} else {
 				CodeMemberMethod delayedLoadMethod = new CodeMemberMethod();
-				delayedLoadMethod.Name="DelayedLoad_"+field.capName;
-				delayedLoadMethod.Attributes=MemberAttributes.Private;
+				delayedLoadMethod.Name = "DelayedLoad_" + field.capName;
+				delayedLoadMethod.Attributes = MemberAttributes.Private;
 				delayedLoadMethod.Parameters.Add(
 					new CodeParameterDeclarationExpression(typeof(object), "resolvedObject"));
 				delayedLoadMethod.Parameters.Add(

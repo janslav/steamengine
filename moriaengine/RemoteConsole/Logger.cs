@@ -18,7 +18,7 @@ namespace SteamEngine.RemoteConsole {
 
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]
-			DateTime dtnow=DateTime.Now;
+			DateTime dtnow = DateTime.Now;
 			string filename = string.Format("SteamEngine.RemoteConsole.{0}-{1}-{2}.log",
 				dtnow.Year, dtnow.Month.ToString("00"), dtnow.Day.ToString("00"));
 			return Path.Combine("logs", filename);

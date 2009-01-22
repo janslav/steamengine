@@ -51,7 +51,7 @@
 //        /**
 //            Decodes a unicode string, truncating it if it contains endlines (and replacing tabs with spaces).
 //            If the string contains a \0 (the 'end-of-string' character), it will be truncated.	
-			
+
 //            @param startpos The position in the packet buffer at which the string starts.
 //            @param len The number of bytes to decode (two per character).
 //            @return The decoded string.
@@ -76,7 +76,7 @@
 //        /**
 //            Decodes an ascii string, truncating it if it contains endlines (and replacing tabs with spaces).
 //            If the string contains a \0 (the 'end-of-string' character), it will be truncated.	
-			
+
 //            @param startpos The position in the packet buffer at which the string starts.
 //            @param len The length of the string.
 //            @return The decoded string.
@@ -88,7 +88,7 @@
 //        /**
 //            Decodes an ascii string.
 //            If the string contains a \0 (the 'end-of-string' character), it will be truncated.	
-			
+
 //            @param startpos The position in the packet buffer at which the string starts.
 //            @param len The length of the string.
 //            @param truncateEndlines If true, truncates the string if it contains endlines (and replacing tabs with spaces).

@@ -147,7 +147,7 @@ namespace SteamEngine.CompiledScripts {
 		public double GetDelayForChar(Character ch) {
 			//GM is always immediate
 			if (ch.IsGM) {
-				return 0; 
+				return 0;
 			} else {
 				return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Delay);
 			}

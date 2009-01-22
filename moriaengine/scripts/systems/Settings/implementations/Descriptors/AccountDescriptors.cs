@@ -29,23 +29,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public static class AbstractAccountDescriptor {
 		[Button("Block")]
 		public static void Block(object target) {
-			((AbstractAccount)target).Block();
+			((AbstractAccount) target).Block();
 		}
 
 		[Button("Unblock")]
 		public static void UnBlock(object target) {
-			((AbstractAccount)target).UnBlock();
+			((AbstractAccount) target).UnBlock();
 		}
 
 		[Button("Delete")]
 		public static void Delete(object target) {
-			((AbstractAccount)target).Delete();
+			((AbstractAccount) target).Delete();
 		}
 
 		[Button("Characters")]
 		public static void AccChars(object target) {
 			//dialog se seznamem characteru (tech bude maximalne pet)
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(((AbstractAccount)target).Name));
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(((AbstractAccount) target).Name));
 		}
 	}
 
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Button("Account notes")]
 		public static void AccNotes(object target) {
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount)target);
+			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);
 			newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 		}
@@ -63,14 +63,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void NewAccNote(object target) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_New_AccountNote.isCrimeTK, false);//je to trest(true) nebo jen poznamka(false)?
-			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount)target);//account
-			Globals.SrcCharacter.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);			
+			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);//account
+			Globals.SrcCharacter.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
 		}
 
 		[Button("Account crimes")]
 		public static void AccCrimes(object target) {
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount)target);
+			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);
 			newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 		}
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void NewAccCrime(object target) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_New_AccountNote.isCrimeTK, true);//je to trest(true) nebo jen poznamka(false)?
-			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount)target);//account			
+			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);//account			
 			Globals.SrcCharacter.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
 		}
 	}

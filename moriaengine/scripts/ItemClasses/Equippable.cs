@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool IsTwoHanded {
 			get {
-				if (Def!=null) return TypeDef.TwoHanded;
+				if (Def != null) return TypeDef.TwoHanded;
 				return false;
 			}
 		}

@@ -20,29 +20,29 @@ using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	
+
 	public class t_ship_other : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_ship_plank : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_ship_side_locked : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_ship_tiller : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_ship_hold : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_ship_side : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_eq_horse : CompiledTriggerGroup {

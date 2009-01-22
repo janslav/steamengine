@@ -35,7 +35,7 @@ using SteamEngine.Common;
 
 //    public class DelegateTimer : Timer {
 //        private TimerDelegate deleg;
-		
+
 //        protected sealed override void OnTimeout() {
 //            //Console.WriteLine("OnTimeout on timer "+this);
 //            Sanity.IfTrueThrow((deleg == null) || (deleg.Target != this.Obj),
@@ -43,7 +43,7 @@ using SteamEngine.Common;
 
 //            deleg(this.args);
 //        }
-		
+
 //        public DelegateTimer(TimerKey name) : base(name) {
 //        }
 //		[DeepCopyImplementationAttribute]
@@ -75,14 +75,14 @@ using SteamEngine.Common;
 //            output.WriteLine(sb.ToString());
 //            base.Save(output);
 //        }
-		
+
 //        public static Regex methodSignRE= new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",                     
 //            RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		
+
 //        internal sealed override void LoadLine(string filename, int line, string name, string value) {
 //            if (name=="deleg") {
 //                //Console.WriteLine("loading method with string: "+value);
-				
+
 //                Match m = methodSignRE.Match(value);
 //                if (m.Success) {
 //                    GroupCollection gc = m.Groups;

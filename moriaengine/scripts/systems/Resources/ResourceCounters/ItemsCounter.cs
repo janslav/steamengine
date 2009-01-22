@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal override bool ItemCorresponds(Item itm) {
-			return (itm.TypeDef == toLookFor);			
+			return (itm.TypeDef == toLookFor);
 		}
 
 		//clear the item def reference (the rest of the clearing is on parent)

@@ -17,14 +17,14 @@
 ////See docs/plans/packetsender.txt for detailed information on PacketSender and its subclasses.
 
 //namespace SteamEngine.Packets {
-	
+
 //    public class PacketSender : HighLevelOut {
 //        public static bool MovementTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Movement Trace Messages"]);
-		
+
 //        static PacketSender() {
-			
+
 //        }
-		
+
 //        //----------------- Packet Preparation Methods ----------------
 
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
@@ -69,7 +69,7 @@
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
 //        //public static void PrepareMountInfo(AbstractCharacter rider) {
 //        //    AbstractCharacter mount = rider.Mount;
-			
+
 //        //    StartGenerating();
 //        //    EncodeByte(0x2e, 0);
 //        //    EncodeUInt((uint) (mount.Uid|0x40000000), 1);
@@ -230,7 +230,7 @@
 //        //    Sanity.IfTrueThrow(chr==null, "PrepareInitialPlayerInfo called with a null character.");
 //        //    StartGenerating();
 //        //    EncodeByte(0x1b, 0);
-			
+
 //        //    EncodeUInt(chr.FlaggedUid,1);
 //        //    //EncodeInt(0x25, 5);
 //        //    EncodeZeros(4, 5);
@@ -240,7 +240,7 @@
 //        //    EncodeByte(0, 15);
 //        //    EncodeSByte(chr.Z, 16);
 //        //    EncodeByte((byte)chr.Direction, 17);
-			
+
 //        //    EncodeByte(0, 18);
 //        //    EncodeByte(0xff, 19);
 //        //    EncodeByte(0xff, 20);
@@ -248,19 +248,19 @@
 //        //    EncodeByte(0xff, 22);
 //        //    EncodeUShort(0, 23);	//UL X coordinate of the server/map
 //        //    EncodeUShort(0, 25);	//UL Y coordinate of the server/map
-			
+
 //        //    //Map Width (According to Kair's packet guide, "The total number of tiles in the X-axis minus eight.")
 //        //    EncodeUShort((ushort)(Map.GetMapSizeX(0)-8), 27);
 //        //    //Map Height (According to Kair's packet guide, "The total number of tiles in the Y-axis.")
 //        //    EncodeUShort((ushort) Map.GetMapSizeY(0), 29);
-			
+
 //        //    //unknown
 //        //    EncodeZeros(6, 31);
-			
+
 //        //    DoneGenerating(37);
 //        //    Compress();
 //        //}
-		
+
 //        ////For use by Server's various speech methods (Which can send to multiple clients).
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
 //        //public static void PrepareSpeech(Thing from, string msg, SpeechType type, ushort font, ushort color, string lang) {
@@ -270,7 +270,7 @@
 //        //        PrepareAsciiMessage(from, from.Model, from.Name, msg, type, font, color);
 //        //    }
 //        //}
-		
+
 //        //'from' can be null.
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
 //        //public static void PrepareUnicodeMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color, string language) {
@@ -279,7 +279,7 @@
 //        //    Sanity.IfTrueThrow(language==null, "PrepareUnicodeMessage called with a null 'language'.");
 //        //    StartGenerating();
 //        //    int msgByteLen = msg.Length+msg.Length;
-			
+
 //        //    if (color==0) {	//black, which only shows in the journal.
 //        //        color=Globals.defaultUnicodeMessageColor;
 //        //    }
@@ -296,14 +296,14 @@
 //        //    EncodeUShort(color, 10); //text color
 //        //    EncodeUShort(font, 12); //font
 //        //    EncodeString(language, 14, 4);
-			
+
 //        //    EncodeString(sourceName, 18, 40);
 //        //    int len = EncodeUnicodeString(msg, 48, 512);
 //        //    EncodeZeros(2, 48+len);
 //        //    DoneGenerating(blockSize);
 //        //    Compress();
 //        //}
-		
+
 //        ////'from' can be null.
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
 //        //public static void PrepareAsciiMessage(Thing from, ushort model, string sourceName, string msg, SpeechType type, ushort font, ushort color) {
@@ -328,12 +328,12 @@
 //        //    DoneGenerating(blockSize);
 //        //    Compress();
 //        //}
-		
+
 //        ///**
 //        //    This method is internal because it can screw up the client if it is prepared but not sent. So only prepare
 //        //    it if you're really going to send it. (Because this method resets conn.moveSeqNum to 0, because the client
 //        //    expects it to be reset whenever a 0x20 is sent)
-			
+
 //        //    This method is only needed when the game is started and when a client is resynced (and if the client's color or model changes).
 //        //*/
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
@@ -543,9 +543,9 @@
 //        //    Compress();
 //        //    return true;
 //        //}
-		
+
 //        /*		Doesn't work, just crashes the client. Oh well, it was worth a shot!
-		
+
 //        public static void PrepareNewArea(ushort upperLeftX, ushort upperLeftY, ushort width,
 //                                ushort height, ushort lowZ, ushort highZ, string name, string description, ushort sfx,
 //                                ushort music, ushort nightsfx, byte dungeon, ushort light) {
@@ -562,7 +562,7 @@
 //            EncodeUShort(lowZ, 53);
 //            EncodeUShort(highZ, 55);
 //            EncodeString(description, 57, 40);
-			
+
 //            EncodeUShort(sfx, 97);
 //            EncodeUShort(music, 99);
 //            EncodeUShort(nightsfx, 101);
@@ -572,7 +572,7 @@
 //            Compress();
 //        }
 //        */
-		
+
 //        //internal static void PreparePickupFailed(DenyResult msg) {
 //        //    StartGenerating();
 //        //    EncodeByte(0x27, 0);
@@ -580,7 +580,7 @@
 //        //    DoneGenerating(2);
 //        //    Compress();
 //        //}
-		
+
 //        //One of these is probably what the UO client expects, we don't know yet, the various packet guides call this
 //        //packet different names, etc.
 //        //public static void PrepareDropFailed(Thing th) {
@@ -590,7 +590,7 @@
 //        //    DoneGenerating(5);
 //        //    Compress();
 //        //}
-				
+
 //        public static void SendGodMode(GameConn conn) {
 //            StartGenerating();
 //            EncodeByte(0x2b, 0);
@@ -599,7 +599,7 @@
 //            Compress();
 //            SendTo(conn, true);
 //        }
-		
+
 //        public static void PrepareGodMode(bool godMode) {
 //            StartGenerating();
 //            EncodeByte(0x2b, 0);
@@ -607,7 +607,7 @@
 //            DoneGenerating(2);
 //            Compress();
 //        }
-		
+
 //        public static void SendHackMove(GameConn conn) {
 //            StartGenerating();
 //            EncodeByte(0x32, 0);
@@ -616,7 +616,7 @@
 //            Compress();
 //            SendTo(conn, true);
 //        }
-		
+
 //        public static void PrepareHackMove(bool hackMove) {
 //            StartGenerating();
 //            EncodeByte(0x32, 0);
@@ -624,7 +624,7 @@
 //            DoneGenerating(2);
 //            Compress();
 //        }
-		
+
 //        public static void PrepareTargettingCursor(bool ground) {
 //            StartGenerating();
 //            EncodeByte(0x6c, 0);
@@ -644,7 +644,7 @@
 //        //    DoneGenerating(26);
 //        //    Compress();
 //        //}
-		
+
 //        //public static void PrepareCancelTargettingCursor() {
 //        //    StartGenerating();
 //        //    EncodeByte(0x6c, 0);
@@ -678,7 +678,7 @@
 //        //    DoneGenerating(5);
 //        //    Compress();
 //        //}
-		
+
 //        //Experimental.
 //        public static void PrepareForceMove(AbstractCharacter cre, bool running) {
 //            StartGenerating();
@@ -691,7 +691,7 @@
 //            DoneGenerating(2);
 //            Compress();
 //        }
-		
+
 //        //public static void SendRejectDeleteRequest(GameConn conn, DeleteCharacterResult reason) {
 //        //    StartGenerating();
 //        //    EncodeByte(0x85, 0);
@@ -712,7 +712,7 @@
 //        //public static void PrepareItemInformation(AbstractItem item) {
 //        //    PrepareItemInformation(item, MoveRestriction.Normal);
 //        //}
-		
+
 //        ///**
 //        //    For flags, 0x20 makes the item always movable, and 0x80 shades it hidden-grey.
 //        //    Nothing else seems to have any effect.
@@ -747,7 +747,7 @@
 //        //        EncodeSByte(item.Z, blockSize+4);
 //        //        blockSize+=5;
 //        //    } 
-			
+
 //        //    ushort y=item.Y;
 //        //    byte flags=item.FlagsToSend;
 //        //    if (restrict==MoveRestriction.Movable) {
@@ -771,7 +771,7 @@
 //        //    DoneGenerating(blockSize);
 //        //    Compress();
 //        //}
-		
+
 //        public static void PrepareSpecialHighlight(AbstractCharacter cre, byte amount) {
 //            StartGenerating();
 //            EncodeByte(0xc4, 0);
@@ -794,7 +794,7 @@
 //        //    EncodeSByte(point.z, 11);
 //        //    byte dir = (byte)chr.Direction;
 //        //    if (running) {
-				
+
 //        //        dir|=0x80;
 //        //    }
 //        //    EncodeByte(dir, 12);
@@ -910,16 +910,16 @@
 //        //        if (len>30) {
 //        //            len=30;
 //        //        }
-			
+
 //        //        EncodeString(charName, 4+charNum*60, 30);
 //        //        EncodeZeros(30, 4+charNum*60+30);
-				
+
 //        //    }
 //        //    DoneGenerating(blockSize);
 //        //    Compress();
 //        //    SendTo(c, true);
 //        //}
-		
+
 //        /**
 //        Note: If you are sending this packet to character's conn, DON'T include 0x02 in the flags, or
 //        the paperdoll will show the [War] button even if the character isn't in war mode. Go figure.
@@ -934,7 +934,7 @@
 //        //    EncodeString(character.PaperdollName, 5, 60);
 //        //    //For the paperdoll, canEquip is apparently the only one which matters.
 //        //    byte flagsToSend = character.FlagsToSend;
-			
+
 //        //    Sanity.IfTrueThrow((flagsToSend&0x02)>0, ""+character+"'s FlagsToSend included 0x02, which is the 'can equip items on' flag for paperdoll packets - FlagsToSend should never include it.");
 //        //    if (canEquip) {	//include 0x02 if we can equip stuff on them.
 //        //        flagsToSend|=0x02;	//does this not work or something? Arrrgh.
@@ -981,7 +981,7 @@
 //        //    DoneGenerating(11);
 //        //    SendUncompressed(c, true);
 //        //}
-		
+
 //        ////This still isn't as nice as I would like, but it doesn't want to be simplified any more.
 //        ////It's much nicer than the one in OutPackets, at least.
 //        //// -SL
@@ -992,7 +992,7 @@
 //        //    EncodeByte(0x5d, 3);	//0x13; //unknown //0x5d on RunUo
 //        //    //EncodeUShort((ushort)Server.numIPs, 4);
 //        //    ushort blockSize=6;
-			
+
 //        //    if (Server.routerIPstr==null) {
 //        //        EncodeUShort((ushort)Server.numIPs, 4);
 //        //        for (int server=0; server<Server.numIPs; server++) {
@@ -1003,24 +1003,24 @@
 //        //            EncodeZeros(2, blockSize+32);
 //        //            EncodeByte(Server.PercentFull(), blockSize+34); //percent full
 //        //            EncodeSByte(Globals.timeZone, blockSize+35);
-					
+
 //        //            EncodeBytesReversed(Server.localIPs, server, blockSize+36);	//4 bytes
 //        //            blockSize+=40;
 //        //        }
-				
+
 //        //    } else {
 //        //        Logger.WriteDebug("routerIP="+Server.routerIPstr);
 //        //        EncodeUShort(1, 4);
 //        //        //get their IP
 //        //        byte[] ipbytes=c.IP.GetAddressBytes();
-				
+
 //        //        EncodeZeros(2, blockSize);
 //        //        string serverName = Globals.serverName;
 //        //        EncodeString(serverName, blockSize+2, 30);
 //        //        EncodeZeros(2, blockSize+32);
 //        //        EncodeByte(Server.PercentFull(), blockSize+34); //percent full
 //        //        EncodeSByte(Globals.timeZone, blockSize+35);
-				
+
 //        //        int localIPnum=Server.IsLocalIP(ipbytes);
 //        //        if (localIPnum==-1) {
 //        //            Logger.WriteDebug("Sending router IP: "+Server.routerIPstr);
@@ -1043,9 +1043,9 @@
 //        //    //EncodeUShort(Globals.featuresFlags, 1);
 //        //    EncodeByte(0xa9, 0);
 //        //    byte numChars = 0;
-			
+
 //        //    ushort blockSize=4;
-			
+
 //        //    //characters
 //        //    for (int charNum=0; charNum<AbstractAccount.maxCharactersPerGameAccount; charNum++) {
 //        //        AbstractAccount acc = c.curAccount;
@@ -1062,10 +1062,10 @@
 //        //            EncodeZeros(60, blockSize);
 //        //        }
 //        //        blockSize+=60;
-				
+
 //        //    }
 //        //    EncodeByte(numChars, 3);
-			
+
 //        //    //cities
 //        //    EncodeByte(1, blockSize);
 //        //    EncodeByte(0, blockSize+1);
@@ -1074,16 +1074,16 @@
 //        //    EncodeByte(0, blockSize+32);
 //        //    EncodeString(area, blockSize+33, 30);
 //        //    EncodeByte(0, blockSize+63);
-			
+
 //        //    //TODO: Login Flags as bools in globals.
 //        //    //Login Flags:
 //        //    //0x14 = One character only
 //        //    //0x08 = Right-click menus
 //        //    //0x20 = AOS features
 //        //    //0x40 = Six characters instead of five
-			
+
 //        //    EncodeUInt(Globals.loginFlags, blockSize+64);
-			
+
 //        //    blockSize+=68;
 //        //    EncodeUShort((ushort)(blockSize), 1);
 //        //    DoneGenerating(blockSize);
@@ -1099,7 +1099,7 @@
 //        //    DoneGenerating(3);
 //        //    Compress();
 //        //}
-		
+
 //        //use the Prepared version
 //        //[Obsolete("Use the alternative from Networking namespace", false)]
 //        //internal static void PrepareSeasonAndCursor(Season season, CursorType cursor) {
@@ -1110,7 +1110,7 @@
 //        //    DoneGenerating(3);
 //        //    Compress();
 //        //}
-		
+
 //        //public static void PrepareSound(IPoint4D source, ushort sound) {
 //        //    Sanity.IfTrueThrow(source==null, "PrepareSound called with a null source.");
 //        //    StartGenerating();
@@ -1134,7 +1134,7 @@
 //        //    DoneGenerating(1);
 //        //    Compress();
 //        //}
-		
+
 
 //        //public static void PrepareAnimation(AbstractCharacter cre, byte anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
 //        //    Logger.WriteDebug("PrepareAnimation("+cre+",anim:"+anim+",numAnims:"+numAnims+",backwards:"+backwards+",undo:"+undo+",frameDelay:"+frameDelay+")");
@@ -1151,7 +1151,7 @@
 //        //    DoneGenerating(14);
 //        //    Compress();
 //        //}
-		
+
 //        //public static void PrepareEffect(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, byte fixedDirection, byte explodes, uint hue, uint renderMode) {
 //        //    StartGenerating();
 //        //    EncodeByte(0xc0, 0);
@@ -1187,7 +1187,7 @@
 //        //    DoneGenerating(36);
 //        //    Compress();
 //        //}
-		
+
 //        /*
 //        public static void SendInitFastwalk(GameConn c) {
 //            int r;
@@ -1195,7 +1195,7 @@
 //            EncodeByte(0xbf, 0);
 //            EncodeShort(29, 1);
 //            EncodeShort(1, 3);
-			
+
 //            EncodeInt(r = Server.dice.Next(1, Int32.MaxValue), 25);     // Encoding backwards because of the client top of stack
 //            c.FastWalk.Push(r);
 //            EncodeInt(r = Server.dice.Next(1, Int32.MaxValue), 21);
@@ -1208,12 +1208,12 @@
 //            c.FastWalk.Push(r);
 //            EncodeInt(r = Server.dice.Next(1, Int32.MaxValue), 5);
 //            c.FastWalk.Push(r);
-			
+
 //            DoneGenerating(29);
 //            Compress();
 //            SendTo(c, true);
 //        }
-		
+
 //        public static void SendAddFastwalkKey(GameConn c) {
 //            StartGenerating();
 //            EncodeByte(0xbf, 0);
@@ -1236,7 +1236,7 @@
 //        //    Compress();
 //        //    SendTo(c, true);
 //        //}
-		
+
 //        //public static void PrepareMovingItemAnimation(IItemState former, IItemState current) {
 //        //	PrepareMovingItemAnimation(former, current, former.ShortAmount);
 //        //}
@@ -1277,7 +1277,7 @@
 //        //    DoneGenerating(26);
 //        //    Compress();
 //        //}
-		
+
 //        ////First test results: Crashes the client. Heh! Hopefully that's because I didn't enable AOS stuff and
 //        ////it wasn't expecting this. -SL
 //        //public static void PrepareCharacterName(AbstractCharacter character) {
@@ -1291,7 +1291,7 @@
 //        //    DoneGenerating(blockSize);
 //        //    Compress();
 //        //}
-		
+
 ////        public static void PrepareGump(Gump instance) {
 ////            //1+2+4+4+4+4+2+instance.layout.Length+1+2+(instance.textsLength+(instance.texts.Length*2)) -tar
 ////            //lol -SL
@@ -1311,7 +1311,7 @@
 ////            EncodeUShort((ushort)(layoutLength+1), 19);
 ////            //no idea why does it have to be +1, but it wont work without it... it is not written in any packet guide, I sniffed it from sphere, tried it, and it worked :) -tar
 ////            //It probably includes the null terminator. Just another little inconsistancy in the packets, nothing unusual... -SL
-			
+
 ////            ushort blockSize = (ushort) (21+EncodeString(layout, 21));
 ////            EncodeByte(0, blockSize);	//null terminator for the layout string
 ////            int numTextLines;
@@ -1337,20 +1337,20 @@
 ////            DoneGenerating(blockSize);
 ////            Compress();
 ////        }
-		
+
 //        //0xbf:
 //        //BYTE cmd
 //        //BYTE[2] len
 //        //BYTE[2] subcmd
 //        //BYTE[len-5] submessage 
-		
+
 //        //Subcommand: 0x19: Extended stats
 //        //
 //        //    * BYTE type // always 2 ? never seen other value
 //        //    * BYTE[4] serial
 //        //    * BYTE unknown // always 0 ?
 //        //    * BYTE lockBits // Bits: XXSS DDII (s=strength, d=dex, i=int), 0 = up, 1 = down, 2 = locked
-		
+
 //        //from the above i ould say that this is wrong, there are Bytes but they should be Shorts -tar
 //        public static void PrepareStatLocks(AbstractCharacter chr) {
 //            StartGenerating();
@@ -1364,7 +1364,7 @@
 //            DoneGenerating(12);
 //            Compress();
 //        }
-		
+
 //        public static void PrepareCloseGump(uint gumpUid, int buttonId) {
 //            StartGenerating();
 //            EncodeByte(0xbf, 0);
@@ -1375,7 +1375,7 @@
 //            DoneGenerating(13);
 //            Compress();
 //        }
-		
+
 //        //use the prepared version
 //        internal static void PrepareFacetChange(byte facet) {
 //            StartGenerating();
@@ -1386,7 +1386,7 @@
 //            DoneGenerating(13);
 //            Compress();
 //        }
-		
+
 //        public static void PreparePing(byte data) {
 //            StartGenerating();
 //            EncodeByte(0x73, 0);
@@ -1429,7 +1429,7 @@
 //            DoneGenerating(blockSize);
 //            Compress();			
 //        }
-		
+
 //        //public static void PrepareAllSkillsUpdate(ISkill[] skills, bool displaySkillCaps) {
 //        [Obsolete("Use the alternative from Networking namespace", false)]
 //        public static void PrepareAllSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
@@ -1469,7 +1469,7 @@
 //            Sanity.IfTrueThrow(skill==null, "PrepareSingleSkillUpdate called with a null 'skill'.");
 //            StartGenerating();
 //            EncodeByte(0x3A, 0);
-			
+
 //            if (displaySkillCap) {
 //                EncodeShort(13, 1);//blocksize
 //                EncodeByte(0xDF, 3);//single skill update with cap
@@ -1480,12 +1480,12 @@
 //                EncodeByte(0xFF, 3);//single skill update without skillcap
 //                DoneGenerating(11);
 //            }
-			
+
 //            EncodeUShort((ushort) (skill.Id), 4);
 //            EncodeUShort(skill.RealValue, 6);
 //            EncodeUShort(skill.RealValue, 8);
 //            EncodeByte((byte) skill.Lock, 10);
-			
+
 //            Compress();	
 //        }
 

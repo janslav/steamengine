@@ -28,7 +28,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
-    internal class ClassTemplateSection {
+	internal class ClassTemplateSection {
 		internal string templateName;
 		internal string className;
 		internal string defClassName;
@@ -43,20 +43,20 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			this.line = line;
 			this.templateName = templateName;
 			this.className = Utility.Capitalize(className);
-			this.defClassName = this.className+"Def";
+			this.defClassName = this.className + "Def";
 			this.baseClassName = baseClassName;
-			this.baseDefClassName  = baseClassName+"Def";
+			this.baseDefClassName = baseClassName + "Def";
 		}
 
 		internal void AddSubSection(ClassTemplateSubSection subSection) {
 			string name = subSection.name;
 			if (subsections.ContainsKey(name)) {
-				throw new Exception("The section "+this.className+" already contains a subsection called "+name);
+				throw new Exception("The section " + this.className + " already contains a subsection called " + name);
 			}
 			subsections[name] = subSection;
 		}
 
-    }
+	}
 
 	internal class ClassTemplateSubSection {
 		internal string name;

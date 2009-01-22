@@ -26,7 +26,7 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	public abstract class CompiledScriptHolder : ScriptHolder {
 		protected string desc;
-		
+
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclassInstances<CompiledScriptHolder>(null, false, false);
 		}
@@ -41,12 +41,12 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-        [Summary("Description provided in any SteamDocAttribute on the SteamFunction")]
-        public override string Description {
-            get {
-                return desc;
-            }
-        }
+		[Summary("Description provided in any SteamDocAttribute on the SteamFunction")]
+		public override string Description {
+			get {
+				return desc;
+			}
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.Method)]
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+compiledSHs.Count+" compiled ScriptHolders");
+					Logger.WriteDebug("Done generating " + compiledSHs.Count + " compiled ScriptHolders");
 				}
 				return codeCompileUnit;
 			} finally {
@@ -124,14 +124,14 @@ namespace SteamEngine.CompiledScripts {
 						new CodeArgumentReferenceExpression("sa"),
 						"argv")));
 
-				int paramOffset = thisAsFirstParam? 0 : -1;
+				int paramOffset = thisAsFirstParam ? 0 : -1;
 
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					ParameterInfo pi = pis[i];
 					if ((i == 0) && thisAsFirstParam) {
 						methodParams[i] = CastParameter(pi,
 								new CodeVariableReferenceExpression("self"));
-					} else if ((i == 1+paramOffset) && (n == 2+paramOffset) && (typeof(ScriptArgs).IsAssignableFrom(pi.ParameterType))) {
+					} else if ((i == 1 + paramOffset) && (n == 2 + paramOffset) && (typeof(ScriptArgs).IsAssignableFrom(pi.ParameterType))) {
 						CodeExpression p = new CodeArgumentReferenceExpression("sa");
 
 						if (typeof(ScriptArgs) != pi.ParameterType) {
@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts {
 						methodParams[i] = p;
 						break;
 					} else {
-						int index = thisAsFirstParam? i - 1 : i;
+						int index = thisAsFirstParam ? i - 1 : i;
 						methodParams[i] = CastParameter(pi,
 							new CodeArrayIndexerExpression(
 								new CodeVariableReferenceExpression("argv"),
@@ -190,40 +190,40 @@ namespace SteamEngine.CompiledScripts {
 		private static CodeMethodInvokeExpression GetConvertMethod(Type convertTo, CodeExpression input) {
 			return new CodeMethodInvokeExpression(
 				new CodeTypeReferenceExpression(typeof(Convert)),
-				"To"+convertTo.Name,
+				"To" + convertTo.Name,
 				input);
 		}
 
-        private class GeneratedInstance {
+		private class GeneratedInstance {
 			MethodInfo method;
 			string name;
-            string desc; //obtained from the "summary" or "remark" (or any other SteamDocBaseAttribute)
+			string desc; //obtained from the "summary" or "remark" (or any other SteamDocBaseAttribute)
 
 			internal GeneratedInstance(MethodInfo method, SteamFunctionAttribute sfa) {
 				if (!method.IsStatic) {
 					throw new Exception("The method with [SteamFunctionAttribute] must be static");
 				}
 
-                this.method = method;
+				this.method = method;
 				this.name = sfa.newFunctionName;
 				if (string.IsNullOrEmpty(this.name)) {
 					this.name = method.Name;
 				}
 				SummaryAttribute sma = Attribute.GetCustomAttribute(method, typeof(SummaryAttribute)) as SummaryAttribute;
-                if (sma != null) {
-                    desc = sma.Text;
-                }							
+				if (sma != null) {
+					desc = sma.Text;
+				}
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_"+name);
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_" + name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(CompiledScriptHolder));
 				codeTypeDeclatarion.IsClass = true;
 
-                codeTypeDeclatarion.Members.Add(GenerateConstructor());
+				codeTypeDeclatarion.Members.Add(GenerateConstructor());
 				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
-                return codeTypeDeclatarion;
+				return codeTypeDeclatarion;
 			}
 
 			private CodeMemberMethod GenerateConstructor() {
@@ -233,10 +233,10 @@ namespace SteamEngine.CompiledScripts {
 
 				retVal.Statements.Add(new CodeMethodInvokeExpression(
 					new CodeBaseReferenceExpression(), "RegisterAsFunction"));
-                
-                //initialize the desc. field
-                retVal.Statements.Add(new CodeAssignStatement(
-                    new CodeVariableReferenceExpression("desc"), new CodePrimitiveExpression(desc)));
+
+				//initialize the desc. field
+				retVal.Statements.Add(new CodeAssignStatement(
+					new CodeVariableReferenceExpression("desc"), new CodePrimitiveExpression(desc)));
 				return retVal;
 			}
 
@@ -261,7 +261,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s=((string) filterCriteria).ToLower();
+				string s = ((string) filterCriteria).ToLower();
 				return m.Name.ToLower().StartsWith(s);
 			}
 		}

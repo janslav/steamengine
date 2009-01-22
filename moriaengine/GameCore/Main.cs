@@ -22,7 +22,7 @@ using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Text;
-using System.Globalization; 
+using System.Globalization;
 using System.Threading;
 using SteamEngine.Common;
 using SteamEngine.Timers;
@@ -33,19 +33,19 @@ using SteamEngine.Regions;
 using SteamEngine.AuxServerPipe;
 using SteamEngine.Networking;
 
-namespace SteamEngine {  
+namespace SteamEngine {
 	public static class MainClass {
-		
+
 		//public static Logger logger;
 
 		public static readonly object globalLock = new object();
 
 		public static ManualResetEvent signalExit = new ManualResetEvent(false);
-		
+
 		//public static bool nativeConsole = false;
-		
+
 		//private static Queue nativeCommands=null;
-		
+
 		//internal static ConsConn winConsole;
 
 		//method: winConsoleCommand
@@ -196,13 +196,13 @@ namespace SteamEngine {
 				return true;
 			}
 		}
-		
+
 		public static void CollectGarbage() {
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			WeakRefDictionaryUtils.PurgeAll();
 		}
-		
+
 		//this clears any static fields that could reference any game objects.
 		//this is used for clearing a failed load attempt.
 		public static void ClearWorld() {
@@ -219,7 +219,7 @@ namespace SteamEngine {
 			AOSToolTips.ClearCache();
 			Networking.ItemOnGroundUpdater.ClearCache();
 		}
-		
+
 		//returns false if nothing was changing, otherwise true
 		internal static bool TryResyncCompiledScripts() {
 			ClassTemplateParser.Resync();
@@ -270,7 +270,7 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		//This is only for use by RetryRecompilingScripts and RecompileScripts, and exists only because
 		//they run the same code, and it's always good to avoid unnecessary duplication, which could lead
 		//to the separate versions getting out of sync when someone changes one but misses the other.
@@ -282,7 +282,7 @@ namespace SteamEngine {
 			//RunLevelManager.SetRunning();
 			PacketSequences.BroadCast("Script recompiling finished.");
 		}
-		
+
 		internal static void RetryRecompilingScripts() {
 			UnLoadAll();
 			if (!LoadAll()) {
@@ -292,7 +292,7 @@ namespace SteamEngine {
 				ScriptRecompilingSucceeded();
 			}
 		}
-		
+
 		private static void UnLoadAll() {
 			ClearWorld();
 			Timers.Timer.Clear();
@@ -315,10 +315,10 @@ namespace SteamEngine {
 			//Region.UnloadScripts();
 			//ExportImport.UnloadScripts();
 			FieldValue.UnloadScripts();
-			
+
 			Console.WriteLine("Definitions unloaded");
 		}
-		
+
 		//reload everything, including recompile
 		//this does basically the same as Init(), only less :)
 		private static bool LoadAll() {
@@ -330,11 +330,11 @@ namespace SteamEngine {
 			}
 			//ExportImport.Init();
 			//if (!Globals.fastStartUp) {
-				ScriptLoader.Load();
-				TriggerGroup.ReAddGlobals();
-			
-				WorldSaver.Load();
-				DelayedResolver.ResolveAll();
+			ScriptLoader.Load();
+			TriggerGroup.ReAddGlobals();
+
+			WorldSaver.Load();
+			DelayedResolver.ResolveAll();
 			//}
 			GameServer.ReLinkCharacters();
 			Map.Init();
@@ -377,11 +377,11 @@ namespace SteamEngine {
 
 		//    Console.WriteLine("Leaving Main Loop");
 		//}
-		
+
 		internal static void Exit() {
 			RunLevelManager.SetShutdown();
 			FastDLL.ShutDownFastDLL();
-			Console.WriteLine("Shutdown...");			
+			Console.WriteLine("Shutdown...");
 			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
 				Logger.WriteDebug("triggering @shutdown");
 				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));

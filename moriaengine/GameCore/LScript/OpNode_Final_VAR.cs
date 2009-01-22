@@ -23,9 +23,9 @@ namespace SteamEngine.LScript {
 		private readonly TagKey name;
 		private OpNode arg;
 
-		internal OpNode_SetVar(IOpNodeHolder parent, string filename, 
+		internal OpNode_SetVar(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name, OpNode arg)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.name = TagKey.Get(name);
 		}
@@ -34,7 +34,7 @@ namespace SteamEngine.LScript {
 			if (arg == oldNode) {
 				arg = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -58,13 +58,13 @@ namespace SteamEngine.LScript {
 			return string.Concat("VAR ", name, " = ", arg);
 		}
 	}
-	
+
 	public class OpNode_GetVar : OpNode, ITriable {
 		private readonly TagKey name;
 
-		internal OpNode_GetVar(IOpNodeHolder parent, string filename, 
+		internal OpNode_GetVar(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.name = TagKey.Get(name);
 		}
 
@@ -80,13 +80,13 @@ namespace SteamEngine.LScript {
 			return string.Concat("VAR(", name, ")");
 		}
 	}
-	
+
 	public class OpNode_VarExists : OpNode, ITriable {
 		private readonly TagKey name;
 
-		internal OpNode_VarExists(IOpNodeHolder parent, string filename, 
+		internal OpNode_VarExists(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.name = TagKey.Get(name);
 		}
 
@@ -102,13 +102,13 @@ namespace SteamEngine.LScript {
 			return string.Concat("VAR.EXISTS(", name, ")");
 		}
 	}
-	
+
 	public class OpNode_RemoveVar : OpNode, ITriable {
 		private readonly TagKey name;
 
-		internal OpNode_RemoveVar(IOpNodeHolder parent, string filename, 
+		internal OpNode_RemoveVar(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.name = TagKey.Get(name);
 		}
 
@@ -126,4 +126,4 @@ namespace SteamEngine.LScript {
 			return string.Concat("VAR.remove(", name, ")");
 		}
 	}
-}	
+}

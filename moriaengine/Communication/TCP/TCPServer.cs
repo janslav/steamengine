@@ -28,7 +28,7 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public class TCPServer<TState> : 
+	public class TCPServer<TState> :
 		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,
 		IServer<TCPConnection<TState>, TState, IPEndPoint>
 		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
@@ -37,7 +37,7 @@ namespace SteamEngine.Communication.TCP {
 		Socket listener;
 
 		public TCPServer(IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
-				: base(protocol, lockObject) {
+			: base(protocol, lockObject) {
 			this.onAccept = this.OnAccept;
 
 		}
@@ -62,7 +62,7 @@ namespace SteamEngine.Communication.TCP {
 				listener.Bind(ipep);
 				listener.Listen(8);
 
-				Console.WriteLine("Listening on port "+ipep.Port);
+				Console.WriteLine("Listening on port " + ipep.Port);
 
 				listener.BeginAccept(CreateSocket(), 0, onAccept, listener);
 			} catch (Exception e) {
@@ -122,7 +122,7 @@ namespace SteamEngine.Communication.TCP {
 
 		public void UnBind() {
 			if (this.IsBound) {
-				Console.WriteLine("Stopped listening on port "+this.BoundTo.Port);
+				Console.WriteLine("Stopped listening on port " + this.BoundTo.Port);
 			}
 			try {
 				listener.Close();

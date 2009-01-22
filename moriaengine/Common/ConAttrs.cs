@@ -26,7 +26,7 @@ using System.ComponentModel;
 
 namespace SteamEngine.Common {
 	public enum LogStyles : byte {
-		Default=0, Warning, Error, Fatal, Critical, Debug,
+		Default = 0, Warning, Error, Fatal, Critical, Debug,
 		Highlight, Ident, FileLine, FilePos, File, Number
 	}
 
@@ -39,7 +39,7 @@ namespace SteamEngine.Common {
 	//deprecated. To be replaced by LogStrParser
 	public class ConAttrs {
 		internal const char separatorChar = '\u001B';
-		internal const char eosChar='e';
+		internal const char eosChar = 'e';
 		internal const char titleChar = 't';
 		internal const char styleChar = 's';
 		internal const string separatorString = "\u001B";
@@ -72,25 +72,25 @@ namespace SteamEngine.Common {
 			public float styleSize;
 
 			public LogStyle(Color col, FontStyle style, FontFamily family, float size) {
-				styleColor=col;
-				styleFont=style;
-				styleFontFamily=family;
-				styleSize=size;
+				styleColor = col;
+				styleFont = style;
+				styleFontFamily = family;
+				styleSize = size;
 			}
 			public LogStyle(Color col, FontStyle style) {
-				styleColor=col;
-				styleFont=style;
-				styleFontFamily=defaultFamily;
-				styleSize=defaultSize;
+				styleColor = col;
+				styleFont = style;
+				styleFontFamily = defaultFamily;
+				styleSize = defaultSize;
 			}
 		}
 
-		private const LogStyles lastStyleElement=LogStyles.Number;
-		private const float defaultSize=8.25f;
-		private const FontStyle defaultFontStyle=FontStyle.Regular;
-		private static readonly FontFamily defaultFamily=new FontFamily(GenericFontFamilies.SansSerif);
-		private static readonly Color defaultColor=Color.Black;
-		private LogStyle[] logStyles=new LogStyle[((int) lastStyleElement)+1];
+		private const LogStyles lastStyleElement = LogStyles.Number;
+		private const float defaultSize = 8.25f;
+		private const FontStyle defaultFontStyle = FontStyle.Regular;
+		private static readonly FontFamily defaultFamily = new FontFamily(GenericFontFamilies.SansSerif);
+		private static readonly Color defaultColor = Color.Black;
+		private LogStyle[] logStyles = new LogStyle[((int) lastStyleElement) + 1];
 
 		#region Log Style Configuration
 		public float DefaultSize {
@@ -123,14 +123,14 @@ namespace SteamEngine.Common {
 		}
 
 		public void SetColor(LogStyles style, Color color) {
-			logStyles[(int) style].styleColor=color;
+			logStyles[(int) style].styleColor = color;
 		}
 		public Color GetColor(LogStyles style) {
 			return logStyles[(int) style].styleColor;
 		}
 
 		public void SetFontStyle(LogStyles style, FontStyle fnt) {
-			logStyles[(int) style].styleFont=fnt;
+			logStyles[(int) style].styleFont = fnt;
 		}
 		public FontStyle GetFontStyle(LogStyles style) {
 			return logStyles[(int) style].styleFont;
@@ -138,14 +138,14 @@ namespace SteamEngine.Common {
 
 		public void SetFontFamily(LogStyles style, string name) {
 			try {
-				FontFamily family=new FontFamily(name);
-				logStyles[(int) style].styleFontFamily=family;
+				FontFamily family = new FontFamily(name);
+				logStyles[(int) style].styleFontFamily = family;
 			} catch {
 				// TODO: name of font family is invalid
 			}
 		}
 		public void SetFontFamily(LogStyles style, FontFamily family) {
-			logStyles[(int) style].styleFontFamily=family;
+			logStyles[(int) style].styleFontFamily = family;
 		}
 		public string GetFontFamilyName(LogStyles style) {
 			return logStyles[(int) style].styleFontFamily.Name;
@@ -155,7 +155,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void SetSize(LogStyles style, float size) {
-			logStyles[(int) style].styleSize=size;
+			logStyles[(int) style].styleSize = size;
 		}
 		public float GetSize(LogStyles style) {
 			return logStyles[(int) style].styleSize;
@@ -169,7 +169,7 @@ namespace SteamEngine.Common {
 		public event TitleChangedHandler TitleChanged;
 
 		protected virtual void OnStyleChanged(LogStyles style) {
-			if (StyleChanged!=null)
+			if (StyleChanged != null)
 				StyleChanged(this, style);
 		}
 
@@ -185,18 +185,18 @@ namespace SteamEngine.Common {
 
 		#endregion
 		public void DefaultSettings() {
-			logStyles[(int) LogStyles.Default]		= new LogStyle(defaultColor, defaultFontStyle, defaultFamily, defaultSize);
-			logStyles[(int) LogStyles.Warning]		= new LogStyle(Color.Red, defaultFontStyle);
-			logStyles[(int) LogStyles.Error]		= new LogStyle(Color.Red, defaultFontStyle);
-			logStyles[(int) LogStyles.Fatal]		= new LogStyle(Color.Red, FontStyle.Bold);
-			logStyles[(int) LogStyles.Critical]		= new LogStyle(Color.Red, FontStyle.Bold);
-			logStyles[(int) LogStyles.Debug]		= new LogStyle(Color.Gray, defaultFontStyle);
-			logStyles[(int) LogStyles.FileLine]		= new LogStyle(Color.Blue, defaultFontStyle);
-			logStyles[(int) LogStyles.Highlight]	= new LogStyle(Color.Orange, defaultFontStyle);
-			logStyles[(int) LogStyles.FilePos]		= new LogStyle(defaultColor, FontStyle.Italic);
-			logStyles[(int) LogStyles.File]			= new LogStyle(Color.Purple, defaultFontStyle);
-			logStyles[(int) LogStyles.Number]		= new LogStyle(Color.Blue, defaultFontStyle);
-			logStyles[(int) LogStyles.Ident]		= new LogStyle(Color.Blue, FontStyle.Bold);
+			logStyles[(int) LogStyles.Default] = new LogStyle(defaultColor, defaultFontStyle, defaultFamily, defaultSize);
+			logStyles[(int) LogStyles.Warning] = new LogStyle(Color.Red, defaultFontStyle);
+			logStyles[(int) LogStyles.Error] = new LogStyle(Color.Red, defaultFontStyle);
+			logStyles[(int) LogStyles.Fatal] = new LogStyle(Color.Red, FontStyle.Bold);
+			logStyles[(int) LogStyles.Critical] = new LogStyle(Color.Red, FontStyle.Bold);
+			logStyles[(int) LogStyles.Debug] = new LogStyle(Color.Gray, defaultFontStyle);
+			logStyles[(int) LogStyles.FileLine] = new LogStyle(Color.Blue, defaultFontStyle);
+			logStyles[(int) LogStyles.Highlight] = new LogStyle(Color.Orange, defaultFontStyle);
+			logStyles[(int) LogStyles.FilePos] = new LogStyle(defaultColor, FontStyle.Italic);
+			logStyles[(int) LogStyles.File] = new LogStyle(Color.Purple, defaultFontStyle);
+			logStyles[(int) LogStyles.Number] = new LogStyle(Color.Blue, defaultFontStyle);
+			logStyles[(int) LogStyles.Ident] = new LogStyle(Color.Blue, FontStyle.Bold);
 		}
 
 		public ConAttrs() {
@@ -232,7 +232,7 @@ namespace SteamEngine.Common {
 			string[] tokens = logStrEncoded.Split(separatorArray);
 			int tokenLen = tokens.Length;
 			if (tokenLen > 0) {
-				for (int i = 0; i<tokenLen; i++) {
+				for (int i = 0; i < tokenLen; i++) {
 					string token = tokens[i];
 
 					if (string.IsNullOrEmpty(token)) {

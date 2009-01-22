@@ -127,7 +127,7 @@ namespace SteamEngine.Timers {
 			priorityQueue.Clear();
 			changes.Clear();
 		}
-		
+
 		public Timer() {
 		}
 
@@ -253,7 +253,7 @@ namespace SteamEngine.Timers {
 		#region save/load
 		internal static void StartingLoading() {
 		}
-		
+
 		[Save]
 		public virtual void Save(SaveStream output) {
 			if (fireAt != negativeOneSecond) {
@@ -277,7 +277,7 @@ namespace SteamEngine.Timers {
 		}
 
 		internal static void LoadingFinished() {
-			Logger.WriteDebug("Loaded "+priorityQueue.Count+" timers.");
+			Logger.WriteDebug("Loaded " + priorityQueue.Count + " timers.");
 
 			ProcessChanges();
 			changes = new SimpleQueue<Timer>();//it could have been unnecessary big...

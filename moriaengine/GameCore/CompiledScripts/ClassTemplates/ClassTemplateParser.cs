@@ -28,37 +28,37 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
-    internal static class ClassTemplateParser {
-        public static bool classTemplateMessages = TagMath.ParseBoolean(ConfigurationManager.AppSettings["ClassTemplate Trace Messages"]);
+	internal static class ClassTemplateParser {
+		public static bool classTemplateMessages = TagMath.ParseBoolean(ConfigurationManager.AppSettings["ClassTemplate Trace Messages"]);
 
-		private static Regex sectionHeaderRE= new Regex(@"^\[\s*(?<templatename>.*?)\s+(?<classname>.*?)\s*:\s*(?<baseclassname>.*?)\s*\]\s*(//(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		private static Regex sectionHeaderRE = new Regex(@"^\[\s*(?<templatename>.*?)\s+(?<classname>.*?)\s*:\s*(?<baseclassname>.*?)\s*\]\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private static Regex subSectionHeaderRE= new Regex(@"^\s*(?<name>.*?)\s*:\s*(//(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		private static Regex subSectionHeaderRE = new Regex(@"^\s*(?<name>.*?)\s*:\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private static Regex fieldRE = new Regex(
 			@"^((?<access>(public)|(private)|(protected)|(internal))\s+)?(?<static>static\s+)?(?<type>[a-z_][_a-z0-9\.<>\[\]\,]*)\s+(?<name>[a-z_][_a-z0-9\.]*)\s*=\s*(?<defval>.*)\s*?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		static ScriptFileCollection allFiles;
 		static CodeGeneratorOptions options;
 
 		static ClassTemplateParser() {
 			options = new CodeGeneratorOptions();
-			options.IndentString="\t";
+			options.IndentString = "\t";
 		}
 
 		public static void Init() {
 			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".ct");
 
 			Logger.WriteDebug("Processing ClassTemplates");
-			int numFilesRead=0;
+			int numFilesRead = 0;
 			foreach (ScriptFile file in allFiles.GetAllFiles()) {
 				ProcessFile(file);
 				numFilesRead++;
 			}
-			Logger.WriteDebug("Processed "+numFilesRead+" ClassTemplates scripts.");
+			Logger.WriteDebug("Processed " + numFilesRead + " ClassTemplates scripts.");
 		}
 
 		public static void Resync() {
@@ -98,17 +98,17 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			StreamReader stream = scriptFile.OpenText();
 
 			int line = 0;
-			ClassTemplateSection curSection=null;
-			ClassTemplateSubSection curSubSection=null; //these are also added to curSection...
+			ClassTemplateSection curSection = null;
+			ClassTemplateSubSection curSubSection = null; //these are also added to curSection...
 			while (true) {
 				string curLine = stream.ReadLine();
 				line++;
 				if (curLine != null) {
 					curLine = curLine.Trim();
-					if ((curLine.Length==0)||(curLine.StartsWith("//"))) {
+					if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
 						continue;
 					}
-					Match m= sectionHeaderRE.Match(curLine);
+					Match m = sectionHeaderRE.Match(curLine);
 					//[SomethingTemplate Myclass : mybaseclass]
 					if (m.Success) {
 						if (curSection != null) {
@@ -116,15 +116,15 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						}
 						GroupCollection gc = m.Groups;
 						curSection = new ClassTemplateSection(line, gc["templatename"].Value, gc["classname"].Value, gc["baseclassname"].Value);
-						curSubSection=null;
+						curSubSection = null;
 						continue;
 					}
-					m= subSectionHeaderRE.Match(curLine);
+					m = subSectionHeaderRE.Match(curLine);
 					//subsection:
 					if (m.Success) {
 						//create a new subsection
 						curSubSection = new ClassTemplateSubSection(m.Groups["name"].Value);
-						if (curSection==null) {
+						if (curSection == null) {
 							//a trigger section without real section?
 							Logger.WriteWarning(fileName, line, "No section for this subsection...?");
 						} else {
@@ -132,23 +132,23 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						}
 						continue;
 					}
-					m= fieldRE.Match(curLine);
+					m = fieldRE.Match(curLine);
 					if (m.Success) {
-						if (curSubSection!=null) {
+						if (curSubSection != null) {
 							GroupCollection gc = m.Groups;
 							curSubSection.AddField(
 								new ClassTemplateInstanceField(gc["access"].Value, gc["static"].Value,
 									gc["type"].Value, gc["name"].Value, gc["defval"].Value));
 						} else {
 							//this shouldnt be, a property without header...?
-							Logger.WriteWarning(fileName, line, "No subsection for this field. Skipping line '"+curLine+"'.");
+							Logger.WriteWarning(fileName, line, "No subsection for this field. Skipping line '" + curLine + "'.");
 						}
 						continue;
 					}
-					Logger.WriteError(fileName, line, "Unrecognizable data '"+curLine+"'.");
+					Logger.WriteError(fileName, line, "Unrecognizable data '" + curLine + "'.");
 				} else {
 					//end of file
-					if (curSection!=null) {
+					if (curSection != null) {
 						yield return curSection;
 					}
 					break;
@@ -177,7 +177,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			//trim every whitespace and '_'
 			filename = filename.Trim('_', '\t', '\n', '\v', '\f', '\r', ' ', '\x00a0', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008', '\u2009', '\u200a', '\u200b', '\u3000', '\ufeff');
 
-			return filename+".Generated.cs";
+			return filename + ".Generated.cs";
 		}
-    }
+	}
 }

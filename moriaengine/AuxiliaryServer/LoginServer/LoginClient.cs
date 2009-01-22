@@ -37,15 +37,15 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		public void On_Init(TCPConnection<LoginClient> conn) {
-			Console.WriteLine(this + " connected from "+conn.EndPoint);
+			Console.WriteLine(this + " connected from " + conn.EndPoint);
 		}
 
 		public void On_Close(string reason) {
-			Console.WriteLine(this + " closed: "+reason);
+			Console.WriteLine(this + " closed: " + reason);
 		}
 
 		public override string ToString() {
-			return "LoginClient "+uid;
+			return "LoginClient " + uid;
 		}
 
 		//public override void Handle(IncomingPacket packet) {

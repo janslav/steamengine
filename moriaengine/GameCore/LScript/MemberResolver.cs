@@ -28,72 +28,72 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	
+
 	internal enum SpecialType {
 		Normal,
 		String,	//method with one argument of type string. is special because of calls without "" 
-				//(like "somemethod(This is a sentence which is allowed because of spherescript's bad design)") 
+		//(like "somemethod(This is a sentence which is allowed because of spherescript's bad design)") 
 		Params	//method with params argument on the end. has to create the array at some point...
 	}
-	
+
 	//internal SecurityTypes {
 	//	Callable, //function, method, field, constructor
 	//	Variable, //Globals.Tag
 	//	Tag, //using the tag keyword
 	//	Timer //using AddTimer "keyword"
 	//}
-	
+
 	internal class MemberDescriptor {
 		internal MemberInfo info;
 		internal SpecialType specialType;
 		private Type[] parameterTypes;
-		
+
 		internal MemberDescriptor(MemberInfo info, SpecialType specialType) {
 			this.info = info;
 			this.specialType = specialType;
 		}
-		
+
 		public override string ToString() {
 			return info.ToString();
 		}
-		
+
 		protected Type[] GetParameterTypes() {
 			if (parameterTypes == null) {
 				MethodBase methOrCtor = info as MethodBase;
 				if (methOrCtor != null) {
 					ParameterInfo[] pars = methOrCtor.GetParameters();
 					parameterTypes = new Type[pars.Length];
-					for (int i = 0, n = pars.Length; i<n; i++) {
+					for (int i = 0, n = pars.Length; i < n; i++) {
 						parameterTypes[i] = pars[i].ParameterType;
 					}
 					return parameterTypes;
 				}
 				FieldInfo field = info as FieldInfo;
 				if (field != null) {
-					parameterTypes = new Type[1] {field.FieldType};
+					parameterTypes = new Type[1] { field.FieldType };
 					return parameterTypes;
 				} else {
-					throw new Exception(info+" of type "+info.GetType()+" and MemberType "+info.MemberType+" is not a field, nor method, nor constructor... wtf? This should not happen!");
+					throw new Exception(info + " of type " + info.GetType() + " and MemberType " + info.MemberType + " is not a field, nor method, nor constructor... wtf? This should not happen!");
 				}
 			}
 			return parameterTypes;
 		}
-		
+
 		internal bool ParamTypesMatch(object[] results) {
 			GetParameterTypes();
-			int i,n;
+			int i, n;
 			switch (specialType) {
 				case SpecialType.Normal:
-					for (i = 0, n = results.Length; i<n; i++) {
+					for (i = 0, n = results.Length; i < n; i++) {
 						if (!MemberResolver.IsCompatibleType(parameterTypes[i], results[i])) {
 							return false;
 						}
 					}
 					break;
 				case SpecialType.Params:
-					int nonArrayLength = parameterTypes.Length-1;
+					int nonArrayLength = parameterTypes.Length - 1;
 					i = 0;
-					for (; i<nonArrayLength; i++) {
+					for (; i < nonArrayLength; i++) {
 						if (!MemberResolver.IsCompatibleType(parameterTypes[i], results[i])) {
 							//Console.WriteLine("ParamTypesMatch returning false: current parameterType "+parameterTypes[i]
 							//	+", current result is "+results[i]);
@@ -101,7 +101,7 @@ namespace SteamEngine.LScript {
 						}
 					}
 					Type arrayType = parameterTypes[nonArrayLength].GetElementType();
-					for (n = results.Length; i<n; i++) {
+					for (n = results.Length; i < n; i++) {
 						if (!MemberResolver.IsCompatibleType(arrayType, results[i])) {
 							//Console.WriteLine("ParamTypesMatch returning false: arrayType is "+arrayType
 							//	+", current result is "+results[i]);
@@ -115,8 +115,8 @@ namespace SteamEngine.LScript {
 			return true;
 		}
 	}
-		
-	
+
+
 	//a "one-use" class that gets instantiated basically just for convenience (it could be entirely static)
 	//designed to resolve use of particular method/field/constuctors (and their "params" and "string" versions
 	//out of a relatively vague signature that is provided by lscript.
@@ -125,7 +125,7 @@ namespace SteamEngine.LScript {
 		//public static bool safeMode = false; //is set to on when LScript is used as commandline parser, and then calls TriggerKey.command on Globals.src
 
 		private static Stack instances = new Stack();
-		
+
 		private IOpNodeHolder parent;
 		private string name;
 		private OpNode[] args;
@@ -135,10 +135,10 @@ namespace SteamEngine.LScript {
 		private string filename;
 		private ScriptVars vars;
 		private bool inStack;
-		
-		internal static MemberResolver GetInstance(ScriptVars vars, IOpNodeHolder parent, 
+
+		internal static MemberResolver GetInstance(ScriptVars vars, IOpNodeHolder parent,
 				string name, OpNode[] args, int line, int column, string filename) {
-			
+
 			MemberResolver instance;
 			if (instances.Count > 0) {
 				instance = (MemberResolver) instances.Pop();
@@ -146,7 +146,7 @@ namespace SteamEngine.LScript {
 				instance = new MemberResolver();
 			}
 			instance.inStack = false;
-						
+
 			instance.vars = vars;
 			instance.parent = parent;
 			instance.name = name;
@@ -157,21 +157,23 @@ namespace SteamEngine.LScript {
 			instance.filename = filename;
 			return instance;
 		}
-		
+
 		//or should we call it Dispose? well, who cares :)
 		internal static void ReturnInstance(MemberResolver instance) {
 			instances.Push(instance);
 			instance.inStack = true;
 		}
-		
+
 		private MemberResolver() {
 		}
-		
-		internal OpNode[] Args { get {
-			return args;
-		} }
-		
-		private void TryMakeMemberDescriptor(MemberInfo info, SpecialType specType, 
+
+		internal OpNode[] Args {
+			get {
+				return args;
+			}
+		}
+
+		private void TryMakeMemberDescriptor(MemberInfo info, SpecialType specType,
 				ref MemberDescriptor desc, ref List<MemberDescriptor> ambiguities) {
 			RunArgs();
 			MemberDescriptor newDesc = new MemberDescriptor(info, specType);
@@ -187,21 +189,21 @@ namespace SteamEngine.LScript {
 				}
 			}
 		}
-		
-		internal bool Resolve(Type type, BindingFlags flags, 
+
+		internal bool Resolve(Type type, BindingFlags flags,
 				MemberTypes memberTypes, out MemberDescriptor desc) {
 			//resolve as any member (method or property(as getter/setter method) or constructor or field)
-			
+
 			Sanity.IfTrueThrow(inStack, "called Resolve on a disposed MemberResolver");
-			
+
 			bool nameMatches = false;
 			desc = null;
 			List<MemberDescriptor> ambiguities = null;
 			int argsLength = args.Length;
 			ArrayList namedWell = null;
-			
+
 			if (IsMethod(memberTypes)) {
-				MethodInfo[] mis = type.GetMethods(BindingFlags.Public|flags);
+				MethodInfo[] mis = type.GetMethods(BindingFlags.Public | flags);
 				foreach (MethodInfo mi in mis) {//methods
 					if (string.Compare(name, mi.Name, true) == 0) { //true for case insensitive
 						if (namedWell == null) {
@@ -223,8 +225,8 @@ namespace SteamEngine.LScript {
 						foreach (MethodInfo mi in namedWell) {
 							pars = mi.GetParameters();
 							parsLength = pars.Length;
-							if ((argsLength >= (parsLength-1))&&(parsLength > 0)&& //(..., params sometype[] foo)
-									(pars[parsLength-1].GetCustomAttributes(typeof(ParamArrayAttribute), true).Length > 0)) {
+							if ((argsLength >= (parsLength - 1)) && (parsLength > 0) && //(..., params sometype[] foo)
+									(pars[parsLength - 1].GetCustomAttributes(typeof(ParamArrayAttribute), true).Length > 0)) {
 								TryMakeMemberDescriptor(mi, SpecialType.Params, ref desc, ref ambiguities);
 							}
 						}
@@ -232,7 +234,7 @@ namespace SteamEngine.LScript {
 							foreach (MethodInfo mi in namedWell) {
 								pars = mi.GetParameters();
 								parsLength = pars.Length;
-								if ((argsLength>0) && (parsLength == 1) && (pars[0].ParameterType == typeof(string))) {
+								if ((argsLength > 0) && (parsLength == 1) && (pars[0].ParameterType == typeof(string))) {
 									TryMakeMemberDescriptor(mi, SpecialType.String, ref desc, ref ambiguities);
 								}
 							}
@@ -240,14 +242,14 @@ namespace SteamEngine.LScript {
 					}
 				}
 			}
-			
+
 			if (IsProperty(memberTypes)) {
 				if (desc == null) {//properties
 					if (namedWell != null) {
 						namedWell.Clear();
 					}
-					
-					foreach (PropertyInfo pi in type.GetProperties(BindingFlags.Public|flags)) {
+
+					foreach (PropertyInfo pi in type.GetProperties(BindingFlags.Public | flags)) {
 						if (string.Compare(name, pi.Name, true) == 0) { //true for case insensitive
 							if (namedWell == null) {
 								namedWell = new ArrayList(1);
@@ -256,8 +258,8 @@ namespace SteamEngine.LScript {
 							nameMatches = true;
 						}
 					}
-					
-					if ((namedWell != null)&&(namedWell.Count > 0)) {
+
+					if ((namedWell != null) && (namedWell.Count > 0)) {
 						foreach (PropertyInfo pi in namedWell) {
 							MethodInfo setter = pi.GetSetMethod(false); //false for public only
 							if (setter != null) {
@@ -270,7 +272,7 @@ namespace SteamEngine.LScript {
 							foreach (PropertyInfo pi in namedWell) {
 								MethodInfo setter = pi.GetSetMethod(false); //false for public only
 								if (setter != null) {
-	 								if ((argsLength > 0)&&(pi.PropertyType == typeof(string))) {
+									if ((argsLength > 0) && (pi.PropertyType == typeof(string))) {
 										TryMakeMemberDescriptor(setter, SpecialType.String, ref desc, ref ambiguities);
 									}
 								}
@@ -289,22 +291,22 @@ namespace SteamEngine.LScript {
 					}
 				}
 			}
-			
+
 			if (IsConstructor(memberTypes)) {
-				if ((desc == null)&&(string.Compare(name, type.Name, true) == 0)) { //constructors
+				if ((desc == null) && (string.Compare(name, type.Name, true) == 0)) { //constructors
 					nameMatches = true;
 					ConstructorInfo[] cis = type.GetConstructors();
 					foreach (ConstructorInfo ci in cis) {
 						if (ci.GetParameters().Length == argsLength) {
 							TryMakeMemberDescriptor(ci, SpecialType.Normal, ref desc, ref ambiguities);
-						} 
+						}
 					}
 					if (desc == null) {
 						foreach (ConstructorInfo ci in cis) {
 							ParameterInfo[] pars = ci.GetParameters();
 							int parsLength = pars.Length;
-							if ((argsLength >= (parsLength-1))&&(parsLength > 0)) {//(..., params sometype[] foo)
-								if (pars[pars.Length-1].GetCustomAttributes(typeof(ParamArrayAttribute), true).Length > 0) {
+							if ((argsLength >= (parsLength - 1)) && (parsLength > 0)) {//(..., params sometype[] foo)
+								if (pars[pars.Length - 1].GetCustomAttributes(typeof(ParamArrayAttribute), true).Length > 0) {
 									TryMakeMemberDescriptor(ci, SpecialType.Params, ref desc, ref ambiguities);
 								}
 							}
@@ -313,7 +315,7 @@ namespace SteamEngine.LScript {
 							foreach (ConstructorInfo ci in cis) {
 								ParameterInfo[] pars = ci.GetParameters();
 								int parsLength = pars.Length;
-								if ((parsLength == 1)&&(pars[0].ParameterType == typeof(string))) {
+								if ((parsLength == 1) && (pars[0].ParameterType == typeof(string))) {
 									TryMakeMemberDescriptor(ci, SpecialType.String, ref desc, ref ambiguities);
 								}
 							}
@@ -321,13 +323,13 @@ namespace SteamEngine.LScript {
 					}
 				}
 			}
-			
+
 			if (IsField(memberTypes)) {
 				if (desc == null) {//fields
 					if (namedWell != null) {
 						namedWell.Clear();
 					}
-					foreach (FieldInfo fi in type.GetFields(BindingFlags.Public|flags)) {
+					foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | flags)) {
 						if (string.Compare(name, fi.Name, true) == 0) { //true for case insensitive
 							if (namedWell == null) {
 								namedWell = new ArrayList(1);
@@ -336,7 +338,7 @@ namespace SteamEngine.LScript {
 							nameMatches = true;
 						}
 					}
-					if ((namedWell != null)&&(namedWell.Count > 0)) {
+					if ((namedWell != null) && (namedWell.Count > 0)) {
 						foreach (FieldInfo fi in namedWell) {
 							if (argsLength < 2) {
 								TryMakeMemberDescriptor(fi, SpecialType.Normal, ref desc, ref ambiguities);
@@ -352,7 +354,7 @@ namespace SteamEngine.LScript {
 					}
 				}
 			}
-			
+
 			if (ambiguities != null) {
 				MemberDescriptor[] resolvedAmbiguities;
 				if (TryResolveAmbiguity(ambiguities, results, out resolvedAmbiguities)) {
@@ -364,15 +366,15 @@ namespace SteamEngine.LScript {
 				foreach (MemberDescriptor md in resolvedAmbiguities) {
 					sb.Append(Environment.NewLine).Append(md.ToString());
 				}
-				throw new InterpreterException(sb.ToString(), 
+				throw new InterpreterException(sb.ToString(),
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 			}
-			
+
 			//Console.WriteLine("nameMatches: "+nameMatches+" of "+name+", flags:"+flags+", memberTypes:"+memberTypes+", type:"+type);
-		
+
 			return nameMatches;
 		}
-		
+
 		//this could not at all be here, but it is quite convenient
 		//internal void CheckCommandSecurity() {
 		//	ScriptArgs sa = new ScriptArgs(vars.self, name, );
@@ -381,14 +383,14 @@ namespace SteamEngine.LScript {
 		//			this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 		//	}
 		//}
-		
+
 		internal void RunArgs() {
 			if (results == null) {
 				object oSelf = vars.self;
 				results = new object[args.Length];
 				vars.self = vars.defaultObject;
 				try {
-					for (int i = 0, n = args.Length; i<n; i++) {
+					for (int i = 0, n = args.Length; i < n; i++) {
 						results[i] = args[i].Run(vars);
 					}
 				} finally {
@@ -396,19 +398,21 @@ namespace SteamEngine.LScript {
 				}
 			}
 		}
-				
-		internal LScriptHolder ParentScriptHolder { get {//"topobj" of the parent node
-			LScriptHolder parentAsHolder = parent as LScriptHolder;
-			if (parentAsHolder != null) {
-				return parentAsHolder;
-			} 
-			OpNode parentAsOpNode = parent as OpNode;
-			if (parentAsOpNode != null) {
-				return parentAsOpNode.ParentScriptHolder;
-			} 
-			throw new Exception("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
-		} }
-		
+
+		internal LScriptHolder ParentScriptHolder {
+			get {//"topobj" of the parent node
+				LScriptHolder parentAsHolder = parent as LScriptHolder;
+				if (parentAsHolder != null) {
+					return parentAsHolder;
+				}
+				OpNode parentAsOpNode = parent as OpNode;
+				if (parentAsOpNode != null) {
+					return parentAsOpNode.ParentScriptHolder;
+				}
+				throw new Exception("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
+			}
+		}
+
 		internal static bool ReturnsString(OpNode node) {
 			IKnownRetType nodeAsKnownType = node as IKnownRetType;
 			if (nodeAsKnownType != null) {
@@ -420,7 +424,7 @@ namespace SteamEngine.LScript {
 			}
 			return false;
 		}
-		
+
 		internal static bool IsCompatibleType(Type toType, object from) {
 			if (from == null) {//in fact it may not be the case, but well, we dont know that...
 				return true;
@@ -428,41 +432,41 @@ namespace SteamEngine.LScript {
 			//Console.WriteLine("is {0} subtype of {1}?", from.GetType(), toType);
 			if (toType.IsInstanceOfType(from)) {
 				return true;
-			} else if ((TagMath.IsNumberType(toType))&&(TagMath.IsNumberType(from.GetType()))) {
+			} else if ((TagMath.IsNumberType(toType)) && (TagMath.IsNumberType(from.GetType()))) {
 				return true;
 			}
 			//Console.WriteLine("MemberResolver.IsCompatibleType false: from {0}({1}) to type {2}", from, from.GetType(), toType);
 			return false;
 		}
-		
+
 		internal static bool IsMethod(MemberInfo info) {
 			return IsMethod(info.MemberType);
 		}
-		
+
 		internal static bool IsMethod(MemberTypes memberType) {
 			return (memberType & MemberTypes.Method) == MemberTypes.Method;
 		}
-		
+
 		internal static bool IsProperty(MemberInfo info) {
 			return IsProperty(info.MemberType);
 		}
-		
+
 		internal static bool IsProperty(MemberTypes memberType) {
 			return (memberType & MemberTypes.Property) == MemberTypes.Property;
 		}
-		
+
 		internal static bool IsConstructor(MemberInfo info) {
 			return IsConstructor(info.MemberType);
 		}
-		
+
 		internal static bool IsConstructor(MemberTypes memberType) {
 			return (memberType & MemberTypes.Constructor) == MemberTypes.Constructor;
 		}
-		
+
 		internal static bool IsField(MemberInfo info) {
 			return IsField(info.MemberType);
 		}
-		
+
 		internal static bool IsField(MemberTypes memberType) {
 			return (memberType & MemberTypes.Field) == MemberTypes.Field;
 		}
@@ -472,7 +476,7 @@ namespace SteamEngine.LScript {
 		internal static bool TryResolveAmbiguity(List<MemberDescriptor> descriptors, object[] results, out MemberDescriptor[] bestMatches) {
 			int n = descriptors.Count;
 			AmbiguityResolver[] resolvers = new AmbiguityResolver[n];
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				resolvers[i] = new AmbiguityResolver(descriptors[i]);
 			}
 
@@ -480,7 +484,7 @@ namespace SteamEngine.LScript {
 
 			n = bestGroup.Count;
 			bestMatches = new MemberDescriptor[n];
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				bestMatches[i] = (MemberDescriptor) bestGroup[i].createdFrom;
 			}
 			return n == 1;
@@ -489,7 +493,7 @@ namespace SteamEngine.LScript {
 		internal static bool TryResolveAmbiguity(List<MethodInfo> mis, object[] results, out MethodInfo[] bestMatches) {
 			int n = mis.Count;
 			AmbiguityResolver[] resolvers = new AmbiguityResolver[n];
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				resolvers[i] = new AmbiguityResolver(mis[i]);
 			}
 
@@ -497,7 +501,7 @@ namespace SteamEngine.LScript {
 
 			n = bestGroup.Count;
 			bestMatches = new MethodInfo[n];
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				bestMatches[i] = (MethodInfo) bestGroup[i].createdFrom;
 			}
 			return n == 1;
@@ -523,8 +527,8 @@ namespace SteamEngine.LScript {
 				}
 			}
 			equalityGroups.Sort(new Comparison<List<AmbiguityResolver>>(CompareEqalityGroups));
-			List<AmbiguityResolver> bestGroup = equalityGroups[equalityGroups.Count -1];
-			equalityGroups.RemoveAt(equalityGroups.Count -1);
+			List<AmbiguityResolver> bestGroup = equalityGroups[equalityGroups.Count - 1];
+			equalityGroups.RemoveAt(equalityGroups.Count - 1);
 
 			foreach (List<AmbiguityResolver> equalityGroup in equalityGroups) {
 				if (CompareEqalityGroups(bestGroup, equalityGroup) < 1) {
@@ -537,7 +541,7 @@ namespace SteamEngine.LScript {
 		private static bool HaveEqualDistances(AmbiguityResolver a, AmbiguityResolver b) {
 			int[] distancesA = a.distances;
 			int[] distancesB = b.distances;
-			for (int i = 0, n = distancesA.Length; i<n; i++) {
+			for (int i = 0, n = distancesA.Length; i < n; i++) {
 				if (distancesA[i] != distancesB[i]) {
 					return false;
 				}
@@ -549,7 +553,7 @@ namespace SteamEngine.LScript {
 			int[] distancesA = groupA[0].distances;
 			int[] distancesB = groupB[0].distances;
 			int retVal = 0;
-			for (int i = 0, n = distancesA.Length; i<n; i++) {
+			for (int i = 0, n = distancesA.Length; i < n; i++) {
 				int distA = distancesA[i];
 				int distB = distancesB[i];
 				if (distA < distB) {
@@ -576,11 +580,13 @@ namespace SteamEngine.LScript {
 			internal int[] distances;
 			internal object createdFrom;
 
-			internal AmbiguityResolver(MethodInfo mi) : base (mi, SpecialType.Normal) {
+			internal AmbiguityResolver(MethodInfo mi)
+				: base(mi, SpecialType.Normal) {
 				this.createdFrom = mi;
 			}
 
-			internal AmbiguityResolver(MemberDescriptor descriptor) : base(descriptor.info, SpecialType.Normal) {
+			internal AmbiguityResolver(MemberDescriptor descriptor)
+				: base(descriptor.info, SpecialType.Normal) {
 				this.createdFrom = descriptor;
 			}
 
@@ -588,14 +594,14 @@ namespace SteamEngine.LScript {
 				distances = new int[results.Length];
 				Type[] paramTypes = this.GetParameterTypes();
 
-				for (int i = 0, n = results.Length; i<n; i++) {
+				for (int i = 0, n = results.Length; i < n; i++) {
 					distances[i] = GetHierarchyDistance(paramTypes[i], results[i]);
 				}
 			}
 
 			private static int GetHierarchyDistance(Type toType, object from) {
 				if (from == null) {
-				    return int.MaxValue;
+					return int.MaxValue;
 				}
 				Type fromType = from.GetType();
 				int dist = GetSubclassDistance(toType, fromType);
@@ -606,7 +612,7 @@ namespace SteamEngine.LScript {
 				if (ConvertTools.IsNumberType(toType) && ConvertTools.IsNumberType(fromType)) {
 					if ((ConvertTools.IsFloatType(toType) && ConvertTools.IsFloatType(fromType)) ||
 						(ConvertTools.IsSignedIntegerType(toType) && ConvertTools.IsSignedIntegerType(fromType)) ||
-						(ConvertTools.IsUnSignedIntegerType(toType) && ConvertTools.IsUnSignedIntegerType(fromType)) ){
+						(ConvertTools.IsUnSignedIntegerType(toType) && ConvertTools.IsUnSignedIntegerType(fromType))) {
 						return 1;
 					}
 					if (ConvertTools.IsIntegerType(toType) && ConvertTools.IsIntegerType(fromType)) {
@@ -617,7 +623,7 @@ namespace SteamEngine.LScript {
 
 				int ifaceDist = GetInterfaceDistance(toType, fromType);
 
-				return 1000+Math.Min(dist, ifaceDist);
+				return 1000 + Math.Min(dist, ifaceDist);
 				//1000 + because the number distances are primary
 			}
 
@@ -637,17 +643,17 @@ namespace SteamEngine.LScript {
 					return int.MaxValue;//totype is no interface
 				}
 				List<Type> fromTypeBaseTypes = new List<Type>();
-				
+
 				do {
 					fromTypeBaseTypes.Add(fromType);
 					fromType = fromType.BaseType;
 				} while (fromType != null);
 
-				for (int i = fromTypeBaseTypes.Count-1; i>=0; i--) {
+				for (int i = fromTypeBaseTypes.Count - 1; i >= 0; i--) {
 					Type fromTypeBase = fromTypeBaseTypes[i];
 					Type[] ifaces = fromTypeBase.GetInterfaces();
 					if (Array.IndexOf(ifaces, toType) > -1) { //it contains the iface
-						return i+GetHighestIfaceDistanceRecursive(ifaces, toType);
+						return i + GetHighestIfaceDistanceRecursive(ifaces, toType);
 					}
 				}
 				return int.MaxValue;
@@ -662,7 +668,7 @@ namespace SteamEngine.LScript {
 					}
 				}
 				if (Array.IndexOf(ifaces, toType) > -1) {
-					highestDist++; 
+					highestDist++;
 				}
 				return highestDist;
 			}
@@ -678,7 +684,7 @@ namespace SteamEngine.LScript {
 
 		}
 
-		
+
 	}
 }
 

@@ -37,7 +37,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadingInitializerAttribute))]
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
-	[AttributeUsage(AttributeTargets.Class|AttributeTargets.Struct)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 	public class SaveableClassAttribute : Attribute {
 		private string description;
 
@@ -66,8 +66,8 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadSectionAttribute))]
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
-	[AttributeUsage(AttributeTargets.Method|AttributeTargets.Constructor)]
-	public class LoadingInitializerAttribute : Attribute {		
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
+	public class LoadingInitializerAttribute : Attribute {
 	}
 
 	[Summary("Use to mark the initializer that takes whole saved section as it's parameter.")]
@@ -82,7 +82,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
 	[SeeAlso(typeof(SaveableClassAttribute))]
-	[AttributeUsage(AttributeTargets.Method|AttributeTargets.Constructor)]
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 	public class LoadSectionAttribute : Attribute {
 		//no params
 	}
@@ -96,7 +96,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
 	[SeeAlso(typeof(SaveableClassAttribute))]
-	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class SaveableDataAttribute : Attribute {
 		private string description;
 
@@ -161,14 +161,18 @@ namespace SteamEngine.Persistence {
 			this.handledType = handledType;
 			this.headerName = headerName;
 		}
-		
-		public Type HandledType { get {
-			return handledType;
-		} }
 
-		public string HeaderName { get {
-			return headerName;
-		} }
+		public Type HandledType {
+			get {
+				return handledType;
+			}
+		}
+
+		public string HeaderName {
+			get {
+				return headerName;
+			}
+		}
 
 		public abstract object LoadSection(PropsSection input);
 		public abstract void Save(object objToSave, SaveStream writer);
@@ -205,14 +209,14 @@ namespace SteamEngine.Persistence {
 
 		public string FileName {
 			get {
-				return "DecoratedClassesSaveImplementors.Generated.cs"; 
+				return "DecoratedClassesSaveImplementors.Generated.cs";
 			}
 		}
 
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-				
+
 
 				if (decoratedClasses.Count > 0) {
 					Logger.WriteDebug("Generating SaveImplementors");
@@ -232,7 +236,7 @@ namespace SteamEngine.Persistence {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+decoratedClasses.Count+" SaveImplementors");
+					Logger.WriteDebug("Done generating " + decoratedClasses.Count + " SaveImplementors");
 				}
 				return codeCompileUnit;
 			} finally {
@@ -270,7 +274,7 @@ namespace SteamEngine.Persistence {
 				if (loadSection != null) {
 					if ((loadLine != null) || (loadingInitializer != null)) {
 						//(saveableDataFields.Count != 0) || (saveableDataProperties.Count != 0)) {
-						throw new SEException("Can not use the "+LogStr.Ident("LoadSectionAttribute")+" along with other auto-loading attributes.");
+						throw new SEException("Can not use the " + LogStr.Ident("LoadSectionAttribute") + " along with other auto-loading attributes.");
 					}
 				} else if (loadingInitializer == null) {
 					throw new SEException("No way to instantiate this class when autoloading.");
@@ -285,18 +289,18 @@ namespace SteamEngine.Persistence {
 			private void HandleSaveAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(SaveAttribute), false)) {
 					if (saveMethod != null) {
-						throw new SEException("Can not use the "+LogStr.Ident("SaveAttribute")+" on two class members.");
-					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						throw new SEException("Can not use the " + LogStr.Ident("SaveAttribute") + " on two class members.");
+					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if (!meth.IsStatic) {
 							ParameterInfo[] pars = meth.GetParameters();
-							if ((pars.Length == 1)&&(pars[0].ParameterType == typeof(SaveStream))) {
+							if ((pars.Length == 1) && (pars[0].ParameterType == typeof(SaveStream))) {
 								saveMethod = MemberWrapper.GetWrapperFor(meth);
 							}
 						}
 					}
 					if (saveMethod == null) {
-						throw new SEException(LogStr.Ident("SaveAttribute")+" can only be placed on an instance method with one parameter of type SaveStream.");
+						throw new SEException(LogStr.Ident("SaveAttribute") + " can only be placed on an instance method with one parameter of type SaveStream.");
 					}
 				}
 			}
@@ -304,10 +308,10 @@ namespace SteamEngine.Persistence {
 			private void HandleLoadSectionAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(LoadSectionAttribute), false)) {
 					if (loadSection != null) {
-						throw new SEException("Can not use the "+LogStr.Ident("LoadSectionAttribute")+" on two class members.");
-					} else if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
+						throw new SEException("Can not use the " + LogStr.Ident("LoadSectionAttribute") + " on two class members.");
+					} else if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						loadSection = (MethodBase) mi;
-					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if (meth.IsStatic) {
 							loadSection = meth;
@@ -315,11 +319,11 @@ namespace SteamEngine.Persistence {
 					}
 					if (loadSection != null) {
 						ParameterInfo[] pars = loadSection.GetParameters();
-						if ((pars.Length != 1)||(pars[0].ParameterType != typeof(PropsSection))) {
-							throw new SEException(LogStr.Ident("LoadSectionAttribute")+" can only be placed on a callable member with one parameter of type PropsSection.");
+						if ((pars.Length != 1) || (pars[0].ParameterType != typeof(PropsSection))) {
+							throw new SEException(LogStr.Ident("LoadSectionAttribute") + " can only be placed on a callable member with one parameter of type PropsSection.");
 						}
 					} else {
-						throw new SEException(LogStr.Ident("LoadSectionAttribute")+" can only be placed on a constructor or static method.");
+						throw new SEException(LogStr.Ident("LoadSectionAttribute") + " can only be placed on a constructor or static method.");
 					}
 				}
 			}
@@ -327,7 +331,7 @@ namespace SteamEngine.Persistence {
 			private void HandleSaveableDataAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(SaveableDataAttribute), false)) {
 					bool added = false;
-					if ((mi.MemberType&MemberTypes.Property) == MemberTypes.Property) {
+					if ((mi.MemberType & MemberTypes.Property) == MemberTypes.Property) {
 						PropertyInfo pi = (PropertyInfo) mi;
 						MethodInfo[] accessors = pi.GetAccessors();
 						if (accessors.Length == 2) {
@@ -336,9 +340,9 @@ namespace SteamEngine.Persistence {
 								added = true;
 							}
 						} else {
-							throw new SEException(LogStr.Ident("SaveableDataAttribute")+" can only be placed on fields or properties with both setter and getter.");
+							throw new SEException(LogStr.Ident("SaveableDataAttribute") + " can only be placed on fields or properties with both setter and getter.");
 						}
-					} else if ((mi.MemberType&MemberTypes.Field) == MemberTypes.Field) {
+					} else if ((mi.MemberType & MemberTypes.Field) == MemberTypes.Field) {
 						FieldInfo fi = (FieldInfo) mi;
 						if (!fi.IsStatic) {
 							saveableDataFields.Add(fi);
@@ -346,7 +350,7 @@ namespace SteamEngine.Persistence {
 						}
 					}
 					if (!added) {
-						throw new SEException(LogStr.Ident("SaveableDataAttribute")+" can only be placed on instance fields or properties.");
+						throw new SEException(LogStr.Ident("SaveableDataAttribute") + " can only be placed on instance fields or properties.");
 					}
 				}
 			}
@@ -354,19 +358,19 @@ namespace SteamEngine.Persistence {
 			private void HandleLoadLineAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(LoadLineAttribute), false)) {
 					if (loadLine != null) {
-						throw new SEException("Can not use the "+LogStr.Ident("LoadLineAttribute")+" on two class members.");
-					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						throw new SEException("Can not use the " + LogStr.Ident("LoadLineAttribute") + " on two class members.");
+					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if (!meth.IsStatic) {
 							ParameterInfo[] pars = meth.GetParameters();
-							if ((pars.Length == 4)&&(pars[0].ParameterType == typeof(string))&&(pars[1].ParameterType == typeof(int))
-										&&(pars[2].ParameterType == typeof(string))&&(pars[3].ParameterType == typeof(string))) {
+							if ((pars.Length == 4) && (pars[0].ParameterType == typeof(string)) && (pars[1].ParameterType == typeof(int))
+										&& (pars[2].ParameterType == typeof(string)) && (pars[3].ParameterType == typeof(string))) {
 								loadLine = MemberWrapper.GetWrapperFor(meth);
 							}
 						}
 					}
 					if (loadLine == null) {
-						throw new SEException(LogStr.Ident("LoadLineAttribute")+" can only be placed on an instance method with four parameters of types string, int, string, string.");
+						throw new SEException(LogStr.Ident("LoadLineAttribute") + " can only be placed on an instance method with four parameters of types string, int, string, string.");
 					}
 				}
 			}
@@ -374,10 +378,10 @@ namespace SteamEngine.Persistence {
 			private void HandleLoadingInitializerAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(LoadingInitializerAttribute), false)) {
 					if (loadingInitializer != null) {
-						throw new SEException("Can not use the "+LogStr.Ident("LoadingInitializerAttribute")+" on two class members.");
-					} else if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
+						throw new SEException("Can not use the " + LogStr.Ident("LoadingInitializerAttribute") + " on two class members.");
+					} else if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						loadingInitializer = (MethodBase) mi;
-					} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if (meth.IsStatic) {
 							loadingInitializer = meth;
@@ -385,16 +389,16 @@ namespace SteamEngine.Persistence {
 					}
 					if (loadingInitializer != null) {
 						if (loadingInitializer.GetParameters().Length != 0) {
-							throw new SEException(LogStr.Ident("LoadingInitializerAttribute")+" can only be placed on a callable member with no parameters.");
+							throw new SEException(LogStr.Ident("LoadingInitializerAttribute") + " can only be placed on a callable member with no parameters.");
 						}
 					} else {
-						throw new SEException(LogStr.Ident("LoadingInitializerAttribute")+" can only be placed on a constructor or static method.");
+						throw new SEException(LogStr.Ident("LoadingInitializerAttribute") + " can only be placed on a constructor or static method.");
 					}
 				}
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedSaveImplementor_"+decoratedClass.Name);
+				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedSaveImplementor_" + decoratedClass.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(DecoratedClassesSaveImplementor));
 				codeTypeDeclatarion.IsClass = true;
@@ -609,7 +613,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			private void GenerateLoadFieldOrProperty(CodeStatementCollection statements, CodeAssignStatement assignment, string name, Type type) {
-				string propsLineName = Utility.Uncapitalize(name+"Line");
+				string propsLineName = Utility.Uncapitalize(name + "Line");
 
 				statements.Add(new CodeVariableDeclarationStatement(
 					typeof(PropsLine), propsLineName,
@@ -632,7 +636,7 @@ namespace SteamEngine.Persistence {
 						new CodeFieldReferenceExpression(
 							new CodeArgumentReferenceExpression("input"),
 							"headerLine"),
-						new CodePrimitiveExpression("Missing value '"+name+"' in loaded section"))));
+						new CodePrimitiveExpression("Missing value '" + name + "' in loaded section"))));
 				statements.Add(ifStatement);
 
 				ifStatement.FalseStatements.Add(new CodeAssignStatement(
@@ -653,7 +657,7 @@ namespace SteamEngine.Persistence {
 
 				} else {
 					//we create a method for delayed loading of the value
-					
+
 					string delayedLoadMethodName = GenerateDelayedLoadMethod(assignment, name, type);
 
 					//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
@@ -666,7 +670,7 @@ namespace SteamEngine.Persistence {
 							new CodeDelegateCreateExpression(
 								new CodeTypeReference(typeof(LoadObjectParam)),
 								new CodeThisReferenceExpression(),
-								delayedLoadMethodName), 
+								delayedLoadMethodName),
 							new CodeFieldReferenceExpression(
 								new CodeArgumentReferenceExpression("input"),
 								"filename"),
@@ -682,7 +686,7 @@ namespace SteamEngine.Persistence {
 				CodeMemberMethod method = new CodeMemberMethod();
 				method.Attributes = MemberAttributes.Private;
 
-				method.Name = "DelayedLoad_"+name;
+				method.Name = "DelayedLoad_" + name;
 				method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "resolved"));
 				method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "filename"));
 				method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "line"));

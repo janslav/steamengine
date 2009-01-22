@@ -26,21 +26,25 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 
 	public sealed class LinkedListSerializer : ISaveImplementor, IDeepCopyImplementor {
-		public string HeaderName { get {
-			return "LinkedList";
-		} }
+		public string HeaderName {
+			get {
+				return "LinkedList";
+			}
+		}
 
-		public Type HandledType { get {
-			return typeof(LinkedList<>);
-		} }
-		
+		public Type HandledType {
+			get {
+				return typeof(LinkedList<>);
+			}
+		}
+
 		public void Save(object objToSave, SaveStream writer) {
 			ICollection linkedList = (ICollection) objToSave;
 			Type listType = linkedList.GetType();
 			Type memberType = listType.GetGenericArguments()[0];
 			int count = linkedList.Count;
 			writer.WriteValue("count", count);
-			writer.WriteLine("type="+memberType.Name);
+			writer.WriteLine("type=" + memberType.Name);
 			int i = 0;
 			foreach (object o in linkedList) {
 				writer.WriteValue(i.ToString(), o);
@@ -70,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 				Type typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
 				IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, new object[] { linkedList, count });
 
-				for (int i = 0; i<count; i++) {
+				for (int i = 0; i < count; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
 					ObjectSaver.Load(valueLine.value, linkedListWrapper.DelayedLoad_Value, input.filename, valueLine.line, i);
@@ -110,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void DelayedCopy_Value(object o, object index) {
-				int i = (int)index;
+				int i = (int) index;
 				if (!loaded[i]) {
 					loadedCount++;
 					loaded[i] = true;

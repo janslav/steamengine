@@ -107,7 +107,7 @@ namespace SteamEngine {
 		internal static MethodInfo GetConvertMethod(Type t) {
 			MethodInfo mi = (MethodInfo) convertMethods[t];
 			if (mi == null) {
-				string methodName = "To"+t.Name;
+				string methodName = "To" + t.Name;
 				mi = typeof(Convert).GetMethod(methodName, singleObjTypeArr);
 				if (mi != null) {
 					convertMethods[t] = mi;
@@ -327,8 +327,8 @@ namespace SteamEngine {
 			private static void EmitInvokeMethod(ConstructorInfo constructor, TypeBuilder tb,
 					Type[] invokeParamTypes, int paramsAt) {
 
-				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final|MethodAttributes.Public|MethodAttributes.ReuseSlot
-					|MethodAttributes.Virtual|MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);
+				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
+					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);
 				ILGenerator il = mb.GetILGenerator();
 
 				EmitPushParams(il, constructor.GetParameters(), paramsAt);
@@ -429,7 +429,7 @@ namespace SteamEngine {
 				Type fieldType = field.FieldType;
 
 				if (!field.IsInitOnly) {//readonly field, no set method
-					mb = tb.DefineMethod("SetValue", MethodAttributes.Public|MethodAttributes.ReuseSlot|MethodAttributes.Virtual,
+					mb = tb.DefineMethod("SetValue", MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual,
 						typeof(void), setParamTypes);
 					il = mb.GetILGenerator();
 
@@ -455,7 +455,7 @@ namespace SteamEngine {
 					il.Emit(OpCodes.Ret);//the setter method finished
 				}
 
-				mb = tb.DefineMethod("GetValue", MethodAttributes.Public|MethodAttributes.ReuseSlot|MethodAttributes.Virtual,
+				mb = tb.DefineMethod("GetValue", MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual,
 					typeof(object), getParamTypes);
 				il = mb.GetILGenerator();
 
@@ -570,8 +570,8 @@ namespace SteamEngine {
 			internal static MethodWrapper SpitAndInstantiateWrapperFor(MethodInfo method) {
 				TypeBuilder tb = MemberWrapper.module.DefineType(GetWrapperClassNameFor(method),
 					TypeAttributes.NotPublic, typeof(MethodWrapper));
-				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final|MethodAttributes.Public|MethodAttributes.ReuseSlot
-					|MethodAttributes.Virtual|MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);
+				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
+					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);
 				ILGenerator il = mb.GetILGenerator();
 
 				Type declaringType = method.DeclaringType;

@@ -43,7 +43,7 @@ namespace SteamEngine.Networking {
 		protected abstract ReadPacketResult ReadDynamicPart(int blockSize);
 	}
 
-	public sealed class  GeneralInformationInPacket : DynamicLenInPacket {
+	public sealed class GeneralInformationInPacket : DynamicLenInPacket {
 		SubPacket subPacket;
 
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
@@ -61,10 +61,10 @@ namespace SteamEngine.Networking {
 					break;
 				case 0x1c:
 					this.subPacket = Pool<SpellSelectedSubPacket>.Acquire();
-					break;	
+					break;
 				case 0x24:
 					this.subPacket = Pool<UnknownSubPacket>.Acquire();
-					break;	
+					break;
 				default:
 					Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
 					this.OutputPacketLog();
@@ -892,9 +892,9 @@ namespace SteamEngine.Networking {
 			conn.Close("Client logoff - returning to main menu");
 		}
 	}
-	
+
 	public sealed class MoveRequestInPacket : GameIncomingPacket {
-		byte dir,sequence;
+		byte dir, sequence;
 
 		protected override ReadPacketResult Read() {
 			this.dir = (byte) (this.DecodeByte() & 0x87); //we only want 0x80 and 0..7
@@ -910,7 +910,7 @@ namespace SteamEngine.Networking {
 			bool running = ((this.dir & 0x80) == 0x80);
 			Direction direction = (Direction) (this.dir & 0x07);
 
-			ms.MovementRequest(direction, running,  sequence);
+			ms.MovementRequest(direction, running, sequence);
 		}
 	}
 
@@ -961,8 +961,8 @@ namespace SteamEngine.Networking {
 				PacketSequences.SendRemoveFromView(conn, this.uid);
 			}
 		}
-	}	
-	
+	}
+
 	public sealed class DropItemInPacket : GameIncomingPacket {
 		int itemUid, contUid;
 		ushort x, y;
@@ -1111,11 +1111,11 @@ namespace SteamEngine.Networking {
 					break;
 			}
 
-			
+
 			this.OutputPacketLog("Error or unexpected value in Request skill/spell/opendoor/anim packet.");
 		}
-	}	
-	
+	}
+
 	public sealed class StatLockChangeInPacket : GameIncomingPacket {
 		byte stat;
 		StatLockType lockType;
@@ -1167,7 +1167,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 	}
-	
+
 	public sealed class RequestWarModeInPacket : GameIncomingPacket {
 		bool warModeEnabled;
 
@@ -1244,7 +1244,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 	}
-	
+
 	public sealed class RequestHelpInPacket : GameIncomingPacket {
 		protected override ReadPacketResult Read() {
 			this.SeekFromCurrent(257);//some worthless data

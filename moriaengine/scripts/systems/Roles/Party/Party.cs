@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		private readonly ReadOnlyCollection<Character> candidatesReadonly;
 		private Character leader;
 
-		public const int Capacity = 10;		
+		public const int Capacity = 10;
 
 		public static Party GetParty(Character ch) {
 			return (Party) RolesManagement.GetRole(ch, PartyDef.rkParty);
@@ -241,4 +241,4 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 	}
-}		
+}

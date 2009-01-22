@@ -24,21 +24,21 @@ using SteamEngine.Common;
 using System.Configuration;
 //
 namespace SteamEngine.Converter {
-//	/**
-//	Hardcoded changes to converted scripts:
-//		1) The fishing pole is forced to be twohanded.
-//			(It's detected by checking if an item's layer is 2 and model is 0xdbf. 0xdc0 is a dupeitem of it and so will inherit its twohandedness.)
-//	
-//	*/
-//	
-	
+	//	/**
+	//	Hardcoded changes to converted scripts:
+	//		1) The fishing pole is forced to be twohanded.
+	//			(It's detected by checking if an item's layer is 2 and model is 0xdbf. 0xdc0 is a dupeitem of it and so will inherit its twohandedness.)
+	//	
+	//	*/
+	//	
+
 
 	public class ConvertedCharDef : ConvertedThingDef {
 		public static Dictionary<string, ConvertedThingDef> charsByDefname = new Dictionary<string, ConvertedThingDef>(StringComparer.OrdinalIgnoreCase);
 		public static Dictionary<int, ConvertedThingDef> charsByModel = new Dictionary<int, ConvertedThingDef>();
 		//by model and by defnames
-		
-	
+
+
 		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
 				new LineImplTask("anim", new LineImpl(MayBeHex_IgnorePoint)), 
 //TODO:
@@ -56,7 +56,8 @@ namespace SteamEngine.Converter {
 																			  
 		};
 
-		public ConvertedCharDef(PropsSection input) : base(input) {
+		public ConvertedCharDef(PropsSection input)
+			: base(input) {
 			this.byModel = charsByModel;
 			this.byDefname = charsByDefname;
 
@@ -80,7 +81,7 @@ namespace SteamEngine.Converter {
 		}
 
 		private static string HandleMountId(ConvertedDef def, PropsLine line) {
-			int num = -1; 
+			int num = -1;
 			if (!ConvertTools.TryParseInt32(line.value, out num)) {
 				ConvertedThingDef i;
 				if (ConvertedItemDef.itemsByDefname.TryGetValue(line.value, out i)) {
@@ -88,7 +89,7 @@ namespace SteamEngine.Converter {
 				}
 			}
 			if (num != -1) {
-				string retVal = "0x"+num.ToString("x");
+				string retVal = "0x" + num.ToString("x");
 				def.Set("MountItem", retVal, line.comment);
 				return retVal;
 			} else {
@@ -102,12 +103,12 @@ namespace SteamEngine.Converter {
 			string retVal = line.value;
 			int num;
 			if (ConvertTools.TryParseInt32(line.value, out num)) {
-				retVal = "0x"+num.ToString("x");
+				retVal = "0x" + num.ToString("x");
 				def.Set("AngerSound", retVal, line.comment);
-				def.Set("IdleSound", "0x"+(num+1).ToString("x"), "");
-				def.Set("AttackSound", "0x"+(num+2).ToString("x"), "");
-				def.Set("HurtSound", "0x"+(num+3).ToString("x"), "");
-				def.Set("DeathSound", "0x"+(num+4).ToString("x"), "");
+				def.Set("IdleSound", "0x" + (num + 1).ToString("x"), "");
+				def.Set("AttackSound", "0x" + (num + 2).ToString("x"), "");
+				def.Set("HurtSound", "0x" + (num + 3).ToString("x"), "");
+				def.Set("DeathSound", "0x" + (num + 4).ToString("x"), "");
 			} else {
 				def.Set("AngerSound", retVal, line.comment);
 				def.Set("IdleSound", retVal + " + 1", "");

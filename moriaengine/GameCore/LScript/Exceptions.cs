@@ -29,36 +29,40 @@ using SteamEngine.Common;
 namespace SteamEngine.LScript {
 	internal class InterpreterException : SEException {
 		private bool hasTrace = false;
-		internal InterpreterException(string s) : base(s) {}
-		internal InterpreterException(LogStr s) : base(s) {}
-		
-		internal InterpreterException(string s, int line, int col, string filename, string scriptHolderName) : 
+		internal InterpreterException(string s) : base(s) { }
+		internal InterpreterException(LogStr s) : base(s) { }
+
+		internal InterpreterException(string s, int line, int col, string filename, string scriptHolderName)
+			:
 				base(s) {
 			AddTrace(scriptHolderName, line, filename);
 		}
 
-		internal InterpreterException(LogStr s, int line, int col, string filename, string scriptHolderName) :
+		internal InterpreterException(LogStr s, int line, int col, string filename, string scriptHolderName)
+			:
 				base(s) {
 			AddTrace(scriptHolderName, line, filename);
 		}
-		
-		internal InterpreterException(string s, int line, int col, string filename, string scriptHolderName, Exception innerException) : 
+
+		internal InterpreterException(string s, int line, int col, string filename, string scriptHolderName, Exception innerException)
+			:
 				base(s, innerException) {
 			AddTrace(scriptHolderName, line, filename);
 		}
 
-		internal InterpreterException(LogStr s, int line, int col, string filename, string scriptHolderName, Exception innerException) :
+		internal InterpreterException(LogStr s, int line, int col, string filename, string scriptHolderName, Exception innerException)
+			:
 				base(s, innerException) {
 			AddTrace(scriptHolderName, line, filename);
 		}
-		
+
 		private void AddTrace(string triggerName, int line, string fileName) {
 			hasTrace = true;
-			niceMessage += Environment.NewLine+"   at function/trigger "
-				+LogStr.Ident(triggerName)+"\t"
-				+LogStr.FileLine(fileName, line);
+			niceMessage += Environment.NewLine + "   at function/trigger "
+				+ LogStr.Ident(triggerName) + "\t"
+				+ LogStr.FileLine(fileName, line);
 		}
-		
+
 		internal void AddTrace(OpNode node) {
 			hasTrace = true;
 			AddTrace(node.ParentScriptHolder.GetDecoratedName(), node.line, node.filename);
@@ -70,11 +74,11 @@ namespace SteamEngine.LScript {
 			}
 		}
 	}
-	
+
 	internal class NameRefException : InterpreterException {
 		internal NameRef nameRef;
-		internal NameRefException(int line, int col, string filename, NameRef nameRef, string scriptHolderName) 
-				: base("Badly placed or invalid namespace/class name ('"+LogStr.Ident(nameRef.name)+"').", line, col, filename, scriptHolderName) {
+		internal NameRefException(int line, int col, string filename, NameRef nameRef, string scriptHolderName)
+			: base("Badly placed or invalid namespace/class name ('" + LogStr.Ident(nameRef.name) + "').", line, col, filename, scriptHolderName) {
 			this.nameRef = nameRef;
 		}
 	}

@@ -23,7 +23,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	
+
 	[SaveableClass]
 	[Dialogs.ViewableClass]
 	public class ScriptedAccount : AbstractAccount {
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 		public void AddCrime(AccountCrime crime) {
 			accCrimes.Add(crime);
 		}
-		[Summary("Remove one selected crime (cannot be removed from AccCrimes property")]		
+		[Summary("Remove one selected crime (cannot be removed from AccCrimes property")]
 		public void RemoveCrime(AccountCrime crime) {
 			accCrimes.Remove(crime);
 		}
@@ -106,11 +106,11 @@ namespace SteamEngine.CompiledScripts {
 			base.Save(output);
 		}
 
-		[Summary("Method for retreiving a sublist of GameAccounts which names contain "+
+		[Summary("Method for retreiving a sublist of GameAccounts which names contain " +
 				"a specified string")]
 		public static List<ScriptedAccount> RetreiveByStr(string searched) {
 			List<ScriptedAccount> retList = new List<ScriptedAccount>();
-            if (searched == null) searched = ""; //can be null
+			if (searched == null) searched = ""; //can be null
 			searched = searched.ToUpper();
 
 			foreach (ScriptedAccount acc in AllAccounts) {

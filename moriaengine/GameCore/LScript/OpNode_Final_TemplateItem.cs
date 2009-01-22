@@ -32,9 +32,9 @@ namespace SteamEngine.LScript {
 		private OpNode amountNode;
 		private readonly bool isnewbie;
 
-		internal OpNode_TemplateItem(IOpNodeHolder parent, string filename, 
+		internal OpNode_TemplateItem(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, bool isnewbie, OpNode defNode, OpNode amountNode)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.isnewbie = isnewbie;
 			this.defNode = defNode;
 			this.amountNode = amountNode;
@@ -49,13 +49,13 @@ namespace SteamEngine.LScript {
 				amountNode = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
 			Thing t = (Thing) vars.defaultObject;
 			vars.self = t;
-			
+
 			IThingFactory tf;
 			uint amount;
 			try {
@@ -75,7 +75,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating (TEMPLATE)ITEM expression", 
+				throw new InterpreterException("Exception while evaluating (TEMPLATE)ITEM expression",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -98,17 +98,19 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating (TEMPLATE)ITEM expression", 
+				throw new InterpreterException("Exception while evaluating (TEMPLATE)ITEM expression",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
-			return (isnewbie?"ITEMNEWBIE":"ITEM")+"("+defNode+", "+amountNode+")";
+			return (isnewbie ? "ITEMNEWBIE" : "ITEM") + "(" + defNode + ", " + amountNode + ")";
 		}
-		
-		public Type ReturnType { get {
-			return typeof(AbstractItem);
-		} }
+
+		public Type ReturnType {
+			get {
+				return typeof(AbstractItem);
+			}
+		}
 	}
-}	
+}

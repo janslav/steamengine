@@ -26,22 +26,22 @@ using System.Globalization;
 using SteamEngine.Packets;
 
 namespace SteamEngine {
-	
+
 	//A simulated connection, for testing.
 	//internal class SimulConn : GameConn {
 	//    internal SimulConn() : base() {
 	//        try {
-				
+
 	//        } catch (ObjectDisposedException) {
 	//        }
 	//    }
-		
+
 	//    public override void Write(byte[] array, int start, int len) {
 	//        try {
-				
+
 	//        } catch (ObjectDisposedException) {
 	//        }
 	//    }
 	//}
-	
+
 }

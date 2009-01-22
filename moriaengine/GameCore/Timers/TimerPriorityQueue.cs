@@ -43,7 +43,7 @@ namespace SteamEngine.Timers {
 			this.capacity = 15;
 			this.heap = new Timer[this.capacity];
 		}
-		
+
 		public void Clear() {
 			Array.Clear(this.heap, 0, this.heap.Length);
 			this.count = 0;
@@ -61,21 +61,21 @@ namespace SteamEngine.Timers {
 			result.index = -1;
 			return result;
 		}
-		
+
 		public void Remove(Timer timer) {
 			if (timer.index > -1) {
 				this.RemoveAt(timer.index);
 				timer.index = -1;
 			}
 		}
-		
+
 		private void RemoveAt(int i) {
 			this.count--;
 			this.TrickleDown(i, this.heap[this.count]);
 			this.heap[this.count] = null;
 			//this.version++;
 		}
-		
+
 		public Timer Peek() {
 			if (this.count == 0) {
 				throw new InvalidOperationException();
@@ -95,10 +95,10 @@ namespace SteamEngine.Timers {
 		private void BubbleUp(int index, Timer timer) {
 			int parent = this.GetParent(index);
 			// note: (index > 0) means there is a parent
-			while ((index > 0) && 
+			while ((index > 0) &&
 					(heap[parent].fireAt > timer.fireAt)) {
-						//original line: (heap[parent].Priority.CompareTo(he.Priority) < 0)
-						//is true when parent priority is lower than our current priority - in case of timers means it higher time
+				//original line: (heap[parent].Priority.CompareTo(he.Priority) < 0)
+				//is true when parent priority is lower than our current priority - in case of timers means it higher time
 				Timer parentTimer = this.heap[parent];
 				parentTimer.index = index;
 				heap[index] = parentTimer;
@@ -141,14 +141,16 @@ namespace SteamEngine.Timers {
 			}
 			this.BubbleUp(index, timer);
 		}
-        
+
 		//public IEnumerator GetEnumerator() {
 		//    return new PriorityQueueEnumerator(this);
 		//}
 
-		public int Count { get {
-			return count;
-		} }
+		public int Count {
+			get {
+				return count;
+			}
+		}
 
 		//private class PriorityQueueEnumerator : IEnumerator<Timer> {
 		//    private int index;

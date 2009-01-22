@@ -32,24 +32,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		[Summary("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, "+
-				"	1 - index ze seznamu tagu ktery bude na strance jako prvni"+
-				"	2 - vyhledavaci kriterium pro jmena tagu"+
+		[Summary("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, " +
+				"	1 - index ze seznamu tagu ktery bude na strance jako prvni" +
+				"	2 - vyhledavaci kriterium pro jmena tagu" +
 				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
-			TagHolder th = (TagHolder)args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
+			TagHolder th = (TagHolder) args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
 			List<KeyValuePair<TagKey, Object>> tagList = args.GetTag(D_TagList.tagListTK) as List<KeyValuePair<TagKey, Object>>;
-			if(tagList == null) {
+			if (tagList == null) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				tagList = ListifyTags(th.GetAllTags(), TagMath.SGetTag(args, D_TagList.tagCriteriumTK));
 				tagList.Sort(TagsComparer.instance);
 				args.SetTag(D_TagList.tagListTK, tagList); //ulozime to do argumentu dialogu				
-			} 
+			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tagList.Count);
-			
+
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(width);
@@ -57,57 +57,57 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech tagù na "+th.ToString()+" (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")");
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech tagù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);//cudlik na info o hodnotach
 			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
-			
+
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
+			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho tagu
-			dlg.AddTable(new GUTATable(1,130,ButtonFactory.D_BUTTON_WIDTH,0));
+			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový tag");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK,3);
-			dlg.MakeLastTableTransparent();			
+			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 3);
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");			
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno tagu");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Info");			
+			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Info");
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Hodnota");
 			dlg.MakeLastTableTransparent();
 
 			//seznam tagu
-			dlg.AddTable(new GUTATable(imax-firstiVal));
+			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				KeyValuePair<TagKey, Object> de = tagList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (3*i));
+				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (3 * i));
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.name);
 				//je li hodnota simple saveable nebo ma koordinator, muzeme ObjectSaver.Save
-				if(ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
+				if (ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
 					//hodnota tagu, vcetne prefixu oznacujicim typ
-					dlg.LastTable[rowCntr, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText,11 + (3*i), ObjectSaver.Save(de.Value));
+					dlg.LastTable[rowCntr, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11 + (3 * i), ObjectSaver.Save(de.Value));
 				} else {//jinak odkaz do infodialogu
-					dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 12 + (3 * i));								
+					dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 12 + (3 * i));
 					dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(de.Value.GetType().Name);
-				}				
-				rowCntr++;			
+				}
+				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//ted paging
-			dlg.CreatePaging(tagList.Count, firstiVal,1);
+			dlg.CreatePaging(tagList.Count, firstiVal, 1);
 
 			//Ok button
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
@@ -120,15 +120,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>)args.GetTag(D_TagList.tagListTK);
+			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>) args.GetTag(D_TagList.tagListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tagList.Count);			
-            if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-                switch(gr.pressedButton) {
-                    case 0: //exit
+			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tagList.Count);
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.pressedButton) {
+					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
-                    case 1: //vyhledat dle zadani
+					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(D_TagList.tagCriteriumTK, nameCriteria);
@@ -137,46 +137,46 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //zobrazit info o vysvetlivkach
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
-						DialogStacking.EnstackDialog(gi, newGi);						
-						break;   						
-                    case 3: //zalozit novy tag.
+						DialogStacking.EnstackDialog(gi, newGi);
+						break;
+					case 3: //zalozit novy tag.
 						DialogArgs newArgs = new DialogArgs();
-						newArgs.SetTag(D_TagList.holderTK, (TagHolder)args.GetTag(D_TagList.holderTK));
+						newArgs.SetTag(D_TagList.holderTK, (TagHolder) args.GetTag(D_TagList.holderTK));
 						newGi = gi.Cont.Dialog(SingletonScript<D_NewTag>.Instance, newArgs); //posleme si parametr toho typka na nemz bude novy tag vytvoren
-						DialogStacking.EnstackDialog(gi,newGi); //vlozime napred dialog do stacku
+						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 4: //uložit pripadne zmeny
 						//projdeme dostupny seznam tagu na strance a u tech editovatelnych zkoukneme zmeny
-						for(int i = firstOnPage; i < imax; i++) {
+						for (int i = firstOnPage; i < imax; i++) {
 							KeyValuePair<TagKey, Object> de = tagList[i];
-							if(ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
+							if (ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
 								//jen editovatelne primo (ostatni jsou editovatelne jen pres info dialog)
 								string oldValue = ObjectSaver.Save(de.Value);
 								string dialogValue = gr.GetTextResponse(11 + (3 * i));
-								if(!string.Equals(oldValue, dialogValue)) {
-									TagHolder tagOwner = (TagHolder)args.GetTag(D_TagList.holderTK);
+								if (!string.Equals(oldValue, dialogValue)) {
+									TagHolder tagOwner = (TagHolder) args.GetTag(D_TagList.holderTK);
 									try {
 										tagOwner.SetTag(de.Key, ObjectSaver.Load(dialogValue));
 									} catch {
 										//napsat chybovou hlasku, ale pojedeme dal
-										((Character)gi.Cont).RedMessage("Failed to set the tag " + de.Key.name + " to value " + dialogValue);
+										((Character) gi.Cont).RedMessage("Failed to set the tag " + de.Key.name + " to value " + dialogValue);
 									}
 								}
-							}											
+							}
 						}
 						//resendneme to
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
-                }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, tagList.Count, 1)) {//kliknuto na paging?
+				}
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, tagList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int)gr.pressedButton - 10) / 3;
-				int buttNo = ((int)gr.pressedButton - 10) % 3;
-				TagHolder tagOwner = (TagHolder)args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
+				int row = ((int) gr.pressedButton - 10) / 3;
+				int buttNo = ((int) gr.pressedButton - 10) % 3;
+				TagHolder tagOwner = (TagHolder) args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
 				KeyValuePair<TagKey, Object> de = tagList[row];
-				switch(buttNo) {
+				switch (buttNo) {
 					case 0: //smazat						
 						tagOwner.RemoveTag(de.Key);
 						args.RemoveTag(D_TagList.tagListTK);//na zaver smazat taglist (musi se reloadnout)
@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(tagOwner.GetTag(de.Key)));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
-				}				
+				}
 			}
 		}
 
@@ -195,18 +195,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<KeyValuePair<TagKey, Object>> tagsList = new List<KeyValuePair<TagKey, Object>>();
 			foreach (KeyValuePair<TagKey, Object> entry in tags) {
 				//entry in this hashtable is TagKey and its object value
-				if(criteria == null || criteria.Equals("")) {
+				if (criteria == null || criteria.Equals("")) {
 					tagsList.Add(entry);//bereme vse
-				} else if(entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					tagsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
 				}
 			}
 			return tagsList;
 		}
 
-		[Summary("Display a tag list. Function accessible from the game."+
-				"The function is designed to be triggered using .x TagList(criteria)"+
-			    "but it can be used also normally .TagList(criteria) to display runner's own tags")]
+		[Summary("Display a tag list. Function accessible from the game." +
+				"The function is designed to be triggered using .x TagList(criteria)" +
+				"but it can be used also normally .TagList(criteria) to display runner's own tags")]
 		[SteamFunction]
 		public static void TagList(TagHolder self, ScriptArgs text) {
 			//zavolat dialog, 
@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvniho tagu
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_TagList.holderTK, self); //na sobe budeme zobrazovat tagy
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TagList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_TagList.tagCriteriumTK, text.Args);//vyhl. kriterium
@@ -236,7 +236,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<TagKey, Object> x, KeyValuePair<TagKey, Object> y) {
 			TagKey a = x.Key;
 			TagKey b = y.Key;
-			return String.Compare(a.name,b.name,true);
+			return String.Compare(a.name, b.name, true);
 		}
 	}
 }

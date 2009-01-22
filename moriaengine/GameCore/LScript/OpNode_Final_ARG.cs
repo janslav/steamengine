@@ -17,16 +17,16 @@
 
 using System;
 using PerCederberg.Grammatica.Parser;
-	
+
 namespace SteamEngine.LScript {
 	public class OpNode_SetArg : OpNode, IOpNodeHolder, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 		private OpNode arg;
 
-		internal OpNode_SetArg(IOpNodeHolder parent, string filename, 
+		internal OpNode_SetArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name, OpNode arg)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.name = name;
 			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
@@ -36,7 +36,7 @@ namespace SteamEngine.LScript {
 			if (arg == oldNode) {
 				arg = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -60,14 +60,14 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARG ", name, " = ", arg);
 		}
 	}
-	
+
 	public class OpNode_GetArg : OpNode, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 
-		internal OpNode_GetArg(IOpNodeHolder parent, string filename, 
+		internal OpNode_GetArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
 			this.name = name;
 		}
@@ -84,14 +84,14 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARG(", name, ")");
 		}
 	}
-	
+
 	public class OpNode_ArgExists : OpNode, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 
-		internal OpNode_ArgExists(IOpNodeHolder parent, string filename, 
+		internal OpNode_ArgExists(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
 			this.name = name;
 		}
@@ -108,14 +108,14 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARG.EXISTS(", name, ")");
 		}
 	}
-	
+
 	public class OpNode_RemoveArg : OpNode, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 
-		internal OpNode_RemoveArg(IOpNodeHolder parent, string filename, 
+		internal OpNode_RemoveArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
 			this.name = name;
 		}
@@ -134,4 +134,4 @@ namespace SteamEngine.LScript {
 			return string.Concat("ARG.remove(", name, ")");
 		}
 	}
-}	
+}

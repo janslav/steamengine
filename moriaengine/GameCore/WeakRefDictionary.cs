@@ -34,15 +34,16 @@ namespace SteamEngine {
 	}
 
 	[Summary("Dictionary of weakly referenced keys and values. "
-	+"That means you can put inside stuff and then later it may or may not be still inside :)"
-	+"Depending on whether it has been deleted meanwhile (if it's IDeletable) or eaten by system garbage collection.")]
-	public class WeakRefDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IPurgable where TKey : class where TValue : class {
+	+ "That means you can put inside stuff and then later it may or may not be still inside :)"
+	+ "Depending on whether it has been deleted meanwhile (if it's IDeletable) or eaten by system garbage collection.")]
+	public class WeakRefDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IPurgable
+		where TKey : class
+		where TValue : class {
 		private Dictionary<WeakRefDictionaryKeyEntry, WeakReference> dict;
 		private IEqualityComparer<TKey> comparer;
 
-		public WeakRefDictionary() 
-			: this(null)
-		{
+		public WeakRefDictionary()
+			: this(null) {
 		}
 
 		public WeakRefDictionary(IEqualityComparer<TKey> comparer) {
@@ -209,9 +210,9 @@ namespace SteamEngine {
 		}
 
 		private class KeysCollection : ICollection<TKey> {
-			private WeakRefDictionary<TKey,TValue> cache;
+			private WeakRefDictionary<TKey, TValue> cache;
 
-			internal KeysCollection(WeakRefDictionary<TKey,TValue> cache) {
+			internal KeysCollection(WeakRefDictionary<TKey, TValue> cache) {
 				this.cache = cache;
 			}
 
@@ -357,8 +358,8 @@ namespace SteamEngine {
 		}
 
 		public bool IsReadOnly {
-			get { 
-				return false; 
+			get {
+				return false;
 			}
 		}
 

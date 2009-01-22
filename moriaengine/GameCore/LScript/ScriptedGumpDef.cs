@@ -43,15 +43,15 @@ namespace SteamEngine.LScript {
 			if (gump != null) {
 				sgd = gump as ScriptedGumpDef;
 				if (sgd == null) {//is not scripted, so can not be overriden
-					throw new SEException(LogStr.FileLine(input.filename, input.headerLine)+"GumpDef/Dialog "+LogStr.Ident(name)+" already exists!");
+					throw new SEException(LogStr.FileLine(input.filename, input.headerLine) + "GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
 			} else {
 				sgd = new ScriptedGumpDef(name);
 				DelayedResolver.DelayResolve(new DelayedMethod(sgd.CheckValidity));
 			}
 			if (headers.Length == 1) {//layout section
-				if ((sgd.layoutScript != null)&&(!sgd.unloaded)) {//already loaded
-					throw new SEException("GumpDef/Dialog "+LogStr.Ident(name)+" already exists!");
+				if ((sgd.layoutScript != null) && (!sgd.unloaded)) {//already loaded
+					throw new SEException("GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
 				LScriptHolder sc = new LScriptHolder(input.GetTrigger(0));
 				if (sc.unloaded) {//in case the compilation failed (syntax error)
@@ -66,17 +66,17 @@ namespace SteamEngine.LScript {
 				switch (type) {
 					case "text":
 					case "texts":
-						if ((sgd.textsScript != null)&&(!sgd.unloaded)) {//already loaded
-							throw new SEException("TEXT section for GumpDef/Dialog called "+LogStr.Ident(name)+" already exists!");
+						if ((sgd.textsScript != null) && (!sgd.unloaded)) {//already loaded
+							throw new SEException("TEXT section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
 						TriggerSection trigger = input.GetTrigger(0);
 						StringReader stream = new StringReader(trigger.code.ToString());
 						StringBuilder modifiedCode = new StringBuilder();
 						while (true) {
 							string curLine = stream.ReadLine();
-							if (curLine!=null) {
+							if (curLine != null) {
 								curLine = curLine.Trim();
-								if ((curLine.Length==0)||(curLine.StartsWith("//"))) {
+								if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
 									continue;
 								}
 								curLine = Utility.UnComment(curLine);
@@ -100,11 +100,11 @@ namespace SteamEngine.LScript {
 					case "buttons":
 					case "triggers":
 					case "trigger":
-						if ((sgd.responseTriggers != null)&&(!sgd.unloaded)) {//already loaded
-							throw new SEException("BUTTON section for GumpDef/Dialog called "+LogStr.Ident(name)+" already exists!");
+						if ((sgd.responseTriggers != null) && (!sgd.unloaded)) {//already loaded
+							throw new SEException("BUTTON section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
 						ArrayList responsesList = new ArrayList();
-						for (int i = 1, n = input.TriggerCount; i<n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
+						for (int i = 1, n = input.TriggerCount; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
 							trigger = input.GetTrigger(i);
 							string triggerName = trigger.triggerName;
 							if (String.Compare(triggerName, "anybutton", true) == 0) {
@@ -127,7 +127,7 @@ namespace SteamEngine.LScript {
 									}
 								}
 							}
-							Logger.WriteError("String '"+LogStr.Ident(triggerName)+"' is not valid as gump/dialog response trigger header");
+							Logger.WriteError("String '" + LogStr.Ident(triggerName) + "' is not valid as gump/dialog response trigger header");
 						}
 						sgd.responseTriggers = (ResponseTrigger[]) responsesList.ToArray(typeof(ResponseTrigger));
 						return sgd;
@@ -138,12 +138,12 @@ namespace SteamEngine.LScript {
 
 		private void CheckValidity(object[] args) {//check method, used as delayed
 			if (layoutScript == null) {
-				Logger.WriteWarning("Dialog "+LogStr.Ident(defname)+" missing the main (layout) section?");
+				Logger.WriteWarning("Dialog " + LogStr.Ident(defname) + " missing the main (layout) section?");
 				unloaded = true;
 				return;
 			}
 			if (unloaded && (layoutScript != null)) {
-				Logger.WriteWarning("Dialog "+LogStr.Ident(defname)+" resynced incompletely?");
+				Logger.WriteWarning("Dialog " + LogStr.Ident(defname) + " resynced incompletely?");
 				return;
 			}
 		}
@@ -158,7 +158,7 @@ namespace SteamEngine.LScript {
 			ThrowIfUnloaded();
 			ScriptedGump instance = new ScriptedGump(this);
 			ScriptArgs sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
-			if(args != null) {
+			if (args != null) {
 				instance.InputArgs = args; //store the Dialog Args to the instance				
 			} else {
 				instance.InputArgs = new DialogArgs(); //prepare the empty DialogArgs object (no params)
@@ -186,7 +186,7 @@ namespace SteamEngine.LScript {
 
 		internal void OnResponse(ScriptedGump instance, uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
 			if (responseTriggers != null) {
-				for (int i = 0, n = responseTriggers.Length; i<n; i++) {
+				for (int i = 0, n = responseTriggers.Length; i < n; i++) {
 					ResponseTrigger rt = responseTriggers[i];
 					if (rt.IsInBounds(pressedButton)) {
 						ScriptArgs sa = new ScriptArgs(
@@ -220,7 +220,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public sealed override string ToString() {
-			return "ScriptedGumpDef "+defname;
+			return "ScriptedGumpDef " + defname;
 		}
 	}
 
@@ -232,7 +232,7 @@ namespace SteamEngine.LScript {
 
 		public int this[int id] {
 			get {
-				for (int i = 0, n = selectedSwitches.Length; i<n; i++) {
+				for (int i = 0, n = selectedSwitches.Length; i < n; i++) {
 					if (selectedSwitches[i] == id) {
 						return 1;
 					}
@@ -250,7 +250,7 @@ namespace SteamEngine.LScript {
 
 		public string this[int id] {
 			get {
-				for (int i = 0, n = responseTexts.Length; i<n; i++) {
+				for (int i = 0, n = responseTexts.Length; i < n; i++) {
 					ResponseText rt = responseTexts[i];
 					if (rt.id == id) {
 						return rt.text;
@@ -269,7 +269,7 @@ namespace SteamEngine.LScript {
 
 		public double this[int id] {
 			get {
-				for (int i = 0, n = responseNumbers.Length; i<n; i++) {
+				for (int i = 0, n = responseNumbers.Length; i < n; i++) {
 					ResponseNumber rn = responseNumbers[i];
 					if ((rn != null) && (rn.id == id)) {
 						return rn.number;
