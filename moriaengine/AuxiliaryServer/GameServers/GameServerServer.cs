@@ -20,7 +20,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		internal static void Init() {
 			instance.Bind(Common.Tools.commonPipeName);
-			
+
 		}
 
 		internal static void Exit() {

@@ -1,4 +1,3 @@
-/*
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation; either version 2 of the License, or
@@ -22,15 +21,15 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	class SoundMul {
-		public static void Init() {	
+		public static void Init() {
 			if (Globals.writeMulDocsFiles) {
 				StreamWriter scr = File.CreateText(Globals.GetMulDocPathFor("Sounds.txt"));
 				string mulFileP = Path.Combine(Globals.mulPath, "sound.mul");
 				string mulFilePI = Path.Combine(Globals.mulPath, "soundidx.mul");
 
-				Console.WriteLine("Loading "+LogStr.File("sound.mul")+" and "+LogStr.File("soundidx.mul")+" - sounds info.");
-				int id=0;
-				string longest="";
+				Console.WriteLine("Loading " + LogStr.File("sound.mul") + " and " + LogStr.File("soundidx.mul") + " - sounds info.");
+				int id = 0;
+				string longest = "";
 				if (File.Exists(mulFileP) && File.Exists(mulFilePI)) {
 					FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
 					FileStream mulfsi = new FileStream(mulFilePI, FileMode.Open, FileAccess.Read);
@@ -44,14 +43,14 @@ namespace SteamEngine {
 							start = mulbri.ReadInt32();
 
 							if (start == -1) {
-								scr.WriteLine("//Sound ID "+id+" doesn't exist.");
+								scr.WriteLine("//Sound ID " + id + " doesn't exist.");
 							} else {
 								mulbr.BaseStream.Seek(start, SeekOrigin.Begin);
 								filenameS = Utility.GetCAsciiString(mulbr, 30);
-								if (filenameS.Length>longest.Length) {
-									longest=filenameS;
+								if (filenameS.Length > longest.Length) {
+									longest = filenameS;
 								}
-								scr.WriteLine(filenameS.Replace(".wav","")+" = "+id+",");
+								scr.WriteLine(filenameS.Replace(".wav", "") + " = " + id + ",");
 							}
 							mulbri.BaseStream.Seek(8, SeekOrigin.Current);
 							id++;
@@ -60,7 +59,7 @@ namespace SteamEngine {
 					}
 					mulbr.Close();
 					mulbri.Close();
-					Console.WriteLine("Longest filename in sound.mul: '"+longest+"', "+longest.Length+" characters long.");
+					Console.WriteLine("Longest filename in sound.mul: '" + longest + "', " + longest.Length + " characters long.");
 				} else {
 					Logger.WriteWarning("Unable to locate sound.mul or soundidx.mul.");
 				}

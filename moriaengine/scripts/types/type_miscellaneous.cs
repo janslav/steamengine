@@ -21,43 +21,43 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_eq_bank_box : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_telescope : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_scroll : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_eq_memory_obj : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_eq_vendor_box : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_game_piece : CompiledTriggerGroup {
-		
+
 	}
-	
+
 	public class t_advance_gate : CompiledTriggerGroup {
-		
+
 	}
-	
+
 	public class t_script : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_eq_script : CompiledTriggerGroup {
-		
+
 	}
-	
-	
+
+
 	public class t_stone_guild : CompiledTriggerGroup {
-		
+
 	}
 }

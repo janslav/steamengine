@@ -30,12 +30,12 @@ namespace SteamEngine.LScript {
 		private const int TAG = 0;
 		private const int ARG = 1;
 		private const int VAR = 2;
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node origNode) {
-			int line = origNode.GetStartLine()+LScript.startLine;
+			int line = origNode.GetStartLine() + LScript.startLine;
 			int column = origNode.GetStartColumn();
 			string filename = LScript.GetParentScriptHolder(parent).filename;
-			
+
 			//LScript.DisplayTree(origNode);
 			int type = ResolveTokenType(origNode.GetChildAt(0));
 			int current = 3;
@@ -127,7 +127,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 		}
-		
+
 		private static int ResolveTokenType(Node token) {
 			if (OpNode.IsType(token, StrictConstants.TAG)) {
 				return TAG;
@@ -137,7 +137,7 @@ namespace SteamEngine.LScript {
 				return ARG;
 			}
 		}
-		
+
 		private static OpNode ConstructGetNode(int type, IOpNodeHolder parent, int line, int column, Node origNode, string name) {
 			string filename = LScript.GetParentScriptHolder(parent).filename;
 			switch (type) {
@@ -151,4 +151,4 @@ namespace SteamEngine.LScript {
 			throw new FatalException("this will never happen");
 		}
 	}
-}	
+}

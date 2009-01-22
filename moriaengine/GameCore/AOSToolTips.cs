@@ -26,7 +26,7 @@ namespace SteamEngine {
 		PacketGroup newIdNGroup;
 		PacketGroup dataNGroup;
 
-		private static CacheDictionary<Thing, AOSToolTips> cache = 
+		private static CacheDictionary<Thing, AOSToolTips> cache =
 			new CacheDictionary<Thing, AOSToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
 		private static int uids;
 

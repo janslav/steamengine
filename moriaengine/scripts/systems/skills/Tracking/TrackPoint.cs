@@ -103,8 +103,8 @@ namespace SteamEngine.CompiledScripts {
 
 			if (BEST_COLOR > WORST_COLOR) {
 				Sanity.IfTrueThrow(((color > BEST_COLOR) || (color < WORST_COLOR)), "color out of range");
-			//} else { //commented because of unreachable code warning
-			//    Sanity.IfTrueThrow(((color < BEST_COLOR) || (color > WORST_COLOR)), "color out of range");
+				//} else { //commented because of unreachable code warning
+				//    Sanity.IfTrueThrow(((color < BEST_COLOR) || (color > WORST_COLOR)), "color out of range");
 			}
 			return color;
 		}
@@ -206,7 +206,7 @@ namespace SteamEngine.CompiledScripts {
 					this.oldest = newQueueOldest;
 				}
 			}
-			
+
 
 			public IEnumerable<TrackPoint> EnumerateFromOldest() {
 				TrackPoint next = this.newest;
@@ -256,7 +256,7 @@ namespace SteamEngine.CompiledScripts {
 						tp.Dispose();
 					} while (next != null);
 					this.newest = null;
-				}				
+				}
 				this.oldest = null;
 
 				this.count = 0;

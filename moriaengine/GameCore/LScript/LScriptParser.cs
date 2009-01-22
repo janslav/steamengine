@@ -24,17 +24,19 @@ using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
-			
+
 namespace SteamEngine.LScript {
 	internal class LScriptParser : StrictParser {
 		//ScriptCode code = null;
-		
-		internal LScriptParser(TextReader stream, Analyzer analyzer) : base(stream, analyzer) {
-			
+
+		internal LScriptParser(TextReader stream, Analyzer analyzer)
+			: base(stream, analyzer) {
+
 		}
-		
-		internal LScriptParser(TextReader stream) : base(stream) {
-			
+
+		internal LScriptParser(TextReader stream)
+			: base(stream) {
+
 		}
 	}
-}		
+}

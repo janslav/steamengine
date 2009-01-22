@@ -50,4 +50,4 @@ namespace SteamEngine.CompiledScripts {
 			return CharRelation.Unknown;
 		}
 	}
-}		
+}

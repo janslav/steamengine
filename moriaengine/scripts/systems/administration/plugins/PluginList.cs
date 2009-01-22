@@ -34,18 +34,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam plugin z pluginholdera (char nebo item) prisleho v parametru dialogu
-			PluginHolder ph = (PluginHolder)args.GetTag(D_PluginList.holderTK); //z koho budeme pluginy brat?
+			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme pluginy brat?
 			List<KeyValuePair<PluginKey, Plugin>> pluginList = args.GetTag(D_PluginList.pluginListTK) as List<KeyValuePair<PluginKey, Plugin>>;
-			if(pluginList == null) {
+			if (pluginList == null) {
 				//vzit seznam plugin dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				pluginList = ListifyPlugins(ph.GetAllPluginsWithKeys(), TagMath.SGetTag(args, D_PluginList.pluginCriteriumTK));
 				pluginList.Sort(PluginsComparer.instance); //setridit podle abecedy
 				args.SetTag(D_PluginList.pluginListTK, pluginList); //ulozime to do argumentu dialogu				
-			} 
+			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, pluginList.Count);
-			
+
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(width);
@@ -56,59 +56,59 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech plugin na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + pluginList.Count + ")");
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
-			
+
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1,130,0,ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText,33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,1);
-			dlg.MakeLastTableTransparent();				
+			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");			
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno pluginy");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Defname");			
+			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Defname");
 			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Info");
 			dlg.MakeLastTableTransparent();
 
 			//seznam tagu
-			dlg.AddTable(new GUTATable(imax-firstiVal));
+			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
-			for(int i = firstiVal; i < imax; i++) {
+			for (int i = firstiVal; i < imax; i++) {
 				KeyValuePair<PluginKey, Plugin> de = pluginList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (2*i));
+				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (2 * i));
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.name);
 				//plugin defname
 				Plugin pl = de.Value;
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(pl.Def.Defname);				
+				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(pl.Def.Defname);
 				//odkaz do infodialogu
-				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + (2*i));
-				rowCntr++;			
+				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + (2 * i));
+				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//ted paging
-			dlg.CreatePaging(pluginList.Count, firstiVal, 1);			
+			dlg.CreatePaging(pluginList.Count, firstiVal, 1);
 
 			dlg.WriteOut();
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<PluginKey, Plugin>> pluginList = (List<KeyValuePair<PluginKey, Plugin>>)args.GetTag(D_PluginList.pluginListTK);
+			List<KeyValuePair<PluginKey, Plugin>> pluginList = (List<KeyValuePair<PluginKey, Plugin>>) args.GetTag(D_PluginList.pluginListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, pluginList.Count);			
-            if(gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-                switch(gr.pressedButton) {
-                    case 0: //exit
+			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, pluginList.Count);
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.pressedButton) {
+					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
-                    case 1: //vyhledat dle zadani
+					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(D_PluginList.pluginCriteriumTK, nameCriteria);
@@ -117,18 +117,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //zobrazit info o vysvetlivkach
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
-						DialogStacking.EnstackDialog(gi, newGi);						
+						DialogStacking.EnstackDialog(gi, newGi);
 						break;
-                }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, pluginList.Count, 1)) {//kliknuto na paging?
+				}
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, pluginList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int)gr.pressedButton - 10) / 2;
-				int buttNo = ((int)gr.pressedButton - 10) % 2;
-				PluginHolder pluginOwner = (PluginHolder)args.GetTag(D_PluginList.holderTK); //z koho budeme pluginu brat?
+				int row = ((int) gr.pressedButton - 10) / 2;
+				int buttNo = ((int) gr.pressedButton - 10) % 2;
+				PluginHolder pluginOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme pluginu brat?
 				KeyValuePair<PluginKey, Plugin> de = pluginList[row];
-				switch(buttNo) {
+				switch (buttNo) {
 					case 0: //smazat						
 						pluginOwner.RemovePlugin(de.Key);
 						args.RemoveTag(D_PluginList.pluginListTK);//na zaver smazat pluginlist (musi se reloadnout)
@@ -138,26 +138,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(de.Value));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
-				}				
+				}
 			}
 		}
 
 		[Summary("Retreives the list of all plugins the given PluginHolder has")]
 		private List<KeyValuePair<PluginKey, Plugin>> ListifyPlugins(IEnumerable<KeyValuePair<PluginKey, Plugin>> plugins, string criteria) {
 			List<KeyValuePair<PluginKey, Plugin>> pluginsList = new List<KeyValuePair<PluginKey, Plugin>>();
-			foreach(KeyValuePair<PluginKey, Plugin> entry in plugins) {
+			foreach (KeyValuePair<PluginKey, Plugin> entry in plugins) {
 				//entry in this hashtable is TagKey and its object value
-				if(criteria == null || criteria.Equals("")) {
+				if (criteria == null || criteria.Equals("")) {
 					pluginsList.Add(entry);//bereme vse
-				} else if(entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
 					pluginsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
 				}
 			}
 			return pluginsList;
 		}
 
-		[Summary("Display a plugin list. Function accessible from the game."+
-				"The function is designed to be triggered using .x PluginList(criteria)"+
+		[Summary("Display a plugin list. Function accessible from the game." +
+				"The function is designed to be triggered using .x PluginList(criteria)" +
 			   "but it can be used also normally .PluginList(criteria) to display runner's own plugins")]
 		[SteamFunction]
 		public static void PluginList(PluginHolder self, ScriptArgs text) {
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvni pluginy co ma
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_PluginList.holderTK, self); //na sobe budeme zobrazovat tagy
-			if(text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.argv == null || text.argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_PluginList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_TagList.tagCriteriumTK, text.Args);//vyhl. kriterium
@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<PluginKey, Plugin> x, KeyValuePair<PluginKey, Plugin> y) {
 			PluginKey a = x.Key;
 			PluginKey b = y.Key;
-			return String.Compare(a.name,b.name,true);
+			return String.Compare(a.name, b.name, true);
 		}
 	}
 }

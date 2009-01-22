@@ -18,7 +18,7 @@
 namespace SteamEngine {
 	using System;
 	using System.Collections;
-	
+
 	/// <summary>
 	/// AbstractKey is used as an ID for tags, to make tag lookups
 	/// fast and not use a lot of memory, etc. base class for all
@@ -31,20 +31,20 @@ namespace SteamEngine {
 
 		public readonly string name;
 		public readonly int uid;
-		
+
 		protected AbstractKey(string name, int uid) {
-			this.name=name;
-			this.uid=uid;
+			this.name = name;
+			this.uid = uid;
 		}
-		
+
 		public override int GetHashCode() {
 			return uid;
 		}
-		
+
 		public override string ToString() {
-			return name;	
+			return name;
 		}
-		
+
 		public override bool Equals(Object obj) {
 			return this == obj;
 		}

@@ -37,83 +37,83 @@ using System.Text;
 
 namespace PerCederberg.Grammatica.Parser {
 
-    /**
-     * A parser log exception. This class contains a list of all the parse
-     * errors encountered while parsing.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  1.1
-     * @since    1.1
-     */
-    public class ParserLogException : Exception {
-    
-        /**
-         * The list of errors found.
-         */
-        private ArrayList errors = new ArrayList();
-    
-        /**
-         * Creates a new empty parser log exception.
-         */
-        public ParserLogException() {
-        }
-    
-        /**
-         * The message property. This property contains the detailed
-         * exception error message.
-         */
-        public override string Message {
-            get{
-                return GetMessage(); 
-            }   
-        }
+	/**
+	 * A parser log exception. This class contains a list of all the parse
+	 * errors encountered while parsing.
+	 *
+	 * @author   Per Cederberg, <per at percederberg dot net>
+	 * @version  1.1
+	 * @since    1.1
+	 */
+	public class ParserLogException : Exception {
 
-        /**
-         * Returns the number of errors in this log.
-         * 
-         * @return the number of errors in this log
-         */
-        public int GetErrorCount() {
-            return errors.Count;    
-        }
-        
-        /**
-         * Returns a specific error from the log.
-         * 
-         * @param index          the error index, 0 <= index < count
-         * 
-         * @return the parse error requested
-         */
-        public ParseException GetError(int index) {
-            return (ParseException) errors[index];
-        }
-    
-        /**
-         * Adds a parse error to the log.
-         * 
-         * @param e              the parse error to add
-         */    
-        public void AddError(ParseException e) {
-            errors.Add(e);
-        }
-        
-        /**
-         * Returns the detailed error message. This message will contain
-         * the error messages from all errors in this log, separated by
-         * a newline.
-         * 
-         * @return the detailed error message
-         */
-        public string GetMessage() {
-            StringBuilder  buffer = new StringBuilder();
-            
-            for (int i = 0; i < GetErrorCount(); i++) {
-                if (i > 0) {
-                    buffer.Append("\n");
-                }
-                buffer.Append(GetError(i).GetMessage());
-            }
-            return buffer.ToString();
-        }    
-    }
+		/**
+		 * The list of errors found.
+		 */
+		private ArrayList errors = new ArrayList();
+
+		/**
+		 * Creates a new empty parser log exception.
+		 */
+		public ParserLogException() {
+		}
+
+		/**
+		 * The message property. This property contains the detailed
+		 * exception error message.
+		 */
+		public override string Message {
+			get {
+				return GetMessage();
+			}
+		}
+
+		/**
+		 * Returns the number of errors in this log.
+		 * 
+		 * @return the number of errors in this log
+		 */
+		public int GetErrorCount() {
+			return errors.Count;
+		}
+
+		/**
+		 * Returns a specific error from the log.
+		 * 
+		 * @param index          the error index, 0 <= index < count
+		 * 
+		 * @return the parse error requested
+		 */
+		public ParseException GetError(int index) {
+			return (ParseException) errors[index];
+		}
+
+		/**
+		 * Adds a parse error to the log.
+		 * 
+		 * @param e              the parse error to add
+		 */
+		public void AddError(ParseException e) {
+			errors.Add(e);
+		}
+
+		/**
+		 * Returns the detailed error message. This message will contain
+		 * the error messages from all errors in this log, separated by
+		 * a newline.
+		 * 
+		 * @return the detailed error message
+		 */
+		public string GetMessage() {
+			StringBuilder buffer = new StringBuilder();
+
+			for (int i = 0; i < GetErrorCount(); i++) {
+				if (i > 0) {
+					buffer.Append("\n");
+				}
+				buffer.Append(GetError(i).GetMessage());
+			}
+			return buffer.ToString();
+		}
+	}
 }

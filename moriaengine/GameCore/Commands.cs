@@ -68,36 +68,36 @@ namespace SteamEngine {
 			}
 		}
 
-//        public static void PlayerCommand(GameConn c, string command) {
-//            string lower = command.ToLower();
-//            string noprefix;
+		//        public static void PlayerCommand(GameConn c, string command) {
+		//            string lower = command.ToLower();
+		//            string noprefix;
 
-//            AbstractCharacter commandSrc = c.CurCharacter;
+		//            AbstractCharacter commandSrc = c.CurCharacter;
 
-//            if ((lower.StartsWith("x ") || lower.StartsWith("x."))) {
-//                noprefix = command.Substring(2);
-//            } else if ((lower.StartsWith("set ") || lower.StartsWith("set."))) {
-//                noprefix = command.Substring(4);
-//            } else {
-//#if DEBUG
-//                long ticksBefore = HighPerformanceTimer.TickCount;
-//#endif
-//                InvokeCommand(commandSrc, commandSrc, command);
-//#if DEBUG
-//                Logger.WriteDebug("Command took (in ms): "+ HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
-//#endif
-//                return;
-//            }
+		//            if ((lower.StartsWith("x ") || lower.StartsWith("x."))) {
+		//                noprefix = command.Substring(2);
+		//            } else if ((lower.StartsWith("set ") || lower.StartsWith("set."))) {
+		//                noprefix = command.Substring(4);
+		//            } else {
+		//#if DEBUG
+		//                long ticksBefore = HighPerformanceTimer.TickCount;
+		//#endif
+		//                InvokeCommand(commandSrc, commandSrc, command);
+		//#if DEBUG
+		//                Logger.WriteDebug("Command took (in ms): "+ HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
+		//#endif
+		//                return;
+		//            }
 
-//            if (AuthorizeCommand(commandSrc, "x")) {
-//                c.WriteLine("Command who or what?");
-//                c.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel, 
-//                    new XCommandParameter(commandSrc, noprefix));
-//                LogCommand(commandSrc, command, true, null);
-//            } else {
-//                LogCommand(commandSrc, command, false, commandAuthorisationFailed);
-//            }
-//        }
+		//            if (AuthorizeCommand(commandSrc, "x")) {
+		//                c.WriteLine("Command who or what?");
+		//                c.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel, 
+		//                    new XCommandParameter(commandSrc, noprefix));
+		//                LogCommand(commandSrc, command, true, null);
+		//            } else {
+		//                LogCommand(commandSrc, command, false, commandAuthorisationFailed);
+		//            }
+		//        }
 
 		private class XCommandParameter {
 			internal readonly ISrc commandSrc;
@@ -113,7 +113,7 @@ namespace SteamEngine {
 		//this is invoked directly by consoles
 		public static void ConsoleCommand(ConsoleDummy c, string command) {
 			if (RunLevelManager.IsAwaitingRetry) {
-				if (command=="exit") {//check if we can run it?
+				if (command == "exit") {//check if we can run it?
 					MainClass.signalExit.Set();
 				} else {
 					MainClass.RetryRecompilingScripts();
@@ -126,7 +126,7 @@ namespace SteamEngine {
 #endif
 			InvokeCommand(c, Globals.instance, command);
 #if DEBUG
-			Logger.WriteDebug("Command took (in ms): "+ HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
+			Logger.WriteDebug("Command took (in ms): " + HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
 #endif
 		}
 
@@ -184,7 +184,7 @@ namespace SteamEngine {
 					bool success = SimpleCommandParser.TryRunSnippet(commandSrc, self, code, out errText);
 					LogCommand(commandSrc, code, success, errText);
 				} else {
-					string codeAsKey = String.Concat(self == null? typeof(void).FullName: self.GetType().FullName, code);
+					string codeAsKey = String.Concat(self == null ? typeof(void).FullName : self.GetType().FullName, code);
 					LScriptHolder scriptHolder;
 					if (!gmCommandsCache.TryGetValue(codeAsKey, out scriptHolder)) {
 						try {
@@ -241,11 +241,11 @@ namespace SteamEngine {
 
 	class SimpleCommandParser {
 		static Regex commandRE = new Regex(@"(?<name>\w+)(\s+(?<arg>.+))?",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 
 		[Summary("Runs a method or function of the object self, given by name, and possible "
-		+"one argument of numeric or string type, separated by space from the name")]
+		+ "one argument of numeric or string type, separated by space from the name")]
 		public static bool TryRunSnippet(ISrc commandSrc, TagHolder self, string code, out string errText) {
 			Match m = commandRE.Match(code);
 			if (m.Success) {
@@ -305,7 +305,7 @@ namespace SteamEngine {
 				} else if (nameMatched) {
 					errText = "Wrong argument for that method";
 				} else {
-					errText = "Unknown method/function "+name;
+					errText = "Unknown method/function " + name;
 				}
 			} else {
 				errText = "Unrecognized command format";
@@ -316,7 +316,7 @@ namespace SteamEngine {
 		private static MethodInfo FindMethod(Type type, string name, bool hasArg, bool argIsNumber, out Type argType, out bool nameMatched) {
 			nameMatched = false;
 			argType = null;
-			foreach (MethodInfo mi in type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static)) {
+			foreach (MethodInfo mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) {
 				if (string.Compare(name, mi.Name, true) == 0) { //true for case insensitive
 					ParameterInfo[] pis = mi.GetParameters();
 					if (hasArg) {

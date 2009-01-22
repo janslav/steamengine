@@ -15,191 +15,191 @@ using System.Runtime.Serialization;
 
 namespace JMBucknall.Containers {
 
-    [Serializable()]
-    public struct HeapEntry {
-        private object item;
-        private IComparable priority;
-        public HeapEntry(object item, IComparable priority) {
-            this.item = item;
-            this.priority = priority;
-        }
-        public object Item {
-            get {return item;}
-        }
-        public IComparable Priority {
-            get {return priority;}
-        }
-        public void Clear() {
-            item = null;
-            priority = null;
-        }
-    }
+	[Serializable()]
+	public struct HeapEntry {
+		private object item;
+		private IComparable priority;
+		public HeapEntry(object item, IComparable priority) {
+			this.item = item;
+			this.priority = priority;
+		}
+		public object Item {
+			get { return item; }
+		}
+		public IComparable Priority {
+			get { return priority; }
+		}
+		public void Clear() {
+			item = null;
+			priority = null;
+		}
+	}
 
-    [Serializable()]
-    public class PriorityQueue : ICollection, ISerializable {
-        private int count;
-        private int capacity;
-        private int version;
-        private HeapEntry[] heap;
+	[Serializable()]
+	public class PriorityQueue : ICollection, ISerializable {
+		private int count;
+		private int capacity;
+		private int version;
+		private HeapEntry[] heap;
 
-        private const string capacityName = "capacity";
-        private const string countName = "count";
-        private const string heapName = "heap";
+		private const string capacityName = "capacity";
+		private const string countName = "count";
+		private const string heapName = "heap";
 
-        public PriorityQueue() {
-            capacity = 15; // 15 is equal to 4 complete levels
-            heap = new HeapEntry[capacity];
-        }
+		public PriorityQueue() {
+			capacity = 15; // 15 is equal to 4 complete levels
+			heap = new HeapEntry[capacity];
+		}
 
-        protected PriorityQueue(SerializationInfo info, StreamingContext context) {
-            capacity = info.GetInt32(capacityName);
-            count = info.GetInt32(countName);
-            HeapEntry[] heapCopy = (HeapEntry[]) info.GetValue(heapName, typeof(HeapEntry[]));
-            heap = new HeapEntry[capacity];
-            Array.Copy(heapCopy, 0, heap, 0, count);
-            version = 0;
-        }
+		protected PriorityQueue(SerializationInfo info, StreamingContext context) {
+			capacity = info.GetInt32(capacityName);
+			count = info.GetInt32(countName);
+			HeapEntry[] heapCopy = (HeapEntry[]) info.GetValue(heapName, typeof(HeapEntry[]));
+			heap = new HeapEntry[capacity];
+			Array.Copy(heapCopy, 0, heap, 0, count);
+			version = 0;
+		}
 
-        public object Dequeue() {
-            if (count == 0) 
-                throw new InvalidOperationException();
-            
-            object result = heap[0].Item;
-            count--;
-            trickleDown(0, heap[count]);
-            heap[count].Clear();
-            version++;
-            return result;
-        }
+		public object Dequeue() {
+			if (count == 0)
+				throw new InvalidOperationException();
 
-        public void Enqueue(object item, IComparable priority) {
-            if (priority == null) 
-                throw new ArgumentNullException("priority");
-            if (count == capacity)  
-                growHeap();
-            count++;
-            bubbleUp(count - 1, new HeapEntry(item, priority));
-            version++;
-        }
+			object result = heap[0].Item;
+			count--;
+			trickleDown(0, heap[count]);
+			heap[count].Clear();
+			version++;
+			return result;
+		}
 
-        private void bubbleUp(int index, HeapEntry he) {
-            int parent = getParent(index);
-            // note: (index > 0) means there is a parent
-            while ((index > 0) && 
-                  (heap[parent].Priority.CompareTo(he.Priority) < 0)) {
-                heap[index] = heap[parent];
-                index = parent;
-                parent = getParent(index);
-            }
-            heap[index] = he;
-        }
+		public void Enqueue(object item, IComparable priority) {
+			if (priority == null)
+				throw new ArgumentNullException("priority");
+			if (count == capacity)
+				growHeap();
+			count++;
+			bubbleUp(count - 1, new HeapEntry(item, priority));
+			version++;
+		}
 
-        private int getLeftChild(int index) {
-            return (index * 2) + 1;
-        }
+		private void bubbleUp(int index, HeapEntry he) {
+			int parent = getParent(index);
+			// note: (index > 0) means there is a parent
+			while ((index > 0) &&
+				  (heap[parent].Priority.CompareTo(he.Priority) < 0)) {
+				heap[index] = heap[parent];
+				index = parent;
+				parent = getParent(index);
+			}
+			heap[index] = he;
+		}
 
-        private int getParent(int index) {
-            return (index - 1) / 2;
-        }
+		private int getLeftChild(int index) {
+			return (index * 2) + 1;
+		}
 
-        private void growHeap() {
-            capacity = (capacity * 2) + 1;
-            HeapEntry[] newHeap = new HeapEntry[capacity];
-            System.Array.Copy(heap, 0, newHeap, 0, count);
-            heap = newHeap;
-        }
+		private int getParent(int index) {
+			return (index - 1) / 2;
+		}
 
-        private void trickleDown(int index, HeapEntry he) {
-            int child = getLeftChild(index);
-            while (child < count) {
-                if (((child + 1) < count) && 
-                    (heap[child].Priority.CompareTo(heap[child + 1].Priority) < 0)) {
-                    child++;
-                }
-                heap[index] = heap[child];
-                index = child;
-                child = getLeftChild(index);
-            }
-            bubbleUp(index, he);
-        }
-        
-        #region IEnumerable implementation
-        public IEnumerator GetEnumerator() {
-            return new PriorityQueueEnumerator(this);
-        }
-        #endregion
+		private void growHeap() {
+			capacity = (capacity * 2) + 1;
+			HeapEntry[] newHeap = new HeapEntry[capacity];
+			System.Array.Copy(heap, 0, newHeap, 0, count);
+			heap = newHeap;
+		}
 
-        #region ICollection implementation
-        public int Count {
-            get {return count;}
-        }
+		private void trickleDown(int index, HeapEntry he) {
+			int child = getLeftChild(index);
+			while (child < count) {
+				if (((child + 1) < count) &&
+					(heap[child].Priority.CompareTo(heap[child + 1].Priority) < 0)) {
+					child++;
+				}
+				heap[index] = heap[child];
+				index = child;
+				child = getLeftChild(index);
+			}
+			bubbleUp(index, he);
+		}
 
-        public void CopyTo(Array array, int index) {
-            System.Array.Copy(heap, 0, array, index, count);
-        }
+		#region IEnumerable implementation
+		public IEnumerator GetEnumerator() {
+			return new PriorityQueueEnumerator(this);
+		}
+		#endregion
 
-        public object SyncRoot {
-            get {return this;}
-        }
+		#region ICollection implementation
+		public int Count {
+			get { return count; }
+		}
 
-        public bool IsSynchronized { 
-            get {return false;}
-        }
-        #endregion
+		public void CopyTo(Array array, int index) {
+			System.Array.Copy(heap, 0, array, index, count);
+		}
 
-        #region ISerializable implementation
-        [SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) {
-            info.AddValue(capacityName, capacity);
-            info.AddValue(countName, count);
-            HeapEntry[] heapCopy = new HeapEntry[count];
-            Array.Copy(heap, 0, heapCopy, 0, count);
-            info.AddValue(heapName, heapCopy, typeof(HeapEntry[]));
-        }
-        #endregion
+		public object SyncRoot {
+			get { return this; }
+		}
 
-        #region Priority Queue enumerator
-        [Serializable()]
-        private class PriorityQueueEnumerator : IEnumerator {
-            private int index;
-            private PriorityQueue pq;
-            private int version;
+		public bool IsSynchronized {
+			get { return false; }
+		}
+		#endregion
 
-            public PriorityQueueEnumerator(PriorityQueue pq) {
-                this.pq = pq;
-                Reset();
-            }
+		#region ISerializable implementation
+		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) {
+			info.AddValue(capacityName, capacity);
+			info.AddValue(countName, count);
+			HeapEntry[] heapCopy = new HeapEntry[count];
+			Array.Copy(heap, 0, heapCopy, 0, count);
+			info.AddValue(heapName, heapCopy, typeof(HeapEntry[]));
+		}
+		#endregion
 
-            private void checkVersion() {
-                if (version != pq.version)
-                    throw new InvalidOperationException();
-            }
+		#region Priority Queue enumerator
+		[Serializable()]
+		private class PriorityQueueEnumerator : IEnumerator {
+			private int index;
+			private PriorityQueue pq;
+			private int version;
 
-            #region IEnumerator Members
+			public PriorityQueueEnumerator(PriorityQueue pq) {
+				this.pq = pq;
+				Reset();
+			}
 
-            public void Reset() {
-                index = -1;
-                version = pq.version;
-            }
+			private void checkVersion() {
+				if (version != pq.version)
+					throw new InvalidOperationException();
+			}
 
-            public object Current {
-                get { 
-                    checkVersion();
-                    return pq.heap[index].Item; 
-                }
-            }
+			#region IEnumerator Members
 
-            public bool MoveNext() {
-                checkVersion();
-                if (index + 1 == pq.count) 
-                    return false;
-                index++;
-                return true;
-            }
+			public void Reset() {
+				index = -1;
+				version = pq.version;
+			}
 
-            #endregion
-        }
-        #endregion
+			public object Current {
+				get {
+					checkVersion();
+					return pq.heap[index].Item;
+				}
+			}
 
-    }
+			public bool MoveNext() {
+				checkVersion();
+				if (index + 1 == pq.count)
+					return false;
+				index++;
+				return true;
+			}
+
+			#endregion
+		}
+		#endregion
+
+	}
 }

@@ -41,41 +41,41 @@ namespace SteamEngine.CompiledScripts {
 		//taken from runuo
 		public static void Bootstrap() {
 			string filename = Path.Combine(Globals.scriptsPath, "bodyTable.cfg");
-	        if (File.Exists(filename)) {
-	            using (StreamReader ip = new StreamReader(filename)) {
-	                bodyTable = new CharAnimType[1000];
+			if (File.Exists(filename)) {
+				using (StreamReader ip = new StreamReader(filename)) {
+					bodyTable = new CharAnimType[1000];
 
-	                string line;
+					string line;
 
-	                while ((line = ip.ReadLine()) != null) {
-	                    if (line.Length == 0 || line.StartsWith("#"))
-	                        continue;
+					while ((line = ip.ReadLine()) != null) {
+						if (line.Length == 0 || line.StartsWith("#"))
+							continue;
 
-	                    string[] split = line.Split('\t');
+						string[] split = line.Split('\t');
 
-	                    try {
-	                        int bodyID = int.Parse(split[0]);
-	                        CharAnimType type = (CharAnimType) Enum.Parse(typeof(CharAnimType), split[1], true);
+						try {
+							int bodyID = int.Parse(split[0]);
+							CharAnimType type = (CharAnimType) Enum.Parse(typeof(CharAnimType), split[1], true);
 
-	                        if (bodyID >= 0 && bodyID < bodyTable.Length)
-	                            bodyTable[bodyID] = type;
-	                    } catch {
-	                        Logger.WriteWarning("Invalid bodyTable entry:");
-	                        Console.WriteLine(line);
-	                    }
-	                }
-	            }
-	        } else {
-	            Logger.WriteWarning(filename+" does not exist");
-	            bodyTable = new CharAnimType[0];
-	        }
+							if (bodyID >= 0 && bodyID < bodyTable.Length)
+								bodyTable[bodyID] = type;
+						} catch {
+							Logger.WriteWarning("Invalid bodyTable entry:");
+							Console.WriteLine(line);
+						}
+					}
+				}
+			} else {
+				Logger.WriteWarning(filename + " does not exist");
+				bodyTable = new CharAnimType[0];
+			}
 		}
 
 		private CharModelInfo(int model) {
 			this.model = (ushort) model;
 			this.charDef = (CharacterDef) ThingDef.FindCharDef(model);
 			if (this.charDef == null) {
-				throw new Exception("There is no Chardef for model 0x"+model.ToString("x"));
+				throw new Exception("There is no Chardef for model 0x" + model.ToString("x"));
 			}
 
 			charAnimType = CharAnimType.Empty;
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts {
 					return true;
 			}
 			return false;
-	    }
+		}
 
 		public static bool IsFemaleModel(int model) {
 			switch (model) {
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 					return true;
 			}
 			return false;
-	    }
+		}
 
 		public static bool IsGhostModel(int model) {
 			switch (model) {
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts {
 					return true;
 			}
 			return false;
-	    }
+		}
 
 		public static bool IsHumanModel(int model) {
 			return (CharModelInfo.Get(model).charAnimType & CharAnimType.Human) == CharAnimType.Human;

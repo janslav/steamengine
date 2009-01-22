@@ -26,12 +26,12 @@ using SteamEngine.Communication;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	
+
 	[Dialogs.ViewableClass]
 	[Summary("Sector-defining class used in various scripts")]
 	public class ScriptSector {
 		[Remark("Dictionary mapping the computed SectorKey to the ScriptSector " +
-			    "we use computed X and Y (byte shift) and the normal M for determining the ScriptSector ")]
+				"we use computed X and Y (byte shift) and the normal M for determining the ScriptSector ")]
 		internal static Dictionary<SectorKey, ScriptSector> scriptSectors = new Dictionary<SectorKey, ScriptSector>();
 
 		[Remark("Power of 2 determining the size of the sector i.e. size 5 means a rectangle 32*32 fields.")]
@@ -43,13 +43,13 @@ namespace SteamEngine.CompiledScripts {
 				"(if not refreshed) - e.g. player's TrackPoints etc.")]
 		public readonly static TimeSpan maxEntityAge = TimeSpan.FromMinutes(3);
 
-		[Summary("The dictionary containing all characters that passed through this sector. Everyone leaves an information "+
+		[Summary("The dictionary containing all characters that passed through this sector. Everyone leaves an information " +
 				"about the fields he stepped onto. For character Tracking purposes.")]
 		private Dictionary<Character, TrackPoint.LinkedQueue> charsPassing = new Dictionary<Character, TrackPoint.LinkedQueue>();
 
 		private ScriptSectorTimer sectorTimer;
-		
-		[Remark("Computed SEctorKey determining a set of map fields that belong to this sector - "+
+
+		[Remark("Computed SEctorKey determining a set of map fields that belong to this sector - " +
 				" see the GetScriptSector method")]
 		private SectorKey sectorIdentifier;
 
@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts {
 			//check if the sector contains any information, otherwise remove it from the global list
 			if (charsPassing.Count == 0) {
 				this.Remove();
-			} 
+			}
 		}
 
 		private void Remove() {
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 			int ssMinY = rectangle.MinY >> scriptSectorSize;
 			int ssMaxX = rectangle.MaxX >> scriptSectorSize;
 			int ssMaxY = rectangle.MaxY >> scriptSectorSize;
-			
+
 			//check all computed sector identifiers if some ScriptSector exists for them and if so, return it
 			for (int sx = ssMinX; sx <= ssMaxX; sx++) {
 				for (int sy = ssMinY; sy <= ssMaxY; sy++) {
@@ -172,9 +172,9 @@ namespace SteamEngine.CompiledScripts {
 			return retChars;
 		}
 
-		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane "+
+		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane " +
 				"and which are not older than specified. The returned")]
-		public static IEnumerable<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan now, TimeSpan maxAge, byte mapplane) {			
+		public static IEnumerable<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan now, TimeSpan maxAge, byte mapplane) {
 			TimeSpan minTimeToYield = now - maxAge; //newer than this are returned
 			TimeSpan minTimeToStay = now - maxEntityAge; //older than this are deleted
 
@@ -269,7 +269,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//add the actually stepped point to the queue (no matter if we have stepped on it previously)
 			TrackPoint tp = new TrackPoint(whose, whose, model);
-			
+
 			//check if we are being tracked and in this case, send the information about the new step made
 			List<Character> tbList = (List<Character>) whose.GetTag(TrackingSkillDef.trackedByTK);
 			if (tbList != null) {
@@ -352,7 +352,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Special immutable key for determining ScriptSectors. It is specified by computed X, Y (byteshifted position) "+
+	[Summary("Special immutable key for determining ScriptSectors. It is specified by computed X, Y (byteshifted position) " +
 			"and the mapplane it lies in")]
 	public struct SectorKey {
 		private readonly int x, y;
@@ -392,7 +392,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//stolen from PointXD
 		public override int GetHashCode() {
-			return ((37*17^x)^y)^m;
+			return ((37 * 17 ^ x) ^ y) ^ m;
 		}
 	}
 }

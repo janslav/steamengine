@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+pluginTGs.Count+" PluginTriggergroups");
+					Logger.WriteDebug("Done generating " + pluginTGs.Count + " PluginTriggergroups");
 				}
 				return codeCompileUnit;
 			} finally {
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 			CodeTypeDeclaration codeTypeDeclatarion;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_"+pluginType.Name);
+				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_" + pluginType.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
 				codeTypeDeclatarion.IsClass = true;
@@ -102,8 +102,8 @@ namespace SteamEngine.CompiledScripts {
 
 			internal GeneratedInstance(Type pluginType) {
 				this.pluginType = pluginType;
-				MemberTypes memberType=MemberTypes.Method;		//Only find methods.
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
+				MemberTypes memberType = MemberTypes.Method;		//Only find methods.
+				BindingFlags bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
 
 				MemberInfo[] mis = pluginType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
 				foreach (MemberInfo m in mis) {
@@ -133,12 +133,12 @@ namespace SteamEngine.CompiledScripts {
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
 					foreach (MethodInfo mi in triggerMethods) {
 						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
-						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase("+tk.uid+"): //"+tk.name));
+						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.uid + "): //" + tk.name));
 						retVal.Statements.AddRange(
-							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi, 
+							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
 							new CodeCastExpression(
 								pluginType,
-								new CodeArgumentReferenceExpression("self")), 
+								new CodeArgumentReferenceExpression("self")),
 							false));
 
 					}
@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 					new CodeMethodInvokeExpression(
 						new CodeTypeReferenceExpression(typeof(PluginDef)),
 						"RegisterPluginTG",
-						new CodeTypeOfExpression(pluginType.Name+"Def"),
+						new CodeTypeOfExpression(pluginType.Name + "Def"),
 						new CodeObjectCreateExpression(this.codeTypeDeclatarion.Name)
 					));
 
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s=((string) filterCriteria).ToLower();
+				string s = ((string) filterCriteria).ToLower();
 				return m.Name.ToLower().StartsWith(s);
 			}
 		}

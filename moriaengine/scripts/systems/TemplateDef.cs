@@ -26,11 +26,11 @@ using SteamEngine.LScript;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	
+
 	//it's not a typical def, but then again, who cares :P
 	public sealed class TemplateDef : AbstractDef, IThingFactory {
 		public static bool TemplateTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Template Trace Messages"]);
-		
+
 		private FieldValue container;
 		private LScriptHolder holder;
 		private static ItemDef defaultContainer;
@@ -41,15 +41,16 @@ namespace SteamEngine.CompiledScripts {
 			return script as TemplateDef;
 		}
 
-		internal TemplateDef(string defname, string filename, int headerLine) : 
+		internal TemplateDef(string defname, string filename, int headerLine)
+			:
 				base(defname, filename, headerLine) {
 			container = InitField_ThingDef("container", null, typeof(ItemDef));
 		}
-		
+
 		public ItemDef Container {
-			get { 
+			get {
 				return (ItemDef) container.CurrentValue;
-			} 
+			}
 			set {
 				container.CurrentValue = value;
 			}
@@ -68,17 +69,17 @@ namespace SteamEngine.CompiledScripts {
 				byDefname[td.altdefname] = td;
 			}
 		}
-		
+
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			string typeName = input.headerType.ToLower();
 			string defname = input.headerName.ToLower();
 			//Console.WriteLine("loading section "+input.HeadToString());
 			//[typeName defname]
-						
+
 			//Attempt to convert defname to a uint, so that we can "normalize" it
 			int defnum;
 			if (TagMath.TryParseInt32(defname, out defnum)) {
-				defname="td_0x"+defnum.ToString("x");
+				defname = "td_0x" + defnum.ToString("x");
 			}
 
 			AbstractScript def;
@@ -86,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 			TemplateDef td = def as TemplateDef;
 			if (td == null) {
 				if (def != null) {//it isnt TemplateDef
-					throw new OverrideNotAllowedException("TemplateDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def)+". Ignoring.");
+					throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 				} else {
 					td = new TemplateDef(defname, input.filename, input.headerLine);
 				}
@@ -94,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 				td.unloaded = false;
 				UnRegisterTemplateDef(td);//will be re-registered again
 			} else {
-				throw new OverrideNotAllowedException("TemplateDef "+LogStr.Ident(defname)+" defined multiple times.");
+				throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
 			}
 
 			TriggerSection trigger = input.GetTrigger(0);
@@ -109,11 +110,11 @@ namespace SteamEngine.CompiledScripts {
 				linenumber++;
 				if (line != null) {
 					line = line.Trim();
-					if ((line.Length==0)||(line.StartsWith("//"))) {//it is a comment or a blank line
+					if ((line.Length == 0) || (line.StartsWith("//"))) {//it is a comment or a blank line
 						newCode.Append(Environment.NewLine);
 						continue;
 					}
-					
+
 					Match m = PropsFileParser.valueRE.Match(line);
 					if (m.Success) {
 						GroupCollection gc = m.Groups;
@@ -134,15 +135,15 @@ namespace SteamEngine.CompiledScripts {
 								if (t == null) {
 									if (def != null) {//it isnt TemplateDef
 										throw new OverrideNotAllowedException(
-											"TemplateDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def)+". Ignoring.");
+											"TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 									} else {
 										td.altdefname = altdefname;
 									}
 								} else if (t == td) {
-									Logger.WriteWarning(input.filename, linenumber, 
-										"Defname redundantly specified for TemplateDef "+LogStr.Ident(altdefname)+".");
+									Logger.WriteWarning(input.filename, linenumber,
+										"Defname redundantly specified for TemplateDef " + LogStr.Ident(altdefname) + ".");
 								} else {
-									throw new OverrideNotAllowedException("TemplateDef "+LogStr.Ident(altdefname)+" defined multiple times.");
+									throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(altdefname) + " defined multiple times.");
 								}
 								altdefnamedefined = true;
 							}
@@ -169,38 +170,40 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//so we have read the important fields, now read the rest as lscript function
-			
+
 			trigger.code = newCode;
 			td.holder = new LScriptHolder(trigger);
-			if (input.TriggerCount>1) {
+			if (input.TriggerCount > 1) {
 				Logger.WriteWarning(input.filename, input.headerLine, "Triggers in a template are nonsensual (and ignored).");
 			}
 
 			//that's all, we're done ;)
 			RegisterTemplateDef(td);
-			
+
 			return td;
 		}
 
 		public static new void Bootstrap() {
-			ScriptLoader.RegisterScriptType(new string[] {"templatedef", "template"}, 
+			ScriptLoader.RegisterScriptType(new string[] { "templatedef", "template" },
 				new LoadSection(LoadFromScripts), true);
 		}
-		
-		public ItemDef DefaultContainer { get {
-			if (defaultContainer == null) {
-				defaultContainer = (ItemDef) ThingDef.Get("i_bag");
+
+		public ItemDef DefaultContainer {
+			get {
 				if (defaultContainer == null) {
-					throw new ScriptException("Missing TemplateDef's default container itemdef (i_bag)");
+					defaultContainer = (ItemDef) ThingDef.Get("i_bag");
+					if (defaultContainer == null) {
+						throw new ScriptException("Missing TemplateDef's default container itemdef (i_bag)");
+					}
 				}
+				return defaultContainer;
 			}
-			return defaultContainer;
-		} }
-		
+		}
+
 		public Thing Create(IPoint4D p) {
 			return Create(p.X, p.Y, p.Z, p.M);
 		}
-		
+
 		public Thing Create(ushort x, ushort y, sbyte z, byte m) {
 			ThrowIfUnloaded();
 			ItemDef contDef = this.Container;
@@ -211,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 			holder.Run(cont, (ScriptArgs) null);
 			return cont;
 		}
-		
+
 		public Thing Create(Thing cont) {
 			ThrowIfUnloaded();
 			ItemDef contDef = this.Container;

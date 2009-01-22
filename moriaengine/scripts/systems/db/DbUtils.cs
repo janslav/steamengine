@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 
 				DbUtils.ExecuteNonQuery(sql.ToString());
 
-				Logger.WriteDebug("Sent "+lines.Count+" rows into database table '"+this.TableName+"'");
+				Logger.WriteDebug("Sent " + lines.Count + " rows into database table '" + this.TableName + "'");
 
 				lines.Clear();
 			}

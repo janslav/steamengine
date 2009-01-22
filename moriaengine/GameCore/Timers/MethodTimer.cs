@@ -43,7 +43,7 @@ namespace SteamEngine.Timers {
 		[DeepCopyImplementation]
 		public MethodTimer() {
 		}
-		
+
 		public MethodTimer(MethodInfo method, object[] args) {
 			this.method = method;
 			this.args = args;
@@ -63,18 +63,18 @@ namespace SteamEngine.Timers {
 				sb.Length -= 2;
 			}
 			sb.Append(")");
-			output.WriteLine("method="+sb);
+			output.WriteLine("method=" + sb);
 			base.Save(output);
 		}
-		
-		public static Regex methodSignRE= new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",                     
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		
+
+		public static Regex methodSignRE = new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
 		[LoadLine]
 		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("method")) {
 				//Console.WriteLine("loading method with string: "+value);
-				
+
 				Match m = methodSignRE.Match(value);
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
@@ -86,12 +86,12 @@ namespace SteamEngine.Timers {
 					for (int i = 0; i < ccCount; i++) {
 						paramTypes[i] = Type.GetType(cc[i].Value, true, true);
 					}
-				    MethodInfo mi = type.GetMethod(methodName, paramTypes);
-				    if (mi != null) {
-				    	method = MemberWrapper.GetWrapperFor(mi);
-				    } else {
-				    	throw new Exception("Unrecognized method.");
-				    }
+					MethodInfo mi = type.GetMethod(methodName, paramTypes);
+					if (mi != null) {
+						method = MemberWrapper.GetWrapperFor(mi);
+					} else {
+						throw new Exception("Unrecognized method.");
+					}
 				} else {
 					throw new Exception("The value has unparsable format");
 				}

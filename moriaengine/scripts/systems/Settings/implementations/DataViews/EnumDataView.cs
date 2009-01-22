@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public bool HandleSubclasses {
-			get { 
-				return true; 
+			get {
+				return true;
 			}
 		}
 
@@ -51,8 +51,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yield return ItemsCountField.instance;
 			//iterovat budeme nejpozdeji do doby nez dojdou polozky seznamu
 			//(iterovani mozno byt prerusovano kvuli pagingu i jinde...)
-			for(int i = firstLineIndex; i < Enum.GetNames(target.GetType()).Length; i++) {
-				yield return EnumItemFields.GetInitializedInstance(i,target);
+			for (int i = firstLineIndex; i < Enum.GetNames(target.GetType()).Length; i++) {
+				yield return EnumItemFields.GetInitializedInstance(i, target);
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private static EnumItemFields instance;
 
 			internal static EnumItemFields GetInitializedInstance(int index, object target) {
-				if (EnumItemFields.instance == null) {					
+				if (EnumItemFields.instance == null) {
 					//newinstantiation
 					EnumItemFields.instance = new EnumItemFields(index, target);
 				} else {
@@ -128,8 +128,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					underlyingType = Enum.GetUnderlyingType(targetEnumType);
 					names = Enum.GetNames(targetEnumType);
 					Array.Sort(names, delegate(string n1, string n2) {
-										return n1.CompareTo(n2);
-									  }
+						return n1.CompareTo(n2);
+					}
 							   );//sort alphabetically
 				}
 			}
@@ -148,7 +148,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int n = names.Length;
 				if (index < n) {
 					//get the value for to the current Name in the sorted Names array
-					return Enum.Parse(targetEnumType,names[index]);
+					return Enum.Parse(targetEnumType, names[index]);
 				} else {
 					return null;
 				}
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override string GetStringValue(object target) {
 				int n = names.Length;
-				if(index < n) {
+				if (index < n) {
 					//return the value casted to basic type (so e.g. number is displayed and not "red" text...)
 					object value = Enum.Parse(targetEnumType, names[index]);
 					return Convert.ToString(Convert.ChangeType(value, underlyingType));

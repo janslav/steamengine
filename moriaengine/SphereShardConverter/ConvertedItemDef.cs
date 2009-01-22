@@ -43,7 +43,7 @@ namespace SteamEngine.Converter {
 		bool isTwoHanded = false;
 		bool twoHandedSet = false;
 		bool wearableTypeSet = false;
-	
+
 		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
 				new LineImplTask("type", new LineImpl(HandleType)), 
 				new LineImplTask("dupelist", new LineImpl(WriteAsComment)), 
@@ -62,7 +62,7 @@ namespace SteamEngine.Converter {
 				new LineImplTask("skill", new LineImpl(WriteAsComment)),
 				new LineImplTask("speed", new LineImpl(WriteAsComment))
 			};
-			
+
 		private static LineImplTask[] secondStageImpl = new LineImplTask[] {
 				new LineImplTask("layer", new LineImpl(HandleLayer)), 
 				new LineImplTask("twohanded", new LineImpl(HandleTwohanded)),
@@ -75,15 +75,16 @@ namespace SteamEngine.Converter {
 			};
 
 
-		public ConvertedItemDef(PropsSection input) : base(input) {
+		public ConvertedItemDef(PropsSection input)
+			: base(input) {
 			this.byModel = itemsByModel;
 			this.byDefname = itemsByDefname;
 
 			this.firstStageImplementations.Add(firstStageImpl);
 			this.secondStageImplementations.Add(secondStageImpl);
 			this.thirdStageImplementations.Add(thirdStageImpl);
-			
-			headerType="ItemDef";
+
+			headerType = "ItemDef";
 		}
 
 		private static string HandleType(ConvertedDef d, PropsLine line) {
@@ -98,11 +99,11 @@ namespace SteamEngine.Converter {
 				case "t_container_locked":
 				case "t_eq_vendor_box":
 				case "t_eq_bank_box":
-					def.headerType="ContainerDef";
+					def.headerType = "ContainerDef";
 					def.isEquippable = true;
 					break;
 				case "t_corpse":
-					def.headerType="CorpseDef";
+					def.headerType = "CorpseDef";
 					def.isEquippable = true;
 					break;
 				case "t_light_lit":
@@ -112,7 +113,7 @@ namespace SteamEngine.Converter {
 				case "t_hair":
 				case "t_beard":
 				case "t_spellbook":
-					def.headerType="EquippableDef";
+					def.headerType = "EquippableDef";
 					def.isEquippable = true;
 					break;
 				case "t_clothing":
@@ -126,15 +127,15 @@ namespace SteamEngine.Converter {
 					def.isEquippable = true;
 					break;
 				case "t_multi":
-					def.headerType="MultiItemDef";
+					def.headerType = "MultiItemDef";
 					def.DontDump();	//for now
 					break;
 				case "t_musical":
-					def.headerType="MusicalDef";
+					def.headerType = "MusicalDef";
 					break;
 				case "t_eq_horse":
 					//isHorseMountItem=true;
-					Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "Ignoring mountitem def "+LogStr.Ident(def.headerName)+" (steamengine does not need those defined).");
+					Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "Ignoring mountitem def " + LogStr.Ident(def.headerName) + " (steamengine does not need those defined).");
 					def.DontDump();	//TODO: make just some constant out of it?
 					break;
 
@@ -194,7 +195,7 @@ namespace SteamEngine.Converter {
 				string[] strings = Utility.SplitSphereString(line.value);
 				int n = strings.Length;
 				double sum = 0;
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					string str = strings[i];
 					int number;
 					if (ConvertTools.TryParseInt32(str, out number)) {
@@ -279,7 +280,7 @@ namespace SteamEngine.Converter {
 					layerSet = true;
 				} else {
 					Set("//layer", "unknown", "");
-					Info(origData.headerLine, "Unknown layer for ItemDef "+headerName);
+					Info(origData.headerLine, "Unknown layer for ItemDef " + headerName);
 				}
 			}
 
@@ -354,15 +355,15 @@ namespace SteamEngine.Converter {
 						Set("ProjectileAnim", "0xf42", "guessed by Converter");
 						break;
 				}
-				Set("WeaponType", "WeaponType."+weaponType, "guessed by Converter");
+				Set("WeaponType", "WeaponType." + weaponType, "guessed by Converter");
 
 				WeaponAnimType animType = WeaponAnimTypeSetting.TranslateAnimType(weaponType);
 				if (animType != WeaponAnimType.Undefined) {
-					Set("WeaponAnimType", "WeaponAnimType."+animType, "guessed by Converter");
+					Set("WeaponAnimType", "WeaponAnimType." + animType, "guessed by Converter");
 				}
 
 				if (isColored) {
-					Set("MaterialType", "MaterialType."+materialType, "guessed by Converter");
+					Set("MaterialType", "MaterialType." + materialType, "guessed by Converter");
 				}
 			} else if (isWearable) {
 				bool isColored = IsColoredMetal();
@@ -373,8 +374,8 @@ namespace SteamEngine.Converter {
 					this.headerType = "WearableDef";
 				}
 				if (!wearableTypeSet) {
-					Set("WearableType", "WearableType."+GetWearableType(this.PrettyDefname), "guessed by Converter");
-					
+					Set("WearableType", "WearableType." + GetWearableType(this.PrettyDefname), "guessed by Converter");
+
 				}
 			}
 
@@ -384,15 +385,15 @@ namespace SteamEngine.Converter {
 		private bool IsColoredMetal() {
 			string material = GetMaterialFromDefname(this.PrettyDefname);
 			if (material != null) {
-				Set("Material", "Material."+Utility.Capitalize(material), "guessed by Converter");
+				Set("Material", "Material." + Utility.Capitalize(material), "guessed by Converter");
 				return true;
 			}
 			return false;
 		}
 
 		private static Regex materialRE = new Regex(
-			@".*(?<material>((Copper)|(Iron)|(Silver)|(Gold)|(Verite)|(Valorite)|(Obsidian)|(Adamantinum)|(Mithril))).*", 
-			RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.IgnoreCase);
+			@".*(?<material>((Copper)|(Iron)|(Silver)|(Gold)|(Verite)|(Valorite)|(Obsidian)|(Adamantinum)|(Mithril))).*",
+			RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
 
 		private static string GetMaterialFromDefname(string defname) {
 			Match m = materialRE.Match(defname);
@@ -404,9 +405,9 @@ namespace SteamEngine.Converter {
 
 		private static Regex wearableTypeRE = new Regex(
 			@".*(?<type>((bone)|(studded)|(chain)|(ring))).*",
-			RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.IgnoreCase);
+			RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
 
-		private WearableType GetWearableType(string prettyDefname ) {
+		private WearableType GetWearableType(string prettyDefname) {
 			Match m = wearableTypeRE.Match(prettyDefname);
 			if (m.Success) {
 				switch (m.Groups["type"].Value.ToLower()) {
@@ -426,7 +427,7 @@ namespace SteamEngine.Converter {
 
 			return WearableType.Plate;
 		}
-		
+
 		private static string HandleLayer(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.MakeEquippable();

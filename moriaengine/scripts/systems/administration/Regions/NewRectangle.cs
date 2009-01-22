@@ -26,15 +26,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_New_Rectangle : CompiledGumpDef {
 		private static int width = 450;
 
-		[Summary("Seznam parametru: 0 - list s rectanglama kam to pak pridame "+
+		[Summary("Seznam parametru: 0 - list s rectanglama kam to pak pridame " +
 				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
 			minX = (args.ArgsArray[0] != null ? args.ArgsArray[0].ToString() : "");
 			minY = (args.ArgsArray[1] != null ? args.ArgsArray[1].ToString() : "");
 			maxX = (args.ArgsArray[2] != null ? args.ArgsArray[2].ToString() : "");
-			maxY = (args.ArgsArray[3] != null ? args.ArgsArray[3].ToString() : "");			
-			
+			maxY = (args.ArgsArray[3] != null ? args.ArgsArray[3].ToString() : "");
+
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(width);
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[1, 2] = TextFactory.CreateLabel("MaxY");
 			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 34, maxY);
 			dlg.MakeLastTableTransparent();
-	
+
 			//send button
 			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
@@ -75,10 +75,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (jsou to ty mutable)
-			List<MutableRectangle> rectsList = (List<MutableRectangle>)args.GetTag(D_Region_Rectangles.rectsListTK);
-			if(gr.pressedButton == 0) { //exit
+			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
+			if (gr.pressedButton == 0) { //exit
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-			} else if(gr.pressedButton == 1) { //ulozit
+			} else if (gr.pressedButton == 1) { //ulozit
 				//precteme parametry a zkusime vytvorit rectangle
 				MutableRectangle newRect = null;
 				try {
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					args.ArgsArray[2] = Convert.ToUInt16(gr.GetNumberResponse(33));
 					args.ArgsArray[3] = Convert.ToUInt16(gr.GetNumberResponse(34));
 
-					newRect = new MutableRectangle((ushort)args.ArgsArray[0], (ushort)args.ArgsArray[1], (ushort)args.ArgsArray[2], (ushort)args.ArgsArray[3]);
+					newRect = new MutableRectangle((ushort) args.ArgsArray[0], (ushort) args.ArgsArray[1], (ushort) args.ArgsArray[2], (ushort) args.ArgsArray[3]);
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu

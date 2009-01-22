@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
 		EffectNeedsLOS = 0x0400,
 		IsAreaSpell = 0x0800,
-		TargetCanMove = 0x1000, 
+		TargetCanMove = 0x1000,
 		UseMindPower = 0x2000, //otherwise, magery value is used, multiplied by the spells Effect value
 		IsHarmful = 0x4000,
 		IsBeneficial = 0x8000
@@ -414,7 +414,7 @@ namespace SteamEngine.CompiledScripts {
 
 			throw new SEException("SpellDef.Trigger_Select - unfinished");
 		}
-		
+
 		private static TriggerKey tkSuccess = TriggerKey.Get("success");
 		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
 		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
@@ -455,7 +455,7 @@ namespace SteamEngine.CompiledScripts {
 						singleEffectDone = true;
 						sea = this.GetSpellPowerAgainstNonChar(caster, target, targetAsItem, sea);
 						if (this.CheckSpellPowerWithMessage(sea)) {
-							this.Trigger_EffectItem(targetAsItem, sea);							
+							this.Trigger_EffectItem(targetAsItem, sea);
 						}
 					}
 				}
@@ -544,7 +544,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (sea == null) {
-				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower);				
+				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower);
 			} else {
 				sea.CurrentTarget = currentTarget;
 				sea.SpellPower = spellPower;

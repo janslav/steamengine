@@ -25,7 +25,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
-	[Summary("Plugin managing all characters regenerations, on timer periodically checks all regens"+
+	[Summary("Plugin managing all characters regenerations, on timer periodically checks all regens" +
 			"and adds correct number of points to be regenerated")]
 	public partial class RegenerationPlugin {
 		//this is to initialize (create the instance) of the Regen.Plug.Def. it must be here as bellow or 
@@ -34,11 +34,11 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
 		internal static PluginKey regenerationsPluginKey = PluginKey.Get("_regenerations_");
 
-        private double lastServerTime; //last time the holder obtained some stats by regen
+		private double lastServerTime; //last time the holder obtained some stats by regen
 
-        internal const double MIN_TIMER = 1.0d; //minimal timer usable
-        private const double ALLOWED_TIMER_DIFF = 1.5d; //allowed difference between the ideal and counted mean timer
-        private const double MAX_TIMER = 1.0d; //maximal timer usable
+		internal const double MIN_TIMER = 1.0d; //minimal timer usable
+		private const double ALLOWED_TIMER_DIFF = 1.5d; //allowed difference between the ideal and counted mean timer
+		private const double MAX_TIMER = 1.0d; //maximal timer usable
 
 		public void On_Assign() {
 			lastServerTime = Globals.TimeInSeconds; //set the first time to be used for regeneration
@@ -46,21 +46,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Periodically check stats and regenerate computed amount of points (if any)")]
-		public void On_Timer() {            
-            if (!ModifyAnything()) {
-                //delete the plugin for now. it will be renewed when hits/mana/stamina lowers
+		public void On_Timer() {
+			if (!ModifyAnything()) {
+				//delete the plugin for now. it will be renewed when hits/mana/stamina lowers
 				//or when the regenerations get some point...
-				Delete();                
-            }
-			
-            double timeElapsed = Globals.TimeInSeconds - lastServerTime;
-            Character holder = (Character)this.Cont;
+				Delete();
+			}
+
+			double timeElapsed = Globals.TimeInSeconds - lastServerTime;
+			Character holder = (Character) this.Cont;
 
 			double hitsRegenSpeed = holder.HitsRegenSpeed;//read it once...
 			double stamRegenSpeed = holder.StamRegenSpeed;
 			double manaRegenSpeed = holder.ManaRegenSpeed;
 
-            bool modifyAllStats = ModifyAllStats();//first check if we will modify all three stats
+			bool modifyAllStats = ModifyAllStats();//first check if we will modify all three stats
 
 			//count the number of modified stats points (if any!)
 			int hitsChange = 0, stamChange = 0, manaChange = 0;
@@ -100,65 +100,65 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				residuumMana = 0.0;
 			}
-            
-            //now count the ideal timer for the next round (ideal means that there would be an integer change 
-            //immediately without any residuum next round)
-            double usedTimer = 0.0;
-            if (!modifyAllStats) { // use the fastest regeneration
+
+			//now count the ideal timer for the next round (ideal means that there would be an integer change 
+			//immediately without any residuum next round)
+			double usedTimer = 0.0;
+			if (!modifyAllStats) { // use the fastest regeneration
 				double fastestRegen = Math.Max(hitsRegenSpeed, Math.Max(stamRegenSpeed, manaRegenSpeed));
 				double fastestStatsResiduum = ((fastestRegen == hitsRegenSpeed) ? residuumHits : //fastest are hits - use them
 												((fastestRegen == stamRegenSpeed) ? residuumStam : //fastest is stamina - use it
 													manaRegenSpeed)); //use mana  
-                //count the timer for the stat with the fastest regen speed
-                usedTimer = CountIdealTimer(fastestRegen, fastestStatsResiduum);				
-            } else { //count the ideal timer for the next round
+				//count the timer for the stat with the fastest regen speed
+				usedTimer = CountIdealTimer(fastestRegen, fastestStatsResiduum);
+			} else { //count the ideal timer for the next round
 				//we are using the newly counted residuum here (see CountStatChange) method...
 				double hitsIdealTimer = CountIdealTimer(hitsRegenSpeed, residuumHits);
 				double stamIdealTimer = CountIdealTimer(stamRegenSpeed, residuumStam);
 				double manaIdealTimer = CountIdealTimer(manaRegenSpeed, residuumMana);
-                double midTimer = Utility.ArithmeticMean(hitsIdealTimer, stamIdealTimer, manaIdealTimer);
-                double hitsTmrDiff = Math.Abs(hitsIdealTimer - midTimer);
-                double manaTmrDiff = Math.Abs(stamIdealTimer - midTimer);
-                double stamTmrDiff = Math.Abs(manaIdealTimer - midTimer);
+				double midTimer = Utility.ArithmeticMean(hitsIdealTimer, stamIdealTimer, manaIdealTimer);
+				double hitsTmrDiff = Math.Abs(hitsIdealTimer - midTimer);
+				double manaTmrDiff = Math.Abs(stamIdealTimer - midTimer);
+				double stamTmrDiff = Math.Abs(manaIdealTimer - midTimer);
 
-                usedTimer = midTimer; //defaultly we want to use the mean value of the count timers
-                if (Math.Max(stamTmrDiff, Math.Max(hitsTmrDiff, manaTmrDiff)) > ALLOWED_TIMER_DIFF) {
-                    //longest ideal timer exceeded the allowed difference from the mid value - we will use the shortest timer
-                    usedTimer = Math.Min(stamTmrDiff, Math.Min(hitsTmrDiff, manaTmrDiff));
-                }
-            }
+				usedTimer = midTimer; //defaultly we want to use the mean value of the count timers
+				if (Math.Max(stamTmrDiff, Math.Max(hitsTmrDiff, manaTmrDiff)) > ALLOWED_TIMER_DIFF) {
+					//longest ideal timer exceeded the allowed difference from the mid value - we will use the shortest timer
+					usedTimer = Math.Min(stamTmrDiff, Math.Min(hitsTmrDiff, manaTmrDiff));
+				}
+			}
 			//modify stats
 			holder.Hits += (short) hitsChange;
 			holder.Stam += (short) stamChange;
 			holder.Mana += (short) manaChange;
 
-            this.Timer = usedTimer; //use the count timer
-            lastServerTime = Globals.TimeInSeconds; //remember the last usage
-		}       
+			this.Timer = usedTimer; //use the count timer
+			lastServerTime = Globals.TimeInSeconds; //remember the last usage
+		}
 
-        //check if we are to modify all three stats or just one or two or none
-        private bool ModifyAllStats() {
-            Character holder = (Character)this.Cont;
-            if (holder.Hits == holder.MaxHits || holder.Mana == holder.MaxMana || holder.Stam == holder.MaxStam) {
-                //some stat is on its maximum
-                return false;
-            }
-            if (holder.HitsRegenSpeed == 0 || holder.StamRegenSpeed == 0 || holder.ManaRegenSpeed == 0) { //or some regen is 0
-                return false;
-            }
-            return true;
-        }
+		//check if we are to modify all three stats or just one or two or none
+		private bool ModifyAllStats() {
+			Character holder = (Character) this.Cont;
+			if (holder.Hits == holder.MaxHits || holder.Mana == holder.MaxMana || holder.Stam == holder.MaxStam) {
+				//some stat is on its maximum
+				return false;
+			}
+			if (holder.HitsRegenSpeed == 0 || holder.StamRegenSpeed == 0 || holder.ManaRegenSpeed == 0) { //or some regen is 0
+				return false;
+			}
+			return true;
+		}
 
 		[Remark("When do we modify anything?")]
-        private bool ModifyAnything() {
-            Character holder = (Character)this.Cont;
-            //either some stat is not full and has positive regeneration - adding values
+		private bool ModifyAnything() {
+			Character holder = (Character) this.Cont;
+			//either some stat is not full and has positive regeneration - adding values
 			if ((holder.Hits < holder.MaxHits && holder.HitsRegenSpeed > 0) ||
 				(holder.Mana < holder.MaxMana && holder.ManaRegenSpeed > 0) ||
 				(holder.Stam < holder.MaxStam && holder.StamRegenSpeed > 0)) {
-                return true;
-            }
-			
+				return true;
+			}
+
 			//or some non-zeroized stat has negative regeneration - subtracting values
 			if ((holder.Hits > 0 && holder.HitsRegenSpeed < 0) ||
 				(holder.Mana > 0 && holder.ManaRegenSpeed < 0) ||
@@ -173,37 +173,37 @@ namespace SteamEngine.CompiledScripts {
 				return true;
 			}
 
-            return false;
-        }
+			return false;
+		}
 
-        [Summary("Count and return the ideal timer for the given regenSpeed - this means "+
-                "number of seconds after which there will be an integer regeneration (de/in)crease")]
-        private double CountIdealTimer(double regenSpeed, double currentResiduum) {
-            //the number of regenerated points (x) is as follows: 
-            //x = (lastResiduum) + (regenSpeed * timer);
-            //we want the timer to be greater than MIN_TIMER and the number of regenerated points
-            //to be integer            
-            double retTmr = 0.0d;
-            int x = 1; //we expect to gain at least 1 point ideally :-)
-            while (retTmr < MIN_TIMER) {
+		[Summary("Count and return the ideal timer for the given regenSpeed - this means " +
+				"number of seconds after which there will be an integer regeneration (de/in)crease")]
+		private double CountIdealTimer(double regenSpeed, double currentResiduum) {
+			//the number of regenerated points (x) is as follows: 
+			//x = (lastResiduum) + (regenSpeed * timer);
+			//we want the timer to be greater than MIN_TIMER and the number of regenerated points
+			//to be integer            
+			double retTmr = 0.0d;
+			int x = 1; //we expect to gain at least 1 point ideally :-)
+			while (retTmr < MIN_TIMER) {
 				retTmr = (x - currentResiduum) / regenSpeed;
-				x++; 
-            }
-            return retTmr;
-        }
+				x++;
+			}
+			return retTmr;
+		}
 
-        
-        [Summary("From the regeneration speed (statpoints/sec), elapsed time and the residuum from the last round "+
-                 "count the integer value to be added (substracted) to the stat, remember the new residuum for the next round")]        
-        private short CountStatChange(double regenSpeed, ref double lastResiduum, double timeElapsed) {
-            //the number of regenerated points (x) is as follows: 
-            //x = (lastResiduum) + (regenSpeed * timer);
-            double absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
-            short retVal = (short)Math.Truncate(absoluteChange); //the stat value added
-            lastResiduum = absoluteChange - retVal; //this is the new residuum for the next round
 
-            return retVal;
-        }
+		[Summary("From the regeneration speed (statpoints/sec), elapsed time and the residuum from the last round " +
+				 "count the integer value to be added (substracted) to the stat, remember the new residuum for the next round")]
+		private short CountStatChange(double regenSpeed, ref double lastResiduum, double timeElapsed) {
+			//the number of regenerated points (x) is as follows: 
+			//x = (lastResiduum) + (regenSpeed * timer);
+			double absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
+			short retVal = (short) Math.Truncate(absoluteChange); //the stat value added
+			lastResiduum = absoluteChange - retVal; //this is the new residuum for the next round
+
+			return retVal;
+		}
 
 		[Summary("Check if character can have this plugin and if true, add it")]
 		public static void TryAddPlugin(Character futureCont) {

@@ -26,14 +26,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog that will display all trackable characters nearby the tracker with the possibility to track them...")]
 	public class D_Tracking_Characters : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			SkillSequenceArgs ssa = (SkillSequenceArgs)args.ArgsArray[0];
-			CharacterTypes charType = (CharacterTypes)ssa.Param1;
+			SkillSequenceArgs ssa = (SkillSequenceArgs) args.ArgsArray[0];
+			CharacterTypes charType = (CharacterTypes) ssa.Param1;
 			List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args.ArgsArray[1];//trackable characters around
 			charsAround.Sort(CharComparerByName<AbstractCharacter>.instance); //sort by name (why not? :-) )
 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, charsAround.Count);
-			
+
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(180);
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, 43, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel(""); //nic, to bude obrazek
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno",DialogAlignment.Align_Center,DialogAlignment.Valign_Top);
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno", DialogAlignment.Align_Center, DialogAlignment.Valign_Top);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel(""); //cudlik na stopovani, to je hotovka
 			dlg.MakeLastTableTransparent();
 
@@ -59,12 +59,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			charsTable.InnerRowsDelimited = true;
 			dlg.AddTable(charsTable);
 			dlg.CopyColsFromLastTable();
-			
+
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			GumpIDs displayGump = GumpIDs.Figurine_Man; //default
 			switch (charType) {
-				case CharacterTypes.Animals: 
+				case CharacterTypes.Animals:
 					displayGump = GumpIDs.Figurine_Llama;
 					break;
 				case CharacterTypes.Monsters:
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break; //for All or Players we need to determine either the whole Icon or at least the Player's gender
 			}
 			for (int i = firstiVal; i < imax; i++) {
-				Character chr = (Character)charsAround[i];
+				Character chr = (Character) charsAround[i];
 				if (charType == CharacterTypes.Players) {
 					displayGump = chr.IsMale ? GumpIDs.Figurine_Man : GumpIDs.Figurine_Woman;
 				} else if (charType == CharacterTypes.All) {//for "all" determine the icon char by char
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 0] = ImageFactory.CreateImage(displayGump);
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(chr.Name, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 10 + rowCntr, DialogAlignment.Valign_Center);
-				
+
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//check which character from the list is to be tracked
 				SkillSequenceArgs ssa = (SkillSequenceArgs) args.ArgsArray[0];
 				List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args.ArgsArray[1];
-				Character charToTrack = (Character)charsAround[(int)gr.pressedButton - 10];
+				Character charToTrack = (Character) charsAround[(int) gr.pressedButton - 10];
 
 				ssa.Target1 = charToTrack;
 				ssa.Param2 = TrackingEnums.Phase_Character_Track; //track the particular character

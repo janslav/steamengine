@@ -46,9 +46,9 @@ namespace SteamEngine.Networking {
 
 		private static PacketGroup enableMapDiffFiles;
 
-		private static PacketGroup clientVersion;	
-	
-		private static PacketGroup clientFeatures;		
+		private static PacketGroup clientVersion;
+
+		private static PacketGroup clientFeatures;
 
 		static PreparedPacketGroups() {
 			for (int i = 0, n = loginDeniedPGs.Length; i < n; i++) {
@@ -62,7 +62,7 @@ namespace SteamEngine.Networking {
 			targetXYZ.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(false);
 			targetCancelled = PacketGroup.CreateFreePG();
 			targetCancelled.AcquirePacket<TargetCursorCommandsOutPacket>().PrepareAsCancel();
-			
+
 			warMode[0] = PacketGroup.CreateFreePG();
 			warMode[0].AcquirePacket<SetWarModeOutPacket>().Prepare(false);
 			warMode[1] = PacketGroup.CreateFreePG();
@@ -71,9 +71,9 @@ namespace SteamEngine.Networking {
 			for (int i = 0, n = pickUpFailed.Length; i < n; i++) {
 				pickUpFailed[i] = PacketGroup.CreateFreePG();
 				pickUpFailed[i].AcquirePacket<RejectMoveItemRequestOutPacket>().Prepare((DenyResult) i);
-			}			
+			}
 
-			for (int i = 0; i < 6; i++) {				
+			for (int i = 0; i < 6; i++) {
 				rejectDeleteCharacter[i] = PacketGroup.CreateFreePG();
 				rejectDeleteCharacter[i].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare((DeleteCharacterResult) i);
 			}
@@ -97,7 +97,7 @@ namespace SteamEngine.Networking {
 			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
 		}
 
-		public static void SendLoginDenied(TCPConnection<GameState> conn,  LoginDeniedReason why) {
+		public static void SendLoginDenied(TCPConnection<GameState> conn, LoginDeniedReason why) {
 			PacketGroup pg = loginDeniedPGs[(int) why];
 			conn.SendPacketGroup(pg);
 		}
@@ -160,6 +160,6 @@ namespace SteamEngine.Networking {
 		public static void SendClientFeatures(TCPConnection<GameState> conn) {
 			conn.SendPacketGroup(clientFeatures);
 		}
-		
+
 	}
 }

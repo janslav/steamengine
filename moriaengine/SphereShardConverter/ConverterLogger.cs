@@ -27,14 +27,14 @@ namespace SteamEngine.Converter {
 			Logger.OpenFile();
 		}
 
-	  	protected override string GetFilepath() {
-	  		//DateTime.Now.GetDateTimeFormats()[4]
-	  		DateTime dtnow = DateTime.Now;
+		protected override string GetFilepath() {
+			//DateTime.Now.GetDateTimeFormats()[4]
+			DateTime dtnow = DateTime.Now;
 			string filename = "Converting.log";
-				//string.Format("converting.{0:00}-{1:00}-{2:00} {3:00}.{4:00}.{5:00}.log", 
-				//dtnow.Year, dtnow.Month, dtnow.Day, 
-				//dtnow.Hour, dtnow.Minute, dtnow.Second);
-	  		return Path.Combine("logs", filename);
+			//string.Format("converting.{0:00}-{1:00}-{2:00} {3:00}.{4:00}.{5:00}.log", 
+			//dtnow.Year, dtnow.Month, dtnow.Day, 
+			//dtnow.Hour, dtnow.Minute, dtnow.Second);
+			return Path.Combine("logs", filename);
 		}
 	}
 }

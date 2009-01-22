@@ -646,7 +646,7 @@ namespace SteamEngine {
 			return true;
 		}
 
-		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {			
+		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {
 			if (Map.IsValidPos(x, y, m)) {
 				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
 				Point4D oldP = this.P();

@@ -55,7 +55,7 @@
 //        //	Encryption context = (Encryption)(state.PacketEncoder);
 //        //	context.m_AlreadyRelayed = true;
 //        //}
-		
+
 //        internal void Relayed() {
 //            m_AlreadyRelayed = true;
 //        }
@@ -82,10 +82,10 @@
 
 //            // Disconnect the client
 //            //ns.Dispose(true);
-			
+
 //            ns.WriteLine("Unencrypted connections are not allowed on this server.");
 //            Prepared.SendFailedLogin(ns, LoginDeniedReason.CommunicationsProblem);
-			
+
 //            ns.Close("Unencrypted client detected");
 //        }
 
@@ -96,38 +96,38 @@
 //            {
 //                // If we're decrypting using LoginCrypt and we've already been relayed,
 //                // only decrypt a single packet using logincrypt and then disable it
-				
+
 //                if (m_AlreadyRelayed && m_Encryption is LoginEncryption) 
 //                {
-					
+
 //                    //Console.WriteLine("new seed on packet 0x"+buffer[0].ToString("x"));
 //                    uint newSeed = ((((LoginEncryption)(m_Encryption)).Key1 + 1) ^ ((LoginEncryption)(m_Encryption)).Key2);
-                
+
 //                    // Swap the seed
 //                    newSeed = ((newSeed >> 24) & 0xFF) | ((newSeed >> 8) & 0xFF00) | ((newSeed << 8) & 0xFF0000) | ((newSeed << 24) & 0xFF000000);
-                
+
 //                    // XOR it with the old seed
 //                    newSeed ^= m_Seed;
-                    
+
 //                    IClientEncryption newEncryption = new GameEncryption(newSeed);
 
 //                    //Console.WriteLine(LogStr.Ident(from)+": Encrypted client detected.");
-                
+
 //                    // Game Encryption comes first
 //                    newEncryption.clientDecrypt(ref buffer, length);
-                
+
 //                    // The login encryption is still used for this one packet
 //                    m_Encryption.clientDecrypt(ref buffer, length);
-                
+
 //                    // Swap the encryption schemes
 //                    m_Encryption = newEncryption;
 //                    m_Seed = newSeed;
-                
-                
+
+
 //                    m_AlreadyRelayed = false;
 //                    return;
 //                }
-				
+
 //                //I don't think this can ever happen (not even in RunUO btw.), so I commented it out ;) -tar
 
 //                m_Encryption.clientDecrypt(ref buffer, length);
@@ -225,7 +225,7 @@
 //                    } else {
 //                        // If it's not an unencrypted packet, simply assume it's encrypted with the seed
 //                        m_Encryption = new GameEncryption(m_Seed);
-						
+
 //                        //Console.WriteLine(LogStr.Ident(from)+": Encrypted client detected.");
 
 //                        byte[] packet = new byte[packetLength];

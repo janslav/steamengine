@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class WeaponTypeMassSetting : MassSettingsByModel<WeaponDef, WeaponType> {
 		public override string Name {
-			get { 
+			get {
 				return "Typy zbraní";
 			}
 		}
@@ -376,7 +376,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponAttackVsPMassSetting : MassSettingByMaterial<ColoredWeaponDef,double> {
+	public class WeaponAttackVsPMassSetting : MassSettingByMaterial<ColoredWeaponDef, double> {
 
 		public override string Name {
 			get { return "Útok proti hráèùm"; }
@@ -428,8 +428,8 @@ namespace SteamEngine.CompiledScripts {
 
 	public class WearableTypeMassSetting : MassSettingsByModel<WearableDef, WearableType> {
 		public override string Name {
-			get { 
-				return "Typy brnìní/obleèení"; 
+			get {
+				return "Typy brnìní/obleèení";
 			}
 		}
 

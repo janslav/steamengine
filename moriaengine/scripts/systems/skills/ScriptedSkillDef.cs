@@ -25,7 +25,8 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class ScriptedSkillDef : SkillDef {
 
-		public ScriptedSkillDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
+		public ScriptedSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 		}
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {

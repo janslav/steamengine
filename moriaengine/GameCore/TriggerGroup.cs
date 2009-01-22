@@ -28,10 +28,11 @@ using SteamEngine.Packets;
 using SteamEngine.LScript;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
-	
+
 namespace SteamEngine {
 	public abstract class TriggerGroup : AbstractScript {
-		protected TriggerGroup() : base() {
+		protected TriggerGroup()
+			: base() {
 			Init(this.defname);
 		}
 
@@ -39,9 +40,9 @@ namespace SteamEngine {
 			: base(defname) {
 			Init(defname);
 		}
-	
+
 		private static Regex globalNameRE = new Regex(@"^.*_all(?<value>[a-z][0-9a-z]+)s\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private void Init(string defname) {
 			this.remover = new TGRemover(this);
@@ -63,23 +64,23 @@ namespace SteamEngine {
 				Globals.instance.AddTriggerGroup(this);
 			}
 		}
-		
+
 		//the first trigger that throws an exceptions terminates the other ones that way
 		public abstract object Run(object self, TriggerKey tk, ScriptArgs sa);
-		
+
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
 		public abstract object TryRun(object self, TriggerKey tk, ScriptArgs sa);
 
 		public override string ToString() {
-			return "TriggerGroup "+defname;
+			return "TriggerGroup " + defname;
 		}
-		
+
 		public static new TriggerGroup Get(string name) {
 			AbstractScript script;
 			byDefname.TryGetValue(name, out script);
 			return script as TriggerGroup;
 		}
-		
+
 		internal static void ReAddGlobals() {
 			foreach (AbstractScript script in byDefname.Values) {
 				TriggerGroup tg = script as TriggerGroup;
@@ -96,14 +97,14 @@ namespace SteamEngine {
 		public static TriggerGroup operator +(TriggerGroup tg) {
 			return tg;
 		}
-    	
-    	private TGRemover remover;
-    	
+
+		private TGRemover remover;
+
 		public static TGRemover operator -(TriggerGroup tg) {
 			return tg.remover;
 		}
 	}
-	
+
 	public class TGRemover {
 		public readonly TriggerGroup tg;
 		public TGRemover(TriggerGroup tg) {

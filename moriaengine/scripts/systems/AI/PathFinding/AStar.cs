@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 			while ((iterations < maxIterations) && (openList.Count > 0)) {
 				parentNode = openList.Dequeue();
 				int newStepsSoFar = parentNode.stepsSoFar + 1;
-				for (int d = 0; d<8; d++) {
+				for (int d = 0; d < 8; d++) {
 					int newY, newX, newZ;
 					Direction dir = (Direction) d;
 					if (map.CheckMovement(parentNode, settings, dir, false, out newX, out newY, out newZ)) {
@@ -73,17 +73,17 @@ namespace SteamEngine.CompiledScripts {
 						//we found the target
 						if ((targetX == newX) && (targetY == newY) && (targetZ == newZ)) {
 							Direction[] path = new Direction[newStepsSoFar];
-							int i = newStepsSoFar-1;
+							int i = newStepsSoFar - 1;
 							path[i] = dir;
 							i--;
-							for (; i>=0; i--) {
+							for (; i >= 0; i--) {
 								path[i] = parentNode.cameFrom;
 								parentNode = parentNode.parentNode;// vtipny :)
 							}
 #if DEBUG
 							ticksEnd = HighPerformanceTimer.TickCount;
 							seconds = HighPerformanceTimer.TicksToSeconds(ticksEnd - ticksStart);
-							Logger.WriteDebug("Astar success. iterations:"+iterations+" nodes used:"+nodesUsed+", took "+seconds+" seconds.");
+							Logger.WriteDebug("Astar success. iterations:" + iterations + " nodes used:" + nodesUsed + ", took " + seconds + " seconds.");
 #endif
 							return path;
 						}
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts {
 #if DEBUG
 			ticksEnd = HighPerformanceTimer.TickCount;
 			seconds = HighPerformanceTimer.TicksToSeconds(ticksEnd - ticksStart);
-			Logger.WriteDebug("Astar failed. iterations:"+iterations+" nodes used:"+nodesUsed+", took "+seconds+" seconds.");
+			Logger.WriteDebug("Astar failed. iterations:" + iterations + " nodes used:" + nodesUsed + ", took " + seconds + " seconds.");
 #endif
 			return null;
 		}
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 			x *= 11;
 			y *= 11;
 
-			return (x*x)+(y*y)+(z*z);
+			return (x * x) + (y * y) + (z * z);
 			//works nicely ;)
 		}
 
@@ -181,7 +181,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public override int GetHashCode() {
-				return ((17^x)^y)^z;
+				return ((17 ^ x) ^ y) ^ z;
 			}
 
 			public override bool Equals(object obj) {
@@ -251,7 +251,7 @@ namespace SteamEngine.CompiledScripts {
 				if (src != null) {
 					double seconds = 0.5;
 					if ((sa != null) && (sa.argv.Length > 0)) {
-						seconds  = Convert.ToDouble(sa.argv[0]);
+						seconds = Convert.ToDouble(sa.argv[0]);
 					}
 
 					src.Target(Targ_AStar_Walk.Instance, new object[] { self, seconds });
@@ -276,9 +276,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public class Targ_AStar_Draw : CompiledTargetDef {
 			private static Targ_AStar_Draw instance;
-			public static Targ_AStar_Draw Instance { get {
-				return instance;
-			} }
+			public static Targ_AStar_Draw Instance {
+				get {
+					return instance;
+				}
+			}
 
 			public Targ_AStar_Draw() {
 				instance = this;
@@ -287,7 +289,7 @@ namespace SteamEngine.CompiledScripts {
 			protected override bool On_TargonPoint(Player ignored, IPoint4D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
-				IMovementSettings settings  = (IMovementSettings) arr[1];
+				IMovementSettings settings = (IMovementSettings) arr[1];
 
 				byte m = self.M;
 				Map map = Map.GetMap(m);
@@ -297,10 +299,10 @@ namespace SteamEngine.CompiledScripts {
 					foreach (Direction dir in path) {
 						int x, y, z;
 						if (!map.CheckMovement(start, settings, dir, false, out x, out y, out z)) {
-							Globals.SrcWriteLine("Dir "+dir+" from "+start+" unwalkable when re-checked.");
+							Globals.SrcWriteLine("Dir " + dir + " from " + start + " unwalkable when re-checked.");
 						}
 						Item i = (Item) Def.Create((ushort) x, (ushort) y, (sbyte) z, m);
-                        i.Color = 0x21; // Tento radek je historicky prvnim C# skripterkym pocinem pana Verbatima, mocneho a krfafeho! 7.4.2007 0:29am
+						i.Color = 0x21; // Tento radek je historicky prvnim C# skripterkym pocinem pana Verbatima, mocneho a krfafeho! 7.4.2007 0:29am
 						start = i;
 						i.AddTimer(decayTimerKey, new AStarDecayTimer()).DueInSeconds = 10;
 					}
@@ -331,9 +333,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public class Targ_AStar_Walk : CompiledTargetDef {
 			private static Targ_AStar_Walk instance;
-			public static Targ_AStar_Walk Instance { get {
-				return instance;
-			} }
+			public static Targ_AStar_Walk Instance {
+				get {
+					return instance;
+				}
+			}
 
 			public Targ_AStar_Walk() {
 				instance = this;
@@ -342,7 +346,7 @@ namespace SteamEngine.CompiledScripts {
 			protected override bool On_TargonPoint(Player ignored, IPoint4D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
-				double seconds  = Convert.ToDouble(arr[1]);
+				double seconds = Convert.ToDouble(arr[1]);
 				byte m = self.M;
 				Map map = Map.GetMap(m);
 				Direction[] path = AStar.GetPathFromTo(self, targetted, map, self.MovementSettings);

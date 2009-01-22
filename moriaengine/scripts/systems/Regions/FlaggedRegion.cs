@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.Regions {
-	
+
 	//todo: make some members virtual?
 	[SaveableClass]
 	[ViewableClass]
@@ -34,19 +34,19 @@ namespace SteamEngine.Regions {
 
 		[LoadSection]
 		public FlaggedRegion(PropsSection input)
-			: base (input) {
+			: base(input) {
 		}
 
-		public FlaggedRegion() 
-				: base() {
+		public FlaggedRegion()
+			: base() {
 		}
 
-		public FlaggedRegion(string defname, Region parent) 
-			: base () {			
+		public FlaggedRegion(string defname, Region parent)
+			: base() {
 			this.Defname = defname;
 			this.Parent = parent;
 		}
-		
+
 		[NoShow]
 		public int Flags {
 			get {
@@ -77,7 +77,7 @@ namespace SteamEngine.Regions {
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			ThrowIfDeleted();
-			switch(valueName) {
+			switch (valueName) {
 				case "flag_announce":
 					LoadSpecificFlag(filename, line, 0x00200, valueString);
 					break;
@@ -127,7 +127,7 @@ namespace SteamEngine.Regions {
 					LoadSpecificFlag(filename, line, 0x00040, valueString);
 					break;
 				case "flag_underground":
-					LoadSpecificFlag(filename, line, 0x00800, valueString); 
+					LoadSpecificFlag(filename, line, 0x00800, valueString);
 					break;
 				//case "flag_unused":
 				//	LoadSpecificFlag(0x00100, args); 
@@ -141,8 +141,8 @@ namespace SteamEngine.Regions {
 					base.LoadLine(filename, line, valueName, valueString);//the Region Loadline
 					break;
 			}
-		}		
-		
+		}
+
 		private void LoadSpecificFlag(string filename, int line, int mask, string args) {
 			if (TagMath.ParseBoolean(args)) {//args is 1 or true or something like that
 				flags |= mask;

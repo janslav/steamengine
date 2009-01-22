@@ -31,19 +31,19 @@ namespace SteamEngine {
 	[Summary("Decorate your class by this attribute if you want it to be cloneable using the DeepCopyFactory framework."
 	+ "When this attribute is used, LoadingInitializerAttribute is expected to be found on a corresponding member, and will be used to initialize a new instance."
 	+ "Members with SaveableData attribute will be considered the members to be copied.")]
-	[AttributeUsage(AttributeTargets.Class|AttributeTargets.Struct)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 	public class DeepCopyableClassAttribute : Attribute {
 	}
 
 	[Summary("In classes that have [DeepCopyableClass], use this attribute to decorate public instance fields and properties"
 	+ " that are supposed to be copied by the deepcopy framework along with the main object.")]
-	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class CopyableDataAttribute : Attribute {
 	}
 
 	[Summary("Use this to decorate a static method or constructor that implements deep copying of instances of the given class. "
 	+ "It must have one parameter of it's type and a return value of assignable type.")]
-	[AttributeUsage(AttributeTargets.Method|AttributeTargets.Constructor)]
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 	public class DeepCopyImplementationAttribute : Attribute {
 	}
 
@@ -89,7 +89,7 @@ namespace SteamEngine {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+decoratedClasses.Count+" Manual DeepCopy Implementors");
+					Logger.WriteDebug("Done generating " + decoratedClasses.Count + " Manual DeepCopy Implementors");
 				}
 				return codeCompileUnit;
 			} finally {
@@ -98,7 +98,7 @@ namespace SteamEngine {
 		}
 
 		public void HandleAssembly(System.Reflection.Assembly compiledAssembly) {
-			
+
 		}
 
 		private class GeneratedInstance {
@@ -125,14 +125,14 @@ namespace SteamEngine {
 			private void HandleDeepCopyImplementationAttribute(Type decoratedClass, MemberInfo mi) {
 				if (mi.IsDefined(typeof(DeepCopyImplementationAttribute), false)) {
 					if (initializer != null) {
-						throw new SEException("Can not use the "+LogStr.Ident("DeepCopyImplementationAttribute")+" on two class members.");
+						throw new SEException("Can not use the " + LogStr.Ident("DeepCopyImplementationAttribute") + " on two class members.");
 					} else {
-						if ((mi.MemberType&MemberTypes.Constructor) == MemberTypes.Constructor) {
+						if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 							initializer = (MethodBase) mi;
-						} else if ((mi.MemberType&MemberTypes.Method) == MemberTypes.Method) {
+						} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 							MethodInfo meth = (MethodInfo) mi;
 							if (!meth.ReturnType.IsAssignableFrom(decoratedClass)) {
-								throw new SEException("Incompatible return type of method "+meth);
+								throw new SEException("Incompatible return type of method " + meth);
 							}
 							if (meth.IsStatic) {
 								initializer = meth;
@@ -143,10 +143,10 @@ namespace SteamEngine {
 							if (pars.Length == 0) {
 							} else if ((pars.Length == 1) && (pars[0].ParameterType == decoratedClass)) {
 							} else {
-								throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute")+" can only be placed on a callable member with one parameter of the same type as is the declaring class, or with zero parameters.");
+								throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a callable member with one parameter of the same type as is the declaring class, or with zero parameters.");
 							}
 						} else {
-							throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute")+" can only be placed on a constructor or static method.");
+							throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a constructor or static method.");
 						}
 					}
 				}
@@ -155,7 +155,7 @@ namespace SteamEngine {
 			private void HandleCopyableDataAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(CopyableDataAttribute), false)) {
 					bool added = false;
-					if ((mi.MemberType&MemberTypes.Property) == MemberTypes.Property) {
+					if ((mi.MemberType & MemberTypes.Property) == MemberTypes.Property) {
 						PropertyInfo pi = (PropertyInfo) mi;
 						MethodInfo[] accessors = pi.GetAccessors();
 						if (accessors.Length == 2) {
@@ -164,9 +164,9 @@ namespace SteamEngine {
 								added = true;
 							}
 						} else {
-							throw new SEException(LogStr.Ident("CopyableDataAttribute")+" can only be placed on fields or properties with both setter and getter.");
+							throw new SEException(LogStr.Ident("CopyableDataAttribute") + " can only be placed on fields or properties with both setter and getter.");
 						}
-					} else if ((mi.MemberType&MemberTypes.Field) == MemberTypes.Field) {
+					} else if ((mi.MemberType & MemberTypes.Field) == MemberTypes.Field) {
 						FieldInfo fi = (FieldInfo) mi;
 						if (!fi.IsStatic) {
 							copyableDataFields.Add(fi);
@@ -174,7 +174,7 @@ namespace SteamEngine {
 						}
 					}
 					if (!added) {
-						throw new SEException(LogStr.Ident("CopyableDataAttribute")+" can only be placed on instance fields or properties.");
+						throw new SEException(LogStr.Ident("CopyableDataAttribute") + " can only be placed on instance fields or properties.");
 					}
 				}
 			}
@@ -253,7 +253,7 @@ namespace SteamEngine {
 					}
 					return new CodeAssignStatement(to, from);
 				} else {
-					string methodName = "DelayedGetCopy_"+name;
+					string methodName = "DelayedGetCopy_" + name;
 
 					CodeMemberMethod method = new CodeMemberMethod();
 					method.Attributes = MemberAttributes.Public | MemberAttributes.Final;
@@ -278,7 +278,7 @@ namespace SteamEngine {
 							name);
 					}
 
-					method.Statements.Add(new CodeAssignStatement(to, 
+					method.Statements.Add(new CodeAssignStatement(to,
 						new CodeCastExpression(type,
 							new CodeArgumentReferenceExpression("copiedValue"))));
 					this.codeTypeDeclatarion.Members.Add(method);
@@ -313,7 +313,7 @@ namespace SteamEngine {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_"+decoratedClass.Name);
+				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + decoratedClass.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(IDeepCopyImplementor));
 				codeTypeDeclatarion.IsClass = true;

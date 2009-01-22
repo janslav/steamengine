@@ -22,7 +22,7 @@ using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Text;
-using System.Globalization; 
+using System.Globalization;
 using System.Threading;
 using SteamEngine.Common;
 using SteamEngine.Timers;
@@ -62,18 +62,18 @@ namespace SteamEngine {
 
 		internal static void SetStartup() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel = RunLevel.Startup | (currentLevel & ~(RunLevel.AwaitingRetry | RunLevel.Running | RunLevel.Shutdown | RunLevel.Dead));
 			}
 		}
 
 		internal static void SetRunning() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel = RunLevel.Running;
 			}
 		}
@@ -86,27 +86,27 @@ namespace SteamEngine {
 
 		internal static void SetPaused() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel |= RunLevel.Paused;
 			}
 		}
 
 		internal static void UnsetPaused() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel &= ~RunLevel.Paused;
 			}
 		}
 
 		internal static void SetAwaitingRetry() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel = RunLevel.AwaitingRetry | (currentLevel & ~(RunLevel.Startup | RunLevel.Running | RunLevel.Shutdown | RunLevel.Dead));
 			}
 		}
@@ -119,36 +119,36 @@ namespace SteamEngine {
 
 		internal static void UnsetAwaitingRetry() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel &= ~RunLevel.AwaitingRetry;
 			}
 		}
 
 		internal static void SetShutdown() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel = RunLevel.Shutdown | (currentLevel & ~(RunLevel.Startup | RunLevel.Running | RunLevel.AwaitingRetry | RunLevel.Dead));
 			}
 		}
 
 		internal static void UnsetShutdown() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel &= ~RunLevel.Shutdown;
 			}
 		}
 
 		internal static void SetDead() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel = RunLevel.Dead | (currentLevel & ~(RunLevel.Startup | RunLevel.Running | RunLevel.AwaitingRetry | RunLevel.Shutdown | RunLevel.Recompiling));
 			}
 		}
@@ -159,18 +159,18 @@ namespace SteamEngine {
 
 		internal static void SetRecompiling() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel = RunLevel.Recompiling | (currentLevel & ~(RunLevel.Running | RunLevel.Dead));
 			}
 		}
 
 		internal static void UnsetRecompiling() {
 #if DEBUG
-			using (new MagicObject()) 
+			using (new MagicObject())
 #endif
-			{
+ {
 				currentLevel &= ~RunLevel.Recompiling;
 			}
 		}

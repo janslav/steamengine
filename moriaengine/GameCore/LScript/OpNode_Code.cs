@@ -34,15 +34,15 @@ namespace SteamEngine.LScript {
 			Production prod = (Production) code;
 			return Construct(parent, prod.children);
 		}
-		
+
 		private static OpNode Construct(IOpNodeHolder parent, ArrayList children) {
 			if (children.Count == 1) {
 				return LScript.CompileNode(parent, (Node) children[0]);
 			}
-			
+
 			int highestPriority = -1;
 			int opIndex = -1;
-			for (int i = 1, n = children.Count; i<n; i+=2) {//step is 2, we are looking just for the operators
+			for (int i = 1, n = children.Count; i < n; i += 2) {//step is 2, we are looking just for the operators
 				Node node = (Node) children[i];
 				string op = LScript.GetString(node).Trim().ToLower();
 				if (IsComparing(op)) {
@@ -59,7 +59,7 @@ namespace SteamEngine.LScript {
 			if (opIndex == -1) {
 				throw new Exception("No operator found... this should not happen!");
 			}
-			
+
 			OpNode_Lazy_BinOperator constructed = null;
 			Node operatorNode = (Node) children[opIndex];
 			if (OpNode.IsType(operatorNode, StrictConstants.OP_AND)) {
@@ -70,15 +70,15 @@ namespace SteamEngine.LScript {
 				//Console.WriteLine("BinOperator type: "+operatorNode);
 				constructed = OpNode_Lazy_BinOperator.Construct(parent, operatorNode);
 			}
-			
+
 			ArrayList listLeft = children.GetRange(0, opIndex);
-			ArrayList listRight = children.GetRange(opIndex+1, children.Count - opIndex - 1);
+			ArrayList listRight = children.GetRange(opIndex + 1, children.Count - opIndex - 1);
 			constructed.left = Construct(constructed, listLeft);
 			constructed.right = Construct(constructed, listRight);
-			
+
 			return constructed;
 		}
-		
+
 		internal static bool IsComparing(string op) {
 			if (op.Length == 2) {
 				if (op[1] == '=') {
@@ -86,43 +86,43 @@ namespace SteamEngine.LScript {
 				}
 			} else {
 				char first = op[0];
-				if ((first == '<')||(first == '>')) {
-					return true;	
+				if ((first == '<') || (first == '>')) {
+					return true;
 				}
 			}
 			return false;
 		}
-		
+
 		internal static int OperatorPriority(string op) {
 			switch (op) {
-				case "||" :
+				case "||":
 					return 5;
-				case "&&" :
+				case "&&":
 					return 5;
-				case "+" :
+				case "+":
 					return 4;
-				case "-" :
+				case "-":
 					return 3;
-				case "*" :
+				case "*":
 					return 2;
-				case "/" :
+				case "/":
 					return 2;
-				case "div" :
+				case "div":
 					return 2;
-				case "%" :
+				case "%":
 					return 2;
-				case "&" :
+				case "&":
 					return 1;
-				case "~" :
+				case "~":
 					return 1;
-				case "|" :
+				case "|":
 					return 1;
 				default:
-					throw new ArgumentException("unknown operator '"+op+"'", "op");
+					throw new ArgumentException("unknown operator '" + op + "'", "op");
 			}
-		}       
-	}           
-}	            
-                
-                
-                
+		}
+	}
+}
+
+
+

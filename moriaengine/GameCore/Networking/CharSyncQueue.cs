@@ -459,7 +459,7 @@ namespace SteamEngine.Networking {
 
 			internal void ProcessChar() {
 				if (!this.thing.IsDeleted) {//deleted items are supposed to be removedfromview by the delete code
-					if ((this.changeflags != NSFlags.None) || (this.changedSkillsCount > 0))  {
+					if ((this.changeflags != NSFlags.None) || (this.changedSkillsCount > 0)) {
 						if ((changeflags & NSFlags.Resend) == NSFlags.Resend) {
 							this.ProcessCharResend(this.thing);
 						} else {
@@ -545,7 +545,7 @@ namespace SteamEngine.Networking {
 				bool basePropsChanged = this.GetBasePropsChanged();
 				bool propertiesChanged = (changeflags & NSFlags.Property) == NSFlags.Property;
 				bool propertiesExist = propertiesChanged;
-				AOSToolTips toolTips = null;				
+				AOSToolTips toolTips = null;
 				ICollection<AbstractCharacter> partyMembers = ch.PartyMembers;
 				bool hasParty = (partyMembers != null && partyMembers.Count > 1);
 

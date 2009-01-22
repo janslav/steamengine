@@ -31,21 +31,23 @@ namespace SteamEngine {
 		private readonly int multiFlags;
 
 		internal MultiItemComponent(MultiComponentDescription mcd, ushort id, byte m, int multiFlags)
-				: base(id, m) {
+			: base(id, m) {
 			this.mcd = mcd;
 			this.multiFlags = multiFlags;
 		}
 
 		internal void SetRelativePos(ushort centerX, ushort centerY, sbyte centerZ) {
-			this.x = (ushort) (centerX+mcd.offsetX);
-			this.y = (ushort) (centerY+mcd.offsetY);
-			this.z = (sbyte) (centerZ+mcd.offsetZ);
+			this.x = (ushort) (centerX + mcd.offsetX);
+			this.y = (ushort) (centerY + mcd.offsetY);
+			this.z = (sbyte) (centerZ + mcd.offsetZ);
 		}
 
 		//useless?
-		public int MultiFlags { get {
-			return multiFlags;
-		} }
+		public int MultiFlags {
+			get {
+				return multiFlags;
+			}
+		}
 	}
 
 	//info about one item of multiItem
@@ -89,7 +91,7 @@ namespace SteamEngine {
 		internal MultiItemComponent[] Create(ushort x, ushort y, sbyte z, byte m) {
 			int n = parts.Count;
 			MultiItemComponent[] retVal = new MultiItemComponent[n];
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				retVal[i] = parts[i].Create(x, y, z, m);
 			}
 			return retVal;
@@ -97,12 +99,13 @@ namespace SteamEngine {
 
 		public MultiComponentDescription this[int index] {
 			get {
-			return parts[index];
-		} }
+				return parts[index];
+			}
+		}
 
 		public static void Init() {
 			if (Globals.useMultiItems) {
-				Console.WriteLine("Loading "+LogStr.File("Multi.mul")+" - multi items info.");
+				Console.WriteLine("Loading " + LogStr.File("Multi.mul") + " - multi items info.");
 
 				string mulFileP = Path.Combine(Globals.mulPath, "multi.mul");
 				string idxFileP = Path.Combine(Globals.mulPath, "multi.idx");
@@ -114,21 +117,21 @@ namespace SteamEngine {
 					BinaryReader mulbr = new BinaryReader(mulfs);
 
 					int pos, length;
-					int slots=0, items=0;
+					int slots = 0, items = 0;
 					MultiData listOfItems;
 					MultiComponentDescription part;
 
 					try {
 						while (true) {
-							if ((pos=idxbr.ReadInt32()) != -1) {
+							if ((pos = idxbr.ReadInt32()) != -1) {
 								length = idxbr.ReadInt32();
 								idxbr.BaseStream.Seek(4, SeekOrigin.Current);
 
 								if (mulbr.BaseStream.Position != pos) {
 									mulbr.BaseStream.Seek(pos, SeekOrigin.Begin);
 								}
-								listOfItems = new MultiData(length/12);
-								for (int i=0; i<length/12; i++) {
+								listOfItems = new MultiData(length / 12);
+								for (int i = 0; i < length / 12; i++) {
 									ushort id = mulbr.ReadUInt16();
 									short offsetX = mulbr.ReadInt16();
 									short offsetY = mulbr.ReadInt16();
@@ -151,8 +154,7 @@ namespace SteamEngine {
 					} catch (EndOfStreamException) {
 					} catch (Exception e) {
 						Logger.WriteWarning("Exceptio while reading Multi.mul/idx", e);
-					}
-					finally {
+					} finally {
 						Logger.WriteDebug("Num of multiItem slots: " + slots);
 						Logger.WriteDebug("Num of multiItems: " + items);
 					}
@@ -164,13 +166,13 @@ namespace SteamEngine {
 					if (Globals.writeMulDocsFiles) {
 						StreamWriter docsw = File.CreateText(Globals.GetMulDocPathFor("MultiItems.txt"));
 
-						foreach (KeyValuePair<int,MultiData> entry in multiItems) {
+						foreach (KeyValuePair<int, MultiData> entry in multiItems) {
 							docsw.WriteLine("Item: " + entry.Key + "\t Num parts: " + entry.Value.parts.Count);
 							foreach (MultiComponentDescription p in entry.Value.parts) {
-								docsw.WriteLine("\t ItemId: "+p.itemID);
-								docsw.WriteLine("\t Offset X: "+p.offsetX);
-								docsw.WriteLine("\t Offset Y: "+p.offsetY);
-								docsw.WriteLine("\t Offset Z: "+p.offsetZ);
+								docsw.WriteLine("\t ItemId: " + p.itemID);
+								docsw.WriteLine("\t Offset X: " + p.offsetX);
+								docsw.WriteLine("\t Offset Y: " + p.offsetY);
+								docsw.WriteLine("\t Offset Z: " + p.offsetZ);
 								//docsw.WriteLine("\t Visible: "+p.flags);
 								docsw.WriteLine();
 							}
@@ -178,7 +180,7 @@ namespace SteamEngine {
 						}
 						docsw.Close();
 					}
-				}  else {
+				} else {
 					Logger.WriteCritical("Unable to locate multi.idx or multi.mul. We're gonna crash soon ;)");
 				}
 			} else {
@@ -198,15 +200,15 @@ namespace SteamEngine {
 
 		internal void Add(MultiItemComponent multiComponent) {
 			Sanity.IfTrueThrow((multiComponent.prevInList != null || multiComponent.nextInList != null),
-				"'"+multiComponent+"' being added into a MultiComponentList while being in another cont already");
-			MultiItemComponent next=firstMultiComponent;
-			firstMultiComponent=multiComponent;
-			multiComponent.prevInList=null;
-			multiComponent.nextInList=next;
-			if (next!=null) {
-				next.prevInList=multiComponent;
+				"'" + multiComponent + "' being added into a MultiComponentList while being in another cont already");
+			MultiItemComponent next = firstMultiComponent;
+			firstMultiComponent = multiComponent;
+			multiComponent.prevInList = null;
+			multiComponent.nextInList = next;
+			if (next != null) {
+				next.prevInList = multiComponent;
 			}
-			multiComponent.collection=this;
+			multiComponent.collection = this;
 			count++;
 		}
 
@@ -218,10 +220,10 @@ namespace SteamEngine {
 					multiComponent.prevInList.nextInList = multiComponent.nextInList;
 				}
 				if (multiComponent.nextInList != null) {
-					multiComponent.nextInList.prevInList=multiComponent.prevInList;
+					multiComponent.nextInList.prevInList = multiComponent.prevInList;
 				}
-				multiComponent.prevInList=null;
-				multiComponent.nextInList=null;
+				multiComponent.prevInList = null;
+				multiComponent.nextInList = null;
 				count--;
 				multiComponent.collection = null;
 				return true;
@@ -232,7 +234,7 @@ namespace SteamEngine {
 		internal MultiItemComponent Find(int x, int y, int z, int id) {
 			MultiItemComponent mic = firstMultiComponent;
 			while (mic != null) {
-				if ((mic.x == x) &&  (mic.y == y) && (mic.z == z) && (mic.Id == id)) {
+				if ((mic.x == x) && (mic.y == y) && (mic.z == z) && (mic.Id == id)) {
 					return mic;
 				}
 				mic = mic.nextInList;
@@ -279,11 +281,11 @@ namespace SteamEngine {
 			}
 
 			public bool MoveNext() {
-				current=next;
-				if (current==null) {
+				current = next;
+				if (current == null) {
 					return false;
 				}
-				next=current.nextInList;
+				next = current.nextInList;
 				return true;
 			}
 

@@ -28,74 +28,77 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	public class OpNode_NotOperator : OpNode_Lazy_UnOperator, ITriable { // !
-		internal OpNode_NotOperator(IOpNodeHolder parent, Node code):base(parent, code) {
+		internal OpNode_NotOperator(IOpNodeHolder parent, Node code)
+			: base(parent, code) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object retVal = obj.Run(vars);
 			try {
 				return !(TagMath.ToBoolean(retVal));
 			} catch (Exception e) {
-				throw new InterpreterException("Expression while evaluating ! operator", 
+				throw new InterpreterException("Expression while evaluating ! operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				return !(TagMath.ToBoolean(results[0]));
 			} catch (Exception e) {
-				throw new InterpreterException("Expression while evaluating ! operator", 
+				throw new InterpreterException("Expression while evaluating ! operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}
-	
+
 	public class OpNode_BitComplementOperator : OpNode_Lazy_UnOperator, ITriable { // ~
-		internal OpNode_BitComplementOperator(IOpNodeHolder parent, Node code):base(parent, code) {
+		internal OpNode_BitComplementOperator(IOpNodeHolder parent, Node code)
+			: base(parent, code) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object retVal = obj.Run(vars);
 			try {
 				return ~(Convert.ToInt64(retVal));
 			} catch (Exception e) {
-				throw new InterpreterException("Expression while evaluating ~ operator", 
+				throw new InterpreterException("Expression while evaluating ~ operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				return ~(Convert.ToInt64(results[0]));
 			} catch (Exception e) {
-				throw new InterpreterException("Expression while evaluating ~ operator", 
+				throw new InterpreterException("Expression while evaluating ~ operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}
-	
+
 	public class OpNode_MinusOperator : OpNode_Lazy_UnOperator, ITriable { // ~
-		internal OpNode_MinusOperator(IOpNodeHolder parent, Node code):base(parent, code) {
+		internal OpNode_MinusOperator(IOpNodeHolder parent, Node code)
+			: base(parent, code) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object retVal = obj.Run(vars);
 			try {
 				return -(Convert.ToDouble(retVal));
 			} catch (Exception e) {
-				throw new InterpreterException("Expression while evaluating - operator", 
+				throw new InterpreterException("Expression while evaluating - operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				return -(Convert.ToDouble(results[0]));
 			} catch (Exception e) {
-				throw new InterpreterException("Expression while evaluating - operator", 
+				throw new InterpreterException("Expression while evaluating - operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}
-}	
+}

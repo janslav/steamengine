@@ -38,10 +38,11 @@ namespace SteamEngine.LScript {
 		internal OpNode nodeToReturn = null;
 
 		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
-		public LScriptHolder(TriggerSection input) : base(input.triggerName) {
+		public LScriptHolder(TriggerSection input)
+			: base(input.triggerName) {
 			Compile(input);
 		}
-		
+
 		//a little hack for gump response triggers.
 		//internal LScriptHolder(TriggerSection input, params string[] addedLocals) : base(input.triggerName) {
 		//    //registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -50,18 +51,19 @@ namespace SteamEngine.LScript {
 		//    }
 		//    Compile(input);
 		//}
-		
-		internal LScriptHolder() : base("temporary") {
+
+		internal LScriptHolder()
+			: base("temporary") {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (code == oldNode) {
 				code = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-		
+
 		internal int GetRegisterIndex(string name) {
 			if (!registerNames.ContainsKey(name)) {
 				registerNames[name] = registerNames.Count;
@@ -71,10 +73,12 @@ namespace SteamEngine.LScript {
 
 
 		internal bool containsRandom = false;
-		public bool ContainsRandomExpression { get {
-			return containsRandom;
-		} }
-		
+		public bool ContainsRandomExpression {
+			get {
+				return containsRandom;
+			}
+		}
+
 		internal void Compile(TriggerSection input) {
 			filename = input.filename;
 			line = input.startline;
@@ -89,7 +93,7 @@ namespace SteamEngine.LScript {
 
 		public sealed override object Run(object self, ScriptArgs sa) {
 			if (unloaded) {
-				throw new UnloadedException("Function/trigger "+LogStr.Ident(name)+" is unloaded, can not be run.");
+				throw new UnloadedException("Function/trigger " + LogStr.Ident(name) + " is unloaded, can not be run.");
 			}
 			lastRunSuccesful = false;
 			try {
@@ -106,11 +110,11 @@ namespace SteamEngine.LScript {
 				throw;
 			}
 		}
-		
+
 		protected sealed override void Error(Exception e) {
 			Logger.WriteError(filename, line, e);
 		}
-		
+
 		public void Unload() {
 			code = null;
 			registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -130,7 +134,7 @@ namespace SteamEngine.LScript {
 		}
 
 	}
-	
+
 	public class ScriptVars {
 		internal ScriptArgs scriptArgs;
 		internal object self;
@@ -138,9 +142,9 @@ namespace SteamEngine.LScript {
 		internal bool returned;
 		internal readonly object defaultObject;
 		internal readonly int uid;
-		
+
 		private static int uids;
-		
+
 		internal ScriptVars(ScriptArgs scriptArgs, object self, int capacity) {
 			this.scriptArgs = scriptArgs;
 			this.self = self;

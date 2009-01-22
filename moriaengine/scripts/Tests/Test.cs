@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
 	[Summary("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]
-	#pragma warning disable 0414 //disable the boring "private field never used warning"
+#pragma warning disable 0414 //disable the boring "private field never used warning"
 	public static class TESTSettClass {
 		[SavedMember("attr1", "Category1")]
 		private static object att1 = "pepicek";
@@ -119,17 +119,17 @@ namespace SteamEngine.CompiledScripts {
 	public static class TestScript {
 		public static void Moo(string asdf) {
 			char o;
-			for (int a=0; a<asdf.Length; a++) {
-				o=asdf[a];
+			for (int a = 0; a < asdf.Length; a++) {
+				o = asdf[a];
 				Console.Write(o);
 			}
 		}
-		
+
 		[Summary("Documentation in scripts")]
 		[Remark("Documentation attributes are allowed in scripts.")]
 		[SteamFunction]
 		public static TagHolder testInvoking(TagHolder self, string accname) {
-			Console.WriteLine("I am called on "+self+" with '"+accname+"'");
+			Console.WriteLine("I am called on " + self + " with '" + accname + "'");
 			return new TagHolder();
 		}
 		[SteamFunction]
@@ -162,9 +162,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 		[SteamFunction]
 		public static void funkce(TagHolder self, ScriptArgs sa) {
-			Console.WriteLine("function has been run: "+sa.Args);
+			Console.WriteLine("function has been run: " + sa.Args);
 		}
-		
+
 		//public void on_startup(TagHolder globals) {
 		//	TagKey testTag=Tag("testTag");
 		//	
@@ -183,7 +183,7 @@ namespace SteamEngine.CompiledScripts {
 		//	globals.SetTag(testTag,list);
 		//	
 		//	TagHolder copied = new TagHolder(globals);
-      //
+		//
 		//	Console.WriteLine("original:"+Globals.ObjToString(globals.tags));
 		//	Console.WriteLine("copied:"+Globals.ObjToString(copied.tags));
 		//	ArrayList copiedlist=(ArrayList)copied.GetTag(testTag);

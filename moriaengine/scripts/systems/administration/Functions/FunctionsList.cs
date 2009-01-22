@@ -23,88 +23,88 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-    [Summary("Dialog that will display all steam functions available")]
-    public class D_Functions : CompiledGumpDef {
-        internal static readonly TagKey listTK = TagKey.Get("_functions_list_");
-        internal static readonly TagKey criteriaTK = TagKey.Get("_functions_search_criteria_");
-        internal static readonly TagKey sortTK = TagKey.Get("_functions_list_sorting_");
+	[Summary("Dialog that will display all steam functions available")]
+	public class D_Functions : CompiledGumpDef {
+		internal static readonly TagKey listTK = TagKey.Get("_functions_list_");
+		internal static readonly TagKey criteriaTK = TagKey.Get("_functions_search_criteria_");
+		internal static readonly TagKey sortTK = TagKey.Get("_functions_list_sorting_");
 
-        private static int width = 300;
+		private static int width = 300;
 
-        public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-            //vzit seznam funkci
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			//vzit seznam funkci
 			List<ScriptHolder> fList = args.GetTag(D_Functions.listTK) as List<ScriptHolder>;
 
 			if (fList == null) {
-                //vzit seznam fci dle vyhledavaciho kriteria
-                //toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
+				//vzit seznam fci dle vyhledavaciho kriteria
+				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				fList = ListifyFunctions(ScriptHolder.AllFunctions, TagMath.SGetTag(args, D_Functions.criteriaTK));
 				SortFunctions(fList, (SortingCriteria) TagMath.IGetTag(args, D_Functions.sortTK));
 				args.SetTag(D_Functions.listTK, fList); //ulozime to do argumentu dialogu				
-            }
-            int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			}
+			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, fList.Count);
 
-            ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
-            //pozadi    
-            dlg.CreateBackground(width);
-            dlg.SetLocation(70, 70);
+			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			//pozadi    
+			dlg.CreateBackground(width);
+			dlg.SetLocation(70, 70);
 
-            //nadpis
-            dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-            dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech funkcí (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + fList.Count + ")");
-            dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
-            dlg.MakeLastTableTransparent();
+			//nadpis
+			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech funkcí (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + fList.Count + ")");
+			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.MakeLastTableTransparent();
 
-            //cudlik a input field na zuzeni vyberu
-            dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-            dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-            dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-            dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
-            dlg.MakeLastTableTransparent();
+			//cudlik a input field na zuzeni vyberu
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
+			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.MakeLastTableTransparent();
 
-            //popis sloupcu
+			//popis sloupcu
 			dlg.AddTable(new GUTATable(1, 160, ButtonFactory.D_BUTTON_WIDTH, 0));
-            dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle name asc
-            dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle name desc				
-            dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Název");
-            dlg.LastTable[0, 1] = TextFactory.CreateLabel("Desc");
-            dlg.LastTable[0, 2] = TextFactory.CreateLabel("Type");//scripted/compiled
-            dlg.MakeLastTableTransparent();
+			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle name asc
+			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle name desc				
+			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Název");
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Desc");
+			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Type");//scripted/compiled
+			dlg.MakeLastTableTransparent();
 
-            //seznam roli
-            dlg.AddTable(new GUTATable(imax - firstiVal));
-            dlg.CopyColsFromLastTable();
+			//seznam roli
+			dlg.AddTable(new GUTATable(imax - firstiVal));
+			dlg.CopyColsFromLastTable();
 
-            //projet seznam v ramci daneho rozsahu indexu
-            int rowCntr = 0;
-            for (int i = firstiVal; i < imax; i++) {
-                ScriptHolder sh = fList[i];
+			//projet seznam v ramci daneho rozsahu indexu
+			int rowCntr = 0;
+			for (int i = firstiVal; i < imax; i++) {
+				ScriptHolder sh = fList[i];
 
-                dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(sh.name);
+				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(sh.name);
 				//cudl na zobrazeni popisu }aktivni pouze je-li popis
-				dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, sh.Description != null, 10 + i);				
+				dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, sh.Description != null, 10 + i);
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText((sh is CompiledScriptHolder) ? "compiled" : "scripted");
-                rowCntr++;
-            }
-            dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
+				rowCntr++;
+			}
+			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
-            //ted paging
-            dlg.CreatePaging(fList.Count, firstiVal, 1);
+			//ted paging
+			dlg.CreatePaging(fList.Count, firstiVal, 1);
 
-            dlg.WriteOut();
-        }
+			dlg.WriteOut();
+		}
 
-        public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam fci bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<ScriptHolder> fList = (List<ScriptHolder>) args.GetTag(D_Functions.listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, fList.Count);
 			if (gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-                switch (gr.pressedButton) {
-                    case 0: //exit
-                        DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
-                        break;
+				switch (gr.pressedButton) {
+					case 0: //exit
+						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
+						break;
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
@@ -122,9 +122,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args.RemoveTag(D_Functions.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
-                }
+				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, fList.Count, 1)) {//posledni 1 - pocet sloupecku v dialogu				
-                return;
+				return;
 			} else {
 				int row = ((int) gr.pressedButton - 10);//zjistime si radek
 				ScriptHolder sh = fList[row];
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Gump newGi = D_Display_Text.ShowInfo(sh.Description + ""); //nezobrazovat "null", jen prazdno evt...
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
-        }
+		}
 
 		[Summary("Retreives the list of all existing functions")]
 		private List<ScriptHolder> ListifyFunctions(IEnumerable<ScriptHolder> fctions, string criteria) {
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				case SortingCriteria.NameDesc:
 					list.Sort(FunctionsNameComparer.instance);
 					list.Reverse();
-					break;				
+					break;
 			}
 		}
 
@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				self.Dialog(SingletonScript<D_Functions>.Instance, newArgs);
 			}
 		}
-    }
+	}
 
 	[Summary("Comparer for sorting functions by name asc")]
 	public class FunctionsNameComparer : IComparer<ScriptHolder> {

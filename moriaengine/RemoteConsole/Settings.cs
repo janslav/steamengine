@@ -91,28 +91,28 @@ namespace SteamEngine.RemoteConsole {
 		private string password = "";
 
 		public string Name {
-			set { name=value; }
+			set { name = value; }
 			get { return name; }
 		}
 		public string Address {
-			set { address=value; }
+			set { address = value; }
 			get { return address; }
 		}
 		public string UserName {
-			set { userName=value; }
+			set { userName = value; }
 			get { return userName; }
 		}
 		public string Password {
-			set { password=value; }
+			set { password = value; }
 			get { return password; }
 		}
 
 		public int Port {
 			set {
-				if (value<0 || value > 65535) {
+				if (value < 0 || value > 65535) {
 					throw new Exception("Port number out of range");
 				}
-				port=value;
+				port = value;
 			}
 			get { return port; }
 		}

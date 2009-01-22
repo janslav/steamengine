@@ -86,9 +86,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override sealed bool AllowGround { get {
-			return this.allowGround; 
-		} }
+		protected override sealed bool AllowGround {
+			get {
+				return this.allowGround;
+			}
+		}
 
 		protected override string GetName() {
 			return this.GetType().Name;
@@ -104,7 +106,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected sealed override void On_TargonCancel(GameState state, object parameter) {
-			Player self = state.Character as Player; 
+			Player self = state.Character as Player;
 			if (self != null) {
 				this.On_TargonCancel(self, parameter);
 			}
@@ -184,9 +186,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override sealed bool AllowGround { get {
-			return ((targon_ground != null) || (targon_point != null)); 
-		} }
+		protected override sealed bool AllowGround {
+			get {
+				return ((targon_ground != null) || (targon_point != null));
+			}
+		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			string typeName = input.headerType.ToLower();
@@ -197,7 +201,7 @@ namespace SteamEngine.CompiledScripts {
 			ScriptedTargetDef td = def as ScriptedTargetDef;
 			if (td == null) {
 				if (def != null) {//it isnt ScriptedTargetDef
-					throw new OverrideNotAllowedException("ScriptedTargetDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def)+". Ignoring.");
+					throw new OverrideNotAllowedException("ScriptedTargetDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 				} else {
 					td = new ScriptedTargetDef(defname, input.filename, input.headerLine);
 				}
@@ -205,7 +209,7 @@ namespace SteamEngine.CompiledScripts {
 				td.unloaded = false;
 				UnRegisterScriptedTargetDef(td);//will be re-registered again
 			} else {
-				throw new OverrideNotAllowedException("TemplateDef "+LogStr.Ident(defname)+" defined multiple times.");
+				throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
 			}
 
 			TriggerSection trigger_start = input.PopTrigger("start");
@@ -223,12 +227,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (trigger_point != null) {
 				if (n > 1) {
-					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef "+LogStr.Ident(input)+" has targon_point defined. All other triggers ignored.");
+					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has targon_point defined. All other triggers ignored.");
 				}
 				td.targon_point = new LScriptHolder(trigger_point);
 			} else {
 
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					TriggerSection trigger = input.GetTrigger(i);
 					switch (trigger.triggerName.ToLower()) {
 						case "targon_ground":
@@ -251,17 +255,17 @@ namespace SteamEngine.CompiledScripts {
 							td.targon_cancel = new LScriptHolder(trigger);
 							break;
 						default:
-							Logger.WriteWarning(trigger.filename, trigger.startline, LogStr.Ident(trigger.triggerName)+" is an invalid trigger name for a ScriptedTargetDef section. Ignored.");
+							Logger.WriteWarning(trigger.filename, trigger.startline, LogStr.Ident(trigger.triggerName) + " is an invalid trigger name for a ScriptedTargetDef section. Ignored.");
 							break;
 					}
 				}
 
 				if ((td.targon_thing != null) && (td.targon_item != null)) {
-					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef "+LogStr.Ident(input)+" has both @targon_thing and @targon_item defined. @targon_item ignored.");
+					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_item defined. @targon_item ignored.");
 					td.targon_item = null;
 				}
 				if ((td.targon_thing != null) && (td.targon_char != null)) {
-					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef "+LogStr.Ident(input)+" has both @targon_thing and @targon_char defined. @targon_char ignored.");
+					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_char defined. @targon_char ignored.");
 					td.targon_char = null;
 				}
 			}
@@ -352,7 +356,7 @@ namespace SteamEngine.CompiledScripts {
 								}
 								return;
 							}
-						} 
+						}
 						if (targon_ground != null) {
 							if (TryRunTrigger(targon_ground, player, getback, parameter)) {
 								On_Start(player, parameter);

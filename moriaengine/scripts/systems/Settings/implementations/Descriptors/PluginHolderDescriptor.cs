@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(PluginHolder), "Plugin/Triggergroup Holder")]
 	public static class PluginHolderDescriptor {
 
-		[GetMethod("PluginsCount",typeof(int))]
+		[GetMethod("PluginsCount", typeof(int))]
 		public static object GetPluginsCount(object target) {
 			int counter = 0;
 			foreach (object o in ((PluginHolder) target).GetAllPlugins()) {
@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[GetMethod("TriggerGroups", typeof(string))]
 		public static object GetTriggerGroups(object target) {
 			string retString = "";
-			foreach(TriggerGroup tg in ((PluginHolder)target).GetAllTriggerGroups()) {
+			foreach (TriggerGroup tg in ((PluginHolder) target).GetAllTriggerGroups()) {
 				retString += tg.PrettyDefname;
 			}
 			return retString;
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Plugin List")]
 		public static void PluginList(object target) {
-			D_PluginList.PluginList((PluginHolder)target, null);
+			D_PluginList.PluginList((PluginHolder) target, null);
 		}
 
 		[Button("Delete plugins")]
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("TriggerGroups List")]
 		public static void TriggerGroupsList(object target) {
-			D_TriggerGroupsList.TriggerGroupList((PluginHolder)target, null);
+			D_TriggerGroupsList.TriggerGroupList((PluginHolder) target, null);
 		}
 
 		[Button("Clear TriggerGroups")]

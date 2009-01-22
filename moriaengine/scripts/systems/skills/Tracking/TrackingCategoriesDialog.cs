@@ -42,21 +42,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			picTable.RowHeight = 50; //dobra vejska pro obrazky
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);
-			dlg.LastTable[0,0] = ImageFactory.CreateImage(0,3,GumpIDs.Figurine_Llama);
-			dlg.LastTable[0,1] = TextFactory.CreateLabel("Zvíøata", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center);
+			dlg.LastTable[0, 0] = ImageFactory.CreateImage(0, 3, GumpIDs.Figurine_Llama);
+			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zvíøata", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[1,0] = ImageFactory.CreateImage(3,3,GumpIDs.Figurine_Ogre);
-			dlg.LastTable[1,1] = TextFactory.CreateLabel("Monstra", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[1,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center);
+			dlg.LastTable[1, 0] = ImageFactory.CreateImage(3, 3, GumpIDs.Figurine_Ogre);
+			dlg.LastTable[1, 1] = TextFactory.CreateLabel("Monstra", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+			dlg.LastTable[1, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 2, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[2,0] = ImageFactory.CreateImage(10,3,GumpIDs.Figurine_Man);
-			dlg.LastTable[2,1] = TextFactory.CreateLabel("Hráèe", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[2,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center);
+			dlg.LastTable[2, 0] = ImageFactory.CreateImage(10, 3, GumpIDs.Figurine_Man);
+			dlg.LastTable[2, 1] = TextFactory.CreateLabel("Hráèe", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+			dlg.LastTable[2, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 3, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[3,0] = ImageFactory.CreateImage(GumpIDs.Figurine_NPC);
-			dlg.LastTable[3,1] = TextFactory.CreateLabel("NPC", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[3,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center);
+			dlg.LastTable[3, 0] = ImageFactory.CreateImage(GumpIDs.Figurine_NPC);
+			dlg.LastTable[3, 1] = TextFactory.CreateLabel("NPC", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+			dlg.LastTable[3, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 4, DialogAlignment.Valign_Center);
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();

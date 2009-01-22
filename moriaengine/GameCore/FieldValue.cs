@@ -32,7 +32,7 @@ namespace SteamEngine {
 		Type HandledType { get; }
 		bool TryParse(string input, out object retVal);
 	}
-	
+
 	public sealed class FieldValue : IUnloadable {
 		private static Dictionary<Type, IFieldValueParser> parsers = new Dictionary<Type, IFieldValueParser>();
 
@@ -41,10 +41,10 @@ namespace SteamEngine {
 		Type type;
 		bool changedValue = false;
 		bool unloaded = false;
-		
+
 		FieldValueImpl currentValue;
 		FieldValueImpl defaultValue;
-				
+
 		internal FieldValue(string name, FieldValueType fvType, Type type, string filename, int line, string value) {
 			this.name = name;
 			this.fvType = fvType;
@@ -91,14 +91,16 @@ namespace SteamEngine {
 
 		private void ThrowIfUnloaded() {
 			if (unloaded) {
-				throw new UnloadedException("The "+this.GetType().Name+" '"+LogStr.Ident(name)+"' is unloaded.");
+				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(name) + "' is unloaded.");
 			}
 		}
 
-		public string Name { get {
-			return name;
-		} }
-		
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
 		internal void ResolveTemporaryState() {
 			if (defaultValue is TemporaryValueImpl) {
 				FieldValueImpl wasCurrent = currentValue;
@@ -121,7 +123,7 @@ namespace SteamEngine {
 							retVal = "";
 						}
 					}
-	
+
 					try {
 						defaultValue = ResolveTemporaryValueImpl();
 						defaultValue.Value = retVal;
@@ -132,7 +134,7 @@ namespace SteamEngine {
 						throw new SEException(tempVI.filename, tempVI.line, e);
 					}
 
-					
+
 					if (!changedValue) {//we were already resynced...the loaded value should not change
 						currentValue = defaultValue.Clone();
 					}
@@ -149,8 +151,8 @@ namespace SteamEngine {
 		}
 
 
-		public static Regex simpleStringRE= new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		public static Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private bool ResolveStringWithoutLScript(string value, ref object retVal) {
 			switch (this.fvType) {
@@ -275,7 +277,7 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
+
 		private FieldValueImpl ResolveTemporaryValueImpl() {
 			switch (this.fvType) {
 				case FieldValueType.Typeless:
@@ -298,7 +300,7 @@ namespace SteamEngine {
 			currentValue = defaultValue.Clone();
 			unloaded = false;
 		}
-		
+
 		public void SetFromScripts(string filename, int line, string value) {
 			if (changedValue) {
 				defaultValue = new TemporaryValueImpl(filename, line, this, value);
@@ -308,7 +310,7 @@ namespace SteamEngine {
 			}
 			unloaded = false;
 		}
-		
+
 		internal bool ShouldBeSaved() {
 			if (unloaded) {
 				return false;
@@ -333,7 +335,7 @@ namespace SteamEngine {
 				changedValue = true;
 			}
 		}
-		
+
 		public object DefaultValue {
 			get {
 				ThrowIfUnloaded();
@@ -349,25 +351,25 @@ namespace SteamEngine {
 			internal abstract object Value { get; set; }
 			internal abstract FieldValueImpl Clone();
 		}
-		
+
 		private class TemporaryValueImpl : FieldValueImpl {
 			internal string filename;
 			internal int line;
 			internal string value;
 			FieldValue holder;
-			
+
 			internal TemporaryValueImpl(string filename, int line, FieldValue holder, string value) {
 				this.filename = filename;
 				this.line = line;
 				this.holder = holder;
 				this.value = value;
 			}
-			
+
 			internal override FieldValueImpl Clone() {
 				throw new InvalidOperationException("this is not supposed to be cloned");
 			}
-			
-			internal override object Value { 
+
+			internal override object Value {
 				get {
 					holder.ResolveTemporaryState();
 					if (holder.currentValue == this) {
@@ -386,25 +388,25 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		private class ModelValueImpl : FieldValueImpl {
 			ThingDef thingDef;
 			ushort model;
-			
+
 			//resolving constructor
 			internal ModelValueImpl() {
 			}
-			
+
 			private ModelValueImpl(ModelValueImpl copyFrom) {
 				this.thingDef = copyFrom.thingDef;
 				this.model = copyFrom.model;
 			}
-			
+
 			internal override FieldValueImpl Clone() {
 				return new ModelValueImpl(this);
 			}
-			
-			internal override object Value { 
+
+			internal override object Value {
 				get {
 					if (thingDef == null) {
 						return model;
@@ -417,35 +419,35 @@ namespace SteamEngine {
 					if (thingDef == null) {
 						model = TagMath.ToUInt16(value);
 					} else {
-						if ((thingDef.model.currentValue == this)||(thingDef.model.defaultValue == this)) {
+						if ((thingDef.model.currentValue == this) || (thingDef.model.defaultValue == this)) {
 							ThingDef d = thingDef;
 							thingDef = null;
-							throw new ScriptException(LogStr.Ident(d)+" specifies its own defname as its model, could lead to infinite loop...!");
+							throw new ScriptException(LogStr.Ident(d) + " specifies its own defname as its model, could lead to infinite loop...!");
 						}
 					}
-			 	}
+				}
 			}
 
 		}
-		
+
 		private class TypedValueImpl : FieldValueImpl {
 			protected Type type;
 			object val;
-			
+
 			//resolving constructor
 			internal TypedValueImpl(Type type) {
 				this.type = type;
 			}
-			
+
 			protected TypedValueImpl(TypedValueImpl copyFrom) {
 				this.type = copyFrom.type;
 				this.val = copyFrom.val;
 			}
-			
+
 			internal override FieldValueImpl Clone() {
 				return new TypedValueImpl(this);
 			}
-			
+
 			private static object GetInternStringIfPossible(object obj) {
 				string asString = obj as String;
 				if (asString != null) {
@@ -453,8 +455,8 @@ namespace SteamEngine {
 				}
 				return obj;
 			}
-			
-			internal override object Value { 
+
+			internal override object Value {
 				get {
 					return val;
 				}
@@ -476,7 +478,7 @@ namespace SteamEngine {
 						}
 					} else {
 						Type objType = value.GetType();
-						
+
 						if (type.IsArray) {
 							Array arr;
 							Array retVal;
@@ -487,14 +489,14 @@ namespace SteamEngine {
 								arr = Utility.SplitSphereString((string) value);
 							} else {
 								retVal = Array.CreateInstance(elemType, 1);
-								retVal.SetValue(TagMath.ConvertTo(elemType, value),0);
+								retVal.SetValue(TagMath.ConvertTo(elemType, value), 0);
 								this.val = TagMath.ConvertTo(type, retVal);
 								return;
 							}
-							
+
 							int n = arr.Length;
 							retVal = Array.CreateInstance(elemType, n);
-							for (int i = 0; i<n; i++) {
+							for (int i = 0; i < n; i++) {
 								retVal.SetValue(
 									TagMath.ConvertTo(elemType, arr.GetValue(i)), i);
 							}
@@ -508,23 +510,23 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		private class TypelessValueImpl : FieldValueImpl {
 			object obj;
-			
+
 			//resolving constructor
 			internal TypelessValueImpl() {
 			}
-			
+
 			private TypelessValueImpl(TypelessValueImpl copyFrom) {
 				this.obj = copyFrom.obj;
 			}
-			
+
 			internal override FieldValueImpl Clone() {
 				return new TypelessValueImpl(this);
 			}
-			
-			internal override object Value { 
+
+			internal override object Value {
 				get {
 					return obj;
 				}
@@ -538,20 +540,22 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		private class ThingDefValueImpl : TypedValueImpl {
 			//resolving constructor
-			internal ThingDefValueImpl(Type type) : base(type) {
+			internal ThingDefValueImpl(Type type)
+				: base(type) {
 			}
-			
-			protected ThingDefValueImpl(ThingDefValueImpl copyFrom) : base(copyFrom) {
+
+			protected ThingDefValueImpl(ThingDefValueImpl copyFrom)
+				: base(copyFrom) {
 			}
-			
+
 			internal override FieldValueImpl Clone() {
 				return new ThingDefValueImpl(this);
 			}
-			
-			internal override object Value { 
+
+			internal override object Value {
 				get {
 					return base.Value;
 				}
@@ -567,7 +571,7 @@ namespace SteamEngine {
 									td = ThingDef.FindCharDef(id);
 								}
 								if (td == null) {
-									throw new SEException("There is no Char/ItemDef with model "+id);
+									throw new SEException("There is no Char/ItemDef with model " + id);
 								}
 								base.Value = td;
 								return;

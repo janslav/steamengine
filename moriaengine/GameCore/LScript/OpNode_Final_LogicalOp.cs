@@ -29,9 +29,10 @@ using SteamEngine.Common;
 namespace SteamEngine.LScript {
 	public class OpNode_LogicalAnd : OpNode_Lazy_BinOperator {
 		//gets created from OpNode
-		internal OpNode_LogicalAnd(IOpNodeHolder parent, Node code):base(parent, code) {
+		internal OpNode_LogicalAnd(IOpNodeHolder parent, Node code)
+			: base(parent, code) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object leftVar = left.Run(vars);
 			bool leftVarBool;
@@ -42,7 +43,7 @@ namespace SteamEngine.LScript {
 					return false;
 				}
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating && operator", 
+				throw new InterpreterException("Exception while evaluating && operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 
@@ -55,12 +56,13 @@ namespace SteamEngine.LScript {
 			}
 		}
 	}
-	
+
 	public class OpNode_LogicalOr : OpNode_Lazy_BinOperator {
 		//gets created from OpNode
-		internal OpNode_LogicalOr(IOpNodeHolder parent, Node code):base(parent, code) {
+		internal OpNode_LogicalOr(IOpNodeHolder parent, Node code)
+			: base(parent, code) {
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object leftVar = left.Run(vars);
 			bool leftVarBool;

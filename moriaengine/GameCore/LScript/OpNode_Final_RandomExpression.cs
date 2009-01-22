@@ -29,36 +29,36 @@ using SteamEngine.Common;
 namespace SteamEngine.LScript {
 	public class OpNode_Final_RandomExpression_Simple_Constant : OpNode {
 		int min, max;
-	
-		internal OpNode_Final_RandomExpression_Simple_Constant(IOpNodeHolder parent, string filename, 
-					int line, int column, Node origNode, int min, int max) 
-				: base(parent, filename, line, column, origNode) {
+
+		internal OpNode_Final_RandomExpression_Simple_Constant(IOpNodeHolder parent, string filename,
+					int line, int column, Node origNode, int min, int max)
+			: base(parent, filename, line, column, origNode) {
 			this.min = min;
 			this.max = max;
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			return Globals.dice.Next(min, max);
 		}
-		
+
 		public override string ToString() {
-			return "{"+min+" "+max+"}";
+			return "{" + min + " " + max + "}";
 		}
 	}
-	
+
 	public class OpNode_Final_RandomExpression_Simple_Variable : OpNode, IOpNodeHolder {
 		OpNode leftNode, rightNode;
-	
-		internal OpNode_Final_RandomExpression_Simple_Variable(IOpNodeHolder parent, string filename, 
-					int line, int column, Node origNode, OpNode leftNode, OpNode rightNode) 
-				: base(parent, filename, line, column, origNode) {
+
+		internal OpNode_Final_RandomExpression_Simple_Variable(IOpNodeHolder parent, string filename,
+					int line, int column, Node origNode, OpNode leftNode, OpNode rightNode)
+			: base(parent, filename, line, column, origNode) {
 			this.leftNode = leftNode;
 			this.rightNode = rightNode;
-			
+
 			leftNode.parent = this;
 			rightNode.parent = this;
 		}
-		
+
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			if (leftNode == oldNode) {
 				leftNode = newNode;
@@ -67,17 +67,17 @@ namespace SteamEngine.LScript {
 				rightNode = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			try {
 				int lVal = Convert.ToInt32(leftNode.Run(vars));
 				int rVal = Convert.ToInt32(rightNode.Run(vars));
 				if (lVal < rVal) {
-					return Globals.dice.Next(lVal, rVal+1);
+					return Globals.dice.Next(lVal, rVal + 1);
 				} else if (lVal > rVal) {
-					return Globals.dice.Next(rVal, lVal+1);
+					return Globals.dice.Next(rVal, lVal + 1);
 				} else { //lVal == rVal
 					return lVal;
 				}
@@ -86,37 +86,37 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating random expression", 
+				throw new InterpreterException("Exception while evaluating random expression",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public override string ToString() {
-			return "{ "+leftNode+" "+rightNode+" }";
+			return "{ " + leftNode + " " + rightNode + " }";
 		}
 	}
-	
+
 	public class OpNode_Final_RandomExpression_Constant : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		int totalOdds;
-	
-		internal OpNode_Final_RandomExpression_Constant(IOpNodeHolder parent, string filename, 
-					int line, int column, Node origNode, ValueOddsPair[] pairs, int totalOdds) 
-				: base(parent, filename, line, column, origNode) {
+
+		internal OpNode_Final_RandomExpression_Constant(IOpNodeHolder parent, string filename,
+					int line, int column, Node origNode, ValueOddsPair[] pairs, int totalOdds)
+			: base(parent, filename, line, column, origNode) {
 			this.pairs = pairs;
 			this.totalOdds = totalOdds;
 			//?TODO sort the pairs for better effectivity
-			
+
 			foreach (ValueOddsPair pair in pairs) {
 				((OpNode) pair.Value).parent = this;
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(pairs, totalOdds);
 			return chosenNode.Run(vars);
 		}
-		
+
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			foreach (ValueOddsPair pair in pairs) {
 				OpNode node = (OpNode) pair.Value;
@@ -125,9 +125,9 @@ namespace SteamEngine.LScript {
 					return;
 				}
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
 			foreach (ValueOddsPair pair in pairs) {
@@ -136,14 +136,14 @@ namespace SteamEngine.LScript {
 			return str.Append("}").ToString();
 		}
 	}
-	
+
 	public class OpNode_Final_RandomExpression_Variable : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		OpNode[] odds;
-	
-		internal OpNode_Final_RandomExpression_Variable(IOpNodeHolder parent, string filename, 
-					int line, int column, Node origNode, ValueOddsPair[] pairs, OpNode[] odds) 
-				: base(parent, filename, line, column, origNode) {
+
+		internal OpNode_Final_RandomExpression_Variable(IOpNodeHolder parent, string filename,
+					int line, int column, Node origNode, ValueOddsPair[] pairs, OpNode[] odds)
+			: base(parent, filename, line, column, origNode) {
 			this.pairs = pairs;
 			this.odds = odds;
 			foreach (OpNode odd in odds) {
@@ -153,13 +153,13 @@ namespace SteamEngine.LScript {
 				((OpNode) pair.Value).parent = this;
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			try {
 				vars.self = vars.defaultObject;
 				int totalOdds = 0;
-				for (int i = 0, n = pairs.Length; i<n; i++) {
+				for (int i = 0, n = pairs.Length; i < n; i++) {
 					int o = Convert.ToInt32(odds[i].Run(vars));
 					totalOdds += o;
 					pairs[i].Odds = totalOdds;
@@ -171,13 +171,13 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating random expression", 
+				throw new InterpreterException("Exception while evaluating random expression",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			} finally {
 				vars.self = oSelf;
 			}
 		}
-		
+
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			foreach (ValueOddsPair pair in pairs) {
 				OpNode node = (OpNode) pair.Value;
@@ -190,17 +190,17 @@ namespace SteamEngine.LScript {
 			if (index >= 0) {
 				odds[index] = newNode;
 				return;
-			} 
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			}
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
-			for (int i = 0, n = pairs.Length; i<n; i++) {
+			for (int i = 0, n = pairs.Length; i < n; i++) {
 				str.Append(pairs[i].Value.ToString()).Append(" ").Append(odds[i].ToString()).Append(" ");
 			}
 			return str.Append("}").ToString();
 		}
 	}
-	
-}	
+
+}

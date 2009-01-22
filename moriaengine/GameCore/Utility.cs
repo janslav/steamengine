@@ -40,40 +40,40 @@ namespace SteamEngine {
 		*/
 		public static string[] SplitSphereString(string input) {
 			ArrayList results = new ArrayList();
-			char lastChar='a';	//nothing meaningful
-			bool inQuote=false;
-			int inCurlyBraces=0;
-			int startPos=0;
-			for (int pos=0; pos<input.Length; pos++) {
+			char lastChar = 'a';	//nothing meaningful
+			bool inQuote = false;
+			int inCurlyBraces = 0;
+			int startPos = 0;
+			for (int pos = 0; pos < input.Length; pos++) {
 				char c = input[pos];
-				if (c=='\t') c=' ';
-				if (c=='\"') {
-					inQuote=!inQuote;
+				if (c == '\t') c = ' ';
+				if (c == '\"') {
+					inQuote = !inQuote;
 				} else if (!inQuote) {
-					if (c=='{') {
+					if (c == '{') {
 						inCurlyBraces++;
-					} else if (c=='}') {
+					} else if (c == '}') {
 						inCurlyBraces--;
-						Sanity.IfTrueThrow(inCurlyBraces<0, "Mismatched {}s.");
-					} else if (inCurlyBraces==0) {
-						if (c==',') {
-							if (lastChar!=' ') {
-								results.Add(input.Substring(startPos, pos-startPos).Trim());
-								startPos=pos+1;
+						Sanity.IfTrueThrow(inCurlyBraces < 0, "Mismatched {}s.");
+					} else if (inCurlyBraces == 0) {
+						if (c == ',') {
+							if (lastChar != ' ') {
+								results.Add(input.Substring(startPos, pos - startPos).Trim());
+								startPos = pos + 1;
 							}
-						} else if (c==' ') {
-							if (lastChar!=' ' && lastChar!=',') {
-								results.Add(input.Substring(startPos, pos-startPos).Trim());
-								startPos=pos+1;
+						} else if (c == ' ') {
+							if (lastChar != ' ' && lastChar != ',') {
+								results.Add(input.Substring(startPos, pos - startPos).Trim());
+								startPos = pos + 1;
 							}
 						}
 					}
 				}
-				lastChar=c;
+				lastChar = c;
 			}
-			if (startPos<input.Length) {
+			if (startPos < input.Length) {
 				results.Add(input.Substring(startPos).Trim());
-			} else if (lastChar==',') {
+			} else if (lastChar == ',') {
 				results.Add("");
 			}
 			return (string[]) results.ToArray(typeof(string));
@@ -85,11 +85,11 @@ namespace SteamEngine {
 			and the modified string is returned.
 		*/
 		public static string Capitalize(string s) {
-			if (s==null) throw new SanityCheckException("Capitalize was called on a null string.");
-			if (s.Length>1) {
-				s=Char.ToUpper(s[0])+s.Substring(1);
-			} else if (s.Length==1) {
-				s=s.ToUpper();
+			if (s == null) throw new SanityCheckException("Capitalize was called on a null string.");
+			if (s.Length > 1) {
+				s = Char.ToUpper(s[0]) + s.Substring(1);
+			} else if (s.Length == 1) {
+				s = s.ToUpper();
 			}
 			return s;
 		}
@@ -99,11 +99,11 @@ namespace SteamEngine {
 			and the modified string is returned. (Uncapitalized meaning it is made lowercase)
 		*/
 		public static string Uncapitalize(string s) {
-			if (s==null) throw new SanityCheckException("Uncapitalize was called on a null string.");
-			if (s.Length>1) {
-				s=Char.ToLower(s[0])+s.Substring(1);
-			} else if (s.Length==1) {
-				s=s.ToLower();
+			if (s == null) throw new SanityCheckException("Uncapitalize was called on a null string.");
+			if (s.Length > 1) {
+				s = Char.ToLower(s[0]) + s.Substring(1);
+			} else if (s.Length == 1) {
+				s = s.ToLower();
 			}
 			return s;
 		}
@@ -115,13 +115,13 @@ namespace SteamEngine {
 		public static string GetCAsciiString(BinaryReader br, int count) {
 			byte[] buffer = br.ReadBytes(count);
 			int len;
-			for (len=0; len<count && buffer[len]!=0; len++);
+			for (len = 0; len < count && buffer[len] != 0; len++) ;
 			return Encoding.ASCII.GetString(buffer, 0, len);
 		}
 
-					
-		private static Regex uncommentRE= new Regex(@"^\s*(?<value>.*?)\s*(//(?<comment>.*))?$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+
+		private static Regex uncommentRE = new Regex(@"^\s*(?<value>.*?)\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public static string UnComment(string input) {
 			Match m = uncommentRE.Match(input);
@@ -172,17 +172,17 @@ namespace SteamEngine {
 			return sb.ToString();
 		}
 
-        [Summary("Count the arithmetic mean of the given values")]
-        public static double ArithmeticMean(params double[] values) {
-            if (values.Length == 0)
-                throw new SanityCheckException("ArithmeticMean called on no values");
+		[Summary("Count the arithmetic mean of the given values")]
+		public static double ArithmeticMean(params double[] values) {
+			if (values.Length == 0)
+				throw new SanityCheckException("ArithmeticMean called on no values");
 
-            double sum = 0;
-            foreach (double val in values) {
-                sum += val;
-            }
-            return sum / values.Length;
-        }
+			double sum = 0;
+			foreach (double val in values) {
+				sum += val;
+			}
+			return sum / values.Length;
+		}
 
 		private static bool CharNeedsEscaping(char ch, out char escapedEquivalent) {
 			escapedEquivalent = ch;

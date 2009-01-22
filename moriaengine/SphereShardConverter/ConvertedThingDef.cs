@@ -24,13 +24,13 @@ using SteamEngine.Common;
 using System.Configuration;
 //
 namespace SteamEngine.Converter {
-//	/**
-//	Hardcoded changes to converted scripts:
-//		1) The fishing pole is forced to be twohanded.
-//			(It's detected by checking if an item's layer is 2 and model is 0xdbf. 0xdc0 is a dupeitem of it and so will inherit its twohandedness.)
-//	
-//	*/
-//	
+	//	/**
+	//	Hardcoded changes to converted scripts:
+	//		1) The fishing pole is forced to be twohanded.
+	//			(It's detected by checking if an item's layer is 2 and model is 0xdbf. 0xdc0 is a dupeitem of it and so will inherit its twohandedness.)
+	//	
+	//	*/
+	//	
 	public class ConvertedThingDef : ConvertedDef {
 		PropsLine idLine, defname1, defname2, dupeItemLine;
 		//bool ownModel = false;
@@ -42,17 +42,19 @@ namespace SteamEngine.Converter {
 		public Dictionary<string, ConvertedThingDef> byDefname = new Dictionary<string, ConvertedThingDef>(StringComparer.OrdinalIgnoreCase);
 		public Dictionary<int, ConvertedThingDef> byModel = new Dictionary<int, ConvertedThingDef>();
 
-		public int Model { get {
-			if (modelNum == -1) {
-				if (modelDef != null) {
-					return modelDef.Model;
+		public int Model {
+			get {
+				if (modelNum == -1) {
+					if (modelDef != null) {
+						return modelDef.Model;
+					}
+				} else {
+					return modelNum;
 				}
-			} else {
-				return modelNum;
+				Error(origData.headerLine, "ThingDef " + headerName + " has no model set...?");
+				return -1;
 			}
-			Error(origData.headerLine, "ThingDef "+headerName+" has no model set...?");
-			return -1;
-		} }
+		}
 
 		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
 //				new LineImplTask("event", new LineImpl(WriteAsTG)), 
@@ -62,7 +64,8 @@ namespace SteamEngine.Converter {
 				new LineImplTask("name", new LineImpl(WriteInQuotes))
 			};
 
-		public ConvertedThingDef(PropsSection input) : base(input) {
+		public ConvertedThingDef(PropsSection input)
+			: base(input) {
 			this.firstStageImplementations.Add(firstStageImpl);
 		}
 
@@ -71,7 +74,7 @@ namespace SteamEngine.Converter {
 		}
 
 
-		
+
 		public override void FirstStage() {
 			base.FirstStage();
 
@@ -79,7 +82,7 @@ namespace SteamEngine.Converter {
 			if (dupeItemLine != null) {
 				int headerNum;
 				if (ConvertTools.TryParseInt32(headerName, out headerNum)) {
-					headerName = "0x"+headerNum.ToString("x");
+					headerName = "0x" + headerNum.ToString("x");
 					modelNum = headerNum;
 				}
 			} else {
@@ -95,7 +98,7 @@ namespace SteamEngine.Converter {
 						//ownModel = true;
 						modelNum = headerNum;
 						byModel[headerNum] = this;
-						headerName = "0x"+headerNum.ToString("x");
+						headerName = "0x" + headerNum.ToString("x");
 					}
 				} else {
 					byDefname[headerName] = this;
@@ -121,7 +124,7 @@ namespace SteamEngine.Converter {
 
 				if (needsHeader) {
 					//what now? :)
-					headerName = "i_hadnodefname_0x"+headerNum.ToString("x");
+					headerName = "i_hadnodefname_0x" + headerNum.ToString("x");
 					Info(origData.headerLine, "Has no defname except a number, and model defined elsewhere...");
 				}
 			}
@@ -136,7 +139,7 @@ namespace SteamEngine.Converter {
 						Set("model", modelDef.PrettyDefname, idLine.comment);
 						//Info(idLine.line, "ID Written as "+modelDef.PrettyDefname);
 					} else {
-						Set("model", "0x"+idNum.ToString("x"), idLine.comment);
+						Set("model", "0x" + idNum.ToString("x"), idLine.comment);
 						modelNum = idNum;
 					}
 				} else {
@@ -181,19 +184,21 @@ namespace SteamEngine.Converter {
 			base.ThirdStage();
 		}
 
-		public string PrettyDefname { get {
-			if (!hasNumericalHeader) {
-				return headerName;
-			}
-			if (defname1 != null) {
-				return defname1.value;
-			}
-			if (defname2 != null) {
-				return defname2.value;
-			}
+		public string PrettyDefname {
+			get {
+				if (!hasNumericalHeader) {
+					return headerName;
+				}
+				if (defname1 != null) {
+					return defname1.value;
+				}
+				if (defname2 != null) {
+					return defname2.value;
+				}
 
-			//it's numeric, so...
-			return "0x"+ConvertTools.ParseInt64(headerName).ToString("x");
-		} }
+				//it's numeric, so...
+				return "0x" + ConvertTools.ParseInt64(headerName).ToString("x");
+			}
+		}
 	}
 }

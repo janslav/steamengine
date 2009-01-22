@@ -26,10 +26,10 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Special abiliy class used for implementing abilities that will automatically perform their action when the "+
-			"first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or "+
-			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability) "+
-			"We make this class to be child of ActivableAbilityDef because we want to have the possibility to swithc (even the passive) "+
+	[Summary("Special abiliy class used for implementing abilities that will automatically perform their action when the " +
+			"first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or " +
+			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability) " +
+			"We make this class to be child of ActivableAbilityDef because we want to have the possibility to swithc (even the passive) " +
 			"ability off - e.g. hypothetical ability 'Healing nearby comrades' might be switched of in some hardcore dungeon where healing is not allowed etc.")]
 	[ViewableClass]
 	public class PassiveAbilityDef : ActivableAbilityDef {
@@ -38,11 +38,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region triggerMethods
-		[Summary("This method implements the assigning of the first point to the Ability"+        
+		[Summary("This method implements the assigning of the first point to the Ability" +
 				"Just call the activate method from parent (this will ensure assigning all TGs and Plugins")]
 		protected override void On_Assign(Character ch) {
 			Activate(ch); //activate the ability automatically
-		}        
+		}
 		#endregion triggerMethods
 
 		[NoShow] //not necessary to be set as it is defaultly 0 and unchangeable!

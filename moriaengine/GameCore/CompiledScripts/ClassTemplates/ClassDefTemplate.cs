@@ -62,9 +62,9 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		private CodeMemberField CodeField(ClassTemplateInstanceField ctfi) {
 			CodeMemberField field = new CodeMemberField("FieldValue", ctfi.uncapName);
-			field.Attributes=MemberAttributes.Final|MemberAttributes.Private;
+			field.Attributes = MemberAttributes.Final | MemberAttributes.Private;
 			if (ctfi.isStatic) {
-				field.Attributes|=MemberAttributes.Static;
+				field.Attributes |= MemberAttributes.Static;
 			}
 			return field;
 		}
@@ -76,9 +76,9 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			if (ctfi.access == MemberAttributes.Final) {
 				ctfi.access |= MemberAttributes.Public;
 			}
-			prop.Attributes=ctfi.access;
+			prop.Attributes = ctfi.access;
 			if (ctfi.isStatic) {
-				prop.Attributes|=MemberAttributes.Static;
+				prop.Attributes |= MemberAttributes.Static;
 			}
 
 			//return (type) field.CurrentValue;
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		private void DefConstructor() {
 			CodeConstructor defConstructor = new CodeConstructor();
-			defConstructor.Attributes=MemberAttributes.Public|MemberAttributes.Final;
+			defConstructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			defConstructor.Parameters.Add(new CodeParameterDeclarationExpression("String", "defname"));
 			defConstructor.Parameters.Add(new CodeParameterDeclarationExpression("String", "filename"));
 			defConstructor.Parameters.Add(new CodeParameterDeclarationExpression("Int32", "headerLine"));

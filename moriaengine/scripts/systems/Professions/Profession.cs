@@ -22,7 +22,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass("Profession")]
-	[Summary("This class holds the profession assigned to one character (cont field). "+
+	[Summary("This class holds the profession assigned to one character (cont field). " +
 			"it holds a reference to the ProfessionDef, dispatches all trigger calls etc.")]
 	public sealed partial class ProfessionPlugin {
 		internal static PluginKey professionKey = PluginKey.Get("_profession_");
@@ -30,10 +30,10 @@ namespace SteamEngine.CompiledScripts {
 		private ProfessionDef def;
 
 		[Summary("Initialize the profession on the character")]
-		internal void Init() {			
+		internal void Init() {
 			//assign all skills - set the basic values
 			SkillName oneName;
-			foreach (ISkill skill in ((Player)Cont).Skills) {//the Cont of the Profession is always Player...
+			foreach (ISkill skill in ((Player) Cont).Skills) {//the Cont of the Profession is always Player...
 				oneName = (SkillName) skill.Id;
 				skill.RealValue = Math.Min(def.BasicSkill(oneName), def.MaxSkill(oneName));
 			}

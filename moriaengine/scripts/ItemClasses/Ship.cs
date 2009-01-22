@@ -21,11 +21,11 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Regions;
-	
+
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class ShipDef : MultiItemDef {
-		
+
 
 		DMICDLoadHelper[] shipComponentsHelpers = new DMICDLoadHelper[4];
 		DynamicMultiItemComponentDescription[] shipComponentsDescs;
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 		private void ResolveDMICDLoadHelper(int i, short[] models) {
 			DMICDLoadHelper helper = shipComponentsHelpers[i];
 			if (helper != null) {
-				helper.args = string.Concat(models[(int) this.Facing],",",helper.args);
+				helper.args = string.Concat(models[(int) this.Facing], ",", helper.args);
 				shipComponentsDescs[i] = helper.Resolve();
 			}
 		}
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 			int n = TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
 				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
 				region = new ShipRegion(this, newRectangles);
@@ -267,21 +267,29 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		public Item Tiller { get {
-			return tiller;
-		} }
+		public Item Tiller {
+			get {
+				return tiller;
+			}
+		}
 
-		public Item LeftPlank { get {
-			return leftPlank;
-		} }
+		public Item LeftPlank {
+			get {
+				return leftPlank;
+			}
+		}
 
-		public Item RightPlank { get {
-			return rightPlank;
-		} }
+		public Item RightPlank {
+			get {
+				return rightPlank;
+			}
+		}
 
-		public Item Trunk { get {
-			return trunk;
-		} }
+		public Item Trunk {
+			get {
+				return trunk;
+			}
+		}
 
 		public ShipFacing Facing {
 			get {
@@ -319,9 +327,11 @@ namespace SteamEngine.CompiledScripts {
 			: base(ship, rectangles) {
 		}
 
-		public Ship Ship { get {
-			return (Ship) multiItem;
-		} }
+		public Ship Ship {
+			get {
+				return (Ship) multiItem;
+			}
+		}
 
 		public override bool On_Enter(AbstractCharacter ch, bool forced) {
 			bool retVal = base.On_Enter(ch, forced);
@@ -333,7 +343,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool On_Exit(AbstractCharacter ch, bool forced) {
-			bool retVal =  base.On_Exit(ch, forced);
+			bool retVal = base.On_Exit(ch, forced);
 			if (!retVal || forced) {
 				this.Ship.RemoveThing(ch);
 				ch.RemoveTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);

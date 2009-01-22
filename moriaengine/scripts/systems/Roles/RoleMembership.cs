@@ -25,7 +25,7 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	public partial class Role {
- 
+
 		[SaveableClass]
 		public class RoleMembership : IRoleMembership {
 			private Character member;
@@ -102,4 +102,4 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 	}
-}		
+}

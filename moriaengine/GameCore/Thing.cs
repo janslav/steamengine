@@ -964,7 +964,7 @@ namespace SteamEngine {
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				this.Name, 0);
 		}
-		
+
 		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
 			AOSToolTips toolTips = this.GetAOSToolTips();
@@ -1625,7 +1625,7 @@ namespace SteamEngine {
 					if (pg == null) {
 						pg = PacketGroup.AcquireMultiUsePG();
 						if (speech == null) {
-							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocSpeech, this.Name, type, font, color, 
+							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocSpeech, this.Name, type, font, color,
 								args == null ? null : string.Join("\t", args));
 						} else {
 							pg.AddPacket(PacketSequences.PrepareMessagePacket(
@@ -1643,18 +1643,18 @@ namespace SteamEngine {
 		///*
 		//    Method: CheckForInvalidCoords
 		//        This function only exists in the debug build, and is not run in non-debug builds.
-				
+
 		//        Checks the coords to see if they are outside the map. Since maps start at 0,0 and coordinates
 		//        are unsigned, X and Y are only checked against the max X and Y for the map, and not against 0,0.
-				
+
 		//        This will definitely trip (Throw a SanityCheckException) if the item never got real coordinates
 		//        after BeingDroppedFromContainer was called, so this is called as a sanity check by methods which
 		//        call BeingDroppedFromContainer but rely on other methods to give it a real location
 		//        (after the other methods have been called).
-				
+
 		//        This will not trip if the item is in a container (or equipped), since invalid coordinates ARE
 		//        used for equipped items (Specifically, X=7000).
-				
+
 		//        This does not check Z.
 		// */
 		//[Conditional("DEBUG")]
@@ -1678,7 +1678,7 @@ namespace SteamEngine {
 		public readonly Thing target;
 
 		public DenyClickArgs(AbstractCharacter clickingChar, Thing target)
-			: base( DenyResult.Allow, clickingChar, target) {
+			: base(DenyResult.Allow, clickingChar, target) {
 
 			this.clickingChar = clickingChar;
 			this.target = target;

@@ -20,10 +20,10 @@ using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 	public class t_wall : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_window : CompiledTriggerGroup {
-		
+
 	}
 }

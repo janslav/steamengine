@@ -7,10 +7,8 @@ using System.Windows.Forms;
 using Genghis.Windows.Forms;
 using System.Collections.Generic;
 
-namespace NProf
-{
-	public class PropertiesForm : System.Windows.Forms.Form
-	{
+namespace NProf {
+	public class PropertiesForm : System.Windows.Forms.Form {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.CheckBox debugProfiler;
@@ -28,8 +26,7 @@ namespace NProf
 		private FlowLayoutPanel recentProjects;
 		private ProfilerProjectMode projectMode;
 
-		public PropertiesForm(ProfilerProjectMode mode)
-		{
+		public PropertiesForm(ProfilerProjectMode mode) {
 			//
 			// Required for Windows Form Designer support
 			//
@@ -40,18 +37,15 @@ namespace NProf
 			//
 			projectMode = ProfilerProjectMode.CreateProject;
 
-			project = new ProjectInfo( ProjectType.File );
+			project = new ProjectInfo(ProjectType.File);
 			this.Mode = mode;
-			if (mode == ProfilerProjectMode.CreateProject)
-			{
-				List<string> files=SerializationHandler.GetRecentlyUsed();
-				foreach (string file in files.GetRange(0,Math.Min(files.Count,5)))
-				{
-					LinkLabel label=new LinkLabel();
+			if (mode == ProfilerProjectMode.CreateProject) {
+				List<string> files = SerializationHandler.GetRecentlyUsed();
+				foreach (string file in files.GetRange(0, Math.Min(files.Count, 5))) {
+					LinkLabel label = new LinkLabel();
 					label.AutoSize = true;
-					label.Text=file;
-					label.Click += delegate
-					{
+					label.Text = file;
+					label.Click += delegate {
 						ProfilerForm.form.Project = SerializationHandler.OpenProjectInfo(label.Text);
 						Close();
 					};
@@ -64,16 +58,13 @@ namespace NProf
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
+		protected override void Dispose(bool disposing) {
+			if (disposing) {
+				if (components != null) {
 					components.Dispose();
 				}
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -81,8 +72,7 @@ namespace NProf
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
-		{
+		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			this.debugProfiler = new System.Windows.Forms.CheckBox();
 			this._btnBrowseApplication = new System.Windows.Forms.Button();
@@ -230,40 +220,32 @@ namespace NProf
 		}
 		#endregion
 
-		public ProfilerProjectMode Mode
-		{
+		public ProfilerProjectMode Mode {
 			get { return projectMode; }
 			set { projectMode = value; }
 		}
 
-		public ProjectInfo Project
-		{
+		public ProjectInfo Project {
 			get { return project; }
 			set { project = value; }
 		}
 
-		private void _btnBrowseApplication_Click(object sender, System.EventArgs e)
-		{
+		private void _btnBrowseApplication_Click(object sender, System.EventArgs e) {
 			OpenFileDialog ofd = new OpenFileDialog();
 			ofd.Filter = "Executable files (*.exe)|*.exe";
 			DialogResult dr = ofd.ShowDialog();
-			if ( dr == DialogResult.OK )
-			{
+			if (dr == DialogResult.OK) {
 				application.Text = ofd.FileName;
 				application.Focus();
 				application.SelectAll();
 			}
 		}
 
-		private void ProfilerProjectOptionsForm_Load(object sender, System.EventArgs e)
-		{
-			if ( projectMode == ProfilerProjectMode.CreateProject )
-			{
+		private void ProfilerProjectOptionsForm_Load(object sender, System.EventArgs e) {
+			if (projectMode == ProfilerProjectMode.CreateProject) {
 				this.Text = "Create Profiler Project";
 				_btnCreateProject.Text = "Create Project";
-			}
-			else
-			{
+			} else {
 				this.Text = "Modify Profiler Project Options";
 				_btnCreateProject.Text = "OK";
 			}
@@ -273,15 +255,13 @@ namespace NProf
 			debugProfiler.Checked = project.DebugProfiler;
 		}
 
-		private void _btnCreateProject_Click(object sender, System.EventArgs e)
-		{
+		private void _btnCreateProject_Click(object sender, System.EventArgs e) {
 			project.ApplicationName = application.Text;
 			project.Arguments = arguments.Text;
 			project.DebugProfiler = debugProfiler.Checked;
 		}
 
-		public enum ProfilerProjectMode
-		{
+		public enum ProfilerProjectMode {
 			CreateProject,
 			ModifyProject,
 		}

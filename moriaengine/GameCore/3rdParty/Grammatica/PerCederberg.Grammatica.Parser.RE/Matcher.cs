@@ -33,163 +33,163 @@
 
 namespace PerCederberg.Grammatica.Parser.RE {
 
-    /**
-     * A regular expression string matcher. This class handles the
-     * matching of a specific string with a specific regular
-     * expression. It contains state information about the matching
-     * process, as for example the position of the latest match, and a
-     * number of flags that were set. This class is not thread-safe.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  1.0
-     */
-    public class Matcher {
+	/**
+	 * A regular expression string matcher. This class handles the
+	 * matching of a specific string with a specific regular
+	 * expression. It contains state information about the matching
+	 * process, as for example the position of the latest match, and a
+	 * number of flags that were set. This class is not thread-safe.
+	 *
+	 * @author   Per Cederberg, <per at percederberg dot net>
+	 * @version  1.0
+	 */
+	public class Matcher {
 
-        /**
-         * The base regular expression element.
-         */
-        private Element element;
-    
-        /**
-         * The string to work with
-         */
-        private string str;
+		/**
+		 * The base regular expression element.
+		 */
+		private Element element;
 
-        /**
-         * The start of the latest match found.
-         */
-        private int start;
-    
-        /**
-         * The length of the latest match found.
-         */
-        private int length;
+		/**
+		 * The string to work with
+		 */
+		private string str;
 
-        /**
-         * The end of string reached flag. This flag is set if the end
-         * of the string was encountered during the latest match.
-         */
-        private bool endOfString;
+		/**
+		 * The start of the latest match found.
+		 */
+		private int start;
 
-        /**
-         * Creates a new matcher with the specified element.
-         * 
-         * @param e              the base regular expression element
-         * @param str            the string to work with
-         */
-        internal Matcher(Element e, string str) {
-            this.element = e;
-            this.str = str;
-            this.start = 0;
-            Reset();
-        }
+		/**
+		 * The length of the latest match found.
+		 */
+		private int length;
 
-        /**
-         * Resets the information about the last match. This will
-         * clear all flags and set the match length to a negative
-         * value. This method is automatically called by all matching
-         * methods.
-         */
-        public void Reset() {
-            length = -1;
-            endOfString = false;
-        }
+		/**
+		 * The end of string reached flag. This flag is set if the end
+		 * of the string was encountered during the latest match.
+		 */
+		private bool endOfString;
 
-        /**
-         * Returns the start position of the latest match. If no match
-         * has been encountered, this method returns zero (0).
-         * 
-         * @return the start position of the latest match
-         */
-        public int Start() {
-            return start;
-        }
+		/**
+		 * Creates a new matcher with the specified element.
+		 * 
+		 * @param e              the base regular expression element
+		 * @param str            the string to work with
+		 */
+		internal Matcher(Element e, string str) {
+			this.element = e;
+			this.str = str;
+			this.start = 0;
+			Reset();
+		}
 
-        /**
-         * Returns the end position of the latest match. This is one
-         * character after the match end, i.e. the first character
-         * after the match. If no match has been encountered, this
-         * method returns the same value as start().
-         * 
-         * @return the end position of the latest match
-         */
-        public int End() {
-            if (length > 0) {
-                return start + length;
-            } else {
-                return start;
-            }
-        }
+		/**
+		 * Resets the information about the last match. This will
+		 * clear all flags and set the match length to a negative
+		 * value. This method is automatically called by all matching
+		 * methods.
+		 */
+		public void Reset() {
+			length = -1;
+			endOfString = false;
+		}
 
-        /**
-         * Returns the length of the latest match.
-         * 
-         * @return the length of the latest match, or
-         *         -1 if no match was found
-         */
-        public int Length() {
-            return length;
-        }
-    
-        /**
-         * Checks if the end of the string was encountered during the
-         * last match attempt. This flag signals that more input may
-         * be needed in order to get a match (or a longer match).
-         * 
-         * @return true if the end of string was encountered, or
-         *         false otherwise
-         */
-        public bool HasReadEndOfString() {
-            return endOfString;
-        }
+		/**
+		 * Returns the start position of the latest match. If no match
+		 * has been encountered, this method returns zero (0).
+		 * 
+		 * @return the start position of the latest match
+		 */
+		public int Start() {
+			return start;
+		}
 
-        /**
-         * Attempts to find a match starting at the beginning of the
-         * string.
-         * 
-         * @return true if a match was found, or
-         *         false otherwise
-         */
-        public bool MatchFromBeginning() {
-            return MatchFrom(0);
-        }
+		/**
+		 * Returns the end position of the latest match. This is one
+		 * character after the match end, i.e. the first character
+		 * after the match. If no match has been encountered, this
+		 * method returns the same value as start().
+		 * 
+		 * @return the end position of the latest match
+		 */
+		public int End() {
+			if (length > 0) {
+				return start + length;
+			} else {
+				return start;
+			}
+		}
 
-        /**
-         * Attempts to find a match starting at the specified position
-         * in the string.
-         * 
-         * @param pos            the starting position of the match
-         * 
-         * @return true if a match was found, or
-         *         false otherwise
-         */
-        public bool MatchFrom(int pos) {
-            Reset();
-            start = pos;
-            length = element.Match(this, str, start, 0);
-            return length >= 0;
-        }
+		/**
+		 * Returns the length of the latest match.
+		 * 
+		 * @return the length of the latest match, or
+		 *         -1 if no match was found
+		 */
+		public int Length() {
+			return length;
+		}
 
-        /**
-         * Returns the latest matched string. If no string has been
-         * matched, an empty string will be returned.
-         * 
-         * @return the latest matched string
-         */
-        public override string ToString() {
-            if (length <= 0) {
-                return "";
-            } else {
-                return str.Substring(start, length);
-            }
-        }
+		/**
+		 * Checks if the end of the string was encountered during the
+		 * last match attempt. This flag signals that more input may
+		 * be needed in order to get a match (or a longer match).
+		 * 
+		 * @return true if the end of string was encountered, or
+		 *         false otherwise
+		 */
+		public bool HasReadEndOfString() {
+			return endOfString;
+		}
 
-        /**
-         * Sets the end of string encountered flag. This method is
-         * called by the various elements analyzing the string.
-         */
-        internal void SetReadEndOfString() {
-            endOfString = true;
-        }
-    }
+		/**
+		 * Attempts to find a match starting at the beginning of the
+		 * string.
+		 * 
+		 * @return true if a match was found, or
+		 *         false otherwise
+		 */
+		public bool MatchFromBeginning() {
+			return MatchFrom(0);
+		}
+
+		/**
+		 * Attempts to find a match starting at the specified position
+		 * in the string.
+		 * 
+		 * @param pos            the starting position of the match
+		 * 
+		 * @return true if a match was found, or
+		 *         false otherwise
+		 */
+		public bool MatchFrom(int pos) {
+			Reset();
+			start = pos;
+			length = element.Match(this, str, start, 0);
+			return length >= 0;
+		}
+
+		/**
+		 * Returns the latest matched string. If no string has been
+		 * matched, an empty string will be returned.
+		 * 
+		 * @return the latest matched string
+		 */
+		public override string ToString() {
+			if (length <= 0) {
+				return "";
+			} else {
+				return str.Substring(start, length);
+			}
+		}
+
+		/**
+		 * Sets the end of string encountered flag. This method is
+		 * called by the various elements analyzing the string.
+		 */
+		internal void SetReadEndOfString() {
+			endOfString = true;
+		}
+	}
 }

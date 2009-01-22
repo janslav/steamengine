@@ -30,13 +30,13 @@ namespace SteamEngine.LScript {
 	public class OpNode_Lazy_ExpressionChain : OpNode, IOpNodeHolder {
 		//accepts DottedExpressionChain
 		private OpNode[] chain; //expression1.expression2.exp....
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
 			return Construct(parent, code, true);
 		}
-			
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
@@ -44,9 +44,9 @@ namespace SteamEngine.LScript {
 			OpNode_Is opnodeIs = null;
 
 			List<OpNode> argsList = new List<OpNode>();
-			for (int i = 0, n = code.GetChildCount(); i<n; i+=2) {//step is 2, we are skipping dots
+			for (int i = 0, n = code.GetChildCount(); i < n; i += 2) {//step is 2, we are skipping dots
 				if (i > 0) {
-					Node dotOrIsNode = code.GetChildAt(i-1);//DOT or OP_IS
+					Node dotOrIsNode = code.GetChildAt(i - 1);//DOT or OP_IS
 					if (IsType(dotOrIsNode, StrictConstants.OP_IS)) {
 						opnodeIs = OpNode_Is.Construct(parent, code, i);
 						break;
@@ -59,11 +59,11 @@ namespace SteamEngine.LScript {
 			//in case that one of the members of the chain is also ExpressionChain (a new chain of indexers or something like that)...
 			//in fact this wont happen in 99% cases, but we want perfectness :)
 			List<OpNode> finalArgsList = new List<OpNode>();
-			for (int i = 0, n = argsList.Count; i<n; i++) {
+			for (int i = 0, n = argsList.Count; i < n; i++) {
 				OpNode node = argsList[i];
 				if (node is OpNode_Lazy_ExpressionChain) {
 					OpNode_Lazy_ExpressionChain chainNode = (OpNode_Lazy_ExpressionChain) node;
-					for (int ii = 0, nn = chainNode.chain.Length; ii<nn; ii++) {
+					for (int ii = 0, nn = chainNode.chain.Length; ii < nn; ii++) {
 						finalArgsList.Add(chainNode.chain[ii]);
 					}
 				} else {
@@ -83,10 +83,10 @@ namespace SteamEngine.LScript {
 			}
 			return constructed;
 		}
-		
+
 		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, OpNode[] chain) {
 			//the chain was already made by Lazy_Expression - chain of indexers
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
@@ -96,24 +96,24 @@ namespace SteamEngine.LScript {
 			}
 			return constructed;
 		}
-		
+
 		protected OpNode_Lazy_ExpressionChain(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(chain, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				chain[index] = newNode;
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;       
+			object oSelf = vars.self;
 			try {
-				for (int i = 0; i<chain.Length;) {
+				for (int i = 0; i < chain.Length; ) {
 					try {
 						vars.self = chain[i].Run(vars);
 						i++;
@@ -130,18 +130,18 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 		}
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder();
-			for (int i = 0, n = chain.Length; i<n; i++) {
+			for (int i = 0, n = chain.Length; i < n; i++) {
 				str.Append(chain[i].ToString()).Append(".");
 			}
 			return str.ToString();
 		}
-		
+
 		private void ChainExceptIndex(int index) {
 			OpNode[] newChain = new OpNode[chain.Length - 1];
-			for (int i = 0, j = 0, n = chain.Length; i<n; i++) {
+			for (int i = 0, j = 0, n = chain.Length; i < n; i++) {
 				if (i != index) {
 					newChain[j] = chain[i];
 					j++;
@@ -150,20 +150,21 @@ namespace SteamEngine.LScript {
 			chain = newChain;
 		}
 	}
-	
+
 	internal abstract class NameRef {
 		internal string name;
 		internal NameRef(string name) {
 			this.name = name;
 		}
 	}
-	
+
 	internal class NameSpaceRef : NameRef {
 		internal NameSpaceRef(string name) : base(name) { }
 	}
-	
+
 	internal class ClassNameRef : NameRef {
-		internal ClassNameRef(string name) : base(name) {
+		internal ClassNameRef(string name)
+			: base(name) {
 		}
 	}
-}	
+}

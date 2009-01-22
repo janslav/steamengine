@@ -14,15 +14,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
- 
+
 using System;
 using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-    [Dialogs.ViewableClass]
-    public partial class Door : Item {
+	[Dialogs.ViewableClass]
+	public partial class Door : Item {
 		private static ushort[] baseModels = new ushort[] {
             0xE8,     //secret stone door		
             0x314,    //secret stone door
@@ -48,13 +48,13 @@ namespace SteamEngine.CompiledScripts {
 
 		private ushort baseModel = 0;
 
-        public override void On_DClick(AbstractCharacter user) {
-            if (!this.IsOpen) {
+		public override void On_DClick(AbstractCharacter user) {
+			if (!this.IsOpen) {
 				this.Trigger_Open((Character) user);
-            } else {
+			} else {
 				this.Trigger_Close((Character) user);
-            }
-        }
+			}
+		}
 
 		public static readonly TriggerKey tkOpen = TriggerKey.Get("open");
 		public static readonly TriggerKey tkClose = TriggerKey.Get("close");
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 					PacketSequences.SendDenyResultMessage(state.Conn, this, result);
 				}
 			}
-        }
+		}
 
 		private void Trigger_Close(Character user) {
 			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual void On_Open() { 
+		public virtual void On_Open() {
 		}
 
 		public void SetClose() {
@@ -218,7 +218,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual void On_Close() { 
+		public virtual void On_Close() {
 		}
 
 		[Summary("Is doors orthogonal(kolmé) on which direction?")]
@@ -239,7 +239,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-        public bool IsOpen {
+		public bool IsOpen {
 			get {
 				this.SetBaseDoorModelOrThrow();
 				if ((this.RD % 2) == 0) {
@@ -248,7 +248,7 @@ namespace SteamEngine.CompiledScripts {
 					return true;
 				}
 			}
-        }
+		}
 
 		public DoorRotation DoorRotation {
 			get {
@@ -259,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 					return DoorRotation.Right;
 				}
 			}
-        }
+		}
 
 		public ushort BaseDoorModel {
 			get {
@@ -294,13 +294,13 @@ namespace SteamEngine.CompiledScripts {
 				throw new SEException(this + " is Door with incompatible model.");
 			}
 		}
-    }
+	}
 
-    [Summary("Do doors rotate by left or right side?")]
+	[Summary("Do doors rotate by left or right side?")]
 	public enum DoorRotation {
-        Left,
-        Right
-    }
+		Left,
+		Right
+	}
 
 	public class DenySwitchDoorArgs : DenyTriggerArgs {
 		public readonly Character user;

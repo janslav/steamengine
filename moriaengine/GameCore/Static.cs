@@ -34,13 +34,13 @@ namespace SteamEngine {
 		internal Static(ushort id, byte m) {
 			this.dispidInfo = ItemDispidInfo.Get(id);
 			if (dispidInfo == null) {
-				throw new SEException("No ItemDispidInfo for id 0x"+id.ToString("x")+". Something's wrong.");
+				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x") + ". Something's wrong.");
 			}
 			this.m = m;
 		}
 
 		internal Static(ushort id, ushort x, ushort y, sbyte z, byte m)
-				: this(id, m) {
+			: this(id, m) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -95,7 +95,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return this.Name+" at "+X+","+Y+","+Z+","+M;
+			return this.Name + " at " + X + "," + Y + "," + Z + "," + M;
 		}
 
 		public Map GetMap() {
@@ -123,8 +123,8 @@ namespace SteamEngine {
 		}
 
 		IPoint2D IPoint2D.TopPoint {
-			get { 
-				return this; 
+			get {
+				return this;
 			}
 		}
 	}
@@ -135,8 +135,8 @@ namespace SteamEngine {
 		public readonly ushort color;
 
 		internal StaticStatic(ushort id, ushort x, ushort y, sbyte z, byte m, ushort color)
-				: base(id, x, y, z, m) {
-			this.color=color; 
+			: base(id, x, y, z, m) {
+			this.color = color;
 		}
 	}
 }

@@ -21,18 +21,18 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_door : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_door_open : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_door_locked : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_portculis : CompiledTriggerGroup {
-		
+
 	}
 }

@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 	internal class ClassTemplateInstanceField {
-		
+
 		internal string capName;
 		internal string uncapName;
 		internal string value;
@@ -58,55 +58,55 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		private void SetType(string typeName) {
 			switch (typeName.ToLower()) {
 				case "bool": {
-						typeName="Boolean";
+						typeName = "Boolean";
 						break;
 					}
 				case "byte": {
-						typeName="Byte";
+						typeName = "Byte";
 						break;
 					}
 				case "sbyte": {
-						typeName="SByte";
+						typeName = "SByte";
 						break;
 					}
 				case "ushort": {
-						typeName="UInt16";
+						typeName = "UInt16";
 						break;
 					}
 				case "short": {
-						typeName="Int16";
+						typeName = "Int16";
 						break;
 					}
 				case "uint": {
-						typeName="UInt32";
+						typeName = "UInt32";
 						break;
 					}
 				case "int": {
-						typeName="Int32";
+						typeName = "Int32";
 						break;
 					}
 				case "ulong": {
-						typeName="UInt64";
+						typeName = "UInt64";
 						break;
 					}
 				case "long": {
-						typeName="Int64";
+						typeName = "Int64";
 						break;
 					}
 				case "float": {
-						typeName="Single";
+						typeName = "Single";
 						break;
 					}
 				case "double": {
-						typeName="Double";
+						typeName = "Double";
 						break;
 					}
 				case "decimal": {
-						typeName="Decimal";
+						typeName = "Decimal";
 						break;
 					}
 				case "char": {
-						typeName="Char";
+						typeName = "Char";
 						break;
 					}
 			}
@@ -114,11 +114,11 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			if (type == null) {
 				type = Type.GetType(typeName, false, true);
 				if (type == null) {
-					type = Type.GetType("System."+typeName, false, true);
+					type = Type.GetType("System." + typeName, false, true);
 					if (type == null) {
-						type = Type.GetType("SteamEngine."+typeName, false, true);
+						type = Type.GetType("SteamEngine." + typeName, false, true);
 						if (type == null) {
-							type = Type.GetType("System.Collections."+typeName, false, true);
+							type = Type.GetType("System.Collections." + typeName, false, true);
 						}
 					}
 				}

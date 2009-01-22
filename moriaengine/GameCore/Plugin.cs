@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using SteamEngine.Persistence;
 using SteamEngine.Common;
-	
+
 namespace SteamEngine {
 	public abstract class Plugin : TagHolder {
 		internal PluginHolder cont;
@@ -76,7 +76,7 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-		
+
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
 		public object TryRun(TriggerKey tk, ScriptArgs sa) {
 			object retVal = null;

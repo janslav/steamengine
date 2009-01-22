@@ -30,22 +30,22 @@ namespace SteamEngine.LScript {
 	public class OpNode_SetField : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode arg;
-		
-		internal OpNode_SetField(IOpNodeHolder parent, string filename, 
+
+		internal OpNode_SetField(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, FieldInfo field, OpNode arg)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.field = field;
 		}
-		
+
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			if (arg == oldNode) {
 				arg = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -59,96 +59,100 @@ namespace SteamEngine.LScript {
 				field.SetValue(oSelf, result);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '"+field.Name+"'", 
+				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				field.SetValue(vars.self, results[0]);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '"+field.Name+"'", 
+				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public override string ToString() {
-			return string.Format("({0} {1}.{2} = {3})", field.FieldType, field.DeclaringType, field.Name, arg );
+			return string.Format("({0} {1}.{2} = {3})", field.FieldType, field.DeclaringType, field.Name, arg);
 		}
-		
-		public Type ReturnType { get {
-			return typeof(void);
-		} }
+
+		public Type ReturnType {
+			get {
+				return typeof(void);
+			}
+		}
 	}
-	
+
 	public class OpNode_GetField : OpNode, ITriable, IKnownRetType {
 		private readonly FieldInfo field;
-		
-		internal OpNode_GetField(IOpNodeHolder parent, string filename, 
+
+		internal OpNode_GetField(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, FieldInfo field)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.field = field;
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			try {
 				return field.GetValue(vars.self);
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting field '"+field.Name+"'", 
+				throw new InterpreterException("Exception while getting field '" + field.Name + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				return field.GetValue(vars.self);
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting field '"+field.Name+"'", 
+				throw new InterpreterException("Exception while getting field '" + field.Name + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public override string ToString() {
-			return string.Format("({0} {1}.{2})", field.FieldType, field.DeclaringType, field.Name );
+			return string.Format("({0} {1}.{2})", field.FieldType, field.DeclaringType, field.Name);
 		}
-		
-		public Type ReturnType { get {
-			return field.FieldType;
-		} }
+
+		public Type ReturnType {
+			get {
+				return field.FieldType;
+			}
+		}
 	}
-	
-	
+
+
 	public class OpNode_InitField_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode[] args;
 		private readonly string formatString;
-		
-		internal OpNode_InitField_String(IOpNodeHolder parent, string filename, 
+
+		internal OpNode_InitField_String(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, FieldInfo field, OpNode[] args, string formatString)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.args = args;
 			this.field = field;
 			this.formatString = formatString;
 		}
-		
+
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(args, oldNode);
 			if (index >= 0) {
 				args[index] = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			int argsCount = args.Length;
 			object[] results = new object[argsCount];
 			try {
-				for (int i = 0; i<argsCount; i++) {
+				for (int i = 0; i < argsCount; i++) {
 					results[i] = args[i].Run(vars);
 				}
 			} finally {
@@ -159,33 +163,35 @@ namespace SteamEngine.LScript {
 				field.SetValue(oSelf, resultString);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '"+field.Name+"'", 
+				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				string resultString = String.Format(formatString, results);
 				field.SetValue(vars.self, resultString);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '"+field.Name+"'", 
+				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("({0} {1}.{2} = (", field.FieldType, field.DeclaringType, field.Name);
-			for (int i = 0, n = args.Length; i<n; i++) {
+			for (int i = 0, n = args.Length; i < n; i++) {
 				str.Append(args[i].ToString()).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}
-		
-		public Type ReturnType { get {
-			return typeof(void);
-		} }
+
+		public Type ReturnType {
+			get {
+				return typeof(void);
+			}
+		}
 	}
-}	
+}

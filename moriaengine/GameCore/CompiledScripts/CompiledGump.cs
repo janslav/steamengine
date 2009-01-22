@@ -26,8 +26,8 @@ namespace SteamEngine.CompiledScripts {
 	//its subclasses (in scripts) are instantiated by TypeInfo class
 
 	public enum GumpButtonType {
-		Page=0,
-		Reply=1
+		Page = 0,
+		Reply = 1
 	}
 
 	public abstract class CompiledGumpDef : GumpDef {
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			Gump gi = new CompiledGump(this);
 
-			if(args == null) {
+			if (args == null) {
 				gi.InputArgs = new DialogArgs(); //empty arguments
 			} else {
 				gi.InputArgs = args; //store input arguments
@@ -336,7 +336,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return "compiled gump "+defname;
+			return "compiled gump " + defname;
 		}
 	}
 
@@ -373,7 +373,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsSwitched(int id) {
-			for (int i = 0, n = selectedSwitches.Length; i<n; i++) {
+			for (int i = 0, n = selectedSwitches.Length; i < n; i++) {
 				if (selectedSwitches[i] == id) {
 					return true;
 				}
@@ -382,7 +382,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string GetTextResponse(int id) {
-			for (int i = 0, n = responseTexts.Length; i<n; i++) {
+			for (int i = 0, n = responseTexts.Length; i < n; i++) {
 				ResponseText rt = responseTexts[i];
 				if (rt.id == id) {
 					return rt.text;
@@ -392,7 +392,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double GetNumberResponse(int id) {
-			for (int i = 0, n = responseNumbers.Length; i<n; i++) {
+			for (int i = 0, n = responseNumbers.Length; i < n; i++) {
 				ResponseNumber rn = responseNumbers[i];
 				if ((rn != null) && (rn.id == id)) {
 					return rn.number;

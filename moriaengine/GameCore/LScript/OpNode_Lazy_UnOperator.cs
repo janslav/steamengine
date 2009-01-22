@@ -31,48 +31,49 @@ namespace SteamEngine.LScript {
 		//accepts SimpleCodeBody, CodeBody
 		internal OpNode obj;
 		internal Node operatorNode;
-		
+
 		private object result;
-		
+
 		internal static OpNode_Lazy_UnOperator Construct(IOpNodeHolder parent, Node code) {
 			return new OpNode_Lazy_UnOperator(parent, code);
 		}
-		
-		internal OpNode_Lazy_UnOperator(IOpNodeHolder parent, Node code) :
-				base(parent, LScript.GetParentScriptHolder(parent).filename, code.GetStartLine()+LScript.startLine, code.GetStartColumn(), code) {
-			
+
+		internal OpNode_Lazy_UnOperator(IOpNodeHolder parent, Node code)
+			:
+				base(parent, LScript.GetParentScriptHolder(parent).filename, code.GetStartLine() + LScript.startLine, code.GetStartColumn(), code) {
+
 			if (code.GetChildCount() == 3) {
 				operatorNode = code.GetChildAt(1);
 				obj = LScript.CompileNode(this, code.GetChildAt(2));
-			}else if (code.GetChildCount() == 2) {
+			} else if (code.GetChildCount() == 2) {
 				operatorNode = code.GetChildAt(0);
 				obj = LScript.CompileNode(this, code.GetChildAt(1));
 			} else {
 				throw new Exception("Wrong number of child nodes. This should not happen.");
 			}
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (obj == oldNode) {
 				obj = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-	
+
 		internal override object Run(ScriptVars vars) {
 			string opString = LScript.GetString(operatorNode).Trim();
 			result = obj.Run(vars);
 
 			if (result == null) {
-				throw new InterpreterException("Operand of the unary operator '"+opString+"' is null.",
+				throw new InterpreterException("Operand of the unary operator '" + opString + "' is null.",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 			}
 
 
 			ITriable newNode = null;
 			switch (opString) {
-				case("+"):
+				case ("+"):
 					if (TagMath.IsNumberType(result.GetType())) {
 						//+ does nothing to numbers
 						ReplaceSelf(obj);
@@ -81,21 +82,21 @@ namespace SteamEngine.LScript {
 						newNode = FindOperatorMethod("op_UnaryPlus");
 					}
 					break;
-				case("-"):
+				case ("-"):
 					if (TagMath.IsNumberType(result.GetType())) {
 						newNode = new OpNode_MinusOperator(parent, origNode);
 					} else {
 						newNode = FindOperatorMethod("op_UnaryNegation");
 					}
 					break;
-				case("!"):
-					if ((TagMath.IsNumberType(result.GetType()))||(result is bool)) {
+				case ("!"):
+					if ((TagMath.IsNumberType(result.GetType())) || (result is bool)) {
 					} else {
 						newNode = FindOperatorMethod("op_LogicalNot");
 					}
 					newNode = new OpNode_NotOperator(parent, origNode);
 					break;
-				case("~"):
+				case ("~"):
 					if (TagMath.IsNumberType(result.GetType())) {
 						newNode = new OpNode_BitComplementOperator(parent, origNode);
 					} else {
@@ -103,16 +104,16 @@ namespace SteamEngine.LScript {
 					}
 					break;
 				default:
-					throw new InterpreterException("Operator "+opString+" unkown or not implemented.", 
+					throw new InterpreterException("Operator " + opString + " unkown or not implemented.",
 						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 			}
 			if (newNode != null) {
 				object retVal;
 				if (newNode is OpNode_Lazy_UnOperator) {
-					((OpNode_Lazy_UnOperator) newNode).obj = obj; 
+					((OpNode_Lazy_UnOperator) newNode).obj = obj;
 				}
 				ReplaceSelf((OpNode) newNode);
-				retVal = newNode.TryRun(vars, new object[] {result});
+				retVal = newNode.TryRun(vars, new object[] { result });
 				if (obj is OpNode_Object) {
 					//operand is constant -> result is also constant
 					OpNode constNode = OpNode_Object.Construct(parent, retVal);
@@ -120,16 +121,16 @@ namespace SteamEngine.LScript {
 				}
 				return retVal;
 			}
-			throw new InterpreterException("Operator "+LogStr.Number(opString)+" is not applicable to this operand.", 
+			throw new InterpreterException("Operator " + LogStr.Number(opString) + " is not applicable to this operand.",
 				this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 		}
-		
+
 		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
 			if (result != null) {
 				ArrayList matches = new ArrayList();
-				
+
 				Type type = result.GetType();
-				MethodInfo[] methods = type.GetMethods(BindingFlags.Public|BindingFlags.Static);
+				MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 				foreach (MethodInfo mi in methods) {
 					if (mi.Name.Equals(methodName)) {
 						ParameterInfo[] pars = mi.GetParameters();
@@ -142,8 +143,8 @@ namespace SteamEngine.LScript {
 				}
 				if (matches.Count == 1) {
 					MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) matches[0]);
-					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(parent, filename, 
-						line, column, origNode, method, new OpNode[] {obj});
+					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(parent, filename,
+						line, column, origNode, method, new OpNode[] { obj });
 					return newNode;
 				} else if (matches.Count > 1) {
 					//List<MethodInfo> resolvedAmbiguities;
@@ -156,17 +157,17 @@ namespace SteamEngine.LScript {
 						sb.Append(Environment.NewLine);
 						sb.AppendFormat("{0} {1}.{2}", mi.ReturnType, mi.DeclaringType, mi);
 					}
-					throw new InterpreterException(sb.ToString(), 
+					throw new InterpreterException(sb.ToString(),
 						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 				}
 				return null;
 			} else {
-				throw new InterpreterException("The operand is a null reference.", 
+				throw new InterpreterException("The operand is a null reference.",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 			}
 		}
 
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("( ");
 			str.Append(LScript.GetString(operatorNode).Trim()).Append(" ");
@@ -174,4 +175,4 @@ namespace SteamEngine.LScript {
 			return str.ToString();
 		}
 	}
-}	
+}

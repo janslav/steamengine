@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 				return this.TypeDef.Piercing;
 			}
 		}
-		
+
 		public WeaponType WeaponType {
 			get {
 				return this.TypeDef.WeaponType;

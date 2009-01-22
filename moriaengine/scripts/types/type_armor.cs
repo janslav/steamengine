@@ -21,18 +21,18 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_armor : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_armor_leather : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_shield : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_clothing : CompiledTriggerGroup {
-		
+
 	}
 }

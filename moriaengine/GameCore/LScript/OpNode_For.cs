@@ -15,13 +15,13 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;                        
-using System.Net;                    
-using System.Net.Sockets;            
-using System.Text;                   
-using System.IO;                     
-using System.Collections;            
-using System.Reflection;             
+using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.IO;
+using System.Collections;
+using System.Reflection;
 using System.Globalization;
 using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
@@ -33,33 +33,33 @@ namespace SteamEngine.LScript {
 		private OpNode leftBoundNode;
 		private OpNode rightBoundNode;
 		private OpNode blockNode;//can be null
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_For constructed = new OpNode_For(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-			
+
 			//LScript.DisplayTree(code);
 			constructed.localName = "localName";
-			
+
 			Production mainProd = (Production) code;
 			Production headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOR_HEADER_CODE or FOR_HEADER_IN_PARENS
 			string localName = GetLocalName(headProd.GetChildAt(0));
 			constructed.localName = localName;
 			constructed.localIndex = constructed.ParentScriptHolder.GetRegisterIndex(localName);
-			
-			
+
+
 			constructed.leftBoundNode = LScript.CompileNode(constructed, headProd.GetChildAt(2));
 			constructed.rightBoundNode = LScript.CompileNode(constructed, headProd.GetChildAt(4));
-			
-			
+
+
 			if (mainProd.GetChildCount() == 6) {//has the Script node inside?
 				constructed.blockNode = LScript.CompileNode(constructed, mainProd.GetChildAt(3), true);
 			}
 			return constructed;
 		}
-		
+
 		private static string GetLocalName(Node node) {
 			if (node is Token) {
 				return ((Token) node).GetImage().Trim();
@@ -67,7 +67,7 @@ namespace SteamEngine.LScript {
 				return ((Token) node.GetChildAt(2)).GetImage().Trim();
 			}
 		}
-		
+
 		private static Production GetHeaderCode(Node node) {
 			if (IsType(node, StrictConstants.FOR_HEADER_CODE)) {
 				return (Production) node;
@@ -77,12 +77,12 @@ namespace SteamEngine.LScript {
 				throw new Exception("Unexpected node. This should not happen.");
 			}
 		}
-		
-		private OpNode_For(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+
+		private OpNode_For(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
-			
+
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (leftBoundNode == oldNode) {
 				leftBoundNode = newNode;
@@ -96,9 +96,9 @@ namespace SteamEngine.LScript {
 				blockNode = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			if (blockNode != null) {
 				try {
@@ -112,7 +112,7 @@ namespace SteamEngine.LScript {
 					} else { //leftBound == rightBound
 						step = 0;
 					}
-					
+
 					object retVal = null;
 					leftBound -= step;
 					do {
@@ -127,16 +127,16 @@ namespace SteamEngine.LScript {
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
-					throw new InterpreterException("Expression while evaluating FOR statement", 
+					throw new InterpreterException("Expression while evaluating FOR statement",
 						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 				}
 			} else {
 				return null;//if there is no code to run, we dont do anything.
 			}
 		}
-		
+
 		public override string ToString() {
-			return String.Concat("For (", localName, ", ", leftBoundNode, ", ", rightBoundNode, ")", 
+			return String.Concat("For (", localName, ", ", leftBoundNode, ", ", rightBoundNode, ")",
 				Environment.NewLine, blockNode, Environment.NewLine, "endfor");
 		}
 	}

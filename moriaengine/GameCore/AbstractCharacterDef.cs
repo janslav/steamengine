@@ -21,35 +21,40 @@ using System.Reflection;
 using System.Globalization;
 using SteamEngine.Common;
 
-namespace SteamEngine {	
-	
+namespace SteamEngine {
+
 	public abstract class AbstractCharacterDef : ThingDef {
 		private FieldValue mountItem;
 
-		public AbstractCharacterDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
+		public AbstractCharacterDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 			mountItem = InitField_Model("mountItem", 0);
 		}
-		
-		public ushort MountItem { 
+
+		public ushort MountItem {
 			get {
-				return (ushort) mountItem.CurrentValue; 
-			} 
+				return (ushort) mountItem.CurrentValue;
+			}
 			set {
-				mountItem.CurrentValue = value; 
+				mountItem.CurrentValue = value;
 			}
 		}
 
-		public override sealed bool IsItemDef { get {
-			return false;
-		} }
-		
-		public override sealed bool IsCharDef { get {
-			return true;
-		} }
+		public override sealed bool IsItemDef {
+			get {
+				return false;
+			}
+		}
+
+		public override sealed bool IsCharDef {
+			get {
+				return true;
+			}
+		}
 
 		public abstract bool IsFemale { get; }
 		public abstract bool IsMale { get; }
-		
+
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			if ("anim".Equals(param)) {
 				param = "animsavailable";

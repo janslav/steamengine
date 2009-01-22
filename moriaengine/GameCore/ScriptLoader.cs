@@ -27,26 +27,26 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 using SteamEngine.Networking;
-	
+
 namespace SteamEngine {
 	public class ScriptLoader {
 		private static ScriptFileCollection allFiles;
 
-		private static Dictionary<string, RegisteredScript> scriptTypesByName = 
+		private static Dictionary<string, RegisteredScript> scriptTypesByName =
 			new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
-		
+
 		static ScriptLoader() {
 			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".scp");
 			allFiles.AddExtension(".def");
 			//allFiles.AddAvoided("import");
 		}
-		
+
 		//the method that is called on server initialisation by MainClass.
 		internal static void Load() {
 			ICollection<ScriptFile> files = allFiles.GetAllFiles();
 			long lengthSum = allFiles.LengthSum;
 			long alreadyloaded = 0;
-			using (StopWatch.StartAndDisplay("Loading "+LogStr.Number(files.Count)+" *.def and *.scp script files. ("+LogStr.Number(lengthSum)+" bytes)...")) {
+			using (StopWatch.StartAndDisplay("Loading " + LogStr.Number(files.Count) + " *.def and *.scp script files. (" + LogStr.Number(lengthSum) + " bytes)...")) {
 
 				ThingDef.StartingLoading();
 				ScriptedTriggerGroup.StartingLoading();
@@ -56,8 +56,8 @@ namespace SteamEngine {
 				AbstractSkillDef.StartingLoading();
 
 				foreach (ScriptFile f in files) {
-					Logger.SetTitle("Loading scripts: "+((alreadyloaded*100)/lengthSum)+" %");
-					Logger.WriteDebug("Loading "+f.Name);
+					Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
+					Logger.WriteDebug("Loading " + f.Name);
 					LoadFile(f);
 					alreadyloaded += f.Length;
 				}
@@ -82,7 +82,7 @@ namespace SteamEngine {
 				}
 			}
 		}
-		
+
 		public static void Resync() {
 			ICollection<ScriptFile> files = allFiles.GetChangedFiles();//this makes the entities unload
 			if (files.Count > 0) {
@@ -94,10 +94,10 @@ namespace SteamEngine {
 				RunLevelManager.SetStartup();
 
 				ObjectSaver.StartingLoading();
-				
+
 				foreach (ScriptFile f in files) {
 					if (f.Exists) {
-						Console.WriteLine("Resyncing file '"+LogStr.File(f.FullName)+"'.");
+						Console.WriteLine("Resyncing file '" + LogStr.File(f.FullName) + "'.");
 						try {
 							LoadFile(f);
 						} catch (IOException e) {
@@ -110,14 +110,14 @@ namespace SteamEngine {
 					Constant.ResolveAll();
 					AbstractDef.ResolveAll();
 				}
-				
+
 				DelayedResolver.ResolveAll();
 				ObjectSaver.LoadingFinished();
 
 				//foreach (Thing t in Thing.AllThings) {
 				//    t.region = null;
 				//}
-				
+
 				Globals.UnPauseServerTime();
 				RunLevelManager.SetRunning();
 
@@ -144,14 +144,14 @@ namespace SteamEngine {
 						try {
 							string type = section.headerType.ToLower();
 							string name = section.headerName;
-							if ((name == "")&&(type == "eof")) {
+							if ((name == "") && (type == "eof")) {
 								continue;
 							}
 
 							switch (type) {
 								case "function":
 									file.Add(SteamEngine.LScript.LScript.LoadAsFunction(section.GetTrigger(0)));
-									if (section.TriggerCount>1) {
+									if (section.TriggerCount > 1) {
 										Logger.WriteWarning(section.filename, section.headerLine, "Triggers in a function are nonsensual (and ignored).");
 									}
 									continue;
@@ -205,7 +205,7 @@ namespace SteamEngine {
 										continue;
 									}
 
-								break;
+									break;
 							}
 						} catch (FatalException) {
 							throw;
@@ -213,7 +213,7 @@ namespace SteamEngine {
 							Logger.WriteError(section.filename, section.headerLine, e);
 							continue;
 						}
-						Logger.WriteError(section.filename, section.headerLine, "Unknown section "+LogStr.Ident(section));
+						Logger.WriteError(section.filename, section.headerLine, "Unknown section " + LogStr.Ident(section));
 					}
 				}
 			}
@@ -235,8 +235,8 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
-	
+
+
 		internal static void LoadNewFile(string filename) {
 			FileInfo fi = new FileInfo(filename);
 			if (!fi.Exists) {
@@ -249,11 +249,11 @@ namespace SteamEngine {
 				if (!allFiles.HasFile(fi)) {
 					PacketSequences.BroadCast("Server is pausing for script file loading...");
 					Globals.PauseServerTime();
-					
+
 					ScriptFile sf = allFiles.AddFile(fi);
-					Console.WriteLine("Loading "+LogStr.File(fi.FullName));
+					Console.WriteLine("Loading " + LogStr.File(fi.FullName));
 					LoadFile(sf);
-					
+
 					DelayedResolver.ResolveAll();
 					Globals.UnPauseServerTime();
 					PacketSequences.BroadCast("Script loading finished.");
@@ -264,15 +264,15 @@ namespace SteamEngine {
 				throw new Exception("Such file does not exist.");
 			}
 		}
-		
+
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
 			RegisteredScript rs;
 			if (scriptTypesByName.TryGetValue(name, out rs)) {
-				throw new OverrideNotAllowedException("There is already a script section loader ("+LogStr.Ident(rs)+") registered for handling the section name "+LogStr.Ident(name));  
+				throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(rs) + ") registered for handling the section name " + LogStr.Ident(name));
 			}
 			scriptTypesByName[name] = new RegisteredScript(deleg, startAsScript);
 		}
-		
+
 		public static void RegisterScriptType(string[] names, LoadSection deleg, bool startAsScript) {
 			foreach (string name in names) {
 				RegisterScriptType(name, deleg, startAsScript);
@@ -288,13 +288,13 @@ namespace SteamEngine {
 				this.startAsScript = startAsScript;
 			}
 		}
-		
+
 		//unloads instances that come from scripts.
 		internal static void UnloadScripts() {
 			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
 
 			Dictionary<string, RegisteredScript> origScripts = scriptTypesByName;
-			scriptTypesByName = new Dictionary<string,RegisteredScript>(StringComparer.OrdinalIgnoreCase);
+			scriptTypesByName = new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
 			foreach (KeyValuePair<string, RegisteredScript> pair in origScripts) {
 				if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
 					scriptTypesByName[pair.Key] = pair.Value;

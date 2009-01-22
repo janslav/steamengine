@@ -22,25 +22,25 @@ namespace SteamEngine.Common {
 	using System;
 	using System.Runtime.InteropServices;
 	using System.Diagnostics;
-	
+
 	public class HighPerformanceTimer {
 		[DllImport("kernel32.dll")]
 		public static extern bool QueryPerformanceCounter(out long counter);
 		[DllImport("kernel32.dll")]
 		public static extern bool QueryPerformanceFrequency(out long frequency);
-		
-		private static long frequency=0;
-		private static double dFrequency=0;
-		private static double dmFrequency=0;
 
-		private static double timeSpanTicksFrequency=0;
+		private static long frequency = 0;
+		private static double dFrequency = 0;
+		private static double dmFrequency = 0;
+
+		private static double timeSpanTicksFrequency = 0;
 		//private static bool fallback=false;
-		
+
 		static HighPerformanceTimer() {
-			bool success=QueryPerformanceFrequency(out frequency);
+			bool success = QueryPerformanceFrequency(out frequency);
 			if (success) {
-				dFrequency=(double)frequency;
-				dmFrequency=dFrequency/1000.0;
+				dFrequency = (double) frequency;
+				dmFrequency = dFrequency / 1000.0;
 				timeSpanTicksFrequency = frequency / 10000000.0;
 			} else {
 				throw new FatalException("Unable to access high performance timer.");
@@ -56,7 +56,7 @@ namespace SteamEngine.Common {
 				//    return Environment.TickCount;
 				//} else {
 				long count;
-				bool success=QueryPerformanceCounter(out count);
+				bool success = QueryPerformanceCounter(out count);
 				if (success) {
 					return count;
 				} else {
@@ -68,26 +68,26 @@ namespace SteamEngine.Common {
 				//}
 			}
 		}
-		
+
 		public static double TicksToSeconds(long count) {
 			//if (fallback) {
 			//    return count/1000.0;
 			//} else {
-				return count/dFrequency;
+			return count / dFrequency;
 			//}
 		}
 		public static long TicksToMilliseconds(long count) {
 			//if (fallback) {
 			//    return count;
 			//} else {
-				return (long) (count/dmFrequency);
+			return (long) (count / dmFrequency);
 			//}
 		}
 		public static double TicksToDMilliseconds(long count) {
 			//if (fallback) {
 			//    return count;
 			//} else {
-				return (count/dmFrequency);
+			return (count / dmFrequency);
 			//}
 		}
 
@@ -97,7 +97,7 @@ namespace SteamEngine.Common {
 			//if (fallback) {
 			//    return new TimeSpan(count);
 			//} else {
-			return new TimeSpan((long) (count/timeSpanTicksFrequency));
+			return new TimeSpan((long) (count / timeSpanTicksFrequency));
 			//}
 		}
 		public static long TimeSpanToTicks(TimeSpan span) {
@@ -113,16 +113,16 @@ namespace SteamEngine.Common {
 			//if (fallback) {
 			//    return count*1000;
 			//} else {
-			return (long) (count*dFrequency);
+			return (long) (count * dFrequency);
 			//}
 		}
 		public static long MillisecondsToTicks(long count) {
 			//if (fallback) {
 			//    return count;
 			//} else {
-			return (long) (count*dmFrequency);	//(count/1000.0)*dFrequency);
+			return (long) (count * dmFrequency);	//(count/1000.0)*dFrequency);
 			//}
-		}		
+		}
 	}
 
 	public class StopWatch : IDisposable {
@@ -147,8 +147,8 @@ namespace SteamEngine.Common {
 			if (!disposed) {
 				long ticksOnEnd = HighPerformanceTimer.TickCount;
 				long diff = ticksOnEnd - ticksOnStart;
-				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length-1);
-				Logger.StaticWriteLine("...took "+HighPerformanceTimer.TicksToTimeSpan(diff).ToString());
+				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length - 1);
+				Logger.StaticWriteLine("...took " + HighPerformanceTimer.TicksToTimeSpan(diff).ToString());
 				disposed = true;
 			}
 		}

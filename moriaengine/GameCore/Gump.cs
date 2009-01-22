@@ -40,9 +40,9 @@ namespace SteamEngine {
 		internal abstract Gump InternalConstruct(Thing focused, AbstractCharacter sendTo, DialogArgs args);
 	}
 
-	[Summary("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)"+
-			"the array's length is unmodifiable so the only way to put args into it is to put them during constructor call."+
-			"Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example "+
+	[Summary("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)" +
+			"the array's length is unmodifiable so the only way to put args into it is to put them during constructor call." +
+			"Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example " +
 			"label and text in the Info/Error dialog-messages). Other args should be added as tags!")]
 	public class DialogArgs : TagHolder {
 		private object[] fldArgs;
@@ -373,8 +373,8 @@ namespace SteamEngine {
 		}
 
 		public void AddTextEntry(int x, int y, int widthPix, int height, int hue, int id, int textId) {
-			if(id < short.MinValue || id > short.MaxValue) {
-				throw new SEException(LogStr.Error("Nepovolena hodnota ID textoveho vstupu - zadano :"+id+" povoleny rozsah: "+short.MinValue+"-"+short.MaxValue));
+			if (id < short.MinValue || id > short.MaxValue) {
+				throw new SEException(LogStr.Error("Nepovolena hodnota ID textoveho vstupu - zadano :" + id + " povoleny rozsah: " + short.MinValue + "-" + short.MaxValue));
 			}
 			string[] arr = new string[] {
 				"textentry", 
@@ -404,7 +404,7 @@ namespace SteamEngine {
 		}
 
 		public void AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, int textId) {
-			if(id < short.MinValue || id > short.MaxValue) {
+			if (id < short.MinValue || id > short.MaxValue) {
 				throw new SEException(LogStr.Error("Nepovolena hodnota ID ciselneho vstupu - zadano :" + id + " povoleny rozsah: " + short.MinValue + "-" + short.MaxValue));
 			}
 			string[] arr = new string[] {
@@ -426,7 +426,7 @@ namespace SteamEngine {
 			if (entryTextIds == null) {
 				entryTextIds = new Dictionary<int, int>();
 			}
-			entryTextIds[id] = textId;			
+			entryTextIds[id] = textId;
 		}
 
 		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, double text) {

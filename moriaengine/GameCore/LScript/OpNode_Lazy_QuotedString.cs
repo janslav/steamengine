@@ -28,37 +28,37 @@ using PerCederberg.Grammatica.Parser;
 namespace SteamEngine.LScript {
 	public class OpNode_Lazy_QuotedString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode[] evals;
-				//or OpNode_Lazy_EvalExpression (<...>) - these get later replaced, of course.
+		//or OpNode_Lazy_EvalExpression (<...>) - these get later replaced, of course.
 		private object[] results;
 		private string formatString;
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
 			ArrayList children = ((Production) code).children;
 			object[] nodes = new object[children.Count - 2]; //minus first and last quote
-			for (int i = 1, n = children.Count-1; i<n; i++) {
-				nodes[i-1] = children[i];
+			for (int i = 1, n = children.Count - 1; i < n; i++) {
+				nodes[i - 1] = children[i];
 			}
 			return ConstructFromArray(parent, code, nodes);
 		}
-		
+
 		//nw when I look at it, I'm quite sure this could be yet optimised :)
 		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, object[] nodes) {
 			//the nodes can be both OpNodes or Nodes (parser nodes), but nothing else
 			bool isConstant = true;
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_QuotedString constructed = new OpNode_Lazy_QuotedString(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-			
+
 			ArrayList nodesList = new ArrayList();
-			for (int i = 0, n = nodes.Length; i<n; i++) {
+			for (int i = 0, n = nodes.Length; i < n; i++) {
 				object node = nodes[i];
 				if (node is OpNode) {
 					nodesList.Add(node);
 				} else {
 					Node no = (Node) node;
 					if ((IsType(no, StrictConstants.STRONG_EVAL_EXPRESSION))
-							||(IsType(no, StrictConstants.EVAL_EXPRESSION))) {
+							|| (IsType(no, StrictConstants.EVAL_EXPRESSION))) {
 						nodesList.Add(LScript.CompileNode(constructed, (Node) node));
 						isConstant = false;
 					} else {
@@ -66,17 +66,17 @@ namespace SteamEngine.LScript {
 					}
 				}
 			}
-			
+
 			StringBuilder formatBuf = new StringBuilder();
 			ArrayList evalsList = new ArrayList();
-			for (int i = 0, n = nodesList.Count; i<n;) {
+			for (int i = 0, n = nodesList.Count; i < n; ) {
 				if (nodesList[i] is OpNode_Lazy_EvalExpression) {
 					isConstant = false;
 					int curEval = evalsList.Add(nodesList[i]);
 					formatBuf.Append("{").Append(curEval.ToString()).Append("}"); //creates {x} in the formatstring
 					i++;
 				} else {
-					while ((i<n)&&(!(nodesList[i] is OpNode_Lazy_EvalExpression))) {
+					while ((i < n) && (!(nodesList[i] is OpNode_Lazy_EvalExpression))) {
 						if (nodesList[i] is OpNode) {
 							formatBuf.Append(((OpNode) nodesList[i]).OrigString);
 						} else {
@@ -95,25 +95,25 @@ namespace SteamEngine.LScript {
 			constructed.results = new object[evalsList.Count];
 			return constructed;
 		}
-		
-		protected OpNode_Lazy_QuotedString(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+
+		protected OpNode_Lazy_QuotedString(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(evals, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				evals[index] = newNode;
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
-				for (int i = 0, n = evals.Length; i<n; i++) {
+				for (int i = 0, n = evals.Length; i < n; i++) {
 					results[i] = evals[i].Run(vars);
 				}
 			} finally {
@@ -121,17 +121,19 @@ namespace SteamEngine.LScript {
 			}
 			return string.Format(formatString, results);
 		}
-		
+
 		public override string ToString() {
 			object[] strings = new object[evals.Length];
-			for (int i = 0, n = evals.Length; i<n; i++) {
+			for (int i = 0, n = evals.Length; i < n; i++) {
 				strings[i] = evals[i].ToString();
 			}
-			return string.Format("\""+formatString+"\"", strings);
+			return string.Format("\"" + formatString + "\"", strings);
 		}
-		
-		public Type ReturnType { get {
-			return typeof(string);
-		} }
+
+		public Type ReturnType {
+			get {
+				return typeof(string);
+			}
+		}
 	}
-}	
+}

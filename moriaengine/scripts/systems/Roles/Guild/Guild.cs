@@ -86,4 +86,4 @@ namespace SteamEngine.CompiledScripts {
 			return new Guild(this, key);
 		}
 	}
-}		
+}

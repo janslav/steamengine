@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 		public MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double> mindPowerVsP = new MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double>();
 	}
 
-	public class WeaponMindPowerVsPMassSetting : MassSettingByMaterial<ColoredWeaponDef,double> {
+	public class WeaponMindPowerVsPMassSetting : MassSettingByMaterial<ColoredWeaponDef, double> {
 
 		public override string Name {
 			get { return "Síla mysli proti hráèùm"; }

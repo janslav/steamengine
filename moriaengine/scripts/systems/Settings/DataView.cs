@@ -21,12 +21,12 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Interface for displaying the labels and values of single members of the target"+
+	[Summary("Interface for displaying the labels and values of single members of the target" +
 			"(infoized) object in the dialog")]
 	public interface IDataFieldView {
 		[Summary("The name of this field / the label of the button")]
 		string GetName(object target);
-		
+
 		[Summary("Is the data read only? - i.e. displaying the settings results?")]
 		bool ReadOnly { get; }
 
@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		bool IsButtonEnabled { get; }
 
 		[Summary("The real type of the data field (it needn't necessary be the type of the value...)")]
-		Type FieldType {get;}
+		Type FieldType { get;}
 
 		[Summary("Take the target object and retreive its member's (for which this interface instance is) value")]
 		object GetValue(object target);
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		void SetStringValue(object target, string value);
 
 		[Summary("What will happen when the button is pressed?")]
-		void OnButton(object target);				
+		void OnButton(object target);
 	}
 
 	[Summary("Class for managing all generated dataviews and providing them according to wanted type")]
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Will find dataview for given type.")]
 		public static IDataView FindDataViewByType(Type handledType) {
-			IDataView view = (IDataView)dataViewsForTypes[handledType];
+			IDataView view = (IDataView) dataViewsForTypes[handledType];
 			if (view != null) {
 				return view;
 			} else {
@@ -80,24 +80,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//ClassManager.RegisterHook(CheckGeneratedDataViewClass);
 		}
 
-		[Summary("Method for checking if the given Type is a descendant of IDataView. If so, store it in the map"+
+		[Summary("Method for checking if the given Type is a descendant of IDataView. If so, store it in the map" +
 				"with the HandledType as Key...")]
 		public static bool CheckGeneratedDataViewClass(Type type) {
 			if (!type.IsAbstract) {
 				//if (typeof(IDataView).IsAssignableFrom(type)) { //this should be managed by the ClassManager :)
-					ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-					if (ci != null) {
-						IDataView idv = (IDataView) ci.Invoke(new object[0] { });
+				ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+				if (ci != null) {
+					IDataView idv = (IDataView) ci.Invoke(new object[0] { });
 
-						if (idv.HandleSubclasses) {
-							dataViewsForbaseClasses.Add(idv.HandledType, idv);
-						} else {
-							dataViewsForTypes.Add(idv.HandledType, idv);
-						}
-
+					if (idv.HandleSubclasses) {
+						dataViewsForbaseClasses.Add(idv.HandledType, idv);
 					} else {
-						throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
+						dataViewsForTypes.Add(idv.HandledType, idv);
 					}
+
+				} else {
+					throw new SEException("Non-parametric-constructor of " + type + " cannot be created. IDataView cannot be registered.");
+				}
 				//}
 			}
 			return false;
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Interface used for all generated DataView classes")]
 	public interface IDataView {
 		[Summary("This getter will provide us the Type this AbstractDataView is made for")]
-		Type HandledType {get;}
+		Type HandledType { get;}
 
 		[Summary("If true, subclasses of HandledType will also be handled.")]
 		bool HandleSubclasses { get;}
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public abstract IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target);
 
 		//these three interface properties will be implemented in children
-		public abstract Type HandledType {get;}
+		public abstract Type HandledType { get;}
 
 		public bool HandleSubclasses {
 			get {
@@ -165,7 +165,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			protected T current;
 
 			[Summary("This method will be used by IPageableCollection to prepare the Enumerator" +
-				   "- set the starting index and the reference object from which we possibly can obtain some"+
+				   "- set the starting index and the reference object from which we possibly can obtain some" +
 					"necessary inforamtion such as upper bound of iteration... if needed")]
 			public AbstractPage(int startIndex, object target) {
 				//initialize indices and prepare for usage
@@ -228,7 +228,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public bool IsButtonEnabled {
 			get {
 				return false;
-			}			
+			}
 		}
 
 		[Summary("Yes, this dataview field is read only")]
@@ -255,7 +255,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//all other properties/methods will be implemented in child classes later
 		public abstract string GetName(object target);
-		public abstract Type FieldType {get;}
+		public abstract Type FieldType { get;}
 		public abstract object GetValue(object target);
 		public abstract string GetStringValue(object target);
 	}
@@ -283,7 +283,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//all other properties/methods will be implemented in child classes later
 		public abstract string GetName(object target);
-		public abstract Type FieldType {get;}
+		public abstract Type FieldType { get;}
 		public abstract object GetValue(object target);
 		public abstract void SetValue(object target, object value);
 		public abstract string GetStringValue(object target);
@@ -340,11 +340,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	[Summary("Decorate your class by this attribute if you want it to be viewable by info dialogs.")]
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]	
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 	public class ViewableClassAttribute : Attribute {
 		[Summary("The name that will be displayed in the headline of the infodialog")]
 		private string name;
-		
+
 		public string Name {
 			get {
 				return name;
@@ -360,7 +360,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Decorate a member of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs."+
+	[Summary("Decorate a member of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs." +
 			 "all other attributes will be displayed")]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class NoShowAttribute : Attribute {
@@ -369,7 +369,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Decorate a member of the ViewableClass by this attribute if you want it to be infoized and you want"+
+	[Summary("Decorate a member of the ViewableClass by this attribute if you want it to be infoized and you want" +
 			 "to specify its name explicitely")]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class InfoFieldAttribute : Attribute {
@@ -400,7 +400,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//no params constructor
-		public ButtonAttribute() {			
+		public ButtonAttribute() {
 		}
 
 		public ButtonAttribute(string name) {
@@ -408,11 +408,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Used for marking classes used as descriptors - see SimpleClassDescriptor for example."+
+	[Summary("Used for marking classes used as descriptors - see SimpleClassDescriptor for example." +
 			"Obligatory constructor parameter is handled type, voluntary is the name of the described class")]
 	public class ViewDescriptorAttribute : Attribute {
 		private Type handledType;
-		
+
 		[Summary("The name that will be displayed in the headline of the infodialog")]
 		private string name;
 

@@ -50,7 +50,7 @@ namespace SteamEngine.Timers {
 		[DeepCopyImplementation]
 		public FunctionTimer() {
 		}
-		
+
 		public FunctionTimer(ScriptHolder function, string formatString, object[] args) {
 			this.function = function;
 			this.formatString = formatString;
@@ -68,7 +68,7 @@ namespace SteamEngine.Timers {
 			if (name.Equals("function")) {
 				function = ScriptHolder.GetFunction((string) ObjectSaver.OptimizedLoad_String(value));
 				if (function == null) {
-					throw new Exception("There is no function "+value);
+					throw new Exception("There is no function " + value);
 				}
 			}
 			base.LoadLine(filename, line, name, value);

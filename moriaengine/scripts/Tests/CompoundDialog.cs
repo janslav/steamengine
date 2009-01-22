@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog testing the tables in columns")]
 	public class D_CompoundDlg : CompiledGumpDef {
-		
+
 		[Summary("Instance of the D_TagList, for possible access from other dialogs etc.")]
 		private static D_CompoundDlg instance;
 		public static D_CompoundDlg Instance {
@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			instance = this;
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {			
+		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(450);
@@ -51,14 +51,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//telo
-			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS,200,0));
+			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, 200, 0));
 
-			GUTATable innerTable1 = new GUTATable(ImprovedDialog.PAGE_ROWS,0,100);
+			GUTATable innerTable1 = new GUTATable(ImprovedDialog.PAGE_ROWS, 0, 100);
 			//innerTable1[0,0] = TextFactory.CreateLabel("prvni vnitrni tabulecka");
 			//innerTable1[0, 1] = TextFactory.CreateHeadline("druhej sloupecek");
 			innerTable1.Transparent = true;
 			innerTable1.NoWrite = true;
-			GUTATable innerTable2 = new GUTATable(ImprovedDialog.PAGE_ROWS,0,100);
+			GUTATable innerTable2 = new GUTATable(ImprovedDialog.PAGE_ROWS, 0, 100);
 			//innerTable2[0,0] = TextFactory.CreateLabel("druha vnitrni tabulecka");
 			//innerTable2[0, 1] = TextFactory.CreateHeadline("taky druhej sloupecek");
 			innerTable2.Transparent = true;
@@ -73,9 +73,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if(gr.pressedButton == 0) { //ovladaci tlacitka (exit, new, vyhledej)								
+			if (gr.pressedButton == 0) { //ovladaci tlacitka (exit, new, vyhledej)								
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
-			}			
+			}
 		}
 
 		[SteamFunction]

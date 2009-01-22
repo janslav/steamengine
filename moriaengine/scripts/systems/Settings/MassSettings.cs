@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (defs.Count == 0) {
-					throw new Exception("MassSettingsByClass instantiated before scripts are loaded... or no "+typeof(DefType).Name+" in scripts?");
+					throw new Exception("MassSettingsByClass instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
 				}
 
 				defs.Sort(delegate(DefType a, DefType b) {
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return defs.Count;
 			}
 		}
-		
+
 
 	}
 
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (modelsSet.Count == 0) {
-					throw new Exception("WeaponMassSetting instantiated before scripts are loaded... or no "+typeof(DefType).Name+" in scripts?");
+					throw new Exception("WeaponMassSetting instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
 				}
 
 				models = new ushort[modelsSet.Count];
@@ -133,20 +133,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (defs == null) {
 				int n = models.Length;
 				defs = new List<DefType>[n];
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					ushort model = models[i];
 					List<DefType> list = new List<DefType>();
 					defs[i] = list;
 					foreach (AbstractScript scp in AbstractScript.AllScripts) {
 						DefType def = scp as DefType;
-						if ((def != null) && 
+						if ((def != null) &&
 								(def.Model == model) &&
 								CheckIfAppies(def)) {
 							list.Add(def);
 						}
 					}
 					if (list.Count == 0) {
-						throw new Exception("Def for model "+model+" not found for mass setting");
+						throw new Exception("Def for model " + model + " not found for mass setting");
 					}
 					foreach (DefType def in list) {
 						if (def.Defname.StartsWith("i_0x") || def.Defname.StartsWith("c_0x")) {
@@ -255,7 +255,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public System.Collections.Generic.IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
 			IMassSettings holder = (IMassSettings) target;
-			for (int i = firstLineIndex, n = holder.Count; i<n; i++) {
+			for (int i = firstLineIndex, n = holder.Count; i < n; i++) {
 				yield return holder.GetFieldView(i);
 			}
 		}
@@ -281,7 +281,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public SettingType[] settings = new SettingType[7];
 
 		public MetaMassSetting() {
-			for (int i = 0, n = settings.Length; i<n; i++) {
+			for (int i = 0, n = settings.Length; i < n; i++) {
 				settings[i] = new SettingType();
 			}
 
@@ -357,8 +357,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static void InitLists() {
 			if (defSets == null) {
 				defSets = new List<DefType>[5, 9];
-				for (int i = 0; i<5; i++) {
-					for (int j = 0; j<9; j++) {
+				for (int i = 0; i < 5; i++) {
+					for (int j = 0; j < 9; j++) {
 						defSets[i, j] = new List<DefType>();
 					}
 				}
@@ -400,7 +400,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return type+", "+mat;
+				return type + ", " + mat;
 			}
 
 			public override Type FieldType {

@@ -21,10 +21,10 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_hair : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_beard : CompiledTriggerGroup {
-		
+
 	}
 }

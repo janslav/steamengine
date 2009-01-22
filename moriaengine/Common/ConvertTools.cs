@@ -28,14 +28,14 @@ namespace SteamEngine.Common {
 	public class ConvertTools {
 		protected static ConvertTools instance;
 
-		public readonly static Regex stringRE= new Regex(@"^""(?<value>.*)""\s*$",                   
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public readonly static Regex floatRE= new Regex(@"^(?<value>-?\d*\.\d*)\s*$",                
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-		public readonly static Regex intRE= new Regex(@"^(?<value>-?\d+)\s*$",                    
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+		public readonly static Regex stringRE = new Regex(@"^""(?<value>.*)""\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+		public readonly static Regex floatRE = new Regex(@"^(?<value>-?\d*\.\d*)\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+		public readonly static Regex intRE = new Regex(@"^(?<value>-?\d+)\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		public readonly static Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public readonly static CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 
@@ -54,36 +54,36 @@ namespace SteamEngine.Common {
 		//	RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
 
 		protected ConvertTools() {
-			instance=this;
+			instance = this;
 		}
 
 		[Summary("If the string contains a \n, \r, or \0, then it is truncated just before that character."
 			 + "If it contains any tabs, they are changed to spaces.")]
 		public static string RemoveIllegalChars(string s) {
-			if (s==null) return s;
-			for (int a=0; a<s.Length; a++) {
+			if (s == null) return s;
+			for (int a = 0; a < s.Length; a++) {
 				char c = s[a];
-				if (c=='\n' || c=='\r' || c=='\0') {
-					s=s.Substring(0,a);
+				if (c == '\n' || c == '\r' || c == '\0') {
+					s = s.Substring(0, a);
 					break;
-				} else if (c=='\t') {
-					if (a<s.Length-1) {
-						s=s.Substring(0,a)+" "+s.Substring(a+1);
+				} else if (c == '\t') {
+					if (a < s.Length - 1) {
+						s = s.Substring(0, a) + " " + s.Substring(a + 1);
 					} else {
-						s=s.Substring(0,a)+" ";
+						s = s.Substring(0, a) + " ";
 					}
 				}
 			}
 			return s;
 		}
-		
+
 		[Summary("The most generic method to convert types. Throws when convert impossible.")]
 		public static object ConvertTo(Type type, object obj) {
 			//Console.WriteLine("Converting from {0} {1} to {2}", obj.GetType(), obj, type);
-			if (obj==null) return obj;
+			if (obj == null) return obj;
 			Type objectType = obj.GetType();
 			string sobj = obj as string;
-			if (sobj=="null") return null;
+			if (sobj == "null") return null;
 			if ((objectType == type) || (type.IsAssignableFrom(objectType))) {
 				return obj;
 			} else if (type.Equals(typeof(String))) {
@@ -91,7 +91,7 @@ namespace SteamEngine.Common {
 			} else if (type.Equals(typeof(Boolean))) {
 				return ToBoolean(obj);
 			} else if (type.IsEnum) {
-				if (obj!=null) {
+				if (obj != null) {
 					//The first thing to try is converting it to whatever the underlying type is,
 					//since Enum.Parse fails on things like "0x4c" or "04c", etc.
 					try {
@@ -120,7 +120,7 @@ namespace SteamEngine.Common {
 			} catch (Exception) {
 				retVal = null;
 				return false;
-			}			
+			}
 		}
 
 		[Summary("Try converting the given object to string")]
@@ -137,7 +137,7 @@ namespace SteamEngine.Common {
 			}
 
 			retVal = null;
-			return false;			
+			return false;
 		}
 
 		[Summary("Try converting the given object to string")]
@@ -161,7 +161,7 @@ namespace SteamEngine.Common {
 				return IsNumberType(o.GetType());
 			}
 		}
-		
+
 		public static bool IsNumberType(Type t) {
 			switch (Type.GetTypeCode(t)) {
 				case TypeCode.Byte:
@@ -180,7 +180,7 @@ namespace SteamEngine.Common {
 			}
 			return false;
 		}
-		
+
 		public static bool IsIntegerType(Type t) {
 			switch (Type.GetTypeCode(t)) {
 				case TypeCode.Byte:
@@ -237,7 +237,7 @@ namespace SteamEngine.Common {
 				If s is any other value, a FormatException is thrown.
 		*/
 		public static bool ParseBoolean(string s) {
-			if (s==null) 
+			if (s == null)
 				return false;
 			switch (s.ToLower()) {
 				case "true":
@@ -249,11 +249,11 @@ namespace SteamEngine.Common {
 				case "off":
 					return false;
 			}
-			throw new FormatException("'"+s+"' is not a valid boolean string (true/1/on/false/0/off).");
+			throw new FormatException("'" + s + "' is not a valid boolean string (true/1/on/false/0/off).");
 		}
 
 		public static bool TryParseBoolean(string s, out bool retVal) {
-			if (s==null) {
+			if (s == null) {
 				retVal = false;
 				return true;
 			}
@@ -274,21 +274,21 @@ namespace SteamEngine.Common {
 		}
 
 		public static bool ToBoolean(object arg) {
-			if (instance==null) {
+			if (instance == null) {
 				instance = new ConvertTools();	//until TagMath replaces it.
 			}
 			return instance.ToBoolImpl(arg);
 		}
-		
+
 		protected virtual bool ToBoolImpl(object arg) {
 			if (arg is bool) {
-				return (bool)arg;
+				return (bool) arg;
 			} else if (IsNumber(arg)) {
-				return (Convert.ToInt32(arg)!=0);
+				return (Convert.ToInt32(arg) != 0);
 			} else if (arg is string) {
 				return ParseBoolean((string) arg);
 			} else {
-				return (arg!=null);
+				return (arg != null);
 			}
 		}
 
@@ -322,7 +322,7 @@ namespace SteamEngine.Common {
 			if (TryParseAnyNumber(input, out retVal)) {
 				return retVal;
 			}
-			throw new FormatException("'"+input+"' does not appear to be any kind of number.");
+			throw new FormatException("'" + input + "' does not appear to be any kind of number.");
 		}
 
 		public static bool TryParseAnyNumber(string input, out object retVal) {

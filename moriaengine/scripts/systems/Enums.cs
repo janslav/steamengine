@@ -153,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("specification of various localities where to look for resources")]
 	public enum ResourcesLocality : int {
 		NonSpecified = 0x000, //not specified where to look for resources (used for resources of type: abilities,skills,triggergroups etc)
-		
+
 		//following usages are usually for resource of type "itemdef" - where should we search for the items
 		WearableLayers = 0x001, //search among worn items (gloves, helm, rings etc)
 		Backpack = 0x002, //look to the backpack only
@@ -447,7 +447,7 @@ namespace SteamEngine.CompiledScripts {
 		Gondor = 1,
 		GondorOutcast = 2
 	}
-	
+
 	public enum CharRelation {
 		AlwaysHostile = -2, //Another realm, evil NPC vs player
 		TempHostile = -1, //aggressor, guild in war

@@ -40,29 +40,33 @@ namespace SteamEngine {
 
 
 	public sealed class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
-		public static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",                     
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
-	
-		public Type HandledType { get {
+		public static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		public Type HandledType {
+			get {
 				return typeof(PluginKey);
-		} }
-		
-		public Regex LineRecognizer { get {
-			return re;
-		} }
-		
-		public string Save(object objToSave) {
-			return "@@"+((PluginKey) objToSave).name;
+			}
 		}
-		
+
+		public Regex LineRecognizer {
+			get {
+				return re;
+			}
+		}
+
+		public string Save(object objToSave) {
+			return "@@" + ((PluginKey) objToSave).name;
+		}
+
 		public object Load(Match match) {
 			return PluginKey.Get(match.Groups["value"].Value);
 		}
-		
+
 		public string Prefix {
 			get {
 				return "@@";
 			}
 		}
 	}
-}		
+}

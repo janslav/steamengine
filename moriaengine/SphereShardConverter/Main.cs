@@ -26,17 +26,17 @@ using SteamEngine;
 
 namespace SteamEngine.Converter {
 
-	public static class ConverterMain  {
+	public static class ConverterMain {
 		public static bool AdditionalConverterMessages = true; //AdditionalConverterMessages = TagMath.ToBoolean(ConfigurationSettings.AppSettings["Additional converter Messages"]);
 		//private static ArrayList convertedDefs = new ArrayList();
 		public static List<ConvertedFile> memFiles = new List<ConvertedFile>();
 		public static string convertToPath = null;
 		public static string convertPath = null;
-		
+
 		public static ConvertedFile currentIFile;
-		
+
 		private static StringToSend consoleDelegate;
-		
+
 		public static void CreateFolders() {
 			convertPath = Path.Combine("SphereShardConverter", "convert");
 			Tools.EnsureDirectory(convertPath, true);
@@ -57,7 +57,7 @@ namespace SteamEngine.Converter {
 			//}
 
 		}
-		
+
 		public static void WinStart(StringToSend consSend) {
 			//this is run if the converter is started by the WinConsole
 			try {
@@ -66,20 +66,20 @@ namespace SteamEngine.Converter {
 				Logger.OnConsoleWriteLine += new StringToSend(ConsoleWriteLine);
 				Logger.OnConsoleWrite += new StringToSend(ConsoleWrite);
 			} catch (Exception e) {
-				Console.WriteLine (e.Message);
+				Console.WriteLine(e.Message);
 				return;
 			}
 			Main();
 		}
-		
+
 		private static void ConsoleWriteLine(string str) {
-			consoleDelegate(str+Environment.NewLine);
+			consoleDelegate(str + Environment.NewLine);
 		}
-		
+
 		private static void ConsoleWrite(string str) {
 			consoleDelegate(str);
 		}
-		
+
 		public static void Main() {
 			Tools.ExitBinDirectory();
 			//Directory.SetCurrentDirectory("SphereShardConverter");
@@ -93,14 +93,14 @@ namespace SteamEngine.Converter {
 				Directory.SetCurrentDirectory(convertPath);
 				CreateFileList(".");
 				Directory.SetCurrentDirectory(origCurDir);
-				Console.WriteLine("Converting "+memFiles.Count+" Sphere script files.");
-				
+				Console.WriteLine("Converting " + memFiles.Count + " Sphere script files.");
+
 				foreach (ConvertedFile file in memFiles) {
 					//Logger.WriteDebug("Reading file "+file.origPath);
 					ConvertFile(file);
 				}
 				Console.WriteLine("Files loaded and parsed.");
-	
+
 				foreach (ConvertedFile file in memFiles) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
 					foreach (ConvertedDef def in file.defs) {
@@ -109,7 +109,7 @@ namespace SteamEngine.Converter {
 				}
 				InvokeStaticMethodOnDefClasses("FirstStageFinished");
 				Console.WriteLine("First stage finished.");
-				
+
 				foreach (ConvertedFile file in memFiles) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
 					foreach (ConvertedDef def in file.defs) {
@@ -118,7 +118,7 @@ namespace SteamEngine.Converter {
 				}
 				InvokeStaticMethodOnDefClasses("SecondStageFinished");
 				Console.WriteLine("Second stage finished.");
-				
+
 				foreach (ConvertedFile file in memFiles) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
 					foreach (ConvertedDef def in file.defs) {
@@ -142,21 +142,21 @@ namespace SteamEngine.Converter {
 		private static void InvokeStaticMethodOnDefClasses(string methodname) {
 			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes()) {
 				if (typeof(ConvertedDef).IsAssignableFrom(type)) {
-					MethodInfo m = type.GetMethod(methodname, BindingFlags.Static|BindingFlags.Public|BindingFlags.DeclaredOnly ); 
-					if (m!=null) {
+					MethodInfo m = type.GetMethod(methodname, BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+					if (m != null) {
 						m.Invoke(null, null);
 					}
 				}
 			}
 		}
-		
+
 		private static void CreateFileList(string folder) {
 			//Console.WriteLine("converting from folder "+LogStr.File(folder));
-			
+
 			foreach (string subfolder in Directory.GetDirectories(folder)) {
 				CreateFileList(subfolder);
 			}
-			
+
 			string[] filenames = Directory.GetFiles(folder, "*.scp");
 			foreach (string filename in filenames) {
 				ConvertedFile file = new ConvertedFile(filename);
@@ -175,7 +175,7 @@ namespace SteamEngine.Converter {
 					try {
 						string type = input.headerType.ToLower();
 						string name = input.headerName;
-						if ((name == "")&&(type == "eof")) {
+						if ((name == "") && (type == "eof")) {
 							continue;
 						}
 

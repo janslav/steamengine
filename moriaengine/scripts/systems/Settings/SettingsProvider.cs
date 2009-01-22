@@ -27,16 +27,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//sotre the used saveable prefixes for particular Types
 		private static Dictionary<Type, string> prefixTypes = new Dictionary<Type, string>();
 
-		[Summary("Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for "+
+		[Summary("Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for " +
 				"displaying")]
-        public static List<SettingResult> AssertSettings(Dictionary<int, IDataFieldView> editFields, GumpResponse resp, object target) {
+		public static List<SettingResult> AssertSettings(Dictionary<int, IDataFieldView> editFields, GumpResponse resp, object target) {
 			List<SettingResult> resList = new List<SettingResult>();
 			SettingResult oneRes = null;
-			foreach(int key in editFields.Keys) {
-				IDataFieldView field = (IDataFieldView)editFields[key];
+			foreach (int key in editFields.Keys) {
+				IDataFieldView field = (IDataFieldView) editFields[key];
 				oneRes = new SettingResult(field, target); //prepare the result
 				string newStringValue = resp.GetTextResponse(key); //get the value from the edit field
-				if(!typeof(Enum).IsAssignableFrom(field.FieldType) && !newStringValue.Equals(field.GetStringValue(target))) {
+				if (!typeof(Enum).IsAssignableFrom(field.FieldType) && !newStringValue.Equals(field.GetStringValue(target))) {
 					//hnadled type is not Enum and it has changed somehow...
 					oneRes.Outcome = SettingsEnums.ChangedOK; //assume it will be OK
 					//something has changed - try to make the setting
@@ -49,12 +49,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						oneRes.ErroneousValue = newStringValue;
 					}
 					resList.Add(oneRes);//add to the list (only if changed somehow)
-				} else if(typeof(Enum).IsAssignableFrom(field.FieldType) && SettingsProvider.IsEnumValueChanged(field,target,newStringValue)) {
+				} else if (typeof(Enum).IsAssignableFrom(field.FieldType) && SettingsProvider.IsEnumValueChanged(field, target, newStringValue)) {
 					//if the field handles the Enum type, we have to check it a slightly different way...
 					oneRes.Outcome = SettingsEnums.ChangedOK;
 					try {
 						//try to set the enumeration value
-						field.SetValue(target,Enum.Parse(field.FieldType, newStringValue, true));
+						field.SetValue(target, Enum.Parse(field.FieldType, newStringValue, true));
 					} catch {
 						oneRes.Outcome = SettingsEnums.ChangedError;
 						oneRes.ErroneousValue = newStringValue;
@@ -63,27 +63,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					//nothing changed
 					oneRes.Outcome = SettingsEnums.NotChanged;
-				}								
+				}
 			}
 			return resList;
 		}
 
 		[Summary("Look on the outcome value and return the correct color for the dialog")]
 		public static Hues ResultColor(SettingResult sres) {
-			switch(sres.Outcome) {
+			switch (sres.Outcome) {
 				case SettingsEnums.ChangedError:
 					return Hues.SettingsFailedColor;
 				case SettingsEnums.ChangedOK:
 					return Hues.SettingsCorrectColor;
 				default:
 					return Hues.SettingsNormalColor; //but thos won't happen :)
-			}			
+			}
 		}
 
 		[Summary("Count all successfully edited fields")]
 		public static int CountSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
-			foreach(SettingResult sres in results) {
+			foreach (SettingResult sres in results) {
 				if (sres.Outcome == SettingsEnums.ChangedOK) {
 					resCntr++;
 				}
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Count all failed fields")]
 		public static int CountUnSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
-			foreach(SettingResult sres in results) {
+			foreach (SettingResult sres in results) {
 				if (sres.Outcome == SettingsEnums.ChangedError) {
 					resCntr++;
 				}
@@ -105,11 +105,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Compare case insensitively the names of enumeration values if they have changed")]
 		private static bool IsEnumValueChanged(IDataFieldView field, object target, string newEnumValueName) {
 			string oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
-			if(string.Compare(oldEnumValuName, newEnumValueName, true) == 0) {
+			if (string.Compare(oldEnumValuName, newEnumValueName, true) == 0) {
 				return false;
 			} else {
 				return true;
-			}			
+			}
 		}
 
 		[Summary("Examine the setings value's member type and get its prefix as used in ObjectSaver." +
@@ -120,20 +120,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			Type t = value.GetType();
 			//we will store it in the special dictionary
-			if(!prefixTypes.TryGetValue(t, out valuePrefix)) {
+			if (!prefixTypes.TryGetValue(t, out valuePrefix)) {
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
-				if(t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
+				if (t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
 					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
-				} else if(typeof(Thing).IsAssignableFrom(t)) {
+				} else if (typeof(Thing).IsAssignableFrom(t)) {
 					valuePrefix = "#";
-				} else if(typeof(AbstractAccount).IsAssignableFrom(t)) {
+				} else if (typeof(AbstractAccount).IsAssignableFrom(t)) {
 					valuePrefix = "$";
-				} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
+				} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 					valuePrefix = "#";
 				} else {
 					//try the simpleimplementors
 					ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
-					if(iss != null) {
+					if (iss != null) {
 						valuePrefix = iss.Prefix;
 					} else {
 						valuePrefix = t.Name; //this is the final possibility
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				//store the prefix in the dictionary
 				prefixTypes[t] = valuePrefix;
-			} 
+			}
 			return valuePrefix;
 		}
 
@@ -150,38 +150,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"If the value has no prefix (it is of some special type, find out what" +
 				"type it is and return some description of it")]
 		public static string GetTypePrefix(Type t) {
-			if(t.Equals(typeof(object))) {
+			if (t.Equals(typeof(object))) {
 				//object is also possible ! - the member can be set to any value
 				return "(Obj)";
-			} else if(t.IsEnum) {
+			} else if (t.IsEnum) {
 				return "(Enum)";
-			} else if(TagMath.IsNumberType(t)) {
+			} else if (TagMath.IsNumberType(t)) {
 				return "(Num)";
-			} else if(t.Equals(typeof(String))) {
+			} else if (t.Equals(typeof(String))) {
 				return "(Str)";
-			} else if(typeof(Region).IsAssignableFrom(t)) {
+			} else if (typeof(Region).IsAssignableFrom(t)) {
 				return "(Reg)";
-			} else if(typeof(Thing).IsAssignableFrom(t)) {
+			} else if (typeof(Thing).IsAssignableFrom(t)) {
 				return "(Thg)";
-			} else if(typeof(AbstractAccount).IsAssignableFrom(t)) {
+			} else if (typeof(AbstractAccount).IsAssignableFrom(t)) {
 				return "(Acc)";
-			} else if(typeof(AbstractScript).IsAssignableFrom(t)) {
+			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 				return "(Scp)";
-			} else if(t.Equals(typeof(Globals))) {
+			} else if (t.Equals(typeof(Globals))) {
 				return "(Glob)";
 			} else {
 				//nothing special, try the simpleimplementors
 				ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
-				if(iss != null) {
-					return "("+iss.Prefix+")";
+				if (iss != null) {
+					return "(" + iss.Prefix + ")";
 				} else {
-					return "("+t.Name+")"; //this is the final desperate possibility
-				}				
+					return "(" + t.Name + ")"; //this is the final desperate possibility
+				}
 			}
 		}
 	}
 
-	[Summary("Class carrying information about one edit field - its former value, its value after setting and "+
+	[Summary("Class carrying information about one edit field - its former value, its value after setting and " +
 			"the setting result value (success/fail)")]
 	public class SettingResult {
 		//former value of the field - before settings
@@ -234,7 +234,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public string FormerValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)
-				if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
 					return Enum.GetName(field.FieldType, formerValue);
 				} else {
 					return ObjectSaver.Save(formerValue);
@@ -249,7 +249,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public string CurrentValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)				
-				if(typeof(Enum).IsAssignableFrom(field.FieldType)) {
+				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
 					return Enum.GetName(field.FieldType, field.GetValue(target));
 				} else {
 					return field.GetStringValue(target);

@@ -17,7 +17,7 @@
 //        public GameEncryption(uint seed) 
 //        {
 //            cipherTable = new byte[0x100];
-	            			
+
 //            // Set up the crypt key
 //            byte[] key = new byte[16];
 //            key[0] = key[4] = key[8] = key[12] = (byte)((seed >> 24) & 0xff);
@@ -56,7 +56,7 @@
 
 //            recvPos = 0;
 //        }
-	        
+
 //        public void serverEncrypt(byte[] buffer) 
 //        {
 //            //byte[] packet = new byte[length];

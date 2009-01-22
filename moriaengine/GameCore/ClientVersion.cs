@@ -56,7 +56,7 @@ namespace SteamEngine {
 		}
 
 		public static Regex osi2dCliVerRE = new Regex(@"^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)(?<letter>[a-z])$",
-			RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private ClientVersion(string versionString) {
 			this.versionString = versionString;
@@ -83,7 +83,7 @@ namespace SteamEngine {
 					this.needsNewSpellbook = number >= 4000000;
 				}
 			} catch (Exception e) {
-				Logger.WriteWarning("While evaluating '"+LogStr.Ident(versionString)+"' as client version string", e);
+				Logger.WriteWarning("While evaluating '" + LogStr.Ident(versionString) + "' as client version string", e);
 			}
 
 		}
@@ -102,7 +102,7 @@ namespace SteamEngine {
 			switch (type) {
 
 				case ClientType.OSI2D:
-					return "OSI2D Client "+osi2dVerNum;
+					return "OSI2D Client " + osi2dVerNum;
 
 				//case ClientType.Iris:
 				//case ClientType.OSI3D:
@@ -111,7 +111,7 @@ namespace SteamEngine {
 				//case ClientType.Palanthir:
 				//case ClientType.Unknown:
 			}
-			return "not implemented client version: "+versionString;
+			return "not implemented client version: " + versionString;
 		}
 	}
 

@@ -49,13 +49,15 @@ namespace SteamEngine.Timers {
 
 		protected abstract void OnTimeout(TagHolder cont);
 
-		public TagHolder Cont { get {
-			TagHolder c = contRef.Target as TagHolder;
-			if (c == null || c.IsDeleted) {
-				return null;
+		public TagHolder Cont {
+			get {
+				TagHolder c = contRef.Target as TagHolder;
+				if (c == null || c.IsDeleted) {
+					return null;
+				}
+				return c;
 			}
-			return c;
-		} }
+		}
 
 		public override void Delete() {
 			TagHolder c = this.Cont;

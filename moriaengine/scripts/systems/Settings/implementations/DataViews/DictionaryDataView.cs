@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public bool HandleSubclasses {
-			get { 
-				return true; 
+			get {
+				return true;
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int GetFieldsCount(object instance) {
-			return ((IDictionary)instance).Count + 1;
+			return ((IDictionary) instance).Count + 1;
 		}
 
 		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
@@ -56,13 +56,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//iterovat budeme nejpozdeji do doby nez dojdou polozky seznamu
 			//(iterovani mozno byt prerusovano kvuli pagingu i jinde...)
 			int i = 0;
-			foreach(object key in ((IDictionary)target).Keys) {
+			foreach (object key in ((IDictionary) target).Keys) {
 				//jsem-li s pocitadlem konecne nad firstLineIndexem, zacinam vracet fieldy
-				if(i >= firstLineIndex) {
+				if (i >= firstLineIndex) {
 					yield return new IndexKeyValue(key);
 				}
 				i++;
-			}			
+			}
 		}
 
 		public IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target) {
@@ -84,11 +84,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				return ((IDictionary)target).Count;
+				return ((IDictionary) target).Count;
 			}
 
 			public override string GetStringValue(object target) {
-				return ((IDictionary)target).Count.ToString();
+				return ((IDictionary) target).Count.ToString();
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			object key;
 
 			internal IndexKeyValue(object key) {
-				this.key = key;				
+				this.key = key;
 			}
 
 			public override string GetName(object target) {
@@ -110,38 +110,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				IDictionary dict = (IDictionary)target;
+				IDictionary dict = (IDictionary) target;
 				return dict[key]; //null or correct value				
 			}
 
 			public override string GetStringValue(object target) {
-				IDictionary dict = (IDictionary)target;
-				if(dict[key] != null) {
+				IDictionary dict = (IDictionary) target;
+				if (dict[key] != null) {
 					return ObjectSaver.Save(dict[key]);
 				} else {
 					return "";
-				}				
+				}
 			}
 
 			public override void SetValue(object target, object value) {
-				IDictionary dict = (IDictionary)target;
-				dict[key] = value;				
+				IDictionary dict = (IDictionary) target;
+				dict[key] = value;
 			}
 
 			public override void SetStringValue(object target, string value) {
-				IDictionary dict = (IDictionary)target;
+				IDictionary dict = (IDictionary) target;
 				int n = dict.Count;
-				dict[key] = ObjectSaver.Load(value);				
+				dict[key] = ObjectSaver.Load(value);
 			}
 		}
 
 		#region ButtonDataFieldView (Clear)
 		public override string GetName(object target) {
-			return "Clear"; 
+			return "Clear";
 		}
 
 		public override void OnButton(object target) {
-			((IDictionary)target).Clear();
+			((IDictionary) target).Clear();
 		}
 		#endregion ButtonDataFieldView (Clear)
 	}

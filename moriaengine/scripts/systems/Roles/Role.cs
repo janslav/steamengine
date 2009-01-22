@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	[SaveableClass]
 	public partial class Role : Disposable {
-        private RoleDef def;
+		private RoleDef def;
 		private RoleKey key;
 		private string name;
 
@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 			//this.membersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<IRoleMembership>(this.members);
 			this.key = key;
 			this.def = def;
-        }
+		}
 
 		internal void InternalAddMember(Character newMember) {
 			IRoleMembership membership = this.CreateMembershipObject(newMember);
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal void InternalRemoveMember(Character removedMember, IRoleMembership membership) {
 			Sanity.IfTrueThrow(removedMember != membership.Member, "removedMember != membership.Member");
-			
+
 			bool removed = this.members.Remove(removedMember);
 			Sanity.IfTrueThrow(!removed, "!this.members.ContainsKey(removedMember)");
 
@@ -140,45 +140,45 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Trigger called when the new role is created")]
 		protected virtual void On_Create() {
-        }
+		}
 
-        [Summary("Trigger called when the role is destroyed")]
+		[Summary("Trigger called when the role is destroyed")]
 		protected virtual void On_Destroy() {
-        }
+		}
 
 		[Summary("Trigger called when the new member adding is requested from this role")]
 		protected virtual bool On_DenyAddMember(DenyRoleTriggerArgs args) {
 			return false; //dont cancel
 		}
 
-        [Summary("Trigger called when the new member is assigned to this role")]
+		[Summary("Trigger called when the new member is assigned to this role")]
 		protected virtual void On_MemberAdded(Character newMember, IRoleMembership membership) {
 			//this trigger will be run after @DenyAddMember
-        }
+		}
 
 		[Summary("Trigger called when the member remove is requested from this role")]
 		protected virtual bool On_DenyRemoveMember(DenyRoleTriggerArgs args) {
 			return false; //dont cancel
-		}   
-		
+		}
+
 		[Summary("Trigger called when the member is unassigned from this role")]
 		protected virtual void On_MemberRemoved(Character exMember, IRoleMembership membership, bool beingDestroyed) {
 			//this trigger will be run after @DenyRemoveMember
-        }
-     
-        #endregion triggers
+		}
 
-        public RoleDef RoleDef {
-            get {
-                return this.def;
-            }
-        }
+		#endregion triggers
 
-        public RoleKey Key {
-            get {
+		public RoleDef RoleDef {
+			get {
+				return this.def;
+			}
+		}
+
+		public RoleKey Key {
+			get {
 				return this.key;
-            }
-        }
+			}
+		}
 
 		public string Name {
 			get {
@@ -295,4 +295,4 @@ namespace SteamEngine.CompiledScripts {
 
 		#endregion persistence
 	}
-}		
+}

@@ -20,7 +20,7 @@ namespace SteamEngine.RemoteConsole {
 			try {
 				Console.Title = "SE Remote Console - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 			} catch { }
-			
+
 			Tools.ExitBinDirectory();
 
 			Application.EnableVisualStyles();
@@ -33,7 +33,7 @@ namespace SteamEngine.RemoteConsole {
 
 
 			Application.Run(mainForm);
-			
+
 
 			//while (!mainForm.IsDisposed) {
 			//    lock (globalLock) {

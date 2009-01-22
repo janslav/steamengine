@@ -54,7 +54,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal TriggerGroup scriptedTriggers; 
+		internal TriggerGroup scriptedTriggers;
 		internal protected PluginTriggerGroup compiledTriggers;
 
 		public abstract class PluginTriggerGroup {
@@ -102,10 +102,10 @@ namespace SteamEngine {
 		public static void RegisterPluginDef(Type pluginDefType, Type pluginType) {
 			Type t;
 			if (pluginDefTypesByPluginType.TryGetValue(pluginDefType, out t)) {
-				throw new OverrideNotAllowedException("PluginDef type "+LogStr.Ident(pluginDefType.FullName)+" already has it's Plugin type -"+t.FullName+".");
+				throw new OverrideNotAllowedException("PluginDef type " + LogStr.Ident(pluginDefType.FullName) + " already has it's Plugin type -" + t.FullName + ".");
 			}
 			if (pluginTypesByPluginDefType.TryGetValue(pluginType, out t)) {
-				throw new OverrideNotAllowedException("Plugin type "+LogStr.Ident(pluginType.FullName)+" already has it's PluginDef type -"+t.FullName+".");
+				throw new OverrideNotAllowedException("Plugin type " + LogStr.Ident(pluginType.FullName) + " already has it's PluginDef type -" + t.FullName + ".");
 			}
 
 			ConstructorInfo ci = pluginDefType.GetConstructor(pluginDefConstructorParamTypes);
@@ -126,12 +126,12 @@ namespace SteamEngine {
 			//[typeName defname]
 
 			pluginDefType = PluginDef.GetDefTypeByName(typeName);
-			if (pluginDefType==null) {
-				throw new SEException("Type "+LogStr.Ident(typeName)+" does not exist.");
+			if (pluginDefType == null) {
+				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
 			}
 
 			if (pluginDefType.IsAbstract) {
-				throw new SEException("The PluginDef Type "+LogStr.Ident(pluginDefType)+" is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
+				throw new SEException("The PluginDef Type " + LogStr.Ident(pluginDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
 			}
 
 			AbstractScript def;
@@ -140,7 +140,7 @@ namespace SteamEngine {
 
 			if (pluginDef == null) {
 				if (def != null) {//it isnt pluginDef
-					throw new OverrideNotAllowedException("PluginDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def));
+					throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
 				} else {
 					ConstructorInfo cw = pluginDefCtors[pluginDefType];
 					pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
@@ -152,7 +152,7 @@ namespace SteamEngine {
 				pluginDef.unloaded = false;
 				byDefname.Remove(pluginDef.Defname);//will be put back again
 			} else {
-				throw new OverrideNotAllowedException("PluginDef "+LogStr.Ident(defname)+" defined multiple times. Ignoring.");
+				throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
 			}
 
 			pluginDef.defname = defname;
@@ -163,8 +163,8 @@ namespace SteamEngine {
 			pluginDef.LoadScriptLines(input);
 
 			//now do load the trigger code. 
-			if (input.TriggerCount>0) {
-				input.headerName = "t__"+input.headerName+"__";
+			if (input.TriggerCount > 0) {
+				input.headerName = "t__" + input.headerName + "__";
 				pluginDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			}
 			if (pluginDef.scriptedTriggers == null) {

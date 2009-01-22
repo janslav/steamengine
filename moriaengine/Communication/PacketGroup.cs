@@ -59,7 +59,7 @@ namespace SteamEngine.Communication {
 		}
 
 		public void AddPacket(OutgoingPacket packet) {
-			Sanity.IfTrueSay((isQueued > 0 || this.compressionDone || this.isWritten) , "Can't add new packets to a locked group. They're ignored.");
+			Sanity.IfTrueSay((isQueued > 0 || this.compressionDone || this.isWritten), "Can't add new packets to a locked group. They're ignored.");
 			packets.Add(packet);
 			this.isEmpty = false;
 		}
@@ -142,11 +142,11 @@ namespace SteamEngine.Communication {
 
 			bytes = this.compressed.bytes;
 
-//#if DEBUG 
-//            foreach (OutgoingPacket packet in packets) {
-//                Logger.WriteDebug("Sending "+packet.FullName);
-//            }
-//#endif
+			//#if DEBUG 
+			//            foreach (OutgoingPacket packet in packets) {
+			//                Logger.WriteDebug("Sending "+packet.FullName);
+			//            }
+			//#endif
 
 			return compressedLen;
 		}

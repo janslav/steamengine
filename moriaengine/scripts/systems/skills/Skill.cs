@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 		private ushort id;
 		private SkillLockType lockType; //lock is C# keyword
 		private Character cont;
-		
+
 		public Skill(ushort id, Character cont) {
 			realValue = 0;
 			cap = 1000;
@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			this.id = id;
 			this.cont = cont;
 		}
-		
+
 		public Skill(Skill copyFrom, Character cont) {
 			realValue = copyFrom.realValue;
 			cap = copyFrom.cap;
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 			id = copyFrom.id;
 			this.cont = cont;
 		}
-		
+
 		public ushort RealValue {
 			get {
 				return realValue;
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
-		
+
 		public ushort Cap {
 			get {
 				return cap;
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
-		
+
 		public ushort Id {
 			get {
 				return id;

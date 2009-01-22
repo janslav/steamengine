@@ -40,25 +40,25 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//translate s to coordinates
-			bool parse=true;
-			string constant=null;
+			bool parse = true;
+			string constant = null;
 			while (parse) {
-				parse=false;
+				parse = false;
 				string[] args = Utility.SplitSphereString(s);
 				switch (args.Length) {
 					case 1: {
-							if (constant==null) {
+							if (constant == null) {
 								object o = Constant.GetValue(s);
 								if (o is string) {
-									Logger.WriteDebug("Resolved constant '"+s+"' to "+o);
-									constant=s;
-									s=(string) o;
-									parse=true;
+									Logger.WriteDebug("Resolved constant '" + s + "' to " + o);
+									constant = s;
+									s = (string) o;
+									parse = true;
 								} else {
-									throw new SanityCheckException("We found a constant named '"+s+"', but it was a "+o.GetType()+" -- we expected a string.");
+									throw new SanityCheckException("We found a constant named '" + s + "', but it was a " + o.GetType() + " -- we expected a string.");
 								}
 							} else {
-								throw new SanityCheckException("We found a constant named '"+s+"', but it didn't resolve to anything meaningful.");
+								throw new SanityCheckException("We found a constant named '" + s + "', but it didn't resolve to anything meaningful.");
 							}
 							break;
 						}
@@ -75,10 +75,10 @@ namespace SteamEngine.CompiledScripts {
 							return;
 						}
 					default: {
-							if (args.Length>4) {
-								throw new SanityCheckException("Too many args ("+args.Length+") to Go(\""+s+"\"), expected no more than 4.");
+							if (args.Length > 4) {
+								throw new SanityCheckException("Too many args (" + args.Length + ") to Go(\"" + s + "\"), expected no more than 4.");
 							} else { //if (args.Length<2) {
-								throw new SanityCheckException("Too few args ("+args.Length+") to Go(\""+s+"\"), expected at least 2.");
+								throw new SanityCheckException("Too few args (" + args.Length + ") to Go(\"" + s + "\"), expected at least 2.");
 							}
 						}
 				}
@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 					EffectFactory.StationaryEffect(self, effect, speed, duration, fixedDirection, false, 0, 0);
 					break;
 				default:
-					Logger.WriteWarning("Unknown effect type '"+type+"'. Sending it anyways.");
+					Logger.WriteWarning("Unknown effect type '" + type + "'. Sending it anyways.");
 					GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 					p.Prepare(Globals.SrcCharacter,
 						self, type, effect, speed, duration, 0, fixedDirection, false, 0, 0);
@@ -169,7 +169,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static string Events(ITriggerGroupHolder self) {
-			StringBuilder toreturn= new StringBuilder();
+			StringBuilder toreturn = new StringBuilder();
 			foreach (TriggerGroup tg in self.GetAllTriggerGroups()) {
 				toreturn.Append(tg.ToString()).Append(", ");
 

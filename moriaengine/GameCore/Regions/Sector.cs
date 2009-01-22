@@ -25,15 +25,15 @@ using System.Diagnostics;
 
 namespace SteamEngine.Regions {
 	public partial class Map {
-		[Summary("Take the rectangle, find all sectors it belongs to and chek every dynamic region rectangle in the"+
+		[Summary("Take the rectangle, find all sectors it belongs to and chek every dynamic region rectangle in the" +
 				"sector that they do not intersect")]
 		internal bool CheckDynRectIntersection(RegionRectangle rect) {
-			foreach(Sector sector in GetSectorsInRectangle(rect)) {//all sectors the examined rectangle belongs to
-				foreach(RegionRectangle existingRect in sector.RegionRectangles) {//all dynamic regions from the sector
-					if(existingRect.IntersectsWith(rect)) { //intersection check
+			foreach (Sector sector in GetSectorsInRectangle(rect)) {//all sectors the examined rectangle belongs to
+				foreach (RegionRectangle existingRect in sector.RegionRectangles) {//all dynamic regions from the sector
+					if (existingRect.IntersectsWith(rect)) { //intersection check
 						return false; //problem here, stop trying !
 					}
-				}				
+				}
 			}
 			return true;
 		}
@@ -79,7 +79,7 @@ namespace SteamEngine.Regions {
 			}
 
 			internal void Add(Thing thing) {
-				Sanity.IfTrueThrow(thing==null, "You can't tell us to add a NULL thing to the sector!");
+				Sanity.IfTrueThrow(thing == null, "You can't tell us to add a NULL thing to the sector!");
 				if (thing.Flag_Disconnected) {
 					AddDisconnected(thing);
 				} else {
@@ -91,7 +91,7 @@ namespace SteamEngine.Regions {
 			}
 
 			internal void Remove(Thing thing) {
-				Sanity.IfTrueThrow(thing==null, "You can't tell us to remove a NULL thing from the sector!");
+				Sanity.IfTrueThrow(thing == null, "You can't tell us to remove a NULL thing from the sector!");
 				if (thing.contOrTLL == disconnects) {
 					RemoveDisconnected(thing);
 				} else {
@@ -103,8 +103,8 @@ namespace SteamEngine.Regions {
 			}
 
 			internal void Disconnected(Thing thing) {
-				Sanity.IfTrueThrow(thing==null, "You can't tell us a NULL thing has disconnected!");
-				Sanity.IfTrueThrow(thing.contOrTLL == disconnects, "Disconnected("+thing+") was called, but that thing is already in our list of disconnected stuff!");
+				Sanity.IfTrueThrow(thing == null, "You can't tell us a NULL thing has disconnected!");
+				Sanity.IfTrueThrow(thing.contOrTLL == disconnects, "Disconnected(" + thing + ") was called, but that thing is already in our list of disconnected stuff!");
 				if (thing.IsPlayer) {
 					RemovePlayer((AbstractCharacter) thing);
 				}
@@ -113,8 +113,8 @@ namespace SteamEngine.Regions {
 			}
 
 			internal void Reconnected(Thing thing) {
-				Sanity.IfTrueThrow(thing==null, "You can't tell us a NULL thing has reconnected!");
-				Sanity.IfTrueThrow(thing.contOrTLL != disconnects, "Reconnected("+thing+") was called, but that thing is not in our list of disconnected stuff!");
+				Sanity.IfTrueThrow(thing == null, "You can't tell us a NULL thing has reconnected!");
+				Sanity.IfTrueThrow(thing.contOrTLL != disconnects, "Reconnected(" + thing + ") was called, but that thing is not in our list of disconnected stuff!");
 				RemoveDisconnected(thing);
 				if (thing.IsPlayer) {
 					AddPlayer((AbstractCharacter) thing);
@@ -123,35 +123,35 @@ namespace SteamEngine.Regions {
 			}
 
 			internal void MadeIntoNonPlayer(AbstractCharacter cre) {
-				Sanity.IfTrueThrow(cre==null, "You can't tell us a NULL character is now a non-player!");
-				Sanity.IfTrueThrow(cre.IsPlayer, "MadeIntoNonPlayer("+cre+") was called, but that character is actually still a player!");
+				Sanity.IfTrueThrow(cre == null, "You can't tell us a NULL character is now a non-player!");
+				Sanity.IfTrueThrow(cre.IsPlayer, "MadeIntoNonPlayer(" + cre + ") was called, but that character is actually still a player!");
 				RemovePlayer(cre);
 			}
 
 			internal void MadeIntoPlayer(AbstractCharacter cre) {
-				Sanity.IfTrueThrow(cre==null, "You can't tell us a NULL character is now a player!");
-				Sanity.IfTrueThrow(!cre.IsPlayer, "MadeIntoPlayer("+cre+") was called, but that character isn't actually a player!");
+				Sanity.IfTrueThrow(cre == null, "You can't tell us a NULL character is now a player!");
+				Sanity.IfTrueThrow(!cre.IsPlayer, "MadeIntoPlayer(" + cre + ") was called, but that character isn't actually a player!");
 				AddPlayer(cre);
 			}
 
 			private void AddThing(Thing thing) {
-				Sanity.IfTrueThrow(thing.contOrTLL == things, "Sector's AddThing("+thing+") was called, but that thing is ALREADY in our list of things!");
+				Sanity.IfTrueThrow(thing.contOrTLL == things, "Sector's AddThing(" + thing + ") was called, but that thing is ALREADY in our list of things!");
 				things.Add(thing);
 			}
 
 			private void AddPlayer(AbstractCharacter player) {
-				Sanity.IfTrueThrow(players.Contains(player), "Sector's AddPlayer("+player+") was called, but that character is ALREADY in our list of players!");
+				Sanity.IfTrueThrow(players.Contains(player), "Sector's AddPlayer(" + player + ") was called, but that character is ALREADY in our list of players!");
 				players.AddLast(player);
 			}
 
 			private void AddDisconnected(Thing thing) {
-				Sanity.IfTrueThrow(thing.contOrTLL == disconnects, "Sector's AddDisconnected("+thing+") was called, but that thing is ALREADY in our list of disconnected things!");
+				Sanity.IfTrueThrow(thing.contOrTLL == disconnects, "Sector's AddDisconnected(" + thing + ") was called, but that thing is ALREADY in our list of disconnected things!");
 				disconnects.Add(thing);
 			}
 
 			private void RemoveThing(Thing thing) {
 				Sanity.IfTrueThrow(thing.contOrTLL != things,
-					"Sector's RemoveThing("+thing+") was called, but that thing isn't in our list of things.");
+					"Sector's RemoveThing(" + thing + ") was called, but that thing isn't in our list of things.");
 
 				things.Remove(thing);
 				thing.contOrTLL = null;
@@ -161,19 +161,19 @@ namespace SteamEngine.Regions {
 				if (players.Remove(thing)) {
 					Sanity.IfTrueThrow(players.Contains(thing), "Removed player still exists in ArrayList - It was in there multiple times?");
 				} else {
-					Sanity.IfTrueSay(true, "Sector's RemovePlayer("+thing+") was called, but that character isn't in our list of players.");
+					Sanity.IfTrueSay(true, "Sector's RemovePlayer(" + thing + ") was called, but that character isn't in our list of players.");
 				}
 			}
 
 			internal void AddMultiComponent(MultiItemComponent component) {
-				Sanity.IfTrueThrow(component==null, "You can't tell us to add a NULL MultiItemComponent to the sector!");
+				Sanity.IfTrueThrow(component == null, "You can't tell us to add a NULL MultiItemComponent to the sector!");
 				Sanity.IfTrueThrow(component.collection != null, "You can't tell us to add a MultiItemComponent which is added elsewhere already!");
-				
+
 				this.multiComponents.Add(component);
 			}
 
 			internal void RemoveMultiComponent(MultiItemComponent component) {
-				Sanity.IfTrueThrow(component==null, "You can't tell us to remove a NULL MultiItemComponent to the sector!");
+				Sanity.IfTrueThrow(component == null, "You can't tell us to remove a NULL MultiItemComponent to the sector!");
 				Sanity.IfTrueThrow(component.collection != this.multiComponents, "You can't tell us to remove a MultiItemComponent which is added elsewhere!");
 
 				this.multiComponents.Remove(component);
@@ -181,7 +181,7 @@ namespace SteamEngine.Regions {
 
 			private void RemoveDisconnected(Thing thing) {
 				Sanity.IfTrueThrow(thing.contOrTLL != disconnects,
-					"Sector's RemoveThing("+thing+") was called, but that thing isn't in our list of disconnects.");
+					"Sector's RemoveThing(" + thing + ") was called, but that thing isn't in our list of disconnects.");
 
 				disconnects.Remove(thing);
 				thing.contOrTLL = null;
@@ -214,21 +214,21 @@ namespace SteamEngine.Regions {
 
 			internal ushort GetTileId(int x, int y) {
 				LoadStatics();
-				int basex= x&Map.sectorAnd;
-				int basey= y&Map.sectorAnd;
+				int basex = x & Map.sectorAnd;
+				int basey = y & Map.sectorAnd;
 
-				int relX= x-basex;
-				int relY= y-basey;
+				int relX = x - basex;
+				int relY = y - basey;
 				return staticSector.GetTileId(relX, relY);
 			}
 
 			internal sbyte GetTileZ(int x, int y) {
 				LoadStatics();
-				int basex= x&Map.sectorAnd;
-				int basey= y&Map.sectorAnd;
+				int basex = x & Map.sectorAnd;
+				int basey = y & Map.sectorAnd;
 
-				int relX= x-basex;
-				int relY= y-basey;
+				int relX = x - basex;
+				int relY = y - basey;
 				return staticSector.GetTileZ(relX, relY);
 			}
 			#endregion Static stuff
@@ -242,7 +242,7 @@ namespace SteamEngine.Regions {
 						}
 					}
 				}
-				for (int i=rectangles.Length - 1; i>=0; i--) {
+				for (int i = rectangles.Length - 1; i >= 0; i--) {
 					RegionRectangle rect = rectangles[i];
 					if (rect.Contains(x, y)) {
 						return rect.region;
@@ -259,7 +259,7 @@ namespace SteamEngine.Regions {
 						}
 					}
 				}
-				for (int i=rectangles.Length - 1; i>=0; i--) {
+				for (int i = rectangles.Length - 1; i >= 0; i--) {
 					RegionRectangle rect = rectangles[i];
 					if (rect.Contains(point)) {
 						return rect.region;
@@ -276,10 +276,10 @@ namespace SteamEngine.Regions {
 					//ACHTUNG!!! do not use the width but send immediatelly the second coordinates!!!
 					//ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
 					//	Map.sectorWidth, Map.sectorWidth);
-					ushort startX = (ushort)(sx << Map.sectorFactor);
-					ushort startY = (ushort)(sy << Map.sectorFactor);
+					ushort startX = (ushort) (sx << Map.sectorFactor);
+					ushort startY = (ushort) (sy << Map.sectorFactor);
 					ImmutableRectangle sectorRect = new ImmutableRectangle(startX, startY,
-						(ushort) (startX + Map.sectorWidth), (ushort)(startY + Map.sectorWidth));
+						(ushort) (startX + Map.sectorWidth), (ushort) (startY + Map.sectorWidth));
 					SectRectComparer comparer = new SectRectComparer(sectorRect);
 					Array.Sort(rectangles, comparer);
 				}
@@ -314,7 +314,7 @@ namespace SteamEngine.Regions {
 
 			internal void ClearRegionRectangles(bool dynamicsToo) {
 				rectangles = RegionRectangle.emptyArray;
-				if(dynamicsToo) {
+				if (dynamicsToo) {
 					dynamicRegionRects = null;
 				}
 			}
@@ -322,13 +322,13 @@ namespace SteamEngine.Regions {
 			[Summary("Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)")]
 			internal void ClearOneRegionRectangles(Region whichRegion) {
 				List<RegionRectangle> copyRects = new List<RegionRectangle>(rectangles);
-				foreach(RegionRectangle regRect in rectangles) {
-					if(regRect.region == whichRegion) {
+				foreach (RegionRectangle regRect in rectangles) {
+					if (regRect.region == whichRegion) {
 						copyRects.Remove(regRect); //remove it from the temporary list
 					}
 				}
 				RegionRectangle[] restRects = new RegionRectangle[copyRects.Count];
-				for(int i = 0;i < copyRects.Count; i++) { //those who are left will be set back as a new array
+				for (int i = 0; i < copyRects.Count; i++) { //those who are left will be set back as a new array
 					restRects[i] = copyRects[i];
 				}
 				rectangles = restRects;
@@ -347,10 +347,10 @@ namespace SteamEngine.Regions {
 				if (dynamicRegionRects == null) {
 					dynamicRegionRects = new LinkedList<RegionRectangle>();
 				}
-				if(performControls) {
+				if (performControls) {
 					//check whethre other dynamic region rectangles do not intersect with the currently inserted one
-					foreach(RegionRectangle existingRect in dynamicRegionRects) {
-						if(existingRect.IntersectsWith(rect)) {
+					foreach (RegionRectangle existingRect in dynamicRegionRects) {
+						if (existingRect.IntersectsWith(rect)) {
 							return false; //problem here, stop trying !
 						}
 					}

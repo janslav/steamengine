@@ -28,7 +28,7 @@ using SteamEngine.Packets;
 using SteamEngine.LScript;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
-	
+
 namespace SteamEngine {
 	public sealed class ScriptedTriggerGroup : TriggerGroup {
 		private Dictionary<TriggerKey, ScriptHolder> triggers = new Dictionary<TriggerKey, ScriptHolder>();
@@ -36,7 +36,7 @@ namespace SteamEngine {
 		private ScriptedTriggerGroup(string defname)
 			: base(defname) {
 		}
-		
+
 		//the first trigger that throws an exceptions terminates the other ones that way
 		public override sealed object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			ThrowIfUnloaded();
@@ -47,7 +47,7 @@ namespace SteamEngine {
 				return null;	//This triggerGroup does not contain that trigger
 			}
 		}
-		
+
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
 		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			ThrowIfUnloaded();
@@ -58,29 +58,29 @@ namespace SteamEngine {
 				return null;	//This triggerGroup does not contain that trigger
 			}
 		}
-		
+
 		private void AddTrigger(ScriptHolder sd) {
-			string name=sd.name;
+			string name = sd.name;
 			//Console.WriteLine("Adding trigger {0} to tg {1}", name, this);
 			TriggerKey tk = TriggerKey.Get(name);
 			if (triggers.ContainsKey(tk)) {
-				Logger.WriteError("Attempted to declare triggers of the same name ("+LogStr.Ident(name)+") in trigger-group "+LogStr.Ident(this.Defname)+"!");
+				Logger.WriteError("Attempted to declare triggers of the same name (" + LogStr.Ident(name) + ") in trigger-group " + LogStr.Ident(this.Defname) + "!");
 				return;
 			}
 			sd.contTriggerGroup = this;
-			triggers[tk]=sd;
+			triggers[tk] = sd;
 		}
-		
+
 		public override string ToString() {
-			return "TriggerGroup "+defname;
+			return "TriggerGroup " + defname;
 		}
-		
+
 		public static new TriggerGroup Get(string name) {
 			AbstractScript script;
 			byDefname.TryGetValue(name, out script);
 			return script as TriggerGroup;
 		}
-			
+
 		private static ScriptedTriggerGroup GetNewOrCleared(string defname) {
 			TriggerGroup tg = Get(defname);
 			if (tg == null) {
@@ -88,15 +88,15 @@ namespace SteamEngine {
 			} else if (tg.IsUnloaded) {
 				return (ScriptedTriggerGroup) tg;
 			}
-			throw new OverrideNotAllowedException("TriggerGroup "+LogStr.Ident(defname)+" defined multiple times.");
+			throw new OverrideNotAllowedException("TriggerGroup " + LogStr.Ident(defname) + " defined multiple times.");
 		}
-		
+
 		internal static void StartingLoading() {
 		}
-		
+
 		public static TriggerGroup Load(PropsSection input) {
 			ScriptedTriggerGroup group = GetNewOrCleared(input.headerName);
-			for (int i = 0, n = input.TriggerCount; i<n; i++) {
+			for (int i = 0, n = input.TriggerCount; i < n; i++) {
 				ScriptHolder sc = new LScriptHolder(input.GetTrigger(i));
 				if (!sc.unloaded) {//in case the compilation failed, we do not add the trigger
 					group.AddTrigger(sc);
@@ -105,11 +105,11 @@ namespace SteamEngine {
 			group.unloaded = false;
 			return group;
 		}
-		
+
 		internal static void LoadingFinished() {
 			//dump the number of groups loaded?
 		}
-		
+
 		public override void Unload() {
 			triggers.Clear();
 			base.Unload();

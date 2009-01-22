@@ -66,11 +66,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[NoShow]
 		public int bar = 0;
 		[NoShow]
-		public int baz = 0;		
+		public int baz = 0;
 
 		[Button("List doublify")]
-		public void SomeMethod() {			
-			for(int i = 0; i < (bar == 0 ? 1 : bar) * 2; i++) {
+		public void SomeMethod() {
+			for (int i = 0; i < (bar == 0 ? 1 : bar) * 2; i++) {
 				nejakejList.Add(nejakejList.Count);
 			}
 			bar = (bar == 0 ? 1 : bar) * 2;
@@ -78,13 +78,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Table doublify")]
 		public void SomeOtherMethod() {
-			for(int i = 0; i < (baz == 0 ? 1 : baz) * 2; i++) {
+			for (int i = 0; i < (baz == 0 ? 1 : baz) * 2; i++) {
 				nejakaTabulka.Add(nejakaTabulka.Count + ".)", nejakaTabulka.Count);
 			}
 			baz = (baz == 0 ? 1 : baz) * 2;
 		}
 	}
-	
+
 	/*[Summary("Class returning pages for the dialog.")]
 	public sealed class Prototype_GeneratedDataView_SimpleClass : AbstractDataView {
 		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {

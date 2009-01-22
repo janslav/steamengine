@@ -45,19 +45,19 @@ namespace SteamEngine {
 
 		protected AbstractDef(string defname, string filename, int headerLine)
 			: base(defname) {
-			this.filename=filename;
-			this.headerLine=headerLine;
+			this.filename = filename;
+			this.headerLine = headerLine;
 			this.unloaded = false;
 			this.uid = uids++;
 		}
 
 		public override string ToString() {
-			return defname+"/"+altdefname;
+			return defname + "/" + altdefname;
 		}
 
 		public string Filepos {
 			get {
-				return "line "+headerLine+" of "+filename;
+				return "line " + headerLine + " of " + filename;
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace SteamEngine {
 			get {
 				//from the two available defnames (like c_0x190 and c_man) it returns the more understandable (c_man)
 				if (defname.IndexOf("_0x") > 0) {
-					if (altdefname!=null) {
+					if (altdefname != null) {
 						return altdefname;
 					}
 				}
@@ -97,11 +97,11 @@ namespace SteamEngine {
 			Match m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
 			if (m.Success) {	//If the name begins with 'tag.'
-				string tagName=m.Groups["name"].Value;
+				string tagName = m.Groups["name"].Value;
 				TagKey td = TagKey.Get(tagName);
 				fieldValue = (FieldValue) fieldValues[td];
 				if (fieldValue == null) {
-					tagName = "tag."+tagName;
+					tagName = "tag." + tagName;
 					fieldValue = new FieldValue(tagName, FieldValueType.Typeless, null, filename, line, args);
 					fieldValues[td] = fieldValue;
 					fieldValues[tagName] = fieldValue;
@@ -129,12 +129,12 @@ namespace SteamEngine {
 					byDefname.TryGetValue(args, out def);
 
 					if (def == null) {
-						altdefname=args;
-						byDefname[altdefname]=this;
+						altdefname = args;
+						byDefname[altdefname] = this;
 					} else if (def == this) {
-						throw new ScriptException("Defname redundantly specified for Def "+LogStr.Ident(args)+".");
+						throw new ScriptException("Defname redundantly specified for Def " + LogStr.Ident(args) + ".");
 					} else {
-						throw new ScriptException("Def "+LogStr.Ident(args)+" defined multiple times.");
+						throw new ScriptException("Def " + LogStr.Ident(args) + " defined multiple times.");
 					}
 					break;
 
@@ -144,7 +144,7 @@ namespace SteamEngine {
 						fieldValue.SetFromScripts(filename, line, args);
 						return;
 					}
-					throw new ScriptException("Invalid data '"+LogStr.Ident(param)+"' = '"+LogStr.Number(args)+"'.");
+					throw new ScriptException("Invalid data '" + LogStr.Ident(param) + "' = '" + LogStr.Number(args) + "'.");
 			}
 		}
 
@@ -156,13 +156,13 @@ namespace SteamEngine {
 
 			AbstractDef def = Get(defname);
 			if (def == null) {
-				Logger.WriteError(input.filename, input.headerLine, LogStr.Ident(typeName+" "+defname)
+				Logger.WriteError(input.filename, input.headerLine, LogStr.Ident(typeName + " " + defname)
 					+ " is in the world being loaded, but it was not defined in the scripts. Skipping.");
 				return;
 			}
 			if (string.Compare(def.GetType().Name, typeName, true) != 0) {
 				Logger.WriteWarning(input.filename, input.headerLine,
-					LogStr.Ident(typeName+" "+defname)+" declared wrong class. It is in fact "+LogStr.Ident(def.GetType().Name)+".");
+					LogStr.Ident(typeName + " " + defname) + " declared wrong class. It is in fact " + LogStr.Ident(def.GetType().Name) + ".");
 			}
 
 			def.LoadFromSaves(input);
@@ -182,9 +182,9 @@ namespace SteamEngine {
 			if (fv == null) {//that means it's not in scripts
 				Match m = TagHolder.tagRE.Match(fieldName);
 				if (m.Success) {	//If the name begins with 'tag.'
-					string tagName=m.Groups["name"].Value;
+					string tagName = m.Groups["name"].Value;
 					TagKey td = TagKey.Get(tagName);
-					tagName = "tag."+tagName;
+					tagName = "tag." + tagName;
 					fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 					fieldValues[td] = fv;
 					fieldValues[tagName] = fv;
@@ -211,7 +211,7 @@ namespace SteamEngine {
 				fieldValue = new FieldValue(name, FieldValueType.Typed, type, value);
 				fieldValues[name] = fieldValue;
 			} else {
-				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
+				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
 			return fieldValue;
 		}
@@ -222,7 +222,7 @@ namespace SteamEngine {
 				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, value);
 				fieldValues[name] = fieldValue;
 			} else {
-				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
+				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
 			return fieldValue;
 		}
@@ -233,7 +233,7 @@ namespace SteamEngine {
 				fieldValue = new FieldValue(name, FieldValueType.Model, null, value);
 				fieldValues[name] = fieldValue;
 			} else {
-				throw new SanityCheckException("InitField_Model called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
+				throw new SanityCheckException("InitField_Model called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
 			return fieldValue;
 		}
@@ -244,7 +244,7 @@ namespace SteamEngine {
 				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, value);
 				fieldValues[name] = fieldValue;
 			} else {
-				throw new SanityCheckException("InitField_Typeless called , when a fieldvalue called "+LogStr.Ident(name)+" already exists.");
+				throw new SanityCheckException("InitField_Typeless called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
 			return fieldValue;
 		}
@@ -286,15 +286,15 @@ namespace SteamEngine {
 		[Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
 		public static void ResolveAll() {
 			int count = byDefname.Count;
-			Logger.WriteDebug("Resolving "+count+" defs");
+			Logger.WriteDebug("Resolving " + count + " defs");
 
 			DateTime before = DateTime.Now;
 			int a = 0;
 			foreach (AbstractScript script in byDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
-					if ((a%50)==0) {
-						Logger.SetTitle("Resolving def field values: "+((a*100)/count)+" %");
+					if ((a % 50) == 0) {
+						Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
 					}
 					if (!def.unloaded) {//those should have already stated what's the problem :)
 						foreach (FieldValue fv in def.fieldValues.Values) {
@@ -311,7 +311,7 @@ namespace SteamEngine {
 				}
 			}
 			DateTime after = DateTime.Now;
-			Logger.WriteDebug("...took "+(after-before));
+			Logger.WriteDebug("...took " + (after - before));
 			Logger.SetTitle("");
 		}
 
@@ -330,10 +330,10 @@ namespace SteamEngine {
 			foreach (AbstractScript script in byDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
-					if ((a%50)==0) {
-						Logger.SetTitle("Saving defs: "+((a*100)/count)+" %");
+					if ((a % 50) == 0) {
+						Logger.SetTitle("Saving defs: " + ((a * 100) / count) + " %");
 					}
-					if ((!def.unloaded)&&(!def.alreadySaved)) {
+					if ((!def.unloaded) && (!def.alreadySaved)) {
 						def.Save(output);
 						def.alreadySaved = true;
 					}
@@ -380,7 +380,7 @@ namespace SteamEngine {
 			string typeName = type.Name;
 			Type o;
 			if (defTypesByName.TryGetValue(typeName, out o)) { //we have already a ThingDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class "+LogStr.Ident(o)+" in the register of AbstractDef classes.");
+				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(o) + " in the register of AbstractDef classes.");
 			}
 			defTypesByName[typeName] = type;
 			return false;
@@ -406,7 +406,7 @@ namespace SteamEngine {
 		public void SetTag(TagKey tk, object value) {
 			FieldValue fv = (FieldValue) fieldValues[tk];
 			if (fv == null) {
-				string tagName = "tag."+tk;
+				string tagName = "tag." + tk;
 				fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 				fieldValues[tk] = fv;
 				fieldValues[tagName] = fv;

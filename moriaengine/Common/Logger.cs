@@ -24,28 +24,28 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Common {
 	public delegate void StringToSend(string data);
-	
+
 	public abstract class Logger : TextWriter {
 		static TextWriter origError;
 		static TextWriter console;
 		static TextWriter file;
 		static DateTime filedate;
-		static bool fileopen=false;
+		static bool fileopen = false;
 		static Logger instance;
 		public static bool showCoreExceptions = true;
 		public static Assembly scriptsAssembly;
 		public static string indentation = "";
 
 		public static readonly string timeFormat = "HH:mm:ss";
-		
+
 		public static event StringToSend OnConsoleWriteLine;
 		public static event StringToSend OnConsoleWrite;
 
 		protected Logger() {
 			if (instance == null) {
-				console=Console.Out;
+				console = Console.Out;
 				origError = Console.Error;
-				filedate=DateTime.Today;
+				filedate = DateTime.Today;
 				Console.SetError(this);
 				Console.SetOut(this);
 				instance = this;
@@ -56,9 +56,9 @@ namespace SteamEngine.Common {
 		public static void WriteLogStr(LogStr data) {
 			instance.WriteLine(data);
 		}
-		
-		public static void Show(string comment,object toshow) {
-			instance.WriteLine(comment+" : "+Tools.ObjToString(toshow));
+
+		public static void Show(string comment, object toshow) {
+			instance.WriteLine(comment + " : " + Tools.ObjToString(toshow));
 		}
 		public static void Show(object toshow) {
 			instance.WriteLine(Tools.ObjToString(toshow));
@@ -117,27 +117,27 @@ namespace SteamEngine.Common {
 
 		public static void WriteFatal(string msg, object data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Fatal("FATAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteFatal(string msg, string data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Fatal("FATAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteFatal(string msg, LogStr data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Fatal("FATAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteFatal(string msg, Exception data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Fatal("FATAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteFatal(string msg, SEException data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Fatal("FATAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteFatal(object data) {
@@ -220,27 +220,27 @@ namespace SteamEngine.Common {
 
 		public static void WriteCritical(string msg, object data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteCritical(string msg, string data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteCritical(string msg, LogStr data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteCritical(string msg, Exception data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteCritical(string msg, SEException data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteCritical(object data) {
@@ -323,27 +323,27 @@ namespace SteamEngine.Common {
 
 		public static void WriteError(string msg, object data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Error("ERROR: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteError(string msg, string data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Error("ERROR: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteError(string msg, LogStr data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Error("ERROR: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteError(string msg, Exception data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Error("ERROR: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteError(string msg, SEException data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Error("ERROR: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteError(object data) {
@@ -426,27 +426,27 @@ namespace SteamEngine.Common {
 
 		public static void WriteWarning(string msg, object data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Warning("WARNING: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteWarning(string msg, string data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Warning("WARNING: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteWarning(string msg, LogStr data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Warning("WARNING: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteWarning(string msg, Exception data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Warning("WARNING: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteWarning(string msg, SEException data) {
 			instance.WriteLine(LogStr.Concat(
-				LogStr.Warning("WARNING: "), LogStr.Raw(msg+": "), ErrText(data)));
+				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
 		public static void WriteWarning(object data) {
@@ -512,31 +512,31 @@ namespace SteamEngine.Common {
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, object txt) {
 			if (ifTrue) {
-				instance.WriteLine("Info: "+LogStr.Highlight(txt));
+				instance.WriteLine("Info: " + LogStr.Highlight(txt));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, string txt) {
 			if (ifTrue) {
-				instance.WriteLine("Info: "+LogStr.Highlight(ErrText(txt)));
+				instance.WriteLine("Info: " + LogStr.Highlight(ErrText(txt)));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, LogStr txt) {
 			if (ifTrue) {
-				instance.WriteLine("Info: "+LogStr.Highlight(txt));
+				instance.WriteLine("Info: " + LogStr.Highlight(txt));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, Exception txt) {
 			if (ifTrue) {
-				instance.WriteLine("Info: "+LogStr.Highlight(ErrText(txt)));
+				instance.WriteLine("Info: " + LogStr.Highlight(ErrText(txt)));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, SEException txt) {
 			if (ifTrue) {
-				instance.WriteLine("Info: "+LogStr.Highlight(txt));
+				instance.WriteLine("Info: " + LogStr.Highlight(txt));
 			}
 		}
 		#endregion WriteInfo
@@ -672,8 +672,8 @@ namespace SteamEngine.Common {
 			return LogStr.Raw(FileString(file, line));
 		}
 
-		static string FileString(string filename,object line) {
-			return "("+filename+", "+line+") ";
+		static string FileString(string filename, object line) {
+			return "(" + filename + ", " + line + ") ";
 		}
 		#endregion ErrText
 
@@ -682,24 +682,24 @@ namespace SteamEngine.Common {
 		}
 
 		protected static void OpenFile() {
-			string pathname= instance.GetFilepath();
-			string dirname=Path.GetDirectoryName(pathname);
+			string pathname = instance.GetFilepath();
+			string dirname = Path.GetDirectoryName(pathname);
 			Tools.EnsureDirectory(dirname, true);
 			try {
-				file=File.AppendText(pathname);
-				fileopen=true;
+				file = File.AppendText(pathname);
+				fileopen = true;
 			} catch (FatalException fe) {
 				throw new FatalException("Re-throwing", fe);
 			} catch (Exception e) {
-				throw new ShowMessageAndExitException("Unable to open log file - SteamEngine is already running? ("+e.Message+")","This is NOT an Error -9! *wink*"); //some general I/O exception
+				throw new ShowMessageAndExitException("Unable to open log file - SteamEngine is already running? (" + e.Message + ")", "This is NOT an Error -9! *wink*"); //some general I/O exception
 			}
-			filedate=DateTime.Today;
+			filedate = DateTime.Today;
 			console.WriteLine("");
 			console.WriteLine("");
-			console.WriteLine("Log file open - "+pathname); //console - with file name
+			console.WriteLine("Log file open - " + pathname); //console - with file name
 			file.WriteLine("Log file open"); //log - without file names...
 		}
-		
+
 		~Logger() {
 			try {
 				if (fileopen) {
@@ -721,25 +721,25 @@ namespace SteamEngine.Common {
 			Console.SetError(instance);
 			Console.SetOut(instance);
 		}
-	  
-	  	protected abstract string GetFilepath();
-	
+
+		protected abstract string GetFilepath();
+
 		static void Rotate() {
 			file.Flush();
-			if (filedate!=DateTime.Today) {
+			if (filedate != DateTime.Today) {
 				file.Close();
-				fileopen=false;
+				fileopen = false;
 				OpenFile();
 			}
 		}
-		
+
 		//method: Log
 		//similar to WriteLine, only it does not show the string on the console - 
 		//it only writes it to file
 		public static void Log(string data) {
 			lock (instance) {
 				if (fileopen) {
-					file.WriteLine(DateTime.Now.ToString(timeFormat)+": "+data);
+					file.WriteLine(DateTime.Now.ToString(timeFormat) + ": " + data);
 					Rotate();
 				}
 			}
@@ -751,9 +751,9 @@ namespace SteamEngine.Common {
 
 		public override void WriteLine(string data) {
 			lock (this) {
-				string printline=String.Concat(DateTime.Now.ToString(timeFormat), ": ", indentation, data);
+				string printline = String.Concat(DateTime.Now.ToString(timeFormat), ": ", indentation, data);
 				console.WriteLine(printline);
-				if (OnConsoleWriteLine!=null) {
+				if (OnConsoleWriteLine != null) {
 					OnConsoleWriteLine(printline);
 				}
 				if (fileopen) {
@@ -766,10 +766,10 @@ namespace SteamEngine.Common {
 		public override void WriteLine(object data) {
 			WriteLine(ErrText(data));
 		}
-		
+
 		public void WriteLine(LogStr data) {
 			lock (this) {
-				LogStr printline=LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat), (LogStr) ": ", (LogStr) indentation, data);
+				LogStr printline = LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat), (LogStr) ": ", (LogStr) indentation, data);
 				console.WriteLine(printline.RawString);
 				if (OnConsoleWriteLine != null) {
 					OnConsoleWriteLine(printline.NiceString);
@@ -780,11 +780,11 @@ namespace SteamEngine.Common {
 				}
 			}
 		}
-		
+
 		public override void Write(string data) {
 			lock (this) {
 				console.Write(data);
-				if (OnConsoleWrite!=null) {
+				if (OnConsoleWrite != null) {
 					OnConsoleWrite(data);
 				}
 				if (fileopen) {
@@ -801,7 +801,7 @@ namespace SteamEngine.Common {
 		public void Write(LogStr data) {
 			lock (this) {
 				console.Write(data.RawString);
-				if (OnConsoleWrite!=null) {
+				if (OnConsoleWrite != null) {
 					OnConsoleWrite(data.NiceString);
 				}
 				if (fileopen) {
@@ -810,9 +810,9 @@ namespace SteamEngine.Common {
 				}
 			}
 		}
-		
+
 		public override Encoding Encoding { //they made me override it
-			get{return(null);}
+			get { return (null); }
 		}
 	}
 }

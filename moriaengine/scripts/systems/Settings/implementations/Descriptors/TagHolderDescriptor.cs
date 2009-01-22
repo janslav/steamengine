@@ -28,10 +28,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/* We will add here a few methods for displaying tags, timers, clearing tags and timers
 		 * and also two fields holding information about the tags and timers count*/
 
-		[GetMethod("TagsCount",typeof(int))]
+		[GetMethod("TagsCount", typeof(int))]
 		public static object GetTagsCount(object target) {
 			int counter = 0;
-			foreach(KeyValuePair<TagKey, object> kvp in ((TagHolder)target).GetAllTags()) {
+			foreach (KeyValuePair<TagKey, object> kvp in ((TagHolder) target).GetAllTags()) {
 				counter++;
 			}
 			return counter;
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[GetMethod("TimersCount", typeof(int))]
 		public static object GetTimersCount(object target) {
 			int counter = 0;
-			foreach(KeyValuePair<TimerKey, BoundTimer> kvp in ((TagHolder)target).GetAllTimers()) {
+			foreach (KeyValuePair<TimerKey, BoundTimer> kvp in ((TagHolder) target).GetAllTimers()) {
 				counter++;
 			}
 			return counter;
@@ -48,22 +48,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Taglist")]
 		public static void TagList(object target) {
-			D_TagList.TagList((TagHolder)target, null);
+			D_TagList.TagList((TagHolder) target, null);
 		}
 
 		[Button("Timerlist")]
 		public static void TimerList(object target) {
-			D_TimerList.TimerList((TagHolder)target, null);
+			D_TimerList.TimerList((TagHolder) target, null);
 		}
 
 		[Button("Cleartags")]
 		public static void ClearTags(object target) {
-			((TagHolder)target).ClearTags();
+			((TagHolder) target).ClearTags();
 		}
 
 		[Button("Cleartimers")]
 		public static void ClearTimers(object target) {
-			((TagHolder)target).DeleteTimers();
+			((TagHolder) target).DeleteTimers();
 		}
 	}
 }

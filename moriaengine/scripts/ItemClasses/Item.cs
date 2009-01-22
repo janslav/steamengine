@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Dialogs.ViewableClass]
-    public partial class Item : AbstractItem {
+	public partial class Item : AbstractItem {
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
 				" then the item will be deleted. Method returns the actually consumed amount.")]
 		public uint Consume(long howMany) {
@@ -63,10 +63,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Flag_Invisible {
 			get {
-				return ((flags&0x0080)==0x0080);
+				return ((flags & 0x0080) == 0x0080);
 			}
 			set {
-				byte newFlags = (byte) (value?(flags|0x80):(flags&~0x80));
+				byte newFlags = (byte) (value ? (flags | 0x80) : (flags & ~0x80));
 				if (newFlags != this.flags) {
 					if (value) {
 						OpenedContainers.SetContainerClosed(this);
@@ -84,9 +84,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual bool IsMusicalInstrument { get {
-			return false;
-		} }
+		public virtual bool IsMusicalInstrument {
+			get {
+				return false;
+			}
+		}
 
 		[Summary("Enumerates every item in this item and items in all subcontainers, recurses into infinite deep.")]
 		public IEnumerable<Item> EnumDeep() {
@@ -166,7 +168,7 @@ namespace SteamEngine.CompiledScripts {
 				argument = name;
 			} else {
 				id = 1050039;//~1_NUMBER~ ~2_ITEMNAME~
-				argument = string.Concat(amount.ToString(),"\t", name);
+				argument = string.Concat(amount.ToString(), "\t", name);
 			}
 		}
 
@@ -205,14 +207,14 @@ namespace SteamEngine.CompiledScripts {
 			AbstractItem i = t as AbstractItem;
 			if (i != null) {
 				if (i.IsStackable) {
-					i.Amount=amount;
+					i.Amount = amount;
 				}
 				return i;
 			}
 			if (t != null) {
 				t.Delete();//we created a character, wtf? :)
 			}
-			throw new SEException(factory+" did not create an item.");
+			throw new SEException(factory + " did not create an item.");
 		}
 
 		//public void PlayDropSound(AbstractCharacter droppingChar) {

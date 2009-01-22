@@ -44,7 +44,7 @@ namespace SteamEngine {
 		public override bool Equals(Object obj) {
 			return this == obj;
 		}
-		
+
 		public override string ToString() {
 			return String.Concat("Console dummy(acc='", this.Account, "')");
 		}

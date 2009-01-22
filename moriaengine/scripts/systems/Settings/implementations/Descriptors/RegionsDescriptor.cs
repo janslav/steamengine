@@ -26,13 +26,13 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Region), "Region",
-	 new string[] { "Parent", "Rectangles", "WorldRegion", "IsWorldRegion", "P", "HierarchyName", "CreatedAt"}
+	 new string[] { "Parent", "Rectangles", "WorldRegion", "IsWorldRegion", "P", "HierarchyName", "CreatedAt" }
 		)]
 	public static class RegionDescriptor {
 		//automaticky se zobrazi defname, createdAt, hierarchy index, mapplane
 		[Button("Parent")]
 		public static void Parent(object target) {
-			Region parent = ((Region)target).Parent;
+			Region parent = ((Region) target).Parent;
 			if (parent != null) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(parent));
 			} else {
@@ -44,25 +44,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Button("Rectangles")]
 		public static void Rectangles(object target) {
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_Region_Rectangles.regionTK, (Region)target);
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance,newArgs);
+			newArgs.SetTag(D_Region_Rectangles.regionTK, (Region) target);
+			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance, newArgs);
 		}
 
 		[GetMethod("Home Point", typeof(Point4D))]
 		public static object GetPosition(object target) {
-			return ((Region)target).P;
+			return ((Region) target).P;
 		}
 
 		[SetMethod("Home Point", typeof(Point4D))]
 		public static void SetPosition(object target, object value) {
-			Region reg = (Region)target;
+			Region reg = (Region) target;
 			Point4D point = null;
-			if(value.GetType().IsAssignableFrom(typeof(Point4D))) {
-				point = (Point4D)value;
-			} else if(value is String) {
-				point = (Point4D)ObjectSaver.Load((string)value);
+			if (value.GetType().IsAssignableFrom(typeof(Point4D))) {
+				point = (Point4D) value;
+			} else if (value is String) {
+				point = (Point4D) ObjectSaver.Load((string) value);
 			}
-			if(reg.ContainsPoint(point)) {
+			if (reg.ContainsPoint(point)) {
 				reg.P = point;
 			} else {
 				throw new SEException("Specified point " + point.ToString() + " must lay in the region");
@@ -71,8 +71,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("Parent name", typeof(string))]
 		public static object GetParentName(object target) {
-			if(((Region)target).Parent != null) {
-				return ((Region)target).Parent.Name;
+			if (((Region) target).Parent != null) {
+				return ((Region) target).Parent.Name;
 			} else {
 				return "";
 			}
@@ -89,6 +89,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[ViewDescriptor(typeof(StaticRegion), "Region")]
 	public static class StaticRegionDescriptor {
-		
+
 	}
 }

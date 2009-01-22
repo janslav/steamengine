@@ -23,7 +23,7 @@ using System.CodeDom.Compiler;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
-namespace SteamEngine.CompiledScripts { 
+namespace SteamEngine.CompiledScripts {
 
 	/*
 		Class: CompiledTriggerGroup
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 							return null;
 						}
 					}
-					Logger.WriteDebug("Done generating "+compiledTGs.Count+" compiled Triggergroups");
+					Logger.WriteDebug("Done generating " + compiledTGs.Count + " compiled Triggergroups");
 				}
 				return codeCompileUnit;
 			} finally {
@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 			Type tgType;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_"+tgType.Name);
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_" + tgType.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(tgType);
 				codeTypeDeclatarion.IsClass = true;
@@ -138,8 +138,8 @@ namespace SteamEngine.CompiledScripts {
 
 			internal GeneratedInstance(Type tgType) {
 				this.tgType = tgType;
-				MemberTypes memberType=MemberTypes.Method;		//Only find methods.
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase|BindingFlags.Instance|BindingFlags.Public;
+				MemberTypes memberType = MemberTypes.Method;		//Only find methods.
+				BindingFlags bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
 
 				MemberInfo[] mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
 				foreach (MemberInfo m in mis) {
@@ -167,7 +167,7 @@ namespace SteamEngine.CompiledScripts {
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
 					foreach (MethodInfo mi in triggerMethods) {
 						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
-						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase("+tk.uid+"): //"+tk.name));
+						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.uid + "): //" + tk.name));
 						retVal.Statements.AddRange(
 							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
 								new CodeThisReferenceExpression(), true));
@@ -197,12 +197,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s=((string) filterCriteria).ToLower();
+				string s = ((string) filterCriteria).ToLower();
 				return m.Name.ToLower().StartsWith(s);
 			}
 		}
 	}
-	
+
 	//Implemented by the types which can represent map tiles
 	//like t_water and such
 	//more in the Map class
@@ -213,7 +213,7 @@ namespace SteamEngine.CompiledScripts {
 		protected GroundTileType() {
 			byName[this.defname] = this;
 		}
-		
+
 		public static new GroundTileType Get(string name) {
 			GroundTileType gtt;
 			byName.TryGetValue(name, out gtt);
@@ -221,11 +221,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static bool IsMapTileInRange(int tileId, int aboveOrEqualTo, int below) {
-			return (tileId>=aboveOrEqualTo && tileId<=below);
+			return (tileId >= aboveOrEqualTo && tileId <= below);
 		}
 
 		public abstract bool IsTypeOfMapTile(int mapTileId);
-		
+
 		internal static void UnLoadScripts() {
 			byName.Clear();
 		}

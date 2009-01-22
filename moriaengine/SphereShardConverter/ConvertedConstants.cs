@@ -26,12 +26,13 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.Converter {
 	public class ConvertedConstants : ConvertedDef {
-		public ConvertedConstants(PropsSection input) : base(input) {
+		public ConvertedConstants(PropsSection input)
+			: base(input) {
 			headerType = "Constants";
 		}
 
 		public override void FirstStage() {
-			base.FirstStage ();
+			base.FirstStage();
 			string line;
 			StringReader reader = new StringReader(origData.GetTrigger(0).code.ToString());
 			while ((line = reader.ReadLine()) != null) {

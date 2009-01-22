@@ -139,9 +139,9 @@ namespace SteamEngine.CompiledScripts {
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange); //0x55
-			conn.SendPacketGroup(pg);			
+			conn.SendPacketGroup(pg);
 		}
-		
+
 		[SteamFunction]
 		public static void SCHI() {
 			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;

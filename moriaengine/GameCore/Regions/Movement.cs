@@ -48,7 +48,7 @@ namespace SteamEngine {
 }
 
 namespace SteamEngine.Regions {
-	
+
 	//I think the movement implementation is important enough to move it into another 
 	//file even though it's still the Map class
 	public partial class Map {
@@ -62,7 +62,7 @@ namespace SteamEngine.Regions {
 
 
 		private bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<Static> tiles, List<AbstractItem> items) {
-			for (int i = 0, n = tiles.Count; i<n; i++) {
+			for (int i = 0, n = tiles.Count; i < n; i++) {
 				Static check = tiles[i];
 				ItemDispidInfo itemData = check.dispidInfo;
 
@@ -83,7 +83,7 @@ namespace SteamEngine.Regions {
 				uint flags = idi.flags;
 
 				if ((flags & ImpassableSurface) != 0) {// Impassable || Surface
-					if (ignoreDoors && ((flags & TileData.flag_door) != 0 
+					if (ignoreDoors && ((flags & TileData.flag_door) != 0
 							|| model == 0x692 || model == 0x846 || model == 0x873 || (model >= 0x6F5 && model <= 0x6F6)))
 						//^^^^ ve standartnich tiledata.mul nemaj tyhle modely flag_door i kdyz sou to dvere
 						continue;
@@ -152,7 +152,7 @@ namespace SteamEngine.Regions {
 				staticsPool.Add(staticItem);
 			}
 
-			for (int i = 0, n = staticsPool.Count; i<n; i++) {
+			for (int i = 0, n = staticsPool.Count; i < n; i++) {
 				Static staticItem = staticsPool[i];
 
 				ItemDispidInfo idi = staticItem.dispidInfo;
@@ -320,10 +320,10 @@ namespace SteamEngine.Regions {
 				reqFlags |= TileData.flag_wet;
 
 			if (checkDiagonals) {
-				Sector sectorStart = this.GetSector(xStart>>sectorFactor, yStart>>sectorFactor);
-				Sector sectorForward = this.GetSector(xForward>>sectorFactor, yForward>>sectorFactor);
-				Sector sectorLeft = this.GetSector(xLeft>>sectorFactor, yLeft>>sectorFactor);
-				Sector sectorRight = this.GetSector(xRight>>sectorFactor, yRight>>sectorFactor);
+				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
+				Sector sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
+				Sector sectorLeft = this.GetSector(xLeft >> sectorFactor, yLeft >> sectorFactor);
+				Sector sectorRight = this.GetSector(xRight >> sectorFactor, yRight >> sectorFactor);
 
 				List<Sector> sectors = m_Sectors;
 
@@ -368,8 +368,8 @@ namespace SteamEngine.Regions {
 				if (m_Sectors.Count > 0)
 					m_Sectors.Clear();
 			} else {
-				Sector sectorStart = this.GetSector(xStart>>sectorFactor, yStart>>sectorFactor);
-				Sector sectorForward = this.GetSector(xForward>>sectorFactor, yForward>>sectorFactor);
+				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
+				Sector sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
 
 				if (sectorStart == sectorForward) {
 					foreach (Thing t in sectorStart.things) {
@@ -508,12 +508,12 @@ namespace SteamEngine.Regions {
 				bool staticIsWater = ((idi.flags & TileData.flag_wet) == TileData.flag_wet);
 				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.id);
 
-				if ((!isSet || calcTop >= zCenter) && 
+				if ((!isSet || calcTop >= zCenter) &&
 						((idi.flags & TileData.flag_surface) != 0 || //je to stul (eh?)
 							(canSwim && staticIsWater) || //je to voda a my umime plavat
 							(canCrossLava && staticIsLava) || //je to lava a nam nevadi
 							(canFly) //umime litat a tak nam nevadi nic
-							)						
+							)
 						&& pointZ >= calcTop) {
 
 					if (!canFly && !canCrossLand && !staticIsWater && !staticIsLava)
@@ -541,12 +541,12 @@ namespace SteamEngine.Regions {
 
 				int calcTop = item.Z + idi.calcHeight;
 
-				if ((!isSet || calcTop >= zCenter) && 
+				if ((!isSet || calcTop >= zCenter) &&
 						((idi.flags & TileData.flag_surface) != 0 || //je to stul (eh?)
 							(canSwim && itemIsWater) || //je to voda a my umime plavat
 							(canCrossLava && itemIsLava) || //je to lava a nam nevadi
 							(canFly) //umime litat a tak nam nevadi nic
-							)						
+							)
 						&& pointZ >= calcTop) {
 
 					if (!canFly && !canCrossLand && !itemIsWater && !itemIsLava)

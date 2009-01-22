@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
 	public enum ReadPacketResult {
-		Success, 
+		Success,
 		DiscardSingle,
 		DiscardAll,
 		NeedMoreData
@@ -154,9 +154,9 @@ namespace SteamEngine.Communication {
 		[Param(0, "The length of the string.")]
 		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
 		protected string DecodeAsciiString(int len, bool truncateEndlines) {
-			string str="";
+			string str = "";
 			//try {
-				str = Encoding.UTF8.GetString(this.buffer, this.position, len);
+			str = Encoding.UTF8.GetString(this.buffer, this.position, len);
 			//} catch (ArgumentOutOfRangeException) {
 			//    //return null;
 			//    throw;
@@ -177,28 +177,28 @@ namespace SteamEngine.Communication {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(4);
-			return ((packet[startpos]<<24)+(packet[startpos+1]<<16)+(packet[startpos+2]<<8)+packet[startpos+3]);
+			return ((packet[startpos] << 24) + (packet[startpos + 1] << 16) + (packet[startpos + 2] << 8) + packet[startpos + 3]);
 		}
 
 		protected uint DecodeUInt() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(4);
-			return (uint) ((packet[startpos]<<24)+(packet[startpos+1]<<16)+(packet[startpos+2]<<8)+packet[startpos+3]);
+			return (uint) ((packet[startpos] << 24) + (packet[startpos + 1] << 16) + (packet[startpos + 2] << 8) + packet[startpos + 3]);
 		}
 
 		protected short DecodeShort() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(2);
-			return (short) ((packet[startpos]<<8)+packet[startpos+1]);
+			return (short) ((packet[startpos] << 8) + packet[startpos + 1]);
 		}
 
 		public ushort DecodeUShort() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
 			this.SeekFromCurrent(2);
-			return (ushort) ((packet[startpos]<<8)+packet[startpos+1]);
+			return (ushort) ((packet[startpos] << 8) + packet[startpos + 1]);
 		}
 
 		protected sbyte DecodeSByte() {

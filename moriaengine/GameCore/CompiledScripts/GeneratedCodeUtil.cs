@@ -21,9 +21,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using Microsoft.CSharp; 
+using Microsoft.CSharp;
 using System.Text;
-using System.Globalization; 
+using System.Globalization;
 using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -32,7 +32,7 @@ using NAnt.Core;
 namespace SteamEngine.CompiledScripts {
 
 	[Summary("Implement this interface to use the core's service of generating an assembly, additional to the scripts "
-		+"(it will most likely be somehow based on the scripts...)")]
+		+ "(it will most likely be somehow based on the scripts...)")]
 	[Remark("In the method \"WriteSources\", the implementor is supposed to generate the code using CodeDom facilities, in C#.")]
 	public interface ISteamCSCodeGenerator {
 		string FileName { get; }
@@ -50,15 +50,15 @@ namespace SteamEngine.CompiledScripts {
 
 		static GeneratedCodeUtil() {
 			options = new CodeGeneratorOptions();
-			options.IndentString="\t";
-			options.ElseOnClosing = true;			
+			options.IndentString = "\t";
+			options.ElseOnClosing = true;
 			provider = new Microsoft.CSharp.CSharpCodeProvider();
 		}
 
 		internal static void RegisterGenerator(ISteamCSCodeGenerator generator) {
 			string fileName = generator.FileName;
 			if (generators.ContainsKey(fileName)) {
-				throw new OverrideNotAllowedException("There is already a ISteamCSCodeGenerator ("+generators[fileName]+") registered for the file name "+fileName);//hopefully this will never display cos it would make no sense
+				throw new OverrideNotAllowedException("There is already a ISteamCSCodeGenerator (" + generators[fileName] + ") registered for the file name " + fileName);//hopefully this will never display cos it would make no sense
 			}
 			generators[fileName] = generator;
 		}
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 			foreach (ISteamCSCodeGenerator generator in generators.Values) {
 				CodeCompileUnit codeCompileUnit = generator.WriteSources();
 				if (codeCompileUnit == null) {
-					Logger.WriteFatal(generator+" failed to generate scripts...?");
+					Logger.WriteFatal(generator + " failed to generate scripts...?");
 					return false;
 				}
 
@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 					dataType = Enum.GetUnderlyingType(enumType);
 				}
 
-				MethodInfo parseMethod = typeof(ConvertTools).GetMethod("Parse"+dataType.Name, BindingFlags.Static|BindingFlags.Public);
+				MethodInfo parseMethod = typeof(ConvertTools).GetMethod("Parse" + dataType.Name, BindingFlags.Static | BindingFlags.Public);
 				if (parseMethod != null) {
 					CodeMethodInvokeExpression parseExp = new CodeMethodInvokeExpression(
 						new CodeMethodReferenceExpression(
@@ -160,16 +160,16 @@ namespace SteamEngine.CompiledScripts {
 						return parseExp;
 					}
 				} else {
-					throw new Exception("ConvertTools class missing a method for parsing number type "+dataType+". This shoud not happen.");
+					throw new Exception("ConvertTools class missing a method for parsing number type " + dataType + ". This shoud not happen.");
 				}
 			} else {
 				CodeMethodInvokeExpression loadMethod = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(ObjectSaver)),
 					"OptimizedLoad_SimpleType",
-					inputStringExpression, 
+					inputStringExpression,
 					new CodeTypeOfExpression(dataType));
 
-				MethodInfo parseMethod = typeof(Convert).GetMethod("To"+dataType.Name, BindingFlags.Static|BindingFlags.Public, null,
+				MethodInfo parseMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
 					new Type[] { typeof(object) }, null);
 
 				//this will probably be true for datetime only
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 			} else if (ConvertTools.IsNumberType(dataType)) {
 				CodeMethodInvokeExpression toNumberExp = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(Convert)),
-					"To"+dataType.Name,
+					"To" + dataType.Name,
 					inputObjectExpression);
 				if (dataType.IsEnum) {
 					return new CodeCastExpression(
@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 					return toNumberExp;
 				}
 			} else {
-				MethodInfo convertMethod = typeof(Convert).GetMethod("To"+dataType.Name, BindingFlags.Static|BindingFlags.Public, null,
+				MethodInfo convertMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
 					new Type[] { typeof(object) }, null);
 
 				//this will probably be true for datetime only

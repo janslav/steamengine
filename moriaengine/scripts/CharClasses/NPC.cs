@@ -53,15 +53,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void ShowValues() {
-			Globals.SrcWriteLine("canCrossLand: "+canCrossLand);
-			Globals.SrcWriteLine("canSwim: "+canSwim);
-			Globals.SrcWriteLine("canCrossLava: "+canCrossLava);
-			Globals.SrcWriteLine("canFly: "+canFly);
-			Globals.SrcWriteLine("ignoreDoors: "+ignoreDoors);
-			Globals.SrcWriteLine("climbPower: "+climbPower);
+			Globals.SrcWriteLine("canCrossLand: " + canCrossLand);
+			Globals.SrcWriteLine("canSwim: " + canSwim);
+			Globals.SrcWriteLine("canCrossLava: " + canCrossLava);
+			Globals.SrcWriteLine("canFly: " + canFly);
+			Globals.SrcWriteLine("ignoreDoors: " + ignoreDoors);
+			Globals.SrcWriteLine("climbPower: " + climbPower);
 		}
 
-		public DynamicMovementSettings(bool canCrossLand, bool canSwim, bool canCrossLava, 
+		public DynamicMovementSettings(bool canCrossLand, bool canSwim, bool canCrossLava,
 					bool canFly, bool ignoreDoors, int climbPower) {
 			this.canCrossLand = canCrossLand;
 			this.canSwim = canSwim;
@@ -71,24 +71,36 @@ namespace SteamEngine.CompiledScripts {
 			this.climbPower = climbPower;
 		}
 
-		bool IMovementSettings.CanCrossLand { get { 
-			return canCrossLand; 
-		} }
-		bool IMovementSettings.CanSwim { get { 
-			return canSwim; 
-		} }
-		bool IMovementSettings.CanCrossLava { get { 
-			return canCrossLava; 
-		} }
-		bool IMovementSettings.CanFly { get { 
-			return canFly; 
-		} }
-		bool IMovementSettings.IgnoreDoors { get { 
-			return ignoreDoors; 
-		} }
-		int IMovementSettings.ClimbPower { get {
-			return climbPower;
-		} } //max positive difference in 1 step
+		bool IMovementSettings.CanCrossLand {
+			get {
+				return canCrossLand;
+			}
+		}
+		bool IMovementSettings.CanSwim {
+			get {
+				return canSwim;
+			}
+		}
+		bool IMovementSettings.CanCrossLava {
+			get {
+				return canCrossLava;
+			}
+		}
+		bool IMovementSettings.CanFly {
+			get {
+				return canFly;
+			}
+		}
+		bool IMovementSettings.IgnoreDoors {
+			get {
+				return ignoreDoors;
+			}
+		}
+		int IMovementSettings.ClimbPower {
+			get {
+				return climbPower;
+			}
+		} //max positive difference in 1 step
 	}
 
 	[ViewableClass]

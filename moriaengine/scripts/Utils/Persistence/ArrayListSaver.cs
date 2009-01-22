@@ -22,19 +22,23 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class ArrayListSaver : ISaveImplementor, IDeepCopyImplementor {
-		public string HeaderName { get {
-			return "ArrayList";
-		} }
+		public string HeaderName {
+			get {
+				return "ArrayList";
+			}
+		}
 
-		public Type HandledType { get {
-			return typeof(ArrayList);
-		} }
-		
+		public Type HandledType {
+			get {
+				return typeof(ArrayList);
+			}
+		}
+
 		public void Save(object objToSave, SaveStream writer) {
 			ArrayList list = (ArrayList) objToSave;
 			int count = list.Count;
 			writer.WriteValue("count", count);
-			for (int i = 0; i<count; i++) {
+			for (int i = 0; i < count; i++) {
 				writer.WriteValue(i.ToString(), list[i]);
 			}
 		}
@@ -46,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 				currentLineNumber = countLine.line;
 				int count = int.Parse(countLine.value);
 				ArrayList list = new ArrayList(count);
-				for (int i = 0; i<count; i++) {
+				for (int i = 0; i < count; i++) {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
@@ -63,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 				throw new SEException(input.filename, currentLineNumber, e);
 			}
 		}
-		
+
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
 			ArrayListIndexPair alip = (ArrayListIndexPair) param;
 			alip.list[alip.index] = loadedObj;
@@ -73,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 			ArrayListIndexPair alip = (ArrayListIndexPair) param;
 			alip.list[alip.index] = loadedObj;
 		}
-		
+
 		private class ArrayListIndexPair {
 			internal ArrayList list;
 			internal int index;
@@ -87,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 			ArrayList copyFromList = (ArrayList) copyFrom;
 			int n = copyFromList.Count;
 			ArrayList newList = new ArrayList(n);
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				newList.Add(null);
 				ArrayListIndexPair alip = new ArrayListIndexPair(newList, i);
 				DeepCopyFactory.GetCopyDelayed(copyFromList[i], DelayedCopy_Index, alip);

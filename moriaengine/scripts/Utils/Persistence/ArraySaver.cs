@@ -23,14 +23,18 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class ArraySaver : ISaveImplementor, IDeepCopyImplementor {
-		public string HeaderName { get {
-			return "Array";
-		} }
+		public string HeaderName {
+			get {
+				return "Array";
+			}
+		}
 
-		public Type HandledType { get {
-			return typeof(Array);
-		} }
-		
+		public Type HandledType {
+			get {
+				return typeof(Array);
+			}
+		}
+
 		public void Save(object objToSave, SaveStream writer) {
 			Array arr = (Array) objToSave;
 			Type arrType = arr.GetType();
@@ -38,11 +42,11 @@ namespace SteamEngine.CompiledScripts {
 				throw new NotImplementedException("Multi-dimensional array saving not implemented.");
 			}
 			Type elemType = arrType.GetElementType();
-			writer.WriteLine("type="+ GenericListSaver.GetTypeName(elemType));
-			
+			writer.WriteLine("type=" + GenericListSaver.GetTypeName(elemType));
+
 			int length = arr.Length;
 			writer.WriteValue("length", length);
-			for (int i = 0; i<length; i++) {
+			for (int i = 0; i < length; i++) {
 				writer.WriteValue(i.ToString(), arr.GetValue(i));
 			}
 		}
@@ -60,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 
 				Array arr = Array.CreateInstance(elemType, length);
 
-				for (int i = 0; i<length; i++) {
+				for (int i = 0; i < length; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.line;
 					ArrayLoadHelper alip = new ArrayLoadHelper(arr, i, elemType);
@@ -76,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 				throw new SEException(input.filename, currentLineNumber, e);
 			}
 		}
-		
+
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
 			ArrayLoadHelper alip = (ArrayLoadHelper) param;
 			alip.arr.SetValue(ConvertTools.ConvertTo(alip.elemType, loadedObj), alip.index);
@@ -86,7 +90,7 @@ namespace SteamEngine.CompiledScripts {
 			ArrayLoadHelper alip = (ArrayLoadHelper) param;
 			alip.arr.SetValue(ConvertTools.ConvertTo(alip.elemType, loadedObj), alip.index);
 		}
-		
+
 		private class ArrayLoadHelper {
 			internal Array arr;
 			internal int index;
@@ -104,7 +108,7 @@ namespace SteamEngine.CompiledScripts {
 			int n = copyFromArray.Length;
 			Type elemType = copyFromArray.GetType().GetElementType();
 			Array newArray = Array.CreateInstance(elemType, n);
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				ArrayLoadHelper aip = new ArrayLoadHelper(newArray, i, elemType);
 				DeepCopyFactory.GetCopyDelayed(copyFromArray.GetValue(i), DelayedCopy_Index, aip);
 			}

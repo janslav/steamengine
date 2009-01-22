@@ -21,7 +21,7 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_light_lit : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_telepad : CompiledTriggerGroup {	//Our script must extend 'CompiledTriggerGroup'
@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		//static TagKey moreyTag = TagKey.Get("morey");
 		//static TagKey morezTag = TagKey.Get("morez");
 		//static TagKey moremTag = TagKey.Get("morem");
-	
+
 		//public void on_step(TagHolder self) {
 		//    ushort morex= (ushort) TagMath.ConvertTo(typeof(ushort), self.GetTag(morexTag));
 		//    ushort morey=(ushort) TagMath.ConvertTo(typeof(ushort), self.GetTag(moreyTag));
@@ -45,17 +45,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public void on_step(TagHolder self, Character steppingChar) {
 			//if (Globals.src.IsAlive) {
-				//todo ;)
-			steppingChar.Hits -=2;
+			//todo ;)
+			steppingChar.Hits -= 2;
 			//}
 		}
 	}
 
 	public class t_spell : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_trap_active : CompiledTriggerGroup {
-		
+
 	}
 }

@@ -13,10 +13,10 @@
 //using SteamEngine.Regions;
 
 //namespace SteamEngine.Packets {
-	
+
 //    public class MediumLevelOut : Compression {
 //        private static Random random = new Random();
-		
+
 //        protected static void Compress() {
 //            if (groupState==GroupState.Open) {
 //                CompressAs(CompressedPacketType.Group);
@@ -24,7 +24,7 @@
 //                CompressAs(CompressedPacketType.Single);
 //            }
 //        }
-		
+
 //        protected static void CompressAs(CompressedPacketType cpt) {	//(Replaces the PrepareToSend* methods) 
 //            Logger.WriteInfo(PacketSenderTracingOn, "CompressAs("+cpt+") : Packet ID "+ucBuffer[0].ToString("x"));
 //            #if TRACE
@@ -32,13 +32,13 @@
 //                //Logger.WriteDebug("LogUCPacket Start.");
 //                LogUCPacket();
 //                //Logger.WriteDebug("LogUCPacket Done.");
-				
+
 //            }
 //            #endif
 //            /*Requires generatingState == Generated, and:
 //                If CPT == Group, requires groupState==Open, adds packet to curGroup,
 //                If CPT == Single, requires groupState==Ready, sets groupState==SingleBlocking,
-				
+
 //                Finally, sets generatingState=Ready, lastCPacketStart=lastCPacketEnd, 
 //                lastCPacketSize=compressedLen (from compression method), 
 //                lastCPacketEnd=lastCPacketSize+compressedLen.
@@ -160,10 +160,10 @@
 //            #endif
 //            */
 //            //Logger.WriteDebug("Adding entry.");
-			
+
 //            //Temporarily disbled until it can be determined why it's really really slow:
 //            //AddEntry(r, compressedLen, 1, tcend-tcstart, ucBuffer[0]);
-			
+
 //            //Logger.WriteDebug("Adding packet.");
 //            if (cpt==CompressedPacketType.Group) {
 //                Sanity.IfTrueThrow(groupState!=GroupState.Open,"CompressAs(Group) called when groupState is"+groupState+" - Expected it to be Open.");
@@ -181,11 +181,11 @@
 //            lastCPacketSize=compressedLen;		//Set size.
 //            lastCPacketEnd=lastCPacketStart+lastCPacketSize;	//Set end so the next packet knows where to compress to.
 //            generatingState=GeneratingState.Ready;
-			
-			
+
+
 //            //Logger.WriteDebug("Done.");
 //        }
-		
+
 //        public static void SendTo(GameConn conn, bool discard) {
 //            Logger.WriteInfo(PacketSenderTracingOn, "SendTo("+conn+","+discard+")");
 //            //Requres generatingState == Ready and groupState==SingleBlocking. If discard is set,
@@ -198,7 +198,7 @@
 //                groupState=GroupState.Ready;
 //            }
 //        }
-		
+
 //        internal static void SendUncompressed(GameConn conn, bool discard) {
 //            Logger.WriteInfo(PacketSenderTracingOn, "SendUncompressed("+conn+","+discard+") : packet ID "+ucBuffer[0].ToString("x"));
 //            //Requires that generatingState == Generated.
@@ -239,7 +239,7 @@
 //            lastCPacketEnd=lastGroupEnd;
 //            groupState=GroupState.Ready;
 //        }
-		
+
 
 //        [Summary("This always discards the single-blocking-packet after sending.")]
 //        public static void SendToClientsWhoCanSee(Thing thing) {
@@ -311,7 +311,7 @@
 //            lastCPacketEnd=lastGroupEnd;
 //            groupState=GroupState.Ready;
 //        }
-		
+
 //        public static void DiscardLastPacket() {
 //            Logger.WriteInfo(PacketSenderTracingOn, "DiscardLastPacket()");
 //            //Requires generatingState==Ready, groupState==SingleBlocking, sets lastCPacketEnd=lastGroupEnd,
@@ -321,7 +321,7 @@
 //            lastCPacketEnd=lastGroupEnd;
 //            groupState=GroupState.Ready;
 //        }
-			
+
 //        internal static void DiscardAll() {
 //            Logger.WriteInfo(PacketSenderTracingOn, "DiscardAll()");
 //            //Requires generatingState==Ready || generatingState==Generated, groupState==Ready ||
@@ -339,15 +339,15 @@
 //            groupState=GroupState.Ready;
 //            generatingState=GeneratingState.Ready;
 //        }
-		
+
 //        internal static void DiscardUncompressed() {
 //            Logger.WriteInfo(PacketSenderTracingOn, "DiscardUncompressed()");
 //            //Requires generatingState==Generated, sets generatingState=Ready.
 //            Sanity.IfTrueThrow(generatingState!=GeneratingState.Generated, "DiscardUncompressed() called when generatingState is "+generatingState+" - Expected it to be Generated.");
 //            generatingState=GeneratingState.Ready;
 //        }
-		
-		
+
+
 //        /**
 //            This tests the Encode* methods in LowLevelOut.
 //            Note that this is in MediumLevelOut because it uses DiscardUncompressed, which is also in MediumLevelOut -
@@ -356,7 +356,7 @@
 //        [RegisterWithRunTests]
 //        public static void EncodingTests() {
 //            StartGenerating();
-			
+
 //            Logger.Show("TestSuite", "Testing void EncodeBytes(byte[] array, int start)");
 //            byte[] arr = new byte[256];
 //            for (int a=0; a<256; a++) {
@@ -370,7 +370,7 @@
 //                    }
 //                }
 //            }
-			
+
 //            Logger.Show("TestSuite", "Testing void EncodeBytes(byte[,] array, int firstIndex, int start)");
 //            byte[,] arr2 = new byte[256, 256];
 //            for (int a=0; a<256; a++) {
@@ -388,7 +388,7 @@
 //                    }
 //                }
 //            }
-			
+
 //            Logger.Show("TestSuite", "Testing void EncodeBytesReversed(byte[] array, int start) {");
 //            arr = new byte[256];
 //            for (int a=0; a<256; a++) {
@@ -402,7 +402,7 @@
 //                    }
 //                }
 //            }
-			
+
 //            Logger.Show("TestSuite", "Testing void EncodeBytesReversed(byte[,] array, int firstIndex, int start)");
 //            arr2 = new byte[256, 256];
 //            for (int a=0; a<256; a++) {
@@ -420,7 +420,7 @@
 //                    }
 //                }
 //            }
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeZeros(3, 15)");
 //            //Fill ucBuffer with non-zero junk.
 //            for (int a=0; a<256; a++) {
@@ -430,78 +430,78 @@
 //            }
 //            EncodeZeros(3, 15);
 //            Sanity.IfTrueThrow(ucBuffer[14]==0 || ucBuffer[15]!=0 || ucBuffer[16]!=0 || ucBuffer[17]!=0 || ucBuffer[18]==0, "The test of EncodeZeros failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeInt(-2032443317, 52)");
 //            int ival=-2032443317;
 //            EncodeInt(ival, 52);	//0x86DB604B
 //            Sanity.IfTrueThrow(ucBuffer[52]!=0x86 || ucBuffer[53]!=0xdb || ucBuffer[54]!=0x60 || ucBuffer[55]!=0x4b, "Test of EncodeInt("+ival+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeInt(2032443317, 59)");
 //            ival=2032443317;
 //            EncodeInt(ival, 59);	//0x79249FB5
 //            Sanity.IfTrueThrow(ucBuffer[59]!=0x79 || ucBuffer[60]!=0x24 || ucBuffer[61]!=0x9f || ucBuffer[62]!=0xb5, "Test of EncodeInt("+ival+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeUInt(2032443317, 41)");
 //            uint uival=2032443317;
 //            EncodeUInt(uival, 41);	//0x79249FB5
 //            Sanity.IfTrueThrow(ucBuffer[41]!=0x79 || ucBuffer[42]!=0x24 || ucBuffer[43]!=0x9f || ucBuffer[44]!=0xb5, "Test of EncodeUInt("+uival+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeUInt(4032443318, 77)");
 //            uival=4032443318;
 //            EncodeUInt(uival, 77);	//0xF05A33B6
 //            Sanity.IfTrueThrow(ucBuffer[77]!=0xf0 || ucBuffer[78]!=0x5a || ucBuffer[79]!=0x33 || ucBuffer[80]!=0xb6, "Test of EncodeUInt("+uival+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeShort(-31849, 33)");
 //            short sval=-31849;
 //            EncodeShort(sval, 33);	//0x8397
 //            Sanity.IfTrueThrow(ucBuffer[33]!=0x83 || ucBuffer[34]!=0x97, "Test of EncodeShort("+sval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeShort(31849, 24)");
 //            sval=31849;
 //            EncodeShort(sval, 24);	//0x7c69
 //            Sanity.IfTrueThrow(ucBuffer[24]!=0x7c || ucBuffer[25]!=0x69, "Test of EncodeShort("+sval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeUShort(31849, 79)");
 //            ushort usval=31849;
 //            EncodeUShort(usval, 79);	//0x7c69
 //            Sanity.IfTrueThrow(ucBuffer[79]!=0x7c || ucBuffer[80]!=0x69, "Test of EncodeUShort("+usval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeUShort(64724, 40)");
 //            usval=64724;
 //            EncodeUShort(usval, 40);	//0xfcd4
 //            Sanity.IfTrueThrow(ucBuffer[40]!=0xfc || ucBuffer[41]!=0xd4, "Test of EncodeUShort("+usval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeSByte(-120, 14)");
 //            sbyte sbval=-120;
 //            EncodeSByte(sbval, 14);	//0x88
 //            Sanity.IfTrueThrow(ucBuffer[14]!=0x88, "Test of EncodeSByte("+sbval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeSByte(52, 16)");
 //            sbval=52;
 //            EncodeSByte(sbval, 16);	//0x34
 //            Sanity.IfTrueThrow(ucBuffer[16]!=0x34, "Test of EncodeSByte("+sbval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeByte(52, 19)");
 //            byte bval=52;
 //            EncodeByte(bval, 19);	//0x34
 //            Sanity.IfTrueThrow(ucBuffer[19]!=0x34, "Test of EncodeByte("+bval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeByte(247, 20)");
 //            bval=247;
 //            EncodeByte(bval, 20);	//0xf7
 //            Sanity.IfTrueThrow(ucBuffer[20]!=0xf7, "Test of EncodeByte("+bval+") failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeBool(false, 4)");
 //            ucBuffer[4]=52;
 //            EncodeBool(false, 4);
 //            Sanity.IfTrueThrow(ucBuffer[4]!=0, "Test of EncodeBool(false) failed.");
-			
+
 //            Logger.Show("TestSuite", "Testing EncodeBool(true, 6)");
 //            ucBuffer[6]=71;
 //            EncodeBool(true, 6);
 //            Sanity.IfTrueThrow(ucBuffer[6]!=1, "Test of EncodeBool(true) failed.");
-			
-			
+
+
 //            Logger.Show("TestSuite (Encoding Tests)", "Not testing EncodeUnicodeString (No test has been written for it).");
 //            Logger.Show("TestSuite (Encoding Tests)", "Not testing EncodeString (No test has been written for it).");
 //            Logger.Show("TestSuite (Encoding Tests)", "Not testing EncodeCurMaxVals (No test has been written for it).");
@@ -511,11 +511,11 @@
 //            ival=-2032443317;
 //            EncodeUInt((uint) ival, 52);	//0x86DB604B
 //            Sanity.IfTrueThrow(ucBuffer[52]!=0x86 || ucBuffer[53]!=0xdb || ucBuffer[54]!=0x60 || ucBuffer[55]!=0x4b, "Test of EncodeUInt((uint)"+ival+") failed.");
-			
+
 //            DiscardUncompressed();
 //        }
-		
-		
+
+
 //        public static string ArrayToString(byte[] array) {
 //            string arrstr = "";
 //            int len=array.Length;
@@ -542,7 +542,7 @@
 //            }
 //            return "{"+arrstr+"}";
 //        }
-		
+
 //        [Conditional("TRACE")]
 //        private static void LogUCPacket() {
 //            byte[] array = ucBuffer;
@@ -576,6 +576,6 @@
 //            }
 //            Logger.Log(s);
 //        }
-		
+
 //    }
 //}

@@ -64,13 +64,13 @@ namespace SteamEngine {
 		internal static void RegisterImplementor(IDeepCopyImplementor implementor) {
 			Type type = implementor.HandledType;
 			if (implementors.ContainsKey(type)) {
-				throw new OverrideNotAllowedException("There is already a IDeepCopyImplementor ("+implementors[type]+") registered for handling the type "+type);
+				throw new OverrideNotAllowedException("There is already a IDeepCopyImplementor (" + implementors[type] + ") registered for handling the type " + type);
 			}
 			implementors[type] = implementor;
 		}
 
 		public static bool IsNotCopied(Type type) {
-			return (type.IsEnum 
+			return (type.IsEnum
 				|| ObjectSaver.IsSimpleSaveableType(type) //numbers, datetime, timespan, etc.
 				|| typeof(AbstractScript).IsAssignableFrom(type)
 				|| typeof(Region).IsAssignableFrom(type)
@@ -152,7 +152,7 @@ namespace SteamEngine {
 						implementor = new CopyImplementor_NoCopyNeeded();
 						implementors[type] = implementor;
 					} else {
-						throw new SEException("We don't know how to copy the type "+type);
+						throw new SEException("We don't know how to copy the type " + type);
 					}
 				}
 
@@ -172,7 +172,7 @@ namespace SteamEngine {
 							} catch (FatalException) {
 								throw;
 							} catch (Exception e) {
-								Logger.WriteError("While deep-copying object "+copier.copyFrom, e);
+								Logger.WriteError("While deep-copying object " + copier.copyFrom, e);
 							}
 						}
 					}
@@ -235,7 +235,7 @@ namespace SteamEngine {
 					deleg(copyFrom);
 					return;
 				}
-				throw new NonExistingObjectException("The object '"+copyFrom+"' has not been copied. Copy requested by "+deleg.Target);
+				throw new NonExistingObjectException("The object '" + copyFrom + "' has not been copied. Copy requested by " + deleg.Target);
 			}
 		}
 
@@ -259,7 +259,7 @@ namespace SteamEngine {
 					deleg(copyFrom, param);
 					return;
 				}
-				throw new NonExistingObjectException("The object '"+copyFrom+"' has not been copied. Copy requested by "+deleg.Target);
+				throw new NonExistingObjectException("The object '" + copyFrom + "' has not been copied. Copy requested by " + deleg.Target);
 			}
 		}
 
@@ -288,9 +288,9 @@ namespace SteamEngine {
 		internal static void UnloadScripts() {
 			Assembly scriptsAssembly = CompiledScripts.ClassManager.CoreAssembly;
 
-			Dictionary<Type,IDeepCopyImplementor> copiedList = new Dictionary<Type,IDeepCopyImplementor>(implementors);
+			Dictionary<Type, IDeepCopyImplementor> copiedList = new Dictionary<Type, IDeepCopyImplementor>(implementors);
 
-			foreach (KeyValuePair<Type,IDeepCopyImplementor> pair in copiedList) {
+			foreach (KeyValuePair<Type, IDeepCopyImplementor> pair in copiedList) {
 
 				IDeepCopyImplementor idci = pair.Value;
 				if (!(idci is CopyImplementor_UseICloneable)) {

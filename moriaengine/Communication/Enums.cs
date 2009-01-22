@@ -28,7 +28,7 @@ using SteamEngine.Common;
 namespace SteamEngine.Communication {
 
 	public enum EncryptionInitResult {
-		SuccessUseEncryption, 
+		SuccessUseEncryption,
 		SuccessNoEncryption,
 		NotEnoughData,
 		InvalidData //

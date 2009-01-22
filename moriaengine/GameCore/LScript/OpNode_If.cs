@@ -26,7 +26,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	
+
 	public class OpNode_If : OpNode, IOpNodeHolder {
 		//accepts
 		private OpNode[] conditions;
@@ -39,23 +39,23 @@ namespace SteamEngine.LScript {
 		//...
 		//else
 		//	elseBlock
-		
-		
+
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_If constructed = new OpNode_If(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-			
+
 			//LScript.DisplayTree(code);
-			
+
 			Production ifProduction = (Production) code;
 			ArrayList conditionsList = new ArrayList();
 			ArrayList blocksList = new ArrayList();
 			int n = code.GetChildCount();
-			for (int i = 0; i<n; i++) {
+			for (int i = 0; i < n; i++) {
 				Node node = ifProduction.GetChildAt(i);
-				if ((IsType(node, StrictConstants.IF_BEGIN))||(IsType(node, StrictConstants.ELSE_IF_BLOCK))) {
+				if ((IsType(node, StrictConstants.IF_BEGIN)) || (IsType(node, StrictConstants.ELSE_IF_BLOCK))) {
 					Production prod = (Production) node;//type IF_BEGIN or ELSE_IF_BLOCK, which are in this context equal
 					//skipping IF / ELSEIF
 					Node condition = prod.GetChildAt(1);
@@ -75,28 +75,28 @@ namespace SteamEngine.LScript {
 			if (conditionsList.Count != blocksList.Count) {
 				throw new Exception("assertion: conditionsList.Count != blocksList.Count.   This should not happen!");
 			}
-			Node elseNode = ifProduction.GetChildAt(n-3);
+			Node elseNode = ifProduction.GetChildAt(n - 3);
 			if (IsType(elseNode, StrictConstants.ELSE_BLOCK)) {
 				Production elseProd = (Production) elseNode;
 				Node elseCode = elseProd.GetChildAt(2);
 				constructed.elseBlock = LScript.CompileNode(constructed, elseCode, true);
 			}
-			
+
 			OpNode[] b = new OpNode[blocksList.Count];
 			blocksList.CopyTo(b);
 			constructed.blocks = b;
 			b = new OpNode[conditionsList.Count];
 			conditionsList.CopyTo(b);
 			constructed.conditions = b;
-			
+
 			return constructed;
 		}
-		
-		protected OpNode_If(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+
+		protected OpNode_If(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
-			
+
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(blocks, oldNode);
 			if (index < 0) {
@@ -114,13 +114,13 @@ namespace SteamEngine.LScript {
 				blocks[index] = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			bool wasRun = false;
 			object retVal = null;
-			for (int i = 0, n = conditions.Length; i<n; i++) {
+			for (int i = 0, n = conditions.Length; i < n; i++) {
 				if (TagMath.ToBoolean(conditions[i].Run(vars))) {
 					if (blocks[i] != null) {
 						retVal = blocks[i].Run(vars);
@@ -134,14 +134,14 @@ namespace SteamEngine.LScript {
 			}
 			return retVal;
 		}
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("If (");
 			str.Append(conditions[0].ToString()).Append(")").Append(Environment.NewLine);
 			if (blocks[0] != null) {
 				str.Append(blocks[0].ToString());
 			}
-			for (int i = 1, n = conditions.Length; i<n; i++) {
+			for (int i = 1, n = conditions.Length; i < n; i++) {
 				str.Append("ElseIf (").Append(conditions[i].ToString()).Append(")").Append(Environment.NewLine);
 				if (blocks[i] != null) {
 					str.Append(blocks[i].ToString());
@@ -155,4 +155,4 @@ namespace SteamEngine.LScript {
 			return str.ToString();
 		}
 	}
-}	
+}

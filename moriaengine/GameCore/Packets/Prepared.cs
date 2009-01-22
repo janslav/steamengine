@@ -12,12 +12,12 @@
 //using SteamEngine.Common;
 
 //namespace SteamEngine.Packets {
-	
+
 //    /**
 //        This class holds instances of already prepared packets.
 //    */
 //    public class Prepared {
-		
+
 //        /*
 //            TODO:
 //                PrepareEnableFeatures
@@ -25,7 +25,7 @@
 //                SendUpdateRange
 //                SendGoodMove, SendBadMove
 //        */
-		
+
 //        //private static FreedPacketGroup[] pickUpFailed;
 //        private static FreedPacketGroup[] godMode;
 //        private static FreedPacketGroup[] hackMove;
@@ -41,7 +41,7 @@
 
 //        internal static void Init() {
 //        }
-		
+
 //        static Prepared() {
 //            BoundPacketGroup pg = null;
 
@@ -51,21 +51,21 @@
 //            //    PacketSender.PreparePickupFailed((DenyResult)index);
 //            //    pickUpFailed[index] = pg.Free();
 //            //}
-			
+
 //            godMode = new FreedPacketGroup[2];
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareGodMode(false); godMode[0] = pg.Free();
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareGodMode(true); godMode[1] = pg.Free();
-			
+
 //            hackMove = new FreedPacketGroup[2];
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareHackMove(false); hackMove[0] = pg.Free();
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareHackMove(true); hackMove[1] = pg.Free();
-			
+
 //            targettingCursor = new FreedPacketGroup[2];
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareTargettingCursor(false); targettingCursor[0] = pg.Free();
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareTargettingCursor(true); targettingCursor[1] = pg.Free();
 
 //            //pg = PacketSender.NewBoundGroup(); PacketSender.PrepareCancelTargettingCursor(); cancelTargettingCursor = pg.Free();
-			
+
 //            //warMode = new FreedPacketGroup[2];
 //            //pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(false); warMode[0] = pg.Free();
 //            //pg = PacketSender.NewBoundGroup(); PacketSender.PrepareWarMode(true); warMode[1] = pg.Free();
@@ -74,13 +74,13 @@
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(0); deathMessages[0] = pg.Free();
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(1); deathMessages[1] = pg.Free();
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareDeathMessage(2); deathMessages[2] = pg.Free();
-			
+
 //            //seasonAndCursor = new FreedPacketGroup[5,2];
 //            //for (int index=0; index<5; index++) {
 //            //    ConstructSeasonAndCursor((Season) index, CursorType.Normal);
 //            //    ConstructSeasonAndCursor((Season) index, CursorType.Gold);
 //            //}
-			
+
 //            //rejectDeleteRequest = new FreedPacketGroup[8];
 //            //for (int index=0; index<6; index++) {
 //            //    pg = PacketSender.NewBoundGroup();
@@ -93,7 +93,7 @@
 //            //pg = PacketSender.NewBoundGroup();
 //            //PacketSender.PrepareRejectDeleteRequest(DeleteCharacterResult.Allow);
 //            //rejectDeleteRequest[7] = pg.Free();
-			
+
 //            failedLogin = new FreedPacketGroup[5];
 //            for (int index=0; index<5; index++) {
 //                pg = PacketSender.NewBoundGroup();
@@ -110,22 +110,22 @@
 
 //            pg = PacketSender.NewBoundGroup(); PacketSender.PrepareRequestCliVer(); requestClientVersion = pg.Free();
 //        }
-		
+
 //        //public static void SendPickupFailed(GameConn c, DenyResult msg) {
 //        //    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //        //    Sanity.IfTrueThrow((int) msg<0 || msg>DenyResult.Allow, "Invalid pickUpFailedMessage '"+msg+"'.");
 //        //    pickUpFailed[(int)msg].SendTo(c);
 //        //}
-		
+
 //        public static void SendGodMode(GameConn c) {
 //            SendGodMode(c, c.GodMode);
 //        }
-		
+
 //        public static void SendGodMode(GameConn c, bool enabled) {
 //            Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //            godMode[enabled?1:0].SendTo(c);
 //        }
-		
+
 //        //private static void ConstructSeasonAndCursor(Season season, CursorType cursor) {
 //        //    BoundPacketGroup pg = PacketSender.NewBoundGroup();
 //        //    PacketSender.PrepareSeasonAndCursor(season, cursor);
@@ -137,7 +137,7 @@
 //        //    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //        //    Sanity.IfTrueThrow((((byte) season) < 0 || ((byte) season) > 4), "Illegal season value.");
 //        //    Sanity.IfTrueThrow((cursor != CursorType.Normal && cursor != CursorType.Gold), "Illegal cursor value.");
-		
+
 //        //    seasonAndCursor[(int) season, (int) cursor].SendTo(c);
 //        //}
 
@@ -147,21 +147,21 @@
 //        //    Sanity.IfTrueThrow(facet>facetChange.Length, "Invalid facet "+facet+".");
 //        //    facetChange[facet].SendTo(c);
 //        //}
-		
+
 //        public static void SendHackMove(GameConn c) {
 //            SendHackMove(c, c.HackMove);
 //        }
-		
+
 //        public static void SendHackMove(GameConn c, bool enabled) {
 //            Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //            hackMove[enabled?1:0].SendTo(c);
 //        }
-		
+
 //        public static void SendTargettingCursor(GameConn c, bool ground) {
 //            Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //            targettingCursor[ground?1:0].SendTo(c);
 //        }
-		
+
 //        //public static void SendCancelTargettingCursor(GameConn c) {
 //        //    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //        //    cancelTargettingCursor.SendTo(c);
@@ -177,7 +177,7 @@
 //        //    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //        //    warMode[enabled?1:0].SendTo(c);
 //        //}
-		
+
 //        //public static void SendRejectDeleteRequest(GameConn c, DeleteCharacterResult msg) {
 //        //    Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //        //    int imsg = (int) msg;
@@ -194,7 +194,7 @@
 //            Sanity.IfTrueThrow((int)msg<0 || (int)msg>5, "Invalid FailedLoginReason '"+msg+"'.");
 //            failedLogin[(int)msg].SendTo(c);
 //        }
-		
+
 //        public static void SendRequestClientVersion(GameConn c) {
 //            Sanity.IfTrueThrow(c==null, "You can't send a packet to a null connection.");
 //            requestClientVersion.SendTo(c);

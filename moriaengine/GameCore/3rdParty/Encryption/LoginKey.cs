@@ -36,7 +36,7 @@
 //            new LoginKey("2.0.5", 0x2c0b97ac, 0xa310de7f),
 //            new LoginKey("2.0.4", 0x2df385bc, 0xa3ed127f),
 //        };
-		
+
 //        private uint m_Key1;
 //        private uint m_Key2;
 //        private String m_Name;

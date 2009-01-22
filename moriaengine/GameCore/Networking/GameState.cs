@@ -264,7 +264,7 @@ namespace SteamEngine.Networking {
 				return this.uid;
 			}
 		}
-		
+
 		internal byte RequestedUpdateRange {
 			get {
 				return this.requestedUpdateRange;
@@ -395,7 +395,7 @@ namespace SteamEngine.Networking {
 							}
 						} else {
 							AbstractCharacter self = this.CharacterNotNull;
-							if (self.CanSeeCoordinates(x, y, z, self.M)) {								
+							if (self.CanSeeCoordinates(x, y, z, self.M)) {
 								Map map = self.GetMap();
 								Static sta = map.GetStatic(x, y, z, model);
 								if (sta != null) {

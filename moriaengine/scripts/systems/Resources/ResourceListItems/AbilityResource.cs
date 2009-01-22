@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 		#region IResourceListItemNonMultiplicable Members
 		public bool IsResourcePresent(Character chr) {
 			//method returns number of ability points or 0 if we dont have the ability
-			return chr.GetAbility(abilityDef) >= number;			
+			return chr.GetAbility(abilityDef) >= number;
 		}
 		#endregion
 	}

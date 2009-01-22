@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts {
 #endif
 			}
 
-			return (iChance - (((iChance/2) * valDiff) / skillCheckVariance));
+			return (iChance - (((iChance / 2) * valDiff) / skillCheckVariance));
 		}
 	}
 }

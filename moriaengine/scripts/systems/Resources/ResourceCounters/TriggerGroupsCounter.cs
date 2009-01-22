@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Counter of triggergroups resources")]
 	public class TriggerGroupsCounter : ResourceCounter {
 		private TriggerGroup toLookFor;
-		
+
 		//internal TriggerGroupsCounter(TriggerGroup tgToLookFor, double desiredCount) : base(desiredCount) {
 		//	this.toLookFor = tgToLookFor;			
 		//}

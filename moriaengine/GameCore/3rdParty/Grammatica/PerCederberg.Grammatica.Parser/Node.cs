@@ -36,292 +36,292 @@ using System.IO;
 
 namespace PerCederberg.Grammatica.Parser {
 
-    /**
-     * An abstract parse tree node. This class is inherited by all
-     * nodes in the parse tree, i.e. by the token and production
-     * classes.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  1.2
-     */
-    public abstract class Node {
-        /**
-         * The parent node. 
-         */
-        private Node parent = null;
+	/**
+	 * An abstract parse tree node. This class is inherited by all
+	 * nodes in the parse tree, i.e. by the token and production
+	 * classes.
+	 *
+	 * @author   Per Cederberg, <per at percederberg dot net>
+	 * @version  1.2
+	 */
+	public abstract class Node {
+		/**
+		 * The parent node. 
+		 */
+		private Node parent = null;
 
-        /**
-         * The computed node values. 
-         */
-        private ArrayList values = null;
+		/**
+		 * The computed node values. 
+		 */
+		private ArrayList values = null;
 
-        /**
-         * Checks if this node is hidden, i.e. if it should not be
-         * visible outside the parser.
-         * 
-         * @return true if the node should be hidden, or
-         *         false otherwise
-         */
-        internal virtual bool IsHidden() {
-            return false;
-        }
+		/**
+		 * Checks if this node is hidden, i.e. if it should not be
+		 * visible outside the parser.
+		 * 
+		 * @return true if the node should be hidden, or
+		 *         false otherwise
+		 */
+		internal virtual bool IsHidden() {
+			return false;
+		}
 
-        /**
-         * Returns the node type id. This value is set as a unique
-         * identifier for each type of node, in order to simplify
-         * later identification.
-         * 
-         * @return the node type id
-         */
-        public abstract int GetId();
+		/**
+		 * Returns the node type id. This value is set as a unique
+		 * identifier for each type of node, in order to simplify
+		 * later identification.
+		 * 
+		 * @return the node type id
+		 */
+		public abstract int GetId();
 
-        /**
-         * Returns the node name.
-         * 
-         * @return the node name
-         */
-        public abstract string GetName();
+		/**
+		 * Returns the node name.
+		 * 
+		 * @return the node name
+		 */
+		public abstract string GetName();
 
-        /**
-         * The line number of the first character in this node. If the
-         * node has child elements, this value will be fetched from
-         * the first child.
-         * 
-         * @return the line number of the first character, or
-         *         -1 if not applicable
-         */
-        public virtual int GetStartLine() {
-            int  line;
-            
-            for (int i = 0; i < GetChildCount(); i++) {
-                line = GetChildAt(i).GetStartLine();
-                if (line >= 0) {
-                    return line;
-                }
-            }
-            return -1;
-        }
-    
-        /**
-         * The column number of the first character in this node. If
-         * the node has child elements, this value will be fetched
-         * from the first child.
-         * 
-         * @return the column number of the first token character, or
-         *         -1 if not applicable
-         */
-        public virtual int GetStartColumn() {
-            int  col;
-            
-            for (int i = 0; i < GetChildCount(); i++) {
-                col = GetChildAt(i).GetStartColumn();
-                if (col >= 0) {
-                    return col;
-                }
-            }
-            return -1;
-        }
-    
-        /**
-         * The line number of the last character in this node. If the
-         * node has child elements, this value will be fetched from
-         * the last child.
-         * 
-         * @return the line number of the last token character, or
-         *         -1 if not applicable
-         */
-        public virtual int GetEndLine() {
-            int  line;
-            
-            for (int i = GetChildCount() - 1; i >= 0; i--) {
-                line = GetChildAt(i).GetEndLine();
-                if (line >= 0) {
-                    return line;
-                }
-            }
-            return -1;
-        }
-    
-        /**
-         * The column number of the last character in this node. If
-         * the node has child elements, this value will be fetched
-         * from the last child.
-         * 
-         * @return the column number of the last token character, or
-         *         -1 if not applicable
-         */
-        public virtual int GetEndColumn() {
-            int  col;
-            
-            for (int i = GetChildCount() - 1; i >= 0; i--) {
-                col = GetChildAt(i).GetEndColumn();
-                if (col >= 0) {
-                    return col;
-                }
-            }
-            return -1;
-        }
+		/**
+		 * The line number of the first character in this node. If the
+		 * node has child elements, this value will be fetched from
+		 * the first child.
+		 * 
+		 * @return the line number of the first character, or
+		 *         -1 if not applicable
+		 */
+		public virtual int GetStartLine() {
+			int line;
 
-        /**
-         * Returns the parent node. 
-         * 
-         * @return the parent parse tree node
-         */
-        public Node GetParent() {
-            return parent;
-        }
+			for (int i = 0; i < GetChildCount(); i++) {
+				line = GetChildAt(i).GetStartLine();
+				if (line >= 0) {
+					return line;
+				}
+			}
+			return -1;
+		}
 
-        /**
-         * Sets the parent node.
-         * 
-         * @param parent         the new parent node
-         */
-        internal void SetParent(Node parent) {
-            this.parent = parent;
-        }
+		/**
+		 * The column number of the first character in this node. If
+		 * the node has child elements, this value will be fetched
+		 * from the first child.
+		 * 
+		 * @return the column number of the first token character, or
+		 *         -1 if not applicable
+		 */
+		public virtual int GetStartColumn() {
+			int col;
 
-        /**
-         * Returns the number of child nodes.
-         * 
-         * @return the number of child nodes
-         */
-        public virtual int GetChildCount() {
-            return 0;
-        }
+			for (int i = 0; i < GetChildCount(); i++) {
+				col = GetChildAt(i).GetStartColumn();
+				if (col >= 0) {
+					return col;
+				}
+			}
+			return -1;
+		}
 
-        /**
-         * Returns the child node with the specified index.
-         * 
-         * @param index          the child index, 0 <= index < count
-         * 
-         * @return the child node found, or 
-         *         null if index out of bounds
-         */
-        public virtual Node GetChildAt(int index) {
-            return null; 
-        }
-        
-        /**
-         * Returns the number of descendant nodes.
-         * 
-         * @return the number of descendant nodes
-         * 
-         * @since 1.2
-         */
-        public int GetDescendantCount() {
-            int  count = 0;
-        
-            for (int i = 0; i < GetChildCount(); i++) {
-                count += 1 + GetChildAt(i).GetDescendantCount();
-            }
-            return count;
-        }
+		/**
+		 * The line number of the last character in this node. If the
+		 * node has child elements, this value will be fetched from
+		 * the last child.
+		 * 
+		 * @return the line number of the last token character, or
+		 *         -1 if not applicable
+		 */
+		public virtual int GetEndLine() {
+			int line;
 
-        /**
-         * Returns the number of computed values associated with this
-         * node. Any number of values can be associated with a node
-         * through calls to AddValue().
-         *
-         * @return the number of values associated with this node
-         */
-        public int GetValueCount() {
-            if (values == null) {
-                return 0;
-            } else {
-                return values.Count;
-            }
-        }
+			for (int i = GetChildCount() - 1; i >= 0; i--) {
+				line = GetChildAt(i).GetEndLine();
+				if (line >= 0) {
+					return line;
+				}
+			}
+			return -1;
+		}
 
-        /**
-         * Returns a computed value of this node, if previously set. A
-         * value may be used for storing intermediate results in the
-         * parse tree during analysis.
-         *
-         * @param pos             the value position, 0 <= pos < count 
-         *
-         * @return the computed node value, or
-         *         null if not set
-         */
-        public object GetValue(int pos) {
-            if (values == null || pos < 0 || pos >= values.Count) {
-                return null;
-            } else {
-                return values[pos];
-            }
-        }
-    
-        /**
-         * Returns the list with all the computed values for this
-         * node. Note that the list is not a copy, so changes will
-         * affect the values in this node (as it is the same object).
-         *
-         * @return a list with all values, or
-         *         null if no values have been set 
-         */
-        public ArrayList GetAllValues() {
-            return values;
-        }
+		/**
+		 * The column number of the last character in this node. If
+		 * the node has child elements, this value will be fetched
+		 * from the last child.
+		 * 
+		 * @return the column number of the last token character, or
+		 *         -1 if not applicable
+		 */
+		public virtual int GetEndColumn() {
+			int col;
 
-        /**
-         * Adds a computed value to this node. The computed value may
-         * be used for storing intermediate results in the parse tree
-         * during analysis.
-         * 
-         * @param value          the node value
-         */
-        public void AddValue(object value) {
-            if (value != null) {
-                if (values == null) {
-                    values = new ArrayList();
-                }
-                values.Add(value);
-            }
-        }
-    
-        /**
-         * Adds a set of computed values to this node.
-         *
-         * @param values         the vector with node values
-         */
-        public void AddValues(ArrayList values) {
-        	if (values != null) {
-                for (int i = 0; i < values.Count; i++) {
-                    AddValue(values[i]);
-                }
-        	}
-        }
-        
-        /**
-         * Removes all computed values stored in this node.
-         */
-        public void RemoveAllValues() {
-            values = null;
-        }
+			for (int i = GetChildCount() - 1; i >= 0; i--) {
+				col = GetChildAt(i).GetEndColumn();
+				if (col >= 0) {
+					return col;
+				}
+			}
+			return -1;
+		}
 
-        /**
-         * Prints this node and all subnodes to the specified output 
-         * stream.
-         * 
-         * @param output         the output stream to use
-         */
-        public void PrintTo(TextWriter output) {
-            PrintTo(output, "");
-            output.Flush();
-        }
-    
-        /**
-         * Prints this node and all subnodes to the specified output 
-         * stream.
-         * 
-         * @param output         the output stream to use
-         * @param indent         the indentation string
-         */
-        private void PrintTo(TextWriter output, string indent) {
-            output.WriteLine(indent + ToString());
-            indent = indent + "  ";
-            for (int i = 0; i < GetChildCount(); i++) {
-                GetChildAt(i).PrintTo(output, indent);
-            }
-        }
-    }
+		/**
+		 * Returns the parent node. 
+		 * 
+		 * @return the parent parse tree node
+		 */
+		public Node GetParent() {
+			return parent;
+		}
+
+		/**
+		 * Sets the parent node.
+		 * 
+		 * @param parent         the new parent node
+		 */
+		internal void SetParent(Node parent) {
+			this.parent = parent;
+		}
+
+		/**
+		 * Returns the number of child nodes.
+		 * 
+		 * @return the number of child nodes
+		 */
+		public virtual int GetChildCount() {
+			return 0;
+		}
+
+		/**
+		 * Returns the child node with the specified index.
+		 * 
+		 * @param index          the child index, 0 <= index < count
+		 * 
+		 * @return the child node found, or 
+		 *         null if index out of bounds
+		 */
+		public virtual Node GetChildAt(int index) {
+			return null;
+		}
+
+		/**
+		 * Returns the number of descendant nodes.
+		 * 
+		 * @return the number of descendant nodes
+		 * 
+		 * @since 1.2
+		 */
+		public int GetDescendantCount() {
+			int count = 0;
+
+			for (int i = 0; i < GetChildCount(); i++) {
+				count += 1 + GetChildAt(i).GetDescendantCount();
+			}
+			return count;
+		}
+
+		/**
+		 * Returns the number of computed values associated with this
+		 * node. Any number of values can be associated with a node
+		 * through calls to AddValue().
+		 *
+		 * @return the number of values associated with this node
+		 */
+		public int GetValueCount() {
+			if (values == null) {
+				return 0;
+			} else {
+				return values.Count;
+			}
+		}
+
+		/**
+		 * Returns a computed value of this node, if previously set. A
+		 * value may be used for storing intermediate results in the
+		 * parse tree during analysis.
+		 *
+		 * @param pos             the value position, 0 <= pos < count 
+		 *
+		 * @return the computed node value, or
+		 *         null if not set
+		 */
+		public object GetValue(int pos) {
+			if (values == null || pos < 0 || pos >= values.Count) {
+				return null;
+			} else {
+				return values[pos];
+			}
+		}
+
+		/**
+		 * Returns the list with all the computed values for this
+		 * node. Note that the list is not a copy, so changes will
+		 * affect the values in this node (as it is the same object).
+		 *
+		 * @return a list with all values, or
+		 *         null if no values have been set 
+		 */
+		public ArrayList GetAllValues() {
+			return values;
+		}
+
+		/**
+		 * Adds a computed value to this node. The computed value may
+		 * be used for storing intermediate results in the parse tree
+		 * during analysis.
+		 * 
+		 * @param value          the node value
+		 */
+		public void AddValue(object value) {
+			if (value != null) {
+				if (values == null) {
+					values = new ArrayList();
+				}
+				values.Add(value);
+			}
+		}
+
+		/**
+		 * Adds a set of computed values to this node.
+		 *
+		 * @param values         the vector with node values
+		 */
+		public void AddValues(ArrayList values) {
+			if (values != null) {
+				for (int i = 0; i < values.Count; i++) {
+					AddValue(values[i]);
+				}
+			}
+		}
+
+		/**
+		 * Removes all computed values stored in this node.
+		 */
+		public void RemoveAllValues() {
+			values = null;
+		}
+
+		/**
+		 * Prints this node and all subnodes to the specified output 
+		 * stream.
+		 * 
+		 * @param output         the output stream to use
+		 */
+		public void PrintTo(TextWriter output) {
+			PrintTo(output, "");
+			output.Flush();
+		}
+
+		/**
+		 * Prints this node and all subnodes to the specified output 
+		 * stream.
+		 * 
+		 * @param output         the output stream to use
+		 * @param indent         the indentation string
+		 */
+		private void PrintTo(TextWriter output, string indent) {
+			output.WriteLine(indent + ToString());
+			indent = indent + "  ";
+			for (int i = 0; i < GetChildCount(); i++) {
+				GetChildAt(i).PrintTo(output, indent);
+			}
+		}
+	}
 }

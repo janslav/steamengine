@@ -21,10 +21,10 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_ship : CompiledTriggerGroup {
-		
+
 	}
 
 	public class t_multi : CompiledTriggerGroup {
-		
+
 	}
 }

@@ -25,31 +25,31 @@ namespace SteamEngine {
 	public abstract class AbstractScript : IUnloadable {
 
 		protected static Dictionary<string, AbstractScript> byDefname = new Dictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
-		
+
 		protected string defname;
 
 		protected bool unloaded = false;
-		
+
 		public virtual void Unload() {
 			unloaded = true;
 		}
 
 		public bool IsUnloaded {
-			get { 
-				return unloaded; 
+			get {
+				return unloaded;
 			}
 		}
 
 		public static void Bootstrap() {
 			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
 		}
-		
+
 		protected AbstractScript() {
 			defname = GetName();
 			if (byDefname.ContainsKey(defname)) {
-				throw new SEException("AbstractScript called "+LogStr.Ident(defname)+" already exists!");
+				throw new SEException("AbstractScript called " + LogStr.Ident(defname) + " already exists!");
 			}
-			byDefname[defname]=this;
+			byDefname[defname] = this;
 		}
 
 		protected AbstractScript(string defname) {
@@ -58,27 +58,27 @@ namespace SteamEngine {
 			}
 			this.defname = defname;
 			if (byDefname.ContainsKey(defname)) {
-				throw new SEException("AbstractScript called "+LogStr.Ident(defname)+" already exists!");
+				throw new SEException("AbstractScript called " + LogStr.Ident(defname) + " already exists!");
 			}
-			byDefname[defname]=this;
+			byDefname[defname] = this;
 		}
-		
+
 		public static AbstractScript Get(string defname) {
 			AbstractScript script;
 			byDefname.TryGetValue(defname, out script);
 			return script;
 		}
-		
+
 		public static void UnloadAll() {
-			foreach(AbstractScript gs in byDefname.Values) {
+			foreach (AbstractScript gs in byDefname.Values) {
 				gs.Unload();
 			}
 			byDefname.Clear();
 		}
-		
+
 		protected void ThrowIfUnloaded() {
 			if (unloaded) {
-				throw new UnloadedException("The "+this.GetType().Name+" '"+LogStr.Ident(defname)+"' is unloaded.");
+				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is unloaded.");
 			}
 		}
 

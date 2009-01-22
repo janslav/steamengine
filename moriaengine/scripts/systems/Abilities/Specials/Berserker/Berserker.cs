@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				damageModifier.CurrentValue = value;
 			}
-		}		
+		}
 
 		[SteamFunction("Berserker")]
 		[Summary("Switching on the berserker ability (if the player has the ability)")]
@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts {
 			if (attacker.CurrentSkillName != SkillName.Archery) { //archery is unmodified (we have sniper ability for rangers)
 				//if (attacker.Stam >= staminaConsumed) {
 				//	attacker.SysMessage("Kritický zásah!");
-					//taken from the moria berserker script
+				//taken from the moria berserker script
 				//	args.FinalDamage = args.FinalDamage * damageModifier;
 				//}
 			}

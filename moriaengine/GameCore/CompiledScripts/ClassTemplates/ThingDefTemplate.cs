@@ -41,9 +41,9 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		private void CreateImpl() {
 			CodeMemberMethod create = new CodeMemberMethod();
-			create.Name="CreateImpl";
-			create.Attributes=MemberAttributes.Family|MemberAttributes.Override; ;
-			create.ReturnType=new CodeTypeReference(typeof(Thing));
+			create.Name = "CreateImpl";
+			create.Attributes = MemberAttributes.Family | MemberAttributes.Override; ;
+			create.ReturnType = new CodeTypeReference(typeof(Thing));
 			create.Statements.Add(//return new "+name+"(x, y, z, m)
 				new CodeMethodReturnStatement(
 					new CodeObjectCreateExpression(
@@ -57,10 +57,10 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		private void Bootstrap() {
 			CodeMemberMethod init = new CodeMemberMethod();
-			init.Name="Bootstrap";
-			init.Attributes=MemberAttributes.Public|MemberAttributes.Static;
+			init.Name = "Bootstrap";
+			init.Attributes = MemberAttributes.Public | MemberAttributes.Static;
 			//if (!section.baseClassName.Equals("AbstractItem") && !section.baseClassName.Equals("AbstractCharacter")) {
-				init.Attributes |= MemberAttributes.New;
+			init.Attributes |= MemberAttributes.New;
 			//}
 			//init.Statements.Add(new CodeSnippetStatement("ThingDef.RegisterThingDef(typeof("+name+"Def), \""+name+"\");"));
 			init.Statements.Add(

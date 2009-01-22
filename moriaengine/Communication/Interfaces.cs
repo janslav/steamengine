@@ -60,7 +60,7 @@ namespace SteamEngine.Communication {
 		//where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
 		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
-		
+
 		IncomingPacket<TConnection, TState, TEndPoint> GetPacketImplementation(byte id, TConnection conn, TState state, out bool discardAfterReading);
 	}
 

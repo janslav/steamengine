@@ -47,8 +47,8 @@ namespace SteamEngine.Networking {
 			int[] packed = new int[length * 4];
 			while (length-- > 0) {
 				//try {
-					numBits = bitTable[bytesIn[offsetIn], 0];
-					value = bitTable[bytesIn[offsetIn++], 1];
+				numBits = bitTable[bytesIn[offsetIn], 0];
+				value = bitTable[bytesIn[offsetIn++], 1];
 				//} catch (Exception e) {
 				//    Console.WriteLine("Pack caught exception (inside) " + e);	//I wanted to see if these ever really get triggered - and they don't seem to. Go figure.
 				//    numBits = bitTable[bytesIn[InIdx] + 256, 0];

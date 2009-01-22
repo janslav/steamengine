@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public bool HandleSubclasses {
-			get { 
-				return true; 
+			get {
+				return true;
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int GetFieldsCount(object instance) {
-			return ((IList) instance).Count+1;
+			return ((IList) instance).Count + 1;
 		}
 
 		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return "["+index+"]";
+				return "[" + index + "]";
 			}
 
 			public override Type FieldType {
@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		#region ButtonDataFieldView (Clear)
 		public override string GetName(object target) {
-			return "Clear"; 
+			return "Clear";
 		}
 
 		public override void OnButton(object target) {

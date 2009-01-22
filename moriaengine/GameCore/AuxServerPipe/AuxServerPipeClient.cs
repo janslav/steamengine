@@ -9,7 +9,7 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
-	public class AuxServerPipeClient : Poolable, 
+	public class AuxServerPipeClient : Poolable,
 		IConnectionState<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
 
 		private static NamedPipeClientFactory<AuxServerPipeClient> clientFactory;
@@ -48,7 +48,7 @@ namespace SteamEngine.AuxServerPipe {
 				return connectedInstance;
 			}
 		}
-			 
+
 		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
 			NamedPipeConnection<AuxServerPipeClient> c =
 				clientFactory.Connect(Common.Tools.commonPipeName);
@@ -92,7 +92,7 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		private void Logger_OnConsoleWriteLine(string data) {
-			SendLogString(data+Environment.NewLine);
+			SendLogString(data + Environment.NewLine);
 		}
 
 		private void Logger_OnConsoleWrite(string data) {

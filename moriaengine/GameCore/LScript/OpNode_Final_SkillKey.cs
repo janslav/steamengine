@@ -31,9 +31,9 @@ namespace SteamEngine.LScript {
 		private OpNode arg;
 		private readonly int skillId;
 
-		internal OpNode_SkillKey_Set(IOpNodeHolder parent, string filename, 
+		internal OpNode_SkillKey_Set(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, int skillId, OpNode arg)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.skillId = skillId;
 		}
@@ -43,7 +43,7 @@ namespace SteamEngine.LScript {
 				arg = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -63,7 +63,7 @@ namespace SteamEngine.LScript {
 				//ch.Skills[skillId].RealValue = Convert.ToUInt16(result);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating SkillKey (skill id "+this.skillId+") expression", 
+				throw new InterpreterException("Exception while evaluating SkillKey (skill id " + this.skillId + ") expression",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -79,13 +79,13 @@ namespace SteamEngine.LScript {
 			return string.Concat(AbstractSkillDef.ById(skillId).Key, "=", arg);
 		}
 	}
-	
+
 	public class OpNode_SkillKey_Get : OpNode, ITriable {
 		private readonly int skillId;
 
-		internal OpNode_SkillKey_Get(IOpNodeHolder parent, string filename, 
+		internal OpNode_SkillKey_Get(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, int skillId)
-				: base(parent, filename, line, column, origNode) {
+			: base(parent, filename, line, column, origNode) {
 			this.skillId = skillId;
 		}
 
@@ -95,7 +95,7 @@ namespace SteamEngine.LScript {
 				return ch.GetSkill(skillId);
 				//return ch.Skills[skillId].RealValue;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while evaluating SkillKey (skill id "+this.skillId+") expression", 
+				throw new InterpreterException("Exception while evaluating SkillKey (skill id " + this.skillId + ") expression",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -110,5 +110,5 @@ namespace SteamEngine.LScript {
 			return AbstractSkillDef.ById(skillId).Key;
 		}
 	}
-	
-}	
+
+}

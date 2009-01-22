@@ -34,14 +34,15 @@ namespace SteamEngine {
 		static TagMath() {
 			new TagMath();
 		}
-		protected TagMath() : base() {
+		protected TagMath()
+			: base() {
 		}
-		
+
 		protected override bool ToBoolImpl(object arg) {
 			if (arg is Thing) {
-				return (((Thing)arg).Uid!=-1);
+				return (((Thing) arg).Uid != -1);
 			} else if (arg is AbstractAccount) {
-				return ((AbstractAccount)arg).IsDeleted;
+				return ((AbstractAccount) arg).IsDeleted;
 			} else if (arg is string) {
 				return ParseBoolean((string) arg);
 			} else {
@@ -49,34 +50,34 @@ namespace SteamEngine {
 			}
 		}
 
-        [Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
-        public static string SGetTag(TagHolder from, TagKey which) {
+		[Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
+		public static string SGetTag(TagHolder from, TagKey which) {
 			object tagValue = from.GetTag(which);
-			if(tagValue == null) 
+			if (tagValue == null)
 				return null; //return null
 
 			IConvertible convertibleVal = tagValue as IConvertible;
-			if(convertibleVal != null) {
+			if (convertibleVal != null) {
 				return convertibleVal.ToString(CultureInfo.InvariantCulture);
 			}
 			IFormattable formattableVal = tagValue as IFormattable;
-			if(formattableVal != null) {
-				return formattableVal.ToString(null,CultureInfo.InvariantCulture);
+			if (formattableVal != null) {
+				return formattableVal.ToString(null, CultureInfo.InvariantCulture);
 			}
 			//not available to transform to string (we dont want the ToString only!)
-			throw new SEException("Unexpected conversion attempt: "+tagValue.GetType().ToString()+"->string");			
-        }
+			throw new SEException("Unexpected conversion attempt: " + tagValue.GetType().ToString() + "->string");
+		}
 
 		[Summary("Try to obtain a uint16 (ushort) tag value or 0 if no tag has been found. Not using (int) cast " +
 				"so we are able to accept a non 'ushort' numbers such as uints, shorts etc.")]
-        public static ushort UShortGetTag(TagHolder from, TagKey which) {
-            return ConvertTools.ToUInt16(from.GetTag(which));
-        }
+		public static ushort UShortGetTag(TagHolder from, TagKey which) {
+			return ConvertTools.ToUInt16(from.GetTag(which));
+		}
 
-        [Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast "+
+		[Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast " +
 				"so we are able to accept a non 'int' numbers such as uints, shorts etc.")]
-        public static int IGetTag(TagHolder from, TagKey which) {
-            return ConvertTools.ToInt32(from.GetTag(which));
-        }
+		public static int IGetTag(TagHolder from, TagKey which) {
+			return ConvertTools.ToInt32(from.GetTag(which));
+		}
 	}
 }

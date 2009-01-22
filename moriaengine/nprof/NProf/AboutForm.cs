@@ -21,13 +21,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace NProf
-{
+namespace NProf {
 	/// <summary>
 	/// Summary description for AboutForm.
 	/// </summary>
-	public class AboutForm : System.Windows.Forms.Form
-	{
+	public class AboutForm : System.Windows.Forms.Form {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.RichTextBox richTextBox1;
 		private System.Windows.Forms.Button button1;
@@ -39,8 +37,7 @@ namespace NProf
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		public AboutForm()
-		{
+		public AboutForm() {
 			//
 			// Required for Windows Form Designer support
 			//
@@ -54,16 +51,13 @@ namespace NProf
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
+		protected override void Dispose(bool disposing) {
+			if (disposing) {
+				if (components != null) {
 					components.Dispose();
 				}
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -71,8 +65,7 @@ namespace NProf
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
-		{
+		private void InitializeComponent() {
 			this.label1 = new System.Windows.Forms.Label();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.button1 = new System.Windows.Forms.Button();
@@ -91,7 +84,7 @@ namespace NProf
 			// 
 			// richTextBox1
 			// 
-			this.richTextBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.richTextBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
 			this.richTextBox1.Location = new System.Drawing.Point(8, 40);
 			this.richTextBox1.Name = "richTextBox1";
 			this.richTextBox1.ReadOnly = true;
@@ -163,17 +156,14 @@ namespace NProf
 		}
 		#endregion
 
-		private void AboutForm_Load(object sender, System.EventArgs e)
-		{
-			using (StreamReader reader = new System.IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NProf.Resources.GPL.txt")))
-			{
+		private void AboutForm_Load(object sender, System.EventArgs e) {
+			using (StreamReader reader = new System.IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NProf.Resources.GPL.txt"))) {
 				richTextBox1.Text = reader.ReadToEnd();
 			}
 		}
 
-		private void linkLabel_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-		{
-			LinkLabel label = (LinkLabel)sender;
+		private void linkLabel_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e) {
+			LinkLabel label = (LinkLabel) sender;
 
 			string url = label.Text.Substring(e.Link.Start, e.Link.Length);
 

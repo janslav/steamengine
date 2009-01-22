@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 			capacity = 15;
 			heap = new Node<TNode, TPriority>[capacity];
 		}
-		
+
 		public void Clear() {
 			Array.Clear(heap, 0, count);
 			count = 0;
@@ -67,14 +67,14 @@ namespace SteamEngine.CompiledScripts {
 			version++;
 			return result;
 		}
-		
+
 		private void RemoveAt(int i) {
 			count--;
 			TrickleDown(i, heap[count]);
 			//heap[count] = default(TNode);
 			version++;
 		}
-		
+
 		public TNode Peek() {
 			if (count == 0) {
 				throw new InvalidOperationException();
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 			int parent = GetParent(index);
 			// note: (index > 0) means there is a parent
 
-			while ((index > 0) && 
+			while ((index > 0) &&
 					(heap[parent].priority.CompareTo(node.priority) > 0)) {
 				Node<TNode, TPriority> parentAStarNode = heap[parent];
 				heap[index] = parentAStarNode;
@@ -126,7 +126,7 @@ namespace SteamEngine.CompiledScripts {
 		private void TrickleDown(int index, Node<TNode, TPriority> node) {
 			int child = GetLeftChild(index);
 			while (child < count) {
-				if (((child + 1) < count) && 
+				if (((child + 1) < count) &&
 						(heap[child].priority.CompareTo(heap[child + 1].priority) > 0)) {
 					child++;
 				}
@@ -137,10 +137,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 			BubbleUp(index, node);
 		}
-        
+
 		public IEnumerator GetEnumerator() {
 			int startVersion = this.version;
-			for (int i = 0; i<count; i++) {
+			for (int i = 0; i < count; i++) {
 				if (startVersion != this.version) {
 					throw new InvalidOperationException();
 				}
@@ -148,8 +148,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public int Count { get {
-			return count;
-		} }
+		public int Count {
+			get {
+				return count;
+			}
+		}
 	}
 }

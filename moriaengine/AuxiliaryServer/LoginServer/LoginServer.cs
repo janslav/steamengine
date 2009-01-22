@@ -9,7 +9,8 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginServer : TCPServer<LoginClient> {
-		private LoginServer() : base(LoginServerProtocol.instance, MainClass.globalLock) {
+		private LoginServer()
+			: base(LoginServerProtocol.instance, MainClass.globalLock) {
 
 		}
 

@@ -446,7 +446,7 @@ namespace SteamEngine.Networking {
 			this.flaggedUid = flaggedUid;
 			this.gump = gump;
 		}
-		
+
 		public void PrepareSpellbook(uint flaggedUid) {
 			this.flaggedUid = flaggedUid;
 			this.gump = 0xffff;
@@ -1584,7 +1584,7 @@ namespace SteamEngine.Networking {
 
 			this.EncodeUShort((ushort) this.strings.Count);
 			foreach (string s in this.strings) {
-				this.EncodeUShort((ushort)s.Length);
+				this.EncodeUShort((ushort) s.Length);
 				this.EncodeBigEndianUnicodeString(s);
 			}
 		}
@@ -1881,7 +1881,7 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.action);
 		}
 	}
-	
+
 	public sealed class DisplayDeathActionOutPacket : GameOutgoingPacket {
 		uint charUid, corpseUid;
 
@@ -2045,7 +2045,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 	}
-	
+
 	public sealed class ClientVersionOutPacket : DynamicLengthOutPacket {
 		public override byte Id {
 			get { return 0xBD; }

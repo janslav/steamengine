@@ -31,22 +31,22 @@ namespace SteamEngine.CompiledScripts {
 		private static uint[] animsAvailableTranslate;
 
 		static AnimCalculator() {
-			animDuration = new float[256,256];
-			for (int numFrames=0; numFrames<256; numFrames++) {
-				for (int frameDelay=0; frameDelay<256; frameDelay++) {
-					animDuration[numFrames, frameDelay] = SlowAnimDuration((ushort)numFrames, (byte)frameDelay);
+			animDuration = new float[256, 256];
+			for (int numFrames = 0; numFrames < 256; numFrames++) {
+				for (int frameDelay = 0; frameDelay < 256; frameDelay++) {
+					animDuration[numFrames, frameDelay] = SlowAnimDuration((ushort) numFrames, (byte) frameDelay);
 				}
 			}
-			animsAvailableTranslate=new uint[32];
-			
+			animsAvailableTranslate = new uint[32];
+
 			//Fill animsAvailableTranslate with the power-of-two for each bit of animsAvailable.
-			uint code=1;
-			for (int anim=0; anim<32; anim++) {
-				animsAvailableTranslate[anim]=code;
-				code+=code;
+			uint code = 1;
+			for (int anim = 0; anim < 32; anim++) {
+				animsAvailableTranslate[anim] = code;
+				code += code;
 			}
 		}
-		
+
 		/**
 			Returns an estimate of how long UO should take to finish the anim.
 			The formula used is (.25*numFrames)+(.1*numFrames*frameDelay), which I got by timing how long it took to do
@@ -97,153 +97,153 @@ namespace SteamEngine.CompiledScripts {
 				a frameDelay parameter, it defaulted to 0.
 		*/
 		public static float AnimDuration(byte numFrames, byte frameDelay) {
-			return animDuration[numFrames,frameDelay];
+			return animDuration[numFrames, frameDelay];
 		}
-		
+
 		private static float SlowAnimDuration(ushort numFrames, byte frameDelay) {
-			return (.25f*numFrames)+(.1f*numFrames*frameDelay);
+			return (.25f * numFrames) + (.1f * numFrames * frameDelay);
 		}
 
 		public static bool CanPerformAnim(Character self, AnimalAnim anim) {
 			return CanPerformAnim(anim, self.AnimsAvailable);
 		}
 		public static bool CanPerformAnim(AnimalAnim anim, uint animsAvailable) {
-			return (animsAvailable&(animsAvailableTranslate[(int) anim]))>0;
+			return (animsAvailable & (animsAvailableTranslate[(int) anim])) > 0;
 		}
 		public static bool CanPerformAnim(Character self, MonsterAnim anim) {
 			return CanPerformAnim(anim, self.AnimsAvailable);
 		}
 		public static bool CanPerformAnim(MonsterAnim anim, uint animsAvailable) {
-			return (animsAvailable&(animsAvailableTranslate[(int) anim]))>0;
+			return (animsAvailable & (animsAvailableTranslate[(int) anim])) > 0;
 		}
 
 		public static AnimalAnim GetAnimalAnim(GenericAnim anim, uint animsAvailable) {
 			AnimalAnim realAnim = AnimalAnim.Walk;
 			switch (anim) {
-				case GenericAnim.Walk: 
-					realAnim=AnimalAnim.Walk;
+				case GenericAnim.Walk:
+					realAnim = AnimalAnim.Walk;
 					break;
-				case GenericAnim.Run: 
+				case GenericAnim.Run:
 					if (CanPerformAnim(AnimalAnim.Run, animsAvailable)) {
-						realAnim=AnimalAnim.Run;
+						realAnim = AnimalAnim.Run;
 					} else {
-						realAnim=AnimalAnim.Walk;
+						realAnim = AnimalAnim.Walk;
 					}
 					break;
 				case GenericAnim.StandStill:
 					if (CanPerformAnim(AnimalAnim.StandStill, animsAvailable)) {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					} else {
-						realAnim=AnimalAnim.Walk;
+						realAnim = AnimalAnim.Walk;
 					}
 					break;
-				case GenericAnim.RandomIdleAction: 
+				case GenericAnim.RandomIdleAction:
 					bool canPerformIdle1 = CanPerformAnim(AnimalAnim.IdleAction, animsAvailable);
 					bool canPerformIdle2 = CanPerformAnim(AnimalAnim.IdleAction2, animsAvailable);
 					if (canPerformIdle1 && canPerformIdle2) {
 						switch (Globals.dice.Next(2)) {
 							case 0:
-								realAnim=AnimalAnim.IdleAction;
+								realAnim = AnimalAnim.IdleAction;
 								break;
 							case 1:
-								realAnim=AnimalAnim.IdleAction2;
+								realAnim = AnimalAnim.IdleAction2;
 								break;
 						}
 					} else if (canPerformIdle1) {
-						realAnim=AnimalAnim.IdleAction;
+						realAnim = AnimalAnim.IdleAction;
 					} else if (canPerformIdle2) {
-						realAnim=AnimalAnim.IdleAction2;
+						realAnim = AnimalAnim.IdleAction2;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.IdleAction:
 					if (CanPerformAnim(AnimalAnim.IdleAction, animsAvailable)) {
-						realAnim=AnimalAnim.IdleAction;
+						realAnim = AnimalAnim.IdleAction;
 					} else if (CanPerformAnim(AnimalAnim.IdleAction2, animsAvailable)) {
-						realAnim=AnimalAnim.IdleAction2;
+						realAnim = AnimalAnim.IdleAction2;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.LookAround:
 					if (CanPerformAnim(AnimalAnim.IdleAction2, animsAvailable)) {
-						realAnim=AnimalAnim.IdleAction2;
+						realAnim = AnimalAnim.IdleAction2;
 					} else if (CanPerformAnim(AnimalAnim.IdleAction, animsAvailable)) {
-						realAnim=AnimalAnim.IdleAction;
+						realAnim = AnimalAnim.IdleAction;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
-				case GenericAnim.AttackStab: 
+				case GenericAnim.AttackStab:
 					if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
-						realAnim=AnimalAnim.Attack2;
+						realAnim = AnimalAnim.Attack2;
 					} else if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
-						realAnim=AnimalAnim.Attack;
+						realAnim = AnimalAnim.Attack;
 					} else {
 						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.AttackSwing:
-				case GenericAnim.AttackOverhead:				
+				case GenericAnim.AttackOverhead:
 				case GenericAnim.AttackShoot:
 				case GenericAnim.AttackBareHands:
 				case GenericAnim.Cast:
 					if (CanPerformAnim(AnimalAnim.Attack, animsAvailable)) {
-						realAnim=AnimalAnim.Attack;
+						realAnim = AnimalAnim.Attack;
 					} else if (CanPerformAnim(AnimalAnim.Attack2, animsAvailable)) {
-						realAnim=AnimalAnim.Attack2;
+						realAnim = AnimalAnim.Attack2;
 					} else {
 						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.GetHit:
 					if (CanPerformAnim(AnimalAnim.GetHit, animsAvailable)) {
-						realAnim=AnimalAnim.GetHit;
+						realAnim = AnimalAnim.GetHit;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.FallBackwards:
 					if (CanPerformAnim(AnimalAnim.Die, animsAvailable)) {
-						realAnim=AnimalAnim.Die;
+						realAnim = AnimalAnim.Die;
 					} else if (CanPerformAnim(AnimalAnim.Die2, animsAvailable)) {
-						realAnim=AnimalAnim.Die2;
+						realAnim = AnimalAnim.Die2;
 					} else if (CanPerformAnim(AnimalAnim.LieDown, animsAvailable)) {
-						realAnim=AnimalAnim.LieDown;
+						realAnim = AnimalAnim.LieDown;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.FallForwards:
 					if (CanPerformAnim(AnimalAnim.Die2, animsAvailable)) {
-						realAnim=AnimalAnim.Die2;
+						realAnim = AnimalAnim.Die2;
 					} else if (CanPerformAnim(AnimalAnim.Die, animsAvailable)) {
-						realAnim=AnimalAnim.Die;
+						realAnim = AnimalAnim.Die;
 					} else if (CanPerformAnim(AnimalAnim.LieDown, animsAvailable)) {
-						realAnim=AnimalAnim.LieDown;
+						realAnim = AnimalAnim.LieDown;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.Block:		//also represents Dodge
 					if (CanPerformAnim(AnimalAnim.Unknown, animsAvailable)) {
-						realAnim=AnimalAnim.Unknown;
+						realAnim = AnimalAnim.Unknown;
 					} else {
-						realAnim=AnimalAnim.StandStill;
+						realAnim = AnimalAnim.StandStill;
 					}
 					break;
 				case GenericAnim.Bow:
-					realAnim=AnimalAnim.Eat;
+					realAnim = AnimalAnim.Eat;
 					break;
 				case GenericAnim.Salute:
-					realAnim=AnimalAnim.Eat;
+					realAnim = AnimalAnim.Eat;
 					break;
 				case GenericAnim.Drink:	//also represents Eat
-					realAnim=AnimalAnim.Eat;
+					realAnim = AnimalAnim.Eat;
 					break;
 				default:
-					throw new SanityCheckException("Unknown generic anim "+anim);
+					throw new SanityCheckException("Unknown generic anim " + anim);
 			}
 			return realAnim;
 		}
@@ -252,22 +252,22 @@ namespace SteamEngine.CompiledScripts {
 			MonsterAnim realAnim = MonsterAnim.Walk;
 			switch (anim) {
 				case GenericAnim.Walk: {
-						realAnim=MonsterAnim.Walk;
+						realAnim = MonsterAnim.Walk;
 						break;
 					}
 				case GenericAnim.Run: {
 						if (CanPerformAnim(MonsterAnim.Fly, animsAvailable)) {
-							realAnim=MonsterAnim.Fly;
+							realAnim = MonsterAnim.Fly;
 						} else {
-							realAnim=MonsterAnim.Walk;
+							realAnim = MonsterAnim.Walk;
 						}
 						break;
 					}
 				case GenericAnim.StandStill: {
 						if (CanPerformAnim(MonsterAnim.StandStill, animsAvailable)) {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						} else {
-							realAnim=MonsterAnim.Walk;
+							realAnim = MonsterAnim.Walk;
 						}
 						break;
 					}
@@ -277,110 +277,110 @@ namespace SteamEngine.CompiledScripts {
 						if (canPerformIdle1 && canPerformIdle2) {
 							switch (Globals.dice.Next(2)) {
 								case 0:
-									realAnim=MonsterAnim.IdleAction;
+									realAnim = MonsterAnim.IdleAction;
 									break;
 								case 1:
-									realAnim=MonsterAnim.LookAround;
+									realAnim = MonsterAnim.LookAround;
 									break;
 							}
 						} else if (canPerformIdle1) {
-							realAnim=MonsterAnim.IdleAction;
+							realAnim = MonsterAnim.IdleAction;
 						} else if (canPerformIdle2) {
-							realAnim=MonsterAnim.LookAround;
+							realAnim = MonsterAnim.LookAround;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.IdleAction: {
 						if (CanPerformAnim(MonsterAnim.IdleAction, animsAvailable)) {
-							realAnim=MonsterAnim.IdleAction;
+							realAnim = MonsterAnim.IdleAction;
 						} else if (CanPerformAnim(MonsterAnim.LookAround, animsAvailable)) {
-							realAnim=MonsterAnim.LookAround;
+							realAnim = MonsterAnim.LookAround;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.LookAround: {
 						if (CanPerformAnim(MonsterAnim.LookAround, animsAvailable)) {
-							realAnim=MonsterAnim.LookAround;
+							realAnim = MonsterAnim.LookAround;
 						} else if (CanPerformAnim(MonsterAnim.IdleAction, animsAvailable)) {
-							realAnim=MonsterAnim.IdleAction;
+							realAnim = MonsterAnim.IdleAction;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.AttackSwing: {
 						if (CanPerformAnim(MonsterAnim.Attack, animsAvailable)) {
-							realAnim=MonsterAnim.Attack;
+							realAnim = MonsterAnim.Attack;
 						} else if (CanPerformAnim(MonsterAnim.Attack2, animsAvailable)) {
-							realAnim=MonsterAnim.Attack2;
+							realAnim = MonsterAnim.Attack2;
 						} else if (CanPerformAnim(MonsterAnim.Attack3, animsAvailable)) {
-							realAnim=MonsterAnim.Attack3;
+							realAnim = MonsterAnim.Attack3;
 						} else if (CanPerformAnim(MonsterAnim.Attack4, animsAvailable)) {
-							realAnim=MonsterAnim.Attack4;
+							realAnim = MonsterAnim.Attack4;
 						} else if (CanPerformAnim(MonsterAnim.Attack5, animsAvailable)) {
-							realAnim=MonsterAnim.Attack5;
+							realAnim = MonsterAnim.Attack5;
 						} else if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
-							realAnim=MonsterAnim.Attack6;
+							realAnim = MonsterAnim.Attack6;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.AttackStab: {
 						if (CanPerformAnim(MonsterAnim.Attack2, animsAvailable)) {
-							realAnim=MonsterAnim.Attack2;
+							realAnim = MonsterAnim.Attack2;
 						} else if (CanPerformAnim(MonsterAnim.Attack, animsAvailable)) {
-							realAnim=MonsterAnim.Attack;
+							realAnim = MonsterAnim.Attack;
 						} else if (CanPerformAnim(MonsterAnim.Attack3, animsAvailable)) {
-							realAnim=MonsterAnim.Attack3;
+							realAnim = MonsterAnim.Attack3;
 						} else if (CanPerformAnim(MonsterAnim.Attack4, animsAvailable)) {
-							realAnim=MonsterAnim.Attack4;
+							realAnim = MonsterAnim.Attack4;
 						} else if (CanPerformAnim(MonsterAnim.Attack5, animsAvailable)) {
-							realAnim=MonsterAnim.Attack5;
+							realAnim = MonsterAnim.Attack5;
 						} else if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
-							realAnim=MonsterAnim.Attack6;
+							realAnim = MonsterAnim.Attack6;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.AttackOverhead: {
 						if (CanPerformAnim(MonsterAnim.Attack3, animsAvailable)) {
-							realAnim=MonsterAnim.Attack3;
+							realAnim = MonsterAnim.Attack3;
 						} else if (CanPerformAnim(MonsterAnim.Attack, animsAvailable)) {
-							realAnim=MonsterAnim.Attack;
+							realAnim = MonsterAnim.Attack;
 						} else if (CanPerformAnim(MonsterAnim.Attack2, animsAvailable)) {
-							realAnim=MonsterAnim.Attack2;
+							realAnim = MonsterAnim.Attack2;
 						} else if (CanPerformAnim(MonsterAnim.Attack4, animsAvailable)) {
-							realAnim=MonsterAnim.Attack4;
+							realAnim = MonsterAnim.Attack4;
 						} else if (CanPerformAnim(MonsterAnim.Attack5, animsAvailable)) {
-							realAnim=MonsterAnim.Attack5;
+							realAnim = MonsterAnim.Attack5;
 						} else if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
-							realAnim=MonsterAnim.Attack6;
+							realAnim = MonsterAnim.Attack6;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.AttackShoot: {
 						if (CanPerformAnim(MonsterAnim.Attack4, animsAvailable)) {
-							realAnim=MonsterAnim.Attack4;
+							realAnim = MonsterAnim.Attack4;
 						} else if (CanPerformAnim(MonsterAnim.Attack5, animsAvailable)) {
-							realAnim=MonsterAnim.Attack5;
+							realAnim = MonsterAnim.Attack5;
 						} else if (CanPerformAnim(MonsterAnim.Attack, animsAvailable)) {
-							realAnim=MonsterAnim.Attack;
+							realAnim = MonsterAnim.Attack;
 						} else if (CanPerformAnim(MonsterAnim.Attack2, animsAvailable)) {
-							realAnim=MonsterAnim.Attack2;
+							realAnim = MonsterAnim.Attack2;
 						} else if (CanPerformAnim(MonsterAnim.Attack3, animsAvailable)) {
-							realAnim=MonsterAnim.Attack3;
+							realAnim = MonsterAnim.Attack3;
 						} else if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
-							realAnim=MonsterAnim.Attack6;
+							realAnim = MonsterAnim.Attack6;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
@@ -406,68 +406,68 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				case GenericAnim.FallBackwards: {
 						if (CanPerformAnim(MonsterAnim.FallBackwards, animsAvailable)) {
-							realAnim=MonsterAnim.FallBackwards;
+							realAnim = MonsterAnim.FallBackwards;
 						} else if (CanPerformAnim(MonsterAnim.FallForwards, animsAvailable)) {
-							realAnim=MonsterAnim.FallForwards;
+							realAnim = MonsterAnim.FallForwards;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.FallForwards: {
 						if (CanPerformAnim(MonsterAnim.FallForwards, animsAvailable)) {
-							realAnim=MonsterAnim.FallForwards;
+							realAnim = MonsterAnim.FallForwards;
 						} else if (CanPerformAnim(MonsterAnim.FallBackwards, animsAvailable)) {
-							realAnim=MonsterAnim.FallBackwards;
+							realAnim = MonsterAnim.FallBackwards;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.Block: {		//also represents Dodge
 						double dbl = Globals.dice.NextDouble();
 						if (dbl < 0.5 && CanPerformAnim(MonsterAnim.BlockLeft, animsAvailable)) {
-							realAnim=MonsterAnim.BlockLeft;
+							realAnim = MonsterAnim.BlockLeft;
 						} else if (CanPerformAnim(MonsterAnim.BlockRight, animsAvailable)) {
-							realAnim=MonsterAnim.BlockRight;
+							realAnim = MonsterAnim.BlockRight;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.Cast: //TODO? check if this makes sense
 				case GenericAnim.AttackBareHands: {
 						if (CanPerformAnim(MonsterAnim.Attack6, animsAvailable)) {
-							realAnim=MonsterAnim.Attack6;
+							realAnim = MonsterAnim.Attack6;
 						} else if (CanPerformAnim(MonsterAnim.Attack, animsAvailable)) {
-							realAnim=MonsterAnim.Attack;
+							realAnim = MonsterAnim.Attack;
 						} else if (CanPerformAnim(MonsterAnim.Attack2, animsAvailable)) {
-							realAnim=MonsterAnim.Attack2;
+							realAnim = MonsterAnim.Attack2;
 						} else if (CanPerformAnim(MonsterAnim.Attack3, animsAvailable)) {
-							realAnim=MonsterAnim.Attack3;
+							realAnim = MonsterAnim.Attack3;
 						} else if (CanPerformAnim(MonsterAnim.Attack4, animsAvailable)) {
-							realAnim=MonsterAnim.Attack4;
+							realAnim = MonsterAnim.Attack4;
 						} else if (CanPerformAnim(MonsterAnim.Attack5, animsAvailable)) {
-							realAnim=MonsterAnim.Attack5;
+							realAnim = MonsterAnim.Attack5;
 						} else {
-							realAnim=MonsterAnim.StandStill;
+							realAnim = MonsterAnim.StandStill;
 						}
 						break;
 					}
 				case GenericAnim.Bow: {
-						realAnim=MonsterAnim.StandStill;
+						realAnim = MonsterAnim.StandStill;
 						break;
 					}
 				case GenericAnim.Salute: {
-						realAnim=MonsterAnim.StandStill;
+						realAnim = MonsterAnim.StandStill;
 						break;
 					}
 				case GenericAnim.Drink: {	//also represents Eat
-						realAnim=MonsterAnim.StandStill;
+						realAnim = MonsterAnim.StandStill;
 						break;
 					}
 				default: {
-						throw new SanityCheckException("Unknown generic anim "+anim);
+						throw new SanityCheckException("Unknown generic anim " + anim);
 					}
 			}
 			return realAnim;
@@ -478,198 +478,198 @@ namespace SteamEngine.CompiledScripts {
 			switch (anim) {
 				case GenericAnim.Walk:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedWalk;
+						realAnim = HumanAnim.MountedWalk;
 					} else if (self.Flag_WarMode) {
-						realAnim=HumanAnim.WalkWarMode;
+						realAnim = HumanAnim.WalkWarMode;
 					} else if (self.WeaponAnimType != WeaponAnimType.BareHands) {
-						realAnim=HumanAnim.WalkArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
+						realAnim = HumanAnim.WalkArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
 					} else {
-						realAnim=HumanAnim.WalkUnarmed;
+						realAnim = HumanAnim.WalkUnarmed;
 					}
 					break;
 				case GenericAnim.Run:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedRun;
+						realAnim = HumanAnim.MountedRun;
 					} else if (self.WeaponAnimType != WeaponAnimType.BareHands) {
-						realAnim=HumanAnim.RunArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
+						realAnim = HumanAnim.RunArmed;	//TODO: Check this, see if it looks right with two-handed weapons, only a shield, etc.
 					} else {
-						realAnim=HumanAnim.RunUnarmed;
+						realAnim = HumanAnim.RunUnarmed;
 					}
 					break;
-				case GenericAnim.StandStill: 
+				case GenericAnim.StandStill:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedStandStill;
+						realAnim = HumanAnim.MountedStandStill;
 					} else if (self.Flag_WarMode) {
-						realAnim=HumanAnim.WarMode;
+						realAnim = HumanAnim.WarMode;
 					} else {
-						realAnim=HumanAnim.StandStill;
+						realAnim = HumanAnim.StandStill;
 					}
 					break;
 				case GenericAnim.RandomIdleAction:
 					if (self.Flag_Riding) {
 						double dbl = Globals.dice.NextDouble();
-						if (dbl<.25) {
-							realAnim=HumanAnim.MountedSalute;
-						} else if (dbl<.5) {
-							realAnim=HumanAnim.MountedBlock;
-						} else if (dbl<.75) {
-							realAnim=HumanAnim.MountedGetHit;
+						if (dbl < .25) {
+							realAnim = HumanAnim.MountedSalute;
+						} else if (dbl < .5) {
+							realAnim = HumanAnim.MountedBlock;
+						} else if (dbl < .75) {
+							realAnim = HumanAnim.MountedGetHit;
 						} else {
 							if (self.WeaponAnimType != WeaponAnimType.HeldInLeftHand) {
 								//This looks like slapping the horse, and that's what wolfpack calls it,
 								//but if you ask me, you shouldn't use it for an idle action unless you don't
 								//have a two-handed weapon equipped (or it will look like you're attacking).
-								realAnim=HumanAnim.MountedLeftHandAttack;
+								realAnim = HumanAnim.MountedLeftHandAttack;
 							} else {
 								//Let's see how this looks. IIRC, if you're mounted you hold two-handed weapons
 								//with only one hand, so this should look like slapping the horse too.
-								realAnim=HumanAnim.MountedRightHandAttack;
+								realAnim = HumanAnim.MountedRightHandAttack;
 							}
 						}
 					} else if (self.Flag_WarMode) {
-						realAnim=HumanAnim.WarMode;	//no idle actions when in war mode.
+						realAnim = HumanAnim.WarMode;	//no idle actions when in war mode.
 					} else {
 						double dbl = Globals.dice.NextDouble();
-						if (dbl<.5) {
-							realAnim=HumanAnim.LookAround;
+						if (dbl < .5) {
+							realAnim = HumanAnim.LookAround;
 						} else {
-							realAnim=HumanAnim.LookDown;
+							realAnim = HumanAnim.LookDown;
 						}
 					}
 					break;
-				case GenericAnim.IdleAction: 
+				case GenericAnim.IdleAction:
 					if (self.Flag_Riding) {
 						double dbl = Globals.dice.NextDouble();
-						if (dbl<.5) {
-							realAnim=HumanAnim.MountedSalute;
+						if (dbl < .5) {
+							realAnim = HumanAnim.MountedSalute;
 						} else {
 							if (self.WeaponAnimType != WeaponAnimType.HeldInLeftHand) {
 								//This looks like slapping the horse, and that's what wolfpack calls it,
 								//but if you ask me, you shouldn't use it for an idle action unless you don't
 								//have a two-handed weapon equipped (or it will look like you're attacking).
 								//Heh.
-								realAnim=HumanAnim.MountedLeftHandAttack;
+								realAnim = HumanAnim.MountedLeftHandAttack;
 							} else {
 								//Let's see how this looks. IIRC, if you're mounted you hold two-handed weapons
 								//with only one hand, so this should look like slapping the horse too.
-								realAnim=HumanAnim.MountedRightHandAttack;
+								realAnim = HumanAnim.MountedRightHandAttack;
 							}
 						}
 					} else if (self.Flag_WarMode) {
-						realAnim=HumanAnim.WarMode;	//no idle actions when in war mode.
+						realAnim = HumanAnim.WarMode;	//no idle actions when in war mode.
 					} else {
-						realAnim=HumanAnim.LookDown;
+						realAnim = HumanAnim.LookDown;
 					}
 					break;
 				case GenericAnim.LookAround:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedSalute;
+						realAnim = HumanAnim.MountedSalute;
 					} else if (self.Flag_WarMode) {
-						realAnim=HumanAnim.WarMode;	//no idle actions when in war mode.
+						realAnim = HumanAnim.WarMode;	//no idle actions when in war mode.
 					} else {
-						realAnim=HumanAnim.LookAround;
+						realAnim = HumanAnim.LookAround;
 					}
 					break;
 				case GenericAnim.AttackSwing:
 					if (self.Flag_Riding) {
 						if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
-							realAnim=HumanAnim.MountedLeftHandAttack;
+							realAnim = HumanAnim.MountedLeftHandAttack;
 						} else {
-							realAnim=HumanAnim.MountedRightHandAttack;
+							realAnim = HumanAnim.MountedRightHandAttack;
 						}
 					} else if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
-						realAnim=HumanAnim.LeftHandSwing;
+						realAnim = HumanAnim.LeftHandSwing;
 					} else {
-						realAnim=HumanAnim.RightHandSwing;
+						realAnim = HumanAnim.RightHandSwing;
 					}
 					break;
 				case GenericAnim.AttackStab:
 					if (self.Flag_Riding) {
 						if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
-							realAnim=HumanAnim.MountedLeftHandAttack;
+							realAnim = HumanAnim.MountedLeftHandAttack;
 						} else {
-							realAnim=HumanAnim.MountedRightHandAttack;
+							realAnim = HumanAnim.MountedRightHandAttack;
 						}
 					} else if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
-						realAnim=HumanAnim.LeftHandStab;
+						realAnim = HumanAnim.LeftHandStab;
 					} else {
-						realAnim=HumanAnim.RightHandStab;
+						realAnim = HumanAnim.RightHandStab;
 					}
 					break;
 				case GenericAnim.AttackOverhead:
 					if (self.Flag_Riding) {
 						if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
-							realAnim=HumanAnim.MountedLeftHandAttack;
+							realAnim = HumanAnim.MountedLeftHandAttack;
 						} else {
-							realAnim=HumanAnim.MountedRightHandAttack;
+							realAnim = HumanAnim.MountedRightHandAttack;
 						}
 					} else if (self.WeaponAnimType == WeaponAnimType.HeldInLeftHand) {
-						realAnim=HumanAnim.LeftHandOverhead;
+						realAnim = HumanAnim.LeftHandOverhead;
 					} else {
-						realAnim=HumanAnim.RightHandOverhead;
+						realAnim = HumanAnim.RightHandOverhead;
 					}
 					break;
 				case GenericAnim.AttackShoot:
 					if (self.WeaponAnimType == WeaponAnimType.XBow) {
 						if (self.Flag_Riding) {
-							realAnim=HumanAnim.MountedFireCrossbow;
+							realAnim = HumanAnim.MountedFireCrossbow;
 						} else {
-							realAnim=HumanAnim.FireCrossbow;
+							realAnim = HumanAnim.FireCrossbow;
 						}
 					} else {//what isnt xbow, is bow.
 						if (self.Flag_Riding) {
-							realAnim=HumanAnim.MountedFireBow;
+							realAnim = HumanAnim.MountedFireBow;
 						} else {
-							realAnim=HumanAnim.FireBow;
+							realAnim = HumanAnim.FireBow;
 						}
 					}
 					break;
 				case GenericAnim.GetHit:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedGetHit;
+						realAnim = HumanAnim.MountedGetHit;
 					} else {
-						realAnim=HumanAnim.GetHit;
+						realAnim = HumanAnim.GetHit;
 					}
 					break;
 				case GenericAnim.FallBackwards:
-					realAnim=HumanAnim.FallBackwards;
+					realAnim = HumanAnim.FallBackwards;
 					break;
 				case GenericAnim.FallForwards:
-					realAnim=HumanAnim.FallForwards;
+					realAnim = HumanAnim.FallForwards;
 					break;
 				case GenericAnim.Block:		//also represents Dodge
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedBlock;
+						realAnim = HumanAnim.MountedBlock;
 					} else {
-						realAnim=HumanAnim.Block;
+						realAnim = HumanAnim.Block;
 					}
 					break;
 				case GenericAnim.AttackBareHands:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedRightHandAttack;
+						realAnim = HumanAnim.MountedRightHandAttack;
 					} else {
-						realAnim=HumanAnim.AttackBareHands;
+						realAnim = HumanAnim.AttackBareHands;
 					}
 					break;
 				case GenericAnim.Bow:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedBlock;
+						realAnim = HumanAnim.MountedBlock;
 					} else {
-						realAnim=HumanAnim.Bow;
+						realAnim = HumanAnim.Bow;
 					}
 					break;
 				case GenericAnim.Salute:
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedSalute;
+						realAnim = HumanAnim.MountedSalute;
 					} else {
-						realAnim=HumanAnim.Salute;
+						realAnim = HumanAnim.Salute;
 					}
 					break;
 				case GenericAnim.Drink:	//also represents Eat
 					if (self.Flag_Riding) {
-						realAnim=HumanAnim.MountedSalute;
+						realAnim = HumanAnim.MountedSalute;
 					} else {
-						realAnim=HumanAnim.Drink;
+						realAnim = HumanAnim.Drink;
 					}
 					break;
 				case GenericAnim.Cast:
@@ -685,15 +685,15 @@ namespace SteamEngine.CompiledScripts {
 					}
 					break;
 				default:
-					throw new SanityCheckException("Unknown generic anim "+anim);
+					throw new SanityCheckException("Unknown generic anim " + anim);
 			}
 			return realAnim;
 		}
 
 		public static byte TranslateAnim(Character self, GenericAnim anim) {
 			byte realAnim = 0;
-			if ((byte) anim>=(byte) HumanAnim.NumAnims) {
-				Sanity.IfTrueThrow((byte) anim>0xff, "Cannot perform anim '"+anim+"', that number is too high.");
+			if ((byte) anim >= (byte) HumanAnim.NumAnims) {
+				Sanity.IfTrueThrow((byte) anim > 0xff, "Cannot perform anim '" + anim + "', that number is too high.");
 				realAnim = (byte) anim;
 			} else {
 				CharModelInfo cmi = self.CharModelInfo;
@@ -701,14 +701,14 @@ namespace SteamEngine.CompiledScripts {
 				CharAnimType bat = cmi.charAnimType;
 
 				if ((bat & CharAnimType.Human) == CharAnimType.Human) {
-					realAnim=(byte) GetHumanAnim(self, anim);
+					realAnim = (byte) GetHumanAnim(self, anim);
 				} else if ((bat & CharAnimType.Monster) == CharAnimType.Monster) {
-					realAnim=(byte) GetMonsterAnim(anim, animsAvailable);
+					realAnim = (byte) GetMonsterAnim(anim, animsAvailable);
 				} else if ((bat & CharAnimType.Animal) == CharAnimType.Animal) {
-					realAnim=(byte) GetAnimalAnim(anim, animsAvailable);
+					realAnim = (byte) GetAnimalAnim(anim, animsAvailable);
 				}
 			}
-			Logger.WriteDebug("Translated "+anim+" to "+realAnim);
+			Logger.WriteDebug("Translated " + anim + " to " + realAnim);
 			return realAnim;
 		}
 
@@ -808,7 +808,7 @@ namespace SteamEngine.CompiledScripts {
 		public static MonsterAnim GetMonsterRandomAttackAnim(uint animsAvailable) {
 			int count = 0;
 
-			for (MonsterAnim i = MonsterAnim.Attack1, n = MonsterAnim.Attack6; i<=n; i++) {
+			for (MonsterAnim i = MonsterAnim.Attack1, n = MonsterAnim.Attack6; i <= n; i++) {
 				if (CanPerformAnim(i, animsAvailable)) {
 					tempMonsterAnimArray[count] = i;
 					count++;
@@ -860,9 +860,9 @@ namespace SteamEngine.CompiledScripts {
 
 			double seconds = self.WeaponDelay.TotalSeconds;
 			byte frameDelay = 0;
-			seconds = seconds - (0.25*attackAnimFrames);
+			seconds = seconds - (0.25 * attackAnimFrames);
 			if (seconds > 0) {
-				frameDelay = (byte) (seconds / (.1*attackAnimFrames));
+				frameDelay = (byte) (seconds / (.1 * attackAnimFrames));
 			}
 
 			self.Anim(anim, frameDelay);

@@ -120,7 +120,7 @@ namespace SteamEngine {
 
 				return success;
 			} else if (target.IsEquipped) {
-				if (target.Z<AbstractCharacter.sentLayers) {
+				if (target.Z < AbstractCharacter.sentLayers) {
 					Thing container = target.TopObj();//the char that has this item equipped
 					if (this.CanSeeImpl(fromCoordinates, targetMapCoordinates, container)) {
 						return this.CanSeeVisibility(target);
@@ -246,7 +246,7 @@ namespace SteamEngine {
 		public virtual DenyResult CanOpenContainer(AbstractItem targetContainer) {
 			return DenyResult.Allow;
 		}
-	}	
+	}
 }
 
 namespace SteamEngine.Regions {

@@ -67,7 +67,7 @@ namespace SteamEngine.Networking {
 
 			//pg = PacketGroup.AcquireSingleUsePG();
 			//pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(ch.Season, ch.Cursor); //0xBC
-			
+
 			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
 			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
 			//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
@@ -84,7 +84,7 @@ namespace SteamEngine.Networking {
 
 			//PreparedPacketGroups.SendWarMode(conn, ch.Flag_WarMode);
 
-			
+
 			new DelayedResyncTimer(ch).DueInSeconds = 1;
 		}
 
@@ -104,13 +104,13 @@ namespace SteamEngine.Networking {
 
 					this.ch.Resync();
 
-					
+
 					state.WriteLine("Welcome to " + Globals.serverName);
 				}
 			}
 		}
 
-		public static void SendCharInfoWithPropertiesTo(AbstractCharacter viewer, GameState viewerState, 
+		public static void SendCharInfoWithPropertiesTo(AbstractCharacter viewer, GameState viewerState,
 			TCPConnection<GameState> viewerConn, AbstractCharacter target) {
 
 			DrawObjectOutPacket packet = Pool<DrawObjectOutPacket>.Acquire();

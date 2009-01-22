@@ -25,7 +25,7 @@ using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Regions;
 //using SteamEngine.PScript;
-	
+
 namespace SteamEngine {
 	public interface IThingFactory {
 		Thing Create(ushort x, ushort y, sbyte z, byte m);
@@ -49,10 +49,10 @@ namespace SteamEngine {
 		private static Dictionary<string, Type> thingDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		private static Dictionary<Type, ConstructorInfo> thingDefCtors = new Dictionary<Type, ConstructorInfo>();
 
-		
+
 		//Highest itemdef model #: 21384	(0x5388)	<-- That's a multi. The last real item is 0x3fff.
 		//Highest chardef model #: 987 (0x03db)
-		
+
 		//In case someone adds more on the end, we've set these higher.
 		//public const int MaxItemModels = 0x6000;
 		//public const int MaxCharModels = 0xf000;
@@ -63,8 +63,9 @@ namespace SteamEngine {
 		private static Dictionary<int, AbstractCharacterDef> charModelDefs = new Dictionary<int, AbstractCharacterDef>();
 		private static int highestItemModel = 0;
 		private static int highestCharModel = 0;
-		
-		internal ThingDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
+
+		internal ThingDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 			name = InitField_Typed("name", "", typeof(string));
 			color = InitField_Typed("color", 0, typeof(ushort));
 
@@ -82,22 +83,22 @@ namespace SteamEngine {
 				throw new ScriptException("Char or item? This should NOT happen!");
 			}
 		}
-		
-		public virtual string Name { 
-			get { 
+
+		public virtual string Name {
+			get {
 				return (string) name.CurrentValue;
-			} 
+			}
 			set {
 				name.CurrentValue = value;
 			}
 		}
-		
-		public ushort Model { 
+
+		public ushort Model {
 			get {
-				return (ushort) model.CurrentValue; 
-			} 
+				return (ushort) model.CurrentValue;
+			}
 			set {
-				model.CurrentValue = value; 
+				model.CurrentValue = value;
 			}
 		}
 
@@ -109,38 +110,38 @@ namespace SteamEngine {
 				color.CurrentValue = value;
 			}
 		}
-		
+
 		public float Weight {
-			get { 
-				return (float) weight.CurrentValue; 
-			} 
-			set { 
-				weight.CurrentValue = value; 
-			} 
+			get {
+				return (float) weight.CurrentValue;
+			}
+			set {
+				weight.CurrentValue = value;
+			}
 		}
-		
-		public int Height { 
-			get { 
-				return (int) height.CurrentValue; 
-			} 
+
+		public int Height {
+			get {
+				return (int) height.CurrentValue;
+			}
 			set {
 				height.CurrentValue = value;
 			}
 		}
-		
+
 		public override string ToString() {
-			if (model.CurrentValue==null) {
-				return Name+": "+defname+"//"+altdefname+" (null model!)";
+			if (model.CurrentValue == null) {
+				return Name + ": " + defname + "//" + altdefname + " (null model!)";
 			} else {
-				return Name+": "+defname+"//"+altdefname+" ("+model.CurrentValue+")";
+				return Name + ": " + defname + "//" + altdefname + " (" + model.CurrentValue + ")";
 			}
 		}
-		
+
 		public abstract bool IsItemDef { get; }
 		public abstract bool IsCharDef { get; }
-		
+
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			switch(param) {
+			switch (param) {
 				case "event":
 				case "events":
 				//case "type":
@@ -156,7 +157,7 @@ namespace SteamEngine {
 					break;
 			}
 		}
-		
+
 		internal Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
 			ThrowIfUnloaded();
 			return CreateImpl();
@@ -174,7 +175,7 @@ namespace SteamEngine {
 			p = p.TopPoint;
 			return Create(p.X, p.Y, p.Z, p.M);
 		}
-		
+
 		public Thing Create(Thing cont) {
 			ThrowIfUnloaded();
 			Thing retVal = CreateImpl();
@@ -221,7 +222,7 @@ namespace SteamEngine {
 				if (layer > 0) {
 					item.Trigger_EnterChar((AbstractCharacter) cont, layer);
 				} else {
-					throw new SEException("Item '"+ item + "' is equippable, but has Layer not set.");
+					throw new SEException("Item '" + item + "' is equippable, but has Layer not set.");
 				}
 			} else {
 				//MarkAsLimbo(item);
@@ -242,7 +243,7 @@ namespace SteamEngine {
 		protected virtual void On_Create(Thing t) {
 
 		}
-		
+
 		protected abstract Thing CreateImpl();
 
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
@@ -254,7 +255,7 @@ namespace SteamEngine {
 				} while (curNode != null);
 			}
 		}
-		
+
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
@@ -264,7 +265,7 @@ namespace SteamEngine {
 				} while (curNode != null);
 			}
 		}
-		
+
 		internal bool CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
@@ -282,7 +283,7 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
+
 		internal bool TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
@@ -309,7 +310,7 @@ namespace SteamEngine {
 			byDefname.TryGetValue(defname, out script);
 			return script as ThingDef;
 		}
-		
+
 		/**
 			This does NOT check Constants.
 			
@@ -325,42 +326,42 @@ namespace SteamEngine {
 		*/
 		public static ThingDef Get(int defnumber) {
 			ThingDef tdone = null;
-			tdone=FindCharDef(defnumber);
-			if (tdone==null) {
+			tdone = FindCharDef(defnumber);
+			if (tdone == null) {
 				return FindItemDef(defnumber);
 			} else {
 				return tdone;
 			}
 		}
-		
+
 		//for loading of thingdefs from .scp/.def scripts
 		public static Type GetDefTypeByName(string name) {
 			Type defType;
 			thingDefTypesByName.TryGetValue(name, out defType);
 			return defType;
 		}
-		
+
 		public static new bool ExistsDefType(string name) {
 			return thingDefTypesByName.ContainsKey(name);
 		}
-		
+
 		//checking type when loading...
 		public static Type GetDefTypeByThingType(Type thingType) {//
 			Type defType;
 			thingDefTypesByThingType.TryGetValue(thingType, out defType);
 			return defType;
 		}
-		
-		private static Type[] thingDefConstructorParamTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
-		
+
+		private static Type[] thingDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
 		//this should be typically called by the Bootstrap methods of scripted ThingDef
 		public static void RegisterThingDef(Type thingDefType, Type thingType) {
 			Type t;
 			if (thingDefTypesByThingType.TryGetValue(thingDefType, out t)) {
-				throw new OverrideNotAllowedException("ThingDef type "+LogStr.Ident(thingDefType.FullName)+" already has it's Thing type -"+t.FullName+".");
+				throw new OverrideNotAllowedException("ThingDef type " + LogStr.Ident(thingDefType.FullName) + " already has it's Thing type -" + t.FullName + ".");
 			}
 			if (thingTypesByThingDefType.TryGetValue(thingType, out t)) {
-				throw new OverrideNotAllowedException("Thing type "+LogStr.Ident(thingType.FullName)+" already has it's ThingDef type -"+t.FullName+".");
+				throw new OverrideNotAllowedException("Thing type " + LogStr.Ident(thingType.FullName) + " already has it's ThingDef type -" + t.FullName + ".");
 			}
 
 			ConstructorInfo ci = thingDefType.GetConstructor(thingDefConstructorParamTypes);
@@ -372,7 +373,7 @@ namespace SteamEngine {
 			thingDefTypesByName[thingDefType.Name] = thingDefType;
 			thingDefCtors[thingDefType] = MemberWrapper.GetWrapperFor(ci);
 		}
-		
+
 		/**
 			This does NOT check Constants.
 			
@@ -387,7 +388,7 @@ namespace SteamEngine {
 			itemModelDefs.TryGetValue(defnumber, out def);
 			return def;
 		}
-		
+
 		/**
 			This does NOT check Constants.
 			
@@ -402,63 +403,65 @@ namespace SteamEngine {
 			charModelDefs.TryGetValue(defnumber, out def);
 			return def;
 		}
-		
-		public static ICollection AllThingDefs { get {
-			return ThingDef.byDefname.Values;
-		} }
-		
-		internal static void StartingLoading() {
-			
+
+		public static ICollection AllThingDefs {
+			get {
+				return ThingDef.byDefname.Values;
+			}
 		}
-		
+
+		internal static void StartingLoading() {
+
+		}
+
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			Type thingDefType = null;
 			string typeName = input.headerType.ToLower();
 			string defname = input.headerName.ToLower();
 			//Console.WriteLine("loading section "+input.HeadToString());
 			//[typeName defname]
-						
-			bool isNumeric=false;
+
+			bool isNumeric = false;
 			//Attempt to convert defname to a uint.
-			
+
 			int defnum;
 			if (TagMath.TryParseInt32(defname, out defnum)) {
-				defname="0x"+defnum.ToString("x");
-				isNumeric=true;
+				defname = "0x" + defnum.ToString("x");
+				isNumeric = true;
 			}
-			
+
 			thingDefType = ThingDef.GetDefTypeByName(typeName);
-			if (thingDefType==null) {
-				throw new SEException("Type "+LogStr.Ident(typeName)+" does not exist.");
+			if (thingDefType == null) {
+				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
 			}
-			
+
 			if (thingDefType.IsAbstract) {
-				throw new SEException("The ThingDef Type "+LogStr.Ident(thingDefType)+" is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
+				throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
 			}
-			
+
 			if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
 				if (isNumeric) {
-					defname="i_"+defname;
+					defname = "i_" + defname;
 				}
 			} else if (thingDefType.IsSubclassOf(typeof(AbstractCharacterDef))) {
 				//is character
 				if (isNumeric) {
-					defname="c_"+defname;
+					defname = "c_" + defname;
 				}
 			} else {//this probably can not happen, but one is never too sure :)
-				throw new SEException("The ThingDef Type "+LogStr.Ident(thingDefType)+" is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
+				throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
 			}
 
 			AbstractScript def;
 			byDefname.TryGetValue(defname, out def);
 			ThingDef thingDef = def as ThingDef;
-			
+
 			if (thingDef == null) {
 				if (def != null) {//it isnt thingDef
-					throw new OverrideNotAllowedException("ThingDef "+LogStr.Ident(defname)+" has the same name as "+LogStr.Ident(def));
+					throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
 				} else {
 					ConstructorInfo cw = thingDefCtors[thingDefType];
-					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] {defname, input.filename, input.headerLine}, null);
+					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
 				}
 			} else if (thingDef.unloaded) {
 				if (thingDef.GetType() != thingDefType) {
@@ -467,34 +470,34 @@ namespace SteamEngine {
 				thingDef.unloaded = false;
 				UnRegisterThingDef(thingDef);//will be re-registered again
 			} else {
-				throw new OverrideNotAllowedException("ThingDef "+LogStr.Ident(defname)+" defined multiple times. Ignoring.");
+				throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
 			}
-			
+
 			thingDef.defname = defname;
 			byDefname[defname] = thingDef;
-			
+
 			thingDef.ClearTriggerGroups();//maybe clear other things too?
-			
+
 			if (isNumeric) {
 				if (thingDef is AbstractItemDef) {
-					if (defnum>highestItemModel) highestItemModel=defnum;
+					if (defnum > highestItemModel) highestItemModel = defnum;
 					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
 					itemModelDefs[defnum] = (AbstractItemDef) thingDef;
 				} else if (thingDef is AbstractCharacterDef) {
-					if (defnum>highestCharModel) highestCharModel=defnum;
+					if (defnum > highestCharModel) highestCharModel = defnum;
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
 					charModelDefs[defnum] = (AbstractCharacterDef) thingDef;
 				}
 			}
-		
+
 			//header done. now we have the def instantiated.
 			//now load the other fields
 			thingDef.LoadScriptLines(input);
-			
+
 			//now do load the trigger code. 
 			TriggerGroup tg = null;
-			if (input.TriggerCount>0) {
-				input.headerName = "t__"+defname+"__";
+			if (input.TriggerCount > 0) {
+				input.headerName = "t__" + defname + "__";
 				tg = ScriptedTriggerGroup.Load(input);
 				thingDef.AddTriggerGroup(tg);
 			}
@@ -504,28 +507,28 @@ namespace SteamEngine {
 				return new UnloadableGroup(thingDef, tg);
 			}
 		}
-		
+
 		private static void UnRegisterThingDef(ThingDef td) {
 			byDefname.Remove(td.Defname);
 			if (td.altdefname != null) {
 				byDefname.Remove(td.altdefname);
 			}
 		}
-		
+
 		internal static void LoadingFinished() {
 			//dump number of loaded instances?
-			Logger.WriteDebug("Highest itemdef model #: "+highestItemModel+" (0x"+highestItemModel.ToString("x")+")");
-			Logger.WriteDebug("Highest chardef model #: "+highestCharModel+" (0x"+highestCharModel.ToString("x")+")");
-			
+			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x") + ")");
+			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x") + ")");
+
 			int count = byDefname.Count;
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				int a = 0;
 				foreach (AbstractScript td in byDefname.Values) {
-					if ((a%100)==0) {
-						Logger.SetTitle("Resolving dupelists and multidata: "+((a*100)/count)+" %");
+					if ((a % 100) == 0) {
+						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
 					}
 					AbstractItemDef idef = td as AbstractItemDef;
-					if (idef!=null) {
+					if (idef != null) {
 						try {
 							AbstractItemDef dupeItem = idef.DupeItem;
 							if (dupeItem != null) {
@@ -552,14 +555,14 @@ namespace SteamEngine {
 			}
 			Logger.SetTitle("");
 		}
-		
+
 		internal static void ClearAll() {
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingDefTypesByName.Clear();
-			thingDefCtors.Clear(); 
+			thingDefCtors.Clear();
 
-			
+
 			//for (int idx=0; idx<MaxItemModels; idx++) {
 			//    itemModelDefs[idx]=null;
 			//}

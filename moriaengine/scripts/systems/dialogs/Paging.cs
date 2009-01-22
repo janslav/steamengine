@@ -19,17 +19,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Data source for all paging dialogs (those, where there are displayed larger "+
+	[Summary("Data source for all paging dialogs (those, where there are displayed larger " +
 			"collections of data that need to be divided to more pages")]
 	public interface IPageableCollection {
 		[Summary("Field for checking the OutOfBounds problem :)")]
 		int LineCount { get; }
 		[Summary("Returns an enumeration for a subset of data (for one single page)")]
-		IEnumerable GetPage(int firstLineIndex, int maxLinesOnPage);		
+		IEnumerable GetPage(int firstLineIndex, int maxLinesOnPage);
 	}
 
 	public interface IPageableCollection<T> : IPageableCollection {
-		new IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage);		
+		new IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage);
 	}
 
 	[Summary("Wrapper class for List<T> which allows us to use the paging")]
@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		#region IPageableCollection<T> Members
 		public IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage) {
-			return new Page(firstLineIndex, maxLinesOnPage, wrappedList);			
+			return new Page(firstLineIndex, maxLinesOnPage, wrappedList);
 		}
 		#endregion
 
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
-			return new Page(firstLineIndex, maxLinesOnPage, wrappedList);			
+			return new Page(firstLineIndex, maxLinesOnPage, wrappedList);
 		}
 		#endregion
 
@@ -76,10 +76,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 
-			[Summary("The main iteration method. Make checks if we are not exceeding the page boundaries"+
+			[Summary("The main iteration method. Make checks if we are not exceeding the page boundaries" +
 					"and check also if we are not exceeding the wrapped list boundaries...")]
 			public bool MoveNext() {
-				if(nextIndex < upperBound && nextIndex < wrappedList.Count) {
+				if (nextIndex < upperBound && nextIndex < wrappedList.Count) {
 					current = wrappedList[nextIndex];
 					nextIndex++; //prepare index for the next iteration round
 					return true;

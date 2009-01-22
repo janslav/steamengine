@@ -26,32 +26,32 @@ using System.Globalization;
 using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.LScript;
-	
+
 namespace SteamEngine {
 	public abstract class ScriptHolder {
 		public readonly string name;
 
 		internal bool unloaded = false;
 		internal TriggerGroup contTriggerGroup;
-		
+
 		internal bool lastRunSuccesful = false;
 		internal Exception lastRunException;
 
-        private static Dictionary<string,ScriptHolder> functionsByName = new Dictionary<string,ScriptHolder>(StringComparer.OrdinalIgnoreCase);
-		
+		private static Dictionary<string, ScriptHolder> functionsByName = new Dictionary<string, ScriptHolder>(StringComparer.OrdinalIgnoreCase);
+
 		public static ScriptHolder GetFunction(string name) {
 			ScriptHolder sh;
 			functionsByName.TryGetValue(name, out sh);
 			return sh;
 		}
-	
+
 		protected ScriptHolder(string name) {
 			if (String.IsNullOrEmpty(name)) {
 				this.name = this.GetName();
 			}
 			this.name = name;
 		}
-		
+
 		protected ScriptHolder() {
 			this.name = this.GetName();
 		}
@@ -65,9 +65,9 @@ namespace SteamEngine {
 				functionsByName[name] = this;
 				return;
 			}
-			throw new ServerException("ScriptHolder '"+name+"' already exists; Cannot create a new one with the same name.");
+			throw new ServerException("ScriptHolder '" + name + "' already exists; Cannot create a new one with the same name.");
 		}
-		
+
 		internal static void UnloadAll() {
 			functionsByName.Clear();
 		}
@@ -86,13 +86,13 @@ namespace SteamEngine {
 		public abstract string Description {
 			get;
 		}
-		
+
 		public abstract object Run(object self, ScriptArgs sa);
-		
+
 		public object Run(object self, params object[] args) {
 			return Run(self, new ScriptArgs(args));
 		}
-		
+
 		public object TryRun(object self, ScriptArgs sa) {
 			try {
 				return Run(self, sa);
@@ -103,20 +103,20 @@ namespace SteamEngine {
 			}
 			return null;
 		}
-		
+
 		public object TryRun(object self, params object[] args) {
 			return TryRun(self, new ScriptArgs(args));
 		}
 		protected virtual void Error(Exception e) {
 			Logger.WriteError(e);
 		}
-		
+
 		public string GetDecoratedName() {
 			if (contTriggerGroup == null) {
 				return name;
 			} else {
-				return contTriggerGroup.Defname+": @"+name;
+				return contTriggerGroup.Defname + ": @" + name;
 			}
-		}        
+		}
 	}
-}		
+}

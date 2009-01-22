@@ -19,7 +19,7 @@ using System;
 using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
-	
+
 	public class Brain_Dummy : CompiledTriggerGroup {	//Our script must extend 'Script'
 		//dummy brain, doesn't do anything. Used for default until we make real AI.
 

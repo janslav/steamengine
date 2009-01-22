@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class ImmediateAbilityDef : AbilityDef {
 		public ImmediateAbilityDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {			
-		}		
+			: base(defname, filename, headerLine) {
+		}
 	}
 }

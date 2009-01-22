@@ -90,10 +90,10 @@ namespace SteamEngine.CompiledScripts {
 			//role.InternalAddMember(chr); this is done when calling this method
 		}
 
-        [Summary("Find a list of characters for given role and remove the specified character from it " +
-                "then remove the role from the character's roles list ")]
+		[Summary("Find a list of characters for given role and remove the specified character from it " +
+				"then remove the role from the character's roles list ")]
 		[Return("true = chr is not member of role, false = it is")]
-        public static bool TryUnAssign(Character chr, Role role) {
+		public static bool TryUnAssign(Character chr, Role role) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 				if (rolesByKey.TryGetValue(key, out prevRole)) {
 					if (role == prevRole) {
 						Role.IRoleMembership membership = role.GetMembership(chr);
-						if (role.Trigger_DenyRemoveMember(chr, membership) == DenyResultRoles.Allow) {							
+						if (role.Trigger_DenyRemoveMember(chr, membership) == DenyResultRoles.Allow) {
 							if (rolesByKey.Count == 1) { //last role of that char
 								charactersRoles.Remove(chr);
 							} else {
@@ -195,15 +195,15 @@ namespace SteamEngine.CompiledScripts {
 			return EmptyReadOnlyGenericCollection<Role>.instance;
 		}
 
-        [Summary("Method for sending clients messages about the role adding/removing result")]
+		[Summary("Method for sending clients messages about the role adding/removing result")]
 		private static void SendRoleMemberManipulationMessage(Character whom, Role role, DenyResultRoles res) {
-            //first send the common message
-            switch (res) {
+			//first send the common message
+			switch (res) {
 				//...any possibilities here :-)
 				case DenyResultRoles.Deny_NoMessage:
-                    //no message here
-                    break;
-            }
-        }
+					//no message here
+					break;
+			}
+		}
 	}
 }

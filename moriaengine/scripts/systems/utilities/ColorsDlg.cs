@@ -29,15 +29,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		static readonly int columnsCnt = 10; //kolik sloupecku bude mit dialog?
 		static readonly int dlgWidth = 850; //sirka dialogu
-		
+
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int startingColor = Convert.ToInt32(args.ArgsArray[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			
+
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS*columnsCnt), lastColor);
-			
+			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS * columnsCnt), lastColor);
+
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
 			dlg.CreateBackground(dlgWidth);
@@ -59,14 +59,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//sloupecky - napred pripravime sirky
 			int[] columns = new int[columnsCnt];
-			for(int i = 0; i < columns.Length; i++) {
+			for (int i = 0; i < columns.Length; i++) {
 				//columns[i] = dlgWidth / columnsCnt;
 				columns[i] = 80;
 			}
 			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, columns));
 			int colorCntr = firstiVal; //zacneme od te, ktera ma byt na strance prvni
-			for(int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
-				for(int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor ; j++, colorCntr++) { //a v nem kazdy radek
+			for (int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
+				for (int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor; j++, colorCntr++) { //a v nem kazdy radek
 					//vlozit priklad jedne pouzite barvy (dokud nedojdou barvy)
 					//dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + String.Format("{0:X2}", colorCntr) + ")");
 					dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + colorCntr + ")");
@@ -81,38 +81,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if(gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-				switch(gr.pressedButton) {
-                    case 0: //exit
+			if (gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
+				switch (gr.pressedButton) {
+					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
-                        break;
-                    case 1: //vybrat prvni barvu
-						args.ArgsArray[0] = (int)gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
+						break;
+					case 1: //vybrat prvni barvu
+						args.ArgsArray[0] = (int) gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
 						args.SetTag(ImprovedDialog.pagingIndexTK, (int) gr.GetNumberResponse(10)); //ta bude zaroven prvni na strance
 						//args.ArgsArray[1] = (int)gr.GetNumberResponse(10);
 						DialogStacking.ResendAndRestackDialog(gi);
-                        break;
-                }
-			} else if(ImprovedDialog.PagingButtonsHandled(gi, gr, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
+						break;
+				}
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//zde je sloupecku vice (columnsCnt, viz nahore)
 				return;
-			} 
+			}
 		}
 
 		[Summary("Prepare an array of colors to be displayed")]
-		private int[] prepareColorList(int startingColor) {			
+		private int[] prepareColorList(int startingColor) {
 			int[] retArr = new int[lastColor - startingColor + 1];
-			for(int i = startingColor, j=0; i <= lastColor; i++,j++) {
+			for (int i = startingColor, j = 0; i <= lastColor; i++, j++) {
 				retArr[j] = i;
 			}
 			return retArr;
 		}
 
-		[Summary("Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)"+
+		[Summary("Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)" +
 				"or with one parameter (number of color which will be taken as the first in the dialog)")]
 		[SteamFunction]
 		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
-			if(text == null || text.Args.Length == 0) {
+			if (text == null || text.Args.Length == 0) {
 				DialogArgs newArgs = new DialogArgs(0); //zaciname od 0. barvy
 				newArgs.SetTag(ImprovedDialog.pagingIndexTK, 0); //prvni na strance bude ta 0.
 				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
@@ -121,6 +121,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				newArgs.SetTag(ImprovedDialog.pagingIndexTK, Convert.ToInt32(text.argv[0])); //prvni na strance bude ta zvolena
 				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			}
-		}	
+		}
 	}
 }

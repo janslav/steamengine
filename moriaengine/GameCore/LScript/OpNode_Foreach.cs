@@ -15,13 +15,13 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;                        
-using System.Net;                    
-using System.Net.Sockets;            
-using System.Text;                   
-using System.IO;                     
-using System.Collections;            
-using System.Reflection;             
+using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.IO;
+using System.Collections;
+using System.Reflection;
 using System.Globalization;
 using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
@@ -32,15 +32,15 @@ namespace SteamEngine.LScript {
 		private string localName;//just for the ToString()
 		private OpNode enumerableNode;
 		private OpNode blockNode;//can be null
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Foreach constructed = new OpNode_Foreach(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-			
+
 			//LScript.DisplayTree(code);
-			
+
 			Production mainProd = (Production) code;
 			Production headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOREACH_HEADER_CODE or FOREACH_HEADER_IN_PARENS
 			string localName = GetLocalName(headProd.GetChildAt(0));
@@ -52,7 +52,7 @@ namespace SteamEngine.LScript {
 			}
 			return constructed;
 		}
-		
+
 		private static string GetLocalName(Node node) {
 			if (node is Token) {
 				return ((Token) node).GetImage().Trim();
@@ -60,7 +60,7 @@ namespace SteamEngine.LScript {
 				return ((Token) node.GetChildAt(2)).GetImage().Trim();
 			}
 		}
-		
+
 		private static Production GetHeaderCode(Node node) {
 			if (IsType(node, StrictConstants.FOREACH_HEADER_CODE)) {
 				return (Production) node;
@@ -70,12 +70,12 @@ namespace SteamEngine.LScript {
 				throw new Exception("Unexpected node. This should not happen.");
 			}
 		}
-		
-		private OpNode_Foreach(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+
+		private OpNode_Foreach(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
-			
+
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (enumerableNode == oldNode) {
 				enumerableNode = newNode;
@@ -85,9 +85,9 @@ namespace SteamEngine.LScript {
 				blockNode = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			if (blockNode != null) {
 				object retVal = null;
@@ -99,7 +99,7 @@ namespace SteamEngine.LScript {
 						retVal = blockNode.Run(vars);
 					}
 				} else {
-					throw new InterpreterException("Result of the expression '"+LogStr.Ident(enumerableNode)+"' is not an IEnumerable instance", 
+					throw new InterpreterException("Result of the expression '" + LogStr.Ident(enumerableNode) + "' is not an IEnumerable instance",
 						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
 				}
 				return retVal;
@@ -107,9 +107,9 @@ namespace SteamEngine.LScript {
 				return null;//if there is no code to run, we dont do anything.
 			}
 		}
-		
+
 		public override string ToString() {
-			return String.Concat("Foreach (", localName, " in ", enumerableNode, ")", 
+			return String.Concat("Foreach (", localName, " in ", enumerableNode, ")",
 				Environment.NewLine, blockNode, Environment.NewLine, "endforeach");
 		}
 	}

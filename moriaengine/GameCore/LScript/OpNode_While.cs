@@ -30,41 +30,41 @@ namespace SteamEngine.LScript {
 		//accepts
 		private OpNode condition;
 		private OpNode code = null;
-		
+
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine()+LScript.startLine;
+			int line = code.GetStartLine() + LScript.startLine;
 			int column = code.GetStartColumn();
 			OpNode_While constructed = new OpNode_While(
 				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
-			
+
 			//LScript.DisplayTree(code);
-			
+
 			Production whileProduction = (Production) code;
 			Node conditionNode = whileProduction.GetChildAt(1);
 			constructed.condition = LScript.CompileNode(constructed, conditionNode, true);
-			
+
 			Node codeNode = whileProduction.GetChildAt(3);
 			if (!IsType(conditionNode, StrictConstants.ENDWHILE)) {
 				constructed.code = LScript.CompileNode(constructed, codeNode, true);
 			}
 			return constructed;
 		}
-		
-		protected OpNode_While(IOpNodeHolder parent, string filename, int line, int column, Node origNode) 
+
+		protected OpNode_While(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
-			
+
 		}
-		
+
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (condition == oldNode) {
 				condition = newNode;
 			} else if (code == oldNode) {
 				code = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node "+oldNode+" at "+this+"  with. This should not happen.");
+				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
-		
+
 		internal override object Run(ScriptVars vars) {
 			object retVal = null;
 			if (code == null) {
@@ -78,7 +78,7 @@ namespace SteamEngine.LScript {
 			}
 			return retVal;
 		}
-		
+
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("While (");
 			str.Append(condition.ToString()).Append(")").Append(Environment.NewLine);
@@ -89,4 +89,4 @@ namespace SteamEngine.LScript {
 			return str.ToString();
 		}
 	}
-}	
+}

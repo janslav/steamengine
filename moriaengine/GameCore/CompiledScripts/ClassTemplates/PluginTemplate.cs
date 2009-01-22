@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			CodeConstructor constructor = new CodeConstructor();
 			constructor.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(Persistence.LoadingInitializerAttribute))));
-			constructor.Attributes=MemberAttributes.Public|MemberAttributes.Final;
+			constructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			generatedType.Members.Add(constructor);
 		}
 	}
