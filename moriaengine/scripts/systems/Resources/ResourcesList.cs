@@ -35,10 +35,10 @@ namespace SteamEngine.CompiledScripts {
 				resourceItemsList.Add(newItem);
 				//put the new item also to the special sublist
 				IResourceListItemMultiplicable castItm = newItem as IResourceListItemMultiplicable;
-				if(newItem != null) {
+				if (newItem != null) {
 					multiplicablesSubList.Add(castItm);
 					return;
-				} 
+				}
 				IResourceListItemNonMultiplicable castItm2 = newItem as IResourceListItemNonMultiplicable;
 				if (newItem != null) {
 					//this wil be the rest of resources for now, 
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[Summary("Check if character has all resources from the resource list. "+
+		[Summary("Check if character has all resources from the resource list. " +
 				"in case some resource is missing, it is set to the output variable.")]
 		public bool HasResourcesPresent(Character chr, ResourcesLocality where, out IResourceListItem missingResource) {
 			//first check non-multiplicables (these are easy to check (usually some "Has..." method))
@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 			return true; //all resources present
 		}
 
-		[Summary("Consume the whole resource list from the character (once) "+
+		[Summary("Consume the whole resource list from the character (once) " +
 				"in case some resource is missing, it is set to the output variable.")]
 		public bool ConsumeResourcesOnce(Character chr, ResourcesLocality where, out IResourceListItem missingResource) {
 			if (!CheckNonMultiplicableItems(chr, out missingResource)) {
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Consume the whole resource list from the character as many times as possible, return information " +
-				"about how many times it has been consumed "+
+				"about how many times it has been consumed " +
 				".In case some resource is missing, it is set to the output variable.")]
 		public int ConsumeResources(Character chr, ResourcesLocality where, out IResourceListItem missingResource) {
 			if (!CheckNonMultiplicableItems(chr, out missingResource)) {
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 			toWho.SysMessage("Chybějící resource: " + missingItem.DesiredCount + " " + missingItem.Definition);
 		}
 
-		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]		
+		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
 		public List<IResourceListItemMultiplicable> MultiplicablesSublist {
 			get {
 				return multiplicablesSubList;
