@@ -64,19 +64,19 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Periodically check stats and regenerate computed amount of points (if any)")]
 		public void On_Timer() {
-			Character holder = (Character)this.Cont;
+			Character holder = (Character) this.Cont;
 
 			//pre read necessary fields:
 			PreSetFields(holder);
 
-            if (!ModifyAnything()) {
-                //delete the plugin for now. it will be renewed when hits/mana/stamina lowers
+			if (!ModifyAnything()) {
+				//delete the plugin for now. it will be renewed when hits/mana/stamina lowers
 				//or when the regenerations get some point...
-				Delete();                
-            }
-			
-            double timeElapsed = Globals.TimeInSeconds - lastServerTime;
-			
+				Delete();
+			}
+
+			double timeElapsed = Globals.TimeInSeconds - lastServerTime;
+
 			bool modifyAllStats = ModifyAllStats();//first check if we will modify all three stats
 
 			//count the number of modified stats points (if any!)
@@ -153,21 +153,21 @@ namespace SteamEngine.CompiledScripts {
 			lastServerTime = Globals.TimeInSeconds; //remember the last usage
 		}
 
-        //check if we are to modify all three stats or just one or two or none
-        private bool ModifyAllStats() {
-            if (hits == maxHits || mana == maxMana || stam == maxStam) {
-                //some stat is on its maximum
-                return false;
-            }
-            if (hitsRegenSpeed == 0 || stamRegenSpeed == 0 || manaRegenSpeed == 0) { //or some regen is 0
-                return false;
-            }
-            return true;
-        }
+		//check if we are to modify all three stats or just one or two or none
+		private bool ModifyAllStats() {
+			if (hits == maxHits || mana == maxMana || stam == maxStam) {
+				//some stat is on its maximum
+				return false;
+			}
+			if (hitsRegenSpeed == 0 || stamRegenSpeed == 0 || manaRegenSpeed == 0) { //or some regen is 0
+				return false;
+			}
+			return true;
+		}
 
 		[Remark("When do we modify anything?")]
-        private bool ModifyAnything() {
-            //either some stat is not full and has positive regeneration - adding values
+		private bool ModifyAnything() {
+			//either some stat is not full and has positive regeneration - adding values
 			if ((hits < maxHits && hitsRegenSpeed > 0) ||
 				(mana < maxMana && manaRegenSpeed > 0) ||
 				(stam < maxStam && stamRegenSpeed > 0)) {
