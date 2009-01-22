@@ -100,8 +100,9 @@ namespace SteamEngine.CompiledScripts {
 					ResourcesList req = spell.Requirements;
 					ResourcesList res = spell.Resources;
 
-					if (((req == null) || (req.HasResourcesPresent(self, ResourcesLocality.WearableLayers | ResourcesLocality.Backpack))) &&
-							((res == null) || (res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack)))) {
+					IResourceListItem missingItem;
+					if (((req == null) || (req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) &&
+							((res == null) || (res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem)))) {
 						self.Mana = (short) (mana - manaUse);
 						AnimCalculator.PerformAnim(self, GenericAnim.Cast);
 
@@ -110,6 +111,7 @@ namespace SteamEngine.CompiledScripts {
 						skillSeqArgs.DelayStroke();
 						return true; //default = set delay by magery skilldef
 					} else {
+						ResourcesList.SendResourceMissingMsg(self, missingItem);
 						self.ClilocSysMessage(502630); // More reagents are needed for this spell.
 					}
 				} else {

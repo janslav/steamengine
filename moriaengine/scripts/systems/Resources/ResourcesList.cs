@@ -34,12 +34,17 @@ namespace SteamEngine.CompiledScripts {
 			if (!Contains(newItem)) {//check if the new resource is not present in the list					
 				resourceItemsList.Add(newItem);
 				//put the new item also to the special sublist
-				if (newItem is IResourceListItemMultiplicable) {
-					multiplicablesSubList.Add((IResourceListItemMultiplicable) newItem);
-				} else if (newItem is IResourceListItemNonMultiplicable) {
+				IResourceListItemMultiplicable castItm = newItem as IResourceListItemMultiplicable;
+				if(newItem != null) {
+					multiplicablesSubList.Add(castItm);
+					return;
+				} 
+				IResourceListItemNonMultiplicable castItm2 = newItem as IResourceListItemNonMultiplicable;
+				if (newItem != null) {
 					//this wil be the rest of resources for now, 
 					//but who knows that type of resource may appear in a few months :)
-					nonMultiplicablesSubList.Add((IResourceListItemNonMultiplicable) newItem);
+					nonMultiplicablesSubList.Add(castItm2);
+					return;
 				}
 			}
 		}
@@ -58,17 +63,18 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[Summary("Check if character has all resources from the resource list")]
-		public bool HasResourcesPresent(Character chr, ResourcesLocality where) {
+		[Summary("Check if character has all resources from the resource list. "+
+				"in case some resource is missing, it is set to the output variable.")]
+		public bool HasResourcesPresent(Character chr, ResourcesLocality where, out IResourceListItem missingResource) {
 			//first check non-multiplicables (these are easy to check (usually some "Has..." method))
-			if (!CheckNonMultiplicableItems(chr)) {
+			if (!CheckNonMultiplicableItems(chr, out missingResource)) {
 				return false;
 			}
 
 			//list of resource counters corresponding to the list of "multiplicable" resources
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
-			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+			if (!CheckMultiplicableItems(chr, where, resourceCounters, out missingResource)) {
 				//dispose counters
 				Disposable.DisposeAll(resourceCounters);
 				return false;
@@ -79,14 +85,15 @@ namespace SteamEngine.CompiledScripts {
 			return true; //all resources present
 		}
 
-		[Summary("Consume the whole resource list from the character (once)")]
-		public bool ConsumeResourcesOnce(Character chr, ResourcesLocality where) {
-			if (!CheckNonMultiplicableItems(chr)) {
+		[Summary("Consume the whole resource list from the character (once) "+
+				"in case some resource is missing, it is set to the output variable.")]
+		public bool ConsumeResourcesOnce(Character chr, ResourcesLocality where, out IResourceListItem missingResource) {
+			if (!CheckNonMultiplicableItems(chr, out missingResource)) {
 				return false;
 			}
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
-			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+			if (!CheckMultiplicableItems(chr, where, resourceCounters, out missingResource)) {
 				//dispose counters before exit
 				Disposable.DisposeAll(resourceCounters);
 				return false;
@@ -102,14 +109,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Consume the whole resource list from the character as many times as possible, return information " +
-				"about how many times it has been consumed")]
-		public int ConsumeResources(Character chr, ResourcesLocality where) {
-			if (!CheckNonMultiplicableItems(chr)) {
+				"about how many times it has been consumed "+
+				".In case some resource is missing, it is set to the output variable.")]
+		public int ConsumeResources(Character chr, ResourcesLocality where, out IResourceListItem missingResource) {
+			if (!CheckNonMultiplicableItems(chr, out missingResource)) {
 				return 0;
 			}
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
 			//then check multiplicables (these may desire some items iterating e.t.c)
-			if (!CheckMultiplicableItems(chr, where, resourceCounters)) {
+			if (!CheckMultiplicableItems(chr, where, resourceCounters, out missingResource)) {
 				//dispose counters
 				Disposable.DisposeAll(resourceCounters);
 				return 0;
@@ -124,7 +132,12 @@ namespace SteamEngine.CompiledScripts {
 			return availableOnly;
 		}
 
-		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
+		[Summary("In case some resource is missing, the mising item can be used for sending some informational message...")]
+		public static void SendResourceMissingMsg(Character toWho, IResourceListItem missingItem) {
+			toWho.SysMessage("Chybějící resource: " + missingItem.DesiredCount + " " + missingItem.Definition);
+		}
+
+		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]		
 		public List<IResourceListItemMultiplicable> MultiplicablesSublist {
 			get {
 				return multiplicablesSubList;
@@ -156,25 +169,29 @@ namespace SteamEngine.CompiledScripts {
 			return retList;
 		}
 
-		private bool CheckNonMultiplicableItems(Character chr) {
+		private bool CheckNonMultiplicableItems(Character chr, out IResourceListItem missingResource) {
 			foreach (IResourceListItemNonMultiplicable rli in nonMultiplicablesSubList) {
-				if (!rli.IsResourcePresent(chr)) { //first not found resource ends the cycle 
+				if (!rli.IsResourcePresent(chr)) { //first not found resource ends the cycle
+					missingResource = rli; //set the missing resource as the returning value for further purposes (such as message)
 					return false;
 				}
 			}
+			missingResource = null;
 			return true;
 		}
 
 		//check multiplicable items for their presence in the specified ResourcesLocality, initializes also the 
 		//list of ResourceCounters
-		private bool CheckMultiplicableItems(Character chr, ResourcesLocality where, List<ResourceCounter> resourceCounters) {
+		private bool CheckMultiplicableItems(Character chr, ResourcesLocality where, List<ResourceCounter> resourceCounters, out IResourceListItem missingResource) {
 			ResourceItemFinder.LocalizeItems(chr, where, resourceCounters);
 			//now check if all resources has been found in adequate amount
 			foreach (ResourceCounter ctr in resourceCounters) {
 				if (ctr.Multiplicity == 0) {//the desired resource cannot be consumed in desired amount
+					missingResource = ctr.SourceListItem; //return the missing resource item
 					return false;
 				}
 			}
+			missingResource = null;
 			return true;
 		}
 	}

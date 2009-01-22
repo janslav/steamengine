@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 		#region IResourceListItemMultiplicable Members
 		public ResourceCounter GetCounter() {
 			ItemsCounter ic = Pool<ItemsCounter>.Acquire();//get from pool
-			ic.SetParameters(itemDef, number);//initialize
+			ic.SetParameters(itemDef, number, this);//initialize
 			return ic;
 		}
 		#endregion

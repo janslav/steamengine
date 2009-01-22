@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 		#region IResourceListItemMultiplicable Members
 		public ResourceCounter GetCounter() {
 			TriggerGroupsCounter tgc = Pool<TriggerGroupsCounter>.Acquire();//get from pool
-			tgc.SetParameters(triggerGroup, number);//initialize
+			tgc.SetParameters(triggerGroup, number, this);//initialize
 			return tgc;
 		}
 		#endregion

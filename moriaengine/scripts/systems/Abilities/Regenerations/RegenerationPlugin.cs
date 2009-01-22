@@ -45,57 +45,74 @@ namespace SteamEngine.CompiledScripts {
 			Timer = MIN_TIMER; //set the basic timer for the first regen round
 		}
 
+		//fields set once everytime the On_Timer method gets fired
+		private double hitsRegenSpeed, stamRegenSpeed, manaRegenSpeed;
+		private ushort hits, stam, mana, maxHits, maxStam, maxMana;
+
+		//set all private fields reading its values from the Cont once
+		private void PreSetFields(Character holder) {
+			hitsRegenSpeed = holder.HitsRegenSpeed;
+			stamRegenSpeed = holder.StamRegenSpeed;
+			manaRegenSpeed = holder.ManaRegenSpeed;
+			hits = holder.Hits;
+			stam = holder.Stam;
+			mana = holder.Mana;
+			maxHits = holder.MaxHits;
+			maxStam = holder.MaxStam;
+			maxMana = holder.MaxMana;
+		}
+
 		[Summary("Periodically check stats and regenerate computed amount of points (if any)")]
 		public void On_Timer() {
-			if (!ModifyAnything()) {
-				//delete the plugin for now. it will be renewed when hits/mana/stamina lowers
+			Character holder = (Character)this.Cont;
+
+			//pre read necessary fields:
+			PreSetFields(holder);
+
+            if (!ModifyAnything()) {
+                //delete the plugin for now. it will be renewed when hits/mana/stamina lowers
 				//or when the regenerations get some point...
-				Delete();
-			}
-
-			double timeElapsed = Globals.TimeInSeconds - lastServerTime;
-			Character holder = (Character) this.Cont;
-
-			double hitsRegenSpeed = holder.HitsRegenSpeed;//read it once...
-			double stamRegenSpeed = holder.StamRegenSpeed;
-			double manaRegenSpeed = holder.ManaRegenSpeed;
-
+				Delete();                
+            }
+			
+            double timeElapsed = Globals.TimeInSeconds - lastServerTime;
+			
 			bool modifyAllStats = ModifyAllStats();//first check if we will modify all three stats
 
 			//count the number of modified stats points (if any!)
 			int hitsChange = 0, stamChange = 0, manaChange = 0;
-			if (hitsRegenSpeed != 0 && holder.Hits != holder.MaxHits) {
+			if (hitsRegenSpeed != 0 && hits != maxHits) {
 				int countedChange = CountStatChange(hitsRegenSpeed, ref residuumHits, timeElapsed);
 				//do not overgo the maxhits or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
-					hitsChange = Math.Max(-holder.Hits, countedChange);
+					hitsChange = Math.Max(-hits, countedChange);
 				} else {
-					hitsChange = Math.Min(holder.MaxHits - holder.Hits, countedChange);
+					hitsChange = Math.Min(maxHits - hits, countedChange);
 				}
 			} else {
 				residuumHits = 0.0; //nothing should be left for the next round!
 			}
-			if (stamRegenSpeed != 0 && holder.Stam != holder.MaxStam) {
+			if (stamRegenSpeed != 0 && stam != maxStam) {
 				int countedChange = CountStatChange(stamRegenSpeed, ref residuumStam, timeElapsed);
 				//do not overgo the maxstam or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
-					stamChange = Math.Max(-holder.Stam, countedChange);
+					stamChange = Math.Max(-stam, countedChange);
 				} else {
-					stamChange = Math.Min(holder.MaxStam - holder.Stam, countedChange);
+					stamChange = Math.Min(maxStam - stam, countedChange);
 				}
 			} else {
 				residuumStam = 0.0;
 			}
-			if (manaRegenSpeed != 0 && holder.Mana != holder.MaxMana) {
+			if (manaRegenSpeed != 0 && mana != maxMana) {
 				int countedChange = CountStatChange(manaRegenSpeed, ref residuumMana, timeElapsed);
 				//do not overgo the maxstam or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
-					manaChange = Math.Max(-holder.Mana, countedChange);
+					manaChange = Math.Max(-mana, countedChange);
 				} else {
-					manaChange = Math.Min(holder.MaxMana - holder.Mana, countedChange);
+					manaChange = Math.Min(maxMana - mana, countedChange);
 				}
 			} else {
 				residuumMana = 0.0;
@@ -136,43 +153,40 @@ namespace SteamEngine.CompiledScripts {
 			lastServerTime = Globals.TimeInSeconds; //remember the last usage
 		}
 
-		//check if we are to modify all three stats or just one or two or none
-		private bool ModifyAllStats() {
-			Character holder = (Character) this.Cont;
-			if (holder.Hits == holder.MaxHits || holder.Mana == holder.MaxMana || holder.Stam == holder.MaxStam) {
-				//some stat is on its maximum
-				return false;
-			}
-			if (holder.HitsRegenSpeed == 0 || holder.StamRegenSpeed == 0 || holder.ManaRegenSpeed == 0) { //or some regen is 0
-				return false;
-			}
-			return true;
-		}
+        //check if we are to modify all three stats or just one or two or none
+        private bool ModifyAllStats() {
+            if (hits == maxHits || mana == maxMana || stam == maxStam) {
+                //some stat is on its maximum
+                return false;
+            }
+            if (hitsRegenSpeed == 0 || stamRegenSpeed == 0 || manaRegenSpeed == 0) { //or some regen is 0
+                return false;
+            }
+            return true;
+        }
 
 		[Remark("When do we modify anything?")]
-		private bool ModifyAnything() {
-			Character holder = (Character) this.Cont;
-			//either some stat is not full and has positive regeneration - adding values
-			if ((holder.Hits < holder.MaxHits && holder.HitsRegenSpeed > 0) ||
-				(holder.Mana < holder.MaxMana && holder.ManaRegenSpeed > 0) ||
-				(holder.Stam < holder.MaxStam && holder.StamRegenSpeed > 0)) {
+        private bool ModifyAnything() {
+            //either some stat is not full and has positive regeneration - adding values
+			if ((hits < maxHits && hitsRegenSpeed > 0) ||
+				(mana < maxMana && manaRegenSpeed > 0) ||
+				(stam < maxStam && stamRegenSpeed > 0)) {
 				return true;
 			}
 
 			//or some non-zeroized stat has negative regeneration - subtracting values
-			if ((holder.Hits > 0 && holder.HitsRegenSpeed < 0) ||
-				(holder.Mana > 0 && holder.ManaRegenSpeed < 0) ||
-				(holder.Stam > 0 && holder.StamRegenSpeed < 0)) {
+			if ((hits > 0 && hitsRegenSpeed < 0) ||
+				(mana > 0 && manaRegenSpeed < 0) ||
+				(stam > 0 && stamRegenSpeed < 0)) {
 				return true;
 			}
 
 			//or some stat is greater than its maximal value - we will decrease it
-			if (holder.Hits > holder.MaxHits ||
-				holder.Mana > holder.MaxMana ||
-				holder.Stam > holder.MaxStam) {
+			if (hits > maxHits ||
+				mana > maxMana ||
+				stam > maxStam) {
 				return true;
 			}
-
 			return false;
 		}
 
