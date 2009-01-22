@@ -24,6 +24,8 @@ namespace SteamEngine.CompiledScripts {
 			"used for storing information about found char's corresponding items and their amount " +
 			"allowing us also to consume the desired amount of found item's")]
 	public abstract class ResourceCounter : Poolable {
+		protected IResourceListItemMultiplicable sourceListItem;//list item this resource is for (useful when some item from the list is missing on the char)
+
 		protected double desiredCount; //how many item occurences we need? (e.g. 5 i_apple)
 		private List<Item> foundItems = new List<Item>();
 		private uint foundCount; //how many occurences have been found so far? (counted from amounts of found items)
@@ -54,7 +56,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Look to the foundItems list and consume desiredCount*howManyTimes items found inside. " +
+		[Summary("ListItem this resource counter is for.")]
+		internal IResourceListItemMultiplicable SourceListItem {
+			get {
+				return sourceListItem;
+			}
+		}
+
+		[Summary("Look to the foundItems list and consume desiredCount*howManyTimes items found inside. "+
 				"These should be available via their 'amounts'")]
 		internal void ConsumeItems(int howManyTimes) {
 			long toConsume = (long) (desiredCount * howManyTimes);

@@ -29,9 +29,10 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		[Summary("Method for setting the counters parameters (used after acquiring from pool)")]
-		internal void SetParameters(TriggerGroup toLookFor, double desiredCount) {
+		internal void SetParameters(TriggerGroup toLookFor, double desiredCount, IResourceListItemMultiplicable sourceListItem) {
 			this.toLookFor = toLookFor;
 			this.desiredCount = desiredCount;
+			this.sourceListItem = sourceListItem;
 		}
 
 		internal override bool ItemCorresponds(Item itm) {
