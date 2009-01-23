@@ -44,6 +44,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return "Intelligence";
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatIntResource) != null);
 		}

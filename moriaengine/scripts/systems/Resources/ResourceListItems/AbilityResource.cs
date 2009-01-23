@@ -48,6 +48,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return abilityDef.Name;
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			AbilityResource newResource = newOne as AbilityResource;
 			if (newResource != null) {

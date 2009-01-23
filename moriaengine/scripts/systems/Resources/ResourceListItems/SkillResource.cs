@@ -48,6 +48,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return skillDef.Key; //name of the skill
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			SkillResource newResource = newOne as SkillResource;
 			if (newResource != null) {

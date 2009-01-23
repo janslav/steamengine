@@ -44,6 +44,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return "Vitality";
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatVitResource) != null);
 		}
