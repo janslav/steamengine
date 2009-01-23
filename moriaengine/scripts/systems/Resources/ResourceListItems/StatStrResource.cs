@@ -44,6 +44,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return "Strength";
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatStrResource) != null);
 		}

@@ -49,6 +49,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return triggerGroup.PrettyDefname;
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			TriggerGroupResource newResource = newOne as TriggerGroupResource;
 			if (newResource != null) {

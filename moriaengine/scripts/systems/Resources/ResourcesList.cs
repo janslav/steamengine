@@ -134,7 +134,17 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("In case some resource is missing, the mising item can be used for sending some informational message...")]
 		public static void SendResourceMissingMsg(Character toWho, IResourceListItem missingItem) {
-			toWho.SysMessage("Chybějící resource: " + missingItem.DesiredCount + " " + missingItem.Definition);
+			if (missingItem is AbilityResource) {
+				toWho.SysMessage("Je potřeba mít " + missingItem.DesiredCount + " bodů v abilitě " + missingItem.Name);
+			} else if (missingItem is ItemResource) {
+				toWho.SysMessage("Je potřeba mít u sebe " + missingItem.DesiredCount + " x " + missingItem.Name);
+			} else if (missingItem is SkillResource) {
+				toWho.SysMessage("Je vyžadována výše skillu " + missingItem.Name + " alespoň " + missingItem.DesiredCount);
+			} else if (missingItem is StatDexResource || missingItem is StatIntResource || missingItem is StatStrResource || missingItem is StatVitResource) {
+				toWho.SysMessage("Je vyžadováno alespoň " + missingItem.Name + " " + missingItem.DesiredCount);
+			} else if (missingItem is TriggerGroupResource) {
+				toWho.SysMessage("Je vyžadována přítomnost typu " + missingItem.Name + " (počet alespoň " + missingItem.DesiredCount + ")");
+			}
 		}
 
 		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
@@ -206,6 +216,12 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Original string defining the resource, will be used for finding the resource's def (or stat or whatever)")]
 		string Definition {
+			get;
+		}
+
+		[Summary("Logical name of the resource (such as 'Apple', 'Stealth', 'Dexterity' atd. " +
+				"Used for informing about missing resources")]
+		string Name {
 			get;
 		}
 

@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 				double fastestRegen = Math.Max(hitsRegenSpeed, Math.Max(stamRegenSpeed, manaRegenSpeed));
 				double fastestStatsResiduum = ((fastestRegen == hitsRegenSpeed) ? residuumHits : //fastest are hits - use them
 												((fastestRegen == stamRegenSpeed) ? residuumStam : //fastest is stamina - use it
-													manaRegenSpeed)); //use mana  
+													manaRegenSpeed)); //use mana
 				//count the timer for the stat with the fastest regen speed
 				usedTimer = CountIdealTimer(fastestRegen, fastestStatsResiduum);
 			} else { //count the ideal timer for the next round
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 				double manaTmrDiff = Math.Abs(stamIdealTimer - midTimer);
 				double stamTmrDiff = Math.Abs(manaIdealTimer - midTimer);
 
-				usedTimer = midTimer; //defaultly we want to use the mean value of the count timers
+				usedTimer = midTimer; //by default we want to use the mean value of the count timers
 				if (Math.Max(stamTmrDiff, Math.Max(hitsTmrDiff, manaTmrDiff)) > ALLOWED_TIMER_DIFF) {
 					//longest ideal timer exceeded the allowed difference from the mid value - we will use the shortest timer
 					usedTimer = Math.Min(stamTmrDiff, Math.Min(hitsTmrDiff, manaTmrDiff));
@@ -130,10 +130,10 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Count and return the ideal timer for the given regenSpeed - this means " +
 				"number of seconds after which there will be an integer regeneration (de/in)crease")]
 		private double CountIdealTimer(double regenSpeed, double currentResiduum) {
-			//the number of regenerated points (x) is as follows: 
+			//the number of regenerated points (x) is as follows:
 			//x = (lastResiduum) + (regenSpeed * timer);
 			//we want the timer to be greater than MIN_TIMER and the number of regenerated points
-			//to be integer            
+			//to be integer
 			double retTmr = 0.0d;
 			int x = 1; //we expect to gain at least 1 point ideally :-)
 			while (retTmr < MIN_TIMER) {
@@ -150,10 +150,10 @@ namespace SteamEngine.CompiledScripts {
 			//the number of regenerated points (x) is as follows: 
 			//x = (lastResiduum) + (regenSpeed * timer);
 			double absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
-			int retVal = (int)absoluteChange; //the stat value added - truncated
+			int retVal = (int) absoluteChange; //the stat value added - truncated
 			lastResiduum = absoluteChange - retVal; //this is the new residuum for the next round
 
-			return retVal; //it is already truncated, the cast is OK
+			return retVal;
 		}
 
 		[Summary("Check if character can have this plugin and if true, add it")]

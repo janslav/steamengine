@@ -44,6 +44,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public string Name {
+			get {
+				return "Dexterity";
+			}
+		}
+
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatDexResource) != null);
 		}
