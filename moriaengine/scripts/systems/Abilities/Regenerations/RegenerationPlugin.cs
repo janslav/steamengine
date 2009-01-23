@@ -150,10 +150,10 @@ namespace SteamEngine.CompiledScripts {
 			//the number of regenerated points (x) is as follows: 
 			//x = (lastResiduum) + (regenSpeed * timer);
 			double absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
-			double retVal = Math.Truncate(absoluteChange); //the stat value added
+			int retVal = (int)absoluteChange; //the stat value added - truncated
 			lastResiduum = absoluteChange - retVal; //this is the new residuum for the next round
 
-			return (int) retVal; //it is already truncated, the cast is OK
+			return retVal; //it is already truncated, the cast is OK
 		}
 
 		[Summary("Check if character can have this plugin and if true, add it")]
