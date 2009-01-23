@@ -464,10 +464,8 @@ namespace SteamEngine.CompiledScripts {
 						CharSyncQueue.AboutToChangeHitpoints(this);
 						hitpoints = value;
 
-						//check the hitpoints regeneration
-						if ((hitpoints <= MaxHits) && (hitsRegenSpeed != 0)) {
-							RegenerationPlugin.TryAddPlugin(this);
-						}
+						//try the hitpoints regeneration
+						RegenerationPlugin.TryInstallPlugin(this, hitpoints, maxHitpoints, hitsRegenSpeed);
 					}
 				}
 			}
@@ -483,9 +481,7 @@ namespace SteamEngine.CompiledScripts {
 					maxHitpoints = value;
 
 					//check the hitpoints regeneration
-					if ((hitpoints <= MaxHits) && (hitsRegenSpeed != 0)) {
-						RegenerationPlugin.TryAddPlugin(this);
-					}
+					RegenerationPlugin.TryInstallPlugin(this, hitpoints, maxHitpoints, hitsRegenSpeed);
 				}
 			}
 		}
@@ -500,9 +496,8 @@ namespace SteamEngine.CompiledScripts {
 					mana = value;
 
 					//regeneration...
-					if ((mana <= MaxMana) && (manaRegenSpeed != 0)) {
-						RegenerationPlugin.TryAddPlugin(this);
-					}
+					RegenerationPlugin.TryInstallPlugin(this, mana, maxMana, manaRegenSpeed);
+
 					//meditation finish
 					if (mana >= MaxMana) {
 						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
@@ -521,8 +516,11 @@ namespace SteamEngine.CompiledScripts {
 					maxMana = value;
 
 					//regeneration...
-					if ((mana <= MaxMana) && (manaRegenSpeed != 0)) {
-						RegenerationPlugin.TryAddPlugin(this);
+					RegenerationPlugin.TryInstallPlugin(this, mana, maxMana, manaRegenSpeed);
+
+					//meditation finish
+					if (mana >= MaxMana) {
+						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
 					}
 				}
 			}
@@ -538,9 +536,7 @@ namespace SteamEngine.CompiledScripts {
 					stamina = value;
 
 					//regeneration...
-					if ((stamina <= MaxStam) && (stamRegenSpeed != 0)) {
-						RegenerationPlugin.TryAddPlugin(this);
-					}
+					RegenerationPlugin.TryInstallPlugin(this, stamina, maxStamina, stamRegenSpeed);
 				}
 			}
 		}
@@ -555,9 +551,7 @@ namespace SteamEngine.CompiledScripts {
 					maxStamina = value;
 
 					//regeneration...
-					if ((stamina <= MaxStam) && (stamRegenSpeed != 0)) {
-						RegenerationPlugin.TryAddPlugin(this);
-					}
+					RegenerationPlugin.TryInstallPlugin(this, stamina, maxStamina, stamRegenSpeed);
 				}
 			}
 		}
@@ -942,6 +936,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				hitsRegenSpeed = value;
+
+				//check the regeneration
+				RegenerationPlugin.TryInstallPlugin(this, hitpoints, maxHitpoints, hitsRegenSpeed);
 			}
 		}
 
@@ -952,6 +949,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				manaRegenSpeed = value;
+
+				//check the regeneration
+				RegenerationPlugin.TryInstallPlugin(this, mana, maxMana, manaRegenSpeed);
 			}
 		}
 
@@ -962,6 +962,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				stamRegenSpeed = value;
+
+				//check the regeneration
+				RegenerationPlugin.TryInstallPlugin(this, stamina, maxStamina, stamRegenSpeed);
 			}
 		}
 		#endregion regenerace
@@ -1843,8 +1846,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual bool IsMountableBy(AbstractCharacter chr) {
 			if (IsMountable && chr.CanReach(this) == DenyResult.Allow) {
-				if (IsPetOf((Character) chr)) return true;
-				if (!IsPet && chr.IsPlevelAtLeast(Globals.plevelOfGM)) return true;
+				if (IsPetOf((Character) chr))
+					return true;
+				if (!IsPet && chr.IsPlevelAtLeast(Globals.plevelOfGM))
+					return true;
 			}
 			return false;
 		}
