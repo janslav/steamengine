@@ -1588,7 +1588,10 @@ namespace SteamEngine {
 
 			bool selfIsPlayer = ((self != null) && (self.IsPlayer));
 			if (selfIsPlayer) {
-				self.Trigger_Say(speech, type, keywords);
+				bool cancel = self.Trigger_Say(speech, type, keywords);
+				if (cancel) {
+					return;
+				}
 			}
 
 			int dist = 0;

@@ -39,6 +39,9 @@
     <Compile Include="..\..\AuxiliaryServer\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\..\AuxiliaryServer\Commands.cs">
+      <Link>Commands.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\ConsoleServer\ConsoleClient.cs">
       <Link>ConsoleServer\ConsoleClient.cs</Link>
     </Compile>

@@ -27,6 +27,7 @@
 	<property name="scriptsFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Scripts.'+scriptsNumber+'.dll'}" />
 	<property name="generatedCodeFileName" value="${'bin/Generated/'+outputFilePrefix+'SteamEngine.Generated.'+scriptsNumber+'.dll'}" />
 	<property name="converterFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.Converter.exe'}" />
+	<property name="restarterFileName" value="${'bin/'+outputFilePrefix+'SteamEngine.ProcessRestarter.exe'}" />
 
 	<target name="cleanCommon">
 		<delete>
@@ -85,8 +86,16 @@
 			</fileset>
 		</delete>
 	</target>
+		
+	<target name="cleanProcessRestarter">
+		<delete>
+			<fileset>
+				<include name="bin/*SteamEngine.ProcessRestarter*" />
+			</fileset>
+		</delete>
+	</target>
 	
-	<target name="clean" depends="cleanCommon,cleanCommunication,cleanGameCore,cleanScripts,cleanConverter, cleanAuxiliaryServer">
+	<target name="clean" depends="cleanCommon, cleanCommunication, cleanGameCore, cleanScripts, cleanConverter, cleanAuxiliaryServer, cleanRemoteConsole">
 	</target>
 	
 	<target name="buildCommon">
@@ -262,6 +271,22 @@
 				<include name="${scriptsFileName}" />
 				<include name="Microsoft.JScript.dll" />
 			</references>
+			<arg line="${cmdLineParams}" />
+		</csc>
+	</target>	
+	
+	<target name="buildRestarter">
+		<csc 
+			target="exe" 
+			output="${restarterFileName}" 
+			debug="${debug}" 
+			define="${defineSymbols}" 
+			optimize="${optimize} ">
+			
+			<sources>
+				<include name="ProcessRestarter/**/*.cs" />
+			</sources>
+
 			<arg line="${cmdLineParams}" />
 		</csc>
 	</target>
