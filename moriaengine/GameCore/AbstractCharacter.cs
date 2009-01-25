@@ -962,17 +962,23 @@ namespace SteamEngine {
 
 		}
 
-		internal void Trigger_Say(string speech, SpeechType type, int[] keywords) {
+		//cancellable because of things like Guild speech, etc.
+		internal bool Trigger_Say(string speech, SpeechType type, int[] keywords) {
+			bool cancel = false;
 			if (this.IsPlayer) {
 				ScriptArgs sa = new ScriptArgs(speech, type, keywords);
-				this.TryTrigger(TriggerKey.say, sa);
-				try {
-					this.On_Say(speech, type, keywords);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				cancel = this.TryCancellableTrigger(TriggerKey.say, sa);
+				if (!cancel) {
+					try {
+						cancel = this.On_Say(speech, type, keywords);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				}
 			}
+			return cancel;
 		}
 
-		public virtual void On_Say(string speech, SpeechType type, int[] keywords) {
+		public virtual bool On_Say(string speech, SpeechType type, int[] keywords) {
+			return false;
 		}
 
 		public virtual void On_ItemDClick(AbstractItem dClicked) {

@@ -3,9 +3,6 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-
-using NAnt.Core;
-
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
@@ -105,55 +102,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
 				Console.WriteLine("Compiling " + this.build + " build of server at " + sett.IniPath);
 
-				AuxServNantLogger o = new AuxServNantLogger(this.serverNum, this.build, nantPath);
-				Thread t = new Thread(o.StartThread);
-				t.Start();
-			}
-		}
-
-		//Nant logger class and a helper threading class combined
-		internal class AuxServNantLogger : DefaultLogger {
-			private byte serverNum;
-			private SEBuild build;
-			private string nantPath;
-
-			internal AuxServNantLogger(byte serverNum, SEBuild build, string nantPath) {
-				this.serverNum = serverNum;
-				this.build = build;
-				this.nantPath = nantPath;
-			}
-
-			public override void BuildFinished(object sender, BuildEventArgs e) { }
-			public override void BuildStarted(object sender, BuildEventArgs e) { }
-			public override void TargetFinished(object sender, BuildEventArgs e) { }
-			public override void TargetStarted(object sender, BuildEventArgs e) { }
-			public override void TaskFinished(object sender, BuildEventArgs e) { }
-			public override void TaskStarted(object sender, BuildEventArgs e) { }
-
-			protected override void Log(string pMessage) {
-				object o = NantLauncher.GetDecoratedLogMessage(pMessage);
-				if (o != null) {
-					Logger.StaticWriteLine(o);
-				}
-				//Console.WriteLine(pMessage);
-			}
-
-			internal void StartThread() {
-				NantLauncher nant = new NantLauncher(this.nantPath);
-				nant.SetLogger(this);
-				nant.SetPropertiesAsSelf();
-				nant.SetDebugMode(this.build == SEBuild.Debug);
-				nant.SetOptimizeMode(this.build == SEBuild.Optimised);
-
-				nant.SetTarget("buildCore");
-				nant.Execute();
-
-				string file = nant.GetCompiledAssemblyName("gameCoreFileName");
-
-				Console.WriteLine("Starting " + file);
-				System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(file);
-				psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-				System.Diagnostics.Process.Start(psi);
+				new AuxServNantProjectStarter(this.serverNum, this.build, nantPath, "buildCore", "gameCoreFileName");
 			}
 		}
 	}
@@ -172,7 +121,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
 			if (this.id == 0) {
 				if (state.IsLoggedInAux) {
-					//TODO
+					Commands.HandleCommand(conn, state, this.command);
+					return;
 				}
 			} else {
 				GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByUid(this.id);
@@ -181,6 +131,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 						GameServers.ConsoleCommandLinePacket p = Pool<GameServers.ConsoleCommandLinePacket>.Acquire();
 						p.Prepare(state.Uid, state.AccountName, state.Password, this.command);
 						cli.Conn.SendSinglePacket(p);
+						return;
 					}
 				}
 			}

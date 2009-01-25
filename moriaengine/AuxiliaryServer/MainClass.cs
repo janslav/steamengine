@@ -12,6 +12,8 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public static readonly object globalLock = new object();
 
+		public static readonly ManualResetEvent setToExit = new ManualResetEvent(false);
+
 		static void Main(string[] args) {
 			//name the console window for better recognizability
 			Console.Title = "SE Auxiliary Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
@@ -21,7 +23,14 @@ namespace SteamEngine.AuxiliaryServer {
 			try {
 				Init();
 
-				Console.ReadLine(); //exit by pressing Enter :D
+				Thread t = new Thread(delegate() {
+					Console.ReadLine();
+					setToExit.Set();
+				});
+				t.IsBackground = true;
+				t.Start();
+
+				setToExit.WaitOne();
 
 			} catch (Exception e) {
 				Logger.WriteFatal(e);
