@@ -31,8 +31,8 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		private class NantProjectReStarter : AuxServNantProjectStarter {
-			internal NantProjectReStarter()
-				: base(0, SEBuild.Sane, NantLauncher.defaultPathInProject, "buildRestarter", "restarterFileName") {
+			internal NantProjectReStarter ()
+				: base (0 , SEBuild.Sane, NantLauncher.defaultPathInProject, "buildRestarter", "restarterFileName") {
 			}
 
 			public override void StartProcess(string file) {
