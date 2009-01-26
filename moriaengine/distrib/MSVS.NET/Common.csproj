@@ -53,6 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
+    <Reference Include="SharpSvn, Version=1.5005.984.35067, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86" />
     <Reference Include="SteamDoc">
       <Name>SteamDoc</Name>
       <HintPath>..\..\bin\SteamDoc.dll</HintPath>
@@ -136,6 +137,9 @@
     </Compile>
     <Compile Include="..\..\Common\Tools.cs">
       <Link>Tools.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\VersionControl.cs">
+      <Link>VersionControl.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

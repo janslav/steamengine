@@ -18,6 +18,9 @@ namespace SteamEngine.AuxiliaryServer {
 				case "restart":
 					CmdRestart();
 					return;
+				case "svnupdate":
+					VersionControl.SVNUpdateProject();
+					return;
 			}
 
 			state.WriteLine(0, "Unknown command '" + cmd + "'.");
