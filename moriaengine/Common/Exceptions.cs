@@ -65,12 +65,12 @@ namespace SteamEngine {
 
 		public virtual bool StartsWithFileLine {
 			get {
-				return niceMessage.NiceString.StartsWith("(" + ConAttrs.PrintStyle(LogStyles.FileLine));
+				return niceMessage.NiceString.StartsWith("(" + ConAttrs.SetStylePrefix(LogStyles.FileLine));
 			}
 		}
 
 		public virtual void TryAddFileLineInfo(string filename, int line) {
-			if (!niceMessage.NiceString.StartsWith("(" + ConAttrs.PrintStyle(LogStyles.FileLine))) {
+			if (!niceMessage.NiceString.StartsWith("(" + ConAttrs.SetStylePrefix(LogStyles.FileLine))) {
 				//if we don't already start with the file/line info, let's add it on the beginning
 				niceMessage = LogStr.FileLine(filename, line) + niceMessage;
 			}

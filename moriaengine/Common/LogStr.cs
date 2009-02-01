@@ -30,10 +30,6 @@ namespace SteamEngine.Common {
 		public string RawString { get { return rawString; } }
 		public string NiceString { get { return niceString; } }
 
-		//needs to stay here, there's obviously a bug in .NET compiler, which causes 100% CPU usage if this isn;t here. Dont ask me why, just do not delete it
-		static LogStr() {
-		}
-
 		internal protected LogStr(string raw, string nice) {
 			rawString = raw;
 			niceString = nice;
@@ -69,7 +65,6 @@ namespace SteamEngine.Common {
 		public override string ToString() {
 			return rawString;
 		}
-
 
 		public void Append(LogStr str) {
 			this.rawString += str.rawString;
@@ -124,97 +119,97 @@ namespace SteamEngine.Common {
 		}
 		public static LogStr Warning(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Warning) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Warning) + str + ConAttrs.EOS);
 		}
 		public static LogStr Error(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Error) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Error) + str + ConAttrs.EOS);
 		}
 		public static LogStr Critical(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Critical) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Critical) + str + ConAttrs.EOS);
 		}
 		public static LogStr Fatal(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Fatal) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Fatal) + str + ConAttrs.EOS);
 		}
 		public static LogStr Debug(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Debug) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Debug) + str + ConAttrs.EOS);
 		}
 		public static LogStr Highlight(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Highlight) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Highlight) + str + ConAttrs.EOS);
 		}
 		public static LogStr Title(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(null, ConAttrs.PrintTitle(str));
+			return new LogStr(null, ConAttrs.SetTitlePrefix(str));
 		}
 		public static LogStr SetStyle(LogStyles style) {
-			return new LogStr(null, ConAttrs.PrintStyle(style));
+			return new LogStr(null, ConAttrs.SetStylePrefix(style));
 		}
 		public static LogStr Style(object obj, LogStyles style) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(style) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(style) + str + ConAttrs.EOS);
 		}
 		public static LogStr Number(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Number) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Number) + str + ConAttrs.EOS);
 		}
 		public static LogStr Ident(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Ident) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Ident) + str + ConAttrs.EOS);
 		}
 		public static LogStr FilePos(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.FilePos) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.FilePos) + str + ConAttrs.EOS);
 		}
 		public static LogStr File(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.File) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.File) + str + ConAttrs.EOS);
 		}
 		public static LogStr Raw(string str) {
 			return new LogStr(str, str);
 		}
 		public static LogStr Warning(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Warning) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Warning) + str + ConAttrs.EOS);
 		}
 		public static LogStr Error(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Error) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Error) + str + ConAttrs.EOS);
 		}
 		public static LogStr Critical(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Critical) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Critical) + str + ConAttrs.EOS);
 		}
 		public static LogStr Fatal(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Fatal) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Fatal) + str + ConAttrs.EOS);
 		}
 		public static LogStr Debug(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Debug) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Debug) + str + ConAttrs.EOS);
 		}
 		public static LogStr FileLine(string file, int line) {
 			string str = file + ", " + line.ToString();
-			return new LogStr("(" + str + ") ", "(" + ConAttrs.PrintStyle(LogStyles.FileLine) + str + ConAttrs.EOS + ") ");
+			return new LogStr("(" + str + ") ", "(" + ConAttrs.SetStylePrefix(LogStyles.FileLine) + str + ConAttrs.EOS + ") ");
 		}
 		public static LogStr Highlight(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Highlight) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Highlight) + str + ConAttrs.EOS);
 		}
 		public static LogStr Title(string str) {
-			return new LogStr(null, ConAttrs.PrintTitle(str));
+			return new LogStr(null, ConAttrs.SetTitlePrefix(str));
 		}
 		public static LogStr Style(string str, LogStyles style) {
-			return new LogStr(str, ConAttrs.PrintStyle(style) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(style) + str + ConAttrs.EOS);
 		}
 		public static LogStr Number(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Number) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Number) + str + ConAttrs.EOS);
 		}
 		public static LogStr Ident(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.Ident) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Ident) + str + ConAttrs.EOS);
 		}
 		public static LogStr FilePos(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.FilePos) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.FilePos) + str + ConAttrs.EOS);
 		}
 		public static LogStr File(string str) {
-			return new LogStr(str, ConAttrs.PrintStyle(LogStyles.File) + str + ConAttrs.EOS);
+			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.File) + str + ConAttrs.EOS);
 		}
 		public static LogStr Code(string s) {
 			return LogStr.Debug("[") + LogStr.Ident(s) + LogStr.Debug("]");
