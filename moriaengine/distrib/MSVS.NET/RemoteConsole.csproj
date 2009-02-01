@@ -47,6 +47,10 @@
     <Compile Include="..\..\RemoteConsole\ConsoleClient.cs">
       <Link>ConsoleClient.cs</Link>
     </Compile>
+    <Compile Include="..\..\RemoteConsole\ExtendedRichTextBox.cs">
+      <Link>ExtendedRichTextBox.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="..\..\RemoteConsole\IncomingPackets.cs">
       <Link>IncomingPackets.cs</Link>
     </Compile>

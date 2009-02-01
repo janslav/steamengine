@@ -49,22 +49,16 @@ namespace SteamEngine.Common {
 		public const string EOS = separatorString + eosString + separatorString;
 
 		#region Static Methods
-		static public string PrintStyle(LogStyles style) {
+		static public string SetStylePrefix(LogStyles style) {
 			return string.Concat(separatorString, styleString, ((int) style).ToString(), separatorString);
 		}
 
-		static public string PrintTitle(string title) {
+		static public string SetTitlePrefix(string title) {
 			return string.Concat(separatorString, titleString, title, separatorString);
 		}
 		#endregion
 
 #if !MONO
-		#region Delegates
-		public delegate void StyleChangedHandler(object sender, LogStyles style);
-		public delegate void TitleChangedHandler(object sender, string title);
-		public delegate void NextChunkHandler(object sender, string chunk);
-		#endregion
-
 		internal struct LogStyle {
 			public Color styleColor;
 			public FontStyle styleFont;
@@ -162,28 +156,6 @@ namespace SteamEngine.Common {
 		}
 		#endregion
 
-
-		#region Events
-		public event StyleChangedHandler StyleChanged;
-		public event NextChunkHandler NextChunk;
-		public event TitleChangedHandler TitleChanged;
-
-		protected virtual void OnStyleChanged(LogStyles style) {
-			if (StyleChanged != null)
-				StyleChanged(this, style);
-		}
-
-		protected virtual void OnNextChunk(string chunk) {
-			if (NextChunk != null && chunk.Length > 0)
-				NextChunk(this, chunk);
-		}
-
-		protected virtual void OnTitleChanged(string title) {
-			if (TitleChanged != null)
-				TitleChanged(this, title);
-		}
-
-		#endregion
 		public void DefaultSettings() {
 			logStyles[(int) LogStyles.Default] = new LogStyle(defaultColor, defaultFontStyle, defaultFamily, defaultSize);
 			logStyles[(int) LogStyles.Warning] = new LogStyle(Color.Red, defaultFontStyle);
