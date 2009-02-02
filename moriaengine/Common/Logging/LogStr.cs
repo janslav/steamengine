@@ -17,18 +17,25 @@
 
 using System;
 using System.Text;
-#if !MONO
-using System.Drawing;
-#endif
+using System.IO;
 using SteamEngine;
 
 namespace SteamEngine.Common {
 	public class LogStr {
+		private static string[] prefixStrings = new string[LogStrBase.logStylesCount];
+		private const string EOS = LogStrBase.separatorString + LogStrBase.eosString + LogStrBase.separatorString;
+
 		internal string rawString;
 		internal string niceString;
 
 		public string RawString { get { return rawString; } }
 		public string NiceString { get { return niceString; } }
+
+		static LogStr() {
+			for (int i = 0, n = prefixStrings.Length; i < n; i++) {
+				prefixStrings[i] = String.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(), LogStrBase.separatorString);
+			}
+		}
 
 		internal protected LogStr(string raw, string nice) {
 			rawString = raw;
@@ -119,97 +126,97 @@ namespace SteamEngine.Common {
 		}
 		public static LogStr Warning(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Warning) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Warning, str));
 		}
 		public static LogStr Error(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Error) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Error, str));
 		}
 		public static LogStr Critical(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Critical) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Critical, str));
 		}
 		public static LogStr Fatal(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Fatal) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Fatal, str));
 		}
 		public static LogStr Debug(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Debug) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr Highlight(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Highlight) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Highlight, str));
 		}
 		public static LogStr Title(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(null, ConAttrs.SetTitlePrefix(str));
+			return new LogStr(null, LogStr.GetTitleSettingMessage(str));
 		}
-		public static LogStr SetStyle(LogStyles style) {
-			return new LogStr(null, ConAttrs.SetStylePrefix(style));
-		}
+		//public static LogStr SetStyle(LogStyles style) {
+		//    return new LogStr(null, LogStr.GetStyleMessage(style));
+		//}
 		public static LogStr Style(object obj, LogStyles style) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(style) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(style, str));
 		}
 		public static LogStr Number(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Number) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Number, str));
 		}
 		public static LogStr Ident(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Ident) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Ident, str));
 		}
 		public static LogStr FilePos(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.FilePos) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.FilePos, str));
 		}
 		public static LogStr File(object obj) {
 			string str = ToStringFor(obj);
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.File) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.File, str));
 		}
 		public static LogStr Raw(string str) {
 			return new LogStr(str, str);
 		}
 		public static LogStr Warning(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Warning) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Warning, str));
 		}
 		public static LogStr Error(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Error) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Error, str));
 		}
 		public static LogStr Critical(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Critical) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Critical, str));
 		}
 		public static LogStr Fatal(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Fatal) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Fatal, str));
 		}
 		public static LogStr Debug(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Debug) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr FileLine(string file, int line) {
-			string str = file + ", " + line.ToString();
-			return new LogStr("(" + str + ") ", "(" + ConAttrs.SetStylePrefix(LogStyles.FileLine) + str + ConAttrs.EOS + ") ");
+			string str = TranslatePath(file) + ", " + line.ToString();
+			return new LogStr("(" + str + ") ", "(" + LogStr.GetStyleMessage(LogStyles.FileLine, str) + ") ");
 		}
 		public static LogStr Highlight(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Highlight) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Highlight, str));
 		}
 		public static LogStr Title(string str) {
-			return new LogStr(null, ConAttrs.SetTitlePrefix(str));
+			return new LogStr(null, LogStr.GetTitleSettingMessage(str));
 		}
 		public static LogStr Style(string str, LogStyles style) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(style) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(style, str));
 		}
 		public static LogStr Number(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Number) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Number, str));
 		}
 		public static LogStr Ident(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.Ident) + str + ConAttrs.EOS);
+			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Ident, str));
 		}
 		public static LogStr FilePos(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.FilePos) + str + ConAttrs.EOS);
+			return new LogStr(TranslatePath(str), LogStr.GetStyleMessage(LogStyles.FilePos, str));
 		}
 		public static LogStr File(string str) {
-			return new LogStr(str, ConAttrs.SetStylePrefix(LogStyles.File) + str + ConAttrs.EOS);
+			return new LogStr(TranslatePath(str), LogStr.GetStyleMessage(LogStyles.File, str));
 		}
 		public static LogStr Code(string s) {
 			return LogStr.Debug("[") + LogStr.Ident(s) + LogStr.Debug("]");
@@ -244,6 +251,33 @@ namespace SteamEngine.Common {
 			return new LogStr(
 				String.Concat(rawstrings),
 				String.Concat(nicestrings));
+		}
+
+		public static string GetStyleStartPrefix(LogStyles style) {
+			return prefixStrings[(int) style];
+		}
+
+		private static string GetStyleMessage(LogStyles style, string text) {
+			return string.Concat(prefixStrings[(int) style], text, EOS);
+		}
+
+		private static string GetTitleSettingMessage(string title) {
+			return string.Concat(LogStrBase.separatorString, LogStrBase.titleString, title, LogStrBase.separatorString);
+		}
+
+		internal static readonly string defaultDir = Path.GetFullPath(".");
+		internal static readonly string separatorAndDot = string.Concat(Path.DirectorySeparatorChar, ".");
+
+		//adds /./ to the position of process default dir
+		private static string TranslatePath(string path) {
+			try {
+				if (Path.IsPathRooted(path)) {
+					if (path.StartsWith(defaultDir, StringComparison.OrdinalIgnoreCase)) {
+						path = string.Concat(defaultDir, separatorAndDot, path.Substring(defaultDir.Length));
+					}
+				}
+			} catch { }
+			return path;
 		}
 
 		#endregion

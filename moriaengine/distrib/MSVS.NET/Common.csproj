@@ -89,9 +89,6 @@
     <Compile Include="..\..\Common\Collections\SimpleQueue.cs">
       <Link>Collections\SimpleQueue.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common\ConAttrs.cs">
-      <Link>ConAttrs.cs</Link>
-    </Compile>
     <Compile Include="..\..\Common\ConvertTools.cs">
       <Link>ConvertTools.cs</Link>
       <SubType>Code</SubType>
@@ -110,13 +107,17 @@
     <Compile Include="..\..\Common\IniFile.cs">
       <Link>IniFile.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common\Logger.cs">
-      <Link>Logger.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\Common\Logging\Logger.cs">
+      <Link>Logging\Logger.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common\LogStr.cs">
-      <Link>LogStr.cs</Link>
-      <SubType>Code</SubType>
+    <Compile Include="..\..\Common\Logging\LogStr.cs">
+      <Link>Logging\LogStr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Logging\LogStrBase.cs">
+      <Link>Logging\LogStrBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Logging\LogStrParser.cs">
+      <Link>Logging\LogStrParser.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\NantLauncher.cs">
       <Link>NantLauncher.cs</Link>

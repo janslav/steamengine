@@ -20,13 +20,28 @@ namespace SteamEngine.RemoteConsole {
 		delegate void WriteDeferredDelegate(string str);
 		WriteDeferredDelegate writeDeferred;
 
-		Dictionary<LogStyles, Font> fonts = new Dictionary<LogStyles, Font>();
-		Dictionary<LogStyles, Color> colors = new Dictionary<LogStyles, Color>();
-
 		public LogStrDisplay() {
 			InitializeComponent();
 			writeDeferred = this.WriteDeferred;
 			this.parser = new LogStrParser(this);
+			this.txtBox.LinkClicked += new LinkClickedEventHandler(txtBox_LinkClicked);
+		}
+
+		void txtBox_LinkClicked(object sender, LinkClickedEventArgs e) {
+			string filename;
+			int line;
+			LogStrParser.TryParseFileLine(e.LinkText, out filename, out line);
+			string ext = System.IO.Path.GetExtension(filename);
+
+			filename = LogStrParser.TranslateToLocalPath(filename);
+
+			string exe, args;
+			if (Settings.GetCommandLineForExt(ext, out exe, out args)) {
+				args = String.Format(args, filename, line);
+				System.Diagnostics.Process.Start(exe, args);
+			} else {
+				System.Diagnostics.Process.Start(filename);
+			}
 		}
 
 		private const int WM_VSCROLL = 0x115;
@@ -80,32 +95,21 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		private static ConAttrs conAttrs = new ConAttrs();
-
-		public void Write(string data, LogStyles style) {
+		public void Write(string data, LogStyleInfo style) {
 			int dataLen = data.Length;
 			if (dataLen > 0) {
-				SetFontAndColor(style);
-
 				while (this.txtBox.TextLength + dataLen > this.txtBox.MaxLength) {
 					this.txtBox.Text = this.txtBox.Text.Substring(this.txtBox.Text.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
 				}
-				this.txtBox.AppendText(data);
+
+				this.txtBox.SelectionFont = style.font;
+				this.txtBox.SelectionColor = style.textColor;
+				if (style.isLink) {
+					this.txtBox.InsertLink(data);
+				} else {
+					this.txtBox.AppendText(data);
+				}
 			}
-		}
-
-		private void SetFontAndColor(LogStyles style) {
-			Font f;
-			if (!this.fonts.TryGetValue(style, out f)) {
-				f = new Font(conAttrs.GetFontFamily(style), conAttrs.GetSize(style), conAttrs.GetFontStyle(style));
-				this.fonts[style] = f;
-			}
-			this.txtBox.SelectionFont = f;
-
-
-			Color color = conAttrs.GetColor(style);
-			this.txtBox.SelectionColor = color;
-
 		}
 
 		public void SetTitle(string data) {

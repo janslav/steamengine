@@ -21,9 +21,19 @@ namespace SteamEngine.AuxiliaryServer {
 				case "svnupdate":
 					VersionControl.SVNUpdateProject();
 					return;
+				case "help":
+					DisplayHelp(conn, state);
+					return;
 			}
 
 			state.WriteLine(0, "Unknown command '" + cmd + "'.");
+		}
+
+		private static void DisplayHelp(TCPConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state) {
+			state.WriteLine(0, "Available commands:"
+				+ "restart" + Environment.NewLine
+				+ "svnupdate" + Environment.NewLine
+				+ "help");
 		}
 
 		public static void CmdRestart() {
