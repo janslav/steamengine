@@ -30,7 +30,9 @@ namespace SteamEngine.RemoteConsole {
 		void txtBox_LinkClicked(object sender, LinkClickedEventArgs e) {
 			string filename;
 			int line;
-			LogStrParser.TryParseFileLine(e.LinkText, out filename, out line);
+			if (!LogStrParser.TryParseFileLine(e.LinkText, out filename, out line)) {
+				filename = e.LinkText;
+			}
 			string ext = System.IO.Path.GetExtension(filename);
 
 			filename = LogStrParser.TranslateToLocalPath(filename);
@@ -98,9 +100,9 @@ namespace SteamEngine.RemoteConsole {
 		public void Write(string data, LogStyleInfo style) {
 			int dataLen = data.Length;
 			if (dataLen > 0) {
-				while (this.txtBox.TextLength + dataLen > this.txtBox.MaxLength) {
-					this.txtBox.Text = this.txtBox.Text.Substring(this.txtBox.Text.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
-				}
+				//while (this.txtBox.TextLength + dataLen > this.txtBox.MaxLength) {
+				//    this.txtBox.Text = this.txtBox.Text.Substring(this.txtBox.Text.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
+				//}
 
 				this.txtBox.SelectionFont = style.font;
 				this.txtBox.SelectionColor = style.textColor;
