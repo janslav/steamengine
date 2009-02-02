@@ -23,7 +23,7 @@ namespace SteamEngine.RemoteConsole {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.txtBox = new ExtendedRichTextBox();
+			this.txtBox = new SteamEngine.RemoteConsole.ExtendedRichTextBox();
 			this.chckAutoScroll = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
@@ -35,7 +35,6 @@ namespace SteamEngine.RemoteConsole {
 			this.txtBox.BackColor = System.Drawing.SystemColors.Window;
 			this.txtBox.DetectUrls = false;
 			this.txtBox.Location = new System.Drawing.Point(0, 26);
-			this.txtBox.MaxLength = 10000;
 			this.txtBox.Name = "txtBox";
 			this.txtBox.ReadOnly = true;
 			this.txtBox.Size = new System.Drawing.Size(306, 267);
