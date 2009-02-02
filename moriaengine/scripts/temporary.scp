@@ -1,3 +1,14 @@
 [function f]
-stationaryeffect(0x3735, 6, 30, 1, 1, 1, 1)
-Sound(0x5C)
+ff
+
+[function ff]
+fff
+
+[function fff]
+ffff
+
+[function ffff]
+fffff
+
+[function fffff]
+ConvertTools.ParseInt32("48621537453186") //we want it to throw an exception

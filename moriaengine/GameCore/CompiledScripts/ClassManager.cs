@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static List<TypeDelegPair> supplySubclassDelegs = new List<TypeDelegPair>();
 
-		private static Assembly commonAssembly = typeof(ConAttrs).Assembly;
+		private static Assembly commonAssembly = typeof(LogStr).Assembly;
 		public static Assembly CommonAssembly {
 			get {
 				return commonAssembly;

@@ -9,16 +9,22 @@ using SteamEngine.Common;
 
 namespace SteamEngine.RemoteConsole {
 	public static class Settings {
-		public static readonly string iniFileName = "steamrc.ini";
+		public const string iniFileName = "steamrc.ini";
+		public const string epsSectionName = "endpoint";
+		public const string linkSectionName = "linkByExtension";
+		public const string generalSectionName = "general";
 
 		public static bool saveEndpointPasswords = true;
 
 		static Settings() {
 			IniFile ini = new IniFile(iniFileName);
 
-			foreach (IniFileSection section in ini.GetSections("endpoint")) {
+			foreach (IniFileSection section in ini.GetSections(epsSectionName)) {
 				knownEndPoints.Add(LoadEPSFromIni(section));
 			}
+		
+			IniFileSection generalSec = ini.GetNewOrParsedSection(generalSectionName);
+			saveEndpointPasswords = generalSec.GetValue<bool>("saveEndpointPasswords", true, "true: Save passwords, false: Don't.");
 		}
 
 		internal static void Init() {
@@ -36,7 +42,7 @@ namespace SteamEngine.RemoteConsole {
 
 				List<IniFileSection> toRemove = new List<IniFileSection>();
 
-				foreach (IniFileSection section in ini.GetSections("endpoint")) {
+				foreach (IniFileSection section in ini.GetSections(epsSectionName)) {
 					string name = section.GetValue<string>("name");
 					EndPointSetting eps;
 					if (pointsToSave.TryGetValue(name, out eps)) {
@@ -48,13 +54,16 @@ namespace SteamEngine.RemoteConsole {
 				}
 
 				foreach (EndPointSetting eps in pointsToSave.Values) {
-					IniFileSection section = ini.GetNewSection("endpoint");
+					IniFileSection section = ini.GetNewSection(epsSectionName);
 					SaveEPSToIni(eps, section);
 				}
 
 				foreach (IniFileSection section in toRemove) {
 					ini.RemoveSection(section);
 				}
+
+				IniFileSection generalSec = ini.GetNewOrParsedSection(generalSectionName);
+				generalSec.SetValue<bool>("saveEndpointPasswords", saveEndpointPasswords, "true: Save passwords, false: Don't.");
 
 				ini.WriteToFile();
 			} catch (Exception e) {
@@ -66,7 +75,11 @@ namespace SteamEngine.RemoteConsole {
 			section.SetValue<string>("Name", eps.Name, null);
 			section.SetValue<string>("Address", eps.Address, null);
 			section.SetValue<string>("UserName", eps.UserName, null);
-			section.SetValue<string>("Password", eps.Password, null);
+			if (saveEndpointPasswords) {
+				section.SetValue<string>("Password", eps.Password, null);
+			} else {
+				section.RemoveValue("Password");
+			}
 			section.SetValue<int>("Port", eps.Port, null);
 		}
 
@@ -76,11 +89,30 @@ namespace SteamEngine.RemoteConsole {
 			eps.Address = section.GetValue<string>("Address", eps.Address, null);
 			eps.UserName = section.GetValue<string>("UserName", eps.UserName, null);
 			eps.Password = section.GetValue<string>("Password", eps.Password, null);
+			if (!saveEndpointPasswords) {
+				section.RemoveValue("Password");
+			}
 			eps.Port = section.GetValue<int>("Port", eps.Port, null);
 			return eps;
 		}
 
 		public static BindingList<EndPointSetting> knownEndPoints = new BindingList<EndPointSetting>();
+
+		internal static bool GetCommandLineForExt(string ext, out string exePath, out string argumentsToFormat) {
+			IniFile ini = new IniFile(iniFileName);
+
+			foreach (IniFileSection section in ini.GetSections(linkSectionName)) {
+				string sectionExt = section.GetValue<string>("extension");
+				if (string.Equals(ext, sectionExt, StringComparison.OrdinalIgnoreCase)) {
+					exePath = section.GetValue<string>("exe");
+					argumentsToFormat = section.GetValue<string>("arguments");
+					return true;
+				}
+			}
+
+			exePath = argumentsToFormat = null;
+			return false;
+		}
 	}
 
 	public class EndPointSetting {
