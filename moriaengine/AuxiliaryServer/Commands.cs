@@ -21,6 +21,9 @@ namespace SteamEngine.AuxiliaryServer {
 				case "svnupdate":
 					VersionControl.SVNUpdateProject();
 					return;
+				case "svncleanup":
+					VersionControl.SVNCleanUpProject();
+					return;
 				case "help":
 					DisplayHelp(conn, state);
 					return;
@@ -33,6 +36,7 @@ namespace SteamEngine.AuxiliaryServer {
 			state.WriteLine(0, "Available commands:"
 				+ "restart" + Environment.NewLine
 				+ "svnupdate" + Environment.NewLine
+				+ "svncleanup" + Environment.NewLine
 				+ "help");
 		}
 

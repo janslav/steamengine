@@ -560,6 +560,10 @@ namespace SteamEngine {
 			VersionControl.SVNUpdateProject();
 		}
 
+		public static void SvnCleanUp() {
+			VersionControl.SVNCleanUpProject();
+		}
+
 		public static Type type(string typename) {
 			//global type, you can actually get any type with this
 			return Type.GetType(typename, true, true);//true for case insensitive
