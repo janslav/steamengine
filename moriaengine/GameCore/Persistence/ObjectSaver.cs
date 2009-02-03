@@ -222,7 +222,7 @@ namespace SteamEngine.Persistence {
 			} else if (TagMath.IsNumberType(t)) {
 				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} else if (t.Equals(typeof(String))) {
-				string stringAsSingleLine = Utility.EscapeNewlines((string) value);
+				string stringAsSingleLine = Tools.EscapeNewlines((string) value);
 				return "\"" + stringAsSingleLine + "\""; //returns the string in ""
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 				return "#" + ((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
@@ -432,7 +432,7 @@ namespace SteamEngine.Persistence {
 			Match m = ConvertTools.stringRE.Match(input);
 			if (m.Success) {
 				string stringAsSingleLine = m.Groups["value"].Value;
-				retVal = Utility.UnescapeNewlines(stringAsSingleLine);
+				retVal = Tools.UnescapeNewlines(stringAsSingleLine);
 				return true;
 			}
 			return false;
