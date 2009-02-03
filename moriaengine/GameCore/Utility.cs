@@ -24,7 +24,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 
-	public sealed class Utility {
+	public static class Utility {
 
 		/**
 			Splits a string which may be comma-delimited or space-delimited. (Tabs are also allowed,
@@ -131,45 +131,12 @@ namespace SteamEngine {
 			return input.Trim();
 		}
 
-		public static string EscapeNewlines(string value) {
-			//return value;
-
-			StringBuilder sb = new StringBuilder();
-			foreach (char ch in value) {
-				char escapedEquivalent;
-				if (CharNeedsEscaping(ch, out escapedEquivalent)) {
-					sb.Append("\\").Append(escapedEquivalent);
-				} else {
-					sb.Append(ch);
-				}
+		public static ushort NormalizeDyedColor(int color, ushort defaultColor) {
+			if ((color < 2) || (color > 1001)) {
+				return defaultColor;
+			} else {
+				return (ushort) color;
 			}
-			return sb.ToString();
-		}
-
-		public static string UnescapeNewlines(string value) {
-			//return value;
-
-			StringBuilder sb = new StringBuilder();
-			bool lastCharWasBackslash = false;
-			foreach (char ch in value) {
-				if (lastCharWasBackslash) {
-					char unEscapedEquivalent;
-					if (CharNeedsUnEscaping(ch, out unEscapedEquivalent)) {
-						sb.Append(unEscapedEquivalent);
-					} else {
-						sb.Append(ch);
-					}
-					lastCharWasBackslash = false;
-					continue;
-				}
-
-				if (ch == '\\') {
-					lastCharWasBackslash = true;
-					continue;
-				}
-				sb.Append(ch);
-			}
-			return sb.ToString();
 		}
 
 		[Summary("Count the arithmetic mean of the given values")]
@@ -182,42 +149,6 @@ namespace SteamEngine {
 				sum += val;
 			}
 			return sum / values.Length;
-		}
-
-		private static bool CharNeedsEscaping(char ch, out char escapedEquivalent) {
-			escapedEquivalent = ch;
-			switch (ch) {
-				case '\n':
-					escapedEquivalent = 'n';
-					return true;
-				case '\r':
-					escapedEquivalent = 'r';
-					return true;
-				case '\\':
-					return true;
-			}
-			return false;
-		}
-
-		private static bool CharNeedsUnEscaping(char ch, out char unEscapedEquivalent) {
-			unEscapedEquivalent = ch;
-			switch (ch) {
-				case 'n':
-					unEscapedEquivalent = '\n';
-					return true;
-				case 'r':
-					unEscapedEquivalent = '\r';
-					return true;
-			}
-			return false;
-		}
-
-		public static ushort NormalizeDyedColor(int color, ushort defaultColor) {
-			if ((color < 2) || (color > 1001)) {
-				return defaultColor;
-			} else {
-				return (ushort) color;
-			}
 		}
 	}
 }

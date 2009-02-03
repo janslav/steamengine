@@ -20,6 +20,10 @@ namespace SteamEngine.RemoteConsole {
 		delegate void WriteDeferredDelegate(string str);
 		WriteDeferredDelegate writeDeferred;
 
+		private const string contractedSign = "[+]";
+
+		List<string> contractedTexts = new List<string>();
+
 		public LogStrDisplay() {
 			InitializeComponent();
 			writeDeferred = this.WriteDeferred;
@@ -30,6 +34,10 @@ namespace SteamEngine.RemoteConsole {
 		void txtBox_LinkClicked(object sender, LinkClickedEventArgs e) {
 			string filename;
 			int line;
+			if (this.TryUncontract(e.LinkText)) {
+				return;
+			}
+
 			if (!LogStrParser.TryParseFileLine(e.LinkText, out filename, out line)) {
 				filename = e.LinkText;
 			}
@@ -46,16 +54,6 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		private const int WM_VSCROLL = 0x115;
-		private const int SB_BOTTOM = 7;
-
-		[DllImportAttribute("user32.dll")]
-		private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, Int32 lParam);
-
-		private void ScrollToEnd() {
-			SendMessage(this.txtBox.Handle, WM_VSCROLL, SB_BOTTOM, 0);
-		}
-
 		public void Write(string logStrEncoded) {
 			this.Invoke(this.writeDeferred, logStrEncoded);
 		}
@@ -69,11 +67,66 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void WriteDeferred(string str) {
+			//this.txtBox.BeginUpdate();
+			int prevLen = this.txtBox.Text.Length;
 			this.parser.ProcessLogStr(str);
 
 			if (this.chckAutoScroll.Checked) {
-				this.ScrollToEnd();
+				this.txtBox.ScrollToBottom();
 			}
+
+			if (this.chkContract.Checked) {				
+				this.TryContract(prevLen);				
+			}
+			//this.txtBox.EndUpdate();
+		}
+
+		private void TryContract(int prevLen) {
+			string data = this.txtBox.Text.Substring(prevLen);
+			int firstNextLine;
+			int firstN = data.IndexOf('\n');
+			int firstR = data.IndexOf('\r');
+			if (firstN == -1) {
+				firstNextLine = firstR;
+			} else if (firstR == -1) {
+				firstNextLine = firstN;
+			} else {
+				firstNextLine = Math.Min(firstN, firstR);
+			}
+
+			if (firstNextLine > -1) { //data is multiline. We want to contract it
+				int start = prevLen + firstNextLine;
+				int len = data.Length - firstNextLine;
+				this.txtBox.Select(start, len);
+				if (this.txtBox.SelectedText.Trim().Length > 0) {
+					string rtf = this.txtBox.SelectedRtf;
+					this.contractedTexts.Add(rtf);
+					this.txtBox.SelectedText = " ";
+					this.txtBox.InsertLink(contractedSign, String.Concat(this.contractedTexts.Count - 1));
+					this.txtBox.AppendText(Environment.NewLine);
+				}
+			}
+		}
+
+		private bool TryUncontract(string linkText) {
+			if (linkText.StartsWith(contractedSign+"#")) {
+				string indexStr = linkText.Substring(4);
+				int i = int.Parse(indexStr);
+				string rtf = this.contractedTexts[i];
+				this.contractedTexts[i] = null;
+
+				string contractedSignDecorated = " " + contractedSign;
+				int signLen = contractedSignDecorated.Length;
+				int selectionStart = this.txtBox.Text.IndexOf(contractedSignDecorated, this.txtBox.CurrentMouseCharIndex - signLen);
+				this.txtBox.Select(selectionStart, signLen + 1 + Environment.NewLine.Length);
+				this.txtBox.SelectedText = " "; //erases the [+]
+
+				if (!string.IsNullOrEmpty(rtf)) {
+					this.txtBox.SelectedRtf = rtf;
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public string Title {
@@ -133,6 +186,15 @@ namespace SteamEngine.RemoteConsole {
 			if (handler != null) {
 				handler(this, EventArgs.Empty);
 			}
+		}
+
+		private void btnClear_Click(object sender, EventArgs e) {
+			this.ClearText();
+		}
+
+		public void ClearText() {
+			this.txtBox.Clear();
+			this.contractedTexts.Clear();
 		}
 	}
 }

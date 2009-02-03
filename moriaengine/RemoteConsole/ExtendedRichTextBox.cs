@@ -14,157 +14,13 @@ using System.Windows.Forms;
 #endregion
 
 namespace SteamEngine.RemoteConsole {
-	#region Control enums
-	/// <summary>
-	/// Specifies the style of underline that should be
-	/// applied to the text.
-	/// </summary>
-	public enum UnderlineStyle {
-		/// <summary>
-		/// No underlining.
-		/// </summary>
-		None = 0,
-
-		/// <summary>
-		/// Standard underlining across all words.
-		/// </summary>
-		Normal = 1,
-
-		/// <summary>
-		/// Standard underlining broken between words.
-		/// </summary>
-		Word = 2,
-
-		/// <summary>
-		/// Double line underlining.
-		/// </summary>
-		Double = 3,
-
-		/// <summary>
-		/// Dotted underlining.
-		/// </summary>
-		Dotted = 4,
-
-		/// <summary>
-		/// Dashed underlining.
-		/// </summary>
-		Dash = 5,
-
-		/// <summary>
-		/// Dash-dot ("-.-.") underlining.
-		/// </summary>
-		DashDot = 6,
-
-		/// <summary>
-		/// Dash-dot-dot ("-..-..") underlining.
-		/// </summary>
-		DashDotDot = 7,
-
-		/// <summary>
-		/// Wave underlining (like spelling mistakes in MS Word).
-		/// </summary>
-		Wave = 8,
-
-		/// <summary>
-		/// Extra thick standard underlining.
-		/// </summary>
-		Thick = 9,
-
-		/// <summary>
-		/// Extra thin standard underlining.
-		/// </summary>
-		HairLine = 10,
-
-		/// <summary>
-		/// Double thickness wave underlining.
-		/// </summary>
-		DoubleWave = 11,
-
-		/// <summary>
-		/// Thick wave underlining.
-		/// </summary>
-		HeavyWave = 12,
-
-		/// <summary>
-		/// Extra long dash underlining.
-		/// </summary>
-		LongDash = 13
-	}
-
-	/// <summary>
-	/// Specifies the color of underline that should be
-	/// applied to the text.
-	/// </summary>
-	/// <remarks>
-	/// I named these colors by their appearance, so some
-	/// of them might not be what you expect. Please email
-	/// me if you feel one should be changed.
-	/// </remarks>
-	public enum UnderlineColor {
-		/// <summary>Black.</summary>
-		Black = 0x00,
-
-		/// <summary>None.</summary>
-		None = 0x00,
-
-		/// <summary>Blue.</summary>
-		Blue = 0x10,
-
-		/// <summary>Cyan.</summary>
-		Cyan = 0x20,
-
-		/// <summary>Lime green.</summary>
-		LimeGreen = 0x30,
-
-		/// <summary>Magenta.</summary>
-		Magenta = 0x40,
-
-		/// <summary>Red.</summary>
-		Red = 0x50,
-
-		/// <summary>Yellow.</summary>
-		Yellow = 0x60,
-
-		/// <summary>White.</summary>
-		White = 0x70,
-
-		/// <summary>DarkBlue.</summary>
-		DarkBlue = 0x80,
-
-		/// <summary>DarkCyan.</summary>
-		DarkCyan = 0x90,
-
-		/// <summary>Green.</summary>
-		Green = 0xA0,
-
-		/// <summary>Dark magenta.</summary>
-		DarkMagenta = 0xB0,
-
-		/// <summary>Brown.</summary>
-		Brown = 0xC0,
-
-		/// <summary>Olive green.</summary>
-		OliveGreen = 0xD0,
-
-		/// <summary>Dark gray.</summary>
-		DarkGray = 0xE0,
-
-		/// <summary>Gray.</summary>
-		Gray = 0xF0
-	}
-
-	// Enum for possible RTF colors
-	public enum RtfColor {
-		Black, Maroon, Green, Olive, Navy, Purple, Teal, Gray, Silver,
-		Red, Lime, Yellow, Blue, Fuchsia, Aqua, White
-	}
-	#endregion
-
 	public class ExtendedRichTextBox : RichTextBox {
 		#region Private fields and constructors
 		private int _Updating = 0;
 		private int _OldEventMask = 0;
 		private ToolTip myToolTip;
+
+		private int currentMouseCharIndex;
 
 		static ExtendedRichTextBox() {
 			// Initialize the dictionary mapping color codes to definitions
@@ -214,6 +70,17 @@ namespace SteamEngine.RemoteConsole {
 			HideCaret(Handle);
 		}
 		#endregion
+
+		public int CurrentMouseCharIndex {
+			get {
+				return this.currentMouseCharIndex;
+			}
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e) {
+			this.currentMouseCharIndex = this.GetCharIndexFromPosition(new Point(e.X, e.Y));
+			base.OnMouseMove(e);
+		}
 		#region Elements required to create an RTF document
 
 		/* RTF HEADER
@@ -1630,4 +1497,150 @@ namespace SteamEngine.RemoteConsole {
 			set { nTrackPos = value; }
 		}
 	}
+
+	#region Control enums
+	/// <summary>
+	/// Specifies the style of underline that should be
+	/// applied to the text.
+	/// </summary>
+	public enum UnderlineStyle {
+		/// <summary>
+		/// No underlining.
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// Standard underlining across all words.
+		/// </summary>
+		Normal = 1,
+
+		/// <summary>
+		/// Standard underlining broken between words.
+		/// </summary>
+		Word = 2,
+
+		/// <summary>
+		/// Double line underlining.
+		/// </summary>
+		Double = 3,
+
+		/// <summary>
+		/// Dotted underlining.
+		/// </summary>
+		Dotted = 4,
+
+		/// <summary>
+		/// Dashed underlining.
+		/// </summary>
+		Dash = 5,
+
+		/// <summary>
+		/// Dash-dot ("-.-.") underlining.
+		/// </summary>
+		DashDot = 6,
+
+		/// <summary>
+		/// Dash-dot-dot ("-..-..") underlining.
+		/// </summary>
+		DashDotDot = 7,
+
+		/// <summary>
+		/// Wave underlining (like spelling mistakes in MS Word).
+		/// </summary>
+		Wave = 8,
+
+		/// <summary>
+		/// Extra thick standard underlining.
+		/// </summary>
+		Thick = 9,
+
+		/// <summary>
+		/// Extra thin standard underlining.
+		/// </summary>
+		HairLine = 10,
+
+		/// <summary>
+		/// Double thickness wave underlining.
+		/// </summary>
+		DoubleWave = 11,
+
+		/// <summary>
+		/// Thick wave underlining.
+		/// </summary>
+		HeavyWave = 12,
+
+		/// <summary>
+		/// Extra long dash underlining.
+		/// </summary>
+		LongDash = 13
+	}
+
+	/// <summary>
+	/// Specifies the color of underline that should be
+	/// applied to the text.
+	/// </summary>
+	/// <remarks>
+	/// I named these colors by their appearance, so some
+	/// of them might not be what you expect. Please email
+	/// me if you feel one should be changed.
+	/// </remarks>
+	public enum UnderlineColor {
+		/// <summary>Black.</summary>
+		Black = 0x00,
+
+		/// <summary>None.</summary>
+		None = 0x00,
+
+		/// <summary>Blue.</summary>
+		Blue = 0x10,
+
+		/// <summary>Cyan.</summary>
+		Cyan = 0x20,
+
+		/// <summary>Lime green.</summary>
+		LimeGreen = 0x30,
+
+		/// <summary>Magenta.</summary>
+		Magenta = 0x40,
+
+		/// <summary>Red.</summary>
+		Red = 0x50,
+
+		/// <summary>Yellow.</summary>
+		Yellow = 0x60,
+
+		/// <summary>White.</summary>
+		White = 0x70,
+
+		/// <summary>DarkBlue.</summary>
+		DarkBlue = 0x80,
+
+		/// <summary>DarkCyan.</summary>
+		DarkCyan = 0x90,
+
+		/// <summary>Green.</summary>
+		Green = 0xA0,
+
+		/// <summary>Dark magenta.</summary>
+		DarkMagenta = 0xB0,
+
+		/// <summary>Brown.</summary>
+		Brown = 0xC0,
+
+		/// <summary>Olive green.</summary>
+		OliveGreen = 0xD0,
+
+		/// <summary>Dark gray.</summary>
+		DarkGray = 0xE0,
+
+		/// <summary>Gray.</summary>
+		Gray = 0xF0
+	}
+
+	// Enum for possible RTF colors
+	public enum RtfColor {
+		Black, Maroon, Green, Olive, Navy, Purple, Teal, Gray, Silver,
+		Red, Lime, Yellow, Blue, Fuchsia, Aqua, White
+	}
+	#endregion
 }

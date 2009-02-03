@@ -50,7 +50,7 @@ namespace SteamEngine.RemoteConsole {
 			this.conn = conn;
 			MainClass.mainForm.SetConnected(true);
 
-			MainClass.mainForm.SystemDisplay.WriteLine("Connected to " + conn.EndPoint);
+			Console.WriteLine("Connected to " + conn.EndPoint);
 			//IdentifyGameServerPacket packet = Pool<IdentifyGameServerPacket>.Acquire();
 			//packet.Prepare();
 			//conn.SendSinglePacket(packet);
@@ -59,7 +59,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void NoParamDeleg();
 
 		public void On_Close(string reason) {
-			MainClass.mainForm.SystemDisplay.WriteLine("Disconnected from " + conn.EndPoint + ": " + reason);
+			Console.WriteLine("Disconnected from " + conn.EndPoint + ": " + reason);
 
 			connectedInstance = null;
 			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.SetConnectedFalse));

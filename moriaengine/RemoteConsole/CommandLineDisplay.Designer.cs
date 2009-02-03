@@ -29,19 +29,20 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			// txtDisplay
 			// 
+			this.txtDisplay.DefaultTitle = null;
 			this.txtDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.txtDisplay.Location = new System.Drawing.Point(0, 0);
 			this.txtDisplay.Name = "txtDisplay";
-			this.txtDisplay.Size = new System.Drawing.Size(496, 391);
+			this.txtDisplay.Size = new System.Drawing.Size(400, 379);
 			this.txtDisplay.TabIndex = 0;
 			// 
 			// txtCommandLine
 			// 
 			this.txtCommandLine.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.txtCommandLine.Enabled = false;
-			this.txtCommandLine.Location = new System.Drawing.Point(0, 391);
+			this.txtCommandLine.Location = new System.Drawing.Point(0, 379);
 			this.txtCommandLine.Name = "txtCommandLine";
-			this.txtCommandLine.Size = new System.Drawing.Size(496, 21);
+			this.txtCommandLine.Size = new System.Drawing.Size(400, 21);
 			this.txtCommandLine.TabIndex = 2;
 			this.txtCommandLine.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCommandLine_KeyPress);
 			// 
@@ -52,7 +53,7 @@ namespace SteamEngine.RemoteConsole {
 			this.Controls.Add(this.txtDisplay);
 			this.Controls.Add(this.txtCommandLine);
 			this.Name = "CommandLineDisplay";
-			this.Size = new System.Drawing.Size(496, 412);
+			this.Size = new System.Drawing.Size(400, 400);
 			this.ResumeLayout(false);
 
 		}
