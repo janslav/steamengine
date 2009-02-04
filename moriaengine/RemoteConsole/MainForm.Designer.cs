@@ -108,7 +108,7 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTab.Controls.Add(this.systemTabPage);
 			this.systemTab.Location = new System.Drawing.Point(4, 22);
 			this.systemTab.Name = "systemTab";
-			this.systemTab.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.systemTab.Padding = new System.Windows.Forms.Padding(3);
 			this.systemTab.Size = new System.Drawing.Size(624, 327);
 			this.systemTab.TabIndex = 0;
 			this.systemTab.Text = "System";
