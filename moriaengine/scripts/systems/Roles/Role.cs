@@ -230,8 +230,8 @@ namespace SteamEngine.CompiledScripts {
 			if (this.name != null) {
 				output.WriteValue("name", this.name);
 			}
-			int count = this.members.Count;
-			output.WriteValue("count", count);
+			//int count = this.members.Count;
+			//output.WriteValue("count", count);
 			//int i = 0;
 			foreach (IRoleMembership membership in this.members.Values) {
 				//output.WriteValue(i.ToString(), membership);				
@@ -252,9 +252,9 @@ namespace SteamEngine.CompiledScripts {
 				currentLineNumber = pl.line;
 				RoleKey key = (RoleKey) ObjectSaver.OptimizedLoad_SimpleType(pl.value, typeof(RoleKey));
 
-				pl = input.PopPropsLine("count");
-				currentLineNumber = pl.line;
-				int count = ConvertTools.ParseInt32(pl.value);
+				//pl = input.PopPropsLine("count");
+				//currentLineNumber = pl.line;
+				//int count = ConvertTools.ParseInt32(pl.value);
 
 				Role role = def.CreateWhenLoading(key);
 
