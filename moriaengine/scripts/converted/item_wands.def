@@ -6,9 +6,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Clumsiness
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_clumsy
+//RESOURCES = i_wand_1,10 i_scroll_clumsy // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_create_food]
 CATEGORY = Provisions - Alchemy & Magic
@@ -16,9 +16,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Create Food
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_create_food
+//RESOURCES = i_wand_2,10 i_scroll_create_food // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Feeblemind]
 CATEGORY = Provisions - Alchemy & Magic
@@ -26,9 +26,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Feeblemindness
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_Feeblemind
+//RESOURCES = i_wand_3,10 i_scroll_Feeblemind // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Heal]
 CATEGORY = Provisions - Alchemy & Magic
@@ -36,9 +36,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Healing
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_heal
+//RESOURCES = i_wand_4,10 i_scroll_heal // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_magic_arrow]
 CATEGORY = Provisions - Alchemy & Magic
@@ -46,9 +46,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Arrow
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_magic_arrow
+//RESOURCES = i_wand_1,10 i_scroll_magic_arrow // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_night_sight]
 CATEGORY = Provisions - Alchemy & Magic
@@ -56,9 +56,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Night Sight
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_night_sight
+//RESOURCES = i_wand_2,10 i_scroll_night_sight // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_react_armor]
 CATEGORY = Provisions - Alchemy & Magic
@@ -66,9 +66,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Reactive Armor
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_reactive_armor
+//RESOURCES = i_wand_3,10 i_scroll_reactive_armor // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_weaken]
 CATEGORY = Provisions - Alchemy & Magic
@@ -76,9 +76,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Weaken
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_weaken
+//RESOURCES = i_wand_4,10 i_scroll_weaken // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Agility]
 CATEGORY = Provisions - Alchemy & Magic
@@ -86,9 +86,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Agility
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_agility
+//RESOURCES = i_wand_1,10 i_scroll_agility // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_CUNNING]
 CATEGORY = Provisions - Alchemy & Magic
@@ -96,9 +96,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Cunning
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_cunning
+//RESOURCES = i_wand_2,10 i_scroll_cunning // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_CURE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -106,9 +106,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Cure
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_cure
+//RESOURCES = i_wand_3,10 i_scroll_cure // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_HARM]
 CATEGORY = Provisions - Alchemy & Magic
@@ -116,9 +116,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Harm
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_harm
+//RESOURCES = i_wand_4,10 i_scroll_harm // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MAGIC_TRAP]
 CATEGORY = Provisions - Alchemy & Magic
@@ -126,9 +126,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Trap
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_magic_trap
+//RESOURCES = i_wand_1,10 i_scroll_magic_trap // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MAGIC_UNTRAP]
 CATEGORY = Provisions - Alchemy & Magic
@@ -136,9 +136,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Untrap
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_magic_untrap
+//RESOURCES = i_wand_2,10 i_scroll_magic_untrap // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Protection]
 CATEGORY = Provisions - Alchemy & Magic
@@ -146,9 +146,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Protection
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_protection
+//RESOURCES = i_wand_3,10 i_scroll_protection // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Strength]
 CATEGORY = Provisions - Alchemy & Magic
@@ -156,9 +156,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Strength
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_strength
+//RESOURCES = i_wand_4,10 i_scroll_strength // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Bless]
 CATEGORY = Provisions - Alchemy & Magic
@@ -166,9 +166,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Blessing
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_bless
+//RESOURCES = i_wand_1,10 i_scroll_bless // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Fireball]
 CATEGORY = Provisions - Alchemy & Magic
@@ -176,9 +176,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Fireballs
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_fireball
+//RESOURCES = i_wand_2,10 i_scroll_fireball // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Magic_Lock]
 CATEGORY = Provisions - Alchemy & Magic
@@ -186,9 +186,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Lock
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_magic_lock
+//RESOURCES = i_wand_3,10 i_scroll_magic_lock // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Poison]
 CATEGORY = Provisions - Alchemy & Magic
@@ -196,9 +196,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Poison
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_poison
+//RESOURCES = i_wand_4,10 i_scroll_poison // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_telekinesis]
 CATEGORY = Provisions - Alchemy & Magic
@@ -206,9 +206,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of telekinesis
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_telekinesis
+//RESOURCES = i_wand_1,10 i_scroll_telekinesis // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_TELEPORT]
 CATEGORY = Provisions - Alchemy & Magic
@@ -216,9 +216,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Teleport
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_teleport
+//RESOURCES = i_wand_2,10 i_scroll_teleport // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Unlock]
 CATEGORY = Provisions - Alchemy & Magic
@@ -226,9 +226,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Unlock
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_unlock
+//RESOURCES = i_wand_3,10 i_scroll_unlock // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_Wall_of_Stone]
 CATEGORY = Provisions - Alchemy & Magic
@@ -236,9 +236,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Wall of Stone
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_wall_of_stone
+//RESOURCES = i_wand_4,10 i_scroll_wall_of_stone // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_archcure]
 CATEGORY = Provisions - Alchemy & Magic
@@ -246,9 +246,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Arch Cure
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_archcure
+//RESOURCES = i_wand_1,10 i_scroll_archcure // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_archprotection]
 CATEGORY = Provisions - Alchemy & Magic
@@ -256,9 +256,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Arch Protection
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_archprotection
+//RESOURCES = i_wand_2,10 i_scroll_archprotection // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_CURSE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -266,9 +266,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Curse
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_curse
+//RESOURCES = i_wand_3,10 i_scroll_curse // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_FIRE_FIELD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -276,9 +276,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Fire Field
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_fire_field
+//RESOURCES = i_wand_4,10 i_scroll_fire_field // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_GREATER_HEAL]
 CATEGORY = Provisions - Alchemy & Magic
@@ -286,9 +286,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Greater Heal
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_greater_heal
+//RESOURCES = i_wand_1,10 i_scroll_greater_heal // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_LIGHTNING]
 CATEGORY = Provisions - Alchemy & Magic
@@ -296,9 +296,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Lightning
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_lightning
+//RESOURCES = i_wand_2,10 i_scroll_lightning // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MANA_DRAIN]
 CATEGORY = Provisions - Alchemy & Magic
@@ -306,9 +306,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mana Drain
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_mana_drain
+//RESOURCES = i_wand_3,10 i_scroll_mana_drain // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_RECALL]
 CATEGORY = Provisions - Alchemy & Magic
@@ -316,9 +316,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Recall
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_recall
+//RESOURCES = i_wand_4,10 i_scroll_recall // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_BLADE_SPIRITS]
 CATEGORY = Provisions - Alchemy & Magic
@@ -326,9 +326,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Blade Spirits
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_blade_spirits
+//RESOURCES = i_wand_1,10 i_scroll_blade_spirits // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_DISPEL_FIELD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -336,9 +336,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Dispel Field
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_dispel_field
+//RESOURCES = i_wand_2,10 i_scroll_dispel_field // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_INCOGNITO]
 CATEGORY = Provisions - Alchemy & Magic
@@ -346,9 +346,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Incognito
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_incognito
+//RESOURCES = i_wand_3,10 i_scroll_incognito // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MAGIC_REFLECTION]
 CATEGORY = Provisions - Alchemy & Magic
@@ -356,9 +356,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Reflect
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_magic_reflection
+//RESOURCES = i_wand_4,10 i_scroll_magic_reflection // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MIND_BLAST]
 CATEGORY = Provisions - Alchemy & Magic
@@ -366,9 +366,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mind Blast
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_mind_blast
+//RESOURCES = i_wand_1,10 i_scroll_mind_blast // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_PARALYZE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -376,9 +376,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Paralyzation
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_paralyze
+//RESOURCES = i_wand_2,10 i_scroll_paralyze // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_POISON_FIELD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -386,9 +386,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Poison Field
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_poison_field
+//RESOURCES = i_wand_3,10 i_scroll_poison_field // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_SUMMON_CREATURE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -396,9 +396,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Creature
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_summon_creature
+//RESOURCES = i_wand_4,10 i_scroll_summon_creature // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_DISPEL]
 CATEGORY = Provisions - Alchemy & Magic
@@ -406,9 +406,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Dispel
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_dispel
+//RESOURCES = i_wand_1,10 i_scroll_dispel // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_ENERGY_BOLT]
 CATEGORY = Provisions - Alchemy & Magic
@@ -416,9 +416,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Energy Bolt
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_energy_bolt
+//RESOURCES = i_wand_2,10 i_scroll_energy_bolt // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_EXPLOSION]
 CATEGORY = Provisions - Alchemy & Magic
@@ -426,9 +426,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Explosion
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_explosion
+//RESOURCES = i_wand_3,10 i_scroll_explosion // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_INVISIBILITY]
 CATEGORY = Provisions - Alchemy & Magic
@@ -436,9 +436,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Invisibility
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_invisibility
+//RESOURCES = i_wand_4,10 i_scroll_invisibility // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MARK]
 CATEGORY = Provisions - Alchemy & Magic
@@ -446,9 +446,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mark
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_mark
+//RESOURCES = i_wand_1,10 i_scroll_mark // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MASS_CURSE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -456,9 +456,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mass Cure
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_mass_curse
+//RESOURCES = i_wand_2,10 i_scroll_mass_curse // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_PARALYZE_FIELD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -466,9 +466,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Paralyze Field
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_paralyze_field
+//RESOURCES = i_wand_3,10 i_scroll_paralyze_field // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_REVEAL]
 CATEGORY = Provisions - Alchemy & Magic
@@ -476,9 +476,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Reveal
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_reveal
+//RESOURCES = i_wand_4,10 i_scroll_reveal // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_CHAIN_LIGHTNING]
 CATEGORY = Provisions - Alchemy & Magic
@@ -486,9 +486,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Chain Lightning
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_chain_lightning
+//RESOURCES = i_wand_1,10 i_scroll_chain_lightning // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_ENERGY_FIELD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -496,9 +496,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Energy Field
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_energy_field
+//RESOURCES = i_wand_2,10 i_scroll_energy_field // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_FLAMESTRIKE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -506,9 +506,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Flame Strike
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_flamestrike
+//RESOURCES = i_wand_3,10 i_scroll_flamestrike // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_GATE_TRAVEL]
 CATEGORY = Provisions - Alchemy & Magic
@@ -516,9 +516,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Gate Travel
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_gate_travel
+//RESOURCES = i_wand_4,10 i_scroll_gate_travel // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MANA_VAMPIRE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -526,9 +526,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mana Vampire
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_mana_vampire
+//RESOURCES = i_wand_1,10 i_scroll_mana_vampire // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_MASS_DISPEL]
 CATEGORY = Provisions - Alchemy & Magic
@@ -536,9 +536,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mass Dispel
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_mass_dispel
+//RESOURCES = i_wand_2,10 i_scroll_mass_dispel // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_METEOR_SWARM]
 CATEGORY = Provisions - Alchemy & Magic
@@ -546,9 +546,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Meteor Storm
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_meteor_swarm
+//RESOURCES = i_wand_3,10 i_scroll_meteor_swarm // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_POLYMORPH]
 CATEGORY = Provisions - Alchemy & Magic
@@ -556,9 +556,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Polymorph
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_polymorph
+//RESOURCES = i_wand_4,10 i_scroll_polymorph // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_EARTHQUAKE]
 CATEGORY = Provisions - Alchemy & Magic
@@ -566,9 +566,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Earthquake
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_earthquake
+//RESOURCES = i_wand_1,10 i_scroll_earthquake // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_ENERGY_VORTEX]
 CATEGORY = Provisions - Alchemy & Magic
@@ -576,9 +576,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Energy Vortex
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_energy_vortex
+//RESOURCES = i_wand_2,10 i_scroll_energy_vortex // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_RESURRECTION]
 CATEGORY = Provisions - Alchemy & Magic
@@ -586,9 +586,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Resurrection
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_resurrection
+//RESOURCES = i_wand_3,10 i_scroll_resurrection // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_summon_elem_air]
 CATEGORY = Provisions - Alchemy & Magic
@@ -596,9 +596,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Air Elemental
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_summon_elem_air
+//RESOURCES = i_wand_4,10 i_scroll_summon_elem_air // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_SUMMON_DAEMON]
 CATEGORY = Provisions - Alchemy & Magic
@@ -606,9 +606,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Daemon
 
 TYPE = T_WAND
-RESOURCES = i_wand_1,10 i_scroll_summon_daemon
+//RESOURCES = i_wand_1,10 i_scroll_summon_daemon // commented out by Converter 
 model = i_wand_1
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_summon_elem_earth]
 CATEGORY = Provisions - Alchemy & Magic
@@ -616,9 +616,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Earth Elemental
 
 TYPE = T_WAND
-RESOURCES = i_wand_2,10 i_scroll_summon_elem_earth
+//RESOURCES = i_wand_2,10 i_scroll_summon_elem_earth // commented out by Converter 
 model = i_wand_2
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_summon_elem_fire]
 CATEGORY = Provisions - Alchemy & Magic
@@ -626,9 +626,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Fire Elemental
 
 TYPE = T_WAND
-RESOURCES = i_wand_3,10 i_scroll_summon_elem_fire
+//RESOURCES = i_wand_3,10 i_scroll_summon_elem_fire // commented out by Converter 
 model = i_wand_3
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_summon_elem_water]
 CATEGORY = Provisions - Alchemy & Magic
@@ -636,9 +636,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Water Elemental
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_summon_elem_water
+//RESOURCES = i_wand_4,10 i_scroll_summon_elem_water // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_SUMMON_UNDEAD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -646,9 +646,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Undead
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_x_green2
+//RESOURCES = i_wand_4,10 i_scroll_x_green2 // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_ANIMATE_DEAD]
 CATEGORY = Provisions - Alchemy & Magic
@@ -656,9 +656,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Animate Dead
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_x_teal2
+//RESOURCES = i_wand_4,10 i_scroll_x_teal2 // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_BONE_ARMOR]
 CATEGORY = Provisions - Alchemy & Magic
@@ -666,9 +666,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Bone Armor
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_x_brown2
+//RESOURCES = i_wand_4,10 i_scroll_x_brown2 // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_LIGHT]
 CATEGORY = Provisions - Alchemy & Magic
@@ -676,9 +676,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Light
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_x_red
+//RESOURCES = i_wand_4,10 i_scroll_x_red // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_FIRE_BOLT]
 CATEGORY = Provisions - Alchemy & Magic
@@ -686,9 +686,9 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Fire Bolt
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_x_blue
+//RESOURCES = i_wand_4,10 i_scroll_x_blue // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_HALLUCINATION]
 CATEGORY = Provisions - Alchemy & Magic
@@ -696,10 +696,11 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Hallucination
 
 TYPE = T_WAND
-RESOURCES = i_wand_4,10 i_scroll_MIND_BLAST
+//RESOURCES = i_wand_4,10 i_scroll_MIND_BLAST // commented out by Converter 
 model = i_wand_4
-//layer = unknown
+layer = 1 //Set by Converter 
 
-[ItemDef i_wand_FIREWORKS]
+[EquippableDef i_wand_FIREWORKS]
 NAME = "fireworks wand 20 charges"
 model = i_wand_3
+layer = 1 //Set by Converter 
