@@ -23,7 +23,7 @@ namespace SteamEngine.LScript {
 			if (lengthNode == oldNode) {
 				lengthNode = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -106,7 +106,7 @@ namespace SteamEngine.LScript {
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(elementNodes, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				elementNodes[index] = newNode;
 			}

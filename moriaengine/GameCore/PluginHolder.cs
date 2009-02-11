@@ -335,7 +335,7 @@ namespace SteamEngine {
 					if (tg != null) {
 						this.PrivateAddTriggerGroup(tg);
 					} else {
-						throw new Exception("TriggerGroup '" + tgName + "' does not exist.");
+						throw new SEException("TriggerGroup '" + tgName + "' does not exist.");
 					}
 					return;
 			}
@@ -391,7 +391,7 @@ namespace SteamEngine {
 			if (tags != null) {
 				PluginKey prevKey = tags[plugin] as PluginKey;
 				if (prevKey != null && prevKey != pk) {
-					throw new Exception("You can't assign one Plugin to one PluginHolder under 2 different PluginKeys");
+					throw new SEException("You can't assign one Plugin to one PluginHolder under 2 different PluginKeys");
 				}
 
 				Plugin prevPlugin = tags[pk] as Plugin;

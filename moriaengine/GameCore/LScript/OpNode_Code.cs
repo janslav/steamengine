@@ -57,7 +57,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 			if (opIndex == -1) {
-				throw new Exception("No operator found... this should not happen!");
+				throw new SEException("No operator found... this should not happen!");
 			}
 
 			OpNode_Lazy_BinOperator constructed = null;
@@ -118,7 +118,7 @@ namespace SteamEngine.LScript {
 				case "|":
 					return 1;
 				default:
-					throw new ArgumentException("unknown operator '" + op + "'", "op");
+					throw new SEException("unknown operator '" + op + "'");
 			}
 		}
 	}

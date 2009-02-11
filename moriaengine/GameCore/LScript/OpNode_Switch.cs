@@ -30,7 +30,7 @@ namespace SteamEngine.LScript {
 
 		private class TempParent : LScriptHolder, IOpNodeHolder {
 			void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
-				throw new Exception("The method or operation is not implemented.");
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 		private static TempParent tempParent = new TempParent();
@@ -40,7 +40,7 @@ namespace SteamEngine.LScript {
 				: base(null, null, -1, -1, null) {
 			}
 			internal override object Run(ScriptVars vars) {
-				throw new Exception("The method or operation is not implemented.");
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 		protected static NullOpNode nullOpNode = new NullOpNode();
@@ -173,7 +173,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 			if (!foundSome) {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

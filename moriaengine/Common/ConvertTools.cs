@@ -249,7 +249,7 @@ namespace SteamEngine.Common {
 				case "off":
 					return false;
 			}
-			throw new FormatException("'" + s + "' is not a valid boolean string (true/1/on/false/0/off).");
+			throw new SEException("'" + s + "' is not a valid boolean string (true/1/on/false/0/off).");
 		}
 
 		public static bool TryParseBoolean(string s, out bool retVal) {
@@ -322,7 +322,7 @@ namespace SteamEngine.Common {
 			if (TryParseAnyNumber(input, out retVal)) {
 				return retVal;
 			}
-			throw new FormatException("'" + input + "' does not appear to be any kind of number.");
+			throw new SEException("'" + input + "' does not appear to be any kind of number.");
 		}
 
 		public static bool TryParseAnyNumber(string input, out object retVal) {
@@ -418,7 +418,7 @@ namespace SteamEngine.Common {
 				case TypeCode.UInt64:
 					return UInt64.Parse(input, NumberStyles.Integer, invariantCulture);
 			}
-			throw new ArgumentOutOfRangeException("typeCode");
+			throw new SEException("typeCode out of range");
 		}
 
 		public static bool TryParseSpecificNumber(TypeCode typeCode, string input, out object retVal) {
@@ -744,7 +744,7 @@ namespace SteamEngine.Common {
 		#endregion UInt64
 
 		protected static string TryConvertTo(object p) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 	}
 }

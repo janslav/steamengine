@@ -50,7 +50,7 @@ namespace SteamEngine.Common {
 		private EnumItem(T item) {
 			Type enumType = typeof(T);
 			if (enumType.BaseType != typeof(Enum)) {
-				throw new ArgumentException("T must be of type System.Enum");
+				throw new SEException("T must be of type System.Enum");
 			}
 
 			this.value = item;

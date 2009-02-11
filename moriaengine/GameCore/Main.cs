@@ -104,7 +104,15 @@ namespace SteamEngine {
 				//t.Start();
 
 				Console.WriteLine("Init done.");
-				Console.ReadLine();
+
+				Thread t = new Thread(delegate() {
+					Console.ReadLine();
+					signalExit.Set();
+				});
+				t.IsBackground = true;
+				t.Start();
+
+				signalExit.WaitOne();
 
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.WriteFatal(smaee);
@@ -378,15 +386,14 @@ namespace SteamEngine {
 		//    Console.WriteLine("Leaving Main Loop");
 		//}
 
-		internal static void Exit() {
+		private static void Exit() {
 			RunLevelManager.SetShutdown();
 			FastDLL.ShutDownFastDLL();
 			Console.WriteLine("Shutdown...");
 			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
 				Logger.WriteDebug("triggering @shutdown");
 				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
-			}
-			signalExit.Set();
+			}			
 			Timers.Timer.Clear();
 			RunLevelManager.SetDead();
 		}

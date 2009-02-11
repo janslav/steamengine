@@ -49,7 +49,7 @@ namespace SteamEngine.LScript {
 				operatorNode = code.GetChildAt(0);
 				obj = LScript.CompileNode(this, code.GetChildAt(1));
 			} else {
-				throw new Exception("Wrong number of child nodes. This should not happen.");
+				throw new SEException("Wrong number of child nodes. This should not happen.");
 			}
 		}
 
@@ -57,7 +57,7 @@ namespace SteamEngine.LScript {
 			if (obj == oldNode) {
 				obj = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

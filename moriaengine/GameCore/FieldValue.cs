@@ -69,7 +69,7 @@ namespace SteamEngine {
 			Type t = parser.HandledType;
 			foreach (Type knownType in parsers.Keys) {
 				if (t.IsAssignableFrom(knownType) || knownType.IsAssignableFrom(t)) {
-					throw new Exception(parser + " is incompatible with " + parsers[knownType] + " as FieldValue parser");
+					throw new SEException(parser + " is incompatible with " + parsers[knownType] + " as FieldValue parser");
 				}
 			}
 			parsers[t] = parser;
@@ -109,22 +109,23 @@ namespace SteamEngine {
 				try {
 					//first, resolve the default value using lscript
 					TemporaryValueImpl tempVI = (TemporaryValueImpl) defaultValue;
-					string value = tempVI.value;
-					object retVal = null;
-					if (value != null) {
-						if (value.Length > 0) {
-							//if ((type != null) && ((ConvertTools.IsNumberType(type)) || (fvType == FieldValueType.ThingDefType) || (fvType == FieldValueType.Model))
-							if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
-								string statement = string.Concat("return ", value);
-								retVal = SteamEngine.LScript.LScript.RunSnippet(
-									tempVI.filename, tempVI.line, Globals.Instance, statement);
-							}
-						} else {
-							retVal = "";
-						}
-					}
 
 					try {
+						string value = tempVI.value;
+						object retVal = null;
+						if (value != null) {
+							if (value.Length > 0) {
+								//if ((type != null) && ((ConvertTools.IsNumberType(type)) || (fvType == FieldValueType.ThingDefType) || (fvType == FieldValueType.Model))
+								if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
+									string statement = string.Concat("return ", value);
+									retVal = SteamEngine.LScript.LScript.RunSnippet(
+										tempVI.filename, tempVI.line, Globals.Instance, statement);
+								}
+							} else {
+								retVal = "";
+							}
+						}
+
 						defaultValue = ResolveTemporaryValueImpl();
 						defaultValue.Value = retVal;
 					} catch (SEException sex) {
@@ -289,7 +290,7 @@ namespace SteamEngine {
 				case FieldValueType.Model:
 					return new ModelValueImpl();
 			}
-			throw new Exception("This can never happen...I hope");
+			throw new SEException("this.fvType out of range. This should not happen.");
 		}
 
 		private void SetFromCode(object value) {
@@ -366,7 +367,7 @@ namespace SteamEngine {
 			}
 
 			internal override FieldValueImpl Clone() {
-				throw new InvalidOperationException("this is not supposed to be cloned");
+				throw new SEException("this is not supposed to be cloned");
 			}
 
 			internal override object Value {
@@ -384,7 +385,7 @@ namespace SteamEngine {
 						holder.CurrentValue = value;
 						return;
 					}
-					throw new InvalidOperationException("Invalid TemporaryValueImpl instance, it's holder is not holding it, or something is setting defaultvalue. This should not happen.");
+					throw new SEException("Invalid TemporaryValueImpl instance, it's holder is not holding it, or something is setting defaultvalue. This should not happen.");
 				}
 			}
 		}

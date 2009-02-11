@@ -38,7 +38,7 @@ namespace SteamEngine {
 
 		public Thing Dupe() {
 			if (IsPlayer) {
-				throw new NotSupportedException("You can not dupe a PC!");
+				throw new SEException("You can not dupe a PC!");
 			}
 			Thing copy = (Thing) DeepCopyFactory.GetCopy(this);
 
@@ -129,7 +129,7 @@ namespace SteamEngine {
 			set {
 				ThrowIfDeleted();
 				if (value == null) {
-					throw new ArgumentNullException("value");
+					throw new SEException("value is null");
 				}
 
 				AbstractItem contItem = value as AbstractItem;
@@ -519,7 +519,7 @@ namespace SteamEngine {
 				MakeLimbo();
 				Trigger_EnterRegion(x, y, z, m);
 			} else {
-				throw new ArgumentOutOfRangeException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
+				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
 			}
 		}
 
@@ -998,7 +998,7 @@ namespace SteamEngine {
 
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
+				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1063,7 +1063,7 @@ namespace SteamEngine {
 				}
 				return retVal;
 			} else {
-				throw new InvalidOperationException("The item (" + targetCont + ") is not a container");
+				throw new SEException("The item (" + targetCont + ") is not a container");
 			}
 		}
 
@@ -1073,7 +1073,7 @@ namespace SteamEngine {
 			target.ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + target + "'");
+				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1138,7 +1138,7 @@ namespace SteamEngine {
 			ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '" + this + "' has no item dragged to drop on ground");
+				throw new SEException("Character '" + this + "' has no item dragged to drop on ground");
 			}
 			item.ThrowIfDeleted();
 
@@ -1190,7 +1190,7 @@ namespace SteamEngine {
 			target.ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + target + "'");
+				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 
@@ -1237,7 +1237,7 @@ namespace SteamEngine {
 			target.ThrowIfDeleted();
 			AbstractItem item = this.draggingLayer;
 			if (item == null) {
-				throw new Exception("Character '" + this + "' has no item dragged to drop on '" + target + "'");
+				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 

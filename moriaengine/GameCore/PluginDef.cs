@@ -110,7 +110,7 @@ namespace SteamEngine {
 
 			ConstructorInfo ci = pluginDefType.GetConstructor(pluginDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			pluginDefTypesByPluginType[pluginType] = pluginDefType;
 			pluginTypesByPluginDefType[pluginDefType] = pluginType;

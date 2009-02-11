@@ -73,7 +73,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 			if (conditionsList.Count != blocksList.Count) {
-				throw new Exception("assertion: conditionsList.Count != blocksList.Count.   This should not happen!");
+				throw new SEException("assertion: conditionsList.Count != blocksList.Count.   This should not happen!");
 			}
 			Node elseNode = ifProduction.GetChildAt(n - 3);
 			if (IsType(elseNode, StrictConstants.ELSE_BLOCK)) {
@@ -114,7 +114,7 @@ namespace SteamEngine.LScript {
 				blocks[index] = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {

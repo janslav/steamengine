@@ -43,7 +43,7 @@ namespace SteamEngine.LScript {
 				arg = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {

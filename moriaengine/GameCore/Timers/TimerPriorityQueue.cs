@@ -51,7 +51,7 @@ namespace SteamEngine.Timers {
 
 		public Timer Dequeue() {
 			if (this.count == 0) {
-				throw new InvalidOperationException();
+				throw new SEException("count == 0");
 			}
 			Timer result = this.heap[0];
 			this.count--;
@@ -78,7 +78,7 @@ namespace SteamEngine.Timers {
 
 		public Timer Peek() {
 			if (this.count == 0) {
-				throw new InvalidOperationException();
+				throw new SEException("count == 0");
 			}
 			return this.heap[0];
 		}

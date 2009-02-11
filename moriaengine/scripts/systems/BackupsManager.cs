@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 					if (isLastLoadPossibility) {
 						throw;//this finishes the loading
 					} else {
-						throw new Exception("Proper file missing in given folder. Let's try an older one...", e);//keeps on loading
+						throw new SEException("Proper file missing in given folder. Let's try an older one...", e);//keeps on loading
 					}
 				}
 			}
@@ -271,7 +271,7 @@ namespace SteamEngine.CompiledScripts {
 				Tools.EnsureDirectory(defaultPath, true);
 				InitBackupsLists(defaultPath);
 				if (sortedByTime.Count == 0) {
-					throw new FileNotFoundException("No previous backup folder found.");
+					throw new SEException("No previous backup folder found.");
 				}
 				int index = sortedByTime.Count - (1 + attempt);
 				isLast = false;
@@ -417,7 +417,7 @@ namespace SteamEngine.CompiledScripts {
 						if ((a != null) && (b != null)) {
 							return TimeSpan.Compare(a.span, b.span);
 						}
-						throw new ArgumentException();
+						throw new SEException("Can't compare '"+x+"' to '"+y+"'");
 					}
 				}
 
@@ -428,7 +428,7 @@ namespace SteamEngine.CompiledScripts {
 						if ((a != null) && (b != null)) {
 							return DateTime.Compare(a.time, b.time);
 						}
-						throw new ArgumentException();
+						throw new SEException("Can't compare '" + x + "' to '" + y + "'");
 					}
 				}
 
@@ -580,7 +580,7 @@ namespace SteamEngine.CompiledScripts {
 				try {
 					zipReader = new OrganicBit.Zip.ZipReader(zipFileName);
 				} catch (Exception e) {
-					throw new FileNotFoundException(e.Message);
+					throw new SEException(e.Message);
 				}
 			}
 
@@ -624,11 +624,11 @@ namespace SteamEngine.CompiledScripts {
 					return zipReader.Read(buffer, offset, count);
 				}
 				public override long Seek(long offset, SeekOrigin origin) {
-					throw new InvalidOperationException();
+					throw new SEException("Can't seek.");
 				}
 
 				public override void SetLength(long length) {
-					throw new InvalidOperationException();
+					throw new SEException("Can't set length");
 				}
 				public override void Write(byte[] buffer, int offset, int count) {
 					//Console.WriteLine("Write: "+Server.utf.GetString(buffer));
@@ -655,16 +655,16 @@ namespace SteamEngine.CompiledScripts {
 
 				public override long Length {
 					get {
-						throw new InvalidOperationException();
+						throw new SEException("Can't get length");
 					}
 				}
 
 				public override long Position {
 					get {
-						throw new InvalidOperationException();
+						throw new SEException("Can't get position");
 					}
 					set {
-						throw new InvalidOperationException();
+						throw new SEException("Can't set position");
 					}
 				}
 			}

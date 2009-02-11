@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (defs.Count == 0) {
-					throw new Exception("MassSettingsByClass instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
+					throw new SEException("MassSettingsByClass instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
 				}
 
 				defs.Sort(delegate(DefType a, DefType b) {
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (modelsSet.Count == 0) {
-					throw new Exception("WeaponMassSetting instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
+					throw new SEException("WeaponMassSetting instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
 				}
 
 				models = new ushort[modelsSet.Count];
@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 					}
 					if (list.Count == 0) {
-						throw new Exception("Def for model " + model + " not found for mass setting");
+						throw new SEException("Def for model " + model + " not found for mass setting");
 					}
 					foreach (DefType def in list) {
 						if (def.Defname.StartsWith("i_0x") || def.Defname.StartsWith("c_0x")) {

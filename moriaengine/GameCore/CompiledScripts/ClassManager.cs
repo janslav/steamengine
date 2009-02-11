@@ -309,7 +309,7 @@ namespace SteamEngine.CompiledScripts {
 							if (ci != null) {
 								instance = ci.Invoke(null);
 							} else if (entry.throwIfNoCtor) {
-								throw new Exception("No proper constructor.");
+								throw new SEException("No proper constructor.");
 							}
 						}
 						if (instance != null) {

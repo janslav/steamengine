@@ -245,7 +245,7 @@ namespace SteamEngine.Persistence {
 				Logger.WriteError(section.filename, section.headerLine, "Unknown section " + LogStr.Ident(section));
 			}
 			if (!EOFMarked) {
-				throw new Exception("EOF Marker not reached!");
+				throw new SEException("EOF Marker not reached!");
 			}
 		}
 

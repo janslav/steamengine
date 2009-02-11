@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 			Array arr = (Array) objToSave;
 			Type arrType = arr.GetType();
 			if (arrType.GetArrayRank() > 1) {
-				throw new NotImplementedException("Multi-dimensional array saving not implemented.");
+				throw new SEException("Multi-dimensional array saving not implemented.");
 			}
 			Type elemType = arrType.GetElementType();
 			writer.WriteLine("type=" + GenericListSaver.GetTypeName(elemType));

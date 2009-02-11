@@ -20,7 +20,7 @@ namespace SteamEngine.Common {
 		public void Add(T value) {
 			int index;
 			if (value == null) {
-				throw new ArgumentNullException("value");
+				throw new SEException("value is null");
 			}
 			if (this.buckets == null) {
 				this.Initialize(0);
@@ -59,7 +59,7 @@ namespace SteamEngine.Common {
 
 		public bool Remove(T key) {
 			if (key == null) {
-				throw new ArgumentNullException("value");
+				throw new SEException("value is null");
 			}
 			if (this.buckets != null) {
 				int num = this.GetHashCode(key) & 2147483647;
@@ -105,7 +105,7 @@ namespace SteamEngine.Common {
 
 		private int FindEntry(T value) {
 			if (value == null) {
-				throw new ArgumentNullException("value");
+				throw new SEException("value is null");
 			}
 			if (this.buckets != null) {
 				int num = this.GetHashCode(value) & 2147483647;
@@ -177,7 +177,7 @@ namespace SteamEngine.Common {
 
 			internal static int GetPrime(int min) {
 				if (min < 0) {
-					throw new ArgumentException();
+					throw new SEException("min < 0");
 				}
 				for (int i = 0; i < primes.Length; i++) {
 					int num2 = primes[i];
@@ -256,7 +256,7 @@ namespace SteamEngine.Common {
 
 			bool System.Collections.IEnumerator.MoveNext() {
 				if (this.version != this.dictionary.version) {
-					throw new InvalidOperationException("Don't touch the HashSet while enumerating it.");
+					throw new SEException("Don't touch the HashSet while enumerating it.");
 				}
 				while (this.index < this.dictionary.count) {
 					if (this.dictionary.entries[this.index].hashCode >= 0) {
@@ -273,7 +273,7 @@ namespace SteamEngine.Common {
 
 			void System.Collections.IEnumerator.Reset() {
 				if (this.version != this.dictionary.version) {
-					throw new InvalidOperationException("Don't touch the HashSet while enumerating it.");
+					throw new SEException("Don't touch the HashSet while enumerating it.");
 				}
 				this.index = 0;
 				this.current = default(T);

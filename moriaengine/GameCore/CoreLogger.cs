@@ -28,7 +28,7 @@ namespace SteamEngine {
 				new CoreLogger();
 			} catch (Exception globalexp) {
 				Logger.WriteFatal(globalexp);
-				MainClass.Exit();
+				MainClass.signalExit.Set();
 			}
 
 			if (Globals.logToFiles) {

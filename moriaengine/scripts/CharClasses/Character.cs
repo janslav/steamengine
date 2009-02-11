@@ -301,7 +301,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 				if (value.Flag_Riding) {
-					throw new ArgumentException("You can't ride something that's riding something else!");
+					throw new SEException("You can't ride something that's riding something else!");
 				} else {
 					mountorrider = (Character) value;
 					SetFlag_Riding(true);
@@ -1217,12 +1217,12 @@ namespace SteamEngine.CompiledScripts {
 			if (backpackDef == null) {
 				backpackDef = ThingDef.Get("i_backpack") as AbstractItemDef;
 				if (backpackDef == null) {
-					throw new Exception("Unable to find itemdef i_backpack in scripts.");
+					throw new SEException("Unable to find itemdef i_backpack in scripts.");
 				}
 			}
 			AbstractItem i = (AbstractItem) backpackDef.Create(this);
 			if (i == null) {
-				throw new Exception("Unable to create item i_backpack.");
+				throw new SEException("Unable to create item i_backpack.");
 			}
 			return i;
 		}
@@ -1243,7 +1243,7 @@ namespace SteamEngine.CompiledScripts {
 			if (i != null) {
 				if (i.Cont != this) {
 					i.Delete();
-					throw new Exception("'" + i + "' ended not equipped on the char... Wtf?");
+					throw new SEException("'" + i + "' ended not equipped on the char... Wtf?");
 				}
 				return i;
 			}

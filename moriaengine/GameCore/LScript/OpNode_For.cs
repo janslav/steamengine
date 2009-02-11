@@ -74,7 +74,7 @@ namespace SteamEngine.LScript {
 			} else if (IsType(node, StrictConstants.FOR_HEADER_IN_PARENS)) {
 				return GetHeaderCode(node.GetChildAt(1));
 			} else {
-				throw new Exception("Unexpected node. This should not happen.");
+				throw new SEException("Unexpected node. This should not happen.");
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace SteamEngine.LScript {
 				blockNode = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {

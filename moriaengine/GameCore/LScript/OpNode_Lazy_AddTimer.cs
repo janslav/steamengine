@@ -238,7 +238,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			} else if (str == oldNode) {
 				str = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

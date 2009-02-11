@@ -48,7 +48,7 @@ namespace SteamEngine.Common {
 		}
 
 		public int Add(object value) {
-			throw new NotSupportedException();
+			throw new SEException("Not supported");
 		}
 
 		public void Clear() {
@@ -63,7 +63,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, object value) {
-			throw new NotSupportedException();
+			throw new SEException("Not supported");
 		}
 
 		public bool IsFixedSize {
@@ -84,15 +84,15 @@ namespace SteamEngine.Common {
 
 		public object this[int index] {
 			get {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 			set {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 		}
 
 		public object Current {
-			get { throw new NotSupportedException(); }
+			get { throw new SEException("Not supported"); }
 		}
 
 		public bool MoveNext() {
@@ -103,7 +103,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Add(object key, object value) {
-			throw new NotSupportedException();
+			throw new SEException("Not supported");
 		}
 
 		IDictionaryEnumerator IDictionary.GetEnumerator() {
@@ -129,16 +129,16 @@ namespace SteamEngine.Common {
 
 		public DictionaryEntry Entry {
 			get {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 		}
 
 		public object Key {
-			get { throw new NotSupportedException(); ; }
+			get { throw new SEException("Not supported"); ; }
 		}
 
 		public object Value {
-			get { throw new NotSupportedException(); ; }
+			get { throw new SEException("Not supported"); ; }
 		}
 	}
 
@@ -146,7 +146,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyGenericCollection<T> instance = new EmptyReadOnlyGenericCollection<T>();
 
 		public void Add(T item) {
-			throw new NotSupportedException();
+			throw new SEException("Not supported");
 		}
 
 		public bool Contains(T item) {
@@ -165,7 +165,7 @@ namespace SteamEngine.Common {
 		}
 
 		public new T Current {
-			get { throw new NotSupportedException(); }
+			get { throw new SEException("Not supported"); }
 		}
 
 		public void Dispose() {
@@ -176,15 +176,15 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, T item) {
-			throw new NotSupportedException();
+			throw new SEException("Not supported");
 		}
 
 		public new T this[int index] {
 			get {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 			set {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 		}
 	}
@@ -193,7 +193,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyDictionary<TKey, TValue> instance = new EmptyReadOnlyDictionary<TKey, TValue>();
 
 		public void Add(TKey key, TValue value) {
-			throw new NotSupportedException();
+			throw new SEException("Not supported");
 		}
 
 		public bool ContainsKey(TKey key) {
@@ -219,10 +219,10 @@ namespace SteamEngine.Common {
 
 		public TValue this[TKey key] {
 			get {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 			set {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 		}
 	}

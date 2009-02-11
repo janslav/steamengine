@@ -47,7 +47,7 @@ namespace SteamEngine.Timers {
 		public T Peek() {
 			lock (this.root) {
 				if (this.count == 0) {
-					throw new Exception("Attempted to get object from empty queue... This should not happen.");
+					throw new SEException("count == 0");
 				}
 				return this.array[headindex];
 			}
@@ -56,7 +56,7 @@ namespace SteamEngine.Timers {
 		public T Dequeue() {
 			lock (this.root) {
 				if (this.count == 0) {
-					throw new Exception("Attempted to get object from empty queue... This should not happen.");
+					throw new SEException("count == 0");
 				}
 				T t = this.array[headindex];
 				this.array[headindex] = default(T);

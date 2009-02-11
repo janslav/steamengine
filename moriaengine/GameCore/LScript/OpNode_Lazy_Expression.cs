@@ -130,7 +130,7 @@ namespace SteamEngine.LScript {
 				}
 				return constructed;
 			} else {
-				throw new Exception("Passed bad Node type construct. This should not happen.");
+				throw new SEException("Passed bad Node type construct. This should not happen.");
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace SteamEngine.LScript {
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(args, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				args[index] = newNode;
 			}
@@ -270,7 +270,7 @@ namespace SteamEngine.LScript {
 							type = SteamEngine.CompiledScripts.ClassManager.GetType(classRef.name);
 						}
 						if (type == null) {
-							throw new Exception("We have not found class named " + classRef.name + ", thought we were supposed to. This should not happen.");
+							throw new SEException("We have not found class named " + classRef.name + ", thought we were supposed to. This should not happen.");
 						}
 						//Console.WriteLine("Type.GetType: {0} ({1}) at {2}:{3}", type, classRef.name, this.line, this.column);
 						tryInstance = false;//we look for a static member

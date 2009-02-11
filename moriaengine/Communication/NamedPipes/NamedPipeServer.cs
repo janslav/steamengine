@@ -77,7 +77,7 @@ namespace SteamEngine.Communication.NamedPipes {
 					try {
 						clientHandle.Close();
 					} catch { }
-					throw new Exception("Failed to create listening named pipe '" + this.pipename + "'");
+					throw new SEException("Failed to create listening named pipe '" + this.pipename + "'");
 				}
 
 				int success = ServerKernelFunctions.ConnectNamedPipe(clientHandle, IntPtr.Zero);
@@ -87,7 +87,7 @@ namespace SteamEngine.Communication.NamedPipes {
 					try {
 						clientHandle.Close();
 					} catch { }
-					throw new Exception("Failed to connect client to named pipe '" + this.pipename + "'");
+					throw new SEException("Failed to connect client to named pipe '" + this.pipename + "'");
 				}
 
 				NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
@@ -105,7 +105,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		}
 
 		public void UnBind() {
-			throw new NotImplementedException("Can't UnBind a NamedPipeServer");
+			throw new SEException("Can't UnBind a NamedPipeServer");
 
 			//if (this.running) {
 			//    Console.WriteLine("Stopped listening on named pipe '"+this.pipename+"'");

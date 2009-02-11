@@ -114,7 +114,7 @@ namespace SteamEngine {
 			}
 			ci = skillDefType.GetConstructor(skillDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			skillDefCtorsByName[skillDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 			return false;
@@ -130,7 +130,7 @@ namespace SteamEngine {
 
 			PropsLine prop = input.PopPropsLine("defname");
 			if (prop == null) {
-				throw new Exception("Missing the defname field for this SkillDef.");
+				throw new SEException("Missing the defname field for this SkillDef.");
 			}
 
 			string defName;
@@ -262,28 +262,6 @@ namespace SteamEngine {
 				this.scriptedTriggers.TryRun(self, td, sa);
 			}
 		}
-
-		//public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
-		//    throw new NotImplementedException();
-		//}
-
-		//public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
-		//    throw new NotImplementedException();
-		//}
-
-		//public override void Trigger(TriggerKey td, ScriptArgs sa) {
-		//    throw new NotImplementedException();
-		//}
-
-		//public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
-		//    throw new NotImplementedException();
-		//}
-
-		//protected override void LoadScriptLine(string filename, int line, string param, string args) {
-		//    base.LoadScriptLine(filename, line, param, args);
-		//}
-
-		//internal protected abstract void Select(AbstractCharacter ch);
 
 		public override string ToString() {
 			return GetType().Name + " " + Key;

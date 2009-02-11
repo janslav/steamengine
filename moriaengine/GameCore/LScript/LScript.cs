@@ -124,6 +124,12 @@ namespace SteamEngine.LScript {
 				return RunSnippet(filename, line, self, script);
 			} catch (FatalException) {
 				throw;
+			} catch (SEException sex) {
+				if (sex.StartsWithFileLine) {
+					Logger.WriteError(sex);
+				} else {
+					Logger.WriteError(filename, line, sex);
+				}
 			} catch (Exception e) {
 				Logger.WriteError(filename, line, e);
 			}

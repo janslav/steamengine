@@ -48,7 +48,7 @@ namespace SteamEngine.Communication.TCP {
 
 		public void Bind(IPEndPoint ipep) {
 			if (this.IsBound) {
-				throw new Exception("Already bound");
+				throw new SEException("Already bound");
 			}
 
 			listener = CreateSocket();

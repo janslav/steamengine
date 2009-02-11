@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 				retVal = resList;
 				return true;
 			} else {
-				throw new SEException(LogStr.Error("Unexpected resources string: " + input));
+				throw new SEException("Unexpected resources string: " + input);
 			}
 		}
 		#endregion

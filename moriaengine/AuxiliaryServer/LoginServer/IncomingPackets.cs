@@ -43,7 +43,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 	}
 

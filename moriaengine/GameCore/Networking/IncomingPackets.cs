@@ -120,7 +120,7 @@ namespace SteamEngine.Networking {
 			}
 
 			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
-				throw new Exception("The method or operation is not implemented.");
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 
@@ -638,7 +638,7 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 	}
 

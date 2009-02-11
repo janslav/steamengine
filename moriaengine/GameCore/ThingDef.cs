@@ -141,21 +141,10 @@ namespace SteamEngine {
 		public abstract bool IsCharDef { get; }
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			switch (param) {
-				case "event":
-				case "events":
-				//case "type":
-				case "triggergroup":
-				case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
-					DelayedResolver.DelayResolve(new DelayedMethod(ResolveTriggerGroup), (object) args);
-					break;
-				default:
-					if ("flag".Equals(param)) {
-						param = "flags";
-					}
-					base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
-					break;
+			if ("flag".Equals(param)) {
+				param = "flags";
 			}
+			base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
 		}
 
 		internal Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
@@ -366,7 +355,7 @@ namespace SteamEngine {
 
 			ConstructorInfo ci = thingDefType.GetConstructor(thingDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			thingDefTypesByThingType[thingType] = thingDefType;
 			thingTypesByThingDefType[thingDefType] = thingType;

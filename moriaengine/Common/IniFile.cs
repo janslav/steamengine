@@ -87,7 +87,7 @@ namespace SteamEngine.Common {
 		public IniFileSection GetSection(string sectionName) {
 			IniFileSection section;
 			if (!sectionsByName.TryGetValue(sectionName, out section)) {
-				throw new Exception("Missing section " + sectionName + " from the ini file.");
+				throw new SEException("Missing section " + sectionName + " from the ini file.");
 			}
 			return section;
 		}
@@ -223,7 +223,7 @@ namespace SteamEngine.Common {
 		internal void SetParsedValue(IniFileValueLine valueLine) {
 			string valueName = valueLine.name;
 			if (props.ContainsKey(valueName)) {
-				throw new Exception("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'");
+				throw new SEException("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'");
 			}
 			props[valueName] = valueLine;
 			parts.Add(valueLine);
@@ -263,7 +263,7 @@ namespace SteamEngine.Common {
 			if (this.props.TryGetValue(name, out value)) {
 				return value.GetValue<T>();
 			} else {
-				throw new Exception("Missing value " + name + " from the ini file.");
+				throw new SEException("Missing value " + name + " from the ini file.");
 			}
 		}
 
@@ -324,7 +324,7 @@ namespace SteamEngine.Common {
 			: base(commentAbove, wrap, commentNext) {
 
 			if (name.Trim(stringWhitespaceChars).IndexOfAny(stringWhitespaceChars) > -1) {
-				throw new Exception("No whitespace characters allowed in value name");
+				throw new SEException("No whitespace characters allowed in value name");
 			}
 			this.name = name;
 			this.valueString = valueString;

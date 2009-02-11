@@ -402,7 +402,7 @@ namespace SteamEngine {
 			//sets value of a field of an instance. 
 			//For static fields, the instance parameter is ignored (should be null). 
 			public override void SetValue(object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
-				throw new NotSupportedException("You can not set a readonly field.");
+				throw new SEException("You can not set a readonly field.");
 			}
 
 			private static Type[] setParamTypes = new Type[] {

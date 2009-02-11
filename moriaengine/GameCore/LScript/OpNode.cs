@@ -96,7 +96,7 @@ namespace SteamEngine.LScript {
 				if (parentAsOpNode != null) {
 					return parentAsOpNode.ParentScriptHolder;
 				}
-				throw new Exception("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
+				throw new SEException("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
 			}
 		}
 

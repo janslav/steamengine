@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			ci = roleDefType.GetConstructor(roleDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			roleDefCtorsByName[roleDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 

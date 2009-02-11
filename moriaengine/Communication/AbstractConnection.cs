@@ -47,7 +47,7 @@ namespace SteamEngine.Communication {
 
 		public AbstractConnection() {
 			if (this.GetType() != typeof(TConnection)) {
-				throw new Exception("The type must be the same as the TConnection generic parameter");
+				throw new SEException("The type must be the same as the TConnection generic parameter");
 			}
 		}
 
@@ -208,7 +208,7 @@ namespace SteamEngine.Communication {
 					System.Buffer.BlockCopy(bytes, offset, bytes, 0, length);
 					offset = 0;
 				} else if ((offset + length) == Buffer.bufferLen) {
-					throw new Exception("Incoming data buffer full. This is bad.");
+					throw new SEException("Incoming data buffer full. This is bad.");
 				}
 			} else {//we read exactly what we had, perfect.
 				offset = 0;
@@ -239,7 +239,7 @@ namespace SteamEngine.Communication {
 								this.useEncryption = false;
 								break;
 							case EncryptionInitResult.InvalidData:
-								throw new Exception("Encryption not recognised");
+								throw new SEException("Encryption not recognised");
 							case EncryptionInitResult.NotEnoughData:
 								this.receivedDataLength = length;
 								return false;
@@ -302,7 +302,7 @@ namespace SteamEngine.Communication {
 							encryptedLen = encryption.Encrypt(unencrypted, 0, encryptedBuffer.bytes, 0, unencryptedLen);
 						} else {
 							this.Close("Tried sending data with encryption not initialised.");
-							throw new Exception("Sending failed - encryption not initialised. Closing.");
+							throw new SEException("Sending failed - encryption not initialised. Closing.");
 						}
 					} else {
 						System.Buffer.BlockCopy(unencrypted, 0, encryptedBuffer.bytes, 0, unencryptedLen);

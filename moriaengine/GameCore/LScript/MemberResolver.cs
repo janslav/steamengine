@@ -73,7 +73,7 @@ namespace SteamEngine.LScript {
 					parameterTypes = new Type[1] { field.FieldType };
 					return parameterTypes;
 				} else {
-					throw new Exception(info + " of type " + info.GetType() + " and MemberType " + info.MemberType + " is not a field, nor method, nor constructor... wtf? This should not happen!");
+					throw new SEException(info + " of type " + info.GetType() + " and MemberType " + info.MemberType + " is not a field, nor method, nor constructor... wtf? This should not happen!");
 				}
 			}
 			return parameterTypes;
@@ -409,7 +409,7 @@ namespace SteamEngine.LScript {
 				if (parentAsOpNode != null) {
 					return parentAsOpNode.ParentScriptHolder;
 				}
-				throw new Exception("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
+				throw new SEException("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
 			}
 		}
 

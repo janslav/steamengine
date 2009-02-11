@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public TNode Dequeue() {
 			if (count == 0) {
-				throw new InvalidOperationException();
+				throw new SEException("count == 0");
 			}
 			TNode result = heap[0].value;
 			count--;
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public TNode Peek() {
 			if (count == 0) {
-				throw new InvalidOperationException();
+				throw new SEException("count == 0");
 			}
 			return heap[0].value;
 		}
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 			int startVersion = this.version;
 			for (int i = 0; i < count; i++) {
 				if (startVersion != this.version) {
-					throw new InvalidOperationException();
+					throw new SEException("Do not touch while enumerating");
 				}
 				yield return heap[i];
 			}

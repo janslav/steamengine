@@ -69,16 +69,16 @@ namespace SteamEngine {
 		internal void AddLoaded(ElementType o, int loadedUid) {
 			int index = loadedUid - uidOffset;
 			if (loadingFinished) {
-				throw new ApplicationException("Add(object,index) disabled after LoadingFinished");
+				throw new SEException("Add(object,index) disabled after LoadingFinished");
 			}
 			if (index < 0) {
-				throw new IndexOutOfRangeException("Object with non-positive UID " + index + " found");
+				throw new SEException("Object with non-positive UID " + index + " found");
 			}
 			if (index >= array.Length) { //index is too high, make the array bigger!
 				ResizeArray(index);
 			}
 			if (array[index] != null) {
-				throw new IndexOutOfRangeException("Two objects attempted to take the same UID");
+				throw new SEException("Two objects attempted to take the same UID");
 			}
 			if (index > highestElement) {
 				highestElement = index;
@@ -94,7 +94,7 @@ namespace SteamEngine {
 			int index = freeSlots.Dequeue();
 			int uid = index + uidOffset;
 			if (uid >= (highestUid - fakeSlots.Count)) {
-				throw new FatalException("We're out of UIDs. This is baaaad.");
+				throw new SEException("We're out of UIDs. This is baaaad.");
 			}
 			o.Uid = uid;
 			array[index] = o;

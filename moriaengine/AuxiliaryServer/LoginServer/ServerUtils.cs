@@ -71,7 +71,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					return entry.ip;
 				}
 			}
-			throw new Exception("No matching interface for " + new IPAddress(remoteIp));
+			throw new SEException("No matching interface for " + new IPAddress(remoteIp));
 		}
 
 		private class InterfaceEntry : IComparable<InterfaceEntry> {

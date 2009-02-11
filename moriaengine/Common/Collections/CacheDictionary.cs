@@ -13,7 +13,7 @@ namespace SteamEngine {
 
 		public CacheDictionary(int maxCacheItems, bool disposeOnRemove) {
 			if (maxCacheItems < 1) {
-				throw new ArgumentException("maxQueueCount must be higher than 0");
+				throw new SEException("maxQueueCount must be higher than 0");
 			}
 			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>();
 			this.maxCacheItems = maxCacheItems;
@@ -22,7 +22,7 @@ namespace SteamEngine {
 
 		public CacheDictionary(int maxCacheItems, bool disposeOnRemove, IEqualityComparer<TKey> comparer) {
 			if (maxCacheItems < 1) {
-				throw new ArgumentException("maxQueueCount must be higher than 0");
+				throw new SEException("maxQueueCount must be higher than 0");
 			}
 			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>(comparer);
 			this.maxCacheItems = maxCacheItems;
@@ -41,7 +41,7 @@ namespace SteamEngine {
 		#region IDictionary<TKey, TValue> Members
 		public void Add(TKey key, TValue value) {
 			if (this.dict.ContainsKey(key)) {
-				throw new ArgumentException("Adding duplicate");
+				throw new SEException("Adding duplicate");
 			} else {
 				this.linkedList.AddFirst(key);
 				dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
@@ -127,7 +127,7 @@ namespace SteamEngine {
 
 		public ICollection<TValue> Values {
 			get {
-				throw new NotImplementedException("The method or operation is not implemented.");
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 		#endregion
@@ -148,7 +148,7 @@ namespace SteamEngine {
 		}
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		public int Count {
@@ -164,7 +164,7 @@ namespace SteamEngine {
 		}
 
 		public bool Remove(KeyValuePair<TKey, TValue> item) {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		#endregion
@@ -172,7 +172,7 @@ namespace SteamEngine {
 		#region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		#endregion
@@ -180,7 +180,7 @@ namespace SteamEngine {
 		#region IEnumerable Members
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		#endregion

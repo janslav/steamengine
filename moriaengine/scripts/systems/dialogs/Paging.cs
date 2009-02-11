@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public void Reset() {
-				throw new System.Exception("The method or operation is not implemented.");
+				throw new SEException("The method or operation is not implemented.");
 			}
 			#endregion
 

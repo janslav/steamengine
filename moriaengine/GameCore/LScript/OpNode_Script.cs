@@ -49,7 +49,7 @@ namespace SteamEngine.LScript {
 		public void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(blocks, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				blocks[index] = newNode;
 			}
@@ -153,7 +153,7 @@ namespace SteamEngine.LScript {
 			if (node == oldNode) {
 				node = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

@@ -320,7 +320,7 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class ShipRegion : MultiRegion {
 		public ShipRegion() {
-			throw new NotSupportedException("The constructor without paramaters is not supported");
+			throw new SEException("The constructor without paramaters is not supported");
 		}
 
 		public ShipRegion(Ship ship, ImmutableRectangle[] rectangles)

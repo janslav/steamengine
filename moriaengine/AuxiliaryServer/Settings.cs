@@ -167,7 +167,7 @@ namespace SteamEngine.AuxiliaryServer {
 			if (File.Exists(iniPath)) {
 				gameIni = new IniFile(iniPath);
 			} else {
-				throw new Exception("Can't find steamengine.ini on the path " + iniPath + ". It inecessary for the AuxiliaryServer operation.");
+				throw new SEException("Can't find steamengine.ini on the path " + iniPath + ". It inecessary for the AuxiliaryServer operation.");
 			}
 
 			name = gameIni.GetSection("setup").GetValue<string>("name");

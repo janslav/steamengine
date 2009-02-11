@@ -154,7 +154,7 @@ namespace SteamEngine {
 	/*
 		Class:	FatalException
 		Exception classes which extend this are passed up the stack and finally will be handled by SE specially.
-		Note that every catch (Exception) MUST BE PRECEDED WITH catch (FatalException fe) { throw new FatalException("Some message here", fe); }
+		Note that every catch (Exception) MUST BE PRECEDED WITH catch (FatalException fe) { throw; }
 		Previously it was suggested to throw fe, but that would result in the loss of the stack-trace info from before.
 		We need to embed the exception into another and throw the new one, that preserves it.
 

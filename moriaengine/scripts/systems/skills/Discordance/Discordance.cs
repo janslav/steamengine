@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 					selfAsPlayer.Target(SingletonScript<Targ_Discordance>.Instance, skillSeqArgs);
 					return true;
 				} else {
-					throw new Exception("Discordance target not set for nonplayer");
+					throw new SEException("Discordance target not set for nonplayer");
 				}
 			}
 

@@ -50,7 +50,7 @@ namespace SteamEngine.LScript {
 			} else if (right == oldNode) {
 				right = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -196,7 +196,7 @@ namespace SteamEngine.LScript {
 						}
 						break;
 					default:
-						throw new Exception("Operator " + opString + " unkown or not implemented.");
+						throw new SEException("Operator " + opString + " unkown or not implemented.");
 				}
 
 				if (newNode != null) {
@@ -214,7 +214,7 @@ namespace SteamEngine.LScript {
 					}
 					return retVal;
 				}
-				throw new Exception(string.Format("Operator {0} is not applicable to these operands(type {1} and {2}).",
+				throw new SEException(string.Format("Operator {0} is not applicable to these operands(type {1} and {2}).",
 					opString,
 					(leftResult == null ? "<null>" : leftResult.GetType().Name),
 					(rightResult == null ? "<null>" : rightResult.GetType().Name)));

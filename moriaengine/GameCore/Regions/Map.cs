@@ -948,7 +948,7 @@ namespace SteamEngine.Regions {
 				int sy = y >> sectorFactor;
 				return GetSector(sx, sy).GetTileId(x, y);
 			}
-			throw new Exception("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
 		}
 
 		/**
@@ -960,7 +960,7 @@ namespace SteamEngine.Regions {
 				int sy = y >> sectorFactor;
 				return GetSector(sx, sy).GetTileZ(x, y);
 			}
-			throw new Exception("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
 		}
 
 		public Static GetStatic(int x, int y, int z, int staticId) {

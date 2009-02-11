@@ -210,7 +210,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			public abstract bool MoveNext();
 
 			public void Reset() {
-				throw new System.Exception("The method or operation is not implemented.");
+				throw new SEException("The method or operation is not implemented.");
 			}
 
 			object IEnumerator.Current {

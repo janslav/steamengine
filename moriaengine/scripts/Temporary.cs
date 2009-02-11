@@ -20,7 +20,7 @@ namespace SteamEngine.CompiledScripts {
 				conn = state.Conn;
 				ch = state.Character;
 			} else {
-				throw new Exception("No client");
+				throw new SEException("No client");
 			}
 		}
 

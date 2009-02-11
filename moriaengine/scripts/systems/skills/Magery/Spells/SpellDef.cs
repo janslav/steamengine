@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			ci = spellDefType.GetConstructor(SpellDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			spellDefCtorsByName[spellDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 
@@ -473,7 +473,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (!singleEffectDone) {
-				throw new Exception(this + ": Invalid target and/or spell flag?!");
+				throw new SEException(this + ": Invalid target and/or spell flag?!");
 			}
 
 			if (isArea) {
