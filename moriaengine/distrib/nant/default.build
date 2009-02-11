@@ -304,8 +304,8 @@
 		<exec program="${remoteConsoleFileName}" />
 	</target>
 	
-	<target name="runConverter">
-		<exec program="${gameCoreFileName}" commandline="Convert"/>
+	<target name="runConverter"  depends="buildConverter">
+		<exec program="${converterFileName}" commandline="Convert"/>
 	</target>
 	
 	<target name="runCore" depends="buildCore">

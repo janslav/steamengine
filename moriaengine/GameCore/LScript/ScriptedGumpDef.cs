@@ -133,7 +133,7 @@ namespace SteamEngine.LScript {
 						return sgd;
 				}
 			}
-			throw new Exception("Invalid GumpDef/Dialog header");
+			throw new SEException("Invalid GumpDef/Dialog header");
 		}
 
 		private void CheckValidity(object[] args) {//check method, used as delayed

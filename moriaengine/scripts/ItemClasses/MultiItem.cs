@@ -253,7 +253,7 @@ namespace SteamEngine.CompiledScripts {
 		public readonly MultiItem multiItem;
 
 		public MultiRegion() {
-			throw new NotSupportedException("The constructor without paramaters is not supported");
+			throw new SEException("The constructor without paramaters is not supported");
 		}
 
 		public MultiRegion(MultiItem multiItem, ImmutableRectangle[] rectangles)
@@ -273,7 +273,7 @@ namespace SteamEngine.CompiledScripts {
 				return "MultiRegion wihout MultiItem";
 			}
 			set {
-				throw new NotSupportedException("Renaming MultiRegions is not supported");
+				throw new SEException("Renaming MultiRegions is not supported");
 			}
 		}
 	}

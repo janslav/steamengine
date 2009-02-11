@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 				elemType = Type.GetType(pl.value, false, true);
 			}
 			if (elemType == null) {
-				throw new Exception("Element type not recognised.");
+				throw new SEException("Element type not recognised.");
 			}
 			return elemType;
 		}

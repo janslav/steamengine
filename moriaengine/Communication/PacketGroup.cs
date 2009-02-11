@@ -53,7 +53,7 @@ namespace SteamEngine.Communication {
 
 		public void SetType(PacketGroupType type) {
 			if (this.isMadeFree) {
-				throw new Exception("Can't change type once the group is made free");
+				throw new SEException("Can't change type once the group is made free");
 			}
 			this.type = type;
 		}

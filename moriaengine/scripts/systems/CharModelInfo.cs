@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 			this.model = (ushort) model;
 			this.charDef = (CharacterDef) ThingDef.FindCharDef(model);
 			if (this.charDef == null) {
-				throw new Exception("There is no Chardef for model 0x" + model.ToString("x"));
+				throw new SEException("There is no Chardef for model 0x" + model.ToString("x"));
 			}
 
 			charAnimType = CharAnimType.Empty;

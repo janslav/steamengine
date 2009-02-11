@@ -162,7 +162,7 @@ namespace SteamEngine {
 			if (commandRunning) {
 				ScriptArgs sa = new ScriptArgs(commandSrc, name);
 				if (Globals.instance.TryCancellableTrigger(TriggerKey.command, sa)) {
-					throw new Exception(commandAuthorisationFailed);
+					throw new SEException(commandAuthorisationFailed);
 				}
 			}
 		}

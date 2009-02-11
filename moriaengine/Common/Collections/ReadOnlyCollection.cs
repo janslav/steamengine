@@ -63,7 +63,7 @@ namespace SteamEngine.Common {
 		}
 
 		object ICollection.SyncRoot {
-			get { throw new Exception("The method or operation is not implemented."); }
+			get { throw new SEException("The method or operation is not implemented."); }
 		}
 
 		bool ICollection<T>.IsReadOnly {
@@ -71,17 +71,17 @@ namespace SteamEngine.Common {
 		}
 
 		void ICollection<T>.Add(T item) {
-			throw new NotSupportedException("This Collection is read only.");
+			throw new SEException("This Collection is read only.");
 		}
 
 		void ICollection<T>.Clear() {
 			if (this.collection.Count > 0) {
-				throw new NotSupportedException("This Collection is read only.");
+				throw new SEException("This Collection is read only.");
 			}
 		}
 
 		bool ICollection<T>.Remove(T item) {
-			throw new NotSupportedException("This Collection is read only.");
+			throw new SEException("This Collection is read only.");
 		}
 	}
 }

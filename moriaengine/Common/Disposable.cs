@@ -55,7 +55,7 @@ namespace SteamEngine.Common {
 
 		protected void ThrowIfDisposed() {
 			if (this.disposed) {
-				throw new ObjectDisposedException(this + " disposed");
+				throw new SEException(this + " disposed");
 			}
 		}
 

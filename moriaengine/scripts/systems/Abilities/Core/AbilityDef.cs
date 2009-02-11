@@ -244,7 +244,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			ci = abilityDefType.GetConstructor(abilityDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			abilityDefCtorsByName[abilityDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 

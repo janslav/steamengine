@@ -258,10 +258,10 @@ namespace SteamEngine {
 					Globals.UnPauseServerTime();
 					PacketSequences.BroadCast("Script loading finished.");
 				} else {
-					throw new Exception("This file is already loaded.");
+					throw new SEException("This file is already loaded.");
 				}
 			} else {
-				throw new Exception("Such file does not exist.");
+				throw new SEException("Such file does not exist.");
 			}
 		}
 

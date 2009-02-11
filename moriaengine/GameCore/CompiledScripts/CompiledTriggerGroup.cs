@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
-			throw new InvalidOperationException("CompiledTriggerGroup without overriden Run method?! This should not happen.");
+			throw new SEException("CompiledTriggerGroup without overriden Run method?! This should not happen.");
 		}
 
 		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {

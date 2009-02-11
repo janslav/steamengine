@@ -50,7 +50,7 @@ namespace SteamEngine.LScript {
 
 			int expressions = (code.GetChildCount() - 1) / 2;
 			if ((expressions % 2) != 0) {
-				throw new Exception("Number of subexpressions in RandomExpressions not odd. This should not happen.");
+				throw new SEException("Number of subexpressions in RandomExpressions not odd. This should not happen.");
 				//grammar should not let such thing in
 			}
 			if (expressions == 2) {
@@ -85,7 +85,7 @@ namespace SteamEngine.LScript {
 					return;
 				}
 			}
-			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {

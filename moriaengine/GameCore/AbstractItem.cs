@@ -276,7 +276,7 @@ namespace SteamEngine {
 
 				this.Trigger_ContainerOpen(viewer, viewerState, viewerConn);
 			} else {
-				throw new InvalidOperationException("The item (" + this + ") is not a container");
+				throw new SEException("The item (" + this + ") is not a container");
 			}
 		}
 
@@ -573,7 +573,7 @@ namespace SteamEngine {
 				return (Direction) 0;
 			}
 			set {
-				throw new NotSupportedException("You can't set Direction to " + this.GetType());
+				throw new SEException("You can't set Direction to " + this.GetType());
 			}
 		}
 

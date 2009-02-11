@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 			if (i != null) {
 				if (i.Cont != this) {
 					i.Delete();
-					throw new Exception("'" + i + "' ended outside the container... Wtf?");
+					throw new SEException("'" + i + "' ended outside the container... Wtf?");
 				}
 				if (i.IsStackable) {
 					i.Amount = amount;

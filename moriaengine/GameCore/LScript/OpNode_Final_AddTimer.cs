@@ -143,7 +143,7 @@ namespace SteamEngine.LScript {
 			} else if (secondsNode == oldNode) {
 				secondsNode = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -238,7 +238,7 @@ namespace SteamEngine.LScript {
 			} else if (secondsNode == oldNode) {
 				secondsNode = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
@@ -351,7 +351,7 @@ namespace SteamEngine.LScript {
 				paramArgs[index] = newNode;
 				return;
 			}
-			throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		public override string ToString() {
@@ -448,7 +448,7 @@ namespace SteamEngine.LScript {
 			} else if (secondsNode == oldNode) {
 				secondsNode = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

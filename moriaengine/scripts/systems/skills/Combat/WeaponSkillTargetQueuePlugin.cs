@@ -127,7 +127,7 @@ namespace SteamEngine.CompiledScripts {
 				case WeaponType.TwoHandBlunt:
 					return SkillName.Macing;
 			}
-			throw new ArgumentOutOfRangeException("weapType");
+			throw new SEException("weapType out of range");
 		}
 
 		public void On_WarModeChange() {

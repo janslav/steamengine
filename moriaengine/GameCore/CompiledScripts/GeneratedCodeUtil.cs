@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 						return parseExp;
 					}
 				} else {
-					throw new Exception("ConvertTools class missing a method for parsing number type " + dataType + ". This shoud not happen.");
+					throw new SEException("ConvertTools class missing a method for parsing number type " + dataType + ". This shoud not happen.");
 				}
 			} else {
 				CodeMethodInvokeExpression loadMethod = new CodeMethodInvokeExpression(

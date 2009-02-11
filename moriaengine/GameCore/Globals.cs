@@ -67,7 +67,7 @@ namespace SteamEngine {
 			}
 			set {
 				//serverName = value;
-				throw new InvalidOperationException("Can't set server name directly. It's read from steamengine.ini");
+				throw new SEException("Can't set server name directly. It's read from steamengine.ini");
 			}
 		}
 		public readonly static string commandPrefix;
@@ -429,11 +429,11 @@ namespace SteamEngine {
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.Show(smaee.Message);
 				smaee.Show();
-				MainClass.Exit();
+				MainClass.signalExit.Set();
 			} catch (Exception globalexp) {
 				Console.WriteLine();
 				Logger.WriteFatal(globalexp);
-				MainClass.Exit();
+				MainClass.signalExit.Set();
 			}
 		}
 

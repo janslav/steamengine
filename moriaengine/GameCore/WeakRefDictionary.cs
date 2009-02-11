@@ -128,10 +128,10 @@ namespace SteamEngine {
 		#region IDictionary<TKey, TValue> Members
 		public void Add(TKey key, TValue value) {
 			if (key == null) {
-				throw new ArgumentNullException("key");
+				throw new SEException("key is null");
 			}
 			if (value == null) {
-				throw new ArgumentNullException("value");
+				throw new SEException("value is null");
 			}
 			dict.Add(new WeakRefDictionaryKeyEntry(key),
 				new WeakReference(value));
@@ -180,10 +180,10 @@ namespace SteamEngine {
 			}
 			set {
 				if (key == null) {
-					throw new ArgumentNullException("key");
+					throw new SEException("key is null");
 				}
 				if (value == null) {
-					throw new ArgumentNullException("value");
+					throw new SEException("value is null");
 				}
 				dict[new WeakRefDictionaryKeyEntry(key)] = new WeakReference(value);
 			}
@@ -217,15 +217,15 @@ namespace SteamEngine {
 			}
 
 			public void Add(TKey item) {
-				throw new NotSupportedException("readonly");
+				throw new SEException("readonly");
 			}
 
 			public void Clear() {
-				throw new NotSupportedException("readonly");
+				throw new SEException("readonly");
 			}
 
 			public bool Remove(TKey item) {
-				throw new NotSupportedException("readonly");
+				throw new SEException("readonly");
 			}
 
 			public bool Contains(TKey key) {
@@ -275,15 +275,15 @@ namespace SteamEngine {
 			}
 
 			public void Add(TValue item) {
-				throw new NotSupportedException("readonly");
+				throw new SEException("readonly");
 			}
 
 			public void Clear() {
-				throw new NotSupportedException("readonly");
+				throw new SEException("readonly");
 			}
 
 			public bool Remove(TValue item) {
-				throw new NotSupportedException("readonly");
+				throw new SEException("readonly");
 			}
 
 			public bool Contains(TValue value) {
@@ -338,7 +338,7 @@ namespace SteamEngine {
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item) {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
@@ -364,7 +364,7 @@ namespace SteamEngine {
 		}
 
 		public bool Remove(KeyValuePair<TKey, TValue> item) {
-			throw new NotImplementedException("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		#endregion

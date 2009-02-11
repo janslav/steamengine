@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			ci = profDefType.GetConstructor(profDefConstructorParamTypes);
 			if (ci == null) {
-				throw new Exception("Proper constructor not found.");
+				throw new SEException("Proper constructor not found.");
 			}
 			profDefCtorsByName[profDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 

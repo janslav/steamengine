@@ -582,7 +582,7 @@ namespace SteamEngine.Persistence {
 					IBaseClassSaveCoordinator ibcsc;
 					if (coordinatorsByImplementor.TryGetValue(pair.Value, out ibcsc)) {
 						if (ibcsc != coordinator) {
-							throw new Exception("ISaveImplementor " + pair.Value + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + coordinator + "'. This should not happen.");
+							throw new SEException("ISaveImplementor " + pair.Value + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + coordinator + "'. This should not happen.");
 						} else {
 							continue;
 						}
@@ -614,7 +614,7 @@ namespace SteamEngine.Persistence {
 					IBaseClassSaveCoordinator ibcsc;
 					if (coordinatorsByImplementor.TryGetValue(implementor, out ibcsc)) {
 						if (ibcsc != pair.Value) {
-							throw new Exception("ISaveImplementor " + implementor + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + pair.Value + "'. This should not happen.");
+							throw new SEException("ISaveImplementor " + implementor + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + pair.Value + "'. This should not happen.");
 						} else {
 							continue;
 						}

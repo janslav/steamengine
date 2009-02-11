@@ -190,7 +190,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		protected virtual void LoadLineImpl(object loadedObject, string filename, int line, string name, string value) {
-			throw new InvalidOperationException("This should not happen.");
+			throw new SEException("This should not happen.");
 		}
 
 	}

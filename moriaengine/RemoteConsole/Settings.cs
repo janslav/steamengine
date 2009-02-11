@@ -142,7 +142,7 @@ namespace SteamEngine.RemoteConsole {
 		public int Port {
 			set {
 				if (value < 0 || value > 65535) {
-					throw new Exception("Port number out of range");
+					throw new SEException("Port number out of range");
 				}
 				port = value;
 			}

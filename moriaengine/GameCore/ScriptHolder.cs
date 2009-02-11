@@ -57,7 +57,7 @@ namespace SteamEngine {
 		}
 
 		protected virtual string GetName() {
-			throw new Exception("This should not happen");
+			throw new SEException("This should not happen");
 		}
 
 		internal protected void RegisterAsFunction() {

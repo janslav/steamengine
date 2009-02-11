@@ -38,8 +38,8 @@ namespace SteamEngine {
 				case "events":
 				//case "type":
 				case "triggergroup":
-				case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
-					DelayedResolver.DelayResolve(new DelayedMethod(ResolveTriggerGroup), (object) args);
+				//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
+					DelayedResolver.DelayResolve(new DelayedMethod(ResolveTriggerGroup), new object[] { args, filename, line });
 					break;
 				default:
 					base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline

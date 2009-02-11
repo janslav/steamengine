@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		[SteamFunction]
 		public static void TestException(TagHolder self) {
-			throw new Exception("I threw an Test exception");
+			throw new SEException("I threw an Test exception");
 		}
 		[SteamFunction]
 		public static void funkce(TagHolder self, ScriptArgs sa) {

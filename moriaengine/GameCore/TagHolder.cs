@@ -98,7 +98,7 @@ namespace SteamEngine {
 			if (tags != null) {
 				TimerKey prevKey = tags[timer] as TimerKey;
 				if (prevKey != null && prevKey != key) {
-					throw new Exception("You can't assign one Timer to one TagHolder under 2 different TimerKeys");
+					throw new SEException("You can't assign one Timer to one TagHolder under 2 different TimerKeys");
 				}
 
 				BoundTimer prevTimer = tags[key] as BoundTimer;
@@ -420,7 +420,7 @@ namespace SteamEngine {
 				try {
 					this.Delete();
 				} catch { }
-				throw new Exception("This object is in Limbo state (" + this + "). This should not happen.");
+				throw new SEException("This object is in Limbo state (" + this + "). This should not happen.");
 			}
 		}
 

@@ -60,7 +60,7 @@ namespace SteamEngine.LScript {
 			if (code == oldNode) {
 				code = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

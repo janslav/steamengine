@@ -201,7 +201,7 @@ namespace SteamEngine.CompiledScripts {
 
 			internal GeneratedInstance(MethodInfo method, SteamFunctionAttribute sfa) {
 				if (!method.IsStatic) {
-					throw new Exception("The method with [SteamFunctionAttribute] must be static");
+					throw new SEException("The method with [SteamFunctionAttribute] must be static");
 				}
 
 				this.method = method;

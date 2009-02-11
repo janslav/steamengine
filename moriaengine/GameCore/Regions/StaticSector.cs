@@ -129,7 +129,7 @@ namespace SteamEngine.Regions {
 				mulbr.Close();
 				return (new object[2] { tile, z });
 			} else {
-				throw new Exception("Unable to locate map file.");
+				throw new SEException("Unable to locate map file.");
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace SteamEngine.Regions {
 				statics.CopyTo(st);
 				return st;
 			} else {
-				throw new Exception("Unable to locate statics0.mul or staidx0.mul. Using map disabled.");
+				throw new SEException("Unable to locate statics0.mul or staidx0.mul. Using map disabled.");
 			}
 		}
 

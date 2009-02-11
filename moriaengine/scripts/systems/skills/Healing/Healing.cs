@@ -211,27 +211,27 @@ namespace SteamEngine.CompiledScripts {
 
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new SEException("The method or operation is not implemented.");
 		}
 	}
 }

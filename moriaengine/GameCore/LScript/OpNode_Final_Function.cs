@@ -44,7 +44,7 @@ namespace SteamEngine.LScript {
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			int index = Array.IndexOf(args, oldNode);
 			if (index < 0) {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				args[index] = newNode;
 			}

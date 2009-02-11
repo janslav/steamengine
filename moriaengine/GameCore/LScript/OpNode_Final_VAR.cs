@@ -34,7 +34,7 @@ namespace SteamEngine.LScript {
 			if (arg == oldNode) {
 				arg = newNode;
 			} else {
-				throw new Exception("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
+				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 

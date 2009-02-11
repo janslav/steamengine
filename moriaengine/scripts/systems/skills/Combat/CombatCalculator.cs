@@ -261,7 +261,7 @@ namespace SteamEngine.CompiledScripts {
 				case WeaponType.TwoHandAxe:
 					return DamageType.Slashing;
 			}
-			throw new ArgumentOutOfRangeException("weapType");
+			throw new SEException("weapType out of range");
 		}
 
 		internal class CombatArmorValues : Poolable {

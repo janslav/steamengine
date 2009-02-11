@@ -25,7 +25,7 @@ using System.Text.RegularExpressions;
 namespace SteamEngine.Regions {
 	public class DynamicRegion : Region {
 		public DynamicRegion() {
-			throw new NotSupportedException("The constructor without paramaters is not supported");
+			throw new SEException("The constructor without paramaters is not supported");
 		}
 
 		public DynamicRegion(ImmutableRectangle[] newRects)
@@ -65,7 +65,7 @@ namespace SteamEngine.Regions {
 			set {
 				ThrowIfDeleted();
 				if (value == null) {
-					throw new ArgumentNullException("P");
+					throw new SEException("P is null");
 				}
 				if (Step(value)) { //first move to the desired position after performing necessary checks
 					//(trying to move over another dynamic region causes movement to fail!)
@@ -169,11 +169,11 @@ namespace SteamEngine.Regions {
 		}
 
 		public override sealed void Save(SteamEngine.Persistence.SaveStream output) {
-			throw new NotSupportedException("Dynamic regions are not supposed to be saved");
+			throw new SEException("Dynamic regions are not supposed to be saved");
 		}
 
 		public override sealed void LoadLine(string filename, int line, string valueName, string valueString) {
-			throw new NotSupportedException("Dynamic regions are not supposed to be loaded");
+			throw new SEException("Dynamic regions are not supposed to be loaded");
 		}
 	}
 }

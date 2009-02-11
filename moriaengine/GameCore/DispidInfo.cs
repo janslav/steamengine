@@ -80,7 +80,7 @@ namespace SteamEngine {
 
 		//This method exists to suppress stupid warnings (We have Equals for dupeitem detection in TileData).
 		public override int GetHashCode() {
-			throw new NotSupportedException("ItemDispidInfo cannot return a hash code.");
+			throw new SEException("ItemDispidInfo cannot return a hash code.");
 		}
 
 		public static int Num() {

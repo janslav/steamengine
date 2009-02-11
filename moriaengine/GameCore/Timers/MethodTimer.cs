@@ -90,10 +90,10 @@ namespace SteamEngine.Timers {
 					if (mi != null) {
 						method = MemberWrapper.GetWrapperFor(mi);
 					} else {
-						throw new Exception("Unrecognized method.");
+						throw new SEException("Unrecognized method.");
 					}
 				} else {
-					throw new Exception("The value has unparsable format");
+					throw new SEException("The value has unparsable format");
 				}
 			}
 			base.LoadLine(filename, line, name, value);

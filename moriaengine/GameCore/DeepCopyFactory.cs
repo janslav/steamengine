@@ -84,7 +84,7 @@ namespace SteamEngine {
 				return null;
 			}
 			if (toBeCopied.Contains(copyFrom)) {
-				throw new InvalidOperationException("You can't obtain a copy of an object that is already pending to be copied in this copy session. Use the -Delayed method here instead.");
+				throw new SEException("You can't obtain a copy of an object that is already pending to be copied in this copy session. Use the -Delayed method here instead.");
 			}
 			object copy;
 			if (copies.TryGetValue(copyFrom, out copy)) {
@@ -192,7 +192,7 @@ namespace SteamEngine {
 			}
 
 			public Type HandledType {
-				get { throw new Exception("This should not happen."); }
+				get { throw new SEException("This should not happen."); }
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace SteamEngine {
 			}
 
 			public Type HandledType {
-				get { throw new Exception("This should not happen."); }
+				get { throw new SEException("This should not happen."); }
 			}
 		}
 

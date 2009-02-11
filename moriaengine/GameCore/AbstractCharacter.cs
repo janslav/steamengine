@@ -263,7 +263,7 @@ namespace SteamEngine {
 				return ((flags & 0x0001) == 0x0001);
 			}
 			set {
-				throw new InvalidOperationException("Can't set Flag_Disconnected directly on a character");
+				throw new SEException("Can't set Flag_Disconnected directly on a character");
 			}
 			//    Sanity.IfTrueThrow(IsPlayer, "It is NOT safe to set Flag_Disconnected on a player.");
 			//    if (Flag_Disconnected!=value) {
@@ -581,7 +581,7 @@ namespace SteamEngine {
 				return defaultMovement;
 			}
 			set {
-				throw new NotSupportedException();
+				throw new SEException("Not supported");
 			}
 		}
 
@@ -661,7 +661,7 @@ namespace SteamEngine {
 				point4d.m = m;
 				ChangedP(oldP);
 			} else {
-				throw new ArgumentOutOfRangeException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
+				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
 			}
 		}
 

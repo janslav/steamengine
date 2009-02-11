@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 					elemType = Type.GetType(pl.value, false, true);
 				}
 				if (elemType == null) {
-					throw new Exception("Generic LinkedList element type not recognised.");
+					throw new SEException("Generic LinkedList element type not recognised.");
 				}
 
 				Type typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);

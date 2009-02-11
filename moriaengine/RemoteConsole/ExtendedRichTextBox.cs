@@ -1347,7 +1347,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="position">Insert position</param>
 		public void InsertLink(string text, int position) {
 			if (position < 0 || position > this.Text.Length)
-				throw new ArgumentOutOfRangeException("position");
+				throw new SEException("position out of range");
 
 			this.SelectionStart = position;
 			this.SelectedText = text;
@@ -1380,7 +1380,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="position">Insert position</param>
 		public void InsertLink(string text, string hyperlink, int position) {
 			if (position < 0 || position > this.Text.Length)
-				throw new ArgumentOutOfRangeException("position");
+				throw new ArgumentOutOfRangeException("position out of range");
 
 			this.SelectionStart = position;
 			this.SelectedRtf = @"{\rtf1\ansi " + text + @"\v #" + hyperlink + @"\v0}";
