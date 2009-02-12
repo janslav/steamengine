@@ -98,23 +98,21 @@ namespace SteamEngine.LScript {
 			}
 
 			List<MethodInfo> matches = new List<MethodInfo>();
-			PropertyInfo[] properties = vars.self.GetType().GetProperties();
-			foreach (PropertyInfo pi in properties) {
-				if (pi.Name == "Item") {
+			MethodInfo[] methods = vars.self.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			foreach (MethodInfo mi in methods) {
+				if (mi.IsSpecialName && (mi.IsPublic || (mi.IsVirtual && mi.IsFinal))) { //public or implementing interface (typically IList or some such)
 					if (arg == null) {//getting indexed item
-						MethodInfo getter = pi.GetGetMethod();
-						if (getter != null) {
-							ParameterInfo[] pars = getter.GetParameters();
+						if (mi.Name.EndsWith(".get_Item")) {
+							ParameterInfo[] pars = mi.GetParameters();
 							if (pars.Length == 1) {
-								matches.Add(getter);
+								matches.Add(mi);
 							}
 						}
 					} else {
-						MethodInfo setter = pi.GetSetMethod();
-						if (setter != null) {
-							ParameterInfo[] pars = setter.GetParameters();
+						if (mi.Name.EndsWith(".set_Item")) {
+							ParameterInfo[] pars = mi.GetParameters();
 							if (pars.Length == 2) {
-								matches.Add(setter);
+								matches.Add(mi);
 							}
 						}
 					}
