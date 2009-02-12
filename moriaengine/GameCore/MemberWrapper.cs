@@ -61,7 +61,7 @@ namespace SteamEngine {
 			//#if !OPTIMIZED
 			//			return method;
 			//#else
-			method = method.GetBaseDefinition();//!! keeping the "virtuality"
+			method = GetMIBaseDefinition(method);//!! keeping the "virtuality"
 			MethodWrapper wrapper = methodWrappers[method] as MethodWrapper;
 			if (wrapper != null) {
 				return wrapper;
@@ -70,6 +70,20 @@ namespace SteamEngine {
 			methodWrappers[method] = wrapper;
 			return wrapper;
 			//#endif
+		}
+
+		private static MethodInfo GetMIBaseDefinition(MethodInfo mi) {
+			mi = mi.GetBaseDefinition();
+			Type declaringType = mi.DeclaringType;
+			Type[] ifaces = declaringType.GetInterfaces();
+			foreach (Type iface in ifaces) {
+				InterfaceMapping mapping = declaringType.GetInterfaceMap(iface);
+				int i = Array.IndexOf<MethodInfo>(mapping.TargetMethods, mi);
+				if (i >= 0) {
+					return mapping.InterfaceMethods[i].GetBaseDefinition();
+				}
+			}
+			return mi;
 		}
 
 		//method: GetWrapperFor
