@@ -104,10 +104,9 @@ namespace SteamEngine.LScript {
 				sb.Append(((Token) node).GetImage().Trim());
 			}
 			string typeName = sb.ToString();
-
-			Type type = ClassManager.GetType(typeName);
+			Type type = TryRecognizeType(typeName);
 			if (type == null) {
-				type = Type.GetType(typeName, false, true);
+				type = TryRecognizeType(typeName + "`1"); //this is how generic types are internally named
 			}
 			if (type == null) {
 				throw new InterpreterException("Type '" + typeName + "' not recognised.",
@@ -115,6 +114,14 @@ namespace SteamEngine.LScript {
 			}
 
 			return OpNode_Object.Construct(parent, type);
+		}
+
+		private static Type TryRecognizeType(string typeName) {
+			Type type = ClassManager.GetType(typeName);
+			if (type == null) {
+				type = Type.GetType(typeName, false, true);
+			}
+			return type;
 		}
 	}
 

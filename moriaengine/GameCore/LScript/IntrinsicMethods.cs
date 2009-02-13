@@ -134,5 +134,17 @@ namespace SteamEngine.LScript {
 		//	}
 		//	return lastroot;
 		//}
+
+		public static object CreateArray(Type type, int length) {
+			return Array.CreateInstance(type, length);
+		}
+
+		public static object CreateList(Type type) {
+			return Activator.CreateInstance(typeof(System.Collections.Generic.List<>).MakeGenericType(type));
+		}
+
+		public static object CreateGenericObject(Type type, params Type[] genericParams) {
+			return Activator.CreateInstance(type.MakeGenericType(genericParams));
+		}
 	}
 }
