@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (skillSeqArgs.Success) {
-				skillSeqArgs.Dispose();
+				//skillSeqArgs.Dispose();
 				return true; //we're done
 			} else {
 				return false; //continue to @Fail

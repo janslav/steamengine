@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[HasSavedMembers]
 	[Dialogs.ViewableClass]
-	public class MagerySettings {
+	public class MagerySettings : SettingsMetaCategory {
 
 		[SavedMember]
 		public static MagerySettings instance = new MagerySettings();
@@ -45,6 +45,20 @@ namespace SteamEngine.CompiledScripts {
 		public MetaMassSetting<WeaponMindPowerVsMMassSetting, ColoredWeaponDef, double> mindPowerVsM = new MetaMassSetting<WeaponMindPowerVsMMassSetting, ColoredWeaponDef, double>();
 
 		public MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double> mindPowerVsP = new MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double>();
+
+		public SpellsSettings spells = new SpellsSettings();
+	}
+
+	[Dialogs.ViewableClass]
+	public class SpellsSettings : SettingsMetaCategory {
+		[InfoField("damage kouzel")]
+		public SpellDamageMassSetting spellDamage = new SpellDamageMassSetting();
+
+		[InfoField("typ damage kouzel")]
+		public SpellDamageTypeMassSetting damageType = new SpellDamageTypeMassSetting();
+
+		[InfoField("všechny kouzla")]
+		public AllSpellsMassSetting allSpells = new AllSpellsMassSetting();
 	}
 
 	public class WeaponMindPowerVsPMassSetting : MassSettingByMaterial<ColoredWeaponDef, double> {
@@ -53,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 			get { return "Síla mysli proti hráèùm"; }
 		}
 
-		protected class WeaponvVsPFieldView : FieldView {
+		protected class WeaponvVsPFieldView : FieldView_ByModel {
 			internal WeaponvVsPFieldView(int index)
 				: base(index) {
 			}
@@ -78,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 			get { return "Síla mysli proti monstrùm"; }
 		}
 
-		protected class WeaponMindPowerVsMFieldView : FieldView {
+		protected class WeaponMindPowerVsMFieldView : FieldView_ByModel {
 			internal WeaponMindPowerVsMFieldView(int index)
 				: base(index) {
 			}
@@ -94,6 +108,65 @@ namespace SteamEngine.CompiledScripts {
 
 		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponMindPowerVsMFieldView(index);
+		}
+	}
+
+	public abstract class SpellDefEffectMassSetting<DefType> : MassSettings_ByClass_SingleField<DefType, double[]> where DefType : SpellDef {
+		protected class SpellDefEffectFieldView : FieldView_ByClass_SingleField {
+			internal SpellDefEffectFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(DefType def, double[] value) {
+				def.Effect = value;
+			}
+
+			internal override double[] GetValue(DefType def) {
+				return def.Effect;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new SpellDefEffectFieldView(index);
+		}
+	}
+
+	public class SpellDamageMassSetting : SpellDefEffectMassSetting<DamageSpellDef> {
+
+		public override string Name {
+			get { return "Damage kouzel (pole effect)"; }
+		}
+	}
+
+	public class SpellDamageTypeMassSetting : MassSettings_ByClass_SingleField<DamageSpellDef, DamageType> {
+
+		public override string Name {
+			get { return "Typ Damage kouzel"; }
+		}
+
+		protected class SpellDamageTypeFieldView : FieldView_ByClass_SingleField {
+			internal SpellDamageTypeFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(DamageSpellDef def, DamageType value) {
+				def.DamageType = value;
+			}
+
+			internal override DamageType GetValue(DamageSpellDef def) {
+				return def.DamageType;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new SpellDamageTypeFieldView(index);
+		}
+	}
+	
+	public class AllSpellsMassSetting : MassSettings_ByClass_List<SpellDef> {
+		
+		public override string Name {
+			get { return "Seznam všech kouzel"; }
 		}
 	}
 }

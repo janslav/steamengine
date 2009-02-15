@@ -567,14 +567,14 @@ namespace SteamEngine.CompiledScripts {
 		[Remark("Failing is something else than being forced to abort")]
 		public void PhaseFail() {
 			if (!this.skillDef.Trigger_Fail(this)) {
-				this.Dispose();
+				//this.Dispose();
 			}
 		}
 
 		[Summary("This method fires the @Success triggers. Gets usually called from the Stroke phase")]
 		public void PhaseSuccess() {
 			if (!this.skillDef.Trigger_Success(this)) {
-				this.Dispose();
+				//this.Dispose();
 			}
 		}
 
@@ -582,7 +582,7 @@ namespace SteamEngine.CompiledScripts {
 		+ "Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
 		public void PhaseAbort() {
 			this.skillDef.Trigger_Abort(this);
-			this.Dispose();
+			//this.Dispose();
 		}
 
 		public static void AbortSkill(Character self) {

@@ -30,10 +30,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		IDataFieldView GetFieldView(int index);
 	}
 
-	public abstract class MassSettingsByClass<DefType, FieldType> : IMassSettings where DefType : ThingDef {
-		static List<DefType> defs;
 
-		static MassSettingsByClass() {
+	public abstract class MassSettings_ByClass<DefType> : SettingsMetaCategory, IMassSettings where DefType : AbstractDef {
+		static protected List<DefType> defs;
+
+		static MassSettings_ByClass() {
 			if (defs == null) {
 				defs = new List<DefType>();
 				foreach (AbstractScript scp in AbstractScript.AllScripts) {
@@ -43,24 +44,68 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (defs.Count == 0) {
-					throw new SEException("MassSettingsByClass instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
+					throw new SEException("ListMassSettingsByClass instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
 				}
 
 				defs.Sort(delegate(DefType a, DefType b) {
-					return Comparer<ushort>.Default.Compare(a.Model, b.Model);
+					return string.CompareOrdinal(a.Defname, b.Defname);
 				});
 			}
 		}
 
-		protected abstract class FieldView : ReadWriteDataFieldView {
+		public int Count {
+			get {
+				return defs.Count;
+			}
+		}
+
+		public abstract string Name { get; }
+
+		public abstract IDataFieldView GetFieldView(int index);
+	}
+
+	public abstract class MassSettings_ByClass_List<DefType> : MassSettings_ByClass<DefType> where DefType : AbstractDef {
+		protected class FieldView_ByClass_List : ReadOnlyDataFieldView {
 			protected int index;
 
-			protected FieldView(int index) {
+			internal protected FieldView_ByClass_List(int index) {
 				this.index = index;
 			}
 
 			public override string GetName(object target) {
-				return defs[index].Name;
+				return defs[index].ToString();
+			}
+
+			public override Type FieldType {
+				get {
+					return typeof(DefType);
+				}
+			}
+
+			public override object GetValue(object target) {
+				return defs[this.index];
+			}
+
+			public override string GetStringValue(object target) {
+				return this.GetName(target);
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new FieldView_ByClass_List(index);
+		}
+	}
+
+	public abstract class MassSettings_ByClass_SingleField<DefType, FieldType> : MassSettings_ByClass<DefType>, IMassSettings where DefType : AbstractDef {
+		protected abstract class FieldView_ByClass_SingleField : ReadWriteDataFieldView {
+			protected int index;
+
+			protected FieldView_ByClass_SingleField(int index) {
+				this.index = index;
+			}
+
+			public override string GetName(object target) {
+				return defs[index].ToString();
 			}
 
 			public override Type FieldType {
@@ -89,24 +134,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			internal abstract FieldType GetValue(DefType def);
 		}
-
-		public abstract string Name { get; }
-		public abstract IDataFieldView GetFieldView(int index);
-
-		public int Count {
-			get {
-				return defs.Count;
-			}
-		}
-
-
 	}
 
-	public abstract class MassSettingsByModel<DefType, FieldType> : IMassSettings where DefType : ThingDef {
+	public abstract class MassSettings_ByClass_ThingDef<DefType, FieldType> : MassSettings_ByClass_SingleField<DefType, FieldType> where DefType : ThingDef {
+		static MassSettings_ByClass_ThingDef() {
+			defs.Sort(delegate(DefType a, DefType b) {
+				return Comparer<ushort>.Default.Compare(a.Model, b.Model);
+			});
+		}
+
+		protected abstract class FieldView_ByClass_ThingDef : FieldView_ByClass_SingleField {
+			protected FieldView_ByClass_ThingDef(int index) : base(index) {
+			}
+
+			public override string GetName(object target) {
+				return defs[index].Name;
+			}
+		}
+	}
+
+	public abstract class MassSettings_ByModel<DefType, FieldType> : SettingsMetaCategory, IMassSettings where DefType : ThingDef {
 		static ushort[] models;
 		List<DefType>[] defs;
 
-		static MassSettingsByModel() {
+		static MassSettings_ByModel() {
 			if (models == null) {
 				HashSet<ushort> modelsSet = new HashSet<ushort>();
 				foreach (AbstractScript scp in AbstractScript.AllScripts) {
@@ -172,16 +223,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return true;
 		}
 
-		protected abstract class FieldView : ReadWriteDataFieldView {
+		protected abstract class FieldView_ByModel : ReadWriteDataFieldView {
 			protected int index;
 
-			protected FieldView(int index) {
+			protected FieldView_ByModel(int index) {
 				this.index = index;
 
 			}
 
 			public override string GetName(object target) {
-				DefType def = ((MassSettingsByModel<DefType, FieldType>) target).defs[index][0];
+				DefType def = ((MassSettings_ByModel<DefType, FieldType>) target).defs[index][0];
 				return def.Name;
 			}
 
@@ -193,7 +244,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				//set the fields on all defs to the same value.
-				List<DefType> defs = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
+				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[index];
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
@@ -204,7 +255,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				List<DefType> defs = ((MassSettingsByModel<DefType, FieldType>) target).defs[index];
+				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[index];
 
 				foreach (DefType def in defs) {
 					this.SetValue(def, (FieldType) value);
@@ -267,7 +318,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 
-	public abstract class MassSettingByMaterial<DefType, FieldType> : MassSettingsByModel<DefType, FieldType> where DefType : ThingDef, IObjectWithMaterial {
+	public abstract class MassSettingByMaterial<DefType, FieldType> : MassSettings_ByModel<DefType, FieldType> where DefType : ThingDef, IObjectWithMaterial {
 		public Material material;
 
 		internal override bool CheckIfAppies(DefType def) {
@@ -331,11 +382,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-
-
-
-
-	public abstract class MassSettingsByWearableTypeAndMaterial<DefType, FieldType> : IMassSettings where DefType : WearableDef, IObjectWithMaterial {
+	public abstract class MassSettings_ByWearableTypeAndMaterial<DefType, FieldType> : IMassSettings where DefType : WearableDef, IObjectWithMaterial {
 		static List<DefType>[,] defSets;
 
 		//Copper=1, Spruce=1,
@@ -386,13 +433,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		protected abstract class FieldView : ReadWriteDataFieldView {
+		protected abstract class FieldView_ByWearableTypeAndMaterial : ReadWriteDataFieldView {
 			protected int firstIndex;
 			protected int secondIndex;
 			protected Material mat;
 			protected WearableType type;
 
-			protected FieldView(int index) {
+			protected FieldView_ByWearableTypeAndMaterial(int index) {
 				firstIndex = index / 9;
 				secondIndex = index % 9;
 				type = (WearableType) (firstIndex + 2);

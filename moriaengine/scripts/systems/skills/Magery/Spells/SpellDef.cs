@@ -504,9 +504,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			if (sea != null) {
-				sea.Dispose();
-			}
+			//if (sea != null) {
+			//    sea.Dispose();
+			//}
 		}
 
 		private bool CheckSpellPowerWithMessage(SpellEffectArgs sea) {
@@ -696,7 +696,7 @@ namespace SteamEngine.CompiledScripts {
 		public CharRelation CasterToMainTargetRelation {
 			get {
 				if (!this.relationFoundOut) {
-					this.relation = Notoriety.GetCharRelation(this.caster, this.mainTarget);
+					this.relation = Notoriety.GetCharRelation(this.caster, (Character) this.mainTarget);
 					this.relationFoundOut = true;
 				}
 				return this.relation;
@@ -713,8 +713,8 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		protected override void On_TargonCancel(Player caster, object parameter) {
-			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
-			mageryArgs.Dispose();
+			//SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
+			//mageryArgs.Dispose();
 		}
 
 		protected override bool On_TargonGround(Player caster, IPoint4D targetted, object parameter) {

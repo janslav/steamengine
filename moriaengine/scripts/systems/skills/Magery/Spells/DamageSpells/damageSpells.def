@@ -1,0 +1,222 @@
+
+[DamageSpellDef 5]//utocne
+DEFNAME=s_magic_arrow
+NAME=Magic Arrow
+SOUND=snd_SPELL_MAGIC_ARROW
+CASTTIME=2.5
+RUNES=IPY
+//RESOURCES=i_reag_black_pearl,i_reag_nightshade
+RUNEITEM=i_rune_MAGIC_ARROW
+SCROLLITEM=i_scroll_MAGIC_ARROW
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+//EFFECTID=0
+EFFECT=0,3
+DURATION=0.0
+MANAUSE=6
+Requirements=4.0 Magery
+difficulty = 5
+
+on=@effectChar
+	EffectFactory.EffectFromTo(argo.Caster, this, 0x36E4, 5, 0, false, true, 0, 0)
+	argo.Caster.Sound(0x1E5)
+	
+	
+[DamageSpellDef 12]//utocne
+DEFNAME=s_harm
+NAME="Harm"
+SOUND=snd_SPELL_HARM
+RUNES=AM
+CASTTIME=1.2
+//RESOURCES=i_reag_nightshade,i_reag_spider_silk
+RUNEITEM=i_rune_HARM
+SCROLLITEM=i_scroll_HARM
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+//EFFECTID=i_fx_curse
+EFFECT=6,12
+DURATION=0.0
+MANAUSE=6
+Requirements=20.0 Magery
+difficulty = 200
+
+on=@effectChar
+	EffectFactory.StationaryEffect(this, 0x374A, 10, 15)
+	argo.Caster.Sound(0x1F1)
+	
+[DamageSpellDef 18]
+DEFNAME=s_fireball
+NAME=Fireball
+SOUND=snd_SPELL_FIREBALL
+RUNES=VF
+CASTTIME=1.7
+//RESOURCES=i_reag_black_pearl,i_reag_sulfur_ash
+RUNEITEM=i_rune_FIREBALL
+SCROLLITEM=i_scroll_FIREBALL
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+//EFFECTID=0
+EFFECT=0,15
+DURATION=0.0
+MANAUSE=10
+Requirements=30.0 Magerys
+
+[SpellDef 20]//utocne
+// NOTE: Does poison need a duration or are they stuck with it until cured ??
+DEFNAME=s_poison
+NAME=Poison
+SOUND=snd_SPELL_POISON
+RUNES=IN
+CASTTIME=2.0
+//RESOURCES=i_reag_nightshade
+RUNEITEM=i_rune_POISON
+SCROLLITEM=i_scroll_POISON
+FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_harm//SPELLFLAG_TARG_CHAR
+//EFFECTID=i_fx_curse
+EFFECT=0,100
+DURATION=0.3,0.5
+MANAUSE=10
+Requirements=30.0 Magery
+
+[DamageSpellDef 30]//utocne
+DEFNAME=s_lightning
+NAME=Lightning
+SOUND=snd_SPELL_LIGHTNING
+RUNES=POG
+CASTTIME=2.0
+//RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_sulfur_ash
+RUNEITEM=i_rune_LIGHTNING
+SCROLLITEM=i_scroll_LIGHTNING
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+//EFFECTID=0
+EFFECT=0,15
+DURATION=0.0
+MANAUSE=11
+Requirements=40.0 Magery
+
+[SpellDef 37]//utocne
+DEFNAME=s_mind_blast
+NAME=Mind Blast
+SOUND=snd_SPELL_MIND_BLAST
+RUNES=PCW
+CASTTIME=2.5
+//RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_nightshade,i_reag_sulfur_ash
+RUNEITEM=i_rune_MIND_BLAST
+SCROLLITEM=i_scroll_MIND_BLAST
+FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
+//EFFECTID=i_fx_curse
+EFFECT=0,12
+DURATION=0.0
+MANAUSE=20
+Requirements=50.0 Magery
+
+[DamageSpellDef 42]
+DEFNAME=s_energy_bolt
+NAME=Energy Bolt
+SOUND=snd_SPELL_ENERGY_BOLT
+RUNES=CP
+CASTTIME=2.5
+//RESOURCES=i_reag_black_pearl,i_reag_nightshade
+RUNEITEM=i_rune_ENERGY_BOLT
+SCROLLITEM=i_scroll_ENERGY_BOLT
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+//EFFECTID=0
+EFFECT=0,22
+DURATION=0.0
+MANAUSE=22
+Requirements=60.0 Magery
+
+[DamageSpellDef 43]//utocne
+DEFNAME=s_explosion
+NAME=Explosion
+SOUND=snd_SPELL_EXPLOSION
+RUNES=VOF
+CASTTIME=2.5
+//RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_sulfur_ash
+RUNEITEM=i_rune_EXPLOSION
+SCROLLITEM=i_scroll_EXPLOSION
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
+//EFFECTID=i_fx_explode
+EFFECT=0,25
+DURATION=0.0
+MANAUSE=22
+Requirements=60.0 Magery
+
+[DamageSpellDef 49]//utocne
+DEFNAME=s_chain_lightning
+NAME=Chain Lightning
+SOUND=snd_SPELL_CHAIN_LIGHTNING
+RUNES=VOG
+CASTTIME=2.8
+//RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root,i_reag_sulfur_ash
+RUNEITEM=i_rune_CHAIN_LIGHTNING
+SCROLLITEM=i_scroll_CHAIN_LIGHTNING
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
+//EFFECTID=0
+EFFECT=0,30
+DURATION=0.0
+MANAUSE=30
+Requirements=70.0 Magery
+
+[DamageSpellDef 51]//utocne
+DEFNAME=s_flamestrike
+NAME=Flame Strike
+SOUND=snd_SPELL_FLAMESTRIKE
+RUNES=KVF
+CASTTIME=2.8
+//RESOURCES=i_reag_spider_silk,i_reag_sulfur_ash
+RUNEITEM=i_rune_FLAMESTRIKE
+SCROLLITEM=i_scroll_FLAMESTRIKE
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+//EFFECTID=03709
+EFFECT=0,35
+DURATION=0.0 
+MANAUSE=40
+Requirements=70.0 Magery
+
+[SpellDef 55]//utocne
+// NOTE: Does Meteor Swarm have a duration or does it just send out one blast of 'rocks' ??? IF a duration then certainly no more the 30secs IMO.
+DEFNAME=s_meteor_swarm
+NAME=Meteor Swarm
+SOUND=snd_SPELL_METEOR_swarm
+RUNES=FKDY
+CASTTIME=3.5
+//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
+RUNEITEM=i_rune_METEOR_swarm
+SCROLLITEM=i_scroll_METEOR_swarm
+FLAGS=SPELLFLAG_DIR_ANIM|spellflag_evil|SPELLFLAG_TARG_XYZ|spellflag_SM|spellflag_harmcaster|spellflag_harm
+//EFFECTID=0
+EFFECT=0,40
+DURATION=0.0
+MANAUSE=40
+Requirements=70.0 Magery
+
+[DamageSpellDef 57]//utocne
+DEFNAME=s_earthquake
+NAME=Earthquake
+SOUND=snd_SPELL_EARTHQUAKE
+RUNES=IVP
+CASTTIME=4.0
+//RESOURCES=i_reag_blood_moss,i_reag_ginseng,i_reag_mandrake_root,i_reag_sulfur_ash
+RUNEITEM=i_rune_EARTHQUAKE
+SCROLLITEM=i_scroll_EARTHQUAKE
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell | SpellFlag.AlwaysTargetSelf
+//EFFECTID=0
+EFFECT=0,50
+DURATION=30
+MANAUSE=50
+Requirements=80.0 Magery
+// NOTE: does Earthquake use a duration?? IF so, no more then 30secs. This spell is more like an irradiating wave thus should have a set distance/time it can be effective
+
+//[SpellDef 69]
+//DEFNAME=s_fire_bolt
+//NAME=Fire Bolt
+//SOUND=snd_SPELL_FIRE_BOLT
+//RUNES=VFP
+//CASTTIME=2.0
+//////RESOURCES=i_reag_black_pearl,i_reag_sulfur_ash,i_reag_nightshade
+//RUNEITEM=i_rune_FIREBALL
+//SCROLLITEM=i_scroll_firebolt
+//FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_BOLT|spellflag_evil|spellflag_SM//SPELLFLAG_TARG_CHAR
+////EFFECTID=0
+//EFFECT=0,30
+//DURATION=0.0
+//MANAUSE=32
+//Requirements=70.0 Magery

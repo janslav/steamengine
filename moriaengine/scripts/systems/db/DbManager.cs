@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[SaveableClass]
 	[Dialogs.ViewableClass("Database Settings")]
-	public class DbConfig {
+	public class DbConfig : Dialogs.SettingsMetaCategory {
 		[LoadingInitializer]
 		public DbConfig() {
 		}

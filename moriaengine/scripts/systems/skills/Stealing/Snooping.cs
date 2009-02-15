@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 				SkillSequenceArgs stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.manipulatedItem, null, null, null, null);
 				stealing.PhaseSelect();
 				bool success = stealing.Success;
-				stealing.Dispose();
+				//stealing.Dispose();
 
 				if (!success) {
 					args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
