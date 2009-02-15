@@ -450,7 +450,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public enum CharRelation {
 		AlwaysHostile = -2, //Another realm, evil NPC vs player
-		TempHostile = -1, //aggressor, guild in war
+		TempHostile = -1, //aggressor, guild in war, criminal?
 		Neutral = 0, Unknown = 0, None = 0,
 		Allied = 1, //same realm
 		Friendly = 2 //same guild/allied guild, party

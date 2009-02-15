@@ -623,12 +623,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class SpellEffectArgs : Poolable {
+	public class SpellEffectArgs {
 		Character caster;
 		IPoint4D currentTarget;
 		IPoint4D mainTarget;
 		SpellDef spellDef;
 		int spellPower;
+		CharRelation relation;
+		bool relationFoundOut = false;
 
 		public readonly ScriptArgs scriptArgs;
 
@@ -638,7 +640,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SpellEffectArgs Acquire(Character caster, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower) {
-			SpellEffectArgs retVal = Pool<SpellEffectArgs>.Acquire();
+			SpellEffectArgs retVal = new SpellEffectArgs();
 			retVal.caster = caster;
 			retVal.mainTarget = mainTarget;
 			retVal.currentTarget = currentTarget;
@@ -688,6 +690,16 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.spellPower = value;
+			}
+		}
+
+		public CharRelation CasterToMainTargetRelation {
+			get {
+				if (!this.relationFoundOut) {
+					this.relation = Notoriety.GetCharRelation(this.caster, this.mainTarget);
+					this.relationFoundOut = true;
+				}
+				return this.relation;
 			}
 		}
 	}

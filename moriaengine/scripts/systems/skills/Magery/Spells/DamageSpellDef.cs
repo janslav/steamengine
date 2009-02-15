@@ -51,8 +51,14 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
-			double dam = this.GetEffectForValue(spellEffectArgs.SpellPower);
+			if (target != spellEffectArgs.MainTarget) { //if not the main target, we only want to hit the bad guys (applies ofc to mass versions of this spells only)
+				CharRelation relation = Notoriety.GetCharRelation(target, spellEffectArgs.Caster);
+				if (relation > spellEffectArgs.CasterToMainTargetRelation) { //if the relation is actually better, we do not proceed with damage
+					return;
+				}
+			}
 
+			double dam = this.GetEffectForValue(spellEffectArgs.SpellPower);
 			DamageManager.CauseDamage(spellEffectArgs.Caster, target, this.DamageType, dam);
 		}
 	}
