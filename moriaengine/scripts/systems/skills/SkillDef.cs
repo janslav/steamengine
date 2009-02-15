@@ -350,7 +350,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Persistence.SaveableClass]
-	public class SkillSequenceArgs : Poolable {
+	public class SkillSequenceArgs {
 		private Character self; //set when calling @Select
 		private SkillDef skillDef; //set when calling @Select
 		private IPoint4D target1, target2; //set in @Select or before it
@@ -362,14 +362,13 @@ namespace SteamEngine.CompiledScripts {
 		public readonly ScriptArgs scriptArgs;
 
 		[Persistence.LoadingInitializer]
-		public SkillSequenceArgs()
-			: base() {
+		public SkillSequenceArgs() {
 
 			this.scriptArgs = new ScriptArgs(this);
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef) {
-			SkillSequenceArgs args = Pool<SkillSequenceArgs>.Acquire();
+			SkillSequenceArgs args = new SkillSequenceArgs();
 			args.self = self;
 			args.skillDef = skillDef;
 			args.target1 = null;
@@ -383,7 +382,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef, IPoint4D target1, IPoint4D target2, Item tool, object param1, object param2) {
-			SkillSequenceArgs args = Pool<SkillSequenceArgs>.Acquire();
+			SkillSequenceArgs args = new SkillSequenceArgs();
 			args.self = self;
 			args.skillDef = skillDef;
 			args.target1 = target1;

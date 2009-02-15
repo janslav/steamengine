@@ -103,38 +103,6 @@ namespace SteamEngine.LScript {
 			return Math.Max(int1, int2);
 		}
 
-		//public static int negativenumber() {
-		//	return -1;
-		//}
-
-
-
-		//public static double Sqrt(double arg) {
-		//	return Math.Sqrt(arg);
-		//}
-		//public static void comptest() {
-		//	DateTime before = DateTime.Now;
-		//	for (int i = 1000000; i>0; i--) {
-		//		Sqrt(687231);
-		//	}
-		//	DateTime after = DateTime.Now;
-		//	Console.WriteLine("diff: "+(after-before));
-		//}
-		//
-		//private static double Sqrt(double arg) {
-		//	double root1 = arg;
-		//	double root2 = arg;
-		//	double lastroot = -1;
-		//	for (int i = 0; i<30; i++) {
-		//		lastroot = root1;
-		//		root1 = (root1/2)+((root2/root1)/2);
-		//		if ((lastroot==root1) || (lastroot == root1)) {
-		//			return lastroot;
-		//		}
-		//	}
-		//	return lastroot;
-		//}
-
 		public static object CreateArray(Type type, int length) {
 			return Array.CreateInstance(type, length);
 		}
