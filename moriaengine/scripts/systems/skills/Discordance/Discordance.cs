@@ -65,18 +65,17 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			using (SkillSequenceArgs musicianship = SkillSequenceArgs.Acquire(self, SkillName.Musicianship, skillSeqArgs.Tool, true)) { //true = parameter for the musicianship @Stroke, it won't proceed with the skill
-				musicianship.PhaseStroke();
+			SkillSequenceArgs musicianship = SkillSequenceArgs.Acquire(self, SkillName.Musicianship, skillSeqArgs.Tool, true); //true = parameter for the musicianship @Stroke, it won't proceed with the skill
+			musicianship.PhaseStroke();
 
-				if (musicianship.Tool != null) {
-					skillSeqArgs.Success = musicianship.Success;
+			if (musicianship.Tool != null) {
+				skillSeqArgs.Success = musicianship.Success;
 
-					self.SysMessage("Pokousis se oslabit " + ((Character) skillSeqArgs.Target1).Name + ".");
-					return false;
-				} else {
-					skillSeqArgs.Dispose();
-					return true; //we lost the instrument or something
-				}
+				self.SysMessage("Pokousis se oslabit " + ((Character) skillSeqArgs.Target1).Name + ".");
+				return false;
+			} else {
+				//skillSeqArgs.Dispose();
+				return true; //we lost the instrument or something
 			}
 		}
 

@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.viewCls = viewCls;
 
 			//what type of dialog we have?
-			isSettings = typeof(SettingsMetaCategory).IsAssignableFrom(target.GetType());
+			isSettings = target is SettingsMetaCategory;
 
 			int[] columns = new int[1 + COLS_COUNT];
 			int firstFieldsColumn = 1;

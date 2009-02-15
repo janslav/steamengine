@@ -626,8 +626,8 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\SpellScroll.Generated.cs">
       <Link>systems\skills\Magery\SpellScroll.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpellDef.cs">
-      <Link>systems\skills\Magery\Spells\DamageSpellDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>

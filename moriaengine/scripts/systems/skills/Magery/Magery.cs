@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 					self.ClilocSysMessage(502625); // Insufficient mana for this spell.
 				}
 			}
-			skillSeqArgs.Dispose();
+			//skillSeqArgs.Dispose();
 			return true;
 		}
 

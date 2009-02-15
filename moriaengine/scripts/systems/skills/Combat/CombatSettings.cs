@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[HasSavedMembers]
 	[Dialogs.ViewableClass]
-	public class CombatSettings {
+	public class CombatSettings : SettingsMetaCategory {
 
 		[SavedMember]
 		public static CombatSettings instance = new CombatSettings();
@@ -143,14 +143,14 @@ namespace SteamEngine.CompiledScripts {
 		public ProjectileTypeMassSetting projectileTypes = new ProjectileTypeMassSetting();
 	}
 
-	public class WeaponTypeMassSetting : MassSettingsByModel<WeaponDef, WeaponType> {
+	public class WeaponTypeMassSetting : MassSettings_ByModel<WeaponDef, WeaponType> {
 		public override string Name {
 			get {
 				return "Typy zbraní";
 			}
 		}
 
-		protected class WeaponTypeFieldView : FieldView {
+		protected class WeaponTypeFieldView : FieldView_ByModel {
 			internal WeaponTypeFieldView(int index)
 				: base(index) {
 			}
@@ -188,14 +188,14 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public class WeaponRangeMassSetting : MassSettingsByModel<WeaponDef, int> {
+	public class WeaponRangeMassSetting : MassSettings_ByModel<WeaponDef, int> {
 		public override string Name {
 			get {
 				return "Dostøely/dosahy zbraní";
 			}
 		}
 
-		protected class WeaponRangeFieldView : FieldView {
+		protected class WeaponRangeFieldView : FieldView_ByModel {
 			internal WeaponRangeFieldView(int index)
 				: base(index) {
 			}
@@ -214,14 +214,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponStrikeStartRangeMassSetting : MassSettingsByModel<WeaponDef, int> {
+	public class WeaponStrikeStartRangeMassSetting : MassSettings_ByModel<WeaponDef, int> {
 		public override string Name {
 			get {
 				return "Dostøely/dosahy zbraní - minimum pro zaèátek nápøahu";
 			}
 		}
 
-		protected class WeaponStrikeStartRangeFieldView : FieldView {
+		protected class WeaponStrikeStartRangeFieldView : FieldView_ByModel {
 			internal WeaponStrikeStartRangeFieldView(int index)
 				: base(index) {
 			}
@@ -240,14 +240,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponStrikeStopRangeMassSetting : MassSettingsByModel<WeaponDef, int> {
+	public class WeaponStrikeStopRangeMassSetting : MassSettings_ByModel<WeaponDef, int> {
 		public override string Name {
 			get {
 				return "Dostøely/dosahy zbraní - maximum pro trvání nápøahu";
 			}
 		}
 
-		protected class WeaponStrikeStopRangeFieldView : FieldView {
+		protected class WeaponStrikeStopRangeFieldView : FieldView_ByModel {
 			internal WeaponStrikeStopRangeFieldView(int index)
 				: base(index) {
 			}
@@ -266,14 +266,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponSpeedMassSetting : MassSettingsByModel<WeaponDef, double> {
+	public class WeaponSpeedMassSetting : MassSettings_ByModel<WeaponDef, double> {
 		public override string Name {
 			get {
 				return "Rychlosti zbraní";
 			}
 		}
 
-		protected class WeaponSpeedFieldView : FieldView {
+		protected class WeaponSpeedFieldView : FieldView_ByModel {
 			internal WeaponSpeedFieldView(int index)
 				: base(index) {
 			}
@@ -292,14 +292,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponAnimTypeSetting : MassSettingsByModel<WeaponDef, WeaponAnimType> {
+	public class WeaponAnimTypeSetting : MassSettings_ByModel<WeaponDef, WeaponAnimType> {
 		public override string Name {
 			get {
 				return "Typy animace zbraní";
 			}
 		}
 
-		protected class WeaponAnimTypeFieldView : FieldView {
+		protected class WeaponAnimTypeFieldView : FieldView_ByModel {
 			internal WeaponAnimTypeFieldView(int index)
 				: base(index) {
 			}
@@ -350,14 +350,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponMaterialTypeMassSetting : MassSettingsByModel<ColoredWeaponDef, MaterialType> {
+	public class WeaponMaterialTypeMassSetting : MassSettings_ByModel<ColoredWeaponDef, MaterialType> {
 		public override string Name {
 			get {
 				return "Typ materiálu zbraní";
 			}
 		}
 
-		protected class WeaponMaterialTypeFieldView : FieldView {
+		protected class WeaponMaterialTypeFieldView : FieldView_ByModel {
 			internal WeaponMaterialTypeFieldView(int index)
 				: base(index) {
 			}
@@ -382,7 +382,7 @@ namespace SteamEngine.CompiledScripts {
 			get { return "Útok proti hráèùm"; }
 		}
 
-		protected class WeaponAttackVsPFieldView : FieldView {
+		protected class WeaponAttackVsPFieldView : FieldView_ByModel {
 			internal WeaponAttackVsPFieldView(int index)
 				: base(index) {
 			}
@@ -407,7 +407,7 @@ namespace SteamEngine.CompiledScripts {
 			get { return "Útok proti monstrùm"; }
 		}
 
-		protected class WeaponAttackVsMFieldView : FieldView {
+		protected class WeaponAttackVsMFieldView : FieldView_ByModel {
 			internal WeaponAttackVsMFieldView(int index)
 				: base(index) {
 			}
@@ -426,14 +426,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WearableTypeMassSetting : MassSettingsByModel<WearableDef, WearableType> {
+	public class WearableTypeMassSetting : MassSettings_ByModel<WearableDef, WearableType> {
 		public override string Name {
 			get {
 				return "Typy brnìní/obleèení";
 			}
 		}
 
-		protected class WearableTypeFieldView : FieldView {
+		protected class WearableTypeFieldView : FieldView_ByModel {
 			internal WearableTypeFieldView(int index)
 				: base(index) {
 			}
@@ -452,14 +452,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WearableLayerMassSetting : MassSettingsByModel<WearableDef, LayerNames> {
+	public class WearableLayerMassSetting : MassSettings_ByModel<WearableDef, LayerNames> {
 		public override string Name {
 			get {
 				return "Layery brnìní/obleèení";
 			}
 		}
 
-		protected class WearableLayerFieldView : FieldView {
+		protected class WearableLayerFieldView : FieldView_ByModel {
 			internal WearableLayerFieldView(int index)
 				: base(index) {
 			}
@@ -478,13 +478,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class ArmorVsPMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+	public class ArmorVsPMassSetting : MassSettings_ByWearableTypeAndMaterial<ColoredArmorDef, int> {
 
 		public override string Name {
 			get { return "Armor proti hráèùm"; }
 		}
 
-		protected class ArmorVsPFieldView : FieldView {
+		protected class ArmorVsPFieldView : FieldView_ByWearableTypeAndMaterial {
 			internal ArmorVsPFieldView(int index)
 				: base(index) {
 			}
@@ -503,13 +503,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class ArmorVsMMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+	public class ArmorVsMMassSetting : MassSettings_ByWearableTypeAndMaterial<ColoredArmorDef, int> {
 
 		public override string Name {
 			get { return "Armor proti monstrùm"; }
 		}
 
-		protected class ArmorVsMFieldView : FieldView {
+		protected class ArmorVsMFieldView : FieldView_ByWearableTypeAndMaterial {
 			internal ArmorVsMFieldView(int index)
 				: base(index) {
 			}
@@ -528,13 +528,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class MindDefenseVsPMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+	public class MindDefenseVsPMassSetting : MassSettings_ByWearableTypeAndMaterial<ColoredArmorDef, int> {
 
 		public override string Name {
 			get { return "Obrana mysli hráèùm"; }
 		}
 
-		protected class MindDefenseVsPFieldView : FieldView {
+		protected class MindDefenseVsPFieldView : FieldView_ByWearableTypeAndMaterial {
 			internal MindDefenseVsPFieldView(int index)
 				: base(index) {
 			}
@@ -553,13 +553,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class MindDefenseVsMMassSetting : MassSettingsByWearableTypeAndMaterial<ColoredArmorDef, int> {
+	public class MindDefenseVsMMassSetting : MassSettings_ByWearableTypeAndMaterial<ColoredArmorDef, int> {
 
 		public override string Name {
 			get { return "Obrana mysli monstrùm"; }
 		}
 
-		protected class MindDefenseVsMFieldView : FieldView {
+		protected class MindDefenseVsMFieldView : FieldView_ByWearableTypeAndMaterial {
 			internal MindDefenseVsMFieldView(int index)
 				: base(index) {
 			}
@@ -578,14 +578,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponProjectileType : MassSettingsByModel<WeaponDef, ProjectileType> {
+	public class WeaponProjectileType : MassSettings_ByModel<WeaponDef, ProjectileType> {
 		public override string Name {
 			get {
 				return "Typ projektilù pro zbranì";
 			}
 		}
 
-		protected class ProjectileTypeFieldView : FieldView {
+		protected class ProjectileTypeFieldView : FieldView_ByModel {
 			internal ProjectileTypeFieldView(int index)
 				: base(index) {
 			}
@@ -604,14 +604,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponProjectileAnimMassSetting : MassSettingsByModel<WeaponDef, int> {
+	public class WeaponProjectileAnimMassSetting : MassSettings_ByModel<WeaponDef, int> {
 		public override string Name {
 			get {
 				return "Animace projektilù pro zbranì";
 			}
 		}
 
-		protected class WeaponProjectileAnimFieldView : FieldView {
+		protected class WeaponProjectileAnimFieldView : FieldView_ByModel {
 			internal WeaponProjectileAnimFieldView(int index)
 				: base(index) {
 			}
@@ -630,14 +630,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class ProjectileTypeMassSetting : MassSettingsByModel<ProjectileDef, ProjectileType> {
+	public class ProjectileTypeMassSetting : MassSettings_ByModel<ProjectileDef, ProjectileType> {
 		public override string Name {
 			get {
 				return "Typ projektilù";
 			}
 		}
 
-		protected class ProjectileTypeFieldView : FieldView {
+		protected class ProjectileTypeFieldView : FieldView_ByModel {
 			internal ProjectileTypeFieldView(int index)
 				: base(index) {
 			}
@@ -656,14 +656,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class ProjectilePiercingMassSetting : MassSettingsByClass<ProjectileDef, double> {
+	public class ProjectilePiercingMassSetting : MassSettings_ByClass_ThingDef<ProjectileDef, double> {
 		public override string Name {
 			get {
 				return "Piercing projektilù";
 			}
 		}
 
-		protected class ProjectilePiercingFieldView : FieldView {
+		protected class ProjectilePiercingFieldView : FieldView_ByClass_ThingDef {
 			internal ProjectilePiercingFieldView(int index)
 				: base(index) {
 			}
