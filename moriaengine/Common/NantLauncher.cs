@@ -132,7 +132,10 @@ namespace SteamEngine.Common {
 			FileInfo fileListFile = null;
 			if (sourceFileNames != null) {
 				fileListFile = new FileInfo(sourceFileNamesFile);
-				TextWriter writer = new StreamWriter(fileListFile.Open(FileMode.Truncate), System.Text.Encoding.UTF8);
+				if (fileListFile.Exists) {
+					fileListFile.Delete();
+				}
+				TextWriter writer = new StreamWriter(fileListFile.Create(), System.Text.Encoding.UTF8);
 				foreach (string sourcefile in sourceFileNames) {
 					writer.WriteLine(sourcefile);
 				}
