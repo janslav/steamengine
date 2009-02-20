@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, 43, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, ImprovedDialog.ICON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = TextFactory.CreateLabel(""); //nic, to bude obrazek
 			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno", DialogAlignment.Align_Center, DialogAlignment.Valign_Top);
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel(""); //cudlik na stopovani, to je hotovka

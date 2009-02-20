@@ -48,6 +48,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			buttonGumps.Add(LeafComponentTypes.ButtonOK, new ButtonGump(4023, 4025));
 			//0fa5, 0fa7 Tick button
 			buttonGumps.Add(LeafComponentTypes.ButtonTick, new ButtonGump(4005, 4007));
+			//0fae, 0fb0 Back button
+			buttonGumps.Add(LeafComponentTypes.ButtonBack, new ButtonGump(4014, 4016));
 			//0fab, 0fad Paper button
 			buttonGumps.Add(LeafComponentTypes.ButtonPaper, new ButtonGump(4011, 4013));
 			//0fbd, 0fbf Send button
@@ -73,6 +75,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public const int D_BUTTON_WIDTH = 31;
 		public const int D_BUTTON_HEIGHT = 22;
+		public const int D_CHECKBOX_WIDTH = 19;
+		public const int D_CHECKBOX_HEIGHT = 20;
 		public const int D_BUTTON_PREVNEXT_WIDTH = 16;
 		public const int D_BUTTON_PREVNEXT_HEIGHT = 21;
 
@@ -128,6 +132,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return CreateButton(type, xPos, yPos, true, 0, id, DialogAlignment.Valign_Top);
 		}
 
+		[Summary("Basic method - allows to specify the button position adn alignment")]
+		public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, int id, DialogAlignment valign) {
+			return CreateButton(type, xPos, yPos, true, 0, id, valign);
+		}
+
 		[Summary("Basic method - allows to specify the button position and activity")]
 		public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int id) {
 			return CreateButton(type, xPos, yPos, active, 0, id, DialogAlignment.Valign_Top);
@@ -145,21 +154,51 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return CreateButton(type, 0, 0, active, page, id, DialogAlignment.Valign_Top);
 		}
 
+		[Summary("Factory method for creating a given type of the tiled button. We have to provide the _relative_" +
+				"x and y position (relative to the parent column) and the button ID, we have to also specify the page " +
+				"opened by this button and whether the button is active or not. Allows specifying the valign." +
+				"FOr the tiled buton we also provide the item ID, its width, height and also the hue")]
+		public static TiledButton CreateTiledButton(LeafComponentTypes type, int xPos, int yPos, bool active, int page, int id, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height) {
+			return new TiledButton(id, xPos, yPos, buttonGumps[type], active, page, valign, itemID, hue, width, height);
+		}
+
+		[Summary("Factory method for creating a given type of the tiled button. We have to provide the _relative_" +
+				"x and y position (relative to the parent column) and the button ID, item ID and its hue, width and height")]
+		public static TiledButton CreateTiledButton(LeafComponentTypes type, int xPos, int yPos, int id, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height) {
+			return CreateTiledButton(type, xPos, yPos, true, 0, id, valign, itemID, hue, width, height);
+		}
+
+		[Summary("Factory method for creating a given type of the tiled button. We have to provide the _relative_" +
+				"x and y position (relative to the parent column) and the button ID. Also the item ID and its width and height")]
+		public static TiledButton CreateTiledButton(LeafComponentTypes type, int xPos, int yPos, int id, GumpIDs itemID, int width, int height) {
+			return CreateTiledButton(type, xPos, yPos, true, 0, id, DialogAlignment.Valign_Bottom, itemID, Hues.WriteColor, width, height);
+		}
+
+		[Summary("Factory method for creating a given type of the tiled button. We have to provide the button ID. Also the item ID and its width and height")]
+		public static TiledButton CreateTiledButton(LeafComponentTypes type, int id, GumpIDs itemID, int width, int height) {
+			return CreateTiledButton(type, 0, 0, true, 0, id, DialogAlignment.Valign_Bottom, itemID, Hues.WriteColor, width, height);
+		}
+
 		[Summary("Create a checkbox using the _relative_ position in the column, the check/unchecked flag" +
 				"and the id")]
-		public static CheckBox CreateCheckbox(int xPos, int yPos, bool isChecked, int id, DialogAlignment valign) {
-			return new CheckBox(xPos, yPos, buttonGumps[LeafComponentTypes.CheckBox], isChecked, id, DialogAlignment.Valign_Top);
+		public static CheckBox CreateCheckbox(int xPos, int yPos, bool isChecked, int id, DialogAlignment align, DialogAlignment valign) {
+			return new CheckBox(xPos, yPos, buttonGumps[LeafComponentTypes.CheckBox], isChecked, id, align, valign);
+		}
+
+		[Summary("Create simply the checkbox with the alignment")]
+		public static CheckBox CreateCheckbox(bool isChecked, int id, DialogAlignment align, DialogAlignment valign) {
+			return CreateCheckbox(0, 0, isChecked, id, align, valign);
 		}
 
 		[Summary("Create checkbox using the 1 or 0 as a marker if the checkbox is checked or not")]
 		public static CheckBox CreateCheckbox(int xPos, int yPos, int isChecked, int id) {
-			return CreateCheckbox(xPos, yPos, isChecked == 1 ? true : false, id, DialogAlignment.Valign_Top);
+			return CreateCheckbox(xPos, yPos, isChecked == 1 ? true : false, id, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
 		}
 
 		[Summary("Create a radio button using the _relative_ position in the column, the check/unchecked flag" +
 				"and the id")]
 		public static RadioButton CreateRadio(int xPos, int yPos, bool isChecked, int id, DialogAlignment valign) {
-			return new RadioButton(xPos, yPos, buttonGumps[LeafComponentTypes.RadioButton], isChecked, id, DialogAlignment.Valign_Top);
+			return new RadioButton(xPos, yPos, buttonGumps[LeafComponentTypes.RadioButton], isChecked, id, valign);
 		}
 
 		[Summary("Create radio button using the 1 or 0 as a marker if the checkbox is checked or not")]
@@ -175,8 +214,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private int page = 0;
 			private bool active = true;
 
-			[Summary("Text vertical alignment")]
+			[Summary("Button vertical alignment")]
 			protected DialogAlignment valign = DialogAlignment.Valign_Top;
+			[Summary("Button horizontal alignment")]
+			protected DialogAlignment align = DialogAlignment.Align_Left;
 
 			[Summary("This constructor is here only for the buttons children classes")]
 			internal Button() {
@@ -236,6 +277,85 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		[Summary("The TiledButton component class - it handles the tiled button writing to the client")]
+		public class TiledButton : LeafGUTAComponent {
+			protected static string stringDescription = "Tiled Button";
+
+			private ButtonGump gumps;
+			private int page = 0;
+			private bool active = true;
+
+			private int itemID, hue;
+
+			[Summary("Button vertical alignment")]
+			protected DialogAlignment valign = DialogAlignment.Valign_Top;
+			[Summary("Button horizontal alignment")]
+			protected DialogAlignment align = DialogAlignment.Align_Left;
+
+			internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, int itemID, int hue, int width, int height) {
+				this.id = id;
+				this.xPos = xPos;
+				this.yPos = yPos;
+				this.gumps = gumps;
+				this.active = active;
+				this.page = page;
+				this.valign = valign;
+
+				this.itemID = itemID;
+				this.width = width;
+				this.height = height;
+				this.hue = hue;
+			}
+
+			[Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
+			internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height)
+				:
+				this(id, xPos, yPos, gumps, active, page, valign, (int) itemID, (int) hue, width, height) {
+			}
+
+			[Summary("When added, we must recompute the TiledButtons absolute position in the dialog (we " +
+					" were provided only relative positions")]
+			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable) parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
+
+				int valignOffset = 0;
+				switch (valign) {
+					case DialogAlignment.Valign_Center:
+						valignOffset = grandpa.RowHeight / 2 - height / 2; //moves the button to the middle of the column
+						break;
+					case DialogAlignment.Valign_Bottom:
+						valignOffset = grandpa.RowHeight - height; //moves the button to the bottom
+						break;
+				}
+				//no space here, the used button gumps have themselves some space...
+				xPos += parent.XPos;
+				yPos += parent.YPos + valignOffset;
+			}
+
+			[Summary("Simply write the tiled button (send the method request to the underlaying gump)")]
+			internal override void WriteComponent() {
+				gump.AddTiledButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, page, id, itemID, hue, width, height);
+			}
+
+			public override string ToString() {
+				string linesTabsOffset = "\r\n"; //at least one row
+				//add as much rows as is the row which this item lies in
+				for (int i = 0; i < columnRow; i++) {
+					linesTabsOffset += "\r\n";
+				}
+				for (int i = 0; i < level; i++) {
+					linesTabsOffset += "\t";
+				}
+				return linesTabsOffset + "->" + stringDescription;
+			}
+		}
+
 		[Summary("Create a nice small checkbox")]
 		public class CheckBox : Button {
 			protected new static string stringDescription = "CheckBox";
@@ -244,13 +364,50 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private bool isChecked;
 
 			[Summary("Creates a checkbox with the given format")]
-			internal CheckBox(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id, DialogAlignment valign) {
+			internal CheckBox(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id, DialogAlignment align, DialogAlignment valign) {
 				this.xPos = xPos;
 				this.yPos = yPos;
 				this.gumps = gumps;
 				this.isChecked = isChecked;
 				this.id = id;
 				this.valign = valign;
+				this.align = align;
+			}
+
+			[Summary("When added, we must recompute the Checkbox's absolute position in the dialog (we " +
+					" were provided only relative positions")]
+			protected override void OnBeforeWrite(GUTAComponent parent) {
+				//set the level
+				level = parent.Level + 1;
+
+				//get the grandparent (GUTATable) (parent is GUTAColumn!)
+				GUTATable grandpa = (GUTATable) parent.Parent;
+				//set the column row (counted from the relative position and the grandpa's inner-row height)
+				columnRow = xPos / grandpa.RowHeight;
+
+				int valignOffset = 0;
+				int alignOffset = 0;
+				
+				switch (valign) {
+					case DialogAlignment.Valign_Center:
+						valignOffset = grandpa.RowHeight / 2 - ButtonFactory.D_CHECKBOX_HEIGHT / 2 + 1; //moves the button to the middle of the column
+						break;
+					case DialogAlignment.Valign_Bottom:
+						valignOffset = grandpa.RowHeight - ButtonFactory.D_CHECKBOX_HEIGHT; //moves the button to the bottom
+						break;
+				}
+				int parentWidth = parent.Width;
+				switch (align) {
+					case DialogAlignment.Align_Center:
+						alignOffset = parentWidth / 2 - ButtonFactory.D_CHECKBOX_WIDTH / 2; //moves the text to the middle of the column
+						break;
+					case DialogAlignment.Align_Right:
+						alignOffset = parentWidth - ButtonFactory.D_CHECKBOX_WIDTH;
+						break;
+				}
+				//no space here, the used button gumps have themselves some space...
+				xPos += parent.XPos + alignOffset;
+				yPos += parent.YPos + valignOffset;
 			}
 
 			[Summary("Simply call the gumps method for writing the checkbox")]
@@ -518,6 +675,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return new Text(0, 0, (int) Hues.WriteColor, text, align, valign);
 		}
 
+		[Summary("The simplest factory method lets the dialog to determine the position of the text")]
+		public static Text CreateText(int xPos, int yPos, string text, DialogAlignment align, DialogAlignment valign) {
+			return new Text(xPos, yPos, (int) Hues.WriteColor, text, align, valign);
+		}
+
 		[Summary("Basic factory method creates the text field with a given _relative_ position in the column" +
 			   " and a specified color (if color is null then default color is used)")]
 		public static Text CreateText(int xPos, int yPos, Hues hue, string text) {
@@ -750,12 +912,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class ImageFactory {
 		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
 		public static Image CreateImage(GumpIDs gumpId) {
-			return new Image(0, 0, gumpId);
+			return CreateImage(gumpId, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+		}
+
+		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
+		public static Image CreateImage(int gumpId) {
+			return CreateImage(gumpId, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 		}
 
 		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
-		public static Image CreateImage(int xPos, int yPos, GumpIDs gumpId) {
-			return new Image(xPos, yPos, gumpId);
+		public static Image CreateImage(GumpIDs gumpId, DialogAlignment align, DialogAlignment valign) {
+			return CreateImage((int)gumpId, align, valign);
+		}
+
+		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
+		public static Image CreateImage(int gumpId, DialogAlignment align, DialogAlignment valign) {
+			return new Image(gumpId, align, valign);
+		}
+
+		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
+		public static Image CreateImage(int x, int y, GumpIDs gumpId) {
+			return CreateImage(x, y, (int)gumpId);
+		}
+
+		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
+		public static Image CreateImage(int x, int y, int gumpId) {
+			return new Image(x, y, gumpId, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
 		}
 
 		//[Summary("Factory method for creating a simple tiled image, position and measures are fully taken from the parent")]
@@ -779,17 +961,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		public class Image : LeafGUTAComponent {
-			protected GumpIDs gumpId;
+			protected int gumpId;
+
+			[Summary("Image horizontal alignment")]
+			private DialogAlignment align;
+			[Summary("Image vertical alignment")]
+			private DialogAlignment valign;
 
 			[Summary("This constructor is here only for the image's children classes")]
 			internal Image() {
 			}
 
 			[Summary("Basic constructor awaiting the gump ID and its position")]
-			internal Image(int xPos, int yPos, GumpIDs gumpId) {
-				this.xPos = xPos;
-				this.yPos = yPos;
+			internal Image(int gumpId, DialogAlignment align, DialogAlignment valign) {
 				this.gumpId = gumpId;
+				this.align = align;
+				this.valign = valign;
+			}
+
+			internal Image(int x, int y, int gumpId, DialogAlignment align, DialogAlignment valign) {
+				this.xPos = x;
+				this.yPos = y;
+				this.gumpId = gumpId;
+				this.align = align;
+				this.valign = valign;
 			}
 
 			[Summary("When added to the column we have to specify the position (count the absolute)")]
@@ -802,9 +997,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//set the column row (counted from the relative position and the grandpa's inner-row height)
 				columnRow = xPos / grandpa.RowHeight;
 
-				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
-				xPos += parent.XPos;
-				yPos += parent.YPos;
+				GumpArtDimension picDim = GumpDimensions.Table[gumpId];
+
+				int alignOffset = -picDim.X; //at least...
+				int valignOffset = -picDim.Y; //at least...
+
+				switch (align) {
+					case DialogAlignment.Align_Center:
+						alignOffset += parent.Width / 2 - picDim.Width / 2; //moves the image to the middle of the column
+						break;
+					case DialogAlignment.Align_Right:
+						alignOffset += parent.Width - picDim.Width - 1; //moves the image to the right (1 pix added - it is the border)
+						break;
+				}
+				switch (valign) {
+					case DialogAlignment.Valign_Center:
+						valignOffset += grandpa.RowHeight / 2 - picDim.Height / 2; //moves the image to the middle of the column
+						break;
+					case DialogAlignment.Valign_Bottom:
+						valignOffset += grandpa.RowHeight - picDim.Height; //moves the image to the bottom
+						break;
+				}
+				xPos += parent.XPos + alignOffset;
+				yPos += parent.YPos + valignOffset;
 			}
 
 			[Summary("Call the underlaying gump istance's methods")]

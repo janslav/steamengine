@@ -55,6 +55,15 @@ namespace SteamEngine {
 			this.fldArgs = args;
 		}
 
+		public object this[int i] {
+			get {
+				return fldArgs[i];
+			}
+			set {
+				fldArgs[i] = value;
+			}
+		}
+
 		public object[] ArgsArray {
 			get {
 				return fldArgs;
@@ -178,6 +187,25 @@ namespace SteamEngine {
 				(isTrigger?"1": "0"), 
 				pageId.ToString(),
 				triggerId.ToString()
+			};
+			AddElement(arr);
+		}
+
+		public void AddTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemID, int hue, int width, int height) {
+			string[] arr = new string[] {
+				"buttontileart", 
+				x.ToString(), 
+				y.ToString(),
+				downGumpId.ToString(), 
+				upGumpId.ToString(), 
+				(isTrigger? "1": "0"), 
+				pageId.ToString(),
+				triggerId.ToString(),
+
+				itemID.ToString(),
+				hue.ToString(),
+				width.ToString(),
+				height.ToString()
 			};
 			AddElement(arr);
 		}

@@ -32,6 +32,20 @@ namespace SteamEngine.CompiledScripts {
 		Footprint_West = 0x1e03,
 		Footprint_North = 0x1e04,
 		Footprint_East = 0x1e05,
-		Footprint_South = 0x1e06
+		Footprint_South = 0x1e06,
+
+		//models for some items (craftmenu)
+		Mortar = 0xe9b,		//Alchemy category
+		Anvil = 0xfb0,		//Blacksmithing category
+		Bow = 0x13b2,		//Bowcraft category
+		Saw = 0x1035,		//Carpentry category
+		Cake = 0x9e9,		//Cooking category
+		Scroll = 0xe34,		//Inscription category
+		SewingKit = 0xf9d,	//Tailoring category
+		Tools = 0x1ebc,		//Tinkering category
+
+		Pouch = 0x9b0,		//subcategory
+
+		Icon_Ressurection = 0x20ba
 	}
 }

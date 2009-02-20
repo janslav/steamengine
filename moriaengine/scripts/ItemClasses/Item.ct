@@ -15,5 +15,8 @@
 
 [ThingTemplate Item : AbstractItem]
 Def:	//vars on the def
-	public AbstractItemDef Resources = null
+	public ResourcesList resources = null
+	public ResourcesList resources2 = null
+	public ResourcesList skillMake = null
+	public ResourcesList skillmake2 = null
 Vars:	//vars defined in the class, so they basically do what tags do, but better

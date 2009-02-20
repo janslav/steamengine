@@ -229,6 +229,7 @@ namespace SteamEngine.CompiledScripts {
 			def.Assign(this, parameter);
 		}
 
+		#region Messaging
 		public void DelayedMessage(string text) {
 			DelayedMessage(null, text);
 		}
@@ -283,6 +284,7 @@ namespace SteamEngine.CompiledScripts {
 			RedMessage(text);
 			InfoMessage("Nova vyznamna zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
 		}
+		#endregion Messaging
 
 		public void Add(int model) {
 			this.Add(ThingDef.Get(model));
@@ -317,6 +319,68 @@ namespace SteamEngine.CompiledScripts {
 				getback = targettedItem.TopObj();
 			}
 			addedDef.Create(getback.X, getback.Y, getback.Z, this.M);
+		}
+
+		[Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
+		public void Make(ItemDef what, int howMuch) {
+			ResourcesList skillMake = what.SkillMake;
+			ResourcesList resources = what.Resources;
+
+			IResourceListItem missingRes;
+			int cntr = 0;
+			bool finishedOK = true;
+			for (; cntr < howMuch; cntr++) {
+				//check the requirements first
+				if (!skillMake.HasResourcesPresent(this, ResourcesLocality.BackpackAndLayers, out missingRes)) {
+					ResourcesList.SendResourceMissingMsg(this, missingRes);
+					finishedOK = false;
+					break;
+				}
+
+				//check the itemd making probability, count the success etc
+
+				//now the resources
+				if (!resources.ConsumeResourcesOnce(this, ResourcesLocality.BackpackAndLayers, out missingRes)) {
+					ResourcesList.SendResourceMissingMsg(this, missingRes);
+					finishedOK = false;
+					break;
+				}
+
+				//get the greatest necessary skill to make this item
+				SkillResource greatestSkill = ResourcesList.GetResource<SkillResource,IResourceListItemNonMultiplicable>(skillMake.NonMultiplicablesSublist, null);
+				//vsechno tohleto musim vrazit samozrejme do skillu (carpentry, tinkering, tailoring, blacksmithy, bowcraft!!!!)
+				//a zde podle vyse nejvyssiho skillu pak vybirat co hodlam prave vyrabet...
+				//=>neni potreba ten sorting podle skillu bo vyroba pujde logicky z craftmenu prislusne sekce odkud se bude 
+				//spoustet prislusny skill (pak se vybere opravdu ten GetResourceTyped toho ktereho skillu a podle nej se rozhodneme co dal)
+
+				//finally create the item
+				//zjistit vzdalenost od receiving containeru (a jestli je to ten samy mapplan) a podle toho to dat 
+				//bud do nej nebo do backpacku
+				Container targetCont = this.ReceivingContainer;
+				if ((targetCont != this.BackpackAsContainer) && (Point2D.GetSimpleDistance(this, targetCont) > Globals.reachRange || this.M != targetCont.M)) {
+					//the receivingContainer is not our backpack and we are too far or in another mapplane
+					targetCont = this.BackpackAsContainer;
+				}
+
+			}
+			if(finishedOK) {
+				this.SysMessage("Výroba ukonèena, vyrobeno " + cntr + " " + ((cntr > 1) ? what.PluralName : what.Name));
+			} else {
+				this.RedMessage("Výroba ukonèena pøedèasnì, vyrobeno " + cntr + " z požadovaného poètu " + howMuch + " " + ((cntr > 1) ? what.PluralName : what.Name));
+			}
+		}
+
+		public Container ReceivingContainer {
+			get {
+				if (receivingContainer == null) {//set the default
+					receivingContainer = this.BackpackAsContainer;
+				}
+				return receivingContainer;
+			}
+
+			set {
+				receivingContainer = value;
+			}
 		}
 	}
 }

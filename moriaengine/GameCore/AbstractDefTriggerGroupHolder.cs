@@ -38,7 +38,7 @@ namespace SteamEngine {
 				case "events":
 				//case "type":
 				case "triggergroup":
-				//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE?
+				//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE? NO!
 					DelayedResolver.DelayResolve(new DelayedMethod(ResolveTriggerGroup), new object[] { args, filename, line });
 					break;
 				default:

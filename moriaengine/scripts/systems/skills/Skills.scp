@@ -52,27 +52,6 @@ StartByMacroEnabled = true
 DELAY=3, 1
 ADVRATE=2.5,50.0,200.0
 
-
-[SCRIPTEDSKILLDEF 7]
-DEFNAME=Skill_Blacksmith
-KEY="Blacksmithing"
-DELAY=1.0 //per stroke?
-ADVRATE=2.5,50.0,200.0
-//VALUES=1,20,100
-
-ON=@Fail
-	src.message "You have failed to make anything"
-
-[SCRIPTEDSKILLDEF 8]
-DEFNAME=Skill_Bowcraft
-KEY="Bowcraft"
-DELAY=2.0
-ADVRATE=10.0,200.0,800.0
-//VALUES=1,30,200
-
-ON=@Fail
-	src.message "You fail to create the item"
-
 [SCRIPTEDSKILLDEF 9]
 DEFNAME=Skill_Peacemaking
 KEY="Peacemaking"
@@ -92,16 +71,6 @@ ADVRATE=2.5,50.0,200.0
 ON=@Fail
 	src.message "You fail to ignite the campfire."
 
-[SCRIPTEDSKILLDEF 11]
-DEFNAME=Skill_Carpentry
-KEY="Carpentry"
-DELAY=2.0
-ADVRATE=2.5,50.0,200.0
-//VALUES=1,20,80
-
-ON=@Fail
-	src.message "You fail to create the item"
-
 [SCRIPTEDSKILLDEF 12]
 DEFNAME=Skill_CARTOGRAPHY
 KEY="Cartography"
@@ -112,17 +81,6 @@ ADVRATE=2.5,50.0,200.0
 
 ON=@Fail
 	src.message "Thy trembling hand results in an unusable map."
-
-[SCRIPTEDSKILLDEF 13]
-DEFNAME=Skill_Cooking
-KEY="Cooking"
-//PROMPTMSG="What would you like to cook?"
-DELAY=2.0
-ADVRATE=2.5,50.0,200.0
-//VALUES=1,20,80
-
-ON=@Fail
-	src.message "You burn the food to a crisp! It's ruined."
 
 [DISCORDANCESKILLDEF 15]
 DEFNAME=Skill_Discordance

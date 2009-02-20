@@ -95,6 +95,8 @@ namespace SteamEngine.CompiledScripts {
 		ButtonOK,
 		[Summary("Button with the tick inside")]
 		ButtonTick,
+		[Summary("Button with the reversed tick (arrow back) inside")]
+		ButtonBack,
 		[Summary("Button with the sheet of paper inside")]
 		ButtonPaper,
 		[Summary("Button with flying paper")]

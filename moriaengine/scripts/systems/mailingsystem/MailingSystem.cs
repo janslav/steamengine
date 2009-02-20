@@ -15,8 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
+using System; 
 using System.Collections;
+using System.Collections.Generic;
 using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
@@ -39,14 +40,14 @@ namespace SteamEngine.CompiledScripts {
 
 
 		[Summary("Returns a copy of the list of clients delayed messages (for sorting e.g.)")]
-		public static ArrayList GetClientsMessages(Character whose) {
+		public static List<DelayedMsg> GetClientsMessages(Character whose) {
 			//get the client messages (empty list if no messages present)
-			ArrayList list = GetMessages(whose);
+			List<DelayedMsg> list = GetMessages(whose);
 			//if the list is empty, return it now, else make a copy of the messages list
 			if (list.Count == 0) {
 				return list;
 			} else {
-				return new ArrayList(list);
+				return new List<DelayedMsg>(list);
 			}
 		}
 
@@ -61,23 +62,23 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Private utility method returning the characters list of messages")]
-		private static ArrayList GetMessages(Character whose) {
-			ArrayList retList = (ArrayList) whose.GetTag(tkDelayedMsgs);
+		private static List<DelayedMsg> GetMessages(Character whose) {
+			List<DelayedMsg> retList = (List<DelayedMsg>)whose.GetTag(tkDelayedMsgs);
 			if (retList == null) { // no messages previously posted
-				retList = new ArrayList();
+				retList = new List<DelayedMsg>();
 				whose.SetTag(tkDelayedMsgs, retList);
 			}
 			return retList;
 		}
 
 		[Summary("Sorting method used for Character: Sorting parameters available are senders name, time and read/unread messages first")]
-		public static ArrayList GetSortedBy(Character whom, SortingCriteria criterion) {
+		public static List<DelayedMsg> GetSortedBy(Character whom, SortingCriteria criterion) {
 			//get a new copy of the list and sort it using another version of this method			
 			return GetSortedBy(GetClientsMessages(whom), criterion);
 		}
 
 		[Summary("Sorting method when the list is obtained first: Sorting parameters available are senders name, time and read/unread messages first")]
-		public static ArrayList GetSortedBy(ArrayList messages, SortingCriteria criterion) {
+		public static List<DelayedMsg> GetSortedBy(List<DelayedMsg> messages, SortingCriteria criterion) {
 			//get a new copy of the list			
 			switch (criterion) {
 				case SortingCriteria.NameAsc: //order by sender alphabetically
@@ -110,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Return the number of unread messages (those the recipient has not opened by " +
 				"'read/display detail' button")]
-		public static int CountUnread(ArrayList msgs) {
+		public static int CountUnread(List<DelayedMsg> msgs) {
 			int counter = 0;
 			foreach (DelayedMsg msg in msgs) {
 				if (!msg.read) {
@@ -179,46 +180,27 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Summary("Comparator serving for sorting the list of messages by sender")]
-	class MsgsSenderComparator : IComparer {
-		public int Compare(object a, object b) {
-			DelayedMsg msg1 = (DelayedMsg) a;
-			DelayedMsg msg2 = (DelayedMsg) b;
-			string name1 = "";
-			string name2 = "";
+	class MsgsSenderComparator : IComparer<DelayedMsg> {
+		public int Compare(DelayedMsg a, DelayedMsg b) {
 			//if sender was not specified, consider the message as from "System"
-			if (msg1.sender == null) {
-				name1 = MsgsBoard.NO_SENDER;
-			} else {
-				name1 = msg1.sender.Name;
-			}
-
-			if (msg2.sender == null) {
-				name2 = MsgsBoard.NO_SENDER;
-			} else {
-				name2 = msg2.sender.Name;
-			}
-
+			string name1 = (a.sender == null) ? MsgsBoard.NO_SENDER : a.sender.Name;
+			string name2 = (b.sender == null) ? MsgsBoard.NO_SENDER : b.sender.Name;
+			
 			return name1.CompareTo(name2);
 		}
 	}
 
 	[Summary("Comparator serving for sorting the list of messages by their creation time")]
-	class MsgsTimeComparator : IComparer {
-		public int Compare(object a, object b) {
-			DateTime time1 = ((DelayedMsg) a).time;
-			DateTime time2 = ((DelayedMsg) b).time;
-
-			return time1.CompareTo(time2);
+	class MsgsTimeComparator : IComparer<DelayedMsg> {
+		public int Compare(DelayedMsg a, DelayedMsg b) {
+			return a.time.CompareTo(b.time);
 		}
 	}
 
 	[Summary("Comparator serving for sorting the list of messages by their unread/status")]
-	class MsgsUnreadComparator : IComparer {
-		public int Compare(object a, object b) {
-			bool read1 = ((DelayedMsg) a).read;
-			bool read2 = ((DelayedMsg) b).read;
-
-			return read1.CompareTo(read2);
+	class MsgsUnreadComparator : IComparer<DelayedMsg> {
+		public int Compare(DelayedMsg a, DelayedMsg b) {
+			return a.read.CompareTo(b.read);
 		}
 	}
 }

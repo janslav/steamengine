@@ -34,12 +34,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("LSCript used method for setting the specified argument's value")]
 		public static void SetArgValue(Gump gi, int index, object value) {
-			gi.InputArgs.ArgsArray[index] = value;
+			gi.InputArgs[index] = value;
 		}
 
 		[Summary("LSCript used method for getting the specified argument's value")]
 		public static object GetArgValue(Gump gi, int index) {
-			return gi.InputArgs.ArgsArray[index];
+			return gi.InputArgs[index];
 		}
 
 		[Summary("Store the info about the dialog to the dialog stack. Used for " +

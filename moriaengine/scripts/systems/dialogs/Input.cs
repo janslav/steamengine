@@ -80,6 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//last row with buttons
 			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
 			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
+			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();
 		}
