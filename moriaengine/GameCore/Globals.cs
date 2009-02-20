@@ -75,7 +75,7 @@ namespace SteamEngine {
 		public readonly static string logPath;
 		public readonly static string savePath;
 		public readonly static string mulPath;
-		public readonly static string scriptsPath;
+		public readonly static string scriptsPath = Path.GetFullPath(".\\scripts\\");
 
 		public readonly static string docsPath;
 		public readonly static string ndocExe;
@@ -267,7 +267,6 @@ namespace SteamEngine {
 				IniFileSection files = iniH.GetNewOrParsedSection("files");
 				logPath = Path.GetFullPath(files.GetValue<string>("logPath", ".\\logs\\", "Path to the log files"));
 				savePath = Path.GetFullPath(files.GetValue<string>("savePath", ".\\saves\\", "Path to the save files"));
-				scriptsPath = Path.GetFullPath(files.GetValue<string>("scriptsPath", ".\\scripts\\", "Path to the scripts"));
 #if MSWIN
 				ndocExe = Path.GetFullPath(files.GetValue<string>("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
 #elif LINUX

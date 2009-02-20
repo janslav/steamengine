@@ -242,7 +242,7 @@ namespace SteamEngine.CompiledScripts {
 
 				retVal = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
 
-				swingArgs.FinalDamage = retVal;
+				swingArgs.InternalSetFinalDamage(retVal);
 
 				Trigger_AfterSwing(swingArgs);
 			}
@@ -323,9 +323,10 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return Convert.ToDouble(this.argv[6]);
 			}
-			set {
-				this.argv[6] = value;
-			}
+		}
+
+		internal  void InternalSetFinalDamage(double value) {
+			this.argv[6] = value;
 		}
 	}
 }

@@ -109,6 +109,10 @@ namespace SteamEngine.CompiledScripts {
 						self.AbortSkill();
 						skillSeqArgs.DelayInSeconds = spell.CastTime;
 						skillSeqArgs.DelayStroke();
+						string runeWords = spell.GetRuneWords();
+						if (!string.IsNullOrEmpty(runeWords)) {
+							self.Speech(runeWords, 0, SpeechType.Spell, -1, 3, null, null);
+						}
 						return true; //default = set delay by magery skilldef
 					} else {
 						ResourcesList.SendResourceMissingMsg(self, missingItem);

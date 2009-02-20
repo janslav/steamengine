@@ -31,7 +31,6 @@ CASTTIME=1.2
 RUNEITEM=i_rune_HARM
 SCROLLITEM=i_scroll_HARM
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-//EFFECTID=i_fx_curse
 EFFECT=6,12
 DURATION=0.0
 MANAUSE=6
@@ -78,7 +77,6 @@ Requirements=30.0 Magery
 [DamageSpellDef 30]//utocne
 DEFNAME=s_lightning
 NAME=Lightning
-SOUND=snd_SPELL_LIGHTNING
 RUNES=POG
 CASTTIME=2.0
 //RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_sulfur_ash
@@ -90,6 +88,11 @@ EFFECT=0,15
 DURATION=0.0
 MANAUSE=11
 Requirements=40.0 Magery
+
+on=@effectChar
+	EffectFactory.LightningEffect(this)
+	argo.Caster.Sound(41)
+
 
 [SpellDef 37]//utocne
 DEFNAME=s_mind_blast
@@ -154,6 +157,12 @@ EFFECT=0,30
 DURATION=0.0
 MANAUSE=30
 Requirements=70.0 Magery
+
+on=@success
+	argo.Caster.Sound(41)
+
+on=@effectChar
+	EffectFactory.LightningEffect(this)
 
 [DamageSpellDef 51]//utocne
 DEFNAME=s_flamestrike
