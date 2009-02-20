@@ -35,12 +35,12 @@ namespace SteamEngine.CompiledScripts {
 				resourceItemsList.Add(newItem);
 				//put the new item also to the special sublist
 				IResourceListItemMultiplicable castItm = newItem as IResourceListItemMultiplicable;
-				if (newItem != null) {
+				if (castItm != null) {
 					multiplicablesSubList.Add(castItm);
 					return;
 				}
 				IResourceListItemNonMultiplicable castItm2 = newItem as IResourceListItemNonMultiplicable;
-				if (newItem != null) {
+				if (castItm2 != null) {
 					//this wil be the rest of resources for now, 
 					//but who knows that type of resource may appear in a few months :)
 					nonMultiplicablesSubList.Add(castItm2);
@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts {
 			} else if (missingItem is SkillResource) {
 				toWho.SysMessage("Je vyžadována výše skillu " + missingItem.Name + " alespoň " + missingItem.DesiredCount);
 			} else if (missingItem is StatDexResource || missingItem is StatIntResource || missingItem is StatStrResource || missingItem is StatVitResource) {
-				toWho.SysMessage("Je vyžadováno alespoň " + missingItem.Name + " " + missingItem.DesiredCount);
+				toWho.SysMessage("Je vyžadováno alespoň " + missingItem.DesiredCount + " " + missingItem.Name);
 			} else if (missingItem is TriggerGroupResource) {
 				toWho.SysMessage("Je vyžadována přítomnost typu " + missingItem.Name + " (počet alespoň " + missingItem.DesiredCount + ")");
 			}
@@ -204,6 +204,44 @@ namespace SteamEngine.CompiledScripts {
 			missingResource = null;
 			return true;
 		}
+
+		[Summary("From the given resources list get the first resourcelistitem that is of the desired (T)ype and " +
+				" that's underlaying resource fulfils the given criteria - for SkillResource the it is the skill key, for " +
+				" AbilityResource or ItemResource it is the defname etc.")]
+		public static T GetResource<T,U>(List<U> list, string criteria) 
+						where T : IResourceListItem //type of resource we are looking for (specific)
+						where U : IResourceListItem {//type of resources that are in the list (multiplicable or nonmultiplicable as an interface...)
+			foreach (IResourceListItem itm in list) {
+				if (typeof(T) == itm.GetType()) {
+					if(criteria == null) {
+						return (T) itm; //no criteria, return the first corresponding resource found
+					}
+					SkillDef skl;
+					if (ResourcesParser.IsSkillResource(criteria, out skl)) {
+						return (T) itm;//this resource is a skill of a correct key ('criteria')
+					}
+					ItemDef itdef;
+					if (ResourcesParser.IsItemResource(criteria, out itdef)) {
+						return (T) itm;//this resource is an item of a correct defname ('criteria')
+					}
+					TriggerGroup tgr;
+					if (ResourcesParser.IsTriggerGroupResource(criteria, out tgr)) {
+						return (T) itm;//this resource is a trigger group of a correct defname ('criteria')
+					}
+					AbilityDef abl;
+					if (ResourcesParser.IsAbilityResource(criteria, out abl)) {
+						return (T) itm;//this resource is an ability of a correct defname ('criteria')
+					}
+					//try stats
+					if ((criteria.Equals("str", StringComparison.InvariantCultureIgnoreCase)) || 
+						(criteria.Equals("dex", StringComparison.InvariantCultureIgnoreCase)) || 
+						(criteria.Equals("int", StringComparison.InvariantCultureIgnoreCase)) || 
+						(criteria.Equals("vit", StringComparison.InvariantCultureIgnoreCase))) {
+						return (T) itm;
+					}				}
+			}
+			return default(T);
+		}
 	}
 
 	[Summary("Interface for single resource stored in resource lists")]
@@ -244,5 +282,17 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Return the resource counter object for this resource, we are using the Object Pool pattern " +
 			" for acquiring and storing desired instances")]
 		ResourceCounter GetCounter();
+	}
+
+	[Summary("Comparator serving for sorting the list of resources by their desired count (greater comes first)")]
+	public class ResourcesCountComparer<T> : IComparer<T> where T : IResourceListItem {
+		public readonly static ResourcesCountComparer<T> instance = new ResourcesCountComparer<T>();
+
+		private ResourcesCountComparer() {
+		}
+
+		public int Compare(T a, T b) {
+			return b.DesiredCount.CompareTo(a.DesiredCount);
+		}
 	}
 }

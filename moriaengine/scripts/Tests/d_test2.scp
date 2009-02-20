@@ -34,20 +34,21 @@ ResizePic(0, 0, 5054, arg(width), arg(height)+120)
 
 GumpPicTiled(10, 10, arg(width) - 20, 20, 2624)
 CheckerTrans(10, 10, arg(width) - 20, 20)
-Text(10, 10, headerColor, 0)
+argv(0).Text(10, 10, headerColor, 0)
 
 GumpPicTiled(10, 40, arg(width) - 20, arg(height) - 80, 2624)
 CheckerTrans(10, 40, arg(width) - 20, arg(height) - 80)
 
-HtmlGumpA(10, 40, arg(width) - 20, arg(height) - 80, content, false, true)
+//argv(0).HtmlGumpA(10, 40, arg(width) - 20, arg(height) - 80, arg(content), false, true)
 
 GumpPicTiled(10, arg(height) - 30, arg(width) - 20, 20, 2624)
 CheckerTrans(10, arg(height) - 30, arg(width) - 20, 20)
-Button(10, arg(height) - 30, 4005, 4007, true, 0, 1)
-Button(50, arg(height) - 30, 4005, 4007, true, 0, 2)
+argv(0).Button(10, arg(height) - 30, 0x1e, 0x1f, true, 0, 1)
+argv(0).AddTiledButton(10, arg(height) - 60, 0xfa5, 0xfa7, true, 0, 3, 0x23f0, 2, 40, 50)
+argv(0).Button(50, arg(height) - 30, 0xfa5, 0xfa7, true, 0, 2)
 XMFHTMLGumpColor(80, arg(height) - 30, 120, 20, 1011036, 0, 0, 32767) // OKAY
 
-CheckBox(10, arg(height) + 30, 210,211, 1, 786)
+argv(0).CheckBox(10, arg(height) + 30, 210,211, 1, 786)
 TextEntryA(10, arg(height) + 50, 500,100, 1, 762, "this is textentry ìšèøžýá")
 NumberEntryA(10, arg(height) + 70, 500,100, 1, 763, 5.5)
 

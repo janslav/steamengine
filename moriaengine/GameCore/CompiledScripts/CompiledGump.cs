@@ -116,6 +116,14 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId);
 		}
 
+		public void AddImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemID, int hue, int width, int height) {
+			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemID, hue, width, height);
+		}
+
+		public void ImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemID, int hue, int width, int height) {
+			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemID, hue, width, height);
+		}
+
 		public void AddGroup(int group) {
 			GumpInstance.AddGroup(group);
 		}

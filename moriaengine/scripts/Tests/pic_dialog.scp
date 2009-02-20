@@ -42,7 +42,13 @@ arg picTable = GutaTable(4,43,0,ButtonFactory.D_BUTTON_WIDTH)
 picTable.RowHeight = 50
 picTable.InnerRowsDelimited = true
 dialog.Add(picTable)
-dialog.LastTable.AddToCell(0,0,ImageFactory.CreateImage(0,3,GumpIDs.Figurine_Llama))
+arg lamaDim = GumpDimensions.Table[0x20f6]
+arg lamaX = 43/2 - lamaDim.Width/2 + lamaDim.X
+arg lamaY = 50/2 - lamaDim.Height/2 + lamaDim.Y
+src.sysmessage("lama:("+lamaX+","+lamaY+")")
+src.sysmessage("lamadim: ("+lamaDim.X+","+lamaDim.Y+"), w: "+lamaDim.Width+" h: "+lamaDim.Height)
+dialog.LastTable.AddToCell(0,0,ImageFactory.CreateImage(43/2 - lamaDim.Width/2 + lamaDim.X,50/2 - lamaDim.Height/2 + lamaDim.Y,GumpIDs.Figurine_Llama))
+//dialog.LastTable.AddToCell(0,0,ImageFactory.CreateImage(0,3,GumpIDs.Figurine_Llama))
 dialog.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Zvíøata", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
 dialog.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center))
 

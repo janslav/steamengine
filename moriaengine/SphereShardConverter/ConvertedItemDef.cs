@@ -49,10 +49,10 @@ namespace SteamEngine.Converter {
 				new LineImplTask("dupelist", new LineImpl(WriteAsComment)), 
 				new LineImplTask("weight", new LineImpl(MayBeInt_IgnorePoint)), 
 //TODO
-				new LineImplTask("resources", new LineImpl(WriteAsIs)),
-				new LineImplTask("resources2", new LineImpl(WriteAsIs)),
-				new LineImplTask("skillmake", new LineImpl(WriteAsIs)),
-				new LineImplTask("skillmake2", new LineImpl(WriteAsIs)),
+				new LineImplTask("resources", new LineImpl(HandleResourcesList)),
+				new LineImplTask("resources2", new LineImpl(HandleResourcesList)),
+				new LineImplTask("skillmake", new LineImpl(HandleResourcesList)),
+				new LineImplTask("skillmake2", new LineImpl(HandleResourcesList)),
 				new LineImplTask("flip", new LineImpl(WriteAsComment)),
 				new LineImplTask("reqstr", new LineImpl(WriteAsComment)),
 				new LineImplTask("dye", new LineImpl(WriteAsComment)),
@@ -85,6 +85,30 @@ namespace SteamEngine.Converter {
 			this.thirdStageImplementations.Add(thirdStageImpl);
 
 			headerType = "ItemDef";
+		}
+
+		//regexp for checking if the string is something like this: "blacksmithing 40.3" - we must switch the number and the string
+		private static readonly Regex re = new Regex(@"^ \s*(?<resource>([a-z_][a-z0-9_]*))\s*(?<number>(\d+(\.\d+)?))\s* $",
+				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+		//resources list may need some number (counts) corrections
+		private static string HandleResourcesList(ConvertedDef def, PropsLine line) {
+			string args = line.value.ToLower();
+			string corrected = "";
+			string[] singleResources = args.Split(new string[] { "," }, StringSplitOptions.None); //split to single resources
+			foreach(string singleRes in singleResources) {
+				Match m = re.Match(singleRes);
+				if (m.Success) {
+					//the resource was in the wrong format! (name and value switched)
+					string res = m.Groups["resource"].Value;
+					string val = m.Groups["number"].Value;
+					corrected += val + " " + res + ", ";//switch the number and the value in the resources definition
+				} else {
+					corrected += singleRes + ", ";
+				}
+			}
+			//from the corrected string also remove the last ", "
+			def.Set(line.name, corrected.Substring(0, corrected.Length - 2), "some resources were fixed by converter");
+			return line.value;
 		}
 
 		private static string HandleType(ConvertedDef d, PropsLine line) {

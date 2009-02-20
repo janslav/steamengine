@@ -38,6 +38,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public ItemDef ItemDef {
+			get {
+				return itemDef;
+			}
+		}
+
 		#region IResourceListItem Members
 		public double DesiredCount {
 			get {

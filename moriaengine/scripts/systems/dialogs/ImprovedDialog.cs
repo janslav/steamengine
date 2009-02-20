@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			charsLength.Add('m', 9); charsLength.Add('M', 10); charsLength.Add('(', 4);
 			charsLength.Add('n', 6); charsLength.Add('N', 8); charsLength.Add(')', 4);
 			charsLength.Add('o', 6); charsLength.Add('O', 8); charsLength.Add(' ', 8);
-			charsLength.Add('p', 6); charsLength.Add('P', 8);
+			charsLength.Add('p', 6); charsLength.Add('P', 8); charsLength.Add('_', 13);
 			charsLength.Add('q', 6); charsLength.Add('Q', 9);
 			charsLength.Add('r', 6); charsLength.Add('R', 8);
 			charsLength.Add('s', 6); charsLength.Add('S', 8);
@@ -305,7 +305,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Summary("Tag key using for holding information about paging actual item index for dialogs.")]
-		internal static readonly TagKey pagingIndexTK = TagKey.Get("_paging_index_");
+		public static readonly TagKey pagingIndexTK = TagKey.Get("_paging_index_");
 
 		[Summary("Look if the paging buttons has been pressed and if so, handle the actions as " +
 				" a normal OnResponse method, otherwise return to the dialog OnResponse method " +
@@ -429,6 +429,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Number of normal rows on the various dialog pages (when paging is used)")]
 		public const int PAGE_ROWS = 20;
+
+		[Summary("Empiricaly determined width and height of the column (row) in which we are to dispaly some gump (icon)")]
+		public const int ICON_WIDTH = 43;
+		public const int ICON_HEIGHT = 30;
 
 		[Summary("Page navigating buttons (constant IDs, different enough from those common used :))")]
 		public const int ID_PREV_BUTTON = 98765;

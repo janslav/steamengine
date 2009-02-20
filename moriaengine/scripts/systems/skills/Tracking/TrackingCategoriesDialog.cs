@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
 			dlg.MakeLastTableTransparent();
 
-			GUTATable picTable = new GUTATable(4, 43, 0, ButtonFactory.D_BUTTON_WIDTH);
+			GUTATable picTable = new GUTATable(4, ImprovedDialog.ICON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH);
 			picTable.RowHeight = 50; //dobra vejska pro obrazky
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);

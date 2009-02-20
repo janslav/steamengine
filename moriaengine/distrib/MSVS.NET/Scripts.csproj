@@ -386,6 +386,9 @@
     <Compile Include="..\..\scripts\systems\dialogs\Input.cs">
       <Link>systems\dialogs\Input.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\ItemsDimensions.cs">
+      <Link>systems\dialogs\ItemsDimensions.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\LeafComponents.cs">
       <Link>systems\dialogs\LeafComponents.cs</Link>
     </Compile>
@@ -586,6 +589,36 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs">
       <Link>systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Alchemy.cs">
+      <Link>systems\skills\Crafting\Alchemy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Blacksmithing.cs">
+      <Link>systems\skills\Crafting\Blacksmithing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Bowcraft.cs">
+      <Link>systems\skills\Crafting\Bowcraft.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Carpentry.cs">
+      <Link>systems\skills\Crafting\Carpentry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Cooking.cs">
+      <Link>systems\skills\Crafting\Cooking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\Craftmenu.cs">
+      <Link>systems\skills\Crafting\Craftmenu\Craftmenu.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs">
+      <Link>systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Inscription.cs">
+      <Link>systems\skills\Crafting\Inscription.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Tailoring.cs">
+      <Link>systems\skills\Crafting\Tailoring.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Tinkering.cs">
+      <Link>systems\skills\Crafting\Tinkering.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Discordance\Discordance.cs">
       <Link>systems\skills\Discordance\Discordance.cs</Link>

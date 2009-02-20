@@ -1,0 +1,159 @@
+[function craftCat]
+dialog(d_CraftCategory_scp)
+
+//Input dialog pro založení nové subkategorie v craftmenu
+[InputDef inpt_craftmenu_newcat_scp]
+label="Nová subkategorie"
+default="Jméno"
+
+on=@response //argv0 - jmeno subkategorie, argv1 - nadrazena kategorie
+arg cat = <argv(1)>
+arg newCat = CraftmenuCategory(<argv(0)>, cat)
+cat.contents.Add(newCat)
+DialogStackItem.ShowPreviousDialog(src.Conn) //zavolat predchozi dialog
+
+
+[dialog d_craftmenu_scp]
+arg dlg = ImprovedDialog(argv(0))
+arg cat = argo.InputArgs.get_Item(0) //this is always some CraftmenuCategory to be displayed
+
+arg firstiVal = TagMath.IGetTag(argo.InputArgs, ImprovedDialog.pagingIndexTK) //prvni index na strance
+arg imax = System.Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.get_Count()) //nejvyssi index na strance
+
+arg width = (500 - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE)
+
+dlg.CreateBackground(500)
+dlg.SetLocation(80,50)
+
+//nadpis dialogu, cudliky na back a zruseni
+dlg.Add(GUTATable(1, width - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH)) 
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby: " + cat.FullName))
+dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack,1)) //one category back button
+dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.MakeLastTableTransparent()
+
+//"new subcategory" button
+dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0))
+dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,2)) //new subcategory btn
+dlg.LastTable.AddToCell(0,1,TextFactory.CreateHeadline("Pøidat podkategorii"))
+dlg.MakeLastTableTransparent()
+
+//"new item(s)" button
+dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0))
+dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,3)) //new item(s) btn
+dlg.LastTable.AddToCell(0,1,TextFactory.CreateHeadline("Pøidat pøedmìt(y)"))
+dlg.MakeLastTableTransparent()
+
+//headlines row
+//make | icon | name | move up/down | flip pic. | info | resources
+dlg.Add(GutaTable(1,ButtonFactory.D_BUTTON_WIDTH,43,150,5,ButtonFactory.D_BUTTON_WIDTH,ButtonFactory.D_BUTTON_WIDTH,0))
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Make"))
+dlg.LastTable.AddToCell(0,2,TextFactory.CreateLabel("Jméno"))
+dlg.LastTable.AddToCell(0,4,TextFactory.CreateLabel("Flip"))
+dlg.LastTable.AddToCell(0,5,TextFactory.CreateLabel("Info"))
+dlg.LastTable.AddToCell(0,6,TextFactory.CreateLabel("Suroviny"))
+
+//konecne seznam polozek
+dlg.AddTable(GUTATable(imax - firstiVal))
+dlg.CopyColsFromLastTable()
+
+//ted polozky. kategorie zobrazit vzdy, itemy jen pokud je muzeme vyrobit (udelat metodu na itemdef "canmake" ktera overi
+//dostatek resourcu a spravny skillmake (nic ale nesezere)
+//overit nutnost cudlicku "flip" - zobrazeni obrazku - spis asi ne
+//polozku "Suroviny" buildit nekde bokem at tu neni mraky kodu
+//pri preskakovani itemu co na ne nema pravo nezvedat index dialog row (aby to vyslo do stranky)
+//pokud dojdou itemy z kategorie, je nutne stranku zkratit (=´pocitat si pocet skutecne zobrazenych polozek)
+
+dlg.MakeLastTableTransparent() //zpruhledni zbytek dialogu
+
+//ted paging
+dlg.CreatePaging(cat.contents.Count, firstiVal, 1)
+
+dlg.WriteOut()
+
+[dialog d_craftmenu_scp button]
+
+[dialog d_CraftCategory_scp]
+arg dlg = ImprovedDialog(argv(0)) 
+
+dlg.CreateBackground(240)
+dlg.SetLocation(80,50)
+
+//nadpis tabulky
+dlg.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH)) 
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby"))
+dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.MakeLastTableTransparent()
+
+arg picTable = GutaTable(8,43,0,ButtonFactory.D_BUTTON_WIDTH)
+picTable.RowHeight = 40
+picTable.InnerRowsDelimited = true
+dlg.AddTable(picTable)
+dlg.LastTable.AddToCell(0,0,ImageFactory.CreateImage(0,13,GumpIDs.Mortar))
+dlg.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Alchemy", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(1,0,ImageFactory.CreateImage(0,2,GumpIDs.Anvil))
+dlg.LastTable.AddToCell(1,1,TextFactory.CreateLabel("Blacksmithing", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(1,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(2,0,ImageFactory.CreateImage(-8,6,GumpIDs.Bow))
+dlg.LastTable.AddToCell(2,1,TextFactory.CreateLabel("Bowcraft", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(2,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(3,0,ImageFactory.CreateImage(-8,11,GumpIDs.Saw))
+dlg.LastTable.AddToCell(3,1,TextFactory.CreateLabel("Carpentry", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(3,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(4,0,ImageFactory.CreateImage(3,9,GumpIDs.Cake))
+dlg.LastTable.AddToCell(4,1,TextFactory.CreateLabel("Cooking", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(4,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,5, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(5,0,ImageFactory.CreateImage(1,10,GumpIDs.Scroll))
+dlg.LastTable.AddToCell(5,1,TextFactory.CreateLabel("Inscription", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(5,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,6, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(6,0,ImageFactory.CreateImage(-8,10,GumpIDs.SewingKit))
+dlg.LastTable.AddToCell(6,1,TextFactory.CreateLabel("Tailoring", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(6,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,7, DialogAlignment.Valign_Center))
+
+dlg.LastTable.AddToCell(7,0,ImageFactory.CreateImage(0,2,GumpIDs.Tools))
+dlg.LastTable.AddToCell(7,1,TextFactory.CreateLabel("Tinkering", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(7,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,8, DialogAlignment.Valign_Center))
+
+dlg.MakeLastTableTransparent()
+
+dlg.WriteOut()
+
+[DIALOG d_CraftCategory_scp BUTTON]
+on=0 //exitting dialog by right click
+return 0
+
+on=1
+src.sysmessage("Alchemy")
+src.dialog(D_Craftmenu, DialogArgs(CraftmenuContents.categoryAlchemy))
+return 0
+
+on=2
+src.sysmessage("Bowcraft")
+return 0
+
+on=3
+src.sysmessage("Carpentry")
+return 0
+
+on=4
+src.sysmessage("Cooking")
+return 0
+
+on=5
+src.sysmessage("Inscription")
+return 0
+
+on=6
+src.sysmessage("Tailoring")
+return 0
+
+on=7
+src.sysmessage("Tinkering")
+return 0

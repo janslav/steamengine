@@ -48,11 +48,23 @@ namespace SteamEngine.CompiledScripts {
 				CaptureCollection numbers = m.Groups["number"].Captures;
 				CaptureCollection values = m.Groups["value"].Captures;
 				for (int i = 0; i < n; i++) {
-					string number = numbers[i].Value.Equals("") ? "1" : numbers[i].Value; //either number or "" if no number is specified (in this case take 1)
+					string number = "";
+					try {
+						number = numbers[i].Value;
+						if (number.Equals(""))
+							number = "1";
+					} catch {
+						//maybe we have something like this: "2 i_something, i_something_else" which we want to be interpreted as "2 ..., 1 ..."
+						number = "1";
+					}
 					string value = values[i].Value; //resource name (trimmed)
 					double nmr = ConvertTools.ParseDouble(number);
 					resList.Add(createResListItem(nmr, value));
 				}
+				//sort found resources by their required multiplicity (greater first)
+				//-it can help when checking the list's availability as the most required items will be checked first
+				resList.MultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemMultiplicable>.instance);
+				resList.NonMultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
 				retVal = resList;
 				return true;
 			} else {
@@ -61,34 +73,69 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion
 
+		[Summary("Check if the given string defines some Item. If so, return the def")]
+		internal static bool IsItemResource(string definition, out ItemDef idef) {
+			if ((idef = ItemDef.Get(definition) as ItemDef) != null) {
+				//this resource is an item
+				return true;
+			}
+			return false;
+		}
+
+		[Summary("Check if the given string defines some TriggerGroup. If so, return it")]
+		internal static bool IsTriggerGroupResource(string definition, out TriggerGroup tgr) {
+			if ((tgr = TriggerGroup.Get(definition)) != null) {
+				//this resource is a trigger group
+				return true;
+			}
+			return false;
+		}
+
+		[Summary("Check if the given string defines some Skill. If so, return the def")]
+		internal static bool IsSkillResource(string definition, out SkillDef skl) {
+			if (((skl = SkillDef.ByKey(definition) as SkillDef) != null) ||  //"hiding", "anatomy" etc.
+				 ((skl = SkillDef.ByDefname(definition) as SkillDef) != null)) {//"skill_hiding, "skill_anatomy" etc.
+				//this resource is a skill
+				return true;
+			}
+			return false;
+		}
+
+		[Summary("Check if the given string defines some Ability. If so, return the def")]
+		internal static bool IsAbilityResource(string definition, out AbilityDef abl) {
+			if ((abl = AbilityDef.ByDefname(definition)) != null) {
+				//this resource is an ability
+				return true;
+			}
+			return false;
+		}
+
 		private IResourceListItem createResListItem(double number, string definition) {
 			//we will try to find what does the 'definition' define
-			//try ItemDef (i_apple)		
-			AbstractScript resource = ThingDef.Get(definition);
-			if (resource != null && ((ThingDef) resource).IsItemDef) {
+			//try ItemDef (i_apple)
+			ItemDef idef;
+			if(IsItemResource(definition, out idef)) {
 				//this resource is item
-				return new ItemResource((ItemDef) resource, number, definition);
+				return new ItemResource(idef, number, definition);
 			}
 			//try TriggerGroup (t_light)
-			resource = TriggerGroup.Get(definition);
-			if (resource != null) {
+			TriggerGroup tgr;
+			if (IsTriggerGroupResource(definition, out tgr)) {
 				//we dont specify the number here, we know that for trigger groups their presence in the
 				//resource list always means '1' (just to 'have it')
-				return new TriggerGroupResource((TriggerGroup) resource, number, definition);
+				return new TriggerGroupResource(tgr, number, definition);
 			}
 			//try Skilldef
-			resource = SkillDef.ByKey(definition); //"hiding", "anatomy" etc.
-			if (resource == null) {
-				resource = SkillDef.ByDefname(definition);//"skill_hiding, "skill_anatomy" etc.
-			}
-			if (resource != null) {
-				return new SkillResource((SkillDef) resource, number, definition);
+			SkillDef skl;
+			if (IsSkillResource(definition, out skl)) {
+				return new SkillResource(skl, number, definition);
 			}
 			//try AbilityDef
-			resource = AbilityDef.ByDefname(definition);
-			if (resource != null) {
-				return new AbilityResource((AbilityDef) resource, number, definition);
+			AbilityDef abl;
+			if (IsAbilityResource(definition, out abl)) {
+				return new AbilityResource(abl, number, definition);
 			}
+			
 			//try stats
 			if (definition.Equals("str", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatStrResource(number);

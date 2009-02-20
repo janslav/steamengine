@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Type");//scripted/compiled
 			dlg.MakeLastTableTransparent();
 
-			//seznam roli
+			//seznam funkci
 			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 

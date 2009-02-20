@@ -26,6 +26,30 @@ using SteamEngine.Communication.TCP;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class ItemDef {
+		[Summary("Check the resources and skillmake if the given character can craft this item")]
+		public bool CanBeMade(Character chr) {
+			if (chr.IsGM) {//GM can everything
+				return true;
+			}
+			//skillmake (skills, tools etc.)
+			ResourcesList requir = SkillMake;
+			if (requir != null) {
+				IResourceListItem missingItem;
+				if (!requir.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+					return false;
+				}
+			}
+
+			//resources (necessary items)
+			ResourcesList reslist = Resources;
+			if (reslist != null) {
+				IResourceListItem missingItem;
+				if (!reslist.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	[Dialogs.ViewableClass]
@@ -155,7 +179,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void GetNameCliloc(out uint id, out string argument) {
 			string name = this.Name;
 			uint amount = this.Amount;
-			id = 1042971;
+			id = 1042971;//~1_NOTHING~
 			argument = null;
 			if (this.Amount <= 1) {
 				ItemDispidInfo idi = this.TypeDef.DispidInfo;

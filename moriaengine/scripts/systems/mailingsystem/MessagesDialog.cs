@@ -16,6 +16,7 @@
 */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.LScript;
@@ -29,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Display the list of the messages")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ArrayList messagesList = (ArrayList) args.GetTag(D_DelayedMessages.msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
+			List<DelayedMsg> messagesList = (List<DelayedMsg>)args.GetTag(D_DelayedMessages.msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
 			if (messagesList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
