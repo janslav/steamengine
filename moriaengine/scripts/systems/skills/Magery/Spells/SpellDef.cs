@@ -219,6 +219,7 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue sound;
 		private FieldValue runes;
 		private FieldValue effectRange;
+		private string runeWords;
 
 		public SpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -380,6 +381,51 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion FieldValues
 
+		public string GetRuneWords() {
+			if (this.runeWords == null) {
+				string runes = this.Runes;
+				int n = runes.Length;
+				string[] arr = new string[n];
+				for (int i = 0; i < n; i++) {
+					arr[i] = GetRuneWord(runes[i]);
+				}
+				this.runeWords = string.Join(" ", arr);
+			}
+			return this.runeWords;
+		}
+
+		private string GetRuneWord(char ch) {
+			switch (ch) {
+				case 'a': return "Ruth";	//hnev
+				case 'b': return "Er";		//jeden,malo
+				case 'c': return "Mor";		//temny
+				case 'd': return "Curu";	//dovednost
+				case 'e': return "Dol";		//hlava
+				case 'f': return "Ruin";	//plamen
+				case 'g': return "Esgal";	//zástìna
+				case 'h': return "Sul";		//vitr
+				case 'i': return "Anna";	//dar
+				case 'j': return "Del";		//hruza
+				case 'k': return "Heru";	//pán
+				case 'l': return "Fuin";	//temnota
+				case 'm': return "Aina";	//svaty
+				case 'n': return "Sereg";	//krev
+				case 'o': return "Morgul";	//temnamagie
+				case 'p': return "Kel";		//odejit
+				case 'q': return "Gor";		//hruza,des
+				case 'r': return "Faroth";	//pronasledovat
+				case 's': return "Tir";		//bditstrezit
+				case 't': return "Barad";	//vez
+				case 'u': return "Ril";		//trpit
+				case 'v': return "Beleg";	//Mohutny
+				case 'w': return "Loth";	//magickýkvìt
+				case 'x': return "Val";		//mocnost
+				case 'y': return "Kemen";	//zeme
+				case 'z': return "Fea";		//duch
+			}
+			throw new SEException("Wrong spell rune " + ch);
+		}
+
 		internal void Trigger_Select(SkillSequenceArgs mageryArgs) {
 			//Checked so far: death, book on self
 			//TODO: Check zones, frozen?, hypnoform?, cooldown?
@@ -443,7 +489,7 @@ namespace SteamEngine.CompiledScripts {
 			if (targetAsChar != null) {
 				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {
 					singleEffectDone = true;
-					sea = this.GetSpellPowerAgainstChar(caster, target, targetAsChar, sea);
+					this.GetSpellPowerAgainstChar(caster, target, targetAsChar, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectChar(targetAsChar, sea);
 					}
@@ -481,12 +527,24 @@ namespace SteamEngine.CompiledScripts {
 				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
 				if (canEffectItem || canEffectChar) {
 					foreach (Thing t in target.GetMap().GetThingsInRange(target.X, target.Y, this.EffectRange)) {
+						if (t == target) {
+							continue;
+						}
 						Character ch = t as Character;
 						if (ch != null) {
-							if (canEffectChar) {
-								//TODO: do not effect allies if harmful? Do not effect enemy if beneficial?
-								sea = this.GetSpellPowerAgainstChar(caster, target, ch, sea);
+							if (canEffectChar) {								
+								this.GetSpellPowerAgainstChar(caster, target, ch, ref sea);
 								if (this.CheckSpellPowerWithMessage(sea)) {
+									if ((flags & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial) {
+										if (Notoriety.GetCharRelation(caster, ch) < sea.CasterToMainTargetRelation) { //target "more enemy" than main target, we don't wanna benefit him.
+											continue;
+										}
+									} else if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
+										if (Notoriety.GetCharRelation(caster, ch) > sea.CasterToMainTargetRelation) { //target "more friendly" than main target, we don't wanna hurt him.
+											continue;
+										}
+									}
+
 									this.Trigger_EffectChar(ch, sea);
 								}
 							}
@@ -524,7 +582,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		private SpellEffectArgs GetSpellPowerAgainstChar(Character caster, IPoint4D mainTarget, Character currentTarget, SpellEffectArgs sea) {
+		private void GetSpellPowerAgainstChar(Character caster, IPoint4D mainTarget, Character currentTarget, ref SpellEffectArgs sea) {
 			int spellPower;
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.UseMindPower) == SpellFlag.UseMindPower) {
@@ -545,11 +603,17 @@ namespace SteamEngine.CompiledScripts {
 
 			if (sea == null) {
 				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower);
+				if (!(mainTarget is Character)) {
+					if ((flags & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial) {
+						sea.CasterToMainTargetRelation = CharRelation.Allied;
+					} else if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
+						sea.CasterToMainTargetRelation = CharRelation.TempHostile;
+					}
+				}
 			} else {
 				sea.CurrentTarget = currentTarget;
 				sea.SpellPower = spellPower;
 			}
-			return sea;
 		}
 
 		private SpellEffectArgs GetSpellPowerAgainstNonChar(Character caster, IPoint4D target, IPoint4D currentTarget, SpellEffectArgs sea) {
@@ -700,6 +764,10 @@ namespace SteamEngine.CompiledScripts {
 					this.relationFoundOut = true;
 				}
 				return this.relation;
+			}
+			set { //used when target is no char
+				this.relation = value;
+				this.relationFoundOut = true;
 			}
 		}
 	}

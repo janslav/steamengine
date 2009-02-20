@@ -465,18 +465,7 @@ namespace SteamEngine.Networking {
 
 		//For use by Server's various message sending methods (Which send to one client).
 		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
-			if (Globals.supportUnicode && font == 3 && !(type == SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
-				UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
-				if (string.IsNullOrEmpty(lang)) {
-					lang = c.State.Language;
-				}
-				packet.Prepare(from, msg, sourceName, type, font, color, lang);
-				c.SendSinglePacket(packet);
-			} else {
-				SendSpeechOutPacket packet = Pool<SendSpeechOutPacket>.Acquire();
-				packet.Prepare(from, msg, sourceName, type, font, color);
-				c.SendSinglePacket(packet);
-			}
+			c.SendSinglePacket(PrepareMessagePacket(from, msg, sourceName, type, font, color, lang));
 		}
 
 		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
