@@ -193,22 +193,24 @@ layer = 16 //Set by Converter
 DEFNAME = i_beard_mustache
 //VALUE = {8 12} // commented out by Converter 
 
-[EquippableDef 0x2042]
+[WearableDef 0x2042]
 CATEGORY = Provisions - GM Items
 SUBSECTION = Special Items
 DESCRIPTION = Lord British Armour
 
 TYPE = T_ARMOR
 layer = 22 //Set by Converter 
+WearableType = WearableType.Plate //guessed by Converter 
 DEFNAME = i_person_lord_british
 
-[EquippableDef 0x2043]
+[WearableDef 0x2043]
 CATEGORY = Provisions - GM Items
 SUBSECTION = Special Items
 DESCRIPTION = Blackthorne Robe
 
 TYPE = T_ARMOR
 layer = 22 //Set by Converter 
+WearableType = WearableType.Plate //guessed by Converter 
 DEFNAME = i_person_black_thorne
 
 [EquippableDef 0x2044]
@@ -321,83 +323,89 @@ layer = 16 //Set by Converter
 DEFNAME = i_beard_vandyke
 //VALUE = {8 12} // commented out by Converter 
 
-[EquippableDef 0x204e]
+[WearableDef 0x204e]
 CATEGORY = Provisions - GM Items
 SUBSECTION = Special Items
 DESCRIPTION = Death Shroud
 
 NAME = "Death Shroud"
 TYPE = T_CLOTHING
+WearableType = WearableType.Clothing //guessed by Converter 
 layer = 22 //Set by Converter 
 DEFNAME = i_deathshroud
 
-[EquippableDef 0x204f]
+[WearableDef 0x204f]
 CATEGORY = Provisions - GM Items
 SUBSECTION = GM Robes
 DESCRIPTION = GM Robes
 
 TYPE = T_CLOTHING
+WearableType = WearableType.Clothing //guessed by Converter 
 //DYE = 1 // commented out by Converter 
 layer = 22 //Set by Converter 
 DEFNAME = i_robe_gm
 
-[EquippableDef 0x2050]
+[WearableDef 0x2050]
 TYPE = T_ARMOR
-//ARMOR = 30 // commented out by Converter 
 layer = 22 //Set by Converter 
+WearableType = WearableType.Plate //guessed by Converter 
 DEFNAME = i_dupre
+armorVsP = 30
+mindDefenseVsP = 30
+armorVsM = 30
+mindDefenseVsM = 30
 
 [ItemDef 0x2053]
 //DUPELIST = 02054,02055,02056,02057,02058,02059,0205a // commented out by Converter 
 DEFNAME = i_handr_1
 
 [ItemDef 0x2054]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 
 [ItemDef 0x2055]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 
 [ItemDef 0x2056]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 
 [ItemDef 0x2057]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 
 [ItemDef 0x2058]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 
 [ItemDef 0x2059]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 //DEFNAME = i_handr_7 // commented out by Converter 
 
 [ItemDef 0x205a]
-DUPEITEM = 0x2053
+DUPEITEM = i_handr_1
 
 [ItemDef 0x206a]
 //DUPELIST = 0206b,0206c,0206d,0206e,0206f,02070,02071 // commented out by Converter 
 DEFNAME = i_hand_1
 
 [ItemDef 0x206b]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 
 [ItemDef 0x206c]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 
 [ItemDef 0x206d]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 
 [ItemDef 0x206e]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 
 [ItemDef 0x206f]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 
 [ItemDef 0x2070]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 //DEFNAME = i_hand_7 // commented out by Converter 
 
 [ItemDef 0x2071]
-DUPEITEM = 0x206a
+DUPEITEM = i_hand_1
 
 [ItemDef 0x2080]
 CATEGORY = Spell Icons
@@ -1160,7 +1168,7 @@ TYPE = T_FIGURINE
 DEFNAME = i_pet_garg
 
 [ItemDef 0x20da]
-DUPEITEM = 0x2131
+DUPEITEM = i_pet_croc
 
 [ItemDef 0x20db]
 CATEGORY = Miscellaneous
@@ -1183,7 +1191,7 @@ TYPE = T_FIGURINE
 DEFNAME = i_pet_harpy
 
 [ItemDef 0x20dd]
-DUPEITEM = 0x2120
+DUPEITEM = i_pet_horse_brown_lt
 //DEFNAME = i_pet_horse // commented out by Converter 
 
 [ItemDef 0x20de]
@@ -1436,6 +1444,7 @@ NAME = "Llama"
 TYPE = T_FIGURINE
 //TDATA3 = c_llama // commented out by Converter 
 DEFNAME = i_pet_llama
+//VALUE = {300 380} // commented out by Converter 
 
 [ItemDef 0x20f7]
 CATEGORY = Miscellaneous
@@ -1513,7 +1522,7 @@ DESCRIPTION = Snake
 
 NAME = "Snake"
 TYPE = T_FIGURINE
-//TDATA3 = c_snake_giant // commented out by Converter 
+//TDATA3 = c_serpent_giant // commented out by Converter 
 DEFNAME = i_pet_snake_giant
 
 [ItemDef 0x20ff]
@@ -1712,7 +1721,7 @@ DESCRIPTION = Horse (gray)
 
 NAME = "Gray Horse"
 TYPE = T_FIGURINE
-//SKILLMAKE = MAGERY 35.0 // commented out by Converter 
+SKILLMAKE = 35.0 magery //some resources were fixed by converter 
 //TDATA3 = c_horse_gray // commented out by Converter 
 DEFNAME = i_pet_horse_gray
 //VALUE = {280 400} // commented out by Converter 
@@ -2481,133 +2490,133 @@ TYPE = t_lava
 DEFNAME = i_lava_edge2
 
 [ItemDef 0x3287]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3288]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3289]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x328a]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x328b]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x328c]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x328d]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x328e]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x328f]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3290]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3291]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3292]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3293]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3294]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3295]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3296]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3297]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3298]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x3299]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x329a]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x329b]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x329c]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x329d]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x329e]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x329f]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a0]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a1]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a2]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a3]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a4]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a5]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a6]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a7]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a8]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32a9]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32aa]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32ab]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32ac]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32ad]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32ae]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32af]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32b0]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32b1]
-DUPEITEM = 0x3286
+DUPEITEM = i_lava_edge2
 
 [ItemDef 0x32d5]
 
@@ -2688,136 +2697,136 @@ TYPE = t_lava
 DEFNAME = i_lava_bubble
 
 [ItemDef 0x343c]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x343d]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x343e]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x343f]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3440]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3441]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3442]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3443]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3444]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3445]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3447]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3448]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3449]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x344a]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x344b]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x344c]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x344e]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x344f]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3450]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3451]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3452]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3453]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3454]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3455]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3456]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3457]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3459]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x345a]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x345b]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x345c]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x345d]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x345e]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x345f]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3460]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3462]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3463]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3464]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3465]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3466]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3468]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x3469]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x346a]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x346b]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x346c]
-DUPEITEM = 0x343b
+DUPEITEM = i_lava_bubble
 
 [ItemDef 0x346e]
 CATEGORY = Ground Tiles (animated)
@@ -3517,40 +3526,40 @@ TYPE = t_fire
 DEFNAME = i_fx_explode
 
 [ItemDef 0x36b1]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b2]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b3]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b4]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b5]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b6]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b7]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b8]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36b9]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36ba]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36bb]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36bc]
-DUPEITEM = 0x36b0
+DUPEITEM = i_fx_explode
 
 [ItemDef 0x36bd]
 CATEGORY = Animations
@@ -3562,40 +3571,40 @@ TYPE = t_fire
 DEFNAME = i_fx_explosion_2
 
 [ItemDef 0x36be]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36bf]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c0]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c1]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c2]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c3]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c4]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c5]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c6]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c7]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c8]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36c9]
-DUPEITEM = 0x36bd
+DUPEITEM = i_fx_explosion_2
 
 [ItemDef 0x36ca]
 CATEGORY = Animations
@@ -3607,31 +3616,31 @@ TYPE = t_fire
 DEFNAME = i_fx_explosion_3
 
 [ItemDef 0x36cb]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36cc]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36cd]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36ce]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36cf]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36d0]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36d1]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36d2]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36d3]
-DUPEITEM = 0x36ca
+DUPEITEM = i_fx_explosion_3
 
 [ItemDef 0x36d4]
 CATEGORY = Animations
@@ -3643,49 +3652,49 @@ TYPE = t_fire
 DEFNAME = i_fx_fireball
 
 [ItemDef 0x36d5]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36d6]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36d7]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36d8]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36d9]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36da]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36db]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36dc]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36dd]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36de]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36df]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36e0]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36e1]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36e2]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36e3]
-DUPEITEM = 0x36d4
+DUPEITEM = i_fx_fireball
 
 [ItemDef 0x36e4]
 CATEGORY = Animations
@@ -3697,49 +3706,49 @@ TYPE = t_fire
 DEFNAME = i_fx_fireball_small
 
 [ItemDef 0x36e5]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36e6]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36e7]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36e8]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36e9]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36ea]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36eb]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36ec]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36ed]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36ee]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36ef]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36f0]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36f1]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36f2]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36f3]
-DUPEITEM = 0x36e4
+DUPEITEM = i_fx_fireball_small
 
 [ItemDef 0x36f4]
 CATEGORY = Animations
@@ -3751,31 +3760,31 @@ TYPE = t_fire
 DEFNAME = i_fx_firesnake
 
 [ItemDef 0x36f5]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36f6]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36f7]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36f8]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36f9]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36fa]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36fb]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36fc]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36fd]
-DUPEITEM = 0x36f4
+DUPEITEM = i_fx_firesnake
 
 [ItemDef 0x36fe]
 CATEGORY = Animations
@@ -3787,34 +3796,34 @@ TYPE = t_fire
 DEFNAME = i_fx_explode_ball
 
 [ItemDef 0x36ff]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3700]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3701]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3702]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3703]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3704]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3705]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3706]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3707]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3708]
-DUPEITEM = 0x36fe
+DUPEITEM = i_fx_explode_ball
 
 [ItemDef 0x3709]
 CATEGORY = Animations
@@ -3826,94 +3835,94 @@ TYPE = t_fire
 DEFNAME = i_fire_column
 
 [ItemDef 0x370a]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x370b]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x370c]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x370d]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x370e]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x370f]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3710]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3711]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3712]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3713]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3714]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3715]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3716]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3717]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3718]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3719]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x371a]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x371b]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x371c]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x371d]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x371e]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x371f]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3720]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3721]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3722]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3723]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3724]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3725]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3726]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3727]
-DUPEITEM = 0x3709
+DUPEITEM = i_fire_column
 
 [ItemDef 0x3728]
 CATEGORY = Animations
@@ -3925,40 +3934,40 @@ TYPE = t_spell
 DEFNAME = i_fx_smoke
 
 [ItemDef 0x3729]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x372a]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x372b]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x372c]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x372d]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x372e]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x372f]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x3730]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x3731]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x3732]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x3733]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x3734]
-DUPEITEM = 0x3728
+DUPEITEM = i_fx_smoke
 
 [ItemDef 0x3735]
 CATEGORY = Animations
@@ -3970,7 +3979,7 @@ TYPE = t_spell
 DEFNAME = i_fx_smoke_small
 
 [ItemDef 0x3736]
-DUPEITEM = 0x3735
+DUPEITEM = i_fx_smoke_small
 
 [ItemDef 0x373a]
 CATEGORY = Animations
@@ -3982,49 +3991,49 @@ TYPE = t_spell
 DEFNAME = i_fx_bless_effect
 
 [ItemDef 0x373b]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x373c]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x373d]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x373e]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x373f]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3740]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3741]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3742]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3743]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3744]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3745]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3746]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3747]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3748]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x3749]
-DUPEITEM = 0x373a
+DUPEITEM = i_fx_bless_effect
 
 [ItemDef 0x374a]
 CATEGORY = Animations
@@ -4036,49 +4045,49 @@ TYPE = t_spell
 DEFNAME = i_fx_curse
 
 [ItemDef 0x374b]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x374c]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x374d]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x374e]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x374f]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3750]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3751]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3752]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3753]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3754]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3755]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3756]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3757]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3758]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x3759]
-DUPEITEM = 0x374a
+DUPEITEM = i_fx_curse
 
 [ItemDef 0x375a]
 CATEGORY = Animations
@@ -4090,49 +4099,49 @@ TYPE = t_spell
 DEFNAME = i_fx_sparkle
 
 [ItemDef 0x375b]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x375c]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x375d]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x375e]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x375f]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3760]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3761]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3762]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3763]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3764]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3765]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3766]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3767]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3768]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x3769]
-DUPEITEM = 0x375a
+DUPEITEM = i_fx_sparkle
 
 [ItemDef 0x376a]
 CATEGORY = Animations
@@ -4144,46 +4153,46 @@ TYPE = t_spell
 DEFNAME = i_fx_heal_effect
 
 [ItemDef 0x376b]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x376c]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x376d]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x376e]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x376f]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3770]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3771]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3772]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3773]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3774]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3775]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3776]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3777]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3778]
-DUPEITEM = 0x376a
+DUPEITEM = i_fx_heal_effect
 
 [ItemDef 0x3779]
 CATEGORY = Animations
@@ -4195,49 +4204,49 @@ TYPE = t_spell
 DEFNAME = i_fx_sparkle_2
 
 [ItemDef 0x377a]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x377b]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x377c]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x377d]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x377e]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x377f]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3780]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3781]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3782]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3783]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3784]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3785]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3786]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3787]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3788]
-DUPEITEM = 0x3779
+DUPEITEM = i_fx_sparkle_2
 
 [ItemDef 0x3789]
 CATEGORY = Animations
@@ -4249,64 +4258,64 @@ TYPE = t_spell
 DEFNAME = i_fx_vortex
 
 [ItemDef 0x378a]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x378b]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x378c]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x378d]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x378e]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x378f]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3790]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3791]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3792]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3793]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3794]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3795]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3796]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3797]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3798]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x3799]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x379a]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x379b]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x379c]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x379d]
-DUPEITEM = 0x3789
+DUPEITEM = i_fx_vortex
 
 [ItemDef 0x379e]
 CATEGORY = Miscellaneous
@@ -4334,76 +4343,76 @@ TYPE = t_trap_Active
 DEFNAME = i_fx_blade_field
 
 [ItemDef 0x37a1]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a2]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a3]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a4]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a5]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a6]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a7]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a8]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37a9]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37aa]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37ab]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37ac]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37ad]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37ae]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37af]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b0]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b1]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b2]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b3]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b4]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b5]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b6]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b7]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b8]
-DUPEITEM = 0x37a0
+DUPEITEM = i_fx_blade_field
 
 [ItemDef 0x37b9]
 CATEGORY = Animations
@@ -4415,16 +4424,16 @@ TYPE = t_spell
 DEFNAME = i_fx_glow
 
 [ItemDef 0x37ba]
-DUPEITEM = 0x37b9
+DUPEITEM = i_fx_glow
 
 [ItemDef 0x37bb]
-DUPEITEM = 0x37b9
+DUPEITEM = i_fx_glow
 
 [ItemDef 0x37bc]
-DUPEITEM = 0x37b9
+DUPEITEM = i_fx_glow
 
 [ItemDef 0x37bd]
-DUPEITEM = 0x37b9
+DUPEITEM = i_fx_glow
 
 [ItemDef 0x37be]
 CATEGORY = Animations
@@ -4436,19 +4445,19 @@ TYPE = t_spell
 DEFNAME = i_fx_glow2
 
 [ItemDef 0x37bf]
-DUPEITEM = 0x37be
+DUPEITEM = i_fx_glow2
 
 [ItemDef 0x37c0]
-DUPEITEM = 0x37be
+DUPEITEM = i_fx_glow2
 
 [ItemDef 0x37c1]
-DUPEITEM = 0x37be
+DUPEITEM = i_fx_glow2
 
 [ItemDef 0x37c2]
-DUPEITEM = 0x37be
+DUPEITEM = i_fx_glow2
 
 [ItemDef 0x37c3]
-DUPEITEM = 0x37be
+DUPEITEM = i_fx_glow2
 
 [ItemDef 0x37c4]
 CATEGORY = Animations
@@ -4460,25 +4469,25 @@ TYPE = t_spell
 DEFNAME = i_fx_glow_spike
 
 [ItemDef 0x37c5]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37c6]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37c7]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37c8]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37c9]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37ca]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37cb]
-DUPEITEM = 0x37c4
+DUPEITEM = i_fx_glow_spike
 
 [ItemDef 0x37cc]
 CATEGORY = Animations
@@ -4490,76 +4499,76 @@ TYPE = t_spell
 DEFNAME = i_fx_vortex_full
 
 [ItemDef 0x37cd]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37ce]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37cf]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d0]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d1]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d2]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d3]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d4]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d5]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d6]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d7]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d8]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37d9]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37da]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37db]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37dc]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37dd]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37de]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37df]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37e0]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37e1]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37e2]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37e3]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37e4]
-DUPEITEM = 0x37cc
+DUPEITEM = i_fx_vortex_full
 
 [ItemDef 0x37eb]
 CATEGORY = Animations
@@ -4571,112 +4580,112 @@ TYPE = t_trap_active
 DEFNAME = i_fx_blade_spirit_1
 
 [ItemDef 0x37ec]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37ed]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37ee]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37ef]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f0]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f1]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f2]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f3]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f4]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f5]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f6]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f7]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f8]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37f9]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37fa]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37fb]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37fc]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37fd]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37fe]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x37ff]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3800]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3801]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3802]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3803]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3804]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3805]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3806]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3807]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3808]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3809]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x380a]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x380b]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x380c]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x380d]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x380e]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x380f]
-DUPEITEM = 0x37eb
+DUPEITEM = i_fx_blade_spirit_1
 
 [ItemDef 0x3818]
 CATEGORY = Miscellaneous
@@ -4696,72 +4705,72 @@ TYPE = t_spell
 DEFNAME = i_fx_poison_field
 
 [ItemDef 0x3915]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3916]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3917]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3918]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3919]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x391a]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x391b]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x391c]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x391d]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x391e]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x391f]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3920]
 CATEGORY = Animations
 SUBSECTION = Poison Field
 DESCRIPTION = @ North/South
 
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 //DEFNAME = i_fx_poison_field_ns // commented out by Converter 
 
 [ItemDef 0x3921]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3922]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3923]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3924]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3925]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3926]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3927]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3928]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3929]
-DUPEITEM = 0x3914
+DUPEITEM = i_fx_poison_field
 
 [ItemDef 0x3946]
 CATEGORY = Animations
@@ -4773,94 +4782,94 @@ TYPE = t_spell
 DEFNAME = i_fx_energy_field
 
 [ItemDef 0x3947]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3948]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3949]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x394a]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x394b]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x394c]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x394d]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x394e]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x394f]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3950]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3951]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3952]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3953]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3954]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3955]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3956]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3957]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3958]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3959]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x395a]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x395b]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x395c]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x395d]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x395e]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x395f]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3960]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3961]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3962]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3963]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3964]
-DUPEITEM = 0x3946
+DUPEITEM = i_fx_energy_field
 
 [ItemDef 0x3967]
 CATEGORY = Animations
@@ -4878,109 +4887,109 @@ layer = 30
 model = i_memory
 
 [ItemDef 0x3968]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3969]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x396a]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x396b]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x396c]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x396d]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x396e]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x396f]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3970]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3971]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3972]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3973]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3974]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3975]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3976]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3977]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3978]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3979]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x397a]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x397b]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x397c]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x397d]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x397e]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x397f]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3980]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3981]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3982]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3983]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3984]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3985]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3986]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3987]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3988]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x3989]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x398a]
-DUPEITEM = 0x3967
+DUPEITEM = i_fx_field_paralyze
 
 [ItemDef 0x398c]
 CATEGORY = Animations
@@ -4992,31 +5001,31 @@ TYPE = t_fire
 DEFNAME = i_fx_field_fire
 
 [ItemDef 0x398d]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x398e]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x398f]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3990]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3991]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3992]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3993]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3994]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3995]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3996]
 CATEGORY = Animations
@@ -5028,31 +5037,31 @@ TYPE = t_fire
 DEFNAME = i_fx_field_fire_ns
 
 [ItemDef 0x3997]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x3998]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x3999]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x399a]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x399b]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x399c]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x399d]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x399e]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x399f]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [CorpseDef 0x3d64]
 CATEGORY = Miscellaneous
@@ -5150,13 +5159,13 @@ DEFNAME = i_bench_5
 [ItemDef 0x3e00]
 DESCRIPTION = @ (w)
 
-DUPEITEM = 0x3dff
+DUPEITEM = i_bench_5
 
 [ItemDef 0x3e27]
-DUPEITEM = 0x398c
+DUPEITEM = i_fx_field_fire
 
 [ItemDef 0x3e31]
-DUPEITEM = 0x3996
+DUPEITEM = i_fx_field_fire_ns
 
 [ItemDef 0x3e3f]
 CATEGORY = Ship Parts
@@ -5172,10 +5181,10 @@ DESCRIPTION = Gang Plank
 
 TYPE = T_SHIP_PLANK
 TYPE = T_SHIP_SIDE_LOCKED
-//CATEGORY = Ship Parts // commented out by Converter 
-//DESCRIPTION = Ship Side // commented out by Converter 
-//SUBSECTION = Ship Side // commented out by Converter 
 //[ITEMDEF = 03e41] (sail tip and side piece) // commented out by Converter 
+//CATEGORY = Ship Parts // commented out by Converter 
+//SUBSECTION = Ship Side // commented out by Converter 
+//DESCRIPTION = Ship Side // commented out by Converter 
 
 [ItemDef 0x3e42]
 CATEGORY = Ship Parts
@@ -5221,47 +5230,47 @@ DEFNAME = i_ship_tillerman
 
 [ItemDef 0x3e4b]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e4c]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e4d]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e4e]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e4f]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e50]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e51]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e52]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e53]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e54]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e55]
 TYPE = T_SHIP_TILLER
-DUPEITEM = 0x3e4a
+DUPEITEM = i_ship_tillerman
 
 [ItemDef 0x3e56]
 DUPEITEM = 0x3e43

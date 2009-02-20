@@ -7,480 +7,480 @@ DESCRIPTION = @
 
 //DUPELIST = 01c61,01c62,01c63,01c64,01c65,01c66,01c67,01c68,01c69,01c6a,01c6b,01c6c,01c6d,01c6e,01c70,01c71,01c72,01c73,01c74,01c75,01c76,01c77,01c78,01c79,01c7a,01c7b,01c7c,01c7d,01c7e,01c7f,01c80,01c81,01c82,01c83,01c84,01c85,01c86,01c87,01c88,01c89,01c8a,01c8b,01c8c,01c8d,01c8e,01c8f,01c90,01c91,01c92,01c93,01c94,01c95,01c96,01c97,01c98,01c99,01c9a,01c9b,01c9c,01c9d,01c9e,01c9f,01ca0,01ca1,01ca2,01ca3,01ca4,01ca5,01ca6,01ca7,01ca8,01ca9,01caa,01cab,01cac,01cad,01cae,01caf,01cb0,01cb1,01cb2,01cb3,01cb4,01cb5,01cb6,01cb7,01cb8,01cb9,01cba,01cbb,01cbc,01cbd,01cbe,01cbf // commented out by Converter 
 WEIGHT = 420
-//RESOURCES = 42 i_stone_sand // commented out by Converter 
+RESOURCES = 42 i_stone_sand //some resources were fixed by converter 
 DEFNAME = i_sarcophagus
 
 [ItemDef 0x1c61]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c62]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c63]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c64]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c65]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c66]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c67]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c68]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c69]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c6a]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c6b]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c6c]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c6d]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c6e]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c6f]
 
 [ItemDef 0x1c70]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c71]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c72]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c73]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c74]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c75]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c76]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c77]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c78]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c79]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c7a]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c7b]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c7c]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c7d]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c7e]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c7f]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c80]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c81]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c82]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c83]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c84]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c85]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c86]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c87]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c88]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c89]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c8a]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c8b]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c8c]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c8d]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c8e]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c8f]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c90]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c91]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c92]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c93]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c94]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c95]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c96]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c97]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c98]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c99]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c9a]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c9b]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c9c]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c9d]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c9e]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1c9f]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca0]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca1]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca2]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca3]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca4]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca5]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca6]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca7]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca8]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1ca9]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1caa]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cab]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cac]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cad]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cae]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1caf]
 DESCRIPTION = @ Lid
 
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb0]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb1]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb2]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb3]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb4]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb5]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb6]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb7]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb8]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cb9]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cba]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cbb]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cbc]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cbd]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cbe]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cbf]
-DUPEITEM = 0x1c60
+DUPEITEM = i_sarcophagus
 
 [ItemDef 0x1cc8]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cc9]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cca]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1ccb]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1ccc]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1ccd]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cce]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1ccf]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd0]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd1]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd2]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd3]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd4]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd5]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd6]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd7]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd8]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cd9]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cda]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cdb]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cdc]
-DUPEITEM = 0x1cc7
+DUPEITEM = i_blood_tile
 
 [ItemDef 0x1cf2]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf3]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf4]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf5]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf6]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf7]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf8]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cf9]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cfa]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cfb]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cfc]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cfd]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cfe]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1cff]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d00]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d01]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d02]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d03]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d04]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d05]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d06]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d07]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d08]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d09]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d0a]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d0b]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d0c]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d0d]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d0e]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d0f]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d10]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d11]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d12]
-DUPEITEM = 0x1cf1
+DUPEITEM = i_blood_2
 
 [ItemDef 0x1d13]
 CATEGORY = Decoration - Dungeons and The Dead
@@ -489,176 +489,176 @@ DESCRIPTION = @
 
 //DUPELIST = 01d14,01d15,01d16,01d17,01d18,01d19,01d1a,01d1b,01d1c,01d1d,01d1e,01d1f,01d20,01d21,01d22,01d23,01d24,01d25,01d26,01d27,01d28,01d29,01d2a,01d2b,01d2c,01d2d,01d2e,01d2f,01d30,01d31,01d32,01d33,01d34,01d35,01d36,01d37,01d38,01d39,01d3a,01d3b,01d3c,01d3d,01d3e,01d3f,01d40,01d41,01d42,01d43,01d44,01d45,01d46,01d47,01d48,01d49,01d4a,01d4b // commented out by Converter 
 WEIGHT = 320
-//RESOURCES = 32 i_BOARD, 2 i_NAILS, i_BODY_SHROUDED // commented out by Converter 
+RESOURCES = 32 i_board,  2 i_nails,  i_body_shrouded //some resources were fixed by converter 
 DEFNAME = i_casket_wood_2_with_body
 
 [ItemDef 0x1d14]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d15]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d16]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d17]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d18]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d19]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d1a]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d1b]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d1c]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d1d]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d1e]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d1f]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d20]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d21]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d22]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d23]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d24]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d25]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d26]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d27]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d28]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d29]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d2a]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d2b]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d2c]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d2d]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d2e]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d2f]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d30]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d31]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d32]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d33]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d34]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d35]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d36]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d37]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d38]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d39]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d3a]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d3b]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d3c]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d3d]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d3e]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d3f]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d40]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d41]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d42]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d43]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d44]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d45]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d46]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d47]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d48]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d49]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d4a]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d4b]
-DUPEITEM = 0x1d13
+DUPEITEM = i_casket_wood_2_with_body
 
 [ItemDef 0x1d4c]
 CATEGORY = Decoration - Dungeons and The Dead
@@ -667,191 +667,191 @@ DESCRIPTION = @
 
 //DUPELIST = 01d4d,01d4e,01d4f,01d50,01d51,01d52,01d53,01d54,01d55,01d56,01d57,01d58,01d59,01d5a,01d5b,01d5c,01d5d,01d5e,01d5f,01d60,01d61,01d62,01d63,01d64,01d65,01d66,01d67,01d68,01d69,01d6a,01d6b,01d6c,01d6d,01d6e,01d6f,01d70,01d71,01d72,01d73,01d74,01d75,01d76,01d77,01d78,01d79,01d7a,01d7b,01d7c,01d7d,01d7e,01d7f,01d80,01d81,01d82,01d83,01d84,01d85,01d86,01d87,01d88,01d89 // commented out by Converter 
 WEIGHT = 320
-//RESOURCES = 32 i_BOARD, 2 i_NAILS, i_SKELETON // commented out by Converter 
+RESOURCES = 32 i_board,  2 i_nails,  i_skeleton //some resources were fixed by converter 
 DEFNAME = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d4d]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d4e]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d4f]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d50]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d51]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d52]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d53]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d54]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d55]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d56]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d57]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d58]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d59]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d5a]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d5b]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d5c]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d5d]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d5e]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d5f]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d60]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d61]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d62]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d63]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d64]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d65]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d66]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d67]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d68]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d69]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d6a]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d6b]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d6c]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d6d]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d6e]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d6f]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d70]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d71]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d72]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d73]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d74]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d75]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d76]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d77]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d78]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d79]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d7a]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d7b]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d7c]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d7d]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d7e]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d7f]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d80]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d81]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d82]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d83]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d84]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d85]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d86]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d87]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d88]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d89]
-DUPEITEM = 0x1d4c
+DUPEITEM = i_casket_wood_2_with_skeleton
 
 [ItemDef 0x1d8a]
 CATEGORY = Decoration - Dungeons and The Dead
@@ -859,17 +859,17 @@ SUBSECTION = Body in wrappings
 DESCRIPTION = @
 
 //DUPELIST = 01d8b,01d8c,01d8d // commented out by Converter 
-//RESOURCES = 7 i_CLOTH, i_corpse_blank // commented out by Converter 
+RESOURCES = 7 i_cloth,  i_corpse_blank //some resources were fixed by converter 
 DEFNAME = i_BODY_SHROUDED
 
 [ItemDef 0x1d8b]
-DUPEITEM = 0x1d8a
+DUPEITEM = i_BODY_SHROUDED
 
 [ItemDef 0x1d8c]
-DUPEITEM = 0x1d8a
+DUPEITEM = i_BODY_SHROUDED
 
 [ItemDef 0x1d8d]
-DUPEITEM = 0x1d8a
+DUPEITEM = i_BODY_SHROUDED
 
 [ItemDef 0x1d8e]
 CATEGORY = Decoration - Dungeons and The Dead
@@ -878,19 +878,19 @@ DESCRIPTION = @
 
 //DUPELIST = 01d8f,01d90,01d91 // commented out by Converter 
 WEIGHT = 180
-//RESOURCES = i_bone_skull, i_bone_jaw, 16 i_BONE, i_bone_pelvis, i_bone_ribcage, 10 i_BONE_SHARDS, i_bone_spine // commented out by Converter 
+RESOURCES = i_bone_skull,  i_bone_jaw,  16 i_bone,  i_bone_pelvis,  i_bone_ribcage,  10 i_bone_shards,  i_bone_spine //some resources were fixed by converter 
 DEFNAME = i_skeleton
 
 [ItemDef 0x1d8f]
-DUPEITEM = 0x1d8e
+DUPEITEM = i_skeleton
 //DEFNAME = i_skeleton_sw_part_2 // commented out by Converter 
 
 [ItemDef 0x1d90]
-DUPEITEM = 0x1d8e
+DUPEITEM = i_skeleton
 //DEFNAME = i_skeleton_se_part_1 // commented out by Converter 
 
 [ItemDef 0x1d91]
-DUPEITEM = 0x1d8e
+DUPEITEM = i_skeleton
 //DEFNAME = i_skeleton_se_part_2 // commented out by Converter 
 
 [ItemDef 0x1d92]
@@ -904,16 +904,16 @@ TYPE = T_BLOOD
 DEFNAME = i_blood_drips
 
 [ItemDef 0x1d93]
-DUPEITEM = 0x1d92
+DUPEITEM = i_blood_drips
 
 [ItemDef 0x1d94]
-DUPEITEM = 0x1d92
+DUPEITEM = i_blood_drips
 
 [ItemDef 0x1d95]
-DUPEITEM = 0x1d92
+DUPEITEM = i_blood_drips
 
 [ItemDef 0x1d96]
-DUPEITEM = 0x1d92
+DUPEITEM = i_blood_drips
 
 [EquippableDef 0x1d97]
 CATEGORY = Miscellaneous
@@ -923,13 +923,13 @@ DESCRIPTION = Ankh of Sacrifice
 TYPE = t_light_lit
 //DUPELIST = 01d98,01e5c,01e5d // commented out by Converter 
 WEIGHT = 300
-//RESOURCES = 10 i_rock_plain, 3 i_BLOOD // commented out by Converter 
+RESOURCES = 10 i_rock_plain,  3 i_blood //some resources were fixed by converter 
 layer = 0 //Set by Converter 
 DEFNAME = i_ankh_sacrifice
 //TDATA4 = i_ankh_sacrifice // commented out by Converter 
 
 [ItemDef 0x1d98]
-DUPEITEM = 0x1d97
+DUPEITEM = i_ankh_sacrifice
 
 [ItemDef 0x1d99]
 CATEGORY = Decoration - Dungeons and The Dead
@@ -938,41 +938,41 @@ DESCRIPTION = Spike Trap
 
 //DUPELIST = 01d9a,01d9b,01d9c,01d9d,01d9e // commented out by Converter 
 WEIGHT = 200
-//RESOURCES = 20 i_ingot_iron, 2 i_BLOOD // commented out by Converter 
+RESOURCES = 20 i_ingot_iron,  2 i_blood //some resources were fixed by converter 
 DEFNAME = i_TRAP_SPIKE_LARGE
 
 [ItemDef 0x1d9a]
-DUPEITEM = 0x1d99
+DUPEITEM = i_TRAP_SPIKE_LARGE
 
 [ItemDef 0x1d9b]
-DUPEITEM = 0x1d99
+DUPEITEM = i_TRAP_SPIKE_LARGE
 
 [ItemDef 0x1d9c]
-DUPEITEM = 0x1d99
+DUPEITEM = i_TRAP_SPIKE_LARGE
 
 [ItemDef 0x1d9d]
-DUPEITEM = 0x1d99
+DUPEITEM = i_TRAP_SPIKE_LARGE
 
 [ItemDef 0x1d9e]
-DUPEITEM = 0x1d99
+DUPEITEM = i_TRAP_SPIKE_LARGE
 
 [ItemDef 0x1dad]
-DUPEITEM = 0x1d9f
+DUPEITEM = i_flesh_torso
 
 [ItemDef 0x1dae]
-DUPEITEM = 0x1da0
+DUPEITEM = i_flesh_head_2
 
 [ItemDef 0x1daf]
-DUPEITEM = 0x1da1
+DUPEITEM = i_flesh_left_arm
 
 [ItemDef 0x1db0]
-DUPEITEM = 0x1da2
+DUPEITEM = i_flesh_right_arm
 
 [ItemDef 0x1db1]
-DUPEITEM = 0x1da3
+DUPEITEM = i_flesh_left_leg
 
 [ItemDef 0x1db2]
-DUPEITEM = 0x1da4
+DUPEITEM = i_flesh_right_leg
 
 [ItemDef 0x1db3]
 CATEGORY = Decoration - Furniture
@@ -981,17 +981,17 @@ DESCRIPTION = Broken Barrel
 
 //DUPELIST = 01db4,01db5,01db6 // commented out by Converter 
 WEIGHT = 210
-//RESOURCES = 16 i_BOARD, 2 i_BARREL_HOOP, I_BARREL // commented out by Converter 
+RESOURCES = 16 i_board,  2 i_barrel_hoop,  i_barrel //some resources were fixed by converter 
 DEFNAME = i_barrel_broken
 
 [ItemDef 0x1db4]
-DUPEITEM = 0x1db3
+DUPEITEM = i_barrel_broken
 
 [ItemDef 0x1db5]
-DUPEITEM = 0x1db3
+DUPEITEM = i_barrel_broken
 
 [ItemDef 0x1db6]
-DUPEITEM = 0x1db3
+DUPEITEM = i_barrel_broken
 
 [ItemDef 0x1db7]
 CATEGORY = Decoration - Furniture
@@ -1016,24 +1016,24 @@ DESCRIPTION = Sandstone Table
 TYPE = t_table
 //DUPELIST = 01dbc,01dbe,01dbf // commented out by Converter 
 WEIGHT = 600
-//RESOURCES = 30 i_stone_sand // commented out by Converter 
+RESOURCES = 30 i_stone_sand //some resources were fixed by converter 
 DEFNAME = i_table_sandstone_end
 
 [ItemDef 0x1dbc]
-DUPEITEM = 0x1dbb
+DUPEITEM = i_table_sandstone_end
 
 [ItemDef 0x1dbd]
 //DUPELIST = 01dc0 // commented out by Converter 
 DEFNAME = i_table_sandstone_ext
 
 [ItemDef 0x1dbe]
-DUPEITEM = 0x1dbb
+DUPEITEM = i_table_sandstone_end
 
 [ItemDef 0x1dbf]
-DUPEITEM = 0x1dbb
+DUPEITEM = i_table_sandstone_end
 
 [ItemDef 0x1dc0]
-DUPEITEM = 0x1dbd
+DUPEITEM = i_table_sandstone_ext
 
 [ItemDef 0x1dc1]
 CATEGORY = Decoration - Furniture
@@ -1043,24 +1043,24 @@ DESCRIPTION = Marble Table
 TYPE = t_table
 //DUPELIST = 01dc2,01dc4,01dc5 // commented out by Converter 
 WEIGHT = 600
-//RESOURCES = 30 i_MARBLE // commented out by Converter 
+RESOURCES = 30 i_marble //some resources were fixed by converter 
 DEFNAME = i_table_marble_end
 
 [ItemDef 0x1dc2]
-DUPEITEM = 0x1dc1
+DUPEITEM = i_table_marble_end
 
 [ItemDef 0x1dc3]
 //DUPELIST = 01dc6 // commented out by Converter 
 DEFNAME = i_table_marble_ext
 
 [ItemDef 0x1dc4]
-DUPEITEM = 0x1dc1
+DUPEITEM = i_table_marble_end
 
 [ItemDef 0x1dc5]
-DUPEITEM = 0x1dc1
+DUPEITEM = i_table_marble_end
 
 [ItemDef 0x1dc6]
-DUPEITEM = 0x1dc3
+DUPEITEM = i_table_marble_ext
 
 [ItemDef 0x1dc7]
 CATEGORY = Decoration - Furniture
@@ -1070,12 +1070,12 @@ DESCRIPTION = Sandstone Bench
 TYPE = T_CHAIR
 //DUPELIST = 01dc8,01dca,01dcb // commented out by Converter 
 WEIGHT = 120
-//RESOURCES = 6 i_stone_sand // commented out by Converter 
+RESOURCES = 6 i_stone_sand //some resources were fixed by converter 
 //FLIP = 1 // commented out by Converter 
 DEFNAME = i_bench_sandstone_end
 
 [ItemDef 0x1dc8]
-DUPEITEM = 0x1dc7
+DUPEITEM = i_bench_sandstone_end
 
 [ItemDef 0x1dc9]
 TYPE = t_chair
@@ -1083,13 +1083,13 @@ TYPE = t_chair
 DEFNAME = i_bench_sandstone_ext
 
 [ItemDef 0x1dca]
-DUPEITEM = 0x1dc7
+DUPEITEM = i_bench_sandstone_end
 
 [ItemDef 0x1dcb]
-DUPEITEM = 0x1dc7
+DUPEITEM = i_bench_sandstone_end
 
 [ItemDef 0x1dcc]
-DUPEITEM = 0x1dc9
+DUPEITEM = i_bench_sandstone_ext
 
 [ItemDef 0x1dcd]
 CATEGORY = Decoration - Furniture
@@ -1099,12 +1099,12 @@ DESCRIPTION = Marble Bench
 TYPE = T_CHAIR
 //DUPELIST = 01dce,01dd0,01dd1 // commented out by Converter 
 WEIGHT = 120
-//RESOURCES = 6 i_MARBLE // commented out by Converter 
+RESOURCES = 6 i_marble //some resources were fixed by converter 
 //FLIP = 1 // commented out by Converter 
 DEFNAME = i_bench_marble_end
 
 [ItemDef 0x1dce]
-DUPEITEM = 0x1dcd
+DUPEITEM = i_bench_marble_end
 
 [ItemDef 0x1dcf]
 TYPE = t_chair
@@ -1112,13 +1112,13 @@ TYPE = t_chair
 DEFNAME = i_bench_marble_ext
 
 [ItemDef 0x1dd0]
-DUPEITEM = 0x1dcd
+DUPEITEM = i_bench_marble_end
 
 [ItemDef 0x1dd1]
-DUPEITEM = 0x1dcd
+DUPEITEM = i_bench_marble_end
 
 [ItemDef 0x1dd2]
-DUPEITEM = 0x1dcf
+DUPEITEM = i_bench_marble_ext
 
 [ItemDef 0x1dd3]
 CATEGORY = Decoration - Carpets & Rugs
@@ -1127,89 +1127,89 @@ DESCRIPTION = @
 
 //DUPELIST = 01dd4,01dd5,01dd6,01dd7,01dd8,01dd9,01dda,01ddb,01ddc,01ddd,01dde,01ddf,01de0,01de1,01de2,01de3,01de4,01de5,01de6,01de7,01de8,01de9,01dea,01deb,01dec,01ded,01dee // commented out by Converter 
 WEIGHT = 20
-//RESOURCES = 2 i_CLOTH // commented out by Converter 
+RESOURCES = 2 i_cloth //some resources were fixed by converter 
 DEFNAME = i_rug_worn
 
 [ItemDef 0x1dd4]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dd5]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dd6]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dd7]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dd8]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dd9]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dda]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1ddb]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1ddc]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1ddd]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dde]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1ddf]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de0]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de1]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de2]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de3]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de4]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de5]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de6]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de7]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de8]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1de9]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dea]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1deb]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dec]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1ded]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1dee]
-DUPEITEM = 0x1dd3
+DUPEITEM = i_rug_worn
 
 [ItemDef 0x1def]
 CATEGORY = Decoration - Carpets & Rugs
@@ -1258,13 +1258,13 @@ DUPEITEM = 0x1def
 DUPEITEM = 0x1def
 
 [ItemDef 0x1dfe]
-DUPEITEM = 0x1dfd
+DUPEITEM = i_dirt
 
 [ItemDef 0x1dff]
-DUPEITEM = 0x1dfd
+DUPEITEM = i_dirt
 
 [ItemDef 0x1e00]
-DUPEITEM = 0x1dfd
+DUPEITEM = i_dirt
 
 [ItemDef 0x1e01]
 CATEGORY = Ground Tiles
@@ -1272,7 +1272,7 @@ SUBSECTION = Mud and Footprints
 DESCRIPTION = Mud
 
 WEIGHT = 10
-//RESOURCES = 1 i_DIRT, i_WATER // commented out by Converter 
+RESOURCES = 1 i_dirt,  i_water //some resources were fixed by converter 
 DEFNAME = i_mud
 
 [ItemDef 0x1e02]
@@ -1292,7 +1292,6 @@ CATEGORY = Ground Tiles
 SUBSECTION = Mud and Footprints
 DESCRIPTION = Footprints
 
-defname=i_footstep
 
 [ItemDef 0x1e05]
 CATEGORY = Ground Tiles
@@ -1340,7 +1339,7 @@ SUBSECTION = Potted Cactuses
 DESCRIPTION = Cactus 1
 
 WEIGHT = 80
-//RESOURCES = i_POT, i_PLANT_CACTUS // commented out by Converter 
+RESOURCES = i_pot,  i_plant_cactus //some resources were fixed by converter 
 DEFNAME = i_PLANT_CACTUS_POTTED
 
 [ItemDef 0x1e10]
@@ -1349,7 +1348,7 @@ SUBSECTION = Potted Cactuses
 DESCRIPTION = Cactus 2
 
 WEIGHT = 80
-//RESOURCES = i_POT, i_PLANT_CACTUS // commented out by Converter 
+RESOURCES = i_pot,  i_plant_cactus //some resources were fixed by converter 
 DEFNAME = i_PLANT_CACTUS_POTTED_2
 
 [ItemDef 0x1e11]
@@ -1358,7 +1357,7 @@ SUBSECTION = Potted Cactuses
 DESCRIPTION = Cactus 3
 
 WEIGHT = 80
-//RESOURCES = i_POT, i_PLANT_CACTUS // commented out by Converter 
+RESOURCES = i_pot,  i_plant_cactus //some resources were fixed by converter 
 DEFNAME = i_PLANT_CACTUS_POTTED_3
 
 [ItemDef 0x1e12]
@@ -1367,7 +1366,7 @@ SUBSECTION = Potted Cactuses
 DESCRIPTION = Cactus 4
 
 WEIGHT = 80
-//RESOURCES = i_POT, i_PLANT_CACTUS // commented out by Converter 
+RESOURCES = i_pot,  i_plant_cactus //some resources were fixed by converter 
 DEFNAME = i_PLANT_CACTUS_POTTED_4
 
 [ItemDef 0x1e13]
@@ -1376,7 +1375,7 @@ SUBSECTION = Potted Cactuses
 DESCRIPTION = Cactus 5
 
 WEIGHT = 80
-//RESOURCES = i_POT, i_PLANT_CACTUS // commented out by Converter 
+RESOURCES = i_pot,  i_plant_cactus //some resources were fixed by converter 
 DEFNAME = i_PLANT_CACTUS_POTTED_5
 
 [ItemDef 0x1e14]
@@ -1385,17 +1384,17 @@ SUBSECTION = Potted Cactuses
 DESCRIPTION = Cactus 6
 
 WEIGHT = 80
-//RESOURCES = i_POT, i_PLANT_CACTUS // commented out by Converter 
+RESOURCES = i_pot,  i_plant_cactus //some resources were fixed by converter 
 DEFNAME = i_PLANT_CACTUS_POTTED_6
 
 [ItemDef 0x1e16]
-DUPEITEM = 0x1e15
+DUPEITEM = i_fish_raw_whole
 
 [ItemDef 0x1e18]
-DUPEITEM = 0x1e17
+DUPEITEM = i_fish_raw
 
 [ItemDef 0x1e1a]
-DUPEITEM = 0x1e19
+DUPEITEM = i_fish_raw_head
 
 [ItemDef 0x1e20]
 CATEGORY = Items by Professions
@@ -1404,7 +1403,7 @@ DESCRIPTION = Red Book (Open and Face Down)
 
 TYPE = T_BOOK
 WEIGHT = 20
-//RESOURCES = 20 i_PAPER, i_THREAD, i_HIDE // commented out by Converter 
+RESOURCES = 20 i_paper,  i_thread,  i_hide //some resources were fixed by converter 
 DEFNAME = i_BOOK_OPEN_red
 
 [ItemDef 0x1e21]
@@ -1413,7 +1412,7 @@ SUBSECTION = Scribe
 DESCRIPTION = Brown Books (Open and Face Down)
 
 WEIGHT = 40
-//RESOURCES = 2 i_BOOK_OPEN // commented out by Converter 
+RESOURCES = 2 i_book_open //some resources were fixed by converter 
 DEFNAME = i_BOOK_OPEN_two_brown
 
 [ItemDef 0x1e22]
@@ -1422,7 +1421,7 @@ SUBSECTION = Scribe
 DESCRIPTION = Red Books (Open and Face Up)
 
 WEIGHT = 40
-//RESOURCES = 2 i_BOOK_OPEN // commented out by Converter 
+RESOURCES = 2 i_book_open //some resources were fixed by converter 
 DEFNAME = i_BOOK_OPEN_two_red
 
 [ItemDef 0x1e23]
@@ -1431,7 +1430,7 @@ SUBSECTION = Scribe
 DESCRIPTION = Blue Books (Open and Face Up)
 
 WEIGHT = 40
-//RESOURCES = 2 i_BOOK_OPEN // commented out by Converter 
+RESOURCES = 2 i_book_open //some resources were fixed by converter 
 DEFNAME = i_BOOK_OPEN_two_blue
 
 [ItemDef 0x1e24]
@@ -1440,7 +1439,7 @@ SUBSECTION = Scribe
 DESCRIPTION = Stack of Books
 
 WEIGHT = 40
-//RESOURCES = 2 i_BOOK_OPEN // commented out by Converter 
+RESOURCES = 2 i_book_open //some resources were fixed by converter 
 DEFNAME = i_BOOK_OPEN_3_red
 
 [ItemDef 0x1e25]
@@ -1449,7 +1448,7 @@ SUBSECTION = Scribe
 DESCRIPTION = Stack of Books
 
 WEIGHT = 120
-//RESOURCES = 6 i_BOOK_OPEN // commented out by Converter 
+RESOURCES = 6 i_book_open //some resources were fixed by converter 
 DEFNAME = i_BOOK_OPEN_two_green
 
 [ItemDef 0x1e26]
@@ -1459,7 +1458,7 @@ DESCRIPTION = @
 
 //DUPELIST = 01e28 // commented out by Converter 
 WEIGHT = 40
-//RESOURCES = 2 i_LOG // commented out by Converter 
+RESOURCES = 2 i_log //some resources were fixed by converter 
 DEFNAME = i_oar_part_1
 
 [ItemDef 0x1e27]
@@ -1469,7 +1468,7 @@ DESCRIPTION = @
 
 //DUPELIST = 01e29 // commented out by Converter 
 WEIGHT = 30
-//RESOURCES = 1 i_LOG, i_BOARD // commented out by Converter 
+RESOURCES = 1 i_log,  i_board //some resources were fixed by converter 
 DEFNAME = i_oar_part_2
 
 [ItemDef 0x1e28]
@@ -1477,14 +1476,14 @@ CATEGORY = Ship Parts
 SUBSECTION = Oar
 DESCRIPTION = @
 
-DUPEITEM = 0x1e26
+DUPEITEM = i_oar_part_1
 
 [ItemDef 0x1e29]
 CATEGORY = Ship Parts
 SUBSECTION = Oar
 DESCRIPTION = @
 
-DUPEITEM = 0x1e27
+DUPEITEM = i_oar_part_2
 
 [ItemDef 0x1e2a]
 CATEGORY = Ship Parts
@@ -1499,21 +1498,21 @@ CATEGORY = Ship Parts
 SUBSECTION = Oar
 DESCRIPTION = @s
 
-DUPEITEM = 0x1e2a
+DUPEITEM = i_OAR_DOUBLE
 
 [ItemDef 0x1e5c]
-DUPEITEM = 0x1d97
+DUPEITEM = i_ankh_sacrifice
 //DEFNAME = i_ankh_sacrifice_2 // commented out by Converter 
 
 [ItemDef 0x1e5d]
-DUPEITEM = 0x1d97
+DUPEITEM = i_ankh_sacrifice
 
 [ItemDef 0x1e94]
 CATEGORY = Items by Professions
 SUBSECTION = Cook
 DESCRIPTION = Chicken on a Spit
 
-//RESOURCES = 1 i_CHICKEN_PLUCKED, i_SPIT // commented out by Converter 
+RESOURCES = 1 i_chicken_plucked,  i_spit //some resources were fixed by converter 
 DEFNAME = i_CHICKEN_SPITTED
 
 [ItemDef 0x1e95]
@@ -1521,7 +1520,7 @@ CATEGORY = Items by Professions
 SUBSECTION = Cook
 DESCRIPTION = Rabbit on a Spit
 
-//RESOURCES = 1 i_RABBIT_SKINNED, i_SPIT // commented out by Converter 
+RESOURCES = 1 i_rabbit_skinned,  i_spit //some resources were fixed by converter 
 DEFNAME = i_RABBIT_SPITTED
 
 [ItemDef 0x1e96]
@@ -1530,7 +1529,7 @@ SUBSECTION = Cook
 DESCRIPTION = Spit
 
 WEIGHT = 30
-//RESOURCES = 2 i_ingot_iron // commented out by Converter 
+RESOURCES = 2 i_ingot_iron //some resources were fixed by converter 
 DEFNAME = i_spit
 
 [ItemDef 0x1e97]
@@ -1539,7 +1538,7 @@ SUBSECTION = Cook
 DESCRIPTION = Chicken on a Spit
 
 WEIGHT = 50
-//RESOURCES = 1 i_CHICKEN_PLUCKED, I_SPIT // commented out by Converter 
+RESOURCES = 1 i_chicken_plucked,  i_spit //some resources were fixed by converter 
 DEFNAME = i_CHICKEN_SPITTED_2
 
 [ItemDef 0x1e98]
@@ -1548,7 +1547,7 @@ SUBSECTION = Cook
 DESCRIPTION = Rabbit on a Spit
 
 WEIGHT = 50
-//RESOURCES = 1 i_RABBIT_SKINNED, I_SPIT // commented out by Converter 
+RESOURCES = 1 i_rabbit_skinned,  i_spit //some resources were fixed by converter 
 DEFNAME = i_RABBIT_SPITTED_2
 
 [ItemDef 0x1e99]
@@ -1557,7 +1556,7 @@ SUBSECTION = Cook
 DESCRIPTION = Spit
 
 WEIGHT = 30
-//RESOURCES = 2 i_ingot_iron // commented out by Converter 
+RESOURCES = 2 i_ingot_iron //some resources were fixed by converter 
 DEFNAME = i_spit_2
 
 [ItemDef 0x1e9a]
@@ -1570,7 +1569,7 @@ DEFNAME = i_hook_and_pulley
 //RESOURCES3 = 1 i_PULLEY, i_ROPE, i_HOOK // commented out by Converter 
 
 [ItemDef 0x1e9b]
-DUPEITEM = 0x1e9a
+DUPEITEM = i_hook_and_pulley
 
 [ItemDef 0x1e9c]
 CATEGORY = Buildings - Other
@@ -1582,13 +1581,13 @@ DEFNAME = i_pullies
 //RESOURCES3 = 2 i_PULLEY, i_ROPE // commented out by Converter 
 
 [ItemDef 0x1e9d]
-DUPEITEM = 0x1e9c
+DUPEITEM = i_pullies
 
 [ItemDef 0x1e9e]
-DUPEITEM = 0x1e9c
+DUPEITEM = i_pullies
 
 [ItemDef 0x1e9f]
-DUPEITEM = 0x1e9c
+DUPEITEM = i_pullies
 
 [ItemDef 0x1ea0]
 CATEGORY = Buildings - Other
@@ -1597,14 +1596,14 @@ DESCRIPTION = Rope
 
 //DUPELIST = 01ea1,01ea2 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 1 i_ROPE // commented out by Converter 
+RESOURCES = 1 i_rope //some resources were fixed by converter 
 DEFNAME = i_rope_bundle
 
 [ItemDef 0x1ea1]
-DUPEITEM = 0x1ea0
+DUPEITEM = i_rope_bundle
 
 [ItemDef 0x1ea2]
-DUPEITEM = 0x1ea0
+DUPEITEM = i_rope_bundle
 
 [ItemDef 0x1ea7]
 CATEGORY = Provisions - GM Items
@@ -1622,29 +1621,29 @@ DESCRIPTION = Winch
 
 //DUPELIST = 01ea9,01eaa,01eab,01eac,01ead,01eae,01eaf // commented out by Converter 
 WEIGHT = 170
-//RESOURCES = 5 i_ROPE, 2 I_GEARS, 20 i_ingot_iron // commented out by Converter 
+RESOURCES = 5 i_rope,  2 i_gears,  20 i_ingot_iron //some resources were fixed by converter 
 DEFNAME = i_winch
 
 [ItemDef 0x1ea9]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1eaa]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1eab]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1eac]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1ead]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1eae]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1eaf]
-DUPEITEM = 0x1ea8
+DUPEITEM = i_winch
 
 [ItemDef 0x1eb0]
 CATEGORY = Items by Professions
@@ -1652,7 +1651,7 @@ SUBSECTION = Cook
 DESCRIPTION = Burned Food
 
 WEIGHT = 10
-//RESOURCES = 1 i_ribs_raw // commented out by Converter 
+RESOURCES = 1 i_ribs_raw //some resources were fixed by converter 
 DEFNAME = i_ribs_BURNED
 
 [ItemDef 0x1eb1]
@@ -1662,17 +1661,17 @@ DESCRIPTION = Barrel Staves
 
 //DUPELIST = 01eb2,01eb3,01eb4 // commented out by Converter 
 WEIGHT = 50
-//RESOURCES = 5 i_BOARD // commented out by Converter 
+RESOURCES = 5 i_board //some resources were fixed by converter 
 DEFNAME = i_barrel_staves
 
 [ItemDef 0x1eb2]
-DUPEITEM = 0x1eb1
+DUPEITEM = i_barrel_staves
 
 [ItemDef 0x1eb3]
-DUPEITEM = 0x1eb1
+DUPEITEM = i_barrel_staves
 
 [ItemDef 0x1eb4]
-DUPEITEM = 0x1eb1
+DUPEITEM = i_barrel_staves
 
 [ItemDef 0x1ebd]
 CATEGORY = Items by Professions
@@ -1696,35 +1695,35 @@ TYPE = T_CROPS
 DEFNAME = i_crop_wheat1
 
 [ItemDef 0x1ebf]
-DUPEITEM = 0x1ebe
+DUPEITEM = i_crop_wheat1
 
 [ItemDef 0x1ec0]
 CATEGORY = Items by Professions
 SUBSECTION = Thief
 DESCRIPTION = Pickpocket Dip (w)
 
-DUPEITEM = 0x1e2c
+DUPEITEM = i_pickpocket_dip
 //DEFNAME = i_pickpocket_dip_n // commented out by Converter 
 
 [ItemDef 0x1ec1]
-DUPEITEM = 0x1e2c
+DUPEITEM = i_pickpocket_dip
 
 [ItemDef 0x1ec2]
-DUPEITEM = 0x1e2c
+DUPEITEM = i_pickpocket_dip
 
 [ItemDef 0x1ec3]
 CATEGORY = Items by Professions
 SUBSECTION = Thief
 DESCRIPTION = Pickpocket Dip (n)
 
-DUPEITEM = 0x1e2c
+DUPEITEM = i_pickpocket_dip
 //DEFNAME = i_pickpocket_dip_w // commented out by Converter 
 
 [ItemDef 0x1ec4]
-DUPEITEM = 0x1e2c
+DUPEITEM = i_pickpocket_dip
 
 [ItemDef 0x1ec5]
-DUPEITEM = 0x1e2c
+DUPEITEM = i_pickpocket_dip
 
 [ItemDef 0x1ec6]
 CATEGORY = Animations
@@ -1747,7 +1746,7 @@ CATEGORY = Buildings - Other
 SUBSECTION = Stone Pylon
 DESCRIPTION = Dark @
 
-//RESOURCES = 1 i_rock_plain // commented out by Converter 
+RESOURCES = 1 i_rock_plain //some resources were fixed by converter 
 DEFNAME = i_PYLON_STONE
 
 [ItemDef 0x1ecb]
@@ -1755,7 +1754,7 @@ CATEGORY = Buildings - Other
 SUBSECTION = Stone Pylon
 DESCRIPTION = Light @
 
-//RESOURCES = 1 i_rock_plain // commented out by Converter 
+RESOURCES = 1 i_rock_plain //some resources were fixed by converter 
 DEFNAME = i_PYLON_STONE_LIGHT
 
 [ItemDef 0x1ecc]
@@ -1763,7 +1762,7 @@ CATEGORY = Buildings - Other
 SUBSECTION = Stone Pylon
 DESCRIPTION = Sandstone Pylon
 
-//RESOURCES = 1 i_stone_sand // commented out by Converter 
+RESOURCES = 1 i_stone_sand //some resources were fixed by converter 
 DEFNAME = i_PYLON_STONE_SAND
 
 [ItemDef 0x1ecd]
@@ -1774,14 +1773,14 @@ DESCRIPTION = Communication Crystal (green)
 NAME = "Communication Crystal"
 TYPE = T_COMM_CRYSTAL
 //DUPELIST = 01ece,01ecf // commented out by Converter 
-//RESOURCES = 10 i_GEM_EMERALD // commented out by Converter 
+RESOURCES = 10 i_gem_emerald //some resources were fixed by converter 
 DEFNAME = i_crystal_green
 
 [ItemDef 0x1ece]
-DUPEITEM = 0x1ecd
+DUPEITEM = i_crystal_green
 
 [ItemDef 0x1ecf]
-DUPEITEM = 0x1ecd
+DUPEITEM = i_crystal_green
 
 [ItemDef 0x1ed0]
 CATEGORY = Provisions - Miscellaneous
@@ -1791,14 +1790,14 @@ DESCRIPTION = Communication Crystal (red)
 NAME = "Communication Crystal"
 TYPE = T_COMM_CRYSTAL
 //DUPELIST = 01ed1,01ed2 // commented out by Converter 
-//RESOURCES = 10 i_GEM_RUBY // commented out by Converter 
+RESOURCES = 10 i_gem_ruby //some resources were fixed by converter 
 DEFNAME = i_crystal_red
 
 [ItemDef 0x1ed1]
-DUPEITEM = 0x1ed0
+DUPEITEM = i_crystal_red
 
 [ItemDef 0x1ed2]
-DUPEITEM = 0x1ed0
+DUPEITEM = i_crystal_red
 
 [ItemDef 0x1ed9]
 CATEGORY = Animations
@@ -1840,59 +1839,59 @@ DESCRIPTION = @
 DEFNAME = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee3]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee4]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee5]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee6]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee7]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee8]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ee9]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1eea]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1eeb]
 CATEGORY = Animations
 SUBSECTION = Magical Door 3
 DESCRIPTION = @
 
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1eec]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1eed]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1eee]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1eef]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ef0]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ef1]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ef2]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ef3]
-DUPEITEM = 0x1ee2
+DUPEITEM = i_DOOR_MAGICAL
 
 [ItemDef 0x1ef4]
 CATEGORY = Animations
@@ -1972,13 +1971,13 @@ DEFNAME = i_rune_marker
 //VALUE = {16 20} // commented out by Converter 
 
 [ItemDef 0x1f15]
-DUPEITEM = 0x1f14
+DUPEITEM = i_rune_marker
 
 [ItemDef 0x1f16]
-DUPEITEM = 0x1f14
+DUPEITEM = i_rune_marker
 
 [ItemDef 0x1f17]
-DUPEITEM = 0x1f14
+DUPEITEM = i_rune_marker
 
 [ItemDef 0x1f18]
 CATEGORY = Decoration - Wall Carvings & Statues
@@ -1995,10 +1994,10 @@ DESCRIPTION = @
 DEFNAME = i_crystal_green_big
 
 [ItemDef 0x1f1a]
-DUPEITEM = 0x1f19
+DUPEITEM = i_crystal_green_big
 
 [ItemDef 0x1f1b]
-DUPEITEM = 0x1f19
+DUPEITEM = i_crystal_green_big
 
 [ItemDef 0x1f1c]
 CATEGORY = Provisions - Alchemy & Magic
@@ -2009,10 +2008,10 @@ DESCRIPTION = @
 DEFNAME = i_crystal_purple
 
 [ItemDef 0x1f1d]
-DUPEITEM = 0x1f1c
+DUPEITEM = i_crystal_purple
 
 [ItemDef 0x1f1e]
-DUPEITEM = 0x1f1c
+DUPEITEM = i_crystal_purple
 
 [ItemDef 0x1f1f]
 CATEGORY = Animations
@@ -2023,13 +2022,13 @@ DESCRIPTION = @
 DEFNAME = i_fx_spin_head
 
 [ItemDef 0x1f20]
-DUPEITEM = 0x1f1f
+DUPEITEM = i_fx_spin_head
 
 [ItemDef 0x1f21]
-DUPEITEM = 0x1f1f
+DUPEITEM = i_fx_spin_head
 
 [ItemDef 0x1f22]
-DUPEITEM = 0x1f1f
+DUPEITEM = i_fx_spin_head
 
 [ItemDef 0x1f24]
 CATEGORY = Provisions - Miscellaneous
@@ -2041,13 +2040,13 @@ TYPE = T_BEDROLL
 DEFNAME = i_bedroll_open
 
 [ItemDef 0x1f25]
-DUPEITEM = 0x1f24
+DUPEITEM = i_bedroll_open
 
 [ItemDef 0x1f26]
-DUPEITEM = 0x1f24
+DUPEITEM = i_bedroll_open
 
 [ItemDef 0x1f27]
-DUPEITEM = 0x1f24
+DUPEITEM = i_bedroll_open
 
 [ItemDef 0x1f28]
 CATEGORY = Decoration - Signs
@@ -2057,13 +2056,13 @@ DESCRIPTION = Blank sign
 TYPE = T_SIGN_GUMP
 //DUPELIST = 01f29 // commented out by Converter 
 WEIGHT = 30
-//RESOURCES = 2 I_BOARD, i_ingot_iron, I_NAILS // commented out by Converter 
+RESOURCES = 2 i_board,  i_ingot_iron,  i_nails //some resources were fixed by converter 
 //FLIP = 1 // commented out by Converter 
 //TDATA2 = 067 // commented out by Converter 
 DEFNAME = i_sign_blank
 
 [ItemDef 0x1f29]
-DUPEITEM = 0x1f28
+DUPEITEM = i_sign_blank
 
 [ItemDef 0x1f2a]
 CATEGORY = Decoration - Wall Carvings & Statues
@@ -2071,7 +2070,7 @@ SUBSECTION = Pedestal
 DESCRIPTION = @
 
 WEIGHT = 120
-//RESOURCES = 6 i_rock_plain // commented out by Converter 
+RESOURCES = 6 i_rock_plain //some resources were fixed by converter 
 DEFNAME = i_pedestal
 
 [ItemDef 0x1f2b]
@@ -2081,7 +2080,7 @@ DESCRIPTION = Brazier
 
 TYPE = T_FIRE
 WEIGHT = 150
-//RESOURCES = 10 I_EMBER, 12 i_ingot_iron // commented out by Converter 
+RESOURCES = 10 i_ember,  12 i_ingot_iron //some resources were fixed by converter 
 DEFNAME = i_brazier
 
 [ItemDef 0x1f6d]
@@ -2094,7 +2093,7 @@ TYPE = T_SCROLL
 DEFNAME = i_scroll_x_green2
 
 [ItemDef 0x1f6e]
-DUPEITEM = 0x1f6d
+DUPEITEM = i_scroll_x_green2
 
 [ItemDef 0x1f6f]
 TYPE = T_SCROLL
@@ -2102,7 +2101,7 @@ TYPE = T_SCROLL
 DEFNAME = i_scroll_x_teal2
 
 [ItemDef 0x1f70]
-DUPEITEM = 0x1f6f
+DUPEITEM = i_scroll_x_teal2
 
 [ItemDef 0x1f71]
 TYPE = T_SCROLL
@@ -2110,7 +2109,7 @@ TYPE = T_SCROLL
 DEFNAME = i_scroll_x_brown2
 
 [ItemDef 0x1f72]
-DUPEITEM = 0x1f71
+DUPEITEM = i_scroll_x_brown2
 
 [ItemDef 0x1f73]
 TYPE = t_FUR
@@ -2274,28 +2273,28 @@ DEFNAME = i_moongate_black_fx
 //TDATA4 = 0 // commented out by Converter 
 
 [ItemDef 0x1fcc]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fcd]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fce]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fcf]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fd0]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fd1]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fd2]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fd3]
-DUPEITEM = 0x1fcb
+DUPEITEM = i_moongate_black_fx
 
 [ItemDef 0x1fd4]
 TYPE = t_telepad
@@ -2303,16 +2302,16 @@ TYPE = t_telepad
 DEFNAME = i_moongate_black
 
 [ItemDef 0x1fd5]
-DUPEITEM = 0x1fd4
+DUPEITEM = i_moongate_black
 
 [ItemDef 0x1fd6]
-DUPEITEM = 0x1fd4
+DUPEITEM = i_moongate_black
 
 [ItemDef 0x1fd7]
-DUPEITEM = 0x1fd4
+DUPEITEM = i_moongate_black
 
 [ItemDef 0x1fd8]
-DUPEITEM = 0x1fd4
+DUPEITEM = i_moongate_black
 
 [EquippableDef 0x1fde]
 CATEGORY = Animations
@@ -2326,28 +2325,28 @@ DEFNAME = i_moongate_gray_fx
 //TDATA4 = 0 // commented out by Converter 
 
 [ItemDef 0x1fdf]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe0]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe1]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe2]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe3]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe4]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe5]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe6]
-DUPEITEM = 0x1fde
+DUPEITEM = i_moongate_gray_fx
 
 [ItemDef 0x1fe7]
 TYPE = t_telepad
@@ -2355,16 +2354,16 @@ TYPE = t_telepad
 DEFNAME = i_moongate_gray
 
 [ItemDef 0x1fe8]
-DUPEITEM = 0x1fe7
+DUPEITEM = i_moongate_gray
 
 [ItemDef 0x1fe9]
-DUPEITEM = 0x1fe7
+DUPEITEM = i_moongate_gray
 
 [ItemDef 0x1fea]
-DUPEITEM = 0x1fe7
+DUPEITEM = i_moongate_gray
 
 [ItemDef 0x1feb]
-DUPEITEM = 0x1fe7
+DUPEITEM = i_moongate_gray
 
 [ItemDef 0x1fed]
 CATEGORY = Buildings - Doors
@@ -2374,7 +2373,7 @@ DESCRIPTION = @ (n / sw)
 TYPE = T_DOOR
 //DUPELIST = 01fef,01ff1,01ff3,01ff5,01ff7,01ff9,01ffb // commented out by Converter 
 WEIGHT = 100
-//RESOURCES = 10 i_ingot_iron // commented out by Converter 
+RESOURCES = 10 i_ingot_iron //some resources were fixed by converter 
 DEFNAME = i_door_metal_bar_2
 
 [ItemDef 0x1fee]
@@ -2387,69 +2386,69 @@ DEFNAME = i_door_metal_bar_2_o
 [ItemDef 0x1fef]
 DESCRIPTION = @ (n / se)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ff0]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o
 
 [ItemDef 0x1ff1]
 DESCRIPTION = @ (n / nw)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ff2]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o
 
 [ItemDef 0x1ff3]
 DESCRIPTION = @ (n / ne)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ff4]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o
 
 [ItemDef 0x1ff5]
 DESCRIPTION = @ (w / se)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ff6]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o
 
 [ItemDef 0x1ff7]
 DESCRIPTION = @ (w / ne)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ff8]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o
 
 [ItemDef 0x1ff9]
 DESCRIPTION = @ (w / sw)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ffa]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o
 
 [ItemDef 0x1ffb]
 DESCRIPTION = @ (w / nw)
 
-DUPEITEM = 0x1fed
+DUPEITEM = i_door_metal_bar_2
 
 [ItemDef 0x1ffc]
 DESCRIPTION = @
 
-DUPEITEM = 0x1fee
+DUPEITEM = i_door_metal_bar_2_o

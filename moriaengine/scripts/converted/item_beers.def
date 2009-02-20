@@ -60,7 +60,7 @@ CATEGORY = Ales
 SUBSECTION = Ales
 DESCRIPTION = Stout Ale
 
-NAME = "Pivo"
+NAME = "Lahev piva"
 TYPE = T_BOOZE
 WEIGHT = 10
 model = i_bottle_ale
@@ -76,3 +76,14 @@ TYPE = T_BOOZE
 WEIGHT = 10
 model = i_bottle_ale
 //VALUE = {38 42} // commented out by Converter 
+
+[ItemDef Pulitr_piva]
+CATEGORY = Ales
+SUBSECTION = Ales
+DESCRIPTION = Pulitr piva
+
+NAME = "Pulitr piva"
+TYPE = T_BOOZE
+WEIGHT = 10
+model = i_mug_ale
+//VALUE = {200 500} // commented out by Converter 

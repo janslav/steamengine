@@ -68,7 +68,7 @@ model = i_memory
 name = "customspell timer"
 type = t_eq_script
 model = i_memory
-layer = 0 //Set by Converter 
+Layer = layer_special //guessed from base def by Converter 
 
 //[function f_customspell_delayed] //argv(0)-cislo kouzla, argv(1) - cil, argv(2) - pozice (je-li) //(commented out by Converter) 
 

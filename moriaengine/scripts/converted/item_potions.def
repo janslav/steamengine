@@ -3,66 +3,66 @@
 [ItemDef i_potion_ExplosionDispell]
 NAME = "Dispell Explosion"
 TYPE = T_POTION_BOMBA
-//RESOURCES = 3 i_reag_sulfur_ash , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 35.0 // commented out by Converter 
+RESOURCES = 3 i_reag_sulfur_ash ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 35.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_black
+model = i_bottle_empty
 
 [ItemDef i_potion_ExplosionLess]
 NAME = "Lesser Explosion"
 TYPE = T_POTION_BOMBA
-//RESOURCES = 3 i_reag_sulfur_ash , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 35.0 // commented out by Converter 
+RESOURCES = 3 i_reag_sulfur_ash ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 35.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_PURPLE
+model = i_bottle_empty
 
 [ItemDef i_potion_Explosion]
 NAME = "Explosion"
 TYPE = T_POTION_bomba
-//RESOURCES = 5 i_reag_sulfur_ash, i_reag_volcanic_ash, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 55.0 // commented out by Converter 
+RESOURCES = 5 i_reag_sulfur_ash,  i_reag_volcanic_ash,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 55.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_PURPLE
+model = i_bottle_empty
 
 [ItemDef i_potion_ExplosionGreat]
 NAME = "Greater Explosion"
 TYPE = T_POTION_bomba
-//RESOURCES = 8 i_reag_sulfur_ash, 2 i_reag_volcanic_ash, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 75.0 // commented out by Converter 
+RESOURCES = 8 i_reag_sulfur_ash,  2 i_reag_volcanic_ash,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 75.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_PURPLE
+model = i_bottle_empty
 
 [ItemDef i_potion_Lava]
 NAME = "Lava Bomb"
 TYPE = T_POTION_bomba
-//RESOURCES = 14 i_reag_sulfur_ash, 4 i_reag_volcanic_ash, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 99.0 // commented out by Converter 
+RESOURCES = 14 i_reag_sulfur_ash,  4 i_reag_volcanic_ash,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 99.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_PURPLE
+model = i_bottle_empty
 
 [ItemDef i_potion_AgilityLess]
 NAME = "Lesser Agility"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_blood_moss, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 0.1 // commented out by Converter 
+RESOURCES = 2 i_reag_blood_moss,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 0.1 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_blue
+model = i_bottle_empty
 
 [ItemDef i_potion_Agility]
 NAME = "Agility"
 TYPE = t_speedpotions
-//RESOURCES = 3 i_reag_blood_moss, i_reag_mandrake_root, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 30.0 // commented out by Converter 
+RESOURCES = 3 i_reag_blood_moss,  i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 30.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_blue
+model = i_bottle_empty
 
 [ItemDef i_potion_AgilityGreat]
 NAME = "Greater Agility"
 TYPE = t_speedpotions
-//RESOURCES = 6 i_reag_blood_moss, 2 i_reag_mandrake_root, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 60.0 // commented out by Converter 
+RESOURCES = 6 i_reag_blood_moss,  2 i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 60.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_BLUE
+model = i_bottle_empty
 
 [ItemDef i_potion_AgilityElixir]
 NAME = "Elixir Agility"
@@ -83,198 +83,198 @@ model = i_rune_agility
 [ItemDef i_potion_CureLess]
 NAME = "Lesser Cure"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_garlic, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 20.0 // commented out by Converter 
+RESOURCES = 2 i_reag_garlic,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 20.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_ORANGE
+model = i_bottle_empty
 
 [ItemDef i_potion_Cure]
 NAME = "Cure"
 TYPE = t_allpotions
-//RESOURCES = 3 i_reag_garlic , i_reag_ginseng, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 3 i_reag_garlic ,  i_reag_ginseng,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_ORANGE
+model = i_bottle_empty
 
 [ItemDef i_potion_CureGreat]
 NAME = "Greater Cure"
 TYPE = t_allpotions
-//RESOURCES = 4 i_reag_garlic , 2 i_reag_ginseng, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 65.0 // commented out by Converter 
+RESOURCES = 4 i_reag_garlic ,  2 i_reag_ginseng,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 65.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_ORANGE
+model = i_bottle_empty
 
 [ItemDef i_potion_HealLess]
 NAME = "Lesser Heal"
 TYPE = t_allpotions
-//RESOURCES = 2 i_reag_ginseng, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 20.0 // commented out by Converter 
+RESOURCES = 2 i_reag_ginseng,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 20.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_YELLOW
+model = i_bottle_empty
 
 [ItemDef i_potion_Heal]
 NAME = "Heal"
 TYPE = t_allpotions
-//RESOURCES = 4 i_reag_ginseng, i_reag_garlic , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 50.0 // commented out by Converter 
+RESOURCES = 4 i_reag_ginseng,  i_reag_garlic ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 50.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_YELLOW
+model = i_bottle_empty
 
 [ItemDef i_potion_HealGreat]
 NAME = "Greater Heal"
 TYPE = t_allpotions
-//RESOURCES = 7 i_reag_ginseng, 2 i_reag_garlic , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 85.0 // commented out by Converter 
+RESOURCES = 7 i_reag_ginseng,  2 i_reag_garlic ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 85.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_YELLOW
+model = i_bottle_empty
 
 [ItemDef i_potion_HealElixir]
 NAME = "Heal Elixir"
-TYPE = t_speedpotions
+TYPE = t_allpotions
 //TDATA1 = i_bottle_empty // commented out by Converter 
 model = i_flask1_blue
 
 [ItemDef i_potion_Nightsight]
 NAME = "Nightsight"
 TYPE = t_speedpotions
-//RESOURCES = i_reag_spider_silk , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 5.0 // commented out by Converter 
+RESOURCES = i_reag_spider_silk ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 5.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_BLACK
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison_para]
 NAME = "Paralyze poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_GREEN
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison_fizz]
 NAME = "Fizzle poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_white
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison_stamina]
 NAME = "Stamina poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_red
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison_weaken]
 NAME = "Weaken poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_green
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison_clumsy]
 NAME = "Clumsy poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_black
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison_feeblemind]
 NAME = "Feeblemind poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_black
+model = i_bottle_empty
 
 [ItemDef i_potion_PoisonLess]
 NAME = "Lesser Poison"
 TYPE = T_POTION
-//RESOURCES = 2 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 30.0 // commented out by Converter 
+RESOURCES = 2 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 30.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_GREEN
+model = i_bottle_empty
 
 [ItemDef i_potion_Poison]
 NAME = "Poison"
 TYPE = T_POTION
-//RESOURCES = 4 i_reag_nightshade , i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_nightshade ,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_GREEN
+model = i_bottle_empty
 
 [ItemDef i_potion_PoisonGreat]
 NAME = "Greater Poison"
 TYPE = T_POTION
-//RESOURCES = 7 i_reag_nightshade, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 70.0 // commented out by Converter 
+RESOURCES = 7 i_reag_nightshade,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 70.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_GREEN
+model = i_bottle_empty
 
 [ItemDef i_potion_PoisonDeadly]
 NAME = "Deadly Poison"
 TYPE = T_POTION
-//RESOURCES = 13 i_reag_nightshade, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 99.9 // commented out by Converter 
+RESOURCES = 13 i_reag_nightshade,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 99.9 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_GREEN
+model = i_bottle_empty
 
 [ItemDef i_potion_RefreshLess]
 NAME = "Lesser Refresh"
 TYPE = t_allpotions
-//RESOURCES = 2 i_reag_black_pearl, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 11.0 // commented out by Converter 
+RESOURCES = 2 i_reag_black_pearl,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 11.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_RED
+model = i_bottle_empty
 
 [ItemDef i_potion_Refresh]
 NAME = "Refresh"
 TYPE = t_allpotions
-//RESOURCES = 2 i_reag_black_pearl, i_reag_spider_silk,  i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 25.0 // commented out by Converter 
+RESOURCES = 2 i_reag_black_pearl,  i_reag_spider_silk,   i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 25.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_RED
+model = i_bottle_empty
 
 [ItemDef i_potion_RefreshGreater]
 NAME = "Greater Refresh"
 TYPE = t_allpotions
-//RESOURCES = 4 i_reag_black_pearl, 2 i_reag_spider_silk,  i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 4 i_reag_black_pearl,  2 i_reag_spider_silk,   i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_RED
+model = i_bottle_empty
 
 [ItemDef i_potion_RefreshElixir]
 NAME = "Refresh Elixir"
-TYPE = t_speedpotions
+TYPE = t_allpotions
 //TDATA1 = i_bottle_empty // commented out by Converter 
 model = i_flask1_blue
 
 [ItemDef i_potion_StrengthLess]
 NAME = "Lesser Strength"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_mandrake_root 2, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 25.0 // commented out by Converter 
+RESOURCES = 2 i_reag_mandrake_root 2,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 25.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_Strength]
 NAME = "Strength"
 TYPE = t_speedpotions
-//RESOURCES = 3 i_reag_mandrake_root, i_reag_nightshade, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 40.0 // commented out by Converter 
+RESOURCES = 3 i_reag_mandrake_root,  i_reag_nightshade,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 40.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_StrengthGreat]
 NAME = "Greater Strength"
 TYPE = t_speedpotions
-//RESOURCES = 4 i_reag_mandrake_root, 2 i_reag_nightshade, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 65.0 // commented out by Converter 
+RESOURCES = 4 i_reag_mandrake_root,  2 i_reag_nightshade,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 65.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_StrengthElixir]
 NAME = "Elixir Strength"
@@ -290,42 +290,42 @@ model = i_rune_strength
 [ItemDef i_potion_Shrink]
 NAME = "Shrink"
 TYPE = T_potion_shrink
-//RESOURCES = 1 i_gem_diamond, 5 i_reag_spider_silk ,10 i_reag_pumice,5 i_reag_eye_of_newt, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 80.0, t_book_shrink // commented out by Converter 
+RESOURCES = 1 i_gem_diamond,  5 i_reag_spider_silk , 10 i_reag_pumice, 5 i_reag_eye_of_newt,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 80.0 alchemy,  t_book_shrink //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_Invisibility]
 NAME = "Invisibility"
 TYPE = t_allpotions
-//RESOURCES = 3 i_reag_worm_heart, 2 i_reag_pig_iron, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 75.0 // commented out by Converter 
+RESOURCES = 3 i_reag_worm_heart,  2 i_reag_pig_iron,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 75.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_green
+model = i_bottle_empty
 
 [ItemDef i_potion_CleverLess]
 NAME = "Lesser Cleverness"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_fertile_dirt, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 35.0 // commented out by Converter 
+RESOURCES = 2 i_reag_fertile_dirt,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 35.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_Clever]
 NAME = "Cleverness"
 TYPE = t_speedpotions
-//RESOURCES = 3 i_reag_fertile_dirt, i_reag_obsidian, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 50.0 // commented out by Converter 
+RESOURCES = 3 i_reag_fertile_dirt,  i_reag_obsidian,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 50.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_CleverGreat]
 NAME = "Great Cleverness"
 TYPE = t_speedpotions
-//RESOURCES = 4 i_reag_fertile_dirt, 2 i_reag_obsidian, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 75.0 // commented out by Converter 
+RESOURCES = 4 i_reag_fertile_dirt,  2 i_reag_obsidian,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 75.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [ItemDef i_potion_CleverElixir]
 NAME = "Cleverness Elixir"
@@ -338,26 +338,39 @@ type = t_custom_spell
 layer = 44
 model = i_rune_cunning
 
+[ItemDef i_potion_Stoneskinelixir]
+NAME = "Elixir Stoneskin"
+TYPE = t_speedpotions
+RESOURCES = 2 i_reag_garlic,  2 i_reag_ginseng,  2 i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 85.0 alchemy //some resources were fixed by converter 
+//TDATA1 = i_bottle_empty // commented out by Converter 
+model = i_flask1_blue
+
+[EquippableDef i_a_steelskin_potion]
+type = t_spell
+layer = LAYER_FLAG_Potion //layer_stoneskin 
+model = i_rune_alchem_3
+
 [ItemDef i_potion_Stoneskin]
 NAME = "Stoneskin"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_Garlic, 2 i_reag_ginseng, 2 i_reag_mandrake_root, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 85.0 // commented out by Converter 
+RESOURCES = 2 i_reag_garlic,  2 i_reag_ginseng,  2 i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 85.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_WHITE
+model = i_bottle_empty
 
 [EquippableDef i_a_stoneskin_potion]
 type = t_spell
-layer = layer_stoneskin
+layer = LAYER_FLAG_Potion //layer_stoneskin 
 model = i_rune_alchem_3
 
 [ItemDef i_potion_mobility]
 NAME = "Mobility"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_Garlic, 2 i_reag_ginseng, 2 i_reag_mandrake_root, i_bottle_EMPTY // commented out by Converter 
-//SKILLMAKE = ALCHEMY 85.0 // commented out by Converter 
+RESOURCES = 2 i_reag_garlic,  2 i_reag_ginseng,  2 i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 85.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_black
+model = i_bottle_empty
 
 [EquippableDef i_a_mobility_potion]
 name = "mobility"
@@ -368,26 +381,26 @@ model = i_rune_paralyze_field
 [ItemDef i_potion_EnergyLess]
 NAME = "Lesser Energy"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_blood_moss, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 0.1 // commented out by Converter 
+RESOURCES = 2 i_reag_blood_moss,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 0.1 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_white
+model = i_bottle_empty
 
 [ItemDef i_potion_Energy]
 NAME = "Energy"
 TYPE = t_speedpotions
-//RESOURCES = 3 i_reag_blood_moss, i_reag_mandrake_root, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 30.0 // commented out by Converter 
+RESOURCES = 3 i_reag_blood_moss,  i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 30.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_white
+model = i_bottle_empty
 
 [ItemDef i_potion_EnergyGreat]
 NAME = "Greater Energy"
 TYPE = t_speedpotions
-//RESOURCES = 6 i_reag_blood_moss, 2 i_reag_mandrake_root, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 60.0 // commented out by Converter 
+RESOURCES = 6 i_reag_blood_moss,  2 i_reag_mandrake_root,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 60.0 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_white
+model = i_bottle_empty
 
 [ItemDef i_potion_EnergyElixir]
 NAME = "Energy Elixir"
@@ -404,18 +417,34 @@ model = i_rune_create_food
 [ItemDef i_potion_reflection]
 NAME = "Reflection"
 TYPE = t_allpotions
-//RESOURCES = 2 i_reag_blood_moss, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 0.1 // commented out by Converter 
+RESOURCES = 2 i_reag_blood_moss,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 0.1 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_purple
+model = i_bottle_empty
+
+[ItemDef i_potion_reactive]
+NAME = "Reactive armor"
+TYPE = t_allpotions
+RESOURCES = 2 i_reag_blood_moss,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 0.1 alchemy //some resources were fixed by converter 
+//TDATA1 = i_bottle_empty // commented out by Converter 
+model = i_bottle_empty
+
+[ItemDef i_potion_Shieldelixir]
+NAME = "Elixir Spell Shield"
+TYPE = t_speedpotions
+RESOURCES = 2 i_reag_blood_moss,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 0.1 alchemy //some resources were fixed by converter 
+//TDATA1 = i_bottle_empty // commented out by Converter 
+model = i_flask1_blue
 
 [ItemDef i_potion_Shield]
 NAME = "Spell Shield"
 TYPE = t_speedpotions
-//RESOURCES = 2 i_reag_blood_moss, i_bottle_empty // commented out by Converter 
-//SKILLMAKE = ALCHEMY 0.1 // commented out by Converter 
+RESOURCES = 2 i_reag_blood_moss,  i_bottle_empty //some resources were fixed by converter 
+SKILLMAKE = 0.1 alchemy //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
-model = i_bottle_black
+model = i_bottle_empty
 
 [EquippableDef i_a_Shield_potion]
 name = "Shield"
@@ -430,7 +459,7 @@ DESCRIPTION = Potion (Black)(Nightsite)
 
 TYPE = t_potion
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_black
 
@@ -441,7 +470,7 @@ DESCRIPTION = Potion (Orange)(Cure)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_orange
 
@@ -452,7 +481,7 @@ DESCRIPTION = Potion (Blue)(Agility)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_blue
 
@@ -463,7 +492,7 @@ DESCRIPTION = Potion (White)(Strength)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_white
 
@@ -474,7 +503,7 @@ DESCRIPTION = Potion (Green)(Poison)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_green
 
@@ -485,7 +514,7 @@ DESCRIPTION = Potion (Red)(Refresh)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_red
 
@@ -496,7 +525,7 @@ DESCRIPTION = Potion (Yellow)(Heal)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = i_bottle_empty // commented out by Converter 
 DEFNAME = i_bottle_yellow
 
@@ -507,7 +536,7 @@ DESCRIPTION = Potion (Purple)(Explosion)
 
 TYPE = T_POTION
 WEIGHT = 10
-//RESOURCES = i_bottle_empty // commented out by Converter 
+RESOURCES = i_bottle_empty //some resources were fixed by converter 
 //TDATA1 = 0 // commented out by Converter 
 DEFNAME = i_bottle_purple
 
@@ -518,9 +547,9 @@ DESCRIPTION = Dyes
 
 TYPE = T_DYE
 WEIGHT = 30
-//RESOURCES = i_log,i_reag_blood_moss // commented out by Converter 
-//RESOURCES2 = 1 i_log,1 i_reag_blood_moss,1 i_reag_sulfur_ash,1 i_reag_serpent_scale,1 i_reag_black_pearl // commented out by Converter 
-//SKILLMAKE = ALCHEMY 10.0 // commented out by Converter 
+RESOURCES = i_log, i_reag_blood_moss //some resources were fixed by converter 
+RESOURCES2 = 1 i_log, 1 i_reag_blood_moss, 1 i_reag_sulfur_ash, 1 i_reag_serpent_scale, 1 i_reag_black_pearl //some resources were fixed by converter 
+SKILLMAKE = 10.0 alchemy //some resources were fixed by converter 
 DEFNAME = i_dyes
 //RESOURCES3 = 1 I_EGGSHELLS, 1 i_reag_blood_moss, 1 i_reag_sulfur_ash, 1 i_reag_serpent_scale, 1 i_reag_black_pearl // commented out by Converter 
 
@@ -597,7 +626,7 @@ DESCRIPTION = Flask 02 (Empty)
 
 //DUPELIST = 01835 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 2 i_SAND // commented out by Converter 
+RESOURCES = 2 i_sand //some resources were fixed by converter 
 DEFNAME = i_beaker2_empty
 
 [ItemDef 0x1833]
@@ -621,7 +650,7 @@ WEIGHT = 10
 DEFNAME = i_beaker2_teal
 
 [ItemDef 0x1835]
-DUPEITEM = 0x1832
+DUPEITEM = i_beaker2_empty
 
 [ItemDef 0x1836]
 CATEGORY = Items by Professions
@@ -670,7 +699,7 @@ DESCRIPTION = Flask 03 (Empty)
 
 TYPE = T_DRINK
 WEIGHT = 10
-//RESOURCES = 2 i_SAND // commented out by Converter 
+RESOURCES = 2 i_sand //some resources were fixed by converter 
 DEFNAME = i_flask2_empty
 
 [ItemDef 0x183b]
@@ -714,10 +743,10 @@ WEIGHT = 10
 DEFNAME = i_flask2_red_anim
 
 [ItemDef 0x183f]
-DUPEITEM = 0x183e
+DUPEITEM = i_flask2_red_anim
 
 [ItemDef 0x1840]
-DUPEITEM = 0x183e
+DUPEITEM = i_flask2_red_anim
 
 [ItemDef 0x1841]
 CATEGORY = Items by Professions
@@ -731,10 +760,10 @@ WEIGHT = 10
 DEFNAME = i_FLASK_LONG_purple_anim
 
 [ItemDef 0x1842]
-DUPEITEM = 0x1841
+DUPEITEM = i_FLASK_LONG_purple_anim
 
 [ItemDef 0x1843]
-DUPEITEM = 0x1841
+DUPEITEM = i_FLASK_LONG_purple_anim
 
 [ItemDef 0x1844]
 CATEGORY = Items by Professions
@@ -748,10 +777,10 @@ WEIGHT = 10
 DEFNAME = i_flask1_blue_anim
 
 [ItemDef 0x1845]
-DUPEITEM = 0x1844
+DUPEITEM = i_flask1_blue_anim
 
 [ItemDef 0x1846]
-DUPEITEM = 0x1844
+DUPEITEM = i_flask1_blue_anim
 
 [ItemDef 0x1847]
 CATEGORY = Items by Professions
@@ -759,7 +788,7 @@ SUBSECTION = Alchemist
 DESCRIPTION = Flask (Small & Empty)
 
 WEIGHT = 10
-//RESOURCES = 1 i_SAND // commented out by Converter 
+RESOURCES = 1 i_sand //some resources were fixed by converter 
 DEFNAME = i_FLASK_SMALL
 
 [ItemDef 0x1848]
@@ -768,7 +797,7 @@ SUBSECTION = Alchemist
 DESCRIPTION = Flask (Small & Green Liquid)
 
 WEIGHT = 10
-//RESOURCES = 1 i_SAND // commented out by Converter 
+RESOURCES = 1 i_sand //some resources were fixed by converter 
 DEFNAME = i_FLASK_SMALL_GREEN
 
 [ItemDef 0xe25]
@@ -778,7 +807,7 @@ DESCRIPTION = BOTTLE
 
 //DUPELIST = 0efd // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle
 
 [ItemDef 0xe26]
@@ -788,7 +817,7 @@ DESCRIPTION = BOTTLE 2
 
 //DUPELIST = 0efe // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_2
 
 [ItemDef 0xe28]
@@ -798,7 +827,7 @@ DESCRIPTION = BOTTLE 3
 
 //DUPELIST = 0f00 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_3
 
 [ItemDef 0xe29]
@@ -808,7 +837,7 @@ DESCRIPTION = BOTTLE 4
 
 //DUPELIST = 0f01 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_4
 
 [ItemDef 0xe2a]
@@ -818,7 +847,7 @@ DESCRIPTION = BOTTLE 5
 
 //DUPELIST = 0f02 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_5
 
 [ItemDef 0xe2b]
@@ -828,7 +857,7 @@ DESCRIPTION = BOTTLE 6
 
 //DUPELIST = 0f03 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_6
 
 [ItemDef 0xe2c]
@@ -838,7 +867,7 @@ DESCRIPTION = Bottle
 
 //DUPELIST = 0f04 // commented out by Converter 
 WEIGHT = 10
-//RESOURCES = 5 I_SAND // commented out by Converter 
+RESOURCES = 5 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_7
 
 [ItemDef 0xefb]
@@ -846,7 +875,7 @@ CATEGORY = Items by Professions
 SUBSECTION = Alchemist
 DESCRIPTION = Bottle
 
-//RESOURCES = 1 I_SAND // commented out by Converter 
+RESOURCES = 1 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_8
 
 [ItemDef 0xefc]
@@ -854,29 +883,29 @@ CATEGORY = Items by Professions
 SUBSECTION = Alchemist
 DESCRIPTION = Bottle
 
-//RESOURCES = 1 I_SAND // commented out by Converter 
+RESOURCES = 1 i_sand //some resources were fixed by converter 
 DEFNAME = i_bottle_9
 
 [ItemDef 0xefd]
-DUPEITEM = 0xe25
+DUPEITEM = i_bottle
 
 [ItemDef 0xefe]
-DUPEITEM = 0xe26
+DUPEITEM = i_bottle_2
 
 [ItemDef 0xf00]
-DUPEITEM = 0xe28
+DUPEITEM = i_bottle_3
 
 [ItemDef 0xf01]
-DUPEITEM = 0xe29
+DUPEITEM = i_bottle_4
 
 [ItemDef 0xf02]
-DUPEITEM = 0xe2a
+DUPEITEM = i_bottle_5
 
 [ItemDef 0xf03]
-DUPEITEM = 0xe2b
+DUPEITEM = i_bottle_6
 
 [ItemDef 0xf04]
-DUPEITEM = 0xe2c
+DUPEITEM = i_bottle_7
 
 [ItemDef 0x1c18]
 CATEGORY = Provisions - Miscellaneous
@@ -885,5 +914,5 @@ DESCRIPTION = Oil Flask
 
 WEIGHT = 10
 DEFNAME = i_oil_flask
-//VALUE = 3 // commented out by Converter 
 //RESOURCES3 = 1 i_OIL, 1 i_FLASK // commented out by Converter 
+//VALUE = 3 // commented out by Converter 
