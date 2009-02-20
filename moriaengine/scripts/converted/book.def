@@ -16,6 +16,7 @@
 
 [ItemDef i_hitchhikersbook]
 model = i_book_of_truth
+type = t_book //guessed from base def by Converter 
 
 //[SCROLL SCROLL_TIP_1] //(commented out by Converter) 
 

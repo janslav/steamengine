@@ -14,6 +14,7 @@ DESCRIPTION = Dragons Egg
 
 NAME = "Dragons Egg"
 model = i_fruit_coconut
+type = t_food //guessed from base def by Converter 
 //VALUE = 5000 // commented out by Converter 
 
 [ItemDef i_dragon_spawn]
@@ -31,4 +32,5 @@ DESCRIPTION = Charge of the Light Brigade
 
 NAME = "Charge of the Light Brigade"
 model = i_BOOK_LG_PUB
+type = t_book //guessed from base def by Converter 
 //VALUE = 10 // commented out by Converter 

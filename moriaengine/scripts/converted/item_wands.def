@@ -6,7 +6,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Clumsiness
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_clumsy // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_clumsy //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -16,7 +16,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Create Food
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_create_food // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_create_food //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -26,7 +26,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Feeblemindness
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_Feeblemind // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_feeblemind //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -36,7 +36,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Healing
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_heal // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_heal //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -46,7 +46,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Arrow
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_magic_arrow // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_magic_arrow //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -56,7 +56,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Night Sight
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_night_sight // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_night_sight //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -66,7 +66,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Reactive Armor
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_reactive_armor // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_reactive_armor //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -76,7 +76,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Weaken
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_weaken // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_weaken //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -86,7 +86,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Agility
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_agility // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_agility //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -96,7 +96,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Cunning
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_cunning // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_cunning //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -106,7 +106,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Cure
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_cure // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_cure //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -116,7 +116,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Harm
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_harm // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_harm //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -126,7 +126,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Trap
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_magic_trap // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_magic_trap //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -136,7 +136,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Untrap
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_magic_untrap // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_magic_untrap //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -146,7 +146,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Protection
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_protection // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_protection //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -156,7 +156,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Strength
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_strength // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_strength //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -166,7 +166,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Blessing
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_bless // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_bless //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -176,7 +176,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Fireballs
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_fireball // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_fireball //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -186,7 +186,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Lock
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_magic_lock // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_magic_lock //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -196,7 +196,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Poison
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_poison // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_poison //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -206,7 +206,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of telekinesis
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_telekinesis // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_telekinesis //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -216,7 +216,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Teleport
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_teleport // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_teleport //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -226,7 +226,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Unlock
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_unlock // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_unlock //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -236,7 +236,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Wall of Stone
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_wall_of_stone // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_wall_of_stone //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -246,7 +246,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Arch Cure
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_archcure // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_archcure //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -256,7 +256,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Arch Protection
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_archprotection // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_archprotection //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -266,7 +266,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Curse
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_curse // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_curse //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -276,7 +276,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Fire Field
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_fire_field // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_fire_field //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -286,7 +286,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Greater Heal
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_greater_heal // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_greater_heal //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -296,7 +296,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Lightning
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_lightning // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_lightning //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -306,7 +306,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mana Drain
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_mana_drain // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_mana_drain //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -316,7 +316,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Recall
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_recall // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_recall //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -326,7 +326,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Blade Spirits
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_blade_spirits // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_blade_spirits //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -336,7 +336,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Dispel Field
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_dispel_field // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_dispel_field //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -346,7 +346,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Incognito
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_incognito // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_incognito //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -356,7 +356,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Magic Reflect
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_magic_reflection // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_magic_reflection //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -366,7 +366,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mind Blast
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_mind_blast // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_mind_blast //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -376,7 +376,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Paralyzation
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_paralyze // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_paralyze //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -386,7 +386,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Poison Field
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_poison_field // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_poison_field //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -396,7 +396,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Creature
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_summon_creature // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_summon_creature //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -406,7 +406,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Dispel
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_dispel // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_dispel //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -416,7 +416,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Energy Bolt
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_energy_bolt // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_energy_bolt //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -426,7 +426,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Explosion
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_explosion // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_explosion //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -436,7 +436,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Invisibility
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_invisibility // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_invisibility //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -446,7 +446,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mark
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_mark // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_mark //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -456,7 +456,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mass Cure
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_mass_curse // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_mass_curse //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -466,7 +466,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Paralyze Field
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_paralyze_field // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_paralyze_field //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -476,7 +476,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Reveal
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_reveal // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_reveal //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -486,7 +486,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Chain Lightning
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_chain_lightning // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_chain_lightning //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -496,7 +496,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Energy Field
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_energy_field // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_energy_field //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -506,7 +506,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Flame Strike
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_flamestrike // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_flamestrike //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -516,7 +516,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Gate Travel
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_gate_travel // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_gate_travel //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -526,7 +526,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mana Vampire
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_mana_vampire // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_mana_vampire //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -536,7 +536,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Mass Dispel
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_mass_dispel // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_mass_dispel //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -546,7 +546,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Meteor Storm
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_meteor_swarm // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_meteor_swarm //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -556,7 +556,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Polymorph
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_polymorph // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_polymorph //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -566,7 +566,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Earthquake
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_earthquake // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_earthquake //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -576,7 +576,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Energy Vortex
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_energy_vortex // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_energy_vortex //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -586,7 +586,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Resurrection
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_resurrection // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_resurrection //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -596,7 +596,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Air Elemental
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_summon_elem_air // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_summon_elem_air //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -606,7 +606,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Daemon
 
 TYPE = T_WAND
-//RESOURCES = i_wand_1,10 i_scroll_summon_daemon // commented out by Converter 
+RESOURCES = 1 i_wand_, 10 i_scroll_summon_daemon //some resources were fixed by converter 
 model = i_wand_1
 layer = 1 //Set by Converter 
 
@@ -616,7 +616,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Earth Elemental
 
 TYPE = T_WAND
-//RESOURCES = i_wand_2,10 i_scroll_summon_elem_earth // commented out by Converter 
+RESOURCES = 2 i_wand_, 10 i_scroll_summon_elem_earth //some resources were fixed by converter 
 model = i_wand_2
 layer = 1 //Set by Converter 
 
@@ -626,7 +626,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Fire Elemental
 
 TYPE = T_WAND
-//RESOURCES = i_wand_3,10 i_scroll_summon_elem_fire // commented out by Converter 
+RESOURCES = 3 i_wand_, 10 i_scroll_summon_elem_fire //some resources were fixed by converter 
 model = i_wand_3
 layer = 1 //Set by Converter 
 
@@ -636,7 +636,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Water Elemental
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_summon_elem_water // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_summon_elem_water //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -646,7 +646,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Summon Undead
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_x_green2 // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_x_green2 //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -656,7 +656,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Animate Dead
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_x_teal2 // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_x_teal2 //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -666,7 +666,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Bone Armor
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_x_brown2 // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_x_brown2 //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -676,7 +676,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Light
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_x_red // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_x_red //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -686,7 +686,7 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Fire Bolt
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_x_blue // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_x_blue //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
@@ -696,11 +696,12 @@ SUBSECTION = Wands
 DESCRIPTION = Wand of Hallucination
 
 TYPE = T_WAND
-//RESOURCES = i_wand_4,10 i_scroll_MIND_BLAST // commented out by Converter 
+RESOURCES = 4 i_wand_, 10 i_scroll_mind_blast //some resources were fixed by converter 
 model = i_wand_4
 layer = 1 //Set by Converter 
 
 [EquippableDef i_wand_FIREWORKS]
 NAME = "fireworks wand 20 charges"
 model = i_wand_3
+type = t_wand //guessed from base def by Converter 
 layer = 1 //Set by Converter 

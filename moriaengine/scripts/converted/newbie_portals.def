@@ -3,86 +3,86 @@
 //[function zakladstats] //(commented out by Converter) 
 
 [Constants basestats]
-basestats_mag_vit_min		50
-basestats_mag_vit_max		80
 basestats_mag_str_min		50
 basestats_mag_str_max		80
 basestats_mag_dex_min		60
 basestats_mag_dex_max		90
 basestats_mag_int_min		100
-basestats_mag_int_max		150
+basestats_mag_int_max		140
+basestats_mag_vit_min		50
+basestats_mag_vit_max		80
 
-basestats_necro_vit_min		60
-basestats_necro_vit_max		90
 basestats_necro_str_min		60
 basestats_necro_str_max		90
 basestats_necro_dex_min		60
 basestats_necro_dex_max		90
 basestats_necro_int_min		80
-basestats_necro_int_max		130
+basestats_necro_int_max		120
+basestats_necro_vit_min		60
+basestats_necro_vit_max		90
 
-basestats_war_vit_min		80
-basestats_war_vit_max		130
 basestats_war_str_min		80
 basestats_war_str_max		120
 basestats_war_dex_min		60
 basestats_war_dex_max		90
 basestats_war_int_min		20
 basestats_war_int_max		50
+basestats_war_vit_min		80
+basestats_war_vit_max		130
 
-basestats_thief_vit_min		70
-basestats_thief_vit_max		100
 basestats_thief_str_min		60
 basestats_thief_str_max		90
 basestats_thief_dex_min		80
 basestats_thief_dex_max		120
 basestats_thief_int_min		50
 basestats_thief_int_max		80
+basestats_thief_vit_min		70
+basestats_thief_vit_max		100
 
-basestats_ranger_vit_min	60
-basestats_ranger_vit_max	90
 basestats_ranger_str_min	50
 basestats_ranger_str_max	80
 basestats_ranger_dex_min	80
 basestats_ranger_dex_max	130
 basestats_ranger_int_min	60
 basestats_ranger_int_max	90
+basestats_ranger_vit_min	60
+basestats_ranger_vit_max	90
 
-basestats_craft_vit_min		100
-basestats_craft_vit_max		150
 basestats_craft_str_min		100
-basestats_craft_str_max		150
+basestats_craft_str_max		130
 basestats_craft_dex_min		50
-basestats_craft_dex_max		100
+basestats_craft_dex_max		80
 basestats_craft_int_min		20
 basestats_craft_int_max		50
+basestats_craft_vit_min		100
+basestats_craft_vit_max		130
 
-basestats_priest_vit_min	70
-basestats_priest_vit_max	120
 basestats_priest_str_min	60
 basestats_priest_str_max	90
 basestats_priest_dex_min	70
 basestats_priest_dex_max	100
 basestats_priest_int_min	60
 basestats_priest_int_max	90
+basestats_priest_vit_min	70
+basestats_priest_vit_max	110
 
-basestats_shaman_vit_min	70
-basestats_shaman_vit_max	100
 basestats_shaman_str_min	60
-basestats_shaman_str_max	110
+basestats_shaman_str_max	80
 basestats_shaman_dex_min	60
-basestats_shaman_dex_max	100
+basestats_shaman_dex_max	80
 basestats_shaman_int_min	90
-basestats_shaman_int_max	140
+basestats_shaman_int_max	110
+basestats_shaman_vit_min	70
+basestats_shaman_vit_max	90
 
-basestats_mystik_vit_min	50
-basestats_mystik_vit_max	80
 basestats_mystik_str_min	50
 basestats_mystik_str_max	80
 basestats_mystik_dex_min	50
 basestats_mystik_dex_max	90
 basestats_mystik_int_min	90
 basestats_mystik_int_max	140
+basestats_mystik_vit_min	50
+basestats_mystik_vit_max	80
 
 
 [Constants colors_class]
@@ -109,7 +109,7 @@ color_skurut_hai	0761
 
 
 [Constants nation_homes]
-home_Gondoran	"5940 3898 -80"	//minas tirith
+home_Gondoran	"5678 3871 -80"	//minas tirith
 home_Rohir	"2344 2542"	//edoras
 home_Severan	"1261 644"	//sever
 home_Mordoran	"3610 2718 -50"	//barad dur
@@ -140,123 +140,153 @@ realm_Divoky		2
 
 [Constants tituly]
 titul_necro[0]	hrobar
-titul_necro[1]	tryznitel
-titul_necro[2]	mucitel
-titul_necro[3]	tyran
-titul_necro[4]	vyvolavac
-titul_necro[5]	demonolog
-titul_necro[6]	cernokneznik
+titul_necro[1]	trapitel
+titul_necro[2]	tryznitel
+titul_necro[3]	mucitel
+titul_necro[4]	tyran
+titul_necro[5]	vyvolavac
+titul_necro[6]	demonolog
+titul_necro[7]	nekromant
+titul_necro[8]	smrtonos
+titul_necro[9]	cernokneznik
 
 titul_mag[0]	ucen
-titul_mag[1]	badatel
-titul_mag[2]	mudrc
+titul_mag[1]	ucenec
+titul_mag[2]	badatel
 titul_mag[3]	iluzionista
-titul_mag[4]	kouzelnik
-titul_mag[5]	carodej
-titul_mag[6]	arcimag
+titul_mag[4]	mudrc
+titul_mag[5]	sesilatel
+titul_mag[6]	divotvurce
+titul_mag[7]	kouzelnik
+titul_mag[8]	carodej
+titul_mag[9]	arcimag
 
 titul_priest[0]	verici
-titul_priest[1]	mastickar
-titul_priest[2]	ranhojic
+titul_priest[1]	ranhojic
+titul_priest[2]	lecitel
 titul_priest[3]	mnich
-titul_priest[4]	knez
-titul_priest[5]	veleknez
-titul_priest[6]	kardinal
+titul_priest[4]	duchovni
+titul_priest[5]	knez
+titul_priest[6]	veleknez
+titul_priest[7]	kardinal
+titul_priest[8]	spasitel
+titul_priest[9]	avatar
 
-titul_ranger[0]	tulak
-titul_ranger[1]	zalesak
-titul_ranger[2]	stopar
-titul_ranger[3]	lucisnik
-titul_ranger[4]	strelec
-titul_ranger[5]	lovec
-titul_ranger[6]	hranicar
+titul_ranger[0] tulak
+titul_ranger[1] zalesak
+titul_ranger[2] stopar
+titul_ranger[3] krotitel
+titul_ranger[4] lucisnik
+titul_ranger[5] strelec
+titul_ranger[6] lovec
+titul_ranger[7] strazce
+titul_ranger[8] chodec
+titul_ranger[9] hranicar
 
 titul_thief[0]	lump
-titul_thief[1]	kapsar
-titul_thief[2]	lapka
-titul_thief[3]	hrdlorez
-titul_thief[4]	zbojnik
-titul_thief[5]	vrah
-titul_thief[6]	zabijak
+titul_thief[1]	chmatak
+titul_thief[2]	tichoslapek
+titul_thief[3]	kapsar
+titul_thief[4]	lapka
+titul_thief[5]	lupic
+titul_thief[6]	zbojnik
+titul_thief[7]	hrdlorez
+titul_thief[8]	vrah
+titul_thief[9]	zabijak
 
-titul_war[0]	rekrut
-titul_war[1]	kadet
-titul_war[2]	gladiator
-titul_war[3]	sermir
-titul_war[4]	bojovnik
-titul_war[5]	valecnik
-titul_war[6]	rytir
+titul_war[0]	rvac
+titul_war[1]	zapasnik
+titul_war[2]	stitonos
+titul_war[3]	rekrut
+titul_war[4]	kadet
+titul_war[5]	sermir
+titul_war[6]	bojovnik
+titul_war[7]	valecnik
+titul_war[8]	dobyvatel
+titul_war[9]	rytir
 
-titul_craft[0]	delnik
+titul_craft[0]	kutil
 titul_craft[1]	tovarys
 titul_craft[2]	remeslnik
-titul_craft[3]	obchodnik
-titul_craft[4]	cechmistr
-titul_craft[5]	magnat
-titul_craft[6]	velmoz
+titul_craft[3]	kramar
+titul_craft[4]	hokynar
+titul_craft[5]	kupec
+titul_craft[6]	obchodnik
+titul_craft[7]	cechmistr
+titul_craft[8]	magnat
+titul_craft[9]	velmoz
 
 titul_shaman[0] pohan
-titul_shaman[1]	myslitel
-titul_shaman[2]	kacir
-titul_shaman[3]	okultista
-titul_shaman[4]	zarikavac
-titul_shaman[5]	zaklinac
-titul_shaman[6]	vymitac
+titul_shaman[1] bezverec
+titul_shaman[2] myslitel
+titul_shaman[3] kacir
+titul_shaman[4] heretik
+titul_shaman[5] mastickar
+titul_shaman[6] okultista
+titul_shaman[7] zarikavac
+titul_shaman[8] zaklinac
+titul_shaman[9] vymitac
 
-titul_Mystik[0]	poutnik
-titul_Mystik[1]	vizionar
-titul_Mystik[2]	vestec
-titul_Mystik[3]	hypnotizer
-titul_Mystik[4]	telepat
-titul_Mystik[5]	jasnovidec
-titul_Mystik[6]	prorok
+titul_mystik[0]	poutnik
+titul_mystik[1] blouznivec
+titul_mystik[2] vizionar
+titul_mystik[3] tusitel
+titul_mystik[4] vestec
+titul_mystik[5] hypnotizer
+titul_mystik[6] hvezdopravec
+titul_mystik[7] telepat
+titul_mystik[8] jasnovidec
+titul_mystik[9] prorok
 
 titul_druid[0]	poustevnik
 titul_druid[1]	sberatel
 titul_druid[2]	bylinkar
 titul_druid[3]	lecitel
 titul_druid[4]	krotitel
-titul_druid[5]	druid
-titul_druid[6]	arcidruid
+titul_druid[5]	vyssi krotitel
+titul_druid[6]	druid
+titul_druid[7]	vyssi druid
+titul_druid[8]	arcidruid
+titul_druid[9]	prvni arcidruid
 
 
 [template tm_shamannewbie]
 ITEM = i_robe
 item = i_spellbook_3
-item = i_bandage_bloody, {80, 150}
+item = i_bandage_bloody, 100
 ITEM = i_staff_gnarled_copper
 ITEM = i_dagger_copper
-ITEM = i_potion_nightsight
+ITEM = i_potion_nightsight, 3
 
 [template tm_Mystiknewbie]
 ITEM = i_robe
 item = i_spellbook_3
-item = i_bandage, {80, 150}
+item = i_bandage, 50
 ITEM = i_staff_gnarled_copper
 ITEM = i_dagger_copper
-ITEM = i_potion_nightsight
+ITEM = i_potion_nightsight, 3
 
 [template tm_necronewbie]
 item = i_spellbook_necro
 ITEM = i_robe
 ITEM = i_staff_gnarled_copper
 ITEM = i_dagger_copper
-ITEM = i_potion_nightsight
+ITEM = i_potion_nightsight, 3
 
 [template tm_magnewbie]
 item = i_spellbook_3
 ITEM = i_robe
 ITEM = i_staff_gnarled_copper
-ITEM = i_potion_nightsight
+ITEM = i_potion_nightsight, 3
 ITEM = i_dagger_copper
 
 [template tm_priestnewbie]
 item = i_spellbook_3
 ITEM = i_robe
-item = i_bandage, {80, 150}
+item = i_bandage, 100
 ITEM = i_hammer_pick_copper
 ITEM = i_dagger_copper
-ITEM = i_potion_nightsight
+ITEM = i_potion_nightsight, 3
 
 [template tm_warnewbie]
 item = i_spellbook_3
@@ -264,41 +294,36 @@ ITEM = i_shirt_plain
 ITEM = random_pants
 ITEM = i_sword_viking_copper
 ITEM = i_COPPER_HEATER_SHIELD
-item = i_bandage, {40, 100}
-ITEM = i_potion_nightsight
+item = i_bandage, 50
+ITEM = i_potion_nightsight, 3
 
 [template tm_rangernewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants
-item = i_bandage, {40, 100}
-item = i_arrow_copper, {40, 100}
-ITEM = i_bow_copper
+item = i_bandage, 50
+item = i_xbolt_piercing_copper, 100
+ITEM = i_crossbolt_heavy_copper
 ITEM = i_dagger_copper
-ITEM = i_potion_nightsight
+ITEM = i_potion_nightsight, 3
 
 [template tm_thiefnewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants
-item = i_bandage, {40, 100}
+item = i_bandage, 50
 ITEM = i_kryss_copper
-ITEM = i_COPPER_BUCKLER_SHIELD
-ITEM = i_potion_nightsight
+ITEM = i_COPPER_metal_SHIELD
+ITEM = i_potion_nightsight, 3
 
 [template tm_craftnewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants
-ITEM = i_HAMMER_SMITH
-ITEM = i_saw
-ITEM = i_sewing_kit
-ITEM = i_scissors
-ITEM = i_tinker_tools
-ITEM = i_fishing_pole
-ITEM = i_hatchet
-ITEM = i_pickaxe
-ITEM = i_potion_nightsight
+ITEM = i_sword_viking_copper
+ITEM = i_COPPER_HEATER_SHIELD
+item = i_bandage, 50
+ITEM = i_potion_nightsight, 3
 
 [Constants zaklad_skilly]
 base_necro_Alchemy=300
@@ -431,7 +456,7 @@ spells_priest_0_1	0408110a
 spells_priest_0_2	0
 
 spells_shaman_0_0	0C4284EF5 //pridan jeste poison - puvodne 0C4204Ef5
-spells_shaman_0_1	048A1332
+spells_shaman_0_1	048A1372
 spells_shaman_0_2	0
 
 spells_Druid_0_0	091a83438
@@ -507,6 +532,7 @@ potions_i_potion_Energy		"class_necro, class_mag, class_priest"
 potions_i_potion_EnergyGreat	"class_necro, class_priest"
 potions_i_potion_Shield		"class_necro, class_mag"
 potions_i_potion_reflection	"class_priest"
+potions_i_potion_reactive	"class_necro"
 potions_i_potion_mobility	"class_necro, class_thief"
 potions_i_potion_Poison_para 	"class_necro"
 potions_i_potion_Poison_fizz 	"class_thief"
@@ -557,6 +583,7 @@ model = i_grave_stone_4
 [ItemDef i_rune_base]
 name = "Newbie rune"
 model = i_rune_marker
+type = t_rune //guessed from base def by Converter 
 
 [Constants startdialogtext]
 seznamras[0]	Clovek<br>+++++++<br>Elf<br>+++++++<br>Hobit<br>+++++++<br>
@@ -674,13 +701,39 @@ NAME = "Kamen na prenastaveni abilit"
 type = t_script
 model = i_grave_stone_4
 
+//[dialog d_YesNo_reset_abilit] //(commented out by Converter) 
+
+//[dialog d_YesNo_reset_abilit Button] //(commented out by Converter) 
+
 //[function resethim] //(commented out by Converter) 
+
+//[function fixnation] //(commented out by Converter) 
+
+//[function nastavhome] //(commented out by Converter) 
+
+//[DIALOG D_raceclass_nations_fix] //(commented out by Converter) 
+
+//[DIALOG D_raceclass_nations_fix button] //(commented out by Converter) 
+
+[ItemDef I_stone_reseting_stats]
+NAME = "Kamen na prenastaveni statu"
+type = t_script
+model = i_grave_stone_4
+
+//[dialog d_YesNo_reset_stats] //(commented out by Converter) 
+
+//[dialog d_YesNo_reset_stats Button] //(commented out by Converter) 
+
+//[DIALOG D_RACEclass_stats_fix] //(commented out by Converter) 
+
+//[DIALOG D_RACEclass_stats_fix BUTTON] //(commented out by Converter) 
 
 //[function reset] //(commented out by Converter) 
 
 [ItemDef i_port_starting]
 name = "Portal do sveta"
 model = i_moongate_blue
+type = t_telepad2 //guessed from base def by Converter 
 
 //[function spellbook_Mage] //(commented out by Converter) 
 

@@ -24,6 +24,8 @@
 
 //[MENU MENU_helproom] //(commented out by Converter) 
 
+//[events e_stuckdamage] //(commented out by Converter) 
+
 [EquippableDef i_teleport_delay]
 NAME = "Delay Teleport"
 TYPE = T_EQ_SCRIPT
