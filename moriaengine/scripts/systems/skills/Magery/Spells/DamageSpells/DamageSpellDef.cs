@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion FieldValues
 
-		public override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			double dam = this.GetEffectForValue(spellEffectArgs.SpellPower);
 			DamageManager.CauseDamage(spellEffectArgs.Caster, target, this.DamageType, dam);
 		}

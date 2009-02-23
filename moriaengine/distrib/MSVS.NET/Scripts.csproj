@@ -677,8 +677,11 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs">
       <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellDef.cs">
-      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.cs">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.Generated.cs">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Meditation\Meditation.cs">
       <Link>systems\skills\Meditation\Meditation.cs</Link>

@@ -32,7 +32,6 @@ namespace SteamEngine.CompiledScripts {
 		//skillParam1: SpellDef instance
 		//skillParam2: spell param (summoned creature def?)
 
-
 		public static void TryCastSpellFromBook(Character ch, int spellid) {
 			SpellDef sd = SpellDef.ById(spellid);
 			if (sd != null) {
@@ -69,55 +68,91 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public static void TryCastSpellFromScroll(Character ch, SpellScroll scroll) {
+			Sanity.IfTrueThrow(scroll == null, "scroll == null");
+
+			if (scroll.TopObj() == ch) {
+				SpellDef spellDef = scroll.SpellDef;
+				if (spellDef != null) {
+					SkillSequenceArgs magery = SkillSequenceArgs.Acquire(ch, SkillName.Magery, scroll, spellDef);
+					magery.PhaseSelect();
+				} else {
+					ch.ClilocMessage(502345); // This spell has been temporarily disabled.
+				}
+			} else {
+				ch.ClilocSysMessage(1042001); // That must be in your pack for you to use it.
+			}
+		}
+
 		public MagerySkillDef(string defname, string filename, int line)
 			: base(defname, filename, line) {
 		}
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			SpellBook book = skillSeqArgs.Tool as SpellBook;
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
-			if (book != null) {
-				if ((book.TopObj() == self) && book.HasSpell(spell)) {
+
+			if (skillSeqArgs.Tool != null) {
+				SpellBook book = skillSeqArgs.Tool as SpellBook;
+				if (book != null) {
+					if ((book.TopObj() == self) && book.HasSpell(spell)) {
+						spell.Trigger_Select(skillSeqArgs);
+						return true; //cancel here, the rest of Select is being done by SpellDef
+					}
+				}
+
+				SpellScroll scroll = skillSeqArgs.Tool as SpellScroll;
+				if (scroll != null) {
 					spell.Trigger_Select(skillSeqArgs);
 					return true; //cancel here, the rest of Select is being done by SpellDef
 				}
 			}
 
-			self.WriteLine("Casting without book not implemented yet");
-			//TODO scrolls
-
-			return true;
+			throw new SEException("Casting without book or scroll not implemented yet."); //would apply for NPCs perhaps?
 		}
 
+		//checking and consuming resources
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (CanSeeTargetWithMessage(skillSeqArgs, self)) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
-				int manaUse = spell.ManaUse;
+
+				SpellSourceType sourceType;
+				if (skillSeqArgs.Tool is SpellScroll) {
+					sourceType = SpellSourceType.SpellScroll;
+				} else {
+					sourceType = SpellSourceType.SpellBook; //we assume there is no other possibility (for now?)
+				}
+
+				int manaUse = spell.GetManaUse(sourceType);
 				int mana = self.Mana;
-				if (self.Mana >= manaUse) {
-					ResourcesList req = spell.Requirements;
-					ResourcesList res = spell.Resources;
+				if (mana >= manaUse) {
+					if (sourceType == SpellSourceType.SpellBook) {
+						ResourcesList req = spell.Requirements;
+						ResourcesList res = spell.Resources;
 
-					IResourceListItem missingItem;
-					if (((req == null) || (req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) &&
-							((res == null) || (res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem)))) {
-						self.Mana = (short) (mana - manaUse);
-						AnimCalculator.PerformAnim(self, GenericAnim.Cast);
-
-						self.AbortSkill();
-						skillSeqArgs.DelayInSeconds = spell.CastTime;
-						skillSeqArgs.DelayStroke();
-						string runeWords = spell.GetRuneWords();
-						if (!string.IsNullOrEmpty(runeWords)) {
-							self.Speech(runeWords, 0, SpeechType.Spell, -1, 3, null, null);
+						IResourceListItem missingItem;
+						if (((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) ||
+								((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem)))) {
+							ResourcesList.SendResourceMissingMsg(self, missingItem);
+							//? self.ClilocSysMessage(502630); // More reagents are needed for this spell.
+							return true;
 						}
-						return true; //default = set delay by magery skilldef
-					} else {
-						ResourcesList.SendResourceMissingMsg(self, missingItem);
-						self.ClilocSysMessage(502630); // More reagents are needed for this spell.
+					} else if (sourceType == SpellSourceType.SpellScroll) {
+						skillSeqArgs.Tool.Consume(1);
 					}
+
+					self.Mana = (short) (mana - manaUse);
+					AnimCalculator.PerformAnim(self, GenericAnim.Cast);
+
+					self.AbortSkill();
+					skillSeqArgs.DelayInSeconds = spell.CastTime;
+					skillSeqArgs.DelayStroke();
+					string runeWords = spell.GetRuneWords();
+					if (!string.IsNullOrEmpty(runeWords)) {
+						self.Speech(runeWords, 0, SpeechType.Spell, -1, 3, null, null);
+					}
+					return true; //default = set delay by magery skilldef, which we don't want					
 				} else {
 					self.ClilocSysMessage(502625); // Insufficient mana for this spell.
 				}
@@ -153,28 +188,35 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			SpellBook book = skillSeqArgs.Tool as SpellBook;
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
-			skillSeqArgs.Success = false;
-			if (book != null) {
-				if (book.IsDeleted || (book.TopObj() != self)) {
-					self.ClilocSysMessage(501608);	//You don't have a spellbook.
-					return false;
-				} else if (!book.HasSpell(spell)) {
-					self.ClilocSysMessage(501902);	//You don't know that spell.
-					return false;
+			SpellSourceType sourceType;
+			Item tool = skillSeqArgs.Tool;
+			if (tool != null) {
+				SpellBook book = skillSeqArgs.Tool as SpellBook;
+				if (book != null) {
+					sourceType = SpellSourceType.SpellBook;
+					if (book.IsDeleted || (book.TopObj() != self)) {
+						self.ClilocSysMessage(501608);	//You don't have a spellbook.
+						return false;
+					} else if (!book.HasSpell(spell)) {
+						self.ClilocSysMessage(501902);	//You don't know that spell.
+						return false;
+					}
+				} else if (tool is SpellScroll) { //it might be deleted by now, but we can still check for it's type...
+					sourceType = SpellSourceType.SpellScroll;
+				} else {
+					throw new SEBugException("Magery tool is neither book nor scroll?");
 				}
 			} else {
-				self.WriteLine("Casting without book not implemented yet");
-				return false;
+				throw new SEBugException("No magery tool - not implemented");
 			}
 
 			if (!CanSeeTargetWithMessage(skillSeqArgs, self)) {
 				return false;
 			}
 
-			skillSeqArgs.Success = this.CheckSuccess(self, spell.Difficulty);
+			skillSeqArgs.Success = this.CheckSuccess(self, spell.GetDifficulty(sourceType));
 
 			return false;
 		}

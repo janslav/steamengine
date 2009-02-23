@@ -319,7 +319,12 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Difficulty {
 			get {
-				return (int) this.difficulty.CurrentValue;
+				object current = this.difficulty.CurrentValue;
+				if ((current == null) || Convert.ToInt32(current) < 0) {
+					//TODO extract from requirement ResList
+					return 0;
+				}
+				return (int) current;
 			}
 			set {
 				this.difficulty.CurrentValue = value;
@@ -369,7 +374,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public string GetRuneWords() {
 			if (this.runeWords == null) {
-				string runes = this.Runes;
+				string runes = this.Runes.ToLower();
 				int n = runes.Length;
 				string[] arr = new string[n];
 				for (int i = 0; i < n; i++) {
@@ -378,6 +383,26 @@ namespace SteamEngine.CompiledScripts {
 				this.runeWords = string.Join(" ", arr);
 			}
 			return this.runeWords;
+		}
+
+		public int GetManaUse(SpellSourceType sourceType) {
+			switch (sourceType) {
+				case SpellSourceType.SpellBook:
+					return this.ManaUse;
+				case SpellSourceType.Scroll:
+					return this.ManaUse / 2;
+			}
+			throw new SEException("Can't determine mana use for source type " + sourceType);
+		}
+
+		public int GetDifficulty(SpellSourceType sourceType) {
+			switch (sourceType) {
+				case SpellSourceType.SpellBook:
+					return this.Difficulty;
+				case SpellSourceType.Scroll:
+					return this.Difficulty / 2;
+			}
+			throw new SEException("Can't determine difficulty for source type " + sourceType);
 		}
 
 		private string GetRuneWord(char ch) {
@@ -439,7 +464,6 @@ namespace SteamEngine.CompiledScripts {
 					}
 				} else {
 					mageryArgs.PhaseStart();
-					//ConsumeResources(mageryArgs, caster);
 					return;
 				}
 			}
@@ -470,12 +494,19 @@ namespace SteamEngine.CompiledScripts {
 			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
 			SpellEffectArgs sea = null;
 
+			SpellSourceType sourceType;
+			if (mageryArgs.Tool is SpellScroll) {
+				sourceType = SpellSourceType.SpellScroll;
+			} else {
+				sourceType = SpellSourceType.SpellBook; //we assume there is no other possibility (for now?)
+			}
+
 			bool singleEffectDone = false;
 			Character targetAsChar = target as Character;
 			if (targetAsChar != null) {
 				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {
 					singleEffectDone = true;
-					this.GetSpellPowerAgainstChar(caster, target, targetAsChar, ref sea);
+					this.GetSpellPowerAgainstChar(caster, target, targetAsChar, sourceType, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectChar(targetAsChar, sea);
 					}
@@ -485,7 +516,7 @@ namespace SteamEngine.CompiledScripts {
 				if (targetAsItem != null) {
 					if ((flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem) {
 						singleEffectDone = true;
-						sea = this.GetSpellPowerAgainstNonChar(caster, target, targetAsItem, sea);
+						this.GetSpellPowerAgainstNonChar(caster, target, targetAsItem, sourceType, ref sea);
 						if (this.CheckSpellPowerWithMessage(sea)) {
 							this.Trigger_EffectItem(targetAsItem, sea);
 						}
@@ -497,7 +528,7 @@ namespace SteamEngine.CompiledScripts {
 					(((flags & SpellFlag.CanEffectStatic) == SpellFlag.CanEffectStatic) && (target is Static))) {
 					singleEffectDone = true;
 
-					sea = this.GetSpellPowerAgainstNonChar(caster, target, target, sea);
+					this.GetSpellPowerAgainstNonChar(caster, target, target, sourceType, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectGround(target, sea);
 					}
@@ -518,8 +549,8 @@ namespace SteamEngine.CompiledScripts {
 						}
 						Character ch = t as Character;
 						if (ch != null) {
-							if (canEffectChar) {								
-								this.GetSpellPowerAgainstChar(caster, target, ch, ref sea);
+							if (canEffectChar) {
+								this.GetSpellPowerAgainstChar(caster, target, ch, sourceType, ref sea);
 								if (this.CheckSpellPowerWithMessage(sea)) {
 									if ((flags & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial) {
 										if (Notoriety.GetCharRelation(caster, ch) < sea.CasterToMainTargetRelation) { //target "more enemy" than main target, we don't wanna benefit him.
@@ -537,7 +568,7 @@ namespace SteamEngine.CompiledScripts {
 						} else if (canEffectItem) {
 							Item i = t as Item;
 							if (i != null) {
-								sea = this.GetSpellPowerAgainstNonChar(caster, target, i, sea);
+								this.GetSpellPowerAgainstNonChar(caster, target, i, sourceType, ref sea);
 								if (this.CheckSpellPowerWithMessage(sea)) {
 									this.Trigger_EffectItem(i, sea);
 								}
@@ -576,7 +607,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		private void GetSpellPowerAgainstChar(Character caster, IPoint4D mainTarget, Character currentTarget, ref SpellEffectArgs sea) {
+		private void GetSpellPowerAgainstChar(Character caster, IPoint4D mainTarget, Character currentTarget, SpellSourceType sourceType, ref SpellEffectArgs sea) {
 			int spellPower;
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.UseMindPower) == SpellFlag.UseMindPower) {
@@ -587,16 +618,16 @@ namespace SteamEngine.CompiledScripts {
 					mindDef = currentTarget.MindDefenseVsM;
 				}
 				if (currentTarget.IsPlayerForCombat) {
-					spellPower = caster.MindPowerVsP - mindDef;
+					spellPower = (caster.MindPowerVsP - mindDef)*10; //*10 because we need to be in thousands, like it is with skills
 				} else {
-					spellPower = caster.MindPowerVsM - mindDef;
+					spellPower = (caster.MindPowerVsM - mindDef)*10;
 				}
 			} else {
 				spellPower = caster.GetSkill(SkillName.Magery);
 			}
 
 			if (sea == null) {
-				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower);
+				sea = SpellEffectArgs.Acquire(caster, mainTarget, currentTarget, this, spellPower, sourceType);
 				if (!(mainTarget is Character)) {
 					if ((flags & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial) {
 						sea.CasterToMainTargetRelation = CharRelation.Allied;
@@ -610,18 +641,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private SpellEffectArgs GetSpellPowerAgainstNonChar(Character caster, IPoint4D target, IPoint4D currentTarget, SpellEffectArgs sea) {
+		private void GetSpellPowerAgainstNonChar(Character caster, IPoint4D target, IPoint4D currentTarget, SpellSourceType sourceType, ref SpellEffectArgs sea) {
 			int spellPower = caster.GetSkill(SkillName.Magery);
 			if (sea == null) {
-				sea = SpellEffectArgs.Acquire(caster, target, currentTarget, this, spellPower);
+				sea = SpellEffectArgs.Acquire(caster, target, currentTarget, this, spellPower, sourceType);
 			} else {
 				sea.CurrentTarget = currentTarget;
 				sea.SpellPower = spellPower;
 			}
-			return sea;
 		}
 
-		private void Trigger_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+		public void Trigger_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
@@ -638,7 +668,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void Trigger_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
+		public void Trigger_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
 			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
@@ -655,7 +685,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void Trigger_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+		public void Trigger_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
 			bool cancel = this.TryCancellableTrigger(target, tkEffectGround, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
@@ -664,20 +694,20 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual bool On_Success(SkillSequenceArgs mageryArgs) {
+		protected virtual bool On_Success(SkillSequenceArgs mageryArgs) {
 			return false;
 		}
 
-		public virtual void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+		protected virtual void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
 		}
 
-		public virtual void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+		protected virtual void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			if ((this.Flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				target.Trigger_HostileAction(spellEffectArgs.Caster);
 			}
 		}
 
-		public virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
+		protected virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
 		}
 	}
 
@@ -689,6 +719,7 @@ namespace SteamEngine.CompiledScripts {
 		int spellPower;
 		CharRelation relation;
 		bool relationFoundOut = false;
+		SpellSourceType sourceType = SpellSourceType.SpellBook;
 
 		public readonly ScriptArgs scriptArgs;
 
@@ -697,13 +728,14 @@ namespace SteamEngine.CompiledScripts {
 			this.scriptArgs = new ScriptArgs(this);
 		}
 
-		public static SpellEffectArgs Acquire(Character caster, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower) {
+		public static SpellEffectArgs Acquire(Character caster, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower, SpellSourceType sourceType) {
 			SpellEffectArgs retVal = new SpellEffectArgs();
 			retVal.caster = caster;
 			retVal.mainTarget = mainTarget;
 			retVal.currentTarget = currentTarget;
 			retVal.spellDef = spellDef;
 			retVal.spellPower = spellPower;
+			retVal.sourceType = sourceType;
 			return retVal;
 		}
 
@@ -762,6 +794,12 @@ namespace SteamEngine.CompiledScripts {
 			set { //used when target is no char
 				this.relation = value;
 				this.relationFoundOut = true;
+			}
+		}
+
+		public SpellSourceType SourceType {
+			get {
+				return this.sourceType;
 			}
 		}
 	}
