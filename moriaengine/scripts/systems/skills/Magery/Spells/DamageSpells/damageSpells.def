@@ -11,7 +11,6 @@ SCROLLITEM=i_scroll_MAGIC_ARROW
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 //EFFECTID=0
 EFFECT=0,3
-DURATION=0.0
 MANAUSE=6
 Requirements=4.0 Magery
 difficulty = 5
@@ -32,10 +31,8 @@ RUNEITEM=i_rune_HARM
 SCROLLITEM=i_scroll_HARM
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 EFFECT=6,12
-DURATION=0.0
-MANAUSE=6
-Requirements=20.0 Magery
-difficulty = 200
+
+MANAUSE=6 Requirements=20.0 Magery difficulty = 200
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x374A, 10, 15)
@@ -53,7 +50,6 @@ SCROLLITEM=i_scroll_FIREBALL
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 //EFFECTID=0
 EFFECT=0,15
-DURATION=0.0
 MANAUSE=10
 Requirements=30.0 Magerys
 
@@ -70,7 +66,7 @@ SCROLLITEM=i_scroll_POISON
 FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_harm//SPELLFLAG_TARG_CHAR
 //EFFECTID=i_fx_curse
 EFFECT=0,100
-DURATION=0.3,0.5
+//DURATION=0.3,0.5
 MANAUSE=10
 Requirements=30.0 Magery
 
@@ -85,7 +81,6 @@ SCROLLITEM=i_scroll_LIGHTNING
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 //EFFECTID=0
 EFFECT=0,15
-DURATION=0.0
 MANAUSE=11
 Requirements=40.0 Magery
 
@@ -106,7 +101,6 @@ SCROLLITEM=i_scroll_MIND_BLAST
 FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
 //EFFECTID=i_fx_curse
 EFFECT=0,12
-DURATION=0.0
 MANAUSE=20
 Requirements=50.0 Magery
 
@@ -122,7 +116,6 @@ SCROLLITEM=i_scroll_ENERGY_BOLT
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 //EFFECTID=0
 EFFECT=0,22
-DURATION=0.0
 MANAUSE=22
 Requirements=60.0 Magery
 
@@ -138,7 +131,6 @@ SCROLLITEM=i_scroll_EXPLOSION
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
 //EFFECTID=i_fx_explode
 EFFECT=0,25
-DURATION=0.0
 MANAUSE=22
 Requirements=60.0 Magery
 
@@ -154,7 +146,6 @@ SCROLLITEM=i_scroll_CHAIN_LIGHTNING
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
 //EFFECTID=0
 EFFECT=0,30
-DURATION=0.0
 MANAUSE=30
 Requirements=70.0 Magery
 
@@ -176,7 +167,7 @@ SCROLLITEM=i_scroll_FLAMESTRIKE
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 //EFFECTID=03709
 EFFECT=0,35
-DURATION=0.0 
+
 MANAUSE=40
 Requirements=70.0 Magery
 
@@ -193,7 +184,6 @@ SCROLLITEM=i_scroll_METEOR_swarm
 FLAGS=SPELLFLAG_DIR_ANIM|spellflag_evil|SPELLFLAG_TARG_XYZ|spellflag_SM|spellflag_harmcaster|spellflag_harm
 //EFFECTID=0
 EFFECT=0,40
-DURATION=0.0
 MANAUSE=40
 Requirements=70.0 Magery
 
@@ -226,6 +216,5 @@ Requirements=80.0 Magery
 //FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_BOLT|spellflag_evil|spellflag_SM//SPELLFLAG_TARG_CHAR
 ////EFFECTID=0
 //EFFECT=0,30
-//DURATION=0.0
 //MANAUSE=32
 //Requirements=70.0 Magery

@@ -662,11 +662,23 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs">
       <Link>systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DurableSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\DurableSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\HealingSpellDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpellDef.cs">
-      <Link>systems\skills\Magery\Spells\StatModSpellDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.cs">
+      <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Meditation\Meditation.cs">
       <Link>systems\skills\Meditation\Meditation.cs</Link>

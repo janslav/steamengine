@@ -22,6 +22,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -109,6 +110,56 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class NPC : Character {
+
+		public override short MaxHits {
+			get {
+				return maxHitpoints;
+			}
+			set {
+				if (value != maxHitpoints) {
+					CharSyncQueue.AboutToChangeHitpoints(this);
+					this.maxHitpoints = value;
+
+					//check the hitpoints regeneration
+					RegenerationPlugin.TryInstallPlugin(this, this.Hits, this.maxHitpoints, this.HitsRegenSpeed);
+				}
+			}
+		}
+
+		public override short MaxMana {
+			get {
+				return maxMana;
+			}
+			set {
+				if (value != maxMana) {
+					CharSyncQueue.AboutToChangeMana(this);
+					this.maxMana = value;
+
+					//regeneration...
+					RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.maxMana, this.ManaRegenSpeed);
+					
+					//meditation finish
+					if (this.Mana >= MaxMana) {
+						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
+					}
+				}
+			}
+		}
+
+		public override short MaxStam {
+			get {
+				return maxStamina;
+			}
+			set {
+				if (value != maxStamina) {
+					CharSyncQueue.AboutToChangeStamina(this);
+					this.maxStamina = value;
+
+					//regeneration...
+					RegenerationPlugin.TryInstallPlugin(this, this.Stam, this.maxStamina, this.StamRegenSpeed);
+				}
+			}
+		}
 
 		public override IMovementSettings MovementSettings {
 			get {

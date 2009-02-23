@@ -152,7 +152,6 @@ namespace SteamEngine.Persistence {
 		//no params
 	}
 
-
 	public abstract class DecoratedClassesSaveImplementor : ISaveImplementor {
 		Type handledType;
 		string headerName;

@@ -108,12 +108,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public override sealed byte FlagsToSend {
 			get {
-				//We don't want to send 0x02 if it is set, so we &0xfd to get rid of it.
-				int ret = 0;	//0xfd is all bits except 0x02.
-				if (IsNotVisible) {
+				int ret = 0;
+				if (this.IsNotVisible) {
 					ret |= 0x80;
 				}
-				if (Flag_WarMode) {
+				if (this.Flag_WarMode) {
 					ret |= 0x41; //both 0x40 (for aos clients) and 0x01 (for older clients?) hope it won't break much
 				}
 				return (byte) ret;
@@ -458,14 +457,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value != hitpoints) {
-					if (!Flag_Dead && value < 1) {
+					if (!this.Flag_Dead && value < 1) {
 						this.CauseDeath((Character) Globals.SrcCharacter);
 					} else {
 						CharSyncQueue.AboutToChangeHitpoints(this);
 						hitpoints = value;
 
 						//try the hitpoints regeneration
-						RegenerationPlugin.TryInstallPlugin(this, hitpoints, maxHitpoints, hitsRegenSpeed);
+						RegenerationPlugin.TryInstallPlugin(this, this.hitpoints, this.MaxHits, hitsRegenSpeed);
 					}
 				}
 			}
@@ -473,16 +472,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short MaxHits {
 			get {
-				return maxHitpoints;
+				throw new SEException("The method or operation is not implemented.");
 			}
 			set {
-				if (value != maxHitpoints) {
-					CharSyncQueue.AboutToChangeHitpoints(this);
-					maxHitpoints = value;
-
-					//check the hitpoints regeneration
-					RegenerationPlugin.TryInstallPlugin(this, hitpoints, maxHitpoints, hitsRegenSpeed);
-				}
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 
@@ -496,33 +489,23 @@ namespace SteamEngine.CompiledScripts {
 					mana = value;
 
 					//regeneration...
-					RegenerationPlugin.TryInstallPlugin(this, mana, maxMana, manaRegenSpeed);
+					RegenerationPlugin.TryInstallPlugin(this, this.mana, this.MaxMana, manaRegenSpeed);
 
 					//meditation finish
-					if (mana >= MaxMana) {
+					if (mana >= this.MaxMana) {
 						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
 					}
 				}
 			}
 		}
 
-		public override short MaxMana {
+
+		public override short MaxStam {
 			get {
-				return maxMana;
+				throw new SEException("The method or operation is not implemented.");
 			}
 			set {
-				if (value != maxMana) {
-					CharSyncQueue.AboutToChangeMana(this);
-					maxMana = value;
-
-					//regeneration...
-					RegenerationPlugin.TryInstallPlugin(this, mana, maxMana, manaRegenSpeed);
-
-					//meditation finish
-					if (mana >= MaxMana) {
-						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
-					}
-				}
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 
@@ -536,23 +519,17 @@ namespace SteamEngine.CompiledScripts {
 					stamina = value;
 
 					//regeneration...
-					RegenerationPlugin.TryInstallPlugin(this, stamina, maxStamina, stamRegenSpeed);
+					RegenerationPlugin.TryInstallPlugin(this, this.stamina, this.MaxStam, stamRegenSpeed);
 				}
 			}
 		}
 
-		public override short MaxStam {
+		public override short MaxMana {
 			get {
-				return maxStamina;
+				throw new SEException("The method or operation is not implemented.");
 			}
 			set {
-				if (value != maxStamina) {
-					CharSyncQueue.AboutToChangeStamina(this);
-					maxStamina = value;
-
-					//regeneration...
-					RegenerationPlugin.TryInstallPlugin(this, stamina, maxStamina, stamRegenSpeed);
-				}
+				throw new SEException("The method or operation is not implemented.");
 			}
 		}
 
@@ -568,7 +545,6 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
-
 
 		public override short Dex {
 			get {
@@ -668,6 +644,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		#endregion status properties
+
+		public void Heal(int howManyHits) {
+			int hits = this.Hits;
+			int maxHits = this.MaxHits;
+			if (hits < maxHits) {
+				hits += howManyHits;
+				if (hits > maxHits) {
+					this.Hits = (short) maxHits;
+				} else {
+					this.Hits = (short) hits;
+				}
+			}
+		}
 
 		#region resisty
 		private static TagKey resistMagicTK = TagKey.Get("_resistMagic_");
@@ -932,39 +921,39 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("How many hitpoints is regenerated in one second")]
 		public double HitsRegenSpeed {
 			get {
-				return hitsRegenSpeed;
+				return this.hitsRegenSpeed;
 			}
 			set {
-				hitsRegenSpeed = value;
+				this.hitsRegenSpeed = value;
 
 				//check the regeneration
-				RegenerationPlugin.TryInstallPlugin(this, hitpoints, maxHitpoints, hitsRegenSpeed);
+				RegenerationPlugin.TryInstallPlugin(this, this.hitpoints, this.MaxHits, this.hitsRegenSpeed);
 			}
 		}
 
 		[Summary("How many stamina points is regenerated in one second")]
 		public double ManaRegenSpeed {
 			get {
-				return manaRegenSpeed;
+				return this.manaRegenSpeed;
 			}
 			set {
-				manaRegenSpeed = value;
+				this.manaRegenSpeed = value;
 
 				//check the regeneration
-				RegenerationPlugin.TryInstallPlugin(this, mana, maxMana, manaRegenSpeed);
+				RegenerationPlugin.TryInstallPlugin(this, this.mana, this.MaxMana, this.manaRegenSpeed);
 			}
 		}
 
 		[Summary("How many mana points is regenerated in one second")]
 		public double StamRegenSpeed {
 			get {
-				return stamRegenSpeed;
+				return this.stamRegenSpeed;
 			}
 			set {
-				stamRegenSpeed = value;
+				this.stamRegenSpeed = value;
 
 				//check the regeneration
-				RegenerationPlugin.TryInstallPlugin(this, stamina, maxStamina, stamRegenSpeed);
+				RegenerationPlugin.TryInstallPlugin(this, this.stamina, this.MaxStam, this.stamRegenSpeed);
 			}
 		}
 		#endregion regenerace

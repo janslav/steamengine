@@ -32,6 +32,62 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class Player : Character {
+
+		public short Vit {
+			get {
+				return this.vitality;
+			}
+			set {
+				if (value != this.vitality) {
+					CharSyncQueue.AboutToChangeHitpoints(this);
+					CharSyncQueue.AboutToChangeStamina(this);
+					this.vitality = value;
+
+					//regeneration...
+					RegenerationPlugin.TryInstallPlugin(this, this.Hits, this.vitality, this.HitsRegenSpeed);
+					RegenerationPlugin.TryInstallPlugin(this, this.Stam, this.vitality, this.StamRegenSpeed);
+				}
+			}
+		}
+
+		public override short MaxHits {
+			get {
+				return this.vitality;
+			}
+			set {
+				this.Vit = value; //or should we throw exception?
+			}
+		}
+
+		public override short MaxMana {
+			get {
+				return this.Int;
+			}
+			set {
+				this.Int = value; //or should we throw exception?
+			}
+		}
+
+		public override short MaxStam {
+			get {
+				return this.vitality;
+			}
+			set {
+				this.Vit = value; //or should we throw exception?
+			}
+		}
+
+		public override short Int {
+			get {
+				return base.Int;
+			}
+			set {
+				base.Int = value;
+
+				RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.MaxMana, this.ManaRegenSpeed);
+			}
+		}
+
 		public Globals serv() {
 			return Globals.Instance;
 		}
