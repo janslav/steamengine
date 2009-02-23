@@ -30,7 +30,7 @@ namespace SteamEngine.RemoteConsole {
 
 			Logger.Init(mainForm.SystemDisplay);
 
-
+			Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
 
 			Application.Run(mainForm);
 
@@ -42,6 +42,10 @@ namespace SteamEngine.RemoteConsole {
 
 			//    Thread.Sleep(5);
 			//}
+		}
+
+		static void Application_ThreadException(object sender, ThreadExceptionEventArgs e) {
+			Logger.WriteError("Untrapped exception", e.Exception);
 		}
 	}
 }
