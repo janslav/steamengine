@@ -65,6 +65,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.Int = value; //or should we throw exception?
+
+				RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.MaxMana, this.ManaRegenSpeed);
 			}
 		}
 
