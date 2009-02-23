@@ -30,12 +30,20 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class DurableSpellDef : SpellDef {
 
+		private FieldValue effectPluginDef;
 		private FieldValue duration;
+
+		private readonly PluginKey effectFromSpellPK;
+		private readonly PluginKey effectFromPotionPK;
 
 		public DurableSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
 			this.duration = this.InitField_Typed("duration", null, typeof(double[]));
+			this.effectPluginDef = this.InitField_Typed("effectPluginDef", null, typeof(PluginDef));
+
+			this.effectFromSpellPK = PluginKey.Get(string.Concat("_effectPlugin_", defname, "_fromSpell_"));
+			this.effectFromPotionPK = PluginKey.Get(string.Concat("_effectPlugin_", defname, "_fromPotion_"));
 		}
 		
 		public double[] Duration {
@@ -51,11 +59,49 @@ namespace SteamEngine.CompiledScripts {
 			return ScriptUtil.EvalRangePermille(spellpower, this.Duration);
 		}
 
-		protected SpellEffectDurationPlugin InitDurationPlugin(Character target, double spellPower, PluginKey key, PluginDef pluginDef) {
-			SpellEffectDurationPlugin plugin = (SpellEffectDurationPlugin) pluginDef.Create();
-			plugin.Init(this.GetEffectForValue(spellPower), this.GetDurationForValue(spellPower), true);
+		protected SpellEffectDurationPlugin InitDurationPlugin(Character target, double spellPower, SpellSourceType sourceType) {
+			SpellEffectDurationPlugin plugin = (SpellEffectDurationPlugin) this.EffectPluginDef.Create();
+			PluginKey key;
+			bool dispellable;
+			if (sourceType == SpellSourceType.Potion) {
+				key = this.EffectFromPotionPK;
+				dispellable = false; //potions are generally not dispellable. Might want some exception from this rule at some point...?
+			} else {
+				key = this.effectFromSpellPK;
+				dispellable = true;
+			}
+
+			target.DeletePlugin(key);
+
+			plugin.Init(this.GetEffectForValue(spellPower), this.GetDurationForValue(spellPower), dispellable);
 			target.AddPlugin(key, plugin);
 			return plugin;
+		}
+
+		public PluginDef EffectPluginDef {
+			get {
+				return (PluginDef) this.effectPluginDef.CurrentValue;
+			}
+			set {
+				this.effectPluginDef.CurrentValue = value;
+			}
+		}
+
+		public PluginKey EffectFromBookPK {
+			get {
+				return this.effectFromSpellPK;
+			}
+		}
+
+		public PluginKey EffectFromPotionPK {
+			get {
+				return this.effectFromPotionPK;
+			}
+		}
+
+		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+			base.On_EffectChar(target, spellEffectArgs);
+			this.InitDurationPlugin(target, spellEffectArgs.SpellPower, spellEffectArgs.SourceType);
 		}
 	}
 }

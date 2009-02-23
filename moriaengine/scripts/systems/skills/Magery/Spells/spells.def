@@ -14,23 +14,6 @@ DURATION=0.0
 MANAUSE=4
 Requirements=1.0 Magery
 
-[SpellDef 1]
-// NOTE: This spell at low levels is deadly and can stop a player from running at high level an annoyance at best
-DEFNAME=s_Clumsy
-NAME=Clumsy
-SOUND=snd_SPELL_CLUMSY
-RUNES=UJ
-CASTTIME=1.0
-//RESOURCES=i_reag_blood_moss,i_reag_nightshade
-RUNEITEM=i_rune_CLUMSY
-SCROLLITEM=i_scroll_CLUMSY
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=2*60.0,3*60.0
-MANAUSE=5
-Requirements=10.0 Magery
-
 [SpellDef 2]
 DEFNAME=s_create_food
 NAME=Create Food
@@ -46,22 +29,6 @@ EFFECT=0
 DURATION=0.0
 MANAUSE=5
 Requirements=500.0 Magery
-
-[SpellDef 3]
-DEFNAME=s_feeblemind
-NAME=Feeblemind
-SOUND=snd_SPELL_FEEBLEMIND
-RUNES=RW
-CASTTIME=1.5
-//RESOURCES=i_reag_ginseng,i_reag_nightshade
-RUNEITEM=i_rune_FEEBLEMIND
-SCROLLITEM=i_scroll_FEEBLEMIND
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=2*60.0,5*60.0
-MANAUSE=5
-Requirements=10.0 Magery
 
 [HealingSpellDef 4]
 DEFNAME=s_heal
@@ -115,56 +82,7 @@ DURATION=2*60.0,5*60.0
 MANAUSE=7
 Requirements=10.0 Magery
 
-[SpellDef 8]
-DEFNAME=s_weaken
-NAME=Weaken
-SOUND=snd_SPELL_WEAKEN
-RUNES=DM
-CASTTIME=1.0
-//RESOURCES=i_reag_garlic,i_reag_nightshade
-RUNEITEM=i_rune_WEAKEN
-SCROLLITEM=i_scroll_WEAKEN
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=2*60.0,5*60.0
-MANAUSE=5
-Requirements=10.0 Magery
-
 ///////////////////////////////////////////// 2 kruh
-[SpellDef 9]
-// Raise dex
-DEFNAME=s_Agility
-NAME=Agility
-SOUND=snd_SPELL_AGILITY
-RUNES=EU
-CASTTIME=1.0
-//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root
-RUNEITEM=i_rune_AGILITY
-SCROLLITEM=i_scroll_AGILITY
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD|SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0,15
-DURATION=2*60.0,5*60.0
-MANAUSE=6
-Requirements=18.0 Magery
-
-[SpellDef 10]
-// Raise int.
-DEFNAME=s_Cunning
-NAME=Cunning
-SOUND=snd_SPELL_CUNNING
-RUNES=UW
-CASTTIME=8
-//RESOURCES=i_reag_mandrake_root,i_reag_nightshade
-RUNEITEM=i_rune_CUNNING
-SCROLLITEM=i_scroll_CUNNING
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0,15
-DURATION=2*60.0,5*60.0
-MANAUSE=6
-Requirements=20.0 Magery
 
 [SpellDef 11]
 DEFNAME=s_cure
@@ -230,39 +148,7 @@ DURATION=3*60.0,8*60.0
 MANAUSE=7
 Requirements=20.0 Magery
 
-[SpellDef 16]
-DEFNAME=s_strength
-NAME=Strength
-SOUND=snd_SPELL_STRENGTH
-RUNES=UM
-CASTTIME=1.5
-//RESOURCES=i_reag_mandrake_root,i_reag_nightshade
-RUNEITEM=i_rune_STRENGTH
-SCROLLITEM=i_scroll_STRENGTH
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0,15
-DURATION=2*60.0,8*60.0
-MANAUSE=7
-Requirements=20.0 Magery
-
 /////////////////////////////////////////////////////////// 3 kruh
-
-[SpellDef 17]
-DEFNAME=s_bless
-NAME=Bless
-SOUND=snd_SPELL_BLESS
-RUNES=RS
-CASTTIME=2.0
-//RESOURCES=i_reag_garlic,i_reag_mandrake_root
-RUNEITEM=i_rune_BLESS
-SCROLLITEM=i_scroll_BLESS
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_OBJ
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0,15
-DURATION=4*60.0,10*60.0
-MANAUSE=9
-Requirements=30.0 Magery
 
 [SpellDef 19]
 DEFNAME=s_magic_lock
@@ -376,22 +262,6 @@ FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD
 EFFECT=0,30
 DURATION=3*60.0,8*60.0
 MANAUSE=11
-Requirements=40.0 Magery
-
-[SpellDef 27]
-DEFNAME=s_curse
-NAME=Curse
-SOUND=snd_SPELL_CURSE
-RUNES=DS
-CASTTIME=2.3
-//RESOURCES=i_reag_garlic,i_reag_nightshade,i_reag_sulfur_ash
-RUNEITEM=i_rune_CURSE
-SCROLLITEM=i_scroll_CURSE
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_OBJ
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=10.0,60.0
-MANAUSE=12
 Requirements=40.0 Magery
 
 [SpellDef 28]
@@ -630,22 +500,6 @@ EFFECT=20,40
 DURATION=0.0
 MANAUSE=50
 Requirements=30.0 Magery
-
-[SpellDef 46]
-DEFNAME=s_mass_curse
-NAME=Mass Curse
-SOUND=snd_SPELL_MASS_CURSE
-RUNES=VDS
-CASTTIME=3.0
-//RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_nightshade,i_reag_sulfur_ash
-RUNEITEM=i_rune_MASS_CURSE
-SCROLLITEM=i_scroll_MASS_CURSE
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=0.0
-MANAUSE=20
-Requirements=60.0 Magery
 
 [SpellDef 47]
 DEFNAME=s_paralyzation_field

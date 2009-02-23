@@ -457,4 +457,12 @@ namespace SteamEngine.CompiledScripts {
 		Allied = 1, //same realm
 		Friendly = 2 //same guild/allied guild, party
 	}
+
+	public enum SpellSourceType {
+		Unknown = 0, None = 0,
+		SpellBook = 1, Book = 1, 
+		SpellScroll = 2, Scroll = 2,
+		Potion = 3,
+		Trap = 4 //?
+	}
 }
