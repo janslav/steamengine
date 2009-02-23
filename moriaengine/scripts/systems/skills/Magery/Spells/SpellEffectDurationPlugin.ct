@@ -13,24 +13,8 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate NPC : Character]
-Defs:
-	double weaponAttack = 1	
-	double weaponPiercing = 0
-	double weaponDelay = 2.0
-	WeaponType weaponType = WeaponType.Undefined
-	int weaponRange = 1
-	int strikeStartRange = 5
-	int strikeStopRange = 10
-	int projectileAnim = -1
-	double mindPower = 1	
-	
-Vars:	//vars defined in the class, so they basically do what tags do, but better
-	private IMovementSettings movementSettings = null 
 
-	short maxStamina=100
-	short maxHitpoints=100
-	short maxMana=100
-
-
-
+[PluginTemplate SpellEffectDurationPlugin : TimerPlugin]
+Vars:
+	double effect = 0
+	bool dispellable = false

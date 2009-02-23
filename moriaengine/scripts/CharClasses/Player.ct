@@ -18,7 +18,4 @@ Vars:	//vars defined in the class, so they basically do what tags do, but better
 	//every skill can have modified its max value specified by profesion (e.g. by magic items etc)
 	private Dictionary<SkillName,short> maxSkillModifier = null
 	//players profession
-	private ProfessionPlugin profession = null
-	
-	//container to put the created items into (defaultly Backpack)
-	private Container receivingContainer = null
+	//container to put the created items into (defaultly Backpack)	private Container receivingContainer = null	private int vitality = 100

@@ -1322,7 +1322,7 @@ namespace SteamEngine.Networking {
 
 	public sealed class TargetCursorCommandsOutPacket : GameOutgoingPacket {
 		byte type;
-		byte cursorType;//3 = cancel
+		byte cursorType;//1 = Harmful, 2 = Beneficial 3 = cancel
 
 		public void Prepare(bool ground) {
 			this.type = ground ? (byte) 1 : (byte) 0;

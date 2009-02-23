@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 		CanTargetChar = 0x0008,
 		CanTargetAnything = CanTargetStatic | CanTargetGround | CanTargetItem | CanTargetChar,
 		AlwaysTargetSelf = 0x0010,
-		//TargetNeedsLOS = 0x0020,
+		CanEffectDeadChar = 0x0020,
 		CanEffectStatic = 0x0040,
 		CanEffectGround = 0x0080,
 		CanEffectItem = 0x0100,
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		EffectNeedsLOS = 0x0400,
 		IsAreaSpell = 0x0800,
 		TargetCanMove = 0x1000,
-		UseMindPower = 0x2000, //otherwise, magery value is used, multiplied by the spells Effect value
+		UseMindPower = 0x2000, //otherwise, magery value is used
 		IsHarmful = 0x4000,
 		IsBeneficial = 0x8000
 	}
@@ -215,7 +215,6 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue resources;
 		private FieldValue difficulty;
 		private FieldValue effect;
-		private FieldValue duration;
 		private FieldValue sound;
 		private FieldValue runes;
 		private FieldValue effectRange;
@@ -234,7 +233,6 @@ namespace SteamEngine.CompiledScripts {
 			this.resources = this.InitField_Typed("resources", null, typeof(ResourcesList));
 			this.difficulty = this.InitField_Typed("difficulty", null, typeof(int));
 			this.effect = this.InitField_Typed("effect", null, typeof(double[]));
-			this.duration = this.InitField_Typed("duration", null, typeof(double[]));
 			this.sound = this.InitField_Typed("sound", null, typeof(SoundNames));
 			this.runes = this.InitField_Typed("runes", null, typeof(string));
 			this.effectRange = this.InitField_Typed("effectRange", 5, typeof(int));
@@ -270,6 +268,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.runeItem.CurrentValue = value;
+				this.runeWords = null;
 			}
 		}
 
@@ -338,19 +337,6 @@ namespace SteamEngine.CompiledScripts {
 
 		public double GetEffectForValue(double spellpower) {
 			return ScriptUtil.EvalRangePermille(spellpower, this.Effect);
-		}
-
-		public double[] Duration {
-			get {
-				return (double[]) this.duration.CurrentValue;
-			}
-			set {
-				this.duration.CurrentValue = value;
-			}
-		}
-
-		public double GetDurationForValue(double spellpower) {
-			return ScriptUtil.EvalRangePermille(spellpower, this.Duration);
 		}
 
 		public SoundNames Sound {
@@ -569,6 +555,14 @@ namespace SteamEngine.CompiledScripts {
 
 		private bool CheckSpellPowerWithMessage(SpellEffectArgs sea) {
 			SpellFlag flags = this.Flags;
+			if ((flags & SpellFlag.CanEffectDeadChar) != SpellFlag.CanEffectDeadChar) {
+				Character targetAsChar = sea.CurrentTarget as Character;
+				if ((targetAsChar != null) && (targetAsChar.Flag_Dead)) {
+					sea.Caster.ClilocSysMessage(501857); // This spell won't work on that!
+					return false;
+				}
+			}
+
 			if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				if (sea.SpellPower < 1) {
 					sea.Caster.SysMessage("Cíl odolal kouzlu!");
