@@ -26,6 +26,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	public interface ICorpseEquipInfo {
@@ -242,6 +243,13 @@ namespace SteamEngine {
 			}
 		}
 
+		public override Region Region {
+			get {
+				Thing top = this.TopObj();
+				return Map.GetMap(top.point4d.m).GetRegionFor(top.point4d);
+			}
+		}
+
 		//commands:
 		public override sealed void Resend() {
 			ItemSyncQueue.Resend(this);
@@ -323,34 +331,34 @@ namespace SteamEngine {
 
 		public override string Name {
 			get {
-				if (name == null) {
-					return Amount > 1 ? TypeDef.PluralName : TypeDef.SingularName;
+				if (this.name == null) {
+					return this.Amount > 1 ? this.TypeDef.PluralName : this.TypeDef.Name;
 				} else {
-					return name;
+					return this.name;
 				}
 			}
 			set {
 				this.InvalidateProperties();
 				if (!string.IsNullOrEmpty(value)) {
-					name = String.Intern(value);
+					this.name = String.Intern(value);
 				} else {
-					name = null;
+					this.name = null;
 				}
 			}
 		}
 
 		public override void On_Create() {
-			AbstractItemDef aidef = (AbstractItemDef) def;
+			AbstractItemDef aidef = (AbstractItemDef) this.def;
 			AbstractItemDef dupe = aidef.DupeItem;
 			if (dupe != null) {
-				def = dupe;
+				this.def = dupe;
 			}
-			Type = aidef.Type;
+			this.Type = aidef.Type;
 			base.On_Create();
 		}
 
 		public void Flip() {
-			Model = TypeDef.GetNextFlipModel(Model);
+			this.Model = this.TypeDef.GetNextFlipModel(this.Model);
 		}
 
 		public static new void RegisterTriggerGroup(TriggerGroup tg) {

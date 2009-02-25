@@ -23,29 +23,25 @@ using SteamEngine.Timers;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[ViewDescriptor(typeof(Character), "Character")]
-	public static class CharacterDescriptor {
-		/*We will add here a ressurect, kill, dismount etc...
-		 */
-
-		[Button("Dismount")]
-		public static void Dismount(object target) {
-			((Character) target).Dismount();
+	[ViewDescriptor(typeof(Item), "Item")]
+	public static class ItemDescriptor {
+		[Button("FixWeight")]
+		public static void FixWeight(object target) {
+			((Item) target).FixWeight();
 		}
+	}
 
-		[Button("Disarm")]
-		public static void Disarm(object target) {
-			((Character) target).DisArm();
-		}
+	[ViewDescriptor(typeof(Container), "Container")]
+	public static class ContainerDescriptor {
 
-		[Button("Kill")]
-		public static void Kill(object target) {
-			((Character) target).Kill();
+		[Button("EmptyCont")]
+		public static void EmptyCont(object target) {
+			((Container) target).EmptyCont();
 		}
+	}
 
-		[Button("Resurrect")]
-		public static void Resurrect(object target) {
-			((Character) target).Resurrect();
-		}
+	[ViewDescriptor(typeof(ItemDispidInfo), "ItemDispidInfo")]
+	public static class ItemDispidInfoDescriptor {
+
 	}
 }

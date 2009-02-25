@@ -106,9 +106,10 @@ namespace SteamEngine.CompiledScripts {
 			//it to be infoized, we must add a ViewableClass attribute to it)
 			if (Attribute.IsDefined(type, typeof(ViewableClassAttribute), false) ||
 							ViewableClassGenerator.IsViewableSpecial(type)) {
-				viewableClasses.Add(type);
+				TryAddAsViewable(type);			
 			} else if (Attribute.IsDefined(type, typeof(ViewDescriptorAttribute), false)) {
 				Type descHandledType = ((ViewDescriptorAttribute) type.GetCustomAttributes(typeof(ViewDescriptorAttribute), false)[0]).HandledType;
+				TryAddAsViewable(descHandledType);
 				List<Type> descriptors;
 				if (viewableDescriptorsForTypes.TryGetValue(descHandledType, out descriptors)) {
 					descriptors.Add(type); //new descriptor to the list
@@ -119,6 +120,12 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			return false;
+		}
+
+		private static void TryAddAsViewable(Type type) {
+			if (!viewableClasses.Contains(type)) {
+				viewableClasses.Add(type);
+			}
 		}
 
 		[Summary("Go through all descriptors and look if their handled type is assignable from the just generated one")]

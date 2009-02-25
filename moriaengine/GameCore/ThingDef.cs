@@ -34,7 +34,7 @@ namespace SteamEngine {
 	}
 
 	public abstract class ThingDef : AbstractDefTriggerGroupHolder, IThingFactory {
-		private FieldValue name;
+		internal FieldValue name;
 		internal FieldValue model;
 		private FieldValue weight;
 		private FieldValue height;

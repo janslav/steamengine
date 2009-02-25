@@ -25,7 +25,6 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	public abstract class AbstractItemDef : ThingDef {
 		private FieldValue type;
-		private FieldValue singularName;
 		private FieldValue pluralName;
 
 		private FieldValue dupeItem;
@@ -43,17 +42,16 @@ namespace SteamEngine {
 		public AbstractItemDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			type = InitField_Typed("type", null, typeof(TriggerGroup));
-			singularName = InitField_Typed("singularName", "", typeof(string));
-			pluralName = InitField_Typed("pluralName", "", typeof(string));
+			this.type = InitField_Typed("type", null, typeof(TriggerGroup));
+			this.pluralName = InitField_Typed("pluralName", "", typeof(string));
 
-			dupeItem = InitField_ThingDef("dupeItem", null, typeof(AbstractItemDef));
+			this.dupeItem = InitField_ThingDef("dupeItem", null, typeof(AbstractItemDef));
 			//clilocName = InitField_Typed("clilocName", "0", typeof(uint));
-			mountChar = InitField_ThingDef("mountChar", null, typeof(AbstractCharacterDef));
-			flippable = InitField_Typed("flippable", false, typeof(bool));
-			stackable = InitField_Typed("stackable", false, typeof(bool));
+			this.mountChar = InitField_ThingDef("mountChar", null, typeof(AbstractCharacterDef));
+			this.flippable = InitField_Typed("flippable", false, typeof(bool));
+			this.stackable = InitField_Typed("stackable", false, typeof(bool));
 
-			dropSound = InitField_Typed("dropSound", 87, typeof(ushort));
+			this.dropSound = InitField_Typed("dropSound", 87, typeof(ushort));
 		}
 
 		public AbstractItemDef DupeItem {
@@ -152,40 +150,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public string SingularName {
-			get {
-				string retVal = (string) singularName.CurrentValue;
-				if (string.IsNullOrEmpty(retVal)) {
-					return Name;
-				}
-				return retVal;
-			}
-			set {
-				singularName.CurrentValue = value;
-			}
-		}
-
-		public string PluralName {
-			get {
-				string retVal = (string) pluralName.CurrentValue;
-				if (string.IsNullOrEmpty(retVal)) {
-					return Name;
-				}
-				return retVal;
-			}
-			set {
-				pluralName.CurrentValue = value;
-			}
-		}
-
-		//public uint ClilocName {
-		//    get {
-		//        return (uint) clilocName.CurrentValue;
-		//    } set {
-		//        clilocName.CurrentValue = value;
-		//    }
-		//}
-
 		public bool IsStackable {
 			get {
 				return (bool) stackable.CurrentValue;
@@ -213,63 +177,44 @@ namespace SteamEngine {
 			}
 		}
 
-
-		private bool ParseName(string name, out string singular, out string plural) {
-			int percentPos = name.IndexOf("%");
-			if (percentPos == -1) {
-				singular = name;
-				plural = name;
-			} else {
-				string before = name.Substring(0, percentPos);
-				string singadd = "";
-				string pluradd = "";
-				int percentPos2 = name.IndexOf("%", percentPos + 1);
-				int slashPos = name.IndexOf("/", percentPos + 1);
-				string after = "";
-				if (percentPos2 == -1) {	//This is sometimes the case in the tiledata info...
-					pluradd = name.Substring(percentPos + 1);
-				} else if (slashPos == -1 || slashPos > percentPos2) {
-					if (percentPos2 == name.Length - 1) {
-						after = "";
-					} else {
-						after = name.Substring(percentPos2 + 1);
-					}
-					pluradd = name.Substring(percentPos + 1, percentPos2 - percentPos - 1);
-				} else { //This is: if (slashPos<percentPos2) {
-					Sanity.IfTrueThrow(!(slashPos < percentPos2), "Expected that this else would mean slashPos<percentPos2, but it is not the case now. slashPos=" + slashPos + " percentPos2=" + percentPos2);
-					if (slashPos == name.Length - 1) {
-						after = "";
-					} else {
-						after = name.Substring(slashPos + 1);
-					}
-					pluradd = name.Substring(percentPos + 1, slashPos - percentPos - 1);
-					singadd = name.Substring(slashPos + 1, percentPos2 - slashPos - 1);
-				}
-				singular = before + singadd + after;
-				plural = before + pluradd + after;
-				return true;
-			}
-			return false;
-		}
-
 		public override string Name {
 			get {
-				string n = (string) base.Name;
-				if ((n == null) || (n.Length == 0)) {
+				if (this.name.IsDefaultCodedValue) {
 					ItemDispidInfo idi = this.DispidInfo;
 					if (idi != null) {
-						return idi.name;
+						return idi.singularName;
 					}
 				}
-				return n;
+
+				return base.Name;
 			}
 			set {
-				base.Name = value;
-				string singular;
-				string plural;
-				ParseName(this.Name, out singular, out plural);
-				SingularName = singular;
-				PluralName = plural;
+				string singular, plural;
+				if (ItemDispidInfo.ParseName(value, out singular, out plural)) {
+					base.Name = singular;
+					this.PluralName = plural;
+				} else {
+					base.Name = value;
+				}
+			}
+		}
+
+		public string PluralName {
+			get {
+				if (!this.pluralName.IsDefaultCodedValue) {
+					return (string) pluralName.CurrentValue;
+				}
+				if (this.name.IsDefaultCodedValue) {
+					ItemDispidInfo idi = this.DispidInfo;
+					if (idi != null) {
+						return idi.pluralName;
+					}
+				}
+
+				return this.Name;
+			}
+			set {
+				pluralName.CurrentValue = value;
 			}
 		}
 
@@ -293,10 +238,11 @@ namespace SteamEngine {
 
 		public ItemDispidInfo DispidInfo {
 			get {
-				if (dispidInfo == null) {
-					dispidInfo = ItemDispidInfo.Get(this.Model);
+				int model = this.Model;
+				if ((this.dispidInfo == null) || (this.dispidInfo.id != model)) {
+					this.dispidInfo = ItemDispidInfo.Get(model);
 				}
-				return dispidInfo;
+				return this.dispidInfo;
 			}
 		}
 
@@ -318,8 +264,7 @@ namespace SteamEngine {
 			//}
 
 			switch (param) {
-				case "dupelist":
-					//Do nothing, for now.
+				case "dupelist": //Do nothing (for now?)
 					break;
 				case "name":
 					System.Text.RegularExpressions.Match m = TagMath.stringRE.Match(args);
@@ -327,10 +272,8 @@ namespace SteamEngine {
 						args = m.Groups["value"].Value;
 					}
 
-					string singular;
-					string plural;
-					if (ParseName(args, out singular, out plural)) {
-						singularName.SetFromScripts(filename, line, "\"" + singular + "\"");
+					string singular, plural;
+					if (ItemDispidInfo.ParseName(args, out singular, out plural)) {
 						pluralName.SetFromScripts(filename, line, "\"" + plural + "\"");
 						base.LoadScriptLine(filename, line, param, "\"" + singular + "\"");//will normally load name
 					} else {

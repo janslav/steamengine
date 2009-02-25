@@ -233,7 +233,7 @@ namespace SteamEngine.CompiledScripts {
 			this.resources = this.InitField_Typed("resources", null, typeof(ResourcesList));
 			this.difficulty = this.InitField_Typed("difficulty", null, typeof(int));
 			this.effect = this.InitField_Typed("effect", null, typeof(double[]));
-			this.sound = this.InitField_Typed("sound", null, typeof(SoundNames));
+			this.sound = this.InitField_Typed("sound", 0xffff, typeof(SoundNames));
 			this.runes = this.InitField_Typed("runes", null, typeof(string));
 			this.effectRange = this.InitField_Typed("effectRange", 5, typeof(int));
 		}
@@ -493,6 +493,11 @@ namespace SteamEngine.CompiledScripts {
 			IPoint4D target = mageryArgs.Target1;
 			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
 			SpellEffectArgs sea = null;
+			
+			ushort sound = (ushort) this.Sound;
+			if (sound != 0xffff) {
+				Networking.PacketSequences.SendSound(target, sound, Globals.MaxUpdateRange);
+			}
 
 			SpellSourceType sourceType;
 			if (mageryArgs.Tool is SpellScroll) {

@@ -65,8 +65,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.Int = value; //or should we throw exception?
-
-				RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.MaxMana, this.ManaRegenSpeed);
 			}
 		}
 
@@ -84,9 +82,17 @@ namespace SteamEngine.CompiledScripts {
 				return base.Int;
 			}
 			set {
+				CharSyncQueue.AboutToChangeMana(this);
+
 				base.Int = value;
 
+				//regeneration...
 				RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.MaxMana, this.ManaRegenSpeed);
+
+				//meditation finish
+				if (this.Mana >= MaxMana) {
+					this.DeletePlugin(MeditationPlugin.meditationPluginKey);
+				}
 			}
 		}
 

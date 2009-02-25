@@ -2,7 +2,7 @@
 [DamageSpellDef 5]//utocne
 DEFNAME=s_magic_arrow
 NAME=Magic Arrow
-SOUND=snd_SPELL_MAGIC_ARROW
+SOUND=0x1E5
 CASTTIME=2.5
 RUNES=IPY
 //RESOURCES=i_reag_black_pearl,i_reag_nightshade
@@ -17,13 +17,11 @@ difficulty = 5
 
 on=@effectChar
 	EffectFactory.EffectFromTo(argo.Caster, this, 0x36E4, 5, 0, false, true, 0, 0)
-	argo.Caster.Sound(0x1E5)
-	
 	
 [DamageSpellDef 12]//utocne
 DEFNAME=s_harm
 NAME="Harm"
-SOUND=snd_SPELL_HARM
+SOUND=0x1F1
 RUNES=AM
 CASTTIME=1.2
 //RESOURCES=i_reag_nightshade,i_reag_spider_silk
@@ -32,11 +30,12 @@ SCROLLITEM=i_scroll_HARM
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 EFFECT=6,12
 
-MANAUSE=6 Requirements=20.0 Magery difficulty = 200
+MANAUSE=6 
+Requirements=20.0 Magery 
+difficulty = 200
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x374A, 10, 15)
-	argo.Caster.Sound(0x1F1)
 	
 [DamageSpellDef 18]
 DEFNAME=s_fireball
@@ -75,6 +74,7 @@ DEFNAME=s_lightning
 NAME=Lightning
 RUNES=POG
 CASTTIME=2.0
+SOUND=41
 //RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_sulfur_ash
 RUNEITEM=i_rune_LIGHTNING
 SCROLLITEM=i_scroll_LIGHTNING
@@ -86,9 +86,7 @@ Requirements=40.0 Magery
 
 on=@effectChar
 	EffectFactory.LightningEffect(this)
-	argo.Caster.Sound(41)
-
-
+s
 [SpellDef 37]//utocne
 DEFNAME=s_mind_blast
 NAME=Mind Blast
@@ -137,7 +135,7 @@ Requirements=60.0 Magery
 [DamageSpellDef 49]//utocne
 DEFNAME=s_chain_lightning
 NAME=Chain Lightning
-SOUND=snd_SPELL_CHAIN_LIGHTNING
+SOUND=41
 RUNES=VOG
 CASTTIME=2.8
 //RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root,i_reag_sulfur_ash
@@ -148,9 +146,6 @@ FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsL
 EFFECT=0,30
 MANAUSE=30
 Requirements=70.0 Magery
-
-on=@success
-	argo.Caster.Sound(41)
 
 on=@effectChar
 	EffectFactory.LightningEffect(this)

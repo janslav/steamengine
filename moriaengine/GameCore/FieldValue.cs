@@ -39,7 +39,8 @@ namespace SteamEngine {
 		string name;
 		FieldValueType fvType;
 		Type type;
-		bool changedValue = false;
+		bool isChangedManually = false;
+		bool isSetFromScripts = false;
 		bool unloaded = false;
 
 		FieldValueImpl currentValue;
@@ -80,7 +81,7 @@ namespace SteamEngine {
 		}
 
 		public void Unload() {
-			if (this.changedValue) {
+			if (this.isChangedManually) {
 				unloaded = true;
 			}
 		}
@@ -126,7 +127,7 @@ namespace SteamEngine {
 							}
 						}
 
-						defaultValue = ResolveTemporaryValueImpl();
+						defaultValue = GetFittingValueImpl();
 						defaultValue.Value = retVal;
 					} catch (SEException sex) {
 						sex.TryAddFileLineInfo(tempVI.filename, tempVI.line);
@@ -136,7 +137,7 @@ namespace SteamEngine {
 					}
 
 
-					if (!changedValue) {//we were already resynced...the loaded value should not change
+					if (!isChangedManually) {//we were already resynced...the loaded value should not change
 						currentValue = defaultValue.Clone();
 					}
 
@@ -279,7 +280,7 @@ namespace SteamEngine {
 			return false;
 		}
 
-		private FieldValueImpl ResolveTemporaryValueImpl() {
+		private FieldValueImpl GetFittingValueImpl() {
 			switch (this.fvType) {
 				case FieldValueType.Typeless:
 					return new TypelessValueImpl();
@@ -294,35 +295,50 @@ namespace SteamEngine {
 		}
 
 		private void SetFromCode(object value) {
-			Sanity.IfTrueThrow((changedValue || unloaded), "SetFromCode after change/unload? This should never happen.");
+			Sanity.IfTrueThrow((this.isChangedManually || this.unloaded), "SetFromCode after change/unload? This should never happen.");
 
-			defaultValue = ResolveTemporaryValueImpl();
-			defaultValue.Value = value;
-			currentValue = defaultValue.Clone();
-			unloaded = false;
+			this.defaultValue = GetFittingValueImpl();
+			this.defaultValue.Value = value;
+			this.currentValue = defaultValue.Clone();
+			this.unloaded = false;
 		}
 
 		public void SetFromScripts(string filename, int line, string value) {
-			if (changedValue) {
+			if (isChangedManually) {
 				defaultValue = new TemporaryValueImpl(filename, line, this, value);
 			} else {
 				currentValue = new TemporaryValueImpl(filename, line, this, value);
 				defaultValue = new TemporaryValueImpl(filename, line, this, value);
 			}
-			unloaded = false;
+
+			this.isSetFromScripts = true;
+			this.unloaded = false;
 		}
 
 		internal bool ShouldBeSaved() {
-			if (unloaded) {
+			if (this.unloaded) {
 				return false;
 			}
-			if (changedValue) {//it was loaded/changed , so it should be also saved :)
+			if (this.isChangedManually) {//it was loaded/changed , so it should be also saved :)
 				return !object.Equals(CurrentValue, DefaultValue);
 			}
-			if ((currentValue is TemporaryValueImpl) && (defaultValue is TemporaryValueImpl)) {
+			if ((this.currentValue is TemporaryValueImpl) && (this.defaultValue is TemporaryValueImpl)) {
 				return false;//unresolved, no need of touching
 			}
-			return !object.Equals(CurrentValue, DefaultValue);
+			return !object.Equals(this.CurrentValue, this.DefaultValue);
+		}
+
+		[Summary("If true, it has not been set from scripts nor from saves nor manually")]
+		public bool IsDefaultCodedValue {
+			get {
+				if (this.isSetFromScripts || this.isChangedManually) {
+					return false;
+				}
+				if ((this.currentValue is TemporaryValueImpl) && (this.defaultValue is TemporaryValueImpl)) {
+					return false; //unresolved, no need of touching
+				}
+				return true;
+			}
 		}
 
 		public object CurrentValue {
@@ -331,9 +347,9 @@ namespace SteamEngine {
 				return currentValue.Value;
 			}
 			set {
-				currentValue.Value = value;
-				unloaded = false;
-				changedValue = true;
+				this.currentValue.Value = value;
+				this.unloaded = false;
+				this.isChangedManually = true;
 			}
 		}
 

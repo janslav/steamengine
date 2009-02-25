@@ -59,21 +59,20 @@ namespace SteamEngine.CompiledScripts {
 			return ScriptUtil.EvalRangePermille(spellpower, this.Duration);
 		}
 
-		protected SpellEffectDurationPlugin InitDurationPlugin(Character target, double spellPower, SpellSourceType sourceType) {
+		protected SpellEffectDurationPlugin InitDurationPlugin(Character target, SpellEffectArgs spellEffectArgs) {
 			SpellEffectDurationPlugin plugin = (SpellEffectDurationPlugin) this.EffectPluginDef.Create();
+
+			SpellSourceType sourceType = spellEffectArgs.SourceType;
 			PluginKey key;
-			bool dispellable;
 			if (sourceType == SpellSourceType.Potion) {
 				key = this.EffectFromPotionPK;
-				dispellable = false; //potions are generally not dispellable. Might want some exception from this rule at some point...?
 			} else {
 				key = this.effectFromSpellPK;
-				dispellable = true;
 			}
 
 			target.DeletePlugin(key);
-
-			plugin.Init(this.GetEffectForValue(spellPower), this.GetDurationForValue(spellPower), dispellable);
+			int spellPower = spellEffectArgs.SpellPower;
+			plugin.Init(spellEffectArgs.Caster, sourceType, this.GetEffectForValue(spellPower), this.GetDurationForValue(spellPower));
 			target.AddPlugin(key, plugin);
 			return plugin;
 		}
@@ -101,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectChar(target, spellEffectArgs);
-			this.InitDurationPlugin(target, spellEffectArgs.SpellPower, spellEffectArgs.SourceType);
+			this.InitDurationPlugin(target, spellEffectArgs);
 		}
 	}
 }
