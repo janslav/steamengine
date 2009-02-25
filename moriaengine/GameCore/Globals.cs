@@ -127,12 +127,12 @@ namespace SteamEngine {
 		//public readonly static sbyte timeZone;
 		public readonly static int maxConnections;
 
-		public readonly static bool supportUnicode;
+		//public readonly static bool supportUnicode;
 		public readonly static int speechDistance;
 		public readonly static int emoteDistance;
 		public readonly static int whisperDistance;
 		public readonly static int yellDistance;
-		public readonly static bool asciiForNames;
+		//public readonly static bool asciiForNames;
 		public readonly static uint loginFlags;
 		public readonly static ushort featuresFlags;
 
@@ -329,8 +329,8 @@ namespace SteamEngine {
 				IniFileSection text = iniH.GetNewOrParsedSection("text");
 				commandPrefix = text.GetValue<string>("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
 				alternateCommandPrefix = text.GetValue<string>("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
-				supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
-				asciiForNames = text.GetValue<bool>("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
+				//supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
+				//asciiForNames = text.GetValue<bool>("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
 				defaultASCIIMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
 				defaultUnicodeMessageColor = text.GetValue<ushort>("defaultUnicodeMessageColor", 0x0394, "The color to use for unicode messages with no specified color (or a specified color of 0, which is not really valid for unicode messages).");
 

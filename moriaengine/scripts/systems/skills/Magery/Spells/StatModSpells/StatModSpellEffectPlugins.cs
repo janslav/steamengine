@@ -29,15 +29,20 @@ namespace SteamEngine.CompiledScripts {
 
 	public static class StatModSpellsUtils {
 		public const int minStat = 10;
+		public const int minResist = 0;
 
 		static StatModSpellsUtils() {
+			new StrModSpellEffectPluginDef("p_strModSpellEffect", "C# scripts", -1);
+			new DexModSpellEffectPluginDef("p_dexModSpellEffect", "C# scripts", -1);			
 			new IntModSpellEffectPluginDef("p_intModSpellEffect", "C# scripts", -1);
+			new CurseSpellEffectPluginDef("p_curseSpellEffect", "C# scripts", -1);
+			new BlessSpellEffectPluginDef("p_blessSpellEffect", "C# scripts", -1);
 		}
 
 		public static void Bootstrap() { //ensure calling the static initialiser
 		}
 
-		public static short ModifyStat(Character ch, short statValue, short statDiff, out short resultDiff) {
+		public static short ModifyStat(int lowBoundary, short statValue, short statDiff, out short resultDiff) {
 			if (statDiff < 0) {
 				short retVal = (short) (statValue + statDiff);
 				if (retVal < minStat) { //this would decrease the stat under the boundary
@@ -60,14 +65,144 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[ViewableClass]
+	public partial class StrModSpellEffectPlugin {
+		public void On_Assign() {
+			Character self = (Character) this.Cont;
+			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, (short) this.Effect, out this.strDifference);
+		}
+
+		public void On_UnAssign(Character cont) {
+			cont.Str -= this.strDifference;
+		}
+	}
+
+	[ViewableClass]
+	public partial class DexModSpellEffectPlugin {
+		public void On_Assign() {
+			Character self = (Character) this.Cont;
+			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, (short) this.Effect, out this.dexDifference);
+		}
+
+		public void On_UnAssign(Character cont) {
+			cont.Dex -= this.dexDifference;
+		}
+	}
+
+	[ViewableClass]
 	public partial class IntModSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
-			self.Int = StatModSpellsUtils.ModifyStat(self, self.Int, (short) this.Effect, out this.intDifference);
+			short shortEffect = (short) this.Effect;
+
+			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
+			//also lower npc maxmana?
+
+			if (shortEffect < 0) {
+				self.Mana = Math.Min(self.Mana, self.MaxMana);
+			}
 		}
 
 		public void On_UnAssign(Character cont) {
 			cont.Int -= this.intDifference;
+		}
+	}
+
+	[ViewableClass]
+	public partial class BlessSpellEffectPlugin {
+		public void On_Assign() {
+			Character self = (Character) this.Cont;
+			short shortEffect = (short) this.Effect;
+			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, shortEffect, out this.strDifference);
+			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, shortEffect, out this.dexDifference);
+			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
+
+			if (shortEffect < 0) {
+				self.Mana = Math.Min(self.Mana, self.MaxMana);
+			}
+		}
+
+		public void On_UnAssign(Character cont) {
+			cont.Str -= this.strDifference;
+			cont.Dex -= this.dexDifference;
+			cont.Int -= this.intDifference;
+		}
+	}
+
+	[ViewableClass]
+	public partial class CurseSpellEffectPlugin {
+		public void On_Assign() {
+			Character self = (Character) this.Cont;
+			short shortEffect = (short) this.Effect;
+
+			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, shortEffect, out this.strDifference);
+			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, shortEffect, out this.dexDifference);
+			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
+
+			Player contAsPlayer = self as Player;
+			if (contAsPlayer != null) {
+				contAsPlayer.Vit = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, contAsPlayer.Vit, shortEffect, out this.maxHitsDifference);
+			} else {
+				NPC contAsNPC = (NPC) self;
+
+				contAsNPC.MaxStam = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.MaxStam, shortEffect, out this.maxStamDifference);
+				contAsNPC.MaxMana = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.MaxMana, shortEffect, out this.maxManaDifference);
+
+				//TODO
+				//Player sourceAsPlayer = this.Source as Player;
+				//if ((sourceAsPlayer != null) && ((this.SourceType == SpellSourceType.Book) || (this.SourceType == SpellSourceType.Scroll))) {
+					//if (cont.tag(classcastera)==necro)
+					//    if (cont.tag(resist_fire))
+					//        if (<cont.tag(resist_fire)> < 990)
+					//            cont.tag(resist_fire,#-<cont.tag(levelcastera)>)
+					//            finduid(cont.tag(UIDcastera)).sysmessage("<cont.name> je nyni zranitelnejsi ohnem.")
+					//            tag(rfire,1)
+					//        endif
+					//        elseif !(cont.tag(resist_fire))
+					//        cont.tag(resist_fire,-<cont.tag(levelcastera)>)
+					//        finduid(cont.tag(UIDcastera)).sysmessage("<cont.name> je nyni zranitelnejsi ohnem.")
+					//        tag(rfire,1)
+					//    endif
+					//endif
+					//if (cont.tag(classcastera)==shaman)
+					//    if (cont.tag(resist_cold))
+					//        if (<cont.tag(resist_cold)> < 990)
+					//            cont.tag(resist_cold,#-<cont.tag(levelcastera)>)
+					//            finduid(<cont.tag(UIDcastera)>).sysmessage("Cil je nyni zranitelnejsi mrazem.")
+					//            tag(rcold,1)
+					//            endif
+					//            elseif !(cont.tag(resist_cold))
+					//            cont.tag(resist_cold,-<cont.tag(levelcastera)>)
+					//            finduid(cont.tag(UIDcastera)).sysmessage("<cont.name> je nyni zranitelnejsi mrazem.")
+					//            tag(rcold,1)
+					//        endif
+					//    endif
+					//endif 
+				//}
+			}
+
+
+			if (shortEffect < 0) {
+				self.Hits = Math.Min(self.Hits, self.MaxHits);
+				self.Stam = Math.Min(self.Stam, self.MaxStam);
+				self.Mana = Math.Min(self.Mana, self.MaxMana);
+			}
+		}
+
+		public void On_UnAssign(Character cont) {
+			cont.Str -= this.strDifference;
+			cont.Dex -= this.dexDifference;
+			cont.Int -= this.intDifference;
+			Player contAsPlayer = cont as Player;
+			if (contAsPlayer != null) {
+				contAsPlayer.Vit -= this.maxHitsDifference;
+			} else {
+				NPC contAsNPC = (NPC) cont;
+				contAsNPC.MaxStam -= this.maxStamDifference;
+				contAsNPC.MaxMana -= this.maxManaDifference;
+
+				contAsNPC.ResistFire -= this.resistFireDifference;
+				contAsNPC.ResistCold -= this.resistColdDifference;
+			}
 		}
 	}
 }

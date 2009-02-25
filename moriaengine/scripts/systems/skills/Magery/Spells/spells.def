@@ -33,7 +33,7 @@ Requirements=500.0 Magery
 [HealingSpellDef 4]
 DEFNAME=s_heal
 NAME=Heal
-SOUND=snd_SPELL_HEAL
+SOUND=0x1F2
 RUNES=IM
 CASTTIME=2.0
 //RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_spider_silk
@@ -48,7 +48,6 @@ Requirements=10.0 Magery
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x376A, 9, 32)
-	argo.Caster.Sound(0x1F2)
 
 [SpellDef 6]
 DEFNAME=s_night_sight
@@ -283,7 +282,7 @@ Requirements=40.0 Magery
 [HealingSpellDef 29]
 DEFNAME=s_greater_heal
 NAME=Greater Heal
-SOUND=snd_SPELL_GREATER_HEAL
+SOUND=0x202
 RUNES=IVM
 CASTTIME=2.3
 //RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_mandrake_root,i_reag_spider_silk
@@ -298,7 +297,6 @@ Requirements=40.0 Magery
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x376A, 9, 32)
-	argo.Caster.Sound(0x202)
 
 [SpellDef 31]
 DEFNAME=s_mana_drain

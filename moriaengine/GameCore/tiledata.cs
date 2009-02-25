@@ -249,8 +249,8 @@ namespace SteamEngine {
 								lastItem = idi;
 								lastItemNum = a;
 								string name = "Unnamed";
-								if (idi.name.Length > 0) {
-									name = idi.name;
+								if (idi.singularName.Length > 0) {
+									name = idi.singularName;
 								}
 								//defname, category, subsection, description
 								scr.WriteLine("");
@@ -344,8 +344,8 @@ namespace SteamEngine {
 				scr.WriteLine("");
 				scr.WriteLine("[Dispid 0x" + a.ToString("x") + "]");
 				string name = "Unnamed";
-				if (idi.name.Length > 0) {
-					name = idi.name;
+				if (idi.singularName.Length > 0) {
+					name = idi.singularName;
 				}
 				scr.WriteLine("Name=" + name);
 				if (HasFlag(idi.flags, flag_wearable)) {

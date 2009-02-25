@@ -16,3 +16,32 @@
 [PluginTemplate IntModSpellEffectPlugin : SpellEffectDurationPlugin]
 Vars:
 	public short intDifference = 0
+
+
+[PluginTemplate StrModSpellEffectPlugin : SpellEffectDurationPlugin]
+Vars:
+	public short strDifference = 0
+
+
+[PluginTemplate DexModSpellEffectPlugin : SpellEffectDurationPlugin]
+Vars:
+	public short dexDifference = 0
+
+
+[PluginTemplate BlessSpellEffectPlugin : SpellEffectDurationPlugin]
+Vars:
+	public short intDifference = 0
+	public short dexDifference = 0
+	public short strDifference = 0
+
+
+[PluginTemplate CurseSpellEffectPlugin : SpellEffectDurationPlugin]
+Vars:
+	public short intDifference = 0
+	public short dexDifference = 0
+	public short strDifference = 0
+	public short maxHitsDifference = 0 /* = vit for players */
+	public short maxStamDifference = 0 /* unused for players ( = vit)*/
+	public short maxManaDifference = 0 /* unused for players ( = int)*/
+	public short resistFireDifference = 0 /* unused for players */
+	public short resistColdDifference = 0 /* unused for players */

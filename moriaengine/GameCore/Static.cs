@@ -48,7 +48,7 @@ namespace SteamEngine {
 
 		public string Name {
 			get {
-				return dispidInfo.name;
+				return dispidInfo.singularName;
 			}
 		}
 

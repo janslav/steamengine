@@ -17,4 +17,6 @@
 [PluginTemplate SpellEffectDurationPlugin : TimerPlugin]
 Vars:
 	double effect = 0
-	bool dispellable = false
+	Thing source = null
+	SpellSourceType sourceType = SpellSourceType.Unknown
+	

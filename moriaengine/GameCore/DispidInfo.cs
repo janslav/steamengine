@@ -37,7 +37,8 @@ namespace SteamEngine {
 		public readonly ushort unknown3;
 		public readonly byte height;
 		public readonly byte calcHeight; //half for bridges
-		public readonly string name;
+		public readonly string singularName;
+		public readonly string pluralName;
 		public readonly bool isEmpty;
 
 		public ItemDispidInfo(uint flags, byte weight, byte quality, ushort unknown, byte minItemsToDisplayThisArt, byte quantity, ushort animID, byte unknown2, byte hue, ushort unknown3, byte height, string name) {
@@ -58,7 +59,10 @@ namespace SteamEngine {
 				this.calcHeight = height;
 			}
 
-			this.name = String.Intern(name);
+			ParseName(name, out this.singularName, out this.pluralName);
+			this.singularName = String.Intern(this.singularName);
+			this.pluralName = String.Intern(this.pluralName);
+
 			this.id = (ushort) array.Count;
 			array.Add(this);
 			this.isEmpty = ((flags == 0 || flags == TileData.flag_unknown_2) && (weight == 1 || weight == 0 || weight == 255) &&
@@ -73,7 +77,7 @@ namespace SteamEngine {
 				return (flags == idi.flags && weight == idi.weight && quality == idi.quality && unknown == idi.unknown &&
 						minItemsToDisplayThisArt == idi.minItemsToDisplayThisArt && quantity == idi.quantity &&
 						animID == idi.animID && unknown2 == idi.unknown2 && hue == idi.hue && unknown3 == idi.unknown3 &&
-						height == idi.height && name == idi.name);
+						height == idi.height && singularName == idi.singularName);
 			}
 			return false;
 		}
@@ -93,6 +97,44 @@ namespace SteamEngine {
 			} else {
 				return null;
 			}
+		}
+
+		internal static bool ParseName(string name, out string singular, out string plural) {
+			int percentPos = name.IndexOf("%");
+			if (percentPos == -1) {
+				singular = name;
+				plural = name;
+			} else {
+				string before = name.Substring(0, percentPos);
+				string singadd = "";
+				string pluradd = "";
+				int percentPos2 = name.IndexOf("%", percentPos + 1);
+				int slashPos = name.IndexOf("/", percentPos + 1);
+				string after = "";
+				if (percentPos2 == -1) {	//This is sometimes the case in the tiledata info...
+					pluradd = name.Substring(percentPos + 1);
+				} else if (slashPos == -1 || slashPos > percentPos2) {
+					if (percentPos2 == name.Length - 1) {
+						after = "";
+					} else {
+						after = name.Substring(percentPos2 + 1);
+					}
+					pluradd = name.Substring(percentPos + 1, percentPos2 - percentPos - 1);
+				} else { //This is: if (slashPos<percentPos2) {
+					Sanity.IfTrueThrow(!(slashPos < percentPos2), "Expected that this else would mean slashPos<percentPos2, but it is not the case now. slashPos=" + slashPos + " percentPos2=" + percentPos2);
+					if (slashPos == name.Length - 1) {
+						after = "";
+					} else {
+						after = name.Substring(slashPos + 1);
+					}
+					pluradd = name.Substring(percentPos + 1, slashPos - percentPos - 1);
+					singadd = name.Substring(slashPos + 1, percentPos2 - slashPos - 1);
+				}
+				singular = before + singadd + after;
+				plural = before + pluradd + after;
+				return true;
+			}
+			return false;
 		}
 	}
 

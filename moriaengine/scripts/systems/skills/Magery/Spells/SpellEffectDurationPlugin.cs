@@ -29,10 +29,11 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class SpellEffectDurationPlugin {
 
-		public void Init(double effect, double duration, bool dispellable) {
-			this.Timer = duration;
+		public void Init(Thing source, SpellSourceType sourceType, double effect, double duration) {
+			this.source = source;
+			this.sourceType = sourceType;
 			this.effect = effect;
-			this.dispellable = dispellable;
+			this.Timer = duration;
 		}
 
 		public void On_Timer() {
@@ -40,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_DispellEffect() {
-			if (this.dispellable) {
+			if (this.Dispellable) {
 				this.Delete();
 			}
 		}
@@ -53,10 +54,19 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Dispellable {
 			get {
-				return this.dispellable;
+				return !(this.sourceType == SpellSourceType.Potion); //potion effects are generally not dispellable. Might want some exception from this rule at some point...?
 			}
-			set {
-				this.dispellable = value;
+		}
+
+		public Thing Source {
+			get {
+				return this.source;
+			}
+		}
+
+		public SpellSourceType SourceType {
+			get {
+				return this.sourceType;
 			}
 		}
 	}

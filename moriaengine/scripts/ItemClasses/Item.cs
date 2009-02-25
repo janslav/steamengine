@@ -181,10 +181,10 @@ namespace SteamEngine.CompiledScripts {
 			uint amount = this.Amount;
 			id = 1042971;//~1_NOTHING~
 			argument = null;
-			if (this.Amount <= 1) {
+			if (amount <= 1) {
 				ItemDispidInfo idi = this.TypeDef.DispidInfo;
 				if (idi != null) {
-					if (string.Compare(name, idi.name, true) == 0) {
+					if (string.Compare(name, idi.singularName, true) == 0) {
 						id = (uint) (1020000 + (this.Model & 16383)); //hmmm...
 						return;
 					}

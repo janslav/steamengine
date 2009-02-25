@@ -469,7 +469,7 @@ namespace SteamEngine.Networking {
 		}
 
 		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
-			if (Globals.supportUnicode && font == 3 && !(type == SpeechType.Name && Globals.asciiForNames)) {	//if it's another font, send it as ASCII
+			if ((type != SpeechType.Spell) && (font == 3)) {	//if it's another font, send it as ASCII
 				UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
 				packet.Prepare(from, msg, sourceName, type, font, color, lang);
 				return packet;
@@ -489,6 +489,12 @@ namespace SteamEngine.Networking {
 				p.Prepare(ch.FlaggedUid, ch.StatLockByte);
 				state.Conn.SendSinglePacket(p);
 			}
+		}
+		
+		public static void SendSound(IPoint4D top, ushort soundId, int range) {
+			PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
+			p.Prepare(top, soundId);
+			GameServer.SendToClientsInRange(top, range, p);
 		}
 	}
 }

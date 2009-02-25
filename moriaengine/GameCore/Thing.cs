@@ -548,7 +548,7 @@ namespace SteamEngine {
 
 		public virtual Region Region {
 			get {
-				return Map.GetMap(this.point4d.m).GetRegionFor(point4d);
+				return Map.GetMap(this.point4d.m).GetRegionFor(this.point4d);
 			}
 		}
 
@@ -1283,10 +1283,7 @@ namespace SteamEngine {
 
 		public void Sound(ushort soundId, int range) {
 			if (soundId != 0xffff) {
-				Thing top = this.TopObj();
-				PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
-				p.Prepare(top, soundId);
-				GameServer.SendToClientsInRange(top, range, p);
+				PacketSequences.SendSound(this.TopObj(), soundId, range);
 			}
 		}
 
