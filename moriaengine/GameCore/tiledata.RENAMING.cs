@@ -21,81 +21,70 @@ using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine {
+	[Flags]
+	public enum TileFlag : uint {
+		None = 0x00000000,
+		Background = 0x00000001,	//No idea. None whatsoever. Maybe it's the blackness.
+		Weapon = 0x00000002,		//I smack thee with this here ... club?
+		Transparent = 0x00000004,	//Yeah. So we can see through it?
+		Translucent = 0x00000008,	//Okay...
+		Wall = 0x00000010,			//Hey look, we can't walk through it!
+		Damaging = 0x00000020,		//Lava, perhaps? Fires, hmm!
+		Impassable = 0x00000040,	//Mountains and stuff, I'll wager.
+		Wet = 0x00000080,			//Water? Or mud? Or a slick road in a rainstorm? Probably the first.
+		Unknown = 0x00000100,		//Uh...
+		Surface = 0x00000200,		//Tables or something?
+		Bridge = 0x00000400,		//I wonder why they'd have a flag for that.
+		Stackable = 0x00000800,
+		Generic = 0x00000800,
+		Window = 0x00001000,		//So we can see/shoot out?
+		Noshoot = 0x00002000,		//? We can't shoot out or something? So, like a glass window maybe?
+		PrefixA = 0x00004000,		//_A_ card
+		PrefixAn = 0x00008000,		//_An_ apple
+		Internal = 0x00010000,		//hair, beards, etc
+		Foliage = 0x00020000,		//Probably bushes and tree leaves and stuff.
+		PartialHue = 0x00040000,	//semi-glowy? (Or maybe it can accept the 08000 color flag)
+		Unknown_1 = 0x00080000,		//Well, gee. I should see if it's used on anything...
+		Map = 0x00100000,			//Sounds good to me.
+		Container = 0x00200000,		//They flag these!?
+		Wearable = 0x00400000,		//Omigod!
+		LightSource = 0x00800000,	//I'm getting tired of typing repetitive shiznit now.
+		Animated = 0x01000000,		//Like fire again. And stuff. Those spinny propeller thingies!
+		NoDiagonal = 0x02000000,	//!?!???!!?
+		Unknown_2 = 0x04000000,		//I really hope some of these unknowns are n/w/s/e facing flags.
+		Armor = 0x08000000,			//Armor, okay, so does that count shields? Hmmm?
+		Roof = 0x10000000,			//"Don't fall through me!" Or why isn't it just flagged surface or something?
+		Door = 0x20000000,			//Okay...
+		StairBack = 0x40000000,		//Don't we have stairs that go forward or left too? This could cover both...
+		StairRight = 0x80000000,		//Well, whatever, you can climb them, so, hey... Good use for a flag.
+
+		ImpassableSurface = Impassable | Surface
+	}
+
 	public class TileData {
 		public const uint numLandTiles = 16384;
-		public static uint[] landFlags;
+		public static TileFlag[] landFlags;
 
-		public static readonly string[] flagNames = new string[] {"background","weapon","transparent","translucent","wall",
-			"damaging","impassable","wet","unknown","surface","bridge","stackable","window",
-			"noshoot","prefixA","prefixAn","internal","foliage","partialHue","unknown_1","map",
-			"container","wearable", "lightSource", "animated", "noDiagonal", "unknown_2", "armor", "roof",
-			"door", "stairBack", "stairRight"};
+		//public static readonly string[] flagNames = new string[] {"background","weapon","transparent","translucent","wall",
+		//    "damaging","impassable","wet","unknown","surface","bridge","stackable","window",
+		//    "noshoot","prefixA","prefixAn","internal","foliage","partialHue","unknown_1","map",
+		//    "container","wearable", "lightSource", "animated", "noDiagonal", "unknown_2", "armor", "roof",
+		//    "door", "stairBack", "stairRight"};
 
-		public const uint flag_background = 0x00000001;	//No idea. None whatsoever. Maybe it's the blackness.
-		public const uint flag_weapon = 0x00000002;	//I smack thee with this here ... club?
-		public const uint flag_transparent = 0x00000004;	//Yeah. So we can see through it?
-		public const uint flag_translucent = 0x00000008;	//Okay...
-		public const uint flag_wall = 0x00000010;	//Hey look, we can't walk through it!
-		public const uint flag_damaging = 0x00000020;	//Lava, perhaps? Fires, hmm!
-		public const uint flag_impassable = 0x00000040;	//Mountains and stuff, I'll wager.
-		public const uint flag_wet = 0x00000080;	//Water? Or mud? Or a slick road in a rainstorm? Probably the first.
-		public const uint flag_unknown = 0x00000100;	//Uh...
-		public const uint flag_surface = 0x00000200;	//Tables or something?
-		public const uint flag_bridge = 0x00000400;	//I wonder why they'd have a flag for that.
-		public const uint flag_stackable = 0x00000800;
-		public const uint flag_generic = 0x00000800;
-		public const uint flag_window = 0x00001000;	//So we can see/shoot out?
-		public const uint flag_noshoot = 0x00002000;	//? We can't shoot out or something? So, like a glass window maybe?
-		public const uint flag_prefixA = 0x00004000;	//_A_ card
-		public const uint flag_prefixAn = 0x00008000;	//_An_ apple
-		public const uint flag_internal = 0x00010000;	//hair, beards, etc
-		public const uint flag_foliage = 0x00020000;	//Probably bushes and tree leaves and stuff.
-		public const uint flag_partialHue = 0x00040000;	//semi-glowy? (Or maybe it can accept the 08000 color flag)
-		public const uint flag_unknown_1 = 0x00080000;	//Well, gee. I should see if it's used on anything...
-		public const uint flag_map = 0x00100000;	//Sounds good to me.
-		public const uint flag_container = 0x00200000;	//They flag these!?
-		public const uint flag_wearable = 0x00400000;	//Omigod!
-		public const uint flag_lightSource = 0x00800000;	//I'm getting tired of typing repetitive shiznit now.
-		public const uint flag_animated = 0x01000000;	//Like fire again. And stuff. Those spinny propeller thingies!
-		public const uint flag_noDiagonal = 0x02000000;	//!?!???!!?
-		public const uint flag_unknown_2 = 0x04000000;	//I really hope some of these unknowns are n/w/s/e facing flags.
-		public const uint flag_armor = 0x08000000;	//Armor, okay, so does that count shields? Hmmm?
-		public const uint flag_roof = 0x10000000;	//"Don't fall through me!" Or why isn't it just flagged surface or something?
-		public const uint flag_door = 0x20000000;	//Okay...
-		public const uint flag_stairBack = 0x40000000;	//Don't we have stairs that go forward or left too? This could cover both...
-		public const uint flag_stairRight = 0x80000000;	//Well, whatever, you can climb them, so, hey... Good use for a flag.
-		//Yay, that's all the flags!
-
-		public static string WriteToString(uint flags) {
-			string result = "";
-			for (int a = 0; a < 32; a++) {
-				if (HasFlagNum(flags, a)) {
-					result += " " + flagNames[a];
-				}
-			}
-			if (result.Length > 0) {
-				result = result.Substring(1);
-			} else {
-				result = "None";
-			}
-			return result;
-		}
-
-		public static bool HasFlag(uint whatsit, uint flag) {
+		public static bool HasFlag(TileFlag whatsit, TileFlag flag) {
 			return ((whatsit & flag) == flag);
 		}
 
-		public static uint GetFlagFromFlagNum(int flagNum) {
-			uint flag = (uint) (1 << flagNum);
-			return flag;
+		public static TileFlag GetFlagFromFlagNum(int bitNum) {
+			return (TileFlag) (1 << bitNum);
 		}
 
-		public static bool HasFlagNum(uint whatsit, int flagNum) {
-			uint flag = (uint) (1 << flagNum);
+		public static bool HasFlagNum(TileFlag whatsit, int bitNum) {
+			TileFlag flag = (TileFlag) (1 << bitNum);
 			return ((whatsit & flag) == flag);
 		}
 
-		public static bool IsIgnoredByMovement(ushort id) {
+		public static bool IsIgnoredId(ushort id) {
 			return (id == 2 || id == 0x1DB || (id >= 0x1AE && id <= 0x1B5));
 		}
 
@@ -109,7 +98,7 @@ namespace SteamEngine {
 			//}
 			//#endif
 			if (File.Exists(mulFileP)) {
-				landFlags = new uint[numLandTiles];
+				landFlags = new TileFlag[numLandTiles];
 
 				FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
 				BinaryReader mulbr = new BinaryReader(mulfs);
@@ -124,12 +113,12 @@ namespace SteamEngine {
 				for (int block = 0; block < 512; block++) {
 					mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
 					for (int tileNum = 0; tileNum < 32; tileNum++) {
-						landFlags[tileId] = mulbr.ReadUInt32();
+						landFlags[tileId] = (TileFlag) mulbr.ReadUInt32();
 						texId = mulbr.ReadUInt16();
 						tileNameS = Utility.GetCAsciiString(mulbr, 20);
 						if (Globals.writeMulDocsFiles) {
 							if (tileNameS.Length > 0 || texId != 0) {
-								mtfi.WriteLine("TileID: 0x" + tileId.ToString("x") + " (" + tileId + ")\tName: " + tileNameS + "\tFlags: " + WriteToString(landFlags[tileId]) + "\ttexId: " + texId);
+								mtfi.WriteLine("TileID: 0x" + tileId.ToString("x") + " (" + tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
 							}
 						}
 						tileId++;
@@ -146,7 +135,7 @@ namespace SteamEngine {
 				//bool firstModel=false;
 				//ItemDispidInfo cur=null;
 				ItemDispidInfo idi = null;
-				uint flags;
+				TileFlag flags;
 				byte weight;
 				byte quality;
 				ushort unknown;
@@ -162,7 +151,7 @@ namespace SteamEngine {
 					while (true) {
 						mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
 						for (int tileNum = 0; tileNum < 32; tileNum++) {
-							flags = mulbr.ReadUInt32();
+							flags = (TileFlag) mulbr.ReadUInt32();
 							weight = mulbr.ReadByte();
 							quality = mulbr.ReadByte();
 							unknown = mulbr.ReadUInt16();
@@ -177,8 +166,8 @@ namespace SteamEngine {
 							bytes += 20 + tileNameS.Length * 2;
 							idi = new ItemDispidInfo(flags, weight, quality, unknown, minItemsToDisplayThisArt, quantity, animID, unknown2, hue, unknown3, height, tileNameS);
 							/* Kemoc - not used for anything
-							if (idi==null || multipleModels==false || idi.unknown<=lastAmount || (!(HasFlag(idi.flags,flag_stackable)))) {
-								if (HasFlag(idi.flags,flag_stackable)) {
+							if (idi==null || multipleModels==false || idi.unknown<=lastAmount || (!(HasFlag(idi.flags,TileFlag.stackable)))) {
+								if (HasFlag(idi.flags,TileFlag.stackable)) {
 									multipleModels=true;
 									firstModel=true;
 									cur=idi;
@@ -186,7 +175,7 @@ namespace SteamEngine {
 									multipleModels=false;
 								}
 							}
-							if (HasFlag(idi.flags,flag_stackable)) {
+							if (HasFlag(idi.flags,TileFlag.stackable)) {
 								lastAmount=idi.unknown;
 								//string aname = "Unnamed";
 								//if (idi.name.Length>0) {
@@ -255,21 +244,21 @@ namespace SteamEngine {
 								//defname, category, subsection, description
 								scr.WriteLine("");
 								string type = "ItemDef";
-								if (HasFlag(idi.flags, flag_wearable)) {
+								if (HasFlag(idi.flags, TileFlag.Wearable)) {
 									type = "EquippableDef";
 								}
-								if (HasFlag(idi.flags, flag_container)) {
+								if (HasFlag(idi.flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
 								scr.WriteLine("[" + type + " 0x" + a.ToString("x") + "]");
 								scr.WriteLine("Model=0x" + a.ToString("x"));
 								scr.WriteLine("Name=\"" + name + "\"");
-								if (HasFlag(idi.flags, flag_wearable)) {
+								if (HasFlag(idi.flags, TileFlag.Wearable)) {
 									scr.WriteLine("Layer=" + idi.quality);
 								} else {
 									scr.WriteLine("//Quality=" + idi.quality);
 								}
-								if (HasFlag(idi.flags, flag_container)) {
+								if (HasFlag(idi.flags, TileFlag.Container)) {
 									scr.WriteLine("//MaxContents=" + idi.height);
 								} else {
 									scr.WriteLine("//Height=" + idi.height);
@@ -285,22 +274,22 @@ namespace SteamEngine {
 								//if (idi.weight==255) {
 								//    scr.WriteLine("Flag=attr_move_never");
 								//}
-								//if (HasFlag(idi.flags,flag_noshoot)) {
+								//if (HasFlag(idi.flags,TileFlag.noshoot)) {
 								//    scr.WriteLine("Flag=attr_block");
 								//}
-								//if (HasFlag(idi.flags,flag_window) || (HasFlag(idi.flags,flag_impassable) && !HasFlag(idi.flags,flag_noshoot))) {
+								//if (HasFlag(idi.flags,TileFlag.window) || (HasFlag(idi.flags,TileFlag.impassable) && !HasFlag(idi.flags,TileFlag.noshoot))) {
 								//    scr.WriteLine("Flag=attr_cover");
 								//}
-								if (HasFlag(idi.flags, flag_stackable)) {
+								if (HasFlag(idi.flags, TileFlag.Stackable)) {
 									scr.WriteLine("Stackable=1");
 								}
-								scr.WriteLine("//Tiledata flags = " + WriteToString(idi.flags));
+								scr.WriteLine("//Tiledata flags = " + idi.flags);
 							} else {
 								string type = "ItemDef";
-								if (HasFlag(idi.flags, flag_wearable)) {
+								if (HasFlag(idi.flags, TileFlag.Wearable)) {
 									type = "EquippableDef";
 								}
-								if (HasFlag(idi.flags, flag_container)) {
+								if (HasFlag(idi.flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
 								scr.WriteLine("[" + type + " 0x" + a.ToString("x") + "]");
@@ -335,8 +324,9 @@ namespace SteamEngine {
 
 			StreamWriter[] sw = new StreamWriter[32];
 			for (int flagNum = 0; flagNum < 32; flagNum++) {
-				sw[flagNum] = File.CreateText(Path.Combine(tiledataDocPath, flagNames[flagNum] + ".txt"));
-				sw[flagNum].WriteLine("//This lists all items with the " + flagNames[flagNum] + " flag (0x" + GetFlagFromFlagNum(flagNum).ToString("x") + ")");
+				string flagName = Enum.GetName(typeof(TileFlag), flagNum);
+				sw[flagNum] = File.CreateText(Path.Combine(tiledataDocPath, flagName + ".txt"));
+				sw[flagNum].WriteLine("//This lists all items with the " + flagName + " flag (0x" + GetFlagFromFlagNum(flagNum).ToString("x") + ")");
 			}
 			scr.WriteLine("//This is not a script.");
 			for (int a = 0; a < ItemDispidInfo.Num(); a++) {
@@ -348,12 +338,12 @@ namespace SteamEngine {
 					name = idi.singularName;
 				}
 				scr.WriteLine("Name=" + name);
-				if (HasFlag(idi.flags, flag_wearable)) {
+				if (HasFlag(idi.flags, TileFlag.Wearable)) {
 					scr.WriteLine("Layer=" + idi.quality);
 				} else {
 					scr.WriteLine("Quality=" + idi.quality);
 				}
-				if (HasFlag(idi.flags, flag_container)) {
+				if (HasFlag(idi.flags, TileFlag.Container)) {
 					scr.WriteLine("Height, or Size (Determines the max # of items that can be held in it?)=" + idi.height);
 				} else {
 					scr.WriteLine("Height=" + idi.height);
@@ -369,7 +359,7 @@ namespace SteamEngine {
 				scr.WriteLine("Unknown2=" + idi.unknown2);
 				scr.WriteLine("Hue=" + idi.hue);
 				scr.WriteLine("Unknown3=" + idi.unknown3);
-				scr.WriteLine("Tiledata flags = " + WriteToString(idi.flags));
+				scr.WriteLine("Tiledata flags = " + idi.flags);
 
 				for (int flagNum = 0; flagNum < 32; flagNum++) {
 					if (HasFlagNum(idi.flags, flagNum)) {
