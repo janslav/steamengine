@@ -88,7 +88,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public uint Flags {
+		public TileFlag Flags {
 			get {
 				return dispidInfo.flags;
 			}

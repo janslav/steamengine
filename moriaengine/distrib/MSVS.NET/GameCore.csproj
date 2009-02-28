@@ -739,8 +739,8 @@
     <Compile Include="..\..\GameCore\Regions\Map.cs">
       <Link>Regions\Map.cs</Link>
     </Compile>
-    <Compile Include="..\..\GameCore\Regions\Movement.cs">
-      <Link>Regions\Movement.cs</Link>
+    <Compile Include="..\..\GameCore\Regions\MapCalculations.cs">
+      <Link>Regions\MapCalculations.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\Regions\Rectangle.cs">
       <Link>Regions\Rectangle.cs</Link>

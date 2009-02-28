@@ -294,5 +294,22 @@ namespace SteamEngine {
 			//other various properties...
 			//todo: not clear those tags/tgs/timers/whatever that were set dynamically (ie not in scripted defs)
 		}
+
+		public override int Height {
+			get {
+				if (this.height.IsDefaultCodedValue) {
+					//if (this.IsContainer) {
+					//    return 4;
+					//}
+					ItemDispidInfo idi = this.DispidInfo;
+					if (idi == null) {
+						return 1;
+					}
+					return idi.calcHeight;
+				} else {
+					return (int) this.height.CurrentValue;
+				}
+			}
+		}
 	}
 }
