@@ -56,19 +56,6 @@ namespace SteamEngine {
 
 		//Don't set the disconnected flag (0x01) by tweaking flags.
 		protected byte flags;
-		/* Flags:
-		 * 0x0001: Stolen (Drop on death)
-		 * 0x0002: Decay
-		 * 0x0004: Newbied
-		 * 0x0008: Always Movable
-		 * 0x0010: Never Movable
-		 * 0x0020: Magic
-		 * 0x0040: Static (For moving stuff to the statics MULs, perhaps?)
-		 * 0x0080: Invisible
-		 * 0x0100: Ignored by NearbyItems
-		 * 0x0200: Blocks LOS
-		 * 0x0400: Provides partial cover (Doesn't block LOS but does assess combat penalties)
-		 * */
 		//private byte netChangeFlags = 0;
 
 		private static uint instances = 0;
@@ -142,23 +129,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public override int Height {
-			get {
-				int defHeight = Def.Height;
-				if (defHeight > 0) {
-					return defHeight;
-				}
-				if (this.IsContainer) {
-					return 4;
-				}
-				ItemDispidInfo idi = ItemDispidInfo.Get(this.Model);
-				if (idi == null) {
-					return 1;
-				}
-				return idi.height;
-			}
-		}
-
 		public uint Amount {
 			get {
 				return amount;
@@ -220,6 +190,11 @@ namespace SteamEngine {
 					}
 				}
 			}
+		}
+
+		public abstract bool Flag_NonMovable {
+			get;
+			set;
 		}
 
 		public bool IsInVisibleLayer {
@@ -611,6 +586,13 @@ namespace SteamEngine {
 		public sealed override void InvalidateProperties() {
 			ItemSyncQueue.PropertiesChanged(this);
 			base.InvalidateProperties();
+		}
+
+		//if true, this is mutually exclusive with other items that return true here, to fit on the same map spot (Map.CanFit)
+		public virtual bool BlocksFit {
+			get {
+				return false;
+			}
 		}
 	}
 }

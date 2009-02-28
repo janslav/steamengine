@@ -707,7 +707,6 @@ namespace SteamEngine.Networking {
 		ushort amount, model, x, y, color;
 		sbyte z;
 		byte dir, flagsToSend;
-		MoveRestriction restrict;
 
 		public void Prepare(AbstractItem item, MoveRestriction restrict) {
 			this.flaggedUid = item.FlaggedUid;
@@ -719,7 +718,9 @@ namespace SteamEngine.Networking {
 			this.z = point.z;
 			this.dir = (byte) item.Direction;
 			this.flagsToSend = item.FlagsToSend;
-			this.restrict = restrict;
+			if (restrict == MoveRestriction.Movable) {
+				this.flagsToSend |= 0x20;
+			}
 			this.color = item.Color;
 		}
 
@@ -733,8 +734,7 @@ namespace SteamEngine.Networking {
 			this.y = point4D.Y;
 			this.z = point4D.Z;
 			this.dir = (byte) dir;
-			this.flagsToSend = 0x00;//Normal
-			this.restrict = MoveRestriction.Normal; //this means Not Movable?
+			this.flagsToSend = 0x00;
 			this.color = color;
 		}
 

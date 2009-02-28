@@ -25,7 +25,7 @@ namespace SteamEngine {
 		private static List<ItemDispidInfo> array = new List<ItemDispidInfo>();
 
 		public readonly ushort id;
-		public readonly uint flags;
+		public readonly TileFlag flags;
 		public readonly byte weight;
 		public readonly byte quality;
 		public readonly ushort unknown;
@@ -41,7 +41,7 @@ namespace SteamEngine {
 		public readonly string pluralName;
 		public readonly bool isEmpty;
 
-		public ItemDispidInfo(uint flags, byte weight, byte quality, ushort unknown, byte minItemsToDisplayThisArt, byte quantity, ushort animID, byte unknown2, byte hue, ushort unknown3, byte height, string name) {
+		public ItemDispidInfo(TileFlag flags, byte weight, byte quality, ushort unknown, byte minItemsToDisplayThisArt, byte quantity, ushort animID, byte unknown2, byte hue, ushort unknown3, byte height, string name) {
 			this.flags = flags;
 			this.weight = weight;
 			this.quality = quality;
@@ -53,7 +53,7 @@ namespace SteamEngine {
 			this.hue = hue;
 			this.unknown3 = unknown3;
 			this.height = height;
-			if ((flags & TileData.flag_bridge) == TileData.flag_bridge) {
+			if ((flags & TileFlag.Bridge) == TileFlag.Bridge) {
 				this.calcHeight = (byte) (height / 2);
 			} else {
 				this.calcHeight = height;
@@ -65,7 +65,7 @@ namespace SteamEngine {
 
 			this.id = (ushort) array.Count;
 			array.Add(this);
-			this.isEmpty = ((flags == 0 || flags == TileData.flag_unknown_2) && (weight == 1 || weight == 0 || weight == 255) &&
+			this.isEmpty = ((flags == 0 || flags == TileFlag.Unknown_2) && (weight == 1 || weight == 0 || weight == 255) &&
 						quality == 0 && unknown == 0 && minItemsToDisplayThisArt == 0 && quantity == 0 && animID == 0 &&
 						unknown2 == 0 && hue == 0 && unknown3 == 0 && name.Length == 0);
 			//height is sometimes not 0 for these.

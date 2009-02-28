@@ -231,6 +231,20 @@ namespace SteamEngine.Regions {
 				int relY = y - basey;
 				return staticSector.GetTileZ(relX, relY);
 			}
+
+
+			internal void GetTileZ(int x, int y, out sbyte z, out ushort id) {
+				LoadStatics();
+				int basex = x & Map.sectorAnd;
+				int basey = y & Map.sectorAnd;
+
+				int relX = x - basex;
+				int relY = y - basey;
+
+				z = this.staticSector.GetTileZ(relX, relY);
+				id = this.staticSector.GetTileId(relX, relY);
+			}
+
 			#endregion Static stuff
 
 			#region Regions

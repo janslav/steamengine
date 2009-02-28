@@ -885,7 +885,7 @@ namespace SteamEngine.Regions {
 
 		public MapTileType GetMapTileType(int id) {
 			MapTileType type = MapTileType.Other;
-			if ((TileData.landFlags[id] & TileData.flag_wet) == TileData.flag_wet) {
+			if ((TileData.landFlags[id] & TileFlag.Wet) == TileFlag.Wet) {
 				type = MapTileType.Water;
 			} else if (t_dirt.IsTypeOfMapTile(id)) {
 				type = MapTileType.Dirt;
@@ -904,7 +904,7 @@ namespace SteamEngine.Regions {
 		*/
 		public bool IsMapTileWater(int x, int y) {
 			ushort id = GetTileId(x, y);
-			return (TileData.landFlags[id] & TileData.flag_wet) == TileData.flag_wet;
+			return (TileData.landFlags[id] & TileFlag.Wet) == TileFlag.Wet;
 		}
 		/**
 			Returns true if the map tile at the specified specified coordinates is dirt.
@@ -946,7 +946,7 @@ namespace SteamEngine.Regions {
 			if (Map.IsValidPos(x, y, m)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
-				return GetSector(sx, sy).GetTileId(x, y);
+				return this.GetSector(sx, sy).GetTileId(x, y);
 			}
 			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
 		}
@@ -958,9 +958,19 @@ namespace SteamEngine.Regions {
 			if (Map.IsValidPos(x, y, m)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
-				return GetSector(sx, sy).GetTileZ(x, y);
+				return this.GetSector(sx, sy).GetTileZ(x, y);
 			}
 			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+		}
+
+		public void GetTile(int x, int y, out sbyte z, out ushort id) {
+			if (Map.IsValidPos(x, y, m)) {
+				int sx = x >> sectorFactor;
+				int sy = y >> sectorFactor;
+				this.GetSector(sx, sy).GetTileZ(x, y, out z, out id);
+			} else {
+				throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+			}
 		}
 
 		public Static GetStatic(int x, int y, int z, int staticId) {

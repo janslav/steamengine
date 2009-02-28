@@ -53,239 +53,120 @@ namespace SteamEngine.Regions {
 	//file even though it's still the Map class
 	public partial class Map {
 
-		private const int PersonHeight = 16;
+		public const int PersonHeight = 16;
 		//private const int StepHeight = 2;
-		private const uint ImpassableSurface = TileData.flag_impassable | TileData.flag_surface;
 
 		//private static bool m_AlwaysIgnoreDoors;
 		//private static bool m_IgnoreMovableImpassables;
 
-
-		private bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<Static> tiles, List<AbstractItem> items) {
-			for (int i = 0, n = tiles.Count; i < n; i++) {
-				Static check = tiles[i];
-				ItemDispidInfo itemData = check.dispidInfo;
-
-				if ((itemData.flags & ImpassableSurface) != 0) {// Impassable || Surface
-					int checkZ = check.Z;
-					int checkTop = checkZ + itemData.calcHeight;
-
-					if (checkTop > ourZ && ourTop > checkZ)
-						return false;
-				}
-			}
-
-			for (int i = 0; i < items.Count; ++i) {
-				AbstractItem item = items[i];
-
-				ushort model = item.Model;
-				ItemDispidInfo idi = ItemDispidInfo.Get(model);
-				uint flags = idi.flags;
-
-				if ((flags & ImpassableSurface) != 0) {// Impassable || Surface
-					if (ignoreDoors && ((flags & TileData.flag_door) != 0
-							|| model == 0x692 || model == 0x846 || model == 0x873 || (model >= 0x6F5 && model <= 0x6F6)))
-						//^^^^ ve standartnich tiledata.mul nemaj tyhle modely flag_door i kdyz sou to dvere
-						continue;
-
-					int checkZ = item.Z;
-					int checkTop = checkZ + idi.calcHeight;
-
-					if (checkTop > ourZ && ourTop > checkZ)
-						return false;
-				}
-			}
-
-			return true;
+		#region CanFit
+		public bool CanFit(IPoint3D p, int height, bool checkBlocksFit) {
+			return CanFit(p.X, p.Y, p.Z, height, checkBlocksFit, true, true);
 		}
 
-		private List<AbstractItem>[] m_Pools = new List<AbstractItem>[] {
-			new List<AbstractItem>(), new List<AbstractItem>(),new List<AbstractItem>(), new List<AbstractItem>(),
-		};
+		public bool CanFit(IPoint3D p, int height, bool checkBlocksFit, bool checkCharacters) {
+			return CanFit(p.X, p.Y, p.Z, height, checkBlocksFit, checkCharacters, true);
+		}
 
-		private List<Sector> m_Sectors = new List<Sector>();
+		public bool CanFit(IPoint2D p, int z, int height, bool checkBlocksFit) {
+			return CanFit(p.X, p.Y, z, height, checkBlocksFit, true, true);
+		}
 
-		private List<Static> staticsPool = new List<Static>();
+		public bool CanFit(IPoint3D p, int height) {
+			return CanFit(p.X, p.Y, p.Z, height, false, true, true);
+		}
 
-		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
-			newZ = 0;
+		public bool CanFit(IPoint2D p, int z, int height) {
+			return CanFit(p.X, p.Y, z, height, false, true, true);
+		}
 
-			ushort landTile = this.GetTileId(x, y);
-			int landZ = 0, landCenter = 0, landTop = 0;
-			uint tileFlags = TileData.landFlags[landTile];
+		public bool CanFit(int x, int y, int z, int height) {
+			return CanFit(x, y, z, height, false, true, true);
+		}
 
-			bool canSwim = settings.CanSwim;
-			bool canFly = settings.CanFly;
-			bool canCrossLand = settings.CanCrossLand;
-			bool canCrossLava = settings.CanCrossLava;
-			bool ignoreDoors = settings.IgnoreDoors;
+		public bool CanFit(int x, int y, int z, int height, bool checksBlocksFit) {
+			return CanFit(x, y, z, height, checksBlocksFit, true, true);
+		}
 
-			bool landBlocks = TileData.HasFlag(tileFlags, TileData.flag_impassable);
-			bool considerLand = !TileData.IsIgnoredByMovement(landTile);
+		public bool CanFit(int x, int y, int z, int height, bool checkBlocksFit, bool checkCharacters) {
+			return CanFit(x, y, z, height, checkBlocksFit, checkCharacters, true);
+		}
 
-			int pointZ = point.Z;
-
-			//we can't go over land or it's no land...let's try swimming, lavawalking or flying
-			if ((landBlocks) || (!canCrossLand)) {
-				landBlocks = true; //land blocks us if we can't cross land
-				bool isWater = ((tileFlags & TileData.flag_wet) == TileData.flag_wet);
-				bool isLava = t_lava.IsTypeOfMapTile(landTile);
-				if ((canSwim && isWater) ||
-						(canCrossLava && isLava) ||
-						(canFly)) {
-					landBlocks = false;
-				}
+		public bool CanFit(int x, int y, int z, int height, bool checkBlocksFit, bool checkCharacters, bool requireSurface) {
+			if (!this.IsValidPos(x, y)) {
+				return false;
 			}
 
+			bool hasSurface = false;
 
+			ushort tileId;
+			sbyte tileZ;
+			this.GetTile(x, y, out tileZ, out tileId);
 
-			this.GetAverageZ(x, y, ref landZ, ref landCenter, ref landTop);
+			int lowZ = 0, avgZ = 0, topZ = 0;
 
-			bool moveIsOk = false;
+			this.GetAverageZ(x, y, ref lowZ, ref avgZ, ref topZ);
+			TileFlag landFlags = TileData.landFlags[tileId & 0x3FFF];
 
-			int stepHeight = settings.ClimbPower;
-			int stepTop = startTop + stepHeight;
-			int checkTop = startZ + PersonHeight;
-
-			staticsPool.Clear();
-			foreach (Static staticItem in this.GetStaticsOnCoords(x, y)) {
-				staticsPool.Add(staticItem);
+			if (((landFlags & TileFlag.Impassable) != 0) && (avgZ > z) && ((z + height) > lowZ)) {
+				return false;
+			} else if ((landFlags & TileFlag.Impassable) == 0 && z == avgZ && !TileData.IsIgnoredId(tileId)) {
+				hasSurface = true;
 			}
 
-			for (int i = 0, n = staticsPool.Count; i < n; i++) {
-				Static staticItem = staticsPool[i];
+			bool surface, impassable;
 
-				ItemDispidInfo idi = staticItem.dispidInfo;
-				uint flags = idi.flags;
+			foreach (Static staticTile in this.GetStaticsOnCoords(x, y)) {
+				ItemDispidInfo dispidInfo = staticTile.dispidInfo;
+				TileFlag staticFlag = dispidInfo.flags;
+				int staticZ = staticTile.z;
+				surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
+				impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
 
-				bool staticIsWater = ((flags & TileData.flag_wet) == TileData.flag_wet);
-				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.id);
-
-				if ((flags & ImpassableSurface) == TileData.flag_surface || // Surface && !Impassable
-						(canSwim && staticIsWater) || //je to voda a my umime plavat
-						(canCrossLava && staticIsLava) || //je to lava a nam nevadi
-						(canFly)) {//umime litat a tak nam nevadi nic
-
-					if (!canFly && !canCrossLand && !staticIsWater && !staticIsLava)
-						continue;//neumime chodit/litat a neni to voda/lava (he?)
-
-					int itemZ = staticItem.Z;
-					int itemTop = itemZ;
-					int ourZ = itemZ + idi.calcHeight;
-					int ourTop = ourZ + PersonHeight;
-					int testTop = checkTop;
-
-					if (moveIsOk) {
-						int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
-
-						if (cmp > 0 || (cmp == 0 && ourZ > newZ))
-							continue;
-					}
-
-					if (ourZ + PersonHeight > testTop)
-						testTop = ourZ + PersonHeight;
-
-					if ((flags & TileData.flag_bridge) == 0)
-						itemTop += idi.height;
-
-					if (stepTop >= itemTop) {
-						int landCheck = itemZ;
-
-						if (idi.height >= stepHeight)
-							landCheck += stepHeight;
-						else
-							landCheck += idi.height;
-
-						if (considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landZ)
-							continue;
-
-						if (IsOk(ignoreDoors, ourZ, testTop, staticsPool, items)) {
-							newZ = ourZ;
-							moveIsOk = true;
-						}
-					}
-				}
+				if ((surface || impassable) && (staticZ + dispidInfo.calcHeight) > z && (z + height) > staticZ)
+					return false;
+				else if (surface && !impassable && z == (staticZ + dispidInfo.calcHeight))
+					hasSurface = true;
 			}
 
-			for (int i = 0; i < items.Count; ++i) {
-				AbstractItem item = items[i];
-				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
-				uint flags = idi.flags;
-
-				bool itemIsWater = ((flags & TileData.flag_wet) == TileData.flag_wet);
-				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.id);
-
-				if (/*item.Flag_NeverMovable && */((flags & ImpassableSurface) == TileData.flag_surface || // Surface && !Impassable && !Movable
-						(canSwim && itemIsWater) || //je to voda a my umime plavat
-						(canCrossLava && itemIsLava) || //je to lava a nam nevadi
-						(canFly))) {//umime litat a tak nam nevadi nic
-
-					if (!canFly && !canCrossLand && !itemIsWater && !itemIsLava)
-						continue;//neumime chodit/litat a neni to voda/lava (he?)
-
+			Sector sector = this.GetSector(x >> sectorFactor, y >> sectorFactor);
+			foreach (Thing t in sector.things) {
+				AbstractItem item = t as AbstractItem;
+				if (item != null) {
+					int itemX = item.X;
+					int itemY = item.Y;
 					int itemZ = item.Z;
-					int itemTop = itemZ;
-					int ourZ = itemZ + idi.calcHeight;
-					int ourTop = ourZ + PersonHeight;
-					int testTop = checkTop;
+					int itemModel = item.Model;
+					if ((itemModel < 0x4000) && (itemX == x) && (itemY == y)) {
+						ItemDispidInfo dispidInfo = ItemDispidInfo.Get(itemModel);
+						TileFlag staticFlag = dispidInfo.flags;
+						surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
+						impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
+						int itemHeight = item.Height;
 
-					if (moveIsOk) {
-						int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
-
-						if (cmp > 0 || (cmp == 0 && ourZ > newZ))
-							continue;
+						if ((surface || impassable || (checkBlocksFit && item.BlocksFit)) && (itemZ + itemHeight) > z && (z + height) > itemZ) {
+							return false;
+						} else if (surface && !impassable && !item.Flag_Disconnected && z == (itemZ + itemHeight)) {
+							hasSurface = true;
+						}
 					}
-
-					if (ourZ + PersonHeight > testTop)
-						testTop = ourZ + PersonHeight;
-
-					if ((flags & TileData.flag_bridge) == 0)
-						itemTop += idi.height;
-
-					if (stepTop >= itemTop) {
-						int landCheck = itemZ;
-
-						if (idi.height >= stepHeight)
-							landCheck += stepHeight;
-						else
-							landCheck += idi.height;
-
-						if (considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landZ)
-							continue;
-
-						if (IsOk(ignoreDoors, ourZ, testTop, staticsPool, items)) {
-							newZ = ourZ;
-							moveIsOk = true;
+				} else if (checkCharacters) {
+					AbstractCharacter ch = (AbstractCharacter) t;
+					if (ch.X == x && ch.Y == y && (!ch.Flag_Insubst)) {
+						int chZ = ch.Z;
+						if ((chZ + 16) > z && (z + height) > chZ) {
+							return false;
 						}
 					}
 				}
 			}
 
-			if (considerLand && !landBlocks && stepTop >= landZ) {
-				int ourZ = landCenter;
-				int ourTop = ourZ + PersonHeight;
-				int testTop = checkTop;
-
-				if (ourZ + PersonHeight > testTop)
-					testTop = ourZ + PersonHeight;
-
-				bool shouldCheck = true;
-
-				if (moveIsOk) {
-					int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
-
-					if (cmp > 0 || (cmp == 0 && ourZ > newZ))
-						shouldCheck = false;
-				}
-
-				if (shouldCheck && IsOk(ignoreDoors, ourZ, testTop, staticsPool, items)) {
-					newZ = ourZ;
-					moveIsOk = true;
-				}
-			}
-
-			return moveIsOk;
+			return !requireSurface || hasSurface;
 		}
+
+		#endregion
+
+		#region CheckMovement
 
 		public bool CheckMovement(IPoint3D point, IMovementSettings settings, Direction d, bool hackMove, out int xForward, out int yForward, out int newZ) {
 			int xStart = point.X;
@@ -314,10 +195,10 @@ namespace SteamEngine.Regions {
 			List<AbstractItem> itemsLeft = m_Pools[2];
 			List<AbstractItem> itemsRight = m_Pools[3];
 
-			uint reqFlags = ImpassableSurface;
+			TileFlag reqFlags = TileFlag.ImpassableSurface;
 
 			if (settings.CanSwim)
-				reqFlags |= TileData.flag_wet;
+				reqFlags |= TileFlag.Wet;
 
 			if (checkDiagonals) {
 				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
@@ -454,24 +335,250 @@ namespace SteamEngine.Regions {
 			return moveIsOk;
 		}
 
+		private bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<Static> tiles, List<AbstractItem> items) {
+			for (int i = 0, n = tiles.Count; i < n; i++) {
+				Static check = tiles[i];
+				ItemDispidInfo itemData = check.dispidInfo;
+
+				if ((itemData.flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
+					int checkZ = check.Z;
+					int checkTop = checkZ + itemData.calcHeight;
+
+					if (checkTop > ourZ && ourTop > checkZ)
+						return false;
+				}
+			}
+
+			for (int i = 0; i < items.Count; ++i) {
+				AbstractItem item = items[i];
+
+				ushort model = item.Model;
+				ItemDispidInfo idi = ItemDispidInfo.Get(model);
+				TileFlag flags = idi.flags;
+
+				if ((flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
+					if (ignoreDoors && ((flags & TileFlag.Door) != 0
+							|| model == 0x692 || model == 0x846 || model == 0x873 || (model >= 0x6F5 && model <= 0x6F6)))
+						//^^^^ ve standartnich tiledata.mul nemaj tyhle modely flag_door i kdyz sou to dvere
+						continue;
+
+					int checkZ = item.Z;
+					int checkTop = checkZ + idi.calcHeight;
+
+					if (checkTop > ourZ && ourTop > checkZ)
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		private List<AbstractItem>[] m_Pools = new List<AbstractItem>[] {
+			new List<AbstractItem>(), new List<AbstractItem>(),new List<AbstractItem>(), new List<AbstractItem>(),
+		};
+
+		private List<Sector> m_Sectors = new List<Sector>();
+
+		private List<Static> staticsPool = new List<Static>();
+
+		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
+			newZ = 0;
+
+			ushort landTile = this.GetTileId(x, y);
+			int landZ = 0, landCenter = 0, landTop = 0;
+			TileFlag tileFlags = TileData.landFlags[landTile];
+
+			bool canSwim = settings.CanSwim;
+			bool canFly = settings.CanFly;
+			bool canCrossLand = settings.CanCrossLand;
+			bool canCrossLava = settings.CanCrossLava;
+			bool ignoreDoors = settings.IgnoreDoors;
+
+			bool landBlocks = TileData.HasFlag(tileFlags, TileFlag.Impassable);
+			bool considerLand = !TileData.IsIgnoredId(landTile);
+
+			int pointZ = point.Z;
+
+			//we can't go over land or it's no land...let's try swimming, lavawalking or flying
+			if ((landBlocks) || (!canCrossLand)) {
+				landBlocks = true; //land blocks us if we can't cross land
+				bool isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
+				bool isLava = t_lava.IsTypeOfMapTile(landTile);
+				if ((canSwim && isWater) ||
+						(canCrossLava && isLava) ||
+						(canFly)) {
+					landBlocks = false;
+				}
+			}
+
+
+
+			this.GetAverageZ(x, y, ref landZ, ref landCenter, ref landTop);
+
+			bool moveIsOk = false;
+
+			int stepHeight = settings.ClimbPower;
+			int stepTop = startTop + stepHeight;
+			int checkTop = startZ + PersonHeight;
+
+			staticsPool.Clear();
+			foreach (Static staticItem in this.GetStaticsOnCoords(x, y)) {
+				staticsPool.Add(staticItem);
+			}
+
+			for (int i = 0, n = staticsPool.Count; i < n; i++) {
+				Static staticItem = staticsPool[i];
+
+				ItemDispidInfo idi = staticItem.dispidInfo;
+				TileFlag flags = idi.flags;
+
+				bool staticIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
+				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.id);
+
+				if ((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable
+						(canSwim && staticIsWater) || //je to voda a my umime plavat
+						(canCrossLava && staticIsLava) || //je to lava a nam nevadi
+						(canFly)) {//umime litat a tak nam nevadi nic
+
+					if (!canFly && !canCrossLand && !staticIsWater && !staticIsLava)
+						continue;//neumime chodit/litat a neni to voda/lava (he?)
+
+					int itemZ = staticItem.Z;
+					int itemTop = itemZ;
+					int ourZ = itemZ + idi.calcHeight;
+					int ourTop = ourZ + PersonHeight;
+					int testTop = checkTop;
+
+					if (moveIsOk) {
+						int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
+
+						if (cmp > 0 || (cmp == 0 && ourZ > newZ))
+							continue;
+					}
+
+					if (ourZ + PersonHeight > testTop)
+						testTop = ourZ + PersonHeight;
+
+					if ((flags & TileFlag.Bridge) == 0)
+						itemTop += idi.height;
+
+					if (stepTop >= itemTop) {
+						int landCheck = itemZ;
+
+						if (idi.height >= stepHeight)
+							landCheck += stepHeight;
+						else
+							landCheck += idi.height;
+
+						if (considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landZ)
+							continue;
+
+						if (IsOk(ignoreDoors, ourZ, testTop, staticsPool, items)) {
+							newZ = ourZ;
+							moveIsOk = true;
+						}
+					}
+				}
+			}
+
+			for (int i = 0; i < items.Count; ++i) {
+				AbstractItem item = items[i];
+				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
+				TileFlag flags = idi.flags;
+
+				bool itemIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
+				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.id);
+
+				if (/*item.Flag_NeverMovable && */((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable && !Movable
+						(canSwim && itemIsWater) || //je to voda a my umime plavat
+						(canCrossLava && itemIsLava) || //je to lava a nam nevadi
+						(canFly))) {//umime litat a tak nam nevadi nic
+
+					if (!canFly && !canCrossLand && !itemIsWater && !itemIsLava)
+						continue;//neumime chodit/litat a neni to voda/lava (he?)
+
+					int itemZ = item.Z;
+					int itemTop = itemZ;
+					int ourZ = itemZ + idi.calcHeight;
+					int ourTop = ourZ + PersonHeight;
+					int testTop = checkTop;
+
+					if (moveIsOk) {
+						int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
+
+						if (cmp > 0 || (cmp == 0 && ourZ > newZ))
+							continue;
+					}
+
+					if (ourZ + PersonHeight > testTop)
+						testTop = ourZ + PersonHeight;
+
+					if ((flags & TileFlag.Bridge) == 0)
+						itemTop += idi.height;
+
+					if (stepTop >= itemTop) {
+						int landCheck = itemZ;
+
+						if (idi.height >= stepHeight)
+							landCheck += stepHeight;
+						else
+							landCheck += idi.height;
+
+						if (considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landZ)
+							continue;
+
+						if (IsOk(ignoreDoors, ourZ, testTop, staticsPool, items)) {
+							newZ = ourZ;
+							moveIsOk = true;
+						}
+					}
+				}
+			}
+
+			if (considerLand && !landBlocks && stepTop >= landZ) {
+				int ourZ = landCenter;
+				int ourTop = ourZ + PersonHeight;
+				int testTop = checkTop;
+
+				if (ourZ + PersonHeight > testTop)
+					testTop = ourZ + PersonHeight;
+
+				bool shouldCheck = true;
+
+				if (moveIsOk) {
+					int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
+
+					if (cmp > 0 || (cmp == 0 && ourZ > newZ))
+						shouldCheck = false;
+				}
+
+				if (shouldCheck && IsOk(ignoreDoors, ourZ, testTop, staticsPool, items)) {
+					newZ = ourZ;
+					moveIsOk = true;
+				}
+			}
+
+			return moveIsOk;
+		}
+
 		private void GetStartZ(IMovementSettings settings, IPoint3D point, List<AbstractItem> itemList, out int zLow, out int zTop) {
 			int xCheck = point.X, yCheck = point.Y;
 
 			ushort landTile = this.GetTileId(xCheck, yCheck);
 			int landZ = 0, landCenter = 0, landTop = 0;
-			uint tileFlags = TileData.landFlags[landTile];
+			TileFlag tileFlags = TileData.landFlags[landTile];
 
 			bool canSwim = settings.CanSwim;
 			bool canFly = settings.CanFly;
 			bool canCrossLand = settings.CanCrossLand;
 			bool canCrossLava = settings.CanCrossLava;
 
-			bool landBlocks = TileData.HasFlag(tileFlags, TileData.flag_impassable);
+			bool landBlocks = TileData.HasFlag(tileFlags, TileFlag.Impassable);
 
 			//we can't go over land or it's no land...let's try swimming, lavawalking or flying
 			if ((landBlocks) || (!canCrossLand)) {
 				landBlocks = true; //land blocks us if we can't cross land
-				bool isWater = ((tileFlags & TileData.flag_wet) == TileData.flag_wet);
+				bool isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
 				bool isLava = t_lava.IsTypeOfMapTile(landTile);
 				if ((canSwim && isWater) ||
 						(canCrossLava && isLava) ||
@@ -482,7 +589,7 @@ namespace SteamEngine.Regions {
 
 			this.GetAverageZ(xCheck, yCheck, ref landZ, ref landCenter, ref landTop);
 
-			bool considerLand = !TileData.IsIgnoredByMovement(landTile);
+			bool considerLand = !TileData.IsIgnoredId(landTile);
 
 			int zCenter = zLow = zTop = 0;
 			bool isSet = false;
@@ -505,11 +612,11 @@ namespace SteamEngine.Regions {
 
 				int calcTop = (staticItem.Z + idi.calcHeight);
 
-				bool staticIsWater = ((idi.flags & TileData.flag_wet) == TileData.flag_wet);
+				bool staticIsWater = ((idi.flags & TileFlag.Wet) == TileFlag.Wet);
 				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.id);
 
 				if ((!isSet || calcTop >= zCenter) &&
-						((idi.flags & TileData.flag_surface) != 0 || //je to stul (eh?)
+						((idi.flags & TileFlag.Surface) != 0 || //je to stul (eh?)
 							(canSwim && staticIsWater) || //je to voda a my umime plavat
 							(canCrossLava && staticIsLava) || //je to lava a nam nevadi
 							(canFly) //umime litat a tak nam nevadi nic
@@ -536,13 +643,13 @@ namespace SteamEngine.Regions {
 
 				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
 
-				bool itemIsWater = ((idi.flags & TileData.flag_wet) == TileData.flag_wet);
+				bool itemIsWater = ((idi.flags & TileFlag.Wet) == TileFlag.Wet);
 				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.id);
 
 				int calcTop = item.Z + idi.calcHeight;
 
 				if ((!isSet || calcTop >= zCenter) &&
-						((idi.flags & TileData.flag_surface) != 0 || //je to stul (eh?)
+						((idi.flags & TileFlag.Surface) != 0 || //je to stul (eh?)
 							(canSwim && itemIsWater) || //je to voda a my umime plavat
 							(canCrossLava && itemIsLava) || //je to lava a nam nevadi
 							(canFly) //umime litat a tak nam nevadi nic
@@ -569,6 +676,8 @@ namespace SteamEngine.Regions {
 			else if (pointZ > zTop)
 				zTop = pointZ;
 		}
+
+		#endregion CheckMovement
 
 		public static void Offset(Direction d, ref int x, ref int y) {
 			switch (d) {

@@ -322,11 +322,6 @@ namespace SteamEngine {
 			return Map.GetMap(M);
 		}
 
-		//There was a Resync method here which called Resend, but Resync is supposed to be a character-only
-		//command, its purpose being to resend everything to that client only
-		//(NOT to resend this thing to every client who can see it, which is what Resend does).
-		//So I've deleted the Resync method which was here. (SL)
-
 		public void NudgeUp() {
 			NudgeUp(1);
 		}
@@ -404,16 +399,16 @@ namespace SteamEngine {
 
 		public virtual bool IsPlayer { get { return false; } }
 
-		public abstract int Height { get; }
+		public int Height {
+			get {
+				return this.def.Height;
+			}		
+		}
 
 		public override bool IsDeleted { get { return (uid == -1); } }
 
 		//------------------------
 		//Static Thing methods
-
-		//method: DeleteThing
-		//Call this to delete a thing
-
 
 		public static int UidClearFlags(int uid) {
 			return (int) (((uint) uid) & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
@@ -755,19 +750,19 @@ namespace SteamEngine {
 
 		public override void Save(SaveStream output) {
 			ThrowIfDeleted();
-			output.WriteValue("uid", uid);
+			output.WriteValue("uid", this.uid);
 
 			output.WriteValue("p", this.P());
 
-			if (color != 0) {
-				output.WriteValue("color", color);
+			if (this.color != 0) {
+				output.WriteValue("color", this.color);
 			}
 
-			if (model != def.Model) {
-				output.WriteValue("model", model);
+			if (this.model != def.Model) {
+				output.WriteValue("model", this.model);
 			}
 
-			output.WriteValue("createdat", createdAt);
+			output.WriteValue("createdat", this.createdAt);
 			try {
 				this.On_Save(output);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -784,24 +779,24 @@ namespace SteamEngine {
 		}
 
 
-		/*
-			Method: Dupe
+		///*
+		//    Method: Dupe
 			
-				Duplicates this character, possibly more than once.
+		//        Duplicates this character, possibly more than once.
 			
-			Parameters:
-				ntimes - The number of times to duplicate this thing.
-		 */
-		public void Dupe(int ntimes) {
-			ThrowIfDeleted();
-			//precondition sanity checks
-			Sanity.IfTrueThrow(ntimes <= 0, "Dupe called with " + ntimes + " times - Only values above 0 are valid.");
+		//    Parameters:
+		//        ntimes - The number of times to duplicate this thing.
+		// */
+		//public void Dupe(int ntimes) {
+		//    ThrowIfDeleted();
+		//    //precondition sanity checks
+		//    Sanity.IfTrueThrow(ntimes <= 0, "Dupe called with " + ntimes + " times - Only values above 0 are valid.");
 
-			while (ntimes > 0) {
-				Dupe();
-				ntimes--;
-			}
-		}
+		//    while (ntimes > 0) {
+		//        this.Dupe();
+		//        ntimes--;
+		//    }
+		//}
 
 		/*
 			Member: weight

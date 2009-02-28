@@ -27,6 +27,16 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
+	public enum WallDirection {
+		None = 0,
+		WestEast = 1, EastWest = WestEast,
+		NorthSouth = 2, SouthNorth = NorthSouth
+	}
+
+	public interface IWallItem {
+		void Init(SpellEffectArgs spellEffectArgs, WallDirection wallDir);
+	}
+
 	[ViewableClass]
 	public class WallSpellDef : DurableSpellDef {
 
@@ -38,34 +48,6 @@ namespace SteamEngine.CompiledScripts {
 			this.wallItemDef = this.InitField_Typed("wallItemDef", null, typeof(ItemDef));
 		}
 
-		protected override void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
-			base.On_EffectGround(target, spellEffectArgs);
-
-			ushort targetX = target.X;
-			ushort targetY = target.Y;
-			sbyte targetZ = target.Z;
-			byte targetM = target.M;
-
-			int dx = (spellEffectArgs.Caster.X - targetX);
-			int dy = (spellEffectArgs.Caster.Y - targetY);
-
-			int ax = Math.Abs(dx);
-			int ay = Math.Abs(dy);
-
-			if (ay > ax) {
-				this.WallItemDef.Create((ushort) (targetX - 2), targetY, targetZ, targetM);
-				this.WallItemDef.Create((ushort) (targetX - 1), targetY, targetZ, targetM);
-				this.WallItemDef.Create((ushort) (targetX + 1), targetY, targetZ, targetM);
-				this.WallItemDef.Create((ushort) (targetX + 2), targetY, targetZ, targetM);
-			} else {
-				this.WallItemDef.Create(targetX, (ushort) (targetY - 2), targetZ, targetM);
-				this.WallItemDef.Create(targetX, (ushort) (targetY - 1), targetZ, targetM);
-				this.WallItemDef.Create(targetX, (ushort) (targetY + 1), targetZ, targetM);
-				this.WallItemDef.Create(targetX, (ushort) (targetY + 2), targetZ, targetM);
-			}
-			this.WallItemDef.Create(target);
-		}
-
 		public ItemDef WallItemDef {
 			get {
 				return (ItemDef) this.wallItemDef.CurrentValue;
@@ -73,6 +55,62 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				this.wallItemDef.CurrentValue = value;
 			}
+		}
+
+		protected override void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+			base.On_EffectGround(target, spellEffectArgs);
+
+			int targetX = target.X;
+			int targetY = target.Y;
+			int targetZ = target.Z;
+			Map map = spellEffectArgs.Caster.GetMap();
+
+			int dx = (spellEffectArgs.Caster.X - targetX);
+			int dy = (spellEffectArgs.Caster.Y - targetY);
+
+			int ax = Math.Abs(dx);
+			int ay = Math.Abs(dy);
+
+			WallDirection dir = WallDirection.NorthSouth;
+			ItemDef wallDef = this.WallItemDef;
+			if (ay > ax) {
+				InitWallItem(spellEffectArgs, wallDef, targetX - 2, targetY, targetZ, map, dir);
+				InitWallItem(spellEffectArgs, wallDef, targetX - 1, targetY, targetZ, map, dir);
+				InitWallItem(spellEffectArgs, wallDef, targetX + 1, targetY, targetZ, map, dir);
+				InitWallItem(spellEffectArgs, wallDef, targetX + 2, targetY, targetZ, map, dir);
+			} else {
+				dir = WallDirection.WestEast;
+				InitWallItem(spellEffectArgs, wallDef, targetX, targetY - 2, targetZ, map, dir);
+				InitWallItem(spellEffectArgs, wallDef, targetX, targetY - 1, targetZ, map, dir);
+				InitWallItem(spellEffectArgs, wallDef, targetX, targetY + 1, targetZ, map, dir);
+				InitWallItem(spellEffectArgs, wallDef, targetX, targetY + 2, targetZ, map, dir);
+			}
+			InitWallItem(spellEffectArgs, wallDef, targetX, targetY, targetZ, map, dir);
+		}
+
+		private static void InitWallItem(SpellEffectArgs spellEffectArgs, ItemDef wallDef, int x, int y, int z, Map map, WallDirection wallDir) {
+			if (AdjustField(x, y, ref z, map, wallDef.Height, true)) {
+				Thing t = wallDef.Create((ushort) x, (ushort) y, (sbyte) z, map.m);
+				IWallItem asWallitem = t as IWallItem;
+				if (asWallitem != null) {
+					asWallitem.Init(spellEffectArgs, wallDir);
+				}
+			}
+		}
+
+		public static bool AdjustField(int x, int y, ref int z, Map map, int height, bool checkCharacters) {
+			if (map == null)
+				return false;
+
+			for (int offset = 0; offset < 10; offset++) {
+				int offsetZ = z - offset;
+				if (map.CanFit(x, y, offsetZ, height, true, checkCharacters)) {
+					z = offsetZ;
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

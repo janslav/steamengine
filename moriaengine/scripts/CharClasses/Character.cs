@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool Flag_Insubst {
+		public override bool Flag_Insubst {
 			get {
 				return ((flags & 0x0004) == 0x0004);
 			}

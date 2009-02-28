@@ -174,16 +174,6 @@ namespace SteamEngine {
 		//	}
 		//}
 
-		public override int Height {
-			get {
-				int defHeight = Def.Height;
-				if (defHeight > 0) {
-					return defHeight;
-				}
-				return 10;
-			}
-		}
-
 		public ushort MountItem {
 			get {
 				return this.TypeDef.MountItem;
@@ -276,6 +266,11 @@ namespace SteamEngine {
 			//        }
 			//    }
 			//}
+		}
+
+		public abstract bool Flag_Insubst {
+			get;
+			set;
 		}
 
 		public override sealed void Resend() {

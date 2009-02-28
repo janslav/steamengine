@@ -37,7 +37,7 @@ namespace SteamEngine {
 		internal FieldValue name;
 		internal FieldValue model;
 		private FieldValue weight;
-		private FieldValue height;
+		internal FieldValue height;
 
 		private FieldValue color;
 
@@ -66,19 +66,19 @@ namespace SteamEngine {
 
 		internal ThingDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			name = InitField_Typed("name", "", typeof(string));
-			color = InitField_Typed("color", 0, typeof(ushort));
+			this.name = InitField_Typed("name", "", typeof(string));
+			this.color = InitField_Typed("color", 0, typeof(ushort));
 
-			model = InitField_Model("model", 0);
-			weight = InitField_Typed("weight", 0, typeof(float));
-			height = InitField_Typed("height", 0, typeof(int));
+			this.model = InitField_Model("model", 0);
+			this.weight = InitField_Typed("weight", 0, typeof(float));
+			this.height = InitField_Typed("height", 0, typeof(int));
 			ushort modelNum;
 			if (TagMath.TryParseUInt16(defname.Substring(2), out modelNum)) {
-				model.SetFromScripts(filename, headerLine, modelNum.ToString());
+				this.model.SetFromScripts(filename, headerLine, modelNum.ToString());
 			} else if (this is AbstractItemDef) {
-				model.SetFromScripts(filename, headerLine, Globals.defaultItemModel.ToString());
+				this.model.SetFromScripts(filename, headerLine, Globals.defaultItemModel.ToString());
 			} else if (this is AbstractCharacterDef) {
-				model.SetFromScripts(filename, headerLine, Globals.defaultCharModel.ToString());
+				this.model.SetFromScripts(filename, headerLine, Globals.defaultCharModel.ToString());
 			} else {
 				throw new ScriptException("Char or item? This should NOT happen!");
 			}
@@ -86,46 +86,50 @@ namespace SteamEngine {
 
 		public virtual string Name {
 			get {
-				return (string) name.CurrentValue;
+				return (string) this.name.CurrentValue;
 			}
 			set {
-				name.CurrentValue = value;
+				this.name.CurrentValue = value;
 			}
 		}
 
 		public ushort Model {
 			get {
-				return (ushort) model.CurrentValue;
+				return (ushort) this.model.CurrentValue;
 			}
 			set {
-				model.CurrentValue = value;
+				this.model.CurrentValue = value;
 			}
 		}
 
 		public ushort Color {
 			get {
-				return (ushort) color.CurrentValue;
+				return (ushort) this.color.CurrentValue;
 			}
 			set {
-				color.CurrentValue = value;
+				this.color.CurrentValue = value;
 			}
 		}
 
 		public float Weight {
 			get {
-				return (float) weight.CurrentValue;
+				return (float) this.weight.CurrentValue;
 			}
 			set {
-				weight.CurrentValue = value;
+				this.weight.CurrentValue = value;
 			}
 		}
 
-		public int Height {
+		public virtual int Height {
 			get {
-				return (int) height.CurrentValue;
+				if (this.height.IsDefaultCodedValue) {
+					return Map.PersonHeight;
+				} else {
+					return (int) this.height.CurrentValue;
+				}
 			}
 			set {
-				height.CurrentValue = value;
+				this.height.CurrentValue = value;
 			}
 		}
 
@@ -148,15 +152,15 @@ namespace SteamEngine {
 		}
 
 		internal Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
-			ThrowIfUnloaded();
+			this.ThrowIfUnloaded();
 			return CreateImpl();
 		}
 
 		public Thing Create(ushort x, ushort y, sbyte z, byte m) {
-			ThrowIfUnloaded();
+			this.ThrowIfUnloaded();
 			Thing retVal = CreateImpl();
 			PutOnGround(retVal, x, y, z, m);
-			Trigger_Create(retVal);
+			this.Trigger_Create(retVal);
 			return retVal;
 		}
 
@@ -166,8 +170,8 @@ namespace SteamEngine {
 		}
 
 		public Thing Create(Thing cont) {
-			ThrowIfUnloaded();
-			Thing retVal = CreateImpl();
+			this.ThrowIfUnloaded();
+			Thing retVal = this.CreateImpl();
 			AbstractItem item = retVal as AbstractItem;
 			if (item == null) {//we are char
 				MutablePoint4D p = cont.TopObj().point4d;

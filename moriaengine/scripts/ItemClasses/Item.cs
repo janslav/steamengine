@@ -52,6 +52,33 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+
+	/* sphere Flags:
+	 * 0x0001: Stolen (Drop on death)
+	 * 0x0002: Decay
+	 * 0x0004: Newbied
+	 * 0x0008: Always Movable
+	 * 0x0010: Never Movable
+	 * 0x0020: Magic
+	 * 0x0040: Static (For moving stuff to the statics MULs, perhaps?)
+	 * 0x0080: Invisible
+	 * 0x0100: Ignored by NearbyItems
+	 * 0x0200: Blocks LOS
+	 * 0x0400: Provides partial cover (Doesn't block LOS but does assess combat penalties)
+	 * */
+
+	public enum ItemFlags : byte {
+		None = 0x00,
+		Disconnecned = 0x01, //reserved by core
+
+		Newbied = 0x04,
+
+		DisplayAsMovable = 0x08, AlwaysMovable = DisplayAsMovable,
+		NonMovable = 0x10, NeverMovable = NonMovable,
+
+		Invisible = 0x80,
+	}
+
 	[Dialogs.ViewableClass]
 	public partial class Item : AbstractItem {
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
@@ -70,35 +97,83 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override byte FlagsToSend {
-			get {	//It looks like only 080 (invis) and 020 (static) are actually used
-				int ret = 0;
+			get {
+				int retVal = 0;
+
 				if (this.IsNotVisible) {
-					ret |= 0x80;
+					retVal |= 0x80;
 				}
-				return (byte) ret;
+
+				if (this.Flag_DisplayAsMovable) {
+					retVal |= 0x20;
+				}
+
+				return (byte) retVal;
 			}
 		}
 
-		public byte Flags {
+		public ItemFlags Flags {
 			get {
-				return flags;
+				return (ItemFlags) this.flags;
 			}
 		}
 
 		public bool Flag_Invisible {
 			get {
-				return ((flags & 0x0080) == 0x0080);
+				return ((this.Flags & ItemFlags.Invisible) == ItemFlags.Invisible);
 			}
 			set {
-				byte newFlags = (byte) (value ? (flags | 0x80) : (flags & ~0x80));
-				if (newFlags != this.flags) {
+				ItemFlags oldFlags = this.Flags;
+				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.Invisible) : (oldFlags & ~ItemFlags.Invisible));
+				if (newFlags != oldFlags) {
 					if (value) {
 						OpenedContainers.SetContainerClosed(this);
 						this.RemoveFromView();
 					}
 					ItemSyncQueue.AboutToChange(this);
-					flags = newFlags;
+					this.flags = (byte) newFlags;
 				}
+			}
+		}
+
+		public bool Flag_Newbied {
+			get {
+				return ((this.Flags & ItemFlags.Newbied) == ItemFlags.Newbied);
+			}
+			set {
+				ItemFlags oldFlags = this.Flags;
+				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.Newbied) : (oldFlags & ~ItemFlags.Newbied));
+				//if (newFlags != oldFlags) {
+				this.flags = (byte) newFlags;
+				//}
+			}
+		}
+
+		public bool Flag_DisplayAsMovable {
+			get {
+				return ((this.Flags & ItemFlags.DisplayAsMovable) == ItemFlags.DisplayAsMovable);
+			}
+			set {
+				ItemFlags oldFlags = this.Flags;
+				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.DisplayAsMovable) : (oldFlags & ~ItemFlags.DisplayAsMovable));
+				if (newFlags != oldFlags) {
+					ItemSyncQueue.AboutToChange(this);
+					this.flags = (byte) newFlags;
+				}
+			}
+		}
+
+		public override sealed bool Flag_NonMovable {
+			get {
+				return ((this.Flags & ItemFlags.NonMovable) == ItemFlags.NonMovable);
+			}
+			set {
+				ItemFlags oldFlags = this.Flags;
+				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.NonMovable) : (oldFlags & ~ItemFlags.NonMovable));
+				//if (newFlags != oldFlags) {
+				//    ItemSyncQueue.AboutToChange(this);
+					this.flags = (byte) newFlags;
+				//}
 			}
 		}
 
