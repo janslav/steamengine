@@ -50,6 +50,24 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return true;
 		}
+
+		public bool IsWearableDef {
+			get {
+				return (this is WearableDef);
+			}
+		}
+
+		public bool IsDestroyableDef {
+			get {
+				return (this is DestroyableDef);
+			}
+		}
+
+		public bool IsWeaponDef {
+			get {
+				return (this is WeaponDef);
+			}
+		}
 	}
 
 

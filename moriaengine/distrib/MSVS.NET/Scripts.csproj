@@ -614,6 +614,9 @@
     <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs">
       <Link>systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\ItemInfoDialog.cs">
+      <Link>systems\skills\Crafting\Craftmenu\ItemInfoDialog.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\Inscription.cs">
       <Link>systems\skills\Crafting\Inscription.cs</Link>
     </Compile>

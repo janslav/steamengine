@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (elem.IsCategory) {
 					oneCat = (CraftmenuCategory) elem;
 					dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 4 * i + 10, DialogAlignment.Valign_Center);
-					dlg.LastTable[rowCntr, 1] = ImageFactory.CreateImage(GumpIDs.Pouch);
+					dlg.LastTable[rowCntr, 1] = ImageFactory.CreateNamedImage(GumpIDs.Pouch);
 				} else {
 					oneItm = (CraftmenuItem) elem;
 					if (!oneItm.itemDef.CanBeMade((Character)focus)) {
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						foreach (IResourceListItemMultiplicable rlItm in reses.MultiplicablesSublist) {
 							ItemResource itmRes = rlItm as ItemResource;
 							if (itmRes != null) {//add count + item picture
-								string textToShow = (lastColPos > spaceLength) ? ", " : ""; //second and more items will be separated by comma
+								string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2spaces
 								textToShow += itmRes.DesiredCount.ToString() + " ";
 								dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(lastColPos, 0, textToShow, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
 								int countLength = ImprovedDialog.TextLength(textToShow); //length of the text with number (count of items needed) plus the seaprating space
@@ -114,9 +114,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							} else {//not an item => can be a typedef... (t_fruit etc.)
 								TriggerGroupResource tgrRes = rlItm as TriggerGroupResource;
 								if (tgrRes != null) {
-									string textToShow = (lastColPos > spaceLength) ? ", " : ""; //second and more items will be separated by comma
+									string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2 spaces
 									textToShow += tgrRes.DesiredCount.ToString() + " " + tgrRes.Name;
-									dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(lastColPos + spaceLength, 0, textToShow, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
+									dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(lastColPos, 0, textToShow, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
 									//prepare next offset:
 									lastColPos += spaceLength + ImprovedDialog.TextLength(textToShow);
 								}
@@ -221,8 +221,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3://show the Item Info
-						gi.Cont.SysMessage("Displaying info about: " + elem.Name);
-						DialogStacking.ResendAndRestackDialog(gi);
+						newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu_ItemInfo>.Instance, new DialogArgs(((CraftmenuItem)elem).itemDef));
+						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}
 			}
@@ -267,38 +267,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			GUTATable picTable = new GUTATable(8, ImprovedDialog.ICON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH);
-			picTable.RowHeight = ImprovedDialog.ICON_HEIGHT;
+			picTable.RowHeight = 40;
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);
-			dlg.LastTable[0,0] = ImageFactory.CreateImage(0,13,GumpIDs.Mortar);
+			dlg.LastTable[0,0] = ImageFactory.CreateNamedImage(GumpIDs.Mortar);
 			dlg.LastTable[0,1] = TextFactory.CreateLabel("Alchemy", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[1,0] = ImageFactory.CreateImage(0,2,GumpIDs.Anvil);
+			dlg.LastTable[1, 0] = ImageFactory.CreateNamedImage(GumpIDs.Anvil);
 			dlg.LastTable[1,1] = TextFactory.CreateLabel("Blacksmithing", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[1,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[2,0] = ImageFactory.CreateImage(-8,6,GumpIDs.Bow);
+			dlg.LastTable[2, 0] = ImageFactory.CreateNamedImage(GumpIDs.Bow);
 			dlg.LastTable[2,1] = TextFactory.CreateLabel("Bowcraft", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[2,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[3,0] = ImageFactory.CreateImage(-8,11,GumpIDs.Saw);
+			dlg.LastTable[3, 0] = ImageFactory.CreateNamedImage(GumpIDs.Saw);
 			dlg.LastTable[3,1] = TextFactory.CreateLabel("Carpentry", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[3,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[4,0] = ImageFactory.CreateImage(3,9,GumpIDs.Cake);
+			dlg.LastTable[4, 0] = ImageFactory.CreateNamedImage(GumpIDs.Cake);
 			dlg.LastTable[4,1] = TextFactory.CreateLabel("Cooking", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[4,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,5, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[5,0] = ImageFactory.CreateImage(1,10,GumpIDs.Scroll);
+			dlg.LastTable[5, 0] = ImageFactory.CreateNamedImage(GumpIDs.Scroll);
 			dlg.LastTable[5,1] = TextFactory.CreateLabel("Inscription", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[5,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,6, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[6,0] = ImageFactory.CreateImage(-8,10,GumpIDs.SewingKit);
+			dlg.LastTable[6, 0] = ImageFactory.CreateNamedImage(GumpIDs.SewingKit);
 			dlg.LastTable[6,1] = TextFactory.CreateLabel("Tailoring", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[6,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,7, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[7,0] = ImageFactory.CreateImage(0,2,GumpIDs.Tools);
+			dlg.LastTable[7, 0] = ImageFactory.CreateNamedImage(GumpIDs.Tools);
 			dlg.LastTable[7,1] = TextFactory.CreateLabel("Tinkering", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[7,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,8, DialogAlignment.Valign_Center);
 

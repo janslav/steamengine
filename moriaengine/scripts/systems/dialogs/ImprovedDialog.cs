@@ -430,9 +430,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Number of normal rows on the various dialog pages (when paging is used)")]
 		public const int PAGE_ROWS = 20;
 
-		[Summary("Empiricaly determined width and height of the column (row) in which we are to dispaly some gump (icon)")]
+		[Summary("Empirically determined icon dimensions (mostly can be used)")]
 		public const int ICON_WIDTH = 43;
-		public const int ICON_HEIGHT = 30;
+		public const int ICON_HEIGHT = 50;
+
+		[Summary("Good delmiting space for the icon in one row (from the top and bottom row border)")]
+		public const int D_ICON_SPACE = 2;
 
 		[Summary("Page navigating buttons (constant IDs, different enough from those common used :))")]
 		public const int ID_PREV_BUTTON = 98765;

@@ -64,5 +64,10 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+
+		public override void On_Create() {
+			base.On_Create();
+			this.maxDurability = TypeDef.MaxDurability; //set the initial maximal durability from the Def
+		}
 	}
 }

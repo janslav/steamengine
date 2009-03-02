@@ -205,6 +205,19 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
+		public override string ToString() {
+			string retVal = "";
+			for(int i = 0; i < resourceItemsList.Count; i++) {
+				IResourceListItem rli = resourceItemsList[i];
+				double numero = rli.DesiredCount;
+				retVal += numero + " " + ((numero > 1 && (rli is ItemResource)) ? ((ItemResource)rli).ItemDef.PluralName : rli.Name);
+				if (i < resourceItemsList.Count - 1) {
+					retVal += ", ";
+				}
+			}
+			return retVal;
+		}
+
 		[Summary("From the given resources list get the first resourcelistitem that is of the desired (T)ype and " +
 				" that's underlaying resource fulfils the given criteria - for SkillResource the it is the skill key, for " +
 				" AbilityResource or ItemResource it is the defname etc.")]
