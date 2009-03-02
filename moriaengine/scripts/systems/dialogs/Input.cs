@@ -113,6 +113,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			: base(defname) {
 		}
 
+		public override void Unload() {
+			//we need to override this method since ScriptedInputDialogDef inherits from the CompiledGumpDef which does not unload iself...
+			unloaded = true;
+		}
+
 		internal static IUnloadable Load(PropsSection input) {
 			string typeName = input.headerType.ToLower();
 			string defname = input.headerName.ToLower();
