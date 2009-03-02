@@ -689,6 +689,12 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellDef.cs">
       <Link>systems\skills\Magery\Spells\WallSpells\WallSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.cs">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.Generated.cs">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Meditation\Meditation.cs">
       <Link>systems\skills\Meditation\Meditation.cs</Link>
     </Compile>
