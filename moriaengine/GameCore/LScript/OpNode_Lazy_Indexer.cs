@@ -102,14 +102,14 @@ namespace SteamEngine.LScript {
 			foreach (MethodInfo mi in methods) {
 				if (mi.IsSpecialName && (mi.IsPublic || (mi.IsVirtual && mi.IsFinal))) { //public or implementing interface (typically IList or some such)
 					if (arg == null) {//getting indexed item
-						if (mi.Name.EndsWith(".get_Item")) {
+						if (mi.Name.EndsWith("get_Item")) {
 							ParameterInfo[] pars = mi.GetParameters();
 							if (pars.Length == 1) {
 								matches.Add(mi);
 							}
 						}
 					} else {
-						if (mi.Name.EndsWith(".set_Item")) {
+						if (mi.Name.EndsWith("set_Item")) {
 							ParameterInfo[] pars = mi.GetParameters();
 							if (pars.Length == 2) {
 								matches.Add(mi);
