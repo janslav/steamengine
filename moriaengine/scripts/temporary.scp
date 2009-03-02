@@ -10,17 +10,17 @@ arg newCat = CraftmenuCategory(<argv(0)>, cat)
 cat.contents.Add(newCat)
 DialogStackItem.ShowPreviousDialog(src.Conn) //zavolat predchozi dialog
 
-
 [function craftSet]
-dialog(d_craftmenu_settings_scp)
+dialog(d_craftmenu_settings_scp, DialogArgs(CraftmenuContents.categoryAlchemy))
+
 //CRAFTMENU SETTINGS SCP--------------------------------------------------------
 [dialog d_craftmenu_settings_scp]
 arg dlg = ImprovedDialog(argv(0))
-arg cat = argo.InputArgs.get_Item(0) //this is always some CraftmenuCategory to be for settings
+arg cat = argo.InputArgs[0] //this is always some CraftmenuCategory to be for settings
 
 arg firstiVal = TagMath.IGetTag(argo.InputArgs, ImprovedDialog.pagingIndexTK) //prvni index na strance
-
-arg imax = System.Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.get_Count()) //nejvyssi index na strance
+src.sysmessage("cat:"+cat.contents.Count)
+arg imax = System.Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.get_Count() + 0) //nejvyssi index na strance
 
 arg width = (500 - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE)
 
@@ -28,22 +28,11 @@ dlg.CreateBackground(500)
 dlg.SetLocation(60,40)
 
 //nadpis dialogu, cudliky na back a zruseni
-dlg.Add(GUTATable(1, width - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH)) 
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Nastavení výroby: " + cat.FullName))
+dlg.Add(GUTATable(1, width - 3 * ButtonFactory.D_BUTTON_WIDTH - 2 * ImprovedDialog.D_COL_SPACE, width - 2 * ButtonFactory.D_BUTTON_WIDTH - 1 * ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH)) 
+dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby: " + cat.FullName))
 dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack,1)) //one category back button
-dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
-dlg.MakeLastTableTransparent()
-
-//"new subcategory" button
-dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0))
-dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,2)) //new subcategory btn
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateHeadline("Pøidat podkategorii"))
-dlg.MakeLastTableTransparent()
-
-//"new item(s)" button
-dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0))
-dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,3)) //new item(s) btn
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateHeadline("Pøidat pøedmìt(y)"))
+dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,2)) //craftmenu button
+dlg.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
 dlg.MakeLastTableTransparent()
 
 //headlines row
