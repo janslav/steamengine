@@ -618,7 +618,10 @@ namespace SteamEngine.LScript {
 					if (ConvertTools.IsIntegerType(toType) && ConvertTools.IsIntegerType(fromType)) {
 						return 2;
 					}
-					return 3;
+					if (ConvertTools.IsFloatType(toType) && ConvertTools.IsIntegerType(fromType)) { //casting from int to double etc.
+						return 3;
+					}
+					return 4;
 				}
 
 				int ifaceDist = GetInterfaceDistance(toType, fromType);
