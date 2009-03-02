@@ -696,7 +696,7 @@ namespace SteamEngine {
 
 			foreach (AbstractItem itm in GetMap().GetItemsInRange(this.X, this.Y, 0)) {
 				if (IsStandingOn(itm)) {
-					itm.Trigger_Step(this, 0);
+					itm.Trigger_Step(this, false);
 				}
 			}
 		}

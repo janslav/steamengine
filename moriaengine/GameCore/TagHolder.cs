@@ -138,6 +138,13 @@ namespace SteamEngine {
 			}
 		}
 
+		public void DeleteTimer(TimerKey key) {
+			BoundTimer timer = this.RemoveTimer(key);
+			if (timer != null) {
+				timer.Delete();
+			}
+		}
+
 		public void DeleteTimers() {
 			if (tags == null) {
 				return;

@@ -13,60 +13,57 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     Or visit http://www.gnu.org/copyleft/gpl.html
- */
+*/
 
 using System;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
+using System.Text.RegularExpressions;
+using SteamEngine.Timers;
+using SteamEngine.Persistence;
 using SteamEngine.Common;
 using SteamEngine.Regions;
+using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
+	public partial class WallSpellItem {
 
+		static TimerKey timerKey = TimerKey.Get("_spellEffectTimer_");
 
-	[Dialogs.ViewableClass]
-	public partial class SpellEffectDurationPlugin {
-
-		public void Init(Thing source, SpellSourceType sourceType, double effect, TimeSpan duration) {
-			this.source = source;
-			this.sourceType = sourceType;
-			this.effect = effect;
-			this.Timer = duration.TotalSeconds;
-		}
-
-		public void On_Timer() {
-			this.Delete();
-		}
-
-		public void On_DispellEffect() {
-			if (this.Dispellable) {
-				this.Delete();
+		public int SpellPower {
+			get {
+				return this.spellPower;
 			}
 		}
 
-		public double Effect {
-			get {
-				return this.effect;
+		internal void Init(int spellPower, TimeSpan duration, WallDirection wallDir) {
+			this.spellPower = spellPower;
+
+			this.DeleteTimer(timerKey);
+
+			BoundTimer timer = new SpellEffectTimer();
+			this.AddTimer(timerKey, timer);
+			timer.DueInSpan = duration;
+		}
+
+		[SaveableClass]
+		[DeepCopyableClass]
+		public class SpellEffectTimer : BoundTimer {
+			[DeepCopyImplementation]
+			[LoadingInitializer]
+			public SpellEffectTimer() {
+			}
+
+			protected override void OnTimeout(TagHolder cont) {
+				this.Cont.Delete();
 			}
 		}
 
-		public bool Dispellable {
+		public override bool BlocksFit {
 			get {
-				return !(this.sourceType == SpellSourceType.Potion); //potion effects are generally not dispellable. Might want some exception from this rule at some point...?
-			}
-		}
-
-		public Thing Source {
-			get {
-				return this.source;
-			}
-		}
-
-		public SpellSourceType SourceType {
-			get {
-				return this.sourceType;
+				return true;
 			}
 		}
 	}

@@ -13,7 +13,11 @@ EFFECT=0
 DURATION=60.0,2*60.0
 MANAUSE=30
 Requirements=30.0 Magery
-WallItemDef = i_0x80
+ItemDef = i_wall_stone_spellEffect
+
+[WallSpellItemDef i_wall_stone_spellEffect]
+Model = 0x80
+TYPE = T_WALL
 
 [WallSpellDef 28]
 DEFNAME=s_fire_field

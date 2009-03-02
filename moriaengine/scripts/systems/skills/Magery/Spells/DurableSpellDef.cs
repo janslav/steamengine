@@ -29,21 +29,12 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class DurableSpellDef : SpellDef {
-
-		private FieldValue effectPluginDef;
 		private FieldValue duration;
-
-		private readonly PluginKey effectFromSpellPK;
-		private readonly PluginKey effectFromPotionPK;
 
 		public DurableSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
 			this.duration = this.InitField_Typed("duration", null, typeof(double[]));
-			this.effectPluginDef = this.InitField_Typed("effectPluginDef", null, typeof(PluginDef));
-
-			this.effectFromSpellPK = PluginKey.Get(string.Concat("_effectPlugin_", defname, "_fromSpell_"));
-			this.effectFromPotionPK = PluginKey.Get(string.Concat("_effectPlugin_", defname, "_fromPotion_"));
 		}
 		
 		public double[] Duration {
@@ -58,23 +49,21 @@ namespace SteamEngine.CompiledScripts {
 		public double GetDurationForValue(double spellpower) {
 			return ScriptUtil.EvalRangePermille(spellpower, this.Duration);
 		}
+	}
 
-		protected SpellEffectDurationPlugin InitDurationPlugin(Character target, SpellEffectArgs spellEffectArgs) {
-			SpellEffectDurationPlugin plugin = (SpellEffectDurationPlugin) this.EffectPluginDef.Create();
+	[ViewableClass]
+	public class DurableCharEffectSpellDef : DurableSpellDef {
 
-			SpellSourceType sourceType = spellEffectArgs.SourceType;
-			PluginKey key;
-			if (sourceType == SpellSourceType.Potion) {
-				key = this.EffectFromPotionPK;
-			} else {
-				key = this.effectFromSpellPK;
-			}
+		private FieldValue effectPluginDef;
+		private FieldValue effectPluginKey_Spell;
+		private FieldValue effectPluginKey_Potion;
 
-			target.DeletePlugin(key);
-			int spellPower = spellEffectArgs.SpellPower;
-			plugin.Init(spellEffectArgs.Caster, sourceType, this.GetEffectForValue(spellPower), this.GetDurationForValue(spellPower));
-			target.AddPlugin(key, plugin);
-			return plugin;
+		public DurableCharEffectSpellDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+			this.effectPluginDef = this.InitField_Typed("effectPluginDef", null, typeof(PluginDef));
+
+			this.effectPluginKey_Spell = this.InitField_Typed("effectPluginKey_Spell", PluginKey.Get(string.Concat("_spellEffect_", defname, "_")), typeof(PluginDef));
+			this.effectPluginKey_Potion = this.InitField_Typed("effectPluginKey_Potion", PluginKey.Get(string.Concat("_potionEffect_", defname, "_")), typeof(PluginDef));
 		}
 
 		public PluginDef EffectPluginDef {
@@ -86,21 +75,45 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public PluginKey EffectFromBookPK {
+		public PluginKey EffectPluginKey_Spell {
 			get {
-				return this.effectFromSpellPK;
+				return (PluginKey) this.effectPluginKey_Spell.CurrentValue;
+			}
+			set {
+				this.effectPluginKey_Spell.CurrentValue = value;
 			}
 		}
 
-		public PluginKey EffectFromPotionPK {
+		public PluginKey EffectPluginKey_Potion {
 			get {
-				return this.effectFromPotionPK;
+				return (PluginKey) this.effectPluginKey_Potion.CurrentValue;
+			}
+			set {
+				this.effectPluginKey_Potion.CurrentValue = value;
 			}
 		}
 
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectChar(target, spellEffectArgs);
-			this.InitDurationPlugin(target, spellEffectArgs);
+
+			SpellSourceType sourceType = spellEffectArgs.SourceType;
+			PluginKey key;
+			if (sourceType == SpellSourceType.Potion) {
+				key = this.EffectPluginKey_Potion;
+			} else {
+				key = this.EffectPluginKey_Spell;
+			}
+
+			target.DeletePlugin(key);
+
+			Plugin plugin = this.EffectPluginDef.Create();
+
+			SpellEffectDurationPlugin durationPlugin = plugin as SpellEffectDurationPlugin;
+			if (durationPlugin != null) {
+				int spellPower = spellEffectArgs.SpellPower;
+				durationPlugin.Init(spellEffectArgs.Caster, sourceType, this.GetEffectForValue(spellPower), TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));
+			}
+			target.AddPlugin(key, plugin);
 		}
 	}
 }

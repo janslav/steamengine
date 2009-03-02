@@ -437,27 +437,25 @@ namespace SteamEngine {
 			return cancel;
 		}
 
-		public void Trigger_Step(AbstractCharacter steppingChar, int repeated) {
+		public void Trigger_Step(AbstractCharacter steppingChar, bool repeated) {
 			ThrowIfDeleted();
 			bool cancel = false;
-			bool rep = (repeated != 0);
 			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated);
 			steppingChar.act = this;
 			cancel = steppingChar.TryCancellableTrigger(TriggerKey.itemStep, sa);
 			if (!cancel) {
 				//@item/charStep on src did not return 1
-				cancel = steppingChar.On_ItemStep(this, rep);//sends true if repeated=1
+				cancel = steppingChar.On_ItemStep(this, repeated);//sends true if repeated=1
 				if (!cancel) {
-					cancel = TryCancellableTrigger(TriggerKey.step, sa);
+					cancel = this.TryCancellableTrigger(TriggerKey.step, sa);
 					if (!cancel) {
-						On_Step(steppingChar, rep);
+						this.On_Step(steppingChar, repeated);
 					}
 				}
 			}
 		}
 
 		public virtual void On_Step(AbstractCharacter stepping, bool repeated) {
-			//Globals.src is stepping/standing on this
 		}
 
 		public override void Save(SaveStream output) {
@@ -531,19 +529,19 @@ namespace SteamEngine {
 
 		public override sealed bool IsOnGround {
 			get {
-				return (Cont == null);
+				return (this.Cont == null);
 			}
 		}
 
 		public override sealed bool IsInContainer {
 			get {
-				Thing c = Cont;
+				Thing c = this.Cont;
 				return (c != null && c.IsItem);
 			}
 		}
 
 		public override sealed Thing TopObj() {
-			Thing c = Cont;
+			Thing c = this.Cont;
 			if (c != null) {
 				return c.TopObj();
 			} else {
@@ -562,7 +560,7 @@ namespace SteamEngine {
 
 		//returns true if this is in given container or its subcontainers
 		public bool IsWithinCont(Thing container) {
-			Thing myCont = Cont;
+			Thing myCont = this.Cont;
 			if (myCont == container) {
 				return true;
 			} else if (myCont != null) {
