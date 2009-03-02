@@ -118,14 +118,14 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(normalArgs, oldNode);
+			int index = Array.IndexOf(this.normalArgs, oldNode);
 			if (index >= 0) {
-				normalArgs[index] = newNode;
+				this.normalArgs[index] = newNode;
 				return;
 			}
-			index = Array.IndexOf(paramArgs, oldNode);
+			index = Array.IndexOf(this.paramArgs, oldNode);
 			if (index >= 0) {
-				paramArgs[index] = newNode;
+				this.paramArgs[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -134,16 +134,16 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int normalArgsLength = normalArgs.Length;
+			int normalArgsLength = this.normalArgs.Length;
 			object[] results = new object[normalArgsLength + 1];
 			try {
 				for (int i = 0; i < normalArgsLength; i++) {
-					results[i] = normalArgs[i].Run(vars);
+					results[i] = this.normalArgs[i].Run(vars);
 				}
-				int paramArrayLength = paramArgs.Length;
-				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
+				int paramArrayLength = this.paramArgs.Length;
+				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
 				for (int i = 0; i < paramArrayLength; i++) {
-					paramArray.SetValue(paramArgs[i].Run(vars), i);
+					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, this.paramArgs[i].Run(vars)), i);
 				}
 				results[normalArgsLength] = paramArray;
 			} finally {
@@ -163,14 +163,15 @@ namespace SteamEngine.LScript {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			int normalArgsLength = normalArgs.Length;
+			int normalArgsLength = this.normalArgs.Length;
 			object[] modifiedResults = new object[normalArgsLength + 1];
 			Array.Copy(results, modifiedResults, normalArgsLength);
 			try {
-				//Console.WriteLine("results[0].GetType(): "+results[0]);
-				int paramArrayLength = paramArgs.Length;
-				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
-				Array.Copy(results, normalArgsLength, paramArray, 0, paramArrayLength);
+				int paramArrayLength = this.paramArgs.Length;
+				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
+				for (int i = 0; i < paramArrayLength; i++) {
+					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, results[i + normalArgsLength]), i);
+				}
 				modifiedResults[normalArgsLength] = paramArray;
 				return ctor.Invoke(modifiedResults);
 			} catch (InterpreterException ie) {
@@ -187,10 +188,10 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
 			str.Append(ctor.DeclaringType).Append(".ctor(");
-			for (int i = 0, n = normalArgs.Length; i < n; i++) {
-				str.Append(normalArgs[i].ToString()).Append(", ");
+			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
+				str.Append(this.normalArgs[i].ToString()).Append(", ");
 			}
-			str.Append(Tools.ObjToString(paramArgs));
+			str.Append(Tools.ObjToString(this.paramArgs));
 			return str.Append("))").ToString();
 		}
 

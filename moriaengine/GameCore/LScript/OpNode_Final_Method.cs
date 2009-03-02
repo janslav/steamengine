@@ -145,7 +145,7 @@ namespace SteamEngine.LScript {
 				int paramArrayLength = paramArgs.Length;
 				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
 				for (int i = 0; i < paramArrayLength; i++) {
-					paramArray.SetValue(paramArgs[i].Run(vars), i);
+					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, paramArgs[i].Run(vars)), i);
 				}
 				results[normalArgsLength] = paramArray;
 			} finally {
@@ -172,7 +172,9 @@ namespace SteamEngine.LScript {
 				//Console.WriteLine("results[0].GetType(): "+results[0]);
 				int paramArrayLength = paramArgs.Length;
 				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
-				Array.Copy(results, normalArgsLength, paramArray, 0, paramArrayLength);
+				for (int i = 0; i < paramArrayLength; i++) {
+					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, results[i + normalArgsLength]), i);
+				}
 				modifiedResults[normalArgsLength] = paramArray;
 				return method.Invoke(vars.self, modifiedResults);
 			} catch (InterpreterException ie) {
