@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[2, 1] = TextFactory.CreateLabel("Hr·Ëe", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[2, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 3, DialogAlignment.Valign_Center);
 
-			dlg.LastTable[3, 0] = ImageFactory.CreateImage(GumpIDs.Figurine_NPC);
+			dlg.LastTable[3, 0] = ImageFactory.CreateNamedImage(GumpIDs.Figurine_NPC);
 			dlg.LastTable[3, 1] = TextFactory.CreateLabel("NPC", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 			dlg.LastTable[3, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 4, DialogAlignment.Valign_Center);
 			dlg.MakeLastTableTransparent();

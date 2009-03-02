@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					displayGump = GetGumpIconForChar(chr);
 				}
 
-				dlg.LastTable[rowCntr, 0] = ImageFactory.CreateImage(displayGump);
+				dlg.LastTable[rowCntr, 0] = ImageFactory.CreateNamedImage(displayGump);
 				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(chr.Name, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 10 + rowCntr, DialogAlignment.Valign_Center);
 

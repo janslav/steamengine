@@ -911,8 +911,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("ImageFactory creates an image field in the dialog containing the specified image")]
 	public class ImageFactory {
 		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
-		public static Image CreateImage(GumpIDs gumpId) {
-			return CreateImage(gumpId, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+		public static Image CreateNamedImage(GumpIDs gumpId) {
+			return CreateNamedImage(gumpId, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
 		}
 
 		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
@@ -921,8 +921,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
-		public static Image CreateImage(GumpIDs gumpId, DialogAlignment align, DialogAlignment valign) {
-			return CreateImage((int)gumpId, align, valign);
+		public static Image CreateNamedImage(GumpIDs gumpId, DialogAlignment align, DialogAlignment valign) {
+			return CreateImage((int) gumpId, align, valign);
 		}
 
 		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
