@@ -8,8 +8,8 @@ namespace SteamEngine {
 	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
 		private LinkedList<TKey> linkedList = new LinkedList<TKey>();
-		public readonly int maxCacheItems;
-		public readonly bool disposeOnRemove;
+		private readonly int maxCacheItems;
+		private readonly bool disposeOnRemove;
 
 		public CacheDictionary(int maxCacheItems, bool disposeOnRemove) {
 			if (maxCacheItems < 1) {
@@ -28,6 +28,14 @@ namespace SteamEngine {
 			this.maxCacheItems = maxCacheItems;
 			this.disposeOnRemove = disposeOnRemove;
 		}
+
+		public int MaxCacheItems {
+			get { return maxCacheItems; }
+		}
+
+		public bool DisposeOnRemove {
+			get { return disposeOnRemove; }
+		} 
 
 		private struct CacheDictionaryKeyEntry {
 			internal TValue value;
@@ -134,8 +142,8 @@ namespace SteamEngine {
 
 		#region ICollection<KeyValuePair<TKey,TValue>> Members
 
-		public void Add(KeyValuePair<TKey, TValue> keyValuePair) {
-			this.Add(keyValuePair.Key, keyValuePair.Value);
+		public void Add(KeyValuePair<TKey, TValue> item) {
+			this.Add(item.Key, item.Value);
 		}
 
 		public void Clear() {

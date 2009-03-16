@@ -279,6 +279,12 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
+			//initialise all language classes
+			if (type.IsSubclassOf(typeof(Loc))) {
+				MethodInfo locInitMethod = typeof(ServLoc<>).MakeGenericType(type).GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+				locInitMethod.Invoke(null, null);
+			}
+
 			bool match = false;
 			foreach (TypeDelegPair entry in supplySubclassDelegs) {
 				if (entry.type.IsAssignableFrom(type)) {

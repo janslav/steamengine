@@ -22,7 +22,7 @@ using SteamEngine;
 
 namespace SteamEngine.Common {
 	public class LogStr {
-		private static string[] prefixStrings = new string[LogStrBase.logStylesCount];
+		private static string[] prefixStrings = new string[Tools.GetEnumLength<LogStyles>()];
 		private const string EOS = LogStrBase.separatorString + LogStrBase.eosString + LogStrBase.separatorString;
 
 		internal string rawString;
@@ -33,7 +33,7 @@ namespace SteamEngine.Common {
 
 		static LogStr() {
 			for (int i = 0, n = prefixStrings.Length; i < n; i++) {
-				prefixStrings[i] = String.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(), LogStrBase.separatorString);
+				prefixStrings[i] = String.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(System.Globalization.CultureInfo.InvariantCulture), LogStrBase.separatorString);
 			}
 		}
 
@@ -67,6 +67,15 @@ namespace SteamEngine.Common {
 
 			return str1;
 		}
+
+		public static LogStr Add(LogStr str1, string str2) {
+			return str1+str2;
+		}
+
+		public static LogStr Add(LogStr str1, LogStr str2) {
+			return str1 + str2;
+		}
+
 		#endregion
 
 		public override string ToString() {
@@ -78,6 +87,10 @@ namespace SteamEngine.Common {
 			this.niceString += str.niceString;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public static bool ParseFileLine(string fileline, out string file, out int line) {
 			file = "";
 			line = 0;
@@ -87,7 +100,7 @@ namespace SteamEngine.Common {
 			file = fileline.Substring(0, idx).Trim();
 			string line_str = fileline.Substring(idx + 1, fileline.Length - idx - 1).Trim();
 			try {
-				line = int.Parse(line_str);
+				line = int.Parse(line_str, System.Globalization.CultureInfo.InvariantCulture);
 			} catch {
 				return false;
 			}
@@ -95,84 +108,60 @@ namespace SteamEngine.Common {
 		}
 
 		#region Static methods
-		public static string ToStringFor(object obj) {
-			string result;
-			if (obj == null) {
-				result = "null";
-			} else if (obj is object[]) {
-				result = ArrayToString((object[]) obj);
-			} else {
-				result = obj.ToString();
-			}
-			return result;
-		}
-		public static string ArrayToString(object[] array) {
-			string arrstr = "";
-			int len = array.Length;
-			for (int a = 0; a < len; a++) {
-				object o = array[a];
-				if (arrstr.Length == 0) {
-					arrstr = o.ToString();
-				} else {
-					arrstr += ", " + o.ToString();
-				}
-			}
-			return "{" + arrstr + "}";
-		}
 
 		public static LogStr Raw(object obj) {
-			string str = ToStringFor(obj);
-			return new LogStr(str, obj.ToString());
+			string str = Tools.ObjToString(obj);
+			return new LogStr(str, String.Concat(obj));
 		}
 		public static LogStr Warning(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Warning, str));
 		}
 		public static LogStr Error(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Error, str));
 		}
 		public static LogStr Critical(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Critical, str));
 		}
 		public static LogStr Fatal(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Fatal, str));
 		}
 		public static LogStr Debug(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr Highlight(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Highlight, str));
 		}
 		public static LogStr Title(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(null, LogStr.GetTitleSettingMessage(str));
 		}
 		//public static LogStr SetStyle(LogStyles style) {
 		//    return new LogStr(null, LogStr.GetStyleMessage(style));
 		//}
-		public static LogStr Style(object obj, LogStyles style) {
-			string str = ToStringFor(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(style, str));
-		}
+		//public static LogStr Style(object obj, LogStyles style) {
+		//    string str = Tools.ObjToString(obj);
+		//    return new LogStr(str, LogStr.GetStyleMessage(style, str));
+		//}
 		public static LogStr Number(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Number, str));
 		}
 		public static LogStr Ident(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Ident, str));
 		}
 		public static LogStr FilePos(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.FilePos, str));
 		}
 		public static LogStr File(object obj) {
-			string str = ToStringFor(obj);
+			string str = Tools.ObjToString(obj);
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.File, str));
 		}
 		public static LogStr Raw(string str) {
@@ -194,7 +183,7 @@ namespace SteamEngine.Common {
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr FileLine(string file, int line) {
-			string str = TranslatePath(file) + ", " + line.ToString();
+			string str = TranslatePath(file) + ", " + line.ToString(System.Globalization.CultureInfo.InvariantCulture);
 			return new LogStr("(" + str + ") ", "(" + LogStr.GetStyleMessage(LogStyles.FileLine, str) + ") ");
 		}
 		public static LogStr Highlight(string str) {
@@ -203,9 +192,9 @@ namespace SteamEngine.Common {
 		public static LogStr Title(string str) {
 			return new LogStr(null, LogStr.GetTitleSettingMessage(str));
 		}
-		public static LogStr Style(string str, LogStyles style) {
-			return new LogStr(str, LogStr.GetStyleMessage(style, str));
-		}
+		//public static LogStr Style(string str, LogStyles style) {
+		//    return new LogStr(str, LogStr.GetStyleMessage(style, str));
+		//}
 		public static LogStr Number(string str) {
 			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Number, str));
 		}
@@ -269,6 +258,7 @@ namespace SteamEngine.Common {
 		internal static readonly string separatorAndDot = string.Concat(Path.DirectorySeparatorChar, ".");
 
 		//adds /./ to the position of process default dir
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static string TranslatePath(string path) {
 			try {
 				if (Path.IsPathRooted(path)) {
@@ -313,8 +303,7 @@ namespace SteamEngine.Common {
 				Append(ls);
 				return this;
 			}
-			str = arg.ToString();
-			Append(str);
+			Append(String.Concat(str));
 			return this;
 		}
 

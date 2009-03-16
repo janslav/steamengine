@@ -35,7 +35,7 @@ namespace SteamEngine.Converter {
 
 		public static ConvertedFile currentIFile;
 
-		private static StringToSend consoleDelegate;
+		private static StringToSendEventHandler consoleDelegate;
 
 		public static void CreateFolders() {
 			convertPath = Path.Combine("SphereShardConverter", "convert");
@@ -58,13 +58,13 @@ namespace SteamEngine.Converter {
 
 		}
 
-		public static void WinStart(StringToSend consSend) {
+		public static void WinStart(StringToSendEventHandler consSend) {
 			//this is run if the converter is started by the WinConsole
 			try {
 				//SteamEngine.MainClass.winConsole=new ConsConn(consSend);
 				consoleDelegate = consSend;
-				Logger.OnConsoleWriteLine += new StringToSend(ConsoleWriteLine);
-				Logger.OnConsoleWrite += new StringToSend(ConsoleWrite);
+				Logger.OnConsoleWriteLine += new StringToSendEventHandler(ConsoleWriteLine);
+				Logger.OnConsoleWrite += new StringToSendEventHandler(ConsoleWrite);
 			} catch (Exception e) {
 				Console.WriteLine(e.Message);
 				return;

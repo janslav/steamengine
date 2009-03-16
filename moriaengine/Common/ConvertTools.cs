@@ -26,18 +26,25 @@ namespace SteamEngine.Common {
 	//if anyone should need any methods that are not implemented, or are commented out, implement them after the ones that are already done.
 	//the commented-out ones are commented out for a reason, do not let them the way they are!
 	public class ConvertTools {
-		protected static ConvertTools instance;
+		private static ConvertTools instance;
 
+		private readonly static CultureInfo invariantCulture = CultureInfo.InvariantCulture;
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public readonly static Regex stringRE = new Regex(@"^""(?<value>.*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public readonly static Regex floatRE = new Regex(@"^(?<value>-?\d*\.\d*)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public readonly static Regex intRE = new Regex(@"^(?<value>-?\d+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public readonly static Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
-		public readonly static CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 
 		//public static Regex timeSpanRE = new Regex(@"^\:(?<value>\d+)\s*$",
 		//changed to match timespan in format like [-]d.hh:mm:ss.ff
@@ -77,13 +84,20 @@ namespace SteamEngine.Common {
 			return s;
 		}
 
-		[Summary("The most generic method to convert types. Throws when convert impossible.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		public static T ConvertTo<T>(object obj) {
+			//TODO some optimisation? at least for valuetypes maybe?
+			return (T) ConvertTo(typeof(T), obj);
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
+		Summary("The most generic method to convert types. Throws when convert impossible.")]
 		public static object ConvertTo(Type type, object obj) {
 			//Console.WriteLine("Converting from {0} {1} to {2}", obj.GetType(), obj, type);
 			if (obj == null) return obj;
 			Type objectType = obj.GetType();
-			string sobj = obj as string;
-			if (sobj == "null") return null;
+			string asString = obj as string;
+			if (asString == "null") return null;
 			if ((objectType == type) || (type.IsAssignableFrom(objectType))) {
 				return obj;
 			} else if (type.Equals(typeof(String))) {
@@ -97,26 +111,26 @@ namespace SteamEngine.Common {
 					try {
 						return Enum.ToObject(type, ConvertTo(Enum.GetUnderlyingType(type), obj));
 					} catch (InvalidCastException) {
-						string asString = obj as String;
 						if (asString != null) {
 							return Enum.Parse(type, asString.Replace('|', ','), true);
 						}
 					}
 				}
 			} else if (IsNumberType(type)) {
-				string asString = obj as String;
 				if (asString != null) {
-					return Convert.ChangeType(ParseAnyNumber(asString), type);
+					return Convert.ChangeType(ParseAnyNumber(asString), type, invariantCulture);
 				}
 			}
-			return Convert.ChangeType(obj, type);
+			return Convert.ChangeType(obj, type, invariantCulture);
 		}
 
-		[Summary("The most generic method to convert types. Returns false when convert impossible.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("The most generic method to convert types. Returns false when convert impossible.")]
 		public static bool TryConvertTo(Type type, object obj, out object retVal) {
 			try {
 				retVal = ConvertTools.ConvertTo(type, obj);
 				return true;
+			} catch (FatalException) {
+				throw;
 			} catch (Exception) {
 				retVal = null;
 				return false;
@@ -197,7 +211,7 @@ namespace SteamEngine.Common {
 			return false;
 		}
 
-		public static bool IsUnSignedIntegerType(Type t) {
+		public static bool IsUnsignedIntegerType(Type t) {
 			switch (Type.GetTypeCode(t)) {
 				case TypeCode.Byte:
 				case TypeCode.UInt16:
@@ -236,10 +250,11 @@ namespace SteamEngine.Common {
 				If s is "false" "0" or "off" (case does not matter), false is returned.
 				If s is any other value, a FormatException is thrown.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		public static bool ParseBoolean(string s) {
 			if (s == null)
 				return false;
-			switch (s.ToLower()) {
+			switch (s.ToLower(invariantCulture)) {
 				case "true":
 				case "1":
 				case "on":
@@ -252,12 +267,13 @@ namespace SteamEngine.Common {
 			throw new SEException("'" + s + "' is not a valid boolean string (true/1/on/false/0/off).");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		public static bool TryParseBoolean(string s, out bool retVal) {
 			if (s == null) {
 				retVal = false;
 				return true;
 			}
-			switch (s.ToLower()) {
+			switch (s.ToLower(invariantCulture)) {
 				case "true":
 				case "1":
 				case "on":
@@ -284,11 +300,14 @@ namespace SteamEngine.Common {
 			if (arg is bool) {
 				return (bool) arg;
 			} else if (IsNumber(arg)) {
-				return (Convert.ToInt32(arg) != 0);
-			} else if (arg is string) {
-				return ParseBoolean((string) arg);
+				return (Convert.ToInt32(arg, invariantCulture) != 0);
 			} else {
-				return (arg != null);
+				string asString = arg as string;
+				if (asString != null) {
+					return ParseBoolean(asString);
+				} else {
+					return (arg != null);
+				}
 			}
 		}
 
@@ -325,6 +344,7 @@ namespace SteamEngine.Common {
 			throw new SEException("'" + input + "' does not appear to be any kind of number.");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryParseAnyNumber(string input, out object retVal) {
 			if (string.IsNullOrEmpty(input)) {
 				retVal = null;
@@ -362,6 +382,7 @@ namespace SteamEngine.Common {
 		}
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object ParseSpecificNumber(TypeCode typeCode, string input) {
 			if (input.StartsWith("0")) {
 				Match m = hexRE.Match(input);
@@ -421,6 +442,7 @@ namespace SteamEngine.Common {
 			throw new SEException("typeCode out of range");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryParseSpecificNumber(TypeCode typeCode, string input, out object retVal) {
 			try {
 				retVal = ParseSpecificNumber(typeCode, input);
@@ -555,6 +577,7 @@ namespace SteamEngine.Common {
 		#endregion Byte
 
 		#region SByte (sbyte)
+		[CLSCompliant(false)]
 		public static sbyte ParseSByte(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -563,6 +586,7 @@ namespace SteamEngine.Common {
 			return SByte.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
+		[CLSCompliant(false)]
 		public static bool TryParseSByte(string input, out SByte retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -572,6 +596,7 @@ namespace SteamEngine.Common {
 			return SByte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
+		[CLSCompliant(false)]
 		public static SByte ToSByte(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -609,6 +634,7 @@ namespace SteamEngine.Common {
 		#endregion Int16
 
 		#region UInt16 (ushort)
+		[CLSCompliant(false)]
 		public static UInt16 ParseUInt16(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -617,6 +643,7 @@ namespace SteamEngine.Common {
 			return UInt16.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
+		[CLSCompliant(false)]
 		public static bool TryParseUInt16(string input, out UInt16 retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -626,6 +653,7 @@ namespace SteamEngine.Common {
 			return UInt16.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
+		[CLSCompliant(false)]
 		public static UInt16 ToUInt16(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -660,9 +688,25 @@ namespace SteamEngine.Common {
 			}
 			return Convert.ToInt32(input, invariantCulture);
 		}
+
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		public static bool TryConvertToInt32(object input, out int retVal) {
+			try {
+				retVal = ToInt32(input);
+				return true;
+			} catch (FatalException) {
+				throw;
+			} catch (Exception) {
+				retVal = 0;
+				return false;
+			}
+		}
+
 		#endregion Int32
 
 		#region UInt32 (uint)
+		[CLSCompliant(false)]
 		public static UInt32 ParseUInt32(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -671,6 +715,7 @@ namespace SteamEngine.Common {
 			return UInt32.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
+		[CLSCompliant(false)]
 		public static bool TryParseUInt32(string input, out UInt32 retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -680,6 +725,7 @@ namespace SteamEngine.Common {
 			return UInt32.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
+		[CLSCompliant(false)]
 		public static UInt32 ToUInt32(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -717,6 +763,7 @@ namespace SteamEngine.Common {
 		#endregion Int64
 
 		#region UInt64 (ulong)
+		[CLSCompliant(false)]
 		public static UInt64 ParseUInt64(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -725,6 +772,7 @@ namespace SteamEngine.Common {
 			return UInt64.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
+		[CLSCompliant(false)]
 		public static bool TryParseUInt64(string input, out UInt64 retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -734,6 +782,7 @@ namespace SteamEngine.Common {
 			return UInt64.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
+		[CLSCompliant(false)]
 		public static UInt64 ToUInt64(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
@@ -742,9 +791,5 @@ namespace SteamEngine.Common {
 			return Convert.ToUInt64(input, invariantCulture);
 		}
 		#endregion UInt64
-
-		protected static string TryConvertTo(object p) {
-			throw new SEException("The method or operation is not implemented.");
-		}
 	}
 }

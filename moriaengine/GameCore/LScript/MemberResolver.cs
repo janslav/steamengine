@@ -612,7 +612,7 @@ namespace SteamEngine.LScript {
 				if (ConvertTools.IsNumberType(toType) && ConvertTools.IsNumberType(fromType)) {
 					if ((ConvertTools.IsFloatType(toType) && ConvertTools.IsFloatType(fromType)) ||
 						(ConvertTools.IsSignedIntegerType(toType) && ConvertTools.IsSignedIntegerType(fromType)) ||
-						(ConvertTools.IsUnSignedIntegerType(toType) && ConvertTools.IsUnSignedIntegerType(fromType))) {
+						(ConvertTools.IsUnsignedIntegerType(toType) && ConvertTools.IsUnsignedIntegerType(fromType))) {
 						return 1;
 					}
 					if (ConvertTools.IsIntegerType(toType) && ConvertTools.IsIntegerType(fromType)) {

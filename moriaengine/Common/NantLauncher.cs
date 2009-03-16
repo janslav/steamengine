@@ -38,12 +38,11 @@ namespace SteamEngine.Common {
 		string[] sourceFileNames;
 		string sourceFileNamesFile;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const string defaultPathInProject = "./distrib/nant/default.build";
 
 		public NantLauncher()
-			:
-				this(defaultPathInProject) {
-
+			: this(defaultPathInProject) {
 		}
 
 		public NantLauncher(string buildFilename) {
@@ -66,10 +65,14 @@ namespace SteamEngine.Common {
 			nantProject.Properties["defineSymbols"] = symbols;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "logger"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public void SetLogger(IBuildLogger logger) {
 			this.logger = logger;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceFileNamesFile"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceFileNames")]
 		public void SetSourceFileNames(string[] sourceFileNames, string sourceFileNamesFile) {
 			this.sourceFileNames = sourceFileNames;
 			this.sourceFileNamesFile = sourceFileNamesFile;
@@ -114,11 +117,11 @@ namespace SteamEngine.Common {
 #if MONO
 			symbols = symbols+",MONO";
 #endif
-
-
 			SetDefineSymbols(symbols);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "target"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public void SetTarget(string target) {
 			this.target = target;
 		}
@@ -126,8 +129,7 @@ namespace SteamEngine.Common {
 		private void OnBuildFinished(object sender, BuildEventArgs e) {
 			exception = e.Exception;
 		}
-
-
+		
 		public void Execute() {
 			FileInfo fileListFile = null;
 			if (sourceFileNames != null) {
@@ -135,13 +137,13 @@ namespace SteamEngine.Common {
 				if (fileListFile.Exists) {
 					fileListFile.Delete();
 				}
-				TextWriter writer = new StreamWriter(fileListFile.Create(), System.Text.Encoding.UTF8);
-				foreach (string sourcefile in sourceFileNames) {
-					writer.WriteLine(sourcefile);
+				using (TextWriter writer = new StreamWriter(fileListFile.Create(), System.Text.Encoding.UTF8)) {
+					foreach (string sourcefile in sourceFileNames) {
+						writer.WriteLine(sourcefile);
+					}
+					nantProject.Properties["sourcesListPath"] = fileListFile.FullName;
+					writer.Flush();
 				}
-				nantProject.Properties["sourcesListPath"] = fileListFile.FullName;
-				writer.Flush();
-				writer.Close();
 			}
 
 			BuildListenerCollection lListeners = new BuildListenerCollection();
@@ -181,6 +183,7 @@ namespace SteamEngine.Common {
 			//private static Regex compileErrorRE = new Regex(@"^\[csc\](?<filename>.+)$",                   
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object GetDecoratedLogMessage(string msg) {
 			msg = msg.Trim();
 
@@ -202,7 +205,7 @@ namespace SteamEngine.Common {
 					logstr = LogStr.Error("ERROR: ");
 				}
 
-				logstr += LogStr.FileLine(m.Groups["filename"].Value, int.Parse(m.Groups["linenumber"].Value))
+				logstr += LogStr.FileLine(m.Groups["filename"].Value, int.Parse(m.Groups["linenumber"].Value, System.Globalization.CultureInfo.InvariantCulture))
 					+ ": " + m.Groups["errtext"].Value;
 
 				return logstr;

@@ -71,6 +71,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\Collections\CacheDictionary.cs">
       <Link>Collections\CacheDictionary.cs</Link>
     </Compile>
@@ -88,6 +91,9 @@
     </Compile>
     <Compile Include="..\..\Common\Collections\SimpleQueue.cs">
       <Link>Collections\SimpleQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\CommonLoc.cs">
+      <Link>CommonLoc.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\ConvertTools.cs">
       <Link>ConvertTools.cs</Link>
@@ -132,6 +138,9 @@
       <Link>Sanity.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common\ServLoc.cs">
+      <Link>ServLoc.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\TestSuite.cs">
       <Link>TestSuite.cs</Link>
       <SubType>Code</SubType>
@@ -142,9 +151,7 @@
     <Compile Include="..\..\Common\VersionControl.cs">
       <Link>VersionControl.cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
+    <Compile Include="GlobalSuppressions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

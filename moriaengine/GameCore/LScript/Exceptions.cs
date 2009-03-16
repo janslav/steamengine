@@ -58,9 +58,9 @@ namespace SteamEngine.LScript {
 
 		private void AddTrace(string triggerName, int line, string fileName) {
 			hasTrace = true;
-			niceMessage += Environment.NewLine + "   at function/trigger "
-				+ LogStr.Ident(triggerName) + "\t"
-				+ LogStr.FileLine(fileName, line);
+			base.AppendNiceMessage(string.Concat(Environment.NewLine, "   at function/trigger ", 
+				LogStr.Ident(triggerName), "\t", 
+				LogStr.FileLine(fileName, line)));
 		}
 
 		internal void AddTrace(OpNode node) {

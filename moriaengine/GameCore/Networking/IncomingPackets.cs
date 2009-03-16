@@ -1057,7 +1057,7 @@ namespace SteamEngine.Networking {
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.type = this.DecodeByte();
 			this.actionStr = this.DecodeAsciiString(blockSize - 4);
-			string firstPart = this.actionStr.Split(Tools.whiteSpaceChars)[0];
+			string firstPart = this.actionStr.Split(Tools.whitespaceChars)[0];
 			this.actionParsed = ConvertTools.TryParseInt32(firstPart, out this.actionParseResult);
 			return ReadPacketResult.Success;
 		}

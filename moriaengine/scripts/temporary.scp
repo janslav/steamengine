@@ -144,7 +144,7 @@ arg cat = argo.InputArgs[0] //this is always some CraftmenuCategory to be displa
 src.sysmessage("cat:"+cat.FullName)
 
 arg firstiVal = TagMath.IGetTag(argo.InputArgs, ImprovedDialog.pagingIndexTK) //prvni index na strance
-arg imax = System.Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.Count) //nejvyssi index na strance
+arg imax = System.Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.Count + 0) //nejvyssi index na strance
 
 arg width = (500 - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE)
 

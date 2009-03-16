@@ -1,0 +1,2 @@
+NotSupported        = Not supported
+NotImplemented      = Not implemented

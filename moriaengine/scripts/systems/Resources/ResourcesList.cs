@@ -76,12 +76,12 @@ namespace SteamEngine.CompiledScripts {
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters, out missingResource)) {
 				//dispose counters
-				Disposable.DisposeAll(resourceCounters);
+				DisposeAll(resourceCounters);
 				return false;
 			}
 
 			//dispose counters
-			Disposable.DisposeAll(resourceCounters);
+			DisposeAll(resourceCounters);
 			return true; //all resources present
 		}
 
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters, out missingResource)) {
 				//dispose counters before exit
-				Disposable.DisposeAll(resourceCounters);
+				DisposeAll(resourceCounters);
 				return false;
 			}
 			//if we are here then there is for every ResourceCounter the multiplicity at least 1 (which is enough for us)
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//dispose counters
-			Disposable.DisposeAll(resourceCounters);
+			DisposeAll(resourceCounters);
 			return true;
 		}
 
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 			//then check multiplicables (these may desire some items iterating e.t.c)
 			if (!CheckMultiplicableItems(chr, where, resourceCounters, out missingResource)) {
 				//dispose counters
-				Disposable.DisposeAll(resourceCounters);
+				DisposeAll(resourceCounters);
 				return 0;
 			}
 			int availableOnly = ResListAvailableTimes(resourceCounters);
@@ -128,8 +128,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//dispose counters
-			Disposable.DisposeAll(resourceCounters);
+			DisposeAll(resourceCounters);
 			return availableOnly;
+		}
+
+		private static void DisposeAll<T>(List<T> disposables) where T : IDisposable {
+			foreach (IDisposable disposable in disposables) {
+				disposable.Dispose();
+			}
 		}
 
 		[Summary("In case some resource is missing, the mising item can be used for sending some informational message...")]

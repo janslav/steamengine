@@ -19,8 +19,8 @@ namespace SteamEngine.AuxServerPipe {
 		private NamedPipeConnection<AuxServerPipeClient> pipe;
 		internal bool sendLogStrings = false;
 
-		private StringToSend onConsoleWrite;
-		private StringToSend onConsoleWriteLine;
+		private StringToSendEventHandler onConsoleWrite;
+		private StringToSendEventHandler onConsoleWriteLine;
 
 		public AuxServerPipeClient() {
 			this.onConsoleWrite = Logger_OnConsoleWrite;

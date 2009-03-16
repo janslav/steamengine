@@ -73,7 +73,7 @@ namespace SteamEngine.Common {
 								}
 								continue;
 							case LogStrBase.styleChar:
-								int num = int.Parse(token.Substring(1));
+								int num = int.Parse(token.Substring(1), System.Globalization.CultureInfo.InvariantCulture);
 								this.styleStack.Push((LogStyles) num);
 								continue;
 						}
@@ -88,6 +88,7 @@ namespace SteamEngine.Common {
 			//private static Regex compileErrorRE = new Regex(@"^\[csc\](?<filename>.+)$",                   
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public static bool TryParseFileLine(string p, out string filename, out int line) {
 			Match m = fileLineRE.Match(p);
 			filename = m.Groups["filename"].Value;
@@ -101,6 +102,7 @@ namespace SteamEngine.Common {
 		}
 
 		//uses the /./ in LogStr paths to rebuild it from the local . dir
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string TranslateToLocalPath(string path) {
 			int indexOfDot = path.IndexOf(LogStr.separatorAndDot);
 			if (indexOfDot > -1) {

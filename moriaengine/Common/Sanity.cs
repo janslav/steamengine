@@ -23,19 +23,7 @@ namespace SteamEngine.Common {
 	using System.Diagnostics;
 	using System.Reflection;
 
-	public delegate void WriteErrorDelegate(object o);
-
-	public class Sanity {
-		//These three things are needed because Sanity can't see stuff in the SteamEngine namespace,
-		//which is where that stuff is. I would have used the MethodInfo, ConstructorInfo, etc, instead of
-		//Reflection, but they're in the SteamEngine namespace too. :P
-		private static WriteErrorDelegate WriteError = null;
-
-		[Conditional("TRACE")]
-		public static void Init(WriteErrorDelegate del) {
-			WriteError = del;
-		}
-
+	public static class Sanity {
 		//Sanity.IfTrueThrow sounds better than Debug.Assert, methinks. This throws a SanityCheckException, which should
 		//be caught by what runs scripts, and marked as a probable script error, but elsewhere it should be marked
 		//as a probable SE bug.

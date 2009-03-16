@@ -82,7 +82,7 @@ namespace SteamEngine.Common {
 
 		public long Value {
 			get {
-				return Convert.ToInt64(this.value);
+				return Convert.ToInt64(this.value, System.Globalization.CultureInfo.InvariantCulture);
 			}
 		}
 
