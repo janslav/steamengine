@@ -17,17 +17,17 @@ namespace SteamEngine.Common {
 			public T key;
 		}
 
-		public void Add(T value) {
+		public void Add(T item) {
 			int index;
-			if (value == null) {
+			if (item == null) {
 				throw new SEException("value is null");
 			}
 			if (this.buckets == null) {
 				this.Initialize(0);
 			}
-			int num = this.GetHashCode(value) & 2147483647;
+			int num = this.GetHashCode(item) & 2147483647;
 			for (int i = this.buckets[num % this.buckets.Length]; i >= 0; i = this.entries[i].next) {
-				if ((this.entries[i].hashCode == num) && this.Equals(this.entries[i].key, value)) {
+				if ((this.entries[i].hashCode == num) && this.Equals(this.entries[i].key, item)) {
 					this.version++;
 					return;
 				}
@@ -46,7 +46,7 @@ namespace SteamEngine.Common {
 			int num4 = num % this.buckets.Length;
 			this.entries[index].hashCode = num;
 			this.entries[index].next = this.buckets[num4];
-			this.entries[index].key = value;
+			this.entries[index].key = item;
 			this.buckets[num4] = index;
 			this.version++;
 		}
@@ -57,16 +57,16 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		public bool Remove(T key) {
-			if (key == null) {
+		public bool Remove(T item) {
+			if (item == null) {
 				throw new SEException("value is null");
 			}
 			if (this.buckets != null) {
-				int num = this.GetHashCode(key) & 2147483647;
+				int num = this.GetHashCode(item) & 2147483647;
 				int index = num % this.buckets.Length;
 				int num3 = -1;
 				for (int i = this.buckets[index]; i >= 0; i = this.entries[i].next) {
-					if ((this.entries[i].hashCode == num) && this.Equals(this.entries[i].key, key)) {
+					if ((this.entries[i].hashCode == num) && this.Equals(this.entries[i].key, item)) {
 						if (num3 < 0) {
 							this.buckets[index] = this.entries[i].next;
 						} else {
@@ -86,8 +86,8 @@ namespace SteamEngine.Common {
 			return false;
 		}
 
-		public bool Contains(T value) {
-			return (this.FindEntry(value) >= 0);
+		public bool Contains(T item) {
+			return (this.FindEntry(item) >= 0);
 		}
 
 		public void Clear() {
@@ -296,7 +296,9 @@ namespace SteamEngine.Common {
 		public void CopyTo(T[] array, int arrayIndex) {
 			foreach (T entry in this) {
 				array[arrayIndex] = entry;
-				arrayIndex++;
+				checked {
+					arrayIndex++;
+				}
 			}
 		}
 
@@ -310,7 +312,9 @@ namespace SteamEngine.Common {
 		public void CopyTo(Array array, int index) {
 			foreach (T entry in this) {
 				array.SetValue(entry, index);
-				index++;
+				checked {
+					index++;
+				}
 			}
 		}
 

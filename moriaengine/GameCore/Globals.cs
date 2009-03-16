@@ -354,7 +354,7 @@ namespace SteamEngine {
 				defaultItemModel = scripts.GetValue<ushort>("defaultItemModel", 0xeed, "The item model # to use when an itemdef has no model specified.");
 				defaultCharModel = scripts.GetValue<ushort>("defaultCharModel", 0x0190, "The character body/model # to use when a chardef has no model specified.");
 				scriptFloats = scripts.GetValue<bool>("scriptFloats", true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
-				Logger.showCoreExceptions = scripts.GetValue<bool>("showCoreExceptions", true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
+				//Logger.showCoreExceptions = scripts.GetValue<bool>("showCoreExceptions", true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
 
 				loginFlags = 0;
 				featuresFlags = 0;
@@ -487,10 +487,10 @@ namespace SteamEngine {
 			}
 		}
 
-		public static bool ShowCoreExceptions {
-			get { return Logger.showCoreExceptions; }
-			set { Logger.showCoreExceptions = value; }
-		}
+		//public static bool ShowCoreExceptions {
+		//    get { return Logger.showCoreExceptions; }
+		//    set { Logger.showCoreExceptions = value; }
+		//}
 
 		public static int StatClients {
 			get {
@@ -556,11 +556,11 @@ namespace SteamEngine {
 		}
 
 		public static void SvnUpdate() {
-			VersionControl.SVNUpdateProject();
+			VersionControl.SvnUpdateProject();
 		}
 
 		public static void SvnCleanUp() {
-			VersionControl.SVNCleanUpProject();
+			VersionControl.SvnCleanUpProject();
 		}
 
 		public static Type type(string typename) {

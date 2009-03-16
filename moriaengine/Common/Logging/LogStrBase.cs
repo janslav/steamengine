@@ -26,7 +26,7 @@ using System.ComponentModel;
 
 namespace SteamEngine.Common {
 	public enum LogStyles : int {
-		Default = 0, 
+		Default = 0,
 		Warning, Error, Fatal, Critical, Debug,
 		Highlight, Ident, FileLine, FilePos, File, Number
 	}
@@ -37,13 +37,13 @@ namespace SteamEngine.Common {
 		void SetTitleToDefault();
 	}
 
-	public class LogStyleInfo {
-		public readonly Color textColor;
-		public readonly FontStyle fontStyle;
-		public readonly FontFamily fontFamily;
-		public readonly float fontSize;
-		public readonly Font font;
-		public readonly bool isLink;
+	public class LogStyleInfo : IDisposable {
+		private readonly Color textColor;
+		private readonly FontStyle fontStyle;
+		private readonly FontFamily fontFamily;
+		private readonly float fontSize;
+		private readonly Font font;
+		private readonly bool isLink;
 
 		public LogStyleInfo(Color color, FontStyle fontStyle, FontFamily fontFamily, float fontSize, bool isLink) {
 			this.textColor = color;
@@ -58,6 +58,44 @@ namespace SteamEngine.Common {
 			: this(color, fontStyle, LogStrBase.defaultFamily, LogStrBase.defaultSize, false) {
 
 		}
+
+		public bool IsLink {
+			get { return isLink; }
+		}
+
+		public Color TextColor {
+			get { return textColor; }
+		}
+
+		public FontStyle FontStyle {
+			get { return fontStyle; }
+		}
+
+		public FontFamily FontFamily {
+			get { return fontFamily; }
+		}
+
+		public float FontSize {
+			get { return fontSize; }
+		}
+
+		public Font Font {
+			get { return font; }
+		}
+
+
+		public void Dispose() {
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~LogStyleInfo() {
+			this.Dispose(false);
+		}
+
+		protected virtual void Dispose(bool disposing) {
+			this.font.Dispose();
+		}
 	}
 
 	public static class LogStrBase {
@@ -68,31 +106,28 @@ namespace SteamEngine.Common {
 		internal const string separatorString = "\u001B";
 		internal const string titleString = "t";
 		internal const string styleString = "s";
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
 		internal const string eosString = "e";
 
-		public static readonly int logStylesCount = Enum.GetValues(typeof(LogStyles)).Length;
+		internal const float defaultSize = 8.25f;
+		internal const FontStyle defaultFontStyle = FontStyle.Regular;
+		internal static readonly FontFamily defaultFamily = new FontFamily(GenericFontFamilies.SansSerif);
+		internal static readonly Color defaultColor = Color.Black;
 
-		public const float defaultSize = 8.25f;
-		public const FontStyle defaultFontStyle = FontStyle.Regular;
-		public static readonly FontFamily defaultFamily = new FontFamily(GenericFontFamilies.SansSerif);
-		public static readonly Color defaultColor = Color.Black;
-
-		private static readonly LogStyleInfo[] logStyles = new LogStyleInfo[logStylesCount];
-
-		static LogStrBase() {
-			logStyles[(int) LogStyles.Default] = new LogStyleInfo(defaultColor, defaultFontStyle, defaultFamily, defaultSize, false);
-			logStyles[(int) LogStyles.Warning] = new LogStyleInfo(Color.Red, defaultFontStyle);
-			logStyles[(int) LogStyles.Error] = new LogStyleInfo(Color.Red, defaultFontStyle);
-			logStyles[(int) LogStyles.Fatal] = new LogStyleInfo(Color.Red, FontStyle.Bold);
-			logStyles[(int) LogStyles.Critical] = new LogStyleInfo(Color.Red, FontStyle.Bold);
-			logStyles[(int) LogStyles.Debug] = new LogStyleInfo(Color.Gray, defaultFontStyle);
-			logStyles[(int) LogStyles.FileLine] = new LogStyleInfo(Color.Blue, defaultFontStyle, defaultFamily, defaultSize, true);
-			logStyles[(int) LogStyles.Highlight] = new LogStyleInfo(Color.Orange, defaultFontStyle);
-			logStyles[(int) LogStyles.FilePos] = new LogStyleInfo(defaultColor, FontStyle.Italic, defaultFamily, defaultSize, true);
-			logStyles[(int) LogStyles.File] = new LogStyleInfo(Color.Purple, defaultFontStyle, defaultFamily, defaultSize, true);
-			logStyles[(int) LogStyles.Number] = new LogStyleInfo(Color.Blue, defaultFontStyle);
-			logStyles[(int) LogStyles.Ident] = new LogStyleInfo(Color.Blue, FontStyle.Bold);
-		}
+		private static readonly LogStyleInfo[] logStyles = new LogStyleInfo[] {
+			new LogStyleInfo(defaultColor, defaultFontStyle, defaultFamily, defaultSize, false), //LogStyles.Default
+			new LogStyleInfo(Color.Red, defaultFontStyle), //LogStyles.Warning
+			new LogStyleInfo(Color.Red, defaultFontStyle), //LogStyles.Error
+			new LogStyleInfo(Color.Red, FontStyle.Bold), //LogStyles.Fatal
+			new LogStyleInfo(Color.Red, FontStyle.Bold), //LogStyles.Critical
+			new LogStyleInfo(Color.Gray, defaultFontStyle), //LogStyles.Debug
+			new LogStyleInfo(Color.Blue, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.FileLine
+			new LogStyleInfo(Color.Orange, defaultFontStyle), //LogStyles.Highlight
+			new LogStyleInfo(defaultColor, FontStyle.Italic, defaultFamily, defaultSize, true), //LogStyles.FilePos
+			new LogStyleInfo(Color.Purple, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.File
+			new LogStyleInfo(Color.Blue, defaultFontStyle), //LogStyles.Number
+			new LogStyleInfo(Color.Blue, FontStyle.Bold) //LogStyles.Ident
+		};
 
 		public static LogStyleInfo DefaultLogStyleInfo {
 			get { return logStyles[(int) LogStyles.Default]; }

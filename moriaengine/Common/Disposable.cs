@@ -27,30 +27,23 @@ namespace SteamEngine.Common {
 	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm
 
 	public abstract class Disposable : IDisposable {
-		internal bool disposed = false;
+		internal bool disposed;
 
 		// subclass should to implement these two methods
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		virtual protected void On_DisposeManagedResources() {
 
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		virtual protected void On_DisposeUnmanagedResources() {
 
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
 		public virtual void Dispose() {
-			lock (this) {
-				Dispose(true);
-			}
-
+			this.Dispose(true);
 			GC.SuppressFinalize(this); // remove this from gc finalizer list
-		}
-
-		[Summary("Utility method for disposing the whole contents of some Enumerable (such as list etc)")]
-		public static void DisposeAll<T>(IEnumerable<T> disposables) where T : IDisposable {
-			foreach (IDisposable disposable in disposables) {
-				disposable.Dispose();
-			}
 		}
 
 		protected void ThrowIfDisposed() {
@@ -67,11 +60,12 @@ namespace SteamEngine.Common {
 
 		private void Dispose(bool disposing) {
 			if (!this.disposed) {
-				if (disposing) // called from Dispose
-                {
-					On_DisposeManagedResources();
+				lock (this) {
+					if (disposing) {// called from Dispose
+						this.On_DisposeManagedResources();
+					}
+					this.On_DisposeUnmanagedResources();
 				}
-				On_DisposeUnmanagedResources();
 			}
 			this.disposed = true;
 		}

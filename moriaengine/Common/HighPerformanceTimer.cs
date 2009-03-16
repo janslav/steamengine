@@ -23,21 +23,31 @@ namespace SteamEngine.Common {
 	using System.Runtime.InteropServices;
 	using System.Diagnostics;
 
-	public class HighPerformanceTimer {
-		[DllImport("kernel32.dll")]
-		public static extern bool QueryPerformanceCounter(out long counter);
-		[DllImport("kernel32.dll")]
-		public static extern bool QueryPerformanceFrequency(out long frequency);
 
-		private static long frequency = 0;
-		private static double dFrequency = 0;
-		private static double dmFrequency = 0;
+	public static class HighPerformanceTimer {
 
-		private static double timeSpanTicksFrequency = 0;
+		private static class NativeMethods {
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"),
+			DllImport("kernel32.dll")]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			internal static extern bool QueryPerformanceCounter(out long counter);
+
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"),
+			DllImport("kernel32.dll")]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			internal static extern bool QueryPerformanceFrequency(out long frequency);
+		}
+		
+
+		private static long frequency;
+		private static double dFrequency;
+		private static double dmFrequency;
+
+		private static double timeSpanTicksFrequency;
 		//private static bool fallback=false;
 
 		static HighPerformanceTimer() {
-			bool success = QueryPerformanceFrequency(out frequency);
+			bool success = NativeMethods.QueryPerformanceFrequency(out frequency);
 			if (success) {
 				dFrequency = (double) frequency;
 				dmFrequency = dFrequency / 1000.0;
@@ -56,7 +66,7 @@ namespace SteamEngine.Common {
 				//    return Environment.TickCount;
 				//} else {
 				long count;
-				bool success = QueryPerformanceCounter(out count);
+				bool success = NativeMethods.QueryPerformanceCounter(out count);
 				if (success) {
 					return count;
 				} else {
@@ -125,9 +135,9 @@ namespace SteamEngine.Common {
 		}
 	}
 
-	public class StopWatch : IDisposable {
+	public sealed class StopWatch : IDisposable {
 		long ticksOnStart = HighPerformanceTimer.TickCount;
-		private bool disposed = false;
+		private bool disposed;
 
 		private StopWatch() {
 		}
@@ -144,12 +154,12 @@ namespace SteamEngine.Common {
 		}
 
 		public void Dispose() {
-			if (!disposed) {
+			if (!this.disposed) {
 				long ticksOnEnd = HighPerformanceTimer.TickCount;
 				long diff = ticksOnEnd - ticksOnStart;
 				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length - 1);
 				Logger.StaticWriteLine("...took " + HighPerformanceTimer.TicksToTimeSpan(diff).ToString());
-				disposed = true;
+				this.disposed = true;
 			}
 		}
 	}

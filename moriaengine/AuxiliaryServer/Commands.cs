@@ -19,10 +19,10 @@ namespace SteamEngine.AuxiliaryServer {
 					CmdRestart();
 					return;
 				case "svnupdate":
-					VersionControl.SVNUpdateProject();
+					VersionControl.SvnUpdateProject();
 					return;
 				case "svncleanup":
-					VersionControl.SVNCleanUpProject();
+					VersionControl.SvnCleanUpProject();
 					return;
 				case "help":
 					DisplayHelp(conn, state);

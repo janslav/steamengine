@@ -46,7 +46,7 @@ namespace SteamEngine.Common {
 
 					foreach (IniFileSection section in Parse(filename, reader)) {
 						allSections.Add(section);
-						sectionsByName[section.name] = section;
+						sectionsByName[section.Name] = section;
 					}
 				}
 			}
@@ -72,7 +72,7 @@ namespace SteamEngine.Common {
 
 				section = new IniFileSection(sectionName, verticalLine);
 				allSections.Add(section);
-				sectionsByName[section.name] = section;
+				sectionsByName[section.Name] = section;
 			}
 			return section;
 		}
@@ -80,7 +80,7 @@ namespace SteamEngine.Common {
 		public IniFileSection GetNewSection(string sectionName) {
 			IniFileSection section = new IniFileSection(sectionName, verticalLine);
 			allSections.Add(section);
-			sectionsByName[section.name] = section;
+			sectionsByName[section.Name] = section;
 			return section;
 		}
 
@@ -98,7 +98,7 @@ namespace SteamEngine.Common {
 
 		public IEnumerable<IniFileSection> GetSections(string sectionName) {
 			foreach (IniFileSection section in allSections) {
-				if (sectionName.Equals(section.name, StringComparison.OrdinalIgnoreCase)) {
+				if (sectionName.Equals(section.Name, StringComparison.OrdinalIgnoreCase)) {
 					yield return section;
 				}
 			}
@@ -108,12 +108,12 @@ namespace SteamEngine.Common {
 			allSections.Remove(section);
 
 			IniFileSection oldSection;
-			if (sectionsByName.TryGetValue(section.name, out oldSection)) {
+			if (sectionsByName.TryGetValue(section.Name, out oldSection)) {
 				if (oldSection == section) {
-					sectionsByName.Remove(section.name);
+					sectionsByName.Remove(section.Name);
 					foreach (IniFileSection s in allSections) {
-						if (string.Equals(s.name, section.name, StringComparison.OrdinalIgnoreCase)) {
-							sectionsByName[s.name] = s;
+						if (string.Equals(s.Name, section.Name, StringComparison.OrdinalIgnoreCase)) {
+							sectionsByName[s.Name] = s;
 							return;
 						}
 					}
@@ -206,7 +206,7 @@ namespace SteamEngine.Common {
 	}
 
 	public class IniFileSection : CommentedIniFilePart, IIniFilePart {
-		public readonly string name;
+		private readonly string name;
 		private Dictionary<string, IniFileValueLine> props = new Dictionary<string, IniFileValueLine>(StringComparer.OrdinalIgnoreCase);
 		private List<IIniFilePart> parts = new List<IIniFilePart>();
 
@@ -218,6 +218,10 @@ namespace SteamEngine.Common {
 		public IniFileSection(string name, string comment)
 			: base(comment, true, null) {
 			this.name = name;
+		}
+
+		public string Name {
+			get { return name; }
 		}
 
 		internal void SetParsedValue(IniFileValueLine valueLine) {
@@ -233,43 +237,44 @@ namespace SteamEngine.Common {
 			parts.Add(new IniFileComment(comment, false));
 		}
 
-		public T GetValue<T>(string name, T defaultValue, string comment) {
+		public T GetValue<T>(string valueName, T defaultValue, string comment) {
 			IniFileValueLine value;
-			if (props.TryGetValue(name, out value)) {
+			if (props.TryGetValue(valueName, out value)) {
 				return value.GetValue<T>();
 			} else {
-				comment = string.Concat(Environment.NewLine, "( ", name, ": ", comment, " )", Environment.NewLine);
-				value = new IniFileValueLine(name, string.Concat(defaultValue), comment, true, null);
-				props[name] = value;
+				comment = string.Concat(Environment.NewLine, "( ", valueName, ": ", comment, " )", Environment.NewLine);
+				value = new IniFileValueLine(valueName, string.Concat(defaultValue), comment, true, null);
+				props[valueName] = value;
 				parts.Add(value);
 				return defaultValue;
 			}
 		}
 
-		public void SetValue<T>(string name, T value, string comment) {
+		public void SetValue<T>(string valueName, T value, string comment) {
 			IniFileValueLine valueLine;
-			if (this.props.TryGetValue(name, out valueLine)) {
+			if (this.props.TryGetValue(valueName, out valueLine)) {
 				valueLine.SetValue(string.Concat(value));
 			} else {
-				comment = string.Concat(Environment.NewLine, "( ", name, ": ", comment, " )", Environment.NewLine);
-				valueLine = new IniFileValueLine(name, string.Concat(value), comment, true, null);
-				props[name] = valueLine;
+				comment = string.Concat(Environment.NewLine, "( ", valueName, ": ", comment, " )", Environment.NewLine);
+				valueLine = new IniFileValueLine(valueName, string.Concat(value), comment, true, null);
+				props[valueName] = valueLine;
 				parts.Add(valueLine);
 			}
 		}
 
-		public T GetValue<T>(string name) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		public T GetValue<T>(string valueName) {
 			IniFileValueLine value;
-			if (this.props.TryGetValue(name, out value)) {
+			if (this.props.TryGetValue(valueName, out value)) {
 				return value.GetValue<T>();
 			} else {
-				throw new SEException("Missing value " + name + " from the ini file.");
+				throw new SEException("Missing value " + valueName + " from the ini file.");
 			}
 		}
 
-		public bool TryGetValue<T>(string name, out T retVal) {
+		public bool TryGetValue<T>(string valueName, out T retVal) {
 			IniFileValueLine value;
-			if (this.props.TryGetValue(name, out value)) {
+			if (this.props.TryGetValue(valueName, out value)) {
 				retVal = value.GetValue<T>();
 				return true;
 			} else {
@@ -278,13 +283,12 @@ namespace SteamEngine.Common {
 			}
 		}
 
-
-		public bool HasValue(string name) {
-			return this.props.ContainsKey(name);
+		public bool HasValue(string valueName) {
+			return this.props.ContainsKey(valueName);
 		}
 
-		public void RemoveValue(string name) {
-			this.props.Remove(name);
+		public void RemoveValue(string valueName) {
+			this.props.Remove(valueName);
 		}
 
 		public void WriteOut(TextWriter stream) {
@@ -301,19 +305,6 @@ namespace SteamEngine.Common {
 	}
 
 	internal class IniFileValueLine : CommentedIniFilePart, IIniFilePart {
-		private static readonly char[] stringWhitespaceChars;
-
-		static IniFileValueLine() {
-			unchecked {
-				stringWhitespaceChars = new char[] { 
-					(char) 9, (char) 10, (char) 11, (char) 12, (char) 13, (char) 32, (char) 133, (char) 160, (char) 5760, 
-					(char) 8192, (char) 8193, (char) 8194, (char) 8195, (char) 8196, (char) 8197, (char) 8198, (char) 8199, 
-					(char) 8200, (char) 8201, (char) 8202, (char) 8203, (char) 8232, (char) 8233, (char) 12288, 
-					(char) -257
-				};
-			}
-		}
-
 		internal string name;
 		internal string valueString;//name=value
 
@@ -323,14 +314,15 @@ namespace SteamEngine.Common {
 		internal IniFileValueLine(string name, string valueString, string commentAbove, bool wrap, string commentNext)
 			: base(commentAbove, wrap, commentNext) {
 
-			if (name.Trim(stringWhitespaceChars).IndexOfAny(stringWhitespaceChars) > -1) {
+			if (name.Trim(Tools.whitespaceChars).IndexOfAny(Tools.whitespaceChars) > -1) {
 				throw new SEException("No whitespace characters allowed in value name");
 			}
 			this.name = name;
 			this.valueString = valueString;
-			this.valueSet = false;
+			//this.valueSet = false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "valueString")]
 		public void SetValue(string valueString) {
 			this.valueString = valueString;
 			this.valueSet = false;
@@ -341,11 +333,11 @@ namespace SteamEngine.Common {
 				if (typeof(T) != typeof(string) && string.IsNullOrEmpty(this.valueString)) {
 					this.value = default(T);
 				} else {
-					this.value = ConvertTools.ConvertTo(typeof(T), this.valueString);
+					this.value = ConvertTools.ConvertTo<T>(this.valueString);
 				}
 				this.valueSet = true;
 			}
-			return (T) ConvertTools.ConvertTo(typeof(T), value);
+			return ConvertTools.ConvertTo<T>(value);
 		}
 
 		public void WriteOut(TextWriter stream) {

@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 					loadedCount++;
 					loaded[i] = true;
 				}
-				loadedValues[i] = (T) ConvertTools.ConvertTo(typeof(T), o);
+				loadedValues[i] = ConvertTools.ConvertTo<T>(o);
 				if (loadedCount == countToLoad) {
 					foreach (T value in loadedValues) {
 						linkedList.AddLast(value);

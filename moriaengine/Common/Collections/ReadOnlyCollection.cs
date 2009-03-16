@@ -25,7 +25,7 @@ using System.Security.Cryptography;
 
 
 namespace SteamEngine.Common {
-	public class ReadOnlyCollection<T> : ICollection<T>, ICollection {
+	public sealed class ReadOnlyCollection<T> : ICollection<T>, ICollection {
 		ICollection<T> genericCollection;
 		ICollection collection;
 

@@ -34,15 +34,13 @@ namespace SteamEngine {
 
 		//regular expressions for stream loading
 		//[type name]//comment
-		public static Regex headerRE = new Regex(@"^\[\s*(?<type>.*?)(\s+(?<name>.*?))?\s*\]\s*(//(?<comment>.*))?$",
+		public static readonly Regex headerRE = new Regex(@"^\[\s*(?<type>.*?)(\s+(?<name>.*?))?\s*\]\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-		//name=value //comment
-		public static Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
-			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
 		//"triggerkey=@triggername//comment"
 		//"triggerkey @triggername//comment"
 		//triggerkey can be "ON", "ONTRIGGER", "ONBUTTON", or ""
-		internal static Regex triggerRE = new Regex(@"^\s*(?<triggerkey>(on|ontrigger|onbutton))((\s*=\s*)|(\s+))@?\s*(?<triggername>\w*)\s*(//(?<comment>.*))?(?<ignored>.*)$",
+		internal static readonly Regex triggerRE = new Regex(@"^\s*(?<triggerkey>(on|ontrigger|onbutton))((\s*=\s*)|(\s+))@?\s*(?<triggername>\w*)\s*(//(?<comment>.*))?(?<ignored>.*)$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		//private static int line;
@@ -112,7 +110,7 @@ namespace SteamEngine {
 						}
 						continue;
 					}
-					m = valueRE.Match(curLine);
+					m = Loc.valueRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {
 							GroupCollection gc = m.Groups;

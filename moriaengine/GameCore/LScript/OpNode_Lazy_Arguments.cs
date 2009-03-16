@@ -90,8 +90,8 @@ namespace SteamEngine.LScript {
 
 			OpNode_Object constIndexOpNode = indexOpNode as OpNode_Object;
 			if (constIndexOpNode != null) { //we check if the indexnode isn't by chance a literal constant
-				object retVal;
-				if (ConvertTools.TryConvertTo(typeof(Int32), constIndexOpNode.obj, out retVal)) {
+				int retVal;
+				if (ConvertTools.TryConvertToInt32(constIndexOpNode.obj, out retVal)) {
 					constantIndex = Convert.ToInt32(retVal);
 					indexOpNode = null;
 				} else {

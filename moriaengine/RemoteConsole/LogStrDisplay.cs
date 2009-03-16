@@ -157,9 +157,9 @@ namespace SteamEngine.RemoteConsole {
 				//    this.txtBox.Text = this.txtBox.Text.Substring(this.txtBox.Text.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
 				//}
 
-				this.txtBox.SelectionFont = style.font;
-				this.txtBox.SelectionColor = style.textColor;
-				if (style.isLink) {
+				this.txtBox.SelectionFont = style.Font;
+				this.txtBox.SelectionColor = style.TextColor;
+				if (style.IsLink) {
 					this.txtBox.InsertLink(data);
 				} else {
 					this.txtBox.AppendText(data);

@@ -44,6 +44,7 @@ namespace SteamEngine.Common {
 			this.On_Reset();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		protected virtual void On_Reset() {
 		}
 

@@ -25,7 +25,14 @@ using System.Security.Cryptography;
 
 
 namespace SteamEngine.Common {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1039:ListsAreStronglyTyped"), 
+	System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix"), 
+	System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix"), 
+	System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1035:ICollectionImplementationsHaveStronglyTypedMembers"), 
+	System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1038:EnumeratorsShouldBeStronglyTyped")]
 	public class EmptyReadOnlyCollection : IEnumerable, IEnumerator, IList, ICollection, IDictionary, IDictionaryEnumerator {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly EmptyReadOnlyCollection instance = new EmptyReadOnlyCollection();
 
 		public void CopyTo(Array array, int index) {
@@ -48,7 +55,7 @@ namespace SteamEngine.Common {
 		}
 
 		public int Add(object value) {
-			throw new SEException("Not supported");
+			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public void Clear() {
@@ -63,7 +70,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, object value) {
-			throw new SEException("Not supported");
+			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public bool IsFixedSize {
@@ -84,15 +91,15 @@ namespace SteamEngine.Common {
 
 		public object this[int index] {
 			get {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 			set {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 
 		public object Current {
-			get { throw new SEException("Not supported"); }
+			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
 		}
 
 		public bool MoveNext() {
@@ -103,7 +110,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Add(object key, object value) {
-			throw new SEException("Not supported");
+			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		IDictionaryEnumerator IDictionary.GetEnumerator() {
@@ -123,22 +130,22 @@ namespace SteamEngine.Common {
 				return null;
 			}
 			set {
-				throw new Exception("The method or operation is not implemented.");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 
 		public DictionaryEntry Entry {
 			get {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 
 		public object Key {
-			get { throw new SEException("Not supported"); ; }
+			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
 		}
 
 		public object Value {
-			get { throw new SEException("Not supported"); ; }
+			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
 		}
 	}
 
@@ -146,7 +153,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyGenericCollection<T> instance = new EmptyReadOnlyGenericCollection<T>();
 
 		public void Add(T item) {
-			throw new SEException("Not supported");
+			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public bool Contains(T item) {
@@ -165,7 +172,7 @@ namespace SteamEngine.Common {
 		}
 
 		public new T Current {
-			get { throw new SEException("Not supported"); }
+			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
 		}
 
 		public void Dispose() {
@@ -176,15 +183,15 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, T item) {
-			throw new SEException("Not supported");
+			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public new T this[int index] {
 			get {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 			set {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 	}
@@ -193,7 +200,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyDictionary<TKey, TValue> instance = new EmptyReadOnlyDictionary<TKey, TValue>();
 
 		public void Add(TKey key, TValue value) {
-			throw new SEException("Not supported");
+			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public bool ContainsKey(TKey key) {
@@ -219,10 +226,10 @@ namespace SteamEngine.Common {
 
 		public TValue this[TKey key] {
 			get {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 			set {
-				throw new SEException("Not supported");
+				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 	}

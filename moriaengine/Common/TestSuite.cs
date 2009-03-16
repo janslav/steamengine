@@ -32,7 +32,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Common {
 	[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-	public class RegisterWithRunTestsAttribute : Attribute {
+	public sealed class RegisterWithRunTestsAttribute : Attribute {
 		public RegisterWithRunTestsAttribute() {
 		}
 	}
@@ -49,6 +49,7 @@ namespace SteamEngine.Common {
 		private MethodInfo mi;
 		//Type exceptionType = null;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal MethodInfo Method {
 			get {
 				return mi;
@@ -65,6 +66,7 @@ namespace SteamEngine.Common {
 			//}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Invoke() {
 			Console.WriteLine("TestSuite : Running test '" + mi + "'.");
 			try {
@@ -84,13 +86,9 @@ namespace SteamEngine.Common {
 		and if one failed, "The test of <whatever whatever> failed. <error message, reason, more information, etc>".
 		
 	*/
-	public class TestSuite {
+	public static class TestSuite {
 		//public static TestSuite This { get { return instance; } }
-		private static ArrayList tests;
-
-		static TestSuite() {
-			tests = new ArrayList();	//It's an ArrayList<TestMethod>
-		}
+		private static ArrayList tests = new ArrayList();	//It's an ArrayList<TestMethod>
 
 		public static void AddTest(MethodInfo mi) {
 			tests.Add(new TestMethod(mi));

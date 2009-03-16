@@ -24,11 +24,11 @@ using System.Runtime.CompilerServices;
 // change them to the information which is associated with the assembly
 // you compile.
 
-[assembly: AssemblyTitle("SteamEngine Auxiliary Server")]
-[assembly: AssemblyDescription("GUI for SteamEngine which can be used with either a local or remote SteamEngine server")]
+[assembly: AssemblyTitle("AuxServer")]
+[assembly: AssemblyDescription("SteamEngine Auxiliary Server Executable")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SteamEngine Team")]
-[assembly: AssemblyProduct("SteamEngine Auxiliary Server")]
+[assembly: AssemblyProduct("SteamEngine")]
 
 // The assembly version has following format :
 //
