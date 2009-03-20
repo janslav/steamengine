@@ -95,6 +95,9 @@
     <Compile Include="..\..\scripts\AI\dummy.cs">
       <Link>AI\dummy.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\CharClasses\Character.cs">
       <Link>CharClasses\Character.cs</Link>
     </Compile>
@@ -970,6 +973,11 @@
       <Project>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</Project>
       <Name>GameCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\remoteconsole\properties\datasources\endpointsetting.datasource">
+      <Link>DataSources\endpointsetting.datasource</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

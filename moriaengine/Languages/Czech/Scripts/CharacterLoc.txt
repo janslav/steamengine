@@ -1,0 +1,2 @@
+GMModeOn            = GM mode on (Plevel {0}).
+GMModeOff           = GM mode off (Plevel 1).

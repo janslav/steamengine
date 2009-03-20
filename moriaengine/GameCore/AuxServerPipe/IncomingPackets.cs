@@ -106,6 +106,15 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
+			if (RunLevelManager.IsAwaitingRetry) {
+				if (this.command == "exit") {//TODO? check authorisation somehow?
+					MainClass.signalExit.Set();
+				} else {
+					MainClass.RetryRecompilingScripts();
+				}
+				return;
+			}
+
 			AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
 			if (acc != null) {
 				ConsoleDummy dummy = new ConsoleDummy(acc, this.consoleId);

@@ -507,6 +507,16 @@ namespace SteamEngine {
 			this.SysMessage(arg);
 		}
 
+		public Language Language {
+			get {
+				GameState state = this.GameState;
+				if (state != null) {
+					return state.Language;
+				}
+				return Language.Default;
+			}
+		}
+
 		public void AnnounceBug() {
 			this.ClilocSysMessage(501634, 0x21);	//Error!  This is a bug, please report it!
 			//0x21 = red, hopefully

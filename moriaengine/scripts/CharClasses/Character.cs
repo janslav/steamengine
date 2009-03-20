@@ -1753,12 +1753,15 @@ namespace SteamEngine.CompiledScripts {
 		public void GM() {
 			AbstractAccount acc = this.Account;
 			if (acc != null) {
+				GameState state = acc.GameState;
 				if (acc.PLevel < acc.MaxPLevel) {
 					acc.PLevel = acc.MaxPLevel;
-					this.GameState.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
+					state.WriteLine(String.Format(
+						ServLoc<CharacterLoc>.Get(state.Language).GMModeOn,
+						acc.PLevel));
 				} else {
 					acc.PLevel = 1;
-					this.GameState.WriteLine("GM mode off (Plevel 1).");
+					state.WriteLine(ServLoc<CharacterLoc>.Get(state.Language).GMModeOff);
 				}
 			}
 		}
@@ -1774,12 +1777,15 @@ namespace SteamEngine.CompiledScripts {
 		public void GM(int i) {
 			AbstractAccount acc = Account;
 			if (acc != null) {
+				GameState state = acc.GameState;
 				if (i > 0) {
 					acc.PLevel = acc.MaxPLevel;
-					this.GameState.WriteLine("GM mode on (Plevel " + acc.PLevel + ").");
+					state.WriteLine(String.Format(
+						ServLoc<CharacterLoc>.Get(state.Language).GMModeOn,
+						acc.PLevel));
 				} else {
 					acc.PLevel = 1;
-					this.GameState.WriteLine("GM mode off (Plevel 1).");
+					state.WriteLine(ServLoc<CharacterLoc>.Get(state.Language).GMModeOff);
 				}
 			}
 		}
@@ -2404,5 +2410,10 @@ namespace SteamEngine.CompiledScripts {
 				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
 			}
 		}
+	}
+
+	public class CharacterLoc : Loc {
+		public string GMModeOn = "GM mode on (Plevel {0}).";
+		public string GMModeOff = "GM mode off (Plevel 1).";
 	}
 }

@@ -9,7 +9,8 @@ using System.Text.RegularExpressions;
 namespace SteamEngine.Common {
 
 	public enum Language {
-		English, Czech
+		Default, English = Default,
+		Czech
 	}
 
 	public class Loc {
@@ -27,7 +28,7 @@ namespace SteamEngine.Common {
 
 		public Dictionary<string, string> ValuesByName {
 			get { return valuesByName; }
-		} 
+		}
 
 		public Language Language {
 			get { return this.language; }
@@ -121,33 +122,8 @@ namespace SteamEngine.Common {
 			}
 			return assembly.GetName().Name;
 		}
-	}
 
-	//client has "cliloc", so we have servloc :)
-
-	//T is supposed to be a simple class with lot of public string fields representing the localised messages
-	public static class ServLoc<T> where T : Loc {
-
-		const Language defaultLanguage = Language.English;
-
-		private static T[] loadedLanguages;
-
-		static ServLoc() {
-			int n = Tools.GetEnumLength<Language>();
-
-			loadedLanguages = new T[n];
-
-			for (int i = 0; i < n; i++) {
-				T l = Activator.CreateInstance<T>();
-				l.Init((Language) i);
-				loadedLanguages[i] = l;
-			}
-		}
-
-		public static void Init() {
-		}
-
-		private static Language TranslateLanguageCode(string languageCode) {
+		public static Language TranslateLanguageCode(string languageCode) {
 			languageCode = languageCode.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			switch (languageCode) {
 				case "cz":
@@ -162,9 +138,33 @@ namespace SteamEngine.Common {
 			}
 			return Language.English;
 		}
+	}
+
+	//client has "cliloc", so we have servloc :)
+
+	//T is supposed to be a simple class with lot of public string fields representing the localised messages
+	public static class ServLoc<T> where T : Loc {
+		private static T[] loadedLanguages = LoadLanuages();
+
+		private static T[] LoadLanuages() {
+			int n = Tools.GetEnumLength<Language>();
+			T[] langs = new T[n];
+
+			for (int i = 0; i < n; i++) {
+				T l = Activator.CreateInstance<T>();
+				l.Init((Language) i);
+				langs[i] = l;
+			}
+
+			return langs;
+		}
+
+		//run by ClassManager, does nothing but will cause the class to init, creating the txt files
+		public static void Init() {
+		}
 
 		public static T Get(string languageCode) {
-			Language lan = TranslateLanguageCode(languageCode);
+			Language lan = Loc.TranslateLanguageCode(languageCode);
 
 			return loadedLanguages[(int) lan];
 		}
@@ -175,7 +175,7 @@ namespace SteamEngine.Common {
 
 		public static T Default {
 			get {
-				return loadedLanguages[(int) defaultLanguage];
+				return loadedLanguages[(int) Language.Default];
 			}
 		}
 	}
