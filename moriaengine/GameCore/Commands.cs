@@ -35,6 +35,8 @@ namespace SteamEngine {
 		//method: PlayerCommand
 		//this is invoked when a player types a command in game
 
+		internal const string commandAuthorisationFailed = "No permission to run that command";
+
 		internal static bool commandRunning;
 
 		public static void PlayerCommand(GameState state, string command) {
@@ -59,12 +61,12 @@ namespace SteamEngine {
 			}
 
 			if (AuthorizeCommand(commandSrc, "x")) {
-				state.WriteLine("Command who or what?");
+				state.WriteLine(ServLoc<CommandLoc>.Get(state.Language).XCommandPrompt);
 				state.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel,
 					new XCommandParameter(commandSrc, noprefix));
 				LogCommand(commandSrc, command, true, null);
 			} else {
-				LogCommand(commandSrc, command, false, commandAuthorisationFailed);
+				LogCommand(commandSrc, command, false, "No permission");
 			}
 		}
 
@@ -112,14 +114,6 @@ namespace SteamEngine {
 		//method: ConsoleCommand
 		//this is invoked directly by consoles
 		public static void ConsoleCommand(ConsoleDummy c, string command) {
-			if (RunLevelManager.IsAwaitingRetry) {
-				if (command == "exit") {//check if we can run it?
-					MainClass.signalExit.Set();
-				} else {
-					MainClass.RetryRecompilingScripts();
-				}
-				return;
-			}
 			Globals.SetSrc(c);
 #if DEBUG
 			long ticksBefore = HighPerformanceTimer.TickCount;
@@ -142,12 +136,13 @@ namespace SteamEngine {
 					errText = string.Concat(err);
 				}
 				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. ERR: " + errText);
-				commandSrc.WriteLine("Command '" + command + "' failed - " + errText);
+				commandSrc.WriteLine(String.Format(
+					ServLoc<CommandLoc>.Get(commandSrc.Language).CommandFailed,
+					command, errText));
 			}
 		}
 
-		public const string commandAuthorisationFailed = "No permission to run that command";
-		//passing just the argument name may be too primitive, but I think it should be enough
+		//TODO? passing just the argument name might be too primitive, but I think it should be enough
 		public static bool AuthorizeCommand(ISrc commandSrc, string name) {
 			if (commandRunning) {
 				ScriptArgs sa = new ScriptArgs(commandSrc, name);
@@ -303,12 +298,14 @@ namespace SteamEngine {
 						errText = e.Message;
 					}
 				} else if (nameMatched) {
-					errText = "Wrong argument for that method";
+					errText = ServLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandArgument;
 				} else {
-					errText = "Unknown method/function " + name;
+					errText = String.Format(
+						ServLoc<CommandLoc>.Get(commandSrc.Language).UnknownCommand,
+						name);
 				}
 			} else {
-				errText = "Unrecognized command format";
+				errText = ServLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandFormat;
 			}
 			return false;
 		}
@@ -338,5 +335,13 @@ namespace SteamEngine {
 			}
 			return null;
 		}
+	}
+
+	public class CommandLoc : Loc {
+		public string XCommandPrompt = "Command who or what?";
+		public string CommandFailed = "Command '{0}' failed - {1}";
+		public string WrongCommandArgument = "Wrong argument for that method";
+		public string UnknownCommand = "Unknown method/function {0}";
+		public string WrongCommandFormat = "Unrecognized command format";
 	}
 }

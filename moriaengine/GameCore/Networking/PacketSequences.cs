@@ -105,7 +105,9 @@ namespace SteamEngine.Networking {
 					this.ch.Resync();
 
 
-					state.WriteLine("Welcome to " + Globals.serverName);
+					state.WriteLine(String.Format(
+						Common.ServLoc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
+						Globals.serverName));
 				}
 			}
 		}
@@ -460,7 +462,7 @@ namespace SteamEngine.Networking {
 		}
 
 		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, int color) {
-			InternalSendMessage(c, from, msg, sourceName, type, font, color, c.State.Language);
+			InternalSendMessage(c, from, msg, sourceName, type, font, color, c.State.ClientLanguage);
 		}
 
 		//For use by Server's various message sending methods (Which send to one client).
@@ -490,11 +492,15 @@ namespace SteamEngine.Networking {
 				state.Conn.SendSinglePacket(p);
 			}
 		}
-		
+
 		public static void SendSound(IPoint4D top, ushort soundId, int range) {
 			PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
 			p.Prepare(top, soundId);
 			GameServer.SendToClientsInRange(top, range, p);
 		}
+	}
+
+	public class PacketSequencesLoc : Loc {
+		public string WelcomeToShard = "Welcome to {0}.";
 	}
 }

@@ -69,5 +69,11 @@ namespace SteamEngine {
 		public AbstractAccount Account {
 			get { return this.account; }
 		}
+
+		public Language Language {
+			get {
+				return Language.Default;
+			}
+		}
 	}
 }

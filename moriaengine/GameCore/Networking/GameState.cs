@@ -58,7 +58,8 @@ namespace SteamEngine.Networking {
 
 		internal readonly MovementState movementState;
 
-		private string language = "enu";
+		private string clientLanguage = "enu";
+		private Language language = Language.Default;
 
 		public int lastSkillMacroId;
 		public int lastSpellMacroId;
@@ -346,12 +347,21 @@ namespace SteamEngine.Networking {
 			this.conn.SendSinglePacket(packet);
 		}
 
-		public string Language {
+		public string ClientLanguage {
 			get {
-				return this.language;
+				return this.clientLanguage;
 			}
 			internal set {
-				this.language = value;
+				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.clientLanguage)) {
+					this.clientLanguage = value;
+					this.language = Loc.TranslateLanguageCode(value);
+				}
+			}
+		}
+
+		public Language Language {
+			get {
+				return this.language;
 			}
 		}
 

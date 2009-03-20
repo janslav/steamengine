@@ -42,12 +42,8 @@ namespace SteamEngine {
 		byte Plevel { get; }
 		byte MaxPlevel { get; }
 		void WriteLine(string line);
-		//void WriteLine(LogStr data);
-		//bool IsNativeConsole { get; }
-		//AbstractCharacter Character { get; }
 		AbstractAccount Account { get; }
-		//Conn ConnObj { get; }
-		//bool IsLoggedIn { get; }
+		Language Language { get;}
 	}
 
 	public class Globals : PluginHolder {
@@ -173,27 +169,21 @@ namespace SteamEngine {
 
 		public static AbstractAccount SrcAccount {
 			get {
-				AbstractCharacter ch = src as AbstractCharacter;
-				if (ch != null) {
-					return ch.Account;
-				}
-				ConsoleDummy console = src as ConsoleDummy;
-				if (console != null) {
-					return console.Account;
+				if (src != null) {
+					return src.Account;
 				}
 				return null;
 			}
 		}
 
-		//public static GameConn SrcGameConn {
-		//    get {
-		//        AbstractCharacter ch = src as AbstractCharacter;
-		//        if (ch != null) {
-		//            return ch.Conn;
-		//        }
-		//        return null;
-		//    }
-		//}
+		public static Language SrcLanguage {
+			get {
+				if (src != null) {
+					return src.Language;
+				}
+				return Language.Default;
+			}
+		}
 
 		public static GameState SrcGameState {
 			get {

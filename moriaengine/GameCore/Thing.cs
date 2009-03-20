@@ -402,7 +402,7 @@ namespace SteamEngine {
 		public int Height {
 			get {
 				return this.def.Height;
-			}		
+			}
 		}
 
 		public override bool IsDeleted { get { return (uid == -1); } }
@@ -781,9 +781,9 @@ namespace SteamEngine {
 
 		///*
 		//    Method: Dupe
-			
+
 		//        Duplicates this character, possibly more than once.
-			
+
 		//    Parameters:
 		//        ntimes - The number of times to duplicate this thing.
 		// */
@@ -1567,7 +1567,7 @@ namespace SteamEngine {
 			if (self != null) {
 				GameState state = self.GameState;
 				if (state != null) {
-					language = state.Language;
+					language = state.ClientLanguage;
 				}
 			}
 			this.Speech(speech, clilocSpeech, type, color, font, language, keywords, args);
