@@ -31,12 +31,11 @@ using System.Net.NetworkInformation;
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public static class ServerUtils {
 
-		static InterfaceEntry[] interfaces;
+		static byte[] fullMask = new byte[] { 255, 255, 255, 255 };
 
-		internal static void Init() {
-		}
+		static InterfaceEntry[] interfaces = InitInterfaces();
 
-		static ServerUtils() {
+		private static InterfaceEntry[] InitInterfaces() {
 			List<InterfaceEntry> list = new List<InterfaceEntry>();
 
 			list.Add(new InterfaceEntry(
@@ -60,18 +59,19 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			}
 
 			list.Sort();
-			interfaces = list.ToArray();
+			return list.ToArray();
 		}
 
-		static byte[] fullMask = new byte[] { 255, 255, 255, 255 };
+		internal static void Init() {
+		}
 
-		public static byte[] GetMatchingInterfaceAddress(byte[] remoteIp) {
+		public static byte[] GetMatchingInterfaceAddress(byte[] remoteIP) {
 			foreach (InterfaceEntry entry in interfaces) {
-				if (entry.MatchesInterface(remoteIp)) {
+				if (entry.MatchesInterface(remoteIP)) {
 					return entry.ip;
 				}
 			}
-			throw new SEException("No matching interface for " + new IPAddress(remoteIp));
+			throw new SEException("No matching interface for " + new IPAddress(remoteIP));
 		}
 
 		private class InterfaceEntry : IComparable<InterfaceEntry> {

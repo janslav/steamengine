@@ -57,6 +57,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			get { return null; }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
 		public void On_Init(TCPConnection<ConsoleClient> conn) {
 			this.conn = conn;
 			Console.WriteLine(this + " connected.");
@@ -75,6 +76,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return "ConsoleClient " + uid;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password")]
 		internal void SetLoginData(string accName, string password) {
 			this.accName = accName;
 			this.password = password;
@@ -139,9 +141,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			LoggedInConsoles.AddPair(this, state);
 		}
 
-		internal void OpenCmdWindow(string name, int uid) {
+		internal void OpenCmdWindow(string name, int cmdWinUid) {
 			RequestOpenCommandWindowPacket packet = Pool<RequestOpenCommandWindowPacket>.Acquire();
-			packet.Prepare(name, uid);
+			packet.Prepare(name, cmdWinUid);
 			this.Conn.SendSinglePacket(packet);
 		}
 

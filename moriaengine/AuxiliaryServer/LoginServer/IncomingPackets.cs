@@ -9,9 +9,12 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginServerProtocol : IProtocol<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly LoginServerProtocol instance = new LoginServerProtocol();
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<LoginClient> conn, LoginClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 			switch (id) {
@@ -19,7 +22,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					return Pool<GameLoginPacket>.Acquire();
 
 				case 0xcf:
-					return Pool<IGRLoginPacket>.Acquire();
+					return Pool<IgrLoginPacket>.Acquire();
 
 				case 0xa4:
 					return Pool<GameSpyPacket>.Acquire();
@@ -70,23 +73,23 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			conn.SendSinglePacket(serverList);
 		}
 
-		internal static bool ByteArraysEquals(byte[] a, byte[] b) {
-			int len = a.Length;
-			if (len != b.Length) {
-				return false;
-			}
-			for (int i = 0; i < len; i++) {
-				if (a[i] != b[i]) {
-					return false;
-				}
-			}
-			return true;
-		}
+		//internal static bool ByteArraysEquals(byte[] a, byte[] b) {
+		//    int len = a.Length;
+		//    if (len != b.Length) {
+		//        return false;
+		//    }
+		//    for (int i = 0; i < len; i++) {
+		//        if (a[i] != b[i]) {
+		//            return false;
+		//        }
+		//    }
+		//    return true;
+		//}
 	}
 
 	//dunno exactly what it means, but I think we can ignore it and just treat it as 0x80
 	//IGR=Internetgame room. I know no further details about thismechanismthough.
-	public class IGRLoginPacket : GameLoginPacket {
+	public class IgrLoginPacket : GameLoginPacket {
 		protected override ReadPacketResult Read() {
 			base.Read();
 			this.SeekFromCurrent(16);

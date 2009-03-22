@@ -16,6 +16,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return 0xA8; }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip")]
 		public void Prepare(byte[] ip) {
 			this.names.Clear();
 			foreach (GameServers.GameServerClient server in GameServers.GameServerServer.AllGameServers) {
@@ -24,7 +25,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				}
 			}
 			this.ip = ip;
-			this.timezone = Settings.timeZone;
+			this.timezone = Settings.TimeZone;
 		}
 
 		protected override void Write() {
@@ -53,6 +54,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return 0x8c; }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "port"), CLSCompliant(false)]
 		public void Prepare(byte[] ip, ushort port) {
 			Logger.WriteDebug("Sending shard IP: " + new System.Net.IPEndPoint(new System.Net.IPAddress(ip), port));
 			this.ip = ip;

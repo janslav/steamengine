@@ -180,6 +180,7 @@ namespace SteamEngine.Communication {
 			return ((packet[startpos] << 24) + (packet[startpos + 1] << 16) + (packet[startpos + 2] << 8) + packet[startpos + 3]);
 		}
 
+		[CLSCompliant(false)]
 		protected uint DecodeUInt() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
@@ -194,6 +195,7 @@ namespace SteamEngine.Communication {
 			return (short) ((packet[startpos] << 8) + packet[startpos + 1]);
 		}
 
+		[CLSCompliant(false)]
 		public ushort DecodeUShort() {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
@@ -201,6 +203,7 @@ namespace SteamEngine.Communication {
 			return (ushort) ((packet[startpos] << 8) + packet[startpos + 1]);
 		}
 
+		[CLSCompliant(false)]
 		protected sbyte DecodeSByte() {
 			int startpos = this.position;
 			this.SeekFromCurrent(1);

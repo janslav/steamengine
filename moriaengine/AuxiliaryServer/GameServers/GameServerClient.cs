@@ -19,8 +19,9 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 
 		GameServerInstanceSettings settings;
 
-		private bool startupFinished = false;
+		private bool startupFinished;
 
+		[CLSCompliant(false)]
 		public NamedPipeConnection<GameServerClient> Conn {
 			get {
 				return conn;
@@ -76,6 +77,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn"), CLSCompliant(false)]
 		public void On_Init(NamedPipeConnection<GameServerClient> conn) {
 			Console.WriteLine(this + " connected.");
 			this.conn = conn;
@@ -106,6 +108,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			return "GameServerClient " + uid;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "settings")]
 		internal void SetIdentificationData(GameServerInstanceSettings settings) {
 			this.settings = settings;
 		}

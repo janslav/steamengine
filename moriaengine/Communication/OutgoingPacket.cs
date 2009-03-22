@@ -187,6 +187,8 @@ namespace SteamEngine.Communication {
 			packet[startpos + 3] = (byte) (value);		//fourth byte
 			this.SeekFromCurrent(4);
 		}
+
+		[CLSCompliant(false)]
 		protected void EncodeUInt(uint value) {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
@@ -205,6 +207,7 @@ namespace SteamEngine.Communication {
 			this.SeekFromCurrent(2);
 		}
 
+		[CLSCompliant(false)]
 		protected void EncodeUShort(ushort value) {
 			byte[] packet = this.buffer;
 			int startpos = this.position;
@@ -213,6 +216,7 @@ namespace SteamEngine.Communication {
 			this.SeekFromCurrent(2);
 		}
 
+		[CLSCompliant(false)]
 		protected void EncodeSByte(sbyte value) {
 			this.buffer[this.position] = (byte) value;
 			this.SeekFromCurrent(1);

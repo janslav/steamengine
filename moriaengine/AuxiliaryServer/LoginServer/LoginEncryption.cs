@@ -18,21 +18,24 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 
-		public EncryptionInitResult Init(byte[] buffer, int packetOffset, int length, out int bytesUsed) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "offsetIn+64"),
+	   System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "offsetIn+4"),
+	   System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "offsetIn+34")]
+		public EncryptionInitResult Init(byte[] bytesIn, int offsetIn, int lengthIn, out int bytesUsed) {
 			bytesUsed = 0;
-			if (length < 66) {
+			if (lengthIn < 66) {
 				return EncryptionInitResult.NotEnoughData;
 			}
 
 
-			if ((buffer[packetOffset + 4] == 0x80 || buffer[packetOffset + 4] == 0xcf) && buffer[packetOffset + 34] == 0x00 && buffer[packetOffset + 64] == 0x00) {
-				if (CheckCorrectASCIIString(buffer, 5, 30) && CheckCorrectASCIIString(buffer, 35, 30)) {
+			if ((bytesIn[offsetIn + 4] == 0x80 || bytesIn[offsetIn + 4] == 0xcf) && bytesIn[offsetIn + 34] == 0x00 && bytesIn[offsetIn + 64] == 0x00) {
+				if (CheckCorrectASCIIString(bytesIn, 5, 30) && CheckCorrectASCIIString(bytesIn, 35, 30)) {
 					bytesUsed = 4;
 					return EncryptionInitResult.SuccessNoEncryption;
 				}
 			}
 
-			if (this.InitEncrypion(buffer, packetOffset, length)) {
+			if (this.InitEncrypion(bytesIn, offsetIn, lengthIn)) {
 				bytesUsed = 4;
 				return EncryptionInitResult.SuccessUseEncryption;
 			} else {
@@ -56,8 +59,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				for (int i = 0, n = LoginKey.loginKeys.Length; i < n; i++) {
 					table1 = orgTable1;
 					table2 = orgTable2;
-					key1 = LoginKey.loginKeys[i].key1;
-					key2 = LoginKey.loginKeys[i].key2;
+					key1 = LoginKey.loginKeys[i].Key1;
+					key2 = LoginKey.loginKeys[i].Key2;
 
 
 					this.Decrypt(buffer, 4, bytes, 0, length - 4);
@@ -67,9 +70,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 						// Reestablish our current state
 						table1 = orgTable1;
 						table2 = orgTable2;
-						key1 = LoginKey.loginKeys[i].key1;
-						key2 = LoginKey.loginKeys[i].key2;
-						name = LoginKey.loginKeys[i].name;
+						key1 = LoginKey.loginKeys[i].Key1;
+						key2 = LoginKey.loginKeys[i].Key2;
+						name = LoginKey.loginKeys[i].Name;
 						return true;
 					}
 				}
@@ -78,7 +81,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return false;
 		}
 
-		private bool CheckCorrectASCIIString(byte[] bytes, int start, int len) {
+		private static bool CheckCorrectASCIIString(byte[] bytes, int start, int len) {
 			bool nullsFromNowOn = false;
 			for (int i = start, n = start + len; i < n; i++) {
 				byte value = bytes[i];

@@ -9,9 +9,12 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.GameServers {
 	public class GameServerProtocol : IProtocol<NamedPipeConnection<GameServerClient>, GameServerClient, string> {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly GameServerProtocol instance = new GameServerProtocol();
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<NamedPipeConnection<GameServerClient>, GameServerClient, string> GetPacketImplementation(byte id, NamedPipeConnection<GameServerClient> conn, GameServerClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 			switch (id) {
@@ -78,6 +81,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 	internal class ConsoleLoginReplyPacket : GameServerIncomingPacket {
 		int consoleId;
 		string accName;
@@ -122,6 +126,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 	internal class ConsoleWriteLinePacket : GameServerIncomingPacket {
 		int consoleId;
 		string line;

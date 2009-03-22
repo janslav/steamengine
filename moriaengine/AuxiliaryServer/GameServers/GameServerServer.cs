@@ -8,12 +8,12 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.GameServers {
-	public class GameServerServer : NamedPipeServer<GameServerClient> {
+	public sealed class GameServerServer : NamedPipeServer<GameServerClient> {
 
 		static LinkedList<GameServerClient> clients = new LinkedList<GameServerClient>();
 
 		private GameServerServer()
-			: base(GameServerProtocol.instance, MainClass.globalLock) {
+			: base(GameServerProtocol.instance, MainClass.GlobalLock) {
 		}
 
 		private static GameServerServer instance = new GameServerServer();

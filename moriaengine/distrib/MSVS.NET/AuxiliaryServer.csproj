@@ -99,6 +99,7 @@
     <Compile Include="..\..\AuxiliaryServer\Settings.cs">
       <Link>Settings.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Common.csproj">

@@ -12,8 +12,11 @@ using NAnt.Core;
 
 namespace SteamEngine.AuxiliaryServer {
 	public static class Commands {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "cmd")]
 		public static void HandleCommand(TCPConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state, string cmd) {
-			cmd = cmd.ToLower();
+			cmd = cmd.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			switch (cmd) {
 				case "restart":
 					CmdRestart();
@@ -25,14 +28,14 @@ namespace SteamEngine.AuxiliaryServer {
 					VersionControl.SvnCleanUpProject();
 					return;
 				case "help":
-					DisplayHelp(conn, state);
+					DisplayHelp(state);
 					return;
 			}
 
 			state.WriteLine(0, "Unknown command '" + cmd + "'.");
 		}
 
-		private static void DisplayHelp(TCPConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state) {
+		private static void DisplayHelp(ConsoleServer.ConsoleClient state) {
 			state.WriteLine(0, "Available commands:"
 				+ "restart" + Environment.NewLine
 				+ "svnupdate" + Environment.NewLine
@@ -40,13 +43,14 @@ namespace SteamEngine.AuxiliaryServer {
 				+ "help");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.Commands+NantProjectReStarter")]
 		public static void CmdRestart() {
 			new NantProjectReStarter();
 		}
 
 		private class NantProjectReStarter : AuxServNantProjectStarter {
 			internal NantProjectReStarter ()
-				: base (0 , SEBuild.Sane, NantLauncher.defaultPathInProject, "buildRestarter", "restarterFileName") {
+				: base (SEBuild.Sane, NantLauncher.defaultPathInProject, "buildRestarter", "restarterFileName") {
 			}
 
 			public override void StartProcess(string file) {
@@ -60,21 +64,19 @@ namespace SteamEngine.AuxiliaryServer {
 #endif
 				System.Diagnostics.Process.Start(psi);
 
-				MainClass.setToExit.Set();
+				MainClass.SetToExit.Set();
 			}
 		}
 	}
 
 	//Nant logger class and a helper threading class combined
 	internal class AuxServNantProjectStarter : DefaultLogger {
-		private byte serverNum;
 		private SEBuild build;
 		private string nantPath;
 		private string targetTask;
 		private string filenameProperty;
 
-		internal AuxServNantProjectStarter(byte serverNum, SEBuild build, string nantPath, string targetTask, string filenameProperty) {
-			this.serverNum = serverNum;
+		internal AuxServNantProjectStarter(SEBuild build, string nantPath, string targetTask, string filenameProperty) {
 			this.build = build;
 			this.nantPath = nantPath;
 			this.targetTask = targetTask;
