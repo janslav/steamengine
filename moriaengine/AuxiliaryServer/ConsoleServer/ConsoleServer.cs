@@ -8,9 +8,10 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public class ConsoleServer : TCPServer<ConsoleClient> {
 		public ConsoleServer()
-			: base(ConsoleServerProtocol.instance, MainClass.globalLock) {
+			: base(ConsoleServerProtocol.instance, MainClass.GlobalLock) {
 		}
 
 		private static ConsoleServer instance = new ConsoleServer();
@@ -19,7 +20,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 
 		internal static void Init() {
-			instance.Bind(Settings.consoleServerEndpoint);
+			instance.Bind(Settings.ConsoleServerEndpoint);
 		}
 
 		internal static void Exit() {

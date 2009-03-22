@@ -8,11 +8,12 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 	public class RequestOpenCommandWindowPacket : OutgoingPacket {
 		string name;
-		int uid;
+		int cmdWinUid;
 
-		public void Prepare(string name, int uid) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cmdWinUid")]
+		public void Prepare(string name, int cmdWinUid) {
 			this.name = name;
-			this.uid = uid;
+			this.cmdWinUid = cmdWinUid;
 		}
 
 		public override byte Id {
@@ -20,7 +21,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		protected override void Write() {
-			this.EncodeInt(this.uid);
+			this.EncodeInt(this.cmdWinUid);
 			this.EncodeUTF8String(this.name);
 		}
 	}
@@ -28,6 +29,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class RequestEnableCommandLinePacket : OutgoingPacket {
 		int uid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
 		public void Prepare(int uid) {
 			this.uid = uid;
 		}
@@ -44,6 +46,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class RequestCloseCommandWindowPacket : OutgoingPacket {
 		int uid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
 		public void Prepare(int uid) {
 			this.uid = uid;
 		}
@@ -61,6 +64,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		string str;
 		int uid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
 		public void Prepare(int uid, string str) {
 			this.uid = uid;
 			this.str = str;
@@ -80,6 +84,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		string str;
 		int uid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid"), 
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
 		public void Prepare(int uid, string str) {
 			this.uid = uid;
 			this.str = str;

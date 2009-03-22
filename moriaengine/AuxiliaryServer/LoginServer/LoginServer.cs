@@ -8,16 +8,17 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginServer : TCPServer<LoginClient> {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
+	public sealed class LoginServer : TCPServer<LoginClient> {
 		private LoginServer()
-			: base(LoginServerProtocol.instance, MainClass.globalLock) {
+			: base(LoginServerProtocol.instance, MainClass.GlobalLock) {
 
 		}
 
 		private static LoginServer instance = new LoginServer();
 
 		internal static void Init() {
-			instance.Bind(Settings.loginServerEndpoint);
+			instance.Bind(Settings.LoginServerEndpoint);
 		}
 
 		internal static void Exit() {

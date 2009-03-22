@@ -10,11 +10,19 @@ namespace SteamEngine.AuxiliaryServer {
 	public static class MainClass {
 		//public static ConsoleServer server = new ConsoleServer();
 
-		public static readonly object globalLock = new object();
+		private static readonly object globalLock = new object();
 
-		public static readonly ManualResetEvent setToExit = new ManualResetEvent(false);
+		private static readonly ManualResetEvent setToExit = new ManualResetEvent(false);
 
-		static void Main(string[] args) {
+		public static object GlobalLock {
+			get { return MainClass.globalLock; }
+		}
+
+		public static ManualResetEvent SetToExit {
+			get { return MainClass.setToExit; }
+		} 
+
+		static void Main() {
 			//name the console window for better recognizability
 			Console.Title = "SE Auxiliary Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 

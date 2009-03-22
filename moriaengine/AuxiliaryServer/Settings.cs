@@ -8,22 +8,39 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
 	public static class Settings {
-		public static readonly string logPath;
-		public static readonly sbyte timeZone;
-		public static readonly IPEndPoint loginServerEndpoint;
-
-		public static readonly IPEndPoint consoleServerEndpoint;
+		private static readonly string logPath;
+		private static readonly sbyte timeZone;
+		private static readonly IPEndPoint loginServerEndpoint;
+		private static readonly IPEndPoint consoleServerEndpoint;
 
 		private static readonly HashSet<GameServerInstanceSettings> knownGameServersSet;
 		private static readonly List<GameServerInstanceSettings> knownGameServersList;
 		private static readonly System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings> knownGameServersListWrapper;
 
-		public static readonly string iniFileName = "steamaux.ini";
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		public const string iniFileName = "steamaux.ini";
+
+		[CLSCompliant(false)]
+		public static sbyte TimeZone {
+			get { return Settings.timeZone; }
+		}
+
+		public static string LogPath {
+			get { return Settings.logPath; }
+		}
 
 		public static System.Collections.ObjectModel.ReadOnlyCollection<GameServerInstanceSettings> KnownGameServersList {
 			get {
 				return knownGameServersListWrapper;
 			}
+		}
+
+		public static IPEndPoint LoginServerEndpoint {
+			get { return Settings.loginServerEndpoint; }
+		}
+
+		public static IPEndPoint ConsoleServerEndpoint {
+			get { return Settings.consoleServerEndpoint; }
 		}
 
 		static Settings() {
@@ -66,7 +83,7 @@ namespace SteamEngine.AuxiliaryServer {
 			});
 
 			for (int i = 0, n = knownGameServersList.Count; i < n; i++) {
-				knownGameServersList[i].SetNumber(i);
+				knownGameServersList[i].Number = i;
 			}
 
 			ini.WriteToFile();
@@ -178,10 +195,9 @@ namespace SteamEngine.AuxiliaryServer {
 			get {
 				return this.number;
 			}
-		}
-
-		internal void SetNumber(int number) {
-			this.number = number;
+			internal set {
+				this.number = value;
+			}
 		}
 
 		public string IniPath {
@@ -196,6 +212,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public ushort Port {
 			get {
 				return this.port;
