@@ -25,7 +25,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				}
 			}
 			this.ip = ip;
-			this.timezone = Settings.TimeZone;
+			this.timezone = (sbyte) Settings.TimeZone;
 		}
 
 		protected override void Write() {
@@ -54,11 +54,11 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return 0x8c; }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "port"), CLSCompliant(false)]
-		public void Prepare(byte[] ip, ushort port) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "port")]
+		public void Prepare(byte[] ip, int port) {
 			Logger.WriteDebug("Sending shard IP: " + new System.Net.IPEndPoint(new System.Net.IPAddress(ip), port));
 			this.ip = ip;
-			this.port = port;
+			this.port = (ushort) port;
 		}
 
 		protected override void Write() {

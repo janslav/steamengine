@@ -28,12 +28,12 @@ namespace SteamEngine {
 
 		public AbstractCharacterDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			mountItem = InitField_Model("mountItem", 0);
+			this.mountItem = InitField_Model("mountItem", 0);
 		}
 
-		public ushort MountItem {
+		public int MountItem {
 			get {
-				return (ushort) mountItem.CurrentValue;
+				return (int) mountItem.CurrentValue;
 			}
 			set {
 				mountItem.CurrentValue = value;

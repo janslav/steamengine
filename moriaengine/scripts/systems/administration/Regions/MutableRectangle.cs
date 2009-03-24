@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	[SaveableClass]
 	public class MutableRectangle : AbstractRectangle {
-		public ushort minX, minY, maxX, maxY;
+		public int minX, minY, maxX, maxY;
 
 		[LoadingInitializer]
 		public MutableRectangle() {
@@ -44,11 +44,11 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Return a rectangle created from the central point with the specific range around the point" +
 				"(square 'around')")]
-		public MutableRectangle(ushort x, ushort y, int range) {
-			this.minX = (ushort) (x - range);
-			this.minY = (ushort) (y - range);
-			this.maxX = (ushort) (x + range);
-			this.maxY = (ushort) (y + range);
+		public MutableRectangle(int x, int y, int range) {
+			this.minX = x - range;
+			this.minY = y - range;
+			this.maxX = x + range;
+			this.maxY = y + range;
 		}
 
 		[Summary("Create a rectangle using the center point and the area around (=>square)")]
@@ -65,27 +65,27 @@ namespace SteamEngine.CompiledScripts {
 			this.maxY = endY;
 		}
 
-		public override ushort MinX {
+		public override int MinX {
 			get {
-				return minX;
+				return this.minX;
 			}
 		}
 
-		public override ushort MinY {
+		public override int MinY {
 			get {
-				return minY;
+				return this.minY;
 			}
 		}
 
-		public override ushort MaxX {
+		public override int MaxX {
 			get {
-				return maxX;
+				return this.maxX;
 			}
 		}
 
-		public override ushort MaxY {
+		public override int MaxY {
 			get {
-				return maxY;
+				return this.maxY;
 			}
 		}
 

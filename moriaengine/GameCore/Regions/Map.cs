@@ -42,10 +42,11 @@ namespace SteamEngine.Regions {
 		private static Map[] maps = new Map[0x100];
 		private static ArrayList mapsList = new ArrayList();
 
-		public readonly uint numXSectors;
-		public readonly uint numYSectors;
-		public readonly int sizeX;
-		public readonly int sizeY;
+		private readonly int numXSectors;
+		private readonly int numYSectors;
+		private readonly int sizeX;
+		private readonly int sizeY;
+
 		private Sector[,] sectors;
 		internal StaticRegion[] regions;
 		public readonly byte m;
@@ -123,7 +124,7 @@ namespace SteamEngine.Regions {
 			It does not check if the tile is walkable, or anything else (including z).
 		*/
 		public static bool IsValidPos(Point4D point) {
-			return (point.x >= 0 && point.y >= 0 && point.x < GetMapSizeX(point.m) && point.y < GetMapSizeY(point.m));
+			return (point.X >= 0 && point.Y >= 0 && point.X < GetMapSizeX(point.m) && point.Y < GetMapSizeY(point.m));
 		}
 
 		public static bool IsValidPos(IPoint4D point) {
@@ -274,8 +275,8 @@ namespace SteamEngine.Regions {
 			this.sizeX = GetMapSizeX(m);
 			this.sizeY = GetMapSizeY(m);
 			Logger.WriteDebug("Initializing map " + m);
-			numXSectors = (uint) (sizeX >> sectorFactor);
-			numYSectors = (uint) (sizeY >> sectorFactor);
+			numXSectors = sizeX >> sectorFactor;
+			numYSectors = sizeY >> sectorFactor;
 			sectors = new Sector[numXSectors, numYSectors];
 
 			//we dont do this, because individual sectors are now initialised on-demand
@@ -285,6 +286,23 @@ namespace SteamEngine.Regions {
 			//	}
 			//}
 		}
+
+
+		public int NumXSectors {
+			get { return numXSectors; }
+		}
+
+		public int NumYSectors {
+			get { return numYSectors; }
+		}
+
+		public int SizeX {
+			get { return sizeX; }
+		}
+
+		public int SizeY {
+			get { return sizeY; }
+		} 
 
 		/**
 			If the specified thing is on the ground, this tells the sector it is in to move
@@ -433,8 +451,8 @@ namespace SteamEngine.Regions {
 
 		private void RemoveFromPImpl(Thing thing, Point4D oldP) {
 			Logger.WriteInfo(MapTracingOn, this + ".RemoveFromPImpl(" + thing + "," + oldP + ")");
-			int oldSx = oldP.x >> sectorFactor;
-			int oldSy = oldP.y >> sectorFactor;
+			int oldSx = oldP.X >> sectorFactor;
+			int oldSy = oldP.Y >> sectorFactor;
 			GetSector(oldSx, oldSy).Remove(thing);
 			if (thing.IsMulti) {
 				RemoveMulti((AbstractItem) thing);
@@ -508,14 +526,14 @@ namespace SteamEngine.Regions {
 		private void ChangedPImpl(Thing thing, Point2D oldP) {
 			MutablePoint4D newP = thing.point4d;
 			Logger.WriteInfo(MapTracingOn, this + ".ChangedPImpl(" + newP + "," + oldP + ")");
-			int oldXPre = oldP.x & sectorAnd;
+			int oldXPre = oldP.X & sectorAnd;
 			int newXPre = newP.x & sectorAnd;
-			int oldYPre = oldP.y & sectorAnd;
+			int oldYPre = oldP.Y & sectorAnd;
 			int newYPre = newP.y & sectorAnd;
 			if (oldXPre != newXPre || oldYPre != newYPre) {
-				int oldSx = oldP.x >> sectorFactor;
+				int oldSx = oldP.X >> sectorFactor;
 				int newSx = newP.x >> sectorFactor;
-				int oldSy = oldP.y >> sectorFactor;
+				int oldSy = oldP.Y >> sectorFactor;
 				int newSy = newP.y >> sectorFactor;
 				Sector oldSector = GetSector(oldSx, oldSy);
 				Sector newSector = GetSector(newSx, newSy);
@@ -592,44 +610,43 @@ namespace SteamEngine.Regions {
 		//    return (enumer.MoveNext());	//return true if there is a player somewhere, false if not.
 
 		//}
-
-		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(ushort x, ushort y, int range) {
+		
+		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(int x, int y, int range) {
 			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		//public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, int range) {
 		//    return GetGameConnsInRectangle(new ImmutableRectangle(x, y, range));
 		//}
-
-		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y, int range) {
+		public IEnumerable<AbstractCharacter> GetPlayersInRange(int x, int y, int range) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y, int range) {
+		public IEnumerable<Thing> GetThingsInRange(int x, int y, int range) {
 			return GetThingsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y, int range) {
+		public IEnumerable<AbstractItem> GetItemsInRange(int x, int y, int range) {
 			return GetItemsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y, int range) {
+		public IEnumerable<AbstractCharacter> GetCharsInRange(int x, int y, int range) {
 			return GetCharsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y, int range) {
+		public IEnumerable<Static> GetStaticsInRange(int x, int y, int range) {
 			return GetStaticsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y, int range) {
+		public IEnumerable<Thing> GetDisconnectsInRange(int x, int y, int range) {
 			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y, int range) {
+		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(int x, int y, int range) {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(ushort x, ushort y) {
+		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(int x, int y) {
 			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
@@ -637,31 +654,31 @@ namespace SteamEngine.Regions {
 		//    return GetGameConnsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		//}
 
-		public IEnumerable<AbstractCharacter> GetPlayersInRange(ushort x, ushort y) {
+		public IEnumerable<AbstractCharacter> GetPlayersInRange(int x, int y) {
 			return GetPlayersInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<Thing> GetThingsInRange(ushort x, ushort y) {
+		public IEnumerable<Thing> GetThingsInRange(int x, int y) {
 			return GetThingsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<AbstractItem> GetItemsInRange(ushort x, ushort y) {
+		public IEnumerable<AbstractItem> GetItemsInRange(int x, int y) {
 			return GetItemsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<AbstractCharacter> GetCharsInRange(ushort x, ushort y) {
+		public IEnumerable<AbstractCharacter> GetCharsInRange(int x, int y) {
 			return GetCharsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<Static> GetStaticsInRange(ushort x, ushort y) {
+		public IEnumerable<Static> GetStaticsInRange(int x, int y) {
 			return GetStaticsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<Thing> GetDisconnectsInRange(ushort x, ushort y) {
+		public IEnumerable<Thing> GetDisconnectsInRange(int x, int y) {
 			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(ushort x, ushort y) {
+		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(int x, int y) {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
@@ -856,10 +873,10 @@ namespace SteamEngine.Regions {
 
 		private IEnumerable<Sector> GetSectorsInRectangle(ImmutableRectangle rectangle) {
 			//rectangle.Crop(0, 0, (ushort) (map.sizeX - 1), (ushort) (map.sizeY - 1));
-			ushort startX = rectangle.MinX;
-			ushort startY = rectangle.MinY;
-			ushort endX = rectangle.MaxX;
-			ushort endY = rectangle.MaxY;
+			int startX = rectangle.MinX;
+			int startY = rectangle.MinY;
+			int endX = rectangle.MaxX;
+			int endY = rectangle.MaxY;
 
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorXY(Math.Min(startX, endX), Math.Min(startY, endY), out xSectorStart, out ySectorStart);
@@ -879,7 +896,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public MapTileType GetMapTileType(int x, int y) {
-			ushort id = GetTileId(x, y);
+			int id = GetTileId(x, y);
 			return GetMapTileType(id);
 		}
 
@@ -903,7 +920,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileWater(int x, int y) {
-			ushort id = GetTileId(x, y);
+			int id = GetTileId(x, y);
 			return (TileData.landFlags[id] & TileFlag.Wet) == TileFlag.Wet;
 		}
 		/**
@@ -911,7 +928,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileDirt(int x, int y) {
-			ushort id = GetTileId(x, y);
+			int id = GetTileId(x, y);
 			return (t_dirt.IsTypeOfMapTile(id));
 		}
 		/**
@@ -919,7 +936,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileLava(int x, int y) {
-			ushort id = GetTileId(x, y);
+			int id = GetTileId(x, y);
 			return (t_lava.IsTypeOfMapTile(id));
 		}
 		/**
@@ -927,7 +944,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileRock(int x, int y) {
-			ushort id = GetTileId(x, y);
+			int id = GetTileId(x, y);
 			return (t_rock.IsTypeOfMapTile(id));
 		}
 		/**
@@ -935,14 +952,14 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileGrass(int x, int y) {
-			ushort id = GetTileId(x, y);
+			int id = GetTileId(x, y);
 			return (t_grass.IsTypeOfMapTile(id));
 		}
 
 		/**
 			Returns the TileID for the map tile at the specified coordinates.
 		*/
-		public ushort GetTileId(int x, int y) {
+		public int GetTileId(int x, int y) {
 			if (Map.IsValidPos(x, y, m)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
@@ -954,7 +971,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the z level of the map tile at the specified coordinates.
 		*/
-		public sbyte GetTileZ(int x, int y) {
+		public int GetTileZ(int x, int y) {
 			if (Map.IsValidPos(x, y, m)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
@@ -963,11 +980,11 @@ namespace SteamEngine.Regions {
 			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
 		}
 
-		public void GetTile(int x, int y, out sbyte z, out ushort id) {
+		public void GetTile(int x, int y, out int z, out int id) {
 			if (Map.IsValidPos(x, y, m)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
-				this.GetSector(sx, sy).GetTileZ(x, y, out z, out id);
+				this.GetSector(sx, sy).GetTile(x, y, out z, out id);
 			} else {
 				throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
 			}
@@ -1015,7 +1032,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public Region GetRegionFor(Point2D point) {
-			return GetSector(point.x >> sectorFactor, point.y >> sectorFactor).GetRegionFor(point);
+			return GetSector(point.X >> sectorFactor, point.Y >> sectorFactor).GetRegionFor(point);
 		}
 
 		public Region GetRegionFor(int x, int y) {

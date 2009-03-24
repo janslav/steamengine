@@ -275,7 +275,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void SetBaseDoorModelOrThrow() {
-			ushort model = this.Model;
+			int model = this.Model;
 			switch (model) {
 				case 0x190e://bar door.
 				case 0x190f:

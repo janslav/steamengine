@@ -46,7 +46,7 @@ namespace SteamEngine {
 
 	//Some of the sounds I haven't listened to, and just used the name from sound.mul. Some have a _ before their name, but that simply means that there was another in here with the same name already. In fact, there's also one which there are three sounds with the same filename - poison, so the third gets two _s.
 
-	public enum SoundNames : ushort {
+	public enum SoundNames : int {
 		AmbientShoreDay1 = 0,				//I hear water in the background for these 'shore' ones.
 		AmbientShoreDay2 = 1,
 		AmbientShoreDay3 = 2,
@@ -1286,7 +1286,7 @@ namespace SteamEngine {
 		weaponmiss_02 = 1337,
 		weaponmiss_03 = 1338,
 
-		None = 0xffff
+		None = -1
 	}
 
 	/* Unclear sounds:

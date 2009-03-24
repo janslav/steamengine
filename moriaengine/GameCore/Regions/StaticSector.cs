@@ -230,7 +230,7 @@ namespace SteamEngine.Regions {
 			rmsy = diffbasey >> 3;
 		}
 
-		internal ushort GetTileId(int relX, int relY) {
+		internal int GetTileId(int relX, int relY) {
 			if (Globals.useMap) {
 				return tile[relX, relY];
 			} else {
@@ -238,7 +238,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		internal sbyte GetTileZ(int relX, int relY) {
+		internal int GetTileZ(int relX, int relY) {
 			if (Globals.useMap) {
 				return z[relX, relY];
 			} else {

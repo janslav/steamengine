@@ -212,7 +212,7 @@ namespace SteamEngine.Regions {
 				return staticSector.HasStaticId(x, y, staticId);
 			}
 
-			internal ushort GetTileId(int x, int y) {
+			internal int GetTileId(int x, int y) {
 				LoadStatics();
 				int basex = x & Map.sectorAnd;
 				int basey = y & Map.sectorAnd;
@@ -222,7 +222,7 @@ namespace SteamEngine.Regions {
 				return staticSector.GetTileId(relX, relY);
 			}
 
-			internal sbyte GetTileZ(int x, int y) {
+			internal int GetTileZ(int x, int y) {
 				LoadStatics();
 				int basex = x & Map.sectorAnd;
 				int basey = y & Map.sectorAnd;
@@ -232,8 +232,7 @@ namespace SteamEngine.Regions {
 				return staticSector.GetTileZ(relX, relY);
 			}
 
-
-			internal void GetTileZ(int x, int y, out sbyte z, out ushort id) {
+			internal void GetTile(int x, int y, out int z, out int id) {
 				LoadStatics();
 				int basex = x & Map.sectorAnd;
 				int basey = y & Map.sectorAnd;

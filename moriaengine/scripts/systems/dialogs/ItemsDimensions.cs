@@ -68,25 +68,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public int X {
 			get {
-				return start.x;
+				return start.X;
 			}			
 		}
 
 		public int Y {
 			get {
-				return start.y;
+				return start.Y;
 			}			
 		}
 
 		public int Width {
 			get {
-				return end.x - start.x;
+				return end.X - start.X;
 			}
 		}
 
 		public int Height {
 			get {
-				return end.y - start.y;
+				return end.Y - start.Y;
 			}
 		}
 	}

@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double GetEffectForValue(ushort skillValue) {
+		public double GetEffectForValue(int skillValue) {
 			return ScriptUtil.EvalRangePermille(skillValue, this.Effect);
 		}
 
@@ -175,7 +175,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static bool CheckSuccess(ushort skillValue, int difficulty) {
+		public static bool CheckSuccess(int skillValue, int difficulty) {
 			return SkillUtils.CheckSuccess(skillValue, difficulty);
 		}
 

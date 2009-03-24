@@ -53,7 +53,7 @@ namespace SteamEngine {
 		public const int MinUpdateRange = 5;
 		public const int defaultWarningLevel = 4;
 
-		public readonly static ushort port;   //Changing this after initialization has no effect. 
+		public readonly static int port;   //Changing this after initialization has no effect. 
 		public readonly static string serverName;  //Can be changed while the server is running.
 		public readonly static string adminEmail;  //Can be changed while the server is running.
 
@@ -86,12 +86,12 @@ namespace SteamEngine {
 		//public readonly static bool kickOnSuspiciousErrors;
 		public readonly static bool allowUnencryptedClients;
 
-		public readonly static ushort reachRange;
+		public readonly static int reachRange;
 		public readonly static int squaredReachRange;
 		//public readonly static ushort sightRange;
 		//public readonly static int squaredSightRange;
-		public readonly static ushort defaultASCIIMessageColor;
-		public readonly static ushort defaultUnicodeMessageColor;
+		public readonly static int defaultASCIIMessageColor;
+		public readonly static int defaultUnicodeMessageColor;
 
 		internal static bool useMap;
 		public static bool UseMap {
@@ -129,11 +129,11 @@ namespace SteamEngine {
 		public readonly static int whisperDistance;
 		public readonly static int yellDistance;
 		//public readonly static bool asciiForNames;
-		public readonly static uint loginFlags;
-		public readonly static ushort featuresFlags;
+		public readonly static int loginFlags;
+		public readonly static int featuresFlags;
 
-		public readonly static ushort defaultItemModel;
-		public readonly static ushort defaultCharModel;
+		public readonly static int defaultItemModel;
+		public readonly static int defaultCharModel;
 
 		public readonly static bool hashPasswords;
 
@@ -488,13 +488,13 @@ namespace SteamEngine {
 			}
 		}
 
-		public static uint StatItems {
+		public static int StatItems {
 			get {
 				return AbstractItem.Instances;
 			}
 		}
 
-		public static uint StatChars {
+		public static int StatChars {
 			get {
 				return AbstractCharacter.Instances;
 			}

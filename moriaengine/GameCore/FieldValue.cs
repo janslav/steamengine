@@ -207,8 +207,8 @@ namespace SteamEngine {
 					}
 					break;
 				case FieldValueType.Model:
-					short s;
-					if (ConvertTools.TryParseInt16(value, out s)) {
+					int s;
+					if (ConvertTools.TryParseInt32(value, out s)) {
 						retVal = s;
 						return true;
 					}
@@ -408,7 +408,7 @@ namespace SteamEngine {
 
 		private class ModelValueImpl : FieldValueImpl {
 			ThingDef thingDef;
-			ushort model;
+			int model;
 
 			//resolving constructor
 			internal ModelValueImpl() {
@@ -434,7 +434,7 @@ namespace SteamEngine {
 				set {
 					thingDef = value as ThingDef;
 					if (thingDef == null) {
-						model = TagMath.ToUInt16(value);
+						model = ConvertTools.ToInt32(value);
 					} else {
 						if ((thingDef.model.currentValue == this) || (thingDef.model.defaultValue == this)) {
 							ThingDef d = thingDef;

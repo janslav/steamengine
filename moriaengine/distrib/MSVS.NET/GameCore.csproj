@@ -881,6 +881,7 @@
     <Compile Include="..\..\GameCore\WeakRefDictionary.cs">
       <Link>WeakRefDictionary.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Common.csproj">
@@ -891,6 +892,9 @@
       <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
       <Name>Communication</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

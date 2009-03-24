@@ -112,7 +112,7 @@ namespace SteamEngine {
 		//and then sets
 		//CheckVisibility itself only if the character turns instead of moving (Since P isn't updated in that case).
 		//this is completely overriden in AbstractCharacter
-		internal abstract void SetPosImpl(ushort x, ushort y, sbyte z, byte m);
+		internal abstract void SetPosImpl(int x, int y, int z, byte m);
 	}
 
 	public partial class AbstractItem {
@@ -262,7 +262,7 @@ namespace SteamEngine {
 
 			Point4D point = new Point4D(this.point4d);
 			Map map = Map.GetMap(point.m);
-			Region region = map.GetRegionFor(point.x, point.y);
+			Region region = map.GetRegionFor(point.X, point.Y);
 			ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
 
 			this.TryTrigger(TriggerKey.leaveRegion, args);
@@ -280,7 +280,7 @@ namespace SteamEngine {
 			if ((this.Cont != null) || (!point.Equals(this))) {
 				Logger.WriteWarning(this + " has been moved in the implementation of one of the @Leave/EnterGround triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
-				this.Trigger_EnterRegion(point.x, point.y, point.z, point.m);
+				this.Trigger_EnterRegion(point.X, point.Y, point.z, point.m);
 			}
 		}
 
@@ -361,7 +361,7 @@ namespace SteamEngine {
 
 			if (CouldBeStacked(toStack, waitingStack)) {
 				//Amount overflow checking:
-				uint tmpAmount = waitingStack.Amount;
+				int tmpAmount = waitingStack.Amount;
 				try {
 					tmpAmount = checked(tmpAmount + toStack.Amount);
 				} catch (OverflowException) {
@@ -407,7 +407,7 @@ namespace SteamEngine {
 			if (CouldBeStacked(toStack, waitingStack)) {
 
 				//Amount overflow checking:
-				uint tmpAmount = waitingStack.Amount;
+				int tmpAmount = waitingStack.Amount;
 				try {
 					tmpAmount = checked(tmpAmount + toStack.Amount);
 				} catch (OverflowException) {
@@ -491,13 +491,10 @@ namespace SteamEngine {
 		}
 
 		//we expect this to be in limbo
-		internal void Trigger_EnterRegion(ushort x, ushort y, sbyte z, byte m) {
+		internal void Trigger_EnterRegion(int x, int y, int z, byte m) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "Item is supposed to be in Limbo state when Trigger_Enter* called");
 
-			this.point4d.x = x;
-			this.point4d.y = y;
-			this.point4d.z = z;
-			this.point4d.m = m;
+			this.point4d.SetP(x, y, z, m);
 
 			Map map = Map.GetMap(m);
 			Region region = map.GetRegionFor(x, y);
@@ -514,7 +511,7 @@ namespace SteamEngine {
 			Region.Trigger_ItemEnter(args);
 		}
 
-		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {
+		internal override sealed void SetPosImpl(int x, int y, int z, byte m) {
 			if (Map.IsValidPos(x, y, m)) {
 				MakeLimbo();
 				Trigger_EnterRegion(x, y, z, m);
@@ -903,7 +900,7 @@ namespace SteamEngine {
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
-		public DenyResult TryPickupItem(AbstractItem item, uint amt) {
+		public DenyResult TryPickupItem(AbstractItem item, int amt) {
 			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
 
@@ -974,8 +971,8 @@ namespace SteamEngine {
 					oldPoint = null;
 				}
 
-				uint amountToPick = args.Amount;
-				uint amountSum = item.Amount;
+				int amountToPick = args.Amount;
+				int amountSum = item.Amount;
 				if (!item.IsEquipped && amountToPick < amountSum) {
 					AbstractItem dupedItem = (AbstractItem) item.Dupe();
 					dupedItem.Amount = (amountSum - amountToPick);
@@ -1443,15 +1440,15 @@ namespace SteamEngine {
 		public readonly AbstractCharacter pickingChar;
 		public readonly AbstractItem manipulatedItem;
 
-		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, uint amount)
+		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, int amount)
 			: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
 			this.pickingChar = pickingChar;
 			this.manipulatedItem = manipulatedItem;
 		}
 
-		public uint Amount {
+		public int Amount {
 			get {
-				return Convert.ToUInt32(this.argv[3]);
+				return Convert.ToInt32(this.argv[3]);
 			}
 			set {
 				argv[3] = value;

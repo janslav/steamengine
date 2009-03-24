@@ -32,30 +32,30 @@ namespace SteamEngine.CompiledScripts {
 		private Character cont;
 
 		public Skill(ushort id, Character cont) {
-			realValue = 0;
-			cap = 1000;
-			lockType = SkillLockType.Increase;
+			this.realValue = 0;
+			this.cap = 1000;
+			this.lockType = SkillLockType.Increase;
 			this.id = id;
 			this.cont = cont;
 		}
 
 		public Skill(Skill copyFrom, Character cont) {
-			realValue = copyFrom.realValue;
-			cap = copyFrom.cap;
-			lockType = copyFrom.lockType;
-			id = copyFrom.id;
+			this.realValue = copyFrom.realValue;
+			this.cap = copyFrom.cap;
+			this.lockType = copyFrom.lockType;
+			this.id = copyFrom.id;
 			this.cont = cont;
 		}
 
-		public ushort RealValue {
+		public int RealValue {
 			get {
-				return realValue;
+				return this.realValue;
 			}
 			set {
 				ushort oldValue = this.realValue;
 				if (oldValue != value) {
 					CharSyncQueue.AboutToChangeSkill(cont, id);
-					this.realValue = value;
+					this.realValue = (ushort) value;
 					cont.Trigger_SkillChange(this, oldValue);
 
 					this.RemoveIfDefault();
@@ -63,21 +63,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ushort Cap {
+		public int Cap {
 			get {
 				return cap;
 			}
 			set {
 				if (this.cap != value) {
 					CharSyncQueue.AboutToChangeSkill(cont, id);
-					this.cap = value;
+					this.cap = (ushort) value;
 
 					this.RemoveIfDefault();
 				}
 			}
 		}
 
-		public ushort Id {
+		public int Id {
 			get {
 				return id;
 			}
@@ -104,12 +104,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void RemoveIfDefault() {
-			if (realValue == 0 && cap == 1000 && lockType == SkillLockType.Increase) {
+			if (this.realValue == 0 && this.cap == 1000 && this.lockType == SkillLockType.Increase) {
 				cont.InternalRemoveSkill(id);
 			}
 		}
 
-		public ushort ModifiedValue {
+		public int ModifiedValue {
 			get { return this.realValue; }
 		}
 	}

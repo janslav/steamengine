@@ -89,7 +89,7 @@ namespace SteamEngine {
 		//	in the SE core (not in scripts), which is why this is internal.
 		//But whatever you do, NEVER set the disconnected flag (0x0001) by tweaking flags.
 		protected ushort flags = 0;	//This is a ushort to save memory.
-		private static uint instances = 0;
+		private static int instances = 0;
 
 		internal CharSyncQueue.CharState syncState; //don't touch
 
@@ -113,7 +113,7 @@ namespace SteamEngine {
 			Map.GetMap(this.point4d.m).Add(this);
 		}
 
-		public static uint Instances {
+		public static int Instances {
 			get {
 				return instances;
 			}
@@ -174,7 +174,7 @@ namespace SteamEngine {
 		//	}
 		//}
 
-		public ushort MountItem {
+		public int MountItem {
 			get {
 				return this.TypeDef.MountItem;
 			}
@@ -536,34 +536,34 @@ namespace SteamEngine {
 			}
 		}
 
-		public void ClilocSysMessage(uint msg, string args) {
+		public void ClilocSysMessage(int msg, string args) {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, args);
 			}
 		}
-		public void ClilocSysMessage(uint msg, params string[] args) {
+		public void ClilocSysMessage(int msg, params string[] args) {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, args);
 			}
 		}
 
-		public void ClilocSysMessage(uint msg, int color) {
+		public void ClilocSysMessage(int msg, int color) {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, "");
 			}
 		}
 
-		public void ClilocSysMessage(uint msg, int color, string args) {
+		public void ClilocSysMessage(int msg, int color, string args) {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
 			}
 		}
 
-		public void ClilocSysMessage(uint msg, int color, params string[] args) {
+		public void ClilocSysMessage(int msg, int color, params string[] args) {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
@@ -651,19 +651,16 @@ namespace SteamEngine {
 			return true;
 		}
 
-		internal override sealed void SetPosImpl(ushort x, ushort y, sbyte z, byte m) {
+		internal override sealed void SetPosImpl(int x, int y, int z, byte m) {
 			if (Map.IsValidPos(x, y, m)) {
 				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
 				Point4D oldP = this.P();
-				Region oldRegion = Map.GetMap(oldP.m).GetRegionFor(oldP.x, oldP.y);
+				Region oldRegion = Map.GetMap(oldP.m).GetRegionFor(oldP.X, oldP.Y);
 				Region newRegion = Map.GetMap(m).GetRegionFor(x, y);
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
 				}
-				point4d.x = x;
-				point4d.y = y;
-				point4d.z = z;
-				point4d.m = m;
+				point4d.SetP(x, y, z, m);
 				ChangedP(oldP);
 			} else {
 				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
@@ -931,7 +928,7 @@ namespace SteamEngine {
 		}
 
 		//this method fires the [speech] triggers
-		internal void Trigger_Hear(AbstractCharacter speaker, string speech, uint clilocSpeech,
+		internal void Trigger_Hear(AbstractCharacter speaker, string speech, int clilocSpeech,
 				SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
 
 			ScriptArgs sa = new ScriptArgs(speaker, speech, clilocSpeech, type, color, font, lang, keywords, args);
@@ -939,7 +936,7 @@ namespace SteamEngine {
 			object[] saArgv = sa.argv;
 
 			speech = ConvertTools.ToString(saArgv[1]);
-			clilocSpeech = ConvertTools.ToUInt32(saArgv[2]);
+			clilocSpeech = ConvertTools.ToInt32(saArgv[2]);
 			type = (SpeechType) ConvertTools.ToInt64(saArgv[3]);
 			color = ConvertTools.ToInt32(saArgv[4]);
 			font = ConvertTools.ToUInt16(saArgv[5]);
@@ -963,7 +960,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual void On_Hear(AbstractCharacter speaker, string speech, uint clilocSpeech, SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
+		public virtual void On_Hear(AbstractCharacter speaker, string speech, int clilocSpeech, SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
 
 		}
 
@@ -1046,9 +1043,9 @@ namespace SteamEngine {
 			this.Anim(anim, 1, backwards, undo, frameDelay);
 		}
 
-		public void Anim(int anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+		public void Anim(int anim, int numAnims, bool backwards, bool undo, byte frameDelay) {
 			CharacterAnimationOutPacket p = Pool<CharacterAnimationOutPacket>.Acquire();
-			p.Prepare(this, (ushort) anim, numAnims, backwards, undo, frameDelay);
+			p.Prepare(this, anim, numAnims, backwards, undo, frameDelay);
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
 
@@ -1105,7 +1102,7 @@ namespace SteamEngine {
 		public abstract void SetSkill(int id, ushort value);
 		public abstract void SetSkillLockType(int id, SkillLockType type);
 		public abstract ISkill GetSkillObject(int id);
-		public abstract ushort GetSkill(int id);
+		public abstract int GetSkill(int id);
 
 		[Summary("Gets called by the core when the player presses the skill button/runs the macro")]
 		public abstract void SelectSkill(AbstractSkillDef skillDef);

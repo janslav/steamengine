@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override string GetName() {
+		protected override string InternalFirstGetDefname() {
 			return this.GetType().Name;
 		}
 

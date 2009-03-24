@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Loading from scripts
 
 		public override string ToString() {
-			return string.Concat(this.defname, " (spellId ", this.id.ToString(), ")");
+			return string.Concat(this.Defname, " (spellId ", this.id.ToString(), ")");
 		}
 
 		public bool TryCancellableTrigger(IPoint4D self, TriggerKey td, ScriptArgs sa) {
@@ -233,7 +233,7 @@ namespace SteamEngine.CompiledScripts {
 			this.resources = this.InitField_Typed("resources", null, typeof(ResourcesList));
 			this.difficulty = this.InitField_Typed("difficulty", null, typeof(int));
 			this.effect = this.InitField_Typed("effect", null, typeof(double[]));
-			this.sound = this.InitField_Typed("sound", 0xffff, typeof(SoundNames));
+			this.sound = this.InitField_Typed("sound", -1, typeof(SoundNames));
 			this.runes = this.InitField_Typed("runes", null, typeof(string));
 			this.effectRange = this.InitField_Typed("effectRange", 5, typeof(int));
 		}
@@ -493,9 +493,9 @@ namespace SteamEngine.CompiledScripts {
 			IPoint4D target = mageryArgs.Target1;
 			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
 			SpellEffectArgs sea = null;
-			
-			ushort sound = (ushort) this.Sound;
-			if (sound != 0xffff) {
+
+			int sound = (int) this.Sound;
+			if (sound != -1) {
 				Networking.PacketSequences.SendSound(target, sound, Globals.MaxUpdateRange);
 			}
 
@@ -717,14 +717,14 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class SpellEffectArgs {
-		Character caster;
-		IPoint4D currentTarget;
-		IPoint4D mainTarget;
-		SpellDef spellDef;
-		int spellPower;
-		CharRelation relation;
-		bool relationFoundOut = false;
-		SpellSourceType sourceType = SpellSourceType.SpellBook;
+		private Character caster;
+		private IPoint4D currentTarget;
+		private IPoint4D mainTarget;
+		private SpellDef spellDef;
+		private int spellPower;
+		private CharRelation relation;
+		private bool relationFoundOut = false;
+		private SpellSourceType sourceType = SpellSourceType.SpellBook;
 
 		public readonly ScriptArgs scriptArgs;
 

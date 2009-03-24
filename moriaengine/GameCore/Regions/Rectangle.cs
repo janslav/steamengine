@@ -20,11 +20,13 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {
+
 	public abstract class AbstractRectangle {
-		public abstract ushort MinX { get; }
-		public abstract ushort MaxX { get; }
-		public abstract ushort MinY { get; }
-		public abstract ushort MaxY { get; }
+
+		public abstract int MinX { get; }
+		public abstract int MaxX { get; }
+		public abstract int MinY { get; }
+		public abstract int MaxY { get; }
 
 		public int Width {
 			get {
@@ -39,20 +41,20 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool Contains(Static p) {
-			ushort px = p.X;
-			ushort py = p.Y;
+			int px = p.X;
+			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
 		public bool Contains(Thing p) {
-			ushort px = p.X;
-			ushort py = p.Y;
+			int px = p.X;
+			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
 		public bool Contains(Point2D p) {
-			ushort px = p.x;
-			ushort py = p.y;
+			int px = p.X;
+			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
@@ -61,8 +63,8 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool Contains(IPoint2D p) {
-			ushort px = p.X;
-			ushort py = p.Y;
+			int px = p.X;
+			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
@@ -101,7 +103,7 @@ namespace SteamEngine.Regions {
 	public class ImmutableRectangle : AbstractRectangle {
 		public static readonly ImmutableRectangle voidInstance = new ImmutableRectangle(0, 0, 0, 0);
 
-		public readonly ushort minX, maxX, minY, maxY;
+		private readonly int minX, maxX, minY, maxY;
 
 		public ImmutableRectangle(AbstractRectangle copiedOne) {
 			this.minX = copiedOne.MinX;
@@ -110,7 +112,7 @@ namespace SteamEngine.Regions {
 			this.maxY = copiedOne.MaxY;
 		}
 
-		public ImmutableRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY) {
+		public ImmutableRectangle(int minX, int minY, int maxX, int maxY) {
 			Sanity.IfTrueThrow((minX > maxX) || (minY > maxY),
 				"Rectangle (" + minX + "," + minY + "," + maxX + "," + maxY + "). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");
 			this.minX = minX;
@@ -130,14 +132,14 @@ namespace SteamEngine.Regions {
 
 		[Summary("Return a rectangle created from the central point with the specific range around the point" +
 				"(square 'around')")]
-		public ImmutableRectangle(ushort x, ushort y, int range) {
-			this.minX = (ushort) (x - range);
-			this.minY = (ushort) (y - range);
-			this.maxX = (ushort) (x + range);
-			this.maxY = (ushort) (y + range);
+		public ImmutableRectangle(int x, int y, int range) {
+			this.minX = x - range;
+			this.minY = y - range;
+			this.maxX = x + range;
+			this.maxY = y + range;
 		}
 
-		public ImmutableRectangle(IPoint2D center, ushort range)
+		public ImmutableRectangle(IPoint2D center, int range)
 			: this(center.X, center.Y, range) {
 		}
 
@@ -152,25 +154,25 @@ namespace SteamEngine.Regions {
 			return ImmutableRectangle.voidInstance;
 		}
 
-		public override sealed ushort MinX {
+		public override sealed int MinX {
 			get {
 				return this.minX;
 			}
 		}
 
-		public override sealed ushort MaxX {
+		public override sealed int MaxX {
 			get {
 				return this.maxX;
 			}
 		}
 
-		public override sealed ushort MinY {
+		public override sealed int MinY {
 			get {
 				return this.minY;
 			}
 		}
 
-		public override sealed ushort MaxY {
+		public override sealed int MaxY {
 			get {
 				return this.maxY;
 			}

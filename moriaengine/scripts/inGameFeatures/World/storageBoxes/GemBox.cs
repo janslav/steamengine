@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							gemsToGive = (int) gr.responseNumbers[i].number;
 						}
 						buttonShowItemDef[i].Create(((Player) gi.Cont).BackpackAsContainer);
-						Globals.lastNewItem.Amount = (uint) gemsToGive;
+						Globals.lastNewItem.Amount = gemsToGive;
 						gi.Cont.SysMessage("Vyndáváš z bedny " + Convert.ToString(gemsToGive) + "ks " + buttonShowItemDef[i].Name + ".");
 						box.inBoxGems[buttonShowItemDef[i]] -= gemsToGive;
 						box.pocetGemu -= gemsToGive;
@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int thisButtonValue = (int) gr.pressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_GemBox.buttonsForGemsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).BackpackAsContainer);
-				Globals.lastNewItem.Amount = (uint) box.inBoxGems[buttonShowItemDef[thisButtonValue]];
+				Globals.lastNewItem.Amount = box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);
 				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance);
 			}
@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				if (focus.pocetGemu + (int) targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik gemu, kolik skutecne lze pridat
 					int gemsToTake = focus.TypeDef.Capacity - focus.pocetGemu;
-					targetted.Amount -= (uint) gemsToTake;
+					targetted.Amount -= gemsToTake;
 					focus.pocetGemu += gemsToTake;
 					focus.inBoxGems[targetted.TypeDef] = previousCount + gemsToTake;
 				} else {

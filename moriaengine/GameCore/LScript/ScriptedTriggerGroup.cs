@@ -72,7 +72,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return "TriggerGroup " + defname;
+			return "TriggerGroup " + Defname;
 		}
 
 		public static new TriggerGroup Get(string name) {

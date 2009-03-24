@@ -101,16 +101,22 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Item : AbstractItem {
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
 				" then the item will be deleted. Method returns the actually consumed amount.")]
-		public uint Consume(long howMany) {
-			long prevAmount = this.Amount;
-			long resultAmount = prevAmount - howMany;
+		public long Consume(long howMany) {
+			int prevAmount = this.Amount;
+
+			long resultAmount;
+			try {
+				resultAmount =  checked(prevAmount - howMany);
+			} catch (OverflowException) {
+				resultAmount = -1; //so we delete
+			}
 
 			if (resultAmount < 1) {
 				this.Delete();
-				return (uint) prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
+				return prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
 			} else {
-				this.Amount = (uint) resultAmount;
-				return (uint) howMany; //consumed the desired amount
+				this.Amount = (int) resultAmount;
+				return howMany; //consumed the desired amount
 			}
 		}
 
@@ -269,16 +275,16 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		public override void GetNameCliloc(out uint id, out string argument) {
+		public override void GetNameCliloc(out int id, out string argument) {
 			string name = this.Name;
-			uint amount = this.Amount;
+			int amount = this.Amount;
 			id = 1042971;//~1_NOTHING~
 			argument = null;
 			if (amount <= 1) {
 				ItemDispidInfo idi = this.TypeDef.DispidInfo;
 				if (idi != null) {
 					if (string.Compare(name, idi.singularName, true) == 0) {
-						id = (uint) (1020000 + (this.Model & 16383)); //hmmm...
+						id = (1020000 + (this.Model & 16383)); //hmmm...
 						return;
 					}
 				}
@@ -290,7 +296,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
-			uint amount = this.Amount;
+			int amount = this.Amount;
 			if (this.Amount <= 1) {
 				PacketSequences.SendNameFrom(clickerConn, this, this.Name, 0);
 			} else {
@@ -319,7 +325,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override AbstractItem NewItem(IThingFactory factory, uint amount) {
+		public override AbstractItem NewItem(IThingFactory factory, int amount) {
 			Thing t = factory.Create(this);
 			AbstractItem i = t as AbstractItem;
 			if (i != null) {

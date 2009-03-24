@@ -338,7 +338,7 @@ namespace SteamEngine.Networking {
 			PreparedPacketGroups.SendTargettingCursor(this.conn, ground);
 		}
 
-		public void TargetForMultis(ushort model, OnTargon targonDeleg, OnTargon_Cancel targonCancelDeleg, object targonParameters) {
+		public void TargetForMultis(int model, OnTargon targonDeleg, OnTargon_Cancel targonCancelDeleg, object targonParameters) {
 			this.targonDeleg = targonDeleg;
 			this.targonCancelDeleg = targonCancelDeleg;
 			this.targonParameters = targonParameters;

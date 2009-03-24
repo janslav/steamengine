@@ -352,7 +352,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public class E_BeingOnShip : CompiledTriggerGroup {
-			private Ship GetShipOnPoint(Map map, ushort x, ushort y) {
+			private Ship GetShipOnPoint(Map map, int x, int y) {
 				Region region = map.GetRegionFor(x, y);
 				ShipRegion shipRegion = region as ShipRegion;
 				if (shipRegion != null) {

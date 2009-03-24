@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							reagsToGive = (int) gr.responseNumbers[i].number;
 						}
 						buttonShowItemDef[i].Create(((Player) gi.Cont).BackpackAsContainer);
-						Globals.lastNewItem.Amount = (uint) reagsToGive;
+						Globals.lastNewItem.Amount = reagsToGive;
 						gi.Cont.SysMessage("Vyndáváš z bedny " + Convert.ToString(reagsToGive) + "ks regu " + buttonShowItemDef[i].Name + ".");
 						box.inBoxReags[buttonShowItemDef[i]] -= reagsToGive;
 						box.pocetRegu -= reagsToGive;
@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int thisButtonValue = (int) gr.pressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).BackpackAsContainer);
-				Globals.lastNewItem.Amount = (uint) box.inBoxReags[buttonShowItemDef[thisButtonValue]];
+				Globals.lastNewItem.Amount = box.inBoxReags[buttonShowItemDef[thisButtonValue]];
 				box.inBoxReags.Remove(buttonShowItemDef[thisButtonValue]);
 				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_RegBox>.Instance);
 			}
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				if (focus.pocetRegu + (int) targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
 					int reagsToTake = focus.TypeDef.Capacity - focus.pocetRegu;
-					targetted.Amount -= (uint) reagsToTake;
+					targetted.Amount -= reagsToTake;
 					focus.pocetRegu += reagsToTake;
 					focus.inBoxReags[targetted.TypeDef] = previousCount + reagsToTake;
 				} else {

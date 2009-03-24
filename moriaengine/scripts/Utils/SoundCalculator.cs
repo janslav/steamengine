@@ -25,11 +25,11 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public static class SoundCalculator {
-		public const ushort NoSound = (ushort) SoundNames.None;
+		public const int NoSound = (int) SoundNames.None;
 
 		[SteamFunction]
 		public static void PlayAngerSound(Character self) {
-			ushort sound = self.TypeDef.AngerSound;
+			int sound = self.TypeDef.AngerSound;
 			if (sound == NoSound) {
 				sound = self.CharModelInfo.charDef.AngerSound;
 			}
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayIdleSound(Character self) {
-			ushort sound = self.TypeDef.IdleSound;
+			int sound = self.TypeDef.IdleSound;
 			if (sound == NoSound) {
 				sound = self.CharModelInfo.charDef.IdleSound;
 			}
@@ -51,23 +51,23 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayMissSound(Character self) {
-			ushort sound = NoSound;
+			int sound = NoSound;
 			switch (self.WeaponType) {
 				case WeaponType.OneHandSword:
 				case WeaponType.OneHandAxe:
 				case WeaponType.TwoHandAxe:
-					sound = (ushort) SoundNames.swish03;
+					sound = (int) SoundNames.swish03;
 					break;
 				case WeaponType.OneHandBlunt:
 				case WeaponType.TwoHandBlunt:
-					sound = (ushort) SoundNames.swish02;
+					sound = (int) SoundNames.swish02;
 					break;
 				case WeaponType.OneHandSpike:
 				case WeaponType.TwoHandSpike:
 				case WeaponType.TwoHandSword:
 				case WeaponType.Bow:
 				case WeaponType.XBow:
-					sound = (ushort) SoundNames.swish01;
+					sound = (int) SoundNames.swish01;
 					break;
 			}
 			if (sound != NoSound) {
@@ -78,30 +78,30 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static void PlayAttackSound(Character self) {
 			CharModelInfo cmi = self.CharModelInfo;
-			ushort sound = NoSound;
+			int sound = NoSound;
 			if ((cmi.charAnimType & CharAnimType.Human) == CharAnimType.Human) {
 				switch (self.WeaponType) {
 					case WeaponType.OneHandAxe:
 					case WeaponType.TwoHandAxe:
-						sound = (ushort) SoundNames.axe01;
+						sound = (int) SoundNames.axe01;
 						break;
 					case WeaponType.OneHandBlunt:
 					case WeaponType.TwoHandBlunt:
-						sound = (ushort) SoundNames.blunt01;
+						sound = (int) SoundNames.blunt01;
 						break;
 					case WeaponType.OneHandSpike:
-						sound = (ushort) SoundNames.sword1;
+						sound = (int) SoundNames.sword1;
 						break;
 					case WeaponType.TwoHandSpike:
-						sound = (ushort) SoundNames.sword7;
+						sound = (int) SoundNames.sword7;
 						break;
 					case WeaponType.OneHandSword:
 					case WeaponType.TwoHandSword:
-						sound = (ushort) SoundNames.hvyswrd4;
+						sound = (int) SoundNames.hvyswrd4;
 						break;
 					case WeaponType.Bow:
 					case WeaponType.XBow:
-						sound = (ushort) SoundNames.crossbow;
+						sound = (int) SoundNames.crossbow;
 						break;
 				}
 			} else {
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayHurtSound(Character self) {
-			ushort sound = self.TypeDef.HurtSound;
+			int sound = self.TypeDef.HurtSound;
 			if (sound == NoSound) {
 				sound = self.CharModelInfo.charDef.HurtSound;
 			}
@@ -129,12 +129,12 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static void PlayDeathSound(Character self) {
 			CharModelInfo cmi = self.CharModelInfo;
-			ushort sound;
+			int sound;
 			if ((cmi.charAnimType & CharAnimType.Human) == CharAnimType.Human) {
 				if (cmi.isFemale) {
-					sound = (ushort) (Globals.dice.Next(4) + 788);
+					sound = (int) (Globals.dice.Next(4) + 788);
 				} else {
-					sound = (ushort) (Globals.dice.Next(5) + 1059);
+					sound = (int) (Globals.dice.Next(5) + 1059);
 				}
 				self.Sound(sound);
 			} else {

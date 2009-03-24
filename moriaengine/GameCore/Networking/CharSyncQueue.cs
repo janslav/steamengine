@@ -67,7 +67,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void AboutToChangeSkill(AbstractCharacter thing, ushort skillId) {
+		public static void AboutToChangeSkill(AbstractCharacter thing, int skillId) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "AboutToChangeSkill(" + thing + ", " + skillId + ") called");
 				instance.PopAndEnqueueInstance(thing).AboutToChangeSkill(skillId);
@@ -185,8 +185,8 @@ namespace SteamEngine.Networking {
 			private AbstractCharacter mount;
 			private int mountUid;
 
-			private ushort model;
-			private ushort color;
+			private int model;
+			private int color;
 			private Direction direction;
 
 			private short hitpoints;
@@ -550,8 +550,8 @@ namespace SteamEngine.Networking {
 				bool hasParty = (partyMembers != null && partyMembers.Count > 1);
 
 				Map chMap = ch.GetMap();
-				ushort chX = ch.X;
-				ushort chY = ch.Y;
+				int chX = ch.X;
+				int chY = ch.Y;
 
 				PacketGroup pgRemoveMount = null, pgUpdateMount = null;
 
@@ -637,7 +637,7 @@ namespace SteamEngine.Networking {
 									PreparedPacketGroups.SendFacetChange(myConn, newFacet);
 								}
 								PacketGroup pg = null;
-								foreach (Thing thing in oldMap.GetThingsInRange(point.x, point.y, updateRange)) {
+								foreach (Thing thing in oldMap.GetThingsInRange(point.X, point.Y, updateRange)) {
 									Logger.WriteInfo(Globals.netSyncingTracingOn, "Removing thing (" + thing + ") from own view");
 									if (pg == null) {
 										pg = PacketGroup.AcquireSingleUsePG();

@@ -131,9 +131,10 @@ namespace SteamEngine {
 			return input.Trim();
 		}
 
-		public static ushort NormalizeDyedColor(int color, ushort defaultColor) {
+		[CLSCompliant(false)]
+		public static ushort NormalizeDyedColor(int color, int defaultColor) {
 			if ((color < 2) || (color > 1001)) {
-				return defaultColor;
+				return (ushort) defaultColor;
 			} else {
 				return (ushort) color;
 			}

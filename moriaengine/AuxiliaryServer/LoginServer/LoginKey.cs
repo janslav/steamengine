@@ -36,17 +36,15 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		};
 
 
-		private readonly uint key1;
-		private readonly uint key2;
+		private readonly long key1;
+		private readonly long key2;
 		private readonly string name;
 
-		[CLSCompliant(false)]
-		public uint Key1 {
+		public long Key1 {
 			get { return key1; }
 		}
 
-		[CLSCompliant(false)]
-		public uint Key2 {
+		public long Key2 {
 			get { return key2; }
 		}
 
@@ -54,8 +52,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return name; }
 		}
 
-		[CLSCompliant(false)]
-		public LoginKey(String name, uint key1, uint key2) {
+		public LoginKey(String name, long key1, long key2) {
 			this.key1 = key1;
 			this.key2 = key2;
 			this.name = name;

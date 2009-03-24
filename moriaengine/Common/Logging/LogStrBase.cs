@@ -121,12 +121,12 @@ namespace SteamEngine.Common {
 			new LogStyleInfo(Color.Red, FontStyle.Bold), //LogStyles.Fatal
 			new LogStyleInfo(Color.Red, FontStyle.Bold), //LogStyles.Critical
 			new LogStyleInfo(Color.Gray, defaultFontStyle), //LogStyles.Debug
-			new LogStyleInfo(Color.Blue, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.FileLine
 			new LogStyleInfo(Color.Orange, defaultFontStyle), //LogStyles.Highlight
+			new LogStyleInfo(Color.Blue, FontStyle.Bold), //LogStyles.Ident
+			new LogStyleInfo(Color.Blue, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.FileLine			
 			new LogStyleInfo(defaultColor, FontStyle.Italic, defaultFamily, defaultSize, true), //LogStyles.FilePos
 			new LogStyleInfo(Color.Purple, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.File
-			new LogStyleInfo(Color.Blue, defaultFontStyle), //LogStyles.Number
-			new LogStyleInfo(Color.Blue, FontStyle.Bold) //LogStyles.Ident
+			new LogStyleInfo(Color.Blue, defaultFontStyle), //LogStyles.Number			
 		};
 
 		public static LogStyleInfo DefaultLogStyleInfo {

@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected double desiredCount; //how many item occurences we need? (e.g. 5 i_apple)
 		private List<Item> foundItems = new List<Item>();
-		private uint foundCount; //how many occurences have been found so far? (counted from amounts of found items)
+		private int foundCount; //how many occurences have been found so far? (counted from amounts of found items)
 
 		internal ResourceCounter() {
 			//non parametric constructor for pooling
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 			long toConsume = (long) (desiredCount * howManyTimes);
 			foreach (Item itm in foundItems) {
 				//try consume as much as possible of this item
-				uint wasConsumed = itm.Consume(toConsume);
+				long wasConsumed = itm.Consume(toConsume);
 				toConsume -= wasConsumed;
 				if (toConsume == 0) {
 					break; //desired amount has been already consumed, stop iterating

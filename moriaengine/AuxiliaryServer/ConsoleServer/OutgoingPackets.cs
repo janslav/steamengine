@@ -121,7 +121,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				this.numbers.Add(gsis.Number);
 				this.iniPaths.Add(gsis.IniPath);
 				this.names.Add(gsis.Name);
-				this.ports.Add(gsis.Port);
+				this.ports.Add((ushort) gsis.Port);
 				this.runnings.Add(runningServerNumbers.Contains(gsis.Number));
 			}
 		}

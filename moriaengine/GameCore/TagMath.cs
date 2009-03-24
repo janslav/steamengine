@@ -68,12 +68,6 @@ namespace SteamEngine {
 			throw new SEException("Unexpected conversion attempt: " + tagValue.GetType().ToString() + "->string");
 		}
 
-		[Summary("Try to obtain a uint16 (ushort) tag value or 0 if no tag has been found. Not using (int) cast " +
-				"so we are able to accept a non 'ushort' numbers such as uints, shorts etc.")]
-		public static ushort UShortGetTag(TagHolder from, TagKey which) {
-			return ConvertTools.ToUInt16(from.GetTag(which));
-		}
-
 		[Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast " +
 				"so we are able to accept a non 'int' numbers such as uints, shorts etc.")]
 		public static int IGetTag(TagHolder from, TagKey which) {

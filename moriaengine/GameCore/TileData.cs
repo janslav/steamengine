@@ -22,7 +22,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	[Flags]
-	public enum TileFlag : uint {
+	public enum TileFlag : long {
 		None = 0x00000000,
 		Background = 0x00000001,	//No idea. None whatsoever. Maybe it's the blackness.
 		Weapon = 0x00000002,		//I smack thee with this here ... club?
@@ -62,7 +62,7 @@ namespace SteamEngine {
 	}
 
 	public class TileData {
-		public const uint numLandTiles = 16384;
+		public const int numLandTiles = 16384;
 		public static TileFlag[] landFlags;
 
 		//public static readonly string[] flagNames = new string[] {"background","weapon","transparent","translucent","wall",
@@ -84,7 +84,7 @@ namespace SteamEngine {
 			return ((whatsit & flag) == flag);
 		}
 
-		public static bool IsIgnoredId(ushort id) {
+		public static bool IsIgnoredId(int id) {
 			return (id == 2 || id == 0x1DB || (id >= 0x1AE && id <= 0x1B5));
 		}
 

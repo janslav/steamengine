@@ -163,7 +163,7 @@ namespace SteamEngine {
 			return CanSeeCoordinatesFrom(fromCoordinates, target.X, target.Y, target.Z, target.M);
 		}
 
-		private bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, ushort targetX, ushort targetY, sbyte targetZ, byte targetM) {
+		private bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, int targetX, int targetY, int targetZ, byte targetM) {
 			this.ThrowIfDeleted();
 			if (fromCoordinates.M != targetM) {
 				return false;

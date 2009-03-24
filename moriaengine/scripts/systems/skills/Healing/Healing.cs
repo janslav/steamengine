@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			ushort selfHealing = self.GetSkill(SkillName.Healing);
+			int selfHealing = self.GetSkill(SkillName.Healing);
 
 			//pokud se leceni zdarilo
 			if (SingletonScript<HealingSkillDef>.Instance.CheckSuccess(self, Globals.dice.Next(200))) {

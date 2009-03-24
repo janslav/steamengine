@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (self.CanReach(item) == DenyResult.Allow) {
 				int diff = (int) (700 + 100 * Math.Log(item.Weight + 1));
-				skillSeqArgs.Success = SkillDef.CheckSuccess(self.GetSkill((int) SkillName.Stealing), diff);
+				skillSeqArgs.Success = SkillDef.CheckSuccess(self.GetSkill(SkillName.Stealing), diff);
 			} else {
 				skillSeqArgs.Success = false;
 			}

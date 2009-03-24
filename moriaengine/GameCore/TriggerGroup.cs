@@ -33,7 +33,7 @@ namespace SteamEngine {
 	public abstract class TriggerGroup : AbstractScript {
 		protected TriggerGroup()
 			: base() {
-			Init(this.defname);
+			Init(this.Defname);
 		}
 
 		protected TriggerGroup(string defname)
@@ -72,7 +72,7 @@ namespace SteamEngine {
 		public abstract object TryRun(object self, TriggerKey tk, ScriptArgs sa);
 
 		public override string ToString() {
-			return "TriggerGroup " + defname;
+			return "TriggerGroup " + Defname;
 		}
 
 		public static new TriggerGroup Get(string name) {

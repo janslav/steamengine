@@ -14,7 +14,7 @@ namespace SteamEngine {
 	public class AOSToolTips : Poolable {
 		private int uid;
 		private Thing thing;
-		private List<uint> ids = new List<uint>(3);
+		private List<int> ids = new List<int>(3);
 		private List<string> arguments = new List<string>(3);
 		private bool initDone;
 
@@ -83,25 +83,25 @@ namespace SteamEngine {
 		//    this.arguments.Add(plainText);
 		//}
 
-		public void AddLine(uint clilocId) {
+		public void AddLine(int clilocId) {
 			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			ids.Add(clilocId);
 			arguments.Add(null);
 		}
 
-		public void AddLine(uint clilocId, string arg) {
+		public void AddLine(int clilocId, string arg) {
 			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			this.ids.Add(clilocId);
 			this.arguments.Add(arg);
 		}
 
-		public void AddLine(uint clilocId, string arg0, string arg1) {
+		public void AddLine(int clilocId, string arg0, string arg1) {
 			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			this.ids.Add(clilocId);
 			this.arguments.Add(string.Concat(arg0, "\t", arg1));
 		}
 
-		public void AddLine(uint clilocId, params string[] args) {
+		public void AddLine(int clilocId, params string[] args) {
 			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
 			this.ids.Add(clilocId);
 			this.arguments.Add(string.Join("\t", args));
@@ -143,9 +143,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public uint FirstId {
+		public int FirstId {
 			get {
-				return ids[0];
+				return this.ids[0];
 			}
 		}
 

@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public abstract class MassSettings_ByClass_ThingDef<DefType, FieldType> : MassSettings_ByClass_SingleField<DefType, FieldType> where DefType : ThingDef {
 		static MassSettings_ByClass_ThingDef() {
 			defs.Sort(delegate(DefType a, DefType b) {
-				return Comparer<ushort>.Default.Compare(a.Model, b.Model);
+				return Comparer<int>.Default.Compare(a.Model, b.Model);
 			});
 		}
 
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		static MassSettings_ByModel() {
 			if (models == null) {
-				HashSet<ushort> modelsSet = new HashSet<ushort>();
+				HashSet<int> modelsSet = new HashSet<int>();
 				foreach (AbstractScript scp in AbstractScript.AllScripts) {
 					DefType weap = scp as DefType;
 					if (weap != null) {

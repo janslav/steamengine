@@ -52,25 +52,25 @@ namespace SteamEngine {
 			}
 		}
 
-		public ushort Id {
+		public int Id {
 			get {
 				return dispidInfo.id;
 			}
 		}
 
-		public ushort X {
+		public int X {
 			get {
 				return x;
 			}
 		}
 
-		public ushort Y {
+		public int Y {
 			get {
 				return y;
 			}
 		}
 
-		public sbyte Z {
+		public int Z {
 			get {
 				return z;
 			}
@@ -131,12 +131,18 @@ namespace SteamEngine {
 
 	//StaticStatic as opposed to...ummm... you guessed it... DynamicStatic. Not.
 	//...as opposed to MultiItemComponent ;)
-	public class StaticStatic : Static {
-		public readonly ushort color;
 
-		internal StaticStatic(ushort id, ushort x, ushort y, sbyte z, byte m, ushort color)
+	public class StaticStatic : Static {
+		private readonly int color;
+
+		internal StaticStatic(ushort id, ushort x, ushort y, sbyte z, byte m, int color)
 			: base(id, x, y, z, m) {
+
 			this.color = color;
 		}
+
+		public int Color {
+			get { return color; }
+		} 
 	}
 }

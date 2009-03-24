@@ -138,12 +138,12 @@ namespace SteamEngine.LScript {
 
 		private void CheckValidity(object[] args) {//check method, used as delayed
 			if (layoutScript == null) {
-				Logger.WriteWarning("Dialog " + LogStr.Ident(defname) + " missing the main (layout) section?");
+				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " missing the main (layout) section?");
 				unloaded = true;
 				return;
 			}
 			if (unloaded && (layoutScript != null)) {
-				Logger.WriteWarning("Dialog " + LogStr.Ident(defname) + " resynced incompletely?");
+				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " resynced incompletely?");
 				return;
 			}
 		}
@@ -220,7 +220,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public sealed override string ToString() {
-			return "ScriptedGumpDef " + defname;
+			return "ScriptedGumpDef " + Defname;
 		}
 	}
 
