@@ -144,11 +144,11 @@ namespace SteamEngine.CompiledScripts {
 				this.def = def;
 			}
 
-			internal Item Create(ushort centerX, ushort centerY, sbyte centerZ, byte m) {
+			internal Item Create(int centerX, int centerY, int centerZ, byte m) {
 				return (Item) def.Create(
-					(ushort) (centerX + offsetX),
-					(ushort) (centerY + offsetY),
-					(sbyte) (centerZ + offsetZ), m);
+					centerX + offsetX,
+					centerY + offsetY,
+					centerZ + offsetZ, m);
 			}
 
 			internal static Regex dmicdRE = new Regex(@"\s*(?<defname>[a-z_0-9]+)\s*(,|\s)\s*(?<x>-?\d+)\s*(,|\s)\s*(?<y>-?\d+)\s*((,|\s)\s*(?<z>-?\d+))?\s*",

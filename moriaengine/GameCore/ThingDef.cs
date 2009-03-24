@@ -27,8 +27,9 @@ using SteamEngine.Regions;
 //using SteamEngine.PScript;
 
 namespace SteamEngine {
+
 	public interface IThingFactory {
-		Thing Create(ushort x, ushort y, sbyte z, byte m);
+		Thing Create(int x, int y, int z, byte m);
 		Thing Create(IPoint4D point);
 		Thing Create(Thing cont);
 	}
@@ -67,13 +68,13 @@ namespace SteamEngine {
 		internal ThingDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			this.name = InitField_Typed("name", "", typeof(string));
-			this.color = InitField_Typed("color", 0, typeof(ushort));
+			this.color = InitField_Typed("color", 0, typeof(int));
 
 			this.model = InitField_Model("model", 0);
 			this.weight = InitField_Typed("weight", 0, typeof(float));
 			this.height = InitField_Typed("height", 0, typeof(int));
-			ushort modelNum;
-			if (TagMath.TryParseUInt16(defname.Substring(2), out modelNum)) {
+			int modelNum;
+			if (TagMath.TryParseInt32(defname.Substring(2), out modelNum)) {
 				this.model.SetFromScripts(filename, headerLine, modelNum.ToString());
 			} else if (this is AbstractItemDef) {
 				this.model.SetFromScripts(filename, headerLine, Globals.defaultItemModel.ToString());
@@ -93,18 +94,18 @@ namespace SteamEngine {
 			}
 		}
 
-		public ushort Model {
+		public int Model {
 			get {
-				return (ushort) this.model.CurrentValue;
+				return (int) this.model.CurrentValue;
 			}
 			set {
 				this.model.CurrentValue = value;
 			}
 		}
 
-		public ushort Color {
+		public int Color {
 			get {
-				return (ushort) this.color.CurrentValue;
+				return (int) this.color.CurrentValue;
 			}
 			set {
 				this.color.CurrentValue = value;
@@ -134,10 +135,10 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			if (model.CurrentValue == null) {
-				return Name + ": " + defname + "//" + altdefname + " (null model!)";
+			if (this.model.CurrentValue == null) {
+				return Name + ": " + Defname + "//" + altdefname + " (null model!)";
 			} else {
-				return Name + ": " + defname + "//" + altdefname + " (" + model.CurrentValue + ")";
+				return Name + ": " + Defname + "//" + altdefname + " (" + model.CurrentValue + ")";
 			}
 		}
 
@@ -156,7 +157,7 @@ namespace SteamEngine {
 			return CreateImpl();
 		}
 
-		public Thing Create(ushort x, ushort y, sbyte z, byte m) {
+		public Thing Create(int x, int y, int z, byte m) {
 			this.ThrowIfUnloaded();
 			Thing retVal = CreateImpl();
 			PutOnGround(retVal, x, y, z, m);
@@ -196,7 +197,7 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		private static void PutOnGround(Thing t, ushort x, ushort y, sbyte z, byte m) {
+		private static void PutOnGround(Thing t, int x, int y, int z, byte m) {
 			//MarkAsLimbo(t);
 			AbstractItem item = t as AbstractItem;
 			if (item != null) {
@@ -466,7 +467,7 @@ namespace SteamEngine {
 				throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
 			}
 
-			thingDef.defname = defname;
+			thingDef.Defname = defname;
 			byDefname[defname] = thingDef;
 
 			thingDef.ClearTriggerGroups();//maybe clear other things too?

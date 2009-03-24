@@ -62,8 +62,8 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 			this.effectPluginDef = this.InitField_Typed("effectPluginDef", null, typeof(PluginDef));
 
-			this.effectPluginKey_Spell = this.InitField_Typed("effectPluginKey_Spell", PluginKey.Get(string.Concat("_spellEffect_", defname, "_")), typeof(PluginDef));
-			this.effectPluginKey_Potion = this.InitField_Typed("effectPluginKey_Potion", PluginKey.Get(string.Concat("_potionEffect_", defname, "_")), typeof(PluginDef));
+			this.effectPluginKey_Spell = this.InitField_Typed("effectPluginKey_Spell", PluginKey.Get(string.Concat("_spellEffect_", defname, "_")), typeof(PluginKey));
+			this.effectPluginKey_Potion = this.InitField_Typed("effectPluginKey_Potion", PluginKey.Get(string.Concat("_potionEffect_", defname, "_")), typeof(PluginKey));
 		}
 
 		public PluginDef EffectPluginDef {

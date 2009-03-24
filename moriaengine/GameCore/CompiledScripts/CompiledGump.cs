@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defName) {
 		}
 
-		protected override string GetName() {
+		protected override string InternalFirstGetDefname() {
 			return this.GetType().Name;
 		}
 
@@ -344,7 +344,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return "compiled gump " + defname;
+			return "compiled gump " + Defname;
 		}
 	}
 

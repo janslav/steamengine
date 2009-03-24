@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			Regions.Map map = ch.GetMap();
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.sizeX, map.sizeY); //0x1B
+			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.SizeX, map.SizeY); //0x1B
 			conn.SendPacketGroup(pg);
 		}
 

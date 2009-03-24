@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		protected override string GetName() {
+		protected override string InternalFirstGetDefname() {
 			return this.GetType().Name;
 		}
 
@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts {
 			private CodeMemberMethod GenerateGetNameMethod() {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Family | MemberAttributes.Override;
-				retVal.Name = "GetName";
+				retVal.Name = "InternalFirstGetDefname";
 				retVal.ReturnType = new CodeTypeReference(typeof(string));
 
 				retVal.Statements.Add(
@@ -211,7 +211,7 @@ namespace SteamEngine.CompiledScripts {
 		private static Dictionary<string, GroundTileType> byName = new Dictionary<string, GroundTileType>(StringComparer.OrdinalIgnoreCase);
 
 		protected GroundTileType() {
-			byName[this.defname] = this;
+			byName[this.Defname] = this;
 		}
 
 		public static new GroundTileType Get(string name) {

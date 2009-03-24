@@ -227,10 +227,10 @@ namespace SteamEngine.CompiledScripts {
 						this.SendObjectPacket(now, conn, tp);
 					}
 				} else {
-					ushort bigRectMinX = Math.Min(oldRect.minX, newRect.minX);
-					ushort bigRectMinY = Math.Min(oldRect.minY, newRect.minY);
-					ushort bigRectMaxX = Math.Max(oldRect.maxX, newRect.maxX);
-					ushort bigRectMaxY = Math.Max(oldRect.maxY, newRect.maxY);
+					int bigRectMinX = Math.Min(oldRect.MinX, newRect.MinX);
+					int bigRectMinY = Math.Min(oldRect.MinY, newRect.MinY);
+					int bigRectMaxX = Math.Max(oldRect.MaxX, newRect.MaxX);
+					int bigRectMaxY = Math.Max(oldRect.MaxY, newRect.MaxY);
 					ImmutableRectangle bigRect = new ImmutableRectangle(bigRectMinX, bigRectMinY, bigRectMaxX, bigRectMaxY);
 
 					TimeSpan sinceLastRefresh = now - this.lastRefreshAt;

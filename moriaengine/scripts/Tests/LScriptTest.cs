@@ -272,9 +272,9 @@ namespace SteamEngine.LScript {
 
 
 	public class LScriptTesterIPoint4D : IPoint4D {
-		public ushort X { get { return 0; } }
-		public ushort Y { get { return 0; } }
-		public sbyte Z { get { return 0; } }
+		public int X { get { return 0; } }
+		public int Y { get { return 0; } }
+		public int Z { get { return 0; } }
 		public byte M { get { return 0; } }
 
 		public IEnumerable ThingsInRange() { return null; }

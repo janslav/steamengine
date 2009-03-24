@@ -192,19 +192,19 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 
-			ushort IPoint2D.X {
+			int IPoint2D.X {
 				get {
 					return (ushort) x;
 				}
 			}
 
-			ushort IPoint2D.Y {
+			int IPoint2D.Y {
 				get {
 					return (ushort) y;
 				}
 			}
 
-			sbyte IPoint3D.Z {
+			int IPoint3D.Z {
 				get {
 					return (sbyte) z;
 				}

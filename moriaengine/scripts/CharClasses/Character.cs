@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public CharModelInfo CharModelInfo {
 			get {
-				ushort model = this.Model;
+				int model = this.Model;
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
 					this.charModelInfo = CharModelInfo.Get(model);
 				}
@@ -1084,11 +1084,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static TagKey oColorTK = TagKey.Get("_ocolor_");
-		public ushort OColor {
+		public int OColor {
 			get {
 				object o = this.GetTag(oColorTK);
 				if (o != null) {
-					return Convert.ToUInt16(o);
+					return Convert.ToInt32(o);
 				}
 				return this.Color;
 			}
@@ -1102,11 +1102,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static TagKey oModelTK = TagKey.Get("_omodel_");
-		public ushort OModel {
+		public int OModel {
 			get {
 				object o = this.GetTag(oModelTK);
 				if (o != null) {
-					return Convert.ToUInt16(o);
+					return Convert.ToInt32(o);
 				}
 				return this.Model;
 			}
@@ -1147,19 +1147,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Go(Point2D pnt) {
-			P(pnt.x, pnt.y);
+			P(pnt.X, pnt.Y);
 			Fix();
 			//Update();
 		}
 
 		public void Go(Point3D pnt) {
-			P(pnt.x, pnt.y, pnt.z);
+			P(pnt.X, pnt.Y, pnt.z);
 			Fix();
 			//Update();
 		}
 
 		public void Go(Point4D pnt) {
-			P(pnt.x, pnt.y, pnt.z, pnt.m);
+			P(pnt.X, pnt.Y, pnt.z, pnt.m);
 			Fix();
 			//Update();
 		}
@@ -1222,7 +1222,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override sealed AbstractItem NewItem(IThingFactory arg, uint amount) {
+		public override sealed AbstractItem NewItem(IThingFactory arg, int amount) {
 			return Backpack.NewItem(arg, amount);
 		}
 
@@ -1263,7 +1263,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
 			foreach (Skill s in Skills) {
 				string defsKey = AbstractSkillDef.ById(s.Id).Key;
-				ushort realValue = s.RealValue;
+				int realValue = s.RealValue;
 				if (realValue != 0) {
 					output.WriteValue(defsKey, realValue);
 				}
@@ -1457,7 +1457,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
-		public override ushort GetSkill(int id) {
+		public override int GetSkill(int id) {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
 				return skl.RealValue;
@@ -1466,7 +1466,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ushort GetSkill(SkillName id) {
+		public int GetSkill(SkillName id) {
 			return this.GetSkill((int) id);
 		}
 
@@ -1491,7 +1491,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TriggerKey skillChangeTK = TriggerKey.Get("skillChange");
 		public void Trigger_SkillChange(Skill skill, ushort oldValue) {
-			ushort newValue = skill.RealValue;
+			int newValue = skill.RealValue;
 			ScriptArgs sa = new ScriptArgs(skill.Id, oldValue, newValue, skill);
 			this.TryTrigger(skillChangeTK, sa);
 			On_SkillChange(skill, oldValue);
@@ -2286,7 +2286,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public CharModelInfo CharModelInfo {
 			get {
-				ushort model = this.Model;
+				int model = this.Model;
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
 					this.charModelInfo = CharModelInfo.Get(model);
 				}

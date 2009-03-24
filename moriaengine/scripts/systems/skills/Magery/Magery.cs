@@ -238,7 +238,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void Fizzle(Character self) {
 			EffectFactory.StationaryEffect(self, 0x3735, 6, 30);
-			self.Sound(0x5C);
+			self.Sound((int) SoundNames.Fizzle);
 			self.ClilocMessage(502632); // The spell fizzles.
 		}
 	}

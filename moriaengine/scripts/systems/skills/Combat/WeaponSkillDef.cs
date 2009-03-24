@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 								break;
 							//else arrow disappears
 						}
-						uint amount = projectile.Amount;
+						int amount = projectile.Amount;
 						if (amount < 2) {
 							projectile.Delete();
 						} else {

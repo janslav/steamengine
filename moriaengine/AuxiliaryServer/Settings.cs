@@ -9,7 +9,7 @@ using SteamEngine.Common;
 namespace SteamEngine.AuxiliaryServer {
 	public static class Settings {
 		private static readonly string logPath;
-		private static readonly sbyte timeZone;
+		private static readonly int timeZone;
 		private static readonly IPEndPoint loginServerEndpoint;
 		private static readonly IPEndPoint consoleServerEndpoint;
 
@@ -20,8 +20,7 @@ namespace SteamEngine.AuxiliaryServer {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const string iniFileName = "steamaux.ini";
 
-		[CLSCompliant(false)]
-		public static sbyte TimeZone {
+		public static int TimeZone {
 			get { return Settings.timeZone; }
 		}
 
@@ -156,7 +155,7 @@ namespace SteamEngine.AuxiliaryServer {
 		private int number;
 		private readonly string iniPath;
 		private readonly string name;
-		private readonly ushort port;
+		private readonly int port;
 
 		internal GameServerInstanceSettings(string iniPath) {
 			this.number = Settings.KnownGameServersList.Count;
@@ -177,7 +176,7 @@ namespace SteamEngine.AuxiliaryServer {
 			section.SetValue<string>("iniPath", this.iniPath, "path to steamengine.ini of this instance");
 		}
 
-		private static void ReadGameIni(string iniPath, out string name, out ushort port) {
+		private static void ReadGameIni(string iniPath, out string name, out int port) {
 			IniFile gameIni;
 
 			iniPath = Path.Combine(iniPath, "steamengine.ini");
@@ -188,7 +187,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			name = gameIni.GetSection("setup").GetValue<string>("name");
-			port = gameIni.GetSection("ports").GetValue<ushort>("game");
+			port = gameIni.GetSection("ports").GetValue<int>("game");
 		}
 
 		public int Number {
@@ -212,8 +211,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 		}
 
-		[CLSCompliant(false)]
-		public ushort Port {
+		public int Port {
 			get {
 				return this.port;
 			}

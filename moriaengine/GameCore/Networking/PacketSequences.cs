@@ -58,7 +58,7 @@ namespace SteamEngine.Networking {
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
 			Regions.Map map = ch.GetMap();
-			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.sizeX, map.sizeY); //0x1B
+			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.SizeX, map.SizeY); //0x1B
 
 			//pg.AcquirePacket<SetFacetOutPacket>().Prepare(map.Facet);//0xBF 0x08
 			//conn.SendPacketGroup(pg);
@@ -155,6 +155,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public static void SendRemoveFromView(TCPConnection<GameState> conn, uint flaggedUid) {
 			DeleteObjectOutPacket packet = Pool<DeleteObjectOutPacket>.Acquire();
 			packet.Prepare(flaggedUid);
@@ -191,7 +192,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 				args - Additional arguments needed for the cliloc message, if any.
 		*/
-		public static void SendClilocSysMessage(TCPConnection<GameState> c, uint msg, int color, string args) {
+		public static void SendClilocSysMessage(TCPConnection<GameState> c, int msg, int color, string args) {
 			if (c != null) {
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(null, msg, "System", SpeechType.Speech, 3, color, args);
@@ -208,7 +209,7 @@ namespace SteamEngine.Networking {
 				color - The color of the message.
 				args - Additional arguments needed for the cliloc message, if any.
 		*/
-		public static void SendClilocSysMessage(TCPConnection<GameState> c, uint msg, int color, params string[] args) {
+		public static void SendClilocSysMessage(TCPConnection<GameState> c, int msg, int color, params string[] args) {
 			if (c != null) {
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(null, msg, "System", SpeechType.Speech, 3, color, string.Join("\t", args));
@@ -263,8 +264,7 @@ namespace SteamEngine.Networking {
 				msg - What to send (A cliloc #).
 				color - The color of the message.
 		*/
-
-		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string args) {
+		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, int msg, int color, string args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -284,8 +284,7 @@ namespace SteamEngine.Networking {
 				msg - What to send (A cliloc #).
 				color - The color of the message.
 		*/
-
-		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string arg1, string arg2) {
+		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, int msg, int color, string arg1, string arg2) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -305,8 +304,7 @@ namespace SteamEngine.Networking {
 				msg - What to send (A cliloc #).
 				color - The color of the message.
 		*/
-
-		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, params string[] args) {
+		public static void SendClilocNameFrom(TCPConnection<GameState> c, Thing from, int msg, int color, params string[] args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -315,7 +313,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string args) {
+		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, int msg, int color, string args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -323,7 +321,8 @@ namespace SteamEngine.Networking {
 				c.SendSinglePacket(packet);
 			}
 		}
-		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, string arg1, string arg2) {
+
+		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, int msg, int color, string arg1, string arg2) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -332,7 +331,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, uint msg, int color, params string[] args) {
+		public static void SendClilocMessageFrom(TCPConnection<GameState> c, Thing from, int msg, int color, params string[] args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
@@ -493,7 +492,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendSound(IPoint4D top, ushort soundId, int range) {
+		public static void SendSound(IPoint4D top, int soundId, int range) {
 			PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
 			p.Prepare(top, soundId);
 			GameServer.SendToClientsInRange(top, range, p);

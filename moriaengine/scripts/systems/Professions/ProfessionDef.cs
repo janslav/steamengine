@@ -314,115 +314,115 @@ namespace SteamEngine.CompiledScripts {
 			skillSum = InitField_Typed("skillSum", 0, typeof(int));
 			statSum = InitField_Typed("statSum", 0, typeof(int));
 			//max skills
-			maxAlchemy = InitField_Typed("maxAlchemy", 1000, typeof(ushort));
-			maxAnatomy = InitField_Typed("maxAnatomy", 1000, typeof(ushort));
-			maxAnimalLore = InitField_Typed("maxAnimalLore", 1000, typeof(ushort));
-			maxItemID = InitField_Typed("maxItemID", 1000, typeof(ushort));
-			maxArmsLore = InitField_Typed("maxArmsLore", 1000, typeof(ushort));
-			maxParry = InitField_Typed("maxParrying", 1000, typeof(ushort));
-			maxBegging = InitField_Typed("maxBegging", 1000, typeof(ushort));
-			maxBlacksmith = InitField_Typed("maxBlacksmithing", 1000, typeof(ushort));
-			maxFletching = InitField_Typed("maxBowcraft", 1000, typeof(ushort));
-			maxPeacemaking = InitField_Typed("maxPeacemaking", 1000, typeof(ushort));
-			maxCamping = InitField_Typed("maxCamping", 1000, typeof(ushort));
-			maxCarpentry = InitField_Typed("maxCarpentry", 1000, typeof(ushort));
-			maxCartography = InitField_Typed("maxCartography", 1000, typeof(ushort));
-			maxCooking = InitField_Typed("maxCooking", 1000, typeof(ushort));
-			maxDetectHidden = InitField_Typed("maxDetectingHidden", 1000, typeof(ushort));
-			maxDiscordance = InitField_Typed("maxDiscordance", 1000, typeof(ushort));
-			maxEvalInt = InitField_Typed("maxEI", 1000, typeof(ushort));
-			maxHealing = InitField_Typed("maxHealing", 1000, typeof(ushort));
-			maxFishing = InitField_Typed("maxFishing", 1000, typeof(ushort));
-			maxForensics = InitField_Typed("maxForensics", 1000, typeof(ushort));
-			maxHerding = InitField_Typed("maxHerding", 1000, typeof(ushort));
-			maxHiding = InitField_Typed("maxHiding", 1000, typeof(ushort));
-			maxProvocation = InitField_Typed("maxProvocation", 1000, typeof(ushort));
-			maxInscribe = InitField_Typed("maxInscription", 1000, typeof(ushort));
-			maxLockpicking = InitField_Typed("maxLockpicking", 1000, typeof(ushort));
-			maxMagery = InitField_Typed("maxMagery", 1000, typeof(ushort));
-			maxMagicResist = InitField_Typed("maxResist", 1000, typeof(ushort));
-			maxTactics = InitField_Typed("maxTactics", 1000, typeof(ushort));
-			maxSnooping = InitField_Typed("maxSnooping", 1000, typeof(ushort));
-			maxMusicianship = InitField_Typed("maxMusicianship", 1000, typeof(ushort));
-			maxPoisoning = InitField_Typed("maxPoisoning", 1000, typeof(ushort));
-			maxArchery = InitField_Typed("maxArchery", 1000, typeof(ushort));
-			maxSpiritSpeak = InitField_Typed("maxSpiritSpeak", 1000, typeof(ushort));
-			maxStealing = InitField_Typed("maxStealing", 1000, typeof(ushort));
-			maxTailoring = InitField_Typed("maxTailoring", 1000, typeof(ushort));
-			maxAnimalTaming = InitField_Typed("maxTaming", 1000, typeof(ushort));
-			maxTasteID = InitField_Typed("maxTasteID", 1000, typeof(ushort));
-			maxTinkering = InitField_Typed("maxTinkering", 1000, typeof(ushort));
-			maxTracking = InitField_Typed("maxTracking", 1000, typeof(ushort));
-			maxVeterinary = InitField_Typed("maxVeterinary", 1000, typeof(ushort));
-			maxSwords = InitField_Typed("maxSwordsmanship", 1000, typeof(ushort));
-			maxMacing = InitField_Typed("maxMacefighting", 1000, typeof(ushort));
-			maxFencing = InitField_Typed("maxFencing", 1000, typeof(ushort));
-			maxWrestling = InitField_Typed("maxWrestling", 1000, typeof(ushort));
-			maxLumberjacking = InitField_Typed("maxLumberjacking", 1000, typeof(ushort));
-			maxMining = InitField_Typed("maxMining", 1000, typeof(ushort));
-			maxMeditation = InitField_Typed("maxMeditation", 1000, typeof(ushort));
-			maxStealth = InitField_Typed("maxStealth", 1000, typeof(ushort));
-			maxRemoveTrap = InitField_Typed("maxRemoveTrap", 1000, typeof(ushort));
-			maxNecromancy = InitField_Typed("maxNecromancy", 1000, typeof(ushort));
-			maxMarksmanship = InitField_Typed("maxMarksmanship", 1000, typeof(ushort));
-			maxChivalry = InitField_Typed("maxChivalry", 1000, typeof(ushort));
-			maxBushido = InitField_Typed("maxBushido", 1000, typeof(ushort));
-			maxNinjitsu = InitField_Typed("maxNinjutsu", 1000, typeof(ushort));
+			maxAlchemy = InitField_Typed("maxAlchemy", 1000, typeof(int));
+			maxAnatomy = InitField_Typed("maxAnatomy", 1000, typeof(int));
+			maxAnimalLore = InitField_Typed("maxAnimalLore", 1000, typeof(int));
+			maxItemID = InitField_Typed("maxItemID", 1000, typeof(int));
+			maxArmsLore = InitField_Typed("maxArmsLore", 1000, typeof(int));
+			maxParry = InitField_Typed("maxParrying", 1000, typeof(int));
+			maxBegging = InitField_Typed("maxBegging", 1000, typeof(int));
+			maxBlacksmith = InitField_Typed("maxBlacksmithing", 1000, typeof(int));
+			maxFletching = InitField_Typed("maxBowcraft", 1000, typeof(int));
+			maxPeacemaking = InitField_Typed("maxPeacemaking", 1000, typeof(int));
+			maxCamping = InitField_Typed("maxCamping", 1000, typeof(int));
+			maxCarpentry = InitField_Typed("maxCarpentry", 1000, typeof(int));
+			maxCartography = InitField_Typed("maxCartography", 1000, typeof(int));
+			maxCooking = InitField_Typed("maxCooking", 1000, typeof(int));
+			maxDetectHidden = InitField_Typed("maxDetectingHidden", 1000, typeof(int));
+			maxDiscordance = InitField_Typed("maxDiscordance", 1000, typeof(int));
+			maxEvalInt = InitField_Typed("maxEI", 1000, typeof(int));
+			maxHealing = InitField_Typed("maxHealing", 1000, typeof(int));
+			maxFishing = InitField_Typed("maxFishing", 1000, typeof(int));
+			maxForensics = InitField_Typed("maxForensics", 1000, typeof(int));
+			maxHerding = InitField_Typed("maxHerding", 1000, typeof(int));
+			maxHiding = InitField_Typed("maxHiding", 1000, typeof(int));
+			maxProvocation = InitField_Typed("maxProvocation", 1000, typeof(int));
+			maxInscribe = InitField_Typed("maxInscription", 1000, typeof(int));
+			maxLockpicking = InitField_Typed("maxLockpicking", 1000, typeof(int));
+			maxMagery = InitField_Typed("maxMagery", 1000, typeof(int));
+			maxMagicResist = InitField_Typed("maxResist", 1000, typeof(int));
+			maxTactics = InitField_Typed("maxTactics", 1000, typeof(int));
+			maxSnooping = InitField_Typed("maxSnooping", 1000, typeof(int));
+			maxMusicianship = InitField_Typed("maxMusicianship", 1000, typeof(int));
+			maxPoisoning = InitField_Typed("maxPoisoning", 1000, typeof(int));
+			maxArchery = InitField_Typed("maxArchery", 1000, typeof(int));
+			maxSpiritSpeak = InitField_Typed("maxSpiritSpeak", 1000, typeof(int));
+			maxStealing = InitField_Typed("maxStealing", 1000, typeof(int));
+			maxTailoring = InitField_Typed("maxTailoring", 1000, typeof(int));
+			maxAnimalTaming = InitField_Typed("maxTaming", 1000, typeof(int));
+			maxTasteID = InitField_Typed("maxTasteID", 1000, typeof(int));
+			maxTinkering = InitField_Typed("maxTinkering", 1000, typeof(int));
+			maxTracking = InitField_Typed("maxTracking", 1000, typeof(int));
+			maxVeterinary = InitField_Typed("maxVeterinary", 1000, typeof(int));
+			maxSwords = InitField_Typed("maxSwordsmanship", 1000, typeof(int));
+			maxMacing = InitField_Typed("maxMacefighting", 1000, typeof(int));
+			maxFencing = InitField_Typed("maxFencing", 1000, typeof(int));
+			maxWrestling = InitField_Typed("maxWrestling", 1000, typeof(int));
+			maxLumberjacking = InitField_Typed("maxLumberjacking", 1000, typeof(int));
+			maxMining = InitField_Typed("maxMining", 1000, typeof(int));
+			maxMeditation = InitField_Typed("maxMeditation", 1000, typeof(int));
+			maxStealth = InitField_Typed("maxStealth", 1000, typeof(int));
+			maxRemoveTrap = InitField_Typed("maxRemoveTrap", 1000, typeof(int));
+			maxNecromancy = InitField_Typed("maxNecromancy", 1000, typeof(int));
+			maxMarksmanship = InitField_Typed("maxMarksmanship", 1000, typeof(int));
+			maxChivalry = InitField_Typed("maxChivalry", 1000, typeof(int));
+			maxBushido = InitField_Typed("maxBushido", 1000, typeof(int));
+			maxNinjitsu = InitField_Typed("maxNinjutsu", 1000, typeof(int));
 			//basic skills
-			basicAlchemy = InitField_Typed("basicAlchemy", 1000, typeof(ushort));
-			basicAnatomy = InitField_Typed("basicAnatomy", 1000, typeof(ushort));
-			basicAnimalLore = InitField_Typed("basicAnimalLore", 1000, typeof(ushort));
-			basicItemID = InitField_Typed("basicItemID", 1000, typeof(ushort));
-			basicArmsLore = InitField_Typed("basicArmsLore", 1000, typeof(ushort));
-			basicParry = InitField_Typed("basicParrying", 1000, typeof(ushort));
-			basicBegging = InitField_Typed("basicBegging", 1000, typeof(ushort));
-			basicBlacksmith = InitField_Typed("basicBlacksmithing", 1000, typeof(ushort));
-			basicFletching = InitField_Typed("basicBowcraft", 1000, typeof(ushort));
-			basicPeacemaking = InitField_Typed("basicPeacemaking", 1000, typeof(ushort));
-			basicCamping = InitField_Typed("basicCamping", 1000, typeof(ushort));
-			basicCarpentry = InitField_Typed("basicCarpentry", 1000, typeof(ushort));
-			basicCartography = InitField_Typed("basicCartography", 1000, typeof(ushort));
-			basicCooking = InitField_Typed("basicCooking", 1000, typeof(ushort));
-			basicDetectHidden = InitField_Typed("basicDetectingHidden", 1000, typeof(ushort));
-			basicDiscordance = InitField_Typed("basicDiscordance", 1000, typeof(ushort));
-			basicEvalInt = InitField_Typed("basicEI", 1000, typeof(ushort));
-			basicHealing = InitField_Typed("basicHealing", 1000, typeof(ushort));
-			basicFishing = InitField_Typed("basicFishing", 1000, typeof(ushort));
-			basicForensics = InitField_Typed("basicForensics", 1000, typeof(ushort));
-			basicHerding = InitField_Typed("basicHerding", 1000, typeof(ushort));
-			basicHiding = InitField_Typed("basicHiding", 1000, typeof(ushort));
-			basicProvocation = InitField_Typed("basicProvocation", 1000, typeof(ushort));
-			basicInscribe = InitField_Typed("basicInscription", 1000, typeof(ushort));
-			basicLockpicking = InitField_Typed("basicLockpicking", 1000, typeof(ushort));
-			basicMagery = InitField_Typed("basicMagery", 1000, typeof(ushort));
-			basicMagicResist = InitField_Typed("basicResist", 1000, typeof(ushort));
-			basicTactics = InitField_Typed("basicTactics", 1000, typeof(ushort));
-			basicSnooping = InitField_Typed("basicSnooping", 1000, typeof(ushort));
-			basicMusicianship = InitField_Typed("basicMusicianship", 1000, typeof(ushort));
-			basicPoisoning = InitField_Typed("basicPoisoning", 1000, typeof(ushort));
-			basicArchery = InitField_Typed("basicArchery", 1000, typeof(ushort));
-			basicSpiritSpeak = InitField_Typed("basicSpiritSpeak", 1000, typeof(ushort));
-			basicStealing = InitField_Typed("basicStealing", 1000, typeof(ushort));
-			basicTailoring = InitField_Typed("basicTailoring", 1000, typeof(ushort));
-			basicAnimalTaming = InitField_Typed("basicTaming", 1000, typeof(ushort));
-			basicTasteID = InitField_Typed("basicTasteID", 1000, typeof(ushort));
-			basicTinkering = InitField_Typed("basicTinkering", 1000, typeof(ushort));
-			basicTracking = InitField_Typed("basicTracking", 1000, typeof(ushort));
-			basicVeterinary = InitField_Typed("basicVeterinary", 1000, typeof(ushort));
-			basicSwords = InitField_Typed("basicSwordsmanship", 1000, typeof(ushort));
-			basicMacing = InitField_Typed("basicMacefighting", 1000, typeof(ushort));
-			basicFencing = InitField_Typed("basicFencing", 1000, typeof(ushort));
-			basicWrestling = InitField_Typed("basicWrestling", 1000, typeof(ushort));
-			basicLumberjacking = InitField_Typed("basicLumberjacking", 1000, typeof(ushort));
-			basicMining = InitField_Typed("basicMining", 1000, typeof(ushort));
-			basicMeditation = InitField_Typed("basicMeditation", 1000, typeof(ushort));
-			basicStealth = InitField_Typed("basicStealth", 1000, typeof(ushort));
-			basicRemoveTrap = InitField_Typed("basicRemoveTrap", 1000, typeof(ushort));
-			basicNecromancy = InitField_Typed("basicNecromancy", 1000, typeof(ushort));
-			basicMarksmanship = InitField_Typed("basicMarksmanship", 1000, typeof(ushort));
-			basicChivalry = InitField_Typed("basicChivalry", 1000, typeof(ushort));
-			basicBushido = InitField_Typed("basicBushido", 1000, typeof(ushort));
-			basicNinjitsu = InitField_Typed("basicNinjutsu", 1000, typeof(ushort));
+			basicAlchemy = InitField_Typed("basicAlchemy", 1000, typeof(int));
+			basicAnatomy = InitField_Typed("basicAnatomy", 1000, typeof(int));
+			basicAnimalLore = InitField_Typed("basicAnimalLore", 1000, typeof(int));
+			basicItemID = InitField_Typed("basicItemID", 1000, typeof(int));
+			basicArmsLore = InitField_Typed("basicArmsLore", 1000, typeof(int));
+			basicParry = InitField_Typed("basicParrying", 1000, typeof(int));
+			basicBegging = InitField_Typed("basicBegging", 1000, typeof(int));
+			basicBlacksmith = InitField_Typed("basicBlacksmithing", 1000, typeof(int));
+			basicFletching = InitField_Typed("basicBowcraft", 1000, typeof(int));
+			basicPeacemaking = InitField_Typed("basicPeacemaking", 1000, typeof(int));
+			basicCamping = InitField_Typed("basicCamping", 1000, typeof(int));
+			basicCarpentry = InitField_Typed("basicCarpentry", 1000, typeof(int));
+			basicCartography = InitField_Typed("basicCartography", 1000, typeof(int));
+			basicCooking = InitField_Typed("basicCooking", 1000, typeof(int));
+			basicDetectHidden = InitField_Typed("basicDetectingHidden", 1000, typeof(int));
+			basicDiscordance = InitField_Typed("basicDiscordance", 1000, typeof(int));
+			basicEvalInt = InitField_Typed("basicEI", 1000, typeof(int));
+			basicHealing = InitField_Typed("basicHealing", 1000, typeof(int));
+			basicFishing = InitField_Typed("basicFishing", 1000, typeof(int));
+			basicForensics = InitField_Typed("basicForensics", 1000, typeof(int));
+			basicHerding = InitField_Typed("basicHerding", 1000, typeof(int));
+			basicHiding = InitField_Typed("basicHiding", 1000, typeof(int));
+			basicProvocation = InitField_Typed("basicProvocation", 1000, typeof(int));
+			basicInscribe = InitField_Typed("basicInscription", 1000, typeof(int));
+			basicLockpicking = InitField_Typed("basicLockpicking", 1000, typeof(int));
+			basicMagery = InitField_Typed("basicMagery", 1000, typeof(int));
+			basicMagicResist = InitField_Typed("basicResist", 1000, typeof(int));
+			basicTactics = InitField_Typed("basicTactics", 1000, typeof(int));
+			basicSnooping = InitField_Typed("basicSnooping", 1000, typeof(int));
+			basicMusicianship = InitField_Typed("basicMusicianship", 1000, typeof(int));
+			basicPoisoning = InitField_Typed("basicPoisoning", 1000, typeof(int));
+			basicArchery = InitField_Typed("basicArchery", 1000, typeof(int));
+			basicSpiritSpeak = InitField_Typed("basicSpiritSpeak", 1000, typeof(int));
+			basicStealing = InitField_Typed("basicStealing", 1000, typeof(int));
+			basicTailoring = InitField_Typed("basicTailoring", 1000, typeof(int));
+			basicAnimalTaming = InitField_Typed("basicTaming", 1000, typeof(int));
+			basicTasteID = InitField_Typed("basicTasteID", 1000, typeof(int));
+			basicTinkering = InitField_Typed("basicTinkering", 1000, typeof(int));
+			basicTracking = InitField_Typed("basicTracking", 1000, typeof(int));
+			basicVeterinary = InitField_Typed("basicVeterinary", 1000, typeof(int));
+			basicSwords = InitField_Typed("basicSwordsmanship", 1000, typeof(int));
+			basicMacing = InitField_Typed("basicMacefighting", 1000, typeof(int));
+			basicFencing = InitField_Typed("basicFencing", 1000, typeof(int));
+			basicWrestling = InitField_Typed("basicWrestling", 1000, typeof(int));
+			basicLumberjacking = InitField_Typed("basicLumberjacking", 1000, typeof(int));
+			basicMining = InitField_Typed("basicMining", 1000, typeof(int));
+			basicMeditation = InitField_Typed("basicMeditation", 1000, typeof(int));
+			basicStealth = InitField_Typed("basicStealth", 1000, typeof(int));
+			basicRemoveTrap = InitField_Typed("basicRemoveTrap", 1000, typeof(int));
+			basicNecromancy = InitField_Typed("basicNecromancy", 1000, typeof(int));
+			basicMarksmanship = InitField_Typed("basicMarksmanship", 1000, typeof(int));
+			basicChivalry = InitField_Typed("basicChivalry", 1000, typeof(int));
+			basicBushido = InitField_Typed("basicBushido", 1000, typeof(int));
+			basicNinjitsu = InitField_Typed("basicNinjutsu", 1000, typeof(int));
 
 			//now prepare the array with skills indexed by numbers in SkillName enumeration
 			maxSkills = new FieldValue[] {maxAlchemy,maxAnatomy,maxAnimalLore,maxItemID,maxArmsLore,
@@ -494,21 +494,21 @@ namespace SteamEngine.CompiledScripts {
 
 		#region utilities
 		[Summary("Return the maximal value of the given skill (by name) for this profession")]
-		public ushort MaxSkill(SkillName skillName) {
-			return MaxSkill((ushort) skillName);
+		public int MaxSkill(SkillName skillName) {
+			return this.MaxSkill((int) skillName);
 		}
 		[Summary("Return the maximal value of the given skill (by id) for this profession")]
-		public ushort MaxSkill(ushort skillId) {
-			return (ushort) maxSkills[skillId].CurrentValue;
+		public int MaxSkill(int skillId) {
+			return (int) maxSkills[skillId].CurrentValue;
 		}
 
 		[Summary("Return the basic value of the given skill (by name) for this profession")]
-		public ushort BasicSkill(SkillName skillName) {
-			return BasicSkill((int) skillName);
+		public int BasicSkill(SkillName skillName) {
+			return this.BasicSkill((int) skillName);
 		}
 		[Summary("Return the basic value of the given skill (by id) for this profession")]
-		public ushort BasicSkill(int skillId) {
-			return (ushort) basicSkills[skillId].CurrentValue;
+		public int BasicSkill(int skillId) {
+			return (int) basicSkills[skillId].CurrentValue;
 		}
 
 		[SteamFunction]

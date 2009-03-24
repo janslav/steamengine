@@ -270,10 +270,10 @@ namespace SteamEngine {
 
 	[Summary("Instances of this class store the skill values of each character")]
 	public interface ISkill {
-		ushort RealValue { get; set;}
-		ushort ModifiedValue { get; }
-		ushort Cap { get; set;}
+		int RealValue { get; set;}
+		int ModifiedValue { get; }
+		int Cap { get; set;}
 		SkillLockType Lock { get; set;}
-		ushort Id { get;}
+		int Id { get;}
 	}
 }

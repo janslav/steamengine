@@ -51,7 +51,7 @@ namespace SteamEngine {
 			this.flippable = InitField_Typed("flippable", false, typeof(bool));
 			this.stackable = InitField_Typed("stackable", false, typeof(bool));
 
-			this.dropSound = InitField_Typed("dropSound", 87, typeof(ushort));
+			this.dropSound = InitField_Typed("dropSound", 87, typeof(int));
 		}
 
 		public AbstractItemDef DupeItem {
@@ -92,7 +92,7 @@ namespace SteamEngine {
 			return dupeList;
 		}
 
-		public ushort GetNextFlipModel(ushort curModel) {
+		public int GetNextFlipModel(int curModel) {
 			if (curModel == Model) {
 				if (dupeList != null) {
 					AbstractItemDef dup = dupeList[0];
@@ -168,9 +168,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public ushort DropSound {
+		public int DropSound {
 			get {
-				return (ushort) dropSound.CurrentValue;
+				return (int) dropSound.CurrentValue;
 			}
 			set {
 				dropSound.CurrentValue = value;

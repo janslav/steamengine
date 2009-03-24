@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public string Save(object objToSave) {
 			Point2D p = (Point2D) objToSave;
-			return "(2D)" + p.x + "," + p.y;
+			return "(2D)" + p.X + "," + p.Y;
 		}
 
 		public object Load(Match match) {
@@ -87,9 +87,9 @@ namespace SteamEngine.CompiledScripts {
 		public string Save(object objToSave) {
 			Point3D p = (Point3D) objToSave;
 			if (p.z == 0) {
-				return "(3D)" + p.x + "," + p.y;
+				return "(3D)" + p.X + "," + p.Y;
 			} else {
-				return "(3D)" + p.x + "," + p.y + "," + p.z;
+				return "(3D)" + p.X + "," + p.Y + "," + p.z;
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				mzPart = "," + p.z + "," + p.m;
 			}
-			return "(4D)" + p.x + "," + p.y + mzPart; ;
+			return "(4D)" + p.X + "," + p.Y + mzPart; ;
 		}
 
 		public object Load(Match match) {

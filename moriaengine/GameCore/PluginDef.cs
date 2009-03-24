@@ -155,7 +155,7 @@ namespace SteamEngine {
 				throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
 			}
 
-			pluginDef.defname = defname;
+			pluginDef.Defname = defname;
 			byDefname[defname] = pluginDef;
 
 			//header done. now we have the def instantiated.

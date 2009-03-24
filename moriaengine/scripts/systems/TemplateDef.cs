@@ -204,7 +204,7 @@ namespace SteamEngine.CompiledScripts {
 			return Create(p.X, p.Y, p.Z, p.M);
 		}
 
-		public Thing Create(ushort x, ushort y, sbyte z, byte m) {
+		public Thing Create(int x, int y, int z, byte m) {
 			ThrowIfUnloaded();
 			ItemDef contDef = this.Container;
 			if (contDef == null) {

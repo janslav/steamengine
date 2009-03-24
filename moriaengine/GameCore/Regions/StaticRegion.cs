@@ -33,6 +33,8 @@ namespace SteamEngine.Regions {
 		private static Dictionary<string, StaticRegion> byDefname;
 		private static int highestHierarchyIndex = -1;
 
+		private string name = ""; //this is typically not unique, containing spaces etc.
+
 		static StaticRegion() {
 			ClearAll();
 		}
@@ -57,7 +59,7 @@ namespace SteamEngine.Regions {
 			worldRegion = voidRegion;
 			highestHierarchyIndex = -1;
 
-			voidRegion.defname = "";
+			voidRegion.Defname = "";
 			voidRegion.name = "void";
 		}
 
@@ -83,8 +85,8 @@ namespace SteamEngine.Regions {
 			string defName = input.headerName;
 
 			if (!byDefname.ContainsKey(defName)) {
-				byDefname[defName] = this;
-				this.defname = defName;
+				//byDefname[defName] = this;
+				this.Defname = defName;
 			} else {
 				throw new OverrideNotAllowedException("Region " + LogStr.Ident(defName) + " loaded multiple times.");
 			}
@@ -172,30 +174,53 @@ namespace SteamEngine.Regions {
 			}
 		}
 
+		public override void Save(SaveStream output) {
+			if (!string.IsNullOrEmpty(this.name)) {
+				output.WriteValue("name", this.name);
+			}
+			base.Save(output);
+		}
+
+		public override void LoadLine(string filename, int line, string valueName, string valueString) {
+			switch (valueName) {
+				case "name":
+					Match ma = ConvertTools.stringRE.Match(valueString);
+					if (ma.Success) {
+						this.name = String.Intern(ma.Groups["value"].Value);
+					} else {
+						this.name = String.Intern(valueString);
+					}
+					break;
+				default:
+					base.LoadLine(filename, line, valueName, valueString);
+					break;
+			}
+		}
+
 		private int SetHierarchyIndex(ICollection<StaticRegion> tempList) {
-			if (parent == null) {
+			if (Parent == null) {
 				if (IsWorldRegion) {
-					hierarchyIndex = 0;
+					HierarchyIndex = 0;
 					tempList.Remove(this);
 					return 0;
 				} else {
 					throw new SEException("Region " + this + " has no parent region set");
 				}
-			} else if (!this.HasSameMapplane(parent)) {
-				throw new SEException("Region " + this + " has as parent set " + parent + ", which is on another mapplane.");
+			} else if (!this.HasSameMapplane(Parent)) {
+				throw new SEException("Region " + this + " has as parent set " + Parent + ", which is on another mapplane.");
 			} else {
-				int parentIndex = ((StaticRegion) parent).SetHierarchyIndex(tempList);
-				hierarchyIndex = parentIndex + 1;
-				highestHierarchyIndex = Math.Max(highestHierarchyIndex, hierarchyIndex);
+				int parentIndex = ((StaticRegion) Parent).SetHierarchyIndex(tempList);
+				HierarchyIndex = parentIndex + 1;
+				highestHierarchyIndex = Math.Max(highestHierarchyIndex, HierarchyIndex);
 				tempList.Remove(this);
-				return hierarchyIndex;
+				return HierarchyIndex;
 			}
 		}
 
 		[Save]
 		public void SaveWithHeader(SaveStream output) {
 			ThrowIfDeleted();
-			output.WriteSection(this.GetType().Name, this.defname);
+			output.WriteSection(this.GetType().Name, this.Defname);
 			this.Save(output);
 			output.WriteLine();
 		}
@@ -273,14 +298,14 @@ namespace SteamEngine.Regions {
 			foreach (StaticRegion region in AllRegions) {
 				//(pri opakovanem reloadu - napr. po editaci regionu uz je worldregion nasetovan
 				//a tudiz by tento kus kodu skoncil tou vyjimkou =>uprava pred vyjimkou
-				if (region.parent == null) {
+				if (region.Parent == null) {
 					if (worldRegion == voidRegion) {
 						worldRegion = region; //world region jeste neni nastaven - prave jsme ho nasli
 					} else {
 						//world region je nastaven a ten co zkoumame nema parenta - neni to naohdou worldregion?
 						if (!region.IsWorldRegion) {
 							//neni a nema parenta -> chyba!
-							throw new SEException("Parent missing for the region " + LogStr.Ident(region.defname));
+							throw new SEException("Parent missing for the region " + LogStr.Ident(region.Defname));
 						}
 					}
 				}
@@ -380,7 +405,7 @@ namespace SteamEngine.Regions {
 			for (int i = 0, n = rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = rectangles[i];
 				if (!other.ContainsRectangle(rect)) {
-					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " should be contained within region " + LogStr.Ident(other.defname) + ", but is not.");
+					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(Defname) + " should be contained within region " + LogStr.Ident(other.Defname) + ", but is not.");
 					retState = false; //problem
 				}
 			}
@@ -392,7 +417,7 @@ namespace SteamEngine.Regions {
 			for (int i = 0, n = rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = rectangles[i];
 				if (other.ContainsRectanglePartly(rect)) {
-					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(defname) + " overlaps with " + LogStr.Ident(other.defname) + ", but should not.");
+					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(Defname) + " overlaps with " + LogStr.Ident(other.Defname) + ", but should not.");
 					retState = false; //problem
 				}
 			}
@@ -414,15 +439,15 @@ namespace SteamEngine.Regions {
 
 		private bool CheckConflictsAndWarn() {
 			bool retState = true;
-			if (parent != null) {
-				if (!CheckHasAllRectanglesIn((StaticRegion) parent)) {
+			if (Parent != null) {
+				if (!CheckHasAllRectanglesIn((StaticRegion) Parent)) {
 					retState = false; //problem
 				}
 			}
 			foreach (StaticRegion other in byDefname.Values) {
 				//Console.WriteLine("CheckConflictsAndWarn for "+this+" and "+other);
 				if ((other != this) && this.HasSameMapplane(other)) {
-					if (other.hierarchyIndex == this.hierarchyIndex) {
+					if (other.HierarchyIndex == this.HierarchyIndex) {
 						//Console.WriteLine("CheckConflictsAndWarn in progress");
 						if (!this.CheckHasNoRectanglesIn(other)) {
 							retState = false; //problem
@@ -492,32 +517,25 @@ namespace SteamEngine.Regions {
 				ThrowIfDeleted();
 				byName.Remove(name);
 				name = String.Intern(value);
-				byName[value] = this;
+				if (this != voidRegion) {
+					byName[value] = this;
+				}
 			}
 		}
 
-		public new string Defname {
+		public override string Defname {
 			get {
-				return defname;
+				return base.Defname;
 			}
 			protected set {
 				//toto se bude volat jen pri skriptovem zakladani noveho regionu
 				//tam bude osetreno ze podobny defname neexistuje atd...
-				ThrowIfDeleted();
-				defname = String.Intern(value);
-				byDefname[value] = this;
-			}
-		}
-
-		public new Region Parent {
-			get {
-				return parent;
-			}
-			protected set {
-				//toto se bude volat jen pri skriptovem zakladani noveho regionu
-				//tam bude osetreno ze podobny defname neexistuje atd...
-				ThrowIfDeleted();
-				parent = value;
+				this.ThrowIfDeleted();
+				value = String.Intern(value);
+				base.Defname = value;
+				if (this != voidRegion) {
+					byDefname[value] = this;
+				}
 			}
 		}
 
@@ -541,14 +559,14 @@ namespace SteamEngine.Regions {
 			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations			
 			try {
 				foreach (StaticRegion child in children) {
-					child.parent = this.parent; //reset parents!
+					child.Parent = this.Parent; //reset parents!
 					if (child is StaticRegion) {
 						//if child is StaticRegion), make it activable - we dont care for DynamicRegions etc				
 						((StaticRegion) child).canBeActivated = true;
 					}
 				}
 				byName.Remove(this.name); //remove it from the byNames dict
-				byDefname.Remove(this.defname);//and from the byDefnames dict this means that the region is now completely removed
+				byDefname.Remove(this.Defname);//and from the byDefnames dict this means that the region is now completely removed
 			} finally {
 				StaticRegion.ActivateAll();//all OK
 			}

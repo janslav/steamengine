@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override AbstractItem NewItem(IThingFactory factory, uint amount) {
+		public override AbstractItem NewItem(IThingFactory factory, int amount) {
 			Thing t = factory.Create(this);
 			AbstractItem i = t as AbstractItem;
 			if (i != null) {

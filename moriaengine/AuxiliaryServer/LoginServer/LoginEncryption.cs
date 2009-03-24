@@ -59,8 +59,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				for (int i = 0, n = LoginKey.loginKeys.Length; i < n; i++) {
 					table1 = orgTable1;
 					table2 = orgTable2;
-					key1 = LoginKey.loginKeys[i].Key1;
-					key2 = LoginKey.loginKeys[i].Key2;
+					key1 = (uint) LoginKey.loginKeys[i].Key1;
+					key2 = (uint) LoginKey.loginKeys[i].Key2;
 
 
 					this.Decrypt(buffer, 4, bytes, 0, length - 4);
@@ -70,8 +70,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 						// Reestablish our current state
 						table1 = orgTable1;
 						table2 = orgTable2;
-						key1 = LoginKey.loginKeys[i].Key1;
-						key2 = LoginKey.loginKeys[i].Key2;
+						key1 = (uint) LoginKey.loginKeys[i].Key1;
+						key2 = (uint) LoginKey.loginKeys[i].Key2;
 						name = LoginKey.loginKeys[i].Name;
 						return true;
 					}

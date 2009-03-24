@@ -29,40 +29,51 @@ namespace SteamEngine.Regions {
 		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		protected string defname; //protected, we will make use of it in StaticRegion loading part...
-		protected Point4D p; //spawnpoint
-		protected string name; //this is typically not unique, containing spaces etc.
+		private string defname; //protected, we will make use of it in StaticRegion loading part...
+		private Point4D p = new Point4D(0, 0, 0, 0); //spawnpoint
 
 		internal IList<RegionRectangle> rectangles = new List<RegionRectangle>();
-		protected Region parent;
-		protected byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
-		protected bool mapplaneIsSet;
-		protected int hierarchyIndex = -1;
-		protected DateTime createdAt = DateTime.Now;
+		private Region parent;
+		private byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
+		private bool mapplaneIsSet;
+		private int hierarchyIndex = -1;
+		private TimeSpan createdAt = Globals.TimeAsSpan;
 
+
+		protected bool inactivated;
+		//this will be set to false when the region is going to be edited
+		//after succesful editing (changing of P or changing rectnagles) it will be then reset to true
+		//without this, the region won't be activated (Error will occur)
+		protected bool canBeActivated = true;
 
 
 		//private readonly static Type[] constructorTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
 		public Region()
 			: base() {
-			this.p = new Point4D(0, 0, 0, 0); //spawnpoint
-			this.name = ""; //this is typically not unique, containing spaces etc.
-			this.inactivated = false; //defaultly is activated
+
 		}
 
 		public Region Parent {
 			get {
-				return parent;
+				return this.parent;
+			}
+			protected set {
+				//toto se bude volat jen pri skriptovem zakladani noveho regionu
+				//tam bude osetreno ze podobny defname neexistuje atd...
+				this.parent = value; 
 			}
 		}
 
-		public string Defname {
+		public virtual string Defname {
 			get {
-				return defname;
+				return this.defname;
+			}
+			protected set {
+				this.defname = value; 
 			}
 		}
 
-		public DateTime CreatedAt {
+		public TimeSpan CreatedAt {
 			get {
 				return createdAt;
 			}
@@ -84,8 +95,9 @@ namespace SteamEngine.Regions {
 
 		public int HierarchyIndex {
 			get {
-				return hierarchyIndex;
+				return this.hierarchyIndex;
 			}
+			internal set { hierarchyIndex = value; }
 		}
 
 		public byte Mapplane {
@@ -107,8 +119,12 @@ namespace SteamEngine.Regions {
 				if (!ContainsPoint((Point2D) value)) {
 					throw new SEException("Spawnpoint " + value.ToString() + " is not contained in the region " + ToString());
 				}
-				p = value;
+				this.p = value;
 			}
+		}
+
+		internal void InternalSetP(Point4D value) {
+			this.p = value;
 		}
 
 		public bool IsChildOf(Region tested) {
@@ -270,7 +286,7 @@ namespace SteamEngine.Regions {
 			if ((item.Cont != null) || (!point.Equals(item))) {
 				Logger.WriteWarning(item + " has been moved in the implementation of one of the @LeaveGround triggers. Don't do this. Putting back.");
 				item.MakeLimbo();
-				item.Trigger_EnterRegion(point.x, point.y, point.z, point.m);
+				item.Trigger_EnterRegion(point.X, point.Y, point.z, point.m);
 			}
 		}
 
@@ -291,7 +307,7 @@ namespace SteamEngine.Regions {
 			return false;
 		}
 
-		public bool ContainsPoint(ushort x, ushort y) {
+		public bool ContainsPoint(int x, int y) {
 			foreach (ImmutableRectangle rect in Rectangles) {
 				if (rect.Contains(x, y)) {
 					return true;
@@ -301,7 +317,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override string ToString() {
-			return GetType().Name + " " + defname;
+			return this.GetType().Name + " " + this.defname;
 		}
 
 		public string HierarchyName {
@@ -358,12 +374,6 @@ namespace SteamEngine.Regions {
 			return false;
 		}
 
-		protected bool inactivated = false;
-		//this will be set to false when the region is going to be edited
-		//after succesful editing (changing of P or changing rectnagles) it will be then reset to true
-		//without this, the region won't be activated (Error will occur)
-		protected bool canBeActivated = true;
-
 		public bool IsInactivated {
 			get {
 				return inactivated;
@@ -412,16 +422,9 @@ namespace SteamEngine.Regions {
 				case "parent":
 					ObjectSaver.Load(valueString, LoadParent_Delayed, filename, line);
 					break;
-				case "name":
-					Match ma = ConvertTools.stringRE.Match(valueString);
-					if (ma.Success) {
-						this.name = String.Intern(ma.Groups["value"].Value);
-					} else {
-						this.name = String.Intern(valueString);
-					}
-					break;
+
 				case "createdat":
-					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(DateTime));
+					this.createdAt = (TimeSpan) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(TimeSpan));
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -439,20 +442,17 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void Save(SaveStream output) {
-			if (!string.IsNullOrEmpty(this.name)) {
-				output.WriteValue("name", name);
-			}
-			output.WriteValue("p", p);
-			output.WriteValue("createdat", createdAt);
+			output.WriteValue("p", this.p);
+			output.WriteValue("createdat", this.createdAt);
 			if (mapplane != 0) {
-				output.WriteValue("mapplane", mapplane);
+				output.WriteValue("mapplane", this.mapplane);
 			}
 			if (parent != null) {
 				output.WriteValue("parent", this.parent);
 			}
 			//RECT=2300,3612,3264,4096
 			foreach (RegionRectangle rect in this.rectangles) {
-				output.WriteLine("rect=" + rect.minX + "," + rect.minY + "," + rect.maxX + "," + rect.maxY);
+				output.WriteLine("rect=" + rect.MinX + "," + rect.MinY + "," + rect.MaxX + "," + rect.MaxY);
 			}
 
 			base.Save(output);
@@ -463,7 +463,7 @@ namespace SteamEngine.Regions {
 		internal static readonly RegionRectangle[] emptyArray = new RegionRectangle[0];
 
 		internal readonly Region region;
-		internal RegionRectangle(ushort minX, ushort minY, ushort maxX, ushort maxY, Region region)
+		internal RegionRectangle(int minX, int minY, int maxX, int maxY, Region region)
 			: base(minX, minY, maxX, maxY) {
 			this.region = region;
 		}
@@ -480,9 +480,9 @@ namespace SteamEngine.Regions {
 
 		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
 				"Returns a new (moved) instance")]
-		internal RegionRectangle Move(int timesX, int timesY) {
-			return new RegionRectangle((ushort) (minX + timesX), (ushort) (minY + timesY),
-									   (ushort) (maxX + timesX), (ushort) (maxY + timesY), region);
+		internal RegionRectangle CloneMoved(int xDiff, int yDiff) {
+			return new RegionRectangle(this.MinX + xDiff, this.MinY + yDiff,
+									   this.MaxX + xDiff, this.MaxY + yDiff, region);
 		}
 	}
 }

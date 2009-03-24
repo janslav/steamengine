@@ -99,8 +99,8 @@ namespace SteamEngine.Regions {
 
 			bool hasSurface = false;
 
-			ushort tileId;
-			sbyte tileZ;
+			int tileId;
+			int tileZ;
 			this.GetTile(x, y, out tileZ, out tileId);
 
 			int lowZ = 0, avgZ = 0, topZ = 0;
@@ -228,7 +228,7 @@ namespace SteamEngine.Regions {
 							continue;
 						}
 
-						ushort model = item.Model;
+						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
 						if ((idi.flags & reqFlags) == 0)
 							continue;
@@ -259,7 +259,7 @@ namespace SteamEngine.Regions {
 							continue;
 						}
 
-						ushort model = item.Model;
+						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
 						if ((idi.flags & reqFlags) == 0)
 							continue;
@@ -278,7 +278,7 @@ namespace SteamEngine.Regions {
 							continue;
 						}
 
-						ushort model = item.Model;
+						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
 						if ((idi.flags & reqFlags) == 0)
 							continue;
@@ -295,7 +295,7 @@ namespace SteamEngine.Regions {
 							continue;
 						}
 
-						ushort model = item.Model;
+						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
 						if ((idi.flags & reqFlags) == 0)
 							continue;
@@ -352,7 +352,7 @@ namespace SteamEngine.Regions {
 			for (int i = 0; i < items.Count; ++i) {
 				AbstractItem item = items[i];
 
-				ushort model = item.Model;
+				int model = item.Model;
 				ItemDispidInfo idi = ItemDispidInfo.Get(model);
 				TileFlag flags = idi.flags;
 
@@ -384,7 +384,7 @@ namespace SteamEngine.Regions {
 		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
 			newZ = 0;
 
-			ushort landTile = this.GetTileId(x, y);
+			int landTile = this.GetTileId(x, y);
 			int landZ = 0, landCenter = 0, landTop = 0;
 			TileFlag tileFlags = TileData.landFlags[landTile];
 
@@ -564,7 +564,7 @@ namespace SteamEngine.Regions {
 		private void GetStartZ(IMovementSettings settings, IPoint3D point, List<AbstractItem> itemList, out int zLow, out int zTop) {
 			int xCheck = point.X, yCheck = point.Y;
 
-			ushort landTile = this.GetTileId(xCheck, yCheck);
+			int landTile = this.GetTileId(xCheck, yCheck);
 			int landZ = 0, landCenter = 0, landTop = 0;
 			TileFlag tileFlags = TileData.landFlags[landTile];
 
@@ -732,7 +732,7 @@ namespace SteamEngine.Regions {
 			return (v / 2);
 		}
 
-		public void GetFixedZ(IPoint3D point, out sbyte newZ) {
+		public void GetFixedZ(IPoint3D point, out int newZ) {
 			int oldZ = point.Z;
 			int x = point.X;
 			int y = point.Y;

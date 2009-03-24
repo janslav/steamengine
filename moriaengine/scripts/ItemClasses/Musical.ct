@@ -15,8 +15,8 @@
 
 [ThingTemplate Musical : Item]
 Def:	//vars on the def
-	ushort SuccessSound = SoundNames.None
-	ushort FailureSound = SoundNames.None
+	int SuccessSound = SoundNames.None
+	int FailureSound = SoundNames.None
 
 
 	

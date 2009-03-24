@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		CharacterDef charDef;
 
-		public override void GetNameCliloc(out uint id, out string argument) {
+		public override void GetNameCliloc(out int id, out string argument) {
 			if (this.ownerName != null) {
 				id = 1070702; //a corpse of ~1_CORPSENAME~
 				argument = this.ownerName;
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 				if (idi != null) {
 					if (string.Compare(name, idi.singularName, true) == 0) {
 						argument = null;
-						id = (uint) (1020000 + (this.Model & 16383));
+						id = (1020000 + (this.Model & 16383));
 						return;
 					}
 				}
@@ -84,14 +84,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			Item hair = dieingChar.Hair;
 			if (hair != null) {
-				hairModel = hair.Model;
-				hairColor = hair.Color;
+				hairModel = hair.ShortModel;
+				hairColor = hair.ShortColor;
 			}
 
 			Item beard = dieingChar.Beard;
 			if (beard != null) {
-				beardModel = beard.Model;
-				beardColor = beard.Color;
+				beardModel = beard.ShortModel;
+				beardColor = beard.ShortColor;
 			}
 			AbstractItem pack = dieingChar.BackpackAsContainer;
 			foreach (Item inBackpack in pack) {
@@ -148,10 +148,10 @@ namespace SteamEngine.CompiledScripts {
 		internal class CorpseEquipInfo : ICorpseEquipInfo {
 			uint flaggedUid;
 			byte layer;
-			ushort color;
-			ushort model;
+			int color;
+			int model;
 
-			internal CorpseEquipInfo(uint flaggedUid, byte layer, ushort color, ushort model) {
+			internal CorpseEquipInfo(uint flaggedUid, byte layer, int color, int model) {
 				this.flaggedUid = flaggedUid;
 				this.layer = layer;
 				this.color = color;
@@ -166,11 +166,11 @@ namespace SteamEngine.CompiledScripts {
 				get { return layer; }
 			}
 
-			public ushort Color {
+			public int Color {
 				get { return color; }
 			}
 
-			public ushort Model {
+			public int Model {
 				get { return model; }
 			}
 		}

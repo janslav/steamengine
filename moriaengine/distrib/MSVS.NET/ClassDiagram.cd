@@ -1,0 +1,3613 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="SteamEngine.Networking.TwofishBase" Collapsed="true">
+    <Position X="18.5" Y="27.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Encryption\TwofishBase.cs</FileName>
+      <HashCode>AAREkRAAAhBAAiSABACAADASAVBhApInAoggAwYiK0A=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.TwofishEncryption" Collapsed="true">
+    <Position X="18.5" Y="28.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Encryption\TwofishEncryption.cs</FileName>
+      <HashCode>QAAACAAAACAAAAAAAAAASAAAAABCAAAAAAAAFAAEAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.Networking.GameCompression" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="232.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameCompression.cs</FileName>
+      <HashCode>AAAAAAAAABAAAAAAAACAAIEAgABAAAAAAABAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Networking.GameEncryption" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="213.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameEncryption.cs</FileName>
+      <HashCode>AQAAAAAAAAAAAAAUAAAAAAAAAkAAAIAAIAACAASAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Networking.GameServer" Collapsed="true">
+    <Position X="215" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameServer.cs</FileName>
+      <HashCode>AEAAAgAAABAAAAEAAAEQAQAgAABAQAAIIAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GameServerProtocol" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="216.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameServerProtocol.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAgAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Networking.GameState" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="218.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameState.cs</FileName>
+      <HashCode>MEEIoCoTKIEIU0kMgBAAZDgDAAwE4IAoAADyQAAAC0A=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Networking.CharSyncQueue" Collapsed="true">
+    <Position X="10.75" Y="30.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\CharSyncQueue.cs</FileName>
+      <HashCode>AQAAAAEAAAABBAQAAABAIAAABhBBAQABACFAAEAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GameIncomingPacket" Collapsed="true">
+    <Position X="36.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DynamicLenInPacket" Collapsed="true">
+    <Position X="38.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GeneralInformationInPacket" Collapsed="true">
+    <Position X="33" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAACCAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PartyCommands" Collapsed="true">
+    <Position X="222" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAIAAAAACAAAABAAAAAAAAAAABBAEAAAQAAIAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GameServerLoginInPacket" Collapsed="true">
+    <Position X="51" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAgAAAAQAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.LoginCharacterInPacket" Collapsed="true">
+    <Position X="55.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAgAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ClientVersionInPacket" Collapsed="true">
+    <Position X="60" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GetPlayerStatusInPacket" Collapsed="true">
+    <Position X="64.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAgAAABAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RequestMultiplePropertiesInPacket" Collapsed="true">
+    <Position X="39.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAgAAAAACAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.TalkRequestInPacket" Collapsed="true">
+    <Position X="42" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAIAAAAAAACAAAAAAAAAAAAAAAADAAKAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.UnicodeOrAsciiSpeechRequestInPacket" Collapsed="true">
+    <Position X="46.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAKAAAAAAACAAAgAAQAAAAAgAAADAAKAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SetLanguageInPacket" Collapsed="true">
+    <Position X="69" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.TargetCursorCommandsInPacket" Collapsed="true">
+    <Position X="3.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAgAAAAAAIAAABgAQAIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PingPongInPacket" Collapsed="true">
+    <Position X="6" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ClientViewRangeInPacket" Collapsed="true">
+    <Position X="8.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SingleClickInPacket" Collapsed="true">
+    <Position X="10.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DoubleClickInPacket" Collapsed="true">
+    <Position X="12.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAgAAAAAAIAAAAQAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CreateCharacterInPacket" Collapsed="true">
+    <Position X="15" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAQAAAAAAAAAQAAAAAAAAAAgAAAAAAIAAAAEAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DisconnectNotificationInPacket" Collapsed="true">
+    <Position X="17.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.MoveRequestInPacket" Collapsed="true">
+    <Position X="19.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAgAAAAAAIAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RequestAttackInPacket" Collapsed="true">
+    <Position X="21.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PickUpItemInPacket" Collapsed="true">
+    <Position X="24" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAgAAAAgAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DropItemInPacket" Collapsed="true">
+    <Position X="26.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAICAAAAAAAAAAAAAAAAgAAAAAAIAAABgAQAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DropToWearItemInPacket" Collapsed="true">
+    <Position X="28.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAICAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RequestSkillEtcUseInPacket" Collapsed="true">
+    <Position X="30.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>gAACAAAAAACAAAAAAIAAAAAAAAABAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.StatLockChangeInPacket" Collapsed="true">
+    <Position X="48.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAgAAAAAgIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SetSkillLockStateInPacket" Collapsed="true">
+    <Position X="35.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAKAAAAAAAAAAAABAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RequestWarModeInPacket" Collapsed="true">
+    <Position X="53.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAQAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DeleteCharacterInPacket" Collapsed="true">
+    <Position X="57.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ResyncRequestInPacket" Collapsed="true">
+    <Position X="62.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.AllNamesInPacket" Collapsed="true">
+    <Position X="37.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAACAEAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RequestHelpInPacket" Collapsed="true">
+    <Position X="66.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GumpMenuSelectionInPacket" Collapsed="true">
+    <Position X="44.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAACAgABAAAAAABBAAAAAAAIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.IncomingPacketsLoc" Collapsed="true">
+    <Position X="227.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\IncomingPackets.cs</FileName>
+      <HashCode>QCAAAAAQAAAAABAAAAIAQEAkAgAAAAAAAAIAAEABAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ItemOnGroundUpdater" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="232.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\ItemOnGroundUpdater.cs</FileName>
+      <HashCode>ACAAAAQAQCAAAAAAAAQAAABAAAAAAAAAgAAACAAAAAg=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Networking.ItemSyncQueue" Collapsed="true">
+    <Position X="8.5" Y="30.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\ItemSyncQueue.cs</FileName>
+      <HashCode>AAABAAEAAAEAAAAAAABAAAAABABAAQAiAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.MovementState" Collapsed="true">
+    <Position X="213.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\MovementState.cs</FileName>
+      <HashCode>AAAAAAABEICgAAEABABAAAAAACBQBAAQAAAgAwUAAQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GameOutgoingPacket" Collapsed="true">
+    <Position X="74.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DynamicLengthOutPacket" Collapsed="true">
+    <Position X="41" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GeneralInformationOutPacket" Collapsed="true">
+    <Position X="32" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAAIAGAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.LoginDeniedOutPacket" Collapsed="true">
+    <Position X="79.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAAAAgAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.EnableLockedClientFeaturesOutPacket" Collapsed="true">
+    <Position X="86" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CharactersListOutPacket" Collapsed="true">
+    <Position X="47.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAQAAAAAAAAAAAAAEAAAAAAACAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.LoginConfirmationOutPacket" Collapsed="true">
+    <Position X="92.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>BAACAAAAAAAAYAAAAAgAAAAAAAIAAAAAAABgAQEIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SetFacetOutPacket" Collapsed="true">
+    <Position X="25.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAQAAAQAACAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SeasonalInformationOutPacket" Collapsed="true">
+    <Position X="99.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAADAAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DrawGamePlayerOutPacket" Collapsed="true">
+    <Position X="104" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAABAYAAAAAgAAAAAAAAAAACAAABgAQEIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SetWarModeOutPacket" Collapsed="true">
+    <Position X="106.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ClientViewRangeOutPacket" Collapsed="true">
+    <Position X="108.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.LoginCompleteOutPacket" Collapsed="true">
+    <Position X="110.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DrawObjectOutPacket" Collapsed="true">
+    <Position X="63.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAACRAQAAAAAgAAAAAAAAAAACAAABgAQAIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.UpdatePlayerPacket" Collapsed="true">
+    <Position X="115.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAACBAQAAAAAgAAAAAAAAAAACAAABgAQEIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DrawContainerOutPacket" Collapsed="true">
+    <Position X="119.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AABCAAAAAAAAAAAAAQgAQAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.AddItemToContainerOutPacket" Collapsed="true">
+    <Position X="124.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAQCAAAAAAAAQAAAAAgAAAAAAAAAgACAAABgAAEIAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CorpseClothingOutPacket" Collapsed="true">
+    <Position X="68" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAQAAAACgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ItemsInContainerOutPacket" Collapsed="true">
+    <Position X="70.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AABCAAAAAAQAAAEAAQgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.NewSpellbookOutPacket" Collapsed="true">
+    <Position X="41" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAABAAAQAACAAgAAAAAAAAEAAEAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.OldPropertiesRefreshOutPacket" Collapsed="true">
+    <Position X="43.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQBACAAgAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PropertiesRefreshOutPacket" Collapsed="true">
+    <Position X="7.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQBAAAAgAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ObjectInfoOutPacket" Collapsed="true">
+    <Position X="14" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAACRAQAAAAAgAAACAAAAAgACAAABgAQAIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.MobAttributesOutPacket" Collapsed="true">
+    <Position X="9.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAACUAAAAAgAAEAAAQQAAAAAAAAAIAEAACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.UpdateCurrentHealthOutPacket" Collapsed="true">
+    <Position X="72.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAACUAAAAAgAAAAAAAQAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.UpdateCurrentManaOutPacket" Collapsed="true">
+    <Position X="74.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAACQAAAAAgAAAAAAAAAAAAAAAAAIAEAACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.UpdateCurrentStaminaOutPacket" Collapsed="true">
+    <Position X="81.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAACQAAAAAgAAEAAAQAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.StatusBarInfoOutPacket" Collapsed="true">
+    <Position X="45.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>EAADYQAIAAQA0IAEAEgQAEIIGQwBAAAgQACAIBAAACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SendSkillsOutPacket" Collapsed="true">
+    <Position X="50" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAgAAAAQAAAAAAAAAIACAAAABIAABAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DeleteObjectOutPacket" Collapsed="true">
+    <Position X="95" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAgAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.MegaClilocOutPacket" Collapsed="true">
+    <Position X="52.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAQBAAAAgAAAAAAAIAAAAAAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SendSpeechOutPacket" Collapsed="true">
+    <Position X="54.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAICAAAAAAQAQAAAAAoAAAAAAAABAACAAAAAAAAIACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.UnicodeSpeechOutPacket" Collapsed="true">
+    <Position X="56.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAICAAAAAAQAQAgAAAoAAAAAAAABAACAAAAAAAAIACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ClilocMessageOutPacket" Collapsed="true">
+    <Position X="59" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAYCAAAAAAQAQAAAAAoAAAAAAAABAACAAAAAAAAIACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ClilocMessageAffixOutPacket" Collapsed="true">
+    <Position X="61.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAYCAAAAAAQAQAAAAAoAAAAAAAABAACAAAAAAAAYACQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.TargetCursorCommandsOutPacket" Collapsed="true">
+    <Position X="113" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAIAAQAAAAAAAAAAAAAABAABAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GiveBoatOrHousePlacementViewOutPacket" Collapsed="true">
+    <Position X="117.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.OpenPaperdollOutPacket" Collapsed="true">
+    <Position X="122" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAABAQAAAAAgAAAAAAAAAAAAIAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.WornItemOutPacket" Collapsed="true">
+    <Position X="126.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAABAAAAAACAAAAAAAAAAAAAAACQAAAABAUIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CharacterMoveAcknowledgeOutPacket" Collapsed="true">
+    <Position X="131" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAAAAAAAQBAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CharMoveRejectionOutPacket" Collapsed="true">
+    <Position X="135.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAYAAAAAAAAAAAAAAAAAAAAQBgAQEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RejectMoveItemRequestOutPacket" Collapsed="true">
+    <Position X="140" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAQAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RejectDeleteCharacterOutPacket" Collapsed="true">
+    <Position X="142.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAgAAQAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ResendCharactersAfterDeleteOutPacket" Collapsed="true">
+    <Position X="11.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.AllNamesOutPacket" Collapsed="true">
+    <Position X="16.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAQAAAAAgAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SendGumpMenuDialogPacket" Collapsed="true">
+    <Position X="18.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAwAAAAAAAAAAAAAIABBAAAABgAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CloseGenericGumpOutPacket" Collapsed="true">
+    <Position X="20.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAwAACAAAAAAIAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PlaySoundEffectOutPacket" Collapsed="true">
+    <Position X="77" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAEAAAAAABgAQEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.CharacterAnimationOutPacket" Collapsed="true">
+    <Position X="83.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAFACAAwAAAAAEAAAAAAAAAAAAAAQAAAAEBAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.GraphicalEffectOutPacket" Collapsed="true">
+    <Position X="88.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACCgoAIAAAQAAAAAAAIAAAAgABDwQAAAAAAAGwAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DraggingOfItemOutPacket" Collapsed="true">
+    <Position X="90.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAIAAAQAAAAAAAAAAAAgAAjgAAAAAAAAG4AAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ExtendedStatsOutPacket" Collapsed="true">
+    <Position X="23" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAACAAgAAAAAAEAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ResurrectionMenuOutPacket" Collapsed="true">
+    <Position X="97.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACBAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.DisplayDeathActionOutPacket" Collapsed="true">
+    <Position X="101.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAABAAAAQAAAACAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.AddPartyMembersOutPacket" Collapsed="true">
+    <Position X="27.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAACAAAAAAAAAAAEAAQAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.RemoveAPartyMemberOutPacket" Collapsed="true">
+    <Position X="29.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAACAAAAAAAACAAEAAQAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.TellPartyMemberAMessageOutPacket" Collapsed="true">
+    <Position X="32" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAACAAAAAAAAAgAEAAAAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.TellFullPartyAMessageOutPacket" Collapsed="true">
+    <Position X="34.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAACAAAAAAAAAgAEAAAAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PartyInvitationOutPacket" Collapsed="true">
+    <Position X="36.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAQAAAAQAACAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.EnableMapDiffFilesOutPacket" Collapsed="true">
+    <Position X="38.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAACAAAAAAAAgAAEAAAAAAAAQAABAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.ClientVersionOutPacket" Collapsed="true">
+    <Position X="65.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PersonalLightLevelOutPacket" Collapsed="true">
+    <Position X="128.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAGAAABAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.OverallLightLevelOutPacket" Collapsed="true">
+    <Position X="133.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAGAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.QuestArrowOutPacket" Collapsed="true">
+    <Position X="137.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAAAIAAAAAAIQEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PacketSequences" Collapsed="true">
+    <Position X="213.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\PacketSequences.cs</FileName>
+      <HashCode>EAAAUIICBACAAAIAEAAACCAACABCAQQABAAAAAgAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PacketSequencesLoc" Collapsed="true">
+    <Position X="215" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\PacketSequences.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.PreparedPacketGroups" Collapsed="true">
+    <Position X="227.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\PreparedPacketGroups.cs</FileName>
+      <HashCode>IAASAAIAAIAAQAIAAEAAhAgQAAAFAAAAABAJBQAJAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Networking.SyncQueue" Collapsed="true">
+    <Position X="9.75" Y="29.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\SyncQueue.cs</FileName>
+      <HashCode>ABAAAAAAAAGAAAEAAAGACAAABAAAAAAAAAAgAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Analyzer" Collapsed="true">
+    <Position X="1.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs</FileName>
+      <HashCode>AAAAAAAAIAJAAIAAAAAgAgAAAgAEAAAAIAEAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.LookAheadSet" Collapsed="true">
+    <Position X="220.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs</FileName>
+      <HashCode>AEIDAIAAAAUAgBBUABAABAAAAAAAABAUKYAAAAAQAIg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Node" Collapsed="true">
+    <Position X="28.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs</FileName>
+      <HashCode>AAAKAQigIAAQAABAAQAgAAAAAQAAACEAAEAAAAYAFAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.ParseException" Collapsed="true">
+    <Position X="216.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs</FileName>
+      <HashCode>AiEASAAAAAAAAAAAAQAAAAAAQAABAEEAQAAAIAAAAQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Parser" Collapsed="true">
+    <Position X="10.5" Y="23.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs</FileName>
+      <HashCode>QAMgAAQBADggcAgEGgQAEAQAAAAAJAAAAAAACAAoEAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.ParserCreationException" Collapsed="true">
+    <Position X="218.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs</FileName>
+      <HashCode>AiAAAAAAAAAAAAAAAQAAAAAAAAAFAEEAQAAAIAAABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.ParserLogException" Collapsed="true">
+    <Position X="220.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs</FileName>
+      <HashCode>ACAAAAAAAAAAAAABAAEAAAAAAAAAAAAAAAAAIAAgABA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Production" Collapsed="true">
+    <Position X="27.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs</FileName>
+      <HashCode>AAAAAAAgAAAAEAQEEBAgAAAAAAAAEAAAAAAAAAIAFAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.ProductionPattern" Collapsed="true">
+    <Position X="229" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs</FileName>
+      <HashCode>EAACAAgAABAAAQCEAIAAAAgAAACEAAAAAhgIABIQDgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.ProductionPatternAlternative" Collapsed="true">
+    <Position X="230.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs</FileName>
+      <HashCode>EAAAAgAIAIADABCEkAAAAAAAAACAEIAAAhgBAAAIIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.ProductionPatternElement" Collapsed="true">
+    <Position X="232.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs</FileName>
+      <HashCode>AAECEBAAAAAQAACEgAAAAAAAIACAAIAAAAgAQAIAAhA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RecursiveDescentParser" Collapsed="true">
+    <Position X="10.5" Y="24.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs</FileName>
+      <HashCode>QAACAAIAAAEAQAAAAAAAAAAAAAAwAAAIAAEAAAgAQAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Token" Collapsed="true">
+    <Position X="29.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs</FileName>
+      <HashCode>AAAIgACAgAAAAAAEECIgAAAwEAAQECEgAAAIAAICBAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Tokenizer" Collapsed="true">
+    <Position X="12.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</FileName>
+      <HashCode>AgMAEAiAEAEBAAAEEAAiIAAAQAAAABAAwABAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.TokenMatcher" Collapsed="true">
+    <Position X="14.75" Y="27.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</FileName>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RegExpTokenMatcher" Collapsed="true">
+    <Position X="13.5" Y="28.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</FileName>
+      <HashCode>AAAAAQAIACAAAAAEEAAAJQAEAAAAEAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.StringTokenMatcher" Collapsed="true">
+    <Position X="15.75" Y="28.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</FileName>
+      <HashCode>AAIAAQAAAAAABAAkEAAIJQAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.Automaton" Collapsed="true">
+    <Position X="220.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAAAgAAAAQAAAAAAACAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.AutomatonTree" Collapsed="true">
+    <Position X="222" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</FileName>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAIACAEAAAAAAAAgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.TokenPattern" Collapsed="true">
+    <Position X="227.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs</FileName>
+      <HashCode>AAAAAAEAAAAQAAgEEAEAAAAAEACFEAAAAAAIAAIARwA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.AlternativeElement" Collapsed="true">
+    <Position X="27.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs</FileName>
+      <HashCode>AAAQAggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAABA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.CombineElement" Collapsed="true">
+    <Position X="18.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs</FileName>
+      <HashCode>AAAQAggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAABA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.Element" Collapsed="true">
+    <Position X="23.25" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs</FileName>
+      <HashCode>AAAAAggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.CharacterSetElement" Collapsed="true">
+    <Position X="21" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs</FileName>
+      <HashCode>AEAAIggACBAAAABESABAABEAAAABAAACAQEAAAAEABQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.Matcher" Collapsed="true">
+    <Position X="227.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs</FileName>
+      <HashCode>AAIAAAAAACAABAAkAEAIBwBIAAAAACAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.RegExp" Collapsed="true">
+    <Position X="218.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs</FileName>
+      <HashCode>AAkAQAAACAAAACAGIAAAEIAIBAAAEQAAAIAAAAAUAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.RegExpException" Collapsed="true">
+    <Position X="220.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs</FileName>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAIAAAAAABEAAAAAAAIAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.RepeatElement" Collapsed="true">
+    <Position X="23.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs</FileName>
+      <HashCode>QAAAEggQYAAQAAgAAAAAAAAAAAABAAAAAAAAAAgAEBA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerCederberg.Grammatica.Parser.RE.StringElement" Collapsed="true">
+    <Position X="25.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs</FileName>
+      <HashCode>AAAAAggAAAAAAAAAAAAABAAAAAAAACAAAAAAAAAAABA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AbstractAccount" Collapsed="true">
+    <Position X="8" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractAccount.cs</FileName>
+      <HashCode>AAQEAKQEIgDACBJEgAwEJIYNQJGFQuIiB4A7AwAAsAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AbstractDef" Collapsed="true">
+    <Position X="32.5" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractDef.cs</FileName>
+      <HashCode>IgAE4IDsAgAAEIZFxBAEAAiCABIAAIDYgAAAACAgAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.AbstractDefTriggerGroupHolder" Collapsed="true">
+    <Position X="30.25" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractDefTriggerGroupHolder.cs</FileName>
+      <HashCode>AAAAQACIAAAAQBCAAAoAJAAAIAAAAQAgAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.AbstractCharacter" Collapsed="true">
+    <Position X="14.75" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractCharacter.cs</FileName>
+      <HashCode>Fg8L4YABK0TwLLmvc3a2raS67zPO+xHoVBvjZqt+7e0=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.EquipsEnumerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="227.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractCharacter.cs</FileName>
+      <HashCode>ACAAAAAAACAABAAAAACAAAAAgAAQAACEoAAQQAIAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.AbstractCharacterDef" Collapsed="true">
+    <Position X="29.25" Y="26" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractCharacterDef.cs</FileName>
+      <HashCode>gAAAQAAAAAAAAAAAAAAAAAAAAAAAhAAIAAAAAIAAAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AbstractItem" Collapsed="true">
+    <Position X="17" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractItem.cs</FileName>
+      <HashCode>ICZoAIHLyAGVDhMAICwEZbWKhVRFgUXkVVVAEVFIiSQ=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.AbstractItemDef" Collapsed="true">
+    <Position X="31.5" Y="26" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractItemDef.cs</FileName>
+      <HashCode>IEAAQCDABAAAAAEAICAAgAQiAIIBBkBCLQBABAABAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AbstractKey" Collapsed="true">
+    <Position X="5.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractKey.cs</FileName>
+      <HashCode>AAAAgAAAAAAAEAAEgAAAAAAAAAAEAIAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AbstractScript" Collapsed="true">
+    <Position X="28" Y="20.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractScript.cs</FileName>
+      <HashCode>AAAAAACAIgAAAAJAAAACAAAEAAAAAAAAgACAAAEAADA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.AbstractSkillDef" Collapsed="true">
+    <Position X="36" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractSkillDef.cs</FileName>
+      <HashCode>AAACCAggEAgAACYMAAxWBAAgAgAAACQAgAAAAiACAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AOSToolTips" Collapsed="true">
+    <Position X="213.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AOSToolTips.cs</FileName>
+      <HashCode>ACkIgAAAAKAAEAAAEJAAAAAAAAAgAAAAmABECAABAgg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ClientVersion" Collapsed="true">
+    <Position X="215" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ClientVersion.cs</FileName>
+      <HashCode>AAAAggAAAAAAAABEAAAAAAAAQAEBBoAAAACAAEIAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.OSI2DVersionNumber" Collapsed="true">
+    <Position X="230.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ClientVersion.cs</FileName>
+      <HashCode>AAAAIAAAAAAAAAAEAQAAAAAAQAAAAEBAAAAABAAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Commands" Collapsed="true">
+    <Position X="218.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Commands.cs</FileName>
+      <HashCode>AAgIAAAAAAQACAEAAAAAQADAAAAAAAAAEAAAAADKAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.SimpleCommandParser" Collapsed="true">
+    <Position X="220.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Commands.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQABEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CommandLoc" Collapsed="true">
+    <Position X="216.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Commands.cs</FileName>
+      <HashCode>gAAAAAAAAACAAAAAAABAAAEAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ConsoleDummy" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="225.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ConsoleDummy.cs</FileName>
+      <HashCode>AAAAgAAACAAAEAAMgAAAAAAAAAAAAIAAAAACQAIQAEA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Constant" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="229" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Constant.cs</FileName>
+      <HashCode>AAEEiADAoAACRABEAAAABAQgAAAEAAAAAgAgAgEBADA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.CoreLogger" Collapsed="true">
+    <Position X="232.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CoreLogger.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DeepCopyableClassAttribute" Collapsed="true">
+    <Position X="216.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DecoratedClassesDeepCopyImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CopyableDataAttribute" Collapsed="true">
+    <Position X="230.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DecoratedClassesDeepCopyImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DeepCopyImplementationAttribute" Collapsed="true">
+    <Position X="220.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DecoratedClassesDeepCopyImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DeepCopyImplementorGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="222" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DecoratedClassesDeepCopyImplementor.cs</FileName>
+      <HashCode>gAAQAAAAAAACAAAAAAAAAAAAAAAAEAAAgAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.DeepCopyFactory" Collapsed="true">
+    <Position X="218.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DeepCopyFactory.cs</FileName>
+      <HashCode>CACAAAAgAAAAAIBQAgAAAEEAAABgAAAEgAAAAAAggAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DelayedResolver" Collapsed="true">
+    <Position X="223.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DelayedResolver.cs</FileName>
+      <HashCode>AAAEAAAAAABAAEDAAAAAAAAAQAAACAAKAAAAJAgABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ItemDispidInfo" Collapsed="true">
+    <Position X="230.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DispidInfo.cs</FileName>
+      <HashCode>IAAAEAggAkAAAARAgAgAAAgAAAIAAICgAIAAAAQCQgQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DenyResultGenerator" Collapsed="true">
+    <Position X="225.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAIAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.FastDLL" Collapsed="true">
+    <Position X="229" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\FastDLL.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.FieldValue" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="230.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\FieldValue.cs</FileName>
+      <HashCode>QAAAAIChgFBAAAAgAACQAAQAAABFgAxQwQCAAEEAACg=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Globals" Collapsed="true">
+    <Position X="5.75" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Globals.cs</FileName>
+      <HashCode>gQwVtaEgN/DAVg7EJIVgIAywKQnpF3qgaFJGDOcCIwA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.GumpDef" Collapsed="true">
+    <Position X="21.25" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Gump.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DialogArgs" Collapsed="true">
+    <Position X="1.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Gump.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAQAAAAAAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Gump" Collapsed="true">
+    <Position X="4.75" Y="27.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Gump.cs</FileName>
+      <HashCode>OCAAgAAQAAABEAAFgAgKhBwCAAAwoIEAAEBiCIkk4BA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ResponseText" Collapsed="true">
+    <Position X="225.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Gump.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ResponseNumber" Collapsed="true">
+    <Position X="223.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Gump.cs</FileName>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CharData" Collapsed="true">
+    <Position X="223.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CharData.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LocalVarKey" Collapsed="true">
+    <Position X="0.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LocalVarKey.cs</FileName>
+      <HashCode>AAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ScriptedTriggerGroup" Collapsed="true">
+    <Position X="27" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\ScriptedTriggerGroup.cs</FileName>
+      <HashCode>AAAAgACACAAAAABEAAAIAAAgAAAAAgAAAAAAAgAAAQI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.MainClass" Collapsed="true">
+    <Position X="223.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Main.cs</FileName>
+      <HashCode>AgAAAAACAACAQEAAAAAAAAAABCAAAAAAIAACBAAEABE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.MemberWrapper" Collapsed="true">
+    <Position X="232.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\MemberWrapper.cs</FileName>
+      <HashCode>AAAABAAAAgIkAAAABAgAAACAgIABAABAAAAgAMAAgog=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.MultiItemComponent" Collapsed="true">
+    <Position X="18.75" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\MultiData.cs</FileName>
+      <HashCode>AAAABAIAAAAgAAAAIEAAAAAAAAIAAAQAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.MultiComponentDescription" Collapsed="true">
+    <Position X="215" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\MultiData.cs</FileName>
+      <HashCode>AAAAAAAAAACAAADAAgAAAAAAAAAAAEAAAAAAAAAAAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.MultiData" Collapsed="true">
+    <Position X="218.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\MultiData.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEABAiAAAAAAAAAAAAEAAAAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.MultiComponentLinkedList" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="216.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\MultiData.cs</FileName>
+      <HashCode>AAIAAAAAAAAAABAADAAABAAAAAAIAAAAAAAAACAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.OpenedContainers" Collapsed="true">
+    <Position X="223.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\OpenedContainers.cs</FileName>
+      <HashCode>EAABAAAAAAAgAADAAEAAAAAAEAAAAAAAAEAAAAAAgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Plugin" Collapsed="true">
+    <Position X="3.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Plugin.cs</FileName>
+      <HashCode>AAQAAIAACAAAAACAAAAEgBAAAAMQAAQBAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.PluginDef" Collapsed="true">
+    <Position X="33.75" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginDef.cs</FileName>
+      <HashCode>IIAAAgAAEAAAAAJEAAAAAIIDAEAwAEQAAAACBAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.PluginHolder" Collapsed="true">
+    <Position X="11.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginHolder.cs</FileName>
+      <HashCode>AECABIAIAAgBRBCAAA4EdAgAMAHAQQCAAAAEAAIIAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.PluginKey" Collapsed="true">
+    <Position X="9.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginKey.cs</FileName>
+      <HashCode>AAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.PluginKeySaveImplementor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="223.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginKey.cs</FileName>
+      <HashCode>AAAAgMAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAAAAQAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Point2D" Collapsed="true">
+    <Position X="26.5" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>QAIAAAAAAAAAAAAEgAAAAAAAAAAAAIAAAAFwAAAAYiA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.Point3D" Collapsed="true">
+    <Position X="26.5" Y="27.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>AAIAAAAAAACAAAAEgAAAAAAAAAAAAIgAAAAAAQAAAiA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.MutablePoint4D" Collapsed="true">
+    <Position X="220.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAEgAAAAAAAAAAAAAAAAgBgAQAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Point4D" Collapsed="true">
+    <Position X="26.5" Y="29.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>ABBgAAAAgAAAAAAEgAAAAAAABABAAIAAAgAAAAAAAiA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.PropsFileParser" Collapsed="true">
+    <Position X="213.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PropsFileParser.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAAEAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.PropsSection" Collapsed="true">
+    <Position X="216.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PropsFileParser.cs</FileName>
+      <HashCode>IAAAAABIEAAAAEAMAIAAAAAAACCEAgBQAAAAEAAgAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TriggerSection" Collapsed="true">
+    <Position X="230.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PropsFileParser.cs</FileName>
+      <HashCode>AAgBAgBAAAAAAAAEAAAAAAAAIAAQAAAAAAAAAAAAABA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.PropsLine" Collapsed="true">
+    <Position X="215" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PropsFileParser.cs</FileName>
+      <HashCode>AAUAAAAAAAAAAAAEAAAAAAAAAAAEACAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.RunLevelManager" Collapsed="true">
+    <Position X="227.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\RunLevel.cs</FileName>
+      <HashCode>AAAAAIAAAQAAAAABAIAAQDAChAAAAAAABAAAAKCAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ScriptArgs" Collapsed="true">
+    <Position X="12.75" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptArgs.cs</FileName>
+      <HashCode>IAQAAAAAAAAAAAAAAAAAAAAAAECAAIAAAAAAAAAEAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompScriptFileCollection" Collapsed="true">
+    <Position X="17.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptFilesCollection.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ScriptFileCollection" Collapsed="true">
+    <Position X="17.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptFilesCollection.cs</FileName>
+      <HashCode>WIABAAQAAIAAAAIBAMAAIBAACAAAAAAAhAAAAAIYAgg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ScriptFile" Collapsed="true">
+    <Position X="215" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptFilesCollection.cs</FileName>
+      <HashCode>AAIBAACAAAAAAIAAIEAAIARAAAAgAAAEBAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ScriptHolder" Collapsed="true">
+    <Position X="22.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptHolder.cs</FileName>
+      <HashCode>BAAAACAACABggQEAACAAAAAIAAAEEAAAAAAAAAEABBI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ScriptLoader" Collapsed="true">
+    <Position X="216.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptLoader.cs</FileName>
+      <HashCode>AAAAgAAgAASAAAAAAAAAAAAAAAAAEAAAAAAAAAAABBQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.SoundMul" Collapsed="true">
+    <Position X="222" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\SoundMul.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Static" Collapsed="true">
+    <Position X="17.75" Y="24.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Static.cs</FileName>
+      <HashCode>AFACBAAQBAAAAAAUAAAAAAQAAAAAAAgAAgBwAQIAYAE=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.StaticStatic" Collapsed="true">
+    <Position X="16.5" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Static.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Statistics" Collapsed="true">
+    <Position X="229" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Statistics.cs</FileName>
+      <HashCode>EAAAAJAAgCAAAAAAAAAACAQAAAgIAAgACAAAAAAABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.StatType" Collapsed="true">
+    <Position X="230.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Statistics.cs</FileName>
+      <HashCode>UEBQgBAAgBBYAASARAAkCEQAAAgsAAAADIAkEAMAMAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.StatEntry" Collapsed="true">
+    <Position X="225.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Statistics.cs</FileName>
+      <HashCode>AAAAAAAAgACABBAACAAAAEAAAAAAAAAAAAAQAAAQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TagHolder" Collapsed="true">
+    <Position X="9" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TagHolder.cs</FileName>
+      <HashCode>IgCAAJKAAAANAEQIQCAFAAQQAAsAAAIAAABCEUAQgAE=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.TagKey" Collapsed="true">
+    <Position X="3" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TagKey.cs</FileName>
+      <HashCode>AAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TagMath" Collapsed="true">
+    <Position X="215" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TagMath.cs</FileName>
+      <HashCode>ACAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Temporary" Collapsed="true">
+    <Position X="216.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Temporary.cs</FileName>
+      <HashCode>AAAEAAAAAAAAAAAgQAAAAQAAAAAAQAAAAAAABAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Thing" Collapsed="true">
+    <Position X="15.75" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Thing.cs</FileName>
+      <HashCode>AJdKpOCqrYCWvl7UhriEpZYYhTcGAez8FLie8Up95xE=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.DenyClickArgs" Collapsed="true">
+    <Position X="24" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Thing.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ThingDef" Collapsed="true">
+    <Position X="30.25" Y="24.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingDef.cs</FileName>
+      <HashCode>AAAAQBQAFAAAARZEACgSJAwnAGEEBECgAEhAmiAIgIY=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.UnloadableGroup" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="213.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingDef.cs</FileName>
+      <HashCode>AAAAAACAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.ThingLinkedList" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="220.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingLinkedList.cs</FileName>
+      <HashCode>gAIAAAAAABAAAAAADAIABAQAAAAQEAAEAAAAAAgAAgA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.ItemStackArgs" Collapsed="true">
+    <Position X="6" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ItemOnGroundArgs" Collapsed="true">
+    <Position X="8.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AACAAACAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ItemInItemArgs" Collapsed="true">
+    <Position X="10.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ItemInCharArgs" Collapsed="true">
+    <Position X="12.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAAABAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DenyTriggerArgs" Collapsed="true">
+    <Position X="19.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DenyPickupArgs" Collapsed="true">
+    <Position X="15" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DenyPutInItemArgs" Collapsed="true">
+    <Position X="17.25" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DenyPutOnGroundArgs" Collapsed="true">
+    <Position X="19.5" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAIAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ItemOnItemArgs" Collapsed="true">
+    <Position X="1.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAGAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.ItemOnCharArgs" Collapsed="true">
+    <Position X="3.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAEAAAAQAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.DenyEquipArgs" Collapsed="true">
+    <Position X="21.75" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingManipulationTriggers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAEAAAAQAAAAAAAABAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TileData" Collapsed="true">
+    <Position X="222" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\tiledata.cs</FileName>
+      <HashCode>ACAQAAAAAAAAAIAAAAAAAAAgAAAAAAAAAAACgCAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TriggerGroup" Collapsed="true">
+    <Position X="25.75" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TriggerGroup.cs</FileName>
+      <HashCode>AAAAAAAACAAAAABEQAEEAAABAAAAAAAAAgACAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TGRemover" Collapsed="true">
+    <Position X="218.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TriggerGroup.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TriggerKey" Collapsed="true">
+    <Position X="5.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TriggerKey.cs</FileName>
+      <HashCode>ABGMLgMkgCAGRARLABAIQEAgECQqiKjAxMBKICAAEwA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.TriggerKeySaveImplementor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="229" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TriggerKey.cs</FileName>
+      <HashCode>AAAAgMAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAAAAQAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.UIDArray&lt;ElementType&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="232.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\UIDArray.cs</FileName>
+      <HashCode>AAIAASBAACAIABDgBAgABAQACCAAAAAGCACAAoBAzAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Utility" Collapsed="true">
+    <Position X="215" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Utility.cs</FileName>
+      <HashCode>AAAAEAQAAAAAAAAAAAAAAAAAACAAQACAAACAAAAQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.WeakRefDictionaryUtils" Collapsed="true">
+    <Position X="220.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\WeakRefDictionary.cs</FileName>
+      <HashCode>AAABACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.WeakRefDictionary&lt;TKey, TValue&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="218.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\WeakRefDictionary.cs</FileName>
+      <HashCode>CSICAAAAAAAMABAQCAAABAQAAAAgACAAAAAhAABQIAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.AuxServerPipeClient" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="223.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\AuxServerPipeClient.cs</FileName>
+      <HashCode>EkAAIAQAAIAEBAAAAAAAAAAQAQCAAIAAAAgCEgAAAwA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.AuxServerPipeProtocol" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="225.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAgAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.AuxServerPipeIncomingPacket" Collapsed="true">
+    <Position X="24" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.RequestSendingLogStringsPacket" Collapsed="true">
+    <Position X="24" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAgAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.RequestAccountLoginPacket" Collapsed="true">
+    <Position X="26.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAQAIAAAAAAgAQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.ConsoleCommandLinePacket" Collapsed="true">
+    <Position X="21.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\IncomingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAQAQAIAAAAAAgAQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.IdentifyGameServerPacket" Collapsed="true">
+    <Position X="225.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAIAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.LogStringPacket" Collapsed="true">
+    <Position X="218.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAAAAAAAAAAAAAAACAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.ReplyAccountLoginPacket" Collapsed="true">
+    <Position X="222" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\OutgoingPackets.cs</FileName>
+      <HashCode>AAACAAAAAAAAQAAIAAAAAAAAAAAAQAAAAAAAAAEQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.StartupFinishedPacket" Collapsed="true">
+    <Position X="223.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\OutgoingPackets.cs</FileName>
+      <HashCode>QAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.AuxServerPipe.ConsoleWriteLinePacket" Collapsed="true">
+    <Position X="227.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AuxServerPipe\OutgoingPackets.cs</FileName>
+      <HashCode>AAECAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.Map" Collapsed="true">
+    <Position X="225.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CanSeeImplementation.cs</FileName>
+      <HashCode>UdZMBAthAMCIO5TRiBC8NYh61AyrJIAJEkC6YhTCoAU=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.DynamicRegion" Collapsed="true">
+    <Position X="10.25" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\DynamicRegion.cs</FileName>
+      <HashCode>ABAAAIAAAAAAAAAAAAAEAAQAAAEAAAAAIEAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.AbstractRectangle" Collapsed="true">
+    <Position X="13.5" Y="23.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\Rectangle.cs</FileName>
+      <HashCode>MAAAAAAwBAAAAAAEAAAAAFAAAAAQAAAAAAAAAAAQAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.ImmutableRectangle" Collapsed="true">
+    <Position X="13.5" Y="24.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\Rectangle.cs</FileName>
+      <HashCode>MDAAAAAwAAAAQAAAAAAAAABAAAAAAAAAAAAAADAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.Region" Collapsed="true">
+    <Position X="11.25" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\Region.cs</FileName>
+      <HashCode>IAsBApEBAAAAJAJkECQGUQAAAgAERiMoIEIAAARKABQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.RegionRectangle" Collapsed="true">
+    <Position X="13.5" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\Region.cs</FileName>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.StaticRegion" Collapsed="true">
+    <Position X="12.5" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\StaticRegion.cs</FileName>
+      <HashCode>EJAACIBAAAQAQCNAIAIEQBUGCAEEAAgDBAAAgSDBAAg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Regions.StaticSector" Collapsed="true">
+    <Position X="227.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\StaticSector.cs</FileName>
+      <HashCode>AAABAAAAEAAAAiQABAABAkAAQAAAAAAAAAAYAQCAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassManager" Collapsed="true">
+    <Position X="227.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassManager.cs</FileName>
+      <HashCode>AgAIAASgEAAAAAAQAAAgEAACgAAAgAmAAAAJEAFBAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompiledGumpDef" Collapsed="true">
+    <Position X="22.5" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledGump.cs</FileName>
+      <HashCode>AUAxAUmAIlAYhCQEACCIAAAAgAQ7oCAgIASOiYFGYAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompiledGump" Collapsed="true">
+    <Position X="5.75" Y="28.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledGump.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.GumpResponse" Collapsed="true">
+    <Position X="222" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledGump.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAoAAAAABBBAACAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompiledScriptHolder" Collapsed="true">
+    <Position X="21.5" Y="27.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledScriptHolder.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAABAgAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.SteamFunctionAttribute" Collapsed="true">
+    <Position X="232.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledScriptHolder.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompiledScriptHolderGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="220.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledScriptHolder.cs</FileName>
+      <HashCode>AAAQABAAAAAEAAAAEAAAAAAAAAAAEACAAAEAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompiledTriggerGroup" Collapsed="true">
+    <Position X="24.75" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledTriggerGroup.cs</FileName>
+      <HashCode>AAAAAACAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompiledTriggerGroupGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="222" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledTriggerGroup.cs</FileName>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAEACBgAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.GroundTileType" Collapsed="true">
+    <Position X="24.75" Y="24.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledTriggerGroup.cs</FileName>
+      <HashCode>AAAACAAgAAAAAABAAAAAAAAAAEgAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.CompilerInvoker" Collapsed="true">
+    <Position X="223.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompilerInvoker.cs</FileName>
+      <HashCode>gBAACAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAABgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.GeneratedCodeUtil" Collapsed="true">
+    <Position X="220.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\GeneratedCodeUtil.cs</FileName>
+      <HashCode>AEAAAASgAAAAgAAAAEgAIAAAAAAAAIAAAAAAAAAAAAg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.PluginTriggerGroupGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="225.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginTriggerGroupGenerator.cs</FileName>
+      <HashCode>AAAQAAAAACAAAAAAAACAAAAAAAAAEAAAgAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassDefTemplate" Collapsed="true">
+    <Position X="1.75" Y="24.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassDefTemplate.cs</FileName>
+      <HashCode>AAAAAAAAgAAAAAAAAgAAAAAAAAQAAAAgAAAQAAAAgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassTemplate" Collapsed="true">
+    <Position X="6.25" Y="24.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassTemplate.cs</FileName>
+      <HashCode>AAAAAKAAgAAAIAAAAgAECAgCAAAAAAAAAAAAAAACgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassTemplateBase" Collapsed="true">
+    <Position X="4" Y="23.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassTemplateBase.cs</FileName>
+      <HashCode>gAgAAAABAAAAAQAAAgAAAAAAAAEAAAAAAAAAAAAAAQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassTemplateParser" Collapsed="true">
+    <Position X="230.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassTemplateParser.cs</FileName>
+      <HashCode>AEAAAAAABAAAAAAAAABBAAAAQAAAUAAAAAACQAAQBAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassTemplateSection" Collapsed="true">
+    <Position X="232.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassTemplateSection.cs</FileName>
+      <HashCode>AAEAAIAEAAAABAABAAACIAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassTemplateSubSection" Collapsed="true">
+    <Position X="213.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassTemplateSection.cs</FileName>
+      <HashCode>AACAAAAEAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ClassTemplateInstanceField" Collapsed="true">
+    <Position X="229" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ClassTemplateSectionField.cs</FileName>
+      <HashCode>AAAAQAAAYABAAAAAAAAAAAAAQAABCCAQAAAAAAIAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.PluginDefTemplate" Collapsed="true">
+    <Position X="0.75" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\PluginDefTemplate.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAEAAgAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.PluginTemplate" Collapsed="true">
+    <Position X="5.25" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\PluginTemplate.cs</FileName>
+      <HashCode>AAAAAAgAAAAAAAAAAgAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ThingDefTemplate" Collapsed="true">
+    <Position X="3" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ThingDefTemplate.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAABAAAAAAAAgAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.CompiledScripts.ClassTemplates.ThingTemplate" Collapsed="true">
+    <Position X="7.5" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassTemplates\ThingTemplate.cs</FileName>
+      <HashCode>AAAAAEAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.InterpreterException" Collapsed="true">
+    <Position X="6.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAIAAAAQAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.NameRefException" Collapsed="true">
+    <Position X="6.5" Y="18" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.IntrinsicMethods" Collapsed="true">
+    <Position X="229" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\IntrinsicMethods.cs</FileName>
+      <HashCode>AAACAAEAABAAACAQEAAAgQGAAAAEAgQAAQIAAAAEAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.LScript" Collapsed="true">
+    <Position X="222" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LScript.cs</FileName>
+      <HashCode>QAAAAAAAAkAAAQAAJgQADAEAAAAQAAAAAAADABAAAMA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.DebugAnalyzer" Collapsed="true">
+    <Position X="0.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LScriptAnalyzer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAIAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.LScriptAnalyzer" Collapsed="true">
+    <Position X="2.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LScriptAnalyzer.cs</FileName>
+      <HashCode>AAgAgAAAEAIAAAAAAIGABAEAAABEAAACIAAEAAgAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.LScriptHolder" Collapsed="true">
+    <Position X="23.75" Y="27.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LScriptHolder.cs</FileName>
+      <HashCode>AAEAACDAAAIgAQAAAAAAAAAAYAAABAAAAAAAAgAAAGI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.ScriptVars" Collapsed="true">
+    <Position X="218.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LScriptHolder.cs</FileName>
+      <HashCode>ACAAgAAAAAAAEAEAAAgACAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.LScriptParser" Collapsed="true">
+    <Position X="10.5" Y="27.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\LScriptParser.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.MemberDescriptor" Collapsed="true">
+    <Position X="229" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\MemberResolver.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAEIEAAAAAAAAAAAIAAAAYAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.MemberResolver" Collapsed="true">
+    <Position X="230.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\MemberResolver.cs</FileName>
+      <HashCode>AAUACABAAACAAABQgRAQCQQAVAJEAAqAAAAAABAECgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode" Collapsed="true">
+    <Position X="110.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode.cs</FileName>
+      <HashCode>AAEACABAAAAAAEDAAAAAAAAAQAAACAAAgAAIAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Code" Collapsed="true">
+    <Position X="225.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Code.cs</FileName>
+      <HashCode>AAAAAAAAAAAAkAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_AddTriggerTimer" Collapsed="true">
+    <Position X="195" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_AddTimer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAABI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_AddMethodTimer" Collapsed="true">
+    <Position X="150" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_AddTimer.cs</FileName>
+      <HashCode>AAQAAAAACAAAECAEAAAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_AddMethodTimer_String" Collapsed="true">
+    <Position X="156.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_AddTimer.cs</FileName>
+      <HashCode>AAQAAAAACAAAEKAEAAAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_AddMethodTimer_Params" Collapsed="true">
+    <Position X="165.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_AddTimer.cs</FileName>
+      <HashCode>ABAAAAAACAAAECAEAAAAAAAAAAAAgAAAACAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_AddFunctionTimer" Collapsed="true">
+    <Position X="177" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_AddTimer.cs</FileName>
+      <HashCode>AAQAAAAACAAAEIAUAgAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SetArg" Collapsed="true">
+    <Position X="183.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ARG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAgAAEAAAAAAAAAAAAACY=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetArg" Collapsed="true">
+    <Position X="190.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ARG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAY=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ArgExists" Collapsed="true">
+    <Position X="199.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ARG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAY=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_RemoveArg" Collapsed="true">
+    <Position X="10.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ARG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAY=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetArgv" Collapsed="true">
+    <Position X="204" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetArgv_Constant" Collapsed="true">
+    <Position X="206.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SetArgv" Collapsed="true">
+    <Position X="208.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SetArgv_Constant" Collapsed="true">
+    <Position X="210.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetArgs" Collapsed="true">
+    <Position X="89.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ArgvCount" Collapsed="true">
+    <Position X="93.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ArrayListIndex" Collapsed="true">
+    <Position X="98.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ArrayListIndexer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAgAAAAAAAAAAAAAABACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_AddOperator" Collapsed="true">
+    <Position X="33" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SubOperator" Collapsed="true">
+    <Position X="35.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_MulOperator" Collapsed="true">
+    <Position X="37.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_DivOperator_Double" Collapsed="true">
+    <Position X="39.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_DivOperator_Int" Collapsed="true">
+    <Position X="42" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ModOperator" Collapsed="true">
+    <Position X="44.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_BinaryAndOperator" Collapsed="true">
+    <Position X="46.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_BinaryOrOperator" Collapsed="true">
+    <Position X="48.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinMathOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ConcatOperator" Collapsed="true">
+    <Position X="53.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_BinOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_EqualsOperator" Collapsed="true">
+    <Position X="57.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_EqualsNotOperator" Collapsed="true">
+    <Position X="60" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_EqualityOperator_Double" Collapsed="true">
+    <Position X="62.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_EqualityOperator_Int" Collapsed="true">
+    <Position X="64.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_InEqualityOperator_Double" Collapsed="true">
+    <Position X="66.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_InEqualityOperator_Int" Collapsed="true">
+    <Position X="69" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_LessThanOperator_Double" Collapsed="true">
+    <Position X="15" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GreaterThanOperator_Double" Collapsed="true">
+    <Position X="17.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_LessThanOrEqualOperator_Double" Collapsed="true">
+    <Position X="19.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GreaterThanOrEqualOperator_Double" Collapsed="true">
+    <Position X="21.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_LessThanOperator_Int" Collapsed="true">
+    <Position X="24" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GreaterThanOperator_Int" Collapsed="true">
+    <Position X="26.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_LessThanOrEqualOperator_Int" Collapsed="true">
+    <Position X="28.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GreaterThanOrEqualOperator_Int" Collapsed="true">
+    <Position X="30.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_ComparOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ConstructorWrapper" Collapsed="true">
+    <Position X="105" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Constructor.cs</FileName>
+      <HashCode>AAQAAAAACAAAAAAEAAAAAAAAgAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ConstructorWrapper_Params" Collapsed="true">
+    <Position X="111.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Constructor.cs</FileName>
+      <HashCode>ABAAAAAACAAAAAAEAAAAAAAAgAAAgAAAACAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ConstructorWrapper_String" Collapsed="true">
+    <Position X="118.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Constructor.cs</FileName>
+      <HashCode>AAQAAAAACAAAAIAEAAAAAAAAgAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SetField" Collapsed="true">
+    <Position X="123" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Field.cs</FileName>
+      <HashCode>AACAAAAACAAAAAAEAAAAAAAAgAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetField" Collapsed="true">
+    <Position X="132" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Field.cs</FileName>
+      <HashCode>AACAAAAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_InitField_String" Collapsed="true">
+    <Position X="134.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Field.cs</FileName>
+      <HashCode>AASAAAAACAAAAIAEAAAAAAAAAAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Function" Collapsed="true">
+    <Position X="138.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Function.cs</FileName>
+      <HashCode>AAQAAAAACAAAAIAUAgAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_LogicalAnd" Collapsed="true">
+    <Position X="51" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_LogicalOp.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_LogicalOr" Collapsed="true">
+    <Position X="55.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_LogicalOp.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_MethodWrapper" Collapsed="true">
+    <Position X="159" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Method.cs</FileName>
+      <HashCode>AAQAAAAACAAAACAEAAAAAAAAAAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_MethodWrapper_Params" Collapsed="true">
+    <Position X="168" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Method.cs</FileName>
+      <HashCode>ABAAAAAACAAAACAEAAAAAAAAAAAAgAAAACAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_MethodWrapper_String" Collapsed="true">
+    <Position X="179.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Method.cs</FileName>
+      <HashCode>AAQAAAAACAAAAKAEAAAAAAAAAAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_RunOnArgo" Collapsed="true">
+    <Position X="186" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Method.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEACM=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Final_RandomExpression_Simple_Constant" Collapsed="true">
+    <Position X="192.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_RandomExpression.cs</FileName>
+      <HashCode>AAAAEAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Final_RandomExpression_Simple_Variable" Collapsed="true">
+    <Position X="201.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_RandomExpression.cs</FileName>
+      <HashCode>AAAAEAAAAAAAAAEEAAAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Final_RandomExpression_Constant" Collapsed="true">
+    <Position X="12.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_RandomExpression.cs</FileName>
+      <HashCode>BAAAAAAAAABAAAAEAAAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Final_RandomExpression_Variable" Collapsed="true">
+    <Position X="73.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_RandomExpression.cs</FileName>
+      <HashCode>AAAAAAAAAABAAAAEAAAAAAAAAEAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Return" Collapsed="true">
+    <Position X="78" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Return.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAgAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Return_String" Collapsed="true">
+    <Position X="82.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_Return.cs</FileName>
+      <HashCode>AAQAAAAAAAAAAIAEAAAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SkillKey_Set" Collapsed="true">
+    <Position X="87" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_SkillKey.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAABgAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SkillKey_Get" Collapsed="true">
+    <Position X="91.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_SkillKey.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAABAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SetTag" Collapsed="true">
+    <Position X="96" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_TAG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAgAAEAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetTag" Collapsed="true">
+    <Position X="100.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_TAG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_RemoveTag" Collapsed="true">
+    <Position X="107.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_TAG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_TagExists" Collapsed="true">
+    <Position X="114" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_TAG.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_TemplateItem" Collapsed="true">
+    <Position X="120.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_TemplateItem.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAEAAAAAAAAAAAAgAEICI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_NotOperator" Collapsed="true">
+    <Position X="125.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_UnOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_BitComplementOperator" Collapsed="true">
+    <Position X="127.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_UnOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_MinusOperator" Collapsed="true">
+    <Position X="129.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_UnOperators.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_SetVar" Collapsed="true">
+    <Position X="141" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_VAR.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAgAAEAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_GetVar" Collapsed="true">
+    <Position X="145.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_VAR.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_VarExists" Collapsed="true">
+    <Position X="152.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_VAR.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_RemoveVar" Collapsed="true">
+    <Position X="161.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Final_VAR.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_For" Collapsed="true">
+    <Position X="170.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_For.cs</FileName>
+      <HashCode>AAAEAAAACAAAgIAEAAAAAAFQAAAAAAAAAAAAAAABACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Foreach" Collapsed="true">
+    <Position X="181.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Foreach.cs</FileName>
+      <HashCode>AAAAAAAACQAAgIAEAAAAAAEQAAAAAAAAAAAAAAABACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_If" Collapsed="true">
+    <Position X="188.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_If.cs</FileName>
+      <HashCode>AAAAAAAABAAAkAAEAAAAAAAAAAAAAAAAAAAAAAAABCI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_AddTimer" Collapsed="true">
+    <Position X="195" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_AddTimer.cs</FileName>
+      <HashCode>AAQACAAIAAAAgIAEAAAAAAAQAAAEACgAAAAAAAAAADI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Argument" Collapsed="true">
+    <Position X="207.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_Arguments.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAAQAAAAAAABgACAAAIAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_BinOperator" Collapsed="true">
+    <Position X="42" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_BinOperator.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgIIEAAAAAACAAAAIAgAAgAAAAAAAgCI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_EvalExpression" Collapsed="true">
+    <Position X="75.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_EvalExpression.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAAAgAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_Expression" Collapsed="true">
+    <Position X="80.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_Expression.cs</FileName>
+      <HashCode>AAQAAAAIAAAAgIAEgAAEBAAAAABEAAgAQAAAAAAAADI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_ExpressionChain" Collapsed="true">
+    <Position X="84.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_ExpressionChain.cs</FileName>
+      <HashCode>AAAAABAAAAAAgAAEAgAAAAAAAAAAAAAAAAAAAAQAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.NameRef" Collapsed="true">
+    <Position X="13.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_ExpressionChain.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.NameSpaceRef" Collapsed="true">
+    <Position X="12.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_ExpressionChain.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.ClassNameRef" Collapsed="true">
+    <Position X="14.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_ExpressionChain.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_Indexer" Collapsed="true">
+    <Position X="102.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_Indexer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAAAgAAAAAAAAAAAAAABACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_QuotedString" Collapsed="true">
+    <Position X="109.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_QuotedString.cs</FileName>
+      <HashCode>AAAQABAAAAAAgIAEAAAAAAAAAAAAAAgAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_RandomExpression" Collapsed="true">
+    <Position X="116.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_RandomExpression.cs</FileName>
+      <HashCode>AACAgAAAAAAAgAAEAAAAAAAAAEAAACAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.ValueOddsPair" Collapsed="true">
+    <Position X="216.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_RandomExpression.cs</FileName>
+      <HashCode>AAAACAAACAAAAAAEIAAAQAAAAEAAACAAAAAgAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_UnOperator" Collapsed="true">
+    <Position X="127.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_UnOperator.cs</FileName>
+      <HashCode>AAAAAAQAAAAAoIAEBAAAAAAAAAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Lazy_VarExpression" Collapsed="true">
+    <Position X="227.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Lazy_VarExpression.cs</FileName>
+      <HashCode>IAAACgAAAAAAgAAAAAAAAAAAAAACAgAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Script" Collapsed="true">
+    <Position X="136.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Script.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAAAAAAAAAAAAAAAAAAABCI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Object" Collapsed="true">
+    <Position X="143.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Script.cs</FileName>
+      <HashCode>AAAAAAAAAAAAoAAEAAAAAAAAAAAAAAAAAAAAAAAEAAI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_ToString" Collapsed="true">
+    <Position X="147.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Script.cs</FileName>
+      <HashCode>AQAAAAAAAAAAgAAEAAAAAAAAAAAAAAAAAAAAAAAEACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_This" Collapsed="true">
+    <Position X="154.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Script.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Constant" Collapsed="true">
+    <Position X="163.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Script.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAQAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Switch" Collapsed="true">
+    <Position X="173.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Switch.cs</FileName>
+      <HashCode>AAAIAAAAABACgAAEAAQAAAAAAAAAAAAAAAAAAEAAASI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Switch_String" Collapsed="true">
+    <Position X="172.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Switch.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Switch_Integer" Collapsed="true">
+    <Position X="174.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_Switch.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Is" Collapsed="true">
+    <Position X="197.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_TypeOf.cs</FileName>
+      <HashCode>AAAABAAAAAAAgAAEAAAAAAAAAAABAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_Typeof" Collapsed="true">
+    <Position X="229" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_TypeOf.cs</FileName>
+      <HashCode>AAAAAAQAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.OpNode_While" Collapsed="true">
+    <Position X="71.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode_While.cs</FileName>
+      <HashCode>AAAAAIAAAAAAgAAEAAAAAAAAIAAAAAAAAAAAAAAAACI=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.LScript.ScriptedGumpDef" Collapsed="true">
+    <Position X="20.25" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\ScriptedGumpDef.cs</FileName>
+      <HashCode>AAAAgACAAAAAAAAEAAAIAAAAAAAAAAABAAAAgAIAAQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.ArgChkHolder" Collapsed="true">
+    <Position X="215" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\ScriptedGumpDef.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.ArgTxtHolder" Collapsed="true">
+    <Position X="218.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\ScriptedGumpDef.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAACAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.ArgNumHolder" Collapsed="true">
+    <Position X="216.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\ScriptedGumpDef.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAgACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.ScriptedGump" Collapsed="true">
+    <Position X="3.5" Y="28.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\ScriptedGumpDef.cs</FileName>
+      <HashCode>AUARAEgAAFAYBCQAJAAIAAAAAAALICAgIAQMCQAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.StrictAnalyzer" Collapsed="true">
+    <Position X="1.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\StrictAnalyzer.cs</FileName>
+      <HashCode>fft6sfH09v2/e6X/69PnldsvaK/+8T/adSycu/5b+9s=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.StrictParser" Collapsed="true">
+    <Position X="10.5" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\StrictParser.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.LScript.StrictTokenizer" Collapsed="true">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\StrictTokenizer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Packets.PacketBase" Collapsed="true">
+    <Position X="232.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Packets\PacketBase.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.SaveableClassAttribute" Collapsed="true">
+    <Position X="229" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.LoadingInitializerAttribute" Collapsed="true">
+    <Position X="213.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.LoadSectionAttribute" Collapsed="true">
+    <Position X="216.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.SaveableDataAttribute" Collapsed="true">
+    <Position X="230.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.LoadLineAttribute" Collapsed="true">
+    <Position X="215" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.SaveAttribute" Collapsed="true">
+    <Position X="232.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.DecoratedClassesSaveImplementor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="213.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>QAAAAMAAAQAAIEAAAABAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Persistence.DecoratedClassesSaveImplementorGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="215" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\DecoratedClassesSaveImplementor.cs</FileName>
+      <HashCode>gAAQAAAAAAACAAAAAAAAAAAAAAAAEAAAgAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Persistence.ObjectSaver" Collapsed="true">
+    <Position X="222" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>BQGAqaAgxQBAAAABBEYAUImgwAEEJEAkkAAEAgQCAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.SaveStream" Collapsed="true">
+    <Position X="213.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>AAAAAAAAAAACAAAIAAAAAAAAAAAAAAAAAQAAAQGAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Persistence.WorldSaver" Collapsed="true">
+    <Position X="222" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\WorldSaver.cs</FileName>
+      <HashCode>AAQEgIQAAAQAACAAABIAAAAAAAAAAAAQAQACACAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.BoundTimer" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\BoundTimer.cs</FileName>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAABAAAAEAAAAAAAAAAAAAEAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.FunctionTimer" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\FunctionTimer.cs</FileName>
+      <HashCode>AAQAAIAIAAAAAIAAAgAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.MethodTimer" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\MethodTimer.cs</FileName>
+      <HashCode>AAQAAIAIAAAAACAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.SynchronizedQueue&lt;T&gt;" Collapsed="true">
+    <Position X="213.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\SynchronizedQueue.cs</FileName>
+      <HashCode>AABAAAADAAAEAACABAggAAQAAAAABAAAAAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.Timer" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\Timer.cs</FileName>
+      <HashCode>EAAAIKAIAAiBAAAAAAAMACAiBCMgAACBAAAAhwBRABA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SteamEngine.Timers.TimerKey" Collapsed="true">
+    <Position X="7.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\TimerKey.cs</FileName>
+      <HashCode>AAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.TimerKeySaveImplementor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="223.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\TimerKey.cs</FileName>
+      <HashCode>AAAAgMAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAQAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SteamEngine.Timers.TimerPriorityQueue" Collapsed="true">
+    <Position X="225.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\TimerPriorityQueue.cs</FileName>
+      <HashCode>ABBAAAgBAAAEAAAABAIABAQAAAAABAQACAAAAARAAAg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SteamEngine.Timers.TriggerTimer" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Timers\TriggerTimer.cs</FileName>
+      <HashCode>AAQAAAAIEAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SteamEngine.WeakRefDictionaryKeyEntry" Collapsed="true">
+    <Position X="213.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\WeakRefDictionary.cs</FileName>
+      <HashCode>AAgAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="SteamEngine.ICorpseEquipInfo" Collapsed="true">
+    <Position X="215" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractItem.cs</FileName>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAEAAgAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.ISkill" Collapsed="true">
+    <Position X="232.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\AbstractSkillDef.cs</FileName>
+      <HashCode>AAASAAAAAAQAAAAAAAAAAAAAEAAAAAAEAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IDeepCopyImplementor" Collapsed="true">
+    <Position X="216.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DeepCopyFactory.cs</FileName>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IFieldValueParser" Collapsed="true">
+    <Position X="220.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\FieldValue.cs</FileName>
+      <HashCode>AIAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.ISrc" Collapsed="true">
+    <Position X="213.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Globals.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAIAAAAAAAAAAAAAAAAAAACAAIAAEA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.ITriggerGroupHolder" Collapsed="true">
+    <Position X="0.5" Y="20.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginHolder.cs</FileName>
+      <HashCode>AAAAAAAIAAAAQBAAAAoAJAAAIAAAAQAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IPluginHolder" Collapsed="true">
+    <Position X="0.5" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\PluginHolder.cs</FileName>
+      <HashCode>AEAAAAAAAAAAAAAAAAQAAAAAEACAQQCAAAAEAAAIAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IPoint2D" Collapsed="true">
+    <Position X="0.5" Y="27.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAYAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IPoint3D" Collapsed="true">
+    <Position X="0.5" Y="28.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IPoint4D" Collapsed="true">
+    <Position X="0.5" Y="30.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Point.cs</FileName>
+      <HashCode>ABAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IMovementSettings" Collapsed="true">
+    <Position X="223.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Regions\MapCalculations.cs</FileName>
+      <HashCode>AACAAAAAAAAEAAAAAEAAAAAAQAAAAQIAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IUnloadable" Collapsed="true">
+    <Position X="222" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ScriptFilesCollection.cs</FileName>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IDeletable" Collapsed="true">
+    <Position X="218.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TagHolder.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.ITagHolder" Collapsed="true">
+    <Position X="216.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\TagHolder.cs</FileName>
+      <HashCode>IgAAAAAAAAAAAAQAAAAEAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.ObjectWithUid" Collapsed="true">
+    <Position X="223.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Thing.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IThingFactory" Collapsed="true">
+    <Position X="218.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\ThingDef.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.IPurgable" Collapsed="true">
+    <Position X="227.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\WeakRefDictionary.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.CompiledScripts.ISteamCSCodeGenerator" Collapsed="true">
+    <Position X="215" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\GeneratedCodeUtil.cs</FileName>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.LScript.IOpNodeHolder" Collapsed="true">
+    <Position X="225.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.LScript.ITriable" Collapsed="true">
+    <Position X="220.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.LScript.IKnownRetType" Collapsed="true">
+    <Position X="222" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\OpNode.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.Persistence.ISaveImplementor" Collapsed="true">
+    <Position X="229" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>AAAAAMAAAQAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.Persistence.IBaseClassSaveCoordinator" Collapsed="true">
+    <Position X="213.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>AAAIgAgAAACAAAABAAAAAAAgAAAAAAAIAAAAAgAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamEngine.Persistence.ISimpleSaveImplementor" Collapsed="true">
+    <Position X="230.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>AAAAgMAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAQAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SteamEngine.Networking.LoginAttemptResult" Collapsed="true">
+    <Position X="215" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\Enums.cs</FileName>
+      <HashCode>AAAEAAAAAABAAAAABIAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.Networking.AffixType" Collapsed="true">
+    <Position X="213.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\OutgoingPackets.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.Direction" Collapsed="true">
+    <Position X="223.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>ACCCABABAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAABAAQ=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.StatLockType" Collapsed="true">
+    <Position X="218.5" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAEAIgAAABAAAAAAFAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.SkillLockType" Collapsed="true">
+    <Position X="213.25" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAEAIgAAABAAAAAAFAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.DeleteCharacterResult" Collapsed="true">
+    <Position X="220.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>gEgAAAAAgAAAAAAAAgAAEAAAAAAAAAAAAAMAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.LoginDeniedReason" Collapsed="true">
+    <Position X="216.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAEAAFAAAAAAAAABAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.RequestableAnim" Collapsed="true">
+    <Position X="227.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.SectorEnumType" Collapsed="true">
+    <Position X="232.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAACIAAACAAAAgAACAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.SpeechType" Collapsed="true">
+    <Position X="216.75" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAIAQAAhAQAAAAABBYAAAAAAIAAAAQAAgAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.RenderModes" Collapsed="true">
+    <Position X="225.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>gAAEAEAAAAAAAAAIAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.StatusBarType" Collapsed="true">
+    <Position X="220.25" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>BAAAAAAAAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.MovementType" Collapsed="true">
+    <Position X="220.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAEAgAI=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.PriorityClass" Collapsed="true">
+    <Position X="223.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAEAAAAAAQAAAAAQAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.CompressedPacketType" Collapsed="true">
+    <Position X="216.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.GroupState" Collapsed="true">
+    <Position X="229" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAIAEAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.GeneratingState" Collapsed="true">
+    <Position X="227.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>IAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.DenyResult" Collapsed="true">
+    <Position X="222" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAACAggAAAAAAAAgAgAgAAQAAAQIAAAAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.Season" Collapsed="true">
+    <Position X="230.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAEggAAAAAAAQAAAICAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.CursorType" Collapsed="true">
+    <Position X="218.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.MoveRestriction" Collapsed="true">
+    <Position X="222" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.MapTileType" Collapsed="true">
+    <Position X="218.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>BAAAAAAAAAAAAAAIAEAAAAAAAAAgAAAQAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.HighlightColor" Collapsed="true">
+    <Position X="232.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAQCkAAABAAAAAAAAAAAAAAAgAAAIACARAAACAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.ClientType" Collapsed="true">
+    <Position X="215" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Enums.cs</FileName>
+      <HashCode>AAAAAQAAAAAAAAAAAGAAAAAAAAAAACAAAAAAAAAARBA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.FieldValueType" Collapsed="true">
+    <Position X="225.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\FieldValue.cs</FileName>
+      <HashCode>AAQAAAAAAgAAAAAAAAAQAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.LayerNames" Collapsed="true">
+    <Position X="213.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LayerNames.cs</FileName>
+      <HashCode>AACFACAQAAAAQKyAUBIBygACgAAAQAAAEAAAAQEEQII=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.RunLevel" Collapsed="true">
+    <Position X="229" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\RunLevel.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAQAAACAAIAAIAAEACAAAABA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.TileFlag" Collapsed="true">
+    <Position X="223.75" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\tiledata.cs</FileName>
+      <HashCode>JAAABGQABVAAQABACIAAQAAMACAAAwwEEAAgDCMAQBA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.CompiledScripts.GumpButtonType" Collapsed="true">
+    <Position X="230.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\CompiledGump.cs</FileName>
+      <HashCode>AAAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.LScript.SpecialType" Collapsed="true">
+    <Position X="215" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\MemberResolver.cs</FileName>
+      <HashCode>AAAAAAIAAAAAAAAAQAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SteamEngine.LScript.StrictConstants" Collapsed="true">
+    <Position X="222" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\LScript\StrictConstants.cs</FileName>
+      <HashCode>kAhH+sUCbiCkgDhM7UIGnN/bAIUJJql98A7kCxAjiow=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="SteamEngine.Networking.OnTargon" Collapsed="true">
+    <Position X="222" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameState.cs</FileName>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.Networking.OnTargon_Cancel" Collapsed="true">
+    <Position X="223.75" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Networking\GameState.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAgA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.ReturnCopy" Collapsed="true">
+    <Position X="227.25" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DeepCopyFactory.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.ReturnCopyParam" Collapsed="true">
+    <Position X="229" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DeepCopyFactory.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.DelayedMethod" Collapsed="true">
+    <Position X="215" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\DelayedResolver.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.CompiledScripts.RegisterTGDeleg" Collapsed="true">
+    <Position X="225.5" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassManager.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.CompiledScripts.SupplyType" Collapsed="true">
+    <Position X="213.25" Y="18" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassManager.cs</FileName>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.CompiledScripts.SupplyDecoratedType&lt;T&gt;" Collapsed="true">
+    <Position X="230.75" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassManager.cs</FileName>
+      <HashCode>BAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.CompiledScripts.SupplyInstance&lt;T&gt;" Collapsed="true">
+    <Position X="232.5" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\CompiledScripts\ClassManager.cs</FileName>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.Persistence.LoadObject" Collapsed="true">
+    <Position X="216.75" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>AAAAAAABAAAAABAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.Persistence.LoadObjectParam" Collapsed="true">
+    <Position X="218.5" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\ObjectSaver.cs</FileName>
+      <HashCode>AAAAAAABAAAAABAAAAAAAAAQCAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.Persistence.LoadSection" Collapsed="true">
+    <Position X="220.25" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\WorldSaver.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SteamEngine.Persistence.CanStartAsScript" Collapsed="true">
+    <Position X="213.25" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>C:\SE\moriaengine\GameCore\Persistence\WorldSaver.cs</FileName>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+</ClassDiagram>

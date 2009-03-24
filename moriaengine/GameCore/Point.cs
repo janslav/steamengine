@@ -24,13 +24,13 @@ using SteamEngine.Regions;
 
 namespace SteamEngine {
 	public interface IPoint2D {
-		ushort X { get; } //Map X coordinate (Low is west, high is east)
-		ushort Y { get; } //Map Y coordinate (Low is north, high is south)
+		int X { get; } //Map X coordinate (Low is west, high is east)
+		int Y { get; } //Map Y coordinate (Low is north, high is south)
 		IPoint2D TopPoint { get; }
 	}
 
 	public interface IPoint3D : IPoint2D {
-		sbyte Z { get; } //Z coordinate (Low is lower, high is higher)
+		int Z { get; } //Z coordinate (Low is lower, high is higher)
 		new IPoint3D TopPoint { get; }
 	}
 
@@ -42,10 +42,10 @@ namespace SteamEngine {
 	}
 
 	public class Point2D : IPoint2D {
-		public readonly ushort x;	//Map X coordinate (Low is west, high is east)
-		public readonly ushort y;
+		private readonly int x;	//Map X coordinate (Low is west, high is east)
+		private readonly int y;
 
-		public static int GetSimpleDistance(ushort ax, ushort ay, ushort bx, ushort by) {
+		public static int GetSimpleDistance(int ax, int ay, int bx, int by) {
 			return Math.Max(Math.Abs(ax - bx), Math.Abs(ay - by));
 		}
 
@@ -104,7 +104,7 @@ namespace SteamEngine {
 			return new Point2D((ushort) (x + diffX), (ushort) (y + diffY));
 		}
 
-		public Point2D(ushort x, ushort y) {
+		public Point2D(int x, int y) {
 			this.x = x;
 			this.y = y;
 		}
@@ -119,24 +119,20 @@ namespace SteamEngine {
 			this.y = p.Y;
 		}
 
+		public int X {
+			get { return x; }
+		}
+
+		public int Y {
+			get { return y; }
+		} 
+
 		public static bool Equals(Point2D a, Point2D b) {
 			return ((a.x == b.x) && (a.y == b.y));
 		}
 
 		public static bool Equals(IPoint2D a, IPoint2D b) {
 			return ((a.X == b.X) && (a.Y == b.Y));
-		}
-
-		ushort IPoint2D.X {
-			get {
-				return x;
-			}
-		}
-
-		ushort IPoint2D.Y {
-			get {
-				return y;
-			}
 		}
 
 		public override string ToString() {
@@ -181,9 +177,9 @@ namespace SteamEngine {
 	}
 
 	public class Point3D : Point2D, IPoint3D {
-		public readonly sbyte z;
+		public readonly int z;
 
-		public Point3D(ushort x, ushort y, sbyte z)
+		public Point3D(int x, int y, int z)
 			: base(x, y) {
 			this.z = z;
 		}
@@ -200,25 +196,25 @@ namespace SteamEngine {
 
 		[Common.Summary("Add the diff's X, Y and Z to owns X, Y and Z")]
 		public Point3D Add(int diffX, int diffY, int diffZ) {
-			return new Point3D((ushort) (x + diffX), (ushort) (y + diffY), (sbyte) (z + diffZ));
+			return new Point3D((ushort) (X + diffX), (ushort) (Y + diffY), (sbyte) (z + diffZ));
 		}
 
 		public static bool Equals(Point3D a, Point3D b) {
-			return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
+			return ((a.X == b.X) && (a.Y == b.Y) && (a.z == b.z));
 		}
 
 		public static bool Equals(IPoint3D a, IPoint3D b) {
 			return ((a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z));
 		}
 
-		sbyte IPoint3D.Z {
+		int IPoint3D.Z {
 			get {
 				return z;
 			}
 		}
 
 		public override string ToString() {
-			return "(" + x + "," + y + "," + z + ")";
+			return "(" + X + "," + Y + "," + z + ")";
 		}
 
 		public static bool operator ==(Point3D first, Point3D second) {
@@ -230,17 +226,17 @@ namespace SteamEngine {
 			} else if (object.ReferenceEquals(second, null)) {
 				return false;
 			}
-			return ((first.x == second.x) && (first.y == second.y) && (first.z == second.z));
+			return ((first.X == second.X) && (first.Y == second.Y) && (first.z == second.z));
 		}
 
 		public override bool Equals(object o) {
 			Point3D p = o as Point3D;
 			if (p != null) {
-				return ((x == p.x) && (y == p.y) && (z == p.z));
+				return ((X == p.X) && (Y == p.Y) && (z == p.z));
 			}
 			IPoint3D ip = o as IPoint3D;
 			if (ip != null) {
-				return ((x == ip.X) && (y == ip.Y) && (z == ip.Z));
+				return ((X == ip.X) && (Y == ip.Y) && (z == ip.Z));
 			}
 			return false;
 		}
@@ -250,7 +246,7 @@ namespace SteamEngine {
 		}
 
 		public override int GetHashCode() {
-			return ((37 * 17 ^ x) ^ y) ^ z;
+			return ((37 * 17 ^ X) ^ Y) ^ z;
 		}
 
 		IPoint3D IPoint3D.TopPoint {
@@ -264,15 +260,15 @@ namespace SteamEngine {
 		internal sbyte z;
 		internal byte m;
 
-		public MutablePoint4D(ushort x, ushort y, sbyte z, byte m) {
+		public MutablePoint4D(int x, int y, int z, byte m) {
 			this.SetP(x, y, z, m);
 		}
 
-		public MutablePoint4D(ushort x, ushort y, sbyte z)
+		public MutablePoint4D(int x, int y, int z)
 			: this(x, y, z, 0) {
 		}
 
-		public MutablePoint4D(ushort x, ushort y)
+		public MutablePoint4D(int x, int y)
 			: this(x, y, 0, 0) {
 		}
 
@@ -281,7 +277,7 @@ namespace SteamEngine {
 		}
 
 		public MutablePoint4D(Point4D p)
-			: this(p.x, p.y, p.z, p.m) {
+			: this(p.X, p.Y, p.z, p.m) {
 		}
 
 		public MutablePoint4D(IPoint4D p)
@@ -320,10 +316,9 @@ namespace SteamEngine {
 			}
 		}
 
-		internal void SetP(ushort x, ushort y, sbyte z, byte m) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
+		internal void SetP(int x, int y, int z, byte m) {
+			this.y = (ushort) y;
+			this.z = (sbyte) z;
 			this.m = m;
 		}
 
@@ -331,26 +326,26 @@ namespace SteamEngine {
 			SetP(p.X, p.Y, p.Z, p.M);
 		}
 
-		internal void SetP(ushort x, ushort y, sbyte z) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
+		internal void SetP(int x, int y, int z) {
+			this.x = (ushort) x;
+			this.y = (ushort) y;
+			this.z = (sbyte) z;
 		}
 	}
 
 	public sealed class Point4D : Point3D, IPoint4D {
 		public readonly byte m;
 
-		public Point4D(ushort x, ushort y, sbyte z, byte m)
+		public Point4D(int x, int y, int z, byte m)
 			: base(x, y, z) {
 			this.m = m;
 		}
 
-		public Point4D(ushort x, ushort y, sbyte z)
+		public Point4D(int x, int y, int z)
 			: this(x, y, z, 0) {
 		}
 
-		public Point4D(ushort x, ushort y)
+		public Point4D(int x, int y)
 			: this(x, y, 0, 0) {
 		}
 
@@ -370,7 +365,7 @@ namespace SteamEngine {
 		}
 
 		public static bool Equals(Point4D a, Point4D b) {
-			return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.m == b.m));
+			return ((a.X == b.X) && (a.Y == b.Y) && (a.z == b.z) && (a.m == b.m));
 		}
 
 		public static bool Equals(IPoint4D a, IPoint4D b) {
@@ -414,11 +409,11 @@ namespace SteamEngine {
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public override string ToString() {
-			return "(" + x + "," + y + "," + z + "," + m + ")";
+			return "(" + X + "," + Y + "," + z + "," + m + ")";
 		}
 
 		public string ToNormalString() {
-			return x + "," + y + "," + z + "," + m;
+			return X + "," + Y + "," + z + "," + m;
 		}
 
 		public static bool operator ==(Point4D first, Point4D second) {
@@ -430,17 +425,17 @@ namespace SteamEngine {
 			} else if (object.ReferenceEquals(second, null)) {
 				return false;
 			}
-			return ((first.x == second.x) && (first.y == second.y) && (first.z == second.z) && (first.m == second.m));
+			return ((first.X == second.X) && (first.Y == second.Y) && (first.z == second.z) && (first.m == second.m));
 		}
 
 		public override bool Equals(object o) {
 			Point4D p = o as Point4D;
 			if (p != null) {
-				return ((this.x == p.x) && (this.y == p.y) && (this.z == p.z) && (this.m == p.m));
+				return ((this.X == p.X) && (this.Y == p.Y) && (this.z == p.z) && (this.m == p.m));
 			}
 			IPoint4D ip = o as IPoint4D;
 			if (ip != null) {
-				return ((this.x == ip.X) && (this.y == ip.Y) && (this.z == ip.Z) && (this.m == ip.M));
+				return ((this.X == ip.X) && (this.Y == ip.Y) && (this.z == ip.Z) && (this.m == ip.M));
 			}
 			return false;
 		}
@@ -450,7 +445,7 @@ namespace SteamEngine {
 		}
 
 		public override int GetHashCode() {
-			return (((37 * 17 ^ x) ^ y) ^ z) ^ m;
+			return (((37 * 17 ^ X) ^ Y) ^ z) ^ m;
 		}
 
 		public Map GetMap() {

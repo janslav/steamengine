@@ -139,8 +139,8 @@ namespace SteamEngine {
 		//still needs to be put into the world
 		protected Thing(ThingDef myDef) {
 			this.def = myDef;
-			this.model = myDef.Model;
-			this.color = myDef.Color;
+			this.model = (ushort) myDef.Model;
+			this.color = (ushort) myDef.Color;
 			if (uidBeingLoaded == -1) {
 				things.Add(this);//sets uid
 				this.Resend();
@@ -209,31 +209,33 @@ namespace SteamEngine {
 		//Property: x
 		//The x coordinate of this Thing. To change something's position, it's generally recommended that you set P
 		//or use Go instead.
-		public ushort X {
+		public int X {
 			get {
 				ThrowIfDeleted();
 				return point4d.x;
 			}
 			set {
-				P(value, Y, Z, M);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(value, this.Y, this.Z, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
-		public ushort Y {
+
+		public int Y {
 			get {
 				ThrowIfDeleted();
 				return point4d.y;
 			}
 			set {
-				P(X, value, Z, M);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(this.X, value, this.Z, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
-		public sbyte Z {
+
+		public int Z {
 			get {
 				ThrowIfDeleted();
 				return point4d.z;
 			}
 			set {
-				P(X, Y, value, M);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(this.X, this.Y, value, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
 
@@ -244,7 +246,7 @@ namespace SteamEngine {
 				return point4d.m;
 			}
 			set {
-				P(X, Y, Z, value);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(this.X, this.Y, this.Z, value);	//maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
 
@@ -273,36 +275,36 @@ namespace SteamEngine {
 
 		public abstract bool Flag_Disconnected { get; set; }
 
-		public void P(ushort x, ushort y) {
+		public void P(int x, int y) {
 			SetPosImpl(x, y, this.Z, this.M);
 		}
 
 		public void P(Point2D point) {
-			SetPosImpl(point.x, point.y, this.Z, this.M);
+			SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
 		public void P(IPoint2D point) {
 			SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
-		public void P(ushort x, ushort y, sbyte z) {
+		public void P(int x, int y, int z) {
 			SetPosImpl(x, y, z, M);
 		}
 
 		public void P(Point3D point) {
-			SetPosImpl(point.x, point.y, point.z, this.M);
+			SetPosImpl(point.X, point.Y, point.z, this.M);
 		}
 
 		public void P(IPoint3D point) {
 			SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
-		public void P(ushort x, ushort y, sbyte z, byte m) {
+		public void P(int x, int y, int z, byte m) {
 			SetPosImpl(x, y, z, m);
 		}
 
 		public void P(Point4D point) {
-			SetPosImpl(point.x, point.y, point.z, point.m);
+			SetPosImpl(point.X, point.Y, point.z, point.m);
 		}
 
 		public void P(IPoint4D point) {
@@ -329,25 +331,25 @@ namespace SteamEngine {
 			NudgeDown(1);
 		}
 
-		public void NudgeUp(short amt) {
-			sbyte tmpZ = Z;
+		public void NudgeUp(int amt) {
+			sbyte tmpZ = this.point4d.z;
 			try {
 				tmpZ = checked((sbyte) (tmpZ + amt));
-				Z = tmpZ;
+				this.Z = tmpZ;
 			} catch (OverflowException) {
 				//OverheadMessage("This cannot be nudged that much (It would make its z coordinate too high).");
-				Z = -128;
+				this.Z = sbyte.MaxValue;
 			}
 		}
 
 		public void NudgeDown(short amt) {
-			sbyte tmpZ = Z;
+			sbyte tmpZ = this.point4d.z;
 			try {
 				tmpZ = checked((sbyte) (tmpZ - amt));
 				Z = tmpZ;
 			} catch (OverflowException) {
 				//OverheadMessage("This cannot be nudged that much (It would make its z coordinate too low).");
-				Z = 127;
+				Z = sbyte.MinValue;
 			}
 		}
 
@@ -359,33 +361,47 @@ namespace SteamEngine {
 			Resend();
 		}
 
-		public ushort Color {
+		public int Color {
 			get {
 				return color;
 			}
 			set {
 				if (value >= 0 && (value & ~0xc000) <= 0xbb6) {
-					if (IsItem) {
+					if (this.IsItem) {
 						ItemSyncQueue.AboutToChange((AbstractItem) this);
 					} else {
 						CharSyncQueue.AboutToChangeBaseProps((AbstractCharacter) this);
 					}
-					color = value;
+					this.color = (ushort) value;
 				}
 			}
 		}
 
-		public ushort Model {
+		[CLSCompliant(false)]
+		public ushort ShortColor {
 			get {
-				return model;
+				return this.color;
+			}
+		}
+
+		public int Model {
+			get {
+				return this.model;
 			}
 			set {
-				if (IsItem) {
+				if (this.IsItem) {
 					ItemSyncQueue.AboutToChange((AbstractItem) this);
 				} else {
 					CharSyncQueue.AboutToChangeBaseProps((AbstractCharacter) this);
 				}
-				model = value;
+				this.model = (ushort) value;
+			}
+		}
+
+		[CLSCompliant(false)]
+		public ushort ShortModel {
+			get {
+				return this.model;
 			}
 		}
 
@@ -1130,7 +1146,7 @@ namespace SteamEngine {
 			return NewItem(factory, 1);
 		}
 
-		public abstract AbstractItem NewItem(IThingFactory factory, uint amount);
+		public abstract AbstractItem NewItem(IThingFactory factory, int amount);
 
 		public void Move(string dir) {
 			Move(dir, 1);
@@ -1159,7 +1175,7 @@ namespace SteamEngine {
 
 			toolTips = Pool<AOSToolTips>.Acquire();
 
-			uint id;
+			int id;
 			string argument;
 			this.GetNameCliloc(out id, out argument);
 			toolTips.AddLine(id, argument);
@@ -1170,7 +1186,7 @@ namespace SteamEngine {
 			return toolTips;//new or changed
 		}
 
-		public virtual void GetNameCliloc(out uint id, out string argument) {
+		public virtual void GetNameCliloc(out int id, out string argument) {
 			id = 1042971;
 			argument = this.Name;
 		}
@@ -1230,22 +1246,22 @@ namespace SteamEngine {
 			PacketSequences.SendOverheadMessageFrom(Globals.SrcTCPConnection, this, arg, color);
 		}
 
-		public void ClilocMessage(uint msg, string args) {
+		public void ClilocMessage(int msg, string args) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
 		}
 
-		public void ClilocMessage(uint msg, params string[] args) {
+		public void ClilocMessage(int msg, params string[] args) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
 		}
 
-		public void ClilocMessage(uint msg, ushort color, string args) {
+		public void ClilocMessage(int msg, ushort color, string args) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
 		}
 
-		public void ClilocMessage(uint msg, ushort color, params string[] args) {
+		public void ClilocMessage(int msg, ushort color, params string[] args) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
 		}
@@ -1259,7 +1275,7 @@ namespace SteamEngine {
 		//    }
 		//}
 
-		public void SoundTo(ushort soundId, AbstractCharacter toPlayer) {
+		public void SoundTo(int soundId, AbstractCharacter toPlayer) {
 			if (soundId != 0xffff) {
 				if (toPlayer != null) {
 					GameState state = toPlayer.GameState;
@@ -1272,12 +1288,12 @@ namespace SteamEngine {
 			}
 		}
 
-		public void Sound(ushort soundId) {
+		public void Sound(int soundId) {
 			this.Sound(soundId, Globals.MaxUpdateRange);
 		}
 
-		public void Sound(ushort soundId, int range) {
-			if (soundId != 0xffff) {
+		public void Sound(int soundId, int range) {
+			if (soundId != -1) {
 				PacketSequences.SendSound(this.TopObj(), soundId, range);
 			}
 		}
@@ -1324,7 +1340,7 @@ namespace SteamEngine {
 			@param arg The cliloc entry # to say
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocSay(uint arg, params string[] args) {
+		public void ClilocSay(int arg, params string[] args) {
 			this.Speech(null, arg, SpeechType.Speech, -1, 3, null, args);
 		}
 
@@ -1335,7 +1351,7 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocSay(uint arg, ushort color, params string[] args) {
+		public void ClilocSay(int arg, ushort color, params string[] args) {
 			this.Speech(null, arg, SpeechType.Speech, color, 3, null, args);
 		}
 
@@ -1347,7 +1363,7 @@ namespace SteamEngine {
 			@param font The font to use for the text (The default is 3)
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocSay(uint arg, ushort color, byte font, params string[] args) {
+		public void ClilocSay(int arg, ushort color, byte font, params string[] args) {
 			this.Speech(null, arg, SpeechType.Speech, color, font, null, args);
 		}
 
@@ -1370,7 +1386,7 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocYell(uint arg, ushort color, params string[] args) {
+		public void ClilocYell(int arg, ushort color, params string[] args) {
 			this.Speech(null, arg, SpeechType.Yell, color, 3, null, args);
 		}
 
@@ -1393,7 +1409,7 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocWhisper(uint arg, ushort color, params string[] args) {
+		public void ClilocWhisper(int arg, ushort color, params string[] args) {
 			this.Speech(null, arg, SpeechType.Whisper, color, 3, null, args);
 		}
 
@@ -1416,7 +1432,7 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocEmote(uint arg, ushort color, params string[] args) {
+		public void ClilocEmote(int arg, ushort color, params string[] args) {
 			this.Speech(null, arg, SpeechType.Emote, color, 3, null, args);
 		}
 
@@ -1435,7 +1451,7 @@ namespace SteamEngine {
 			@param arg The cliloc entry # to yell
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocYell(uint arg, params string[] args) {
+		public void ClilocYell(int arg, params string[] args) {
 			this.ClilocYell(arg, 0);
 		}
 
@@ -1453,7 +1469,7 @@ namespace SteamEngine {
 			@param arg The cliloc entry # to whisper
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocWhisper(uint arg, params string[] args) {
+		public void ClilocWhisper(int arg, params string[] args) {
 			this.ClilocWhisper(arg, 0);
 		}
 
@@ -1471,13 +1487,13 @@ namespace SteamEngine {
 			@param arg The cliloc entry # to emote
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocEmote(uint arg, params string[] args) {
+		public void ClilocEmote(int arg, params string[] args) {
 			this.ClilocEmote(arg, 0x22);
 		}
 
 		public void Fix() {
-			sbyte oldZ = this.Z;
-			sbyte newZ;
+			int oldZ = this.point4d.z;
+			int newZ;
 			GetMap().GetFixedZ(this, out newZ);
 			if (oldZ != newZ) {
 				this.Z = newZ;
@@ -1560,7 +1576,7 @@ namespace SteamEngine {
 					a font. If this is not 3, then the speech will be sent in ASCII instead of Unicode, because
 					Unicode doesn't support special fonts like runic.
 		 */
-		public void Speech(string speech, uint clilocSpeech, SpeechType type, int color, ushort font, int[] keywords, string[] args) {
+		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ushort font, int[] keywords, string[] args) {
 			AbstractCharacter self = this as AbstractCharacter;
 
 			string language = "enu";
@@ -1573,7 +1589,7 @@ namespace SteamEngine {
 			this.Speech(speech, clilocSpeech, type, color, font, language, keywords, args);
 		}
 
-		public void Speech(string speech, uint clilocSpeech, SpeechType type, int color, ushort font, string language, int[] keywords, string[] args) {
+		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ushort font, string language, int[] keywords, string[] args) {
 			this.ThrowIfDeleted();
 
 			AbstractCharacter self = this as AbstractCharacter;

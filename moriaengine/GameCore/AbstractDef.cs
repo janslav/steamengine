@@ -52,7 +52,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return defname + "/" + altdefname;
+			return Defname + "/" + altdefname;
 		}
 
 		public string Filepos {
@@ -71,12 +71,12 @@ namespace SteamEngine {
 		public override string PrettyDefname {
 			get {
 				//from the two available defnames (like c_0x190 and c_man) it returns the more understandable (c_man)
-				if (defname.IndexOf("_0x") > 0) {
+				if (Defname.IndexOf("_0x") > 0) {
 					if (altdefname != null) {
 						return altdefname;
 					}
 				}
-				return defname;
+				return Defname;
 			}
 		}
 

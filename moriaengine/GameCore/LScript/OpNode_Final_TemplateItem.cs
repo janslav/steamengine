@@ -57,10 +57,10 @@ namespace SteamEngine.LScript {
 			vars.self = t;
 
 			IThingFactory tf;
-			uint amount;
+			int amount;
 			try {
 				tf = (IThingFactory) defNode.Run(vars);
-				amount = Convert.ToUInt32(amountNode.Run(vars));
+				amount = Convert.ToInt32(amountNode.Run(vars));
 			} finally {
 				vars.self = t;
 			}
@@ -84,9 +84,9 @@ namespace SteamEngine.LScript {
 			Thing t = (Thing) vars.defaultObject;
 			vars.self = t;
 			IThingFactory tf = (IThingFactory) results[0];
-			uint amount = 1;
+			int amount = 1;
 			if (results.Length > 1) {
-				amount = Convert.ToUInt32(results[1]);
+				amount = Convert.ToInt32(results[1]);
 			}
 			try {
 				AbstractItem i = t.NewItem(tf, amount);

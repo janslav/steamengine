@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 	public interface IObjectWithMaterial {
 		MaterialType MaterialType { get; }
 		Material Material { get; }
-		ushort Color { get; set; }
+		int Color { get; set; }
 	}
 
 	[Dialogs.ViewableClass]

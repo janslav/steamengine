@@ -32,12 +32,12 @@ namespace SteamEngine {
 	public interface ICorpseEquipInfo {
 		uint FlaggedUid { get; }
 		byte Layer { get; }
-		ushort Color { get; }
-		ushort Model { get; }
+		int Color { get; }
+		int Model { get; }
 	}
 
 	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
-		private uint amount;
+		private int amount;
 		private string name;
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
 		//and coords of an item inside a container should only be changed through MoveInsideContainer
@@ -58,7 +58,7 @@ namespace SteamEngine {
 		protected byte flags;
 		//private byte netChangeFlags = 0;
 
-		private static uint instances = 0;
+		private static int instances = 0;
 		private static ArrayList registeredTGs = new ArrayList();
 		public TriggerGroup Type {
 			get {
@@ -101,7 +101,7 @@ namespace SteamEngine {
 			Globals.lastNewItem = this;
 		}
 
-		public static uint Instances {
+		public static int Instances {
 			get {
 				return instances;
 			}
@@ -129,9 +129,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public uint Amount {
+		public int Amount {
 			get {
-				return amount;
+				return this.amount;
 			}
 			set {
 				if (value != amount) {
@@ -141,7 +141,7 @@ namespace SteamEngine {
 					if (c != null) {
 						c.AdjustWeight(this.def.Weight * (value - amount));
 					}
-					amount = value;
+					this.amount = value;
 				}
 			}
 		}
@@ -500,7 +500,7 @@ namespace SteamEngine {
 					}
 					break;
 				case "amount":
-					amount = TagMath.ParseUInt16(valueString);
+					amount = TagMath.ParseInt32(valueString);
 					break;
 				case "flags":
 					flags = TagMath.ParseByte(valueString);

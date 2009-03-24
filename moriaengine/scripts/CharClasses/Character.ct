@@ -18,15 +18,15 @@
 
 [ThingTemplate Character : AbstractCharacter]
 Def:	//vars on the def
-	ushort AngerSound = SoundNames.None
-	ushort IdleSound = SoundNames.None
-	ushort AttackSound = SoundNames.None
-	ushort HurtSound = SoundNames.None
-	ushort DeathSound = SoundNames.None
+	int AngerSound = SoundNames.None
+	int IdleSound = SoundNames.None
+	int AttackSound = SoundNames.None
+	int HurtSound = SoundNames.None
+	int DeathSound = SoundNames.None
 
-	ushort corpseModel = 0x2006
+	int corpseModel = 0x2006
 
-	ushort icon = 0
+	int icon = 0
 	
 	uint AnimsAvailable = 0xffffffff /*all anims by default*/
 	

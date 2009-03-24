@@ -100,8 +100,8 @@ namespace SteamEngine.Networking {
 	public sealed class EnableLockedClientFeaturesOutPacket : GameOutgoingPacket {
 		ushort features;
 
-		public void Prepare(ushort features) {
-			this.features = features;
+		public void Prepare(int features) {
+			this.features = (ushort) features;
 		}
 
 		public override byte Id {
@@ -115,9 +115,9 @@ namespace SteamEngine.Networking {
 
 	public sealed class CharactersListOutPacket : DynamicLengthOutPacket {
 		string[] charNames = new string[AbstractAccount.maxCharactersPerGameAccount];
-		uint loginFlags;
+		int loginFlags;
 
-		public void Prepare(AbstractAccount charsSource, uint loginFlags) {
+		public void Prepare(AbstractAccount charsSource, int loginFlags) {
 			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
 				AbstractCharacter ch = charsSource.GetCharacterInSlot(i);
 				if (ch != null) {
@@ -159,7 +159,7 @@ namespace SteamEngine.Networking {
 			//0x08 = Right-click menus
 			//0x20 = AOS features
 			//0x40 = Six characters instead of five
-			this.EncodeUInt(this.loginFlags);
+			this.EncodeInt(this.loginFlags);
 
 			this.SeekFromStart(3);
 			this.EncodeByte((byte) numOfCharacters);
@@ -174,10 +174,10 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(AbstractCharacter chr, int mapSizeX, int mapSizeY) {
 			this.flaggedUid = chr.FlaggedUid;
-			this.model = chr.Model;
-			this.x = chr.X;
-			this.y = chr.Y;
-			this.z = chr.Z;
+			this.model = chr.ShortModel;
+			this.x = (ushort) chr.X;
+			this.y = (ushort) chr.Y;
+			this.z = (sbyte) chr.Z;
 			this.direction = chr.Dir;
 
 			this.mapSizeX = (ushort) (mapSizeX - 8);
@@ -250,8 +250,8 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(GameState state, AbstractCharacter ch) {
 			this.flaggedUid = ch.FlaggedUid;
-			this.model = ch.Model;
-			this.color = ch.Color;
+			this.model =  ch.ShortModel;
+			this.color = ch.ShortColor;
 			MutablePoint4D p = ch.point4d;
 			this.x = p.x;
 			this.y = p.y;
@@ -347,24 +347,24 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(AbstractCharacter ch, HighlightColor highlight) {
 			this.flaggedUid = ch.FlaggedUid;
-			this.model = ch.Model;
+			this.model = ch.ShortModel;
 			MutablePoint4D point = ch.point4d;
 			this.x = point.x;
 			this.y = point.y;
 			this.z = point.z;
 			this.dir = ch.Dir;
-			this.color = ch.Color;
+			this.color = ch.ShortColor;
 			this.flagsToSend = ch.FlagsToSend;
 			this.highlight = (byte) highlight;
 
 			items.Clear();
 			foreach (AbstractItem i in ch.visibleLayers) {
-				items.Add(new ItemInfo(i.FlaggedUid, i.Color, i.Model, i.Layer));
+				items.Add(new ItemInfo(i.FlaggedUid, i.ShortColor, i.ShortModel, i.Layer));
 			}
 
 			AbstractCharacter mount = ch.Mount;
 			if (mount != null) {
-				items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.Color, mount.MountItem, (byte) LayerNames.Mount));
+				items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.ShortColor, (ushort) mount.MountItem, (byte) LayerNames.Mount));
 			}
 		}
 
@@ -407,11 +407,11 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(AbstractCharacter chr, bool running, HighlightColor highlight) {
 			this.flaggedUid = chr.FlaggedUid;
-			this.model = chr.Model;
-			this.x = chr.X;
-			this.y = chr.Y;
-			this.z = chr.Z;
-			this.color = chr.Color;
+			this.model = chr.ShortModel;
+			this.x = (ushort) chr.X;
+			this.y = (ushort) chr.Y;
+			this.z = (sbyte) chr.Z;
+			this.color = chr.ShortColor;
 			this.flagsToSend = chr.FlagsToSend;
 			this.highlight = (byte) highlight;
 
@@ -469,20 +469,20 @@ namespace SteamEngine.Networking {
 		public void Prepare(uint contFlaggedUid, AbstractItem i) {
 			this.flaggedUid = i.FlaggedUid;
 			this.contFlaggedUid = i.Cont.FlaggedUid;
-			this.model = i.Model;
-			this.x = i.X;
-			this.y = i.Y;
-			this.color = i.Color;
+			this.model = i.ShortModel;
+			this.x = (ushort) i.X;
+			this.y = (ushort) i.Y;
+			this.color = i.ShortColor;
 			this.amount = i.ShortAmount;
 		}
 
 		public void PrepareItemInCorpse(uint corpseUid, ICorpseEquipInfo i) {
 			this.flaggedUid = i.FlaggedUid;
 			this.contFlaggedUid = corpseUid;
-			this.model = i.Model;
+			this.model = (ushort) i.Model;
 			this.x = 0;
 			this.y = 0;
-			this.color = i.Color;
+			this.color = (ushort) i.Color;
 			this.amount = 1;
 		}
 
@@ -549,17 +549,17 @@ namespace SteamEngine.Networking {
 
 			internal ItemInfo(AbstractItem i) {
 				this.flaggedUid = i.FlaggedUid;
-				this.color = i.Color;
-				this.model = i.Model;
+				this.color = i.ShortColor;
+				this.model = i.ShortModel;
 				this.amount = i.ShortAmount;
-				this.x = i.X;
-				this.y = i.Y;
+				this.x = (ushort) i.X;
+				this.y = (ushort) i.Y;
 			}
 
 			internal ItemInfo(ICorpseEquipInfo i) {
 				this.flaggedUid = i.FlaggedUid;
-				this.color = i.Color;
-				this.model = i.Model;
+				this.color = (ushort) i.Color;
+				this.model = (ushort) i.Model;
 				this.amount = 1;
 				this.x = 0;
 				this.y = 0;
@@ -641,10 +641,10 @@ namespace SteamEngine.Networking {
 		short firstSpellId;
 		ulong content;
 
-		public void Prepare(uint bookUid, ushort bookModel, short firstSpellId, ulong content) {
+		public void Prepare(uint bookUid, int bookModel, int firstSpellId, ulong content) {
 			this.flaggedUid = bookUid;
-			this.bookModel = bookModel;
-			this.firstSpellId = firstSpellId;
+			this.bookModel = (ushort) bookModel;
+			this.firstSpellId = (short) firstSpellId;
 			this.content = content;
 		}
 
@@ -711,7 +711,7 @@ namespace SteamEngine.Networking {
 		public void Prepare(AbstractItem item, MoveRestriction restrict) {
 			this.flaggedUid = item.FlaggedUid;
 			this.amount = item.ShortAmount;
-			this.model = item.Model;
+			this.model = item.ShortModel;
 			MutablePoint4D point = item.point4d;
 			this.x = point.x;
 			this.y = point.y;
@@ -721,7 +721,7 @@ namespace SteamEngine.Networking {
 			if (restrict == MoveRestriction.Movable) {
 				this.flagsToSend |= 0x20;
 			}
-			this.color = item.Color;
+			this.color = (ushort) item.Color;
 		}
 
 		[Summary("Prepare method for creating the 'fake item' packets")]
@@ -730,9 +730,9 @@ namespace SteamEngine.Networking {
 			this.flaggedUid = itemUid | 0x40000000;
 			this.amount = amount;
 			this.model = model;
-			this.x = point4D.X;
-			this.y = point4D.Y;
-			this.z = point4D.Z;
+			this.x = (ushort) point4D.X;
+			this.y = (ushort) point4D.Y;
+			this.z = (sbyte) point4D.Z;
 			this.dir = (byte) dir;
 			this.flagsToSend = 0x00;
 			this.color = color;
@@ -1006,8 +1006,8 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public void PrepareSingleSkillUpdate(ushort skillId, ISkill skill, bool displaySkillCaps) {
-			ushort realValue, modifiedValue, cap;
+		public void PrepareSingleSkillUpdate(int skillId, ISkill skill, bool displaySkillCaps) {
+			int realValue, modifiedValue, cap;
 			SkillLockType skillLock;
 			if (skill == null) {
 				realValue = 0;
@@ -1028,7 +1028,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public void PrepareSingleSkillUpdate(ushort skillId, ushort realValue, ushort modifiedValue, SkillLockType skillLock) {
+		public void PrepareSingleSkillUpdate(int skillId, int realValue, int modifiedValue, SkillLockType skillLock) {
 			this.displaySkillCaps = false;
 			this.singleSkill = true;
 			this.type = 0xFF; //partial list without caps
@@ -1036,7 +1036,7 @@ namespace SteamEngine.Networking {
 			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, 0, skillLock));
 		}
 
-		public void PrepareSingleSkillUpdate(ushort skillId, ushort realValue, ushort modifiedValue, SkillLockType skillLock, ushort cap) {
+		public void PrepareSingleSkillUpdate(int skillId, int realValue, int modifiedValue, SkillLockType skillLock, int cap) {
 			this.displaySkillCaps = true;
 			this.singleSkill = true;
 			this.type = 0xDF; //partial list with caps
@@ -1048,11 +1048,11 @@ namespace SteamEngine.Networking {
 			public readonly ushort realValue, modifiedValue, cap, id;
 			public readonly SkillLockType skillLock;
 
-			public SkillInfo(ushort id, ushort realValue, ushort modifiedValue, ushort cap, SkillLockType skillLock) {
-				this.realValue = realValue;
-				this.modifiedValue = modifiedValue;
-				this.cap = cap;
-				this.id = id;
+			public SkillInfo(int id, int realValue, int modifiedValue, int cap, SkillLockType skillLock) {
+				this.realValue = (ushort) realValue;
+				this.modifiedValue = (ushort) modifiedValue;
+				this.cap = (ushort) cap;
+				this.id = (ushort) id;
 				this.skillLock = skillLock;
 			}
 		}
@@ -1112,10 +1112,10 @@ namespace SteamEngine.Networking {
 	public sealed class MegaClilocOutPacket : DynamicLengthOutPacket {
 		uint flaggedUid;
 		int propertiesUid;
-		IList<uint> ids;
+		IList<int> ids;
 		IList<string> strings;
 
-		public void Prepare(uint flaggedUid, int propertiesUid, IList<uint> ids, IList<string> strings) {
+		public void Prepare(uint flaggedUid, int propertiesUid, IList<int> ids, IList<string> strings) {
 			this.flaggedUid = flaggedUid;
 			this.propertiesUid = propertiesUid;
 			this.ids = ids;
@@ -1133,7 +1133,7 @@ namespace SteamEngine.Networking {
 			this.EncodeInt(this.propertiesUid);
 
 			for (int i = 0, n = ids.Count; i < n; i++) {
-				this.EncodeUInt(ids[i]);
+				this.EncodeInt(ids[i]);
 				string msg = strings[i];
 				if (msg == null) {
 					msg = "";
@@ -1152,20 +1152,20 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, int color) {
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, int font, int color) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
 			} else {
 				this.flaggedUid = from.FlaggedUid;
-				this.model = from.Model;
+				this.model = from.ShortModel;
 			}
 
 			this.sourceName = sourceName;
 			this.message = message;
 			this.type = (byte) type;
 			this.color = Utility.NormalizeDyedColor(color, Globals.defaultASCIIMessageColor);
-			this.font = font;
+			this.font = (ushort) font;
 		}
 
 		public override byte Id {
@@ -1196,7 +1196,7 @@ namespace SteamEngine.Networking {
 				this.model = 0xffff;
 			} else {
 				this.flaggedUid = from.FlaggedUid;
-				this.model = from.Model;
+				this.model = from.ShortModel;
 			}
 
 			this.sourceName = sourceName;
@@ -1228,17 +1228,17 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		ushort model, color, font;
 		string sourceName, args;
-		uint message;
+		int message;
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, uint message, string sourceName, SpeechType type, ushort font, int color, string args) {
+		public void Prepare(Thing from, int message, string sourceName, SpeechType type, ushort font, int color, string args) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
 			} else {
 				this.flaggedUid = from.FlaggedUid;
-				this.model = from.Model;
+				this.model = from.ShortModel;
 			}
 
 			this.sourceName = sourceName;
@@ -1259,7 +1259,7 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.type);
 			this.EncodeUShort(this.color);
 			this.EncodeUShort(this.font);
-			this.EncodeUInt(this.message);
+			this.EncodeInt(this.message);
 			this.EncodeASCIIString(this.sourceName, 30);
 			this.EncodeLittleEndianUnicodeString(this.args);
 			this.EncodeZeros(2);//msg terminator
@@ -1287,7 +1287,7 @@ namespace SteamEngine.Networking {
 				this.flags = 0x02;
 			} else {
 				this.flaggedUid = from.FlaggedUid;
-				this.model = from.Model;
+				this.model = from.ShortModel;
 				this.flags = 0x00;
 			}
 
@@ -1349,8 +1349,8 @@ namespace SteamEngine.Networking {
 	public sealed class GiveBoatOrHousePlacementViewOutPacket : GameOutgoingPacket {
 		ushort model;
 
-		public void Prepare(ushort model) {
-			this.model = model;
+		public void Prepare(int model) {
+			this.model = (ushort) model;
 		}
 
 		public override byte Id {
@@ -1400,17 +1400,17 @@ namespace SteamEngine.Networking {
 		public void PrepareItem(uint charUid, AbstractItem item) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = item.FlaggedUid;
-			this.layer = item.Z;
-			this.model = item.Model;
-			this.color = item.Color;
+			this.layer = (sbyte) item.Z;
+			this.model = item.ShortModel;
+			this.color = item.ShortColor;
 		}
 
 		public void PrepareMount(uint charUid, AbstractCharacter mount) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = (uint) (mount.Uid | 0x40000000);
 			this.layer = (sbyte) LayerNames.Mount;
-			this.model = mount.MountItem;
-			this.color = mount.Color;
+			this.model = (ushort) mount.MountItem;
+			this.color = mount.ShortColor;
 		}
 
 		public override byte Id {
@@ -1453,9 +1453,9 @@ namespace SteamEngine.Networking {
 		public void Prepare(byte sequence, AbstractCharacter ch) {
 			this.sequence = sequence;
 			this.direction = ch.Dir;
-			this.x = ch.X;
-			this.y = ch.Y;
-			this.z = ch.Z;
+			this.x = (ushort) ch.X;
+			this.y = (ushort) ch.Y;
+			this.z = (sbyte) ch.Z;
 		}
 
 		public override byte Id {
@@ -1614,12 +1614,12 @@ namespace SteamEngine.Networking {
 		ushort x, y;
 		sbyte z;
 
-		public void Prepare(IPoint3D source, ushort sound) {
+		public void Prepare(IPoint3D source, int sound) {
 			source = source.TopPoint;
-			this.sound = sound;
-			this.x = source.X;
-			this.y = source.Y;
-			this.z = source.Z;
+			this.sound = (ushort) sound;
+			this.x = (ushort) source.X;
+			this.y = (ushort) source.Y;
+			this.z = (sbyte) source.Z;
 		}
 
 		public override byte Id {
@@ -1690,11 +1690,11 @@ namespace SteamEngine.Networking {
 		ushort anim, numAnims;
 		bool backwards, undo;
 
-		public void Prepare(AbstractCharacter cre, ushort anim, ushort numAnims, bool backwards, bool undo, byte frameDelay) {
+		public void Prepare(AbstractCharacter cre, int anim, int numAnims, bool backwards, bool undo, byte frameDelay) {
 			this.charUid = cre.FlaggedUid;
 			this.dir = cre.Dir;
-			this.anim = anim;
-			this.numAnims = numAnims;
+			this.anim = (ushort) anim;
+			this.numAnims = (ushort) numAnims;
 			this.backwards = backwards;
 			this.undo = undo;
 			this.frameDelay = frameDelay;
@@ -1735,9 +1735,9 @@ namespace SteamEngine.Networking {
 				this.sourceZ = p.z;
 			} else {
 				this.sourceUid = 0xffffffff;
-				this.sourceX = source.X;
-				this.sourceY = source.Y;
-				this.sourceZ = source.Z;
+				this.sourceX = (ushort) source.X;
+				this.sourceY = (ushort) source.Y;
+				this.sourceZ = (sbyte) source.Z;
 			}
 			Thing targetAsThing = target as Thing;
 			if (targetAsThing != null) {
@@ -1748,9 +1748,9 @@ namespace SteamEngine.Networking {
 				this.targetZ = p.z;
 			} else {
 				this.targetUid = 0xffffffff;
-				this.targetX = target.X;
-				this.targetY = target.Y;
-				this.targetZ = target.Z;
+				this.targetX = (ushort) target.X;
+				this.targetY = (ushort) target.Y;
+				this.targetZ = (sbyte) target.Z;
 			}
 			this.type = type;
 			this.effect = effect;
@@ -1805,9 +1805,9 @@ namespace SteamEngine.Networking {
 				this.sourceZ = p.z;
 			} else {
 				this.sourceUid = 0xffffffff;
-				this.sourceX = source.X;
-				this.sourceY = source.Y;
-				this.sourceZ = source.Z;
+				this.sourceX = (ushort) source.X;
+				this.sourceY = (ushort) source.Y;
+				this.sourceZ = (sbyte) source.Z;
 			}
 			Thing targetAsThing = target as Thing;
 			if (targetAsThing != null) {
@@ -1818,11 +1818,11 @@ namespace SteamEngine.Networking {
 				this.targetZ = p.z;
 			} else {
 				this.targetUid = 0xffffffff;
-				this.targetX = target.X;
-				this.targetY = target.Y;
-				this.targetZ = target.Z;
+				this.targetX = (ushort) target.X;
+				this.targetY = (ushort) target.Y;
+				this.targetZ = (sbyte) target.Z;
 			}
-			this.model = i.Model;
+			this.model = i.ShortModel;
 			this.amount = i.ShortAmount;
 		}
 
@@ -2094,16 +2094,16 @@ namespace SteamEngine.Networking {
 		bool active;
 		ushort xPos, yPos;
 
-		public void Prepare(bool active, ushort xPos, ushort yPos) {
+		public void Prepare(bool active, int xPos, int yPos) {
 			this.active = active;
-			this.xPos = xPos;
-			this.yPos = yPos;
+			this.xPos = (ushort) xPos;
+			this.yPos = (ushort) yPos;
 		}
 
 		public void Prepare(bool active, IPoint2D position) {
 			this.active = active;
-			this.xPos = position.X;
-			this.yPos = position.Y;
+			this.xPos = (ushort) position.X;
+			this.yPos = (ushort) position.Y;
 		}
 
 		public override byte Id {
