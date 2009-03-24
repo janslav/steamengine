@@ -185,8 +185,8 @@ DESCRIPTION = Bloodstone
 
 NAME = "Bloodstone"
 WEIGHT = 20
-RESOURCES = 1 i_rock_7,  2 i_blood //some resources were fixed by converter 
-model = i_rock_7
+RESOURCES = 1 0x136c,  2 i_blood //some resources were fixed by converter 
+model = 0x136c //i_rock_7
 
 [ItemDef I_MARBLE]
 CATEGORY = Items by Professions
@@ -196,7 +196,7 @@ DESCRIPTION = Marble
 NAME = "Marble"
 TYPE = t_AROCK
 WEIGHT = 50
-model = i_rock_3 //ROCK 
+model = 0x1368 //ROCK i_rock_3
 
 [ItemDef I_TOMATO_SAUCE]
 CATEGORY = Items by Professions

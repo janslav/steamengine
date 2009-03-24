@@ -164,17 +164,17 @@ if (ImprovedDialog.PagingButtonsHandled(<argv(0)>, <argv(2)>, <argnum[ImprovedDi
 endif
 
 if (btnNumber == 0) //player info
-	//accountmgr.findname(<arg(iPage).account.name>).lastcharuid.try srccome
+  src.sysmessage("Zobrazuji player info")
 elseif (btnNumber==1) //go to the pages creating position
 	src.sysmessage("skacu na <iPage.p> : <iPage.p.ToString()>")
-  	src.go(iPage.P)
+  src.go(iPage.P)
 	//src.update
 elseif (btnNumber==2) //delete the page from the list
   	GMPage.DeletePage(iPage)
   	src.sysmessage("Page byla smazana")
 	DialogStackItem.ShowPreviousDialog(argv(1).Conn);
 elseif (btnNumber==3) //display the information about the account 
-  	//try accountinfo(<arg(iPage).account.name>)
+  src.sysmessage("Zobrazuji account info")
 elseif (btnNumber==4) //reply to the page (if not replied, otherwise the button will not exist
   	dialog(inpt_page_reply,iPage) //send the page instance and the dialog information	
 elseif (btnNumber==5) //display the page text in the better window

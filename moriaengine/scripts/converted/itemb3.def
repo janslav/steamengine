@@ -519,9 +519,6 @@ DESCRIPTION = Grave
 
 DUPEITEM = i_portrait_1
 
-[ItemDef 0xee9]
-DUPEITEM = 0xe21
-
 [ItemDef 0xeeb]
 CATEGORY = Provisions - Miscellaneous
 SUBSECTION = Coins
@@ -570,13 +567,6 @@ DUPEITEM = i_scroll_x_brown
 
 [ItemDef 0xef9]
 DUPEITEM = i_scroll_x_purp
-
-[EquippableDef i_spellbook_necro]
-name = "necro spellbook"
-model = i_spellbook
-Layer = 1 //guessed from base def by Converter 
-type = t_spellbook //guessed from base def by Converter 
-//value = 300 // commented out by Converter 
 
 [ItemDef 0xeff]
 DUPEITEM = i_bottle_hair_dye

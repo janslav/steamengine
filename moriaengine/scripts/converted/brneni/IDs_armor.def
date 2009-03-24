@@ -247,9 +247,6 @@ mindDefenseVsP = 1
 armorVsM = 1
 mindDefenseVsM = 1
 
-[ItemDef 0x13c8]
-DUPEITEM = i_leather_sleeves
-
 [WearableDef 0x13cb]
 CATEGORY = Provisions - Armor
 SUBSECTION = Leather Armor
@@ -297,9 +294,6 @@ DUPEITEM = i_leather_sleeves
 
 [ItemDef 0x13ce]
 DUPEITEM = i_leather_gloves
-
-[ItemDef 0x13cf]
-DUPEITEM = i_leather_sleeves
 
 [ItemDef 0x13d0]
 DUPEITEM = i_leather_leggings_decoration

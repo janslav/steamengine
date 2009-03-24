@@ -1249,7 +1249,7 @@ model = I_DIRT
 
 [ItemDef I_CLAY]
 WEIGHT = 100
-model = I_ROCK_2
+model = 0x1367 //I_ROCK_2
 //VALUE = 10 // commented out by Converter 
 
 [ItemDef I_STONE_MARBLE]
