@@ -5,7 +5,7 @@ WEIGHT = 1
 DEFNAME = i_bandage
 
 [ItemDef 0xee9]
-DUPEITEM = 0x21
+DUPEITEM = 0xe21
 
 [ItemDef  0xe20]
 TYPE = t_bandage_blood

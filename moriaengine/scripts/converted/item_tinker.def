@@ -299,9 +299,6 @@ SKILLMAKE = 80.0 tinkering, t_tinker_tools //some resources were fixed by conver
 layer = 0 //Set by Converter 
 DEFNAME = i_post_box
 
-[ItemDef 0xe41]
-DUPEITEM = i_chest_metal_brass
-
 [ContainerDef 0xe77]
 CATEGORY = Provisions - Miscellaneous
 SUBSECTION = Containers

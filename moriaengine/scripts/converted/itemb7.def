@@ -5830,26 +5830,6 @@ DEFNAME = i_fx_yellow_dot
 
 [ItemDef 0x3f0f]
 
-[ItemDef 0x3f10]
-
-[ItemDef 0x3f11]
-
-[ItemDef 0x3f12]
-
-[ItemDef 0x3f13]
-
-[ItemDef 0x3f14]
-
-[ItemDef 0x3f15]
-
-[ItemDef 0x3f16]
-
-[ItemDef 0x3f17]
-
-[ItemDef 0x3f18]
-
-[ItemDef 0x3f19]
-
 [ItemDef 0x3f1a]
 
 [ItemDef 0x3f1b]

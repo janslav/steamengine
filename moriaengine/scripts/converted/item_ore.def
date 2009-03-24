@@ -6,7 +6,6 @@ color_o_iron		0763 //option: 0961
 color_o_bronze          06d6
 color_o_gold		0995 //0995 //030
 color_o_golden		0995
-color_o_copper		099a //option: 060c
 color_o_silver          0990
 color_o_shadow          0770
 color_o_verite          097f
