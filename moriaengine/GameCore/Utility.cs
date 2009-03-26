@@ -131,12 +131,19 @@ namespace SteamEngine {
 			return input.Trim();
 		}
 
-		[CLSCompliant(false)]
-		public static ushort NormalizeDyedColor(int color, int defaultColor) {
+		public static int NormalizeDyedColor(int color, int defaultColor) {
 			if ((color < 2) || (color > 1001)) {
-				return (ushort) defaultColor;
+				return defaultColor;
 			} else {
-				return (ushort) color;
+				return color;
+			}
+		}
+
+		public static ClientFont NormalizeClientFont(ClientFont font) {
+			if ((font < ClientFont.Server) || (font > ClientFont.BorderLess)) {
+				return ClientFont.Unified;
+			} else {
+				return font;
 			}
 		}
 

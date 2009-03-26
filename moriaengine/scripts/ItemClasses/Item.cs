@@ -283,7 +283,7 @@ namespace SteamEngine.CompiledScripts {
 			if (amount <= 1) {
 				ItemDispidInfo idi = this.TypeDef.DispidInfo;
 				if (idi != null) {
-					if (string.Compare(name, idi.singularName, true) == 0) {
+					if (string.Compare(name, idi.SingularName, true) == 0) {
 						id = (1020000 + (this.Model & 16383)); //hmmm...
 						return;
 					}

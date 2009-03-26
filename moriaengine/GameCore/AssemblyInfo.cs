@@ -40,6 +40,6 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("1.0.*")]
 
-//[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 
 [assembly: ComVisible(false)]

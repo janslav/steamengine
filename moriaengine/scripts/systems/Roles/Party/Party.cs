@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 			if (candidateState != null) {
 				PacketGroup pg = PacketGroup.AcquireMultiUsePG();
 				pg.AcquirePacket<PartyInvitationOutPacket>().Prepare(leader.FlaggedUid);
-				pg.AcquirePacket<ClilocMessageAffixOutPacket>().Prepare(null, 1008089, "System", SpeechType.Name, 3, -1, AffixType.Prepend, leader.Name, "");//  : You are invited to join the party. Type /accept to join or /decline to decline the offer.
+				pg.AcquirePacket<ClilocMessageAffixOutPacket>().Prepare(null, 1008089, "System", SpeechType.Name, ClientFont.Unified, -1, AffixType.Prepend, leader.Name, "");//  : You are invited to join the party. Type /accept to join or /decline to decline the offer.
 				candidateState.Conn.SendPacketGroup(pg);
 
 				leader.ClilocSysMessage(1008090); // You have invited them to join the party.
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 				if (members.Count > 0) {
 					using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
 						pg.AcquirePacket<RemoveAPartyMemberOutPacket>().Prepare(exMember, (IEnumerable<AbstractCharacter>) members);
-						pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(null, 1005452, "System", SpeechType.Speech, 3, -1, ""); // 1005452 = A player has been removed from your party.
+						pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(null, 1005452, "System", SpeechType.Speech, ClientFont.Unified, -1, ""); // 1005452 = A player has been removed from your party.
 						foreach (Character ch in members) {
 							GameState state = ch.GameState;
 							if (state != null) {

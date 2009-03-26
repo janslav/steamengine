@@ -86,10 +86,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public string Save(object objToSave) {
 			Point3D p = (Point3D) objToSave;
-			if (p.z == 0) {
+			if (p.Z == 0) {
 				return "(3D)" + p.X + "," + p.Y;
 			} else {
-				return "(3D)" + p.X + "," + p.Y + "," + p.z;
+				return "(3D)" + p.X + "," + p.Y + "," + p.Z;
 			}
 		}
 
@@ -145,12 +145,12 @@ namespace SteamEngine.CompiledScripts {
 			Point4D p = (Point4D) objToSave;
 
 			string mzPart = "";
-			if (p.m == 0) {
-				if (p.z != 0) {
-					mzPart = "," + p.z;
+			if (p.M == 0) {
+				if (p.Z != 0) {
+					mzPart = "," + p.Z;
 				}
 			} else {
-				mzPart = "," + p.z + "," + p.m;
+				mzPart = "," + p.Z + "," + p.M;
 			}
 			return "(4D)" + p.X + "," + p.Y + mzPart; ;
 		}

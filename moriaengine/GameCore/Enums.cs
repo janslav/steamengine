@@ -107,7 +107,21 @@ namespace SteamEngine {
 		Command = 15,
 	}
 
-	public enum RenderModes : uint {
+	//only 0 and 3 normally used
+	public enum ClientFont {
+		Server = 0, Wide = 0,
+		ShadowFaceSmall = 1,
+		ShadowFaceBig = 2,
+		Regular = 3, Unified = 3, //ascii the same as unicode, more or less
+		FancyTall = 4,
+		FancyNoColor = 5, 
+		FancyBorderLess = 6,
+		FancyShadowFace = 7,
+		Runic = 8,
+		BorderLess = 9
+	}
+
+	public enum RenderModes {
 		Opaque = 0,      // not_transparent (just as you see regular effects in uo)
 		Black = 1,       // will be all black shape with no sighns of texture
 		HardLighten = 2, // will be lightened, might lose some detail of original texture (good for flares)

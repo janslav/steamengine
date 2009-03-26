@@ -52,7 +52,7 @@ namespace SteamEngine.Regions {
 			}
 			this.InternalSetP(p);
 
-			Map map = Map.GetMap(p.m);
+			Map map = Map.GetMap(p.M);
 			this.Parent = map.GetRegionFor(p);
 
 			return map.AddDynamicRegion(this, true); //add it to the map, but try if there is no other obstacle!
@@ -84,14 +84,14 @@ namespace SteamEngine.Regions {
 				movedRects.Add(oneRect.CloneMoved(xDiff, yDiff));
 			}
 			Point4D oldP = this.P;
-			Map oldMap = Map.GetMap(oldP.m); //the dynamic region's old Map
+			Map oldMap = Map.GetMap(oldP.M); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
 			bool result = SetRectangles(movedRects, oldMap);
 			//add it without checks (these were performed when setting the rectangles)
 			//we will add either the new array of rectangles or the old one if there were problems
 			oldMap.AddDynamicRegion(this, false);
 			if (result) { //OK - alter the position also
-				this.InternalSetP(new Point4D((ushort) (oldP.X + xDiff), (ushort) (oldP.Y + yDiff), oldP.z, oldP.m));
+				this.InternalSetP(new Point4D((ushort) (oldP.X + xDiff), (ushort) (oldP.Y + yDiff), oldP.Z, oldP.M));
 			}
 			return result;
 		}
@@ -103,9 +103,9 @@ namespace SteamEngine.Regions {
 			IList<RegionRectangle> oldRects = rectangles;
 
 			bool xyChanged = (oldPos.X != newP.X || oldPos.Y != newP.Y);
-			bool mapChanged = oldPos.m != newP.m;
+			bool mapChanged = oldPos.M != newP.M;
 
-			Map oldMap = Map.GetMap(oldPos.m); //the dynamic region's old Map
+			Map oldMap = Map.GetMap(oldPos.M); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
 			bool movingOK = true;//indicator if the movement success
 			if (xyChanged) {
@@ -116,7 +116,7 @@ namespace SteamEngine.Regions {
 					movedRects.Add(oneRect.CloneMoved(diffX, diffY));
 				}
 				if (mapChanged) {
-					Map newMap = Map.GetMap(newP.m);
+					Map newMap = Map.GetMap(newP.M);
 					this.Parent = newMap.GetRegionFor(newP);
 					movingOK = SetRectangles(movedRects, newMap);
 					newMap.AddDynamicRegion(this, false);//place the region to the map (no checks, they were already performed in SetRectangles)
@@ -126,7 +126,7 @@ namespace SteamEngine.Regions {
 					oldMap.AddDynamicRegion(this, false);//and place (no checks as well)
 				}
 			} else if (mapChanged) {
-				Map newMap = Map.GetMap(newP.m);
+				Map newMap = Map.GetMap(newP.M);
 				this.Parent = newMap.GetRegionFor(newP);
 				movingOK = SetRectangles(rectangles, newMap); //here set the old rectangles (but to the new map)
 				newMap.AddDynamicRegion(this, false);//place, still no checks
@@ -165,7 +165,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override void Delete() {
-			Map.GetMap(this.P.m).RemoveDynamicRegion(this);
+			Map.GetMap(this.P.M).RemoveDynamicRegion(this);
 			base.Delete();
 		}
 

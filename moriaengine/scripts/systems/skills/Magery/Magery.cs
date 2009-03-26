@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts {
 					skillSeqArgs.DelayStroke();
 					string runeWords = spell.GetRuneWords();
 					if (!string.IsNullOrEmpty(runeWords)) {
-						self.Speech(runeWords, 0, SpeechType.Spell, -1, 3, null, null);
+						self.Speech(runeWords, 0, SpeechType.Spell, -1, ClientFont.Unified, null, null);
 					}
 					return true; //default = set delay by magery skilldef, which we don't want					
 				} else {

@@ -394,17 +394,10 @@ on=8
 src.sysmessage("Tinkering")
 return 0
 
+
+
 [function f]
-ff
+local message = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-[function ff]
-fff
-
-[function fff]
-ffff
-
-[function ffff]
-fffff
-
-[function fffff]
-ConvertTools.ParseInt32("48621537453186") //we want it to throw an exception
+PacketSequences.SendUnicodeMessage(Globals.SrcTCPConnection, Globals.Src, <local message>, Globals.Src.Name, SpeechType.Speech, argv[0], -1, "CSY")
+PacketSequences.SendAsciiMessage(Globals.SrcTCPConnection, Globals.Src, <local message>, Globals.Src.Name, SpeechType.Speech, argv[0], -1, "CSY")

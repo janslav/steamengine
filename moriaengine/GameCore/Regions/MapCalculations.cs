@@ -118,14 +118,14 @@ namespace SteamEngine.Regions {
 
 			foreach (Static staticTile in this.GetStaticsOnCoords(x, y)) {
 				ItemDispidInfo dispidInfo = staticTile.dispidInfo;
-				TileFlag staticFlag = dispidInfo.flags;
-				int staticZ = staticTile.z;
+				TileFlag staticFlag = dispidInfo.Flags;
+				int staticZ = staticTile.Z;
 				surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
 				impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
 
-				if ((surface || impassable) && (staticZ + dispidInfo.calcHeight) > z && (z + height) > staticZ)
+				if ((surface || impassable) && (staticZ + dispidInfo.CalcHeight) > z && (z + height) > staticZ)
 					return false;
-				else if (surface && !impassable && z == (staticZ + dispidInfo.calcHeight))
+				else if (surface && !impassable && z == (staticZ + dispidInfo.CalcHeight))
 					hasSurface = true;
 			}
 
@@ -139,7 +139,7 @@ namespace SteamEngine.Regions {
 					int itemModel = item.Model;
 					if ((itemModel < 0x4000) && (itemX == x) && (itemY == y)) {
 						ItemDispidInfo dispidInfo = ItemDispidInfo.Get(itemModel);
-						TileFlag staticFlag = dispidInfo.flags;
+						TileFlag staticFlag = dispidInfo.Flags;
 						surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
 						impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
 						int itemHeight = item.Height;
@@ -230,7 +230,7 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0)
 							continue;
 						int itemX = item.X;
 						int itemY = item.Y;
@@ -261,7 +261,7 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0)
 							continue;
 						int itemX = item.X;
 						int itemY = item.Y;
@@ -280,7 +280,7 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0)
 							continue;
 						int itemX = item.X;
 						int itemY = item.Y;
@@ -297,7 +297,7 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0)
 							continue;
 						int itemX = item.X;
 						int itemY = item.Y;
@@ -340,9 +340,9 @@ namespace SteamEngine.Regions {
 				Static check = tiles[i];
 				ItemDispidInfo itemData = check.dispidInfo;
 
-				if ((itemData.flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
+				if ((itemData.Flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
 					int checkZ = check.Z;
-					int checkTop = checkZ + itemData.calcHeight;
+					int checkTop = checkZ + itemData.CalcHeight;
 
 					if (checkTop > ourZ && ourTop > checkZ)
 						return false;
@@ -354,7 +354,7 @@ namespace SteamEngine.Regions {
 
 				int model = item.Model;
 				ItemDispidInfo idi = ItemDispidInfo.Get(model);
-				TileFlag flags = idi.flags;
+				TileFlag flags = idi.Flags;
 
 				if ((flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
 					if (ignoreDoors && ((flags & TileFlag.Door) != 0
@@ -363,7 +363,7 @@ namespace SteamEngine.Regions {
 						continue;
 
 					int checkZ = item.Z;
-					int checkTop = checkZ + idi.calcHeight;
+					int checkTop = checkZ + idi.CalcHeight;
 
 					if (checkTop > ourZ && ourTop > checkZ)
 						return false;
@@ -430,10 +430,10 @@ namespace SteamEngine.Regions {
 				Static staticItem = staticsPool[i];
 
 				ItemDispidInfo idi = staticItem.dispidInfo;
-				TileFlag flags = idi.flags;
+				TileFlag flags = idi.Flags;
 
 				bool staticIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
-				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.id);
+				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if ((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable
 						(canSwim && staticIsWater) || //je to voda a my umime plavat
@@ -445,7 +445,7 @@ namespace SteamEngine.Regions {
 
 					int itemZ = staticItem.Z;
 					int itemTop = itemZ;
-					int ourZ = itemZ + idi.calcHeight;
+					int ourZ = itemZ + idi.CalcHeight;
 					int ourTop = ourZ + PersonHeight;
 					int testTop = checkTop;
 
@@ -460,15 +460,15 @@ namespace SteamEngine.Regions {
 						testTop = ourZ + PersonHeight;
 
 					if ((flags & TileFlag.Bridge) == 0)
-						itemTop += idi.height;
+						itemTop += idi.Height;
 
 					if (stepTop >= itemTop) {
 						int landCheck = itemZ;
 
-						if (idi.height >= stepHeight)
+						if (idi.Height >= stepHeight)
 							landCheck += stepHeight;
 						else
-							landCheck += idi.height;
+							landCheck += idi.Height;
 
 						if (considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landZ)
 							continue;
@@ -484,10 +484,10 @@ namespace SteamEngine.Regions {
 			for (int i = 0; i < items.Count; ++i) {
 				AbstractItem item = items[i];
 				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
-				TileFlag flags = idi.flags;
+				TileFlag flags = idi.Flags;
 
 				bool itemIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
-				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.id);
+				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if (/*item.Flag_NeverMovable && */((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable && !Movable
 						(canSwim && itemIsWater) || //je to voda a my umime plavat
@@ -499,7 +499,7 @@ namespace SteamEngine.Regions {
 
 					int itemZ = item.Z;
 					int itemTop = itemZ;
-					int ourZ = itemZ + idi.calcHeight;
+					int ourZ = itemZ + idi.CalcHeight;
 					int ourTop = ourZ + PersonHeight;
 					int testTop = checkTop;
 
@@ -514,15 +514,15 @@ namespace SteamEngine.Regions {
 						testTop = ourZ + PersonHeight;
 
 					if ((flags & TileFlag.Bridge) == 0)
-						itemTop += idi.height;
+						itemTop += idi.Height;
 
 					if (stepTop >= itemTop) {
 						int landCheck = itemZ;
 
-						if (idi.height >= stepHeight)
+						if (idi.Height >= stepHeight)
 							landCheck += stepHeight;
 						else
-							landCheck += idi.height;
+							landCheck += idi.Height;
 
 						if (considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landZ)
 							continue;
@@ -610,13 +610,13 @@ namespace SteamEngine.Regions {
 
 				ItemDispidInfo idi = staticItem.dispidInfo;
 
-				int calcTop = (staticItem.Z + idi.calcHeight);
+				int calcTop = (staticItem.Z + idi.CalcHeight);
 
-				bool staticIsWater = ((idi.flags & TileFlag.Wet) == TileFlag.Wet);
-				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.id);
+				bool staticIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
+				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if ((!isSet || calcTop >= zCenter) &&
-						((idi.flags & TileFlag.Surface) != 0 || //je to stul (eh?)
+						((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
 							(canSwim && staticIsWater) || //je to voda a my umime plavat
 							(canCrossLava && staticIsLava) || //je to lava a nam nevadi
 							(canFly) //umime litat a tak nam nevadi nic
@@ -629,7 +629,7 @@ namespace SteamEngine.Regions {
 					zLow = staticItem.Z;
 					zCenter = calcTop;
 
-					int top = staticItem.Z + idi.height;
+					int top = staticItem.Z + idi.Height;
 
 					if (!isSet || top > zTop)
 						zTop = top;
@@ -643,13 +643,13 @@ namespace SteamEngine.Regions {
 
 				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
 
-				bool itemIsWater = ((idi.flags & TileFlag.Wet) == TileFlag.Wet);
-				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.id);
+				bool itemIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
+				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
-				int calcTop = item.Z + idi.calcHeight;
+				int calcTop = item.Z + idi.CalcHeight;
 
 				if ((!isSet || calcTop >= zCenter) &&
-						((idi.flags & TileFlag.Surface) != 0 || //je to stul (eh?)
+						((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
 							(canSwim && itemIsWater) || //je to voda a my umime plavat
 							(canCrossLava && itemIsLava) || //je to lava a nam nevadi
 							(canFly) //umime litat a tak nam nevadi nic
@@ -662,7 +662,7 @@ namespace SteamEngine.Regions {
 					zLow = item.Z;
 					zCenter = calcTop;
 
-					int top = item.Z + idi.height;
+					int top = item.Z + idi.Height;
 
 					if (!isSet || top > zTop)
 						zTop = top;

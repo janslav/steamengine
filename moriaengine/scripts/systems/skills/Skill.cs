@@ -31,11 +31,11 @@ namespace SteamEngine.CompiledScripts {
 		private SkillLockType lockType; //lock is C# keyword
 		private Character cont;
 
-		public Skill(ushort id, Character cont) {
+		public Skill(int id, Character cont) {
 			this.realValue = 0;
 			this.cap = 1000;
 			this.lockType = SkillLockType.Increase;
-			this.id = id;
+			this.id = (ushort) id;
 			this.cont = cont;
 		}
 

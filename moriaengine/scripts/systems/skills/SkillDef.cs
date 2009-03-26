@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillDef ById(SkillName name) {
-			return (SkillDef) ById((int) name);
+			return (SkillDef) GetById((int) name);
 		}
 
 		public double[] AdvRate {
@@ -396,19 +396,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName) {
-			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName));
+			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName));
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool) {
-			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName), null, null, tool, null, null);
+			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), null, null, tool, null, null);
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool, object param1) {
-			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName), null, null, tool, param1, null);
+			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), null, null, tool, param1, null);
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, IPoint4D target1, IPoint4D target2, Item tool, object param1, object param2) {
-			return Acquire(self, (SkillDef) SkillDef.ById((int) skillName), target1, target2, tool, param1, param2);
+			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), target1, target2, tool, param1, param2);
 		}
 
 		public Character Self {

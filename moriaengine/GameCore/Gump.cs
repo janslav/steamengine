@@ -72,9 +72,9 @@ namespace SteamEngine {
 	}
 
 	public abstract class Gump {
-		private static uint uids = 0;
+		private static int uids = 0;
 
-		public readonly uint uid;
+		public readonly int uid;
 		public readonly GumpDef def;
 		internal DialogArgs inputArgs;//arguments the gump is called with
 		private AbstractCharacter cont;//the player who sees this instance (src)
@@ -138,7 +138,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public abstract void OnResponse(uint pressedButton, uint[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers);
+		public abstract void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers);
 
 		public override int GetHashCode() {
 			return (int) uid;
@@ -527,18 +527,18 @@ namespace SteamEngine {
 	}
 
 	public class ResponseText {
-		public readonly uint id;
+		public readonly int id;
 		public readonly string text;
-		public ResponseText(uint id, string text) {
+		public ResponseText(int id, string text) {
 			this.id = id;
 			this.text = text;
 		}
 	}
 
 	public class ResponseNumber {
-		public readonly uint id;
+		public readonly int id;
 		public readonly double number;
-		public ResponseNumber(uint id, double number) {
+		public ResponseNumber(int id, double number) {
 			this.id = id;
 			this.number = number;
 		}

@@ -24,28 +24,125 @@ namespace SteamEngine {
 	public class ItemDispidInfo {
 		private static List<ItemDispidInfo> array = new List<ItemDispidInfo>();
 
-		public readonly ushort id;
-		public readonly TileFlag flags;
-		public readonly byte weight;
-		public readonly byte quality;
-		public readonly ushort unknown;
-		public readonly byte minItemsToDisplayThisArt;
-		public readonly byte quantity;
-		public readonly ushort animID;
-		public readonly byte unknown2;
-		public readonly byte hue;
-		public readonly ushort unknown3;
-		public readonly byte height;
-		public readonly byte calcHeight; //half for bridges
-		public readonly string singularName;
-		public readonly string pluralName;
-		public readonly bool isEmpty;
+		private readonly int id;
 
-		public ItemDispidInfo(TileFlag flags, byte weight, byte quality, ushort unknown, byte minItemsToDisplayThisArt, byte quantity, ushort animID, byte unknown2, byte hue, ushort unknown3, byte height, string name) {
+		private readonly TileFlag flags;
+		private readonly byte weight;
+		private readonly byte quality;
+		private readonly int unknown1;
+		private readonly byte minItemsToDisplayThisArt;
+		private readonly byte quantity;
+		private readonly int animID;
+		private readonly byte unknown2;
+		private readonly byte hue;
+		private readonly int unknown3;
+		private readonly byte height;
+		private readonly byte calcHeight; //half for bridges
+		private readonly string singularName;
+		private readonly string pluralName;
+		private readonly bool isEmpty;
+
+		public int Id {
+			get {
+				return this.id;
+			}
+		}
+
+		public TileFlag Flags {
+			get {
+				return this.flags;
+			}
+		}
+
+		public byte Weight {
+			get {
+				return this.weight;
+			}
+		}
+
+		public byte Quality {
+			get {
+				return this.quality;
+			}
+		}
+
+		public int Unknown1 {
+			get {
+				return this.unknown1;
+			}
+		}
+
+		public byte MinItemsToDisplayThisArt {
+			get {
+				return this.minItemsToDisplayThisArt;
+			}
+		}
+
+		public byte Quantity {
+			get {
+				return this.quantity;
+			}
+		}
+
+		public int AnimID {
+			get {
+				return this.animID;
+			}
+		}
+
+		public byte Unknown2 {
+			get {
+				return this.unknown2;
+			}
+		}
+
+		public byte Hue {
+			get {
+				return this.hue;
+			}
+		}
+
+		public int Unknown3 {
+			get {
+				return this.unknown3;
+			}
+		}
+
+		public byte Height {
+			get {
+				return this.height;
+			}
+		}
+
+		public byte CalcHeight {
+			get {
+				return this.calcHeight;
+			}
+		}
+
+		public string SingularName {
+			get {
+				return this.singularName;
+			}
+		}
+
+		public string PluralName {
+			get {
+				return this.pluralName;
+			}
+		}
+
+		public bool IsEmpty {
+			get {
+				return this.isEmpty;
+			}
+		}
+
+		internal ItemDispidInfo(TileFlag flags, byte weight, byte quality, int unknown, byte minItemsToDisplayThisArt, byte quantity, int animID, byte unknown2, byte hue, int unknown3, byte height, string name) {
 			this.flags = flags;
 			this.weight = weight;
 			this.quality = quality;
-			this.unknown = unknown;
+			this.unknown1 = unknown;
 			this.minItemsToDisplayThisArt = minItemsToDisplayThisArt;
 			this.quantity = quantity;
 			this.animID = animID;
@@ -63,7 +160,7 @@ namespace SteamEngine {
 			this.singularName = String.Intern(this.singularName);
 			this.pluralName = String.Intern(this.pluralName);
 
-			this.id = (ushort) array.Count;
+			this.id = array.Count;
 			array.Add(this);
 			this.isEmpty = ((flags == 0 || flags == TileFlag.Unknown_2) && (weight == 1 || weight == 0 || weight == 255) &&
 						quality == 0 && unknown == 0 && minItemsToDisplayThisArt == 0 && quantity == 0 && animID == 0 &&
@@ -74,7 +171,7 @@ namespace SteamEngine {
 		public override bool Equals(object obj) {
 			if (obj is ItemDispidInfo) {
 				ItemDispidInfo idi = (ItemDispidInfo) obj;
-				return (flags == idi.flags && weight == idi.weight && quality == idi.quality && unknown == idi.unknown &&
+				return (flags == idi.flags && weight == idi.weight && quality == idi.quality && unknown1 == idi.unknown1 &&
 						minItemsToDisplayThisArt == idi.minItemsToDisplayThisArt && quantity == idi.quantity &&
 						animID == idi.animID && unknown2 == idi.unknown2 && hue == idi.hue && unknown3 == idi.unknown3 &&
 						height == idi.height && singularName == idi.singularName);
@@ -87,8 +184,10 @@ namespace SteamEngine {
 			throw new SEException("ItemDispidInfo cannot return a hash code.");
 		}
 
-		public static int Num() {
-			return array.Count;
+		public static int Count {
+			get {
+				return array.Count;
+			}
 		}
 
 		public static ItemDispidInfo Get(int num) {
@@ -137,5 +236,4 @@ namespace SteamEngine {
 			return false;
 		}
 	}
-
 }

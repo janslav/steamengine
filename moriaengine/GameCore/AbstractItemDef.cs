@@ -182,7 +182,7 @@ namespace SteamEngine {
 				if (this.name.IsDefaultCodedValue) {
 					ItemDispidInfo idi = this.DispidInfo;
 					if (idi != null) {
-						return idi.singularName;
+						return idi.SingularName;
 					}
 				}
 
@@ -207,7 +207,7 @@ namespace SteamEngine {
 				if (this.name.IsDefaultCodedValue) {
 					ItemDispidInfo idi = this.DispidInfo;
 					if (idi != null) {
-						return idi.pluralName;
+						return idi.PluralName;
 					}
 				}
 
@@ -239,7 +239,7 @@ namespace SteamEngine {
 		public ItemDispidInfo DispidInfo {
 			get {
 				int model = this.Model;
-				if ((this.dispidInfo == null) || (this.dispidInfo.id != model)) {
+				if ((this.dispidInfo == null) || (this.dispidInfo.Id != model)) {
 					this.dispidInfo = ItemDispidInfo.Get(model);
 				}
 				return this.dispidInfo;
@@ -305,7 +305,7 @@ namespace SteamEngine {
 					if (idi == null) {
 						return 1;
 					}
-					return idi.calcHeight;
+					return idi.CalcHeight;
 				} else {
 					return (int) this.height.CurrentValue;
 				}

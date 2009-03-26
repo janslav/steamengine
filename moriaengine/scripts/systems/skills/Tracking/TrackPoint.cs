@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private readonly Point4D location;
 		private readonly Player owner;
-		private readonly ushort model;//model of the "footprint"
+		private readonly int model;//model of the "footprint"
 		private readonly TimeSpan createdAt;
 
 		private TrackPoint newer;
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ushort Model {
+		public int Model {
 			get {
 				return this.model;
 			}
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ushort GetColor(TimeSpan now, TimeSpan maxAge) {
+		public int GetColor(TimeSpan now, TimeSpan maxAge) {
 			if (this.createdAt >= now) { //created in the future
 				return BEST_COLOR;
 			}
@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 			double nowSeconds = now.TotalSeconds;
 			double maxAgeSeconds = maxAge.TotalSeconds;
 
-			ushort color = (ushort) (BEST_COLOR - (BEST_COLOR - WORST_COLOR) * ((nowSeconds - createdAtSeconds) / maxAgeSeconds));
+			int color = (int) (BEST_COLOR - (BEST_COLOR - WORST_COLOR) * ((nowSeconds - createdAtSeconds) / maxAgeSeconds));
 
 			if (BEST_COLOR > WORST_COLOR) {
 				Sanity.IfTrueThrow(((color > BEST_COLOR) || (color < WORST_COLOR)), "color out of range");

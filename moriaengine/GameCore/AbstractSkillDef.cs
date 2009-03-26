@@ -43,19 +43,19 @@ namespace SteamEngine {
 		private TriggerGroup scriptedTriggers;
 
 
-		public static AbstractSkillDef ByDefname(string defname) {
+		public static AbstractSkillDef GetByDefname(string defname) {
 			AbstractScript script;
 			byDefname.TryGetValue(defname, out script);
 			return script as AbstractSkillDef;
 		}
 
-		public static AbstractSkillDef ByKey(string key) {
+		public static AbstractSkillDef GetByKey(string key) {
 			AbstractSkillDef retVal;
 			byKey.TryGetValue(key, out retVal);
 			return retVal;
 		}
 
-		public static AbstractSkillDef ById(int id) {
+		public static AbstractSkillDef GetById(int id) {
 			if ((id >= 0) || (id < byId.Count)) {
 				return byId[id];
 			}

@@ -93,8 +93,8 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if the given string defines some Skill. If so, return the def")]
 		internal static bool IsSkillResource(string definition, out SkillDef skl) {
-			if (((skl = SkillDef.ByKey(definition) as SkillDef) != null) ||  //"hiding", "anatomy" etc.
-				 ((skl = SkillDef.ByDefname(definition) as SkillDef) != null)) {//"skill_hiding, "skill_anatomy" etc.
+			if (((skl = SkillDef.GetByKey(definition) as SkillDef) != null) ||  //"hiding", "anatomy" etc.
+				 ((skl = SkillDef.GetByDefname(definition) as SkillDef) != null)) {//"skill_hiding, "skill_anatomy" etc.
 				//this resource is a skill
 				return true;
 			}

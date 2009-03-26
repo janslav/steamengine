@@ -189,6 +189,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public virtual uint FlaggedUid {
 			get {
 				return (uint) Uid;
@@ -292,7 +293,7 @@ namespace SteamEngine {
 		}
 
 		public void P(Point3D point) {
-			SetPosImpl(point.X, point.Y, point.z, this.M);
+			SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
 		public void P(IPoint3D point) {
@@ -304,7 +305,7 @@ namespace SteamEngine {
 		}
 
 		public void P(Point4D point) {
-			SetPosImpl(point.X, point.Y, point.z, point.m);
+			SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
 		public void P(IPoint4D point) {
@@ -430,6 +431,7 @@ namespace SteamEngine {
 			return (int) (((uint) uid) & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
+		[CLSCompliant(false)]
 		public static int UidClearFlags(uint uid) {
 			return (int) (uid & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
@@ -438,6 +440,7 @@ namespace SteamEngine {
 			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
 		}
 
+		[CLSCompliant(false)]
 		public static AbstractCharacter UidGetCharacter(uint uid) {
 			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
 		}
@@ -454,6 +457,7 @@ namespace SteamEngine {
 			return things.Get(UidClearFlags(uid)) as AbstractItem;
 		}
 
+		[CLSCompliant(false)]
 		public static AbstractItem UidGetItem(uint uid) {
 			return things.Get(UidClearFlags(uid)) as AbstractItem;
 		}
@@ -462,6 +466,7 @@ namespace SteamEngine {
 			return things.Get(UidClearFlags(uid));
 		}
 
+		[CLSCompliant(false)]
 		public static Thing UidGetThing(uint uid) {
 			return things.Get(UidClearFlags(uid));
 		}
@@ -715,10 +720,12 @@ namespace SteamEngine {
 			things.ReIndexAll();
 		}
 
+		[CLSCompliant(false)]
 		public static uint GetFakeUid() {
 			return (uint) things.GetFakeUid();
 		}
 
+		[CLSCompliant(false)]
 		public static uint GetFakeItemUid() {
 			return (uint) things.GetFakeUid() | 0x40000000;
 		}
@@ -727,6 +734,7 @@ namespace SteamEngine {
 			things.DisposeFakeUid(Thing.UidClearFlags(uid));
 		}
 
+		[CLSCompliant(false)]
 		public static void DisposeFakeUid(uint uid) {
 			things.DisposeFakeUid(Thing.UidClearFlags(uid));
 		}
@@ -1142,7 +1150,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public AbstractItem Newitem(IThingFactory factory) {
+		public AbstractItem NewItem(IThingFactory factory) {
 			return NewItem(factory, 1);
 		}
 
@@ -1241,7 +1249,7 @@ namespace SteamEngine {
 			this.Message(arg, 0);
 		}
 
-		public void Message(string arg, ushort color) {
+		public void Message(string arg, int color) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendOverheadMessageFrom(Globals.SrcTCPConnection, this, arg, color);
 		}
@@ -1256,12 +1264,12 @@ namespace SteamEngine {
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
 		}
 
-		public void ClilocMessage(int msg, ushort color, string args) {
+		public void ClilocMessage(int msg, int color, string args) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
 		}
 
-		public void ClilocMessage(int msg, ushort color, params string[] args) {
+		public void ClilocMessage(int msg, int color, params string[] args) {
 			this.ThrowIfDeleted();
 			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
 		}
@@ -1305,7 +1313,7 @@ namespace SteamEngine {
 		 */
 		public void Say(string arg) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Speech, -1, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Speech, -1, ClientFont.Unified, null, null);
 			}
 		}
 
@@ -1315,9 +1323,9 @@ namespace SteamEngine {
 			@param arg The text to say
 			@param color The color the text should be
 		 */
-		public void Say(string arg, ushort color) {
+		public void Say(string arg, int color) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Speech, color, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Speech, color, ClientFont.Unified, null, null);
 			}
 		}
 
@@ -1328,7 +1336,7 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param font The font to use for the text (The default is 3)
 		 */
-		public void Say(string arg, ushort color, byte font) {
+		public void Say(string arg, int color, ClientFont font) {
 			if (!string.IsNullOrEmpty(arg)) {
 				this.Speech(arg, 0, SpeechType.Speech, color, font, null, null);
 			}
@@ -1341,7 +1349,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocSay(int arg, params string[] args) {
-			this.Speech(null, arg, SpeechType.Speech, -1, 3, null, args);
+			this.Speech(null, arg, SpeechType.Speech, -1, ClientFont.Unified, null, args);
 		}
 
 		/**
@@ -1351,8 +1359,8 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocSay(int arg, ushort color, params string[] args) {
-			this.Speech(null, arg, SpeechType.Speech, color, 3, null, args);
+		public void ClilocSay(int arg, int color, params string[] args) {
+			this.Speech(null, arg, SpeechType.Speech, color, ClientFont.Unified, null, args);
 		}
 
 		/**
@@ -1363,7 +1371,7 @@ namespace SteamEngine {
 			@param font The font to use for the text (The default is 3)
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocSay(int arg, ushort color, byte font, params string[] args) {
+		public void ClilocSay(int arg, int color, ClientFont font, params string[] args) {
 			this.Speech(null, arg, SpeechType.Speech, color, font, null, args);
 		}
 
@@ -1373,9 +1381,9 @@ namespace SteamEngine {
 			@param arg The text to yell
 			@param color The color the text should be
 		 */
-		public void Yell(string arg, ushort color) {
+		public void Yell(string arg, int color) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Yell, color, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Yell, color, ClientFont.Unified, null, null);
 			}
 		}
 
@@ -1386,8 +1394,8 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocYell(int arg, ushort color, params string[] args) {
-			this.Speech(null, arg, SpeechType.Yell, color, 3, null, args);
+		public void ClilocYell(int arg, int color, params string[] args) {
+			this.Speech(null, arg, SpeechType.Yell, color, ClientFont.Unified, null, args);
 		}
 
 		/**
@@ -1396,9 +1404,9 @@ namespace SteamEngine {
 			@param arg The text to whisper
 			@param color  The color the text should be
 		 */
-		public void Whisper(string arg, ushort color) {
+		public void Whisper(string arg, int color) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Whisper, color, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Whisper, color, ClientFont.Unified, null, null);
 			}
 		}
 
@@ -1409,8 +1417,8 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocWhisper(int arg, ushort color, params string[] args) {
-			this.Speech(null, arg, SpeechType.Whisper, color, 3, null, args);
+		public void ClilocWhisper(int arg, int color, params string[] args) {
+			this.Speech(null, arg, SpeechType.Whisper, color, ClientFont.Unified, null, args);
 		}
 
 		/**
@@ -1419,9 +1427,9 @@ namespace SteamEngine {
 			@param arg The text to emote
 			@param color  The color the text should be
 		 */
-		public void Emote(string arg, ushort color) {
+		public void Emote(string arg, int color) {
 			if (!string.IsNullOrEmpty(arg)) {
-				this.Speech(arg, 0, SpeechType.Emote, color, 3, null, null);
+				this.Speech(arg, 0, SpeechType.Emote, color, ClientFont.Unified, null, null);
 			}
 		}
 
@@ -1432,8 +1440,8 @@ namespace SteamEngine {
 			@param color The color the text should be
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
-		public void ClilocEmote(int arg, ushort color, params string[] args) {
-			this.Speech(null, arg, SpeechType.Emote, color, 3, null, args);
+		public void ClilocEmote(int arg, int color, params string[] args) {
+			this.Speech(null, arg, SpeechType.Emote, color, ClientFont.Unified, null, args);
 		}
 
 		/**
@@ -1576,7 +1584,7 @@ namespace SteamEngine {
 					a font. If this is not 3, then the speech will be sent in ASCII instead of Unicode, because
 					Unicode doesn't support special fonts like runic.
 		 */
-		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ushort font, int[] keywords, string[] args) {
+		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, int[] keywords, string[] args) {
 			AbstractCharacter self = this as AbstractCharacter;
 
 			string language = "enu";
@@ -1589,7 +1597,7 @@ namespace SteamEngine {
 			this.Speech(speech, clilocSpeech, type, color, font, language, keywords, args);
 		}
 
-		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ushort font, string language, int[] keywords, string[] args) {
+		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, string language, int[] keywords, string[] args) {
 			this.ThrowIfDeleted();
 
 			AbstractCharacter self = this as AbstractCharacter;

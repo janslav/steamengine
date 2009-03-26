@@ -180,7 +180,7 @@ namespace SteamEngine.Converter {
 			ConvertedRegion r = (ConvertedRegion) def;
 			Point4D p = Point4D.Parse(line.value);
 			if (!r.mapplaneSet) {
-				r.mapplane = p.m;
+				r.mapplane = p.M;
 			}
 			string retVal = pImplementor.Save(p);
 			def.Set("Spawnpoint", retVal, line.comment);

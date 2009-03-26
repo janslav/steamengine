@@ -518,7 +518,7 @@ namespace SteamEngine.Networking {
 				//we don't? not sure here, we'll see -tar
 
 				//actually speak it
-				state.CharacterNotNull.Speech(this.speech, 0, (SpeechType) this.type, this.color, this.font, null, null);
+				state.CharacterNotNull.Speech(this.speech, 0, (SpeechType) this.type, this.color, (ClientFont) this.font, null, null);
 			}
 		}
 	}
@@ -587,7 +587,7 @@ namespace SteamEngine.Networking {
 				Commands.PlayerCommand(state, this.speech.Substring(Globals.alternateCommandPrefix.Length));
 			} else {
 				//actually speak it
-				state.CharacterNotNull.Speech(this.speech, 0, (SpeechType) this.type, this.color, this.font, this.language, this.keywords, null);
+				state.CharacterNotNull.Speech(this.speech, 0, (SpeechType) this.type, this.color, (ClientFont) this.font, this.language, this.keywords, null);
 			}
 		}
 	}
@@ -874,27 +874,27 @@ namespace SteamEngine.Networking {
 
 			public byte gender;
 
-			public byte startStr;
-			public byte startDex;
-			public byte startInt;
+			public int startStr;
+			public int startDex;
+			public int startInt;
 
-			public ushort skinColor;
-			public ushort hairStyle;
-			public ushort hairColor;
-			public ushort facialHair;
-			public ushort facialHairColor;
+			public int skinColor;
+			public int hairStyle;
+			public int hairColor;
+			public int facialHair;
+			public int facialHairColor;
 
-			public ushort shirtColor;
-			public ushort pantsColor;
+			public int shirtColor;
+			public int pantsColor;
 
-			public short locationNum;
+			public int locationNum;
 
-			public byte skillId1;
-			public byte skillValue1;
-			public byte skillId2;
-			public byte skillValue2;
-			public byte skillId3;
-			public byte skillValue3;
+			public int skillId1;
+			public int skillValue1;
+			public int skillId2;
+			public int skillValue2;
+			public int skillId3;
+			public int skillValue3;
 		}
 	}
 
@@ -1091,7 +1091,7 @@ namespace SteamEngine.Networking {
 						} else {
 							skillId = this.actionParseResult;
 						}
-						AbstractSkillDef skillDef = AbstractSkillDef.ById(skillId);
+						AbstractSkillDef skillDef = AbstractSkillDef.GetById(skillId);
 						if (skillDef.StartByMacroEnabled) {
 							state.lastSkillMacroId = skillId;
 							state.CharacterNotNull.SelectSkill(skillDef);
@@ -1274,20 +1274,20 @@ namespace SteamEngine.Networking {
 	}
 
 	public sealed class GumpMenuSelectionInPacket : DynamicLenInPacket {
-		uint gumpUid;
-		uint pressedButton;
-		uint[] selectedSwitches;
+		int gumpUid;
+		int pressedButton;
+		int[] selectedSwitches;
 		ResponseText[] responseTexts;
 
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.SeekFromCurrent(4); //skip the focus uid
-			this.gumpUid = this.DecodeUInt();
-			this.pressedButton = this.DecodeUInt();
+			this.gumpUid = this.DecodeInt();
+			this.pressedButton = this.DecodeInt();
 
 			int switchesCount = this.DecodeInt();
-			this.selectedSwitches = new uint[switchesCount];
+			this.selectedSwitches = new int[switchesCount];
 			for (int i = 0; i < switchesCount; i++) {
-				selectedSwitches[i] = this.DecodeUInt();
+				selectedSwitches[i] = this.DecodeInt();
 			}
 
 			uint entriesCount = this.DecodeUInt();

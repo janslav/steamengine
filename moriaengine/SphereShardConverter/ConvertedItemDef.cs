@@ -299,7 +299,7 @@ namespace SteamEngine.Converter {
 				int model = this.Model;
 				ItemDispidInfo info = ItemDispidInfo.Get(model);
 				if (info != null) {
-					this.layer = info.quality.ToString();
+					this.layer = info.Quality.ToString();
 					Set("layer", this.layer, "Set by Converter");
 					layerSet = true;
 				} else {

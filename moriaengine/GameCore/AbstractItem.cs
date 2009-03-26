@@ -29,6 +29,8 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Regions;
 
 namespace SteamEngine {
+
+	[CLSCompliant(false)]
 	public interface ICorpseEquipInfo {
 		uint FlaggedUid { get; }
 		byte Layer { get; }

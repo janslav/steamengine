@@ -112,15 +112,15 @@ namespace SteamEngine.LScript {
 								continue;
 							} else {
 								try {
-									uint index = TagMath.ParseUInt32(triggerName);
+									int index = TagMath.ParseInt32(triggerName);
 									responsesList.Add(new ResponseTrigger(index, index, trigger));
 									continue;
 								} catch (Exception) {
 									string[] boundStrings = triggerName.Split(' ', '\t', ',');
 									if (boundStrings.Length == 2) {
 										try {
-											uint lowerBound = TagMath.ParseUInt32(boundStrings[0].Trim());
-											uint upperBound = TagMath.ParseUInt32(boundStrings[1].Trim());
+											int lowerBound = TagMath.ParseInt32(boundStrings[0].Trim());
+											int upperBound = TagMath.ParseInt32(boundStrings[1].Trim());
 											responsesList.Add(new ResponseTrigger(lowerBound, upperBound, trigger));
 											continue;
 										} catch (Exception) { }
@@ -184,7 +184,7 @@ namespace SteamEngine.LScript {
 			return null;
 		}
 
-		internal void OnResponse(ScriptedGump instance, uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
+		internal void OnResponse(ScriptedGump instance, int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
 			if (responseTriggers != null) {
 				for (int i = 0, n = responseTriggers.Length; i < n; i++) {
 					ResponseTrigger rt = responseTriggers[i];
@@ -205,16 +205,16 @@ namespace SteamEngine.LScript {
 		}
 
 		private class ResponseTrigger {
-			private readonly uint lowerBound;
-			private readonly uint upperBound;
+			private readonly int lowerBound;
+			private readonly int upperBound;
 			internal readonly LScriptHolder script;
-			internal ResponseTrigger(uint lowerBound, uint upperBound, TriggerSection trigger) {
+			internal ResponseTrigger(int lowerBound, int upperBound, TriggerSection trigger) {
 				this.lowerBound = lowerBound;
 				this.upperBound = upperBound;
 				this.script = new LScriptHolder(trigger);
 			}
 
-			internal bool IsInBounds(uint index) {
+			internal bool IsInBounds(int index) {
 				return ((lowerBound <= index) && (index <= upperBound));
 			}
 		}
@@ -225,8 +225,8 @@ namespace SteamEngine.LScript {
 	}
 
 	public class ArgChkHolder {
-		private uint[] selectedSwitches;
-		internal ArgChkHolder(uint[] selectedSwitches) {
+		private int[] selectedSwitches;
+		internal ArgChkHolder(int[] selectedSwitches) {
 			this.selectedSwitches = selectedSwitches;
 		}
 
@@ -285,7 +285,7 @@ namespace SteamEngine.LScript {
 			: base(def) {
 		}
 
-		public override void OnResponse(uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
+		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
 			ScriptedGumpDef sdef = (ScriptedGumpDef) def;
 			sdef.OnResponse(this, pressedButton, selectedSwitches, returnedTexts, responseNumbers);
 		}

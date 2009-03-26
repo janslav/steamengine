@@ -384,7 +384,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			TreasureChest treasure = (TreasureChest) gi.Focus;
 			Player p = gi.Cont as Player;
-			uint button = gr.pressedButton;
+			int button = gr.pressedButton;
 			switch (gr.pressedButton) {
 				case 0:	// cancel
 					p.SysMessage("Nastaveni zustava nezmeneno.");
