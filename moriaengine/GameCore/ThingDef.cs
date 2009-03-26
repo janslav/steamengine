@@ -220,7 +220,7 @@ namespace SteamEngine {
 				}
 			} else {
 				//MarkAsLimbo(item);
-				ushort x, y;
+				int x, y;
 				contItem.GetRandomXYInside(out x, out y);
 				item.Trigger_EnterItem(contItem, x, y);
 			}

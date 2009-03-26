@@ -179,7 +179,7 @@ namespace SteamEngine.Networking {
 		*/
 		public static void SendSystemMessage(TCPConnection<GameState> c, string msg, int color) {
 			if (c != null) {
-				InternalSendMessage(c, null, msg, "System", SpeechType.Speech, 3, color);
+				InternalSendMessage(c, null, msg, "System", SpeechType.Speech, ClientFont.Unified, color);
 			}
 		}
 
@@ -195,7 +195,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocSysMessage(TCPConnection<GameState> c, int msg, int color, string args) {
 			if (c != null) {
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(null, msg, "System", SpeechType.Speech, 3, color, args);
+				packet.Prepare(null, msg, "System", SpeechType.Speech, ClientFont.Unified, color, args);
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -212,7 +212,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocSysMessage(TCPConnection<GameState> c, int msg, int color, params string[] args) {
 			if (c != null) {
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(null, msg, "System", SpeechType.Speech, 3, color, string.Join("\t", args));
+				packet.Prepare(null, msg, "System", SpeechType.Speech, ClientFont.Unified, color, string.Join("\t", args));
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -229,7 +229,7 @@ namespace SteamEngine.Networking {
 		public static void SendOverheadMessage(TCPConnection<GameState> c, string msg, int color) {
 			if (c != null) {
 				AbstractCharacter cre = c.State.CharacterNotNull;
-				InternalSendMessage(c, cre, msg, "System", SpeechType.Speech, 3, color);
+				InternalSendMessage(c, cre, msg, "System", SpeechType.Speech, ClientFont.Unified, color);
 			}
 		}
 
@@ -248,7 +248,7 @@ namespace SteamEngine.Networking {
 		public static void SendNameFrom(TCPConnection<GameState> c, Thing from, string msg, int color) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				InternalSendMessage(c, from, msg, "", SpeechType.Name, 3, color);
+				InternalSendMessage(c, from, msg, "", SpeechType.Name, ClientFont.Unified, color);
 			}
 		}
 
@@ -268,7 +268,7 @@ namespace SteamEngine.Networking {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(from, msg, "", SpeechType.Name, 3, color, args);
+				packet.Prepare(from, msg, "", SpeechType.Name, ClientFont.Unified, color, args);
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -288,7 +288,7 @@ namespace SteamEngine.Networking {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(from, msg, "", SpeechType.Name, 3, color, string.Concat(arg1, "\t", arg2));
+				packet.Prepare(from, msg, "", SpeechType.Name, ClientFont.Unified, color, string.Concat(arg1, "\t", arg2));
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -308,7 +308,7 @@ namespace SteamEngine.Networking {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(from, msg, "", SpeechType.Name, 3, color, string.Join("\t", args));
+				packet.Prepare(from, msg, "", SpeechType.Name, ClientFont.Unified, color, string.Join("\t", args));
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -317,7 +317,7 @@ namespace SteamEngine.Networking {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(from, msg, "System", SpeechType.Speech, 3, color, args);
+				packet.Prepare(from, msg, "System", SpeechType.Speech, ClientFont.Unified, color, args);
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -326,7 +326,7 @@ namespace SteamEngine.Networking {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(from, msg, "System", SpeechType.Speech, 3, color, string.Concat(arg1, "\t", arg2));
+				packet.Prepare(from, msg, "System", SpeechType.Speech, ClientFont.Unified, color, string.Concat(arg1, "\t", arg2));
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -335,7 +335,7 @@ namespace SteamEngine.Networking {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
 				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-				packet.Prepare(from, msg, "System", SpeechType.Speech, 3, color, string.Join("\t", args));
+				packet.Prepare(from, msg, "System", SpeechType.Speech, ClientFont.Unified, color, string.Join("\t", args));
 				c.SendSinglePacket(packet);
 			}
 		}
@@ -359,7 +359,7 @@ namespace SteamEngine.Networking {
 				//    SendMessage(c, from, 0, from.Name, msg, SpeechType.Speech, 3, color);
 				//}
 
-				InternalSendMessage(c, from, msg, from.Name, SpeechType.Speech, 3, color);
+				InternalSendMessage(c, from, msg, from.Name, SpeechType.Speech, ClientFont.Unified, color);
 			}
 		}
 		/*
@@ -375,24 +375,7 @@ namespace SteamEngine.Networking {
 		public static void SendOverheadMessageFrom(TCPConnection<GameState> c, Static from, string msg, int color) {
 			if (c != null) {
 				//if (from == null) throw new ArgumentNullException("from cannot be null in SendOverheadMessageFrom.");
-
-				InternalSendMessage(c, null, msg, from.Name, SpeechType.Speech, 3, color);
-			}
-		}
-
-
-		/*
-			Method: SendOverheadServerMessage
-				Displays a server message above the client's head, but only to that client.
-			Parameters:
-				c - The Connection to send to. (Get from character.conn, if it's not null)
-				msg - What to send.
-				color - The color of the message.
-		*/
-		public static void SendOverheadServerMessage(TCPConnection<GameState> c, string msg, int color) {
-			if (c != null) {
-				AbstractCharacter cre = c.State.CharacterNotNull;
-				InternalSendMessage(c, cre, msg, "System", SpeechType.Server, 0, color);
+				InternalSendMessage(c, null, msg, from.Name, SpeechType.Speech, ClientFont.Unified, color);
 			}
 		}
 
@@ -404,19 +387,15 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendServerMessage(TCPConnection<GameState> c, string msg, int color) {
-			if (c != null) {
-				InternalSendMessage(c, null, msg, "System", SpeechType.Server, 0, color);
-			}
+		public static GameOutgoingPacket PrepareServerMessagePacket(string msg) {
+			return PrepareMessagePacket(null, msg, "System", SpeechType.Server, ClientFont.Server, -1, null);
 		}
 
 		public static void SendDenyResultMessage(TCPConnection<GameState> c, Thing t, DenyResult denyResult) {
 			switch (denyResult) {
 				case DenyResult.Deny_RemoveFromView:
 					if ((t != null) && (!t.IsDeleted)) {
-						DeleteObjectOutPacket packet = Pool<DeleteObjectOutPacket>.Acquire();
-						packet.Prepare(t);
-						c.SendSinglePacket(packet);
+						SendRemoveFromView(c, t.FlaggedUid);
 					}
 					break;
 				case DenyResult.Deny_ThatDoesNotBelongToYou:
@@ -455,22 +434,26 @@ namespace SteamEngine.Networking {
 		*/
 		internal static void BroadCast(string msg) {
 			Console.WriteLine("Broadcasting: " + msg);
-			foreach (GameState state in GameServer.AllClients) {
-				SendServerMessage(state.Conn, msg, -1);
+			using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
+				pg.AddPacket(PrepareServerMessagePacket(msg));
+
+				foreach (GameState state in GameServer.AllClients) {
+					state.Conn.SendPacketGroup(pg);
+				}
 			}
 		}
 
-		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, int color) {
+		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ClientFont font, int color) {
 			InternalSendMessage(c, from, msg, sourceName, type, font, color, c.State.ClientLanguage);
 		}
 
 		//For use by Server's various message sending methods (Which send to one client).
-		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
+		internal static void InternalSendMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ClientFont font, int color, string lang) {
 			c.SendSinglePacket(PrepareMessagePacket(from, msg, sourceName, type, font, color, lang));
 		}
 
-		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ushort font, int color, string lang) {
-			if ((type != SpeechType.Spell) && (font == 3)) {	//if it's another font, send it as ASCII
+		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ClientFont font, int color, string lang) {
+			if ((type != SpeechType.Spell) && (font == ClientFont.Unified)) {	//if it's another font than 3, send it as ASCII
 				UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
 				packet.Prepare(from, msg, sourceName, type, font, color, lang);
 				return packet;
@@ -480,6 +463,18 @@ namespace SteamEngine.Networking {
 				return packet;
 			}
 		}
+
+		//public static void SendAsciiMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ClientFont font, int color, string lang) {
+		//    SendSpeechOutPacket packet = Pool<SendSpeechOutPacket>.Acquire();
+		//    packet.Prepare(from, msg, sourceName, type, font, color);
+		//    c.SendSinglePacket(packet);
+		//}
+
+		//public static void SendUnicodeMessage(TCPConnection<GameState> c, Thing from, string msg, string sourceName, SpeechType type, ClientFont font, int color, string lang) {
+		//    UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
+		//    packet.Prepare(from, msg, sourceName, type, font, color, lang);
+		//    c.SendSinglePacket(packet);
+		//}
 
 		#endregion messages
 

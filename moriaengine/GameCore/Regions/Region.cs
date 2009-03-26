@@ -103,7 +103,7 @@ namespace SteamEngine.Regions {
 		public byte Mapplane {
 			get {
 				if (!mapplaneIsSet) {
-					mapplane = P.m;
+					mapplane = P.M;
 					mapplaneIsSet = true;
 				}
 				return mapplane;
@@ -286,7 +286,7 @@ namespace SteamEngine.Regions {
 			if ((item.Cont != null) || (!point.Equals(item))) {
 				Logger.WriteWarning(item + " has been moved in the implementation of one of the @LeaveGround triggers. Don't do this. Putting back.");
 				item.MakeLimbo();
-				item.Trigger_EnterRegion(point.X, point.Y, point.z, point.m);
+				item.Trigger_EnterRegion(point.X, point.Y, point.Z, point.M);
 			}
 		}
 

@@ -64,7 +64,7 @@ namespace SteamEngine.Networking {
 		public int lastSkillMacroId;
 		public int lastSpellMacroId;
 
-		private Dictionary<uint, Gump> gumpInstancesByUid = new Dictionary<uint, Gump>();
+		private Dictionary<int, Gump> gumpInstancesByUid = new Dictionary<int, Gump>();
 		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
 
 		public int charBackupUid;
@@ -445,7 +445,7 @@ namespace SteamEngine.Networking {
 			return EmptyReadOnlyGenericCollection<Gump>.instance;
 		}
 
-		internal Gump PopGump(uint uid) {
+		internal Gump PopGump(int uid) {
 			Gump gi;
 			if (this.gumpInstancesByUid.TryGetValue(uid, out gi)) {
 				this.gumpInstancesByUid.Remove(uid);

@@ -128,7 +128,7 @@ namespace SteamEngine.CompiledScripts {
 
 					int projectileAnim = self.WeaponProjectileAnim;
 					if (projectileAnim >= 0) {
-						EffectFactory.EffectFromTo(self, target, (ushort) projectileAnim, 10, 1, false, false, 0, 0);
+						EffectFactory.EffectFromTo(self, target, projectileAnim, 10, 1, false, false, 0, 0);
 					}
 
 					skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));

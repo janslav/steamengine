@@ -1153,13 +1153,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Go(Point3D pnt) {
-			P(pnt.X, pnt.Y, pnt.z);
+			P(pnt.X, pnt.Y, pnt.Z);
 			Fix();
 			//Update();
 		}
 
 		public void Go(Point4D pnt) {
-			P(pnt.X, pnt.Y, pnt.z, pnt.m);
+			P(pnt.X, pnt.Y, pnt.Z, pnt.M);
 			Fix();
 			//Update();
 		}
@@ -1248,7 +1248,7 @@ namespace SteamEngine.CompiledScripts {
 			//rewritten using dictionary of skills and abilities
 			foreach (Skill skl in copyFrom.Skills) {
 				Skill newSkill = new Skill(skl, this); //create a copy
-				SkillsAbilities.Add(SkillDef.ById(newSkill.Id), newSkill);//add to the duped char's storage
+				SkillsAbilities.Add(SkillDef.GetById(newSkill.Id), newSkill);//add to the duped char's storage
 			}
 
 			//if (copyFrom.skills != null) {
@@ -1262,7 +1262,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
 			foreach (Skill s in Skills) {
-				string defsKey = AbstractSkillDef.ById(s.Id).Key;
+				string defsKey = AbstractSkillDef.GetById(s.Id).Key;
 				int realValue = s.RealValue;
 				if (realValue != 0) {
 					output.WriteValue(defsKey, realValue);
@@ -1294,13 +1294,13 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Load(PropsSection input) {
 			int n = AbstractSkillDef.SkillsCount;
 			for (ushort i = 0; i < n; i++) {
-				AbstractSkillDef skillDef = AbstractSkillDef.ById(i);
+				AbstractSkillDef skillDef = AbstractSkillDef.GetById(i);
 				if (skillDef != null) {
 					string skillKey = skillDef.Key;
 					PropsLine ps = input.TryPopPropsLine(skillKey);
 					if (ps != null) {
-						ushort val;
-						if (TagMath.TryParseUInt16(ps.value, out val)) {
+						int val;
+						if (TagMath.TryParseInt32(ps.value, out val)) {
 							SetSkill(i, val);
 						} else {
 							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
@@ -1360,7 +1360,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Find the appropriate Skill instance by given ID (look to the dictionary)")]
 		public override ISkill GetSkillObject(int id) {
 			if (this.skillsabilities != null) {
-				AbstractSkillDef def = SkillDef.ById(id);
+				AbstractSkillDef def = SkillDef.GetById(id);
 				object retVal = null;
 				if (this.skillsabilities.TryGetValue(def, out retVal)) {
 					return (ISkill) retVal;//return either Skill or null if not present
@@ -1373,7 +1373,7 @@ namespace SteamEngine.CompiledScripts {
 				"if yes it also instantiates the returning value")]
 		public bool HasSkill(int id) {
 			if (this.skillsabilities != null) {
-				AbstractSkillDef def = SkillDef.ById(id);
+				AbstractSkillDef def = SkillDef.GetById(id);
 				return this.skillsabilities.ContainsKey(def);
 			}
 			return false;
@@ -1381,7 +1381,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present " +
 				"create a new instance on the character")]
-		public override void SetSkill(int id, ushort value) {
+		public override void SetSkill(int id, int value) {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
 				skl.RealValue = value;
@@ -1429,30 +1429,30 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//instantiate new skill and set the specified points, used when the skill does not exist
-		private void AddNewSkill(int id, ushort value) {
+		private void AddNewSkill(int id, int value) {
 			AddNewSkill(id, value, 1000); //call the same method with default cap
 		}
 
 		//instantiate new skill and set the specified lock type, used when the skill does not exist
 		private void AddNewSkill(int id, SkillLockType type) {
-			AbstractSkillDef newSkillDef = AbstractSkillDef.ById(id);
+			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
 			ISkill skl = new Skill((ushort) id, this);
 			SkillsAbilities[newSkillDef] = skl; //add to dict
 			skl.Lock = type; //set lock type
 		}
 
 		//instantiate new skill and set the specified value and cap, used when the skill does not exist
-		private void AddNewSkill(int id, ushort value, ushort cap) {
-			AbstractSkillDef newSkillDef = AbstractSkillDef.ById(id);
-			ISkill skl = new Skill((ushort) id, this);
+		private void AddNewSkill(int id, int value, int cap) {
+			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
+			ISkill skl = new Skill(id, this);
 			SkillsAbilities[newSkillDef] = skl; //add to dict
 			skl.RealValue = value; //set value
 			skl.Cap = cap; //set lock type
 		}
 
-		internal void InternalRemoveSkill(ushort id) {
+		internal void InternalRemoveSkill(int id) {
 			CharSyncQueue.AboutToChangeSkill(this, id);
-			AbstractSkillDef aDef = AbstractSkillDef.ById(id);
+			AbstractSkillDef aDef = AbstractSkillDef.GetById(id);
 			SkillsAbilities.Remove(aDef);
 		}
 
@@ -1508,12 +1508,12 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Start a skill.")]
 		public void SelectSkill(SkillName skillName) {
-			SelectSkill((SkillDef) AbstractSkillDef.ById((int) skillName));
+			SelectSkill((SkillDef) AbstractSkillDef.GetById((int) skillName));
 		}
 
 		[Summary("Start a skill.")]
 		public void SelectSkill(int skillId) {
-			SelectSkill((SkillDef) AbstractSkillDef.ById(skillId));
+			SelectSkill((SkillDef) AbstractSkillDef.GetById(skillId));
 		}
 
 		[Summary("Start a skill. "

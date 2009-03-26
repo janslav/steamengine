@@ -220,11 +220,11 @@ namespace SteamEngine {
 				int numNonexistant = 0;
 				int lastItemNum = 0;
 				ItemDispidInfo lastItem = null;
-				for (int a = 0; a < ItemDispidInfo.Num(); a++) {
+				for (int a = 0; a < ItemDispidInfo.Count; a++) {
 					AbstractItemDef def = ThingDef.FindItemDef(a);
 					if (def == null) {
 						ItemDispidInfo idi = ItemDispidInfo.Get(a);
-						if (idi.isEmpty) {
+						if (idi.IsEmpty) {
 							numNonexistant++;
 							if (Globals.writeMulDocsFiles) {
 								nonexistant.WriteLine("0x" + a.ToString("x"));
@@ -238,39 +238,39 @@ namespace SteamEngine {
 								lastItem = idi;
 								lastItemNum = a;
 								string name = "Unnamed";
-								if (idi.singularName.Length > 0) {
-									name = idi.singularName;
+								if (idi.SingularName.Length > 0) {
+									name = idi.SingularName;
 								}
 								//defname, category, subsection, description
 								scr.WriteLine("");
 								string type = "ItemDef";
-								if (HasFlag(idi.flags, TileFlag.Wearable)) {
+								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
 									type = "EquippableDef";
 								}
-								if (HasFlag(idi.flags, TileFlag.Container)) {
+								if (HasFlag(idi.Flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
 								scr.WriteLine("[" + type + " 0x" + a.ToString("x") + "]");
 								scr.WriteLine("Model=0x" + a.ToString("x"));
 								scr.WriteLine("Name=\"" + name + "\"");
-								if (HasFlag(idi.flags, TileFlag.Wearable)) {
-									scr.WriteLine("Layer=" + idi.quality);
+								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
+									scr.WriteLine("Layer=" + idi.Quality);
 								} else {
-									scr.WriteLine("//Quality=" + idi.quality);
+									scr.WriteLine("//Quality=" + idi.Quality);
 								}
-								if (HasFlag(idi.flags, TileFlag.Container)) {
-									scr.WriteLine("//MaxContents=" + idi.height);
+								if (HasFlag(idi.Flags, TileFlag.Container)) {
+									scr.WriteLine("//MaxContents=" + idi.Height);
 								} else {
-									scr.WriteLine("//Height=" + idi.height);
+									scr.WriteLine("//Height=" + idi.Height);
 								}
-								scr.WriteLine("//Weight=" + idi.weight);
-								scr.WriteLine("//Unknown=" + idi.unknown);
-								scr.WriteLine("//Min Items to display this art=" + idi.minItemsToDisplayThisArt);
-								scr.WriteLine("//AnimID=0x" + idi.animID.ToString("x"));
-								scr.WriteLine("//Quantity (Wpn/armor type)=" + idi.quantity);
-								scr.WriteLine("//Unknown2=" + idi.unknown2);
-								scr.WriteLine("//Hue=" + idi.hue);
-								scr.WriteLine("//Unknown3=" + idi.unknown3);
+								scr.WriteLine("//Weight=" + idi.Weight);
+								scr.WriteLine("//Unknown=" + idi.Unknown1);
+								scr.WriteLine("//Min Items to display this art=" + idi.MinItemsToDisplayThisArt);
+								scr.WriteLine("//AnimID=0x" + idi.AnimID.ToString("x"));
+								scr.WriteLine("//Quantity (Wpn/armor type)=" + idi.Quantity);
+								scr.WriteLine("//Unknown2=" + idi.Unknown2);
+								scr.WriteLine("//Hue=" + idi.Hue);
+								scr.WriteLine("//Unknown3=" + idi.Unknown3);
 								//if (idi.weight==255) {
 								//    scr.WriteLine("Flag=attr_move_never");
 								//}
@@ -280,16 +280,16 @@ namespace SteamEngine {
 								//if (HasFlag(idi.flags,TileFlag.window) || (HasFlag(idi.flags,TileFlag.impassable) && !HasFlag(idi.flags,TileFlag.noshoot))) {
 								//    scr.WriteLine("Flag=attr_cover");
 								//}
-								if (HasFlag(idi.flags, TileFlag.Stackable)) {
+								if (HasFlag(idi.Flags, TileFlag.Stackable)) {
 									scr.WriteLine("Stackable=1");
 								}
-								scr.WriteLine("//Tiledata flags = " + idi.flags);
+								scr.WriteLine("//Tiledata flags = " + idi.Flags);
 							} else {
 								string type = "ItemDef";
-								if (HasFlag(idi.flags, TileFlag.Wearable)) {
+								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
 									type = "EquippableDef";
 								}
-								if (HasFlag(idi.flags, TileFlag.Container)) {
+								if (HasFlag(idi.Flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
 								scr.WriteLine("[" + type + " 0x" + a.ToString("x") + "]");
@@ -329,40 +329,40 @@ namespace SteamEngine {
 				sw[flagNum].WriteLine("//This lists all items with the " + flagName + " flag (0x" + GetFlagFromFlagNum(flagNum).ToString("x") + ")");
 			}
 			scr.WriteLine("//This is not a script.");
-			for (int a = 0; a < ItemDispidInfo.Num(); a++) {
+			for (int a = 0; a < ItemDispidInfo.Count; a++) {
 				ItemDispidInfo idi = ItemDispidInfo.Get(a);
 				scr.WriteLine("");
 				scr.WriteLine("[Dispid 0x" + a.ToString("x") + "]");
 				string name = "Unnamed";
-				if (idi.singularName.Length > 0) {
-					name = idi.singularName;
+				if (idi.SingularName.Length > 0) {
+					name = idi.SingularName;
 				}
 				scr.WriteLine("Name=" + name);
-				if (HasFlag(idi.flags, TileFlag.Wearable)) {
-					scr.WriteLine("Layer=" + idi.quality);
+				if (HasFlag(idi.Flags, TileFlag.Wearable)) {
+					scr.WriteLine("Layer=" + idi.Quality);
 				} else {
-					scr.WriteLine("Quality=" + idi.quality);
+					scr.WriteLine("Quality=" + idi.Quality);
 				}
-				if (HasFlag(idi.flags, TileFlag.Container)) {
-					scr.WriteLine("Height, or Size (Determines the max # of items that can be held in it?)=" + idi.height);
+				if (HasFlag(idi.Flags, TileFlag.Container)) {
+					scr.WriteLine("Height, or Size (Determines the max # of items that can be held in it?)=" + idi.Height);
 				} else {
-					scr.WriteLine("Height=" + idi.height);
+					scr.WriteLine("Height=" + idi.Height);
 				}
-				scr.WriteLine("Weight=" + idi.weight);
-				if (idi.weight == 255) {
+				scr.WriteLine("Weight=" + idi.Weight);
+				if (idi.Weight == 255) {
 					scr.WriteLine("\t(Too heavy to move)");
 				}
-				scr.WriteLine("Unknown=" + idi.unknown);
-				scr.WriteLine("Min Items to display this art (Probably used by the client with stackables)=" + idi.minItemsToDisplayThisArt);
-				scr.WriteLine("AnimID=0x" + idi.animID.ToString("x"));
-				scr.WriteLine("Quantity (Wpn/armor type)=" + idi.quantity);
-				scr.WriteLine("Unknown2=" + idi.unknown2);
-				scr.WriteLine("Hue=" + idi.hue);
-				scr.WriteLine("Unknown3=" + idi.unknown3);
-				scr.WriteLine("Tiledata flags = " + idi.flags);
+				scr.WriteLine("Unknown=" + idi.Unknown1);
+				scr.WriteLine("Min Items to display this art (Probably used by the client with stackables)=" + idi.MinItemsToDisplayThisArt);
+				scr.WriteLine("AnimID=0x" + idi.AnimID.ToString("x"));
+				scr.WriteLine("Quantity (Wpn/armor type)=" + idi.Quantity);
+				scr.WriteLine("Unknown2=" + idi.Unknown2);
+				scr.WriteLine("Hue=" + idi.Hue);
+				scr.WriteLine("Unknown3=" + idi.Unknown3);
+				scr.WriteLine("Tiledata flags = " + idi.Flags);
 
 				for (int flagNum = 0; flagNum < 32; flagNum++) {
-					if (HasFlagNum(idi.flags, flagNum)) {
+					if (HasFlagNum(idi.Flags, flagNum)) {
 						sw[flagNum].WriteLine("0x" + a.ToString("x") + ") " + name);
 
 					}

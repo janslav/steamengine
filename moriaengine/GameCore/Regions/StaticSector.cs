@@ -189,7 +189,7 @@ namespace SteamEngine.Regions {
 			for (int a = 0; a < statics.Length; a++) {
 				if (statics[a] != null) {
 					Static sta = statics[a];
-					if (x == sta.x && y == sta.y) {
+					if (x == sta.X && y == sta.Y) {
 						if (sta.Id == staticId) {
 							return true;
 						}
@@ -202,7 +202,7 @@ namespace SteamEngine.Regions {
 		internal Static GetStatic(int x, int y, int z, int tileID) {
 			foreach (Static stat in statics) {
 				//Logger.WriteDebug("Compare static ("+stat.X+","+stat.Y+","+stat.Z+","+stat.M+":"+stat.id+" ("+stat.Name+")) to ("+x+","+y+","+z+":"+tileID+")");
-				if (stat.x == x && stat.y == y && stat.z == z && stat.Id == tileID) {
+				if (stat.X == x && stat.Y == y && stat.Z == z && stat.Id == tileID) {
 					return stat;
 				}
 			}

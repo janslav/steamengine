@@ -151,7 +151,7 @@ namespace SteamEngine {
 			return this.CanSeeCoordinatesFrom(this, target);
 		}
 
-		public bool CanSeeCoordinates(ushort targetX, ushort targetY, sbyte targetZ, byte targetM) {
+		public bool CanSeeCoordinates(int targetX, int targetY, int targetZ, byte targetM) {
 			return this.CanSeeCoordinatesFrom(this, targetX, targetY, targetZ, targetM);
 		}
 

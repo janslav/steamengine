@@ -30,16 +30,16 @@ namespace SteamEngine {
 		public MultiComponentDescription mcd;
 		private readonly int multiFlags;
 
-		internal MultiItemComponent(MultiComponentDescription mcd, ushort id, byte m, int multiFlags)
+		internal MultiItemComponent(MultiComponentDescription mcd, int id, byte m, int multiFlags)
 			: base(id, m) {
 			this.mcd = mcd;
 			this.multiFlags = multiFlags;
 		}
 
-		internal void SetRelativePos(ushort centerX, ushort centerY, sbyte centerZ) {
-			this.x = (ushort) (centerX + mcd.offsetX);
-			this.y = (ushort) (centerY + mcd.offsetY);
-			this.z = (sbyte) (centerZ + mcd.offsetZ);
+		internal void SetRelativePos(int centerX, int centerY, int centerZ) {
+			this.X = (ushort) (centerX + mcd.offsetX);
+			this.Y = (ushort) (centerY + mcd.offsetY);
+			this.Z = (sbyte) (centerZ + mcd.offsetZ);
 		}
 
 		//useless?
@@ -52,13 +52,13 @@ namespace SteamEngine {
 
 	//info about one item of multiItem
 	public class MultiComponentDescription {
-		public readonly ushort itemID;
-		public readonly short offsetX;
-		public readonly short offsetY;
-		public readonly short offsetZ;
+		public readonly int itemID;
+		public readonly int offsetX;
+		public readonly int offsetY;
+		public readonly int offsetZ;
 		public readonly int flags;
 
-		public MultiComponentDescription(ushort id, short offsetX, short offsetY, short offsetZ, int flags) {
+		public MultiComponentDescription(int id, int offsetX, int offsetY, int offsetZ, int flags) {
 			this.itemID = id;
 			this.offsetX = offsetX;
 			this.offsetY = offsetY;
@@ -66,7 +66,7 @@ namespace SteamEngine {
 			this.flags = flags;
 		}
 
-		internal MultiItemComponent Create(ushort centerX, ushort centerY, sbyte centerZ, byte m) {
+		internal MultiItemComponent Create(int centerX, int centerY, int centerZ, byte m) {
 			MultiItemComponent retVal = new MultiItemComponent(this, itemID, m, flags);
 			retVal.SetRelativePos(centerX, centerY, centerZ);
 			return retVal;
@@ -234,7 +234,7 @@ namespace SteamEngine {
 		internal MultiItemComponent Find(int x, int y, int z, int id) {
 			MultiItemComponent mic = firstMultiComponent;
 			while (mic != null) {
-				if ((mic.x == x) && (mic.y == y) && (mic.z == z) && (mic.Id == id)) {
+				if ((mic.X == x) && (mic.Y == y) && (mic.Z == z) && (mic.Id == id)) {
 					return mic;
 				}
 				mic = mic.nextInList;

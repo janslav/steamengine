@@ -41,26 +41,26 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		public static void StationaryEffect(Thing self, ushort effect, byte speed, byte duration, bool fixedDirection, bool explodes, uint hue, RenderModes renderMode) {
+		public static void StationaryEffect(Thing self, int effect, byte speed, byte duration, bool fixedDirection, bool explodes, int hue, RenderModes renderMode) {
 			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 			p.Prepare(self, self, 3, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
 			GameServer.SendToClientsWhoCanSee(self, p);
 		}
 
-		public static void StationaryEffect(Thing self, ushort effect, byte speed, byte duration) {
+		public static void StationaryEffect(Thing self, int effect, byte speed, byte duration) {
 			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 			p.Prepare(self, self, 3, effect, speed, duration, 0, true, false, 0, 0);
 			GameServer.SendToClientsWhoCanSee(self, p);
 		}
 
-		public static void StationaryEffectAt(IPoint4D point, ushort effect, byte speed, byte duration, bool fixedDirection, bool explodes, uint hue, RenderModes renderMode) {
+		public static void StationaryEffectAt(IPoint4D point, int effect, byte speed, byte duration, bool fixedDirection, bool explodes, int hue, RenderModes renderMode) {
 			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 			p.Prepare(point, point, 2, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
 			GameServer.SendToClientsInRange(point, Globals.MaxUpdateRange, p);
 		}
 
 		[SteamFunction]
-		public static void EffectFromTo(IPoint4D source, IPoint4D target, ushort effect, byte speed, byte duration, bool fixedDirection, bool explodes, uint hue, RenderModes renderMode) {
+		public static void EffectFromTo(IPoint4D source, IPoint4D target, int effect, byte speed, byte duration, bool fixedDirection, bool explodes, int hue, RenderModes renderMode) {
 			GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
 			p.Prepare(source, target, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
 			GameServer.SendToClientsInRange(source, Globals.MaxUpdateRange, p);

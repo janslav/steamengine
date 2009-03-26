@@ -238,16 +238,16 @@ namespace SteamEngine.LScript {
 			if (vars.self is NameRef) {
 				classOrNamespaceName += ((NameRef) vars.self).name;
 				if (vars.self is NameSpaceRef) {
-					isClass = false;
+					this.isClass = false;
 				} else { //vars.self is ClassNameRef
-					isClass = true;
+					this.isClass = true;
 				}
 			}
 
 			if (haveBaseInstance) {
 				if (classOrNamespaceName != "") {
 					//noArgs
-					if (!isClass) {
+					if (!this.isClass) {
 						string className = classOrNamespaceName + "." + name;
 						type = Type.GetType(className, false, true);
 						if (type == null) {
@@ -370,7 +370,7 @@ namespace SteamEngine.LScript {
 			}
 
 			//skillkey
-			AbstractSkillDef sd = AbstractSkillDef.ByKey(name);
+			AbstractSkillDef sd = AbstractSkillDef.GetByKey(name);
 			if ((sd != null) && (vars.self is AbstractCharacter)) {
 				skillKeyMatched = true;
 				if (args.Length == 0) {

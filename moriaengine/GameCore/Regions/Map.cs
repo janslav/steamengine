@@ -124,7 +124,7 @@ namespace SteamEngine.Regions {
 			It does not check if the tile is walkable, or anything else (including z).
 		*/
 		public static bool IsValidPos(Point4D point) {
-			return (point.X >= 0 && point.Y >= 0 && point.X < GetMapSizeX(point.m) && point.Y < GetMapSizeY(point.m));
+			return (point.X >= 0 && point.Y >= 0 && point.X < GetMapSizeX(point.M) && point.Y < GetMapSizeY(point.M));
 		}
 
 		public static bool IsValidPos(IPoint4D point) {
@@ -361,8 +361,8 @@ namespace SteamEngine.Regions {
 			components = data.Create(p.x, p.y, p.z, p.m);
 			multiItem.contentsOrComponents = components;
 			foreach (MultiItemComponent mic in components) {
-				int sx = mic.x >> sectorFactor;
-				int sy = mic.y >> sectorFactor;
+				int sx = mic.X >> sectorFactor;
+				int sy = mic.Y >> sectorFactor;
 				GetSector(sx, sy).AddMultiComponent(mic);
 			}
 		}
@@ -386,8 +386,8 @@ namespace SteamEngine.Regions {
 			Sanity.IfTrueThrow(components == null, "MultiItem being removed from map when it doesn't have it's components instantiated!");
 			MutablePoint4D p = multiItem.point4d;
 			foreach (MultiItemComponent mic in components) {
-				int sx = mic.x >> sectorFactor;
-				int sy = mic.y >> sectorFactor;
+				int sx = mic.X >> sectorFactor;
+				int sy = mic.Y >> sectorFactor;
 				GetSector(sx, sy).RemoveMultiComponent(mic);
 			}
 		}
@@ -428,7 +428,7 @@ namespace SteamEngine.Regions {
 		internal static void ChangedP(Thing thing, Point4D oldP) {
 			bool oldPValid = Map.IsValidPos(oldP);
 			bool newPValid = Map.IsValidPos(thing);
-			Map oldM = Map.GetMap(oldP.m);
+			Map oldM = Map.GetMap(oldP.M);
 			Map newM = Map.GetMap(thing.M);
 			if (!oldPValid) {
 				if (newPValid) {
@@ -547,7 +547,7 @@ namespace SteamEngine.Regions {
 				MultiItemComponent[] components = multiItem.contentsOrComponents as MultiItemComponent[];
 				if (components != null) {
 					foreach (MultiItemComponent mic in components) {
-						ushort oldX = mic.x, oldY = mic.y;
+						int oldX = mic.X, oldY = mic.Y;
 						mic.SetRelativePos(newP.x, newP.y, newP.z);
 						ChangedMultiCOmponentPImpl(mic, oldX, oldY);
 					}
@@ -558,14 +558,14 @@ namespace SteamEngine.Regions {
 		private void ChangedMultiCOmponentPImpl(MultiItemComponent mic, int oldX, int oldY) {
 			Logger.WriteInfo(MapTracingOn, this + ".ChangedMultiCOmponentPImpl(" + mic + "," + oldX + "," + oldY + ")");
 			int oldXPre = oldX & sectorAnd;
-			int newXPre = mic.x & sectorAnd;
+			int newXPre = mic.X & sectorAnd;
 			int oldYPre = oldY & sectorAnd;
-			int newYPre = mic.y & sectorAnd;
+			int newYPre = mic.Y & sectorAnd;
 			if (oldXPre != newXPre || oldYPre != newYPre) {
 				int oldSx = oldX >> sectorFactor;
-				int newSx = mic.x >> sectorFactor;
+				int newSx = mic.X >> sectorFactor;
 				int oldSy = oldY >> sectorFactor;
-				int newSy = mic.y >> sectorFactor;
+				int newSy = mic.Y >> sectorFactor;
 				Sector oldSector = GetSector(oldSx, oldSy);
 				Sector newSector = GetSector(newSx, newSy);
 				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
@@ -796,13 +796,13 @@ namespace SteamEngine.Regions {
 			Sector sector = GetSector(sx, sy);
 
 			foreach (Static s in sector.Statics) {
-				if ((s.x == x) && (s.y == y)) {
+				if ((s.X == x) && (s.Y == y)) {
 					yield return s;
 				}
 			}
 			if (sector.multiComponents != null) {
 				foreach (Static s in sector.multiComponents) {
-					if ((s.x == x) && (s.y == y)) {
+					if ((s.X == x) && (s.Y == y)) {
 						yield return s;
 					}
 				}

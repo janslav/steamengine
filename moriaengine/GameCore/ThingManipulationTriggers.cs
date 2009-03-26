@@ -147,7 +147,7 @@ namespace SteamEngine {
 					}
 				} else if (contItem.IsContainer) {
 					this.MakeLimbo();
-					ushort x, y;
+					int x, y;
 					contItem.GetRandomXYInside(out x, out y);
 					this.Trigger_EnterItem(contItem, x, y);
 
@@ -201,7 +201,7 @@ namespace SteamEngine {
 			cont.ItemMakeLimbo(this);
 		}
 
-		private void ReturnIntoItemIfNeeded(AbstractItem originalCont, ushort x, ushort y) {
+		private void ReturnIntoItemIfNeeded(AbstractItem originalCont, int x, int y) {
 			if (this.Cont != originalCont) {
 				Logger.WriteWarning(this + " has been moved in the implementation of one of the @LeaveItem/@EnterItem triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
@@ -261,7 +261,7 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow(this.Cont != null, "this not on ground.");
 
 			Point4D point = new Point4D(this.point4d);
-			Map map = Map.GetMap(point.m);
+			Map map = Map.GetMap(point.M);
 			Region region = map.GetRegionFor(point.X, point.Y);
 			ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
 
@@ -280,17 +280,17 @@ namespace SteamEngine {
 			if ((this.Cont != null) || (!point.Equals(this))) {
 				Logger.WriteWarning(this + " has been moved in the implementation of one of the @Leave/EnterGround triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
-				this.Trigger_EnterRegion(point.X, point.Y, point.z, point.m);
+				this.Trigger_EnterRegion(point.X, point.Y, point.Z, point.M);
 			}
 		}
 
 		//we expect this to be in limbo, and cont to be really container
-		internal void Trigger_EnterItem(AbstractItem cont, ushort x, ushort y) {
+		internal void Trigger_EnterItem(AbstractItem cont, int x, int y) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "this not in Limbo");
 			Sanity.IfTrueThrow(!cont.IsContainer, "cont is no Container");
 #if TRACE
 			{
-				ushort minX, minY, maxX, maxY;
+				int minX, minY, maxX, maxY;
 				cont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
 				Sanity.IfTrueThrow(x < minX, "x < minX");
 				Sanity.IfTrueThrow(x > maxX, "x > maxX");
@@ -300,8 +300,8 @@ namespace SteamEngine {
 #endif
 
 			cont.InternalItemEnter(this);
-			this.point4d.x = x;
-			this.point4d.y = y;
+			this.point4d.x = (ushort) x;
+			this.point4d.y = (ushort) y;
 
 			ItemInItemArgs args = new ItemInItemArgs(this, cont);
 			this.TryTrigger(TriggerKey.enterItem, args);
@@ -555,15 +555,15 @@ namespace SteamEngine {
 
 		}
 
-		public void GetRandomXYInside(out ushort x, out ushort y) {
+		public void GetRandomXYInside(out int x, out int y) {
 			//todo?: nonconstant bounds for this? or virtual?
-			ushort minX, minY, maxX, maxY;
+			int minX, minY, maxX, maxY;
 			GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
-			x = (ushort) Globals.dice.Next(minX, maxX);
-			y = (ushort) Globals.dice.Next(minY, maxY);
+			x = Globals.dice.Next(minX, maxX);
+			y = Globals.dice.Next(minY, maxY);
 		}
 
-		public virtual void GetContainerGumpBoundaries(out ushort minX, out ushort minY, out ushort maxX, out ushort maxY) {
+		public virtual void GetContainerGumpBoundaries(out int minX, out int minY, out int maxX, out int maxY) {
 			minX = 20;
 			minY = 20;
 			maxX = 120;
@@ -590,10 +590,10 @@ namespace SteamEngine {
 			this.AdjustWeight(-i.Weight);
 		}
 
-		public void MoveInsideContainer(ushort x, ushort y) {
+		public void MoveInsideContainer(int x, int y) {
 			AbstractItem i = this.Cont as AbstractItem;
 			if (i != null) {
-				ushort minX, minY, maxX, maxY;
+				int minX, minY, maxX, maxY;
 				i.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
 				if (x < minX) {
 					x = minX;
@@ -609,8 +609,8 @@ namespace SteamEngine {
 				if ((this.point4d.x != x) || (this.point4d.y != y)) {
 					OpenedContainers.SetContainerClosed(this);//if I am a container too, I get closed also
 					ItemSyncQueue.AboutToChange(this);
-					point4d.x = x;
-					point4d.y = y;
+					point4d.x = (ushort) x;
+					point4d.y = (ushort) y;
 				}
 			}//else throw? Probably not so important...
 		}
@@ -620,17 +620,17 @@ namespace SteamEngine {
 			if (i != null) {
 				MutablePoint4D p = this.point4d;
 
-				ushort minX, minY, maxX, maxY;
+				int minX, minY, maxX, maxY;
 				i.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
 				if (p.x < minX) {
-					p.x = minX;
+					p.x = (ushort) minX;
 				} else if (p.x > maxX) {
-					p.x = maxX;
+					p.x = (ushort) maxX;
 				}
 				if (p.y < minY) {
-					p.y = minY;
+					p.y = (ushort) minY;
 				} else if (p.y > maxY) {
-					p.y = maxY;
+					p.y = (ushort) maxY;
 				}
 			}
 		}
@@ -989,7 +989,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
-		public DenyResult TryPutItemInItem(AbstractItem targetCont, ushort x, ushort y, bool tryStacking) {
+		public DenyResult TryPutItemInItem(AbstractItem targetCont, int x, int y, bool tryStacking) {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
@@ -1036,7 +1036,7 @@ namespace SteamEngine {
 				}
 
 				if (retVal == DenyResult.Allow) {
-					ushort minX, minY, maxX, maxY;
+					int minX, minY, maxX, maxY;
 					targetCont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
 					if (x < minX) {
 						x = minX;
@@ -1075,7 +1075,7 @@ namespace SteamEngine {
 			item.ThrowIfDeleted();
 
 			if (target.IsContainer) {
-				ushort x, y;
+				int x, y;
 				target.GetRandomXYInside(out x, out y);
 				return this.TryPutItemInItem(target, x, y, true);
 			} else {
@@ -1131,7 +1131,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
-		public DenyResult TryPutItemOnGround(ushort x, ushort y, sbyte z) {
+		public DenyResult TryPutItemOnGround(int x, int y, int z) {
 			ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
 			if (item == null) {

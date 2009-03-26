@@ -43,7 +43,8 @@ namespace SteamEngine.LScript {
 				throw new SEException("The method or operation is not implemented.");
 			}
 		}
-		protected static NullOpNode nullOpNode = new NullOpNode();
+
+		protected static readonly NullOpNode nullOpNodeInstance = new NullOpNode();
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
 			int line = code.GetStartLine() + LScript.startLine;
@@ -93,7 +94,7 @@ namespace SteamEngine.LScript {
 						if (caseProd.GetChildCount() == 6) {//has script
 							caseCode = LScript.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 						} else {
-							caseCode = nullOpNode;
+							caseCode = nullOpNodeInstance;
 						}
 
 						if (tempCases.Count > 0) {
@@ -199,11 +200,11 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object value = String.Concat(switchNode.Run(vars));
 			OpNode node = (OpNode) cases[value];
-			if (node != nullOpNode) {
+			if (node != nullOpNodeInstance) {
 				if (node == null) {
 					node = defaultNode;
 				}
-				if ((node != nullOpNode) && (node != null)) {
+				if ((node != nullOpNodeInstance) && (node != null)) {
 					return node.Run(vars);
 				}
 			}
@@ -225,11 +226,11 @@ namespace SteamEngine.LScript {
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 			OpNode node = (OpNode) cases[value];
-			if (node != nullOpNode) {
+			if (node != nullOpNodeInstance) {
 				if (node == null) {
 					node = defaultNode;
 				}
-				if ((node != nullOpNode) && (node != null)) {
+				if ((node != nullOpNodeInstance) && (node != null)) {
 					return node.Run(vars);
 				}
 			}

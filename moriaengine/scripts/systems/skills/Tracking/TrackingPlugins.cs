@@ -259,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void SendObjectPacket(TimeSpan now, Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
-			ushort color = tp.GetColor(now, this.maxFootstepAge);
+			int color = tp.GetColor(now, this.maxFootstepAge);
 			ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
 			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, color);
 			conn.SendSinglePacket(oiop);
@@ -269,8 +269,8 @@ namespace SteamEngine.CompiledScripts {
 			TimeSpan minTimeToShow = now - this.maxFootstepAge;
 			TimeSpan tpCreatedAt = tp.CreatedAt;
 			if (tpCreatedAt >= minTimeToShow) {
-				ushort oldColor = tp.GetColor(this.lastRefreshAt, this.maxFootstepAge);
-				ushort newColor = tp.GetColor(now, this.maxFootstepAge);
+				int oldColor = tp.GetColor(this.lastRefreshAt, this.maxFootstepAge);
+				int newColor = tp.GetColor(now, this.maxFootstepAge);
 				if (oldColor != newColor) {
 					ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
 					oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, newColor);

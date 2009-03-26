@@ -177,7 +177,7 @@ namespace SteamEngine {
 	}
 
 	public class Point3D : Point2D, IPoint3D {
-		public readonly int z;
+		private readonly int z;
 
 		public Point3D(int x, int y, int z)
 			: base(x, y) {
@@ -207,11 +207,11 @@ namespace SteamEngine {
 			return ((a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z));
 		}
 
-		int IPoint3D.Z {
+		public int Z {
 			get {
-				return z;
+				return this.z;
 			}
-		}
+		} 		
 
 		public override string ToString() {
 			return "(" + X + "," + Y + "," + z + ")";
@@ -277,7 +277,7 @@ namespace SteamEngine {
 		}
 
 		public MutablePoint4D(Point4D p)
-			: this(p.X, p.Y, p.z, p.m) {
+			: this(p.X, p.Y, p.Z, p.M) {
 		}
 
 		public MutablePoint4D(IPoint4D p)
@@ -334,7 +334,7 @@ namespace SteamEngine {
 	}
 
 	public sealed class Point4D : Point3D, IPoint4D {
-		public readonly byte m;
+		private readonly byte m;
 
 		public Point4D(int x, int y, int z, byte m)
 			: base(x, y, z) {
@@ -364,18 +364,18 @@ namespace SteamEngine {
 			this.m = p.M;
 		}
 
+		public byte M {
+			get {
+				return m;
+			}
+		} 
+
 		public static bool Equals(Point4D a, Point4D b) {
-			return ((a.X == b.X) && (a.Y == b.Y) && (a.z == b.z) && (a.m == b.m));
+			return ((a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.m == b.m));
 		}
 
 		public static bool Equals(IPoint4D a, IPoint4D b) {
 			return ((a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.M == b.M));
-		}
-
-		byte IPoint4D.M {
-			get {
-				return m;
-			}
 		}
 
 		public static Point4D Parse(string value) {
@@ -409,11 +409,11 @@ namespace SteamEngine {
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public override string ToString() {
-			return "(" + X + "," + Y + "," + z + "," + m + ")";
+			return "(" + X + "," + Y + "," + Z + "," + m + ")";
 		}
 
 		public string ToNormalString() {
-			return X + "," + Y + "," + z + "," + m;
+			return X + "," + Y + "," + Z + "," + m;
 		}
 
 		public static bool operator ==(Point4D first, Point4D second) {
@@ -425,17 +425,17 @@ namespace SteamEngine {
 			} else if (object.ReferenceEquals(second, null)) {
 				return false;
 			}
-			return ((first.X == second.X) && (first.Y == second.Y) && (first.z == second.z) && (first.m == second.m));
+			return ((first.X == second.X) && (first.Y == second.Y) && (first.Z == second.Z) && (first.m == second.m));
 		}
 
 		public override bool Equals(object o) {
 			Point4D p = o as Point4D;
 			if (p != null) {
-				return ((this.X == p.X) && (this.Y == p.Y) && (this.z == p.z) && (this.m == p.m));
+				return ((this.X == p.X) && (this.Y == p.Y) && (this.Z == p.Z) && (this.m == p.m));
 			}
 			IPoint4D ip = o as IPoint4D;
 			if (ip != null) {
-				return ((this.X == ip.X) && (this.Y == ip.Y) && (this.z == ip.Z) && (this.m == ip.M));
+				return ((this.X == ip.X) && (this.Y == ip.Y) && (this.Z == ip.Z) && (this.m == ip.M));
 			}
 			return false;
 		}
@@ -445,7 +445,7 @@ namespace SteamEngine {
 		}
 
 		public override int GetHashCode() {
-			return (((37 * 17 ^ X) ^ Y) ^ z) ^ m;
+			return (((37 * 17 ^ X) ^ Y) ^ Z) ^ m;
 		}
 
 		public Map GetMap() {

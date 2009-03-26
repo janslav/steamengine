@@ -26,12 +26,12 @@ using SteamEngine.Networking;
 namespace SteamEngine {
 	public abstract class Static : IPoint4D {
 		public readonly ItemDispidInfo dispidInfo;
-		internal ushort x;
-		internal ushort y;
-		internal sbyte z;
+		private ushort x;
+		private ushort y;
+		private sbyte z;
 		private readonly byte m;
 
-		internal Static(ushort id, byte m) {
+		internal Static(int id, byte m) {
 			this.dispidInfo = ItemDispidInfo.Get(id);
 			if (dispidInfo == null) {
 				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x") + ". Something's wrong.");
@@ -39,58 +39,68 @@ namespace SteamEngine {
 			this.m = m;
 		}
 
-		internal Static(ushort id, ushort x, ushort y, sbyte z, byte m)
+		internal Static(int id, int x, int y, int z, byte m)
 			: this(id, m) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			this.x = (ushort) x;
+			this.y = (ushort) y;
+			this.z = (sbyte) z;
 		}
 
 		public string Name {
 			get {
-				return dispidInfo.singularName;
+				return dispidInfo.SingularName;
 			}
 		}
 
 		public int Id {
 			get {
-				return dispidInfo.id;
+				return dispidInfo.Id;
 			}
 		}
 
 		public int X {
 			get {
-				return x;
+				return this.x;
+
+			}
+			internal set {
+				this.x = (ushort) value; 
 			}
 		}
 
 		public int Y {
 			get {
-				return y;
+				return this.y;
+			}
+			internal set {
+				this.y = (ushort) value; 
 			}
 		}
 
 		public int Z {
 			get {
-				return z;
+				return this.z;
+			}
+			internal set {
+				this.z = (sbyte) value; 
 			}
 		}
 
 		public byte M {
 			get {
-				return m;
+				return this.m;
 			}
 		}
 
 		public int Height {
 			get {
-				return dispidInfo.height;
+				return dispidInfo.Height;
 			}
 		}
 
 		public TileFlag Flags {
 			get {
-				return dispidInfo.flags;
+				return dispidInfo.Flags;
 			}
 		}
 
@@ -143,6 +153,6 @@ namespace SteamEngine {
 
 		public int Color {
 			get { return color; }
-		} 
+		}
 	}
 }

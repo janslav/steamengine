@@ -51,7 +51,7 @@ namespace SteamEngine {
 		//Variables and Properties
 
 		//- Constants
-		public const uint maxCharactersPerGameAccount = 5;
+		public const int maxCharactersPerGameAccount = 5;
 
 		//- Public
 		private AbstractCharacter[] characters = new AbstractCharacter[maxCharactersPerGameAccount];

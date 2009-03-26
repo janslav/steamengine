@@ -54,6 +54,7 @@ namespace SteamEngine.Networking {
 
 	}
 
+	[CLSCompliant(false)]
 	public abstract class GeneralInformationOutPacket : DynamicLengthOutPacket {
 		public override sealed byte Id {
 			get { return 0xBF; }
@@ -208,6 +209,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class SetFacetOutPacket : GeneralInformationOutPacket {
 		byte facet;
 
@@ -442,11 +444,13 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		ushort gump;
 
+		[CLSCompliant(false)]
 		public void PrepareContainer(uint flaggedUid, ushort gump) {
 			this.flaggedUid = flaggedUid;
 			this.gump = gump;
 		}
 
+		[CLSCompliant(false)]
 		public void PrepareSpellbook(uint flaggedUid) {
 			this.flaggedUid = flaggedUid;
 			this.gump = 0xffff;
@@ -466,6 +470,7 @@ namespace SteamEngine.Networking {
 		uint flaggedUid, contFlaggedUid;
 		ushort model, x, y, color, amount;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint contFlaggedUid, AbstractItem i) {
 			this.flaggedUid = i.FlaggedUid;
 			this.contFlaggedUid = i.Cont.FlaggedUid;
@@ -476,6 +481,7 @@ namespace SteamEngine.Networking {
 			this.amount = i.ShortAmount;
 		}
 
+		[CLSCompliant(false)]
 		public void PrepareItemInCorpse(uint corpseUid, ICorpseEquipInfo i) {
 			this.flaggedUid = i.FlaggedUid;
 			this.contFlaggedUid = corpseUid;
@@ -506,6 +512,7 @@ namespace SteamEngine.Networking {
 		List<ItemInfo> items = new List<ItemInfo>();
 		uint corpseUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
 			this.corpseUid = corpseUid;
 
@@ -590,6 +597,7 @@ namespace SteamEngine.Networking {
 			return items.Count > 0;
 		}
 
+		[CLSCompliant(false)]
 		public bool PrepareCorpse(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
 			this.flaggedUid = corpseUid;
 
@@ -601,6 +609,7 @@ namespace SteamEngine.Networking {
 			return this.items.Count > 0;
 		}
 
+		[CLSCompliant(false)]
 		public void PrepareSpellbook(uint flaggedUid, int offset, ulong content) {
 			this.flaggedUid = flaggedUid;
 
@@ -635,6 +644,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class NewSpellbookOutPacket : GeneralInformationOutPacket {
 		uint flaggedUid;
 		ushort bookModel;
@@ -664,6 +674,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class OldPropertiesRefreshOutPacket : GeneralInformationOutPacket {
 		uint flaggedUid;
 		int propertiesUid;
@@ -687,6 +698,7 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		int propertiesUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, int propertiesUid) {
 			this.flaggedUid = flaggedUid;
 			this.propertiesUid = propertiesUid;
@@ -725,17 +737,18 @@ namespace SteamEngine.Networking {
 		}
 
 		[Summary("Prepare method for creating the 'fake item' packets")]
-		public void PrepareFakeItem(uint itemUid, ushort model, IPoint4D point4D, ushort amount, Direction dir, ushort color) {
+		[CLSCompliant(false)]
+		public void PrepareFakeItem(uint itemUid, int model, IPoint4D point4D, ushort shortAmount, Direction dir, int color) {
 			//this must be the item UID (containing 0x40000000)
 			this.flaggedUid = itemUid | 0x40000000;
-			this.amount = amount;
-			this.model = model;
+			this.amount = shortAmount;
+			this.model = (ushort) model;
 			this.x = (ushort) point4D.X;
 			this.y = (ushort) point4D.Y;
 			this.z = (sbyte) point4D.Z;
 			this.dir = (byte) dir;
 			this.flagsToSend = 0x00;
-			this.color = color;
+			this.color = (ushort) color;
 		}
 
 		public override byte Id {
@@ -810,6 +823,7 @@ namespace SteamEngine.Networking {
 		short hits, maxHits;
 		uint flaggedUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, short hits, short maxHits, bool showReal) {
 			this.flaggedUid = flaggedUid;
 			this.hits = hits;
@@ -832,6 +846,7 @@ namespace SteamEngine.Networking {
 		short mana, maxMana;
 		uint flaggedUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, short mana, short maxMana, bool showReal) {
 			this.flaggedUid = flaggedUid;
 			this.mana = mana;
@@ -854,6 +869,7 @@ namespace SteamEngine.Networking {
 		short stam, maxStam;
 		uint flaggedUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, short stam, short maxStam, bool showReal) {
 			this.flaggedUid = flaggedUid;
 			this.stam = stam;
@@ -1088,6 +1104,7 @@ namespace SteamEngine.Networking {
 	public sealed class DeleteObjectOutPacket : GameOutgoingPacket {
 		uint flaggedUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint flaggedUid) {
 			this.flaggedUid = flaggedUid;
 		}
@@ -1115,6 +1132,7 @@ namespace SteamEngine.Networking {
 		IList<int> ids;
 		IList<string> strings;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, int propertiesUid, IList<int> ids, IList<string> strings) {
 			this.flaggedUid = flaggedUid;
 			this.propertiesUid = propertiesUid;
@@ -1152,7 +1170,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, string message, string sourceName, SpeechType type, int font, int color) {
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ClientFont font, int color) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1164,8 +1182,8 @@ namespace SteamEngine.Networking {
 			this.sourceName = sourceName;
 			this.message = message;
 			this.type = (byte) type;
-			this.color = Utility.NormalizeDyedColor(color, Globals.defaultASCIIMessageColor);
-			this.font = (ushort) font;
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultASCIIMessageColor);
+			this.font = (ushort) Utility.NormalizeClientFont(font);
 		}
 
 		public override byte Id {
@@ -1190,7 +1208,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ushort font, int color, string language) {
+		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ClientFont font, int color, string language) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1203,8 +1221,8 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.language = language;
 			this.type = (byte) type;
-			this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor);
-			this.font = font;
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor);
+			this.font = (ushort) Utility.NormalizeClientFont(font);
 		}
 
 		public override byte Id {
@@ -1232,7 +1250,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
-		public void Prepare(Thing from, int message, string sourceName, SpeechType type, ushort font, int color, string args) {
+		public void Prepare(Thing from, int message, string sourceName, SpeechType type, ClientFont font, int color, string args) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1245,8 +1263,8 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.args = args;
 			this.type = (byte) type;
-			this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
-			this.font = font;
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
+			this.font = (ushort) Utility.NormalizeClientFont(font);
 		}
 
 		public override byte Id {
@@ -1276,11 +1294,12 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		ushort model, color, font;
 		string sourceName, args, affix;
-		uint message;
+		int message;
 		byte type, flags;
 
 		//from can be null
-		public void Prepare(Thing from, uint message, string sourceName, SpeechType type, ushort font, int color, AffixType flags, string affix, string args) {
+		[CLSCompliant(false)]
+		public void Prepare(Thing from, int message, string sourceName, SpeechType type, ClientFont font, int color, AffixType flags, string affix, string args) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
 				this.model = 0xffff;
@@ -1296,8 +1315,8 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.args = args;
 			this.type = (byte) type;
-			this.color = Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
-			this.font = font;
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
+			this.font = (ushort) Utility.NormalizeClientFont(font);
 			this.affix = affix;
 		}
 
@@ -1311,7 +1330,7 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.type);
 			this.EncodeUShort(this.color);
 			this.EncodeUShort(this.font);
-			this.EncodeUInt(this.message);
+			this.EncodeInt(this.message);
 			this.EncodeByte(this.flags);
 			this.EncodeASCIIString(this.sourceName, 30);
 			this.EncodeASCIIString(this.affix);
@@ -1397,6 +1416,7 @@ namespace SteamEngine.Networking {
 		sbyte layer;
 		ushort model, color;
 
+		[CLSCompliant(false)]
 		public void PrepareItem(uint charUid, AbstractItem item) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = item.FlaggedUid;
@@ -1405,6 +1425,7 @@ namespace SteamEngine.Networking {
 			this.color = item.ShortColor;
 		}
 
+		[CLSCompliant(false)]
 		public void PrepareMount(uint charUid, AbstractCharacter mount) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = (uint) (mount.Uid | 0x40000000);
@@ -1551,8 +1572,8 @@ namespace SteamEngine.Networking {
 	}
 
 	public sealed class SendGumpMenuDialogPacket : DynamicLengthOutPacket {
-		uint focusFlaggedUid, gumpUid;
-		int x, y;
+		uint focusFlaggedUid;
+		int x, y, gumpUid;
 		string layoutText;
 		List<string> strings = new List<string>();
 
@@ -1575,7 +1596,7 @@ namespace SteamEngine.Networking {
 
 		protected override void WriteDynamicPart() {
 			this.EncodeUInt(this.focusFlaggedUid);
-			this.EncodeUInt(this.gumpUid);
+			this.EncodeInt(this.gumpUid);
 			this.EncodeInt(this.x);
 			this.EncodeInt(this.y);
 
@@ -1590,11 +1611,12 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class CloseGenericGumpOutPacket : GeneralInformationOutPacket {
-		uint gumpUid;
+		int gumpUid;
 		int buttonId;
 
-		public void Prepare(uint gumpUid, int buttonId) {
+		public void Prepare(int gumpUid, int buttonId) {
 			this.gumpUid = gumpUid;
 			this.buttonId = buttonId;
 		}
@@ -1604,7 +1626,7 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void WriteSubCmd() {
-			this.EncodeUInt(this.gumpUid);
+			this.EncodeInt(this.gumpUid);
 			this.EncodeInt(this.buttonId);
 		}
 	}
@@ -1717,13 +1739,14 @@ namespace SteamEngine.Networking {
 	}
 
 	public sealed class GraphicalEffectOutPacket : GameOutgoingPacket {
-		uint sourceUid, targetUid, renderMode, hue;
+		uint sourceUid, targetUid;
+		int renderMode, hue;
 		byte type, speed, duration;
 		bool fixedDirection, explodes;
 		ushort effect, unk, sourceX, sourceY, targetX, targetY;
 		sbyte sourceZ, targetZ;
 
-		public void Prepare(IPoint4D source, IPoint4D target, byte type, ushort effect, byte speed, byte duration, ushort unk, bool fixedDirection, bool explodes, uint hue, RenderModes renderMode) {
+		public void Prepare(IPoint4D source, IPoint4D target, byte type, int effect, byte speed, byte duration, int unk, bool fixedDirection, bool explodes, int hue, RenderModes renderMode) {
 			source = source.TopPoint;
 			target = target.TopPoint;
 			Thing sourceAsThing = source as Thing;
@@ -1753,14 +1776,14 @@ namespace SteamEngine.Networking {
 				this.targetZ = (sbyte) target.Z;
 			}
 			this.type = type;
-			this.effect = effect;
+			this.effect = (ushort) effect;
 			this.speed = speed;
 			this.duration = duration;
-			this.unk = unk;
+			this.unk = (ushort) unk;
 			this.fixedDirection = fixedDirection;
 			this.explodes = explodes;
 			this.hue = hue;
-			this.renderMode = (uint) renderMode;
+			this.renderMode = (int) renderMode;
 		}
 
 		public override byte Id {
@@ -1783,8 +1806,8 @@ namespace SteamEngine.Networking {
 			this.EncodeUShort(this.unk);
 			this.EncodeBool(this.fixedDirection);
 			this.EncodeBool(this.explodes);
-			this.EncodeUInt(this.hue);
-			this.EncodeUInt(this.renderMode);
+			this.EncodeInt(this.hue);
+			this.EncodeInt(this.renderMode);
 		}
 	}
 
@@ -1845,6 +1868,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class ExtendedStatsOutPacket : GeneralInformationOutPacket {
 		byte statLockByte;
 		uint flaggedUid;
@@ -1885,6 +1909,7 @@ namespace SteamEngine.Networking {
 	public sealed class DisplayDeathActionOutPacket : GameOutgoingPacket {
 		uint charUid, corpseUid;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint charUid, AbstractItem corpse) {
 			this.charUid = charUid;
 			if (corpse == null) {
@@ -1905,6 +1930,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class AddPartyMembersOutPacket : GeneralInformationOutPacket {
 		List<uint> members = new List<uint>();
 
@@ -1929,6 +1955,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class RemoveAPartyMemberOutPacket : GeneralInformationOutPacket {
 		List<uint> members = new List<uint>();
 
@@ -1961,6 +1988,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class TellPartyMemberAMessageOutPacket : GeneralInformationOutPacket {
 		uint sourceUid;
 		string message;
@@ -1981,6 +2009,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class TellFullPartyAMessageOutPacket : GeneralInformationOutPacket {
 		uint sourceUid;
 		string message;
@@ -2001,6 +2030,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class PartyInvitationOutPacket : GeneralInformationOutPacket {
 		uint leaderUid;
 
@@ -2018,6 +2048,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
+	[CLSCompliant(false)]
 	public sealed class EnableMapDiffFilesOutPacket : GeneralInformationOutPacket {
 		byte facetsCount;
 		List<int> mapPatches = new List<int>();
@@ -2059,6 +2090,7 @@ namespace SteamEngine.Networking {
 		uint charUid;
 		byte lightLevel;
 
+		[CLSCompliant(false)]
 		public void Prepare(uint charUid, byte lightLevel) {
 			this.charUid = charUid;
 			this.lightLevel = lightLevel;

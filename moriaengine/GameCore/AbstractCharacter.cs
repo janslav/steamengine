@@ -59,8 +59,8 @@ namespace SteamEngine {
 	public abstract partial class AbstractCharacter : Thing, ISrc {
 		public static bool CharacterTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Character Trace Messages"]);
 
-		public const uint numLayers = 31;
-		public const uint sentLayers = 25;//0-24
+		public const int numLayers = 31;
+		public const int sentLayers = 25;//0-24
 
 		public AbstractCharacterDef TypeDef {
 			get {
@@ -608,7 +608,7 @@ namespace SteamEngine {
 				//move char, and send 0x77 to players nearby
 
 				//check valid spot, and change z
-				if (!Map.IsValidPos(newX, newY, oldPoint.m)) {	//off the map
+				if (!Map.IsValidPos(newX, newY, oldPoint.M)) {	//off the map
 					return false;
 				}
 
@@ -655,7 +655,7 @@ namespace SteamEngine {
 			if (Map.IsValidPos(x, y, m)) {
 				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
 				Point4D oldP = this.P();
-				Region oldRegion = Map.GetMap(oldP.m).GetRegionFor(oldP.X, oldP.Y);
+				Region oldRegion = Map.GetMap(oldP.M).GetRegionFor(oldP.X, oldP.Y);
 				Region newRegion = Map.GetMap(m).GetRegionFor(x, y);
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
@@ -837,7 +837,7 @@ namespace SteamEngine {
 			this.DialogClose(instance.uid, buttonId);
 		}
 
-		public void DialogClose(uint gumpUid, int buttonId) {
+		public void DialogClose(int gumpUid, int buttonId) {
 			GameState state = this.GameState;
 			if (state != null) {
 				CloseGenericGumpOutPacket p = Pool<CloseGenericGumpOutPacket>.Acquire();
@@ -929,7 +929,7 @@ namespace SteamEngine {
 
 		//this method fires the [speech] triggers
 		internal void Trigger_Hear(AbstractCharacter speaker, string speech, int clilocSpeech,
-				SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
+				SpeechType type, int color, ClientFont font, string lang, int[] keywords, string[] args) {
 
 			ScriptArgs sa = new ScriptArgs(speaker, speech, clilocSpeech, type, color, font, lang, keywords, args);
 			this.TryTrigger(TriggerKey.hear, sa);
@@ -939,7 +939,7 @@ namespace SteamEngine {
 			clilocSpeech = ConvertTools.ToInt32(saArgv[2]);
 			type = (SpeechType) ConvertTools.ToInt64(saArgv[3]);
 			color = ConvertTools.ToInt32(saArgv[4]);
-			font = ConvertTools.ToUInt16(saArgv[5]);
+			font = (ClientFont) ConvertTools.ToInt64(saArgv[5]);
 			lang = ConvertTools.ToString(saArgv[6]);
 			keywords = (int[]) saArgv[7];
 			args = (string[]) saArgv[8];
@@ -960,7 +960,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual void On_Hear(AbstractCharacter speaker, string speech, int clilocSpeech, SpeechType type, int color, ushort font, string lang, int[] keywords, string[] args) {
+		public virtual void On_Hear(AbstractCharacter speaker, string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, string lang, int[] keywords, string[] args) {
 
 		}
 
@@ -1013,6 +1013,7 @@ namespace SteamEngine {
 		public abstract bool CanRename(AbstractCharacter to);
 
 		//The client apparently doesn't want characters' uids to be flagged with anything.
+		[CLSCompliant(false)]
 		public sealed override uint FlaggedUid {
 			get {
 				return (uint) this.Uid;
@@ -1099,7 +1100,7 @@ namespace SteamEngine {
 
 		//public abstract ISkill[] Skills { get; }
 		public abstract IEnumerable<ISkill> Skills { get; }
-		public abstract void SetSkill(int id, ushort value);
+		public abstract void SetSkill(int id, int value);
 		public abstract void SetSkillLockType(int id, SkillLockType type);
 		public abstract ISkill GetSkillObject(int id);
 		public abstract int GetSkill(int id);

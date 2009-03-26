@@ -352,7 +352,7 @@ namespace SteamEngine.CompiledScripts {
 		public CompiledGump(CompiledGumpDef def)
 			: base(def) {
 		}
-		public override void OnResponse(uint pressedButton, uint[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] returnedNumbers) {
+		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] returnedNumbers) {
 			CompiledGumpDef gdef = (CompiledGumpDef) def;
 			gdef.gumpInstance = this;
 			try {
@@ -368,12 +368,12 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class GumpResponse {
-		public readonly uint pressedButton;
-		public readonly uint[] selectedSwitches;
+		public readonly int pressedButton;
+		public readonly int[] selectedSwitches;
 		public readonly ResponseText[] responseTexts;
 		public readonly ResponseNumber[] responseNumbers;
 
-		public GumpResponse(uint pressedButton, uint[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
+		public GumpResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
 			this.pressedButton = pressedButton;
 			this.selectedSwitches = selectedSwitches;
 			this.responseTexts = responseTexts;

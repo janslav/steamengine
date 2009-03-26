@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		public static void Effect(Thing self, byte type, ushort effect, byte speed, byte duration, bool fixedDirection) {
+		public static void Effect(Thing self, byte type, int effect, byte speed, byte duration, bool fixedDirection) {
 			switch (type) {
 				case 0:
 					EffectFactory.EffectFromTo(Globals.SrcCharacter, self,
