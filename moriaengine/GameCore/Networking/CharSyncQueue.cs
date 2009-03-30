@@ -474,6 +474,13 @@ namespace SteamEngine.Networking {
 			private void ProcessCharResend(AbstractCharacter ch) {
 				Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessCharResend " + ch);
 
+				GameState state = ch.GameState;
+				if (state != null) {
+					DrawGamePlayerOutPacket packet = Pool<DrawGamePlayerOutPacket>.Acquire();
+					packet.Prepare(state, ch);
+					state.Conn.SendSinglePacket(packet);
+				}
+
 				bool propertiesExist = true;
 				AOSToolTips toolTips = null;
 
@@ -618,10 +625,13 @@ namespace SteamEngine.Networking {
 						}
 						if (flagsChanged || highlightChanged || basePropsChanged || ((directionChanged || posChanged) && (!requestedStep))) {
 							Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending char info to self");
-							PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-							pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78
-							//might not be necessary pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(myState, ch); //0x20							
-							myConn.SendPacketGroup(pg);
+							DrawGamePlayerOutPacket dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
+							dgpot.Prepare(myState, ch); //0x20
+							myConn.SendSinglePacket(dgpot);
+
+							DrawObjectOutPacket doop = Pool<DrawObjectOutPacket>.Acquire();
+							doop.Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78							
+							myConn.SendSinglePacket(doop);
 						}
 						if (warModeChanges) {
 							PreparedPacketGroups.SendWarMode(myConn, ch.Flag_WarMode);

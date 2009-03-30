@@ -1234,12 +1234,16 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
 			AbstractCharacter ch = state.CharacterNotNull;
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch);//0x20
-			pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78
-			//TODO? also send nearby stuff?
 
-			conn.SendPacketGroup(pg);
+			DrawGamePlayerOutPacket dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
+			dgpot.Prepare(state, ch); //0x20
+			conn.SendSinglePacket(dgpot);
+
+			DrawObjectOutPacket doop = Pool<DrawObjectOutPacket>.Acquire();
+			doop.Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78							
+			conn.SendSinglePacket(doop);
+
+			//TODO? also send nearby stuff?
 		}
 	}
 

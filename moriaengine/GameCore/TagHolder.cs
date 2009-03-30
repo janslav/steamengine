@@ -423,7 +423,7 @@ namespace SteamEngine {
 			if (this.IsDeleted) {
 				throw new DeletedException("You can not manipulate a deleted object (" + this + ")");
 			}
-			if (this.IsLimbo) {
+			if (this.IsLimbo && RunLevelManager.IsRunning) { //when loading, it's ok for stuff to be in limbo
 				try {
 					this.Delete();
 				} catch { }

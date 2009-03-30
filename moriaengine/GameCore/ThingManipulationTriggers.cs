@@ -166,13 +166,13 @@ namespace SteamEngine {
 
 				Thing cont = this.Cont;
 				if (cont == null) {
-					Trigger_LeaveGround();
+					this.Trigger_LeaveGround();
 				} else {
 					AbstractItem contItem = cont as AbstractItem;
 					if (contItem == null) {
-						Trigger_LeaveChar((AbstractCharacter) cont);
+						this.Trigger_LeaveChar((AbstractCharacter) cont);
 					} else {
-						Trigger_LeaveItem(contItem);
+						this.Trigger_LeaveItem(contItem);
 					}
 				}
 				base.MakeLimbo();
@@ -259,21 +259,23 @@ namespace SteamEngine {
 
 		private void Trigger_LeaveGround() {
 			Sanity.IfTrueThrow(this.Cont != null, "this not on ground.");
+			
+			if (Map.IsValidPos(this)) {
+				Point4D point = new Point4D(this.point4d);
+				Map map = Map.GetMap(point.M);
+				Region region = map.GetRegionFor(point.X, point.Y);
+				ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
 
-			Point4D point = new Point4D(this.point4d);
-			Map map = Map.GetMap(point.M);
-			Region region = map.GetRegionFor(point.X, point.Y);
-			ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
+				this.TryTrigger(TriggerKey.leaveRegion, args);
+				ReturnOnGroundIfNeeded(point);
+				try {
+					this.On_LeaveRegion(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnOnGroundIfNeeded(point);
+				Region.Trigger_ItemLeave(args);
 
-			this.TryTrigger(TriggerKey.leaveRegion, args);
-			ReturnOnGroundIfNeeded(point);
-			try {
-				this.On_LeaveRegion(args);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnOnGroundIfNeeded(point);
-			Region.Trigger_ItemLeave(args);
-
-			map.Remove(this);
+				map.Remove(this);
+			} //else what?
 		}
 
 		private void ReturnOnGroundIfNeeded(Point4D point) {
