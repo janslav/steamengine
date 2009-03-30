@@ -21,6 +21,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Regions;
+using SteamEngine.Common;
 
 namespace SteamEngine {
 	public interface IPoint2D {
@@ -289,34 +290,35 @@ namespace SteamEngine {
 		}
 
 		internal static void Parse(MutablePoint4D point, string value) {
-			Match m = Point4D.positionRE.Match(value);
-			if (m.Success) {
-				GroupCollection gc = m.Groups;
-				ushort thisx = TagMath.ParseUInt16(gc["x"].Value);
-				ushort thisy = TagMath.ParseUInt16(gc["y"].Value);
+			Match match = Point4D.positionRE.Match(value);
+			if (match.Success) {
+				GroupCollection gc = match.Groups;
+				int x = TagMath.ParseUInt16(gc["x"].Value);
+				int y = TagMath.ParseUInt16(gc["y"].Value);
 				string zstr = gc["z"].Value;
 				string mstr = gc["m"].Value;
-				sbyte thisz;
-				byte thism;
+				int z;
+				byte m;
 				if (zstr.Length > 0) {
-					thisz = TagMath.ParseSByte(zstr);
+					z = TagMath.ParseSByte(zstr);
 					if (mstr.Length > 0) {
-						thism = TagMath.ParseByte(mstr);
+						m = TagMath.ParseByte(mstr);
 					} else {
-						thism = 0;
+						m = 0;
 					}
 				} else {
-					thisz = 0;
-					thism = 0;
+					z = 0;
+					m = 0;
 				}
 
-				point.SetP(thisx, thisy, thisz, thism);
+				point.SetP(x, y, z, m);
 			} else {
 				throw new SEException("Invalid input string for Point4D parse: '" + value + "'");
 			}
 		}
 
 		internal void SetP(int x, int y, int z, byte m) {
+			this.x = (ushort) x;
 			this.y = (ushort) y;
 			this.z = (sbyte) z;
 			this.m = m;
@@ -379,27 +381,27 @@ namespace SteamEngine {
 		}
 
 		public static Point4D Parse(string value) {
-			Match m = positionRE.Match(value);
-			if (m.Success) {
-				GroupCollection gc = m.Groups;
-				ushort thisx = TagMath.ParseUInt16(gc["x"].Value);
-				ushort thisy = TagMath.ParseUInt16(gc["y"].Value);
+			Match match = positionRE.Match(value);
+			if (match.Success) {
+				GroupCollection gc = match.Groups;
+				int x = ConvertTools.ParseInt32(gc["x"].Value);
+				int y = ConvertTools.ParseInt32(gc["y"].Value);
 				string zstr = gc["z"].Value;
 				string mstr = gc["m"].Value;
-				sbyte thisz;
-				byte thism;
+				int z;
+				byte m;
 				if (zstr.Length > 0) {
-					thisz = TagMath.ParseSByte(zstr);
+					z = ConvertTools.ParseInt32(zstr);
 					if (mstr.Length > 0) {
-						thism = TagMath.ParseByte(mstr);
+						m = ConvertTools.ParseByte(mstr);
 					} else {
-						thism = 0;
+						m = 0;
 					}
 				} else {
-					thisz = 0;
-					thism = 0;
+					z = 0;
+					m = 0;
 				}
-				return new Point4D(thisx, thisy, thisz, thism);
+				return new Point4D(x, y, z, m);
 			} else {
 				throw new SEException("Invalid input string for Point4D parse: '" + value + "'");
 			}
@@ -445,7 +447,7 @@ namespace SteamEngine {
 		}
 
 		public override int GetHashCode() {
-			return (((37 * 17 ^ X) ^ Y) ^ Z) ^ m;
+			return (((37 * 17 ^ this.X) ^ this.Y) ^ this.Z) ^ this.m;
 		}
 
 		public Map GetMap() {

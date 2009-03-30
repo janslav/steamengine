@@ -289,7 +289,7 @@ namespace SteamEngine {
 			return iogu;
 		}
 
-		internal override void Trigger_Destroy() {
+		internal sealed override void Trigger_Destroy() {
 			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				tll.BeingDeleted();

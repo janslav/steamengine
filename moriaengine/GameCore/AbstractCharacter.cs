@@ -655,7 +655,12 @@ namespace SteamEngine {
 			if (Map.IsValidPos(x, y, m)) {
 				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
 				Point4D oldP = this.P();
-				Region oldRegion = Map.GetMap(oldP.M).GetRegionFor(oldP.X, oldP.Y);
+				Region oldRegion;
+				if (Map.IsValidPos(oldP)) {
+					oldRegion = Map.GetMap(oldP.M).GetRegionFor(oldP.X, oldP.Y);
+				} else {
+					oldRegion = StaticRegion.WorldRegion;
+				}
 				Region newRegion = Map.GetMap(m).GetRegionFor(x, y);
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
@@ -763,7 +768,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal override void Trigger_Destroy() {
+		internal sealed override void Trigger_Destroy() {
 			AbstractAccount acc = this.Account;
 			if (acc != null) {
 				GameState state = acc.GameState;
@@ -780,8 +785,11 @@ namespace SteamEngine {
 
 			base.Trigger_Destroy();
 			instances--;
-			this.GetMap().Remove(this);
-			Thing.MarkAsLimbo(this);
+
+			if (!this.IsLimbo) {
+				this.GetMap().Remove(this);
+				Thing.MarkAsLimbo(this);
+			}
 		}
 
 		public void EmptyCont() {

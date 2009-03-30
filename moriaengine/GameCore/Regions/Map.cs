@@ -371,10 +371,15 @@ namespace SteamEngine.Regions {
 			This removes a specified thing from the sector that its coordinates indicate it should be in.
 		*/
 		internal void Remove(Thing t) {
+			int x = t.X;
+			int y = t.Y;
+			//if (!this.IsValidPos(x, y)) {
+			//    return;
+			//}
 			Sanity.IfTrueThrow(t == null, "You can't tell us to remove a NULL thing from the map!");
 			Logger.WriteInfo(MapTracingOn, this + ".Remove " + t);
-			int sx = t.X >> sectorFactor;
-			int sy = t.Y >> sectorFactor;
+			int sx = x >> sectorFactor;
+			int sy = y >> sectorFactor;
 			GetSector(sx, sy).Remove(t);
 			if (t.IsMulti) {
 				RemoveMulti((AbstractItem) t);
@@ -575,7 +580,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public void ClearThings() {
+		internal void ClearThings() {
 			foreach (Sector sector in sectors) {
 				if (sector != null) {
 					sector.ClearThings();
@@ -590,12 +595,10 @@ namespace SteamEngine.Regions {
 				t.FixWeight();
 				if (t.IsOnGround) {
 					if (Map.IsValidPos(t)) {
-
 						t.GetMap().Add(t);
-					} else {
-						Logger.WriteError(t + " has invalid coordinates for an item on ground. Removing.");
-						t.InternalDelete();
+						continue;
 					}
+					t.CheckAfterLoad();
 				}
 			}
 			Logger.WriteDebug("Done categorizing sector contents.");

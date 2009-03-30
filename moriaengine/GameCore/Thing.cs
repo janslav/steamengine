@@ -41,11 +41,11 @@ namespace SteamEngine {
 		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
 		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
 
-		private DateTime createdAt;//Server time of creation
+		private TimeSpan createdAt = Globals.TimeAsSpan;//Server time of creation
 		private ushort color;
 		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
-		internal readonly MutablePoint4D point4d = new MutablePoint4D(0xffff, 0xffff, 0, 0); //made this internal because SetPosImpl is now abstract... -tar
+		internal readonly MutablePoint4D point4d; //made this internal because SetPosImpl is now abstract... -tar
 		private int uid = -2;
 		//internal Region region;
 		//internal NetState netState;//No one is to touch this but the NetState class itself!
@@ -141,12 +141,12 @@ namespace SteamEngine {
 			this.def = myDef;
 			this.model = (ushort) myDef.Model;
 			this.color = (ushort) myDef.Color;
+			this.point4d = new MutablePoint4D(0xffff, 0xffff, 0, 0);
 			if (uidBeingLoaded == -1) {
 				things.Add(this);//sets uid
 				this.Resend();
 			} else {
-				uid = uidBeingLoaded;
-				this.point4d = new MutablePoint4D((ushort) Globals.dice.Next(0, 20), (ushort) Globals.dice.Next(0, 20), 0, 0);
+				uid = uidBeingLoaded;				
 			}
 			Globals.lastNew = this;
 		}
@@ -162,6 +162,18 @@ namespace SteamEngine {
 			model = copyFrom.model;
 			//SetSectorPoint4D();
 			Globals.lastNew = this;
+		}
+
+		internal void CheckAfterLoad() {
+			if (this.IsLimbo || !this.GetMap().IsValidPos((IPoint2D) this)) {
+				if (this.IsPlayer) {
+					Logger.WriteWarning("Player " + LogStr.Ident(this) + " outside the world after load - P line missing. Putting to 1, 1, 0, 0.");
+					this.P(1, 1, 0, 0);
+				} else {
+					Logger.WriteWarning("Thing " + LogStr.Ident(this) + " outside the world after load - P or CONT line missing. Deleting.");
+					this.Delete();
+				}
+			}
 		}
 
 		//Property: Enumerable
@@ -277,39 +289,39 @@ namespace SteamEngine {
 		public abstract bool Flag_Disconnected { get; set; }
 
 		public void P(int x, int y) {
-			SetPosImpl(x, y, this.Z, this.M);
+			this.SetPosImpl(x, y, this.Z, this.M);
 		}
 
 		public void P(Point2D point) {
-			SetPosImpl(point.X, point.Y, this.Z, this.M);
+			this.SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
 		public void P(IPoint2D point) {
-			SetPosImpl(point.X, point.Y, this.Z, this.M);
+			this.SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
 		public void P(int x, int y, int z) {
-			SetPosImpl(x, y, z, M);
+			this.SetPosImpl(x, y, z, M);
 		}
 
 		public void P(Point3D point) {
-			SetPosImpl(point.X, point.Y, point.Z, this.M);
+			this.SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
 		public void P(IPoint3D point) {
-			SetPosImpl(point.X, point.Y, point.Z, this.M);
+			this.SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
 		public void P(int x, int y, int z, byte m) {
-			SetPosImpl(x, y, z, m);
+			this.SetPosImpl(x, y, z, m);
 		}
 
 		public void P(Point4D point) {
-			SetPosImpl(point.X, point.Y, point.Z, point.M);
+			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
 		public void P(IPoint4D point) {
-			SetPosImpl(point.X, point.Y, point.Z, point.M);
+			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
 		public virtual Thing Cont {
@@ -406,7 +418,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public DateTime CreatedAt {
+		public TimeSpan CreatedAt {
 			get {
 				return createdAt;
 			}
@@ -707,7 +719,7 @@ namespace SteamEngine {
 					model = TagMath.ParseUInt16(valueString);
 					break;
 				case "createdat":
-					this.createdAt = (DateTime) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(DateTime));
+					this.createdAt = (TimeSpan) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(TimeSpan));
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -782,7 +794,7 @@ namespace SteamEngine {
 				output.WriteValue("color", this.color);
 			}
 
-			if (this.model != def.Model) {
+			if (this.model != this.def.Model) {
 				output.WriteValue("model", this.model);
 			}
 
@@ -862,11 +874,11 @@ namespace SteamEngine {
 		//}
 
 
-		public override void Delete() {
+		public sealed override void Delete() {
 			if (this.IsDeleted) {
 				return;
 			}
-			if (IsPlayer) {
+			if (this.IsPlayer) {
 				Globals.SrcWriteLine("Unable to remove player characters with Delete command. Use DeletePlayer().");
 				return;
 			}
@@ -881,7 +893,9 @@ namespace SteamEngine {
 			if (this.IsDeleted) {
 				return;
 			}
-			this.RemoveFromView();
+			if (!this.IsLimbo) {
+				this.RemoveFromView();
+			}
 			this.InternalDeleteNoRFV();
 		}
 
@@ -893,8 +907,7 @@ namespace SteamEngine {
 			this.Trigger_Destroy();
 
 			things.RemoveAt(uid);
-			uid = -1;
-
+			this.uid = -1;
 		}
 
 		//fires the @destroy trigger on this Thing, after that removes the item from world. 
@@ -1071,11 +1084,6 @@ namespace SteamEngine {
 		}
 
 		public virtual bool On_DenyDClick(DenyClickArgs args) {
-			return false;
-		}
-
-		public virtual bool On_StackOn(AbstractCharacter stackingCharacter, AbstractItem i, ref object objX, ref object objY) {
-			//stackingCharacter is dropping/stacking item i on/with me
 			return false;
 		}
 
