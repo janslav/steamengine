@@ -533,14 +533,15 @@ namespace SteamEngine.CompiledScripts {
 					(((flags & SpellFlag.CanEffectStatic) == SpellFlag.CanEffectStatic) && (target is Static))) {
 					singleEffectDone = true;
 
-					this.GetSpellPowerAgainstNonChar(caster, target, target, sourceType, ref sea);
+					IPoint4D targetTop = target.TopPoint;
+					this.GetSpellPowerAgainstNonChar(caster, target, targetTop, sourceType, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
-						this.Trigger_EffectGround(target, sea);
+						this.Trigger_EffectGround(targetTop, sea);
 					}
 				}
 			}
 
-			if (!singleEffectDone) {
+			if (!singleEffectDone && !isArea) {
 				throw new SEException(this + ": Invalid target and/or spell flag?!");
 			}
 

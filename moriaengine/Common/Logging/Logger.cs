@@ -606,7 +606,7 @@ namespace SteamEngine.Common {
 
 					Type declaringType = methodBase.DeclaringType;
 					if (declaringType != null) {
-						builder.Append(declaringType.FullName.Replace('+', '.'));
+						builder.Append(Tools.TypeToString(declaringType));
 						builder.Append(".");
 					}
 					builder.Append(methodBase.Name);
@@ -614,7 +614,7 @@ namespace SteamEngine.Common {
 					MethodInfo method = methodBase as MethodInfo;
 					if ((method != null) && method.IsGenericMethod) {
 						Type[] genericArguments = method.GetGenericArguments();
-						builder.Append("[");
+						builder.Append("<");
 						int index = 0;
 						bool displayComma = true;
 						while (index < genericArguments.Length) {
@@ -623,10 +623,10 @@ namespace SteamEngine.Common {
 							} else {
 								displayComma = false;
 							}
-							builder.Append(genericArguments[index].Name);
+							builder.Append(Tools.TypeToString(genericArguments[index]));
 							index++;
 						}
-						builder.Append("]");
+						builder.Append(">");
 					}
 					builder.Append("(");
 					ParameterInfo[] parameters = methodBase.GetParameters();
@@ -639,7 +639,7 @@ namespace SteamEngine.Common {
 						}
 						string name = "<UnknownType>";
 						if (parameters[j].ParameterType != null) {
-							name = parameters[j].ParameterType.Name;
+							name = Tools.TypeToString(parameters[j].ParameterType);
 						}
 						builder.Append(name + " " + parameters[j].Name);
 					}
