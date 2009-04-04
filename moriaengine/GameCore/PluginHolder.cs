@@ -233,26 +233,17 @@ namespace SteamEngine {
 				<Trigger>, <CancellableTriggers>
 		*/
 
-		private static bool Is1(object o) {
-			try {
-				if (ConvertTools.ToInt32(o) == 1) {
-					return true;
-				}
-			} catch { }
-			return false;
-		}
-
 		public virtual bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
-				if (Is1(curNode.storedTG.Run(this, tk, sa))) {
+				if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
 					return true;
 				}
 				curNode = curNode.nextNode;
 			}
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
-				if (Is1(curPlugin.Run(tk, sa))) {
+				if (TagMath.Is1(curPlugin.Run(tk, sa))) {
 					return true;
 				}
 				curPlugin = curPlugin.nextInList;
@@ -263,14 +254,14 @@ namespace SteamEngine {
 		public virtual bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
-				if (Is1(curNode.storedTG.TryRun(this, tk, sa))) {
+				if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
 					return true;
 				}
 				curNode = curNode.nextNode;
 			}
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
-				if (Is1(curPlugin.TryRun(tk, sa))) {
+				if (TagMath.Is1(curPlugin.TryRun(tk, sa))) {
 					return true;
 				}
 				curPlugin = curPlugin.nextInList;

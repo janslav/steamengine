@@ -15,4 +15,4 @@
 
 [ThingTemplate Container : Equippable]
 Def:	//vars on the def
-	ushort Gump = 0xffff
+	short Gump = -1

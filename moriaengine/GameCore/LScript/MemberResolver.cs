@@ -205,7 +205,7 @@ namespace SteamEngine.LScript {
 			if (IsMethod(memberTypes)) {
 				MethodInfo[] mis = type.GetMethods(BindingFlags.Public | flags);
 				foreach (MethodInfo mi in mis) {//methods
-					if (string.Compare(name, mi.Name, true) == 0) { //true for case insensitive
+					if (StringComparer.OrdinalIgnoreCase.Equals(name, mi.Name)) {
 						if (namedWell == null) {
 							namedWell = new ArrayList(1);
 						}
@@ -250,7 +250,7 @@ namespace SteamEngine.LScript {
 					}
 
 					foreach (PropertyInfo pi in type.GetProperties(BindingFlags.Public | flags)) {
-						if (string.Compare(name, pi.Name, true) == 0) { //true for case insensitive
+						if (StringComparer.OrdinalIgnoreCase.Equals(name, pi.Name)) {
 							if (namedWell == null) {
 								namedWell = new ArrayList(1);
 							}
@@ -293,7 +293,7 @@ namespace SteamEngine.LScript {
 			}
 
 			if (IsConstructor(memberTypes)) {
-				if ((desc == null) && (string.Compare(name, type.Name, true) == 0)) { //constructors
+				if ((desc == null) && (StringComparer.OrdinalIgnoreCase.Equals(name, type.Name))) { //constructors
 					nameMatches = true;
 					ConstructorInfo[] cis = type.GetConstructors();
 					foreach (ConstructorInfo ci in cis) {
@@ -330,7 +330,7 @@ namespace SteamEngine.LScript {
 						namedWell.Clear();
 					}
 					foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | flags)) {
-						if (string.Compare(name, fi.Name, true) == 0) { //true for case insensitive
+						if (StringComparer.OrdinalIgnoreCase.Equals(name, fi.Name)) {
 							if (namedWell == null) {
 								namedWell = new ArrayList(1);
 							}

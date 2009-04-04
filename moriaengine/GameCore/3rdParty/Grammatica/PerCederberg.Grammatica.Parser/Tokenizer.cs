@@ -133,6 +133,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public bool GetUseTokenList() {
 			return useTokenList;
 		}
@@ -151,6 +152,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "useTokenList"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public void SetUseTokenList(bool useTokenList) {
 			this.useTokenList = useTokenList;
 		}
@@ -187,6 +189,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the current line number
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetCurrentLine() {
 			return line;
 		}
@@ -197,6 +200,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the current column number
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetCurrentColumn() {
 			return column;
 		}
@@ -211,6 +215,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParserCreationException if the pattern couldn't be 
 		 *             added to the tokenizer
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void AddPattern(TokenPattern pattern) {
 			switch (pattern.GetPatternType()) {
 				case TokenPattern.PatternType.STRING:
@@ -421,6 +426,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return a detailed string representation 
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "buffer")]
 		public override string ToString() {
 			StringBuilder buffer = new StringBuilder();
 
@@ -518,6 +524,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the start position of the last match, or
 		 *         zero (0) if none found
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public int Start() {
 			if (matcher == null || matcher.Length() <= 0) {
 				return 0;
@@ -773,6 +780,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @param str            the string to match
 		 * @param value          the match value
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "value"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1820:TestForEmptyStringsUsingStringLength")]
 		public void AddMatch(string str, object value) {
 			Automaton state;
 
@@ -881,6 +889,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @param c              the character to transition for
 		 * @param state          the state to transition to
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "state")]
 		public void Add(char c, Automaton state) {
 			if (value == '\0') {
 				this.value = c;

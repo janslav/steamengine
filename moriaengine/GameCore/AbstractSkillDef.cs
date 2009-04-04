@@ -201,8 +201,8 @@ namespace SteamEngine {
 
 		public AbstractSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			this.key = this.InitField_Typed("key", "", typeof(string));
-			this.startByMacroEnabled = this.InitField_Typed("startByMacroEnabled", false, typeof(bool));
+			this.key = this.InitTypedField("key", "", typeof(string));
+			this.startByMacroEnabled = this.InitTypedField("startByMacroEnabled", false, typeof(bool));
 		}
 
 		public int Id {
@@ -219,7 +219,7 @@ namespace SteamEngine {
 				string prev = Key;
 				key.CurrentValue = value;
 				string after = Key;
-				if (string.Compare(prev, after, true) != 0) {
+				if (!StringComparer.OrdinalIgnoreCase.Equals(prev, after)) {
 					byKey.Remove(prev);
 					byKey[after] = this;
 				}
@@ -244,13 +244,8 @@ namespace SteamEngine {
 		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
-				object retVal = this.scriptedTriggers.TryRun(self, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+					return true;
 				}
 			}
 			return false;

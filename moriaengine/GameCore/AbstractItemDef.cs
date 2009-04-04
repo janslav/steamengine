@@ -42,16 +42,16 @@ namespace SteamEngine {
 		public AbstractItemDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.type = InitField_Typed("type", null, typeof(TriggerGroup));
-			this.pluralName = InitField_Typed("pluralName", "", typeof(string));
+			this.type = InitTypedField("type", null, typeof(TriggerGroup));
+			this.pluralName = InitTypedField("pluralName", "", typeof(string));
 
-			this.dupeItem = InitField_ThingDef("dupeItem", null, typeof(AbstractItemDef));
+			this.dupeItem = InitThingDefField("dupeItem", null, typeof(AbstractItemDef));
 			//clilocName = InitField_Typed("clilocName", "0", typeof(uint));
-			this.mountChar = InitField_ThingDef("mountChar", null, typeof(AbstractCharacterDef));
-			this.flippable = InitField_Typed("flippable", false, typeof(bool));
-			this.stackable = InitField_Typed("stackable", false, typeof(bool));
+			this.mountChar = InitThingDefField("mountChar", null, typeof(AbstractCharacterDef));
+			this.flippable = InitTypedField("flippable", false, typeof(bool));
+			this.stackable = InitTypedField("stackable", false, typeof(bool));
 
-			this.dropSound = InitField_Typed("dropSound", 87, typeof(int));
+			this.dropSound = InitTypedField("dropSound", 87, typeof(int));
 		}
 
 		public AbstractItemDef DupeItem {

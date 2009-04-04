@@ -184,7 +184,7 @@ namespace SteamEngine {
 								//	return null;
 								default:
 									//"itemdef", "characterdef", etc.
-									if (string.Compare(type, "chardef", true) == 0) {
+									if (StringComparer.OrdinalIgnoreCase.Equals(type, "chardef")) {
 										type = "CharacterDef";
 									}
 									if (ThingDef.ExistsDefType(type)) {

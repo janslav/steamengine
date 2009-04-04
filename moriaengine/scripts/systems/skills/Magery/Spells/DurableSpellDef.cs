@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		public DurableSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.duration = this.InitField_Typed("duration", null, typeof(double[]));
+			this.duration = this.InitTypedField("duration", null, typeof(double[]));
 		}
 		
 		public double[] Duration {
@@ -60,10 +60,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public DurableCharEffectSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			this.effectPluginDef = this.InitField_Typed("effectPluginDef", null, typeof(PluginDef));
+			this.effectPluginDef = this.InitTypedField("effectPluginDef", null, typeof(PluginDef));
 
-			this.effectPluginKey_Spell = this.InitField_Typed("effectPluginKey_Spell", PluginKey.Get(string.Concat("_spellEffect_", defname, "_")), typeof(PluginKey));
-			this.effectPluginKey_Potion = this.InitField_Typed("effectPluginKey_Potion", PluginKey.Get(string.Concat("_potionEffect_", defname, "_")), typeof(PluginKey));
+			this.effectPluginKey_Spell = this.InitTypedField("effectPluginKey_Spell", PluginKey.Get(string.Concat("_spellEffect_", defname, "_")), typeof(PluginKey));
+			this.effectPluginKey_Potion = this.InitTypedField("effectPluginKey_Potion", PluginKey.Get(string.Concat("_potionEffect_", defname, "_")), typeof(PluginKey));
 		}
 
 		public PluginDef EffectPluginDef {

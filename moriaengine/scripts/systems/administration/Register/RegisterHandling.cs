@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 			//check if we have the reffered character, otherwise return "all" - the note or crime is related to the whole account
 			string refXName = (x.referredChar != null ? x.referredChar.Name : "all");
 			string refYName = (y.referredChar != null ? y.referredChar.Name : "all");
-			return String.Compare(refXName, refYName, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(refXName, refYName);
 		}
 	}
 
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int Compare(T x, T y) {
-			return String.Compare(x.issuer.Name, y.issuer.Name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.issuer.Name, y.issuer.Name);
 		}
 	}
 

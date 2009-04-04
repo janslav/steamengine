@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 		internal TemplateDef(string defname, string filename, int headerLine)
 			:
 				base(defname, filename, headerLine) {
-			container = InitField_ThingDef("container", null, typeof(ItemDef));
+			container = InitThingDefField("container", null, typeof(ItemDef));
 		}
 
 		public ItemDef Container {
@@ -58,15 +58,15 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void UnRegisterTemplateDef(TemplateDef td) {
 			byDefname.Remove(td.Defname);
-			if (td.altdefname != null) {
-				byDefname.Remove(td.altdefname);
+			if (td.Altdefname != null) {
+				byDefname.Remove(td.Altdefname);
 			}
 		}
 
 		private static void RegisterTemplateDef(TemplateDef td) {
 			byDefname[td.Defname] = td;
-			if (td.altdefname != null) {
-				byDefname[td.altdefname] = td;
+			if (td.Altdefname != null) {
+				byDefname[td.Altdefname] = td;
 			}
 		}
 
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 					if (m.Success) {
 						GroupCollection gc = m.Groups;
 						string name = gc["name"].Value;
-						if (string.Compare(name, "defname", true) == 0) {//set altdefname
+						if (StringComparer.OrdinalIgnoreCase.Equals(name, "defname")) {//set altdefname
 							if (altdefnamedefined) {
 								Logger.WriteWarning(input.filename, linenumber, "Alternative defname already defined, ignoring.");
 							} else {
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 										throw new OverrideNotAllowedException(
 											"TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 									} else {
-										td.altdefname = altdefname;
+										td.Altdefname = altdefname;
 									}
 								} else if (t == td) {
 									Logger.WriteWarning(input.filename, linenumber,
@@ -147,16 +147,16 @@ namespace SteamEngine.CompiledScripts {
 								}
 								altdefnamedefined = true;
 							}
-						} else if (string.Compare(name, "container", true) == 0) {//set container itemdef
+						} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "container")) {//set container itemdef
 							if (containerdefined) {
 								Logger.WriteWarning(input.filename, linenumber, "Container id already defined, ignoring.");
 							} else {
 								td.container.SetFromScripts(input.filename, linenumber, gc["value"].Value);
 								containerdefined = true;
 							}
-						} else if (string.Compare(name, "CATEGORY", true) == 0) {//ignoring axis thingies
-						} else if (string.Compare(name, "SUBSECTION", true) == 0) {//ignoring axis thingies
-						} else if (string.Compare(name, "DESCRIPTION", true) == 0) {//ignoring axis thingies
+						} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "CATEGORY")) {//ignoring axis thingies
+						} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "SUBSECTION")) {//ignoring axis thingies
+						} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "DESCRIPTION")) {//ignoring axis thingies
 						} else {
 							newCode.Append(line);
 						}

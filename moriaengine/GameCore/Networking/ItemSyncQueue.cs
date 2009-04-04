@@ -63,8 +63,8 @@ namespace SteamEngine.Networking {
 			while (this.queue.Count > 0) {
 				AbstractItem item = this.queue.Dequeue();
 				if ((item != null) && (!item.IsDeleted)) {
-					SyncFlags syncFlags = item.syncFlags;
-					item.syncFlags = SyncFlags.None;
+					SyncFlags syncFlags = item.SyncFlags;
+					item.SyncFlags = SyncFlags.None;
 
 					if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
 						this.UpdateItemAndProperties(item);
@@ -78,11 +78,12 @@ namespace SteamEngine.Networking {
 		private void SetFlagsOnItem(AbstractItem item, SyncFlags flags) {
 			Sanity.IfTrueThrow(flags == SyncFlags.None, "flags == SyncFlags.None");
 
-			if (item.syncFlags == SyncFlags.None) {
+			SyncFlags itemSyncFlags = item.SyncFlags;
+			if (itemSyncFlags == SyncFlags.None) {
 				this.queue.Enqueue(item);
 				this.autoResetEvent.Set();
 			}
-			item.syncFlags |= flags;
+			item.SyncFlags = itemSyncFlags | flags;
 		}
 
 		[Flags]
@@ -90,8 +91,7 @@ namespace SteamEngine.Networking {
 			None = 0x00,
 			Resend = 0x01,	//complete update - after creation, or on demand
 			ItemUpdate = 0x02,
-			//update properties
-			Property = 0x04
+			Property = 0x04 //update properties
 		}
 
 		private void SendItemPropertiesOnly(AbstractItem item) {

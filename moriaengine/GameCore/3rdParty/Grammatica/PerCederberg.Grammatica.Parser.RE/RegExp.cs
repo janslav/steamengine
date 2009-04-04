@@ -103,6 +103,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * 
 		 * @return a string representation of the regular expression
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.IO.StringWriter.#ctor"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope")]
 		public override string ToString() {
 			StringWriter str;
 
@@ -315,6 +316,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @throws RegExpException if an error was encountered in the 
 		 *             pattern string
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		private Element ParseCharSet() {
 			CharacterSetElement charset;
 			Element elem;
@@ -395,6 +397,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @throws RegExpException if an error was encountered in the 
 		 *             pattern string
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.Parse(System.String,System.Globalization.NumberStyles)"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private Element ParseEscapeChar() {
 			char c;
 			string str;
@@ -496,6 +499,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @throws RegExpException if an error was encountered in the 
 		 *             pattern string
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.Parse(System.String)")]
 		private int ReadNumber() {
 			StringBuilder buf = new StringBuilder();
 			int c;
@@ -586,6 +590,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * 
 		 * @return the combined element
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		private Element CombineElements(ArrayList list) {
 			Element prev;
 			Element elem;

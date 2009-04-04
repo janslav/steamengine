@@ -51,7 +51,7 @@ namespace SteamEngine {
 			Match m = globalNameRE.Match(defname);
 			if (m.Success) {
 				string typeName = m.Groups["value"].Value;
-				if (string.Compare(typeName, "account", true) == 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(typeName, "account")) {
 					typeName = "GameAccount";
 				}
 

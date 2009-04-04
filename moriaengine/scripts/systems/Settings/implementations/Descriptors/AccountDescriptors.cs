@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Unblock")]
 		public static void UnBlock(object target) {
-			((AbstractAccount) target).UnBlock();
+			((AbstractAccount) target).Unblock();
 		}
 
 		[Button("Delete")]

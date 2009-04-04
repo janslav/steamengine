@@ -293,7 +293,7 @@ namespace SteamEngine {
 			PropertyInfo[] props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			StringBuilder propNames = new StringBuilder("(");
 			foreach (PropertyInfo propertyInfo in props) {
-				if (name == null || String.Compare(propertyInfo.Name, name, true) == 0) {
+				if (name == null || StringComparer.OrdinalIgnoreCase.Equals(propertyInfo.Name, name)) {
 					if (propNames.Length > 1) {
 						propNames.Append(", ");
 					}
@@ -316,7 +316,7 @@ namespace SteamEngine {
 			MethodInfo[] meths = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
 			StringBuilder methNames = new StringBuilder("(");
 			foreach (MethodInfo methodInfo in meths) {
-				if (name == null || String.Compare(methodInfo.Name, name, true) == 0) {
+				if (name == null || StringComparer.OrdinalIgnoreCase.Equals(methodInfo.Name, name)) {
 					if (methNames.Length > 1) {
 						methNames.Append(", ");
 					}
@@ -396,7 +396,7 @@ namespace SteamEngine {
 		internal void LoadSectionLines(PropsSection ps) {
 			foreach (PropsLine p in ps.props.Values) {
 				try {
-					LoadLine(ps.filename, p.line, p.name.ToLower(), p.value);
+					this.LoadLine(ps.filename, p.line, p.name.ToLower(), p.value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {

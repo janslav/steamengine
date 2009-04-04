@@ -133,6 +133,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the production pattern for this alternative
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public ProductionPattern GetPattern() {
 			return pattern;
 		}
@@ -144,6 +145,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @param pattern        the new production pattern
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "pattern")]
 		internal void SetPattern(ProductionPattern pattern) {
 			this.pattern = pattern;
 		}
@@ -153,6 +155,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *  
 		 * @return the number of elements in this alternative
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetElementCount() {
 			return elements.Count;
 		}
@@ -164,6 +167,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the minimum number of elements
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetMinElementCount() {
 			ProductionPatternElement elem;
 			int min = 0;
@@ -182,6 +186,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the maximum number of elements
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetMaxElementCount() {
 			ProductionPatternElement elem;
 			int max = 0;
@@ -280,6 +285,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return true if the object is identical to this one, or
 		 *         false otherwise
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		public override bool Equals(object obj) {
 			//ProductionPatternAlternative  alt;
 
@@ -290,6 +296,7 @@ namespace PerCederberg.Grammatica.Parser {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", MessageId = "System.Exception.#ctor(System.String)")]
 		public override int GetHashCode() {
 			throw new Exception("ProductionPatternAlternative::GetHashCode not supported");
 		}
@@ -347,6 +354,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @param lookAhead      the new look-ahead set
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "lookAhead")]
 		internal void SetLookAhead(LookAheadSet lookAhead) {
 			this.lookAhead = lookAhead;
 		}

@@ -187,6 +187,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @throws ParseException if the node analysis discovered errors
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames", MessageId = "1#")]
 		public virtual void Child(Production node, Node child) {
 			node.AddChild(child);
 		}
@@ -204,6 +205,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParseException if either the node or the child node 
 		 *             was null
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		protected Node GetChildAt(Node node, int pos) {
 			Node child;
 
@@ -240,6 +242,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParseException if the node was null, or a child node 
 		 *             couldn't be found
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		protected Node GetChildWithId(Node node, int id) {
 			Node child;
 
@@ -275,6 +278,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @throws ParseException if either the node or the value was null
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		protected object GetValue(Node node, int pos) {
 			object value;
 
@@ -311,6 +315,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParseException if either the node was null, or the 
 		 *             value wasn't an integer 
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		protected int GetIntValue(Node node, int pos) {
 			object value;
 
@@ -341,6 +346,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParseException if either the node was null, or the 
 		 *             value wasn't a string 
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		protected string GetStringValue(Node node, int pos) {
 			object value;
 
@@ -366,6 +372,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.3
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		protected ArrayList GetChildValues(Node node) {
 			ArrayList result = new ArrayList();
 			Node child;

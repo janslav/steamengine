@@ -56,12 +56,14 @@ namespace PerCederberg.Grammatica.Parser {
 			 * The string pattern type is used for tokens that only
 			 * match an exact string.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			STRING,
 
 			/*
 			 * The regular expression pattern type is used for tokens
 			 * that match a regular expression.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			REGEXP
 		}
 
@@ -168,6 +170,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the token pattern id
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetId() {
 			return id;
 		}
@@ -177,6 +180,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the token pattern name
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetName() {
 			return name;
 		}
@@ -186,6 +190,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the token pattern type
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public PatternType GetPatternType() {
 			return type;
 		}
@@ -195,6 +200,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the token pattern
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetPattern() {
 			return pattern;
 		}
@@ -205,6 +211,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *  
 		 * @return the token error message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetErrorMessage() {
 			return errorMessage;
 		}
@@ -215,6 +222,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *  
 		 * @return the token ignore message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetIgnoreMessage() {
 			return ignoreMessage;
 		}
@@ -222,6 +230,7 @@ namespace PerCederberg.Grammatica.Parser {
 		/**
 		 * Sets the token error flag and assigns a default error message.
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", MessageId = "PerCederberg.Grammatica.Parser.TokenPattern.SetError(System.String)")]
 		public void SetError() {
 			SetError("unrecognized token found");
 		}

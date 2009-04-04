@@ -322,11 +322,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			name = InitField_Typed("name", "", typeof(string));
-			useDelay = InitField_Typed("useDelay", 0, typeof(double));
-			maxPoints = InitField_Typed("maxPoints", 0, typeof(ushort));
-			resourcesConsumed = InitField_Typed("resourcesConsumed", null, typeof(ResourcesList));
-			resourcesPresent = InitField_Typeless("resourcesPresent", null);
+			name = InitTypedField("name", "", typeof(string));
+			useDelay = InitTypedField("useDelay", 0, typeof(double));
+			maxPoints = InitTypedField("maxPoints", 0, typeof(ushort));
+			resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
+			resourcesPresent = InitTypelessField("resourcesPresent", null);
 		}
 
 		public string Name {
@@ -360,13 +360,8 @@ namespace SteamEngine.CompiledScripts {
 		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
-				object retVal = this.scriptedTriggers.TryRun(self, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+					return true;
 				}
 			}
 			return false;

@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					AbstractDef def = script as AbstractDef;
 					if (def != null) {
-						defname = def.altdefname;
+						defname = def.Altdefname;
 						if ((defname != null) && re.IsMatch(defname)) {
 							Globals.SrcWriteLine(script.ToString());
 						}

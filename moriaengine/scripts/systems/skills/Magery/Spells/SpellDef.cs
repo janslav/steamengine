@@ -192,13 +192,8 @@ namespace SteamEngine.CompiledScripts {
 		public bool TryCancellableTrigger(IPoint4D self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
-				object retVal = this.scriptedTriggers.TryRun(self, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+					return true;
 				}
 			}
 			return false;
@@ -223,19 +218,19 @@ namespace SteamEngine.CompiledScripts {
 		public SpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.name = this.InitField_Typed("name", null, typeof(string));
-			this.scrollItem = this.InitField_ThingDef("scrollItem", null, typeof(SpellScrollDef));
-			this.runeItem = this.InitField_ThingDef("runeItem", null, typeof(ItemDef));
-			this.castTime = this.InitField_Typed("castTime", null, typeof(double));
-			this.flags = this.InitField_Typed("flags", null, typeof(SpellFlag));
-			this.manaUse = this.InitField_Typed("manaUse", 10, typeof(int));
-			this.requirements = this.InitField_Typed("requirements", null, typeof(ResourcesList));
-			this.resources = this.InitField_Typed("resources", null, typeof(ResourcesList));
-			this.difficulty = this.InitField_Typed("difficulty", null, typeof(int));
-			this.effect = this.InitField_Typed("effect", null, typeof(double[]));
-			this.sound = this.InitField_Typed("sound", -1, typeof(SoundNames));
-			this.runes = this.InitField_Typed("runes", null, typeof(string));
-			this.effectRange = this.InitField_Typed("effectRange", 5, typeof(int));
+			this.name = this.InitTypedField("name", null, typeof(string));
+			this.scrollItem = this.InitThingDefField("scrollItem", null, typeof(SpellScrollDef));
+			this.runeItem = this.InitThingDefField("runeItem", null, typeof(ItemDef));
+			this.castTime = this.InitTypedField("castTime", null, typeof(double));
+			this.flags = this.InitTypedField("flags", null, typeof(SpellFlag));
+			this.manaUse = this.InitTypedField("manaUse", 10, typeof(int));
+			this.requirements = this.InitTypedField("requirements", null, typeof(ResourcesList));
+			this.resources = this.InitTypedField("resources", null, typeof(ResourcesList));
+			this.difficulty = this.InitTypedField("difficulty", null, typeof(int));
+			this.effect = this.InitTypedField("effect", null, typeof(double[]));
+			this.sound = this.InitTypedField("sound", -1, typeof(SoundNames));
+			this.runes = this.InitTypedField("runes", null, typeof(string));
+			this.effectRange = this.InitTypedField("effectRange", 5, typeof(int));
 		}
 
 		public int Id {

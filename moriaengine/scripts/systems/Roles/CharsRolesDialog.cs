@@ -217,7 +217,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Role x, Role y) {
-			return String.Compare(x.Key.name, y.Key.name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Key.name, y.Key.name);
 		}
 	}
 
@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Role x, Role y) {
-			return String.Compare(x.RoleDef.Defname, y.RoleDef.Defname, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.RoleDef.Defname, y.RoleDef.Defname);
 		}
 	}
 }

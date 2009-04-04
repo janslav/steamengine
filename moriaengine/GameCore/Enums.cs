@@ -26,14 +26,14 @@ namespace SteamEngine {
 	//to WalkRunOrFly and to the methods in OutPackets which take a direction as a parameter.
 	//-SL
 	public enum Direction : byte {
-		North = 0,
+		North = 0, Default = North, 
 		NorthEast = 1,
 		East = 2,
 		SouthEast = 3,
 		South = 4,
 		SouthWest = 5,
 		West = 6,
-		NorthWest = 7,
+		NorthWest = 7, Mask = NorthWest
 	}
 
 	public enum StatLockType : byte {
@@ -161,17 +161,17 @@ namespace SteamEngine {
 	}
 
 
-	public enum PriorityClass {
-		Pet = 0,		//A pet
-		NPC = 1,		//An NPC
-		NPCHero = 2,	//A hero NPC
-		Player = 3	//A player.
-	}
+	//public enum PriorityClass {
+	//    Pet = 0,		//A pet
+	//    NPC = 1,		//An NPC
+	//    NPCHero = 2,	//A hero NPC
+	//    Player = 3	//A player.
+	//}
 
-	public enum CompressedPacketType {
-		Single,
-		Group
-	}
+	//public enum CompressedPacketType {
+	//    Single,
+	//    Group
+	//}
 
 	public enum GroupState {
 		Open,			//- a group has been made w/ NewGroup and not yet closed.
@@ -179,11 +179,11 @@ namespace SteamEngine {
 		SingleBlocking	//- A single compressed packet is the latest thing, so nothing else can be done until it's discarded.
 	}
 
-	public enum GeneratingState {
-		Generating,		//- Generating a packet. Nothing else can be done until it is done.
-		Generated,		//- A packet has been generated, and is waiting to be compressed.
-		Ready,			//- We are ready to generate a new packet (Or do other things).
-	}
+	//public enum GeneratingState {
+	//    Generating,		//- Generating a packet. Nothing else can be done until it is done.
+	//    Generated,		//- A packet has been generated, and is waiting to be compressed.
+	//    Ready,			//- We are ready to generate a new packet (Or do other things).
+	//}
 
 	public enum DenyResult {
 		//item manipulation denials

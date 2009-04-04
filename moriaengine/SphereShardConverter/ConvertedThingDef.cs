@@ -168,7 +168,7 @@ namespace SteamEngine.Converter {
 		public override void ThirdStage() {
 			bool defnameWritten = false;
 			if (defname1 != null) {
-				if (string.Compare(headerName, defname1.value, true) != 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(headerName, defname1.value)) {
 					defnameWritten = true;
 					Set(defname1);
 				}
@@ -176,7 +176,7 @@ namespace SteamEngine.Converter {
 			if (defname2 != null) {
 				if (defnameWritten) {
 					Warning(defname2.line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
-				} else if (string.Compare(headerType, defname2.value, true) != 0) {
+				} else if (!StringComparer.OrdinalIgnoreCase.Equals(headerType, defname2.value)) {
 					Set("defname", defname2.value, defname2.comment);
 				}
 			}

@@ -175,7 +175,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Profession
 
 		[Summary("Every step is monitored by the ScriptSector system")]
-		public override bool On_Step(byte direction, bool running) {
+		public override bool On_Step(Direction direction, bool running) {
 			ScriptSector.AddTrackingStep(this, direction);
 			return base.On_Step(direction, running);
 		}

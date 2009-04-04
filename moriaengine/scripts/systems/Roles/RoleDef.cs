@@ -201,13 +201,8 @@ namespace SteamEngine.CompiledScripts {
 		public bool TryCancellableTrigger(Role role, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
-				object retVal = this.scriptedTriggers.TryRun(role, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(this.scriptedTriggers.TryRun(role, td, sa))) {
+					return true;
 				}
 			}
 			return false;

@@ -244,6 +244,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @return true if the character is present, or
 		 *         false otherwise
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		private bool InDotSet(char c) {
 			switch (c) {
 				case '\n':
@@ -266,6 +267,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @return true if the character is a digit, or
 		 *         false otherwise
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		private bool InDigitSet(char c) {
 			return '0' <= c && c <= '9';
 		}
@@ -279,6 +281,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @return true if the character is a whitespace character, or
 		 *         false otherwise
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		private bool InWhitespaceSet(char c) {
 			switch (c) {
 				case ' ':
@@ -302,6 +305,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @return true if the character is a word character, or
 		 *         false otherwise
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		private bool InWordSet(char c) {
 			return ('a' <= c && c <= 'z')
 				|| ('A' <= c && c <= 'Z')
@@ -319,6 +323,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * @return true if the character is present, or
 		 *         false otherwise
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		private bool InUserSet(char value) {
 			object obj;
 			char c;

@@ -158,7 +158,7 @@ namespace SteamEngine {
 
 		public TriggerSection GetTrigger(string name) {
 			foreach (TriggerSection s in triggerSections) {
-				if (string.Compare(name, s.triggerName, true) == 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.triggerName)) {
 					return s;
 				}
 			}
@@ -170,7 +170,7 @@ namespace SteamEngine {
 			TriggerSection s = null;
 			for (; i < n; i++) {
 				s = triggerSections[i];
-				if (string.Compare(name, s.triggerName, true) == 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.triggerName)) {
 					n = -1;
 					break;
 				}

@@ -91,6 +91,13 @@ namespace SteamEngine.CompiledScripts {
 
 	}
 
+	[Flags]
+	public enum CharacterFlags : short {
+		None = 0, Zero = None,
+		Disconnected = 0x01,
+
+	}
+
 	[Dialogs.ViewableClass]
 	public partial class Character : AbstractCharacter {
 		//removed, reworked to use the Skills togeter with abilities in one distionary
@@ -119,73 +126,60 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		/**
-			You can't set this, use the Flag_* properties to set flags.
-		*/
-		public ushort Flags {
-			get {
-				return flags;
-			}
-		}
-
 		public bool Flag_Dead {
 			get {
-				return ((flags & 0x0002) == 0x0002);
+				return this.ProtectedFlag1;
 			}
 			private set {
-				flags = (ushort) (value ? (flags | 0x0002) : (flags & ~0x0002));
+				this.ProtectedFlag1 = value;
 			}
 		}
 
 		public override bool Flag_Insubst {
 			get {
-				return ((flags & 0x0004) == 0x0004);
+				return this.ProtectedFlag2;
 			}
 			set {
-				ushort newFlags = (ushort) (value ? (flags | 0x0004) : (flags & ~0x0004));
-				if (newFlags != flags) {
+				if (this.ProtectedFlag2 != value) {
 					CharSyncQueue.AboutToChangeVisibility(this);
-					flags = newFlags;
+					this.ProtectedFlag2 = value;
 				}
 			}
 		}
 
 		public bool Flag_InvisByMagic {
 			get {
-				return ((flags & 0x0008) == 0x0008);
+				return this.ProtectedFlag3;
 			}
 			set {
-				ushort newFlags = (ushort) (value ? (flags | 0x0008) : (flags & ~0x0008));
-				if (newFlags != flags) {
+				if (this.ProtectedFlag3 != value) {
 					CharSyncQueue.AboutToChangeVisibility(this);
-					flags = newFlags;
+					this.ProtectedFlag3 = value;
 				}
 			}
 		}
 
 		public bool Flag_Hidden {
 			get {
-				return ((flags & 0x0010) == 0x0010);
+				return this.ProtectedFlag4;
 			}
 			set {
-				ushort newFlags = (ushort) (value ? (flags | 0x0010) : (flags & ~0x0010));
-				if (newFlags != flags) {
+				if (this.ProtectedFlag4 != value) {
 					CharSyncQueue.AboutToChangeVisibility(this);
-					flags = newFlags;
+					this.ProtectedFlag4 = value;
 				}
 			}
 		}
 
 		public override bool Flag_WarMode {
 			get {
-				return ((flags & 0x0020) == 0x0020);
+				return this.ProtectedFlag5;
 			}
 			set {
-				ushort newFlags = (ushort) (value ? (flags | 0x0020) : (flags & ~0x0020));
-				if (newFlags != flags) {
+				if (this.ProtectedFlag5 != value) {
 					CharSyncQueue.AboutToChangeFlags(this);
-					flags = newFlags;
-					Trigger_WarModeChange();
+					this.ProtectedFlag5 = value;
+					this.Trigger_WarModeChange();
 				}
 			}
 		}
@@ -230,7 +224,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override sealed bool IsNotVisible {
 			get {
-				return (Flag_InvisByMagic || Flag_Hidden || Flag_Insubst || Flag_Disconnected);
+				return (this.Flag_InvisByMagic || this.Flag_Hidden || this.Flag_Insubst || this.Flag_Disconnected);
 			}
 		}
 
@@ -238,12 +232,12 @@ namespace SteamEngine.CompiledScripts {
 		//(they should set Mount instead) but it needs to be settable from within Character itself.
 		public override bool Flag_Riding {
 			get {
-				return ((flags & 0x2000) == 0x2000);
+				return this.ProtectedFlag6;
 			}
 		}
 
 		private void SetFlag_Riding(bool value) {
-			flags = (ushort) (value ? (flags | 0x2000) : (flags & ~0x2000));
+			this.ProtectedFlag6 = value;
 		}
 
 
@@ -275,7 +269,7 @@ namespace SteamEngine.CompiledScripts {
 					if (Flag_Riding) {
 						if (mountorrider.IsDeleted) {
 							CharSyncQueue.AboutToChangeMount(this);
-							SetFlag_Riding(false);
+							this.SetFlag_Riding(false);
 							mountorrider = null;
 						}
 					}
@@ -289,7 +283,7 @@ namespace SteamEngine.CompiledScripts {
 						Dismount();
 					} else {
 						CharSyncQueue.AboutToChangeMount(this);
-						SetFlag_Riding(false);
+						this.SetFlag_Riding(false);
 						mountorrider = null;
 					}
 					return;
@@ -303,7 +297,7 @@ namespace SteamEngine.CompiledScripts {
 					throw new SEException("You can't ride something that's riding something else!");
 				} else {
 					mountorrider = (Character) value;
-					SetFlag_Riding(true);
+					this.SetFlag_Riding(true);
 					mountorrider.mountorrider = this;
 					mountorrider.Disconnect();
 				}
@@ -327,7 +321,7 @@ namespace SteamEngine.CompiledScripts {
 					Logger.WriteCritical("Dismount(): Mounted character doesn't know who's riding it or thinks the wrong person is ([" + this + "] is, but the mount thinks [" + mountorrider.mountorrider + "] is)!");
 				}
 			}
-			SetFlag_Riding(false);
+			this.SetFlag_Riding(false);
 			mountorrider = null;
 		}
 
@@ -572,30 +566,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override short ExtendedStatusNum01 {
-			get {
-				return 0;
-			}
-		}
-
-		public override short ExtendedStatusNum02 {
-			get {
-				return 0;
-			}
-		}
-
-		public override short ExtendedStatusNum03 {
-			get {
-				return 0;
-			}
-		}
-
-		public override short ExtendedStatusNum04 {
-			get {
-				return 0;
-			}
-		}
-
 		public override short TithingPoints {
 			get {
 				return tithingPoints;
@@ -608,37 +578,61 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override short ExtendedStatusNum05 {
-			get {
-				return 0;
-			}
-		}
+		//public override short ExtendedStatusNum01 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
 
-		public override short ExtendedStatusNum06 {
-			get {
-				return 0;
-			}
-		}
+		//public override short ExtendedStatusNum02 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
 
-		public override byte ExtendedStatusNum07 {
-			get {
-				return 0;
-			}
-		}
+		//public override short ExtendedStatusNum03 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
 
-		public override byte ExtendedStatusNum08 {
-			get {
-				return 0;
-			}
-		}
+		//public override short ExtendedStatusNum04 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
 
-		public override ushort ExtendedStatusNum09 {
-			get {
-				return 0;
-			}
-		}
+		//public override short ExtendedStatusNum05 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
 
-		public override ulong Gold {
+		//public override short ExtendedStatusNum06 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
+
+		//public override byte ExtendedStatusNum07 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
+
+		//public override byte ExtendedStatusNum08 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
+
+		//public override short ExtendedStatusNum09 {
+		//    get {
+		//        return 0;
+		//    }
+		//}
+
+		public override long Gold {
 			get {
 				return 0;
 			}
@@ -1319,11 +1313,11 @@ namespace SteamEngine.CompiledScripts {
 
 					ps = input.TryPopPropsLine("SkillLock." + skillKey);
 					if (ps != null) {
-						if (string.Compare("Lock", ps.value, true) == 0) {
+						if (StringComparer.OrdinalIgnoreCase.Equals("Lock", ps.value)) {
 							this.SetSkillLockType(i, SkillLockType.Locked);
-						} else if (string.Compare("Down", ps.value, true) == 0) {
+						} else if (StringComparer.OrdinalIgnoreCase.Equals("Down", ps.value)) {
 							this.SetSkillLockType(i, SkillLockType.Down);
-						} else if (string.Compare("Up", ps.value, true) == 0) {
+						} else if (StringComparer.OrdinalIgnoreCase.Equals("Up", ps.value)) {
 							this.SetSkillLockType(i, SkillLockType.Increase);
 						} else {
 							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
@@ -1909,7 +1903,7 @@ namespace SteamEngine.CompiledScripts {
 					if (!mountorrider.IsDeleted) {
 						mountorrider.Delete();
 					}
-					SetFlag_Riding(false);
+					this.SetFlag_Riding(false);
 					mountorrider = null;
 				} else {//I am the mount
 					mountorrider.Dismount();
@@ -1939,7 +1933,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		public override short Experience {
+		public short Experience {
 			get {
 				return experience;
 			}

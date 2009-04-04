@@ -48,7 +48,7 @@ namespace SteamEngine {
 		}
 
 		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
-		internal PluginHolder.TGListNode firstTGListNode = null; //linked list of triggergroup references
+		internal PluginHolder.TGListNode firstTGListNode; //linked list of triggergroup references
 		//This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
 		internal void ResolveTriggerGroup(object[] args) {
 			string name = (string) args[0];
@@ -223,13 +223,8 @@ namespace SteamEngine {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
-					object retVal = curNode.storedTG.Run(this, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+					if (TagMath.Is1(curNode.storedTG.Run(this, td, sa))) {
+						return true;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);
@@ -241,13 +236,8 @@ namespace SteamEngine {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
-					object retVal = curNode.storedTG.TryRun(this, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+					if (TagMath.Is1(curNode.storedTG.TryRun(this, td, sa))) {
+						return true;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);

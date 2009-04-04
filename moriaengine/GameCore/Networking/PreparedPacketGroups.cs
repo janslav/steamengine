@@ -28,7 +28,7 @@ namespace SteamEngine.Networking {
 
 	public static class PreparedPacketGroups {
 
-		private static PacketGroup[] loginDeniedPGs = new PacketGroup[5];
+		private static PacketGroup[] loginDeniedPGs = new PacketGroup[Tools.GetEnumLength<LoginDeniedReason>()];
 
 		private static PacketGroup targetGround;
 		private static PacketGroup targetXYZ;

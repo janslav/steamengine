@@ -234,7 +234,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("For the given player make a record of his actual position as a new tracking step")]
-		internal static void AddTrackingStep(Player whose, byte direction) {
+		internal static void AddTrackingStep(Player whose, Direction direction) {
 			//get actual sector
 			ScriptSector hisSector = ScriptSector.GetScriptSector(whose);
 
@@ -246,7 +246,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			ushort model;
-			switch ((Direction) direction) {
+			switch (direction) {
 				case Direction.North://0
 				case Direction.NorthEast://1
 					model = (ushort) GumpIDs.Footprint_North; //0x1e04

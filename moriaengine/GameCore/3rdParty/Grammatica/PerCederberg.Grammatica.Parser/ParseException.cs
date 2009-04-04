@@ -43,6 +43,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.1
 	 */
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ParseException : Exception {
 
 		/**
@@ -55,6 +56,7 @@ namespace PerCederberg.Grammatica.Parser {
 			 * that is a result of a bug in the parser or tokenizer
 			 * code.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			INTERNAL,
 
 			/*
@@ -66,6 +68,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * The unexpected end of file error type is used when end
 			 * of file is encountered instead of a valid token.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			UNEXPECTED_EOF,
 
 			/*
@@ -73,12 +77,16 @@ namespace PerCederberg.Grammatica.Parser {
 			 * character is read that isn't handled by one of the
 			 * token patterns.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			UNEXPECTED_CHAR,
 
 			/*
 			 * The unexpected token error type is used when another
 			 * token than the expected one is encountered.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			UNEXPECTED_TOKEN,
 
 			/*
@@ -87,6 +95,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * additional information provided should contain the
 			 * error message.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			INVALID_TOKEN,
 
 			/*
@@ -94,6 +104,7 @@ namespace PerCederberg.Grammatica.Parser {
 			 * encountered in the analysis. The additional information
 			 * provided should contain the error message.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			ANALYSIS
 		}
 
@@ -178,6 +189,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the error type
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public ErrorType GetErrorType() {
 			return type;
 		}
@@ -187,6 +199,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the additional error information
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetInfo() {
 			return info;
 		}
@@ -196,6 +209,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the additional detailed error information
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public ArrayList GetDetails() {
 			return new ArrayList(details);
 		}
@@ -206,6 +220,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the line number of the error, or 
 		 *         -1 if unknown
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetLine() {
 			return line;
 		}
@@ -216,6 +231,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the column number of the error, or 
 		 *         -1 if unknown
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetColumn() {
 			return column;
 		}
@@ -225,6 +241,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return a default error message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetMessage() {
 			StringBuilder buffer = new StringBuilder();
 
@@ -249,6 +266,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the error message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetErrorMessage() {
 			StringBuilder buffer = new StringBuilder();
 

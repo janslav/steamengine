@@ -72,8 +72,6 @@ namespace SteamEngine.Persistence {
 
 			bool success = false;
 			try {
-
-
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);

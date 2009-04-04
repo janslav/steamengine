@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 							ctfi.uncapName),
 						new CodeMethodInvokeExpression(
 							new CodeThisReferenceExpression(),
-							"InitField_Typed",
+							"InitTypedField",
 							new CodePrimitiveExpression(ctfi.uncapName),
 							new CodeSnippetExpression(ctfi.value),
 							new CodeTypeOfExpression(ctfi.typeString))));

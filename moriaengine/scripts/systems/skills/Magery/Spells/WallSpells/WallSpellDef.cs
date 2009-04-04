@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 		public WallSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.itemDef = this.InitField_Typed("itemDef", null, typeof(ItemDef));
+			this.itemDef = this.InitTypedField("itemDef", null, typeof(ItemDef));
 		}
 
 		public ItemDef ItemDef {

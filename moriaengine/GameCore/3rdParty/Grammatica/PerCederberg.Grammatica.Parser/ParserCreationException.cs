@@ -45,6 +45,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.0
 	 */
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ParserCreationException : Exception {
 
 		/**
@@ -57,6 +58,7 @@ namespace PerCederberg.Grammatica.Parser {
 			 * error that is a result of a bug in the parser or
 			 * tokenizer code.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			INTERNAL,
 
 			/*
@@ -64,6 +66,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * as such is invalid. This error is typically caused by
 			 * using a parser without any patterns.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			INVALID_PARSER,
 
 			/*
@@ -72,6 +76,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * by an invalid pattern type or an erroneous regular
 			 * expression.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			INVALID_TOKEN,
 
 			/*
@@ -80,6 +86,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * typically caused by referencing undeclared productions,
 			 * or violating some other production pattern constraint.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			INVALID_PRODUCTION,
 
 			/*
@@ -87,6 +95,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * loop has been detected in the grammar. One of the
 			 * productions in the loop will be reported.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			INFINITE_LOOP,
 
 			/*
@@ -94,6 +104,8 @@ namespace PerCederberg.Grammatica.Parser {
 			 * of production patterns (i.e. the grammar) contains
 			 * ambiguities that cannot be resolved.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			INHERENT_AMBIGUITY
 		}
 
@@ -178,6 +190,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @return the error type
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public ErrorType GetErrorType() {
 			return type;
 		}
@@ -187,6 +200,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @return the token or production name
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetName() {
 			return name;
 		}
@@ -196,6 +210,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @return the additional error information
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetInfo() {
 			return info;
 		}
@@ -205,6 +220,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @return the detailed error information
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetDetails() {
 			StringBuilder buffer = new StringBuilder();
 
@@ -230,6 +246,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @return the error message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetMessage() {
 			StringBuilder buffer = new StringBuilder();
 

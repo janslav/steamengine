@@ -384,16 +384,16 @@ namespace SteamEngine.Persistence {
 				return true;
 			}
 
-			if (string.Compare(input, "true", true) == 0) {//true: ignore case
+			if (StringComparer.OrdinalIgnoreCase.Equals(input, "true")) {//true: ignore case
 				retVal = true;
 				return true;
 			}
-			if (string.Compare(input, "false", true) == 0) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(input, "false")) {
 				retVal = false;
 				return true;
 			}
 
-			if (string.Compare(input, "null", true) == 0) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(input, "null")) {
 				retVal = null;
 				return true;
 			}
@@ -412,7 +412,7 @@ namespace SteamEngine.Persistence {
 			Match m = abstractScriptRE.Match(input);
 			if (m.Success) {
 				string defname = m.Groups["value"].Value;
-				if (string.Compare("globals", defname, true) == 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals("globals", defname)) {
 					retVal = Globals.instance;
 					return true;
 				}

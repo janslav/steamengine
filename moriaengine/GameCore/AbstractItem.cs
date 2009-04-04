@@ -44,43 +44,33 @@ namespace SteamEngine {
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
 		//and coords of an item inside a container should only be changed through MoveInsideContainer
 
-		internal ItemSyncQueue.SyncFlags syncFlags;
+		private enum InternalFlag : byte {
+			SyncMask = (ItemSyncQueue.SyncFlags.Resend | ItemSyncQueue.SyncFlags.ItemUpdate | ItemSyncQueue.SyncFlags.Property),
+			ItemFlag1 = 0x08, 
+			ItemFlag2 = 0x10,
+			ItemFlag3 = 0x20,
+			ItemFlag4 = 0x40,
+			ItemFlag5 = 0x80
+		}
+
+		//ItemSyncQueue.SyncFlags: 1, 2, 4
+		//Don't set the disconnected flag (0x01) by tweaking flags.
+		private InternalFlag flags;
+
 
 		private TriggerGroup type;
-
 		internal object contentsOrComponents = null;
-
-		public AbstractItemDef TypeDef {
-			get {
-				return (AbstractItemDef) Def;
-			}
-		}
-
-		//Don't set the disconnected flag (0x01) by tweaking flags.
-		protected byte flags;
-		//private byte netChangeFlags = 0;
-
 		private static int instances = 0;
 		private static ArrayList registeredTGs = new ArrayList();
-		public TriggerGroup Type {
+
+
+		public static int Instances {
 			get {
-				return type;
-			}
-			set {
-				type = value;
+				return instances;
 			}
 		}
 
-		//On ground
-		//public AbstractItem(ThingDef myDef, ushort x, ushort y, sbyte z, byte m) : base(myDef, x, y,z,m) {
-		//	instances++;
-		//	this.cont=null;
-		//	this.model = myDef.Model;
-		//	this.flags=0;
-		//	this.amount=1;
-		//	this.name=-1;
-		//}
-
+		#region Constructors
 		public AbstractItem(ThingDef myDef)
 			: base(myDef) {
 			instances++;
@@ -102,22 +92,41 @@ namespace SteamEngine {
 			amount = copyFrom.amount;
 			Globals.lastNewItem = this;
 		}
+		#endregion Constructors
 
-		public static int Instances {
+		internal ItemSyncQueue.SyncFlags SyncFlags {
 			get {
-				return instances;
+				return (ItemSyncQueue.SyncFlags) (this.flags & InternalFlag.SyncMask);
+			}
+			set {
+				this.flags = ((this.flags & ~InternalFlag.SyncMask) | ((InternalFlag) value & InternalFlag.SyncMask));
+			}
+		}
+
+		public AbstractItemDef TypeDef {
+			get {
+				return (AbstractItemDef) this.Def;
+			}
+		}
+
+		public TriggerGroup Type {
+			get {
+				return this.type;
+			}
+			set {
+				this.type = value;
 			}
 		}
 
 		public bool IsStackable {
 			get {
-				return ((AbstractItemDef) Def).IsStackable;
+				return ((AbstractItemDef) this.Def).IsStackable;
 			}
 		}
 
 		public int Count {
 			get {
-				ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
+				ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 				if (tll == null) {
 					return 0;
 				}
@@ -127,7 +136,7 @@ namespace SteamEngine {
 
 		public bool IsEmpty {
 			get {
-				return (Count == 0);
+				return (this.Count == 0);
 			}
 		}
 
@@ -136,12 +145,12 @@ namespace SteamEngine {
 				return this.amount;
 			}
 			set {
-				if (value != amount) {
+				if (value != this.amount) {
 					this.InvalidateProperties();
 					ItemSyncQueue.AboutToChange(this);
 					Thing c = this.Cont;
 					if (c != null) {
-						c.AdjustWeight(this.def.Weight * (value - amount));
+						c.AdjustWeight(this.def.Weight * (value - this.amount));
 					}
 					this.amount = value;
 				}
@@ -155,6 +164,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public ushort ShortAmount {
 			get {
 				return (ushort) Math.Min(ushort.MaxValue, this.amount);
@@ -167,29 +177,102 @@ namespace SteamEngine {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public sealed override uint FlaggedUid {
 			get {
-				return (uint) (Uid | 0x40000000);
+				return (uint) (this.Uid | 0x40000000);
 			}
 		}
 
-		public override bool Flag_Disconnected {
+		//public override bool Flag_Disconnected {
+		//    get {
+		//        return ((this.flags & itemFlagDisconnected) == itemFlagDisconnected);
+		//    }
+		//    internal set {				
+		//        byte newFlags;
+		//        if (value) {
+		//            newFlags = this.flags | itemFlagDisconnected;
+		//        } else {
+		//            newFlags = this.flags & ~itemFlagDisconnected;
+		//        }
+
+		//        if (this.flags != newFlags) {
+		//            if (value) {
+		//                OpenedContainers.SetContainerClosed(this);
+		//                this.RemoveFromView();
+		//            }
+		//            ItemSyncQueue.AboutToChange(this);
+		//            this.flags = newFlags;
+		//            if (value) {
+		//                this.GetMap().Disconnected(this);
+		//            } else {
+		//                this.GetMap().Reconnected(this);
+		//            }
+		//        }
+		//    }
+		//}
+
+		protected bool ProtectedFlag1 {
 			get {
-				return ((flags & 0x01) == 0x01);
+				return ((this.flags & InternalFlag.ItemFlag1) == InternalFlag.ItemFlag1);
 			}
 			set {
-				if (this.Flag_Disconnected != value) {
-					if (value) {
-						OpenedContainers.SetContainerClosed(this);
-						this.RemoveFromView();
-					}
-					ItemSyncQueue.AboutToChange(this);
-					flags = (byte) (value ? (flags | 0x01) : (flags & ~0x01));
-					if (value) {
-						GetMap().Disconnected(this);
-					} else {
-						GetMap().Reconnected(this);
-					}
+				if (value) {
+					this.flags |= InternalFlag.ItemFlag1;
+				} else {
+					this.flags &= ~InternalFlag.ItemFlag1;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag2 {
+			get {
+				return ((this.flags & InternalFlag.ItemFlag2) == InternalFlag.ItemFlag2);
+			}
+			set {
+				if (value) {
+					this.flags |= InternalFlag.ItemFlag2;
+				} else {
+					this.flags &= ~InternalFlag.ItemFlag2;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag3 {
+			get {
+				return ((this.flags & InternalFlag.ItemFlag3) == InternalFlag.ItemFlag3);
+			}
+			set {
+				if (value) {
+					this.flags |= InternalFlag.ItemFlag3;
+				} else {
+					this.flags &= ~InternalFlag.ItemFlag3;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag4 {
+			get {
+				return ((this.flags & InternalFlag.ItemFlag4) == InternalFlag.ItemFlag4);
+			}
+			set {
+				if (value) {
+					this.flags |= InternalFlag.ItemFlag4;
+				} else {
+					this.flags &= ~InternalFlag.ItemFlag4;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag5 {
+			get {
+				return ((this.flags & InternalFlag.ItemFlag5) == InternalFlag.ItemFlag5);
+			}
+			set {
+				if (value) {
+					this.flags |= InternalFlag.ItemFlag5;
+				} else {
+					this.flags &= ~InternalFlag.ItemFlag5;
 				}
 			}
 		}
@@ -214,7 +297,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual ushort Gump {
+		public virtual short Gump {
 			get {
 				return 0;
 			}
@@ -369,29 +452,19 @@ namespace SteamEngine {
 		}
 
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
-				object retVal = tg.Run(this, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(tg.Run(this, td, sa))) {
+					return true;
 				}
 			}
 			if (base.CancellableTrigger(td, sa)) {
 				return true;
 			} else {
 				if (type != null) {
-					object retVal = type.Run(this, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+					if (TagMath.Is1(type.Run(this, td, sa))) {
+						return true;
 					}
 				}
 			}
@@ -402,26 +475,16 @@ namespace SteamEngine {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
-				object retVal = tg.TryRun(this, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(tg.TryRun(this, td, sa))) {
+					return true;
 				}
 			}
 			if (base.TryCancellableTrigger(td, sa)) {
 				return true;
 			} else {
 				if (type != null) {
-					object retVal = type.TryRun(this, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+					if (TagMath.Is1(type.TryRun(this, td, sa))) {
+						return true;
 					}
 				}
 			}
@@ -470,21 +533,21 @@ namespace SteamEngine {
 			if (c != null) {
 				output.WriteValue("cont", c);
 			}
-			if (amount != 1) {
-				output.WriteValue("amount", amount);
+			if (this.amount != 1) {
+				output.WriteValue("amount", this.amount);
 			}
-			if (flags != 0) {
-				output.WriteValue("flags", flags);
+			if (this.flags != 0) {
+				output.WriteValue("flags", this.flags);
 			}
-			if ((type != null) && (type != def.Type)) {
-				output.WriteLine("type=" + type.Defname);
+			if ((this.type != null) && (this.type != def.Type)) {
+				output.WriteLine("type=" + this.type.Defname);
 			}
 		}
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
 				case "cont":
-					ObjectSaver.Load(valueString, new LoadObject(LoadCont_Delayed), filename, line);
+					ObjectSaver.Load(valueString, new LoadObject(this.LoadCont_Delayed), filename, line);
 					break;
 				case "p":
 					base.LoadLine(filename, line, valueName, valueString);//loads the position
@@ -496,19 +559,19 @@ namespace SteamEngine {
 				case "name":
 					Match ma = TagMath.stringRE.Match(valueString);
 					if (ma.Success) {
-						name = String.Intern(ma.Groups["value"].Value);
+						this.name = String.Intern(ma.Groups["value"].Value);
 					} else {
-						name = String.Intern(valueString);
+						this.name = String.Intern(valueString);
 					}
 					break;
 				case "amount":
-					amount = TagMath.ParseInt32(valueString);
+					this.amount = TagMath.ParseInt32(valueString);
 					break;
 				case "flags":
-					flags = TagMath.ParseByte(valueString);
+					this.flags = (InternalFlag) TagMath.ParseByte(valueString);
 					break;
 				case "type":
-					type = TriggerGroup.Get(valueString);
+					this.type = TriggerGroup.Get(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -548,15 +611,6 @@ namespace SteamEngine {
 				return c.TopObj();
 			} else {
 				return this;
-			}
-		}
-
-		public virtual Direction Direction {
-			get {
-				return (Direction) 0;
-			}
-			set {
-				throw new SEException("You can't set Direction to " + this.GetType());
 			}
 		}
 

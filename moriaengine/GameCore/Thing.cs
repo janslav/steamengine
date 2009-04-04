@@ -69,7 +69,7 @@ namespace SteamEngine {
 		public static TagKey weightTag = TagKey.Get("_weight_");
 
 
-		public sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
+		internal sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?[\da-f]+)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -286,7 +286,11 @@ namespace SteamEngine {
 			}
 		}
 
-		public abstract bool Flag_Disconnected { get; set; }
+		public virtual bool Flag_Disconnected {
+			get {
+				return false;
+			}
+		}
 
 		public void P(int x, int y) {
 			this.SetPosImpl(x, y, this.Z, this.M);
@@ -510,16 +514,11 @@ namespace SteamEngine {
 		}
 
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
-				object retVal = tg.Run(this, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(tg.Run(this, td, sa))) {
+					return true;
 				}
 			}
 			if (base.CancellableTrigger(td, sa)) {
@@ -533,13 +532,8 @@ namespace SteamEngine {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
-				object retVal = tg.TryRun(this, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(tg.TryRun(this, td, sa))) {
+					return true;
 				}
 			}
 			if (base.TryCancellableTrigger(td, sa)) {
@@ -1571,6 +1565,15 @@ namespace SteamEngine {
 			}
 
 			this.P((ushort) x, (ushort) y, this.Z);	//This won't change our Z coordinate, whereas P(x,y) would.
+		}
+
+		public virtual Direction Direction {
+			get {
+				return Direction.Default;
+			}
+			set {
+				throw new SEException("You can't set Direction to " + this.GetType());
+			}
 		}
 
 		/*

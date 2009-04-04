@@ -105,11 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Compare case insensitively the names of enumeration values if they have changed")]
 		private static bool IsEnumValueChanged(IDataFieldView field, object target, string newEnumValueName) {
 			string oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
-			if (string.Compare(oldEnumValuName, newEnumValueName, true) == 0) {
-				return false;
-			} else {
-				return true;
-			}
+			return !StringComparer.OrdinalIgnoreCase.Equals(oldEnumValuName, newEnumValueName);
 		}
 
 		[Summary("Examine the setings value's member type and get its prefix as used in ObjectSaver." +

@@ -134,6 +134,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the token characters
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetImage() {
 			return image;
 		}
@@ -199,6 +200,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public Token GetPreviousToken() {
 			return previous;
 		}
@@ -212,6 +214,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "previous")]
 		internal void SetPreviousToken(Token previous) {
 			if (this.previous != null) {
 				this.previous.next = null;
@@ -238,6 +241,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public Token GetNextToken() {
 			return next;
 		}
@@ -251,6 +255,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "next"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void SetNextToken(Token next) {
 			if (this.next != null) {
 				this.next.previous = null;
