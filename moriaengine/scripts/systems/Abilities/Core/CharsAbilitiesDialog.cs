@@ -243,7 +243,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Ability x, Ability y) {
-			return String.Compare(x.Name, y.Name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 		}
 	}
 
@@ -256,7 +256,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Ability x, Ability y) {
-			return String.Compare(x.AbilityDef.Defname, y.AbilityDef.Defname, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.AbilityDef.Defname, y.AbilityDef.Defname);
 		}
 	}
 

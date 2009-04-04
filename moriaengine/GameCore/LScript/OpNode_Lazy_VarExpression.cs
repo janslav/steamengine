@@ -57,7 +57,7 @@ namespace SteamEngine.LScript {
 			}
 
 			string name = LScript.GetString(origNode.GetChildAt(2));
-			if (string.Compare(name, "remove", true) == 0) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(name, "remove")) {
 				if (indicesList.Count != 0) {
 					throw new InterpreterException("Remove in this context means removing of a single value, thus indexing is invalid.",
 						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
@@ -77,7 +77,7 @@ namespace SteamEngine.LScript {
 					throw new InterpreterException("Invalid/missing token specifying the name of the value to remove",
 						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
 				}
-			} else if (string.Compare(name, "exists", true) == 0) {
+			} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "exists")) {
 				if (indicesList.Count != 0) {
 					throw new InterpreterException("Exists in this context means finding out if given value exists, thus indexing is invalid.",
 						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());

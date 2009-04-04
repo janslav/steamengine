@@ -44,6 +44,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.0
 	 */
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class RegExpException : Exception {
 
 		/**
@@ -56,12 +57,16 @@ namespace PerCederberg.Grammatica.Parser.RE {
 			 * used when a character was read that didn't match the
 			 * allowed set of characters at the given position.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			UNEXPECTED_CHARACTER,
 
 			/*
 			 * The unterminated pattern error constant. This error is
 			 * used when more characters were expected in the pattern.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			UNTERMINATED_PATTERN,
 
 			/*
@@ -70,6 +75,8 @@ namespace PerCederberg.Grammatica.Parser.RE {
 			 * characters are used in the pattern, but not supported
 			 * in this implementation.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			UNSUPPORTED_SPECIAL_CHARACTER,
 
 			/*
@@ -78,6 +85,8 @@ namespace PerCederberg.Grammatica.Parser.RE {
 			 * used in the pattern, but not supported in this
 			 * implementation.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 			UNSUPPORTED_ESCAPE_CHARACTER,
 
 			/*
@@ -85,6 +94,8 @@ namespace PerCederberg.Grammatica.Parser.RE {
 			 * used when a repetition count of zero is specified, or
 			 * when the minimum exceeds the maximum.
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased", MessageId = "Member")]
 			INVALID_REPEAT_COUNT
 		}
 
@@ -131,6 +142,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		 * 
 		 * @return the exception error message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetMessage() {
 			StringBuilder buffer = new StringBuilder();
 

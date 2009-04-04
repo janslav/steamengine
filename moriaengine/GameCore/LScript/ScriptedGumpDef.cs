@@ -107,7 +107,7 @@ namespace SteamEngine.LScript {
 						for (int i = 1, n = input.TriggerCount; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
 							trigger = input.GetTrigger(i);
 							string triggerName = trigger.triggerName;
-							if (String.Compare(triggerName, "anybutton", true) == 0) {
+							if (StringComparer.OrdinalIgnoreCase.Equals(triggerName, "anybutton")) {
 								responsesList.Add(new ResponseTrigger(0, int.MaxValue, trigger));
 								continue;
 							} else {

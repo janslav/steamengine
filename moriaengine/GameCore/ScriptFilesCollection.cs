@@ -183,7 +183,7 @@ namespace SteamEngine {
 
 		private bool IsRightExtension(string tryThis) {
 			foreach (string extension in extensions) {
-				if (string.Compare(tryThis, extension, true) == 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(tryThis, extension)) {
 					return true;
 				}
 			}

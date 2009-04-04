@@ -177,6 +177,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the production pattern id
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetId() {
 			return id;
 		}
@@ -186,6 +187,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the production pattern name
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetName() {
 			return name;
 		}
@@ -198,6 +200,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @param syntetic       the new value of the syntetic flag
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "syntetic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public void SetSyntetic(bool syntetic) {
 			this.syntetic = syntetic;
 		}
@@ -207,6 +210,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *  
 		 * @return the number of alternatives in this pattern
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetAlternativeCount() {
 			return alternatives.Count;
 		}
@@ -230,6 +234,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParserCreationException if an identical alternative has
 		 *             already been added
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void AddAlternative(ProductionPatternAlternative alt) {
 			if (alternatives.Contains(alt)) {
 				throw new ParserCreationException(
@@ -285,6 +290,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @param lookAhead      the new look-ahead set
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "lookAhead")]
 		internal void SetLookAhead(LookAheadSet lookAhead) {
 			this.lookAhead = lookAhead;
 		}

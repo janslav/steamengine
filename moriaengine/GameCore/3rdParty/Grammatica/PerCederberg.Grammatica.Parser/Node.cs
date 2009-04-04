@@ -73,6 +73,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the node type id
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public abstract int GetId();
 
 		/**
@@ -80,6 +81,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the node name
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public abstract string GetName();
 
 		/**
@@ -90,6 +92,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the line number of the first character, or
 		 *         -1 if not applicable
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual int GetStartLine() {
 			int line;
 
@@ -110,6 +113,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the column number of the first token character, or
 		 *         -1 if not applicable
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual int GetStartColumn() {
 			int col;
 
@@ -130,6 +134,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the line number of the last token character, or
 		 *         -1 if not applicable
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual int GetEndLine() {
 			int line;
 
@@ -150,6 +155,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return the column number of the last token character, or
 		 *         -1 if not applicable
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual int GetEndColumn() {
 			int col;
 
@@ -167,6 +173,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the parent parse tree node
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public Node GetParent() {
 			return parent;
 		}
@@ -176,6 +183,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @param parent         the new parent node
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "parent")]
 		internal void SetParent(Node parent) {
 			this.parent = parent;
 		}
@@ -185,6 +193,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the number of child nodes
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual int GetChildCount() {
 			return 0;
 		}
@@ -208,6 +217,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.2
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetDescendantCount() {
 			int count = 0;
 
@@ -224,6 +234,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @return the number of values associated with this node
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetValueCount() {
 			if (values == null) {
 				return 0;
@@ -258,6 +269,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @return a list with all values, or
 		 *         null if no values have been set 
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public ArrayList GetAllValues() {
 			return values;
 		}
@@ -283,6 +295,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 *
 		 * @param values         the vector with node values
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "values")]
 		public void AddValues(ArrayList values) {
 			if (values != null) {
 				for (int i = 0; i < values.Count; i++) {

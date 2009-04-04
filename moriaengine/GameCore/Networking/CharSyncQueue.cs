@@ -199,7 +199,7 @@ namespace SteamEngine.Networking {
 			private short intel;
 			private short dex;
 			private bool isFemale;
-			private ulong gold;
+			private long gold;
 
 			private short armorClass;
 			private short stat1;
@@ -325,7 +325,7 @@ namespace SteamEngine.Networking {
 				if (this.IsNewAndPositiveBit(NSFlags.Position)) {
 					this.point = new Point4D(this.thing);
 				}
-				this.changeflags |= (NSFlags) movType;//a dirty change of the enum type....
+				this.changeflags |= (NSFlags) movType; //a dirty change of the enum type....
 			}
 
 			private bool GetPositionChanged(out bool teleported, out bool running, out bool requestedStep) {
@@ -950,7 +950,7 @@ namespace SteamEngine.Networking {
 		}
 
 		[Flags]
-		internal enum NSFlags : int {
+		internal enum NSFlags {
 			None = 0x00000000,
 			Resend = 0x10000000, //complete update - after creation
 

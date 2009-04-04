@@ -67,12 +67,12 @@ namespace SteamEngine {
 
 		internal ThingDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			this.name = InitField_Typed("name", "", typeof(string));
-			this.color = InitField_Typed("color", 0, typeof(int));
+			this.name = InitTypedField("name", "", typeof(string));
+			this.color = InitTypedField("color", 0, typeof(int));
 
-			this.model = InitField_Model("model", 0);
-			this.weight = InitField_Typed("weight", 0, typeof(float));
-			this.height = InitField_Typed("height", 0, typeof(int));
+			this.model = InitModelField("model", 0);
+			this.weight = InitTypedField("weight", 0, typeof(float));
+			this.height = InitTypedField("height", 0, typeof(int));
 			int modelNum;
 			if (TagMath.TryParseInt32(defname.Substring(2), out modelNum)) {
 				this.model.SetFromScripts(filename, headerLine, modelNum.ToString());
@@ -136,9 +136,9 @@ namespace SteamEngine {
 
 		public override string ToString() {
 			if (this.model.CurrentValue == null) {
-				return Name + ": " + Defname + "//" + altdefname + " (null model!)";
+				return Name + ": " + Defname + "//" + Altdefname + " (null model!)";
 			} else {
-				return Name + ": " + Defname + "//" + altdefname + " (" + model.CurrentValue + ")";
+				return Name + ": " + Defname + "//" + Altdefname + " (" + model.CurrentValue + ")";
 			}
 		}
 
@@ -504,8 +504,8 @@ namespace SteamEngine {
 
 		private static void UnRegisterThingDef(ThingDef td) {
 			byDefname.Remove(td.Defname);
-			if (td.altdefname != null) {
-				byDefname.Remove(td.altdefname);
+			if (td.Altdefname != null) {
+				byDefname.Remove(td.Altdefname);
 			}
 		}
 

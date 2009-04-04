@@ -95,7 +95,7 @@ namespace SteamEngine.Regions {
 			this.inactivated = false;
 		}
 
-		public sealed class StaticRegionSaveCoordinator : IBaseClassSaveCoordinator {
+		internal sealed class StaticRegionSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex regionNameRE = new Regex(@"^\(\s*(?<value>\w*)\s*\)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 

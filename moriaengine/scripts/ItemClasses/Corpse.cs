@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 				ItemDispidInfo idi = this.TypeDef.DispidInfo;
 				string name = this.Name;
 				if (idi != null) {
-					if (string.Compare(name, idi.SingularName, true) == 0) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(name, idi.SingularName)) {
 						argument = null;
 						id = (1020000 + (this.Model & 16383));
 						return;
@@ -126,11 +126,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public override Direction Direction {
 			get {
-				return direction;
+				return this.direction;
 			}
 			set {
-				SteamEngine.Networking.ItemSyncQueue.AboutToChange(this);
-				direction = value;
+				value = value & Direction.Mask;
+				if (value != this.direction) {
+					SteamEngine.Networking.ItemSyncQueue.AboutToChange(this);
+					this.direction = value;
+				}
 			}
 		}
 

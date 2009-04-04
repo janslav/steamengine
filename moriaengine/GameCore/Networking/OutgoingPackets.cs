@@ -179,7 +179,7 @@ namespace SteamEngine.Networking {
 			this.x = (ushort) chr.X;
 			this.y = (ushort) chr.Y;
 			this.z = (sbyte) chr.Z;
-			this.direction = chr.Dir;
+			this.direction = chr.DirectionByte;
 
 			this.mapSizeX = (ushort) (mapSizeX - 8);
 			this.mapSizeY = (ushort) mapSizeY;
@@ -259,7 +259,7 @@ namespace SteamEngine.Networking {
 			this.y = p.y;
 			this.z = p.z;
 			this.flagsToSend = ch.FlagsToSend;
-			this.direction = ch.Dir;
+			this.direction = ch.DirectionByte;
 
 			state.movementState.ResetMovementSequence();
 		}
@@ -354,7 +354,7 @@ namespace SteamEngine.Networking {
 			this.x = point.x;
 			this.y = point.y;
 			this.z = point.z;
-			this.dir = ch.Dir;
+			this.dir = ch.DirectionByte;
 			this.color = ch.ShortColor;
 			this.flagsToSend = ch.FlagsToSend;
 			this.highlight = (byte) highlight;
@@ -417,7 +417,7 @@ namespace SteamEngine.Networking {
 			this.flagsToSend = chr.FlagsToSend;
 			this.highlight = (byte) highlight;
 
-			this.dir = chr.Dir;
+			this.dir = chr.DirectionByte;
 			if (running) {
 				this.dir |= 0x80;
 			}
@@ -442,10 +442,10 @@ namespace SteamEngine.Networking {
 
 	public sealed class DrawContainerOutPacket : GameOutgoingPacket {
 		uint flaggedUid;
-		ushort gump;
+		short gump;
 
 		[CLSCompliant(false)]
-		public void PrepareContainer(uint flaggedUid, ushort gump) {
+		public void PrepareContainer(uint flaggedUid, short gump) {
 			this.flaggedUid = flaggedUid;
 			this.gump = gump;
 		}
@@ -453,7 +453,7 @@ namespace SteamEngine.Networking {
 		[CLSCompliant(false)]
 		public void PrepareSpellbook(uint flaggedUid) {
 			this.flaggedUid = flaggedUid;
-			this.gump = 0xffff;
+			this.gump = -1;
 		}
 
 		public override byte Id {
@@ -462,7 +462,7 @@ namespace SteamEngine.Networking {
 
 		protected override void Write() {
 			this.EncodeUInt(this.flaggedUid);
-			this.EncodeUShort(this.gump);
+			this.EncodeShort(this.gump);
 		}
 	}
 
@@ -892,9 +892,9 @@ namespace SteamEngine.Networking {
 		uint flaggedUid, gold;
 		string charName;
 		short mana, maxMana, hits, maxHits, stam, maxStam, strength, dexterity, intelligence, armor,
-			fireResist, coldResist, poisonResist, energyResist, luck, minDamage, maxDamage, tithingPoints;
+			fireResist, coldResist, poisonResist, energyResist, luck, minDamage, maxDamage, tithingPoints, statCap;
 		byte currentPets, maxPets;
-		ushort statCap, weight;
+		ushort weight;
 		bool isFemale;
 		bool canRenameSelf;
 
@@ -919,7 +919,7 @@ namespace SteamEngine.Networking {
 				this.dexterity = ch.Dex;
 				this.intelligence = ch.Int;
 
-				ulong lgold = ch.Gold;
+				long lgold = ch.Gold;
 				this.gold = (uint) (lgold > 0xffffffff ? 0xffffffff : lgold);
 				this.armor = ch.StatusArmorClass;
 				this.weight = (ushort) ch.Weight;
@@ -983,7 +983,7 @@ namespace SteamEngine.Networking {
 
 			this.EncodeByte(0); //unknown
 
-			this.EncodeUShort(this.statCap);
+			this.EncodeShort(this.statCap);
 			this.EncodeByte(this.currentPets);
 			this.EncodeByte(this.maxPets);
 
@@ -1473,7 +1473,7 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(byte sequence, AbstractCharacter ch) {
 			this.sequence = sequence;
-			this.direction = ch.Dir;
+			this.direction = ch.DirectionByte;
 			this.x = (ushort) ch.X;
 			this.y = (ushort) ch.Y;
 			this.z = (sbyte) ch.Z;
@@ -1714,7 +1714,7 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(AbstractCharacter cre, int anim, int numAnims, bool backwards, bool undo, byte frameDelay) {
 			this.charUid = cre.FlaggedUid;
-			this.dir = cre.Dir;
+			this.dir = cre.DirectionByte;
 			this.anim = (ushort) anim;
 			this.numAnims = (ushort) numAnims;
 			this.backwards = backwards;

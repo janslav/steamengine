@@ -76,11 +76,11 @@ namespace SteamEngine.LScript {
 		}
 
 		public static int StrCmp(string str1, string str2) {
-			return string.Compare(str1, str2, false);
+			return StringComparer.Ordinal.Compare(str1, str2);
 		}
 
 		public static int StrCmpi(string str1, string str2) {
-			return string.Compare(str1, str2, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(str1, str2);
 		}
 
 		public static ArrayList List() { //a 'shortcut' for spherescript to make an arraylist

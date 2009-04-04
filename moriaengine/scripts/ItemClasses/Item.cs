@@ -85,17 +85,17 @@ namespace SteamEngine.CompiledScripts {
 	 * 0x0400: Provides partial cover (Doesn't block LOS but does assess combat penalties)
 	 * */
 
-	public enum ItemFlags : byte {
-		None = 0x00,
-		Disconnecned = 0x01, //reserved by core
+	//public enum ItemFlags : byte {
+	//    None = 0x00,
+	//    Disconnecned = 0x01, //reserved by core
 
-		Newbied = 0x04,
+	//    Newbied = 0x04,
 
-		DisplayAsMovable = 0x08, AlwaysMovable = DisplayAsMovable,
-		NonMovable = 0x10, NeverMovable = NonMovable,
+	//    DisplayAsMovable = 0x08, AlwaysMovable = DisplayAsMovable,
+	//    NonMovable = 0x10, NeverMovable = NonMovable,
 
-		Invisible = 0x80,
-	}
+	//    Invisible = 0x80,
+	//}
 
 	[Dialogs.ViewableClass]
 	public partial class Item : AbstractItem {
@@ -136,68 +136,49 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public ItemFlags Flags {
-			get {
-				return (ItemFlags) this.flags;
-			}
-		}
-
 		public bool Flag_Invisible {
 			get {
-				return ((this.Flags & ItemFlags.Invisible) == ItemFlags.Invisible);
+				return this.ProtectedFlag1;
 			}
 			set {
-				ItemFlags oldFlags = this.Flags;
-				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.Invisible) : (oldFlags & ~ItemFlags.Invisible));
-				if (newFlags != oldFlags) {
+				if (this.ProtectedFlag1 != value) {
 					if (value) {
 						OpenedContainers.SetContainerClosed(this);
 						this.RemoveFromView();
 					}
 					ItemSyncQueue.AboutToChange(this);
-					this.flags = (byte) newFlags;
+					this.ProtectedFlag1 = value;
 				}
 			}
 		}
 
 		public bool Flag_Newbied {
 			get {
-				return ((this.Flags & ItemFlags.Newbied) == ItemFlags.Newbied);
+				return this.ProtectedFlag2;
 			}
 			set {
-				ItemFlags oldFlags = this.Flags;
-				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.Newbied) : (oldFlags & ~ItemFlags.Newbied));
-				//if (newFlags != oldFlags) {
-				this.flags = (byte) newFlags;
-				//}
+				this.ProtectedFlag2 = value;
 			}
 		}
 
 		public bool Flag_DisplayAsMovable {
 			get {
-				return ((this.Flags & ItemFlags.DisplayAsMovable) == ItemFlags.DisplayAsMovable);
+				return this.ProtectedFlag3;
 			}
 			set {
-				ItemFlags oldFlags = this.Flags;
-				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.DisplayAsMovable) : (oldFlags & ~ItemFlags.DisplayAsMovable));
-				if (newFlags != oldFlags) {
+				if (this.ProtectedFlag3 != value) {
 					ItemSyncQueue.AboutToChange(this);
-					this.flags = (byte) newFlags;
+					this.ProtectedFlag3 = value;
 				}
 			}
 		}
 
 		public override sealed bool Flag_NonMovable {
 			get {
-				return ((this.Flags & ItemFlags.NonMovable) == ItemFlags.NonMovable);
+				return this.ProtectedFlag4;
 			}
 			set {
-				ItemFlags oldFlags = this.Flags;
-				ItemFlags newFlags = (value ? (oldFlags | ItemFlags.NonMovable) : (oldFlags & ~ItemFlags.NonMovable));
-				//if (newFlags != oldFlags) {
-				//    ItemSyncQueue.AboutToChange(this);
-					this.flags = (byte) newFlags;
-				//}
+				this.ProtectedFlag4 = value;
 			}
 		}
 
@@ -215,7 +196,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Enumerates every item in this item and items in all subcontainers, recurses into infinite deep.")]
 		public IEnumerable<Item> EnumDeep() {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
 			while (e.MoveNext()) {
 				Item i = (Item) e.Current;
@@ -283,7 +264,7 @@ namespace SteamEngine.CompiledScripts {
 			if (amount <= 1) {
 				ItemDispidInfo idi = this.TypeDef.DispidInfo;
 				if (idi != null) {
-					if (string.Compare(name, idi.SingularName, true) == 0) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(name, idi.SingularName)) {
 						id = (1020000 + (this.Model & 16383)); //hmmm...
 						return;
 					}

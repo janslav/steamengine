@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public RegenerationDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			regenSpeed = InitField_Typed("regenSpeedCoef", 10, typeof(ushort));
+			regenSpeed = InitTypedField("regenSpeedCoef", 10, typeof(ushort));
 		}
 
 		[InfoField("Regeneration Speed")]

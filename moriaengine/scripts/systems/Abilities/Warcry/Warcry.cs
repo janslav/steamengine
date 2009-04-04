@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public WarcryDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			effectDuration = InitField_Typed("effectDuration", 10, typeof(double));
+			effectDuration = InitTypedField("effectDuration", 10, typeof(double));
 		}
 
 		#region triggerMethods

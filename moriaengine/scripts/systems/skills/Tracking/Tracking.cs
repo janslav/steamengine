@@ -52,13 +52,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public TrackingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			minFootstepAge = InitField_Typed("minFootstepAge", 15, typeof(double));
-			maxFootstepAge = InitField_Typed("maxFootstepAge", 120, typeof(double));
-			minCharsToTrack = InitField_Typed("minCharsToTrack", 3, typeof(int));
-			maxCharsToTrack = InitField_Typed("maxCharsToTrack", 20, typeof(int));
-			minSafeSteps = InitField_Typed("minSafeSteps", 1, typeof(int));
-			maxSafeSteps = InitField_Typed("maxSafeSteps", 10, typeof(int));
-			pvmEffect = InitField_Typed("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
+			minFootstepAge = InitTypedField("minFootstepAge", 15, typeof(double));
+			maxFootstepAge = InitTypedField("maxFootstepAge", 120, typeof(double));
+			minCharsToTrack = InitTypedField("minCharsToTrack", 3, typeof(int));
+			maxCharsToTrack = InitTypedField("maxCharsToTrack", 20, typeof(int));
+			minSafeSteps = InitTypedField("minSafeSteps", 1, typeof(int));
+			maxSafeSteps = InitTypedField("maxSafeSteps", 10, typeof(int));
+			pvmEffect = InitTypedField("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
 		}
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {

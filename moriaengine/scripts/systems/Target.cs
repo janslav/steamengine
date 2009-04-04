@@ -174,7 +174,7 @@ namespace SteamEngine.CompiledScripts {
 		internal ScriptedTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.message = this.InitField_Typed("message", "Target?", typeof(string));
+			this.message = this.InitTypedField("message", "Target?", typeof(string));
 		}
 
 		public string Message {
@@ -278,15 +278,15 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void UnRegisterScriptedTargetDef(ScriptedTargetDef td) {
 			byDefname.Remove(td.Defname);
-			if (td.altdefname != null) {
-				byDefname.Remove(td.altdefname);
+			if (td.Altdefname != null) {
+				byDefname.Remove(td.Altdefname);
 			}
 		}
 
 		private static void RegisterScriptedTargetDef(ScriptedTargetDef td) {
 			byDefname[td.Defname] = td;
-			if (td.altdefname != null) {
-				byDefname[td.altdefname] = td;
+			if (td.Altdefname != null) {
+				byDefname[td.Altdefname] = td;
 			}
 		}
 

@@ -33,34 +33,114 @@ using SteamEngine.Communication.TCP;
 #if TESTRUNUO
 using RunUO_Compression = Server.Network.Compression;
 #endif
-
-/*
-	Unused (potential) flags:
-	In 'direction':
-		0x08, 0x10, 0x20, and 0x40 (0x80 is Flag_Moving, which is used to signal information about
-		movement to NetState). Note that anyone checking the Direction property, or dir, or facing,
-		will not see the flags, since they are hidden by those properties.
-	'gender':
-		This is currently a byte with valid values being 0 or 1, but probably should be eliminated
-		and made into a flag on some other variable. One argument for leaving it as a byte would
-		be if scripters want to script races with more than two genders (or two genders plus genderless).
-		If we do leave it as a byte, then bits 2-7 (0x02 to 0x80) are available for use as flags, but
-		we should use the higher ones first in case a scripter does decide to increase the # of genders
-		for a specific race. Also, if we do add flags here, gender would have to be hidden behind a
-		masking property, like direction is.
-*/
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 
+	/*
+		Unused (potential) flags:
+		In 'direction':
+			0x08, 0x10, 0x20, and 0x40 (0x80 is Flag_Moving, which is used to signal information about
+			movement to NetState). Note that anyone checking the Direction property, or dir, or facing,
+			will not see the flags, since they are hidden by those properties.
+		'gender':
+			This is currently a byte with valid values being 0 or 1, but probably should be eliminated
+			and made into a flag on some other variable. One argument for leaving it as a byte would
+			be if scripters want to script races with more than two genders (or two genders plus genderless).
+			If we do leave it as a byte, then bits 2-7 (0x02 to 0x80) are available for use as flags, but
+			we should use the higher ones first in case a scripter does decide to increase the # of genders
+			for a specific race. Also, if we do add flags here, gender would have to be hidden behind a
+			masking property, like direction is.
+	*/
+
 	/**
 		A character.
 	*/
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public abstract partial class AbstractCharacter : Thing, ISrc {
 		public static bool CharacterTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Character Trace Messages"]);
 
 		public const int numLayers = 31;
 		public const int sentLayers = 25;//0-24
+
+		//In most cases, you should use Flag_* properties to set/get flags. Rarely, you may need to directly modify flags,
+		//	in the SE core (not in scripts), which is why this is internal.
+		//But whatever you do, NEVER set the disconnected flag by tweaking flags.
+		private enum DirectionAndFlag : short {
+			Zero = 0,
+			DirectionMask = 0x0007,
+			DirFlagDisconnected = 0x0008,
+			DirFlagMoving = 0x0010,
+			DirFlag1 = 0x0020,
+			DirFlag2 = 0x0040,
+			DirFlag3 = 0x0080,
+			DirFlag4 = 0x0100,
+			DirFlag5 = 0x0200,
+			DirFlag6 = 0x0400
+		}
+
+		private AbstractAccount account;
+		private string name;
+		public Thing act;
+		public Thing targ;
+		private DirectionAndFlag directionAndFlags = DirectionAndFlag.Zero;
+		internal ThingLinkedList visibleLayers;//layers 0..24
+		internal ThingLinkedList invisibleLayers;//layers (26..29) + (32..max)
+		internal ThingLinkedList specialLayer;//layer 30
+		internal AbstractItem draggingLayer;
+
+		private static int instances;
+
+		internal CharSyncQueue.CharState syncState; //don't touch
+
+		protected AbstractCharacter(ThingDef myDef)
+			: base(myDef) {
+			instances++;
+			this.name = myDef.Name;
+			Globals.lastNewChar = this;
+		}
+
+		protected AbstractCharacter(AbstractCharacter copyFrom)
+			: base(copyFrom) { //copying constuctor
+			instances++;
+			this.account = copyFrom.account;
+			this.name = copyFrom.name;
+			this.targ = copyFrom.targ;
+			this.directionAndFlags = copyFrom.directionAndFlags;
+			this.act = copyFrom.act;
+			Globals.lastNewChar = this;
+			Map.GetMap(this.point4d.m).Add(this);
+		}
+
+		public static int Instances {
+			get {
+				return instances;
+			}
+		}
+
+		[Summary("The Direction this character is facing.")]
+		public override sealed Direction Direction {
+			get {
+				return (Direction) this.DirectionByte;
+			}
+			set {
+				this.DirectionByte = (byte) value;
+			}
+		}
+
+		[Summary("Direction, as a byte.")]
+		internal byte DirectionByte {
+			get {
+				return (byte) (this.directionAndFlags & DirectionAndFlag.DirectionMask);
+			}
+			set {
+				DirectionAndFlag newValue = (this.directionAndFlags & ~DirectionAndFlag.DirectionMask) | ((DirectionAndFlag) value & DirectionAndFlag.DirectionMask);
+				if (this.directionAndFlags != newValue) {
+					CharSyncQueue.AboutToChangeDirection(this, false);
+					this.directionAndFlags = newValue;
+				}
+			}
+		}
 
 		public AbstractCharacterDef TypeDef {
 			get {
@@ -75,78 +155,6 @@ namespace SteamEngine {
 			}
 		}
 
-		private AbstractAccount account = null;
-		private string name = null;
-		public Thing act = null;
-		public Thing targ = null;
-		private byte direction = 0;
-		internal ThingLinkedList visibleLayers;//layers 0..24
-		internal ThingLinkedList invisibleLayers;//layers (26..29) + (32..max)
-		internal ThingLinkedList specialLayer;//layer 30
-		internal AbstractItem draggingLayer = null;
-
-		//In most cases, you should use Flag_* properties to set/get flags. Rarely, you may need to directly modify flags,
-		//	in the SE core (not in scripts), which is why this is internal.
-		//But whatever you do, NEVER set the disconnected flag (0x0001) by tweaking flags.
-		protected ushort flags = 0;	//This is a ushort to save memory.
-		private static int instances = 0;
-
-		internal CharSyncQueue.CharState syncState; //don't touch
-
-		public AbstractCharacter(ThingDef myDef)
-			: base(myDef) {
-			instances++;
-			this.name = myDef.Name;
-			Globals.lastNewChar = this;
-		}
-
-		public AbstractCharacter(AbstractCharacter copyFrom)
-			: base(copyFrom) { //copying constuctor
-			instances++;
-			this.account = copyFrom.account;
-			this.name = copyFrom.name;
-			this.targ = copyFrom.targ;
-			this.flags = copyFrom.flags;
-			this.direction = copyFrom.direction;
-			this.act = copyFrom.act;
-			Globals.lastNewChar = this;
-			Map.GetMap(this.point4d.m).Add(this);
-		}
-
-		public static int Instances {
-			get {
-				return instances;
-			}
-		}
-
-		/**
-			The Direction this character is facing.
-		*/
-		public Direction Direction {
-			get {
-				return (Direction) (direction & 0x7);
-			}
-			set {
-				byte dir = (byte) value;
-				if (dir != direction) {
-					Sanity.IfTrueThrow(!Enum.IsDefined(typeof(Direction), value), "Invalid value " + value + " for " + this + "'s direction.");
-					CharSyncQueue.AboutToChangeDirection(this, false);
-					direction = dir;
-				}
-			}
-		}
-		/**
-			Direction, as a byte.
-		*/
-		public byte Dir {
-			get {
-				return ((byte) (direction & 0x7));
-			}
-			set {
-				Direction = (Direction) value;
-			}
-		}
-
 		public abstract bool IsFemale { get; }
 		public abstract bool IsMale { get; }
 
@@ -154,17 +162,94 @@ namespace SteamEngine {
 		//set for the rest of the cycle. Maybe there's a potential use for that in scripts, so this is public.
 		public bool Flag_Moving {
 			get {
-				return (direction & 0x80) == 0x80;
+				return (this.directionAndFlags & DirectionAndFlag.DirFlagMoving) == DirectionAndFlag.DirFlagMoving;
 			}
 			set {
 				if (value) {
-					direction |= 0x80;
+					this.directionAndFlags |= DirectionAndFlag.DirFlagMoving;
 				} else {
-					direction &= 0x7f;
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlagMoving;
 				}
 			}
 		}
 
+		protected bool ProtectedFlag1 {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlag1) == DirectionAndFlag.DirFlag1);
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlag1;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlag1;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag2 {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlag2) == DirectionAndFlag.DirFlag2);
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlag2;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlag2;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag3 {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlag3) == DirectionAndFlag.DirFlag3);
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlag3;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlag3;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag4 {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlag4) == DirectionAndFlag.DirFlag4);
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlag4;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlag4;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag5 {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlag5) == DirectionAndFlag.DirFlag5);
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlag5;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlag5;
+				}
+			}
+		}
+
+		protected bool ProtectedFlag6 {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlag6) == DirectionAndFlag.DirFlag6);
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlag6;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlag6;
+				}
+			}
+		}
 		//public override float Weight {
 		//	get {
 		//		if (recalculateWeight) FixWeight();
@@ -248,26 +333,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public override bool Flag_Disconnected {
-			get {
-				return ((flags & 0x0001) == 0x0001);
-			}
-			set {
-				throw new SEException("Can't set Flag_Disconnected directly on a character");
-			}
-			//    Sanity.IfTrueThrow(IsPlayer, "It is NOT safe to set Flag_Disconnected on a player.");
-			//    if (Flag_Disconnected!=value) {
-			//        NetState.AboutToChangeFlags(this);
-			//        flags=(ushort) (value?(flags|0x0001):(flags&~0x0001));
-			//        if (value) {
-			//            GetMap().Disconnected(this);
-			//        } else {
-			//            GetMap().Reconnected(this);
-			//        }
-			//    }
-			//}
-		}
-
 		public abstract bool Flag_Insubst {
 			get;
 			set;
@@ -275,6 +340,26 @@ namespace SteamEngine {
 
 		public override sealed void Resend() {
 			CharSyncQueue.Resend(this);
+		}
+
+		public override bool Flag_Disconnected {
+			get {
+				return ((this.directionAndFlags & DirectionAndFlag.DirFlagDisconnected) == DirectionAndFlag.DirFlagDisconnected);
+			}
+		}
+
+		private void SetFlag_Disconnected(bool value) {
+			DirectionAndFlag newValue = (value ? (this.directionAndFlags | DirectionAndFlag.DirFlagDisconnected) : (this.directionAndFlags & ~DirectionAndFlag.DirFlagDisconnected));
+
+			if (this.directionAndFlags != newValue) {
+				CharSyncQueue.AboutToChangeVisibility(this);
+				this.directionAndFlags = newValue;
+				if (value) {
+					this.GetMap().Disconnected(this);
+				} else {
+					this.GetMap().Reconnected(this);
+				}
+			}
 		}
 
 		/**
@@ -323,23 +408,10 @@ namespace SteamEngine {
 			}
 		}
 
-		//So Character itself (or GameConn after relinking) can set the flag without warnings.
-		private void SetFlag_Disconnected(bool value) {
-			if (this.Flag_Disconnected != value) {
-				CharSyncQueue.AboutToChangeVisibility(this);
-				this.flags = (ushort) (value ? (this.flags | 0x0001) : (this.flags & ~0x0001));
-				if (value) {
-					this.GetMap().Disconnected(this);
-				} else {
-					this.GetMap().Reconnected(this);
-				}
-			}
-		}
-
 		//is called by GameConn when relinking, which is after the Things have been loaded, but before
 		//they're put into map
 		internal void ReLinkToGameState() {
-			this.flags = (ushort) (this.flags & ~0x0001); //we're not disconnected, the Map needs to know
+			this.directionAndFlags &= ~DirectionAndFlag.DirFlagDisconnected; //we're not disconnected, the Map needs to know
 		}
 
 		//Called by GameConn
@@ -389,14 +461,13 @@ namespace SteamEngine {
 			if (!this.Def.Name.Equals(this.name)) {
 				output.WriteValue("name", this.name);
 			}
-			int flagsToSave = this.flags;
+			DirectionAndFlag flagsToSave = this.directionAndFlags;
 			if (this.IsPlayer) {
-				flagsToSave = flagsToSave | 0x0001;//add the Disconnected flag, makes no sense to save a person "connected"
+				flagsToSave = flagsToSave | DirectionAndFlag.DirFlagDisconnected;//add the Disconnected flag, makes no sense to save a person "connected"
 			}
 			if (flagsToSave != 0) {
-				output.WriteValue("flags", flagsToSave);
+				output.WriteValue("directionAndFlags", flagsToSave);
 			}
-			output.WriteValue("direction", (byte) this.direction);
 			base.Save(output);
 		}
 
@@ -417,11 +488,11 @@ namespace SteamEngine {
 
 		//For loading
 		public void FixDisconnectedFlagOnPlayers() {
-			if (IsPlayer) {
+			if (this.IsPlayer) {
 				if (this.GameState == null) {
-					flags = (ushort) (flags | 0x0001);
+					this.directionAndFlags |= DirectionAndFlag.DirFlagDisconnected;
 				} else {	//there shouldn't actually be anyone connected when this happens, but we check just in case.
-					flags = (ushort) (flags & ~0x0001);
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlagDisconnected;
 				}
 			}
 		}
@@ -446,15 +517,8 @@ namespace SteamEngine {
 						name = valueString;
 					}
 					break;
-				case "flags":
-					flags = TagMath.ParseUInt16(valueString);
-					break;
-				case "direction":
-					direction = TagMath.ParseByte(valueString);
-					if (Flag_Moving) {
-						Flag_Moving = false;
-						Sanity.IfTrueSay(true, "Flag_Moving was saved! It should not have been! (At the time this sanity check was written, NetState changes should always be processed before any thought of saving occurs. NetState changes clear Flag_Moving, if it is set)");
-					}
+				case "directionandflags":
+					this.directionAndFlags = (DirectionAndFlag) TagMath.ParseByte(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -593,8 +657,10 @@ namespace SteamEngine {
 		//player or npc walking
 		public bool WalkRunOrFly(Direction dir, bool running, bool requested) {
 			ThrowIfDeleted();
-			Flag_Moving = true;
-			if (Direction == dir) {
+			this.Flag_Moving = true;
+			dir = dir & Direction.Mask;
+
+			if (this.Direction == dir) { //no dir change = step forward
 				Point4D oldPoint = new Point4D(this.point4d);
 
 				Map map = GetMap();
@@ -607,18 +673,13 @@ namespace SteamEngine {
 
 				//move char, and send 0x77 to players nearby
 
-				//check valid spot, and change z
-				if (!Map.IsValidPos(newX, newY, oldPoint.M)) {	//off the map
-					return false;
-				}
-
 				if (this.TryCancellableTrigger(TriggerKey.step, new ScriptArgs(dir, running))) {
 					return false;
 				}
 
 				bool onStepCancelled = false;
 				try {
-					this.On_Step((byte) dir, running);
+					this.On_Step(dir, running);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (onStepCancelled) {
 					return false;
@@ -633,20 +694,22 @@ namespace SteamEngine {
 					}
 				}
 
-				MovementType mt = MovementType.Walking;
+				MovementType mt;
 				if (running) {
 					mt = MovementType.Running;
+				} else {
+					mt = MovementType.Walking;
 				}
 				if (requested) {
 					mt |= MovementType.RequestedStep;
 				}
 				CharSyncQueue.AboutToChangePosition(this, mt);
 
-				point4d.SetP((ushort) newX, (ushort) newY, (sbyte) newZ);
+				point4d.SetP(newX, newY, newZ);
 				ChangedP(oldPoint);
-			} else {//just changing direction, no steps
+			} else { //just changing direction, no steps
 				CharSyncQueue.AboutToChangeDirection(this, requested);
-				direction = (byte) dir;
+				this.Direction = dir;
 			}
 			return true;
 		}
@@ -680,7 +743,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual bool On_Step(byte direction, bool running) {
+		public virtual bool On_Step(Direction direction, bool running) {
 			return false;
 		}
 
@@ -1133,37 +1196,36 @@ namespace SteamEngine {
 		public abstract short Str { get; set; }
 		public abstract short Dex { get; set; }
 		public abstract short Int { get; set; }
-		public abstract ulong Gold { get; }
-		public abstract short Experience { get; set; }
+		public abstract long Gold { get; }
+
 		//Tithing points can be reduced if you do something to displease your god, like murdering innocents.
 		//They can even go negative (but not from using powers, which work only with enough points).
 		//You only gain points by sacrificing gold (that balances this with other magic classes since this has no reagent costs).
 		public abstract short TithingPoints { get; set; }
 		[Summary("Displays in client status as Physical resistance by default")]
-		public abstract short StatusArmorClass { get; }
+		public virtual short StatusArmorClass { get { return 0; } }
 		[Summary("Displays in client status as Energy resistance by default")]
-		public abstract short StatusMindDefense { get; }
+		public virtual short StatusMindDefense { get { return 0; } }
 
 		//Resistances do not have effs. Negative values impart penalties.
 		[Summary("Displays in client status as Fire resistance by default")]
-		public abstract short ExtendedStatusNum01 { get; }
+		public virtual short ExtendedStatusNum01 { get { return 0; } }
 		[Summary("Displays in client status as Cold resistance by default")]
-		public abstract short ExtendedStatusNum02 { get; }
+		public virtual short ExtendedStatusNum02 { get { return 0; } }
 		[Summary("Displays in client status as Poison resistance by default")]
-		public abstract short ExtendedStatusNum03 { get; }
+		public virtual short ExtendedStatusNum03 { get { return 0; } }
 		[Summary("Displays in client status as Luck by default")]
-		public abstract short ExtendedStatusNum04 { get; }
+		public virtual short ExtendedStatusNum04 { get { return 0; } }
 		[Summary("Displays in client status as Min damage by default")]
-		public abstract short ExtendedStatusNum05 { get; }
+		public virtual short ExtendedStatusNum05 { get { return 0; } }
 		[Summary("Displays in client status as Max damage by default")]
-		public abstract short ExtendedStatusNum06 { get; }
-
+		public virtual short ExtendedStatusNum06 { get { return 0; } }
 		[Summary("Displays in client status as Current pet count by default")]
-		public abstract byte ExtendedStatusNum07 { get; }
+		public virtual byte ExtendedStatusNum07 { get { return 0; } }
 		[Summary("Displays in client status as Max pet count by default")]
-		public abstract byte ExtendedStatusNum08 { get; }
+		public virtual byte ExtendedStatusNum08 { get { return 0; } }
 		[Summary("Displays in client status as Stat cap by default")]
-		public abstract ushort ExtendedStatusNum09 { get; }
+		public virtual short ExtendedStatusNum09 { get { return 0; } }
 
 		public abstract HighlightColor GetHighlightColorFor(AbstractCharacter viewer);
 

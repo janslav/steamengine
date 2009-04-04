@@ -94,7 +94,7 @@ namespace SteamEngine.Converter {
 
 			string name = input.headerName;
 			Set("Name", "\"" + name + "\"", "");
-			if (string.Compare(name, "%servname%", true) == 0) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(name, "%servname%")) {
 				//headerType = "WorldRegion";
 				hierarchyIndex = 0;
 				//} else {
@@ -117,7 +117,7 @@ namespace SteamEngine.Converter {
 
 			PropsLine defnameLine = input.TryPopPropsLine("defname");
 			if (defnameLine != null) {
-				if (string.Compare(defnameLine.value, "a_world", true) == 0) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(defnameLine.value, "a_world")) {
 					//headerType = "Worldregion";
 					hierarchyIndex = 0;
 				}

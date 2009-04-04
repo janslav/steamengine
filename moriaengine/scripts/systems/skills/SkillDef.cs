@@ -47,9 +47,9 @@ namespace SteamEngine.CompiledScripts {
 
 		public SkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			advRate = InitField_Typed("advRate", 0, typeof(double[]));
-			delay = InitField_Typed("delay", 0, typeof(double[]));
-			effect = InitField_Typed("effect", 0, typeof(double[]));
+			advRate = InitTypedField("advRate", 0, typeof(double[]));
+			delay = InitTypedField("delay", 0, typeof(double[]));
+			effect = InitTypedField("effect", 0, typeof(double[]));
 		}
 
 		//		protected override void LoadLine(string param, string args) {

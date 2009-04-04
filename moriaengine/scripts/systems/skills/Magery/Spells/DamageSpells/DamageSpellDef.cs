@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 		public DamageSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.damageType = this.InitField_Typed("damageType", DamageType.Magic, typeof(DamageType));
+			this.damageType = this.InitTypedField("damageType", DamageType.Magic, typeof(DamageType));
 		}
 
 		public DamageType DamageType {

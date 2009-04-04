@@ -45,6 +45,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * @version  1.1
 	 * @since    1.1
 	 */
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ParserLogException : Exception {
 
 		/**
@@ -73,6 +74,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the number of errors in this log
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public int GetErrorCount() {
 			return errors.Count;
 		}
@@ -104,6 +106,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the detailed error message
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetMessage() {
 			StringBuilder buffer = new StringBuilder();
 

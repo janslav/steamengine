@@ -58,22 +58,22 @@ namespace SteamEngine.LScript {
 				string identifier = ((Token) code).GetImage();
 				Commands.AuthorizeCommandThrow(Globals.Src, identifier);
 				//some "keywords"
-				if (string.Compare(identifier, "args", true) == 0) { //true for case insensitive
+				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "args")) { //true for case insensitive
 					/*args*/
 					return new OpNode_GetArgs(parent, filename, line, column, code);
-				} else if (string.Compare(identifier, "this", true) == 0) { //true for case insensitive
+				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "this")) { //true for case insensitive
 					/*this*/
 					return new OpNode_This(parent, filename, line, column, code);
-				} else if (string.Compare(identifier, "argvcount", true) == 0) { //true for case insensitive
+				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "argvcount")) { //true for case insensitive
 					/*argvcount*/
 					return new OpNode_ArgvCount(parent, filename, line, column, code);
-				} else if (string.Compare(identifier, "true", true) == 0) { //true for case insensitive
+				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "true")) { //true for case insensitive
 					/*true*/
 					return OpNode_Object.Construct(parent, true);
-				} else if (string.Compare(identifier, "false", true) == 0) { //true for case insensitive
+				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "false")) { //true for case insensitive
 					/*false*/
 					return OpNode_Object.Construct(parent, false);
-				} else if (string.Compare(identifier, "null", true) == 0) { //true for case insensitive
+				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "null")) { //true for case insensitive
 					/*null*/
 					return OpNode_Object.Construct(parent, (object) null);
 				}
@@ -203,7 +203,7 @@ namespace SteamEngine.LScript {
 			//ArrayList matches = new ArrayList(1); //list of possible OpNodes. only the first one is really used.
 
 			//return
-			if (string.Compare(name, "return", true) == 0) { //true for case insensitive
+			if (StringComparer.OrdinalIgnoreCase.Equals(name, "return")) {
 				OpNode newNode;
 				if (args.Length == 1) {
 					newNode = new OpNode_Return(parent, filename, line, column, origNode, args[0]);
@@ -283,7 +283,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 			//I am namespace name ("system")
-			if (string.Compare(name, "system", true) == 0) { //true for case insensitive
+			if (StringComparer.OrdinalIgnoreCase.Equals(name, "system")) {
 				throw new NameRefException(this.line, this.column, this.filename,
 					new NameSpaceRef(name), ParentScriptHolder.GetDecoratedName());
 				//this exception being thrown doesnt really mean something is wrong. 
@@ -306,10 +306,10 @@ namespace SteamEngine.LScript {
 			//Console.WriteLine("resolving "+name);
 			if (haveBaseInstance) {
 				if ((vars.defaultObject is Thing) &&
-						((String.Compare(name, "item", true) == 0) ||
-						(String.Compare(name, "itemnewbie", true) == 0) ||
-						(String.Compare(name, "sell", true) == 0) ||
-						(String.Compare(name, "buy", true) == 0))) {
+						((StringComparer.OrdinalIgnoreCase.Equals(name, "item")) ||
+						(StringComparer.OrdinalIgnoreCase.Equals(name, "itemnewbie")) ||
+						(StringComparer.OrdinalIgnoreCase.Equals(name, "sell")) ||
+						(StringComparer.OrdinalIgnoreCase.Equals(name, "buy")))) {
 					int argsLength = args.Length;
 					if ((argsLength == 1) || (argsLength == 2)) {
 						resolver.RunArgs();
@@ -321,7 +321,7 @@ namespace SteamEngine.LScript {
 							} else {
 								amountNode = args[1];
 							}
-							bool newbie = (String.Compare(name, "itemnewbie", true) == 0);
+							bool newbie = (StringComparer.OrdinalIgnoreCase.Equals(name, "itemnewbie"));
 							finalOpNode = new OpNode_TemplateItem(parent, filename, line, column, origNode,
 								newbie, args[0], amountNode);
 							goto runit;

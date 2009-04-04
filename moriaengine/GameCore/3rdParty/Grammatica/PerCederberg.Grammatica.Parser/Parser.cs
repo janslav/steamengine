@@ -44,6 +44,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.4
 	 */
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public abstract class Parser {
 
 		/**
@@ -126,6 +127,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public Tokenizer GetTokenizer() {
 			return tokenizer;
 		}
@@ -137,6 +139,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @since 1.4
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public Analyzer GetAnalyzer() {
 			return analyzer;
 		}
@@ -148,6 +151,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @param initialized    the new initialized flag
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "initialized")]
 		internal void SetInitialized(bool initialized) {
 			this.initialized = initialized;
 		}
@@ -162,6 +166,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParserCreationException if the pattern couldn't be 
 		 *             added correctly to the parser
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual void AddPattern(ProductionPattern pattern) {
 			if (pattern.GetAlternativeCount() <= 0) {
 				throw new ParserCreationException(

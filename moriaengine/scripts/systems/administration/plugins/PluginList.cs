@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<PluginKey, Plugin> x, KeyValuePair<PluginKey, Plugin> y) {
 			PluginKey a = x.Key;
 			PluginKey b = y.Key;
-			return String.Compare(a.name, b.name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(a.name, b.name);
 		}
 	}
 }

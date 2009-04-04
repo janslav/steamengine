@@ -50,9 +50,9 @@ namespace SteamEngine.CompiledScripts {
 			//these values will be then used for assigning TG / plugin to the ability holder
 			//...
 			//we expect the values from Lscript as follows
-			triggerGroup = InitField_Typed("triggerGroup", null, typeof(TriggerGroup)); //which trigger group will be stored on ability holder
-			pluginDef = InitField_Typed("pluginDef", null, typeof(PluginDef)); //which plugin will be stored on ability holder
-			pluginKey = InitField_Typed("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
+			triggerGroup = InitTypedField("triggerGroup", null, typeof(TriggerGroup)); //which trigger group will be stored on ability holder
+			pluginDef = InitTypedField("pluginDef", null, typeof(PluginDef)); //which plugin will be stored on ability holder
+			pluginKey = InitTypedField("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
 		}
 
 		[Summary("Check the ability on the character, if he has it, chesk its state and decide what to do next." +

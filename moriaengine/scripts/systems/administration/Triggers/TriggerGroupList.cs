@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(TriggerGroup x, TriggerGroup y) {
 			string nameA = x.Defname;
 			string nameB = y.Defname;
-			return String.Compare(nameA, nameB, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(nameA, nameB);
 		}
 	}
 }

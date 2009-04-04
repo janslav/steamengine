@@ -236,7 +236,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<TagKey, Object> x, KeyValuePair<TagKey, Object> y) {
 			TagKey a = x.Key;
 			TagKey b = y.Key;
-			return String.Compare(a.name, b.name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(a.name, b.name);
 		}
 	}
 }

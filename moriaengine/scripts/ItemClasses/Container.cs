@@ -30,16 +30,16 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Container : Equippable {
 		float weight;
 
-		public override ushort Gump {
+		public override short Gump {
 			get {
-				ushort gump = TypeDef.Gump;
-				if (gump == 0xffff) {		//It has no defined gump
+				short gump = TypeDef.Gump;
+				if (gump == -1) {		//It has no defined gump
 					AbstractItemDef idef = ThingDef.FindItemDef(this.Model);
 					ContainerDef cdef = idef as ContainerDef;
 					if (cdef != null) {
 						gump = cdef.Gump;
 					}
-					if (gump == 0xffff) {	//That one didn't exist, wasn't a container, or had no defined gump either.
+					if (gump == -1) {	//That one didn't exist, wasn't a container, or had no defined gump either.
 						gump = 0x3c;		//The backpack gump.
 					}
 				}

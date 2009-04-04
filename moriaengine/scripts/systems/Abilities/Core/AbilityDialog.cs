@@ -206,7 +206,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//we have to make sure that we are sorting a list of DictionaryEntries which are abilitydefs
 		//otherwise this will crash on some ClassCastException -)
 		public int Compare(AbilityDef x, AbilityDef y) {
-			return String.Compare(x.Name, y.Name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 		}
 	}
 
@@ -219,7 +219,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(AbilityDef x, AbilityDef y) {
-			return String.Compare(x.Defname, y.Defname, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Defname, y.Defname);
 		}
 	}
 }

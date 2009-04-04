@@ -82,6 +82,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return the production pattern
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public ProductionPattern GetPattern() {
 			return pattern;
 		}

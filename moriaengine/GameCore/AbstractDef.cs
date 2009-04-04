@@ -30,17 +30,13 @@ namespace SteamEngine {
 		static int uids;
 		private int uid;
 
-		//internal protected static Dictionary<string, AbstractDef> byDefname = new Dictionary<string, AbstractDef>(StringComparer.OrdinalIgnoreCase);
-		protected static Dictionary<string, Type> defTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<string, Type> defTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		//string-Type pairs  ("ItemDef" - class ItemDef)
 
-
-		internal Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		public string filename;
-		public int headerLine;
-		//internal protected bool unloaded;
-		//public string defname = null;
-		public string altdefname = null;
+		internal readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		private readonly string filename;
+		private readonly int headerLine;
+		private string altdefname;
 		private bool alreadySaved;
 
 		protected AbstractDef(string defname, string filename, int headerLine)
@@ -51,8 +47,20 @@ namespace SteamEngine {
 			this.uid = uids++;
 		}
 
+		public string Filename {
+			get { 
+				return this.filename; 
+			}
+		}
+
+		public int HeaderLine {
+			get { 
+				return this.headerLine; 
+			}
+		}
+
 		public override string ToString() {
-			return Defname + "/" + altdefname;
+			return this.Defname + "/" + this.altdefname;
 		}
 
 		public string Filepos {
@@ -61,19 +69,27 @@ namespace SteamEngine {
 			}
 		}
 
-
 		public static new AbstractDef Get(string name) {
 			AbstractScript script;
 			byDefname.TryGetValue(name, out script);
 			return script as AbstractDef;
 		}
 
+		public string Altdefname {
+			get {
+				return this.altdefname;
+			}
+			protected set {
+				this.altdefname = value;
+			}
+		}
+
 		public override string PrettyDefname {
 			get {
 				//from the two available defnames (like c_0x190 and c_man) it returns the more understandable (c_man)
 				if (Defname.IndexOf("_0x") > 0) {
-					if (altdefname != null) {
-						return altdefname;
+					if (this.altdefname != null) {
+						return this.altdefname;
 					}
 				}
 				return Defname;
@@ -81,10 +97,11 @@ namespace SteamEngine {
 		}
 
 		//used by loaders (Thing, GameAccount, Thingdefs)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void LoadScriptLines(PropsSection ps) {
 			foreach (PropsLine p in ps.props.Values) {
 				try {
-					LoadScriptLine(ps.filename, p.line, p.name.ToLower(), p.value);
+					LoadScriptLine(ps.filename, p.line, p.name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
@@ -93,6 +110,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
 		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
 			Match m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
@@ -129,8 +147,8 @@ namespace SteamEngine {
 					byDefname.TryGetValue(args, out def);
 
 					if (def == null) {
-						altdefname = args;
-						byDefname[altdefname] = this;
+						this.altdefname = args;
+						byDefname[this.altdefname] = this;
 					} else if (def == this) {
 						throw new ScriptException("Defname redundantly specified for Def " + LogStr.Ident(args) + ".");
 					} else {
@@ -151,8 +169,8 @@ namespace SteamEngine {
 		internal static void LoadSectionFromSaves(PropsSection input) {
 			//todo: a way to load new defs (or just regions)
 
-			string typeName = input.headerType.ToLower();
-			string defname = input.headerName.ToLower();
+			string typeName = input.headerType;
+			string defname = input.headerName;
 
 			AbstractDef def = Get(defname);
 			if (def == null) {
@@ -160,7 +178,7 @@ namespace SteamEngine {
 					+ " is in the world being loaded, but it was not defined in the scripts. Skipping.");
 				return;
 			}
-			if (string.Compare(def.GetType().Name, typeName, true) != 0) {
+			if (!StringComparer.OrdinalIgnoreCase.Equals(def.GetType().Name, typeName)) {
 				Logger.WriteWarning(input.filename, input.headerLine,
 					LogStr.Ident(typeName + " " + defname) + " declared wrong class. It is in fact " + LogStr.Ident(def.GetType().Name) + ".");
 			}
@@ -175,6 +193,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void LoadField_Delayed(object resolvedObject, string filename, int line, object args) {
 			string fieldName = (string) args;
 			FieldValue fv = (FieldValue) fieldValues[fieldName];
@@ -202,9 +221,9 @@ namespace SteamEngine {
 			}
 		}
 
-		protected FieldValue InitField_Typed(string name, object value, Type type) {
+		protected FieldValue InitTypedField(string name, object value, Type type) {
 			if (typeof(ThingDef).IsAssignableFrom(type)) {
-				return InitField_ThingDef(name, value, type);
+				return InitThingDefField(name, value, type);
 			}
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
@@ -216,7 +235,7 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		protected FieldValue InitField_ThingDef(string name, object value, Type type) {
+		protected FieldValue InitThingDefField(string name, object value, Type type) {
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, value);
@@ -227,7 +246,7 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		protected FieldValue InitField_Model(string name, object value) {
+		protected FieldValue InitModelField(string name, object value) {
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.Model, null, value);
@@ -238,7 +257,7 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		protected FieldValue InitField_Typeless(string name, object value) {
+		protected FieldValue InitTypelessField(string name, object value) {
 			FieldValue fieldValue = (FieldValue) fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, value);
@@ -283,7 +302,7 @@ namespace SteamEngine {
 			//todo: not clear those tags/tgs/timers/whatever that were set dynamically (ie not in scripted defs)
 		}
 
-		[Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
 		public static void ResolveAll() {
 			int count = byDefname.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");
@@ -345,6 +364,7 @@ namespace SteamEngine {
 			ObjectSaver.FlushCache(output);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Save(SaveStream output) {
 			bool headerWritten = false;
 			foreach (DictionaryEntry entry in fieldValues) {

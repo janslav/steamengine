@@ -73,5 +73,16 @@ namespace SteamEngine {
 		public static int IGetTag(TagHolder from, TagKey which) {
 			return ConvertTools.ToInt32(from.GetTag(which));
 		}
+
+
+		public static bool Is1(object o) {
+			int i;
+			if (ConvertTools.TryConvertToInt32(o, out i)) {
+				if (i == 1) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

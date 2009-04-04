@@ -184,7 +184,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(ScriptHolder x, ScriptHolder y) {
-			return String.Compare(x.name, y.name, true);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.name, y.name);
 		}
 	}
 }

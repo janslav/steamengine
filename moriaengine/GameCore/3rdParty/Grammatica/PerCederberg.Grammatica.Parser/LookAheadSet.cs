@@ -692,6 +692,7 @@ namespace PerCederberg.Grammatica.Parser {
 			 * @return true if the objects are equal, or
 			 *         false otherwise 
 			 */
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 			public override bool Equals(object obj) {
 				if (obj is Sequence) {
 					return Equals((Sequence) obj);
@@ -700,6 +701,7 @@ namespace PerCederberg.Grammatica.Parser {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", MessageId = "System.Exception.#ctor(System.String)")]
 			public override int GetHashCode() {
 				throw new Exception("LookAheadSet::GetHashCode not supported");
 			}

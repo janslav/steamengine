@@ -85,6 +85,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @throws ParserCreationException if the pattern couldn't be 
 		 *             added correctly to the parser
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void AddPattern(ProductionPattern pattern) {
 
 			// Check for empty matches
@@ -739,6 +740,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * 
 		 * @return a unified look-ahead set
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		private LookAheadSet FindUnion(ProductionPattern pattern) {
 			LookAheadSet result;
 			int length = 0;

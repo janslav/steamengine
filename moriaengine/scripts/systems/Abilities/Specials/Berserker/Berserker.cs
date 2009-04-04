@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public BerserkerDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			damageModifier = InitField_Typed("damageModifier", 1.0, typeof(double));
+			damageModifier = InitTypedField("damageModifier", 1.0, typeof(double));
 		}
 
 		#region triggerMethods

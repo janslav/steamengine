@@ -314,7 +314,7 @@ namespace SteamEngine {
 			nameMatched = false;
 			argType = null;
 			foreach (MethodInfo mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) {
-				if (string.Compare(name, mi.Name, true) == 0) { //true for case insensitive
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, mi.Name)) {
 					ParameterInfo[] pis = mi.GetParameters();
 					if (hasArg) {
 						if (pis.Length == 1) {

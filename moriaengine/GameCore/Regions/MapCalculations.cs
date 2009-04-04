@@ -146,7 +146,7 @@ namespace SteamEngine.Regions {
 
 						if ((surface || impassable || (checkBlocksFit && item.BlocksFit)) && (itemZ + itemHeight) > z && (z + height) > itemZ) {
 							return false;
-						} else if (surface && !impassable && !item.Flag_Disconnected && z == (itemZ + itemHeight)) {
+						} else if (surface && !impassable && /*!item.Flag_Disconnected &&*/ z == (itemZ + itemHeight)) {
 							hasSurface = true;
 						}
 					}
@@ -180,8 +180,13 @@ namespace SteamEngine.Regions {
 
 			Offset(d, ref xForward, ref yForward);
 
-			Offset((Direction) (((int) d - 1) & 0x7), ref xLeft, ref yLeft);
-			Offset((Direction) (((int) d + 1) & 0x7), ref xRight, ref yRight);
+			if (!this.IsValidPos(xForward, yForward)) {	//off the map?
+				newZ = 0;
+				return false;
+			}
+
+			Offset((Direction) ((d - 1) & Direction.Mask), ref xLeft, ref yLeft);
+			Offset((Direction) ((d + 1) & Direction.Mask), ref xRight, ref yRight);
 
 			if (xForward < 0 || yForward < 0 || xForward >= this.sizeX || yForward >= this.sizeY) {
 				newZ = 0;
@@ -190,15 +195,11 @@ namespace SteamEngine.Regions {
 
 			int startZ, startTop;
 
-			List<AbstractItem> itemsStart = m_Pools[0];
-			List<AbstractItem> itemsForward = m_Pools[1];
-			List<AbstractItem> itemsLeft = m_Pools[2];
-			List<AbstractItem> itemsRight = m_Pools[3];
-
 			TileFlag reqFlags = TileFlag.ImpassableSurface;
 
-			if (settings.CanSwim)
+			if (settings.CanSwim) {
 				reqFlags |= TileFlag.Wet;
+			}
 
 			if (checkDiagonals) {
 				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
@@ -206,18 +207,21 @@ namespace SteamEngine.Regions {
 				Sector sectorLeft = this.GetSector(xLeft >> sectorFactor, yLeft >> sectorFactor);
 				Sector sectorRight = this.GetSector(xRight >> sectorFactor, yRight >> sectorFactor);
 
-				List<Sector> sectors = m_Sectors;
+				List<Sector> sectors = sectorsPool;
 
 				sectors.Add(sectorStart);
 
-				if (!sectors.Contains(sectorForward))
+				if (!sectors.Contains(sectorForward)) {
 					sectors.Add(sectorForward);
+				}
 
-				if (!sectors.Contains(sectorLeft))
+				if (!sectors.Contains(sectorLeft)) {
 					sectors.Add(sectorLeft);
+				}
 
-				if (!sectors.Contains(sectorRight))
+				if (!sectors.Contains(sectorRight)) {
 					sectors.Add(sectorRight);
+				}
 
 				for (int i = 0; i < sectors.Count; ++i) {
 					Sector sector = sectors[i];
@@ -235,19 +239,20 @@ namespace SteamEngine.Regions {
 						int itemX = item.X;
 						int itemY = item.Y;
 
-						if (sector == sectorStart && (itemX == xStart && itemY == yStart) && model < 0x4000)
-							itemsStart.Add(item);
-						else if (sector == sectorForward && (itemX == xForward && itemY == yForward) && model < 0x4000)
-							itemsForward.Add(item);
-						else if (sector == sectorLeft && (itemX == xLeft && itemY == yLeft) && model < 0x4000)
-							itemsLeft.Add(item);
-						else if (sector == sectorRight && (itemX == xRight && itemY == yRight) && model < 0x4000)
-							itemsRight.Add(item);
+						if (sector == sectorStart && (itemX == xStart && itemY == yStart) && model < 0x4000) {
+							itemsPoolStart.Add(item);
+						} else if (sector == sectorForward && (itemX == xForward && itemY == yForward) && model < 0x4000) {
+							itemsPoolForward.Add(item);
+						} else if (sector == sectorLeft && (itemX == xLeft && itemY == yLeft) && model < 0x4000) {
+							itemsPoolLeft.Add(item);
+						} else if (sector == sectorRight && (itemX == xRight && itemY == yRight) && model < 0x4000) {
+							itemsPoolRight.Add(item);
+						}
 					}
 				}
 
-				if (m_Sectors.Count > 0)
-					m_Sectors.Clear();
+				if (sectorsPool.Count > 0)
+					sectorsPool.Clear();
 			} else {
 				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
 				Sector sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
@@ -261,15 +266,17 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.Flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0) {
 							continue;
+						}
 						int itemX = item.X;
 						int itemY = item.Y;
 
-						if (itemX == xStart && itemY == yStart && model < 0x4000)
-							itemsStart.Add(item);
-						else if (itemX == xForward && itemY == yForward && model < 0x4000)
-							itemsForward.Add(item);
+						if (itemX == xStart && itemY == yStart && model < 0x4000) {
+							itemsPoolStart.Add(item);
+						} else if (itemX == xForward && itemY == yForward && model < 0x4000) {
+							itemsPoolForward.Add(item);
+						}
 					}
 				} else {
 					foreach (Thing t in sectorForward.things) {
@@ -280,13 +287,15 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.Flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0) {
 							continue;
+						}
 						int itemX = item.X;
 						int itemY = item.Y;
 
-						if (itemX == xForward && itemY == yForward && model < 0x4000)
-							itemsForward.Add(item);
+						if (itemX == xForward && itemY == yForward && model < 0x4000) {
+							itemsPoolForward.Add(item);
+						}
 					}
 
 					foreach (Thing t in sectorStart.things) {
@@ -297,25 +306,28 @@ namespace SteamEngine.Regions {
 
 						int model = item.Model;
 						ItemDispidInfo idi = ItemDispidInfo.Get(model);
-						if ((idi.Flags & reqFlags) == 0)
+						if ((idi.Flags & reqFlags) == 0) {
 							continue;
+						}
 						int itemX = item.X;
 						int itemY = item.Y;
 
-						if (itemX == xStart && itemY == yStart && model < 0x4000)
-							itemsStart.Add(item);
+						if (itemX == xStart && itemY == yStart && model < 0x4000) {
+							itemsPoolStart.Add(item);
+						}
 					}
 				}
 			}
 
-			GetStartZ(settings, point, itemsStart, out startZ, out startTop);
+			GetStartZ(settings, point, itemsPoolStart, out startZ, out startTop);
 
-			bool moveIsOk = Check(point, settings, itemsForward, xForward, yForward, startTop, startZ, out newZ);
+			bool moveIsOk = Check(point, settings, itemsPoolForward, xForward, yForward, startTop, startZ, out newZ);
 			if (moveIsOk && checkDiagonals) {
 				int hold;
 				//ani monstra ani hraci nemuzou projit sikmo pres roh, natoz pres diagonalni zed
-				if (!Check(point, settings, itemsLeft, xLeft, yLeft, startTop, startZ, out hold) || !Check(point, settings, itemsRight, xRight, yRight, startTop, startZ, out hold))
+				if (!Check(point, settings, itemsPoolLeft, xLeft, yLeft, startTop, startZ, out hold) || !Check(point, settings, itemsPoolRight, xRight, yRight, startTop, startZ, out hold)) {
 					moveIsOk = false;
+				}
 			}
 
 			if (!moveIsOk) {
@@ -324,13 +336,16 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			for (int i = 0; i < (checkDiagonals ? 4 : 2); ++i) {
-				if (m_Pools[i].Count > 0)
-					m_Pools[i].Clear();
+			itemsPoolStart.Clear();
+			itemsPoolForward.Clear();
+			if (checkDiagonals) {
+				itemsPoolLeft.Clear();
+				itemsPoolRight.Clear();
 			}
 
-			if (!moveIsOk)
+			if (!moveIsOk) {
 				newZ = startZ;
+			}
 
 			return moveIsOk;
 		}
@@ -373,13 +388,13 @@ namespace SteamEngine.Regions {
 			return true;
 		}
 
-		private List<AbstractItem>[] m_Pools = new List<AbstractItem>[] {
-			new List<AbstractItem>(), new List<AbstractItem>(),new List<AbstractItem>(), new List<AbstractItem>(),
-		};
 
-		private List<Sector> m_Sectors = new List<Sector>();
-
-		private List<Static> staticsPool = new List<Static>();
+		private static List<AbstractItem> itemsPoolStart = new List<AbstractItem>();
+		private static List<AbstractItem> itemsPoolForward = new List<AbstractItem>();
+		private static List<AbstractItem> itemsPoolLeft = new List<AbstractItem>();
+		private static List<AbstractItem> itemsPoolRight = new List<AbstractItem>();
+		private static List<Sector> sectorsPool = new List<Sector>();
+		private static List<Static> staticsPool = new List<Static>();
 
 		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
 			newZ = 0;

@@ -37,32 +37,31 @@ namespace SteamEngine {
 		private static Dictionary<string, AbstractAccount> accounts = new Dictionary<string, AbstractAccount>(StringComparer.OrdinalIgnoreCase);
 
 		//private string _password = null;	//http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconensuringdataintegritywithhashcodes.asp
-		private Byte[] passwordHash = null;
-		private string password = null;
+		private Byte[] passwordHash;
+		private string password;
 
 		/// private uid representation.
 		//private int uid = 0; public int Uid { get { return uid; } }
 
-		private byte maxPlevel = 0;
-		private byte plevel = 0;
+		private byte maxPlevel;
+		private byte plevel;
 
 
 		//------------------------
 		//Variables and Properties
 
 		//- Constants
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const int maxCharactersPerGameAccount = 5;
 
 		//- Public
 		private AbstractCharacter[] characters = new AbstractCharacter[maxCharactersPerGameAccount];
 		private System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter> charactersReadOnly;
 
-		private bool deleted = false;
-		public bool blocked = false;
-		private string name = null;
-
-		//private GameConn conn = null;
-		private GameState gameState = null;
+		private bool deleted;
+		private bool blocked;
+		private string name;
+		private GameState gameState;
 
 		internal static void ClearAll() {
 			accounts.Clear();
@@ -72,7 +71,6 @@ namespace SteamEngine {
 			: this(input.headerName) {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
 			this.charactersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(characters);
-			string name = input.headerType;
 			this.LoadSectionLines(input);
 		}
 
@@ -88,17 +86,20 @@ namespace SteamEngine {
 			}
 			accounts[name] = this;
 			this.name = name;
-			this.passwordHash = null;
-			this.password = null;
 			this.plevel = 1;
 			this.maxPlevel = 1;
-			for (int a = 0; a < maxCharactersPerGameAccount; a++) {
-				characters[a] = null;
+		}
+
+		public bool Blocked {
+			get { 
+				return this.blocked; 
 			}
 		}
 
-		public sealed class AccountSaveCoordinator : IBaseClassSaveCoordinator {
-			public static readonly Regex accountNameRE = new Regex(@"^\$(?<value>\w*)\s*$",
+		#region persistence
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+		internal sealed class AccountSaveCoordinator : IBaseClassSaveCoordinator {
+			private static readonly Regex accountNameRE = new Regex(@"^\$(?<value>\w*)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 			public string FileNameToSave {
@@ -108,14 +109,14 @@ namespace SteamEngine {
 			public void StartingLoading() {
 			}
 
-			public void SaveAll(SaveStream output) {
+			public void SaveAll(SaveStream writer) {
 				Logger.WriteDebug("Saving GameAccounts.");
-				output.WriteComment("GameAccounts");
-				output.WriteLine();
+				writer.WriteComment("GameAccounts");
+				writer.WriteLine();
 				int numGameAccounts = accounts.Count;
 				foreach (AbstractAccount acc in accounts.Values) {
-					acc.SaveWithHeader(output);
-					ObjectSaver.FlushCache(output);
+					acc.SaveWithHeader(writer);
+					ObjectSaver.FlushCache(writer);
 				}
 				Logger.WriteDebug("Saved " + numGameAccounts + " accounts.");
 			}
@@ -136,6 +137,7 @@ namespace SteamEngine {
 				get { return accountNameRE; }
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
 				string name = m.Groups["value"].Value;
 				return AbstractAccount.Get(name);
@@ -196,18 +198,13 @@ namespace SteamEngine {
 					}
 					break;
 				case "blocked":
-					this.blocked = false;
-					if (valueString.ToLower().StartsWith("true")) {
-						this.blocked = true;
-					} else if (!valueString.StartsWith("0")) {
-						this.blocked = true;
-					}
+					this.blocked = ConvertTools.ParseBoolean(valueString);
 					break;
 				case "plevel":
-					this.plevel = byte.Parse(valueString, NumberStyles.Integer);
+					this.plevel = ConvertTools.ParseByte(valueString);
 					break;
 				case "maxplevel":
-					this.maxPlevel = byte.Parse(valueString, NumberStyles.Integer);
+					this.maxPlevel = ConvertTools.ParseByte(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -215,13 +212,14 @@ namespace SteamEngine {
 			}
 		}
 
-		[Save]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public void SaveWithHeader(SaveStream output) {
 			output.WriteLine("[" + this.GetType().Name + " " + name + "]");
 			this.Save(output);
 			output.WriteLine();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			//output.WriteValue("uid",uid);
 			if (this.passwordHash != null) {
@@ -234,10 +232,10 @@ namespace SteamEngine {
 				output.WriteValue("plevel", plevel);
 				output.WriteValue("maxplevel", maxPlevel);
 			}
-			if (blocked) {
+			if (this.blocked) {
 				output.WriteValue("blocked", this.blocked);
 			}
-			CheckReferences();
+			this.CheckReferences();
 			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
 				if (this.characters[i] != null) {
 					//output.WriteValue("CharUID["+i+"]", this.characters[i]);
@@ -246,6 +244,8 @@ namespace SteamEngine {
 			}
 			base.Save(output);//base save - TagHolder
 		}
+		#endregion persistence
+
 
 		public static IEnumerable<AbstractAccount> AllAccounts {
 			get {
@@ -258,12 +258,6 @@ namespace SteamEngine {
 				return (this.gameState != null);
 			}
 		}
-
-		//public GameConn Conn {
-		//    get {
-		//        return this.conn;
-		//    }
-		//}
 
 		public GameState GameState {
 			get {
@@ -290,6 +284,7 @@ namespace SteamEngine {
 			return null;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public AbstractCharacter GetLingeringCharacter() {
 			foreach (AbstractCharacter ch in this.characters) {
 				if ((ch != null) && (ch.IsLingering)) {
@@ -322,6 +317,7 @@ namespace SteamEngine {
 			return acc;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public static LoginAttemptResult HandleLoginAttempt(string username, string password, GameState gs, out AbstractAccount acc) {
 			acc = AbstractAccount.Get(username);
 			if (acc == null) {
@@ -340,7 +336,7 @@ namespace SteamEngine {
 			} else {
 				if (!acc.TestPassword(password)) {
 					return LoginAttemptResult.Failed_BadPassword;
-				} else if (acc.IsBlocked) {
+				} else if (acc.blocked) {
 					return LoginAttemptResult.Failed_Blocked;
 				} else if (acc.IsOnline) {
 					return LoginAttemptResult.Failed_AlreadyOnline;
@@ -360,43 +356,6 @@ namespace SteamEngine {
 			this.gameState = null;
 		}
 
-		//public static void HandleLoginAttempt(string username, string password, GameConn c) {
-		//    AbstractAccount acc = null;
-		//    acc = AbstractAccount.Get(username);
-		//    if (acc == null) {
-		//        if ((Globals.autoAccountCreation) || (accounts.Count == 0)) {
-		//            acc = CreateAccount(username, password);
-		//            if (accounts.Count == 1) {
-		//                acc.plevel = Globals.maximalPlevel;
-		//                acc.maxPlevel = Globals.maximalPlevel;
-		//            }
-		//            c.LogIn(acc);
-		//            acc.LogIn(c);
-		//            PacketSender.SendCharList(c);
-		//            //Server._out.SendCharList(c);
-		//        } else {
-		//            Packets.Prepared.SendFailedLogin(c, LoginDeniedReason.NoAccount);
-		//            c.Close("No account '" + username + "'");
-		//        }
-		//    } else {
-		//        if (!acc.TestPassword(password)) {
-		//            Packets.Prepared.SendFailedLogin(c, LoginDeniedReason.InvalidAccountCredentials);
-		//            c.Close("Bad password for account " + acc);
-		//        } else if (acc.IsBlocked) {
-		//            Packets.Prepared.SendFailedLogin(c, LoginDeniedReason.Blocked);
-		//            c.Close("Account '" + acc + "' blocked.");
-		//        } else if (acc.IsOnline) {
-		//            Packets.Prepared.SendFailedLogin(c, LoginDeniedReason.SomeoneIsAlreadyUsingThisAccount);
-		//            c.Close("Account '" + acc + "' already online.");
-		//        } else {
-		//            c.LogIn(acc);
-		//            acc.LogIn(c);
-		//            PacketSender.SendCharList(c);
-		//            //Server._out.SendCharList(c);
-		//        }
-		//    }
-		//}
-
 		public static AbstractAccount HandleConsoleLoginAttempt(string username, string password) {
 			AbstractAccount acc = null;
 			if (accounts.Count == 0) {
@@ -408,7 +367,7 @@ namespace SteamEngine {
 			}
 			if (acc == null) {
 				return null;
-			} else if (acc.TestPassword(password) == false || (acc.maxPlevel < 4) || (acc.IsBlocked)) {
+			} else if (acc.TestPassword(password) == false || (acc.maxPlevel < 4) || (acc.blocked)) {
 				return null;
 			} else {
 				return acc;
@@ -453,8 +412,8 @@ namespace SteamEngine {
 				name - Their account name
 				plevel - The maxPlevel you want them to be.
 		*/
-		public void Promote(int plevel) {
-			PromoteOrDemote(Globals.Src.MaxPlevel, AbstractAccount.Get(name), plevel);
+		public void Promote(int newMaxPlevel) {
+			PromoteOrDemote(Globals.Src.MaxPlevel, AbstractAccount.Get(name), newMaxPlevel);
 		}
 
 		public override bool IsDeleted { get { return deleted; } }
@@ -483,12 +442,12 @@ namespace SteamEngine {
 		}
 
 		public void Block() {
-			if (IsBlocked) {
+			if (this.blocked) {
 				Globals.SrcWriteLine("GameAccount " + name + " is already blocked.");
 			} else {
 				if (MaxPLevel < Globals.maximalPlevel) {
 					Commands.AuthorizeCommandThrow(Globals.Src, "BlockAccount");
-					blocked = true;
+					this.blocked = true;
 					Globals.SrcWriteLine("GameAccount " + name + " blocked successfully.");
 				} else {
 					Globals.SrcWriteLine("GameAccount " + name + " cannot be blocked; It's owner..");
@@ -496,12 +455,12 @@ namespace SteamEngine {
 			}
 		}
 
-		public void UnBlock() {
-			if (!IsBlocked) {
+		public void Unblock() {
+			if (!this.blocked) {
 				Globals.SrcWriteLine("GameAccount " + name + " is not blocked.");
 			} else {
-				blocked = false;
-				Commands.AuthorizeCommandThrow(Globals.Src, "UnBlockAccount");
+				this.blocked = false;
+				Commands.AuthorizeCommandThrow(Globals.Src, "UnblockAccount");
 				Globals.SrcWriteLine("GameAccount " + name + " unblocked successfully.");
 			}
 		}
@@ -510,15 +469,13 @@ namespace SteamEngine {
 			if (yesorno) {
 				Block();
 			} else {
-				UnBlock();
+				Unblock();
 			}
 		}
 
 		public override string ToString() {
 			return name + " - Plevel " + PLevel + "/" + MaxPLevel;
 		}
-
-		public bool IsBlocked { get { return blocked; } }
 
 		public override int GetHashCode() {
 			return name.GetHashCode();
@@ -632,28 +589,6 @@ namespace SteamEngine {
 			}
 		}
 
-		//internal void LogIn(GameConn conn) {
-		//    this.conn = conn;
-		//}
-		//Called by GameConn's Close method. Do not call this to log someone out.
-		//internal void LogOut() {
-		//    this.conn = null;
-		//}
-
-		//internal void CharLoad_Delayed(object resolvedChar, string filename, int line, object index) {
-		//    int i = (int) index;
-		//    AbstractCharacter ch = resolvedChar as AbstractCharacter;
-		//    this.characters[i] = ch;
-		//    if (ch == null) {
-		//        Logger.WriteError("Failed resolving char at index "+LogStr.Number(index)+" for account '"+LogStr.Ident(name)+"'. Resolved "+LogStr.Ident(resolvedChar)+" instead.");
-		//    //} else {
-		//    //	if (ch.Account != this) {
-		//    //		Logger.WriteError("The Character"+LogStr.Ident(ch)+" should belong to this account ("+LogStr.Ident(this)+"), but does not. Re-adding.");
-		//    //		ch.MakeBePlayer(this);
-		//    //	}
-		//    }
-		//}
-
 		//If both password and passwordHash become set, then passwordHash takes
 		//precedence. This should not happen, but this is here as an additional
 		//security measure, in case someone manages to somehow set the string
@@ -740,13 +675,8 @@ namespace SteamEngine {
 
 		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				object retVal = registeredTGs[i].Run(this, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(registeredTGs[i].Run(this, td, sa))) {
+					return true;
 				}
 			}
 			return base.TryCancellableTrigger(td, sa);
@@ -754,13 +684,8 @@ namespace SteamEngine {
 
 		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				object retVal = registeredTGs[i].TryRun(this, td, sa);
-				try {
-					int retInt = Convert.ToInt32(retVal);
-					if (retInt == 1) {
-						return true;
-					}
-				} catch (Exception) {
+				if (TagMath.Is1(registeredTGs[i].TryRun(this, td, sa))) {
+					return true;
 				}
 			}
 			return base.TryCancellableTrigger(td, sa);
