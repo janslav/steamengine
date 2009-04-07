@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Iterate through all items in character's wearable layers check if it is in the resource items list " +
 				"and if so, prepare the ResourceCounter object for it")]
 		private static void LocalizeWearableItems(Character chr, List<ResourceCounter> resCountersList) {
-			foreach (Item i in chr.GetVisibleEquip()) {
+			foreach (Item i in chr.VisibleEquip) {
 				switch ((LayerNames) i.Z) {
 					case LayerNames.Arms:
 					case LayerNames.Bracelet:

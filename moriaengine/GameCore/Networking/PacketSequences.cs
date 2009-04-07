@@ -131,7 +131,7 @@ namespace SteamEngine.Networking {
 				using (ListBuffer<AbstractItem> listBuffer = Pool<ListBuffer<AbstractItem>>.Acquire()) {
 					if (iicp.PrepareContainer(container, viewer, listBuffer.list)) {
 						viewerConn.SendSinglePacket(iicp);
-						if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+						if (Globals.aosToolTips && viewerState.Version.AosToolTips) {
 							foreach (AbstractItem contained in listBuffer.list) {
 								AOSToolTips toolTips = contained.GetAOSToolTips();
 								if (toolTips != null) {
@@ -147,7 +147,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public static void TrySendPropertiesTo(GameState viewerState, TCPConnection<GameState> viewerConn, Thing target) {
-			if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+			if (Globals.aosToolTips && viewerState.Version.AosToolTips) {
 				AOSToolTips toolTips = target.GetAOSToolTips();
 				if (toolTips != null) {
 					toolTips.SendIdPacket(viewerState, viewerConn);

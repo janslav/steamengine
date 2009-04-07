@@ -93,7 +93,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
 		public virtual bool CanSeeForUpdate(Thing target) {
 			return this.CanSeeImpl(this, target.TopPoint, target);
 		}
@@ -151,8 +151,8 @@ namespace SteamEngine {
 			return this.CanSeeCoordinatesFrom(this, target);
 		}
 
-		public bool CanSeeCoordinates(int targetX, int targetY, int targetZ, byte targetM) {
-			return this.CanSeeCoordinatesFrom(this, targetX, targetY, targetZ, targetM);
+		public bool CanSeeCoordinates(int targetX, int targetY, byte targetM) {
+			return this.CanSeeCoordinatesFrom(this, targetX, targetY, targetM);
 		}
 
 		internal bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, IPoint4D target) {
@@ -160,10 +160,10 @@ namespace SteamEngine {
 				return false;
 			}
 
-			return CanSeeCoordinatesFrom(fromCoordinates, target.X, target.Y, target.Z, target.M);
+			return CanSeeCoordinatesFrom(fromCoordinates, target.X, target.Y, target.M);
 		}
 
-		private bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, int targetX, int targetY, int targetZ, byte targetM) {
+		private bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, int targetX, int targetY, byte targetM) {
 			this.ThrowIfDeleted();
 			if (fromCoordinates.M != targetM) {
 				return false;
@@ -176,7 +176,7 @@ namespace SteamEngine {
 		//    return DenyResult.Allow;
 		//}
 
-		[Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {
 			return this.CanReachFromAt(this, target.TopPoint, target, true);
 		}
@@ -218,6 +218,7 @@ namespace SteamEngine {
 			return DenyResult.Allow;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public DenyResult CanReachCoordinates(IPoint4D target) {
 			target = target.TopPoint;
 			if (!CanReachMapRangeFrom(this, target)) {

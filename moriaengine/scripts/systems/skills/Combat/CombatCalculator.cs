@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 				double armorVsPTotal = 0;
 				double armorVsMTotal = 0;
 
-				foreach (Item equipped in self.GetVisibleEquip()) {
+				foreach (Item equipped in self.VisibleEquip) {
 					Wearable wearable = equipped as Wearable;
 					if (wearable != null) {
 						LayerNames layer = (LayerNames) wearable.Z;

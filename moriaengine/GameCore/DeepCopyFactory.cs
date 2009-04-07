@@ -138,6 +138,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static object CopyImplementation(object copyFrom) {
 			recursionLevel++;
 

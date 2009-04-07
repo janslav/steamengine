@@ -499,7 +499,7 @@ namespace SteamEngine.Networking {
 								}
 								TCPConnection<GameState> viewerConn = viewerState.Conn;
 								viewerConn.SendPacketGroup(pg);
-								if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+								if (Globals.aosToolTips && viewerState.Version.AosToolTips) {
 									if (propertiesExist) {
 										propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
 									}
@@ -569,7 +569,7 @@ namespace SteamEngine.Networking {
 						this.UpdateSkills(myState, myConn);
 
 						if (propertiesChanged) {
-							if (Globals.aosToolTips && myState.Version.aosToolTips) {
+							if (Globals.aosToolTips && myState.Version.AosToolTips) {
 								propertiesExist = ProcessCharProperties(ch, ref toolTips, myState, myConn);
 							}
 						}
@@ -755,7 +755,7 @@ namespace SteamEngine.Networking {
 											Logger.WriteInfo(Globals.netSyncingTracingOn, "Sending new char info to " + viewerState);
 											viewerConn.SendPacketGroup(myCharInfo);
 											newCharSent = true;
-											if (propertiesExist && Globals.aosToolTips && viewerState.Version.aosToolTips) {
+											if (propertiesExist && Globals.aosToolTips && viewerState.Version.AosToolTips) {
 												propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
 											}
 
@@ -767,7 +767,7 @@ namespace SteamEngine.Networking {
 									}
 									if (!newCharSent) {
 										if (propertiesChanged && propertiesExist) {
-											if (Globals.aosToolTips && viewerState.Version.aosToolTips) {
+											if (Globals.aosToolTips && viewerState.Version.AosToolTips) {
 												propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
 											}
 										}
@@ -928,7 +928,7 @@ namespace SteamEngine.Networking {
 						int skillId = changedSkills[i];
 						ISkill skill = this.thing.GetSkillObject(skillId);
 						Logger.WriteInfo(Globals.netSyncingTracingOn, "UpdateSkill id: " + skillId);
-						pg.AcquirePacket<SendSkillsOutPacket>().PrepareSingleSkillUpdate((ushort) skillId, skill, myState.Version.displaySkillCaps);
+						pg.AcquirePacket<SendSkillsOutPacket>().PrepareSingleSkillUpdate((ushort) skillId, skill, myState.Version.DisplaySkillCaps);
 					}
 					myConn.SendPacketGroup(pg);
 				}

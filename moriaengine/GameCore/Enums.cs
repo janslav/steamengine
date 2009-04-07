@@ -25,6 +25,7 @@ namespace SteamEngine {
 	//This is actually used now, for Character's direction, and you pass this instead of a byte
 	//to WalkRunOrFly and to the methods in OutPackets which take a direction as a parameter.
 	//-SL
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
 	public enum Direction : byte {
 		North = 0, Default = North, 
 		NorthEast = 1,
@@ -53,7 +54,7 @@ namespace SteamEngine {
 	//the others are all reasons for rejection which are sent. The name, after "Deny_", is exactly what
 	//the client prints, but with spaces. (We send a number, but the client knows what it means)
 	//-SL
-	public enum DeleteCharacterResult : byte {
+	public enum DeleteCharacterResult {
 		Deny_InvalidCharacterPassword = 0,
 		Deny_NonexistantCharacter = 1,
 		Deny_CharacterIsBeingPlayedRightNow = 2,
@@ -64,7 +65,7 @@ namespace SteamEngine {
 		Allow = 255
 	}
 
-	public enum LoginDeniedReason : byte {
+	public enum LoginDeniedReason {
 		NoAccount = 0,
 		SomeoneIsAlreadyUsingThisAccount = 1,
 		Blocked = 2,
@@ -210,7 +211,7 @@ namespace SteamEngine {
 		}
 	}
 
-	public enum Season : byte {
+	public enum Season {
 		Spring = 0,
 		Summer = 1,
 		Fall = 2, Autumn = 2,
@@ -218,7 +219,7 @@ namespace SteamEngine {
 		Dead = 4, Desolation = 4
 	}
 
-	public enum CursorType : byte {
+	public enum CursorType {
 		Normal = 0,
 		Gold = 1
 	}
@@ -229,7 +230,7 @@ namespace SteamEngine {
 		//Immovable = 2	//Does not work
 	}
 
-	public enum MapTileType : byte {
+	public enum MapTileType {
 		Water = 0,
 		Rock = 1,
 		Grass = 2,

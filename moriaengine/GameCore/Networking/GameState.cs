@@ -32,16 +32,15 @@ namespace SteamEngine.Networking {
 
 	public class GameState : Poolable, IConnectionState<TCPConnection<GameState>, GameState, IPEndPoint> {
 
-		static int uids;
-
+		private static int uids;
 		private int uid;
 
-		IEncryption encryption;
+		private IEncryption encryption;
 
-		AbstractAccount account;
-		AbstractCharacter character;
-		IPEndPoint ip;
-		TCPConnection<GameState> conn;
+		private AbstractAccount account;
+		private AbstractCharacter character;
+		private IPEndPoint ip;
+		private TCPConnection<GameState> conn;
 
 		private byte updateRange = 18;
 		private int visionRange = 18;	//for scripts to fiddle with
@@ -52,22 +51,23 @@ namespace SteamEngine.Networking {
 
 		private bool allShow = false;
 
-		public OnTargon targonDeleg;
-		public OnTargon_Cancel targonCancelDeleg;
-		public object targonParameters;
+		private OnTargon targonDeleg;
+		private OnTargon_Cancel targonCancelDeleg;
+		private object targonParameters;
 
 		internal readonly MovementState movementState;
 
-		private string clientLanguage = "enu";
-		private Language language = Language.Default;
+		private string languageString = "enu";
+		private Language language = Language.English;
 
-		public int lastSkillMacroId;
-		public int lastSpellMacroId;
+		private int lastSkillMacroId;
+
+		private int lastSpellMacroId;
 
 		private Dictionary<int, Gump> gumpInstancesByUid = new Dictionary<int, Gump>();
 		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
 
-		public int charBackupUid;
+		internal int charBackupUid;
 
 		public GameState() {
 			this.movementState = new MovementState(this);
@@ -104,6 +104,16 @@ namespace SteamEngine.Networking {
 			get {
 				return this.conn;
 			}
+		}
+
+		public int LastSkillMacroId {
+			get { return lastSkillMacroId; }
+			internal set { lastSkillMacroId = value; }
+		}
+
+		public int LastSpellMacroId {
+			get { return lastSpellMacroId; }
+			internal set { lastSpellMacroId = value; }
 		}
 
 		public void On_Init(TCPConnection<GameState> conn) {
@@ -349,11 +359,11 @@ namespace SteamEngine.Networking {
 
 		public string ClientLanguage {
 			get {
-				return this.clientLanguage;
+				return this.languageString;
 			}
 			internal set {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.clientLanguage)) {
-					this.clientLanguage = value;
+				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.languageString)) {
+					this.languageString = value;
 					this.language = Loc.TranslateLanguageCode(value);
 				}
 			}
@@ -378,9 +388,11 @@ namespace SteamEngine.Networking {
 			this.targonCancelDeleg = null;
 			OnTargon targ = this.targonDeleg;
 			this.targonDeleg = null;
+			AbstractCharacter self = this.CharacterNotNull;
 
 			if (x == 0xffff && y == 0xffff && uid == 0 && z == 0 && model == 0) {
 				//cancel
+				self.Targ = null;
 				if (targonCancel != null) {
 					targonCancel(this, parameter);
 				}
@@ -390,30 +402,32 @@ namespace SteamEngine.Networking {
 					if (!targGround) {
 						Thing thing = Thing.UidGetThing(uid);
 						if (thing != null) {
-							if (this.CharacterNotNull.CanSeeForUpdate(thing)) {
+							if (self.CanSeeForUpdate(thing)) {
+								self.Targ = thing;
 								targ(this, thing, parameter);
 								return;
 							}
 						}
 					} else {
 						if (model == 0) {
-							AbstractCharacter self = this.CharacterNotNull;
 							Point4D point = new Point4D(x, y, z, self.M);
 							if (self.CanSeeCoordinates(point)) {
+								self.Targ = point;
 								targ(this, point, parameter);
 								return;
 							}
 						} else {
-							AbstractCharacter self = this.CharacterNotNull;
-							if (self.CanSeeCoordinates(x, y, z, self.M)) {
+							if (self.CanSeeCoordinates(x, y, self.M)) {
 								Map map = self.GetMap();
 								Static sta = map.GetStatic(x, y, z, model);
 								if (sta != null) {
+									self.Targ = sta;
 									targ(this, sta, parameter);
 									return;
 								}
 								MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
 								if (mic != null) {
+									self.Targ = mic;
 									targ(this, mic, parameter);
 									return;
 								}

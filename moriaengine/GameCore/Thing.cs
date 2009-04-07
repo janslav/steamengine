@@ -938,7 +938,6 @@ namespace SteamEngine {
 				} else {
 					bool cancel = false;
 					ScriptArgs sa = new ScriptArgs(clicker, clickerState, clickerConn, this);
-					clicker.act = this;
 					cancel = this.TryCancellableTrigger(TriggerKey.aosClick, sa);
 					if (!cancel) {
 						//@aosClick on thing did not return 1
@@ -965,7 +964,6 @@ namespace SteamEngine {
 				} else {
 					bool cancel = false;
 					ScriptArgs sa = new ScriptArgs(clicker, this);
-					clicker.act = this;
 					cancel = this.Trigger_SpecificClick(clicker, sa);
 					if (!cancel) {
 						//@itemclick or @charclick on src did not return 1

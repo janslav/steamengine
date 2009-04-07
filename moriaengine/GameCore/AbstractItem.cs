@@ -71,7 +71,7 @@ namespace SteamEngine {
 		}
 
 		#region Constructors
-		public AbstractItem(ThingDef myDef)
+		protected AbstractItem(ThingDef myDef)
 			: base(myDef) {
 			instances++;
 			this.name = null;
@@ -84,7 +84,7 @@ namespace SteamEngine {
 			Globals.lastNewItem = this;
 		}
 
-		public AbstractItem(AbstractItem copyFrom)
+		protected AbstractItem(AbstractItem copyFrom)
 			: base(copyFrom) { //copying constuctor
 			instances++;
 			name = copyFrom.name;
@@ -277,6 +277,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public abstract bool Flag_NonMovable {
 			get;
 			set;
@@ -348,6 +349,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
 			ScriptArgs sa = new ScriptArgs(viewer, viewerState, viewerConn);
 			this.TryTrigger(TriggerKey.containerOpen, sa);
@@ -356,6 +358,7 @@ namespace SteamEngine {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
 		}
 
@@ -364,6 +367,7 @@ namespace SteamEngine {
 
 		//}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual ItemOnGroundUpdater GetOnGroundUpdater() {
 			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);
 			if (iogu == null) {
@@ -496,17 +500,16 @@ namespace SteamEngine {
 			bool cancel = false;
 			cancel = clickingChar.TryCancellableTrigger(TriggerKey.itemClick, sa);
 			if (!cancel) {
-				clickingChar.act = this;
 				cancel = clickingChar.On_ItemClick(this);
 			}
 			return cancel;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public void Trigger_Step(AbstractCharacter steppingChar, bool repeated) {
 			ThrowIfDeleted();
 			bool cancel = false;
 			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated);
-			steppingChar.act = this;
 			cancel = steppingChar.TryCancellableTrigger(TriggerKey.itemStep, sa);
 			if (!cancel) {
 				//@item/charStep on src did not return 1
@@ -520,6 +523,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Step(AbstractCharacter stepping, bool repeated) {
 		}
 

@@ -89,6 +89,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void ResolveAll() {
 			resolving = true;
 			while (resolving) {
@@ -103,11 +104,7 @@ namespace SteamEngine {
 					DelayedMethod dm = (DelayedMethod) delayedDelegates[a];
 					try {
 						dm((object[]) delayedArgs[a]);
-					} catch (FatalException) {
-						throw;
-					} catch (Exception e) {
-						Logger.WriteError(e);
-					}
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 				DateTime after = DateTime.Now;
 				Logger.WriteDebug("...took " + (after - before));

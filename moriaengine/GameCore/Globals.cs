@@ -430,6 +430,7 @@ namespace SteamEngine {
 			Looks in the registry to find the path to the MUL files. If both 2d and 3d are installed,
 			it isn't specified which this will find.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static string GetMulsPath() {
 #if !MONO
 			RegistryKey rk = Registry.LocalMachine;
@@ -666,7 +667,7 @@ namespace SteamEngine {
 		}
 #endif
 
-		[Summary("First documentation in Steamengine.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("First documentation in Steamengine.")]
 		[Remark("This is first documentation in Steamengine, that uses SteamDoc attributes.")]
 		[Return("Nothing")]
 		public static void CompileDocs() {
@@ -693,9 +694,7 @@ namespace SteamEngine {
 				scanner.ScanAssembly(asm);
 				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
-			} catch (Exception e) {
-				Logger.WriteError(e);
-			}
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 #if MSWIN
 			if (ndocExe.Length != 0) {
@@ -717,9 +716,7 @@ namespace SteamEngine {
 					ndocProcess.Exited += new EventHandler(ndocExited);
 					ndocProcess.EnableRaisingEvents = true;
 					ndocProcess.Start();
-				} catch (Exception e) {
-					Logger.WriteError(e);
-				}
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
 #elif LINUX
 			Console.WriteLine ("NDoc is not supported under Linux.");

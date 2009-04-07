@@ -35,11 +35,12 @@ namespace SteamEngine {
 
 		private FieldValue dropSound;
 
-		private List<AbstractItemDef> dupeList = null;
+		private List<AbstractItemDef> dupeList;
+		private System.Collections.ObjectModel.ReadOnlyCollection<AbstractItemDef> dupeListReadOnly;
 
 		private ItemDispidInfo dispidInfo;
 
-		public AbstractItemDef(string defname, string filename, int headerLine)
+		protected AbstractItemDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
 			this.type = InitTypedField("type", null, typeof(TriggerGroup));
@@ -71,11 +72,12 @@ namespace SteamEngine {
 		}
 
 		public void AddToDupeList(AbstractItemDef idef) {
-			if (dupeList == null) {
-				dupeList = new List<AbstractItemDef>();
+			if (this.dupeList == null) {
+				this.dupeList = new List<AbstractItemDef>();
+				this.dupeListReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractItemDef>(this.dupeList);
 			}
-			if (!dupeList.Contains(idef)) {
-				dupeList.Add(idef);
+			if (!this.dupeList.Contains(idef)) {
+				this.dupeList.Add(idef);
 			}
 		}
 
@@ -88,8 +90,10 @@ namespace SteamEngine {
 			}
 		}
 
-		public List<AbstractItemDef> DupeList() {
-			return dupeList;
+		public System.Collections.ObjectModel.ReadOnlyCollection<AbstractItemDef> DupeList {
+			get {
+				return this.dupeListReadOnly;
+			}
 		}
 
 		public int GetNextFlipModel(int curModel) {
