@@ -43,7 +43,7 @@ using SteamEngine.Packets;
 using SteamEngine.Common;
 
 namespace SteamEngine {
-	internal class FastDLL {
+	internal static class FastDLL {
 
 		static FastDLL() {
 #if USEFASTDLL

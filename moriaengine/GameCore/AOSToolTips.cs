@@ -127,8 +127,9 @@ namespace SteamEngine {
 		//    }
 		//}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void SendIdPacket(GameState state, TCPConnection<GameState> conn) {
-			if (state.Version.oldAosToolTips) {
+			if (state.Version.OldAosToolTips) {
 				if (this.oldIdNGroup == null) {
 					this.oldIdNGroup = PacketGroup.CreateFreePG();
 					this.oldIdNGroup.AcquirePacket<OldPropertiesRefreshOutPacket>().Prepare(thing.FlaggedUid, this.uid);

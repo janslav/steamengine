@@ -17,7 +17,7 @@
 
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
@@ -25,38 +25,38 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class ClientVersion {
-		private static Hashtable byVersionString = new Hashtable();
+		public static Regex osi2dCliVerRE = new Regex(@"^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)(?<letter>[a-z])$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		private static Dictionary<string, ClientVersion> byVersionString = new Dictionary<string, ClientVersion>(StringComparer.OrdinalIgnoreCase);
 
 		public static ClientVersion Get(string versionString) {
-			ClientVersion cliver = (ClientVersion) byVersionString[versionString];
-			if (cliver == null) {
+			ClientVersion cliver;
+			if (!byVersionString.TryGetValue(versionString, out cliver)) {
 				cliver = new ClientVersion(versionString);
 				byVersionString[versionString] = cliver;
 			}
-
 			return cliver;
 		}
 
-		public static ClientVersion nullValue = new ClientVersion();
+		internal readonly static ClientVersion nullValue = new ClientVersion();
+
+		private readonly ClientType type;
+		private readonly string versionString;//what we got from the client
 
 
-		public readonly ClientType type;
-		public readonly string versionString;//what we got from the client
 		private OSI2DVersionNumber osi2dVerNum = OSI2DVersionNumber.nullValue;
 		//int palanthirVerNum = 0;
 
 		//flags:
-		public readonly bool displaySkillCaps = false;
-		public readonly bool aosToolTips = false;
-		public readonly bool oldAosToolTips = false;
-		public readonly bool needsNewSpellbook = false;
+		private readonly bool displaySkillCaps = false;
+		private readonly bool aosToolTips = false;
+		private readonly bool oldAosToolTips = false;
+		private readonly bool needsNewSpellbook = false;
 
 		private ClientVersion() {
 			type = ClientType.Unknown;
 		}
-
-		public static Regex osi2dCliVerRE = new Regex(@"^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)(?<letter>[a-z])$",
-			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private ClientVersion(string versionString) {
 			this.versionString = versionString;
@@ -70,7 +70,7 @@ namespace SteamEngine {
 					this.type = ClientType.OSI2D;
 					this.osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
 
-					int number = osi2dVerNum.comparableNumber;
+					int number = osi2dVerNum.ComparableNumber;
 					if (number >= 3000803) {//client 3.0.8d
 						this.displaySkillCaps = true;
 					}
@@ -85,12 +85,47 @@ namespace SteamEngine {
 			} catch (Exception e) {
 				Logger.WriteWarning("While evaluating '" + LogStr.Ident(versionString) + "' as client version string", e);
 			}
-
 		}
+
+		public bool DisplaySkillCaps {
+			get { 
+				return this.displaySkillCaps; 
+			}
+		}
+
+		public bool AosToolTips {
+			get { 
+				return this.aosToolTips; 
+			}
+		}
+
+		public bool OldAosToolTips {
+			get { 
+				return this.oldAosToolTips; 
+			}
+		}
+
+		public bool NeedsNewSpellbook {
+			get { 
+				return this.needsNewSpellbook; 
+			}
+		}
+
+		public ClientType Type {
+			get { 
+				return this.type; 
+			}
+		}
+
+		public string VersionString {
+			get { 
+				return this.versionString; 
+			}
+		} 
 
 		public OSI2DVersionNumber OSI2DVerNum {
 			get {
-				return osi2dVerNum;
+				return this.osi2dVerNum;
 			}
 		}
 
@@ -116,15 +151,45 @@ namespace SteamEngine {
 	}
 
 	public class OSI2DVersionNumber {
-		public readonly byte major;
-		public readonly byte minor;
-		public readonly byte revision;
-		public readonly char letter;
-		public readonly int comparableNumber;
+		private readonly int major;
+		private readonly int minor;
+		private readonly int revision;
+		private readonly char letter;
+		private readonly int comparableNumber;
 
-		public static OSI2DVersionNumber nullValue = new OSI2DVersionNumber(0, 0, 0, 'a');
+		public int Major {
+			get { 
+				return this.major; 
+			}
+		}
 
-		public OSI2DVersionNumber(byte major, byte minor, byte revision, char letter) {
+		public int Minor {
+			get { 
+				return this.minor; 
+			}
+		}
+		
+		public int Revision {
+			get { 
+				return this.revision; 
+			}
+		}
+
+		public char Letter {
+			get { 
+				return this.letter; 
+			}
+		}
+
+		public int ComparableNumber {
+			get { 
+				return this.comparableNumber; 
+			}
+		} 
+
+		internal readonly static OSI2DVersionNumber nullValue = new OSI2DVersionNumber(0, 0, 0, 'a');
+
+		public OSI2DVersionNumber(int major, int minor, int revision, char letter) {
 			this.major = major;
 			this.minor = minor;
 			this.revision = revision;
@@ -133,10 +198,10 @@ namespace SteamEngine {
 			comparableNumber = major * 1000000;
 			comparableNumber += minor * 10000;
 			comparableNumber += revision * 100;
-			comparableNumber += ((byte) this.letter) - valueOfA;
+			comparableNumber += ((int) this.letter) - valueOfA;
 		}
 
-		const byte valueOfA = (byte) 'a';
+		const int valueOfA = (int) 'a';
 
 		public override string ToString() {
 			return string.Concat(major, ".", minor, ".", revision, letter);

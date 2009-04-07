@@ -1709,13 +1709,13 @@ namespace SteamEngine.Networking {
 	public sealed class CharacterAnimationOutPacket : GameOutgoingPacket {
 		uint charUid;
 		byte dir, frameDelay;
-		ushort anim, numAnims;
+		ushort animId, numAnims;
 		bool backwards, undo;
 
-		public void Prepare(AbstractCharacter cre, int anim, int numAnims, bool backwards, bool undo, byte frameDelay) {
+		public void Prepare(AbstractCharacter cre, int animId, int numAnims, bool backwards, bool undo, byte frameDelay) {
 			this.charUid = cre.FlaggedUid;
 			this.dir = cre.DirectionByte;
-			this.anim = (ushort) anim;
+			this.animId = (ushort) animId;
 			this.numAnims = (ushort) numAnims;
 			this.backwards = backwards;
 			this.undo = undo;
@@ -1728,7 +1728,7 @@ namespace SteamEngine.Networking {
 
 		protected override void Write() {
 			this.EncodeUInt(this.charUid);
-			this.EncodeUShort(this.anim);
+			this.EncodeUShort(this.animId);
 			this.EncodeByte(1);
 			this.EncodeByte((byte) ((this.dir - 4) & 0x7)); //-4? huh ?
 			this.EncodeUShort(this.numAnims);

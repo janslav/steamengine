@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 				conn.SendPacketGroup(pg);
 
 				pg = PacketGroup.AcquireSingleUsePG();//the 2 packets can't be in one group. Don't ask me why.
-				if (state.Version.needsNewSpellbook) {
+				if (state.Version.NeedsNewSpellbook) {
 					pg.AcquirePacket<NewSpellbookOutPacket>().Prepare(this.FlaggedUid, this.Model, this.FirstSpellId, this.contents);
 				} else {
 					pg.AcquirePacket<ItemsInContainerOutPacket>().PrepareSpellbook(this.FlaggedUid, this.FirstSpellId, this.contents);

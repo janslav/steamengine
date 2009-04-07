@@ -666,7 +666,7 @@ namespace SteamEngine.Networking {
 		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
 			Thing thing = Thing.UidGetThing(this.uid);
 			if (thing != null) {
-				if (Globals.aosToolTips && state.Version.aosToolTips) {
+				if (Globals.aosToolTips && state.Version.AosToolTips) {
 					thing.Trigger_AosClick(state.CharacterNotNull);
 				} else {
 					thing.Trigger_Click(state.CharacterNotNull);
@@ -1087,13 +1087,13 @@ namespace SteamEngine.Networking {
 					if (this.actionParsed) {
 						int skillId;
 						if (this.actionParseResult == 0) {//last skill
-							skillId = state.lastSkillMacroId;
+							skillId = state.LastSkillMacroId;
 						} else {
 							skillId = this.actionParseResult;
 						}
 						AbstractSkillDef skillDef = AbstractSkillDef.GetById(skillId);
 						if (skillDef.StartByMacroEnabled) {
-							state.lastSkillMacroId = skillId;
+							state.LastSkillMacroId = skillId;
 							state.CharacterNotNull.SelectSkill(skillDef);
 							return;
 						}
@@ -1103,10 +1103,10 @@ namespace SteamEngine.Networking {
 					if (this.actionParsed) {
 						int spellId;
 						if (this.actionParseResult == 0) {//last spell
-							spellId = state.lastSpellMacroId;
+							spellId = state.LastSpellMacroId;
 						} else {
 							spellId = this.actionParseResult;
-							state.lastSpellMacroId = spellId;
+							state.LastSpellMacroId = spellId;
 						}
 						state.CharacterNotNull.TryCastSpellFromBook(spellId);
 						return;

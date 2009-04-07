@@ -179,6 +179,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_LeaveItem(AbstractItem cont) {
 			Sanity.IfTrueThrow(cont != this.Cont, "this not in cont.");
 
@@ -209,6 +210,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_LeaveChar(AbstractCharacter cont) {
 			Sanity.IfTrueThrow(cont != this.Cont, "this not in cont.");
 
@@ -246,6 +248,7 @@ namespace SteamEngine {
 			cont.ItemMakeLimbo(this);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_UnEquip(ItemInCharArgs args) {
 		}
 
@@ -257,6 +260,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_LeaveGround() {
 			Sanity.IfTrueThrow(this.Cont != null, "this not on ground.");
 			
@@ -287,6 +291,7 @@ namespace SteamEngine {
 		}
 
 		//we expect this to be in limbo, and cont to be really container
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_EnterItem(AbstractItem cont, int x, int y) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "this not in Limbo");
 			Sanity.IfTrueThrow(!cont.IsContainer, "cont is no Container");
@@ -349,6 +354,7 @@ namespace SteamEngine {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool CouldBeStacked(AbstractItem a, AbstractItem b) {
 			return ((a.IsStackable && b.IsStackable) &&
 					(a.def == b.def) &&
@@ -357,6 +363,7 @@ namespace SteamEngine {
 		}
 
 		//add "toStack" to this stack, if possible
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Trigger_StackInCont(AbstractItem toStack, AbstractItem waitingStack) {
 			Sanity.IfTrueThrow(this != toStack.Cont, "toStack not in this.");
 			Sanity.IfTrueThrow(this != waitingStack.Cont, "waitingStack not in this.");
@@ -402,6 +409,7 @@ namespace SteamEngine {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static bool Trigger_StackOnGround(AbstractItem toStack, AbstractItem waitingStack) {
 			Sanity.IfTrueThrow(null != toStack.Cont, "toStack not on ground.");
 			Sanity.IfTrueThrow(null != waitingStack.Cont, "waitingStack not on ground.");
@@ -449,6 +457,7 @@ namespace SteamEngine {
 
 
 		//we expect this to be in limbo and equippable
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_EnterChar(AbstractCharacter cont, byte layer) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "this not in limbo");
 			Sanity.IfTrueThrow(((layer != (byte) LayerNames.Dragging) && (!this.IsEquippable)), "this not equippable");
@@ -489,10 +498,12 @@ namespace SteamEngine {
 
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Equip(ItemInCharArgs args) {
 		}
 
 		//we expect this to be in limbo
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_EnterRegion(int x, int y, int z, byte m) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "Item is supposed to be in Limbo state when Trigger_Enter* called");
 
@@ -522,41 +533,52 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_LeaveItem(ItemInItemArgs args) {
 			//I am the manipulated item
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemLeave(ItemInItemArgs args) {
 			//I am the container
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_LeaveChar(ItemInCharArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_LeaveRegion(ItemOnGroundArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemEnter(ItemInItemArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_EnterItem(ItemInItemArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_ItemStackOn(ItemStackArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_StackOnItem(ItemStackArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_EnterChar(ItemInCharArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_EnterRegion(ItemOnGroundArgs args) {
 
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public void GetRandomXYInside(out int x, out int y) {
 			//todo?: nonconstant bounds for this? or virtual?
 			int minX, minY, maxX, maxY;
@@ -565,6 +587,7 @@ namespace SteamEngine {
 			y = Globals.dice.Next(minY, maxY);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public virtual void GetContainerGumpBoundaries(out int minX, out int minY, out int maxX, out int maxY) {
 			minX = 20;
 			minY = 20;
@@ -637,6 +660,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public void LoadCont_Delayed(object resolvedObj, string filename, int line) {
 			if (Uid == -1) {
 				//I was probably cleared because of failed load. Let me get deleted by garbage collector.
@@ -662,47 +686,47 @@ namespace SteamEngine {
 			Logger.WriteWarning("The object (" + resolvedObj + ") is being loaded as cont for item '" + this.ToString() + "', but it already does have it's cont. This should not happen.");
 		}
 
-		[Summary("Someone is trying to pick me up")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to pick me up")]
 		public virtual bool On_DenyPickup(DenyPickupArgs args) {
 			return false;
 		}
 
-		[Summary("Someone is trying to pick up item that is contained in me")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to pick up item that is contained in me")]
 		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
 			return false;
 		}
 
-		[Summary("Someone is trying to put me on ground")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put me on ground")]
 		public virtual bool On_DenyPutOnGround(DenyPutOnGroundArgs args) {
 			return false;
 		}
 
-		[Summary("Someone is trying to put me in a container")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put me in a container")]
 		public virtual bool On_DenyPutInItem(DenyPutInItemArgs args) {
 			return false;
 		}
 
-		[Summary("Someone is trying to put an item in me (I am a container)")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put an item in me (I am a container)")]
 		public virtual bool On_DenyPutItemIn(DenyPutInItemArgs args) {
 			return false;
 		}
 
-		[Summary("I am being put on another item")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("I am being put on another item")]
 		public virtual bool On_PutOnItem(ItemOnItemArgs args) {
 			return false;
 		}
 
-		[Summary("Another item is being put on me")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Another item is being put on me")]
 		public virtual bool On_PutItemOn(ItemOnItemArgs args) {
 			return false;
 		}
 
-		[Summary("I am being put on a character other than the person wielding me")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("I am being put on a character other than the person wielding me")]
 		public virtual bool On_PutOnChar(ItemOnCharArgs args) {
 			return false;
 		}
 
-		[Summary("Iam being equipped on a character")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Iam being equipped on a character")]
 		public virtual bool On_DenyEquip(DenyEquipArgs args) {
 			return false;
 		}
@@ -791,6 +815,7 @@ namespace SteamEngine {
 			InternalItemEnter(item, layer);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemLeave(ItemInCharArgs args) {
 
 		}
@@ -902,6 +927,7 @@ namespace SteamEngine {
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPickupItem(AbstractItem item, int amt) {
 			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
@@ -991,6 +1017,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemInItem(AbstractItem targetCont, int x, int y, bool tryStacking) {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
@@ -1067,6 +1094,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnItem(AbstractItem target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
@@ -1133,6 +1161,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnGround(int x, int y, int z) {
 			ThrowIfDeleted();
 			AbstractItem item = draggingLayer;
@@ -1184,6 +1213,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. drops the held item on target (I am the src)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
@@ -1231,6 +1261,7 @@ namespace SteamEngine {
 
 		//typically called from InPackets. drops the held item on target (I am the src)
 		//dropping on ones own paperdoll
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
@@ -1331,44 +1362,55 @@ namespace SteamEngine {
 		#endregion client trigger_deny methods
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemEnter(ItemInCharArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemEquip(ItemInCharArgs args) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemUnEquip(ItemInCharArgs args) {
 
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyPutItemOnGround(DenyPutOnGroundArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyPickupItem(DenyPickupArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyPutItemInItem(DenyPutInItemArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_PutItemOn(ItemOnCharArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_PutItemOnChar(ItemOnCharArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyEquip(DenyEquipArgs args) {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyEquipOnChar(DenyEquipArgs args) {
 			return false;
 		}

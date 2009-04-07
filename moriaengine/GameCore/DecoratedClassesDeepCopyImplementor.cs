@@ -32,19 +32,19 @@ namespace SteamEngine {
 	+ "When this attribute is used, LoadingInitializerAttribute is expected to be found on a corresponding member, and will be used to initialize a new instance."
 	+ "Members with SaveableData attribute will be considered the members to be copied.")]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-	public class DeepCopyableClassAttribute : Attribute {
+	public sealed class DeepCopyableClassAttribute : Attribute {
 	}
 
 	[Summary("In classes that have [DeepCopyableClass], use this attribute to decorate public instance fields and properties"
 	+ " that are supposed to be copied by the deepcopy framework along with the main object.")]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-	public class CopyableDataAttribute : Attribute {
+	public sealed class CopyableDataAttribute : Attribute {
 	}
 
 	[Summary("Use this to decorate a static method or constructor that implements deep copying of instances of the given class. "
 	+ "It must have one parameter of it's type and a return value of assignable type.")]
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-	public class DeepCopyImplementationAttribute : Attribute {
+	public sealed class DeepCopyImplementationAttribute : Attribute {
 	}
 
 	//public abstract class DecoratedClassesDeepCopyImplementor : IDeepCopyImplementor {
@@ -68,6 +68,7 @@ namespace SteamEngine {
 			ClassManager.RegisterSupplyDecoratedClasses<DeepCopyableClassAttribute>(AddDecoratedClass, false);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public System.CodeDom.CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();

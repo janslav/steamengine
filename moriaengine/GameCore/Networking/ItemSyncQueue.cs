@@ -110,7 +110,7 @@ namespace SteamEngine.Networking {
 				GameState state = player.GameState;
 				if (state != null) {
 					TCPConnection<GameState> conn = state.Conn;
-					if (state.Version.aosToolTips) {
+					if (state.Version.AosToolTips) {
 						if (toolTips == null) {
 							toolTips = item.GetAOSToolTips();
 							if (toolTips == null) {
@@ -193,7 +193,7 @@ namespace SteamEngine.Networking {
 							}
 
 							if (propertiesExist) {
-								if (Globals.aosToolTips && state.Version.aosToolTips) {
+								if (Globals.aosToolTips && state.Version.AosToolTips) {
 									if (toolTips == null) {
 										toolTips = item.GetAOSToolTips();
 										if (toolTips == null) {

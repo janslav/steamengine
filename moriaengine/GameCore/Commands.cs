@@ -39,6 +39,7 @@ namespace SteamEngine {
 
 		internal static bool commandRunning;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void PlayerCommand(GameState state, string command) {
 			string lower = command.ToLower();
 			string noprefix;
@@ -113,12 +114,13 @@ namespace SteamEngine {
 
 		//method: ConsoleCommand
 		//this is invoked directly by consoles
-		public static void ConsoleCommand(ConsoleDummy c, string command) {
-			Globals.SetSrc(c);
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		public static void ConsoleCommand(ConsoleDummy consoleDummy, string command) {
+			Globals.SetSrc(consoleDummy);
 #if DEBUG
 			long ticksBefore = HighPerformanceTimer.TickCount;
 #endif
-			InvokeCommand(c, Globals.instance, command);
+			InvokeCommand(consoleDummy, Globals.instance, command);
 #if DEBUG
 			Logger.WriteDebug("Command took (in ms): " + HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
 #endif
@@ -168,6 +170,7 @@ namespace SteamEngine {
 			gmCommandsCache.Clear();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void InvokeCommand(ISrc commandSrc, TagHolder self, string code) {
 			Sanity.IfTrueThrow(commandSrc == null, "commandSrc cannot be null in Commands.InvokeCommand");
 

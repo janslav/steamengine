@@ -23,6 +23,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class CoreLogger : Logger {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void Init() {
 			try {
 				new CoreLogger();

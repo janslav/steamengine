@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 					inBackpack.Cont = this;
 				}
 			}
-			foreach (Item equipped in dieingChar.GetVisibleEquip()) {
+			foreach (Item equipped in dieingChar.VisibleEquip) {
 				if (equipped.CanFallToCorpse && equipped != pack && equipped != hair && equipped != beard) {
 					equipped.Cont = this;
 					if (equippedItems == null) {

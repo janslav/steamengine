@@ -26,7 +26,7 @@ namespace SteamEngine {
 	public abstract class AbstractCharacterDef : ThingDef {
 		private FieldValue mountItem;
 
-		public AbstractCharacterDef(string defname, string filename, int headerLine)
+		protected AbstractCharacterDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			this.mountItem = InitModelField("mountItem", 0);
 		}
