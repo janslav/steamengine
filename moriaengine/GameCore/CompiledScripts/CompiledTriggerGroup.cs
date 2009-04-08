@@ -65,12 +65,13 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> compiledTGs = new List<Type>();
 
 		public static void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<CompiledTriggerGroup>(AddCompiledTGType);
+			ClassManager.RegisterSupplySubclasses<CompiledTriggerGroup>(AddCompiledTGType, false);
+			//they will be overriden anyway by generated code (so they _could_ be abstract), 
+			//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType), i.e. they're meant to be overriden by actual TGs
 		}
 
 		internal static bool AddCompiledTGType(Type t) {
-			if ((!t.IsAbstract) && (!t.IsSealed)) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
-				//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
+			if (!t.IsSealed) { //the generated ones are sealed				
 				compiledTGs.Add(t);
 				return true;
 			}
