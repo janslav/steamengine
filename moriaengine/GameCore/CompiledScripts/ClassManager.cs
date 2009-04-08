@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static List<SupplySubclassInstanceBase> supplySubclassInstanceDelegs = new List<SupplySubclassInstanceBase>();
 
-		private static List<TypeDelegPair> supplySubclassDelegs = new List<TypeDelegPair>();
+		private static List<SupplySubtypeHelper> supplySubclassDelegs = new List<SupplySubtypeHelper>();
 
 		private static Assembly commonAssembly = typeof(LogStr).Assembly;
 		public static Assembly CommonAssembly {
@@ -97,8 +97,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 			supplySubclassInstanceDelegs = tempInstances;
 
-			List<TypeDelegPair> tempSubclasses = new List<TypeDelegPair>(supplySubclassDelegs.Count);
-			foreach (TypeDelegPair entry in supplySubclassDelegs) {
+			List<SupplySubtypeHelper> tempSubclasses = new List<SupplySubtypeHelper>(supplySubclassDelegs.Count);
+			foreach (SupplySubtypeHelper entry in supplySubclassDelegs) {
 				if (!IsTypeFromScripts(entry.type)) {
 					tempSubclasses.Add(entry);
 				}
@@ -130,8 +130,8 @@ namespace SteamEngine.CompiledScripts {
 			supplyDecoratedTypesDelegs.Add(new SupplyDecoratedTypeBaseTuple<T>(deleg, inherited));
 		}
 
-		public static void RegisterSupplySubclasses<T>(SupplyType deleg) {
-			supplySubclassDelegs.Add(new TypeDelegPair(typeof(T), deleg));
+		public static void RegisterSupplySubclasses<T>(SupplyType deleg, bool includeAbstract) {
+			supplySubclassDelegs.Add(new SupplySubtypeHelper(typeof(T), deleg, includeAbstract));
 		}
 
 		public static void RegisterSupplySubclassInstances<T>(SupplyInstance<T> deleg, bool sealedOnly, bool throwIfNoCtor) {
@@ -143,13 +143,15 @@ namespace SteamEngine.CompiledScripts {
 			ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
 		}
 
-		private class TypeDelegPair {
+		private class SupplySubtypeHelper {
 			internal readonly Type type;
 			internal readonly SupplyType deleg;
+			internal readonly bool includeAbstract;
 
-			internal TypeDelegPair(Type type, SupplyType deleg) {
+			internal SupplySubtypeHelper(Type type, SupplyType deleg, bool includeAbstract) {
 				this.type = type;
 				this.deleg = deleg;
+				this.includeAbstract = includeAbstract;
 			}
 		}
 
@@ -286,9 +288,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			bool match = false;
-			foreach (TypeDelegPair entry in supplySubclassDelegs) {
+			foreach (SupplySubtypeHelper entry in supplySubclassDelegs) {
 				if (entry.type.IsAssignableFrom(type)) {
-					match = match || entry.deleg(type);
+					if (!entry.type.IsAbstract || entry.includeAbstract) {
+						match = match || entry.deleg(type);
+					}
 				}
 			}
 

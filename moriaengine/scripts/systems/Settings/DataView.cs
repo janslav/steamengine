@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Register a new hook to ClassManager - it will send the examined Types here and we will care for next.")]
 		public static void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<IDataView>(CheckGeneratedDataViewClass);
+			ClassManager.RegisterSupplySubclasses<IDataView>(CheckGeneratedDataViewClass, true);
 			//ClassManager.RegisterHook(CheckGeneratedDataViewClass);
 		}
 

@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<ProfessionDef>(RegisterProfessionDefType);
+			ClassManager.RegisterSupplySubclasses<ProfessionDef>(RegisterProfessionDefType, false);
 		}
 
 		//for loading of ProfessionDefs from .scp scripts

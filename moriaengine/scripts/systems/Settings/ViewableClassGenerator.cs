@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts {
 			//register the CheckViewabilityClass method so every ClassManager managed Type will be
 			//checked here for its Viewability...
 			if (!Globals.fastStartUp) {
-				ClassManager.RegisterSupplySubclasses<object>(CheckViewabilityClass);
+				ClassManager.RegisterSupplySubclasses<object>(CheckViewabilityClass, true);
 			}
 		}
 

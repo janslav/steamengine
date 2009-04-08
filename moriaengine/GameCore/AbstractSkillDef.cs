@@ -96,7 +96,7 @@ namespace SteamEngine {
 		}
 
 		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<AbstractSkillDef>(RegisterSkillDefType);
+			ClassManager.RegisterSupplySubclasses<AbstractSkillDef>(RegisterSkillDefType, false);
 		}
 
 		//for loading of skilldefs from .scp/.def scripts
