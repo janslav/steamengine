@@ -96,7 +96,7 @@ namespace SteamEngine {
 		}
 
 		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<AbstractSkillDef>(RegisterSkillDefType, false);
+			ClassManager.RegisterSupplySubclasses<AbstractSkillDef>(RegisterSkillDefType);
 		}
 
 		//for loading of skilldefs from .scp/.def scripts
@@ -108,15 +108,17 @@ namespace SteamEngine {
 
 		//called by ClassManager
 		internal static bool RegisterSkillDefType(Type skillDefType) {
-			ConstructorInfo ci;
-			if (skillDefCtorsByName.TryGetValue(skillDefType.Name, out ci)) { //we have already a ThingDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SkillDef classes.");
+			if (!skillDefType.IsAbstract) {
+				ConstructorInfo ci;
+				if (skillDefCtorsByName.TryGetValue(skillDefType.Name, out ci)) { //we have already a ThingDef type named like that
+					throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SkillDef classes.");
+				}
+				ci = skillDefType.GetConstructor(skillDefConstructorParamTypes);
+				if (ci == null) {
+					throw new SEException("Proper constructor not found.");
+				}
+				skillDefCtorsByName[skillDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 			}
-			ci = skillDefType.GetConstructor(skillDefConstructorParamTypes);
-			if (ci == null) {
-				throw new SEException("Proper constructor not found.");
-			}
-			skillDefCtorsByName[skillDefType.Name] = MemberWrapper.GetWrapperFor(ci);
 			return false;
 		}
 

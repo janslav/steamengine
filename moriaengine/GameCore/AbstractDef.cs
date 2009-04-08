@@ -393,7 +393,7 @@ namespace SteamEngine {
 		}
 
 		public static new void Bootstrap() {
-			CompiledScripts.ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype, true);
+			CompiledScripts.ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype);
 		}
 
 		public static bool RegisterSubtype(Type type) {

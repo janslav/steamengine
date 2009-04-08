@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 		#region Loading from scripts
 
 		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<SpellDef>(RegisterSpellDefType, false);
+			ClassManager.RegisterSupplySubclasses<SpellDef>(RegisterSpellDefType);
 		}
 
 		//for loading of Spelldefs from .scp scripts
