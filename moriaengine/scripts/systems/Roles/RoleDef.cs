@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<RoleDef>(RegisterRoleDefType, false);
+			ClassManager.RegisterSupplySubclasses<RoleDef>(RegisterRoleDefType);
 		}
 
 		//for loading of roledefs from .scp scripts

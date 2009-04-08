@@ -28,11 +28,13 @@ namespace SteamEngine.CompiledScripts {
 		static List<Type> pluginTGs = new List<Type>();
 
 		public static void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<Plugin>(AddPluginTGType, false);
+			ClassManager.RegisterSupplySubclasses<Plugin>(AddPluginTGType);
 		}
 
 		internal static bool AddPluginTGType(Type t) {
-			pluginTGs.Add(t);
+			if (!t.IsAbstract) {
+				pluginTGs.Add(t);
+			}
 			return false;
 		}
 

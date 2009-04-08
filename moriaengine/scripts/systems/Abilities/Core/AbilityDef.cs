@@ -226,7 +226,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<AbilityDef>(RegisterAbilityDefType, false);
+			ClassManager.RegisterSupplySubclasses<AbilityDef>(RegisterAbilityDefType);
 		}
 
 		//for loading of abilitydefs from .scp scripts
