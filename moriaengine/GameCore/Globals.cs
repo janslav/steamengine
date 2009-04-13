@@ -53,9 +53,15 @@ namespace SteamEngine {
 		public const int MinUpdateRange = 5;
 		public const int defaultWarningLevel = 4;
 
-		public readonly static int port;   //Changing this after initialization has no effect. 
-		public readonly static string serverName;  //Can be changed while the server is running.
-		public readonly static string adminEmail;  //Can be changed while the server is running.
+		private readonly static int port;
+		public static int Port {
+			get { return Globals.port; }
+		}
+
+		private readonly static string serverName;
+		public static string ServerName {
+			get { return Globals.serverName; }
+		} 
 
 		public override string Name {
 			get {
@@ -66,32 +72,103 @@ namespace SteamEngine {
 				throw new SEException("Can't set server name directly. It's read from steamengine.ini");
 			}
 		}
-		public readonly static string commandPrefix;
-		public readonly static string alternateCommandPrefix;
-		public readonly static string logPath;
-		public readonly static string savePath;
-		public readonly static string mulPath;
-		public readonly static string scriptsPath = Path.GetFullPath(".\\scripts\\");
 
-		public readonly static string docsPath;
-		public readonly static string ndocExe;
+		private readonly static string adminEmail;
+		public static string AdminEmail {
+			get { return Globals.adminEmail; }
+		} 
 
-		public readonly static bool logToFiles;
-		public static bool logToConsole;
+		private readonly static string commandPrefix;
+		public static string CommandPrefix {
+			get { return Globals.commandPrefix; }
+		}
 
-		public readonly static byte maximalPlevel;
-		public readonly static int plevelOfGM;
-		public readonly static int plevelToLscriptCommands;
+		private readonly static string alternateCommandPrefix;
+		public static string AlternateCommandPrefix {
+			get { return Globals.alternateCommandPrefix; }
+		}
 
-		//public readonly static bool kickOnSuspiciousErrors;
-		public readonly static bool allowUnencryptedClients;
+		private readonly static string logPath;
+		public static string LogPath {
+			get { return Globals.logPath; }
+		}
 
-		public readonly static int reachRange;
-		public readonly static int squaredReachRange;
-		//public readonly static ushort sightRange;
-		//public readonly static int squaredSightRange;
-		public readonly static int defaultASCIIMessageColor;
-		public readonly static int defaultUnicodeMessageColor;
+		private readonly static string savePath;
+		public static string SavePath {
+			get { return Globals.savePath; }
+		}
+
+		private readonly static string mulPath;
+		public static string MulPath {
+			get { return Globals.mulPath; }
+		}
+
+		private readonly static string scriptsPath = Path.GetFullPath(".\\scripts\\");
+		public static string ScriptsPath {
+			get { return Globals.scriptsPath; }
+		}
+
+		private readonly static string docsPath;
+		public static string DocsPath {
+			get { return Globals.docsPath; }
+		}
+
+		private readonly static string ndocExe;
+		public static string NdocExe {
+			get { return Globals.ndocExe; }
+		}
+
+		private readonly static bool logToFiles;
+		public static bool LogToFiles {
+			get { return Globals.logToFiles; }
+		}
+
+		private static bool logToConsole;
+		public static bool LogToConsole {
+			get { return Globals.logToConsole; }
+			set { Globals.logToConsole = value; }
+		}
+
+		private readonly static byte maximalPlevel;
+		public static byte MaximalPlevel {
+			get { return Globals.maximalPlevel; }
+		}
+
+		private readonly static int plevelOfGM;
+		public static int PlevelOfGM {
+			get { return Globals.plevelOfGM; }
+		}
+
+		private readonly static int plevelForLscriptCommands;
+		public static int PlevelForLscriptCommands {
+			get { return Globals.plevelForLscriptCommands; }
+		} 
+
+		private readonly static bool allowUnencryptedClients;
+		public static bool AllowUnencryptedClients {
+			get { return Globals.allowUnencryptedClients; }
+		}
+
+		private readonly static int reachRange;
+		public static int ReachRange {
+			get { return Globals.reachRange; }
+		}
+
+		private readonly static int squaredReachRange;
+		public static int SquaredReachRange {
+			get { return Globals.squaredReachRange; }
+		}
+
+		private readonly static int defaultAsciiMessageColor;
+		public static int DefaultAsciiMessageColor {
+			get { return Globals.defaultAsciiMessageColor; }
+		}
+
+		private readonly static int defaultUnicodeMessageColor;
+		public static int DefaultUnicodeMessageColor {
+			get { return Globals.defaultUnicodeMessageColor; }
+		} 
+
 
 		internal static bool useMap;
 		public static bool UseMap {
@@ -100,57 +177,149 @@ namespace SteamEngine {
 			}
 		}
 
-		public readonly static bool generateMissingDefs;
-		public readonly static bool useMultiItems;
-		internal static bool readBodyDefs;
+		private readonly static bool generateMissingDefs;
+		public static bool GenerateMissingDefs {
+			get { return Globals.generateMissingDefs; }
+		}
+
+		private readonly static bool useMultiItems;
+		public static bool UseMultiItems {
+			get { return Globals.useMultiItems; }
+		}
+
+		private static bool readBodyDefs;
 		public static bool ReadBodyDefs {
 			get {
 				return readBodyDefs;
 			}
+			internal set {
+				readBodyDefs = value;
+			}
 		}
 
-		public readonly static bool sendTileDataSpam;
-		public readonly static bool fastStartUp;
-		public readonly static bool netSyncingTracingOn;
+		private readonly static bool sendTileDataSpam;
+		public static bool SendTileDataSpam {
+			get { return Globals.sendTileDataSpam; }
+		}
 
-		public readonly static bool writeMulDocsFiles;
+		private readonly static bool fastStartUp;
+		public static bool FastStartUp {
+			get { return Globals.fastStartUp; }
+		}
 
-		public readonly static bool resolveEverythingAtStart;
+		private readonly static bool netSyncingTracingOn;
+		public static bool NetSyncingTracingOn {
+			get { return Globals.netSyncingTracingOn; }
+		}
 
-		public readonly static bool autoAccountCreation;
-		public readonly static bool blockOSI3DClient;
-		//public readonly static bool alwaysUpdateRouterIPOnStartup;
-		//public readonly static sbyte timeZone;
-		public readonly static int maxConnections;
 
-		//public readonly static bool supportUnicode;
-		public readonly static int speechDistance;
-		public readonly static int emoteDistance;
-		public readonly static int whisperDistance;
-		public readonly static int yellDistance;
-		//public readonly static bool asciiForNames;
-		public readonly static int loginFlags;
-		public readonly static int featuresFlags;
+		private readonly static bool writeMulDocsFiles;
+		public static bool WriteMulDocsFiles {
+			get { return Globals.writeMulDocsFiles; }
+		}
 
-		public readonly static int defaultItemModel;
-		public readonly static int defaultCharModel;
 
-		public readonly static bool hashPasswords;
+		private readonly static bool resolveEverythingAtStart;
+		public static bool ResolveEverythingAtStart {
+			get { return Globals.resolveEverythingAtStart; }
+		}
 
-		public readonly static bool scriptFloats;
+		private readonly static bool autoAccountCreation;
+		public static bool AutoAccountCreation {
+			get { return Globals.autoAccountCreation; }
+		}
 
-		public readonly static bool aosToolTips;
+		private readonly static bool blockOSI3DClient;
+		public static bool BlockOSI3DClient {
+			get { return Globals.blockOSI3DClient; }
+		}
+
+		private readonly static int maxConnections;
+		public static int MaxConnections {
+			get { return Globals.maxConnections; }
+		}
+
+		private readonly static int speechDistance;
+		public static int SpeechDistance {
+			get { return Globals.speechDistance; }
+		}
+
+		private readonly static int emoteDistance;
+		public static int EmoteDistance {
+			get { return Globals.emoteDistance; }
+		}
+
+		private readonly static int whisperDistance;
+		public static int WhisperDistance {
+			get { return Globals.whisperDistance; }
+		}
+
+		private readonly static int yellDistance;
+		public static int YellDistance {
+			get { return Globals.yellDistance; }
+		}
+
+		private readonly static int loginFlags;
+		public static int LoginFlags {
+			get { return Globals.loginFlags; }
+		}
+
+		private readonly static int featuresFlags;
+		public static int FeaturesFlags {
+			get { return Globals.featuresFlags; }
+		}
+
+
+		private readonly static int defaultItemModel;
+		public static int DefaultItemModel {
+			get { return Globals.defaultItemModel; }
+		}
+
+		private readonly static int defaultCharModel;
+		public static int DefaultCharModel {
+			get { return Globals.defaultCharModel; }
+		}
+		
+		private readonly static bool hashPasswords;
+		public static bool HashPasswords {
+			get { return Globals.hashPasswords; }
+		}
+
+		private readonly static bool scriptFloats;
+		public static bool ScriptFloats {
+			get { return Globals.scriptFloats; }
+		}
+
+
+		private readonly static bool useAosToolTips;
+		public static bool UseAosToolTips {
+			get { return Globals.useAosToolTips; }
+		} 
+
 
 		//public readonly static IList<IPAddress> omitip;
 
+
+		private static TagHolder lastNew = null;
 		[Summary("The last new item or character or memory or whatever created.")]
-		public static TagHolder lastNew = null;
+		public static TagHolder LastNew {
+			get { return Globals.lastNew; }
+			internal set { Globals.lastNew = value; }
+		}
 
+		private static AbstractCharacter lastNewChar = null;
 		[Summary("The last new Character created.")]
-		public static AbstractCharacter lastNewChar = null;
-
+		public static AbstractCharacter LastNewChar {
+			get { return Globals.lastNewChar; }
+			internal set { Globals.lastNewChar = value; }
+		}
+		
+		private static AbstractItem lastNewItem = null;
 		[Summary("The last new Item created.")]
-		public static AbstractItem lastNewItem = null;
+		public static AbstractItem LastNewItem {
+			get { return Globals.lastNewItem; }
+			internal set { Globals.lastNewItem = value; }
+		}
 
 		[Summary("The source of the current action.")]
 		private static ISrc src = null;
@@ -195,7 +364,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public static TCPConnection<GameState> SrcTCPConnection {
+		public static TcpConnection<GameState> SrcTcpConnection {
 			get {
 				AbstractCharacter ch = src as AbstractCharacter;
 				if (ch != null) {
@@ -321,7 +490,7 @@ namespace SteamEngine {
 				alternateCommandPrefix = text.GetValue<string>("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
 				//supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
 				//asciiForNames = text.GetValue<bool>("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
-				defaultASCIIMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
+				defaultAsciiMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
 				defaultUnicodeMessageColor = text.GetValue<ushort>("defaultUnicodeMessageColor", 0x0394, "The color to use for unicode messages with no specified color (or a specified color of 0, which is not really valid for unicode messages).");
 
 				IniFileSection ranges = iniH.GetNewOrParsedSection("ranges");
@@ -337,7 +506,7 @@ namespace SteamEngine {
 				IniFileSection plevels = iniH.GetNewOrParsedSection("plevels");
 				maximalPlevel = plevels.GetValue<byte>("maximalPlevel", 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");
 				plevelOfGM = plevels.GetValue<int>("plevelOfGM", 4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
-				plevelToLscriptCommands = plevels.GetValue<int>("plevelToLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
+				plevelForLscriptCommands = plevels.GetValue<int>("plevelForLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
 
 				IniFileSection scripts = iniH.GetNewOrParsedSection("scripts");
 				resolveEverythingAtStart = scripts.GetValue<bool>("resolveEverythingAtStart", false, "If this is false, Constants and fields of scripted defs (ThingDef,Skilldef, etc.) will be resolved from the text on demand (and probably at the first save). Otherwise, everything is resolved on the start. Leave this to false on your development server, but set it to true for a live shard, because it's more secure.");
@@ -351,11 +520,11 @@ namespace SteamEngine {
 
 				IniFileSection features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
-				aosToolTips = features.GetValue<bool>("aosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
+				useAosToolTips = features.GetValue<bool>("useAosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
 
 				featuresFlags |= 0x2;
-				if (aosToolTips) {
+				if (useAosToolTips) {
 					loginFlags |= 0x20;
 					featuresFlags |= 0x0008 | 0x8000;
 				}
@@ -530,7 +699,7 @@ namespace SteamEngine {
 			MainClass.CollectGarbage();
 		}
 
-		public static void ReCompile() {
+		public static void Recompile() {
 			//forced complete recompiling
 			MainClass.RecompileScripts();//can block for some time
 		}
@@ -559,7 +728,7 @@ namespace SteamEngine {
 			return Type.GetType(typename, true, true);//true for case insensitive
 		}
 
-		public static Type se(string typename) {
+		public static Type SE(string typename) {
 			//Console.WriteLine("type: "+Type.GetType("SteamEngine."+typename));
 			return Type.GetType("SteamEngine." + typename, true, true);
 		}
@@ -582,7 +751,7 @@ namespace SteamEngine {
 		}
 
 		public static void Information() {
-			Globals.Src.WriteLine(string.Format(
+			Globals.Src.WriteLine(string.Format(System.Globalization.CultureInfo.InvariantCulture, 
 				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
 				version, serverName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));

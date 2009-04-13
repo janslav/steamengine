@@ -93,7 +93,7 @@ namespace SteamEngine {
 			: base(myDef) {
 			instances++;
 			this.name = myDef.Name;
-			Globals.lastNewChar = this;
+			Globals.LastNewChar = this;
 		}
 
 		protected AbstractCharacter(AbstractCharacter copyFrom)
@@ -103,7 +103,7 @@ namespace SteamEngine {
 			this.name = copyFrom.name;
 			this.targ = copyFrom.targ;
 			this.directionAndFlags = copyFrom.directionAndFlags;
-			Globals.lastNewChar = this;
+			Globals.LastNewChar = this;
 			Map.GetMap(this.point4d.m).Add(this);
 		}
 
@@ -465,6 +465,7 @@ namespace SteamEngine {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			if (this.account != null) {
 				output.WriteValue("account", this.account);
@@ -579,8 +580,8 @@ namespace SteamEngine {
 		//}
 
 		//ISrc implementation
-		public void WriteLine(string arg) {
-			this.SysMessage(arg);
+		public void WriteLine(string line) {
+			this.SysMessage(line);
 		}
 
 		public Language Language {
@@ -679,7 +680,7 @@ namespace SteamEngine {
 				Map map = GetMap();
 				int newZ, newY, newX;
 
-				bool canMoveEverywhere = (this.IsPlayer && this.Plevel >= Globals.plevelOfGM);
+				bool canMoveEverywhere = (this.IsPlayer && this.Plevel >= Globals.PlevelOfGM);
 				if (!map.CheckMovement(oldPoint, this.MovementSettings, dir, canMoveEverywhere, out newX, out newY, out newZ)) {
 					return false;
 				}
@@ -761,11 +762,6 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public override void On_Create() {
-			AbstractItem ignoreTheWarning = Backpack; //mono compiler knows we dont use the variable ;)
-			base.On_Create();
-		}
-
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IsStandingOn(AbstractItem i) {
 			int zdiff = Math.Abs(i.Z - Z);
@@ -824,7 +820,7 @@ namespace SteamEngine {
 		public void Resync() {
 			GameState state = this.GameState;
 			if (state != null) {
-				TCPConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 
 				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
@@ -874,25 +870,13 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		public abstract AbstractItem GetBackpack();
+
 		public void EmptyCont() {
 			ThrowIfDeleted();
 			foreach (AbstractItem i in this) {
 				i.InternalDelete();
-			}
-		}
-
-		public abstract AbstractItem AddBackpack();
-
-		public AbstractItem Backpack {
-			get {
-				AbstractItem foundPack = null;
-				if (this.visibleLayers != null) {
-					foundPack = (AbstractItem) this.visibleLayers.FindByZ((int) LayerNames.Pack);
-				}
-				if (foundPack == null) {
-					foundPack = this.AddBackpack();
-				}
-				return foundPack;
 			}
 		}
 
@@ -996,7 +980,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public void ShowPaperdollTo(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
+		public void ShowPaperdollTo(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 			bool canEquip = true;
 			if (viewer != this) {
 				canEquip = viewer.CanEquipItemsOn(this);
@@ -1005,9 +989,9 @@ namespace SteamEngine {
 			packet.Prepare(this, canEquip);
 			viewerConn.SendSinglePacket(packet);
 
-			if (Globals.aosToolTips && viewerState.Version.AosToolTips) {
+			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
 				foreach (AbstractItem equipped in this.VisibleEquip) {
-					AOSToolTips toolTips = equipped.GetAOSToolTips();
+					AosToolTips toolTips = equipped.GetAOSToolTips();
 					if (toolTips != null) {
 						toolTips.SendIdPacket(viewerState, viewerConn);
 					}
@@ -1152,7 +1136,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-		public void ShowStatusBarTo(AbstractCharacter viewer, TCPConnection<GameState> viewerConn) {
+		public void ShowStatusBarTo(AbstractCharacter viewer, TcpConnection<GameState> viewerConn) {
 			StatusBarInfoOutPacket packet = Pool<StatusBarInfoOutPacket>.Acquire();
 
 			if (this == viewer) {
@@ -1167,7 +1151,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-		public void ShowSkillsTo(TCPConnection<GameState> viewerConn, GameState viewerState) {
+		public void ShowSkillsTo(TcpConnection<GameState> viewerConn, GameState viewerState) {
 			SendSkillsOutPacket packet = Pool<SendSkillsOutPacket>.Acquire();
 			packet.PrepareAllSkillsUpdate(this.Skills, viewerState.Version.DisplaySkillCaps);
 			viewerConn.SendSinglePacket(packet);
@@ -1278,12 +1262,12 @@ namespace SteamEngine {
 		public void SendNearbyStuff() {
 			GameState state = this.GameState;
 			if (state != null) {
-				TCPConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 				this.SendNearbyStuffTo(state, conn);
 			}
 		}
 
-		private void SendNearbyStuffTo(GameState state, TCPConnection<GameState> conn) {
+		private void SendNearbyStuffTo(GameState state, TcpConnection<GameState> conn) {
 			ImmutableRectangle rect = new ImmutableRectangle(this, this.UpdateRange);
 			Map map = this.GetMap();
 
@@ -1298,7 +1282,7 @@ namespace SteamEngine {
 			}
 		}
 
-		private void ProcessSendNearbyThing(GameState state, TCPConnection<GameState> conn, Thing t) {
+		private void ProcessSendNearbyThing(GameState state, TcpConnection<GameState> conn, Thing t) {
 			AbstractItem item = t as AbstractItem;
 			if (item != null) {
 				if (this.CanSeeForUpdate(item)) {

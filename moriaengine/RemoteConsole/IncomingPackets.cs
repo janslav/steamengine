@@ -8,11 +8,11 @@ using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.RemoteConsole {
 
-	public class ConsoleProtocol : IProtocol<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+	public class ConsoleProtocol : IProtocol<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 		public static readonly ConsoleProtocol instance = new ConsoleProtocol();
 
 
-		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
+		public IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 			switch (id) {
 				case 1:
@@ -34,7 +34,7 @@ namespace SteamEngine.RemoteConsole {
 	}
 
 
-	public abstract class ConsoleIncomingPacket : IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+	public abstract class ConsoleIncomingPacket : IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 
 	}
 
@@ -45,7 +45,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void IntAndStrDeleg(int i, string s);
 		private static IntAndStrDeleg deleg = AddCmdLineDisplay;
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid, this.name);
 		}
 
@@ -66,7 +66,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void IntDeleg(int i);
 		private static IntDeleg deleg = CloseGameServerWindow;
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid);
 		}
 
@@ -85,7 +85,7 @@ namespace SteamEngine.RemoteConsole {
 
 		private static Action<int> deleg = EnableCommandLine;
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid);
 		}
 
@@ -106,7 +106,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void IntAndStrDeleg(int i, string s);
 		private static IntAndStrDeleg deleg = Write;
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid, this.str);
 		}
 
@@ -128,7 +128,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void IntAndStrDeleg(int i, string s);
 		private static IntAndStrDeleg deleg = WriteLine;
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, this.uid, this.str);
 		}
 
@@ -149,7 +149,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void EntriesArrayDeleg(GameServerEntry[] entries);
 		private static EntriesArrayDeleg deleg = OpenStartGameForm;
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			MainClass.mainForm.Invoke(deleg, new object[] { this.entries });
 		}
 

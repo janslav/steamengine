@@ -259,7 +259,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
-			sb.Append("(").Append(name.name).Append(", ").Append(secondsNode.ToString());
+			sb.Append("(").Append(name.Name).Append(", ").Append(secondsNode.ToString());
 			sb.Append(funcName).Append(", ");
 			int n = args.Length;
 			if (n > 0) {

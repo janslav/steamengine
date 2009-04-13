@@ -149,7 +149,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 
-			if ((this.CanMoveAgain()) || (this.gameState.Account.PLevel >= Globals.plevelOfGM)) {
+			if ((this.CanMoveAgain()) || (this.gameState.Account.PLevel >= Globals.PlevelOfGM)) {
 				this.Movement(mr.direction, mr.running, mr.sequence);
 			} else {
 				this.moveRequests.Enqueue(mr);

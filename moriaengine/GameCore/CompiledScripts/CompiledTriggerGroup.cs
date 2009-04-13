@@ -164,10 +164,10 @@ namespace SteamEngine.CompiledScripts {
 						typeof(object[]),
 						"argv"));
 
-					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.uid) {"));
+					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.Uid) {"));
 					foreach (MethodInfo mi in triggerMethods) {
 						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
-						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.uid + "): //" + tk.name));
+						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.Uid + "): //" + tk.Name));
 						retVal.Statements.AddRange(
 							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
 								new CodeThisReferenceExpression(), true));

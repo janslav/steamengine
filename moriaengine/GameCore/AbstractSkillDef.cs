@@ -75,14 +75,14 @@ namespace SteamEngine {
 			}
 			AbstractSkillDef oldSd = byId[id];
 			if (oldSd != null) { //or should we throw exception or what...?
-				UnRegisterSkillDef(oldSd);
+				UnregisterSkillDef(oldSd);
 			}
 			byId[id] = sd;
 			byDefname[sd.Defname] = sd;
 			byKey[sd.Key] = sd;
 		}
 
-		public static void UnRegisterSkillDef(AbstractSkillDef sd) {
+		public static void UnregisterSkillDef(AbstractSkillDef sd) {
 			byId[sd.Id] = null;
 			byDefname.Remove(sd.Defname);
 			byKey.Remove(sd.Key);
@@ -128,7 +128,7 @@ namespace SteamEngine {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			string typeName = input.headerType.ToLower();
+			string typeName = input.headerType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 
 			PropsLine prop = input.PopPropsLine("defname");
 			if (prop == null) {
@@ -164,9 +164,9 @@ namespace SteamEngine {
 				//we have to load the key first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("key");
-				skillDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(), p.value);
+				skillDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.value);
 
-				UnRegisterSkillDef(skillDef);//will be re-registered again
+				UnregisterSkillDef(skillDef);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("SkillDef " + LogStr.Ident(defName) + " defined multiple times.");
 			}

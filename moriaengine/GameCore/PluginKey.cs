@@ -32,7 +32,7 @@ namespace SteamEngine {
 			if (byName.TryGetValue(name, out key)) {
 				return key;
 			}
-			key = new PluginKey(name, uids++);
+			key = new PluginKey(name, AbstractKey.GetNewUid());
 			byName[name] = key;
 			return key;
 		}
@@ -56,7 +56,7 @@ namespace SteamEngine {
 		}
 
 		public string Save(object objToSave) {
-			return "@@" + ((PluginKey) objToSave).name;
+			return "@@" + ((PluginKey) objToSave).Name;
 		}
 
 		public object Load(Match match) {

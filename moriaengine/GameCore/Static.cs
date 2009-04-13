@@ -117,7 +117,7 @@ namespace SteamEngine {
 		}
 
 		public void OverheadMessage(string arg, int color) {
-			PacketSequences.SendOverheadMessageFrom(Globals.SrcTCPConnection, this, arg, (ushort) color);
+			PacketSequences.SendOverheadMessageFrom(Globals.SrcTcpConnection, this, arg, (ushort) color);
 		}
 
 		public IPoint4D TopPoint {

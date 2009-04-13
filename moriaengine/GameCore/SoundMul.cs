@@ -22,10 +22,10 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	class SoundMul {
 		public static void Init() {
-			if (Globals.writeMulDocsFiles) {
+			if (Globals.WriteMulDocsFiles) {
 				StreamWriter scr = File.CreateText(Globals.GetMulDocPathFor("Sounds.txt"));
-				string mulFileP = Path.Combine(Globals.mulPath, "sound.mul");
-				string mulFilePI = Path.Combine(Globals.mulPath, "soundidx.mul");
+				string mulFileP = Path.Combine(Globals.MulPath, "sound.mul");
+				string mulFilePI = Path.Combine(Globals.MulPath, "soundidx.mul");
 
 				Console.WriteLine("Loading " + LogStr.File("sound.mul") + " and " + LogStr.File("soundidx.mul") + " - sounds info.");
 				int id = 0;

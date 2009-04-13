@@ -162,7 +162,7 @@ namespace SteamEngine {
 				case "password":
 					Match m = TagMath.stringRE.Match(valueString);
 					if (m.Success) {
-						if (Globals.hashPasswords) {
+						if (Globals.HashPasswords) {
 							this.passwordHash = Tools.HashPassword(m.Groups["value"].Value);
 							this.password = null;
 						} else {
@@ -170,7 +170,7 @@ namespace SteamEngine {
 							this.passwordHash = null;
 						}
 					} else {
-						if (Globals.hashPasswords) {
+						if (Globals.HashPasswords) {
 							this.passwordHash = Tools.HashPassword(valueString);
 							this.password = null;
 						} else {
@@ -182,7 +182,7 @@ namespace SteamEngine {
 				case "passwordHash":
 					m = TagMath.stringRE.Match(valueString);
 					if (m.Success) {
-						if (Globals.hashPasswords) {
+						if (Globals.HashPasswords) {
 							if (this.passwordHash == null) {	//Allows admins to set password=xxx without erasing passwordHash, and the password=xxx will override the passwordHash.
 								this.passwordHash = DecodeEncodedHash(m.Groups["value"].Value);
 							}
@@ -267,7 +267,7 @@ namespace SteamEngine {
 
 		public void Password(string pass) {
 			Commands.AuthorizeCommandThrow(Globals.Src, "SetAccountPassword");
-			if (Globals.hashPasswords) {
+			if (Globals.HashPasswords) {
 				this.passwordHash = Tools.HashPassword(pass);
 				this.password = null;
 			} else {
@@ -321,11 +321,11 @@ namespace SteamEngine {
 		public static LoginAttemptResult HandleLoginAttempt(string username, string password, GameState gs, out AbstractAccount acc) {
 			acc = AbstractAccount.Get(username);
 			if (acc == null) {
-				if ((Globals.autoAccountCreation) || (accounts.Count == 0)) {
+				if ((Globals.AutoAccountCreation) || (accounts.Count == 0)) {
 					acc = CreateAccount(username, password);
 					if (accounts.Count == 1) {
-						acc.plevel = Globals.maximalPlevel;
-						acc.maxPlevel = Globals.maximalPlevel;
+						acc.plevel = Globals.MaximalPlevel;
+						acc.maxPlevel = Globals.MaximalPlevel;
 					}
 					gs.SetLoggedIn(acc);
 					acc.SetLoggedIn(gs);
@@ -360,8 +360,8 @@ namespace SteamEngine {
 			AbstractAccount acc = null;
 			if (accounts.Count == 0) {
 				acc = CreateAccount(username, password);
-				acc.maxPlevel = Globals.maximalPlevel;
-				acc.plevel = Globals.maximalPlevel;
+				acc.maxPlevel = Globals.MaximalPlevel;
+				acc.plevel = Globals.MaximalPlevel;
 			} else {
 				acc = AbstractAccount.Get(username);
 			}
@@ -383,7 +383,7 @@ namespace SteamEngine {
 		public byte PLevel {
 			get { return plevel; }
 			set {
-				if (value < maxPlevel && value <= Globals.maximalPlevel) {
+				if (value < maxPlevel && value <= Globals.MaximalPlevel) {
 					plevel = value;
 				} else {
 					plevel = maxPlevel;
@@ -445,7 +445,7 @@ namespace SteamEngine {
 			if (this.blocked) {
 				Globals.SrcWriteLine("GameAccount " + name + " is already blocked.");
 			} else {
-				if (MaxPLevel < Globals.maximalPlevel) {
+				if (MaxPLevel < Globals.MaximalPlevel) {
 					Commands.AuthorizeCommandThrow(Globals.Src, "BlockAccount");
 					this.blocked = true;
 					Globals.SrcWriteLine("GameAccount " + name + " blocked successfully.");
@@ -561,7 +561,7 @@ namespace SteamEngine {
 		}
 
 		internal static void PromoteOrDemote(int promotingPlevel, AbstractAccount whoToPromote, int promoteOrDemoteTo) {
-			if (promoteOrDemoteTo >= 0 && promoteOrDemoteTo <= Globals.maximalPlevel && promotingPlevel >= promoteOrDemoteTo) {
+			if (promoteOrDemoteTo >= 0 && promoteOrDemoteTo <= Globals.MaximalPlevel && promotingPlevel >= promoteOrDemoteTo) {
 				whoToPromote.maxPlevel = (byte) promoteOrDemoteTo;
 				whoToPromote.plevel = (byte) promoteOrDemoteTo;
 			}
@@ -600,7 +600,7 @@ namespace SteamEngine {
 
 			if (this.passwordHash != null) {
 				if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {
-					if (!Globals.hashPasswords) {
+					if (!Globals.HashPasswords) {
 						//record the password string and get rid of the hash now that we know what the password is again
 						this.password = pass;
 						this.passwordHash = null;
@@ -611,7 +611,7 @@ namespace SteamEngine {
 				}
 			} else {
 				//We should only get here if we're not using hashed passwords, but let's check anyways.
-				if (!Globals.hashPasswords) {
+				if (!Globals.HashPasswords) {
 					if (this.password != null) {
 						if (this.password == pass) {
 							return true;

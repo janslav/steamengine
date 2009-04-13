@@ -8,14 +8,14 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginServerProtocol : IProtocol<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
+	public class LoginServerProtocol : IProtocol<TcpConnection<LoginClient>, LoginClient, IPEndPoint> {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly LoginServerProtocol instance = new LoginServerProtocol();
 
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		public IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<LoginClient> conn, LoginClient state, out bool discardAfterReading) {
+		public IncomingPacket<TcpConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<LoginClient> conn, LoginClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 			switch (id) {
 				case 0x80:
@@ -35,7 +35,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 	}
 
-	public abstract class LoginIncomingPacket : IncomingPacket<TCPConnection<LoginClient>, LoginClient, IPEndPoint> {
+	public abstract class LoginIncomingPacket : IncomingPacket<TcpConnection<LoginClient>, LoginClient, IPEndPoint> {
 
 	}
 
@@ -45,7 +45,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return ReadPacketResult.DiscardSingle;
 		}
 
-		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
+		protected override void Handle(TcpConnection<LoginClient> conn, LoginClient state) {
 			throw new SEException("The method or operation is not implemented.");
 		}
 	}
@@ -62,7 +62,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
+		protected override void Handle(TcpConnection<LoginClient> conn, LoginClient state) {
 			Console.WriteLine(state + " identified as " + this.accname);
 
 			ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
@@ -105,7 +105,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<LoginClient> conn, LoginClient state) {
+		protected override void Handle(TcpConnection<LoginClient> conn, LoginClient state) {
 			LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
 			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
 

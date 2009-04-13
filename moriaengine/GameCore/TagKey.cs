@@ -31,7 +31,7 @@ namespace SteamEngine {
 			if (byName.TryGetValue(name, out key)) {
 				return key;
 			}
-			key = new TagKey(name, uids++);
+			key = new TagKey(name, AbstractKey.GetNewUid());
 			byName[name] = key;
 			return key;
 		}

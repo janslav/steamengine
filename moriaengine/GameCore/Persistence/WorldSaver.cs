@@ -56,13 +56,13 @@ namespace SteamEngine.Persistence {
 		}
 
 		static bool TrySave() {
-			string path = Globals.savePath;
+			string path = Globals.SavePath;
 
 			ScriptArgs sa = new ScriptArgs(path);
 			Globals.instance.TryTrigger(TriggerKey.beforeSave, sa);
 			path = string.Concat(sa.argv[0]);
 			if (path.Length < 1) {//scripts error or something...
-				path = Globals.savePath;
+				path = Globals.SavePath;
 			}
 
 
@@ -149,12 +149,12 @@ namespace SteamEngine.Persistence {
 			string path = "";
 
 			try {
-				path = Globals.savePath;
+				path = Globals.SavePath;
 				ScriptArgs sa = new ScriptArgs(path);
 				Globals.instance.Trigger(TriggerKey.beforeLoad, sa);
 				path = string.Concat(sa.argv[0]);
 				if (path.Length < 1) {//scripts error or something...
-					path = Globals.savePath;
+					path = Globals.SavePath;
 				}
 				Tools.EnsureDirectory(path, true);
 

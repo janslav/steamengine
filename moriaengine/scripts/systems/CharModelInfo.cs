@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//taken from runuo
 		public static void Bootstrap() {
-			string filename = Path.Combine(Globals.scriptsPath, "bodyTable.cfg");
+			string filename = Path.Combine(Globals.ScriptsPath, "bodyTable.cfg");
 			if (File.Exists(filename)) {
 				using (StreamReader ip = new StreamReader(filename)) {
 					bodyTable = new CharAnimType[1000];

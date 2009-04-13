@@ -151,12 +151,12 @@ namespace SteamEngine.CompiledScripts {
 			base.AdjustWeight(adjust);
 		}
 
-		public override void BuildAOSToolTips(AOSToolTips toolTips) {
+		public override void BuildAOSToolTips(AosToolTips toolTips) {
 			toolTips.AddLine(1050044, this.Count.ToString(), this.Weight.ToString());
 			//~1_COUNT~ items, ~2_WEIGHT~ stones
 		}
 
-		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
 			Networking.PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				String.Concat(this.Count.ToString(), " items, ", this.Weight.ToString(), " stones"),

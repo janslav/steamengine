@@ -55,12 +55,19 @@ namespace SteamEngine {
 	//the client prints, but with spaces. (We send a number, but the client knows what it means)
 	//-SL
 	public enum DeleteCharacterResult {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_InvalidCharacterPassword = 0,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_NonexistantCharacter = 1,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CharacterIsBeingPlayedRightNow = 2,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CharacterIsNotOldEnoughToDelete = 3,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CharacterIsCurrentlyQueuedForBackup = 4,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CouldntCarryOutRequest = 5,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_NoMessage = 254,
 		Allow = 255
 	}
@@ -188,15 +195,24 @@ namespace SteamEngine {
 
 	public enum DenyResult {
 		//item manipulation denials
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_YouCannotPickThatUp = 0,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatIsTooFarAway = 1,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatIsOutOfSight = 2,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatDoesNotBelongToYou = 3,	//you will have to steal it
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_YouAreAlreadyHoldingAnItem = 4,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_RemoveFromView = 5,	//remove from view
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_NoMessage = 6,
 		Allow = 7,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatIsLocked = 8,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ContainerClosed = 9, //You cannot peek into the container.
 	}
 
@@ -258,9 +274,9 @@ namespace SteamEngine {
 
 	public enum ClientType {
 		Iris,
-		OSI2D,
-		OSI3D,
-		OSIGod,
+		Osi2D,
+		Osi3D,
+		OsiGod,
 		PlayUO,
 		Palanthir,
 		Unknown

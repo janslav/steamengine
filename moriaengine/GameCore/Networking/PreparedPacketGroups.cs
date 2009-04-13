@@ -94,15 +94,15 @@ namespace SteamEngine.Networking {
 			clientVersion.AcquirePacket<ClientVersionOutPacket>();
 
 			clientFeatures = PacketGroup.CreateFreePG();
-			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
+			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.FeaturesFlags);
 		}
 
-		public static void SendLoginDenied(TCPConnection<GameState> conn, LoginDeniedReason why) {
+		public static void SendLoginDenied(TcpConnection<GameState> conn, LoginDeniedReason why) {
 			PacketGroup pg = loginDeniedPGs[(int) why];
 			conn.SendPacketGroup(pg);
 		}
 
-		public static void SendTargettingCursor(TCPConnection<GameState> conn, bool ground) {
+		public static void SendTargettingCursor(TcpConnection<GameState> conn, bool ground) {
 			if (ground) {
 				conn.SendPacketGroup(targetGround);
 			} else {
@@ -110,11 +110,11 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public static void SendCancelTargettingCursor(TCPConnection<GameState> conn) {
+		public static void SendCancelTargettingCursor(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(targetCancelled);
 		}
 
-		public static void SendFacetChange(TCPConnection<GameState> conn, byte facet) {
+		public static void SendFacetChange(TcpConnection<GameState> conn, byte facet) {
 			PacketGroup pg = facetChange[facet];
 			if (pg == null) {
 				pg = PacketGroup.CreateFreePG();
@@ -124,15 +124,15 @@ namespace SteamEngine.Networking {
 			conn.SendPacketGroup(pg);
 		}
 
-		public static void SendWarMode(TCPConnection<GameState> conn, bool enabled) {
+		public static void SendWarMode(TcpConnection<GameState> conn, bool enabled) {
 			conn.SendPacketGroup(warMode[enabled ? 1 : 0]);
 		}
 
-		public static void SendRejectMoveItemRequest(TCPConnection<GameState> conn, DenyResult msg) {
+		public static void SendRejectMoveItemRequest(TcpConnection<GameState> conn, DenyResult msg) {
 			conn.SendPacketGroup(pickUpFailed[(int) msg]);
 		}
 
-		public static void SendRejectDeleteCharacter(TCPConnection<GameState> conn, DeleteCharacterResult msg) {
+		public static void SendRejectDeleteCharacter(TcpConnection<GameState> conn, DeleteCharacterResult msg) {
 			int imsg = (int) msg;
 			if (imsg >= 254) {
 				imsg -= 248;
@@ -141,23 +141,23 @@ namespace SteamEngine.Networking {
 			conn.SendPacketGroup(rejectDeleteCharacter[(int) msg]);
 		}
 
-		public static void SendYouAreDeathMessage(TCPConnection<GameState> conn) {
+		public static void SendYouAreDeathMessage(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(deathMessages[2]);
 		}
 
-		public static void SendResurrectMessage(TCPConnection<GameState> conn) {
+		public static void SendResurrectMessage(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(deathMessages[1]);
 		}
 
-		public static void SendEnableMapDiffFiles(TCPConnection<GameState> conn) {
+		public static void SendEnableMapDiffFiles(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(enableMapDiffFiles);
 		}
 
-		public static void SendClientVersionQuery(TCPConnection<GameState> conn) {
+		public static void SendClientVersionQuery(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(clientVersion);
 		}
 
-		public static void SendClientFeatures(TCPConnection<GameState> conn) {
+		public static void SendClientFeatures(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(clientFeatures);
 		}
 

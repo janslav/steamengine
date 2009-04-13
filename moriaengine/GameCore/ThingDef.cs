@@ -77,9 +77,9 @@ namespace SteamEngine {
 			if (TagMath.TryParseInt32(defname.Substring(2), out modelNum)) {
 				this.model.SetFromScripts(filename, headerLine, modelNum.ToString());
 			} else if (this is AbstractItemDef) {
-				this.model.SetFromScripts(filename, headerLine, Globals.defaultItemModel.ToString());
+				this.model.SetFromScripts(filename, headerLine, Globals.DefaultItemModel.ToString());
 			} else if (this is AbstractCharacterDef) {
-				this.model.SetFromScripts(filename, headerLine, Globals.defaultCharModel.ToString());
+				this.model.SetFromScripts(filename, headerLine, Globals.DefaultCharModel.ToString());
 			} else {
 				throw new ScriptException("Char or item? This should NOT happen!");
 			}
@@ -183,7 +183,7 @@ namespace SteamEngine {
 					if (retVal.IsEquippable) {
 						PutInCont(item, contAsChar);
 					} else {
-						PutInCont(item, contAsChar.Backpack);
+						PutInCont(item, contAsChar.GetBackpack());
 					}
 				} else if (cont.IsContainer) {
 					PutInCont(item, cont);
@@ -509,7 +509,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void LoadingFinished() {
+		internal new static void LoadingFinished() {
 			//dump number of loaded instances?
 			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x") + ")");
 			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x") + ")");

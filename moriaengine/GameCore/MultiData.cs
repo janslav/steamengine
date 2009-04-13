@@ -104,11 +104,11 @@ namespace SteamEngine {
 		}
 
 		public static void Init() {
-			if (Globals.useMultiItems) {
+			if (Globals.UseMultiItems) {
 				Console.WriteLine("Loading " + LogStr.File("Multi.mul") + " - multi items info.");
 
-				string mulFileP = Path.Combine(Globals.mulPath, "multi.mul");
-				string idxFileP = Path.Combine(Globals.mulPath, "multi.idx");
+				string mulFileP = Path.Combine(Globals.MulPath, "multi.mul");
+				string idxFileP = Path.Combine(Globals.MulPath, "multi.idx");
 
 				if (File.Exists(mulFileP) && File.Exists(idxFileP)) {
 					FileStream idxfs = new FileStream(idxFileP, FileMode.Open, FileAccess.Read);
@@ -163,7 +163,7 @@ namespace SteamEngine {
 					mulbr.Close();
 					idxbr.Close();
 
-					if (Globals.writeMulDocsFiles) {
+					if (Globals.WriteMulDocsFiles) {
 						StreamWriter docsw = File.CreateText(Globals.GetMulDocPathFor("MultiItems.txt"));
 
 						foreach (KeyValuePair<int, MultiData> entry in multiItems) {

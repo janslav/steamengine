@@ -28,15 +28,15 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public class TCPServer<TState> :
-		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,
-		IServer<TCPConnection<TState>, TState, IPEndPoint>
-		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
+	public class TcpServer<TState> :
+		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>,
+		IServer<TcpConnection<TState>, TState, IPEndPoint>
+		where TState : Poolable, IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
 		private AsyncCallback onAccept;
 		Socket listener;
 
-		public TCPServer(IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
+		public TcpServer(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
 			: base(protocol, lockObject) {
 			this.onAccept = this.OnAccept;
 
@@ -101,7 +101,7 @@ namespace SteamEngine.Communication.TCP {
 			}
 
 			if (accepted != null) {
-				TCPConnection<TState> newConn = Pool<TCPConnection<TState>>.Acquire();
+				TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
 				newConn.socket = accepted;
 				InitNewConnection(newConn);
 			}

@@ -28,9 +28,9 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public sealed class TCPConnection<TState> :
-		AbstractConnection<TCPConnection<TState>, TState, IPEndPoint>
-		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
+	public sealed class TcpConnection<TState> :
+		AbstractConnection<TcpConnection<TState>, TState, IPEndPoint>
+		where TState : Poolable, IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
 
 		internal Socket socket;
@@ -38,7 +38,7 @@ namespace SteamEngine.Communication.TCP {
 		private AsyncCallback onSend;
 		private AsyncCallback onReceieve;
 
-		public TCPConnection() {
+		public TcpConnection() {
 			this.onSend = this.OnSend;
 			this.onReceieve = this.OnReceieve;
 		}

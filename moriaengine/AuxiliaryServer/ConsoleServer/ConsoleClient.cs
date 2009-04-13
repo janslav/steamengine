@@ -9,9 +9,9 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class ConsoleClient : Poolable,
-		IConnectionState<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+		IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 
-		TCPConnection<ConsoleClient> conn;
+		TcpConnection<ConsoleClient> conn;
 
 		static int uids;
 		int uid;
@@ -27,7 +27,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			}
 		}
 
-		public TCPConnection<ConsoleClient> Conn {
+		public TcpConnection<ConsoleClient> Conn {
 			get {
 				return this.conn;
 			}
@@ -58,7 +58,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
-		public void On_Init(TCPConnection<ConsoleClient> conn) {
+		public void On_Init(TcpConnection<ConsoleClient> conn) {
 			this.conn = conn;
 			Console.WriteLine(this + " connected.");
 

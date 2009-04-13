@@ -30,7 +30,7 @@ namespace SteamEngine.Networking {
 	public delegate void OnTargon(GameState state, IPoint4D getback, object parameter);
 	public delegate void OnTargon_Cancel(GameState state, object parameter);
 
-	public class GameState : Poolable, IConnectionState<TCPConnection<GameState>, GameState, IPEndPoint> {
+	public class GameState : Poolable, IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
 
 		private static int uids;
 		private int uid;
@@ -40,7 +40,7 @@ namespace SteamEngine.Networking {
 		private AbstractAccount account;
 		private AbstractCharacter character;
 		private IPEndPoint ip;
-		private TCPConnection<GameState> conn;
+		private TcpConnection<GameState> conn;
 
 		private byte updateRange = 18;
 		private int visionRange = 18;	//for scripts to fiddle with
@@ -100,7 +100,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public TCPConnection<GameState> Conn {
+		public TcpConnection<GameState> Conn {
 			get {
 				return this.conn;
 			}
@@ -116,7 +116,7 @@ namespace SteamEngine.Networking {
 			internal set { lastSpellMacroId = value; }
 		}
 
-		public void On_Init(TCPConnection<GameState> conn) {
+		public void On_Init(TcpConnection<GameState> conn) {
 			GameServer.On_ClientInit(this);
 
 			this.conn = conn;

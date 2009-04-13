@@ -1182,7 +1182,7 @@ namespace SteamEngine.Networking {
 			this.sourceName = sourceName;
 			this.message = message;
 			this.type = (byte) type;
-			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultASCIIMessageColor);
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.DefaultAsciiMessageColor);
 			this.font = (ushort) Utility.NormalizeClientFont(font);
 		}
 
@@ -1221,7 +1221,7 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.language = language;
 			this.type = (byte) type;
-			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor);
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.DefaultUnicodeMessageColor);
 			this.font = (ushort) Utility.NormalizeClientFont(font);
 		}
 
@@ -1263,7 +1263,7 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.args = args;
 			this.type = (byte) type;
-			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.DefaultUnicodeMessageColor); ;
 			this.font = (ushort) Utility.NormalizeClientFont(font);
 		}
 
@@ -1315,7 +1315,7 @@ namespace SteamEngine.Networking {
 			this.message = message;
 			this.args = args;
 			this.type = (byte) type;
-			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.defaultUnicodeMessageColor); ;
+			this.color = (ushort) Utility.NormalizeDyedColor(color, Globals.DefaultUnicodeMessageColor); ;
 			this.font = (ushort) Utility.NormalizeClientFont(font);
 			this.affix = affix;
 		}

@@ -10,7 +10,7 @@ using SteamEngine.Timers;
 namespace SteamEngine.CompiledScripts {
 	public static class SomeScript {
 
-		private static void GetClient(out GameState state, out TCPConnection<GameState> conn, out AbstractCharacter ch) {
+		private static void GetClient(out GameState state, out TcpConnection<GameState> conn, out AbstractCharacter ch) {
 			if (GameServer.AllClients.Count > 0) {
 				state = null;
 				foreach (GameState gs in GameServer.AllClients) {
@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0x1B() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 			Regions.Map map = ch.GetMap();
 
@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0xBF0x08() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 			Regions.Map map = ch.GetMap();
 
@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0xBF0x18() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0xBC() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0xB9() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PreparedPacketGroups.SendClientFeatures(conn);
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0x20() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0x78() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0x11() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0x55() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0x72() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PreparedPacketGroups.SendWarMode(conn, ch.Flag_WarMode); //0x72
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void SR() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 			Regions.Map map = ch.GetMap();
 
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void S0xC8() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 			Regions.Map map = ch.GetMap();
 
@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void SCHI() {
-			GameState state; TCPConnection<GameState> conn; AbstractCharacter ch;
+			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
 			PacketSequences.SendCharInfoWithPropertiesTo(ch, state, conn, ch);

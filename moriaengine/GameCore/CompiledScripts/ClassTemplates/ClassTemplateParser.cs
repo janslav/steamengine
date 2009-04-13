@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		}
 
 		public static void Init() {
-			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".ct");
+			allFiles = new ScriptFileCollection(Globals.ScriptsPath, ".ct");
 
 			Logger.WriteDebug("Processing ClassTemplates");
 			int numFilesRead = 0;

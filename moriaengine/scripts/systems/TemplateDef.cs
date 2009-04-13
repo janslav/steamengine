@@ -219,7 +219,7 @@ namespace SteamEngine.CompiledScripts {
 			ThrowIfUnloaded();
 			ItemDef contDef = this.Container;
 			if (cont.IsChar) {
-				cont = ((Character) cont).BackpackAsContainer;
+				cont = ((Character) cont).Backpack;
 			}
 			if (contDef != null) {
 				cont = contDef.Create(cont);

@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 			if (byName.TryGetValue(name, out key)) {
 				return key;
 			}
-			key = new RoleKey(name, uids++);
+			key = new RoleKey(name, AbstractKey.GetNewUid());
 			byName[name] = key;
 			return key;
 		}
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			return "°" + ((RoleKey) objToSave).name;
+			return "°" + ((RoleKey) objToSave).Name;
 		}
 
 		public object Load(Match match) {

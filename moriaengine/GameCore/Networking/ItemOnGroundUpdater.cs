@@ -57,8 +57,8 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		public virtual void SendTo(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
-			if (viewer.IsPlevelAtLeast(Globals.plevelOfGM)) {
+		public virtual void SendTo(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
+			if (viewer.IsPlevelAtLeast(Globals.PlevelOfGM)) {
 				if (this.packetGroupMovable == null) {
 					this.packetGroupMovable = PacketGroup.CreateFreePG();
 					this.packetGroupMovable.AcquirePacket<ObjectInfoOutPacket>().Prepare(this.item, MoveRestriction.Movable);

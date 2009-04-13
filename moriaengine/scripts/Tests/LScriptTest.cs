@@ -148,7 +148,7 @@ namespace SteamEngine.LScript {
 			TestSnippet(double.PositiveInfinity, "TestMethod_OneParam(56/0)", "division by zero");
 
 
-			TestSnippet(Globals.port, "return Globals.port", "dotted expression");
+			TestSnippet(Globals.Port, "return Globals.port", "dotted expression");
 			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"),
 				"dotted expression: method and constructor witn no params"); //this could outcome false if someone changed the ObjToString method...
 			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"),

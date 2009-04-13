@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 
 			nant.SetProperty("scriptsNumber", CompilerInvoker.compilenumber.ToString());
 			nant.SetProperty("scriptsReferencesListPath",
-				Path.Combine(Globals.scriptsPath, "referencedAssemblies.txt"));
+				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
 
 			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
 			nant.Execute();

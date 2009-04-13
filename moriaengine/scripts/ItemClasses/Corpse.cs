@@ -59,14 +59,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
 			PacketSequences.SendNameFrom(clickerConn, this, this.Name, 0);
 		}
 
-		public override void On_AosClick(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+		public override void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
-			AOSToolTips toolTips = this.GetAOSToolTips();
+			AosToolTips toolTips = this.GetAOSToolTips();
 			PacketSequences.SendClilocNameFrom(clickerConn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 				beardModel = beard.ShortModel;
 				beardColor = beard.ShortColor;
 			}
-			AbstractItem pack = dieingChar.BackpackAsContainer;
+			AbstractItem pack = dieingChar.Backpack;
 			foreach (Item inBackpack in pack) {
 				if (inBackpack.CanFallToCorpse) {
 					inBackpack.Cont = this;
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 					//resurrectedChar.TryEquip(resurrectedChar, i);
 				}
 			}
-			AbstractItem backpack = resurrectedChar.BackpackAsContainer;
+			AbstractItem backpack = resurrectedChar.Backpack;
 			foreach (Item i in this) {
 				i.Cont = backpack; //TODO pickup/dropon backpack triggers...?
 			}
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 				: base(corpse) {
 			}
 
-			public override void SendTo(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TCPConnection<GameState> viewerConn) {
+			public override void SendTo(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TcpConnection<GameState> viewerConn) {
 				base.SendTo(viewer, viewerState, viewerConn);
 
 				Corpse corpse = (Corpse) this.item;
@@ -272,7 +272,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TCPConnection<GameState> viewerConn) {
+		public override void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TcpConnection<GameState> viewerConn) {
 			base.On_ContainerOpen(viewer, viewerState, viewerConn);
 
 			if (this.IsOnGround && this.hasHairItems) {

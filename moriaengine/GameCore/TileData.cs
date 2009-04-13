@@ -89,7 +89,7 @@ namespace SteamEngine {
 		}
 
 		public static void Init() {
-			string mulFileP = Path.Combine(Globals.mulPath, "tiledata.mul");
+			string mulFileP = Path.Combine(Globals.MulPath, "tiledata.mul");
 			Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - terrain tile info.");
 			// Kemoc - filenames will be solved later
 			//#if MONO
@@ -104,7 +104,7 @@ namespace SteamEngine {
 				BinaryReader mulbr = new BinaryReader(mulfs);
 				StreamWriter mtfi = null;
 
-				if (Globals.writeMulDocsFiles) {
+				if (Globals.WriteMulDocsFiles) {
 					mtfi = File.CreateText(Globals.GetMulDocPathFor("TileData - map tiles.txt"));
 				}
 				ushort texId;
@@ -116,7 +116,7 @@ namespace SteamEngine {
 						landFlags[tileId] = (TileFlag) mulbr.ReadUInt32();
 						texId = mulbr.ReadUInt16();
 						tileNameS = Utility.GetCAsciiString(mulbr, 20);
-						if (Globals.writeMulDocsFiles) {
+						if (Globals.WriteMulDocsFiles) {
 							if (tileNameS.Length > 0 || texId != 0) {
 								mtfi.WriteLine("TileID: 0x" + tileId.ToString("x") + " (" + tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
 							}
@@ -124,7 +124,7 @@ namespace SteamEngine {
 						tileId++;
 					}
 				}
-				if (Globals.writeMulDocsFiles) {
+				if (Globals.WriteMulDocsFiles) {
 					mtfi.Close();
 				}
 				Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - item dispid info.");
@@ -205,14 +205,14 @@ namespace SteamEngine {
 		}
 
 		public static void GenerateMissingDefs() {
-			if (Globals.generateMissingDefs) {
-				string itemdefsPath = Tools.CombineMultiplePaths(Globals.scriptsPath, "defaults", "itemdefs");
+			if (Globals.GenerateMissingDefs) {
+				string itemdefsPath = Tools.CombineMultiplePaths(Globals.ScriptsPath, "defaults", "itemdefs");
 				Tools.EnsureDirectory(itemdefsPath, true);
 
 				StreamWriter scr = File.AppendText(Path.Combine(itemdefsPath, "newItemDefsFromMuls.def"));
 				StreamWriter nonexistant = null;
 				string filepath = null;
-				if (Globals.writeMulDocsFiles) {
+				if (Globals.WriteMulDocsFiles) {
 					filepath = Globals.GetMulDocPathFor("Free (unused) itemID numbers.txt");
 					nonexistant = File.CreateText(filepath);
 				}
@@ -226,7 +226,7 @@ namespace SteamEngine {
 						ItemDispidInfo idi = ItemDispidInfo.Get(a);
 						if (idi.IsEmpty) {
 							numNonexistant++;
-							if (Globals.writeMulDocsFiles) {
+							if (Globals.WriteMulDocsFiles) {
 								nonexistant.WriteLine("0x" + a.ToString("x"));
 							}
 						} else {
@@ -301,16 +301,16 @@ namespace SteamEngine {
 					}
 				}
 				scr.Close();
-				if (Globals.writeMulDocsFiles) {
+				if (Globals.WriteMulDocsFiles) {
 					nonexistant.Close();
 				}
 				if (numWritten > 0) {
 					Console.WriteLine("Wrote " + numWritten + " basic itemdefs (for which there were no itemdefs in the scripts), to " + itemdefsPath + "/fromTileData.def.");
 				}
-				if (Globals.writeMulDocsFiles && (numNonexistant > 0)) {
+				if (Globals.WriteMulDocsFiles && (numNonexistant > 0)) {
 					Console.WriteLine("Tiledata.mul appears to contain " + numNonexistant + " free slots. These have been recorded in " + filepath + ".");
 				}
-				if (Globals.writeMulDocsFiles) {
+				if (Globals.WriteMulDocsFiles) {
 					DumpInfoFromTileData();
 				}
 			}

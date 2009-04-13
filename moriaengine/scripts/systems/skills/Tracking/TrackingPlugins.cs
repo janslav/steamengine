@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 			Character tracker = (Character) Cont;
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
 				this.lastRefreshAt = Globals.TimeAsSpan;
 				this.trackingRectangle = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
 				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, this.lastRefreshAt, this.maxFootstepAge, tracker.M)) {
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 			Character tracker = (Character) Cont;
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
 				TimeSpan now = Globals.TimeAsSpan;
 				TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
 				TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
 
 				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, Globals.TimeAsSpan, this.maxFootstepAge, tracker.M)) {
 					SendDeletePacket(conn, tp);
@@ -216,7 +216,7 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
 				if (dist > this.rectWidth) {//old and new have no intersection. We treat them separately, and only send delete packets in the area still visible to client
 					ImmutableRectangle updateRect = new ImmutableRectangle(tracker, state.UpdateRange);
 					ImmutableRectangle oldRectVisible = ImmutableRectangle.GetIntersection(oldRect, updateRect);
@@ -258,14 +258,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void SendObjectPacket(TimeSpan now, Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
+		private void SendObjectPacket(TimeSpan now, Communication.TCP.TcpConnection<GameState> conn, TrackPoint tp) {
 			int color = tp.GetColor(now, this.maxFootstepAge);
 			ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
 			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, color);
 			conn.SendSinglePacket(oiop);
 		}
 
-		private void SendRefreshObject(TimeSpan now, Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
+		private void SendRefreshObject(TimeSpan now, Communication.TCP.TcpConnection<GameState> conn, TrackPoint tp) {
 			TimeSpan minTimeToShow = now - this.maxFootstepAge;
 			TimeSpan tpCreatedAt = tp.CreatedAt;
 			if (tpCreatedAt >= minTimeToShow) {
@@ -281,7 +281,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static void SendDeletePacket(Communication.TCP.TCPConnection<GameState> conn, TrackPoint tp) {
+		private static void SendDeletePacket(Communication.TCP.TcpConnection<GameState> conn, TrackPoint tp) {
 			DeleteObjectOutPacket doop = Pool<DeleteObjectOutPacket>.Acquire();
 			doop.Prepare(tp.FakeUID);
 			conn.SendSinglePacket(doop);

@@ -7,13 +7,13 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.RemoteConsole {
-	public class ConsoleClient : Poolable, IConnectionState<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
-		static TCPClientFactory<ConsoleClient> factory = new TCPClientFactory<ConsoleClient>(
+	public class ConsoleClient : Poolable, IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+		static TcpClientFactory<ConsoleClient> factory = new TcpClientFactory<ConsoleClient>(
 			ConsoleProtocol.instance, MainClass.globalLock);
 
 
 		private static ConsoleClient connectedInstance;
-		private TCPConnection<ConsoleClient> conn;
+		private TcpConnection<ConsoleClient> conn;
 
 		protected override void On_Reset() {
 			this.conn = null;
@@ -27,7 +27,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public TCPConnection<ConsoleClient> Conn {
+		public TcpConnection<ConsoleClient> Conn {
 			get {
 				return this.conn;
 			}
@@ -45,7 +45,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public void On_Init(TCPConnection<ConsoleClient> conn) {
+		public void On_Init(TcpConnection<ConsoleClient> conn) {
 			connectedInstance = this;
 			this.conn = conn;
 			MainClass.mainForm.SetConnected(true);
@@ -74,9 +74,9 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public static TCPConnection<ConsoleClient> Connect(EndPointSetting connectTo) {
+		public static TcpConnection<ConsoleClient> Connect(EndPointSetting connectTo) {
 			try {
-				TCPConnection<ConsoleClient> conn = factory.Connect(new IPEndPoint(
+				TcpConnection<ConsoleClient> conn = factory.Connect(new IPEndPoint(
 					Dns.GetHostAddresses(connectTo.Address)[0], connectTo.Port));
 
 				Settings.Save();

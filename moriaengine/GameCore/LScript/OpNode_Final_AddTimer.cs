@@ -60,8 +60,8 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
-			sb.Append("(").Append(name.name).Append(", ").Append(secondsNode.ToString());
-			sb.Append("@").Append(triggerKey.name).Append(", ");
+			sb.Append("(").Append(name.Name).Append(", ").Append(secondsNode.ToString());
+			sb.Append("@").Append(triggerKey.Name).Append(", ");
 			int n = args.Length;
 			if (n > 0) {
 				sb.Append(", ");
@@ -149,7 +149,7 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
-			sb.Append("(").Append(timerKey.name).Append(", ").Append(secondsNode.ToString());
+			sb.Append("(").Append(timerKey.Name).Append(", ").Append(secondsNode.ToString());
 			sb.Append(method.Name).Append(", ");
 			int n = args.Length;
 			if (n > 0) {
@@ -244,7 +244,7 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer_String(");
-			sb.Append("(").Append(timerKey.name).Append(", ").Append(secondsNode.ToString());
+			sb.Append("(").Append(timerKey.Name).Append(", ").Append(secondsNode.ToString());
 			sb.Append(method.Name).Append(", ");
 			int n = args.Length;
 			if (n > 0) {
@@ -356,7 +356,7 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer_Params(");
-			sb.Append("(").Append(timerKey.name).Append(", ").Append(secondsNode.ToString());
+			sb.Append("(").Append(timerKey.Name).Append(", ").Append(secondsNode.ToString());
 			sb.Append(method.Name).Append(", ");
 			for (int i = 0, n = normalArgs.Length; i < n; i++) {
 				sb.Append(normalArgs[i].ToString()).Append(", ");
@@ -454,7 +454,7 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
-			sb.Append("(").Append(timerKey.name).Append(", ").Append(secondsNode.ToString());
+			sb.Append("(").Append(timerKey.Name).Append(", ").Append(secondsNode.ToString());
 			sb.Append(function.name).Append(", ");
 			int n = args.Length;
 			if (n > 0) {

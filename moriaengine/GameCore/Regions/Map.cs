@@ -614,7 +614,7 @@ namespace SteamEngine.Regions {
 
 		//}
 		
-		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(int x, int y, int range) {
+		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRange(int x, int y, int range) {
 			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
@@ -649,7 +649,7 @@ namespace SteamEngine.Regions {
 			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRange(int x, int y) {
+		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRange(int x, int y) {
 			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
@@ -696,7 +696,7 @@ namespace SteamEngine.Regions {
 		//    }
 		//}
 
-		public IEnumerable<TCPConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
+		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.players) {
 					GameState state = player.GameState;
@@ -861,7 +861,7 @@ namespace SteamEngine.Regions {
 		//    }
 		//}
 
-		public IEnumerable<TCPConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
+		public IEnumerable<TcpConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
 			Thing top = thing.TopObj();
 			ImmutableRectangle rectangle = new ImmutableRectangle(top.X, top.Y, Globals.MaxUpdateRange);
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {

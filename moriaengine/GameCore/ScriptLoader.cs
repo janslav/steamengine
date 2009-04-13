@@ -36,7 +36,7 @@ namespace SteamEngine {
 			new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
 
 		static ScriptLoader() {
-			allFiles = new ScriptFileCollection(Globals.scriptsPath, ".scp");
+			allFiles = new ScriptFileCollection(Globals.ScriptsPath, ".scp");
 			allFiles.AddExtension(".def");
 			//allFiles.AddAvoided("import");
 		}
@@ -74,9 +74,10 @@ namespace SteamEngine {
 				//ObjectSaver.LoadingFinished();
 				AbstractSkillDef.LoadingFinished();
 
-				DelayedResolver.ResolveAll();
+				AbstractDefTriggerGroupHolder.LoadingFinished();
+				ScriptedGumpDef.LoadingFinished();
 
-				if (Globals.resolveEverythingAtStart) {
+				if (Globals.ResolveEverythingAtStart) {
 					Constant.ResolveAll();
 					AbstractDef.ResolveAll();
 				}
@@ -106,12 +107,13 @@ namespace SteamEngine {
 					}
 				}
 
-				if (Globals.resolveEverythingAtStart) {
+				if (Globals.ResolveEverythingAtStart) {
 					Constant.ResolveAll();
 					AbstractDef.ResolveAll();
 				}
 
-				DelayedResolver.ResolveAll();
+				AbstractDefTriggerGroupHolder.LoadingFinished();
+				ScriptedGumpDef.LoadingFinished();
 				ObjectSaver.LoadingFinished();
 
 				//foreach (Thing t in Thing.AllThings) {
@@ -241,7 +243,7 @@ namespace SteamEngine {
 			FileInfo fi = new FileInfo(filename);
 			if (!fi.Exists) {
 				try {
-					fi = new FileInfo(Path.Combine(Globals.scriptsPath, filename));
+					fi = new FileInfo(Path.Combine(Globals.ScriptsPath, filename));
 				} catch { }
 			}
 
@@ -254,7 +256,9 @@ namespace SteamEngine {
 					Console.WriteLine("Loading " + LogStr.File(fi.FullName));
 					LoadFile(sf);
 
-					DelayedResolver.ResolveAll();
+					AbstractDefTriggerGroupHolder.LoadingFinished();
+					ScriptedGumpDef.LoadingFinished();
+
 					Globals.UnPauseServerTime();
 					PacketSequences.BroadCast("Script loading finished.");
 				} else {

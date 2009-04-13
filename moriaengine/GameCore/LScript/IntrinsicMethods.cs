@@ -39,19 +39,19 @@ namespace SteamEngine.LScript {
 
 		public static TagHolder LastNew {
 			get {
-				return Globals.lastNew;
+				return Globals.LastNew;
 			}
 		}
 
 		public static AbstractItem LastNewItem {
 			get {
-				return Globals.lastNewItem;
+				return Globals.LastNewItem;
 			}
 		}
 
 		public static AbstractCharacter LastNewChar {
 			get {
-				return Globals.lastNewChar;
+				return Globals.LastNewChar;
 			}
 		}
 

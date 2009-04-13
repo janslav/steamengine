@@ -63,11 +63,11 @@ namespace SteamEngine {
 			try {
 				Match m = osi2dCliVerRE.Match(versionString);
 				if (m.Success) {
-					byte major = byte.Parse(m.Groups["major"].Value);
-					byte minor = byte.Parse(m.Groups["minor"].Value);
-					byte revision = byte.Parse(m.Groups["revision"].Value);
+					byte major = byte.Parse(m.Groups["major"].Value, System.Globalization.CultureInfo.InvariantCulture);
+					byte minor = byte.Parse(m.Groups["minor"].Value, System.Globalization.CultureInfo.InvariantCulture);
+					byte revision = byte.Parse(m.Groups["revision"].Value, System.Globalization.CultureInfo.InvariantCulture);
 					char letter = m.Groups["letter"].Value[0];
-					this.type = ClientType.OSI2D;
+					this.type = ClientType.Osi2D;
 					this.osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
 
 					int number = osi2dVerNum.ComparableNumber;
@@ -136,7 +136,7 @@ namespace SteamEngine {
 		public override string ToString() {
 			switch (type) {
 
-				case ClientType.OSI2D:
+				case ClientType.Osi2D:
 					return "OSI2D Client " + osi2dVerNum;
 
 				//case ClientType.Iris:
