@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				KeyValuePair<TagKey, Object> de = tagList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (3 * i));
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.name);
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.Name);
 				//je li hodnota simple saveable nebo ma koordinator, muzeme ObjectSaver.Save
 				if (ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
 					//hodnota tagu, vcetne prefixu oznacujicim typ
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 										tagOwner.SetTag(de.Key, ObjectSaver.Load(dialogValue));
 									} catch {
 										//napsat chybovou hlasku, ale pojedeme dal
-										((Character) gi.Cont).RedMessage("Failed to set the tag " + de.Key.name + " to value " + dialogValue);
+										((Character) gi.Cont).RedMessage("Failed to set the tag " + de.Key.Name + " to value " + dialogValue);
 									}
 								}
 							}
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//entry in this hashtable is TagKey and its object value
 				if (criteria == null || criteria.Equals("")) {
 					tagsList.Add(entry);//bereme vse
-				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Key.Name.ToUpper().Contains(criteria.ToUpper())) {
 					tagsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
 				}
 			}
@@ -236,7 +236,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<TagKey, Object> x, KeyValuePair<TagKey, Object> y) {
 			TagKey a = x.Key;
 			TagKey b = y.Key;
-			return StringComparer.OrdinalIgnoreCase.Compare(a.name, b.name);
+			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);
 		}
 	}
 }

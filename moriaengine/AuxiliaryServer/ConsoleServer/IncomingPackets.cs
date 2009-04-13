@@ -8,13 +8,13 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
-	public class ConsoleServerProtocol : IProtocol<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+	public class ConsoleServerProtocol : IProtocol<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly ConsoleServerProtocol instance = new ConsoleServerProtocol();
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		public IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
+		public IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 
 			switch (id) {
@@ -32,7 +32,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	}
 
 
-	public abstract class ConsoleIncomingPacket : IncomingPacket<TCPConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+	public abstract class ConsoleIncomingPacket : IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 
 	}
 
@@ -46,7 +46,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			state.SetLoginData(this.accName, this.password);
 
 			bool failed = false;
@@ -71,7 +71,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			List<int> runningServerNumbers = new List<int>();
 			foreach (GameServers.GameServerClient gsc in GameServers.GameServerServer.AllGameServers) {
 				runningServerNumbers.Add(gsc.Setting.Number);
@@ -95,7 +95,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.AuxServNantProjectStarter")]
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByNumber(this.serverNum);
 			if (cli != null) {
 				state.WriteLine(0, "Server already online, ignoring start command.");
@@ -122,7 +122,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<ConsoleClient> conn, ConsoleClient state) {
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			if (this.id == 0) {
 				if (state.IsLoggedInAux) {
 					Commands.HandleCommand(conn, state, this.command);

@@ -34,18 +34,18 @@ namespace SteamEngine {
 		}
 
 		public static void GenerateMissingDefs() {
-			if (Globals.readBodyDefs) {
+			if (Globals.ReadBodyDefs) {
 				StreamReader sr;
-				string fPath = Path.Combine(Globals.mulPath, "Bodyconv.def");
+				string fPath = Path.Combine(Globals.MulPath, "Bodyconv.def");
 				if (File.Exists(fPath)) {
 					sr = new StreamReader(fPath);
 				} else {
 					Logger.WriteCritical("Unable to locate Bodyconv.def.");
-					Globals.readBodyDefs = false;
+					Globals.ReadBodyDefs = false;
 					return;
 				}
 
-				string chardefsPath = Tools.CombineMultiplePaths(Globals.scriptsPath, "defaults", "chardefs");
+				string chardefsPath = Tools.CombineMultiplePaths(Globals.ScriptsPath, "defaults", "chardefs");
 				Tools.EnsureDirectory(chardefsPath, true);
 
 				StreamWriter scr = File.AppendText(Path.Combine(chardefsPath, "newCharDefsFromMuls.def"));

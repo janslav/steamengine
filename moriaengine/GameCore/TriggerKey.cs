@@ -34,7 +34,7 @@ namespace SteamEngine {
 			if (byName.TryGetValue(name, out key)) {
 				return key;
 			}
-			key = new TriggerKey(name, uids++);
+			key = new TriggerKey(name, AbstractKey.GetNewUid());
 			byName[name] = key;
 			return key;
 		}
@@ -155,7 +155,7 @@ namespace SteamEngine {
 		}
 
 		public string Save(object objToSave) {
-			return "@" + ((TriggerKey) objToSave).name;
+			return "@" + ((TriggerKey) objToSave).Name;
 		}
 
 		public object Load(Match match) {

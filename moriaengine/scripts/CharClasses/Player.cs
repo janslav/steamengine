@@ -421,9 +421,9 @@ namespace SteamEngine.CompiledScripts {
 				//zjistit vzdalenost od receiving containeru (a jestli je to ten samy mapplan) a podle toho to dat 
 				//bud do nej nebo do backpacku
 				Container targetCont = this.ReceivingContainer;
-				if ((targetCont != this.BackpackAsContainer) && (Point2D.GetSimpleDistance(this, targetCont) > Globals.reachRange || this.M != targetCont.M)) {
+				if ((targetCont != this.Backpack) && (Point2D.GetSimpleDistance(this, targetCont) > Globals.ReachRange || this.M != targetCont.M)) {
 					//the receivingContainer is not our backpack and we are too far or in another mapplane
-					targetCont = this.BackpackAsContainer;
+					targetCont = this.Backpack;
 				}
 
 			}
@@ -437,7 +437,7 @@ namespace SteamEngine.CompiledScripts {
 		public Container ReceivingContainer {
 			get {
 				if (receivingContainer == null) {//set the default
-					receivingContainer = this.BackpackAsContainer;
+					receivingContainer = this.Backpack;
 				}
 				return receivingContainer;
 			}

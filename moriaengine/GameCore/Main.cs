@@ -140,7 +140,7 @@ namespace SteamEngine {
 				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 
 #if DEBUG
-				Console.WriteLine("Starting SteamEngine ver. " + Globals.version + " (DEBUG build)" + " - " + Globals.serverName);
+				Console.WriteLine("Starting SteamEngine ver. " + Globals.version + " (DEBUG build)" + " - " + Globals.ServerName);
 #elif SANE
 			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (SANE build)"+" - "+Globals.serverName);
 #elif OPTIMIZED
@@ -161,11 +161,11 @@ namespace SteamEngine {
 				if (!CompilerInvoker.CompileScripts(true)) {
 					return false;
 				}
-				Tools.EnsureDirectory(Globals.mulPath, true);
+				Tools.EnsureDirectory(Globals.MulPath, true);
 				//ExportImport.Init();
 
 				//if (!Globals.fastStartUp) {
-				using (StopWatch.StartAndDisplay("Loading .idx and .mul files from " + LogStr.File(Globals.mulPath) + "...")) {
+				using (StopWatch.StartAndDisplay("Loading .idx and .mul files from " + LogStr.File(Globals.MulPath) + "...")) {
 					TileData.Init();
 					SoundMul.Init();
 					MultiData.Init();
@@ -182,13 +182,10 @@ namespace SteamEngine {
 				//Server.Init();
 				Networking.GameServer.Init();
 
-				//Console.WriteLine("Resolving object references...");
-				DelayedResolver.ResolveAll();
 				//Region.ResolveLoadedRegions();
 				Map.Init();   //Sectors are created and items sorted on startup. 
 				ClassManager.InitScripts();
 				PluginDef.Init();
-				DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
 				Globals.UnPauseServerTime();
 				RunLevelManager.SetRunning();
 				Logger.WriteDebug("triggering @startup");
@@ -220,11 +217,10 @@ namespace SteamEngine {
 			AbstractAccount.ClearAll();
 			Globals.ClearAll();
 			Map.ClearAll();
-			DelayedResolver.ClearAll();
 			ObjectSaver.ClearJobs();
 			OpenedContainers.ClearAll();
-			Commands.ClearGmCommandsCache();
-			AOSToolTips.ClearCache();
+			Commands.ClearGMCommandsCache();
+			AosToolTips.ClearCache();
 			Networking.ItemOnGroundUpdater.ClearCache();
 		}
 
@@ -331,7 +327,6 @@ namespace SteamEngine {
 		//this does basically the same as Init(), only less :)
 		private static bool LoadAll() {
 			RunLevelManager.SetStartup();
-			DelayedResolver.ClearAll();
 			ObjectSaver.ClearJobs();
 			if (!CompilerInvoker.CompileScripts(false)) {
 				return false;
@@ -342,13 +337,11 @@ namespace SteamEngine {
 			TriggerGroup.ReAddGlobals();
 
 			WorldSaver.Load();
-			DelayedResolver.ResolveAll();
 			//}
 			GameServer.ReLinkCharacters();
 			Map.Init();
 			ClassManager.InitScripts();
 			PluginDef.Init();
-			DelayedResolver.ResolveAll();	//Resolve anything scripts needed resolved.
 			//Region.ResolveLoadedRegions();
 			Globals.UnPauseServerTime();
 			RunLevelManager.SetRunning();

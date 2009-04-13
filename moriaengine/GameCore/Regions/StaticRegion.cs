@@ -139,7 +139,7 @@ namespace SteamEngine.Regions {
 					//and now the (cpu) intensive part :)  check if the declared hierarchy is right
 					//it has no real effect, only showing warnings about overlapping regions
 					//it's optional - part of the "resolveEverythingAtStart" option in .ini
-					if (Globals.resolveEverythingAtStart) {
+					if (Globals.ResolveEverythingAtStart) {
 						CheckAllRegions();
 					}
 

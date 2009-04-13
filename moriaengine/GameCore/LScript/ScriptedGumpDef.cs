@@ -47,7 +47,6 @@ namespace SteamEngine.LScript {
 				}
 			} else {
 				sgd = new ScriptedGumpDef(name);
-				DelayedResolver.DelayResolve(new DelayedMethod(sgd.CheckValidity));
 			}
 			if (headers.Length == 1) {//layout section
 				if ((sgd.layoutScript != null) && (!sgd.unloaded)) {//already loaded
@@ -136,7 +135,16 @@ namespace SteamEngine.LScript {
 			throw new SEException("Invalid GumpDef/Dialog header");
 		}
 
-		private void CheckValidity(object[] args) {//check method, used as delayed
+		internal static void LoadingFinished() {
+			foreach (AbstractScript script in AbstractScript.AllScripts) {
+				ScriptedGumpDef sgd = script as ScriptedGumpDef;
+				if (sgd != null) {
+					sgd.CheckValidity();
+				}
+			}
+		}
+
+		private void CheckValidity() {//check method, used as delayed
 			if (layoutScript == null) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " missing the main (layout) section?");
 				unloaded = true;

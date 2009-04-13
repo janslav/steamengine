@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static bool CompileScriptsUsingNAnt() {
-			CompScriptFileCollection fileCollection = new CompScriptFileCollection(Globals.scriptsPath, ".cs");
+			CompScriptFileCollection fileCollection = new CompScriptFileCollection(Globals.ScriptsPath, ".cs");
 
 			NantLauncher nant = new NantLauncher();
 			nant.SetLogger(new CoreNantLogger());
@@ -90,9 +90,9 @@ namespace SteamEngine.CompiledScripts {
 
 			nant.SetProperty("scriptsNumber", compilenumber.ToString());
 			nant.SetProperty("scriptsReferencesListPath",
-				Path.Combine(Globals.scriptsPath, "referencedAssemblies.txt"));
+				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
 			nant.SetSourceFileNames(fileCollection.GetAllFileNames(),
-				Path.Combine(Globals.scriptsPath, "scriptSources.Generated.txt"));
+				Path.Combine(Globals.ScriptsPath, "scriptSources.Generated.txt"));
 
 			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
 			nant.Execute();

@@ -11,7 +11,7 @@ using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
 
-	public class AOSToolTips : Poolable {
+	public class AosToolTips : Poolable {
 		private int uid;
 		private Thing thing;
 		private List<int> ids = new List<int>(3);
@@ -26,15 +26,15 @@ namespace SteamEngine {
 		PacketGroup newIdNGroup;
 		PacketGroup dataNGroup;
 
-		private static CacheDictionary<Thing, AOSToolTips> cache =
-			new CacheDictionary<Thing, AOSToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
+		private static CacheDictionary<Thing, AosToolTips> cache =
+			new CacheDictionary<Thing, AosToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
 		private static int uids;
 
-		public AOSToolTips() {
+		public AosToolTips() {
 		}
 
-		public static AOSToolTips GetFromCache(Thing thing) {
-			AOSToolTips toolTips;
+		public static AosToolTips GetFromCache(Thing thing) {
+			AosToolTips toolTips;
 			cache.TryGetValue(thing, out toolTips);
 			return toolTips;
 		}
@@ -65,6 +65,7 @@ namespace SteamEngine {
 			base.Dispose();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "thing")]
 		public void InitDone(Thing thing) {
 			this.thing = thing;
 			cache[thing] = this;
@@ -128,7 +129,7 @@ namespace SteamEngine {
 		//}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-		public void SendIdPacket(GameState state, TCPConnection<GameState> conn) {
+		public void SendIdPacket(GameState state, TcpConnection<GameState> conn) {
 			if (state.Version.OldAosToolTips) {
 				if (this.oldIdNGroup == null) {
 					this.oldIdNGroup = PacketGroup.CreateFreePG();
@@ -166,7 +167,7 @@ namespace SteamEngine {
 		//    dataGroup.SendTo(c);
 		//}
 
-		internal void SendDataPacket(TCPConnection<GameState> conn, GameState state) {
+		internal void SendDataPacket(TcpConnection<GameState> conn, GameState state) {
 			if (this.dataNGroup == null) {
 				this.dataNGroup = PacketGroup.CreateFreePG();
 				this.dataNGroup.AcquirePacket<MegaClilocOutPacket>().Prepare(thing.FlaggedUid, uid, ids, arguments);

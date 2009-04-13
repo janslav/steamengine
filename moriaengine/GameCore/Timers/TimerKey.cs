@@ -32,7 +32,7 @@ namespace SteamEngine.Timers {
 			if (byName.TryGetValue(name, out key)) {
 				return key;
 			}
-			key = new TimerKey(name, uids++);
+			key = new TimerKey(name, AbstractKey.GetNewUid());
 			byName[name] = key;
 			return key;
 		}
@@ -53,7 +53,7 @@ namespace SteamEngine.Timers {
 		}
 
 		public string Save(object objToSave) {
-			return "%" + ((TimerKey) objToSave).name;
+			return "%" + ((TimerKey) objToSave).Name;
 		}
 
 		public object Load(Match match) {

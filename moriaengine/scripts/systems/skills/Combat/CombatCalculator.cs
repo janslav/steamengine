@@ -299,7 +299,7 @@ namespace SteamEngine.CompiledScripts {
 					retVal = null;
 				}
 				if ((retVal == null) || (!CheckProjectile(retVal, type))) {
-					foreach (Item i in self.BackpackAsContainer.EnumShallow()) {
+					foreach (Item i in self.Backpack.EnumShallow()) {
 						retVal = i as Projectile;
 						if ((retVal != null) && (CheckProjectile(retVal, type))) {
 							return retVal;

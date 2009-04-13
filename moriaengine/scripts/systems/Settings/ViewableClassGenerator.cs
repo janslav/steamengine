@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void Bootstrap() {
 			//register the CheckViewabilityClass method so every ClassManager managed Type will be
 			//checked here for its Viewability...
-			if (!Globals.fastStartUp) {
+			if (!Globals.FastStartUp) {
 				ClassManager.RegisterSupplySubclasses<object>(CheckViewabilityClass);
 			}
 		}

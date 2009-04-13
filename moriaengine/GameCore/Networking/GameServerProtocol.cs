@@ -25,10 +25,10 @@ using System.IO;
 using System.Net;
 
 namespace SteamEngine.Networking {
-	public class GameServerProtocol : IProtocol<TCPConnection<GameState>, GameState, IPEndPoint> {
+	public class GameServerProtocol : IProtocol<TcpConnection<GameState>, GameState, IPEndPoint> {
 		public static readonly GameServerProtocol instance = new GameServerProtocol();
 
-		public IncomingPacket<TCPConnection<GameState>, GameState, IPEndPoint> GetPacketImplementation(byte id, TCPConnection<GameState> conn, GameState state, out bool discardAfterReading) {
+		public IncomingPacket<TcpConnection<GameState>, GameState, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<GameState> conn, GameState state, out bool discardAfterReading) {
 			bool isLoggedIn = state.IsLoggedIn;
 			bool hasChar = state.Character != null;
 

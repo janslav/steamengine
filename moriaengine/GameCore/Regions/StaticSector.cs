@@ -99,7 +99,7 @@ namespace SteamEngine.Regions {
 
 		//(TODO): Loading other map MULs.
 		private static object[] LoadMapSector(int sx, int sy, int numMulSectors, int m) {
-			string mulFileP = Path.Combine(Globals.mulPath, "map0.mul");
+			string mulFileP = Path.Combine(Globals.MulPath, "map0.mul");
 
 			if (File.Exists(mulFileP)) {
 				FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
@@ -136,8 +136,8 @@ namespace SteamEngine.Regions {
 		//(TODO): Loading other static MULs.
 		private static Static[] LoadStaticsSector(int mulsX, int mulsY, int sx, int sy, int numMulSectors, int m, out uint[,] versions) {
 			versions = new uint[numMulSectors, numMulSectors];
-			string mulFilePI = Path.Combine(Globals.mulPath, "staidx0.mul");
-			string mulFileP = Path.Combine(Globals.mulPath, "statics0.mul");
+			string mulFilePI = Path.Combine(Globals.MulPath, "staidx0.mul");
+			string mulFileP = Path.Combine(Globals.MulPath, "statics0.mul");
 
 			if (File.Exists(mulFilePI) && File.Exists(mulFileP)) {
 				FileStream idxfs = new FileStream(mulFilePI, FileMode.Open, FileAccess.Read);

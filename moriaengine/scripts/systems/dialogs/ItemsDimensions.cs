@@ -33,8 +33,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		static GumpDimensions() {
-			if (File.Exists(Globals.scriptsPath + datafilePath)) {
-				using (FileStream fs = new FileStream(Globals.scriptsPath + datafilePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+			if (File.Exists(Globals.ScriptsPath + datafilePath)) {
+				using (FileStream fs = new FileStream(Globals.ScriptsPath + datafilePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 					BinaryReader bin = new BinaryReader(fs);
 
 					bounds = new GumpArtDimension[0x4000];

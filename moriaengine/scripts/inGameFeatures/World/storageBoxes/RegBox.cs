@@ -124,8 +124,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						} else {
 							reagsToGive = (int) gr.responseNumbers[i].number;
 						}
-						buttonShowItemDef[i].Create(((Player) gi.Cont).BackpackAsContainer);
-						Globals.lastNewItem.Amount = reagsToGive;
+						buttonShowItemDef[i].Create(((Player) gi.Cont).Backpack);
+						Globals.LastNewItem.Amount = reagsToGive;
 						gi.Cont.SysMessage("Vyndáváš z bedny " + Convert.ToString(reagsToGive) + "ks regu " + buttonShowItemDef[i].Name + ".");
 						box.inBoxReags[buttonShowItemDef[i]] -= reagsToGive;
 						box.pocetRegu -= reagsToGive;
@@ -138,8 +138,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.pressedButton >= 1000) {
 				int thisButtonValue = (int) gr.pressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
-				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).BackpackAsContainer);
-				Globals.lastNewItem.Amount = box.inBoxReags[buttonShowItemDef[thisButtonValue]];
+				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
+				Globals.LastNewItem.Amount = box.inBoxReags[buttonShowItemDef[thisButtonValue]];
 				box.inBoxReags.Remove(buttonShowItemDef[thisButtonValue]);
 				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_RegBox>.Instance);
 			}

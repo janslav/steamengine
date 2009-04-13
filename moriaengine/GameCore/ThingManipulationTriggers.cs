@@ -234,13 +234,13 @@ namespace SteamEngine {
 				this.TryTrigger(TriggerKey.unEquip, args);
 				ReturnIntoCharIfNeeded(cont, layer);
 				try {
-					this.On_UnEquip(args);
+					this.On_Unequip(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				ReturnIntoCharIfNeeded(cont, layer);
 				cont.TryTrigger(TriggerKey.itemUnEquip, args);
 				ReturnIntoCharIfNeeded(cont, layer);
 				try {
-					cont.On_ItemUnEquip(args);
+					cont.On_ItemUnequip(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				ReturnIntoCharIfNeeded(cont, layer);
 			}
@@ -249,7 +249,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_UnEquip(ItemInCharArgs args) {
+		public virtual void On_Unequip(ItemInCharArgs args) {
 		}
 
 		private void ReturnIntoCharIfNeeded(AbstractCharacter originalCont, byte layer) {
@@ -883,6 +883,7 @@ namespace SteamEngine {
 		}
 
 		//
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void TryEquip(AbstractItem i) {
 			i.Cont = this;
 		}
@@ -892,10 +893,10 @@ namespace SteamEngine {
 		public bool TryGetRidOfDraggedItem() {
 			AbstractItem i = draggingLayer;
 			if (i != null) {
-				DenyResult result = this.TryPutItemOnItem(this.Backpack);
+				DenyResult result = this.TryPutItemOnItem(this.GetBackpack());
 				if (result != DenyResult.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
 					GameState state = this.GameState;
-					SteamEngine.Communication.TCP.TCPConnection<GameState> conn = null;
+					SteamEngine.Communication.TCP.TcpConnection<GameState> conn = null;
 					if (state != null) {
 						conn = state.Conn;
 						PacketSequences.SendDenyResultMessage(conn, i, result);
@@ -927,7 +928,7 @@ namespace SteamEngine {
 		//picks up item. typically called from InPackets. I am the src, the item can be anywhere.
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPickupItem(AbstractItem item, int amt) {
 			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
@@ -974,7 +975,7 @@ namespace SteamEngine {
 							} else {
 								MutablePoint4D p = item.point4d;
 								Region region = Map.GetMap(p.m).GetRegionFor(p.x, p.y);
-								cancel = Region.Trigger_DenyPickupItemFrom(args);
+								cancel = region.Trigger_DenyPickupItemFrom(args);
 							}
 						}
 					}
@@ -1017,7 +1018,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemInItem(AbstractItem targetCont, int x, int y, bool tryStacking) {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
@@ -1094,7 +1095,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. (I am the src)
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnItem(AbstractItem target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
@@ -1188,7 +1189,7 @@ namespace SteamEngine {
 
 						if (!cancel) {
 							Region region = Map.GetMap(m).GetRegionFor(x, y);
-							cancel = Region.Trigger_DenyPutItemOn(args);
+							cancel = region.Trigger_DenyPutItemOn(args);
 						}
 					}
 				}
@@ -1213,7 +1214,7 @@ namespace SteamEngine {
 		}
 
 		//typically called from InPackets. drops the held item on target (I am the src)
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
@@ -1224,7 +1225,7 @@ namespace SteamEngine {
 			item.ThrowIfDeleted();
 
 			if (target == this) {
-				return this.TryPutItemOnItem(this.Backpack);
+				return this.TryPutItemOnItem(this.GetBackpack());
 			} else {
 				ItemOnCharArgs args = new ItemOnCharArgs(this, item, target);
 
@@ -1252,7 +1253,7 @@ namespace SteamEngine {
 				}
 
 				if (!cancel) {
-					return this.TryPutItemOnItem(target.Backpack);
+					return this.TryPutItemOnItem(target.GetBackpack());
 				}
 			}
 
@@ -1261,7 +1262,7 @@ namespace SteamEngine {
 
 		//typically called from InPackets. drops the held item on target (I am the src)
 		//dropping on ones own paperdoll
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
@@ -1371,7 +1372,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_ItemUnEquip(ItemInCharArgs args) {
+		public virtual void On_ItemUnequip(ItemInCharArgs args) {
 
 		}
 
@@ -1472,7 +1473,7 @@ namespace SteamEngine {
 
 		public DenyResult Result {
 			get {
-				return (DenyResult) Convert.ToInt32(argv[0]);
+				return (DenyResult) ConvertTools.ToInt32(argv[0]);
 			}
 			set {
 				argv[0] = value;
@@ -1492,7 +1493,7 @@ namespace SteamEngine {
 
 		public int Amount {
 			get {
-				return Convert.ToInt32(this.argv[3]);
+				return ConvertTools.ToInt32(this.argv[3]);
 			}
 			set {
 				argv[3] = value;

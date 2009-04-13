@@ -27,15 +27,23 @@ namespace SteamEngine {
 	/// 
 	/// </summary>                                                
 	public abstract class AbstractKey {
-		protected static int uids;
+		private static int uids;
 
-		public readonly string name;
-		public readonly int uid;
+		private readonly string name;
+		private readonly int uid;
 
 		protected AbstractKey(string name, int uid) {
 			this.name = name;
 			this.uid = uid;
 		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		public int Uid {
+			get { return uid; }
+		} 
 
 		public override int GetHashCode() {
 			return uid;
@@ -46,7 +54,11 @@ namespace SteamEngine {
 		}
 
 		public override bool Equals(Object obj) {
-			return this == obj;
+			return Object.ReferenceEquals(this, obj);
+		}
+
+		public static int GetNewUid() {
+			return uids++;
 		}
 	}
 }

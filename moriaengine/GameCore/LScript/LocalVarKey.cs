@@ -34,7 +34,7 @@ namespace SteamEngine {
 			if (byName.TryGetValue(name, out key)) {
 				return key;
 			}
-			key = new LocalVarKey(name, uids++);
+			key = new LocalVarKey(name, AbstractKey.GetNewUid());
 			byName[name] = key;
 			return key;
 		}

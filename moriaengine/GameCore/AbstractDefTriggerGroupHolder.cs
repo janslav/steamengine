@@ -27,6 +27,11 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	public abstract class AbstractDefTriggerGroupHolder : AbstractDef, ITriggerGroupHolder {
 
+		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
+		internal PluginHolder.TGListNode firstTGListNode; //linked list of triggergroup references
+
+		private static List<TGResolver> tgResolvers = new List<TGResolver>();
+
 		protected AbstractDefTriggerGroupHolder(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
@@ -39,7 +44,7 @@ namespace SteamEngine {
 				//case "type":
 				case "triggergroup":
 				//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE? NO!
-					DelayedResolver.DelayResolve(new DelayedMethod(ResolveTriggerGroup), new object[] { args, filename, line });
+					tgResolvers.Add(new TGResolver(this, args, filename, line));
 					break;
 				default:
 					base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
@@ -47,21 +52,36 @@ namespace SteamEngine {
 			}
 		}
 
-		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
-		internal PluginHolder.TGListNode firstTGListNode; //linked list of triggergroup references
 		//This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
-		internal void ResolveTriggerGroup(object[] args) {
-			string name = (string) args[0];
-			if (name != "0") {	//"0" means nothing
-				TriggerGroup tg = TriggerGroup.Get(name);
-				if (tg == null) {
-					string filename = (string) args[1];
-					int line = (int) args[2];
-					Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(name) + "' is not a valid TriggerGroup (Event/Type).");
-				} else {
-					AddTriggerGroup(tg);
+		private class TGResolver {
+			AbstractDefTriggerGroupHolder cont;
+			string filename, tgName;
+			int line;
+
+			internal TGResolver(AbstractDefTriggerGroupHolder cont, string tgName, string filename, int line) {
+				this.cont = cont;
+				this.tgName = tgName;
+				this.filename = filename;
+				this.line = line;
+			}
+
+			internal void Resolve() {
+				if (this.tgName != "0") {	//"0" means nothing
+					TriggerGroup tg = TriggerGroup.Get(this.tgName);
+					if (tg == null) {
+						Logger.WriteWarning(LogStr.FileLine(this.filename, this.line) + "'" + LogStr.Ident(this.tgName) + "' is not a valid TriggerGroup (Event/Type).");
+					} else {
+						this.cont.AddTriggerGroup(tg);
+					}
 				}
 			}
+		}
+
+		internal static void LoadingFinished() {
+			foreach (TGResolver resolver in tgResolvers) {
+				resolver.Resolve();
+			}
+			tgResolvers = new List<TGResolver>();
 		}
 
 		/*
@@ -99,8 +119,6 @@ namespace SteamEngine {
 				} while (curNode != null);
 			}
 		}
-
-
 
 		/*
 			Method: RemoveTriggerGroup

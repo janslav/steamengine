@@ -29,21 +29,21 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public sealed class TCPClientFactory<TState> :
-		AsyncCore<TCPConnection<TState>, TState, IPEndPoint>,
-		IClientFactory<TCPConnection<TState>, TState, IPEndPoint>
-		where TState : Poolable, IConnectionState<TCPConnection<TState>, TState, IPEndPoint>, new() {
+	public sealed class TcpClientFactory<TState> :
+		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>,
+		IClientFactory<TcpConnection<TState>, TState, IPEndPoint>
+		where TState : Poolable, IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
-		public TCPClientFactory(IProtocol<TCPConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
+		public TcpClientFactory(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
 			: base(protocol, lockObject) {
 
 		}
 
-		public TCPConnection<TState> Connect(IPEndPoint endpoint) {
-			Socket socket = TCPServer<TState>.CreateSocket();
+		public TcpConnection<TState> Connect(IPEndPoint endpoint) {
+			Socket socket = TcpServer<TState>.CreateSocket();
 			socket.Connect(endpoint);
 
-			TCPConnection<TState> newConn = Pool<TCPConnection<TState>>.Acquire();
+			TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
 			newConn.socket = socket;
 			InitNewConnection(newConn);
 

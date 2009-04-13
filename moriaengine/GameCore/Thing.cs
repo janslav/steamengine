@@ -148,7 +148,7 @@ namespace SteamEngine {
 			} else {
 				uid = uidBeingLoaded;				
 			}
-			Globals.lastNew = this;
+			Globals.LastNew = this;
 		}
 
 		protected Thing(Thing copyFrom)
@@ -161,7 +161,7 @@ namespace SteamEngine {
 			color = copyFrom.color;
 			model = copyFrom.model;
 			//SetSectorPoint4D();
-			Globals.lastNew = this;
+			Globals.LastNew = this;
 		}
 
 		internal void CheckAfterLoad() {
@@ -932,7 +932,7 @@ namespace SteamEngine {
 
 			GameState clickerState = clicker.GameState;
 			if (clickerState != null) {
-				TCPConnection<GameState> clickerConn = clickerState.Conn;
+				TcpConnection<GameState> clickerConn = clickerState.Conn;
 				if (!clicker.CanSeeForUpdate(this)) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
@@ -958,7 +958,7 @@ namespace SteamEngine {
 
 			GameState clickerState = clicker.GameState;
 			if (clickerState != null) {
-				TCPConnection<GameState> clickerConn = clickerState.Conn;
+				TcpConnection<GameState> clickerConn = clickerState.Conn;
 				if (!clicker.CanSeeForUpdate(this)) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
@@ -984,14 +984,14 @@ namespace SteamEngine {
 		//method: On_Click
 		//Thing`s implementation of trigger @Click,
 		//sends the name (DecoratedName) of this Thing as plain overheadmessage
-		public virtual void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+		public virtual void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				this.Name, 0);
 		}
 
-		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
-			AOSToolTips toolTips = this.GetAOSToolTips();
+			AosToolTips toolTips = this.GetAOSToolTips();
 			PacketSequences.SendClilocNameFrom(clicker.GameState.Conn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -1175,13 +1175,13 @@ namespace SteamEngine {
 
 		public abstract void Resend();
 
-		public AOSToolTips GetAOSToolTips() {
-			AOSToolTips toolTips = AOSToolTips.GetFromCache(this);
+		public AosToolTips GetAOSToolTips() {
+			AosToolTips toolTips = AosToolTips.GetFromCache(this);
 			if (toolTips != null) {
 				return toolTips;
 			}
 
-			toolTips = Pool<AOSToolTips>.Acquire();
+			toolTips = Pool<AosToolTips>.Acquire();
 
 			int id;
 			string argument;
@@ -1199,11 +1199,11 @@ namespace SteamEngine {
 			argument = this.Name;
 		}
 
-		public virtual void BuildAOSToolTips(AOSToolTips opc) {
+		public virtual void BuildAOSToolTips(AosToolTips opc) {
 		}
 
 		public virtual void InvalidateProperties() {
-			AOSToolTips.RemoveFromCache(this);
+			AosToolTips.RemoveFromCache(this);
 		}
 
 		//public Gump Dialog(string gumpName) {
@@ -1251,27 +1251,27 @@ namespace SteamEngine {
 
 		public void Message(string arg, int color) {
 			this.ThrowIfDeleted();
-			PacketSequences.SendOverheadMessageFrom(Globals.SrcTCPConnection, this, arg, color);
+			PacketSequences.SendOverheadMessageFrom(Globals.SrcTcpConnection, this, arg, color);
 		}
 
 		public void ClilocMessage(int msg, string args) {
 			this.ThrowIfDeleted();
-			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTcpConnection, this, msg, 0, args);
 		}
 
 		public void ClilocMessage(int msg, params string[] args) {
 			this.ThrowIfDeleted();
-			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, 0, args);
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTcpConnection, this, msg, 0, args);
 		}
 
 		public void ClilocMessage(int msg, int color, string args) {
 			this.ThrowIfDeleted();
-			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTcpConnection, this, msg, color, args);
 		}
 
 		public void ClilocMessage(int msg, int color, params string[] args) {
 			this.ThrowIfDeleted();
-			PacketSequences.SendClilocMessageFrom(Globals.SrcTCPConnection, this, msg, color, args);
+			PacketSequences.SendClilocMessageFrom(Globals.SrcTcpConnection, this, msg, color, args);
 		}
 
 		//public void SoundTo(ushort soundId, GameState toClient) {
@@ -1622,19 +1622,19 @@ namespace SteamEngine {
 			int dist = 0;
 			switch (type) {
 				case SpeechType.Speech:
-					dist = Globals.speechDistance;
+					dist = Globals.SpeechDistance;
 					break;
 				case SpeechType.Emote:
-					dist = Globals.emoteDistance;
+					dist = Globals.EmoteDistance;
 					break;
 				case SpeechType.Whisper:
-					dist = Globals.whisperDistance;
+					dist = Globals.WhisperDistance;
 					break;
 				case SpeechType.Yell:
-					dist = Globals.yellDistance;
+					dist = Globals.YellDistance;
 					break;
 				default:
-					dist = Globals.speechDistance;
+					dist = Globals.SpeechDistance;
 					//type = SpeechType.Speech; //or should we? could this cause something bad? -tar
 					break;
 			}
@@ -1649,7 +1649,7 @@ namespace SteamEngine {
 				}
 			} else {//item/npc is speaking... no triggers fired, just send it to players
 				PacketGroup pg = null;
-				foreach (TCPConnection<GameState> conn in map.GetConnectionsInRange(x, y, dist)) {
+				foreach (TcpConnection<GameState> conn in map.GetConnectionsInRange(x, y, dist)) {
 					if (pg == null) {
 						pg = PacketGroup.AcquireMultiUsePG();
 						if (speech == null) {

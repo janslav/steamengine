@@ -41,7 +41,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void PlayerCommand(GameState state, string command) {
-			string lower = command.ToLower();
+			string lower = command.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			string noprefix;
 
 			AbstractCharacter commandSrc = state.CharacterNotNull;
@@ -138,7 +138,7 @@ namespace SteamEngine {
 					errText = string.Concat(err);
 				}
 				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. ERR: " + errText);
-				commandSrc.WriteLine(String.Format(
+				commandSrc.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 					ServLoc<CommandLoc>.Get(commandSrc.Language).CommandFailed,
 					command, errText));
 			}
@@ -166,7 +166,7 @@ namespace SteamEngine {
 
 		static CacheDictionary<string, LScriptHolder> gmCommandsCache = new CacheDictionary<string, LScriptHolder>(1000, false, StringComparer.Ordinal);
 
-		public static void ClearGmCommandsCache() {
+		public static void ClearGMCommandsCache() {
 			gmCommandsCache.Clear();
 		}
 
@@ -177,7 +177,7 @@ namespace SteamEngine {
 			Globals.SetSrc(commandSrc);
 			try {
 				commandRunning = true;
-				if (commandSrc.MaxPlevel < Globals.plevelToLscriptCommands) {
+				if (commandSrc.MaxPlevel < Globals.PlevelForLscriptCommands) {
 					string errText;
 					bool success = SimpleCommandParser.TryRunSnippet(commandSrc, self, code, out errText);
 					LogCommand(commandSrc, code, success, errText);
@@ -221,14 +221,14 @@ namespace SteamEngine {
 			//Console.WriteLine("lscript: "+HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - start)+" ms");
 		}
 
-		private static SteamEngine.Networking.OnTargon xCommand_Targon = XCommand_Targon;
-		private static SteamEngine.Networking.OnTargon_Cancel xCommand_Cancel = XCommand_Cancel;
+		private static SteamEngine.Networking.OnTargon xCommand_Targon = XCommandTargon;
+		private static SteamEngine.Networking.OnTargon_Cancel xCommand_Cancel = XCommandCancel;
 
-		public static void XCommand_Cancel(GameState state, object parameter) {
+		public static void XCommandCancel(GameState state, object parameter) {
 			//?
 		}
 
-		public static void XCommand_Targon(GameState state, IPoint3D getback, object parameter) {
+		public static void XCommandTargon(GameState state, IPoint3D getback, object parameter) {
 			TagHolder self = getback as TagHolder;
 			if (self != null) {
 				XCommandParameter xcp = (XCommandParameter) parameter;

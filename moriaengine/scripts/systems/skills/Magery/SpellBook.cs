@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		public void DisplayTo(Character viewer) {
 			GameState state = viewer.GameState;
 			if (state != null) {
-				Communication.TCP.TCPConnection<GameState> conn = state.Conn;
+				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
 
 				//this is probably not necessary. We'll see if it breaks :)
 				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts {
 				if (canReach == DenyResult.Allow) {
 					Container cont = targetted.Cont as Container;
 					if (cont == null) {
-						cont = self.BackpackAsContainer;
+						cont = self.Backpack;
 					}
 					int firstSpellId = book.FirstSpellId;
 					for (int i = firstSpellId, n = firstSpellId + 64; i < n; i++) {

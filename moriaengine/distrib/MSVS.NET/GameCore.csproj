@@ -341,10 +341,6 @@
     <Compile Include="..\..\GameCore\DeepCopyFactory.cs">
       <Link>DeepCopyFactory.cs</Link>
     </Compile>
-    <Compile Include="..\..\GameCore\DelayedResolver.cs">
-      <Link>DelayedResolver.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\GameCore\DispidInfo.cs">
       <Link>DispidInfo.cs</Link>
       <SubType>Code</SubType>

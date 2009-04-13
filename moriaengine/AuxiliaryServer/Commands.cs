@@ -15,7 +15,7 @@ namespace SteamEngine.AuxiliaryServer {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"), 
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "cmd")]
-		public static void HandleCommand(TCPConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state, string cmd) {
+		public static void HandleCommand(TcpConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state, string cmd) {
 			cmd = cmd.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			switch (cmd) {
 				case "restart":

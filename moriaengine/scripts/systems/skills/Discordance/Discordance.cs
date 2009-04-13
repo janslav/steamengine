@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			if (instrument == null) {
-				instrument = (Musical) self.BackpackAsContainer.FindByClass(typeof(Musical));
+				instrument = (Musical) self.Backpack.FindByClass(typeof(Musical));
 			}
 			if (instrument == null) {
 				self.SysMessage("Nemáš u sebe hudební nástroj.");

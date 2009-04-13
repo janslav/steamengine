@@ -69,6 +69,7 @@ namespace SteamEngine {
 			implementors[type] = implementor;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool IsNotCopied(Type type) {
 			return (type.IsEnum
 				|| ObjectSaver.IsSimpleSaveableType(type) //numbers, datetime, timespan, etc.
@@ -198,6 +199,7 @@ namespace SteamEngine {
 		}
 
 		private class CopyImplementor_UseICloneable : IDeepCopyImplementor {
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object DeepCopy(object copyFrom) {
 				return ((ICloneable) copyFrom).Clone();
 			}

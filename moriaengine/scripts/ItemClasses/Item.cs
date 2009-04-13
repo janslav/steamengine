@@ -276,7 +276,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TCPConnection<GameState> clickerConn) {
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			int amount = this.Amount;
 			if (this.Amount <= 1) {
 				PacketSequences.SendNameFrom(clickerConn, this, this.Name, 0);

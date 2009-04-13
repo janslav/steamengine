@@ -38,6 +38,7 @@ namespace SteamEngine {
 		int Model { get; }
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
 		private int amount;
 		private string name;
@@ -59,8 +60,8 @@ namespace SteamEngine {
 
 
 		private TriggerGroup type;
-		internal object contentsOrComponents = null;
-		private static int instances = 0;
+		internal object contentsOrComponents;
+		private static int instances;
 		private static ArrayList registeredTGs = new ArrayList();
 
 
@@ -74,14 +75,12 @@ namespace SteamEngine {
 		protected AbstractItem(ThingDef myDef)
 			: base(myDef) {
 			instances++;
-			this.name = null;
 			this.type = ((AbstractItemDef) myDef).Type;
-			this.flags = 0;
 			this.amount = 1;
 
 			//MoveInsideContainer((ushort) Globals.dice.Next(20,100),(ushort) Globals.dice.Next(20,100));
 			//cont.InternalAddItem(this);//also resends
-			Globals.lastNewItem = this;
+			Globals.LastNewItem = this;
 		}
 
 		protected AbstractItem(AbstractItem copyFrom)
@@ -90,7 +89,7 @@ namespace SteamEngine {
 			name = copyFrom.name;
 			flags = copyFrom.flags;
 			amount = copyFrom.amount;
-			Globals.lastNewItem = this;
+			Globals.LastNewItem = this;
 		}
 		#endregion Constructors
 
@@ -330,7 +329,7 @@ namespace SteamEngine {
 			this.OpenTo(viewer, viewerState, viewerState.Conn);
 		}
 
-		public void OpenTo(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
+		public void OpenTo(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 			if (this.IsContainer) {
 				this.ThrowIfDeleted();
 				viewer.ThrowIfDeleted();
@@ -350,7 +349,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		private void Trigger_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
+		private void Trigger_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 			ScriptArgs sa = new ScriptArgs(viewer, viewerState, viewerConn);
 			this.TryTrigger(TriggerKey.containerOpen, sa);
 			try {
@@ -359,7 +358,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TCPConnection<GameState> viewerConn) {
+		public virtual void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 		}
 
 		//[Obsolete("Use the alternative from Networking namespace", false)]
@@ -505,7 +504,7 @@ namespace SteamEngine {
 			return cancel;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public void Trigger_Step(AbstractCharacter steppingChar, bool repeated) {
 			ThrowIfDeleted();
 			bool cancel = false;
@@ -527,6 +526,7 @@ namespace SteamEngine {
 		public virtual void On_Step(AbstractCharacter stepping, bool repeated) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			base.Save(output);
 			AbstractItemDef def = this.TypeDef;

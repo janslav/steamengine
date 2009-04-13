@@ -25,7 +25,7 @@ using System.IO;
 using System.Net;
 
 namespace SteamEngine.Networking {
-	public class GameServer : TCPServer<GameState> {
+	public class GameServer : TcpServer<GameState> {
 
 		private static GameServer instance = new GameServer();
 
@@ -43,7 +43,7 @@ namespace SteamEngine.Networking {
 		}
 
 		internal static void Init() {
-			instance.Bind(new IPEndPoint(IPAddress.Any, Globals.port));
+			instance.Bind(new IPEndPoint(IPAddress.Any, Globals.Port));
 		}
 
 		internal static void On_ClientInit(GameState gc) {
@@ -100,7 +100,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			foreach (TCPConnection<GameState> conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
+			foreach (TcpConnection<GameState> conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);
@@ -118,7 +118,7 @@ namespace SteamEngine.Networking {
 		public static void SendToClientsWhoCanSee(AbstractCharacter ch, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 
-			foreach (TCPConnection<GameState> conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
+			foreach (TcpConnection<GameState> conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);
@@ -149,7 +149,7 @@ namespace SteamEngine.Networking {
 				}
 				return;
 			} else {
-				foreach (TCPConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
+				foreach (TcpConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
 					if (pg == null) {
 						pg = PacketGroup.AcquireMultiUsePG();
 						pg.AddPacket(outPacket);
@@ -169,7 +169,7 @@ namespace SteamEngine.Networking {
 			point = point.TopPoint;
 			PacketGroup pg = null;
 
-			foreach (TCPConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {
+			foreach (TcpConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);

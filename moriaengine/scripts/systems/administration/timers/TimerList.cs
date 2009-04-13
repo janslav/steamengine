@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				BoundTimer tmr = de.Value;
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2 * i) + 10);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText((de.Key).name);
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText((de.Key).Name);
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tmr.DueInSeconds.ToString()); //hodnota tagu, vcetne prefixu oznacujicim typ
 				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (2 * i) + 11);
 
@@ -168,7 +168,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//entry in this hashtable is TimerKey and its Timer value
 				if (criteria == null || criteria.Equals("")) {
 					timersList.Add(entry);//bereme vse
-				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Key.Name.ToUpper().Contains(criteria.ToUpper())) {
 					timersList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu timeru
 				}
 			}
@@ -209,7 +209,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<TimerKey, BoundTimer> x, KeyValuePair<TimerKey, BoundTimer> y) {
 			TimerKey a = (x.Key);
 			TimerKey b = (y.Key);
-			return string.Compare(a.name, b.name);
+			return string.Compare(a.Name, b.Name);
 		}
 	}
 }

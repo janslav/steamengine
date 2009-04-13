@@ -32,7 +32,7 @@ namespace SteamEngine {
 				MainClass.signalExit.Set();
 			}
 
-			if (Globals.logToFiles) {
+			if (Globals.LogToFiles) {
 				Logger.OpenFile();
 			}
 		}
@@ -40,9 +40,12 @@ namespace SteamEngine {
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]
 			DateTime dtnow = DateTime.Now;
-			string filename = string.Format("SteamEngine.GameServer.{0}-{1}-{2}.log",
-				dtnow.Year, dtnow.Month.ToString("00"), dtnow.Day.ToString("00"));
-			return Path.Combine(Globals.logPath, filename);
+			string filename = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"SteamEngine.GameServer.{0}-{1}-{2}.log",
+				dtnow.Year.ToString("0000", System.Globalization.CultureInfo.InvariantCulture), 
+				dtnow.Month.ToString("00", System.Globalization.CultureInfo.InvariantCulture), 
+				dtnow.Day.ToString("00", System.Globalization.CultureInfo.InvariantCulture));
+			return Path.Combine(Globals.LogPath, filename);
 		}
 	}
 }

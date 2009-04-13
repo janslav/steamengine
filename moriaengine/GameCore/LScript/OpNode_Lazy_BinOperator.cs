@@ -81,7 +81,7 @@ namespace SteamEngine.LScript {
 						break;
 					case ("/"):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_DivOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_DivOperator_Int(parent, origNode);
@@ -125,7 +125,7 @@ namespace SteamEngine.LScript {
 						break;
 					case ("=="):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_EqualityOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_EqualityOperator_Int(parent, origNode);
@@ -139,7 +139,7 @@ namespace SteamEngine.LScript {
 						break;
 					case ("!="):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_InEqualityOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_InEqualityOperator_Int(parent, origNode);
@@ -153,7 +153,7 @@ namespace SteamEngine.LScript {
 						break;
 					case ("<="):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_LessThanOrEqualOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_LessThanOrEqualOperator_Int(parent, origNode);
@@ -164,7 +164,7 @@ namespace SteamEngine.LScript {
 						break;
 					case (">="):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_GreaterThanOrEqualOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_GreaterThanOrEqualOperator_Int(parent, origNode);
@@ -175,7 +175,7 @@ namespace SteamEngine.LScript {
 						break;
 					case ("<"):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_LessThanOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_LessThanOperator_Int(parent, origNode);
@@ -186,7 +186,7 @@ namespace SteamEngine.LScript {
 						break;
 					case (">"):
 						if (OperandsAreNumbers()) {
-							if (Globals.scriptFloats) {
+							if (Globals.ScriptFloats) {
 								newNode = new OpNode_GreaterThanOperator_Double(parent, origNode);
 							} else {
 								newNode = new OpNode_GreaterThanOperator_Int(parent, origNode);

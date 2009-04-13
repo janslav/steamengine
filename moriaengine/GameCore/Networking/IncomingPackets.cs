@@ -25,7 +25,7 @@ using System.IO;
 using System.Net;
 
 namespace SteamEngine.Networking {
-	public abstract class GameIncomingPacket : IncomingPacket<TCPConnection<GameState>, GameState, IPEndPoint> {
+	public abstract class GameIncomingPacket : IncomingPacket<TcpConnection<GameState>, GameState, IPEndPoint> {
 
 	}
 
@@ -77,7 +77,7 @@ namespace SteamEngine.Networking {
 			return this.subPacket.ReadSubPacket(this, blockSize);
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			this.subPacket.Handle(this, conn, state);
 		}
 
@@ -91,7 +91,7 @@ namespace SteamEngine.Networking {
 
 		public abstract class SubPacket : Poolable {
 			internal protected abstract ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize);
-			internal protected abstract void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state);
+			internal protected abstract void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state);
 		}
 
 		public sealed class ScreenSizeSubPacket : SubPacket {
@@ -109,7 +109,7 @@ namespace SteamEngine.Networking {
 #endif
 			}
 
-			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+			protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 				Logger.WriteDebug(state + " reports screen resolution " + this.x + "x" + this.y);
 			}
 		}
@@ -119,7 +119,7 @@ namespace SteamEngine.Networking {
 				return ReadPacketResult.DiscardSingle;
 			}
 
-			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+			protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 				throw new SEException("The method or operation is not implemented.");
 			}
 		}
@@ -132,7 +132,7 @@ namespace SteamEngine.Networking {
 				return ReadPacketResult.Success;
 			}
 
-			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+			protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 				state.ClientLanguage = this.language;
 			}
 		}
@@ -146,7 +146,7 @@ namespace SteamEngine.Networking {
 				return ReadPacketResult.Success;
 			}
 
-			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+			protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 				state.CharacterNotNull.TryCastSpellFromBook(this.spellId);
 			}
 		}
@@ -188,7 +188,7 @@ namespace SteamEngine.Networking {
 				return this.subSubPacket.ReadSubPacket(packet, blockSize);
 			}
 
-			protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+			protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 				this.subSubPacket.Handle(packet, conn, state);
 			}
 
@@ -205,7 +205,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestAddMember(state.CharacterNotNull);
@@ -221,7 +221,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestRemoveMember(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
@@ -239,7 +239,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestPrivateMessage(state.CharacterNotNull, Thing.UidGetCharacter(this.uid), this.message);
@@ -254,7 +254,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestPublicMessage(state.CharacterNotNull, this.message);
@@ -270,7 +270,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.SetCanLoot(state.CharacterNotNull, this.canLoot);
@@ -286,7 +286,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.AcceptJoinRequest(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
@@ -302,7 +302,7 @@ namespace SteamEngine.Networking {
 					return ReadPacketResult.Success;
 				}
 
-				protected internal override void Handle(GeneralInformationInPacket packet, TCPConnection<GameState> conn, GameState state) {
+				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
 					PartyCommands instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.DeclineJoinRequest(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
@@ -343,7 +343,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractAccount acc;
 			LoginAttemptResult result = AbstractAccount.HandleLoginAttempt(this.accName, this.pass, state, out acc);
 
@@ -355,7 +355,7 @@ namespace SteamEngine.Networking {
 					//if (Globals.aos) {
 					//	pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
 					//}
-					pg.AcquirePacket<CharactersListOutPacket>().Prepare(acc, Globals.loginFlags);
+					pg.AcquirePacket<CharactersListOutPacket>().Prepare(acc, Globals.LoginFlags);
 					conn.SendPacketGroup(pg);
 
 					PreparedPacketGroups.SendClientVersionQuery(conn);
@@ -391,7 +391,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			state.LoginCharacter(this.charIndex);
 		}
 	}
@@ -406,7 +406,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			ClientVersion cv = ClientVersion.Get(this.ver);
 			if (cv != state.Version) {
 				Console.WriteLine(LogStr.Ident(state.ToString()) + (" claims to be: " + cv.ToString()));
@@ -428,7 +428,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractCharacter viewer = state.CharacterNotNull;
 
 			AbstractCharacter target = Thing.UidGetCharacter(this.uid);
@@ -438,7 +438,7 @@ namespace SteamEngine.Networking {
 						target.ShowStatusBarTo(viewer, conn);
 						return;
 					case 0x05:
-						if ((viewer == target) || viewer.IsPlevelAtLeast(Globals.plevelOfGM)) {
+						if ((viewer == target) || viewer.IsPlevelAtLeast(Globals.PlevelOfGM)) {
 							target.ShowSkillsTo(conn, state);
 							//} else {
 							//    Server.SendSystemMessage(c, "Illegal skills request.", 0);
@@ -463,7 +463,7 @@ namespace SteamEngine.Networking {
 
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.uids.Clear();
-			if (Globals.aosToolTips) {
+			if (Globals.UseAosToolTips) {
 				int dataBlockSize = blockSize - 3;
 				if ((dataBlockSize >= 0) && ((dataBlockSize % 4) == 0)) {
 					int count = dataBlockSize / 4;
@@ -477,13 +477,13 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
-			if (Globals.aosToolTips) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
+			if (Globals.UseAosToolTips) {
 				AbstractCharacter curChar = state.CharacterNotNull;
 				foreach (int uid in this.uids) {
 					Thing t = Thing.UidGetThing(uid);
 					if ((t != null) && (!t.IsDeleted)) {
-						AOSToolTips toolTips = t.GetAOSToolTips();
+						AosToolTips toolTips = t.GetAOSToolTips();
 						if (toolTips != null) {
 							if (curChar.CanSeeForUpdate(t)) {
 								toolTips.SendDataPacket(conn, state);
@@ -508,11 +508,11 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
-			if (this.speech.IndexOf(Globals.commandPrefix) == 0) {
-				Commands.PlayerCommand(state, speech.Substring(Globals.commandPrefix.Length));
-			} else if (this.speech.IndexOf(Globals.alternateCommandPrefix) == 0) {
-				Commands.PlayerCommand(state, speech.Substring(Globals.alternateCommandPrefix.Length));
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
+			if (this.speech.IndexOf(Globals.CommandPrefix) == 0) {
+				Commands.PlayerCommand(state, speech.Substring(Globals.CommandPrefix.Length));
+			} else if (this.speech.IndexOf(Globals.AlternateCommandPrefix) == 0) {
+				Commands.PlayerCommand(state, speech.Substring(Globals.AlternateCommandPrefix.Length));
 			} else {
 				//this.font = 3;	//We don't want them speaking in runic or anything. -SL
 				//we don't? not sure here, we'll see -tar
@@ -580,11 +580,11 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
-			if (this.speech.IndexOf(Globals.commandPrefix) == 0) {
-				Commands.PlayerCommand(state, this.speech.Substring(Globals.commandPrefix.Length));
-			} else if (this.speech.IndexOf(Globals.alternateCommandPrefix) == 0) {
-				Commands.PlayerCommand(state, this.speech.Substring(Globals.alternateCommandPrefix.Length));
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
+			if (this.speech.IndexOf(Globals.CommandPrefix) == 0) {
+				Commands.PlayerCommand(state, this.speech.Substring(Globals.CommandPrefix.Length));
+			} else if (this.speech.IndexOf(Globals.AlternateCommandPrefix) == 0) {
+				Commands.PlayerCommand(state, this.speech.Substring(Globals.AlternateCommandPrefix.Length));
 			} else {
 				//actually speak it
 				state.CharacterNotNull.Speech(this.speech, 0, (SpeechType) this.type, this.color, (ClientFont) this.font, this.language, this.keywords, null);
@@ -600,7 +600,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			state.ClientLanguage = this.language;
 		}
 	}
@@ -625,7 +625,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			state.HandleTarget(this.targGround, this.uid, this.x, this.y, this.z, this.model);
 		}
 	}
@@ -637,7 +637,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.DiscardSingle;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			throw new SEException("The method or operation is not implemented.");
 		}
 	}
@@ -650,7 +650,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			state.RequestedUpdateRange = this.range;
 		}
 	}
@@ -663,10 +663,10 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			Thing thing = Thing.UidGetThing(this.uid);
 			if (thing != null) {
-				if (Globals.aosToolTips && state.Version.AosToolTips) {
+				if (Globals.UseAosToolTips && state.Version.AosToolTips) {
 					thing.Trigger_AosClick(state.CharacterNotNull);
 				} else {
 					thing.Trigger_Click(state.CharacterNotNull);
@@ -685,7 +685,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractCharacter ch = state.CharacterNotNull;
 			Thing thing;
 			if (this.uid == 0x3cfff) {
@@ -740,7 +740,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractAccount acc = state.Account;
 			if (!acc.HasFreeSlot) {
 				state.WriteLine(ServLoc<IncomingPacketsLoc>.Get(state.Language).MaxAccCharsReached);
@@ -904,7 +904,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			conn.Close("Client logoff - returning to main menu");
 		}
 	}
@@ -920,7 +920,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			MovementState ms = state.movementState;
 
 			bool running = ((this.dir & 0x80) == 0x80);
@@ -939,7 +939,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractCharacter cre = Thing.UidGetCharacter(this.uid);
 			if ((cre == null) || (cre.IsDeleted)) {
 				PacketSequences.SendRemoveFromView(conn, this.uid);
@@ -960,7 +960,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractItem item = Thing.UidGetItem(this.uid);
 			if (item != null) {
 				AbstractCharacter cre = state.CharacterNotNull;
@@ -993,7 +993,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			//always an item, may or may not have the item-flag.
 			AbstractItem i = Thing.UidGetItem(this.itemUid);
 			AbstractCharacter cre = state.CharacterNotNull;
@@ -1044,7 +1044,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractItem i = Thing.UidGetItem(this.itemUid);
 			AbstractCharacter cre = state.CharacterNotNull;
 			if (i != null && cre.HasPickedUp(i)) {
@@ -1078,7 +1078,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			switch (this.type) {
 				//case 0: //God mode teleport?
 				//case 0x6b: //God mode command?
@@ -1146,7 +1146,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			switch (stat) {
 				case 0:
 					state.CharacterNotNull.StrLock = this.lockType;
@@ -1175,7 +1175,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			if ((this.skillId >= 0) && (this.skillId < AbstractSkillDef.SkillsCount)) {
 				state.CharacterNotNull.SetSkillLockType(this.skillId, this.lockType);
 			} else {
@@ -1193,7 +1193,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			state.CharacterNotNull.Flag_WarMode = this.warModeEnabled;
 		}
 	}
@@ -1208,7 +1208,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			if (this.charSlot < 0 || this.charSlot >= AbstractAccount.maxCharactersPerGameAccount) {
 				//Server.DisconnectAndLog(c, "Illegal char index "+charIndex);
 				PreparedPacketGroups.SendRejectDeleteCharacter(conn, DeleteCharacterResult.Deny_NonexistantCharacter);
@@ -1232,7 +1232,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractCharacter ch = state.CharacterNotNull;
 
 			DrawGamePlayerOutPacket dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
@@ -1255,7 +1255,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractCharacter c = Thing.UidGetCharacter(this.uid);
 			if ((c != null) && (state.CharacterNotNull.CanSeeForUpdate(c))) {
 				AllNamesOutPacket p = Pool<AllNamesOutPacket>.Acquire();
@@ -1271,7 +1271,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			//TODO
 			state.WriteLine("Sorry, there isn't a help menu yet.");
 		}
@@ -1305,7 +1305,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
-		protected override void Handle(TCPConnection<GameState> conn, GameState state) {
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			Gump gi = state.PopGump(this.gumpUid);
 			if (gi != null) {
 				int n = (gi.numEntryIDs != null) ? gi.numEntryIDs.Count : 0;
@@ -1335,7 +1335,7 @@ namespace SteamEngine.Networking {
 			this.responseTexts = null;
 		}
 
-		private static void SendGumpBack(TCPConnection<GameState> conn, GameState state, Gump gi, ResponseText[] responseTexts) {
+		private static void SendGumpBack(TcpConnection<GameState> conn, GameState state, Gump gi, ResponseText[] responseTexts) {
 			//first we copy the responsetext into the default texts for the textentries so that they don't change.
 			foreach (ResponseText rt in responseTexts) {
 				int defaultTextId;

@@ -112,7 +112,7 @@ namespace SteamEngine {
 					TemporaryValueImpl tempVI = (TemporaryValueImpl) defaultValue;
 
 					try {
-						string value = tempVI.value;
+						string value = tempVI.valueString;
 						object retVal = null;
 						if (value != null) {
 							if (value.Length > 0) {
@@ -156,6 +156,7 @@ namespace SteamEngine {
 		public static Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private bool ResolveStringWithoutLScript(string value, ref object retVal) {
 			switch (this.fvType) {
 				case FieldValueType.Typeless:
@@ -372,14 +373,14 @@ namespace SteamEngine {
 		private class TemporaryValueImpl : FieldValueImpl {
 			internal string filename;
 			internal int line;
-			internal string value;
+			internal string valueString;
 			FieldValue holder;
 
 			internal TemporaryValueImpl(string filename, int line, FieldValue holder, string value) {
 				this.filename = filename;
 				this.line = line;
 				this.holder = holder;
-				this.value = value;
+				this.valueString = value;
 			}
 
 			internal override FieldValueImpl Clone() {

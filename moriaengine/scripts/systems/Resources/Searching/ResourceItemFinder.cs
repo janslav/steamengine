@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Iterate through all items in character's backpack check if it is in the resource items list " +
 				"and if so, prepare the ResourceCounter object for it. Do it recursively for inner containers")]
 		private static void LocalizeBackpackItems(Character chr, List<ResourceCounter> resCountersList) {
-			CheckItemsInside(chr.BackpackAsContainer, resCountersList);
+			CheckItemsInside(chr.Backpack, resCountersList);
 		}
 
 		[Summary("Iterate through all items in character's bank, check if it is in the resource items list " +

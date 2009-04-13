@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				KeyValuePair<PluginKey, Plugin> de = pluginList[i];
 
 				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (2 * i));
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.name);
+				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.Name);
 				//plugin defname
 				Plugin pl = de.Value;
 				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(pl.Def.Defname);
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//entry in this hashtable is TagKey and its object value
 				if (criteria == null || criteria.Equals("")) {
 					pluginsList.Add(entry);//bereme vse
-				} else if (entry.Key.name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Key.Name.ToUpper().Contains(criteria.ToUpper())) {
 					pluginsList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu tagu
 				}
 			}
@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public int Compare(KeyValuePair<PluginKey, Plugin> x, KeyValuePair<PluginKey, Plugin> y) {
 			PluginKey a = x.Key;
 			PluginKey b = y.Key;
-			return StringComparer.OrdinalIgnoreCase.Compare(a.name, b.name);
+			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);
 		}
 	}
 }

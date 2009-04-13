@@ -34,7 +34,7 @@ namespace SteamEngine.Networking {
 		[Summary("Call when a thing is about to be created/changed")]
 		public static void Resend(AbstractItem item) {
 			if (IsEnabled) {
-				Logger.WriteInfo(Globals.netSyncingTracingOn, "Resend(" + item + ") called");
+				Logger.WriteInfo(Globals.NetSyncingTracingOn, "Resend(" + item + ") called");
 				instance.SetFlagsOnItem(item, SyncFlags.Resend);
 			}
 		}
@@ -43,7 +43,7 @@ namespace SteamEngine.Networking {
 		public static void AboutToChange(AbstractItem item) {
 			ItemOnGroundUpdater.RemoveFromCache(item);
 			if (IsEnabled) {
-				Logger.WriteInfo(Globals.netSyncingTracingOn, "ItemAboutToChange(" + item + ") called");
+				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ItemAboutToChange(" + item + ") called");
 				instance.SetFlagsOnItem(item, SyncFlags.ItemUpdate);
 			}
 		}
@@ -51,7 +51,7 @@ namespace SteamEngine.Networking {
 		[Summary("Call when an item is about to be changed")]
 		public static void PropertiesChanged(AbstractItem item) {
 			if (IsEnabled) {
-				Logger.WriteInfo(Globals.netSyncingTracingOn, "ItemPropertiesChanged(" + item + ") called");
+				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ItemPropertiesChanged(" + item + ") called");
 				instance.SetFlagsOnItem(item, SyncFlags.Property);
 			}
 		}
@@ -68,7 +68,7 @@ namespace SteamEngine.Networking {
 
 					if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
 						this.UpdateItemAndProperties(item);
-					} else if (Globals.aosToolTips) {//only new properties
+					} else if (Globals.UseAosToolTips) {//only new properties
 						this.SendItemPropertiesOnly(item);
 					}
 				}
@@ -95,7 +95,7 @@ namespace SteamEngine.Networking {
 		}
 
 		private void SendItemPropertiesOnly(AbstractItem item) {
-			Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessItemProperties " + item);
+			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItemProperties " + item);
 			IEnumerable<AbstractCharacter> enumerator;
 			AbstractItem contAsItem = item.Cont as AbstractItem;
 			if (contAsItem != null) {
@@ -105,11 +105,11 @@ namespace SteamEngine.Networking {
 				enumerator = top.GetMap().GetPlayersInRange(top.X, top.Y, Globals.MaxUpdateRange);
 			}
 
-			AOSToolTips toolTips = null;
+			AosToolTips toolTips = null;
 			foreach (AbstractCharacter player in enumerator) {
 				GameState state = player.GameState;
 				if (state != null) {
-					TCPConnection<GameState> conn = state.Conn;
+					TcpConnection<GameState> conn = state.Conn;
 					if (state.Version.AosToolTips) {
 						if (toolTips == null) {
 							toolTips = item.GetAOSToolTips();
@@ -125,7 +125,7 @@ namespace SteamEngine.Networking {
 
 		//oldMapPoint can be null if checkPreviousVisibility is false
 		private void UpdateItemAndProperties(AbstractItem item) {
-			Logger.WriteInfo(Globals.netSyncingTracingOn, "ProcessItem " + item);
+			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItem " + item);
 
 			bool propertiesExist = true;
 			bool isOnGround = item.IsOnGround;
@@ -145,7 +145,7 @@ namespace SteamEngine.Networking {
 			if (isOnGround || isEquippedAndVisible || isInContainer) {
 				PacketGroup pg = null;//iteminfo or paperdollinfo or itemincontainer
 				PacketGroup allmoveItemInfo = null;
-				AOSToolTips toolTips = null;
+				AosToolTips toolTips = null;
 
 				IEnumerable<AbstractCharacter> enumerator;
 				AbstractItem contAsItem = item.Cont as AbstractItem;
@@ -161,11 +161,11 @@ namespace SteamEngine.Networking {
 				foreach (AbstractCharacter viewer in enumerator) {
 					GameState state = viewer.GameState;
 					if (state != null) {
-						TCPConnection<GameState> conn = state.Conn;
+						TcpConnection<GameState> conn = state.Conn;
 
 						if (viewer.CanSeeForUpdate(item)) {
 							if (isOnGround) {
-								if (viewer.IsPlevelAtLeast(Globals.plevelOfGM)) {
+								if (viewer.IsPlevelAtLeast(Globals.PlevelOfGM)) {
 									if (allmoveItemInfo == null) {
 										allmoveItemInfo = PacketGroup.AcquireMultiUsePG();
 										allmoveItemInfo.AcquirePacket<ObjectInfoOutPacket>().Prepare(item, MoveRestriction.Movable); //0x1a
@@ -193,7 +193,7 @@ namespace SteamEngine.Networking {
 							}
 
 							if (propertiesExist) {
-								if (Globals.aosToolTips && state.Version.AosToolTips) {
+								if (Globals.UseAosToolTips && state.Version.AosToolTips) {
 									if (toolTips == null) {
 										toolTips = item.GetAOSToolTips();
 										if (toolTips == null) {

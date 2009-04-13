@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts {
 								break;
 							case 1://arrow appears in targets backpack
 								Projectile inPack = (Projectile) projectile.Dupe();
-								inPack.Cont = target.BackpackAsContainer;
+								inPack.Cont = target.Backpack;
 								inPack.Amount = 1;
 								break;
 							//else arrow disappears

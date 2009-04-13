@@ -241,7 +241,7 @@ namespace SteamEngine {
 			}
 
 			int dist = Point2D.GetSimpleDistance(fromCoordinates, target);
-			return dist <= Globals.reachRange;
+			return dist <= Globals.ReachRange;
 		}
 
 		public virtual DenyResult CanOpenContainer(AbstractItem targetContainer) {

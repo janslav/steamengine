@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return string.Concat(this.GetType().ToString(), " °", this.key.name);
+			return string.Concat(this.GetType().ToString(), " °", this.key.Name);
 		}
 
 		public ICollection<Character> Members {

@@ -1006,14 +1006,14 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				GameState state = this.GameState;
-				TCPConnection<GameState> conn = null;
+				TcpConnection<GameState> conn = null;
 				if (state != null) {
 					conn = state.Conn;
 					PreparedPacketGroups.SendYouAreDeathMessage(conn);
 				}
 
 				PacketGroup pg = null;
-				foreach (TCPConnection<GameState> viewerConn in this.GetMap().GetConnectionsWhoCanSee(this)) {
+				foreach (TcpConnection<GameState> viewerConn in this.GetMap().GetConnectionsWhoCanSee(this)) {
 					if (conn != viewerConn) {
 						if (pg == null) {
 							pg = PacketGroup.AcquireMultiUsePG();
@@ -1194,30 +1194,42 @@ namespace SteamEngine.CompiledScripts {
 			//Update();
 		}
 
-		private static AbstractItemDef backpackDef = null;
-		public override sealed AbstractItem AddBackpack() {
+		private static ContainerDef backpackDef = null;
+
+		private AbstractItem AddBackpack() {
 			ThrowIfDeleted();
 			if (backpackDef == null) {
-				backpackDef = ThingDef.Get("i_backpack") as AbstractItemDef;
+				backpackDef = ThingDef.FindItemDef(0xe75) as ContainerDef;
 				if (backpackDef == null) {
-					throw new SEException("Unable to find itemdef i_backpack in scripts.");
+					throw new SEException("Unable to find itemdef 0xe75 in scripts.");
+				} else if ((LayerNames) backpackDef.Layer != LayerNames.Pack) {
+					throw new SEException("Wrong layer of backpack itemdef.");
 				}
 			}
+
 			AbstractItem i = (AbstractItem) backpackDef.Create(this);
 			if (i == null) {
-				throw new SEException("Unable to create item i_backpack.");
+				throw new SEException("Unable to create backpack.");
 			}
 			return i;
 		}
 
-		public Container BackpackAsContainer {
+		public sealed override AbstractItem GetBackpack() {
+			AbstractItem foundPack = this.FindLayer(LayerNames.Pack);
+			if (foundPack == null) {
+				foundPack = this.AddBackpack();
+			}
+			return foundPack;
+		}
+
+		public Container Backpack {
 			get {
-				return (Container) base.Backpack;
+				return (Container) this.GetBackpack();
 			}
 		}
 
 		public override sealed AbstractItem NewItem(IThingFactory arg, int amount) {
-			return Backpack.NewItem(arg, amount);
+			return this.Backpack.NewItem(arg, amount);
 		}
 
 		public Equippable NewEquip(IThingFactory factory) {
@@ -1814,7 +1826,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
 			Character target = (Character) chr;
-			return (IsPlevelAtLeast(Globals.plevelOfGM) || (target.Owner == this && CanReach(chr) == DenyResult.Allow));
+			return (IsPlevelAtLeast(Globals.PlevelOfGM) || (target.Owner == this && CanReach(chr) == DenyResult.Allow));
 		}
 
 		//public override bool CanEquip(AbstractItem i) {
@@ -1837,7 +1849,7 @@ namespace SteamEngine.CompiledScripts {
 			if (IsMountable && chr.CanReach(this) == DenyResult.Allow) {
 				if (IsPetOf((Character) chr))
 					return true;
-				if (!IsPet && chr.IsPlevelAtLeast(Globals.plevelOfGM))
+				if (!IsPet && chr.IsPlevelAtLeast(Globals.PlevelOfGM))
 					return true;
 			}
 			return false;
@@ -2267,7 +2279,7 @@ namespace SteamEngine.CompiledScripts {
 		public void DisArm() {
 			Weapon w = this.Weapon;
 			if (w != null)
-				w.Cont = this.BackpackAsContainer;
+				w.Cont = this.Backpack;
 		}
 		#endregion combat
 
