@@ -169,7 +169,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//nothing special, try the simpleimplementors
 				ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
 				if (iss != null) {
-					return "(" + iss.Prefix + ")";
+					string pref = iss.Prefix;
+					if (pref.Contains("(")) {
+						return iss.Prefix; //it already contains the brackets
+					} else { //add the surrounding brackets
+						return "(" + iss.Prefix + ")";
+					}
 				} else {
 					return "(" + t.Name + ")"; //this is the final desperate possibility
 				}

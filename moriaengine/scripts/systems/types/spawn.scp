@@ -33,29 +33,29 @@ dlg.CreateBackground(<sirka>)
 dlg.SetLocation(60,80)
 
 //nadpis
-dlg.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH))
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Vytvoøení nového spawnu"))
-dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.Add(GUTATable(1,0,ButtonMetrics.D_BUTTON_WIDTH))
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextHeadline("Vytvoøení nového spawnu").Build())
+dlg.LastTable.AddToCell(0,1,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build()) //exit button
 dlg.MakeTableTransparent()
 
 dlg.Add(GUTATable(5,0,180))
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Amount"))
-dlg.LastTable.AddToCell(1,0,TextFactory.CreateLabel("Baseid"))
-dlg.LastTable.AddToCell(2,0,TextFactory.CreateLabel("Mintime [min]"))
-dlg.LastTable.AddToCell(3,0,TextFactory.CreateLabel("Maxtime [min]"))
-dlg.LastTable.AddToCell(4,0,TextFactory.CreateLabel("Homedist"))
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextLabel("Amount").Build())
+dlg.LastTable.AddToCell(1,0,GUTAText.Builder.TextLabel("Baseid").Build())
+dlg.LastTable.AddToCell(2,0,GUTAText.Builder.TextLabel("Mintime [min]").Build())
+dlg.LastTable.AddToCell(3,0,GUTAText.Builder.TextLabel("Maxtime [min]").Build())
+dlg.LastTable.AddToCell(4,0,GUTAText.Builder.TextLabel("Homedist").Build())
 
-dlg.LastTable.AddToCell(0,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,10,"<argv(2).Amount>"))
-dlg.LastTable.AddToCell(1,1,InputFactory.CreateInput(LeafComponentTypes.InputText,11,"<argv(2).SpawnDef.PrettyDefname>"))
-dlg.LastTable.AddToCell(2,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,12,"<argv(2).MinTime>"))
-dlg.LastTable.AddToCell(3,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,13,"<argv(2).MaxTime>"))
-dlg.LastTable.AddToCell(4,1,InputFactory.CreateInput(LeafComponentTypes.InputNumber,14,"<argv(2).Homedist>"))
+dlg.LastTable.AddToCell(0,1,GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(10).Text("<argv(2).Amount>").Build())
+dlg.LastTable.AddToCell(1,1,GUTAInput.Builder.Id(11).Text("<argv(2).SpawnDef.PrettyDefname>").Build())
+dlg.LastTable.AddToCell(2,1,GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(12).Text("<argv(2).MinTime>").Build())
+dlg.LastTable.AddToCell(3,1,GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(13).Text("<argv(2).MaxTime>").Build())
+dlg.LastTable.AddToCell(4,1,GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(14).Text("<argv(2).Homedist>").Build())
 dlg.MakeTableTransparent()
 
 //a posledni radek s tlacitkem
-dlg.Add(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0));
-dlg.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1))
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Potvrdit"))
+dlg.Add(GUTATable(1,ButtonMetrics.D_BUTTON_WIDTH,0));
+dlg.LastTable.AddToCell(0,0,GUTAButton.Builder.Id(1).Build())
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextLabel("Potvrdit").Build())
 dlg.MakeTableTransparent() //zpruhledni posledni radek
 
 dlg.WriteOut()

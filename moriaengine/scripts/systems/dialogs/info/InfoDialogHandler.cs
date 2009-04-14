@@ -39,6 +39,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private bool isSettings; //settings dialog (true) / info dialog (false)
 
+		private int fieldColumnWidth;
+
 		//how many data fields there will be? (normally 2 but if we dont have any action buttons
 		//then there will be 3
 		public int REAL_COLUMNS_COUNT;
@@ -59,10 +61,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public InfoDialogHandler(Gump dialogInstance)
 			: base(dialogInstance) {
 			//pairing collections (pairs IDAtaFieldViews and indexes of edit fields or buttons
-			//keys - button or edit field index; value - related IDataFieldView for performing some action
+			//keys - button edit field or details button index; value - related IDataFieldView for performing some action
 			//these collections will be renewed on every InfoDialog instantiation (even during the paging!)
 			dialogInstance.InputArgs.SetTag(D_Info.btnsIndexPairingTK, new Dictionary<int, IDataFieldView>());
 			dialogInstance.InputArgs.SetTag(D_Info.editFieldsIndexPairingTK, new Dictionary<int, IDataFieldView>());
+			dialogInstance.InputArgs.SetTag(D_Info.detailIndexPairingTK, new Dictionary<int, IDataFieldView>());
 		}
 
 		[Summary("Table for all of the IDataFieldViews")]
@@ -91,12 +94,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (viewCls.GetActionButtonsCount(target) > 0) {
 					AddTable(new GUTATable(1, columns[0], 0));
 					//there are subcategories and fields - two header columns
-					LastTable[0, 0] = TextFactory.CreateLabel("Subcategories");
-					LastTable[0, 1] = TextFactory.CreateLabel("Settings Items");
+					LastTable[0, 0] = GUTAText.Builder.TextLabel("Subcategories").Build();
+					LastTable[0, 1] = GUTAText.Builder.TextLabel("Settings Items").Build();
 				} else {
 					AddTable(new GUTATable(1, 0));
 					//no subcategories - one header column
-					LastTable[0, 0] = TextFactory.CreateLabel("Settings Items");
+					LastTable[0, 0] = GUTAText.Builder.TextLabel("Settings Items").Build();
 				}
 				MakeLastTableTransparent();
 			}
@@ -106,35 +109,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//now add subtables to every defined column... first- action table (two subcolumns - button and his label)
 			if (viewCls.GetActionButtonsCount(target) > 0) { //do we have the action buttons colum ?
-				LastTable.Components[0].AddComponent(new GUTATable(PAGE_ROWS, ButtonFactory.D_BUTTON_WIDTH, 0));
-				actionTable = (GUTATable) LastTable.Components[0].Components[0]; //(dialogtable - first column - his just added inner table)
+				actionTable = new GUTATable(PAGE_ROWS, ButtonMetrics.D_BUTTON_WIDTH, 0);
+				//tbl     row            column        ...adding inner table
+				LastTable.Components[0].Components[0].AddComponent(actionTable); //add to the table's-firstrow's-first column
 				actionTable.NoWrite = true; //only its columns will be seen, the table itself is just virtual, for operating
 				actualActionRow = 0;
 				actionTable.Transparent = true;
 			}
 			//then other tables (3 columns - name(, button), value)
 			for (int i = firstFieldsColumn; i <= COLS_COUNT; i++) {
-				LastTable.Components[i].AddComponent(new GUTATable(PAGE_ROWS, FIELD_LABEL, ButtonFactory.D_BUTTON_WIDTH, 0));
-				((GUTATable) LastTable.Components[i].Components[0]).Transparent = true;
-				((GUTATable) LastTable.Components[i].Components[0]).NoWrite = true;//also not for writing out!
-			}
-			actualFieldTable = (GUTATable) LastTable.Components[firstFieldsColumn].Components[0];//(dialogtable - first fields column - his inner table)
+				GUTATable actualTbl = new GUTATable(PAGE_ROWS, FIELD_LABEL, ButtonMetrics.D_BUTTON_WIDTH, 0);
+				//tbl     row           column            ...adding inner table
+				LastTable.Components[0].Components[i].AddComponent(actualTbl); //first row - i-th column
+				actualTbl.Transparent = true;
+				actualTbl.NoWrite = true;//also not for writing out!
+			}							//(dialogtable first row     first fields column          his inner table
+			actualFieldTable = (GUTATable) LastTable.Components[0].Components[firstFieldsColumn].Components[0];
 			actualFieldRow = 0; //row counter
 			actualFieldColumn = firstFieldsColumn; //column counter (we have REAL_COLUMNS_COUNT columns to write to)
 		}
 
 		[Summary("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
-		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex) {
+		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex, ref int detailsIndex) {
 			if (field.IsButtonEnabled) { //buttonized field - we need the button index
 				actionTable[actualActionRow, 0] = CreateInfoInnerButton(ref buttonsIndex, field);
-				actionTable[actualActionRow, 1] = TextFactory.CreateLabel(field.GetName(target));
+				actionTable[actualActionRow, 1] = GUTAText.Builder.TextLabel(field.GetName(target)).Build();
 				actualActionRow++;
 				return;
 			}
 
 			//first column holds the type information in brackets() and the name of the field
-			actualFieldTable[actualFieldRow, 0] = TextFactory.CreateLabel(GetFieldName(field, target));
-
+			actualFieldTable[actualFieldRow, 0] = GUTAText.Builder.TextLabel(GetFieldName(field, target)).Build();
+			
 			object fieldValue = field.GetValue(target);
 			Type fieldValueType = null;
 			string thirdColumnText = "";
@@ -185,14 +191,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (secondColIsButton) {
 				actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
 			}
-			if (thirdColumnIsText) {
-				actualFieldTable[actualFieldRow, 2] = TextFactory.CreateText(thirdColumnText);
-			} else {
-				actualFieldTable[actualFieldRow, 2] = InputFactory.CreateInput(LeafComponentTypes.InputText, editsIndex, thirdColumnText);
-				//store the field under the edits index
-				Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>) instance.InputArgs.GetTag(D_Info.editFieldsIndexPairingTK);
-				editFieldsPairing.Add(editsIndex, field);
-				editsIndex++;
+			//if the value to be written to the text column is too long, we will add a button for value's detail display
+			if (ImprovedDialog.TextLength(thirdColumnText) > FieldColumn - (FIELD_LABEL + ButtonMetrics.D_BUTTON_WIDTH + 2*ImprovedDialog.D_COL_SPACE) ) { //whole single column includes label (,button), field value - we need only the value
+				Dictionary<int, IDataFieldView> detailBtnsPairing = (Dictionary<int, IDataFieldView>) instance.InputArgs.GetTag(D_Info.detailIndexPairingTK);
+				actualFieldTable[actualFieldRow, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(detailsIndex).Build();
+				//now the shortened text (non editable - this will be done usnig the new button...
+				actualFieldTable[actualFieldRow, 2] = GUTAText.Builder.Text(thirdColumnText.Substring(0, 10) + "...").XPos(ButtonMetrics.D_BUTTON_WIDTH).Build();
+				detailBtnsPairing.Add(detailsIndex, field);
+				detailsIndex++;
+			} else { //dispaly it normally
+				if (thirdColumnIsText) {
+					actualFieldTable[actualFieldRow, 2] = GUTAText.Builder.Text(thirdColumnText).Build();
+				} else {
+					actualFieldTable[actualFieldRow, 2] = GUTAInput.Builder.Id(editsIndex).Text(thirdColumnText).Build();
+					//store the field under the edits index
+					Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>) instance.InputArgs.GetTag(D_Info.editFieldsIndexPairingTK);
+					editFieldsPairing.Add(editsIndex, field);
+					editsIndex++;
+				}
 			}
 			actualFieldRow++;
 
@@ -204,8 +220,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//next column to write to (indexing is from 0 and actualFieldColumn starts at 1 so this is correct)
 				//Lasttable - the main table containing action buttons columns and COLS_COUNT odf columns for datafields
 				//every column for datfields contain the GUTATable for writing fields to -
-				//column						table inside
-				actualFieldTable = (GUTATable) LastTable.Components[actualFieldColumn].Components[0];
+				//column					table         1st row         desired column               the table inside
+				actualFieldTable = (GUTATable) LastTable.Components[0].Components[actualFieldColumn].Components[0];
 			}
 		}
 
@@ -229,21 +245,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int actualPage = (pageDeterminingFirstItem / (ImprovedDialog.PAGE_ROWS * columnsForPagingCreate)) + 1;
 
 			bool prevNextColumnAdded = false; //indicator of navigating column
-			//last column					//the inner table
-			GUTATable pagingTable = (GUTATable) LastTable.Components[COLS_COUNT].Components[0];
-			GUTAColumn pagingCol = new GUTAColumn(ButtonFactory.D_BUTTON_PREVNEXT_WIDTH);
+			//last column					//the inner table's first row (the inner table is in the 1st row in the COLS_COUNT-th column
+			//									tbl        1st row		 COLS_COUNTth column	inner table	   its first row...
+			GUTARow pagingTableRow = (GUTARow) LastTable.Components[0].Components[COLS_COUNT].Components[0].Components[0];
+			GUTAColumn pagingCol = new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH);
 			pagingCol.IsLast = true;
 			if (actualPage > 1) {
-				pagingTable.AddComponent(pagingCol);
+				pagingTableRow.AddComponent(pagingCol);
 
-				pagingCol.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonPrev, ID_PREV_BUTTON)); //prev
+				pagingCol.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonPrev).Id(ID_PREV_BUTTON).Build()); //prev
 				prevNextColumnAdded = true; //the column has been created				
 			}
 			if (actualPage < pagesCount) { //there will be a next page
 				if (!prevNextColumnAdded) { //the navigating column does not exist (e.g. we are on the 1st page)
-					pagingTable.AddComponent(pagingCol);
+					pagingTableRow.AddComponent(pagingCol);
 				}
-				pagingCol.AddComponent(ButtonFactory.CreateButton(LeafComponentTypes.ButtonNext, 0, pagingCol.Height - 21, ID_NEXT_BUTTON)); //next
+				pagingCol.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonNext).YPos(pagingCol.Height - 21).Id(ID_NEXT_BUTTON).Build()); //next
 			}
 			//MakeLastTableTransparent(); //the row where we added the navigating column
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
@@ -252,11 +269,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			GUTATable storedLastTable = LastTable; //store this one :)
 
 			AddTable(new GUTATable(1, 0));
-			LastTable[0, 0] = TextFactory.CreateLabel("Stránka");
+			LastTable[0, 0] = GUTAText.Builder.TextLabel("Stránka").Build();
 			//type if input,x,y,ID, width, height, prescribed text
-			LastTable[0, 0] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 65, 0, ID_PAGE_NO_INPUT, 30, D_ROW_HEIGHT, actualPage.ToString());
-			LastTable[0, 0] = TextFactory.CreateLabel(95, 0, "/" + pagesCount.ToString());
-			LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 135, 0, ID_JUMP_PAGE_BUTTON);
+			LastTable[0, 0] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).XPos(65).Id(ID_PAGE_NO_INPUT).Width(30).Text(actualPage.ToString()).Build();
+			LastTable[0, 0] = GUTAText.Builder.TextLabel("/" + pagesCount.ToString()).XPos(95).Build();
+			LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).XPos(135).Id(ID_JUMP_PAGE_BUTTON).Build();
 			MakeLastTableTransparent(); //newly created row
 			//restore the last components
 			lastTable = storedLastTable;
@@ -309,7 +326,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Create a inside-info dialog button (buttons in the columns). Increase the button index and store the field in the map")]
 		private GUTAComponent CreateInfoInnerButton(ref int buttonsIndex, IDataFieldView field) {
-			GUTAComponent retBut = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, buttonsIndex);
+			GUTAComponent retBut = GUTAButton.Builder.Id(buttonsIndex).Build();
 			//store the field under the edits index
 			Dictionary<int, IDataFieldView> buttonsPairing = (Dictionary<int, IDataFieldView>) instance.InputArgs.GetTag(D_Info.btnsIndexPairingTK);
 			buttonsPairing.Add(buttonsIndex, field);
@@ -331,18 +348,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private int FieldColumn {
 			get {
-				if (viewCls.GetActionButtonsCount(target) > 0) {
-					return (INFO_WIDTH - //complete dialog width
-							ACTION_COLUMN - //action button column
-							2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
-										 (COLS_COUNT - 1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
-										 / COLS_COUNT;//divide by number of desired data columns
-				} else { //no button column...
-					return (INFO_WIDTH - //complete dialog width							
-							2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
-								 (REAL_COLUMNS_COUNT - 1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
-								 / REAL_COLUMNS_COUNT;//divide by number of desired data columns
+				if (fieldColumnWidth == 0) {//lazily initialized value column width
+					if (viewCls.GetActionButtonsCount(target) > 0) {
+						fieldColumnWidth = (INFO_WIDTH - //complete dialog width
+								ACTION_COLUMN - //action button column
+								2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
+											 (COLS_COUNT - 1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
+											 / COLS_COUNT;//divide by number of desired data columns
+					} else { //no button column...
+						fieldColumnWidth = (INFO_WIDTH - //complete dialog width							
+								2 * (ImprovedDialog.D_BORDER + ImprovedDialog.D_SPACE + ImprovedDialog.D_ROW_SPACE) - //left and right tables delimits
+									 (REAL_COLUMNS_COUNT - 1) * ImprovedDialog.D_COL_SPACE) //one less columns delimit than there are columns
+									 / REAL_COLUMNS_COUNT;//divide by number of desired data columns
+					}
 				}
+				return fieldColumnWidth;
 			}
 		}
 

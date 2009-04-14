@@ -43,22 +43,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového trigger groupy na " + ph.ToString());
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vložení nové trigger groupy na " + ph.ToString()).Build();
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//dialozek s inputama
 			dlg.AddTable(new GUTATable(1, 0, 275)); //1.sl - label, 2sl. - defname pro vyhledani
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Defname");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10, (filledDefname == null ? "" : filledDefname));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Defname").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(10).Text(filledDefname == null ? "" : filledDefname).Build();
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Id(1).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Potvrdit").Build();
 			dlg.MakeLastTableTransparent(); //zpruhledni posledni radek
 
 			dlg.WriteOut();

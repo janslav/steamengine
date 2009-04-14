@@ -66,20 +66,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(350, 350);
 
 			//first row - the label of the dialog
-			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline(this.Label);
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextHeadline(this.Label).Build();
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			//second row - the basic, whole row, input field
 			dialogHandler.AddTable(new GUTATable(1, 0));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-			dialogHandler.LastTable[0, 0] = InputFactory.CreateInput(LeafComponentTypes.InputText, 1, this.DefaultInput);
+			dialogHandler.LastTable[0, 0] = GUTAInput.Builder.Id(1).Text(this.DefaultInput).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			//last row with buttons
-			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
+			dialogHandler.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();

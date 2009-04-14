@@ -31,6 +31,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static TagKey pagingFieldsTK = TagKey.Get("_paging_fields_");
 		internal static TagKey btnsIndexPairingTK = TagKey.Get("_button_index_pairing_");
 		internal static TagKey editFieldsIndexPairingTK = TagKey.Get("_edit_fields_index_pairing_");
+		internal static TagKey detailIndexPairingTK = TagKey.Get("_detail_button_index_pairing_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			object target = args.ArgsArray[0];//target of info dialog
@@ -53,17 +54,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				headline = "Info dialog" + (viewCls == null ? "" : " - " + viewCls.GetName(target));
 			}
 
-			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonMetrics.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			//the viewCls could be null ! - e.g. DataView does not exist
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(headline);
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline(headline).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//no data - no dialog necessary
 			if (viewCls == null) {
 				dlg.AddTable(new GUTATable(1, 0));
-				dlg.LastTable[0, 0] = TextFactory.CreateLabel("No DataView found for the given type " + target.GetType());
+				dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("No DataView found for the given type " + target.GetType()).Build();
 				dlg.MakeLastTableTransparent();
 				dlg.WriteOut();
 				return;
@@ -73,14 +74,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			int buttonsIndex = 10; //start counting buttons from 10
 			int editsIndex = 10; //start counting editable input fields also from 10
+			int detailsIndex = 1000; //start counting detail buttons indexes from 1000 - this allows us to differ it later
 
 			int finishIndex = firstItemFld + dlg.REAL_COLUMNS_COUNT * ImprovedDialog.PAGE_ROWS;
 			int counter = firstItemFld;
 			foreach (IDataFieldView field in viewCls.GetDataFieldsPage(firstItemFld, target)) {
-				//add both indexing params - the buttons index will be used (and raised) when the field is Button or 
+				//add indexing params - the buttons index will be used (and raised) when the field is Button or 
 				//ReadWrite or ReadOnly field with type that itself has the DataView implemented (and can be infoized)
 				// - the edits index will be used for input fields in ReadWrite field case
-				dlg.WriteDataField(field, target, ref buttonsIndex, ref editsIndex);
+				// - the details index will be used for "detail" buttons for too long texts in the columns
+				dlg.WriteDataField(field, target, ref buttonsIndex, ref editsIndex, ref detailsIndex);
 				//check if we should continue
 				counter++;
 				if (counter == finishIndex)
@@ -91,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			finishIndex = firstItemButt + ImprovedDialog.PAGE_ROWS;
 			counter = firstItemButt;
 			foreach (ButtonDataFieldView button in viewCls.GetActionButtonsPage(firstItemButt, target)) {
-				dlg.WriteDataField(button, target, ref buttonsIndex, ref editsIndex);
+				dlg.WriteDataField(button, target, ref buttonsIndex, ref editsIndex, ref detailsIndex);
 				//check if we should continue
 				counter++;
 				if (counter == finishIndex)
@@ -102,9 +105,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreatePaging(viewCls, target, firstItemButt, firstItemFld);
 
 			//send button
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("Uložit").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();
@@ -139,27 +142,36 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//kliknuto na paging? 
 				return;
 			} else { //info dialog buttons
-				Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.btnsIndexPairingTK);
+				int pressedButtonNo = gr.pressedButton;
+				
+				if (pressedButtonNo >= 1000) { //display detail of too long fields
+					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.detailIndexPairingTK);
+					IDataFieldView idfv = (IDataFieldView) detailsPairing[pressedButtonNo];
 
-				//get the IDataFieldView and do something
-				IDataFieldView idfv = (IDataFieldView) btnsPairing[(int) gr.pressedButton];
-
-				if (idfv.IsButtonEnabled) {
-					DialogStacking.ResendAndRestackDialog(gi);
-					//action button field - call the method
-					((ButtonDataFieldView) idfv).OnButton(target);
-				} else {
-					object fieldValue = idfv.GetValue(target);
-					Type fieldValueType = null;
-					if (fieldValue != null) {
-						fieldValueType = fieldValue.GetType();
-					}
-					if (fieldValueType != null) {
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
-						DialogStacking.EnstackDialog(gi, newGi); //store						
-						//display info dialog on this datafield
+					//display the detail on the selected field
+					Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv,target));
+					DialogStacking.EnstackDialog(gi, newGi); //store
+				} else {//normal field button
+					Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.btnsIndexPairingTK);
+					IDataFieldView idfv = (IDataFieldView) btnsPairing[pressedButtonNo];
+	
+					if (idfv.IsButtonEnabled) {
+						DialogStacking.ResendAndRestackDialog(gi);
+						//action button field - call the method
+						((ButtonDataFieldView) idfv).OnButton(target);
 					} else {
-						throw new SEException("Null value can't be viewed");
+						object fieldValue = idfv.GetValue(target);
+						Type fieldValueType = null;
+						if (fieldValue != null) {
+							fieldValueType = fieldValue.GetType();
+						}
+						if (fieldValueType != null) {
+							Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
+							DialogStacking.EnstackDialog(gi, newGi); //store						
+							//display info dialog on this datafield
+						} else {
+							throw new SEException("Null value can't be viewed");
+						}
 					}
 				}
 			}

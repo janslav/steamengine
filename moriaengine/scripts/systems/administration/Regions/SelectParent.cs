@@ -54,27 +54,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(200, 100);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Výbìr regionu (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + regionsList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Výbìr regionu (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + regionsList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu (Detail, Delete, Name, Defname, P)
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 150, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyber");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit podle jmena asc
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit podle jmena desc            
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno");
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 5); //tridit dle defnamu asc
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6); //tridit dle defnamu desc
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Defname");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 150, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyber").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(3).Build(); //tridit podle jmena asc
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(4).Build(); //tridit podle jmena desc            
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Jméno").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(5).Build(); //tridit dle defnamu asc
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(6).Build(); //tridit dle defnamu desc
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Defname").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam regionu
@@ -86,9 +86,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				StaticRegion reg = regionsList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 10 + i); //vyber tento
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(reg.Name); //nazev
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(reg.Defname); //defname
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Id(10 + i).Build(); //vyber tento
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(reg.Name).Build(); //nazev
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(reg.Defname).Build(); //defname
 
 				rowCntr++;
 			}

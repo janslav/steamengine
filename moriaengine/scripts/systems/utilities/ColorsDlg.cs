@@ -44,17 +44,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Colors dialog - ukázky barev v textu (poèínaje " + startingColor + ")");
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Colors dialog - ukázky barev v textu (poèínaje " + startingColor + ")").Build();
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//input field pro vyber barvy
 			dlg.AddTable(new GUTATable(1, 160, 40, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zadej poèáteèní barvu: ");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 10, startingColor.ToString());
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Zadej poèáteèní barvu: ").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(10).Text(startingColor.ToString()).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//sloupecky - napred pripravime sirky
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				for (int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor; j++, colorCntr++) { //a v nem kazdy radek
 					//vlozit priklad jedne pouzite barvy (dokud nedojdou barvy)
 					//dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + String.Format("{0:X2}", colorCntr) + ")");
-					dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + colorCntr + ")");
+					dlg.LastTable[j, i] = GUTAText.Builder.Text("Color(" + colorCntr + ")").Hue(colorCntr).Build();
 				}
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu

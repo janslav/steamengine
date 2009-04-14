@@ -344,6 +344,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public List<ICraftmenuElement> Contents {
+			get {
+				return contents;
+			}
+		}
+
 		#region ICraftmenuElement Members
 		public string Name {
 			get {

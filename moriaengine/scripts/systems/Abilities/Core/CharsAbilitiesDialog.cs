@@ -52,33 +52,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(70, 70);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam abilit co má " + focus.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + abList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam abilit co má " + focus.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + abList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 250, 50, 150, 40, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Info");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle name asc
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle name desc				
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Název");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Pts/Max pts");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Last usage");
-			dlg.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 6); //tridit podle running asc
-			dlg.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7); //tridit podle running desc							
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Run");
-			dlg.LastTable[0, 5] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 4); //tridit podle roledefname asc
-			dlg.LastTable[0, 5] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit podle abilitydefname desc				
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Abilitydef");
-			dlg.LastTable[0, 6] = TextFactory.CreateLabel("Abilitydef info");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 250, 50, 150, 40, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Info").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle name asc
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(3).Build(); //tridit podle name desc				
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Název").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Pts/Max pts").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Last usage").Build();
+			dlg.LastTable[0, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(6).Build(); //tridit podle running asc
+			dlg.LastTable[0, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(7).Build(); //tridit podle running desc							
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Run").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4).Build(); //tridit podle roledefname asc
+			dlg.LastTable[0, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit podle abilitydefname desc				
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Abilitydef").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 6] = GUTAText.Builder.TextLabel("Abilitydef info").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam roli
@@ -92,14 +92,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Hues hue = ab.Running ? Hues.WriteColor2 : Hues.WriteColor;
 
 				//infodialog
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + 2 * i);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(hue, ab.Name);
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(hue, ab.Points + "/" + ab.MaxPoints);
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(hue, Globals.TimeInSeconds - ab.LastUsage + "secs ago");
-				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText(hue, ab.Running ? "Y" : "N");
-				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(hue, ab.AbilityDef.Defname);
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + 2 * i).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ab.Name).Hue(hue).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(ab.Points + "/" + ab.MaxPoints).Hue(hue).Build();
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Globals.TimeInSeconds - ab.LastUsage + "secs ago").Hue(hue).Build();
+				dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text(ab.Running ? "Y" : "N").Hue(hue).Build();
+				dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(ab.AbilityDef.Defname).Hue(hue).Build();
 				//abilitydef info dialog
-				dlg.LastTable[rowCntr, 6] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + 2 * i);
+				dlg.LastTable[rowCntr, 6] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(11 + 2 * i).Build();
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu

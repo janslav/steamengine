@@ -32,29 +32,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vytvoøení nového hráèského úètu");
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vytvoøení nového hráèského úètu").Build();
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//dvousloupeckovy dialozek
 			dlg.AddTable(new GUTATable(3, 0, 300)); //1.sl - napisy, 2.sl - editacni pole
 			//napred napisy 
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Jméno úètu");
-			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Heslo");
-			dlg.LastTable[2, 0] = TextFactory.CreateLabel("Registraèní e-mail");
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Jméno úètu").Build();
+			dlg.LastTable[1, 0] = GUTAText.Builder.TextLabel("Heslo").Build();
+			dlg.LastTable[2, 0] = GUTAText.Builder.TextLabel("Registraèní e-mail").Build();
 
 			//ted editacni pole
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10);
-			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11);
-			dlg.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 12);
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(10).Build();
+			dlg.LastTable[1, 1] = GUTAInput.Builder.Id(11).Build();
+			dlg.LastTable[2, 1] = GUTAInput.Builder.Id(12).Build();
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//a posledni radek s tlacitkem
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Potvrdit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Id(1).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Potvrdit").Build();
 			dlg.MakeLastTableTransparent(); //zpruhledni posledni radek
 
 			dlg.WriteOut();

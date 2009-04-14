@@ -50,27 +50,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(70, 70);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech rolí (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + rlList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech rolí (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + rlList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, 300, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle name asc
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle name desc				
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Název");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 4); //tridit dle defname asc
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit dle defname desc
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Defname");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Info");
+			dlg.AddTable(new GUTATable(1, 300, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle name asc
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(3).Build(); //tridit podle name desc				
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4).Build(); //tridit dle defname asc
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit dle defname desc
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Defname").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Info").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam roli
@@ -82,10 +82,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				RoleDef rd = rlList[i];
 
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(rd.Defname);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(rd.Defname);
+				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.TextLabel(rd.Defname).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.TextLabel(rd.Defname).Build();
 				//a na zaver odkaz do infodialogu
-				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + i);
+				dlg.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + i).Build();
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu

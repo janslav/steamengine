@@ -51,25 +51,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(70, 70);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech funkcí (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + fList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech funkcí (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + fList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, 160, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle name asc
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle name desc				
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Název");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Desc");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Type");//scripted/compiled
+			dlg.AddTable(new GUTATable(1, 160, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle name asc
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(3).Build(); //tridit podle name desc				
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Desc").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Type").Build();//scripted/compiled
 			dlg.MakeLastTableTransparent();
 
 			//seznam funkci
@@ -81,10 +81,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				ScriptHolder sh = fList[i];
 
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(sh.name);
+				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(sh.name).Build();
 				//cudl na zobrazeni popisu }aktivni pouze je-li popis
-				dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, sh.Description != null, 10 + i);
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText((sh is CompiledScriptHolder) ? "compiled" : "scripted");
+				dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Active(sh.Description != null).Id(10 + i).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text((sh is CompiledScriptHolder) ? "compiled" : "scripted").Build();
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu

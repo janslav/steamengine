@@ -44,16 +44,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(700);
 			dlg.SetLocation(50, 590);
 
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Výsledky nastavení (celkem:" + allFields + ", pøenastaveno: " + resultsOK + ", chybnì zadáno: " + resultsNOK + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Výsledky nastavení (celkem:" + allFields + ", pøenastaveno: " + resultsOK + ", chybnì zadáno: " + resultsNOK + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(1, 175, 175, 175, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Název");//name of the datafield
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Souèasná hodnota");//after setting
-			dlg.LastTable[0, 2] = TextFactory.CreateText("Pùvodní hodnota");//filled when successfully changed
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Chybná hodnota");//filled on erroneous attempt to store the change
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název").Build();//name of the datafield
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Souèasná hodnota").Build();//after setting
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Pùvodní hodnota").Build();//filled when successfully changed
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Chybná hodnota").Build();//filled on erroneous attempt to store the change
 			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(imax - firstiVal)); //as much lines as many results there is on the page (maximally ROW_COUNT)
@@ -63,10 +63,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				SettingResult sres = setResults[i];
 				Hues color = SettingsProvider.ResultColor(sres);
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(color, sres.Name); //nam of the editable field
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(color, sres.CurrentValue); //actual value from the field
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(color, sres.FormerValue); //former value of the field (filled only if the value has changed)														//
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(color, sres.ErroneousValue); //value that was attempted to be filled but which ended by some error (filled only on error)
+				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(sres.Name).Hue(color).Build(); //nam of the editable field
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(sres.CurrentValue).Hue(color).Build(); //actual value from the field
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(sres.FormerValue).Hue(color).Build(); //former value of the field (filled only if the value has changed)														//
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(sres.ErroneousValue).Hue(color).Build(); //value that was attempted to be filled but which ended by some error (filled only on error)
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent();

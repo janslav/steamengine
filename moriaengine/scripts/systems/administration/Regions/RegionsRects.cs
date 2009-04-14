@@ -52,26 +52,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(25, 25);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Pøehled rectanglù pro region " + reg.Name + "(" + reg.Defname + ") (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + rectList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Pøehled rectanglù pro region " + reg.Name + "(" + reg.Defname + ") (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + rectList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho rectanglu
-			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Pøidat rectangle");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Pøidat rectangle").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu (Info, Height, Width, StartPoint, EndPoint, Tiles)
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 35, 35, 130, 0, 35));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Edit");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Smaž");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Šíøka");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Výška");
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Poèáteèní bod");
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Koncový bod");
-			dlg.LastTable[0, 6] = TextFactory.CreateLabel("Polí");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ButtonMetrics.D_BUTTON_WIDTH, 35, 35, 130, 0, 35));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Edit").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Smaž").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Šíøka").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Výška").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Poèáteèní bod").Build();
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Koncový bod").Build();
+			dlg.LastTable[0, 6] = GUTAText.Builder.TextLabel("Polí").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam rectnaglu
@@ -83,22 +83,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				MutableRectangle rect = rectList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (2 * i)); //editovat
-				dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 11 + (2 * i)); //smazat
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(rect.Width.ToString());
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(rect.Height.ToString());
-				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText("(" + rect.MinX + "," + rect.MinY + ")");
-				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText("(" + rect.MaxX + "," + rect.MaxY + ")");
-				dlg.LastTable[rowCntr, 6] = TextFactory.CreateText(rect.TilesNumber.ToString());
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + (2 * i)).Build(); //editovat
+				dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(11 + (2 * i)).Build(); //smazat
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(rect.Width.ToString()).Build();
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(rect.Height.ToString()).Build();
+				dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text("(" + rect.MinX + "," + rect.MinY + ")").Build();
+				dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("(" + rect.MaxX + "," + rect.MaxY + ")").Build();
+				dlg.LastTable[rowCntr, 6] = GUTAText.Builder.Text(rect.TilesNumber.ToString()).Build();
 
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//send button
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2);
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(2).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("Uložit").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.CreatePaging(rectList.Count, firstiVal, 1);//ted paging		

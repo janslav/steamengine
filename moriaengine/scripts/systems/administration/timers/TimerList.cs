@@ -58,32 +58,32 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			//dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech timerù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + timerList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 3);//cudlik na refresh dialogu
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonMetrics.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			//dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech timerù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + timerList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(3).Build();//cudlik na refresh dialogu
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho timeru
-			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový timer");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2);
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Založit nový timer").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(2).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Zruš");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno timeru");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Zbývající èas");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Uprav");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 200, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Zruš").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Jméno timeru").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Zbývající èas").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Uprav").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam timeru
@@ -96,11 +96,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				KeyValuePair<TimerKey, BoundTimer> de = timerList[i];
 				BoundTimer tmr = de.Value;
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2 * i) + 10);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText((de.Key).Name);
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(tmr.DueInSeconds.ToString()); //hodnota tagu, vcetne prefixu oznacujicim typ
-				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (2 * i) + 11);
-
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id((2 * i) + 10).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(de.Key.Name).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(tmr.DueInSeconds.ToString()).Build(); //hodnota tagu, vcetne prefixu oznacujicim typ
+				dlg.LastTable[rowCntr, 3] = GUTAButton.Builder.Id((2 * i) + 11).Build();
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu

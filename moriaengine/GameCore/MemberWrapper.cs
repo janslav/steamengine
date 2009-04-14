@@ -58,6 +58,7 @@ namespace SteamEngine {
 		//method: GetWrapperFor
 		//returns instance of a new class dynamically derived from <MethodWrapper>, according to given MethodInfo
 		public static MethodInfo GetWrapperFor(MethodInfo method) {
+			//return method;
 			//#if !OPTIMIZED
 			//			return method;
 			//#else

@@ -201,7 +201,7 @@ namespace SteamEngine {
 
 		}
 
-		protected AbstractSkillDef(string defname, string filename, int headerLine)
+		public AbstractSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			this.key = this.InitTypedField("key", "", typeof(string));
 			this.startByMacroEnabled = this.InitTypedField("startByMacroEnabled", false, typeof(bool));

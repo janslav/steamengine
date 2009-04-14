@@ -47,37 +47,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam hráèských úètù (" + (firstiVal + 1) + "-" + imax + " z " + accList.Count + ")");
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam hráèských úètù (" + (firstiVal + 1) + "-" + imax + " z " + accList.Count + ")").Build();
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 150, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho uctu
-			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový account");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 2);
+			dlg.AddTable(new GUTATable(1, 150, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Založit nový account").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(2).Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam uctu s tlacitkem pro detail (tolik radku, kolik se bude zobrazovat uctu)
-			dlg.AddTable(new GUTATable(imax - firstiVal, ButtonFactory.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(imax - firstiVal, ButtonMetrics.D_BUTTON_WIDTH, 0));
 			//cudlik pro info
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Come");
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Come").Build();
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for (int i = firstiVal; i < imax; i++) {
 				AbstractAccount ga = accList[i];
 				Hues nameColor = ga.IsOnline ? Hues.OnlineColor : Hues.OfflineColor;
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, i + 10); //account info
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(nameColor, ga.Name); //acc name
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(i + 10).Build(); //account info
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ga.Name).Hue(nameColor).Build(); //acc name
 
 				rowCntr++;
 			}
