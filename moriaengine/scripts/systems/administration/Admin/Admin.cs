@@ -46,34 +46,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(50, 50);
 
 			//nadpis
-			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline("Admin dialog - seznam pøipojených klientù (" + (firstiVal + 1) + "-" + imax + " z " + playersList.Count + ")");
+			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Admin dialog - seznam pøipojených klientù (" + (firstiVal + 1) + "-" + imax + " z " + playersList.Count + ")").Build();
 			//cudlik na zavreni dialogu
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 180, 180, 180, 0));
+			dialogHandler.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 180, 180, 180, 0));
 			//cudlik pro privolani hrace
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateLabel("Come");
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextLabel("Come").Build();
 
 			//Accounts
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit podle accountu asc
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit podle accountu desc			
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Account");
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(1).Build(); //tridit podle accountu asc
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(4).Build(); //tridit podle accountu desc			
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel("Account").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 
 			//Jméno
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle hráèù asc
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit podle hráèù desc			
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Jméno");
+			dialogHandler.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle hráèù asc
+			dialogHandler.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit podle hráèù desc			
+			dialogHandler.LastTable[0, 2] = GUTAText.Builder.TextLabel("Jméno").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 
 			//Lokace
-			dialogHandler.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit dle lokaci asc
-			dialogHandler.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6); //tridit podle lokaci desc			
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Lokace");
+			dialogHandler.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(3).Build(); //tridit dle lokaci asc
+			dialogHandler.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(6).Build(); //tridit podle lokaci desc			
+			dialogHandler.LastTable[0, 3] = GUTAText.Builder.TextLabel("Lokace").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 
 			//Akce
-			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel("Action");
+			dialogHandler.LastTable[0, 4] = GUTAText.Builder.TextLabel("Action").Build();
 			dialogHandler.MakeLastTableTransparent(); //zpruhledni nadpisovy radek
 
 			//vlastni seznam lidi
@@ -113,14 +113,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Player plr = (Player) playersList[i];
 				Hues plrColor = Hues.PlayerColor;
 				//TODO - barveni dle prislusnosti
-				dialogHandler.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 10); //player come
-				dialogHandler.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (4 * i) + 11); //account detail
-				dialogHandler.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Account.Name); //acc name
-				dialogHandler.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (4 * i) + 12); //player info
-				dialogHandler.LastTable[rowCntr, 2] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Name); //plr name
-				dialogHandler.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, (4 * i) + 13); //goto location
-				dialogHandler.LastTable[rowCntr, 3] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, plrColor, plr.Region.Name); //region name
-				dialogHandler.LastTable[rowCntr, 4] = TextFactory.CreateText(plrColor, plr.CurrentSkillName.ToString()); //action name
+				dialogHandler.LastTable[rowCntr, 0] = GUTAButton.Builder.Id((4 * i) + 10).Build(); //player come
+				dialogHandler.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((4 * i) + 11).Build(); //account detail
+				dialogHandler.LastTable[rowCntr, 1] = GUTAText.Builder.Text(plr.Account.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Hue(plrColor).Build(); //acc name
+				dialogHandler.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((4 * i) + 12).Build(); //player info
+				dialogHandler.LastTable[rowCntr, 2] = GUTAText.Builder.Text(plr.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Hue(plrColor).Build(); //plr name
+				dialogHandler.LastTable[rowCntr, 3] = GUTAButton.Builder.Id((4 * i) + 13).Build(); //goto location
+				dialogHandler.LastTable[rowCntr, 3] = GUTAText.Builder.Text(plr.Region.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Hue(plrColor).Build(); //region name
+				dialogHandler.LastTable[rowCntr, 4] = GUTAText.Builder.Text(plr.CurrentSkillName.ToString()).Hue(plrColor).Build(); //action name
 
 				rowCntr++;
 			}

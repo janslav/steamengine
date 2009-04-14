@@ -37,14 +37,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(100, 70);
 
 			//jmeno, ikona, cudlik na zruseni
-			GUTATable hdrTable = new GUTATable(1, 85, 120, 0, ButtonFactory.D_BUTTON_WIDTH);
+			GUTATable hdrTable = new GUTATable(1, 85, 120, 0, ButtonMetrics.D_BUTTON_WIDTH);
 			//add 2 pixels from both top and bottom corners (but minimal rowheight stays... - due to button icons))
 			hdrTable.RowHeight = Math.Max(ImprovedDialog.D_ROW_HEIGHT, picDim.Height + 2 * ImprovedDialog.D_ICON_SPACE);
 			dlg.AddTable(hdrTable);
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Název:");
-			dlg.LastTable[0, 1] = TextFactory.CreateText(itm.Name);
-			dlg.LastTable[0, 2] = ImageFactory.CreateImage(itm.Model);
-			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); //exit button
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název:").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text(itm.Name).Build();
+			dlg.LastTable[0, 2] = GUTAImage.Builder.Gump(itm.Model).Build();
+			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
 			int otherRows = 2;
@@ -59,27 +59,27 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			dlg.AddTable(new GUTATable(otherRows, 85, 0));
 			//resources
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Materiál");
-			dlg.LastTable[0, 1] = TextFactory.CreateText((itm.Resources != null) ? itm.Resources.ToString(): "");
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Materiál").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text((itm.Resources != null) ? itm.Resources.ToString() : "").Build();
 			//type
-			dlg.LastTable[1, 0] = TextFactory.CreateLabel("Typ");
-			dlg.LastTable[1, 1] = TextFactory.CreateText(CraftmenuContents.typeNames[itm.Type.Defname]);
+			dlg.LastTable[1, 0] = GUTAText.Builder.TextLabel("Typ").Build();
+			dlg.LastTable[1, 1] = GUTAText.Builder.Text(CraftmenuContents.typeNames[itm.Type.Defname]).Build();
 			//weapon
 			if (itm.IsWeaponDef) {
-				dlg.LastTable[2, 0] = TextFactory.CreateLabel("UC vs M");
-				dlg.LastTable[2, 1] = TextFactory.CreateText(((WeaponDef) itm).AttackVsM.ToString());
-				dlg.LastTable[3, 0] = TextFactory.CreateLabel("UC vs P");
-				dlg.LastTable[3, 1] = TextFactory.CreateText(((WeaponDef) itm).AttackVsP.ToString());
+				dlg.LastTable[2, 0] = GUTAText.Builder.TextLabel("UC vs M").Build();
+				dlg.LastTable[2, 1] = GUTAText.Builder.Text(((WeaponDef) itm).AttackVsM.ToString()).Build();
+				dlg.LastTable[3, 0] = GUTAText.Builder.TextLabel("UC vs P").Build();
+				dlg.LastTable[3, 1] = GUTAText.Builder.Text(((WeaponDef) itm).AttackVsP.ToString()).Build();
 			}
 			if (itm.IsWearableDef) {
-				dlg.LastTable[2, 0] = TextFactory.CreateLabel("Armor vs M");
-				dlg.LastTable[2, 1] = TextFactory.CreateText(((WearableDef) itm).ArmorVsM.ToString());
-				dlg.LastTable[3, 0] = TextFactory.CreateLabel("Armor vs P");
-				dlg.LastTable[3, 1] = TextFactory.CreateText(((WearableDef) itm).ArmorVsP.ToString());
+				dlg.LastTable[2, 0] = GUTAText.Builder.TextLabel("Armor vs M").Build();
+				dlg.LastTable[2, 1] = GUTAText.Builder.Text(((WearableDef) itm).ArmorVsM.ToString()).Build();
+				dlg.LastTable[3, 0] = GUTAText.Builder.TextLabel("Armor vs P").Build();
+				dlg.LastTable[3, 1] = GUTAText.Builder.Text(((WearableDef) itm).ArmorVsP.ToString()).Build();
 			}
 			if (itm.IsDestroyableDef) {
-				dlg.LastTable[4, 0] = TextFactory.CreateLabel("Výdrž");
-				dlg.LastTable[4, 1] = TextFactory.CreateText(((DestroyableDef) itm).MaxDurability.ToString());
+				dlg.LastTable[4, 0] = GUTAText.Builder.TextLabel("Výdrž").Build();
+				dlg.LastTable[4, 1] = GUTAText.Builder.Text(((DestroyableDef) itm).MaxDurability.ToString()).Build();
 			}
 
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu

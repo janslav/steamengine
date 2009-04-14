@@ -23,11 +23,11 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Class for holding one parsed resource list")]
 	public class ResourcesList {
 		//complete list of resources (separated into number-value pairs in special class)
-		private List<IResourceListItem> resourceItemsList = new List<IResourceListItem>();
+		private readonly List<IResourceListItem> resourceItemsList = new List<IResourceListItem>();
 		//sublist of resources allowing us to use the resource list more than once (consuming) at a time (typically "itemdef" resources)
-		private List<IResourceListItemMultiplicable> multiplicablesSubList = new List<IResourceListItemMultiplicable>();
+		private readonly List<IResourceListItemMultiplicable> multiplicablesSubList = new List<IResourceListItemMultiplicable>();
 		//sublist of other resources used usually only for "is present" check
-		private List<IResourceListItemNonMultiplicable> nonMultiplicablesSubList = new List<IResourceListItemNonMultiplicable>();
+		private readonly List<IResourceListItemNonMultiplicable> nonMultiplicablesSubList = new List<IResourceListItemNonMultiplicable>();
 
 		[Summary("Add new ResourceListItem to the list")]
 		internal void Add(IResourceListItem newItem) {
@@ -211,12 +211,27 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
+		[Summary("Make a string containing counts and names of all resource list items")]
 		public override string ToString() {
 			string retVal = "";
 			for(int i = 0; i < resourceItemsList.Count; i++) {
 				IResourceListItem rli = resourceItemsList[i];
 				double numero = rli.DesiredCount;
 				retVal += numero + " " + ((numero > 1 && (rli is ItemResource)) ? ((ItemResource)rli).ItemDef.PluralName : rli.Name);
+				if (i < resourceItemsList.Count - 1) {
+					retVal += ", ";
+				}
+			}
+			return retVal;
+		}
+
+		[Summary("Make a string containing counts and (pretty)defnames of all resource list items")]
+		public string ToDefsString() {
+			string retVal = "";
+			for (int i = 0; i < resourceItemsList.Count; i++) {
+				IResourceListItem rli = resourceItemsList[i];
+				double numero = rli.DesiredCount;
+				retVal += numero + " " + (rli is ItemResource ? ((ItemResource) rli).ItemDef.PrettyDefname : rli.Name);
 				if (i < resourceItemsList.Count - 1) {
 					retVal += ", ";
 				}

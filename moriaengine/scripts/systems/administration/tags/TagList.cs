@@ -56,31 +56,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech tagù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2);//cudlik na info o hodnotach
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonMetrics.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech tagù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build();//cudlik na info o hodnotach
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho tagu
-			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Založit nový tag");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 3);
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Založit nový tag").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(3).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno tagu");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Info");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Hodnota");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 200, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Smaž").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Jméno tagu").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Info").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Hodnota").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam tagu
@@ -92,15 +92,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				KeyValuePair<TagKey, Object> de = tagList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (3 * i));
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.Name);
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + (3 * i)).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(de.Key.Name).Build();
 				//je li hodnota simple saveable nebo ma koordinator, muzeme ObjectSaver.Save
 				if (ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
 					//hodnota tagu, vcetne prefixu oznacujicim typ
-					dlg.LastTable[rowCntr, 3] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11 + (3 * i), ObjectSaver.Save(de.Value));
+					dlg.LastTable[rowCntr, 3] = GUTAInput.Builder.Id(11 + (3 * i)).Text(ObjectSaver.Save(de.Value)).Build();
 				} else {//jinak odkaz do infodialogu
-					dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 12 + (3 * i));
-					dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(de.Value.GetType().Name);
+					dlg.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(12 + (3 * i)).Build();
+					dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(de.Value.GetType().Name).Build();
 				}
 				rowCntr++;
 			}
@@ -110,9 +110,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreatePaging(tagList.Count, firstiVal, 1);
 
 			//Ok button
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 4);
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(4).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("Uložit").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();

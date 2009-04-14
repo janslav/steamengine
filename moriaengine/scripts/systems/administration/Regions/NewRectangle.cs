@@ -41,33 +41,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(100, 100);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Vložení nového rectanglu");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vložení nového rectanglu").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//navod
 			dlg.AddTable(new GUTATable(2, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("(MinX,MinY) - levy horni roh, (MaxX,MaxY) - pravy dolni roh");
-			dlg.LastTable[1, 0] = TextFactory.CreateHeadline("Mapa v UO zacina vlevo nahore bodem (0,0) a konci vpravo dole!");
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("(MinX,MinY) - levy horni roh, (MaxX,MaxY) - pravy dolni roh").Build();
+			dlg.LastTable[1, 0] = GUTAText.Builder.TextHeadline("Mapa v UO zacina vlevo nahore bodem (0,0) a konci vpravo dole!").Build();
 			dlg.MakeLastTableTransparent();
 
 			//textiky a editfieldy na zadani souradnic
 			dlg.AddTable(new GUTATable(2, 100, 100, 0, 100));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("MinX");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 31, minX);
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("MinY");
-			dlg.LastTable[0, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 32, minY);
-			dlg.LastTable[1, 0] = TextFactory.CreateLabel("MaxX");
-			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 33, maxX);
-			dlg.LastTable[1, 2] = TextFactory.CreateLabel("MaxY");
-			dlg.LastTable[1, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 34, maxY);
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("MinX").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(31).Text(minX).Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("MinY").Build();
+			dlg.LastTable[0, 3] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(32).Text(minY).Build();
+			dlg.LastTable[1, 0] = GUTAText.Builder.TextLabel("MaxX").Build();
+			dlg.LastTable[1, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(33).Text(maxX).Build();
+			dlg.LastTable[1, 2] = GUTAText.Builder.TextLabel("MaxY").Build();
+			dlg.LastTable[1, 3] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(34).Text(maxY).Build();
 			dlg.MakeLastTableTransparent();
 
 			//send button
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
-			dlg.LastTable[0, 1] = TextFactory.CreateText("Uložit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("Uložit").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();

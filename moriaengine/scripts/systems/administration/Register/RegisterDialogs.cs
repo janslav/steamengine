@@ -55,30 +55,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Poznámky k accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + notesList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Poznámky k accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + notesList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni nove pozmamky
-			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Nová poznámka");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Nová poznámka").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, 145, 120, 350, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle casu asc
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle casu desc            
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 4); //tridit dle refcharu asc
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit dle refcharu desc
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Postava");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Text poznámky");
-			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 6); //tridit dle issuera asc
-			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7); //tridit dle issuera desc
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Autor");
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Smaž");
+			dlg.AddTable(new GUTATable(1, 145, 120, 350, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle casu asc
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(3).Build(); //tridit podle casu desc            
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Èas").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4).Build(); //tridit dle refcharu asc
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit dle refcharu desc
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Postava").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Text poznámky").Build();
+			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(6).Build(); //tridit dle issuera asc
+			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(7).Build(); //tridit dle issuera desc
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Autor").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Smaž").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam poznamek
@@ -90,23 +90,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				AccountNote note = notesList[i];
 
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(note.time.ToString("hh:mm:ss dd.MM.yyyy"));
+				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(note.time.ToString("hh:mm:ss dd.MM.yyyy")).Build();
 				if (note.referredChar != null) {
-					dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (4 * i)); //info o postave
-					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.referredChar.Name); //postava
+					dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + (4 * i)).Build(); //info o postave
+					dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(note.referredChar.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //postava
 				} else {
-					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(AccountRegister.ALL_CHARS); //tyka se vsech postav na acc
+					dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(AccountRegister.ALL_CHARS).Build(); //tyka se vsech postav na acc
 				}
-				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + (4 * i)); //zobrazit text zpravy
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.text); //text zpravy
-				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 12 + (4 * i)); //info o issuerovi
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, note.issuer.Name); //issuer
+				dlg.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(11 + (4 * i)).Build(); //zobrazit text zpravy
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(note.text).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //text zpravy
+				dlg.LastTable[rowCntr, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(12 + (4 * i)).Build(); //info o issuerovi
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(note.issuer.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //issuer
 
 				if (sendTo == note.issuer || sendTo.Plevel > note.issuer.Plevel) {
-					dlg.LastTable[rowCntr, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 13 + (4 * i)); //smaz
+					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(13 + (4 * i)).Build(); //smaz
 				} else {
 					//pokud ten co se diva neni ten kdo zpravu postnul a ani nema vyssi plevel, pak nesmi poznamku smazat!
-					dlg.LastTable[rowCntr, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonNoOperation, false, 9999);
+					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id(9999).Build();
 				}
 				rowCntr++;
 			}
@@ -268,31 +268,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Prohøešky accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + crimesList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Prohøešky accountu " + acc.Name + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + crimesList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na zalozeni noveho trestu
-			dlg.AddTable(new GUTATable(1, 130, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Nový prohøešek");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Nový prohøešek").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, 145, 120, 225, 225, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 2); //tridit podle casu asc
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 3); //tridit podle casu desc            
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 4); //tridit dle refcharu asc
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 5); //tridit dle refcharu desc
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Postava");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Popis prohøešku");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Popis trestu");
-			dlg.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 6); //tridit dle issuera asc
-			dlg.LastTable[0, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 7); //tridit dle issuera desc
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Autor");
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Smaž");
+			dlg.AddTable(new GUTATable(1, 145, 120, 225, 225, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle casu asc
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(3).Build(); //tridit podle casu desc            
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Èas").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4).Build(); //tridit dle refcharu asc
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit dle refcharu desc
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Postava").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Popis prohøešku").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Popis trestu").Build();
+			dlg.LastTable[0, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(6).Build(); //tridit dle issuera asc
+			dlg.LastTable[0, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(7).Build(); //tridit dle issuera desc
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Autor").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Smaž").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam trestu
@@ -304,26 +304,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				AccountCrime crime = crimesList[i];
 
-				dlg.LastTable[rowCntr, 0] = TextFactory.CreateText(crime.time.ToString("hh:mm:ss dd.MM.yyyy"));
+				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(crime.time.ToString("hh:mm:ss dd.MM.yyyy")).Build();
 				if (crime.referredChar != null) {
-					dlg.LastTable[rowCntr, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 10 + (5 * i)); //info o postave
-					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.referredChar.Name); //postava
+					dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + (5 * i)).Build(); //info o postave
+					dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(crime.referredChar.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //postava
 				} else {
-					dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(AccountRegister.ALL_CHARS); //tyka se vsech postav na acc
+					dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(AccountRegister.ALL_CHARS).Build(); //tyka se vsech postav na acc
 				}
-				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + (5 * i)); //zobrazit text zpravy
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.text); //text prohresku
-				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 12 + (5 * i)); //zobrazit text zpravy
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.punishment); //text trestu
+				dlg.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(11 + (5 * i)).Build(); //zobrazit text zpravy
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(crime.text).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //text prohresku
+				dlg.LastTable[rowCntr, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(12 + (5 * i)).Build(); //zobrazit text zpravy
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(crime.punishment).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //text trestu
 
-				dlg.LastTable[rowCntr, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 13 + (5 * i)); //info o issuerovi
-				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, crime.issuer.Name); //issuer
+				dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(13 + (5 * i)).Build(); //info o issuerovi
+				dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text(crime.issuer.Name).XPos(ButtonMetrics.D_BUTTON_WIDTH).Build(); //issuer
 
 				if (sendTo == crime.issuer || sendTo.Plevel > crime.issuer.Plevel) {
-					dlg.LastTable[rowCntr, 5] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 14 + (5 * i)); //smaz
+					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(14 + (5 * i)).Build(); //smaz
 				} else {
 					//pokud ten co se diva neni ten kdo zpravu postnul a ani nema vyssi plevel, pak nesmi trest smazat!
-					dlg.LastTable[rowCntr, 5] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonNoOperation, false, 9999);
+					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id(9999).Build();
 				}
 				rowCntr++;
 			}
@@ -493,34 +493,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(400);
 			dlg.SetLocation(50, 50);
 
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline(dlgHeadline);
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline(dlgHeadline).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable((isCrime ? 3 : 2), 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
-			dlg.LastTable[1, 0] = TextFactory.CreateLabel(textFldLabel);
+			dlg.LastTable[1, 0] = GUTAText.Builder.TextLabel(textFldLabel).Build();
 			if (refChar == null) {
-				dlg.LastTable[0, 0] = TextFactory.CreateLabel("Account");
+				dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Account").Build();
 				if (acc == null) { //account didnt come					
-					dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 10);
+					dlg.LastTable[0, 1] = GUTAInput.Builder.Id(10).Build();
 				} else {
-					dlg.LastTable[0, 1] = TextFactory.CreateText(acc.Name);
+					dlg.LastTable[0, 1] = GUTAText.Builder.Text(acc.Name).Build();
 				}
 			} else {//we have player
-				dlg.LastTable[0, 0] = TextFactory.CreateLabel("Postava");
-				dlg.LastTable[0, 1] = TextFactory.CreateText(refChar.Name);
+				dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Postava").Build();
+				dlg.LastTable[0, 1] = GUTAText.Builder.Text(refChar.Name).Build();
 			}
-			dlg.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 11);
+			dlg.LastTable[1, 1] = GUTAInput.Builder.Id(11).Build();
 			if (isCrime) { //crimes have more fields...
-				dlg.LastTable[2, 0] = TextFactory.CreateLabel("Trest");
-				dlg.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 12);
+				dlg.LastTable[2, 0] = GUTAText.Builder.TextLabel("Trest").Build();
+				dlg.LastTable[2, 1] = GUTAInput.Builder.Id(12).Build();
 			}
 			dlg.MakeLastTableTransparent();
 
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1);
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Uložit");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Id(1).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Uložit").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();

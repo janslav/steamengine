@@ -41,29 +41,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(80, 50);
 
 			//nadpis dialogu, cudliky na back a zruseni
-			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonFactory.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Kategorie výroby: " + cat.FullName);
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack, 1); //one category back button
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0); //exit button
+			
+			dlg.AddTable(new GUTATable(1, innerWidth - 3 * ButtonMetrics.D_BUTTON_WIDTH - 5 * ImprovedDialog.D_COL_SPACE, ButtonMetrics.D_BUTTON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Kategorie výroby: " + cat.FullName).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(1).Build(); //one category back button
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(8).Build(); //settings button
+			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
 			//"new subcategory" and "add items" button	
 			if (((Player) sendTo).IsGM) {//only for GMs
-				dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 203, ButtonFactory.D_BUTTON_WIDTH, 0));
-				dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 3); //new item(s) btn
-				dlg.LastTable[0, 1] = TextFactory.CreateLabel("Pøidat pøedmìt(y)");
-				dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 2); //new subcategory btn
-				dlg.LastTable[0, 3] = TextFactory.CreateLabel("Pøidat podkategorii");
+				dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 203, ButtonMetrics.D_BUTTON_WIDTH, 0));
+				dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(3).Build(); //new item(s) btn
+				dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Pøidat pøedmìt(y)").Build();
+				dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build(); //new subcategory btn
+				dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Pøidat podkategorii").Build();
 				dlg.MakeLastTableTransparent();
 			}
 
 			
 			//headlines row
 			//make | icon | name | move up/down | info | resources
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonFactory.D_BUTTON_WIDTH, 0));
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Jméno", DialogAlignment.Align_Center, DialogAlignment.Valign_Top);
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Info");
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Suroviny", DialogAlignment.Align_Center, DialogAlignment.Valign_Top);
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Jméno").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Top).Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Info").Build();
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Suroviny").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Top).Build();
 			dlg.MakeLastTableTransparent();
 
 			//konecne seznam polozek
@@ -81,8 +83,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				ICraftmenuElement elem = cat.contents[i];
 				if (elem.IsCategory) {
 					oneCat = (CraftmenuCategory) elem;
-					dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 4 * i + 10, DialogAlignment.Valign_Center);
-					dlg.LastTable[rowCntr, 1] = ImageFactory.CreateNamedImage(GumpIDs.Pouch);
+					dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Id(4 * i + 10).Valign(DialogAlignment.Valign_Center).Build();
+					dlg.LastTable[rowCntr, 1] = GUTAImage.Builder.NamedGump(GumpIDs.Pouch).Build();
 				} else {
 					oneItm = (CraftmenuItem) elem;
 					if (!oneItm.itemDef.CanBeMade((Character)focus)) {
@@ -92,9 +94,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 						continue;
 					}
-					dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateCheckbox(false, 1 * i + 10, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-					dlg.LastTable[rowCntr, 1] = ImageFactory.CreateImage((int)oneItm.itemDef.Model);
-					dlg.LastTable[rowCntr, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 4 * i + 13, DialogAlignment.Valign_Center);//display info
+					dlg.LastTable[rowCntr, 0] = GUTACheckBox.Builder.Id(4 * i + 10).Build();
+					dlg.LastTable[rowCntr, 1] = GUTAImage.Builder.Gump(oneItm.itemDef.Model).Build();
+					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(4 * i + 13).Valign(DialogAlignment.Valign_Center).Build();//display info
 					//now the list of resources
 					ResourcesList reses = oneItm.itemDef.Resources;
 					if (reses != null) {//only if we have any resources...
@@ -105,9 +107,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							if (itmRes != null) {//add count + item picture
 								string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2spaces
 								textToShow += itmRes.DesiredCount.ToString() + " ";
-								dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(lastColPos, 0, textToShow, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
+								dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 								int countLength = ImprovedDialog.TextLength(textToShow); //length of the text with number (count of items needed) plus the seaprating space
-								dlg.LastTable[rowCntr, 5] = ImageFactory.CreateImage(lastColPos + countLength, 0, itmRes.ItemDef.Model);
+								dlg.LastTable[rowCntr, 5] = GUTAImage.Builder.Gump(itmRes.ItemDef.Model).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build();
 								//prepare next offset:
 								GumpArtDimension gad = GumpDimensions.Table[itmRes.ItemDef.Model];
 								lastColPos += spaceLength + countLength + gad.Width; //first offset, counted length of the number text including separating space, width of the icon, space after the icon
@@ -116,7 +118,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								if (tgrRes != null) {
 									string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2 spaces
 									textToShow += tgrRes.DesiredCount.ToString() + " " + tgrRes.Name;
-									dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(lastColPos, 0, textToShow, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
+									dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 									//prepare next offset:
 									lastColPos += spaceLength + ImprovedDialog.TextLength(textToShow);
 								}
@@ -124,13 +126,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 					}
 				}
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(elem.Name, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(elem.Name).Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
 
 				if (i > 0) {//item can be moved up only if it is not the first one
-					dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 4 * i + 11, DialogAlignment.Valign_Center); //v seznamu posunout nahoru
+					dlg.LastTable[rowCntr, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4 * i + 11).Valign(DialogAlignment.Valign_Center).Build(); //v seznamu posunout nahoru
 				}
 				if (i < maxIndex) {//similarly with the last one
-					dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4 * i + 12, DialogAlignment.Valign_Center); //v seznamu posunout dolu
+					dlg.LastTable[rowCntr, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(4 * i + 12).Valign(DialogAlignment.Valign_Center).Build(); //v seznamu posunout dolu
 				}
 				rowCntr++;
 			}
@@ -145,14 +147,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//ted paging
 			dlg.CreatePaging(cat.contents.Count, firstiVal, 1);
 
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 160, ButtonFactory.D_BUTTON_WIDTH, 150, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 4); //start making
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 5); //how many to make of the selected items
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Množství k vyrobení");
-			dlg.LastTable[0, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack, 6); //next time open here
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Pøíštì otevøít zde");
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Zrušit otevírání");
-			dlg.LastTable[0, 6] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 7); //discard saved position
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 160, ButtonMetrics.D_BUTTON_WIDTH, 150, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(4).Build(); //start making
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(5).Build(); //how many to make of the selected items
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Množství k vyrobení").Build();
+			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(6).Build(); //next time open here
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Pøíštì otevøít zde").Build();
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Zrušit otevírání").Build();
+			dlg.LastTable[0, 6] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(7).Build(); //discard saved position
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();
@@ -172,7 +174,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(cat.Parent));
 							//DialogStacking.EnstackDialog(gi, newGi);
 						} else {
-							gi.Cont.SysMessage("Nelze se vrátit na pøedchozí kategorii, souèasná je v hierarchii nejvýše!");
+							gi.Cont.SysMessage("Nelze pøejít na nadøazenou kategorii, souèasná je v hierarchii nejvýše!");
 							DialogStacking.ResendAndRestackDialog(gi);
 						}
 						break;
@@ -197,7 +199,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						gi.Cont.SysMessage("Nastavení poslední pozice výrobního menu zrušeno");
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
+					case 8: //go to settings page with this category
+						newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu_Settings>.Instance, new DialogArgs(cat));
+						DialogStacking.EnstackDialog(gi, newGi);
+						break;
 				}
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.contents.Count, 1)) {
+				return;
 			} else {
 				int btnNumber = (btnNo - 10) % 4; //on one line we have numbers 10,11,12,13 next line is 14,15,16,17 etc.
 				int line = (int)((btnNo - (10+btnNumber)) / 4); //e.g. 12 - (10+2) / 4 = 0; 21 - (10+3) / 4 = 8/4 = 2; 15 - (10 + 1) / 4 = 1 etc...
@@ -261,46 +269,46 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(70, 70);
 
 			//nadpis tabulky
-			dlg.AddTable(new GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby"));
-			dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)); //exit button
+			dlg.AddTable(new GUTATable(1,0,ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0,0] = GUTAText.Builder.TextHeadline("Kategorie výroby").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
-			GUTATable picTable = new GUTATable(8, ImprovedDialog.ICON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH);
+			GUTATable picTable = new GUTATable(8, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH);
 			picTable.RowHeight = 40;
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);
-			dlg.LastTable[0,0] = ImageFactory.CreateNamedImage(GumpIDs.Mortar);
-			dlg.LastTable[0,1] = TextFactory.CreateLabel("Alchemy", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[0,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center);
+			dlg.LastTable[0, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Mortar).Build();
+			dlg.LastTable[0,1] = GUTAText.Builder.TextLabel("Alchemy").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[0,2] = GUTAButton.Builder.Id(1).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[1, 0] = ImageFactory.CreateNamedImage(GumpIDs.Anvil);
-			dlg.LastTable[1,1] = TextFactory.CreateLabel("Blacksmithing", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[1,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center);
+			dlg.LastTable[1, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Anvil).Build();
+			dlg.LastTable[1,1] = GUTAText.Builder.TextLabel("Blacksmithing").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[1, 2] = GUTAButton.Builder.Id(2).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[2, 0] = ImageFactory.CreateNamedImage(GumpIDs.Bow);
-			dlg.LastTable[2,1] = TextFactory.CreateLabel("Bowcraft", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[2,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center);
+			dlg.LastTable[2, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Bow).Build();
+			dlg.LastTable[2,1] = GUTAText.Builder.TextLabel("Bowcraft").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[2, 2] = GUTAButton.Builder.Id(3).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[3, 0] = ImageFactory.CreateNamedImage(GumpIDs.Saw);
-			dlg.LastTable[3,1] = TextFactory.CreateLabel("Carpentry", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[3,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center);
+			dlg.LastTable[3, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Saw).Build();
+			dlg.LastTable[3,1] = GUTAText.Builder.TextLabel("Carpentry").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[3, 2] = GUTAButton.Builder.Id(4).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[4, 0] = ImageFactory.CreateNamedImage(GumpIDs.Cake);
-			dlg.LastTable[4,1] = TextFactory.CreateLabel("Cooking", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[4,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,5, DialogAlignment.Valign_Center);
+			dlg.LastTable[4, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Cake).Build();
+			dlg.LastTable[4,1] = GUTAText.Builder.TextLabel("Cooking").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[4, 2] = GUTAButton.Builder.Id(5).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[5, 0] = ImageFactory.CreateNamedImage(GumpIDs.Scroll);
-			dlg.LastTable[5,1] = TextFactory.CreateLabel("Inscription", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[5,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,6, DialogAlignment.Valign_Center);
+			dlg.LastTable[5, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Scroll).Build();
+			dlg.LastTable[5,1] = GUTAText.Builder.TextLabel("Inscription").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[5, 2] = GUTAButton.Builder.Id(6).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[6, 0] = ImageFactory.CreateNamedImage(GumpIDs.SewingKit);
-			dlg.LastTable[6,1] = TextFactory.CreateLabel("Tailoring", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[6,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,7, DialogAlignment.Valign_Center);
+			dlg.LastTable[6, 0] = GUTAImage.Builder.NamedGump(GumpIDs.SewingKit).Build();
+			dlg.LastTable[6,1] = GUTAText.Builder.TextLabel("Tailoring").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[6, 2] = GUTAButton.Builder.Id(7).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[7, 0] = ImageFactory.CreateNamedImage(GumpIDs.Tools);
-			dlg.LastTable[7,1] = TextFactory.CreateLabel("Tinkering", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[7,2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,8, DialogAlignment.Valign_Center);
+			dlg.LastTable[7, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Tools).Build();
+			dlg.LastTable[7,1] = GUTAText.Builder.TextLabel("Tinkering").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[7, 2] = GUTAButton.Builder.Id(8).Valign(DialogAlignment.Valign_Center).Build();
 
 			dlg.MakeLastTableTransparent();
 

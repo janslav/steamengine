@@ -51,33 +51,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(40, 30);
 
 			//nadpis
-			dialogHandler.AddTable(new GUTATable(1, 300, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam zpráv (" + (firstiVal + 1) + "-" + imax + " z " + messagesList.Count + ")");
+			dialogHandler.AddTable(new GUTATable(1, 300, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam zpráv (" + (firstiVal + 1) + "-" + imax + " z " + messagesList.Count + ")").Build();
 
 			//cudliky na trideni dle neprectenych (i s popiskem)
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 5);//tridit dle neprectenych (neprectene nahoru)
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 6);//tridit dle neprectenych (neprectene dolu)
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Tøídit dle nepøeètených (nepøeètených " + unreadCnt + ")");
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(5).Build();//tridit dle neprectenych (neprectene nahoru)
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(6).Build();//tridit dle neprectenych (neprectene dolu)
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel("Tøídit dle nepøeètených (nepøeètených " + unreadCnt + ")").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 			//cudlik na zavreni dialogu			
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dialogHandler.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			//popis sloupecku
-			dialogHandler.AddTable(new GUTATable(1, 180, 160, ButtonFactory.D_BUTTON_WIDTH, ButtonFactory.D_BUTTON_WIDTH, 0)); //radek na nadpisy            
+			dialogHandler.AddTable(new GUTATable(1, 180, 160, ButtonMetrics.D_BUTTON_WIDTH, ButtonMetrics.D_BUTTON_WIDTH, 0)); //radek na nadpisy            
 			//cas
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 1); //tridit podle casu asc
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 2); //tridit podle casu desc            
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Èas odeslání");
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(1).Build(); //tridit podle casu asc
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(2).Build(); //tridit podle casu desc            
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextLabel("Èas odeslání").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 			//cudlik s odesilatelem
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp, 3); //tridit dle jmena sendera asc
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown, 0, ButtonFactory.D_SORTBUTTON_LINE_OFFSET, 4); //tridit dle jmena sendera desc
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET, 0, "Odesilatel");
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(3).Build(); //tridit dle jmena sendera asc
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(4).Build(); //tridit dle jmena sendera desc
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel("Odesilatel").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 			//cudlik pro cteni
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateLabel("Èíst");
+			dialogHandler.LastTable[0, 2] = GUTAText.Builder.TextLabel("Èíst").Build();
 			//cudlik pro mazani   
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateLabel("Del");
+			dialogHandler.LastTable[0, 3] = GUTAText.Builder.TextLabel("Del").Build();
 			//text
-			dialogHandler.LastTable[0, 4] = TextFactory.CreateLabel("Text zprávy");
+			dialogHandler.LastTable[0, 4] = GUTAText.Builder.TextLabel("Text zprávy").Build();
 
 			dialogHandler.MakeLastTableTransparent(); //zpruhledni nadpisovy radek
 
@@ -90,11 +90,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				DelayedMsg msg = (DelayedMsg) messagesList[i];
 				Hues msgColor = msg.color;
-				dialogHandler.LastTable[rowCntr, 0] = TextFactory.CreateText(msgColor, msg.time.ToString());//cas odeslani
-				dialogHandler.LastTable[rowCntr, 1] = TextFactory.CreateText(msgColor, (msg.sender == null ? MsgsBoard.NO_SENDER : msg.sender.Name)); //odesilatel
-				dialogHandler.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, (2 * i) + 10); //èíst
-				dialogHandler.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, (2 * i) + 11); //smazat
-				dialogHandler.LastTable[rowCntr, 4] = TextFactory.CreateText(msgColor, msg.text); //text zpravy				
+				dialogHandler.LastTable[rowCntr, 0] = GUTAText.Builder.Text(msg.time.ToString()).Hue(msgColor).Build();//cas odeslani
+				dialogHandler.LastTable[rowCntr, 1] = GUTAText.Builder.Text(msg.sender == null ? MsgsBoard.NO_SENDER : msg.sender.Name).Hue(msgColor).Build(); //odesilatel
+				dialogHandler.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((2 * i) + 10).Build(); //èíst
+				dialogHandler.LastTable[rowCntr, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id((2 * i) + 11).Build(); //smazat
+				dialogHandler.LastTable[rowCntr, 4] = GUTAText.Builder.Text(msg.text).Hue(msgColor).Build(); //text zpravy				
 
 				rowCntr++;
 			}

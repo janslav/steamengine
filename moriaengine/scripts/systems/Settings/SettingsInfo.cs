@@ -32,161 +32,171 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(1100);
 			dlg.SetLocation(0, 20);
 
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Informace a vysvìtlivky");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Informace a vysvìtlivky").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(1, 85, 50, 40, 0, 185));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Popis hodnoty");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zkratka typu");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Prefix");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Zápis hodnoty (urèeno informací o typu - viz zkratky)");
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Pøíklad");
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Popis hodnoty").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Zkratka typu").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Prefix").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Zápis hodnoty (urèeno informací o typu - viz zkratky)").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Pøíklad").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Èísla
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Èíslo");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Num)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Normálnì numericky");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("25; 13.3 apd.");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Èíslo").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Num)").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Normálnì numericky").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("25; 13.3 apd.").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Øetìzce
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("String");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Str)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Text v úvozovkách");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("\"foobar\"");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("String").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Str)").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Text v úvozovkách").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("\"foobar\"").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Thingy
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Thing");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Thg)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "#");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Existující UID");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#094dfd; #01");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Thing").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Thg)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("#").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Existující UID").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("#094dfd; #01").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Regiony
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Region");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Reg)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Defname regionu v závorkách");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("(a_Edoras)");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Region").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Reg)").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Defname regionu v závorkách").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("(a_Edoras)").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Accounty
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Account");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("($)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "$");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Název accountu");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("$kandelabr");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Account").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("($)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("$").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Název accountu").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("$kandelabr").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Abstract defy
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("AbstractScript");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Scp)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "#");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Defname existujícího skriptu");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#c_man; #c_0x123, kde 0x123 je nìjaký model");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("AbstractScript").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Scp)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("#").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Defname existujícího skriptu").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("#c_man; #c_0x123, kde 0x123 je nìjaký model").Build();
 			dlg.MakeLastTableTransparent();
 
 			//TimeSpan
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("TimeSpan");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(:)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, ":");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("-d.hh:mm:ss.ff, kde '-', sekundy a desetiny sekundy jsou nepovinné. Pøesnost max 7 míst.");
-			dlg.LastTable[0, 4] = TextFactory.CreateText(":14.12:15; :0.1:13:12; :1.1:11:11.1111111");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("TimeSpan").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(:)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text(":").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("-d.hh:mm:ss.ff, kde '-', sekundy a desetiny sekundy jsou nepovinné. Pøesnost max 7 míst.").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text(":14.12:15; :0.1:13:12; :1.1:11:11.1111111").Build();
 			dlg.MakeLastTableTransparent();
 
 			//DateTime
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("DateTime");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(::)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "::");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("dd.MM.yyyy HH:mm:ss.FF, kde desetiny sekundy, sekundy nebo celý hodinový údaj jsou nepovinné. Pøesnost max 7 míst.");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("::11.12.1913 15:16:17.18");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("DateTime").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(::)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("::").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("dd.MM.yyyy HH:mm:ss.FF, kde desetiny sekundy, sekundy nebo celý hodinový údaj jsou nepovinné. Pøesnost max 7 míst.").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("::11.12.1913 15:16:17.18").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Pozice
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Pozice");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(nD)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "(nD)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("x,y,z,m (poèet èísel záleží na typu pozice)");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("(2D)991,996; (4D)1000,1000,0,1");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Pozice").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(nD)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("(nD)").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("x,y,z,m (poèet èísel záleží na typu pozice)").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("(2D)991,996; (4D)1000,1000,0,1").Build();
 			dlg.MakeLastTableTransparent();
 
 			//IPèka
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("IP");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(IP)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "(IP)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("IP adresa v korektní podobì");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("(IP)127.0.0.1");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("IP").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(IP)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("(IP)").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("IP adresa v korektní podobì").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("(IP)127.0.0.1").Build();
+			dlg.MakeLastTableTransparent();
+
+			//Resources list
+			dlg.AddTable(new GUTATable(1));
+			dlg.CopyColsFromLastTable();
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Resources list").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(RL)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("(RL)").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Seznam resourcù").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("(RL)5 i_apple, 23.5 Hiding, 3 a_warcry, t_light").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Timer key
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Timer key");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(%)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "%");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Timer key");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("%SpawnTimer");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Timer key").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(%)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("%").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Timer key").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("%SpawnTimer").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Triggery
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Trigger key");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(@)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "@");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Trigger key");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("@create");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Trigger key").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(@)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("@").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Trigger key").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("@create").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Enumerace
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Enumerace");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Enum)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Normálnì numericky (takøka nepoužívané)");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Enumerace").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Enum)").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Normálnì numericky (takøka nepoužívané)").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Objekty
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Object");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Obj)");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Libovolný typ zapsaný v korektní podobì (viz výše)");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#1234; \"barbar\"; 15 apd.");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Object").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Obj)").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Libovolný typ zapsaný v korektní podobì (viz výše)").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("#1234; \"barbar\"; 15 apd.").Build();
 			dlg.MakeLastTableTransparent();
 
 			//Globals
 			dlg.AddTable(new GUTATable(1));
 			dlg.CopyColsFromLastTable();
-			dlg.LastTable[0, 0] = TextFactory.CreateText("Globals");
-			dlg.LastTable[0, 1] = TextFactory.CreateText("(Glob)");
-			dlg.LastTable[0, 2] = TextFactory.CreateText(Hues.Blue, "#");
-			dlg.LastTable[0, 3] = TextFactory.CreateText("Globals (nepoužívané v normálním nastavení)");
-			dlg.LastTable[0, 4] = TextFactory.CreateText("#globals (doslova)");
+			dlg.LastTable[0, 0] = GUTAText.Builder.Text("Globals").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.Text("(Glob)").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.Text("#").Hue(Hues.Blue).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.Text("Globals (nepoužívané v normálním nastavení)").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.Text("#globals (doslova)").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();//a vykreslíme ten info dialog

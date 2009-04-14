@@ -40,19 +40,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 600);
 
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam postav na accountu " + acc.Name);
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam postav na accountu " + acc.Name).Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam charu s tlacitkem pro info
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 160, 130, 110, 40, 0));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Info");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Profese");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Rasa");
-			dlg.LastTable[0, 4] = TextFactory.CreateLabel("Level");
-			dlg.LastTable[0, 5] = TextFactory.CreateLabel("Pozice");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 160, 130, 110, 40, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Info").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Jméno").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Profese").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Rasa").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Level").Build();
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Pozice").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable((int) AbstractAccount.maxCharactersPerGameAccount));
@@ -67,12 +67,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Player castChar = (Player) oneChar;
 				///TODO poresit barvy podle prislusnosti ke strane!
 				Hues color = Hues.WriteColor;
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, rowCntr + 10); //char info
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(color, castChar.Name); //plr name
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(color, "TODO-profese"); //profese
-				dlg.LastTable[rowCntr, 3] = TextFactory.CreateText(color, "TODO-rasa"); //rasa
-				dlg.LastTable[rowCntr, 4] = TextFactory.CreateText(color, "TODO-level"); //level
-				dlg.LastTable[rowCntr, 5] = TextFactory.CreateText(color, castChar.P().ToNormalString()); //pozice
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(rowCntr + 10).Build(); //char info
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(castChar.Name).Hue(color).Build(); //plr name
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("TODO-profese").Hue(color).Build(); //profese
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text("TODO-rasa").Hue(color).Build(); //rasa
+				dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text("TODO-level").Hue(color).Build(); //level
+				dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(castChar.P().ToNormalString()).Hue(color).Build(); //pozice
 
 				rowCntr++;
 			}

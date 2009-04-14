@@ -32,31 +32,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(80, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Co chceš stopovat?");
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Co chceš stopovat?").Build();
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
-			GUTATable picTable = new GUTATable(4, ImprovedDialog.ICON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH);
+			GUTATable picTable = new GUTATable(4, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH);
 			picTable.RowHeight = 50; //dobra vejska pro obrazky
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);
-			dlg.LastTable[0, 0] = ImageFactory.CreateImage(0, 3, GumpIDs.Figurine_Llama);
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Zvíøata", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 1, DialogAlignment.Valign_Center);
+			dlg.LastTable[0, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Figurine_Llama).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Zvíøata").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Id(1).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[1, 0] = ImageFactory.CreateImage(3, 3, GumpIDs.Figurine_Ogre);
-			dlg.LastTable[1, 1] = TextFactory.CreateLabel("Monstra", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[1, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 2, DialogAlignment.Valign_Center);
+			dlg.LastTable[1, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Figurine_Ogre).Build();
+			dlg.LastTable[1, 1] = GUTAText.Builder.TextLabel("Monstra").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[1, 2] = GUTAButton.Builder.Id(2).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[2, 0] = ImageFactory.CreateImage(10, 3, GumpIDs.Figurine_Man);
-			dlg.LastTable[2, 1] = TextFactory.CreateLabel("Hráèe", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[2, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 3, DialogAlignment.Valign_Center);
+			dlg.LastTable[2, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Figurine_Man).Build();
+			dlg.LastTable[2, 1] = GUTAText.Builder.TextLabel("Hráèe").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[2, 2] = GUTAButton.Builder.Id(3).Valign(DialogAlignment.Valign_Center).Build();
 
-			dlg.LastTable[3, 0] = ImageFactory.CreateNamedImage(GumpIDs.Figurine_NPC);
-			dlg.LastTable[3, 1] = TextFactory.CreateLabel("NPC", DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-			dlg.LastTable[3, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 4, DialogAlignment.Valign_Center);
+			dlg.LastTable[3, 0] = GUTAImage.Builder.NamedGump(GumpIDs.Figurine_NPC).Build();
+			dlg.LastTable[3, 1] = GUTAText.Builder.TextLabel("NPC").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+			dlg.LastTable[3, 2] = GUTAButton.Builder.Id(4).Valign(DialogAlignment.Valign_Center).Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();

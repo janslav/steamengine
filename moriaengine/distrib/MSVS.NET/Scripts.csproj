@@ -383,6 +383,9 @@
     <Compile Include="..\..\scripts\systems\dialogs\info\Info.cs">
       <Link>systems\dialogs\info\Info.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\info\InfoDetail.cs">
+      <Link>systems\dialogs\info\InfoDetail.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\dialogs\info\InfoDialogHandler.cs">
       <Link>systems\dialogs\info\InfoDialogHandler.cs</Link>
     </Compile>
@@ -466,6 +469,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Resources\ResourcesParser.cs">
       <Link>systems\Resources\ResourcesParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourcesSaver.cs">
+      <Link>systems\Resources\ResourcesSaver.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Resources\Searching\ResourceItemFinder.cs">
       <Link>systems\Resources\Searching\ResourceItemFinder.cs</Link>
@@ -616,6 +622,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs">
       <Link>systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\CraftmenuSettingsDialog.cs">
+      <Link>systems\skills\Crafting\Craftmenu\CraftmenuSettingsDialog.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\ItemInfoDialog.cs">
       <Link>systems\skills\Crafting\Craftmenu\ItemInfoDialog.cs</Link>

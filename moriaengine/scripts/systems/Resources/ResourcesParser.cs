@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Class for parsing resources strings from LScript")]
@@ -28,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		//regular expression for recogninzing the whole reslist (first resource is obligatory, others are voluntary (separated by commas), all resources contain from a number-value pair where number can be hex, float and decimal
 		public static readonly Regex re = new Regex(@"^ (?<resource>\s* (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) (\s*,\s* (?<resource> (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) )* $",
 				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
-
+		
 		#region IFieldValueParser Members
 
 		public Type HandledType {
@@ -42,6 +43,15 @@ namespace SteamEngine.CompiledScripts {
 			//we dont have it yet, perform parsing, we expect sth. like this:
 			//3 i_apples, 1 i_spruce_log, t_light, 5 a_warcry, 35.6 hiding etc....
 			Match m = re.Match(input);
+			if (processMatch(m, out retVal)) {
+				return true;
+			} else {
+				throw new SEException("Unexpected resources string: " + input);
+			}
+		}
+
+		private bool processMatch(Match m, out object retVal) {
+			retVal = null;
 			if (m.Success) {
 				ResourcesList resList = new ResourcesList();
 				int n = m.Groups["resource"].Captures.Count; //number of found resources
@@ -67,9 +77,8 @@ namespace SteamEngine.CompiledScripts {
 				resList.NonMultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
 				retVal = resList;
 				return true;
-			} else {
-				throw new SEException("Unexpected resources string: " + input);
 			}
+			return false;
 		}
 		#endregion
 
@@ -110,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		private IResourceListItem createResListItem(double number, string definition) {
+		internal static IResourceListItem createResListItem(double number, string definition) {
 			//we will try to find what does the 'definition' define
 			//try ItemDef (i_apple)
 			ItemDef idef;

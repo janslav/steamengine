@@ -52,16 +52,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.SetLocation(400, 300);
 
 			//first row - the label of the dialog
-			dialogHandler.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline(label, textColor);
-			dialogHandler.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.Text(label).Hue(textColor).Build();
+			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			//at least three rows of a button height (scrollbar has some demands)
 			dialogHandler.AddTable(new GUTATable(3, 0));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			//unbounded, scrollable html text area
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHTML(dispText, false, true);
+			dialogHandler.LastTable[0, 0] = GUTAHTMLText.Builder.Text(dispText).Scrollable(true).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();

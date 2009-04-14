@@ -22,6 +22,10 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
+	public abstract class Builder<T> where T : LeafGUTAComponent{
+		public abstract T Build();
+	}
+	
 	[Summary("Leaf GUTA components cannot have any children, these are e.g buttons, inputs, texts etc.")]
 	public abstract class LeafGUTAComponent : GUTAComponent {
 		[Summary("This is the ID many gump items have - buttons number, input entries number...")]
@@ -36,12 +40,110 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Factory class for creating buttons according to the given button type. Including special buttons" +
-			" such as Checkbox or Radio Button")]
-	public class ButtonFactory {
-		internal static Dictionary<LeafComponentTypes, ButtonGump> buttonGumps = new Dictionary<LeafComponentTypes, ButtonGump>();
+	[Summary("A staic class holding all necessary button constants")]
+	public static class ButtonMetrics {
+		public const int D_BUTTON_WIDTH = 31;
+		public const int D_BUTTON_HEIGHT = 22;
+		public const int D_CHECKBOX_WIDTH = 19;
+		public const int D_CHECKBOX_HEIGHT = 20;
+		public const int D_RADIO_WIDTH = 21;
+		public const int D_RADIO_HEIGHT = 21;
+		public const int D_BUTTON_PREVNEXT_WIDTH = 16;
+		public const int D_BUTTON_PREVNEXT_HEIGHT = 21;
 
-		static ButtonFactory() {
+		[Summary("Number of pixels to move the button in the line so it is in the middle")]
+		public const int D_SORTBUTTON_LINE_OFFSET = 9;
+		[Summary("Number of pixels to move the text to the right so it is readable next to the sort buttons")]
+		public const int D_SORTBUTTON_COL_OFFSET = 11;
+
+		//not used and not necessary so far...
+		//[Summary("The TiledButton component class - it handles the tiled button writing to the client")]
+		//public class TiledButton : LeafGUTAComponent {
+		//    protected static string stringDescription = "Tiled Button";
+
+		//    private ButtonGump gumps;
+		//    private int page = 0;
+		//    private bool active = true;
+
+		//    private int itemID, hue;
+
+		//    [Summary("Button vertical alignment")]
+		//    protected DialogAlignment valign = DialogAlignment.Valign_Top;
+		//    [Summary("Button horizontal alignment")]
+		//    protected DialogAlignment align = DialogAlignment.Align_Left;
+
+		//    internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, int itemID, int hue, int width, int height) {
+		//        this.id = id;
+		//        this.xPos = xPos;
+		//        this.yPos = yPos;
+		//        this.gumps = gumps;
+		//        this.active = active;
+		//        this.page = page;
+		//        this.valign = valign;
+
+		//        this.itemID = itemID;
+		//        this.width = width;
+		//        this.height = height;
+		//        this.hue = hue;
+		//    }
+
+		//    [Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
+		//    internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height)
+		//        :
+		//        this(id, xPos, yPos, gumps, active, page, valign, (int) itemID, (int) hue, width, height) {
+		//    }
+
+		//    [Summary("When added, we must recompute the TiledButtons absolute position in the dialog (we " +
+		//            " were provided only relative positions")]
+		//    protected override void OnBeforeWrite(GUTAComponent parent) {
+		//        //set the level
+		//        level = parent.Level + 1;
+
+		//        //get the grandparent (GUTARow) (parent is GUTAColumn!)
+		//        GUTARow grandpa = (GUTARow) parent.Parent;
+		//        //set the column row (counted from the relative position and the grandpa's inner-row height)
+		//        columnRow = xPos / grandpa.RowHeight;
+
+		//        int valignOffset = 0;
+		//        switch (valign) {
+		//            case DialogAlignment.Valign_Center:
+		//                valignOffset = grandpa.RowHeight / 2 - height / 2; //moves the button to the middle of the column
+		//                break;
+		//            case DialogAlignment.Valign_Bottom:
+		//                valignOffset = grandpa.RowHeight - height; //moves the button to the bottom
+		//                break;
+		//        }
+		//        //no space here, the used button gumps have themselves some space...
+		//        xPos += parent.XPos;
+		//        yPos += parent.YPos + valignOffset;
+		//    }
+
+		//    [Summary("Simply write the tiled button (send the method request to the underlaying gump)")]
+		//    internal override void WriteComponent() {
+		//        gump.AddTiledButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, page, id, itemID, hue, width, height);
+		//    }
+
+		//    public override string ToString() {
+		//        string linesTabsOffset = "\r\n"; //at least one row
+		//        //add as much rows as is the row which this item lies in
+		//        for (int i = 0; i < columnRow; i++) {
+		//            linesTabsOffset += "\r\n";
+		//        }
+		//        for (int i = 0; i < level; i++) {
+		//            linesTabsOffset += "\t";
+		//        }
+		//        return linesTabsOffset + "->" + stringDescription;
+		//    }
+		//}
+	}
+
+	[Summary("The Button component class - it handles the button writing to the client")]
+	public class GUTAButton : LeafGUTAComponent {
+		protected static string stringDescription = "Button";
+
+		protected static Dictionary<LeafComponentTypes, ButtonGump> buttonGumps = new Dictionary<LeafComponentTypes, ButtonGump>();
+
+		static GUTAButton() {
 			//0fb1, 0fb3 Cross button
 			buttonGumps.Add(LeafComponentTypes.ButtonCross, new ButtonGump(4017, 4019));
 			//0fb7, 0fb9 OK button
@@ -73,21 +175,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			buttonGumps.Add(LeafComponentTypes.RadioButton, new ButtonGump(208, 209));
 		}
 
-		public const int D_BUTTON_WIDTH = 31;
-		public const int D_BUTTON_HEIGHT = 22;
-		public const int D_CHECKBOX_WIDTH = 19;
-		public const int D_CHECKBOX_HEIGHT = 20;
-		public const int D_BUTTON_PREVNEXT_WIDTH = 16;
-		public const int D_BUTTON_PREVNEXT_HEIGHT = 21;
-
-		[Summary("Number of pixels to move the button in the line so it is in the middle")]
-		public const int D_SORTBUTTON_LINE_OFFSET = 9;
-		[Summary("Number of pixels to move the text to the right so it is readable next to the sort buttons")]
-		public const int D_SORTBUTTON_COL_OFFSET = 11;
-
-		[Summary("Flyweight class carrying info about the two button gumps (pressed and released)" +
+		[Summary("Flyweight struct carrying info about the two button gumps (pressed and released)" +
 				"it will be used when building the dialog buttons for storing info about the gumps.")]
-		internal class ButtonGump {
+		protected struct ButtonGump {
 			private int gumpUp, //also unchecked checkbox and unselected radiobutton
 						gumpDown; //also checked checkbox and selected radiobutton
 
@@ -109,983 +199,1086 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Factory method for creating a given type of the button. We have to provide the _relative_" +
-				"x and y position (relative to the parent column) and the button ID, we have to also specify the page " +
-				"opened by this button and whether the button is active or not. Allows specifying the valign")]
-		public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int page, int id, DialogAlignment valign) {
-			return new Button(id, xPos, yPos, buttonGumps[type], active, page, valign);
+		protected ButtonGump gumps;
+		private int page = 0;
+		private bool active = true;
+
+		[Summary("Button vertical alignment")]
+		protected DialogAlignment valign = DialogAlignment.Valign_Top;
+		
+		public static ButtonBuilder Builder {
+			get {
+				return new ButtonBuilder();
+			}
 		}
 
-		[Summary("Basic method - it adds the button automatically to the beginning of the column.")]
-		public static Button CreateButton(LeafComponentTypes type, int id) {
-			return CreateButton(type, 0, 0, true, 0, id, DialogAlignment.Valign_Top);
-		}
+		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class ButtonBuilder : Builder<GUTAButton> {
+			//prepare the default values
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal int id = 0;
+			internal DialogAlignment valign = DialogAlignment.Valign_Top;
+			internal bool active = true;
+			internal int page = 0;
+			internal LeafComponentTypes type = LeafComponentTypes.ButtonTick;
 
-		[Summary("Basic method - it adds the button automatically to the beginning of the column. " +
-				 "Allows specifying the valign")]
-		public static Button CreateButton(LeafComponentTypes type, int id, DialogAlignment valign) {
-			return CreateButton(type, 0, 0, true, 0, id, valign);
-		}
+			internal ButtonBuilder() {
+			}			
 
-		[Summary("Basic method - allows to specify the button position")]
-		public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, int id) {
-			return CreateButton(type, xPos, yPos, true, 0, id, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Basic method - allows to specify the button position adn alignment")]
-		public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, int id, DialogAlignment valign) {
-			return CreateButton(type, xPos, yPos, true, 0, id, valign);
-		}
-
-		[Summary("Basic method - allows to specify the button position and activity")]
-		public static Button CreateButton(LeafComponentTypes type, int xPos, int yPos, bool active, int id) {
-			return CreateButton(type, xPos, yPos, active, 0, id, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Basic method - it adds the button automatically to the beginning of the column" +
-				"allows us to specify if the button is active or not")]
-		public static Button CreateButton(LeafComponentTypes type, bool active, int id) {
-			return CreateButton(type, 0, 0, active, 0, id, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Basic method - it adds the button automatically to the beginning of the column" +
-				"allows us to specify if the button is active or not and the page opened")]
-		public static Button CreateButton(LeafComponentTypes type, bool active, int page, int id) {
-			return CreateButton(type, 0, 0, active, page, id, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Factory method for creating a given type of the tiled button. We have to provide the _relative_" +
-				"x and y position (relative to the parent column) and the button ID, we have to also specify the page " +
-				"opened by this button and whether the button is active or not. Allows specifying the valign." +
-				"FOr the tiled buton we also provide the item ID, its width, height and also the hue")]
-		public static TiledButton CreateTiledButton(LeafComponentTypes type, int xPos, int yPos, bool active, int page, int id, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height) {
-			return new TiledButton(id, xPos, yPos, buttonGumps[type], active, page, valign, itemID, hue, width, height);
-		}
-
-		[Summary("Factory method for creating a given type of the tiled button. We have to provide the _relative_" +
-				"x and y position (relative to the parent column) and the button ID, item ID and its hue, width and height")]
-		public static TiledButton CreateTiledButton(LeafComponentTypes type, int xPos, int yPos, int id, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height) {
-			return CreateTiledButton(type, xPos, yPos, true, 0, id, valign, itemID, hue, width, height);
-		}
-
-		[Summary("Factory method for creating a given type of the tiled button. We have to provide the _relative_" +
-				"x and y position (relative to the parent column) and the button ID. Also the item ID and its width and height")]
-		public static TiledButton CreateTiledButton(LeafComponentTypes type, int xPos, int yPos, int id, GumpIDs itemID, int width, int height) {
-			return CreateTiledButton(type, xPos, yPos, true, 0, id, DialogAlignment.Valign_Bottom, itemID, Hues.WriteColor, width, height);
-		}
-
-		[Summary("Factory method for creating a given type of the tiled button. We have to provide the button ID. Also the item ID and its width and height")]
-		public static TiledButton CreateTiledButton(LeafComponentTypes type, int id, GumpIDs itemID, int width, int height) {
-			return CreateTiledButton(type, 0, 0, true, 0, id, DialogAlignment.Valign_Bottom, itemID, Hues.WriteColor, width, height);
-		}
-
-		[Summary("Create a checkbox using the _relative_ position in the column, the check/unchecked flag" +
-				"and the id")]
-		public static CheckBox CreateCheckbox(int xPos, int yPos, bool isChecked, int id, DialogAlignment align, DialogAlignment valign) {
-			return new CheckBox(xPos, yPos, buttonGumps[LeafComponentTypes.CheckBox], isChecked, id, align, valign);
-		}
-
-		[Summary("Create simply the checkbox with the alignment")]
-		public static CheckBox CreateCheckbox(bool isChecked, int id, DialogAlignment align, DialogAlignment valign) {
-			return CreateCheckbox(0, 0, isChecked, id, align, valign);
-		}
-
-		[Summary("Create checkbox using the 1 or 0 as a marker if the checkbox is checked or not")]
-		public static CheckBox CreateCheckbox(int xPos, int yPos, int isChecked, int id) {
-			return CreateCheckbox(xPos, yPos, isChecked == 1 ? true : false, id, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Create a radio button using the _relative_ position in the column, the check/unchecked flag" +
-				"and the id")]
-		public static RadioButton CreateRadio(int xPos, int yPos, bool isChecked, int id, DialogAlignment valign) {
-			return new RadioButton(xPos, yPos, buttonGumps[LeafComponentTypes.RadioButton], isChecked, id, valign);
-		}
-
-		[Summary("Create radio button using the 1 or 0 as a marker if the checkbox is checked or not")]
-		public static RadioButton CreateRadio(int xPos, int yPos, int isChecked, int id) {
-			return CreateRadio(xPos, yPos, isChecked == 1 ? true : false, id, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("The Button component class - it handles the button writing to the client")]
-		public class Button : LeafGUTAComponent {
-			protected static string stringDescription = "Button";
-
-			private ButtonGump gumps;
-			private int page = 0;
-			private bool active = true;
-
-			[Summary("Button vertical alignment")]
-			protected DialogAlignment valign = DialogAlignment.Valign_Top;
-			[Summary("Button horizontal alignment")]
-			protected DialogAlignment align = DialogAlignment.Align_Left;
-
-			[Summary("This constructor is here only for the buttons children classes")]
-			internal Button() {
+			[Summary("Set the button's relative X position")]
+			public ButtonBuilder XPos(int val) {
+				xPos = val;
+				return this;
 			}
 
-			[Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
-			internal Button(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign) {
-				this.id = id;
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.gumps = gumps;
-				this.active = active;
-				this.page = page;
-				this.valign = valign;
+			[Summary("Set the button's relative Y position")]
+			public ButtonBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
+			
+			[Summary("Set the button's ID")]
+			public ButtonBuilder Id(int val) {
+				id = val;
+				return this;
 			}
 
-			[Summary("When added, we must recompute the Buttons absolute position in the dialog (we " +
-					" were provided only relative positions")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
+			[Summary("Set the button's state (active = clickable)")]
+			public ButtonBuilder Active(bool val) {
+				active = val;
+				return this;
+			}
 
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
+			[Summary("Set the button's referenced page")]
+			public ButtonBuilder Page(int val) {
+				page = val;
+				return this;
+			}
 
-				int valignOffset = 0;
-				switch (valign) {
-					case DialogAlignment.Valign_Center:
-						valignOffset = grandpa.RowHeight / 2 - ButtonFactory.D_BUTTON_HEIGHT / 2; //moves the button to the middle of the column
+			[Summary("Set the button's up and down graphics (using enumeration of types)")]
+			public ButtonBuilder Type(LeafComponentTypes val) {
+				type = val;
+				return this;
+			}
+			
+			[Summary("Set the button's vertical algiment")]
+			public ButtonBuilder Valign(DialogAlignment val) {
+				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAButton field: " + val.ToString()));
+				}
+				valign = val;
+				return this;
+			}
+
+			[Summary("Create the GUTAButton instance")]
+			public override GUTAButton Build() {
+				GUTAButton retVal = new GUTAButton(this);
+				return retVal;
+			}
+		}
+
+		protected GUTAButton() {
+			//constructor for children
+		}
+
+		private GUTAButton(ButtonBuilder builder) {
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.id = builder.id;
+			this.gumps = buttonGumps[builder.type];
+			this.active = builder.active;
+			this.page = builder.page;
+			this.valign = builder.valign;
+		}
+
+		[Summary("When added, we must recompute the Buttons absolute position in the dialog (we " +
+				" were provided only relative positions")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			int valignOffset = 0;
+			switch (valign) {
+				case DialogAlignment.Valign_Center:
+					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_BUTTON_HEIGHT / 2; //moves the button to the middle of the column
+					break;
+				case DialogAlignment.Valign_Bottom:
+					valignOffset = grandpa.RowHeight - ButtonMetrics.D_BUTTON_HEIGHT; //moves the button to the bottom
+					break;
+			}
+			//no space here, the used button gumps have themselves some space...
+			xPos += parent.XPos;
+			yPos += parent.YPos + valignOffset;
+		}
+
+		[Summary("Simply write the button (send the method request to the underlaying gump)")]
+		internal override void WriteComponent() {
+			gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
+		}
+
+		public override string ToString() {
+			string linesTabsOffset = "\r\n"; //at least one row
+			//add as much rows as is the row which this item lies in
+			for (int i = 0; i < columnRow; i++) {
+				linesTabsOffset += "\r\n";
+			}
+			for (int i = 0; i < level; i++) {
+				linesTabsOffset += "\t";
+			}
+			return linesTabsOffset + "->" + stringDescription;
+		}
+	}
+
+	[Summary("Create a nice small checkbox")]
+	public class GUTACheckBox : GUTAButton {
+		protected new static string stringDescription = "CheckBox";
+
+		private bool isChecked;
+		[Summary("Checkbox's horizontal alignment")]
+		private DialogAlignment align = DialogAlignment.Align_Center;
+
+		public new static CheckBoxBuilder Builder {
+			get {
+				return new CheckBoxBuilder();
+			}
+		}
+
+		[Summary("Builder class for the Checkbox LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class CheckBoxBuilder : Builder<GUTACheckBox> {
+			//prepare the default values
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal int id = 0;
+			internal DialogAlignment valign = DialogAlignment.Valign_Center;
+			internal DialogAlignment align = DialogAlignment.Align_Center;
+			internal bool isChecked = false;
+			internal LeafComponentTypes type = LeafComponentTypes.CheckBox;
+
+			internal CheckBoxBuilder() {
+			}
+
+			[Summary("Set the checkbox's relative X position")]
+			public CheckBoxBuilder XPos(int val) {
+				xPos = val;
+				return this;
+			}
+
+			[Summary("Set the checkbox's relative Y position")]
+			public CheckBoxBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
+
+			[Summary("Set the checkbox's ID")]
+			public CheckBoxBuilder Id(int val) {
+				id = val;
+				return this;
+			}
+
+			[Summary("Set the checkbox's state (checked/unchecked)")]
+			public CheckBoxBuilder Checked(bool val) {
+				isChecked = val;
+				return this;
+			}
+
+			[Summary("Set the checkbox's up and down graphics (using enumeration of types)")]
+			public CheckBoxBuilder Type(LeafComponentTypes val) {
+				type = val;
+				return this;
+			}
+			
+			[Summary("Set the checkbox's vertical algiment")]
+			public CheckBoxBuilder Valign(DialogAlignment val) {
+				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
+					throw new SEException(LogStr.Error("Wrong valign used for GUTACheckBox field: " + val.ToString()));
+				}
+				valign = val;
+				return this;
+			}
+
+			[Summary("Set the checkbox's horizontal algiment")]
+			public CheckBoxBuilder Align(DialogAlignment val) {
+				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
+					throw new SEException(LogStr.Error("Wrong align used for GUTACheckBox field: " + val.ToString()));
+				}
+				align = val;
+				return this;
+			}
+
+			[Summary("Create the GUTACheckBox instance")]
+			public override GUTACheckBox Build() {
+				GUTACheckBox retVal = new GUTACheckBox(this);
+				return retVal;
+			}
+		}
+
+		private GUTACheckBox(CheckBoxBuilder builder) {
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.gumps = buttonGumps[builder.type];
+			this.isChecked = builder.isChecked;
+			this.id = builder.id;
+			this.valign = builder.valign;
+			this.align = builder.align;
+		}
+
+		[Summary("When added, we must recompute the Checkbox's absolute position in the dialog (we " +
+				" were provided only relative positions")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			int valignOffset = 0;
+			int alignOffset = 0;
+			
+			switch (valign) {
+				case DialogAlignment.Valign_Center:
+					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_CHECKBOX_HEIGHT / 2 + 1; //moves the button to the middle of the column
+					break;
+				case DialogAlignment.Valign_Bottom:
+					valignOffset = grandpa.RowHeight - ButtonMetrics.D_CHECKBOX_HEIGHT; //moves the button to the bottom
+					break;
+			}
+			int parentWidth = parent.Width;
+			switch (align) {
+				case DialogAlignment.Align_Center:
+					alignOffset = parentWidth / 2 - ButtonMetrics.D_CHECKBOX_WIDTH / 2; //moves the text to the middle of the column
+					break;
+				case DialogAlignment.Align_Right:
+					alignOffset = parentWidth - ButtonMetrics.D_CHECKBOX_WIDTH;
+					break;
+			}
+			//no space here, the used button gumps have themselves some space...
+			xPos += parent.XPos + alignOffset;
+			yPos += parent.YPos + valignOffset;
+		}
+
+		[Summary("Simply call the gumps method for writing the checkbox")]
+		internal override void WriteComponent() {
+			//unchecked!!!,    checked !!!
+			gump.AddCheckBox(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
+		}
+	}
+
+	[Summary("A class representing the radio button")]
+	public class GUTARadioButton : GUTAButton {
+		protected new static string stringDescription = "Radio";
+
+		[Summary("Radiobutton's horizontal alignment")]
+		private DialogAlignment align = DialogAlignment.Align_Center;
+		private bool isChecked;
+
+		public new static RadioBuilder Builder {
+			get {
+				return new RadioBuilder();
+			}
+		}
+
+		[Summary("Builder class for the Radiobutton LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class RadioBuilder : Builder<GUTARadioButton> {
+			//prepare the default values
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal int id = 0;
+			internal DialogAlignment valign = DialogAlignment.Valign_Center;
+			internal DialogAlignment align = DialogAlignment.Align_Center;
+			internal bool isChecked = false;
+			internal LeafComponentTypes type = LeafComponentTypes.RadioButton;
+
+			internal RadioBuilder() {
+			}
+
+			[Summary("Set the radiobutton's relative X position")]
+			public RadioBuilder XPos(int val) {
+				xPos = val;
+				return this;
+			}
+
+			[Summary("Set the radiobutton's relative Y position")]
+			public RadioBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
+
+			[Summary("Set the radiobutton's ID")]
+			public RadioBuilder Id(int val) {
+				id = val;
+				return this;
+			}
+
+			[Summary("Set the radiobutton's state (checked/unchecked)")]
+			public RadioBuilder Checked(bool val) {
+				isChecked = val;
+				return this;
+			}
+
+			[Summary("Set the radiobutton's checked/unchecked graphics (using enumeration of types)")]
+			public RadioBuilder Type(LeafComponentTypes val) {
+				type = val;
+				return this;
+			}
+
+			[Summary("Set the radiobutton's vertical algiment")]
+			public RadioBuilder Valign(DialogAlignment val) {
+				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
+					throw new SEException(LogStr.Error("Wrong valign used for GUTARadioButton field: " + val.ToString()));
+				}
+				valign = val;
+				return this;
+			}
+
+			[Summary("Set the radiobutton's horizontal algiment")]
+			public RadioBuilder Align(DialogAlignment val) {
+				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
+					throw new SEException(LogStr.Error("Wrong align used for GUTARadioButton field: " + val.ToString()));
+				}
+				align = val;
+				return this;
+			}
+
+			[Summary("Create the GUTARadioButton instance")]
+			public override GUTARadioButton Build() {
+				GUTARadioButton retVal = new GUTARadioButton(this);
+				return retVal;
+			}
+		}
+
+		private GUTARadioButton(RadioBuilder builder) {
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.gumps = buttonGumps[builder.type];
+			this.isChecked = builder.isChecked;
+			this.id = builder.id;
+			this.valign = builder.valign;
+			this.align = builder.align;
+		}
+
+		[Summary("When added, we must recompute the Radiobutton's absolute position in the dialog (we " +
+				" were provided only relative positions")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			int valignOffset = 0;
+			int alignOffset = 0;
+
+			switch (valign) {
+				case DialogAlignment.Valign_Center:
+					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_RADIO_HEIGHT / 2 + 1; //moves the button to the middle of the column
+					break;
+				case DialogAlignment.Valign_Bottom:
+					valignOffset = grandpa.RowHeight - ButtonMetrics.D_RADIO_HEIGHT; //moves the button to the bottom
+					break;
+			}
+			int parentWidth = parent.Width;
+			switch (align) {
+				case DialogAlignment.Align_Center:
+					alignOffset = parentWidth / 2 - ButtonMetrics.D_RADIO_WIDTH / 2; //moves the text to the middle of the column
+					break;
+				case DialogAlignment.Align_Right:
+					alignOffset = parentWidth - ButtonMetrics.D_RADIO_WIDTH;
+					break;
+			}
+			//no space here, the used button gumps have themselves some space...
+			xPos += parent.XPos + alignOffset;
+			yPos += parent.YPos + valignOffset;
+		}
+
+		[Summary("Simply call the gumps method for writing the radiobutton")]
+		internal override void WriteComponent() {
+			//unselected!!!, selected!!!
+			gump.AddRadio(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
+		}
+	}
+
+	[Summary("The Button component class - it handles the button writing to the client")]
+	public class GUTAInput : LeafGUTAComponent {
+		private LeafComponentTypes type;
+		[Summary("We have either ID of the used (pre-)text, or the text string itself")]
+		private int textId;
+		private string text;
+		[Summary("The text hue in the input field - if not specified, the default will be used.")]
+		private int textHue;
+
+		[Summary("Input field vertical alignment")]
+		protected DialogAlignment valign = DialogAlignment.Valign_Top;
+		[Summary("Input field horizontal alignment")]
+		protected DialogAlignment align = DialogAlignment.Align_Left;
+
+		public static InputBuilder Builder {
+			get {
+				return new InputBuilder();
+			}
+		}
+
+		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class InputBuilder : Builder<GUTAInput> {
+			//prepare the default values
+			internal LeafComponentTypes type = LeafComponentTypes.InputText;
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal int width = 0;
+			internal int id = 100; //some default ID (it will be usually specified as it is necessary for Response implementation...)
+			internal int height = ButtonMetrics.D_BUTTON_HEIGHT; //default height is to fit to the rows with buttons (majority of rows use this)
+			internal int hue = (int) Hues.WriteColor;
+			internal DialogAlignment align = DialogAlignment.Align_Left;
+			internal DialogAlignment valign = DialogAlignment.Valign_Bottom;
+			internal string text = "";
+			internal int textId = 0;
+
+			internal InputBuilder() {
+			}			
+
+			[Summary("Set the input field's relative X position")]
+			public InputBuilder XPos(int val) {
+				xPos = val;
+				return this;
+			}
+
+			[Summary("Set the input field's relative Y position")]
+			public InputBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
+
+			[Summary("Set the input field's ID for inside-Response recognition")]
+			public InputBuilder Id(int val) {
+				id = val;
+				return this;
+			}
+
+			[Summary("Set the input field's width")]
+			public InputBuilder Width(int val) {
+				width = val;
+				return this;
+			}
+
+			[Summary("Set the input field's height")]
+			public InputBuilder Height(int val) {
+				height = val;
+				return this;
+			}
+
+			[Summary("Set the input type")]
+			public InputBuilder Type(LeafComponentTypes val) {
+				type = val;
+				return this;
+			}
+
+			[Summary("Set the input field's text hue")]
+			public InputBuilder Hue(int val) {
+				hue = val;
+				return this;
+			}
+
+			[Summary("Set the input field's text hue usign enum")]
+			public InputBuilder Hue(Hues val) {
+				hue = (int) val;
+				return this;
+			}
+
+			[Summary("Set the input field's value")]
+			public InputBuilder Text(string val) {
+				text = val;
+				return this;
+			}
+
+			[Summary("Set the input field's text id (for prepared texts)")]
+			public InputBuilder TextId(int val) {
+				textId = val;
+				return this;
+			}
+
+			[Summary("Set the input field's text's horizontal algiment")]
+			public InputBuilder Align(DialogAlignment val) {
+				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
+					throw new SEException(LogStr.Error("Wrong align used for GUTAInput field: " + val.ToString()));
+				}
+				align = val;
+				return this;
+			}
+
+			[Summary("Set the input field's text's vertical algiment")]
+			public InputBuilder Valign(DialogAlignment val) {
+				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAInput field: " + val.ToString()));
+				}
+				valign = val;
+				return this;
+			}
+
+			[Summary("Create the GUTAInput instance")]
+			public override GUTAInput Build() {
+				GUTAInput retVal = new GUTAInput(this);
+				return retVal;
+			}
+		}
+
+		private GUTAInput(InputBuilder builder) {
+			this.type = builder.type;
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.id = builder.id;
+			this.width = builder.width;
+			this.height = builder.height;
+			this.textHue = builder.hue;
+			this.align = builder.align;
+			this.valign = builder.valign;
+			this.text = builder.text;
+			this.textId = builder.textId;
+		}
+
+		[Summary("When added, we must recompute the Input Field's absolute position in the dialog (we " +
+				" were provided only relative positions")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			xPos += parent.XPos;
+			yPos += parent.YPos;
+			if (width == 0) {
+				//no width - get it from the parent
+				width = parent.Width;
+				width -= ImprovedDialog.D_COL_SPACE; //put it between the borders of the column with a little spaces
+				//substract also the space from the xPos adjustment of this field (it can be shorter to fit to the column)
+				//this makes  sense, if the input field is not at the beginning pos. of the column... - it will shorten it 
+				//of the space it is indented from the left border
+				width -= (xPos - parent.XPos);
+			}
+
+			int valignOffset = 0;
+			int alignOffset = 0;
+			switch (valign) {
+				case DialogAlignment.Valign_Center:
+					valignOffset = grandpa.RowHeight / 2 - height / 2 + 1; //moves the field to the middle of the column
+					break;
+				case DialogAlignment.Valign_Bottom:
+					valignOffset = grandpa.RowHeight - height + 1; //moves the field to the bottom
+					break;
+			}
+			int parentWidth = parent.Width;
+			switch (align) {
+				case DialogAlignment.Align_Center:
+					alignOffset = parentWidth / 2 - width / 2; //moves the field to the middle of the column
+					break;
+				case DialogAlignment.Align_Right:
+					alignOffset = parentWidth - width;
+					break;
+			}
+			xPos += alignOffset;
+			yPos += valignOffset;
+		}
+
+		[Summary("Simply write the input (send the method request to the underlaying gump)" +
+				" it will determine also what parameters to send")]
+		internal override void WriteComponent() {
+			//first of all add a different background
+			gump.AddGumpPicTiled(xPos, yPos, width, height, ImprovedDialog.D_DEFAULT_INPUT_BACKGROUND);
+			//and make it immediately transparent
+			gump.AddCheckerTrans(xPos, yPos, width, height);
+			switch (type) {
+				case LeafComponentTypes.InputText: {
+						if (textId == 0) {//no text ID was specified, use the text version
+							gump.AddTextEntry(xPos, yPos, width, height, textHue, id, text);
+						} else {
+							gump.AddTextEntry(xPos, yPos, width, height, textHue, id, textId);
+						}
 						break;
-					case DialogAlignment.Valign_Bottom:
-						valignOffset = grandpa.RowHeight - ButtonFactory.D_BUTTON_HEIGHT; //moves the button to the bottom
+					}
+				case LeafComponentTypes.InputNumber: {
+						if (textId == 0) {//no text ID was specified, use the text version (but send it as double!)
+							//if the text is empty (the input field will be empty), then display zero
+							double textToDisp = text.Equals("") ? default(double) : double.Parse(text);
+							gump.AddNumberEntry(xPos, yPos, width, height, textHue, id, textToDisp);
+						} else {
+							gump.AddNumberEntry(xPos, yPos, width, height, textHue, id, textId);
+						}
 						break;
-				}
-				//no space here, the used button gumps have themselves some space...
-				xPos += parent.XPos;
-				yPos += parent.YPos + valignOffset;
-			}
-
-			[Summary("Simply write the button (send the method request to the underlaying gump)")]
-			internal override void WriteComponent() {
-				gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
-			}
-
-			public override string ToString() {
-				string linesTabsOffset = "\r\n"; //at least one row
-				//add as much rows as is the row which this item lies in
-				for (int i = 0; i < columnRow; i++) {
-					linesTabsOffset += "\r\n";
-				}
-				for (int i = 0; i < level; i++) {
-					linesTabsOffset += "\t";
-				}
-				return linesTabsOffset + "->" + stringDescription;
+					}
 			}
 		}
 
-		[Summary("The TiledButton component class - it handles the tiled button writing to the client")]
-		public class TiledButton : LeafGUTAComponent {
-			protected static string stringDescription = "Tiled Button";
-
-			private ButtonGump gumps;
-			private int page = 0;
-			private bool active = true;
-
-			private int itemID, hue;
-
-			[Summary("Button vertical alignment")]
-			protected DialogAlignment valign = DialogAlignment.Valign_Top;
-			[Summary("Button horizontal alignment")]
-			protected DialogAlignment align = DialogAlignment.Align_Left;
-
-			internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, int itemID, int hue, int width, int height) {
-				this.id = id;
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.gumps = gumps;
-				this.active = active;
-				this.page = page;
-				this.valign = valign;
-
-				this.itemID = itemID;
-				this.width = width;
-				this.height = height;
-				this.hue = hue;
+		public override string ToString() {
+			string linesTabsOffset = "\r\n";
+			//add as much rows as is the row which this item lies in
+			for (int i = 0; i < columnRow; i++) {
+				linesTabsOffset += "\r\n";
 			}
-
-			[Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
-			internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height)
-				:
-				this(id, xPos, yPos, gumps, active, page, valign, (int) itemID, (int) hue, width, height) {
+			for (int i = 0; i < level; i++) {
+				linesTabsOffset += "\t";
 			}
+			return linesTabsOffset + "->Input";
+		}
+	}
 
-			[Summary("When added, we must recompute the TiledButtons absolute position in the dialog (we " +
-					" were provided only relative positions")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
+	[Summary("The text component class - it handles the text writing to the underlaying gump")]
+	public class GUTAText : LeafGUTAComponent {
+		[Summary("The text hue in the input field - if not specified, the default will be used.")]
+		private int textHue;
+		[Summary("We have either ID of the used text, or the text string itself")]
+		private int textId;
+		private string text;
 
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
+		[Summary("Text horizontal alignment")]
+		private DialogAlignment align;
+		[Summary("Text vertical alignment")]
+		private DialogAlignment valign;
 
-				int valignOffset = 0;
-				switch (valign) {
-					case DialogAlignment.Valign_Center:
-						valignOffset = grandpa.RowHeight / 2 - height / 2; //moves the button to the middle of the column
-						break;
-					case DialogAlignment.Valign_Bottom:
-						valignOffset = grandpa.RowHeight - height; //moves the button to the bottom
-						break;
-				}
-				//no space here, the used button gumps have themselves some space...
-				xPos += parent.XPos;
-				yPos += parent.YPos + valignOffset;
-			}
-
-			[Summary("Simply write the tiled button (send the method request to the underlaying gump)")]
-			internal override void WriteComponent() {
-				gump.AddTiledButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, page, id, itemID, hue, width, height);
-			}
-
-			public override string ToString() {
-				string linesTabsOffset = "\r\n"; //at least one row
-				//add as much rows as is the row which this item lies in
-				for (int i = 0; i < columnRow; i++) {
-					linesTabsOffset += "\r\n";
-				}
-				for (int i = 0; i < level; i++) {
-					linesTabsOffset += "\t";
-				}
-				return linesTabsOffset + "->" + stringDescription;
+		public static TextBuilder Builder {
+			get {
+				return new TextBuilder();
 			}
 		}
 
-		[Summary("Create a nice small checkbox")]
-		public class CheckBox : Button {
-			protected new static string stringDescription = "CheckBox";
+		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class TextBuilder : Builder<GUTAText> {
+			//prepare the default values
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal int hue = (int) Hues.WriteColor;
+			internal DialogAlignment align = DialogAlignment.Align_Left;
+			internal DialogAlignment valign = DialogAlignment.Valign_Top;
+			internal string text = "";
+			internal int textId = 0;
 
-			private ButtonGump gumps;
-			private bool isChecked;
+			internal TextBuilder() {
+			}			
 
-			[Summary("Creates a checkbox with the given format")]
-			internal CheckBox(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id, DialogAlignment align, DialogAlignment valign) {
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.gumps = gumps;
-				this.isChecked = isChecked;
-				this.id = id;
-				this.valign = valign;
-				this.align = align;
+			[Summary("Set the text's relative X position")]
+			public TextBuilder XPos(int val) {
+				xPos = val;
+				return this;
 			}
 
-			[Summary("When added, we must recompute the Checkbox's absolute position in the dialog (we " +
-					" were provided only relative positions")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
+			[Summary("Set the text's relative Y position")]
+			public TextBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
 
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
+			[Summary("Set the text's hue")]
+			public TextBuilder Hue(int val) {
+				hue = val;
+				return this;
+			}
 
-				int valignOffset = 0;
-				int alignOffset = 0;
-				
-				switch (valign) {
-					case DialogAlignment.Valign_Center:
-						valignOffset = grandpa.RowHeight / 2 - ButtonFactory.D_CHECKBOX_HEIGHT / 2 + 1; //moves the button to the middle of the column
-						break;
-					case DialogAlignment.Valign_Bottom:
-						valignOffset = grandpa.RowHeight - ButtonFactory.D_CHECKBOX_HEIGHT; //moves the button to the bottom
-						break;
+			[Summary("Set the text's hue usign enum")]
+			public TextBuilder Hue(Hues val) {
+				hue = (int) val;
+				return this;
+			}
+
+			[Summary("Create the text as label (set the hue also)")]
+			public TextBuilder TextLabel(string val) {
+				text = val;
+				hue = (int) Hues.LabelColor;
+				return this;
+			}
+
+			[Summary("Create the text as headline (set the hue also)")]
+			public TextBuilder TextHeadline(string val) {
+				text = val;
+				hue = (int) Hues.HeadlineColor;
+				return this;
+			}
+
+			[Summary("Set the text value")]
+			public TextBuilder Text(string val) {
+				text = val;
+				return this;
+			}
+
+			[Summary("Set the text id (for prepared texts)")]
+			public TextBuilder TextId(int val) {
+				textId = val;
+				return this;
+			}
+
+			[Summary("Set the text's horizontal algiment")]
+			public TextBuilder Align(DialogAlignment val) {
+				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
+					throw new SEException(LogStr.Error("Wrong align used for GUTAText field: " + val.ToString()));
 				}
+				align = val;
+				return this;
+			}
+
+			[Summary("Set the text's vertical algiment")]
+			public TextBuilder Valign(DialogAlignment val) {
+				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAText field: " + val.ToString()));
+				}
+				valign = val;
+				return this;
+			}
+
+			[Summary("Create the GUTAText instance")]
+			public override GUTAText Build() {
+				GUTAText retVal = new GUTAText(this);
+				return retVal;
+			}
+		}
+
+		private GUTAText(TextBuilder builder) {
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.textHue = builder.hue;
+			this.align = builder.align;
+			this.valign = builder.valign;
+			this.text = builder.text;
+			this.textId = builder.textId;
+		}
+
+		[Summary("When added to the column we have to specify the position (count the absolute)")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			int alignOffset = 0;
+			int valignOffset = 0;
+			if (text != null) { //we are not using the ID of the text, we can do some alignment computings if necessary
 				int parentWidth = parent.Width;
+				int textWidth = ImprovedDialog.TextLength(text);
 				switch (align) {
 					case DialogAlignment.Align_Center:
-						alignOffset = parentWidth / 2 - ButtonFactory.D_CHECKBOX_WIDTH / 2; //moves the text to the middle of the column
+						alignOffset = parentWidth / 2 - textWidth / 2; //moves the text to the middle of the column
 						break;
 					case DialogAlignment.Align_Right:
-						alignOffset = parentWidth - ButtonFactory.D_CHECKBOX_WIDTH;
-						break;
-				}
-				//no space here, the used button gumps have themselves some space...
-				xPos += parent.XPos + alignOffset;
-				yPos += parent.YPos + valignOffset;
-			}
-
-			[Summary("Simply call the gumps method for writing the checkbox")]
-			internal override void WriteComponent() {
-				//unchecked!!!,    checked !!!
-				gump.AddCheckBox(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
-			}
-		}
-
-		[Summary("A class representing the radio button")]
-		public class RadioButton : Button {
-			protected new static string stringDescription = "Radio";
-
-			private ButtonGump gumps;
-			private bool isChecked;
-
-			[Summary("Creates a radio button")]
-			internal RadioButton(int xPos, int yPos, ButtonGump gumps, bool isChecked, int id, DialogAlignment valign) {
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.gumps = gumps;
-				this.isChecked = isChecked;
-				this.id = id;
-				this.valign = valign;
-			}
-
-			[Summary("Simply call the gumps method for writing the radiobutton")]
-			internal override void WriteComponent() {
-				//unselected!!!, selected!!!
-				gump.AddRadio(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
-			}
-		}
-	}
-
-	[Summary("InputFactory creates different type of input fields (basicly TEXT or NUMBER)")]
-	public class InputFactory {
-		[Summary("Position from the parent, no pre-text specified, default color")]
-		public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height) {
-			return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, "");
-		}
-
-		[Summary("Position and width from the parent, no pre-text specified, default color ")]
-		public static Input CreateInput(LeafComponentTypes type, int id) {
-			return new Input(type, 0, 0, id, 0, 0, Hues.WriteColor, "");
-		}
-
-		[Summary("Position and width from the parent, default color but the pre-text is specified here")]
-		public static Input CreateInput(LeafComponentTypes type, int id, string text) {
-			return new Input(type, 0, 0, id, 0, 0, Hues.WriteColor, text);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, the entry ID, pixel and " +
-				"character width and optionally the text hue and the text itself " +
-				"the position will be determined from the parent")]
-		public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height, Hues textHue, string text) {
-			return new Input(type, 0, 0, id, pixelWidth, height, textHue, text);
-		}
-
-		[Summary("Position will be determined from the parent, the color will be default")]
-		public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height, string text) {
-			return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, text);
-		}
-
-		[Summary("Position will be determined from the parent, the color will be default, the text may be only the specified Id")]
-		public static Input CreateInput(LeafComponentTypes type, int id, int pixelWidth, int height, int textId) {
-			return new Input(type, 0, 0, id, pixelWidth, height, Hues.WriteColor, textId);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width, height and color here !")]
-		public static Input CreateInput(LeafComponentTypes type, Hues textHue, string text, int xPos, int yPos, int id) {
-			return new Input(type, xPos, yPos, id, 0, 0, textHue, text);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the x and y pos but we neednt specify the width and height here !")]
-		public static Input CreateInput(LeafComponentTypes type, string text, int xPos, int yPos, int id) {
-			return new Input(type, xPos, yPos, id, 0, 0, Hues.WriteColor, text);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide " +
-				" the relative positions, the entry ID, pixel and chracter width and optionally the text hue and the text itself")]
-		public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, Hues textHue, string text) {
-			return new Input(type, xPos, yPos, id, pixelWidth, height, textHue, text);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide " +
-				" the relative positions, the entry ID, pixel and chracter width and optionally the text hue and the textId")]
-		public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, Hues textHue, int textId) {
-			return new Input(type, xPos, yPos, id, pixelWidth, height, textHue, textId);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide " +
-				" the relative positions, the entry ID, pixel and chracter width.")]
-		public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height) {
-			return InputFactory.CreateInput(type, xPos, yPos, id, pixelWidth, height, Hues.WriteColor, "");
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide " +
-				" the relative positions, the entry ID, pixel and chracter width, the pre-text.")]
-		public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, string text) {
-			return InputFactory.CreateInput(type, xPos, yPos, id, pixelWidth, height, Hues.WriteColor, text);
-		}
-
-		[Summary("Factory method for creating a given type fo the button. We have to specify the button type, provide " +
-				" the relative positions, the entry ID, pixel and chracter width, the pre-text id.")]
-		public static Input CreateInput(LeafComponentTypes type, int xPos, int yPos, int id, int pixelWidth, int height, int textId) {
-			return InputFactory.CreateInput(type, xPos, yPos, id, pixelWidth, height, Hues.WriteColor, textId);
-		}
-
-		[Summary("The Button component class - it handles the button writing to the client")]
-		public class Input : LeafGUTAComponent {
-			private LeafComponentTypes type;
-			[Summary("We have either ID of the used (pre-)text, or the text string itself")]
-			private int textId;
-			private string text;
-			[Summary("The text hue in the input field - if not specified, the default will be used.")]
-			private Hues textHue;
-
-			[Summary("First complete constructor - awaits the necessary things and the pre-text in the string form")]
-			internal Input(LeafComponentTypes type, int xPos, int yPos, int id, int widthPix, int height, Hues textHue, string text) {
-				this.id = id;
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.type = type;
-				this.width = widthPix;
-				this.height = height;
-				this.textHue = textHue;
-				this.text = text;
-			}
-
-			[Summary("Second complete constructor - awaits the necessary things and the pre-text as the string id")]
-			internal Input(LeafComponentTypes type, int xPos, int yPos, int id, int widthPix, int height, Hues textHue, int textId) {
-				this.id = id;
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.type = type;
-				this.width = widthPix;
-				this.height = height;
-				this.textHue = textHue;
-				this.textId = textId;
-			}
-
-			[Summary("When added, we must recompute the Input Field's absolute position in the dialog (we " +
-					" were provided only relative positions")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
-
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
-
-				//				//set the column row (counted from the relative position
-				//				columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
-
-				xPos += parent.XPos;
-				yPos += parent.YPos;
-				if (width == 0) {
-					//no width - get it from the parent
-					width = parent.Width;
-					width -= ImprovedDialog.D_COL_SPACE; //put it between the borders of the column with a little spaces
-					//substract also the space from the xPos adjustment of this field (it can be shorter to fit to the column)
-					//this makes  sense, if the input field is not at the beginning pos. of the column... - it will shorten it 
-					//of the space it is indented from the left border
-					width -= (xPos - parent.XPos);
-				}
-				if (height == 0) {
-					//no height specified, give it the default one row height (which is the height of the buttons)
-					height = ButtonFactory.D_BUTTON_HEIGHT;
-				}
-			}
-
-			[Summary("Simply write the input (send the method request to the underlaying gump)" +
-					" it will determine also what parameters to send")]
-			internal override void WriteComponent() {
-				//first of all add a different background
-				gump.AddGumpPicTiled(xPos, yPos, width, height, ImprovedDialog.D_DEFAULT_INPUT_BACKGROUND);
-				//and make it immediately transparent
-				gump.AddCheckerTrans(xPos, yPos, width, height);
-				switch (type) {
-					case LeafComponentTypes.InputText: {
-							if (textId == 0) {//no text ID was specified, use the text version
-								gump.AddTextEntry(xPos, yPos, width, height, (int) textHue, id, text);
-							} else {
-								gump.AddTextEntry(xPos, yPos, width, height, (int) textHue, id, textId);
-							}
-							break;
-						}
-					case LeafComponentTypes.InputNumber: {
-							if (textId == 0) {//no text ID was specified, use the text version (but send it as double!)
-								//if the text is empty (the input field will be empty), then display zero
-								double textToDisp = text.Equals("") ? default(double) : double.Parse(text);
-								gump.AddNumberEntry(xPos, yPos, width, height, (int) textHue, id, textToDisp);
-							} else {
-								gump.AddNumberEntry(xPos, yPos, width, height, (int) textHue, id, textId);
-							}
-							break;
-						}
-				}
-			}
-
-			public override string ToString() {
-				string linesTabsOffset = "\r\n";
-				//add as much rows as is the row which this item lies in
-				for (int i = 0; i < columnRow; i++) {
-					linesTabsOffset += "\r\n";
-				}
-				for (int i = 0; i < level; i++) {
-					linesTabsOffset += "\t";
-				}
-				return linesTabsOffset + "->Input";
-			}
-		}
-	}
-
-	[Summary("TextFactory creates a text displayed in the gump according to the specified position and hue)")]
-	public class TextFactory {
-		[Summary("Creating labels - of columns, of input fields etc")]
-		public static Text CreateLabel(string text) {
-			return CreateText(Hues.LabelColor, text);
-		}
-
-		[Summary("Creating labels - of columns, of input fields etc. Allows alignment specifying")]
-		public static Text CreateLabel(string text, DialogAlignment align, DialogAlignment valign) {
-			return CreateText(Hues.LabelColor, text, align, valign);
-		}
-
-		[Summary("Creating labels - of columns, of input fields etc")]
-		public static Text CreateLabel(int xPos, int yPos, string text) {
-			return CreateText(xPos, yPos, Hues.LabelColor, text);
-		}
-
-		[Summary("Bezny titulek tabulky")]
-		public static Text CreateHeadline(string text) {
-			return CreateText(Hues.HeadlineColor, text);
-		}
-
-		[Summary("Titulek tabulky, ovsem s volbou barvy")]
-		public static Text CreateHeadline(string text, Hues color) {
-			return CreateText(color, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
-		public static Text CreateText(int hue, string text) {
-			return new Text(0, 0, hue, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
-		public static Text CreateText(Hues hue, string text) {
-			return new Text(0, 0, (int) hue, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Simple factory method allows us to let the dialog to determine the text's position in the column")]
-		public static Text CreateText(Hues hue, string text, DialogAlignment align, DialogAlignment valign) {
-			return new Text(0, 0, (int) hue, text, align, valign);
-		}
-
-		[Summary("The simplest factory method just to display the desired text with the basic color")]
-		public static Text CreateText(string text) {
-			return new Text(0, 0, (int) Hues.WriteColor, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("The simplest factory method lets the dialog to determine the position of the text")]
-		public static Text CreateText(string text, DialogAlignment align, DialogAlignment valign) {
-			return new Text(0, 0, (int) Hues.WriteColor, text, align, valign);
-		}
-
-		[Summary("The simplest factory method lets the dialog to determine the position of the text")]
-		public static Text CreateText(int xPos, int yPos, string text, DialogAlignment align, DialogAlignment valign) {
-			return new Text(xPos, yPos, (int) Hues.WriteColor, text, align, valign);
-		}
-
-		[Summary("Basic factory method creates the text field with a given _relative_ position in the column" +
-			   " and a specified color (if color is null then default color is used)")]
-		public static Text CreateText(int xPos, int yPos, Hues hue, string text) {
-			return new Text(xPos, yPos, (int) hue, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Basic factory method creates the text field form the previously added text (by ID) with a given _relative_ " +
-				" position in the column and a specified color (if color is null then default color is used)")]
-		public static Text CreateText(int xPos, int yPos, Hues hue, int textId) {
-			return new Text(xPos, yPos, (int) hue, textId, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Factory method awaiting the text string but no special hue (the default will be used)")]
-		public static Text CreateText(int xPos, int yPos, string text) {
-			return new Text(xPos, yPos, (int) Hues.WriteColor, text, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Factory method awaiting the textId but no special hue (the default will be used)")]
-		public static Text CreateText(int xPos, int yPos, int textId) {
-			return new Text(xPos, yPos, (int) Hues.WriteColor, textId, DialogAlignment.Align_Left, DialogAlignment.Valign_Top);
-		}
-
-		[Summary("Basic fafctory method for building a html gump - we can specify all")]
-		public static HTMLText CreateHTML(int xPos, int yPos, int width, int height, string text, bool hasBoundBox, bool scrollBar) {
-			return new HTMLText(xPos, yPos, width, height, text, hasBoundBox, scrollBar);
-		}
-
-		[Summary("Basic fafctory method for building a html gump - we can specify all but pass the text as ID")]
-		public static HTMLText CreateHTML(int xPos, int yPos, int width, int height, int textId, bool hasBoundBox, bool scrollBar) {
-			return new HTMLText(xPos, yPos, width, height, textId, hasBoundBox, scrollBar);
-		}
-
-		[Summary("Basic fafctory method for building a html gump - on a relative position")]
-		public static HTMLText CreateHTML(int width, int height, string text, bool hasBoundBox, bool scrollBar) {
-			return new HTMLText(0, 0, width, height, text, hasBoundBox, scrollBar);
-		}
-
-		[Summary("Create a html gump which takes the size and position from the parent")]
-		public static HTMLText CreateHTML(string text, bool hasBoundBox, bool scrollable) {
-			return new HTMLText(0, 0, 0, 0, text, hasBoundBox, scrollable);
-		}
-
-		[Summary("Create a html gump which takes the size and position from the parent (using textID)")]
-		public static HTMLText CreateHTML(int textId, bool hasBoundBox, bool scrollable) {
-			return new HTMLText(0, 0, 0, 0, textId, hasBoundBox, scrollable);
-		}
-
-		[Summary("Create a html gump which takes the size and position from the parent " +
-				"using default values for boundaries and scrollability (false both)")]
-		public static HTMLText CreateHTML(string text) {
-			return new HTMLText(0, 0, 0, 0, text, false, false);
-		}
-
-		[Summary("Create a html gump which takes the size and position from the parent (using textID) " +
-				"using default values for boundaries and scrollability (false both)")]
-		public static HTMLText CreateHTML(int textId) {
-			return new HTMLText(0, 0, 0, 0, textId, false, false);
-		}
-
-		[Summary("The text component class - it handles the text writing to the underlaying gump")]
-		public class Text : LeafGUTAComponent {
-			[Summary("The text hue in the input field - if not specified, the default will be used.")]
-			private int textHue;
-			[Summary("We have either ID of the used text, or the text string itself")]
-			private int textId;
-			private string text;
-
-			[Summary("Text horizontal alignment")]
-			private DialogAlignment align = DialogAlignment.Align_Left;
-			[Summary("Text vertical alignment")]
-			private DialogAlignment valign = DialogAlignment.Valign_Top;
-
-			private Text(int xPos, int yPos, int hue, DialogAlignment align, DialogAlignment valign) {
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.textHue = hue;
-				this.align = align;
-				this.valign = valign;
-			}
-
-			[Summary("First complete constructor - awaits the text in the string form." +
-					"Using color as int and not Hue enumeration. Allows specifying the alignment")]
-			public Text(int xPos, int yPos, int hue, string text, DialogAlignment align, DialogAlignment valign)
-				: this(xPos, yPos, hue, align, valign) {
-				this.text = text;
-			}
-
-			[Summary("First complete constructor - awaits the text in the textId. Allows specifying the alignment")]
-			public Text(int xPos, int yPos, int hue, int textId, DialogAlignment align, DialogAlignment valign)
-				: this(xPos, yPos, hue, align, valign) {
-				this.textId = textId;
-			}
-
-			[Summary("When added to the column we have to specify the position (count the absolute)")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
-
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
-
-				int alignOffset = 0;
-				int valignOffset = 0;
-				if (text != null) { //we are not using the ID of the text, we can do some alignment computings if necessary
-					int parentWidth = parent.Width;
-					int textWidth = ImprovedDialog.TextLength(text);
-					switch (align) {
-						case DialogAlignment.Align_Center:
-							alignOffset = parentWidth / 2 - textWidth / 2; //moves the text to the middle of the column
-							break;
-						case DialogAlignment.Align_Right:
-							alignOffset = parentWidth - textWidth - 1; //moves the text to the right (1 pix added - it is the border)
-							break;
-					}
-					switch (valign) {
-						case DialogAlignment.Valign_Center:
-							valignOffset = grandpa.RowHeight / 2 - ImprovedDialog.D_TEXT_HEIGHT / 2; //moves the text to the middle of the column
-							break;
-						case DialogAlignment.Valign_Bottom:
-							valignOffset = grandpa.RowHeight - ImprovedDialog.D_CHARACTER_HEIGHT; //moves the text to the bottom
-							break;
-					}
-				}
-				xPos += parent.XPos + alignOffset;
-				yPos += parent.YPos + valignOffset;
-
-				if (text == null) {
-					text = "null"; //we cannot display null so stringify it
-				}
-			}
-
-			[Summary("Call the underlaying gump istance's methods")]
-			internal override void WriteComponent() {
-				if (textId == 0) { //no text ID was specified, use the text version
-					gump.AddText(xPos, yPos, textHue, text);
-				} else {
-					gump.AddText(xPos, yPos, textHue, textId);
-				}
-			}
-
-			public override string ToString() {
-				string linesTabsOffset = "\r\n";
-				//add as much rows as is the row which this item lies in
-				for (int i = 0; i < columnRow; i++) {
-					linesTabsOffset += "\r\n";
-				}
-				for (int i = 0; i < level; i++) {
-					linesTabsOffset += "\t";
-				}
-				return linesTabsOffset + "->Text(" + text + ")";
-			}
-		}
-
-		[Summary("The HTML text component class - allows making the text scrollable")]
-		public class HTMLText : LeafGUTAComponent {
-			private bool isScrollable, hasBoundBox;
-			[Summary("The text is either specified or passed as a text id")]
-			private string text;
-			private int textId;
-
-			private HTMLText(int x, int y, int width, int height, bool hasBoundBox, bool isScrollable) {
-				this.xPos = x;
-				this.yPos = y;
-				this.width = width;
-				this.height = height;
-				this.hasBoundBox = hasBoundBox;
-				this.isScrollable = isScrollable;
-			}
-
-			[Summary("First complete constructor - awaits the text in the string form")]
-			public HTMLText(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable)
-				: this(x, y, width, height, hasBoundBox, isScrollable) {
-				this.text = text;
-			}
-
-			[Summary("Second complete constructor - awaits the text in the textId")]
-			public HTMLText(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable)
-				: this(x, y, width, height, hasBoundBox, isScrollable) {
-				this.textId = textId;
-			}
-
-			[Summary("When added to the column we have to specify the position (count the absolute)")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
-
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
-
-				//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
-				xPos += parent.XPos;
-				yPos += parent.YPos;
-				//if not specified, take the size from the parent
-				if (height == 0) {
-					height = parent.Height;
-				}
-				if (width == 0) {
-					width = parent.Width;
-				}
-			}
-
-			[Summary("Call the underlaying gump istance's methods")]
-			internal override void WriteComponent() {
-				if (textId == 0) { //no text ID was specified, use the text version
-					gump.AddHTMLGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
-				} else {
-					gump.AddHTMLGump(xPos, yPos, width, height, textId, hasBoundBox, isScrollable);
-				}
-			}
-
-			public override string ToString() {
-				string linesTabsOffset = "\r\n";
-				//add as much rows as is the row which this item lies in
-				for (int i = 0; i < columnRow; i++) {
-					linesTabsOffset += "\r\n";
-				}
-				for (int i = 0; i < level; i++) {
-					linesTabsOffset += "\t";
-				}
-				return linesTabsOffset + "->HTMLText(" + text + ")";
-			}
-		}
-	}
-
-	[Summary("ImageFactory creates an image field in the dialog containing the specified image")]
-	public class ImageFactory {
-		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
-		public static Image CreateNamedImage(GumpIDs gumpId) {
-			return CreateNamedImage(gumpId, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-		}
-
-		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
-		public static Image CreateImage(int gumpId) {
-			return CreateImage(gumpId, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-		}
-
-		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
-		public static Image CreateNamedImage(GumpIDs gumpId, DialogAlignment align, DialogAlignment valign) {
-			return CreateImage((int) gumpId, align, valign);
-		}
-
-		[Summary("Factory method for creating a given type of the image. Allows specifying also its X and Y position (relative to the parents)")]
-		public static Image CreateImage(int gumpId, DialogAlignment align, DialogAlignment valign) {
-			return new Image(gumpId, align, valign);
-		}
-
-		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
-		public static Image CreateImage(int x, int y, GumpIDs gumpId) {
-			return CreateImage(x, y, (int)gumpId);
-		}
-
-		[Summary("Factory method for creating a simple image, position is fully taken from the parent")]
-		public static Image CreateImage(int x, int y, int gumpId) {
-			return new Image(x, y, gumpId, DialogAlignment.Align_Left, DialogAlignment.Valign_Center);
-		}
-
-		//[Summary("Factory method for creating a simple tiled image, position and measures are fully taken from the parent")]
-		//public static ImageTiled CreateImageTiled(GumpIDs gumpId) {
-		//    return new ImageTiled(0, 0, gumpId, 0, 0);
-		//}
-
-		//[Summary("Factory method for creating a tiled image with predefined measures, position is taken from the parents")]
-		//public static ImageTiled CreateImageTiled(GumpIDs gumpId, int width, int height) {
-		//    return new ImageTiled(0, 0, gumpId, width, height);
-		//}
-
-		//[Summary("Factory method for creating a tiled image with predefined position, measures is taken from the parents")]
-		//public static ImageTiled CreateImageTiled(int xPos, int yPos, GumpIDs gumpId) {
-		//    return new ImageTiled(xPos, yPos, gumpId, 0, 0);
-		//}
-
-		//[Summary("Factory method for creating a tiled image with everything defined")]
-		//public static ImageTiled CreateImageTiled(int xPos, int yPos, GumpIDs gumpId, int width, int height) {
-		//    return new ImageTiled(xPos, yPos, gumpId, width, height);
-		//}
-
-		public class Image : LeafGUTAComponent {
-			protected int gumpId;
-
-			[Summary("Image horizontal alignment")]
-			private DialogAlignment align;
-			[Summary("Image vertical alignment")]
-			private DialogAlignment valign;
-
-			[Summary("This constructor is here only for the image's children classes")]
-			internal Image() {
-			}
-
-			[Summary("Basic constructor awaiting the gump ID and its position")]
-			internal Image(int gumpId, DialogAlignment align, DialogAlignment valign) {
-				this.gumpId = gumpId;
-				this.align = align;
-				this.valign = valign;
-			}
-
-			internal Image(int x, int y, int gumpId, DialogAlignment align, DialogAlignment valign) {
-				this.xPos = x;
-				this.yPos = y;
-				this.gumpId = gumpId;
-				this.align = align;
-				this.valign = valign;
-			}
-
-			[Summary("When added to the column we have to specify the position (count the absolute)")]
-			protected override void OnBeforeWrite(GUTAComponent parent) {
-				//set the level
-				level = parent.Level + 1;
-
-				//get the grandparent (GUTATable) (parent is GUTAColumn!)
-				GUTATable grandpa = (GUTATable) parent.Parent;
-				//set the column row (counted from the relative position and the grandpa's inner-row height)
-				columnRow = xPos / grandpa.RowHeight;
-
-				GumpArtDimension picDim = GumpDimensions.Table[gumpId];
-
-				int alignOffset = -picDim.X; //at least...
-				int valignOffset = -picDim.Y; //at least...
-
-				switch (align) {
-					case DialogAlignment.Align_Center:
-						alignOffset += parent.Width / 2 - picDim.Width / 2; //moves the image to the middle of the column
-						break;
-					case DialogAlignment.Align_Right:
-						alignOffset += parent.Width - picDim.Width - 1; //moves the image to the right (1 pix added - it is the border)
+						alignOffset = parentWidth - textWidth - 1; //moves the text to the right (1 pix added - it is the border)
 						break;
 				}
 				switch (valign) {
 					case DialogAlignment.Valign_Center:
-						valignOffset += grandpa.RowHeight / 2 - picDim.Height / 2; //moves the image to the middle of the column
+						valignOffset = grandpa.RowHeight / 2 - ImprovedDialog.D_TEXT_HEIGHT / 2; //moves the text to the middle of the column
 						break;
 					case DialogAlignment.Valign_Bottom:
-						valignOffset += grandpa.RowHeight - picDim.Height; //moves the image to the bottom
+						valignOffset = grandpa.RowHeight - ImprovedDialog.D_CHARACTER_HEIGHT; //moves the text to the bottom
 						break;
 				}
-				xPos += parent.XPos + alignOffset;
-				yPos += parent.YPos + valignOffset;
 			}
+			xPos += parent.XPos + alignOffset;
+			yPos += parent.YPos + valignOffset;
 
-			[Summary("Call the underlaying gump istance's methods")]
-			internal override void WriteComponent() {
-				gump.AddTilePic(xPos, yPos, (int) gumpId);
-			}
-
-			public override string ToString() {
-				string linesTabsOffset = "\r\n";
-				//add as much rows as is the row which this item lies in
-				for (int i = 0; i < columnRow; i++) {
-					linesTabsOffset += "\r\n";
-				}
-				for (int i = 0; i < level; i++) {
-					linesTabsOffset += "\t";
-				}
-				return linesTabsOffset + "->Image(" + gumpId + ")";
+			if (text == null) {
+				text = "null"; //we cannot display null so stringify it
 			}
 		}
 
-		//public class ImageTiled : Image {
-		//    [Summary("Creates a checkbox with the given format")]
-		//    internal ImageTiled(int xPos, int yPos, GumpIDs gumpId, int width, int height) {
-		//        this.xPos = xPos;
-		//        this.yPos = yPos;
-		//        this.gumpId = gumpId;
-		//        this.width = width;
-		//        this.height = height;
-		//    }
+		[Summary("Call the underlaying gump istance's methods")]
+		internal override void WriteComponent() {
+			if (textId == 0) { //no text ID was specified, use the text version
+				gump.AddText(xPos, yPos, textHue, text);
+			} else {
+				gump.AddText(xPos, yPos, textHue, textId);
+			}
+		}
 
-		//    [Summary("When added to the column we have to specify the position (count the absolute)")]
-		//    protected override void OnBeforeWrite(GUTAComponent parent) {
-		//        //set the level
-		//        level = parent.Level + 1;
-		//        //set the column row (counted from the relative position
-		//        columnRow = xPos / ImprovedDialog.D_ROW_HEIGHT;
+		public override string ToString() {
+			string linesTabsOffset = "\r\n";
+			//add as much rows as is the row which this item lies in
+			for (int i = 0; i < columnRow; i++) {
+				linesTabsOffset += "\r\n";
+			}
+			for (int i = 0; i < level; i++) {
+				linesTabsOffset += "\t";
+			}
+			return linesTabsOffset + "->GUTAText(" + text + ")";
+		}
+	}
 
-		//        //dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
-		//        xPos += parent.XPos;
-		//        yPos += parent.YPos;
+	
+	[Summary("The HTML text component class - allows making the text scrollable")]
+	public class GUTAHTMLText : LeafGUTAComponent {
+		private bool isScrollable, hasBoundBox;
+		[Summary("The text is either specified or passed as a text id")]
+		private string text;
+		private int textId;
 
-		//        //if not specified, take the size from the parent
-		//        if (height == 0) {
-		//            height = parent.Height;
-		//        }
-		//        if (width == 0) {
-		//            width = parent.Width;
-		//        }
-		//    }
+		public static HTMLTextBuilder Builder {
+			get {
+				return new HTMLTextBuilder();
+			}
+		}
 
-		//    [Summary("Call the underlaying gump istance's methods")]
-		//    internal override void WriteComponent() {
-		//        gump.AddGumpPicTiled(xPos, yPos, width, height, (int)gumpId);				
-		//    }
+		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class HTMLTextBuilder : Builder<GUTAHTMLText> {
+			//prepare the default values
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal bool isScrollable = false;
+			internal bool hasBoundBox = false;
+			internal string text = "";
+			internal int textId = 0;
 
-		//    public override string ToString() {
-		//        string linesTabsOffset = "\r\n";
-		//        //add as much rows as is the row which this item lies in
-		//        for (int i = 0; i < columnRow; i++) {
-		//            linesTabsOffset += "\r\n";
-		//        }
-		//        for (int i = 0; i < level; i++) {
-		//            linesTabsOffset += "\t";
-		//        }
-		//        return linesTabsOffset + "->ImageTiled(" + gumpId + ")";
-		//    }
-		//}
+			internal HTMLTextBuilder() {
+			}			
+
+			[Summary("Set the text's relative X position")]
+			public HTMLTextBuilder XPos(int val) {
+				xPos = val;
+				return this;
+			}
+
+			[Summary("Set the text's relative Y position")]
+			public HTMLTextBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
+			
+			[Summary("Set the text's scrollable state")]
+			public HTMLTextBuilder Scrollable(bool val) {
+				isScrollable = val;
+				return this;
+			}
+
+			[Summary("Set the text's scrollable state")]
+			public HTMLTextBuilder HasBoundBox(bool val) {
+				hasBoundBox = val;
+				return this;
+			}
+			
+			[Summary("Set the text value")]
+			public HTMLTextBuilder Text(string val) {
+				text = val;
+				return this;
+			}
+
+			[Summary("Set the text id (for prepared texts)")]
+			public HTMLTextBuilder TextId(int val) {
+				textId = val;
+				return this;
+			}
+			
+			[Summary("Create the GUTAText instance")]
+			public override GUTAHTMLText Build() {
+				GUTAHTMLText retVal = new GUTAHTMLText(this);
+				return retVal;
+			}
+		}
+		
+		private GUTAHTMLText(HTMLTextBuilder builder) {
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.hasBoundBox = builder.hasBoundBox;
+			this.isScrollable = builder.isScrollable;
+			this.text = builder.text;
+			this.textId = builder.textId;
+		}
+
+
+		private GUTAHTMLText(int x, int y, int width, int height, bool hasBoundBox, bool isScrollable) {
+			this.xPos = x;
+			this.yPos = y;
+			this.width = width;
+			this.height = height;
+			this.hasBoundBox = hasBoundBox;
+			this.isScrollable = isScrollable;
+		}		
+
+		[Summary("When added to the column we have to specify the position (count the absolute)")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
+			xPos += parent.XPos;
+			yPos += parent.YPos;
+			//if not specified, take the size from the parent
+			if (height == 0) {
+				height = parent.Height;
+			}
+			if (width == 0) {
+				width = parent.Width;
+			}
+		}
+
+		[Summary("Call the underlaying gump istance's methods")]
+		internal override void WriteComponent() {
+			if (textId == 0) { //no text ID was specified, use the text version
+				gump.AddHTMLGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
+			} else {
+				gump.AddHTMLGump(xPos, yPos, width, height, textId, hasBoundBox, isScrollable);
+			}
+		}
+
+		public override string ToString() {
+			string linesTabsOffset = "\r\n";
+			//add as much rows as is the row which this item lies in
+			for (int i = 0; i < columnRow; i++) {
+				linesTabsOffset += "\r\n";
+			}
+			for (int i = 0; i < level; i++) {
+				linesTabsOffset += "\t";
+			}
+			return linesTabsOffset + "->HTMLText(" + text + ")";
+		}
+	}
+
+	public class GUTAImage : LeafGUTAComponent {
+		protected int gumpId;
+
+		[Summary("Image horizontal alignment")]
+		private DialogAlignment align;
+		[Summary("Image vertical alignment")]
+		private DialogAlignment valign;
+
+		public static ImageBuilder Builder {
+			get {
+				return new ImageBuilder();
+			}
+		}
+
+		[Summary("Builder class for the GUTAImage LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		public class ImageBuilder : Builder<GUTAImage> {
+			//prepare the default values
+			internal int xPos = 0;
+			internal int yPos = 0;
+			internal DialogAlignment align = DialogAlignment.Align_Center;
+			internal DialogAlignment valign = DialogAlignment.Valign_Center;
+			internal int gumpId = 0;
+
+			internal ImageBuilder() {
+			}
+
+			[Summary("Set the image's relative X position")]
+			public ImageBuilder XPos(int val) {
+				xPos = val;
+				return this;
+			}
+
+			[Summary("Set the image's relative Y position")]
+			public ImageBuilder YPos(int val) {
+				yPos = val;
+				return this;
+			}
+
+			[Summary("Set the image's horizontal alignment")]
+			public ImageBuilder Align(DialogAlignment val) {
+				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
+					throw new SEException(LogStr.Error("Wrong align used for GUTAImage field: " + val.ToString()));
+				}
+				align = val;
+				return this;
+			}
+
+			[Summary("Set the image's vertical alignment")]
+			public ImageBuilder Valign(DialogAlignment val) {
+				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAImage field: " + val.ToString()));
+				}
+				valign = val;
+				return this;
+			}
+
+			[Summary("Set the image's gump")]
+			public ImageBuilder Gump(int val) {
+				gumpId = val;
+				return this;
+			}
+
+			[Summary("Set the image's gump using enumeration")]
+			public ImageBuilder NamedGump(GumpIDs val) {
+				gumpId = (int) val;
+				return this;
+			}
+
+
+			[Summary("Create the GUTAImage instance")]
+			public override GUTAImage Build() {
+				GUTAImage retVal = new GUTAImage(this);
+				return retVal;
+			}
+		}
+
+		private GUTAImage(ImageBuilder builder) {
+			this.xPos = builder.xPos;
+			this.yPos = builder.yPos;
+			this.align = builder.align;
+			this.valign = builder.valign;
+			this.gumpId = builder.gumpId;
+		}
+
+		[Summary("When added to the column we have to specify the position (count the absolute)")]
+		protected override void OnBeforeWrite(GUTAComponent parent) {
+			//set the level
+			level = parent.Level + 1;
+
+			//get the grandparent (GUTARow) (parent is GUTAColumn!)
+			GUTARow grandpa = (GUTARow) parent.Parent;
+			//set the column row (counted from the relative position and the grandpa's inner-row height)
+			columnRow = xPos / grandpa.RowHeight;
+
+			GumpArtDimension picDim = GumpDimensions.Table[gumpId];
+
+			int alignOffset = -picDim.X; //at least...
+			int valignOffset = -picDim.Y; //at least...
+
+			switch (align) {
+				case DialogAlignment.Align_Center:
+					alignOffset += parent.Width / 2 - picDim.Width / 2; //moves the image to the middle of the column
+					break;
+				case DialogAlignment.Align_Right:
+					alignOffset += parent.Width - picDim.Width - 1; //moves the image to the right (1 pix added - it is the border)
+					break;
+			}
+			switch (valign) {
+				case DialogAlignment.Valign_Center:
+					valignOffset += grandpa.RowHeight / 2 - picDim.Height / 2; //moves the image to the middle of the column
+					break;
+				case DialogAlignment.Valign_Bottom:
+					valignOffset += grandpa.RowHeight - picDim.Height; //moves the image to the bottom
+					break;
+			}
+			xPos += parent.XPos + alignOffset;
+			yPos += parent.YPos + valignOffset;
+		}
+
+		[Summary("Call the underlaying gump istance's methods")]
+		internal override void WriteComponent() {
+			gump.AddTilePic(xPos, yPos, (int) gumpId);
+		}
+
+		public override string ToString() {
+			string linesTabsOffset = "\r\n";
+			//add as much rows as is the row which this item lies in
+			for (int i = 0; i < columnRow; i++) {
+				linesTabsOffset += "\r\n";
+			}
+			for (int i = 0; i < level; i++) {
+				linesTabsOffset += "\t";
+			}
+			return linesTabsOffset + "->Image(" + gumpId + ")";
+		}
 	}
 }

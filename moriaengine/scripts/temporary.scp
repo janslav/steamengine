@@ -28,11 +28,11 @@ dlg.CreateBackground(600)
 dlg.SetLocation(60,40)
 
 //nadpis dialogu, cudliky na back a zruseni
-dlg.AddTable(GUTATable(1, width - 3 * ButtonFactory.D_BUTTON_WIDTH - 5 * ImprovedDialog.D_COL_SPACE, ButtonFactory.D_BUTTON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH)) 
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby: " + cat.FullName))
-dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack,1)) //one category back button
-dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,2)) //craftmenu button
-dlg.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.AddTable(GUTATable(1, width - 3 * ButtonMetrics.D_BUTTON_WIDTH - 5 * ImprovedDialog.D_COL_SPACE, ButtonMetrics.D_BUTTON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH)) 
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextHeadline("Kategorie výroby: " + cat.FullName).Build())
+dlg.LastTable.AddToCell(0,1,GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(1).Build()) //one category back button
+dlg.LastTable.AddToCell(0,2,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build()) //craftmenu button
+dlg.LastTable.AddToCell(0,3,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build()) //exit button
 dlg.MakeLastTableTransparent()
 
 //konecne seznam polozek
@@ -43,37 +43,36 @@ dlg.MakeLastTableTransparent() //zpruhledni zbytek dialogu
 arg rowCntr = 0
 //for (arg.i, firstiVal, imax) //pojedeme pres polozky kategorie
 //  arg elem = cat.contents[i]
-arg catRowHgth = System.Math.Max(ButtonFactory.D_BUTTON_HEIGHT+0,GumpDimensions.Table[GumpIDs.Pouch].Height + 2*ImprovedDialog.D_ICON_SPACE)
-src.sysmessage("Vyska kategorie: "+<catRowHgth>)
+arg catRowHgth = System.Math.Max(ButtonMetrics.D_BUTTON_HEIGHT+0,GumpDimensions.Table[GumpIDs.Pouch].Height + 2*ImprovedDialog.D_ICON_SPACE)
 arg offset = ImprovedDialog.TextLength("Weight:  ") //offset for the weight edit field
 arg wghtLen = ImprovedDialog.TextLength("1000") //just some number length (4 letters)
-src.sysmessage("offset: "+offset+" len: "+wghtLen)
 foreach (arg elem in cat.contents)
   if (elem.IsCategory)
-    arg oneRow = GUTARow(1,ButtonFactory.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 0)
+    arg oneRow = GUTARow(1,ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 0)
     mainTable.AddRow(oneRow)
     oneRow.RowHeight = catRowHgth
-    oneRow.AddToRow(0,0, ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 5*rowCntr + 10, DialogAlignment.Valign_Center))
-    oneRow.AddToRow(0,1, ImageFactory.CreateNamedImage(GumpIDs.Pouch))
-    oneRow.AddToRow(0,2, TextFactory.CreateText(elem.Name, DialogAlignment.Align_Left, DialogAlignment.Valign_Center))
+    oneRow.AddToRow(0,0, GUTAButton.Builder.Id(5*rowCntr + 10).Valign(DialogAlignment.Valign_Center).Build())
+    oneRow.AddToRow(0,1, GUTAImage.Builder.NamedGump(GumpIDs.Pouch).Build())
+    oneRow.AddToRow(0,2, GUTAText.Builder.Text(elem.Name).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build())
 	else
-	  arg oneRow = GUTARow(1,ButtonFactory.D_BUTTON_WIDTH, 80, 0, ButtonFactory.D_BUTTON_WIDTH)
+	  arg oneRow = GUTARow(1,ButtonMetrics.D_BUTTON_WIDTH, 80, 0, ButtonMetrics.D_BUTTON_WIDTH)
 	  oneRow.InTableSeparated = false
 	  mainTable.AddRow(oneRow)
+	  arg itmPicRowHgth = System.Math.Max(ButtonMetrics.D_BUTTON_HEIGHT+0,GumpDimensions.Table[elem.ItemDef.Model].Height + 2*ImprovedDialog.D_ICON_SPACE)
 	  //oneRow.RowHeight = GumpDimensions.Table[elem.ItemDef.Model].Height + 2*ImprovedDialog.D_ICON_SPACE
-	  oneRow.RowHeight = 20 + 2*ImprovedDialog.D_ICON_SPACE
-	  oneRow.AddToRow(0,1, ImageFactory.CreateImage(elem.ItemDef.Model))
-	  oneRow.AddToRow(0,2, TextFactory.CreateText(elem.Name+"("+elem.ItemDef.AltDefname+")   defname: "+elem.ItemDef.Defname, DialogAlignment.Align_Left, DialogAlignment.Valign_Center))
-	  oneRow.AddToRow(0,3, ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 5*rowCntr + 12, DialogAlignment.Valign_Center))
-	  arg secRow = GUTARow(3, ButtonFactory.D_BUTTON_WIDTH, 80, 0)
+	  oneRow.RowHeight = itmPicRowHgth
+	  oneRow.AddToRow(0,1, GUTAImage.Builder.Gump(elem.ItemDef.Model).Build())
+	  oneRow.AddToRow(0,2, GUTAText.Builder.Text(elem.Name+"("+elem.ItemDef.AltDefname+")   defname: "+elem.ItemDef.Defname).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build())
+	  oneRow.AddToRow(0,3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(5*rowCntr + 12).Valign(DialogAlignment.Valign_Center).Build())
+	  arg secRow = GUTARow(3, ButtonMetrics.D_BUTTON_WIDTH, 80, 0)
 	  secRow.InnerRowsDelimited = true
 	  mainTable.AddRow(secRow)
-	  secRow.AddToRow(0,2, TextFactory.CreateText("Weight:",DialogAlignment.Align_Left,DialogAlignment.Valign_Bottom))
-	  secRow.AddToRow(0,2, InputFactory.CreateInput(LeafComponentTypes.InputNumber,<offset>,5*rowCntr + 11,wghtLen)) //type, Xpos, ID, width ...
-	  secRow.AddToRow(1,1, TextFactory.CreateText("Resources",DialogAlignment.Align_Left,DialogAlignment.Valign_Bottom))
-	  secRow.AddToRow(1,2, InputFactory.CreateInput(LeafComponentTypes.InputText,5*rowCntr + 13, ObjectSaver.Save(elem.ItemDef.Resources)))
-	  secRow.AddToRow(2,1, TextFactory.CreateText("Skillmake",DialogAlignment.Align_Left,DialogAlignment.Valign_Bottom))
-	  secRow.AddToRow(2,2, InputFactory.CreateInput(LeafComponentTypes.InputText,5*rowCntr + 14, ObjectSaver.Save(elem.ItemDef.Skillmake)))
+	  secRow.AddToRow(0,2, GUTAText.Builder.Text("Weight:").Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Bottom).Build())
+	  secRow.AddToRow(0,2, GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).XPos(<offset>).Id(5*rowCntr + 11).Width(wghtLen).Build()) //type, Xpos, ID, width ...
+	  secRow.AddToRow(1,1, GUTAText.Builder.Text("Resources").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Bottom).Build())
+	  secRow.AddToRow(1,2, GUTAInput.Builder.Type(LeafComponentTypes.InputText).Id(5*rowCntr + 13).Text(ObjectSaver.Save(elem.ItemDef.Resources)).Build())
+	  secRow.AddToRow(2,1, GUTAText.Builder.Text("Skillmake").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Bottom).Build())
+	  secRow.AddToRow(2,2, GUTAInput.Builder.Type(LeafComponentTypes.InputText).Id(5*rowCntr + 14).Text(ObjectSaver.Save(elem.ItemDef.Skillmake)).Build())
 	endif
 	arg rowCntr = <rowCntr> + 1
 endforeach
@@ -85,7 +84,7 @@ dlg.WriteOut()
 
 [dialog d_craftmenu_settings_scp button]
 on=0 //exit
-DialogStacking.ResendAndRestackDialog(gi);
+DialogStacking.ShowPreviousDialog(argo);
 return 0
 
 on=1 //back
@@ -112,17 +111,17 @@ dlg.CreateBackground(600)
 dlg.SetLocation(100,70)
 
 //nadpis dialogu, cudliky na back a zruseni
-arg hdrTable = GUTATable(1, 85, 120, 0, ButtonFactory.D_BUTTON_WIDTH)
+arg hdrTable = GUTATable(1, 85, 120, 0, ButtonMetrics.D_BUTTON_WIDTH)
 arg hgt = picDim.Height + 2 * ImprovedDialog.D_ICON_SPACE
 if (<hgt> < <ImprovedDialog.D_ROW_HEIGHT>)
   arg hgt = ImprovedDialog.D_ROW_HEIGHT
 endif
 hdrTable.RowHeight = hgt //add 2 pixels from both top and bottom corners (but minimal rowheight stays...))
 dlg.Add(hdrTable) 
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Název:"))
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateText(itm.Name))
-dlg.LastTable.AddToCell(0,2,ImageFactory.CreateImage(itm.Model))
-dlg.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextLabel("Název:").Build())
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.Text(itm.Name).Build())
+dlg.LastTable.AddToCell(0,2,GUTAImage.Builder.Gump(itm.Model).Build())
+dlg.LastTable.AddToCell(0,3,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build()) //exit button
 dlg.MakeLastTableTransparent()
 
 arg rows = 2
@@ -137,27 +136,27 @@ if (itm.IsDestroyableDef)
 endif
 dlg.Add(GUTATable(<rows>,85, 0))
 //resources
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateLabel("Materiál"))
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateText(itm.Resources.ToString))
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextLabel("Materiál").Build())
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.Text(itm.Resources.ToString).Build())
 //type
-dlg.LastTable.AddToCell(1,0,TextFactory.CreateLabel("Typ"))
-dlg.LastTable.AddToCell(1,1,TextFactory.CreateText(itm.Type.Defname))
+dlg.LastTable.AddToCell(1,0,GUTAText.Builder.TextLabel("Typ").Build())
+dlg.LastTable.AddToCell(1,1,GUTAText.Builder.Text(itm.Type.Defname).Build())
 //weapon
 if (itm.IsWeaponDef)
-  dlg.LastTable.AddToCell(2,0,TextFactory.CreateLabel("UC vs M"))
-  dlg.LastTable.AddToCell(2,1,TextFactory.CreateText(itm.AttackVsM))  
-  dlg.LastTable.AddToCell(3,0,TextFactory.CreateLabel("UC vs P"))
-  dlg.LastTable.AddToCell(3,1,TextFactory.CreateText(itm.AttackVsP))
+  dlg.LastTable.AddToCell(2,0,GUTAText.Builder.TextLabel("UC vs M").Build())
+  dlg.LastTable.AddToCell(2,1,GUTAText.Builder.Text(itm.AttackVsM).Build())  
+  dlg.LastTable.AddToCell(3,0,GUTAText.Builder.TextLabel("UC vs P").Build())
+  dlg.LastTable.AddToCell(3,1,GUTAText.Builder.Text(itm.AttackVsP).Build())
 endif
 if (itm.IsWearableDef)
-  dlg.LastTable.AddToCell(2,0,TextFactory.CreateLabel("Armor vs M"))
-  dlg.LastTable.AddToCell(2,1,TextFactory.CreateText(itm.ArmorVsM))  
-  dlg.LastTable.AddToCell(3,0,TextFactory.CreateLabel("Armor vs P"))
-  dlg.LastTable.AddToCell(3,1,TextFactory.CreateText(itm.ArmorVsP))
+  dlg.LastTable.AddToCell(2,0,GUTAText.Builder.TextLabel("Armor vs M").Build())
+  dlg.LastTable.AddToCell(2,1,GUTAText.Builder.Text(itm.ArmorVsM).Build())  
+  dlg.LastTable.AddToCell(3,0,GUTAText.Builder.TextLabel("Armor vs P").Build())
+  dlg.LastTable.AddToCell(3,1,GUTAText.Builder.Text(itm.ArmorVsP).Build())
 endif
 if (itm.IsDestroyableDef)
-  dlg.LastTable.AddToCell(4,0,TextFactory.CreateLabel("Výdrž"))
-  dlg.LastTable.AddToCell(4,1,TextFactory.CreateText(itm.MaxDurability))
+  dlg.LastTable.AddToCell(4,0,GUTAText.Builder.TextLabel("Výdrž").Build())
+  dlg.LastTable.AddToCell(4,1,GUTAText.Builder.Text(itm.MaxDurability).Build())
 endif
 
 dlg.MakeLastTableTransparent() //zpruhledni zbytek dialogu
@@ -166,7 +165,7 @@ dlg.WriteOut()
 
 [dialog d_Craftmenu_ItemInfo_scp button]
 on=0 //exitting dialog by right click
-DialogStacking.ResendAndRestackDialog(gi);
+DialogStacking.ShowPreviousDialog(argo);
 return 0
 
 //CRAFTMENU SCP-----------------------------------------------------------------
@@ -187,31 +186,31 @@ dlg.CreateBackground(600)
 dlg.SetLocation(80,50)
 
 //nadpis dialogu, cudliky na back a zruseni
-dlg.AddTable(GUTATable(1, width - 3 * ButtonFactory.D_BUTTON_WIDTH - 5 * ImprovedDialog.D_COL_SPACE, ButtonFactory.D_BUTTON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH)) 
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby: " + cat.FullName))
-dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack,1)) //one category back button
-dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,8)) //settings button
-dlg.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.AddTable(GUTATable(1, width - 3 * ButtonMetrics.D_BUTTON_WIDTH - 5 * ImprovedDialog.D_COL_SPACE, ButtonMetrics.D_BUTTON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH)) 
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextHeadline("Kategorie výroby: " + cat.FullName).Build())
+dlg.LastTable.AddToCell(0,1,GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(1).Build()) //one category back button
+dlg.LastTable.AddToCell(0,2,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(8).Build()) //settings button
+dlg.LastTable.AddToCell(0,3,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build()) //exit button
 dlg.MakeLastTableTransparent()
 
 //"new subcategory" button
-dlg.AddTable(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0))
-dlg.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,2)) //new subcategory btn
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateHeadline("Pøidat podkategorii"))
+dlg.AddTable(GUTATable(1,ButtonMetrics.D_BUTTON_WIDTH,0))
+dlg.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build()) //new subcategory btn
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextHeadline("Pøidat podkategorii").Build())
 dlg.MakeLastTableTransparent()
 
 //"new item(s)" button
-dlg.AddTable(GUTATable(1,ButtonFactory.D_BUTTON_WIDTH,0))
-dlg.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,3)) //new item(s) btn
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateHeadline("Pøidat pøedmìt(y)"))
+dlg.AddTable(GUTATable(1,ButtonMetrics.D_BUTTON_WIDTH,0))
+dlg.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(3).Build()) //new item(s) btn
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextHeadline("Pøidat pøedmìt(y)").Build())
 dlg.MakeLastTableTransparent()
 
 //headlines row
 //make | icon | name | move up/down | info | resources
-dlg.AddTable(GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonFactory.D_BUTTON_WIDTH, 0));
-dlg.LastTable.AddToCell(0,2,TextFactory.CreateLabel("Jméno"))
-dlg.LastTable.AddToCell(0,4,TextFactory.CreateLabel("Info"))
-dlg.LastTable.AddToCell(0,5,TextFactory.CreateLabel("Suroviny"))
+dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonMetrics.D_BUTTON_WIDTH, 0));
+dlg.LastTable.AddToCell(0,2,GUTAText.Builder.TextLabel("Jméno").Build())
+dlg.LastTable.AddToCell(0,4,GUTAText.Builder.TextLabel("Info").Build())
+dlg.LastTable.AddToCell(0,5,GUTAText.Builder.TextLabel("Suroviny").Build())
 dlg.MakeLastTableTransparent()
 
 //konecne seznam polozek
@@ -221,9 +220,9 @@ dlg.CopyColsFromLastTable()
 dlg.LastTable.InnerRowsDelimited = true
 
 //add one item just for test...
-dlg.LastTable.AddToCell(0, 0, ButtonFactory.CreateCheckbox(false, 10, DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(0, 1, ImageFactory.CreateImage(i_maul.Model))
-dlg.LastTable.AddToCell(0, 4, ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 13, DialogAlignment.Valign_Center)) //display info
+dlg.LastTable.AddToCell(0, 0, GUTACheckbox.Builder.Id(10).Build())
+dlg.LastTable.AddToCell(0, 1, GUTAImage.Builder.Gump(i_maul.Model).Build())
+dlg.LastTable.AddToCell(0, 4, GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(13).Valign(DialogAlignment.Valign_Center).Build()) //display info
 					
 //now the list of resources
 arg reses = i_maul.Resources;
@@ -232,28 +231,29 @@ arg reses = i_maul.Resources;
 		foreach (arg.rlItm in reses.MultiplicablesSublist)
 		  	arg textToShow = ""
         arg textToShow = <textToShow>+rlItm.DesiredCount.ToString() + " "
-				dlg.LastTable.AddToCell(0, 5, TextFactory.CreateText(lastColPos, 0, textToShow, DialogAlignment.Align_Left, DialogAlignment.Valign_Center))
+        src.sysmessage("maul: "+textToShow)
+				dlg.LastTable.AddToCell(0, 5, GUTAText.Builder.XPos(lastColPos).Text(textToShow).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build())
 				arg countLength = ImprovedDialog.TextLength(textToShow)
-				dlg.LastTable.AddToCell(0, 5, ImageFactory.CreateNamedImage(lastColPos + countLength, 0, rlItm.ItemDef.Model))
+				dlg.LastTable.AddToCell(0, 5, GUTAImage.Builder.NamedGump(rlItm.ItemDef.Model).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build())
 				//prepare next offset:
 				arg gad = GumpDimensions.Table[rlItm.ItemDef.Model]
 				arg lastColPos = <lastColPos>+ <spaceLength> + <countLength> + <gad.Width> //first offset, counted length of the number text including separating space, width of the icon, space after the icon
 		endforeach
-dlg.LastTable.AddToCell(0, 2, TextFactory.CreateText(i_maul.Name, DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(0, 2, GUTAText.Builder.Text(i_maul.Name).Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
 
 dlg.MakeLastTableTransparent() //zpruhledni zbytek dialogu
 
 //ted paging
 dlg.CreatePaging(cat.contents.Count, firstiVal, 1)
 
-dlg.AddTable(GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 160, ButtonFactory.D_BUTTON_WIDTH, 150, 0, ButtonFactory.D_BUTTON_WIDTH))
-dlg.LastTable.AddToCell(0, 0, ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 4)) //start making
-dlg.LastTable.AddToCell(0, 1, InputFactory.CreateInput(LeafComponentTypes.InputNumber, 5)) //how many to make of the selected items
-dlg.LastTable.AddToCell(0, 2, TextFactory.CreateLabel("Množství k vyrobení"))
-dlg.LastTable.AddToCell(0, 3, ButtonFactory.CreateButton(LeafComponentTypes.ButtonBack, 6)) //next time open here
-dlg.LastTable.AddToCell(0, 4, TextFactory.CreateLabel("Pøíštì otevøít zde"))
-dlg.LastTable.AddToCell(0, 5, TextFactory.CreateLabel("Zrušit otevírání"))
-dlg.LastTable.AddToCell(0, 6, ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 7)) //discard saved position
+dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 160, ButtonMetrics.D_BUTTON_WIDTH, 150, 0, ButtonMetrics.D_BUTTON_WIDTH))
+dlg.LastTable.AddToCell(0, 0, GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(4).Build()) //start making
+dlg.LastTable.AddToCell(0, 1, GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(5).Build()) //how many to make of the selected items
+dlg.LastTable.AddToCell(0, 2, GUTAText.Builder.TextLabel("Množství k vyrobení").Build())
+dlg.LastTable.AddToCell(0, 3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(6).Build()) //next time open here
+dlg.LastTable.AddToCell(0, 4, GUTAText.Builder.TextLabel("Pøíštì otevøít zde").Build())
+dlg.LastTable.AddToCell(0, 5, GUTAText.Builder.TextLabel("Zrušit otevírání").Build())
+dlg.LastTable.AddToCell(0, 6, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(7).Build()) //discard saved position
 dlg.MakeLastTableTransparent();
 
 dlg.WriteOut()
@@ -310,46 +310,46 @@ dlg.CreateBackground(240)
 dlg.SetLocation(60,30)
 
 //nadpis tabulky
-dlg.AddTable(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH)) 
-dlg.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Kategorie výroby"))
-dlg.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dlg.AddTable(GUTATable(1,0,ButtonMetrics.D_BUTTON_WIDTH)) 
+dlg.LastTable.AddToCell(0,0,GUTAText.Builder.TextHeadline("Kategorie výroby").Build())
+dlg.LastTable.AddToCell(0,1,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build()) //exit button
 dlg.MakeLastTableTransparent()
 
-arg picTable = GutaTable(8,43,0,ButtonFactory.D_BUTTON_WIDTH)
+arg picTable = GutaTable(8,43,0,ButtonMetrics.D_BUTTON_WIDTH)
 picTable.RowHeight = 40
 picTable.InnerRowsDelimited = true
 dlg.AddTable(picTable)
-dlg.LastTable.AddToCell(0,0,ImageFactory.CreateNamedImage(GumpIDs.Mortar))
-dlg.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Alchemy", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(0,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,1, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(0,0,GUTAImage.Builder.NamedGump(GumpIDs.Mortar).Build())
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextLabel("Alchemy").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(0,2,GUTAButton.Builder.Id(1).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(1,0,ImageFactory.CreateNamedImage(GumpIDs.Anvil))
-dlg.LastTable.AddToCell(1,1,TextFactory.CreateLabel("Blacksmithing", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(1,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,2, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(1,0,GUTAImage.Builder.NamedGump(GumpIDs.Anvil).Build())
+dlg.LastTable.AddToCell(1,1,GUTAText.Builder.TextLabel("Blacksmithing").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(1,2,GUTAButton.Builder.Id(2).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(2,0,ImageFactory.CreateNamedImage(GumpIDs.Bow))
-dlg.LastTable.AddToCell(2,1,TextFactory.CreateLabel("Bowcraft", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(2,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,3, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(2,0,GUTAImage.Builder.NamedGump(GumpIDs.Bow).Build())
+dlg.LastTable.AddToCell(2,1,GUTAText.Builder.TextLabel("Bowcraft").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(2,2,GUTAButton.Builder.Id(3).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(3,0,ImageFactory.CreateNamedImage(GumpIDs.Saw))
-dlg.LastTable.AddToCell(3,1,TextFactory.CreateLabel("Carpentry", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(3,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,4, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(3,0,GUTAImage.Builder.NamedGump(GumpIDs.Saw).Build())
+dlg.LastTable.AddToCell(3,1,GUTAText.Builder.TextLabel("Carpentry").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(3,2,GUTAButton.Builder.Id(4).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(4,0,ImageFactory.CreateNamedImage(GumpIDs.Cake))
-dlg.LastTable.AddToCell(4,1,TextFactory.CreateLabel("Cooking", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(4,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,5, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(4,0,GUTAImage.Builder.NamedGump(GumpIDs.Cake).Build())
+dlg.LastTable.AddToCell(4,1,GUTAText.Builder.TextLabel("Cooking").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(4,2,GUTAButton.Builder.Id(5).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(5,0,ImageFactory.CreateNamedImage(GumpIDs.Scroll))
-dlg.LastTable.AddToCell(5,1,TextFactory.CreateLabel("Inscription", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(5,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,6, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(5,0,GUTAImage.Builder.NamedGump(GumpIDs.Scroll).Build())
+dlg.LastTable.AddToCell(5,1,GUTAText.Builder.TextLabel("Inscription").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(5,2,GUTAButton.Builder.Id(6).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(6,0,ImageFactory.CreateNamedImage(GumpIDs.SewingKit))
-dlg.LastTable.AddToCell(6,1,TextFactory.CreateLabel("Tailoring", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(6,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,7, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(6,0,GUTAImage.Builder.NamedGump(GumpIDs.SewingKit).Build())
+dlg.LastTable.AddToCell(6,1,GUTAText.Builder.TextLabel("Tailoring").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(6,2,GUTAButton.Builder.Id(7).Valign(DialogAlignment.Valign_Center).Build())
 
-dlg.LastTable.AddToCell(7,0,ImageFactory.CreateNamedImage(GumpIDs.Tools))
-dlg.LastTable.AddToCell(7,1,TextFactory.CreateLabel("Tinkering", DialogAlignment.Align_Center, DialogAlignment.Valign_Center))
-dlg.LastTable.AddToCell(7,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,8, DialogAlignment.Valign_Center))
+dlg.LastTable.AddToCell(7,0,GUTAImage.Builder.NamedGump(GumpIDs.Tools).Build())
+dlg.LastTable.AddToCell(7,1,GUTAText.Builder.TextLabel("Tinkering").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build())
+dlg.LastTable.AddToCell(7,2,GUTAButton.Builder.Id(8).Valign(DialogAlignment.Valign_Center).Build())
 
 dlg.MakeLastTableTransparent()
 

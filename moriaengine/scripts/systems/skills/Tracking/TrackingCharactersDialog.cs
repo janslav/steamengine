@@ -40,17 +40,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(80, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Co chceš stopovat?");
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Co chceš stopovat?").Build();
 			//cudlik na zavreni dialogu
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, ImprovedDialog.ICON_WIDTH, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel(""); //nic, to bude obrazek
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno", DialogAlignment.Align_Center, DialogAlignment.Valign_Top);
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel(""); //cudlik na stopovani, to je hotovka
+			dlg.AddTable(new GUTATable(1, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("").Build(); //nic, to bude obrazek
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Jméno").Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Top).Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("").Build(); //cudlik na stopovani, to je hotovka
 			dlg.MakeLastTableTransparent();
 
 			//seznam charu ke stopovani
@@ -84,9 +84,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					displayGump = GetGumpIconForChar(chr);
 				}
 
-				dlg.LastTable[rowCntr, 0] = ImageFactory.CreateNamedImage(displayGump);
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(chr.Name, DialogAlignment.Align_Center, DialogAlignment.Valign_Center);
-				dlg.LastTable[rowCntr, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 10 + rowCntr, DialogAlignment.Valign_Center);
+				dlg.LastTable[rowCntr, 0] = GUTAImage.Builder.NamedGump(displayGump).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(chr.Name).Align(DialogAlignment.Align_Center).Valign(DialogAlignment.Valign_Center).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAButton.Builder.Id(10 + rowCntr).Valign(DialogAlignment.Valign_Center).Build();
 
 				rowCntr++;
 			}

@@ -39,37 +39,37 @@ dialog.CreateBackground(<d_def_Pages_sirka>)
 dialog.SetLocation(10,30)
 
 //nadpis tabulky
-dialog.Add(GUTATable(1,0,ButtonFactory.D_BUTTON_WIDTH)) 
-dialog.LastTable.AddToCell(0,0,TextFactory.CreateHeadline("Seznam GMPagí - (<firstival> - <imax>) z <pagesList.Count>")) //prvni text, uplne vpravo
-dialog.LastTable.AddToCell(0,0,TextFactory.CreateText(400,0,<Hues.WriteColor>,"ONLINE")) //text o 400 bodù vpravo 
-dialog.LastTable.AddToCell(0,0,TextFactory.CreateText(500,0,<Hues.NAColor>,"OFFLINE")) //text o 500 bodù vpravo
-dialog.LastTable.AddToCell(0,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,0)) //exit button
+dialog.Add(GUTATable(1,0,ButtonMetrics.D_BUTTON_WIDTH)) 
+dialog.LastTable.AddToCell(0,0,GUTAText.Builder.TextHeadline("Seznam GMPagí - (<firstival> - <imax>) z <pagesList.Count>").Build()) //prvni text, uplne vpravo
+dialog.LastTable.AddToCell(0,0,GUTAText.Builder.XPos(400).Hue(<Hues.WriteColor>).Text("ONLINE").Build()) //text o 400 bodù vpravo 
+dialog.LastTable.AddToCell(0,0,GUTAText.Builder.XPos(500).Hue(<Hues.NAColor>).Text("OFFLINE").Build()) //text o 500 bodù vpravo
+dialog.LastTable.AddToCell(0,1,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build()) //exit button
 dialog.MakeTableTransparent()
 
 //popis sloupecku
-dialog.Add(GUTATable(1,160,140,ButtonFactory.D_BUTTON_WIDTH,180,130,ButtonFactory.D_BUTTON_WIDTH,0,ButtonFactory.D_BUTTON_WIDTH))
+dialog.Add(GUTATable(1,160,140,ButtonMetrics.D_BUTTON_WIDTH,180,130,ButtonMetrics.D_BUTTON_WIDTH,0,ButtonMetrics.D_BUTTON_WIDTH))
 //cudlik s hracem
-dialog.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,1)) //tridit dle jmena hrace asc
-dialog.LastTable.AddToCell(0,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,4)) //tridit dle jmena hrace desc
-dialog.LastTable.AddToCell(0,0,TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Hráè")) //x posunuto kousek o sortovaci button
+dialog.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(1).Build()) //tridit dle jmena hrace asc
+dialog.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(4).Build()) //tridit dle jmena hrace desc
+dialog.LastTable.AddToCell(0,0,GUTAText.Builder.TextLabel("Hráè").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET,0).Build()) //x posunuto kousek o sortovaci button
 //cudlik s pozici
-dialog.LastTable.AddToCell(0,1,TextFactory.CreateLabel("Pozice"))
+dialog.LastTable.AddToCell(0,1,GUTAText.Builder.TextLabel("Pozice"))
 //cudlik na smazani
-dialog.LastTable.AddToCell(0,2,TextFactory.CreateLabel("Del"))
+dialog.LastTable.AddToCell(0,2,GUTAText.Builder.TextLabel("Del"))
 //cas
-dialog.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,2)) //tridit podle casu asc
-dialog.LastTable.AddToCell(0,3,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,5)) //tridit podle casu desc
-dialog.LastTable.AddToCell(0,3,TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0, "Èas odeslání"))
+dialog.LastTable.AddToCell(0,3,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build()) //tridit podle casu asc
+dialog.LastTable.AddToCell(0,3,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonFactory.D_SORTBUTTON_LINE_OFFSET).Id(5).Build()) //tridit podle casu desc
+dialog.LastTable.AddToCell(0,3,GUTAText.Builder.TextLabel(ButtonMetrics.D_SORTBUTTON_COL_OFFSET,0, "Èas odeslání"))
 //cudlik s accountem
-dialog.LastTable.AddToCell(0,4,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortUp,3)) //tridit dle accountu asc
-dialog.LastTable.AddToCell(0,4,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSortDown,0,ButtonFactory.D_SORTBUTTON_LINE_OFFSET,6)) //tridit dle accountu desc
-dialog.LastTable.AddToCell(0,4,TextFactory.CreateLabel(ButtonFactory.D_SORTBUTTON_COL_OFFSET,0,"Account"))
+dialog.LastTable.AddToCell(0,4,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(3).Build()) //tridit dle accountu asc
+dialog.LastTable.AddToCell(0,4,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonFactory.D_SORTBUTTON_LINE_OFFSET).Id(6).Build()) //tridit dle accountu desc
+dialog.LastTable.AddToCell(0,4,GUTAText.Builder.TextLabel("Account").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build())
 //cudlik na odpoved
-dialog.LastTable.AddToCell(0,5,TextFactory.CreateLabel("Re:"))
+dialog.LastTable.AddToCell(0,5,GUTAText.Builder.TextLabel("Re:").Build())
 //zbytek - text
-dialog.LastTable.AddToCell(0,6,TextFactory.CreateLabel("Popis problému"))
+dialog.LastTable.AddToCell(0,6,GUTAText.Builder.TextLabel("Popis problému").Build())
 //button na odpoved
-dialog.LastTable.AddToCell(0,7,TextFactory.CreateLabel("Odpoved"))
+dialog.LastTable.AddToCell(0,7,GUTAText.Builder.TextLabel("Odpovìï").Build())
 
 dialog.MakeTableTransparent() //zpruhledni nadpisovy radek
 
@@ -90,21 +90,21 @@ while (<idx> < <imax>)
   		arg mscolor = <Hues.WriteColor> //default
  	endif
 		//cislo sloupce, cislo radku ve sloupci, objekt co se tam frkne
-	dialog.LastTable.AddToCell(<rowCntr>,0,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,(7*idx)+100)) //players info
-	dialog.LastTable.AddToCell(<rowCntr>,0,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, pColor, "<iPage.sender.Name>")) //jmeno odesilatele
-	dialog.LastTable.AddToCell(<rowCntr>,1,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,(7*idx)+101)) //jdi na pozici
-	dialog.LastTable.AddToCell(<rowCntr>,1,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0, pColor, "<iPage.p.ToNormalString()>")) //pozice
-	dialog.LastTable.AddToCell(<rowCntr>,2,ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross,(7*idx)+102)) //smaz page
-	dialog.LastTable.AddToCell(<rowCntr>,3,TextFactory.CreateText(pColor, "<iPage.time.ToString()>")) //cas napsani
-	dialog.LastTable.AddToCell(<rowCntr>,4,ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick,(7*idx)+103)) //ukaz account
-	dialog.LastTable.AddToCell(<rowCntr>,4,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH,0, pColor, "<iPage.sender.Account.Name>")) //account
-	dialog.LastTable.AddToCell(<rowCntr>,6,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,(7*idx)+105)) //zobrazit text zpravy
-	dialog.LastTable.AddToCell(<rowCntr>,6,TextFactory.CreateText(ButtonFactory.D_BUTTON_WIDTH, 0, mscolor, "<iPage.reason>")) //text page 	 	
+	dialog.LastTable.AddToCell(<rowCntr>,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((7*idx)+100).Build()) //players info
+	dialog.LastTable.AddToCell(<rowCntr>,0,GUTAText.Builder.Text("<iPage.sender.Name>").XPos(ButtonFactory.D_BUTTON_WIDTH).Hues(pColor).Build()) //jmeno odesilatele
+	dialog.LastTable.AddToCell(<rowCntr>,1,GUTAButton.Builder.Id((7*idx)+101).Build()) //jdi na pozici
+	dialog.LastTable.AddToCell(<rowCntr>,1,GUTAText.Builder.Text("<iPage.p.ToNormalString()>").XPos(ButtonFactory.D_BUTTON_WIDTH).Hues(pColor).Build()) //pozice
+	dialog.LastTable.AddToCell(<rowCntr>,2,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id((7*idx)+102).Build()) //smaz page
+	dialog.LastTable.AddToCell(<rowCntr>,3,GUTAText.Builder.Text(pColor, "<iPage.time.ToString()>").Build()) //cas napsani
+	dialog.LastTable.AddToCell(<rowCntr>,4,GUTAButton.Builder.Id((7*idx)+103).Build()) //ukaz account
+	dialog.LastTable.AddToCell(<rowCntr>,4,GUTAText.Builder.Text("<iPage.sender.Account.Name>").XPos(ButtonFactory.D_BUTTON_WIDTH).Hue(pColor).Build()) //account
+	dialog.LastTable.AddToCell(<rowCntr>,6,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((7*idx)+105).Build()) //zobrazit text zpravy
+	dialog.LastTable.AddToCell(<rowCntr>,6,GUTAText.Builder.Text("<iPage.reason>").XPos(ButtonFactory.D_BUTTON_WIDTH).Hue(mscolor).Build()) //text page 	 	
 	if(iPage.Replied)
   		//nepujde odpovedet vickrat
-		dialog.LastTable.AddToCell(<rowCntr>,7,ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper,(7*idx)+106)) //zobrazit text opdpovedi			
+		dialog.LastTable.AddToCell(<rowCntr>,7,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((7*idx)+106).Build()) //zobrazit text opdpovedi			
  	else
-		dialog.LastTable.AddToCell(<rowCntr>,5,ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend,(7*idx)+104)) //cudlik pro odpoved  		
+		dialog.LastTable.AddToCell(<rowCntr>,5,GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id((7*idx)+104).Build()) //cudlik pro odpoved  		
  	endif
 	arg rowCntr = <rowCntr>+1
  	arg idx = <idx>+1

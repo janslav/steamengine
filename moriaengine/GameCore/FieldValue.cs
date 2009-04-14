@@ -76,6 +76,14 @@ namespace SteamEngine {
 			parsers[t] = parser;
 		}
 
+		public static IFieldValueParser GetParserFor(Type type) {
+			IFieldValueParser outVal;
+			if (parsers.TryGetValue(type, out outVal)) {
+				return outVal;
+			}
+			return null;
+		}
+
 		internal static void UnloadScripts() {
 			parsers.Clear();
 		}

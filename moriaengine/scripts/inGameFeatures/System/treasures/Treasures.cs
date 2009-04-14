@@ -327,54 +327,54 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			// Headline
 			dialogHandler.AddTable(new GUTATable(1, 0));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline("Menu Pokladu");
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Menu Pokladu").Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			// First table
-			dialogHandler.LastTable.RowHeight = ButtonFactory.D_BUTTON_HEIGHT;
-			dialogHandler.AddTable(new GUTATable(6, 100, 0, ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.LastTable.RowHeight = ButtonMetrics.D_BUTTON_HEIGHT;
+			dialogHandler.AddTable(new GUTATable(6, 100, 0, ButtonMetrics.D_BUTTON_WIDTH));
 
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateText("Peníze (exp):");
-			dialogHandler.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 1, Convert.ToString(treasure.MoneyCoefficient));
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 10); // goto treasuremoneyCoefficientHlp gump
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextLabel("Peníze (exp):").Build();
+			dialogHandler.LastTable[0, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(1).Text(Convert.ToString(treasure.MoneyCoefficient)).Build();
+			dialogHandler.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(10).Build(); // goto treasuremoneyCoefficientHlp gump
 
-			dialogHandler.LastTable[1, 0] = TextFactory.CreateText("Šek:");
-			dialogHandler.LastTable[1, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 2, Convert.ToString(treasure.Check));
-			dialogHandler.LastTable[1, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 11); // goto treasureCheckHlp gump
+			dialogHandler.LastTable[1, 0] = GUTAText.Builder.TextLabel("Šek:").Build();
+			dialogHandler.LastTable[1, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(2).Text(Convert.ToString(treasure.Check)).Build();
+			dialogHandler.LastTable[1, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(11).Build(); // goto treasureCheckHlp gump
 
-			dialogHandler.LastTable[2, 0] = TextFactory.CreateText("Perioda:");
-			dialogHandler.LastTable[2, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 3, Convert.ToString(treasure.CycleTime));
-			dialogHandler.LastTable[2, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 12); // goto treasureperiodicHlp gump
+			dialogHandler.LastTable[2, 0] = GUTAText.Builder.TextLabel("Perioda:").Build();
+			dialogHandler.LastTable[2, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(3).Text(Convert.ToString(treasure.CycleTime)).Build();
+			dialogHandler.LastTable[2, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(12).Build(); // goto treasureperiodicHlp gump
 
-			dialogHandler.LastTable[3, 0] = TextFactory.CreateText("Lockpick:");
-			dialogHandler.LastTable[3, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 4, Convert.ToString(treasure.Lockpick));
-			dialogHandler.LastTable[3, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 13); // goto treasureLockpickHlp gump
+			dialogHandler.LastTable[3, 0] = GUTAText.Builder.TextLabel("Lockpick:").Build();
+			dialogHandler.LastTable[3, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(4).Text(Convert.ToString(treasure.Lockpick)).Build();
+			dialogHandler.LastTable[3, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(13).Build(); // goto treasureLockpickHlp gump
 
-			dialogHandler.LastTable[4, 0] = TextFactory.CreateText("LastOpened:");
-			dialogHandler.LastTable[4, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, 5, Convert.ToString(treasure.GetLastopenTimeDifference()));
-			dialogHandler.LastTable[4, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonSend, 14); // goto treasureLastOpenHlp gump
+			dialogHandler.LastTable[4, 0] = GUTAText.Builder.TextLabel("LastOpened:").Build();
+			dialogHandler.LastTable[4, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(5).Text(Convert.ToString(treasure.GetLastopenTimeDifference())).Build();
+			dialogHandler.LastTable[4, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(14).Build(); // goto treasureLastOpenHlp gump
 
-			dialogHandler.LastTable[5, 1] = TextFactory.CreateText(treasure.GetLastopenTimeDifference(true));
+			dialogHandler.LastTable[5, 1] = GUTAText.Builder.TextLabel(treasure.GetLastopenTimeDifference(true)).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			// Second table
 			// Head
-			dialogHandler.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH + 100, 0));
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" pocet itemu:");
+			dialogHandler.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH + 100, 0));
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel(" pocet itemu:").Build();
 			// Body
-			dialogHandler.AddTable(new GUTATable(2, ButtonFactory.D_BUTTON_WIDTH, 100, 0));
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 2); // goto treasureBounty gump
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText("Poklad");
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(" " + Convert.ToString(treasure.TreasureItems.Count));
-			dialogHandler.LastTable[1, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 3); // goto treasureSpawns gump
-			dialogHandler.LastTable[1, 1] = TextFactory.CreateText("Spawny");
-			dialogHandler.LastTable[1, 2] = TextFactory.CreateText(" " + Convert.ToString(treasure.TreasureSpawns.Count));
+			dialogHandler.AddTable(new GUTATable(2, ButtonMetrics.D_BUTTON_WIDTH, 100, 0));
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Id(2).Build(); // goto treasureBounty gump
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel("Poklad").Build();
+			dialogHandler.LastTable[0, 2] = GUTAText.Builder.Text(" " + Convert.ToString(treasure.TreasureItems.Count)).Build();
+			dialogHandler.LastTable[1, 0] = GUTAButton.Builder.Id(3).Build(); // goto treasureSpawns gump
+			dialogHandler.LastTable[1, 1] = GUTAText.Builder.TextLabel("Spawny").Build();
+			dialogHandler.LastTable[1, 2] = GUTAText.Builder.Text(" " + Convert.ToString(treasure.TreasureSpawns.Count)).Build();
 
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.AddTable(new GUTATable(1, 0));
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1); //OK
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, ButtonFactory.D_BUTTON_WIDTH, 0, 0); // Cancel
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build(); //OK
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).XPos(ButtonMetrics.D_BUTTON_WIDTH).Id(0).Build(); // Cancel
 
 			//finish creating
 			dialogHandler.WriteOut();
@@ -419,34 +419,34 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 				// opening of setting Dialogs
 				case 2:	// treasureBounty gump
-					treasure.Dialog(p, SingletonScript<Dialogs.D_TreasureBounty>.Instance);
+					treasure.Dialog(p, SingletonScript<D_TreasureBounty>.Instance);
 					p.SysMessage("Open treasureBounty gump...");
 					return;
 				case 3:	// treasureSpawns gump
-					treasure.Dialog(p, SingletonScript<Dialogs.D_TreasureSpawns>.Instance);
+					treasure.Dialog(p, SingletonScript<D_TreasureSpawns>.Instance);
 					p.SysMessage("Open treasureSpawns gump...");
 					return;
 
 				// Help dialogy
 				case 10:	//help moneyCoefficient
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Peníze", "Promìnná 'Peníze' udává poèet penìz generovaných stáøím pokladu");
+					p.Dialog(SingletonScript<D_Display_Text>.Instance, "Help - Peníze", "Promìnná 'Peníze' udává poèet penìz generovaných stáøím pokladu");
 					break;
 				case 11:	//help check
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Šek", "Promìnná 'Šek' je konstantní poèet penìz, který bude pokaždé do pokladu vložen.<br>" +
+					p.Dialog(SingletonScript<D_Display_Text>.Instance, "Help - Šek", "Promìnná 'Šek' je konstantní poèet penìz, který bude pokaždé do pokladu vložen.<br>" +
 																								"Nemá vliv na hodnotu 'moneyCoefficient'. Suma vypoèítaná z této složky se prostì pøiète k celkovému výnosu.");
 					break;
 				case 12:	//help perioda
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Perioda", "Promìnná 'perioda' je èas v sekundách, po kterém se násobí periodic itemy. Èas posledního otevøení pokladu " +
+					p.Dialog(SingletonScript<D_Display_Text>.Instance, "Help - Perioda", "Promìnná 'perioda' je èas v sekundách, po kterém se násobí periodic itemy. Èas posledního otevøení pokladu " +
 																								"je uložen a po dalším otevøení hráèi se rozdíl èasù podìlí periodic konstantou. Výsledná hodnota udává poèet cyklù, " +
 																								"které budou generovat itemy z pokladu s kladným attributem periodic.<br>" +
 																								" vzorec pro periodic itemy:<br><\t> (lastOpened/Perioda)*itemPeriodic");
 					break;
 				case 13:	//help lockpick
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - Lockpick", "Promìnná 'lockpick' udává minimální potøebný skill pro odemèení pokladu. Nulová hodnota nechá poklad" +
+					p.Dialog(SingletonScript<D_Display_Text>.Instance, "Help - Lockpick", "Promìnná 'lockpick' udává minimální potøebný skill pro odemèení pokladu. Nulová hodnota nechá poklad" +
 																								"otevøený, bez nutnosti používat lockpicky.");
 					break;
 				case 14:	//help lastOpened
-					p.Dialog(SingletonScript<Dialogs.D_Display_Text>.Instance, "Help - LastOpened", "Promìnná 'lastOpened' udává, pøed jakou dobou v sekundách byl naposledy poklad otevøen. " +
+					p.Dialog(SingletonScript<D_Display_Text>.Instance, "Help - LastOpened", "Promìnná 'lastOpened' udává, pøed jakou dobou v sekundách byl naposledy poklad otevøen. " +
 																									"Pøepoèet na dny je možné vidìt o øádek níž.");
 					break;
 				default:
@@ -473,33 +473,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			// Headline
 			dialogHandler.AddTable(new GUTATable(1, 0));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline("Obsah Pokladu");
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Obsah Pokladu").Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			// First row
-			dialogHandler.LastTable.RowHeight = ButtonFactory.D_BUTTON_HEIGHT;
-			dialogHandler.AddTable(new GUTATable(1, 220, 70, 70, 80, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateText(" Itemdef");
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" amount");
-			dialogHandler.LastTable[0, 2] = TextFactory.CreateText(" chance");
-			dialogHandler.LastTable[0, 3] = TextFactory.CreateText(" periodic");
+			dialogHandler.LastTable.RowHeight = ButtonMetrics.D_BUTTON_HEIGHT;
+			dialogHandler.AddTable(new GUTATable(1, 220, 70, 70, 80, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextLabel(" Itemdef").Build();
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel(" Amount").Build();
+			dialogHandler.LastTable[0, 2] = GUTAText.Builder.TextLabel(" Chance").Build();
+			dialogHandler.LastTable[0, 3] = GUTAText.Builder.TextLabel(" Periodic").Build();
 
 			// Second row
-			dialogHandler.AddTable(new GUTATable(rowCount, 220, 70, 70, 80, ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.AddTable(new GUTATable(rowCount, 220, 70, 70, 80, ButtonMetrics.D_BUTTON_WIDTH));
 			foreach (TreasureItemEntry tie in trItems) {
-				dialogHandler.LastTable[i, 0] = InputFactory.CreateInput(LeafComponentTypes.InputText, (i * 10) + 1, tie.itemID.PrettyDefname);
-				dialogHandler.LastTable[i, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, (i * 10) + 2, tie.amount.ToString());
-				dialogHandler.LastTable[i, 2] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, (i * 10) + 3, tie.chance.ToString());
-				dialogHandler.LastTable[i, 3] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, (i * 10) + 4, tie.periodic.ToString());
-				dialogHandler.LastTable[i, 4] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + i);
+				dialogHandler.LastTable[i, 0] = GUTAInput.Builder.Id((i * 10) + 1).Text(tie.itemID.PrettyDefname).Build();
+				dialogHandler.LastTable[i, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 2).Text(tie.amount.ToString()).Build();
+				dialogHandler.LastTable[i, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 3).Text(tie.chance.ToString()).Build();
+				dialogHandler.LastTable[i, 3] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 4).Text(tie.periodic.ToString()).Build();
+				dialogHandler.LastTable[i, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + i).Build();
 				i++;
 			}
 
 			// last row
-			dialogHandler.AddTable(new GUTATable(1, 360, 80, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);	// OK
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" Add item");
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 2);	// Add button
+			dialogHandler.AddTable(new GUTATable(1, 360, 80, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();	// OK
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel(" Add item").Build();
+			dialogHandler.LastTable[0, 2] = GUTAButton.Builder.Id(2).Build();	// Add button
 
 			dialogHandler.WriteOut();
 		}
@@ -578,29 +578,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			// Headline
 			dialogHandler.AddTable(new GUTATable(1, 0));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam guard spawnù");
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam guard spawnù").Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			// First row
-			dialogHandler.LastTable.RowHeight = ButtonFactory.D_BUTTON_HEIGHT;
-			dialogHandler.AddTable(new GUTATable(1, 300, 70, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = TextFactory.CreateText(" Character Def");
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" amount");
+			dialogHandler.LastTable.RowHeight = ButtonMetrics.D_BUTTON_HEIGHT;
+			dialogHandler.AddTable(new GUTATable(1, 300, 70, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.TextLabel(" Character Def").Build();
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel(" Amount").Build();
 
 			// Second row
-			dialogHandler.AddTable(new GUTATable(rowCount, 300, 70, ButtonFactory.D_BUTTON_WIDTH));
+			dialogHandler.AddTable(new GUTATable(rowCount, 300, 70, ButtonMetrics.D_BUTTON_WIDTH));
 			foreach (TreasureSpawnEntry tse in trSpawns) {
-				dialogHandler.LastTable[i, 0] = InputFactory.CreateInput(LeafComponentTypes.InputText, (i * 10) + 1, tse.charDef.PrettyDefname);
-				dialogHandler.LastTable[i, 1] = InputFactory.CreateInput(LeafComponentTypes.InputNumber, (i * 10) + 2, tse.amount.ToString());
-				dialogHandler.LastTable[i, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + i);
+				dialogHandler.LastTable[i, 0] = GUTAInput.Builder.Id((i * 10) + 1).Text(tse.charDef.PrettyDefname).Build();
+				dialogHandler.LastTable[i, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 2).Text(tse.amount.ToString()).Build();
+				dialogHandler.LastTable[i, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + i).Build();
 				i++;
 			}
 
 			// last row
-			dialogHandler.AddTable(new GUTATable(1, 270, 100, ButtonFactory.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonOK, 1);	// OK
-			dialogHandler.LastTable[0, 1] = TextFactory.CreateText(" Add spawn");
-			dialogHandler.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonTick, 2);	// Add button
+			dialogHandler.AddTable(new GUTATable(1, 270, 100, ButtonMetrics.D_BUTTON_WIDTH));
+			dialogHandler.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();	// OK
+			dialogHandler.LastTable[0, 1] = GUTAText.Builder.TextLabel(" Add spawn").Build();
+			dialogHandler.LastTable[0, 2] = GUTAButton.Builder.Id(2).Build();	// Add button
 
 			dialogHandler.WriteOut();
 		}

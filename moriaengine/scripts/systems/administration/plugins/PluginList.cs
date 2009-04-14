@@ -52,24 +52,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(50, 50);
 
 			//nadpis
-			dlg.AddTable(new GUTATable(1, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateHeadline("Seznam všech plugin na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + pluginList.Count + ")");
-			dlg.LastTable[0, 1] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 0);//cudlik na zavreni dialogu
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech plugin na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + pluginList.Count + ")").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Vyhledávací kriterium");
-			dlg.LastTable[0, 1] = InputFactory.CreateInput(LeafComponentTypes.InputText, 33);
-			dlg.LastTable[0, 2] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 1);
+			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
+			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
+			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, ButtonFactory.D_BUTTON_WIDTH, 200, 0, ButtonFactory.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = TextFactory.CreateLabel("Smaž");
-			dlg.LastTable[0, 1] = TextFactory.CreateLabel("Jméno pluginy");
-			dlg.LastTable[0, 2] = TextFactory.CreateLabel("Defname");
-			dlg.LastTable[0, 3] = TextFactory.CreateLabel("Info");
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 200, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Smaž").Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Jméno pluginy").Build();
+			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Defname").Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Info").Build();
 			dlg.MakeLastTableTransparent();
 
 			//seznam tagu
@@ -81,13 +81,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				KeyValuePair<PluginKey, Plugin> de = pluginList[i];
 
-				dlg.LastTable[rowCntr, 0] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonCross, 10 + (2 * i));
-				dlg.LastTable[rowCntr, 1] = TextFactory.CreateText(de.Key.Name);
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + (2 * i)).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(de.Key.Name).Build();
 				//plugin defname
 				Plugin pl = de.Value;
-				dlg.LastTable[rowCntr, 2] = TextFactory.CreateText(pl.Def.Defname);
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(pl.Def.Defname).Build();
 				//odkaz do infodialogu
-				dlg.LastTable[rowCntr, 3] = ButtonFactory.CreateButton(LeafComponentTypes.ButtonPaper, 11 + (2 * i));
+				dlg.LastTable[rowCntr, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(11 + (2 * i)).Build();
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
