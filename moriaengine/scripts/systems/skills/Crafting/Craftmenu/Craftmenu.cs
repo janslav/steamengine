@@ -316,6 +316,7 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[Summary("Craftmenu category class. This is the entity where all Items from the menu are stored as well " +
 			"as it is a container for another subcategories")]
+	[ViewableClass]
 	public class CraftmenuCategory : ICraftmenuElement {
 		[SaveableData]
 		public string name; //name of the category
@@ -380,6 +381,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[SaveableClass]
+	[ViewableClass]
 	[Summary("Craftmenu item class. This is the entity representing a single Item in the craftmenu")]
 	public class CraftmenuItem : ICraftmenuElement {
 		[SaveableData]

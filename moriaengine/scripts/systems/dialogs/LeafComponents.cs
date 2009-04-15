@@ -1146,7 +1146,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	public class GUTAImage : LeafGUTAComponent {
-		protected int gumpId;
+		private int gumpId;
+		private int color;
 
 		[Summary("Image horizontal alignment")]
 		private DialogAlignment align;
@@ -1167,6 +1168,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal DialogAlignment align = DialogAlignment.Align_Center;
 			internal DialogAlignment valign = DialogAlignment.Valign_Center;
 			internal int gumpId = 0;
+			internal int color = 0;
 
 			internal ImageBuilder() {
 			}
@@ -1213,6 +1215,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
+			[Summary("Set the image's hue (color)")]
+			public ImageBuilder Hue(int val) {
+				this.color = (int) val;
+				return this;
+			}
+
+			[Summary("Set the image's hue (color)")]
+			public ImageBuilder Color(int val) {
+				this.color = (int) val;
+				return this;
+			}
 
 			[Summary("Create the GUTAImage instance")]
 			public override GUTAImage Build() {
@@ -1227,6 +1240,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.align = builder.align;
 			this.valign = builder.valign;
 			this.gumpId = builder.gumpId;
+			this.color = builder.color;
 		}
 
 		[Summary("When added to the column we have to specify the position (count the absolute)")]
@@ -1266,7 +1280,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Call the underlaying gump istance's methods")]
 		internal override void WriteComponent() {
-			gump.AddTilePic(xPos, yPos, (int) gumpId);
+			if (this.color == 0) {
+				gump.AddTilePic(xPos, yPos, gumpId);
+			} else {
+				gump.AddTilePicHue(this.xPos, this.yPos, this.gumpId, this.color);
+			}
 		}
 
 		public override string ToString() {

@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					int itmPicRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[itm.itemDef.Model].Height + 2 * ImprovedDialog.D_ICON_SPACE);
 					oneRow.RowHeight = itmPicRowHgth;
 					oneRow[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(5 * i + 12).Valign(DialogAlignment.Valign_Top).Build(); //link to the itemdef info...
-					oneRow[0, 1] = GUTAImage.Builder.Gump(itm.itemDef.Model).Build();
+					oneRow[0, 1] = GUTAImage.Builder.Gump(itm.itemDef.Model).Color(itm.itemDef.Color).Build();
 					oneRow[0, 2] = GUTAText.Builder.Text(itm.Name + "(" + itm.itemDef.PrettyDefname + ")   defname: " + itm.itemDef.Defname).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 					GUTARow secRow = new GUTARow(3, ButtonMetrics.D_BUTTON_WIDTH, 80, 0);
 					secRow.InnerRowsDelimited = true; //lines in the row will be separated

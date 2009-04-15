@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(hdrTable);
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název:").Build();
 			dlg.LastTable[0, 1] = GUTAText.Builder.Text(itm.Name).Build();
-			dlg.LastTable[0, 2] = GUTAImage.Builder.Gump(itm.Model).Build();
+			dlg.LastTable[0, 2] = GUTAImage.Builder.Gump(itm.Model).Color(itm.Color).Build();
 			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
