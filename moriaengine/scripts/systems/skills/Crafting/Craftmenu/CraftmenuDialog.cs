@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						continue;
 					}
 					dlg.LastTable[rowCntr, 0] = GUTACheckBox.Builder.Id(4 * i + 10).Build();
-					dlg.LastTable[rowCntr, 1] = GUTAImage.Builder.Gump(oneItm.itemDef.Model).Build();
+					dlg.LastTable[rowCntr, 1] = GUTAImage.Builder.Gump(oneItm.itemDef.Model).Color(oneItm.itemDef.Color).Build();
 					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(4 * i + 13).Valign(DialogAlignment.Valign_Center).Build();//display info
 					//now the list of resources
 					ResourcesList reses = oneItm.itemDef.Resources;
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								textToShow += itmRes.DesiredCount.ToString() + " ";
 								dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 								int countLength = ImprovedDialog.TextLength(textToShow); //length of the text with number (count of items needed) plus the seaprating space
-								dlg.LastTable[rowCntr, 5] = GUTAImage.Builder.Gump(itmRes.ItemDef.Model).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build();
+								dlg.LastTable[rowCntr, 5] = GUTAImage.Builder.Gump(itmRes.ItemDef.Model).Color(itmRes.ItemDef.Color).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build();
 								//prepare next offset:
 								GumpArtDimension gad = GumpDimensions.Table[itmRes.ItemDef.Model];
 								lastColPos += spaceLength + countLength + gad.Width; //first offset, counted length of the number text including separating space, width of the icon, space after the icon
