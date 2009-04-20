@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static new AbstractTargetDef Get(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as AbstractTargetDef;
 		}
 
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 			string defname = input.headerName.ToLower();
 
 			AbstractScript def;
-			byDefname.TryGetValue(defname, out def);
+			AllScriptsByDefname.TryGetValue(defname, out def);
 			ScriptedTargetDef td = def as ScriptedTargetDef;
 			if (td == null) {
 				if (def != null) {//it isnt ScriptedTargetDef
@@ -205,8 +205,8 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					td = new ScriptedTargetDef(defname, input.filename, input.headerLine);
 				}
-			} else if (td.unloaded) {
-				td.unloaded = false;
+			} else if (td.IsUnloaded) {
+				td.IsUnloaded = false;
 				UnRegisterScriptedTargetDef(td);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
@@ -277,16 +277,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void UnRegisterScriptedTargetDef(ScriptedTargetDef td) {
-			byDefname.Remove(td.Defname);
+			AllScriptsByDefname.Remove(td.Defname);
 			if (td.Altdefname != null) {
-				byDefname.Remove(td.Altdefname);
+				AllScriptsByDefname.Remove(td.Altdefname);
 			}
 		}
 
 		private static void RegisterScriptedTargetDef(ScriptedTargetDef td) {
-			byDefname[td.Defname] = td;
+			AllScriptsByDefname[td.Defname] = td;
 			if (td.Altdefname != null) {
-				byDefname[td.Altdefname] = td;
+				AllScriptsByDefname[td.Altdefname] = td;
 			}
 		}
 

@@ -71,7 +71,7 @@ namespace SteamEngine {
 
 		public static new PluginDef Get(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as PluginDef;
 		}
 
@@ -135,7 +135,7 @@ namespace SteamEngine {
 			}
 
 			AbstractScript def;
-			byDefname.TryGetValue(defname, out def);
+			AllScriptsByDefname.TryGetValue(defname, out def);
 			PluginDef pluginDef = def as PluginDef;
 
 			if (pluginDef == null) {
@@ -145,18 +145,18 @@ namespace SteamEngine {
 					ConstructorInfo cw = pluginDefCtors[pluginDefType];
 					pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
 				}
-			} else if (pluginDef.unloaded) {
+			} else if (pluginDef.IsUnloaded) {
 				if (pluginDef.GetType() != pluginDefType) {
 					throw new OverrideNotAllowedException("You can not change the class of a Plugindef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				pluginDef.unloaded = false;
-				byDefname.Remove(pluginDef.Defname);//will be put back again
+				pluginDef.IsUnloaded = false;
+				AllScriptsByDefname.Remove(pluginDef.Defname);//will be put back again
 			} else {
 				throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
 			}
 
 			pluginDef.Defname = defname;
-			byDefname[defname] = pluginDef;
+			AllScriptsByDefname[defname] = pluginDef;
 
 			//header done. now we have the def instantiated.
 			//now load the other fields
@@ -183,7 +183,7 @@ namespace SteamEngine {
 		}
 
 		internal static void Init() {
-			foreach (AbstractScript script in AbstractScript.byDefname.Values) {
+			foreach (AbstractScript script in AbstractScript.AllScriptsByDefname.Values) {
 				PluginDef pd = script as PluginDef;
 				if (pd != null) {
 					pd.TryActivateCompiledTriggers();

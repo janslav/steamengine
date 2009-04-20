@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static ProfessionDef ByDefname(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as ProfessionDef;
 		}
 
@@ -90,12 +90,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void RegisterProfessionDef(ProfessionDef pd) {
-			byDefname[pd.Defname] = pd;
+			AllScriptsByDefname[pd.Defname] = pd;
 			byName[pd.Name] = pd;
 		}
 
 		private static void UnRegisterProfessionDef(ProfessionDef pd) {
-			byDefname.Remove(pd.Defname);
+			AllScriptsByDefname.Remove(pd.Defname);
 			byName.Remove(pd.Name);
 		}
 
@@ -136,7 +136,7 @@ namespace SteamEngine.CompiledScripts {
 			string profDefName = input.headerName.ToLower();
 
 			AbstractScript def;
-			byDefname.TryGetValue(profDefName, out def);
+			AllScriptsByDefname.TryGetValue(profDefName, out def);
 			ProfessionDef profDef = def as ProfessionDef;
 
 			ConstructorInfo constructor = profDefCtorsByName[typeName];
@@ -148,11 +148,11 @@ namespace SteamEngine.CompiledScripts {
 					object[] cargs = new object[] { profDefName, input.filename, input.headerLine };
 					profDef = (ProfessionDef) constructor.Invoke(cargs);
 				}
-			} else if (profDef.unloaded) {
+			} else if (profDef.IsUnloaded) {
 				if (profDef.GetType() != constructor.DeclaringType) {
 					throw new OverrideNotAllowedException("You can not change the class of a ProfessionDef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				profDef.unloaded = false;
+				profDef.IsUnloaded = false;
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
@@ -476,7 +476,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return GetType().Name + " " + Name;
+			return Tools.TypeToString(this.GetType()) + " " + Name;
 		}
 
 		[Summary("Compiled trigger group specific for the given ProfessionDef")]

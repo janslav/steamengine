@@ -356,7 +356,7 @@ namespace SteamEngine.LScript {
 
 			//var
 			if (args.Length == 0) {
-				if (Globals.instance.HasTag(TagKey.Get(name))) {
+				if (Globals.Instance.HasTag(TagKey.Get(name))) {
 					finalOpNode = new OpNode_GetVar(parent, filename, line, column, origNode, name);
 					goto runit;
 				}

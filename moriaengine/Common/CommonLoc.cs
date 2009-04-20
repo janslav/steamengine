@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace SteamEngine.Common {
 
 	public class CommonLoc : Loc {
-		public readonly string NotSupported = "Not supported";
-		public readonly string NotImplemented = "Not implemented";
+		internal readonly string NotSupported = "Not supported";
+		internal readonly string NotImplemented = "Not implemented";
 	}
 }

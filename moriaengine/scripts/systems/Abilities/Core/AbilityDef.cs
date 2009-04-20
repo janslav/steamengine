@@ -199,7 +199,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static AbilityDef ByDefname(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as AbilityDef;
 		}
 
@@ -216,12 +216,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void RegisterAbilityDef(AbilityDef ad) {
-			byDefname[ad.Defname] = ad;
+			AllScriptsByDefname[ad.Defname] = ad;
 			byName[ad.Name] = ad;
 		}
 
 		private static void UnRegisterAbilityDef(AbilityDef ad) {
-			byDefname.Remove(ad.Defname);
+			AllScriptsByDefname.Remove(ad.Defname);
 			byName.Remove(ad.Name);
 		}
 
@@ -264,7 +264,7 @@ namespace SteamEngine.CompiledScripts {
 			string abilityDefName = input.headerName.ToLower();
 
 			AbstractScript def;
-			byDefname.TryGetValue(abilityDefName, out def);
+			AllScriptsByDefname.TryGetValue(abilityDefName, out def);
 			AbilityDef abilityDef = def as AbilityDef;
 
 			ConstructorInfo constructor = abilityDefCtorsByName[typeName];
@@ -276,11 +276,11 @@ namespace SteamEngine.CompiledScripts {
 					object[] cargs = new object[] { abilityDefName, input.filename, input.headerLine };
 					abilityDef = (AbilityDef) constructor.Invoke(cargs);
 				}
-			} else if (abilityDef.unloaded) {
+			} else if (abilityDef.IsUnloaded) {
 				if (abilityDef.GetType() != constructor.DeclaringType) {
 					throw new OverrideNotAllowedException("You can not change the class of a AbilityDef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				abilityDef.unloaded = false;
+				abilityDef.IsUnloaded = false;
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
@@ -378,7 +378,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return GetType().Name + " " + Name;
+			return Tools.TypeToString(this.GetType()) + " " + Name;
 		}
 
 		#region utilities

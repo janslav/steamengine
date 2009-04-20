@@ -61,7 +61,7 @@ namespace SteamEngine {
 				}
 			}
 			if (defname.ToLower().EndsWith("_global")) {
-				Globals.instance.AddTriggerGroup(this);
+				Globals.Instance.AddTriggerGroup(this);
 			}
 		}
 
@@ -77,16 +77,16 @@ namespace SteamEngine {
 
 		public static new TriggerGroup Get(string name) {
 			AbstractScript script;
-			byDefname.TryGetValue(name, out script);
+			AllScriptsByDefname.TryGetValue(name, out script);
 			return script as TriggerGroup;
 		}
 
 		internal static void ReAddGlobals() {
-			foreach (AbstractScript script in byDefname.Values) {
+			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				TriggerGroup tg = script as TriggerGroup;
 				if (tg != null) {
 					if (tg.Defname.ToLower().EndsWith("_global")) {
-						Globals.instance.AddTriggerGroup(tg);
+						Globals.Instance.AddTriggerGroup(tg);
 					}
 				}
 			}

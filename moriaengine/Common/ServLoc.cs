@@ -99,7 +99,7 @@ namespace SteamEngine.Common {
 		private Dictionary<string, FieldInfo> GetFieldInfoDict(Type languageClass) {
 			Dictionary<string, FieldInfo> fieldsDict = new Dictionary<string, FieldInfo>(StringComparer.InvariantCultureIgnoreCase);
 
-			foreach (FieldInfo fi in languageClass.GetFields(BindingFlags.Public | BindingFlags.Instance)) {
+			foreach (FieldInfo fi in languageClass.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				if (fi.FieldType == typeof(string)) {
 					fieldsDict[fi.Name] = fi;
 					string value = (string) fi.GetValue(this);

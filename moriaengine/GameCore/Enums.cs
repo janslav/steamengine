@@ -37,7 +37,7 @@ namespace SteamEngine {
 		NorthWest = 7, Mask = NorthWest
 	}
 
-	public enum StatLockType : byte {
+	public enum StatLockType {
 		Up = 0, Increase = 0, Unlocked = 0,
 		Down = 1, Decrease = 1, LockedDown = 1,
 		Locked = 2
@@ -85,16 +85,6 @@ namespace SteamEngine {
 	public enum RequestableAnim {
 		Bow,
 		Salute
-	}
-
-	//Used by the enumerations stuff in UberSectorEnumerator.cs and Sector.cs.
-	//-SL
-	internal enum SectorEnumType {
-		Players,
-		Things,
-		Disconnects,
-		Statics,
-		NumSectorEnumTypes		//Used as an array-size constant.
 	}
 
 	//Used by the core speech code.
@@ -145,15 +135,6 @@ namespace SteamEngine {
 		Me
 	}
 
-	//Used by the Has/Exists methods in TagHolder. e.g. Has(rider), Has(owner), etc.
-	//-SL
-	//public enum DoesItHaveIt {
-	//    No=0,				//No, it is null.
-	//    Yes=1,				//Yes, it has it, it isn't null.
-	//    Maybe=2,			//It might have it... There's more than one member with the same name, so you need to capitalize exactly.
-	//    No_Such_Name=3		//There are no properties matching that name!
-	//}
-
 	[Flags]
 	public enum MovementType {
 		None = 0,
@@ -161,37 +142,7 @@ namespace SteamEngine {
 		Running = 2,
 		RequestedStep = 4,
 		Teleporting = 8,
-
-		//Flying=3,
-		//Appearing=4,
-		//Disappearing=5
-		//TODO?: More for dragging items, etc, so we can show the proper dragging anim?
 	}
-
-
-	//public enum PriorityClass {
-	//    Pet = 0,		//A pet
-	//    NPC = 1,		//An NPC
-	//    NPCHero = 2,	//A hero NPC
-	//    Player = 3	//A player.
-	//}
-
-	//public enum CompressedPacketType {
-	//    Single,
-	//    Group
-	//}
-
-	public enum GroupState {
-		Open,			//- a group has been made w/ NewGroup and not yet closed.
-		Ready,			//- Ready to do whatever.
-		SingleBlocking	//- A single compressed packet is the latest thing, so nothing else can be done until it's discarded.
-	}
-
-	//public enum GeneratingState {
-	//    Generating,		//- Generating a packet. Nothing else can be done until it is done.
-	//    Generated,		//- A packet has been generated, and is waiting to be compressed.
-	//    Ready,			//- We are ready to generate a new packet (Or do other things).
-	//}
 
 	public enum DenyResult {
 		//item manipulation denials
@@ -217,15 +168,15 @@ namespace SteamEngine {
 	}
 
 	//for testing purposes
-	internal static class DenyResultGenerator {
-		static int i;
+	//internal static class DenyResultGenerator {
+	//    static int i;
 
-		internal static DenyResult GetResultAndPrintIt() {
-			DenyResult retVal = (DenyResult) ((i++) % 9);
-			Console.WriteLine("Generated DenyResult:" + retVal);
-			return retVal;
-		}
-	}
+	//    internal static DenyResult GetResultAndPrintIt() {
+	//        DenyResult retVal = (DenyResult) ((i++) % 9);
+	//        Console.WriteLine("Generated DenyResult:" + retVal);
+	//        return retVal;
+	//    }
+	//}
 
 	public enum Season {
 		Spring = 0,
@@ -255,7 +206,7 @@ namespace SteamEngine {
 		Other = 5
 	}
 
-	public enum HighlightColor : byte {
+	public enum HighlightColor {
 		NoColor = 0,		//This draws them as color 0 (the default color). You can't change this color in the client.
 
 		//Name = number		//default color						The description in the client (Options->Reputation System (3rd tab down on the right))
@@ -267,9 +218,7 @@ namespace SteamEngine {
 		Murderer = 6,		//Red by default.					("Murderer highlight color")
 
 		Invulnerable = 7, Yellow = 7, //You can't change this color in the client.
-		Transparent = 8,	//Makes their status bar look really bizarre, and makes them turn transparent-black 
-		//when highlighted.
-		NumHighlightColors = 9
+		Transparent = 8,	//Makes their status bar look really bizarre, and makes them turn transparent-black when highlighted.
 	}
 
 	public enum ClientType {

@@ -120,7 +120,7 @@ namespace SteamEngine {
 #if DEBUG
 			long ticksBefore = HighPerformanceTimer.TickCount;
 #endif
-			InvokeCommand(consoleDummy, Globals.instance, command);
+			InvokeCommand(consoleDummy, Globals.Instance, command);
 #if DEBUG
 			Logger.WriteDebug("Command took (in ms): " + HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - ticksBefore));
 #endif
@@ -148,7 +148,7 @@ namespace SteamEngine {
 		public static bool AuthorizeCommand(ISrc commandSrc, string name) {
 			if (commandRunning) {
 				ScriptArgs sa = new ScriptArgs(commandSrc, name);
-				if (Globals.instance.TryCancellableTrigger(TriggerKey.command, sa)) {
+				if (Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
 					return false;
 				}
 			}
@@ -158,7 +158,7 @@ namespace SteamEngine {
 		public static void AuthorizeCommandThrow(ISrc commandSrc, string name) {
 			if (commandRunning) {
 				ScriptArgs sa = new ScriptArgs(commandSrc, name);
-				if (Globals.instance.TryCancellableTrigger(TriggerKey.command, sa)) {
+				if (Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
 					throw new SEException(commandAuthorisationFailed);
 				}
 			}
@@ -340,7 +340,7 @@ namespace SteamEngine {
 		}
 	}
 
-	public class CommandLoc : Loc {
+	internal class CommandLoc : Loc {
 		public string XCommandPrompt = "Command who or what?";
 		public string CommandFailed = "Command '{0}' failed - {1}";
 		public string WrongCommandArgument = "Wrong argument for that method";

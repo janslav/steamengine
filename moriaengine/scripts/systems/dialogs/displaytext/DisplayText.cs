@@ -32,8 +32,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static TagKey textHueTK = TagKey.Get("_text_hue_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			label = string.Concat(args.ArgsArray[0]); //the gump's label
-			dispText = string.Concat(args.ArgsArray[1]); //the text to be displayed
+			label = string.Concat(args[0]); //the gump's label
+			dispText = string.Concat(args[1]); //the text to be displayed
 
 			object hue = args.GetTag(D_Display_Text.textHueTK);
 			if (hue != null) {

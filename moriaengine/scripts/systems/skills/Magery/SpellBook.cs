@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool On_DenyDClick(DenyClickArgs args) {
-			Character ch = (Character) args.clickingChar;
+			Character ch = (Character) args.ClickingChar;
 			Thing cont = this.Cont;
 			if (ch.IsGM || (cont == ch) || (cont == ch.Backpack)) {
 				return base.On_DenyDClick(args);
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool On_PutItemOn(ItemOnItemArgs args) {
-			SpellScroll scroll = args.manipulatedItem as SpellScroll;
+			SpellScroll scroll = args.ManipulatedItem as SpellScroll;
 			if (scroll != null) {
 				if (this.AddSpell(scroll.SpellId)) {
 					scroll.Delete();

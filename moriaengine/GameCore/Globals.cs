@@ -33,6 +33,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Diagnostics;
 using System.ComponentModel;
+using SharpSvn;
 #if !MONO
 using Microsoft.Win32;	//for RegistryKey
 #endif
@@ -51,14 +52,15 @@ namespace SteamEngine {
 		public const int MaxUpdateRange = 18;
 		public const int MaxUpdateRangeSquared = MaxUpdateRange * MaxUpdateRange;
 		public const int MinUpdateRange = 5;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const int defaultWarningLevel = 4;
 
-		private readonly static int port;
+		private static int port;
 		public static int Port {
 			get { return Globals.port; }
 		}
 
-		private readonly static string serverName;
+		private static string serverName;
 		public static string ServerName {
 			get { return Globals.serverName; }
 		} 
@@ -73,32 +75,32 @@ namespace SteamEngine {
 			}
 		}
 
-		private readonly static string adminEmail;
+		private static string adminEmail;
 		public static string AdminEmail {
 			get { return Globals.adminEmail; }
 		} 
 
-		private readonly static string commandPrefix;
+		private static string commandPrefix;
 		public static string CommandPrefix {
 			get { return Globals.commandPrefix; }
 		}
 
-		private readonly static string alternateCommandPrefix;
+		private static string alternateCommandPrefix;
 		public static string AlternateCommandPrefix {
 			get { return Globals.alternateCommandPrefix; }
 		}
 
-		private readonly static string logPath;
+		private static string logPath;
 		public static string LogPath {
 			get { return Globals.logPath; }
 		}
 
-		private readonly static string savePath;
+		private static string savePath;
 		public static string SavePath {
 			get { return Globals.savePath; }
 		}
 
-		private readonly static string mulPath;
+		private static string mulPath;
 		public static string MulPath {
 			get { return Globals.mulPath; }
 		}
@@ -108,17 +110,17 @@ namespace SteamEngine {
 			get { return Globals.scriptsPath; }
 		}
 
-		private readonly static string docsPath;
+		private static string docsPath;
 		public static string DocsPath {
 			get { return Globals.docsPath; }
 		}
 
-		private readonly static string ndocExe;
+		private static string ndocExe;
 		public static string NdocExe {
 			get { return Globals.ndocExe; }
 		}
 
-		private readonly static bool logToFiles;
+		private static bool logToFiles;
 		public static bool LogToFiles {
 			get { return Globals.logToFiles; }
 		}
@@ -129,42 +131,42 @@ namespace SteamEngine {
 			set { Globals.logToConsole = value; }
 		}
 
-		private readonly static byte maximalPlevel;
+		private static byte maximalPlevel;
 		public static byte MaximalPlevel {
 			get { return Globals.maximalPlevel; }
 		}
 
-		private readonly static int plevelOfGM;
+		private static int plevelOfGM;
 		public static int PlevelOfGM {
 			get { return Globals.plevelOfGM; }
 		}
 
-		private readonly static int plevelForLscriptCommands;
+		private static int plevelForLscriptCommands;
 		public static int PlevelForLscriptCommands {
 			get { return Globals.plevelForLscriptCommands; }
 		} 
 
-		private readonly static bool allowUnencryptedClients;
+		private static bool allowUnencryptedClients;
 		public static bool AllowUnencryptedClients {
 			get { return Globals.allowUnencryptedClients; }
 		}
 
-		private readonly static int reachRange;
+		private static int reachRange;
 		public static int ReachRange {
 			get { return Globals.reachRange; }
 		}
 
-		private readonly static int squaredReachRange;
+		private static int squaredReachRange;
 		public static int SquaredReachRange {
 			get { return Globals.squaredReachRange; }
 		}
 
-		private readonly static int defaultAsciiMessageColor;
+		private static int defaultAsciiMessageColor;
 		public static int DefaultAsciiMessageColor {
 			get { return Globals.defaultAsciiMessageColor; }
 		}
 
-		private readonly static int defaultUnicodeMessageColor;
+		private static int defaultUnicodeMessageColor;
 		public static int DefaultUnicodeMessageColor {
 			get { return Globals.defaultUnicodeMessageColor; }
 		} 
@@ -177,12 +179,12 @@ namespace SteamEngine {
 			}
 		}
 
-		private readonly static bool generateMissingDefs;
+		private static bool generateMissingDefs;
 		public static bool GenerateMissingDefs {
 			get { return Globals.generateMissingDefs; }
 		}
 
-		private readonly static bool useMultiItems;
+		private static bool useMultiItems;
 		public static bool UseMultiItems {
 			get { return Globals.useMultiItems; }
 		}
@@ -197,124 +199,119 @@ namespace SteamEngine {
 			}
 		}
 
-		private readonly static bool sendTileDataSpam;
+		private static bool sendTileDataSpam;
 		public static bool SendTileDataSpam {
 			get { return Globals.sendTileDataSpam; }
 		}
 
-		private readonly static bool fastStartUp;
+		private static bool fastStartUp;
 		public static bool FastStartUp {
 			get { return Globals.fastStartUp; }
 		}
 
-		private readonly static bool netSyncingTracingOn;
+		private static bool netSyncingTracingOn;
 		public static bool NetSyncingTracingOn {
 			get { return Globals.netSyncingTracingOn; }
 		}
 
 
-		private readonly static bool writeMulDocsFiles;
+		private static bool writeMulDocsFiles;
 		public static bool WriteMulDocsFiles {
 			get { return Globals.writeMulDocsFiles; }
 		}
 
 
-		private readonly static bool resolveEverythingAtStart;
+		private static bool resolveEverythingAtStart;
 		public static bool ResolveEverythingAtStart {
 			get { return Globals.resolveEverythingAtStart; }
 		}
 
-		private readonly static bool autoAccountCreation;
+		private static bool autoAccountCreation;
 		public static bool AutoAccountCreation {
 			get { return Globals.autoAccountCreation; }
 		}
 
-		private readonly static bool blockOSI3DClient;
+		private static bool blockOSI3DClient;
 		public static bool BlockOSI3DClient {
 			get { return Globals.blockOSI3DClient; }
 		}
 
-		private readonly static int maxConnections;
+		private static int maxConnections;
 		public static int MaxConnections {
 			get { return Globals.maxConnections; }
 		}
 
-		private readonly static int speechDistance;
+		private static int speechDistance;
 		public static int SpeechDistance {
 			get { return Globals.speechDistance; }
 		}
 
-		private readonly static int emoteDistance;
+		private static int emoteDistance;
 		public static int EmoteDistance {
 			get { return Globals.emoteDistance; }
 		}
 
-		private readonly static int whisperDistance;
+		private static int whisperDistance;
 		public static int WhisperDistance {
 			get { return Globals.whisperDistance; }
 		}
 
-		private readonly static int yellDistance;
+		private static int yellDistance;
 		public static int YellDistance {
 			get { return Globals.yellDistance; }
 		}
 
-		private readonly static int loginFlags;
+		private static int loginFlags;
 		public static int LoginFlags {
 			get { return Globals.loginFlags; }
 		}
 
-		private readonly static int featuresFlags;
+		private static int featuresFlags;
 		public static int FeaturesFlags {
 			get { return Globals.featuresFlags; }
 		}
-
-
-		private readonly static int defaultItemModel;
+		
+		private static int defaultItemModel;
 		public static int DefaultItemModel {
 			get { return Globals.defaultItemModel; }
 		}
 
-		private readonly static int defaultCharModel;
+		private static int defaultCharModel;
 		public static int DefaultCharModel {
 			get { return Globals.defaultCharModel; }
 		}
 		
-		private readonly static bool hashPasswords;
+		private static bool hashPasswords;
 		public static bool HashPasswords {
 			get { return Globals.hashPasswords; }
 		}
 
-		private readonly static bool scriptFloats;
+		private static bool scriptFloats;
 		public static bool ScriptFloats {
 			get { return Globals.scriptFloats; }
 		}
 
 
-		private readonly static bool useAosToolTips;
+		private static bool useAosToolTips;
 		public static bool UseAosToolTips {
 			get { return Globals.useAosToolTips; }
 		} 
 
-
-		//public readonly static IList<IPAddress> omitip;
-
-
-		private static TagHolder lastNew = null;
+		private static TagHolder lastNew;
 		[Summary("The last new item or character or memory or whatever created.")]
 		public static TagHolder LastNew {
 			get { return Globals.lastNew; }
 			internal set { Globals.lastNew = value; }
 		}
 
-		private static AbstractCharacter lastNewChar = null;
+		private static AbstractCharacter lastNewChar;
 		[Summary("The last new Character created.")]
 		public static AbstractCharacter LastNewChar {
 			get { return Globals.lastNewChar; }
 			internal set { Globals.lastNewChar = value; }
 		}
 		
-		private static AbstractItem lastNewItem = null;
+		private static AbstractItem lastNewItem;
 		[Summary("The last new Item created.")]
 		public static AbstractItem LastNewItem {
 			get { return Globals.lastNewItem; }
@@ -322,8 +319,7 @@ namespace SteamEngine {
 		}
 
 		[Summary("The source of the current action.")]
-		private static ISrc src = null;
-
+		private static ISrc src;
 		public static ISrc Src {
 			get {
 				return src;
@@ -391,9 +387,11 @@ namespace SteamEngine {
 		 * Field: dice
 		 * Call dice.Next(int min, int max) to generate a random number.
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly Random dice = new Random();
 
-		internal static Globals instance;
+		private static Globals instance = new Globals();
 		public static Globals Instance {
 			get {
 				return instance;
@@ -403,14 +401,14 @@ namespace SteamEngine {
 		private static Process ndocProcess;
 
 		private Globals() {
-
+			LoadIni();
 		}
 
 		internal static void Init() {
-			instance = new Globals();
 		}
 
-		static Globals() {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		private static void LoadIni() {
 			try {
 				IniFile iniH = new IniFile("steamengine.ini");
 				IniFileSection setup = iniH.GetNewOrParsedSection("setup");
@@ -425,6 +423,7 @@ namespace SteamEngine {
 
 				IniFileSection files = iniH.GetNewOrParsedSection("files");
 				logPath = Path.GetFullPath(files.GetValue<string>("logPath", ".\\logs\\", "Path to the log files"));
+				CoreLogger.Init();
 				savePath = Path.GetFullPath(files.GetValue<string>("savePath", ".\\saves\\", "Path to the save files"));
 #if MSWIN
 				ndocExe = Path.GetFullPath(files.GetValue<string>("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
@@ -515,8 +514,8 @@ namespace SteamEngine {
 				scriptFloats = scripts.GetValue<bool>("scriptFloats", true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
 				//Logger.showCoreExceptions = scripts.GetValue<bool>("showCoreExceptions", true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
 
-				loginFlags = 0;
-				featuresFlags = 0;
+				//loginFlags = 0;
+				//featuresFlags = 0;
 
 				IniFileSection features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
@@ -614,11 +613,9 @@ namespace SteamEngine {
 							string[] names2 = uoKey.GetSubKeyNames();
 							foreach (string name2 in names2) {
 								RegistryKey verKey = uoKey.OpenSubKey(name2);
-								object s = verKey.GetValue("InstCDPath");
-								if (s != null && s is string) {
-									return (string) s;
-									//} else {
-									//Console.WriteLine("It ain't a string (Type is "+s.GetType().ToString()+") : "+s.ToString());
+								string s = verKey.GetValue("InstCDPath") as string;
+								if (s != null) {
+									return s;
 								}
 							}
 						} else {
@@ -638,10 +635,22 @@ namespace SteamEngine {
 		}
 
 		//public static readonly string version="1.0.0"; 
-		public static readonly string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+		private static readonly string version = GetVersion();
+		public static string Version {
+			get { return Globals.version; }
+		} 
+		
+		private static string GetVersion() {
+			using (SvnClient client = new SvnClient()) {
+				SvnInfoEventArgs info;
+				client.GetInfo(SvnTarget.FromString(Path.GetFullPath("."), true), out info);
 
-		public static readonly DateTime startedAt = DateTime.Now;
-		public static TimeSpan timeUp {
+				return "SVN revision " + info.Revision;
+			}
+		}
+
+		private static readonly DateTime startedAt = DateTime.Now;
+		public static TimeSpan TimeUp {
 			get {
 				return DateTime.Now - startedAt;
 			}
@@ -723,14 +732,14 @@ namespace SteamEngine {
 			VersionControl.SvnCleanUpProject();
 		}
 
-		public static Type type(string typename) {
+		public static Type Type(string typename) {
 			//global type, you can actually get any type with this
-			return Type.GetType(typename, true, true);//true for case insensitive
+			return System.Type.GetType(typename, true, true);//true for case insensitive
 		}
 
 		public static Type SE(string typename) {
 			//Console.WriteLine("type: "+Type.GetType("SteamEngine."+typename));
-			return Type.GetType("SteamEngine." + typename, true, true);
+			return System.Type.GetType("SteamEngine." + typename, true, true);
 		}
 
 		//sphere compatibility
@@ -783,11 +792,11 @@ namespace SteamEngine {
 		//	}
 		//}
 
-		public void SysMessage(object o) {
+		public static void SysMessage(object o) {
 			Console.WriteLine(Tools.ObjToString(o));
 		}
 
-		public void Log(object o) {
+		public static void Log(object o) {
 			Console.WriteLine(Tools.ObjToString(o));
 		}
 
@@ -836,7 +845,8 @@ namespace SteamEngine {
 		}
 #endif
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("First documentation in Steamengine.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), 
+		Summary("First documentation in Steamengine.")]
 		[Remark("This is first documentation in Steamengine, that uses SteamDoc attributes.")]
 		[Return("Nothing")]
 		public static void CompileDocs() {
@@ -952,7 +962,7 @@ namespace SteamEngine {
 
 		private static DateTime lastMarkRealTime = DateTime.Now;
 		private static TimeSpan lastMarkServerTime;
-		private static int paused = 0;
+		private static int paused;
 
 
 		public static long TimeInTicks {

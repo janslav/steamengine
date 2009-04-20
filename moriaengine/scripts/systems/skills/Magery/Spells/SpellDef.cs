@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static SpellDef ByDefname(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as SpellDef;
 		}
 
@@ -73,12 +73,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void RegisterSpellDef(SpellDef sd) {
-			byDefname[sd.Defname] = sd;
+			AllScriptsByDefname[sd.Defname] = sd;
 			byId[sd.id] = sd;
 		}
 
 		private static void UnRegisterSpellDef(SpellDef sd) {
-			byDefname.Remove(sd.Defname);
+			AllScriptsByDefname.Remove(sd.Defname);
 			byId.Remove(sd.id);
 		}
 
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 			string spellDefName = input.PopPropsLine("defname").value;
 
 			AbstractScript def;
-			byDefname.TryGetValue(spellDefName, out def);
+			AllScriptsByDefname.TryGetValue(spellDefName, out def);
 			SpellDef spellDef = def as SpellDef;
 
 			ConstructorInfo constructor = spellDefCtorsByName[typeName];
@@ -141,11 +141,11 @@ namespace SteamEngine.CompiledScripts {
 					object[] cargs = new object[] { spellDefName, input.filename, input.headerLine };
 					spellDef = (SpellDef) constructor.Invoke(cargs);
 				}
-			} else if (spellDef.unloaded) {
+			} else if (spellDef.IsUnloaded) {
 				if (spellDef.GetType() != constructor.DeclaringType) {
 					throw new OverrideNotAllowedException("You can not change the class of a SpellDef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				spellDef.unloaded = false;
+				spellDef.IsUnloaded = false;
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");

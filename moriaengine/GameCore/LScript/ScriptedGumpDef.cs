@@ -49,23 +49,23 @@ namespace SteamEngine.LScript {
 				sgd = new ScriptedGumpDef(name);
 			}
 			if (headers.Length == 1) {//layout section
-				if ((sgd.layoutScript != null) && (!sgd.unloaded)) {//already loaded
+				if ((sgd.layoutScript != null) && (!sgd.IsUnloaded)) {//already loaded
 					throw new SEException("GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
 				LScriptHolder sc = new LScriptHolder(input.GetTrigger(0));
 				if (sc.unloaded) {//in case the compilation failed (syntax error)
-					sgd.unloaded = true;
+					sgd.IsUnloaded = true;
 					return null;
 				}
 				sgd.layoutScript = sc;
-				sgd.unloaded = false;
+				sgd.IsUnloaded = false;
 				return sgd;
 			} else if (headers.Length == 2) {//buttons or texts section
 				string type = headers[1].ToLower();
 				switch (type) {
 					case "text":
 					case "texts":
-						if ((sgd.textsScript != null) && (!sgd.unloaded)) {//already loaded
+						if ((sgd.textsScript != null) && (!sgd.IsUnloaded)) {//already loaded
 							throw new SEException("TEXT section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
 						TriggerSection trigger = input.GetTrigger(0);
@@ -90,7 +90,7 @@ namespace SteamEngine.LScript {
 						trigger.code = modifiedCode;
 						LScriptHolder sc = new LScriptHolder(trigger);
 						if (sc.unloaded) {//in case the compilation failed (syntax error)
-							sgd.unloaded = true;
+							sgd.IsUnloaded = true;
 							return null;
 						}
 						sgd.textsScript = sc;
@@ -99,7 +99,7 @@ namespace SteamEngine.LScript {
 					case "buttons":
 					case "triggers":
 					case "trigger":
-						if ((sgd.responseTriggers != null) && (!sgd.unloaded)) {//already loaded
+						if ((sgd.responseTriggers != null) && (!sgd.IsUnloaded)) {//already loaded
 							throw new SEException("BUTTON section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
 						ArrayList responsesList = new ArrayList();
@@ -147,10 +147,10 @@ namespace SteamEngine.LScript {
 		private void CheckValidity() {//check method, used as delayed
 			if (layoutScript == null) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " missing the main (layout) section?");
-				unloaded = true;
+				IsUnloaded = true;
 				return;
 			}
-			if (unloaded && (layoutScript != null)) {
+			if (IsUnloaded && (layoutScript != null)) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " resynced incompletely?");
 				return;
 			}

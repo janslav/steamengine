@@ -182,8 +182,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey ipToBlockTK = TagKey.Get("_ip_to_block_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			string ip = TagMath.SGetTag(args, D_BlockIP.ipToBlockTK);
-			if (ip == null) ip = "";
+			string ip = TagMath.SGetTagNotNull(args, D_BlockIP.ipToBlockTK);
 
 			int width = 500;
 			int labels = 130;
@@ -255,11 +254,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey ipToRangeTK = TagKey.Get("_ip_to_range_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			string ipfrom = TagMath.SGetTag(args, D_BlockIPRange.ipFromRangeTK);
-			if (ipfrom == null) ipfrom = "";
-
-			string ipto = TagMath.SGetTag(args, D_BlockIPRange.ipToRangeTK);
-			if (ipto == null) ipto = "";
+			string ipfrom = TagMath.SGetTagNotNull(args, D_BlockIPRange.ipFromRangeTK);
+			string ipto = TagMath.SGetTagNotNull(args, D_BlockIPRange.ipToRangeTK);
 
 			int width = 500;
 			int labels = 150;

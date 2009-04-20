@@ -39,9 +39,9 @@ namespace SteamEngine {
 		string name;
 		FieldValueType fvType;
 		Type type;
-		bool isChangedManually = false;
-		bool isSetFromScripts = false;
-		bool unloaded = false;
+		bool isChangedManually;
+		bool isSetFromScripts;
+		bool unloaded;
 
 		FieldValueImpl currentValue;
 		FieldValueImpl defaultValue;
@@ -100,7 +100,7 @@ namespace SteamEngine {
 
 		private void ThrowIfUnloaded() {
 			if (unloaded) {
-				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(name) + "' is unloaded.");
+				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(name) + "' is unloaded.");
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace SteamEngine {
 		}
 
 
-		public static Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
+		private readonly static Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -253,7 +253,7 @@ namespace SteamEngine {
 			return false;
 		}
 
-		private bool TryResolveWithExternalParser(Type returnType, string value, ref object retVal) {
+		private static bool TryResolveWithExternalParser(Type returnType, string value, ref object retVal) {
 			if (returnType != null) {
 				IFieldValueParser parser;
 				if (parsers.TryGetValue(returnType, out parser)) {
@@ -487,14 +487,17 @@ namespace SteamEngine {
 					return val;
 				}
 				set {
+					string valueAsString = value as string;
+					bool valueIsString = (valueAsString != null);
+
 					if (type.IsInstanceOfType(value)) {
 						this.val = GetInternStringIfPossible(value);
 						return;
 					} else if (value == null) {
 						this.val = TagMath.ConvertTo(type, value);
 						return;
-					} else if (typeof(AbstractScript).IsAssignableFrom(type) && value is string) {
-						string str = (string) value;
+					} else if (typeof(AbstractScript).IsAssignableFrom(type) && valueIsString) {
+						string str = valueAsString;
 						str = str.Trim();
 						str = str.TrimStart('#');
 						AbstractScript script = AbstractScript.Get(str);
@@ -503,16 +506,16 @@ namespace SteamEngine {
 							return;
 						}
 					} else {
-						Type objType = value.GetType();
+						Type valueType = value.GetType();
 
 						if (type.IsArray) {
 							Array arr;
 							Array retVal;
 							Type elemType = type.GetElementType();
-							if (objType.IsArray) {//we must change the element type
+							if (valueType.IsArray) {//we must change the element type
 								arr = (Array) value;
-							} else if (typeof(string).IsAssignableFrom(objType)) {
-								arr = Utility.SplitSphereString((string) value);
+							} else if (valueIsString) {
+								arr = Utility.SplitSphereString(valueAsString);
 							} else {
 								retVal = Array.CreateInstance(elemType, 1);
 								retVal.SetValue(TagMath.ConvertTo(elemType, value), 0);

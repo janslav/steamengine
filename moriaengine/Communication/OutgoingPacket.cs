@@ -37,7 +37,7 @@ namespace SteamEngine.Communication {
 
 		public virtual string Name {
 			get {
-				return this.GetType().Name;
+				return Tools.TypeToString(this.GetType());
 			}
 		}
 

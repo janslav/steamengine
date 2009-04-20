@@ -22,7 +22,7 @@ namespace SteamEngine {
 	//TriggerKeys are used when calling triggers. You should call Get(name) once to get a TriggerKey, and then use
 	//that from then on for calling that trigger.
 	//This and FunctionKey are very similar, and serve similar purposes.
-	public class LocalVarKey : AbstractKey {
+	public sealed class LocalVarKey : AbstractKey {
 		private static Dictionary<string, LocalVarKey> byName = new Dictionary<string, LocalVarKey>();
 
 		private LocalVarKey(string name, int uid)

@@ -263,7 +263,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_LeaveGround() {
 			Sanity.IfTrueThrow(this.Cont != null, "this not on ground.");
-			
+
 			if (Map.IsValidPos(this)) {
 				Point4D point = new Point4D(this.point4d);
 				Map map = Map.GetMap(point.M);
@@ -1482,8 +1482,8 @@ namespace SteamEngine {
 	}
 
 	public class DenyPickupArgs : DenyTriggerArgs {
-		public readonly AbstractCharacter pickingChar;
-		public readonly AbstractItem manipulatedItem;
+		private readonly AbstractCharacter pickingChar;
+		private readonly AbstractItem manipulatedItem;
 
 		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, int amount)
 			: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
@@ -1499,12 +1499,24 @@ namespace SteamEngine {
 				argv[3] = value;
 			}
 		}
+
+		public AbstractCharacter PickingChar {
+			get { 
+				return this.pickingChar; 
+			}
+		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem; 
+			}
+		} 
 	}
 
 	public class DenyPutInItemArgs : DenyTriggerArgs {
-		public readonly AbstractCharacter pickingChar;
-		public readonly AbstractItem manipulatedItem;
-		public readonly AbstractItem container;
+		private readonly AbstractCharacter pickingChar;
+		private readonly AbstractItem manipulatedItem;
+		private readonly AbstractItem container;
 
 		public DenyPutInItemArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, AbstractItem container)
 			: base(DenyResult.Allow, pickingChar, manipulatedItem, container) {
@@ -1512,11 +1524,30 @@ namespace SteamEngine {
 			this.manipulatedItem = manipulatedItem;
 			this.container = container;
 		}
+
+		public AbstractCharacter PickingChar {
+			get { 
+				return this.pickingChar; 
+			}
+		}
+
+		public AbstractItem ManipulatedItem {
+			get { 
+				return this.manipulatedItem; 
+			}
+		}
+
+		public AbstractItem Container {
+			get { 
+				return this.container;
+			}
+		} 
+
 	}
 
 	public class DenyPutOnGroundArgs : DenyTriggerArgs {
-		public readonly AbstractCharacter puttingChar;
-		public readonly AbstractItem manipulatedItem;
+		private readonly AbstractCharacter puttingChar;
+		private readonly AbstractItem manipulatedItem;
 
 		public DenyPutOnGroundArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, IPoint4D point)
 			: base(DenyResult.Allow, puttingChar, manipulatedItem, point) {
@@ -1532,12 +1563,24 @@ namespace SteamEngine {
 				argv[3] = value;
 			}
 		}
+
+		public AbstractCharacter PuttingChar {
+			get { 
+				return this. puttingChar; 
+			}
+		}
+
+		public AbstractItem ManipulatedItem {
+			get { 
+				return this.manipulatedItem; 
+			}
+		} 
 	}
 
 	public class ItemOnItemArgs : ScriptArgs {
-		public readonly AbstractCharacter puttingChar;
-		public readonly AbstractItem manipulatedItem;
-		public readonly AbstractItem waitingItem;
+		private readonly AbstractCharacter puttingChar;
+		private readonly AbstractItem manipulatedItem;
+		private readonly AbstractItem waitingItem;
 
 		public ItemOnItemArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractItem waitingItem)
 			: base(puttingChar, manipulatedItem, waitingItem) {
@@ -1545,13 +1588,32 @@ namespace SteamEngine {
 			this.manipulatedItem = manipulatedItem;
 			this.waitingItem = waitingItem;
 		}
+
+		public AbstractCharacter PuttingChar {
+			get {
+				return this.puttingChar;
+			}
+		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem; 
+			}
+		}
+
+		public AbstractItem WaitingItem {
+			get {
+				return this.waitingItem; 
+			}
+		} 
+
 	}
 
 
 	public class ItemOnCharArgs : ScriptArgs {
-		public readonly AbstractCharacter puttingChar;
-		public readonly AbstractCharacter cont;
-		public readonly AbstractItem manipulatedItem;
+		private readonly AbstractCharacter puttingChar;
+		private readonly AbstractCharacter cont;
+		private readonly AbstractItem manipulatedItem;
 
 		public ItemOnCharArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont)
 			: base(puttingChar, manipulatedItem, cont) {
@@ -1559,21 +1621,63 @@ namespace SteamEngine {
 			this.cont = cont;
 			this.manipulatedItem = manipulatedItem;
 		}
+
+		public AbstractCharacter PuttingChar {
+			get {
+				return this.puttingChar;
+			}
+		}
+
+		public AbstractCharacter Cont {
+			get {
+				return this.cont;
+			}
+		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem;
+			}
+		}
 	}
 
 	public class DenyEquipArgs : DenyTriggerArgs {
-		public readonly AbstractCharacter puttingChar;
-		public readonly AbstractCharacter cont;
-		public readonly AbstractItem manipulatedItem;
-		public readonly byte layer;
+		private readonly AbstractCharacter puttingChar;
+		private readonly AbstractCharacter cont;
+		private readonly AbstractItem manipulatedItem;
+		private readonly int layer;
 
-		public DenyEquipArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont, byte layer)
+		public DenyEquipArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont, int layer)
 			: base(DenyResult.Allow, puttingChar, manipulatedItem, cont, layer) {
 
 			this.puttingChar = puttingChar;
 			this.cont = cont;
 			this.manipulatedItem = manipulatedItem;
 			this.layer = layer;
+		}
+
+		public AbstractCharacter PuttingChar {
+			get {
+				return this.puttingChar;
+			}
+		}
+
+		public AbstractCharacter Cont {
+			get {
+				return this.cont;
+			}
+		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem;
+			}
+		}
+
+		public int Layer {
+			get {
+				return this.layer;
+			}
 		}
 	}
 }

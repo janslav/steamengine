@@ -33,7 +33,7 @@ namespace SteamEngine {
 
 		public static new GumpDef Get(string name) {
 			AbstractScript script;
-			byDefname.TryGetValue(name, out script);
+			AllScriptsByDefname.TryGetValue(name, out script);
 			return script as GumpDef;
 		}
 
@@ -47,9 +47,9 @@ namespace SteamEngine {
 	public class DialogArgs : TagHolder {
 		private object[] fldArgs;
 
-		public DialogArgs() {
-			this.fldArgs = new object[0] { }; //aspon prazdny pole, ale ne null
-		}
+		//public DialogArgs() {
+		//    this.fldArgs = new object[0]; //aspon prazdny pole, ale ne null
+		//}
 
 		public DialogArgs(params object[] args) {
 			this.fldArgs = args;
@@ -64,10 +64,8 @@ namespace SteamEngine {
 			}
 		}
 
-		public object[] ArgsArray {
-			get {
-				return fldArgs;
-			}
+		public object[] GetArgsArray() {
+			return fldArgs;
 		}
 	}
 
@@ -149,7 +147,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return String.Format("{0} {1} (uid {2})", GetType().Name, def.Defname, uid);
+			return String.Format("{0} {1} (uid {2})", Tools.TypeToString(GetType()), def.Defname, uid);
 		}
 
 		private void AddElement(string[] arr) {

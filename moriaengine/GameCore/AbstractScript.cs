@@ -24,11 +24,10 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	public abstract class AbstractScript : IUnloadable {
 
-		protected readonly static Dictionary<string, AbstractScript> byDefname = new Dictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
+		private readonly static Dictionary<string, AbstractScript> byDefname = new Dictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
 
 		private string defname;
-		protected bool unloaded = false;
-
+		private bool unloaded;
 
 		public static void Bootstrap() {
 			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
@@ -46,6 +45,13 @@ namespace SteamEngine {
 			}
 			byDefname.Clear();
 		}
+
+
+		protected static Dictionary<string, AbstractScript> AllScriptsByDefname {
+			get {
+				return byDefname; 
+			}
+		} 
 
 		public static IEnumerable<AbstractScript> AllScripts {
 			get {
@@ -78,8 +84,11 @@ namespace SteamEngine {
 		}
 
 		public bool IsUnloaded {
-			get {
-				return this.unloaded;
+			get { 
+				return this.unloaded; 
+			}
+			protected set { 
+				this.unloaded = value; 
 			}
 		}
 
@@ -99,8 +108,8 @@ namespace SteamEngine {
 		}
 
 		protected void ThrowIfUnloaded() {
-			if (unloaded) {
-				throw new UnloadedException("The " + this.GetType().Name + " '" + LogStr.Ident(defname) + "' is unloaded.");
+			if (this.unloaded) {
+				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(defname) + "' is unloaded.");
 			}
 		}
 

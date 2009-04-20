@@ -97,7 +97,9 @@ namespace SteamEngine.Common {
 			if (obj == null) return obj;
 			Type objectType = obj.GetType();
 			string asString = obj as string;
-			if (asString == "null") return null;
+			if (asString == "null") {
+				return null;
+			}
 			if ((objectType == type) || (type.IsAssignableFrom(objectType))) {
 				return obj;
 			} else if (type.Equals(typeof(String))) {
@@ -109,7 +111,7 @@ namespace SteamEngine.Common {
 					//The first thing to try is converting it to whatever the underlying type is,
 					//since Enum.Parse fails on things like "0x4c" or "04c", etc.
 					try {
-						return Enum.ToObject(type, ConvertTo(Enum.GetUnderlyingType(type), obj));
+						return Enum.ToObject(type, ToInt64(obj));
 					} catch (InvalidCastException) {
 						if (asString != null) {
 							return Enum.Parse(type, asString.Replace('|', ','), true);

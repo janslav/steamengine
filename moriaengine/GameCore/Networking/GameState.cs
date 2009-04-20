@@ -124,7 +124,7 @@ namespace SteamEngine.Networking {
 
 			Console.WriteLine(LogStr.Ident(this.ToString()) + (" connected from " + conn.EndPoint.ToString()));
 
-			Globals.instance.TryTrigger(TriggerKey.clientAttach, new ScriptArgs(this, this.conn)); // 
+			Globals.Instance.TryTrigger(TriggerKey.clientAttach, new ScriptArgs(this, this.conn)); // 
 		}
 
 		public void On_Close(string reason) {

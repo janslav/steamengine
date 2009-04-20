@@ -214,7 +214,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public void SaveWithHeader(SaveStream output) {
-			output.WriteLine("[" + this.GetType().Name + " " + name + "]");
+			output.WriteLine("[" + Tools.TypeToString(this.GetType()) + " " + name + "]");
 			this.Save(output);
 			output.WriteLine();
 		}

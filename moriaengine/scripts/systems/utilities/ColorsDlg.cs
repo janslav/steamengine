@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static readonly int dlgWidth = 850; //sirka dialogu
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			int startingColor = Convert.ToInt32(args.ArgsArray[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
+			int startingColor = Convert.ToInt32(args[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						break;
 					case 1: //vybrat prvni barvu
-						args.ArgsArray[0] = (int) gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
+						args[0] = (int) gr.GetNumberResponse(10); //vezmi zvolenou prvni barvu
 						args.SetTag(ImprovedDialog.pagingIndexTK, (int) gr.GetNumberResponse(10)); //ta bude zaroven prvni na strance
 						//args.ArgsArray[1] = (int)gr.GetNumberResponse(10);
 						DialogStacking.ResendAndRestackDialog(gi);

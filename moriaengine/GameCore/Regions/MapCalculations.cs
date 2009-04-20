@@ -185,8 +185,8 @@ namespace SteamEngine.Regions {
 				return false;
 			}
 
-			Offset((Direction) ((d - 1) & Direction.Mask), ref xLeft, ref yLeft);
-			Offset((Direction) ((d + 1) & Direction.Mask), ref xRight, ref yRight);
+			Offset((d - 1) & Direction.Mask, ref xLeft, ref yLeft);
+			Offset((d + 1) & Direction.Mask, ref xRight, ref yRight);
 
 			if (xForward < 0 || yForward < 0 || xForward >= this.sizeX || yForward >= this.sizeY) {
 				newZ = 0;

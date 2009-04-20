@@ -1702,8 +1702,9 @@ namespace SteamEngine {
 	}
 
 	public class DenyClickArgs : DenyTriggerArgs {
-		public readonly AbstractCharacter clickingChar;
-		public readonly Thing target;
+		private readonly AbstractCharacter clickingChar;
+		private readonly Thing target;
+
 
 		public DenyClickArgs(AbstractCharacter clickingChar, Thing target)
 			: base(DenyResult.Allow, clickingChar, target) {
@@ -1711,5 +1712,18 @@ namespace SteamEngine {
 			this.clickingChar = clickingChar;
 			this.target = target;
 		}
+
+		public AbstractCharacter ClickingChar {
+			get {
+				return this.clickingChar; 
+			}
+		}
+
+		public Thing Target {
+			get { 
+				return this.target; 
+			}
+		} 
+
 	}
 }

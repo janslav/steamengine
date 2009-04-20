@@ -24,12 +24,13 @@ using SteamEngine.Common;
 
 
 namespace SteamEngine {
-	public class ClientVersion {
-		public static Regex osi2dCliVerRE = new Regex(@"^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)(?<letter>[a-z])$",
+	public sealed class ClientVersion {
+		private static Regex osi2dCliVerRE = new Regex(@"^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)(?<letter>[a-z])$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private static Dictionary<string, ClientVersion> byVersionString = new Dictionary<string, ClientVersion>(StringComparer.OrdinalIgnoreCase);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
 		public static ClientVersion Get(string versionString) {
 			ClientVersion cliver;
 			if (!byVersionString.TryGetValue(versionString, out cliver)) {
@@ -41,7 +42,7 @@ namespace SteamEngine {
 
 		internal readonly static ClientVersion nullValue = new ClientVersion();
 
-		private readonly ClientType type;
+		private readonly ClientType type = ClientType.Unknown;
 		private readonly string versionString;//what we got from the client
 
 
@@ -49,13 +50,12 @@ namespace SteamEngine {
 		//int palanthirVerNum = 0;
 
 		//flags:
-		private readonly bool displaySkillCaps = false;
-		private readonly bool aosToolTips = false;
-		private readonly bool oldAosToolTips = false;
-		private readonly bool needsNewSpellbook = false;
+		private readonly bool displaySkillCaps;
+		private readonly bool aosToolTips;
+		private readonly bool oldAosToolTips;
+		private readonly bool needsNewSpellbook;
 
 		private ClientVersion() {
-			type = ClientType.Unknown;
 		}
 
 		private ClientVersion(string versionString) {
@@ -150,7 +150,7 @@ namespace SteamEngine {
 		}
 	}
 
-	public class OSI2DVersionNumber {
+	public sealed class OSI2DVersionNumber {
 		private readonly int major;
 		private readonly int minor;
 		private readonly int revision;

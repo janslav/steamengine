@@ -59,7 +59,7 @@ namespace SteamEngine.Communication {
 
 			this.outgoingPackets = new SimpleQueue<OutgoingMessage>();
 
-			string threadsName = this.GetType().Name;
+			string threadsName = Tools.TypeToString(this.GetType());
 
 			this.workerAlpha = CreateAndStartWorkerThread(threadsName + "_Worker_Alpha");
 			//this.workerBeta = CreateAndStartWorkerThread(threadsName+"_Worker_Beta");

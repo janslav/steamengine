@@ -67,7 +67,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + ctor.DeclaringType.Name + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -81,7 +81,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + ctor.DeclaringType.Name + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -157,7 +157,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + ctor.DeclaringType.Name + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -180,7 +180,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + ctor.DeclaringType.Name + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -245,7 +245,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + ctor.DeclaringType.Name + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -260,7 +260,7 @@ namespace SteamEngine.LScript {
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + ctor.DeclaringType.Name + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}

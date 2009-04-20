@@ -26,9 +26,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog that will display all trackable characters nearby the tracker with the possibility to track them...")]
 	public class D_Tracking_Characters : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			SkillSequenceArgs ssa = (SkillSequenceArgs) args.ArgsArray[0];
+			SkillSequenceArgs ssa = (SkillSequenceArgs) args[0];
 			CharacterTypes charType = (CharacterTypes) ssa.Param1;
-			List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args.ArgsArray[1];//trackable characters around
+			List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args[1];//trackable characters around
 			charsAround.Sort(CharComparerByName<AbstractCharacter>.instance); //sort by name (why not? :-) )
 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
@@ -99,13 +99,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (gr.pressedButton < 10) {
 				switch (gr.pressedButton) {
 					case 0: //exit - finish tracking without selecting anything
-						((SkillSequenceArgs) args.ArgsArray[0]).PhaseAbort();
+						((SkillSequenceArgs) args[0]).PhaseAbort();
 						break;
 				}
 			} else {
 				//check which character from the list is to be tracked
-				SkillSequenceArgs ssa = (SkillSequenceArgs) args.ArgsArray[0];
-				List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args.ArgsArray[1];
+				SkillSequenceArgs ssa = (SkillSequenceArgs) args[0];
+				List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args[1];
 				Character charToTrack = (Character) charsAround[(int) gr.pressedButton - 10];
 
 				ssa.Target1 = charToTrack;

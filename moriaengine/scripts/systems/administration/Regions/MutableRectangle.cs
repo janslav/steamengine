@@ -52,11 +52,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Create a rectangle using the center point and the area around (=>square)")]
-		public MutableRectangle(IPoint4D center, ushort range)
+		public MutableRectangle(IPoint4D center, int range)
 			: this(center.X, center.Y, range) {
 		}
 
-		public MutableRectangle(ushort startX, ushort startY, ushort endX, ushort endY) {
+		public MutableRectangle(int startX, int startY, int endX, int endY) {
 			Sanity.IfTrueThrow((startX > endX) || (startY > endY),
 				"MutableRectangle (" + startX + "," + startY + "," + endX + "," + endY + "). The first two arguments are supposed to be the upper left corner coordinates while the 3rd and 4th arguments coordinates of the lower right corner.");
 			this.minX = startX;

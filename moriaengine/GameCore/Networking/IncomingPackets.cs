@@ -486,7 +486,7 @@ namespace SteamEngine.Networking {
 						AosToolTips toolTips = t.GetAOSToolTips();
 						if (toolTips != null) {
 							if (curChar.CanSeeForUpdate(t)) {
-								toolTips.SendDataPacket(conn, state);
+								toolTips.SendDataPacket(conn);
 							}
 						}
 					}
@@ -841,7 +841,7 @@ namespace SteamEngine.Networking {
 			//TODO: check skills and stats? Can't be bothered for moria, for now... -tar
 
 			ScriptArgs sa = new ScriptArgs(this.args);
-			object o = CreatePlayerCharacterFunction.Run(Globals.instance, sa);//creates the character
+			object o = CreatePlayerCharacterFunction.Run(Globals.Instance, sa);//creates the character
 
 			AbstractCharacter cre = o as AbstractCharacter;
 			if (cre == null) {
@@ -1353,7 +1353,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
-	public class IncomingPacketsLoc : Loc {
+	internal class IncomingPacketsLoc : Loc {
 		public string NotANumber = "'{0}' is not a number!";
 		public string MaxAccCharsReached = "You already have the maximum number of characters in your account.";
 		public string IllegalCharsInName = "Illegal name - Contains something other than letters and spaces.";

@@ -17,7 +17,7 @@
 
 using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using SteamEngine.LScript;
 using SteamEngine.Common;
 using System.Globalization;
@@ -75,11 +75,10 @@ namespace SteamEngine {
 		private string name;
 		private string filename = "<filename>";
 		private int line = -1;
-		private ConstantValue held;
-		private bool unloaded = false;
+		private ConstantValue implementation;
+		private bool unloaded;
 
-		public static bool ConstantTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Constant Trace Messages"]);
-		private static Hashtable byName = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<string, Constant> allConstantsByName = new Dictionary<string,Constant>(StringComparer.OrdinalIgnoreCase);
 
 		//		internal Constant(string filename, int line, string name, object value) : this(name, value) {
 		//			this.filename = filename;
@@ -87,45 +86,45 @@ namespace SteamEngine {
 		//		}
 
 		internal Constant(string name, object value) {
-			this.held = new NormalConstant(value);
+			this.implementation = new NormalConstant(value);
 			this.name = name;
 		}
 
 		public void Set(object value) {
-			this.held = new NormalConstant(value);
-			unloaded = false;
+			this.implementation = new NormalConstant(value);
+			this.unloaded = false;
 		}
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
 		public string Filename {
 			get {
-				return filename;
+				return this.filename;
 			}
 		}
 
 		public int Line {
 			get {
-				return line;
+				return this.line;
 			}
 		}
 
 		public object Value {
 			get {
-				if (unloaded) {
-					throw new UnloadedException("The constant '" + name + "' is unloaded.");
+				if (this.unloaded) {
+					throw new UnloadedException("The constant '" + this.name + "' is unloaded.");
 				}
-				return held.Value;
+				return this.implementation.Value;
 			}
 		}
 
 		public static object GetValue(string name) {
-			Constant def = byName[name] as Constant;
-			if (def != null) {
+			Constant def;
+			if (allConstantsByName.TryGetValue(name, out def)) {
 				return def.Value;
 			} else {
 				throw new SEException("There is no constant called " + name + ".");
@@ -133,18 +132,20 @@ namespace SteamEngine {
 		}
 
 		public static Constant Set(string name, object newValue) {
-			Constant def = byName[name] as Constant;
-			if (def == null) {
-				def = new Constant(name, newValue);
-				byName[name] = def;
-			} else {
+			Constant def;
+			if (allConstantsByName.TryGetValue(name, out def)) {
 				def.Set(newValue);
+			} else {
+				def = new Constant(name, newValue);
+				allConstantsByName[name] = def;
 			}
 			return def;
 		}
 
 		public static Constant Get(string name) {
-			return (Constant) (byName[name]);
+			Constant def;
+			allConstantsByName.TryGetValue(name, out def);
+			return def;
 		}
 
 		internal static void StartingLoading() {
@@ -152,7 +153,7 @@ namespace SteamEngine {
 		}
 
 		internal static Constant[] Load(PropsSection input) {
-			ArrayList list = new ArrayList();
+			List<Constant> list = new List<Constant>();
 			string line;
 			int linenum = input.headerLine;
 			StringReader reader = new StringReader(input.GetTrigger(0).code.ToString());
@@ -177,10 +178,10 @@ namespace SteamEngine {
 					name = line.Substring(0, delimiterAt).Trim();
 					value = Utility.UnComment(line.Substring(delimiterAt + 1, line.Length - (delimiterAt + 1)));
 				}
-				Constant d = byName[name] as Constant;
-				if (d == null) {
+				Constant d;
+				if (!allConstantsByName.TryGetValue(name, out d)) {
 					d = new Constant(name, null);
-					byName[name] = d;
+					allConstantsByName[name] = d;
 				} else {
 					if (d.unloaded) {
 						d.unloaded = false;
@@ -189,7 +190,7 @@ namespace SteamEngine {
 						continue;
 					}
 				}
-				d.held = new TemporaryValue(d, value);
+				d.implementation = new TemporaryValue(d, value);
 				d.filename = input.filename;
 				d.line = linenum;
 				list.Add(d);
@@ -198,7 +199,7 @@ namespace SteamEngine {
 			if (input.TriggerCount > 1) {
 				Logger.WriteWarning(input.filename, input.headerLine, "Triggers in a definition of constants are nonsensual (and ignored).");
 			}
-			return ((Constant[]) list.ToArray(typeof(Constant)));
+			return list.ToArray();
 		}
 
 		private static int MinPositive(params int[] numbers) {
@@ -217,16 +218,16 @@ namespace SteamEngine {
 
 		[Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
 		public static void ResolveAll() {
-			int count = byName.Count;
+			int count = allConstantsByName.Count;
 			Logger.WriteDebug("Resolving " + count + " constants");
 			DateTime before = DateTime.Now;
 			int a = 0;
-			foreach (Constant c in byName.Values) {
+			foreach (Constant c in allConstantsByName.Values) {
 				if ((a % 20) == 0) {
 					Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
 				}
 				if (!c.unloaded) {//those should have already stated what's the problem :)
-					TemporaryValue tv = c.held as TemporaryValue;
+					TemporaryValue tv = c.implementation as TemporaryValue;
 					if (tv != null) {
 						c.ResolveValueFromScript(tv.str);
 					}
@@ -251,47 +252,46 @@ namespace SteamEngine {
 
 			object retVal = null;
 			if (FieldValue.TryResolveAsString(value, ref retVal)) {
-				held = new NormalConstant(retVal);
+				this.implementation = new NormalConstant(retVal);
 			} else if (FieldValue.TryResolveAsScript(value, ref retVal)) {
-				held = new NormalConstant(retVal);
+				this.implementation = new NormalConstant(retVal);
 			} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
-				held = new NormalConstant(retVal);
+				this.implementation = new NormalConstant(retVal);
 			} else {
 				string statement = string.Concat("return ", value);
-				Logger.WriteInfo(ConstantTracingOn, "TryRunSnippet(filename(" + filename + "), line(" + line + "), statement(" + statement + "))");
 				retVal = SteamEngine.LScript.LScript.TryRunSnippet(
-					filename, line, Globals.instance, statement);
+					this.filename, this.line, Globals.Instance, statement);
 				if (!SteamEngine.LScript.LScript.LastSnippetSuccess) {
-					unloaded = true;
-					Logger.WriteWarning(filename, line, "No value was set on this (" + this + "): It is now unloaded!");
+					this.unloaded = true;
+					Logger.WriteWarning(this.filename, this.line, "No value was set on this (" + this + "): It is now unloaded!");
 				} else {
-					unloaded = false;
+					this.unloaded = false;
 					if (SteamEngine.LScript.LScript.snippetRunner.ContainsRandomExpression) {
-						held = new LScriptHolderConstant(SteamEngine.LScript.LScript.snippetRunner);
+						this.implementation = new LScriptHolderConstant(SteamEngine.LScript.LScript.snippetRunner);
 						SteamEngine.LScript.LScript.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
 					} else {
-						held = new NormalConstant(retVal);
+						this.implementation = new NormalConstant(retVal);
 					}
 				}
 			}
 		}
 
 		internal static void UnloadAll() {
-			foreach (Constant c in byName.Values) {
+			foreach (Constant c in allConstantsByName.Values) {
 				if (c != null) {
 					c.Unload();
 				}
 			}
-			byName.Clear();
+			allConstantsByName.Clear();
 		}
 
 		public void Unload() {
-			unloaded = true;
+			this.unloaded = true;
 		}
 
 		public bool IsUnloaded {
 			get {
-				return unloaded;
+				return this.unloaded;
 			}
 		}
 
@@ -300,7 +300,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return held + " " + name;
+			return this.implementation + " " + this.name;
 		}
 
 		private sealed class NormalConstant : ConstantValue {
@@ -335,7 +335,7 @@ namespace SteamEngine {
 
 			internal override sealed object Value {
 				get {
-					return sh.Run(Globals.instance, (ScriptArgs) null);
+					return sh.Run(Globals.Instance, (ScriptArgs) null);
 				}
 			}
 

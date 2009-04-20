@@ -140,11 +140,11 @@ namespace SteamEngine {
 				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 
 #if DEBUG
-				Console.WriteLine("Starting SteamEngine ver. " + Globals.version + " (DEBUG build)" + " - " + Globals.ServerName);
+				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", DEBUG build)" + " - " + Globals.ServerName);
 #elif SANE
-			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (SANE build)"+" - "+Globals.serverName);
+			Console.WriteLine("Starting SteamEngine ("+Globals.version+", SANE build)"+" - "+Globals.serverName);
 #elif OPTIMIZED
-			Console.WriteLine("Starting SteamEngine ver. "+Globals.version+" (OPTIMIZED build)"+" - "+Globals.serverName);
+			Console.WriteLine("Starting SteamEngine ("+Globals.version+", OPTIMIZED build)"+" - "+Globals.serverName);
 #else
 			throw new SanityCheckException("None of these flags were set: DEBUG, SANE, or OPTIMIZED?");
 #endif
@@ -189,7 +189,7 @@ namespace SteamEngine {
 				Globals.UnPauseServerTime();
 				RunLevelManager.SetRunning();
 				Logger.WriteDebug("triggering @startup");
-				Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
+				Globals.Instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
 
 				//if (!Globals.fastStartUp) {
 				Console.WriteLine("Checking to see if any scripts have changed.");
@@ -247,8 +247,8 @@ namespace SteamEngine {
 					RunLevelManager.SetShutdown();
 
 					Logger.WriteDebug("triggering @shutdown");
-					if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
-						Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
+					if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)
+						Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
 					}
 					GameServer.BackupLinksToCharacters();
 					UnLoadAll();
@@ -346,7 +346,7 @@ namespace SteamEngine {
 			Globals.UnPauseServerTime();
 			RunLevelManager.SetRunning();
 			Logger.WriteDebug("triggering @startup");
-			Globals.instance.TryTrigger(TriggerKey.startup, new ScriptArgs(false));
+			Globals.Instance.TryTrigger(TriggerKey.startup, new ScriptArgs(false));
 			return true;
 		}
 
@@ -383,9 +383,9 @@ namespace SteamEngine {
 			RunLevelManager.SetShutdown();
 			FastDLL.ShutDownFastDLL();
 			Console.WriteLine("Shutdown...");
-			if (Globals.instance != null) { //is null when first run (and writing steamengine.ini)
+			if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)
 				Logger.WriteDebug("triggering @shutdown");
-				Globals.instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
+				Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
 			}			
 			Timers.Timer.Clear();
 			RunLevelManager.SetDead();

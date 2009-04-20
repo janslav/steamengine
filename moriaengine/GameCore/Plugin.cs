@@ -111,7 +111,7 @@ namespace SteamEngine {
 		}
 
 		#region save/load
-		[Save]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SaveStream output) {
 			output.WriteValue("def", this.def);
 			base.Save(output);

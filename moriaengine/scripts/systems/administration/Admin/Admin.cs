@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.CopyColsFromLastTable();
 
 			//sorting = 0th position
-			switch ((SortingCriteria) args.ArgsArray[0]) {
+			switch ((SortingCriteria) Convert.ToInt32(args[0])) {
 				case SortingCriteria.NameAsc:
 					playersList.Sort(CharComparerByName<Player>.instance);
 					break;
@@ -141,31 +141,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						break;
 					case 1: //acc tøídit asc
-						args.ArgsArray[0] = SortingCriteria.AccountAsc;
+						args[0] = SortingCriteria.AccountAsc;
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //hráèi tøídit asc
-						args.ArgsArray[0] = SortingCriteria.NameAsc;
+						args[0] = SortingCriteria.NameAsc;
 						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.NameAsc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //lokace tøídit asc
-						args.ArgsArray[0] = SortingCriteria.LocationAsc;
+						args[0] = SortingCriteria.LocationAsc;
 						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.LocationAsc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //acc tøídit desc
-						args.ArgsArray[0] = SortingCriteria.AccountDesc;
+						args[0] = SortingCriteria.AccountDesc;
 						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.AccountDesc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //hráèi tøídit desc
-						args.ArgsArray[0] = SortingCriteria.NameDesc;
+						args[0] = SortingCriteria.NameDesc;
 						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.NameDesc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //lokace tøídit desc
-						args.ArgsArray[0] = SortingCriteria.LocationDesc;
+						args[0] = SortingCriteria.LocationDesc;
 						//args.SetTag(D_Admin.plrListSortTK, SortingCriteria.LocationDesc);//uprav info o sortovani
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;

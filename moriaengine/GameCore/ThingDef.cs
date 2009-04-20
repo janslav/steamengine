@@ -301,7 +301,7 @@ namespace SteamEngine {
 		*/
 		public static new ThingDef Get(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as ThingDef;
 		}
 
@@ -400,7 +400,7 @@ namespace SteamEngine {
 
 		public static ICollection AllThingDefs {
 			get {
-				return ThingDef.byDefname.Values;
+				return ThingDef.AllScriptsByDefname.Values;
 			}
 		}
 
@@ -447,7 +447,7 @@ namespace SteamEngine {
 			}
 
 			AbstractScript def;
-			byDefname.TryGetValue(defname, out def);
+			AllScriptsByDefname.TryGetValue(defname, out def);
 			ThingDef thingDef = def as ThingDef;
 
 			if (thingDef == null) {
@@ -457,18 +457,18 @@ namespace SteamEngine {
 					ConstructorInfo cw = thingDefCtors[thingDefType];
 					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
 				}
-			} else if (thingDef.unloaded) {
+			} else if (thingDef.IsUnloaded) {
 				if (thingDef.GetType() != thingDefType) {
 					throw new OverrideNotAllowedException("You can not change the class of a Thingdef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				thingDef.unloaded = false;
+				thingDef.IsUnloaded = false;
 				UnRegisterThingDef(thingDef);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
 			}
 
 			thingDef.Defname = defname;
-			byDefname[defname] = thingDef;
+			AllScriptsByDefname[defname] = thingDef;
 
 			thingDef.ClearTriggerGroups();//maybe clear other things too?
 
@@ -503,9 +503,9 @@ namespace SteamEngine {
 		}
 
 		private static void UnRegisterThingDef(ThingDef td) {
-			byDefname.Remove(td.Defname);
+			AllScriptsByDefname.Remove(td.Defname);
 			if (td.Altdefname != null) {
-				byDefname.Remove(td.Altdefname);
+				AllScriptsByDefname.Remove(td.Altdefname);
 			}
 		}
 
@@ -514,10 +514,10 @@ namespace SteamEngine {
 			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x") + ")");
 			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x") + ")");
 
-			int count = byDefname.Count;
+			int count = AllScriptsByDefname.Count;
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				int a = 0;
-				foreach (AbstractScript td in byDefname.Values) {
+				foreach (AbstractScript td in AllScriptsByDefname.Values) {
 					if ((a % 100) == 0) {
 						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
 					}
