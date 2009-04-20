@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (defs.Count == 0) {
-					throw new SEException("ListMassSettingsByClass instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
+					throw new SEException("ListMassSettingsByClass instantiated before scripts are loaded... or no " + Tools.TypeToString(typeof(DefType)) + " in scripts?");
 				}
 
 				defs.Sort(delegate(DefType a, DefType b) {
@@ -167,7 +167,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 				if (modelsSet.Count == 0) {
-					throw new SEException("WeaponMassSetting instantiated before scripts are loaded... or no " + typeof(DefType).Name + " in scripts?");
+					throw new SEException("WeaponMassSetting instantiated before scripts are loaded... or no " + Tools.TypeToString(typeof(DefType)) + " in scripts?");
 				}
 
 				models = new ushort[modelsSet.Count];

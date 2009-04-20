@@ -39,12 +39,9 @@ namespace SteamEngine {
 		}
 
 		protected override bool ToBoolImpl(object arg) {
-			if (arg is Thing) {
-				return (((Thing) arg).Uid != -1);
-			} else if (arg is AbstractAccount) {
-				return ((AbstractAccount) arg).IsDeleted;
-			} else if (arg is string) {
-				return ParseBoolean((string) arg);
+			IDeletable deletable = arg as IDeletable;
+			if (deletable != null) {
+				return !deletable.IsDeleted;
 			} else {
 				return base.ToBoolImpl(arg);
 			}
@@ -53,8 +50,9 @@ namespace SteamEngine {
 		[Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
 		public static string SGetTag(TagHolder from, TagKey which) {
 			object tagValue = from.GetTag(which);
-			if (tagValue == null)
+			if (tagValue == null) {
 				return null; //return null
+			}
 
 			IConvertible convertibleVal = tagValue as IConvertible;
 			if (convertibleVal != null) {
@@ -65,7 +63,16 @@ namespace SteamEngine {
 				return formattableVal.ToString(null, CultureInfo.InvariantCulture);
 			}
 			//not available to transform to string (we dont want the ToString only!)
-			throw new SEException("Unexpected conversion attempt: " + tagValue.GetType().ToString() + "->string");
+			throw new SEException("Unexpected conversion attempt: " + Tools.TypeToString(tagValue.GetType()) + " -> String");
+		}
+
+		[Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
+		public static string SGetTagNotNull(TagHolder from, TagKey which) {
+			string retVal = SGetTag(from, which);
+			if (retVal == null) {
+				return String.Empty; //return "" instead of null
+			}
+			return retVal;
 		}
 
 		[Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast " +

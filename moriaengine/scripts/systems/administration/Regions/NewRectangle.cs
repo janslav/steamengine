@@ -30,10 +30,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
-			minX = (args.ArgsArray[0] != null ? args.ArgsArray[0].ToString() : "");
-			minY = (args.ArgsArray[1] != null ? args.ArgsArray[1].ToString() : "");
-			maxX = (args.ArgsArray[2] != null ? args.ArgsArray[2].ToString() : "");
-			maxY = (args.ArgsArray[3] != null ? args.ArgsArray[3].ToString() : "");
+			object[] argsArray = args.GetArgsArray();
+			minX = String.Concat(argsArray[0]);
+			minY = String.Concat(argsArray[1]);
+			maxX = String.Concat(argsArray[2]);
+			maxY = String.Concat(argsArray[3]);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -82,12 +83,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//precteme parametry a zkusime vytvorit rectangle
 				MutableRectangle newRect = null;
 				try {
-					args.ArgsArray[0] = Convert.ToUInt16(gr.GetNumberResponse(31));
-					args.ArgsArray[1] = Convert.ToUInt16(gr.GetNumberResponse(32));
-					args.ArgsArray[2] = Convert.ToUInt16(gr.GetNumberResponse(33));
-					args.ArgsArray[3] = Convert.ToUInt16(gr.GetNumberResponse(34));
-
-					newRect = new MutableRectangle((ushort) args.ArgsArray[0], (ushort) args.ArgsArray[1], (ushort) args.ArgsArray[2], (ushort) args.ArgsArray[3]);
+					int startX = (int) gr.GetNumberResponse(31);
+					int startY = (int) gr.GetNumberResponse(32);
+					int endX = (int) gr.GetNumberResponse(33);
+					int endY = (int) gr.GetNumberResponse(34);
+					object[] argsArray = args.GetArgsArray();
+					argsArray[0] = startX;
+					argsArray[1] = startY;
+					argsArray[2] = endX;
+					argsArray[3] = endY;
+					newRect = new MutableRectangle(startX, startY, endX, endY);
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu

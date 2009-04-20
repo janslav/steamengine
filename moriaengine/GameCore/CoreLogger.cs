@@ -23,18 +23,27 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class CoreLogger : Logger {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public static void Init() {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+		private static CoreLogger initInstance = PrivateInit();
+
+		private static CoreLogger PrivateInit() {
+			CoreLogger retval;
 			try {
-				new CoreLogger();
+				retval = new CoreLogger();
 			} catch (Exception globalexp) {
 				Logger.WriteFatal(globalexp);
 				MainClass.signalExit.Set();
+				return null;
 			}
 
 			if (Globals.LogToFiles) {
 				Logger.OpenFile();
 			}
+			return retval;
+		}
+
+		internal static void Init() {
+
 		}
 
 		protected override string GetFilepath() {
@@ -42,8 +51,8 @@ namespace SteamEngine {
 			DateTime dtnow = DateTime.Now;
 			string filename = string.Format(System.Globalization.CultureInfo.InvariantCulture,
 				"SteamEngine.GameServer.{0}-{1}-{2}.log",
-				dtnow.Year.ToString("0000", System.Globalization.CultureInfo.InvariantCulture), 
-				dtnow.Month.ToString("00", System.Globalization.CultureInfo.InvariantCulture), 
+				dtnow.Year.ToString("0000", System.Globalization.CultureInfo.InvariantCulture),
+				dtnow.Month.ToString("00", System.Globalization.CultureInfo.InvariantCulture),
 				dtnow.Day.ToString("00", System.Globalization.CultureInfo.InvariantCulture));
 			return Path.Combine(Globals.LogPath, filename);
 		}

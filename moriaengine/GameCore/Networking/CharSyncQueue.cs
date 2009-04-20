@@ -469,7 +469,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			private static PacketGroup[] charInfoPackets = new PacketGroup[(int) HighlightColor.NumHighlightColors]; //0x78
+			private static PacketGroup[] charInfoPackets = new PacketGroup[Tools.GetEnumLength<HighlightColor>()]; //0x78
 
 			private void ProcessCharResend(AbstractCharacter ch) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessCharResend " + ch);
@@ -532,8 +532,8 @@ namespace SteamEngine.Networking {
 				return false;
 			}
 
-			private static PacketGroup[] myCharInfos = new PacketGroup[(int) HighlightColor.NumHighlightColors];
-			private static PacketGroup[] myMovings = new PacketGroup[(int) HighlightColor.NumHighlightColors];
+			private static PacketGroup[] myCharInfos = new PacketGroup[Tools.GetEnumLength<HighlightColor>()];
+			private static PacketGroup[] myMovings = new PacketGroup[Tools.GetEnumLength<HighlightColor>()];
 
 			private void ProcessCharUpdate(AbstractCharacter ch) {
 				//TODO: party update

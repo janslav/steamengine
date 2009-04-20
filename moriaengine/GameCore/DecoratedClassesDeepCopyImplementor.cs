@@ -64,6 +64,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplyDecoratedClasses<DeepCopyableClassAttribute>(AddDecoratedClass, false);
 		}
@@ -104,7 +105,7 @@ namespace SteamEngine {
 
 		private class GeneratedInstance {
 			Type decoratedClass;
-			MethodBase initializer = null;
+			MethodBase initializer;
 
 			List<FieldInfo> copyableDataFields = new List<FieldInfo>();
 			List<PropertyInfo> copyableDataProperties = new List<PropertyInfo>();
@@ -114,35 +115,35 @@ namespace SteamEngine {
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
 				foreach (MemberInfo mi in decoratedClass.GetMembers()) {
-					HandleDeepCopyImplementationAttribute(decoratedClass, mi);
+					HandleDeepCopyImplementationAttribute(mi);
 					HandleCopyableDataAttribute(mi);
 				}
 
-				if (initializer == null) {
+				if (this.initializer == null) {
 					throw new SEException("No proper member with [DeepCopyImplementationAttribute].");
 				}
 			}
 
-			private void HandleDeepCopyImplementationAttribute(Type decoratedClass, MemberInfo mi) {
+			private void HandleDeepCopyImplementationAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(DeepCopyImplementationAttribute), false)) {
-					if (initializer != null) {
+					if (this.initializer != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("DeepCopyImplementationAttribute") + " on two class members.");
 					} else {
 						if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
-							initializer = (MethodBase) mi;
+							this.initializer = (MethodBase) mi;
 						} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 							MethodInfo meth = (MethodInfo) mi;
-							if (!meth.ReturnType.IsAssignableFrom(decoratedClass)) {
+							if (!meth.ReturnType.IsAssignableFrom(this.decoratedClass)) {
 								throw new SEException("Incompatible return type of method " + meth);
 							}
 							if (meth.IsStatic) {
-								initializer = meth;
+								this.initializer = meth;
 							}
 						}
-						if (initializer != null) {
-							ParameterInfo[] pars = initializer.GetParameters();
+						if (this.initializer != null) {
+							ParameterInfo[] pars = this.initializer.GetParameters();
 							if (pars.Length == 0) {
-							} else if ((pars.Length == 1) && (pars[0].ParameterType == decoratedClass)) {
+							} else if ((pars.Length == 1) && (pars[0].ParameterType == this.decoratedClass)) {
 							} else {
 								throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a callable member with one parameter of the same type as is the declaring class, or with zero parameters.");
 							}
@@ -161,7 +162,7 @@ namespace SteamEngine {
 						MethodInfo[] accessors = pi.GetAccessors();
 						if (accessors.Length == 2) {
 							if (!accessors[0].IsStatic) {
-								copyableDataProperties.Add(pi);
+								this.copyableDataProperties.Add(pi);
 								added = true;
 							}
 						} else {
@@ -170,7 +171,7 @@ namespace SteamEngine {
 					} else if ((mi.MemberType & MemberTypes.Field) == MemberTypes.Field) {
 						FieldInfo fi = (FieldInfo) mi;
 						if (!fi.IsStatic) {
-							copyableDataFields.Add(fi);
+							this.copyableDataFields.Add(fi);
 							added = true;
 						}
 					}
@@ -188,14 +189,14 @@ namespace SteamEngine {
 				retVal.ReturnType = new CodeTypeReference(typeof(object));
 
 				retVal.Statements.Add(new CodeVariableDeclarationStatement(
-					decoratedClass,
+					this.decoratedClass,
 					"copyFromConverted",
-					new CodeCastExpression(decoratedClass,
+					new CodeCastExpression(this.decoratedClass,
 						new CodeArgumentReferenceExpression("copyFrom"))));
 
 
 				CodeExpression[] parameters;
-				if (initializer.GetParameters().Length > 0) {
+				if (this.initializer.GetParameters().Length > 0) {
 					parameters = new CodeExpression[] { 
 						new CodeArgumentReferenceExpression("copyFromConverted") };
 				} else {
@@ -203,27 +204,27 @@ namespace SteamEngine {
 				}
 
 				CodeExpression initExpression;
-				if (initializer is ConstructorInfo) {
+				if (this.initializer is ConstructorInfo) {
 					initExpression = new CodeObjectCreateExpression(
-						decoratedClass,
+						this.decoratedClass,
 						parameters);
 				} else {
 					initExpression = new CodeMethodInvokeExpression(
-						new CodeTypeReferenceExpression(decoratedClass),
-						initializer.Name,
+						new CodeTypeReferenceExpression(this.decoratedClass),
+						this.initializer.Name,
 						parameters);
 				}
 
 				retVal.Statements.Add(new CodeVariableDeclarationStatement(
-					decoratedClass,
+					this.decoratedClass,
 					"copy",
 					initExpression));
 
-				foreach (FieldInfo fi in copyableDataFields) {
+				foreach (FieldInfo fi in this.copyableDataFields) {
 					string name = fi.Name;
 					retVal.Statements.Add(GenerateCopyOperation(name, fi.FieldType, false));
 				}
-				foreach (PropertyInfo pi in copyableDataProperties) {
+				foreach (PropertyInfo pi in this.copyableDataProperties) {
 					string name = pi.Name;
 					retVal.Statements.Add(GenerateCopyOperation(name, pi.PropertyType, true));
 				}
@@ -263,9 +264,9 @@ namespace SteamEngine {
 					method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "self"));
 
 					method.Statements.Add(new CodeVariableDeclarationStatement(
-						decoratedClass,
+						this.decoratedClass,
 						"copyConverted",
-						new CodeCastExpression(decoratedClass,
+						new CodeCastExpression(this.decoratedClass,
 							new CodeArgumentReferenceExpression("self"))));
 
 					CodeExpression to;
@@ -307,22 +308,22 @@ namespace SteamEngine {
 
 				retVal.GetStatements.Add(
 					new CodeMethodReturnStatement(
-						new CodeTypeOfExpression(decoratedClass)));
+						new CodeTypeOfExpression(this.decoratedClass)));
 
 
 				return retVal;
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + decoratedClass.Name);
-				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
-				codeTypeDeclatarion.BaseTypes.Add(typeof(IDeepCopyImplementor));
-				codeTypeDeclatarion.IsClass = true;
+				this.codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + this.decoratedClass.Name);
+				this.codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
+				this.codeTypeDeclatarion.BaseTypes.Add(typeof(IDeepCopyImplementor));
+				this.codeTypeDeclatarion.IsClass = true;
 
-				codeTypeDeclatarion.Members.Add(GenerateDeepCopyMethod());
-				codeTypeDeclatarion.Members.Add(GenerateHandledTypeProperty());
+				this.codeTypeDeclatarion.Members.Add(GenerateDeepCopyMethod());
+				this.codeTypeDeclatarion.Members.Add(GenerateHandledTypeProperty());
 
-				return codeTypeDeclatarion;
+				return this.codeTypeDeclatarion;
 			}
 		}
 	}

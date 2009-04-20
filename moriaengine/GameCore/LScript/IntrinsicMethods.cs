@@ -57,7 +57,7 @@ namespace SteamEngine.LScript {
 
 		public static Globals Serv {
 			get {
-				return Globals.instance;
+				return Globals.Instance;
 			}
 		}
 

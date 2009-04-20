@@ -53,6 +53,7 @@
       <Name>Microsoft.JScript</Name>
     </Reference>
     <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
+    <Reference Include="SharpSvn, Version=1.5005.984.35067, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86" />
     <Reference Include="SteamDoc">
       <Name>SteamDoc</Name>
       <HintPath>..\..\bin\SteamDoc.dll</HintPath>

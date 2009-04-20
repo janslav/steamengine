@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static TagKey detailIndexPairingTK = TagKey.Get("_detail_button_index_pairing_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			object target = args.ArgsArray[0];//target of info dialog
+			object target = args[0];//target of info dialog
 
 			//first argument is the object being infoized - we will get its DataView first
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			object target = args.ArgsArray[0];//target of info dialog
+			object target = args[0];//target of info dialog
 
 			if (gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
 				switch (gr.pressedButton) {

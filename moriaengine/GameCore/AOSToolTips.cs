@@ -11,7 +11,7 @@ using SteamEngine.Communication.TCP;
 
 namespace SteamEngine {
 
-	public class AosToolTips : Poolable {
+	public sealed class AosToolTips : Poolable {
 		private int uid;
 		private Thing thing;
 		private List<int> ids = new List<int>(3);
@@ -43,7 +43,7 @@ namespace SteamEngine {
 			cache.Remove(thing);
 		}
 
-		protected override void On_Reset() {
+		protected override sealed void On_Reset() {
 			base.On_Reset();
 
 			this.uid = uids++;
@@ -56,7 +56,7 @@ namespace SteamEngine {
 			this.thing = null;
 		}
 
-		public override void Dispose() {
+		public override sealed void Dispose() {
 			if (this.initDone) {
 				cache.Remove(this.thing);
 				this.initDone = false;
@@ -167,7 +167,7 @@ namespace SteamEngine {
 		//    dataGroup.SendTo(c);
 		//}
 
-		internal void SendDataPacket(TcpConnection<GameState> conn, GameState state) {
+		internal void SendDataPacket(TcpConnection<GameState> conn) {
 			if (this.dataNGroup == null) {
 				this.dataNGroup = PacketGroup.CreateFreePG();
 				this.dataNGroup.AcquirePacket<MegaClilocOutPacket>().Prepare(thing.FlaggedUid, uid, ids, arguments);

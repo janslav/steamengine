@@ -216,8 +216,8 @@ namespace SteamEngine.LScript {
 				}
 				throw new SEException(string.Format("Operator {0} is not applicable to these operands(type {1} and {2}).",
 					opString,
-					(leftResult == null ? "<null>" : leftResult.GetType().Name),
-					(rightResult == null ? "<null>" : rightResult.GetType().Name)));
+					(leftResult == null ? "<null>" : Common.Tools.TypeToString(leftResult.GetType())),
+					(rightResult == null ? "<null>" :  Common.Tools.TypeToString(rightResult.GetType()))));
 			} catch (InterpreterException) {
 				throw;
 			} catch (Exception e) {

@@ -101,13 +101,13 @@ namespace SteamEngine.CompiledScripts {
 		public static int duration = 180;
 
 		public bool On_DenyPickupItem(DenyPickupArgs args) {
-			Container conta = args.manipulatedItem.Cont as Container;
+			Container conta = args.ManipulatedItem.Cont as Container;
 
 			if (this.Contains(conta)) {
 				Sanity.IfTrueThrow(conta == null, "conta == null");
-				Character thief = args.pickingChar as Character;
+				Character thief = args.PickingChar as Character;
 
-				SkillSequenceArgs stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.manipulatedItem, null, null, null, null);
+				SkillSequenceArgs stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.ManipulatedItem, null, null, null, null);
 				stealing.PhaseSelect();
 				bool success = stealing.Success;
 				//stealing.Dispose();

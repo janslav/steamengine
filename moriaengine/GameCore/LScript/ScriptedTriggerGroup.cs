@@ -77,7 +77,7 @@ namespace SteamEngine {
 
 		public static new TriggerGroup Get(string name) {
 			AbstractScript script;
-			byDefname.TryGetValue(name, out script);
+			AllScriptsByDefname.TryGetValue(name, out script);
 			return script as TriggerGroup;
 		}
 
@@ -102,7 +102,7 @@ namespace SteamEngine {
 					group.AddTrigger(sc);
 				}
 			}
-			group.unloaded = false;
+			group.IsUnloaded = false;
 			return group;
 		}
 

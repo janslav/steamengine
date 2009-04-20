@@ -35,21 +35,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY, name, defname, home, parent; //predzadane hodnoty (if any)
 
-			minX = (args.ArgsArray[0] != null ? args.ArgsArray[0].ToString() : "");
-			minY = (args.ArgsArray[1] != null ? args.ArgsArray[1].ToString() : "");
-			maxX = (args.ArgsArray[2] != null ? args.ArgsArray[2].ToString() : "");
-			maxY = (args.ArgsArray[3] != null ? args.ArgsArray[3].ToString() : "");
-			name = TagMath.SGetTag(args, nameTK);
-			if (name == null) name = "";
-
-			defname = TagMath.SGetTag(args, defNameTK);
-			if (defname == null) defname = "";
-
-			home = TagMath.SGetTag(args, homeposTK);
-			if (home == null) home = "";
-
-			parent = TagMath.SGetTag(args, parentDefTK);
-			if (parent == null) parent = "";
+			object[] argsArray = args.GetArgsArray();
+			minX = string.Concat(argsArray[0]);
+			minY = string.Concat(argsArray[1]);
+			maxX = string.Concat(argsArray[2]);
+			maxY = string.Concat(argsArray[3]);
+			name = TagMath.SGetTagNotNull(args, nameTK);
+			defname = TagMath.SGetTagNotNull(args, defNameTK);
+			home = TagMath.SGetTagNotNull(args, homeposTK);
+			parent = TagMath.SGetTagNotNull(args, parentDefTK);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -105,10 +99,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.pressedButton == 1) { //ulozit				
 				//zkusime precist vsechny parametry
-				args.ArgsArray[0] = Convert.ToUInt16(gr.GetNumberResponse(31));
-				args.ArgsArray[1] = Convert.ToUInt16(gr.GetNumberResponse(32));
-				args.ArgsArray[2] = Convert.ToUInt16(gr.GetNumberResponse(33));
-				args.ArgsArray[3] = Convert.ToUInt16(gr.GetNumberResponse(34));
+				int startX = (int) gr.GetNumberResponse(31);
+				int startY = (int) gr.GetNumberResponse(32);
+				int endX = (int) gr.GetNumberResponse(33);
+				int endY = (int) gr.GetNumberResponse(34);
+				object[] argsArray = args.GetArgsArray();
+				argsArray[0] = startX;
+				argsArray[1] = startY;
+				argsArray[2] = endX;
+				argsArray[3] = endY;
 				args.SetTag(nameTK, gr.GetTextResponse(21)); //name
 				args.SetTag(defNameTK, gr.GetTextResponse(22)); //defname
 				args.SetTag(homeposTK, gr.GetTextResponse(23)); //home pozice
@@ -120,7 +119,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//precteme parametry a zkusime vytvorit rectangle
 				MutableRectangle newRect = null;
 				try {
-					newRect = new MutableRectangle((ushort) args.ArgsArray[0], (ushort) args.ArgsArray[1], (ushort) args.ArgsArray[2], (ushort) args.ArgsArray[3]);
+					newRect = new MutableRectangle(startX, startY, endX, endY);
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu
@@ -130,7 +129,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				Point4D home = null;
 				try {
-					home = (Point4D) ObjectSaver.Load(gr.GetTextResponse(23));//homepos
+					home = (Point4D) ObjectSaver.OptimizedLoad_SimpleType(gr.GetTextResponse(23), typeof(Point4D));//homepos
 				} catch {
 					//podelal homepos
 					//stackneme a zobrazime chybu
@@ -148,7 +147,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else if (!newRect.Contains(home)) {
 					//homepos by nesedla
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Home pozice (" + gr.GetTextResponse(23) + ") musi lezet v zadanem rectanglu (" + args.ArgsArray[0] + "," + args.ArgsArray[1] + ")-(" + args.ArgsArray[2] + "," + args.ArgsArray[3] + ")");
+					Gump newGi = D_Display_Text.ShowError("Home pozice (" + gr.GetTextResponse(23) + ") musi lezet v zadanem rectanglu (" + args[0] + "," + args[1] + ")-(" + args[2] + "," + args[3] + ")");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				} else if (StaticRegion.GetByName(name) != null) {
@@ -183,10 +182,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.pressedButton == 2) {//vyber regionu parenta                         dialog,vyhledavani,prvni index, seznam regionu, trideni
 				//zkusime precist vsechyn parametry abychom je kdyztak meli
-				args.ArgsArray[0] = Convert.ToUInt16(gr.GetNumberResponse(31));
-				args.ArgsArray[1] = Convert.ToUInt16(gr.GetNumberResponse(32));
-				args.ArgsArray[2] = Convert.ToUInt16(gr.GetNumberResponse(33));
-				args.ArgsArray[3] = Convert.ToUInt16(gr.GetNumberResponse(34));
+				object[] argsArray = args.GetArgsArray();
+				argsArray[0] = (int) gr.GetNumberResponse(31);
+				argsArray[1] = (int) gr.GetNumberResponse(32);
+				argsArray[2] = (int) gr.GetNumberResponse(33);
+				argsArray[3] = (int) gr.GetNumberResponse(34);
 				args.SetTag(nameTK, gr.GetTextResponse(21)); //name
 				args.SetTag(defNameTK, gr.GetTextResponse(22)); //defname
 				args.SetTag(homeposTK, gr.GetTextResponse(23)); //home pozice

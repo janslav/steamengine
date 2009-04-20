@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					dlg.LastTable[rowCntr, 3] = GUTAInput.Builder.Id(11 + (3 * i)).Text(ObjectSaver.Save(de.Value)).Build();
 				} else {//jinak odkaz do infodialogu
 					dlg.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(12 + (3 * i)).Build();
-					dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(de.Value.GetType().Name).Build();
+					dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Tools.TypeToString(de.Value.GetType())).Build();
 				}
 				rowCntr++;
 			}

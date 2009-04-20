@@ -59,7 +59,7 @@ namespace SteamEngine.Persistence {
 			string path = Globals.SavePath;
 
 			ScriptArgs sa = new ScriptArgs(path);
-			Globals.instance.TryTrigger(TriggerKey.beforeSave, sa);
+			Globals.Instance.TryTrigger(TriggerKey.beforeSave, sa);
 			path = string.Concat(sa.argv[0]);
 			if (path.Length < 1) {//scripts error or something...
 				path = Globals.SavePath;
@@ -75,7 +75,7 @@ namespace SteamEngine.Persistence {
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);
-					Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
+					Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
 					SaveStream saveStream = GetSaveStream(path, sa.argv[1]);
 					saveStream.WriteComment("Textual SteamEngine save");
 					coordinator.SaveAll(saveStream);
@@ -86,7 +86,7 @@ namespace SteamEngine.Persistence {
 				}
 
 				sa = new ScriptArgs(path, "globals");
-				Globals.instance.TryTrigger(TriggerKey.openSaveStream, sa);
+				Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
 				globalsSaver = GetSaveStream(path, sa.argv[1]);
 				//currentfile = "globals.sav";
 				Globals.SaveGlobals(globalsSaver);
@@ -98,7 +98,7 @@ namespace SteamEngine.Persistence {
 			} catch (Exception e) {
 				Logger.WriteCritical(e);
 			} finally {
-				Globals.instance.TryTrigger(TriggerKey.afterSave, new ScriptArgs(path, success));
+				Globals.Instance.TryTrigger(TriggerKey.afterSave, new ScriptArgs(path, success));
 				CloseSaveStreams();
 			}
 
@@ -151,7 +151,7 @@ namespace SteamEngine.Persistence {
 			try {
 				path = Globals.SavePath;
 				ScriptArgs sa = new ScriptArgs(path);
-				Globals.instance.Trigger(TriggerKey.beforeLoad, sa);
+				Globals.Instance.Trigger(TriggerKey.beforeLoad, sa);
 				path = string.Concat(sa.argv[0]);
 				if (path.Length < 1) {//scripts error or something...
 					path = Globals.SavePath;
@@ -168,7 +168,7 @@ namespace SteamEngine.Persistence {
 						nameSet.Add(name.ToLower());
 					}
 					sa = new ScriptArgs(path, name);
-					Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
+					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
 					TextReader loadStream = GetLoadStream(path, sa.argv[1]);
 					InvokeLoad(loadStream, Path.Combine(path, name + ".sav"));
 					try {
@@ -177,10 +177,10 @@ namespace SteamEngine.Persistence {
 				}
 
 				sa = new ScriptArgs(path, "globals");
-				Globals.instance.Trigger(TriggerKey.openLoadStream, sa);
+				Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
 				globalsLoader = GetLoadStream(path, sa.argv[1]);
 				InvokeLoad(globalsLoader, Path.Combine(path, "globals.sav"));
-				Globals.instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
+				Globals.Instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
 				Console.WriteLine("Loading successful");
 			} catch (FileNotFoundException e) {
 				//this is not critical, just a warning.
@@ -195,7 +195,7 @@ namespace SteamEngine.Persistence {
 				Logger.WriteCritical("Loading failed.");
 				MainClass.ClearWorld();
 				TriggerGroup.ReAddGlobals();
-				Globals.instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, false));
+				Globals.Instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, false));
 				return false;
 			} finally {
 				CloseLoadStreams();

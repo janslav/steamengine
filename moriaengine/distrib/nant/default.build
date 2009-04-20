@@ -171,6 +171,7 @@
 				<include name="GameCore/**/*.cs" />
 			</sources>
 			<references>
+				<include name="bin/SharpSvn.dll" />
 				<include name="bin/NAnt.Core.dll" />
 				<include name="bin/SteamDoc.dll" />
 				<include name="${communicationFileName}" />

@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 									if (ConvertTools.TryConvertTo(miReturnType, entry.Value, out value)) {
 										SetValueToMember(mi, value);
 									} else {
-										Logger.WriteWarning("Cannot convert loaded type '" + entry.Value.GetType() + "' to type '" +
+										Logger.WriteWarning("Cannot convert loaded type '" + Tools.TypeToString(entry.Value.GetType()) + "' to type '" +
 										miReturnType + "', while loading the static member " + LogStr.Ident(entry.Key));
 									}
 								} else {

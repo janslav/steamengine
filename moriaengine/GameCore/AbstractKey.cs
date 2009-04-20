@@ -57,6 +57,7 @@ namespace SteamEngine {
 			return Object.ReferenceEquals(this, obj);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static int GetNewUid() {
 			return uids++;
 		}

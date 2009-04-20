@@ -43,7 +43,7 @@ namespace SteamEngine {
 			: base(defname) {
 			this.filename = filename;
 			this.headerLine = headerLine;
-			this.unloaded = false;
+			this.IsUnloaded = false;
 			this.uid = uids++;
 		}
 
@@ -71,7 +71,7 @@ namespace SteamEngine {
 
 		public static new AbstractDef Get(string name) {
 			AbstractScript script;
-			byDefname.TryGetValue(name, out script);
+			AllScriptsByDefname.TryGetValue(name, out script);
 			return script as AbstractDef;
 		}
 
@@ -144,11 +144,11 @@ namespace SteamEngine {
 					}
 
 					AbstractScript def;
-					byDefname.TryGetValue(args, out def);
+					AllScriptsByDefname.TryGetValue(args, out def);
 
 					if (def == null) {
 						this.altdefname = args;
-						byDefname[this.altdefname] = this;
+						AllScriptsByDefname[this.altdefname] = this;
 					} else if (def == this) {
 						throw new ScriptException("Defname redundantly specified for Def " + LogStr.Ident(args) + ".");
 					} else {
@@ -180,7 +180,7 @@ namespace SteamEngine {
 			}
 			if (!StringComparer.OrdinalIgnoreCase.Equals(def.GetType().Name, typeName)) {
 				Logger.WriteWarning(input.filename, input.headerLine,
-					LogStr.Ident(typeName + " " + defname) + " declared wrong class. It is in fact " + LogStr.Ident(def.GetType().Name) + ".");
+					LogStr.Ident(typeName + " " + defname) + " declared wrong class. It is in fact " + LogStr.Ident(Tools.TypeToString(def.GetType())) + ".");
 			}
 
 			def.LoadFromSaves(input);
@@ -304,18 +304,18 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
 		public static void ResolveAll() {
-			int count = byDefname.Count;
+			int count = AllScriptsByDefname.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");
 
 			DateTime before = DateTime.Now;
 			int a = 0;
-			foreach (AbstractScript script in byDefname.Values) {
+			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					if ((a % 50) == 0) {
 						Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
 					}
-					if (!def.unloaded) {//those should have already stated what's the problem :)
+					if (!def.IsUnloaded) {//those should have already stated what's the problem :)
 						foreach (FieldValue fv in def.fieldValues.Values) {
 							try {
 								fv.ResolveTemporaryState();
@@ -338,21 +338,21 @@ namespace SteamEngine {
 			Logger.WriteDebug("Saving defs.");
 			output.WriteComment("Defs");
 
-			foreach (AbstractScript script in byDefname.Values) {
+			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					def.alreadySaved = false;
 				}
 			}
-			int count = byDefname.Count;
+			int count = AllScriptsByDefname.Count;
 			int a = 0;
-			foreach (AbstractScript script in byDefname.Values) {
+			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					if ((a % 50) == 0) {
 						Logger.SetTitle("Saving defs: " + ((a * 100) / count) + " %");
 					}
-					if ((!def.unloaded) && (!def.alreadySaved)) {
+					if ((!def.IsUnloaded) && (!def.alreadySaved)) {
 						def.Save(output);
 						def.alreadySaved = true;
 					}
@@ -457,7 +457,7 @@ namespace SteamEngine {
 		//unloads instances that come from scripts.
 		internal static void UnloadScripts() {
 			defTypesByName.Clear();//we assume that inside core there are no non-abstract defs
-			byDefname.Clear();
+			AllScriptsByDefname.Clear();
 		}
 
 		public override bool Equals(object obj) {

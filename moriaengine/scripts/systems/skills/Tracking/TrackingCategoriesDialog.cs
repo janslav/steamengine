@@ -63,10 +63,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			SkillSequenceArgs skillSeqArgs = (SkillSequenceArgs) args.ArgsArray[0];
+			SkillSequenceArgs skillSeqArgs = (SkillSequenceArgs) args[0];
 			switch (gr.pressedButton) {
 				case 0: //exit - finish tracking without selecting anything
-					((SkillSequenceArgs) args.ArgsArray[0]).PhaseAbort();
+					skillSeqArgs.PhaseAbort();
 					break;
 				//start the tracking skill in the first phase - looking for the characters around
 				//as a parameter - set the category of characters to look for and the phase to start

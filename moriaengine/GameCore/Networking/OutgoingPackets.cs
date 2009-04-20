@@ -900,7 +900,7 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(AbstractCharacter ch, StatusBarType type) {
 			Sanity.IfTrueThrow(ch == null, "PrepareStatusBar called with a null character.");
-			Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType), type), "Invalid value " + type + " for StatusBarType in PrepareStatusBar.");
+			//Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType), type), "Invalid value " + type + " for StatusBarType in PrepareStatusBar.");
 
 			this.type = type;
 			this.charName = ch.Name;

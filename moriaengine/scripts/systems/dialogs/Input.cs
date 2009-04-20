@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Static 'factory' method for getting the instance of an existing input def.")]
 		public static new AbstractInputDef Get(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 
 			return script as AbstractInputDef;
 		}
@@ -115,7 +115,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Unload() {
 			//we need to override this method since ScriptedInputDialogDef inherits from the CompiledGumpDef which does not unload iself...
-			unloaded = true;
+			IsUnloaded = true;
 		}
 
 		internal static IUnloadable Load(PropsSection input) {
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			string defname = input.headerName.ToLower();
 
 			AbstractScript def;
-			byDefname.TryGetValue(defname, out def);
+			AllScriptsByDefname.TryGetValue(defname, out def);
 
 			ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
 			if (id == null) {
@@ -132,8 +132,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					id = new ScriptedInputDialogDef(defname);
 				}
-			} else if (id.unloaded) {
-				id.unloaded = false;
+			} else if (id.IsUnloaded) {
+				id.IsUnloaded = false;
 				UnRegisterInputDialogDef(id);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("ScriptedInputDialogDef " + LogStr.Ident(defname) + " defined multiple times.");
@@ -177,7 +177,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"1st - the inputted text, followed by the params the input dialog was called with")]
 		public override void Response(Character sentTo, TagHolder focus, string filledText) {
 			//prepend the input text to previous input parameters
-			object[] oldParams = GumpInstance.InputArgs.ArgsArray;
+			object[] oldParams = GumpInstance.InputArgs.GetArgsArray();
 			object[] newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
 			Array.Copy(oldParams, 0, newPars, 1, oldParams.Length); //copy all old values to the new field beginning with the index 1
 			newPars[0] = filledText; //filled text will be 0th                        
@@ -187,12 +187,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Unregister the input dialog def from the other defs")]
 		private static void UnRegisterInputDialogDef(ScriptedInputDialogDef id) {
-			byDefname.Remove(id.Defname);
+			AllScriptsByDefname.Remove(id.Defname);
 		}
 
 		[Summary("Register the input dialog def among the other defs")]
 		private static void RegisterInputDialogDef(ScriptedInputDialogDef id) {
-			byDefname[id.Defname] = id;
+			AllScriptsByDefname[id.Defname] = id;
 		}
 
 		public static new void Bootstrap() {

@@ -406,39 +406,41 @@ namespace SteamEngine.CompiledScripts {
 
 		public override sealed byte StatLockByte {
 			get {
-				return statLockByte;
+				return this.statLockByte;
 			}
 		}
 
 		public override StatLockType StrLock {
 			get {
-				return (StatLockType) ((statLockByte >> 4) & 0x3);
+				return (StatLockType) ((this.statLockByte >> 4) & 0x3);
 			}
 			set {
 				if (value != this.StrLock) {
-					statLockByte = (byte) ((statLockByte & 0xCF) + ((((byte) value) & 0x3) << 4));
+					this.statLockByte = (byte) ((this.statLockByte & 0xCF) + ((((byte) value) & 0x3) << 4));
 					PacketSequences.SendStatLocks(this);
 				}
 			}
 		}
+
 		public override StatLockType DexLock {
 			get {
-				return (StatLockType) ((statLockByte >> 2) & 0x3);
+				return (StatLockType) ((this.statLockByte >> 2) & 0x3);
 			}
 			set {
 				if (value != DexLock) {
-					statLockByte = (byte) ((statLockByte & 0xF3) + ((((byte) value) & 0x3) << 2));
+					this.statLockByte = (byte) ((this.statLockByte & 0xF3) + ((((byte) value) & 0x3) << 2));
 					PacketSequences.SendStatLocks(this);
 				}
 			}
 		}
+
 		public override StatLockType IntLock {
 			get {
-				return (StatLockType) ((statLockByte) & 0x3);
+				return (StatLockType) ((this.statLockByte) & 0x3);
 			}
 			set {
 				if (value != IntLock) {
-					statLockByte = (byte) ((statLockByte & 0xFC) + ((((byte) value) & 0x3)));
+					this.statLockByte = (byte) ((this.statLockByte & 0xFC) + ((((byte) value) & 0x3)));
 					PacketSequences.SendStatLocks(this);
 				}
 			}
@@ -2418,7 +2420,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class CharacterLoc : Loc {
+	internal class CharacterLoc : Loc {
 		public string GMModeOn = "GM mode on (Plevel {0}).";
 		public string GMModeOff = "GM mode off (Plevel 1).";
 	}

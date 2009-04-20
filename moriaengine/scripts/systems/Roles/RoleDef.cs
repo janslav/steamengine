@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static RoleDef ByDefname(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as RoleDef;
 		}
 
@@ -86,12 +86,12 @@ namespace SteamEngine.CompiledScripts {
 		#region Loading from scripts
 
 		private static void RegisterRoleDef(RoleDef rd) {
-			byDefname[rd.Defname] = rd;
+			AllScriptsByDefname[rd.Defname] = rd;
 			//byName[rd.Name] = rd;
 		}
 
 		private static void UnRegisterRoleDef(RoleDef rd) {
-			byDefname.Remove(rd.Defname);
+			AllScriptsByDefname.Remove(rd.Defname);
 			//byName.Remove(rd.Name);
 		}
 
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 			string roleDefName = input.headerName.ToLower();
 
 			AbstractScript def;
-			byDefname.TryGetValue(roleDefName, out def);
+			AllScriptsByDefname.TryGetValue(roleDefName, out def);
 			RoleDef roleDef = def as RoleDef;
 
 			ConstructorInfo constructor = roleDefCtorsByName[typeName];
@@ -145,11 +145,11 @@ namespace SteamEngine.CompiledScripts {
 					object[] cargs = new object[] { roleDefName, input.filename, input.headerLine };
 					roleDef = (RoleDef) constructor.Invoke(cargs);
 				}
-			} else if (roleDef.unloaded) {
+			} else if (roleDef.IsUnloaded) {
 				if (roleDef.GetType() != constructor.DeclaringType) {
 					throw new OverrideNotAllowedException("You can not change the class of a RoleDef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				roleDef.unloaded = false;
+				roleDef.IsUnloaded = false;
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
@@ -215,7 +215,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return this.GetType().Name + " " + this.Defname;
+			return Tools.TypeToString(this.GetType()) + " " + this.Defname;
 		}
 
 		#region utilities

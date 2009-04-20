@@ -42,7 +42,7 @@ namespace SteamEngine.LScript {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
-				Globals.instance.SetTag(name, arg.Run(vars));
+				Globals.Instance.SetTag(name, arg.Run(vars));
 			} finally {
 				vars.self = oSelf;
 			}
@@ -50,7 +50,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			Globals.instance.SetTag(name, results[0]);
+			Globals.Instance.SetTag(name, results[0]);
 			return null;
 		}
 
@@ -69,11 +69,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return Globals.instance.GetTag(name);
+			return Globals.Instance.GetTag(name);
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			return Globals.instance.GetTag(name);
+			return Globals.Instance.GetTag(name);
 		}
 
 		public override string ToString() {
@@ -91,11 +91,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return Globals.instance.HasTag(name);
+			return Globals.Instance.HasTag(name);
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			return Globals.instance.HasTag(name);
+			return Globals.Instance.HasTag(name);
 		}
 
 		public override string ToString() {
@@ -113,12 +113,12 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			Globals.instance.RemoveTag(name);
+			Globals.Instance.RemoveTag(name);
 			return null;
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			Globals.instance.RemoveTag(name);
+			Globals.Instance.RemoveTag(name);
 			return null;
 		}
 

@@ -1014,9 +1014,9 @@ namespace SteamEngine {
 
 			speech = ConvertTools.ToString(saArgv[1]);
 			clilocSpeech = ConvertTools.ToInt32(saArgv[2]);
-			type = (SpeechType) ConvertTools.ToInt64(saArgv[3]);
+			type = (SpeechType) ConvertTools.ToInt32(saArgv[3]);
 			color = ConvertTools.ToInt32(saArgv[4]);
-			font = (ClientFont) ConvertTools.ToInt64(saArgv[5]);
+			font = (ClientFont) ConvertTools.ToInt32(saArgv[5]);
 			lang = ConvertTools.ToString(saArgv[6]);
 			keywords = (int[]) saArgv[7];
 			args = (string[]) saArgv[8];
@@ -1071,9 +1071,9 @@ namespace SteamEngine {
 		public virtual void On_CharDClick(AbstractCharacter dClicked) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyItemDClick(DenyClickArgs args) {
-			DenyResult result = args.clickingChar.CanReach(args.target);
+			DenyResult result = args.ClickingChar.CanReach(args.Target);
 			args.Result = result;
 			return result != DenyResult.Allow;
 		}
@@ -1354,6 +1354,7 @@ namespace SteamEngine {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
 	public class EquipsEnumerator : IEnumerator<AbstractItem> {
 		private const int STATE_VISIBLES = 0;
 		private const int STATE_DRAGGING = 1;
@@ -1365,91 +1366,89 @@ namespace SteamEngine {
 		AbstractItem next;
 
 		public EquipsEnumerator(AbstractCharacter c) {
-			cont = c;
-			state = STATE_VISIBLES;
-			current = null;
-			next = null;
+			this.cont = c;
+			//this.state = STATE_VISIBLES;
 		}
 
 		public void Reset() {
-			state = STATE_VISIBLES;
-			current = null;
-			next = null;
+			this.state = STATE_VISIBLES;
+			this.current = null;
+			this.next = null;
 		}
 
 		public bool MoveNext() {
-			switch (state) {
+			switch (this.state) {
 				case STATE_VISIBLES:
-					if (cont.visibleLayers != null) {
-						if (current == null) {//it just started
-							current = (AbstractItem) cont.visibleLayers.firstThing;
-							if (current != null) {
-								next = (AbstractItem) current.nextInList;
+					if (this.cont.visibleLayers != null) {
+						if (this.current == null) {//it just started
+							this.current = (AbstractItem) this.cont.visibleLayers.firstThing;
+							if (this.current != null) {
+								this.next = (AbstractItem) this.current.nextInList;
 								return true;
 							} else {
-								next = null;
+								this.next = null;
 							}
 						} else {
-							if (next != null) {
-								current = next;
-								next = (AbstractItem) current.nextInList;
+							if (this.next != null) {
+								this.current = this.next;
+								this.next = (AbstractItem) current.nextInList;
 								return true;
 							} else {
-								current = null;//continue on next state
+								this.current = null;//continue on next state
 							}
 						}
 					}
-					state = STATE_DRAGGING;
+					this.state = STATE_DRAGGING;
 					goto case STATE_DRAGGING;
 				case STATE_DRAGGING:
-					if ((next == null) && (current == null)) {//first time
-						if (cont.draggingLayer != null) {
-							current = cont.draggingLayer;
-							if (current != null) {
+					if ((this.next == null) && (this.current == null)) {//first time
+						if (this.cont.draggingLayer != null) {
+							this.current = this.cont.draggingLayer;
+							if (this.current != null) {
 								return true;
 							}
 						}
 					} else {
-						current = null;//continue on next state
+						this.current = null;//continue on next state
 					}
-					state = STATE_SPECIAL;
+					this.state = STATE_SPECIAL;
 					goto case STATE_SPECIAL;
 				case STATE_SPECIAL:
-					if (cont.specialLayer != null) {
-						if (current == null) {//it just started
-							current = (AbstractItem) cont.specialLayer.firstThing;
-							if (current != null) {
-								next = (AbstractItem) current.nextInList;
+					if (this.cont.specialLayer != null) {
+						if (this.current == null) {//it just started
+							this.current = (AbstractItem) this.cont.specialLayer.firstThing;
+							if (this.current != null) {
+								this.next = (AbstractItem) this.current.nextInList;
 								return true;
 							} else {
-								next = null;
+								this.next = null;
 							}
 						} else {
-							if (next != null) {
-								current = next;
-								next = (AbstractItem) current.nextInList;
+							if (this.next != null) {
+								this.current = this.next;
+								this.next = (AbstractItem) this.current.nextInList;
 								return true;
 							} else {
-								current = null;//continue on next state
+								this.current = null;//continue on next state
 							}
 						}
 					}
-					state = STATE_OTHERS;
+					this.state = STATE_OTHERS;
 					goto case STATE_OTHERS;
 				case STATE_OTHERS:
-					if (cont.invisibleLayers != null) {
-						if (current == null) {//it just started
-							current = (AbstractItem) cont.invisibleLayers.firstThing;
-							if (current != null) {
-								next = (AbstractItem) current.nextInList;
+					if (this.cont.invisibleLayers != null) {
+						if (this.current == null) {//it just started
+							this.current = (AbstractItem) this.cont.invisibleLayers.firstThing;
+							if (this.current != null) {
+								this.next = (AbstractItem) this.current.nextInList;
 								return true;
 							} else {
-								next = null;
+								this.next = null;
 							}
 						} else {
-							if (next != null) {
-								current = next;
-								next = (AbstractItem) current.nextInList;
+							if (this.next != null) {
+								this.current = this.next;
+								this.next = (AbstractItem) this.current.nextInList;
 								return true;
 							}
 						}
@@ -1459,18 +1458,19 @@ namespace SteamEngine {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
 		public void Dispose() {
 		}
 
 		public AbstractItem Current {
 			get {
-				return current;
+				return this.current;
 			}
 		}
 
 		object IEnumerator.Current {
 			get {
-				return current;
+				return this.current;
 			}
 		}
 	}

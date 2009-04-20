@@ -282,7 +282,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
 		public static bool PagingHandled(Gump gi, GumpResponse gr) {
 			DialogArgs args = gi.InputArgs;//arguments of the dialog		
-			object target = args.ArgsArray[0];
+			object target = args[0];
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
 			int buttonCount = viewCls.GetActionButtonsCount(target);
 			int fieldsCount = viewCls.GetFieldsCount(target);

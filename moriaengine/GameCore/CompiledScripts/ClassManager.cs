@@ -251,7 +251,7 @@ namespace SteamEngine.CompiledScripts {
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
-					Logger.WriteError(assemblyName, types[i].Name, e);
+					Logger.WriteError(assemblyName, Tools.TypeToString(types[i]), e);
 					success = false;
 				}
 			}

@@ -48,7 +48,7 @@ namespace SteamEngine.Communication.NamedPipes {
 
 			this.listenThread = new Thread(ListenForClients);
 			this.listenThread.IsBackground = true;
-			this.listenThread.Name = this.GetType().Name + "_PipeServerListener";
+			this.listenThread.Name = Tools.TypeToString(this.GetType()) + "_PipeServerListener";
 			this.listenThread.Start();
 		}
 

@@ -31,7 +31,7 @@ namespace SteamEngine {
 	//invoking/setting/getting methods/fields/properties/constructors.
 	//Valuetype parameters are automatically being converted using the System.Convert class.
 
-	public sealed class MemberWrapper {
+	public static class MemberWrapper {
 		private static AssemblyBuilder assembly;
 		internal static ModuleBuilder module; //this is needed by the typebuilders
 		private static Hashtable methodWrappers;

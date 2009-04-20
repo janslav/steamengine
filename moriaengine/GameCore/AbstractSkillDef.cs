@@ -45,7 +45,7 @@ namespace SteamEngine {
 
 		public static AbstractSkillDef GetByDefname(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as AbstractSkillDef;
 		}
 
@@ -78,13 +78,13 @@ namespace SteamEngine {
 				UnregisterSkillDef(oldSd);
 			}
 			byId[id] = sd;
-			byDefname[sd.Defname] = sd;
+			AllScriptsByDefname[sd.Defname] = sd;
 			byKey[sd.Key] = sd;
 		}
 
 		public static void UnregisterSkillDef(AbstractSkillDef sd) {
 			byId[sd.Id] = null;
-			byDefname.Remove(sd.Defname);
+			AllScriptsByDefname.Remove(sd.Defname);
 			byKey.Remove(sd.Key);
 		}
 
@@ -144,7 +144,7 @@ namespace SteamEngine {
 			}
 
 			AbstractScript def;
-			byDefname.TryGetValue(defName, out def);
+			AllScriptsByDefname.TryGetValue(defName, out def);
 			AbstractSkillDef skillDef = def as AbstractSkillDef;
 
 			ConstructorInfo constructor = skillDefCtorsByName[typeName];
@@ -156,11 +156,11 @@ namespace SteamEngine {
 					object[] cargs = new object[] { defName, input.filename, input.headerLine };
 					skillDef = (AbstractSkillDef) constructor.Invoke(cargs);
 				}
-			} else if (skillDef.unloaded) {
+			} else if (skillDef.IsUnloaded) {
 				if (skillDef.GetType() != constructor.DeclaringType) {
 					throw new OverrideNotAllowedException("You can not change the class of a Skilldef while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
-				skillDef.unloaded = false;
+				skillDef.IsUnloaded = false;
 				//we have to load the key first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("key");
@@ -201,7 +201,7 @@ namespace SteamEngine {
 
 		}
 
-		public AbstractSkillDef(string defname, string filename, int headerLine)
+		protected AbstractSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			this.key = this.InitTypedField("key", "", typeof(string));
 			this.startByMacroEnabled = this.InitTypedField("startByMacroEnabled", false, typeof(bool));
@@ -261,7 +261,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return GetType().Name + " " + Key;
+			return Tools.TypeToString(this.GetType()) + " " + Key;
 		}
 	}
 

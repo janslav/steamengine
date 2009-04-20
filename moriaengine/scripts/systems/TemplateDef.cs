@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static new TemplateDef Get(string defname) {
 			AbstractScript script;
-			byDefname.TryGetValue(defname, out script);
+			AllScriptsByDefname.TryGetValue(defname, out script);
 			return script as TemplateDef;
 		}
 
@@ -57,16 +57,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void UnRegisterTemplateDef(TemplateDef td) {
-			byDefname.Remove(td.Defname);
+			AllScriptsByDefname.Remove(td.Defname);
 			if (td.Altdefname != null) {
-				byDefname.Remove(td.Altdefname);
+				AllScriptsByDefname.Remove(td.Altdefname);
 			}
 		}
 
 		private static void RegisterTemplateDef(TemplateDef td) {
-			byDefname[td.Defname] = td;
+			AllScriptsByDefname[td.Defname] = td;
 			if (td.Altdefname != null) {
-				byDefname[td.Altdefname] = td;
+				AllScriptsByDefname[td.Altdefname] = td;
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			AbstractScript def;
-			byDefname.TryGetValue(defname, out def);
+			AllScriptsByDefname.TryGetValue(defname, out def);
 			TemplateDef td = def as TemplateDef;
 			if (td == null) {
 				if (def != null) {//it isnt TemplateDef
@@ -91,8 +91,8 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					td = new TemplateDef(defname, input.filename, input.headerLine);
 				}
-			} else if (td.unloaded) {
-				td.unloaded = false;
+			} else if (td.IsUnloaded) {
+				td.IsUnloaded = false;
 				UnRegisterTemplateDef(td);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");

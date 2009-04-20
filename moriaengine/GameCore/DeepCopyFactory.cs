@@ -40,7 +40,7 @@ namespace SteamEngine {
 	}
 
 	public static class DeepCopyFactory {
-		private static int recursionLevel = 0;
+		private static int recursionLevel;
 
 		private static DelayedCopier firstCopier; //this is the list of the pending jobs :)
 		private static DelayedCopier lastCopier;
@@ -49,12 +49,6 @@ namespace SteamEngine {
 		private static Dictionary<object, object> copies = new Dictionary<object, object>(new ObjectSaver.ReferenceEqualityComparer());
 
 		private static Dictionary<Type, IDeepCopyImplementor> implementors = new Dictionary<Type, IDeepCopyImplementor>();
-
-		static DeepCopyFactory() {
-			//initialize accepted ICloneable stuff here
-			//implementors[typeof(sometype)] = new CopyImplementor_UseICloneable();
-
-		}
 
 		public static void Bootstrap() {
 			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<IDeepCopyImplementor>(RegisterImplementor, true, true);
@@ -198,7 +192,8 @@ namespace SteamEngine {
 			}
 		}
 
-		private class CopyImplementor_UseICloneable : IDeepCopyImplementor {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+		public class CopyImplementor_UseICloneable : IDeepCopyImplementor {
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object DeepCopy(object copyFrom) {
 				return ((ICloneable) copyFrom).Clone();
@@ -289,8 +284,6 @@ namespace SteamEngine {
 		}
 
 		internal static void UnloadScripts() {
-			Assembly scriptsAssembly = CompiledScripts.ClassManager.CoreAssembly;
-
 			Dictionary<Type, IDeepCopyImplementor> copiedList = new Dictionary<Type, IDeepCopyImplementor>(implementors);
 
 			foreach (KeyValuePair<Type, IDeepCopyImplementor> pair in copiedList) {

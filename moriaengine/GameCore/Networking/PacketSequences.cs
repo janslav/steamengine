@@ -494,7 +494,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
-	public class PacketSequencesLoc : Loc {
+	internal class PacketSequencesLoc : Loc {
 		public string WelcomeToShard = "Welcome to {0}.";
 	}
 }

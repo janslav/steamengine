@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	public class Skill : ISkill {
 		private ushort realValue;
 		private ushort cap;
-		private ushort id;
+		private byte id;
 		private SkillLockType lockType; //lock is C# keyword
 		private Character cont;
 
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 			this.realValue = 0;
 			this.cap = 1000;
 			this.lockType = SkillLockType.Increase;
-			this.id = (ushort) id;
+			this.id = (byte) id;
 			this.cont = cont;
 		}
 

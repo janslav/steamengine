@@ -226,7 +226,7 @@ namespace SteamEngine.Persistence {
 				return "\"" + stringAsSingleLine + "\""; //returns the string in ""
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 				return "#" + ((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
-			} else if (value == Globals.instance) {
+			} else if (value == Globals.Instance) {
 				return "#globals";
 			} else {
 				ISimpleSaveImplementor iss;
@@ -413,7 +413,7 @@ namespace SteamEngine.Persistence {
 			if (m.Success) {
 				string defname = m.Groups["value"].Value;
 				if (StringComparer.OrdinalIgnoreCase.Equals("globals", defname)) {
-					retVal = Globals.instance;
+					retVal = Globals.Instance;
 					return true;
 				}
 
