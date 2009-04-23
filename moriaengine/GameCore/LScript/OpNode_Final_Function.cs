@@ -26,6 +26,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_Function : OpNode, IOpNodeHolder, ITriable {
 		private readonly ScriptHolder function;
 		private readonly OpNode[] args;
@@ -80,7 +81,7 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.AppendFormat("function {0}(", function.name);
+			str.AppendFormat("function {0}(", function.Name);
 			for (int i = 0, n = args.Length; i < n; i++) {
 				str.Append(args[i].ToString()).Append(", ");
 			}

@@ -353,7 +353,7 @@ namespace SteamEngine.CompiledScripts {
 	public class SkillSequenceArgs {
 		private Character self; //set when calling @Select
 		private SkillDef skillDef; //set when calling @Select
-		private IPoint4D target1, target2; //set in @Select or before it
+		private IPoint3D target1, target2; //set in @Select or before it
 		private object param1, param2; //set in @Select or before it
 		private Item tool;
 		private TimeSpan delay; //set in @Start
@@ -448,7 +448,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Persistence.SaveableData]
-		public IPoint4D Target1 {
+		public IPoint3D Target1 {
 			get {
 				return this.target1;
 			}
@@ -458,7 +458,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Persistence.SaveableData]
-		public IPoint4D Target2 {
+		public IPoint3D Target2 {
 			get {
 				return this.target2;
 			}

@@ -202,21 +202,21 @@ namespace SteamEngine {
 			See also:
 				<Trigger>, <CancellableTriggers>
 		*/
-		public virtual void Trigger(TriggerKey td, ScriptArgs sa) {
+		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
-					curNode.storedTG.Run(this, td, sa);
+					curNode.storedTG.Run(this, tk, sa);
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
 		}
 
-		public virtual void TryTrigger(TriggerKey td, ScriptArgs sa) {
+		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
-					curNode.storedTG.TryRun(this, td, sa);
+					curNode.storedTG.TryRun(this, tk, sa);
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
@@ -237,11 +237,11 @@ namespace SteamEngine {
 				<Trigger>, <CancellableTriggers>
 		*/
 
-		public virtual bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public virtual bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
-					if (TagMath.Is1(curNode.storedTG.Run(this, td, sa))) {
+					if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
 						return true;
 					}
 					curNode = curNode.nextNode;
@@ -250,11 +250,11 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public virtual bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public virtual bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
-					if (TagMath.Is1(curNode.storedTG.TryRun(this, td, sa))) {
+					if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
 						return true;
 					}
 					curNode = curNode.nextNode;
@@ -263,19 +263,19 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public void Trigger(TriggerKey td, params object[] scriptArguments) {
+		public void Trigger(TriggerKey tk, params object[] scriptArguments) {
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
-				Trigger(td, new ScriptArgs(scriptArguments));
+				Trigger(tk, new ScriptArgs(scriptArguments));
 			} else {
-				Trigger(td, (ScriptArgs) null);
+				Trigger(tk, (ScriptArgs) null);
 			}
 		}
 
-		public bool CancellableTrigger(TriggerKey td, params object[] scriptArguments) {
+		public bool CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
-				return CancellableTrigger(td, new ScriptArgs(scriptArguments));
+				return CancellableTrigger(tk, new ScriptArgs(scriptArguments));
 			} else {
-				return CancellableTrigger(td, (ScriptArgs) null);
+				return CancellableTrigger(tk, (ScriptArgs) null);
 			}
 		}
 	}

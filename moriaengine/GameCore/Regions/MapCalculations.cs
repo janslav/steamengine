@@ -106,7 +106,7 @@ namespace SteamEngine.Regions {
 			int lowZ = 0, avgZ = 0, topZ = 0;
 
 			this.GetAverageZ(x, y, ref lowZ, ref avgZ, ref topZ);
-			TileFlag landFlags = TileData.landFlags[tileId & 0x3FFF];
+			TileFlag landFlags = TileData.GetTileFlags(tileId & 0x3FFF);
 
 			if (((landFlags & TileFlag.Impassable) != 0) && (avgZ > z) && ((z + height) > lowZ)) {
 				return false;
@@ -116,8 +116,8 @@ namespace SteamEngine.Regions {
 
 			bool surface, impassable;
 
-			foreach (Static staticTile in this.GetStaticsOnCoords(x, y)) {
-				ItemDispidInfo dispidInfo = staticTile.dispidInfo;
+			foreach (AbstractInternalItem staticTile in this.GetStaticsAndMultiComponentsOnCoords(x, y)) {
+				ItemDispidInfo dispidInfo = staticTile.DispidInfo;
 				TileFlag staticFlag = dispidInfo.Flags;
 				int staticZ = staticTile.Z;
 				surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
@@ -130,7 +130,7 @@ namespace SteamEngine.Regions {
 			}
 
 			Sector sector = this.GetSector(x >> sectorFactor, y >> sectorFactor);
-			foreach (Thing t in sector.things) {
+			foreach (Thing t in sector.Things) {
 				AbstractItem item = t as AbstractItem;
 				if (item != null) {
 					int itemX = item.X;
@@ -226,7 +226,7 @@ namespace SteamEngine.Regions {
 				for (int i = 0; i < sectors.Count; ++i) {
 					Sector sector = sectors[i];
 
-					foreach (Thing t in sector.things) {
+					foreach (Thing t in sector.Things) {
 						AbstractItem item = t as AbstractItem;
 						if (item == null) {
 							continue;
@@ -258,7 +258,7 @@ namespace SteamEngine.Regions {
 				Sector sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
 
 				if (sectorStart == sectorForward) {
-					foreach (Thing t in sectorStart.things) {
+					foreach (Thing t in sectorStart.Things) {
 						AbstractItem item = t as AbstractItem;
 						if (item == null) {
 							continue;
@@ -279,7 +279,7 @@ namespace SteamEngine.Regions {
 						}
 					}
 				} else {
-					foreach (Thing t in sectorForward.things) {
+					foreach (Thing t in sectorForward.Things) {
 						AbstractItem item = t as AbstractItem;
 						if (item == null) {
 							continue;
@@ -298,7 +298,7 @@ namespace SteamEngine.Regions {
 						}
 					}
 
-					foreach (Thing t in sectorStart.things) {
+					foreach (Thing t in sectorStart.Things) {
 						AbstractItem item = t as AbstractItem;
 						if (item == null) {
 							continue;
@@ -350,10 +350,10 @@ namespace SteamEngine.Regions {
 			return moveIsOk;
 		}
 
-		private bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<Static> tiles, List<AbstractItem> items) {
+		private bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<AbstractInternalItem> tiles, List<AbstractItem> items) {
 			for (int i = 0, n = tiles.Count; i < n; i++) {
-				Static check = tiles[i];
-				ItemDispidInfo itemData = check.dispidInfo;
+				AbstractInternalItem check = tiles[i];
+				ItemDispidInfo itemData = check.DispidInfo;
 
 				if ((itemData.Flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
 					int checkZ = check.Z;
@@ -394,14 +394,14 @@ namespace SteamEngine.Regions {
 		private static List<AbstractItem> itemsPoolLeft = new List<AbstractItem>();
 		private static List<AbstractItem> itemsPoolRight = new List<AbstractItem>();
 		private static List<Sector> sectorsPool = new List<Sector>();
-		private static List<Static> staticsPool = new List<Static>();
+		private static List<AbstractInternalItem> staticsPool = new List<AbstractInternalItem>();
 
 		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
 			newZ = 0;
 
 			int landTile = this.GetTileId(x, y);
 			int landZ = 0, landCenter = 0, landTop = 0;
-			TileFlag tileFlags = TileData.landFlags[landTile];
+			TileFlag tileFlags = TileData.GetTileFlags(landTile);
 
 			bool canSwim = settings.CanSwim;
 			bool canFly = settings.CanFly;
@@ -437,14 +437,14 @@ namespace SteamEngine.Regions {
 			int checkTop = startZ + PersonHeight;
 
 			staticsPool.Clear();
-			foreach (Static staticItem in this.GetStaticsOnCoords(x, y)) {
+			foreach (AbstractInternalItem staticItem in this.GetStaticsAndMultiComponentsOnCoords(x, y)) {
 				staticsPool.Add(staticItem);
 			}
 
 			for (int i = 0, n = staticsPool.Count; i < n; i++) {
-				Static staticItem = staticsPool[i];
+				AbstractInternalItem staticItem = staticsPool[i];
 
-				ItemDispidInfo idi = staticItem.dispidInfo;
+				ItemDispidInfo idi = staticItem.DispidInfo;
 				TileFlag flags = idi.Flags;
 
 				bool staticIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
@@ -581,7 +581,7 @@ namespace SteamEngine.Regions {
 
 			int landTile = this.GetTileId(xCheck, yCheck);
 			int landZ = 0, landCenter = 0, landTop = 0;
-			TileFlag tileFlags = TileData.landFlags[landTile];
+			TileFlag tileFlags = TileData.GetTileFlags(landTile);
 
 			bool canSwim = settings.CanSwim;
 			bool canFly = settings.CanFly;
@@ -621,9 +621,9 @@ namespace SteamEngine.Regions {
 				isSet = true;
 			}
 
-			foreach (Static staticItem in this.GetStaticsOnCoords(xCheck, yCheck)) {
+			foreach (AbstractInternalItem staticItem in this.GetStaticsAndMultiComponentsOnCoords(xCheck, yCheck)) {
 
-				ItemDispidInfo idi = staticItem.dispidInfo;
+				ItemDispidInfo idi = staticItem.DispidInfo;
 
 				int calcTop = (staticItem.Z + idi.CalcHeight);
 

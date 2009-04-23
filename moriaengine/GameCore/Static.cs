@@ -24,39 +24,45 @@ using SteamEngine.Regions;
 using SteamEngine.Networking;
 
 namespace SteamEngine {
-	public abstract class Static : IPoint4D {
-		public readonly ItemDispidInfo dispidInfo;
-		private ushort x;
-		private ushort y;
-		private sbyte z;
-		private readonly byte m;
+	public abstract class AbstractInternalItem : IPoint3D {
+		private readonly ItemDispidInfo dispidInfo;
+		private int x;
+		private int y;
+		private int z;
+		private byte facet;
 
-		internal Static(int id, byte m) {
+		internal AbstractInternalItem(int id, byte facet) {
 			this.dispidInfo = ItemDispidInfo.Get(id);
-			if (dispidInfo == null) {
-				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x") + ". Something's wrong.");
+			if (this.dispidInfo == null) {
+				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ". Something's wrong.");
 			}
-			this.m = m;
+			this.facet = facet;
 		}
 
-		internal Static(int id, int x, int y, int z, byte m)
-			: this(id, m) {
-			this.x = (ushort) x;
-			this.y = (ushort) y;
-			this.z = (sbyte) z;
+		internal AbstractInternalItem(int id, int x, int y, int z, byte facet)
+			: this(id, facet) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
 		}
 
 		public string Name {
 			get {
-				return dispidInfo.SingularName;
+				return this.dispidInfo.SingularName;
 			}
 		}
 
 		public int Id {
 			get {
-				return dispidInfo.Id;
+				return this.dispidInfo.Id;
 			}
 		}
+
+		public ItemDispidInfo DispidInfo {
+			get {
+				return dispidInfo;
+			}
+		} 
 
 		public int X {
 			get {
@@ -64,7 +70,7 @@ namespace SteamEngine {
 
 			}
 			internal set {
-				this.x = (ushort) value; 
+				this.x = value; 
 			}
 		}
 
@@ -73,7 +79,7 @@ namespace SteamEngine {
 				return this.y;
 			}
 			internal set {
-				this.y = (ushort) value; 
+				this.y = value; 
 			}
 		}
 
@@ -82,34 +88,33 @@ namespace SteamEngine {
 				return this.z;
 			}
 			internal set {
-				this.z = (sbyte) value; 
+				this.z = value; 
 			}
 		}
 
-		public byte M {
+		public byte Facet {
 			get {
-				return this.m;
+				return this.facet;
+			}
+			internal set {
+				this.facet = value;
 			}
 		}
 
 		public int Height {
 			get {
-				return dispidInfo.Height;
+				return this.dispidInfo.Height;
 			}
 		}
 
 		public TileFlag Flags {
 			get {
-				return dispidInfo.Flags;
+				return this.dispidInfo.Flags;
 			}
 		}
 
 		public override string ToString() {
-			return this.Name + " at " + X + "," + Y + "," + Z + "," + M;
-		}
-
-		public Map GetMap() {
-			return Map.GetMap(m);
+			return this.Name + " at " + this.x + "," + this.y + "," + this.z + " (facet " + this.facet + ")";
 		}
 
 		public void OverheadMessage(string arg) {
@@ -118,12 +123,6 @@ namespace SteamEngine {
 
 		public void OverheadMessage(string arg, int color) {
 			PacketSequences.SendOverheadMessageFrom(Globals.SrcTcpConnection, this, arg, (ushort) color);
-		}
-
-		public IPoint4D TopPoint {
-			get {
-				return this;
-			}
 		}
 
 		IPoint3D IPoint3D.TopPoint {
@@ -139,14 +138,11 @@ namespace SteamEngine {
 		}
 	}
 
-	//StaticStatic as opposed to...ummm... you guessed it... DynamicStatic. Not.
-	//...as opposed to MultiItemComponent ;)
-
-	public class StaticStatic : Static {
+	public sealed class StaticItem : AbstractInternalItem {
 		private readonly int color;
 
-		internal StaticStatic(ushort id, ushort x, ushort y, sbyte z, byte m, int color)
-			: base(id, x, y, z, m) {
+		internal StaticItem(ushort id, ushort x, ushort y, sbyte z, byte facet, int color)
+			: base(id, x, y, z, facet) {
 
 			this.color = color;
 		}

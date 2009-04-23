@@ -177,13 +177,13 @@ namespace SteamEngine.Persistence {
 		public abstract void Save(object objToSave, SaveStream writer);
 
 		protected void LoadSectionLines(PropsSection ps, object loadedObject) {
-			foreach (PropsLine p in ps.props.Values) {
+			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadLineImpl(loadedObject, ps.filename, p.line, p.name.ToLower(), p.value);
+					LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLower(), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
-					Logger.WriteWarning(ps.filename, p.line, ex);
+					Logger.WriteWarning(ps.Filename, p.Line, ex);
 				}
 			}
 		}
@@ -475,9 +475,9 @@ namespace SteamEngine.Persistence {
 				//int currentLineNumber = input.headerLine;
 				retVal.Statements.Add(new CodeVariableDeclarationStatement(
 					typeof(int), "currentLineNumber",
-					new CodeFieldReferenceExpression(
+					new CodePropertyReferenceExpression(
 						new CodeArgumentReferenceExpression("input"),
-						"headerLine")));
+						"HeaderLine")));
 
 				CodeTryCatchFinallyStatement trycatch = new CodeTryCatchFinallyStatement();
 				retVal.Statements.Add(trycatch);
@@ -561,9 +561,9 @@ namespace SteamEngine.Persistence {
 							new CodeMethodInvokeExpression(
 								new CodeVariableReferenceExpression("sex"),
 								"TryAddFileLineInfo",
-								new CodeFieldReferenceExpression(
+								new CodePropertyReferenceExpression(
 									new CodeArgumentReferenceExpression("input"),
-									"filename"),
+									"Filename"),
 								new CodeVariableReferenceExpression("currentLineNumber"))),
 						new CodeThrowExceptionStatement()));
 
@@ -572,9 +572,9 @@ namespace SteamEngine.Persistence {
 					new CodeTypeReference(typeof(Exception)),
 					new CodeThrowExceptionStatement(
 						new CodeObjectCreateExpression(typeof(SEException),
-							new CodeFieldReferenceExpression(
+							new CodePropertyReferenceExpression(
 								new CodeArgumentReferenceExpression("input"),
-								"filename"),
+								"Filename"),
 							new CodeVariableReferenceExpression("currentLineNumber"),
 							new CodeVariableReferenceExpression("e")))));
 
@@ -629,28 +629,28 @@ namespace SteamEngine.Persistence {
 					new CodeExpressionStatement(new CodeMethodInvokeExpression(
 						new CodeTypeReferenceExpression(typeof(CoreLogger)),
 						"WriteWarning",
-						new CodeFieldReferenceExpression(
+						new CodePropertyReferenceExpression(
 							new CodeArgumentReferenceExpression("input"),
-							"filename"),
-						new CodeFieldReferenceExpression(
+							"Filename"),
+						new CodePropertyReferenceExpression(
 							new CodeArgumentReferenceExpression("input"),
-							"headerLine"),
+							"HeaderLine"),
 						new CodePrimitiveExpression("Missing value '" + name + "' in loaded section"))));
 				statements.Add(ifStatement);
 
 				ifStatement.FalseStatements.Add(new CodeAssignStatement(
 					new CodeVariableReferenceExpression("currentLineNumber"),
-					new CodeFieldReferenceExpression(
+					new CodePropertyReferenceExpression(
 						new CodeVariableReferenceExpression(propsLineName),
-						"line")));
+						"Line")));
 
 				if (ObjectSaver.IsSimpleSaveableType(type)) {
 					//we directly assign the value to the field/property
 					assignment.Right = GeneratedCodeUtil.GenerateSimpleLoadExpression(
 						type,
-						new CodeFieldReferenceExpression(
+						new CodePropertyReferenceExpression(
 							new CodeVariableReferenceExpression(propsLineName),
-							"value"));
+							"Value"));
 
 					ifStatement.FalseStatements.Add(assignment);
 
@@ -663,19 +663,19 @@ namespace SteamEngine.Persistence {
 					ifStatement.FalseStatements.Add(new CodeMethodInvokeExpression(
 						new CodeMethodReferenceExpression(
 							new CodeTypeReferenceExpression(typeof(ObjectSaver)), "Load"),
-							new CodeFieldReferenceExpression(
+							new CodePropertyReferenceExpression(
 								new CodeVariableReferenceExpression(propsLineName),
-								"value"),
+								"Value"),
 							new CodeDelegateCreateExpression(
 								new CodeTypeReference(typeof(LoadObjectParam)),
 								new CodeThisReferenceExpression(),
 								delayedLoadMethodName),
-							new CodeFieldReferenceExpression(
+							new CodePropertyReferenceExpression(
 								new CodeArgumentReferenceExpression("input"),
-								"filename"),
-							new CodeFieldReferenceExpression(
+								"Filename"),
+							new CodePropertyReferenceExpression(
 								new CodeVariableReferenceExpression(propsLineName),
-								"line"),
+								"Line"),
 							new CodeVariableReferenceExpression("loadedObject")));
 
 					//

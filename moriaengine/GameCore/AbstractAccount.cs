@@ -68,7 +68,7 @@ namespace SteamEngine {
 		}
 
 		protected AbstractAccount(PropsSection input)
-			: this(input.headerName) {
+			: this(input.HeaderName) {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
 			this.charactersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(characters);
 			this.LoadSectionLines(input);
@@ -659,36 +659,36 @@ namespace SteamEngine {
 			}
 		}
 
-		public override void Trigger(TriggerKey td, ScriptArgs sa) {
+		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				registeredTGs[i].Run(this, td, sa);
+				registeredTGs[i].Run(this, tk, sa);
 			}
-			base.TryTrigger(td, sa);
+			base.TryTrigger(tk, sa);
 		}
 
-		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
+		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				registeredTGs[i].TryRun(this, td, sa);
+				registeredTGs[i].TryRun(this, tk, sa);
 			}
-			base.TryTrigger(td, sa);
+			base.TryTrigger(tk, sa);
 		}
 
-		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				if (TagMath.Is1(registeredTGs[i].Run(this, td, sa))) {
+				if (TagMath.Is1(registeredTGs[i].Run(this, tk, sa))) {
 					return true;
 				}
 			}
-			return base.TryCancellableTrigger(td, sa);
+			return base.TryCancellableTrigger(tk, sa);
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				if (TagMath.Is1(registeredTGs[i].TryRun(this, td, sa))) {
+				if (TagMath.Is1(registeredTGs[i].TryRun(this, tk, sa))) {
 					return true;
 				}
 			}
-			return base.TryCancellableTrigger(td, sa);
+			return base.TryCancellableTrigger(tk, sa);
 		}
 	}
 }

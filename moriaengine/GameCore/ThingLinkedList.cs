@@ -29,7 +29,7 @@ namespace SteamEngine {
 	internal class ThingLinkedList : IEnumerable<Thing> {
 		private readonly object cont;
 		internal Thing firstThing;
-		internal ushort count;
+		internal int count;
 
 		internal ThingLinkedList(object cont) {
 			this.cont = cont;
@@ -37,28 +37,28 @@ namespace SteamEngine {
 
 		internal Thing ContAsThing {
 			get {
-				return cont as Thing;
+				return this.cont as Thing;
 			}
 		}
 
 		internal void Add(Thing thing) {
 			Sanity.IfTrueThrow((thing.prevInList != null || thing.nextInList != null),
 				"'" + thing + "' being added into a ThingLinkedList while being in another cont already");
-			Thing next = firstThing;
-			firstThing = thing;
+			Thing next = this.firstThing;
+			this.firstThing = thing;
 			thing.prevInList = null;
 			thing.nextInList = next;
 			if (next != null) {
 				next.prevInList = thing;
 			}
 			thing.contOrTLL = this;
-			count++;
+			this.count++;
 		}
 
 		internal bool Remove(Thing thing) {
 			if (thing.contOrTLL == this) {
-				if (firstThing == thing) {
-					firstThing = thing.nextInList;
+				if (this.firstThing == thing) {
+					this.firstThing = thing.nextInList;
 				} else {
 					thing.prevInList.nextInList = thing.nextInList;
 				}
@@ -67,14 +67,14 @@ namespace SteamEngine {
 				}
 				thing.prevInList = null;
 				thing.nextInList = null;
-				count--;
+				this.count--;
 				return true;
 			}
 			return false;
 		}
 
-		internal Thing FindByZ(byte z) {//usd by findlayer
-			Thing i = firstThing;
+		internal Thing FindByZ(int z) {//usd by findlayer
+			Thing i = this.firstThing;
 			while (i != null) {
 				if (i.Z == z) {
 					return i;
@@ -86,10 +86,10 @@ namespace SteamEngine {
 
 		internal Thing this[int index] {
 			get {
-				if ((index >= count) || (index < 0)) {
+				if ((index >= this.count) || (index < 0)) {
 					return null;
 				}
-				Thing i = firstThing;
+				Thing i = this.firstThing;
 				int counter = 0;
 				while (i != null) {
 					if (index == counter) {
@@ -103,7 +103,7 @@ namespace SteamEngine {
 		}
 
 		internal void Empty() {
-			Thing i = firstThing;
+			Thing i = this.firstThing;
 			while (i != null) {
 				Thing next = i.nextInList;
 				i.InternalDelete();
@@ -112,7 +112,7 @@ namespace SteamEngine {
 		}
 
 		internal void BeingDeleted() {
-			Thing i = firstThing;
+			Thing i = this.firstThing;
 			while (i != null) {
 				Thing next = i.nextInList;
 				i.InternalDeleteNoRFV();
@@ -138,40 +138,39 @@ namespace SteamEngine {
 			Thing next;//this is because of the possibility 
 			//that the current will be removed from the container during the enumeration
 			public ThingLinkedListEnumerator(ThingLinkedList c) {
-				cont = c;
-				current = null;
-				next = cont.firstThing;
+				this.cont = c;
+				this.next = this.cont.firstThing;
 			}
 
 			public void Reset() {
-				current = null;
-				next = cont.firstThing;
+				this.current = null;
+				this.next = this.cont.firstThing;
 			}
 
 			public bool MoveNext() {
-				current = next;
-				if (current == null) {
+				this.current = this.next;
+				if (this.current == null) {
 					return false;
 				}
-				next = current.nextInList;
+				this.next = this.current.nextInList;
 				return true;
 			}
 
 			Thing IEnumerator<Thing>.Current {
 				get {
-					return current;
+					return this.current;
 				}
 			}
 
 			object IEnumerator.Current {
 				get {
-					return current;
+					return this.current;
 				}
 			}
 
 			AbstractItem IEnumerator<AbstractItem>.Current {
 				get {
-					return (AbstractItem) current;
+					return (AbstractItem) this.current;
 				}
 			}
 

@@ -43,9 +43,9 @@ namespace SteamEngine.Converter {
 
 		public override void SecondStage() {
 			StringWriter writer = new StringWriter();
-			StringReader reader = new StringReader(origData.GetTrigger(0).code.ToString());
+			StringReader reader = new StringReader(origData.GetTrigger(0).Code.ToString());
 			string line;
-			int linenum = origData.headerLine;
+			int linenum = origData.HeaderLine;
 			while ((line = reader.ReadLine()) != null) {
 				linenum++;
 				Match m = PropsFileParser.valueRE.Match(line);

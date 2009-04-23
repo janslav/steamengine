@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_AddOperator : OpNode_Lazy_BinOperator, ITriable {
 		internal OpNode_AddOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -36,7 +37,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVal) + Convert.ToDouble(rightVal));
+				return (Convert.ToDouble(leftVal, System.Globalization.CultureInfo.InvariantCulture) + Convert.ToDouble(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating + operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -45,7 +46,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0]) + Convert.ToDouble(results[1]));
+				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) + Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating + operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -53,6 +54,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_SubOperator : OpNode_Lazy_BinOperator, ITriable {
 		internal OpNode_SubOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -79,6 +81,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_MulOperator : OpNode_Lazy_BinOperator, ITriable {
 		internal OpNode_MulOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -88,7 +91,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVal) * Convert.ToDouble(rightVal));
+				return (Convert.ToDouble(leftVal, System.Globalization.CultureInfo.InvariantCulture) * Convert.ToDouble(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating * operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -97,7 +100,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0]) * Convert.ToDouble(results[1]));
+				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) * Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating * operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -105,6 +108,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_DivOperator_Double : OpNode_Lazy_BinOperator, ITriable {
 		internal OpNode_DivOperator_Double(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -114,7 +118,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVal) / Convert.ToDouble(rightVal));
+				return (Convert.ToDouble(leftVal, System.Globalization.CultureInfo.InvariantCulture) / Convert.ToDouble(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating / operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -123,7 +127,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0]) / Convert.ToDouble(results[1]));
+				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) / Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating / operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -131,6 +135,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_DivOperator_Int : OpNode_Lazy_BinOperator, ITriable {
 		internal OpNode_DivOperator_Int(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -140,7 +145,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVal) / Convert.ToInt64(rightVal));
+				return (Convert.ToInt64(leftVal, System.Globalization.CultureInfo.InvariantCulture) / Convert.ToInt64(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating / operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -149,7 +154,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0]) / Convert.ToInt64(results[1]));
+				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) / Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating / operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -157,6 +162,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ModOperator : OpNode_Lazy_BinOperator, ITriable {// %
 		internal OpNode_ModOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -166,7 +172,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVal) % Convert.ToDouble(rightVal));
+				return (Convert.ToDouble(leftVal, System.Globalization.CultureInfo.InvariantCulture) % Convert.ToDouble(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating % operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -175,7 +181,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0]) % Convert.ToDouble(results[1]));
+				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) % Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating % operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -183,6 +189,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_BinaryAndOperator : OpNode_Lazy_BinOperator, ITriable {// & as binary operator
 		internal OpNode_BinaryAndOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -192,7 +199,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVal) & Convert.ToInt64(rightVal));
+				return (Convert.ToInt64(leftVal, System.Globalization.CultureInfo.InvariantCulture) & Convert.ToInt64(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating & operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -201,7 +208,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0]) & Convert.ToInt64(results[1]));
+				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) & Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating & operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -209,6 +216,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_BinaryOrOperator : OpNode_Lazy_BinOperator, ITriable {// & as binary operator
 		internal OpNode_BinaryOrOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -218,7 +226,7 @@ namespace SteamEngine.LScript {
 			object leftVal = left.Run(vars);
 			object rightVal = right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVal) | Convert.ToInt64(rightVal));
+				return (Convert.ToInt64(leftVal, System.Globalization.CultureInfo.InvariantCulture) | Convert.ToInt64(rightVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating | operator",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -227,7 +235,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0]) | Convert.ToInt64(results[1]));
+				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) | Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating | operator",
 				this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);

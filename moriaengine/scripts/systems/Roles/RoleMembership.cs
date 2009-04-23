@@ -51,34 +51,34 @@ namespace SteamEngine.CompiledScripts {
 
 			[LoadSection]
 			public RoleMembership(PropsSection input) {
-				int currentLineNumber = input.headerLine;
+				int currentLineNumber = input.HeaderLine;
 				try {
 					PropsLine pl = input.PopPropsLine("member");
-					currentLineNumber = pl.line;
-					ObjectSaver.Load(pl.value, this.Load_RoleMember, input.filename, pl.line);
+					currentLineNumber = pl.Line;
+					ObjectSaver.Load(pl.Value, this.Load_RoleMember, input.Filename, pl.Line);
 
 					pl = input.PopPropsLine("cont");
-					currentLineNumber = pl.line;
-					ObjectSaver.Load(pl.value, this.Load_RoleCont, input.filename, pl.line);
+					currentLineNumber = pl.Line;
+					ObjectSaver.Load(pl.Value, this.Load_RoleCont, input.Filename, pl.Line);
 
 
-					foreach (PropsLine p in input.GetPropsLines()) {
+					foreach (PropsLine p in input.PropsLines) {
 						try {
-							this.LoadLine(input.filename, p.line, p.name.ToLower(), p.value);
+							this.LoadLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 						} catch (FatalException) {
 							throw;
 						} catch (Exception ex) {
-							Logger.WriteWarning(input.filename, p.line, ex);
+							Logger.WriteWarning(input.Filename, p.Line, ex);
 						}
 					}
 
 				} catch (FatalException) {
 					throw;
 				} catch (SEException sex) {
-					sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+					sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 					throw;
 				} catch (Exception e) {
-					throw new SEException(input.filename, currentLineNumber, e);
+					throw new SEException(input.Filename, currentLineNumber, e);
 				}
 			}
 

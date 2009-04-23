@@ -43,29 +43,29 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine countLine = input.PopPropsLine("count");
-				currentLineNumber = countLine.line;
-				int count = int.Parse(countLine.value);
+				currentLineNumber = countLine.Line;
+				int count = int.Parse(countLine.Value);
 				Hashtable table = new Hashtable(count);
 				for (int i = 0; i<count; i++) {
 					PropsLine keyLine = input.PopPropsLine(i+".K");
 					PropsLine valueLine = input.PopPropsLine(i+".V");
 					HashtableLoadHelper helper = new HashtableLoadHelper(table);
-					currentLineNumber = keyLine.line;
-					ObjectSaver.Load(keyLine.value, new LoadObject(helper.DelayedLoad_Key), input.filename, keyLine.line);
-					currentLineNumber = valueLine.line;
-					ObjectSaver.Load(valueLine.value, new LoadObject(helper.DelayedLoad_Value), input.filename, valueLine.line);
+					currentLineNumber = keyLine.Line;
+					ObjectSaver.Load(keyLine.Value, new LoadObject(helper.DelayedLoad_Key), input.Filename, keyLine.Line);
+					currentLineNumber = valueLine.Line;
+					ObjectSaver.Load(valueLine.Value, new LoadObject(helper.DelayedLoad_Value), input.Filename, valueLine.Line);
 				}
 				return table;
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 		

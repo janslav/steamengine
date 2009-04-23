@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//accountu vezmeme z args
 			//vyhledavani
 			DialogArgs newArgs = new DialogArgs();
-			if (text.argv == null || text.argv.Length == 0) {
+			if (text.Argv == null || text.Argv.Length == 0) {
 				sender.Dialog(SingletonScript<D_AccList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_AccList.searchStringTK, text.Args);
@@ -145,10 +145,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"Usage .x accinfo or .accinfo('accname')")]
 		[SteamFunction]
 		public static void AccInfo(AbstractCharacter target, ScriptArgs text) {
-			if (text.argv == null || text.argv.Length == 0) {
+			if (text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(target.Account));
 			} else {
-				string accName = (String) text.argv[0];
+				string accName = (String) text.Argv[0];
 				AbstractAccount acc = AbstractAccount.Get(accName);
 				if (acc == null) {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int) Hues.Red);

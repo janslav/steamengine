@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine {
-	public class TagKey : AbstractKey {
+	public sealed class TagKey : AbstractKey {
 		private static Dictionary<string, TagKey> byName = new Dictionary<string, TagKey>(StringComparer.OrdinalIgnoreCase);
 
 		private TagKey(string name, int uid)

@@ -39,6 +39,7 @@ namespace SteamEngine {
 		byte M { get; } //Mapplane (0 is default, 255 can see and be seen by all planes (theoretically -tar))
 
 		new IPoint4D TopPoint { get; }
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		Map GetMap();
 	}
 
@@ -60,6 +61,7 @@ namespace SteamEngine {
 			return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static Direction GetDirFromTo(IPoint2D start, IPoint2D target) {
 			// Get the 2D direction between points.
 			start = start.TopPoint;
@@ -152,12 +154,12 @@ namespace SteamEngine {
 			return ((first.x == second.x) && (first.y == second.y));
 		}
 
-		public override bool Equals(object o) {
-			Point2D p = o as Point2D;
+		public override bool Equals(object obj) {
+			Point2D p = obj as Point2D;
 			if (p != null) {
 				return ((x == p.x) && (y == p.y));
 			}
-			IPoint2D ip = o as IPoint2D;
+			IPoint2D ip = obj as IPoint2D;
 			if (ip != null) {
 				return ((x == ip.X) && (y == ip.Y));
 			}
@@ -230,12 +232,12 @@ namespace SteamEngine {
 			return ((first.X == second.X) && (first.Y == second.Y) && (first.z == second.z));
 		}
 
-		public override bool Equals(object o) {
-			Point3D p = o as Point3D;
+		public override bool Equals(object obj) {
+			Point3D p = obj as Point3D;
 			if (p != null) {
 				return ((X == p.X) && (Y == p.Y) && (z == p.z));
 			}
-			IPoint3D ip = o as IPoint3D;
+			IPoint3D ip = obj as IPoint3D;
 			if (ip != null) {
 				return ((X == ip.X) && (Y == ip.Y) && (z == ip.Z));
 			}
@@ -285,6 +287,7 @@ namespace SteamEngine {
 			: this(p.X, p.Y, p.Z, p.M) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static bool Equals(MutablePoint4D a, MutablePoint4D b) {
 			return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.m == b.m));
 		}
@@ -430,12 +433,12 @@ namespace SteamEngine {
 			return ((first.X == second.X) && (first.Y == second.Y) && (first.Z == second.Z) && (first.m == second.m));
 		}
 
-		public override bool Equals(object o) {
-			Point4D p = o as Point4D;
+		public override bool Equals(object obj) {
+			Point4D p = obj as Point4D;
 			if (p != null) {
 				return ((this.X == p.X) && (this.Y == p.Y) && (this.Z == p.Z) && (this.m == p.m));
 			}
-			IPoint4D ip = o as IPoint4D;
+			IPoint4D ip = obj as IPoint4D;
 			if (ip != null) {
 				return ((this.X == ip.X) && (this.Y == ip.Y) && (this.Z == ip.Z) && (this.m == ip.M));
 			}

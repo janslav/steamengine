@@ -60,7 +60,7 @@ namespace SteamEngine {
 		}
 
 		private void AddTrigger(ScriptHolder sd) {
-			string name = sd.name;
+			string name = sd.Name;
 			//Console.WriteLine("Adding trigger {0} to tg {1}", name, this);
 			TriggerKey tk = TriggerKey.Get(name);
 			if (triggers.ContainsKey(tk)) {
@@ -94,8 +94,9 @@ namespace SteamEngine {
 		internal static void StartingLoading() {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static TriggerGroup Load(PropsSection input) {
-			ScriptedTriggerGroup group = GetNewOrCleared(input.headerName);
+			ScriptedTriggerGroup group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {
 				ScriptHolder sc = new LScriptHolder(input.GetTrigger(i));
 				if (!sc.unloaded) {//in case the compilation failed, we do not add the trigger

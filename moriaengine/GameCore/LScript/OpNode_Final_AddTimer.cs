@@ -23,6 +23,7 @@ using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_AddTriggerTimer : OpNode_Lazy_AddTimer {
 		private readonly TriggerKey triggerKey;
 
@@ -47,7 +48,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				TriggerTimer timer = new TriggerTimer(triggerKey, formatString, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(name, timer);
@@ -73,6 +74,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_AddMethodTimer : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		internal readonly MethodInfo method;
@@ -104,7 +106,7 @@ namespace SteamEngine.LScript {
 			}
 
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(method, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -125,7 +127,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(method, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -164,6 +166,7 @@ namespace SteamEngine.LScript {
 
 
 	//"string" version... concatenates all it's arguments into one string.
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_AddMethodTimer_String : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		internal readonly MethodInfo method;
@@ -195,10 +198,11 @@ namespace SteamEngine.LScript {
 			} finally {
 				vars.self = oSelf;
 			}
-			string resultString = String.Format(formatString, results);
+			string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				formatString, results);
 
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(method, new object[] { resultString });
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -219,8 +223,9 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(formatString, results);
-				double seconds = Convert.ToDouble(secondsVal);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					formatString, results);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(method, new object[] { resultString });
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -258,6 +263,7 @@ namespace SteamEngine.LScript {
 	}
 
 	//"params" version: to handle methods with params argument
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_AddMethodTimer_Params : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		internal readonly MethodInfo method;
@@ -298,7 +304,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(method, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -329,7 +335,7 @@ namespace SteamEngine.LScript {
 				Array.Copy(results, normalArgsLength, paramArray, 0, paramArrayLength);
 				modifiedResults[normalArgsLength] = paramArray;
 
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(method, modifiedResults);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -368,6 +374,7 @@ namespace SteamEngine.LScript {
 	}
 
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_AddFunctionTimer : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		private readonly ScriptHolder function;
@@ -401,7 +408,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				FunctionTimer timer = new FunctionTimer(function, formatString, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -426,7 +433,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal);
+				double seconds = Convert.ToDouble(secondsVal, System.Globalization.CultureInfo.InvariantCulture);
 				FunctionTimer timer = new FunctionTimer(function, formatString, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(timerKey, timer);
@@ -455,7 +462,7 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
 			sb.Append("(").Append(timerKey.Name).Append(", ").Append(secondsNode.ToString());
-			sb.Append(function.name).Append(", ");
+			sb.Append(function.Name).Append(", ");
 			int n = args.Length;
 			if (n > 0) {
 				sb.Append(", ");

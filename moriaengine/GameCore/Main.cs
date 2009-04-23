@@ -38,9 +38,9 @@ namespace SteamEngine {
 
 		//public static Logger logger;
 
-		public static readonly object globalLock = new object();
+		internal static readonly object globalLock = new object();
 
-		public static ManualResetEvent signalExit = new ManualResetEvent(false);
+		internal static ManualResetEvent signalExit = new ManualResetEvent(false);
 
 		//public static bool nativeConsole = false;
 
@@ -79,10 +79,11 @@ namespace SteamEngine {
 		//    SteamMain();
 		//}
 
-		public static void Main(string[] args) {
+		public static void Main() {
 			SteamMain();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void SteamMain() {
 			//name the console window for better recognizability
 			Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
@@ -91,7 +92,7 @@ namespace SteamEngine {
 			try {
 				Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-				long time = HighPerformanceTimer.TickCount; //initializing HighPerformanceTimer
+				HighPerformanceTimer.Init();
 				Common.Tools.ExitBinDirectory();
 				if (!Init()) {
 					RunLevelManager.SetDead();

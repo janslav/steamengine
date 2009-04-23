@@ -21,20 +21,19 @@ using System.Collections;
 using System.Globalization;
 
 namespace SteamEngine.LScript {
-	internal class DebugAnalyzer : StrictAnalyzer {
-		private string indent = "";
+	//internal class DebugAnalyzer : StrictAnalyzer {
+	//    private string indent = "";
 
-		public override Node Exit(Node node) {
-			indent = indent.Substring(0, indent.Length - 2);
-			return node;
-		}
+	//    public override Node Exit(Node node) {
+	//        indent = indent.Substring(0, indent.Length - 2);
+	//        return node;
+	//    }
 
-		public override void Enter(Node node) {
-			Console.WriteLine(indent + "entering " + node);
-			indent += "  ";
-		}
-
-	}
+	//    public override void Enter(Node node) {
+	//        Console.WriteLine(indent + "entering " + node);
+	//        indent += "  ";
+	//    }
+	//}
 
 	internal class LScriptAnalyzer : StrictAnalyzer {
 		private int flag = 0;

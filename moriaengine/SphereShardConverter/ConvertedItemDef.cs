@@ -92,7 +92,7 @@ namespace SteamEngine.Converter {
 				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 		//resources list may need some number (counts) corrections
 		private static string HandleResourcesList(ConvertedDef def, PropsLine line) {
-			string args = line.value.ToLower();
+			string args = line.Value.ToLower();
 			string corrected = "";
 			string[] singleResources = args.Split(new string[] { "," }, StringSplitOptions.None); //split to single resources
 			foreach(string singleRes in singleResources) {
@@ -107,15 +107,15 @@ namespace SteamEngine.Converter {
 				}
 			}
 			//from the corrected string also remove the last ", "
-			def.Set(line.name, corrected.Substring(0, corrected.Length - 2), "some resources were fixed by converter");
-			return line.value;
+			def.Set(line.Name, corrected.Substring(0, corrected.Length - 2), "some resources were fixed by converter");
+			return line.Value;
 		}
 
 		private static string HandleType(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.Set(line);
 
-			string args = line.value.ToLower();
+			string args = line.Value.ToLower();
 			def.type = args;
 
 			switch (args) {
@@ -190,21 +190,21 @@ namespace SteamEngine.Converter {
 			//TODO: Implement args=="t_sign_gump" || "t_board", which have gumps too in sphere scripts,
 			//but aren't containers.
 			//TODO: Detect if item with 'resmake' isn't craftable.
-			return line.value;
+			return line.Value;
 		}
 
 		private static string HandleTwohanded(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.twoHandedSet = true;
-			string largs = line.value.ToLower();
+			string largs = line.Value.ToLower();
 			switch (largs) {
 				case "0":
 				case "n":
 				case "false":
-					def.Set("TwoHanded", "false", line.comment);
+					def.Set("TwoHanded", "false", line.Comment);
 					return "false";
 				default:
-					def.Set("TwoHanded", "true", line.comment);
+					def.Set("TwoHanded", "true", line.Comment);
 					def.isTwoHanded = true;
 					return "true";
 			}
@@ -216,7 +216,7 @@ namespace SteamEngine.Converter {
 			if (!def.armorOrDamHandled) {
 				def.armorOrDamHandled = true;
 				string value = null;
-				string[] strings = Utility.SplitSphereString(line.value);
+				string[] strings = Utility.SplitSphereString(line.Value);
 				int n = strings.Length;
 				double sum = 0;
 				for (int i = 0; i < n; i++) {
@@ -236,19 +236,19 @@ namespace SteamEngine.Converter {
 					}
 					value = sum.ToString();
 				} else {
-					value = line.value;
+					value = line.Value;
 				}
 
 				if (def.isWeapon) {
-					def.Set("attackVsP", value, line.comment);
-					def.Set("attackVsM", value, line.comment);
+					def.Set("attackVsP", value, line.Comment);
+					def.Set("attackVsM", value, line.Comment);
 					def.Set("piercing", "100", "");
 					def.Set("speed", "100", "");
 					def.Set("range", "1", "");
 					def.Set("strikeStartRange", "5", "");
 					def.Set("strikeStopRange", "10", "");
 				} else if (def.isWearable) {
-					def.Set("armorVsP", value, line.comment);
+					def.Set("armorVsP", value, line.Comment);
 					def.Set("mindDefenseVsP", value, "");
 					def.Set("armorVsM", value, "");
 					def.Set("mindDefenseVsM", value, "");
@@ -304,7 +304,7 @@ namespace SteamEngine.Converter {
 					layerSet = true;
 				} else {
 					Set("//layer", "unknown", "");
-					Info(origData.headerLine, "Unknown layer for ItemDef " + headerName);
+					Info(origData.HeaderLine, "Unknown layer for ItemDef " + headerName);
 				}
 			}
 

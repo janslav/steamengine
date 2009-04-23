@@ -133,7 +133,7 @@ namespace SteamEngine.Networking {
 						viewerConn.SendSinglePacket(iicp);
 						if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
 							foreach (AbstractItem contained in listBuffer.list) {
-								AosToolTips toolTips = contained.GetAOSToolTips();
+								AosToolTips toolTips = contained.GetAosToolTips();
 								if (toolTips != null) {
 									toolTips.SendIdPacket(viewerState, viewerConn);
 								}
@@ -148,7 +148,7 @@ namespace SteamEngine.Networking {
 
 		public static void TrySendPropertiesTo(GameState viewerState, TcpConnection<GameState> viewerConn, Thing target) {
 			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-				AosToolTips toolTips = target.GetAOSToolTips();
+				AosToolTips toolTips = target.GetAosToolTips();
 				if (toolTips != null) {
 					toolTips.SendIdPacket(viewerState, viewerConn);
 				}
@@ -372,7 +372,7 @@ namespace SteamEngine.Networking {
 				msg - What to send.
 				color - The color of the message.
 		*/
-		public static void SendOverheadMessageFrom(TcpConnection<GameState> c, Static from, string msg, int color) {
+		public static void SendOverheadMessageFrom(TcpConnection<GameState> c, AbstractInternalItem from, string msg, int color) {
 			if (c != null) {
 				//if (from == null) throw new ArgumentNullException("from cannot be null in SendOverheadMessageFrom.");
 				InternalSendMessage(c, null, msg, from.Name, SpeechType.Speech, ClientFont.Unified, color);

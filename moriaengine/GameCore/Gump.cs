@@ -57,24 +57,24 @@ namespace SteamEngine {
 
 		public object this[int i] {
 			get {
-				return fldArgs[i];
+				return this.fldArgs[i];
 			}
 			set {
-				fldArgs[i] = value;
+				this.fldArgs[i] = value;
 			}
 		}
 
 		public object[] GetArgsArray() {
-			return fldArgs;
+			return this.fldArgs;
 		}
 	}
 
 	public abstract class Gump {
-		private static int uids = 0;
+		private static int uids;
 
-		public readonly int uid;
-		public readonly GumpDef def;
-		internal DialogArgs inputArgs;//arguments the gump is called with
+		private readonly int uid;
+		private readonly GumpDef def;
+		private DialogArgs inputArgs;//arguments the gump is called with
 		private AbstractCharacter cont;//the player who sees this instance (src)
 		private Thing focus;//the thing this gump was "launched on"
 		private int x;
@@ -93,85 +93,99 @@ namespace SteamEngine {
 
 		internal Gump(GumpDef def) {
 			this.def = def;
-			uid = uids++;
+			this.uid = uids++;
 		}
 
 		public DialogArgs InputArgs {
 			get {
-				return inputArgs;
+				return this.inputArgs;
 			}
 
 			set {
-				inputArgs = value;
+				this.inputArgs = value;
 			}
 		}
 
 		public int X {
 			get {
-				return x;
+				return this.x;
 			}
 			set {
-				x = value;
+				this.x = value;
 			}
 		}
 
 		public int Y {
 			get {
-				return y;
+				return this.y;
 			}
 			set {
-				y = value;
+				this.y = value;
 			}
 		}
 
 		public AbstractCharacter Cont {
 			get {
-				return cont;
+				return this.cont;
 			}
 		}
 
 		public Thing Focus {
 			get {
-				return focus;
+				return this.focus;
 			}
 		}
+
+		public int Uid {
+			get { 
+				return this.uid; 
+			}
+		}
+
+		public GumpDef Def {
+			get {
+				return this.def; 
+			}
+		} 
 
 		public abstract void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers);
 
 		public override int GetHashCode() {
-			return (int) uid;
+			return this.uid;
 		}
 
-		public override bool Equals(object o) {
-			return (o == this);
+		public override bool Equals(object obj) {
+			return (obj == this);
 		}
 
 		public override string ToString() {
-			return String.Format("{0} {1} (uid {2})", Tools.TypeToString(GetType()), def.Defname, uid);
+			return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				"{0} {1} (uid {2})", 
+				Tools.TypeToString(GetType()), this.def.Defname, this.uid);
 		}
 
 		private void AddElement(string[] arr) {
-			layout.Append("{").Append(String.Join(" ", arr)).Append("}");
+			this.layout.Append("{").Append(String.Join(" ", arr)).Append("}");
 		}
 
-		//this is the final method where all the elements are compiled into the string
-		public void FinishCompilingPacketData(Thing focus, AbstractCharacter cont) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "focus"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cont")]
+		internal void FinishCompilingPacketData(Thing focus, AbstractCharacter cont) {
 			if (!this.movable) {
-				layout.Insert(0, "{nomove}");
+				this.layout.Insert(0, "{nomove}");
 			}
 			if (!this.closable) {
-				layout.Insert(0, "{noclose}");
+				this.layout.Insert(0, "{noclose}");
 			}
 			if (!this.disposable) {//what does it really mean? :)
-				layout.Insert(0, "{nodispose}");
+				this.layout.Insert(0, "{nodispose}");
 			}
 			this.focus = focus;
 			this.cont = cont;
 		}
 
 		private void CreateTexts() {
-			if (textsList == null) {
-				textsList = new List<string>();
+			if (this.textsList == null) {
+				this.textsList = new List<string>();
 			}
 		}
 
@@ -192,7 +206,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), 
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
-		public void AddTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemID, int hue, int width, int height) {
+		public void AddTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
 			string[] arr = new string[] {
 				"buttontileart", 
 				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
@@ -203,7 +217,7 @@ namespace SteamEngine {
 				pageId.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				triggerId.ToString(System.Globalization.CultureInfo.InvariantCulture),
 
-				itemID.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				itemId.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				hue.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				width.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				height.ToString(System.Globalization.CultureInfo.InvariantCulture)
@@ -278,9 +292,9 @@ namespace SteamEngine {
 		public int AddText(int x, int y, int hue, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			textsList.Add(text);
+			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = textsList.Count - 1;
+			int textId = this.textsList.Count - 1;
 			AddText(x, y, hue, textId);
 			return textId;
 		}
@@ -305,9 +319,9 @@ namespace SteamEngine {
 		public int AddCroppedText(int x, int y, int width, int height, int hue, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			textsList.Add(text);
+			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = textsList.Count - 1;
+			int textId = this.textsList.Count - 1;
 			AddCroppedText(x, y, width, height, hue, textId);
 			return textId;
 		}
@@ -365,7 +379,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
-		public void AddHTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
+		public void AddHtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
 			string[] arr = new string[] {
 				"htmlgump", 
 				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
@@ -381,13 +395,13 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
-		public int AddHTMLGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
+		public int AddHtmlGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			textsList.Add(text);
+			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = textsList.Count - 1;
-			AddHTMLGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+			int textId = this.textsList.Count - 1;
+			AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 			return textId;
 		}
 
@@ -421,9 +435,9 @@ namespace SteamEngine {
 		public int AddTextLine(string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			textsList.Add(text);
+			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			return textsList.Count - 1;
+			return this.textsList.Count - 1;
 		}
 
 		public void AddTextEntry(int x, int y, int widthPix, int height, int hue, int id, int textId) {
@@ -441,18 +455,18 @@ namespace SteamEngine {
 				textId.ToString(System.Globalization.CultureInfo.InvariantCulture)
 			};
 			AddElement(arr);
-			if (entryTextIds == null) {
-				entryTextIds = new Dictionary<int, int>();
+			if (this.entryTextIds == null) {
+				this.entryTextIds = new Dictionary<int, int>();
 			}
-			entryTextIds[id] = textId;
+			this.entryTextIds[id] = textId;
 		}
 
 		public int AddTextEntry(int x, int y, int widthPix, int height, int hue, int id, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			CreateTexts();
-			textsList.Add(text);
+			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = textsList.Count - 1;
+			int textId = this.textsList.Count - 1;
 			AddTextEntry(x, y, widthPix, height, hue, id, textId);
 			return textId;
 		}
@@ -472,27 +486,28 @@ namespace SteamEngine {
 				textId.ToString(System.Globalization.CultureInfo.InvariantCulture)
 			};
 			AddElement(arr);
-			if (numEntryIDs == null) {
-				numEntryIDs = new List<int>();
+			if (this.numEntryIDs == null) {
+				this.numEntryIDs = new List<int>();
 			}
-			numEntryIDs.Add(id);
+			this.numEntryIDs.Add(id);
 
-			if (entryTextIds == null) {
-				entryTextIds = new Dictionary<int, int>();
+			if (this.entryTextIds == null) {
+				this.entryTextIds = new Dictionary<int, int>();
 			}
-			entryTextIds[id] = textId;
+			this.entryTextIds[id] = textId;
 		}
 
 		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, double text) {
 			CreateTexts();
 			string textStr = text.ToString(System.Globalization.CultureInfo.InvariantCulture);
-			textsList.Add(textStr);
+			this.textsList.Add(textStr);
 			//textsLengthsSum += textStr.Length;
-			int textId = textsList.Count - 1;
+			int textId = this.textsList.Count - 1;
 			AddNumberEntry(x, y, widthPix, height, hue, id, textId);
 			return textId;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddTilePic(int x, int y, int model) {
 			string[] arr = new string[] {
 				"tilepic", 
@@ -503,6 +518,7 @@ namespace SteamEngine {
 			AddElement(arr);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y")]
 		public void AddTilePicHue(int x, int y, int model, int hue) {
 			if (hue == 0) {
 				AddTilePic(x, y, model);
@@ -518,11 +534,13 @@ namespace SteamEngine {
 			}
 		}
 
-		public void AddXMFHTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			AddXMFHTMLGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, 0);
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		public void AddXmfhtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
+			AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, 0);
 		}
 
-		public void AddXMFHTMLGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		public void AddXmfhtmlGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
 			string[] arr;
 			if (hue == 0) {
 				arr = new string[] {
@@ -553,20 +571,46 @@ namespace SteamEngine {
 	}
 
 	public class ResponseText {
-		public readonly int id;
-		public readonly string text;
+		private readonly int id;
+		private readonly string text;
+
 		public ResponseText(int id, string text) {
 			this.id = id;
 			this.text = text;
 		}
+
+		public int Id {
+			get {
+				return this.id;
+			}
+		}
+
+		public string Text {
+			get {
+				return this.text;
+			}
+		} 
 	}
 
 	public class ResponseNumber {
-		public readonly int id;
-		public readonly double number;
+		private readonly int id;
+		private readonly double number;
+
 		public ResponseNumber(int id, double number) {
 			this.id = id;
 			this.number = number;
+		}
+
+		public int Id {
+			get {
+				return this.id;
+			}
+		}
+
+		public double Number {
+			get {
+				return this.number;
+			}
 		}
 	}
 }

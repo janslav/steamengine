@@ -30,7 +30,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 
-	public class LScript {
+	public static class LScript {
 		internal static int startLine;
 
 		internal static LScriptHolder snippetRunner = new LScriptHolder();
@@ -137,7 +137,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal static LScriptHolder LoadAsFunction(TriggerSection input) {
-			string name = input.triggerName;
+			string name = input.TriggerName;
 			LScriptHolder sc = ScriptHolder.GetFunction(name) as LScriptHolder;
 			if (sc == null) {
 				sc = new LScriptHolder(input);
@@ -152,6 +152,7 @@ namespace SteamEngine.LScript {
 			return sc;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static OpNode TryCompile(LScriptHolder parent, TextReader stream, int startLine) {
 			try {
 				return Compile(parent, stream, startLine);

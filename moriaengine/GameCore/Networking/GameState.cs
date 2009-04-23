@@ -27,7 +27,7 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
 
-	public delegate void OnTargon(GameState state, IPoint4D getback, object parameter);
+	public delegate void OnTargon(GameState state, IPoint3D getback, object parameter);
 	public delegate void OnTargon_Cancel(GameState state, object parameter);
 
 	public class GameState : Poolable, IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
@@ -392,7 +392,6 @@ namespace SteamEngine.Networking {
 
 			if (x == 0xffff && y == 0xffff && uid == 0 && z == 0 && model == 0) {
 				//cancel
-				self.Targ = null;
 				if (targonCancel != null) {
 					targonCancel(this, parameter);
 				}
@@ -403,7 +402,6 @@ namespace SteamEngine.Networking {
 						Thing thing = Thing.UidGetThing(uid);
 						if (thing != null) {
 							if (self.CanSeeForUpdate(thing)) {
-								self.Targ = thing;
 								targ(this, thing, parameter);
 								return;
 							}
@@ -412,22 +410,19 @@ namespace SteamEngine.Networking {
 						if (model == 0) {
 							Point4D point = new Point4D(x, y, z, self.M);
 							if (self.CanSeeCoordinates(point)) {
-								self.Targ = point;
 								targ(this, point, parameter);
 								return;
 							}
 						} else {
 							if (self.CanSeeCoordinates(x, y, self.M)) {
 								Map map = self.GetMap();
-								Static sta = map.GetStatic(x, y, z, model);
+								StaticItem sta = map.GetStatic(x, y, z, model);
 								if (sta != null) {
-									self.Targ = sta;
 									targ(this, sta, parameter);
 									return;
 								}
 								MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
 								if (mic != null) {
-									self.Targ = mic;
 									targ(this, mic, parameter);
 									return;
 								}
@@ -441,8 +436,8 @@ namespace SteamEngine.Networking {
 
 
 		internal void SentGump(Gump gi) {
-			this.gumpInstancesByUid[gi.uid] = gi;
-			GumpDef thisGump = gi.def;
+			this.gumpInstancesByUid[gi.Uid] = gi;
+			GumpDef thisGump = gi.Def;
 			LinkedList<Gump> instancesOfThisGump;
 			if (!this.gumpInstancesByGump.TryGetValue(thisGump, out instancesOfThisGump)) {
 				instancesOfThisGump = new LinkedList<Gump>();
@@ -464,7 +459,7 @@ namespace SteamEngine.Networking {
 			if (this.gumpInstancesByUid.TryGetValue(uid, out gi)) {
 				this.gumpInstancesByUid.Remove(uid);
 
-				GumpDef gd = gi.def;
+				GumpDef gd = gi.Def;
 				LinkedList<Gump> list;
 				if (this.gumpInstancesByGump.TryGetValue(gd, out list)) {
 					list.Remove(gi);

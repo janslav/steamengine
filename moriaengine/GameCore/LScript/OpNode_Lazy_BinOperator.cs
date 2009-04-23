@@ -27,6 +27,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Lazy_BinOperator : OpNode, IOpNodeHolder {
 		internal OpNode left;
 		internal OpNode right;
@@ -55,7 +56,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			string opString = LScript.GetString(origNode).Trim().ToLower();
+			string opString = LScript.GetString(origNode).Trim().ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			leftResult = left.Run(vars);
 			rightResult = right.Run(vars);
 
@@ -214,7 +215,8 @@ namespace SteamEngine.LScript {
 					}
 					return retVal;
 				}
-				throw new SEException(string.Format("Operator {0} is not applicable to these operands(type {1} and {2}).",
+				throw new SEException(string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+					"Operator {0} is not applicable to these operands(type {1} and {2}).",
 					opString,
 					(leftResult == null ? "<null>" : Common.Tools.TypeToString(leftResult.GetType())),
 					(rightResult == null ? "<null>" :  Common.Tools.TypeToString(rightResult.GetType()))));

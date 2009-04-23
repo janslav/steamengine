@@ -36,7 +36,7 @@ namespace SteamEngine {
 
 	[Flags]
 	public enum RunLevel {
-		Unknown = 0x00,
+		None = 0x00, 
 		Startup = 0x01,
 		Running = 0x02,
 		Paused = 0x04,
@@ -52,7 +52,7 @@ namespace SteamEngine {
 	//Running, Paused
 
 	public static class RunLevelManager {
-		private static RunLevel currentLevel = RunLevel.Unknown;
+		private static RunLevel currentLevel = RunLevel.None;
 
 		public static RunLevel RunLevel {
 			get {
@@ -117,6 +117,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetAwaitingRetry() {
 #if DEBUG
 			using (new MagicObject())
@@ -135,6 +136,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetShutdown() {
 #if DEBUG
 			using (new MagicObject())
@@ -166,6 +168,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetRecompiling() {
 #if DEBUG
 			using (new MagicObject())

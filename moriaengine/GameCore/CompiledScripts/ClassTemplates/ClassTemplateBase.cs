@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			ClassTemplateSubSection ss = null;
 
 			foreach (ClassTemplateSubSection entry in section.subsections.Values) {
-				switch (entry.name.ToLower()) {
+				switch (entry.name.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 					case "def":
 					case "defvars":
 					case "defs":

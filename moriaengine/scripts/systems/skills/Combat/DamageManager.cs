@@ -265,10 +265,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public double Damage {
 			get {
-				return Convert.ToDouble(this.argv[3]);
+				return Convert.ToDouble(this.Argv[3]);
 			}
 			set {
-				this.argv[3] = value;
+				this.Argv[3] = value;
 			}
 		}
 	}
@@ -285,48 +285,48 @@ namespace SteamEngine.CompiledScripts {
 
 		public double Attack {
 			get {
-				return Convert.ToDouble(this.argv[2]);
+				return Convert.ToDouble(this.Argv[2]);
 			}
 			set {
-				this.argv[2] = value;
+				this.Argv[2] = value;
 			}
 		}
 
 		public double Piercing {
 			get {
-				return Convert.ToDouble(this.argv[3]);
+				return Convert.ToDouble(this.Argv[3]);
 			}
 			set {
-				this.argv[3] = value;
+				this.Argv[3] = value;
 			}
 		}
 
 		public double ArmorClass {
 			get {
-				return Convert.ToDouble(this.argv[4]);
+				return Convert.ToDouble(this.Argv[4]);
 			}
 			set {
-				this.argv[4] = value;
+				this.Argv[4] = value;
 			}
 		}
 
 		public double DamageAfterAC {
 			get {
-				return Convert.ToDouble(this.argv[5]);
+				return Convert.ToDouble(this.Argv[5]);
 			}
 			set {
-				this.argv[5] = value;
+				this.Argv[5] = value;
 			}
 		}
 
 		public double FinalDamage {
 			get {
-				return Convert.ToDouble(this.argv[6]);
+				return Convert.ToDouble(this.Argv[6]);
 			}
 		}
 
 		internal  void InternalSetFinalDamage(double value) {
-			this.argv[6] = value;
+			this.Argv[6] = value;
 		}
 	}
 }

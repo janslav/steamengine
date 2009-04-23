@@ -26,15 +26,15 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class Equippable : Item {
-		public override byte Layer {
+		public override int Layer {
 			get {
-				return TypeDef.Layer;
+				return this.TypeDef.Layer;
 			}
 		}
 
 		public override sealed bool IsEquippable {
 			get {
-				return TypeDef.Layer != 0;
+				return this.TypeDef.Layer != 0;
 			}
 		}
 

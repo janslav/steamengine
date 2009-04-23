@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using SteamEngine.Timers; //SimpleQueue :D
 
 namespace SteamEngine {
-	internal class UIDArray<ElementType> : IEnumerable<ElementType> where ElementType : ObjectWithUid {
-		private ElementType[] array;
+	internal class UIDArray<T> : IEnumerable<T> where T : ObjectWithUid {
+		private T[] array = new T[minimalLength];
 		private SimpleQueue<int> freeSlots = new SimpleQueue<int>();
 		private int highestElement;
 		private int count;
@@ -39,139 +39,132 @@ namespace SteamEngine {
 
 		internal int HighestElement {
 			get {
-				return highestElement;
+				return this.highestElement;
 			}
 		}
 
 		internal int Count {
 			get {
-				return count;
+				return this.count;
 			}
 		}
 
-		internal UIDArray() {
-			highestElement = 0;	//we don't have any elements yet
-			count = 0;
-			loadingFinished = false;
-			array = new ElementType[minimalLength];
-		}
-
 		internal void Clear() {
-			freeSlots.Clear();
-			freeFakeSlots.Clear();
-			fakeSlots.Clear();
-			highestElement = 0;
-			count = 0;
-			array = new ElementType[array.Length];
-			loadingFinished = false;
+			this.freeSlots.Clear();
+			this.freeFakeSlots.Clear();
+			this.fakeSlots.Clear();
+			this.highestElement = 0;
+			this.count = 0;
+			this.array = new T[this.array.Length];
+			this.loadingFinished = false;
 		}
 
-		internal void AddLoaded(ElementType o, int loadedUid) {
+		internal void AddLoaded(T o, int loadedUid) {
 			int index = loadedUid - uidOffset;
-			if (loadingFinished) {
+			if (this.loadingFinished) {
 				throw new SEException("Add(object,index) disabled after LoadingFinished");
 			}
 			if (index < 0) {
 				throw new SEException("Object with non-positive UID " + index + " found");
 			}
-			if (index >= array.Length) { //index is too high, make the array bigger!
-				ResizeArray(index);
+			if (index >= this.array.Length) { //index is too high, make the array bigger!
+				this.ResizeArray(index);
 			}
-			if (array[index] != null) {
+			if (this.array[index] != null) {
 				throw new SEException("Two objects attempted to take the same UID");
 			}
-			if (index > highestElement) {
-				highestElement = index;
+			if (index > this.highestElement) {
+				this.highestElement = index;
 			}
-			array[index] = o;
-			count++;
+			this.array[index] = o;
+			this.count++;
 		}
 
-		internal void Add(ElementType o) {
-			if (freeSlots.Count == 0) {	//no indexes in the freeSlots queue
-				FillFreeSlotQueue();
+		internal void Add(T o) {
+			if (this.freeSlots.Count == 0) {	//no indexes in the freeSlots queue
+				this.FillFreeSlotQueue();
 			}
-			int index = freeSlots.Dequeue();
+			int index = this.freeSlots.Dequeue();
 			int uid = index + uidOffset;
-			if (uid >= (highestUid - fakeSlots.Count)) {
+			if (uid >= (highestUid - this.fakeSlots.Count)) {
 				throw new SEException("We're out of UIDs. This is baaaad.");
 			}
 			o.Uid = uid;
-			array[index] = o;
-			count++;
+			this.array[index] = o;
+			this.count++;
 
-			if (uid > highestElement) {
-				highestElement = uid;
+			if (uid > this.highestElement) {
+				this.highestElement = uid;
 			}
 		}
 
 		private void FillFreeSlotQueue() {
-			freeSlots.Clear();
+			this.freeSlots.Clear();
 
-			int count = 0;
-			for (int i = 0, n = array.Length; i < n; i++) {
-				if (array[i] == null) {
-					freeSlots.Enqueue(i);
-					count++;
-					if (count >= queueMaxCount) {
+			int counter = 0;
+			for (int i = 0, n = this.array.Length; i < n; i++) {
+				if (this.array[i] == null) {
+					this.freeSlots.Enqueue(i);
+					counter++;
+					if (counter >= queueMaxCount) {
 						break;
 					}
 				}
 			}
-			if (count == 0) {
-				ResizeArray();
-				FillFreeSlotQueue();//try again
+			if (counter == 0) {
+				this.ResizeArray();
+				this.FillFreeSlotQueue();//try again
 			}
 		}
 
 		private void ResizeArray() {
-			ResizeImpl(array.Length * 2);
+			this.ResizeImpl(this.array.Length * 2);
 		}
 
-		private void ResizeArray(int highestElement) {
-			int newSize = Math.Max(highestElement + minimalLength, array.Length * 2);
-			ResizeImpl(newSize);
+		private void ResizeArray(int newHighestElement) {
+			int newSize = Math.Max(newHighestElement + minimalLength, this.array.Length * 2);
+			this.ResizeImpl(newSize);
 		}
 
 		private void ResizeImpl(int newSize) {
-			ElementType[] temp = new ElementType[newSize];
-			Array.Copy(this.array, temp, array.Length);
-			array = temp;
+			T[] temp = new T[newSize];
+			Array.Copy(this.array, temp, this.array.Length);
+			this.array = temp;
 		}
 
 		internal void LoadingFinished() {
-			loadingFinished = true;
+			this.loadingFinished = true;
 		}
 
-		internal ElementType Get(int uid) { //may return a null object
+		internal T Get(int uid) { //may return a null object
 			int index = uid - uidOffset;
-			if (index < array.Length && index >= 0) {
-				return array[index];
+			if (index < this.array.Length && index >= 0) {
+				return this.array[index];
 			}
-			return default(ElementType);
+			return default(T);
 		}
 
 		internal void RemoveAt(int uid) {
 			int index = uid - uidOffset;
-			if (!Object.Equals(array[index], default(ElementType))) { //only add to queue if not already null
-				array[index] = default(ElementType);
-				if (index == highestElement) {
-					highestElement--;
+			if (!Object.Equals(this.array[index], default(T))) { //only add to queue if not already null
+				this.array[index] = default(T);
+				if (index == this.highestElement) {
+					this.highestElement--;
 				} else {
-					freeSlots.Enqueue(index);
+					this.freeSlots.Enqueue(index);
 				}
-				count--;
+				this.count--;
 			}
 		}
 
 		internal void ReIndexAll() {
-			ElementType[] origArray = this.array;
+			T[] origArray = this.array;
 			int n = origArray.Length;
-			ElementType[] newArray = new ElementType[n];
+			T[] newArray = new T[n];
 
 			for (int i = 0, newI = 0; i < n; i++) {
-				ElementType elem = origArray[i];
-				if (!Object.Equals(elem, default(ElementType))) {
+				T elem = origArray[i];
+				if (!Object.Equals(elem, default(T))) {
 					newArray[newI] = elem;
 					elem.Uid = newI + uidOffset;
 					newI++;
@@ -180,47 +173,47 @@ namespace SteamEngine {
 		}
 
 		internal int GetFakeUid() {
-			if (freeFakeSlots.Count == 0) {	//no indexes in the freeSlots queue
-				FillFreeFakeSlotQueue();
+			if (this.freeFakeSlots.Count == 0) {	//no indexes in the freeSlots queue
+				this.FillFreeFakeSlotQueue();
 			}
-			int index = freeFakeSlots.Dequeue();
-			fakeSlots[index] = true;
+			int index = this.freeFakeSlots.Dequeue();
+			this.fakeSlots[index] = true;
 			return highestUid - index;
 		}
 
 		private void FillFreeFakeSlotQueue() {
-			freeFakeSlots.Clear();
+			this.freeFakeSlots.Clear();
 
-			int count = 0;
-			for (int i = 0, n = fakeSlots.Capacity; i < n; i++) {
-				if (i >= fakeSlots.Count) {
-					fakeSlots.Add(false);
+			int counter = 0;
+			for (int i = 0, n = this.fakeSlots.Capacity; i < n; i++) {
+				if (i >= this.fakeSlots.Count) {
+					this.fakeSlots.Add(false);
 				}
-				if (!fakeSlots[i]) {
-					freeFakeSlots.Enqueue(i);
-					count++;
-					if (count >= queueMaxCount) {
+				if (!this.fakeSlots[i]) {
+					this.freeFakeSlots.Enqueue(i);
+					counter++;
+					if (counter >= queueMaxCount) {
 						break;
 					}
 				}
 			}
-			if (count == 0) {
-				fakeSlots.Capacity = fakeSlots.Capacity * 2;
-				FillFreeFakeSlotQueue();//try again
+			if (counter == 0) {
+				this.fakeSlots.Capacity = this.fakeSlots.Capacity * 2;
+				this.FillFreeFakeSlotQueue();//try again
 			}
 		}
 
 		internal void DisposeFakeUid(int uid) {
 			int index = highestUid - uid;
-			if (index < fakeSlots.Count) {
-				if (fakeSlots[index]) {
-					fakeSlots[index] = false;
-					freeFakeSlots.Enqueue(index);
+			if (index < this.fakeSlots.Count) {
+				if (this.fakeSlots[index]) {
+					this.fakeSlots[index] = false;
+					this.freeFakeSlots.Enqueue(index);
 				}
 			}
 		}
 
-		public IEnumerator<ElementType> GetEnumerator() {
+		public IEnumerator<T> GetEnumerator() {
 			return new Enumerator(this);
 		}
 
@@ -229,37 +222,41 @@ namespace SteamEngine {
 		}
 
 
-		private class Enumerator : IEnumerator<ElementType> {
-			private ElementType current;
+		private class Enumerator : IEnumerator<T> {
+			private T current;
 			private int currIdx;
-			private UIDArray<ElementType> source;
+			private UIDArray<T> source;
 
-			internal Enumerator(UIDArray<ElementType> source) {
+			internal Enumerator(UIDArray<T> source) {
 				this.source = source;
-				Reset();
+				this.Reset();
 			}
 
 			public void Reset() {
-				currIdx = 1;
-				current = default(ElementType);
+				this.currIdx = 1;
+				this.current = default(T);
 			}
 
-			public ElementType Current {
-				get { return current; }
+			public T Current {
+				get {
+					return this.current;
+				}
 			}
 
 			public void Dispose() {
 			}
 
 			object IEnumerator.Current {
-				get { return current; }
+				get {
+					return this.current;
+				}
 			}
 
 			public bool MoveNext() {
-				while (currIdx <= source.HighestElement) {
-					current = source.Get(currIdx);
-					currIdx++;
-					if (!Object.Equals(current, default(ElementType))) {
+				while (this.currIdx <= this.source.HighestElement) {
+					this.current = this.source.Get(this.currIdx);
+					this.currIdx++;
+					if (!Object.Equals(this.current, default(T))) {
 						return true;
 					}
 				}

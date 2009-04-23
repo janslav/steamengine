@@ -29,6 +29,7 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.LScript {
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Lazy_Expression : OpNode, IOpNodeHolder {
 		//accepts STRING, SimpleExpression, 
 		private string name;
@@ -380,7 +381,7 @@ namespace SteamEngine.LScript {
 				} else if (args.Length == 1) {
 					resolver.RunArgs();
 					try {
-						Convert.ToUInt16(resolver.results[0]);
+						Convert.ToUInt16(resolver.results[0], System.Globalization.CultureInfo.InvariantCulture);
 						finalOpNode = new OpNode_SkillKey_Set(parent, filename, line, column, origNode,
 							sd.Id, args[0]);
 						goto runit;
@@ -406,8 +407,8 @@ namespace SteamEngine.LScript {
 			}
 
 			//a little hack for gumps - to make possible to use dialog layout methods without the "argo."
-			if ((vars.self == vars.defaultObject) && (vars.scriptArgs != null) && (vars.scriptArgs.argv.Length > 0)) {
-				ScriptedGump sgi = vars.scriptArgs.argv[0] as ScriptedGump;
+			if ((vars.self == vars.defaultObject) && (vars.scriptArgs != null) && (vars.scriptArgs.Argv.Length > 0)) {
+				ScriptedGump sgi = vars.scriptArgs.Argv[0] as ScriptedGump;
 				if (sgi != null) {
 					if (ScriptedGump.IsMethodName(name)) {
 						desc = null;

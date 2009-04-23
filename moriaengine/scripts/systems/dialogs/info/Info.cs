@@ -183,13 +183,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"finally - we can use it also like .info(obj) to display the info about obj")]
 		[SteamFunction]
 		public static void Info(object self, ScriptArgs args) {
-			if (args.argv == null || args.argv.Length == 0) {
+			if (args.Argv == null || args.Argv.Length == 0) {
 				//display it normally (targetted or for self)
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(self));
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.argv[0]));
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.Argv[0]));
 			}
 		}
 
@@ -198,13 +198,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"mainly used from the SettingsCategories dialog on a various buttons")]
 		[SteamFunction]
 		public static void Settings(object self, ScriptArgs args) {
-			if (args.argv == null || args.argv.Length == 0) {
+			if (args.Argv == null || args.Argv.Length == 0) {
 				//call the default settings dialog
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(SettingsCategories.instance));
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.argv[0]));
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.Argv[0]));
 			}
 		}
 

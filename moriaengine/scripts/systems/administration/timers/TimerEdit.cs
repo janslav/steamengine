@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Timer tm = (Timer) args.GetTag(D_EditTimer.editedTimerTK);
 				tm.DueInSeconds = timerTime;
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
-				if (prevStacked.def is D_TimerList) {
+				if (prevStacked.Def is D_TimerList) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
 					prevStacked.InputArgs.RemoveTag(D_TimerList.timerListTK);
 				}

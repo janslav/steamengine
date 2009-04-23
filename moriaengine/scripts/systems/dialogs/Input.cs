@@ -119,8 +119,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		internal static IUnloadable Load(PropsSection input) {
-			string typeName = input.headerType.ToLower();
-			string defname = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower();
+			string defname = input.HeaderName.ToLower();
 
 			AbstractScript def;
 			AllScriptsByDefname.TryGetValue(defname, out def);
@@ -143,31 +143,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (trigger_response != null) {
 				id.on_response = new LScriptHolder(trigger_response);
 			} else {
-				Logger.WriteWarning(input.filename, input.headerLine, "InputDialogDef " + LogStr.Ident(input) + " has not a trigger submit defined.");
+				Logger.WriteWarning(input.Filename, input.HeaderLine, "InputDialogDef " + LogStr.Ident(input) + " has not a trigger submit defined.");
 			}
 			RegisterInputDialogDef(id);
 
 			//cteni dvou radku ze scriptu - nadpis dialogu a defaultni hodnota v inputu
 			PropsLine pl = input.TryPopPropsLine("label");
 			if (pl == null) {
-				throw new SEException(input.filename, input.headerLine, "input dialog label is missing");
+				throw new SEException(input.Filename, input.HeaderLine, "input dialog label is missing");
 			}
-			System.Text.RegularExpressions.Match m = ConvertTools.stringRE.Match(pl.value);
+			System.Text.RegularExpressions.Match m = ConvertTools.stringRE.Match(pl.Value);
 			if (m.Success) {
 				id.label = m.Groups["value"].Value;
 			} else {
-				id.label = pl.value;
+				id.label = pl.Value;
 			}
 
 			pl = input.TryPopPropsLine("default");
 			if (pl == null) {
-				throw new SEException(input.filename, input.headerLine, "input dialog default value is missing");
+				throw new SEException(input.Filename, input.HeaderLine, "input dialog default value is missing");
 			}
-			m = ConvertTools.stringRE.Match(pl.value);
+			m = ConvertTools.stringRE.Match(pl.Value);
 			if (m.Success) {
 				id.defaultInput = m.Groups["value"].Value;
 			} else {
-				id.defaultInput = pl.value;
+				id.defaultInput = pl.Value;
 			}
 
 			return id;

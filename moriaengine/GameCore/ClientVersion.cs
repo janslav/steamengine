@@ -193,12 +193,14 @@ namespace SteamEngine {
 			this.major = major;
 			this.minor = minor;
 			this.revision = revision;
-			this.letter = char.ToLower(letter);
+			this.letter = char.ToLower(letter, System.Globalization.CultureInfo.InvariantCulture);
 
-			comparableNumber = major * 1000000;
-			comparableNumber += minor * 10000;
-			comparableNumber += revision * 100;
-			comparableNumber += ((int) this.letter) - valueOfA;
+			checked {
+				comparableNumber = major * 1000000;
+				comparableNumber += minor * 10000;
+				comparableNumber += revision * 100;
+				comparableNumber += ((int) this.letter) - valueOfA;
+			}
 		}
 
 		const int valueOfA = (int) 'a';

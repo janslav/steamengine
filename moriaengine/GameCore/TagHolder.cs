@@ -51,7 +51,7 @@ namespace SteamEngine {
 	[Summary("This is the base class for implementation of our \"lightweight polymorphism\". "
 		+ "TagHolder class holds tags (values indexed by names) and Timers.")]
 	public class TagHolder : IDeletable, ITagHolder {
-		internal Hashtable tags = null; //in this Hashtable are stored Tags, Timers, and by PluginHolder class also Plugins and TGListNodes
+		internal Hashtable tags; //in this Hashtable are stored Tags, Timers, and by PluginHolder class also Plugins and TGListNodes
 
 		public TagHolder() {
 		}
@@ -181,7 +181,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		[Summary("Return enumerable containing all timers")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), Summary("Return enumerable containing all timers")]
 		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
@@ -195,7 +195,7 @@ namespace SteamEngine {
 		#endregion Timers
 
 		#region Tags
-		[Summary("Return enumerable containing all tags")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), Summary("Return enumerable containing all tags")]
 		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
@@ -340,6 +340,7 @@ namespace SteamEngine {
 		#region save/load
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual void Save(SaveStream output) {
 			if (tags != null) {
 				ArrayList forDeleting = new ArrayList();
@@ -372,8 +373,9 @@ namespace SteamEngine {
 		internal static Regex tagRE = new Regex(@"tag\.(?<name>\w+)\s*",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		public static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		internal static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#")]
 		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
 			Match m = tagRE.Match(valueName);
 			if (m.Success) {	//If the name begins with 'tag.'
@@ -393,14 +395,15 @@ namespace SteamEngine {
 		}
 
 		//used by loaders (Thing, GameAccount...)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void LoadSectionLines(PropsSection ps) {
-			foreach (PropsLine p in ps.props.Values) {
+			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					this.LoadLine(ps.filename, p.line, p.name.ToLower(), p.value);
+					this.LoadLine(ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
-					Logger.WriteWarning(ps.filename, p.line, ex);
+					Logger.WriteWarning(ps.Filename, p.Line, ex);
 				}
 			}
 		}
@@ -419,6 +422,7 @@ namespace SteamEngine {
 
 		#region IDeletable
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void ThrowIfDeleted() {
 			if (this.IsDeleted) {
 				throw new DeletedException("You can not manipulate a deleted object (" + this + ")");

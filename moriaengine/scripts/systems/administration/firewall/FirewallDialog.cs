@@ -241,7 +241,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void BlockIP(Character self, ScriptArgs sa) {
 			if (sa != null) {
 				DialogArgs newArgs = new DialogArgs();
-				newArgs.SetTag(D_BlockIP.ipToBlockTK, sa.argv[0]);
+				newArgs.SetTag(D_BlockIP.ipToBlockTK, sa.Argv[0]);
 				self.Dialog(SingletonScript<D_BlockIP>.Instance, newArgs);
 			} else {
 				self.Dialog(SingletonScript<D_BlockIP>.Instance);
@@ -321,11 +321,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void BlockIpRange(Character self, ScriptArgs sa) {
 			if (sa != null) {
 				DialogArgs newArgs = new DialogArgs();
-				if (sa.argv != null && sa.argv.Length == 1) {
-					newArgs.SetTag(D_BlockIPRange.ipFromRangeTK, sa.argv[0]);
-				} else if (sa.argv != null && sa.argv.Length == 2) {
-					newArgs.SetTag(D_BlockIPRange.ipFromRangeTK, sa.argv[0]);
-					newArgs.SetTag(D_BlockIPRange.ipToRangeTK, sa.argv[1]);
+				if (sa.Argv != null && sa.Argv.Length == 1) {
+					newArgs.SetTag(D_BlockIPRange.ipFromRangeTK, sa.Argv[0]);
+				} else if (sa.Argv != null && sa.Argv.Length == 2) {
+					newArgs.SetTag(D_BlockIPRange.ipFromRangeTK, sa.Argv[0]);
+					newArgs.SetTag(D_BlockIPRange.ipToRangeTK, sa.Argv[1]);
 				} else {
 					D_Display_Text.ShowError("Oèekávány 2 parametry: od IP - do IP");
 					return;

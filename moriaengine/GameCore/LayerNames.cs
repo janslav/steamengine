@@ -16,7 +16,7 @@
 */
 
 namespace SteamEngine {
-	public enum LayerNames : byte {
+	public enum LayerNames {
 		None = 0,			//non-equippable items have this.
 
 		Hand1 = 1,			//one-handed weapons or tools
@@ -31,7 +31,7 @@ namespace SteamEngine {
 		Collar = 10,		//Necklace, Gorget, Mempo, etc.
 		Gorget = 10,
 		Hair = 11,
-		Half_apron = 12,
+		HalfApron = 12,
 		Chest = 13,			//Primarily for armor
 		Bracelet = 14,			//Bracelets.
 		Hidden = 15,		//Apparently you can equip animation items (i_fx_*) here - that would probably give you an endlessly repeating animation.

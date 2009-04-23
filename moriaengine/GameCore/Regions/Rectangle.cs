@@ -40,7 +40,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public bool Contains(Static p) {
+		public bool Contains(AbstractInternalItem p) {
 			int px = p.X;
 			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));

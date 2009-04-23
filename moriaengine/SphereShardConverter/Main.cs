@@ -173,8 +173,8 @@ namespace SteamEngine.Converter {
 
 					ConvertedDef cd = null;
 					try {
-						string type = input.headerType.ToLower();
-						string name = input.headerName;
+						string type = input.HeaderType.ToLower();
+						string name = input.HeaderName;
 						if ((name == "") && (type == "eof")) {
 							continue;
 						}
@@ -200,11 +200,11 @@ namespace SteamEngine.Converter {
 					} catch (FatalException) {
 						throw;
 					} catch (SEException se) {
-						se.TryAddFileLineInfo(input.filename, input.headerLine);
+						se.TryAddFileLineInfo(input.Filename, input.HeaderLine);
 						Logger.WriteError(se.NiceMessage);
 						continue;
 					} catch (Exception e) {
-						Logger.WriteError(input.filename, input.headerLine, e);
+						Logger.WriteError(input.Filename, input.HeaderLine, e);
 						continue;
 					}
 					if (cd == null) {

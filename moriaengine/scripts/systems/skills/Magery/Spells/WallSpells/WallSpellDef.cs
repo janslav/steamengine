@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+		protected override void On_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectGround(target, spellEffectArgs);
 
 			int targetX = target.X;
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void InitWallItem(SpellEffectArgs spellEffectArgs, ItemDef wallDef, int spellPower, TimeSpan duration, int x, int y, int z, Map map, WallDirection wallDir) {
 			if (AdjustField(x, y, ref z, map, wallDef.Height, true)) {
-				Thing t = wallDef.Create((ushort) x, (ushort) y, (sbyte) z, map.m);
+				Thing t = wallDef.Create((ushort) x, (ushort) y, (sbyte) z, map.M);
 				WallSpellItem asWallitem = t as WallSpellItem;
 				if (asWallitem != null) {
 					asWallitem.Init(spellPower, duration, wallDir);

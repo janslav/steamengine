@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			if (sa != null) {
 				Console.WriteLine("@" + tk.Name + " on " + self + " - parameters:\t" + Environment.NewLine
-				+ Common.Tools.ObjToString(sa.argv));
+				+ Common.Tools.ObjToString(sa.Argv));
 			} else {
 				Console.WriteLine("@" + tk.Name + " on " + self);
 			}

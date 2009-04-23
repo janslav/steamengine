@@ -31,7 +31,7 @@ namespace SteamEngine {
 
 		internal PluginDef def;
 
-		private bool isDeleted = false;
+		private bool isDeleted;
 
 		protected Plugin(Plugin copyFrom)
 			: base(copyFrom) {
@@ -78,6 +78,7 @@ namespace SteamEngine {
 		}
 
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public object TryRun(TriggerKey tk, ScriptArgs sa) {
 			object retVal = null;
 			if (!isDeleted) {

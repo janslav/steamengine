@@ -29,15 +29,14 @@ using SteamEngine.LScript;
 
 namespace SteamEngine {
 	public abstract class ScriptHolder {
-		public readonly string name;
+		private static Dictionary<string, ScriptHolder> functionsByName = new Dictionary<string, ScriptHolder>(StringComparer.OrdinalIgnoreCase);
 
-		internal bool unloaded = false;
+		private readonly string name;
+		internal bool unloaded;
 		internal TriggerGroup contTriggerGroup;
 
-		internal bool lastRunSuccesful = false;
+		internal bool lastRunSuccesful;
 		internal Exception lastRunException;
-
-		private static Dictionary<string, ScriptHolder> functionsByName = new Dictionary<string, ScriptHolder>(StringComparer.OrdinalIgnoreCase);
 
 		public static ScriptHolder GetFunction(string name) {
 			ScriptHolder sh;
@@ -47,25 +46,31 @@ namespace SteamEngine {
 
 		protected ScriptHolder(string name) {
 			if (String.IsNullOrEmpty(name)) {
-				this.name = this.GetName();
+				this.name = this.InternalFirstGetName();
 			}
 			this.name = name;
 		}
 
 		protected ScriptHolder() {
-			this.name = this.GetName();
+			this.name = this.InternalFirstGetName();
 		}
 
-		protected virtual string GetName() {
+		public string Name {
+			get { 
+				return this.name; 
+			}
+		}
+
+		protected virtual string InternalFirstGetName() {
 			throw new SEException("This should not happen");
 		}
 
 		internal protected void RegisterAsFunction() {
-			if (!functionsByName.ContainsKey(name)) {
-				functionsByName[name] = this;
+			if (!functionsByName.ContainsKey(this.name)) {
+				functionsByName[this.name] = this;
 				return;
 			}
-			throw new ServerException("ScriptHolder '" + name + "' already exists; Cannot create a new one with the same name.");
+			throw new ServerException("ScriptHolder '" + this.name + "' already exists; Cannot create a new one with the same name.");
 		}
 
 		internal static void UnloadAll() {
@@ -111,11 +116,12 @@ namespace SteamEngine {
 			Logger.WriteError(e);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public string GetDecoratedName() {
-			if (contTriggerGroup == null) {
-				return name;
+			if (this.contTriggerGroup == null) {
+				return this.name;
 			} else {
-				return contTriggerGroup.Defname + ": @" + name;
+				return this.contTriggerGroup.Defname + ": @" + this.name;
 			}
 		}
 	}

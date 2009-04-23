@@ -27,6 +27,7 @@ using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ConstructorWrapper : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly OpNode[] args;
@@ -102,6 +103,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ConstructorWrapper_Params : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly OpNode[] normalArgs;
@@ -202,6 +204,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ConstructorWrapper_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly string formatString;
@@ -237,7 +240,8 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(formatString, results);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				formatString, results);
 				return ctor.Invoke(BindingFlags.Default, null, new object[] { resultString }, null);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
@@ -252,7 +256,8 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = String.Format(formatString, results);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				formatString, results);
 				return ctor.Invoke(new object[] { resultString });
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);

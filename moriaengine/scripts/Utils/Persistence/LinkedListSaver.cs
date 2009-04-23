@@ -53,17 +53,17 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine countLine = input.PopPropsLine("count");
-				currentLineNumber = countLine.line;
-				int count = int.Parse(countLine.value);
+				currentLineNumber = countLine.Line;
+				int count = int.Parse(countLine.Value);
 
 				PropsLine pl = input.PopPropsLine("type");
-				currentLineNumber = pl.line;
-				Type elemType = ClassManager.GetType(pl.value);
+				currentLineNumber = pl.Line;
+				Type elemType = ClassManager.GetType(pl.Value);
 				if (elemType == null) {
-					elemType = Type.GetType(pl.value, false, true);
+					elemType = Type.GetType(pl.Value, false, true);
 				}
 				if (elemType == null) {
 					throw new SEException("Generic LinkedList element type not recognised.");
@@ -76,17 +76,17 @@ namespace SteamEngine.CompiledScripts {
 
 				for (int i = 0; i < count; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
-					currentLineNumber = valueLine.line;
-					ObjectSaver.Load(valueLine.value, linkedListWrapper.DelayedLoad_Value, input.filename, valueLine.line, i);
+					currentLineNumber = valueLine.Line;
+					ObjectSaver.Load(valueLine.Value, linkedListWrapper.DelayedLoad_Value, input.Filename, valueLine.Line, i);
 				}
 				return linkedList;
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 

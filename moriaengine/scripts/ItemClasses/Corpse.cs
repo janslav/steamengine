@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
-			AosToolTips toolTips = this.GetAOSToolTips();
+			AosToolTips toolTips = this.GetAosToolTips();
 			PacketSequences.SendClilocNameFrom(clickerConn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -149,10 +149,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal class CorpseEquipInfo : ICorpseEquipInfo {
-			uint flaggedUid;
-			byte layer;
-			int color;
-			int model;
+			private uint flaggedUid;
+			private byte layer;
+			private int color;
+			private int model;
 
 			internal CorpseEquipInfo(uint flaggedUid, byte layer, int color, int model) {
 				this.flaggedUid = flaggedUid;
@@ -162,19 +162,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public uint FlaggedUid {
-				get { return flaggedUid; }
+				get { return this.flaggedUid; }
 			}
 
-			public byte Layer {
-				get { return layer; }
+			public int Layer {
+				get { return this.layer; }
 			}
 
 			public int Color {
-				get { return color; }
+				get { return this.color; }
 			}
 
 			public int Model {
-				get { return model; }
+				get { return this.model; }
 			}
 		}
 
@@ -225,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 
 						if (corpse.hairModel != 0) {
 							hair = new CorpseEquipInfo(
-								corpse.hairFakeUid, (byte) LayerNames.Hair, corpse.hairColor, corpse.hairModel);
+								corpse.hairFakeUid, (int) LayerNames.Hair, corpse.hairColor, corpse.hairModel);
 							if (corpse.equippedItems == null) {
 								corpse.equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
 							}
@@ -233,7 +233,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 						if (corpse.beardModel != 0) {
 							beard = new CorpseEquipInfo(
-								corpse.beardFakeUid, (byte) LayerNames.Beard, corpse.beardColor, corpse.beardModel);
+								corpse.beardFakeUid, (int) LayerNames.Beard, corpse.beardColor, corpse.beardModel);
 							if (corpse.equippedItems == null) {
 								corpse.equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
 							}
@@ -280,13 +280,13 @@ namespace SteamEngine.CompiledScripts {
 					this.hairItemsPackets = PacketGroup.CreateFreePG();
 					if (hairModel != 0) {
 						CorpseEquipInfo hair = new CorpseEquipInfo(
-							hairFakeUid, (byte) LayerNames.Hair, hairColor, hairModel);
+							hairFakeUid, (int) LayerNames.Hair, hairColor, hairModel);
 						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, hair);
 						hasHairItems = true;
 					}
 					if (beardModel != 0) {
 						CorpseEquipInfo beard = new CorpseEquipInfo(
-							beardFakeUid, (byte) LayerNames.Beard, beardColor, beardModel);
+							beardFakeUid, (int) LayerNames.Beard, beardColor, beardModel);
 
 						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, beard);
 						hasHairItems = true;
@@ -304,7 +304,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_ItemLeave(ItemInItemArgs args) {
 			if (equippedItems != null) {
-				if (equippedItems.ContainsKey(args.manipulatedItem)) {
+				if (equippedItems.ContainsKey(args.ManipulatedItem)) {
 					ItemOnGroundUpdater.RemoveFromCache(this);
 				}
 			}

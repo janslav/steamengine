@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine {
-	public class PluginKey : AbstractKey {
+	public sealed class PluginKey : AbstractKey {
 		private static Dictionary<string, PluginKey> byName = new Dictionary<string, PluginKey>(StringComparer.OrdinalIgnoreCase);
 
 		private PluginKey(string name, int uid)
@@ -40,7 +40,7 @@ namespace SteamEngine {
 
 
 	public sealed class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
-		public static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",
+		private static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		public Type HandledType {
@@ -55,10 +55,12 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public string Save(object objToSave) {
 			return "@@" + ((PluginKey) objToSave).Name;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
 			return PluginKey.Get(match.Groups["value"].Value);
 		}

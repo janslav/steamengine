@@ -62,8 +62,8 @@ namespace SteamEngine {
 
 		private static Dictionary<int, AbstractItemDef> itemModelDefs = new Dictionary<int, AbstractItemDef>();
 		private static Dictionary<int, AbstractCharacterDef> charModelDefs = new Dictionary<int, AbstractCharacterDef>();
-		private static int highestItemModel = 0;
-		private static int highestCharModel = 0;
+		private static int highestItemModel;
+		private static int highestCharModel;
 
 		internal ThingDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -75,11 +75,11 @@ namespace SteamEngine {
 			this.height = InitTypedField("height", 0, typeof(int));
 			int modelNum;
 			if (TagMath.TryParseInt32(defname.Substring(2), out modelNum)) {
-				this.model.SetFromScripts(filename, headerLine, modelNum.ToString());
+				this.model.SetFromScripts(filename, headerLine, modelNum.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			} else if (this is AbstractItemDef) {
-				this.model.SetFromScripts(filename, headerLine, Globals.DefaultItemModel.ToString());
+				this.model.SetFromScripts(filename, headerLine, Globals.DefaultItemModel.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			} else if (this is AbstractCharacterDef) {
-				this.model.SetFromScripts(filename, headerLine, Globals.DefaultCharModel.ToString());
+				this.model.SetFromScripts(filename, headerLine, Globals.DefaultCharModel.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			} else {
 				throw new ScriptException("Char or item? This should NOT happen!");
 			}
@@ -152,7 +152,7 @@ namespace SteamEngine {
 			base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
 		}
 
-		internal Thing CreateWhenLoading(ushort x, ushort y, sbyte z, byte m) {
+		internal Thing CreateWhenLoading() {
 			this.ThrowIfUnloaded();
 			return CreateImpl();
 		}
@@ -165,11 +165,13 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		public Thing Create(IPoint4D p) {
-			p = p.TopPoint;
-			return Create(p.X, p.Y, p.Z, p.M);
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public Thing Create(IPoint4D point) {
+			point = point.TopPoint;
+			return Create(point.X, point.Y, point.Z, point.M);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Thing Create(Thing cont) {
 			this.ThrowIfUnloaded();
 			Thing retVal = this.CreateImpl();
@@ -212,7 +214,7 @@ namespace SteamEngine {
 			AbstractItem contItem = cont as AbstractItem;
 			if (contItem == null) {
 				//MarkAsLimbo(item);
-				byte layer = item.Layer;
+				int layer = item.Layer;
 				if (layer > 0) {
 					item.Trigger_EnterChar((AbstractCharacter) cont, layer);
 				} else {
@@ -226,7 +228,8 @@ namespace SteamEngine {
 			}
 		}
 
-		public void Trigger_Create(Thing createdThing) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		internal void Trigger_Create(Thing createdThing) {
 			this.On_Create(createdThing);
 			createdThing.TryTrigger(TriggerKey.create, null);
 			try {
@@ -234,6 +237,7 @@ namespace SteamEngine {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		protected virtual void On_Create(Thing t) {
 
 		}
@@ -260,13 +264,14 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.Run(self, td, sa);
 					try {
-						int retInt = Convert.ToInt32(retVal);
+						int retInt = Convert.ToInt32(retVal, System.Globalization.CultureInfo.InvariantCulture);
 						if (retInt == 1) {
 							return true;
 						}
@@ -278,17 +283,14 @@ namespace SteamEngine {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.TryRun(self, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+					if (TagMath.Is1(retVal)) {
+						return true;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);
@@ -410,8 +412,8 @@ namespace SteamEngine {
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			Type thingDefType = null;
-			string typeName = input.headerType.ToLower();
-			string defname = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			//Console.WriteLine("loading section "+input.HeadToString());
 			//[typeName defname]
 
@@ -419,8 +421,8 @@ namespace SteamEngine {
 			//Attempt to convert defname to a uint.
 
 			int defnum;
-			if (TagMath.TryParseInt32(defname, out defnum)) {
-				defname = "0x" + defnum.ToString("x");
+			if (ConvertTools.TryParseInt32(defname, out defnum)) {
+				defname = "0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
 				isNumeric = true;
 			}
 
@@ -455,7 +457,7 @@ namespace SteamEngine {
 					throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
 				} else {
 					ConstructorInfo cw = thingDefCtors[thingDefType];
-					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
+					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
 				}
 			} else if (thingDef.IsUnloaded) {
 				if (thingDef.GetType() != thingDefType) {
@@ -473,12 +475,17 @@ namespace SteamEngine {
 			thingDef.ClearTriggerGroups();//maybe clear other things too?
 
 			if (isNumeric) {
-				if (thingDef is AbstractItemDef) {
-					if (defnum > highestItemModel) highestItemModel = defnum;
+				AbstractItemDef asItemDef = thingDef as AbstractItemDef;
+				if (asItemDef != null) {
+					if (defnum > highestItemModel) {
+						highestItemModel = defnum;
+					}
 					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
-					itemModelDefs[defnum] = (AbstractItemDef) thingDef;
-				} else if (thingDef is AbstractCharacterDef) {
-					if (defnum > highestCharModel) highestCharModel = defnum;
+					itemModelDefs[defnum] = asItemDef;
+				} else {
+					if (defnum > highestCharModel) {
+						highestCharModel = defnum;
+					}
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
 					charModelDefs[defnum] = (AbstractCharacterDef) thingDef;
 				}
@@ -491,7 +498,7 @@ namespace SteamEngine {
 			//now do load the trigger code. 
 			TriggerGroup tg = null;
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + defname + "__";
+				input.HeaderName = "t__" + defname + "__";
 				tg = ScriptedTriggerGroup.Load(input);
 				thingDef.AddTriggerGroup(tg);
 			}
@@ -509,10 +516,11 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal new static void LoadingFinished() {
 			//dump number of loaded instances?
-			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x") + ")");
-			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x") + ")");
+			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")");
+			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")");
 
 			int count = AllScriptsByDefname.Count;
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
@@ -545,7 +553,6 @@ namespace SteamEngine {
 					}
 					a++;
 				}
-				DateTime after = DateTime.Now;
 			}
 			Logger.SetTitle("");
 		}

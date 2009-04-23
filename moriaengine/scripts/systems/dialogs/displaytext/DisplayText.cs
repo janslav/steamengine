@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
-				DialogArgs newArgs = new DialogArgs("CHYBA", args.argv[0]);
+				DialogArgs newArgs = new DialogArgs("CHYBA", args.Argv[0]);
 				newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {

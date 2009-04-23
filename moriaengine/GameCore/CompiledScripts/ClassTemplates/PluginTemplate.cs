@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			foreach (CodeTypeMember member in generatedType.Members) {
 				CodeMemberMethod method = member as CodeMemberMethod;
 				if (method != null) {
-					switch (method.Name.ToLower()) {
+					switch (method.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 						case "save":
 							method.CustomAttributes.Add(new CodeAttributeDeclaration(
 								new CodeTypeReference(typeof(Persistence.SaveAttribute))));

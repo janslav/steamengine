@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	//this is actually just a static class, for convenience using the same constructing signature as the other, _real_ , OpNodes
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Code {
 		//accepts Code, SimpleCode
 
@@ -44,7 +45,7 @@ namespace SteamEngine.LScript {
 			int opIndex = -1;
 			for (int i = 1, n = children.Count; i < n; i += 2) {//step is 2, we are looking just for the operators
 				Node node = (Node) children[i];
-				string op = LScript.GetString(node).Trim().ToLower();
+				string op = LScript.GetString(node).Trim().ToLower(System.Globalization.CultureInfo.InvariantCulture);
 				if (IsComparing(op)) {
 					opIndex = i;
 					break;

@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//0 - zacneme od prvni pluginy co ma
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_PluginList.holderTK, self); //na kom budeme zobrazovat tagy
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TriggerGroupsList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_TriggerGroupsList.tgCriteriumTK, text.Args);//vyhl. kriterium

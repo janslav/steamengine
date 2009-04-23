@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void AllAbilities(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.NameAsc);//default sorting
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_AbilitiesList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_AbilitiesList.criteriumTK, text.Args);//vyhl. kriterium

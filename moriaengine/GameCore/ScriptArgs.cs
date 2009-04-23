@@ -22,7 +22,7 @@ using System.Collections;
 namespace SteamEngine {
 	public class ScriptArgs {
 		private string formatArgs;
-		public readonly object[] argv;
+		private readonly object[] argv;
 		private string args;
 
 		private static object[] zeroArray = new object[0];
@@ -40,10 +40,10 @@ namespace SteamEngine {
 
 		public string FormatString {
 			get {
-				return formatArgs;
+				return this.formatArgs;
 			}
 			internal set {
-				formatArgs = value;
+				this.formatArgs = value;
 				args = null;
 			}
 		}
@@ -59,24 +59,33 @@ namespace SteamEngine {
 		public string Args {
 			get {
 				if (args == null) {
-					if (formatArgs == null) {
-						if (argv.Length > 0) {//we fake the args of the function, in case it was actually called from compiled code
+					if (this.formatArgs == null) {
+						if (this.argv.Length > 0) {//we fake the args of the function, in case it was actually called from compiled code
 							StringBuilder sb = new StringBuilder();
-							for (int i = 0, n = argv.Length - 1; i < n; i++) {
+							for (int i = 0, n = this.argv.Length - 1; i < n; i++) {
 								sb.Append("{" + i + "}, ");
 							}
-							sb.Append("{" + (argv.Length - 1) + "}");
-							formatArgs = sb.ToString();
+							sb.Append("{" + (this.argv.Length - 1) + "}");
+							this.formatArgs = sb.ToString();
 						} else {
-							formatArgs = "";
+							this.formatArgs = "";
 						}
 					}
 					//Console.WriteLine("format string: '{0}', with {1} args", formatArgs, argv.Length);
-					args = string.Format(formatArgs, argv);
+					args = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+						this.formatArgs, this.argv);
 				}
 				return args;
 			}
 		}
+
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+		public object[] Argv {
+			get { 
+				return this.argv; 
+			}
+		} 
 
 		//a little hack because of Dialogs. No more needed, yay!
 		//public void InsertArgo(object obj) {

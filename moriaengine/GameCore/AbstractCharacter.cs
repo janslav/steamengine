@@ -78,7 +78,6 @@ namespace SteamEngine {
 
 		private AbstractAccount account;
 		private string name;
-		private IPoint4D targ;
 		private DirectionAndFlag directionAndFlags = DirectionAndFlag.Zero;
 		internal ThingLinkedList visibleLayers;//layers 0..24
 		internal ThingLinkedList invisibleLayers;//layers (26..29) + (32..max)
@@ -101,7 +100,6 @@ namespace SteamEngine {
 			instances++;
 			this.account = copyFrom.account;
 			this.name = copyFrom.name;
-			this.targ = copyFrom.targ;
 			this.directionAndFlags = copyFrom.directionAndFlags;
 			Globals.LastNewChar = this;
 			Map.GetMap(this.point4d.m).Add(this);
@@ -146,15 +144,6 @@ namespace SteamEngine {
 		public override bool IsPlayer {
 			get {
 				return (this.Account != null);
-			}
-		}
-
-		public IPoint4D Targ {
-			get { 
-				return this.targ; 
-			}
-			internal set {
-				this.targ = value; 
 			}
 		}
 
@@ -280,18 +269,18 @@ namespace SteamEngine {
 
 		public override string Name {
 			get {
-				return name;
+				return this.name;
 			}
 			set {
 				this.InvalidateProperties();
 				CharSyncQueue.AboutToChangeName(this);
-				name = value;
+				this.name = value;
 			}
 		}
 
 		public AbstractAccount Account {
 			get {
-				return account;
+				return this.account;
 			}
 		}
 
@@ -525,9 +514,9 @@ namespace SteamEngine {
 				case "name":
 					Match ma = ConvertTools.stringRE.Match(valueString);
 					if (ma.Success) {
-						name = ma.Groups["value"].Value;
+						this.name = ma.Groups["value"].Value;
 					} else {
-						name = valueString;
+						this.name = valueString;
 					}
 					break;
 				case "directionandflags":
@@ -677,7 +666,7 @@ namespace SteamEngine {
 			if (this.Direction == dir) { //no dir change = step forward
 				Point4D oldPoint = new Point4D(this.point4d);
 
-				Map map = GetMap();
+				Map map = this.GetMap();
 				int newZ, newY, newX;
 
 				bool canMoveEverywhere = (this.IsPlayer && this.Plevel >= Globals.PlevelOfGM);
@@ -719,7 +708,7 @@ namespace SteamEngine {
 				}
 				CharSyncQueue.AboutToChangePosition(this, mt);
 
-				point4d.SetP(newX, newY, newZ);
+				this.point4d.SetP(newX, newY, newZ);
 				ChangedP(oldPoint);
 			} else { //just changing direction, no steps
 				CharSyncQueue.AboutToChangeDirection(this, requested);
@@ -742,7 +731,7 @@ namespace SteamEngine {
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
 				}
-				point4d.SetP(x, y, z, m);
+				this.point4d.SetP(x, y, z, m);
 				ChangedP(oldP);
 			} else {
 				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
@@ -781,7 +770,7 @@ namespace SteamEngine {
 				this.On_NewPosition();
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-			foreach (AbstractItem itm in GetMap().GetItemsInRange(this.X, this.Y, 0)) {
+			foreach (AbstractItem itm in this.GetMap().GetItemsInRange(this.X, this.Y, 0)) {
 				if (IsStandingOn(itm)) {
 					itm.Trigger_Step(this, false);
 				}
@@ -810,7 +799,7 @@ namespace SteamEngine {
 			if (acc.AttachCharacter(this, out slot)) {
 				CharSyncQueue.Resend(this);
 				this.account = acc;
-				GetMap().MadeIntoPlayer(this);
+				this.GetMap().MadeIntoPlayer(this);
 			} else {
 				throw new SEException("That account (" + acc + ") is already full.");
 			}
@@ -908,7 +897,7 @@ namespace SteamEngine {
 		}
 
 		public void DialogClose(Gump instance, int buttonId) {
-			this.DialogClose(instance.uid, buttonId);
+			this.DialogClose(instance.Uid, buttonId);
 		}
 
 		public void DialogClose(int gumpUid, int buttonId) {
@@ -924,7 +913,7 @@ namespace SteamEngine {
 			GameState state = this.GameState;
 			if (state != null) {
 				foreach (Gump gi in state.FindGumpInstances(def)) {
-					this.DialogClose(gi.uid, buttonId);
+					this.DialogClose(gi.Uid, buttonId);
 				}
 			}
 		}
@@ -991,7 +980,7 @@ namespace SteamEngine {
 
 			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
 				foreach (AbstractItem equipped in this.VisibleEquip) {
-					AosToolTips toolTips = equipped.GetAOSToolTips();
+					AosToolTips toolTips = equipped.GetAosToolTips();
 					if (toolTips != null) {
 						toolTips.SendIdPacket(viewerState, viewerConn);
 					}
@@ -1010,7 +999,7 @@ namespace SteamEngine {
 
 			ScriptArgs sa = new ScriptArgs(speaker, speech, clilocSpeech, type, color, font, lang, keywords, args);
 			this.TryTrigger(TriggerKey.hear, sa);
-			object[] saArgv = sa.argv;
+			object[] saArgv = sa.Argv;
 
 			speech = ConvertTools.ToString(saArgv[1]);
 			clilocSpeech = ConvertTools.ToInt32(saArgv[2]);
@@ -1309,20 +1298,20 @@ namespace SteamEngine {
 
 		public int VisibleCount {
 			get {
-				if (visibleLayers == null) {
+				if (this.visibleLayers == null) {
 					return 0;
 				} else {
-					return visibleLayers.count;
+					return this.visibleLayers.count;
 				}
 			}
 		}
 
 		public IEnumerable<Thing> VisibleEquip {
 			get {
-				if (visibleLayers == null) {
+				if (this.visibleLayers == null) {
 					return EmptyReadOnlyGenericCollection<Thing>.instance;
 				} else {
-					return visibleLayers;
+					return this.visibleLayers;
 				}
 			}
 		}
@@ -1335,13 +1324,13 @@ namespace SteamEngine {
 		public int InvisibleCount {
 			get {
 				int count = 0;
-				if (invisibleLayers != null) {
-					count = invisibleLayers.count;
+				if (this.invisibleLayers != null) {
+					count = this.invisibleLayers.count;
 				}
-				if (specialLayer != null) {
-					count += specialLayer.count;
+				if (this.specialLayer != null) {
+					count += this.specialLayer.count;
 				}
-				if (draggingLayer != null) {
+				if (this.draggingLayer != null) {
 					count++;
 				}
 				return count;

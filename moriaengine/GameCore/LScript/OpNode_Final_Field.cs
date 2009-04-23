@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_SetField : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode arg;
@@ -75,7 +76,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Format("({0} {1}.{2} = {3})", field.FieldType, field.DeclaringType, field.Name, arg);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+			"({0} {1}.{2} = {3})", field.FieldType, field.DeclaringType, field.Name, arg);
 		}
 
 		public Type ReturnType {
@@ -85,6 +87,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_GetField : OpNode, ITriable, IKnownRetType {
 		private readonly FieldInfo field;
 
@@ -113,7 +116,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Format("({0} {1}.{2})", field.FieldType, field.DeclaringType, field.Name);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				"({0} {1}.{2})", field.FieldType, field.DeclaringType, field.Name);
 		}
 
 		public Type ReturnType {
@@ -124,6 +128,7 @@ namespace SteamEngine.LScript {
 	}
 
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_InitField_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode[] args;
@@ -159,7 +164,8 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(formatString, results);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+					formatString, results);
 				field.SetValue(oSelf, resultString);
 				return null;
 			} catch (Exception e) {
@@ -170,7 +176,8 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = String.Format(formatString, results);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+					formatString, results);
 				field.SetValue(vars.self, resultString);
 				return null;
 			} catch (Exception e) {

@@ -17,7 +17,7 @@ namespace SteamEngine.AuxServerPipe {
 
 
 		private NamedPipeConnection<AuxServerPipeClient> pipe;
-		internal bool sendLogStrings = false;
+		internal bool sendLogStrings;
 
 		private StringToSendEventHandler onConsoleWrite;
 		private StringToSendEventHandler onConsoleWriteLine;
@@ -62,6 +62,7 @@ namespace SteamEngine.AuxServerPipe {
 			connectingTimer.Change(TimeSpan.FromSeconds(1), TimeSpan.Zero);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxServerPipe.AuxServerPipeClient+AnnounceStartupFinishedTimer")]
 		public void On_Init(NamedPipeConnection<AuxServerPipeClient> conn) {
 			connectedInstance = this;
 			this.pipe = conn;

@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 #endif
 			nant.SetTarget("buildGeneratedCode");
 
-			nant.SetProperty("scriptsNumber", CompilerInvoker.compilenumber.ToString());
+			nant.SetProperty("scriptsNumber", CompilerInvoker.compilenumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			nant.SetProperty("scriptsReferencesListPath",
 				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
 

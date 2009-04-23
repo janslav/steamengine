@@ -51,7 +51,7 @@ namespace SteamEngine.Converter {
 				} else {
 					return modelNum;
 				}
-				Error(origData.headerLine, "ThingDef " + headerName + " has no model set...?");
+				Error(origData.HeaderLine, "ThingDef " + headerName + " has no model set...?");
 				return -1;
 			}
 		}
@@ -70,7 +70,7 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void WriteAsTG(ConvertedDef def, PropsLine line) {
-			def.Set("triggerGroup", line.value, line.comment);
+			def.Set("triggerGroup", line.Value, line.Comment);
 		}
 
 
@@ -107,25 +107,25 @@ namespace SteamEngine.Converter {
 				defname1 = origData.TryPopPropsLine("defname");
 				if (defname1 != null) {
 					if (needsHeader) {
-						headerName = defname1.value;
+						headerName = defname1.Value;
 						needsHeader = false;
 					}
-					byDefname[defname1.value] = this;
+					byDefname[defname1.Value] = this;
 				}
 
 				defname2 = origData.TryPopPropsLine("defname2");
 				if (defname2 != null) {
 					if (needsHeader) {
-						headerName = defname2.value;
+						headerName = defname2.Value;
 						needsHeader = false;
 					}
-					byDefname[defname2.value] = this;
+					byDefname[defname2.Value] = this;
 				}
 
 				if (needsHeader) {
 					//what now? :)
 					headerName = "i_hadnodefname_0x" + headerNum.ToString("x");
-					Info(origData.headerLine, "Has no defname except a number, and model defined elsewhere...");
+					Info(origData.HeaderLine, "Has no defname except a number, and model defined elsewhere...");
 				}
 			}
 		}
@@ -134,27 +134,27 @@ namespace SteamEngine.Converter {
 			base.SecondStage();
 			if (idLine != null) {
 				int idNum;
-				if (ConvertTools.TryParseInt32(idLine.value, out idNum)) {
+				if (ConvertTools.TryParseInt32(idLine.Value, out idNum)) {
 					if (byModel.TryGetValue(idNum, out modelDef)) {
-						Set("model", modelDef.PrettyDefname, idLine.comment);
+						Set("model", modelDef.PrettyDefname, idLine.Comment);
 						//Info(idLine.line, "ID Written as "+modelDef.PrettyDefname);
 					} else {
-						Set("model", "0x" + idNum.ToString("x"), idLine.comment);
+						Set("model", "0x" + idNum.ToString("x"), idLine.Comment);
 						modelNum = idNum;
 					}
 				} else {
-					Set("model", idLine.value, idLine.comment);
-					byDefname.TryGetValue(idLine.value, out modelDef);
+					Set("model", idLine.Value, idLine.Comment);
+					byDefname.TryGetValue(idLine.Value, out modelDef);
 				}
 			}
 
 			if (dupeItemLine != null) {
 				int dupeItemNum;
 				bool dupeItemSet = false;
-				if (ConvertTools.TryParseInt32(dupeItemLine.value, out dupeItemNum)) {
+				if (ConvertTools.TryParseInt32(dupeItemLine.Value, out dupeItemNum)) {
 					ConvertedThingDef dupeItemDef;
 					if (byModel.TryGetValue(dupeItemNum, out dupeItemDef)) {
-						Set(dupeItemLine.name, dupeItemDef.PrettyDefname, dupeItemLine.comment);
+						Set(dupeItemLine.Name, dupeItemDef.PrettyDefname, dupeItemLine.Comment);
 						dupeItemSet = true;
 						//Info(dupeItemLine.line, "DupeItem Written as "+dupeItemDef.PrettyDefname);
 					}
@@ -168,16 +168,16 @@ namespace SteamEngine.Converter {
 		public override void ThirdStage() {
 			bool defnameWritten = false;
 			if (defname1 != null) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(headerName, defname1.value)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(headerName, defname1.Value)) {
 					defnameWritten = true;
 					Set(defname1);
 				}
 			}
 			if (defname2 != null) {
 				if (defnameWritten) {
-					Warning(defname2.line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
-				} else if (!StringComparer.OrdinalIgnoreCase.Equals(headerType, defname2.value)) {
-					Set("defname", defname2.value, defname2.comment);
+					Warning(defname2.Line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
+				} else if (!StringComparer.OrdinalIgnoreCase.Equals(headerType, defname2.Value)) {
+					Set("defname", defname2.Value, defname2.Comment);
 				}
 			}
 
@@ -190,10 +190,10 @@ namespace SteamEngine.Converter {
 					return headerName;
 				}
 				if (defname1 != null) {
-					return defname1.value;
+					return defname1.Value;
 				}
 				if (defname2 != null) {
-					return defname2.value;
+					return defname2.Value;
 				}
 
 				//it's numeric, so...

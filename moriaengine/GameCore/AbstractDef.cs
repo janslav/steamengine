@@ -99,13 +99,13 @@ namespace SteamEngine {
 		//used by loaders (Thing, GameAccount, Thingdefs)
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void LoadScriptLines(PropsSection ps) {
-			foreach (PropsLine p in ps.props.Values) {
+			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadScriptLine(ps.filename, p.line, p.name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.value);
+					LoadScriptLine(ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
-					Logger.WriteWarning(ps.filename, p.line, ex);
+					Logger.WriteWarning(ps.Filename, p.Line, ex);
 				}
 			}
 		}
@@ -169,17 +169,17 @@ namespace SteamEngine {
 		internal static void LoadSectionFromSaves(PropsSection input) {
 			//todo: a way to load new defs (or just regions)
 
-			string typeName = input.headerType;
-			string defname = input.headerName;
+			string typeName = input.HeaderType;
+			string defname = input.HeaderName;
 
 			AbstractDef def = Get(defname);
 			if (def == null) {
-				Logger.WriteError(input.filename, input.headerLine, LogStr.Ident(typeName + " " + defname)
+				Logger.WriteError(input.Filename, input.HeaderLine, LogStr.Ident(typeName + " " + defname)
 					+ " is in the world being loaded, but it was not defined in the scripts. Skipping.");
 				return;
 			}
 			if (!StringComparer.OrdinalIgnoreCase.Equals(def.GetType().Name, typeName)) {
-				Logger.WriteWarning(input.filename, input.headerLine,
+				Logger.WriteWarning(input.Filename, input.HeaderLine,
 					LogStr.Ident(typeName + " " + defname) + " declared wrong class. It is in fact " + LogStr.Ident(Tools.TypeToString(def.GetType())) + ".");
 			}
 
@@ -187,9 +187,9 @@ namespace SteamEngine {
 		}
 
 		public virtual void LoadFromSaves(PropsSection input) {
-			foreach (PropsLine pl in input.props.Values) {
-				ObjectSaver.Load(pl.value, new LoadObjectParam(this.LoadField_Delayed), filename, pl.line,
-					pl.name);
+			foreach (PropsLine pl in input.PropsLines) {
+				ObjectSaver.Load(pl.Value, new LoadObjectParam(this.LoadField_Delayed), filename, pl.Line,
+					pl.Name);
 			}
 		}
 

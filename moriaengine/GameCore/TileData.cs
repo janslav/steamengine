@@ -44,14 +44,14 @@ namespace SteamEngine {
 		Internal = 0x00010000,		//hair, beards, etc
 		Foliage = 0x00020000,		//Probably bushes and tree leaves and stuff.
 		PartialHue = 0x00040000,	//semi-glowy? (Or maybe it can accept the 08000 color flag)
-		Unknown_1 = 0x00080000,		//Well, gee. I should see if it's used on anything...
+		Unknown1 = 0x00080000,		//Well, gee. I should see if it's used on anything...
 		Map = 0x00100000,			//Sounds good to me.
 		Container = 0x00200000,		//They flag these!?
 		Wearable = 0x00400000,		//Omigod!
 		LightSource = 0x00800000,	//I'm getting tired of typing repetitive shiznit now.
 		Animated = 0x01000000,		//Like fire again. And stuff. Those spinny propeller thingies!
 		NoDiagonal = 0x02000000,	//!?!???!!?
-		Unknown_2 = 0x04000000,		//I really hope some of these unknowns are n/w/s/e facing flags.
+		Unknown2 = 0x04000000,		//I really hope some of these unknowns are n/w/s/e facing flags.
 		Armor = 0x08000000,			//Armor, okay, so does that count shields? Hmmm?
 		Roof = 0x10000000,			//"Don't fall through me!" Or why isn't it just flagged surface or something?
 		Door = 0x20000000,			//Okay...
@@ -61,9 +61,10 @@ namespace SteamEngine {
 		ImpassableSurface = Impassable | Surface
 	}
 
-	public class TileData {
+	public static class TileData {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const int numLandTiles = 16384;
-		public static TileFlag[] landFlags;
+		private static TileFlag[] landFlags;
 
 		//public static readonly string[] flagNames = new string[] {"background","weapon","transparent","translucent","wall",
 		//    "damaging","impassable","wet","unknown","surface","bridge","stackable","window",
@@ -79,6 +80,10 @@ namespace SteamEngine {
 			return (TileFlag) (1 << bitNum);
 		}
 
+		public static TileFlag GetTileFlags(int id) {
+			return landFlags[id];
+		}
+
 		public static bool HasFlagNum(TileFlag whatsit, int bitNum) {
 			TileFlag flag = (TileFlag) (1 << bitNum);
 			return ((whatsit & flag) == flag);
@@ -88,6 +93,7 @@ namespace SteamEngine {
 			return (id == 2 || id == 0x1DB || (id >= 0x1AE && id <= 0x1B5));
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.ItemDispidInfo")]
 		public static void Init() {
 			string mulFileP = Path.Combine(Globals.MulPath, "tiledata.mul");
 			Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - terrain tile info.");
@@ -118,7 +124,8 @@ namespace SteamEngine {
 						tileNameS = Utility.GetCAsciiString(mulbr, 20);
 						if (Globals.WriteMulDocsFiles) {
 							if (tileNameS.Length > 0 || texId != 0) {
-								mtfi.WriteLine("TileID: 0x" + tileId.ToString("x") + " (" + tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
+								mtfi.WriteLine("TileID: 0x" + tileId.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (" + 
+									tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
 							}
 						}
 						tileId++;
@@ -134,7 +141,7 @@ namespace SteamEngine {
 				//int dispIDNum=0;
 				//bool firstModel=false;
 				//ItemDispidInfo cur=null;
-				ItemDispidInfo idi = null;
+				//ItemDispidInfo idi = null;
 				TileFlag flags;
 				byte weight;
 				byte quality;
@@ -164,7 +171,7 @@ namespace SteamEngine {
 							height = mulbr.ReadByte();
 							tileNameS = Utility.GetCAsciiString(mulbr, 20);
 							bytes += 20 + tileNameS.Length * 2;
-							idi = new ItemDispidInfo(flags, weight, quality, unknown, minItemsToDisplayThisArt, quantity, animID, unknown2, hue, unknown3, height, tileNameS);
+							/*idi = */new ItemDispidInfo(flags, weight, quality, unknown, minItemsToDisplayThisArt, quantity, animID, unknown2, hue, unknown3, height, tileNameS);
 							/* Kemoc - not used for anything
 							if (idi==null || multipleModels==false || idi.unknown<=lastAmount || (!(HasFlag(idi.flags,TileFlag.stackable)))) {
 								if (HasFlag(idi.flags,TileFlag.stackable)) {
@@ -227,7 +234,7 @@ namespace SteamEngine {
 						if (idi.IsEmpty) {
 							numNonexistant++;
 							if (Globals.WriteMulDocsFiles) {
-								nonexistant.WriteLine("0x" + a.ToString("x"));
+								nonexistant.WriteLine("0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
 							}
 						} else {
 							if (numWritten == 0) {
@@ -250,8 +257,8 @@ namespace SteamEngine {
 								if (HasFlag(idi.Flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
-								scr.WriteLine("[" + type + " 0x" + a.ToString("x") + "]");
-								scr.WriteLine("Model=0x" + a.ToString("x"));
+								scr.WriteLine("[" + type + " 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
+								scr.WriteLine("Model=0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
 								scr.WriteLine("Name=\"" + name + "\"");
 								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
 									scr.WriteLine("Layer=" + idi.Quality);
@@ -266,7 +273,7 @@ namespace SteamEngine {
 								scr.WriteLine("//Weight=" + idi.Weight);
 								scr.WriteLine("//Unknown=" + idi.Unknown1);
 								scr.WriteLine("//Min Items to display this art=" + idi.MinItemsToDisplayThisArt);
-								scr.WriteLine("//AnimID=0x" + idi.AnimID.ToString("x"));
+								scr.WriteLine("//AnimID=0x" + idi.AnimId.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
 								scr.WriteLine("//Quantity (Wpn/armor type)=" + idi.Quantity);
 								scr.WriteLine("//Unknown2=" + idi.Unknown2);
 								scr.WriteLine("//Hue=" + idi.Hue);
@@ -292,9 +299,9 @@ namespace SteamEngine {
 								if (HasFlag(idi.Flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
-								scr.WriteLine("[" + type + " 0x" + a.ToString("x") + "]");
-								scr.WriteLine("Model=0x" + a.ToString("x"));
-								scr.WriteLine("DupeItem=0x" + lastItemNum.ToString("x"));
+								scr.WriteLine("[" + type + " 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
+								scr.WriteLine("Model=0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
+								scr.WriteLine("DupeItem=0x" + lastItemNum.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
 							}
 
 						}
@@ -332,7 +339,7 @@ namespace SteamEngine {
 			for (int a = 0; a < ItemDispidInfo.Count; a++) {
 				ItemDispidInfo idi = ItemDispidInfo.Get(a);
 				scr.WriteLine("");
-				scr.WriteLine("[Dispid 0x" + a.ToString("x") + "]");
+				scr.WriteLine("[Dispid 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
 				string name = "Unnamed";
 				if (idi.SingularName.Length > 0) {
 					name = idi.SingularName;
@@ -354,7 +361,7 @@ namespace SteamEngine {
 				}
 				scr.WriteLine("Unknown=" + idi.Unknown1);
 				scr.WriteLine("Min Items to display this art (Probably used by the client with stackables)=" + idi.MinItemsToDisplayThisArt);
-				scr.WriteLine("AnimID=0x" + idi.AnimID.ToString("x"));
+				scr.WriteLine("AnimID=0x" + idi.AnimId.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
 				scr.WriteLine("Quantity (Wpn/armor type)=" + idi.Quantity);
 				scr.WriteLine("Unknown2=" + idi.Unknown2);
 				scr.WriteLine("Hue=" + idi.Hue);
@@ -363,7 +370,7 @@ namespace SteamEngine {
 
 				for (int flagNum = 0; flagNum < 32; flagNum++) {
 					if (HasFlagNum(idi.Flags, flagNum)) {
-						sw[flagNum].WriteLine("0x" + a.ToString("x") + ") " + name);
+						sw[flagNum].WriteLine("0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ") " + name);
 
 					}
 				}

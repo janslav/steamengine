@@ -38,11 +38,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public CompiledGumpDef()
+		protected CompiledGumpDef()
 			: base() {
 		}
 
-		public CompiledGumpDef(string defName)
+		protected CompiledGumpDef(string defName)
 			: base(defName) {
 		}
 
@@ -53,6 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void Unload() {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			Gump gi = new CompiledGump(this);
 
@@ -96,19 +97,19 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddCheckerTrans();
 		}
 
-		public void AddBackground(int x, int y, int width, int height, int gumpID) {
-			GumpInstance.AddResizePic(x, y, gumpID, width, height);
+		public void AddBackground(int x, int y, int width, int height, int gumpId) {
+			GumpInstance.AddResizePic(x, y, gumpId, width, height);
 		}
 
 		public void ResizePic(int x, int y, int gumpId, int width, int height) {
 			GumpInstance.AddResizePic(x, y, gumpId, width, height);
 		}
 
-		public void AddButton(int x, int y, int normalID, int pressedID, int buttonID, GumpButtonType type, int param) {
+		public void AddButton(int x, int y, int normalId, int pressedId, int buttonId, GumpButtonType type, int param) {
 			if (type == GumpButtonType.Reply) {
-				GumpInstance.AddButton(x, y, normalID, pressedID, true, param, buttonID);
+				GumpInstance.AddButton(x, y, normalId, pressedId, true, param, buttonId);
 			} else {
-				GumpInstance.AddButton(x, y, normalID, pressedID, false, param, buttonID);
+				GumpInstance.AddButton(x, y, normalId, pressedId, false, param, buttonId);
 			}
 		}
 
@@ -116,12 +117,12 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId);
 		}
 
-		public void AddImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemID, int hue, int width, int height) {
-			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemID, hue, width, height);
+		public void AddImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
+			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemId, hue, width, height);
 		}
 
-		public void ImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemID, int hue, int width, int height) {
-			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemID, hue, width, height);
+		public void ImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
+			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemId, hue, width, height);
 		}
 
 		public void AddGroup(int group) {
@@ -133,51 +134,51 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void AddHtml(int x, int y, int width, int height, string text, bool background, bool scrollbar) {
-			GumpInstance.AddHTMLGump(x, y, width, height, text, background, scrollbar);
+			GumpInstance.AddHtmlGump(x, y, width, height, text, background, scrollbar);
 		}
 
-		public void HTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddHTMLGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+		public void HtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
+			GumpInstance.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 		//99z+ interface
-		public void HTMLGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddHTMLGump(x, y, width, height, text, hasBoundBox, isScrollable);
+		public void HtmlGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
+			GumpInstance.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 		//55ir interface
-		public void DHTMLGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddHTMLGump(x, y, width, height, text, hasBoundBox, isScrollable);
+		public void DhtmlGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
+			GumpInstance.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 
 		public void AddHtmlLocalized(int x, int y, int width, int height, int number, bool background, bool scrollbar) {
-			GumpInstance.AddXMFHTMLGump(x, y, width, height, number, background, scrollbar);
+			GumpInstance.AddXmfhtmlGump(x, y, width, height, number, background, scrollbar);
 		}
 
 		public void AddHtmlLocalized(int x, int y, int width, int height, int number, int color, bool background, bool scrollbar) {
-			GumpInstance.AddXMFHTMLGumpColor(x, y, width, height, number, background, scrollbar, color);
+			GumpInstance.AddXmfhtmlGumpColor(x, y, width, height, number, background, scrollbar, color);
 		}
 
-		public void XMFHTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddXMFHTMLGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+		public void XmfhtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
+			GumpInstance.AddXmfhtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 
-		public void XMFHTMLGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
-			GumpInstance.AddXMFHTMLGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
+		public void XmfhtmlGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
+			GumpInstance.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
 		}
 
-		public void AddCheck(int x, int y, int inactiveID, int activeID, bool initialState, int switchID) {
-			GumpInstance.AddCheckBox(x, y, inactiveID, activeID, initialState, switchID);
+		public void AddCheck(int x, int y, int inactiveId, int activeId, bool initialState, int switchId) {
+			GumpInstance.AddCheckBox(x, y, inactiveId, activeId, initialState, switchId);
 		}
 
 		public void CheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
 			GumpInstance.AddCheckBox(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
 		}
 
-		public void AddItem(int x, int y, int itemID) {
-			GumpInstance.AddTilePic(x, y, itemID);
+		public void AddItem(int x, int y, int itemId) {
+			GumpInstance.AddTilePic(x, y, itemId);
 		}
 
-		public void AddItem(int x, int y, int itemID, int hue) {
-			GumpInstance.AddTilePicHue(x, y, itemID, hue);
+		public void AddItem(int x, int y, int itemId, int hue) {
+			GumpInstance.AddTilePicHue(x, y, itemId, hue);
 		}
 
 		public void TilePic(int x, int y, int tileId) {
@@ -188,16 +189,16 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddTilePicHue(x, y, tileId, hue);
 		}
 
-		public void AddImage(int x, int y, int gumpID) {
-			GumpInstance.AddGumpPic(x, y, gumpID);
+		public void AddImage(int x, int y, int gumpId) {
+			GumpInstance.AddGumpPic(x, y, gumpId);
 		}
 
-		public void AddImage(int x, int y, int gumpID, int hue) {
-			GumpInstance.AddGumpPic(x, y, gumpID, hue);
+		public void AddImage(int x, int y, int gumpId, int hue) {
+			GumpInstance.AddGumpPic(x, y, gumpId, hue);
 		}
 
-		public void AddImageTiled(int x, int y, int width, int height, int gumpID) {
-			GumpInstance.AddGumpPicTiled(x, y, width, height, gumpID);
+		public void AddImageTiled(int x, int y, int width, int height, int gumpId) {
+			GumpInstance.AddGumpPicTiled(x, y, width, height, gumpId);
 		}
 
 		public void GumpPicTiled(int x, int y, int width, int height, int gumpId) {
@@ -244,16 +245,16 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddPage(page);
 		}
 
-		public void AddRadio(int x, int y, int inactiveID, int activeID, bool initialState, int switchID) {
-			GumpInstance.AddRadio(x, y, inactiveID, activeID, initialState, switchID);
+		public void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId) {
+			GumpInstance.AddRadio(x, y, inactiveId, activeId, initialState, switchId);
 		}
 
 		public void Radio(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
 			GumpInstance.AddRadio(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
 		}
 
-		public void AddTextEntry(int x, int y, int width, int height, int hue, int entryID, string initialText) {
-			GumpInstance.AddTextEntry(x, y, width, height, hue, entryID, initialText);
+		public void AddTextEntry(int x, int y, int width, int height, int hue, int entryId, string initialText) {
+			GumpInstance.AddTextEntry(x, y, width, height, hue, entryId, initialText);
 		}
 
 		public void TextEntry(int x, int y, int widthPix, int widthChars, int hue, int id, int textId) {
@@ -305,32 +306,32 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void NoClose() {
-			GumpInstance.closable = false;
+			this.GumpInstance.closable = false;
 		}
 
 		public void NoMove() {
-			GumpInstance.movable = false;
+			this.GumpInstance.movable = false;
 		}
 
 		public void NoDispose() {
-			GumpInstance.disposable = false;
+			this.GumpInstance.disposable = false;
 		}
 
 		public bool Closable {
 			get {
-				return GumpInstance.closable;
+				return this.GumpInstance.closable;
 			}
 			set {
-				GumpInstance.closable = value;
+				this.GumpInstance.closable = value;
 			}
 		}
 
 		public bool Disposable {
 			get {
-				return GumpInstance.disposable;
+				return this.GumpInstance.disposable;
 			}
 			set {
-				GumpInstance.disposable = value;
+				this.GumpInstance.disposable = value;
 			}
 		}
 
@@ -352,8 +353,9 @@ namespace SteamEngine.CompiledScripts {
 		public CompiledGump(CompiledGumpDef def)
 			: base(def) {
 		}
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] returnedNumbers) {
-			CompiledGumpDef gdef = (CompiledGumpDef) def;
+			CompiledGumpDef gdef = (CompiledGumpDef) Def;
 			gdef.gumpInstance = this;
 			try {
 				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers), this.InputArgs);
@@ -392,8 +394,8 @@ namespace SteamEngine.CompiledScripts {
 		public string GetTextResponse(int id) {
 			for (int i = 0, n = responseTexts.Length; i < n; i++) {
 				ResponseText rt = responseTexts[i];
-				if (rt.id == id) {
-					return rt.text;
+				if (rt.Id == id) {
+					return rt.Text;
 				}
 			}
 			return "";
@@ -402,8 +404,8 @@ namespace SteamEngine.CompiledScripts {
 		public double GetNumberResponse(int id) {
 			for (int i = 0, n = responseNumbers.Length; i < n; i++) {
 				ResponseNumber rn = responseNumbers[i];
-				if ((rn != null) && (rn.id == id)) {
-					return rn.number;
+				if ((rn != null) && (rn.Id == id)) {
+					return rn.Number;
 				}
 			}
 			return 0;

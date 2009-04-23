@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			ClassManager.RegisterSupplySubclassInstances<CompiledScriptHolder>(null, false, false);
 		}
 
-		public CompiledScriptHolder()
+		protected CompiledScriptHolder()
 			: base() {
 
 		}
@@ -51,13 +51,19 @@ namespace SteamEngine.CompiledScripts {
 
 	[AttributeUsage(AttributeTargets.Method)]
 	public class SteamFunctionAttribute : Attribute {
-		internal string newFunctionName;
+		private readonly string newFunctionName;
 
 		public SteamFunctionAttribute() {
 		}
 
 		public SteamFunctionAttribute(string newFunctionName) {
 			this.newFunctionName = newFunctionName;
+		}
+
+		public string NewFunctionName {
+			get {
+				return newFunctionName;
+			}
 		}
 	}
 
@@ -68,6 +74,7 @@ namespace SteamEngine.CompiledScripts {
 			compiledSHs.Add(mi);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -120,9 +127,9 @@ namespace SteamEngine.CompiledScripts {
 
 				retVal.Add(new CodeAssignStatement(
 					new CodeVariableReferenceExpression("argv"),
-					new CodeFieldReferenceExpression(
+					new CodePropertyReferenceExpression(
 						new CodeArgumentReferenceExpression("sa"),
-						"argv")));
+						"Argv")));
 
 				int paramOffset = thisAsFirstParam ? 0 : -1;
 
@@ -205,7 +212,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				this.method = method;
-				this.name = sfa.newFunctionName;
+				this.name = sfa.NewFunctionName;
 				if (string.IsNullOrEmpty(this.name)) {
 					this.name = method.Name;
 				}
@@ -261,8 +268,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s = ((string) filterCriteria).ToLower();
-				return m.Name.ToLower().StartsWith(s);
+				string s = ((string) filterCriteria).ToLower(System.Globalization.CultureInfo.InvariantCulture);
+				return m.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith(s);
 			}
 		}
 	}

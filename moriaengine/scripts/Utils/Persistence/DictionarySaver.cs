@@ -52,38 +52,38 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine pl = input.PopPropsLine("TKey");
-				currentLineNumber = pl.line;
+				currentLineNumber = pl.Line;
 				Type[] genericTypes = new Type[2];
 				genericTypes[0] = GenericListSaver.ParseType(pl);
 				pl = input.PopPropsLine("TValue");
-				currentLineNumber = pl.line;
+				currentLineNumber = pl.Line;
 				genericTypes[1] = GenericListSaver.ParseType(pl);
 				Type dictType = typeof(Dictionary<,>).MakeGenericType(genericTypes);
 				IDictionary dict = (IDictionary) Activator.CreateInstance(dictType);
 
 				PropsLine countLine = input.PopPropsLine("count");
-				currentLineNumber = countLine.line;
-				int count = int.Parse(countLine.value);
+				currentLineNumber = countLine.Line;
+				int count = int.Parse(countLine.Value);
 				for (int i = 0; i < count; i++) {
 					PropsLine keyLine = input.PopPropsLine(i + ".K");
 					PropsLine valueLine = input.PopPropsLine(i + ".V");
 					DictionaryLoadHelper helper = new DictionaryLoadHelper(dict, genericTypes[0], genericTypes[1]);
-					currentLineNumber = keyLine.line;
-					ObjectSaver.Load(keyLine.value, new LoadObject(helper.DelayedLoad_Key), input.filename, keyLine.line);
-					currentLineNumber = valueLine.line;
-					ObjectSaver.Load(valueLine.value, new LoadObject(helper.DelayedLoad_Value), input.filename, valueLine.line);
+					currentLineNumber = keyLine.Line;
+					ObjectSaver.Load(keyLine.Value, new LoadObject(helper.DelayedLoad_Key), input.Filename, keyLine.Line);
+					currentLineNumber = valueLine.Line;
+					ObjectSaver.Load(valueLine.Value, new LoadObject(helper.DelayedLoad_Value), input.Filename, valueLine.Line);
 				}
 				return dict;
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 

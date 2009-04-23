@@ -237,12 +237,12 @@ namespace SteamEngine {
 		}
 	}
 
-	class SimpleCommandParser {
+	static class SimpleCommandParser {
 		static Regex commandRE = new Regex(@"(?<name>\w+)(\s+(?<arg>.+))?",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 
-		[Summary("Runs a method or function of the object self, given by name, and possible "
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Runs a method or function of the object self, given by name, and possible "
 		+ "one argument of numeric or string type, separated by space from the name")]
 		public static bool TryRunSnippet(ISrc commandSrc, TagHolder self, string code, out string errText) {
 			Match m = commandRE.Match(code);
@@ -285,7 +285,7 @@ namespace SteamEngine {
 					try {
 						if (haveArg) {
 							if (argIsNumber) {
-								mi.Invoke(self, new object[] { Convert.ChangeType(argAsNumber, argType) });
+								mi.Invoke(self, new object[] { Convert.ChangeType(argAsNumber, argType, System.Globalization.CultureInfo.InvariantCulture) });
 							} else {
 								mi.Invoke(self, new object[] { arg });
 							}
@@ -303,7 +303,7 @@ namespace SteamEngine {
 				} else if (nameMatched) {
 					errText = ServLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandArgument;
 				} else {
-					errText = String.Format(
+					errText = String.Format(System.Globalization.CultureInfo.InvariantCulture,
 						ServLoc<CommandLoc>.Get(commandSrc.Language).UnknownCommand,
 						name);
 				}

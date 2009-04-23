@@ -1204,7 +1204,7 @@ namespace SteamEngine.CompiledScripts {
 				backpackDef = ThingDef.FindItemDef(0xe75) as ContainerDef;
 				if (backpackDef == null) {
 					throw new SEException("Unable to find itemdef 0xe75 in scripts.");
-				} else if ((LayerNames) backpackDef.Layer != LayerNames.Pack) {
+				} else if (backpackDef.Layer != (int) LayerNames.Pack) {
 					throw new SEException("Wrong layer of backpack itemdef.");
 				}
 			}
@@ -1308,33 +1308,33 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine ps = input.TryPopPropsLine(skillKey);
 					if (ps != null) {
 						int val;
-						if (TagMath.TryParseInt32(ps.value, out val)) {
+						if (TagMath.TryParseInt32(ps.Value, out val)) {
 							SetSkill(i, val);
 						} else {
-							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+							Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
 						}
 					}
 
 					ps = input.TryPopPropsLine("Cap." + skillKey);
 					if (ps != null) {
 						ushort val;
-						if (TagMath.TryParseUInt16(ps.value, out val)) {
+						if (TagMath.TryParseUInt16(ps.Value, out val)) {
 							SetSkillCap(i, val);
 						} else {
-							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+							Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
 						}
 					}
 
 					ps = input.TryPopPropsLine("SkillLock." + skillKey);
 					if (ps != null) {
-						if (StringComparer.OrdinalIgnoreCase.Equals("Lock", ps.value)) {
+						if (StringComparer.OrdinalIgnoreCase.Equals("Lock", ps.Value)) {
 							this.SetSkillLockType(i, SkillLockType.Locked);
-						} else if (StringComparer.OrdinalIgnoreCase.Equals("Down", ps.value)) {
+						} else if (StringComparer.OrdinalIgnoreCase.Equals("Down", ps.Value)) {
 							this.SetSkillLockType(i, SkillLockType.Down);
-						} else if (StringComparer.OrdinalIgnoreCase.Equals("Up", ps.value)) {
+						} else if (StringComparer.OrdinalIgnoreCase.Equals("Up", ps.Value)) {
 							this.SetSkillLockType(i, SkillLockType.Increase);
 						} else {
-							Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+							Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
 						}
 					}
 				}
@@ -1346,10 +1346,10 @@ namespace SteamEngine.CompiledScripts {
 				PropsLine ps = input.TryPopPropsLine(defName);
 				if (ps != null) {
 					int val;
-					if (TagMath.TryParseInt32(ps.value, out val)) {
+					if (TagMath.TryParseInt32(ps.Value, out val)) {
 						AddNewAbility(abDef, val);
 					} else {
-						Logger.WriteError(input.filename, ps.line, "Unrecognised value format.");
+						Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
 					}
 				}
 			}
@@ -1958,13 +1958,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public Item Hair {
 			get {
-				return (Item) FindLayer((byte) LayerNames.Hair);
+				return (Item) this.FindLayer( LayerNames.Hair);
 			}
 		}
 
 		public Item Beard {
 			get {
-				return (Item) FindLayer((byte) LayerNames.Beard);
+				return (Item) this.FindLayer(LayerNames.Beard);
 			}
 		}
 
@@ -2101,18 +2101,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_ItemEnter(ItemInCharArgs args) {
-			if (args.manipulatedItem is Wearable) {
+			if (args.ManipulatedItem is Wearable) {
 				this.InvalidateCombatArmorValues();
-			} else if (args.manipulatedItem is Weapon) {
+			} else if (args.ManipulatedItem is Weapon) {
 				this.InvalidateCombatWeaponValues();
 			}
 			base.On_ItemEnter(args);
 		}
 
 		public override void On_ItemLeave(ItemInCharArgs args) {
-			if (args.manipulatedItem is Wearable) {
+			if (args.ManipulatedItem is Wearable) {
 				this.InvalidateCombatArmorValues();
-			} else if (args.manipulatedItem is Weapon) {
+			} else if (args.ManipulatedItem is Weapon) {
 				this.InvalidateCombatWeaponValues();
 			}
 			base.On_ItemLeave(args);

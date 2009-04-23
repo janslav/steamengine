@@ -36,14 +36,14 @@ namespace SteamEngine.LScript {
 		}
 
 		internal static ScriptedGumpDef Load(PropsSection input) {
-			string[] headers = input.headerName.Split(new char[] { ' ', '\t' }, 2);
+			string[] headers = input.HeaderName.Split(new char[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
 			GumpDef gump = GumpDef.Get(name);
 			ScriptedGumpDef sgd;
 			if (gump != null) {
 				sgd = gump as ScriptedGumpDef;
 				if (sgd == null) {//is not scripted, so can not be overriden
-					throw new SEException(LogStr.FileLine(input.filename, input.headerLine) + "GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
+					throw new SEException(LogStr.FileLine(input.Filename, input.HeaderLine) + "GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
 			} else {
 				sgd = new ScriptedGumpDef(name);
@@ -69,7 +69,7 @@ namespace SteamEngine.LScript {
 							throw new SEException("TEXT section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
 						TriggerSection trigger = input.GetTrigger(0);
-						StringReader stream = new StringReader(trigger.code.ToString());
+						StringReader stream = new StringReader(trigger.Code.ToString());
 						StringBuilder modifiedCode = new StringBuilder();
 						while (true) {
 							string curLine = stream.ReadLine();
@@ -78,7 +78,7 @@ namespace SteamEngine.LScript {
 								if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
 									continue;
 								}
-								curLine = Utility.UnComment(curLine);
+								curLine = Utility.Uncomment(curLine);
 								modifiedCode.Append("AddString(\"");
 								modifiedCode.Append(curLine);
 								modifiedCode.Append("\")");
@@ -87,7 +87,7 @@ namespace SteamEngine.LScript {
 								break;
 							}
 						}
-						trigger.code = modifiedCode;
+						trigger.Code = modifiedCode;
 						LScriptHolder sc = new LScriptHolder(trigger);
 						if (sc.unloaded) {//in case the compilation failed (syntax error)
 							sgd.IsUnloaded = true;
@@ -105,7 +105,7 @@ namespace SteamEngine.LScript {
 						ArrayList responsesList = new ArrayList();
 						for (int i = 1, n = input.TriggerCount; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
 							trigger = input.GetTrigger(i);
-							string triggerName = trigger.triggerName;
+							string triggerName = trigger.TriggerName;
 							if (StringComparer.OrdinalIgnoreCase.Equals(triggerName, "anybutton")) {
 								responsesList.Add(new ResponseTrigger(0, int.MaxValue, trigger));
 								continue;
@@ -180,7 +180,7 @@ namespace SteamEngine.LScript {
 
 			layoutScript.TryRun(focus, sa);
 
-			ScriptedGump returnedInstance = sa.argv[0] as ScriptedGump;
+			ScriptedGump returnedInstance = sa.Argv[0] as ScriptedGump;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}
@@ -260,8 +260,8 @@ namespace SteamEngine.LScript {
 			get {
 				for (int i = 0, n = responseTexts.Length; i < n; i++) {
 					ResponseText rt = responseTexts[i];
-					if (rt.id == id) {
-						return rt.text;
+					if (rt.Id == id) {
+						return rt.Text;
 					}
 				}
 				return "";
@@ -279,8 +279,8 @@ namespace SteamEngine.LScript {
 			get {
 				for (int i = 0, n = responseNumbers.Length; i < n; i++) {
 					ResponseNumber rn = responseNumbers[i];
-					if ((rn != null) && (rn.id == id)) {
-						return rn.number;
+					if ((rn != null) && (rn.Id == id)) {
+						return rn.Number;
 					}
 				}
 				return 0;
@@ -294,7 +294,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
-			ScriptedGumpDef sdef = (ScriptedGumpDef) def;
+			ScriptedGumpDef sdef = (ScriptedGumpDef) Def;
 			sdef.OnResponse(this, pressedButton, selectedSwitches, returnedTexts, responseNumbers);
 		}
 
@@ -319,7 +319,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public void HTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			this.AddHTMLGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+			this.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 
 		//public void HTMLGump(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable) {
@@ -327,28 +327,28 @@ namespace SteamEngine.LScript {
 		//}
 		//99z+ interface
 		public void HTMLGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			this.AddHTMLGump(x, y, width, height, text, hasBoundBox, isScrollable);
+			this.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 		//public void HTMLGumpA(int x, int y, int width, int height, string text, int hasBoundBox, int isScrollable) {
 		//    builder.AddHTMLGump(x, y, width, height, text, hasBoundBox!=0, isScrollable!=0);
 		//}
 		//55ir interface
 		public void DHTMLGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			this.AddHTMLGump(x, y, width, height, text, hasBoundBox, isScrollable);
+			this.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 		//public void DHTMLGump(int x, int y, int width, int height, string text, int hasBoundBox, int isScrollable) {
 		//    builder.AddHTMLGump(x, y, width, height, text, hasBoundBox!=0, isScrollable!=0);
 		//}
 
 		public void XMFHTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			this.AddXMFHTMLGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+			this.AddXmfhtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 		//public void XMFHTMLGump(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable) {
 		//    builder.AddXMFHTMLGump(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0);
 		//}
 
 		public void XMFHTMLGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
-			this.AddXMFHTMLGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
+			this.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
 		}
 		//public void XMFHTMLGumpColor(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable, int hue) {
 		//    builder.AddXMFHTMLGumpColor(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0, hue);

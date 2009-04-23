@@ -208,7 +208,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//2. param - trideni dle...
 			//3. od kolikate poznamky zaciname (0), 3. prostor pro potreby dialogu
 			DialogArgs newArgs = new DialogArgs();
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				AbstractCharacter refChar = self as AbstractCharacter;
 				if (refChar == null) {
 					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer hrace", (int) Hues.Red);
@@ -222,17 +222,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
 				}
 			} else {
-				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.argv[0].ToString());
+				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.Argv[0].ToString());
 				if (acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem " + text.argv[0].ToString() + " neexistuje.", (int) Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0].ToString() + " neexistuje.", (int) Hues.Red);
 					return;
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);//nastavit account					
-				if (text.argv.Length == 1) { //mame jen nazev accountu
+				if (text.Argv.Length == 1) { //mame jen nazev accountu
 					newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				} else { //mame i trideni
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (SortingCriteria) text.argv[1]);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (SortingCriteria) text.Argv[1]);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
 				}
 			}
@@ -429,7 +429,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//2. param - trideni dle...
 			//3. od kolikate poznamky zaciname (0), 3. prostor pro potreby dialogu
 			DialogArgs newArgs = new DialogArgs();
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				AbstractCharacter refChar = self as AbstractCharacter;
 				if (refChar == null) {
 					Globals.SrcCharacter.SysMessage("Chybne zamereni, zamer hrace", (int) Hues.Red);
@@ -443,17 +443,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
 				}
 			} else {
-				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.argv[0].ToString());
+				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.Argv[0].ToString());
 				if (acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem " + text.argv[0].ToString() + " neexistuje.", (int) Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0].ToString() + " neexistuje.", (int) Hues.Red);
 					return;
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);
-				if (text.argv.Length == 1) { //mame jen nazev accountu
+				if (text.Argv.Length == 1) { //mame jen nazev accountu
 					newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				} else { //mame i trideni
-					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (SortingCriteria) text.argv[1]);
+					newArgs.SetTag(D_AccountNotes.issuesSortingTK, (SortingCriteria) text.Argv[1]);
 					Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
 				}
 			}
@@ -578,7 +578,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//1 - true (isCrime) / false (isNote)
 			//2 - referred character
 			//3 - referred account (not necessary)
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				//no player, no account specified - we will use the "self" as the target player
 				AbstractCharacter refChar = self as AbstractCharacter;
 				if (refChar == null) {
@@ -606,7 +606,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//1 - true (isCrime) / false (isNote)
 			//2 - referred character
 			//3 - referred account (not necessary)
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				//no player, no account specified - we will use the "self" as the target player
 				AbstractCharacter refChar = self as AbstractCharacter;
 				if (refChar == null) {

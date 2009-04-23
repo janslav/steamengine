@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ArrayListIndex : OpNode, IOpNodeHolder {
 		private OpNode arg;
 		private OpNode index;
@@ -61,7 +62,7 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				ArrayList list = (ArrayList) oSelf;
-				int resIndex = Convert.ToInt32(indexVal);
+				int resIndex = Convert.ToInt32(indexVal, System.Globalization.CultureInfo.InvariantCulture);
 				if (resIndex == list.Count) {
 					list.Add(argVal);
 				} else {
@@ -92,9 +93,11 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			if (arg == null) {
-				return String.Format("(ArrayList)[{0}]", index);
+				return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+					"(ArrayList)[{0}]", index);
 			} else {
-				return String.Format("(ArrayList)[{0}] = {1}", index, arg);
+				return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				"(ArrayList)[{0}] = {1}", index, arg);
 			}
 		}
 	}

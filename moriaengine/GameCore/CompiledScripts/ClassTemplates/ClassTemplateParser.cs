@@ -67,6 +67,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessFile(ScriptFile scriptFile) {
 
 			CodeCompileUnit ccu = CreateCompileUnit();

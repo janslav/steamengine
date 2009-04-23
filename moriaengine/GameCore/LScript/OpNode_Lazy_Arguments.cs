@@ -23,6 +23,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public abstract class OpNode_Argument : OpNode, IOpNodeHolder {
 		protected OpNode arg;
 		protected OpNode nodeIndex;
@@ -134,7 +135,7 @@ namespace SteamEngine.LScript {
 			//    return 1;
 			//}
 			string intStr = name.Substring(4);
-			return int.Parse(intStr, NumberStyles.Integer);
+			return int.Parse(intStr, NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
 		}
 
 		private static bool HasNumberAttached(Node code) {

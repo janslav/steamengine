@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 					case LayerNames.Dragging:
 					case LayerNames.Earrings:
 					case LayerNames.Gloves:
-					case LayerNames.Half_apron:
+					case LayerNames.HalfApron:
 					case LayerNames.Hand1:
 					case LayerNames.Hand2:
 					case LayerNames.Helmet:
